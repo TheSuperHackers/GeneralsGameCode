@@ -45,11 +45,6 @@
 #include "GameLogic/Object.h"
 #include "GameLogic/ScriptEngine.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -150,7 +145,7 @@ void RebuildHoleExposeDie::onDie( const DamageInfo *damageInfo )
 		RebuildHoleBehaviorInterface *rhbi = RebuildHoleBehavior::getRebuildHoleBehaviorInterfaceFromObject( hole );
 
 		// sanity
-		DEBUG_ASSERTCRASH( rhbi, ("RebuildHoleExposeDie: No Rebuild Hole Behavior interface on hole\n") );
+		DEBUG_ASSERTCRASH( rhbi, ("RebuildHoleExposeDie: No Rebuild Hole Behavior interface on hole") );
 
 		// start the rebuild process
 		if( rhbi )

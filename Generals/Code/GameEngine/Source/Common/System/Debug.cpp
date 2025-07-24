@@ -76,10 +76,6 @@ extern HWND ApplicationHWnd;
 
 extern const char *gAppPrefix; /// So WB can have a different log file name.
 
-#ifdef RTS_INTERNAL
-// this should ALWAYS be present
-#pragma optimize("", off)
-#endif
 
 // ----------------------------------------------------------------------------
 // DEFINES 
@@ -87,10 +83,7 @@ extern const char *gAppPrefix; /// So WB can have a different log file name.
 
 #ifdef DEBUG_LOGGING
 
-#if defined(RTS_INTERNAL)
-	#define DEBUG_FILE_NAME				"DebugLogFileI"
-	#define DEBUG_FILE_NAME_PREV	"DebugLogFilePrevI"
-#elif defined(RTS_DEBUG)
+#if defined(RTS_DEBUG)
 	#define DEBUG_FILE_NAME				"DebugLogFileD"
 	#define DEBUG_FILE_NAME_PREV	"DebugLogFilePrevD"
 #else
@@ -135,9 +128,10 @@ const char *TheDebugLevels[DEBUG_LEVEL_MAX] = {
 // ----------------------------------------------------------------------------
 static const char *getCurrentTimeString(void);
 static const char *getCurrentTickString(void);
-static const char *prepBuffer(const char* format, char *buffer);
+static void prepBuffer(char *buffer);
 #ifdef DEBUG_LOGGING
 static void doLogOutput(const char *buffer);
+static void doLogOutput(const char *buffer, const char *endline);
 #endif
 #ifdef DEBUG_CRASHING
 static int doCrashBox(const char *buffer, Bool logResult);
@@ -213,7 +207,7 @@ static const char *getCurrentTickString(void)
 	Empty the buffer passed in, then optionally prepend the current TickCount
 	value in string form, depending on the setting of theDebugFlags.
 */
-static const char *prepBuffer(const char* format, char *buffer)
+static void prepBuffer(char *buffer)
 {
 	buffer[0] = 0;
 #ifdef ALLOW_DEBUG_UTILS
@@ -223,7 +217,6 @@ static const char *prepBuffer(const char* format, char *buffer)
 		strcat(buffer, " ");
 	}
 #endif
-	return format;
 }
 
 // ----------------------------------------------------------------------------
@@ -235,12 +228,17 @@ static const char *prepBuffer(const char* format, char *buffer)
 #ifdef DEBUG_LOGGING
 static void doLogOutput(const char *buffer)
 {
+		doLogOutput(buffer, "\n");
+}
+
+static void doLogOutput(const char *buffer, const char *endline)
+{
 	// log message to file
 	if (theDebugFlags & DEBUG_FLAG_LOG_TO_FILE)
 	{
 		if (theLogFile)
 		{
-			fprintf(theLogFile, "%s", buffer);	// note, no \n (should be there already)
+			fprintf(theLogFile, "%s%s", buffer, endline);
 			fflush(theLogFile);
 		}
 	}
@@ -249,13 +247,14 @@ static void doLogOutput(const char *buffer)
 	if (theDebugFlags & DEBUG_FLAG_LOG_TO_CONSOLE)
 	{
 		::OutputDebugString(buffer);
+		::OutputDebugString(endline);
 	}
 
 #ifdef INCLUDE_DEBUG_LOG_IN_CRC_LOG
-	addCRCDebugLineNoCounter("%s", buffer);
+	addCRCDebugLineNoCounter("%s%s", buffer, endline);
 #endif
 }
-#endif
+#endif // DEBUG_LOGGING
 
 // ----------------------------------------------------------------------------
 // doCrashBox
@@ -281,14 +280,14 @@ static int doCrashBox(const char *buffer, Bool logResult)
 		case IDABORT:
 #ifdef DEBUG_LOGGING
 			if (logResult)
-				DebugLog("[Abort]\n");
+				DebugLog("[Abort]");
 #endif
 			_exit(1);
 			break;
 		case IDRETRY:
 #ifdef DEBUG_LOGGING
 			if (logResult)
-				DebugLog("[Retry]\n");
+				DebugLog("[Retry]");
 #endif
 			::DebugBreak();
 			break;
@@ -296,7 +295,7 @@ static int doCrashBox(const char *buffer, Bool logResult)
 #ifdef DEBUG_LOGGING
 			// do nothing, just keep going
 			if (logResult)
-				DebugLog("[Ignore]\n");
+				DebugLog("[Ignore]");
 #endif
 			break;
 	}
@@ -315,7 +314,7 @@ static void doStackDump()
 	const int STACKTRACE_SKIP = 2;
 	void* stacktrace[STACKTRACE_SIZE];
 
-	doLogOutput("\nStack Dump:\n");
+	doLogOutput("\nStack Dump:");
 	::FillStackAddresses(stacktrace, STACKTRACE_SIZE, STACKTRACE_SKIP);
 	::StackDumpFromAddresses(stacktrace, STACKTRACE_SIZE, doLogOutput);
 }
@@ -403,7 +402,7 @@ void DebugInit(int flags)
 		theLogFile = fopen(theLogFileName, "w");
 		if (theLogFile != NULL)
 		{
-			DebugLog("Log %s opened: %s\n", theLogFileName, getCurrentTimeString());
+			DebugLog("Log %s opened: %s", theLogFileName, getCurrentTimeString());
 		} 
 	#endif
 	}
@@ -416,7 +415,7 @@ void DebugInit(int flags)
 // ----------------------------------------------------------------------------
 #ifdef DEBUG_LOGGING
 /**
-	Print a character string to the logfile and/or console.
+	Print a string to the log file and/or console.
 */
 void DebugLog(const char *format, ...)
 {
@@ -427,19 +426,44 @@ void DebugLog(const char *format, ...)
 	if (theDebugFlags == 0)
 		MessageBoxWrapper("DebugLog - Debug not inited properly", "", MB_OK|MB_TASKMODAL);
 
-	format = prepBuffer(format, theBuffer);
+	prepBuffer(theBuffer);
 
-	va_list arg;
-  va_start(arg, format);
-  vsprintf(theBuffer + strlen(theBuffer), format, arg);
-  va_end(arg);
+	va_list args;
+	va_start(args, format);
+	vsprintf(theBuffer + strlen(theBuffer), format, args);
+	va_end(args);
 
 	if (strlen(theBuffer) >= sizeof(theBuffer))
 		MessageBoxWrapper("String too long for debug buffer", "", MB_OK|MB_TASKMODAL);
 
 	whackFunnyCharacters(theBuffer);
 	doLogOutput(theBuffer);
-} 
+}
+
+/**
+	Print a string with no modifications to the log file and/or console.
+*/
+void DebugLogRaw(const char *format, ...)
+{
+#ifdef DEBUG_THREADSAFE
+	ScopedCriticalSection scopedCriticalSection(TheDebugLogCriticalSection);
+#endif
+
+	if (theDebugFlags == 0)
+		MessageBoxWrapper("DebugLogRaw - Debug not inited properly", "", MB_OK|MB_TASKMODAL);
+
+	theBuffer[0] = 0;
+
+	va_list args;
+	va_start(args, format);
+	vsprintf(theBuffer, format, args);
+	va_end(args);
+
+	if (strlen(theBuffer) >= sizeof(theBuffer))
+		MessageBoxWrapper("String too long for debug buffer", "", MB_OK|MB_TASKMODAL);
+
+	doLogOutput(theBuffer, "");
+}
 
 const char* DebugGetLogFileName()
 {
@@ -480,7 +504,7 @@ void DebugCrash(const char *format, ...)
 		MessageBoxWrapper("DebugCrash - Debug not inited properly", "", MB_OK|MB_TASKMODAL);
 	}
 
-	format = prepBuffer(format, theCrashBuffer);
+	prepBuffer(theCrashBuffer);
 	strcat(theCrashBuffer, "ASSERTION FAILURE: ");
 
 	va_list arg;
@@ -501,7 +525,7 @@ void DebugCrash(const char *format, ...)
 #ifdef DEBUG_LOGGING
 	if (ignoringAsserts()) 
 	{
-		doLogOutput("**** CRASH IN FULL SCREEN - Auto-ignored, CHECK THIS LOG!\n");
+		doLogOutput("**** CRASH IN FULL SCREEN - Auto-ignored, CHECK THIS LOG!");
 	}
 	whackFunnyCharacters(theCrashBuffer);
 	doLogOutput(theCrashBuffer);
@@ -513,7 +537,7 @@ void DebugCrash(const char *format, ...)
 	}
 #endif
 
-	strcat(theCrashBuffer, "\n\nAbort->exception; Retry->debugger; Ignore->continue\n");
+	strcat(theCrashBuffer, "\n\nAbort->exception; Retry->debugger; Ignore->continue");
 
 	int result = doCrashBox(theCrashBuffer, true);
 
@@ -553,7 +577,7 @@ void DebugShutdown()
 #ifdef DEBUG_LOGGING
 	if (theLogFile)
 	{
-		DebugLog("Log closed: %s\n", getCurrentTimeString());
+		DebugLog("Log closed: %s", getCurrentTimeString());
 		fclose(theLogFile);
 	}
 	theLogFile = NULL;
@@ -630,9 +654,9 @@ void SimpleProfiler::stopAndLog(const char *msg, int howOftenToLog, int howOften
 	{
 		m_numSessions = 0;
 		m_totalAllSessions = 0;
-		DEBUG_LOG(("%s: reset averages\n",msg));
+		DEBUG_LOG(("%s: reset averages",msg));
 	}
-	DEBUG_ASSERTLOG(m_numSessions % howOftenToLog != 0, ("%s: %f msec, total %f msec, avg %f msec\n",msg,getTime(),getTotalTime(),getAverageTime()));
+	DEBUG_ASSERTLOG(m_numSessions % howOftenToLog != 0, ("%s: %f msec, total %f msec, avg %f msec",msg,getTime(),getTotalTime(),getAverageTime()));
 }
 
 // ----------------------------------------------------------------------------
@@ -689,7 +713,7 @@ double SimpleProfiler::getAverageTime()
 	{
 		if (theReleaseCrashLogFile)
 		{
-			fprintf(theReleaseCrashLogFile, "%s", buffer);	// note, no \n (should be there already)
+			fprintf(theReleaseCrashLogFile, "%s\n", buffer);
 			fflush(theReleaseCrashLogFile);
 		}
 	}
@@ -736,7 +760,7 @@ void ReleaseCrash(const char *reason)
 		}
 	}
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	/* static */ char buff[8192]; // not so static so we can be threadsafe
 	snprintf(buff, 8192, "Sorry, a serious error occurred. (%s)", reason);
 	::MessageBox(NULL, buff, "Technical Difficulties...", MB_OK|MB_SYSTEMMODAL|MB_ICONERROR);

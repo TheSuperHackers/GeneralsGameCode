@@ -92,11 +92,6 @@
 	UnsignedInt s_gcoPerfFrame = 0xffffffff;
 #endif 
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 extern void addIcon(const Coord3D *pos, Real width, Int numFramesDuration, RGBColor color);
 
@@ -247,10 +242,10 @@ inline Bool filtersAllow(PartitionFilter **filters, Object *objOther)
 
 	if (DoFilterProfiling && calls > 0 && calls % 1000==0)
 	{
-		DEBUG_LOG(("\n\n"));
+		DEBUG_LOG(("\n"));
 		for (idx = 0; idx < maxEver; idx++)
 		{
-			DEBUG_LOG(("rejections[%s] = %d (useful = %d)\n",names[idx],rejections[idx],usefulRejections[idx]));
+			DEBUG_LOG(("rejections[%s] = %d (useful = %d)",names[idx],rejections[idx],usefulRejections[idx]));
 		}
 	}
 
@@ -1281,7 +1276,7 @@ void PartitionCell::addLooker(Int playerIndex)
 
 	CellShroudStatus newShroud = getShroudStatusForPlayer( playerIndex );
 
-//	DEBUG_LOG(( "ADD    %d, %d.  CS = %d, AS = %d for player %d.\n", 
+//	DEBUG_LOG(( "ADD    %d, %d.  CS = %d, AS = %d for player %d.", 
 //							m_cellX, 
 //							m_cellY, 
 //							m_shroudLevel[playerIndex].m_currentShroud,
@@ -1317,7 +1312,7 @@ void PartitionCell::removeLooker(Int playerIndex)
 	}
 	CellShroudStatus newShroud = getShroudStatusForPlayer( playerIndex );
 
-//	DEBUG_LOG(( "REMOVE %d, %d.  CS = %d, AS = %d for player %d.\n", 
+//	DEBUG_LOG(( "REMOVE %d, %d.  CS = %d, AS = %d for player %d.", 
 //							m_cellX, 
 //							m_cellY, 
 //							m_shroudLevel[playerIndex].m_currentShroud,
@@ -1546,7 +1541,7 @@ void PartitionCell::loadPostProcess( void )
 //-----------------------------------------------------------------------------
 PartitionData::PartitionData()
 {
-	//DEBUG_LOG(("create pd %08lx\n",this));
+	//DEBUG_LOG(("create pd %08lx",this));
 	m_next = NULL;
 	m_prev = NULL;
 	m_nextDirty = NULL;
@@ -1570,15 +1565,15 @@ PartitionData::PartitionData()
 //-----------------------------------------------------------------------------
 PartitionData::~PartitionData()
 {
-	//DEBUG_LOG(("toss pd for pd %08lx obj %08lx\n",this,m_object));
+	//DEBUG_LOG(("toss pd for pd %08lx obj %08lx",this,m_object));
 	removeAllTouchedCells();
 	freeCoiArray();
 	DEBUG_ASSERTCRASH(ThePartitionManager, ("ThePartitionManager is null"));
 	if (ThePartitionManager && ThePartitionManager->isInListDirtyModules(this))
 	{
-		//DEBUG_LOG(("remove pd %08lx from dirty list (%08lx %08lx)\n",this,m_prevDirty,m_nextDirty));
+		//DEBUG_LOG(("remove pd %08lx from dirty list (%08lx %08lx)",this,m_prevDirty,m_nextDirty));
 		ThePartitionManager->removeFromDirtyModules(this);
-		//DEBUG_ASSERTCRASH(!ThePartitionManager->isInListDirtyModules(this), ("hmm\n"));
+		//DEBUG_ASSERTCRASH(!ThePartitionManager->isInListDirtyModules(this), ("hmm"));
 	}
 } 
 
@@ -1619,7 +1614,7 @@ ObjectShroudStatus PartitionData::getShroudedStatus(Int playerIndex)
 {
 	// sanity
 	DEBUG_ASSERTCRASH( playerIndex >= 0 && playerIndex < MAX_PLAYER_COUNT, 
-										 ("PartitionData::getShroudedStatus - Invalid player index '%d'\n", playerIndex) );
+										 ("PartitionData::getShroudedStatus - Invalid player index '%d'", playerIndex) );
 
 	if (!ThePartitionManager->getUpdatedSinceLastReset()) 
 	{
@@ -1888,7 +1883,7 @@ void PartitionData::doSmallFill(
 	Real halfCellSize = ThePartitionManager->getCellSize() * 0.5f;
 	if (radius > halfCellSize)
 	{
-		DEBUG_CRASH(("object is too large to use a 'small' geometry, truncating size to cellsize\n"));
+		DEBUG_CRASH(("object is too large to use a 'small' geometry, truncating size to cellsize"));
 		radius = halfCellSize;
 	}
 
@@ -1939,7 +1934,7 @@ void PartitionData::addPossibleCollisions(PartitionContactList *ctList)
 	}
 #endif
 
-	//DEBUG_LOG(("adding possible collision for %s\n",getObject()->getTemplate()->getName().str()));
+	//DEBUG_LOG(("adding possible collision for %s",getObject()->getTemplate()->getName().str()));
 
 	CellAndObjectIntersection *myCoi = m_coiArray;
 	for (Int i = m_coiInUseCount; i > 0; --i, ++myCoi)
@@ -2138,7 +2133,7 @@ void PartitionData::invalidateShroudedStatusForAllPlayers()
 	}
 }
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 static AsciiString theObjName;
 #endif
 
@@ -2148,10 +2143,10 @@ Int PartitionData::calcMaxCoiForShape(GeometryType geom, Real majorRadius, Real 
 	Int result;
 	if (isSmall)
 	{
-		#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+		#if defined(RTS_DEBUG)
 		Int chk = calcMaxCoiForShape(geom, majorRadius, minorRadius, false);
 		(void)chk;
-		DEBUG_ASSERTCRASH(chk <= 4, ("Small objects should be <= 4 cells, but I calced %s as %d\n",theObjName.str(),chk));
+		DEBUG_ASSERTCRASH(chk <= 4, ("Small objects should be <= 4 cells, but I calced %s as %d",theObjName.str(),chk));
 		#endif
 		result = 4;
 	}
@@ -2197,7 +2192,7 @@ Int PartitionData::calcMaxCoiForObject()
 	Real majorRadius = obj->getGeometryInfo().getMajorRadius();
 	Real minorRadius = obj->getGeometryInfo().getMinorRadius();
 	Bool isSmall = obj->getGeometryInfo().getIsSmall();
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 theObjName = obj->getTemplate()->getName();
 #endif
 	return calcMaxCoiForShape(geom, majorRadius, minorRadius, isSmall);
@@ -2206,7 +2201,7 @@ theObjName = obj->getTemplate()->getName();
 //-----------------------------------------------------------------------------
 void PartitionData::makeDirty(Bool needToUpdateCells)
 {
-	//DEBUG_LOG(("makeDirty for pd %08lx obj %08lx\n",this,m_object));
+	//DEBUG_LOG(("makeDirty for pd %08lx obj %08lx",this,m_object));
 	if (!ThePartitionManager->isInListDirtyModules(this))
 	{
 		if (needToUpdateCells)
@@ -2268,7 +2263,7 @@ void PartitionData::attachToObject(Object* object)
 			m_ghostObject = TheGhostObjectManager->addGhostObject(object, this);
 	}
 
-	//DEBUG_LOG(("attach pd for pd %08lx obj %08lx\n",this,m_object));
+	//DEBUG_LOG(("attach pd for pd %08lx obj %08lx",this,m_object));
 
 	// (re)calc maxCoi and (re)alloc cois
 	DEBUG_ASSERTCRASH(m_coiArrayCount == 0 && m_coiArray == NULL, ("hmm, coi should probably be null here"));
@@ -2299,7 +2294,7 @@ void PartitionData::detachFromObject()
 	removeAllTouchedCells();
 	freeCoiArray();
 
-	//DEBUG_LOG(("detach pd for pd %08lx obj %08lx\n",this,m_object));
+	//DEBUG_LOG(("detach pd for pd %08lx obj %08lx",this,m_object));
 
 	// no longer attached to object
 	m_object = NULL;
@@ -2345,7 +2340,7 @@ void PartitionData::detachFromGhostObject(void)
 	removeAllTouchedCells();
 	freeCoiArray();
 
-	//DEBUG_LOG(("detach pd for pd %08lx obj %08lx\n",this,m_object));
+	//DEBUG_LOG(("detach pd for pd %08lx obj %08lx",this,m_object));
 
 	// no longer attached to object
 	m_object = NULL;
@@ -2423,7 +2418,7 @@ for (PartitionContactListNode *cd2 = m_contactHash[ hashValue ]; cd2; cd2 = cd2-
 }
 if (depth > 3)
 {
-	DEBUG_LOG(("depth is %d for %s %08lx (%d) - %s %08lx (%d)\n",
+	DEBUG_LOG(("depth is %d for %s %08lx (%d) - %s %08lx (%d)",
 		depth,obj_obj->getTemplate()->getName().str(),obj_obj,obj_obj->getID(),
 		other_obj->getTemplate()->getName().str(),other_obj,other_obj->getID()
 		));
@@ -2434,7 +2429,7 @@ if (depth > 3)
 		//hashValue %= PartitionContactList_SOCKET_COUNT;
 
 
-		DEBUG_LOG(("ENTRY: %s %08lx (%d) - %s %08lx (%d) [rawhash %d]\n",
+		DEBUG_LOG(("ENTRY: %s %08lx (%d) - %s %08lx (%d) [rawhash %d]",
 			cd2->m_obj->getObject()->getTemplate()->getName().str(),cd2->m_obj->getObject(),cd2->m_obj->getObject()->getID(),
 			cd2->m_other->getObject()->getTemplate()->getName().str(),cd2->m_other->getObject(),cd2->m_other->getObject()->getID(),
 			rawhash));
@@ -2455,7 +2450,7 @@ for (int ii = 0; ii < PartitionContactList_SOCKET_COUNT; ++ii)
 	}
 }
 aggcount += 1.0f;
-DEBUG_ASSERTLOG(((Int)aggcount)%1000!=0,("avg hash depth at %f is %f, fullness %f%%\n",
+DEBUG_ASSERTLOG(((Int)aggcount)%1000!=0,("avg hash depth at %f is %f, fullness %f%%",
 aggcount,aggtotal/(aggcount*PartitionContactList_SOCKET_COUNT),(aggfull*100)/(aggcount*PartitionContactList_SOCKET_COUNT)));
 #endif
 
@@ -2540,12 +2535,12 @@ void PartitionContactList::processContactList()
 		//
 		if (!obj->isDestroyed() && obj->friend_getPartitionData() != NULL && !obj->isKindOf(KINDOF_IMMOBILE))
 		{
-//DEBUG_LOG(("%d: re-dirtying collision of %s %08lx with %s %08lx\n",TheGameLogic->getFrame(),obj->getTemplate()->getName().str(),obj,other->getTemplate()->getName().str(),other));
+//DEBUG_LOG(("%d: re-dirtying collision of %s %08lx with %s %08lx",TheGameLogic->getFrame(),obj->getTemplate()->getName().str(),obj,other->getTemplate()->getName().str(),other));
 			obj->friend_getPartitionData()->makeDirty(false);
 		}
 		if (!other->isDestroyed() && other->friend_getPartitionData() != NULL && !other->isKindOf(KINDOF_IMMOBILE))
 		{
-//DEBUG_LOG(("%d: re-dirtying collision of %s %08lx with %s %08lx [other]\n",TheGameLogic->getFrame(),other->getTemplate()->getName().str(),other,obj->getTemplate()->getName().str(),obj));
+//DEBUG_LOG(("%d: re-dirtying collision of %s %08lx with %s %08lx [other]",TheGameLogic->getFrame(),other->getTemplate()->getName().str(),other,obj->getTemplate()->getName().str(),obj));
 			other->friend_getPartitionData()->makeDirty(false);
 		}
 	}
@@ -2776,14 +2771,14 @@ void PartitionManager::update()
 		
 		ctList.processContactList();
 #ifdef INTENSE_DEBUG
-		DEBUG_ASSERTLOG(cc==0,("updated partition info for %d objects\n",cc));
+		DEBUG_ASSERTLOG(cc==0,("updated partition info for %d objects",cc));
 #endif
 		TheContactList = NULL;
 
 		processPendingUndoShroudRevealQueue();
 	}
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	if (TheGlobalData->m_debugThreatMap) 
 	{
 		if (TheGameLogic->getFrame() % TheGlobalData->m_debugThreatMapTileDuration)
@@ -2843,7 +2838,7 @@ void PartitionManager::update()
 			}			
 		}
 	}
-#endif // defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#endif // defined(RTS_DEBUG)
 }  // end update
 
 //------------------------------------------------------------------------------
@@ -2856,7 +2851,7 @@ void PartitionManager::registerObject( Object* object )
 	// if object is already part of this system get out of here
 	if( object->friend_getPartitionData() != NULL )
 	{
-		DEBUG_LOG(( "Object '%s' already registered with partition manager\n",
+		DEBUG_LOG(( "Object '%s' already registered with partition manager",
 								object->getTemplate()->getName().str() ));
 		return;
 	}  // end if
@@ -2931,7 +2926,7 @@ void PartitionManager::registerGhostObject( GhostObject* object)
 	// if object is already part of this system get out of here
 	if( object->friend_getPartitionData() != NULL )
 	{
-		DEBUG_LOG(( "GhostObject already registered with partition manager\n"));
+		DEBUG_LOG(( "GhostObject already registered with partition manager"));
 		return;
 	}  // end if
 
@@ -3166,20 +3161,20 @@ void PartitionManager::calcRadiusVec()
 				contain objects that are <= (curRadius * cellSize) distance away from cell (0,0).
 			*/
 			Int curRadius = calcMinRadius(cur);
-			DEBUG_ASSERTCRASH(curRadius <= m_maxGcoRadius, ("expected max of %d but got %d\n",m_maxGcoRadius,curRadius));
+			DEBUG_ASSERTCRASH(curRadius <= m_maxGcoRadius, ("expected max of %d but got %d",m_maxGcoRadius,curRadius));
 			if (curRadius <= m_maxGcoRadius)
 				m_radiusVec[curRadius].push_back(cur);
 		}
 	}
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	Int total = 0;
 	for (Int i = 0; i <= m_maxGcoRadius; ++i)
 	{
 		total += m_radiusVec[i].size();
-		//DEBUG_LOG(("radius %d has %d entries\n",i,m_radiusVec[i].size()));
+		//DEBUG_LOG(("radius %d has %d entries",i,m_radiusVec[i].size()));
 	}
-	DEBUG_ASSERTCRASH(total == (cx*2-1)*(cy*2-1),("expected %d, got %d\n",(cx*2-1)*(cy*2-1),total));
+	DEBUG_ASSERTCRASH(total == (cx*2-1)*(cy*2-1),("expected %d, got %d",(cx*2-1)*(cy*2-1),total));
 #endif
 
 }
@@ -3892,7 +3887,7 @@ Bool PartitionManager::findPositionAround( const Coord3D *center,
 	// sanity, FPF_IGNORE_WATER and FPF_WATER_ONLY are mutually exclusive
 	DEBUG_ASSERTCRASH( !(BitIsSet( options->flags, FPF_IGNORE_WATER ) == TRUE &&
 										   BitIsSet( options->flags, FPF_WATER_ONLY ) == TRUE),
-										 ("PartitionManager::findPositionAround - The options FPF_WATER_ONLY and FPF_IGNORE_WATER are mutually exclusive.  You cannot use them together\n") );
+										 ("PartitionManager::findPositionAround - The options FPF_WATER_ONLY and FPF_IGNORE_WATER are mutually exclusive.  You cannot use them together") );
 
 	// pick a random angle from the center location to start at
 	Real startAngle;
@@ -4544,7 +4539,7 @@ Bool PartitionManager::isClearLineOfSightTerrain(const Object* obj, const Coord3
 	const Real LOS_FUDGE = 0.5f;
 	if (terrainAtHighPoint > lineOfSightAtHighPoint + LOS_FUDGE)
 	{
-		//DEBUG_LOG(("isClearLineOfSightTerrain fails\n"));
+		//DEBUG_LOG(("isClearLineOfSightTerrain fails"));
 		return false;
 	}
 
@@ -4595,7 +4590,7 @@ void PartitionManager::xfer( Xfer *xfer )
 	if( cellSize != m_cellSize )
 	{
 
-		DEBUG_CRASH(( "Partition cell size has changed, this save game file is invalid\n" ));
+		DEBUG_CRASH(( "Partition cell size has changed, this save game file is invalid" ));
 		throw SC_INVALID_DATA;
 
 	}  // end if
@@ -4608,7 +4603,7 @@ void PartitionManager::xfer( Xfer *xfer )
 	if( totalCellCount != m_totalCellCount )
 	{
 
-		DEBUG_CRASH(( "Partition total cell count mismatch %d, should be %d\n",
+		DEBUG_CRASH(( "Partition total cell count mismatch %d, should be %d",
 									totalCellCount, m_totalCellCount ));
 		throw SC_INVALID_DATA;
 
@@ -5367,10 +5362,8 @@ Bool PartitionFilterPossibleToAttack::allow(Object *objOther)
 //		return false;
 
 	// we should have already filtered out isAbleToAttack!
-#ifdef RTS_DEBUG
-	// disable this assert for INTERNAL builds (srj)
-	DEBUG_ASSERTCRASH(m_obj && m_obj->isAbleToAttack(), ("if the object is unable to attack at all, you should filter that out ahead of time!"));
-#endif
+	DEBUG_ASSERTCRASH(m_obj->isAbleToAttack(), ("if the object is unable to attack at all, you should filter that out ahead of time!"));
+
 	CanAttackResult result = m_obj->getAbleToAttackSpecificObject( m_attackType, objOther, m_commandSource );
 	if( result == ATTACKRESULT_POSSIBLE || result == ATTACKRESULT_POSSIBLE_AFTER_MOVING )
 	{

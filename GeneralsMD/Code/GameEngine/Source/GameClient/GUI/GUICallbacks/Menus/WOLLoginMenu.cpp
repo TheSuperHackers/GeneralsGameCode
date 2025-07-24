@@ -69,11 +69,6 @@
 
 #include "GameNetwork/WOLBrowser/WebBrowser.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 #ifdef ALLOW_NON_PROFILED_LOGIN
 Bool GameSpyUseProfiles = false;
@@ -774,7 +769,7 @@ static void checkLogin( void )
 	{
 		// save off our ping string, and end those threads
 		AsciiString pingStr = ThePinger->getPingString( 1000 );
-		DEBUG_LOG(("Ping string is %s\n", pingStr.str()));
+		DEBUG_LOG(("Ping string is %s", pingStr.str()));
 		TheGameSpyInfo->setPingString(pingStr);
 		//delete ThePinger;
 		//ThePinger = NULL;
@@ -873,7 +868,7 @@ void WOLLoginMenuUpdate( WindowLayout * layout, void *userData)
 					// kill & restart the threads
 					AsciiString motd = TheGameSpyInfo->getMOTD();
 					AsciiString config = TheGameSpyInfo->getConfig();
-					DEBUG_LOG(("Tearing down GameSpy from WOLLoginMenuUpdate(PEERRESPONSE_DISCONNECT)\n"));
+					DEBUG_LOG(("Tearing down GameSpy from WOLLoginMenuUpdate(PEERRESPONSE_DISCONNECT)"));
 					TearDownGameSpy();
 					SetUpGameSpy( motd.str(), config.str() );
 				}
@@ -899,7 +894,7 @@ void WOLLoginMenuUpdate( WindowLayout * layout, void *userData)
 		// kill & restart the threads
 		AsciiString motd = TheGameSpyInfo->getMOTD();
 		AsciiString config = TheGameSpyInfo->getConfig();
-		DEBUG_LOG(("Tearing down GameSpy from WOLLoginMenuUpdate(login timeout)\n"));
+		DEBUG_LOG(("Tearing down GameSpy from WOLLoginMenuUpdate(login timeout)"));
 		TearDownGameSpy();
 		SetUpGameSpy( motd.str(), config.str() );
 	}
@@ -1278,7 +1273,7 @@ WindowMsgHandledType WOLLoginMenuSystem( GameWindow *window, UnsignedInt msg,
 							//TheGameSpyInfo->setLocalProfileID( resp.player.profileID );
 							TheGameSpyInfo->setLocalEmail( email );
 							TheGameSpyInfo->setLocalPassword( password );
-							DEBUG_LOG(("before create: TheGameSpyInfo->stuff(%s/%s/%s)\n", TheGameSpyInfo->getLocalBaseName().str(), TheGameSpyInfo->getLocalEmail().str(), TheGameSpyInfo->getLocalPassword().str()));
+							DEBUG_LOG(("before create: TheGameSpyInfo->stuff(%s/%s/%s)", TheGameSpyInfo->getLocalBaseName().str(), TheGameSpyInfo->getLocalEmail().str(), TheGameSpyInfo->getLocalPassword().str()));
 
 							TheGameSpyBuddyMessageQueue->addRequest( req );
 							if(checkBoxRememberPassword && GadgetCheckBoxIsChecked(checkBoxRememberPassword))
@@ -1367,7 +1362,7 @@ WindowMsgHandledType WOLLoginMenuSystem( GameWindow *window, UnsignedInt msg,
 							//TheGameSpyInfo->setLocalProfileID( resp.player.profileID );
 							TheGameSpyInfo->setLocalEmail( email );
 							TheGameSpyInfo->setLocalPassword( password );
-							DEBUG_LOG(("before login: TheGameSpyInfo->stuff(%s/%s/%s)\n", TheGameSpyInfo->getLocalBaseName().str(), TheGameSpyInfo->getLocalEmail().str(), TheGameSpyInfo->getLocalPassword().str()));
+							DEBUG_LOG(("before login: TheGameSpyInfo->stuff(%s/%s/%s)", TheGameSpyInfo->getLocalBaseName().str(), TheGameSpyInfo->getLocalEmail().str(), TheGameSpyInfo->getLocalPassword().str()));
 
 							TheGameSpyBuddyMessageQueue->addRequest( req );
 							if(checkBoxRememberPassword && GadgetCheckBoxIsChecked(checkBoxRememberPassword))
@@ -1484,7 +1479,7 @@ WindowMsgHandledType WOLLoginMenuSystem( GameWindow *window, UnsignedInt msg,
 										}
 									}
 									//uniLine.trim();
-									DEBUG_LOG(("adding TOS line: [%ls]\n", uniLine.str()));
+									DEBUG_LOG(("adding TOS line: [%ls]", uniLine.str()));
 									GadgetListBoxAddEntryText(listboxTOS, uniLine, tosColor, -1);
 								}
 

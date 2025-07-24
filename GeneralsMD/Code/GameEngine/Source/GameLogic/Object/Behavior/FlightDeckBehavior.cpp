@@ -52,11 +52,6 @@
 #include "GameLogic/Module/JetAIUpdate.h"
 #include "GameLogic/Module/ProductionUpdate.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 FlightDeckBehaviorModuleData::FlightDeckBehaviorModuleData()
 {
@@ -1205,10 +1200,10 @@ UpdateSleepTime FlightDeckBehavior::update()
 			if( pu == NULL )
 			{
 
-				DEBUG_CRASH( ("MSG_QUEUE_UNIT_CREATE: Producer '%s' doesn't have a unit production interface\n", getObject()->getTemplate()->getName().str()) );
+				DEBUG_CRASH( ("MSG_QUEUE_UNIT_CREATE: Producer '%s' doesn't have a unit production interface", getObject()->getTemplate()->getName().str()) );
 				break;
 			}  // end if
-			DEBUG_ASSERTCRASH( m_thingTemplate != NULL, ("flightdeck has a null thingtemplate... no jets for you!\n") );
+			DEBUG_ASSERTCRASH( m_thingTemplate != NULL, ("flightdeck has a null thingtemplate... no jets for you!") );
 			if( !pu->getProductionCount() && now >= m_nextAllowedProductionFrame && m_thingTemplate != NULL )
 			{
 				//Queue the build
@@ -1339,7 +1334,7 @@ void FlightDeckBehavior::exitObjectViaDoor( Object *newObj, ExitDoorType exitDoo
 
 	DUMPMATRIX3D(getObject()->getTransformMatrix());
 	DUMPCOORD3D(getObject()->getPosition());
-	CRCDEBUG_LOG(("Produced at hangar (door = %d)\n", exitDoor));
+	CRCDEBUG_LOG(("Produced at hangar (door = %d)", exitDoor));
 	DEBUG_ASSERTCRASH(exitDoor != DOOR_NONE_NEEDED, ("Hmm, unlikely"));
 	if (!reserveSpace(newObj->getID(), parkingOffset, &ppinfo)) //&loc, &orient, NULL, NULL, NULL, NULL, &hangarInternal, &hangOrient))
 	{

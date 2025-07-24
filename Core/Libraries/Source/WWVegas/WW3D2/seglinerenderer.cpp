@@ -60,11 +60,6 @@
 #define SEGLINE_CHUNK_SIZE (128)
 #endif
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 #define MAX_SEGLINE_POINT_BUFFER_SIZE (1 + SEGLINE_CHUNK_SIZE)
 // This macro depends on the assumption that each line segment is two polys.
@@ -196,7 +191,7 @@ void SegLineRendererClass::Set_Texture_Tile_Factor(float factor)
 	///@todo: I raised this number and didn't see much difference on our min-spec. -MW
 	const static float MAX_LINE_TILING_FACTOR = 50.0f;
 	if (factor > MAX_LINE_TILING_FACTOR) {
-		WWDEBUG_SAY(("Texture (%s) Tile Factor (%.2f) too large in SegLineRendererClass!\r\n", Get_Texture()->Get_Texture_Name().str(), TextureTileFactor));
+		WWDEBUG_SAY(("Texture (%s) Tile Factor (%.2f) too large in SegLineRendererClass!", Get_Texture()->Get_Texture_Name().str(), TextureTileFactor));
 		factor = MAX_LINE_TILING_FACTOR;
 	} else {
 		factor = MAX(factor, 0.0f);

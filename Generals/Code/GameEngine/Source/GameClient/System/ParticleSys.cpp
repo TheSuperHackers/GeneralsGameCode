@@ -49,11 +49,6 @@
 #include "GameLogic/Object.h"
 #include "GameLogic/TerrainLogic.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 //------------------------------------------------------------------------------ Performance Timers 
 //#include "Common/PerfMetrics.h"
@@ -340,7 +335,7 @@ Particle::Particle( ParticleSystem *system, const ParticleInfo *info )
 	if (system->isUsingDrawables())
 	{
 		const ThingTemplate *tmpl = TheThingFactory->findTemplate(system->getParticleTypeName());
-		DEBUG_ASSERTCRASH(tmpl, ("Drawable %s not found\n",system->getParticleTypeName().str()));
+		DEBUG_ASSERTCRASH(tmpl, ("Drawable %s not found",system->getParticleTypeName().str()));
 		if (tmpl)
 		{
 			m_drawable = TheThingFactory->newDrawable(tmpl);
@@ -358,7 +353,7 @@ Particle::Particle( ParticleSystem *system, const ParticleInfo *info )
 	// add this particle to the Particle System list, retaining local creation order
 	m_system->addParticle(this);
 
-	//DEBUG_ASSERTLOG(!(totalParticleCount % 100 == 0), ( "TotalParticleCount = %d\n", m_totalParticleCount ));
+	//DEBUG_ASSERTLOG(!(totalParticleCount % 100 == 0), ( "TotalParticleCount = %d", m_totalParticleCount ));
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -384,7 +379,7 @@ Particle::~Particle()
 	// remove from the global list
 	TheParticleSystemManager->removeParticle(this);
 
-	//DEBUG_ASSERTLOG(!(totalParticleCount % 100 == 0), ( "TotalParticleCount = %d\n", m_totalParticleCount ));
+	//DEBUG_ASSERTLOG(!(totalParticleCount % 100 == 0), ( "TotalParticleCount = %d", m_totalParticleCount ));
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -769,7 +764,7 @@ void Particle::xfer( Xfer *xfer )
 		if( m_drawable == NULL )
 		{
 
-			DEBUG_CRASH(( "Particle::xfer - Unable to find matching drawable id for particle\n" ));
+			DEBUG_CRASH(( "Particle::xfer - Unable to find matching drawable id for particle" ));
 			throw SC_INVALID_DATA;
 
 		}  // end if
@@ -810,7 +805,7 @@ void Particle::loadPostProcess( void )
 		if( m_systemUnderControlID == NULL )
 		{
 
-			DEBUG_CRASH(( "Particle::loadPostProcess - Unable to find system under control pointer\n" ));
+			DEBUG_CRASH(( "Particle::loadPostProcess - Unable to find system under control pointer" ));
 			throw SC_INVALID_DATA;
 
 		}  // end if
@@ -1283,7 +1278,7 @@ ParticleSystem::ParticleSystem( const ParticleSystemTemplate *sysTemplate,
 
 	TheParticleSystemManager->friend_addParticleSystem(this);
 
-	//DEBUG_ASSERTLOG(!(m_totalParticleSystemCount % 10 == 0), ( "TotalParticleSystemCount = %d\n", m_totalParticleSystemCount ));
+	//DEBUG_ASSERTLOG(!(m_totalParticleSystemCount % 10 == 0), ( "TotalParticleSystemCount = %d", m_totalParticleSystemCount ));
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -1296,7 +1291,7 @@ ParticleSystem::~ParticleSystem()
 	if( m_slaveSystem )
 	{
 
-		DEBUG_ASSERTCRASH( m_slaveSystem->getMaster() == this, ("~ParticleSystem: Our slave doesn't have us as a master!\n") );
+		DEBUG_ASSERTCRASH( m_slaveSystem->getMaster() == this, ("~ParticleSystem: Our slave doesn't have us as a master!") );
 		m_slaveSystem->setMaster( NULL );
 		setSlave( NULL );
 
@@ -1306,7 +1301,7 @@ ParticleSystem::~ParticleSystem()
 	if( m_masterSystem )
 	{
 
-		DEBUG_ASSERTCRASH( m_masterSystem->getSlave() == this, ("~ParticleSystem: Our master doesn't have us as a slave!\n") );
+		DEBUG_ASSERTCRASH( m_masterSystem->getSlave() == this, ("~ParticleSystem: Our master doesn't have us as a slave!") );
 		m_masterSystem->setSlave( NULL );
 		setMaster( NULL );
 
@@ -1327,7 +1322,7 @@ ParticleSystem::~ParticleSystem()
 	m_controlParticle = NULL;
 	
 	TheParticleSystemManager->friend_removeParticleSystem(this);
-	//DEBUG_ASSERTLOG(!(m_totalParticleSystemCount % 10 == 0), ( "TotalParticleSystemCount = %d\n", m_totalParticleSystemCount ));
+	//DEBUG_ASSERTLOG(!(m_totalParticleSystemCount % 10 == 0), ( "TotalParticleSystemCount = %d", m_totalParticleSystemCount ));
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -2211,7 +2206,7 @@ void ParticleSystem::updateWindMotion( void )
 			Real endAngle = m_windMotionEndAngle;
 
 			// this only works when start angle is less than end angle
-			DEBUG_ASSERTCRASH( startAngle < endAngle, ("updateWindMotion: startAngle must be < endAngle\n") );
+			DEBUG_ASSERTCRASH( startAngle < endAngle, ("updateWindMotion: startAngle must be < endAngle") );
 
 			// how big is the total angle span
 			Real totalSpan = endAngle - startAngle;
@@ -2617,7 +2612,7 @@ void ParticleSystem::xfer( Xfer *xfer )
 			particle = createParticle( info, priority, TRUE );
 
 			// sanity
-			DEBUG_ASSERTCRASH( particle, ("ParticleSyste::xfer - Unable to create particle for loading\n") );
+			DEBUG_ASSERTCRASH( particle, ("ParticleSyste::xfer - Unable to create particle for loading") );
 
 			// read in the particle data
 			xfer->xferSnapshot( particle );
@@ -2645,7 +2640,7 @@ void ParticleSystem::loadPostProcess( void )
 		if( m_slaveSystem != NULL )
 		{
 
-			DEBUG_CRASH(( "ParticleSystem::loadPostProcess - m_slaveSystem is not NULL but should be\n" ));
+			DEBUG_CRASH(( "ParticleSystem::loadPostProcess - m_slaveSystem is not NULL but should be" ));
 			throw SC_INVALID_DATA;
 
 		}  // end if
@@ -2657,7 +2652,7 @@ void ParticleSystem::loadPostProcess( void )
 		if( m_slaveSystem == NULL || m_slaveSystem->isDestroyed() == TRUE )
 		{
 
-			DEBUG_CRASH(( "ParticleSystem::loadPostProcess - m_slaveSystem is NULL or destroyed\n" ));
+			DEBUG_CRASH(( "ParticleSystem::loadPostProcess - m_slaveSystem is NULL or destroyed" ));
 			throw SC_INVALID_DATA;
 
 		}  // end if
@@ -2672,7 +2667,7 @@ void ParticleSystem::loadPostProcess( void )
 		if( m_masterSystem != NULL )
 		{
 
-			DEBUG_CRASH(( "ParticleSystem::loadPostProcess - m_masterSystem is not NULL but should be\n" ));
+			DEBUG_CRASH(( "ParticleSystem::loadPostProcess - m_masterSystem is not NULL but should be" ));
 			throw SC_INVALID_DATA;
 
 		}  // end if
@@ -2684,7 +2679,7 @@ void ParticleSystem::loadPostProcess( void )
 		if( m_masterSystem == NULL || m_masterSystem->isDestroyed() == TRUE )
 		{
 
-			DEBUG_CRASH(( "ParticleSystem::loadPostProcess - m_masterSystem is NULL or destroyed\n" ));
+			DEBUG_CRASH(( "ParticleSystem::loadPostProcess - m_masterSystem is NULL or destroyed" ));
 			throw SC_INVALID_DATA;
 
 		}  // end if
@@ -2976,8 +2971,8 @@ void ParticleSystemManager::init( void )
 	{
 
 		// sanity		
-		DEBUG_ASSERTCRASH( m_allParticlesHead[ i ] == NULL, ("INIT: ParticleSystem all particles head[%d] is not NULL!\n", i) );
-		DEBUG_ASSERTCRASH( m_allParticlesTail[ i ] == NULL, ("INIT: ParticleSystem all particles tail[%d] is not NULL!\n", i) );
+		DEBUG_ASSERTCRASH( m_allParticlesHead[ i ] == NULL, ("INIT: ParticleSystem all particles head[%d] is not NULL!", i) );
+		DEBUG_ASSERTCRASH( m_allParticlesTail[ i ] == NULL, ("INIT: ParticleSystem all particles tail[%d] is not NULL!", i) );
 
 		// just to be clean set them to NULL
 		m_allParticlesHead[ i ] = NULL;
@@ -3003,8 +2998,8 @@ void ParticleSystemManager::reset( void )
 	{
 
 		// sanity		
-		DEBUG_ASSERTCRASH( m_allParticlesHead[ i ] == NULL, ("RESET: ParticleSystem all particles head[%d] is not NULL!\n", i) );
-		DEBUG_ASSERTCRASH( m_allParticlesTail[ i ] == NULL, ("RESET: ParticleSystem all particles tail[%d] is not NULL!\n", i) );
+		DEBUG_ASSERTCRASH( m_allParticlesHead[ i ] == NULL, ("RESET: ParticleSystem all particles head[%d] is not NULL!", i) );
+		DEBUG_ASSERTCRASH( m_allParticlesTail[ i ] == NULL, ("RESET: ParticleSystem all particles tail[%d] is not NULL!", i) );
 
 		// just to be clean set them to NULL
 		m_allParticlesHead[ i ] = NULL;
@@ -3418,7 +3413,7 @@ void ParticleSystemManager::xfer( Xfer *xfer )
 			if( systemTemplate == NULL )
 			{
 
-				DEBUG_CRASH(( "ParticleSystemManager::xfer - Unknown particle system template '%s'\n",
+				DEBUG_CRASH(( "ParticleSystemManager::xfer - Unknown particle system template '%s'",
 											systemName.str() ));
 				throw SC_INVALID_DATA;
 
@@ -3430,7 +3425,7 @@ void ParticleSystemManager::xfer( Xfer *xfer )
 			if( system == NULL )
 			{
 
-				DEBUG_CRASH(( "ParticleSystemManager::xfer - Unable to allocate particle system '%s'\n",
+				DEBUG_CRASH(( "ParticleSystemManager::xfer - Unable to allocate particle system '%s'",
 											systemName.str() ));
 				throw SC_INVALID_DATA;
 

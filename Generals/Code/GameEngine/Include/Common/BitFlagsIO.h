@@ -223,7 +223,7 @@ void BitFlags<NUMBITS>::xfer(Xfer* xfer)
 	else
 	{
 
-		DEBUG_CRASH(( "BitFlagsXfer - Unknown xfer mode '%d'\n", xfer->getXferMode() ));
+		DEBUG_CRASH(( "BitFlagsXfer - Unknown xfer mode '%d'", xfer->getXferMode() ));
 		throw XFER_MODE_UNKNOWN;
 
 	}  // end else

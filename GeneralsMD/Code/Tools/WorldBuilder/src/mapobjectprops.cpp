@@ -39,11 +39,6 @@
 const char* NEUTRAL_TEAM_UI_STR = "(neutral)";
 const char* NEUTRAL_TEAM_INTERNAL_STR = "team";
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 
 /////////////////////////////////////////////////////////////////////////////
@@ -217,7 +212,7 @@ void MapObjectProps::_DictToTeam(void)
     if (name == NEUTRAL_TEAM_INTERNAL_STR)
       name = NEUTRAL_TEAM_UI_STR;
     i = owner->FindStringExact(-1, name.str());
-		DEBUG_ASSERTLOG(i >= 0, ("missing team '%s'. Non-fatal (jkmcd)\n", name.str()));
+		DEBUG_ASSERTLOG(i >= 0, ("missing team '%s'. Non-fatal (jkmcd)", name.str()));
 
   }
   owner->SetCurSel(i);

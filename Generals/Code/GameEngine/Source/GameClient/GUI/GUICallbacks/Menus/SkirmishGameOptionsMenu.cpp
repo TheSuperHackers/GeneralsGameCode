@@ -68,11 +68,6 @@
 #include "GameNetwork/IPEnumeration.h"
 #include "WWDownload/Registry.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 SkirmishGameInfo *TheSkirmishGameInfo = NULL;
 
@@ -380,7 +375,7 @@ void reallyDoStart( void )
 	//NameKeyType sliderGameSpeedID = TheNameKeyGenerator->nameToKey( AsciiString( "SkirmishGameOptionsMenu.wnd:SliderGameSpeed" ) );
 	GameWindow *sliderGameSpeed = TheWindowManager->winGetWindowFromId( parentSkirmishGameOptions, sliderGameSpeedID );
 	Int maxFPS = GadgetSliderGetPosition( sliderGameSpeed );
-	DEBUG_LOG(("GameSpeedSlider was at %d\n", maxFPS));
+	DEBUG_LOG(("GameSpeedSlider was at %d", maxFPS));
 	if (maxFPS > GREATER_NO_FPS_LIMIT)
 		maxFPS = 1000;
 	if (maxFPS < 15)
@@ -423,7 +418,7 @@ static MessageBoxReturnType cancelStartBecauseOfNoCD( void *userData )
 
 Bool IsFirstCDPresent(void)
 {
-#if !defined(RTS_INTERNAL) && !defined(RTS_DEBUG)
+#if !defined(RTS_DEBUG)
 	return TheFileSystem->areMusicFilesOnCD();
 #else
 	return TRUE;

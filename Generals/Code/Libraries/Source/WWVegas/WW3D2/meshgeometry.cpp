@@ -1575,7 +1575,7 @@ WW3DErrorType MeshGeometryClass::Load_W3D(ChunkLoadClass & cload)
 	cload.Open_Chunk();
 	
 	if (cload.Cur_Chunk_ID() != W3D_CHUNK_MESH_HEADER3) {
-		WWDEBUG_SAY(("Old format mesh mesh, no longer supported.\n"));
+		WWDEBUG_SAY(("Old format mesh mesh, no longer supported."));
 		goto Error;
 	}
 	

@@ -55,11 +55,6 @@
 #include "GameLogic/Module/DozerAIUpdate.h"
 #include "GameClient/InGameUI.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 // FORWARD DECLARATIONS ///////////////////////////////////////////////////////////////////////////
 class DozerPrimaryStateMachine;
@@ -700,11 +695,11 @@ StateReturnType DozerActionDoActionState::update( void )
 				if( goalObject->isKindOf( KINDOF_BRIDGE_TOWER ) )
 				{
 					BridgeTowerBehaviorInterface *btbi = BridgeTowerBehavior::getBridgeTowerBehaviorInterfaceFromObject( goalObject );
-					DEBUG_ASSERTCRASH( btbi, ("Unable to find bridge tower interface\n") );
+					DEBUG_ASSERTCRASH( btbi, ("Unable to find bridge tower interface") );
 					Object *bridgeObject = TheGameLogic->findObjectByID( btbi->getBridgeID() );
-					DEBUG_ASSERTCRASH( bridgeObject, ("Unable to find bridge center object\n") );
+					DEBUG_ASSERTCRASH( bridgeObject, ("Unable to find bridge center object") );
 					BridgeBehaviorInterface *bbi = BridgeBehavior::getBridgeBehaviorInterfaceFromObject( bridgeObject );
-					DEBUG_ASSERTCRASH( bbi, ("Unable to find bridge interface from tower goal object during repair\n") );
+					DEBUG_ASSERTCRASH( bbi, ("Unable to find bridge interface from tower goal object during repair") );
 
 					if( bbi->isScaffoldInMotion() == TRUE )
 						canHeal = FALSE;
@@ -758,7 +753,7 @@ StateReturnType DozerActionDoActionState::update( void )
 		default:
 		{
 
-			DEBUG_CRASH(( "Unknown task for the dozer action do action state\n" ));
+			DEBUG_CRASH(( "Unknown task for the dozer action do action state" ));
 			return STATE_FAILURE;
 
 		}  // end default
@@ -1651,7 +1646,7 @@ Object *DozerAIUpdate::construct( const ThingTemplate *what,
 
 	// sanity
 	DEBUG_ASSERTCRASH( getObject()->getControllingPlayer() == owningPlayer,
-										 ("Dozer::Construct - The controlling player of the Dozer is not the owning player passed in\n") );
+										 ("Dozer::Construct - The controlling player of the Dozer is not the owning player passed in") );
 	
 	// if we're not rebuilding, we have a few checks to pass first for sanity
 	if( isRebuild == FALSE )
@@ -1782,7 +1777,7 @@ Bool DozerAIUpdate::canAcceptNewRepair( Object *obj )
 			if( currentTowerInterface == NULL || newTowerInterface == NULL )
 			{
 
-				DEBUG_CRASH(( "Unable to find bridge tower interface on object\n" ));
+				DEBUG_CRASH(( "Unable to find bridge tower interface on object" ));
 				return FALSE;
 
 			}  // end if
@@ -1828,10 +1823,10 @@ void DozerAIUpdate::privateRepair( Object *obj, CommandSourceType cmdSource )
 	//if( obj->isKindOf( KINDOF_BRIDGE_TOWER ) )
 	//{
 	//	BridgeTowerBehaviorInterface *btbi = BridgeTowerBehavior::getBridgeTowerBehaviorInterfaceFromObject( obj );
-	//	DEBUG_ASSERTCRASH( btbi, ("Unable to find bridge tower behavior interface\n") );
+	//	DEBUG_ASSERTCRASH( btbi, ("Unable to find bridge tower behavior interface") );
   //
 	//	Object *bridge = TheGameLogic->findObjectByID( btbi->getBridgeID() );
-	//	DEBUG_ASSERTCRASH( bridge, ("Unable to find bridge object\n") );
+	//	DEBUG_ASSERTCRASH( bridge, ("Unable to find bridge object") );
 	//	if( BitIsSet( bridge->getStatusBits(), OBJECT_STATUS_UNDERGOING_REPAIR ) == TRUE )
 	//		return;
   //
@@ -1842,10 +1837,10 @@ void DozerAIUpdate::privateRepair( Object *obj, CommandSourceType cmdSource )
 	//if( obj->isKindOf( KINDOF_BRIDGE_TOWER ) )
 	//{
 	//	BridgeTowerBehaviorInterface *btbi = BridgeTowerBehavior::getBridgeTowerBehaviorInterfaceFromObject( obj );
-	//	DEBUG_ASSERTCRASH( btbi, ("Unable to find bridge tower behavior interface\n") );
+	//	DEBUG_ASSERTCRASH( btbi, ("Unable to find bridge tower behavior interface") );
 	//
 	//  Object *bridge = TheGameLogic->findObjectByID( btbi->getBridgeID() );
-	//	DEBUG_ASSERTCRASH( bridge, ("Unable to find bridge object\n") );
+	//	DEBUG_ASSERTCRASH( bridge, ("Unable to find bridge object") );
 	//	bridge->setStatus( OBJECT_STATUS_UNDERGOING_REPAIR );
   //
 	//}  // end if
@@ -1973,7 +1968,7 @@ void DozerAIUpdate::newTask( DozerTask task, Object *target )
 {
 
 	// sanity
-	DEBUG_ASSERTCRASH( task >= 0 && task < DOZER_NUM_TASKS, ("Illegal dozer task '%d'\n", task) );
+	DEBUG_ASSERTCRASH( task >= 0 && task < DOZER_NUM_TASKS, ("Illegal dozer task '%d'", task) );
 
 	// sanity
 	if( target == NULL )
@@ -2055,7 +2050,7 @@ Bool DozerAIUpdate::isTaskPending( DozerTask task )
 {
 
 	// sanity
-	DEBUG_ASSERTCRASH( task >= 0 && task < DOZER_NUM_TASKS, ("Illegal dozer task '%d'\n", task) );
+	DEBUG_ASSERTCRASH( task >= 0 && task < DOZER_NUM_TASKS, ("Illegal dozer task '%d'", task) );
 
 	return m_task[ task ].m_targetObjectID != 0 ? TRUE : FALSE;
 		
@@ -2082,7 +2077,7 @@ ObjectID DozerAIUpdate::getTaskTarget( DozerTask task )
 {
 
 	// sanity
-	DEBUG_ASSERTCRASH( task >= 0 && task < DOZER_NUM_TASKS, ("Illegal dozer task '%d'\n", task) );
+	DEBUG_ASSERTCRASH( task >= 0 && task < DOZER_NUM_TASKS, ("Illegal dozer task '%d'", task) );
 
 	return m_task[ task ].m_targetObjectID;
 
@@ -2095,7 +2090,7 @@ void DozerAIUpdate::internalTaskComplete( DozerTask task )
 {
 
 	// sanity
-	DEBUG_ASSERTCRASH( task >= 0 && task < DOZER_NUM_TASKS, ("Illegal dozer task '%d'\n", task) );
+	DEBUG_ASSERTCRASH( task >= 0 && task < DOZER_NUM_TASKS, ("Illegal dozer task '%d'", task) );
 
 	// call the single method that gets called for completing and canceling tasks
 	internalTaskCompleteOrCancelled( task );
@@ -2118,7 +2113,7 @@ void DozerAIUpdate::internalCancelTask( DozerTask task )
 {
 
 	// sanity
-	DEBUG_ASSERTCRASH( task >= 0 && task < DOZER_NUM_TASKS, ("Illegal dozer task '%d'\n", task) );
+	DEBUG_ASSERTCRASH( task >= 0 && task < DOZER_NUM_TASKS, ("Illegal dozer task '%d'", task) );
 	
 	if(task < 0 || task >= DOZER_NUM_TASKS)
 		return;  //DAMNIT!  You CANNOT assert and then not handle the damn error!  The.  Code.  Must.  Not.  Crash.
@@ -2202,9 +2197,9 @@ void DozerAIUpdate::internalTaskCompleteOrCancelled( DozerTask task )
       //  
 			//		// clear the repair bit from the bridge
 			//		BridgeTowerBehaviorInterface *btbi = BridgeTowerBehavior::getBridgeTowerBehaviorInterfaceFromObject( obj );
-			//		DEBUG_ASSERTCRASH( btbi, ("Unable to find bridge tower behavior interface\n") );
+			//		DEBUG_ASSERTCRASH( btbi, ("Unable to find bridge tower behavior interface") );
 			//		Object *bridge = TheGameLogic->findObjectByID( btbi->getBridgeID() );
-			//		DEBUG_ASSERTCRASH( bridge, ("Unable to find bridge object\n") );
+			//		DEBUG_ASSERTCRASH( bridge, ("Unable to find bridge object") );
 			//		bridge->clearStatus( OBJECT_STATUS_UNDERGOING_REPAIR );
 			//	
 			//	}  // end if
@@ -2227,7 +2222,7 @@ void DozerAIUpdate::internalTaskCompleteOrCancelled( DozerTask task )
 		default:
 		{
 
-			DEBUG_CRASH(( "internalTaskCompleteOrCancelled: Unknown Dozer task '%d'\n", task ));
+			DEBUG_CRASH(( "internalTaskCompleteOrCancelled: Unknown Dozer task '%d'", task ));
 			break;
 
 		}  // end default

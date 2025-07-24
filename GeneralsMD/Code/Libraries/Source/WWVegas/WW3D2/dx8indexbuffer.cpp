@@ -80,8 +80,8 @@ IndexBufferClass::IndexBufferClass(unsigned type_, unsigned short index_count_)
 	_IndexBufferTotalIndices+=index_count;
 	_IndexBufferTotalSize+=index_count*sizeof(unsigned short);
 #ifdef VERTEX_BUFFER_LOG
-	WWDEBUG_SAY(("New IB, %d indices, size %d bytes\n",index_count,index_count*sizeof(unsigned short)));
-	WWDEBUG_SAY(("Total IB count: %d, total %d indices, total size %d bytes\n",
+	WWDEBUG_SAY(("New IB, %d indices, size %d bytes",index_count,index_count*sizeof(unsigned short)));
+	WWDEBUG_SAY(("Total IB count: %d, total %d indices, total size %d bytes",
 		_IndexBufferCount,
 		_IndexBufferTotalIndices,
 		_IndexBufferTotalSize));
@@ -94,8 +94,8 @@ IndexBufferClass::~IndexBufferClass()
 	_IndexBufferTotalIndices-=index_count;
 	_IndexBufferTotalSize-=index_count*sizeof(unsigned short);
 #ifdef VERTEX_BUFFER_LOG
-	WWDEBUG_SAY(("Delete IB, %d indices, size %d bytes\n",index_count,index_count*sizeof(unsigned short)));
-	WWDEBUG_SAY(("Total IB count: %d, total %d indices, total size %d bytes\n",
+	WWDEBUG_SAY(("Delete IB, %d indices, size %d bytes",index_count,index_count*sizeof(unsigned short)));
+	WWDEBUG_SAY(("Total IB count: %d, total %d indices, total size %d bytes",
 		_IndexBufferCount,
 		_IndexBufferTotalIndices,
 		_IndexBufferTotalSize));
@@ -308,7 +308,7 @@ DX8IndexBufferClass::DX8IndexBufferClass(unsigned short index_count_,UsageType u
 		return;
 	}
 
-	WWDEBUG_SAY(("Index buffer creation failed, trying to release assets...\n"));
+	WWDEBUG_SAY(("Index buffer creation failed, trying to release assets..."));
 
 	// Vertex buffer creation failed, so try releasing least used textures and flushing the mesh cache.
 
@@ -327,7 +327,7 @@ DX8IndexBufferClass::DX8IndexBufferClass(unsigned short index_count_,UsageType u
 		&index_buffer);
 
 	if (SUCCEEDED(ret)) {
-		WWDEBUG_SAY(("...Index buffer creation succesful\n"));
+		WWDEBUG_SAY(("...Index buffer creation succesful"));
 	}
 
 	// If it still fails it is fatal

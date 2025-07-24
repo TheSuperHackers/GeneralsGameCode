@@ -50,11 +50,6 @@
 #include "GameClient/MapUtil.h"
 #include "GameNetwork/GameSpy/PeerDefs.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 //-----------------------------------------------------------------------------
 // DEFINES ////////////////////////////////////////////////////////////////////
@@ -799,7 +794,7 @@ Bool LadderPreferences::loadProfile( Int profileID )
 		AsciiString ladName = it->first;
 		AsciiString ladData = it->second;
 
-		DEBUG_LOG(("Looking at [%s] = [%s]\n", ladName.str(), ladData.str()));
+		DEBUG_LOG(("Looking at [%s] = [%s]", ladName.str(), ladData.str()));
 
 		const char *ptr = ladName.reverseFind(':');
 		DEBUG_ASSERTCRASH(ptr, ("Did not find ':' in ladder name - skipping"));

@@ -58,11 +58,6 @@
 #include "WW3D2/dx8caps.h"
 #include "GameClient/Drawable.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 // Global Variables and Functions /////////////////////////////////////////////
 
@@ -974,7 +969,7 @@ void W3DShadowGeometryMesh::buildPolygonNeighbors( void )
 					pv[0] /= 3.0f;	//find center of polygon
 
 //					sprintf(errorText,"%s: Shadow Polygon with too many neighbors at %f,%f,%f",m_parentGeometry->Get_Name(),pv[0].X,pv[0].Y,pv[0].Z);
-//					DEBUG_LOG(("****%s Shadow Polygon with too many neighbors at %f,%f,%f\n",m_parentGeometry->Get_Name(),pv[0].X,pv[0].Y,pv[0].Z));
+//					DEBUG_LOG(("****%s Shadow Polygon with too many neighbors at %f,%f,%f",m_parentGeometry->Get_Name(),pv[0].X,pv[0].Y,pv[0].Z));
 //					DEBUG_ASSERTCRASH(a != MAX_POLYGON_NEIGHBORS,(errorText));
 				}
 
@@ -1171,7 +1166,7 @@ void W3DVolumetricShadow::updateOptimalExtrusionPadding(void)
 // getRenderCost ============================================================
 // Returns number of draw calls for this shadow.
 // ============================================================================
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)	
+#if defined(RTS_DEBUG)	
 void W3DVolumetricShadow::getRenderCost(RenderCost & rc) const
 {
 	Int drawCount = 0;
@@ -2981,7 +2976,7 @@ void W3DVolumetricShadow::constructVolumeVB( Vector3 *lightPosObject,Real shadow
 		}
 	}
 
-//	DEBUG_ASSERTLOG(polygonCount == vertexCount, ("WARNING***Shadow volume mesh not optimal: %s\n",m_geometry->Get_Name()));
+//	DEBUG_ASSERTLOG(polygonCount == vertexCount, ("WARNING***Shadow volume mesh not optimal: %s",m_geometry->Get_Name()));
 }  // end constructVolume
 
 // allocateShadowVolume =======================================================
@@ -3893,7 +3888,7 @@ int W3DShadowGeometryManager::Load_Geom(RenderObjClass *robj, const char *name)
 	if (res != TRUE)
 	{	// load failed!
 		newgeom->Release_Ref();
-		//DEBUG_LOG(("****Shadow Volume Creation Failed on %s\n",name));
+		//DEBUG_LOG(("****Shadow Volume Creation Failed on %s",name));
 		goto Error;
 	} else if (Peek_Geom(newgeom->Get_Name()) != NULL)
 	{	// duplicate exists!

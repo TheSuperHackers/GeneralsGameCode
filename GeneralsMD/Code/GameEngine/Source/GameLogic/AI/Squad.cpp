@@ -48,11 +48,6 @@
 #include "GameLogic/GameLogic.h"
 #include "GameLogic/Object.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 // addObject //////////////////////////////////////////////////////////////////////////////////////
 void Squad::addObject(Object *objectToAdd)
@@ -241,7 +236,7 @@ void Squad::xfer( Xfer *xfer )
 		if( m_objectsCached.size() != 0 )
 		{
 
-			DEBUG_CRASH(( "Squad::xfer - m_objectsCached should be emtpy, but is not\n" ));
+			DEBUG_CRASH(( "Squad::xfer - m_objectsCached should be emtpy, but is not" ));
 			throw SC_INVALID_DATA;
 
 		}  // end of

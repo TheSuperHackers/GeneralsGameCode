@@ -52,11 +52,6 @@
 
 #include "Common/UnitTimings.h" //Contains the DO_UNIT_TIMINGS define jba.		 
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 
 #ifdef RTS_DEBUG
@@ -437,6 +432,8 @@ void W3DInGameUI::draw( void )
 	postDraw();
 
 	TheWindowManager->winRepaint();
+
+	postWindowDraw();
 	
 #ifdef EXTENDED_STATS
 	}

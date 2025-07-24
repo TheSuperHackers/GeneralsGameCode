@@ -51,11 +51,6 @@
 #include "WW3D2/matinfo.h"
 
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 /**This class will hold all information about a W3D RenderObject needed to
 reconstruct it if necessary*/
@@ -192,7 +187,7 @@ void W3DRenderObjectSnapshot::xfer( Xfer *xfer )
 	xfer->xferVersion( &version, currentVersion );
 
 	// sanity
-	DEBUG_ASSERTCRASH( m_robj, ("W3DRenderObjectSnapshot::xfer - invalid m_robj\n") );
+	DEBUG_ASSERTCRASH( m_robj, ("W3DRenderObjectSnapshot::xfer - invalid m_robj") );
 
 	// transform on the main render object
 	Matrix3D transform;
@@ -423,7 +418,7 @@ void W3DGhostObject::removeParentObject(void)
 			robj=w3dDraw->getRenderObject();
 			if (robj)
 			{
-				DEBUG_ASSERTCRASH(robj->Peek_Scene() != NULL, ("Removing GhostObject parent not in scene "));
+				DEBUG_ASSERTCRASH(robj->Peek_Scene() != NULL, ("Removing GhostObject parent not in scene"));
 				robj->Remove();
 			}
 		}
@@ -641,7 +636,7 @@ void W3DGhostObject::xfer( Xfer *xfer )
 
 		// sanity
 		if( drawableID != INVALID_DRAWABLE_ID && m_drawableInfo.m_drawable == NULL )
-			DEBUG_CRASH(( "W3DGhostObject::xfer - Unable to find drawable for ghost object\n" ));
+			DEBUG_CRASH(( "W3DGhostObject::xfer - Unable to find drawable for ghost object" ));
 
 	}  // end if
 
@@ -680,7 +675,7 @@ void W3DGhostObject::xfer( Xfer *xfer )
 		if( snapshotCount == 0 && m_parentSnapshots[ i ] != NULL )
 		{
 
-			DEBUG_CRASH(( "W3DGhostObject::xfer - m_parentShapshots[ %d ] has data present but the count from the xfer stream is empty\n" ));
+			DEBUG_CRASH(( "W3DGhostObject::xfer - m_parentShapshots[ %d ] has data present but the count from the xfer stream is empty" ));
 			throw INI_INVALID_DATA;
 
 		}  // end if

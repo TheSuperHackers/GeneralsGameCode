@@ -29,11 +29,6 @@
 #include "Common/SubsystemInterface.h"
 #include "Common/Xfer.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 #ifdef DUMP_PERF_STATS
 #include "GameLogic/GameLogic.h"
@@ -78,7 +73,7 @@ void SubsystemInterface::UPDATE(void)
 	Real subTime = s_msConsumed - m_startTimeConsumed;
 	if (m_name.isEmpty()) return;
 	if (m_curUpdateTime > 0.00001) {
-		//DEBUG_LOG(("Subsys %s total time %.2f, subTime %.2f, net time %.2f\n", 
+		//DEBUG_LOG(("Subsys %s total time %.2f, subTime %.2f, net time %.2f", 
 		//	m_name.str(), m_curUpdateTime*1000, subTime*1000, (m_curUpdateTime-subTime)*1000	));
 
 		m_curUpdateTime -= subTime;
@@ -101,7 +96,7 @@ void SubsystemInterface::DRAW(void)
 	Real subTime = s_msConsumed - m_startDrawTimeConsumed;
 	if (m_name.isEmpty()) return;
 	if (m_curDrawTime > 0.00001) {
-		//DEBUG_LOG(("Subsys %s total time %.2f, subTime %.2f, net time %.2f\n", 
+		//DEBUG_LOG(("Subsys %s total time %.2f, subTime %.2f, net time %.2f", 
 		//	m_name.str(), m_curUpdateTime*1000, subTime*1000, (m_curUpdateTime-subTime)*1000	));
 
 		m_curDrawTime -= subTime;

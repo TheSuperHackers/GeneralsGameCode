@@ -56,10 +56,6 @@
 #include "GameLogic/PartitionManager.h"
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-#ifdef RTS_INTERNAL
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 //-------------------------------------------------------------------------------------------------
 SoundManager::SoundManager()
@@ -145,7 +141,7 @@ void SoundManager::addAudioEvent(AudioEventRTS *&eventToAdd)
 
 	if (canPlayNow(eventToAdd)) {
 #ifdef INTENSIVE_AUDIO_DEBUG
-		DEBUG_LOG((" - appended to request list with handle '%d'.\n", (UnsignedInt) eventToAdd->getPlayingHandle()));
+		DEBUG_LOG((" - appended to request list with handle '%d'.", (UnsignedInt) eventToAdd->getPlayingHandle()));
 #endif
 		AudioRequest *audioRequest = TheAudio->allocateAudioRequest( true );
 		audioRequest->m_pendingEvent = eventToAdd;
@@ -227,7 +223,7 @@ Bool SoundManager::canPlayNow( AudioEventRTS *event )
 			if (distance.length() >= event->getAudioEventInfo()->m_maxDistance) 
 			{
 #ifdef INTENSIVE_AUDIO_DEBUG
-				DEBUG_LOG(("- culled due to distance (%.2f).\n", distance.length()));
+				DEBUG_LOG(("- culled due to distance (%.2f).", distance.length()));
 #endif
 				return false;
 			}
@@ -237,7 +233,7 @@ Bool SoundManager::canPlayNow( AudioEventRTS *event )
 					 ThePartitionManager->getShroudStatusForPlayer(localPlayerNdx, pos) != CELLSHROUD_CLEAR ) 
 			{
 #ifdef INTENSIVE_AUDIO_DEBUG
-				DEBUG_LOG(("- culled due to shroud.\n"));
+				DEBUG_LOG(("- culled due to shroud."));
 #endif
 				return false;
 			}
@@ -254,7 +250,7 @@ Bool SoundManager::canPlayNow( AudioEventRTS *event )
 		else 
 		{
 #ifdef INTENSIVE_AUDIO_DEBUG
-		DEBUG_LOG(("- culled due to voice.\n"));
+		DEBUG_LOG(("- culled due to voice."));
 #endif
 			return false;
 		}
@@ -263,7 +259,7 @@ Bool SoundManager::canPlayNow( AudioEventRTS *event )
 	if( TheAudio->doesViolateLimit( event ) )
 	{
 #ifdef INTENSIVE_AUDIO_DEBUG
-		DEBUG_LOG(("- culled due to limit.\n" ));
+		DEBUG_LOG(("- culled due to limit." ));
 #endif
 		return false;
 	}
@@ -306,7 +302,7 @@ Bool SoundManager::canPlayNow( AudioEventRTS *event )
 		else 
 		{
 #ifdef INTENSIVE_AUDIO_DEBUG
-			DEBUG_LOG(("- culled due to no channels available and non-interrupting.\n" ));
+			DEBUG_LOG(("- culled due to no channels available and non-interrupting." ));
 #endif
 			return false;
 		}

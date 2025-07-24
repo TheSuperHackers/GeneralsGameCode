@@ -50,10 +50,6 @@
 
 class AsciiString;
 
-#if defined(RTS_DEBUG) && defined(RTS_INTERNAL)
-	#error "Only one at a time of these should ever be defined"
-#endif
-
 #define NO_RELEASE_DEBUG_LOGGING
 
 #ifdef RELEASE_DEBUG_LOGGING  ///< Creates a DebugLogFile.txt (No I or D) with all the debug log goodness.  Good for startup problems.
@@ -70,7 +66,7 @@ class AsciiString;
 #define MESSAGE(a) message (__FILE__ "(" TOKEN_IT(__LINE__) ") : " a)
 
 // by default, turn on ALLOW_DEBUG_UTILS if RTS_DEBUG is turned on.
-#if (defined(RTS_DEBUG) || defined(RTS_INTERNAL)) && !defined(ALLOW_DEBUG_UTILS) && !defined(DISABLE_ALLOW_DEBUG_UTILS)
+#if defined(RTS_DEBUG) && !defined(ALLOW_DEBUG_UTILS) && !defined(DISABLE_ALLOW_DEBUG_UTILS)
 	#define ALLOW_DEBUG_UTILS 1
 #elif defined(DEBUG_LOGGING) || defined(DEBUG_CRASHING) || defined(DEBUG_STACKTRACE) || defined(DEBUG_PROFILE)
 	// TheSuperHackers @tweak also turn on when any of the above options is already set.
@@ -126,13 +122,7 @@ class AsciiString;
 		DEBUG_FLAG_LOG_TO_FILE = 0x01,	
 		DEBUG_FLAG_LOG_TO_CONSOLE = 0x02,
 		DEBUG_FLAG_PREPEND_TIME = 0x04,
-#ifdef RTS_INTERNAL
-		// by default, RTS_INTERNAL builds log to file, but not to console, in the interest
-		// of speed. want console output? just change this line:
-		DEBUG_FLAGS_DEFAULT = (DEBUG_FLAG_LOG_TO_FILE)
-#else
-		DEBUG_FLAGS_DEFAULT = (DEBUG_FLAG_LOG_TO_FILE | DEBUG_FLAG_LOG_TO_CONSOLE)
-#endif
+		DEBUG_FLAGS_DEFAULT = (DEBUG_FLAG_LOG_TO_FILE | DEBUG_FLAG_LOG_TO_CONSOLE),
 	};
 
 	DEBUG_EXTERN_C void DebugInit(int flags);
@@ -154,6 +144,7 @@ class AsciiString;
 #ifdef DEBUG_LOGGING
 
 	DEBUG_EXTERN_C void DebugLog(const char *format, ...);
+	DEBUG_EXTERN_C void DebugLogRaw(const char *format, ...);
 	DEBUG_EXTERN_C const char* DebugGetLogFileName();
 	DEBUG_EXTERN_C const char* DebugGetLogFileNamePrev();
 
@@ -168,14 +159,18 @@ class AsciiString;
 	};
 	extern const char *TheDebugLevels[DEBUG_LEVEL_MAX];
 
-	#define DEBUG_LOG(m)						do { { DebugLog m ; } } while (0)
+	#define DEBUG_LOG(m)						do { { DebugLog m ; } } while (0) // Log message with trailing new line character (LF)
+	#define DEBUG_LOG_RAW(m)				do { { DebugLogRaw m ; } } while (0) // Log message without trailing new line character (LF)
 	#define DEBUG_LOG_LEVEL(l, m)		do { if (l & DebugLevelMask) { DebugLog m ; } } while (0)
+	#define DEBUG_LOG_LEVEL_RAW(l, m)	do { if (l & DebugLevelMask) { DebugLogRaw m ; } } while (0)
 	#define DEBUG_ASSERTLOG(c, m)		do { { if (!(c)) DebugLog m ; } } while (0)
 
 #else
 
 	#define DEBUG_LOG(m)						((void)0)
+	#define DEBUG_LOG_RAW(m)				((void)0)
 	#define DEBUG_LOG_LEVEL(l, m)		((void)0)
+	#define DEBUG_LOG_LEVEL_RAW(l, m)	((void)0)
 	#define DEBUG_ASSERTLOG(c, m)		((void)0)
 
 #endif

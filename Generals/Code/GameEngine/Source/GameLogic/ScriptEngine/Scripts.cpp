@@ -66,11 +66,6 @@
 #include "GameLogic/SidesList.h"
 
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 
 static Script *s_mtScript = NULL;
@@ -1915,7 +1910,7 @@ AsciiString Parameter::getUiText(void) const
 		case RADAR_EVENT_TYPE:
 			switch (m_int) {
 				//case RADAR_EVENT_INVALID: ++m_int;	// continue to the next case.
-				case RADAR_EVENT_INVALID: DEBUG_CRASH(("Invalid radar event\n")); uiText.format("Construction"); break;
+				case RADAR_EVENT_INVALID: DEBUG_CRASH(("Invalid radar event")); uiText.format("Construction"); break;
 				case RADAR_EVENT_CONSTRUCTION: uiText.format("Construction"); break;
 				case RADAR_EVENT_UPGRADE: uiText.format("Upgrade"); break;
 				case RADAR_EVENT_UNDER_ATTACK: uiText.format("Under Attack"); break;
@@ -2093,7 +2088,7 @@ Parameter *Parameter::ReadParameter(DataChunkInput &file)
 			strcpy(newName, "GLA");
 			strcat(newName, oldName+strlen("Fundamentalist"));
 			pParm->m_string.set(newName);
-			DEBUG_LOG(("Changing Script Ref from %s to %s\n", oldName, newName));
+			DEBUG_LOG(("Changing Script Ref from %s to %s", oldName, newName));
 		}
 	}
 
@@ -2372,10 +2367,10 @@ Bool ScriptAction::ParseActionDataChunk(DataChunkInput &file, DataChunkInfo *inf
 
 	pScriptAction->m_actionType = (enum ScriptActionType)file.readInt();
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	const ActionTemplate* at = TheScriptEngine->getActionTemplate(pScriptAction->m_actionType);
 	if (at && (at->getName().isEmpty() || (at->getName().compareNoCase("(placeholder)") == 0))) {
-		DEBUG_CRASH(("Invalid Script Action found in script '%s'\n", pScript->getName().str()));
+		DEBUG_CRASH(("Invalid Script Action found in script '%s'", pScript->getName().str()));
 	}
 #endif
 

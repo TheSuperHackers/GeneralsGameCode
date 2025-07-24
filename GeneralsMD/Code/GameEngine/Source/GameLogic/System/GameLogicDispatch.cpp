@@ -86,11 +86,6 @@
 #include "GameNetwork/NetworkInterface.h"
 
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 
 #define MAX_PATH_SUBJECTS 64
@@ -105,7 +100,7 @@ static int thePlanSubjectCount = 0;
 static void doMoveTo( Object *obj, const Coord3D *pos )
 {
 	AIUpdateInterface *ai = obj->getAIUpdateInterface();
-	DEBUG_ASSERTCRASH(ai, ("Attemped doMoveTo() on an Object with no AI\n"));
+	DEBUG_ASSERTCRASH(ai, ("Attemped doMoveTo() on an Object with no AI"));
 	if (ai)
 	{
 		if (theBuildPlan)
@@ -335,7 +330,7 @@ void GameLogic::prepareNewGame( Int gameMode, GameDifficulty diff, Int rankPoint
 	}
 
 	m_rankPointsToAddAtGameStart = rankPoints;
-	DEBUG_LOG(("GameLogic::prepareNewGame() - m_rankPointsToAddAtGameStart = %d\n", m_rankPointsToAddAtGameStart));
+	DEBUG_LOG(("GameLogic::prepareNewGame() - m_rankPointsToAddAtGameStart = %d", m_rankPointsToAddAtGameStart));
 
 	// If we're about to start a game, hide the shell.
 	if(!TheGameLogic->isInShellGame())
@@ -357,7 +352,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 #endif
 
 	Player *thisPlayer = ThePlayerList->getNthPlayer( msg->getPlayerIndex() );
-	DEBUG_ASSERTCRASH( thisPlayer, ("logicMessageDispatcher: Processing message from unknown player (player index '%d')\n", 
+	DEBUG_ASSERTCRASH( thisPlayer, ("logicMessageDispatcher: Processing message from unknown player (player index '%d')", 
 																	msg->getPlayerIndex()) );
 	
 	AIGroupPtr currentlySelectedGroup = NULL;
@@ -369,7 +364,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 			if (msg->getType() != GameMessage::MSG_LOGIC_CRC && msg->getType() != GameMessage::MSG_SET_REPLAY_CAMERA)
 			{
 				currentlySelectedGroup = TheAI->createGroup(); // can't do this outside a game - it'll cause sync errors galore.
-				CRCGEN_LOG(( "Creating AIGroup %d in GameLogic::logicMessageDispatcher()\n", currentlySelectedGroup?currentlySelectedGroup->getID():0 ));
+				CRCGEN_LOG(( "Creating AIGroup %d in GameLogic::logicMessageDispatcher()", currentlySelectedGroup?currentlySelectedGroup->getID():0 ));
 #if RETAIL_COMPATIBLE_AIGROUP
 				thisPlayer->getCurrentSelectionAsAIGroup(currentlySelectedGroup);
 #else
@@ -413,7 +408,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 #if 0
 	if (commandName.isNotEmpty() /*&& msg->getType() != GameMessage::MSG_FRAME_TICK*/)
 	{
-		DEBUG_LOG(("Frame %d: GameLogic::logicMessageDispatcher() saw a %s from player %d (%ls)\n", getFrame(), commandName.str(),
+		DEBUG_LOG(("Frame %d: GameLogic::logicMessageDispatcher() saw a %s from player %d (%ls)", getFrame(), commandName.str(),
 			msg->getPlayerIndex(), thisPlayer->getPlayerDisplayName().str()));
 	}
 #endif
@@ -440,7 +435,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 				Int maxFPS = msg->getArgument( 3 )->integer;
 				if (maxFPS < 1 || maxFPS > 1000)
 					maxFPS = TheGlobalData->m_framesPerSecondLimit;
-				DEBUG_LOG(("Setting max FPS limit to %d FPS\n", maxFPS));
+				DEBUG_LOG(("Setting max FPS limit to %d FPS", maxFPS));
 				TheGameEngine->setFramesPerSecondLimit(maxFPS);
 				TheWritableGlobalData->m_useFpsLimit = true;
 			}
@@ -459,7 +454,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 		case GameMessage::MSG_CLEAR_GAME_DATA:
 		{
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 			if (TheDisplay && TheGlobalData->m_dumpAssetUsage)
 				TheDisplay->dumpAssetUsage(TheGlobalData->m_mapName.str());
 #endif
@@ -481,7 +476,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 		//---------------------------------------------------------------------------------------------
 		case GameMessage::MSG_META_BEGIN_PATH_BUILD:
 		{
-			DEBUG_LOG(("META: begin path build\n"));
+			DEBUG_LOG(("META: begin path build"));
 			DEBUG_ASSERTCRASH(!theBuildPlan, ("mismatched theBuildPlan"));
 
 			if (theBuildPlan == false)
@@ -496,7 +491,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 		//---------------------------------------------------------------------------------------------
 		case GameMessage::MSG_META_END_PATH_BUILD:
 		{
-			DEBUG_LOG(("META: end path build\n"));
+			DEBUG_LOG(("META: end path build"));
 			DEBUG_ASSERTCRASH(theBuildPlan, ("mismatched theBuildPlan"));
 
 			// tell everyone who participated in the plan to move
@@ -832,7 +827,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 
 			if( currentlySelectedGroup )
 			{
-				//DEBUG_LOG(("GameLogicDispatch - got a MSG_DO_MOVETO command\n"));
+				//DEBUG_LOG(("GameLogicDispatch - got a MSG_DO_MOVETO command"));
 				currentlySelectedGroup->releaseWeaponLockForGroup(LOCKED_TEMPORARILY);	// release any temporary locks.
 				currentlySelectedGroup->groupMoveToPosition( &dest, false, CMD_FROM_PLAYER );
 			}
@@ -847,7 +842,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 
 			if( currentlySelectedGroup )
 			{
-				//DEBUG_LOG(("GameLogicDispatch - got a MSG_DO_MOVETO command\n"));
+				//DEBUG_LOG(("GameLogicDispatch - got a MSG_DO_MOVETO command"));
 				currentlySelectedGroup->releaseWeaponLockForGroup(LOCKED_TEMPORARILY);	// release any temporary locks.
 				currentlySelectedGroup->groupMoveToPosition( &dest, true, CMD_FROM_PLAYER );
 			}
@@ -939,7 +934,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 			break;
 		}
 		
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL) || defined (_ALLOW_DEBUG_CHEATS_IN_RELEASE)
+#if defined(RTS_DEBUG) || defined (_ALLOW_DEBUG_CHEATS_IN_RELEASE)
 		//---------------------------------------------------------------------------------------------
 		case GameMessage::MSG_DEBUG_KILL_SELECTION:
 		{
@@ -1388,7 +1383,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 			if( pu == NULL )
 			{
 
-				DEBUG_ASSERTCRASH( 0, ("MSG_QUEUE_UNIT_CREATE: Producer '%s' doesn't have a unit production interface\n", 
+				DEBUG_ASSERTCRASH( 0, ("MSG_QUEUE_UNIT_CREATE: Producer '%s' doesn't have a unit production interface", 
 															producer->getTemplate()->getName().str()) );
 				break;
 
@@ -1674,7 +1669,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 				// how many does this player have active?
 				Int count;
 				thisPlayer->countObjectsByThingTemplate( 1, &thing, false, &count );
-				DEBUG_LOG(("Player already has %d beacons active\n", count));
+				DEBUG_LOG(("Player already has %d beacons active", count));
 				if (count >= TheMultiplayerSettings->getMaxBeaconsPerPlayer())
 				{
 					if (thisPlayer == ThePlayerList->getLocalPlayer())
@@ -1771,7 +1766,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 					if (beacon)
 					{
 						const ThingTemplate *thing = TheThingFactory->findTemplate( beacon->getControllingPlayer()->getPlayerTemplate()->getBeaconTemplate() );
-						if (thing->isEquivalentTo(beacon->getTemplate()))
+						if (thing && thing->isEquivalentTo(beacon->getTemplate()))
 						{
 							if (beacon->getControllingPlayer() == thisPlayer)
 							{
@@ -2007,27 +2002,27 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 
 				if (thisPlayer->isLocalPlayer())
 				{
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 					// don't even put this in release, cause someone might hack it.
 					if (!TheDebugIgnoreSyncErrors)
 					{
 #endif
 						m_shouldValidateCRCs = TRUE;
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 					}
 #endif
 				}
 
 				//UnsignedInt oldCRC = m_cachedCRCs[msg->getPlayerIndex()];
 				UnsignedInt newCRC = msg->getArgument(0)->integer;
-				//DEBUG_LOG(("Recieved CRC of %8.8X from %ls on frame %d\n", newCRC,
+				//DEBUG_LOG(("Recieved CRC of %8.8X from %ls on frame %d", newCRC,
 					//thisPlayer->getPlayerDisplayName().str(), m_frame));
 				m_cachedCRCs[msg->getPlayerIndex()] = newCRC; // to mask problem: = (oldCRC < newCRC)?newCRC:oldCRC;
 			}
 			else if (TheRecorder && TheRecorder->isPlaybackMode())
 			{
 				UnsignedInt newCRC = msg->getArgument(0)->integer;
-				//DEBUG_LOG(("Saw CRC of %X from player %d.  Our CRC is %X.  Arg count is %d\n",
+				//DEBUG_LOG(("Saw CRC of %X from player %d.  Our CRC is %X.  Arg count is %d",
 					//newCRC, thisPlayer->getPlayerIndex(), getCRC(), msg->getArgumentCount()));
 
 				TheRecorder->handleCRCMessage(newCRC, thisPlayer->getPlayerIndex(), (msg->getArgument(1)->boolean));

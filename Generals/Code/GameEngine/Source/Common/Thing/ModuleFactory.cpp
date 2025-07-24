@@ -259,11 +259,6 @@ ModuleFactory *TheModuleFactory = NULL;  ///< the module factory singleton
 
 // PUBLIC FUNCTIONS ///////////////////////////////////////////////////////////////////////////////
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -564,7 +559,7 @@ const ModuleFactory::ModuleTemplate* ModuleFactory::findModuleTemplate(const Asc
   ModuleTemplateMap::const_iterator it = m_moduleTemplateMap.find(namekey);
   if (it == m_moduleTemplateMap.end()) 
 	{
-		DEBUG_CRASH(( "Module name '%s' not found\n", name.str() ));
+		DEBUG_CRASH(( "Module name '%s' not found", name.str() ));
 		return NULL;
 	}
 	else
@@ -581,7 +576,7 @@ Module *ModuleFactory::newModule( Thing *thing, const AsciiString& name, const M
 	// sanity
 	if( name.isEmpty() )
 	{
-		DEBUG_CRASH(("attempting to create module with empty name\n"));
+		DEBUG_CRASH(("attempting to create module with empty name"));
 		return NULL;
 	}
 	const ModuleTemplate* mt = findModuleTemplate(name, type);
@@ -596,34 +591,34 @@ Module *ModuleFactory::newModule( Thing *thing, const AsciiString& name, const M
 
 			DEBUG_ASSERTCRASH(
 				((mt->m_whichInterfaces & (MODULEINTERFACE_BODY)) != 0) == (bm->getBody() != NULL), 
-				("getInterfaceMask bad for MODULE_BODY (%s)\n",name.str()));
+				("getInterfaceMask bad for MODULE_BODY (%s)",name.str()));
 			DEBUG_ASSERTCRASH(
 				((mt->m_whichInterfaces & (MODULEINTERFACE_COLLIDE)) != 0) == (bm->getCollide() != NULL), 
-				("getInterfaceMask bad for MODULE_COLLIDE (%s)\n",name.str()));
+				("getInterfaceMask bad for MODULE_COLLIDE (%s)",name.str()));
 			DEBUG_ASSERTCRASH(
 				((mt->m_whichInterfaces & (MODULEINTERFACE_CONTAIN)) != 0) == (bm->getContain() != NULL), 
-				("getInterfaceMask bad for MODULE_CONTAIN (%s)\n",name.str()));
+				("getInterfaceMask bad for MODULE_CONTAIN (%s)",name.str()));
 			DEBUG_ASSERTCRASH(
 				((mt->m_whichInterfaces & (MODULEINTERFACE_CREATE)) != 0) == (bm->getCreate() != NULL), 
-				("getInterfaceMask bad for MODULE_CREATE (%s)\n",name.str()));
+				("getInterfaceMask bad for MODULE_CREATE (%s)",name.str()));
 			DEBUG_ASSERTCRASH(
 				((mt->m_whichInterfaces & (MODULEINTERFACE_DAMAGE)) != 0) == (bm->getDamage() != NULL), 
-				("getInterfaceMask bad for MODULE_DAMAGE (%s)\n",name.str()));
+				("getInterfaceMask bad for MODULE_DAMAGE (%s)",name.str()));
 			DEBUG_ASSERTCRASH(
 				((mt->m_whichInterfaces & (MODULEINTERFACE_DESTROY)) != 0) == (bm->getDestroy() != NULL), 
-				("getInterfaceMask bad for MODULE_DESTROY (%s)\n",name.str()));
+				("getInterfaceMask bad for MODULE_DESTROY (%s)",name.str()));
 			DEBUG_ASSERTCRASH(
 				((mt->m_whichInterfaces & (MODULEINTERFACE_DIE)) != 0) == (bm->getDie() != NULL), 
-				("getInterfaceMask bad for MODULE_DIE (%s)\n",name.str()));
+				("getInterfaceMask bad for MODULE_DIE (%s)",name.str()));
 			DEBUG_ASSERTCRASH(
 				((mt->m_whichInterfaces & (MODULEINTERFACE_SPECIAL_POWER)) != 0) == (bm->getSpecialPower() != NULL), 
-				("getInterfaceMask bad for MODULE_SPECIAL_POWER (%s)\n",name.str()));
+				("getInterfaceMask bad for MODULE_SPECIAL_POWER (%s)",name.str()));
 			DEBUG_ASSERTCRASH(
 				((mt->m_whichInterfaces & (MODULEINTERFACE_UPDATE)) != 0) == (bm->getUpdate() != NULL), 
-				("getInterfaceMask bad for MODULE_UPDATE (%s)\n",name.str()));
+				("getInterfaceMask bad for MODULE_UPDATE (%s)",name.str()));
 			DEBUG_ASSERTCRASH(
 				((mt->m_whichInterfaces & (MODULEINTERFACE_UPGRADE)) != 0) == (bm->getUpgrade() != NULL), 
-				("getInterfaceMask bad for MODULE_UPGRADE (%s)\n",name.str()));
+				("getInterfaceMask bad for MODULE_UPGRADE (%s)",name.str()));
 		}
 #endif
 

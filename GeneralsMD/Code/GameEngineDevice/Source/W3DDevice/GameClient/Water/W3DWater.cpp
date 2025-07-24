@@ -66,11 +66,6 @@
 #include "W3DDevice/GameClient/W3DCustomScene.h"
 
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 #define MIPMAP_BUMP_TEXTURE
 
@@ -1222,23 +1217,21 @@ void WaterRenderObjClass::update( void )
 	if( TheGameLogic )
 		currLogicFrame = TheGameLogic->getFrame();
 
-	m_riverVOrigin += 0.002f;
-	m_riverXOffset += (Real)(0.0125*33/5000);
-	m_riverYOffset += (Real)(2*0.0125*33/5000);
-	if (m_riverXOffset > 1) m_riverXOffset -= 1;
-	if (m_riverYOffset > 1) m_riverYOffset -= 1;
-	if (m_riverXOffset < -1) m_riverXOffset += 1;
-	if (m_riverYOffset < -1) m_riverYOffset += 1;
- 	m_iBumpFrame++;
-	if (m_iBumpFrame >= NUM_BUMP_FRAMES) {
-		m_iBumpFrame = 0;
-	}
-
-
-
-	// we only process some things if the logic frame has changed
+	// we only process things if the logic frame has changed
 	if( lastLogicFrame != currLogicFrame )
 	{
+
+		m_riverVOrigin += 0.002f;
+		m_riverXOffset += (Real)(0.0125*33/5000);
+		m_riverYOffset += (Real)(2*0.0125*33/5000);
+		if (m_riverXOffset > 1) m_riverXOffset -= 1;
+		if (m_riverYOffset > 1) m_riverYOffset -= 1;
+		if (m_riverXOffset < -1) m_riverXOffset += 1;
+		if (m_riverYOffset < -1) m_riverYOffset += 1;
+ 		m_iBumpFrame++;
+		if (m_iBumpFrame >= NUM_BUMP_FRAMES) {
+			m_iBumpFrame = 0;
+		}
 
 		// for vertex animated water we need to update the vector field
 		if( m_doWaterGrid && m_meshInMotion == TRUE )
@@ -1365,7 +1358,7 @@ void WaterRenderObjClass::loadSetting( Setting *setting, TimeOfDay timeOfDay )
 	SurfaceClass::SurfaceDescription surfaceDesc;
 
 	// sanity
-	DEBUG_ASSERTCRASH( setting, ("WaterRenderObjClass::loadSetting, NULL setting\n") );
+	DEBUG_ASSERTCRASH( setting, ("WaterRenderObjClass::loadSetting, NULL setting") );
 	
 	// textures
 	setting->skyTexture = WW3DAssetManager::Get_Instance()->Get_Texture( WaterSettings[ timeOfDay ].m_skyTextureFile.str() );
@@ -2460,7 +2453,7 @@ void WaterRenderObjClass::renderWaterMesh(void)
 
 inline void WaterRenderObjClass::setGridVertexHeight(Int x, Int y, Real value)
 {
-	DEBUG_ASSERTCRASH( x < (m_gridCellsX+1) && y < (m_gridCellsY+1), ("Invalid Water Mesh Coordinates\n") );
+	DEBUG_ASSERTCRASH( x < (m_gridCellsX+1) && y < (m_gridCellsY+1), ("Invalid Water Mesh Coordinates") );
 
 	if (m_meshData)
 	{
@@ -3459,7 +3452,7 @@ void WaterRenderObjClass::xfer( Xfer *xfer )
 	if( cellsX != m_gridCellsX )
 	{
 
-		DEBUG_CRASH(( "WaterRenderObjClass::xfer - cells X mismatch\n" ));
+		DEBUG_CRASH(( "WaterRenderObjClass::xfer - cells X mismatch" ));
 		throw SC_INVALID_DATA;
 
 	}  // end if
@@ -3470,7 +3463,7 @@ void WaterRenderObjClass::xfer( Xfer *xfer )
 	if( cellsY != m_gridCellsY )
 	{
 	
-		DEBUG_CRASH(( "WaterRenderObjClass::xfer - cells Y mismatch\n" ));
+		DEBUG_CRASH(( "WaterRenderObjClass::xfer - cells Y mismatch" ));
 		throw SC_INVALID_DATA;
 
 	}  // end if

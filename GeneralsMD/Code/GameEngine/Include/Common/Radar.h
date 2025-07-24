@@ -226,6 +226,9 @@ protected:
 	virtual void xfer( Xfer *xfer );
 	virtual void loadPostProcess( void );
 
+	virtual void onLocalRadarObjectAdded( const RadarObject* radarObject ) = 0;
+	virtual void onLocalRadarObjectRemoved( const RadarObject* radarObject ) = 0;
+
 	/// internal method for creating a radar event with specific colors
 	void internalCreateEvent( const Coord3D *world, RadarEventType type, Real secondsToLive,
 														const RGBAColorInt *color1, const RGBAColorInt *color2 );
@@ -300,6 +303,8 @@ public:
 	virtual void draw(Int pixelX, Int pixelY, Int width, Int height) { }
 	virtual void clearShroud() { }
 	virtual void setShroudLevel(Int x, Int y, CellShroudStatus setting) { }
+	virtual void onLocalRadarObjectAdded(const RadarObject*) { }
+	virtual void onLocalRadarObjectRemoved(const RadarObject*) { }
 };
 
 #endif  // __RADAR_H_

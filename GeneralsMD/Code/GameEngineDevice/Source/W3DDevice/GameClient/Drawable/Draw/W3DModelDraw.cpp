@@ -68,11 +68,6 @@
 #include "WW3D2/meshmdl.h"
 #include "Common/BitFlagsIO.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 //-------------------------------------------------------------------------------------------------
 static inline Bool isValidTimeToCalcLogicStuff()
@@ -85,7 +80,7 @@ static inline Bool isValidTimeToCalcLogicStuff()
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 
-#if defined(DEBUG_CRC) && (defined(RTS_DEBUG) || defined(RTS_INTERNAL))
+#if defined(DEBUG_CRC) && defined(RTS_DEBUG)
 #include <cstdarg>
 class LogClass
 {
@@ -165,10 +160,10 @@ void LogClass::dumpMatrix3D(const Matrix3D *m, AsciiString name, AsciiString fna
 	fname.toLower();
 	fname = fname.reverseFind('\\') + 1;
 	const Real *matrix = (const Real *)m;
-	log("dumpMatrix3D() %s:%d %s\n",
+	log("dumpMatrix3D() %s:%d %s",
 		fname.str(), line, name.str());
 	for (Int i=0; i<3; ++i)
-		log("      0x%08X 0x%08X 0x%08X 0x%08X\n",
+		log("      0x%08X 0x%08X 0x%08X 0x%08X",
 			AS_INT(matrix[(i<<2)+0]), AS_INT(matrix[(i<<2)+1]), AS_INT(matrix[(i<<2)+2]), AS_INT(matrix[(i<<2)+3]));
 }
 
@@ -178,7 +173,7 @@ void LogClass::dumpReal(Real r, AsciiString name, AsciiString fname, Int line)
 		return;
 	fname.toLower();
 	fname = fname.reverseFind('\\') + 1;
-	log("dumpReal() %s:%d %s %8.8X (%f)\n",
+	log("dumpReal() %s:%d %s %8.8X (%f)",
 		fname.str(), line, name.str(), AS_INT(r), r);
 }
 
@@ -204,11 +199,11 @@ LogClass BonePosLog("bonePositions.txt");
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL) || defined(DEBUG_CRASHING)
+#if defined(RTS_DEBUG) || defined(DEBUG_CRASHING)
 extern AsciiString TheThingTemplateBeingParsedName;
 #endif
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 extern Real TheSkateDistOverride;
 #endif
 
@@ -352,7 +347,7 @@ HAnimClass* W3DAnimationInfo::getAnimHandle() const
 	{
 		// Get_HAnim addrefs it, so we'll have to release it in our dtor.
 		m_handle = W3DDisplay::m_assetManager->Get_HAnim(m_name.str());
-		DEBUG_ASSERTCRASH(m_handle, ("*** ASSET ERROR: animation %s not found\n",m_name.str()));
+		DEBUG_ASSERTCRASH(m_handle, ("*** ASSET ERROR: animation %s not found",m_name.str()));
 		if (m_handle)
 		{
 			m_naturalDurationInMsec = m_handle->Get_Num_Frames() * 1000.0f / m_handle->Get_Frame_Rate();
@@ -364,7 +359,7 @@ HAnimClass* W3DAnimationInfo::getAnimHandle() const
 	return m_handle;
 #else
 	HAnimClass* handle = W3DDisplay::m_assetManager->Get_HAnim(m_name.str());
-	DEBUG_ASSERTCRASH(handle, ("*** ASSET ERROR: animation %s not found\n",m_name.str()));
+	DEBUG_ASSERTCRASH(handle, ("*** ASSET ERROR: animation %s not found",m_name.str()));
 	if (handle != NULL && m_naturalDurationInMsec < 0)
 	{
 		m_naturalDurationInMsec = handle->Get_Num_Frames() * 1000.0f / handle->Get_Frame_Rate();
@@ -475,7 +470,7 @@ static Bool findSingleSubObj(RenderObjClass* robj, const AsciiString& boneName, 
 			if (test == childObject)
 			{
 				boneIndex = robj->Get_Sub_Object_Bone_Index(0, subObj);
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 				test->Release_Ref();
 				test = robj->Get_Sub_Object_On_Bone(0, boneIndex);
 				DEBUG_ASSERTCRASH(test != NULL && test == childObject, ("*** ASSET ERROR: Hmm, bone problem"));
@@ -510,8 +505,8 @@ static Bool doSingleBoneName(RenderObjClass* robj, const AsciiString& boneName, 
 
 	if (findSingleBone(robj, boneNameTmp, info.mtx, info.boneIndex))
 	{
-//DEBUG_LOG(("added bone %s\n",boneNameTmp.str()));
-		BONEPOS_LOG(("Caching bone %s (index %d)\n", boneNameTmp.str(), info.boneIndex));
+//DEBUG_LOG(("added bone %s",boneNameTmp.str()));
+		BONEPOS_LOG(("Caching bone %s (index %d)", boneNameTmp.str(), info.boneIndex));
 		BONEPOS_DUMPMATRIX3D(&(info.mtx));
 
 		map[NAMEKEY(boneNameTmp)] = info;
@@ -523,8 +518,8 @@ static Bool doSingleBoneName(RenderObjClass* robj, const AsciiString& boneName, 
 		tmp.format("%s%02d", boneNameTmp.str(), i);
 		if (findSingleBone(robj, tmp, info.mtx, info.boneIndex))
 		{
-//DEBUG_LOG(("added bone %s\n",tmp.str()));
-			BONEPOS_LOG(("Caching bone %s (index %d)\n", tmp.str(), info.boneIndex));
+//DEBUG_LOG(("added bone %s",tmp.str()));
+			BONEPOS_LOG(("Caching bone %s (index %d)", tmp.str(), info.boneIndex));
 			BONEPOS_DUMPMATRIX3D(&(info.mtx));
 			map[NAMEKEY(tmp)] = info;
 			foundAsBone = true;
@@ -539,8 +534,8 @@ static Bool doSingleBoneName(RenderObjClass* robj, const AsciiString& boneName, 
 	{
 		if (findSingleSubObj(robj, boneNameTmp, info.mtx, info.boneIndex))
 		{
-//DEBUG_LOG(("added subobj %s\n",boneNameTmp.str()));
-			BONEPOS_LOG(("Caching bone from subobject %s (index %d)\n", boneNameTmp.str(), info.boneIndex));
+//DEBUG_LOG(("added subobj %s",boneNameTmp.str()));
+			BONEPOS_LOG(("Caching bone from subobject %s (index %d)", boneNameTmp.str(), info.boneIndex));
 			BONEPOS_DUMPMATRIX3D(&(info.mtx));
 			map[NAMEKEY(boneNameTmp)] = info;
 			foundAsSubObj = true;
@@ -551,8 +546,8 @@ static Bool doSingleBoneName(RenderObjClass* robj, const AsciiString& boneName, 
 			tmp.format("%s%02d", boneNameTmp.str(), i);
 			if (findSingleSubObj(robj, tmp, info.mtx, info.boneIndex))
 			{
-//DEBUG_LOG(("added subobj %s\n",tmp.str()));
-				BONEPOS_LOG(("Caching bone from subobject %s (index %d)\n", tmp.str(), info.boneIndex));
+//DEBUG_LOG(("added subobj %s",tmp.str()));
+				BONEPOS_LOG(("Caching bone from subobject %s (index %d)", tmp.str(), info.boneIndex));
 				BONEPOS_DUMPMATRIX3D(&(info.mtx));
 				map[NAMEKEY(tmp)] = info;
 				foundAsSubObj = true;
@@ -605,7 +600,7 @@ void ModelConditionInfo::validateCachedBones(RenderObjClass* robj, Real scale) c
 	setFPMode();
 
 	BONEPOS_LOG(("Validating bones for %s: %s", m_modelName.str(), getDescription().str()));
-	//BONEPOS_LOG(("Passing in valid render obj: %d\n", (robj != 0)));
+	//BONEPOS_LOG(("Passing in valid render obj: %d", (robj != 0)));
 	BONEPOS_DUMPREAL(scale);
 
 	m_pristineBones.clear();
@@ -618,15 +613,15 @@ void ModelConditionInfo::validateCachedBones(RenderObjClass* robj, Real scale) c
 	{
 		if (m_modelName.isEmpty())
 		{
-			//BONEPOS_LOG(("Bailing: model name is empty\n"));
+			//BONEPOS_LOG(("Bailing: model name is empty"));
 			return;
 		}
 
 		robj = W3DDisplay::m_assetManager->Create_Render_Obj(m_modelName.str(), scale, 0);
-		DEBUG_ASSERTCRASH(robj, ("*** ASSET ERROR: Model %s not found!\n",m_modelName.str()));
+		DEBUG_ASSERTCRASH(robj, ("*** ASSET ERROR: Model %s not found!",m_modelName.str()));
 		if (!robj)
 		{
-			//BONEPOS_LOG(("Bailing: could not load render object\n"));
+			//BONEPOS_LOG(("Bailing: could not load render object"));
 			return;
 		}
 		tossRobj = true;
@@ -680,11 +675,11 @@ void ModelConditionInfo::validateCachedBones(RenderObjClass* robj, Real scale) c
 			if (!doSingleBoneName(robj, *it, m_pristineBones))
 			{
 				// don't crash here, since these are catch-all global bones and won't be present in most models.
-				//DEBUG_CRASH(("public bone %s (and variations thereof) not found in model %s!\n",it->str(),m_modelName.str()));
+				//DEBUG_CRASH(("public bone %s (and variations thereof) not found in model %s!",it->str(),m_modelName.str()));
 			}
 			//else
 			//{
-			//	DEBUG_LOG(("global bone %s (or variations thereof) found in model %s\n",it->str(),m_modelName.str()));
+			//	DEBUG_LOG(("global bone %s (or variations thereof) found in model %s",it->str(),m_modelName.str()));
 			//}
 		}
 	}
@@ -693,11 +688,11 @@ void ModelConditionInfo::validateCachedBones(RenderObjClass* robj, Real scale) c
 		if (!doSingleBoneName(robj, *it, m_pristineBones))
 		{
 			// DO crash here, since we specifically requested this bone for this model
-			DEBUG_CRASH(("*** ASSET ERROR: public bone '%s' (and variations thereof) not found in model %s!\n",it->str(),m_modelName.str()));
+			DEBUG_CRASH(("*** ASSET ERROR: public bone '%s' (and variations thereof) not found in model %s!",it->str(),m_modelName.str()));
 		}
 		//else
 		//{
-		//	DEBUG_LOG(("extra bone %s (or variations thereof) found in model %s\n",it->str(),m_modelName.str()));
+		//	DEBUG_LOG(("extra bone %s (or variations thereof) found in model %s",it->str(),m_modelName.str()));
 		//}
 	}
 
@@ -742,7 +737,7 @@ void ModelConditionInfo::validateWeaponBarrelInfo() const
 // since this class has no idea which object it refers to, it must assume that the projectilelaunchbonename
 // is required if the fxBoneName is specified
 // this is not always true, since some weapons have no launched projectiles, hence the caveat in the assert message
-//#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+//#if defined(RTS_DEBUG)
 //    if (
 //          ( m_modelName.startsWith("UV") || m_modelName.startsWith("NV") || m_modelName.startsWith("AV") ||
 //            m_modelName.startsWith("uv") || m_modelName.startsWith("nv") || m_modelName.startsWith("av")
@@ -772,7 +767,7 @@ void ModelConditionInfo::validateWeaponBarrelInfo() const
 				{
 					sprintf(buffer, "%s%02d", mfName.str(), i);
 					findPristineBone(NAMEKEY(buffer), &info.m_muzzleFlashBone);
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL) || defined(DEBUG_CRASHING)
+#if defined(RTS_DEBUG) || defined(DEBUG_CRASHING)
 					if (info.m_muzzleFlashBone)
 						info.m_muzzleFlashBoneName = buffer;
 #endif
@@ -798,9 +793,9 @@ void ModelConditionInfo::validateWeaponBarrelInfo() const
 				if (info.m_fxBone == 0 && info.m_recoilBone == 0 && info.m_muzzleFlashBone == 0 && plbBoneIndex == 0)
 					break;
 
-				CRCDEBUG_LOG(("validateWeaponBarrelInfo() - model name %s wslot %d\n", m_modelName.str(), wslot));
+				CRCDEBUG_LOG(("validateWeaponBarrelInfo() - model name %s wslot %d", m_modelName.str(), wslot));
 				DUMPMATRIX3D(&(info.m_projectileOffsetMtx));
-				BONEPOS_LOG(("validateWeaponBarrelInfo() - model name %s wslot %d\n", m_modelName.str(), wslot));
+				BONEPOS_LOG(("validateWeaponBarrelInfo() - model name %s wslot %d", m_modelName.str(), wslot));
 				BONEPOS_DUMPMATRIX3D(&(info.m_projectileOffsetMtx));
 				m_weaponBarrelInfoVec[wslot].push_back(info);
 
@@ -820,7 +815,7 @@ void ModelConditionInfo::validateWeaponBarrelInfo() const
 				if (!mfName.isEmpty())
 					findPristineBone(NAMEKEY(mfName), &info.m_muzzleFlashBone);
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL) || defined(DEBUG_CRASHING)
+#if defined(RTS_DEBUG) || defined(DEBUG_CRASHING)
 				if (info.m_muzzleFlashBone)
 					info.m_muzzleFlashBoneName = mfName;
 #endif
@@ -836,9 +831,9 @@ void ModelConditionInfo::validateWeaponBarrelInfo() const
 				
 				if (info.m_fxBone != 0 || info.m_recoilBone != 0 || info.m_muzzleFlashBone != 0 || plbMtx != NULL)
 				{
-					CRCDEBUG_LOG(("validateWeaponBarrelInfo() - model name %s (unadorned) wslot %d\n", m_modelName.str(), wslot));
+					CRCDEBUG_LOG(("validateWeaponBarrelInfo() - model name %s (unadorned) wslot %d", m_modelName.str(), wslot));
 					DUMPMATRIX3D(&(info.m_projectileOffsetMtx));
-					BONEPOS_LOG(("validateWeaponBarrelInfo() - model name %s (unadorned) wslot %d\n", m_modelName.str(), wslot));
+					BONEPOS_LOG(("validateWeaponBarrelInfo() - model name %s (unadorned) wslot %d", m_modelName.str(), wslot));
 					BONEPOS_DUMPMATRIX3D(&(info.m_projectileOffsetMtx));
 					m_weaponBarrelInfoVec[wslot].push_back(info);
 					if (info.m_recoilBone != 0 || info.m_muzzleFlashBone != 0)
@@ -846,12 +841,12 @@ void ModelConditionInfo::validateWeaponBarrelInfo() const
 				}
 				else
 				{
-					CRCDEBUG_LOG(("validateWeaponBarrelInfo() - model name %s (unadorned) found nothing\n", m_modelName.str()));
-					BONEPOS_LOG(("validateWeaponBarrelInfo() - model name %s (unadorned) found nothing\n", m_modelName.str()));
+					CRCDEBUG_LOG(("validateWeaponBarrelInfo() - model name %s (unadorned) found nothing", m_modelName.str()));
+					BONEPOS_LOG(("validateWeaponBarrelInfo() - model name %s (unadorned) found nothing", m_modelName.str()));
 				}
 			}	// if empty
 
-			DEBUG_ASSERTCRASH(!(m_modelName.isNotEmpty() && m_weaponBarrelInfoVec[wslot].empty()), ("*** ASSET ERROR: No fx bone named '%s' found in model %s!\n",fxBoneName.str(),m_modelName.str()));
+			DEBUG_ASSERTCRASH(!(m_modelName.isNotEmpty() && m_weaponBarrelInfoVec[wslot].empty()), ("*** ASSET ERROR: No fx bone named '%s' found in model %s!",fxBoneName.str(),m_modelName.str()));
 		}
 	}
 	m_validStuff |= BARRELS_VALID;
@@ -880,7 +875,7 @@ void ModelConditionInfo::validateTurretInfo() const
 		{
 			if (findPristineBone(tur.m_turretAngleNameKey, &tur.m_turretAngleBone) == NULL)
 			{
-				DEBUG_CRASH(("*** ASSET ERROR: TurretBone %s not found! (%s)\n",KEYNAME(tur.m_turretAngleNameKey).str(),m_modelName.str()));
+				DEBUG_CRASH(("*** ASSET ERROR: TurretBone %s not found! (%s)",KEYNAME(tur.m_turretAngleNameKey).str(),m_modelName.str()));
 				tur.m_turretAngleBone = 0;
 			}
 		}
@@ -893,7 +888,7 @@ void ModelConditionInfo::validateTurretInfo() const
 		{
 			if (findPristineBone(tur.m_turretPitchNameKey, &tur.m_turretPitchBone) == NULL)
 			{
-				DEBUG_CRASH(("*** ASSET ERROR: TurretBone %s not found! (%s)\n",KEYNAME(tur.m_turretPitchNameKey).str(),m_modelName.str()));
+				DEBUG_CRASH(("*** ASSET ERROR: TurretBone %s not found! (%s)",KEYNAME(tur.m_turretPitchNameKey).str(),m_modelName.str()));
 				tur.m_turretPitchBone = 0;
 			}
 		}
@@ -985,7 +980,7 @@ void ModelConditionInfo::loadAnimations() const
 void ModelConditionInfo::clear()
 { 
 	int i;
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	m_description.clear();
 #endif
 	m_conditionsYesVec.clear();
@@ -1456,32 +1451,32 @@ void W3DModelDrawModuleData::parseConditionState(INI* ini, void *instance, void 
 		{
 			if (self->m_defaultState >= 0)
 			{
-				DEBUG_CRASH(("*** ASSET ERROR: you may have only one default state!\n"));
+				DEBUG_CRASH(("*** ASSET ERROR: you may have only one default state!"));
 				throw INI_INVALID_DATA;
 			}
 			else if (ini->getNextTokenOrNull())
 			{
-				DEBUG_CRASH(("*** ASSET ERROR: unknown keyword\n"));
+				DEBUG_CRASH(("*** ASSET ERROR: unknown keyword"));
 				throw INI_INVALID_DATA;
 			}
 			else
 			{
 				if (!self->m_conditionStates.empty())
 				{
-					DEBUG_CRASH(("*** ASSET ERROR: when using DefaultConditionState, it must be the first state listed (%s)\n",TheThingTemplateBeingParsedName.str()));
+					DEBUG_CRASH(("*** ASSET ERROR: when using DefaultConditionState, it must be the first state listed (%s)",TheThingTemplateBeingParsedName.str()));
 					throw INI_INVALID_DATA;
 				}
 
 				// note, this is size(), not size()-1, since we haven't actually modified the list yet
 				self->m_defaultState = self->m_conditionStates.size();
-				//DEBUG_LOG(("set default state to %d\n",self->m_defaultState));
+				//DEBUG_LOG(("set default state to %d",self->m_defaultState));
 
 				// add an empty conditionstateflag set
 				ModelConditionFlags blankConditions;
 				info.m_conditionsYesVec.clear();
 				info.m_conditionsYesVec.push_back(blankConditions);
 
-	#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+	#if defined(RTS_DEBUG)
 				info.m_description.clear();
 				info.m_description.concat(TheThingTemplateBeingParsedName);
 				info.m_description.concat(" DEFAULT");
@@ -1499,7 +1494,7 @@ void W3DModelDrawModuleData::parseConditionState(INI* ini, void *instance, void 
 
 			if (firstKey == secondKey)
 			{
-				DEBUG_CRASH(("*** ASSET ERROR: You may not declare a transition between two identical states\n"));
+				DEBUG_CRASH(("*** ASSET ERROR: You may not declare a transition between two identical states"));
 				throw INI_INVALID_DATA;
 			}
 
@@ -1512,7 +1507,7 @@ void W3DModelDrawModuleData::parseConditionState(INI* ini, void *instance, void 
 			}
 
 			info.m_transitionSig = buildTransitionSig(firstKey, secondKey);
-	#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+	#if defined(RTS_DEBUG)
 			info.m_description.clear();
 			info.m_description.concat(TheThingTemplateBeingParsedName);
 			info.m_description.concat(" TRANSITION: ");
@@ -1528,7 +1523,7 @@ void W3DModelDrawModuleData::parseConditionState(INI* ini, void *instance, void 
 		{
 			if (self->m_conditionStates.empty())
 			{
-				DEBUG_CRASH(("*** ASSET ERROR: AliasConditionState must refer to the previous state!\n"));
+				DEBUG_CRASH(("*** ASSET ERROR: AliasConditionState must refer to the previous state!"));
 				throw INI_INVALID_DATA;
 			}
 			
@@ -1536,7 +1531,7 @@ void W3DModelDrawModuleData::parseConditionState(INI* ini, void *instance, void 
 			
 			ModelConditionFlags conditionsYes;
 
-	#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+	#if defined(RTS_DEBUG)
 			AsciiString description;
 			conditionsYes.parse(ini, &description);
 
@@ -1548,7 +1543,7 @@ void W3DModelDrawModuleData::parseConditionState(INI* ini, void *instance, void 
 			
 			if (conditionsYes.anyIntersectionWith(self->m_ignoreConditionStates))
 			{
-				DEBUG_CRASH(("You should not specify bits in a state once they are used in IgnoreConditionStates (%s)\n", TheThingTemplateBeingParsedName.str()));
+				DEBUG_CRASH(("You should not specify bits in a state once they are used in IgnoreConditionStates (%s)", TheThingTemplateBeingParsedName.str()));
 				throw INI_INVALID_DATA;
 			}
 
@@ -1583,12 +1578,12 @@ void W3DModelDrawModuleData::parseConditionState(INI* ini, void *instance, void 
 	// files too badly. maybe someday.
 	//	else
 	//	{
-	//		DEBUG_CRASH(("*** ASSET ERROR: you must specify a default state\n"));
+	//		DEBUG_CRASH(("*** ASSET ERROR: you must specify a default state"));
 	//		throw INI_INVALID_DATA;
 	//	}
 			
 			ModelConditionFlags conditionsYes;
-	#if defined(RTS_DEBUG) || defined(RTS_INTERNAL) || defined(DEBUG_CRASHING)
+	#if defined(RTS_DEBUG) || defined(DEBUG_CRASHING)
 			AsciiString description;
 			conditionsYes.parse(ini, &description);
 
@@ -1602,14 +1597,14 @@ void W3DModelDrawModuleData::parseConditionState(INI* ini, void *instance, void 
 
 			if (conditionsYes.anyIntersectionWith(self->m_ignoreConditionStates))
 			{
-				DEBUG_CRASH(("You should not specify bits in a state once they are used in IgnoreConditionStates (%s)\n", TheThingTemplateBeingParsedName.str()));
+				DEBUG_CRASH(("You should not specify bits in a state once they are used in IgnoreConditionStates (%s)", TheThingTemplateBeingParsedName.str()));
 				throw INI_INVALID_DATA;
 			}
 
 			if (self->m_defaultState < 0 && self->m_conditionStates.empty() && conditionsYes.any())
 			{
 				// it doesn't actually NEED to be first, but it does need to be present, and this is the simplest way to enforce...
-				DEBUG_CRASH(("*** ASSET ERROR: when not using DefaultConditionState, the first ConditionState must be for NONE (%s)\n",TheThingTemplateBeingParsedName.str()));
+				DEBUG_CRASH(("*** ASSET ERROR: when not using DefaultConditionState, the first ConditionState must be for NONE (%s)",TheThingTemplateBeingParsedName.str()));
 				throw INI_INVALID_DATA;
 			}
 
@@ -1652,7 +1647,7 @@ void W3DModelDrawModuleData::parseConditionState(INI* ini, void *instance, void 
 
 	if ((info.m_iniReadFlags & (1<<GOT_IDLE_ANIMS)) && (info.m_mode != RenderObjClass::ANIM_MODE_ONCE && info.m_mode != RenderObjClass::ANIM_MODE_ONCE_BACKWARDS))
 	{
-		DEBUG_CRASH(("*** ASSET ERROR: Idle Anims should always use ONCE or ONCE_BACKWARDS (%s)\n",TheThingTemplateBeingParsedName.str()));
+		DEBUG_CRASH(("*** ASSET ERROR: Idle Anims should always use ONCE or ONCE_BACKWARDS (%s)",TheThingTemplateBeingParsedName.str()));
 		throw INI_INVALID_DATA;
 	}
 
@@ -1752,7 +1747,7 @@ W3DModelDraw::W3DModelDraw(Thing *thing, const ModuleData* moduleData) : DrawMod
 	const ModelConditionInfo* info = findBestInfo(emptyFlags);
 	if (!info)
 	{
-		DEBUG_CRASH(("*** ASSET ERROR: all draw modules must have an IDLE state\n"));
+		DEBUG_CRASH(("*** ASSET ERROR: all draw modules must have an IDLE state"));
 		throw INI_INVALID_DATA;
 	}
 
@@ -1773,7 +1768,7 @@ W3DModelDraw::W3DModelDraw(Thing *thing, const ModuleData* moduleData) : DrawMod
     if ( ! getW3DModelDrawModuleData()->m_receivesDynamicLights)
     {
       draw->setReceivesDynamicLights( FALSE );
-		  DEBUG_LOG(("setReceivesDynamicLights = FALSE: %s\n", draw->getTemplate()->getName().str()));
+		  DEBUG_LOG(("setReceivesDynamicLights = FALSE: %s", draw->getTemplate()->getName().str()));
     }
   }
 
@@ -1888,18 +1883,18 @@ void W3DModelDraw::setShadowsEnabled(Bool enable)
 }
 
 /**collect some stats about the rendering cost of this draw module */
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)	
+#if defined(RTS_DEBUG)	
 void W3DModelDraw::getRenderCost(RenderCost & rc) const
 {
 	getRenderCostRecursive(rc,m_renderObject);
 	if (m_shadow)
 		m_shadow->getRenderCost(rc);
 }
-#endif //RTS_DEBUG || RTS_INTERNAL
+#endif //RTS_DEBUG
 
 
 /**recurse through sub-objs to collect stats about the rendering cost of this draw module */
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)	
+#if defined(RTS_DEBUG)	
 void W3DModelDraw::getRenderCostRecursive(RenderCost & rc,RenderObjClass * robj) const 
 {
 	if (robj == NULL) return;
@@ -1936,7 +1931,7 @@ void W3DModelDraw::getRenderCostRecursive(RenderCost & rc,RenderObjClass * robj)
 		}
 	}
 }
-#endif //RTS_DEBUG || RTS_INTERNAL
+#endif //RTS_DEBUG
 
 //-------------------------------------------------------------------------------------------------
 void W3DModelDraw::setFullyObscuredByShroud(Bool fullyObscured)
@@ -2019,7 +2014,7 @@ void W3DModelDraw::adjustTransformMtx(Matrix3D& mtx) const
 		}
 		else
 		{
-			DEBUG_LOG(("m_attachToDrawableBone %s not found\n",getW3DModelDrawModuleData()->m_attachToDrawableBone.str()));
+			DEBUG_LOG(("m_attachToDrawableBone %s not found",getW3DModelDrawModuleData()->m_attachToDrawableBone.str()));
 		}
 	}
 #endif
@@ -2060,7 +2055,7 @@ void W3DModelDraw::doDrawModule(const Matrix3D* transformMtx)
 	{
 		if (m_curState != NULL && m_nextState != NULL)
 		{
-			//DEBUG_LOG(("transition %s is complete\n",m_curState->m_description.str()));
+			//DEBUG_LOG(("transition %s is complete",m_curState->m_description.str()));
 			const ModelConditionInfo* nextState = m_nextState;
 			UnsignedInt nextDuration = m_nextStateAnimLoopDuration;
 			m_nextState = NULL;
@@ -2068,7 +2063,7 @@ void W3DModelDraw::doDrawModule(const Matrix3D* transformMtx)
 			setModelState(nextState);
 			if (nextDuration != NO_NEXT_DURATION)
 			{
-				//DEBUG_LOG(("restoring pending duration of %d frames\n",nextDuration));
+				//DEBUG_LOG(("restoring pending duration of %d frames",nextDuration));
 				setAnimationLoopDuration(nextDuration);
 			}
 		}
@@ -2079,7 +2074,7 @@ void W3DModelDraw::doDrawModule(const Matrix3D* transformMtx)
 		{
 			if (m_curState->m_animations[m_whichAnimInCurState].isIdleAnim())
 			{
-				//DEBUG_LOG(("randomly switching to new idle state!\n"));
+				//DEBUG_LOG(("randomly switching to new idle state!"));
 
 				// state hasn't changed, if it's been awhile, switch the idle anim
 				// (yes, that's right: pass curState for prevState)
@@ -2261,7 +2256,7 @@ Real W3DModelDraw::getCurAnimDistanceCovered() const
 	if (m_curState != NULL && m_whichAnimInCurState >= 0)
 	{
 		const W3DAnimationInfo& animInfo = m_curState->m_animations[m_whichAnimInCurState];
-	#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+	#if defined(RTS_DEBUG)
 		if (TheSkateDistOverride != 0.0f)
 			return TheSkateDistOverride;
 	#endif
@@ -2336,7 +2331,7 @@ void ModelConditionInfo::WeaponBarrelInfo::setMuzzleFlashHidden(RenderObjClass *
 		}
 		else
 		{
-			DEBUG_CRASH(("*** ASSET ERROR: childObject %s not found in setMuzzleFlashHidden()\n",m_muzzleFlashBoneName.str()));
+			DEBUG_CRASH(("*** ASSET ERROR: childObject %s not found in setMuzzleFlashHidden()",m_muzzleFlashBoneName.str()));
 		}
 	}
 }
@@ -2370,7 +2365,7 @@ void W3DModelDraw::doHideShowSubObjs(const std::vector<ModelConditionInfo::HideS
 			}
 			else
 			{
-				DEBUG_CRASH(("*** ASSET ERROR: SubObject %s not found (%s)!\n",it->subObjName.str(),getDrawable()->getTemplate()->getName().str()));
+				DEBUG_CRASH(("*** ASSET ERROR: SubObject %s not found (%s)!",it->subObjName.str(),getDrawable()->getTemplate()->getName().str()));
 			}
 		}
 	}
@@ -2516,7 +2511,7 @@ void W3DModelDraw::handleClientRecoil()
 			if (barrels[i].m_muzzleFlashBone != 0)
 			{
 				Bool hidden = recoils[i].m_state != WeaponRecoilInfo::RECOIL_START;
-				//DEBUG_LOG(("adjust muzzleflash %08lx for Draw %08lx state %s to %d at frame %d\n",subObjToHide,this,m_curState->m_description.str(),hidden?1:0,TheGameLogic->getFrame()));
+				//DEBUG_LOG(("adjust muzzleflash %08lx for Draw %08lx state %s to %d at frame %d",subObjToHide,this,m_curState->m_description.str(),hidden?1:0,TheGameLogic->getFrame()));
 				barrels[i].setMuzzleFlashHidden(m_renderObject, hidden);
 			}
 
@@ -2557,7 +2552,7 @@ void W3DModelDraw::handleClientRecoil()
 				Matrix3D gunXfrm;
 				gunXfrm.Make_Identity();
 				gunXfrm.Translate_X( -recoils[i].m_shift );
-				//DEBUG_ASSERTLOG(recoils[i].m_shift==0.0f,("adjust bone %d by %f\n",recoils[i].m_recoilBone,recoils[i].m_shift));
+				//DEBUG_ASSERTLOG(recoils[i].m_shift==0.0f,("adjust bone %d by %f",recoils[i].m_recoilBone,recoils[i].m_shift));
 
 				if (m_renderObject)
 				{
@@ -2568,7 +2563,7 @@ void W3DModelDraw::handleClientRecoil()
 			else
 			{
 				recoils[i].m_state = WeaponRecoilInfo::IDLE;
-				//DEBUG_LOG(("reset Draw %08lx state %08lx\n",this,m_curState));
+				//DEBUG_LOG(("reset Draw %08lx state %08lx",this,m_curState));
 			}
 		}
 	}
@@ -2822,7 +2817,7 @@ void W3DModelDraw::nukeCurrentRender(Matrix3D* xform)
 }
 
 //-------------------------------------------------------------------------------------------------
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)	//art wants to see buildings without flags as a test.
+#if defined(RTS_DEBUG)	//art wants to see buildings without flags as a test.
 void W3DModelDraw::hideGarrisonFlags(Bool hide)
 {
 	if (!m_renderObject)
@@ -2914,12 +2909,12 @@ static Bool turretNamesDiffer(const ModelConditionInfo* a, const ModelConditionI
 //-------------------------------------------------------------------------------------------------
 void W3DModelDraw::setModelState(const ModelConditionInfo* newState)
 {
-	DEBUG_ASSERTCRASH(newState, ("invalid state in W3DModelDraw::setModelState\n")); 
+	DEBUG_ASSERTCRASH(newState, ("invalid state in W3DModelDraw::setModelState")); 
 
 #ifdef DEBUG_OBJECT_ID_EXISTS
 	if (getDrawable() && getDrawable()->getObject() && getDrawable()->getObject()->getID() == TheObjectIDToDebug)
 	{
-		DEBUG_LOG(("REQUEST switching to state %s for obj %s %d\n",newState->m_description.str(),getDrawable()->getObject()->getTemplate()->getName().str(),getDrawable()->getObject()->getID()));
+		DEBUG_LOG(("REQUEST switching to state %s for obj %s %d",newState->m_description.str(),getDrawable()->getObject()->getTemplate()->getName().str(),getDrawable()->getObject()->getID()));
 	}
 #endif
 	const ModelConditionInfo* nextState = NULL;
@@ -2950,7 +2945,7 @@ void W3DModelDraw::setModelState(const ModelConditionInfo* newState)
 #ifdef DEBUG_OBJECT_ID_EXISTS
 			if (getDrawable() && getDrawable()->getObject() && getDrawable()->getObject()->getID() == TheObjectIDToDebug)
 			{
-				DEBUG_LOG(("IGNORE duplicate state %s for obj %s %d\n",newState->m_description.str(),getDrawable()->getObject()->getTemplate()->getName().str(),getDrawable()->getObject()->getID()));
+				DEBUG_LOG(("IGNORE duplicate state %s for obj %s %d",newState->m_description.str(),getDrawable()->getObject()->getTemplate()->getName().str(),getDrawable()->getObject()->getID()));
 			}
 #endif
 			// I don't think he'll be interested...
@@ -2967,7 +2962,7 @@ void W3DModelDraw::setModelState(const ModelConditionInfo* newState)
 #ifdef DEBUG_OBJECT_ID_EXISTS
 			if (getDrawable() && getDrawable()->getObject() && getDrawable()->getObject()->getID() == TheObjectIDToDebug)
 			{
-				DEBUG_LOG(("ALLOW_TO_FINISH state %s for obj %s %d\n",newState->m_description.str(),getDrawable()->getObject()->getTemplate()->getName().str(),getDrawable()->getObject()->getID()));
+				DEBUG_LOG(("ALLOW_TO_FINISH state %s for obj %s %d",newState->m_description.str(),getDrawable()->getObject()->getTemplate()->getName().str(),getDrawable()->getObject()->getID()));
 			}
 #endif
 			m_nextState = newState;
@@ -2986,7 +2981,7 @@ void W3DModelDraw::setModelState(const ModelConditionInfo* newState)
 #ifdef DEBUG_OBJECT_ID_EXISTS
 				if (getDrawable() && getDrawable()->getObject() && getDrawable()->getObject()->getID() == TheObjectIDToDebug)
 				{
-					DEBUG_LOG(("using TRANSITION state %s before requested state %s for obj %s %d\n",transState->m_description.str(),newState->m_description.str(),getDrawable()->getObject()->getTemplate()->getName().str(),getDrawable()->getObject()->getID()));
+					DEBUG_LOG(("using TRANSITION state %s before requested state %s for obj %s %d",transState->m_description.str(),newState->m_description.str(),getDrawable()->getObject()->getTemplate()->getName().str(),getDrawable()->getObject()->getID()));
 				}
 #endif
 				nextState = newState;
@@ -3036,10 +3031,10 @@ void W3DModelDraw::setModelState(const ModelConditionInfo* newState)
 		else
 		{
 			m_renderObject = W3DDisplay::m_assetManager->Create_Render_Obj(newState->m_modelName.str(), draw->getScale(), m_hexColor);
-			DEBUG_ASSERTCRASH(m_renderObject, ("*** ASSET ERROR: Model %s not found!\n",newState->m_modelName.str()));
+			DEBUG_ASSERTCRASH(m_renderObject, ("*** ASSET ERROR: Model %s not found!",newState->m_modelName.str()));
 		}
 
-		//BONEPOS_LOG(("validateStuff() from within W3DModelDraw::setModelState()\n"));
+		//BONEPOS_LOG(("validateStuff() from within W3DModelDraw::setModelState()"));
 		//BONEPOS_DUMPREAL(draw->getScale());
 
 		newState->validateStuff(m_renderObject, draw->getScale(), getW3DModelDrawModuleData()->m_extraPublicBones);
@@ -3048,7 +3043,7 @@ void W3DModelDraw::setModelState(const ModelConditionInfo* newState)
 		rebuildWeaponRecoilInfo(newState);
 		doHideShowSubObjs(&newState->m_hideShowVec);
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)	//art wants to see buildings without flags as a test.
+#if defined(RTS_DEBUG)	//art wants to see buildings without flags as a test.
 		if (TheGlobalData->m_hideGarrisonFlags && draw->isKindOf(KINDOF_STRUCTURE))
 			hideGarrisonFlags(TRUE);
 #endif
@@ -3165,7 +3160,7 @@ void W3DModelDraw::setModelState(const ModelConditionInfo* newState)
 	else 
 	{
 
-		//BONEPOS_LOG(("validateStuff() from within W3DModelDraw::setModelState()\n"));
+		//BONEPOS_LOG(("validateStuff() from within W3DModelDraw::setModelState()"));
 		//BONEPOS_DUMPREAL(getDrawable()->getScale());
 
 		newState->validateStuff(m_renderObject, getDrawable()->getScale(), getW3DModelDrawModuleData()->m_extraPublicBones);
@@ -3274,12 +3269,12 @@ Bool W3DModelDraw::getProjectileLaunchOffset(
 	const ModelConditionInfo* stateToUse = findBestInfo(condition);
 	if (!stateToUse)
 	{
-		CRCDEBUG_LOG(("can't find best info\n"));
-		//BONEPOS_LOG(("can't find best info\n"));
+		CRCDEBUG_LOG(("can't find best info"));
+		//BONEPOS_LOG(("can't find best info"));
 		return false;
 	}
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
-	CRCDEBUG_LOG(("W3DModelDraw::getProjectileLaunchOffset() for %s\n",
+#if defined(RTS_DEBUG)
+	CRCDEBUG_LOG(("W3DModelDraw::getProjectileLaunchOffset() for %s",
 		stateToUse->getDescription().str()));
 #endif
 
@@ -3297,9 +3292,9 @@ Bool W3DModelDraw::getProjectileLaunchOffset(
 #endif // INTENSE_DEBUG
 
 	const W3DModelDrawModuleData* d = getW3DModelDrawModuleData();
-	//CRCDEBUG_LOG(("validateStuffs() from within W3DModelDraw::getProjectileLaunchOffset()\n"));
+	//CRCDEBUG_LOG(("validateStuffs() from within W3DModelDraw::getProjectileLaunchOffset()"));
 	//DUMPREAL(getDrawable()->getScale());
-	//BONEPOS_LOG(("validateStuffs() from within W3DModelDraw::getProjectileLaunchOffset()\n"));
+	//BONEPOS_LOG(("validateStuffs() from within W3DModelDraw::getProjectileLaunchOffset()"));
 	//BONEPOS_DUMPREAL(getDrawable()->getScale());
 	stateToUse->validateStuff(NULL, getDrawable()->getScale(), d->m_extraPublicBones);
 
@@ -3324,13 +3319,13 @@ Bool W3DModelDraw::getProjectileLaunchOffset(
 	}
 #endif
 
-	CRCDEBUG_LOG(("wslot = %d\n", wslot));
+	CRCDEBUG_LOG(("wslot = %d", wslot));
 	const ModelConditionInfo::WeaponBarrelInfoVec& wbvec = stateToUse->m_weaponBarrelInfoVec[wslot];	
 	if( wbvec.empty() )
 	{
 		// Can't find the launch pos, but they might still want the other info they asked for
-		CRCDEBUG_LOG(("empty wbvec\n"));
-		//BONEPOS_LOG(("empty wbvec\n"));
+		CRCDEBUG_LOG(("empty wbvec"));
+		//BONEPOS_LOG(("empty wbvec"));
 		launchPos = NULL;
 	}
 	else
@@ -3340,7 +3335,7 @@ Bool W3DModelDraw::getProjectileLaunchOffset(
 
 		if (launchPos)
 		{
-			CRCDEBUG_LOG(("specificBarrelToUse = %d\n", specificBarrelToUse));
+			CRCDEBUG_LOG(("specificBarrelToUse = %d", specificBarrelToUse));
 			*launchPos = wbvec[specificBarrelToUse].m_projectileOffsetMtx;
 
 			if (tur != TURRET_INVALID)
@@ -3373,7 +3368,7 @@ Bool W3DModelDraw::getProjectileLaunchOffset(
 			if (turInfo.m_turretAngleNameKey != NAMEKEY_INVALID &&
 					!stateToUse->findPristineBonePos(turInfo.m_turretAngleNameKey, *turretRotPos))
 			{
-				DEBUG_CRASH(("*** ASSET ERROR: TurretBone %s not found!\n",KEYNAME(turInfo.m_turretAngleNameKey).str()));
+				DEBUG_CRASH(("*** ASSET ERROR: TurretBone %s not found!",KEYNAME(turInfo.m_turretAngleNameKey).str()));
 			}
 #ifdef CACHE_ATTACH_BONE
 			if (offset)
@@ -3389,7 +3384,7 @@ Bool W3DModelDraw::getProjectileLaunchOffset(
 			if (turInfo.m_turretPitchNameKey != NAMEKEY_INVALID &&
 					!stateToUse->findPristineBonePos(turInfo.m_turretPitchNameKey, *turretPitchPos))
 			{
-				DEBUG_CRASH(("*** ASSET ERROR: TurretBone %s not found!\n",KEYNAME(turInfo.m_turretPitchNameKey).str()));
+				DEBUG_CRASH(("*** ASSET ERROR: TurretBone %s not found!",KEYNAME(turInfo.m_turretPitchNameKey).str()));
 			}
 #ifdef CACHE_ATTACH_BONE
 			if (offset)
@@ -3426,12 +3421,12 @@ Int W3DModelDraw::getPristineBonePositionsForConditionState(
 
 //	if (isValidTimeToCalcLogicStuff())
 //	{
-//		CRCDEBUG_LOG(("W3DModelDraw::getPristineBonePositionsForConditionState() - state = '%s'\n",
+//		CRCDEBUG_LOG(("W3DModelDraw::getPristineBonePositionsForConditionState() - state = '%s'",
 //			stateToUse->getDescription().str()));
-//		//CRCDEBUG_LOG(("renderObject == NULL: %d\n", (stateToUse==m_curState)?(m_renderObject == NULL):1));
+//		//CRCDEBUG_LOG(("renderObject == NULL: %d", (stateToUse==m_curState)?(m_renderObject == NULL):1));
 //	}
 
-	//BONEPOS_LOG(("validateStuff() from within W3DModelDraw::getPristineBonePositionsForConditionState()\n"));
+	//BONEPOS_LOG(("validateStuff() from within W3DModelDraw::getPristineBonePositionsForConditionState()"));
 	//BONEPOS_DUMPREAL(getDrawable()->getScale());
 	// we must call this every time we set m_nextState, to ensure cached bones are happy
 	stateToUse->validateStuff(
@@ -3478,7 +3473,7 @@ Int W3DModelDraw::getPristineBonePositionsForConditionState(
 		}
 		else
 		{
-			//DEBUG_CRASH(("*** ASSET ERROR: Bone %s not found!\n",buffer));
+			//DEBUG_CRASH(("*** ASSET ERROR: Bone %s not found!",buffer));
 			const Object *obj = getDrawable()->getObject();
 			if (obj)
 				transforms[posCount] = *obj->getTransformMatrix();
@@ -3509,7 +3504,7 @@ Int W3DModelDraw::getPristineBonePositionsForConditionState(
 
 //	if (isValidTimeToCalcLogicStuff())
 //	{
-//		CRCDEBUG_LOG(("end of W3DModelDraw::getPristineBonePositionsForConditionState()\n"));
+//		CRCDEBUG_LOG(("end of W3DModelDraw::getPristineBonePositionsForConditionState()"));
 //	}
 
 	return posCount;
@@ -3758,13 +3753,13 @@ Bool W3DModelDraw::handleWeaponFireFX(WeaponSlotType wslot, Int specificBarrelTo
 		}
 		else
 		{
-			DEBUG_LOG(("*** no FXBone found for a non-null FXL\n"));
+			DEBUG_LOG(("*** no FXBone found for a non-null FXL"));
 		}
 	}
 
 	if (info.m_recoilBone || info.m_muzzleFlashBone)
 	{
-		//DEBUG_LOG(("START muzzleflash %08lx for Draw %08lx state %s at frame %d\n",info.m_muzzleFlashBone,this,m_curState->m_description.str(),TheGameLogic->getFrame()));
+		//DEBUG_LOG(("START muzzleflash %08lx for Draw %08lx state %s at frame %d",info.m_muzzleFlashBone,this,m_curState->m_description.str(),TheGameLogic->getFrame()));
 		WeaponRecoilInfo& recoil = m_weaponRecoilInfoVec[wslot][specificBarrelToUse];
 		recoil.m_state = WeaponRecoilInfo::RECOIL_START;
 		recoil.m_recoilRate = getW3DModelDrawModuleData()->m_initialRecoil;
@@ -3783,7 +3778,7 @@ void W3DModelDraw::setAnimationLoopDuration(UnsignedInt numFrames)
 	if (m_curState != NULL && m_curState->m_transition != NO_TRANSITION && 
 			m_nextState != NULL && m_nextState->m_transition == NO_TRANSITION)
 	{
-		DEBUG_LOG(("deferring pending duration of %d frames\n",numFrames));
+		DEBUG_LOG(("deferring pending duration of %d frames",numFrames));
 		m_nextStateAnimLoopDuration = numFrames;
 		return;
 	}
@@ -4010,7 +4005,7 @@ void W3DModelDraw::updateSubObjects()
 			}
 			else
 			{
-				DEBUG_CRASH(("*** ASSET ERROR: SubObject %s not found (%s)!\n",it->subObjName.str(),getDrawable()->getTemplate()->getName().str()));
+				DEBUG_CRASH(("*** ASSET ERROR: SubObject %s not found (%s)!",it->subObjName.str(),getDrawable()->getTemplate()->getName().str()));
 			}
 		}
 	}
@@ -4299,7 +4294,7 @@ void W3DModelDrawModuleData::xfer( Xfer *x )
 	{
 		ModelConditionInfo *info = &(*it);
 		x->xferByte(&(info->m_validStuff));
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 		x->xferAsciiString(&(info->m_description));
 #endif
 		if (info->m_validStuff)

@@ -153,27 +153,27 @@ HRESULT DownloadManager::OnError( int error )
 			break;
 	}
 	m_errorString = s;
-	DEBUG_LOG(("DownloadManager::OnError(): %s(%d)\n", s.c_str(), error));
+	DEBUG_LOG(("DownloadManager::OnError(): %s(%d)", s.c_str(), error));
 	return S_OK;
 }
 
 HRESULT DownloadManager::OnEnd()
 {
 	m_sawEnd = true;
-	DEBUG_LOG(("DownloadManager::OnEnd()\n"));
+	DEBUG_LOG(("DownloadManager::OnEnd()"));
 	return S_OK;
 }
 
 HRESULT DownloadManager::OnQueryResume()
 {
-	DEBUG_LOG(("DownloadManager::OnQueryResume()\n"));
+	DEBUG_LOG(("DownloadManager::OnQueryResume()"));
 	//return DOWNLOADEVENT_DONOTRESUME;
 	return DOWNLOADEVENT_RESUME;
 }
 
 HRESULT DownloadManager::OnProgressUpdate( int bytesread, int totalsize, int timetaken, int timeleft )
 {
-	DEBUG_LOG(("DownloadManager::OnProgressUpdate(): %d/%d %d/%d\n", bytesread, totalsize, timetaken, timeleft));
+	DEBUG_LOG(("DownloadManager::OnProgressUpdate(): %d/%d %d/%d", bytesread, totalsize, timetaken, timeleft));
 	return S_OK;
 }
 
@@ -208,7 +208,7 @@ HRESULT DownloadManager::OnStatusUpdate( int status )
 			break;
 	}
 	m_statusString = s;
-	DEBUG_LOG(("DownloadManager::OnStatusUpdate(): %s(%d)\n", s.c_str(), status));
+	DEBUG_LOG(("DownloadManager::OnStatusUpdate(): %s(%d)", s.c_str(), status));
 	return S_OK;
 }
 

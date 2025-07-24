@@ -97,11 +97,6 @@
 #include "W3DDevice/GameClient/W3DSmudge.h"
 #include "W3DDevice/GameClient/W3DSnow.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 extern FlatHeightMapRenderObjClass *TheFlatHeightMap;
 extern HeightMapRenderObjClass *TheHeightMap;
@@ -320,7 +315,7 @@ BaseHeightMapRenderObjClass::BaseHeightMapRenderObjClass(void)
 #ifdef DO_ROADS
 	m_roadBuffer = NEW W3DRoadBuffer;
 #endif
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if ENABLE_CONFIGURABLE_SHROUD
 	if (TheGlobalData->m_shroudOn)
 		m_shroud = NEW W3DShroud;
 #else

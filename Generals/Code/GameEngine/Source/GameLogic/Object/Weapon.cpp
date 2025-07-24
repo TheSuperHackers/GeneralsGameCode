@@ -86,11 +86,6 @@
 	const DistanceCalculationType ATTACK_RANGE_CALC_TYPE = FROM_BOUNDINGSPHERE_3D;
 #endif
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 // damage is ALWAYS 3d
 const DistanceCalculationType DAMAGE_RANGE_CALC_TYPE = FROM_BOUNDINGSPHERE_3D;
@@ -494,7 +489,7 @@ Int WeaponTemplate::getDelayBetweenShots(const WeaponBonus& bonus) const
 		delayToUse = GameLogicRandomValue( m_minDelayBetweenShots, m_maxDelayBetweenShots );
 
 	Real bonusROF = bonus.getField(WeaponBonus::RATE_OF_FIRE);
-	//CRCDEBUG_LOG(("WeaponTemplate::getDelayBetweenShots() - min:%d max:%d val:%d, bonusROF=%g/%8.8X\n",
+	//CRCDEBUG_LOG(("WeaponTemplate::getDelayBetweenShots() - min:%d max:%d val:%d, bonusROF=%g/%8.8X",
 		//m_minDelayBetweenShots, m_maxDelayBetweenShots, delayToUse, bonusROF, AS_INT(bonusROF)));
 
 	return REAL_TO_INT_FLOOR(delayToUse / bonusROF); 
@@ -713,7 +708,7 @@ Bool WeaponTemplate::shouldProjectileCollideWith(
 	if ((getProjectileCollideMask() & requiredMask) != 0)
 		return true;
 
-	//DEBUG_LOG(("Rejecting projectile collision between %s and %s!\n",projectile->getTemplate()->getName().str(),thingWeCollidedWith->getTemplate()->getName().str()));
+	//DEBUG_LOG(("Rejecting projectile collision between %s and %s!",projectile->getTemplate()->getName().str(),thingWeCollidedWith->getTemplate()->getName().str()));
 	return false;
 }
 
@@ -734,7 +729,7 @@ UnsignedInt WeaponTemplate::fireWeaponTemplate
 {
 
 	//-extraLogging 
-	#if (defined(RTS_DEBUG) || defined(RTS_INTERNAL))
+	#if defined(RTS_DEBUG)
 		AsciiString targetStr;
 		if( TheGlobalData->m_extraLogging )
 		{
@@ -745,21 +740,21 @@ UnsignedInt WeaponTemplate::fireWeaponTemplate
 			else
 				targetStr.format( "SELF." );
 
-			DEBUG_LOG( ("%d - WeaponTemplate::fireWeaponTemplate() begin - %s attacking %s - ", 
+			DEBUG_LOG( ("%d - WeaponTemplate::fireWeaponTemplate() begin - %s attacking %s",
 				TheGameLogic->getFrame(), sourceObj->getTemplate()->getName().str(), targetStr.str() ) );
 		}
 	#endif
 	//end -extraLogging 
 
-	//CRCDEBUG_LOG(("WeaponTemplate::fireWeaponTemplate() from %s\n", DescribeObject(sourceObj).str()));
-	DEBUG_ASSERTCRASH(specificBarrelToUse >= 0, ("specificBarrelToUse should no longer be -1\n"));
+	//CRCDEBUG_LOG(("WeaponTemplate::fireWeaponTemplate() from %s", DescribeObject(sourceObj).str()));
+	DEBUG_ASSERTCRASH(specificBarrelToUse >= 0, ("specificBarrelToUse should no longer be -1"));
 
 	if (sourceObj == NULL || (victimObj == NULL && victimPos == NULL))
 	{
 		//-extraLogging 
-		#if (defined(RTS_DEBUG) || defined(RTS_INTERNAL))
+		#if defined(RTS_DEBUG)
 			if( TheGlobalData->m_extraLogging )
-				DEBUG_LOG( ("FAIL 1 (sourceObj %d == NULL || (victimObj %d == NULL && victimPos %d == NULL)\n", sourceObj != 0, victimObj != 0, victimPos != 0) );
+				DEBUG_LOG( ("FAIL 1 (sourceObj %d == NULL || (victimObj %d == NULL && victimPos %d == NULL)", sourceObj != 0, victimObj != 0, victimPos != 0) );
 		#endif
 		//end -extraLogging 
 
@@ -777,7 +772,7 @@ UnsignedInt WeaponTemplate::fireWeaponTemplate
 	Coord3D victimPosStorage;
 	if (victimObj)
 	{
-		DEBUG_ASSERTLOG(sourceObj != victimObj, ("*** firing weapon at self -- is this really what you want?\n"));
+		DEBUG_ASSERTLOG(sourceObj != victimObj, ("*** firing weapon at self -- is this really what you want?"));
 		victimPos = victimObj->getPosition();
 		victimID = victimObj->getID();
 
@@ -824,7 +819,7 @@ UnsignedInt WeaponTemplate::fireWeaponTemplate
 		distSqr = ThePartitionManager->getDistanceSquared(sourceObj, victimPos, ATTACK_RANGE_CALC_TYPE);
 	}
 
-//	DEBUG_LOG(("WeaponTemplate::fireWeaponTemplate: firing weapon %s (source=%s, victim=%s)\n",
+//	DEBUG_LOG(("WeaponTemplate::fireWeaponTemplate: firing weapon %s (source=%s, victim=%s)",
 //		m_name.str(),sourceObj->getTemplate()->getName().str(),victimObj?victimObj->getTemplate()->getName().str():"NULL"));
 
 	//Only perform this check if the weapon isn't a leech range weapon (which can have unlimited range!)
@@ -833,12 +828,12 @@ UnsignedInt WeaponTemplate::fireWeaponTemplate
 		Real attackRangeSqr = sqr(getAttackRange(bonus));
 		if (distSqr > attackRangeSqr)
 		{
-			//DEBUG_ASSERTCRASH(distSqr < 5*5 || distSqr < attackRangeSqr*1.2f, ("*** victim is out of range (%f vs %f) of this weapon -- why did we attempt to fire?\n",sqrtf(distSqr),sqrtf(attackRangeSqr)));
+			//DEBUG_ASSERTCRASH(distSqr < 5*5 || distSqr < attackRangeSqr*1.2f, ("*** victim is out of range (%f vs %f) of this weapon -- why did we attempt to fire?",sqrtf(distSqr),sqrtf(attackRangeSqr)));
 			
 			//-extraLogging 
-			#if (defined(RTS_DEBUG) || defined(RTS_INTERNAL))
+			#if defined(RTS_DEBUG)
 				if( TheGlobalData->m_extraLogging )
-					DEBUG_LOG( ("FAIL 2 (distSqr %.2f > attackRangeSqr %.2f)\n", distSqr, attackRangeSqr ) );
+					DEBUG_LOG( ("FAIL 2 (distSqr %.2f > attackRangeSqr %.2f)", distSqr, attackRangeSqr ) );
 			#endif
 			//end -extraLogging 
 
@@ -855,12 +850,12 @@ UnsignedInt WeaponTemplate::fireWeaponTemplate
 		if (distSqr < minAttackRangeSqr-0.5f && !isProjectileDetonation)
 #endif
 		{
-			DEBUG_ASSERTCRASH(distSqr > minAttackRangeSqr*0.8f, ("*** victim is closer than min attack range (%f vs %f) of this weapon -- why did we attempt to fire?\n",sqrtf(distSqr),sqrtf(minAttackRangeSqr)));
+			DEBUG_ASSERTCRASH(distSqr > minAttackRangeSqr*0.8f, ("*** victim is closer than min attack range (%f vs %f) of this weapon -- why did we attempt to fire?",sqrtf(distSqr),sqrtf(minAttackRangeSqr)));
 
 			//-extraLogging 
-			#if (defined(RTS_DEBUG) || defined(RTS_INTERNAL))
+			#if defined(RTS_DEBUG)
 				if( TheGlobalData->m_extraLogging )
-					DEBUG_LOG( ("FAIL 3 (distSqr %.2f< minAttackRangeSqr %.2f - 0.5f && !isProjectileDetonation %d)\n", distSqr, minAttackRangeSqr, isProjectileDetonation ) );
+					DEBUG_LOG( ("FAIL 3 (distSqr %.2f< minAttackRangeSqr %.2f - 0.5f && !isProjectileDetonation %d)", distSqr, minAttackRangeSqr, isProjectileDetonation ) );
 			#endif
 			//end -extraLogging 
 
@@ -915,7 +910,7 @@ UnsignedInt WeaponTemplate::fireWeaponTemplate
 		if (handled == false && fx != NULL)
 		{
 			// bah. just play it at the drawable's pos.
-			//DEBUG_LOG(("*** WeaponFireFX not fully handled by the client\n"));
+			//DEBUG_LOG(("*** WeaponFireFX not fully handled by the client"));
 			const Coord3D* where = isContactWeapon() ? &targetPos : sourceObj->getDrawable()->getPosition();
 			FXList::doFXPos(fx, where, sourceObj->getDrawable()->getTransformMatrix(), getWeaponSpeed(), &targetPos, getPrimaryDamageRadius(bonus));
 		}
@@ -950,13 +945,13 @@ UnsignedInt WeaponTemplate::fireWeaponTemplate
 		if (delayInFrames < 1.0f)
 		{
 			// go ahead and do it now
-			//DEBUG_LOG(("WeaponTemplate::fireWeaponTemplate: firing weapon immediately!\n"));
+			//DEBUG_LOG(("WeaponTemplate::fireWeaponTemplate: firing weapon immediately!"));
 			dealDamageInternal(sourceID, damageID, damagePos, bonus, isProjectileDetonation);
 
 			//-extraLogging 
-			#if (defined(RTS_DEBUG) || defined(RTS_INTERNAL))
+			#if defined(RTS_DEBUG)
 				if( TheGlobalData->m_extraLogging )
-					DEBUG_LOG( ("EARLY 4 (delayed damage applied now)\n") );
+					DEBUG_LOG( ("EARLY 4 (delayed damage applied now)") );
 			#endif
 			//end -extraLogging 
 
@@ -970,14 +965,14 @@ UnsignedInt WeaponTemplate::fireWeaponTemplate
 			{
 				UnsignedInt delayInWholeFrames = REAL_TO_INT_CEIL(delayInFrames);
 				when = TheGameLogic->getFrame() + delayInWholeFrames;
-				//DEBUG_LOG(("WeaponTemplate::fireWeaponTemplate: firing weapon in %d frames (= %d)!\n", delayInWholeFrames,when));
+				//DEBUG_LOG(("WeaponTemplate::fireWeaponTemplate: firing weapon in %d frames (= %d)!", delayInWholeFrames,when));
 				TheWeaponStore->setDelayedDamage(this, damagePos, when, sourceID, damageID, bonus);
 			}
 
 			//-extraLogging 
-			#if (defined(RTS_DEBUG) || defined(RTS_INTERNAL))
+			#if defined(RTS_DEBUG)
 				if( TheGlobalData->m_extraLogging )
-					DEBUG_LOG( ("EARLY 5 (delaying damage applied until frame %d)\n", when ) );
+					DEBUG_LOG( ("EARLY 5 (delaying damage applied until frame %d)", when ) );
 			#endif
 			//end -extraLogging 
 
@@ -1085,14 +1080,14 @@ UnsignedInt WeaponTemplate::fireWeaponTemplate
 		}
 		else
 		{
-			//DEBUG_CRASH(("Projectiles should implement ProjectileUpdateInterface!\n"));
+			//DEBUG_CRASH(("Projectiles should implement ProjectileUpdateInterface!"));
 			// actually, this is ok, for things like Firestorm.... (srj)
 			projectile->setPosition(&projectileDestination);
 		}
 		//-extraLogging 
-		#if (defined(RTS_DEBUG) || defined(RTS_INTERNAL))
+		#if defined(RTS_DEBUG)
 			if( TheGlobalData->m_extraLogging )
-				DEBUG_LOG( ("DONE\n") );
+				DEBUG_LOG( ("DONE") );
 		#endif
 		//end -extraLogging 
 
@@ -1185,7 +1180,7 @@ void WeaponTemplate::dealDamageInternal(ObjectID sourceID, ObjectID victimID, co
 
 	} // if historic bonuses
 
-//DEBUG_LOG(("WeaponTemplate::dealDamageInternal: dealing damage %s at frame %d\n",m_name.str(),TheGameLogic->getFrame()));
+//DEBUG_LOG(("WeaponTemplate::dealDamageInternal: dealing damage %s at frame %d",m_name.str(),TheGameLogic->getFrame()));
 
 	// if there's a specific victim, use it's pos (overriding the value passed in)
 	Object *primaryVictim = victimID ? TheGameLogic->findObjectByID(victimID) : NULL;	// might be null...
@@ -1208,7 +1203,7 @@ void WeaponTemplate::dealDamageInternal(ObjectID sourceID, ObjectID victimID, co
 		Real secondaryDamage = getSecondaryDamage(bonus);
 		Int affects = getAffectsMask();
 
-		DEBUG_ASSERTCRASH(secondaryRadius >= primaryRadius || secondaryRadius == 0.0f, ("secondary radius should be >= primary radius (or zero)\n"));
+		DEBUG_ASSERTCRASH(secondaryRadius >= primaryRadius || secondaryRadius == 0.0f, ("secondary radius should be >= primary radius (or zero)"));
 
 		Real primaryRadiusSqr = sqr(primaryRadius);
 		Real radius = max(primaryRadius, secondaryRadius);
@@ -1250,7 +1245,7 @@ void WeaponTemplate::dealDamageInternal(ObjectID sourceID, ObjectID victimID, co
 						// Remember that source is a missile for some units, and they don't want to injure them'selves' either
 						if( source == curVictim || source->getProducerID() == curVictim->getID() )
 						{
-							//DEBUG_LOG(("skipping damage done to SELF...\n"));
+							//DEBUG_LOG(("skipping damage done to SELF..."));
 							continue;
 						}
 					}
@@ -1335,14 +1330,14 @@ void WeaponTemplate::dealDamageInternal(ObjectID sourceID, ObjectID victimID, co
 			}
 
 			curVictim->attemptDamage(&damageInfo);
-			//DEBUG_ASSERTLOG(damageInfo.out.m_noEffect, ("WeaponTemplate::dealDamageInternal: dealt to %s %08lx: attempted %f, actual %f (%f)\n",
+			//DEBUG_ASSERTLOG(damageInfo.out.m_noEffect, ("WeaponTemplate::dealDamageInternal: dealt to %s %08lx: attempted %f, actual %f (%f)",
 			//	curVictim->getTemplate()->getName().str(),curVictim,
 			//	damageInfo.in.m_amount, damageInfo.out.m_actualDamageDealt, damageInfo.out.m_actualDamageClipped));
 		}
 	}
 	else
 	{
-		DEBUG_CRASH(("projectile weapons should never get dealDamage called directly\n"));
+		DEBUG_CRASH(("projectile weapons should never get dealDamage called directly"));
 	}
 }
 
@@ -1390,7 +1385,7 @@ void WeaponStore::createAndFireTempWeapon(const WeaponTemplate* wt, const Object
 //-------------------------------------------------------------------------------------------------
 void WeaponStore::createAndFireTempWeapon(const WeaponTemplate* wt, const Object *source, Object *target)
 {
-	//CRCDEBUG_LOG(("WeaponStore::createAndFireTempWeapon() for %s\n", DescribeObject(source)));
+	//CRCDEBUG_LOG(("WeaponStore::createAndFireTempWeapon() for %s", DescribeObject(source)));
 	if (wt == NULL)
 		return;
 	Weapon* w = TheWeaponStore->allocateNewWeapon(wt, PRIMARY_WEAPON);
@@ -1405,7 +1400,7 @@ const WeaponTemplate *WeaponStore::findWeaponTemplate( AsciiString name ) const
 	if (stricmp(name.str(), "None") == 0)
 		return NULL;
 	const WeaponTemplate * wt = findWeaponTemplatePrivate( TheNameKeyGenerator->nameToKey( name ) );
-	DEBUG_ASSERTCRASH(wt != NULL, ("Weapon %s not found!\n",name.str()));
+	DEBUG_ASSERTCRASH(wt != NULL, ("Weapon %s not found!",name.str()));
 	return wt;
 }
 
@@ -1574,7 +1569,7 @@ void WeaponStore::postProcessLoad()
 	if (weapon->m_projectileName.isNone())
 		weapon->m_projectileName.clear();
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	if (!weapon->getFireSound().getEventName().isEmpty() && weapon->getFireSound().getEventName().compareNoCase("NoSound") != 0) 
 	{ 
 		DEBUG_ASSERTCRASH(TheAudio->isValidAudioEvent(&weapon->getFireSound()), ("Invalid FireSound %s in Weapon '%s'.", weapon->getFireSound().getEventName().str(), weapon->getName().str())); 
@@ -1665,7 +1660,7 @@ void Weapon::computeBonus(const Object *source, WeaponBonusConditionFlags extraB
 {
 	bonus.clear();
 	WeaponBonusConditionFlags flags = source->getWeaponBonusCondition();
-	//CRCDEBUG_LOG(("Weapon::computeBonus() - flags are %X for %s\n", flags, DescribeObject(source).str()));
+	//CRCDEBUG_LOG(("Weapon::computeBonus() - flags are %X for %s", flags, DescribeObject(source).str()));
 	flags |= extraBonusFlags;
 	if (TheGlobalData->m_weaponBonusSet)
 		TheGlobalData->m_weaponBonusSet->appendBonuses(flags, bonus);
@@ -1710,10 +1705,10 @@ void Weapon::setClipPercentFull(Real percent, Bool allowReduction)
 	{
 		m_ammoInClip = ammo;
 		m_status = m_ammoInClip ? OUT_OF_AMMO : READY_TO_FIRE;
-		//CRCDEBUG_LOG(("Weapon::setClipPercentFull() just set m_status to %d (ammo in clip is %d)\n", m_status, m_ammoInClip));
+		//CRCDEBUG_LOG(("Weapon::setClipPercentFull() just set m_status to %d (ammo in clip is %d)", m_status, m_ammoInClip));
 		m_whenLastReloadStarted = TheGameLogic->getFrame();
 		m_whenWeCanFireAgain = m_whenLastReloadStarted;		
-		//CRCDEBUG_LOG(("Just set m_whenWeCanFireAgain to %d in Weapon::setClipPercentFull\n", m_whenWeCanFireAgain));
+		//CRCDEBUG_LOG(("Just set m_whenWeCanFireAgain to %d in Weapon::setClipPercentFull", m_whenWeCanFireAgain));
 		rebuildScatterTargets();
 	}
 }
@@ -1747,7 +1742,7 @@ void Weapon::reloadWithBonus(const Object *sourceObj, const WeaponBonus& bonus, 
 	Real reloadTime = loadInstantly ? 0 : m_template->getClipReloadTime(bonus);
 	m_whenLastReloadStarted = TheGameLogic->getFrame();
 	m_whenWeCanFireAgain = m_whenLastReloadStarted + reloadTime;			
-	//CRCDEBUG_LOG(("Just set m_whenWeCanFireAgain to %d in Weapon::reloadWithBonus 1\n", m_whenWeCanFireAgain));
+	//CRCDEBUG_LOG(("Just set m_whenWeCanFireAgain to %d in Weapon::reloadWithBonus 1", m_whenWeCanFireAgain));
 
 			// if we are sharing reload times
 			// go through other weapons in weapon set
@@ -1761,7 +1756,7 @@ void Weapon::reloadWithBonus(const Object *sourceObj, const WeaponBonus& bonus, 
 			if (weapon)
 			{
 				weapon->setPossibleNextShotFrame(m_whenWeCanFireAgain);
-				//CRCDEBUG_LOG(("Just set m_whenWeCanFireAgain to %d in Weapon::reloadWithBonus 2\n", m_whenWeCanFireAgain));
+				//CRCDEBUG_LOG(("Just set m_whenWeCanFireAgain to %d in Weapon::reloadWithBonus 2", m_whenWeCanFireAgain));
 				weapon->setStatus(RELOADING_CLIP);
 			}
 		}
@@ -1821,7 +1816,7 @@ Bool Weapon::computeApproachTarget(const Object *source, const Object *target, c
 	if (minAttackRange > PATHFIND_CELL_SIZE_F && dist < minAttackRange) 
 	{
 		// We aret too close, so move away from the target.
-		DEBUG_ASSERTCRASH((minAttackRange<0.9f*getAttackRange(source)), ("Min attack range is too near attack range.\n"));
+		DEBUG_ASSERTCRASH((minAttackRange<0.9f*getAttackRange(source)), ("Min attack range is too near attack range."));
 		// Recompute dir, cause if the bounding spheres touch, it will be 0.
 		Coord3D srcPos = *source->getPosition();
 		dir.x = srcPos.x-targetPos->x;
@@ -2271,7 +2266,7 @@ Bool Weapon::privateFireWeapon(
 	ObjectID* projectileID
 )
 {
-	//CRCDEBUG_LOG(("Weapon::privateFireWeapon() for %s\n", DescribeObject(sourceObj).str()));
+	//CRCDEBUG_LOG(("Weapon::privateFireWeapon() for %s", DescribeObject(sourceObj).str()));
 	//USE_PERF_TIMER(fireWeapon)
 	if (projectileID)
 		*projectileID = INVALID_ID;
@@ -2438,17 +2433,17 @@ Bool Weapon::privateFireWeapon(
 			{
 				m_status = OUT_OF_AMMO;
 				m_whenWeCanFireAgain = 0x7fffffff;
-				//CRCDEBUG_LOG(("Just set m_whenWeCanFireAgain to %d in Weapon::privateFireWeapon 1\n", m_whenWeCanFireAgain));
+				//CRCDEBUG_LOG(("Just set m_whenWeCanFireAgain to %d in Weapon::privateFireWeapon 1", m_whenWeCanFireAgain));
 			}
 		}
 		else
 		{
 			m_status = BETWEEN_FIRING_SHOTS;
-			//CRCDEBUG_LOG(("Weapon::privateFireWeapon() just set m_status to BETWEEN_FIRING_SHOTS\n"));
+			//CRCDEBUG_LOG(("Weapon::privateFireWeapon() just set m_status to BETWEEN_FIRING_SHOTS"));
 			Int delay = m_template->getDelayBetweenShots(bonus);
 			m_whenLastReloadStarted = now;
 			m_whenWeCanFireAgain = now + delay;
-			//CRCDEBUG_LOG(("Just set m_whenWeCanFireAgain to %d (delay is %d) in Weapon::privateFireWeapon\n", m_whenWeCanFireAgain, delay));
+			//CRCDEBUG_LOG(("Just set m_whenWeCanFireAgain to %d (delay is %d) in Weapon::privateFireWeapon", m_whenWeCanFireAgain, delay));
 			
 			// if we are sharing reload times
 			// go through other weapons in weapon set
@@ -2463,7 +2458,7 @@ Bool Weapon::privateFireWeapon(
 					if (weapon)
 					{
 						weapon->setPossibleNextShotFrame(m_whenWeCanFireAgain);
-						//CRCDEBUG_LOG(("Just set m_whenWeCanFireAgain to %d in Weapon::privateFireWeapon 3\n", m_whenWeCanFireAgain));
+						//CRCDEBUG_LOG(("Just set m_whenWeCanFireAgain to %d in Weapon::privateFireWeapon 3", m_whenWeCanFireAgain));
 						weapon->setStatus(BETWEEN_FIRING_SHOTS);
 					}
 				}
@@ -2494,7 +2489,7 @@ void Weapon::preFireWeapon( const Object *source, const Object *victim )
 //-------------------------------------------------------------------------------------------------
 Bool Weapon::fireWeapon(const Object *source, Object *target, ObjectID* projectileID)
 {
-	//CRCDEBUG_LOG(("Weapon::fireWeapon() for %s at %s\n", DescribeObject(source).str(), DescribeObject(target).str()));
+	//CRCDEBUG_LOG(("Weapon::fireWeapon() for %s at %s", DescribeObject(source).str(), DescribeObject(target).str()));
 	return privateFireWeapon(source, target, NULL, false, false, 0, projectileID);
 }
 
@@ -2502,21 +2497,21 @@ Bool Weapon::fireWeapon(const Object *source, Object *target, ObjectID* projecti
 // return true if we auto-reloaded our clip after firing.
 Bool Weapon::fireWeapon(const Object *source, const Coord3D* pos, ObjectID* projectileID)
 {
-	//CRCDEBUG_LOG(("Weapon::fireWeapon() for %s\n", DescribeObject(source).str()));
+	//CRCDEBUG_LOG(("Weapon::fireWeapon() for %s", DescribeObject(source).str()));
 	return privateFireWeapon(source, NULL, pos, false, false, 0, projectileID);
 }
 
 //-------------------------------------------------------------------------------------------------
 void Weapon::fireProjectileDetonationWeapon(const Object *source, Object *target, WeaponBonusConditionFlags extraBonusFlags)
 {
-	//CRCDEBUG_LOG(("Weapon::fireProjectileDetonationWeapon() for %sat %s\n", DescribeObject(source).str(), DescribeObject(target).str()));
+	//CRCDEBUG_LOG(("Weapon::fireProjectileDetonationWeapon() for %sat %s", DescribeObject(source).str(), DescribeObject(target).str()));
 	privateFireWeapon(source, target, NULL, true, false, extraBonusFlags, NULL);
 }
 
 //-------------------------------------------------------------------------------------------------
 void Weapon::fireProjectileDetonationWeapon(const Object *source, const Coord3D* pos, WeaponBonusConditionFlags extraBonusFlags)
 {
-	//CRCDEBUG_LOG(("Weapon::fireProjectileDetonationWeapon() for %s\n", DescribeObject(source).str()));
+	//CRCDEBUG_LOG(("Weapon::fireProjectileDetonationWeapon() for %s", DescribeObject(source).str()));
 	privateFireWeapon(source, NULL, pos, true, false, extraBonusFlags, NULL);
 }
 
@@ -2525,7 +2520,7 @@ void Weapon::fireProjectileDetonationWeapon(const Object *source, const Coord3D*
 //and immediately gain control of the weapon that was fired to give it special orders...
 Object* Weapon::forceFireWeapon( const Object *source, const Coord3D *pos)
 {
-	//CRCDEBUG_LOG(("Weapon::forceFireWeapon() for %s\n", DescribeObject(source).str()));
+	//CRCDEBUG_LOG(("Weapon::forceFireWeapon() for %s", DescribeObject(source).str()));
 	//Force the ammo to load instantly.
 	//loadAmmoNow( source );
 	//Fire the weapon at the position. Internally, it'll store the weapon projectile ID if so created.
@@ -2549,7 +2544,7 @@ WeaponStatus Weapon::getStatus() const
 			m_status = READY_TO_FIRE;
 		else
 			m_status = OUT_OF_AMMO;
-		//CRCDEBUG_LOG(("Weapon::getStatus() just set m_status to %d (ammo in clip is %d)\n", m_status, m_ammoInClip));
+		//CRCDEBUG_LOG(("Weapon::getStatus() just set m_status to %d (ammo in clip is %d)", m_status, m_ammoInClip));
 	}
 	return m_status;
 }
@@ -2576,7 +2571,7 @@ Bool Weapon::isWithinTargetPitch(const Object *source, const Object *victim) con
 			(minPitch <= m_template->getMinTargetPitch() && maxPitch >= m_template->getMaxTargetPitch()))
 		return true;
 
-	//DEBUG_LOG(("pitch %f-%f is out of range\n",rad2deg(minPitch),rad2deg(maxPitch),rad2deg(m_template->getMinTargetPitch()),rad2deg(m_template->getMaxTargetPitch())));
+	//DEBUG_LOG(("pitch %f-%f is out of range",rad2deg(minPitch),rad2deg(maxPitch),rad2deg(m_template->getMinTargetPitch()),rad2deg(m_template->getMaxTargetPitch())));
 	return false;
 }
 
@@ -2740,17 +2735,17 @@ void Weapon::processRequestAssistance( const Object *requestingObject, Object *v
 	Real turretPitch = 0.0f;
 	const AIUpdateInterface* ai = launcher->getAIUpdateInterface();
 	WhichTurretType tur = ai ? ai->getWhichTurretForWeaponSlot(wslot, &turretAngle, &turretPitch) : TURRET_INVALID;
-	//CRCDEBUG_LOG(("calcProjectileLaunchPosition(): Turret %d, slot %d, barrel %d for %s\n", tur, wslot, specificBarrelToUse, DescribeObject(launcher).str()));
+	//CRCDEBUG_LOG(("calcProjectileLaunchPosition(): Turret %d, slot %d, barrel %d for %s", tur, wslot, specificBarrelToUse, DescribeObject(launcher).str()));
 
 	Matrix3D attachTransform(true);
 	Coord3D turretRotPos = {0.0f, 0.0f, 0.0f};
 	Coord3D turretPitchPos = {0.0f, 0.0f, 0.0f};
 	const Drawable* draw = launcher->getDrawable();
-	//CRCDEBUG_LOG(("Do we have a drawable? %d\n", (draw != NULL)));
+	//CRCDEBUG_LOG(("Do we have a drawable? %d", (draw != NULL)));
 	if (!draw || !draw->getProjectileLaunchOffset(wslot, specificBarrelToUse, &attachTransform, tur, &turretRotPos, &turretPitchPos))
 	{
-		//CRCDEBUG_LOG(("ProjectileLaunchPos %d %d not found!\n",wslot, specificBarrelToUse));
-		DEBUG_CRASH(("ProjectileLaunchPos %d %d not found!\n",wslot, specificBarrelToUse));
+		//CRCDEBUG_LOG(("ProjectileLaunchPos %d %d not found!",wslot, specificBarrelToUse));
+		DEBUG_CRASH(("ProjectileLaunchPos %d %d not found!",wslot, specificBarrelToUse));
 		attachTransform.Make_Identity();
 		turretRotPos.zero();
 		turretPitchPos.zero();
@@ -2798,7 +2793,7 @@ void Weapon::processRequestAssistance( const Object *requestingObject, Object *v
 	Int specificBarrelToUse
 )
 {
-	//CRCDEBUG_LOG(("Weapon::positionProjectileForLaunch() for %s from %s\n",
+	//CRCDEBUG_LOG(("Weapon::positionProjectileForLaunch() for %s from %s",
 		//DescribeObject(projectile).str(), DescribeObject(launcher).str()));
 
 	// if our launch vehicle is gone, destroy ourselves
@@ -2865,12 +2860,12 @@ Bool Weapon::isClearFiringLineOfSightTerrain(const Object* source, const Object*
 {
 	Coord3D origin;
 	origin = *source->getPosition();
-	//CRCDEBUG_LOG(("Weapon::isClearFiringLineOfSightTerrain(Object) for %s\n", DescribeObject(source).str()));
+	//CRCDEBUG_LOG(("Weapon::isClearFiringLineOfSightTerrain(Object) for %s", DescribeObject(source).str()));
 	//DUMPCOORD3D(&origin);
 	getFiringLineOfSightOrigin(source, origin);
 	Coord3D victimPos;
 	victim->getGeometryInfo().getCenterPosition( *victim->getPosition(), victimPos );
-	//CRCDEBUG_LOG(("Weapon::isClearFiringLineOfSightTerrain() - victimPos is (%g,%g,%g) (%X,%X,%X)\n",
+	//CRCDEBUG_LOG(("Weapon::isClearFiringLineOfSightTerrain() - victimPos is (%g,%g,%g) (%X,%X,%X)",
 	//	victimPos.x, victimPos.y, victimPos.z,
 	//	AS_INT(victimPos.x),AS_INT(victimPos.y),AS_INT(victimPos.z)));
 	return ThePartitionManager->isClearLineOfSightTerrain(NULL, origin, NULL, victimPos);
@@ -2882,7 +2877,7 @@ Bool Weapon::isClearFiringLineOfSightTerrain(const Object* source, const Coord3D
 {
 	Coord3D origin;
 	origin = *source->getPosition();
-	//CRCDEBUG_LOG(("Weapon::isClearFiringLineOfSightTerrain(Coord3D) for %s\n", DescribeObject(source).str()));
+	//CRCDEBUG_LOG(("Weapon::isClearFiringLineOfSightTerrain(Coord3D) for %s", DescribeObject(source).str()));
 	//DUMPCOORD3D(&origin);
 	getFiringLineOfSightOrigin(source, origin);
 	return ThePartitionManager->isClearLineOfSightTerrain(NULL, origin, NULL, victimPos);
@@ -2894,7 +2889,7 @@ Bool Weapon::isClearFiringLineOfSightTerrain(const Object* source, const Coord3D
 Bool Weapon::isClearGoalFiringLineOfSightTerrain(const Object* source, const Coord3D& goalPos, const Object* victim) const
 {
 	Coord3D origin=goalPos;
-	//CRCDEBUG_LOG(("Weapon::isClearGoalFiringLineOfSightTerrain(Object) for %s\n", DescribeObject(source).str()));
+	//CRCDEBUG_LOG(("Weapon::isClearGoalFiringLineOfSightTerrain(Object) for %s", DescribeObject(source).str()));
 	//DUMPCOORD3D(&origin);
 	getFiringLineOfSightOrigin(source, origin);
 	Coord3D victimPos;
@@ -2908,10 +2903,10 @@ Bool Weapon::isClearGoalFiringLineOfSightTerrain(const Object* source, const Coo
 Bool Weapon::isClearGoalFiringLineOfSightTerrain(const Object* source, const Coord3D& goalPos, const Coord3D& victimPos) const
 {
 	Coord3D origin=goalPos;
-	//CRCDEBUG_LOG(("Weapon::isClearGoalFiringLineOfSightTerrain(Coord3D) for %s\n", DescribeObject(source).str()));
+	//CRCDEBUG_LOG(("Weapon::isClearGoalFiringLineOfSightTerrain(Coord3D) for %s", DescribeObject(source).str()));
 	//DUMPCOORD3D(&origin);
 	getFiringLineOfSightOrigin(source, origin);
-	//CRCDEBUG_LOG(("Weapon::isClearFiringLineOfSightTerrain() - victimPos is (%g,%g,%g) (%X,%X,%X)\n",
+	//CRCDEBUG_LOG(("Weapon::isClearFiringLineOfSightTerrain() - victimPos is (%g,%g,%g) (%X,%X,%X)",
 	//	victimPos.x, victimPos.y, victimPos.z,
 	//	AS_INT(victimPos.x),AS_INT(victimPos.y),AS_INT(victimPos.z)));
 	return ThePartitionManager->isClearLineOfSightTerrain(NULL, origin, NULL, victimPos);
@@ -3112,7 +3107,7 @@ void Weapon::crc( Xfer *xfer )
 #ifdef DEBUG_CRC
 	if (doLogging)
 	{
-		CRCDEBUG_LOG(("%s\n", logString.str()));
+		CRCDEBUG_LOG(("%s", logString.str()));
 	}
 #endif // DEBUG_CRC
 

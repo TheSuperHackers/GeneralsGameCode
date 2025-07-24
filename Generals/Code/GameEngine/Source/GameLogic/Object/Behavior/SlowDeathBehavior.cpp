@@ -51,11 +51,6 @@
 #include "GameLogic/Weapon.h"
 #include "GameClient/Drawable.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 const Real BEGIN_MIDPOINT_RATIO = 0.35f;
 const Real END_MIDPOINT_RATIO = 0.65f;
@@ -164,7 +159,7 @@ SlowDeathBehavior::SlowDeathBehavior( Thing *thing, const ModuleData* moduleData
 
 	if (getSlowDeathBehaviorModuleData()->m_probabilityModifier < 1)
 	{
-		DEBUG_CRASH(("ProbabilityModifer must be >= 1.\n"));
+		DEBUG_CRASH(("ProbabilityModifer must be >= 1."));
 		throw INI_INVALID_DATA;
 	}
 
@@ -382,7 +377,7 @@ void SlowDeathBehavior::doPhaseStuff(SlowDeathPhaseType sdphase)
 //-------------------------------------------------------------------------------------------------
 UpdateSleepTime SlowDeathBehavior::update()
 {
-	//DEBUG_LOG(("updating SlowDeathBehavior %08lx\n",this));
+	//DEBUG_LOG(("updating SlowDeathBehavior %08lx",this));
 	DEBUG_ASSERTCRASH(isSlowDeathActivated(), ("hmm, this should not be possible"));
 
 	const SlowDeathBehaviorModuleData* d = getSlowDeathBehaviorModuleData();

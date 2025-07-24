@@ -56,22 +56,17 @@
 #include "GameClient/SelectionXlat.h"
 #include "GameClient/TerrainVisual.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 // Lorenzen changed this to a member of SelectionTranslator, providing external access
 // name ly in rebuildholeexposedie, where we decide whether to create GLA Holes when hand-of-Godding
-//#if defined(RTS_DEBUG) || defined(RTS_INTERNAL) || defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
+//#if defined(RTS_DEBUG) || defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
 //static Bool TheHandOfGodSelectionMode = false;
 //#endif
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 static Bool TheHurtSelectionMode = false;
 static Bool TheDebugSelectionMode = false;
 #endif
@@ -284,7 +279,7 @@ SelectionTranslator::SelectionTranslator()
 
 	TheSelectionTranslator = this;
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL) || defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
+#if defined(RTS_DEBUG) || defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
   m_HandOfGodSelectionMode = FALSE;
 #endif
 }
@@ -835,7 +830,7 @@ GameMessageDisposition SelectionTranslator::translateGameMessage(const GameMessa
 				{
 
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL) 
+#if defined(RTS_DEBUG) 
 
 
           if (m_HandOfGodSelectionMode && draw)
@@ -1064,7 +1059,7 @@ GameMessageDisposition SelectionTranslator::translateGameMessage(const GameMessa
 			Int group = t - GameMessage::MSG_META_CREATE_TEAM0;
 			if ( group >= 0 && group < 10 )
 			{
-				DEBUG_LOG(("META: create team %d\n",group));
+				DEBUG_LOG(("META: create team %d",group));
 				// Assign selected items to a group
 				GameMessage *newmsg = TheMessageStream->appendMessage((GameMessage::Type)(GameMessage::MSG_CREATE_TEAM0 + group));
 				Drawable *drawable = TheGameClient->getDrawableList();
@@ -1096,7 +1091,7 @@ GameMessageDisposition SelectionTranslator::translateGameMessage(const GameMessa
 			Int group = t - GameMessage::MSG_META_SELECT_TEAM0;
 			if ( group >= 0 && group < 10 )
 			{
-				DEBUG_LOG(("META: select team %d\n",group));
+				DEBUG_LOG(("META: select team %d",group));
 
 				UnsignedInt now = TheGameLogic->getFrame();
 				if ( m_lastGroupSelTime == 0 )
@@ -1107,7 +1102,7 @@ GameMessageDisposition SelectionTranslator::translateGameMessage(const GameMessa
 				// check for double-press to jump view
 				if ( now - m_lastGroupSelTime < 20 && group == m_lastGroupSelGroup )
 				{
-					DEBUG_LOG(("META: DOUBLETAP select team %d\n",group));
+					DEBUG_LOG(("META: DOUBLETAP select team %d",group));
 					Player *player = ThePlayerList->getLocalPlayer();
 					if (player)
 					{
@@ -1169,7 +1164,7 @@ GameMessageDisposition SelectionTranslator::translateGameMessage(const GameMessa
 			Int group = t - GameMessage::MSG_META_ADD_TEAM0;
 			if ( group >= 0 && group < 10 )
 			{
-				DEBUG_LOG(("META: select team %d\n",group));
+				DEBUG_LOG(("META: select team %d",group));
 
 				UnsignedInt now = TheGameLogic->getFrame();
 				if ( m_lastGroupSelTime == 0 )
@@ -1181,7 +1176,7 @@ GameMessageDisposition SelectionTranslator::translateGameMessage(const GameMessa
 
 				if ( now - m_lastGroupSelTime < 20 && group == m_lastGroupSelGroup )
 				{
-					DEBUG_LOG(("META: DOUBLETAP select team %d\n",group));
+					DEBUG_LOG(("META: DOUBLETAP select team %d",group));
 					Player *player = ThePlayerList->getLocalPlayer();
 					if (player)
 					{
@@ -1250,7 +1245,7 @@ GameMessageDisposition SelectionTranslator::translateGameMessage(const GameMessa
 			Int group = t - GameMessage::MSG_META_VIEW_TEAM0;
 			if ( group >= 1 && group <= 10 )
 			{
-				DEBUG_LOG(("META: view team %d\n",group));
+				DEBUG_LOG(("META: view team %d",group));
 				Player *player = ThePlayerList->getLocalPlayer();
 				if (player) 
 				{
@@ -1281,7 +1276,7 @@ GameMessageDisposition SelectionTranslator::translateGameMessage(const GameMessa
 		}
 
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL) 
+#if defined(RTS_DEBUG) 
 		//-----------------------------------------------------------------------------------------
 		case GameMessage::MSG_META_DEMO_TOGGLE_HAND_OF_GOD_MODE:
 		{
@@ -1309,7 +1304,7 @@ GameMessageDisposition SelectionTranslator::translateGameMessage(const GameMessa
 		}
 #endif
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 		//-----------------------------------------------------------------------------------------
 		case GameMessage::MSG_META_DEMO_TOGGLE_HURT_ME_MODE:
 		{
@@ -1323,7 +1318,7 @@ GameMessageDisposition SelectionTranslator::translateGameMessage(const GameMessa
 		}
 #endif
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 		//-----------------------------------------------------------------------------------------
 		case GameMessage::MSG_META_DEMO_DEBUG_SELECTION:
 		{

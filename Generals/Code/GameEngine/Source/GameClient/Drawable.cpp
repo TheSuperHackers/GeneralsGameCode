@@ -76,11 +76,6 @@
 #include "GameClient/Shadow.h"
 #include "GameClient/GameText.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 #define VERY_TRANSPARENT_HEATVISION (0.001f)
 #define HEATVISION_FADE_SCALAR (0.8f)
@@ -192,7 +187,7 @@ static const char *drawableIconIndexToName( DrawableIconType iconIndex )
 {
 
 	DEBUG_ASSERTCRASH( iconIndex >= ICON_FIRST && iconIndex < MAX_ICONS,
-										 ("drawableIconIndexToName - Illegal index '%d'\n", iconIndex) );
+										 ("drawableIconIndexToName - Illegal index '%d'", iconIndex) );
 
 	return TheDrawableIconNames[ iconIndex ];
 
@@ -203,7 +198,7 @@ static const char *drawableIconIndexToName( DrawableIconType iconIndex )
 static DrawableIconType drawableIconNameToIndex( const char *iconName )
 {
 
-	DEBUG_ASSERTCRASH( iconName != NULL, ("drawableIconNameToIndex - Illegal name\n") );
+	DEBUG_ASSERTCRASH( iconName != NULL, ("drawableIconNameToIndex - Illegal name") );
 
 	for( Int i = ICON_FIRST; i < MAX_ICONS; ++i )
 		if( stricmp( TheDrawableIconNames[ i ], iconName ) == 0 )
@@ -2089,14 +2084,14 @@ void Drawable::validatePos() const
 	const Coord3D* ourPos = getPosition();
 	if (_isnan(ourPos->x) || _isnan(ourPos->y) || _isnan(ourPos->z))
 	{
-		DEBUG_CRASH(("Drawable/Object position NAN! '%s'\n", getTemplate()->getName().str()));
+		DEBUG_CRASH(("Drawable/Object position NAN! '%s'", getTemplate()->getName().str()));
 	}
 	if (getObject())
 	{
 		const Coord3D* objPos = getObject()->getPosition();
 		if (ourPos->x != objPos->x || ourPos->y != objPos->y || ourPos->z != objPos->z)
 		{
-			DEBUG_CRASH(("Drawable/Object position mismatch! '%s'\n", getTemplate()->getName().str()));
+			DEBUG_CRASH(("Drawable/Object position mismatch! '%s'", getTemplate()->getName().str()));
 		}
 	}
 }
@@ -2387,7 +2382,7 @@ void Drawable::setEmoticon( const AsciiString &name, Int duration )
 	Anim2DTemplate *animTemplate = TheAnim2DCollection->findTemplate( name );
 	if( animTemplate )
 	{
-		DEBUG_ASSERTCRASH( getIconInfo()->m_icon[ ICON_EMOTICON ] == NULL, ("Drawable::setEmoticon - Emoticon isn't empty, need to refuse to set or destroy the old one in favor of the new one\n") );
+		DEBUG_ASSERTCRASH( getIconInfo()->m_icon[ ICON_EMOTICON ] == NULL, ("Drawable::setEmoticon - Emoticon isn't empty, need to refuse to set or destroy the old one in favor of the new one") );
 		if( getIconInfo()->m_icon[ ICON_EMOTICON ] == NULL )
 		{
 			getIconInfo()->m_icon[ ICON_EMOTICON ] = newInstance(Anim2D)( animTemplate, TheAnim2DCollection );
@@ -3646,7 +3641,7 @@ DrawableID Drawable::getID( void ) const
 {
 
 	// we should never be getting the ID of a drawable who doesn't yet have and ID assigned to it
-	DEBUG_ASSERTCRASH( m_id != 0, ("Drawable::getID - Using ID before it was assigned!!!!\n") );
+	DEBUG_ASSERTCRASH( m_id != 0, ("Drawable::getID - Using ID before it was assigned!!!!") );
 
 	return m_id;
 
@@ -4176,7 +4171,7 @@ void Drawable::xferDrawableModules( Xfer *xfer )
 				// write module identifier
 				moduleIdentifier = TheNameKeyGenerator->keyToName( (*m)->getModuleTagNameKey() );
 				DEBUG_ASSERTCRASH( moduleIdentifier != AsciiString::TheEmptyString,
-													 ("Drawable::xferDrawableModules - module name key does not translate to a string!\n") );
+													 ("Drawable::xferDrawableModules - module name key does not translate to a string!") );
 				xfer->xferAsciiString( &moduleIdentifier );
 
 				// begin data block
@@ -4227,7 +4222,7 @@ void Drawable::xferDrawableModules( Xfer *xfer )
 				{
 
 					// for testing purposes, this module better be found
-					DEBUG_CRASH(( "Drawable::xferDrawableModules - Module '%s' was indicated in file, but not found on Drawable %s %d\n",
+					DEBUG_CRASH(( "Drawable::xferDrawableModules - Module '%s' was indicated in file, but not found on Drawable %s %d",
 												moduleIdentifier.str(), getTemplate()->getName().str(),getID() ));
 
 					// skip this data in the file
@@ -4385,7 +4380,7 @@ void Drawable::xfer( Xfer *xfer )
 			if( objectID != m_object->getID() )
 			{
 			
-				DEBUG_CRASH(( "Drawable::xfer - Drawable '%s' is attached to wrong object '%s'\n",
+				DEBUG_CRASH(( "Drawable::xfer - Drawable '%s' is attached to wrong object '%s'",
 											getTemplate()->getName().str(), m_object->getTemplate()->getName().str() ));
 				throw SC_INVALID_DATA;
 
@@ -4401,7 +4396,7 @@ void Drawable::xfer( Xfer *xfer )
 #ifdef DEBUG_CRASHING
 				Object *obj = TheGameLogic->findObjectByID( objectID );
 
-				DEBUG_CRASH(( "Drawable::xfer - Drawable '%s' is not attached to an object but should be attached to object '%s' with id '%d'\n",
+				DEBUG_CRASH(( "Drawable::xfer - Drawable '%s' is not attached to an object but should be attached to object '%s' with id '%d'",
 											getTemplate()->getName().str(),
 											obj ? obj->getTemplate()->getName().str() : "Unknown",
 											objectID ));
@@ -4535,7 +4530,7 @@ void Drawable::xfer( Xfer *xfer )
 
 		// sanity, we don't write old versions we can only read them
 		DEBUG_ASSERTCRASH( xfer->getXferMode() == XFER_LOAD, 
-											 ("Drawable::xfer - Writing an old format!!!\n") );
+											 ("Drawable::xfer - Writing an old format!!!") );
 
 		// condition state, note that when we're loading we need to force a replace of these flags
 		m_conditionState.xfer( xfer );
@@ -4617,7 +4612,7 @@ void Drawable::xfer( Xfer *xfer )
 			if( animTemplate == NULL )
 			{
 
-				DEBUG_CRASH(( "Drawable::xfer - Unknown icon template '%s'\n", iconTemplateName.str() ));
+				DEBUG_CRASH(( "Drawable::xfer - Unknown icon template '%s'", iconTemplateName.str() ));
 				throw SC_INVALID_DATA;
 
 			}  // end if
@@ -4651,7 +4646,7 @@ void Drawable::xfer( Xfer *xfer )
 	//
 #ifdef DIRTY_CONDITION_FLAGS
 	if( xfer->getXferMode() == XFER_SAVE )
-		DEBUG_ASSERTCRASH( m_isModelDirty == FALSE, ("Drawble::xfer - m_isModelDirty is not FALSE!\n") );
+		DEBUG_ASSERTCRASH( m_isModelDirty == FALSE, ("Drawble::xfer - m_isModelDirty is not FALSE!") );
 	else
 		m_isModelDirty = TRUE;
 #endif

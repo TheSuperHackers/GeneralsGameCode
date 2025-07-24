@@ -38,11 +38,6 @@
 #include "GameLogic/PartitionManager.h"
 #include "GameLogic/AIPathfind.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 SupplyWarehouseDockUpdateModuleData::SupplyWarehouseDockUpdateModuleData( void )
@@ -100,7 +95,7 @@ Bool SupplyWarehouseDockUpdate::action( Object* docker, Object *drone )
 	Real closeEnoughSqr = sqr(docker->getGeometryInfo().getBoundingCircleRadius()*2);
 	Real curDistSqr = ThePartitionManager->getDistanceSquared(docker, getObject(), FROM_BOUNDINGSPHERE_2D);
 	if (curDistSqr > closeEnoughSqr) {
-		DEBUG_LOG(("Failing dock, dist %f, not close enough(%f).\n", sqrt(curDistSqr), sqrt(closeEnoughSqr)));
+		DEBUG_LOG(("Failing dock, dist %f, not close enough(%f).", sqrt(curDistSqr), sqrt(closeEnoughSqr)));
 		// Make it twitch a little.
 		Coord3D newPos = *docker->getPosition();
 		Real range = 0.4*PATHFIND_CELL_SIZE_F;

@@ -51,11 +51,6 @@
 #include "Common/Xfer.h"
 #include "GameLogic/Object.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 //-----------------------------------------------------------------------------
 Energy::Energy()
@@ -74,7 +69,7 @@ Int Energy::getProduction() const
 //-----------------------------------------------------------------------------
 Real Energy::getEnergySupplyRatio() const 
 { 
-	DEBUG_ASSERTCRASH(m_energyProduction >= 0 && m_energyConsumption >= 0, ("neg Energy numbers\n"));
+	DEBUG_ASSERTCRASH(m_energyProduction >= 0 && m_energyConsumption >= 0, ("neg Energy numbers"));
 
 	if (m_energyConsumption == 0)
 		return (Real)m_energyProduction;

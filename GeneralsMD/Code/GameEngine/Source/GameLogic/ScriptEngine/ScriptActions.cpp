@@ -86,11 +86,6 @@
 #include "GameLogic/VictoryConditions.h"
 #include "GameLogic/AIPathfind.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 // Kind of hacky, but we need to dance on the guts of the terrain.
 extern void oversizeTheTerrain(Int amount);
@@ -431,7 +426,7 @@ void ScriptActions::doMoveToWaypoint(const AsciiString& team, const AsciiString&
 		Waypoint *way = TheTerrainLogic->getWaypointByName(waypoint);
 		if (way) {
 			Coord3D destination = *way->getLocation();
-			//DEBUG_LOG(("Moving team to waypoint %f, %f, %f\n", destination.x, destination.y, destination.z));
+			//DEBUG_LOG(("Moving team to waypoint %f, %f, %f", destination.x, destination.y, destination.z));
  			theGroup->groupMoveToPosition( &destination, false, CMD_FROM_SCRIPT );
 		}
 	}
@@ -520,7 +515,7 @@ void ScriptActions::doCreateReinforcements(const AsciiString& team, const AsciiS
 
 	destination = *way->getLocation();
 	if (!theTeamProto) {
-		DEBUG_LOG(("***WARNING - Team %s not found.\n", team.str()));
+		DEBUG_LOG(("***WARNING - Team %s not found.", team.str()));
 		return;
 	}
 	const TeamTemplateInfo *pInfo = theTeamProto->getTemplateInfo();
@@ -1007,7 +1002,7 @@ void ScriptActions::doCreateObject(const AsciiString& objectName, const AsciiStr
 	if (!theTeam) {
 		TheScriptEngine->AppendDebugMessage("***WARNING - Team not found:***", false);
 		TheScriptEngine->AppendDebugMessage(teamName, true);
-		DEBUG_LOG(("WARNING - Team %s not found.\n", teamName.str()));
+		DEBUG_LOG(("WARNING - Team %s not found.", teamName.str()));
 		return;
 	}
 	const ThingTemplate *thingTemplate;
@@ -1039,7 +1034,7 @@ void ScriptActions::doCreateObject(const AsciiString& objectName, const AsciiStr
 
 		}  // end if
 	} else {
-		DEBUG_LOG(("WARNING - ThingTemplate '%s' not found.\n", thingName.str()));
+		DEBUG_LOG(("WARNING - ThingTemplate '%s' not found.", thingName.str()));
 	}
 }
 
@@ -1198,7 +1193,7 @@ void ScriptActions::createUnitOnTeamAt(const AsciiString& unitName, const AsciiS
 	if (!theTeam) {
 		TheScriptEngine->AppendDebugMessage("***WARNING - Team not found:***", false);
 		TheScriptEngine->AppendDebugMessage(teamName, true);
-		DEBUG_LOG(("WARNING - Team %s not found.\n", teamName.str()));
+		DEBUG_LOG(("WARNING - Team %s not found.", teamName.str()));
 		return;
 	}
 	const ThingTemplate *thingTemplate;
@@ -1226,7 +1221,7 @@ void ScriptActions::createUnitOnTeamAt(const AsciiString& unitName, const AsciiS
 			}
 		}  // end if
 	} else {
-		DEBUG_LOG(("WARNING - ThingTemplate '%s' not found.\n", objType.str()));
+		DEBUG_LOG(("WARNING - ThingTemplate '%s' not found.", objType.str()));
 	}
 }
 
@@ -1671,7 +1666,7 @@ void ScriptActions::doNamedFollowWaypoints(const AsciiString& unitName, const As
 		return;
 	}
 
-	DEBUG_ASSERTLOG(TheTerrainLogic->isPurposeOfPath(way, waypointPathLabel), ("***Wrong waypoint purpose. Make jba fix this.\n"));
+	DEBUG_ASSERTLOG(TheTerrainLogic->isPurposeOfPath(way, waypointPathLabel), ("***Wrong waypoint purpose. Make jba fix this."));
 	
 	theUnit->leaveGroup();
 	aiUpdate->chooseLocomotorSet(LOCOMOTORSET_NORMAL);
@@ -1698,7 +1693,7 @@ void ScriptActions::doNamedFollowWaypointsExact(const AsciiString& unitName, con
 		return;
 	}
 
-	DEBUG_ASSERTLOG(TheTerrainLogic->isPurposeOfPath(way, waypointPathLabel), ("***Wrong waypoint purpose. Make jba fix this.\n"));
+	DEBUG_ASSERTLOG(TheTerrainLogic->isPurposeOfPath(way, waypointPathLabel), ("***Wrong waypoint purpose. Make jba fix this."));
 	
 	theUnit->leaveGroup();
 	aiUpdate->chooseLocomotorSet(LOCOMOTORSET_NORMAL);
@@ -1763,7 +1758,7 @@ void ScriptActions::doTeamFollowSkirmishApproachPath(const AsciiString& teamName
 		aiPlayer->checkBridges(firstUnit, way);
 	}
 
-	DEBUG_ASSERTLOG(TheTerrainLogic->isPurposeOfPath(way, pathLabel), ("***Wrong waypoint purpose. Make jba fix this.\n"));
+	DEBUG_ASSERTLOG(TheTerrainLogic->isPurposeOfPath(way, pathLabel), ("***Wrong waypoint purpose. Make jba fix this."));
 	if (asTeam) 
 	{
 		theGroup->groupFollowWaypointPathAsTeam(way, CMD_FROM_SCRIPT);
@@ -1820,7 +1815,7 @@ void ScriptActions::doTeamMoveToSkirmishApproachPath(const AsciiString& teamName
 	if (!way) {
 		return;
 	}
-	DEBUG_ASSERTLOG(TheTerrainLogic->isPurposeOfPath(way, pathLabel), ("***Wrong waypoint purpose. Make jba fix this.\n"));
+	DEBUG_ASSERTLOG(TheTerrainLogic->isPurposeOfPath(way, pathLabel), ("***Wrong waypoint purpose. Make jba fix this."));
 	theGroup->groupMoveToPosition(way->getLocation(), false, CMD_FROM_SCRIPT);
 }
 
@@ -1866,7 +1861,7 @@ void ScriptActions::doTeamFollowWaypoints(const AsciiString& teamName, const Asc
 	if (!way) {
 		return;
 	}
-	DEBUG_ASSERTLOG(TheTerrainLogic->isPurposeOfPath(way, waypointPathLabel), ("***Wrong waypoint purpose. Make jba fix this.\n"));
+	DEBUG_ASSERTLOG(TheTerrainLogic->isPurposeOfPath(way, waypointPathLabel), ("***Wrong waypoint purpose. Make jba fix this."));
 	if (asTeam) 
 	{
 		theGroup->groupFollowWaypointPathAsTeam(way, CMD_FROM_SCRIPT);
@@ -1917,7 +1912,7 @@ void ScriptActions::doTeamFollowWaypointsExact(const AsciiString& teamName, cons
 	if (!way) {
 		return;
 	}
-	DEBUG_ASSERTLOG(TheTerrainLogic->isPurposeOfPath(way, waypointPathLabel), ("***Wrong waypoint purpose. Make jba fix this.\n"));
+	DEBUG_ASSERTLOG(TheTerrainLogic->isPurposeOfPath(way, waypointPathLabel), ("***Wrong waypoint purpose. Make jba fix this."));
 	if (asTeam) 
 	{
 		theGroup->groupFollowWaypointPathAsTeamExact(way, CMD_FROM_SCRIPT);
@@ -3062,7 +3057,7 @@ static PlayerMaskType getHumanPlayerMask( void )
 			mask &= player->getPlayerMask();
 	}
 
-	//DEBUG_LOG(("getHumanPlayerMask(): mask was %4.4X\n", mask));
+	//DEBUG_LOG(("getHumanPlayerMask(): mask was %4.4X", mask));
 	return mask;
 }
 
@@ -3121,22 +3116,22 @@ void ScriptActions::doShroudMapAtWaypoint(const AsciiString& waypointName, Real 
 //-------------------------------------------------------------------------------------------------
 void ScriptActions::doRevealMapEntire(const AsciiString& playerName)
 {
-	DEBUG_LOG(("ScriptActions::doRevealMapEntire() for player named '%s'\n", playerName.str()));
+	DEBUG_LOG(("ScriptActions::doRevealMapEntire() for player named '%s'", playerName.str()));
 	Player* player = TheScriptEngine->getPlayerFromAsciiString(playerName);
 	if (player && playerName.isNotEmpty())
 	{
-		DEBUG_LOG(("ScriptActions::doRevealMapEntire() for player named '%ls' in position %d\n", player->getPlayerDisplayName().str(), player->getPlayerIndex()));
+		DEBUG_LOG(("ScriptActions::doRevealMapEntire() for player named '%ls' in position %d", player->getPlayerDisplayName().str(), player->getPlayerIndex()));
 		ThePartitionManager->revealMapForPlayer( player->getPlayerIndex() );
 	}
 	else
 	{
-		DEBUG_LOG(("ScriptActions::doRevealMapEntire() - no player, so doing all human players\n"));
+		DEBUG_LOG(("ScriptActions::doRevealMapEntire() - no player, so doing all human players"));
 		for (Int i=0; i<ThePlayerList->getPlayerCount(); ++i)
 		{
 			Player *player = ThePlayerList->getNthPlayer(i);
 			if (player->getPlayerType() == PLAYER_HUMAN)
 			{
-				DEBUG_LOG(("ScriptActions::doRevealMapEntire() for player %d\n", i));
+				DEBUG_LOG(("ScriptActions::doRevealMapEntire() for player %d", i));
 				ThePartitionManager->revealMapForPlayer( i );
 			}
 		}
@@ -3160,7 +3155,7 @@ void ScriptActions::doRevealMapEntirePermanently( Bool reveal, const AsciiString
 			Player *player = ThePlayerList->getNthPlayer(i);
 			if (player->getPlayerType() == PLAYER_HUMAN)
 			{
-				DEBUG_LOG(("ScriptActions::doRevealMapEntirePermanently() for player %d\n", i));
+				DEBUG_LOG(("ScriptActions::doRevealMapEntirePermanently() for player %d", i));
 				if( reveal )
 					ThePartitionManager->revealMapForPlayerPermanently( i );
 				else
@@ -3187,7 +3182,7 @@ void ScriptActions::doShroudMapEntire(const AsciiString& playerName)
 			Player *player = ThePlayerList->getNthPlayer(i);
 			if (player->getPlayerType() == PLAYER_HUMAN)
 			{
-				DEBUG_LOG(("ScriptActions::doShroudMapEntire() for player %d\n", i));
+				DEBUG_LOG(("ScriptActions::doShroudMapEntire() for player %d", i));
 				ThePartitionManager->shroudMapForPlayer( i );
 			}
 		}
@@ -3261,7 +3256,7 @@ void ScriptActions::doMergeTeamIntoTeam(const AsciiString& teamSrcName, const As
 //-------------------------------------------------------------------------------------------------
 void ScriptActions::doDisableInput()
 {
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	if (!TheGlobalData->m_disableScriptedInputDisabling)
 #endif
 	{
@@ -3312,7 +3307,7 @@ void ScriptActions::doIdleAllPlayerUnits(const AsciiString& playerName)
 			Player *player = ThePlayerList->getNthPlayer(i);
 			if (player->getPlayerType() == PLAYER_HUMAN)
 			{
-				DEBUG_LOG(("ScriptActions::doIdleAllPlayerUnits() for player %d\n", i));
+				DEBUG_LOG(("ScriptActions::doIdleAllPlayerUnits() for player %d", i));
 				player->setUnitsShouldIdleOrResume(true);
 			}
 		}
@@ -3336,7 +3331,7 @@ void ScriptActions::doResumeSupplyTruckingForIdleUnits(const AsciiString& player
 			Player *player = ThePlayerList->getNthPlayer(i);
 			if (player->getPlayerType() == PLAYER_HUMAN)
 			{
-				DEBUG_LOG(("ScriptActions::doResumeSupplyTruckingForIdleUnits() for player %d\n", i));
+				DEBUG_LOG(("ScriptActions::doResumeSupplyTruckingForIdleUnits() for player %d", i));
 				player->setUnitsShouldIdleOrResume(false);
 			}
 		}
@@ -3916,7 +3911,7 @@ void ScriptActions::doUnfreezeTime(void)
 //-------------------------------------------------------------------------------------------------
 void ScriptActions::doMilitaryCaption(const AsciiString& briefing, Int duration)
 {
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	if (TheGlobalData->m_disableMilitaryCaption)
 		duration = 1;
 #endif
@@ -4831,7 +4826,7 @@ void ScriptActions::doNamedFireWeaponFollowingWaypointPath( const AsciiString& u
 		{
 			return;
 		}
-		DEBUG_ASSERTLOG(TheTerrainLogic->isPurposeOfPath(way, waypointPath), ("***Wrong waypoint purpose. Make jba fix this.\n"));
+		DEBUG_ASSERTLOG(TheTerrainLogic->isPurposeOfPath(way, waypointPath), ("***Wrong waypoint purpose. Make jba fix this."));
 		
 		projectile->leaveGroup();
 		aiUpdate->chooseLocomotorSet(LOCOMOTORSET_NORMAL);
@@ -6223,7 +6218,7 @@ void ScriptActions::doC3CameraShake
 )
 {
 	Waypoint *way = TheTerrainLogic->getWaypointByName(waypointName);
-	DEBUG_ASSERTLOG( (way != NULL), ("Camera shake with No Valid Waypoint\n") );
+	DEBUG_ASSERTLOG( (way != NULL), ("Camera shake with No Valid Waypoint") );
 	Coord3D pos = *way->getLocation();
 
 	TheTacticalView->Add_Camera_Shake(pos, radius, duration_seconds, amplitude);
@@ -6883,7 +6878,7 @@ void ScriptActions::executeAction( ScriptAction *pAction )
 			{
 				const char* MSG = "Your Script requested the following message be displayed:\n\n";
 				const char* MSG2 = "\n\nTHIS IS NOT A BUG. DO NOT REPORT IT.";
-				DEBUG_CRASH(("%s%s%s\n",MSG,pAction->getParameter(0)->getString().str(),MSG2));
+				DEBUG_CRASH(("%s%s%s",MSG,pAction->getParameter(0)->getString().str(),MSG2));
 			}
 #endif
 			return;

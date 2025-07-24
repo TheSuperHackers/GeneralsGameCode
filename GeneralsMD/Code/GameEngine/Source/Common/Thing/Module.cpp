@@ -47,11 +47,6 @@
 #include "GameLogic/Module/UpdateModule.h"
 #include "GameLogic/Module/UpgradeModule.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma message("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // PUBLIC FUNCTIONS ///////////////////////////////////////////////////////////////////////////////
@@ -113,13 +108,13 @@ ObjectModule::ObjectModule( Thing *thing, const ModuleData* moduleData ) : Modul
 { 
 	if (!moduleData)
 	{
-		DEBUG_CRASH(("module data may not be null\n"));
+		DEBUG_CRASH(("module data may not be null"));
 		throw INI_INVALID_DATA;
 	}
 
-	DEBUG_ASSERTCRASH( thing, ("Thing passed to ObjectModule is NULL!\n") );
+	DEBUG_ASSERTCRASH( thing, ("Thing passed to ObjectModule is NULL!") );
 	m_object = AsObject(thing);
-	DEBUG_ASSERTCRASH( m_object, ("Thing passed to ObjectModule is not an Object!\n") );
+	DEBUG_ASSERTCRASH( m_object, ("Thing passed to ObjectModule is not an Object!") );
 
 }  // end ObjectModule
 
@@ -176,13 +171,13 @@ DrawableModule::DrawableModule( Thing *thing, const ModuleData* moduleData ) : M
 { 
 	if (!moduleData)
 	{
-		DEBUG_CRASH(("module data may not be null\n"));
+		DEBUG_CRASH(("module data may not be null"));
 		throw INI_INVALID_DATA;
 	}
 
-	DEBUG_ASSERTCRASH( thing, ("Thing passed to DrawableModule is NULL!\n") );
+	DEBUG_ASSERTCRASH( thing, ("Thing passed to DrawableModule is NULL!") );
 	m_drawable = AsDrawable(thing);
-	DEBUG_ASSERTCRASH( m_drawable, ("Thing passed to DrawableModule is not a Drawable!\n") );
+	DEBUG_ASSERTCRASH( m_drawable, ("Thing passed to DrawableModule is not a Drawable!") );
 
 }  // end ~DrawableModule
 

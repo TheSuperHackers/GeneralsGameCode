@@ -46,11 +46,6 @@
 #include "GameLogic/Module/BodyModule.h"
 #include "GameLogic/Module/AIUpdate.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 static const Real DONUT_TIME_DELAY_SECONDS=2.5f;
 static const Real DONUT_DISTANCE=4.0*PATHFIND_CELL_SIZE_F;
@@ -398,25 +393,25 @@ void LocomotorTemplate::validate()
 				m_lift != 0.0f ||
 				m_liftDamaged != 0.0f)
 		{
-			DEBUG_CRASH(("THRUST locos may not use ZAxisBehavior or lift!\n"));
+			DEBUG_CRASH(("THRUST locos may not use ZAxisBehavior or lift!"));
 			throw INI_INVALID_DATA;
 		}
 		if (m_maxSpeed <= 0.0f)
 		{
 			// if one of these was omitted, it defaults to zero... just quietly heal it here, rather than crashing
-			DEBUG_LOG(("THRUST locos may not have zero m_maxSpeed; healing...\n"));
+			DEBUG_LOG(("THRUST locos may not have zero m_maxSpeed; healing..."));
 			m_maxSpeed = 0.01f;
 		}
 		if (m_maxSpeedDamaged <= 0.0f)
 		{
 			// if one of these was omitted, it defaults to zero... just quietly heal it here, rather than crashing
-			DEBUG_LOG(("THRUST locos may not have zero m_maxSpeedDamaged; healing...\n"));
+			DEBUG_LOG(("THRUST locos may not have zero m_maxSpeedDamaged; healing..."));
 			m_maxSpeedDamaged = 0.01f;
 		}
 		if (m_minSpeed <= 0.0f)
 		{
 			// if one of these was omitted, it defaults to zero... just quietly heal it here, rather than crashing
-			DEBUG_LOG(("THRUST locos may not have zero m_minSpeed; healing...\n"));
+			DEBUG_LOG(("THRUST locos may not have zero m_minSpeed; healing..."));
 			m_minSpeed = 0.01f;
 		}
 	}
@@ -871,7 +866,7 @@ void Locomotor::locoUpdate_moveTowardsAngle(Object* obj, Real goalAngle)
 	}
 
 #ifdef DEBUG_OBJECT_ID_EXISTS
-//	DEBUG_ASSERTLOG(obj->getID() != TheObjectIDToDebug, ("locoUpdate_moveTowardsAngle %f (%f deg), spd %f (%f)\n",goalAngle,goalAngle*180/PI,physics->getSpeed(),physics->getForwardSpeed2D()));
+//	DEBUG_ASSERTLOG(obj->getID() != TheObjectIDToDebug, ("locoUpdate_moveTowardsAngle %f (%f deg), spd %f (%f)",goalAngle,goalAngle*180/PI,physics->getSpeed(),physics->getForwardSpeed2D()));
 #endif
 
 	Real minSpeed = getMinSpeed();
@@ -892,7 +887,7 @@ void Locomotor::locoUpdate_moveTowardsAngle(Object* obj, Real goalAngle)
 	}
 	else
 	{
-		DEBUG_ASSERTCRASH(m_template->m_appearance != LOCO_THRUST, ("THRUST should always have minspeeds!\n"));
+		DEBUG_ASSERTCRASH(m_template->m_appearance != LOCO_THRUST, ("THRUST should always have minspeeds!"));
 		Coord3D desiredPos = *obj->getPosition();
 		desiredPos.x += Cos(goalAngle) * 1000.0f;
 		desiredPos.y += Sin(goalAngle) * 1000.0f;
@@ -958,7 +953,7 @@ void Locomotor::locoUpdate_moveTowardsPosition(Object* obj, const Coord3D& goalP
 	}
 
 #ifdef DEBUG_OBJECT_ID_EXISTS
-//	DEBUG_ASSERTLOG(obj->getID() != TheObjectIDToDebug, ("locoUpdate_moveTowardsPosition %f %f %f (dtg %f, spd %f), speed %f (%f)\n",goalPos.x,goalPos.y,goalPos.z,onPathDistToGoal,desiredSpeed,physics->getSpeed(),physics->getForwardSpeed2D()));
+//	DEBUG_ASSERTLOG(obj->getID() != TheObjectIDToDebug, ("locoUpdate_moveTowardsPosition %f %f %f (dtg %f, spd %f), speed %f (%f)",goalPos.x,goalPos.y,goalPos.z,onPathDistToGoal,desiredSpeed,physics->getSpeed(),physics->getForwardSpeed2D()));
 #endif
 
 	//
@@ -1215,7 +1210,7 @@ void Locomotor::moveTowardsPositionTreads(Object* obj, PhysicsBehavior *physics,
 	}
 
 
-	//DEBUG_LOG(("Actual speed %f, Braking factor %f, slowDownDist %f, Pathdist %f, goalSpeed %f\n", 
+	//DEBUG_LOG(("Actual speed %f, Braking factor %f, slowDownDist %f, Pathdist %f, goalSpeed %f", 
 	//	actualSpeed, m_brakingFactor, slowDownDist, onPathDistToGoal, goalSpeed));
 
 	//
@@ -1424,7 +1419,7 @@ void Locomotor::moveTowardsPositionWheels(Object* obj, PhysicsBehavior *physics,
 	}
 
 
-	//DEBUG_LOG(("Actual speed %f, Braking factor %f, slowDownDist %f, Pathdist %f, goalSpeed %f\n", 
+	//DEBUG_LOG(("Actual speed %f, Braking factor %f, slowDownDist %f, Pathdist %f, goalSpeed %f", 
 	//	actualSpeed, m_brakingFactor, slowDownDist, onPathDistToGoal, goalSpeed));
 
 
@@ -1475,7 +1470,7 @@ void Locomotor::moveTowardsPositionWheels(Object* obj, PhysicsBehavior *physics,
 		if (fabs(accelForce) > fabs(maxForceNeeded))
 			accelForce = maxForceNeeded;
 
-		//DEBUG_LOG(("Braking %d, actualSpeed %f, goalSpeed %f, delta %f, accel %f\n", getFlag(IS_BRAKING),
+		//DEBUG_LOG(("Braking %d, actualSpeed %f, goalSpeed %f, delta %f, accel %f", getFlag(IS_BRAKING),
 			//actualSpeed, goalSpeed, speedDelta, accelForce));
 
 		const Coord3D *dir = obj->getUnitDirectionVector2D();
@@ -1983,7 +1978,7 @@ void Locomotor::moveTowardsPositionThrust(Object* obj, PhysicsBehavior *physics,
 		Vector3 curVel(physics->getVelocity()->x, physics->getVelocity()->y, physics->getVelocity()->z);
 
 		Vector3 accelVec = thrustDir * maxAccel - curVel * damping;
-		//DEBUG_LOG(("accel %f (max %f) vel %f (max %f) damping %f\n",accelVec.Length(),maxAccel,curVel.Length(),maxForwardSpeed,damping));
+		//DEBUG_LOG(("accel %f (max %f) vel %f (max %f) damping %f",accelVec.Length(),maxAccel,curVel.Length(),maxForwardSpeed,damping));
 
 		Real mass = physics->getMass();
 
@@ -2266,7 +2261,7 @@ Bool Locomotor::handleBehaviorZ(Object* obj, PhysicsBehavior *physics, const Coo
 
 					Real liftToUse = calcLiftToUseAtPt(obj, physics, pos.z, surfaceHt, preferredHeight);
 
-					//DEBUG_LOG(("HandleBZ %d LiftToUse %f\n",TheGameLogic->getFrame(),liftToUse));
+					//DEBUG_LOG(("HandleBZ %d LiftToUse %f",TheGameLogic->getFrame(),liftToUse));
 					if (liftToUse != 0.0f)
 					{
 						Coord3D force;
@@ -2299,7 +2294,7 @@ Bool Locomotor::handleBehaviorZ(Object* obj, PhysicsBehavior *physics, const Coo
 
 					Real liftToUse = calcLiftToUseAtPt(obj, physics, pos.z, surfaceHt, preferredHeight);
 
-					//DEBUG_LOG(("HandleBZ %d LiftToUse %f\n",TheGameLogic->getFrame(),liftToUse));
+					//DEBUG_LOG(("HandleBZ %d LiftToUse %f",TheGameLogic->getFrame(),liftToUse));
 					if (liftToUse != 0.0f)
 					{
 						Coord3D force;
@@ -2339,7 +2334,7 @@ void Locomotor::moveTowardsPositionOther(Object* obj, PhysicsBehavior *physics, 
 	const Coord3D* pos =  obj->getPosition();
 	Coord3D dirToApplyForce = *obj->getUnitDirectionVector2D();
 
-//DEBUG_ASSERTLOG(!getFlag(ULTRA_ACCURATE),("thresh %f %f (%f %f)\n",
+//DEBUG_ASSERTLOG(!getFlag(ULTRA_ACCURATE),("thresh %f %f (%f %f)",
 //fabs(goalPos.y - pos->y),fabs(goalPos.x - pos->x),
 //fabs(goalPos.y - pos->y)/goalSpeed,fabs(goalPos.x - pos->x)/goalSpeed));
 	if (getFlag(ULTRA_ACCURATE) && 
@@ -2421,7 +2416,7 @@ Bool Locomotor::locoUpdate_maintainCurrentPosition(Object* obj)
 	}
 
 #ifdef DEBUG_OBJECT_ID_EXISTS
-//	DEBUG_ASSERTLOG(obj->getID() != TheObjectIDToDebug, ("locoUpdate_maintainCurrentPosition %f %f %f, speed %f (%f)\n",m_maintainPos.x,m_maintainPos.y,m_maintainPos.z,physics->getSpeed(),physics->getForwardSpeed2D()));
+//	DEBUG_ASSERTLOG(obj->getID() != TheObjectIDToDebug, ("locoUpdate_maintainCurrentPosition %f %f %f, speed %f (%f)",m_maintainPos.x,m_maintainPos.y,m_maintainPos.z,physics->getSpeed(),physics->getForwardSpeed2D()));
 #endif
 
 	Bool requiresConstantCalling = TRUE;	// assume the worst.
@@ -2648,7 +2643,7 @@ void LocomotorSet::xfer( Xfer *xfer )
 		// vector should be empty at this point
 		if (m_locomotors.empty() == FALSE)
 		{
-			DEBUG_CRASH(( "LocomotorSet::xfer - vector is not empty, but should be\n" ));
+			DEBUG_CRASH(( "LocomotorSet::xfer - vector is not empty, but should be" ));
 			throw XFER_LIST_NOT_EMPTY;
 		}
 
@@ -2660,7 +2655,7 @@ void LocomotorSet::xfer( Xfer *xfer )
 			const LocomotorTemplate* lt = TheLocomotorStore->findLocomotorTemplate(NAMEKEY(name));
 			if (lt == NULL)
 			{
-				DEBUG_CRASH(( "LocomotorSet::xfer - template %s not found\n", name.str() ));
+				DEBUG_CRASH(( "LocomotorSet::xfer - template %s not found", name.str() ));
 				throw XFER_UNKNOWN_STRING;
 			}
 
@@ -2715,7 +2710,7 @@ void LocomotorSet::xferSelfAndCurLocoPtr(Xfer *xfer, Locomotor** loco)
 				}
 			}
 
-			DEBUG_CRASH(( "LocomotorSet::xfer - template %s not found\n", name.str() ));
+			DEBUG_CRASH(( "LocomotorSet::xfer - template %s not found", name.str() ));
 			throw XFER_UNKNOWN_STRING;
 		}
 	}

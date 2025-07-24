@@ -53,11 +53,6 @@
 #include "GameLogic/Module/ContainModule.h"
 #include "GameLogic/Module/StealthUpdate.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 // GLOBALS ////////////////////////////////////////////////////////////////////////////////////////
 Radar *TheRadar = NULL;  ///< the radar global singleton
@@ -75,6 +70,8 @@ void Radar::deleteListResources( void )
 	// delete entries from the local object list
 	while( m_localObjectList )
 	{
+
+		onLocalRadarObjectRemoved( m_localObjectList );
 
 		// get next object
 		nextObject = m_localObjectList->friend_getNext();
@@ -180,7 +177,7 @@ void RadarObject::xfer( Xfer *xfer )
 		if( m_object == NULL )
 		{
 
-			DEBUG_CRASH(( "RadarObject::xfer - Unable to find object for radar data\n" ));
+			DEBUG_CRASH(( "RadarObject::xfer - Unable to find object for radar data" ));
 			throw SC_INVALID_DATA;
 
 		}  // end if
@@ -336,7 +333,7 @@ void Radar::newMap( TerrainLogic *terrain )
 	// keep a pointer for our radar window
 	Int id = NAMEKEY( "ControlBar.wnd:LeftHUD" );
 	m_radarWindow = TheWindowManager->winGetWindowFromId( NULL, id );
-	DEBUG_ASSERTCRASH( m_radarWindow, ("Radar::newMap - Unable to find radar game window\n") );
+	DEBUG_ASSERTCRASH( m_radarWindow, ("Radar::newMap - Unable to find radar game window") );
 
 	// reset all the data in the radar
 	reset();
@@ -411,7 +408,7 @@ bool Radar::addObject( Object *obj )
 
 	// sanity
 	DEBUG_ASSERTCRASH( obj->friend_getRadarData() == NULL,
-										 ("Radar: addObject - non NULL radar data for '%s'\n", 
+										 ("Radar: addObject - non NULL radar data for '%s'", 
 										 obj->getTemplate()->getName().str()) );
 
 	// allocate a new object
@@ -547,6 +544,11 @@ bool Radar::addObject( Object *obj )
 
 	}  // end else
 
+	if (list == &m_localObjectList)
+	{
+		onLocalRadarObjectAdded(newObj);
+	}
+
 	return true;
 }  // end addObject
 
@@ -563,6 +565,10 @@ Bool Radar::deleteFromList( Object *obj, RadarObject **list )
 		
 		if( radarObject->friend_getObject() == obj )
 		{
+			if (list == &m_localObjectList)
+			{
+				onLocalRadarObjectRemoved( radarObject );
+			}
 
 			// unlink the object from list
 			if( prevObject == NULL )
@@ -609,7 +615,7 @@ bool Radar::removeObject( Object *obj )
 	{
 
 		// sanity
-		DEBUG_ASSERTCRASH( 0, ("Radar: Tried to remove object '%s' which was not found\n",
+		DEBUG_ASSERTCRASH( 0, ("Radar: Tried to remove object '%s' which was not found",
 											 obj->getTemplate()->getName().str()) );
 		return false;
 	}  // end else
@@ -871,7 +877,7 @@ Object *Radar::searchListForRadarLocationMatch( RadarObject *listHead, ICoord2D 
 		if( obj == NULL )
 		{
 
-			DEBUG_CRASH(( "Radar::searchListForRadarLocationMatch - NULL object encountered in list\n" ));
+			DEBUG_CRASH(( "Radar::searchListForRadarLocationMatch - NULL object encountered in list" ));
 			continue;
 
 		}  // end if
@@ -1047,7 +1053,7 @@ void Radar::createEvent( const Coord3D *world, RadarEventType type, Real seconds
 		static RGBAColorInt color1 = { 255, 255, 255, 255 };
 		static RGBAColorInt color2 = { 255, 255, 255, 255 };
 
-		DEBUG_CRASH(( "Radar::createEvent - Event not found in color table, using default colors\n" ));
+		DEBUG_CRASH(( "Radar::createEvent - Event not found in color table, using default colors" ));
 		color[ 0 ] = color1;
 		color[ 1 ] = color2;
 
@@ -1390,7 +1396,7 @@ static void xferRadarObjectList( Xfer *xfer, RadarObject **head )
 	RadarObject *radarObject;
 
 	// sanity
-	DEBUG_ASSERTCRASH( head != NULL, ("xferRadarObjectList - Invalid parameters\n" ));
+	DEBUG_ASSERTCRASH( head != NULL, ("xferRadarObjectList - Invalid parameters" ));
 
 	// version
 	XferVersion currentVersion = 1;
@@ -1431,12 +1437,12 @@ static void xferRadarObjectList( Xfer *xfer, RadarObject **head )
 			{
 				if (!radarObject->friend_getObject()->isDestroyed())
 				{
-					DEBUG_CRASH(( "xferRadarObjectList - List head should be NULL, or contain only destroyed objects\n" ));
+					DEBUG_CRASH(( "xferRadarObjectList - List head should be NULL, or contain only destroyed objects" ));
 					throw SC_INVALID_DATA;
 				}
 			}
 #else
-			DEBUG_CRASH(( "xferRadarObjectList - List head should be NULL, but isn't\n" ));
+			DEBUG_CRASH(( "xferRadarObjectList - List head should be NULL, but isn't" ));
 			throw SC_INVALID_DATA;
 #endif
 		}  // end if
@@ -1505,7 +1511,7 @@ void Radar::xfer( Xfer *xfer )
 	if( eventCount != eventCountVerify )
 	{
 
-		DEBUG_CRASH(( "Radar::xfer - size of MAX_RADAR_EVENTS has changed, you must version this xfer method to accomodate the new array size.  Was '%d' and is now '%d'\n",
+		DEBUG_CRASH(( "Radar::xfer - size of MAX_RADAR_EVENTS has changed, you must version this xfer method to accomodate the new array size.  Was '%d' and is now '%d'",
 									eventCount, eventCountVerify ));
 		throw SC_INVALID_DATA;
 

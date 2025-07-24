@@ -62,11 +62,6 @@
 
 #include "Common/STLTypedefs.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 // PRIVATE DATA ///////////////////////////////////////////////////////////////////////////////////
 enum {
@@ -299,7 +294,7 @@ static void gameTooltip(GameWindow *window,
 		GameSpyGameSlot *slot = room->getGameSpySlot(i);
 		if (i == 0 && (!slot || !slot->isHuman()))
 		{
-			DEBUG_CRASH(("About to tooltip a non-hosted game!\n"));
+			DEBUG_CRASH(("About to tooltip a non-hosted game!"));
 		}
 		if (slot && slot->isHuman())
 		{
@@ -327,7 +322,7 @@ static void gameTooltip(GameWindow *window,
 			}
 		}
 	}
-	DEBUG_ASSERTCRASH(numPlayers, ("Tooltipping a 0-player game!\n"));
+	DEBUG_ASSERTCRASH(numPlayers, ("Tooltipping a 0-player game!"));
 
 	TheMouse->setCursorTooltip( tooltip, 10, NULL, 2.0f ); // the text and width are the only params used.  the others are the default values.
 }

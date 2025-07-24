@@ -62,11 +62,6 @@
 #include "GameClient/Mouse.h"
 #include "GameClient/SelectionXlat.h"
 #include "GameClient/GameWindowTransitions.h"
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 // DEFINES ////////////////////////////////////////////////////////////////////
 
@@ -1612,7 +1607,7 @@ Int GameWindow::winSetEnabledImage( Int index, const Image *image )
 	if( index < 0 || index >= MAX_DRAW_DATA )
 	{
 
-		DEBUG_LOG(( "set enabled image, index out of range '%d'\n", index ));
+		DEBUG_LOG(( "set enabled image, index out of range '%d'", index ));
 		assert( 0 );
 		return WIN_ERR_INVALID_PARAMETER;
 
@@ -1633,7 +1628,7 @@ Int GameWindow::winSetEnabledColor( Int index, Color color )
 	if( index < 0 || index >= MAX_DRAW_DATA )
 	{
 
-		DEBUG_LOG(( "set enabled color, index out of range '%d'\n", index ));
+		DEBUG_LOG(( "set enabled color, index out of range '%d'", index ));
 		assert( 0 );
 		return WIN_ERR_INVALID_PARAMETER;
 
@@ -1654,7 +1649,7 @@ Int GameWindow::winSetEnabledBorderColor( Int index, Color color )
 	if( index < 0 || index >= MAX_DRAW_DATA )
 	{
 
-		DEBUG_LOG(( "set enabled border color, index out of range '%d'\n", index ));
+		DEBUG_LOG(( "set enabled border color, index out of range '%d'", index ));
 		assert( 0 );
 		return WIN_ERR_INVALID_PARAMETER;
 
@@ -1675,7 +1670,7 @@ Int GameWindow::winSetDisabledImage( Int index, const Image *image )
 	if( index < 0 || index >= MAX_DRAW_DATA )
 	{
 
-		DEBUG_LOG(( "set disabled image, index out of range '%d'\n", index ));
+		DEBUG_LOG(( "set disabled image, index out of range '%d'", index ));
 		assert( 0 );
 		return WIN_ERR_INVALID_PARAMETER;
 
@@ -1696,7 +1691,7 @@ Int GameWindow::winSetDisabledColor( Int index, Color color )
 	if( index < 0 || index >= MAX_DRAW_DATA )
 	{
 
-		DEBUG_LOG(( "set disabled color, index out of range '%d'\n", index ));
+		DEBUG_LOG(( "set disabled color, index out of range '%d'", index ));
 		assert( 0 );
 		return WIN_ERR_INVALID_PARAMETER;
 
@@ -1717,7 +1712,7 @@ Int GameWindow::winSetDisabledBorderColor( Int index, Color color )
 	if( index < 0 || index >= MAX_DRAW_DATA )
 	{
 
-		DEBUG_LOG(( "set disabled border color, index out of range '%d'\n", index ));
+		DEBUG_LOG(( "set disabled border color, index out of range '%d'", index ));
 		assert( 0 );
 		return WIN_ERR_INVALID_PARAMETER;
 
@@ -1738,7 +1733,7 @@ Int GameWindow::winSetHiliteImage( Int index, const Image *image )
 	if( index < 0 || index >= MAX_DRAW_DATA )
 	{
 
-		DEBUG_LOG(( "set hilite image, index out of range '%d'\n", index ));
+		DEBUG_LOG(( "set hilite image, index out of range '%d'", index ));
 		assert( 0 );
 		return WIN_ERR_INVALID_PARAMETER;
 
@@ -1759,7 +1754,7 @@ Int GameWindow::winSetHiliteColor( Int index, Color color )
 	if( index < 0 || index >= MAX_DRAW_DATA )
 	{
 
-		DEBUG_LOG(( "set hilite color, index out of range '%d'\n", index ));
+		DEBUG_LOG(( "set hilite color, index out of range '%d'", index ));
 		assert( 0 );
 		return WIN_ERR_INVALID_PARAMETER;
 
@@ -1780,7 +1775,7 @@ Int GameWindow::winSetHiliteBorderColor( Int index, Color color )
 	if( index < 0 || index >= MAX_DRAW_DATA )
 	{
 
-		DEBUG_LOG(( "set hilite border color, index out of range '%d'\n", index ));
+		DEBUG_LOG(( "set hilite border color, index out of range '%d'", index ));
 		assert( 0 );
 		return WIN_ERR_INVALID_PARAMETER;
 

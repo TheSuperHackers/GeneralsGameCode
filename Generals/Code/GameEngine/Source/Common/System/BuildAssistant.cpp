@@ -59,11 +59,6 @@
 // PUBLIC DATA ////////////////////////////////////////////////////////////////////////////////////
 BuildAssistant *TheBuildAssistant = NULL;
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -595,7 +590,7 @@ void BuildAssistant::iterateFootprint( const ThingTemplate *build,
 	else
 	{
 
-		DEBUG_ASSERTCRASH( 0, ("iterateFootprint: Undefined geometry '%d' for '%s'\n",
+		DEBUG_ASSERTCRASH( 0, ("iterateFootprint: Undefined geometry '%d' for '%s'",
 											     build->getTemplateGeometryInfo().getGeomType(), build->getName().str()) );
 		return;
 
@@ -1201,7 +1196,7 @@ Bool BuildAssistant::isPossibleToMakeUnit( Object *builder, const ThingTemplate 
 	if( commandSet == NULL )
 	{
 
-		DEBUG_ASSERTLOG( 0, ("Can't build a '%s' from the builder '%s' because '%s' doesn't have any command set defined\n",
+		DEBUG_ASSERTLOG( 0, ("Can't build a '%s' from the builder '%s' because '%s' doesn't have any command set defined",
 													whatToBuild->getName().str(),
 													builder->getTemplate()->getName().str(),
 													builder->getTemplate()->getName().str()) );
@@ -1223,9 +1218,8 @@ Bool BuildAssistant::isPossibleToMakeUnit( Object *builder, const ThingTemplate 
 		// get this button
 		commandButton = commandSet->getCommandButton(i);
 		if( commandButton &&
-				(commandButton->getCommandType() == GUI_COMMAND_UNIT_BUILD ||
-				 commandButton->getCommandType() == GUI_COMMAND_DOZER_CONSTRUCT) &&
-				commandButton->getThingTemplate()->isEquivalentTo(whatToBuild) )
+				(commandButton->getCommandType() == GUI_COMMAND_UNIT_BUILD || commandButton->getCommandType() == GUI_COMMAND_DOZER_CONSTRUCT) &&
+				commandButton->getThingTemplate() && commandButton->getThingTemplate()->isEquivalentTo(whatToBuild) )
 			foundCommand = commandButton;
 
 	}  // end for i
@@ -1511,17 +1505,29 @@ void BuildAssistant::sellObject( Object *obj )
 	// set the model condition in the drawable for this object that will show the buildup
 	// scaffold and adjust the model height by construction percent
 	//
-	obj->setModelConditionFlags( MAKE_MODELCONDITION_MASK2( MODELCONDITION_PARTIALLY_CONSTRUCTED, 
-																													MODELCONDITION_ACTIVELY_BEING_CONSTRUCTED) );
+	obj->setModelConditionFlags( MAKE_MODELCONDITION_MASK2( MODELCONDITION_PARTIALLY_CONSTRUCTED, MODELCONDITION_ACTIVELY_BEING_CONSTRUCTED) );
 
+#if RETAIL_COMPATIBLE_AIGROUP
 	//
 	// set this object as under de-construction (sold).  It is still a legal target, since you get the money at 
 	// the completion of sale.
 	//
 	obj->setStatus( MAKE_OBJECT_STATUS_MASK2( OBJECT_STATUS_SOLD, OBJECT_STATUS_UNSELECTABLE ) );
+#endif
+
+	// TheSuperHackers @bugfix Mauller 27/06/2025 we need to deselect the object before setting it as unselectable
+	// If the object is set unselectable too soon, it fails to be removed from the selection group
 
 	// for everybody, unselect them at this time.  You can't just deselect a drawable.  Selection is a logic property.
 	TheGameLogic->deselectObject(obj, PLAYERMASK_ALL, TRUE);
+
+#if !RETAIL_COMPATIBLE_AIGROUP
+	//
+	// set this object as under de-construction (sold).  It is still a legal target, since you get the money at 
+	// the completion of sale.
+	//
+	obj->setStatus( MAKE_OBJECT_STATUS_MASK2( OBJECT_STATUS_SOLD, OBJECT_STATUS_UNSELECTABLE ) );
+#endif
 
 	//
 	// set the animation durations so that the regular build up loop animations can be

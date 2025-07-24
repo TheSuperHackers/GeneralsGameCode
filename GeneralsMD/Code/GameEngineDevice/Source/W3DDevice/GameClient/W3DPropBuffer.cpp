@@ -64,11 +64,6 @@
 #include "W3DDevice/GameClient/BaseHeightMap.h"
 #include "GameLogic/PartitionManager.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 
 
@@ -164,7 +159,7 @@ Int W3DPropBuffer::addPropType(const AsciiString &modelName)
 
 	m_propTypes[m_numPropTypes].m_robj = WW3DAssetManager::Get_Instance()->Create_Render_Obj(modelName.str());
 	if (m_propTypes[m_numPropTypes].m_robj==NULL) {
-		DEBUG_CRASH(("Unable to find model for prop %s\n", modelName.str()));
+		DEBUG_CRASH(("Unable to find model for prop %s", modelName.str()));
 		return -1;
 	}
 	m_propTypes[m_numPropTypes].m_robjName = modelName;

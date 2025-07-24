@@ -312,7 +312,7 @@ static void playerTooltip(GameWindow *window,
 	}
 	UnicodeString tooltip;
 	tooltip.format(TheGameText->fetch("TOOLTIP:LANPlayer"), player->getLogin().str(), player->getHost().str());
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	UnicodeString ip;
 	ip.format(L" - %d.%d.%d.%d", PRINTF_IP_AS_4_INTS(player->getIP()));
 	tooltip.concat(ip);
@@ -405,7 +405,7 @@ void LanLobbyMenuInit( WindowLayout *layout, void *userData )
 	{
 		IPSource = L"Default local IP";
 	}
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	UnicodeString str;
 	str.format(L"%s: %d.%d.%d.%d", IPSource, PRINTF_IP_AS_4_INTS(IP));
 	GadgetListBoxAddEntryText(listboxChatWindow, str, chatSystemColor, -1, 0);
@@ -580,7 +580,7 @@ void LanLobbyMenuUpdate( WindowLayout * layout, void *userData)
 
 	if (LANSocketErrorDetected == TRUE) {
 		LANSocketErrorDetected = FALSE;
-		DEBUG_LOG(("SOCKET ERROR!  BAILING!\n"));
+		DEBUG_LOG(("SOCKET ERROR!  BAILING!"));
 		MessageBoxOk(TheGameText->fetch("GUI:NetworkError"), TheGameText->fetch("GUI:SocketError"), NULL);
 
 		// we have a socket problem, back out to the main menu.
@@ -727,7 +727,7 @@ WindowMsgHandledType LanLobbyMenuSystem( GameWindow *window, UnsignedInt msg,
 				{
 					//shellmapOn = TRUE;
 					LANbuttonPushed = true;
-					DEBUG_LOG(("Back was hit - popping to main menu\n"));
+					DEBUG_LOG(("Back was hit - popping to main menu"));
 					TheShell->pop();
 					delete TheLAN;
 					TheLAN = NULL;

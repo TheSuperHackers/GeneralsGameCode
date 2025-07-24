@@ -47,11 +47,6 @@
 // PUBLIC DATA ////////////////////////////////////////////////////////////////////////////////////
 Shell *TheShell = NULL;  ///< the shell singleton definition
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 // PUBLIC FUNCTIONS ///////////////////////////////////////////////////////////////////////////////
 //-------------------------------------------------------------------------------------------------
@@ -202,7 +197,7 @@ void Shell::update( void )
 		for( Int i = m_screenCount - 1; i >= 0; i-- )
 		{
 
-			DEBUG_ASSERTCRASH( m_screenStack[ i ], ("Top of shell stack is NULL!\n") );
+			DEBUG_ASSERTCRASH( m_screenStack[ i ], ("Top of shell stack is NULL!") );
 			m_screenStack[ i ]->runUpdate( NULL );
 
 		}  // end for i
@@ -338,10 +333,10 @@ void Shell::push( AsciiString filename, Bool shutdownImmediate )
 
 
 #ifdef DEBUG_LOGGING
-	DEBUG_LOG(("Shell:push(%s) - stack was\n", filename.str()));
+	DEBUG_LOG(("Shell:push(%s) - stack was", filename.str()));
 	for (Int i=0; i<m_screenCount; ++i)
 	{
-		DEBUG_LOG(("\t\t%s\n", m_screenStack[i]->getFilename().str()));
+		DEBUG_LOG(("\t\t%s", m_screenStack[i]->getFilename().str()));
 	}
 #endif
 
@@ -349,7 +344,7 @@ void Shell::push( AsciiString filename, Bool shutdownImmediate )
 	if( m_screenCount >= MAX_SHELL_STACK )
 	{
 	
-		DEBUG_LOG(( "Unable to load screen '%s', max '%d' reached\n",
+		DEBUG_LOG(( "Unable to load screen '%s', max '%d' reached",
 								filename.str(), MAX_SHELL_STACK ));
 		return;
 
@@ -405,10 +400,10 @@ void Shell::pop( void )
 		return;
 
 #ifdef DEBUG_LOGGING
-	DEBUG_LOG(("Shell:pop() - stack was\n"));
+	DEBUG_LOG(("Shell:pop() - stack was"));
 	for (Int i=0; i<m_screenCount; ++i)
 	{
-		DEBUG_LOG(("\t\t%s\n", m_screenStack[i]->getFilename().str()));
+		DEBUG_LOG(("\t\t%s", m_screenStack[i]->getFilename().str()));
 	}
 #endif
 
@@ -444,10 +439,10 @@ void Shell::popImmediate( void )
 		return;
 
 #ifdef DEBUG_LOGGING
-	DEBUG_LOG(("Shell:popImmediate() - stack was\n"));
+	DEBUG_LOG(("Shell:popImmediate() - stack was"));
 	for (Int i=0; i<m_screenCount; ++i)
 	{
-		DEBUG_LOG(("\t\t%s\n", m_screenStack[i]->getFilename().str()));
+		DEBUG_LOG(("\t\t%s", m_screenStack[i]->getFilename().str()));
 	}
 #endif
 
@@ -474,7 +469,7 @@ void Shell::popImmediate( void )
 //-------------------------------------------------------------------------------------------------
 void Shell::showShell( Bool runInit )
 {
-	DEBUG_LOG(("Shell:showShell() - %s (%s)\n", TheGlobalData->m_initialFile.str(), (top())?top()->getFilename().str():"no top screen"));
+	DEBUG_LOG(("Shell:showShell() - %s (%s)", TheGlobalData->m_initialFile.str(), (top())?top()->getFilename().str():"no top screen"));
 
 	if(!TheGlobalData->m_initialFile.isEmpty() || !TheGlobalData->m_simulateReplays.empty())
 	{
@@ -588,7 +583,7 @@ void Shell::hideShell( void )
 	// If we have the 3d background running, mark it to close
 	m_clearBackground = TRUE;
 
-	DEBUG_LOG(("Shell:hideShell() - %s\n", (top())?top()->getFilename().str():"no top screen"));
+	DEBUG_LOG(("Shell:hideShell() - %s", (top())?top()->getFilename().str():"no top screen"));
 
 	WindowLayout *layout = top();
 
@@ -638,7 +633,7 @@ void Shell::linkScreen( WindowLayout *screen )
 	if( m_screenCount == MAX_SHELL_STACK )
 	{
 
-		DEBUG_CRASH(( "No room in shell stack for screen\n" ));
+		DEBUG_CRASH(( "No room in shell stack for screen" ));
 		return;
 
 	}  // end if
@@ -659,7 +654,7 @@ void Shell::unlinkScreen( WindowLayout *screen )
 		return;
 
 	DEBUG_ASSERTCRASH( m_screenStack[ m_screenCount - 1 ] == screen, 
-										 ("Screen not on top of stack\n") );
+										 ("Screen not on top of stack") );
 
 	// remove reference to screen and decrease count
 	if( m_screenStack[ m_screenCount - 1 ] == screen )
@@ -678,7 +673,7 @@ void Shell::doPush( AsciiString layoutFile )
 	
 	// create new layout and load from window manager
 	newScreen = TheWindowManager->winCreateLayout( layoutFile );
-	DEBUG_ASSERTCRASH( newScreen != NULL, ("Shell unable to load pending push layout\n") );
+	DEBUG_ASSERTCRASH( newScreen != NULL, ("Shell unable to load pending push layout") );
 
 	// link screen to the top
 	linkScreen( newScreen );
@@ -701,7 +696,7 @@ void Shell::doPop( Bool impendingPush )
 	WindowLayout *currentTop = top();
 
 	// there better be a top of the stack since we're popping
-	DEBUG_ASSERTCRASH( currentTop, ("Shell: No top of stack and we want to pop!\n") );
+	DEBUG_ASSERTCRASH( currentTop, ("Shell: No top of stack and we want to pop!") );
 
 	if (currentTop)
 	{
@@ -743,7 +738,7 @@ void Shell::shutdownComplete( WindowLayout *screen, Bool impendingPush )
 
 	// there should never be a pending push AND pop operation
 	DEBUG_ASSERTCRASH( m_pendingPush == FALSE || m_pendingPop == FALSE,
-										 ("There is a pending push AND pop in the shell.  Not allowed!\n") );	
+										 ("There is a pending push AND pop in the shell.  Not allowed!") );	
 
 	// Reset the AnimateWindowManager
 	m_animateWindowManager->reset();
@@ -857,7 +852,7 @@ WindowLayout *Shell::getSaveLoadMenuLayout( void )
    m_saveLoadMenuLayout = TheWindowManager->winCreateLayout( AsciiString( "Menus/PopupSaveLoad.wnd" ) );
 
 	// sanity
-	DEBUG_ASSERTCRASH( m_saveLoadMenuLayout, ("Unable to create save/load menu layout\n") );
+	DEBUG_ASSERTCRASH( m_saveLoadMenuLayout, ("Unable to create save/load menu layout") );
 
 	// return the layout
 	return m_saveLoadMenuLayout;
@@ -874,7 +869,7 @@ WindowLayout *Shell::getPopupReplayLayout( void )
    m_popupReplayLayout = TheWindowManager->winCreateLayout( AsciiString( "Menus/PopupReplay.wnd" ) );
 
 	// sanity
-	DEBUG_ASSERTCRASH( m_popupReplayLayout, ("Unable to create replay save menu layout\n") );
+	DEBUG_ASSERTCRASH( m_popupReplayLayout, ("Unable to create replay save menu layout") );
 
 	// return the layout
 	return m_popupReplayLayout;
@@ -891,7 +886,7 @@ WindowLayout *Shell::getOptionsLayout( Bool create )
 		m_optionsLayout = TheWindowManager->winCreateLayout( AsciiString( "Menus/OptionsMenu.wnd" ) );
 
 		// sanity
-		DEBUG_ASSERTCRASH( m_optionsLayout, ("Unable to create options menu layout\n") );
+		DEBUG_ASSERTCRASH( m_optionsLayout, ("Unable to create options menu layout") );
 	}
 
 	// return the layout

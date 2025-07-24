@@ -66,10 +66,6 @@
 
 #include "Common/file.h"
 
-#ifdef RTS_INTERNAL
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 enum { INFINITE_LOOP_COUNT = 1000000 };
 
@@ -109,12 +105,12 @@ MilesAudioManager::~MilesAudioManager()
 	closeDevice();
 	delete m_audioCache;
 	
-	DEBUG_ASSERTCRASH(this == TheAudio, ("Umm...\n"));
+	DEBUG_ASSERTCRASH(this == TheAudio, ("Umm..."));
 	TheAudio = NULL;
 }
 
 //-------------------------------------------------------------------------------------------------
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 AudioHandle MilesAudioManager::addAudioEvent( const AudioEventRTS *eventToAdd )
 {
 	if (TheGlobalData->m_preloadReport) {
@@ -127,7 +123,7 @@ AudioHandle MilesAudioManager::addAudioEvent( const AudioEventRTS *eventToAdd )
 }
 #endif
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 //-------------------------------------------------------------------------------------------------
 void MilesAudioManager::audioDebugDisplay(DebugDisplayInterface *dd, void *, FILE *fp )
 {
@@ -445,7 +441,7 @@ void MilesAudioManager::init()
 {
 	AudioManager::init();
 #ifdef INTENSE_DEBUG
-	DEBUG_LOG(("Sound has temporarily been disabled in debug builds only. jkmcd\n"));
+	DEBUG_LOG(("Sound has temporarily been disabled in debug builds only. jkmcd"));
 	// for now, RTS_DEBUG builds only should have no sound. ask jkmcd or srj about this.
 	return;
 #endif
@@ -467,7 +463,7 @@ void MilesAudioManager::postProcessLoad()
 //-------------------------------------------------------------------------------------------------
 void MilesAudioManager::reset()
 {
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	dumpAllAssetsUsed();
 	m_allEventsLoaded.clear();
 #endif
@@ -681,7 +677,7 @@ void MilesAudioManager::playAudioEvent( AudioEventRTS *event )
 		case AT_Streaming:
 		{
 		#ifdef INTENSIVE_AUDIO_DEBUG
-			DEBUG_LOG(("- Stream\n"));
+			DEBUG_LOG(("- Stream"));
 		#endif
 			
 			if ((info->m_soundType == AT_Streaming) && event->getUninterruptable()) {
@@ -807,14 +803,14 @@ void MilesAudioManager::playAudioEvent( AudioEventRTS *event )
 				{
 					m_playing3DSounds.pop_back();
 					#ifdef INTENSIVE_AUDIO_DEBUG
-						DEBUG_LOG((" Killed (no handles available)\n"));
+						DEBUG_LOG((" Killed (no handles available)"));
 					#endif
 				} 
 				else 
 				{
 					audio = NULL;
 					#ifdef INTENSIVE_AUDIO_DEBUG
-						DEBUG_LOG((" Playing.\n"));
+						DEBUG_LOG((" Playing."));
 					#endif
 				}
 			} 
@@ -876,7 +872,7 @@ void MilesAudioManager::playAudioEvent( AudioEventRTS *event )
 
 				if (!audio->m_file) {
 					#ifdef INTENSIVE_AUDIO_DEBUG
-						DEBUG_LOG((" Killed (no handles available)\n"));
+						DEBUG_LOG((" Killed (no handles available)"));
 					#endif
 					m_playingSounds.pop_back();
 				} else {
@@ -884,7 +880,7 @@ void MilesAudioManager::playAudioEvent( AudioEventRTS *event )
 				}
 
 				#ifdef INTENSIVE_AUDIO_DEBUG
-					DEBUG_LOG((" Playing.\n"));
+					DEBUG_LOG((" Playing."));
 				#endif
 			}
 			break;
@@ -902,7 +898,7 @@ void MilesAudioManager::playAudioEvent( AudioEventRTS *event )
 void MilesAudioManager::stopAudioEvent( AudioHandle handle )
 {
 #ifdef INTENSIVE_AUDIO_DEBUG
-	DEBUG_LOG(("MILES (%d) - Processing stop request: %d\n", TheGameLogic->getFrame(), handle));
+	DEBUG_LOG(("MILES (%d) - Processing stop request: %d", TheGameLogic->getFrame(), handle));
 #endif
 
 	std::list<PlayingAudio *>::iterator it;
@@ -965,7 +961,7 @@ void MilesAudioManager::stopAudioEvent( AudioHandle handle )
 
 		if (audio->m_audioEventRTS->getPlayingHandle() == handle) {
 		#ifdef INTENSIVE_AUDIO_DEBUG
-			DEBUG_LOG((" (%s)\n", audio->m_audioEventRTS->getEventName()));
+			DEBUG_LOG((" (%s)", audio->m_audioEventRTS->getEventName()));
 		#endif
 			audio->m_requestStop = true;
 			break;
@@ -2913,7 +2909,7 @@ void MilesAudioManager::initSamplePools( void )
 	int i = 0;
 	for (i = 0; i < getAudioSettings()->m_sampleCount2D; ++i) {
 		HSAMPLE sample = AIL_allocate_sample_handle(m_digitalHandle);
-		DEBUG_ASSERTCRASH(sample, ("Couldn't get %d 2D samples\n", i + 1));
+		DEBUG_ASSERTCRASH(sample, ("Couldn't get %d 2D samples", i + 1));
 		if (sample) {
 			AIL_init_sample(sample);
 			AIL_set_sample_user_data(sample, 0, i + 1);
@@ -2924,7 +2920,7 @@ void MilesAudioManager::initSamplePools( void )
 
 	for (i = 0; i < getAudioSettings()->m_sampleCount3D; ++i) {
 		H3DSAMPLE sample = AIL_allocate_3D_sample_handle(m_provider3D[m_selectedProvider].id);
-		DEBUG_ASSERTCRASH(sample, ("Couldn't get %d 3D samples\n", i + 1));
+		DEBUG_ASSERTCRASH(sample, ("Couldn't get %d 3D samples", i + 1));
 		if (sample) {
 			AIL_set_3D_user_data(sample, 0, i + 1);
 			m_available3DSamples.push_back(sample);
@@ -2997,7 +2993,7 @@ void MilesAudioManager::friend_forcePlayAudioEventRTS(const AudioEventRTS* event
 	if (!eventToPlay->getAudioEventInfo()) {
 		getInfoForAudioEvent(eventToPlay);
 		if (!eventToPlay->getAudioEventInfo()) {
-			DEBUG_CRASH(("No info for forced audio event '%s'\n", eventToPlay->getEventName().str()));
+			DEBUG_CRASH(("No info for forced audio event '%s'", eventToPlay->getEventName().str()));
 			return;
 		}
 	}
@@ -3064,9 +3060,9 @@ void AILCALLBACK setStreamCompleted( HSTREAM streamCompleted )
 //-------------------------------------------------------------------------------------------------
 U32 AILCALLBACK streamingFileOpen(char const *fileName, U32 *file_handle)
 {
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	if (sizeof(U32) != sizeof(File*)) {
-		RELEASE_CRASH(("streamingFileOpen - This function requires work in order to compile on non 32-bit platforms.\n"));
+		RELEASE_CRASH(("streamingFileOpen - This function requires work in order to compile on non 32-bit platforms."));
 	}
 #endif
 
@@ -3110,7 +3106,7 @@ AudioFileCache::~AudioFileCache()
 		OpenFilesHashIt it;
 		for ( it = m_openFiles.begin(); it != m_openFiles.end(); ++it ) {
 			if (it->second.m_openCount > 0) {
-				DEBUG_CRASH(("Sample '%s' is still playing, and we're trying to quit.\n", it->second.m_eventInfo->m_audioName.str()));
+				DEBUG_CRASH(("Sample '%s' is still playing, and we're trying to quit.", it->second.m_eventInfo->m_audioName.str()));
 			}
 
 			releaseOpenAudioFile(&it->second);
@@ -3155,7 +3151,7 @@ void *AudioFileCache::openFile( AudioEventRTS *eventToOpenFrom )
 	// Couldn't find the file, so actually open it.
 	File *file = TheFileSystem->openFile(strToFind.str());
 	if (!file) {
-		DEBUG_ASSERTLOG(strToFind.isEmpty(), ("Missing Audio File: '%s'\n", strToFind.str()));
+		DEBUG_ASSERTLOG(strToFind.isEmpty(), ("Missing Audio File: '%s'", strToFind.str()));
 		return NULL;
 	}
 
@@ -3192,7 +3188,7 @@ void *AudioFileCache::openFile( AudioEventRTS *eventToOpenFrom )
 		openedAudioFile.m_soundInfo = soundInfo;
 		openedAudioFile.m_openCount = 1;
 	} else {
-		DEBUG_CRASH(("Unexpected compression type in '%s'\n", strToFind.str()));
+		DEBUG_CRASH(("Unexpected compression type in '%s'", strToFind.str()));
 		// prevent leaks
 		delete [] buffer;
 		return NULL;
@@ -3324,7 +3320,7 @@ Bool AudioFileCache::freeEnoughSpaceForSample(const OpenAudioFile& sampleThatNee
 }
 
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 //-------------------------------------------------------------------------------------------------
 void MilesAudioManager::dumpAllAssetsUsed()
 {

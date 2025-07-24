@@ -60,11 +60,6 @@
 #include "GameClient/GameText.h"
 #include "GameNetwork/GUIUtil.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 extern char *LANnextScreen;
 extern Bool LANisShuttingDown;
@@ -228,7 +223,7 @@ static void playerTooltip(GameWindow *window,
 	}
 	UnicodeString tooltip;
 	tooltip.format(TheGameText->fetch("TOOLTIP:LANPlayer"), player->getLogin().str(), player->getHost().str());
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	UnicodeString ip;
 	ip.format(L" - %d.%d.%d.%d", PRINTF_IP_AS_4_INTS(player->getIP()));
 	tooltip.concat(ip);
@@ -853,7 +848,7 @@ void LanGameOptionsMenuInit( WindowLayout *layout, void *userData )
 	{
 		// If we init while the game is in progress, we are really returning to the menu
 		// after the game.  So, we pop the menu and go back to the lobby.  Whee!
-		DEBUG_LOG(("Popping to lobby after a game!\n"));
+		DEBUG_LOG(("Popping to lobby after a game!"));
 		TheShell->popImmediate();
 		return;
 	}
@@ -906,7 +901,7 @@ void LanGameOptionsMenuInit( WindowLayout *layout, void *userData )
 	else
 	{
 
-		//DEBUG_LOG(("LanGameOptionsMenuInit(): map is %s\n", TheLAN->GetMyGame()->getMap().str()));
+		//DEBUG_LOG(("LanGameOptionsMenuInit(): map is %s", TheLAN->GetMyGame()->getMap().str()));
 		buttonStart->winSetText(TheGameText->fetch("GUI:Accept"));
 		buttonSelectMap->winEnable( FALSE );
     checkboxLimitSuperweapons->winEnable( FALSE ); // Can look but only host can touch

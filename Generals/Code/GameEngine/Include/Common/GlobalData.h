@@ -400,6 +400,10 @@ public:
 	Bool m_saveCameraInReplay;
 	Bool m_useCameraInReplay;
 
+	// TheSuperHackers @feature Mauller 21/06/2025 allow the system time and game time font size to be set, a size of zero disables them
+	Int m_systemTimeFontSize;
+	Int m_gameTimeFontSize;
+
 	Real m_shakeSubtleIntensity;			///< Intensity for shaking a camera with SHAKE_SUBTLE
 	Real m_shakeNormalIntensity;			///< Intensity for shaking a camera with SHAKE_NORMAL
 	Real m_shakeStrongIntensity;			///< Intensity for shaking a camera with SHAKE_STRONG
@@ -465,15 +469,16 @@ public:
   Int					m_playStats;									///< Int whether we want to log play stats or not, if <= 0 then we don't log
 
   Bool m_TiVOFastMode;            ///< When true, the client speeds up the framerate... set by HOTKEY!
-  
 
+#if defined(RTS_DEBUG) || ENABLE_CONFIGURABLE_SHROUD
+	Bool m_shroudOn;
+#endif
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	Bool m_wireframe;
 	Bool m_stateMachineDebug;
 	Bool m_useCameraConstraints;
 	Bool m_specialPowerUsesDelay;
-	Bool m_shroudOn;
 	Bool m_fogOfWarOn;
 	Bool m_jabberOn;
 	Bool m_munkeeOn;

@@ -96,11 +96,6 @@
 #include "WinMain.h"  /** @todo Remove this, it's only here because we
 													are using timeGetTime, but we can remove that
 													when we have our own timer */
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 
 
@@ -405,7 +400,7 @@ void W3DView::buildCameraTransform( Matrix3D *transform )
 	}
 
 	//m_3DCamera->Set_View_Plane(DEG_TO_RADF(50.0f));
-	//DEBUG_LOG(("zoom %f, SourceZ %f, posZ %f, groundLevel %f CamOffZ %f\n",
+	//DEBUG_LOG(("zoom %f, SourceZ %f, posZ %f, groundLevel %f CamOffZ %f",
 	//			zoom, sourcePos.Z, pos.z, groundLevel,m_cameraOffset.z));
 
 	// build new camera transform
@@ -421,7 +416,7 @@ void W3DView::buildCameraTransform( Matrix3D *transform )
 
 	//if (m_shakerAngles.X >= 0.0f)
 	//{
-	//	DEBUG_LOG(("m_shakerAngles %f, %f, %f\n", m_shakerAngles.X, m_shakerAngles.Y, m_shakerAngles.Z));
+	//	DEBUG_LOG(("m_shakerAngles %f, %f, %f", m_shakerAngles.X, m_shakerAngles.Y, m_shakerAngles.Z));
 	//}
 
 	// (gth) check if the camera is being controlled by an animation
@@ -453,7 +448,7 @@ void W3DView::buildCameraTransform( Matrix3D *transform )
 						m_pos.z = position.Z; 
 						
 
-						//DEBUG_LOG(("mpos x%f, y%f, z%f\n", m_pos.x, m_pos.y, m_pos.z ));
+						//DEBUG_LOG(("mpos x%f, y%f, z%f", m_pos.x, m_pos.y, m_pos.z ));
 
 						break;
 					}
@@ -474,7 +469,7 @@ void W3DView::calcCameraConstraints()
 {
 //	const Matrix3D& cameraTransform = m_3DCamera->Get_Transform();
 
-//	DEBUG_LOG(("*** rebuilding cam constraints\n"));
+//	DEBUG_LOG(("*** rebuilding cam constraints"));
 
 	// ok, now check to ensure that we can't see outside the map region,
 	// and twiddle the camera if needed
@@ -587,7 +582,7 @@ void W3DView::setCameraTransform( void )
 	}
 
 	m_3DCamera->Set_Clip_Planes(nearZ, farZ);
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	if (TheGlobalData->m_useCameraConstraints)
 #endif
 	{
@@ -597,7 +592,7 @@ void W3DView::setCameraTransform( void )
 			m_3DCamera->Set_Transform( cameraTransform );
 			calcCameraConstraints();
 		}
-		DEBUG_ASSERTLOG(m_cameraConstraintValid,("*** cam constraints are not valid!!!\n"));
+		DEBUG_ASSERTLOG(m_cameraConstraintValid,("*** cam constraints are not valid!!!"));
 
 		if (m_cameraConstraintValid)
 		{
@@ -610,7 +605,7 @@ void W3DView::setCameraTransform( void )
 		}
 	}
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	m_3DCamera->Set_View_Plane( m_FOV, -1 );
 #endif
 
@@ -728,7 +723,7 @@ static void drawTerrainNormal( Drawable *draw, void *userData )
   }
 }
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 // ------------------------------------------------------------------------------------------------
 // Draw a crude circle. Appears on top of any world geometry
 // ------------------------------------------------------------------------------------------------
@@ -994,7 +989,7 @@ static void drawablePostDraw( Drawable *draw, void *userData )
 
 	Object* obj = draw->getObject();
 	Int localPlayerIndex = ThePlayerList ? ThePlayerList->getLocalPlayer()->getPlayerIndex() : 0;
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if ENABLE_CONFIGURABLE_SHROUD
 	ObjectShroudStatus ss = (!obj || !TheGlobalData->m_shroudOn) ? OBJECTSHROUD_CLEAR : obj->getShroudedStatus(localPlayerIndex);
 #else
 	ObjectShroudStatus ss = (!obj) ? OBJECTSHROUD_CLEAR : obj->getShroudedStatus(localPlayerIndex);
@@ -1012,7 +1007,7 @@ static void drawablePostDraw( Drawable *draw, void *userData )
 			draw->drawIconUI();
 	//}
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	// debug collision extents
 	if( TheGlobalData->m_showCollisionExtents )
 	  drawDrawableExtents( draw, userData );
@@ -1341,7 +1336,7 @@ void W3DView::update(void)
   	{
   		// if we are in a scripted camera movement, take its height above ground as our desired height.
   		m_heightAboveGround = m_currentHeightAboveGround;
-			//DEBUG_LOG(("Frame %d: height above ground: %g %g %g %g\n", TheGameLogic->getFrame(), m_heightAboveGround,
+			//DEBUG_LOG(("Frame %d: height above ground: %g %g %g %g", TheGameLogic->getFrame(), m_heightAboveGround,
 			//	m_cameraOffset.z, m_zoom, m_terrainHeightUnderCamera));
   	}
 		if (TheInGameUI->isScrolling())
@@ -1364,7 +1359,7 @@ void W3DView::update(void)
 			Real zoomAdjAbs = fabs(zoomAdj);
 			if (zoomAdjAbs >= 0.0001 && !didScriptedMovement)
 			{
-				//DEBUG_LOG(("W3DView::update() - m_zoom=%g, desiredHeight=%g\n", m_zoom, desiredZoom));
+				//DEBUG_LOG(("W3DView::update() - m_zoom=%g, desiredHeight=%g", m_zoom, desiredZoom));
 				m_zoom -= zoomAdj;
 				recalcCamera = true;
 			}
@@ -1689,7 +1684,7 @@ void W3DView::draw( void )
 
 	}  // end if, show debug AI
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	if( TheGlobalData->m_debugCamera )
 	{
 		UnsignedInt c = 0xaaffffff;
@@ -1759,7 +1754,7 @@ void W3DView::draw( void )
       drawable = drawable->getNextDrawable();
     }
   }
-#endif // DEBUG or INTERNAL
+#endif // RTS_DEBUG
 
 	Region3D axisAlignedRegion;
 	getAxisAlignedViewRegion(axisAlignedRegion);
@@ -1834,7 +1829,7 @@ void W3DView::scrollBy( Coord2D *delta )
 		Coord3D pos = *getPosition();
 		pos.x += world.X;
 		pos.y += world.Y;
-		//DEBUG_LOG(("Delta %.2f, %.2f\n", world.X, world.Z));
+		//DEBUG_LOG(("Delta %.2f, %.2f", world.X, world.Z));
 		// no change to z
 		setPosition(&pos);
 
@@ -1986,7 +1981,7 @@ void W3DView::setZoomToDefault( void )
 	Real desiredHeight = (terrainHeightMax + m_maxHeightAboveGround);
 	Real desiredZoom = desiredHeight / m_cameraOffset.z;
 
-	//DEBUG_LOG(("W3DView::setZoomToDefault() Current zoom: %g  Desired zoom: %g\n", m_zoom, desiredZoom));
+	//DEBUG_LOG(("W3DView::setZoomToDefault() Current zoom: %g  Desired zoom: %g", m_zoom, desiredZoom));
 
 	m_zoom = desiredZoom;
 	m_heightAboveGround = m_maxHeightAboveGround;
@@ -2008,7 +2003,7 @@ void W3DView::setFieldOfView( Real angle )
 {
 	View::setFieldOfView( angle );
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	// this is only for testing, and recalculating the 
 	// camera every frame is wasteful
 	setCameraTransform();
@@ -2806,7 +2801,7 @@ void W3DView::resetCamera(const Coord3D *location, Int milliseconds, Real easeIn
 
 	pitchCamera( 1.0, milliseconds, easeIn, easeOut );
 	// pitchCamera( m_defaultPitchAngle, milliseconds, easeIn, easeOut );
-	//DEBUG_LOG(("W3DView::resetCamera() Current zoom: %g  Desired zoom: %g  Current pitch: %g  Desired pitch: %g\n",
+	//DEBUG_LOG(("W3DView::resetCamera() Current zoom: %g  Desired zoom: %g  Current pitch: %g  Desired pitch: %g",
 	//	m_zoom, desiredZoom, m_pitchAngle, m_defaultPitchAngle));
 }
 
@@ -2831,7 +2826,7 @@ Bool W3DView::isCameraMovementFinished(void)
 
 Bool W3DView::isCameraMovementAtWaypointAlongPath(void)
 {
-	// WWDEBUG_SAY((( "MBL: Polling W3DView::isCameraMovementAtWaypointAlongPath\n" )));
+	// WWDEBUG_SAY((( "MBL: Polling W3DView::isCameraMovementAtWaypointAlongPath" )));
 	
 	Bool return_value = m_CameraArrivedAtWaypointOnPathFlag;
 	#pragma message( "MBL: Clearing variable after polling - for scripting - see Adam.\n" )
@@ -2905,7 +2900,7 @@ void W3DView::setupWaypointPath(Bool orient)
 			angle -= PI/2;
 			normAngle(angle);
 		}
-		//DEBUG_LOG(("Original Index %d, angle %.2f\n", i, angle*180/PI));
+		//DEBUG_LOG(("Original Index %d, angle %.2f", i, angle*180/PI));
 		m_mcwpInfo.cameraAngle[i] = angle;
 	}
 	m_mcwpInfo.cameraAngle[1] = getAngle();	
@@ -2930,7 +2925,7 @@ void W3DView::setupWaypointPath(Bool orient)
 		m_mcwpInfo.timeMultiplier[i] = m_timeMultiplier;
 		m_mcwpInfo.groundHeight[i] = m_groundLevel*factor1 + newGround*factor2;
 		curDistance += m_mcwpInfo.waySegLength[i];
-		//DEBUG_LOG(("New Index %d, angle %.2f\n", i, m_mcwpInfo.cameraAngle[i]*180/PI));
+		//DEBUG_LOG(("New Index %d, angle %.2f", i, m_mcwpInfo.cameraAngle[i]*180/PI));
 	}
 
 	// Pad the end.
@@ -3067,7 +3062,7 @@ void W3DView::zoomCameraOneFrame(void)
 		m_zoom = m_zcInfo.endZoom;
 	}
 
-	//DEBUG_LOG(("W3DView::zoomCameraOneFrame() - m_zoom = %g\n", m_zoom));
+	//DEBUG_LOG(("W3DView::zoomCameraOneFrame() - m_zoom = %g", m_zoom));
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -3138,7 +3133,7 @@ void W3DView::moveAlongWaypointPath(Int milliseconds)
 
 		if ( m_doingMoveCameraOnWaypointPath )
 		{
-			//WWDEBUG_SAY(( "MBL TEST: Camera waypoint along path reached!\n" ));
+			//WWDEBUG_SAY(( "MBL TEST: Camera waypoint along path reached!" ));
 			m_CameraArrivedAtWaypointOnPathFlag = true;
 		}
 
@@ -3174,7 +3169,7 @@ void W3DView::moveAlongWaypointPath(Int milliseconds)
 	Real deltaAngle = angle-m_angle;
 	normAngle(deltaAngle);
 	if (fabs(deltaAngle) > PI/10) {
-		DEBUG_LOG(("Huh.\n"));
+		DEBUG_LOG(("Huh."));
 	}
 	m_angle += avgFactor*(deltaAngle);
 	normAngle(m_angle);
@@ -3226,7 +3221,7 @@ void W3DView::moveAlongWaypointPath(Int milliseconds)
 	result.z = 0;
 /*
 	static Real prevGround = 0;
-	DEBUG_LOG(("Dx %.2f, dy %.2f, DeltaANgle = %.2f, %.2f DeltaGround %.2f\n", m_pos.x-result.x, m_pos.y-result.y, deltaAngle, m_groundLevel, m_groundLevel-prevGround));
+	DEBUG_LOG(("Dx %.2f, dy %.2f, DeltaANgle = %.2f, %.2f DeltaGround %.2f", m_pos.x-result.x, m_pos.y-result.y, deltaAngle, m_groundLevel, m_groundLevel-prevGround));
 	prevGround = m_groundLevel;
 */
 	setPosition(&result);

@@ -47,11 +47,6 @@
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
 #include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 //-----------------------------------------------------------------------------
 // USER INCLUDES //////////////////////////////////////////////////////////////
@@ -85,7 +80,7 @@ void INI::parseWindowTransitions( INI* ini )
 
 	// find existing item if present
 	
-	DEBUG_ASSERTCRASH( TheTransitionHandler, ("parseWindowTransitions: TheTransitionHandler doesn't exist yet\n") );
+	DEBUG_ASSERTCRASH( TheTransitionHandler, ("parseWindowTransitions: TheTransitionHandler doesn't exist yet") );
 	if( !TheTransitionHandler )
 		return;
 
@@ -94,7 +89,7 @@ void INI::parseWindowTransitions( INI* ini )
 	g = TheTransitionHandler->getNewGroup( name );
 
 	// sanity
-	DEBUG_ASSERTCRASH( g, ("parseWindowTransitions: Unable to allocate group '%s'\n", name.str()) );
+	DEBUG_ASSERTCRASH( g, ("parseWindowTransitions: Unable to allocate group '%s'", name.str()) );
 
 	// parse the ini definition
 	ini->initFromINI( g, TheTransitionHandler->getFieldParse() );

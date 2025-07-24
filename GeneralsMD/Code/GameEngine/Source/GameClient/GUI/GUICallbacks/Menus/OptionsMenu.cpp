@@ -76,11 +76,6 @@
 // This is for non-RC builds only!!!
 #define VERBOSE_VERSION L"Release"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 
 static NameKeyType		comboBoxOnlineIPID	= NAMEKEY_INVALID;
@@ -772,6 +767,34 @@ Real OptionPreferences::getMusicVolume(void)
 	return volume;
 }
 
+Int OptionPreferences::getSystemTimeFontSize(void)
+{
+	OptionPreferences::const_iterator it = find("SystemTimeFontSize");
+	if (it == end())
+		return 8;
+
+	Int fontSize = atoi(it->second.str());
+	if (fontSize < 0)
+	{
+		fontSize = 0;
+	}
+	return fontSize;
+}
+
+Int OptionPreferences::getGameTimeFontSize(void)
+{
+	OptionPreferences::const_iterator it = find("GameTimeFontSize");
+	if (it == end())
+		return 8;
+
+	Int fontSize = atoi(it->second.str());
+	if (fontSize < 0)
+	{
+		fontSize = 0;
+	}
+	return fontSize;
+}
+
 static OptionPreferences *pref = NULL;
 
 static void setDefaults( void )
@@ -1169,7 +1192,7 @@ static void saveOptions( void )
 	if(val != -1)
 	{
 		TheWritableGlobalData->m_keyboardScrollFactor = val/100.0f;
-		DEBUG_LOG(("Scroll Spped val %d, keyboard scroll factor %f\n", val, TheGlobalData->m_keyboardScrollFactor));
+		DEBUG_LOG(("Scroll Spped val %d, keyboard scroll factor %f", val, TheGlobalData->m_keyboardScrollFactor));
 		AsciiString prefString;
 		prefString.format("%d", val);
 		(*pref)["ScrollFactor"] = prefString;
@@ -1263,6 +1286,28 @@ static void saveOptions( void )
  	}
 
 	//-------------------------------------------------------------------------------------------------
+	// Set System Time Font Size
+	val = TheWritableGlobalData->m_systemTimeFontSize; // TheSuperHackers @todo replace with options input when applicable
+	if (val)
+	{
+		AsciiString prefString;
+		prefString.format("%d", val);
+		(*pref)["SystemTimeFontSize"] = prefString;
+		TheInGameUI->refreshSystemTimeResources();
+	}
+
+	//-------------------------------------------------------------------------------------------------
+	// Set Game Time Font Size
+	val = TheWritableGlobalData->m_gameTimeFontSize; // TheSuperHackers @todo replace with options input when applicable
+	if (val)
+	{
+		AsciiString prefString;
+		prefString.format("%d", val);
+		(*pref)["GameTimeFontSize"] = prefString;
+		TheInGameUI->refreshGameTimeResources();
+	}
+
+	//-------------------------------------------------------------------------------------------------
 	// Resolution
 	//
 	// TheSuperHackers @bugfix xezon 12/06/2025 Now performs the resolution change at the very end of
@@ -1304,6 +1349,7 @@ static void saveOptions( void )
 				TheShell->recreateWindowLayouts();
 
 				TheInGameUI->recreateControlBar();
+				TheInGameUI->refreshCustomUiResources();
 			}
 		}
 	}
@@ -1758,7 +1804,7 @@ void OptionsMenuInit( WindowLayout *layout, void *userData )
 
 	//set scroll options
 	AsciiString test = (*pref)["DrawScrollAnchor"];
-	DEBUG_LOG(("DrawScrollAnchor == [%s]\n", test.str()));
+	DEBUG_LOG(("DrawScrollAnchor == [%s]", test.str()));
 	if (test == "Yes" || (test.isEmpty() && TheInGameUI->getDrawRMBScrollAnchor()))
 	{
 		GadgetCheckBoxSetChecked( checkDrawAnchor, true);
@@ -1770,7 +1816,7 @@ void OptionsMenuInit( WindowLayout *layout, void *userData )
 		TheInGameUI->setDrawRMBScrollAnchor(false);
 	}
 	test = (*pref)["MoveScrollAnchor"];
-	DEBUG_LOG(("MoveScrollAnchor == [%s]\n", test.str()));
+	DEBUG_LOG(("MoveScrollAnchor == [%s]", test.str()));
 	if (test == "Yes" || (test.isEmpty() && TheInGameUI->getMoveRMBScrollAnchor()))
 	{
 		GadgetCheckBoxSetChecked( checkMoveAnchor, true);
@@ -1794,7 +1840,7 @@ void OptionsMenuInit( WindowLayout *layout, void *userData )
 	// set scroll speed slider
 	Int scrollPos = (Int)(TheGlobalData->m_keyboardScrollFactor*100.0f);
 	GadgetSliderSetPosition( sliderScrollSpeed, scrollPos );
-	DEBUG_LOG(("Scroll SPeed %d\n", scrollPos));
+	DEBUG_LOG(("Scroll SPeed %d", scrollPos));
 
 	// set the send delay check box
 	GadgetCheckBoxSetChecked(checkSendDelay, TheGlobalData->m_firewallSendDelay);

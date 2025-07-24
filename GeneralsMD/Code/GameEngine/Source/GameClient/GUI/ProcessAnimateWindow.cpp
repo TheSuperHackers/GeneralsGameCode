@@ -840,7 +840,7 @@ void ProcessAnimateWindowSlideFromBottomTimed::initReverseAnimateWindow( wnd::An
 
 	UnsignedInt now = timeGetTime();
 
-	DEBUG_LOG(("initReverseAnimateWindow at %d (%d->%d)\n", now, now, now + m_maxDuration));
+	DEBUG_LOG(("initReverseAnimateWindow at %d (%d->%d)", now, now, now + m_maxDuration));
 	animWin->setAnimData(startPos, endPos, curPos, restPos, vel, now, now + m_maxDuration);
 }
 
@@ -882,7 +882,7 @@ void ProcessAnimateWindowSlideFromBottomTimed::initAnimateWindow( wnd::AnimateWi
 	UnsignedInt now = timeGetTime();
 	UnsignedInt delay = animWin->getDelay();
 
-	DEBUG_LOG(("initAnimateWindow at %d (%d->%d)\n", now, now + delay, now + m_maxDuration + delay));
+	DEBUG_LOG(("initAnimateWindow at %d (%d->%d)", now, now + delay, now + m_maxDuration + delay));
 	animWin->setAnimData(startPos, endPos, curPos, restPos, vel, now + delay, now + m_maxDuration + delay);
 }
 
@@ -929,12 +929,12 @@ Bool ProcessAnimateWindowSlideFromBottomTimed::updateAnimateWindow( wnd::Animate
 		curPos.y = endPos.y;
 		animWin->setFinished( TRUE );
 		win->winSetPosition(curPos.x, curPos.y);
-		DEBUG_LOG(("window finished animating at %d (%d->%d)\n", now, startTime, endTime));
+		DEBUG_LOG(("window finished animating at %d (%d->%d)", now, startTime, endTime));
 		return TRUE;
 	}
 
 	curPos.y = startPos.y + percentDone*(endPos.y - startPos.y);
-	DEBUG_LOG(("(%d,%d) -> (%d,%d) -> (%d,%d) at %g\n",
+	DEBUG_LOG(("(%d,%d) -> (%d,%d) -> (%d,%d) at %g",
 		startPos.x, startPos.y, curPos.x, curPos.y, endPos.x, endPos.y, percentDone));
 
 	win->winSetPosition(curPos.x, curPos.y);

@@ -1482,7 +1482,7 @@ PersistClass *	DazzlePersistFactoryClass::Load(ChunkLoadClass & cload) const
 				break;
 
 			default:
-				WWDEBUG_SAY(("Unhandled Chunk: 0x%X File: %s Line: %d\r\n",__FILE__,__LINE__));
+				WWDEBUG_SAY(("Unhandled Chunk: 0x%X File: %s Line: %d",__FILE__,__LINE__));
 				break;
 		};
 		cload.Close_Chunk();
@@ -1503,8 +1503,8 @@ PersistClass *	DazzlePersistFactoryClass::Load(ChunkLoadClass & cload) const
 	if (new_obj == NULL) {
 		static int count = 0;
 		if ( ++count < 10 ) {
-			WWDEBUG_SAY(("DazzlePersistFactory failed to create dazzle of type: %s!!\r\n",dazzle_type));
-			WWDEBUG_SAY(("Replacing it with a NULL render object!\r\n"));
+			WWDEBUG_SAY(("DazzlePersistFactory failed to create dazzle of type: %s!!",dazzle_type));
+			WWDEBUG_SAY(("Replacing it with a NULL render object!"));
 		}
 		new_obj = WW3DAssetManager::Get_Instance()->Create_Render_Obj("NULL");
 	}

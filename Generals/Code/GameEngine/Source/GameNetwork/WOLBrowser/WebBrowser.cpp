@@ -46,11 +46,6 @@
 #include "GameClient/GameWindow.h"
 #include "GameClient/Display.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 /**
 	* OLEInitializer class - Init and shutdown OLE & COM as a global
@@ -94,7 +89,7 @@ CComObject<WebBrowser> * TheWebBrowser = NULL;
 WebBrowser::WebBrowser() :
 		mRefCount(1)
 {
-	DEBUG_LOG(("Instantiating embedded WebBrowser\n"));
+	DEBUG_LOG(("Instantiating embedded WebBrowser"));
 	m_urlList = NULL;
 }
 
@@ -117,9 +112,9 @@ WebBrowser::WebBrowser() :
 
 WebBrowser::~WebBrowser()
 {
-	DEBUG_LOG(("Destructing embedded WebBrowser\n"));
+	DEBUG_LOG(("Destructing embedded WebBrowser"));
 	if (this == TheWebBrowser) {
-		DEBUG_LOG(("WebBrowser::~WebBrowser - setting TheWebBrowser to NULL\n"));
+		DEBUG_LOG(("WebBrowser::~WebBrowser - setting TheWebBrowser to NULL"));
 		TheWebBrowser = NULL;
 	}
 	WebBrowserURL *url = m_urlList;
@@ -297,7 +292,7 @@ ULONG STDMETHODCALLTYPE WebBrowser::Release(void) IUNKNOWN_NOEXCEPT
 
 	if (mRefCount == 0)
 	{
-		DEBUG_LOG(("WebBrowser::Release - all references released, deleting the object.\n"));
+		DEBUG_LOG(("WebBrowser::Release - all references released, deleting the object."));
 		if (this == TheWebBrowser) {
 			TheWebBrowser = NULL;
 		}
@@ -310,6 +305,6 @@ ULONG STDMETHODCALLTYPE WebBrowser::Release(void) IUNKNOWN_NOEXCEPT
 
 STDMETHODIMP WebBrowser::TestMethod(Int num1) 
 {
-	DEBUG_LOG(("WebBrowser::TestMethod - num1 = %d\n", num1));
+	DEBUG_LOG(("WebBrowser::TestMethod - num1 = %d", num1));
 	return S_OK;
 }

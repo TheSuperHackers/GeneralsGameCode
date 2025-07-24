@@ -70,11 +70,6 @@
 #include "Common/GlobalData.h"
 #include "Common/GameCommon.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 //---------------------------------------------------------------------
 // Constants
@@ -239,7 +234,7 @@ TextureClass *W3DAssetManager::Get_Texture(
 //			extern std::vector<std::string>	preloadTextureNamesGlobalHack;
 //			preloadTextureNamesGlobalHack.push_back(tex->Get_Texture_Name());
 //		}
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL) || defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
+#if defined(RTS_DEBUG) || defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
 		if (TheGlobalData->m_preloadReport)
 		{	
 			//loading a new asset and app is requesting a log of all loaded assets.
@@ -798,7 +793,7 @@ RenderObjClass * W3DAssetManager::Create_Render_Obj(
 		static int warning_count = 0;
 		if (++warning_count <= 20) 
 		{
-			WWDEBUG_SAY(("WARNING: Failed to create Render Object: %s\r\n",name));
+			WWDEBUG_SAY(("WARNING: Failed to create Render Object: %s",name));
 		}
 	#ifdef DUMP_PERF_STATS
 		GetPrecisionTimer(&endTime64);
@@ -1000,7 +995,7 @@ bool W3DAssetManager::Load_3D_Assets( const char * filename )
 
 	bool result = WW3DAssetManager::Load_3D_Assets(filename);
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	if (result && TheGlobalData->m_preloadReport)
 	{	
 		//loading a new asset and app is requesting a log of all loaded assets.
@@ -1158,7 +1153,7 @@ void W3DAssetManager::Report_Used_Prototypes(void)
 		PrototypeClass * proto = Prototypes[count];
 		if (proto->Get_Class_ID() == RenderObjClass::CLASSID_HLOD || proto->Get_Class_ID() == RenderObjClass::CLASSID_MESH)
 		{
-			DEBUG_LOG(("**Unfreed Prototype On Map Reset: %s\n",proto->Get_Name()));
+			DEBUG_LOG(("**Unfreed Prototype On Map Reset: %s",proto->Get_Name()));
 		}
 	}
 }
@@ -1188,7 +1183,7 @@ void W3DAssetManager::Report_Used_FontChars(void)
 	{
 		if (FontCharsList[count]->Num_Refs() >= 1)
 		{
-			DEBUG_LOG(("**Unfreed FontChar On Map Reset: %s\n",FontCharsList[count]->Get_Name()));
+			DEBUG_LOG(("**Unfreed FontChar On Map Reset: %s",FontCharsList[count]->Get_Name()));
 			//FontCharsList[count]->Release_Ref();
 			//FontCharsList.Delete(count);
 		}
@@ -1224,7 +1219,7 @@ void W3DAssetManager::Report_Used_Textures(void)
 		}
 		else
 		{
-			DEBUG_LOG(("**Texture \"%s\" referenced %d times on map reset\n",tex->Get_Texture_Name().str(),tex->Num_Refs()-1));
+			DEBUG_LOG(("**Texture \"%s\" referenced %d times on map reset",tex->Get_Texture_Name().str(),tex->Num_Refs()-1));
 		}
 	}
 /*	for (unsigned i=0;i<count;++i) {
@@ -1251,7 +1246,7 @@ void W3DAssetManager::Report_Used_Font3DDatas( void )
 		}
 		else
 		{
-			DEBUG_LOG(("**Unfreed Font3DDatas On Map Reset: %s\n",font->Name));
+			DEBUG_LOG(("**Unfreed Font3DDatas On Map Reset: %s",font->Name));
 		}
 	}
 }
@@ -1404,7 +1399,7 @@ RenderObjClass * W3DAssetManager::Create_Render_Obj(const char * name,float scal
 	if (proto == NULL) {
 		static int warning_count = 0;
 		if (++warning_count <= 20) {
-			WWDEBUG_SAY(("WARNING: Failed to create Render Object: %s\r\n",name));
+			WWDEBUG_SAY(("WARNING: Failed to create Render Object: %s",name));
 		}
 		return NULL;		// Failed to find a prototype
 	}

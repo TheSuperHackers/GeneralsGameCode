@@ -146,7 +146,7 @@ void FireWeaponCollide::xfer( Xfer *xfer )
 	{
 
 		DEBUG_ASSERTCRASH( m_collideWeapon != NULL,
-											 ("FireWeaponCollide::xfer - m_collideWeapon present mismatch\n") );
+											 ("FireWeaponCollide::xfer - m_collideWeapon present mismatch") );
 		xfer->xferSnapshot( m_collideWeapon );
 
 	}  // end else
@@ -154,7 +154,7 @@ void FireWeaponCollide::xfer( Xfer *xfer )
 	{
 
 		DEBUG_ASSERTCRASH( m_collideWeapon == NULL,
-											 ("FireWeaponCollide::Xfer - m_collideWeapon missing mismatch\n" ));
+											 ("FireWeaponCollide::Xfer - m_collideWeapon missing mismatch" ));
 
 	}  // end else
 

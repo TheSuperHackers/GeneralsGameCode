@@ -38,11 +38,6 @@
 #include "Common/WellKnownKeys.h"
 #include "Common/QuotedPrintable.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 class MapMetaDataReader
 {
@@ -169,7 +164,7 @@ void INI::parseMapCacheDefinition( INI* ini )
 		AsciiString lowerName = name;
 		lowerName.toLower();
 		md.m_fileName = lowerName;
-//		DEBUG_LOG(("INI::parseMapCacheDefinition - adding %s to map cache\n", lowerName.str()));
+//		DEBUG_LOG(("INI::parseMapCacheDefinition - adding %s to map cache", lowerName.str()));
 		(*TheMapCache)[lowerName] = md;
 	}
 }

@@ -47,11 +47,6 @@
 
 extern void addIcon(const Coord3D *pos, Real width, Int numFramesDuration, RGBColor color);
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // PRIVATE CLASS ///////////////////////////////////////////////////////////////////////////////////
@@ -345,7 +340,7 @@ void AI::reset( void )
 		}
 	}
 #else
-	DEBUG_ASSERTCRASH(m_groupList.empty(), ("AI::m_groupList is expected empty already\n"));
+	DEBUG_ASSERTCRASH(m_groupList.empty(), ("AI::m_groupList is expected empty already"));
 
 	m_groupList.clear(); // Clear just in case...
 #endif
@@ -458,7 +453,7 @@ AIGroupPtr AI::createGroup( void )
 #endif
 
 	// add it to the list
-//	DEBUG_LOG(("***AIGROUP %x is being added to m_groupList.\n", group ));
+//	DEBUG_LOG(("***AIGROUP %x is being added to m_groupList.", group ));
 #if RETAIL_COMPATIBLE_AIGROUP
 	m_groupList.push_back( group );
 #else
@@ -482,7 +477,7 @@ void AI::destroyGroup( AIGroup *group )
 	DEBUG_ASSERTCRASH(group != NULL, ("A NULL group made its way into the AIGroup list.. jkmcd"));
 
 	// remove it
-//	DEBUG_LOG(("***AIGROUP %x is being removed from m_groupList.\n", group ));
+//	DEBUG_LOG(("***AIGROUP %x is being removed from m_groupList.", group ));
 	m_groupList.erase( i );
 
 	// destroy group
@@ -539,7 +534,7 @@ public:
 		return true;
 	}
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	virtual const char* debugGetName() { return "PartitionFilterLiveMapEnemies"; }
 #endif
 };
@@ -569,7 +564,7 @@ public:
 		return false;
 	}
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	virtual const char* debugGetName() { return "PartitionFilterWithinAttackRange"; }
 #endif
 };
@@ -734,7 +729,7 @@ Object *AI::findClosestEnemy( const Object *me, Real range, UnsignedInt qualifie
 		}
 	}	
 	if (bestEnemy) {
-		//DEBUG_LOG(("Find closest found %s, hunter %s, info %s\n", bestEnemy->getTemplate()->getName().str(), 
+		//DEBUG_LOG(("Find closest found %s, hunter %s, info %s", bestEnemy->getTemplate()->getName().str(), 
 		//	me->getTemplate()->getName().str(), info->getName().str()));
 	}
 	return bestEnemy;
@@ -875,7 +870,7 @@ Real AI::getAdjustedVisionRangeForObject(const Object *object, Int factorsToCons
 		}
 	}
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	if (TheGlobalData->m_debugVisibility) 
 	{
 		// ICK. This really nasty statement is used so that we only initialize this color once.
@@ -984,7 +979,7 @@ void TAiData::crc( Xfer *xfer )
 	xfer->xferReal( &m_maxRecruitDistance );
 	xfer->xferReal( &m_repulsedDistance );
 	xfer->xferBool( &m_enableRepulsors );
-	CRCGEN_LOG(("CRC after AI TAiData for frame %d is 0x%8.8X\n", TheGameLogic->getFrame(), ((XferCRC *)xfer)->getCRC()));
+	CRCGEN_LOG(("CRC after AI TAiData for frame %d is 0x%8.8X", TheGameLogic->getFrame(), ((XferCRC *)xfer)->getCRC()));
 
 }  // end crc
 
@@ -1010,7 +1005,7 @@ void AI::crc( Xfer *xfer )
 {
 
 	xfer->xferSnapshot( m_pathfinder );
-	CRCGEN_LOG(("CRC after AI pathfinder for frame %d is 0x%8.8X\n", TheGameLogic->getFrame(), ((XferCRC *)xfer)->getCRC()));
+	CRCGEN_LOG(("CRC after AI pathfinder for frame %d is 0x%8.8X", TheGameLogic->getFrame(), ((XferCRC *)xfer)->getCRC()));
 
 	AsciiString marker;
 	TAiData *aiData = m_aiData;

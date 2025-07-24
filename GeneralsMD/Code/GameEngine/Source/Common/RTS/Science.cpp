@@ -35,11 +35,6 @@
 
 ScienceStore* TheScienceStore = NULL;
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 //-----------------------------------------------------------------------------
 void ScienceStore::init()
@@ -220,7 +215,7 @@ const ScienceInfo* ScienceStore::findScienceInfo(ScienceType st) const
 		{
 			if (info != NULL)
 			{
-				DEBUG_CRASH(("duplicate science %s!\n",c));
+				DEBUG_CRASH(("duplicate science %s!",c));
 				throw INI_INVALID_DATA;
 			}
 			info = newInstance(ScienceInfo);

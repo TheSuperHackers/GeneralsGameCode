@@ -135,7 +135,7 @@ static Bool handleSlashCommands( UnicodeString message, Bool isAction, GameWindo
 		case L'r':
 		case L'R':
 			remainder.nextToken(&token);
-#if defined RTS_DEBUG || defined RTS_INTERNAL
+#if defined(RTS_DEBUG)
 			if (token.compareNoCase(L"raw") == 0)
 			{
 				// Send raw IRC commands (Ascii only)
@@ -149,7 +149,7 @@ static Bool handleSlashCommands( UnicodeString message, Bool isAction, GameWindo
 			}
 #endif
 			break;
-#if defined RTS_DEBUG || defined RTS_INTERNAL
+#if defined(RTS_DEBUG)
 		case L'k':
 		case L'K':
 			remainder.nextToken(&token);
@@ -194,7 +194,7 @@ static Bool handleSlashCommands( UnicodeString message, Bool isAction, GameWindo
 				}
 				return true; // show it anyway
 			}
-#if defined RTS_DEBUG || defined RTS_INTERNAL
+#if defined(RTS_DEBUG)
 			else if (token.compareNoCase(L"oper") == 0)
 			{
 				// Send raw IRC oper command
@@ -245,7 +245,7 @@ static Bool handleSlashCommands( UnicodeString message, Bool isAction, GameWindo
 				return true; // show it anyway
 			}
 			break;
-#if defined RTS_DEBUG || defined RTS_INTERNAL
+#if defined(RTS_DEBUG)
 		case L'c':
 		case L'C':
 			remainder.nextToken(&token);
@@ -262,7 +262,7 @@ static Bool handleSlashCommands( UnicodeString message, Bool isAction, GameWindo
 				return true; // show it anyway
 			}
 			break;
-#endif // RTS_DEBUG || defined RTS_INTERNAL
+#endif // RTS_DEBUG
 		}
 	}
 	*/
@@ -375,7 +375,7 @@ void RoomMessageCallback(PEER peer, RoomType roomType,
 												 const char * nick, const char * message,
 												 MessageType messageType, void * param)
 {
-	DEBUG_LOG(("RoomMessageCallback\n"));
+	DEBUG_LOG(("RoomMessageCallback"));
 	handleUnicodeMessage(nick, QuotedPrintableToUnicodeString(message), true, (messageType == ActionMessage));
 }
 
@@ -383,7 +383,7 @@ void PlayerMessageCallback(PEER peer,
 												 const char * nick, const char * message,
 												 MessageType messageType, void * param)
 {
-	DEBUG_LOG(("PlayerMessageCallback\n"));
+	DEBUG_LOG(("PlayerMessageCallback"));
 	handleUnicodeMessage(nick, QuotedPrintableToUnicodeString(message), false, (messageType == ActionMessage));
 }
 

@@ -45,7 +45,7 @@
   This module defines a number of macros. Usually only these macros should be
   used to access any debug functionality.
 
-  All these macros are defined if either RTS_DEBUG or RTS_INTERNAL is defined. Otherwise
+  All these macros are defined if RTS_DEBUG is defined. Otherwise
   all of them (with the exception of DCHECK and DCHECK_MSG) will be removed.
 */
 ///@{
@@ -57,7 +57,7 @@
     returns false. The user will then have the choice of aborting the program,
     continuing once or continuing with completely ignoring that specific assertion.
 
-    Assertions are completely removed if neither RTS_DEBUG nor RTS_INTERNAL are defined.
+    Assertions are completely removed if RTS_DEBUG is not defined.
 
     \param expr expression, trigger assert window if false
   */
@@ -73,7 +73,7 @@
     \endcode
     For more information see the \ref debug_stream page.
 
-    Assertions are completely removed if neither RTS_DEBUG nor RTS_INTERNAL are defined.
+    Assertions are completely removed if RTS_DEBUG is not defined.
 
     \param expr expression, trigger assert window if false
     \param msg custom message stream, see \ref debug_stream
@@ -282,7 +282,7 @@ DFAIL_IF_MSG(!ptrval,"pointer must not be NULL") return;
 
 ///@}
 
-#elif defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#elif defined(RTS_DEBUG)
 
   #define DASSERT(expr) \
     ((void)( Debug::SkipNext() || \

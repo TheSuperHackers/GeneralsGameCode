@@ -70,11 +70,6 @@
 
 #include "Common/CRCDebug.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // PUBLIC DATA ////////////////////////////////////////////////////////////////////////////////////
@@ -898,7 +893,7 @@ public:
 
 		ini->initFromINIMulti(nugget, p);
 
-		DEBUG_ASSERTCRASH(nugget->m_mass > 0.0f, ("Zero masses are not allowed for debris!\n"));
+		DEBUG_ASSERTCRASH(nugget->m_mass > 0.0f, ("Zero masses are not allowed for debris!"));
 		((ObjectCreationList*)instance)->addObjectCreationNugget(nugget);
 	}
 
@@ -1004,7 +999,7 @@ protected:
 
 		if (m_inheritsVeterancy && sourceObj && obj->getExperienceTracker()->isTrainable())
 		{
-			DEBUG_LOG(("Object %s inherits veterancy level %d from %s\n",
+			DEBUG_LOG(("Object %s inherits veterancy level %d from %s",
 				obj->getTemplate()->getName().str(), sourceObj->getVeterancyLevel(), sourceObj->getTemplate()->getName().str()));
 			VeterancyLevel v = sourceObj->getVeterancyLevel();
 			obj->getExperienceTracker()->setVeterancyLevel(v);
@@ -1102,7 +1097,7 @@ protected:
 					DUMPREAL(m_mass);
 					objUp->setMass( m_mass );
 				}
-				DEBUG_ASSERTCRASH(objUp->getMass() > 0.0f, ("Zero masses are not allowed for obj!\n"));
+				DEBUG_ASSERTCRASH(objUp->getMass() > 0.0f, ("Zero masses are not allowed for obj!"));
 
 				objUp->setExtraBounciness(m_extraBounciness);
 				objUp->setExtraFriction(m_extraFriction);
@@ -1274,7 +1269,7 @@ protected:
 
 				tmpl = debrisTemplate;
 			}
-			DEBUG_ASSERTCRASH(tmpl, ("Object %s not found\n",m_names[pick].str()));
+			DEBUG_ASSERTCRASH(tmpl, ("Object %s not found",m_names[pick].str()));
 			if (!tmpl)
 				continue;
 

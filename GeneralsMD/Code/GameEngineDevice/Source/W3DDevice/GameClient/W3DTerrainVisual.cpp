@@ -661,7 +661,7 @@ Bool W3DTerrainVisual::load( AsciiString filename )
 	if (W3DDisplay::m_3DScene != NULL)
 		W3DDisplay::m_3DScene->Add_Render_Object( m_terrainRenderObject );
 
-#if defined RTS_DEBUG || defined RTS_INTERNAL
+#if defined(RTS_DEBUG)
 	// Icon drawing utility object for pathfinding.
 	if (W3DDisplay::m_3DScene != NULL)
 	{
@@ -1205,7 +1205,7 @@ void W3DTerrainVisual::xfer( Xfer *xfer )
 	if( gridEnabled != m_isWaterGridRenderingEnabled )
 	{
 
-		DEBUG_CRASH(( "W3DTerrainVisual::xfer - m_isWaterGridRenderingEnabled mismatch\n" ));
+		DEBUG_CRASH(( "W3DTerrainVisual::xfer - m_isWaterGridRenderingEnabled mismatch" ));
 		throw SC_INVALID_DATA;
 
 	}  // end if
@@ -1225,7 +1225,7 @@ void W3DTerrainVisual::xfer( Xfer *xfer )
 		if( width != getGridWidth() )
 		{
 
-			DEBUG_CRASH(( "W3DTerainVisual::xfer - grid width mismatch '%d' should be '%d'\n",
+			DEBUG_CRASH(( "W3DTerainVisual::xfer - grid width mismatch '%d' should be '%d'",
 										width, getGridWidth() ));
 			throw SC_INVALID_DATA;
 
@@ -1233,7 +1233,7 @@ void W3DTerrainVisual::xfer( Xfer *xfer )
 		if( height != getGridHeight() )
 		{
 
-			DEBUG_CRASH(( "W3DTerainVisual::xfer - grid height mismatch '%d' should be '%d'\n",
+			DEBUG_CRASH(( "W3DTerainVisual::xfer - grid height mismatch '%d' should be '%d'",
 										height, getGridHeight() ));
 			throw SC_INVALID_DATA;
 

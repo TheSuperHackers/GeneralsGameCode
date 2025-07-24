@@ -55,7 +55,7 @@ BOOL CWBFrameWnd::LoadFrame(UINT nIDResource,
 			SWP_NOZORDER|SWP_NOSIZE);
 		if (!m_cellSizeToolBar.Create(this, IDD_CELL_SLIDER, CBRS_LEFT, IDD_CELL_SLIDER))
 		{
-			DEBUG_CRASH(("Failed to create toolbar\n"));
+			DEBUG_CRASH(("Failed to create toolbar"));
 		}
 		EnableDocking(CBRS_ALIGN_ANY);
 		m_cellSizeToolBar.SetupSlider();

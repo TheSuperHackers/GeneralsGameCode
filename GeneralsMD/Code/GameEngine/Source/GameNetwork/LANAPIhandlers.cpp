@@ -224,7 +224,7 @@ void LANAPI::handleRequestJoin( LANMessage *msg, UnsignedInt senderIP )
 			reply.GameNotJoined.reason = LANAPIInterface::RET_GAME_STARTED;
 			reply.GameNotJoined.gameIP = m_localIP;
 			reply.GameNotJoined.playerIP = senderIP;
-			DEBUG_LOG(("LANAPI::handleRequestJoin - join denied because game already started.\n"));
+			DEBUG_LOG(("LANAPI::handleRequestJoin - join denied because game already started."));
 		}
 		else
 		{
@@ -232,13 +232,13 @@ void LANAPI::handleRequestJoin( LANMessage *msg, UnsignedInt senderIP )
 			Bool canJoin = true;
 
 			// see if the CRCs match
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 			if (TheGlobalData->m_netMinPlayers > 0) {
 #endif
 /*			if (msg->GameToJoin.iniCRC != TheGlobalData->m_iniCRC ||
 					msg->GameToJoin.exeCRC != TheGlobalData->m_exeCRC)
 			{
-				DEBUG_LOG(("LANAPI::handleRequestJoin - join denied because of CRC mismatch. CRCs are them/us INI:%X/%X exe:%X/%X\n",
+				DEBUG_LOG(("LANAPI::handleRequestJoin - join denied because of CRC mismatch. CRCs are them/us INI:%X/%X exe:%X/%X",
 					msg->GameToJoin.iniCRC, TheGlobalData->m_iniCRC,
 					msg->GameToJoin.exeCRC, TheGlobalData->m_exeCRC));
 				reply.LANMessageType = LANMessage::MSG_JOIN_DENY;
@@ -248,7 +248,7 @@ void LANAPI::handleRequestJoin( LANMessage *msg, UnsignedInt senderIP )
 				canJoin = false;
 			}
 */
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 			}
 #endif
 			
@@ -273,7 +273,7 @@ void LANAPI::handleRequestJoin( LANMessage *msg, UnsignedInt senderIP )
 
 				if (s.isNotEmpty())
 				{
-					DEBUG_LOG(("Checking serial '%s' in slot %d\n", s.str(), player));
+					DEBUG_LOG(("Checking serial '%s' in slot %d", s.str(), player));
 
 					if (!strncmp(s.str(), msg->GameToJoin.serial, g_maxSerialLength))
 					{
@@ -284,7 +284,7 @@ void LANAPI::handleRequestJoin( LANMessage *msg, UnsignedInt senderIP )
 						reply.GameNotJoined.playerIP = senderIP;
 						canJoin = false;
 
-						DEBUG_LOG(("LANAPI::handleRequestJoin - join denied because of duplicate serial # (%s).\n", s.str()));
+						DEBUG_LOG(("LANAPI::handleRequestJoin - join denied because of duplicate serial # (%s).", s.str()));
 						break;
 					}
 				}
@@ -304,7 +304,7 @@ void LANAPI::handleRequestJoin( LANMessage *msg, UnsignedInt senderIP )
 					reply.GameNotJoined.playerIP = senderIP;
 					canJoin = false;
 
-					DEBUG_LOG(("LANAPI::handleRequestJoin - join denied because of duplicate names.\n"));
+					DEBUG_LOG(("LANAPI::handleRequestJoin - join denied because of duplicate names."));
 					break;
 				}
 			}
@@ -349,7 +349,7 @@ void LANAPI::handleRequestJoin( LANMessage *msg, UnsignedInt senderIP )
 						newSlot.setLastHeard(timeGetTime());
 						newSlot.setSerial(msg->GameToJoin.serial);
 						m_currentGame->setSlot(player,newSlot);
-						DEBUG_LOG(("LANAPI::handleRequestJoin - added player %ls at ip 0x%08x to the game\n", msg->name, senderIP));
+						DEBUG_LOG(("LANAPI::handleRequestJoin - added player %ls at ip 0x%08x to the game", msg->name, senderIP));
 
 						OnPlayerJoin(player, UnicodeString(msg->name));
 						responseIP = 0;
@@ -366,7 +366,7 @@ void LANAPI::handleRequestJoin( LANMessage *msg, UnsignedInt senderIP )
 				reply.GameNotJoined.reason = LANAPIInterface::RET_GAME_FULL;
 				reply.GameNotJoined.gameIP = m_localIP;
 				reply.GameNotJoined.playerIP = senderIP;
-				DEBUG_LOG(("LANAPI::handleRequestJoin - join denied because game is full.\n"));
+				DEBUG_LOG(("LANAPI::handleRequestJoin - join denied because game is full."));
 			}
 		}
 	}
@@ -422,7 +422,7 @@ void LANAPI::handleJoinAccept( LANMessage *msg, UnsignedInt senderIP )
 				prefs.write();
 
 				OnGameJoin(RET_OK, m_currentGame);
-				//DEBUG_ASSERTCRASH(false, ("setting host to %ls@%ls\n", m_currentGame->getLANSlot(0)->getUser()->getLogin().str(),
+				//DEBUG_ASSERTCRASH(false, ("setting host to %ls@%ls", m_currentGame->getLANSlot(0)->getUser()->getLogin().str(),
 				//	m_currentGame->getLANSlot(0)->getUser()->getHost().str()));
 			}
 			m_pendingAction = ACT_NONE;
@@ -590,10 +590,10 @@ void LANAPI::handleChat( LANMessage *msg, UnsignedInt senderIP )
 	{
 		if (LookupGame(UnicodeString(msg->Chat.gameName)) != m_currentGame)
 		{
-			DEBUG_LOG(("Game '%ls' is not my game\n", msg->Chat.gameName));
+			DEBUG_LOG(("Game '%ls' is not my game", msg->Chat.gameName));
 			if (m_currentGame)
 			{
-				DEBUG_LOG(("Current game is '%ls'\n", m_currentGame->getName().str()));
+				DEBUG_LOG(("Current game is '%ls'", m_currentGame->getName().str()));
 			}
 			return;
 		}

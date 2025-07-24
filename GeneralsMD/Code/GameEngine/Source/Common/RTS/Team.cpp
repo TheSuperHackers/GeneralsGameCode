@@ -51,11 +51,6 @@
 #include "GameLogic/ScriptActions.h"
 #include "GameLogic/ScriptEngine.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 ///@todo - do delayed script evaluations for team scripts. jba.
 
@@ -241,7 +236,7 @@ void TeamFactory::initTeam(const AsciiString& name, const AsciiString& owner, Bo
 {
 	DEBUG_ASSERTCRASH(findTeamPrototype(name)==NULL,("team already exists"));
 	Player *pOwner = ThePlayerList->findPlayerWithNameKey(NAMEKEY(owner));
-	DEBUG_ASSERTCRASH(pOwner, ("no owner found for team %s (%s)\n",name.str(),owner.str()));
+	DEBUG_ASSERTCRASH(pOwner, ("no owner found for team %s (%s)",name.str(),owner.str()));
 	if (!pOwner)
 		pOwner = ThePlayerList->getNeutralPlayer(); 
 	/*TeamPrototype *tp =*/ newInstance(TeamPrototype)(this, name, pOwner, isSingleton, d, ++m_uniqueTeamPrototypeID);
@@ -452,7 +447,7 @@ void TeamFactory::xfer( Xfer *xfer )
 	if( prototypeCount != m_prototypes.size() )
 	{
 
-		DEBUG_CRASH(( "TeamFactory::xfer - Prototype count mismatch '%d should be '%d'\n",
+		DEBUG_CRASH(( "TeamFactory::xfer - Prototype count mismatch '%d should be '%d'",
 									prototypeCount, m_prototypes.size() ));
 		throw SC_INVALID_DATA;
 
@@ -500,7 +495,7 @@ void TeamFactory::xfer( Xfer *xfer )
 			if( teamPrototype == NULL )
 			{
 
-				DEBUG_CRASH(( "TeamFactory::xfer - Unable to find team prototype by id\n" ));
+				DEBUG_CRASH(( "TeamFactory::xfer - Unable to find team prototype by id" ));
 				throw SC_INVALID_DATA;
 
 			}  // end if
@@ -2582,7 +2577,7 @@ void Team::xfer( Xfer *xfer )
 	if( teamID != m_id )
 	{
 
-		DEBUG_CRASH(( "Team::xfer - TeamID mismatch.  Xfered '%d' but should be '%d'\n",
+		DEBUG_CRASH(( "Team::xfer - TeamID mismatch.  Xfered '%d' but should be '%d'",
 									teamID, m_id ));
 		throw SC_INVALID_DATA;
 
@@ -2717,7 +2712,7 @@ void Team::loadPostProcess( void )
 		if( obj == NULL )
 		{
 
-			DEBUG_CRASH(( "Team::loadPostProcess - Unable to post process object to member list, object ID = '%d'\n", *it ));
+			DEBUG_CRASH(( "Team::loadPostProcess - Unable to post process object to member list, object ID = '%d'", *it ));
 			throw SC_INVALID_DATA;
 
 		}  // end if
@@ -2731,7 +2726,7 @@ void Team::loadPostProcess( void )
 		if( isInList_TeamMemberList( obj ) == FALSE )
 		{
 
-			DEBUG_CRASH(( "Team::loadPostProcess - Object '%s'(%d) should be in team list but is not\n",
+			DEBUG_CRASH(( "Team::loadPostProcess - Object '%s'(%d) should be in team list but is not",
 										obj->getTemplate()->getName().str(), obj->getID() ));
 			throw SC_INVALID_DATA;
 

@@ -67,11 +67,6 @@
 #include "GameLogic/Module/ContainModule.h"
 
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 
 static Script *s_mtScript = NULL;
@@ -1704,7 +1699,7 @@ Bool Condition::ParseConditionDataChunk(DataChunkInput &file, DataChunkInfo *inf
 				ct = TheScriptEngine->getConditionTemplate(i);
 				if (key == ct->m_internalNameKey) {
 					match = true;
-					DEBUG_LOG(("Rematching script condition %s\n", KEYNAME(key).str()));
+					DEBUG_LOG(("Rematching script condition %s", KEYNAME(key).str()));
 					pCondition->m_conditionType = (enum ConditionType)i;
 					break;
 				}
@@ -1979,7 +1974,7 @@ AsciiString Parameter::getUiText(void) const
 		case RADAR_EVENT_TYPE:
 			switch (m_int) {
 				//case RADAR_EVENT_INVALID: ++m_int;	// continue to the next case.
-				case RADAR_EVENT_INVALID: DEBUG_CRASH(("Invalid radar event\n")); uiText.format("Construction"); break;
+				case RADAR_EVENT_INVALID: DEBUG_CRASH(("Invalid radar event")); uiText.format("Construction"); break;
 				case RADAR_EVENT_CONSTRUCTION: uiText.format("Construction"); break;
 				case RADAR_EVENT_UPGRADE: uiText.format("Upgrade"); break;
 				case RADAR_EVENT_UNDER_ATTACK: uiText.format("Under Attack"); break;
@@ -2168,7 +2163,7 @@ Parameter *Parameter::ReadParameter(DataChunkInput &file)
 			strcpy(newName, "GLA");
 			strcat(newName, oldName+strlen("Fundamentalist"));
 			pParm->m_string.set(newName);
-			DEBUG_LOG(("Changing Script Ref from %s to %s\n", oldName, newName));
+			DEBUG_LOG(("Changing Script Ref from %s to %s", oldName, newName));
 		}
 	}
 
@@ -2466,7 +2461,7 @@ ScriptAction *ScriptAction::ParseAction(DataChunkInput &file, DataChunkInfo *inf
 				at = TheScriptEngine->getActionTemplate(i);
 				if (key == at->m_internalNameKey) {
 					match = true;
-					DEBUG_LOG(("Rematching script action %s\n", KEYNAME(key).str()));
+					DEBUG_LOG(("Rematching script action %s", KEYNAME(key).str()));
 					pScriptAction->m_actionType = (enum ScriptActionType)i;
 					break;
 				}
@@ -2482,7 +2477,7 @@ ScriptAction *ScriptAction::ParseAction(DataChunkInput &file, DataChunkInfo *inf
 #ifdef DEBUG_CRASHING
 	Script *pScript = (Script *)userData;
 	if (at && (at->getName().isEmpty() || (at->getName().compareNoCase("(placeholder)") == 0))) {
-		DEBUG_CRASH(("Invalid Script Action found in script '%s'\n", pScript->getName().str()));
+		DEBUG_CRASH(("Invalid Script Action found in script '%s'", pScript->getName().str()));
 	}
 #endif
 #ifdef COUNT_SCRIPT_USAGE

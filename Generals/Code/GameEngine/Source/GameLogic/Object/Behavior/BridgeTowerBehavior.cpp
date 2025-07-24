@@ -115,7 +115,7 @@ void BridgeTowerBehavior::onDamage( DamageInfo *damageInfo )
 			break;
 
 	}  // end for bmi
-	DEBUG_ASSERTCRASH( bridgeInterface != NULL, ("BridgeTowerBehavior::onDamage - no 'BridgeBehaviorInterface' found\n") );
+	DEBUG_ASSERTCRASH( bridgeInterface != NULL, ("BridgeTowerBehavior::onDamage - no 'BridgeBehaviorInterface' found") );
 	if( bridgeInterface )
 	{
 
@@ -196,7 +196,7 @@ void BridgeTowerBehavior::onHealing( DamageInfo *damageInfo )
 			break;
 
 	}  // end for bmi
-	DEBUG_ASSERTCRASH( bridgeInterface != NULL, ("BridgeTowerBehavior::onHealing - no 'BridgeBehaviorInterface' found\n") );
+	DEBUG_ASSERTCRASH( bridgeInterface != NULL, ("BridgeTowerBehavior::onHealing - no 'BridgeBehaviorInterface' found") );
 	if( bridgeInterface )
 	{
 

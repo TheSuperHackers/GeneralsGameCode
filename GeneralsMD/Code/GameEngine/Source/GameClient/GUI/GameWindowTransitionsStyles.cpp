@@ -47,11 +47,6 @@
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
 #include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma message("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 //-----------------------------------------------------------------------------
 // USER INCLUDES //////////////////////////////////////////////////////////////
@@ -1498,7 +1493,7 @@ void CountUpTransition::init( GameWindow *win )
 	AsciiString tempStr;
 	tempStr.translate(m_fullText);
 	m_intValue = atoi(tempStr.str());
-	DEBUG_LOG(("CountUpTransition::init %hs %s %d\n", m_fullText.str(), tempStr.str(), m_intValue));
+	DEBUG_LOG(("CountUpTransition::init %hs %s %d", m_fullText.str(), tempStr.str(), m_intValue));
 	if(m_intValue < COUNTUPTRANSITION_END)
 	{
 		m_countState = COUNT_ONES;

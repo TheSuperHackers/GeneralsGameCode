@@ -37,11 +37,6 @@
 #include "GameLogic/GameLogic.h"
 #include "GameLogic/Object.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 // tinting is all handled in drawable, now, Graham look near the bottom of Drawable::UpdateDrawable()
 //static const RGBColor poisonedTint = {0.0f, 1.0f, 0.0f};

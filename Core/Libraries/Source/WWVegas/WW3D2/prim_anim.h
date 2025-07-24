@@ -187,7 +187,7 @@ int PrimitiveAnimationChannelClass<T>::Get_Key_Count (void) const
 //	Set_Key_Value
 /////////////////////////////////////////////////////////
 template<class T>
-const PrimitiveAnimationChannelClass<T>::KeyClass &PrimitiveAnimationChannelClass<T>::Get_Key (int index) const
+const typename PrimitiveAnimationChannelClass<T>::KeyClass &PrimitiveAnimationChannelClass<T>::Get_Key (int index) const
 {
 	return m_Data[index];
 }

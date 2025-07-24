@@ -91,8 +91,8 @@ void GraphDraw::render()
 	Int height = TheDisplay->getHeight();
 
 	Int totalCount = m_graphEntries.size();
-	DEBUG_ASSERTCRASH(totalCount < MAX_GRAPH_VALUES, ("MAX_GRAPH_VALUES must be increased, not all labels will appear (max %d, cur %d).\n",MAX_GRAPH_VALUES,totalCount));
-	DEBUG_ASSERTCRASH(BAR_HEIGHT * totalCount < height, ("BAR_HEIGHT must be reduced, as bars are being drawn off-screen.\n"));
+	DEBUG_ASSERTCRASH(totalCount < MAX_GRAPH_VALUES, ("MAX_GRAPH_VALUES must be increased, not all labels will appear (max %d, cur %d).",MAX_GRAPH_VALUES,totalCount));
+	DEBUG_ASSERTCRASH(BAR_HEIGHT * totalCount < height, ("BAR_HEIGHT must be reduced, as bars are being drawn off-screen."));
 	VecGraphEntriesIt it;
 
 	Int count = 0;

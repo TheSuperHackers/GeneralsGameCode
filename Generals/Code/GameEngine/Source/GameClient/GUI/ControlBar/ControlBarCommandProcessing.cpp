@@ -56,11 +56,6 @@
 #include "GameLogic/Object.h"
 #include "GameLogic/Module/ProductionUpdate.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 //-------------------------------------------------------------------------------------------------
 /** Process a button transition message from the window system that should be for one of
@@ -269,7 +264,7 @@ CBCommandStatus ControlBar::processCommandUI( GameWindow *control,
 				break;
 
 			// sanity, we must have something to build
-			DEBUG_ASSERTCRASH( whatToBuild, ("Undefined BUILD command for object '%s'\n", 
+			DEBUG_ASSERTCRASH( whatToBuild, ("Undefined BUILD command for object '%s'", 
 												 commandButton->getThingTemplate()->getName().str()) );
 			
 			CanMakeType cmt = TheBuildAssistant->canMakeUnit(factory, whatToBuild);
@@ -297,7 +292,7 @@ CBCommandStatus ControlBar::processCommandUI( GameWindow *control,
 			} 
 			else if (cmt != CANMAKE_OK)
 			{
-				DEBUG_ASSERTCRASH( 0, ("Cannot create '%s' because the factory object '%s' returns false for canMakeUnit\n", 
+				DEBUG_ASSERTCRASH( 0, ("Cannot create '%s' because the factory object '%s' returns false for canMakeUnit", 
 																whatToBuild->getName().str(), 
 																factory->getTemplate()->getName().str()) );
 				break;
@@ -310,7 +305,7 @@ CBCommandStatus ControlBar::processCommandUI( GameWindow *control,
 			if( pu == NULL )
 			{
 
-				DEBUG_ASSERTCRASH( 0, ("Cannot create '%s' because the factory object '%s' is not capable of producting units\n", 
+				DEBUG_ASSERTCRASH( 0, ("Cannot create '%s' because the factory object '%s' is not capable of producting units", 
 																whatToBuild->getName().str(), 
 																factory->getTemplate()->getName().str()) );
 				break;
@@ -344,7 +339,7 @@ CBCommandStatus ControlBar::processCommandUI( GameWindow *control,
 			if( i == MAX_BUILD_QUEUE_BUTTONS )
 			{
 
-				DEBUG_ASSERTCRASH( 0, ("Control not found in build queue data\n") );
+				DEBUG_ASSERTCRASH( 0, ("Control not found in build queue data") );
 				break;
 
 			}  // end if
@@ -377,7 +372,7 @@ CBCommandStatus ControlBar::processCommandUI( GameWindow *control,
 		case GUI_COMMAND_PLAYER_UPGRADE:
 		{
 			const UpgradeTemplate *upgradeT = commandButton->getUpgradeTemplate();
-			DEBUG_ASSERTCRASH( upgradeT, ("Undefined upgrade '%s' in player upgrade command\n", "UNKNOWN") );
+			DEBUG_ASSERTCRASH( upgradeT, ("Undefined upgrade '%s' in player upgrade command", "UNKNOWN") );
 
 			// sanity
 			if( obj == NULL || upgradeT == NULL )
@@ -413,7 +408,7 @@ CBCommandStatus ControlBar::processCommandUI( GameWindow *control,
 		case GUI_COMMAND_OBJECT_UPGRADE:
 		{
 			const UpgradeTemplate *upgradeT = commandButton->getUpgradeTemplate();
-			DEBUG_ASSERTCRASH( upgradeT, ("Undefined upgrade '%s' in object upgrade command\n", "UNKNOWN") );
+			DEBUG_ASSERTCRASH( upgradeT, ("Undefined upgrade '%s' in object upgrade command", "UNKNOWN") );
 			// sanity
 			if( upgradeT == NULL )
 				break;
@@ -468,7 +463,7 @@ CBCommandStatus ControlBar::processCommandUI( GameWindow *control,
 			if( i == MAX_BUILD_QUEUE_BUTTONS )
 			{
 
-				DEBUG_ASSERTCRASH( 0, ("Control not found in build queue data\n") );
+				DEBUG_ASSERTCRASH( 0, ("Control not found in build queue data") );
 				break;
 
 			}  // end if
@@ -736,7 +731,7 @@ CBCommandStatus ControlBar::processCommandUI( GameWindow *control,
 		//---------------------------------------------------------------------------------------------
 		default:
 
-			DEBUG_ASSERTCRASH( 0, ("Unknown command '%d'\n", commandButton->getCommandType()) );
+			DEBUG_ASSERTCRASH( 0, ("Unknown command '%d'", commandButton->getCommandType()) );
 			return CBC_COMMAND_NOT_USED;
 
 	}  // end switch

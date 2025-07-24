@@ -488,7 +488,7 @@ GlobalData* GlobalData::m_theOriginal = NULL;
 	{ "KeyboardCameraRotateSpeed", INI::parseReal, NULL, offsetof( GlobalData, m_keyboardCameraRotateSpeed ) },
 	{ "PlayStats",									INI::parseInt,				NULL,			offsetof( GlobalData, m_playStats ) },
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	{ "DisableCameraFade",			INI::parseBool,				NULL,			offsetof( GlobalData, m_disableCameraFade ) },
 	{ "DisableScriptedInputDisabling",			INI::parseBool,		NULL,			offsetof( GlobalData, m_disableScriptedInputDisabling ) },
 	{ "DisableMilitaryCaption",			INI::parseBool,				NULL,			offsetof( GlobalData, m_disableMilitaryCaption ) },
@@ -543,16 +543,19 @@ GlobalData::GlobalData()
 		m_theOriginal = this;
 	m_next = NULL;
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL) || defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
+#if defined(RTS_DEBUG) || defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
 	m_specialPowerUsesDelay = TRUE;
 #endif
   m_TiVOFastMode = FALSE;
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG) || ENABLE_CONFIGURABLE_SHROUD
+	m_shroudOn = TRUE;
+#endif
+
+#if defined(RTS_DEBUG)
 	m_wireframe = 0;
 	m_stateMachineDebug = FALSE;
 	m_useCameraConstraints = TRUE;
-	m_shroudOn = TRUE;
 	m_fogOfWarOn = FALSE;
 	m_jabberOn = FALSE;
 	m_munkeeOn = FALSE;
@@ -928,6 +931,8 @@ GlobalData::GlobalData()
 	m_saveCameraInReplay = FALSE;
 	m_useCameraInReplay = FALSE;
 
+	m_systemTimeFontSize = 8;
+	m_gameTimeFontSize = 8;
 
 	m_debugShowGraphicalFramerate = FALSE;
 
@@ -1052,7 +1057,7 @@ GlobalData::GlobalData()
 //-------------------------------------------------------------------------------------------------
 GlobalData::~GlobalData( void )
 {
-	DEBUG_ASSERTCRASH( TheWritableGlobalData->m_next == NULL, ("~GlobalData: theOriginal is not original\n") );
+	DEBUG_ASSERTCRASH( TheWritableGlobalData->m_next == NULL, ("~GlobalData: theOriginal is not original") );
 
 	if (m_weaponBonusSet)
 		deleteInstance(m_weaponBonusSet);
@@ -1095,7 +1100,7 @@ GlobalData *GlobalData::newOverride( void )
 	GlobalData *override = NEW GlobalData;
 
 	// copy the data from the latest override (TheWritableGlobalData) to the newly created instance
-	DEBUG_ASSERTCRASH( TheWritableGlobalData, ("GlobalData::newOverride() - no existing data\n") );
+	DEBUG_ASSERTCRASH( TheWritableGlobalData, ("GlobalData::newOverride() - no existing data") );
 	*override = *TheWritableGlobalData;
 
 	//
@@ -1148,8 +1153,8 @@ void GlobalData::reset( void )
 	// we now have the one single global data in TheWritableGlobalData singleton, lets sanity check
 	// some of all that
 	//
-	DEBUG_ASSERTCRASH( TheWritableGlobalData->m_next == NULL, ("ResetGlobalData: theOriginal is not original\n") );
-	DEBUG_ASSERTCRASH( TheWritableGlobalData == GlobalData::m_theOriginal, ("ResetGlobalData: oops\n") );
+	DEBUG_ASSERTCRASH( TheWritableGlobalData->m_next == NULL, ("ResetGlobalData: theOriginal is not original") );
+	DEBUG_ASSERTCRASH( TheWritableGlobalData == GlobalData::m_theOriginal, ("ResetGlobalData: oops") );
 
 }  // end ResetGlobalData
 
@@ -1196,6 +1201,9 @@ void GlobalData::parseGameDataDefinition( INI* ini )
 	
 	TheWritableGlobalData->m_saveCameraInReplay = optionPref.saveCameraInReplays();
 	TheWritableGlobalData->m_useCameraInReplay = optionPref.useCameraInReplays();
+
+	TheWritableGlobalData->m_systemTimeFontSize = optionPref.getSystemTimeFontSize();
+	TheWritableGlobalData->m_gameTimeFontSize = optionPref.getGameTimeFontSize();
 	
 	Int val=optionPref.getGammaValue();
 	//generate a value between 0.6 and 2.0.
@@ -1235,7 +1243,7 @@ UnsignedInt GlobalData::generateExeCRC()
 #define GENERALSMD_104_EAAPP_EXE_CRC 0xc4181eb9u
 
 	exeCRC.set(GENERALSMD_104_CD_EXE_CRC);
-	DEBUG_LOG(("Fake EXE CRC is 0x%8.8X\n", exeCRC.get()));
+	DEBUG_LOG(("Fake EXE CRC is 0x%8.8X", exeCRC.get()));
 
 #else
 	{
@@ -1249,7 +1257,7 @@ UnsignedInt GlobalData::generateExeCRC()
 			{
 				exeCRC.computeCRC(crcBlock, amtRead);
 			}
-			DEBUG_LOG(("EXE CRC is 0x%8.8X\n", exeCRC.get()));
+			DEBUG_LOG(("EXE CRC is 0x%8.8X", exeCRC.get()));
 			fp->close();
 			fp = NULL;
 		}
@@ -1289,7 +1297,7 @@ UnsignedInt GlobalData::generateExeCRC()
 		fp = NULL;
 	}
 
-	DEBUG_LOG(("EXE+Version(%d.%d)+SCB CRC is 0x%8.8X\n", version >> 16, version & 0xffff, exeCRC.get()));
+	DEBUG_LOG(("EXE+Version(%d.%d)+SCB CRC is 0x%8.8X", version >> 16, version & 0xffff, exeCRC.get()));
 
 	return exeCRC.get();
 }

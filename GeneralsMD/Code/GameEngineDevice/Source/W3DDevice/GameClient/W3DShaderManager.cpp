@@ -74,11 +74,6 @@
 #include "dx8caps.h"
 #include "Common/GameLOD.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 // Turn this on to turn off pixel shaders. jba[4/3/2003]
 #define do_not_DISABLE_PIXEL_SHADERS 1
@@ -1217,7 +1212,7 @@ Int ShroudTextureShader::set(Int stage)
 
 	if (stage == 0)
 	{
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	if (TheGlobalData && TheGlobalData->m_fogOfWarOn)
 		DX8Wrapper::Set_Shader(ShaderClass::_PresetAlphaSpriteShader);
 	else
@@ -2674,7 +2669,7 @@ void W3DShaderManager::init(void)
 		}
 	}
 
-	DEBUG_LOG(("ShaderManager ChipsetID %d\n", res));
+	DEBUG_LOG(("ShaderManager ChipsetID %d", res));
 }
 
 // W3DShaderManager::shutdown =======================================================

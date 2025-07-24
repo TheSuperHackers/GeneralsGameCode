@@ -58,15 +58,6 @@ static const Int INVALID_PATH = -1;
 
 
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-//#pragma message("NO COMMENTS, PLEASE ABOUT THIS PRAGMA BEING LEFT ON... IT IS FOR A SPECIAL TEST...")
-//#pragma message("IF QA EVER REPRODUCES A DESYNC (BELIEVED FIXED) I'LL NEED TO DEBUG WHILE PLAYING AGAINST")
-//#pragma message("THAT MACHINE WITHOUT QUITTING TO START A DEBUGGABLE VERSION...")
-//#pragma message("THIS WILL BE CORRECTED IN GOOD TIME. JUST TRUST ME, -ML")
-#endif
 
 
 #define FRAMES_UNPULLED_LONG_ENOUGH_TO_UNHITCH (2)
@@ -871,7 +862,7 @@ public:
 
 	PartitionFilterIsValidCarriage(Object* obj, const RailroadBehaviorModuleData* data) : m_obj(obj), m_data(data) { }
 	
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	virtual const char* debugGetName() { return "PartitionFilterIsValidCarriage"; }
 #endif
 
@@ -961,7 +952,7 @@ void RailroadBehavior::createCarriages( void )
 				else // or else let's use the defualt template list prvided in the INI
 				{
 					firstCarriage = TheThingFactory->newObject( temp, self->getTeam() ); 
-					DEBUG_LOG(("%s Added a carriage, %s \n", self->getTemplate()->getName().str(),firstCarriage->getTemplate()->getName().str()));
+					DEBUG_LOG(("%s Added a carriage, %s ", self->getTemplate()->getName().str(),firstCarriage->getTemplate()->getName().str()));
 				}
 				
 				if ( firstCarriage )
@@ -1202,7 +1193,7 @@ void alignToTerrain( Real angle, const Coord3D& pos, const Coord3D& normal, Matr
 		x.normalize();
 	}
 
-	DEBUG_ASSERTCRASH(fabs(x.x*z.x + x.y*z.y + x.z*z.z)<0.0001,("dot is not zero\n"));
+	DEBUG_ASSERTCRASH(fabs(x.x*z.x + x.y*z.y + x.z*z.z)<0.0001,("dot is not zero"));
 
 	// now computing the y vector is trivial.
 	y.crossProduct( &z, &x, &y );

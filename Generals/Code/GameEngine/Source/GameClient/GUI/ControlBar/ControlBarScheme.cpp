@@ -62,11 +62,6 @@
 #include "GameClient/Image.h"
 #include "GameClient/GameWindowManager.h"
 #include "GameClient/GadgetPushButton.h"
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 //-----------------------------------------------------------------------------
 // DEFINES ////////////////////////////////////////////////////////////////////
@@ -442,9 +437,9 @@ void ControlBarScheme::init(void)
 	win= TheWindowManager->winGetWindowFromId( NULL, TheNameKeyGenerator->nameToKey( "ControlBar.wnd:PopupCommunicator" ) );
 	if(win)	
 	{
-//		DEBUG_ASSERTCRASH(m_buddyButtonEnable,     ("No enable button image for communicator in scheme %s!\n", m_name.str()));
-//		DEBUG_ASSERTCRASH(m_buddyButtonHightlited, ("No hilite button image for communicator in scheme %s!\n", m_name.str()));
-//		DEBUG_ASSERTCRASH(m_buddyButtonPushed,     ("No pushed button image for communicator in scheme %s!\n", m_name.str()));
+//		DEBUG_ASSERTCRASH(m_buddyButtonEnable,     ("No enable button image for communicator in scheme %s!", m_name.str()));
+//		DEBUG_ASSERTCRASH(m_buddyButtonHightlited, ("No hilite button image for communicator in scheme %s!", m_name.str()));
+//		DEBUG_ASSERTCRASH(m_buddyButtonPushed,     ("No pushed button image for communicator in scheme %s!", m_name.str()));
 		GadgetButtonSetEnabledImage(win, m_buddyButtonEnable);
 		GadgetButtonSetHiliteImage(win, m_buddyButtonHightlited);
 		GadgetButtonSetHiliteSelectedImage(win, m_buddyButtonPushed);
@@ -591,7 +586,7 @@ void ControlBarScheme::init(void)
 		}
 		win->winSetPosition(x,y );
 		win->winSetSize((m_powerBarLR.x - m_powerBarUL.x)*resMultiplier.x+ COMMAND_BAR_SIZE_OFFSET,(m_powerBarLR.y - m_powerBarUL.y)*resMultiplier.y+ COMMAND_BAR_SIZE_OFFSET);
-		DEBUG_LOG(("Power Bar UL X:%d Y:%d LR X:%d Y:%d size X:%d Y:%d\n",m_powerBarUL.x, m_powerBarUL.y,m_powerBarLR.x, m_powerBarLR.y, (m_powerBarLR.x - m_powerBarUL.x)*resMultiplier.x+ COMMAND_BAR_SIZE_OFFSET,(m_powerBarLR.y - m_powerBarUL.y)*resMultiplier.y+ COMMAND_BAR_SIZE_OFFSET  ));
+		DEBUG_LOG(("Power Bar UL X:%d Y:%d LR X:%d Y:%d size X:%d Y:%d",m_powerBarUL.x, m_powerBarUL.y,m_powerBarLR.x, m_powerBarLR.y, (m_powerBarLR.x - m_powerBarUL.x)*resMultiplier.x+ COMMAND_BAR_SIZE_OFFSET,(m_powerBarLR.y - m_powerBarUL.y)*resMultiplier.y+ COMMAND_BAR_SIZE_OFFSET  ));
 	}	
 
 	win= TheWindowManager->winGetWindowFromId( NULL, TheNameKeyGenerator->nameToKey( "ControlBar.wnd:ButtonGeneral" ) );
@@ -679,7 +674,7 @@ void ControlBarScheme::addAnimation( ControlBarSchemeAnimation *schemeAnim )
 {
 	if( !schemeAnim )
 	{
-		DEBUG_ASSERTCRASH(FALSE,("Trying to add a null animation to the controlbarscheme\n"));
+		DEBUG_ASSERTCRASH(FALSE,("Trying to add a null animation to the controlbarscheme"));
 		return;
 	}
 	m_animations.push_back( schemeAnim );
@@ -692,13 +687,13 @@ void ControlBarScheme::addImage( ControlBarSchemeImage *schemeImage )
 {
 	if( !schemeImage )
 	{
-		DEBUG_ASSERTCRASH(FALSE,("Trying to add a null image to the controlbarscheme\n"));
+		DEBUG_ASSERTCRASH(FALSE,("Trying to add a null image to the controlbarscheme"));
 		return;
 	}
 
 	if(schemeImage->m_layer < 0 || schemeImage->m_layer >= MAX_CONTROL_BAR_SCHEME_IMAGE_LAYERS)
 	{
-		DEBUG_ASSERTCRASH(FALSE,("SchemeImage %s attempted to be added to layer %d which is not Between to %d, %d\n",
+		DEBUG_ASSERTCRASH(FALSE,("SchemeImage %s attempted to be added to layer %d which is not Between to %d, %d",
 								 schemeImage->m_name.str(), schemeImage->m_layer, 0, MAX_CONTROL_BAR_SCHEME_IMAGE_LAYERS));
 		// bring the foobar to the front so we make it obvious that something's wrong
 		schemeImage->m_layer = 0;
@@ -1097,14 +1092,14 @@ void ControlBarSchemeManager::setControlBarSchemeByPlayerTemplate( const PlayerT
 	{
 		m_currentScheme->init();
 
-		DEBUG_LOG(("setControlBarSchemeByPlayer already is using %s as its side\n", side.str()));
+		DEBUG_LOG(("setControlBarSchemeByPlayer already is using %s as its side", side.str()));
 		return;
 	}
 
 	// if we don't have a side, set it to Observer shell
 	if(side.isEmpty())
 		side.set("Observer");
-	DEBUG_LOG(("setControlBarSchemeByPlayer used %s as its side\n", side.str()));
+	DEBUG_LOG(("setControlBarSchemeByPlayer used %s as its side", side.str()));
 	ControlBarScheme *tempScheme = NULL;
 
 	ControlBarSchemeList::iterator it = m_schemeList.begin();
@@ -1165,14 +1160,14 @@ void ControlBarSchemeManager::setControlBarSchemeByPlayer(Player *p)
 	{
 		m_currentScheme->init();
 
-		DEBUG_LOG(("setControlBarSchemeByPlayer already is using %s as its side\n", side.str()));
+		DEBUG_LOG(("setControlBarSchemeByPlayer already is using %s as its side", side.str()));
 		return;
 	}
 
 	// if we don't have a side, set it to Observer shell
 	if(side.isEmpty())
 		side.set("Observer");
-	DEBUG_LOG(("setControlBarSchemeByPlayer used %s as its side\n", side.str()));
+	DEBUG_LOG(("setControlBarSchemeByPlayer used %s as its side", side.str()));
 	ControlBarScheme *tempScheme = NULL;
 
 	ControlBarSchemeList::iterator it = m_schemeList.begin();

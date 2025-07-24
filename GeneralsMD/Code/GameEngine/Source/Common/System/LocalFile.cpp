@@ -61,11 +61,6 @@
 #include "Common/PerfTimer.h"
 			
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 //----------------------------------------------------------------------------
 //         Externals                                                     
@@ -277,7 +272,7 @@ Bool LocalFile::open( const Char *filename, Int access )
 #endif
 
 	++s_totalOpen;
-///	DEBUG_LOG(("LocalFile::open %s (total %d)\n",filename,s_totalOpen));
+///	DEBUG_LOG(("LocalFile::open %s (total %d)",filename,s_totalOpen));
 	if ( m_access & APPEND )
 	{
 		if ( seek ( 0, END ) < 0 )

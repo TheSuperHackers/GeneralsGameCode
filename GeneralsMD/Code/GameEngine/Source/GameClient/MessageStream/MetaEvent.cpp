@@ -62,11 +62,6 @@
 
 MetaMap *TheMetaMap = NULL;
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 
 // DEFINES ////////////////////////////////////////////////////////////////////
@@ -210,7 +205,7 @@ static const LookupListRec GameMessageMetaTypeNames[] =
 
 #endif
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	{ "HELP",																			GameMessage::MSG_META_HELP },
 
 	{ "DEMO_TOGGLE_BEHIND_BUILDINGS",							GameMessage::MSG_META_DEMO_TOGGLE_BEHIND_BUILDINGS },
@@ -335,12 +330,12 @@ static const LookupListRec GameMessageMetaTypeNames[] =
 	{ "DEBUG_OBJECT_ID_PERFORMANCE",							GameMessage::MSG_META_DEBUG_OBJECT_ID_PERFORMANCE },
 	{ "DEBUG_DRAWABLE_ID_PERFORMANCE",						GameMessage::MSG_META_DEBUG_DRAWABLE_ID_PERFORMANCE },
 	{ "DEBUG_SLEEPY_UPDATE_PERFORMANCE",					GameMessage::MSG_META_DEBUG_SLEEPY_UPDATE_PERFORMANCE },
-#endif // defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#endif // defined(RTS_DEBUG)
 
 
-#if defined(RTS_INTERNAL) || defined(RTS_DEBUG) 
+#if defined(RTS_DEBUG) 
 	{ "DEMO_TOGGLE_AUDIODEBUG",										GameMessage::MSG_META_DEMO_TOGGLE_AUDIODEBUG },
-#endif//defined(RTS_INTERNAL) || defined(RTS_DEBUG)
+#endif//defined(RTS_DEBUG)
 #ifdef DUMP_PERF_STATS
 	{ "DEMO_PERFORM_STATISTICAL_DUMP",						GameMessage::MSG_META_DEMO_PERFORM_STATISTICAL_DUMP },
 #endif//DUMP_PERF_STATS
@@ -396,7 +391,7 @@ static const char * findGameMessageNameByType(GameMessage::Type type)
 		if (metaNames->value == (Int)type)
 			return metaNames->name;
 
-	DEBUG_CRASH(("MetaTypeName %d not found -- did you remember to add it to GameMessageMetaTypeNames[] ?\n"));
+	DEBUG_CRASH(("MetaTypeName %d not found -- did you remember to add it to GameMessageMetaTypeNames[] ?"));
 	return "???";
 }
 
@@ -469,7 +464,7 @@ GameMessageDisposition MetaEventTranslator::translateGameMessage(const GameMessa
 						)
 					)
 			{
-				//DEBUG_LOG(("Frame %d: MetaEventTranslator::translateGameMessage() Mods-only change: %s\n", TheGameLogic->getFrame(), findGameMessageNameByType(map->m_meta)));
+				//DEBUG_LOG(("Frame %d: MetaEventTranslator::translateGameMessage() Mods-only change: %s", TheGameLogic->getFrame(), findGameMessageNameByType(map->m_meta)));
 				/*GameMessage *metaMsg =*/ TheMessageStream->appendMessage(map->m_meta);
 				disp = DESTROY_MESSAGE;
 				break;
@@ -491,7 +486,7 @@ GameMessageDisposition MetaEventTranslator::translateGameMessage(const GameMessa
 				{
 					// if it's an autorepeat of a "known" key, don't generate the meta-event, 
 					// but DO eat the keystroke so no one else can mess with it
-					//DEBUG_LOG(("Frame %d: MetaEventTranslator::translateGameMessage() auto-repeat: %s\n", TheGameLogic->getFrame(), findGameMessageNameByType(map->m_meta)));
+					//DEBUG_LOG(("Frame %d: MetaEventTranslator::translateGameMessage() auto-repeat: %s", TheGameLogic->getFrame(), findGameMessageNameByType(map->m_meta)));
 				}
 				else
 				{
@@ -517,7 +512,7 @@ GameMessageDisposition MetaEventTranslator::translateGameMessage(const GameMessa
 
 
 					/*GameMessage *metaMsg =*/ TheMessageStream->appendMessage(map->m_meta);
-					//DEBUG_LOG(("Frame %d: MetaEventTranslator::translateGameMessage() normal: %s\n", TheGameLogic->getFrame(), findGameMessageNameByType(map->m_meta)));
+					//DEBUG_LOG(("Frame %d: MetaEventTranslator::translateGameMessage() normal: %s", TheGameLogic->getFrame(), findGameMessageNameByType(map->m_meta)));
 				}
 				disp = DESTROY_MESSAGE;
 				break;

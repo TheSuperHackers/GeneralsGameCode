@@ -71,11 +71,6 @@
 //-------------------------------------------------------------------------------------------------
 
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 struct TCheckMovementInfo
 {
@@ -129,7 +124,7 @@ void PathNode::setNextOptimized(PathNode *node)
 		m_nextOptiDist2D = m_nextOptiDirNorm2D.length();
 		if (m_nextOptiDist2D == 0.0f) 
 		{
-			//DEBUG_LOG(("Warning - Path Seg length == 0, adjusting. john a.\n"));
+			//DEBUG_LOG(("Warning - Path Seg length == 0, adjusting. john a."));
 			m_nextOptiDist2D = 0.01f;
 		}
 		m_nextOptiDirNorm2D.x /= m_nextOptiDist2D;
@@ -340,7 +335,7 @@ void Path::xfer( Xfer *xfer )
 	xfer->xferBool(&m_blockedByAlly);
 
 
-#if defined RTS_DEBUG || defined RTS_INTERNAL
+#if defined(RTS_DEBUG)
 	if (TheGlobalData->m_debugAI == AI_DEBUG_PATHS)
 	{
 		extern void addIcon(const Coord3D *pos, Real width, Int numFramesDuration, RGBColor color);
@@ -407,7 +402,7 @@ void Path::appendNode( const Coord3D *pos, PathfindLayerEnum layer )
 	{
 		/* Check for duplicates. */
 		if (pos->x == m_pathTail->getPosition()->x && pos->y == m_pathTail->getPosition()->y) {
-			DEBUG_LOG(("Warning - Path Seg length == 0, ignoring. john a.\n"));
+			DEBUG_LOG(("Warning - Path Seg length == 0, ignoring. john a."));
 			return;
 		}
 	}
@@ -504,7 +499,7 @@ void Path::optimize( const Object *obj, LocomotorSurfaceTypeMask acceptableSurfa
 		for( ; node != anchor; node = node->getPrevious() )		
 		{
 			Bool isPassable = false;
-			//CRCDEBUG_LOG(("Path::optimize() calling isLinePassable()\n"));
+			//CRCDEBUG_LOG(("Path::optimize() calling isLinePassable()"));
 			if (TheAI->pathfinder()->isLinePassable( obj, acceptableSurfaces, layer, *anchor->getPosition(), 
 				*node->getPosition(), blocked, false))
 			{
@@ -621,7 +616,7 @@ void Path::optimizeGroundPath( Bool crusher, Int pathDiameter )
 		for( ; node != anchor; node = node->getPrevious() )		
 		{
 			Bool isPassable = false;
-			//CRCDEBUG_LOG(("Path::optimize() calling isLinePassable()\n"));
+			//CRCDEBUG_LOG(("Path::optimize() calling isLinePassable()"));
 			if (TheAI->pathfinder()->isGroundPathPassable( crusher, *anchor->getPosition(), layer,
 				*node->getPosition(), pathDiameter))
 			{
@@ -743,7 +738,7 @@ void Path::computePointOnPath(
 	ClosestPointOnPathInfo& out
 )
 {
-	CRCDEBUG_LOG(("Path::computePointOnPath() for %s\n", DebugDescribeObject(obj).str()));
+	CRCDEBUG_LOG(("Path::computePointOnPath() for %s", DebugDescribeObject(obj).str()));
 
 	out.layer = LAYER_GROUND;
 	out.posOnPath.zero();
@@ -760,7 +755,7 @@ void Path::computePointOnPath(
 	{
 		out = m_cpopOut;
 		m_cpopCountdown--;
-		CRCDEBUG_LOG(("Path::computePointOnPath() end because we're really close\n"));
+		CRCDEBUG_LOG(("Path::computePointOnPath() end because we're really close"));
 		return;
 	}
 	m_cpopCountdown = MAX_CPOP;
@@ -913,7 +908,7 @@ void Path::computePointOnPath(
 			k = 1.0f;
 
 		Bool gotPos = false;
-		CRCDEBUG_LOG(("Path::computePointOnPath() calling isLinePassable() 1\n"));
+		CRCDEBUG_LOG(("Path::computePointOnPath() calling isLinePassable() 1"));
 		if (TheAI->pathfinder()->isLinePassable( obj, locomotorSet.getValidSurfaces(), out.layer, pos, *nextNodePos, 
 			false, true )) 
 		{
@@ -947,7 +942,7 @@ void Path::computePointOnPath(
 					tryPos.x = (nextNodePos->x + next->getPosition()->x) * 0.5;
 					tryPos.y = (nextNodePos->y + next->getPosition()->y) * 0.5;
 					tryPos.z = nextNodePos->z;
-					CRCDEBUG_LOG(("Path::computePointOnPath() calling isLinePassable() 2\n"));
+					CRCDEBUG_LOG(("Path::computePointOnPath() calling isLinePassable() 2"));
 					if (veryClose || TheAI->pathfinder()->isLinePassable( obj, locomotorSet.getValidSurfaces(), closeNext->getLayer(), pos, tryPos, false, true )) 
 					{
 						gotPos = true;
@@ -965,7 +960,7 @@ void Path::computePointOnPath(
 			out.posOnPath.y = closeNodePos->y + tryDist * segmentDirNorm.y;
 			out.posOnPath.z = closeNodePos->z;
 
-			CRCDEBUG_LOG(("Path::computePointOnPath() calling isLinePassable() 3\n"));
+			CRCDEBUG_LOG(("Path::computePointOnPath() calling isLinePassable() 3"));
 			if (TheAI->pathfinder()->isLinePassable( obj, locomotorSet.getValidSurfaces(), out.layer, pos, out.posOnPath, false, true )) 
 			{
 				k = 0.5f;
@@ -1016,7 +1011,7 @@ void Path::computePointOnPath(
 	m_cpopIn = pos;
 	m_cpopOut = out;
 	m_cpopValid = true;
-	CRCDEBUG_LOG(("Path::computePointOnPath() end\n"));
+	CRCDEBUG_LOG(("Path::computePointOnPath() end"));
 
 }
 
@@ -1330,7 +1325,7 @@ void PathfindCell::setGoalUnit(ObjectID unitID, const ICoord2D &pos )
 			allocateInfo(pos);
 		}
 		if (!m_info) {
-			DEBUG_CRASH(("Ran out of pathfind cells - fatal error!!!!! jba. "));
+			DEBUG_CRASH(("Ran out of pathfind cells - fatal error!!!!! jba."));
 			return;
 		}
 		m_info->m_goalUnitID = unitID;
@@ -1366,7 +1361,7 @@ void PathfindCell::setGoalAircraft(ObjectID unitID, const ICoord2D &pos )
 			allocateInfo(pos);
 		}
 		if (!m_info) {
-			DEBUG_CRASH(("Ran out of pathfind cells - fatal error!!!!! jba. "));
+			DEBUG_CRASH(("Ran out of pathfind cells - fatal error!!!!! jba."));
 			return;
 		}
 		m_info->m_goalAircraftID = unitID;
@@ -1402,7 +1397,7 @@ void PathfindCell::setPosUnit(ObjectID unitID, const ICoord2D &pos )
 			allocateInfo(pos);
 		}
 		if (!m_info) {
-			DEBUG_CRASH(("Ran out of pathfind cells - fatal error!!!!! jba. "));
+			DEBUG_CRASH(("Ran out of pathfind cells - fatal error!!!!! jba."));
 			return;
 		}
 		if (m_info->m_goalUnitID!=INVALID_ID && (m_info->m_goalUnitID==m_info->m_posUnitID)) {
@@ -2207,7 +2202,7 @@ void PathfindZoneManager::allocateZones(void)
 	while (m_zonesAllocated <= m_maxZone) {
 		m_zonesAllocated *= 2;
 	}
-	DEBUG_LOG(("Allocating zone tables of size %d\n", m_zonesAllocated));
+	DEBUG_LOG(("Allocating zone tables of size %d", m_zonesAllocated));
 	// pool[]ify
 	m_groundCliffZones = MSGNEW("PathfindZoneInfo") zoneStorageType[m_zonesAllocated];
 	m_groundWaterZones = MSGNEW("PathfindZoneInfo") zoneStorageType[m_zonesAllocated];
@@ -2326,13 +2321,13 @@ void PathfindZoneManager::calculateZones( PathfindCell **map, PathfindLayer laye
 					
 				}
 			}
-			//DEBUG_LOG(("Collapsed zones %d\n", m_maxZone));
+			//DEBUG_LOG(("Collapsed zones %d", m_maxZone));
  		}
 	}
 
 	Int totalZones = m_maxZone;
 	if (totalZones>maxZones/2) {
-		DEBUG_LOG(("Max zones %d\n", m_maxZone));
+		DEBUG_LOG(("Max zones %d", m_maxZone));
 	}
 
 	// Collapse the zones into a 1,2,3... sequence, removing collapsed zones.
@@ -2352,7 +2347,7 @@ void PathfindZoneManager::calculateZones( PathfindCell **map, PathfindLayer laye
 #if defined(DEBUG_LOGGING)
 	QueryPerformanceCounter((LARGE_INTEGER *)&endTime64);
 	timeToUpdate = ((double)(endTime64-startTime64) / (double)(freq64));
-	DEBUG_LOG(("Time to calculate first %f\n", timeToUpdate));
+	DEBUG_LOG(("Time to calculate first %f", timeToUpdate));
 #endif
 #endif
 	// Now map the zones in the map back into the collapsed zones.
@@ -2411,7 +2406,7 @@ void PathfindZoneManager::calculateZones( PathfindCell **map, PathfindLayer laye
 #if defined(DEBUG_LOGGING) 
 	QueryPerformanceCounter((LARGE_INTEGER *)&endTime64);
 	timeToUpdate = ((double)(endTime64-startTime64) / (double)(freq64));
-	DEBUG_LOG(("Time to calculate second %f\n", timeToUpdate));
+	DEBUG_LOG(("Time to calculate second %f", timeToUpdate));
 #endif
 #endif
 
@@ -2443,7 +2438,7 @@ void PathfindZoneManager::calculateZones( PathfindCell **map, PathfindLayer laye
 					Int zone1 = map[i][j].getZone();
 					Int zone2 = map[i-1][j].getZone();
 					if (m_terrainZones[zone1] != m_terrainZones[zone2]) {
-						//DEBUG_LOG(("Matching terrain zone %d to %d.\n", zone1, zone2));
+						//DEBUG_LOG(("Matching terrain zone %d to %d.", zone1, zone2));
 					}
 					applyZone(map[i][j], map[i-1][j], m_groundRubbleZones, m_maxZone);
 				}
@@ -2468,7 +2463,7 @@ void PathfindZoneManager::calculateZones( PathfindCell **map, PathfindLayer laye
 					Int zone1 = map[i][j].getZone();
 					Int zone2 = map[i][j-1].getZone();
 					if (m_terrainZones[zone1] != m_terrainZones[zone2]) {
-						//DEBUG_LOG(("Matching terrain zone %d to %d.\n", zone1, zone2));
+						//DEBUG_LOG(("Matching terrain zone %d to %d.", zone1, zone2));
 					}
 					applyZone(map[i][j], map[i][j-1], m_groundRubbleZones, m_maxZone);
 				}
@@ -2518,10 +2513,10 @@ void PathfindZoneManager::calculateZones( PathfindCell **map, PathfindLayer laye
 #if defined(DEBUG_LOGGING) 
 	QueryPerformanceCounter((LARGE_INTEGER *)&endTime64);
 	timeToUpdate = ((double)(endTime64-startTime64) / (double)(freq64));
-	DEBUG_LOG(("Time to calculate zones %f, cells %d\n", timeToUpdate, (globalBounds.hi.x-globalBounds.lo.x)*(globalBounds.hi.y-globalBounds.lo.y)));
+	DEBUG_LOG(("Time to calculate zones %f, cells %d", timeToUpdate, (globalBounds.hi.x-globalBounds.lo.x)*(globalBounds.hi.y-globalBounds.lo.y)));
 #endif
 #endif
-#if defined RTS_DEBUG || defined RTS_INTERNAL
+#if defined(RTS_DEBUG)
 	if (TheGlobalData->m_debugAI && false) 
 	{
 		extern void addIcon(const Coord3D *pos, Real width, Int numFramesDuration, RGBColor color);
@@ -2835,7 +2830,7 @@ Bool PathfindLayer::isUnused(void)
 /**
  * Draws debug cell info.
  */
-#if defined RTS_DEBUG || defined RTS_INTERNAL
+#if defined(RTS_DEBUG)
 void PathfindLayer::doDebugIcons(void) {
 	if (isUnused()) return;
 	extern void addIcon(const Coord3D *pos, Real width, Int numFramesDuration, RGBColor color);
@@ -3399,7 +3394,7 @@ Pathfinder::~Pathfinder( void )
 void Pathfinder::reset( void )
 {
 	frameToShowObstacles = 0;
-	DEBUG_LOG(("Pathfind cell is %d bytes, PathfindCellInfo is %d bytes\n", sizeof(PathfindCell), sizeof(PathfindCellInfo)));
+	DEBUG_LOG(("Pathfind cell is %d bytes, PathfindCellInfo is %d bytes", sizeof(PathfindCell), sizeof(PathfindCellInfo)));
 
 	if (m_blockOfMapCells) {
 		delete []m_blockOfMapCells;
@@ -3535,7 +3530,7 @@ PathfindLayerEnum Pathfinder::addBridge(Bridge *theBridge)
 			if (m_layers[layer].init(theBridge, (PathfindLayerEnum)layer) ) {
 				return (PathfindLayerEnum)layer;
 			}
-			DEBUG_LOG(("WARNING: Bridge failed to init in pathfinder\n"));
+			DEBUG_LOG(("WARNING: Bridge failed to init in pathfinder"));
 			return LAYER_GROUND; // failed to init, usually cause off of the map.  jba.
 		}
 		layer++;
@@ -3554,7 +3549,7 @@ void Pathfinder::updateLayer(Object *obj, PathfindLayerEnum layer)
 			layer = LAYER_GROUND;
 		}
 	}
-	//DEBUG_LOG(("Object layer is %d\n", layer));
+	//DEBUG_LOG(("Object layer is %d", layer));
 	obj->setLayer(layer);
 }
 
@@ -4209,7 +4204,7 @@ void Pathfinder::debugShowSearch(  Bool pathFound  )
 	if (!TheGlobalData->m_debugAI) {
 		return;
 	}
-#if defined RTS_DEBUG || defined RTS_INTERNAL
+#if defined(RTS_DEBUG)
 	extern void addIcon(const Coord3D *pos, Real width, Int numFramesDuration, RGBColor color);
 
 	// show all explored cells for debugging
@@ -4348,12 +4343,12 @@ void Pathfinder::cleanOpenAndClosedLists(void) {
 					needInfo = true;
 				}				
 				if (!needInfo) {
-					DEBUG_LOG(("leaked cell %d, %d\n", m_map[i][j].getXIndex(), m_map[i][j].getYIndex()));
+					DEBUG_LOG(("leaked cell %d, %d", m_map[i][j].getXIndex(), m_map[i][j].getYIndex()));
 					m_map[i][j].releaseInfo();
 				}
 				DEBUG_ASSERTCRASH((needInfo), ("Minor temporary memory leak - Extra cell allocated.  Tell JBA steps if repeatable."));
 			};
-	//DEBUG_LOG(("Pathfind used %d cells.\n", count));
+	//DEBUG_LOG(("Pathfind used %d cells.", count));
 #endif
 //#endif
 
@@ -4684,7 +4679,7 @@ void Pathfinder::snapClosestGoalPosition(Object *obj, Coord3D *pos)
 			}
 		}
 	}
-	//DEBUG_LOG(("Couldn't find goal.\n"));
+	//DEBUG_LOG(("Couldn't find goal."));
 }
 
 /** 
@@ -4933,7 +4928,7 @@ Bool Pathfinder::adjustDestination(Object *obj, const LocomotorSet& locomotorSet
 		// Didn't work, so just do simple adjust.
 		return(adjustDestination(obj, locomotorSet, dest, NULL));
 	}
-	//DEBUG_LOG(("adjustDestination failed, dest (%f, %f), adj dest (%f,%f), %x %s\n", dest->x, dest->y, adjustDest.x, adjustDest.y,
+	//DEBUG_LOG(("adjustDestination failed, dest (%f, %f), adj dest (%f,%f), %x %s", dest->x, dest->y, adjustDest.x, adjustDest.y,
 		//obj, obj->getTemplate()->getName().str()));
 	return false;
 }
@@ -5162,7 +5157,7 @@ Bool Pathfinder::queueForPath(ObjectID id)
 			AIUpdateInterface *tmpAI = tmpObj->getAIUpdateInterface();
 			if (tmpAI) {
 				const Coord3D* pos = tmpAI->friend_getRequestedDestination();
-				DEBUG_ASSERTLOG(pos->x != 0.0 && pos->y != 0.0, ("Queueing pathfind to (0, 0), usually a bug. (Unit Name: '%s', Type: '%s' \n", tmpObj->getName().str(), tmpObj->getTemplate()->getName().str()));
+				DEBUG_ASSERTLOG(pos->x != 0.0 && pos->y != 0.0, ("Queueing pathfind to (0, 0), usually a bug. (Unit Name: '%s', Type: '%s')", tmpObj->getName().str(), tmpObj->getTemplate()->getName().str()));
 			}
 		}
 	}
@@ -5194,7 +5189,7 @@ Bool Pathfinder::queueForPath(ObjectID id)
 	return true;
 }
 
-#if defined RTS_DEBUG || defined RTS_INTERNAL
+#if defined(RTS_DEBUG)
 void Pathfinder::doDebugIcons(void) {
 	const Int FRAMES_TO_SHOW_OBSTACLES = 100;
 	extern void addIcon(const Coord3D *pos, Real width, Int numFramesDuration, RGBColor color);
@@ -5438,14 +5433,13 @@ void Pathfinder::processPathfindQueue(void)
 		timeToUpdate = ((double)(endTime64-startTime64) / (double)(freq64));
 		if (timeToUpdate>0.01f) 
 		{
-			DEBUG_LOG(("%d Pathfind queue: %d paths, %d cells", TheGameLogic->getFrame(), pathsFound, m_cumulativeCellsAllocated));
-			DEBUG_LOG(("Time %f (%f)", timeToUpdate, (::GetTickCount()-startTimeMS)/1000.0f));
-			DEBUG_LOG(("\n"));
+			DEBUG_LOG(("%d Pathfind queue: %d paths, %d cells --", TheGameLogic->getFrame(), pathsFound, m_cumulativeCellsAllocated));
+			DEBUG_LOG(("time %f (%f)", timeToUpdate, (::GetTickCount()-startTimeMS)/1000.0f));
 		}
 #endif
 #endif
 	}
-#if defined RTS_DEBUG || defined RTS_INTERNAL
+#if defined(RTS_DEBUG)
 	doDebugIcons();
 #endif
 
@@ -5585,7 +5579,7 @@ struct ExamineCellsStruct
 			to->setParentCell(from) ;
 			to->setTotalCost(to->getCostSoFar() + costRemaining) ;
 
-			//DEBUG_LOG(("Cell (%d,%d), Parent cost %d, newCostSoFar %d, cost rem %d, tot %d\n", 
+			//DEBUG_LOG(("Cell (%d,%d), Parent cost %d, newCostSoFar %d, cost rem %d, tot %d", 
 			//	to->getXIndex(), to->getYIndex(), 
 			//	to->costSoFar(from), newCostSoFar, costRemaining, to->getCostSoFar() + costRemaining));
 
@@ -5847,7 +5841,7 @@ Int Pathfinder::examineNeighboringCells(PathfindCell *parentCell, PathfindCell *
 			}
 			newCell->setTotalCost(newCell->getCostSoFar() + costRemaining) ;
 
-			//DEBUG_LOG(("Cell (%d,%d), Parent cost %d, newCostSoFar %d, cost rem %d, tot %d\n", 
+			//DEBUG_LOG(("Cell (%d,%d), Parent cost %d, newCostSoFar %d, cost rem %d, tot %d", 
 			//	newCell->getXIndex(), newCell->getYIndex(), 
 			//	newCell->costSoFar(parentCell), newCostSoFar, costRemaining, newCell->getCostSoFar() + costRemaining));
 
@@ -5913,12 +5907,12 @@ Path *Pathfinder::findPath( Object *obj, const LocomotorSet& locomotorSet, const
 				Path *linkPath = findClosestPath(obj, locomotorSet, node->getPosition(), 
 					prior->getPosition(), false, 0, true);
 				if (linkPath==NULL) {
-					DEBUG_LOG(("Couldn't find path - unexpected. jba.\n"));
+					DEBUG_LOG(("Couldn't find path - unexpected. jba."));
 					continue;
 				}
 				PathNode *linkNode = linkPath->getLastNode();
 				if (linkNode==NULL) {
-					DEBUG_LOG(("Empty path - unexpected. jba.\n"));
+					DEBUG_LOG(("Empty path - unexpected. jba."));
 					continue;
 				}
 				for (linkNode=linkNode->getPrevious(); linkNode; linkNode=linkNode->getPrevious()) {
@@ -5947,9 +5941,9 @@ Path *Pathfinder::findPath( Object *obj, const LocomotorSet& locomotorSet, const
 Path *Pathfinder::internalFindPath( Object *obj, const LocomotorSet& locomotorSet, const Coord3D *from, 
 													 const Coord3D *rawTo)
 {
-	//CRCDEBUG_LOG(("Pathfinder::findPath()\n"));
+	//CRCDEBUG_LOG(("Pathfinder::findPath()"));
 #ifdef INTENSE_DEBUG
-	DEBUG_LOG(("internal find path...\n"));
+	DEBUG_LOG(("internal find path..."));
 #endif
 
 #ifdef DEBUG_LOGGING
@@ -5967,7 +5961,7 @@ Path *Pathfinder::internalFindPath( Object *obj, const LocomotorSet& locomotorSe
 	}
 
 	if (rawTo->x == 0.0f && rawTo->y == 0.0f) {
-		DEBUG_LOG(("Attempting pathfind to 0,0, generally a bug.\n"));
+		DEBUG_LOG(("Attempting pathfind to 0,0, generally a bug."));
 		return NULL;
 	}
 	DEBUG_ASSERTCRASH(m_openList==NULL && m_closedList == NULL, ("Dangling lists."));
@@ -6058,10 +6052,10 @@ Path *Pathfinder::internalFindPath( Object *obj, const LocomotorSet& locomotorSe
 		zone1 = m_zoneManager.getEffectiveZone(locomotorSet.getValidSurfaces(), isCrusher, zone1); 
 	}																																 
 
-	//DEBUG_LOG(("Zones %d to %d\n", zone1, zone2));
+	//DEBUG_LOG(("Zones %d to %d", zone1, zone2));
 
 	if ( zone1 != zone2) {
-		//DEBUG_LOG(("Intense Debug Info - Pathfind Zone screen failed-cannot reach desired location.\n"));
+		//DEBUG_LOG(("Intense Debug Info - Pathfind Zone screen failed-cannot reach desired location."));
 		goalCell->releaseInfo();
 		parentCell->releaseInfo();
 		return NULL;
@@ -6106,15 +6100,15 @@ Path *Pathfinder::internalFindPath( Object *obj, const LocomotorSet& locomotorSe
 			// success - found a path to the goal
 			Bool show = TheGlobalData->m_debugAI==AI_DEBUG_PATHS;
 #ifdef INTENSE_DEBUG
-			DEBUG_LOG(("internal find path SUCCESS...\n"));
+			DEBUG_LOG(("internal find path SUCCESS..."));
 			Int count = 0;
 			if (cellCount>1000 && obj) {
 				show = true;
-				DEBUG_LOG(("cells %d obj %s %x from (%f,%f) to(%f, %f)\n", count, obj->getTemplate()->getName().str(), obj, from->x, from->y, to->x, to->y));
+				DEBUG_LOG(("cells %d obj %s %x from (%f,%f) to(%f, %f)", count, obj->getTemplate()->getName().str(), obj, from->x, from->y, to->x, to->y));
 #ifdef STATE_MACHINE_DEBUG
 				if( obj->getAIUpdateInterface() )
 				{
-					DEBUG_LOG(("State %s\n",  obj->getAIUpdateInterface()->getCurrentStateName().str()));
+					DEBUG_LOG(("State %s",  obj->getAIUpdateInterface()->getCurrentStateName().str()));
 				}
 #endif
 				TheScriptEngine->AppendDebugMessage("Big path", false);
@@ -6142,9 +6136,9 @@ Path *Pathfinder::internalFindPath( Object *obj, const LocomotorSet& locomotorSe
 	}
 
 	// failure - goal cannot be reached
-#if defined RTS_DEBUG || defined RTS_INTERNAL
+#if defined(RTS_DEBUG)
 #ifdef INTENSE_DEBUG
-	DEBUG_LOG(("internal find path FAILURE...\n"));
+	DEBUG_LOG(("internal find path FAILURE..."));
 #endif
 	if (TheGlobalData->m_debugAI == AI_DEBUG_PATHS)
 	{
@@ -6185,7 +6179,7 @@ Path *Pathfinder::internalFindPath( Object *obj, const LocomotorSet& locomotorSe
 #ifdef STATE_MACHINE_DEBUG
 		if( obj->getAIUpdateInterface() )
 		{
-			DEBUG_LOG(("state %s\n", obj->getAIUpdateInterface()->getCurrentStateName().str()));
+			DEBUG_LOG(("state %s", obj->getAIUpdateInterface()->getCurrentStateName().str()));
 		}
 #endif
 	}
@@ -6197,9 +6191,8 @@ Path *Pathfinder::internalFindPath( Object *obj, const LocomotorSet& locomotorSe
 		Bool valid;
 		valid = validMovementPosition( isCrusher, obj->getLayer(), locomotorSet, to ) ;
 
-		DEBUG_LOG(("%d ", TheGameLogic->getFrame()));
-		DEBUG_LOG(("Pathfind failed from (%f,%f) to (%f,%f), OV %d\n", from->x, from->y, to->x, to->y, valid));
-		DEBUG_LOG(("Unit '%s', time %f, cells %d\n", obj->getTemplate()->getName().str(), (::GetTickCount()-startTimeMS)/1000.0f,cellCount));
+		DEBUG_LOG(("%d Pathfind failed from (%f,%f) to (%f,%f), OV %d --", TheGameLogic->getFrame(), from->x, from->y, to->x, to->y, valid));
+		DEBUG_LOG(("Unit '%s', time %f, cells %d", obj->getTemplate()->getName().str(), (::GetTickCount()-startTimeMS)/1000.0f,cellCount));
 	}
 #endif
 
@@ -6290,7 +6283,7 @@ Path *Pathfinder::buildGroundPath(Bool isCrusher, const Coord3D *fromPos, Pathfi
 	path->optimizeGroundPath( isCrusher, pathDiameter );
 
 
-#if defined RTS_DEBUG || defined RTS_INTERNAL
+#if defined(RTS_DEBUG)
 	if (TheGlobalData->m_debugAI==AI_DEBUG_GROUND_PATHS)
 	{
 		extern void addIcon(const Coord3D *pos, Real width, Int numFramesDuration, RGBColor color);
@@ -6335,7 +6328,7 @@ Path *Pathfinder::buildHierachicalPath( const Coord3D *fromPos, PathfindCell *go
 
 	prependCells(path, fromPos, goalCell, true);
 
-#if defined RTS_DEBUG || defined RTS_INTERNAL
+#if defined(RTS_DEBUG)
 	if (TheGlobalData->m_debugAI==AI_DEBUG_PATHS)
 	{
 		extern void addIcon(const Coord3D *pos, Real width, Int numFramesDuration, RGBColor color);
@@ -6391,7 +6384,7 @@ struct MADStruct
 			return 0;  // Only move allies.
 		}
 		if (otherObj && otherObj->getAI() && !otherObj->getAI()->isMoving()) {
-			//DEBUG_LOG(("Moving ally\n"));
+			//DEBUG_LOG(("Moving ally"));
 			otherObj->getAI()->aiMoveAwayFromUnit(d->obj, CMD_FROM_AI);
 		}
 	}
@@ -6471,7 +6464,7 @@ struct GroundCellsStruct
 Path *Pathfinder::findGroundPath( const Coord3D *from, 
 													 const Coord3D *rawTo, Int pathDiameter, Bool crusher)
 {
-	//CRCDEBUG_LOG(("Pathfinder::findGroundPath()\n"));
+	//CRCDEBUG_LOG(("Pathfinder::findGroundPath()"));
 #ifdef DEBUG_LOGGING
 	Int startTimeMS = ::GetTickCount();
 #endif
@@ -6491,7 +6484,7 @@ Path *Pathfinder::findGroundPath( const Coord3D *from,
 	}
 
 	if (rawTo->x == 0.0f && rawTo->y == 0.0f) {
-		DEBUG_LOG(("Attempting pathfind to 0,0, generally a bug.\n"));
+		DEBUG_LOG(("Attempting pathfind to 0,0, generally a bug."));
 		return NULL;
 	}
 	DEBUG_ASSERTCRASH(m_openList==NULL && m_closedList == NULL, ("Dangling lists."));
@@ -6571,7 +6564,7 @@ Path *Pathfinder::findGroundPath( const Coord3D *from,
 	zone1 = m_zoneManager.getEffectiveZone(LOCOMOTORSURFACE_GROUND, false, parentCell->getZone()); 
 	zone2 =  m_zoneManager.getEffectiveZone(LOCOMOTORSURFACE_GROUND, false, goalCell->getZone());
 
-	//DEBUG_LOG(("Zones %d to %d\n", zone1, zone2));
+	//DEBUG_LOG(("Zones %d to %d", zone1, zone2));
 
 	if ( zone1 != zone2) {
 		goalCell->releaseInfo();
@@ -6607,9 +6600,9 @@ Path *Pathfinder::findGroundPath( const Coord3D *from,
 			// success - found a path to the goal	 
 #ifdef INTENSE_DEBUG
 	DEBUG_LOG((" time %d msec %d cells", (::GetTickCount()-startTimeMS), cellCount));
-	DEBUG_LOG((" SUCCESS\n"));
+	DEBUG_LOG((" SUCCESS"));
 #endif	
-#if defined RTS_DEBUG || defined RTS_INTERNAL
+#if defined(RTS_DEBUG)
 			Bool show = TheGlobalData->m_debugAI==AI_DEBUG_GROUND_PATHS;
 			if (show)
 				debugShowSearch(true);
@@ -6753,13 +6746,13 @@ Path *Pathfinder::findGroundPath( const Coord3D *from,
 			}
 			//DEBUG_LOG(("CELL(%d,%d)L%d CD%d CSF %d, CR%d // ",newCell->getXIndex(), newCell->getYIndex(), 
 			//	newCell->getLayer(), clearDiameter, newCostSoFar, costRemaining));
-			//if ((cellCount&7)==0) DEBUG_LOG(("\n"));
+			//if ((cellCount&7)==0) DEBUG_LOG_RAW(("\n"));
 			newCell->setCostSoFar(newCostSoFar);
 			// keep track of path we're building - point back to cell we moved here from
 			newCell->setParentCell(parentCell) ;
 			newCell->setTotalCost(newCell->getCostSoFar() + costRemaining) ;
 
-			//DEBUG_LOG(("Cell (%d,%d), Parent cost %d, newCostSoFar %d, cost rem %d, tot %d\n", 
+			//DEBUG_LOG(("Cell (%d,%d), Parent cost %d, newCostSoFar %d, cost rem %d, tot %d", 
 			//	newCell->getXIndex(), newCell->getYIndex(), 
 			//	newCell->costSoFar(parentCell), newCostSoFar, costRemaining, newCell->getCostSoFar() + costRemaining));
 
@@ -6779,9 +6772,9 @@ Path *Pathfinder::findGroundPath( const Coord3D *from,
 	}
 	// failure - goal cannot be reached
 #ifdef INTENSE_DEBUG
-	DEBUG_LOG((" FAILURE\n"));
+	DEBUG_LOG((" FAILURE"));
 #endif	
-#if defined RTS_DEBUG || defined RTS_INTERNAL
+#if defined(RTS_DEBUG)
 	if (TheGlobalData->m_debugAI)
 	{
 		extern void addIcon(const Coord3D *pos, Real width, Int numFramesDuration, RGBColor color);
@@ -6815,9 +6808,8 @@ Path *Pathfinder::findGroundPath( const Coord3D *from,
 	}	
 #endif
 
-	DEBUG_LOG(("%d ", TheGameLogic->getFrame()));
-	DEBUG_LOG(("FindGroundPath failed from (%f,%f) to (%f,%f)\n", from->x, from->y, to->x, to->y));
-	DEBUG_LOG(("time %f\n", (::GetTickCount()-startTimeMS)/1000.0f));
+	DEBUG_LOG(("%d FindGroundPath failed from (%f,%f) to (%f,%f) --", TheGameLogic->getFrame(), from->x, from->y, to->x, to->y));
+	DEBUG_LOG(("time %f", (::GetTickCount()-startTimeMS)/1000.0f));
 
 #ifdef DUMP_PERF_STATS
 	TheGameLogic->incrementOverallFailedPathfinds();
@@ -6933,13 +6925,13 @@ Path *Pathfinder::findClosestHierarchicalPath( Bool isHuman, const LocomotorSet&
 Path *Pathfinder::internal_findHierarchicalPath( Bool isHuman, const LocomotorSurfaceTypeMask locomotorSurface, const Coord3D *from, 
 													 const Coord3D *rawTo, Bool crusher, Bool closestOK)
 {
-	//CRCDEBUG_LOG(("Pathfinder::findGroundPath()\n"));
+	//CRCDEBUG_LOG(("Pathfinder::findGroundPath()"));
 #ifdef DEBUG_LOGGING
 	Int startTimeMS = ::GetTickCount();
 #endif
 	
 	if (rawTo->x == 0.0f && rawTo->y == 0.0f) {
-		DEBUG_LOG(("Attempting pathfind to 0,0, generally a bug.\n"));
+		DEBUG_LOG(("Attempting pathfind to 0,0, generally a bug."));
 		return NULL;
 	}
 	DEBUG_ASSERTCRASH(m_openList==NULL && m_closedList == NULL, ("Dangling lists."));
@@ -7161,7 +7153,7 @@ Path *Pathfinder::internal_findHierarchicalPath( Bool isHuman, const LocomotorSu
 			m_isTunneling = false;
 			// construct and return path
 			Path *path =  buildHierachicalPath( from, goalCell );
-#if defined RTS_DEBUG || defined RTS_INTERNAL
+#if defined(RTS_DEBUG)
 			Bool show = TheGlobalData->m_debugAI==AI_DEBUG_PATHS;
 			show |= (TheGlobalData->m_debugAI==AI_DEBUG_GROUND_PATHS);
 			if (show)	{
@@ -7196,7 +7188,7 @@ Path *Pathfinder::internal_findHierarchicalPath( Bool isHuman, const LocomotorSu
 			return path;
 		}	
 
-#if defined RTS_DEBUG || defined RTS_INTERNAL
+#if defined(RTS_DEBUG)
 #if 0 
 		Bool show = TheGlobalData->m_debugAI==AI_DEBUG_PATHS;
 		show |= (TheGlobalData->m_debugAI==AI_DEBUG_GROUND_PATHS);
@@ -7363,7 +7355,7 @@ Path *Pathfinder::internal_findHierarchicalPath( Bool isHuman, const LocomotorSu
 		m_isTunneling = false;
 		// construct and return path
 		Path *path =  buildHierachicalPath( from, closestCell );
-#if defined RTS_DEBUG || defined RTS_INTERNAL
+#if defined(RTS_DEBUG)
 #if 0
 		if (TheGlobalData->m_debugAI)
 		{
@@ -7397,7 +7389,7 @@ Path *Pathfinder::internal_findHierarchicalPath( Bool isHuman, const LocomotorSu
 	}
 
 	// failure - goal cannot be reached
-#if defined RTS_DEBUG || defined RTS_INTERNAL
+#if defined(RTS_DEBUG)
 	if (TheGlobalData->m_debugAI)
 	{
 		extern void addIcon(const Coord3D *pos, Real width, Int numFramesDuration, RGBColor color);
@@ -7431,9 +7423,8 @@ Path *Pathfinder::internal_findHierarchicalPath( Bool isHuman, const LocomotorSu
 	}	
 #endif
 
-	DEBUG_LOG(("%d ", TheGameLogic->getFrame()));
-	DEBUG_LOG(("FindHierarchicalPath failed from (%f,%f) to (%f,%f)\n", from->x, from->y, to->x, to->y));
-	DEBUG_LOG(("time %f\n", (::GetTickCount()-startTimeMS)/1000.0f));
+	DEBUG_LOG(("%d FindHierarchicalPath failed from (%f,%f) to (%f,%f) --", TheGameLogic->getFrame(), from->x, from->y, to->x, to->y));
+	DEBUG_LOG(("time %f", (::GetTickCount()-startTimeMS)/1000.0f));
 
 #ifdef DUMP_PERF_STATS
 	TheGameLogic->incrementOverallFailedPathfinds();
@@ -7592,7 +7583,7 @@ void Pathfinder::clip( Coord3D *from, Coord3D *to )
 Bool Pathfinder::pathDestination( 	Object *obj, const LocomotorSet& locomotorSet, Coord3D *dest, 
 		PathfindLayerEnum layer, const Coord3D *groupDest)
 {
-	//CRCDEBUG_LOG(("Pathfinder::pathDestination()\n"));
+	//CRCDEBUG_LOG(("Pathfinder::pathDestination()"));
 	if (m_isMapReady == false) return NULL;
 	
 	if (!obj) return false;
@@ -7787,7 +7778,7 @@ Bool Pathfinder::pathDestination( 	Object *obj, const LocomotorSet& locomotorSet
 
 			newCell->setTotalCost(newCell->getCostSoFar() + costRemaining) ;
 
-			//DEBUG_LOG(("Cell (%d,%d), Parent cost %d, newCostSoFar %d, cost rem %d, tot %d\n", 
+			//DEBUG_LOG(("Cell (%d,%d), Parent cost %d, newCostSoFar %d, cost rem %d, tot %d", 
 			//	newCell->getXIndex(), newCell->getYIndex(), 
 			//	newCell->costSoFar(parentCell), newCostSoFar, costRemaining, newCell->getCostSoFar() + costRemaining));
 
@@ -7804,7 +7795,7 @@ Bool Pathfinder::pathDestination( 	Object *obj, const LocomotorSet& locomotorSet
 		}
 	}
 
-#if defined RTS_DEBUG || defined RTS_INTERNAL
+#if defined(RTS_DEBUG)
 	if (closestCell) {
 		debugShowSearch(true);
 		*dest = closestPos;
@@ -7870,7 +7861,7 @@ void Pathfinder::tightenPath(Object *obj, const LocomotorSet& locomotorSet, Coor
 Int Pathfinder::checkPathCost(Object *obj, const LocomotorSet& locomotorSet, const Coord3D *from, 
 		const Coord3D *rawTo)
 {
-	//CRCDEBUG_LOG(("Pathfinder::checkPathCost()\n"));
+	//CRCDEBUG_LOG(("Pathfinder::checkPathCost()"));
 	if (m_isMapReady == false) return NULL;
 	enum {MAX_COST = 0x7fff0000};	
 	if (!obj) return MAX_COST;
@@ -8040,7 +8031,7 @@ Int Pathfinder::checkPathCost(Object *obj, const LocomotorSet& locomotorSet, con
 
 			newCell->setTotalCost(newCell->getCostSoFar() + costRemaining) ;
 
-			//DEBUG_LOG(("Cell (%d,%d), Parent cost %d, newCostSoFar %d, cost rem %d, tot %d\n", 
+			//DEBUG_LOG(("Cell (%d,%d), Parent cost %d, newCostSoFar %d, cost rem %d, tot %d", 
 			//	newCell->getXIndex(), newCell->getYIndex(), 
 			//	newCell->costSoFar(parentCell), newCostSoFar, costRemaining, newCell->getCostSoFar() + costRemaining));
 
@@ -8075,7 +8066,7 @@ Int Pathfinder::checkPathCost(Object *obj, const LocomotorSet& locomotorSet, con
 Path *Pathfinder::findClosestPath( Object *obj, const LocomotorSet& locomotorSet, const Coord3D *from, 
 																	Coord3D *rawTo, Bool blocked, Real pathCostMultiplier, Bool moveAllies)
 {
-	//CRCDEBUG_LOG(("Pathfinder::findClosestPath()\n"));
+	//CRCDEBUG_LOG(("Pathfinder::findClosestPath()"));
 #ifdef DEBUG_LOGGING
 	Int startTimeMS = ::GetTickCount();
 #endif
@@ -8245,11 +8236,11 @@ Path *Pathfinder::findClosestPath( Object *obj, const LocomotorSet& locomotorSet
 			}
 			if (count>1000) {
 				show = true;
-				DEBUG_LOG(("FCP - cells %d obj %s %x\n", count, obj->getTemplate()->getName().str(), obj));
+				DEBUG_LOG(("FCP - cells %d obj %s %x", count, obj->getTemplate()->getName().str(), obj));
 #ifdef STATE_MACHINE_DEBUG
 				if( obj->getAIUpdateInterface() )
 				{
-					DEBUG_LOG(("State %s\n",  obj->getAIUpdateInterface()->getCurrentStateName().str()));
+					DEBUG_LOG(("State %s",  obj->getAIUpdateInterface()->getCurrentStateName().str()));
 				}
 #endif
 				TheScriptEngine->AppendDebugMessage("Big path FCP", false);
@@ -8318,17 +8309,16 @@ Path *Pathfinder::findClosestPath( Object *obj, const LocomotorSet& locomotorSet
 #ifdef INTENSE_DEBUG
 		if (count>5000) {
 			show = true;
-			DEBUG_LOG(("FCP CC cells %d obj %s %x\n", count, obj->getTemplate()->getName().str(), obj));
+			DEBUG_LOG(("FCP CC cells %d obj %s %x", count, obj->getTemplate()->getName().str(), obj));
 #ifdef STATE_MACHINE_DEBUG
 			if( obj->getAIUpdateInterface() )
 			{
-				DEBUG_LOG(("State %s\n",  obj->getAIUpdateInterface()->getCurrentStateName().str()));
+				DEBUG_LOG(("State %s",  obj->getAIUpdateInterface()->getCurrentStateName().str()));
 			}
 #endif
 
-			DEBUG_LOG(("%d ", TheGameLogic->getFrame()));
-			DEBUG_LOG(("Pathfind(findClosestPath) chugged from (%f,%f) to (%f,%f), --", from->x, from->y, to->x, to->y));
-			DEBUG_LOG(("Unit '%s', time %f\n", obj->getTemplate()->getName().str(), (::GetTickCount()-startTimeMS)/1000.0f));
+			DEBUG_LOG(("%d Pathfind(findClosestPath) chugged from (%f,%f) to (%f,%f) --", TheGameLogic->getFrame(), from->x, from->y, to->x, to->y));
+			DEBUG_LOG(("Unit '%s', time %f", obj->getTemplate()->getName().str(), (::GetTickCount()-startTimeMS)/1000.0f));
 #ifdef INTENSE_DEBUG
 			TheScriptEngine->AppendDebugMessage("Big path FCP CC", false);
 #endif
@@ -8352,11 +8342,10 @@ Path *Pathfinder::findClosestPath( Object *obj, const LocomotorSet& locomotorSet
 	Bool valid;
 	valid = validMovementPosition( isCrusher, obj->getLayer(), locomotorSet, to ) ;
 
-	DEBUG_LOG(("%d ", TheGameLogic->getFrame()));
-	DEBUG_LOG(("Pathfind(findClosestPath) failed from (%f,%f) to (%f,%f), original valid %d --", from->x, from->y, to->x, to->y, valid));
-	DEBUG_LOG(("Unit '%s', time %f\n", obj->getTemplate()->getName().str(), (::GetTickCount()-startTimeMS)/1000.0f));
+	DEBUG_LOG(("Pathfind(findClosestPath) failed from (%f,%f) to (%f,%f), original valid %d --", TheGameLogic->getFrame(), from->x, from->y, to->x, to->y, valid));
+	DEBUG_LOG(("Unit '%s', time %f", obj->getTemplate()->getName().str(), (::GetTickCount()-startTimeMS)/1000.0f));
 #endif
-#if defined RTS_DEBUG || defined RTS_INTERNAL
+#if defined(RTS_DEBUG)
 	if (TheGlobalData->m_debugAI) 
 		debugShowSearch(false);
 #endif
@@ -8404,7 +8393,7 @@ Path *Pathfinder::buildActualPath( const Object *obj, LocomotorSurfaceTypeMask a
 	// cleanup the path by checking line of sight
 	path->optimize(obj, acceptableSurfaces, blocked);
 
-#if defined RTS_DEBUG || defined RTS_INTERNAL
+#if defined(RTS_DEBUG)
 	if (TheGlobalData->m_debugAI==AI_DEBUG_PATHS) 
 	{
 		extern void addIcon(const Coord3D *pos, Real width, Int numFramesDuration, RGBColor color);
@@ -8797,23 +8786,23 @@ Bool Pathfinder::isViewBlockedByObstacle(const Object* obj, const Object* objOth
 //-----------------------------------------------------------------------------
 Bool Pathfinder::isAttackViewBlockedByObstacle(const Object* attacker, const Coord3D& attackerPos, const Object* victim, const Coord3D& victimPos)
 {
-	//CRCDEBUG_LOG(("Pathfinder::isAttackViewBlockedByObstacle() - attackerPos is (%g,%g,%g) (%X,%X,%X)\n",
+	//CRCDEBUG_LOG(("Pathfinder::isAttackViewBlockedByObstacle() - attackerPos is (%g,%g,%g) (%X,%X,%X)",
 	//	attackerPos.x, attackerPos.y, attackerPos.z,
 	//	AS_INT(attackerPos.x),AS_INT(attackerPos.y),AS_INT(attackerPos.z)));
-	//CRCDEBUG_LOG(("Pathfinder::isAttackViewBlockedByObstacle() - victimPos is (%g,%g,%g) (%X,%X,%X)\n",
+	//CRCDEBUG_LOG(("Pathfinder::isAttackViewBlockedByObstacle() - victimPos is (%g,%g,%g) (%X,%X,%X)",
 	//	victimPos.x, victimPos.y, victimPos.z,
 	//	AS_INT(victimPos.x),AS_INT(victimPos.y),AS_INT(victimPos.z)));
 	// Global switch to turn this off in case it doesn't work.
 	if (!TheAI->getAiData()->m_attackUsesLineOfSight) 
 	{
-		//CRCDEBUG_LOG(("Pathfinder::isAttackViewBlockedByObstacle() 1\n"));
+		//CRCDEBUG_LOG(("Pathfinder::isAttackViewBlockedByObstacle() 1"));
 		return false;
 	}
 
 	// If the attacker doesn't need line of sight, isn't blocked.
 	if (!attacker->isKindOf(KINDOF_ATTACK_NEEDS_LINE_OF_SIGHT)) 
 	{
-		//CRCDEBUG_LOG(("Pathfinder::isAttackViewBlockedByObstacle() 2\n"));
+		//CRCDEBUG_LOG(("Pathfinder::isAttackViewBlockedByObstacle() 2"));
 		return false;
 	}
 
@@ -8835,7 +8824,7 @@ Bool Pathfinder::isAttackViewBlockedByObstacle(const Object* attacker, const Coo
 
 		if (viewBlocked)
 		{
-			//CRCDEBUG_LOG(("Pathfinder::isAttackViewBlockedByObstacle() 3\n"));
+			//CRCDEBUG_LOG(("Pathfinder::isAttackViewBlockedByObstacle() 3"));
 			return true;
 		}
 	}
@@ -8863,7 +8852,7 @@ Bool Pathfinder::isAttackViewBlockedByObstacle(const Object* attacker, const Coo
 	}
 
 	Int ret = iterateCellsAlongLine(attackerPos, victimPos, layer, attackBlockedByObstacleCallback, &info);
-	//CRCDEBUG_LOG(("Pathfinder::isAttackViewBlockedByObstacle() 4\n"));
+	//CRCDEBUG_LOG(("Pathfinder::isAttackViewBlockedByObstacle() 4"));
 	return ret != 0;
 }
 
@@ -9062,7 +9051,7 @@ Bool Pathfinder::isLinePassable( const Object *obj, LocomotorSurfaceTypeMask acc
 																Bool allowPinched)
 {
 	LinePassableStruct info;
-	//CRCDEBUG_LOG(("Pathfinder::isLinePassable(): %d %d %d \n", m_ignoreObstacleID, m_isMapReady, m_isTunneling));
+	//CRCDEBUG_LOG(("Pathfinder::isLinePassable(): %d %d %d ", m_ignoreObstacleID, m_isMapReady, m_isTunneling));
 
 	info.obj = obj;
 	info.acceptableSurfaces = acceptableSurfaces;
@@ -9152,7 +9141,7 @@ void Pathfinder::updateGoal( Object *obj, const Coord3D *newGoalPos, PathfindLay
 
 	PathfindLayerEnum originalLayer = obj->getDestinationLayer();
 
-	//DEBUG_LOG(("Object Goal layer is %d\n", layer));
+	//DEBUG_LOG(("Object Goal layer is %d", layer));
 	Bool layerChanged = originalLayer != layer;
 
 	Bool doGround=false;
@@ -9201,7 +9190,7 @@ void Pathfinder::updateGoal( Object *obj, const Coord3D *newGoalPos, PathfindLay
 					if (warn && cell->getGoalUnit()!=INVALID_ID && cell->getGoalUnit() != obj->getID()) {
 						warn = false;
 						// jba intense debug
-						//DEBUG_LOG(, ("Units got stuck close to each other.  jba\n"));
+						//DEBUG_LOG(, ("Units got stuck close to each other.  jba"));
 					}	
 					cellNdx.x = i;
 					cellNdx.y = j;
@@ -9214,7 +9203,7 @@ void Pathfinder::updateGoal( Object *obj, const Coord3D *newGoalPos, PathfindLay
 					if (warn && cell->getGoalUnit()!=INVALID_ID && cell->getGoalUnit() != obj->getID()) {
 						warn = false;
 						// jba intense debug
-						//DEBUG_LOG(, ("Units got stuck close to each other.  jba\n"));
+						//DEBUG_LOG(, ("Units got stuck close to each other.  jba"));
 					}
 					cellNdx.x = i;
 					cellNdx.y = j;
@@ -9408,7 +9397,7 @@ void Pathfinder::updatePos( Object *obj, const Coord3D *newPos)
 	ai->setCurPathfindCell(newCell);
 	Int i,j;
 	ICoord2D cellNdx;
-	//DEBUG_LOG(("Updating unit pos at cell %d, %d\n", newCell.x, newCell.y));
+	//DEBUG_LOG(("Updating unit pos at cell %d, %d", newCell.x, newCell.y));
 	if (curCell.x>=0 && curCell.y>=0) {
 		for (i=curCell.x-radius; i<curCell.x+numCellsAbove; i++) {
 			for (j=curCell.y-radius; j<curCell.y+numCellsAbove; j++) {
@@ -9479,7 +9468,7 @@ void Pathfinder::removePos( Object *obj)
 
 	Int i,j;
 	ICoord2D cellNdx;
-	//DEBUG_LOG(("Updating unit pos at cell %d, %d\n", newCell.x, newCell.y));
+	//DEBUG_LOG(("Updating unit pos at cell %d, %d", newCell.x, newCell.y));
 	if (curCell.x>=0 && curCell.y>=0) {
 		for (i=curCell.x-radius; i<curCell.x+numCellsAbove; i++) {
 			for (j=curCell.y-radius; j<curCell.y+numCellsAbove; j++) {
@@ -9569,7 +9558,7 @@ if (g_UT_startTiming) return false;
 						if (!path->getBlockedByAlly()) continue;
 					}
 					if (otherObj && otherObj->getAI() && !otherObj->getAI()->isMoving()) {
-						//DEBUG_LOG(("Moving ally\n"));
+						//DEBUG_LOG(("Moving ally"));
 						otherObj->getAI()->aiMoveAwayFromUnit(obj, CMD_FROM_AI);
 					}
 				}
@@ -9742,13 +9731,12 @@ Path *Pathfinder::getMoveAwayFromPath(Object* obj, Object *otherObj,
 
 	}
 
-#if defined RTS_DEBUG || defined RTS_INTERNAL
+#if defined(RTS_DEBUG)
 	debugShowSearch(true);
 #endif
 
-	DEBUG_LOG(("%d ", TheGameLogic->getFrame()));
-	DEBUG_LOG(("getMoveAwayFromPath pathfind failed  -- "));
-	DEBUG_LOG(("Unit '%s', time %f\n", obj->getTemplate()->getName().str(), (::GetTickCount()-startTimeMS)/1000.0f));
+	DEBUG_LOG(("%d getMoveAwayFromPath pathfind failed --", TheGameLogic->getFrame()));
+	DEBUG_LOG(("Unit '%s', time %f", obj->getTemplate()->getName().str(), (::GetTickCount()-startTimeMS)/1000.0f));
 
 	m_isTunneling = false;
 	cleanOpenAndClosedLists();
@@ -9762,7 +9750,7 @@ Path *Pathfinder::getMoveAwayFromPath(Object* obj, Object *otherObj,
 Path *Pathfinder::patchPath( const Object *obj, const LocomotorSet& locomotorSet, 
 		Path *originalPath, Bool blocked )
 {
-	//CRCDEBUG_LOG(("Pathfinder::patchPath()\n"));
+	//CRCDEBUG_LOG(("Pathfinder::patchPath()"));
 #ifdef DEBUG_LOGGING
 	Int startTimeMS = ::GetTickCount();
 #endif
@@ -9818,7 +9806,7 @@ Path *Pathfinder::patchPath( const Object *obj, const LocomotorSet& locomotorSet
 	// until goal is found.
 	//
 
-#if defined RTS_DEBUG || defined RTS_INTERNAL
+#if defined(RTS_DEBUG)
 	extern void addIcon(const Coord3D *pos, Real width, Int numFramesDuration, RGBColor color);
 	if (TheGlobalData->m_debugAI) 
 	{
@@ -9841,7 +9829,7 @@ Path *Pathfinder::patchPath( const Object *obj, const LocomotorSet& locomotorSet
 		info.radius = radius;
 		info.considerTransient = blocked;
 		info.acceptableSurfaces = locomotorSet.getValidSurfaces();
-#if defined RTS_DEBUG || defined RTS_INTERNAL
+#if defined(RTS_DEBUG)
 		if (TheGlobalData->m_debugAI) {
 			RGBColor color;
 			color.setFromInt(0);
@@ -9925,11 +9913,10 @@ Path *Pathfinder::patchPath( const Object *obj, const LocomotorSet& locomotorSet
 		}
 	}
 
-	DEBUG_LOG(("%d ", TheGameLogic->getFrame()));
-	DEBUG_LOG(("patchPath Pathfind failed  -- "));
-	DEBUG_LOG(("Unit '%s', time %f\n", obj->getTemplate()->getName().str(), (::GetTickCount()-startTimeMS)/1000.0f));
+	DEBUG_LOG(("%d patchPath Pathfind failed --", TheGameLogic->getFrame()));
+	DEBUG_LOG(("Unit '%s', time %f", obj->getTemplate()->getName().str(), (::GetTickCount()-startTimeMS)/1000.0f));
 
-#if defined RTS_DEBUG || defined RTS_INTERNAL
+#if defined(RTS_DEBUG)
 	if (TheGlobalData->m_debugAI) {
 		debugShowSearch(true);
 	}
@@ -9950,36 +9937,36 @@ Path *Pathfinder::findAttackPath( const Object *obj, const LocomotorSet& locomot
 		const Object *victim, const Coord3D* victimPos, const Weapon *weapon ) 
 {
 	/*
-	CRCDEBUG_LOG(("Pathfinder::findAttackPath() for object %d (%s)\n", obj->getID(), obj->getTemplate()->getName().str()));
+	CRCDEBUG_LOG(("Pathfinder::findAttackPath() for object %d (%s)", obj->getID(), obj->getTemplate()->getName().str()));
 	XferCRC xferCRC;
 	xferCRC.open("lightCRC");
 	xferCRC.xferSnapshot((Object *)obj);
 	xferCRC.close();
-	CRCDEBUG_LOG(("obj CRC is %X\n", xferCRC.getCRC()));
+	CRCDEBUG_LOG(("obj CRC is %X", xferCRC.getCRC()));
 	if (from)
 	{
-		CRCDEBUG_LOG(("from: (%g,%g,%g) (%X,%X,%X)\n",
+		CRCDEBUG_LOG(("from: (%g,%g,%g) (%X,%X,%X)",
 			from->x, from->y, from->z,
 			AS_INT(from->x), AS_INT(from->y), AS_INT(from->z)));
 	}
 	if (victim)
 	{
-		CRCDEBUG_LOG(("victim is %d (%s)\n", victim->getID(), victim->getTemplate()->getName().str()));
+		CRCDEBUG_LOG(("victim is %d (%s)", victim->getID(), victim->getTemplate()->getName().str()));
 		XferCRC xferCRC;
 		xferCRC.open("lightCRC");
 		xferCRC.xferSnapshot((Object *)victim);
 		xferCRC.close();
-		CRCDEBUG_LOG(("victim CRC is %X\n", xferCRC.getCRC()));
+		CRCDEBUG_LOG(("victim CRC is %X", xferCRC.getCRC()));
 	}
 	if (victimPos)
 	{
-		CRCDEBUG_LOG(("from: (%g,%g,%g) (%X,%X,%X)\n",
+		CRCDEBUG_LOG(("from: (%g,%g,%g) (%X,%X,%X)",
 			victimPos->x, victimPos->y, victimPos->z,
 			AS_INT(victimPos->x), AS_INT(victimPos->y), AS_INT(victimPos->z)));
 	}
 	*/
 	if (m_isMapReady == false) return NULL; // Should always be ok.
-#if defined RTS_DEBUG || defined RTS_INTERNAL
+#if defined(RTS_DEBUG)
 //	Int startTimeMS = ::GetTickCount();
 #endif
 
@@ -10157,11 +10144,11 @@ Path *Pathfinder::findAttackPath( const Object *obj, const LocomotorSet& locomot
 				}
 				if (count>1000) {
 					show = true;
-					DEBUG_LOG(("FAP cells %d obj %s %x\n", count, obj->getTemplate()->getName().str(), obj));
+					DEBUG_LOG(("FAP cells %d obj %s %x", count, obj->getTemplate()->getName().str(), obj));
 	#ifdef STATE_MACHINE_DEBUG
 					if( obj->getAIUpdateInterface() )
 					{
-						DEBUG_LOG(("State %s\n",  obj->getAIUpdateInterface()->getCurrentStateName().str()));
+						DEBUG_LOG(("State %s",  obj->getAIUpdateInterface()->getCurrentStateName().str()));
 					}
 	#endif
 					TheScriptEngine->AppendDebugMessage("Big Attack path", false);
@@ -10169,8 +10156,8 @@ Path *Pathfinder::findAttackPath( const Object *obj, const LocomotorSet& locomot
 	#endif
 				if (show)
 					debugShowSearch(true);
-	#if defined RTS_DEBUG || defined RTS_INTERNAL
-				//DEBUG_LOG(("Attack path took %d cells, %f sec\n", cellCount, (::GetTickCount()-startTimeMS)/1000.0f));
+	#if defined(RTS_DEBUG)
+				//DEBUG_LOG(("Attack path took %d cells, %f sec", cellCount, (::GetTickCount()-startTimeMS)/1000.0f));
 	#endif
 				// construct and return path
 				Path *path = buildActualPath( obj, locomotorSet.getValidSurfaces(), obj->getPosition(), parentCell, centerInCell, false);
@@ -10208,11 +10195,11 @@ Path *Pathfinder::findAttackPath( const Object *obj, const LocomotorSet& locomot
 	}
 
 #ifdef INTENSE_DEBUG
-	DEBUG_LOG(("obj %s %x\n", obj->getTemplate()->getName().str(), obj));
+	DEBUG_LOG(("obj %s %x", obj->getTemplate()->getName().str(), obj));
 #ifdef STATE_MACHINE_DEBUG
 	if( obj->getAIUpdateInterface() )
 	{
-		DEBUG_LOG(("State %s\n",  obj->getAIUpdateInterface()->getCurrentStateName().str()));
+		DEBUG_LOG(("State %s",  obj->getAIUpdateInterface()->getCurrentStateName().str()));
 	}
 #endif
 	debugShowSearch(true);
@@ -10225,10 +10212,9 @@ Path *Pathfinder::findAttackPath( const Object *obj, const LocomotorSet& locomot
 		cleanOpenAndClosedLists();
 		return path;
 	}
-#if defined RTS_DEBUG || defined RTS_INTERNAL
-	DEBUG_LOG(("%d (%d cells)", TheGameLogic->getFrame(), cellCount));
-	DEBUG_LOG(("Attack Pathfind failed from (%f,%f) to (%f,%f) -- \n", from->x, from->y, victim->getPosition()->x, victim->getPosition()->y));
-	DEBUG_LOG(("Unit '%s', attacking '%s' time %f\n", obj->getTemplate()->getName().str(),  victim->getTemplate()->getName().str(), (::GetTickCount()-startTimeMS)/1000.0f));
+#if defined(RTS_DEBUG)
+	DEBUG_LOG(("%d (%d cells) Attack Pathfind failed from (%f,%f) to (%f,%f) --", TheGameLogic->getFrame(), cellCount, from->x, from->y, victim->getPosition()->x, victim->getPosition()->y));
+	DEBUG_LOG(("Unit '%s', attacking '%s' time %f", obj->getTemplate()->getName().str(),  victim->getTemplate()->getName().str(), (::GetTickCount()-startTimeMS)/1000.0f));
 #endif
 #endif
 #ifdef DUMP_PERF_STATS
@@ -10246,9 +10232,9 @@ Path *Pathfinder::findAttackPath( const Object *obj, const LocomotorSet& locomot
 Path *Pathfinder::findSafePath( const Object *obj, const LocomotorSet& locomotorSet, 
 		const Coord3D *from, const Coord3D* repulsorPos1, const Coord3D* repulsorPos2, Real repulsorRadius) 
 {
-	//CRCDEBUG_LOG(("Pathfinder::findSafePath()\n"));
+	//CRCDEBUG_LOG(("Pathfinder::findSafePath()"));
 	if (m_isMapReady == false) return NULL; // Should always be ok.
-#if defined RTS_DEBUG || defined RTS_INTERNAL
+#if defined(RTS_DEBUG)
 //	Int startTimeMS = ::GetTickCount();
 #endif
 
@@ -10325,7 +10311,7 @@ Path *Pathfinder::findSafePath( const Object *obj, const LocomotorSet& locomotor
 			farthestDistanceSqr = distSqr;
 			if (cellCount > MAX_CELLS) {
 #ifdef INTENSE_DEBUG
-				DEBUG_LOG(("Took intermediate path, dist %f, goal dist %f\n", sqrt(farthestDistanceSqr), repulsorRadius));
+				DEBUG_LOG(("Took intermediate path, dist %f, goal dist %f", sqrt(farthestDistanceSqr), repulsorRadius));
 #endif
 				ok = true; // Already a big search, just take this one.
 			}
@@ -10343,11 +10329,11 @@ Path *Pathfinder::findSafePath( const Object *obj, const LocomotorSet& locomotor
 			}
 			if (count>2000) {
 				show = true;
-				DEBUG_LOG(("cells %d obj %s %x\n", count, obj->getTemplate()->getName().str(), obj));
+				DEBUG_LOG(("cells %d obj %s %x", count, obj->getTemplate()->getName().str(), obj));
 #ifdef STATE_MACHINE_DEBUG
 				if( obj->getAIUpdateInterface() )
 				{
-					DEBUG_LOG(("State %s\n",  obj->getAIUpdateInterface()->getCurrentStateName().str()));
+					DEBUG_LOG(("State %s",  obj->getAIUpdateInterface()->getCurrentStateName().str()));
 				}
 #endif
 				TheScriptEngine->AppendDebugMessage("Big Safe path", false);
@@ -10355,8 +10341,8 @@ Path *Pathfinder::findSafePath( const Object *obj, const LocomotorSet& locomotor
 #endif
 			if (show)
 				debugShowSearch(true);
-#if defined RTS_DEBUG || defined RTS_INTERNAL
-			//DEBUG_LOG(("Attack path took %d cells, %f sec\n", cellCount, (::GetTickCount()-startTimeMS)/1000.0f));
+#if defined(RTS_DEBUG)
+			//DEBUG_LOG(("Attack path took %d cells, %f sec", cellCount, (::GetTickCount()-startTimeMS)/1000.0f));
 #endif
 			// construct and return path
 			Path *path = buildActualPath( obj, locomotorSet.getValidSurfaces(), obj->getPosition(), parentCell, centerInCell, false);
@@ -10376,20 +10362,19 @@ Path *Pathfinder::findSafePath( const Object *obj, const LocomotorSet& locomotor
 	}
 
 #ifdef INTENSE_DEBUG
-	DEBUG_LOG(("obj %s %x count %d\n", obj->getTemplate()->getName().str(), obj, cellCount));
+	DEBUG_LOG(("obj %s %x count %d", obj->getTemplate()->getName().str(), obj, cellCount));
 #ifdef STATE_MACHINE_DEBUG
 	if( obj->getAIUpdateInterface() )
 	{
-		DEBUG_LOG(("State %s\n",  obj->getAIUpdateInterface()->getCurrentStateName().str()));
+		DEBUG_LOG(("State %s",  obj->getAIUpdateInterface()->getCurrentStateName().str()));
 	}
 #endif
 	TheScriptEngine->AppendDebugMessage("Overflowed Safe path", false);
 #endif
 #if 0
-#if defined RTS_DEBUG || defined RTS_INTERNAL
-	DEBUG_LOG(("%d (%d cells)", TheGameLogic->getFrame(), cellCount));
-	DEBUG_LOG(("Attack Pathfind failed from (%f,%f) to (%f,%f) -- \n", from->x, from->y, victim->getPosition()->x, victim->getPosition()->y));
-	DEBUG_LOG(("Unit '%s', attacking '%s' time %f\n", obj->getTemplate()->getName().str(),  victim->getTemplate()->getName().str(), (::GetTickCount()-startTimeMS)/1000.0f));
+#if defined(RTS_DEBUG)
+	DEBUG_LOG(("%d (%d cells) Attack Pathfind failed from (%f,%f) to (%f,%f) --", TheGameLogic->getFrame(), cellCount, from->x, from->y, victim->getPosition()->x, victim->getPosition()->y));
+	DEBUG_LOG(("Unit '%s', attacking '%s' time %f", obj->getTemplate()->getName().str(),  victim->getTemplate()->getName().str(), (::GetTickCount()-startTimeMS)/1000.0f));
 #endif
 #endif
 #ifdef DUMP_PERF_STATS
@@ -10403,42 +10388,42 @@ Path *Pathfinder::findSafePath( const Object *obj, const LocomotorSet& locomotor
 //-----------------------------------------------------------------------------
 void Pathfinder::crc( Xfer *xfer )
 {
-	CRCDEBUG_LOG(("Pathfinder::crc() on frame %d\n", TheGameLogic->getFrame()));
-	CRCDEBUG_LOG(("beginning CRC: %8.8X\n", ((XferCRC *)xfer)->getCRC()));
+	CRCDEBUG_LOG(("Pathfinder::crc() on frame %d", TheGameLogic->getFrame()));
+	CRCDEBUG_LOG(("beginning CRC: %8.8X", ((XferCRC *)xfer)->getCRC()));
 
 	xfer->xferUser( &m_extent, sizeof(IRegion2D) );
-	CRCDEBUG_LOG(("m_extent: %8.8X\n", ((XferCRC *)xfer)->getCRC()));
+	CRCDEBUG_LOG(("m_extent: %8.8X", ((XferCRC *)xfer)->getCRC()));
 
 	xfer->xferBool( &m_isMapReady );
-	CRCDEBUG_LOG(("m_isMapReady: %8.8X\n", ((XferCRC *)xfer)->getCRC()));
+	CRCDEBUG_LOG(("m_isMapReady: %8.8X", ((XferCRC *)xfer)->getCRC()));
 	xfer->xferBool( &m_isTunneling );
-	CRCDEBUG_LOG(("m_isTunneling: %8.8X\n", ((XferCRC *)xfer)->getCRC()));
+	CRCDEBUG_LOG(("m_isTunneling: %8.8X", ((XferCRC *)xfer)->getCRC()));
 
 	Int obsolete1 = 0;
 	xfer->xferInt( &obsolete1 );
 
 	xfer->xferUser(&m_ignoreObstacleID, sizeof(ObjectID));
-	CRCDEBUG_LOG(("m_ignoreObstacleID: %8.8X\n", ((XferCRC *)xfer)->getCRC()));
+	CRCDEBUG_LOG(("m_ignoreObstacleID: %8.8X", ((XferCRC *)xfer)->getCRC()));
 
 	xfer->xferUser(m_queuedPathfindRequests, sizeof(ObjectID)*PATHFIND_QUEUE_LEN);
-	CRCDEBUG_LOG(("m_queuedPathfindRequests: %8.8X\n", ((XferCRC *)xfer)->getCRC()));
+	CRCDEBUG_LOG(("m_queuedPathfindRequests: %8.8X", ((XferCRC *)xfer)->getCRC()));
 	xfer->xferInt(&m_queuePRHead);
-	CRCDEBUG_LOG(("m_queuePRHead: %8.8X\n", ((XferCRC *)xfer)->getCRC()));
+	CRCDEBUG_LOG(("m_queuePRHead: %8.8X", ((XferCRC *)xfer)->getCRC()));
 	xfer->xferInt(&m_queuePRTail);
-	CRCDEBUG_LOG(("m_queuePRTail: %8.8X\n", ((XferCRC *)xfer)->getCRC()));
+	CRCDEBUG_LOG(("m_queuePRTail: %8.8X", ((XferCRC *)xfer)->getCRC()));
 
 	xfer->xferInt(&m_numWallPieces);
-	CRCDEBUG_LOG(("m_numWallPieces: %8.8X\n", ((XferCRC *)xfer)->getCRC()));
+	CRCDEBUG_LOG(("m_numWallPieces: %8.8X", ((XferCRC *)xfer)->getCRC()));
 	for (Int i=0; i<MAX_WALL_PIECES; ++i)
 	{
 		xfer->xferObjectID(&m_wallPieces[MAX_WALL_PIECES]);
 	}
-	CRCDEBUG_LOG(("m_wallPieces: %8.8X\n", ((XferCRC *)xfer)->getCRC()));
+	CRCDEBUG_LOG(("m_wallPieces: %8.8X", ((XferCRC *)xfer)->getCRC()));
 
 	xfer->xferReal(&m_wallHeight);
-	CRCDEBUG_LOG(("m_wallHeight: %8.8X\n", ((XferCRC *)xfer)->getCRC()));
+	CRCDEBUG_LOG(("m_wallHeight: %8.8X", ((XferCRC *)xfer)->getCRC()));
 	xfer->xferInt(&m_cumulativeCellsAllocated);
-	CRCDEBUG_LOG(("m_cumulativeCellsAllocated: %8.8X\n", ((XferCRC *)xfer)->getCRC()));
+	CRCDEBUG_LOG(("m_cumulativeCellsAllocated: %8.8X", ((XferCRC *)xfer)->getCRC()));
 
 }  // end crc
 
