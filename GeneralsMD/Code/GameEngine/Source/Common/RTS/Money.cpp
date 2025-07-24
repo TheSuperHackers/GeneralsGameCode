@@ -102,7 +102,7 @@ void Money::deposit(UnsignedInt amountToDeposit, Bool playSound)
 
 void Money::triggerAudioEvent(MiscAudioEvent audioEvent)
 {
-	Real volume = TheAudio->getAudioSettings()->m_preferredMoneyTickVolume;
+	Real volume = TheAudio->getAudioSettings()->m_preferredMoneyTransactionVolume;
 	if (volume <= 0.0f)
 		return;
 	
