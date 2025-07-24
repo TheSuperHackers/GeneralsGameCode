@@ -254,7 +254,7 @@ jobs:
           #$arguments = "-jobs -1 -headless -replay 00vs2019_debug_short.rep"
           #$arguments = "-jobs -1 -headless -replay 05-01-50_2v2_amoor123_beshr_HardAI_HardAI.rep"
           $arguments = "-jobs -1 -headless -replay *.rep"
-          $timeoutSeconds = 60
+          $timeoutSeconds = 1000
           $stdoutPath = "stdout.log"
           $stderrPath = "stderr.log"
 
@@ -284,7 +284,7 @@ jobs:
           Write-Host "bla3"
 
           if (-not $exited) {
-              Write-Host "ERROR: Process timed out after $timeoutSeconds seconds. Killing process..."
+              Write-Host "ERROR: Process still running after $timeoutSeconds seconds. Killing process..."
               Stop-Process -Id $process.Id -Force
           }
 
