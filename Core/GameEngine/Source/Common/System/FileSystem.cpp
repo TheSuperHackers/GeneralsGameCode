@@ -179,11 +179,14 @@ File*		FileSystem::openFile( const Char *filename, Int access )
 	if ( TheLocalFileSystem != NULL )
 	{
 		file = TheLocalFileSystem->openFile( filename, access );
+
+#if ENABLE_FILESYSTEM_EXISTENCE_CACHE
 		if (file != NULL && (file->getAccess() & File::CREATE))
 		{
 			unsigned key = TheNameKeyGenerator->nameToLowercaseKey(filename);
 			m_fileExist[key] = true;
 		}
+#endif
 	}
 
 	if ( (TheArchiveFileSystem != NULL) && (file == NULL) )
@@ -202,23 +205,31 @@ Bool FileSystem::doesFileExist(const Char *filename) const
 {
 	USE_PERF_TIMER(FileSystem)
 
-  unsigned key=TheNameKeyGenerator->nameToLowercaseKey(filename);
-  std::map<unsigned,bool>::iterator i=m_fileExist.find(key);
-  if (i!=m_fileExist.end())
-    return i->second;
+#if ENABLE_FILESYSTEM_EXISTENCE_CACHE
+	unsigned key=TheNameKeyGenerator->nameToLowercaseKey(filename);
+	std::map<unsigned,bool>::iterator i=m_fileExist.find(key);
+	if (i!=m_fileExist.end())
+		return i->second;
+#endif
 
 	if (TheLocalFileSystem->doesFileExist(filename)) 
-  {
-    m_fileExist[key]=true;
+	{
+#if ENABLE_FILESYSTEM_EXISTENCE_CACHE
+		m_fileExist[key]=true;
+#endif
 		return TRUE;
 	}
 	if (TheArchiveFileSystem->doesFileExist(filename)) 
-  {
-    m_fileExist[key]=true;
+	{
+#if ENABLE_FILESYSTEM_EXISTENCE_CACHE
+		m_fileExist[key]=true;
+#endif
 		return TRUE;
 	}
 
-  m_fileExist[key]=false;
+#if ENABLE_FILESYSTEM_EXISTENCE_CACHE
+	m_fileExist[key]=false;
+#endif
 	return FALSE;
 }
 
