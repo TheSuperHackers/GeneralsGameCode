@@ -216,10 +216,10 @@ jobs:
       - name: Set Generals InstallPath in Registry
         shell: pwsh
         run: |
-          # Zero Hour loads some Generals files and needs this registry key to point to the
+          # Zero Hour loads some Generals files and needs this registry key to find the
           # Generals data files.
           $regPath = "HKCU:\SOFTWARE\Electronic Arts\EA Games\Generals"
-          $installPath = "C:\GameData\Generals"
+          $installPath = "C:\GameData\Generals\"
 
           # Ensure the key exists
           if (-not (Test-Path $regPath)) {
@@ -333,6 +333,16 @@ jobs:
         shell: pwsh
         run: |
           $dir = "."
+          Write-Host "Listing all files in $dir recursively:"
+          Get-ChildItem -Path $dir -Recurse -File | ForEach-Object {
+            Write-Host $_.FullName
+          }
+
+      - name: List All Files in Directory (C:\GameData)
+        if: always()
+        shell: pwsh
+        run: |
+          $dir = "C:\GameData"
           Write-Host "Listing all files in $dir recursively:"
           Get-ChildItem -Path $dir -Recurse -File | ForEach-Object {
             Write-Host $_.FullName
