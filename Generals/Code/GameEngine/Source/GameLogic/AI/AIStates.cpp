@@ -399,6 +399,7 @@ AttackStateMachine::AttackStateMachine( Object *obj, AIAttackState* att, AsciiSt
 //----------------------------------------------------------------------------------------------------------
 AttackStateMachine::~AttackStateMachine()
 {
+	clear();
 }
 
 //-----------------------------------------------------------------------------------------------------------
@@ -730,6 +731,8 @@ AIStateMachine::~AIStateMachine()
 	{
 		deleteInstance(m_goalSquad);
 	}
+
+	clear();
 }
 
 
@@ -1954,6 +1957,7 @@ AIAttackMoveStateMachine::AIAttackMoveStateMachine(Object *owner, AsciiString na
 //----------------------------------------------------------------------------------------------------------
 AIAttackMoveStateMachine::~AIAttackMoveStateMachine()
 {
+	clear();
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -5576,6 +5580,7 @@ AIAttackThenIdleStateMachine::AIAttackThenIdleStateMachine(Object *owner, AsciiS
 //----------------------------------------------------------------------------------------------------------
 AIAttackThenIdleStateMachine::~AIAttackThenIdleStateMachine()
 {
+	clear();
 }
 
 //----------------------------------------------------------------------------------------------------------
