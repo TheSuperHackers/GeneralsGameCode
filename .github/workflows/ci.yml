@@ -186,7 +186,7 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
           AWS_ENDPOINT_URL: ${{ secrets.R2_ENDPOINT_URL }}
-          EXPECTED_HASH: "CA2D4C614B6C2EF1692A3ADC3F1E07B5620A151AF333E1821271AE00352E464D"
+          EXPECTED_HASH: "3BE86F84B1E771BEA01BD2DBA39442683381AE4401716E9AE9D4AD95C8F45372"
         shell: pwsh
         run: |
           Write-Host "Downloading GameData" -ForegroundColor Cyan
@@ -197,7 +197,7 @@ jobs:
           $fileHash = (Get-FileHash -Path gen_gamedata_trimmed.7z -Algorithm SHA256).Hash
           Write-Host "Downloaded file SHA256: $fileHash"
           Write-Host "Expected file SHA256: $env:EXPECTED_HASH"
-          if ($fileHash -eq $env:EXPECTED_HASH) {
+          if ($fileHash -ne $env:EXPECTED_HASH) {
               Write-Error "Hash verification failed! File may be corrupted or tampered with."
               exit 1
           }
@@ -218,7 +218,7 @@ jobs:
         run: |
           $installPath = "C:\GameData\Generals"
 
-          $regPath = "HKLM:\SOFTWARE\WOW6432Node\Electronic Arts\EA Games\Generals"
+          $regPath = "HKCU:\SOFTWARE\Electronic Arts\EA Games\Generals"
 
           # Ensure the key exists
           if (-not (Test-Path $regPath)) {
