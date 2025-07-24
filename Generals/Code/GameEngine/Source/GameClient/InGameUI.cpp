@@ -4188,7 +4188,7 @@ CanAttackResult InGameUI::getCanSelectedObjectsAttack( ActionType action, const 
 			case ACTIONTYPE_MAKE_DEFECTOR:
 			case ACTIONTYPE_SET_RALLY_POINT:
 			default:
-				DEBUG_CRASH( ("Called InGameUI::getCanSelectedObjectsAttack() with actiontype %d. Only accepts attack types! Should you be calling InGameUI::canSelectedObjectsDoAction() instead?") );
+				DEBUG_CRASH( ("Called InGameUI::getCanSelectedObjectsAttack() with actiontype %d. Only accepts attack types! Should you be calling InGameUI::canSelectedObjectsDoAction() instead?", action) );
 				return ATTACKRESULT_INVALID_SHOT;
 
 		}

@@ -850,7 +850,7 @@ void ConnectionManager::processAckStage1(NetCommandMsg *msg) {
 			ref = m_connections[playerID]->processAck(msg);
 		}
 	} else {
-		DEBUG_ASSERTCRASH((playerID >= 0) && (playerID < NUM_CONNECTIONS), ("ConnectionManager::processAck - %d is an invalid player number"));
+		DEBUG_ASSERTCRASH((playerID >= 0) && (playerID < NUM_CONNECTIONS), ("ConnectionManager::processAck - %d is an invalid player number", playerID));
 	}
 
 	if (ref != NULL) {
