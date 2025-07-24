@@ -232,7 +232,7 @@ jobs:
       #        exit 1
       #    }
 #
-      #    $process = Start-Process -FilePath $exePath -ArgumentList "-jobs 2 -headless -replay *.rep" -Wait -PassThru
+      #    $process = Start-Process -FilePath $exePath -ArgumentList "-jobs -1 -headless -replay *.rep" -Wait -PassThru
       #    $exitCode = $process.ExitCode
 #
       #    # Handle non-zero exit code
@@ -244,69 +244,69 @@ jobs:
       - name: Run Replay Compatibility Tests
         shell: pwsh
         run: |
-          $exePath = "build\generalszh.exe"
-          $logPath = "replay_test_output.txt"
-          $timeoutSeconds = 150
+          $exePath = "build/generalszh.exe"
+          #$arguments = "-jobs -1 -headless -replay 00vs2019_debug_short.rep"
+          $arguments = "-jobs -1 -headless -replay 05-01-50_2v2_amoor123_beshr_HardAI_HardAI.rep"
+          $timeoutSeconds = 60
+          $stdoutPath = "stdout.log"
+          $stderrPath = "stderr.log"
 
-          Write-Host "Checking if executable exists at: $exePath"
           if (-not (Test-Path $exePath)) {
               Write-Host "ERROR: Executable not found at $exePath"
               exit 1
           }
 
-          Write-Host "Starting executable and redirecting output to $logPath"
-          $startInfo = New-Object System.Diagnostics.ProcessStartInfo
-          $startInfo.FileName = $exePath
-          $startInfo.Arguments = "-jobs 2 -headless -replay *.rep"
-          $startInfo.RedirectStandardOutput = $true
-          $startInfo.RedirectStandardError = $true
-          $startInfo.UseShellExecute = $false
+          # Note that the game is a gui application. That means we need to redirect console output to a file
+          # in order to see it.
 
-          $process = New-Object System.Diagnostics.Process
-          $process.StartInfo = $startInfo
+          # Clean previous logs
+          Remove-Item $stdoutPath, $stderrPath -ErrorAction SilentlyContinue
 
-          $process.add_OutputDataReceived({ Write-Host $_.Data })
-          $process.add_ErrorDataReceived({ Write-Host "STDERR: $($_.Data)" })
+          Write-Host "bla1"
+          # Start the process
+          $process = Start-Process -FilePath $exePath `
+              -ArgumentList $arguments `
+              -RedirectStandardOutput $stdoutPath `
+              -RedirectStandardError $stderrPath `
+              -PassThru
+          Write-Host "bla2"
+          #$handle = $proc.Handle # cache proc.Handle
 
-          $process.Start() | Out-Null
+          # Wait with timeout
+          $exited = $process.WaitForExit($timeoutSeconds * 1000)
+          Write-Host "bla3"
 
-          $process.BeginOutputReadLine()
-          $process.BeginErrorReadLine()
-
-          # Async read output while waiting (prevents hanging on long stdout)
-          #$stdoutJob = Start-Job { param($p) $p.StandardOutput.ReadToEnd() } -ArgumentList $process
-          #$stderrJob = Start-Job { param($p) $p.StandardError.ReadToEnd() } -ArgumentList $process
-
-          Write-Host "Waiting up to $timeoutSeconds seconds for the process to finish"
-          if (-not $process.WaitForExit($timeoutSeconds * 1000)) {
-              Write-Host "ERROR: Process exceeded $timeoutSeconds second timeout. Killing it."
-              $process.Kill()
-              $timedOut = $true
-          } else {
-              $timedOut = $false
+          if (-not $exited) {
+              Write-Host "ERROR: Process timed out after $timeoutSeconds seconds. Killing process..."
+              Stop-Process -Id $process.Id -Force
           }
 
-          #$stdout = Receive-Job $stdoutJob
-          #$stderr = Receive-Job $stderrJob
+          # Read output
+          Write-Host "=== STDOUT ==="
+          Get-Content $stdoutPath
 
-          #Remove-Job $stdoutJob, $stderrJob
+          if ((Test-Path $stderrPath) -and (Get-Item $stderrPath).Length -gt 0) {
+              Write-Host "`n=== STDERR ==="
+              Get-Content $stderrPath
+          }
 
-          #$stdout | Out-File -FilePath $logPath -Encoding utf8
-          #if ($stderr) {
-          #    "`n=== STDERR ===`n" | Out-File -FilePath $logPath -Append -Encoding utf8
-          #    $stderr | Out-File -FilePath $logPath -Append -Encoding utf8
-          #}
-
-          if ($timedOut) {
-              Write-Host "ERROR: Replay test timed out after $timeoutSeconds seconds"
+          if (-not $exited) {
               exit 1
           }
 
-          $exitCode = $process.ExitCode
+          # Check exit code
+          #$exitCode = $process.ExitCode # This doesn't work, Powershell is so stupid (see https://stackoverflow.com/a/16018287)
+          $process.HasExited | Out-Null # Needs to be called for the command below to work correctly
+          # This will get out the actual exit code of the process
+          $exitCode = $process.GetType().GetField('exitCode', 'NonPublic, Instance').GetValue($process)
+
           if ($exitCode -ne 0) {
-              Write-Host "Executable failed with exit code $exitCode"
+              Write-Host "ERROR: Process failed with exit code $exitCode"
               exit $exitCode
           }
+
+          Write-Host "Success!"
+
 
       - name: List All Files in Directory (Recursive)
         if: always()
@@ -323,4 +323,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: Replay-Test-Log-${{ matrix.preset }}
-          path: build/DebugLogFileD.txt
+          path: build/DebugLogFile*.txt
