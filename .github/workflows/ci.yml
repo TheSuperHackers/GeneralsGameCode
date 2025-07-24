@@ -265,14 +265,13 @@ jobs:
           $process = New-Object System.Diagnostics.Process
           $process.StartInfo = $startInfo
 
-          # Async output handling
-          $process.BeginOutputReadLine()
-          $process.BeginErrorReadLine()
-
           $process.add_OutputDataReceived({ Write-Host $_.Data })
           $process.add_ErrorDataReceived({ Write-Host "STDERR: $($_.Data)" })
 
           $process.Start() | Out-Null
+
+          $process.BeginOutputReadLine()
+          $process.BeginErrorReadLine()
 
           # Async read output while waiting (prevents hanging on long stdout)
           #$stdoutJob = Start-Job { param($p) $p.StandardOutput.ReadToEnd() } -ArgumentList $process
