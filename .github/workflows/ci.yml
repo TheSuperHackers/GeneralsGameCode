@@ -324,3 +324,10 @@ jobs:
         with:
           name: Replay-Test-Log-${{ matrix.preset }}
           path: build/DebugLogFile*.txt
+
+      - name: Upload Replay Test Log2
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: stdout.log-${{ matrix.preset }}
+          path: stdout.log
