@@ -96,7 +96,7 @@ class LocalFile : public File
 		//virtual				~LocalFile();
 
 
-		virtual Bool	open( const Char *filename, Int access = 0 );				///< Open a file for access
+		virtual Bool	open( const Char *filename, Int access = NONE, size_t bufferSize = BUFFERSIZE ); ///< Open a file for access
 		virtual void	close( void );																			///< Close the file
 		virtual Int		read( void *buffer, Int bytes );										///< Read the specified number of bytes in to buffer: See File::read
 		virtual Int		write( const void *buffer, Int bytes );							///< Write the specified number of bytes from the buffer: See File::write

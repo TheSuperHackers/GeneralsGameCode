@@ -42,7 +42,7 @@ public:
 	virtual void reset();
 	virtual void update();
 
-	virtual File * openFile(const Char *filename, Int access = 0);	///< open the given file.
+	virtual File * openFile(const Char *filename, Int access = File::NONE, size_t bufferSize = File::BUFFERSIZE);	///< open the given file.
 	virtual Bool doesFileExist(const Char *filename) const;								///< does the given file exist?
 
 	virtual void getFileListInDirectory(const AsciiString& currentDirectory, const AsciiString& originalDirectory, const AsciiString& searchName, FilenameList &filenameList, Bool searchSubdirectories) const; ///< search the given directory for files matching the searchName (egs. *.ini, *.rep).  Possibly search subdirectories.

@@ -134,14 +134,14 @@ LocalFile::~LocalFile()
 // LocalFile::open	
 //=================================================================
 /**
-  *	This function opens a file using the standard C open() call. Access flags
-	* are mapped to the appropriate open flags. Returns true if file was opened
-	* successfully.
+	* This function opens a file using the standard C open() or
+	* fopen() call. Access flags are mapped to the appropriate flags.
+	* Returns true if file was opened successfully.
 	*/
 //=================================================================
 
 //DECLARE_PERF_TIMER(LocalFile)
-Bool LocalFile::open( const Char *filename, Int access )
+Bool LocalFile::open( const Char *filename, Int access, size_t bufferSize )
 {
 	//USE_PERF_TIMER(LocalFile)
 	if( !File::open( filename, access) )
@@ -171,7 +171,6 @@ Bool LocalFile::open( const Char *filename, Int access )
 
 	// Mode string selection (mimics _open flag combinations)
 	// TEXT is implicit for fopen if 'b' is not present
-	// READ is implicit here if not READWRITE or WRITE
 	if (readwrite)
 	{
 		if (append)
@@ -197,6 +196,26 @@ Bool LocalFile::open( const Char *filename, Int access )
 	if (m_file == NULL)
 	{
 		goto error;
+	}
+
+	{
+		Int result = 0;
+
+		if (bufferSize == 0)
+		{
+			result = setvbuf(m_file, NULL, _IONBF, 0); // Uses no buffering
+		}
+		else
+		{
+			const Int bufferMode = (m_access & LINEBUF)
+				? _IOLBF // Uses line buffering
+				: _IOFBF; // Uses full buffering
+
+			// Buffer is expected to lazy allocate on first read or write later
+			result = setvbuf(m_file, NULL, bufferMode, bufferSize);
+		}
+
+		DEBUG_ASSERTCRASH(result == 0, ("LocalFile::open - setvbuf failed"));
 	}
 
 #else
