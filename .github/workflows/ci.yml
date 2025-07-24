@@ -214,7 +214,7 @@ jobs:
         run: |
           $source = "C:\GameData\GeneralsMD"
           $destination = "build"
-          Get-ChildItem -Path $source | Copy-Item -Destination $destination
+          Copy-Item -Path $source\* -Destination $destination -Recurse -Force
 
       - name: Set Generals InstallPath in Registry
         shell: pwsh
