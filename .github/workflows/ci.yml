@@ -114,7 +114,10 @@ jobs:
           #- preset: "vc6-profile"
           #  tools: true
           #  extras: true
-          - preset: "vc6-debug"
+          #- preset: "vc6-debug"
+          #  tools: false
+          #  extras: false
+          - preset: "vc6-releaselog"
             tools: false
             extras: false
           #- preset: "win32"
@@ -149,7 +152,7 @@ jobs:
     secrets: inherit
 
   replay-test:
-    name: Replay Compatibility Test (${{ matrix.preset }})
+    name: Replay Check (${{ matrix.preset }})
     needs: build-generalsmd
     if: ${{ github.event_name == 'workflow_dispatch' || needs.detect-changes.outputs.generalsmd == 'true' || needs.detect-changes.outputs.shared == 'true' }}
     runs-on: windows-latest
@@ -159,7 +162,7 @@ jobs:
           - preset: "vc6"
             tools: false
             extras: false
-          - preset: "vc6-debug"
+          - preset: "vc6-releaselog"
             tools: false
             extras: false
       fail-fast: false
@@ -243,26 +246,6 @@ jobs:
           Get-ChildItem -Path $source -File | ForEach-Object {
             Move-Item -Path $_.FullName -Destination (Join-Path $destination $_.Name) -Force
           }
-
-      #- name: Run Replay Compatibility Tests
-      #  shell: pwsh
-      #  run: |
-      #    $exePath = "build\generalszh.exe"
-#
-      #    Write-Host "Checking if executable exists at: $exePath"
-      #    if (-not (Test-Path $exePath)) {
-      #        Write-Host "ERROR: Executable not found at $exePath"
-      #        exit 1
-      #    }
-#
-      #    $process = Start-Process -FilePath $exePath -ArgumentList "-jobs -1 -headless -replay *.rep" -Wait -PassThru
-      #    $exitCode = $process.ExitCode
-#
-      #    # Handle non-zero exit code
-      #    if ($exitCode -ne 0) {
-      #        Write-Host "Process failed with exit code $exitCode"
-      #        throw "Executable failed with exit code $exitCode"
-      #    }
 
       - name: Run Replay Compatibility Tests
         shell: pwsh
@@ -370,10 +353,3 @@ jobs:
         with:
           name: Replay-Test-Log-${{ matrix.preset }}
           path: build/DebugLogFile*.txt
-
-      - name: Upload Replay Test Log2
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: stdout.log-${{ matrix.preset }}
-          path: stdout.log

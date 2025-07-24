@@ -44,6 +44,15 @@
             }
         },
         {
+            "name": "vc6-releaselog",
+            "displayName": "Windows 32bit VC6 Release Logging",
+            "inherits": "vc6",
+            "cacheVariables": {
+                "RTS_DEBUG_LOGGING": "ON",
+                "RTS_DEBUG_CRASHING": "ON"
+            }
+        },
+        {
             "name": "default",
             "displayName": "Default Config (don't use directly!)",
             "generator": "Ninja Multi-Config",
@@ -100,15 +109,6 @@
             "displayName": "Windows 32bit Debug",
             "cacheVariables": {
                 "RTS_BUILD_OPTION_DEBUG": "ON"
-            }
-        },
-        {
-            "name": "win32-debuglog",
-            "inherits": "win32",
-            "displayName": "Windows 32bit Debug Logging",
-            "cacheVariables": {
-                "RTS_DEBUG_LOGGING": "ON",
-                "RTS_DEBUG_CRASHING": "ON"
             }
         },
         {
