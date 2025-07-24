@@ -172,6 +172,12 @@
             "description": "Build Windows 32bit VC6 Debug"
         },
         {
+            "name": "vc6-releaselog",
+            "configurePreset": "vc6-releaselog",
+            "displayName": "Build Windows 32bit VC6 Release Logging",
+            "description": "Build Windows 32bit VC6 Release Logging"
+        },
+        {
             "name": "win32",
             "configurePreset": "win32",
             "displayName": "Build Windows 32bit Release",
@@ -190,13 +196,6 @@
             "configurePreset": "win32-debug",
             "displayName": "Build Windows 32bit Debug",
             "description": "Build Windows 32bit Debug",
-            "configuration": "Debug"
-        },
-        {
-            "name": "win32-debuglog",
-            "configurePreset": "win32-debuglog",
-            "displayName": "Build Windows 32bit Debug Logging",
-            "description": "Build Windows 32bit Debug Logging",
             "configuration": "Debug"
         },
         {
@@ -269,6 +268,19 @@
             ]
         },
         {
+            "name": "vc6-releaselog",
+            "steps": [
+                {
+                    "type": "configure",
+                    "name": "vc6-releaselog"
+                },
+                {
+                    "type": "build",
+                    "name": "vc6-releaselog"
+                }
+            ]
+        },
+        {
             "name": "win32",
             "steps": [
                 {
@@ -304,19 +316,6 @@
                 {
                     "type": "build",
                     "name": "win32-debug"
-                }
-            ]
-        },
-        {
-            "name": "win32-debuglog",
-            "steps": [
-                {
-                    "type": "configure",
-                    "name": "win32-debuglog"
-                },
-                {
-                    "type": "build",
-                    "name": "win32-debuglog"
                 }
             ]
         },
