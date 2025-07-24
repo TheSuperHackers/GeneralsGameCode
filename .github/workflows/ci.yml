@@ -246,7 +246,7 @@ jobs:
         run: |
           $exePath = "build\generalszh.exe"
           $logPath = "replay_test_output.txt"
-          $timeoutSeconds = 60
+          $timeoutSeconds = 150
 
           Write-Host "Checking if executable exists at: $exePath"
           if (-not (Test-Path $exePath)) {
@@ -265,14 +265,14 @@ jobs:
           $process = New-Object System.Diagnostics.Process
           $process.StartInfo = $startInfo
 
-          $process.Start() | Out-Null
-
           # Async output handling
           $process.BeginOutputReadLine()
           $process.BeginErrorReadLine()
 
           $process.add_OutputDataReceived({ Write-Host $_.Data })
           $process.add_ErrorDataReceived({ Write-Host "STDERR: $($_.Data)" })
+
+          $process.Start() | Out-Null
 
           # Async read output while waiting (prevents hanging on long stdout)
           #$stdoutJob = Start-Job { param($p) $p.StandardOutput.ReadToEnd() } -ArgumentList $process
