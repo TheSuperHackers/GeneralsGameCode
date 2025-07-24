@@ -69,7 +69,7 @@ UnsignedInt Money::withdraw(UnsignedInt amountToWithdraw, Bool playSound)
 
 	if (playSound)
 	{
-		triggerAudioEvent(MiscAudioEvent_MoneyWithdraw);
+		triggerAudioEvent(TheAudio->getMiscAudio()->m_moneyWithdrawSound);
 	}
 
 	m_money -= amountToWithdraw;
@@ -85,7 +85,7 @@ void Money::deposit(UnsignedInt amountToDeposit, Bool playSound)
 
 	if (playSound)
 	{
-		triggerAudioEvent(MiscAudioEvent_MoneyDeposit);
+		triggerAudioEvent(TheAudio->getMiscAudio()->m_moneyDepositSound);
 	}
 	
 	m_money += amountToDeposit;
@@ -100,16 +100,17 @@ void Money::deposit(UnsignedInt amountToDeposit, Bool playSound)
 	}
 }
 
-void Money::triggerAudioEvent(MiscAudioEvent audioEvent)
+void Money::triggerAudioEvent(const AudioEventRTS& audioEvent)
 {
 	Real volume = TheAudio->getAudioSettings()->m_preferredMoneyTransactionVolume;
+	volume *= audioEvent.getVolume();
 	if (volume <= 0.0f)
 		return;
 	
 	//@todo: Do we do this frequently enough that it is a performance hit?
-	AudioEventRTS event = TheAudio->getMiscAudio()->m_events[audioEvent];
+	AudioEventRTS event = audioEvent;
 	event.setPlayerIndex(m_playerIndex);
-	event.setVolume(volume * event.getVolume());
+	event.setVolume(volume);
 	TheAudio->addAudioEvent(&event);
 }
 

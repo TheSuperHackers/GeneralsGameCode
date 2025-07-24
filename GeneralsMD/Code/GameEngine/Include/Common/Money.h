@@ -51,7 +51,7 @@
 #include "Common/Debug.h"
 #include "Common/Snapshot.h"
 
-enum MiscAudioEvent CPP_11(: Int);
+class AudioEventRTS;
 
 // ----------------------------------------------------------------------------------------------
 /**
@@ -94,7 +94,7 @@ public:
 
 protected:
 
-	void triggerAudioEvent(MiscAudioEvent audioEvent);
+	void triggerAudioEvent(const AudioEventRTS& audioEvent);
 
 	// snapshot methods
 	virtual void crc( Xfer *xfer );

@@ -32,20 +32,9 @@
 
 #include "Common/AudioEventRTS.h"
 
-enum MiscAudioEvent CPP_11(: Int)
-{
-	MiscAudioEvent_MoneyDeposit,                 ///< Money was deposited in my bank
-	MiscAudioEvent_MoneyWithdraw,                ///< Money was withdrawn from my bank
-
-	MiscAudioEvent_Count
-};
-
 struct MiscAudio
 {
-
 	static const FieldParse m_fieldParseTable[];
-
-	AudioEventRTS m_events[MiscAudioEvent_Count];
 	
 	AudioEventRTS m_radarUnitUnderAttackSound;						///< radar sounds to play when unit under attack
 	AudioEventRTS m_radarHarvesterUnderAttackSound;				///< radar sounds to play when harvester under attack
@@ -63,6 +52,8 @@ struct MiscAudio
 	AudioEventRTS m_noCanDoSound;													///< Global "No Can Do" sound
 	AudioEventRTS	m_stealthDiscoveredSound;								///< I have just discovered an enemy stealth unit
 	AudioEventRTS	m_stealthNeutralizedSound;							///< One of my stealthed units has just been discovered by the enemy
+	AudioEventRTS m_moneyDepositSound;										///< Money was deposited in my bank
+	AudioEventRTS m_moneyWithdrawSound;										///< Money was withdrawn from my bank
 	AudioEventRTS m_buildingDisabled;											///< Building has lost power, been hit with an EMP, or disable hacked.
 	AudioEventRTS m_buildingReenabled;										///< Building has recovered from being disabled.
 	AudioEventRTS m_vehicleDisabled;											///< Vehicle has been disabled via EMP or hacker attack.
