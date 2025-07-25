@@ -85,6 +85,7 @@
 #include "dx8texman.h"
 #include "bound.h"
 #include "dx8webbrowser.h"
+#include "DbgHelpGuard.h"
 
 #include "shdlib.h"
 
@@ -331,7 +332,13 @@ bool DX8Wrapper::Init(void * hwnd, bool lite)
 		** Create the D3D interface object
 		*/
 		WWDEBUG_SAY(("Create Direct3D8"));
-		D3DInterface = Direct3DCreate8Ptr(D3D_SDK_VERSION);		// TODO: handle failure cases...
+		{
+			// TheSuperHackers @bugfix xezon 13/06/2025 Front load the system dbghelp.dll
+			// to prevent the graphics driver from potentially loading the old game dbghelp.dll.
+			DbgHelpGuard dbgHelpGuard;
+
+			D3DInterface = Direct3DCreate8Ptr(D3D_SDK_VERSION);		// TODO: handle failure cases...
+		}
 		if (D3DInterface == NULL) {
 			return(false);
 		}
@@ -592,15 +599,22 @@ bool DX8Wrapper::Create_Device(void)
 	Vertex_Processing_Behavior|=D3DCREATE_FPU_PRESERVE;
 #endif
 
-	HRESULT hr=D3DInterface->CreateDevice
-	(
-		CurRenderDevice,
-		WW3D_DEVTYPE,
-		_Hwnd,
-		Vertex_Processing_Behavior,
-		&_PresentParameters,
-		&D3DDevice 
-	);
+	HRESULT hr;
+	{
+		// TheSuperHackers @bugfix xezon 13/06/2025 Front load the system dbghelp.dll
+		// to prevent the graphics driver from potentially loading the old game dbghelp.dll.
+		DbgHelpGuard dbgHelpGuard;
+
+		hr=D3DInterface->CreateDevice
+		(
+			CurRenderDevice,
+			WW3D_DEVTYPE,
+			_Hwnd,
+			Vertex_Processing_Behavior,
+			&_PresentParameters,
+			&D3DDevice 
+		);
+	}
 
 	if (FAILED(hr)) 
 	{
