@@ -243,14 +243,14 @@ jobs:
         run: |
           # These files are expected in the user dir, so we move them here.
 
-          $source = "GeneralsMD\ReplayCheck\Replays"
+          $source = "GeneralsMD\Test\Replays"
           $destination = "$env:USERPROFILE\Documents\Command and Conquer Generals Zero Hour Data\Replays"
           Write-Host "Move replays to $destination"
           New-Item -ItemType Directory -Path $destination -Force | Out-Null
           New-Item -ItemType Directory -Path $destination -Force | Out-Null
           Move-Item -Path "$source\*" -Destination $destination -Force
 
-          $source = "GeneralsMD\ReplayCheck\Maps"
+          $source = "GeneralsMD\Test\Maps"
           $destination = "$env:USERPROFILE\Documents\Command and Conquer Generals Zero Hour Data\Maps"
           Write-Host "Move maps to $destination"
           New-Item -ItemType Directory -Path $destination -Force | Out-Null
