@@ -757,7 +757,6 @@ static CriticalSection critSec1, critSec2, critSec3, critSec4, critSec5;
 Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
                       LPSTR lpCmdLine, Int nCmdShow )
 {
-	printf("Hello CI\n");
 	Int exitcode = 1;
 
 #ifdef RTS_PROFILE
