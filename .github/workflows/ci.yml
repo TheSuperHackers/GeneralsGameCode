@@ -195,6 +195,23 @@ jobs:
           # Download trimmed gamedata of both ZH and Generals. This data cannot be used for playing because it's
           # missing textures, audio and gui files. But it's enough for replay checking.
           # It's also encrypted because it's not allowed to distribute these files.
+          # The archive contains these files:
+          # Generals\BINKW32.DLL
+          # Generals\English.big
+          # Generals\INI.big
+          # Generals\Maps.big
+          # Generals\mss32.dll
+          # Generals\W3D.big
+          # Generals\Data\Scripts\MultiplayerScripts.scb
+          # Generals\Data\Scripts\SkirmishScripts.scb
+          # GeneralsMD\BINKW32.DLL
+          # GeneralsMD\INIZH.big
+          # GeneralsMD\MapsZH.big
+          # GeneralsMD\mss32.dll
+          # GeneralsMD\W3DZH.big
+          # GeneralsMD\Data\Scripts\MultiplayerScripts.scb
+          # GeneralsMD\Data\Scripts\Scripts.ini
+          # GeneralsMD\Data\Scripts\SkirmishScripts.scb
 
           Write-Host "Downloading GameData" -ForegroundColor Cyan
           #aws s3 cp s3://github-ci/gen_gamedata_trimmed.7z gen_gamedata_trimmed.7z --endpoint-url $env:AWS_ENDPOINT_URL
@@ -259,7 +276,7 @@ jobs:
         shell: pwsh
         run: |
           $exePath = "build/generalszh.exe"
-          $arguments = "-jobs 4 -headless -replay *.rep"
+          $arguments = "-jobs 5 -headless -replay *.rep"
           $timeoutSeconds = 1500
           $stdoutPath = "stdout.log"
           $stderrPath = "stderr.log"
