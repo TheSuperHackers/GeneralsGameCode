@@ -231,7 +231,6 @@ jobs:
 
           # Ensure the key exists
           if (-not (Test-Path $regPath)) {
-            Write-Host "Registry key not yet there: $regPath"
             New-Item -Path $regPath -Force | Out-Null
           }
 
@@ -247,6 +246,7 @@ jobs:
           $source = "GeneralsMD\ReplayCheck\Replays"
           $destination = "$env:USERPROFILE\Documents\Command and Conquer Generals Zero Hour Data\Replays"
           Write-Host "Move replays to $destination"
+          New-Item -ItemType Directory -Path $destination -Force | Out-Null
           New-Item -ItemType Directory -Path $destination -Force | Out-Null
           Move-Item -Path "$source\*" -Destination $destination -Force
 
@@ -273,24 +273,20 @@ jobs:
           }
 
           # Note that the game is a gui application. That means we need to redirect console output to a file
-          # in order to see it.
-
+          # in order to retrieve it.
           # Clean previous logs
           Remove-Item $stdoutPath, $stderrPath -ErrorAction SilentlyContinue
 
-          Write-Host "bla1"
           # Start the process
+          Write-Host "Run $exePath $arguments"
           $process = Start-Process -FilePath $exePath `
               -ArgumentList $arguments `
               -RedirectStandardOutput $stdoutPath `
               -RedirectStandardError $stderrPath `
               -PassThru
-          Write-Host "bla2"
-          #$handle = $proc.Handle # cache proc.Handle
 
           # Wait with timeout
           $exited = $process.WaitForExit($timeoutSeconds * 1000)
-          Write-Host "bla3"
 
           if (-not $exited) {
               Write-Host "ERROR: Process still running after $timeoutSeconds seconds. Killing process..."
@@ -311,11 +307,12 @@ jobs:
           }
 
           # Check exit code
-          $exitCode = $process.ExitCode # This doesn't work, Powershell is so stupid (see https://stackoverflow.com/a/16018287)
+          $exitCode = $process.ExitCode
+          
+          # The above doesn't work on all Windows versions. If not, try this: (see https://stackoverflow.com/a/16018287)
           #$process.HasExited | Out-Null # Needs to be called for the command below to work correctly
-          # This will get out the actual exit code of the process
           #$exitCode = $process.GetType().GetField('exitCode', 'NonPublic, Instance').GetValue($process)
-          Write-Host "exit code $exitCode"
+          #Write-Host "exit code $exitCode"
 
           if ($exitCode -ne 0) {
               Write-Host "ERROR: Process failed with exit code $exitCode"
@@ -356,9 +353,9 @@ jobs:
             Write-Host "$($_.FullName) [$sizeKB KB]"
           }
 
-      - name: Upload Replay Test Log
+      - name: Upload Debug Log
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: Replay-Test-Log-${{ matrix.preset }}
+          name: Replay-Debug-Log-${{ matrix.preset }}
           path: build/DebugLogFile*.txt
