@@ -320,6 +320,11 @@ Object *ThingFactory::newObject( const ThingTemplate *tmplate, Team *team, Objec
 	//the onCreate() calls... in the case of constructing.
 	Object *obj = TheGameLogic->friend_createObject( tmplate, statusBits, team );
 
+	// TheSuperHackers @bugfix Mauller 24/07/2025 Create the drawable early to prevent crashing when behavior modules try to initialize drawable data.
+	// This predominantly occurs with the veterancy create module when the chemical suits upgrade is unlocked as it tries to set the terrain decal.
+	Drawable *draw = newDrawable(obj->getTemplate());
+	obj->friend_setDrawable(draw);
+
 	// run the create function for the thing
 	for (BehaviorModule** m = obj->getBehaviorModules(); *m; ++m)
 	{

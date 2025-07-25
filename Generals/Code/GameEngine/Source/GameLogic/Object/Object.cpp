@@ -2670,6 +2670,15 @@ VeterancyLevel Object::getVeterancyLevel() const
 }
 
 //-------------------------------------------------------------------------------------------------
+void Object::friend_setDrawable( Drawable *draw )
+{
+	if (!m_drawable)
+		m_drawable = draw;
+	else
+		DEBUG_CRASH(("Drawable should only be set once at object creation"));
+}
+
+//-------------------------------------------------------------------------------------------------
 void Object::friend_bindToDrawable( Drawable *draw ) 
 { 
 	m_drawable = draw;
