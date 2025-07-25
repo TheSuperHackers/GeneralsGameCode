@@ -101,7 +101,7 @@ friend class BaseHeightMapRenderObjClass;
 public:
 
 	W3DPropBuffer(void);
-	~W3DPropBuffer(void);
+	virtual ~W3DPropBuffer(void);
 	/// Add a prop at location.  Name is the w3d model name.
 	void addProp(Int id, Coord3D location, Real angle, Real scale, const AsciiString &modelName);
 	/// Remove a prop.

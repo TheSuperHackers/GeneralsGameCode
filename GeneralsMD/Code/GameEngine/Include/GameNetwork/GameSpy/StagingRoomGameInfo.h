@@ -99,6 +99,7 @@ private:
 
 public:
 	GameSpyStagingRoom();
+	virtual ~GameSpyStagingRoom(){}
 	virtual void reset( void );
 
 	void cleanUpSlotPointers(void);
