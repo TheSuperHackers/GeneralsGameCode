@@ -125,7 +125,6 @@ Bool GetStringFromGeneralsRegistry(AsciiString path, AsciiString key, AsciiStrin
 	{
 		return TRUE;
 	}
-	DEBUG_LOG(("GetStringFromRegistry - looking in CU"));
 
 	return getStringFromRegistry(HKEY_CURRENT_USER, fullPath.str(), key.str(), val);
 }

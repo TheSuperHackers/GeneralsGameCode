@@ -40,6 +40,7 @@
             "hidden": false,
             "inherits": "vc6",
             "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug",
                 "RTS_BUILD_OPTION_DEBUG": "ON"
             }
         },

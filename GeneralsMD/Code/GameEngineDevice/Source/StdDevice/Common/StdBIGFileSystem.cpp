@@ -57,7 +57,6 @@ void StdBIGFileSystem::init() {
     // load original Generals assets
     AsciiString installPath;
     GetStringFromGeneralsRegistry("", "InstallPath", installPath );
-    DEBUG_LOG(("InstallPath: %s\n", InstallPath.str()));
     //@todo this will need to be ramped up to a crash for release
     DEBUG_ASSERTCRASH(installPath != "", ("Be 1337! Go install Generals!"));
     if (installPath!="")
