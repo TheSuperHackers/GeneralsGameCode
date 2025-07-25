@@ -260,10 +260,8 @@ jobs:
         shell: pwsh
         run: |
           $exePath = "build/generalszh.exe"
-          #$arguments = "-jobs -1 -headless -replay 00vs2019_debug_short.rep"
-          #$arguments = "-jobs -1 -headless -replay 05-01-50_2v2_amoor123_beshr_HardAI_HardAI.rep"
-          $arguments = "-jobs -1 -headless -replay *.rep"
-          $timeoutSeconds = 1000
+          $arguments = "-jobs 1 -headless -replay *.rep"
+          $timeoutSeconds = 1500
           $stdoutPath = "stdout.log"
           $stderrPath = "stderr.log"
 
@@ -359,3 +357,4 @@ jobs:
         with:
           name: Replay-Debug-Log-${{ matrix.preset }}
           path: build/DebugLogFile*.txt
+          if-no-files-found: ignore
