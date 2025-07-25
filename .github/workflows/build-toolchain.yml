@@ -25,6 +25,10 @@ on:
         default: false
         type: boolean
         description: "Build extras"
+      release-name:
+        required: false
+        type: string
+        description: "Release name for the build, used in versioning"
 
 jobs:
   build:
@@ -110,6 +114,10 @@ jobs:
           "-DRTS_BUILD_ZEROHOUR=${{ inputs.game == 'GeneralsMD' && 'ON' || 'OFF' }}",
           "-DRTS_BUILD_GENERALS=${{ inputs.game == 'Generals' && 'ON' || 'OFF' }}"
           )
+          
+          if ("${{ inputs.release-name }}") {
+              $buildFlags += "-DRELEASE_NAME='${{ inputs.release-name }}'"
+          }
 
           $gamePrefix = "${{ inputs.game == 'Generals' && 'GENERALS' || 'ZEROHOUR' }}"
           $buildFlags += "-DRTS_BUILD_CORE_TOOLS=${{ inputs.tools && 'ON' || 'OFF' }}"
