@@ -151,7 +151,7 @@ jobs:
       extras: ${{ matrix.extras }}
     secrets: inherit
 
-  replay-test:
+  replaycheck-generalsmd:
     name: Replay Check (${{ matrix.preset }})
     needs: build-generalsmd
     if: ${{ github.event_name == 'workflow_dispatch' || needs.detect-changes.outputs.generalsmd == 'true' || needs.detect-changes.outputs.shared == 'true' }}
@@ -192,8 +192,12 @@ jobs:
           EXPECTED_HASH: "3BE86F84B1E771BEA01BD2DBA39442683381AE4401716E9AE9D4AD95C8F45372"
         shell: pwsh
         run: |
+          # Download trimmed gamedata of both ZH and Generals. This data cannot be used for playing because it's
+          # missing textures, audio and gui files. But it's enough for replay checking.
+          # It's also encrypted because it's not allowed to distribute these files.
+
           Write-Host "Downloading GameData" -ForegroundColor Cyan
-          #aws s3 cp s3://github-ci/zh_gamedata_no_audio.7z zh_gamedata_no_audio.7z --endpoint-url $env:AWS_ENDPOINT_URL
+          #aws s3 cp s3://github-ci/gen_gamedata_trimmed.7z gen_gamedata_trimmed.7z --endpoint-url $env:AWS_ENDPOINT_URL
           Invoke-WebRequest -Uri "https://gadgetpack.net/stuff/gen_gamedata_trimmed.7z" -OutFile "gen_gamedata_trimmed.7z"
 
           Write-Host "Verifying File Integrity" -ForegroundColor Cyan
@@ -221,6 +225,7 @@ jobs:
         run: |
           # Zero Hour loads some Generals files and needs this registry key to find the
           # Generals data files.
+
           $regPath = "HKCU:\SOFTWARE\Electronic Arts\EA Games\Generals"
           $installPath = "C:\GameData\Generals\"
 
@@ -232,20 +237,23 @@ jobs:
 
           # Set the InstallPath value
           Set-ItemProperty -Path $regPath -Name InstallPath -Value $installPath -Type String
-
           Write-Host "Registry key set: $regPath -> InstallPath = $installPath"
 
       - name: Move Replays and Maps to User Dir
         shell: pwsh
         run: |
+          # These files are expected in the user dir, so we move them here.
+
           $source = "GeneralsMD\ReplayCheck\Replays"
           $destination = "$env:USERPROFILE\Documents\Command and Conquer Generals Zero Hour Data\Replays"
           Write-Host "Move replays to $destination"
+          New-Item -ItemType Directory -Path $destination -Force | Out-Null
           Move-Item -Path "$source\*" -Destination $destination -Force
 
           $source = "GeneralsMD\ReplayCheck\Maps"
           $destination = "$env:USERPROFILE\Documents\Command and Conquer Generals Zero Hour Data\Maps"
           Write-Host "Move maps to $destination"
+          New-Item -ItemType Directory -Path $destination -Force | Out-Null
           Move-Item -Path "$source\*" -Destination $destination -Force
 
       - name: Run Replay Compatibility Tests
