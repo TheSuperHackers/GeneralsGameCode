@@ -176,14 +176,14 @@ jobs:
           name: GeneralsMD-${{ matrix.preset }}
           path: build
 
-      - name: Cache GameData files
+      - name: Cache Game Data
         id: cache-gamedata
         uses: actions/cache@v4
         with:
           path: C:\GameData
           key: gamedata-permanent-cache-v1
 
-      - name: Download GameData from Cloudflare R2
+      - name: Download Game Data from Cloudflare R2
         if: ${{ steps.cache-gamedata.outputs.cache-hit != 'true' }}
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
@@ -213,7 +213,7 @@ jobs:
           & 7z x gen_gamedata_trimmed.7z -oC:\GameData
           Remove-Item gen_gamedata_trimmed.7z -Verbose
 
-      - name: Set Up GameData
+      - name: Set Up Game Data
         shell: pwsh
         run: |
           $source = "C:\GameData\GeneralsMD"
@@ -246,7 +246,6 @@ jobs:
           $source = "GeneralsMD\Test\Replays"
           $destination = "$env:USERPROFILE\Documents\Command and Conquer Generals Zero Hour Data\Replays"
           Write-Host "Move replays to $destination"
-          New-Item -ItemType Directory -Path $destination -Force | Out-Null
           New-Item -ItemType Directory -Path $destination -Force | Out-Null
           Move-Item -Path "$source\*" -Destination $destination -Force
 
@@ -318,38 +317,6 @@ jobs:
           }
 
           Write-Host "Success!"
-
-
-      - name: List All Files in Directory (Recursive)
-        if: always()
-        shell: pwsh
-        run: |
-          $dir = "."
-          Write-Host "Listing all files in $dir recursively:"
-          Get-ChildItem -Path $dir -Recurse -File | ForEach-Object {
-            Write-Host $_.FullName
-          }
-
-      - name: List All Files in Directory (C:\GameData)
-        if: always()
-        shell: pwsh
-        run: |
-          $dir = "C:\GameData"
-          Write-Host "Listing all files in $dir recursively:"
-          Get-ChildItem -Path $dir -Recurse -File | ForEach-Object {
-            Write-Host $_.FullName
-          }
-
-      - name: List All Files in Directory (data)
-        if: always()
-        shell: pwsh
-        run: |
-          $dir = "$env:USERPROFILE\Documents\Command and Conquer Generals Zero Hour Data"
-          Write-Host "Listing all files in $dir recursively:"
-          Get-ChildItem -Path $dir -Recurse -File | ForEach-Object {
-            $sizeKB = "{0:N1}" -f ($_.Length / 1KB)
-            Write-Host "$($_.FullName) [$sizeKB KB]"
-          }
 
       - name: Upload Debug Log
         if: always()
