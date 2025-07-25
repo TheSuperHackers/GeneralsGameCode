@@ -32,6 +32,13 @@
 
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 #define WIN32_LEAN_AND_MEAN  // only bare bones windows stuff wanted
+
+#if defined(_MSC_VER) && _MSC_VER < 1300
+// This is required to access GetMonitorInfo in VC6.
+#undef WINVER
+#define WINVER 0x0500
+#endif
+
 #include <windows.h>
 #include <stdlib.h>
 #include <crtdbg.h>
@@ -686,7 +693,23 @@ static Bool initializeAppWindows( HINSTANCE hInstance, Int nCmdShow, Bool runWin
 	                     TEXT("Game Window") };
   RegisterClass( &wndClass );
 
-   // Create our main window
+	// TheSuperHackers @feature helmutbuhler 23/03/2025
+	// Find out which monitor to create the window on.
+	// This way, when the executable or a shortcut to it is opened on a certain monitor, the window
+	// opens on the same monitor. This also works when the game is started from the taskbar.
+	// See docs for STARTUPINFO for how this works.
+	STARTUPINFO si;
+	GetStartupInfo(&si);
+	HMONITOR hMonitor = (HMONITOR)si.hStdOutput;
+	MONITORINFO mi = { sizeof(mi) };
+	if (!GetMonitorInfo(hMonitor, &mi))
+	{
+		// Default to primary monitor.
+		hMonitor = MonitorFromWindow(NULL, MONITOR_DEFAULTTOPRIMARY);
+		GetMonitorInfo(hMonitor, &mi);
+	}
+
+	// Create our main window
 	windowStyle =  WS_POPUP|WS_VISIBLE;
 	if (runWindowed) 
 		windowStyle |= WS_DLGFRAME | WS_CAPTION | WS_SYSMENU;
@@ -699,26 +722,25 @@ static Bool initializeAppWindows( HINSTANCE hInstance, Int nCmdShow, Bool runWin
 	rect.right = startWidth;
 	rect.bottom = startHeight;
 	AdjustWindowRect (&rect, windowStyle, FALSE);
-	if (runWindowed) {
-		// Makes the normal debug 800x600 window center in the screen.
-		startWidth = DEFAULT_XRESOLUTION;
-		startHeight= DEFAULT_YRESOLUTION;
-	}
+	startWidth = rect.right - rect.left;
+	startHeight = rect.bottom - rect.top;
 
 	gInitializing = true;
 
   HWND hWnd = CreateWindow( TEXT("Game Window"),
                             TEXT("Command and Conquer Generals"),
                             windowStyle, 
-														(GetSystemMetrics( SM_CXSCREEN ) / 2) - (startWidth / 2), // original position X
-														(GetSystemMetrics( SM_CYSCREEN ) / 2) - (startHeight / 2),// original position Y
+														//(GetSystemMetrics( SM_CXSCREEN ) / 2) - (startWidth / 2), // original position X
+														//(GetSystemMetrics( SM_CYSCREEN ) / 2) - (startHeight / 2),// original position Y
 														// Lorenzen nudged the window higher
 														// so the constantdebug report would 
 														// not get obliterated by assert windows, thank you.
 														//(GetSystemMetrics( SM_CXSCREEN ) / 2) - (startWidth / 2),   //this works with any screen res
 														//(GetSystemMetrics( SM_CYSCREEN ) / 25) - (startHeight / 25),//this works with any screen res
-														rect.right-rect.left,
-														rect.bottom-rect.top,
+														(mi.rcMonitor.right+mi.rcMonitor.left-startWidth) / 2,
+														(mi.rcMonitor.bottom+mi.rcMonitor.top-startHeight) / 2,
+														startWidth,
+														startHeight,
 														0L, 
 														0L, 
 														hInstance, 
