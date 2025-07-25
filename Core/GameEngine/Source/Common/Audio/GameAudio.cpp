@@ -1098,7 +1098,9 @@ void AudioManager::releaseAudioEventRTS( AudioEventRTS *&eventToRelease )
 //-------------------------------------------------------------------------------------------------
 void AudioManager::loseFocus( void )
 {
-	DEBUG_ASSERTLOG(m_savedValues == NULL, ("AudioManager::loseFocus() - leak - jkmcd"));
+	if (m_savedValues)
+		return;
+
 	// In this case, make all the audio go silent.
 	m_savedValues = NEW Real[NUM_VOLUME_TYPES];
 	m_savedValues[0] = m_systemMusicVolume;
