@@ -355,7 +355,14 @@ class AudioManager : public SubsystemInterface
 		
 		AudioEventRTS *m_silentAudioEvent;
 		
-		enum { NUM_VOLUME_TYPES = 4 };
+		enum
+		{
+			VOLUME_TYPE_MUSIC,
+			VOLUME_TYPE_SOUND,
+			VOLUME_TYPE_SOUND3D,
+			VOLUME_TYPE_SPEECH,
+			NUM_VOLUME_TYPES
+		};
 		Real *m_savedValues;
 
 		// Group of 8
