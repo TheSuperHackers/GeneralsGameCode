@@ -152,7 +152,7 @@ jobs:
     secrets: inherit
 
   replaycheck-generalsmd:
-    name: Replay Check (${{ matrix.preset }})
+    name: Replay Check MD (${{ matrix.preset }})
     needs: build-generalsmd
     if: ${{ github.event_name == 'workflow_dispatch' || needs.detect-changes.outputs.generalsmd == 'true' || needs.detect-changes.outputs.shared == 'true' }}
     runs-on: windows-latest
@@ -259,7 +259,7 @@ jobs:
         shell: pwsh
         run: |
           $exePath = "build/generalszh.exe"
-          $arguments = "-jobs 2 -headless -replay *.rep"
+          $arguments = "-jobs 3 -headless -replay *.rep"
           $timeoutSeconds = 1500
           $stdoutPath = "stdout.log"
           $stderrPath = "stderr.log"
