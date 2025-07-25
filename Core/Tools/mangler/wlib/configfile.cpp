@@ -114,7 +114,7 @@ bit8 ConfigFile::readFile(FILE *in)
     value.truncate('\n');
     value.truncate('#');
 
-    // TheSuperHackers @compile xezon 25/03/2025 Re-implement algorithm to avoid writing into string buffer directly.
+    // TheSuperHackers @build xezon 25/03/2025 Re-implement algorithm to avoid writing into string buffer directly.
     // Remove trailing spaces
     {
       const char* valueStr = value.get();

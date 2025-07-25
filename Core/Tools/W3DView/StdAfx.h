@@ -32,7 +32,7 @@
 
 #include "always.h"
 
-// TheSuperHackers @compile jlallas384 05/04/2025 Prevent afxwin.h from loading d3d9types.h, colliding with our own DirectX library.
+// TheSuperHackers @build jlallas384 05/04/2025 Prevent afxwin.h from loading d3d9types.h, colliding with our own DirectX library.
 #define _d3d9TYPES_H_
 
 #include <afxwin.h>         // MFC core and standard components

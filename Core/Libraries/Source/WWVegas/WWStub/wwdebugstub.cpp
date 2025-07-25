@@ -16,7 +16,7 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-// TheSuperHackers @compile feliwir 15/04/2025 Simple debug implementation useful for tools
+// TheSuperHackers @build feliwir 15/04/2025 Simple debug implementation useful for tools
 #include "wwdebug.h"
 #include <stdarg.h>
 #include <stdlib.h>
