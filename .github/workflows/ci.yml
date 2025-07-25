@@ -259,7 +259,7 @@ jobs:
         shell: pwsh
         run: |
           $exePath = "build/generalszh.exe"
-          $arguments = "-jobs 1 -headless -replay *.rep"
+          $arguments = "-jobs 2 -headless -replay *.rep"
           $timeoutSeconds = 1500
           $stdoutPath = "stdout.log"
           $stderrPath = "stderr.log"
