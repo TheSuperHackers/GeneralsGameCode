@@ -45,7 +45,7 @@
 #include <assert.h>
 #include <new>
 
-// TheSuperHackers @compile feliwir 17/04/2025 include utility macros for cross-platform compatibility
+// TheSuperHackers @build feliwir 17/04/2025 include utility macros for cross-platform compatibility
 #include <Utility/compat.h>
 #include <Utility/stdint_adapter.h>
 #include <Utility/CppMacros.h>

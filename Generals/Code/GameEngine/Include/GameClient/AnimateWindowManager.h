@@ -95,7 +95,7 @@ enum AnimTypes CPP_11(: Int)
 } ;
 
 //-----------------------------------------------------------------------------
-// TheSuperHackers @compile xezon 14/03/2025 Puts class into namespace to avoid name collision with AnimateWindow function in WinUser.h
+// TheSuperHackers @build xezon 14/03/2025 Puts class into namespace to avoid name collision with AnimateWindow function in WinUser.h
 namespace wnd
 {
 class AnimateWindow : public MemoryPoolObject

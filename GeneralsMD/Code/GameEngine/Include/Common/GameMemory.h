@@ -179,7 +179,7 @@
 
 #endif // MEMORYPOOL_DEBUG
 
-// TheSuperHackers @compile xezon 30/03/2025 Define DISABLE_GAMEMEMORY to use a null implementations for Game Memory.
+// TheSuperHackers @build xezon 30/03/2025 Define DISABLE_GAMEMEMORY to use a null implementations for Game Memory.
 // Useful for address sanitizer checks and other investigations.
 // Is included below the macros so that memory pool debug code can still be used.
 #ifdef DISABLE_GAMEMEMORY

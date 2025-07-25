@@ -84,7 +84,7 @@ class AsciiString;
 #if defined(ALLOW_DEBUG_UTILS) && !defined(DEBUG_STACKTRACE) && !defined(DISABLE_DEBUG_STACKTRACE)
 	#define DEBUG_STACKTRACE 1
 	#ifndef DEBUG_LOGGING
-		#define DEBUG_LOGGING 1 // TheSuperHackers @compile Stack trace requires logging.
+		#define DEBUG_LOGGING 1 // TheSuperHackers @build Stack trace requires logging.
 	#endif
 #endif
 #if defined(ALLOW_DEBUG_UTILS) && !defined(DEBUG_PROFILE) && !defined(DISABLE_DEBUG_PROFILE)
