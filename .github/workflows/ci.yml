@@ -235,17 +235,18 @@ jobs:
 
           Write-Host "Registry key set: $regPath -> InstallPath = $installPath"
 
-      - name: Move Replay files to correct folder
+      - name: Move Replays and Maps to User Dir
         shell: pwsh
         run: |
-          $source = "GeneralsMD\Replays"
+          $source = "GeneralsMD\ReplayCheck\Replays"
           $destination = "$env:USERPROFILE\Documents\Command and Conquer Generals Zero Hour Data\Replays"
           Write-Host "Move replays to $destination"
+          Move-Item -Path "$source\*" -Destination $destination -Force
 
-          New-Item -ItemType Directory -Path $destination -Force | Out-Null
-          Get-ChildItem -Path $source -File | ForEach-Object {
-            Move-Item -Path $_.FullName -Destination (Join-Path $destination $_.Name) -Force
-          }
+          $source = "GeneralsMD\ReplayCheck\Maps"
+          $destination = "$env:USERPROFILE\Documents\Command and Conquer Generals Zero Hour Data\Maps"
+          Write-Host "Move maps to $destination"
+          Move-Item -Path "$source\*" -Destination $destination -Force
 
       - name: Run Replay Compatibility Tests
         shell: pwsh
@@ -336,11 +337,11 @@ jobs:
             Write-Host $_.FullName
           }
 
-      - name: List All Files in Directory (replays)
+      - name: List All Files in Directory (data)
         if: always()
         shell: pwsh
         run: |
-          $dir = "$env:USERPROFILE\Documents\Command and Conquer Generals Zero Hour Data\Replays"
+          $dir = "$env:USERPROFILE\Documents\Command and Conquer Generals Zero Hour Data"
           Write-Host "Listing all files in $dir recursively:"
           Get-ChildItem -Path $dir -Recurse -File | ForEach-Object {
             $sizeKB = "{0:N1}" -f ($_.Length / 1KB)
