@@ -3643,7 +3643,11 @@ UnsignedInt GameLogic::getCRC( Int mode, AsciiString deepCRCFileName )
 // ------------------------------------------------------------------------------------------------
 void GameLogic::sendObjectCreated( Object *obj )
 {
-	Drawable *draw = TheThingFactory->newDrawable(obj->getTemplate());
+	Drawable *draw = obj->getDrawable();
+
+	if (!draw) {
+		draw = TheThingFactory->newDrawable(obj->getTemplate());
+	}
 
 /// @todo COLIN ... shouldn't we have a check here for existing drawable!!!!!
 
