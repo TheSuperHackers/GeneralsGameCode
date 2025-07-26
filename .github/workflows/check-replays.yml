@@ -36,7 +36,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: C:\GameData
-          key: gamedata-permanent-cache-v1
+          key: gamedata-permanent-cache-v2
 
       - name: Download Game Data from Cloudflare R2
         if: ${{ steps.cache-gamedata.outputs.cache-hit != 'true' }}
@@ -68,6 +68,13 @@ jobs:
           # GeneralsMD\Data\Scripts\Scripts.ini
           # GeneralsMD\Data\Scripts\SkirmishScripts.scb
 
+          if (-not $env:AWS_ACCESS_KEY_ID -or -not $env:AWS_SECRET_ACCESS_KEY -or -not $env:AWS_ENDPOINT_URL) {
+              $ok1 = [bool]$env:AWS_ACCESS_KEY_ID
+              $ok2 = [bool]$env:AWS_SECRET_ACCESS_KEY
+              $ok3 = [bool]$env:AWS_ENDPOINT_URL
+              Write-Host "One or more required secrets are not set or are empty. R2_ACCESS_KEY_ID: $ok1, R2_SECRET_ACCESS_KEY: $ok2, R2_ENDPOINT_URL: $ok3"
+              exit 1
+          }
           Write-Host "Downloading GameData" -ForegroundColor Cyan
           aws s3 cp s3://github-ci/gen_gamedata_trimmed.7z gen_gamedata_trimmed.7z --endpoint-url $env:AWS_ENDPOINT_URL
 
