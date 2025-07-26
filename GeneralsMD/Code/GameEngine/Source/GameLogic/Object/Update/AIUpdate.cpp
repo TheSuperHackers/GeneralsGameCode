@@ -4742,29 +4742,32 @@ void AIUpdateInterface::evaluateMoraleBonus( void )
 		//if ( draw && !us->isKindOf( KINDOF_PORTABLE_STRUCTURE ) )
 		//	draw->setTerrainDecal(TERRAIN_DECAL_NONE);
 
-		// horde
 		if( horde )
-		{
 			us->setWeaponBonusCondition( WEAPONBONUSCONDITION_HORDE );
-
-		}  // end if
 		else
 			us->clearWeaponBonusCondition( WEAPONBONUSCONDITION_HORDE );
 
-		// nationalism
+#if RETAIL_COMPATIBLE_CRC
 		if( nationalism )
-    {
+#else
+		//TheSuperHackers @bugfix GeneralCamo/Mauller nationalism and fanaticism should only be applied when within a horde
+		if( horde && nationalism )
+#endif
+		{
 			us->setWeaponBonusCondition( WEAPONBONUSCONDITION_NATIONALISM );
-      // fanaticism
-      if ( fanaticism )
-        us->setWeaponBonusCondition( WEAPONBONUSCONDITION_FANATICISM );// FOR THE NEW GC INFANTRY GENERAL
-      else 
-        us->clearWeaponBonusCondition( WEAPONBONUSCONDITION_FANATICISM );
-    }
+
+			if ( fanaticism )
+				us->setWeaponBonusCondition( WEAPONBONUSCONDITION_FANATICISM );
+			else
+				us->clearWeaponBonusCondition( WEAPONBONUSCONDITION_FANATICISM );
+		}
 		else
+		{
 			us->clearWeaponBonusCondition( WEAPONBONUSCONDITION_NATIONALISM );
-
-
+#if !RETAIL_COMPATIBLE_CRC
+			us->clearWeaponBonusCondition( WEAPONBONUSCONDITION_FANATICISM );
+#endif
+		}
 
 	}  // end if
 #ifdef ALLOW_DEMORALIZE
