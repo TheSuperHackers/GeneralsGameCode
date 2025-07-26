@@ -196,4 +196,5 @@ jobs:
         with:
           name: Replay-Debug-Log-${{ inputs.preset }}
           path: build/DebugLogFile*.txt
+          retention-days: 30
           if-no-files-found: ignore
