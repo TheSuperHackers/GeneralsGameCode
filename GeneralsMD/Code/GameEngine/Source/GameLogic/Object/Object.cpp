@@ -93,6 +93,7 @@
 #include "GameLogic/Module/StatusDamageHelper.h"
 #include "GameLogic/Module/StickyBombUpdate.h"
 #include "GameLogic/Module/SubdualDamageHelper.h"
+#include "GameLogic/Module/ChronoDamageHelper.h"
 #include "GameLogic/Module/TempWeaponBonusHelper.h"
 #include "GameLogic/Module/ToppleUpdate.h"
 #include "GameLogic/Module/UpdateModule.h"
@@ -240,6 +241,7 @@ Object::Object( const ThingTemplate *tt, const ObjectStatusMaskType &objectStatu
 	m_statusDamageHelper(NULL),
 	m_tempWeaponBonusHelper(NULL),
 	m_subdualDamageHelper(NULL),
+	m_chronoDamageHelper(NULL),
 	m_smcHelper(NULL),
 	m_wsHelper(NULL),
 	m_defectionHelper(NULL),
@@ -390,6 +392,12 @@ Object::Object( const ThingTemplate *tt, const ObjectStatusMaskType &objectStatu
 		subdualModuleData.setModuleTagNameKey( subdualHelperModuleDataTagNameKey );
 		m_subdualDamageHelper = newInstance(SubdualDamageHelper)(this, &subdualModuleData);		
 		*curB++ = m_subdualDamageHelper;
+
+		static const NameKeyType chronoHelperModuleDataTagNameKey = NAMEKEY("ModuleTag_ChronoDamageHelper");
+		static ChronoDamageHelperModuleData chronoModuleData;
+		chronoModuleData.setModuleTagNameKey(chronoHelperModuleDataTagNameKey);
+		m_chronoDamageHelper = newInstance(ChronoDamageHelper)(this, &chronoModuleData);
+		*curB++ = m_chronoDamageHelper;
 	}
 
 	if (TheAI != NULL
@@ -710,6 +718,7 @@ Object::~Object()
 	m_statusDamageHelper = NULL;
 	m_tempWeaponBonusHelper = NULL;
 	m_subdualDamageHelper = NULL;
+	m_chronoDamageHelper = NULL;
 	m_smcHelper = NULL;
 	m_wsHelper = NULL;
 	m_defectionHelper = NULL;
@@ -5363,6 +5372,23 @@ void Object::notifySubdualDamage( Real amount )
 		else
 			getDrawable()->clearTintStatus(TINT_STATUS_GAINING_SUBDUAL_DAMAGE);
 	}
+}
+
+//-------------------------------------------------------------------------------------------------
+void Object::notifyChronoDamage(Real amount)
+{
+	if (m_chronoDamageHelper)
+		m_chronoDamageHelper->notifyChronoDamage(amount);
+
+	// TODO
+	// If we are gaining subdual damage, we are slowly tinting
+	//if (getDrawable())
+	//{
+	//	if (amount > 0)
+	//		getDrawable()->setTintStatus(TINT_STATUS_GAINING_SUBDUAL_DAMAGE);
+	//	else
+	//		getDrawable()->clearTintStatus(TINT_STATUS_GAINING_SUBDUAL_DAMAGE);
+	//}
 }
 
 //-------------------------------------------------------------------------------------------------

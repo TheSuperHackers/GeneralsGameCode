@@ -491,6 +491,44 @@ void ActiveBody::attemptDamage( DamageInfo *damageInfo )
 			allowModifier = FALSE;
 			break;
 		}
+
+		case DAMAGE_CHRONO_GUN:
+		case DAMAGE_CHRONO_UNRESISTABLE:
+		{
+			// This handles both gaining chrono damage and recovering from it
+
+			// Note: Should HoldTheLine or Shields apply? (Not for recovery)
+			if (damageInfo->in.m_damageType != DAMAGE_CHRONO_UNRESISTABLE) {
+				amount *= m_damageScalar;
+			}
+			
+			Bool wasSubdued = isSubduedChrono();
+
+			// Increase damage counter
+			internalAddChronoDamage(amount);
+			DEBUG_LOG(("ActiveBody::attemptDamage - amount = %f, chronoDmg = %f\n", amount, getCurrentChronoDamageAmount()));
+			
+			// Check for disabling threshold
+			Bool nowSubdued = isSubduedChrono();
+
+			if (wasSubdued != nowSubdued)
+			{
+				// Enable/Disable ; Apply/Remove Visual Effects
+				onSubdualChronoChange(nowSubdued);
+			}
+
+			// This will handle continuous art changes such as transparency
+			getObject()->notifyChronoDamage(amount);
+
+			// Check kill state:
+			if (getCurrentChronoDamageAmount() > getMaxHealth()) {
+				damageInfo->in.m_kill = TRUE;
+			}
+			else {
+				alreadyHandled = TRUE;
+			}
+			allowModifier = FALSE;
+		}
 	}
 
 	if( IsSubdualDamage(damageInfo->in.m_damageType) )
@@ -1265,6 +1303,16 @@ void ActiveBody::internalAddSubdualDamage( Real delta )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
+void ActiveBody::internalAddChronoDamage(Real delta)
+{
+	// Just increment, we don't need a cap. we kill once maxHealth is reached
+	//Real chronoDamageCap = m_maxHealth * 2.0;
+    m_currentChronoDamage += delta;
+	//m_currentChronoDamage = min(m_currentChronoDamage, chronoDamageCap);
+}
+
+//-------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------
 Bool ActiveBody::canBeSubdued() const
 {
 	// Any body with subdue listings can be subdued.
@@ -1315,6 +1363,45 @@ void ActiveBody::onSubdualChange( Bool isNowSubdued )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
+void ActiveBody::onSubdualChronoChange( Bool isNowSubdued )
+{
+	// TODO: Apply/Remove visual effects
+
+	Object *me = getObject();
+		
+	if( isNowSubdued )
+	{
+		me->setDisabled(DISABLED_CHRONO);
+
+    ContainModuleInterface *contain = me->getContain();
+    if ( contain )
+		contain->orderAllPassengersToIdle( CMD_FROM_AI );
+	}
+	else
+	{
+		me->clearDisabled(DISABLED_CHRONO);
+
+		if (me->isKindOf(KINDOF_FS_INTERNET_CENTER))
+		{
+			//Kris: October 20, 2003 - Patch 1.01
+			//Any unit inside an internet center is a hacker! Order
+			//them to start hacking again.
+			ContainModuleInterface* contain = me->getContain();
+			if (contain)
+				contain->orderAllPassengersToHackInternet(CMD_FROM_AI);
+		}
+	}
+}
+
+//-------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------
+Bool ActiveBody::isSubduedChrono() const
+{
+	return (m_maxHealth * TheGlobalData->m_chronoDamageDisableThreshold) <= m_currentChronoDamage;
+}
+
+//-------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------
 Bool ActiveBody::isSubdued() const
 {
 	return m_maxHealth <= m_currentSubdualDamage;
@@ -1360,6 +1447,28 @@ Real ActiveBody::getSubdualDamageHealAmount() const
 Bool ActiveBody::hasAnySubdualDamage() const
 {
 	return m_currentSubdualDamage > 0;
+}
+
+//-------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------
+UnsignedInt ActiveBody::getChronoDamageHealRate() const
+{
+	return TheGlobalData->m_chronoDamageHealRate;
+}
+
+//-------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------
+Real ActiveBody::getChronoDamageHealAmount() const
+{
+	DEBUG_LOG(("ActiveBody::getChronoDamageHealAmount() - maxHealth = %f\n", m_maxHealth));
+	return m_maxHealth * TheGlobalData->m_chronoDamageHealAmount;
+}
+
+//-------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------
+Bool ActiveBody::hasAnyChronoDamage() const
+{
+	return m_currentChronoDamage > 0;
 }
 
 //-------------------------------------------------------------------------------------------------

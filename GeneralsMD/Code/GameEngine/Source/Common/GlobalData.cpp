@@ -543,6 +543,12 @@ GlobalData* GlobalData::m_theOriginal = NULL;
 
 	{ "UseVanillaDiagonalMoveSpeed",	      INI::parseBool,		NULL,			offsetof(GlobalData, m_useOldMoveSpeed) },
 	{ "TintStatus",	 GlobalData::parseTintStatusType, NULL, offsetof(GlobalData, m_colorTintTypes) },
+	
+	{"ChronoDamageDisableThreshold", INI::parsePercentToReal, NULL, offsetof(GlobalData, m_chronoDamageDisableThreshold)},
+	{"ChronoDamageHealRate", INI::parseDurationUnsignedInt, NULL, offsetof(GlobalData, m_chronoDamageHealRate)},
+	{"ChronoDamageHealAmountPercent", INI::parsePercentToReal, NULL, offsetof(GlobalData, m_chronoDamageHealAmount) },
+	{"DefaultExcludedDeathTypes", INI::parseDeathTypeFlagsList, NULL, offsetof(GlobalData, m_defaultExcludedDeathTypes) },
+	
 	{ NULL,					NULL,						NULL,						0 }  // keep this last
 
 };
@@ -1150,6 +1156,11 @@ GlobalData::GlobalData()
 	}
 	// ------------------------------------------------------------------------------
 
+	m_chronoDamageDisableThreshold = 0.1;
+	m_chronoDamageHealRate = 15;
+	m_chronoDamageHealAmount = 0.1;
+
+	m_defaultExcludedDeathTypes = DEATH_TYPE_FLAGS_NONE;
 
 }  // end GlobalData
 

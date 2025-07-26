@@ -79,7 +79,22 @@ const char* DamageTypeFlags::s_bitNameList[] =
 	"MICROWAVE",
 	"KILL_GARRISONED",
 	"STATUS",
-
+	// Generic additional damage types (no special logic)
+	"SONIC",
+	"ACID",
+	"JET_BOMB",
+	"ANTI_TANK_GUN",
+	"ANTI_TANK_MISSILE",
+	"ANTI_AIR_GUN",
+	"ANTI_AIR_MISSILE",
+	"ARTILLERY",
+	"SEISMIC",
+	"RAD_BEAM",
+	"TESLA",
+	// Specific damage types with special logic attached
+	"CHRONO_GUN",
+	//"ZOMBIE_VIRUS",  // TODO
+	//"MIND_CONTROL",  // TODO
 	NULL
 };
 

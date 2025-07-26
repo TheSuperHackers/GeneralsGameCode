@@ -154,6 +154,11 @@ public:
 	virtual Bool hasAnySubdualDamage() const = 0;
 	virtual Real getCurrentSubdualDamageAmount() const = 0;
 
+	virtual UnsignedInt getChronoDamageHealRate() const = 0;
+	virtual Real getChronoDamageHealAmount() const = 0;
+	virtual Bool hasAnyChronoDamage() const = 0;
+	virtual Real getCurrentChronoDamageAmount() const = 0;
+
 	virtual BodyDamageType getDamageState() const = 0;
 	virtual void setDamageState( BodyDamageType newState ) = 0;	///< control damage state directly.  Will adjust hitpoints.
 	virtual void setAflame( Bool setting ) = 0;///< This is a major change like a damage state.  
@@ -246,6 +251,11 @@ public:
 	virtual Real getSubdualDamageHealAmount() const {return 0.0f;}
 	virtual Bool hasAnySubdualDamage() const{return FALSE;}
 	virtual Real getCurrentSubdualDamageAmount() const { return 0.0f; }
+
+	virtual UnsignedInt getChronoDamageHealRate() const { return 0; }
+	virtual Real getChronoDamageHealAmount() const { return 0.0f; }
+	virtual Bool hasAnyChronoDamage() const { return FALSE; }
+	virtual Real getCurrentChronoDamageAmount() const { return 0.0f; }
 
 	virtual Real getInitialHealth() const {return 0.0f;}  // return initial health
 

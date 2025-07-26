@@ -31,6 +31,7 @@
 
 #define DEFINE_OBJECT_STATUS_NAMES
 #include "Common/Xfer.h"
+#include "Common/GlobalData.h"
 #include "GameClient/Drawable.h"
 #include "GameLogic/ExperienceTracker.h"
 #include "GameLogic/GameLogic.h"
@@ -47,10 +48,13 @@
 
 
 //-------------------------------------------------------------------------------------------------
-DieMuxData::DieMuxData() :
-	m_deathTypes(DEATH_TYPE_FLAGS_ALL),
-	m_veterancyLevels(VETERANCY_LEVEL_FLAGS_ALL)
-{
+DieMuxData::DieMuxData() {
+	m_deathTypes = DEATH_TYPE_FLAGS_ALL;
+	m_veterancyLevels = VETERANCY_LEVEL_FLAGS_ALL;
+
+	if (TheGlobalData) {
+		m_deathTypes &= ~TheGlobalData->m_defaultExcludedDeathTypes;
+	}
 }
 
 //-------------------------------------------------------------------------------------------------
