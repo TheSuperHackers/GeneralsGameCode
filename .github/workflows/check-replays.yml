@@ -28,7 +28,7 @@ jobs:
       - name: Download Game Artifact
         uses: actions/download-artifact@v4
         with:
-          name: GeneralsMD-${{ matrix.preset }}
+          name: GeneralsMD-${{ inputs.preset }}
           path: build
 
       - name: Cache Game Data
@@ -194,6 +194,6 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: Replay-Debug-Log-${{ matrix.preset }}
+          name: Replay-Debug-Log-${{ inputs.preset }}
           path: build/DebugLogFile*.txt
           if-no-files-found: ignore
