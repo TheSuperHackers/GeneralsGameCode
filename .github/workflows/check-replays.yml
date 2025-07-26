@@ -69,8 +69,7 @@ jobs:
           # GeneralsMD\Data\Scripts\SkirmishScripts.scb
 
           Write-Host "Downloading GameData" -ForegroundColor Cyan
-          #aws s3 cp s3://github-ci/gen_gamedata_trimmed.7z gen_gamedata_trimmed.7z --endpoint-url $env:AWS_ENDPOINT_URL
-          Invoke-WebRequest -Uri "https://gadgetpack.net/stuff/gen_gamedata_trimmed.7z" -OutFile "gen_gamedata_trimmed.7z"
+          aws s3 cp s3://github-ci/gen_gamedata_trimmed.7z gen_gamedata_trimmed.7z --endpoint-url $env:AWS_ENDPOINT_URL
 
           Write-Host "Verifying File Integrity" -ForegroundColor Cyan
           $fileHash = (Get-FileHash -Path gen_gamedata_trimmed.7z -Algorithm SHA256).Hash
