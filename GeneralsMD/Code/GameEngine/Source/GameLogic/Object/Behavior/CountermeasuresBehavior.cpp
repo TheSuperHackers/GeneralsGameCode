@@ -152,36 +152,38 @@ ObjectID CountermeasuresBehavior::calculateCountermeasureToDivertTo( const Objec
 {
 	const CountermeasuresBehaviorModuleData *data = getCountermeasuresBehaviorModuleData();
 
-	//Flares are pushed to the front of the list, but we only want to acquire the "newest" of the flares, therefore
-	//stop iterating after we've reached size of a single volley.
-	Int iteratorMax = MAX( data->m_volleySize, 1 );
+	// TheSuperHackers @bugfix Mauller/Stubbjax 27/07/2025 Fix unsafe iterator handling and correct the countermeasures behavior
+	// The code now iterates through all flares in the volley and selects the nearest one to the weapon as intended in the original EA code
+	// This can slightly change behavior but does not significantly impact the overall survivability of the aircraft
 
-	Real closestDist = 1e15f;
+	Real closestFlareDist = 1e15f;
 	Object *closestFlare = NULL;
+	
+	const int volleySize = data->m_volleySize;
+	int volleyFlaresCounted = 0;
 
+	//Flares are pushed to the front of the list, but we only want to acquire the "newest" of the flares, therefore
 	//Start at the end of the list and go towards the beginning.
-	CountermeasuresVec::iterator it = m_counterMeasures.end();
-	DEBUG_ASSERTCRASH(iteratorMax <= (Int)m_counterMeasures.size(), ("Unsafe size"));
-	//end is actually the end so advance the iterator.
-	if( it != m_counterMeasures.begin() )
+	CountermeasuresVec::reverse_iterator it = m_counterMeasures.rbegin();
+	//stop iterating after we've reached size of a single volley.
+	while( it != m_counterMeasures.rend() && volleyFlaresCounted < volleySize )
 	{
-		--it;
-		while( iteratorMax-- )
+		Object *obj = TheGameLogic->findObjectByID( *it++ );
+		if( obj )
 		{
-			Object *obj = TheGameLogic->findObjectByID( *it );
-			if( obj )
+			Real weaponToFlareDist = ThePartitionManager->getDistanceSquared( obj, getObject(), FROM_CENTER_2D );
+			if( weaponToFlareDist < closestFlareDist )
 			{
-				Real dist = ThePartitionManager->getDistanceSquared( obj, getObject(), FROM_CENTER_2D );
-				if( dist < closestDist )
-				{
-					closestDist = dist;
-					closestFlare = obj;
-				}
+				closestFlareDist = weaponToFlareDist;
+				closestFlare = obj;
 			}
-			else
-			{
-				--it;
-			}
+#if RETAIL_COMPATIBLE_CRC
+			// TheSuperHackers @info Original EA code did not work as intended and stopped on the first retrieved flare
+			// The non retail behaviour corrects the code to iterate through all flares in the volley
+			break;
+#else
+			volleyFlaresCounted++;
+#endif
 		}
 	}
 
