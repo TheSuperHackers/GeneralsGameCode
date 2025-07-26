@@ -816,7 +816,7 @@ void LanGameOptionsMenuInit( WindowLayout *layout, void *userData )
 		updateGameOptions();
 		start = 1; // leave my combo boxes usable
 
-		// disable the combo box for the host's player name
+		// TheSuperHackers @tweak disable the combo box for the host's player name
 		comboBoxPlayer[0]->winEnable(FALSE);
 	}
 	else
