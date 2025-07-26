@@ -152,36 +152,36 @@ ObjectID CountermeasuresBehavior::calculateCountermeasureToDivertTo( const Objec
 {
 	const CountermeasuresBehaviorModuleData *data = getCountermeasuresBehaviorModuleData();
 
-	//Flares are pushed to the front of the list, but we only want to acquire the "newest" of the flares, therefore
-	//stop iterating after we've reached size of a single volley.
-	Int iteratorMax = MAX( data->m_volleySize, 1 );
-
-	Real closestDist = 1e15f;
+	Real closestFlareDist = 1e15f;
 	Object *closestFlare = NULL;
+	
+#if RETAIL_COMPATIBLE_CRC
+	const int volleySize = MAX( data->m_volleySize, 1 );
+#else
+	const int volleySize = data->m_volleySize;
+#endif
+	int countedFlares = 0;
 
+	//Flares are pushed to the front of the list, but we only want to acquire the "newest" of the flares, therefore
 	//Start at the end of the list and go towards the beginning.
-	CountermeasuresVec::iterator it = m_counterMeasures.end();
-	DEBUG_ASSERTCRASH(iteratorMax <= (Int)m_counterMeasures.size(), ("Unsafe size"));
-	//end is actually the end so advance the iterator.
-	if( it != m_counterMeasures.begin() )
+	CountermeasuresVec::reverse_iterator it = m_counterMeasures.rbegin();
+	//stop iterating after we've reached size of a single volley.
+	while( it != m_counterMeasures.rend() && countedFlares < volleySize )
 	{
-		--it;
-		while( iteratorMax-- )
+		Object *obj = TheGameLogic->findObjectByID( *it++ );
+		if( obj )
 		{
-			Object *obj = TheGameLogic->findObjectByID( *it );
-			if( obj )
+			Real weaponToFlareDist = ThePartitionManager->getDistanceSquared( obj, getObject(), FROM_CENTER_2D );
+			if( weaponToFlareDist < closestFlareDist )
 			{
-				Real dist = ThePartitionManager->getDistanceSquared( obj, getObject(), FROM_CENTER_2D );
-				if( dist < closestDist )
-				{
-					closestDist = dist;
-					closestFlare = obj;
-				}
+				closestFlareDist = weaponToFlareDist;
+				closestFlare = obj;
 			}
-			else
-			{
-				--it;
-			}
+#if RETAIL_COMPATIBLE_CRC
+			break;
+#else
+			countedFlares++;
+#endif
 		}
 	}
 
