@@ -18,7 +18,7 @@ on:
 
 jobs:
   build:
-    name: Preset ${{ inputs.preset }}
+    name: ${{ inputs.preset }}
     runs-on: windows-latest
     timeout-minutes: 15
     steps:
@@ -28,7 +28,7 @@ jobs:
       - name: Download Game Artifact
         uses: actions/download-artifact@v4
         with:
-          name: GeneralsMD-${{ inputs.preset }}
+          name: ${{ inputs.game }}-${{ inputs.preset }}
           path: build
 
       - name: Cache Game Data
@@ -88,7 +88,7 @@ jobs:
       - name: Set Up Game Data
         shell: pwsh
         run: |
-          $source = "C:\GameData\GeneralsMD"
+          $source = "C:\GameData\${{ inputs.game }}"
           $destination = "build"
           Copy-Item -Path $source\* -Destination $destination -Recurse -Force
 
@@ -115,13 +115,13 @@ jobs:
         run: |
           # These files are expected in the user dir, so we move them here.
 
-          $source = "GeneralsMD\Test\Replays"
+          $source = "${{ inputs.game }}\Test\Replays"
           $destination = "$env:USERPROFILE\Documents\Command and Conquer Generals Zero Hour Data\Replays"
           Write-Host "Move replays to $destination"
           New-Item -ItemType Directory -Path $destination -Force | Out-Null
           Move-Item -Path "$source\*" -Destination $destination -Force
 
-          $source = "GeneralsMD\Test\Maps"
+          $source = "${{ inputs.game }}\Test\Maps"
           $destination = "$env:USERPROFILE\Documents\Command and Conquer Generals Zero Hour Data\Maps"
           Write-Host "Move maps to $destination"
           New-Item -ItemType Directory -Path $destination -Force | Out-Null

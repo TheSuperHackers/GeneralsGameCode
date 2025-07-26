@@ -5,10 +5,9 @@ permissions:
   pull-requests: write
 
 on:
-  #push:
-  #  branches:
-  #    - main
-  #    - ci-replays
+  push:
+    branches:
+      - main
   pull_request:
     branches:
       - main
@@ -59,20 +58,20 @@ jobs:
   build-generals:
     name: Build Generals${{ matrix.preset && '' }}
     needs: detect-changes
-    if: ${{ 'false' == 'true' }}
-    #if: ${{ github.event_name == 'workflow_dispatch' || needs.detect-changes.outputs.generals == 'true' || needs.detect-changes.outputs.shared == 'true' }}
+    #if: ${{ 'false' == 'true' }}
+    if: ${{ github.event_name == 'workflow_dispatch' || needs.detect-changes.outputs.generals == 'true' || needs.detect-changes.outputs.shared == 'true' }}
     strategy:
       matrix:
         include:
-          # - preset: "vc6"
-          #   tools: true
-          #   extras: true
-          # - preset: "vc6-profile"
-          #   tools: true
-          #   extras: true
-          # - preset: "vc6-debug"
-          #   tools: true
-          #   extras: true
+           - preset: "vc6"
+             tools: true
+             extras: true
+           - preset: "vc6-profile"
+             tools: true
+             extras: true
+           - preset: "vc6-debug"
+             tools: true
+             extras: true
           - preset: "win32"
             tools: true
             extras: true
@@ -109,29 +108,29 @@ jobs:
       matrix:
         include:
           - preset: "vc6"
-            tools: false
-            extras: false
-          #- preset: "vc6-profile"
-          #  tools: true
-          #  extras: true
-          #- preset: "vc6-debug"
-          #  tools: false
-          #  extras: false
+            tools: true
+            extras: true
+          - preset: "vc6-profile"
+            tools: true
+            extras: true
+          - preset: "vc6-debug"
+            tools: true
+            extras: true
           - preset: "vc6-releaselog"
-            tools: false
-            extras: false
-          #- preset: "win32"
-          #  tools: true
-          #  extras: true
-          #- preset: "win32-profile"
-          #  tools: true
-          #  extras: true
-          #- preset: "win32-debug"
-          #  tools: true
-          #  extras: true
-          #- preset: "win32-debuglog"
-          #  tools: true
-          #  extras: true
+            tools: true
+            extras: true
+          - preset: "win32"
+            tools: true
+            extras: true
+          - preset: "win32-profile"
+            tools: true
+            extras: true
+          - preset: "win32-debug"
+            tools: true
+            extras: true
+          - preset: "win32-debuglog"
+            tools: true
+            extras: true
           # vcpkg builds have been disabled for now due to excessive build times of 30 minutes per preset
           # - preset: "win32-vcpkg"
           #   tools: true
@@ -152,14 +151,14 @@ jobs:
     secrets: inherit
 
   replaycheck-generalsmd:
-    name: Replay Check MD (${{ matrix.preset }})
+    name: Replay Check MD${{ matrix.preset && '' }}
     needs: build-generalsmd
     if: ${{ github.event_name == 'workflow_dispatch' || needs.detect-changes.outputs.generalsmd == 'true' || needs.detect-changes.outputs.shared == 'true' }}
     strategy:
       matrix:
         include:
-          - preset: "vc6"
-          - preset: "vc6-releaselog"
+          - preset: "vc6+t+e"
+          - preset: "vc6-releaselog+t+e"
       fail-fast: false
     uses: ./.github/workflows/check-replays.yml
     with:
