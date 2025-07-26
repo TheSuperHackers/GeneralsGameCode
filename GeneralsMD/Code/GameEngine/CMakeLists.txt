@@ -1,16 +1,16 @@
 set(GAMEENGINE_SRC
     Include/Common/AcademyStats.h
     Include/Common/ActionManager.h
-    Include/Common/ArchiveFile.h
-    Include/Common/ArchiveFileSystem.h
-    Include/Common/AsciiString.h
-    Include/Common/AudioAffect.h
-    Include/Common/AudioEventInfo.h
-    Include/Common/AudioEventRTS.h
-    Include/Common/AudioHandleSpecialValues.h
-    Include/Common/AudioRandomValue.h
-    Include/Common/AudioRequest.h
-    Include/Common/AudioSettings.h
+#    Include/Common/ArchiveFile.h
+#    Include/Common/ArchiveFileSystem.h
+#    Include/Common/AsciiString.h
+#    Include/Common/AudioAffect.h
+#    Include/Common/AudioEventInfo.h
+#    Include/Common/AudioEventRTS.h
+#    Include/Common/AudioHandleSpecialValues.h
+#    Include/Common/AudioRandomValue.h
+#    Include/Common/AudioRequest.h
+#    Include/Common/AudioSettings.h
     Include/Common/BattleHonors.h
     Include/Common/BezFwdIterator.h
     Include/Common/BezierSegment.h
@@ -33,21 +33,21 @@ set(GAMEENGINE_SRC
     Include/Common/DisabledTypes.h
     Include/Common/DiscreteCircle.h
     Include/Common/DrawModule.h
-    Include/Common/DynamicAudioEventInfo.h
+#    Include/Common/DynamicAudioEventInfo.h
     Include/Common/encrypt.h
     Include/Common/Energy.h
     Include/Common/Errors.h
-    Include/Common/file.h
-    Include/Common/FileSystem.h
+#    Include/Common/file.h
+#    Include/Common/FileSystem.h
     Include/Common/FunctionLexicon.h
-    Include/Common/GameAudio.h
+#    Include/Common/GameAudio.h
     Include/Common/GameCommon.h
 #    Include/Common/GameDefines.h
     Include/Common/GameEngine.h
     Include/Common/GameLOD.h
     Include/Common/GameMemory.h
-    Include/Common/GameMusic.h
-    Include/Common/GameSounds.h
+#    Include/Common/GameMusic.h
+#    Include/Common/GameSounds.h
     Include/Common/GameSpyMiscPreferences.h
     Include/Common/GameState.h
     Include/Common/GameStateMap.h
@@ -63,13 +63,13 @@ set(GAMEENGINE_SRC
     Include/Common/Language.h
     Include/Common/LatchRestore.h
     Include/Common/List.h
-    Include/Common/LocalFile.h
-    Include/Common/LocalFileSystem.h
+#    Include/Common/LocalFile.h
+#    Include/Common/LocalFileSystem.h
     Include/Common/MapObject.h
     Include/Common/MapReaderWriterInfo.h
     Include/Common/MessageStream.h
     Include/Common/MiniLog.h
-    Include/Common/MiscAudio.h
+#    Include/Common/MiscAudio.h
     Include/Common/MissionStats.h
     Include/Common/ModelState.h
     Include/Common/Module.h
@@ -91,7 +91,7 @@ set(GAMEENGINE_SRC
     Include/Common/QuickmatchPreferences.h
     Include/Common/QuotedPrintable.h
     Include/Common/Radar.h
-    Include/Common/RAMFile.h
+#    Include/Common/RAMFile.h
     Include/Common/RandomValue.h
     Include/Common/Recorder.h
 #    Include/Common/ReplaySimulation.h
@@ -100,7 +100,7 @@ set(GAMEENGINE_SRC
     Include/Common/Science.h
     Include/Common/ScopedMutex.h
     Include/Common/ScoreKeeper.h
-    Include/Common/simpleplayer.h
+#    Include/Common/simpleplayer.h
     Include/Common/SkirmishBattleHonors.h
     Include/Common/SkirmishPreferences.h
     Include/Common/Snapshot.h
@@ -112,7 +112,7 @@ set(GAMEENGINE_SRC
     Include/Common/StateMachine.h
     Include/Common/StatsCollector.h
     Include/Common/STLTypedefs.h
-    Include/Common/StreamingArchiveFile.h
+#    Include/Common/StreamingArchiveFile.h
     Include/Common/SubsystemInterface.h
     Include/Common/SystemInfo.h
     Include/Common/Team.h
@@ -123,10 +123,10 @@ set(GAMEENGINE_SRC
     Include/Common/ThingSort.h
     Include/Common/ThingTemplate.h
     Include/Common/TunnelTracker.h
-    Include/Common/UnicodeString.h
+#    Include/Common/UnicodeString.h
     Include/Common/UnitTimings.h
     Include/Common/Upgrade.h
-    Include/Common/urllaunch.h
+#    Include/Common/urllaunch.h
     Include/Common/UserPreferences.h
     Include/Common/version.h
     Include/Common/WellKnownKeys.h
@@ -551,14 +551,14 @@ set(GAMEENGINE_SRC
     Include/GameNetwork/WOLBrowser/FEBDispatch.h
     Include/GameNetwork/WOLBrowser/WebBrowser.h
     Include/Precompiled/PreRTS.h
-    Source/Common/Audio/AudioEventRTS.cpp
-    Source/Common/Audio/AudioRequest.cpp
-    Source/Common/Audio/DynamicAudioEventInfo.cpp
-    Source/Common/Audio/GameAudio.cpp
-    Source/Common/Audio/GameMusic.cpp
-    Source/Common/Audio/GameSounds.cpp
-    #Source/Common/Audio/simpleplayer.cpp
-    #Source/Common/Audio/urllaunch.cpp
+#    Source/Common/Audio/AudioEventRTS.cpp
+#    Source/Common/Audio/AudioRequest.cpp
+#    Source/Common/Audio/DynamicAudioEventInfo.cpp
+#    Source/Common/Audio/GameAudio.cpp
+#    Source/Common/Audio/GameMusic.cpp
+#    Source/Common/Audio/GameSounds.cpp
+    #Source/Common/Audio/simpleplayer.cpp # unused
+    #Source/Common/Audio/urllaunch.cpp # unused
     Source/Common/Bezier/BezFwdIterator.cpp
     Source/Common/Bezier/BezierSegment.cpp
     Source/Common/BitFlags.cpp
@@ -575,7 +575,7 @@ set(GAMEENGINE_SRC
     Source/Common/INI/INI.cpp
     Source/Common/INI/INIAiData.cpp
     Source/Common/INI/INIAnimation.cpp
-    Source/Common/INI/INIAudioEventInfo.cpp
+#    Source/Common/INI/INIAudioEventInfo.cpp
     Source/Common/INI/INICommandButton.cpp
     Source/Common/INI/INICommandSet.cpp
     Source/Common/INI/INIControlBarScheme.cpp
@@ -586,7 +586,7 @@ set(GAMEENGINE_SRC
     Source/Common/INI/INIMapCache.cpp
     Source/Common/INI/INIMapData.cpp
     Source/Common/INI/INIMappedImage.cpp
-    Source/Common/INI/INIMiscAudio.cpp
+#    Source/Common/INI/INIMiscAudio.cpp
     Source/Common/INI/INIModel.cpp
     Source/Common/INI/INIMultiplayer.cpp
     Source/Common/INI/INIObject.cpp
@@ -629,9 +629,9 @@ set(GAMEENGINE_SRC
     Source/Common/SkirmishBattleHonors.cpp
     Source/Common/StateMachine.cpp
     Source/Common/StatsCollector.cpp
-    Source/Common/System/ArchiveFile.cpp
-    Source/Common/System/ArchiveFileSystem.cpp
-    Source/Common/System/AsciiString.cpp
+#    Source/Common/System/ArchiveFile.cpp
+#    Source/Common/System/ArchiveFileSystem.cpp
+#    Source/Common/System/AsciiString.cpp
     Source/Common/System/BuildAssistant.cpp
     Source/Common/System/CDManager.cpp
     Source/Common/System/CriticalSection.cpp
@@ -640,8 +640,8 @@ set(GAMEENGINE_SRC
     Source/Common/System/Directory.cpp
     Source/Common/System/DisabledTypes.cpp
     Source/Common/System/encrypt.cpp
-    Source/Common/System/File.cpp
-    Source/Common/System/FileSystem.cpp
+#    Source/Common/System/File.cpp
+#    Source/Common/System/FileSystem.cpp
     Source/Common/System/FunctionLexicon.cpp
     Source/Common/System/GameCommon.cpp
     #Source/Common/System/GameMemory.cpp
@@ -649,22 +649,22 @@ set(GAMEENGINE_SRC
     Source/Common/System/Geometry.cpp
     Source/Common/System/KindOf.cpp
     Source/Common/System/List.cpp
-    Source/Common/System/LocalFile.cpp
-    Source/Common/System/LocalFileSystem.cpp
+#    Source/Common/System/LocalFile.cpp
+#    Source/Common/System/LocalFileSystem.cpp
     #Source/Common/System/MemoryInit.cpp
     Source/Common/System/ObjectStatusTypes.cpp
     Source/Common/System/QuotedPrintable.cpp
     Source/Common/System/Radar.cpp
-    Source/Common/System/RAMFile.cpp
+#    Source/Common/System/RAMFile.cpp
     Source/Common/System/registry.cpp
     Source/Common/System/SaveGame/GameState.cpp
     Source/Common/System/SaveGame/GameStateMap.cpp
     Source/Common/System/Snapshot.cpp
     Source/Common/System/StackDump.cpp
-    Source/Common/System/StreamingArchiveFile.cpp
+#    Source/Common/System/StreamingArchiveFile.cpp
     Source/Common/System/SubsystemInterface.cpp
     Source/Common/System/Trig.cpp
-    Source/Common/System/UnicodeString.cpp
+#    Source/Common/System/UnicodeString.cpp
     Source/Common/System/Upgrade.cpp
 #    Source/Common/System/Xfer.cpp
 #    Source/Common/System/XferCRC.cpp
@@ -814,7 +814,7 @@ set(GAMEENGINE_SRC
     Source/GameClient/Statistics.cpp
     Source/GameClient/System/Anim2D.cpp
     Source/GameClient/System/CampaignManager.cpp
-    "Source/GameClient/System/Debug Displayers/AudioDebugDisplay.cpp"
+#    "Source/GameClient/System/Debug Displayers/AudioDebugDisplay.cpp"
     Source/GameClient/System/DebugDisplay.cpp
     Source/GameClient/System/Image.cpp
     Source/GameClient/System/ParticleSys.cpp

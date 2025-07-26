@@ -124,7 +124,7 @@ DECLARE_PERF_TIMER(MemoryPoolInitFilling)
 			s_initFillerValue |= (~(s_initFillerValue << 4)) & 0xf0;
 			s_initFillerValue |= (s_initFillerValue << 8);
 			s_initFillerValue |= (s_initFillerValue << 16);
-			DEBUG_LOG(("Setting MemoryPool initFillerValue to %08x (index %d)",s_initFillerValue,index));
+			//DEBUG_LOG(("Setting MemoryPool initFillerValue to %08x (index %d)",s_initFillerValue,index));
 		}
 	#endif
 
@@ -899,16 +899,17 @@ void MemoryPoolSingleBlock::initBlock(Int logicalSize, MemoryPoolBlob *owningBlo
 #ifdef MEMORYPOOL_CHECKPOINTING
 	m_checkpointInfo = NULL;
 #endif
-#ifdef MEMORYPOOL_BOUNDINGWALL
-	m_wallPattern = theBoundingWallPattern++;
-	debugFillInWalls();
-#endif
 
 	m_nextBlock = NULL;
 #ifdef MPSB_DLINK
 	m_prevBlock = NULL;
 #endif
 	m_owningBlob = owningBlob;	// could be NULL
+
+#ifdef MEMORYPOOL_BOUNDINGWALL
+	m_wallPattern = theBoundingWallPattern++;
+	debugFillInWalls();
+#endif
 }
 
 //-----------------------------------------------------------------------------
@@ -1056,9 +1057,13 @@ void MemoryPoolSingleBlock::debugVerifyBlock()
 	DEBUG_ASSERTCRASH(m_debugLiteralTagString != NULL, ("bad tagstring"));
 	/// @todo Put this check back in after the AI memory usage is under control (MSB)
 	//DEBUG_ASSERTCRASH(m_logicalSize>0 && m_logicalSize < 0x00ffffff, ("unlikely value for m_logicalSize"));
-	DEBUG_ASSERTCRASH(!m_nextBlock || m_nextBlock->m_owningBlob == m_owningBlob, ("owning blob mismatch..."));
+	DEBUG_ASSERTCRASH(m_nextBlock == NULL
+		|| memcmp(&m_nextBlock->m_owningBlob, &s_initFillerValue, sizeof(s_initFillerValue)) == 0
+		|| m_nextBlock->m_owningBlob == m_owningBlob, ("owning blob mismatch..."));
 #ifdef MPSB_DLINK
-	DEBUG_ASSERTCRASH(!m_prevBlock || m_prevBlock->m_owningBlob == m_owningBlob, ("owning blob mismatch..."));
+	DEBUG_ASSERTCRASH(m_prevBlock == NULL
+		|| memcmp(&m_prevBlock->m_owningBlob, &s_initFillerValue, sizeof(s_initFillerValue)) == 0
+		|| m_prevBlock->m_owningBlob == m_owningBlob, ("owning blob mismatch..."));
 #endif
 	debugCheckUnderrun();
 	debugCheckOverrun();
@@ -3424,6 +3429,9 @@ void initMemoryManager()
 		TheDynamicMemoryAllocator = TheMemoryPoolFactory->createDynamicMemoryAllocator(numSubPools, pParms);	// will throw on failure
 		userMemoryManagerInitPools();
 		thePreMainInitFlag = false;
+
+		DEBUG_INIT(DEBUG_FLAGS_DEFAULT);
+		DEBUG_LOG(("*** Initialized the Memory Manager"));
 	}
 	else
 	{
@@ -3433,7 +3441,7 @@ void initMemoryManager()
 		}
 		else 
 		{
-			DEBUG_CRASH(("memory manager is already inited"));
+			DEBUG_CRASH(("Memory Manager is already initialized"));
 		}
 	}
 
@@ -3487,8 +3495,6 @@ static void preMainInitMemoryManager()
 {
 	if (TheMemoryPoolFactory == NULL)
 	{
-		DEBUG_INIT(DEBUG_FLAGS_DEFAULT);
-		DEBUG_LOG(("*** Initing Memory Manager prior to main!"));
 
 		Int numSubPools;
 		const PoolInitRec *pParms;
@@ -3499,6 +3505,9 @@ static void preMainInitMemoryManager()
 		TheDynamicMemoryAllocator = TheMemoryPoolFactory->createDynamicMemoryAllocator(numSubPools, pParms);	// will throw on failure
 		userMemoryManagerInitPools();
 		thePreMainInitFlag = true;
+
+		DEBUG_INIT(DEBUG_FLAGS_DEFAULT);
+		DEBUG_LOG(("*** Initialized the Memory Manager prior to main!"));
 	}
 }
 
@@ -3543,6 +3552,8 @@ void shutdownMemoryManager()
 	}
 
 	theMainInitFlag = false;
+
+	DEBUG_SHUTDOWN();
 }
 
 //-----------------------------------------------------------------------------

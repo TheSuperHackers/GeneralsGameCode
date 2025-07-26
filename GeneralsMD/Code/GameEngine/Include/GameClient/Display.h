@@ -146,6 +146,7 @@ public:
 													Int endX, Int endY, Color color = 0xFFFFFFFF, DrawImageMode mode=DRAW_IMAGE_ALPHA) = 0;
 
 	/// draw a video buffer fit within the screen coordinates
+	virtual void drawScaledVideoBuffer( VideoBuffer *buffer, VideoStreamInterface *stream ) = 0;
 	virtual void drawVideoBuffer( VideoBuffer *buffer, Int startX, Int startY, 
 													Int endX, Int endY ) = 0;
 

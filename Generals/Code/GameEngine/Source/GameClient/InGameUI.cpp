@@ -2030,6 +2030,20 @@ void InGameUI::message( AsciiString stringManagerLabel, ... )
 }  // end 
 
 //-------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------
+void InGameUI::messageNoFormat( const UnicodeString& message )
+{
+	addMessageText( message, NULL );
+}
+
+//-------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------
+void InGameUI::messageNoFormat( const RGBColor *rgbColor, const UnicodeString& message )
+{
+	addMessageText( message, rgbColor );
+}
+
+//-------------------------------------------------------------------------------------------------
 /** Interface for display text messages to the user */
 //-------------------------------------------------------------------------------------------------
 // srj sez: passing as const-ref screws up varargs for some reason. dunno why. just pass by value.

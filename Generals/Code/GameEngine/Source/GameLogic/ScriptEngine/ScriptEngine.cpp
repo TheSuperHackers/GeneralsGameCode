@@ -4639,10 +4639,18 @@ void ScriptEngine::reset( void )
 
 	_updateCurrentParticleCap();
 
-	VecSequentialScriptPtrIt seqScriptIt;
-	for (seqScriptIt = m_sequentialScripts.begin(); seqScriptIt != m_sequentialScripts.end(); ) {
-		cleanupSequentialScript(seqScriptIt, TRUE);
+	// delete and clear all sequential scripts.
+	VecSequentialScriptPtrIt seqScriptIt = m_sequentialScripts.begin();
+	while (seqScriptIt != m_sequentialScripts.end()) {
+		SequentialScript* seqScript = *seqScriptIt;
+		while (seqScript != NULL) {
+			SequentialScript* scriptToDelete = seqScript;
+			seqScript = seqScript->m_nextScriptInSequence;
+			deleteInstance(scriptToDelete);
+		}
+		++seqScriptIt;
 	}
+	m_sequentialScripts.clear();
 
 	// clear out all the lists of object types that were in the old map.
 	for (AllObjectTypesIt it = m_allObjectTypeLists.begin(); it != m_allObjectTypeLists.end(); it = m_allObjectTypeLists.begin() ) {

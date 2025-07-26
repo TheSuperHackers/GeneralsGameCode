@@ -317,10 +317,7 @@ void StatsCollector::createFileName( void )
 	const char *fname = name.reverseFind('\\');
 	if (fname)
 		name = fname+1;
-	name.removeLastChar(); // p
-	name.removeLastChar(); // a
-	name.removeLastChar(); // m
-	name.removeLastChar(); // .
+	name.truncateBy(4); // ".map"
 	m_statsFileName.clear();
 #if defined(RTS_DEBUG)
 	if (TheGlobalData->m_saveStats)

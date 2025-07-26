@@ -1405,8 +1405,11 @@ BOOL CWorldBuilderDoc::OnOpenDocument(LPCTSTR lpszPathName)
 	// clear out map-specific text
 	TheGameText->reset();
 	AsciiString s = lpszPathName;
-	while (s.getLength() && s.getCharAt(s.getLength()-1) != '\\')
-		s.removeLastChar();
+	const char* lastSep = s.reverseFind('\\');
+	if (lastSep != NULL)
+	{
+		s.truncateTo(lastSep - s.str() + 1);
+	}
 	s.concat("map.str");
 	DEBUG_LOG(("Looking for map-specific text in [%s]", s.str()));
 	TheGameText->initMapStringFile(s);

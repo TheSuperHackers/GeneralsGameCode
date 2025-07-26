@@ -368,11 +368,13 @@ Real OptionPreferences::getScrollFactor(void)
 		return TheGlobalData->m_keyboardDefaultScrollFactor;
 
 	Int factor = atoi(it->second.str());
-	if (factor < 0)
-		factor = 0;
-	if (factor > 100)
-		factor = 100;
-	
+
+	// TheSuperHackers @tweak xezon 11/07/2025
+	// No longer caps the upper limit to 100, because the options setting can go beyond that.
+	// No longer caps the lower limit to 0, because that would mean standstill.
+	if (factor < 1)
+		factor = 1;
+
 	return factor/100.0f;
 }
 
@@ -864,12 +866,11 @@ static void setDefaults( void )
 
 	//-------------------------------------------------------------------------------------------------
 //	// scroll speed val
-	Int valMin, valMax;
-//	GadgetSliderGetMinMax(sliderScrollSpeed,&valMin, &valMax);
-//	GadgetSliderSetPosition(sliderScrollSpeed, ((valMax - valMin) / 2 + valMin));
 	Int scrollPos = (Int)(TheGlobalData->m_keyboardDefaultScrollFactor*100.0f);
 	GadgetSliderSetPosition( sliderScrollSpeed, scrollPos );
 
+
+	Int valMin, valMax;
 
 	//-------------------------------------------------------------------------------------------------
 	// slider music volume
@@ -1189,7 +1190,7 @@ static void saveOptions( void )
 	//-------------------------------------------------------------------------------------------------
 	// scroll speed val
 	val = GadgetSliderGetPosition(sliderScrollSpeed);
-	if(val != -1)
+	if(val > 0)
 	{
 		TheWritableGlobalData->m_keyboardScrollFactor = val/100.0f;
 		DEBUG_LOG(("Scroll Spped val %d, keyboard scroll factor %f", val, TheGlobalData->m_keyboardScrollFactor));
@@ -1398,6 +1399,27 @@ static void cancelAdvancedOptions()
 
 	WinAdvancedDisplay->winHide(TRUE);
 }
+
+// TheSuperHackers @tweak Now prints additional version information in the version label.
+static void initLabelVersion()
+{
+	NameKeyType versionID = TheNameKeyGenerator->nameToKey( AsciiString("OptionsMenu.wnd:LabelVersion") );
+	GameWindow *labelVersion = TheWindowManager->winGetWindowFromId( NULL, versionID );
+
+	if (labelVersion)
+	{
+		if (TheVersion && TheGlobalData)
+		{
+			UnicodeString text = TheVersion->getUnicodeProductVersionHashString();
+			GadgetStaticTextSetText( labelVersion, text );
+		}
+		else
+		{
+			labelVersion->winHide( TRUE );
+		}
+	}
+}
+
 //-------------------------------------------------------------------------------------------------
 /** Initialize the options menu */
 //-------------------------------------------------------------------------------------------------
@@ -1529,29 +1551,7 @@ void OptionsMenuInit( WindowLayout *layout, void *userData )
     NUM_ALIASING_MODES
   };
 
-	NameKeyType versionID = TheNameKeyGenerator->nameToKey( AsciiString("OptionsMenu.wnd:LabelVersion") );
-	GameWindow *labelVersion = TheWindowManager->winGetWindowFromId( NULL, versionID );
-	UnicodeString versionString;
-	versionString.format(TheGameText->fetch("Version:Format2").str(), (GetRegistryVersion() >> 16), (GetRegistryVersion() & 0xffff));
-	
-	if (TheVersion->showFullVersion())
-	{
-		if (TheVersion)
-		{
-			UnicodeString version;
-			version.format(L"(%s) %s -- %s", versionString.str(), TheVersion->getFullUnicodeVersion().str(), TheVersion->getUnicodeBuildTime().str());
-			GadgetStaticTextSetText( labelVersion, version );
-		}
-		else
-		{
-			labelVersion->winHide( TRUE );
-		}
-	}
-	else
-	{
-		GadgetStaticTextSetText( labelVersion, versionString );
-	}
-
+	initLabelVersion();
 
 	// Choose an IP address, then initialize the IP combo box
 	UnsignedInt selectedIP = pref->getLANIPAddress();
@@ -1838,9 +1838,17 @@ void OptionsMenuInit( WindowLayout *layout, void *userData )
 	GadgetCheckBoxSetChecked( checkDoubleClickAttackMove, TheGlobalData->m_doubleClickAttackMove );
 
 	// set scroll speed slider
+	// TheSuperHackers @tweak xezon 11/07/2025 No longer sets the slider position if the user setting
+	// is set beyond the slider limits. This gives the user more freedom to customize the scroll
+	// speed. The slider value remains 0.
 	Int scrollPos = (Int)(TheGlobalData->m_keyboardScrollFactor*100.0f);
-	GadgetSliderSetPosition( sliderScrollSpeed, scrollPos );
-	DEBUG_LOG(("Scroll SPeed %d", scrollPos));
+	Int scrollMin, scrollMax;
+	GadgetSliderGetMinMax( sliderScrollSpeed, &scrollMin, &scrollMax );
+	if (scrollPos >= scrollMin && scrollPos <= scrollMax)
+	{
+		GadgetSliderSetPosition( sliderScrollSpeed, scrollPos );
+	}
+	DEBUG_LOG(("Scroll Speed %d", scrollPos));
 
 	// set the send delay check box
 	GadgetCheckBoxSetChecked(checkSendDelay, TheGlobalData->m_firewallSendDelay);

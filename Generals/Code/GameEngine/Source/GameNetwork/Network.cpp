@@ -588,7 +588,7 @@ void Network::RelayCommandsToCommandList(UnsignedInt frame) {
 	while (msg != NULL) {
 		NetCommandType cmdType = msg->getCommand()->getNetCommandType();
 		if (cmdType == NETCOMMANDTYPE_GAMECOMMAND) {
-			//DEBUG_LOG(("Network::RelayCommandsToCommandList - appending command %d of type %s to command list on frame %d", msg->getCommand()->getID(), ((NetGameCommandMsg *)msg->getCommand())->constructGameMessage()->getCommandAsAsciiString().str(), TheGameLogic->getFrame()));
+			//DEBUG_LOG(("Network::RelayCommandsToCommandList - appending command %d of type %s to command list on frame %d", msg->getCommand()->getID(), ((NetGameCommandMsg *)msg->getCommand())->constructGameMessage()->getCommandAsString(), TheGameLogic->getFrame()));
 			TheCommandList->appendMessage(((NetGameCommandMsg *)msg->getCommand())->constructGameMessage());
 		} else {
 			processFrameSynchronizedNetCommand(msg);

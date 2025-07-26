@@ -894,8 +894,7 @@ void LANAPI::RequestGameCreate( UnicodeString gameName, Bool isDirectConnect )
 	else
 		s.concat(gameName);
 
-	while (s.getLength() > g_lanGameNameLength)
-		s.removeLastChar();
+	s.truncateTo(g_lanGameNameLength);
 
 	DEBUG_LOG(("Setting local game name to '%ls'", s.str()));
 

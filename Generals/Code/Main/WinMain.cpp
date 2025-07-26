@@ -753,6 +753,9 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 		TheMemoryPoolCriticalSection = &critSec4;
 		TheDebugLogCriticalSection = &critSec5;
 
+		// initialize the memory manager early
+		initMemoryManager();
+
 		/// @todo remove this force set of working directory later
 		Char buffer[ _MAX_PATH ];
 		GetModuleFileName( NULL, buffer, sizeof( buffer ) );
@@ -768,7 +771,6 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 		}
 		::SetCurrentDirectory(buffer);
 
-		CommandLine::parseCommandLineForStartup();
 
 		#ifdef RTS_DEBUG
 			// Turn on Memory heap tracking
@@ -788,6 +790,8 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 		// Force to be loaded from a file, not a resource so same exe can be used in germany and retail.
  		gLoadScreenBitmap = (HBITMAP)LoadImage(hInstance, "Install_Final.bmp",	IMAGE_BITMAP, 0, 0, LR_SHARED|LR_LOADFROMFILE);
 
+		CommandLine::parseCommandLineForStartup();
+
 		// register windows class and create application window
 		if(!TheGlobalData->m_headless && initializeAppWindows(hInstance, nCmdShow, TheGlobalData->m_windowed) == false)
 			return exitcode;
@@ -804,9 +808,6 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 		// BGC - initialize COM
 	//	OleInitialize(NULL);
 
-		// start the log
-		DEBUG_INIT(DEBUG_FLAGS_DEFAULT);
-		initMemoryManager();
 
  
 		// Set up version info
@@ -830,7 +831,6 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 			delete TheVersion;
 			TheVersion = NULL;
 			shutdownMemoryManager();
-			DEBUG_SHUTDOWN();
 			return exitcode;
 		}
 		DEBUG_LOG(("Create Generals Mutex okay."));
@@ -849,9 +849,7 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 		TheMemoryPoolFactory->memoryPoolUsageReport("AAAMemStats");
 	#endif
 
-		// close the log
 		shutdownMemoryManager();
-		DEBUG_SHUTDOWN();
 
 		// BGC - shut down COM
 	//	OleUninitialize();

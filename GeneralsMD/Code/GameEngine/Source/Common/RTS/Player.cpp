@@ -452,14 +452,16 @@ void Player::init(const PlayerTemplate* pt)
 
 		if( m_money.countMoney() == 0 )
 		{
-      if ( TheGameInfo )
-      {
-        m_money = TheGameInfo->getStartingCash();
-      }
-      else
-      {
-  			m_money = TheGlobalData->m_defaultStartingCash;
-      }
+			// TheSuperHacker @bugfix Now correctly deposits the money and fixes its audio and academy issues.
+			// Note that copying the entire Money class instead would also copy the player index inside of it.
+			if ( TheGameInfo )
+			{
+				m_money.deposit( TheGameInfo->getStartingCash().countMoney(), FALSE );
+			}
+			else
+			{
+				m_money.deposit( TheGlobalData->m_defaultStartingCash.countMoney(), FALSE );
+			}
 		}
 
 		m_playerDisplayName.clear();
@@ -2084,7 +2086,29 @@ void Player::killPlayer(void)
 	}
 	if (isLocalPlayer() && !TheGameLogic->isInShellGame())
 	{
+		// TheSuperHackers @bugfix helmutbuhler 29/03/2025
+		// Avoid multiplayer mismatch on surrender in team games when owning a base structure that has
+		// been cleared of infantry before, by disabling this bugged logic.
+		// 
+		// Note that becomingLocalPlayer calls recalcApparentControllingPlayer on all objects with a
+		// contain, which does two things:
+		//   1. Reset the teams of all objects with empty contains
+		//   2. Update m_hideGarrisonedStateFromNonallies
+		// 
+		// Likely, the original intent was to reveal hidden garrisoned buildings for the new observer.
+		// But this does not appear to work anyway, so this call is useless.
+		// 
+		// There is another bug: The Contain modules keep track of the object's team before any units
+		// got inside. And that team does not get updated when the player is killed and the units
+		// transfer to another team. That means resetting the team sets it to neutral, and when this
+		// is done only for the local player, then a mismatch occurs.
+		// 
+		// When fixing disguises for observers or fixing the team bug in the Contain classes, then this
+		// code can be used again.
+#if 0
 		becomingLocalPlayer(TRUE); // recalc disguises, etc
+#endif
+
 		if (TheControlBar )
 		{
 			if (isPlayerActive())

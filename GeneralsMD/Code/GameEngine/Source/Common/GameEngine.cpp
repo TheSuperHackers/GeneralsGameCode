@@ -256,15 +256,14 @@ void GameEngine::init()
 		if (TheVersion)
 		{
 			DEBUG_LOG(("================================================================================"));
-	#if defined RTS_DEBUG
-			const char *buildType = "Debug";
-	#else
-			const char *buildType = "Release";
-	#endif
-			DEBUG_LOG(("Generals version %s (%s)", TheVersion->getAsciiVersion().str(), buildType));
+			DEBUG_LOG(("Generals version %s", TheVersion->getAsciiVersion().str()));
 			DEBUG_LOG(("Build date: %s", TheVersion->getAsciiBuildTime().str()));
 			DEBUG_LOG(("Build location: %s", TheVersion->getAsciiBuildLocation().str()));
-			DEBUG_LOG(("Built by: %s", TheVersion->getAsciiBuildUser().str()));
+			DEBUG_LOG(("Build user: %s", TheVersion->getAsciiBuildUser().str()));
+			DEBUG_LOG(("Build git revision: %s", TheVersion->getAsciiGitCommitCount().str()));
+			DEBUG_LOG(("Build git version: %s", TheVersion->getAsciiGitTagOrHash().str()));
+			DEBUG_LOG(("Build git commit time: %s", TheVersion->getAsciiGitCommitTime().str()));
+			DEBUG_LOG(("Build git commit author: %s", Version::getGitCommitAuthorName()));
 			DEBUG_LOG(("================================================================================"));
 		}
 #endif
@@ -957,9 +956,7 @@ void updateTGAtoDDS()
 		}
 
 		// replace tga with dds
-		filenameDDS.removeLastChar();	// a
-		filenameDDS.removeLastChar();	// g
-		filenameDDS.removeLastChar();	// t
+		filenameDDS.truncateBy(3); // tga
 		filenameDDS.concat("dds");
 
 		Bool needsToBeUpdated = FALSE;

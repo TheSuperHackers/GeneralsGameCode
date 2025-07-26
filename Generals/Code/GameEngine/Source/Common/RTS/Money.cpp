@@ -48,11 +48,18 @@
 #include "Common/GameAudio.h"
 #include "Common/MiscAudio.h"
 #include "Common/Player.h"
+#include "Common/PlayerList.h"
 #include "Common/Xfer.h"
 
 // ------------------------------------------------------------------------------------------------
 UnsignedInt Money::withdraw(UnsignedInt amountToWithdraw, Bool playSound)
 {
+#if defined(RTS_DEBUG)
+	Player* player = ThePlayerList->getNthPlayer(m_playerIndex);
+	if (player != NULL && player->buildsForFree())
+		return 0;
+#endif
+
 	if (amountToWithdraw > m_money)
 		amountToWithdraw = m_money;
 

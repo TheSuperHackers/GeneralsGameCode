@@ -87,8 +87,7 @@ static LadderInfo *parseLadder(AsciiString raw)
 			line.nextToken(&tokenHomepage, " ");
 
 			lad->name = MultiByteToWideCharSingleLine(tokenName.str()).c_str();
-			while (lad->name.getLength() > 20)
-				lad->name.removeLastChar(); // Per Harvard's request, ladder names are limited to 20 chars
+			lad->name.truncateTo(20); // Per Harvard's request, ladder names are limited to 20 chars
 			lad->address = tokenAddr;
 			lad->port = atoi(tokenPort.str());
 			lad->homepageURL = tokenHomepage;

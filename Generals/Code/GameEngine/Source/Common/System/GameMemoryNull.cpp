@@ -111,10 +111,13 @@ void initMemoryManager()
 	{
 		TheMemoryPoolFactory = new (malloc(sizeof MemoryPoolFactory)) MemoryPoolFactory;
 		TheDynamicMemoryAllocator = new (malloc(sizeof DynamicMemoryAllocator)) DynamicMemoryAllocator;
+
+		DEBUG_INIT(DEBUG_FLAGS_DEFAULT);
+		DEBUG_LOG(("*** Initialized the Null Memory Manager"));
 	}
 	else
 	{
-			DEBUG_CRASH(("memory manager is already inited"));
+			DEBUG_CRASH(("Null Memory Manager is already initialized"));
 	}
 
 	theMainInitFlag = true;
@@ -148,6 +151,8 @@ void shutdownMemoryManager()
 	}
 
 	theMainInitFlag = false;
+
+	DEBUG_SHUTDOWN();
 }
 
 

@@ -315,9 +315,9 @@ public:
 		MSG_META_DEMO_BEGIN_ADJUST_FOV,							///< enter adjust-FOV mode
 		MSG_META_DEMO_END_ADJUST_FOV,								///< exit adjust-FOV mode
 		MSG_META_DEMO_LOCK_CAMERA_TO_PLANES,				///< lock camera to airborne thingies
-		MSG_META_DEMO_REMOVE_PREREQ,								///< Turn of Prerequisite checks in building legality
-		MSG_META_DEMO_INSTANT_BUILD,								///< All building is with a timer of 1
-		MSG_META_DEMO_FREE_BUILD,										///< All building is for 0 money
+		MSG_META_DEMO_REMOVE_PREREQ,								///< Turn off Prerequisite checks in building legality, works in MULTIPLAYER for all humans
+		MSG_META_DEMO_INSTANT_BUILD,								///< All building is with a timer of 1, works in MULTIPLAYER for all humans
+		MSG_META_DEMO_FREE_BUILD,										///< All building is for 0 money, works in MULTIPLAYER for all humans
 		MSG_META_DEMO_RUNSCRIPT1,										///< run script named "KEY_F1"
 		MSG_META_DEMO_RUNSCRIPT2,										///< run script named "KEY_F2"
 		MSG_META_DEMO_RUNSCRIPT3,										///< run script named "KEY_F3"
@@ -377,10 +377,10 @@ public:
 		MSG_META_DEMO_TOGGLE_THREATDEBUG,						///< Toggle the threat debugger on/off
 		MSG_META_DEMO_TOGGLE_CASHMAPDEBUG,					///< Toggle the cash map debugger on/off
 		MSG_META_DEMO_TOGGLE_GRAPHICALFRAMERATEBAR,	///< Toggle the graphical framerate bar on/off
-		MSG_META_DEMO_GIVE_ALL_SCIENCES,						///< grant all grantable sciences
-		MSG_META_DEMO_GIVE_RANKLEVEL,								///< up one RankLevel
-		MSG_META_DEMO_TAKE_RANKLEVEL,								///< up one RankLevel
-		MSG_META_DEMO_GIVE_SCIENCEPURCHASEPOINTS,		///< give yourself an SPP (but no rank change)
+		MSG_META_DEMO_GIVE_ALL_SCIENCES,						///< grant all available sciences, works in MULTIPLAYER for all humans
+		MSG_META_DEMO_GIVE_RANKLEVEL,								///< up one rank level
+		MSG_META_DEMO_TAKE_RANKLEVEL,								///< up one rank level
+		MSG_META_DEMO_GIVE_SCIENCEPURCHASEPOINTS,		///< give a science purchase point (but no rank change)
 		MSG_META_DEBUG_TOGGLE_NETWORK,							///< toggle between having and not having network traffic.
 		MSG_META_DEBUG_DUMP_PLAYER_OBJECTS,					///< Dump numbers of objects owned by each player to the script debug window
 		MSG_META_DEBUG_DUMP_ALL_PLAYER_OBJECTS,			///< Dump numbers of objects owned by each player to the script debug window, and additional object info
@@ -597,8 +597,8 @@ public:
 	Type getType( void ) const { return m_type; }					///< Return the message type
 	UnsignedByte getArgumentCount( void ) const { return m_argCount; }	///< Return the number of arguments for this msg
 
-	AsciiString getCommandAsAsciiString( void ); ///< returns a string representation of the command type.
-	static AsciiString getCommandTypeAsAsciiString(GameMessage::Type t);
+	const char *getCommandAsString( void ) const; ///< returns a string representation of the command type.
+	static const char *getCommandTypeAsString(GameMessage::Type t);
 
 	Int getPlayerIndex( void ) const { return m_playerIndex; }		///< Return the originating player
 

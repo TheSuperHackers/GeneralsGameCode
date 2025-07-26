@@ -216,15 +216,6 @@ void NetGameCommandMsg::setGameMessageType(GameMessage::Type type) {
 	m_type = type;
 }
 
-AsciiString NetGameCommandMsg::getContentsAsAsciiString(void)
-{
-	AsciiString ret;
-	//AsciiString tmp;
-	ret.format("Type:%s", GameMessage::getCommandTypeAsAsciiString((GameMessage::Type)m_type).str());
-
-	return ret;
-}
-
 //-------------------------
 // NetAckBothCommandMsg
 //-------------------------

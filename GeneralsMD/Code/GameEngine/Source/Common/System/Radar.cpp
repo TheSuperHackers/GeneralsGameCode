@@ -71,8 +71,6 @@ void Radar::deleteListResources( void )
 	while( m_localObjectList )
 	{
 
-		onLocalRadarObjectRemoved( m_localObjectList );
-
 		// get next object
 		nextObject = m_localObjectList->friend_getNext();
 
@@ -138,8 +136,15 @@ RadarObject::~RadarObject( void )
 //-------------------------------------------------------------------------------------------------
 Bool RadarObject::isTemporarilyHidden() const
 {
-	Drawable* draw = m_object->getDrawable();
-	if (draw->getStealthLook() == STEALTHLOOK_INVISIBLE || draw->isDrawableEffectivelyHidden())
+	return isTemporarilyHidden(m_object);
+}
+
+//-------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------
+Bool RadarObject::isTemporarilyHidden(const Object* obj)
+{
+	Drawable* draw = obj->getDrawable();
+	if (draw == NULL || draw->getStealthLook() == STEALTHLOOK_INVISIBLE || draw->isDrawableEffectivelyHidden())
 		return true;
 
 	return false;
@@ -394,13 +399,13 @@ void Radar::newMap( TerrainLogic *terrain )
 /** Add an object to the radar list.  The object will be sorted in the list to be grouped
 	* using it's radar priority */
 //-------------------------------------------------------------------------------------------------
-bool Radar::addObject( Object *obj )
+RadarObjectType Radar::addObject( Object *obj )
 {
 
 	// get the radar priority for this object
 	RadarPriorityType newPriority = obj->getRadarPriority();
 	if( isPriorityVisible( newPriority ) == FALSE )
-		return false;
+		return RadarObjectType_None;
 
 	// if this object is on the radar, remove it in favor of the new add
 	RadarObject **list;
@@ -466,14 +471,21 @@ bool Radar::addObject( Object *obj )
 	// set a chunk of radar data in the object
 	obj->friend_setRadarData( newObj );
 
+	RadarObjectType objectType;
 	//
 	// we will put this on either the local object list for objects that belong to the
 	// local player, or on the regular object list for all other objects
 	//
 	if( obj->isLocallyControlled() )
+	{
 		list = &m_localObjectList;
+		objectType = RadarObjectType_Local;
+	}
 	else
+	{
 		list = &m_objectList;
+		objectType = RadarObjectType_Regular;
+	}
 
 	// link object to master list at the head of it's priority section
 	if( *list == NULL )
@@ -544,12 +556,7 @@ bool Radar::addObject( Object *obj )
 
 	}  // end else
 
-	if (list == &m_localObjectList)
-	{
-		onLocalRadarObjectAdded(newObj);
-	}
-
-	return true;
+	return objectType;
 }  // end addObject
 
 //-------------------------------------------------------------------------------------------------
@@ -565,10 +572,6 @@ Bool Radar::deleteFromList( Object *obj, RadarObject **list )
 		
 		if( radarObject->friend_getObject() == obj )
 		{
-			if (list == &m_localObjectList)
-			{
-				onLocalRadarObjectRemoved( radarObject );
-			}
 
 			// unlink the object from list
 			if( prevObject == NULL )
@@ -600,24 +603,24 @@ Bool Radar::deleteFromList( Object *obj, RadarObject **list )
 //-------------------------------------------------------------------------------------------------
 /** Remove an object from the radar, the object may reside in any list */
 //-------------------------------------------------------------------------------------------------
-bool Radar::removeObject( Object *obj )
+RadarObjectType Radar::removeObject( Object *obj )
 {
 
 	// sanity
 	if( obj->friend_getRadarData() == NULL )
-		return false;
+		return RadarObjectType_None;
 
 	if( deleteFromList( obj, &m_localObjectList ) == TRUE )
-		return true;
+		return RadarObjectType_Local;
 	else if( deleteFromList( obj, &m_objectList ) == TRUE )
-		return true;
+		return RadarObjectType_Regular;
 	else
 	{
 
 		// sanity
 		DEBUG_ASSERTCRASH( 0, ("Radar: Tried to remove object '%s' which was not found",
 											 obj->getTemplate()->getName().str()) );
-		return false;
+		return RadarObjectType_None;
 	}  // end else
 
 }  // end removeObject
@@ -1558,7 +1561,7 @@ void Radar::loadPostProcess( void )
 // ------------------------------------------------------------------------------------------------
 /** Is the priority type passed in a "visible" one that can show up on the radar */
 // ------------------------------------------------------------------------------------------------
-Bool Radar::isPriorityVisible( RadarPriorityType priority ) const 
+Bool Radar::isPriorityVisible( RadarPriorityType priority )
 {
 
 	switch( priority )

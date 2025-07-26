@@ -661,7 +661,7 @@ void ConnectionManager::processChat(NetChatCommandMsg *msg)
 	
 	Bool fromObserver = !player->isPlayerActive();
 	Bool amIObserver = !ThePlayerList->getLocalPlayer()->isPlayerActive();
-	Bool canSeeChat = amIObserver || !fromObserver && !TheGameInfo->getConstSlot(playerID)->isMuted();
+	Bool canSeeChat = (amIObserver || !fromObserver) && !TheGameInfo->getConstSlot(playerID)->isMuted();
 	
 	if ( ((1<<m_localSlot) & msg->getPlayerMask() ) && canSeeChat  )
 	{

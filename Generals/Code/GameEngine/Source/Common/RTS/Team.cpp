@@ -2430,8 +2430,10 @@ void Team::killTeam(void)
 
 	evacuateTeam();
 
+	// TheSuperHackers @bugfix Mauller 20/07/2025 the neutral player has no player template so we need to check for a null template
+	const PlayerTemplate* playerTemplate = getControllingPlayer()->getPlayerTemplate();
 	// beacons are effectively dead, so we need to destroy via a non-kill() method
-	const ThingTemplate *beaconTemplate = TheThingFactory->findTemplate( getControllingPlayer()->getPlayerTemplate()->getBeaconTemplate() );
+	const ThingTemplate* beaconTemplate = playerTemplate ? TheThingFactory->findTemplate( playerTemplate->getBeaconTemplate() ) : NULL;
 
 	// now find objects to kill
 	for (DLINK_ITERATOR<Object> iter = iterate_TeamMemberList(); !iter.done(); iter.advance()) {

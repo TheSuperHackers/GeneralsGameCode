@@ -550,10 +550,8 @@ void HandleBuddyResponses( void )
 					}  // end if
 
 					UnicodeString snippet = message.m_message;
-					while (snippet.getLength() > 11)
-					{
-						snippet.removeLastChar();
-					}
+					snippet.truncateTo(11);
+
 					UnicodeString s;
 					s.format(TheGameText->fetch("Buddy:MessageNotification"), nick.str(), snippet.str());
 					lastNotificationWasStatus = FALSE;

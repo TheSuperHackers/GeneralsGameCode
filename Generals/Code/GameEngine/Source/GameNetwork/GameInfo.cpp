@@ -512,9 +512,7 @@ void GameInfo::setMap( AsciiString mapName )
 		{
 			m_mapMask = 1;
 			AsciiString path = mapName;
-			path.removeLastChar();
-			path.removeLastChar();
-			path.removeLastChar();
+			path.truncateBy(3);
 			path.concat("tga");
 			DEBUG_LOG(("GameInfo::setMap() - Looking for '%s'", path.str()));
 			File *fp = TheFileSystem->openFile(path.str());
