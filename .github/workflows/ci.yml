@@ -58,7 +58,6 @@ jobs:
   build-generals:
     name: Build Generals${{ matrix.preset && '' }}
     needs: detect-changes
-    #if: ${{ 'false' == 'true' }}
     if: ${{ github.event_name == 'workflow_dispatch' || needs.detect-changes.outputs.generals == 'true' || needs.detect-changes.outputs.shared == 'true' }}
     strategy:
       matrix:
