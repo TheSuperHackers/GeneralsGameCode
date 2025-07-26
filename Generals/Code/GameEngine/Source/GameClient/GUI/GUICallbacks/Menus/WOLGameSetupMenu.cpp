@@ -1251,7 +1251,7 @@ void WOLGameSetupMenuInit( WindowLayout *layout, void *userData )
 		WOLDisplaySlotList();
 		WOLDisplayGameOptions();
 
-		// disable the combo box for the host's player name
+		// TheSuperHackers @tweak disable the combo box for the host's player name
 		comboBoxPlayer[0]->winEnable(FALSE);
 	}
 	else
