@@ -21,7 +21,7 @@
 //
 // Basic types and constants
 // Author: Michael S. Booth, January 1995, September 2000
-// TheSuperHackers @compile feliwir 11/04/2025 Move common BaseType.h code to BaseTypeCore.h
+// TheSuperHackers @build feliwir 11/04/2025 Move common BaseType.h code to BaseTypeCore.h
 //
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -34,7 +34,7 @@
 
 #include <math.h>
 #include <string.h>
-// TheSuperHackers @compile feliwir 07/04/2025 Adds utility macros for cross-platform compatibility
+// TheSuperHackers @build feliwir 07/04/2025 Adds utility macros for cross-platform compatibility
 #include <Utility/compat.h>
 #include <Utility/CppMacros.h>
 #include <Utility/stdint_adapter.h>

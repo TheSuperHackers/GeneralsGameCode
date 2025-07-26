@@ -51,7 +51,7 @@
  *   RawFileClass::Write -- Writes the specified data to the buffer specified.                 *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-// TheSuperHackers @compile feliwir 11/04/2025 We removed Win32 API here and use plain C
+// TheSuperHackers @build feliwir 11/04/2025 We removed Win32 API here and use plain C
 #include	"always.h"
 #include	"RAWFILE.H"
 #include	<stddef.h>

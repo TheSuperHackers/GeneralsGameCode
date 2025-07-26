@@ -319,7 +319,7 @@ class Waypoint;
 class Team;
 class Weapon;
 
-// TheSuperHackers @compile xezon 17/03/2025 Renames AI_PASSIVE to not conflict with macro in ws2def.h
+// TheSuperHackers @build xezon 17/03/2025 Renames AI_PASSIVE to not conflict with macro in ws2def.h
 
 // Note - written out in save/load xfer and .map files, don't change these numbers.  
 enum AttitudeType CPP_11(: Int)
