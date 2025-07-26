@@ -173,7 +173,7 @@ jobs:
       matrix:
         include:
           - preset: "vc6+t+e"
-          - preset: "vc6-releaselog+t+e"
+          - preset: "vc6-releaselog+t+e" # optimized build with logging and crashing enabled should be compatible, so we test that here.
       fail-fast: false
     uses: ./.github/workflows/check-replays.yml
     with:
