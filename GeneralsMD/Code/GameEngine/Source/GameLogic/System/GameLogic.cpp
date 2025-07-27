@@ -1125,7 +1125,10 @@ void GameLogic::deleteLoadScreen( void )
 // ------------------------------------------------------------------------------------------------
 void GameLogic::setGameMode( GameMode mode )
 {
+	GameMode prev = m_gameMode;
 	m_gameMode = mode;
+
+	TheMouse->onGameModeChanged(prev, mode);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -4366,6 +4369,8 @@ void GameLogic::pauseGameInput(Bool paused)
 		return;
 
 	m_pauseInput = paused;
+
+	TheMouse->onGamePaused(paused);
 
 	if(paused)
 	{

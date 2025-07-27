@@ -183,6 +183,7 @@ GameClient::~GameClient()
 	delete TheFontLibrary;
 	TheFontLibrary = NULL;
 
+	TheMouse->reset();
 	delete TheMouse;
 	TheMouse = NULL;
 

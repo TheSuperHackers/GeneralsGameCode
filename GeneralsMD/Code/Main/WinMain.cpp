@@ -405,27 +405,43 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message,
 				if( TheKeyboard )
 					TheKeyboard->resetKeys();
 
-				if (TheWin32Mouse)
-					TheWin32Mouse->lostFocus(FALSE);
+				if (TheMouse)
+					TheMouse->regainFocus();
 
 				break;
 
 			}  // end set focus
 
 			//-------------------------------------------------------------------------
+			case WM_MOVE:
+			{
+				if (TheMouse)
+					TheMouse->refreshCursorCapture();
+
+				break;
+			}
+
+			//-------------------------------------------------------------------------
 			case WM_SIZE:
+			{
 				// When W3D initializes, it resizes the window.  So stop repainting.
 				if (!gInitializing)
 					gDoPaint = false;
+
+				if (TheMouse)
+					TheMouse->refreshCursorCapture();
+
 				break;
+			}
 
 			//-------------------------------------------------------------------------
 			case WM_KILLFOCUS:
 			{
 				if (TheKeyboard )
 					TheKeyboard->resetKeys();
-				if (TheWin32Mouse)
-					TheWin32Mouse->lostFocus(TRUE);
+
+				if (TheMouse)
+					TheMouse->loseFocus();
 
 				break;
 			}
@@ -460,27 +476,20 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message,
 			{
 				Int active = LOWORD( wParam );
 
-				//
-				// when window is becoming deactivated we must release mouse cursor
-				// locks on our region, otherwise set the mouse limit region again
-				// which will clip the cursor to our window
-				//
 				if( active == WA_INACTIVE )
 				{
-
-					ClipCursor( NULL );
 					if (TheAudio)
 						TheAudio->loseFocus();
-				}  // end if
+				}
 				else
 				{
-					if( TheMouse )
-						TheMouse->setMouseLimits();
-
 					if (TheAudio)
 						TheAudio->regainFocus();
 
-				}  // end else
+					// Cursor can only be captured after one of the activation events.
+					if (TheMouse)
+						TheMouse->refreshCursorCapture();
+				}
 				break;
 
 			}  // end case activate

@@ -38,6 +38,8 @@
 //-----------------------------------------------------------------------------
 #include "Common/STLTypedefs.h"
 
+enum CursorCaptureMode CPP_11(: Int);
+
 //-----------------------------------------------------------------------------
 // PUBLIC TYPES ///////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
@@ -90,6 +92,7 @@ public:
 	void setOnlineIPAddress(UnsignedInt IP);	// convenience function
 	Bool getAlternateMouseModeEnabled(void);	// convenience function
 	Real getScrollFactor(void);								// convenience function
+	CursorCaptureMode getCursorCaptureMode() const;
 	Bool getSendDelay(void);									// convenience function
 	Int getFirewallBehavior(void);						// convenience function
 	Short getFirewallPortAllocationDelta(void);	// convenience function

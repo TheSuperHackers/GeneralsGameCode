@@ -366,11 +366,6 @@ void GameEngine::init()
 		initSubsystem(TheWritableGlobalData, "TheWritableGlobalData", TheWritableGlobalData, &xferCRC, "Data\\INI\\Default\\GameData.ini", "Data\\INI\\GameData.ini");
 		TheWritableGlobalData->parseCustomDefinition();
 
-		// TheSuperHackers @bugfix helmutbuhler 14/04/2025
-		// Pump messages during startup to ensure that the application window is correctly
-		// positioned on slower computers and in debug builds by a later call to SetWindowPos.
-		// It is unclear what the issue with SetWindowPos is when it fails to reposition the window.
-		serviceWindowsOS();
 
 
 	#if defined(RTS_DEBUG)

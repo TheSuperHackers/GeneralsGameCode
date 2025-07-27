@@ -74,16 +74,19 @@ public:
 	virtual void initCursorResources(void);	///< load windows resources needed for 2d cursors.
 
 	virtual void setCursor( MouseCursor cursor );		///< set mouse cursor
-	virtual void capture( void );										///< capture the mouse
-	virtual void releaseCapture( void );						///< release mouse capture
 
 	virtual void setVisibility(Bool visible);
 
+	virtual void loseFocus();
+	virtual void regainFocus();
+
 	/// add an event from a win32 window procedure
 	void addWin32Event( UINT msg, WPARAM wParam, LPARAM lParam, DWORD time );
-	void lostFocus (Bool state) { m_lostFocus = state;}
 
 protected:
+
+	virtual void capture( void ); ///< capture the mouse
+	virtual void releaseCapture( void ); ///< release mouse capture
 
 	/// get the next event available in the buffer
 	virtual UnsignedByte getMouseEvent( MouseIO *result, Bool flush );
@@ -105,8 +108,8 @@ protected:
 															 will come from this index, then it will be
 															 incremented to the next index */
 	MouseCursor m_currentWin32Cursor;	///< keep track of last cursor image sent to D3D.
-	Int m_directionFrame;	///< current frame of directional cursor (frome 0 points up).
-	Bool m_lostFocus;		///< flag if window has lost focues and mouse should stop being updated.
+	Int m_directionFrame;	///< current frame of directional cursor (from 0 points up).
+	Bool m_lostFocus;		///< flag if window has lost focus and mouse should stop being updated.
 };  // end Win32Mouse
 
 // INLINING ///////////////////////////////////////////////////////////////////
