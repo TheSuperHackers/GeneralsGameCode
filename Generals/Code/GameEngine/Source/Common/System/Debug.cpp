@@ -499,9 +499,10 @@ void DebugCrash(const char *format, ...)
 	strcat(theCrashBuffer, "ASSERTION FAILURE: ");
 
 	va_list arg;
-  va_start(arg, format);
-  vsnprintf(theCrashBuffer + strlen(theCrashBuffer), LARGE_BUFFER, format, arg);
-  va_end(arg);
+	va_start(arg, format);
+	size_t offset =  strlen(theCrashBuffer);
+	vsnprintf(theCrashBuffer + offset, ARRAY_SIZE(theCrashBuffer) - offset, format, arg);
+	va_end(arg);
 
 	whackFunnyCharacters(theCrashBuffer);
 
