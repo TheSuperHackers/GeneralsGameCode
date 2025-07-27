@@ -184,6 +184,8 @@ public:
 	Bool isInShellGame( void );
 	Bool isInMultiplayerGame( void );
 
+	static Bool isInInteractiveGame(GameMode mode) { return mode != GAME_NONE && mode != GAME_SHELL; }
+
 	//Kris: Cut isLoadingGame() and replaced with isLoadingMap() and isLoadingSave() -- reason: nomenclature
 	//Bool isLoadingGame() const { return m_loadingScene; }		// This is the old function that isn't very clear on it's definition.
 	Bool isLoadingMap() const { return m_loadingMap; }			// Whenever a map is in the process of loading.
