@@ -1122,6 +1122,13 @@ void GameLogic::deleteLoadScreen( void )
 }  // end deleteLoadScreen
 
 // ------------------------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------------------------
+void GameLogic::setGameMode( GameMode mode )
+{
+	m_gameMode = mode;
+}
+
+// ------------------------------------------------------------------------------------------------
 /** Entry point for starting a new game, the engine is already in clean state at this
 	* point and ready to load up with all the data */
 // ------------------------------------------------------------------------------------------------
