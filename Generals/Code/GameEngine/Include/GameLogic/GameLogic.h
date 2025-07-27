@@ -71,7 +71,7 @@ enum BuildableStatus CPP_11(: Int);
 typedef const CommandButton* ConstCommandButtonPtr;
 
 // What kind of game we're in.
-enum
+enum GameMode CPP_11(: Int)
 {
 	GAME_SINGLE_PLAYER,
 	GAME_LAN,
@@ -116,7 +116,7 @@ public:
 
 	void processCommandList( CommandList *list );		///< process the command list
 
-	void prepareNewGame( Int gameMode, GameDifficulty diff, Int rankPoints );						///< prepare for new game
+	void prepareNewGame( GameMode gameMode, GameDifficulty diff, Int rankPoints );						///< prepare for new game
 
 	void logicMessageDispatcher( GameMessage *msg,
 																			 void *userData );	///< Logic command list processing
@@ -162,9 +162,10 @@ public:
 	void deleteLoadScreen( void );
 
 	void setGameLoading( Bool loading );
-	void setGameMode( Int mode );
-	Int getGameMode( void );
-	Bool isInGame( void );
+	void setGameMode( GameMode mode );
+	GameMode getGameMode( void );
+
+	Bool isInGame( void ); // Includes Shell Game
 	Bool isInLanGame( void );
 	Bool isInSinglePlayerGame( void );
 	Bool isInSkirmishGame( void );
@@ -335,7 +336,7 @@ private:
 	virtual TerrainLogic *createTerrainLogic( void );
 	virtual GhostObjectManager *createGhostObjectManager(void);
 
-	Int m_gameMode;
+	GameMode m_gameMode;
 	Int m_rankLevelLimit;
 
 	LoadScreen *getLoadScreen( Bool saveGame );
@@ -386,12 +387,11 @@ inline void GameLogic::setHeight( Real height ) { m_height = height; }
 inline Real GameLogic::getHeight( void ) { return m_height; }
 inline UnsignedInt GameLogic::getFrame( void ) { return m_frame; }
 
-inline Bool GameLogic::isInGame( void ) { return !(m_gameMode == GAME_NONE); }
-inline void GameLogic::setGameMode( Int mode ) { m_gameMode = mode; }
-inline Int  GameLogic::getGameMode( void ) { return m_gameMode; }
+inline Bool GameLogic::isInGame( void ) { return m_gameMode != GAME_NONE; }
+inline GameMode GameLogic::getGameMode( void ) { return m_gameMode; }
 inline Bool GameLogic::isInLanGame( void ) { return (m_gameMode == GAME_LAN); }
 inline Bool GameLogic::isInSkirmishGame( void ) { return (m_gameMode == GAME_SKIRMISH); }
-inline Bool GameLogic::isInMultiplayerGame( void ) { return ((m_gameMode == GAME_LAN) || (m_gameMode == GAME_INTERNET)) ; }
+inline Bool GameLogic::isInMultiplayerGame( void ) { return (m_gameMode == GAME_LAN) || (m_gameMode == GAME_INTERNET) ; }
 inline Bool GameLogic::isInReplayGame( void ) { return (m_gameMode == GAME_REPLAY); }
 inline Bool GameLogic::isInInternetGame( void ) { return (m_gameMode == GAME_INTERNET); }
 inline Bool GameLogic::isInShellGame( void ) { return (m_gameMode == GAME_SHELL); }
