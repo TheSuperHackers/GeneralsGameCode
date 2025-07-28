@@ -725,6 +725,19 @@ Real OptionPreferences::getMusicVolume(void)
 	return volume;
 }
 
+Real OptionPreferences::getMoneyTransactionVolume(void)
+{
+	OptionPreferences::const_iterator it = find("MoneyTransactionVolume");
+	if (it == end())
+		return TheAudio->getAudioSettings()->m_defaultMoneyTransactionVolume * 100.0f;
+
+	Real volume = (Real) atof(it->second.str());
+	if (volume < 0.0f)
+		volume = 0.0f;
+
+	return volume;
+}
+
 Int OptionPreferences::getSystemTimeFontSize(void)
 {
 	OptionPreferences::const_iterator it = find("SystemTimeFontSize");
@@ -1193,6 +1206,17 @@ static void saveOptions( void )
     prefString.format("%d", val);
     (*pref)["VoiceVolume"] = prefString;
     TheAudio->setVolume(val / 100.0f, (AudioAffect) (AudioAffect_Speech | AudioAffect_SystemSetting));
+	}
+
+	//-------------------------------------------------------------------------------------------------
+	// Money tick volume
+	// TheSuperHackers @todo Add options slider ?
+	{
+		val = pref->getMoneyTransactionVolume();
+		AsciiString prefString;
+		prefString.format("%d", val);
+		(*pref)["MoneyTransactionVolume"] = prefString;
+		TheAudio->friend_getAudioSettings()->m_preferredMoneyTransactionVolume = val / 100.0f;
 	}
 
  	//-------------------------------------------------------------------------------------------------
