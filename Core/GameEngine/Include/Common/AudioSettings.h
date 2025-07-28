@@ -35,6 +35,8 @@
 
 enum { MAX_HW_PROVIDERS = 4 };
 
+// TheSuperHackers @tweak xezon 23/07/2025 Adds setting to modify the volume of money deposit and withdraw sounds
+
 struct AudioSettings
 {
 	AudioSettings()
@@ -75,7 +77,7 @@ struct AudioSettings
 	Real m_default3DSoundVolume;
 	Real m_defaultSpeechVolume;
 	Real m_defaultMusicVolume;
-	Real m_defaultMoneyTransactionVolume; // TheSuperHackers @tweak Adds new setting for money deposit and withdraw audio
+	Real m_defaultMoneyTransactionVolume;
 	UnsignedInt m_defaultSpeakerType2D;
 	UnsignedInt m_defaultSpeakerType3D;
 
@@ -84,7 +86,7 @@ struct AudioSettings
 	Real m_preferred3DSoundVolume;
 	Real m_preferredSpeechVolume;
 	Real m_preferredMusicVolume;
-	Real m_preferredMoneyTransactionVolume; // TheSuperHackers @tweak Adds new setting for money deposit and withdraw audio
+	Real m_preferredMoneyTransactionVolume;
 
 	//The desired altitude of the microphone to improve panning relative to terrain.
 	Real m_microphoneDesiredHeightAboveTerrain;
