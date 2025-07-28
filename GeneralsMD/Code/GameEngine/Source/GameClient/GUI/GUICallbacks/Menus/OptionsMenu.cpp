@@ -769,7 +769,7 @@ Real OptionPreferences::getMusicVolume(void)
 	return volume;
 }
 
-Real OptionPreferences::getMoneyTransactionVolume(void)
+Real OptionPreferences::getMoneyTransactionVolume(void) const
 {
 	OptionPreferences::const_iterator it = find("MoneyTransactionVolume");
 	if (it == end())
