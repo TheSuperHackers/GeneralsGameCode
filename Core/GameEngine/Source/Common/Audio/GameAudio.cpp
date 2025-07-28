@@ -232,7 +232,7 @@ void AudioManager::init()
 	
 	// determine if one of the music tracks exists. Since their now BIGd, one implies all.
 	// If they don't exist, then attempt to load them from the CD. 
-	if (!isMusicAlreadyLoaded()) 
+	if (!TheGlobalData->m_headless && !isMusicAlreadyLoaded()) 
 	{
 		m_musicPlayingFromCD = TRUE;
 		while (TRUE) 

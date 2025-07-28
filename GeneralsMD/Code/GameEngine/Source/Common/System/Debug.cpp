@@ -149,11 +149,16 @@ static void doStackDump();
 // ----------------------------------------------------------------------------
 inline Bool ignoringAsserts()
 {
+	if (!DX8Wrapper_IsWindowed)
+		return true;
+	if (TheGlobalData && TheGlobalData->m_headless)
+		return true;
 #ifdef DEBUG_CRASHING
-	return !DX8Wrapper_IsWindowed || (TheGlobalData&&TheGlobalData->m_debugIgnoreAsserts);
-#else
-	return !DX8Wrapper_IsWindowed;
+	if (TheGlobalData && TheGlobalData->m_debugIgnoreAsserts)
+		return true;
 #endif
+
+	return false;
 }
 
 // ----------------------------------------------------------------------------
