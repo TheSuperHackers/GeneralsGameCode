@@ -47,7 +47,8 @@ jobs:
           EXPECTED_HASH: "3BE86F84B1E771BEA01BD2DBA39442683381AE4401716E9AE9D4AD95C8F45372"
         shell: pwsh
         run: |
-          # Download trimmed gamedata of both ZH and Generals. This data cannot be used for playing because it's
+          # Download trimmed gamedata of both Generals 1.08 and Generals Zero Hour 1.04.
+          # This data cannot be used for playing because it's
           # missing textures, audio and gui files. But it's enough for replay checking.
           # It's also encrypted because it's not allowed to distribute these files.
           # The archive contains these files:
