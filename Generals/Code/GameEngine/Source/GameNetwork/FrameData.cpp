@@ -123,7 +123,7 @@ FrameDataReturnType FrameData::allCommandsReady(Bool debugSpewage) {
 		DEBUG_LOG(("FrameData::allCommandsReady - There are more commands than there should be (%d, should be %d).  Commands in command list are...", m_commandCount, m_frameCommandCount));
 		NetCommandRef *ref = m_commandList->getFirstMessage();
 		while (ref != NULL) {
-			DEBUG_LOG(("%s, frame = %d, id = %d", GetAsciiNetCommandType(ref->getCommand()->getNetCommandType()).str(), ref->getCommand()->getExecutionFrame(), ref->getCommand()->getID()));
+			DEBUG_LOG(("%s, frame = %d, id = %d", GetNetCommandTypeAsString(ref->getCommand()->getNetCommandType()), ref->getCommand()->getExecutionFrame(), ref->getCommand()->getID()));
 			ref = ref->getNext();
 		}
 		DEBUG_LOG(("FrameData::allCommandsReady - End of command list."));
@@ -174,7 +174,7 @@ void FrameData::addCommand(NetCommandMsg *msg) {
 	m_commandList->addMessage(msg);
 
 	++m_commandCount;
-	//DEBUG_LOG(("added command %d, type = %d(%s), command count = %d, frame command count = %d", msg->getID(), msg->getNetCommandType(), GetAsciiNetCommandType(msg->getNetCommandType()).str(), m_commandCount, m_frameCommandCount));
+	//DEBUG_LOG(("added command %d, type = %d(%s), command count = %d, frame command count = %d", msg->getID(), msg->getNetCommandType(), GetNetCommandTypeAsString(msg->getNetCommandType()), m_commandCount, m_frameCommandCount));
 }
 
 /**
