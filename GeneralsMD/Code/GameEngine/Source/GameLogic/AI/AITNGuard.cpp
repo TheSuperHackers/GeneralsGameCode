@@ -319,6 +319,12 @@ void AITNGuardInnerState::loadPostProcess( void )
 	onEnter();
 }  // end loadPostProcess
 
+// ------------------------------------------------------------------------------------------------
+AITNGuardInnerState::~AITNGuardInnerState(void)
+{
+	deleteInstance(m_attackState);
+}
+
 //--------------------------------------------------------------------------------------
 StateReturnType AITNGuardInnerState::onEnter( void )
 {
@@ -456,6 +462,12 @@ void AITNGuardOuterState::loadPostProcess( void )
 {						 AITNGuardOuterState
 	onEnter();
 }  // end loadPostProcess
+
+// ------------------------------------------------------------------------------------------------
+AITNGuardOuterState::~AITNGuardOuterState(void)
+{
+	deleteInstance(m_attackState);
+}
 
 //--------------------------------------------------------------------------------------
 StateReturnType AITNGuardOuterState::onEnter( void )
@@ -776,6 +788,12 @@ AITNGuardAttackAggressorState::AITNGuardAttackAggressorState( StateMachine *mach
 	State( machine, "AITNGuardAttackAggressorState" )
 {
 	m_attackState = NULL;
+}
+
+// ------------------------------------------------------------------------------------------------
+AITNGuardAttackAggressorState::~AITNGuardAttackAggressorState(void)
+{
+	deleteInstance(m_attackState);
 }
 
 //-------------------------------------------------------------------------------------------------

@@ -130,17 +130,17 @@ StreamingArchiveFile::~StreamingArchiveFile()
 // StreamingArchiveFile::open	
 //=================================================================
 /**
-  *	This function opens a file using the standard C open() call. Access flags
-	* are mapped to the appropriate open flags. Returns true if file was opened
-	* successfully.
+	* This function opens a file using the file system. Access flags
+	* are mapped to the appropriate open flags. Returns true if file
+	* was opened successfully.
 	*/
 //=================================================================
 
 //DECLARE_PERF_TIMER(StreamingArchiveFile)
-Bool StreamingArchiveFile::open( const Char *filename, Int access )
+Bool StreamingArchiveFile::open( const Char *filename, Int access, size_t bufferSize )
 {
 	//USE_PERF_TIMER(StreamingArchiveFile)
-	File *file = TheFileSystem->openFile( filename, access );
+	File *file = TheFileSystem->openFile( filename, access, bufferSize );
 
 	if ( file == NULL )
 	{

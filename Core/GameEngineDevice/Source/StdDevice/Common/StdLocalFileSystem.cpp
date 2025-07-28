@@ -125,7 +125,7 @@ static std::filesystem::path fixFilenameFromWindowsPath(const Char *filename, In
 	return path;
 }
 
-File * StdLocalFileSystem::openFile(const Char *filename, Int access /* = 0 */)
+File * StdLocalFileSystem::openFile(const Char *filename, Int access, size_t bufferSize)
 {
 	//USE_PERF_TIMER(StdLocalFileSystem_openFile)
 
@@ -155,7 +155,7 @@ File * StdLocalFileSystem::openFile(const Char *filename, Int access /* = 0 */)
 
 	StdLocalFile *file = newInstance( StdLocalFile );
 	
-	if (file->open(path.string().c_str(), access) == FALSE) {
+	if (file->open(path.string().c_str(), access, bufferSize) == FALSE) {
 		deleteInstance(file);
 		file = NULL;
 	} else {

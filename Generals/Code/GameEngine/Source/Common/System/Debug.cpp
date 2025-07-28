@@ -197,7 +197,7 @@ static const char *getCurrentTimeString(void)
 static const char *getCurrentTickString(void)
 {
 	static char TheTickString[32];
-	sprintf(TheTickString, "(T=%08lx)",::GetTickCount());
+	snprintf(TheTickString, ARRAY_SIZE(TheTickString), "(T=%08lx)", ::GetTickCount());
 	return TheTickString;
 }
 
@@ -390,14 +390,20 @@ void DebugInit(int flags)
 		strcat(theLogFileNamePrev, gAppPrefix);
 		strcat(theLogFileNamePrev, DEBUG_FILE_NAME_PREV);
 		if (rts::ClientInstance::getInstanceId() > 1u)
-			sprintf(theLogFileNamePrev + strlen(theLogFileNamePrev), "_Instance%.2u", rts::ClientInstance::getInstanceId());
+		{
+			size_t offset = strlen(theLogFileNamePrev);
+			snprintf(theLogFileNamePrev + offset, ARRAY_SIZE(theLogFileNamePrev) - offset, "_Instance%.2u", rts::ClientInstance::getInstanceId());
+		}
 		strcat(theLogFileNamePrev, ".txt");
 
 		strcpy(theLogFileName, dirbuf);
 		strcat(theLogFileName, gAppPrefix);
 		strcat(theLogFileName, DEBUG_FILE_NAME);
 		if (rts::ClientInstance::getInstanceId() > 1u)
-			sprintf(theLogFileName + strlen(theLogFileName), "_Instance%.2u", rts::ClientInstance::getInstanceId());
+		{
+			size_t offset = strlen(theLogFileNamePrev);
+			snprintf(theLogFileName + offset, ARRAY_SIZE(theLogFileName) - offset, "_Instance%.2u", rts::ClientInstance::getInstanceId());
+		}
 		strcat(theLogFileName, ".txt");
 
 		remove(theLogFileNamePrev);
@@ -433,7 +439,8 @@ void DebugLog(const char *format, ...)
 
 	va_list args;
 	va_start(args, format);
-	vsprintf(theBuffer + strlen(theBuffer), format, args);
+	size_t offset = strlen(theBuffer);
+	vsnprintf(theBuffer + offset, ARRAY_SIZE(theBuffer) - offset, format, args);
 	va_end(args);
 
 	if (strlen(theBuffer) >= sizeof(theBuffer))
@@ -459,7 +466,7 @@ void DebugLogRaw(const char *format, ...)
 
 	va_list args;
 	va_start(args, format);
-	vsprintf(theBuffer, format, args);
+	vsnprintf(theBuffer, ARRAY_SIZE(theBuffer), format, args);
 	va_end(args);
 
 	if (strlen(theBuffer) >= sizeof(theBuffer))
@@ -504,9 +511,10 @@ void DebugCrash(const char *format, ...)
 	strcat(theCrashBuffer, "ASSERTION FAILURE: ");
 
 	va_list arg;
-  va_start(arg, format);
-  vsnprintf(theCrashBuffer + strlen(theCrashBuffer), LARGE_BUFFER, format, arg);
-  va_end(arg);
+	va_start(arg, format);
+	size_t offset =  strlen(theCrashBuffer);
+	vsnprintf(theCrashBuffer + offset, ARRAY_SIZE(theCrashBuffer) - offset, format, arg);
+	va_end(arg);
 
 	whackFunnyCharacters(theCrashBuffer);
 

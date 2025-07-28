@@ -126,6 +126,7 @@ static const FieldParse audioSettingsFieldParseTable[] =
 	{ "Default3DSoundVolume",	INI::parsePercentToReal,						NULL,							offsetof( AudioSettings, m_default3DSoundVolume) },
 	{ "DefaultSpeechVolume",	INI::parsePercentToReal,						NULL,							offsetof( AudioSettings, m_defaultSpeechVolume) },
 	{ "DefaultMusicVolume",		INI::parsePercentToReal,						NULL,							offsetof( AudioSettings, m_defaultMusicVolume) },
+	{ "DefaultMoneyTransactionVolume", INI::parsePercentToReal,		NULL,							offsetof( AudioSettings, m_defaultMoneyTransactionVolume) },
 	{ "MicrophoneDesiredHeightAboveTerrain",	INI::parseReal,			NULL,							offsetof( AudioSettings, m_microphoneDesiredHeightAboveTerrain ) },
 	{ "MicrophoneMaxPercentageBetweenGroundAndCamera", INI::parsePercentToReal,	NULL,	offsetof( AudioSettings, m_microphoneMaxPercentageBetweenGroundAndCamera ) },
   { "ZoomMinDistance",		INI::parseReal,									NULL,							offsetof( AudioSettings, m_zoomMinDistance ) },
@@ -1042,7 +1043,7 @@ Bool AudioManager::shouldPlayLocally(const AudioEventRTS *audioEvent)
 	Player *owningPlayer = ThePlayerList->getNthPlayer(audioEvent->getPlayerIndex());
 
 	if (BitIsSet(ei->m_type, ST_PLAYER) && BitIsSet(ei->m_type, ST_UI) && owningPlayer == NULL) {
-		DEBUG_ASSERTCRASH(!TheGameLogic->isInGameLogicUpdate(), ("Playing %s sound -- player-based UI sound without specifying a player."));
+		DEBUG_ASSERTCRASH(!TheGameLogic->isInGameLogicUpdate(), ("Playing %s sound -- player-based UI sound without specifying a player.", ei->m_audioName.str()));
 		return TRUE;
 	}
 
@@ -1098,13 +1099,15 @@ void AudioManager::releaseAudioEventRTS( AudioEventRTS *&eventToRelease )
 //-------------------------------------------------------------------------------------------------
 void AudioManager::loseFocus( void )
 {
-	DEBUG_ASSERTLOG(m_savedValues == NULL, ("AudioManager::loseFocus() - leak - jkmcd"));
+	if (m_savedValues)
+		return;
+
 	// In this case, make all the audio go silent.
 	m_savedValues = NEW Real[NUM_VOLUME_TYPES];
-	m_savedValues[0] = m_systemMusicVolume;
-	m_savedValues[1] = m_systemSoundVolume;
-	m_savedValues[2] = m_systemSound3DVolume;
-	m_savedValues[3] = m_systemSpeechVolume;
+	m_savedValues[VOLUME_TYPE_MUSIC] = m_systemMusicVolume;
+	m_savedValues[VOLUME_TYPE_SOUND] = m_systemSoundVolume;
+	m_savedValues[VOLUME_TYPE_SOUND3D] = m_systemSound3DVolume;
+	m_savedValues[VOLUME_TYPE_SPEECH] = m_systemSpeechVolume;
 
 	// Now, set them all to 0.
 	setVolume(0.0f, (AudioAffect) (AudioAffect_All | AudioAffect_SystemSetting));
@@ -1113,15 +1116,14 @@ void AudioManager::loseFocus( void )
 //-------------------------------------------------------------------------------------------------
 void AudioManager::regainFocus( void )
 {
-	if (!m_savedValues) {
+	if (!m_savedValues)
 		return;
-	}
 
 	// We got focus back. Restore the previous audio values.
-	setVolume(m_savedValues[0], (AudioAffect) (AudioAffect_Music | AudioAffect_SystemSetting));
-	setVolume(m_savedValues[1], (AudioAffect) (AudioAffect_Sound | AudioAffect_SystemSetting));
-	setVolume(m_savedValues[2], (AudioAffect) (AudioAffect_Sound3D | AudioAffect_SystemSetting));
-	setVolume(m_savedValues[3], (AudioAffect) (AudioAffect_Speech | AudioAffect_SystemSetting));
+	setVolume(m_savedValues[VOLUME_TYPE_MUSIC], (AudioAffect) (AudioAffect_Music | AudioAffect_SystemSetting));
+	setVolume(m_savedValues[VOLUME_TYPE_SOUND], (AudioAffect) (AudioAffect_Sound | AudioAffect_SystemSetting));
+	setVolume(m_savedValues[VOLUME_TYPE_SOUND3D], (AudioAffect) (AudioAffect_Sound3D | AudioAffect_SystemSetting));
+	setVolume(m_savedValues[VOLUME_TYPE_SPEECH], (AudioAffect) (AudioAffect_Speech | AudioAffect_SystemSetting));
 
 	// Now, blow away the old volumes.
 	delete [] m_savedValues;
@@ -1149,6 +1151,7 @@ void INI::parseAudioSettingsDefinition( INI *ini )
 	TheAudio->friend_getAudioSettings()->m_preferred3DSoundVolume	= prefs.get3DSoundVolume() / 100.0f;
 	TheAudio->friend_getAudioSettings()->m_preferredSpeechVolume	= prefs.getSpeechVolume() / 100.0f;
 	TheAudio->friend_getAudioSettings()->m_preferredMusicVolume		= prefs.getMusicVolume() / 100.0f;
+	TheAudio->friend_getAudioSettings()->m_preferredMoneyTransactionVolume = prefs.getMoneyTransactionVolume() / 100.0f;
 }
 
 //-------------------------------------------------------------------------------------------------

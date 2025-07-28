@@ -291,7 +291,7 @@ UnsignedShort FirewallHelperClass::getNextTemporarySourcePort(Int skip)
 			closeSpareSocket(return_port);
 			return(return_port);
 		} else {
-			DEBUG_LOG(("FirewallHelperClass::getNextTemporarySourcePort - failed to open socket on port %d"));
+			DEBUG_LOG(("FirewallHelperClass::getNextTemporarySourcePort - failed to open socket on port %d", return_port));
 		}
 	}
 
@@ -997,7 +997,7 @@ Bool FirewallHelperClass::detectionTest3WaitForResponsesUpdate() {
 			*/
 			m_sourcePortAllocationDelta = m_lastSourcePortAllocationDelta;
 		}
-		DEBUG_LOG(("FirewallHelperClass::detectionTest3WaitForResponsesUpdate - didn't get enough responses, using %d as the source port allocation delta, finished test"));
+		DEBUG_LOG(("FirewallHelperClass::detectionTest3WaitForResponsesUpdate - didn't get enough responses, using %d as the source port allocation delta, finished test", m_sourcePortAllocationDelta));
 		m_currentState = DETECTIONSTATE_DONE;
 		return TRUE;
 	}
