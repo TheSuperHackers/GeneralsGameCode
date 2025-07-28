@@ -57,89 +57,67 @@ jobs:
           echo "- Shared: ${{ steps.filter.outputs.shared == 'true' && '✅' || '❌' }}" >> $GITHUB_STEP_SUMMARY
 
   build-generals:
-    name: Build Generals${{ matrix.preset && '' }}
+    name: Build Generals (${{ matrix.configurePreset }} | ${{ matrix.buildPreset }})
     needs: detect-changes
     if: ${{ github.event_name == 'workflow_dispatch' || needs.detect-changes.outputs.generals == 'true' || needs.detect-changes.outputs.shared == 'true' }}
     strategy:
       matrix:
         include:
-          - preset: "vc6"
+          - configurePreset: "default"
+            buildPreset: "release"
             tools: true
             extras: true
-          - preset: "vc6-profile"
+          - configurePreset: "dev"
+            buildPreset: "dev-release"
             tools: true
             extras: true
-          - preset: "vc6-debug"
+          - configurePreset: "vc6"
+            buildPreset: "vc6-release"
             tools: true
             extras: true
-          - preset: "win32"
+          - configurePreset: "vc6-dev"
+            buildPreset: "vc6-dev-release"
             tools: true
             extras: true
-          - preset: "win32-profile"
-            tools: true
-            extras: true
-          - preset: "win32-debug"
-            tools: true
-            extras: true
-          # vcpkg builds have been disabled for now due to excessive build times of 30 minutes per preset
-          # - preset: "win32-vcpkg"
-          #   tools: true
-          #   extras: true
-          # - preset: "win32-vcpkg-profile"
-          #   tools: true
-          #   extras: true
-          # - preset: "win32-vcpkg-debug"
-          #   tools: true
-          #   extras: true
       fail-fast: false
     uses: ./.github/workflows/build-toolchain.yml
     with:
       game: "Generals"
-      preset: ${{ matrix.preset }}
+      configurePreset: ${{ matrix.configurePreset }}
+      buildPreset: ${{ matrix.buildPreset }}
       tools: ${{ matrix.tools }}
       extras: ${{ matrix.extras }}
     secrets: inherit
 
   build-generalsmd:
-    name: Build GeneralsMD${{ matrix.preset && '' }}
+    name: Build GeneralsMD (${{ matrix.configurePreset }} | ${{ matrix.buildPreset }})
     needs: detect-changes
     if: ${{ github.event_name == 'workflow_dispatch' || needs.detect-changes.outputs.generalsmd == 'true' || needs.detect-changes.outputs.shared == 'true' }}
     strategy:
       matrix:
         include:
-          - preset: "vc6"
+          - configurePreset: "default"
+            buildPreset: "release"
             tools: true
             extras: true
-          - preset: "vc6-profile"
+          - configurePreset: "dev"
+            buildPreset: "dev-release"
             tools: true
             extras: true
-          - preset: "vc6-debug"
+          - configurePreset: "vc6"
+            buildPreset: "vc6-release"
             tools: true
             extras: true
-          - preset: "win32"
+          - configurePreset: "vc6-dev"
+            buildPreset: "vc6-dev-release"
             tools: true
             extras: true
-          - preset: "win32-profile"
-            tools: true
-            extras: true
-          - preset: "win32-debug"
-            tools: true
-            extras: true
-          # vcpkg builds have been disabled for now due to excessive build times of 30 minutes per preset
-          # - preset: "win32-vcpkg"
-          #   tools: true
-          #   extras: true
-          # - preset: "win32-vcpkg-profile"
-          #   tools: true
-          #   extras: true
-          # - preset: "win32-vcpkg-debug"
-          #   tools: true
-          #   extras: true
       fail-fast: false
     uses: ./.github/workflows/build-toolchain.yml
     with:
       game: "GeneralsMD"
-      preset: ${{ matrix.preset }}
+      configurePreset: ${{ matrix.configurePreset }}
+      buildPreset: ${{ matrix.buildPreset }}
       tools: ${{ matrix.tools }}
       extras: ${{ matrix.extras }}
     secrets: inherit

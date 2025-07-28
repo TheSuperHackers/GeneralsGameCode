@@ -231,3 +231,7 @@ if(WIN32 OR "${CMAKE_SYSTEM}" MATCHES "Windows")
 else()
     set_target_properties(z_worldbuilder PROPERTIES OUTPUT_NAME worldbuilderzh)
 endif()
+
+if(IS_VS6_BUILD)
+    target_compile_options(z_worldbuilder PRIVATE /Zd)
+endif()
