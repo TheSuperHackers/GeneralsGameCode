@@ -171,6 +171,7 @@ public:
 	void								Set_View_Plane(const Vector2 & min,const Vector2 & max);
 	void								Set_View_Plane(float hfov,float vfov = -1);
 	void								Set_Aspect_Ratio(float width_to_height);
+	void                                Set_Aspect_Ratio_HackedForWB(float width_to_height);
 
 	// Methods for querying the View Plane settings.		
 	void								Get_View_Plane(Vector2 & set_min,Vector2 & set_max) const;

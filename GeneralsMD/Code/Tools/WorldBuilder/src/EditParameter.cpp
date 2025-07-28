@@ -1512,14 +1512,6 @@ Bool EditParameter::loadSides(CComboBox *pCombo, AsciiString match)
 		pCombo->AddString(LOCAL_PLAYER);
 		pCombo->AddString(THIS_PLAYER);
 		pCombo->AddString(THIS_PLAYER_ENEMY);
-		pCombo->AddString(PLAYER_0);
-		pCombo->AddString(PLAYER_1);
-		pCombo->AddString(PLAYER_2);
-		pCombo->AddString(PLAYER_3);
-		pCombo->AddString(PLAYER_4);
-		pCombo->AddString(PLAYER_5);
-		pCombo->AddString(PLAYER_6);
-		pCombo->AddString(PLAYER_7);
 	}
 	Bool didMatch = false;
 	if (match == LOCAL_PLAYER) didMatch=true;
@@ -1543,6 +1535,18 @@ Bool EditParameter::loadSides(CComboBox *pCombo, AsciiString match)
 		if (pCombo) pCombo->AddString(name.str());
 		if ((name==match)) didMatch = true;
 	}
+
+	// Add these to the last after the dynamic ones
+	// if (pCombo) {
+	// 	pCombo->AddString(PLAYER_0);
+	// 	pCombo->AddString(PLAYER_1);
+	// 	pCombo->AddString(PLAYER_2);
+	// 	pCombo->AddString(PLAYER_3);
+	// 	pCombo->AddString(PLAYER_4);
+	// 	pCombo->AddString(PLAYER_5);
+	// 	pCombo->AddString(PLAYER_6);
+	// 	pCombo->AddString(PLAYER_7);
+	// }
 	return didMatch;
 }
 

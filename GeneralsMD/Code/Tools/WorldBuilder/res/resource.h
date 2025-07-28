@@ -143,6 +143,7 @@
 #define IDC_ABORT_ALL                   240
 #define IDC_SCRIPT_SEARCH               241
 #define IDC_FIND_NEXT                   242
+#define IDD_TOAST                       242
 #define IDC_OBJECT_SEARCH_EDIT          243
 #define IDC_OBJECT_SEARCH_BUTTON        244
 #define IDC_OBJECT_SEARCH_RESET_BTN     245
@@ -156,6 +157,7 @@
 #define IDC_OBJECT_SEARCH_BUTTON_PICK   253
 #define IDC_OBJECT_SEARCH_RESET_BTN_PICK 254
 #define IDC_ROAD_SNAP_POINT_EDIT        255
+#define IDC_HINT_TEXT                   256
 #define IDC_HEIGHT_COMBO                1000
 #define IDC_CELL_WIDTH                  1001
 #define IDC_INITIAL_HEIGHT              1002
@@ -474,6 +476,7 @@
 #define IDC_ON_UNIT_DESTROYED_SCRIPT    1208
 #define IDC_TeamGeneric_Script11        1208
 #define IDC_TeamGeneric_Script12        1209
+#define IDC_TEAMS                       1209
 #define IDC_Grove_Type1                 1210
 #define IDC_TeamGeneric_Script13        1210
 #define IDC_Grove_Per1                  1211
@@ -846,7 +849,7 @@
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_3D_CONTROLS                     1
-#define _APS_NEXT_RESOURCE_VALUE        242
+#define _APS_NEXT_RESOURCE_VALUE        243
 #define _APS_NEXT_COMMAND_VALUE         33347
 #define _APS_NEXT_CONTROL_VALUE         1355
 #define _APS_NEXT_SYMED_VALUE           101

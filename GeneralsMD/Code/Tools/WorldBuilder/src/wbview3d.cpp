@@ -813,7 +813,7 @@ void WbView3d::reset3dEngineDisplaySize(Int width, Int height)
 	// Update camera FOV instead of stretching -- Preserves ratio
 	if (m_camera) {
 		float newAspectRatio = (float)width / (float)height;
-		m_camera->Set_Aspect_Ratio(newAspectRatio);
+		m_camera->Set_Aspect_Ratio_HackedForWB(newAspectRatio);
 	}
 }
 
@@ -970,8 +970,8 @@ void WbView3d::setupCamera()
 	if (m_heightMapRenderObj) {
 		m_heightMapRenderObj->setDrawEntireMap(m_showEntireMap);
 	}
-// not needed, handled in OnSize
-//	m_camera->Set_Aspect_Ratio((float)m_actualWinSize.x/(float)m_actualWinSize.y);
+
+	m_camera->Set_Aspect_Ratio_HackedForWB((float)m_actualWinSize.x/(float)m_actualWinSize.y);
 }
 
 // ----------------------------------------------------------------------------

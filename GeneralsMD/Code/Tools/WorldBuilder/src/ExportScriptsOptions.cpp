@@ -26,6 +26,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // ExportScriptsOptions dialog
 Bool ExportScriptsOptions::m_units = true;
+Bool ExportScriptsOptions::m_teams = true;
 Bool ExportScriptsOptions::m_waypoints = true;
 Bool ExportScriptsOptions::m_triggers = true;
 Bool ExportScriptsOptions::m_allScripts = false;
@@ -65,6 +66,8 @@ void ExportScriptsOptions::OnOK()
 	m_waypoints = pButton->GetCheck()==1;
 	pButton = (CButton*)GetDlgItem(IDC_UNITS);
 	m_units = pButton->GetCheck()==1;
+	pButton = (CButton*)GetDlgItem(IDC_TEAMS);
+	m_teams = pButton->GetCheck()==1;
 	pButton = (CButton*)GetDlgItem(IDC_TRIGGERS);
 	m_triggers = pButton->GetCheck()==1;
 	pButton = (CButton*)GetDlgItem(IDC_ALL_SCRIPTS);
@@ -84,6 +87,8 @@ BOOL ExportScriptsOptions::OnInitDialog()
 	pButton->SetCheck(m_waypoints?1:0);
 	pButton = (CButton*)GetDlgItem(IDC_UNITS);
 	pButton->SetCheck(m_units?1:0);
+	pButton = (CButton*)GetDlgItem(IDC_TEAMS);
+	pButton->SetCheck(m_teams?1:0);
 	pButton = (CButton*)GetDlgItem(IDC_TRIGGERS);
 	pButton->SetCheck(m_triggers?1:0);
 	pButton = (CButton*)GetDlgItem(IDC_ALL_SCRIPTS);

@@ -146,31 +146,23 @@ void WaypointOptions::updateTheUI(void)
 		pCombo->ShowWindow(SW_SHOW);
 	}	else if (pCombo && theTrigger) {
 		pCombo->ResetContent();
-		AsciiString trigger;
-		trigger = INNER_PERIMETER;
-		trigger.concat("1");
-		pCombo->AddString(trigger.str());
-		trigger = OUTER_PERIMETER;
-		trigger.concat("1");
-		pCombo->AddString(trigger.str());
-		trigger = INNER_PERIMETER;
-		trigger.concat("2");
-		pCombo->AddString(trigger.str());
-		trigger = OUTER_PERIMETER;
-		trigger.concat("2");
-		pCombo->AddString(trigger.str());
-		trigger = INNER_PERIMETER;
-		trigger.concat("3");
-		pCombo->AddString(trigger.str());
-		trigger = OUTER_PERIMETER;
-		trigger.concat("3");
-		pCombo->AddString(trigger.str());
-		trigger = INNER_PERIMETER;
-		trigger.concat("4");
-		pCombo->AddString(trigger.str());
-		trigger = OUTER_PERIMETER;
-		trigger.concat("4");
-		pCombo->AddString(trigger.str());
+		char buffer[16];
+
+		for (int i = 1; i <= 8; ++i) {
+			sprintf(buffer, "%d", i);  // convert int to string
+
+			AsciiString trigger = INNER_PERIMETER;
+			trigger.concat(buffer);
+			pCombo->AddString(trigger.str());
+
+			trigger = OUTER_PERIMETER;
+			trigger.concat(buffer);
+			pCombo->AddString(trigger.str());
+			
+		}
+
+		pCombo->AddString("CombatZone");
+
 		pCombo->ShowWindow(SW_SHOW);
 	}
 

@@ -55,9 +55,11 @@ protected:
 	static Bool m_triggers;
 	static Bool m_allScripts;
 	static Bool m_sides;
+	static Bool m_teams;
 
 public:
 	Bool getDoUnits(void) {return m_units;}
+	Bool getDoTeams(void) {return m_teams;}
 	Bool getDoWaypoints(void) {return m_waypoints;}
 	Bool getDoTriggers(void) {return m_triggers;}
 	Bool getDoAllScripts(void) {return m_allScripts;}

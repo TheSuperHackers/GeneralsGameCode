@@ -285,7 +285,7 @@ void ScriptDialog::OnSelchangedScriptTree(NMHDR* pNMHDR, LRESULT* pResult)
 	pWnd->EnableWindow(pScript!=NULL || pGroup!=NULL);
 	
 	pWnd = GetDlgItem(IDC_COPY_SCRIPT);
-	pWnd->EnableWindow(pScript!=NULL);
+	pWnd->EnableWindow(pScript!=NULL || pGroup!=NULL);
 
 	pWnd = GetDlgItem(IDC_DELETE);
 	pWnd->EnableWindow(m_curSelection.m_objType != ListType::PLAYER_TYPE);
@@ -795,7 +795,6 @@ Bool ScriptDialog::LoadScriptWarningsState()
 						appendWarningHintLazy(pScr);
 					}
 
-
 					// Expensive
 					// if (pScr->hasWarnings()) {
 					// 	// updateScriptWarning(pScr);  // Force regen of warning messages like [???]
@@ -1243,8 +1242,8 @@ Bool ScriptDialog::updateIcons(HTREEITEM hItem)
 				// pTree->SetItemState(child, INDEXTOSTATEIMAGEMASK(3), TVIS_STATEIMAGEMASK);
 				// SetItemIconIfDifferent(pTree, child, 3);
 				warnings = true;
-				setIconGroup(child);
 			}
+			setIconGroup(child);
 		}
 
 		/// script
@@ -1258,8 +1257,8 @@ Bool ScriptDialog::updateIcons(HTREEITEM hItem)
 					// pTree->SetItemState(child, INDEXTOSTATEIMAGEMASK(4), TVIS_STATEIMAGEMASK);
 					// SetItemIconIfDifferent(pTree, child, 4);
 					warnings = true;
-					setIconScript(child);
 				}
+				setIconScript(child);
 			}
 		}
 
@@ -1666,15 +1665,48 @@ void ScriptDialog::OnEditScript()
 
 void ScriptDialog::OnCopyScript() 
 {
-	Script *pScript = getCurScript();
-	DEBUG_ASSERTCRASH(pScript, ("Null script."));
-	if (pScript == NULL) return;
-	Script *pDup = pScript->duplicate();
-	AsciiString newName = pDup->getName();
-	newName.concat(" C");
-	pDup->setName(newName);
-	insertScript(pDup);
-	updateIcons(TVI_ROOT);
+    Script *pScript = getCurScript();
+    ScriptGroup *pGroup = getCurGroup();
+
+    // If a script is selected, copy just that script
+    if (pScript && (!pGroup || m_curSelection.m_objType == ListType::SCRIPT_IN_PLAYER_TYPE)) {
+        Script *pDup = pScript->duplicate();
+        AsciiString newName = pDup->getName();
+        newName.concat(" C");
+        pDup->setName(newName);
+        insertScript(pDup);
+        updateIcons(TVI_ROOT);
+        return;
+    }
+
+    // If a folder/group is selected, copy the entire group
+    if (pGroup && m_curSelection.m_objType == ListType::GROUP_TYPE) {
+        ScriptGroup* pNewGroup = newInstance(ScriptGroup);
+        AsciiString newGroupName = pGroup->getName();
+        newGroupName.concat(" Copy");
+        pNewGroup->setName(newGroupName);
+        pNewGroup->setActive(pGroup->isActive());
+        pNewGroup->setSubroutine(pGroup->isSubroutine());
+
+        // Copy all scripts in group, preserving order
+        Int scriptIndex = 0;
+        for (Script* pScr = pGroup->getScript(); pScr; pScr = pScr->getNext(), ++scriptIndex) {
+            Script* pDup = pScr->duplicate();
+            AsciiString scriptName = pDup->getName();
+            scriptName.concat(" C");
+            pDup->setName(scriptName);
+            pNewGroup->addScript(pDup, scriptIndex); // Indexed insert
+        }
+
+        ScriptList *pSL = m_sides.getSideInfo(m_curSelection.m_playerIndex)->getScriptList();
+        if (pSL) {
+            Int insertIndex = m_curSelection.m_groupIndex + 1; // insert after current group
+            pSL->addGroup(pNewGroup, insertIndex);
+            reloadPlayer(m_curSelection.m_playerIndex, pSL);
+        }
+
+        updateIcons(TVI_ROOT);
+    }
 }
 
 void ScriptDialog::OnDelete() 
@@ -1754,7 +1786,7 @@ void ScriptDialog::markWaypoint(MapObject *pObj)
 }
 
 /** Looks for referenced waypoints & teams. */
-void ScriptDialog::scanParmForWaypointsAndTeams(Parameter *pParm, Bool doUnits, Bool doWaypoints, Bool doTriggers)
+void ScriptDialog::scanParmForWaypointsAndTeams(Parameter *pParm, Bool doUnits, Bool doWaypoints, Bool doTriggers, Bool doTeams)
 {
 	if (pParm->getParameterType() == Parameter::WAYPOINT && doWaypoints) {
 		AsciiString waypointName  = pParm->getString();
@@ -1786,7 +1818,7 @@ void ScriptDialog::scanParmForWaypointsAndTeams(Parameter *pParm, Bool doUnits, 
 	if (pParm->getParameterType() == Parameter::TEAM) {
 		AsciiString teamName  = pParm->getString();
 		TeamsInfo * pInfo = m_sides.findTeamInfo(teamName);
-		if (pInfo) {
+		if (pInfo && doTeams) {
 			pInfo->getDict()->setBool(TheKey_exportWithScript, true);
 		}	 
 		if (doUnits) {
@@ -1829,7 +1861,7 @@ void ScriptDialog::scanParmForWaypointsAndTeams(Parameter *pParm, Bool doUnits, 
 }
 
 /** Looks for referenced waypoints & teams. */
-void ScriptDialog::scanForWaypointsAndTeams(Script *pScript, Bool doUnits, Bool doWaypoints, Bool doTriggers)
+void ScriptDialog::scanForWaypointsAndTeams(Script *pScript, Bool doUnits, Bool doWaypoints, Bool doTriggers, Bool doTeams)
 {
 	pScript->setWarnings(false);
 	OrCondition *pOr;
@@ -1838,7 +1870,7 @@ void ScriptDialog::scanForWaypointsAndTeams(Script *pScript, Bool doUnits, Bool 
 		for (pCondition = pOr->getFirstAndCondition(); pCondition; pCondition = pCondition->getNext()) {
 			Int i;
 			for (i=0; i<pCondition->getNumParameters(); i++) {
-				scanParmForWaypointsAndTeams(pCondition->getParameter(i), doUnits, doWaypoints, doTriggers);
+				scanParmForWaypointsAndTeams(pCondition->getParameter(i), doUnits, doWaypoints, doTriggers, doTeams);
 			}
 		}
 	}
@@ -1847,7 +1879,7 @@ void ScriptDialog::scanForWaypointsAndTeams(Script *pScript, Bool doUnits, Bool 
 		pAction->setWarnings(false);
 		Int i;
 		for (i=0; i<pAction->getNumParameters(); i++) {
-			scanParmForWaypointsAndTeams(pAction->getParameter(i), doUnits, doWaypoints, doTriggers);
+			scanParmForWaypointsAndTeams(pAction->getParameter(i), doUnits, doWaypoints, doTriggers, doTeams);
 		}
 	}
 }
@@ -1863,6 +1895,7 @@ void ScriptDialog::OnSave()
 	Bool doUnits = true;
 	Bool doAllScripts = true;
 	Bool doSides = true;
+	Bool doTeams = true;
 	Int	 i;
 
 	ExportScriptsOptions optionsDlg;
@@ -1871,6 +1904,7 @@ void ScriptDialog::OnSave()
 	}
 	doWaypoints = optionsDlg.getDoWaypoints();
 	doUnits = optionsDlg.getDoUnits();
+	doTeams = optionsDlg.getDoTeams(); // you'll implement this getter
 	doTriggerAreas = optionsDlg.getDoTriggers();
 	doAllScripts = optionsDlg.getDoAllScripts();
 	doSides = optionsDlg.getDoSides();
@@ -1921,6 +1955,9 @@ void ScriptDialog::OnSave()
 		}
 	}
 
+	// DEBUG_LOG(("doTeams %s", doTeams ? "true" : "false"));
+	// DEBUG_LOG(("doAllScripts %s", doAllScripts ? "true" : "false"));
+
 	for (i = 0; i < m_sides.getNumTeams(); i++) {
 		m_sides.getTeamInfo(i)->getDict()->setBool(TheKey_exportWithScript, doAllScripts);
 	}
@@ -1953,11 +1990,11 @@ void ScriptDialog::OnSave()
 		ScriptList *pSL = scripts[i];
 		Script *pScr;
 		for (pScr = pSL->getScript(); pScr; pScr=pScr->getNext()) {
-			scanForWaypointsAndTeams(pScr, doUnits, doWaypoints, doTriggerAreas);
+			scanForWaypointsAndTeams(pScr, doUnits, doWaypoints, doTriggerAreas, doTeams);
 		}
 		for (pGroup = pSL->getScriptGroup(); pGroup; pGroup=pGroup->getNext()) {
 			for (pScr = pGroup->getScript(); pScr; pScr=pScr->getNext()) {
-				scanForWaypointsAndTeams(pScr, doUnits, doWaypoints, doTriggerAreas);
+				scanForWaypointsAndTeams(pScr, doUnits, doWaypoints, doTriggerAreas, doTeams);
 			}
 		}
 	}

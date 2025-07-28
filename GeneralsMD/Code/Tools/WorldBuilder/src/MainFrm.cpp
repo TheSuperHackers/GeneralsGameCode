@@ -31,6 +31,7 @@
 #include "WorldBuilder.h"
 #include "WorldBuilderDoc.h"
 #include "WorldBuilderView.h"
+#include "ToastDialog.h"
 
 #include "ScriptDialog.h"
 #define ADJUST_VIEW_TIMER 6969
@@ -323,7 +324,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 void CMainFrame::adjustWindowSize(Bool forcedResolution, Bool dynamicResolution)
 {
-	// DEBUG_LOG(("IgnoredX resize? %s\n", m_disableOnSize ? "Yes" : "No"));
+	DEBUG_LOG(("Adjusting window size"));
 	// if (m_disableOnSize){
 	// 	Int viewWidth = ::AfxGetApp()->GetProfileInt(MAIN_FRAME_SECTION, "Width", THREE_D_VIEW_WIDTH);
 	// 	Int viewHeight = ::AfxGetApp()->GetProfileInt(MAIN_FRAME_SECTION, "Height", THREE_D_VIEW_HEIGHT);
@@ -618,7 +619,7 @@ void CMainFrame::OnTimer(UINT nIDEvent)
         if (pDoc && pDoc->needAutoSave() && secondsRemaining <= 10 && secondsRemaining > 0)
 		{
 			CString msg;
-			msg.Format("Auto-saving in %.0f seconds...", secondsRemaining);
+			msg.Format("Autosaving in %.0f seconds...", secondsRemaining);
 			// DEBUG_LOG(("SetMessageText: %s", msg));
 
 			SetMessageText(msg);
@@ -626,6 +627,10 @@ void CMainFrame::OnTimer(UINT nIDEvent)
 			// Play a system sound as a cue (only once at 10 seconds)
 			if ((int)secondsRemaining == 10)
 			{
+				CToastDialog* pToast = new CToastDialog(_T(msg), 10000, false);
+				pToast->Create(CToastDialog::IDD);
+				pToast->ShowWindow(SW_SHOW);
+					
 				PlaySound((LPCTSTR)SND_ALIAS_SYSTEMASTERISK, NULL, SND_ALIAS_ID | SND_ASYNC);
 			}
 		}

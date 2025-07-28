@@ -365,6 +365,17 @@ void CameraClass::Set_Aspect_Ratio(float width_to_height)
 }
 
 
+void CameraClass::Set_Aspect_Ratio_HackedForWB(float width_to_height)
+{
+	AspectRatio = width_to_height;
+
+	// Retain a vertical FOV by scaling horizontal view instead of vertical
+	ViewPlane.Min.X = ViewPlane.Min.Y * AspectRatio;
+	ViewPlane.Max.X = ViewPlane.Max.Y * AspectRatio;
+
+	FrustumValid = false;
+}
+
 /***********************************************************************************************
  * CameraClass::Get_View_Plane -- get the corners of the current view plane                    *
  *                                                                                             *

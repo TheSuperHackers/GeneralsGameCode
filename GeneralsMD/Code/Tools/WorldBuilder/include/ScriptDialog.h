@@ -137,8 +137,8 @@ protected:
 	void reloadPlayer(Int playerIndex, ScriptList *pSL);
 	HTREEITEM findItem(ListType sel, Bool failSafe = FALSE);
 	void insertScript(Script *pNewScript);
-	void scanForWaypointsAndTeams(Script *pScript, Bool doUnits, Bool doWaypoints, Bool doTriggers);
-	void scanParmForWaypointsAndTeams(Parameter *pParm, Bool doUnits, Bool doWaypoints, Bool doTriggers);
+	void scanForWaypointsAndTeams(Script *pScript, Bool doUnits, Bool doWaypoints, Bool doTriggers, Bool doTeams);
+	void scanParmForWaypointsAndTeams(Parameter *pParm, Bool doUnits, Bool doWaypoints, Bool doTriggers, Bool doTeams);
 	void updateSelection(ListType sel);
 	void setIconScript(HTREEITEM item);
 	void setIconGroup(HTREEITEM item);

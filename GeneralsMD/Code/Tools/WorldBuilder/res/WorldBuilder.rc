@@ -498,7 +498,7 @@ END
 IDD_ABOUTBOX DIALOGEX 0, 0, 456, 192
 STYLE WS_MINIMIZEBOX | WS_CAPTION | WS_SYSMENU
 CAPTION "About Generals World Builder"
-FONT 8, "MS Sans Serif"
+FONT 8, "MS Sans Serif", 0, 0, 0x1
 BEGIN
     LTEXT           "Adriane [ Deathscythe ] Community Worldbuilder V3.0",
                     IDC_STATIC,4,3,216,11,SS_NOPREFIX | SS_CENTERIMAGE | 
@@ -1089,12 +1089,12 @@ END
 IDD_ScriptDialog DIALOGEX 0, 0, 655, 328
 STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION
 CAPTION "Scripts"
-FONT 8, "MS Sans Serif"
+FONT 8, "MS Sans Serif", 0, 0, 0x1
 BEGIN
     DEFPUSHBUTTON   "OK",IDOK,598,289,50,14
     PUSHBUTTON      "New &Script...",IDC_NEW_SCRIPT,598,103,50,14
     PUSHBUTTON      "&Edit...",IDC_EDIT_SCRIPT,598,119,50,14
-    PUSHBUTTON      "&Copy Script",IDC_COPY_SCRIPT,598,143,50,14
+    PUSHBUTTON      "&Copy",IDC_COPY_SCRIPT,598,143,50,14
     PUSHBUTTON      "&Delete",IDC_DELETE,598,159,50,14
     PUSHBUTTON      "Import Scripts",IDC_LOAD,597,228,51,14
     PUSHBUTTON      "Export Scripts",IDC_SAVE,598,210,50,14
@@ -1249,20 +1249,20 @@ BEGIN
                     WS_TABSTOP,311,7,72,14
 END
 
-IDD_EDIT_PARAMETER DIALOG DISCARDABLE  0, 0, 281, 74
+IDD_EDIT_PARAMETER DIALOG DISCARDABLE  0, 0, 281, 295
 STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Edit Parameter:"
 FONT 8, "MS Sans Serif"
 BEGIN
-    DEFPUSHBUTTON   "OK",IDOK,171,52,50,14
-    PUSHBUTTON      "Cancel",IDCANCEL,224,52,50,14
-    GROUPBOX        "Parameter:",IDC_CAPTION,7,7,267,41
-    COMBOBOX        IDC_COMBO,15,21,250,87,CBS_DROPDOWN | CBS_SORT | 
+    DEFPUSHBUTTON   "OK",IDOK,171,273,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,224,273,50,14
+    GROUPBOX        "Parameter:",IDC_CAPTION,7,7,267,264
+    COMBOBOX        IDC_COMBO,7,21,267,248,CBS_SIMPLE | CBS_SORT | 
                     WS_VSCROLL | WS_TABSTOP
-    EDITTEXT        IDC_EDIT,19,21,190,12,ES_AUTOHSCROLL
-    COMBOBOX        IDC_LIST,19,21,190,84,CBS_DROPDOWNLIST | CBS_SORT | 
-                    WS_VSCROLL | WS_TABSTOP
-    PUSHBUTTON      "Preview Sound",IDC_PREVIEWSOUND,7,52,62,14
+    EDITTEXT        IDC_EDIT,7,20,267,12,ES_AUTOHSCROLL
+    COMBOBOX        IDC_LIST,7,20,267,250,CBS_SIMPLE | CBS_SORT | WS_VSCROLL | 
+                    WS_TABSTOP
+    PUSHBUTTON      "Preview Sound",IDC_PREVIEWSOUND,7,273,62,14
 END
 
 IDD_ScriptAction DIALOGEX 0, 0, 581, 327
@@ -1514,23 +1514,25 @@ BEGIN
     DEFPUSHBUTTON   "OK",IDOK,190,149,50,14
     PUSHBUTTON      "Cancel",IDCANCEL,245,149,50,14
     CONTROL         "Include waypoints and waypoint paths.",IDC_WAYPOINTS,
-                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,12,20,150,8
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,13,18,150,8
     CONTROL         "Include trigger areas.",IDC_TRIGGERS,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,12,40,156,9
+                    BS_AUTOCHECKBOX | WS_TABSTOP,13,34,156,9
     CONTROL         "Include units and buildings.",IDC_UNITS,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,12,61,154,9
+                    BS_AUTOCHECKBOX | WS_TABSTOP,13,50,154,9
     GROUPBOX        "Include items referenced in the scripts:",IDC_STATIC,7,
                     7,163,88
     CONTROL         "Export all scripts.",IDC_ALL_SCRIPTS,"Button",
                     BS_AUTORADIOBUTTON,15,115,97,8
-    CONTROL         "Export selected scripts.",IDC_SELECTED_SCRIPTS,"Button",
-                    BS_AUTORADIOBUTTON,15,127,99,8
+    CONTROL         "Export selected scripts/folder.",IDC_SELECTED_SCRIPTS,
+                    "Button",BS_AUTORADIOBUTTON,15,127,122,8
     GROUPBOX        "Export Mode:",IDC_STATIC,7,104,288,39
-    CONTROL         "Include sides.",IDC_SIDES,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,12,79,154,9
+    CONTROL         "Include Players.",IDC_SIDES,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,13,82,154,9
     GROUPBOX        "Developer Note:",IDC_STATIC,178,7,117,88
     LTEXT           "If you only want to export scripts, please uncheck all other items and just proceed to select your export mode.",
                     IDC_STATIC,183,18,106,70
+    CONTROL         "Include Teams",IDC_TEAMS,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,13,66,154,9
 END
 
 IDD_GROVE_OPTIONS DIALOG DISCARDABLE  0, 0, 200, 353
@@ -1800,13 +1802,13 @@ BEGIN
                     IDC_CENTER_ON_SELECTED,13,128,116,14
 END
 
-IDD_WAYPOINT_OPTIONS DIALOG DISCARDABLE  0, 0, 200, 186
+IDD_WAYPOINT_OPTIONS DIALOG DISCARDABLE  0, 0, 200, 332
 STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION
 CAPTION "Waypoint Options"
 FONT 8, "MS Sans Serif"
 BEGIN
     GROUPBOX        "Waypoint Name:",IDC_WAYPOINT_CAPTION1,1,1,195,34
-    COMBOBOX        IDC_WAYPOINTNAME_EDIT,7,15,186,88,CBS_DROPDOWN | 
+    COMBOBOX        IDC_WAYPOINTNAME_EDIT,7,15,186,271,CBS_DROPDOWN | 
                     CBS_SORT | WS_VSCROLL | WS_TABSTOP
     EDITTEXT        IDC_WAYPOINTLABEL1_EDIT,7,119,182,12,ES_AUTOHSCROLL
     EDITTEXT        IDC_WAYPOINTLABEL2_EDIT,8,134,182,12,ES_AUTOHSCROLL
@@ -1822,8 +1824,9 @@ BEGIN
                     28
     COMBOBOX        IDC_LIST_OF_WAYPOINT_NAMES,7,85,183,88,CBS_DROPDOWN | 
                     CBS_SORT | WS_VSCROLL | WS_TABSTOP
-    CONTROL         "Bi-Directional",IDC_WAYPOINT_BIDIRECTIONAL,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,11,172,132,9
+    CONTROL         "Bi-Directional (Used for back-and-forth patrol routes)",
+                    IDC_WAYPOINT_BIDIRECTIONAL,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,8,171,188,9
 END
 
 IDD_CHANGE_TEAM_OWNER DIALOG DISCARDABLE  0, 0, 200, 131
@@ -2099,6 +2102,16 @@ BEGIN
     LTEXT           "Z:",IDC_STATIC,146,174,8,8
     GROUPBOX        "Pre-built upgrades",IDC_STATIC,4,307,193,67
     RTEXT           "XY Pos:",IDC_STATIC,8,174,26,8
+END
+
+IDD_TOAST DIALOG DISCARDABLE  0, 0, 233, 36
+STYLE DS_MODALFRAME | WS_POPUP
+FONT 8, "MS Sans Serif"
+BEGIN
+    LTEXT           "Customizable hint text goes here...",IDC_HINT_TEXT,2,1,
+                    156,33
+    DEFPUSHBUTTON   "OK",IDOK,204,1,27,14
+    PUSHBUTTON      "Cancel",IDCANCEL,204,20,27,14
 END
 
 
@@ -2388,7 +2401,7 @@ BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 274
         TOPMARGIN, 7
-        BOTTOMMARGIN, 66
+        BOTTOMMARGIN, 287
     END
 
     IDD_ScriptAction, DIALOG
@@ -2569,7 +2582,7 @@ BEGIN
         LEFTMARGIN, 1
         RIGHTMARGIN, 196
         TOPMARGIN, 1
-        BOTTOMMARGIN, 182
+        BOTTOMMARGIN, 328
     END
 
     IDD_CHANGE_TEAM_OWNER, DIALOG
@@ -2623,6 +2636,14 @@ BEGIN
         RIGHTMARGIN, 197
         TOPMARGIN, 7
         BOTTOMMARGIN, 374
+    END
+
+    IDD_TOAST, DIALOG
+    BEGIN
+        LEFTMARGIN, 2
+        RIGHTMARGIN, 230
+        TOPMARGIN, 1
+        BOTTOMMARGIN, 34
     END
 END
 #endif    // APSTUDIO_INVOKED
