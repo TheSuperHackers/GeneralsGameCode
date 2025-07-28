@@ -396,7 +396,7 @@ void DebugInit(int flags)
 		strcat(theLogFileName, DEBUG_FILE_NAME);
 		if (rts::ClientInstance::getInstanceId() > 1u)
 		{
-			size_t offset = strlen(theLogFileNamePrev);
+			size_t offset = strlen(theLogFileName);
 			snprintf(theLogFileName + offset, ARRAY_SIZE(theLogFileName) - offset, "_Instance%.2u", rts::ClientInstance::getInstanceId());
 		}
 		strcat(theLogFileName, ".txt");
