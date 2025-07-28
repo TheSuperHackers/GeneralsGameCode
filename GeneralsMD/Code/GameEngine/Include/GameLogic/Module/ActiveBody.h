@@ -123,7 +123,7 @@ public:
 	virtual void setIndestructible( Bool indestructible );
 	virtual Bool isIndestructible( void ) const { return m_indestructible; }
 
-	virtual void internalChangeHealth( Real delta );								///< change health
+	virtual void internalChangeHealth( Real delta, Bool changeModelCondition = TRUE);								///< change health
 
 	virtual void evaluateVisualCondition();
 	virtual void updateBodyParticleSystems( void );// made public for topple anf building collapse updates -ML
@@ -156,6 +156,8 @@ protected:
 
 	virtual void internalAddSubdualDamage( Real delta );								///< change health
 	virtual void internalAddChronoDamage( Real delta );								///< change health
+
+	virtual void applyChronoParticleSystems(void);
 
 private:
 

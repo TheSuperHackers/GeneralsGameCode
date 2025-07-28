@@ -373,7 +373,14 @@ void ActiveBody::attemptDamage( DamageInfo *damageInfo )
 
 	Bool alreadyHandled = FALSE;
 	Bool allowModifier = TRUE;
+	Bool doDamageModules = TRUE;
+	Bool adjustConditions = TRUE;
 	Real amount = m_curArmor.adjustDamage(damageInfo->in.m_damageType, damageInfo->in.m_amount);
+
+	// Units that get disabled by Chrono damage cannot take damage:
+	if (obj->isDisabledByType(DISABLED_CHRONO) &&
+		!(damageInfo->in.m_damageType == DAMAGE_CHRONO_GUN || damageInfo->in.m_damageType == DAMAGE_CHRONO_UNRESISTABLE))
+		return;
 
 	switch( damageInfo->in.m_damageType )
 	{
@@ -506,7 +513,7 @@ void ActiveBody::attemptDamage( DamageInfo *damageInfo )
 
 			// Increase damage counter
 			internalAddChronoDamage(amount);
-			DEBUG_LOG(("ActiveBody::attemptDamage - amount = %f, chronoDmg = %f\n", amount, getCurrentChronoDamageAmount()));
+			// DEBUG_LOG(("ActiveBody::attemptDamage - amount = %f, chronoDmg = %f\n", amount, getCurrentChronoDamageAmount()));
 			
 			// Check for disabling threshold
 			Bool nowSubdued = isSubduedChrono();
@@ -523,6 +530,8 @@ void ActiveBody::attemptDamage( DamageInfo *damageInfo )
 			// Check kill state:
 			if (getCurrentChronoDamageAmount() > getMaxHealth()) {
 				damageInfo->in.m_kill = TRUE;
+				doDamageModules = FALSE;
+				adjustConditions = FALSE;
 			}
 			else {
 				alreadyHandled = TRUE;
@@ -574,7 +583,7 @@ void ActiveBody::attemptDamage( DamageInfo *damageInfo )
 		if (!alreadyHandled) 
 		{
 			// do the damage simplistic damage subtraction
-			internalChangeHealth( -amount );
+			internalChangeHealth( -amount, adjustConditions);
 		}
 
 #ifdef ALLOW_SURRENDER
@@ -646,7 +655,7 @@ void ActiveBody::attemptDamage( DamageInfo *damageInfo )
 		}
 
 		// if our health has gone down then do run the damage module callback
-		if( m_currentHealth < m_prevHealth )
+		if( m_currentHealth < m_prevHealth && doDamageModules)
 		{
 			for (BehaviorModule** m = obj->getBehaviorModules(); *m; ++m)
 			{
@@ -658,7 +667,7 @@ void ActiveBody::attemptDamage( DamageInfo *damageInfo )
 			}
 		}
 
-		if (m_curDamageState != oldState)
+		if (m_curDamageState != oldState && adjustConditions)
 		{
 			for (BehaviorModule** m = obj->getBehaviorModules(); *m; ++m)
 			{
@@ -1249,7 +1258,7 @@ void ActiveBody::updateBodyParticleSystems( void )
 	* Game stuff goes in attemptDamage and attemptHealing.
 */
 //-------------------------------------------------------------------------------------------------
-void ActiveBody::internalChangeHealth( Real delta )
+void ActiveBody::internalChangeHealth( Real delta, Bool changeModelCondition)
 {
 	// save the current health as the previous health
 	m_prevHealth = m_currentHealth;
@@ -1267,23 +1276,25 @@ void ActiveBody::internalChangeHealth( Real delta )
 	if( m_currentHealth < lowEndCap )
 		m_currentHealth = lowEndCap;
 
-	// recalc the damage state
-	BodyDamageType oldState = m_curDamageState;
-	setCorrectDamageState();
+	if (changeModelCondition) {
+		// recalc the damage state
+		BodyDamageType oldState = m_curDamageState;
+		setCorrectDamageState();
 
-	// if our state has changed
-	if( m_curDamageState != oldState )
-	{
+		// if our state has changed
+		if (m_curDamageState != oldState)
+		{
 
-		//
-		// show a visual change in the model for the damage state, we do not show visual changes
-		// for damage states when things are under construction because we just don't have
-		// all the art states for that during buildup animation
-		//
-		if( !getObject()->getStatusBits().test( OBJECT_STATUS_UNDER_CONSTRUCTION ) )
-			evaluateVisualCondition();
+			//
+			// show a visual change in the model for the damage state, we do not show visual changes
+			// for damage states when things are under construction because we just don't have
+			// all the art states for that during buildup animation
+			//
+			if (!getObject()->getStatusBits().test(OBJECT_STATUS_UNDER_CONSTRUCTION))
+				evaluateVisualCondition();
 
-	}  // end if
+		}  // end if
+	}
 
 	// mark the bit according to our health. (if our AI is dead but our health improves, it will
 	// still re-flag this bit in the AIDeadState every frame.)
@@ -1365,21 +1376,25 @@ void ActiveBody::onSubdualChange( Bool isNowSubdued )
 //-------------------------------------------------------------------------------------------------
 void ActiveBody::onSubdualChronoChange( Bool isNowSubdued )
 {
-	// TODO: Apply/Remove visual effects
-
 	Object *me = getObject();
 		
 	if( isNowSubdued )
 	{
 		me->setDisabled(DISABLED_CHRONO);
 
-    ContainModuleInterface *contain = me->getContain();
-    if ( contain )
-		contain->orderAllPassengersToIdle( CMD_FROM_AI );
-	}
+		// Apply Chrono Particles
+		applyChronoParticleSystems();
+
+		ContainModuleInterface *contain = me->getContain();
+		if ( contain )
+			contain->orderAllPassengersToIdle( CMD_FROM_AI );
+		}
 	else
 	{
 		me->clearDisabled(DISABLED_CHRONO);
+
+		// Remove Chrono Particles, i.e. restore default particles
+		updateBodyParticleSystems();
 
 		if (me->isKindOf(KINDOF_FS_INTERNET_CENTER))
 		{
@@ -1390,6 +1405,64 @@ void ActiveBody::onSubdualChronoChange( Bool isNowSubdued )
 			if (contain)
 				contain->orderAllPassengersToHackInternet(CMD_FROM_AI);
 		}
+	}
+}
+
+// ------------------------------------------------------------------------------------------------
+/* 	This function is called on state changes only.  Body Type or Aflameness. */
+// ------------------------------------------------------------------------------------------------
+void ActiveBody::applyChronoParticleSystems(void)
+{
+	deleteAllParticleSystems();
+
+	static const ParticleSystemTemplate* chronoEffectsLargeTemplate = TheParticleSystemManager->findTemplate(TheGlobalData->m_chronoDisableParticleSystemLarge);
+	static const ParticleSystemTemplate* chronoEffectsMediumTemplate = TheParticleSystemManager->findTemplate(TheGlobalData->m_chronoDisableParticleSystemMedium);
+	static const ParticleSystemTemplate* chronoEffectsSmallTemplate = TheParticleSystemManager->findTemplate(TheGlobalData->m_chronoDisableParticleSystemSmall);
+	
+	const ParticleSystemTemplate* chronoEffects;
+
+	// TODO: select particles
+	Object* obj = getObject();
+
+	if (obj->isKindOf(KINDOF_INFANTRY)) {
+		chronoEffects = chronoEffectsSmallTemplate;
+	}
+	else if (obj->isKindOf(KINDOF_STRUCTURE)) {
+		chronoEffects = chronoEffectsLargeTemplate;
+	}
+	// Use Medium as default
+	else {
+		chronoEffects = chronoEffectsMediumTemplate;
+	}
+
+	ParticleSystem* particleSystem = TheParticleSystemManager->createParticleSystem(chronoEffects);
+	if (particleSystem)
+	{
+		// set the position of the particle system in local object space
+		// particleSystem->setPosition(obj->getPosition());
+
+		// attach particle system to object
+		particleSystem->attachToObject(obj);
+
+		// Scale particle count based on size
+		Real x = obj->getGeometryInfo().getMajorRadius();
+		Real y = obj->getGeometryInfo().getMinorRadius();
+		Real z = obj->getGeometryInfo().getMaxHeightAbovePosition() * 0.5;
+		particleSystem->setEmissionBoxHalfSize(x, y, z);
+		//Real size = x * y;
+		//particleSystem->setBurstCountMultiplier(MAX(1.0, sqrt(size * 0.02f))); // these are somewhat tweaked right now
+		//particleSystem->setBurstDelayMultiplier(MIN(5.0, sqrt(500.0f / size)));
+
+		// create a new body particle system entry and keep this particle system in it
+		BodyParticleSystem* newEntry = newInstance(BodyParticleSystem);
+		newEntry->m_particleSystemID = particleSystem->getSystemID();
+		newEntry->m_next = m_particleSystems;
+		m_particleSystems = newEntry;
+
+		// DEBUG_LOG(("ActiveBody::applyChronoParticleSystems - created particleSystem.\n"));
+	}
+	else {
+		// DEBUG_LOG(("ActiveBody::applyChronoParticleSystems - Failed to create particleSystem?!\n"));
 	}
 }
 
@@ -1460,7 +1533,7 @@ UnsignedInt ActiveBody::getChronoDamageHealRate() const
 //-------------------------------------------------------------------------------------------------
 Real ActiveBody::getChronoDamageHealAmount() const
 {
-	DEBUG_LOG(("ActiveBody::getChronoDamageHealAmount() - maxHealth = %f\n", m_maxHealth));
+	// DEBUG_LOG(("ActiveBody::getChronoDamageHealAmount() - maxHealth = %f\n", m_maxHealth));
 	return m_maxHealth * TheGlobalData->m_chronoDamageHealAmount;
 }
 
@@ -1643,8 +1716,8 @@ void ActiveBody::overrideDamageFX(DamageFX* damageFX)
 			m_curDamageFX = set->getDamageFX();
 		}
 	}
-	DEBUG_LOG((">>>ActiveBody: overrideDamageFX - new m_curDamageFX = %d, m_damageFXOverride = %d\n",
-		m_curDamageFX, m_damageFXOverride));
+	//DEBUG_LOG((">>>ActiveBody: overrideDamageFX - new m_curDamageFX = %d, m_damageFXOverride = %d\n",
+	//	m_curDamageFX, m_damageFXOverride));
 }
 
 // ------------------------------------------------------------------------------------------------

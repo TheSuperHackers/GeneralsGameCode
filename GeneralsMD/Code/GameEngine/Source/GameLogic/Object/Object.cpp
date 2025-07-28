@@ -2218,7 +2218,7 @@ void Object::setDisabledUntil( DisabledType type, UnsignedInt frame )
 				// Doh. Also shouldn't be tinting when disabled by scripting.
 				// Doh^2. Also shouldn't be CLEARING tinting if we're disabling by held or script disabledness
 				// Doh^3. Unmanned is no tint too
-				if( type != DISABLED_HELD && type != DISABLED_SCRIPT_DISABLED && type != DISABLED_UNMANNED && type != DISABLED_TELEPORT)
+				if( type != DISABLED_HELD && type != DISABLED_SCRIPT_DISABLED && type != DISABLED_UNMANNED && type != DISABLED_TELEPORT && type != DISABLED_CHRONO)
 				{
 					m_drawable->setTintStatus( TINT_STATUS_DISABLED );
 				}
@@ -2395,6 +2395,7 @@ Bool Object::clearDisabled( DisabledType type )
 	exceptions.set(DISABLED_SCRIPT_DISABLED);
 	exceptions.set(DISABLED_UNMANNED);
 	exceptions.set(DISABLED_TELEPORT);
+	exceptions.set(DISABLED_CHRONO);
 
 	DisabledMaskType myFlagsMinusExceptions = getDisabledFlags();
 	myFlagsMinusExceptions.clearAndSet(exceptions, DISABLEDMASK_NONE);
@@ -5380,15 +5381,43 @@ void Object::notifyChronoDamage(Real amount)
 	if (m_chronoDamageHelper)
 		m_chronoDamageHelper->notifyChronoDamage(amount);
 
-	// TODO
-	// If we are gaining subdual damage, we are slowly tinting
-	//if (getDrawable())
-	//{
-	//	if (amount > 0)
-	//		getDrawable()->setTintStatus(TINT_STATUS_GAINING_SUBDUAL_DAMAGE);
-	//	else
-	//		getDrawable()->clearTintStatus(TINT_STATUS_GAINING_SUBDUAL_DAMAGE);
-	//}
+	//Real progress = INT_TO_REAL(now - m_dieFrame) / INT_TO_REAL(m_destructionFrame - m_dieFrame);
+
+	BodyModuleInterface* body = getBodyModule();
+	Drawable* draw = getDrawable();
+	if (body != NULL && draw != NULL) {
+
+		Real chronoTh = TheGlobalData->m_chronoDamageDisableThreshold * body->getMaxHealth();
+		Real chronoDmg = body->getCurrentChronoDamageAmount();
+		if (chronoDmg > chronoTh) {
+			Real progress = (chronoDmg - chronoTh) / (body->getMaxHealth() - chronoTh);
+			progress = min(1.0f, max(0.0f, progress));
+
+			Real alpha0 = TheGlobalData->m_chronoDisableAlphaStart;
+			Real alpha1 = TheGlobalData->m_chronoDisableAlphaEnd;
+			Real opacity = (1.0 - progress) * alpha0 + progress * alpha1;
+
+			// DEBUG_LOG(("Object::notifyChronoDamage - progress = %f, alpha = %f\n", progress, opacity));
+
+			draw->setDrawableOpacity(opacity);
+			//draw->setEffectiveOpacity(opacity);
+			//draw->setSecondMaterialPassOpacity(opacity);
+
+		}
+		else if (amount < 0) {
+			draw->setDrawableOpacity(1.0);
+			// DEBUG_LOG(("Object::notifyChronoDamage - reset opacity\n"));
+		}
+	}	
+
+	//If we are gaining chrono damage, we are slowly tinting
+	if (getDrawable())
+	{
+		if (amount > 0)
+			getDrawable()->setTintStatus(TINT_STATUS_GAINING_CHRONO_DAMAGE);
+		else
+			getDrawable()->clearTintStatus(TINT_STATUS_GAINING_CHRONO_DAMAGE);
+	}
 }
 
 //-------------------------------------------------------------------------------------------------

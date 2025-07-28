@@ -532,6 +532,14 @@ public:
 	UnsignedInt m_chronoDamageHealRate;
 	Real m_chronoDamageHealAmount;
 
+	Real m_chronoDisableAlphaStart;
+	Real m_chronoDisableAlphaEnd;
+
+	// TintStatus m_chronoTintStatusType;
+	AsciiString m_chronoDisableParticleSystemLarge;
+	AsciiString m_chronoDisableParticleSystemMedium;
+	AsciiString m_chronoDisableParticleSystemSmall;
+
 	DeathTypeFlags m_defaultExcludedDeathTypes;
 
 

@@ -194,7 +194,7 @@ public:
 		call this directly (especially when when decreasing health, since
 		you probably want "attemptDamage" or "attemptHealing")
 	*/
-	virtual void internalChangeHealth( Real delta ) = 0;
+	virtual void internalChangeHealth(Real delta, Bool changeModelCondition = TRUE ) = 0;
 
 	virtual void setIndestructible( Bool indestructible ) = 0;
 	virtual Bool isIndestructible( void ) const = 0;
@@ -299,7 +299,7 @@ public:
 		call this directly (especially when when decreasing health, since
 		you probably want "attemptDamage" or "attemptHealing")
 	*/
-	virtual void internalChangeHealth( Real delta ) = 0;
+	virtual void internalChangeHealth( Real delta, Bool changeModelCondition = TRUE) = 0;
 
 	virtual void evaluateVisualCondition() { }
 	virtual void updateBodyParticleSystems() { };// made public for topple anf building collapse updates -ML

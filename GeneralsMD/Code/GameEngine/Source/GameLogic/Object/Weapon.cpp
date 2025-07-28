@@ -627,8 +627,6 @@ Real WeaponTemplate::estimateWeaponTemplateDamage(
   }
 
 
-
-
 	if (damageType == DAMAGE_SURRENDER || m_allowAttackGarrisonedBldgs)
 	{
 		ContainModuleInterface* contain = victimObj->getContain();
@@ -654,6 +652,13 @@ Real WeaponTemplate::estimateWeaponTemplateDamage(
 		{
 			return 1.0f;
 		}
+
+		// Units that get disabled by Chrono damage cannot be attacked
+		if (victimObj->isDisabledByType(DISABLED_CHRONO) &&
+			!(damageType == DAMAGE_CHRONO_GUN || damageType == DAMAGE_CHRONO_UNRESISTABLE)) {
+			return 0.0;
+		}
+			
 	}
 
 	//@todo Kris need to examine the DAMAGE_HACK type for damage estimation purposes.

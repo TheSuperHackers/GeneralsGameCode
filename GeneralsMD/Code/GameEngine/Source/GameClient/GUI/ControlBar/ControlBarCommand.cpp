@@ -1074,6 +1074,10 @@ CommandAvailability ControlBar::getCommandAvailability( const CommandButton *com
 			}
 		}
 	}
+
+	//Disabled Chrono does not allow *any* commands
+	if ( obj->isDisabledByType( DISABLED_CHRONO ) )
+        return COMMAND_RESTRICTED;
  
 	//Other disabled objects are unable to use buttons -- so gray them out.
 	Bool disabled = obj->isDisabled();

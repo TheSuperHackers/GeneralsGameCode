@@ -74,8 +74,8 @@ TeleporterAIUpdateModuleData::TeleporterAIUpdateModuleData( void )
 		{ "TeleportRecoverEndFX", INI::parseFXList, NULL, offsetof(TeleporterAIUpdateModuleData, m_recoverEndFX) },
 		{ "TeleportRecoverSoundAmbient", INI::parseAudioEventRTS, NULL, offsetof(TeleporterAIUpdateModuleData, m_recoverSoundLoop) },
 		{ "TeleportRecoverTint", TintStatusFlags::parseSingleBitFromINI, NULL, offsetof(TeleporterAIUpdateModuleData, m_tintStatus) },
-		{ "TeleportRecoverOpacityStart", INI::parseReal, NULL, offsetof(TeleporterAIUpdateModuleData, m_opacityStart) },
-		{ "TeleportRecoverOpacityEnd", INI::parseReal, NULL, offsetof(TeleporterAIUpdateModuleData, m_opacityEnd) },
+		{ "TeleportRecoverOpacityStart", INI::parsePercentToReal, NULL, offsetof(TeleporterAIUpdateModuleData, m_opacityStart) },
+		{ "TeleportRecoverOpacityEnd", INI::parsePercentToReal, NULL, offsetof(TeleporterAIUpdateModuleData, m_opacityEnd) },
 		{ 0, 0, 0, 0 }
 	};
 	p.add(dataFieldParse);
@@ -117,14 +117,16 @@ UpdateSleepTime TeleporterAIUpdate::update(void)
 			// We are currently disabled
 			Real progress = __max(__min(INT_TO_REAL(now - m_disabledStart) / INT_TO_REAL(m_disabledUntil - m_disabledStart), 1.0), 0.0);
 
-			Drawable* drw = obj->getDrawable();
-			if (drw)
+			Drawable* draw = obj->getDrawable();
+			if (draw)
 			{
 				// - set opacity
 				if (d->m_opacityStart < 1.0f || d->m_opacityEnd < 1.0f) {
-					Real curOpacity = (1.0 - progress) * d->m_opacityStart + progress * d->m_opacityEnd;
+					Real opacity = (1.0 - progress) * d->m_opacityStart + progress * d->m_opacityEnd;
 					// DEBUG_LOG((">>> TPAI Update: opacity = %f\n", curOpacity));
-					drw->setDrawableOpacity(curOpacity);
+					draw->setDrawableOpacity(opacity);
+					//draw->setEffectiveOpacity(opacity);
+					//draw->setSecondMaterialPassOpacity(opacity);
 				}
 			}
 			// We actually need to stop here, because the default update would allow us to attack while disabled
@@ -162,18 +164,20 @@ void TeleporterAIUpdate::applyRecoverEffects(Real dist)
 	m_recoverSoundLoop.setObjectID(obj->getID());
 	m_recoverSoundLoop.setPlayingHandle(TheAudio->addAudioEvent(&m_recoverSoundLoop));
 	
-	Drawable* drw = obj->getDrawable();
-	if (drw)
+	Drawable* draw = obj->getDrawable();
+	if (draw)
 	{
 		// - set color tint
 		if (d->m_tintStatus > TINT_STATUS_INVALID && d->m_tintStatus < TINT_STATUS_COUNT)
 		{
-			drw->setTintStatus(d->m_tintStatus);
+			draw->setTintStatus(d->m_tintStatus);
 		}
 
 		// - set opacity
 		if (d->m_opacityStart < 1.0 || d->m_opacityEnd < 1.0) {
-			drw->setEffectiveOpacity(1.0);
+			//draw->setEffectiveOpacity(1.0);
+			//draw->setSecondMaterialPassOpacity(1.0);
+			draw->setDrawableOpacity(1.0);
 		}
 	}
 

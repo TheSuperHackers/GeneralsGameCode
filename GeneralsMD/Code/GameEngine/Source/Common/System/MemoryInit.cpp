@@ -240,6 +240,7 @@ static PoolSizeRec sizes[] =
 	{ "ImmortalBody", 128, 256 },
 	{ "InactiveBody", 2048, 32 },
 	{ "InstantDeathBehavior", 512, 32 },
+	{ "ChronoDeathBehavior", 512, 32 },
 	{ "LaserUpdate", 32, 32 },
 	{ "PointDefenseLaserUpdate", 32, 32 },
 	{ "CleanupHazardUpdate", 32, 32 },
