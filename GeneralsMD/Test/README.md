@@ -3,8 +3,8 @@
 This folder contains replays and the required maps that are tested in CI to ensure that the game is retail compatible.
 
 You can also test with these replays locally:
-- Copy the replays into a subfolder in your `*userpath*/Documents/Command and Conquer Generals Zero Hour Data/Replays` folder.
-- Copy the maps into `*userpath*/Documents/Command and Conquer Generals Zero Hour Data/Maps`
+- Copy the replays into a subfolder in your `%USERPROFILE%/Documents/Command and Conquer Generals Zero Hour Data/Replays` folder.
+- Copy the maps into `%USERPROFILE%/Documents/Command and Conquer Generals Zero Hour Data/Maps`
 - Start the test with this: (copy into a .bat file next to your executable)
 ```
 START /B /W generalszh.exe -jobs 4 -headless -replay subfolder/*.rep > replay_check.log
