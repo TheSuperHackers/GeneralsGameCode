@@ -101,6 +101,7 @@ class LocalFile : public File
 		virtual Int		read( void *buffer, Int bytes );										///< Read the specified number of bytes in to buffer: See File::read
 		virtual Int		write( const void *buffer, Int bytes );							///< Write the specified number of bytes from the buffer: See File::write
 		virtual Int		seek( Int new_pos, seekMode mode = CURRENT );				///< Set file position: See File::seek
+		virtual Bool	flush();													///< flush data to disk
 		virtual void	nextLine(Char *buf = NULL, Int bufSize = 0);				///< moves file position to after the next new-line
 		virtual Bool	scanInt(Int &newInt);																///< return what gets read in as an integer at the current file position.
 		virtual Bool	scanReal(Real &newReal);														///< return what gets read in as a float at the current file position.
