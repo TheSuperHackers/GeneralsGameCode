@@ -27,7 +27,7 @@ set(GAMEENGINE_SRC
 #    Include/Common/CustomMatchPreferences.h
 #    Include/Common/DamageFX.h
 #    Include/Common/DataChunk.h
-#    Include/Common/Debug.h
+    Include/Common/Debug.h
 #    Include/Common/Dict.h
 #    Include/Common/Directory.h
 #    Include/Common/DisabledTypes.h
@@ -637,7 +637,7 @@ set(GAMEENGINE_SRC
 #    Source/Common/System/CDManager.cpp
 #    Source/Common/System/CriticalSection.cpp
 #    Source/Common/System/DataChunk.cpp
-#    Source/Common/System/Debug.cpp
+    Source/Common/System/Debug.cpp
 #    Source/Common/System/Directory.cpp
 #    Source/Common/System/DisabledTypes.cpp
 #    Source/Common/System/encrypt.cpp

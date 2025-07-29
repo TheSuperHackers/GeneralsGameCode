@@ -103,6 +103,9 @@ def unify_file(fromGame: Game, fromFile: str, toGame: Game, toFile: str):
 
 def main():
 
+    #unify_file(Game.ZEROHOUR, "GameEngine/Include/Common/Debug.h", Game.CORE, "GameEngine/Include/Common/Debug.h")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Source/Common/System/Debug.cpp", Game.CORE, "GameEngine/Source/Common/System/Debug.cpp")
+
     return
 
 
