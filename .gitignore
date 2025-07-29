@@ -56,3 +56,6 @@ cmake-build-*/
 .ninja_deps
 .ninja_log
 build.ninja
+
+out/build/x64-debug
+out/build/x86-debug
