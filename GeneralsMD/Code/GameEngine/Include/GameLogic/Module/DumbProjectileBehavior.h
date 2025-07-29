@@ -65,7 +65,7 @@ public:
 	KindOfMaskType	m_garrisonHitKillKindofNot;		///< the kind(s) of units that CANNOT be collided with
 	const FXList*		m_garrisonHitKillFX;
 	Real m_flightPathAdjustDistPerFrame;
-
+	Bool m_applyLauncherBonus;
 
 	DumbProjectileBehaviorModuleData();
 

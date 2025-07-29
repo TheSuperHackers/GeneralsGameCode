@@ -54,7 +54,7 @@ void WeaponSetUpgradeModuleData::buildFieldParse(MultiIniFieldParse& p)
 
 	static const FieldParse dataFieldParse[] =
 	{
-		{ "WeaponSetFlag", INI::parseIndexList,	WeaponSetFlags::getBitNames(),offsetof(WeaponSetUpgradeModuleData, m_weaponSetFlag) },
+		{ "WeaponSetFlag", INI::parseIndexListOrNone, WeaponSetFlags::getBitNames(),offsetof(WeaponSetUpgradeModuleData, m_weaponSetFlag) },
 		{ "WeaponSetFlagsToClear", WeaponSetFlags::parseFromINI, NULL, offsetof(WeaponSetUpgradeModuleData, m_weaponSetFlagsToClear) },
 		{ "NeedsParkedAircraft", INI::parseBool, NULL, offsetof(WeaponSetUpgradeModuleData, m_needsParkedAircraft) },
 		{ 0, 0, 0, 0 }
@@ -112,7 +112,9 @@ void WeaponSetUpgrade::upgradeImplementation( )
 	const WeaponSetUpgradeModuleData* data = getWeaponSetUpgradeModuleData();
 
 	Object *obj = getObject();
-	obj->setWeaponSetFlag(data->m_weaponSetFlag);
+	if (data->m_weaponSetFlag > WEAPONSET_NONE) {
+		obj->setWeaponSetFlag(data->m_weaponSetFlag);
+	}
 
 	/*DEBUG_LOG((">>> WSU: m_weaponSetFlagsToClear = %d\n",
 		data->m_weaponSetFlag));*/

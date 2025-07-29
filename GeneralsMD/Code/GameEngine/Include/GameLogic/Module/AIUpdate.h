@@ -83,6 +83,7 @@ enum LocomotorSetType CPP_11(: Int)
 	LOCOMOTORSET_TAXIING,			// set used for normally-airborne items while taxiing on ground
 	LOCOMOTORSET_SUPERSONIC,	// set used for high-speed attacks
 	LOCOMOTORSET_SLUGGISH,		// set used for abnormally slow (but not damaged) speeds
+	LOCOMOTORSET_VTOL,          // set used for VTOL aircraft to take off and land
 
 	LOCOMOTORSET_COUNT	///< keep last, please
 };
@@ -107,6 +108,7 @@ static const char *TheLocomotorSetNames[] =
 	"SET_TAXIING",
 	"SET_SUPERSONIC",
 	"SET_SLUGGISH",
+	"SET_VTOL",
 
 	NULL
 };
@@ -238,87 +240,87 @@ enum AIFreeToExitType CPP_11(: Int) // Note - written out in save/load xfer, don
 class AIUpdateInterface : public UpdateModule, public AICommandInterface
 {
 
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( AIUpdateInterface, "AIUpdateInterface" )
-	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( AIUpdateInterface, AIUpdateModuleData )
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIUpdateInterface, "AIUpdateInterface")
+		MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA(AIUpdateInterface, AIUpdateModuleData)
 
 protected:
 
 	// yes, protected, NOT public.
-	virtual void privateMoveToPosition( const Coord3D *pos, CommandSourceType cmdSource );			///< move to given position(s) tightening the formation.
-	virtual void privateMoveToObject( Object *obj, CommandSourceType cmdSource );			///< move to given object
-	virtual void privateMoveToAndEvacuate( const Coord3D *pos, CommandSourceType cmdSource );			///< move to given position(s)
-	virtual void privateMoveToAndEvacuateAndExit( const Coord3D *pos, CommandSourceType cmdSource );			///< move to given position & unload transport.
+	virtual void privateMoveToPosition(const Coord3D* pos, CommandSourceType cmdSource);			///< move to given position(s) tightening the formation.
+	virtual void privateMoveToObject(Object* obj, CommandSourceType cmdSource);			///< move to given object
+	virtual void privateMoveToAndEvacuate(const Coord3D* pos, CommandSourceType cmdSource);			///< move to given position(s)
+	virtual void privateMoveToAndEvacuateAndExit(const Coord3D* pos, CommandSourceType cmdSource);			///< move to given position & unload transport.
 	virtual void privateIdle(CommandSourceType cmdSource);						///< Enter idle state.	
-	virtual void privateTightenToPosition( const Coord3D *pos, CommandSourceType cmdSource );			///< move to given position(s) tightening the formation.
-	virtual void privateFollowWaypointPath( const Waypoint *way, CommandSourceType cmdSource );///< start following the path from the given point
-	virtual void privateFollowWaypointPathAsTeam( const Waypoint *way, CommandSourceType cmdSource );///< start following the path from the given point
-	virtual void privateFollowWaypointPathExact( const Waypoint *way, CommandSourceType cmdSource );///< start following the path from the given point
-	virtual void privateFollowWaypointPathAsTeamExact( const Waypoint *way, CommandSourceType cmdSource );///< start following the path from the given point
-	virtual void privateFollowPath( const std::vector<Coord3D>* path, Object *ignoreObject, CommandSourceType cmdSource, Bool exitProduction );///< follow the path defined by the given array of points
-	virtual void privateFollowPathAppend( const Coord3D *pos, CommandSourceType cmdSource );
-	virtual void privateAttackObject( Object *victim, Int maxShotsToFire, CommandSourceType cmdSource );					///< attack given object
-	virtual void privateForceAttackObject( Object *victim, Int maxShotsToFire, CommandSourceType cmdSource );					///< attack given object
-	virtual void privateGuardRetaliate( Object *victim, const Coord3D *pos, Int maxShotsToFire, CommandSourceType cmdSource );				///< retaliate and attack attacker -- but with guard restrictions
-	virtual void privateAttackTeam( const Team *team, Int maxShotsToFire, CommandSourceType cmdSource );							///< attack the given team
-	virtual void privateAttackPosition( const Coord3D *pos, Int maxShotsToFire, CommandSourceType cmdSource );						///< attack given spot
-	virtual void privateAttackMoveToPosition( const Coord3D *pos, Int maxShotsToFire, CommandSourceType cmdSource );			///< attack move to the given location
-	virtual void privateAttackFollowWaypointPath( const Waypoint *way, Int maxShotsToFire, Bool asTeam, CommandSourceType cmdSource );			///< attack move along the following waypoint path, potentially as a team
-	virtual void privateHunt( CommandSourceType cmdSource );														///< begin "seek and destroy"
-	virtual void privateRepair( Object *obj, CommandSourceType cmdSource );						///< repair the given object
+	virtual void privateTightenToPosition(const Coord3D* pos, CommandSourceType cmdSource);			///< move to given position(s) tightening the formation.
+	virtual void privateFollowWaypointPath(const Waypoint* way, CommandSourceType cmdSource);///< start following the path from the given point
+	virtual void privateFollowWaypointPathAsTeam(const Waypoint* way, CommandSourceType cmdSource);///< start following the path from the given point
+	virtual void privateFollowWaypointPathExact(const Waypoint* way, CommandSourceType cmdSource);///< start following the path from the given point
+	virtual void privateFollowWaypointPathAsTeamExact(const Waypoint* way, CommandSourceType cmdSource);///< start following the path from the given point
+	virtual void privateFollowPath(const std::vector<Coord3D>* path, Object* ignoreObject, CommandSourceType cmdSource, Bool exitProduction);///< follow the path defined by the given array of points
+	virtual void privateFollowPathAppend(const Coord3D* pos, CommandSourceType cmdSource);
+	virtual void privateAttackObject(Object* victim, Int maxShotsToFire, CommandSourceType cmdSource);					///< attack given object
+	virtual void privateForceAttackObject(Object* victim, Int maxShotsToFire, CommandSourceType cmdSource);					///< attack given object
+	virtual void privateGuardRetaliate(Object* victim, const Coord3D* pos, Int maxShotsToFire, CommandSourceType cmdSource);				///< retaliate and attack attacker -- but with guard restrictions
+	virtual void privateAttackTeam(const Team* team, Int maxShotsToFire, CommandSourceType cmdSource);							///< attack the given team
+	virtual void privateAttackPosition(const Coord3D* pos, Int maxShotsToFire, CommandSourceType cmdSource);						///< attack given spot
+	virtual void privateAttackMoveToPosition(const Coord3D* pos, Int maxShotsToFire, CommandSourceType cmdSource);			///< attack move to the given location
+	virtual void privateAttackFollowWaypointPath(const Waypoint* way, Int maxShotsToFire, Bool asTeam, CommandSourceType cmdSource);			///< attack move along the following waypoint path, potentially as a team
+	virtual void privateHunt(CommandSourceType cmdSource);														///< begin "seek and destroy"
+	virtual void privateRepair(Object* obj, CommandSourceType cmdSource);						///< repair the given object
 #ifdef ALLOW_SURRENDER
-	virtual void privatePickUpPrisoner( Object *prisoner, CommandSourceType cmdSource );			///< pick up prisoner
-	virtual void privateReturnPrisoners( Object *prison, CommandSourceType cmdSource );			///< return picked up prisoners to the 'prison'
+	virtual void privatePickUpPrisoner(Object* prisoner, CommandSourceType cmdSource);			///< pick up prisoner
+	virtual void privateReturnPrisoners(Object* prison, CommandSourceType cmdSource);			///< return picked up prisoners to the 'prison'
 #endif
-	virtual void privateResumeConstruction( Object *obj, CommandSourceType cmdSource );	///< resume construction of object
-	virtual void privateGetHealed( Object *healDepot, CommandSourceType cmdSource );		///< get healed at heal depot
-	virtual void privateGetRepaired( Object *repairDepot, CommandSourceType cmdSource );///< get repaired at repair depot
-	virtual void privateEnter( Object *obj, CommandSourceType cmdSource );							///< enter the given object
-	virtual void privateDock( Object *obj, CommandSourceType cmdSource );							///< get near given object and wait for enter clearance
-	virtual void privateExit( Object *objectToExit, CommandSourceType cmdSource );			///< get out of this Object
-	virtual void privateExitInstantly( Object *objectToExit, CommandSourceType cmdSource );			///< get out of this Object this frame
-	virtual void privateEvacuate( Int exposeStealthUnits, CommandSourceType cmdSource );												///< empty its contents
-	virtual void privateEvacuateInstantly( Int exposeStealthUnits, CommandSourceType cmdSource );												///< empty its contents this frame
-	virtual void privateExecuteRailedTransport( CommandSourceType cmdSource );					///< execute next leg in railed transport sequence
-	virtual void privateGoProne( const DamageInfo *damageInfo, CommandSourceType cmdSource );												///< life altering state change, if this AI can do it
-	virtual void privateGuardTunnelNetwork( GuardMode guardMode, CommandSourceType cmdSource );			///< guard the given spot
-	virtual void privateGuardPosition( const Coord3D *pos, GuardMode guardMode, CommandSourceType cmdSource );			///< guard the given spot
-	virtual void privateGuardObject( Object *objectToGuard, GuardMode guardMode, CommandSourceType cmdSource );		///< guard the given object
-	virtual void privateGuardArea( const PolygonTrigger *areaToGuard, GuardMode guardMode, CommandSourceType cmdSource );	///< guard the given area
-	virtual void privateAttackArea( const PolygonTrigger *areaToGuard, CommandSourceType cmdSource );	///< guard the given area
-	virtual void privateHackInternet( CommandSourceType cmdSource );	///< Hack money from the heavens (free money)
-	virtual void privateFaceObject( Object *target, CommandSourceType cmdSource );
-	virtual void privateFacePosition( const Coord3D *pos, CommandSourceType cmdSource );
-	virtual void privateRappelInto( Object *target, const Coord3D& pos, CommandSourceType cmdSource );
-	virtual void privateCombatDrop( Object *target, const Coord3D& pos, CommandSourceType cmdSource );
-	virtual void privateCommandButton( const CommandButton *commandButton, CommandSourceType cmdSource );
-	virtual void privateCommandButtonPosition( const CommandButton *commandButton, const Coord3D *pos, CommandSourceType cmdSource );
-	virtual void privateCommandButtonObject( const CommandButton *commandButton, Object *obj, CommandSourceType cmdSource );
-	virtual void privateWander( const Waypoint *way, CommandSourceType cmdSource );	///< Wander around the waypoint path.
-	virtual void privateWanderInPlace( CommandSourceType cmdSource );	///< Wander around the current position.
-	virtual void privatePanic( const Waypoint *way, CommandSourceType cmdSource );	///< Run screaming down the waypoint path.
-	virtual void privateBusy( CommandSourceType cmdSource );	///< Transition to the busy state
-	virtual void privateMoveAwayFromUnit( Object *unit, CommandSourceType cmdSource );	///< Move out of the way of a unit.
+	virtual void privateResumeConstruction(Object* obj, CommandSourceType cmdSource);	///< resume construction of object
+	virtual void privateGetHealed(Object* healDepot, CommandSourceType cmdSource);		///< get healed at heal depot
+	virtual void privateGetRepaired(Object* repairDepot, CommandSourceType cmdSource);///< get repaired at repair depot
+	virtual void privateEnter(Object* obj, CommandSourceType cmdSource);							///< enter the given object
+	virtual void privateDock(Object* obj, CommandSourceType cmdSource);							///< get near given object and wait for enter clearance
+	virtual void privateExit(Object* objectToExit, CommandSourceType cmdSource);			///< get out of this Object
+	virtual void privateExitInstantly(Object* objectToExit, CommandSourceType cmdSource);			///< get out of this Object this frame
+	virtual void privateEvacuate(Int exposeStealthUnits, CommandSourceType cmdSource);												///< empty its contents
+	virtual void privateEvacuateInstantly(Int exposeStealthUnits, CommandSourceType cmdSource);												///< empty its contents this frame
+	virtual void privateExecuteRailedTransport(CommandSourceType cmdSource);					///< execute next leg in railed transport sequence
+	virtual void privateGoProne(const DamageInfo* damageInfo, CommandSourceType cmdSource);												///< life altering state change, if this AI can do it
+	virtual void privateGuardTunnelNetwork(GuardMode guardMode, CommandSourceType cmdSource);			///< guard the given spot
+	virtual void privateGuardPosition(const Coord3D* pos, GuardMode guardMode, CommandSourceType cmdSource);			///< guard the given spot
+	virtual void privateGuardObject(Object* objectToGuard, GuardMode guardMode, CommandSourceType cmdSource);		///< guard the given object
+	virtual void privateGuardArea(const PolygonTrigger* areaToGuard, GuardMode guardMode, CommandSourceType cmdSource);	///< guard the given area
+	virtual void privateAttackArea(const PolygonTrigger* areaToGuard, CommandSourceType cmdSource);	///< guard the given area
+	virtual void privateHackInternet(CommandSourceType cmdSource);	///< Hack money from the heavens (free money)
+	virtual void privateFaceObject(Object* target, CommandSourceType cmdSource);
+	virtual void privateFacePosition(const Coord3D* pos, CommandSourceType cmdSource);
+	virtual void privateRappelInto(Object* target, const Coord3D& pos, CommandSourceType cmdSource);
+	virtual void privateCombatDrop(Object* target, const Coord3D& pos, CommandSourceType cmdSource);
+	virtual void privateCommandButton(const CommandButton* commandButton, CommandSourceType cmdSource);
+	virtual void privateCommandButtonPosition(const CommandButton* commandButton, const Coord3D* pos, CommandSourceType cmdSource);
+	virtual void privateCommandButtonObject(const CommandButton* commandButton, Object* obj, CommandSourceType cmdSource);
+	virtual void privateWander(const Waypoint* way, CommandSourceType cmdSource);	///< Wander around the waypoint path.
+	virtual void privateWanderInPlace(CommandSourceType cmdSource);	///< Wander around the current position.
+	virtual void privatePanic(const Waypoint* way, CommandSourceType cmdSource);	///< Run screaming down the waypoint path.
+	virtual void privateBusy(CommandSourceType cmdSource);	///< Transition to the busy state
+	virtual void privateMoveAwayFromUnit(Object* unit, CommandSourceType cmdSource);	///< Move out of the way of a unit.
 
 
 public:
-	AIUpdateInterface( Thing *thing, const ModuleData* moduleData );
+	AIUpdateInterface(Thing* thing, const ModuleData* moduleData);
 	// virtual destructor prototype provided by memory pool declaration
 
 	virtual AIUpdateInterface* getAIUpdateInterface() { return this; }
 
 	// Disabled conditions to process (AI will still process held status)
-	virtual DisabledMaskType getDisabledTypesToProcess() const { return MAKE_DISABLED_MASK( DISABLED_HELD ); }
-	
+	virtual DisabledMaskType getDisabledTypesToProcess() const { return MAKE_DISABLED_MASK(DISABLED_HELD); }
+
 	// Some very specific, complex behaviors are used by more than one AIUpdate.  Here are their interfaces.
-	virtual DozerAIInterface* getDozerAIInterface() {return NULL;}
-	virtual SupplyTruckAIInterface* getSupplyTruckAIInterface() {return NULL;}
-	virtual const DozerAIInterface* getDozerAIInterface() const {return NULL;}
-	virtual const SupplyTruckAIInterface* getSupplyTruckAIInterface() const {return NULL;}
+	virtual DozerAIInterface* getDozerAIInterface() { return NULL; }
+	virtual SupplyTruckAIInterface* getSupplyTruckAIInterface() { return NULL; }
+	virtual const DozerAIInterface* getDozerAIInterface() const { return NULL; }
+	virtual const SupplyTruckAIInterface* getSupplyTruckAIInterface() const { return NULL; }
 #ifdef ALLOW_SURRENDER
-	virtual POWTruckAIUpdateInterface *getPOWTruckAIUpdateInterface( void ) { return NULL; }
+	virtual POWTruckAIUpdateInterface* getPOWTruckAIUpdateInterface(void) { return NULL; }
 #endif
-	virtual WorkerAIInterface* getWorkerAIInterface( void ) { return NULL; }
-	virtual const WorkerAIInterface* getWorkerAIInterface( void ) const { return NULL; }
+	virtual WorkerAIInterface* getWorkerAIInterface(void) { return NULL; }
+	virtual const WorkerAIInterface* getWorkerAIInterface(void) const { return NULL; }
 	virtual HackInternetAIInterface* getHackInternetAIInterface() { return NULL; }
 	virtual const HackInternetAIInterface* getHackInternetAIInterface() const { return NULL; }
 	virtual AssaultTransportAIInterface* getAssaultTransportAIInterface() { return NULL; }
@@ -327,13 +329,13 @@ public:
 	virtual const JetAIUpdate* getJetAIUpdate() const { return NULL; }
 
 #ifdef ALLOW_SURRENDER
-	void setSurrendered( const Object *objWeSurrenderedTo, Bool surrendered );
-	inline Bool isSurrendered( void ) const { return m_surrenderedFramesLeft > 0; }
+	void setSurrendered(const Object* objWeSurrenderedTo, Bool surrendered);
+	inline Bool isSurrendered(void) const { return m_surrenderedFramesLeft > 0; }
 	inline Int getSurrenderedPlayerIndex() const { return m_surrenderedPlayerIndex; }
 #endif
 
-	virtual void joinTeam( void );			///< This unit just got added to a team & needs to catch up.
-	
+	virtual void joinTeam(void);			///< This unit just got added to a team & needs to catch up.
+
 	Bool areTurretsLinked() const { return getAIUpdateModuleData()->m_turretsLinked; }
 
 	Real getAttackAngle() const { return getAIUpdateModuleData()->m_attackAngle; }
@@ -343,7 +345,7 @@ public:
 	// this is present solely for some transports to override, so that they can land before 
 	// allowing people to exit...
 	virtual AIFreeToExitType getAiFreeToExit(const Object* exiter) const { return FREE_TO_EXIT; }
-	
+
 	// this is present solely to allow some special-case things to override, like landed choppers.
 	virtual Bool isAllowedToAdjustDestination() const { return true; }
 	virtual Bool isAllowedToMoveAwayFromUnit() const { return true; }
@@ -360,26 +362,28 @@ public:
 	virtual Bool isBusy() const;
 
 	virtual void onObjectCreated();
-	virtual void doQuickExit( const std::vector<Coord3D>* path );			///< get out of this Object
-	
+	virtual void doQuickExit(const std::vector<Coord3D>* path);			///< get out of this Object
+
 	virtual void aiDoCommand(const AICommandParms* parms);
-	
-	virtual const Coord3D *getGuardLocation( void ) const { return &m_locationToGuard;	}
-	virtual const ObjectID getGuardObject( void ) const { return m_objectToGuard; }
-	virtual const PolygonTrigger *getAreaToGuard( void ) const { return m_areaToGuard; }
+
+	virtual const Coord3D* getGuardLocation(void) const { return &m_locationToGuard; }
+	virtual const ObjectID getGuardObject(void) const { return m_objectToGuard; }
+	virtual const PolygonTrigger* getAreaToGuard(void) const { return m_areaToGuard; }
 	virtual GuardTargetType getGuardTargetType() const { return m_guardTargetType[1]; }
 	virtual void clearGuardTargetType() { m_guardTargetType[1] = m_guardTargetType[0]; m_guardTargetType[0] = GUARDTARGET_NONE; }
 	virtual GuardMode getGuardMode() const { return m_guardMode; }
 
-	virtual Object* construct( const ThingTemplate *what, 
-														 const Coord3D *pos, Real angle, 
-														 Player *owningPlayer,
-														 Bool isRebuild ) { return NULL; }///< construct a building
+	virtual Object* construct(const ThingTemplate* what,
+		const Coord3D* pos, Real angle,
+		Player* owningPlayer,
+		Bool isRebuild) {
+		return NULL;
+	}///< construct a building
 
 
-	void ignoreObstacle( const Object *obj );			///< tell the pathfinder to ignore the given object as an obstacle
-	void ignoreObstacleID( ObjectID id );			///< tell the pathfinder to ignore the given object as an obstacle
-	
+	void ignoreObstacle(const Object* obj);			///< tell the pathfinder to ignore the given object as an obstacle
+	void ignoreObstacleID(ObjectID id);			///< tell the pathfinder to ignore the given object as an obstacle
+
 	AIStateType getAIStateType() const;							///< What general state is the AIState Machine in?
 
 	AsciiString getCurrentStateName(void) const { return m_stateMachine->getCurrentStateName(); }
@@ -400,25 +404,25 @@ public:
 	virtual void addTargeter(ObjectID id, Bool add) { return; }
 	virtual Bool isTemporarilyPreventingAimSuccess() const { return false; }
 
-	 
-	void setPriorWaypointID( UnsignedInt id )   { m_priorWaypointID = id; };
-	void setCurrentWaypointID( UnsignedInt id ) { m_currentWaypointID = id; };
+
+	void setPriorWaypointID(UnsignedInt id) { m_priorWaypointID = id; };
+	void setCurrentWaypointID(UnsignedInt id) { m_currentWaypointID = id; };
 
 	// Group ----------------------------------------------------------------------------------------------
 	// these three methods allow a group leader's path to be communicated to the other group members
 
-	AIGroup *getGroup(void);
+	AIGroup* getGroup(void);
 
 	// it's VERY RARE you want to call this function; you should normally use Object::isEffectivelyDead()
 	// instead. the exception would be for things that need to know whether to call markIsDead or not.
-	Bool isAiInDeadState( void ) const { return m_isAiDead; }				///< return true if we are dead
-	void markAsDead( void );
+	Bool isAiInDeadState(void) const { return m_isAiDead; }				///< return true if we are dead
+	void markAsDead(void);
 
-	Bool isRecruitable(void) const {return m_isRecruitable;}
-	void setIsRecruitable(Bool isRecruitable) {m_isRecruitable = isRecruitable;}
+	Bool isRecruitable(void) const { return m_isRecruitable; }
+	void setIsRecruitable(Bool isRecruitable) { m_isRecruitable = isRecruitable; }
 
 	Real getDesiredSpeed() const { return m_desiredSpeed; }
-	void setDesiredSpeed( Real speed ) { m_desiredSpeed = speed; }	///< how fast we want to go
+	void setDesiredSpeed(Real speed) { m_desiredSpeed = speed; }	///< how fast we want to go
 
 	// these are virtual because subclasses might need to override them. (srj)
 	virtual void setLocomotorGoalPositionOnPath();
@@ -431,8 +435,8 @@ public:
 	Bool isAircraftThatAdjustsDestination(void) const;  ///< True if is aircraft that doesn't stack destinations (missles for example do stack destinations.) 
 	Real getCurLocomotorSpeed() const;
 	Real getLocomotorDistanceToGoal();
-	const Locomotor *getCurLocomotor() const {return m_curLocomotor;}
-	Locomotor *getCurLocomotor() { return m_curLocomotor; }
+	const Locomotor* getCurLocomotor() const { return m_curLocomotor; }
+	Locomotor* getCurLocomotor() { return m_curLocomotor; }
 	LocomotorSetType getCurLocomotorSetType() const { return m_curLocomotorSet; }
 	Bool hasLocomotorForSurface(LocomotorSurfaceType surfaceType);
 
@@ -440,7 +444,7 @@ public:
 	WhichTurretType getWhichTurretForWeaponSlot(WeaponSlotType wslot, Real* turretAngle, Real* turretPitch = NULL) const;
 	WhichTurretType getWhichTurretForCurWeapon() const;
 	/**
-		return true iff the weapon is on a turret, that turret is trying to aim at the victim, 
+		return true iff the weapon is on a turret, that turret is trying to aim at the victim,
 		BUT is not yet pointing in the right dir.
 	*/
 	Bool isWeaponSlotOnTurretAndAimingAtTarget(WeaponSlotType wslot, const Object* victim) const;
@@ -452,49 +456,49 @@ public:
 	Bool hasLimitedTurretAngle(WhichTurretType tur) const;
 
 	void setTurretTargetObject(WhichTurretType tur, Object* o, Bool isForceAttacking = FALSE);
-	Object *getTurretTargetObject( WhichTurretType tur, Bool clearDeadTargets = TRUE );
+	Object* getTurretTargetObject(WhichTurretType tur, Bool clearDeadTargets = TRUE);
 	void setTurretTargetPosition(WhichTurretType tur, const Coord3D* pos);
 	void setTurretEnabled(WhichTurretType tur, Bool enabled);
 	void recenterTurret(WhichTurretType tur);
-	Bool isTurretEnabled( WhichTurretType tur ) const;
+	Bool isTurretEnabled(WhichTurretType tur) const;
 	Bool isTurretInNaturalPosition(WhichTurretType tur) const;
 
 	// "Planning Mode" -----------------------------------------------------------------------------------
-	Bool queueWaypoint( const Coord3D *pos );				///< add waypoint to end of move list. return true if success, false if queue was full and those the waypoint not added
-	void clearWaypointQueue( void );								///< reset the waypoint queue to empty
-	void executeWaypointQueue( void );							///< start moving along queued waypoints
+	Bool queueWaypoint(const Coord3D* pos);				///< add waypoint to end of move list. return true if success, false if queue was full and those the waypoint not added
+	void clearWaypointQueue(void);								///< reset the waypoint queue to empty
+	void executeWaypointQueue(void);							///< start moving along queued waypoints
 
 	// Pathfinding ---------------------------------------------------------------------------------------
 private:
-	Bool computePath( PathfindServicesInterface *pathfinder, Coord3D *destination );	///< computes path to destination, returns false if no path
-	Bool computeAttackPath(PathfindServicesInterface *pathfinder,  const Object *victim, const Coord3D* victimPos );	///< computes path to attack the current target, returns false if no path
+	Bool computePath(PathfindServicesInterface* pathfinder, Coord3D* destination);	///< computes path to destination, returns false if no path
+	Bool computeAttackPath(PathfindServicesInterface* pathfinder, const Object* victim, const Coord3D* victimPos);	///< computes path to attack the current target, returns false if no path
 #ifdef ALLOW_SURRENDER
 	void doSurrenderUpdateStuff();
 #endif
 
 public:
-	void doPathfind( PathfindServicesInterface *pathfinder ); 
-	void requestPath( Coord3D *destination, Bool isGoalDestination );	///< Queues a request to pathfind to destination.
-	void requestAttackPath( ObjectID victimID, const Coord3D* victimPos );	///< computes path to attack the current target, returns false if no path
-	void requestApproachPath( Coord3D *destination );	///< computes path to attack the current target, returns false if no path
-	void requestSafePath( ObjectID repulsor1 );	///< computes path to attack the current target, returns false if no path
+	virtual void doPathfind(PathfindServicesInterface* pathfinder);
+	virtual void requestPath(Coord3D* destination, Bool isGoalDestination);	///< Queues a request to pathfind to destination.
+	virtual void requestAttackPath(ObjectID victimID, const Coord3D* victimPos);	///< computes path to attack the current target, returns false if no path
+	virtual void requestApproachPath(Coord3D* destination);	///< computes path to attack the current target, returns false if no path
+	virtual void requestSafePath(ObjectID repulsor1);	///< computes path to attack the current target, returns false if no path
 
-	Bool isWaitingForPath(void) const {return m_waitingForPath;}
-	Bool isAttackPath(void) const {return m_isAttackPath;} ///< True if we have a path to an attack location.
+	Bool isWaitingForPath(void) const { return m_waitingForPath; }
+	Bool isAttackPath(void) const { return m_isAttackPath; } ///< True if we have a path to an attack location.
 	void cancelPath(void); ///< Called if we no longer need the path. 
-	Path* getPath( void ) { return m_path; }				///< return the agent's current path
-	const Path* getPath( void ) const { return m_path; }				///< return the agent's current path
-	void destroyPath( void );												///< destroy the current path, setting it to NULL
-	UnsignedInt getPathAge( void ) const { return TheGameLogic->getFrame() - m_pathTimestamp; }	///< return the "age" of the path
-	Bool isPathAvailable( const Coord3D *destination ) const; ///< does a path exist between us and the destination
-	Bool isQuickPathAvailable( const Coord3D *destination ) const;  ///< does a path (using quick pathfind) exist between us and the destination
-	Int getNumFramesBlocked(void) const {return m_blockedFrames;}
-	Bool isBlockedAndStuck(void) const {return m_isBlockedAndStuck;}
-	Bool canComputeQuickPath(void); ///< Returns true if we can quickly comput a path.  Usually missiles & the like that just move straight to the destination.
-	Bool computeQuickPath(const Coord3D *destination); ///< Computes a quick path to the destination.
+	Path* getPath(void) { return m_path; }				///< return the agent's current path
+	const Path* getPath(void) const { return m_path; }				///< return the agent's current path
+	void destroyPath(void);												///< destroy the current path, setting it to NULL
+	UnsignedInt getPathAge(void) const { return TheGameLogic->getFrame() - m_pathTimestamp; }	///< return the "age" of the path
+	Bool isPathAvailable(const Coord3D* destination) const; ///< does a path exist between us and the destination
+	Bool isQuickPathAvailable(const Coord3D* destination) const;  ///< does a path (using quick pathfind) exist between us and the destination
+	Int getNumFramesBlocked(void) const { return m_blockedFrames; }
+	Bool isBlockedAndStuck(void) const { return m_isBlockedAndStuck; }
+	virtual Bool canComputeQuickPath(void); ///< Returns true if we can quickly comput a path.  Usually missiles & the like that just move straight to the destination.
+	virtual Bool computeQuickPath(const Coord3D* destination); ///< Computes a quick path to the destination.
 
 	Bool isMoving() const;
-	Bool isMovingAwayFrom(Object *obj) const;
+	Bool isMovingAwayFrom(Object* obj) const;
 
 	// the following routines should only be called by the AIInternalMoveToState.  
 	// They are used to determine when we are really through moving.  Due to the nature of the beast, 
@@ -503,88 +507,88 @@ public:
 	void friend_startingMove(void);
 	void friend_endingMove(void);
 
-	void friend_setPath(Path *newPath);
+	void friend_setPath(Path* newPath);
 	Path* friend_getPath() { return m_path; }
 
-	void friend_setGoalObject(Object *obj);
+	void friend_setGoalObject(Object* obj);
 
-	virtual Bool processCollision(PhysicsBehavior *physics, Object *other); ///< Returns true if the physics collide should apply the force.  Normally not.  jba.
-	ObjectID getIgnoredObstacleID( void ) const;
+	virtual Bool processCollision(PhysicsBehavior* physics, Object* other); ///< Returns true if the physics collide should apply the force.  Normally not.  jba.
+	ObjectID getIgnoredObstacleID(void) const;
 
 	// "Waypoint Mode" -----------------------------------------------------------------------------------
-	const Waypoint *getCompletedWaypoint(void) const {return m_completedWaypoint;}
-	void setCompletedWaypoint(const Waypoint *pWay) {m_completedWaypoint = pWay;}
+	const Waypoint* getCompletedWaypoint(void) const { return m_completedWaypoint; }
+	void setCompletedWaypoint(const Waypoint* pWay) { m_completedWaypoint = pWay; }
 
-	const LocomotorSet& getLocomotorSet(void) const {return m_locomotorSet;}
-	void setPathExtraDistance(Real dist) {m_pathExtraDistance = dist;}
+	const LocomotorSet& getLocomotorSet(void) const { return m_locomotorSet; }
+	void setPathExtraDistance(Real dist) { m_pathExtraDistance = dist; }
 	inline Real getPathExtraDistance() const { return m_pathExtraDistance; }
 
 	virtual Bool chooseLocomotorSet(LocomotorSetType wst);
 
 	virtual CommandSourceType getLastCommandSource() const { return m_lastCommandSource; }
 
-	const AttackPriorityInfo *getAttackInfo(void) {return m_attackInfo;}
-	void setAttackInfo(const AttackPriorityInfo *info) {m_attackInfo = info;}
+	const AttackPriorityInfo* getAttackInfo(void) { return m_attackInfo; }
+	void setAttackInfo(const AttackPriorityInfo* info) { m_attackInfo = info; }
 
-	void setCurPathfindCell(const ICoord2D &cell) {m_pathfindCurCell = cell;}
-	void setPathfindGoalCell(const ICoord2D &cell) {m_pathfindGoalCell = cell;}
-	
-	void setPathFromWaypoint(const Waypoint *way, const Coord2D *offset);
-	
-	const ICoord2D *getCurPathfindCell(void) const {return &m_pathfindCurCell;}
-	const ICoord2D *getPathfindGoalCell(void) const {return &m_pathfindGoalCell;}
+	void setCurPathfindCell(const ICoord2D& cell) { m_pathfindCurCell = cell; }
+	void setPathfindGoalCell(const ICoord2D& cell) { m_pathfindGoalCell = cell; }
+
+	void setPathFromWaypoint(const Waypoint* way, const Coord2D* offset);
+
+	const ICoord2D* getCurPathfindCell(void) const { return &m_pathfindCurCell; }
+	const ICoord2D* getPathfindGoalCell(void) const { return &m_pathfindGoalCell; }
 
 	/// Return true if our path has higher priority.
-	Bool hasHigherPathPriority(AIUpdateInterface *otherAI) const;
-	void setFinalPosition(const Coord3D *pos) { m_finalPosition = *pos; m_doFinalPosition = false;}
+	Bool hasHigherPathPriority(AIUpdateInterface* otherAI) const;
+	void setFinalPosition(const Coord3D* pos) { m_finalPosition = *pos; m_doFinalPosition = false; }
 
-	virtual UpdateSleepTime update( void );	///< update this object's AI
+	virtual UpdateSleepTime update(void);	///< update this object's AI
 
 	/// if we are attacking "fromID", stop that and attack "toID" instead
 	void transferAttack(ObjectID fromID, ObjectID toID);
 
-	void setCurrentVictim( const Object *nemesis );			///<  Current victim.
-	Object *getCurrentVictim( void ) const;	
-	virtual void notifyVictimIsDead() { }
+	void setCurrentVictim(const Object* nemesis);			///<  Current victim.
+	Object* getCurrentVictim(void) const;
+	virtual void notifyVictimIsDead() {}
 
 	// if we are attacking a position (and NOT an object), return it. otherwise return null.
-	const Coord3D *getCurrentVictimPos( void ) const;	
+	const Coord3D* getCurrentVictimPos(void) const;
 
 	void setLocomotorUpgrade(Bool set);
 
 	// This function is used to notify the unit that it may have a target of opportunity to attack.
-	void wakeUpAndAttemptToTarget( void );
-	
-	void resetNextMoodCheckTime( void );
+	void wakeUpAndAttemptToTarget(void);
+
+	void resetNextMoodCheckTime(void);
 
 	//Specifically set a frame to check next mood time -- added for the purpose of ordering a stealth combat unit that can't 
 	//autoacquire while stealthed, but isn't stealthed and can stealth and is not detected, and the player specifically orders
 	//that unit to stop. In this case, instead of the unit autoacquiring another unit, and preventing him from stealthing,
 	//we will instead delay the autoacquire until later to give him enough time to stealth properly.
-	void setNextMoodCheckTime( UnsignedInt frame );
+	void setNextMoodCheckTime(UnsignedInt frame);
 
 	///< States should call this with calledByAI set true to prevent them from checking every frame
 	///< States that are doing idle checks should call with calledDuringIdle set true so that they check their
 
-	Object *getNextMoodTarget( Bool calledByAI, Bool calledDuringIdle );	
+	Object* getNextMoodTarget(Bool calledByAI, Bool calledDuringIdle);
 	UnsignedInt getNextMoodCheckTime() const { return m_nextMoodCheckTime; }
 
 	// This function will return a combination of MoodMatrixParameter flags.
-	UnsignedInt getMoodMatrixValue( void ) const;
-	UnsignedInt getMoodMatrixActionAdjustment( MoodMatrixAction action ) const;
-	void setAttitude( AttitudeType tude );	///< set the behavior modifier for this agent
+	UnsignedInt getMoodMatrixValue(void) const;
+	UnsignedInt getMoodMatrixActionAdjustment(MoodMatrixAction action) const;
+	void setAttitude(AttitudeType tude);	///< set the behavior modifier for this agent
 
 	// Common AI "status" effects -------------------------------------------------------------------
-	void evaluateMoraleBonus( void );
+	void evaluateMoraleBonus(void);
 
 #ifdef ALLOW_DEMORALIZE
 	// demoralization ... what a nifty word to write.
-	Bool isDemoralized( void ) const { return m_demoralizedFramesLeft > 0; }
-	void setDemoralized( UnsignedInt durationInFrames );
+	Bool isDemoralized(void) const { return m_demoralizedFramesLeft > 0; }
+	void setDemoralized(UnsignedInt durationInFrames);
 #endif
-	
-	Bool canPathThroughUnits( void ) const { return m_canPathThroughUnits; }
-	void setCanPathThroughUnits( Bool canPath ) { m_canPathThroughUnits = canPath; if (canPath) m_isBlockedAndStuck=false;}
+
+	Bool canPathThroughUnits(void) const { return m_canPathThroughUnits; }
+	void setCanPathThroughUnits(Bool canPath) { m_canPathThroughUnits = canPath; if (canPath) m_isBlockedAndStuck = false; }
 
 	// Notify the ai that it has caused a crate to be created (usually by killing something.)
 	void notifyCrate(ObjectID id) { m_crateCreated = id; }
@@ -597,17 +601,17 @@ public:
 
 	// For the attack move, that switches from move to attack, and the attack is CMD_FROM_AI, 
 	// while the move is the original command source.  John A.
-	void friend_setLastCommandSource( CommandSourceType source ) {m_lastCommandSource = source;}
+	void friend_setLastCommandSource(CommandSourceType source) { m_lastCommandSource = source; }
 
 	Bool canAutoAcquire() const { return getAIUpdateModuleData()->m_autoAcquireEnemiesWhenIdle; }
 
-  Bool canAutoAcquireWhileStealthed() const ;
+	Bool canAutoAcquireWhileStealthed() const;
 
 
 protected:
-	
+
 	/*
-		AIUpdates run in the initial phase. 
+		AIUpdates run in the initial phase.
 
 		It's actually quite important that AI (the thing that drives Locomotors) and Physics
 		run in the same order, relative to each other, for a given object; otherwise,
@@ -621,16 +625,16 @@ protected:
 	virtual Bool isAllowedToRespondToAiCommands(const AICommandParms* parms) const;
 
 	// getAttitude is protected because other places should call getMoodMatrixValue to get all the facts they need to consider.
-	AttitudeType getAttitude( void ) const;				///< get the current behavior modifier state.
+	AttitudeType getAttitude(void) const;				///< get the current behavior modifier state.
 
-	Bool blockedBy(Object *other); ///< Returns true if we are blocked by "other"
+	Bool blockedBy(Object* other); ///< Returns true if we are blocked by "other"
 	Bool needToRotate(void); ///< Returns true if we are not pointing in the right direction for movement.
-	Real calculateMaxBlockedSpeed(Object *other) const;
+	Real calculateMaxBlockedSpeed(Object* other) const;
 
 	virtual UpdateSleepTime doLocomotor();	// virtual so subclasses can override
-	void chooseGoodLocomotorFromCurrentSet();
+	virtual void chooseGoodLocomotorFromCurrentSet();
 
-	void setLastCommandSource( CommandSourceType source );
+	void setLastCommandSource(CommandSourceType source);
 
 	// subclasses may want to override this, to use a subclass of AIStateMachine.
 	virtual AIStateMachine* makeStateMachine();
@@ -646,11 +650,11 @@ protected:
 public:
 
 	inline StateID getCurrentStateID() const { return getStateMachine()->getCurrentStateID(); }	///< return the id of the current state of the machine
-/// @ todo -- srj sez: JBA NUKE THIS CODE, IT IS EVIL
-	inline void friend_addToWaypointGoalPath( const Coord3D *pathPoint ) { getStateMachine()->addToGoalPath(pathPoint); }
+	/// @ todo -- srj sez: JBA NUKE THIS CODE, IT IS EVIL
+	inline void friend_addToWaypointGoalPath(const Coord3D* pathPoint) { getStateMachine()->addToGoalPath(pathPoint); }
 
 	// this is intended for use ONLY by W3dWaypointBuffer and AIFollowPathState.
-	inline const Coord3D* friend_getGoalPathPosition( Int index ) const { return getStateMachine()->getGoalPathPosition( index ); }
+	inline const Coord3D* friend_getGoalPathPosition(Int index) const { return getStateMachine()->getGoalPathPosition(index); }
 
 	// this is intended for use ONLY by W3dWaypointBuffer.
 	Int friend_getWaypointGoalPathSize() const;
@@ -659,10 +663,10 @@ public:
 	inline Int friend_getCurrentGoalPathIndex() const { return m_nextGoalPathIndex; }
 
 	// this is intended for use ONLY by AIFollowPathState.
-	inline void friend_setCurrentGoalPathIndex( Int index ) { m_nextGoalPathIndex = index; }
+	inline void friend_setCurrentGoalPathIndex(Int index) { m_nextGoalPathIndex = index; }
 #ifdef DEBUG_LOGGING
-	inline const Coord3D *friend_getRequestedDestination() const { return &m_requestedDestination; }
-	inline const Coord3D *friend_getRequestedDestination2() const { return &m_requestedDestination2; }
+	inline const Coord3D* friend_getRequestedDestination() const { return &m_requestedDestination; }
+	inline const Coord3D* friend_getRequestedDestination2() const { return &m_requestedDestination2; }
 #endif
 
 	inline Object* getGoalObject() { return getStateMachine()->getGoalObject(); }	///< return the id of the current state of the machine
@@ -671,21 +675,24 @@ public:
 	inline WhichTurretType friend_getTurretSync() const { return m_turretSyncFlag; }
 	inline void friend_setTurretSync(WhichTurretType t) { m_turretSyncFlag = t; }
 
-	inline UnsignedInt getPriorWaypointID ( void ) { return m_priorWaypointID; };
-	inline UnsignedInt getCurrentWaypointID ( void ) { return m_currentWaypointID; };
+	inline UnsignedInt getPriorWaypointID(void) { return m_priorWaypointID; };
+	inline UnsignedInt getCurrentWaypointID(void) { return m_currentWaypointID; };
 
-	inline void clearMoveOutOfWay(void) {m_moveOutOfWay1 = INVALID_ID; m_moveOutOfWay2 = INVALID_ID;}
+	inline void clearMoveOutOfWay(void) { m_moveOutOfWay1 = INVALID_ID; m_moveOutOfWay2 = INVALID_ID; }
 
-	inline void setTmpValue(Int val) {m_tmpInt = val;}
-	inline Int getTmpValue(void) {return m_tmpInt;}
+	inline void setTmpValue(Int val) { m_tmpInt = val; }
+	inline Int getTmpValue(void) { return m_tmpInt; }
 
-	inline Bool getRetryPath(void) {return m_retryPath;}
-	
-	inline void setAllowedToChase( Bool allow ) { m_allowedToChase = allow; }
+	inline Bool getRetryPath(void) { return m_retryPath; }
+
+	inline void setAllowedToChase(Bool allow) { m_allowedToChase = allow; }
 	inline Bool isAllowedToChase() const { return m_allowedToChase; }
 
 	// only for AIStateMachine.
 	virtual void friend_notifyStateMachineChanged();
+
+	//TEMP
+	inline int getLocomotorGoalType(void) { return m_locomotorGoalType; }
 
 private:
 	// this should only be called by load/save, or by chooseLocomotorSet.

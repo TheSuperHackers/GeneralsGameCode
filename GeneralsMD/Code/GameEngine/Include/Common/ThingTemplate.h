@@ -241,6 +241,7 @@ enum AmmoPipsStyle CPP_11(: Int)
 		AMMO_PIPS_DEFAULT = 0,  ///< Default style, showing each shot in clip
 		AMMO_PIPS_BAR,	///< Show percentage bar
 		AMMO_PIPS_SINGLE,  ///< like default, but show a single pip only (full or empty)
+		AMMO_PIPS_THIN,  ///< like default, but half width
 	
 		AMMO_PIPS_NUM_TYPES								// leave this last
 };
@@ -250,6 +251,7 @@ static const char* AmmoPipsStyleNames[] =
 	"DEFAULT",
 	"PERCENTAGE_BAR",
 	"SINGLE",
+	"THIN",
 
 	NULL
 };

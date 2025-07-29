@@ -124,8 +124,11 @@ class KindOfPercentProductionChange : public MemoryPoolObject
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(KindOfPercentProductionChange, "KindOfPercentProductionChange")		
 public:
 	KindOfMaskType		m_kindOf;
-	Real							m_percent;
-	UnsignedInt				m_ref;
+	Real				m_percent;
+	UnsignedInt			m_ref;  // Counter
+	Bool				m_stackWithAny; // this entry can stack with any of same values
+	UnsignedInt         m_templateID;  // Bonus Source thingtemplate
+
 };
 EMPTY_DTOR(KindOfPercentProductionChange)
 
@@ -380,16 +383,24 @@ public:
 	void friend_applyDifficultyBonusesForObject(Object* obj, Bool apply) const;
 
 	/// Decrement the ref counter on the typeof production list node
-	void removeKindOfProductionCostChange(KindOfMaskType kindOf, Real percent);
+	void removeKindOfProductionCostChange(KindOfMaskType kindOf, Real percent,
+										  UnsignedInt sourceTemplateID = INVALID_ID,
+										  Bool stackUniqueType = FALSE, Bool stackWithAny = FALSE);
 	/// add type of production cost change (Used for upgrades)
-	void addKindOfProductionCostChange( KindOfMaskType kindOf, Real percent);
+	void addKindOfProductionCostChange( KindOfMaskType kindOf, Real percent,
+										UnsignedInt sourceTemplateID = INVALID_ID,
+										Bool stackUniqueType = FALSE, Bool stackWithAny = FALSE);
 	/// Returns production cost change based on typeof (Used for upgrades)
 	Real getProductionCostChangeBasedOnKindOf( KindOfMaskType kindOf ) const;
 
 	/// Decrement the ref counter on the typeof production list node
-	void removeKindOfProductionTimeChange(KindOfMaskType kindOf, Real percent);
+	void removeKindOfProductionTimeChange(KindOfMaskType kindOf, Real percent,
+		UnsignedInt sourceTemplateID = INVALID_ID,
+		Bool stackUniqueType = FALSE, Bool stackWithAny = FALSE);
 	/// add type of production cost change (Used for upgrades)
-	void addKindOfProductionTimeChange(KindOfMaskType kindOf, Real percent);
+	void addKindOfProductionTimeChange(KindOfMaskType kindOf, Real percent,
+		UnsignedInt sourceTemplateID = INVALID_ID,
+		Bool stackUniqueType = FALSE, Bool stackWithAny = FALSE);
 	/// Returns production cost change based on typeof (Used for upgrades)
 	Real getProductionTimeChangeBasedOnKindOf(KindOfMaskType kindOf) const;
 
@@ -405,6 +416,12 @@ public:
 	/** Return starting veterancy level of a newly built thing of this type
 	*/
 	VeterancyLevel getProductionVeterancyLevel( AsciiString buildTemplateName ) const;
+
+
+	// These values can now be set via module
+	void addProductionCostChangePercent(AsciiString buildTemplateName, Real percent);
+	void addProductionTimeChangePercent(AsciiString buildTemplateName, Real percent);
+
 
 	// Friend function for the script engine's usage.
 	void friend_setSkillset(Int skillSet);

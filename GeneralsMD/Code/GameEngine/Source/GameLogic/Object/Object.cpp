@@ -93,6 +93,7 @@
 #include "GameLogic/Module/StatusDamageHelper.h"
 #include "GameLogic/Module/StickyBombUpdate.h"
 #include "GameLogic/Module/SubdualDamageHelper.h"
+#include "GameLogic/Module/ChronoDamageHelper.h"
 #include "GameLogic/Module/TempWeaponBonusHelper.h"
 #include "GameLogic/Module/ToppleUpdate.h"
 #include "GameLogic/Module/UpdateModule.h"
@@ -145,6 +146,41 @@ static const ModelConditionFlags s_allWeaponFireFlags[WEAPONSLOT_COUNT] =
 		MODELCONDITION_RELOADING_C,
 		MODELCONDITION_PREATTACK_C,
 		MODELCONDITION_USING_WEAPON_C
+	),
+	MAKE_MODELCONDITION_MASK5(
+		MODELCONDITION_FIRING_D,
+		MODELCONDITION_BETWEEN_FIRING_SHOTS_D,
+		MODELCONDITION_RELOADING_D,
+		MODELCONDITION_PREATTACK_D,
+		MODELCONDITION_USING_WEAPON_D
+	),
+	MAKE_MODELCONDITION_MASK5(
+		MODELCONDITION_FIRING_E,
+		MODELCONDITION_BETWEEN_FIRING_SHOTS_E,
+		MODELCONDITION_RELOADING_E,
+		MODELCONDITION_PREATTACK_E,
+		MODELCONDITION_USING_WEAPON_E
+	),
+	MAKE_MODELCONDITION_MASK5(
+		MODELCONDITION_FIRING_F,
+		MODELCONDITION_BETWEEN_FIRING_SHOTS_F,
+		MODELCONDITION_RELOADING_F,
+		MODELCONDITION_PREATTACK_F,
+		MODELCONDITION_USING_WEAPON_F
+	),
+	MAKE_MODELCONDITION_MASK5(
+		MODELCONDITION_FIRING_G,
+		MODELCONDITION_BETWEEN_FIRING_SHOTS_G,
+		MODELCONDITION_RELOADING_G,
+		MODELCONDITION_PREATTACK_G,
+		MODELCONDITION_USING_WEAPON_G
+	),
+	MAKE_MODELCONDITION_MASK5(
+		MODELCONDITION_FIRING_H,
+		MODELCONDITION_BETWEEN_FIRING_SHOTS_H,
+		MODELCONDITION_RELOADING_H,
+		MODELCONDITION_PREATTACK_H,
+		MODELCONDITION_USING_WEAPON_H
 	)
 };
 
@@ -205,6 +241,7 @@ Object::Object( const ThingTemplate *tt, const ObjectStatusMaskType &objectStatu
 	m_statusDamageHelper(NULL),
 	m_tempWeaponBonusHelper(NULL),
 	m_subdualDamageHelper(NULL),
+	m_chronoDamageHelper(NULL),
 	m_smcHelper(NULL),
 	m_wsHelper(NULL),
 	m_defectionHelper(NULL),
@@ -355,6 +392,12 @@ Object::Object( const ThingTemplate *tt, const ObjectStatusMaskType &objectStatu
 		subdualModuleData.setModuleTagNameKey( subdualHelperModuleDataTagNameKey );
 		m_subdualDamageHelper = newInstance(SubdualDamageHelper)(this, &subdualModuleData);		
 		*curB++ = m_subdualDamageHelper;
+
+		static const NameKeyType chronoHelperModuleDataTagNameKey = NAMEKEY("ModuleTag_ChronoDamageHelper");
+		static ChronoDamageHelperModuleData chronoModuleData;
+		chronoModuleData.setModuleTagNameKey(chronoHelperModuleDataTagNameKey);
+		m_chronoDamageHelper = newInstance(ChronoDamageHelper)(this, &chronoModuleData);
+		*curB++ = m_chronoDamageHelper;
 	}
 
 	if (TheAI != NULL
@@ -675,6 +718,7 @@ Object::~Object()
 	m_statusDamageHelper = NULL;
 	m_tempWeaponBonusHelper = NULL;
 	m_subdualDamageHelper = NULL;
+	m_chronoDamageHelper = NULL;
 	m_smcHelper = NULL;
 	m_wsHelper = NULL;
 	m_defectionHelper = NULL;
@@ -1277,7 +1321,12 @@ Bool Object::getWeaponInWeaponSlotSyncedToSlot(WeaponSlotType thisSlot, WeaponSl
 	return ((Int)mask >= 0) &&
 		((mask & (1 << CMD_SYNC_TO_PRIMARY) && otherSlot == PRIMARY_WEAPON) ||
 		(mask & (1 << CMD_SYNC_TO_SECONDARY) && otherSlot == SECONDARY_WEAPON) ||
-		(mask & (1 << CMD_SYNC_TO_TERTIARY) && otherSlot == TERTIARY_WEAPON));
+		(mask & (1 << CMD_SYNC_TO_TERTIARY) && otherSlot == TERTIARY_WEAPON) ||
+		(mask & (1 << CMD_SYNC_TO_FOUR) && otherSlot == WEAPON_FOUR) ||
+		(mask & (1 << CMD_SYNC_TO_FIVE) && otherSlot == WEAPON_FIVE) ||
+		(mask & (1 << CMD_SYNC_TO_SIX) && otherSlot == WEAPON_SIX) ||
+		(mask & (1 << CMD_SYNC_TO_SEVEN) && otherSlot == WEAPON_SEVEN) ||
+		(mask & (1 << CMD_SYNC_TO_EIGHT) && otherSlot == WEAPON_EIGHT));
 
 }
 
@@ -2169,7 +2218,7 @@ void Object::setDisabledUntil( DisabledType type, UnsignedInt frame )
 				// Doh. Also shouldn't be tinting when disabled by scripting.
 				// Doh^2. Also shouldn't be CLEARING tinting if we're disabling by held or script disabledness
 				// Doh^3. Unmanned is no tint too
-				if( type != DISABLED_HELD && type != DISABLED_SCRIPT_DISABLED && type != DISABLED_UNMANNED )
+				if( type != DISABLED_HELD && type != DISABLED_SCRIPT_DISABLED && type != DISABLED_UNMANNED && type != DISABLED_TELEPORT && type != DISABLED_CHRONO)
 				{
 					m_drawable->setTintStatus( TINT_STATUS_DISABLED );
 				}
@@ -2345,6 +2394,8 @@ Bool Object::clearDisabled( DisabledType type )
 	exceptions.set(DISABLED_HELD);
 	exceptions.set(DISABLED_SCRIPT_DISABLED);
 	exceptions.set(DISABLED_UNMANNED);
+	exceptions.set(DISABLED_TELEPORT);
+	exceptions.set(DISABLED_CHRONO);
 
 	DisabledMaskType myFlagsMinusExceptions = getDisabledFlags();
 	myFlagsMinusExceptions.clearAndSet(exceptions, DISABLEDMASK_NONE);
@@ -2940,7 +2991,8 @@ Bool Object::isMobile() const
 	if (isKindOf(KINDOF_IMMOBILE))
 		return false;
 
-	if( isDisabled() )
+	// AW: This excemption is needed, because teleporters still need to listen to AI commands when disabled
+	if( isDisabled() && !isDisabledByType(DISABLED_TELEPORT) )
 		return false;
 
 	return true;
@@ -5320,6 +5372,51 @@ void Object::notifySubdualDamage( Real amount )
 			getDrawable()->setTintStatus(TINT_STATUS_GAINING_SUBDUAL_DAMAGE);
 		else
 			getDrawable()->clearTintStatus(TINT_STATUS_GAINING_SUBDUAL_DAMAGE);
+	}
+}
+
+//-------------------------------------------------------------------------------------------------
+void Object::notifyChronoDamage(Real amount)
+{
+	if (m_chronoDamageHelper)
+		m_chronoDamageHelper->notifyChronoDamage(amount);
+
+	//Real progress = INT_TO_REAL(now - m_dieFrame) / INT_TO_REAL(m_destructionFrame - m_dieFrame);
+
+	BodyModuleInterface* body = getBodyModule();
+	Drawable* draw = getDrawable();
+	if (body != NULL && draw != NULL) {
+
+		Real chronoTh = TheGlobalData->m_chronoDamageDisableThreshold * body->getMaxHealth();
+		Real chronoDmg = body->getCurrentChronoDamageAmount();
+		if (chronoDmg > chronoTh) {
+			Real progress = (chronoDmg - chronoTh) / (body->getMaxHealth() - chronoTh);
+			progress = min(1.0f, max(0.0f, progress));
+
+			Real alpha0 = TheGlobalData->m_chronoDisableAlphaStart;
+			Real alpha1 = TheGlobalData->m_chronoDisableAlphaEnd;
+			Real opacity = (1.0 - progress) * alpha0 + progress * alpha1;
+
+			// DEBUG_LOG(("Object::notifyChronoDamage - progress = %f, alpha = %f\n", progress, opacity));
+
+			draw->setDrawableOpacity(opacity);
+			//draw->setEffectiveOpacity(opacity);
+			//draw->setSecondMaterialPassOpacity(opacity);
+
+		}
+		else if (amount < 0) {
+			draw->setDrawableOpacity(1.0);
+			// DEBUG_LOG(("Object::notifyChronoDamage - reset opacity\n"));
+		}
+	}	
+
+	//If we are gaining chrono damage, we are slowly tinting
+	if (getDrawable())
+	{
+		if (amount > 0)
+			getDrawable()->setTintStatus(TINT_STATUS_GAINING_CHRONO_DAMAGE);
+		else
+			getDrawable()->clearTintStatus(TINT_STATUS_GAINING_CHRONO_DAMAGE);
 	}
 }
 

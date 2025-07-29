@@ -34,6 +34,7 @@
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/DamageFX.h"
+#include "Common/MiscAudio.h"
 #include "GameLogic/Module/BodyModule.h"
 #include "GameLogic/Damage.h"
 #include "GameLogic/Armor.h"
@@ -89,6 +90,11 @@ public:
 	virtual Bool hasAnySubdualDamage() const;
 	virtual Real getCurrentSubdualDamageAmount() const { return m_currentSubdualDamage; }
 
+	virtual UnsignedInt getChronoDamageHealRate() const;
+	virtual Real getChronoDamageHealAmount() const;
+	virtual Bool hasAnyChronoDamage() const;
+	virtual Real getCurrentChronoDamageAmount() const { return m_currentChronoDamage; }
+
 	virtual const DamageInfo *getLastDamageInfo() const { return &m_lastDamageInfo; }	///< return info on last damage dealt to this object
 	virtual UnsignedInt getLastDamageTimestamp() const { return m_lastDamageTimestamp; }	///< return frame of last damage dealt
 	virtual UnsignedInt getLastHealingTimestamp() const { return m_lastHealingTimestamp; }	///< return frame of last damage dealt
@@ -118,7 +124,7 @@ public:
 	virtual void setIndestructible( Bool indestructible );
 	virtual Bool isIndestructible( void ) const { return m_indestructible; }
 
-	virtual void internalChangeHealth( Real delta );								///< change health
+	virtual void internalChangeHealth( Real delta, Bool changeModelCondition = TRUE);								///< change health
 
 	virtual void evaluateVisualCondition();
 	virtual void updateBodyParticleSystems( void );// made public for topple anf building collapse updates -ML
@@ -127,6 +133,11 @@ public:
 	virtual Bool isSubdued() const; 
 	virtual Bool canBeSubdued() const; 
 	virtual void onSubdualChange( Bool isNowSubdued );///< Override this if you want a totally different effect than DISABLED_SUBDUED
+
+	// Chrono
+	virtual Bool isSubduedChrono() const;
+	virtual void onSubdualChronoChange(Bool isNowSubdued); ///< Override this if you want a totally different effect than DISABLED_SUBDUED
+
 
 	virtual void overrideDamageFX(DamageFX* damageFX);
 
@@ -145,6 +156,9 @@ protected:
 	Bool shouldRetaliateAgainstAggressor(Object *obj, Object *damager);
 
 	virtual void internalAddSubdualDamage( Real delta );								///< change health
+	virtual void internalAddChronoDamage( Real delta );								///< change health
+
+	virtual void applyChronoParticleSystems(void);
 
 private:
 
@@ -153,6 +167,7 @@ private:
   Real									m_maxHealth;						///< max health this object can have
   Real									m_initialHealth;				///< starting health for this object
 	Real									m_currentSubdualDamage;	///< Starts at zero and goes up.  Inherited modules will do something when "subdued".
+	Real									m_currentChronoDamage;	///< Same as Subdual, but for CHRONO_GUN
 
 	BodyDamageType				m_curDamageState;				///< last known damage state
 	UnsignedInt						m_nextDamageFXTime;
@@ -167,6 +182,8 @@ private:
 	Bool									m_damageFXOverride;
 
 	BodyParticleSystem *m_particleSystems;				///< particle systems created and attached to this object
+	
+	AudioEventRTS m_chronoDisabledSoundLoop;
 
 	/*
 		Note, you MUST call validateArmorAndDamageFX() before accessing these fields.

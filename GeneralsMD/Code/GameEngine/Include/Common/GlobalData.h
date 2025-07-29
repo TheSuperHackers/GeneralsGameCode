@@ -51,6 +51,7 @@ class INI;
 class WeaponBonusSet;
 enum BodyDamageType CPP_11(: Int);
 enum AIDebugOptions CPP_11(: Int);
+typedef UnsignedInt DeathTypeFlags;
 //enum DrawableColorTint CPP_11(: Int);
 
 // PUBLIC /////////////////////////////////////////////////////////////////////////////////////////
@@ -526,6 +527,22 @@ public:
 	Bool	m_colorTintTypes2; // [TINT_STATUS_COUNT] ;
 
 	Bool m_useOldMoveSpeed;
+
+	Real m_chronoDamageDisableThreshold;
+	UnsignedInt m_chronoDamageHealRate;
+	Real m_chronoDamageHealAmount;
+
+	Real m_chronoDisableAlphaStart;
+	Real m_chronoDisableAlphaEnd;
+
+	// TintStatus m_chronoTintStatusType;
+	AsciiString m_chronoDisableParticleSystemLarge;
+	AsciiString m_chronoDisableParticleSystemMedium;
+	AsciiString m_chronoDisableParticleSystemSmall;
+
+	//AudioEventRTS m_chronoDisableSoundLoop;
+
+	DeathTypeFlags m_defaultExcludedDeathTypes;
 
 
 	// the trailing '\' is included!

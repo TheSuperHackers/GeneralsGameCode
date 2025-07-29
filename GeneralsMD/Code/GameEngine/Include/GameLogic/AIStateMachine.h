@@ -165,6 +165,8 @@ public:
 	StateReturnType setTemporaryState( StateID newStateID, Int frameLimitCoount );			///< change the temporary state of the machine, and number of frames limit.
 	StateID getTemporaryState(void) const {return m_temporaryState?m_temporaryState->getID():INVALID_STATE_ID;}
 
+	AIGuardMachine* getGuardMachine( void );
+
 public:	// overrides.
 	virtual StateReturnType updateStateMachine();				///< run one step of the machine
 #ifdef STATE_MACHINE_DEBUG
@@ -1177,6 +1179,10 @@ public:
 #ifdef STATE_MACHINE_DEBUG
 	virtual AsciiString getName() const ;
 #endif
+
+	// For Teleporter Guard logic
+	inline AIGuardMachine* const getGuardMachine() { return m_guardMachine; }
+
 protected:
 	// snapshot interface
 	virtual void crc( Xfer *xfer );

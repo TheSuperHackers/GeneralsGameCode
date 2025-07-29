@@ -543,6 +543,20 @@ GlobalData* GlobalData::m_theOriginal = NULL;
 
 	{ "UseVanillaDiagonalMoveSpeed",	      INI::parseBool,		NULL,			offsetof(GlobalData, m_useOldMoveSpeed) },
 	{ "TintStatus",	 GlobalData::parseTintStatusType, NULL, offsetof(GlobalData, m_colorTintTypes) },
+	
+	{"ChronoDamageDisableThreshold", INI::parsePercentToReal, NULL, offsetof(GlobalData, m_chronoDamageDisableThreshold)},
+	{"ChronoDamageHealRate", INI::parseDurationUnsignedInt, NULL, offsetof(GlobalData, m_chronoDamageHealRate)},
+	{"ChronoDamageHealAmountPercent", INI::parsePercentToReal, NULL, offsetof(GlobalData, m_chronoDamageHealAmount) },
+	{"ChronoDamageOpacityStart", INI::parsePercentToReal, NULL, offsetof(GlobalData, m_chronoDisableAlphaStart) },
+	{"ChronoDamageOpacityEnd", INI::parsePercentToReal, NULL, offsetof(GlobalData, m_chronoDisableAlphaEnd) },
+	
+	// {"ChronoDamageTintStatusType", TintStatusFlags::parseSingleBitFromINI, NULL, offsetof(GlobalData, m_chronoTintStatusType) },
+	{"ChronoDamageParticleSystemLarge", INI::parseAsciiString, NULL, offsetof(GlobalData, m_chronoDisableParticleSystemLarge) },
+	{"ChronoDamageParticleSystemMedium", INI::parseAsciiString, NULL, offsetof(GlobalData, m_chronoDisableParticleSystemMedium) },
+	{"ChronoDamageParticleSystemSmall", INI::parseAsciiString, NULL, offsetof(GlobalData, m_chronoDisableParticleSystemSmall) },
+
+	{"DefaultExcludedDeathTypes", INI::parseDeathTypeFlagsList, NULL, offsetof(GlobalData, m_defaultExcludedDeathTypes) },
+	
 	{ NULL,					NULL,						NULL,						0 }  // keep this last
 
 };
@@ -1150,6 +1164,19 @@ GlobalData::GlobalData()
 	}
 	// ------------------------------------------------------------------------------
 
+	m_chronoDamageDisableThreshold = 0.1;
+	m_chronoDamageHealRate = 15;
+	m_chronoDamageHealAmount = 0.1;
+
+	m_chronoDisableAlphaStart = 1.0;
+	m_chronoDisableAlphaEnd = 1.0;
+
+	m_defaultExcludedDeathTypes = DEATH_TYPE_FLAGS_NONE;
+
+	m_chronoDisableParticleSystemLarge.clear();
+	m_chronoDisableParticleSystemMedium.clear();
+	m_chronoDisableParticleSystemSmall.clear();
+	// m_chronoTintStatusType = TINT_STATUS_INVALID;
 
 }  // end GlobalData
 

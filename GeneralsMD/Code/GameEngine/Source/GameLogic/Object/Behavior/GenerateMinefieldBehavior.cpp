@@ -465,8 +465,11 @@ UpdateSleepTime GenerateMinefieldBehavior::update()
 	{
 		if (m_generated)
 		{
+			const GenerateMinefieldBehaviorModuleData* d = getGenerateMinefieldBehaviorModuleData();
 			// Upgraded minefield to next level for China Player
-			const UpgradeTemplate *upgradeTemplate = TheUpgradeCenter->findUpgrade( "Upgrade_ChinaEMPMines" );
+			// 
+			// const UpgradeTemplate *upgradeTemplate = TheUpgradeCenter->findUpgrade( "Upgrade_ChinaEMPMines" );
+			const UpgradeTemplate *upgradeTemplate = TheUpgradeCenter->findUpgrade( d->m_mineUpgradeTrigger );
 
 			if (upgradeTemplate)
 			{

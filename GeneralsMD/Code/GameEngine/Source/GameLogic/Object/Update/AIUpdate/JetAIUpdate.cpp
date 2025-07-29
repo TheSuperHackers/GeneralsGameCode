@@ -942,22 +942,22 @@ static Real calcDistSqr(const Coord3D& a, const Coord3D& b)
 	Success: we are on the ground at the runway start
 	Failure: we are unable to get on the ground
 */
-class HeliTakeoffOrLandingState : public State 
+class HeliTakeoffOrLandingState : public State
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(HeliTakeoffOrLandingState, "HeliTakeoffOrLandingState")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(HeliTakeoffOrLandingState, "HeliTakeoffOrLandingState")
 protected:
 	// snapshot interface
-	virtual void crc( Xfer *xfer )
+	virtual void crc(Xfer* xfer)
 	{
 		// empty. jba.
 	}
 
-	virtual void xfer( Xfer *xfer )
+	virtual void xfer(Xfer* xfer)
 	{
 		// version
 		XferVersion currentVersion = 1;
 		XferVersion version = currentVersion;
-		xfer->xferVersion( &version, currentVersion );
+		xfer->xferVersion(&version, currentVersion);
 
 		// set on create. xfer->xferBool(&m_landing);
 		xfer->xferCoord3D(&m_path[0]);
@@ -978,17 +978,17 @@ private:
 	Real			m_parkingOrientation;
 	Bool			m_landing;
 public:
-	HeliTakeoffOrLandingState( StateMachine *machine, Bool landing ) : m_landing(landing), 
-		State( machine, "HeliTakeoffOrLandingState" ), m_index(0)
-		{ 
-			m_parkingLoc.zero();
-		}
+	HeliTakeoffOrLandingState(StateMachine* machine, Bool landing) : m_landing(landing),
+		State(machine, "HeliTakeoffOrLandingState"), m_index(0)
+	{
+		m_parkingLoc.zero();
+	}
 
 	virtual StateReturnType onEnter()
 	{
 		Object* jet = getMachineOwner();
 		JetAIUpdate* jetAI = (JetAIUpdate*)jet->getAIUpdateInterface();
-		if( !jetAI )
+		if (!jetAI)
 			return STATE_FAILURE;
 
 		jetAI->friend_setTakeoffInProgress(!m_landing);
@@ -1006,7 +1006,7 @@ public:
 		ParkingPlaceBehaviorInterface* pp = getPP(jet->getProducerID(), &airfield);
 		if (pp == NULL)
 			return STATE_SUCCESS;	// no airfield? just skip this step
-		
+
 		Coord3D landingApproach;
 		if (jet->isKindOf(KINDOF_PRODUCED_AT_HELIPAD))
 		{
@@ -1034,7 +1034,7 @@ public:
 			landingApproach = m_parkingLoc;
 			landingApproach.z += (ppinfo.runwayApproach.z - ppinfo.runwayEnd.z);
 		}
-		
+
 		if (m_landing)
 		{
 			m_path[0] = landingApproach;
@@ -1058,10 +1058,10 @@ public:
 			return STATE_FAILURE;
 
 		JetAIUpdate* jetAI = (JetAIUpdate*)jet->getAIUpdateInterface();
-		if( !jetAI )
+		if (!jetAI)
 			return STATE_FAILURE;
 
-// I have disabled this because it is no longer necessary and is a bit funky lookin' (srj)
+		// I have disabled this because it is no longer necessary and is a bit funky lookin' (srj)
 #ifdef NOT_IN_USE
 		// magically position it correctly.
 		jet->getPhysics()->scrubVelocity2D(0);
@@ -1071,18 +1071,18 @@ public:
 		Coord3D pos = *jet->getPosition();
 		Real dx = hoverloc.x - pos.x;
 		Real dy = hoverloc.y - pos.y;
-		Real dSqr = dx*dx+dy*dy;
+		Real dSqr = dx * dx + dy * dy;
 		const Real DARN_CLOSE = 0.25f;
-		if (dSqr < DARN_CLOSE) 
+		if (dSqr < DARN_CLOSE)
 		{
 			jet->setPosition(&hoverloc);
-		} 
-		else 
+		}
+		else
 		{
 			Real dist = sqrtf(dSqr);
-			if (dist<1) dist = 1;
-			pos.x += PATHFIND_CELL_SIZE_F*dx/(dist*LOGICFRAMES_PER_SECOND);
-			pos.y += PATHFIND_CELL_SIZE_F*dy/(dist*LOGICFRAMES_PER_SECOND);
+			if (dist < 1) dist = 1;
+			pos.x += PATHFIND_CELL_SIZE_F * dx / (dist * LOGICFRAMES_PER_SECOND);
+			pos.y += PATHFIND_CELL_SIZE_F * dy / (dist * LOGICFRAMES_PER_SECOND);
 			jet->setPosition(&pos);
 		}
 #else
@@ -1100,25 +1100,25 @@ public:
 		jetAI->setLocomotorGoalPositionExplicit(m_path[m_index]);
 
 		const Real THRESH = 3.0f;
-		const Real THRESH_SQR = THRESH*THRESH;
+		const Real THRESH_SQR = THRESH * THRESH;
 		const Coord3D* a = jet->getPosition();
 		const Coord3D* b = &m_path[m_index];
 		Real distSqr = calcDistSqr(*a, *b);
 		if (distSqr <= THRESH_SQR)
 			++m_index;
-		
+
 		if (m_index >= 2)
 			return STATE_SUCCESS;
 
 		return STATE_CONTINUE;
 	}
 
-	virtual void onExit( StateExitType status )
+	virtual void onExit(StateExitType status)
 	{
 		// just in case.
 		Object* jet = getMachineOwner();
 		JetAIUpdate* jetAI = (JetAIUpdate*)jet->getAIUpdateInterface();
-		if( !jetAI )
+		if (!jetAI)
 			return;
 
 		jetAI->friend_setTakeoffInProgress(false);
@@ -1153,6 +1153,382 @@ public:
 
 };
 EMPTY_DTOR(HeliTakeoffOrLandingState)
+
+
+//-------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------
+class VtolParkOrientState : public State
+{
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(VtolParkOrientState, "VtolParkOrientState")
+protected:
+	// snapshot interface STUBBED.
+	virtual void crc(Xfer* xfer) {};
+	virtual void xfer(Xfer* xfer) { XferVersion cv = 1;	XferVersion v = cv; xfer->xferVersion(&v, cv); }
+	virtual void loadPostProcess() {};
+
+public:
+	VtolParkOrientState(StateMachine* machine) : State(machine, "VtolParkOrientState") {}
+
+	virtual StateReturnType onEnter()
+	{
+		Object* jet = getMachineOwner();
+		JetAIUpdate* jetAI = (JetAIUpdate*)jet->getAIUpdateInterface();
+		if (!jetAI)
+			return STATE_FAILURE;
+
+		jetAI->friend_setTakeoffInProgress(false);
+		jetAI->friend_setLandingInProgress(true);
+
+		jetAI->ignoreObstacleID(jet->getProducerID());
+
+		jetAI->friend_setUseSpecialReturnLoco(false);
+		jetAI->AIUpdateInterface::chooseLocomotorSet(LOCOMOTORSET_VTOL);
+
+		return STATE_CONTINUE;
+	}
+
+	virtual StateReturnType update()
+	{
+		Object* jet = getMachineOwner();
+		if (jet->isEffectivelyDead())
+			return STATE_FAILURE;
+
+		JetAIUpdate* jetAI = (JetAIUpdate*)jet->getAIUpdateInterface();
+		if (!jetAI)
+		{
+			return STATE_FAILURE;
+		}
+
+		ParkingPlaceBehaviorInterface* pp = getPP(jet->getProducerID());
+		if (pp == NULL)
+			return STATE_FAILURE;
+
+		ParkingPlaceBehaviorInterface::PPInfo ppinfo;
+		if (!pp->reserveSpace(jet->getID(), jetAI->friend_getParkingOffset(), &ppinfo))
+			return STATE_FAILURE;
+
+		// Check Orientation
+		Real angleDiff = fabs(stdAngleDiff(jet->getOrientation(), ppinfo.parkingOrientation));
+
+		// Check Position (Slide into place)
+		Coord3D hoverloc = ppinfo.parkingSpace;
+		if (jet->testStatus(OBJECT_STATUS_DECK_HEIGHT_OFFSET))
+		{
+			hoverloc = ppinfo.runwayPrep;
+		}
+		hoverloc.z = jet->getPosition()->z;
+
+		Coord3D pos = *jet->getPosition();
+		Real dx = hoverloc.x - pos.x;
+		Real dy = hoverloc.y - pos.y;
+		Real dSqr = dx * dx + dy * dy;
+		const Real DARN_CLOSE = 3.0f; // 0.25f;
+
+		/*DEBUG_LOG((">>> VtolParkOrientState - Update: dx = %f, dy = %f, dSqr = %f; loco = %s\n",
+			dx, dy, dSqr,
+			jetAI->getCurLocomotor()->getTemplateName().str()));*/
+
+		if (dSqr < DARN_CLOSE)
+		{
+			jet->setPosition(&hoverloc);
+		}
+		else
+		{
+			Real dist = sqrtf(dSqr);
+			if (dist < 2) dist = 2;
+			pos.x += PATHFIND_CELL_SIZE_F * dx / (dist * LOGICFRAMES_PER_SECOND) * 5.0f;
+			pos.y += PATHFIND_CELL_SIZE_F * dy / (dist * LOGICFRAMES_PER_SECOND) * 5.0f;
+			jet->setPosition(&pos);
+		}
+
+		const Real A_THRESH = 0.001f;
+		if (angleDiff <= A_THRESH && dSqr <= DARN_CLOSE) {
+			return STATE_SUCCESS;
+		}
+
+		//if (fabs(stdAngleDiff(jet->getOrientation(), ppinfo.parkingOrientation)) <= THRESH)
+		//	return STATE_SUCCESS;
+
+		// magically position it correctly.
+		/*jet->getPhysics()->scrubVelocity2D(0);
+		Coord3D hoverloc = ppinfo.parkingSpace;
+		if (jet->testStatus(OBJECT_STATUS_DECK_HEIGHT_OFFSET))
+		{
+			hoverloc = ppinfo.runwayPrep;
+		}
+
+		hoverloc.z = jet->getPosition()->z;
+		jet->setPosition(&hoverloc);*/
+
+		jetAI->setLocomotorGoalOrientation(ppinfo.parkingOrientation);
+
+		return STATE_CONTINUE;
+	}
+
+	virtual void onExit(StateExitType status)
+	{
+		Object* jet = getMachineOwner();
+		JetAIUpdate* jetAI = (JetAIUpdate*)jet->getAIUpdateInterface();
+		if (!jetAI)
+			return;
+
+		jetAI->friend_setTakeoffInProgress(false);
+		jetAI->friend_setLandingInProgress(false);
+		jetAI->ignoreObstacleID(INVALID_ID);
+	}
+};
+EMPTY_DTOR(VtolParkOrientState)
+
+// ------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------
+/*
+	Success: we are on the ground at the runway start
+	Failure: we are unable to get on the ground
+*/
+class VtolTakeoffOrLandingState : public State
+{
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(VtolTakeoffOrLandingState, "VtolTakeoffOrLandingState")
+protected:
+	// snapshot interface
+	virtual void crc(Xfer* xfer)
+	{
+		// empty. jba.
+	}
+
+	virtual void xfer(Xfer* xfer)
+	{
+		// version
+		XferVersion currentVersion = 1;
+		XferVersion version = currentVersion;
+		xfer->xferVersion(&version, currentVersion);
+
+		// set on create. xfer->xferBool(&m_landing);
+		xfer->xferCoord3D(&m_path[0]);
+		xfer->xferCoord3D(&m_path[1]);
+		xfer->xferInt(&m_index);
+		xfer->xferCoord3D(&m_parkingLoc);
+		xfer->xferReal(&m_parkingOrientation);
+	}
+	virtual void loadPostProcess()
+	{
+		// empty. jba.
+	}
+
+private:
+	Coord3D		m_path[2];
+	Int				m_index;
+	Coord3D		m_parkingLoc;
+	Real			m_parkingOrientation;
+	Bool			m_landing;
+public:
+	VtolTakeoffOrLandingState(StateMachine* machine, Bool landing) : m_landing(landing),
+		State(machine, "VtolTakeoffOrLandingState"), m_index(0)
+	{
+		m_parkingLoc.zero();
+	}
+
+	virtual StateReturnType onEnter()
+	{
+		Object* jet = getMachineOwner();
+		JetAIUpdate* jetAI = (JetAIUpdate*)jet->getAIUpdateInterface();
+		if (!jetAI)
+			return STATE_FAILURE;
+
+		jetAI->friend_setTakeoffInProgress(!m_landing);
+		jetAI->friend_setLandingInProgress(m_landing);
+		jetAI->friend_setAllowAirLoco(true);
+
+		//TODO: different sound and state for landing and takeoff
+		jetAI->AIUpdateInterface::chooseLocomotorSet(LOCOMOTORSET_VTOL);
+
+		Locomotor* loco = jetAI->getCurLocomotor();
+		DEBUG_ASSERTCRASH(loco, ("no loco"));
+		loco->setUsePreciseZPos(true);
+		loco->setUltraAccurate(true);
+
+		jetAI->ignoreObstacleID(jet->getProducerID());
+
+		Object* airfield;
+		ParkingPlaceBehaviorInterface* pp = getPP(jet->getProducerID(), &airfield);
+		if (pp == NULL)
+			return STATE_SUCCESS;	// no airfield? just skip this step
+
+		Coord3D landingApproach;
+		
+		ParkingPlaceBehaviorInterface::PPInfo ppinfo;
+
+		if (!pp->reserveSpace(jet->getID(), jetAI->friend_getParkingOffset(), &ppinfo))
+			return STATE_FAILURE;
+		m_parkingLoc = ppinfo.parkingSpace;
+		m_parkingOrientation = ppinfo.parkingOrientation;
+
+		//landingApproach = m_parkingLoc;
+		//landingApproach.z += (ppinfo.runwayApproach.z - ppinfo.runwayEnd.z);
+
+
+		if (m_landing)
+		{
+			jetAI->friend_enableLandingEffects(true);
+
+			landingApproach = *jet->getPosition();
+
+			m_path[0] = landingApproach;
+			m_path[1] = m_parkingLoc;
+
+			/*DEBUG_LOG((">>> HeliTakeoffOrLANDINGState - Enter: m_path[0] = %f, %f, %f\n",
+				m_path[0].x, m_path[0].y, m_path[0].z));
+			DEBUG_LOG((">>> HeliTakeoffOrLANDINGState - Enter: m_path[1] = %f, %f, %f\n",
+				m_path[1].x, m_path[1].y, m_path[1].z));*/
+
+			jetAI->friend_setUseSpecialReturnLoco(false);
+		}
+		else
+		{  // Take-off
+			jetAI->friend_enableTakeOffEffects(true);
+
+			landingApproach = m_parkingLoc;
+
+			m_path[0] = m_parkingLoc;
+			m_path[1] = landingApproach;
+
+			// We return to our preferred height
+			Real targetHeight = jetAI->getCurLocomotor()->getPreferredHeight()
+				+ Locomotor::getSurfaceHtAtPt(landingApproach.x, landingApproach.y);
+
+			m_path[1].z = targetHeight;
+
+			//DEBUG_LOG((">>> HeliTAKEOFFOrLandingState - Enter: m_path[1] = %f, %f, %f\n",
+			//	m_path[1].x, m_path[1].y, m_path[1].z));
+		}
+		m_index = 0;
+
+		// DEBUG_LOG(("HeliTakeoffOrLandingState - Enter: Locomotor = %s \n", loco->getTemplateName().str()));
+
+		return STATE_CONTINUE;
+	}
+
+	virtual StateReturnType update()
+	{
+		Object* jet = getMachineOwner();
+		if (jet->isEffectivelyDead())
+			return STATE_FAILURE;
+
+		JetAIUpdate* jetAI = (JetAIUpdate*)jet->getAIUpdateInterface();
+		if (!jetAI)
+			return STATE_FAILURE;
+
+		// I have disabled this because it is no longer necessary and is a bit funky lookin' (srj)
+
+#ifdef NOT_IN_USE
+		// magically position it correctly.
+		jet->getPhysics()->scrubVelocity2D(0);
+		Coord3D hoverloc = m_path[m_index];
+		hoverloc.z = jet->getPosition()->z;
+#if 1
+		Coord3D pos = *jet->getPosition();
+		Real dx = hoverloc.x - pos.x;
+		Real dy = hoverloc.y - pos.y;
+		Real dSqr = dx * dx + dy * dy;
+		const Real DARN_CLOSE = 0.25f;
+		if (dSqr < DARN_CLOSE)
+		{
+			jet->setPosition(&hoverloc);
+		}
+		else
+		{
+			Real dist = sqrtf(dSqr);
+			if (dist < 1) dist = 1;
+			pos.x += PATHFIND_CELL_SIZE_F * dx / (dist * LOGICFRAMES_PER_SECOND);
+			pos.y += PATHFIND_CELL_SIZE_F * dy / (dist * LOGICFRAMES_PER_SECOND);
+			jet->setPosition(&pos);
+		}
+#else
+		jet->setPosition(&hoverloc);
+#endif
+		jet->setOrientation(m_parkingOrientation);
+#endif
+		Int targetIndex = 2;
+
+		if (!m_landing) {
+			//targetIndex = 3;
+			TheAI->pathfinder()->updateGoal(jet, &m_path[m_index], LAYER_GROUND);
+		}
+
+		jetAI->setLocomotorGoalPositionExplicit(m_path[m_index]);
+
+		//DEBUG_LOG((">>> HeliTakeoffOrLandingState - Update: index = %d, goalPos = %f, %f, %f; loco = %s\n",
+		//	m_index, m_path[m_index].x, m_path[m_index].y, m_path[m_index].z,
+		//	jetAI->getCurLocomotor()->getTemplateName().str()));
+
+		const Real THRESH = 3.0f;
+		const Real THRESH_SQR = THRESH * THRESH;
+		const Coord3D* a = jet->getPosition();
+		const Coord3D* b = &m_path[m_index];
+		Real distSqr = calcDistSqr(*a, *b);
+		if (distSqr <= THRESH_SQR)
+			++m_index;
+
+		if (m_index >= targetIndex)
+			return STATE_SUCCESS;
+
+		return STATE_CONTINUE;
+	}
+
+	virtual void onExit(StateExitType status)
+	{
+		// just in case.
+		Object* jet = getMachineOwner();
+		JetAIUpdate* jetAI = (JetAIUpdate*)jet->getAIUpdateInterface();
+		if (!jetAI)
+			return;
+
+		jetAI->friend_setTakeoffInProgress(false);
+		jetAI->friend_setLandingInProgress(false);
+
+		// Paranoia checks - sometimes onExit is called when we are 
+		// shutting down, and not all pieces are valid.  CurLocomotor
+		// is definitely null in some cases. jba.
+		Locomotor* loco = jetAI->getCurLocomotor();
+		if (loco)
+		{
+			loco->setUsePreciseZPos(false);
+			loco->setUltraAccurate(false);
+			// don't restore lift if dead -- this may fight with JetSlowDeathBehavior!
+			if (!jet->isEffectivelyDead())
+				loco->setMaxLift(BIGNUM);
+		}
+
+		jetAI->ignoreObstacleID(INVALID_ID);
+		ParkingPlaceBehaviorInterface* pp = getPP(jet->getProducerID());
+		if (m_landing)
+		{
+			jetAI->friend_enableLandingEffects(false);
+			jetAI->friend_setAllowAirLoco(false);
+			jetAI->AIUpdateInterface::chooseLocomotorSet(LOCOMOTORSET_TAXIING);
+		}
+		else
+		{
+			jetAI->friend_enableTakeOffEffects(false);
+			
+			jetAI->chooseLocomotorSet(LOCOMOTORSET_NORMAL);
+
+			//TODO: Fix this terrible nose tilt
+
+			// Snap to preferred height
+			/*Coord3D pos = *jet->getPosition();
+			pos.z = jetAI->getCurLocomotor()->getPreferredHeight()
+				+ Locomotor::getSurfaceHtAtPt(pos.x, pos.y);
+			jet->setPosition(&pos);*/
+
+			if (pp && !jetAI->friend_keepsParkingSpaceWhenAirborne())
+				pp->releaseSpace(jet->getID());
+		}
+
+	}
+
+};
+EMPTY_DTOR(VtolTakeoffOrLandingState)
+
 
 //-------------------------------------------------------------------------------------------------
 class JetOrHeliParkOrientState : public State
@@ -1661,6 +2037,40 @@ HeliAIStateMachine::~HeliAIStateMachine()
 //-------------------------------------------------------------------------------------------------
 
 //-------------------------------------------------------------------------------------------------
+class VtolAIStateMachine : public AIStateMachine
+{
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(VtolAIStateMachine, "VtolAIStateMachine");
+
+public:
+	VtolAIStateMachine(Object* owner, AsciiString name);
+
+};
+
+//-------------------------------------------------------------------------------------------------
+VtolAIStateMachine::VtolAIStateMachine(Object* owner, AsciiString name) : AIStateMachine(owner, name)
+{
+	defineState(RETURNING_FOR_LANDING, newInstance(JetOrHeliReturnForLandingState)(this), LANDING_AWAIT_CLEARANCE, RETURN_TO_DEAD_AIRFIELD);
+	defineState(TAKING_OFF_AWAIT_CLEARANCE, newInstance(SuccessState)(this), TAKING_OFF, AI_IDLE);
+	defineState(TAKING_OFF, newInstance(VtolTakeoffOrLandingState)(this, false), AI_IDLE, AI_IDLE);
+	defineState(LANDING_AWAIT_CLEARANCE, newInstance(SuccessState)(this), ORIENT_FOR_PARKING_PLACE, AI_IDLE);
+	defineState(ORIENT_FOR_PARKING_PLACE, newInstance(VtolParkOrientState)(this), LANDING, AI_IDLE);
+	defineState(LANDING, newInstance(VtolTakeoffOrLandingState)(this, true), RELOAD_AMMO, AI_IDLE);
+	defineState(RELOAD_AMMO, newInstance(JetOrHeliReloadAmmoState)(this), AI_IDLE, AI_IDLE);
+	defineState(RETURN_TO_DEAD_AIRFIELD, newInstance(JetOrHeliReturningToDeadAirfieldState)(this), CIRCLING_DEAD_AIRFIELD, RETURN_TO_DEAD_AIRFIELD);
+	defineState(CIRCLING_DEAD_AIRFIELD, newInstance(JetOrHeliCirclingDeadAirfieldState)(this), AI_IDLE, AI_IDLE);
+	defineState(TAXI_FROM_HANGAR, newInstance(JetOrHeliTaxiState)(this, FROM_HANGAR), AI_IDLE, AI_IDLE);
+}
+
+//-------------------------------------------------------------------------------------------------
+VtolAIStateMachine::~VtolAIStateMachine()
+{
+}
+
+//-------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------
+
+//-------------------------------------------------------------------------------------------------
 JetAIUpdateModuleData::JetAIUpdateModuleData()
 {
 	m_outOfAmmoDamagePerSecond = 0;
@@ -1721,10 +2131,26 @@ JetAIUpdateModuleData::JetAIUpdateModuleData()
 //-------------------------------------------------------------------------------------------------
 AIStateMachine* JetAIUpdate::makeStateMachine()
 {
-	if (getJetAIUpdateModuleData()->m_needsRunway)
-		return newInstance(JetAIStateMachine)( getObject(), "JetAIStateMachine");
-	else
-		return newInstance(HeliAIStateMachine)( getObject(), "HeliAIStateMachine");
+
+
+	// If we need a runway, we are a jet
+	if (getJetAIUpdateModuleData()->m_needsRunway) {
+		return newInstance(JetAIStateMachine)(getObject(), "JetAIStateMachine");
+	}
+	else {
+
+		// return newInstance(HeliAIStateMachine)(getObject(), "HeliAIStateMachine");
+
+		if (getObject()->isKindOf(KINDOF_PRODUCED_AT_HELIPAD)) {
+			return newInstance(HeliAIStateMachine)(getObject(), "HeliAIStateMachine");
+		}
+		// Else we need hybrid VTOL logic
+		else {
+			return newInstance(VtolAIStateMachine)(getObject(), "VtolAIStateMachine");
+		}
+
+	}
+		
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -1733,6 +2159,13 @@ JetAIUpdate::JetAIUpdate( Thing *thing, const ModuleData* moduleData ) : AIUpdat
 	m_flags = 0;
 	m_afterburnerSound = *(getObject()->getTemplate()->getPerUnitSound("Afterburner"));
 	m_afterburnerSound.setObjectID(getObject()->getID());
+
+	m_takeOffSound = *(getObject()->getTemplate()->getPerUnitSound("TakeOff"));
+	m_takeOffSound.setObjectID(getObject()->getID());
+
+	m_landingSound = *(getObject()->getTemplate()->getPerUnitSound("Landing"));
+	m_landingSound.setObjectID(getObject()->getID());
+
 	m_attackLocoExpireFrame = 0;
 	m_attackersMissExpireFrame = 0;
 	m_untargetableExpireFrame = 0;
@@ -2536,6 +2969,51 @@ void JetAIUpdate::friend_enableAfterburners(Bool v)
 		if (m_afterburnerSound.isCurrentlyPlaying())
 		{
 			TheAudio->removeAudioEvent(m_afterburnerSound.getPlayingHandle());
+		}
+	}
+}
+
+//-------------------------------------------------------------------------------------------------
+void JetAIUpdate::friend_enableTakeOffEffects(Bool v)
+{
+	Object* jet = getObject();
+	if (v)
+	{
+		jet->setModelConditionState(MODELCONDITION_TAKEOFF);
+		if (!m_takeOffSound.isCurrentlyPlaying())
+		{
+			m_takeOffSound.setObjectID(jet->getID());
+			m_takeOffSound.setPlayingHandle(TheAudio->addAudioEvent(&m_takeOffSound));
+		}
+	}
+	else
+	{
+		jet->clearModelConditionState(MODELCONDITION_TAKEOFF);
+		if (m_takeOffSound.isCurrentlyPlaying())
+		{
+			TheAudio->removeAudioEvent(m_takeOffSound.getPlayingHandle());
+		}
+	}
+}
+//-------------------------------------------------------------------------------------------------
+void JetAIUpdate::friend_enableLandingEffects(Bool v)
+{
+	Object* jet = getObject();
+	if (v)
+	{
+		jet->setModelConditionState(MODELCONDITION_LANDING);
+		if (!m_landingSound.isCurrentlyPlaying())
+		{
+			m_landingSound.setObjectID(jet->getID());
+			m_landingSound.setPlayingHandle(TheAudio->addAudioEvent(&m_landingSound));
+		}
+	}
+	else
+	{
+		jet->clearModelConditionState(MODELCONDITION_LANDING);
+		if (m_landingSound.isCurrentlyPlaying())
+		{
+			TheAudio->removeAudioEvent(m_landingSound.getPlayingHandle());
 		}
 	}
 }

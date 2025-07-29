@@ -77,6 +77,20 @@ class Player;
 
 // FORWARD REFERENCES /////////////////////////////////////////////////////////////////////////////
 
+enum BonusStackingType CPP_11(: Int)
+{
+	NO_STACKING = 0,  // Default behaviour: Values of different percentage stack
+	OTHER_TYPE = 1,  // Values from the different source object types stack.
+	SAME_TYPE = 2   // Values from the same type of source object stack.
+};
+static const char* TheBonusStackingTypeNames[] =
+{
+	"DIFFERENT_VALUE",
+	"OTHER_TYPE",
+	"SAME_TYPE",
+	NULL
+};
+
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 class CostModifierUpgradeModuleData : public UpgradeModuleData
@@ -90,6 +104,8 @@ public:
 
 	Real m_percentage;
 	KindOfMaskType m_kindOf;
+	Bool m_isOneShot;
+	BonusStackingType m_stackingType;
 };
 
 //-------------------------------------------------------------------------------------------------

@@ -53,8 +53,10 @@
 #include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
 
 #include "Common/player.h"
+#include "Common/ThingTemplate.h"
 #include "Common/Xfer.h"
 #include "GameLogic/Module/ProductionTimeModifierUpgrade.h"
+#include "GameLogic/Module/CostModifierUpgrade.h"
 #include "GameLogic/Object.h"
 #include "Common/BitFlagsIO.h"
 //-----------------------------------------------------------------------------
@@ -77,6 +79,8 @@ ProductionTimeModifierUpgradeModuleData::ProductionTimeModifierUpgradeModuleData
 
 	m_kindOf = KINDOFMASK_NONE;
 	m_percentage = 0;
+	m_isOneShot = FALSE;
+	m_stackingType = NO_STACKING;
 
 }  // end ProductionTimeModifierUpgradeModuleData
 
@@ -90,6 +94,8 @@ ProductionTimeModifierUpgradeModuleData::ProductionTimeModifierUpgradeModuleData
 	{
 		{ "EffectKindOf",		KindOfMaskType::parseFromINI, NULL, offsetof(ProductionTimeModifierUpgradeModuleData, m_kindOf ) },
 		{ "Percentage",			INI::parsePercentToReal, NULL, offsetof(ProductionTimeModifierUpgradeModuleData, m_percentage ) },
+		{ "IsOneShotUpgrade",		INI::parseBool, NULL, offsetof(ProductionTimeModifierUpgradeModuleData, m_isOneShot) },
+		{ "BonusStacksWith",		INI::parseIndexList, TheBonusStackingTypeNames, offsetof(ProductionTimeModifierUpgradeModuleData, m_stackingType) },
 		{ 0, 0, 0, 0 } 
 	};
 	p.add(dataFieldParse);
@@ -119,15 +125,25 @@ ProductionTimeModifierUpgrade::~ProductionTimeModifierUpgrade( void )
 //-------------------------------------------------------------------------------------------------
 void ProductionTimeModifierUpgrade::onDelete( void )
 {
+	const ProductionTimeModifierUpgradeModuleData* d = getProductionTimeModifierUpgradeModuleData();
+
+	// This is a global one time upgrade. Don't remove it.
+	if (d->m_isOneShot)
+		return;
 
 	// if we haven't been upgraded there is nothing to clean up
 	if( isAlreadyUpgraded() == FALSE )
 		return;
 
+	Bool stackWithAny = d->m_stackingType == SAME_TYPE;
+	Bool stackUniqueType = d->m_stackingType == OTHER_TYPE;
+
 	// remove the radar from the player
-	Player *player = getObject()->getControllingPlayer();
-	if( player )
-		player->removeKindOfProductionTimeChange(getProductionTimeModifierUpgradeModuleData()->m_kindOf, getProductionTimeModifierUpgradeModuleData()->m_percentage );
+	Player* player = getObject()->getControllingPlayer();
+	if (player) {
+		player->removeKindOfProductionTimeChange(d->m_kindOf, d->m_percentage,
+			getObject()->getTemplate()->getTemplateID(), stackUniqueType, stackWithAny);
+	}
 
 	// this upgrade module is now "not upgraded"
 	setUpgradeExecuted(FALSE);

@@ -361,6 +361,12 @@ public:
 
 	void startMove(void); ///< Indicates that a move is starting, primarily to reset the donut timer. jba.
 
+	static Real getSurfaceHtAtPt(Real x, Real y);
+
+	inline void applySpeedMultiplier(Real scalar) { m_speedMultiplier *= scalar; }
+	// inline void setSpeedMultiplier(Real value) { m_speedMultiplier = value; }
+	inline Real getSpeedMultiplier(void) const { return m_speedMultiplier; }
+
 protected:
 	void moveTowardsPositionLegs(Object* obj, PhysicsBehavior *physics, const Coord3D& goalPos, Real onPathDistToGoal, Real desiredSpeed);
 	void moveTowardsPositionLegsWander(Object* obj, PhysicsBehavior *physics, const Coord3D& goalPos, Real onPathDistToGoal, Real desiredSpeed);
@@ -389,7 +395,6 @@ protected:
 	Bool handleBehaviorZ(Object* obj, PhysicsBehavior *physics, const Coord3D& goalPos);
 	PhysicsTurningType rotateObjAroundLocoPivot(Object* obj, const Coord3D& goalPos, Real maxTurnRate, Real *relAngle = NULL);
 
-	Real getSurfaceHtAtPt(Real x, Real y);
 	Real calcLiftToUseAtPt(Object* obj, PhysicsBehavior *physics, Real curZ, Real surfaceAtPt, Real preferredHeight);
 
 	Bool fixInvalidPosition(Object* obj, PhysicsBehavior *physics);
@@ -455,6 +460,7 @@ private:
 	Real				m_offsetIncrement;
 	UnsignedInt m_donutTimer;				///< Frame time to keep units from doing the donut. jba.
 
+	Real			    m_speedMultiplier;  ///< scalar to max speed and acceleration
 
 };
 

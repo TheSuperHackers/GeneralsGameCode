@@ -292,6 +292,9 @@ void OpenContain::addOrRemoveObjFromWorld(Object* obj, Bool add)
 //-------------------------------------------------------------------------------------------------
 void OpenContain::addToContain( Object *rider )
 {
+	if (rider->isDisabledByType(DISABLED_TELEPORT))
+		return;
+
 	if( getObject()->checkAndDetonateBoobyTrap(rider) )
 	{
 		// Whoops, I was mined.  Cancel if I (or they) am now dead.
@@ -891,6 +894,9 @@ void OpenContain::onDie( const DamageInfo * damageInfo )
 // ------------------------------------------------------------------------------------------------
 Bool OpenContain::isValidContainerFor(const Object* obj, Bool checkCapacity) const
 {
+	//if (obj->isDisabledByType(DISABLED_TELEPORT))
+	//	return false;
+
 	const Object *us = getObject();
 	const OpenContainModuleData *modData = getOpenContainModuleData();
 

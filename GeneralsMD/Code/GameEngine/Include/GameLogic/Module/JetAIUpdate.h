@@ -126,6 +126,8 @@ public:
 	void friend_setAllowCircling(Bool v) { setFlag(ALLOW_CIRCLING, v); }
 	const Coord3D& friend_getLandingPosForHelipadStuff() const { return m_landingPosForHelipadStuff; }
 	void friend_enableAfterburners(Bool v);
+	void friend_enableTakeOffEffects(Bool v);  // For VTOL and Helicopters
+	void friend_enableLandingEffects(Bool v);  // For VTOL and Helicopters
 	void friend_setAllowAirLoco(Bool a);
 	Bool friend_isTakeoffOrLandingInProgress() const
 	{
@@ -169,6 +171,8 @@ private:
 	Coord3D									m_producerLocation;		///< remember this, so that if our producer dies, we have a place to circle aimlessly
 	AICommandParmsStorage		m_mostRecentCommand;
 	AudioEventRTS						m_afterburnerSound;		///< Sound when afterburners on
+	AudioEventRTS						m_takeOffSound;		///< Sound when VTOL or Heli takes off
+	AudioEventRTS						m_landingSound;		///< Sound when VTOL or Heli lands
 	UnsignedInt							m_attackLocoExpireFrame;
 	UnsignedInt							m_attackersMissExpireFrame;
 	UnsignedInt							m_returnToBaseFrame;	///< if nonzero, return to base at this frame when we are idle, even if not out of ammo

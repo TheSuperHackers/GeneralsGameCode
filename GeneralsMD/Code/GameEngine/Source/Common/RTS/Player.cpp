@@ -2045,6 +2045,36 @@ Real Player::getProductionTimeChangePercent( AsciiString buildTemplateName ) con
 }	
 
 //=============================================================================
+void Player::addProductionCostChangePercent(AsciiString buildTemplateName, Real percent)
+{
+	// First check if the entry exists
+	ProductionChangeMap::iterator it = m_productionCostChanges.find(NAMEKEY(buildTemplateName));
+	if (it != m_productionCostChanges.end())
+	{
+		(*it).second += percent;  // Additive stacking
+		return;
+	}
+	// If we haven't found it, add it
+	m_productionCostChanges[NAMEKEY(buildTemplateName)] = percent;
+	//TODO: remove the entry if we end up at 0?
+}
+
+//=============================================================================
+void Player::addProductionTimeChangePercent(AsciiString buildTemplateName, Real percent)
+{
+	// First check if the entry exists
+	ProductionChangeMap::iterator it = m_productionTimeChanges.find(NAMEKEY(buildTemplateName));
+	if (it != m_productionTimeChanges.end())
+	{
+		(*it).second += percent;  // Additive stacking
+		return;
+	}
+	// If we haven't found it, add it
+	m_productionTimeChanges[NAMEKEY(buildTemplateName)] = percent;
+	//TODO: remove the entry if we end up at 0?
+}
+
+//=============================================================================
 VeterancyLevel Player::getProductionVeterancyLevel( AsciiString buildTemplateName ) const 
 { 
 	NameKeyType templateNameKey = NAMEKEY(buildTemplateName);
@@ -3888,25 +3918,40 @@ void Player::addAIGroupToCurrentSelection(AIGroup *group) {
 //-------------------------------------------------------------------------------------------------
 /** addTypeOfProductionCostChange adds a production change to the typeof list */
 //-------------------------------------------------------------------------------------------------
-void Player::addKindOfProductionCostChange(	KindOfMaskType kindOf, Real percent )
+void Player::addKindOfProductionCostChange(	KindOfMaskType kindOf, Real percent,
+	UnsignedInt sourceTemplateID /*= INVALID_ID*/,
+	Bool stackUniqueType /*= FALSE*/, Bool stackWithAny /*= FALSE*/)
 {
-	KindOfPercentProductionChangeListIt it = m_kindOfPercentProductionChangeList.begin();
-	while(it != m_kindOfPercentProductionChangeList.end())
-	{
-		
-		KindOfPercentProductionChange *tof = *it;
-		if( tof->m_percent == percent && tof->m_kindOf == kindOf)
+	// Possible cases:
+	// 1. Default behavior: No stacking of bonus with SAME perecentage
+	// 2. Stack with bonus from OTHER templates but SAME percentage
+	//   - Keep separate entries for each templateID
+	// 3. Stack with bonus from SAME template and SAME percentage
+	//   - Keep separate entry for each Object (need to track ObjectID)
+	//   - Don't track Object, just track that we can stack, then just remove first matching entry that can stack
+
+	if (!stackWithAny) { // We always stack, no need to check
+
+		KindOfPercentProductionChangeListIt it = m_kindOfPercentProductionChangeList.begin();
+		while (it != m_kindOfPercentProductionChangeList.end())
 		{
-			tof->m_ref++;
-			return;
+			KindOfPercentProductionChange* tof = *it;
+			if (tof->m_percent == percent && tof->m_kindOf == kindOf &&
+				(!stackUniqueType || (tof->m_templateID == sourceTemplateID && tof->m_templateID != INVALID_ID)))
+			{
+				tof->m_ref++;
+				return;
+			}
+			++it;
 		}
-		++it;
-	}	
+	}
 
 	KindOfPercentProductionChange *newTof = newInstance( KindOfPercentProductionChange );
 	newTof->m_kindOf = kindOf;
 	newTof->m_percent = percent;
 	newTof->m_ref = 1;
+	newTof->m_stackWithAny = stackWithAny;
+	newTof->m_templateID = sourceTemplateID;
 	m_kindOfPercentProductionChangeList.push_back(newTof);
 
 }
@@ -3914,14 +3959,19 @@ void Player::addKindOfProductionCostChange(	KindOfMaskType kindOf, Real percent 
 //-------------------------------------------------------------------------------------------------
 /** addTypeOfProductionCostChange adds a production change to the typeof list */
 //-------------------------------------------------------------------------------------------------
-void Player::removeKindOfProductionCostChange(	KindOfMaskType kindOf, Real percent )
+void Player::removeKindOfProductionCostChange(	KindOfMaskType kindOf, Real percent,
+	UnsignedInt sourceTemplateID /*= INVALID_ID*/,
+	Bool stackUniqueType /*= FALSE*/, Bool stackWithAny /*= FALSE*/)
 {
 	KindOfPercentProductionChangeListIt it = m_kindOfPercentProductionChangeList.begin();
 	while(it != m_kindOfPercentProductionChangeList.end())
 	{
 		
 		KindOfPercentProductionChange* tof = *it;
-		if( tof->m_percent == percent && tof->m_kindOf == kindOf)
+		if( tof->m_percent == percent && tof->m_kindOf == kindOf &&
+			(!stackWithAny || tof->m_stackWithAny) &&
+			(!stackUniqueType || tof->m_templateID == sourceTemplateID)
+			)
 		{
 			tof->m_ref--;
 			if(tof->m_ref == 0)
@@ -3929,6 +3979,9 @@ void Player::removeKindOfProductionCostChange(	KindOfMaskType kindOf, Real perce
 				m_kindOfPercentProductionChangeList.erase( it );
 				if(tof)
 					tof->deleteInstance();
+			}
+			else if (stackWithAny) {
+				DEBUG_CRASH(("KindOfProductionCost: StackWithAny should never have count > 1.\n"));
 			}
 			return;
 		}
@@ -3960,25 +4013,32 @@ Real Player::getProductionCostChangeBasedOnKindOf( KindOfMaskType kindOf ) const
 //-------------------------------------------------------------------------------------------------
 /** addKindOfProductionTimeChange adds a production change to the typeof list */
 //-------------------------------------------------------------------------------------------------
-void Player::addKindOfProductionTimeChange(KindOfMaskType kindOf, Real percent)
+void Player::addKindOfProductionTimeChange(KindOfMaskType kindOf, Real percent,
+	UnsignedInt sourceTemplateID /*= INVALID_ID*/,
+	Bool stackUniqueType /*= FALSE*/, Bool stackWithAny /*= FALSE*/)
 {
-	KindOfPercentProductionChangeListIt it = m_kindOfPercentProductionTimeChangeList.begin();
-	while (it != m_kindOfPercentProductionTimeChangeList.end())
-	{
+	if (!stackWithAny) { // We always stack, no need to check
 
-		KindOfPercentProductionChange* tof = *it;
-		if (tof->m_percent == percent && tof->m_kindOf == kindOf)
+		KindOfPercentProductionChangeListIt it = m_kindOfPercentProductionTimeChangeList.begin();
+		while (it != m_kindOfPercentProductionTimeChangeList.end())
 		{
-			tof->m_ref++;
-			return;
+			KindOfPercentProductionChange* tof = *it;
+			if (tof->m_percent == percent && tof->m_kindOf == kindOf &&
+				(!stackUniqueType || (tof->m_templateID == sourceTemplateID && tof->m_templateID != INVALID_ID)))
+			{
+				tof->m_ref++;
+				return;
+			}
+			++it;
 		}
-		++it;
 	}
 
 	KindOfPercentProductionChange* newTof = newInstance(KindOfPercentProductionChange);
 	newTof->m_kindOf = kindOf;
 	newTof->m_percent = percent;
 	newTof->m_ref = 1;
+	newTof->m_stackWithAny = stackWithAny;
+	newTof->m_templateID = sourceTemplateID;
 	m_kindOfPercentProductionTimeChangeList.push_back(newTof);
 
 }
@@ -3986,14 +4046,19 @@ void Player::addKindOfProductionTimeChange(KindOfMaskType kindOf, Real percent)
 //-------------------------------------------------------------------------------------------------
 /** removeKindOfProductionTimeChange adds a production change to the typeof list */
 //-------------------------------------------------------------------------------------------------
-void Player::removeKindOfProductionTimeChange(KindOfMaskType kindOf, Real percent)
+void Player::removeKindOfProductionTimeChange(KindOfMaskType kindOf, Real percent,
+	UnsignedInt sourceTemplateID /*= INVALID_ID*/,
+	Bool stackUniqueType /*= FALSE*/, Bool stackWithAny /*= FALSE*/)
 {
 	KindOfPercentProductionChangeListIt it = m_kindOfPercentProductionTimeChangeList.begin();
 	while (it != m_kindOfPercentProductionTimeChangeList.end())
 	{
 
 		KindOfPercentProductionChange* tof = *it;
-		if (tof->m_percent == percent && tof->m_kindOf == kindOf)
+		if (tof->m_percent == percent && tof->m_kindOf == kindOf &&
+			(!stackWithAny || tof->m_stackWithAny) &&
+			(!stackUniqueType || tof->m_templateID == sourceTemplateID)
+			)
 		{
 			tof->m_ref--;
 			if (tof->m_ref == 0)
@@ -4001,6 +4066,9 @@ void Player::removeKindOfProductionTimeChange(KindOfMaskType kindOf, Real percen
 				m_kindOfPercentProductionTimeChangeList.erase(it);
 				if (tof)
 					tof->deleteInstance();
+			}
+			else if (stackWithAny) {
+				DEBUG_CRASH(("KindOfProductionTime: StackWithAny should never have count > 1.\n"));
 			}
 			return;
 		}
@@ -4743,6 +4811,78 @@ void Player::xfer( Xfer *xfer )
 	}
 	else
 		m_unitsShouldHunt = FALSE;
+
+
+	// -------------------------
+	// Xfer ProductionCostChangeMap
+	// -------------------------
+	{
+		UnsignedShort entriesCount = m_productionCostChanges.size();
+		xfer->xferUnsignedShort(&entriesCount);
+		ProductionChangeMap::iterator it;
+		if (xfer->getXferMode() == XFER_SAVE)
+		{
+			// iterate each prototype and xfer if it needs to be in the save file
+			for (it = m_productionCostChanges.begin(); it != m_productionCostChanges.end(); ++it)
+			{
+				AsciiString templateName = KEYNAME((*it).first);
+				xfer->xferAsciiString(&templateName);
+				xfer->xferReal(&((*it).second));
+			}  //end for, it
+
+		}  // end if, saving
+		else
+		{
+			for (UnsignedShort i = 0; i < entriesCount; ++i)
+			{
+				AsciiString templateName;
+				Real bonusPercent;
+
+				xfer->xferAsciiString(&templateName);
+				xfer->xferReal(&bonusPercent);
+
+				m_productionCostChanges[NAMEKEY(templateName)] = bonusPercent;
+
+			}  // end for, i
+
+		}  // end else, loading
+	}
+	//------------------------
+	// Xfer ProductionTimeChangeMap
+	// -------------------------
+	{
+		UnsignedShort entriesCount = m_productionTimeChanges.size();
+		xfer->xferUnsignedShort(&entriesCount);
+		ProductionChangeMap::iterator it;
+		if (xfer->getXferMode() == XFER_SAVE)
+		{
+			// iterate each prototype and xfer if it needs to be in the save file
+			for (it = m_productionTimeChanges.begin(); it != m_productionTimeChanges.end(); ++it)
+			{
+				AsciiString templateName = KEYNAME((*it).first);
+				xfer->xferAsciiString(&templateName);
+				xfer->xferReal(&((*it).second));
+			}  //end for, it
+
+		}  // end if, saving
+		else
+		{
+			for (UnsignedShort i = 0; i < entriesCount; ++i)
+			{
+				AsciiString templateName;
+				Real bonusPercent;
+
+				xfer->xferAsciiString(&templateName);
+				xfer->xferReal(&bonusPercent);
+
+				m_productionTimeChanges[NAMEKEY(templateName)] = bonusPercent;
+
+			}  // end for, i
+
+		}  // end else, loading
+	}
+	//------------------------
+
 
 }  // end xfer
 

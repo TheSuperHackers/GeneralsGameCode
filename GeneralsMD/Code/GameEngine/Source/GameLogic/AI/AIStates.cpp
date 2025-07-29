@@ -1095,6 +1095,20 @@ Squad *AIStateMachine::getGoalSquad( void )
 	return m_goalSquad;
 }
 
+
+//----------------------------------------------------------------------------------------------------------
+AIGuardMachine* AIStateMachine::getGuardMachine(void)
+{
+	if (getCurrentStateID() == AI_GUARD) {
+		AIGuardState* guardState = (AIGuardState*)(StateMachine::internalGetState(getCurrentStateID()));
+		if (guardState != NULL) {
+			return guardState->getGuardMachine();
+		}
+	}
+
+	return NULL;
+}
+
 // State transition conditions ----------------------------------------------------------------------------
 /**
  * Return true if the machine's owner's current weapon's range 
@@ -1486,18 +1500,43 @@ StateReturnType AIDeadState::onEnter()
 		nonDyingStuff.set(MODELCONDITION_USING_WEAPON_A);
 		nonDyingStuff.set(MODELCONDITION_USING_WEAPON_B);
 		nonDyingStuff.set(MODELCONDITION_USING_WEAPON_C);
+		nonDyingStuff.set(MODELCONDITION_USING_WEAPON_D);
+		nonDyingStuff.set(MODELCONDITION_USING_WEAPON_E);
+		nonDyingStuff.set(MODELCONDITION_USING_WEAPON_F);
+		nonDyingStuff.set(MODELCONDITION_USING_WEAPON_G);
+		nonDyingStuff.set(MODELCONDITION_USING_WEAPON_H);
 		nonDyingStuff.set(MODELCONDITION_FIRING_A);
 		nonDyingStuff.set(MODELCONDITION_FIRING_B);
 		nonDyingStuff.set(MODELCONDITION_FIRING_C);
+		nonDyingStuff.set(MODELCONDITION_FIRING_D);
+		nonDyingStuff.set(MODELCONDITION_FIRING_E);
+		nonDyingStuff.set(MODELCONDITION_FIRING_F);
+		nonDyingStuff.set(MODELCONDITION_FIRING_G);
+		nonDyingStuff.set(MODELCONDITION_FIRING_H);
 		nonDyingStuff.set(MODELCONDITION_BETWEEN_FIRING_SHOTS_A);
 		nonDyingStuff.set(MODELCONDITION_BETWEEN_FIRING_SHOTS_B);
 		nonDyingStuff.set(MODELCONDITION_BETWEEN_FIRING_SHOTS_C);
+		nonDyingStuff.set(MODELCONDITION_BETWEEN_FIRING_SHOTS_D);
+		nonDyingStuff.set(MODELCONDITION_BETWEEN_FIRING_SHOTS_E);
+		nonDyingStuff.set(MODELCONDITION_BETWEEN_FIRING_SHOTS_F);
+		nonDyingStuff.set(MODELCONDITION_BETWEEN_FIRING_SHOTS_G);
+		nonDyingStuff.set(MODELCONDITION_BETWEEN_FIRING_SHOTS_H);
 		nonDyingStuff.set(MODELCONDITION_RELOADING_A);
 		nonDyingStuff.set(MODELCONDITION_RELOADING_B);
 		nonDyingStuff.set(MODELCONDITION_RELOADING_C);
+		nonDyingStuff.set(MODELCONDITION_RELOADING_D);
+		nonDyingStuff.set(MODELCONDITION_RELOADING_E);
+		nonDyingStuff.set(MODELCONDITION_RELOADING_F);
+		nonDyingStuff.set(MODELCONDITION_RELOADING_G);
+		nonDyingStuff.set(MODELCONDITION_RELOADING_H);
 		nonDyingStuff.set(MODELCONDITION_PREATTACK_A);
 		nonDyingStuff.set(MODELCONDITION_PREATTACK_B);
 		nonDyingStuff.set(MODELCONDITION_PREATTACK_C);
+		nonDyingStuff.set(MODELCONDITION_PREATTACK_D);
+		nonDyingStuff.set(MODELCONDITION_PREATTACK_E);
+		nonDyingStuff.set(MODELCONDITION_PREATTACK_F);
+		nonDyingStuff.set(MODELCONDITION_PREATTACK_G);
+		nonDyingStuff.set(MODELCONDITION_PREATTACK_H);
 #ifdef ALLOW_SURRENDER
 		nonDyingStuff.set(MODELCONDITION_SURRENDER);
 #endif

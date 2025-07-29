@@ -422,6 +422,10 @@ void AIGroup::recompute( void )
 		if ((*i)->isKindOf(KINDOF_IMMOBILE))
 			continue;
 
+		// don't consider (chrono) teleporters (they are very fast, or currently disabled)
+		if ((*i)->isKindOf(KINDOF_TELEPORTER))
+			continue;
+
 		if( (*i)->isDisabledByType( DISABLED_HELD) ) 
 		{
 			continue; // don't bother counting riders in the max speed calculation.
@@ -560,7 +564,12 @@ Bool AIGroup::friend_computeGroundPath( const Coord3D *pos, CommandSourceType cm
 		if( obj->getAI()==NULL )
 		{	
 			continue;
-		}	 
+		}
+		if (obj->isKindOf(KINDOF_TELEPORTER))
+		{
+			continue;
+		}
+
 		if( obj->isKindOf( KINDOF_INFANTRY ) )
 		{	
  			numInfantry++;
@@ -683,6 +692,8 @@ static void clampToMap(Coord3D *dest, PlayerType pt)
 Bool AIGroup::friend_moveInfantryToPos( const Coord3D *pos, CommandSourceType cmdSource )
 
 {
+	DEBUG_LOG(("!! AIGroup::friend_moveInfantryToPos.\n"));
+
 	if (m_groundPath==NULL) return false;
 
 	Int numColumns = 3;
@@ -752,6 +763,10 @@ Bool AIGroup::friend_moveInfantryToPos( const Coord3D *pos, CommandSourceType cm
 	PlayerType controllingPlayerType = PLAYER_COMPUTER;
 	for( i = m_memberList.begin(); i != m_memberList.end(); ++i )	
 	{
+		if ((*i)->isKindOf(KINDOF_TELEPORTER))
+		{
+			continue;
+		}
 		if ((*i)->isDisabledByType( DISABLED_HELD ) ) 
 		{
 			continue; // don't bother telling the occupants to move.

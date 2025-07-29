@@ -672,6 +672,8 @@ Locomotor::Locomotor(const LocomotorTemplate* tmpl)
 	m_offsetIncrement = (PI/40) * (GameLogicRandomValueReal(0.8f, 1.2f)/m_template->m_wanderLengthFactor);
 	setFlag(OFFSET_INCREASING, GameLogicRandomValue(0,1));
 	m_donutTimer = TheGameLogic->getFrame()+DONUT_TIME_DELAY_SECONDS*LOGICFRAMES_PER_SECOND;
+
+	m_speedMultiplier = 1.0;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -771,6 +773,8 @@ void Locomotor::xfer( Xfer *xfer )
 	xfer->xferReal(&m_angleOffset);
 	xfer->xferReal(&m_offsetIncrement);
 
+	xfer->xferReal(&m_speedMultiplier);
+
 }  // end xfer
 
 // ------------------------------------------------------------------------------------------------
@@ -798,6 +802,8 @@ Real Locomotor::getMaxSpeedForCondition(BodyDamageType condition) const
 	else
 		speed = m_template->m_maxSpeedDamaged;
 
+	speed *= m_speedMultiplier;
+
 	if (speed > m_maxSpeed)
 		speed = m_maxSpeed;
 
@@ -813,6 +819,8 @@ Real Locomotor::getMaxTurnRate(BodyDamageType condition) const
 		turn = m_template->m_maxTurnRate;
 	else
 		turn = m_template->m_maxTurnRateDamaged;
+
+	turn *= m_speedMultiplier;
 
 	if (turn > m_maxTurnRate)
 		turn = m_maxTurnRate;
@@ -834,6 +842,8 @@ Real Locomotor::getMaxAcceleration(BodyDamageType condition) const
 	else
 		accel = m_template->m_accelerationDamaged;
 
+	accel *= m_speedMultiplier;
+
 	if (accel > m_maxAccel)
 		accel = m_maxAccel;
 
@@ -844,6 +854,8 @@ Real Locomotor::getMaxAcceleration(BodyDamageType condition) const
 Real Locomotor::getBraking() const
 {
 	Real braking = m_template->m_braking;
+
+	braking *= m_speedMultiplier;
 
 	if (braking > m_maxBraking)
 		braking = m_maxBraking;
@@ -860,6 +872,8 @@ Real Locomotor::getMaxLift(BodyDamageType condition) const
 		lift = m_template->m_lift;
 	else
 		lift = m_template->m_liftDamaged;
+
+	lift *= m_speedMultiplier;
 
 	if (lift > m_maxLift)
 		lift = m_maxLift;
@@ -1136,6 +1150,9 @@ void Locomotor::locoUpdate_moveTowardsPosition(Object* obj, const Coord3D& goalP
 				dx *= dist;
 				dy *= dist;
 				dz *= dist;
+
+				// DEBUG_LOG((">>> Locomotor Braking - d(xyz) = %f / %f / %f\n", dx * vel, dy * vel, dz * vel));
+
 				pos.x += dx * vel;
 				pos.y += dy * vel;
 				pos.z += dz * vel;
@@ -1981,6 +1998,25 @@ void Locomotor::moveTowardsPositionThrust(Object* obj, PhysicsBehavior *physics,
 		Bool adjust = true;
 		if( obj->getStatusBits().test( OBJECT_STATUS_BRAKING ) ) 
 		{
+			//Real closeInDist = 150.0f;  // TODO: get/set this from missileAI? 
+			//Real af = 1.0f - __min((onPathDistToGoal / closeInDist), 1.0);
+
+			//if (af > 0.0f) {
+
+			//	vel.Set(
+			//		vel.X * (1.0f - af) + (goalPos.x - pos.x) * af,
+			//		vel.Y * (1.0f - af) + (goalPos.y - pos.y) * af,
+			//		vel.Z * (1.0f - af) + (goalPos.z - pos.z) * af
+			//	);
+			//	if (isNearlyZero(sqr(vel.X) + sqr(vel.Y) + sqr(vel.Z))) {
+			//		// we are at target.
+			//		adjust = false;
+			//	}
+			//	maxTurnRate = (1.0f + (af * 2.0f) ) * maxTurnRate;
+			//}
+			
+			// DEBUG_LOG((">>> moveTowardsPositionThrust - Braking - maxTurnRate = %f\n", maxTurnRate));
+
 			// align to target, cause that's where we're going anyway.
 
 			vel.Set(goalPos.x - pos.x, goalPos.y-pos.y, goalPos.z-pos.z);
@@ -2028,7 +2064,7 @@ void Locomotor::moveTowardsPositionThrust(Object* obj, PhysicsBehavior *physics,
 }
 
 //-------------------------------------------------------------------------------------------------
-Real Locomotor::getSurfaceHtAtPt(Real x, Real y)
+/*static*/ Real Locomotor::getSurfaceHtAtPt(Real x, Real y)
 {
 	Real ht = 0;
 
