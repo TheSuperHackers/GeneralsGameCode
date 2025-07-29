@@ -26,8 +26,11 @@
 
 inline int vsnprintf(char* _Buffer, size_t _BufferCount, const char* _Format, va_list _ArgList)
 {
+	if (_BufferCount == 0)
+		return -1;
 	// Microsoft's _vsnprintf does not null terminate when writing the entire length.
 	int result = _vsnprintf(_Buffer, _BufferCount, _Format, _ArgList);
+	// Deal with errors and edge cases.
 	if (result == -1 || (size_t)result == _BufferCount)
 	{
 		_Buffer[_BufferCount - 1] = '\0';
@@ -39,8 +42,11 @@ inline int vsnprintf(char* _Buffer, size_t _BufferCount, const char* _Format, va
 // Yes, this is called vswprintf instead of vsnwprintf
 inline int vswprintf(wchar_t* _Buffer, size_t _BufferCount, const wchar_t* _Format, va_list _ArgList)
 {
+	if (_BufferCount == 0)
+		return -1;
 	// Microsoft's _vsnwprintf does not null terminate when writing the entire length.
 	int result = _vsnwprintf(_Buffer, _BufferCount, _Format, _ArgList);
+	// Deal with errors and edge cases.
 	if (result == -1 || (size_t)result == _BufferCount)
 	{
 		_Buffer[_BufferCount - 1] = L'\0';
