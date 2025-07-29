@@ -165,7 +165,7 @@ jobs:
     secrets: inherit
 
   replaycheck-generalsmd:
-    name: Replay Check MD${{ matrix.preset && '' }}
+    name: Replay Check GeneralsMD${{ matrix.preset && '' }}
     needs: build-generalsmd-vc6
     if: ${{ github.event_name == 'workflow_dispatch' || needs.detect-changes.outputs.generalsmd == 'true' || needs.detect-changes.outputs.shared == 'true' }}
     strategy:
