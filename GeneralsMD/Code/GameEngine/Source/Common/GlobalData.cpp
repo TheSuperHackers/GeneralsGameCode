@@ -554,7 +554,7 @@ GlobalData* GlobalData::m_theOriginal = NULL;
 	{"ChronoDamageParticleSystemLarge", INI::parseAsciiString, NULL, offsetof(GlobalData, m_chronoDisableParticleSystemLarge) },
 	{"ChronoDamageParticleSystemMedium", INI::parseAsciiString, NULL, offsetof(GlobalData, m_chronoDisableParticleSystemMedium) },
 	{"ChronoDamageParticleSystemSmall", INI::parseAsciiString, NULL, offsetof(GlobalData, m_chronoDisableParticleSystemSmall) },
-	
+
 	{"DefaultExcludedDeathTypes", INI::parseDeathTypeFlagsList, NULL, offsetof(GlobalData, m_defaultExcludedDeathTypes) },
 	
 	{ NULL,					NULL,						NULL,						0 }  // keep this last

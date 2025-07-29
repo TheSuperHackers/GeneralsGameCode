@@ -540,6 +540,8 @@ public:
 	AsciiString m_chronoDisableParticleSystemMedium;
 	AsciiString m_chronoDisableParticleSystemSmall;
 
+	//AudioEventRTS m_chronoDisableSoundLoop;
+
 	DeathTypeFlags m_defaultExcludedDeathTypes;
 
 

@@ -34,6 +34,7 @@
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/DamageFX.h"
+#include "Common/MiscAudio.h"
 #include "GameLogic/Module/BodyModule.h"
 #include "GameLogic/Damage.h"
 #include "GameLogic/Armor.h"
@@ -181,6 +182,8 @@ private:
 	Bool									m_damageFXOverride;
 
 	BodyParticleSystem *m_particleSystems;				///< particle systems created and attached to this object
+	
+	AudioEventRTS m_chronoDisabledSoundLoop;
 
 	/*
 		Note, you MUST call validateArmorAndDamageFX() before accessing these fields.

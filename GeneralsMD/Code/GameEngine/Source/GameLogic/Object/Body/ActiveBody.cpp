@@ -1385,6 +1385,10 @@ void ActiveBody::onSubdualChronoChange( Bool isNowSubdued )
 		// Apply Chrono Particles
 		applyChronoParticleSystems();
 
+		m_chronoDisabledSoundLoop = TheAudio->getMiscAudio()->m_chronoDisabledSoundLoop;
+		m_chronoDisabledSoundLoop.setObjectID(me->getID());
+		m_chronoDisabledSoundLoop.setPlayingHandle(TheAudio->addAudioEvent(&m_chronoDisabledSoundLoop));
+
 		ContainModuleInterface *contain = me->getContain();
 		if ( contain )
 			contain->orderAllPassengersToIdle( CMD_FROM_AI );
@@ -1395,6 +1399,8 @@ void ActiveBody::onSubdualChronoChange( Bool isNowSubdued )
 
 		// Remove Chrono Particles, i.e. restore default particles
 		updateBodyParticleSystems();
+
+		TheAudio->removeAudioEvent(m_chronoDisabledSoundLoop.getPlayingHandle());
 
 		if (me->isKindOf(KINDOF_FS_INTERNET_CENTER))
 		{
