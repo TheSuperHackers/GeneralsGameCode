@@ -54,21 +54,22 @@
 // deterministic or the same on all peers in multiplayer games.
 //#define INCLUDE_DEBUG_LOG_IN_CRC_LOG
 
-#include "Common/CommandLine.h"
 #define DEBUG_THREADSAFE
 #ifdef DEBUG_THREADSAFE
 #include "Common/CriticalSection.h"
 #endif
+#include "Common/CommandLine.h"
 #include "Common/Debug.h"
 #include "Common/CRCDebug.h"
-#include "Common/Registry.h"
 #include "Common/SystemInfo.h"
 #include "Common/UnicodeString.h"
 #include "GameClient/ClientInstance.h"
 #include "GameClient/GameText.h"
 #include "GameClient/Keyboard.h"
 #include "GameClient/Mouse.h"
-#include "Common/StackDump.h"
+#if defined(DEBUG_STACKTRACE) || defined(IG_DEBUG_STACKTRACE)
+	#include "Common/StackDump.h"
+#endif
 
 // Horrible reference, but we really, really need to know if we are windowed.
 extern bool DX8Wrapper_IsWindowed;
@@ -271,8 +272,8 @@ static int doCrashBox(const char *buffer, Bool logResult)
 	int result;
 
 	if (!ignoringAsserts()) {
-		//result = MessageBoxWrapper(buffer, "Assertion Failure", MB_ABORTRETRYIGNORE|MB_TASKMODAL|MB_ICONWARNING|MB_DEFBUTTON3);
-		result = MessageBoxWrapper(buffer, "Assertion Failure", MB_ABORTRETRYIGNORE|MB_TASKMODAL|MB_ICONWARNING);
+		result = MessageBoxWrapper(buffer, "Assertion Failure", MB_ABORTRETRYIGNORE|MB_TASKMODAL|MB_ICONWARNING|MB_DEFBUTTON3);
+		//result = MessageBoxWrapper(buffer, "Assertion Failure", MB_ABORTRETRYIGNORE|MB_TASKMODAL|MB_ICONWARNING);
 	}	else {
 		result = IDIGNORE;
 	}
@@ -358,7 +359,7 @@ void DebugInit(int flags)
 //		::MessageBox(NULL, "Debug already inited", "", MB_OK|MB_APPLMODAL);
 
 	// just quietly allow multiple calls to this, so that static ctors can call it.
-	if (theDebugFlags == 0 && strcmp(gAppPrefix, "wb_") != 0) 
+	if (theDebugFlags == 0) 
 	{
 		theDebugFlags = flags;
 
@@ -722,6 +723,11 @@ void ReleaseCrash(const char *reason)
 {
 	/// do additional reporting on the crash, if possible
 
+	if (!DX8Wrapper_IsWindowed) {
+		if (ApplicationHWnd) {
+			ShowWindow(ApplicationHWnd, SW_HIDE);
+		}
+	}
 
 	char prevbuf[ _MAX_PATH ];
 	char curbuf[ _MAX_PATH ];
@@ -767,15 +773,13 @@ void ReleaseCrash(const char *reason)
 #else
 // crash error messaged changed 3/6/03 BGC
 //	::MessageBox(NULL, "Sorry, a serious error occurred.", "Technical Difficulties...", MB_OK|MB_TASKMODAL|MB_ICONERROR);
+//	::MessageBox(NULL, "You have encountered a serious error.  Serious errors can be caused by many things including viruses, overheated hardware and hardware that does not meet the minimum specifications for the game. Please visit the forums at www.generals.ea.com for suggested courses of action or consult your manual for Technical Support contact information.", "Technical Difficulties...", MB_OK|MB_TASKMODAL|MB_ICONERROR);
 
-	if (!GetRegistryLanguage().compareNoCase("german2") || !GetRegistryLanguage().compareNoCase("german") )
-	{
-		::MessageBox(NULL, "Es ist ein gravierender Fehler aufgetreten. Solche Fehler k\366nnen durch viele verschiedene Dinge wie Viren, \374berhitzte Hardware und Hardware, die den Mindestanforderungen des Spiels nicht entspricht, ausgel\366st werden. Tipps zur Vorgehensweise findest du in den Foren unter www.generals.ea.com, Informationen zum Technischen Kundendienst im Handbuch zum Spiel.", "Fehler...", MB_OK|MB_TASKMODAL|MB_ICONERROR);
-	} 
-	else
-	{
-		::MessageBox(NULL, "You have encountered a serious error.  Serious errors can be caused by many things including viruses, overheated hardware and hardware that does not meet the minimum specifications for the game. Please visit the forums at www.generals.ea.com for suggested courses of action or consult your manual for Technical Support contact information.", "Technical Difficulties...", MB_OK|MB_TASKMODAL|MB_ICONERROR);
-	}
+// crash error message changed again 8/22/03 M Lorenzen... made this message box modal to the system so it will appear on top of any task-modal windows, splash-screen, etc.
+  ::MessageBox(NULL, "You have encountered a serious error.  Serious errors can be caused by many things including viruses, overheated hardware and hardware that does not meet the minimum specifications for the game. Please visit the forums at www.generals.ea.com for suggested courses of action or consult your manual for Technical Support contact information.", 
+   "Technical Difficulties...", 
+   MB_OK|MB_SYSTEMMODAL|MB_ICONERROR);
+
 
 #endif
 
