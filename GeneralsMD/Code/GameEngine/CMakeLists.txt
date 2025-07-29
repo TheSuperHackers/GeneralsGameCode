@@ -348,6 +348,7 @@ set(GAMEENGINE_SRC
     Include/GameLogic/Module/ImmortalBody.h
     Include/GameLogic/Module/InactiveBody.h
     Include/GameLogic/Module/InstantDeathBehavior.h
+    Include/GameLogic/Module/ChronoDeathBehavior.h
     Include/GameLogic/Module/InternetHackContain.h
     Include/GameLogic/Module/JetAIUpdate.h
     Include/GameLogic/Module/JetSlowDeathBehavior.h
@@ -450,6 +451,7 @@ set(GAMEENGINE_SRC
     Include/GameLogic/Module/StructureCollapseUpdate.h
     Include/GameLogic/Module/StructureToppleUpdate.h
     Include/GameLogic/Module/SubdualDamageHelper.h
+    Include/GameLogic/Module/ChronoDamageHelper.h
     Include/GameLogic/Module/SubObjectsUpgrade.h
     Include/GameLogic/Module/SupplyCenterCreate.h
     Include/GameLogic/Module/SupplyCenterDockUpdate.h
@@ -866,6 +868,7 @@ set(GAMEENGINE_SRC
     Source/GameLogic/Object/Behavior/GenerateMinefieldBehavior.cpp
     Source/GameLogic/Object/Behavior/GrantStealthBehavior.cpp
     Source/GameLogic/Object/Behavior/InstantDeathBehavior.cpp
+    Source/GameLogic/Object/Behavior/ChronoDeathBehavior.cpp
     Source/GameLogic/Object/Behavior/JetSlowDeathBehavior.cpp
     Source/GameLogic/Object/Behavior/MinefieldBehavior.cpp
     Source/GameLogic/Object/Behavior/NeutonBlastBehavior.cpp
@@ -956,6 +959,7 @@ set(GAMEENGINE_SRC
     Source/GameLogic/Object/Helper/ObjectWeaponStatusHelper.cpp
     Source/GameLogic/Object/Helper/StatusDamageHelper.cpp
     Source/GameLogic/Object/Helper/SubdualDamageHelper.cpp
+    Source/GameLogic/Object/Helper/ChronoDamageHelper.cpp
     Source/GameLogic/Object/Helper/TempWeaponBonusHelper.cpp
     Source/GameLogic/Object/Locomotor.cpp
     Source/GameLogic/Object/Object.cpp

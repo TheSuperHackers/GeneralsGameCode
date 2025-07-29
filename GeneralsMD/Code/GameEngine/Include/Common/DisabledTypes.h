@@ -60,6 +60,7 @@ enum DisabledType CPP_11(: Int)
 	DISABLED_SCRIPT_UNDERPOWERED,
 
 	DISABLED_TELEPORT,    // Chrono Legionnaire after teleporting
+	DISABLED_CHRONO,    // Chrono Gun removal
 
 	DISABLED_COUNT,
 	

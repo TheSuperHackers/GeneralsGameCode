@@ -24,6 +24,8 @@ enum TintStatus CPP_11(: Int)
 	TINT_STATUS_DEMORALIZED,
 	TINT_STATUS_BOOST,
 	TINT_STATUS_TELEPORT_RECOVER, ///< (Chrono Legionnaire -> recover from teleport)
+	TINT_STATUS_DISABLED_CHRONO,  ///< Unit disabled by chrono gun
+	TINT_STATUS_GAINING_CHRONO_DAMAGE,  ///< Unit getting damaged from chrono gun
 	TINT_STATUS_EXTRA1,
 	TINT_STATUS_EXTRA2,
 	TINT_STATUS_EXTRA3,

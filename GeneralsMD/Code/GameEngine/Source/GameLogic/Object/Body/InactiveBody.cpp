@@ -131,7 +131,7 @@ void InactiveBody::attemptHealing( DamageInfo *damageInfo )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void InactiveBody::internalChangeHealth( Real delta )
+void InactiveBody::internalChangeHealth( Real delta, Bool changeModelCondition)
 {
 
 	// Inactive bodies have no health to increase or decrease

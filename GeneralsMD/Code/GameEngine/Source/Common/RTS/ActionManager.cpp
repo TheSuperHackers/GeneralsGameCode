@@ -150,6 +150,9 @@ Bool ActionManager::canGetRepairedAt( const Object *obj, const Object *repairDes
 	if( obj == NULL || repairDest == NULL )
 		return FALSE;
 
+	if (repairDest->isDisabledByType( DISABLED_CHRONO ))
+		return FALSE;
+
 	Relationship r = obj->getRelationship(repairDest);
 
 	// only available by our allies
@@ -219,6 +222,9 @@ Bool ActionManager::canTransferSuppliesAt( const Object *obj, const Object *tran
 	{
 		return FALSE;
 	}
+
+	if (transferDest->isDisabledByType( DISABLED_CHRONO ))
+		return FALSE;
 
 	// nothing can be done with things that are under construction
 	if( obj->getStatusBits().test( OBJECT_STATUS_UNDER_CONSTRUCTION ) ||
@@ -290,6 +296,9 @@ Bool ActionManager::canTransferSuppliesAt( const Object *obj, const Object *tran
 Bool ActionManager::canDockAt( const Object *obj, const Object *dockDest, CommandSourceType commandSource )
 {
 
+	if (dockDest->isDisabledByType( DISABLED_CHRONO ))
+		return FALSE;
+
 	// look for a dock interface
 	DockUpdateInterface *di = NULL;
 	for (BehaviorModule **u = dockDest->getBehaviorModules(); *u; ++u)
@@ -333,6 +342,9 @@ Bool ActionManager::canGetHealedAt( const Object *obj, const Object *healDest, C
 
 	// sanity
 	if( obj == NULL || healDest == NULL )
+		return FALSE;
+
+	if (healDest->isDisabledByType( DISABLED_CHRONO ))
 		return FALSE;
 
 	Relationship r = obj->getRelationship(healDest);
@@ -385,6 +397,9 @@ Bool ActionManager::canRepairObject( const Object *obj, const Object *objectToRe
 
 	// sanity
 	if( obj == NULL || objectToRepair == NULL )
+		return FALSE;
+
+	if (objectToRepair->isDisabledByType( DISABLED_CHRONO ))
 		return FALSE;
 
 	Relationship r = obj->getRelationship(objectToRepair);
@@ -459,6 +474,9 @@ Bool ActionManager::canResumeConstructionOf( const Object *obj,
 	if( obj == NULL || objectBeingConstructed == NULL )
 		return FALSE;
 
+	if (objectBeingConstructed->isDisabledByType( DISABLED_CHRONO ))
+		return FALSE;
+
 	// only dozers or workers can resume construction of things
 	if( obj->isKindOf( KINDOF_DOZER ) == FALSE )
 		return FALSE;
@@ -528,6 +546,9 @@ Bool ActionManager::canEnterObject( const Object *obj, const Object *objectToEnt
 
 	// sanity
 	if( obj == NULL || objectToEnter == NULL )
+		return FALSE;
+
+	if (objectToEnter->isDisabledByType( DISABLED_CHRONO ))
 		return FALSE;
 	
 	if( obj == objectToEnter )
@@ -722,6 +743,11 @@ Bool ActionManager::canEnterObject( const Object *obj, const Object *objectToEnt
 // ------------------------------------------------------------------------------------------------
 CanAttackResult ActionManager::getCanAttackObject( const Object *obj, const Object *objectToAttack, CommandSourceType commandSource, AbleToAttackType attackType )
 {
+
+	// We still need to attack with chrono damage
+	// if (objectToEnter->isDisabledByType( DISABLED_CHRONO )
+	// 	return FALSE;
+
 	// sanity
 	if( !obj || !objectToAttack || obj->isEffectivelyDead() || objectToAttack->isEffectivelyDead() || objectToAttack == obj )
 	{
@@ -829,6 +855,10 @@ Bool ActionManager::canConvertObjectToCarBomb( const Object *obj, const Object *
 		return FALSE;
 	}
 
+	if (objectToConvert->isDisabledByType( DISABLED_CHRONO ))
+		return FALSE;
+
+
 	// if the target is in the shroud, we can't do anything
 	if (isObjectShroudedForAction(obj, objectToConvert, commandSource))
 		return FALSE;
@@ -852,6 +882,7 @@ Bool ActionManager::canConvertObjectToCarBomb( const Object *obj, const Object *
 // ------------------------------------------------------------------------------------------------
 Bool ActionManager::canHijackVehicle( const Object *obj, const Object *objectToHijack, CommandSourceType commandSource ) //LORENZEN
 {
+
 	// sanity
 	if( obj == NULL || objectToHijack == NULL )
 	{
@@ -863,6 +894,9 @@ Bool ActionManager::canHijackVehicle( const Object *obj, const Object *objectToH
 	{
 		return FALSE;
 	}
+
+	if (objectToHijack->isDisabledByType( DISABLED_CHRONO ))
+		return FALSE;
 
 	// if the target is in the shroud, we can't do anything
 	if (isObjectShroudedForAction(obj, objectToHijack, commandSource))
@@ -926,6 +960,10 @@ Bool ActionManager::canSabotageBuilding( const Object *obj, const Object *object
 		return FALSE;
 	}
 
+	if (objectToSabotage->isDisabledByType( DISABLED_CHRONO ))
+		return FALSE;
+
+
 	// if the target is in the shroud, we can't do anything
 	if (isObjectShroudedForAction(obj, objectToSabotage, commandSource))
 	{
@@ -979,6 +1017,9 @@ Bool ActionManager::canMakeObjectDefector( const Object *obj, const Object *obje
 		return FALSE;
 	}
 
+	if (objectToMakeDefector->isDisabledByType( DISABLED_CHRONO ))
+		return FALSE;
+
 	// if the target is in the shroud, we can't do anything
 	if (isObjectShroudedForAction(obj, objectToMakeDefector, commandSource))
 	{
@@ -997,6 +1038,9 @@ Bool ActionManager::canCaptureBuilding( const Object *obj, const Object *objectT
 
 	// sanity
 	if( obj == NULL || objectToCapture == NULL )
+		return FALSE;
+
+	if (objectToCapture->isDisabledByType( DISABLED_CHRONO ))
 		return FALSE;
 
 	//Make sure our object has the capability of performing this special ability.
@@ -1101,6 +1145,9 @@ Bool ActionManager::canDisableVehicleViaHacking( const Object *obj, const Object
 {
 	// sanity
 	if( obj == NULL || objectToHack == NULL )
+		return FALSE;
+
+	if (objectToHack->isDisabledByType( DISABLED_CHRONO ))
 		return FALSE;
 
 	if (checkSourceRequirements)
@@ -1227,6 +1274,9 @@ Bool ActionManager::canStealCashViaHacking( const Object *obj, const Object *obj
 	if( obj == NULL || objectToHack == NULL )
 		return FALSE;
 
+	if (objectToHack->isDisabledByType( DISABLED_CHRONO ))
+		return FALSE;
+
 	//Make sure our object has the capability of performing this special ability.
 	if( !obj->hasSpecialPower( SPECIAL_BLACKLOTUS_STEAL_CASH_HACK ) )
 	{
@@ -1311,6 +1361,9 @@ Bool ActionManager::canDisableBuildingViaHacking( const Object *obj, const Objec
 {
 	// sanity
 	if( obj == NULL || objectToHack == NULL )
+		return FALSE;
+
+	if (objectToHack->isDisabledByType( DISABLED_CHRONO ))
 		return FALSE;
 
 	//Make sure our object has the capability of performing this special ability.
@@ -1404,6 +1457,9 @@ Bool ActionManager::canSnipeVehicle( const Object *obj, const Object *objectToSn
 		return FALSE;
 	}
 
+	if (objectToSnipe->isDisabledByType( DISABLED_CHRONO ))
+		return FALSE;
+
 	// if the target is in the shroud, we can't do anything
 	if (isObjectShroudedForAction(obj, objectToSnipe, commandSource))
 		return FALSE;
@@ -1477,7 +1533,7 @@ Bool ActionManager::canDoSpecialPowerAtLocation( const Object *obj, const Coord3
 		if (behaviorType >= SPECIAL_ION_CANNON) { //first custom SP
 			behaviorType = spTemplate->getSpecialPowerBehaviorType();
 			if (behaviorType == SPECIAL_INVALID) {
-				behaviorType == SPECIAL_NEUTRON_MISSILE; // Default to behave like neutron missile, common behavior
+				behaviorType = SPECIAL_NEUTRON_MISSILE; // Default to behave like neutron missile, common behavior
 			}
 		} 
 
@@ -1604,6 +1660,9 @@ Bool ActionManager::canDoSpecialPowerAtObject( const Object *obj, const Object *
 	{
 		return FALSE;
 	}
+
+	if (target->isDisabledByType( DISABLED_CHRONO ))
+		return FALSE;
 
 	Relationship r = obj->getRelationship(target);
 	
@@ -1889,7 +1948,7 @@ Bool ActionManager::canDoSpecialPower( const Object *obj, const SpecialPowerTemp
 		if (behaviorType >= SPECIAL_ION_CANNON) { //first custom SP
 			behaviorType = spTemplate->getSpecialPowerBehaviorType();
 			if (behaviorType == SPECIAL_INVALID) {
-				behaviorType == SPECIAL_NEUTRON_MISSILE; // Default to behave like neutron missile, common behavior
+				behaviorType = SPECIAL_NEUTRON_MISSILE; // Default to behave like neutron missile, common behavior
 			}
 		}
 
@@ -2043,6 +2102,9 @@ Bool ActionManager::canGarrison( const Object *obj, const Object *target, Comman
 	if (!(obj && target))
 		return false;
 
+	if (target->isDisabledByType( DISABLED_CHRONO ))
+		return FALSE;
+
 	// The object was not an infantry, or is disallowed from being allowed to garrison stuff.
 	if (obj->isKindOf(KINDOF_INFANTRY) == false || obj->isKindOf(KINDOF_NO_GARRISON))
 		return false;
@@ -2080,6 +2142,9 @@ Bool ActionManager::canPlayerGarrison( const Player *player, const Object *targe
 {
 	if (!(player && target))
 		return false;
+
+	if (target->isDisabledByType( DISABLED_CHRONO ))
+		return FALSE;
 	
 	if (target->isEffectivelyDead()) {
 		return false;

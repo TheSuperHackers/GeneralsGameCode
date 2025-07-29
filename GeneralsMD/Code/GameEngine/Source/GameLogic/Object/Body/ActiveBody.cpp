@@ -373,7 +373,14 @@ void ActiveBody::attemptDamage( DamageInfo *damageInfo )
 
 	Bool alreadyHandled = FALSE;
 	Bool allowModifier = TRUE;
+	Bool doDamageModules = TRUE;
+	Bool adjustConditions = TRUE;
 	Real amount = m_curArmor.adjustDamage(damageInfo->in.m_damageType, damageInfo->in.m_amount);
+
+	// Units that get disabled by Chrono damage cannot take damage:
+	if (obj->isDisabledByType(DISABLED_CHRONO) &&
+		!(damageInfo->in.m_damageType == DAMAGE_CHRONO_GUN || damageInfo->in.m_damageType == DAMAGE_CHRONO_UNRESISTABLE))
+		return;
 
 	switch( damageInfo->in.m_damageType )
 	{
@@ -491,6 +498,46 @@ void ActiveBody::attemptDamage( DamageInfo *damageInfo )
 			allowModifier = FALSE;
 			break;
 		}
+
+		case DAMAGE_CHRONO_GUN:
+		case DAMAGE_CHRONO_UNRESISTABLE:
+		{
+			// This handles both gaining chrono damage and recovering from it
+
+			// Note: Should HoldTheLine or Shields apply? (Not for recovery)
+			if (damageInfo->in.m_damageType != DAMAGE_CHRONO_UNRESISTABLE) {
+				amount *= m_damageScalar;
+			}
+			
+			Bool wasSubdued = isSubduedChrono();
+
+			// Increase damage counter
+			internalAddChronoDamage(amount);
+			// DEBUG_LOG(("ActiveBody::attemptDamage - amount = %f, chronoDmg = %f\n", amount, getCurrentChronoDamageAmount()));
+			
+			// Check for disabling threshold
+			Bool nowSubdued = isSubduedChrono();
+
+			if (wasSubdued != nowSubdued)
+			{
+				// Enable/Disable ; Apply/Remove Visual Effects
+				onSubdualChronoChange(nowSubdued);
+			}
+
+			// This will handle continuous art changes such as transparency
+			getObject()->notifyChronoDamage(amount);
+
+			// Check kill state:
+			if (getCurrentChronoDamageAmount() > getMaxHealth()) {
+				damageInfo->in.m_kill = TRUE;
+				doDamageModules = FALSE;
+				adjustConditions = FALSE;
+			}
+			else {
+				alreadyHandled = TRUE;
+			}
+			allowModifier = FALSE;
+		}
 	}
 
 	if( IsSubdualDamage(damageInfo->in.m_damageType) )
@@ -536,7 +583,7 @@ void ActiveBody::attemptDamage( DamageInfo *damageInfo )
 		if (!alreadyHandled) 
 		{
 			// do the damage simplistic damage subtraction
-			internalChangeHealth( -amount );
+			internalChangeHealth( -amount, adjustConditions);
 		}
 
 #ifdef ALLOW_SURRENDER
@@ -608,7 +655,7 @@ void ActiveBody::attemptDamage( DamageInfo *damageInfo )
 		}
 
 		// if our health has gone down then do run the damage module callback
-		if( m_currentHealth < m_prevHealth )
+		if( m_currentHealth < m_prevHealth && doDamageModules)
 		{
 			for (BehaviorModule** m = obj->getBehaviorModules(); *m; ++m)
 			{
@@ -620,7 +667,7 @@ void ActiveBody::attemptDamage( DamageInfo *damageInfo )
 			}
 		}
 
-		if (m_curDamageState != oldState)
+		if (m_curDamageState != oldState && adjustConditions)
 		{
 			for (BehaviorModule** m = obj->getBehaviorModules(); *m; ++m)
 			{
@@ -1211,7 +1258,7 @@ void ActiveBody::updateBodyParticleSystems( void )
 	* Game stuff goes in attemptDamage and attemptHealing.
 */
 //-------------------------------------------------------------------------------------------------
-void ActiveBody::internalChangeHealth( Real delta )
+void ActiveBody::internalChangeHealth( Real delta, Bool changeModelCondition)
 {
 	// save the current health as the previous health
 	m_prevHealth = m_currentHealth;
@@ -1229,23 +1276,25 @@ void ActiveBody::internalChangeHealth( Real delta )
 	if( m_currentHealth < lowEndCap )
 		m_currentHealth = lowEndCap;
 
-	// recalc the damage state
-	BodyDamageType oldState = m_curDamageState;
-	setCorrectDamageState();
+	if (changeModelCondition) {
+		// recalc the damage state
+		BodyDamageType oldState = m_curDamageState;
+		setCorrectDamageState();
 
-	// if our state has changed
-	if( m_curDamageState != oldState )
-	{
+		// if our state has changed
+		if (m_curDamageState != oldState)
+		{
 
-		//
-		// show a visual change in the model for the damage state, we do not show visual changes
-		// for damage states when things are under construction because we just don't have
-		// all the art states for that during buildup animation
-		//
-		if( !getObject()->getStatusBits().test( OBJECT_STATUS_UNDER_CONSTRUCTION ) )
-			evaluateVisualCondition();
+			//
+			// show a visual change in the model for the damage state, we do not show visual changes
+			// for damage states when things are under construction because we just don't have
+			// all the art states for that during buildup animation
+			//
+			if (!getObject()->getStatusBits().test(OBJECT_STATUS_UNDER_CONSTRUCTION))
+				evaluateVisualCondition();
 
-	}  // end if
+		}  // end if
+	}
 
 	// mark the bit according to our health. (if our AI is dead but our health improves, it will
 	// still re-flag this bit in the AIDeadState every frame.)
@@ -1261,6 +1310,16 @@ void ActiveBody::internalAddSubdualDamage( Real delta )
 
 	m_currentSubdualDamage += delta;
 	m_currentSubdualDamage = min(m_currentSubdualDamage, data->m_subdualDamageCap);
+}
+
+//-------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------
+void ActiveBody::internalAddChronoDamage(Real delta)
+{
+	// Just increment, we don't need a cap. we kill once maxHealth is reached
+	//Real chronoDamageCap = m_maxHealth * 2.0;
+    m_currentChronoDamage += delta;
+	//m_currentChronoDamage = min(m_currentChronoDamage, chronoDamageCap);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -1315,6 +1374,113 @@ void ActiveBody::onSubdualChange( Bool isNowSubdued )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
+void ActiveBody::onSubdualChronoChange( Bool isNowSubdued )
+{
+	Object *me = getObject();
+		
+	if( isNowSubdued )
+	{
+		me->setDisabled(DISABLED_CHRONO);
+
+		// Apply Chrono Particles
+		applyChronoParticleSystems();
+
+		m_chronoDisabledSoundLoop = TheAudio->getMiscAudio()->m_chronoDisabledSoundLoop;
+		m_chronoDisabledSoundLoop.setObjectID(me->getID());
+		m_chronoDisabledSoundLoop.setPlayingHandle(TheAudio->addAudioEvent(&m_chronoDisabledSoundLoop));
+
+		ContainModuleInterface *contain = me->getContain();
+		if ( contain )
+			contain->orderAllPassengersToIdle( CMD_FROM_AI );
+		}
+	else
+	{
+		me->clearDisabled(DISABLED_CHRONO);
+
+		// Remove Chrono Particles, i.e. restore default particles
+		updateBodyParticleSystems();
+
+		TheAudio->removeAudioEvent(m_chronoDisabledSoundLoop.getPlayingHandle());
+
+		if (me->isKindOf(KINDOF_FS_INTERNET_CENTER))
+		{
+			//Kris: October 20, 2003 - Patch 1.01
+			//Any unit inside an internet center is a hacker! Order
+			//them to start hacking again.
+			ContainModuleInterface* contain = me->getContain();
+			if (contain)
+				contain->orderAllPassengersToHackInternet(CMD_FROM_AI);
+		}
+	}
+}
+
+// ------------------------------------------------------------------------------------------------
+/* 	This function is called on state changes only.  Body Type or Aflameness. */
+// ------------------------------------------------------------------------------------------------
+void ActiveBody::applyChronoParticleSystems(void)
+{
+	deleteAllParticleSystems();
+
+	static const ParticleSystemTemplate* chronoEffectsLargeTemplate = TheParticleSystemManager->findTemplate(TheGlobalData->m_chronoDisableParticleSystemLarge);
+	static const ParticleSystemTemplate* chronoEffectsMediumTemplate = TheParticleSystemManager->findTemplate(TheGlobalData->m_chronoDisableParticleSystemMedium);
+	static const ParticleSystemTemplate* chronoEffectsSmallTemplate = TheParticleSystemManager->findTemplate(TheGlobalData->m_chronoDisableParticleSystemSmall);
+	
+	const ParticleSystemTemplate* chronoEffects;
+
+	// TODO: select particles
+	Object* obj = getObject();
+
+	if (obj->isKindOf(KINDOF_INFANTRY)) {
+		chronoEffects = chronoEffectsSmallTemplate;
+	}
+	else if (obj->isKindOf(KINDOF_STRUCTURE)) {
+		chronoEffects = chronoEffectsLargeTemplate;
+	}
+	// Use Medium as default
+	else {
+		chronoEffects = chronoEffectsMediumTemplate;
+	}
+
+	ParticleSystem* particleSystem = TheParticleSystemManager->createParticleSystem(chronoEffects);
+	if (particleSystem)
+	{
+		// set the position of the particle system in local object space
+		// particleSystem->setPosition(obj->getPosition());
+
+		// attach particle system to object
+		particleSystem->attachToObject(obj);
+
+		// Scale particle count based on size
+		Real x = obj->getGeometryInfo().getMajorRadius();
+		Real y = obj->getGeometryInfo().getMinorRadius();
+		Real z = obj->getGeometryInfo().getMaxHeightAbovePosition() * 0.5;
+		particleSystem->setEmissionBoxHalfSize(x, y, z);
+		//Real size = x * y;
+		//particleSystem->setBurstCountMultiplier(MAX(1.0, sqrt(size * 0.02f))); // these are somewhat tweaked right now
+		//particleSystem->setBurstDelayMultiplier(MIN(5.0, sqrt(500.0f / size)));
+
+		// create a new body particle system entry and keep this particle system in it
+		BodyParticleSystem* newEntry = newInstance(BodyParticleSystem);
+		newEntry->m_particleSystemID = particleSystem->getSystemID();
+		newEntry->m_next = m_particleSystems;
+		m_particleSystems = newEntry;
+
+		// DEBUG_LOG(("ActiveBody::applyChronoParticleSystems - created particleSystem.\n"));
+	}
+	else {
+		// DEBUG_LOG(("ActiveBody::applyChronoParticleSystems - Failed to create particleSystem?!\n"));
+	}
+}
+
+//-------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------
+Bool ActiveBody::isSubduedChrono() const
+{
+	return (m_maxHealth * TheGlobalData->m_chronoDamageDisableThreshold) <= m_currentChronoDamage;
+}
+
+//-------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------
 Bool ActiveBody::isSubdued() const
 {
 	return m_maxHealth <= m_currentSubdualDamage;
@@ -1360,6 +1526,28 @@ Real ActiveBody::getSubdualDamageHealAmount() const
 Bool ActiveBody::hasAnySubdualDamage() const
 {
 	return m_currentSubdualDamage > 0;
+}
+
+//-------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------
+UnsignedInt ActiveBody::getChronoDamageHealRate() const
+{
+	return TheGlobalData->m_chronoDamageHealRate;
+}
+
+//-------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------
+Real ActiveBody::getChronoDamageHealAmount() const
+{
+	// DEBUG_LOG(("ActiveBody::getChronoDamageHealAmount() - maxHealth = %f\n", m_maxHealth));
+	return m_maxHealth * TheGlobalData->m_chronoDamageHealAmount;
+}
+
+//-------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------
+Bool ActiveBody::hasAnyChronoDamage() const
+{
+	return m_currentChronoDamage > 0;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -1534,8 +1722,8 @@ void ActiveBody::overrideDamageFX(DamageFX* damageFX)
 			m_curDamageFX = set->getDamageFX();
 		}
 	}
-	DEBUG_LOG((">>>ActiveBody: overrideDamageFX - new m_curDamageFX = %d, m_damageFXOverride = %d\n",
-		m_curDamageFX, m_damageFXOverride));
+	//DEBUG_LOG((">>>ActiveBody: overrideDamageFX - new m_curDamageFX = %d, m_damageFXOverride = %d\n",
+	//	m_curDamageFX, m_damageFXOverride));
 }
 
 // ------------------------------------------------------------------------------------------------

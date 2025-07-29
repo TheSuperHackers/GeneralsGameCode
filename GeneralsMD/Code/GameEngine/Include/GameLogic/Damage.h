@@ -86,7 +86,26 @@ enum DamageType CPP_11(: Int)
 	DAMAGE_SUBDUAL_UNRESISTABLE		= 34,
 	DAMAGE_MICROWAVE							= 35, ///< Radiation that only affects infantry
 	DAMAGE_KILL_GARRISONED				= 36, ///< Kills Passengers up to the number specified in Damage
-	DAMAGE_STATUS									= 37, ///< Damage that gives a status condition, not that does hitpoint damage
+	DAMAGE_STATUS						= 37, ///< Damage that gives a status condition, not that does hitpoint damage
+	// --
+	// Generic additional damage types (no special logic)
+	DAMAGE_SONIC,
+	DAMAGE_ACID,
+	DAMAGE_JET_BOMB,
+	DAMAGE_ANTI_TANK_GUN,
+	DAMAGE_ANTI_TANK_MISSILE,
+	DAMAGE_ANTI_AIR_GUN,
+	DAMAGE_ANTI_AIR_MISSILE,
+	DAMAGE_SEISMIC,
+	DAMAGE_RAD_BEAM,
+	DAMAGE_TESLA,
+	
+	// Specific damage types with special logic attached
+	DAMAGE_CHRONO_GUN,   ///< Disable target and remove them once health threshold is reached
+	DAMAGE_CHRONO_UNRESISTABLE,  ///< Used for recovery from CHRONO_GUN
+	// DAMAGE_ZOMBIE_VIRUS,  // TODO
+	// DAMAGE_MIND_CONTROL,  // TODO
+
 
 	// Please note: There is a string array DamageTypeFlags::s_bitNameList[]
 
@@ -194,6 +213,9 @@ enum DeathType CPP_11(: Int)
 	DEATH_EXTRA_7		= 18,	
 	DEATH_EXTRA_8		= 19,	
 	DEATH_POISONED_GAMMA = 20,
+
+	//New Death Types
+	DEATH_CHRONO,
 	
 	DEATH_NUM_TYPES			// keep this last
 };
@@ -221,7 +243,9 @@ static const char *TheDeathNames[] =
 	"EXTRA_6",	
 	"EXTRA_7",	
 	"EXTRA_8",	
-	"POISONED_GAMMA",	
+	"POISONED_GAMMA",
+	//New:
+	"CHRONO",	
 
 	NULL
 };

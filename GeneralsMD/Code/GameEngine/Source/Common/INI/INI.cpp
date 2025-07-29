@@ -44,6 +44,7 @@
 #include "Common/ThingFactory.h"
 #include "Common/ThingTemplate.h"
 #include "Common/Upgrade.h"
+#include "Common/GlobalData.h"
 #include "Common/Xfer.h"
 #include "Common/XferCRC.h"
 
@@ -1941,11 +1942,21 @@ void INI::parseDamageTypeFlags(INI* ini, void* /*instance*/, void* store, const 
 void INI::parseDeathTypeFlags(INI* ini, void* /*instance*/, void* store, const void* /*userData*/)
 {
 	DeathTypeFlags flags = DEATH_TYPE_FLAGS_ALL;
+
 	for (const char* token = ini->getNextToken(); token; token = ini->getNextTokenOrNull())
 	{
 		if (stricmp(token, "ALL") == 0)
 		{
 			flags = DEATH_TYPE_FLAGS_ALL;
+
+			if (TheGlobalData) {
+				flags &= ~TheGlobalData->m_defaultExcludedDeathTypes;
+				DEBUG_LOG(("INI::parseDeathTypeFlags - flags = %X\n", flags));
+			}
+			else {
+				DEBUG_LOG(("INI::parseDeathTypeFlags - TheGlobalData is NULL\n"));
+			}
+
 			continue;
 		}
 		if (stricmp(token, "NONE") == 0)
@@ -1966,6 +1977,31 @@ void INI::parseDeathTypeFlags(INI* ini, void* /*instance*/, void* store, const v
 			continue;
 		}
 		throw INI_UNKNOWN_TOKEN;
+	}
+	*(DeathTypeFlags*)store = flags;
+}
+
+//-------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------
+// Parse a simple list, no +/- syntax allowed
+void INI::parseDeathTypeFlagsList(INI* ini, void* /*instance*/, void* store, const void* /*userData*/)
+{
+	DeathTypeFlags flags = DEATH_TYPE_FLAGS_NONE;
+	for (const char* token = ini->getNextToken(); token; token = ini->getNextTokenOrNull())
+	{
+		if (stricmp(token, "ALL") == 0)
+		{
+			flags = DEATH_TYPE_FLAGS_ALL;
+			continue;
+		}
+		if (stricmp(token, "NONE") == 0)
+		{
+			flags = DEATH_TYPE_FLAGS_NONE;
+			continue;
+		}
+
+		DeathType dt = (DeathType)INI::scanIndexList(token, TheDeathNames);
+		flags = setDeathTypeFlag(flags, dt);
 	}
 	*(DeathTypeFlags*)store = flags;
 }

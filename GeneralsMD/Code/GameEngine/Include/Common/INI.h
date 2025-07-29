@@ -320,6 +320,7 @@ public:
 	static void parseAngularVelocityReal( INI *ini, void *instance, void *store, const void *userData );
 	static void parseDamageTypeFlags(INI* ini, void* instance, void* store, const void* userData);
 	static void parseDeathTypeFlags(INI* ini, void* instance, void* store, const void* userData);
+	static void parseDeathTypeFlagsList(INI* ini, void* instance, void* store, const void* userData);
 	static void parseVeterancyLevelFlags(INI* ini, void* instance, void* store, const void* userData);
 	static void parseSoundsList( INI* ini, void *instance, void *store, const void* /*userData*/ );
 	

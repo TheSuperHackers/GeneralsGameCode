@@ -52,13 +52,13 @@ ImmortalBody::~ImmortalBody( void )
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void ImmortalBody::internalChangeHealth( Real delta )
+void ImmortalBody::internalChangeHealth( Real delta, Bool changeModelCondition)
 {
 	// Don't let anything changes us to below one hit point
 	delta = max( delta, -getHealth() + 1 );
 
 	// extend functionality, but I go first because I can't let you die and then fix it, I must prevent
-	ActiveBody::internalChangeHealth( delta );
+	ActiveBody::internalChangeHealth( delta, changeModelCondition );
 
 	// nothing -- never mark it as dead.
 	DEBUG_ASSERTCRASH( (getHealth() > 0 && !getObject()->isEffectivelyDead() ), ("Immortal objects should never get marked as dead!"));
