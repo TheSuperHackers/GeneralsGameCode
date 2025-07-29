@@ -524,7 +524,7 @@ void DebugCrash(const char *format, ...)
 	if (useLogging)
 	{
 #ifdef DEBUG_LOGGING
-		if (ignoringAsserts()) 
+		if (ignoringAsserts())
 		{
 			doLogOutput("**** CRASH IN FULL SCREEN - Auto-ignored, CHECK THIS LOG!");
 		}
@@ -728,13 +728,6 @@ void ReleaseCrash(const char *reason)
 			ShowWindow(ApplicationHWnd, SW_HIDE);
 		}
 	}
-//#if defined(RTS_DEBUG)
-//	/* static */ char buff[8192]; // not so static so we can be threadsafe
-//	snprintf(buff, 8192, "Sorry, a serious error occurred. (%s)", reason);/
-//	::MessageBox(NULL, buff, "Technical Difficulties...", MB_OK|MB_SYSTEMMODAL|MB_ICONERROR);
-//#else
-//	::MessageBox(NULL, "Sorry, a serious error occurred.", "Technical Difficulties...", MB_OK|MB_TASKMODAL|MB_ICONERROR);
-//#endif
 
 	char prevbuf[ _MAX_PATH ];
 	char curbuf[ _MAX_PATH ];
@@ -772,6 +765,7 @@ void ReleaseCrash(const char *reason)
 			ShowWindow(ApplicationHWnd, SW_HIDE);
 		}
 	}
+
 #if defined(RTS_DEBUG)
 	/* static */ char buff[8192]; // not so static so we can be threadsafe
 	snprintf(buff, 8192, "Sorry, a serious error occurred. (%s)", reason);

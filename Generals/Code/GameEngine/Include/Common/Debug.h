@@ -50,14 +50,20 @@
 
 class AsciiString;
 
+#define NO_RELEASE_DEBUG_LOGGING
+
+#ifdef RELEASE_DEBUG_LOGGING  ///< Creates a DebugLogFile.txt (No I or D) with all the debug log goodness.  Good for startup problems.
+	#define ALLOW_DEBUG_UTILS 1
+	#define DEBUG_LOGGING 1
+	#define DISABLE_DEBUG_CRASHING 1
+	#define DISABLE_DEBUG_STACKTRACE 1
+	#define DISABLE_DEBUG_PROFILE 1
+#endif
+
 // These are stolen from the WW3D Debug file. REALLY useful. :-)
 #define STRING_IT(a) #a																				  
 #define TOKEN_IT(a) STRING_IT(,##a)
 #define MESSAGE(a) message (__FILE__ "(" TOKEN_IT(__LINE__) ") : " a)
-
-// BGC, 3/26/03 - put this in so we can build internal worldbuilder for a patch that doesn't
-// have any debugging of any kind.
-//#define DISABLE_DEBUG_LOGGING
 
 // by default, turn on ALLOW_DEBUG_UTILS if RTS_DEBUG is turned on.
 #if defined(RTS_DEBUG) && !defined(ALLOW_DEBUG_UTILS) && !defined(DISABLE_ALLOW_DEBUG_UTILS)
