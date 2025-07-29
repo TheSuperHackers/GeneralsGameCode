@@ -47,11 +47,6 @@
 #include "W3DDevice/GameClient/Module/W3DTankDraw.h"
 #include "WW3D2/matinfo.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 class Matrix3D;
 
@@ -234,7 +229,12 @@ void W3DTankDraw::updateTreadPositions(Real uvDelta)
 		else
 		if (pTread->m_type == TREAD_RIGHT)	//this tread needs to scroll backwards
 			offset_u = pTread->m_materialSettings.customUVOffset.X - uvDelta;
-				
+		else
+		{
+			DEBUG_CRASH(("Unhandled case in W3DTankDraw::updateTreadPositions"));
+			offset_u = 0.0f;
+		}
+
 		// ensure coordinates of offset are in [0, 1] range:
 		offset_u = offset_u - WWMath::Floor(offset_u);
 		pTread->m_materialSettings.customUVOffset.Set(offset_u,0);

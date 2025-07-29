@@ -55,13 +55,18 @@ public:
 	W3DRadar( void );
 	~W3DRadar( void );
 
+	virtual void xfer( Xfer *xfer );
+
 	virtual void init( void );																		///< subsystem init
 	virtual void update( void );																	///< subsystem update
 	virtual void reset( void );																		///< subsystem reset
 
+	virtual RadarObjectType addObject( Object *obj ); ///< add object to radar
+	virtual RadarObjectType removeObject( Object *obj ); ///< remove object from radar
+
 	virtual void newMap( TerrainLogic *terrain );				///< reset radar for new map
 
-	void draw( Int pixelX, Int pixelY, Int width, Int height );		///< draw the radar
+	virtual void draw( Int pixelX, Int pixelY, Int width, Int height );		///< draw the radar
 
 	virtual void clearShroud();
 	virtual void setShroudLevel(Int x, Int y, CellShroudStatus setting);
@@ -118,7 +123,7 @@ protected:
 	Real m_viewZoom;															///< camera zoom used for the view box we have	
 	ICoord2D m_viewBox[ 4 ];											///< radar cell points for the 4 corners of view box
 
-	std::list<const Coord3D *> m_cachedHeroPosList;					//< cache of hero positions for drawing icons in radar overlay
+	std::vector<const Object *> m_cachedHeroObjectList; //< cache of hero objects for drawing icons in radar overlay
 };
 
 

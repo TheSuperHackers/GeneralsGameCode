@@ -61,11 +61,6 @@
 #include "GameLogic/Module/SupplyWarehouseDockUpdate.h"
 #include "GameLogic/PartitionManager.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 #define SUPPLY_CENTER_CLOSE_DIST (20*PATHFIND_CELL_SIZE_F)
 
@@ -165,7 +160,7 @@ void AIPlayer::onStructureProduced( Object *factory, Object *bldg )
 					if( rhbi ) {
 						ObjectID spawnedID = rhbi->getReconstructedBuildingID();
 						if (bldg->getID() == spawnedID) {
-							DEBUG_LOG(("AI got rebuilt %s\n", bldgPlan->getName().str()));
+							DEBUG_LOG(("AI got rebuilt %s", bldgPlan->getName().str()));
 							info->setObjectID(bldg->getID());
 							return;
 						}
@@ -176,7 +171,7 @@ void AIPlayer::onStructureProduced( Object *factory, Object *bldg )
 	}
 
 	if (TheGameLogic->getFrame()>0) {
-		DEBUG_LOG(("***AI PLAYER-Structure not found in production queue.\n"));
+		DEBUG_LOG(("***AI PLAYER-Structure not found in production queue."));
 	}
 }
 
@@ -336,7 +331,7 @@ void AIPlayer::queueSupplyTruck( void )
 						}
 					}
 				}
-				//DEBUG_LOG(("Expected %d harvesters, found %d, need %d\n", info->getDesiredGatherers(), 
+				//DEBUG_LOG(("Expected %d harvesters, found %d, need %d", info->getDesiredGatherers(), 
 				//	curGatherers, info->getDesiredGatherers()-curGatherers) );
 				info->setCurrentGatherers(curGatherers);
 			}
@@ -368,7 +363,7 @@ void AIPlayer::queueSupplyTruck( void )
 									// The supply truck ai issues dock commands, and they become confused.
 									// Thus, player.  jba.  ;(
 									obj->getAI()->aiDock(center, CMD_FROM_PLAYER);
-									DEBUG_LOG(("Re-attaching supply truck to supply center.\n"));
+									DEBUG_LOG(("Re-attaching supply truck to supply center."));
 									return;
 								}
 							}
@@ -432,7 +427,7 @@ static void deleteQueue(TeamInQueue* o)
 {
 	if (o)
 	{
-		o->deleteInstance();
+		deleteInstance(o);
 	}
 }
 
@@ -626,7 +621,7 @@ Object *AIPlayer::buildStructureWithDozer(const ThingTemplate *bldgPlan, BuildLi
 
 
 
-#if defined RTS_DEBUG || defined RTS_INTERNAL
+#if defined(RTS_DEBUG)
 	if (TheGlobalData->m_debugAI == AI_DEBUG_PATHS)
 	{
 		extern void addIcon(const Coord3D *pos, Real width, Int numFramesDuration, RGBColor color);
@@ -711,7 +706,7 @@ void AIPlayer::processBaseBuilding( void )
 			if (name.isEmpty()) continue;
 			const ThingTemplate *bldgPlan = TheThingFactory->findTemplate( name );
 			if (!bldgPlan) {																											 
-				DEBUG_LOG(("*** ERROR - Build list building '%s' doesn't exist.\n", name.str()));
+				DEBUG_LOG(("*** ERROR - Build list building '%s' doesn't exist.", name.str()));
 				continue;
 			}
 			// check for hole.
@@ -732,7 +727,7 @@ void AIPlayer::processBaseBuilding( void )
 						if( rhbi ) {
 							ObjectID spawnerID = rhbi->getSpawnerID();
 							if (priorID == spawnerID) {
-								DEBUG_LOG(("AI Found hole to rebuild %s\n", bldgPlan->getName().str()));
+								DEBUG_LOG(("AI Found hole to rebuild %s", bldgPlan->getName().str()));
 								info->setObjectID(obj->getID());
 							}
 						}
@@ -746,7 +741,7 @@ void AIPlayer::processBaseBuilding( void )
 							ObjectID builder = bldg->getBuilderID();
 							Object* myDozer = TheGameLogic->findObjectByID(builder);
 							if (myDozer==NULL) {
-								DEBUG_LOG(("AI's Dozer got killed.  Find another dozer.\n"));
+								DEBUG_LOG(("AI's Dozer got killed.  Find another dozer."));
  								myDozer = findDozer(bldg->getPosition());
 								if (myDozer==NULL || myDozer->getAI()==NULL) {
 									continue;
@@ -770,7 +765,7 @@ void AIPlayer::processBaseBuilding( void )
 				if (info->getObjectTimestamp()+TheAI->getAiData()->m_rebuildDelaySeconds*LOGICFRAMES_PER_SECOND > TheGameLogic->getFrame()) {
 					continue;
 				}	else {
-					DEBUG_LOG(("Enabling rebuild for %s\n", info->getTemplateName().str()));
+					DEBUG_LOG(("Enabling rebuild for %s", info->getTemplateName().str()));
 					info->setObjectTimestamp(0); // ready to build.
 				}
 			}
@@ -859,7 +854,7 @@ void AIPlayer::aiPreTeamDestroy( const Team *deletedTeam )
 			if (team->m_team == deletedTeam) {
 				// The members of the team all got killed before we could finish building the team.
 				removeFrom_TeamBuildQueue(team);
-				team->deleteInstance();
+				deleteInstance(team);
 				iter = iterate_TeamBuildQueue();
 			}
 		}
@@ -871,7 +866,7 @@ void AIPlayer::aiPreTeamDestroy( const Team *deletedTeam )
 			if (team->m_team == deletedTeam) {
 				// The members of the team all got killed before we could activate the team.
 				removeFrom_TeamReadyQueue(team);
-				team->deleteInstance();
+				deleteInstance(team);
 				iter = iterate_TeamReadyQueue();
 			}
 		}
@@ -893,11 +888,15 @@ void AIPlayer::guardSupplyCenter( Team *team, Int minSupplies )
 	}
 	if (warehouse) {
 
-		AIGroup* theGroup = TheAI->createGroup();
+		AIGroupPtr theGroup = TheAI->createGroup();
 		if (!theGroup) {
 			return;
 		}
+#if RETAIL_COMPATIBLE_AIGROUP
 		team->getTeamAsAIGroup(theGroup);
+#else
+		team->getTeamAsAIGroup(theGroup.Peek());
+#endif
 		Coord3D location = *warehouse->getPosition();
 		// It's probably a defensive move - position towards the enemy.
 		Region2D bounds;
@@ -1042,9 +1041,9 @@ void AIPlayer::onUnitProduced( Object *factory, Object *unit )
 {
 	Bool found = false;
 	// TheSuperHackers @fix Mauller 26/04/2025 Fixes uninitialized variable.
-	// To keep retail compatibility this needs to remain uninitialized in VS6 builds.
+	// To keep retail compatibility it needs to be set true in VS6 builds.
 #if defined(_MSC_VER) && _MSC_VER < 1300
-	Bool supplyTruck;
+	Bool supplyTruck = true;
 #else
 	Bool supplyTruck = false;
 #endif
@@ -1130,7 +1129,7 @@ void AIPlayer::onUnitProduced( Object *factory, Object *unit )
 		}
 	}
 	if (!found) {
-		DEBUG_LOG(("***AI PLAYER-Unit not found in production queue.\n"));
+		DEBUG_LOG(("***AI PLAYER-Unit not found in production queue."));
 	}
 
 	m_teamDelay = 0; // Cause the update queues & selection to happen immediately.
@@ -1803,7 +1802,7 @@ void AIPlayer::buildBySupplies(Int minimumCash, const AsciiString& thingName)
 																							 NULL, m_player ) == LBC_OK;
 					if (valid) break;
 					if( TheGlobalData->m_debugSupplyCenterPlacement )
-						DEBUG_LOG(("buildBySupplies -- Fail at (%.2f,%.2f)\n", newPos.x, newPos.y));
+						DEBUG_LOG(("buildBySupplies -- Fail at (%.2f,%.2f)", newPos.x, newPos.y));
 					newPos.y = yPos+posOffset;
 					valid = TheBuildAssistant->isLocationLegalToBuild( &newPos, tTemplate, angle,
 																							 BuildAssistant::CLEAR_PATH |
@@ -1811,7 +1810,7 @@ void AIPlayer::buildBySupplies(Int minimumCash, const AsciiString& thingName)
 																							 BuildAssistant::NO_OBJECT_OVERLAP,
 																							 NULL, m_player ) == LBC_OK;
 					if( !valid && TheGlobalData->m_debugSupplyCenterPlacement )
-						DEBUG_LOG(("buildBySupplies -- Fail at (%.2f,%.2f)\n", newPos.x, newPos.y));
+						DEBUG_LOG(("buildBySupplies -- Fail at (%.2f,%.2f)", newPos.x, newPos.y));
 				}
 				if (valid) break;
 				xPos = location.x-offset;
@@ -1825,7 +1824,7 @@ void AIPlayer::buildBySupplies(Int minimumCash, const AsciiString& thingName)
 																							 NULL, m_player ) == LBC_OK;
 					if (valid) break;
 					if( TheGlobalData->m_debugSupplyCenterPlacement )
-						DEBUG_LOG(("buildBySupplies -- Fail at (%.2f,%.2f)\n", newPos.x, newPos.y));
+						DEBUG_LOG(("buildBySupplies -- Fail at (%.2f,%.2f)", newPos.x, newPos.y));
 					newPos.x = xPos+posOffset;
 					valid = TheBuildAssistant->isLocationLegalToBuild( &newPos, tTemplate, angle,
 																							 BuildAssistant::CLEAR_PATH |
@@ -1833,7 +1832,7 @@ void AIPlayer::buildBySupplies(Int minimumCash, const AsciiString& thingName)
 																							 BuildAssistant::NO_OBJECT_OVERLAP,
 																							 NULL, m_player ) == LBC_OK;
 					if( !valid && TheGlobalData->m_debugSupplyCenterPlacement )
-						DEBUG_LOG(("buildBySupplies -- Fail at (%.2f,%.2f)\n", newPos.x, newPos.y));
+						DEBUG_LOG(("buildBySupplies -- Fail at (%.2f,%.2f)", newPos.x, newPos.y));
 				}
 				if (valid) break;
 			}
@@ -1841,7 +1840,7 @@ void AIPlayer::buildBySupplies(Int minimumCash, const AsciiString& thingName)
 		if (valid) 
 		{
 			if( TheGlobalData->m_debugSupplyCenterPlacement )
-				DEBUG_LOG(("buildAISupplyCenter -- SUCCESS at (%.2f,%.2f)\n", newPos.x, newPos.y));
+				DEBUG_LOG(("buildAISupplyCenter -- SUCCESS at (%.2f,%.2f)", newPos.x, newPos.y));
 			location = newPos;
 		}
 		TheTerrainVisual->removeAllBibs();	// isLocationLegalToBuild adds bib feedback, turn it off.  jba.
@@ -1958,7 +1957,7 @@ void AIPlayer::repairStructure(ObjectID structure)
 	if (structureObj==NULL) return;
 	if (structureObj->getBodyModule()==NULL) return;
 	// If the structure is not noticably damaged, don't bother.
-	enum BodyDamageType structureState = structureObj->getBodyModule()->getDamageState(); 
+	BodyDamageType structureState = structureObj->getBodyModule()->getDamageState(); 
 	if (structureState==BODY_PRISTINE) {
 		return; 
 	}
@@ -1968,12 +1967,12 @@ void AIPlayer::repairStructure(ObjectID structure)
 	Int i;
 	for (i=0; i<m_structuresInQueue; i++) {
 		if (m_structuresToRepair[i] == structureObj->getID()) {
-			DEBUG_LOG(("info - Bridge already queued for repair.\n"));
+			DEBUG_LOG(("info - Bridge already queued for repair."));
 			return;
 		}
 	}
-	if (m_structuresInQueue==MAX_STRUCTURES_TO_REPAIR) {
-		DEBUG_LOG(("Structure repair queue is full, ignoring repair request. JBA\n"));
+	if (m_structuresInQueue>=MAX_STRUCTURES_TO_REPAIR) {
+		DEBUG_LOG(("Structure repair queue is full, ignoring repair request. JBA"));
 		return;
 	}
 	m_structuresToRepair[m_structuresInQueue] = structureObj->getID();
@@ -1986,7 +1985,7 @@ void AIPlayer::repairStructure(ObjectID structure)
 void AIPlayer::selectSkillset(Int skillset)
 {
 	DEBUG_ASSERTCRASH(m_skillsetSelector == INVALID_SKILLSET_SELECTION, 
-		("Selecting a skill set (%d) after one has already been chosen (%d) means some points have been incorrectly spent.\n", skillset + 1, m_skillsetSelector + 1));
+		("Selecting a skill set (%d) after one has already been chosen (%d) means some points have been incorrectly spent.", skillset + 1, m_skillsetSelector + 1));
 
 	m_skillsetSelector = skillset;
 }
@@ -2017,7 +2016,7 @@ void AIPlayer::updateBridgeRepair(void)
 	// Got a bridge to repair.
 	Object *dozer = NULL;
 	Coord3D bridgePos = *bridgeObj->getPosition();
-	enum BodyDamageType bridgeState = bridgeObj->getBodyModule()->getDamageState(); 
+	BodyDamageType bridgeState = bridgeObj->getBodyModule()->getDamageState(); 
 	if (m_repairDozer==INVALID_ID) {
 		m_dozerIsRepairing = false;
 		// Need a dozer.
@@ -2029,7 +2028,7 @@ void AIPlayer::updateBridgeRepair(void)
 			m_repairDozer = dozer->getID();
 			m_repairDozerOrigin = *dozer->getPosition();
 			dozer->getAI()->aiRepair(bridgeObj, CMD_FROM_AI);
-			DEBUG_LOG(("Telling dozer to repair\n"));
+			DEBUG_LOG(("Telling dozer to repair"));
 			m_dozerIsRepairing = true;
 			return;
 		}
@@ -2054,7 +2053,7 @@ void AIPlayer::updateBridgeRepair(void)
 		if (!dozerAI->isAnyTaskPending())	{
 			// should be done repairing.
 			if (bridgeState==BODY_PRISTINE) {
-				DEBUG_LOG(("Dozer finished repairing structure.\n"));
+				DEBUG_LOG(("Dozer finished repairing structure."));
 				// we're done.
 				Int i;
 				for (i=0; i<m_structuresInQueue-1; i++) {
@@ -2081,7 +2080,7 @@ void AIPlayer::updateBridgeRepair(void)
 	}	
 	dozer->getAI()->aiRepair(bridgeObj, CMD_FROM_AI);
 	m_dozerIsRepairing = true;
-	DEBUG_LOG(("Telling dozer to repair\n"));
+	DEBUG_LOG(("Telling dozer to repair"));
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -2278,7 +2277,7 @@ void AIPlayer::recruitSpecificAITeam(TeamPrototype *teamProto, Real recruitRadiu
 #ifdef DEBUG_LOGGING
 							Coord3D pos = *unit->getPosition();
 							Coord3D to = teamProto->getTemplateInfo()->m_homeLocation;
-							DEBUG_LOG(("Moving unit from %f,%f to %f,%f\n", pos.x, pos.y , to.x, to.y ));
+							DEBUG_LOG(("Moving unit from %f,%f to %f,%f", pos.x, pos.y , to.x, to.y ));
 #endif
 							ai->aiMoveToPosition( &teamProto->getTemplateInfo()->m_homeLocation, CMD_FROM_AI);
 						}
@@ -2305,7 +2304,7 @@ void AIPlayer::recruitSpecificAITeam(TeamPrototype *teamProto, Real recruitRadiu
 		}	else {
 			//disband.
 			if (!theTeam->getPrototype()->getIsSingleton()) {
-				theTeam->deleteInstance();
+				deleteInstance(theTeam);
 				theTeam = NULL;
 			}
 			AsciiString teamName = teamProto->getName();
@@ -2467,9 +2466,9 @@ void AIPlayer::checkReadyTeams( void )
 					/*
 					if (team->m_team->getPrototype()->getTemplateInfo()->m_hasHomeLocation && 
 							!team->m_reinforcement) {
- 						AIGroup* theGroup = TheAI->createGroup();
+ 						AIGroupPtr theGroup = TheAI->createGroup();
 						if (theGroup) {
-							team->m_team->getTeamAsAIGroup(theGroup);
+							team->m_team->getTeamAsAIGroup(theGroup.Peek());
 							Coord3D destination = team->m_team->getPrototype()->getTemplateInfo()->m_homeLocation;
 							theGroup->groupTightenToPosition( &destination, false, CMD_FROM_AI );
 							team->m_frameStarted = TheGameLogic->getFrame();
@@ -2497,7 +2496,7 @@ void AIPlayer::checkReadyTeams( void )
 						TheScriptEngine->AppendDebugMessage(teamName, false);
 					}
 				}
-				team->deleteInstance();
+				deleteInstance(team);
 				iter = iterate_TeamReadyQueue();
 			}																		 
 		}
@@ -2529,7 +2528,7 @@ void AIPlayer::checkQueuedTeams( void )
 					// Disband.
 					removeFrom_TeamBuildQueue(team);
 					team->disband();
-					team->deleteInstance();
+					deleteInstance(team);
 					if (isSkirmishAI()) {
 						TheScriptEngine->clearTeamFlags();
 					}
@@ -2735,7 +2734,7 @@ void AIPlayer::newMap( void )
 		if (name.isEmpty()) continue;
 		const ThingTemplate *bldgPlan = TheThingFactory->findTemplate( name );
 		if (!bldgPlan) {																											 
-			DEBUG_LOG(("*** ERROR - Build list building '%s' doesn't exist.\n", name.str()));
+			DEBUG_LOG(("*** ERROR - Build list building '%s' doesn't exist.", name.str()));
 			continue;
 		}
 		if (info->isInitiallyBuilt()) {
@@ -3018,7 +3017,7 @@ void AIPlayer::xfer( Xfer *xfer )
 		if( getFirstItemIn_TeamBuildQueue() != NULL )
 		{
 		
-			DEBUG_CRASH(( "AIPlayer::xfer - TeamBuildQueue head is not NULL, you should delete it or something before loading a new list\n" ));
+			DEBUG_CRASH(( "AIPlayer::xfer - TeamBuildQueue head is not NULL, you should delete it or something before loading a new list" ));
 			throw SC_INVALID_DATA;
 
 		}  // end if
@@ -3077,7 +3076,7 @@ void AIPlayer::xfer( Xfer *xfer )
 		if( getFirstItemIn_TeamReadyQueue() != NULL )
 		{
 		
-			DEBUG_CRASH(( "AIPlayer::xfer - TeamReadyQueue head is not NULL, you should delete it or something before loading a new list\n" ));
+			DEBUG_CRASH(( "AIPlayer::xfer - TeamReadyQueue head is not NULL, you should delete it or something before loading a new list" ));
 			throw SC_INVALID_DATA;
 
 		}  // end if
@@ -3108,7 +3107,7 @@ void AIPlayer::xfer( Xfer *xfer )
 	if( playerIndex != m_player->getPlayerIndex() )
 	{
 
-		DEBUG_CRASH(( "AIPlayer::xfer - player index mismatch\n" ));
+		DEBUG_CRASH(( "AIPlayer::xfer - player index mismatch" ));
 		throw SC_INVALID_DATA;
 
 	}  // end if
@@ -3160,7 +3159,7 @@ TeamInQueue::~TeamInQueue()
 	for( order = m_workOrders; order; order = next )
 	{
 		next = order->m_next;
-		order->deleteInstance();
+		deleteInstance(order);
 	}
 	// If we have a team, activate it.  If it is empty, Team.cpp will remove empty active teams.
 	if (m_team) m_team->setActive();
@@ -3261,7 +3260,7 @@ void TeamInQueue::disband()
 	if (m_team != newTeam) {
 		m_team->transferUnitsTo(newTeam);
 		if (!m_team->getPrototype()->getIsSingleton()) {
-			m_team->deleteInstance();
+			deleteInstance(m_team);
 		}
 		m_team = NULL;
 	}
@@ -3316,7 +3315,7 @@ void TeamInQueue::xfer( Xfer *xfer )
 		if( m_workOrders != NULL )
 		{
 
-			DEBUG_CRASH(( "TeamInQueue::xfer - m_workOrders should be NULL but isn't.  Perhaps you should blow it away before loading\n" ));
+			DEBUG_CRASH(( "TeamInQueue::xfer - m_workOrders should be NULL but isn't.  Perhaps you should blow it away before loading" ));
 			throw SC_INVALID_DATA;
 
 		}  // end if

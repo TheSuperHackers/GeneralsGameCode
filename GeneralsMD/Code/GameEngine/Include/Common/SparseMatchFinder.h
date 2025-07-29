@@ -36,14 +36,20 @@
 #include "Common/BitFlags.h"
 #include "Common/STLTypedefs.h"
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	#define SPARSEMATCH_DEBUG
 #else
 	#undef SPARSEMATCH_DEBUG
 #endif
 
+typedef UnsignedInt SparseMatchFinderFlags;
+enum SparseMatchFinderFlags_ CPP_11(: SparseMatchFinderFlags)
+{
+	SparseMatchFinderFlags_NoCopy = 1<<0,
+};
+
 //-------------------------------------------------------------------------------------------------
-template<class MATCHABLE, class BITSET>
+template<class MATCHABLE, class BITSET, SparseMatchFinderFlags FLAGS = 0>
 class SparseMatchFinder
 {
 private:
@@ -174,7 +180,7 @@ private:
 		{
 			AsciiString curConditionStr;
 			bits.buildDescription(&curConditionStr); 
-			DEBUG_CRASH(("ambiguous model match in findBestInfoSlow \n\nbetween \n(%s)\n<and>\n(%s)\n\n(%d extra matches found)\n\ncurrent bits are (\n%s)\n",
+			DEBUG_CRASH(("ambiguous model match in findBestInfoSlow \n\nbetween \n(%s)\n<and>\n(%s)\n\n(%d extra matches found)\n\ncurrent bits are (\n%s)",
 					curBestMatchStr.str(),
 					dupMatchStr.str(),
 					numDupMatches,
@@ -185,8 +191,28 @@ private:
 		return result;
 	}
 
-	//-------------------------------------------------------------------------------------------------
 public:
+
+
+	//-------------------------------------------------------------------------------------------------
+	SparseMatchFinder() {}
+	SparseMatchFinder(const SparseMatchFinder& other)
+	{
+		*this = other;
+	}
+
+	//-------------------------------------------------------------------------------------------------
+	SparseMatchFinder& operator=(const SparseMatchFinder& other)
+	{
+		if CONSTEXPR ((FLAGS & SparseMatchFinderFlags_NoCopy) == 0)
+		{
+			if (this != &other)
+			{
+				m_bestMatches = other.m_bestMatches;
+			}
+		}
+		return *this;
+	}
 
 	//-------------------------------------------------------------------------------------------------
 	void clear()
@@ -210,7 +236,7 @@ public:
 		
 		const MATCHABLE* info = findBestInfoSlow(v, bits);
 
-		DEBUG_ASSERTCRASH(info != NULL, ("no suitable match for criteria was found!\n"));
+		DEBUG_ASSERTCRASH(info != NULL, ("no suitable match for criteria was found!"));
 		if (info != NULL) {
 			m_bestMatches[bits] = info;
 		}

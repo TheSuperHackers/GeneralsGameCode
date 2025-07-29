@@ -48,7 +48,7 @@ unsigned _MipMapFilters[TextureFilterClass::FILTER_TYPE_COUNT];
 /*************************************************************************
 **                             TextureFilterClass
 *************************************************************************/
-TextureFilterClass::TextureFilterClass(MipCountType mip_level_count=MIP_LEVELS_1)
+TextureFilterClass::TextureFilterClass(MipCountType mip_level_count)
 :	TextureMinFilter(FILTER_TYPE_DEFAULT),
 	TextureMagFilter(FILTER_TYPE_DEFAULT),
 	UAddressMode(TEXTURE_ADDRESS_REPEAT),
@@ -157,7 +157,7 @@ void TextureFilterClass::Set_Mip_Mapping(FilterType mipmap)
 {
 //	if (mipmap != FILTER_TYPE_NONE && Get_Mip_Level_Count() <= 1 && Is_Initialized()) 
 //	{
-//		WWASSERT_PRINT(0, "Trying to enable MipMapping on texture w/o Mip levels!\n");
+//		WWASSERT_PRINT(0, "Trying to enable MipMapping on texture w/o Mip levels!");
 //		return;
 //	}
 	MipMapFilter=mipmap;

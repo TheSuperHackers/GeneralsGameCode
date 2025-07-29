@@ -34,11 +34,6 @@
 #include "Common/Registry.h"
 #include "GameNetwork/WOLBrowser/WebBrowser.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // PRIVATE DATA ///////////////////////////////////////////////////////////////////////////////////
@@ -109,7 +104,7 @@ void INI::parseWebpageURLDefinition( INI* ini )
 
 //	}  // end if
 
-//	DEBUG_ASSERTCRASH( track, ("parseMusicTrackDefinition: Unable to allocate track '%s'\n",
+//	DEBUG_ASSERTCRASH( track, ("parseMusicTrackDefinition: Unable to allocate track '%s'",
 //										 name.str()) );
 
 	// parse the ini definition
@@ -121,7 +116,7 @@ void INI::parseWebpageURLDefinition( INI* ini )
 		getcwd(cwd, _MAX_PATH);
 
 		url->m_url.format("file://%s\\Data\\%s\\%s", encodeURL(cwd).str(), GetRegistryLanguage().str(), url->m_url.str()+7);
-		DEBUG_LOG(("INI::parseWebpageURLDefinition() - converted URL to [%s]\n", url->m_url.str()));
+		DEBUG_LOG(("INI::parseWebpageURLDefinition() - converted URL to [%s]", url->m_url.str()));
 	}
 }  // end parseMusicTrackDefinition
 

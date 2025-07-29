@@ -507,7 +507,7 @@ GlobalData* GlobalData::m_theOriginal = NULL;
 	{ "KeyboardCameraRotateSpeed", INI::parseReal, NULL, offsetof( GlobalData, m_keyboardCameraRotateSpeed ) },
 	{ "PlayStats",									INI::parseInt,				NULL,			offsetof( GlobalData, m_playStats ) },
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	{ "DisableCameraFade",			INI::parseBool,				NULL,			offsetof( GlobalData, m_disableCameraFade ) },
 	{ "DisableScriptedInputDisabling",			INI::parseBool,		NULL,			offsetof( GlobalData, m_disableScriptedInputDisabling ) },
 	{ "DisableMilitaryCaption",			INI::parseBool,				NULL,			offsetof( GlobalData, m_disableMilitaryCaption ) },
@@ -589,16 +589,19 @@ GlobalData::GlobalData()
 		m_theOriginal = this;
 	m_next = NULL;
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL) || defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
+#if defined(RTS_DEBUG) || defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
 	m_specialPowerUsesDelay = TRUE;
 #endif
   m_TiVOFastMode = FALSE;
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG) || ENABLE_CONFIGURABLE_SHROUD
+	m_shroudOn = TRUE;
+#endif
+
+#if defined(RTS_DEBUG)
 	m_wireframe = 0;
 	m_stateMachineDebug = FALSE;
 	m_useCameraConstraints = TRUE;
-	m_shroudOn = TRUE;
 	m_fogOfWarOn = FALSE;
 	m_jabberOn = FALSE;
 	m_munkeeOn = FALSE;
@@ -659,6 +662,7 @@ GlobalData::GlobalData()
 	m_dumpAssetUsage = FALSE;
 	m_framesPerSecondLimit = 0;
 	m_chipSetType = 0;
+	m_headless = FALSE;
 	m_windowed = 0;
 	m_xResolution = 800;
 	m_yResolution = 600;
@@ -973,6 +977,8 @@ GlobalData::GlobalData()
 	m_saveCameraInReplay = FALSE;
 	m_useCameraInReplay = FALSE;
 
+	m_systemTimeFontSize = 8;
+	m_gameTimeFontSize = 8;
 
 	m_debugShowGraphicalFramerate = FALSE;
 
@@ -1001,6 +1007,9 @@ GlobalData::GlobalData()
 	m_buildMapCache = FALSE;
 	m_initialFile.clear();
 	m_pendingFile.clear();
+	
+	m_simulateReplays.clear();
+	m_simulateReplayJobs = SIMULATE_REPLAYS_SEQUENTIAL;
 
 	for (i = LEVEL_FIRST; i <= LEVEL_LAST; ++i)
 		m_healthBonus[i] = 1.0f;
@@ -1023,10 +1032,6 @@ GlobalData::GlobalData()
 	m_afterIntro = FALSE;
 	m_allowExitOutOfMovies = FALSE;
 	m_loadScreenRender = FALSE;
-  m_musicVolumeFactor = 0.5f;
- 	m_SFXVolumeFactor = 0.5f;
-  m_voiceVolumeFactor = 0.5f;
-  m_3DSoundPref = false;
 
 	m_keyboardDefaultScrollFactor = m_keyboardScrollFactor = 0.5f;
 	m_scrollAmountCutoff = 10.0f;
@@ -1037,54 +1042,6 @@ GlobalData::GlobalData()
 	
 	m_iniCRC = 0;
 	m_exeCRC = 0;
-	
-	// lets CRC the executable!  Whee!
-	const Int blockSize = 65536;
-	Char buffer[ _MAX_PATH ];
-	CRC exeCRC;
-	GetModuleFileName( NULL, buffer, sizeof( buffer ) );
-	File *fp = TheFileSystem->openFile(buffer, File::READ | File::BINARY);
-	if (fp != NULL) {
-		unsigned char crcBlock[blockSize];
-		Int amtRead = 0;
-		while ( (amtRead=fp->read(crcBlock, blockSize)) > 0 )
-		{
-			exeCRC.computeCRC(crcBlock, amtRead);
-		}
-		fp->close();
-		fp = NULL;
-	}
-	if (TheVersion)
-	{
-		UnsignedInt version = TheVersion->getVersionNumber();
-		exeCRC.computeCRC( &version, sizeof(UnsignedInt) );
-	}
-	// Add in MP scripts to the EXE CRC, since the game will go out of sync if they change
-	fp = TheFileSystem->openFile("Data\\Scripts\\SkirmishScripts.scb", File::READ | File::BINARY);
-	if (fp != NULL) {
-		unsigned char crcBlock[blockSize];
-		Int amtRead = 0;
-		while ( (amtRead=fp->read(crcBlock, blockSize)) > 0 )
-		{
-			exeCRC.computeCRC(crcBlock, amtRead);
-		}
-		fp->close();
-		fp = NULL;
-	}
-	fp = TheFileSystem->openFile("Data\\Scripts\\MultiplayerScripts.scb", File::READ | File::BINARY);
-	if (fp != NULL) {
-		unsigned char crcBlock[blockSize];
-		Int amtRead = 0;
-		while ( (amtRead=fp->read(crcBlock, blockSize)) > 0 )
-		{
-			exeCRC.computeCRC(crcBlock, amtRead);
-		}
-		fp->close();
-		fp = NULL;
-	}
-
-	m_exeCRC = exeCRC.get();
-	DEBUG_LOG(("EXE CRC: 0x%8.8X\n", m_exeCRC));
 	
 	m_movementPenaltyDamageState = BODY_REALLYDAMAGED;
 	
@@ -1185,10 +1142,10 @@ GlobalData::GlobalData()
 //-------------------------------------------------------------------------------------------------
 GlobalData::~GlobalData( void )
 {
-	DEBUG_ASSERTCRASH( TheWritableGlobalData->m_next == NULL, ("~GlobalData: theOriginal is not original\n") );
+	DEBUG_ASSERTCRASH( TheWritableGlobalData->m_next == NULL, ("~GlobalData: theOriginal is not original") );
 
 	if (m_weaponBonusSet)
-		m_weaponBonusSet->deleteInstance();
+		deleteInstance(m_weaponBonusSet);
 
 	if( m_theOriginal == this )	{
 		m_theOriginal = NULL;
@@ -1228,7 +1185,7 @@ GlobalData *GlobalData::newOverride( void )
 	GlobalData *override = NEW GlobalData;
 
 	// copy the data from the latest override (TheWritableGlobalData) to the newly created instance
-	DEBUG_ASSERTCRASH( TheWritableGlobalData, ("GlobalData::newOverride() - no existing data\n") );
+	DEBUG_ASSERTCRASH( TheWritableGlobalData, ("GlobalData::newOverride() - no existing data") );
 	*override = *TheWritableGlobalData;
 
 	//
@@ -1248,7 +1205,7 @@ GlobalData *GlobalData::newOverride( void )
 //-------------------------------------------------------------------------------------------------
 void GlobalData::init( void )
 {
-	// nothing
+	m_exeCRC = generateExeCRC();
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -1281,8 +1238,8 @@ void GlobalData::reset( void )
 	// we now have the one single global data in TheWritableGlobalData singleton, lets sanity check
 	// some of all that
 	//
-	DEBUG_ASSERTCRASH( TheWritableGlobalData->m_next == NULL, ("ResetGlobalData: theOriginal is not original\n") );
-	DEBUG_ASSERTCRASH( TheWritableGlobalData == GlobalData::m_theOriginal, ("ResetGlobalData: oops\n") );
+	DEBUG_ASSERTCRASH( TheWritableGlobalData->m_next == NULL, ("ResetGlobalData: theOriginal is not original") );
+	DEBUG_ASSERTCRASH( TheWritableGlobalData == GlobalData::m_theOriginal, ("ResetGlobalData: oops") );
 
 }  // end ResetGlobalData
 
@@ -1329,6 +1286,9 @@ void GlobalData::parseGameDataDefinition( INI* ini )
 	
 	TheWritableGlobalData->m_saveCameraInReplay = optionPref.saveCameraInReplays();
 	TheWritableGlobalData->m_useCameraInReplay = optionPref.useCameraInReplays();
+
+	TheWritableGlobalData->m_systemTimeFontSize = optionPref.getSystemTimeFontSize();
+	TheWritableGlobalData->m_gameTimeFontSize = optionPref.getGameTimeFontSize();
 	
 	Int val=optionPref.getGammaValue();
 	//generate a value between 0.6 and 2.0.
@@ -1350,3 +1310,79 @@ void GlobalData::parseGameDataDefinition( INI* ini )
 	TheWritableGlobalData->m_yResolution = yres;
 }
 
+
+UnsignedInt GlobalData::generateExeCRC()
+{
+	DEBUG_ASSERTCRASH(TheFileSystem != NULL, ("TheFileSystem is NULL"));
+
+	// lets CRC the executable!  Whee!
+	const Int blockSize = 65536;
+	CRC exeCRC;
+	File *fp;
+	// TheSuperHackers @tweak SkyAero/xezon 27/05/2025
+	// Simulate the EXE's CRC value to force Network and Replay compatibility with another build.
+#if (defined(_MSC_VER) && _MSC_VER < 1300) && RETAIL_COMPATIBLE_CRC
+
+#define GENERALSMD_104_CD_EXE_CRC    0x3b6fb2cfu
+#define GENERALSMD_104_STEAM_EXE_CRC 0xf6a4221bu
+#define GENERALSMD_104_EAAPP_EXE_CRC 0xc4181eb9u
+
+	exeCRC.set(GENERALSMD_104_CD_EXE_CRC);
+	DEBUG_LOG(("Fake EXE CRC is 0x%8.8X", exeCRC.get()));
+
+#else
+	{
+		Char buffer[ _MAX_PATH ];
+		GetModuleFileName( NULL, buffer, sizeof( buffer ) );
+		fp = TheFileSystem->openFile(buffer, File::READ | File::BINARY);
+		if (fp != NULL) {
+			unsigned char crcBlock[blockSize];
+			Int amtRead = 0;
+			while ( (amtRead=fp->read(crcBlock, blockSize)) > 0 )
+			{
+				exeCRC.computeCRC(crcBlock, amtRead);
+			}
+			DEBUG_LOG(("EXE CRC is 0x%8.8X", exeCRC.get()));
+			fp->close();
+			fp = NULL;
+		}
+		else {
+			DEBUG_CRASH(("Executable file has failed to open"));
+		}
+	}
+#endif
+
+	UnsignedInt version = 0;
+	if (TheVersion)
+	{
+		version = TheVersion->getVersionNumber();
+		exeCRC.computeCRC( &version, sizeof(UnsignedInt) );
+	}
+	// Add in MP scripts to the EXE CRC, since the game will go out of sync if they change
+	fp = TheFileSystem->openFile("Data\\Scripts\\SkirmishScripts.scb", File::READ | File::BINARY);
+	if (fp != NULL) {
+		unsigned char crcBlock[blockSize];
+		Int amtRead = 0;
+		while ( (amtRead=fp->read(crcBlock, blockSize)) > 0 )
+		{
+			exeCRC.computeCRC(crcBlock, amtRead);
+		}
+		fp->close();
+		fp = NULL;
+	}
+	fp = TheFileSystem->openFile("Data\\Scripts\\MultiplayerScripts.scb", File::READ | File::BINARY);
+	if (fp != NULL) {
+		unsigned char crcBlock[blockSize];
+		Int amtRead = 0;
+		while ( (amtRead=fp->read(crcBlock, blockSize)) > 0 )
+		{
+			exeCRC.computeCRC(crcBlock, amtRead);
+		}
+		fp->close();
+		fp = NULL;
+	}
+
+	DEBUG_LOG(("EXE+Version(%d.%d)+SCB CRC is 0x%8.8X", version >> 16, version & 0xffff, exeCRC.get()));
+
+	return exeCRC.get();
+}

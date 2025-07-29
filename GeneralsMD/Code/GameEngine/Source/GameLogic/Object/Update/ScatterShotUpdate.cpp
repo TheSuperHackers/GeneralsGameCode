@@ -138,7 +138,7 @@ ScatterShotUpdate::ScatterShotUpdate(Thing* thing, const ModuleData* moduleData)
 ScatterShotUpdate::~ScatterShotUpdate(void)
 {
 	if (m_weapon)
-		m_weapon->deleteInstance();
+		deleteInstance(m_weapon);
 	m_goalObj = NULL;
 }
 

@@ -61,11 +61,6 @@
 #include "GameLogic/ScriptEngine.h"
 #include "GameLogic/Weapon.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // PRIVATE DATA ///////////////////////////////////////////////////////////////////////////////////
@@ -272,7 +267,7 @@ void INI::prepFile( AsciiString filename, INILoadType loadType )
 	if( m_file != NULL )
 	{
 
-		DEBUG_CRASH(( "INI::load, cannot open file '%s', file already open\n", filename.str() ));
+		DEBUG_CRASH(( "INI::load, cannot open file '%s', file already open", filename.str() ));
 		throw INI_FILE_ALREADY_OPEN;
 
 	}  // end if
@@ -282,7 +277,7 @@ void INI::prepFile( AsciiString filename, INILoadType loadType )
 	if( m_file == NULL )
 	{
 
-		DEBUG_CRASH(( "INI::load, cannot open file '%s'\n", filename.str() ));
+		DEBUG_CRASH(( "INI::load, cannot open file '%s'", filename.str() ));
 		throw INI_CANT_OPEN_FILE;
 
 	}  // end if
@@ -364,7 +359,7 @@ void INI::load( AsciiString filename, INILoadType loadType, Xfer *pXfer )
 	{
 
 		// read all lines in the file
-		DEBUG_ASSERTCRASH( m_endOfFile == FALSE, ("INI::load, EOF at the beginning!\n") );
+		DEBUG_ASSERTCRASH( m_endOfFile == FALSE, ("INI::load, EOF at the beginning!") );
 		while( m_endOfFile == FALSE )
 		{
 			// read this line
@@ -386,7 +381,7 @@ void INI::load( AsciiString filename, INILoadType loadType, Xfer *pXfer )
 						(*parse)( this );
 
 					} catch (...) {
-						DEBUG_CRASH(("Error parsing block '%s' in INI file '%s'\n", token, m_filename.str()) );
+						DEBUG_CRASH(("Error parsing block '%s' in INI file '%s'", token, m_filename.str()) );
 						char buff[1024];
 						sprintf(buff, "Error parsing INI file '%s' (Line: '%s')\n", m_filename.str(), currentLine.str());
 
@@ -398,7 +393,7 @@ void INI::load( AsciiString filename, INILoadType loadType, Xfer *pXfer )
 				}
 				else
 				{
-					DEBUG_ASSERTCRASH( 0, ("[LINE: %d - FILE: '%s'] Unknown block '%s'\n",
+					DEBUG_ASSERTCRASH( 0, ("[LINE: %d - FILE: '%s'] Unknown block '%s'",
 														 getLineNum(), getFilename().str(), token ) );
 					throw INI_UNKNOWN_TOKEN;
 				}
@@ -426,7 +421,7 @@ void INI::load( AsciiString filename, INILoadType loadType, Xfer *pXfer )
 void INI::readLine( void )
 {
 	// sanity
-	DEBUG_ASSERTCRASH( m_file, ("readLine(), file pointer is NULL\n") );
+	DEBUG_ASSERTCRASH( m_file, ("readLine(), file pointer is NULL") );
 
   if (m_endOfFile)
     *m_buffer=0;
@@ -459,7 +454,7 @@ void INI::readLine( void )
         break;
       }
 
-      DEBUG_ASSERTCRASH(*p != '\t', ("tab characters are not allowed in INI files (%s). please check your editor settings. Line Number %d\n",m_filename.str(), getLineNum()));
+      DEBUG_ASSERTCRASH(*p != '\t', ("tab characters are not allowed in INI files (%s). please check your editor settings. Line Number %d",m_filename.str(), getLineNum()));
 
       // comment?
       if (*p==';')
@@ -478,7 +473,7 @@ void INI::readLine( void )
 		if ( p == m_buffer+INI_MAX_CHARS_PER_LINE )
 		{
 
-			DEBUG_ASSERTCRASH( 0, ("Buffer too small (%d) and was truncated, increase INI_MAX_CHARS_PER_LINE\n", 
+			DEBUG_ASSERTCRASH( 0, ("Buffer too small (%d) and was truncated, increase INI_MAX_CHARS_PER_LINE", 
 														 INI_MAX_CHARS_PER_LINE) );
 
 		}  // end if
@@ -487,7 +482,7 @@ void INI::readLine( void )
 	if (s_xfer)
 	{
 		s_xfer->xferUser( m_buffer, sizeof( char ) * strlen( m_buffer ) );
-		//DEBUG_LOG(("Xfer val is now 0x%8.8X in %s, line %s\n", ((XferCRC *)s_xfer)->getCRC(),
+		//DEBUG_LOG(("Xfer val is now 0x%8.8X in %s, line %s", ((XferCRC *)s_xfer)->getCRC(),
 			//m_filename.str(), m_buffer));
 	}
 }
@@ -576,7 +571,7 @@ void INI::parsePositiveNonZeroReal( INI* ini, void * /*instance*/, void *store, 
 	*(Real *)store = scanReal(token);
 	if (*(Real *)store <= 0.0f)
 	{
-		DEBUG_CRASH(("invalid Real value %f -- expected > 0\n",*(Real*)store));
+		DEBUG_CRASH(("invalid Real value %f -- expected > 0",*(Real*)store));
 		throw INI_INVALID_DATA;
 	}
 
@@ -645,7 +640,7 @@ void INI::parseBitInInt32( INI *ini, void *instance, void *store, const void* us
 		return FALSE;
 	else
 	{
-		DEBUG_CRASH(("invalid boolean token %s -- expected Yes or No\n",token));
+		DEBUG_CRASH(("invalid boolean token %s -- expected Yes or No",token));
 		throw INI_INVALID_DATA;
 		return false;	// keep compiler happy
 	}
@@ -755,6 +750,7 @@ AsciiString INI::getNextQuotedAsciiString()
 {
 	AsciiString result;
 	char buff[INI_MAX_CHARS_PER_LINE];
+	buff[0] = '\0';
 
 	const char *token = getNextTokenOrNull();	// if null, just leave an empty string
 	if (token != NULL)
@@ -898,7 +894,7 @@ void INI::parseMappedImage( INI *ini, void * /*instance*/, void *store, const vo
 	else
 	{
 
-		DEBUG_CRASH(( "INI::parseAnim2DTemplate - TheAnim2DCollection is NULL\n" ));
+		DEBUG_CRASH(( "INI::parseAnim2DTemplate - TheAnim2DCollection is NULL" ));
 		throw INI_UNKNOWN_ERROR;
 
 	}  // end else
@@ -946,7 +942,7 @@ void INI::parseBitString32( INI* ini, void * /*instance*/, void *store, const vo
 
 	if( flagList == NULL || flagList[ 0 ] == NULL)
 	{
-		DEBUG_ASSERTCRASH( flagList, ("INTERNAL ERROR! parseBitString32: No flag list provided!\n") );
+		DEBUG_ASSERTCRASH( flagList, ("INTERNAL ERROR! parseBitString32: No flag list provided!") );
 		throw INI_INVALID_NAME_LIST;
 	}
 
@@ -1218,7 +1214,7 @@ void INI::parseDynamicAudioEventRTS( INI *ini, void * /*instance*/, void *store,
 	{
 		if (*theSound)
 		{
-			(*theSound)->deleteInstance();
+			deleteInstance(*theSound);
 			*theSound = NULL;
 		}
 	}
@@ -1273,7 +1269,7 @@ void INI::parseThingTemplate( INI* ini, void * /*instance*/, void *store, const 
 	else
 	{
 		const ThingTemplate *tt = TheThingFactory->findTemplate(token);	// could be null!
-		DEBUG_ASSERTCRASH(tt, ("ThingTemplate %s not found!\n",token));
+		DEBUG_ASSERTCRASH(tt, ("ThingTemplate %s not found!",token));
 		// assign it, even if null!
 		*theThingTemplate = tt;
 	}
@@ -1297,7 +1293,7 @@ void INI::parseArmorTemplate( INI* ini, void * /*instance*/, void *store, const 
 	else
 	{
 		const ArmorTemplate *tt = TheArmorStore->findArmorTemplate(token);	// could be null!
-		DEBUG_ASSERTCRASH(tt, ("ArmorTemplate %s not found!\n",token));
+		DEBUG_ASSERTCRASH(tt, ("ArmorTemplate %s not found!",token));
 		// assign it, even if null!
 		*theArmorTemplate = tt;
 	}
@@ -1315,7 +1311,7 @@ void INI::parseWeaponTemplate( INI* ini, void * /*instance*/, void *store, const
 	ConstWeaponTemplatePtr* theWeaponTemplate = (ConstWeaponTemplatePtr*)store;		
 
 	const WeaponTemplate *tt = TheWeaponStore->findWeaponTemplate(token);	// could be null!
-	DEBUG_ASSERTCRASH(tt || stricmp(token, "None") == 0, ("WeaponTemplate %s not found!\n",token));
+	DEBUG_ASSERTCRASH(tt || stricmp(token, "None") == 0, ("WeaponTemplate %s not found!",token));
 	// assign it, even if null!
 	*theWeaponTemplate = tt;
 
@@ -1332,7 +1328,7 @@ void INI::parseFXList( INI* ini, void * /*instance*/, void *store, const void* /
 	ConstFXListPtr* theFXList = (ConstFXListPtr*)store;		
 
 	const FXList *fxl = TheFXListStore->findFXList(token);	// could be null!
-	DEBUG_ASSERTCRASH(fxl != NULL || stricmp(token, "None") == 0, ("FXList %s not found!\n",token));
+	DEBUG_ASSERTCRASH(fxl != NULL || stricmp(token, "None") == 0, ("FXList %s not found!",token));
 	// assign it, even if null!
 	*theFXList = fxl;
 
@@ -1346,7 +1342,7 @@ void INI::parseParticleSystemTemplate( INI *ini, void * /*instance*/, void *stor
 	const char *token = ini->getNextToken();
 
 	const ParticleSystemTemplate *pSystemT = TheParticleSystemManager->findTemplate( AsciiString( token ) );
-	DEBUG_ASSERTCRASH( pSystemT || stricmp( token, "None" ) == 0, ("ParticleSystem %s not found!\n",token) );
+	DEBUG_ASSERTCRASH( pSystemT || stricmp( token, "None" ) == 0, ("ParticleSystem %s not found!",token) );
 
 	typedef const ParticleSystemTemplate* ConstParticleSystemTemplatePtr;
 	ConstParticleSystemTemplatePtr* theParticleSystemTemplate = (ConstParticleSystemTemplatePtr*)store;		
@@ -1372,7 +1368,7 @@ void INI::parseDamageFX( INI* ini, void * /*instance*/, void *store, const void*
 	else
 	{
 		const DamageFX *fxl = TheDamageFXStore->findDamageFX(token);	// could be null!
-		DEBUG_ASSERTCRASH(fxl, ("DamageFX %s not found!\n",token));
+		DEBUG_ASSERTCRASH(fxl, ("DamageFX %s not found!",token));
 		// assign it, even if null!
 		*theDamageFX = fxl;
 	}
@@ -1390,7 +1386,7 @@ void INI::parseObjectCreationList( INI* ini, void * /*instance*/, void *store, c
 	ConstObjectCreationListPtr* theObjectCreationList = (ConstObjectCreationListPtr*)store;		
 
 	const ObjectCreationList *ocl = TheObjectCreationListStore->findObjectCreationList(token);	// could be null!
-	DEBUG_ASSERTCRASH(ocl || stricmp(token, "None") == 0, ("ObjectCreationList %s not found!\n",token));
+	DEBUG_ASSERTCRASH(ocl || stricmp(token, "None") == 0, ("ObjectCreationList %s not found!",token));
 	// assign it, even if null!
 	*theObjectCreationList = ocl;
 
@@ -1410,7 +1406,7 @@ void INI::parseUpgradeTemplate( INI* ini, void * /*instance*/, void *store, cons
 	}
 
 	const UpgradeTemplate *uu = TheUpgradeCenter->findUpgrade( AsciiString( token ) );
-	DEBUG_ASSERTCRASH( uu || stricmp( token, "None" ) == 0, ("Upgrade %s not found!\n",token) );
+	DEBUG_ASSERTCRASH( uu || stricmp( token, "None" ) == 0, ("Upgrade %s not found!",token) );
 
 	typedef const UpgradeTemplate* ConstUpgradeTemplatePtr;
 	ConstUpgradeTemplatePtr* theUpgradeTemplate = (ConstUpgradeTemplatePtr *)store;		
@@ -1433,7 +1429,7 @@ void INI::parseSpecialPowerTemplate( INI* ini, void * /*instance*/, void *store,
 	const SpecialPowerTemplate *sPowerT = TheSpecialPowerStore->findSpecialPowerTemplate( AsciiString( token ) );
 	if( !sPowerT && stricmp( token, "None" ) != 0 )
 	{
-		DEBUG_CRASH( ("[LINE: %d in '%s'] Specialpower %s not found!\n", ini->getLineNum(), ini->getFilename().str(), token) );
+		DEBUG_CRASH( ("[LINE: %d in '%s'] Specialpower %s not found!", ini->getLineNum(), ini->getFilename().str(), token) );
 	}
 
 	typedef const SpecialPowerTemplate* ConstSpecialPowerTemplatePtr;
@@ -1579,7 +1575,7 @@ void INI::initFromINIMulti( void *what, const MultiIniFieldParse& parseTableList
 
 	if( what == NULL )
 	{
-		DEBUG_ASSERTCRASH( 0, ("INI::initFromINI - Invalid parameters supplied!\n") );
+		DEBUG_ASSERTCRASH( 0, ("INI::initFromINI - Invalid parameters supplied!") );
 		throw INI_INVALID_PARAMS;
 	}
 
@@ -1615,7 +1611,7 @@ void INI::initFromINIMulti( void *what, const MultiIniFieldParse& parseTableList
 						(*parse)( this, what, (char *)what + offset + parseTableList.getNthExtraOffset(ptIdx), userData );
 
 						} catch (...) {
-							DEBUG_CRASH( ("[LINE: %d - FILE: '%s'] Error reading field '%s' of block '%s'\n",
+							DEBUG_CRASH( ("[LINE: %d - FILE: '%s'] Error reading field '%s' of block '%s'",
 																 INI::getLineNum(), INI::getFilename().str(), field, m_curBlockStart) );
 
 
@@ -1632,7 +1628,7 @@ void INI::initFromINIMulti( void *what, const MultiIniFieldParse& parseTableList
 
 				if (!found)
 				{
-					DEBUG_ASSERTCRASH( 0, ("[LINE: %d - FILE: '%s'] Unknown field '%s' in block '%s'\n",
+					DEBUG_ASSERTCRASH( 0, ("[LINE: %d - FILE: '%s'] Unknown field '%s' in block '%s'",
 														 INI::getLineNum(), INI::getFilename().str(), field, m_curBlockStart) );
 					throw INI_UNKNOWN_TOKEN;
 				}
@@ -1646,7 +1642,7 @@ void INI::initFromINIMulti( void *what, const MultiIniFieldParse& parseTableList
 		{
 
 			done = TRUE;
-			DEBUG_ASSERTCRASH( 0, ("Error parsing block '%s', in INI file '%s'.  Missing '%s' token\n",
+			DEBUG_ASSERTCRASH( 0, ("Error parsing block '%s', in INI file '%s'.  Missing '%s' token",
 												 m_curBlockStart, getFilename().str(), m_blockEndToken) );
 			throw INI_MISSING_END_TOKEN;
 
@@ -1722,7 +1718,7 @@ void INI::initFromINIMulti( void *what, const MultiIniFieldParse& parseTableList
 	if( nameList == NULL || nameList[ 0 ] == NULL )
 	{
 
-		DEBUG_ASSERTCRASH( 0, ("INTERNAL ERROR! scanIndexList, invalid name list\n") );
+		DEBUG_ASSERTCRASH( 0, ("INTERNAL ERROR! scanIndexList, invalid name list") );
 		throw INI_INVALID_NAME_LIST;
 
 	}
@@ -1737,7 +1733,7 @@ void INI::initFromINIMulti( void *what, const MultiIniFieldParse& parseTableList
 		}
 	}
 
-	DEBUG_CRASH(("token %s is not a valid member of the index list\n",token));
+	DEBUG_CRASH(("token %s is not a valid member of the index list",token));
 	throw INI_INVALID_DATA;
 	return 0;	// never executed, but keeps compiler happy
 
@@ -1747,7 +1743,7 @@ void INI::initFromINIMulti( void *what, const MultiIniFieldParse& parseTableList
 {
 	if( lookupList == NULL || lookupList[ 0 ].name == NULL )
 	{
-		DEBUG_ASSERTCRASH( 0, ("INTERNAL ERROR! scanLookupList, invalid name list\n") );
+		DEBUG_ASSERTCRASH( 0, ("INTERNAL ERROR! scanLookupList, invalid name list") );
 		throw INI_INVALID_NAME_LIST;
 	}
 
@@ -1763,7 +1759,7 @@ void INI::initFromINIMulti( void *what, const MultiIniFieldParse& parseTableList
 		}
 	}
 
-	DEBUG_CRASH(("token %s is not a valid member of the lookup list\n",token));
+	DEBUG_CRASH(("token %s is not a valid member of the lookup list",token));
 	throw INI_INVALID_DATA;
 	return 0;	// never executed, but keeps compiler happy
 

@@ -42,9 +42,9 @@
 #ifndef __SPHERE_PROPERTY_SHEET_H
 #define __SPHERE_PROPERTY_SHEET_H
 
-#include "SphereColorPropPage.H"
-#include "SphereGeneralPropPage.H"
-#include "SphereSizePropPage.H"
+#include "SphereColorPropPage.h"
+#include "SphereGeneralPropPage.h"
+#include "SphereSizePropPage.h"
 
 
 // Forward declarations

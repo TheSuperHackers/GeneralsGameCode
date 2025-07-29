@@ -48,11 +48,6 @@
 
 const Real BIGNUM = 99999.0f;
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 //-------------------------------------------------------------------------------------------------
 enum ChinookAIStateType CPP_11(: Int)
@@ -436,7 +431,7 @@ protected:
 			{
 				if (!m_ropes.empty())
 				{
-					DEBUG_CRASH(( "ChinookCombatDropState - ropes should be empty\n" ));
+					DEBUG_CRASH(( "ChinookCombatDropState - ropes should be empty" ));
 					throw SC_INVALID_DATA;
 				}
 				m_ropes.resize(numRopes);
@@ -656,7 +651,7 @@ public:
 		}
 
 		UnsignedInt now = TheGameLogic->getFrame();
-		for (Int i = 0; i < m_ropes.size(); ++i)
+		for (size_t i = 0; i < m_ropes.size(); ++i)
 		{
 			if (m_ropes[i].ropeDrawable)
 			{

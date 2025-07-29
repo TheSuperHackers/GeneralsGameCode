@@ -225,6 +225,7 @@ public:
 		MSG_META_VIEW_LAST_RADAR_EVENT,							///< center view on last radar event
 		MSG_META_SELECT_HERO,                       ///< selects player's hero character, if exists...
 		MSG_META_SELECT_ALL,                        ///< selects all units across screen
+		MSG_META_SELECT_ALL_AIRCRAFT,								///< selects all air units just like select all
 		MSG_META_SCATTER,														///< selected units scatter
 		MSG_META_STOP,															///< selected units stop
 		MSG_META_DEPLOY,														///< selected units 'deploy'
@@ -235,7 +236,7 @@ public:
 		MSG_META_CHAT_EVERYONE,											///< send chat msg to everyone (incl. observers)
 		MSG_META_DIPLOMACY,													///< bring up diplomacy screen
 		MSG_META_OPTIONS,														///< bring up options screen
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 		MSG_META_HELP,															///< bring up help screen
 #endif
 
@@ -266,12 +267,14 @@ public:
 		MSG_META_BEGIN_CAMERA_ZOOM_OUT,
 		MSG_META_END_CAMERA_ZOOM_OUT,
 		MSG_META_CAMERA_RESET,
-		MSG_META_TOGGLE_FAST_FORWARD_REPLAY,	      ///< Toggle the fast forward feature
+		MSG_META_TOGGLE_FAST_FORWARD_REPLAY,				///< Toggle the fast forward feature
+		MSG_META_TOGGLE_PAUSE,											///< TheSuperHackers @feature Toggle game pause (in replay playbacks)
+		MSG_META_STEP_FRAME,												///< TheSuperHackers @feature Step one frame (in replay playbacks)
 
 
 		// META items that are really for debug/demo/development use only...
 		// They do not get built into RELEASE builds.
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 		MSG_META_DEMO_TOGGLE_BEHIND_BUILDINGS,			///< Toggles showing units behind buildings or not
 		MSG_META_DEMO_TOGGLE_LETTERBOX,							///< enable/disable letterbox mode
 		MSG_META_DEMO_TOGGLE_MESSAGE_TEXT,					///< toggle the text from the UI messages
@@ -312,9 +315,9 @@ public:
 		MSG_META_DEMO_BEGIN_ADJUST_FOV,							///< enter adjust-FOV mode
 		MSG_META_DEMO_END_ADJUST_FOV,								///< exit adjust-FOV mode
 		MSG_META_DEMO_LOCK_CAMERA_TO_PLANES,				///< lock camera to airborne thingies
-		MSG_META_DEMO_REMOVE_PREREQ,								///< Turn of Prerequisite checks in building legality
-		MSG_META_DEMO_INSTANT_BUILD,								///< All building is with a timer of 1
-		MSG_META_DEMO_FREE_BUILD,										///< All building is for 0 money
+		MSG_META_DEMO_REMOVE_PREREQ,								///< Turn off Prerequisite checks in building legality, works in MULTIPLAYER for all humans
+		MSG_META_DEMO_INSTANT_BUILD,								///< All building is with a timer of 1, works in MULTIPLAYER for all humans
+		MSG_META_DEMO_FREE_BUILD,										///< All building is for 0 money, works in MULTIPLAYER for all humans
 		MSG_META_DEMO_RUNSCRIPT1,										///< run script named "KEY_F1"
 		MSG_META_DEMO_RUNSCRIPT2,										///< run script named "KEY_F2"
 		MSG_META_DEMO_RUNSCRIPT3,										///< run script named "KEY_F3"
@@ -374,10 +377,10 @@ public:
 		MSG_META_DEMO_TOGGLE_THREATDEBUG,						///< Toggle the threat debugger on/off
 		MSG_META_DEMO_TOGGLE_CASHMAPDEBUG,					///< Toggle the cash map debugger on/off
 		MSG_META_DEMO_TOGGLE_GRAPHICALFRAMERATEBAR,	///< Toggle the graphical framerate bar on/off
-		MSG_META_DEMO_GIVE_ALL_SCIENCES,						///< grant all grantable sciences
-		MSG_META_DEMO_GIVE_RANKLEVEL,								///< up one RankLevel
-		MSG_META_DEMO_TAKE_RANKLEVEL,								///< up one RankLevel
-		MSG_META_DEMO_GIVE_SCIENCEPURCHASEPOINTS,		///< give yourself an SPP (but no rank change)
+		MSG_META_DEMO_GIVE_ALL_SCIENCES,						///< grant all available sciences, works in MULTIPLAYER for all humans
+		MSG_META_DEMO_GIVE_RANKLEVEL,								///< up one rank level
+		MSG_META_DEMO_TAKE_RANKLEVEL,								///< up one rank level
+		MSG_META_DEMO_GIVE_SCIENCEPURCHASEPOINTS,		///< give a science purchase point (but no rank change)
 		MSG_META_DEBUG_TOGGLE_NETWORK,							///< toggle between having and not having network traffic.
 		MSG_META_DEBUG_DUMP_PLAYER_OBJECTS,					///< Dump numbers of objects owned by each player to the script debug window
 		MSG_META_DEBUG_DUMP_ALL_PLAYER_OBJECTS,			///< Dump numbers of objects owned by each player to the script debug window, and additional object info
@@ -385,11 +388,11 @@ public:
 		MSG_META_DEBUG_WIN,													///< Instant Win
 		MSG_META_DEMO_TOGGLE_DEBUG_STATS,						///< show/hide the debug stats
 		/// @todo END section to REMOVE (not disable) for release
-#endif // defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#endif // defined(RTS_DEBUG)
 
-#if defined(RTS_INTERNAL) || defined(RTS_DEBUG)
+#if defined(RTS_DEBUG)
 		MSG_META_DEMO_TOGGLE_AUDIODEBUG,						///< show/hide the audio debug info
-#endif//defined(RTS_INTERNAL) || defined(RTS_DEBUG)
+#endif//defined(RTS_DEBUG)
 #ifdef DUMP_PERF_STATS
 		MSG_META_DEMO_PERFORM_STATISTICAL_DUMP,			///< dump performance stats for this frame to StatisticsDump.txt
 #endif//DUMP_PERF_STATS
@@ -562,7 +565,7 @@ public:
 
 		MSG_BEGIN_DEBUG_NETWORK_MESSAGES = 1900,		///< network messages that exist only in debug/internal builds. all grouped separately.
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 		// all debug/internal-only messages must go here.
 		MSG_DEBUG_KILL_SELECTION,
 		MSG_DEBUG_HURT_OBJECT,
@@ -594,8 +597,8 @@ public:
 	Type getType( void ) const { return m_type; }					///< Return the message type
 	UnsignedByte getArgumentCount( void ) const { return m_argCount; }	///< Return the number of arguments for this msg
 
-	AsciiString getCommandAsAsciiString( void ); ///< returns a string representation of the command type.
-	static AsciiString getCommandTypeAsAsciiString(GameMessage::Type t);
+	const char *getCommandAsString( void ) const; ///< returns a string representation of the command type.
+	static const char *getCommandTypeAsString(GameMessage::Type t);
 
 	Int getPlayerIndex( void ) const { return m_playerIndex; }		///< Return the originating player
 

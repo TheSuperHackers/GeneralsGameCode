@@ -336,7 +336,7 @@ unsigned int TextureBaseClass::Get_Priority(void)
 {
 	if (!D3DTexture) 
 	{
-		WWASSERT_PRINT(0, "Get_Priority: D3DTexture is NULL!\n");
+		WWASSERT_PRINT(0, "Get_Priority: D3DTexture is NULL!");
 		return 0;
 	}
 
@@ -356,7 +356,7 @@ unsigned int TextureBaseClass::Set_Priority(unsigned int priority)
 {
 	if (!D3DTexture) 
 	{
-		WWASSERT_PRINT(0, "Set_Priority: D3DTexture is NULL!\n");
+		WWASSERT_PRINT(0, "Set_Priority: D3DTexture is NULL!");
 		return 0;
 	}
 
@@ -713,7 +713,7 @@ TextureClass::TextureClass
 	default:	break;
 	}
 
-	WWASSERT_PRINT(name && name[0], "TextureClass CTor: NULL or empty texture name\n");
+	WWASSERT_PRINT(name && name[0], "TextureClass CTor: NULL or empty texture name");
 	int len=strlen(name);
 	for (int i=0;i<len;++i) 
 	{
@@ -987,7 +987,7 @@ SurfaceClass *TextureClass::Get_Surface_Level(unsigned int level)
 {
 	if (!Peek_D3D_Texture()) 
 	{
-		WWASSERT_PRINT(0, "Get_Surface_Level: D3DTexture is NULL!\n");
+		WWASSERT_PRINT(0, "Get_Surface_Level: D3DTexture is NULL!");
 		return 0;
 	}
 
@@ -1020,7 +1020,7 @@ IDirect3DSurface8 *TextureClass::Get_D3D_Surface_Level(unsigned int level)
 {
 	if (!Peek_D3D_Texture()) 
 	{
-		WWASSERT_PRINT(0, "Get_D3D_Surface_Level: D3DTexture is NULL!\n");
+		WWASSERT_PRINT(0, "Get_D3D_Surface_Level: D3DTexture is NULL!");
 		return 0;
 	}
 
@@ -1312,7 +1312,7 @@ IDirect3DSurface8* ZTextureClass::Get_D3D_Surface_Level(unsigned int level)
 {
 	if (!Peek_D3D_Texture()) 
 	{
-		WWASSERT_PRINT(0, "Get_D3D_Surface_Level: D3DTexture is NULL!\n");
+		WWASSERT_PRINT(0, "Get_D3D_Surface_Level: D3DTexture is NULL!");
 		return 0;
 	}
 
@@ -1458,7 +1458,7 @@ CubeTextureClass::CubeTextureClass
 	default:	break;
 	}
 
-	WWASSERT_PRINT(name && name[0], "TextureClass CTor: NULL or empty texture name\n");
+	WWASSERT_PRINT(name && name[0], "TextureClass CTor: NULL or empty texture name");
 	int len=strlen(name);
 	for (int i=0;i<len;++i) 
 	{
@@ -1743,7 +1743,7 @@ VolumeTextureClass::VolumeTextureClass
 	default:	break;
 	}
 
-	WWASSERT_PRINT(name && name[0], "TextureClass CTor: NULL or empty texture name\n");
+	WWASSERT_PRINT(name && name[0], "TextureClass CTor: NULL or empty texture name");
 	int len=strlen(name);
 	for (int i=0;i<len;++i) 
 	{

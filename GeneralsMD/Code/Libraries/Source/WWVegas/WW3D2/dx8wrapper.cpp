@@ -45,6 +45,11 @@
 //#define CREATE_DX8_FPU_PRESERVE
 #define WW3D_DEVTYPE D3DDEVTYPE_HAL
 
+#if defined(_MSC_VER) && _MSC_VER < 1300
+#undef WINVER
+#define WINVER 0x0500 // Required to access GetMonitorInfo in VC6.
+#endif
+
 #include "dx8wrapper.h"
 #include "dx8webbrowser.h"
 #include "dx8fvf.h"
@@ -238,10 +243,31 @@ void Non_Fatal_Log_DX8_ErrorCode(unsigned res,const char * file,int line)
 		sizeof(tmp));
 
 	if (new_res==D3D_OK) {
-		WWDEBUG_SAY(("DX8 Error: %s, File: %s, Line: %d\n",tmp,file,line));
+		WWDEBUG_SAY(("DX8 Error: %s, File: %s, Line: %d",tmp,file,line));
 	}
 }
 
+// TheSuperHackers @info helmutbuhler 14/04/2025
+// Helper function that moves x and y such that the inner rect fits into the outer rect.
+// If the inner rect already is in the outer rect, then this does nothing.
+// If the inner rect is larger than the outer rect, then the inner rect will be aligned to the top left of the outer rect.
+void MoveRectIntoOtherRect(const RECT& inner, const RECT& outer, int* x, int* y)
+{
+	int dx = 0;
+	if (inner.right > outer.right)
+		dx = outer.right-inner.right;
+	if (inner.left < outer.left)
+		dx = outer.left-inner.left;
+
+	int dy = 0;
+	if (inner.bottom > outer.bottom)
+		dy = outer.bottom-inner.bottom;
+	if (inner.top < outer.top)
+		dy = outer.top-inner.top;
+
+	*x += dx;
+	*y += dy;
+}
 
 
 bool DX8Wrapper::Init(void * hwnd, bool lite)
@@ -262,7 +288,7 @@ bool DX8Wrapper::Init(void * hwnd, bool lite)
 	*/
 	_Hwnd = (HWND)hwnd;
 	_MainThreadID=ThreadClass::_Get_Current_Thread_ID();
-	WWDEBUG_SAY(("DX8Wrapper main thread: 0x%x\n",_MainThreadID));
+	WWDEBUG_SAY(("DX8Wrapper main thread: 0x%x",_MainThreadID));
 	CurRenderDevice = -1;
 	ResolutionWidth = DEFAULT_RESOLUTION_WIDTH;
 	ResolutionHeight = DEFAULT_RESOLUTION_HEIGHT;
@@ -288,7 +314,7 @@ bool DX8Wrapper::Init(void * hwnd, bool lite)
 	D3DInterface = NULL;
 	D3DDevice = NULL;
 
-	WWDEBUG_SAY(("Reset DX8Wrapper statistics\n"));
+	WWDEBUG_SAY(("Reset DX8Wrapper statistics"));
 	Reset_Statistics();
 
 	Invalidate_Cached_Render_States();
@@ -304,7 +330,7 @@ bool DX8Wrapper::Init(void * hwnd, bool lite)
 		/*
 		** Create the D3D interface object
 		*/
-		WWDEBUG_SAY(("Create Direct3D8\n"));
+		WWDEBUG_SAY(("Create Direct3D8"));
 		D3DInterface = Direct3DCreate8Ptr(D3D_SDK_VERSION);		// TODO: handle failure cases...
 		if (D3DInterface == NULL) {
 			return(false);
@@ -314,9 +340,9 @@ bool DX8Wrapper::Init(void * hwnd, bool lite)
 		/*
 		** Enumerate the available devices
 		*/
-		WWDEBUG_SAY(("Enumerate devices\n"));
+		WWDEBUG_SAY(("Enumerate devices"));
 		Enumerate_Devices();
-		WWDEBUG_SAY(("DX8Wrapper Init completed\n"));
+		WWDEBUG_SAY(("DX8Wrapper Init completed"));
 	}
 
 	return(true);
@@ -619,7 +645,7 @@ bool DX8Wrapper::Create_Device(void)
 
 bool DX8Wrapper::Reset_Device(bool reload_assets)
 {
-	WWDEBUG_SAY(("Resetting device.\n"));
+	WWDEBUG_SAY(("Resetting device."));
 	DX8_THREAD_ASSERT();
 	if ((IsInitted) && (D3DDevice != NULL)) {
 		// Release all non-MANAGED stuff
@@ -663,10 +689,10 @@ bool DX8Wrapper::Reset_Device(bool reload_assets)
 		Invalidate_Cached_Render_States();
 		Set_Default_Global_Render_States();
 		SHD_INIT_SHADERS;
-		WWDEBUG_SAY(("Device reset completed\n"));
+		WWDEBUG_SAY(("Device reset completed"));
 		return true;
 	}
-	WWDEBUG_SAY(("Device reset failed\n"));
+	WWDEBUG_SAY(("Device reset failed"));
 	return false;
 }
 
@@ -886,6 +912,60 @@ void DX8Wrapper::Get_Format_Name(unsigned int format, StringClass *tex_format)
 		}
 }
 
+void DX8Wrapper::Resize_And_Position_Window()
+{
+	// Get the current dimensions of the 'render area' of the window
+	RECT rect = { 0 };
+	::GetClientRect (_Hwnd, &rect);
+
+	// Is the window the correct size for this resolution?
+	if ((rect.right-rect.left) != ResolutionWidth ||
+			(rect.bottom-rect.top) != ResolutionHeight) {			
+			
+		// Calculate what the main window's bounding rectangle should be to
+		// accommodate this resolution
+		rect.left = 0;
+		rect.top = 0;
+		rect.right = ResolutionWidth;
+		rect.bottom = ResolutionHeight;
+		DWORD dwstyle = ::GetWindowLong (_Hwnd, GWL_STYLE);
+		AdjustWindowRect (&rect, dwstyle, FALSE);
+		int width = rect.right-rect.left;
+		int height = rect.bottom-rect.top;
+
+		// Resize the window to fit this resolution
+		if (!IsWindowed)
+		{
+			::SetWindowPos(_Hwnd, HWND_TOPMOST, 0, 0, width, height, SWP_NOSIZE | SWP_NOMOVE);
+
+			DEBUG_LOG(("Window resized to w:%d h:%d", width, height));
+		}
+		else
+		{
+			// TheSuperHackers @feature helmutbuhler 14/04/2025
+			// Center the window in the workarea of the monitor it is on.
+			MONITORINFO mi = {sizeof(MONITORINFO)};
+			GetMonitorInfo(MonitorFromWindow(_Hwnd, MONITOR_DEFAULTTOPRIMARY), &mi);
+			int left = (mi.rcWork.left + mi.rcWork.right - width) / 2;
+			int top  = (mi.rcWork.top + mi.rcWork.bottom - height) / 2;
+
+			// TheSuperHackers @feature helmutbuhler 14/04/2025
+			// Move the window to try fit it into the monitor area, if one of its dimensions is larger than the work area.
+			// Otherwise align the window to the top left edges, if it is even larger than the monitor area.
+			RECT rectClient;
+			rectClient.left = left - rect.left;
+			rectClient.top = top - rect.top;
+			rectClient.right = rectClient.left + ResolutionWidth;
+			rectClient.bottom = rectClient.top + ResolutionHeight;
+			MoveRectIntoOtherRect(rectClient, mi.rcMonitor, &left, &top);
+
+			::SetWindowPos (_Hwnd, NULL, left, top, width, height, SWP_NOZORDER);
+
+			DEBUG_LOG(("Window positioned to x:%d y:%d, resized to w:%d h:%d", left, top, width, height));
+		}
+	}
+}
+
 bool DX8Wrapper::Set_Render_Device(int dev, int width, int height, int bits, int windowed,
 								   bool resize_window,bool reset_device, bool restore_assets)
 {
@@ -916,8 +996,8 @@ bool DX8Wrapper::Set_Render_Device(int dev, int width, int height, int bits, int
 	if (windowed != -1)	IsWindowed = (windowed != 0);
 	DX8Wrapper_IsWindowed = IsWindowed;
 
-	WWDEBUG_SAY(("Attempting Set_Render_Device: name: %s (%s:%s), width: %d, height: %d, windowed: %d\n",
-		_RenderDeviceNameTable[CurRenderDevice],_RenderDeviceDescriptionTable[CurRenderDevice].Get_Driver_Name(),
+	WWDEBUG_SAY(("Attempting Set_Render_Device: name: %s (%s:%s), width: %d, height: %d, windowed: %d",
+		_RenderDeviceNameTable[CurRenderDevice].str(),_RenderDeviceDescriptionTable[CurRenderDevice].Get_Driver_Name(),
 		_RenderDeviceDescriptionTable[CurRenderDevice].Get_Driver_Version(),ResolutionWidth,ResolutionHeight,(IsWindowed ? 1 : 0)));
 
 #ifdef _WINDOWS
@@ -927,36 +1007,7 @@ bool DX8Wrapper::Set_Render_Device(int dev, int width, int height, int bits, int
 	// push the client area to be the size you really want.
 	// if ( resize_window && windowed ) {
 	if (resize_window) {
-
-		// Get the current dimensions of the 'render area' of the window
-		RECT rect = { 0 };
-		::GetClientRect (_Hwnd, &rect);
-
-		// Is the window the correct size for this resolution?
-		if ((rect.right-rect.left) != ResolutionWidth ||
-			 (rect.bottom-rect.top) != ResolutionHeight) {			
-			
-			// Calculate what the main window's bounding rectangle should be to
-			// accomodate this resolution
-			rect.left = 0;
-			rect.top = 0;
-			rect.right = ResolutionWidth;
-			rect.bottom = ResolutionHeight;
-			DWORD dwstyle = ::GetWindowLong (_Hwnd, GWL_STYLE);
-			AdjustWindowRect (&rect, dwstyle, FALSE);
-
-			// Resize the window to fit this resolution
-			if (!windowed)
-				::SetWindowPos(_Hwnd, HWND_TOPMOST, 0, 0, rect.right-rect.left, rect.bottom-rect.top,SWP_NOSIZE |SWP_NOMOVE);
-			else
-				::SetWindowPos (_Hwnd,
-								 NULL,
-								 0,
-								 0,
-								 rect.right-rect.left,
-								 rect.bottom-rect.top,
-								 SWP_NOZORDER | SWP_NOMOVE);
-		}
+		Resize_And_Position_Window();
 	}
 #endif
 	//must be either resetting existing device or creating a new one.
@@ -1062,16 +1113,19 @@ bool DX8Wrapper::Set_Render_Device(int dev, int width, int height, int bits, int
 	Get_Format_Name(DisplayFormat,&displayFormat);
 	Get_Format_Name(_PresentParameters.BackBufferFormat,&backbufferFormat);
 
-	WWDEBUG_SAY(("Using Display/BackBuffer Formats: %s/%s\n",displayFormat,backbufferFormat));
+	WWDEBUG_SAY(("Using Display/BackBuffer Formats: %s/%s",displayFormat.str(),backbufferFormat.str()));
 	
 	bool ret;
 
 	if (reset_device)
+	{
+		WWDEBUG_SAY(("DX8Wrapper::Set_Render_Device is resetting the device."));
 		ret = Reset_Device(restore_assets);	//reset device without restoring data - we're likely switching out of the app.
+	}
 	else
 		ret = Create_Device();
 
-	WWDEBUG_SAY(("Reset/Create_Device done, reset_device=%d, restore_assets=%d\n", reset_device, restore_assets));
+	WWDEBUG_SAY(("Reset/Create_Device done, reset_device=%d, restore_assets=%d", reset_device, restore_assets));
 
 	return ret;
 }
@@ -1139,6 +1193,7 @@ void DX8Wrapper::Set_Swap_Interval(int swap)
 		default: _PresentParameters.FullScreen_PresentationInterval = D3DPRESENT_INTERVAL_ONE ; break;
 	}
 
+	WWDEBUG_SAY(("DX8Wrapper::Set_Swap_Interval is resetting the device."));
 	Reset_Device();
 }
 
@@ -1205,39 +1260,10 @@ bool DX8Wrapper::Set_Device_Resolution(int width,int height,int bits,int windowe
 		}
 		if (resize_window)
 		{
-
-			// Get the current dimensions of the 'render area' of the window
-			RECT rect = { 0 };
-			::GetClientRect (_Hwnd, &rect);
-
-			// Is the window the correct size for this resolution?
-			if ((rect.right-rect.left) != ResolutionWidth ||
-				 (rect.bottom-rect.top) != ResolutionHeight)
-			{			
-				
-				// Calculate what the main window's bounding rectangle should be to
-				// accomodate this resolution
-				rect.left = 0;
-				rect.top = 0;
-				rect.right = ResolutionWidth;
-				rect.bottom = ResolutionHeight;
-				DWORD dwstyle = ::GetWindowLong (_Hwnd, GWL_STYLE);
-				AdjustWindowRect (&rect, dwstyle, FALSE);
-
-				// Resize the window to fit this resolution
-				if (!windowed)
-					::SetWindowPos(_Hwnd, HWND_TOPMOST, 0, 0, rect.right-rect.left, rect.bottom-rect.top,SWP_NOSIZE |SWP_NOMOVE);
-				else
-					::SetWindowPos (_Hwnd,
-									 NULL,
-									 0,
-									 0,
-									 rect.right-rect.left,
-									 rect.bottom-rect.top,
-									 SWP_NOZORDER | SWP_NOMOVE);
-			}
+			Resize_And_Position_Window();
 		}
 #pragma message("TODO: support changing windowed status and changing the bit depth")
+		WWDEBUG_SAY(("DX8Wrapper::Set_Device_Resolution is resetting the device."));
 		return Reset_Device();
 	} else {
 		return false;
@@ -1291,7 +1317,7 @@ bool DX8Wrapper::Registry_Save_Render_Device( const char *sub_key, int device, i
 
 	if ( !registry->Is_Valid() ) {
 		delete registry;
-		WWDEBUG_SAY(( "Error getting Registry\n" ));
+		WWDEBUG_SAY(( "Error getting Registry" ));
 		return false;
 	}
 
@@ -1322,12 +1348,12 @@ bool DX8Wrapper::Registry_Load_Render_Device( const char * sub_key, bool resize_
 													TextureBitDepth) &&
 			(*name != 0))
 	{
-		WWDEBUG_SAY(( "Device %s (%d X %d) %d bit windowed:%d\n", name,width,height,depth,windowed));
+		WWDEBUG_SAY(( "Device %s (%d X %d) %d bit windowed:%d", name,width,height,depth,windowed));
 
 		if (TextureBitDepth==16 || TextureBitDepth==32) {
-//			WWDEBUG_SAY(( "Texture depth %d\n", TextureBitDepth));
+//			WWDEBUG_SAY(( "Texture depth %d", TextureBitDepth));
 		} else {
-			WWDEBUG_SAY(( "Invalid texture depth %d, switching to 16 bits\n", TextureBitDepth));
+			WWDEBUG_SAY(( "Invalid texture depth %d, switching to 16 bits", TextureBitDepth));
 			TextureBitDepth=16;
 		}
 
@@ -1393,7 +1419,7 @@ bool DX8Wrapper::Registry_Load_Render_Device( const char * sub_key, bool resize_
 		return true;
 	}
 
-	WWDEBUG_SAY(( "Error getting Registry\n" ));
+	WWDEBUG_SAY(( "Error getting Registry" ));
 
 	return Set_Any_Render_Device();
 }
@@ -1505,7 +1531,7 @@ bool DX8Wrapper::Find_Color_Mode(D3DFORMAT colorbuffer, int resx, int resy, UINT
 	{
 		D3DInterface->EnumAdapterModes(D3DADAPTER_DEFAULT, i, &dmode);
 		if (dmode.Width==rx && dmode.Height==ry && dmode.Format==colorbuffer) {
-			WWDEBUG_SAY(("Found valid color mode.  Width = %d Height = %d Format = %d\r\n",dmode.Width,dmode.Height,dmode.Format));
+			WWDEBUG_SAY(("Found valid color mode.  Width = %d Height = %d Format = %d",dmode.Width,dmode.Height,dmode.Format));
 			found=true;
 		}
 		i++;
@@ -1515,7 +1541,7 @@ bool DX8Wrapper::Find_Color_Mode(D3DFORMAT colorbuffer, int resx, int resy, UINT
 
 	// no match
 	if (!found) {
-		WWDEBUG_SAY(("Failed to find a valid color mode\r\n"));
+		WWDEBUG_SAY(("Failed to find a valid color mode"));
 		return false;
 	}
 
@@ -1545,47 +1571,47 @@ bool DX8Wrapper::Find_Z_Mode(D3DFORMAT colorbuffer,D3DFORMAT backbuffer, D3DFORM
 	if (Test_Z_Mode(colorbuffer,backbuffer,D3DFMT_D24S8))
 	{
 		*zmode=D3DFMT_D24S8;
-		WWDEBUG_SAY(("Found zbuffer mode D3DFMT_D24S8\n"));
+		WWDEBUG_SAY(("Found zbuffer mode D3DFMT_D24S8"));
 		return true;
 	}
 
 	if (Test_Z_Mode(colorbuffer,backbuffer,D3DFMT_D32))
 	{
 		*zmode=D3DFMT_D32;
-		WWDEBUG_SAY(("Found zbuffer mode D3DFMT_D32\n"));
+		WWDEBUG_SAY(("Found zbuffer mode D3DFMT_D32"));
 		return true;
 	}
 
 	if (Test_Z_Mode(colorbuffer,backbuffer,D3DFMT_D24X8))
 	{
 		*zmode=D3DFMT_D24X8;
-		WWDEBUG_SAY(("Found zbuffer mode D3DFMT_D24X8\n"));
+		WWDEBUG_SAY(("Found zbuffer mode D3DFMT_D24X8"));
 		return true;
 	}
 
 	if (Test_Z_Mode(colorbuffer,backbuffer,D3DFMT_D24X4S4))
 	{
 		*zmode=D3DFMT_D24X4S4;
-		WWDEBUG_SAY(("Found zbuffer mode D3DFMT_D24X4S4\n"));
+		WWDEBUG_SAY(("Found zbuffer mode D3DFMT_D24X4S4"));
 		return true;
 	}
 
 	if (Test_Z_Mode(colorbuffer,backbuffer,D3DFMT_D16))
 	{
 		*zmode=D3DFMT_D16;
-		WWDEBUG_SAY(("Found zbuffer mode D3DFMT_D16\n"));
+		WWDEBUG_SAY(("Found zbuffer mode D3DFMT_D16"));
 		return true;
 	}
 
 	if (Test_Z_Mode(colorbuffer,backbuffer,D3DFMT_D15S1))
 	{
 		*zmode=D3DFMT_D15S1;
-		WWDEBUG_SAY(("Found zbuffer mode D3DFMT_D15S1\n"));
+		WWDEBUG_SAY(("Found zbuffer mode D3DFMT_D15S1"));
 		return true;
 	}
 
 	// can't find a match
-	WWDEBUG_SAY(("Failed to find a valid zbuffer mode\r\n"));
+	WWDEBUG_SAY(("Failed to find a valid zbuffer mode"));
 	return false;
 }
 
@@ -1595,7 +1621,7 @@ bool DX8Wrapper::Test_Z_Mode(D3DFORMAT colorbuffer,D3DFORMAT backbuffer, D3DFORM
 	if (FAILED(D3DInterface->CheckDeviceFormat(D3DADAPTER_DEFAULT,WW3D_DEVTYPE,
 		colorbuffer,D3DUSAGE_DEPTHSTENCIL,D3DRTYPE_SURFACE,zmode)))
 	{
-		WWDEBUG_SAY(("CheckDeviceFormat failed.  Colorbuffer format = %d  Zbufferformat = %d\n",colorbuffer,zmode));
+		WWDEBUG_SAY(("CheckDeviceFormat failed.  Colorbuffer format = %d  Zbufferformat = %d",colorbuffer,zmode));
 		return false;
 	}
 
@@ -1603,7 +1629,7 @@ bool DX8Wrapper::Test_Z_Mode(D3DFORMAT colorbuffer,D3DFORMAT backbuffer, D3DFORM
 	if(FAILED(D3DInterface->CheckDepthStencilMatch(D3DADAPTER_DEFAULT, WW3D_DEVTYPE,
 		colorbuffer,backbuffer,zmode)))
 	{
-		WWDEBUG_SAY(("CheckDepthStencilMatch failed.  Colorbuffer format = %d  Backbuffer format = %d Zbufferformat = %d\n",colorbuffer,backbuffer,zmode));
+		WWDEBUG_SAY(("CheckDepthStencilMatch failed.  Colorbuffer format = %d  Backbuffer format = %d Zbufferformat = %d",colorbuffer,backbuffer,zmode));
 		return false;
 	}
 	return true;
@@ -1728,6 +1754,7 @@ void DX8Wrapper::End_Scene(bool flip_frames)
 		if (hr==D3DERR_DEVICELOST) {
 			hr=_Get_D3D_Device8()->TestCooperativeLevel();
 			if (hr==D3DERR_DEVICENOTRESET) {
+				WWDEBUG_SAY(("DX8Wrapper::End_Scene is resetting the device."));
 				Reset_Device();
 			}
 			else {
@@ -1765,28 +1792,28 @@ void DX8Wrapper::Flip_To_Primary(void)
 			HRESULT hr = _Get_D3D_Device8()->TestCooperativeLevel();
 
 			if (FAILED(hr)) {
-				WWDEBUG_SAY(("TestCooperativeLevel Failed!\n"));
+				WWDEBUG_SAY(("TestCooperativeLevel Failed!"));
 
 				if (D3DERR_DEVICELOST == hr) {
 					IsDeviceLost=true;
-					WWDEBUG_SAY(("DEVICELOST: Cannot flip to primary.\n"));
+					WWDEBUG_SAY(("DEVICELOST: Cannot flip to primary."));
 					return;
 				}
 				IsDeviceLost=false;
 
 				if (D3DERR_DEVICENOTRESET == hr) {
-					WWDEBUG_SAY(("DEVICENOTRESET\n"));
+					WWDEBUG_SAY(("DEVICENOTRESET"));
 					Reset_Device();
 					resetAttempts++;
 				}
 			} else {
-				WWDEBUG_SAY(("Flipping: %ld\n", FrameCount));
+				WWDEBUG_SAY(("Flipping: %ld", FrameCount));
 				hr = _Get_D3D_Device8()->Present(NULL, NULL, NULL, NULL);
 
 				if (SUCCEEDED(hr)) {
 					IsDeviceLost=false;
 					FrameCount++;
-					WWDEBUG_SAY(("Flip to primary succeeded %ld\n", FrameCount));
+					WWDEBUG_SAY(("Flip to primary succeeded %ld", FrameCount));
 				}
 				else {
 					IsDeviceLost=true;
@@ -2046,7 +2073,7 @@ void DX8Wrapper::Draw(
 	if (DrawPolygonLowBoundLimit && DrawPolygonLowBoundLimit>=polygon_count) return;
 
 	DX8_THREAD_ASSERT();
-	SNAPSHOT_SAY(("DX8 - draw\n"));
+	SNAPSHOT_SAY(("DX8 - draw"));
 
 	Apply_Render_State_Changes();
 
@@ -2056,55 +2083,55 @@ void DX8Wrapper::Draw(
 #ifdef MESH_RENDER_SNAPSHOT_ENABLED
 	if (WW3D::Is_Snapshot_Activated()) {
 		unsigned long passes=0;
-		SNAPSHOT_SAY(("ValidateDevice: "));
+		SNAPSHOT_SAY(("ValidateDevice:"));
 		HRESULT res=D3DDevice->ValidateDevice(&passes);
 		switch (res) {
 		case D3D_OK:
-			SNAPSHOT_SAY(("OK\n"));
+			SNAPSHOT_SAY(("OK"));
 			break;
 
 		case D3DERR_CONFLICTINGTEXTUREFILTER:
-			SNAPSHOT_SAY(("D3DERR_CONFLICTINGTEXTUREFILTER\n"));
+			SNAPSHOT_SAY(("D3DERR_CONFLICTINGTEXTUREFILTER"));
 			break;
 		case D3DERR_CONFLICTINGTEXTUREPALETTE:
-			SNAPSHOT_SAY(("D3DERR_CONFLICTINGTEXTUREPALETTE\n"));
+			SNAPSHOT_SAY(("D3DERR_CONFLICTINGTEXTUREPALETTE"));
 			break;
 		case D3DERR_DEVICELOST:
-			SNAPSHOT_SAY(("D3DERR_DEVICELOST\n"));
+			SNAPSHOT_SAY(("D3DERR_DEVICELOST"));
 			break;
 		case D3DERR_TOOMANYOPERATIONS:
-			SNAPSHOT_SAY(("D3DERR_TOOMANYOPERATIONS\n"));
+			SNAPSHOT_SAY(("D3DERR_TOOMANYOPERATIONS"));
 			break;
 		case D3DERR_UNSUPPORTEDALPHAARG:
-			SNAPSHOT_SAY(("D3DERR_UNSUPPORTEDALPHAARG\n"));
+			SNAPSHOT_SAY(("D3DERR_UNSUPPORTEDALPHAARG"));
 			break;
 		case D3DERR_UNSUPPORTEDALPHAOPERATION:
-			SNAPSHOT_SAY(("D3DERR_UNSUPPORTEDALPHAOPERATION\n"));
+			SNAPSHOT_SAY(("D3DERR_UNSUPPORTEDALPHAOPERATION"));
 			break;
 		case D3DERR_UNSUPPORTEDCOLORARG:
-			SNAPSHOT_SAY(("D3DERR_UNSUPPORTEDCOLORARG\n"));
+			SNAPSHOT_SAY(("D3DERR_UNSUPPORTEDCOLORARG"));
 			break;
 		case D3DERR_UNSUPPORTEDCOLOROPERATION:
-			SNAPSHOT_SAY(("D3DERR_UNSUPPORTEDCOLOROPERATION\n"));
+			SNAPSHOT_SAY(("D3DERR_UNSUPPORTEDCOLOROPERATION"));
 			break;
 		case D3DERR_UNSUPPORTEDFACTORVALUE:
-			SNAPSHOT_SAY(("D3DERR_UNSUPPORTEDFACTORVALUE\n"));
+			SNAPSHOT_SAY(("D3DERR_UNSUPPORTEDFACTORVALUE"));
 			break;
 		case D3DERR_UNSUPPORTEDTEXTUREFILTER:
-			SNAPSHOT_SAY(("D3DERR_UNSUPPORTEDTEXTUREFILTER\n"));
+			SNAPSHOT_SAY(("D3DERR_UNSUPPORTEDTEXTUREFILTER"));
 			break;
 		case D3DERR_WRONGTEXTUREFORMAT:
-			SNAPSHOT_SAY(("D3DERR_WRONGTEXTUREFORMAT\n"));
+			SNAPSHOT_SAY(("D3DERR_WRONGTEXTUREFORMAT"));
 			break;
 		default:
-			SNAPSHOT_SAY(("UNKNOWN Error\n"));
+			SNAPSHOT_SAY(("UNKNOWN Error"));
 			break;
 		}
 	}
 #endif	// MESH_RENDER_SHAPSHOT_ENABLED
 
 
-	SNAPSHOT_SAY(("DX8 - draw %d polygons (%d vertices)\n",polygon_count,vertex_count));
+	SNAPSHOT_SAY(("DX8 - draw %d polygons (%d vertices)",polygon_count,vertex_count));
 
 	if (vertex_count<3) {
 		min_vertex_index=0;
@@ -2232,11 +2259,11 @@ void DX8Wrapper::Draw_Strip(
 
 void DX8Wrapper::Apply_Render_State_Changes()
 {
-	SNAPSHOT_SAY(("DX8Wrapper::Apply_Render_State_Changes()\n"));
+	SNAPSHOT_SAY(("DX8Wrapper::Apply_Render_State_Changes()"));
 	
 	if (!render_state_changed) return;
 	if (render_state_changed&SHADER_CHANGED) {
-		SNAPSHOT_SAY(("DX8 - apply shader\n"));
+		SNAPSHOT_SAY(("DX8 - apply shader"));
 		render_state.shader.Apply();
 	}
 
@@ -2246,7 +2273,7 @@ void DX8Wrapper::Apply_Render_State_Changes()
 	{
 		if (render_state_changed&mask) 
 		{
-			SNAPSHOT_SAY(("DX8 - apply texture %d (%s)\n",i,render_state.Textures[i] ? render_state.Textures[i]->Get_Full_Path().Peek_Buffer() : "NULL"));
+			SNAPSHOT_SAY(("DX8 - apply texture %d (%s)",i,render_state.Textures[i] ? render_state.Textures[i]->Get_Full_Path().str() : "NULL"));
 
 			if (render_state.Textures[i]) 
 			{
@@ -2261,7 +2288,7 @@ void DX8Wrapper::Apply_Render_State_Changes()
 
 	if (render_state_changed&MATERIAL_CHANGED) 
 	{
-		SNAPSHOT_SAY(("DX8 - apply material\n"));
+		SNAPSHOT_SAY(("DX8 - apply material"));
 		VertexMaterialClass* material=const_cast<VertexMaterialClass*>(render_state.material);
 		if (material) 
 		{
@@ -2275,7 +2302,7 @@ void DX8Wrapper::Apply_Render_State_Changes()
 		unsigned mask=LIGHT0_CHANGED;
 		for (unsigned index=0;index<4;++index,mask<<=1) {
 			if (render_state_changed&mask) {
-				SNAPSHOT_SAY(("DX8 - apply light %d\n",index));
+				SNAPSHOT_SAY(("DX8 - apply light %d",index));
 				if (render_state.LightEnable[index]) {
 #ifdef MESH_RENDER_SNAPSHOT_ENABLED		
 					if ( WW3D::Is_Snapshot_Activated() ) {
@@ -2283,12 +2310,12 @@ void DX8Wrapper::Apply_Render_State_Changes()
 						static const char * _light_types[] = { "Unknown", "Point","Spot", "Directional" };
 						WWASSERT((light->Type >= 0) && (light->Type <= 3));					
 
-						SNAPSHOT_SAY((" type = %s amb = %4.2f,%4.2f,%4.2f  diff = %4.2f,%4.2f,%4.2f spec = %4.2f, %4.2f, %4.2f\n",
+						SNAPSHOT_SAY((" type = %s amb = %4.2f,%4.2f,%4.2f  diff = %4.2f,%4.2f,%4.2f spec = %4.2f, %4.2f, %4.2f",
 							_light_types[light->Type],
 							light->Ambient.r,light->Ambient.g,light->Ambient.b,
 							light->Diffuse.r,light->Diffuse.g,light->Diffuse.b,
 							light->Specular.r,light->Specular.g,light->Specular.b ));
-						SNAPSHOT_SAY((" pos = %f, %f, %f  dir = %f, %f, %f\n",
+						SNAPSHOT_SAY((" pos = %f, %f, %f  dir = %f, %f, %f",
 							light->Position.x, light->Position.y, light->Position.z,
 							light->Direction.x, light->Direction.y, light->Direction.z ));
 					}
@@ -2298,22 +2325,22 @@ void DX8Wrapper::Apply_Render_State_Changes()
 				}
 				else {
 					Set_DX8_Light(index,NULL);
-					SNAPSHOT_SAY((" clearing light to NULL\n"));
+					SNAPSHOT_SAY((" clearing light to NULL"));
 				}
 			}
 		}
 	}
 
 	if (render_state_changed&WORLD_CHANGED) {
-		SNAPSHOT_SAY(("DX8 - apply world matrix\n"));
+		SNAPSHOT_SAY(("DX8 - apply world matrix"));
 		_Set_DX8_Transform(D3DTS_WORLD,render_state.world);
 	}
 	if (render_state_changed&VIEW_CHANGED) {
-		SNAPSHOT_SAY(("DX8 - apply view matrix\n"));
+		SNAPSHOT_SAY(("DX8 - apply view matrix"));
 		_Set_DX8_Transform(D3DTS_VIEW,render_state.view);
 	}
 	if (render_state_changed&VERTEX_BUFFER_CHANGED) {
-		SNAPSHOT_SAY(("DX8 - apply vb change\n"));
+		SNAPSHOT_SAY(("DX8 - apply vb change"));
 		for (i=0;i<MAX_VERTEX_STREAMS;++i) {
 			if (render_state.vertex_buffers[i]) {
 				switch (render_state.vertex_buffer_types[i]) {//->Type()) {
@@ -2345,7 +2372,7 @@ void DX8Wrapper::Apply_Render_State_Changes()
 		}
 	}
 	if (render_state_changed&INDEX_BUFFER_CHANGED) {
-		SNAPSHOT_SAY(("DX8 - apply ib change\n"));
+		SNAPSHOT_SAY(("DX8 - apply ib change"));
 		if (render_state.index_buffer) {
 			switch (render_state.index_buffer_type) {//->Type()) {
 			case BUFFER_TYPE_DX8:
@@ -2372,7 +2399,7 @@ void DX8Wrapper::Apply_Render_State_Changes()
 
 	render_state_changed&=((unsigned)WORLD_IDENTITY|(unsigned)VIEW_IDENTITY);
 
-	SNAPSHOT_SAY(("DX8Wrapper::Apply_Render_State_Changes() - finished\n"));
+	SNAPSHOT_SAY(("DX8Wrapper::Apply_Render_State_Changes() - finished"));
 }
 
 IDirect3DTexture8 * DX8Wrapper::_Create_DX8_Texture
@@ -2415,7 +2442,7 @@ IDirect3DTexture8 * DX8Wrapper::_Create_DX8_Texture
 
 		// If ran out of texture ram, try invalidating some textures and mesh cache.
 		if (ret==D3DERR_OUTOFVIDEOMEMORY) {
-			WWDEBUG_SAY(("Error: Out of memory while creating render target. Trying to release assets...\n"));
+			WWDEBUG_SAY(("Error: Out of memory while creating render target. Trying to release assets..."));
 			// Free all textures that haven't been used in the last 5 seconds
 			TextureClass::Invalidate_Old_Unused_Textures(5000);
 
@@ -2433,10 +2460,10 @@ IDirect3DTexture8 * DX8Wrapper::_Create_DX8_Texture
 				&texture);
 
 			if (SUCCEEDED(ret)) {
-				WWDEBUG_SAY(("...Render target creation succesful.\n"));
+				WWDEBUG_SAY(("...Render target creation succesful."));
 			}
 			else {
-				WWDEBUG_SAY(("...Render target creation failed.\n"));
+				WWDEBUG_SAY(("...Render target creation failed."));
 			}
 			if (ret==D3DERR_OUTOFVIDEOMEMORY) {
 				Non_Fatal_Log_DX8_ErrorCode(ret,__FILE__,__LINE__);
@@ -2465,7 +2492,7 @@ IDirect3DTexture8 * DX8Wrapper::_Create_DX8_Texture
 
 	// If ran out of texture ram, try invalidating some textures and mesh cache.
 	if (ret==D3DERR_OUTOFVIDEOMEMORY) {
-		WWDEBUG_SAY(("Error: Out of memory while creating texture. Trying to release assets...\n"));
+		WWDEBUG_SAY(("Error: Out of memory while creating texture. Trying to release assets..."));
 		// Free all textures that haven't been used in the last 5 seconds
 		TextureClass::Invalidate_Old_Unused_Textures(5000);
 
@@ -2482,12 +2509,12 @@ IDirect3DTexture8 * DX8Wrapper::_Create_DX8_Texture
 			pool,
 			&texture);
 		if (SUCCEEDED(ret)) {
-			WWDEBUG_SAY(("...Texture creation succesful.\n"));
+			WWDEBUG_SAY(("...Texture creation succesful."));
 		}
 		else {
 			StringClass format_name(0,true);
 			Get_WW3D_Format_Name(format, format_name);
-			WWDEBUG_SAY(("...Texture creation failed. (%d x %d, format: %s, mips: %d\n",width,height,format_name,mip_level_count));
+			WWDEBUG_SAY(("...Texture creation failed. (%d x %d, format: %s, mips: %d",width,height,format_name.str(),mip_level_count));
 		}
 
 	}
@@ -2614,7 +2641,7 @@ IDirect3DTexture8 * DX8Wrapper::_Create_DX8_ZTexture
 	// If ran out of texture ram, try invalidating some textures and mesh cache.
 	if (ret==D3DERR_OUTOFVIDEOMEMORY) 
 	{
-		WWDEBUG_SAY(("Error: Out of memory while creating render target. Trying to release assets...\n"));
+		WWDEBUG_SAY(("Error: Out of memory while creating render target. Trying to release assets..."));
 		// Free all textures that haven't been used in the last 5 seconds
 		TextureClass::Invalidate_Old_Unused_Textures(5000);
 
@@ -2634,11 +2661,11 @@ IDirect3DTexture8 * DX8Wrapper::_Create_DX8_ZTexture
 
 		if (SUCCEEDED(ret)) 
 		{
-			WWDEBUG_SAY(("...Render target creation succesful.\n"));
+			WWDEBUG_SAY(("...Render target creation succesful."));
 		}
 		else 
 		{
-			WWDEBUG_SAY(("...Render target creation failed.\n"));
+			WWDEBUG_SAY(("...Render target creation failed."));
 		}
 		if (ret==D3DERR_OUTOFVIDEOMEMORY) 
 		{
@@ -2705,7 +2732,7 @@ IDirect3DCubeTexture8* DX8Wrapper::_Create_DX8_Cube_Texture
 		// If ran out of texture ram, try invalidating some textures and mesh cache.
 		if (ret==D3DERR_OUTOFVIDEOMEMORY) 
 		{
-			WWDEBUG_SAY(("Error: Out of memory while creating render target. Trying to release assets...\n"));
+			WWDEBUG_SAY(("Error: Out of memory while creating render target. Trying to release assets..."));
 			// Free all textures that haven't been used in the last 5 seconds
 			TextureClass::Invalidate_Old_Unused_Textures(5000);
 
@@ -2725,11 +2752,11 @@ IDirect3DCubeTexture8* DX8Wrapper::_Create_DX8_Cube_Texture
 
 			if (SUCCEEDED(ret))
 			{
-				WWDEBUG_SAY(("...Render target creation succesful.\n"));
+				WWDEBUG_SAY(("...Render target creation succesful."));
 			}
 			else 
 			{
-				WWDEBUG_SAY(("...Render target creation failed.\n"));
+				WWDEBUG_SAY(("...Render target creation failed."));
 			}
 			if (ret==D3DERR_OUTOFVIDEOMEMORY) 
 			{
@@ -2761,7 +2788,7 @@ IDirect3DCubeTexture8* DX8Wrapper::_Create_DX8_Cube_Texture
 	// If ran out of texture ram, try invalidating some textures and mesh cache.
 	if (ret==D3DERR_OUTOFVIDEOMEMORY) 
 	{
-		WWDEBUG_SAY(("Error: Out of memory while creating texture. Trying to release assets...\n"));
+		WWDEBUG_SAY(("Error: Out of memory while creating texture. Trying to release assets..."));
 		// Free all textures that haven't been used in the last 5 seconds
 		TextureClass::Invalidate_Old_Unused_Textures(5000);
 
@@ -2780,13 +2807,13 @@ IDirect3DCubeTexture8* DX8Wrapper::_Create_DX8_Cube_Texture
 		);
 		if (SUCCEEDED(ret)) 
 		{
-			WWDEBUG_SAY(("...Texture creation succesful.\n"));
+			WWDEBUG_SAY(("...Texture creation succesful."));
 		}
 		else 
 		{
 			StringClass format_name(0,true);
 			Get_WW3D_Format_Name(format, format_name);
-			WWDEBUG_SAY(("...Texture creation failed. (%d x %d, format: %s, mips: %d\n",width,height,format_name,mip_level_count));
+			WWDEBUG_SAY(("...Texture creation failed. (%d x %d, format: %s, mips: %d",width,height,format_name.str(),mip_level_count));
 		}
 
 	}
@@ -2838,7 +2865,7 @@ IDirect3DVolumeTexture8* DX8Wrapper::_Create_DX8_Volume_Texture
 	// If ran out of texture ram, try invalidating some textures and mesh cache.
 	if (ret==D3DERR_OUTOFVIDEOMEMORY) 
 	{
-		WWDEBUG_SAY(("Error: Out of memory while creating texture. Trying to release assets...\n"));
+		WWDEBUG_SAY(("Error: Out of memory while creating texture. Trying to release assets..."));
 		// Free all textures that haven't been used in the last 5 seconds
 		TextureClass::Invalidate_Old_Unused_Textures(5000);
 
@@ -2859,13 +2886,13 @@ IDirect3DVolumeTexture8* DX8Wrapper::_Create_DX8_Volume_Texture
 		);
 		if (SUCCEEDED(ret)) 
 		{
-			WWDEBUG_SAY(("...Texture creation succesful.\n"));
+			WWDEBUG_SAY(("...Texture creation succesful."));
 		}
 		else 
 		{
 			StringClass format_name(0,true);
 			Get_WW3D_Format_Name(format, format_name);
-			WWDEBUG_SAY(("...Texture creation failed. (%d x %d, format: %s, mips: %d\n",width,height,format_name,mip_level_count));
+			WWDEBUG_SAY(("...Texture creation failed. (%d x %d, format: %s, mips: %d",width,height,format_name.str(),mip_level_count));
 		}
 
 	}
@@ -2915,9 +2942,10 @@ IDirect3DSurface8 * DX8Wrapper::_Create_DX8_Surface(const char *filename_)
 			// If file not found, try the dds format
 			// else create a surface with missing texture in it
 			char compressed_name[200];
-			strncpy(compressed_name,filename_, 200);
+			strncpy(compressed_name,filename_, ARRAY_SIZE(compressed_name));
+			compressed_name[ARRAY_SIZE(compressed_name)-1] = '\0';
 			char *ext = strstr(compressed_name, ".");
-			if ( (strlen(ext)==4) && 
+			if ( ext && (strlen(ext)==4) && 
 				  ( (ext[1] == 't') || (ext[1] == 'T') ) && 
 				  ( (ext[2] == 'g') || (ext[2] == 'G') ) && 
 				  ( (ext[3] == 'a') || (ext[3] == 'A') ) ) {
@@ -3190,7 +3218,7 @@ DX8Wrapper::Create_Render_Target (int width, int height, WW3DFormat format)
 
 	// If render target format isn't supported return NULL
 	if (!Get_Current_Caps()->Support_Render_To_Texture_Format(format)) {
-		WWDEBUG_SAY(("DX8Wrapper - Render target format is not supported\r\n"));
+		WWDEBUG_SAY(("DX8Wrapper - Render target format is not supported"));
 		return NULL;
 	}
 
@@ -3222,7 +3250,7 @@ DX8Wrapper::Create_Render_Target (int width, int height, WW3DFormat format)
 	// that they support render targets!
 	if (tex->Peek_D3D_Base_Texture() == NULL) 
 	{
-		WWDEBUG_SAY(("DX8Wrapper - Render target creation failed!\r\n"));
+		WWDEBUG_SAY(("DX8Wrapper - Render target creation failed!"));
 		REF_PTR_RELEASE(tex);
 	}
 
@@ -3262,7 +3290,7 @@ void DX8Wrapper::Create_Render_Target
 	if (!Get_Current_Caps()->Support_Render_To_Texture_Format(format) ||
 		 !Get_Current_Caps()->Support_Depth_Stencil_Format(zformat)) 
 	{
-		WWDEBUG_SAY(("DX8Wrapper - Render target with depth format is not supported\r\n"));
+		WWDEBUG_SAY(("DX8Wrapper - Render target with depth format is not supported"));
 		return;
 	}
 
@@ -3294,7 +3322,7 @@ void DX8Wrapper::Create_Render_Target
 	// that they support render targets!
 	if (tex->Peek_D3D_Base_Texture() == NULL) 
 	{
-		WWDEBUG_SAY(("DX8Wrapper - Render target creation failed!\r\n"));
+		WWDEBUG_SAY(("DX8Wrapper - Render target creation failed!"));
 		REF_PTR_RELEASE(tex);
 	}
 
@@ -3713,7 +3741,7 @@ void DX8Wrapper::Set_Gamma(float gamma,float bright,float contrast,bool calibrat
 */
 void DX8Wrapper::Apply_Default_State()
 {
-	SNAPSHOT_SAY(("DX8Wrapper::Apply_Default_State()\n"));
+	SNAPSHOT_SAY(("DX8Wrapper::Apply_Default_State()"));
 	
 	// only set states used in game
 	Set_DX8_Render_State(D3DRS_ZENABLE, TRUE);
@@ -3839,7 +3867,7 @@ void DX8Wrapper::Apply_Default_State()
 	VertexMaterialClass::Apply_Null();
 
 	for (unsigned index=0;index<4;++index) {
-		SNAPSHOT_SAY(("Clearing light %d to NULL\n",index));
+		SNAPSHOT_SAY(("Clearing light %d to NULL",index));
 		Set_DX8_Light(index,NULL);
 	}
 
@@ -4155,6 +4183,7 @@ void DX8Wrapper::Get_DX8_Texture_Stage_State_Value_Name(StringClass& name, D3DTE
 
 	case D3DTSS_TEXTURETRANSFORMFLAGS:
 		name=Get_DX8_Texture_Transform_Flag_Name(value);
+		break;
 
 	// Floating point values
 	case D3DTSS_MIPMAPLODBIAS:

@@ -587,9 +587,6 @@ DynamicMeshClass::DynamicMeshClass(const DynamicMeshClass & src) :
 
 		MultiVertexMaterial[pass] = src.MultiVertexMaterial[pass];
 		VertexMaterialIdx[pass] = src.VertexMaterialIdx[pass];
-
-		MultiVertexColor[pass] = src.MultiVertexColor[pass];
-		CurVertexColor[pass]  = src.CurVertexColor[pass];
 	}
 
 	for (int color_array_index = 0; color_array_index < MAX_COLOR_ARRAYS; color_array_index++) {

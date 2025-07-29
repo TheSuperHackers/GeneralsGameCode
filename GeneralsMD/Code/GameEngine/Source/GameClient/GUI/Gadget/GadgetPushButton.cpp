@@ -54,11 +54,6 @@
 #include "GameClient/GameWindowManager.h"
 #include "GameClient/InGameUI.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 // DEFINES ////////////////////////////////////////////////////////////////////
 
 // PRIVATE TYPES //////////////////////////////////////////////////////////////
@@ -465,12 +460,10 @@ WindowMsgHandledType GadgetPushButtonSystem( GameWindow *window, UnsignedInt msg
 		// ------------------------------------------------------------------------
 		case GWM_DESTROY:
 		{
-			PushButtonData *pData = (PushButtonData *)window->winGetUserData();
-			if(pData)
-				delete pData;
+			delete (PushButtonData *)window->winGetUserData();
 			window->winSetUserData(NULL);
-		}
 			break;
+		}
 
 		// ------------------------------------------------------------------------
 		case GWM_INPUT_FOCUS:
@@ -519,7 +512,7 @@ void GadgetCheckLikeButtonSetVisualCheck( GameWindow *g, Bool checked )
 	if( BitIsSet( g->winGetStatus(), WIN_STATUS_CHECK_LIKE ) == FALSE )
 	{
 
-		DEBUG_CRASH(( "GadgetCheckLikeButtonSetVisualCheck: Window is not 'CHECK-LIKE'\n" ));
+		DEBUG_CRASH(( "GadgetCheckLikeButtonSetVisualCheck: Window is not 'CHECK-LIKE'" ));
 		return;
 
 	}  // end if

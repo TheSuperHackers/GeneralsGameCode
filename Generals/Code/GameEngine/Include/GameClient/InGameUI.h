@@ -36,7 +36,9 @@
 #include "Common/GameCommon.h"
 #include "Common/GameType.h"
 #include "Common/MessageStream.h"		// for GameMessageTranslator
+#include "Common/KindOf.h"
 #include "Common/SpecialPowerType.h"
+#include "Common/Snapshot.h"
 #include "Common/STLTypedefs.h"
 #include "Common/SubsystemInterface.h"
 #include "Common/UnicodeString.h"
@@ -44,7 +46,6 @@
 #include "GameClient/Mouse.h"
 #include "GameClient/RadiusDecal.h"
 #include "GameClient/View.h"
-#include "Common/Snapshot.h"
 
 // FORWARD DECLARATIONS ///////////////////////////////////////////////////////////////////////////
 class Drawable;
@@ -361,11 +362,14 @@ public:  // ********************************************************************
 	// interface for messages to the user
 	// srj sez: passing as const-ref screws up varargs for some reason. dunno why. just pass by value.
 	virtual void messageColor( const RGBColor *rgbColor, UnicodeString format, ... );	///< display a colored message to the user
+	virtual void messageNoFormat( const UnicodeString& message ); ///< display a message to the user
+	virtual void messageNoFormat( const RGBColor *rgbColor, const UnicodeString& message ); ///< display a colored message to the user
 	virtual void message( UnicodeString format, ... );				  ///< display a message to the user
 	virtual void message( AsciiString stringManagerLabel, ... );///< display a message to the user
 	virtual void toggleMessages( void ) { m_messagesOn = 1 - m_messagesOn; }	///< toggle messages on/off
 	virtual Bool isMessagesOn( void ) { return m_messagesOn; }	///< are the display messages on
 	void freeMessageResources( void );				///< free resources for the ui messages
+	void freeCustomUiResources( void );				///< free resources for custom ui elements
 	Color getMessageColor(Bool altColor) { return (altColor)?m_messageColor2:m_messageColor1; }
 	
 	// interface for military style messages
@@ -415,7 +419,9 @@ public:  // ********************************************************************
 	// build interface
 	virtual void placeBuildAvailable( const ThingTemplate *build, Drawable *buildDrawable );				///< built thing being placed
 	virtual const ThingTemplate *getPendingPlaceType( void );					///< get item we're trying to place
-	virtual const ObjectID getPendingPlaceSourceObjectID( void );			///< get producing object
+	virtual ObjectID getPendingPlaceSourceObjectID( void );			///< get producing object
+	virtual Bool getPreventLeftClickDeselectionInAlternateMouseModeForOneClick() const { return m_preventLeftClickDeselectionInAlternateMouseModeForOneClick; }
+	virtual void setPreventLeftClickDeselectionInAlternateMouseModeForOneClick( Bool set ) { m_preventLeftClickDeselectionInAlternateMouseModeForOneClick = set; }
 	virtual void setPlacementStart( const ICoord2D *start );					///< placement anchor point (for choosing angles)
 	virtual void setPlacementEnd( const ICoord2D *end );							///< set target placement point (for choosing angles)
 	virtual Bool isPlacementAnchored( void );													///< is placement arrow anchor set
@@ -448,6 +454,7 @@ public:  // ********************************************************************
 	virtual void preDraw( void );														///< Logic which needs to occur before the UI renders
 	virtual void draw( void ) = 0;													///< Render the in-game user interface
 	virtual void postDraw( void );													///< Logic which needs to occur after the UI renders
+	virtual void postWindowDraw( void );											///< Logic which needs to occur after the WindowManager has repainted the menus
 
 	/// Ingame video playback 
 	virtual void playMovie( const AsciiString& movieName );
@@ -482,10 +489,16 @@ public:  // ********************************************************************
 	Bool canSelectedObjectsOverrideSpecialPowerDestination( const Coord3D *loc, SelectionRules rule, SpecialPowerType spType = SPECIAL_INVALID ) const;
 
 	// Selection Methods
-	virtual Int selectMatchingUnits();                        ///< selects matching units
-	virtual Int selectAcrossScreen();                         ///< selects matching units across screen
-	virtual Int selectAcrossMap();                            ///< selects matching units across map
-	virtual Int selectAcrossRegion( IRegion2D *region );			// -1 = no locally-owned selection, 0+ = # of units selected
+	virtual Int selectUnitsMatchingCurrentSelection();                        ///< selects matching units
+	virtual Int selectMatchingAcrossScreen();                         ///< selects matching units across screen
+	virtual Int selectMatchingAcrossMap();                            ///< selects matching units across map
+	virtual Int selectMatchingAcrossRegion( IRegion2D *region );			// -1 = no locally-owned selection, 0+ = # of units selected
+
+	virtual Int selectAllUnitsByType(KindOfMaskType mustBeSet, KindOfMaskType mustBeClear);                
+	virtual Int selectAllUnitsByTypeAcrossScreen(KindOfMaskType mustBeSet, KindOfMaskType mustBeClear);                         
+	virtual Int selectAllUnitsByTypeAcrossMap(KindOfMaskType mustBeSet, KindOfMaskType mustBeClear);                            
+	virtual Int selectAllUnitsByTypeAcrossRegion( IRegion2D *region, KindOfMaskType mustBeSet, KindOfMaskType mustBeClear );			
+	
 	virtual void buildRegion( const ICoord2D *anchor, const ICoord2D *dest, IRegion2D *region );  ///< builds a region around the specified coordinates
 
 	virtual Bool getDisplayedMaxWarning( void ) { return m_displayedMaxWarning; }
@@ -533,6 +546,9 @@ public:  // ********************************************************************
 	virtual void selectNextIdleWorker( void );
 
 	virtual void recreateControlBar( void );
+	virtual void refreshCustomUiResources( void );
+	virtual void refreshSystemTimeResources( void );
+	virtual void refreshGameTimeResources( void );
 
 	virtual void disableTooltipsUntil(UnsignedInt frameNum);
 	virtual void clearTooltipsDisabled();
@@ -552,6 +568,9 @@ private:
 	virtual void updateIdleWorker( void );
 	virtual void resetIdleWorker( void );
 
+	void drawSystemTime();
+	void drawGameTime();
+
 public:
 	void registerWindowLayout(WindowLayout *layout); // register a layout for updates
 	void unregisterWindowLayout(WindowLayout *layout); // stop updates for this layout
@@ -564,7 +583,7 @@ public:
 													Real durationInSeconds,
 													Real zRisePerSecond );
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	virtual void DEBUG_addFloatingText(const AsciiString& text,const Coord3D * pos, Color color);
 #endif
 
@@ -692,6 +711,7 @@ protected:
 	BuildProgress								m_buildProgress[ MAX_BUILD_PROGRESS ];	///< progress for building units
 	const ThingTemplate *				m_pendingPlaceType;											///< type of built thing we're trying to place
 	ObjectID										m_pendingPlaceSourceObjectID;						///< source object of the thing constructing the item
+	Bool										m_preventLeftClickDeselectionInAlternateMouseModeForOneClick;
 	Drawable **									m_placeIcon;														///< array for drawables to appear at the cursor when building in the world
 	Bool												m_placeAnchorInProgress;								///< is place angle interface for placement active
 	ICoord2D										m_placeAnchorStart;											///< place angle anchor start
@@ -708,6 +728,25 @@ protected:
 	// Video playback data
 	VideoBuffer*								m_cameoVideoBuffer;///< video playback buffer
 	VideoStreamInterface*				m_cameoVideoStream;///< Video stream;
+
+	// System Time
+	DisplayString *										m_systemTimeString;
+	AsciiString											m_systemTimeFont;
+	Int													m_systemTimePointSize;
+	Bool												m_systemTimeBold;
+	Coord2D												m_systemTimePosition;
+	Color												m_systemTimeColor;
+	Color												m_systemTimeDropColor;
+
+	// Game Time
+	DisplayString *										m_gameTimeString;
+	DisplayString *										m_gameTimeFrameString;
+	AsciiString											m_gameTimeFont;
+	Int													m_gameTimePointSize;
+	Bool												m_gameTimeBold;
+	Coord2D												m_gameTimePosition;
+	Color												m_gameTimeColor;
+	Color												m_gameTimeDropColor;
 
 	// message data
 	UIMessage										m_uiMessages[ MAX_UI_MESSAGES ];/**< messages to display to the user, the

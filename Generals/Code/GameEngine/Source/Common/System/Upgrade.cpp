@@ -155,7 +155,7 @@ UpgradeTemplate::~UpgradeTemplate( void )
 //-------------------------------------------------------------------------------------------------
 Int UpgradeTemplate::calcTimeToBuild( Player *player ) const
 {
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	if( player->buildsInstantly() )
 	{
 		return 1;
@@ -244,7 +244,7 @@ UpgradeCenter::~UpgradeCenter( void )
 		next = m_upgradeList->friend_getNext();
 
 		// delete head of list
-		m_upgradeList->deleteInstance();
+		deleteInstance(m_upgradeList);
 
 		// set head to next element
 		m_upgradeList = next;
@@ -488,7 +488,7 @@ void UpgradeCenter::parseUpgradeDefinition( INI *ini )
 	}  // end if
 
 	// sanity
-	DEBUG_ASSERTCRASH( upgrade, ("parseUpgradeDefinition: Unable to allocate upgrade '%s'\n", name.str()) );
+	DEBUG_ASSERTCRASH( upgrade, ("parseUpgradeDefinition: Unable to allocate upgrade '%s'", name.str()) );
 
 	// parse the ini definition
 	ini->initFromINI( upgrade, upgrade->getFieldParse() );

@@ -54,11 +54,6 @@
 #include "GameLogic/Weapon.h"
 #include "GameClient/Drawable.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 //-------------------------------------------------------------------------------------------------
 GenerateMinefieldBehaviorModuleData::GenerateMinefieldBehaviorModuleData()
@@ -393,7 +388,7 @@ void GenerateMinefieldBehavior::placeMines()
 
 	if (!mineTemplate)
 	{
-		DEBUG_CRASH(("mine %s not found\n",d->m_mineName.str()));
+		DEBUG_CRASH(("mine %s not found",d->m_mineName.str()));
 		return;
 	}
 

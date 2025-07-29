@@ -38,7 +38,7 @@
 //----------------------------------------------------------------------------
 
 #include <stdlib.h>
-#include <stdio.h>
+#include <Utility/stdio_adapter.h>
 #include <ctype.h>
 #include <string.h>
 
@@ -357,15 +357,17 @@ void GameTextManager::deinit( void )
 
 	NoString *noString = m_noStringList;
 
-	DEBUG_LOG(("\n*** Missing strings ***\n"));
+	DEBUG_LOG((""));
+	DEBUG_LOG(("*** Missing strings ***"));
 	while ( noString )
 	{
-		DEBUG_LOG(("*** %ls ***\n", noString->text.str()));
+		DEBUG_LOG(("*** %ls ***", noString->text.str()));
 		NoString *next = noString->next;
 		delete noString;
 		noString = next;
 	}
-	DEBUG_LOG(("*** End missing strings ***\n\n"));
+	DEBUG_LOG(("*** End missing strings ***"));
+	DEBUG_LOG((""));
 
 	m_noStringList = NULL;
 
@@ -1072,8 +1074,7 @@ const wchar_t * GameTextManager::fetch( const Char *label )
 	{
 		// See if we already have the missing string
 		wchar_t tmp[256];
-		_snwprintf(tmp, 256, L"MISSING: '%hs'", label);
-		tmp[255] = 0;
+		swprintf(tmp, 256, L"MISSING: '%hs'", label);
 		std::wstring missingString = tmp;
 
 		NoString *noString = m_noStringList;
@@ -1086,7 +1087,7 @@ const wchar_t * GameTextManager::fetch( const Char *label )
 			noString = noString->next;
 		}
 
-		//DEBUG_LOG(("*** MISSING:'%s' ***\n", label));
+		//DEBUG_LOG(("*** MISSING:'%s' ***", label));
 		// Remember file could have been altered at this point.
 		noString = new NoString;
 		noString->text = missingString;

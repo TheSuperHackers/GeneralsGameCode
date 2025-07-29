@@ -171,7 +171,7 @@ void RailedTransportAIUpdate::pickAndMoveToInitialLocation( void )
 
 	// a path must have been found
 	DEBUG_ASSERTCRASH( closestPath != INVALID_PATH,
-										 ("No suitable starting waypoint path could be found for '%s'\n",
+										 ("No suitable starting waypoint path could be found for '%s'",
 										 us->getTemplate()->getName().str()) );
 
 	// follow the waypoint path to its destination end point
@@ -221,29 +221,36 @@ UpdateSleepTime RailedTransportAIUpdate::update( void )
 	
 		// sanity
 		DEBUG_ASSERTCRASH( m_currentPath != INVALID_PATH,
-											 ("RailedTransportAIUpdate: Invalid current path '%s'\n", m_currentPath) );
+											 ("RailedTransportAIUpdate: Invalid current path '%s'", m_currentPath) );
 
 		// get our target waypoint
 		Waypoint *waypoint = TheTerrainLogic->getWaypointByID( m_path[ m_currentPath ].endWaypointID );
 		
 		// sanity
-		DEBUG_ASSERTCRASH( waypoint, ("RailedTransportAIUpdate: Invalid target waypoint\n") );
+		DEBUG_ASSERTCRASH( waypoint, ("RailedTransportAIUpdate: Invalid target waypoint") );
 
-		// how far away are we from the target waypoint
-		const Coord3D *start = us->getPosition();
-		const Coord3D *end = waypoint->getLocation();
-		Coord3D v;
-		v.x = end->x - start->x;
-		v.y = end->y - start->y;
-		v.z = end->z - start->z;
-		Real dist = v.length();
-		if( dist <= 5.0f || isIdle() )
+		if (waypoint)
 		{
+			// how far away are we from the target waypoint
+			const Coord3D *start = us->getPosition();
+			const Coord3D *end = waypoint->getLocation();
+			Coord3D v;
+			v.x = end->x - start->x;
+			v.y = end->y - start->y;
+			v.z = end->z - start->z;
+			Real dist = v.length();
+			if( dist <= 5.0f || isIdle() )
+			{
 
-			// we are no longer in transit
+				// we are no longer in transit
+				setInTransit( FALSE );
+
+			}  // end if
+		}
+		else
+		{
 			setInTransit( FALSE );
-
-		}  // end if
+		}
 
 	}  // end if
 
@@ -317,7 +324,7 @@ void RailedTransportAIUpdate::privateExecuteRailedTransport( CommandSourceType c
 
 	// find the start waypoint for our current path
 	Waypoint *startWaypoint = TheTerrainLogic->getWaypointByID( m_path[ m_currentPath ].startWaypointID );
-	DEBUG_ASSERTCRASH( startWaypoint, ("RailedTransportAIUpdate: Start waypoint not found\n") );
+	DEBUG_ASSERTCRASH( startWaypoint, ("RailedTransportAIUpdate: Start waypoint not found") );
 
 	// follow this waypoint path
 	aiFollowWaypointPath( startWaypoint, CMD_FROM_AI );

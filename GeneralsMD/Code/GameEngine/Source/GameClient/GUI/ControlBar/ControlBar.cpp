@@ -83,11 +83,6 @@
 
 #include "GameNetwork/GameInfo.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 // PUBLIC /////////////////////////////////////////////////////////////////////////////////////////
 ControlBar *TheControlBar = NULL;
@@ -139,7 +134,7 @@ void ControlBar::markUIDirty( void )
 { 
   m_UIDirty = TRUE;
 
-#if defined( RTS_INTERNAL ) || defined( RTS_DEBUG )
+#if defined(RTS_DEBUG)
 	UnsignedInt now = TheGameLogic->getFrame();
 	if( now == m_lastFrameMarkedDirty )
 	{
@@ -800,7 +795,7 @@ void CommandSet::parseCommandButton( INI* ini, void *instance, void *store, cons
 	if( commandButton == NULL )
 	{
 
-		DEBUG_CRASH(( "[LINE: %d - FILE: '%s'] Unknown command '%s' found in command set\n",
+		DEBUG_CRASH(( "[LINE: %d - FILE: '%s'] Unknown command '%s' found in command set",
 								  ini->getLineNum(), ini->getFilename().str(), token ));
 		throw INI_INVALID_DATA;
 
@@ -811,7 +806,7 @@ void CommandSet::parseCommandButton( INI* ini, void *instance, void *store, cons
 	Int buttonIndex = (Int)userData;
 
 	// sanity
-	DEBUG_ASSERTCRASH( buttonIndex < MAX_COMMANDS_PER_SET, ("parseCommandButton: button index '%d' out of range\n", 
+	DEBUG_ASSERTCRASH( buttonIndex < MAX_COMMANDS_PER_SET, ("parseCommandButton: button index '%d' out of range", 
 										 buttonIndex) );
 
 	// save it
@@ -961,7 +956,7 @@ ControlBar::ControlBar( void )
 	m_remainingRadarAttackGlowFrames = 0;
 	m_radarAttackGlowWindow = NULL;
 
-#if defined( RTS_INTERNAL ) || defined( RTS_DEBUG )
+#if defined(RTS_DEBUG)
 	m_lastFrameMarkedDirty = 0;
 	m_consecutiveDirtyFrames = 0;
 #endif
@@ -976,9 +971,9 @@ ControlBar::~ControlBar( void )
 	if(m_scienceLayout)
 	{
 		m_scienceLayout->destroyWindows();
-		m_scienceLayout->deleteInstance();
+		deleteInstance(m_scienceLayout);
+		m_scienceLayout = NULL;
 	}
-	m_scienceLayout = NULL;
 	m_genArrow = NULL;
 	if(m_videoManager)
 		delete m_videoManager;
@@ -1008,7 +1003,7 @@ ControlBar::~ControlBar( void )
 	while( m_commandSets )
 	{
 		set = m_commandSets->friend_getNext();
-		m_commandSets->deleteInstance();
+		deleteInstance(m_commandSets);
 		m_commandSets = set;
 
 	}  // end while
@@ -1018,28 +1013,31 @@ ControlBar::~ControlBar( void )
 	while( m_commandButtons )
 	{
 		button = m_commandButtons->friend_getNext();
-		m_commandButtons->deleteInstance();
+		deleteInstance(m_commandButtons);
 		m_commandButtons = button;
 
 	}  // end while
 	if(m_buildToolTipLayout)
 	{
 		m_buildToolTipLayout->destroyWindows();
-		m_buildToolTipLayout->deleteInstance();
+		deleteInstance(m_buildToolTipLayout);
 		m_buildToolTipLayout = NULL;
 	}
 
 	if(m_specialPowerLayout)
 	{
 		m_specialPowerLayout->destroyWindows();
-		m_specialPowerLayout->deleteInstance();
+		deleteInstance(m_specialPowerLayout);
 		m_specialPowerLayout = NULL;
 	}
 
 	m_radarAttackGlowWindow = NULL;
 
 	if (m_rightHUDCameoWindow && m_rightHUDCameoWindow->winGetUserData())
+	{
 		delete m_rightHUDCameoWindow->winGetUserData();
+		m_rightHUDCameoWindow->winSetUserData(NULL);
+	}
 
 }  // end ~ControlBar
 void ControlBarPopupDescriptionUpdateFunc( WindowLayout *layout, void *param );
@@ -1382,6 +1380,8 @@ void ControlBar::reset( void )
 //-------------------------------------------------------------------------------------------------
 void ControlBar::update( void )
 {
+	if (TheGlobalData->m_headless)
+		return;
 	getStarImage();
 	updateRadarAttackGlow();
 	if(m_controlBarSchemeManager)
@@ -1549,7 +1549,7 @@ void ControlBar::update( void )
 	{
 
 		// we better be in the default none context
-		DEBUG_ASSERTCRASH( m_currContext == CB_CONTEXT_NONE, ("ControlBar::update no selection, but not we're not showing the default NONE context\n") );
+		DEBUG_ASSERTCRASH( m_currContext == CB_CONTEXT_NONE, ("ControlBar::update no selection, but not we're not showing the default NONE context") );
 		return;
 
 	}  // end if
@@ -2010,7 +2010,7 @@ CommandButton *ControlBar::newCommandButtonOverride( CommandButton *buttonToOver
 	}
 
 	// sanity
-	DEBUG_ASSERTCRASH( commandSet, ("parseCommandSetDefinition: Unable to allocate set '%s'\n", name.str()) );
+	DEBUG_ASSERTCRASH( commandSet, ("parseCommandSetDefinition: Unable to allocate set '%s'", name.str()) );
 
 	// parse the ini definition
 	ini->initFromINI( commandSet, commandSet->friend_getFieldParse() );
@@ -2373,7 +2373,7 @@ void ControlBar::switchToContext( ControlBarContext context, Drawable *draw )
 		default:
 		{
 
-			DEBUG_ASSERTCRASH( 0, ("ControlBar::switchToContext, unknown context '%d'\n", context) );
+			DEBUG_ASSERTCRASH( 0, ("ControlBar::switchToContext, unknown context '%d'", context) );
 			break;
 
 		}  // end default
@@ -2434,7 +2434,7 @@ void ControlBar::setControlCommand( GameWindow *button, const CommandButton *com
 	if( button->winGetInputFunc() != GadgetPushButtonInput )
 	{
 
-		DEBUG_ASSERTCRASH( 0, ("setControlCommand: Window is not a button\n") );
+		DEBUG_ASSERTCRASH( 0, ("setControlCommand: Window is not a button") );
 		return;
 
 	}  // end if
@@ -2443,7 +2443,7 @@ void ControlBar::setControlCommand( GameWindow *button, const CommandButton *com
 	if( commandButton == NULL )
 	{
 
-		DEBUG_ASSERTCRASH( 0, ("setControlCommand: NULL commandButton passed in\n") );
+		DEBUG_ASSERTCRASH( 0, ("setControlCommand: NULL commandButton passed in") );
 		return;
 
 	}  // end if
@@ -2545,7 +2545,7 @@ void ControlBar::setControlCommand( const AsciiString& buttonWindowName, GameWin
 	if( win == NULL )
 	{
 
-		DEBUG_ASSERTCRASH( 0, ("setControlCommand: Unable to find window '%s'\n", buttonWindowName.str()) );
+		DEBUG_ASSERTCRASH( 0, ("setControlCommand: Unable to find window '%s'", buttonWindowName.str()) );
 		return;
 
 	}  // end if
@@ -2716,7 +2716,7 @@ void ControlBar::showRallyPoint( const Coord3D *loc )
 
 			const ThingTemplate* ttn = TheThingFactory->findTemplate("RallyPointMarker");
 			marker = TheThingFactory->newDrawable( ttn );
-			DEBUG_ASSERTCRASH( marker, ("showRallyPoint: Unable to create rally point drawable\n") );
+			DEBUG_ASSERTCRASH( marker, ("showRallyPoint: Unable to create rally point drawable") );
 			if (marker)
 			{
 				marker->setDrawableStatus(DRAWABLE_STATUS_NO_SAVE);
@@ -2728,7 +2728,7 @@ void ControlBar::showRallyPoint( const Coord3D *loc )
 			marker = TheGameClient->findDrawableByID( m_rallyPointDrawableID );
 
 		// sanity
-		DEBUG_ASSERTCRASH( marker, ("showRallyPoint: No rally point marker found\n" ) );
+		DEBUG_ASSERTCRASH( marker, ("showRallyPoint: No rally point marker found" ) );
 
 		// set the position of the rally point drawble to the position passed in
 		marker->setPosition( loc );
@@ -2766,7 +2766,7 @@ void ControlBar::setControlBarSchemeByPlayer(Player *p)
 	{
 		m_isObserverCommandBar = TRUE;
 		switchToContext( CB_CONTEXT_OBSERVER_LIST, NULL );
-		DEBUG_LOG(("We're loading the Observer Command Bar\n"));
+		DEBUG_LOG(("We're loading the Observer Command Bar"));
 
 		if (buttonPlaceBeacon)
 			buttonPlaceBeacon->winHide(TRUE);
@@ -2811,7 +2811,7 @@ void ControlBar::setControlBarSchemeByPlayerTemplate( const PlayerTemplate *pt)
 	{
 		m_isObserverCommandBar = TRUE;
 		switchToContext( CB_CONTEXT_OBSERVER_LIST, NULL );
-		DEBUG_LOG(("We're loading the Observer Command Bar\n"));
+		DEBUG_LOG(("We're loading the Observer Command Bar"));
 
 		if (buttonPlaceBeacon)
 			buttonPlaceBeacon->winHide(TRUE);
@@ -3004,8 +3004,6 @@ void ControlBar::toggleControlBarStage( void )
 void ControlBar::switchControlBarStage( ControlBarStages stage )
 {
 	if(stage < CONTROL_BAR_STAGE_DEFAULT || stage >= MAX_CONTROL_BAR_STAGES)
-		return;
-	if (TheRecorder && TheRecorder->getMode() == RECORDERMODETYPE_PLAYBACK)
 		return;
 	switch (stage) {
 	case CONTROL_BAR_STAGE_DEFAULT:
@@ -3234,7 +3232,7 @@ void ControlBar::initSpecialPowershortcutBar( Player *player)
 	if(m_specialPowerLayout)
 	{
 		m_specialPowerLayout->destroyWindows();
-		m_specialPowerLayout->deleteInstance();
+		deleteInstance(m_specialPowerLayout);
 		m_specialPowerLayout = NULL;
 	}
 	m_specialPowerShortcutParent = NULL;
@@ -3371,7 +3369,7 @@ void ControlBar::populateSpecialPowerShortcut( Player *player)
 						//button specifying a vector of sciences in the command button.
 						Int bestIndex = -1;
 						ScienceType science;
-						for( Int scienceIndex = 0; scienceIndex < commandButton->getScienceVec().size(); ++scienceIndex )
+						for( size_t scienceIndex = 0; scienceIndex < commandButton->getScienceVec().size(); ++scienceIndex )
 						{
 							science = commandButton->getScienceVec()[ scienceIndex ];
 							

@@ -37,11 +37,6 @@
 #include "GameLogic/GameLogic.h"
 
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 //-------------------------------------------------------------------------------------------------
 FireWeaponUpdateModuleData::FireWeaponUpdateModuleData()
@@ -89,7 +84,7 @@ FireWeaponUpdate::FireWeaponUpdate( Thing *thing, const ModuleData* moduleData )
 FireWeaponUpdate::~FireWeaponUpdate( void )
 {
 	if (m_weapon)
-		m_weapon->deleteInstance();
+		deleteInstance(m_weapon);
 }
 
 //-------------------------------------------------------------------------------------------------

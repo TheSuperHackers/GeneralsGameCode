@@ -49,11 +49,6 @@
 #define NONE_SPAWNED_YET (0xffffffff)
 
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 
 
@@ -1110,7 +1105,7 @@ void SpawnBehavior::xfer( Xfer *xfer )
 			if( m_spawnTemplate == NULL )
 			{
 
-				DEBUG_CRASH(( "SpawnBehavior::xfer - Unable to find template '%s'\n", name.str() ));
+				DEBUG_CRASH(( "SpawnBehavior::xfer - Unable to find template '%s'", name.str() ));
 				throw SC_INVALID_DATA;
 
 			}  // end if

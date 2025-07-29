@@ -587,7 +587,7 @@ exit:
 
 		if (result->ComputeContactPoint) {
 			//WWASSERT(0); // TODO
-			WWDEBUG_SAY(("AABox-AABox collision does not currently support contact point computation\r\n"));
+			WWDEBUG_SAY(("AABox-AABox collision does not currently support contact point computation"));
 		}
 
 		return true;

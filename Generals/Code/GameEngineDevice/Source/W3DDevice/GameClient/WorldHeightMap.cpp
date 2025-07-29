@@ -138,7 +138,7 @@ MapObject::~MapObject(void)
 		while (cur) {
 			next = cur->getNext();
 			cur->setNextMap(NULL); // prevents recursion. 
-			cur->deleteInstance();
+			deleteInstance(cur);
 			cur = next;
 		}
 	}
@@ -424,7 +424,7 @@ void WorldHeightMap::freeListOfMapObjects(void)
 {
 	if (MapObject::TheMapObjectListPtr) 
 	{
-		MapObject::TheMapObjectListPtr->deleteInstance();
+		deleteInstance(MapObject::TheMapObjectListPtr);
 		MapObject::TheMapObjectListPtr = NULL;
 	}
 	MapObject::getWorldDict()->clear();
@@ -1085,7 +1085,7 @@ Bool WorldHeightMap::ParseObjectData(DataChunkInput &file, DataChunkInfo *info, 
 	}		 
 
 	if (loc.z<minZ || loc.z>maxZ) {
-		DEBUG_LOG(("Removing object at z height %f\n", loc.z));
+		DEBUG_LOG(("Removing object at z height %f", loc.z));
 		return true;
 	}
 
@@ -1095,7 +1095,7 @@ Bool WorldHeightMap::ParseObjectData(DataChunkInput &file, DataChunkInfo *info, 
 	pThisOne = newInstance( MapObject )( loc, name, angle, flags, &d, 
 														TheThingFactory->findTemplate( name ) );
 
-//DEBUG_LOG(("obj %s owner %s\n",name.str(),d.getAsciiString(TheKey_originalOwner).str()));
+//DEBUG_LOG(("obj %s owner %s",name.str(),d.getAsciiString(TheKey_originalOwner).str()));
 
 	if (pThisOne->getProperties()->getType(TheKey_waypointID) == Dict::DICT_INT)
 		pThisOne->setIsWaypoint();
@@ -1959,7 +1959,7 @@ TextureClass *WorldHeightMap::getTerrainTexture(void)
 		m_terrainTex = MSGNEW("WorldHeightMap_getTerrainTexture") TerrainTextureClass(pow2Height);
 		m_terrainTexHeight = m_terrainTex->update(this);
 		char buf[64];
-		sprintf(buf, "Base tex height %d\n", pow2Height);
+		sprintf(buf, "Base tex height %d", pow2Height);
 		DEBUG_LOG((buf));
 		REF_PTR_RELEASE(m_alphaTerrainTex);
 		m_alphaTerrainTex = MSGNEW("WorldHeightMap_getTerrainTexture") AlphaTerrainTextureClass(m_terrainTex);

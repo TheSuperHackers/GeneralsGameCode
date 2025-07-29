@@ -31,11 +31,6 @@
 #include "GameClient/Snow.h"
 #include "GameClient/View.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 SnowManager *TheSnowManager=NULL;
 
@@ -103,7 +98,7 @@ SnowManager::~SnowManager()
 	// TheSuperHackers @fix Mauller 13/04/2025 Delete the instance of the weather settings
 	if (TheWeatherSetting)
 	{
-		((WeatherSetting*)TheWeatherSetting.getNonOverloadedPointer())->deleteInstance();
+		deleteInstance((WeatherSetting*)TheWeatherSetting.getNonOverloadedPointer());
 		TheWeatherSetting=NULL;
 	}
 }

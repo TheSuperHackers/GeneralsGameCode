@@ -41,6 +41,7 @@
 #include "Common/Registry.h"
 #include "Common/version.h"
 
+#include "GameClient/ClientInstance.h"
 #include "GameClient/GameClient.h"
 #include "GameClient/InGameUI.h"
 #include "GameClient/WindowLayout.h"
@@ -75,11 +76,6 @@
 // This is for non-RC builds only!!!
 #define VERBOSE_VERSION L"Release"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 
 static NameKeyType		comboBoxOnlineIPID	= NAMEKEY_INVALID;
@@ -232,14 +228,24 @@ enum Detail CPP_11(: Int)
 
 OptionPreferences::OptionPreferences( void )
 {
-	// note, the superclass will put this in the right dir automatically, this is just a leaf name
-	load("Options.ini");
+	loadFromIniFile();
 }
 
 OptionPreferences::~OptionPreferences()
 {
 }
 
+Bool OptionPreferences::loadFromIniFile()
+{
+	if (rts::ClientInstance::getInstanceId() > 1u)
+	{
+		AsciiString fname;
+		fname.format("Options_Instance%.2u.ini", rts::ClientInstance::getInstanceId());
+		return load(fname);
+	}
+
+	return load("Options.ini");
+}
 
 Int OptionPreferences::getCampaignDifficulty(void)
 {
@@ -287,7 +293,7 @@ void OptionPreferences::setLANIPAddress( AsciiString IP )
 void OptionPreferences::setLANIPAddress( UnsignedInt IP )
 {
 	AsciiString tmp;
-	tmp.format("%d.%d.%d.%d", ((IP & 0xff000000) >> 24), ((IP & 0xff0000) >> 16), ((IP & 0xff00) >> 8), (IP & 0xff));
+	tmp.format("%d.%d.%d.%d", PRINTF_IP_AS_4_INTS(IP));
 	(*this)["IPAddress"] = tmp;
 }
 
@@ -315,7 +321,7 @@ void OptionPreferences::setOnlineIPAddress( AsciiString IP )
 void OptionPreferences::setOnlineIPAddress( UnsignedInt IP )
 {
 	AsciiString tmp;
-	tmp.format("%d.%d.%d.%d", ((IP & 0xff000000) >> 24), ((IP & 0xff0000) >> 16), ((IP & 0xff00) >> 8), (IP & 0xff));
+	tmp.format("%d.%d.%d.%d", PRINTF_IP_AS_4_INTS(IP));
 	(*this)["GameSpyIPAddress"] = tmp;
 }
 
@@ -362,11 +368,13 @@ Real OptionPreferences::getScrollFactor(void)
 		return TheGlobalData->m_keyboardDefaultScrollFactor;
 
 	Int factor = atoi(it->second.str());
-	if (factor < 0)
-		factor = 0;
-	if (factor > 100)
-		factor = 100;
-	
+
+	// TheSuperHackers @tweak xezon 11/07/2025
+	// No longer caps the upper limit to 100, because the options setting can go beyond that.
+	// No longer caps the lower limit to 0, because that would mean standstill.
+	if (factor < 1)
+		factor = 1;
+
 	return factor/100.0f;
 }
 
@@ -761,6 +769,47 @@ Real OptionPreferences::getMusicVolume(void)
 	return volume;
 }
 
+Real OptionPreferences::getMoneyTransactionVolume(void) const
+{
+	OptionPreferences::const_iterator it = find("MoneyTransactionVolume");
+	if (it == end())
+		return TheAudio->getAudioSettings()->m_defaultMoneyTransactionVolume * 100.0f;
+
+	Real volume = (Real) atof(it->second.str());
+	if (volume < 0.0f)
+		volume = 0.0f;
+
+	return volume;
+}
+
+Int OptionPreferences::getSystemTimeFontSize(void)
+{
+	OptionPreferences::const_iterator it = find("SystemTimeFontSize");
+	if (it == end())
+		return 8;
+
+	Int fontSize = atoi(it->second.str());
+	if (fontSize < 0)
+	{
+		fontSize = 0;
+	}
+	return fontSize;
+}
+
+Int OptionPreferences::getGameTimeFontSize(void)
+{
+	OptionPreferences::const_iterator it = find("GameTimeFontSize");
+	if (it == end())
+		return 8;
+
+	Int fontSize = atoi(it->second.str());
+	if (fontSize < 0)
+	{
+		fontSize = 0;
+	}
+	return fontSize;
+}
+
 static OptionPreferences *pref = NULL;
 
 static void setDefaults( void )
@@ -830,12 +879,11 @@ static void setDefaults( void )
 
 	//-------------------------------------------------------------------------------------------------
 //	// scroll speed val
-	Int valMin, valMax;
-//	GadgetSliderGetMinMax(sliderScrollSpeed,&valMin, &valMax);
-//	GadgetSliderSetPosition(sliderScrollSpeed, ((valMax - valMin) / 2 + valMin));
 	Int scrollPos = (Int)(TheGlobalData->m_keyboardDefaultScrollFactor*100.0f);
 	GadgetSliderSetPosition( sliderScrollSpeed, scrollPos );
 
+
+	Int valMin, valMax;
 
 	//-------------------------------------------------------------------------------------------------
 	// slider music volume
@@ -963,11 +1011,14 @@ static void saveOptions( void )
 	
 	//-------------------------------------------------------------------------------------------------
 	// send Delay
-	TheWritableGlobalData->m_firewallSendDelay = GadgetCheckBoxIsChecked(checkSendDelay);
-	if (TheGlobalData->m_firewallSendDelay) {
-		(*pref)["SendDelay"] = AsciiString("yes");
-	} else {
-		(*pref)["SendDelay"] = AsciiString("no");
+	if (checkSendDelay && checkSendDelay->winGetEnabled())
+	{
+		TheWritableGlobalData->m_firewallSendDelay = GadgetCheckBoxIsChecked(checkSendDelay);
+		if (TheGlobalData->m_firewallSendDelay) {
+			(*pref)["SendDelay"] = AsciiString("yes");
+		} else {
+			(*pref)["SendDelay"] = AsciiString("no");
+		}
 	}
 
 	//-------------------------------------------------------------------------------------------------
@@ -1043,102 +1094,63 @@ static void saveOptions( void )
 
 	//-------------------------------------------------------------------------------------------------
 	// LOD
-	Bool levelChanged=FALSE;
-	GadgetComboBoxGetSelectedPos( comboBoxDetail, &index );
-	//The levels stored by the LOD Manager are inverted compared to GUI so find correct one:
-	switch (index) {
-	case HIGHDETAIL:
-		levelChanged=TheGameLODManager->setStaticLODLevel(STATIC_GAME_LOD_HIGH);
-		break;
-	case MEDIUMDETAIL:
-		levelChanged=TheGameLODManager->setStaticLODLevel(STATIC_GAME_LOD_MEDIUM);
-		break;
-	case LOWDETAIL:
-		levelChanged=TheGameLODManager->setStaticLODLevel(STATIC_GAME_LOD_LOW);
-		break;
-	case CUSTOMDETAIL:
-		levelChanged=TheGameLODManager->setStaticLODLevel(STATIC_GAME_LOD_CUSTOM);
-		break;
-	default:
-		DEBUG_ASSERTCRASH(FALSE,("LOD passed in was %d, %d is not a supported LOD",index,index));
-		break;
-	}
-
-	if (levelChanged)
-	        (*pref)["StaticGameLOD"] = TheGameLODManager->getStaticGameLODLevelName(TheGameLODManager->getStaticLODLevel());
-
-	//-------------------------------------------------------------------------------------------------
-	// Resolution
-	GadgetComboBoxGetSelectedPos( comboBoxResolution, &index );
-	Int xres, yres, bitDepth;
-	
-	oldDispSettings.xRes = TheDisplay->getWidth();
-	oldDispSettings.yRes = TheDisplay->getHeight();
-	oldDispSettings.bitDepth = TheDisplay->getBitDepth();
-	oldDispSettings.windowed = TheDisplay->getWindowed();
-	
-	if (index < TheDisplay->getDisplayModeCount() && index >= 0)
+	if (comboBoxDetail && comboBoxDetail->winGetEnabled())
 	{
-		TheDisplay->getDisplayModeDescription(index,&xres,&yres,&bitDepth);
-		if (TheGlobalData->m_xResolution != xres || TheGlobalData->m_yResolution != yres)
-		{
-			
-			if (TheDisplay->setDisplayMode(xres,yres,bitDepth,TheDisplay->getWindowed()))
-			{
-				dispChanged = TRUE;
-				TheWritableGlobalData->m_xResolution = xres;
-				TheWritableGlobalData->m_yResolution = yres;
+		Bool levelChanged=FALSE;
+		GadgetComboBoxGetSelectedPos( comboBoxDetail, &index );
 
-				TheHeaderTemplateManager->headerNotifyResolutionChange();
-				TheMouse->mouseNotifyResolutionChange();
-				
-				//Save new settings for a dialog box confirmation after options are accepted
-				newDispSettings.xRes = xres;
-				newDispSettings.yRes = yres;
-				newDispSettings.bitDepth = bitDepth;
-				newDispSettings.windowed = TheDisplay->getWindowed();
-
-				AsciiString prefString;
-				prefString.format("%d %d", xres, yres );
-				(*pref)["Resolution"] = prefString;
-
-				// delete the shell
-				delete TheShell;
-				TheShell = NULL;
-
-				// create the shell
-				TheShell = MSGNEW("GameClientSubsystem") Shell;
-				if( TheShell )
-					TheShell->init();
-				
-				TheInGameUI->recreateControlBar();
-
-				TheShell->push( AsciiString("Menus/MainMenu.wnd") );
-			}
+		//The levels stored by the LOD Manager are inverted compared to GUI so find correct one:
+		switch (index) {
+		case HIGHDETAIL:
+			levelChanged=TheGameLODManager->setStaticLODLevel(STATIC_GAME_LOD_HIGH);
+			break;
+		case MEDIUMDETAIL:
+			levelChanged=TheGameLODManager->setStaticLODLevel(STATIC_GAME_LOD_MEDIUM);
+			break;
+		case LOWDETAIL:
+			levelChanged=TheGameLODManager->setStaticLODLevel(STATIC_GAME_LOD_LOW);
+			break;
+		case CUSTOMDETAIL:
+			levelChanged=TheGameLODManager->setStaticLODLevel(STATIC_GAME_LOD_CUSTOM);
+			break;
+		default:
+			DEBUG_ASSERTCRASH(FALSE,("LOD passed in was %d, %d is not a supported LOD",index,index));
+			break;
 		}
+
+		if (levelChanged)
+			(*pref)["StaticGameLOD"] = TheGameLODManager->getStaticGameLODLevelName(TheGameLODManager->getStaticLODLevel());
 	}
 
 	//-------------------------------------------------------------------------------------------------
 	// IP address
-	UnsignedInt ip;
-	GadgetComboBoxGetSelectedPos(comboBoxLANIP, &index);
-	if (index>=0 && TheGlobalData)
+	if (comboBoxLANIP && comboBoxLANIP->winGetEnabled())
 	{
-		ip = (UnsignedInt)GadgetComboBoxGetItemData(comboBoxLANIP, index);
-		TheWritableGlobalData->m_defaultIP = ip;
-		pref->setLANIPAddress(ip);
+		UnsignedInt ip;
+		GadgetComboBoxGetSelectedPos(comboBoxLANIP, &index);
+		if (index>=0 && TheGlobalData)
+		{
+			ip = (UnsignedInt)GadgetComboBoxGetItemData(comboBoxLANIP, index);
+			TheWritableGlobalData->m_defaultIP = ip;
+			pref->setLANIPAddress(ip);
+		}
 	}
-	GadgetComboBoxGetSelectedPos(comboBoxOnlineIP, &index);
-	if (index>=0)
+
+	if (comboBoxOnlineIP && comboBoxOnlineIP->winGetEnabled())
 	{
-		ip = (UnsignedInt)GadgetComboBoxGetItemData(comboBoxOnlineIP, index);
-		pref->setOnlineIPAddress(ip);
+		UnsignedInt ip;
+		GadgetComboBoxGetSelectedPos(comboBoxOnlineIP, &index);
+		if (index>=0)
+		{
+			ip = (UnsignedInt)GadgetComboBoxGetItemData(comboBoxOnlineIP, index);
+			pref->setOnlineIPAddress(ip);
+		}
 	}
 
 	//-------------------------------------------------------------------------------------------------
 	// HTTP Proxy
 	GameWindow *textEntryHTTPProxy = TheWindowManager->winGetWindowFromId(NULL, NAMEKEY("OptionsMenu.wnd:TextEntryHTTPProxy"));
-	if (textEntryHTTPProxy)
+	if (textEntryHTTPProxy && textEntryHTTPProxy->winGetEnabled())
 	{
 		UnicodeString uStr = GadgetTextEntryGetText(textEntryHTTPProxy);
 		AsciiString aStr;
@@ -1150,7 +1162,7 @@ static void saveOptions( void )
 	//-------------------------------------------------------------------------------------------------
 	// Firewall Port Override
 	GameWindow *textEntryFirewallPortOverride = TheWindowManager->winGetWindowFromId(NULL, NAMEKEY("OptionsMenu.wnd:TextEntryFirewallPortOverride"));
-	if (textEntryFirewallPortOverride)
+	if (textEntryFirewallPortOverride && textEntryFirewallPortOverride->winGetEnabled())
 	{
 		UnicodeString uStr = GadgetTextEntryGetText(textEntryFirewallPortOverride);
 		AsciiString aStr;
@@ -1191,10 +1203,10 @@ static void saveOptions( void )
 	//-------------------------------------------------------------------------------------------------
 	// scroll speed val
 	val = GadgetSliderGetPosition(sliderScrollSpeed);
-	if(val != -1)
+	if(val > 0)
 	{
 		TheWritableGlobalData->m_keyboardScrollFactor = val/100.0f;
-		DEBUG_LOG(("Scroll Spped val %d, keyboard scroll factor %f\n", val, TheGlobalData->m_keyboardScrollFactor));
+		DEBUG_LOG(("Scroll Spped val %d, keyboard scroll factor %f", val, TheGlobalData->m_keyboardScrollFactor));
 		AsciiString prefString;
 		prefString.format("%d", val);
 		(*pref)["ScrollFactor"] = prefString;
@@ -1205,7 +1217,6 @@ static void saveOptions( void )
 	val = GadgetSliderGetPosition(sliderMusicVolume);
 	if(val != -1)
 	{
-	  TheWritableGlobalData->m_musicVolumeFactor = val;
     AsciiString prefString;
     prefString.format("%d", val);
     (*pref)["MusicVolume"] = prefString;
@@ -1239,7 +1250,6 @@ static void saveOptions( void )
 		TheAudio->setVolume( sound3DVolume, (AudioAffect) (AudioAffect_Sound3D | AudioAffect_SystemSetting) );
 
 		//Save the settings in the options.ini.
-    TheWritableGlobalData->m_SFXVolumeFactor = val;
     AsciiString prefString;
     prefString.format("%d", REAL_TO_INT( sound2DVolume * 100.0f ) );
     (*pref)["SFXVolume"] = prefString;
@@ -1252,11 +1262,21 @@ static void saveOptions( void )
 	val = GadgetSliderGetPosition(sliderVoiceVolume);
 	if(val != -1)
 	{
-    TheWritableGlobalData->m_voiceVolumeFactor = val;
     AsciiString prefString;
     prefString.format("%d", val);
     (*pref)["VoiceVolume"] = prefString;
     TheAudio->setVolume(val / 100.0f, (AudioAffect) (AudioAffect_Speech | AudioAffect_SystemSetting));
+	}
+
+	//-------------------------------------------------------------------------------------------------
+	// Money tick volume
+	// TheSuperHackers @todo Add options slider ?
+	{
+		val = pref->getMoneyTransactionVolume();
+		AsciiString prefString;
+		prefString.format("%d", val);
+		(*pref)["MoneyTransactionVolume"] = prefString;
+		TheAudio->friend_getAudioSettings()->m_preferredMoneyTransactionVolume = val / 100.0f;
 	}
 
  	//-------------------------------------------------------------------------------------------------
@@ -1287,6 +1307,76 @@ static void saveOptions( void )
 		}
  	}
 
+	//-------------------------------------------------------------------------------------------------
+	// Set System Time Font Size
+	val = pref->getSystemTimeFontSize(); // TheSuperHackers @todo replace with options input when applicable
+	if (val >= 0)
+	{
+		AsciiString prefString;
+		prefString.format("%d", val);
+		(*pref)["SystemTimeFontSize"] = prefString;
+		TheInGameUI->refreshSystemTimeResources();
+	}
+
+	//-------------------------------------------------------------------------------------------------
+	// Set Game Time Font Size
+	val = pref->getGameTimeFontSize(); // TheSuperHackers @todo replace with options input when applicable
+	if (val >= 0)
+	{
+		AsciiString prefString;
+		prefString.format("%d", val);
+		(*pref)["GameTimeFontSize"] = prefString;
+		TheInGameUI->refreshGameTimeResources();
+	}
+
+	//-------------------------------------------------------------------------------------------------
+	// Resolution
+	//
+	// TheSuperHackers @bugfix xezon 12/06/2025 Now performs the resolution change at the very end of
+	// processing all the options. This is necessary, because recreating the Shell will destroy the
+	// Options Menu and therefore prevent any further ui gadget interactions afterwards.
+
+	GadgetComboBoxGetSelectedPos( comboBoxResolution, &index );
+	Int xres, yres, bitDepth;
+	
+	oldDispSettings.xRes = TheDisplay->getWidth();
+	oldDispSettings.yRes = TheDisplay->getHeight();
+	oldDispSettings.bitDepth = TheDisplay->getBitDepth();
+	oldDispSettings.windowed = TheDisplay->getWindowed();
+	
+	if (comboBoxResolution && comboBoxResolution->winGetEnabled() && index < TheDisplay->getDisplayModeCount() && index >= 0)
+	{
+		TheDisplay->getDisplayModeDescription(index,&xres,&yres,&bitDepth);
+		if (TheGlobalData->m_xResolution != xres || TheGlobalData->m_yResolution != yres)
+		{
+			if (TheDisplay->setDisplayMode(xres,yres,bitDepth,TheDisplay->getWindowed()))
+			{
+				dispChanged = TRUE;
+				TheWritableGlobalData->m_xResolution = xres;
+				TheWritableGlobalData->m_yResolution = yres;
+
+				TheHeaderTemplateManager->headerNotifyResolutionChange();
+				TheMouse->mouseNotifyResolutionChange();
+				
+				//Save new settings for a dialog box confirmation after options are accepted
+				newDispSettings.xRes = xres;
+				newDispSettings.yRes = yres;
+				newDispSettings.bitDepth = bitDepth;
+				newDispSettings.windowed = TheDisplay->getWindowed();
+
+				AsciiString prefString;
+				prefString.format("%d %d", xres, yres );
+				(*pref)["Resolution"] = prefString;
+
+				TheShell->recreateWindowLayouts();
+
+				TheInGameUI->recreateControlBar();
+				TheInGameUI->refreshCustomUiResources();
+			}
+		}
+	}
+
+	// MUST NEVER ADD ANOTHER OPTION HERE AT THE END !
 }
 
 static void DestroyOptionsLayout() {
@@ -1330,6 +1420,27 @@ static void cancelAdvancedOptions()
 
 	WinAdvancedDisplay->winHide(TRUE);
 }
+
+// TheSuperHackers @tweak Now prints additional version information in the version label.
+static void initLabelVersion()
+{
+	NameKeyType versionID = TheNameKeyGenerator->nameToKey( AsciiString("OptionsMenu.wnd:LabelVersion") );
+	GameWindow *labelVersion = TheWindowManager->winGetWindowFromId( NULL, versionID );
+
+	if (labelVersion)
+	{
+		if (TheVersion && TheGlobalData)
+		{
+			UnicodeString text = TheVersion->getUnicodeProductVersionHashString();
+			GadgetStaticTextSetText( labelVersion, text );
+		}
+		else
+		{
+			labelVersion->winHide( TRUE );
+		}
+	}
+}
+
 //-------------------------------------------------------------------------------------------------
 /** Initialize the options menu */
 //-------------------------------------------------------------------------------------------------
@@ -1461,29 +1572,7 @@ void OptionsMenuInit( WindowLayout *layout, void *userData )
     NUM_ALIASING_MODES
   };
 
-	NameKeyType versionID = TheNameKeyGenerator->nameToKey( AsciiString("OptionsMenu.wnd:LabelVersion") );
-	GameWindow *labelVersion = TheWindowManager->winGetWindowFromId( NULL, versionID );
-	UnicodeString versionString;
-	versionString.format(TheGameText->fetch("Version:Format2").str(), (GetRegistryVersion() >> 16), (GetRegistryVersion() & 0xffff));
-	
-	if (TheVersion->showFullVersion())
-	{
-		if (TheVersion)
-		{
-			UnicodeString version;
-			version.format(L"(%s) %s -- %s", versionString.str(), TheVersion->getFullUnicodeVersion().str(), TheVersion->getUnicodeBuildTime().str());
-			GadgetStaticTextSetText( labelVersion, version );
-		}
-		else
-		{
-			labelVersion->winHide( TRUE );
-		}
-	}
-	else
-	{
-		GadgetStaticTextSetText( labelVersion, versionString );
-	}
-
+	initLabelVersion();
 
 	// Choose an IP address, then initialize the IP combo box
 	UnsignedInt selectedIP = pref->getLANIPAddress();
@@ -1603,7 +1692,6 @@ void OptionsMenuInit( WindowLayout *layout, void *userData )
 	AsciiString selectedResolution = (*pref) ["Resolution"];
 	Int selectedXRes=800,selectedYRes=600;
 	Int selectedResIndex=-1;
-	Int defaultResIndex=0;	//index of default video mode that should always exist
 	if (!selectedResolution.isEmpty())
 	{	//try to parse 2 integers out of string
 		if (sscanf(selectedResolution.str(),"%d%d", &selectedXRes, &selectedYRes) != 2)
@@ -1614,26 +1702,31 @@ void OptionsMenuInit( WindowLayout *layout, void *userData )
 	// populate resolution modes
 	GadgetComboBoxReset(comboBoxResolution);
 	Int numResolutions = TheDisplay->getDisplayModeCount();
+	UnsignedInt displayWidth = TheDisplay->getWidth();
+	UnsignedInt displayHeight = TheDisplay->getHeight();
+
 	for( i = 0; i < numResolutions; ++i )
 	{	Int xres,yres,bitDepth;
 		TheDisplay->getDisplayModeDescription(i,&xres,&yres,&bitDepth);
 		str.format(L"%d x %d",xres,yres);
 		GadgetComboBoxAddEntry( comboBoxResolution, str, color);
-		if (xres == 800 && yres == 600)	//keep track of default mode in case we need it.
-			defaultResIndex=i;
-		if (xres == selectedXRes && yres == selectedYRes)
+		// TheSuperHackers @bugfix xezon 12/06/2025 Now makes a selection with the active display resolution
+		// instead of the resolution read from the Option Preferences, because the active display resolution
+		// is the most relevant to make a selection with and the Option Preferences could be wrong.
+		if ( xres == displayWidth && yres == displayHeight )
 			selectedResIndex=i;
 	}
 
-	if (selectedResIndex == -1)	//check if saved mode no longer available
-	{	//pick default resolution
-		selectedXRes = 800;
-		selectedXRes = 600;
-		selectedResIndex = defaultResIndex;
+	if (selectedResIndex == -1)
+	{
+		// TheSuperHackers @bugfix xezon 08/06/2025 Now adds the current resolution instead of defaulting to 800 x 600.
+		// This avoids force changing the resolution when the user has set a custom resolution in the Option Preferences.
+		Int xres = displayWidth;
+		Int yres = displayHeight;
+		str.format(L"%d x %d",xres,yres);
+		GadgetComboBoxAddEntry( comboBoxResolution, str, color );
+		selectedResIndex = GadgetComboBoxGetLength( comboBoxResolution ) - 1;
 	}
-
-	TheWritableGlobalData->m_xResolution = selectedXRes;
-	TheWritableGlobalData->m_yResolution = selectedYRes;
 
 	GadgetComboBoxSetSelectedPos( comboBoxResolution, selectedResIndex );
 
@@ -1732,7 +1825,7 @@ void OptionsMenuInit( WindowLayout *layout, void *userData )
 
 	//set scroll options
 	AsciiString test = (*pref)["DrawScrollAnchor"];
-	DEBUG_LOG(("DrawScrollAnchor == [%s]\n", test.str()));
+	DEBUG_LOG(("DrawScrollAnchor == [%s]", test.str()));
 	if (test == "Yes" || (test.isEmpty() && TheInGameUI->getDrawRMBScrollAnchor()))
 	{
 		GadgetCheckBoxSetChecked( checkDrawAnchor, true);
@@ -1744,7 +1837,7 @@ void OptionsMenuInit( WindowLayout *layout, void *userData )
 		TheInGameUI->setDrawRMBScrollAnchor(false);
 	}
 	test = (*pref)["MoveScrollAnchor"];
-	DEBUG_LOG(("MoveScrollAnchor == [%s]\n", test.str()));
+	DEBUG_LOG(("MoveScrollAnchor == [%s]", test.str()));
 	if (test == "Yes" || (test.isEmpty() && TheInGameUI->getMoveRMBScrollAnchor()))
 	{
 		GadgetCheckBoxSetChecked( checkMoveAnchor, true);
@@ -1766,9 +1859,17 @@ void OptionsMenuInit( WindowLayout *layout, void *userData )
 	GadgetCheckBoxSetChecked( checkDoubleClickAttackMove, TheGlobalData->m_doubleClickAttackMove );
 
 	// set scroll speed slider
+	// TheSuperHackers @tweak xezon 11/07/2025 No longer sets the slider position if the user setting
+	// is set beyond the slider limits. This gives the user more freedom to customize the scroll
+	// speed. The slider value remains 0.
 	Int scrollPos = (Int)(TheGlobalData->m_keyboardScrollFactor*100.0f);
-	GadgetSliderSetPosition( sliderScrollSpeed, scrollPos );
-	DEBUG_LOG(("Scroll SPeed %d\n", scrollPos));
+	Int scrollMin, scrollMax;
+	GadgetSliderGetMinMax( sliderScrollSpeed, &scrollMin, &scrollMax );
+	if (scrollPos >= scrollMin && scrollPos <= scrollMax)
+	{
+		GadgetSliderSetPosition( sliderScrollSpeed, scrollPos );
+	}
+	DEBUG_LOG(("Scroll Speed %d", scrollPos));
 
 	// set the send delay check box
 	GadgetCheckBoxSetChecked(checkSendDelay, TheGlobalData->m_firewallSendDelay);
@@ -1801,17 +1902,25 @@ void OptionsMenuInit( WindowLayout *layout, void *userData )
 	{
 		// disable controls that you can't change the options for in game
 		comboBoxLANIP->winEnable(FALSE);
+
 		if (comboBoxOnlineIP)
 			comboBoxOnlineIP->winEnable(FALSE);
+
 		checkSendDelay->winEnable(FALSE);
+
 		buttonFirewallRefresh->winEnable(FALSE);
 
 		if (comboBoxDetail)
 			comboBoxDetail->winEnable(FALSE);
 
-
 		if (comboBoxResolution)
 			comboBoxResolution->winEnable(FALSE);
+
+		if (textEntryFirewallPortOverride)
+			textEntryFirewallPortOverride->winEnable(FALSE);
+
+		if (textEntryHTTPProxy)
+			textEntryHTTPProxy->winEnable(FALSE);
 
 //		if (checkAudioSurround)
 //			checkAudioSurround->winEnable(FALSE);

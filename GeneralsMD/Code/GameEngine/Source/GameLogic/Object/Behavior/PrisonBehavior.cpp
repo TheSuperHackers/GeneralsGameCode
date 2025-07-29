@@ -157,7 +157,7 @@ void PrisonBehavior::onDelete( void )
 
 		// delete element and set next to head
 		visual = m_visualList->m_next;
-		m_visualList->deleteInstance();
+		deleteInstance(m_visualList);
 		m_visualList = visual;
 
 	}  // end while
@@ -363,7 +363,7 @@ void PrisonBehavior::removeVisual( Object *obj )
 				m_visualList = visual->m_next;
 
 			// delete the element
-			visual->deleteInstance();
+			deleteInstance(visual);
 
 			break;  // exit for
 
@@ -437,7 +437,7 @@ void PrisonBehavior::xfer( Xfer *xfer )
 		if( m_visualList != NULL )
 		{
 
-			DEBUG_CRASH(( "PrisonBehavior::xfer - the visual list should be empty but is not\n" ));
+			DEBUG_CRASH(( "PrisonBehavior::xfer - the visual list should be empty but is not" ));
 			throw SC_INVALID_DATA;
 
 		}  // end if

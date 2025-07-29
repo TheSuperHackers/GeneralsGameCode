@@ -66,11 +66,6 @@
 #include "GameLogic/SidesList.h"
 
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 
 static Script *s_mtScript = NULL;
@@ -199,7 +194,7 @@ void ScriptList::reset(void)
 	{
 		ScriptList* pList = TheSidesList->getSideInfo(i)->getScriptList();
 		TheSidesList->getSideInfo(i)->setScriptList(NULL);
-		pList->deleteInstance();
+		deleteInstance(pList);
 	}
 }
 
@@ -221,11 +216,11 @@ m_firstScript(NULL)
 ScriptList::~ScriptList(void) 
 {
 	if (m_firstGroup) {
-		m_firstGroup->deleteInstance();
+		deleteInstance(m_firstGroup);
 		m_firstGroup = NULL;
 	}
 	if (m_firstScript) {
-		m_firstScript->deleteInstance();
+		deleteInstance(m_firstScript);
 		m_firstScript = NULL;
 	}
 }
@@ -418,7 +413,7 @@ void ScriptList::discard(void)
 {
 	m_firstGroup = NULL;
 	m_firstScript = NULL;
-	this->deleteInstance();
+	deleteInstance(this);
 }
 
 /**
@@ -490,7 +485,7 @@ void ScriptList::deleteScript(Script *pScr)
 	}
 	// Clear the link & delete.
 	pCur->setNextScript(NULL);
-	pCur->deleteInstance();
+	deleteInstance(pCur);
 }
 
 /**
@@ -515,7 +510,7 @@ void ScriptList::deleteGroup(ScriptGroup *pGrp)
 	}
 	// Clear the link & delete.
 	pCur->setNextGroup(NULL);
-	pCur->deleteInstance();
+	deleteInstance(pCur);
 }
 
 /**
@@ -532,7 +527,7 @@ Bool ScriptList::ParseScriptsDataChunk(DataChunkInput &file, DataChunkInfo *info
 	DEBUG_ASSERTCRASH(s_numInReadList==0, ("Leftover scripts floating aroung."));
 	for (i=0; i<s_numInReadList; i++) {
 		if (s_readLists[i]) {
-			s_readLists[i]->deleteInstance();
+			deleteInstance(s_readLists[i]);
 			s_readLists[i] = NULL;
 		}
 	}
@@ -656,7 +651,7 @@ ScriptGroup::~ScriptGroup(void)
 {
 	if (m_firstScript) {
 		// Delete the first script.  m_firstScript deletes the entire list.
-		m_firstScript->deleteInstance();
+		deleteInstance(m_firstScript);
 		m_firstScript = NULL;
 	}
 	if (m_nextGroup) {
@@ -666,7 +661,7 @@ ScriptGroup::~ScriptGroup(void)
 		while (cur) {
 			next = cur->getNext();
 			cur->setNextGroup(NULL); // prevents recursion. 
-			cur->deleteInstance();
+			deleteInstance(cur);
 			cur = next; 
 		}
 	}
@@ -822,7 +817,7 @@ void ScriptGroup::deleteScript(Script *pScr)
 	}
 	// Clear link & delete.
 	pCur->setNextScript(NULL);
-	pCur->deleteInstance();
+	deleteInstance(pCur);
 }
 
 /**
@@ -935,19 +930,19 @@ Script::~Script(void)
 		while (cur) {
 			next = cur->getNext();
 			cur->setNextScript(NULL); // prevents recursion. 
-			cur->deleteInstance();
+			deleteInstance(cur);
 			cur = next; 
 		}
 	}
 	if (m_condition) {
-		m_condition->deleteInstance();
+		deleteInstance(m_condition);
 	}
 	if (m_action) {
-		m_action->deleteInstance();
+		deleteInstance(m_action);
 	}
 
 	if (m_actionFalse) {
-		m_actionFalse->deleteInstance();
+		deleteInstance(m_actionFalse);
 	}
 }
 
@@ -996,10 +991,10 @@ Script *Script::duplicate(void) const
 {
 	Script *pNew = newInstance(Script);	
 	if (pNew->m_condition) {
-		pNew->m_condition->deleteInstance();
+		deleteInstance(pNew->m_condition);
 	}
 	if (pNew->m_action) {
-		pNew->m_action->deleteInstance();
+		deleteInstance(pNew->m_action);
 	}
 	pNew->m_scriptName = m_scriptName;
 	pNew->m_comment = m_comment;
@@ -1035,10 +1030,10 @@ Script *Script::duplicateAndQualify(const AsciiString& qualifier,
 {
 	Script *pNew = newInstance(Script);
 	if (pNew->m_condition) {
-		pNew->m_condition->deleteInstance();
+		deleteInstance(pNew->m_condition);
 	}
 	if (pNew->m_action) {
-		pNew->m_action->deleteInstance();
+		deleteInstance(pNew->m_action);
 	}
 	pNew->m_scriptName = m_scriptName;
 	pNew->m_scriptName.concat(qualifier);
@@ -1084,17 +1079,17 @@ void Script::updateFrom(Script *pSrc)
 	this->m_normal = pSrc->m_normal;
 	this->m_hard = pSrc->m_hard;
 	if (this->m_condition) {
-		this->m_condition->deleteInstance();
+		deleteInstance(this->m_condition);
 	}
 	this->m_condition = pSrc->m_condition;
 	pSrc->m_condition = NULL;
 	if (this->m_action) {
-		this->m_action->deleteInstance();
+		deleteInstance(this->m_action);
 	}
 	this->m_action = pSrc->m_action;
 	pSrc->m_action = NULL;
 	if (this->m_actionFalse) {
-		this->m_actionFalse->deleteInstance();
+		deleteInstance(this->m_actionFalse);
 	}
 	this->m_actionFalse = pSrc->m_actionFalse;
 	pSrc->m_actionFalse = NULL;
@@ -1119,7 +1114,7 @@ void Script::deleteOrCondition(OrCondition *pCond)
 		m_condition = pCur->getNextOrCondition();
 	}
 	pCur->setNextOrCondition(NULL);
-	pCur->deleteInstance();
+	deleteInstance(pCur);
 }
 
 
@@ -1142,7 +1137,7 @@ void Script::deleteAction(ScriptAction *pAct)
 		m_action = pCur->getNext();
 	}
 	pCur->setNextAction(NULL);
-	pCur->deleteInstance();
+	deleteInstance(pCur);
 }
 
 
@@ -1165,7 +1160,7 @@ void Script::deleteFalseAction(ScriptAction *pAct)
 		m_actionFalse = pCur->getNext();
 	}
 	pCur->setNextAction(NULL);
-	pCur->deleteInstance();
+	deleteInstance(pCur);
 }
 
 
@@ -1344,7 +1339,7 @@ OrCondition *Script::findPreviousOrCondition( OrCondition *curOr )
 OrCondition::~OrCondition(void) 
 {
 	if (m_firstAnd) {
-		m_firstAnd->deleteInstance();
+		deleteInstance(m_firstAnd);
 		m_firstAnd = NULL;
 	}
 	if (m_nextOr) {
@@ -1353,7 +1348,7 @@ OrCondition::~OrCondition(void)
 		while (cur) {
 			next = cur->getNextOrCondition();
 			cur->setNextOrCondition(NULL); // prevents recursion. 
-			cur->deleteInstance();
+			deleteInstance(cur);
 			cur = next; 
 		}
 	}
@@ -1426,7 +1421,7 @@ void OrCondition::deleteCondition(Condition *pCond)
 	DEBUG_ASSERTCRASH(pCur, ("Couldn't find condition."));
 	if (pCur==NULL) 
 		return;
-	pCur->deleteInstance();
+	deleteInstance(pCur);
 }
 
 
@@ -1532,7 +1527,7 @@ void Condition::setConditionType(enum ConditionType type)
 	Int i;
 	for (i=0; i<m_numParms; i++) {
 		if (m_parms[i]) 
-			m_parms[i]->deleteInstance();
+			deleteInstance(m_parms[i]);
 		m_parms[i] = NULL;
 	}
 	m_conditionType = type;
@@ -1590,7 +1585,7 @@ Condition::~Condition(void)
 {
 	Int i;
 	for (i=0; i<m_numParms; i++) {
-		m_parms[i]->deleteInstance();
+		deleteInstance(m_parms[i]);
 		m_parms[i] = NULL;
 	}
 	if (m_nextAndCondition) {
@@ -1599,7 +1594,7 @@ Condition::~Condition(void)
 		while (cur) {
 			next = cur->getNext();
 			cur->setNextCondition(NULL); // prevents recursion. 
-			cur->deleteInstance();
+			deleteInstance(cur);
 			cur = next; 
 		}
 	}
@@ -1776,7 +1771,7 @@ void Parameter::qualify(const AsciiString& qualifier,
 			if (m_string == THIS_TEAM) {
 				break;
 			}
-			/// otherwise drop down & qualify.
+			FALLTHROUGH; /// otherwise drop down & qualify.
 		case SCRIPT:
 		case COUNTER:
 		case FLAG:
@@ -1858,7 +1853,7 @@ AsciiString Parameter::getUiText(void) const
 			if (m_int >= KINDOF_FIRST && m_int < KINDOF_COUNT )
 				uiText.format("Kind is '%s'", KindOfMaskType::getNameFromSingleBit(m_int));
 			else 
-				uiText.format("Kind is '???'");
+				uiText.format("Kind is ???");
 			break;
 		case SIDE:
 			uiText.format("Player '%s'", uiString.str());
@@ -1915,7 +1910,7 @@ AsciiString Parameter::getUiText(void) const
 		case RADAR_EVENT_TYPE:
 			switch (m_int) {
 				//case RADAR_EVENT_INVALID: ++m_int;	// continue to the next case.
-				case RADAR_EVENT_INVALID: DEBUG_CRASH(("Invalid radar event\n")); uiText.format("Construction"); break;
+				case RADAR_EVENT_INVALID: DEBUG_CRASH(("Invalid radar event")); uiText.format("Construction"); break;
 				case RADAR_EVENT_CONSTRUCTION: uiText.format("Construction"); break;
 				case RADAR_EVENT_UPGRADE: uiText.format("Upgrade"); break;
 				case RADAR_EVENT_UNDER_ATTACK: uiText.format("Under Attack"); break;
@@ -1979,7 +1974,7 @@ AsciiString Parameter::getUiText(void) const
 			if (m_int >= BSTATUS_YES && m_int < BSTATUS_NUM_TYPES )
 				uiText.format("Buildable (%s)", BuildableStatusNames[m_int - BSTATUS_YES]);
 			else 
-				uiText.format("Buildable (???)");
+				uiText.format("Buildable ???");
 			break;
 		
 		case SURFACES_ALLOWED:
@@ -2003,7 +1998,7 @@ AsciiString Parameter::getUiText(void) const
 		case OBJECT_STATUS:
 		{
 			if (m_string.isEmpty()) {
-				uiText.format("Object Status is '???'");
+				uiText.format("Object Status is ???");
 			} else {
 				uiText.format("Object Status is '%s'", m_string.str());
 			}
@@ -2093,7 +2088,7 @@ Parameter *Parameter::ReadParameter(DataChunkInput &file)
 			strcpy(newName, "GLA");
 			strcat(newName, oldName+strlen("Fundamentalist"));
 			pParm->m_string.set(newName);
-			DEBUG_LOG(("Changing Script Ref from %s to %s\n", oldName, newName));
+			DEBUG_LOG(("Changing Script Ref from %s to %s", oldName, newName));
 		}
 	}
 
@@ -2223,7 +2218,7 @@ void ScriptAction::setActionType(enum ScriptActionType type)
 	Int i;
 	for (i=0; i<m_numParms; i++) {
 		if (m_parms[i]) 
-			m_parms[i]->deleteInstance();
+			deleteInstance(m_parms[i]);
 		m_parms[i] = NULL;
 	}
 	m_actionType = type;
@@ -2289,7 +2284,7 @@ ScriptAction::~ScriptAction(void)
 {
 	Int i;
 	for (i=0; i<m_numParms; i++) {
-		m_parms[i]->deleteInstance();
+		deleteInstance(m_parms[i]);
 		m_parms[i] = NULL;
 	}
 	if (m_nextAction) {
@@ -2298,7 +2293,7 @@ ScriptAction::~ScriptAction(void)
 		while (cur) {
 			next = cur->getNext();
 			cur->setNextAction(NULL); // prevents recursion. 
-			cur->deleteInstance();
+			deleteInstance(cur);
 			cur = next; 
 		}
 	}
@@ -2372,10 +2367,10 @@ Bool ScriptAction::ParseActionDataChunk(DataChunkInput &file, DataChunkInfo *inf
 
 	pScriptAction->m_actionType = (enum ScriptActionType)file.readInt();
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	const ActionTemplate* at = TheScriptEngine->getActionTemplate(pScriptAction->m_actionType);
 	if (at && (at->getName().isEmpty() || (at->getName().compareNoCase("(placeholder)") == 0))) {
-		DEBUG_CRASH(("Invalid Script Action found in script '%s'\n", pScript->getName().str()));
+		DEBUG_CRASH(("Invalid Script Action found in script '%s'", pScript->getName().str()));
 	}
 #endif
 
@@ -2409,7 +2404,7 @@ Bool ScriptAction::ParseActionDataChunk(DataChunkInput &file, DataChunkInfo *inf
 			if (pScriptAction->m_numParms == 1)
 			{		
 				Bool flank = pScriptAction->m_parms[0]->getInt()!=0;
-				pScriptAction->m_parms[0]->deleteInstance();
+				deleteInstance(pScriptAction->m_parms[0]);
 				pScriptAction->m_numParms = 0;
 				if (flank) pScriptAction->m_actionType = SKIRMISH_BUILD_BASE_DEFENSE_FLANK;
 			}
@@ -2445,8 +2440,8 @@ Bool ScriptAction::ParseActionDataChunk(DataChunkInput &file, DataChunkInfo *inf
 				pScriptAction->m_numParms = 2;
 				// Default it to TRUE, as per conversation with JohnL
 				pScriptAction->m_parms[1] = newInstance(Parameter)(Parameter::BOOLEAN, 1);
-				break;
 			}
+			break;
 	}
 
 

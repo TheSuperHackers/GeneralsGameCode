@@ -446,12 +446,12 @@ bool VectorChannelClass::SaveAdaptiveDelta(ChunkSaveClass & csave, BitChannelCla
 // Brute Force Compressor
 
 	// Initialize Chan Data
+	memset(chn, 0, channelsize);
 	chn->NumFrames = MaxFrames;
 	chn->Pivot = ID;
 	chn->VectorLen = VectorLen;
 	chn->Flags = Flags;
 	chn->Scale = 0.0f;
-	memset(&chn->Data[0], channelsize - (sizeof(W3dAdaptiveDeltaAnimChannelStruct) - sizeof(char)), 0x00);
 	
 	assert(VectorLen <= 4);	// otherwise temp vector won't have room
 

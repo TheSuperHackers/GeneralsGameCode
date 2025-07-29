@@ -35,11 +35,6 @@
 
 RankInfoStore* TheRankInfoStore = NULL;
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 //-----------------------------------------------------------------------------
 RankInfo::~RankInfo()
@@ -56,7 +51,7 @@ RankInfoStore::~RankInfoStore()
 		RankInfo* ri = m_rankInfos[level];
 		if (ri)
 		{
-			ri->deleteInstance();
+			deleteInstance(ri);
 		}
 	}
 	m_rankInfos.clear();

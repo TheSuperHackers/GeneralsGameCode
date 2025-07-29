@@ -30,11 +30,6 @@
 #include "PreRTS.h"	// This must go first in EVERY cpp file int the Game
 #include "GameClient/Smudge.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 DLListClass<Smudge> SmudgeSet::m_freeSmudgeList;	///<list of unused smudges for use by SmudgeSets.
 

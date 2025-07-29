@@ -307,17 +307,20 @@ public:
 	void onUpgradeCompleted( const UpgradeTemplate *upgradeTemplate );				///< An upgrade just finished, do things like tell all objects to recheck UpgradeModules
 	void onUpgradeRemoved(){}					///< An upgrade just got removed, this doesn't do anything now.
  
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	/// Prereq disabling cheat key
 	void toggleIgnorePrereqs(){ m_DEMO_ignorePrereqs = !m_DEMO_ignorePrereqs; }
+	void enableIgnorePrereqs(Bool enable) { m_DEMO_ignorePrereqs = enable; }
 	Bool ignoresPrereqs() const { return m_DEMO_ignorePrereqs; }
 
 	/// No cost building cheat key
 	void toggleFreeBuild(){ m_DEMO_freeBuild = !m_DEMO_freeBuild; }
+	void enableFreeBuild(Bool enable) { m_DEMO_freeBuild = enable; }
 	Bool buildsForFree() const { return m_DEMO_freeBuild; }
 
 	/// No time building cheat key
 	void toggleInstantBuild(){ m_DEMO_instantBuild = !m_DEMO_instantBuild; }
+	void enableInstantBuild(Bool enable) { m_DEMO_instantBuild = enable; }
 	Bool buildsInstantly() const { return m_DEMO_instantBuild; }
 #endif
 
@@ -608,7 +611,7 @@ public:
 	// add to the player's current selection this hotkey team.
 	void processAddTeamGameMessage(Int hotkeyNum, GameMessage *msg);
 
-	// returns an AIGroup object that is the currently selected group.
+	// fills an AIGroup object that is the currently selected group.
 	void getCurrentSelectionAsAIGroup(AIGroup *group);
 
 	// sets the currently selected group to be the given AIGroup
@@ -767,7 +770,7 @@ private:
 	Real									m_cashBountyPercent;
 
 	/// @todo REMOVE (not disable) these cheat keys
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	Bool									m_DEMO_ignorePrereqs;		///< Can I ignore prereq checks?
 	Bool									m_DEMO_freeBuild;				///< Can I build everything for no money?
 	Bool									m_DEMO_instantBuild;		///< Can I build anything in one frame?

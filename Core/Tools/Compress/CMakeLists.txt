@@ -14,8 +14,5 @@ target_link_libraries(core_compress PRIVATE
 )
 
 if(WIN32 OR "${CMAKE_SYSTEM}" MATCHES "Windows")
-    if(IS_VS6_BUILD)
-        target_compile_definitions(core_compress PRIVATE vsnprintf=_vsnprintf)
-    endif()
     target_link_options(core_compress PRIVATE /subsystem:console)
 endif()

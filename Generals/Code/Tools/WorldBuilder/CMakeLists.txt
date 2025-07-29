@@ -11,7 +11,6 @@ set(WORLDBUILDER_SRC
     "src/BuildListTool.cpp"
     "src/CameraOptions.cpp"
     "src/CButtonShowColor.cpp"
-    "src/CButtonShowColor.h"
     "src/CellWidth.cpp"
     "src/CFixTeamOwnerDialog.cpp"
     "src/ContourOptions.cpp"
@@ -108,6 +107,7 @@ set(WORLDBUILDER_SRC
     "include/BuildList.h"
     "include/BuildListTool.h"
     "include/CameraOptions.h"
+    "include/CButtonShowColor.h"
     "include/CellWidth.h"
     "include/CFixTeamOwnerDialog.h"
     "include/ContourOptions.h"
@@ -210,8 +210,6 @@ target_link_libraries(g_worldbuilder PRIVATE
     core_browserdispatch
     g_gameengine
     g_gameenginedevice
-    gi_gameengine_include
-    gi_gameenginedevice_include
     gi_always
     imm32
     vfw32

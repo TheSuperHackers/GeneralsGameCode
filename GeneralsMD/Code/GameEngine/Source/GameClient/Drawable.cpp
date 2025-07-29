@@ -83,11 +83,6 @@
 	#include "GameLogic/Module/ParkingPlaceBehavior.h"
 #endif
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 #define VERY_TRANSPARENT_MATERIAL_PASS_OPACITY (0.001f)
 #define MATERIAL_PASS_OPACITY_FADE_SCALAR (0.8f)
@@ -187,7 +182,7 @@ void DrawableIconInfo::clear()
 	for (int i = 0; i < MAX_ICONS; ++i)
 	{
 		if (m_icon[i])
-			m_icon[i]->deleteInstance();
+			deleteInstance(m_icon[i]);
 		m_icon[i] = NULL;
 		m_keepTillFrame[i] = 0;
 	}
@@ -199,7 +194,7 @@ void DrawableIconInfo::killIcon(DrawableIconType t)
 {
 	if (m_icon[t])
 	{
-		m_icon[t]->deleteInstance();
+		deleteInstance(m_icon[t]);
 		m_icon[t] = NULL;
 		m_keepTillFrame[t] = 0;
 	}
@@ -246,7 +241,7 @@ static const char *drawableIconIndexToName( DrawableIconType iconIndex )
 {
 
 	DEBUG_ASSERTCRASH( iconIndex >= ICON_FIRST && iconIndex < MAX_ICONS,
-										 ("drawableIconIndexToName - Illegal index '%d'\n", iconIndex) );
+										 ("drawableIconIndexToName - Illegal index '%d'", iconIndex) );
 
 	return TheDrawableIconNames[ iconIndex ];
 
@@ -257,7 +252,7 @@ static const char *drawableIconIndexToName( DrawableIconType iconIndex )
 static DrawableIconType drawableIconNameToIndex( const char *iconName )
 {
 
-	DEBUG_ASSERTCRASH( iconName != NULL, ("drawableIconNameToIndex - Illegal name\n") );
+	DEBUG_ASSERTCRASH( iconName != NULL, ("drawableIconNameToIndex - Illegal name") );
 
 	for( Int i = ICON_FIRST; i < MAX_ICONS; ++i )
 		if( stricmp( TheDrawableIconNames[ i ], iconName ) == 0 )
@@ -587,7 +582,7 @@ Drawable::~Drawable()
 	{
 		for (Module** m = m_modules[i]; m && *m; ++m)
 		{
-			(*m)->deleteInstance();
+			deleteInstance(*m);
 			*m = NULL;	// in case other modules call findModule from their dtor!
 		}
 		delete [] m_modules[i]; 
@@ -597,7 +592,7 @@ Drawable::~Drawable()
 	stopAmbientSound();
 	if (m_ambientSound)
 	{
-		m_ambientSound->deleteInstance();
+		deleteInstance(m_ambientSound);
 		m_ambientSound = NULL;
 	}
 
@@ -612,17 +607,17 @@ Drawable::~Drawable()
 
 	// delete any icons present
 	if (m_iconInfo)
-		m_iconInfo->deleteInstance();
+		deleteInstance(m_iconInfo);
 
 	if (m_selectionFlashEnvelope)
-		m_selectionFlashEnvelope->deleteInstance();
+		deleteInstance(m_selectionFlashEnvelope);
 
 	if (m_colorTintEnvelope)
-		m_colorTintEnvelope->deleteInstance();
+		deleteInstance(m_colorTintEnvelope);
 
 	if (m_locoInfo)
 	{
-		m_locoInfo->deleteInstance();
+		deleteInstance(m_locoInfo);
 		m_locoInfo = NULL;
 	}
 }
@@ -1129,7 +1124,7 @@ void Drawable::fadeIn( UnsignedInt frames )		///< decloak object
 
 
 //-------------------------------------------------------------------------------------------------
-const Real Drawable::getScale (void) const 
+Real Drawable::getScale (void) const
 { 
 	return m_instanceScale; 
 //	return getTemplate()->getAssetScale(); 
@@ -2609,14 +2604,14 @@ void Drawable::validatePos() const
 	const Coord3D* ourPos = getPosition();
 	if (_isnan(ourPos->x) || _isnan(ourPos->y) || _isnan(ourPos->z))
 	{
-		DEBUG_CRASH(("Drawable/Object position NAN! '%s'\n", getTemplate()->getName().str()));
+		DEBUG_CRASH(("Drawable/Object position NAN! '%s'", getTemplate()->getName().str()));
 	}
 	if (getObject())
 	{
 		const Coord3D* objPos = getObject()->getPosition();
 		if (ourPos->x != objPos->x || ourPos->y != objPos->y || ourPos->z != objPos->z)
 		{
-			DEBUG_CRASH(("Drawable/Object position mismatch! '%s'\n", getTemplate()->getName().str()));
+			DEBUG_CRASH(("Drawable/Object position mismatch! '%s'", getTemplate()->getName().str()));
 		}
 	}
 }
@@ -2913,7 +2908,7 @@ void Drawable::setEmoticon( const AsciiString &name, Int duration )
 	Anim2DTemplate *animTemplate = TheAnim2DCollection->findTemplate( name );
 	if( animTemplate )
 	{
-		DEBUG_ASSERTCRASH( getIconInfo()->m_icon[ ICON_EMOTICON ] == NULL, ("Drawable::setEmoticon - Emoticon isn't empty, need to refuse to set or destroy the old one in favor of the new one\n") );
+		DEBUG_ASSERTCRASH( getIconInfo()->m_icon[ ICON_EMOTICON ] == NULL, ("Drawable::setEmoticon - Emoticon isn't empty, need to refuse to set or destroy the old one in favor of the new one") );
 		if( getIconInfo()->m_icon[ ICON_EMOTICON ] == NULL )
 		{
 			getIconInfo()->m_icon[ ICON_EMOTICON ] = newInstance(Anim2D)( animTemplate, TheAnim2DCollection );
@@ -4325,7 +4320,7 @@ DrawableID Drawable::getID( void ) const
 {
 
 	// we should never be getting the ID of a drawable who doesn't yet have and ID assigned to it
-	DEBUG_ASSERTCRASH( m_id != 0, ("Drawable::getID - Using ID before it was assigned!!!!\n") );
+	DEBUG_ASSERTCRASH( m_id != 0, ("Drawable::getID - Using ID before it was assigned!!!!") );
 
 	return m_id;
 
@@ -4739,7 +4734,7 @@ void Drawable::startAmbientSound(BodyDamageType dt, TimeOfDay tod, Bool onlyIfPe
 		else
 		{
 			DEBUG_CRASH( ("Ambient sound %s missing! Skipping...", m_ambientSound->m_event.getEventName().str() ) );
-			m_ambientSound->deleteInstance();
+			deleteInstance(m_ambientSound);
 			m_ambientSound = NULL;
 		}
 	}
@@ -5031,7 +5026,7 @@ void Drawable::xferDrawableModules( Xfer *xfer )
 				// write module identifier
 				moduleIdentifier = TheNameKeyGenerator->keyToName( (*m)->getModuleTagNameKey() );
 				DEBUG_ASSERTCRASH( moduleIdentifier != AsciiString::TheEmptyString,
-													 ("Drawable::xferDrawableModules - module name key does not translate to a string!\n") );
+													 ("Drawable::xferDrawableModules - module name key does not translate to a string!") );
 				xfer->xferAsciiString( &moduleIdentifier );
 
 				// begin data block
@@ -5082,7 +5077,7 @@ void Drawable::xferDrawableModules( Xfer *xfer )
 				{
 
 					// for testing purposes, this module better be found
-					DEBUG_CRASH(( "Drawable::xferDrawableModules - Module '%s' was indicated in file, but not found on Drawable %s %d\n",
+					DEBUG_CRASH(( "Drawable::xferDrawableModules - Module '%s' was indicated in file, but not found on Drawable %s %d",
 												moduleIdentifier.str(), getTemplate()->getName().str(),getID() ));
 
 					// skip this data in the file
@@ -5134,7 +5129,7 @@ void Drawable::xfer( Xfer *xfer )
 	if( xfer->getXferMode() == XFER_LOAD && m_ambientSound )
 	{
 		TheAudio->killAudioEventImmediately( m_ambientSound->m_event.getPlayingHandle() );
-		m_ambientSound->deleteInstance();
+		deleteInstance(m_ambientSound);
 		m_ambientSound = NULL;
 	}
 
@@ -5242,7 +5237,7 @@ void Drawable::xfer( Xfer *xfer )
 			if( objectID != m_object->getID() )
 			{
 			
-				DEBUG_CRASH(( "Drawable::xfer - Drawable '%s' is attached to wrong object '%s'\n",
+				DEBUG_CRASH(( "Drawable::xfer - Drawable '%s' is attached to wrong object '%s'",
 											getTemplate()->getName().str(), m_object->getTemplate()->getName().str() ));
 				throw SC_INVALID_DATA;
 
@@ -5258,7 +5253,7 @@ void Drawable::xfer( Xfer *xfer )
 #ifdef DEBUG_CRASHING
 				Object *obj = TheGameLogic->findObjectByID( objectID );
 
-				DEBUG_CRASH(( "Drawable::xfer - Drawable '%s' is not attached to an object but should be attached to object '%s' with id '%d'\n",
+				DEBUG_CRASH(( "Drawable::xfer - Drawable '%s' is not attached to an object but should be attached to object '%s' with id '%d'",
 											getTemplate()->getName().str(),
 											obj ? obj->getTemplate()->getName().str() : "Unknown",
 											objectID ));
@@ -5394,7 +5389,7 @@ void Drawable::xfer( Xfer *xfer )
 
 		// sanity, we don't write old versions we can only read them
 		DEBUG_ASSERTCRASH( xfer->getXferMode() == XFER_LOAD, 
-											 ("Drawable::xfer - Writing an old format!!!\n") );
+											 ("Drawable::xfer - Writing an old format!!!") );
 
 		// condition state, note that when we're loading we need to force a replace of these flags
 		m_conditionState.xfer( xfer );
@@ -5476,7 +5471,7 @@ void Drawable::xfer( Xfer *xfer )
 			if( animTemplate == NULL )
 			{
 
-				DEBUG_CRASH(( "Drawable::xfer - Unknown icon template '%s'\n", iconTemplateName.str() ));
+				DEBUG_CRASH(( "Drawable::xfer - Unknown icon template '%s'", iconTemplateName.str() ));
 				throw SC_INVALID_DATA;
 
 			}  // end if
@@ -5510,7 +5505,7 @@ void Drawable::xfer( Xfer *xfer )
 	//
 #ifdef DIRTY_CONDITION_FLAGS
 	if( xfer->getXferMode() == XFER_SAVE )
-		DEBUG_ASSERTCRASH( m_isModelDirty == FALSE, ("Drawble::xfer - m_isModelDirty is not FALSE!\n") );
+		DEBUG_ASSERTCRASH( m_isModelDirty == FALSE, ("Drawble::xfer - m_isModelDirty is not FALSE!") );
 	else
 		m_isModelDirty = TRUE;
 #endif
@@ -5588,7 +5583,7 @@ void Drawable::xfer( Xfer *xfer )
             }
             else
             {
-              customizedInfo->deleteInstance();
+              deleteInstance(customizedInfo);
               customizedInfo = NULL;
             }
           }
@@ -5596,7 +5591,7 @@ void Drawable::xfer( Xfer *xfer )
           {
             // since Xfer can throw exceptions -- don't leak memory!
             if ( customizedInfo != NULL ) 
-              customizedInfo->deleteInstance();
+              deleteInstance(customizedInfo);
 
             throw; //rethrow
           }

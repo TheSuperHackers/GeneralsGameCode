@@ -79,8 +79,8 @@ IndexBufferClass::IndexBufferClass(unsigned type_, unsigned short index_count_)
 	_IndexBufferTotalIndices+=index_count;
 	_IndexBufferTotalSize+=index_count*sizeof(unsigned short);
 #ifdef VERTEX_BUFFER_LOG
-	WWDEBUG_SAY(("New IB, %d indices, size %d bytes\n",index_count,index_count*sizeof(unsigned short)));
-	WWDEBUG_SAY(("Total IB count: %d, total %d indices, total size %d bytes\n",
+	WWDEBUG_SAY(("New IB, %d indices, size %d bytes",index_count,index_count*sizeof(unsigned short)));
+	WWDEBUG_SAY(("Total IB count: %d, total %d indices, total size %d bytes",
 		_IndexBufferCount,
 		_IndexBufferTotalIndices,
 		_IndexBufferTotalSize));
@@ -93,8 +93,8 @@ IndexBufferClass::~IndexBufferClass()
 	_IndexBufferTotalIndices-=index_count;
 	_IndexBufferTotalSize-=index_count*sizeof(unsigned short);
 #ifdef VERTEX_BUFFER_LOG
-	WWDEBUG_SAY(("Delete IB, %d indices, size %d bytes\n",index_count,index_count*sizeof(unsigned short)));
-	WWDEBUG_SAY(("Total IB count: %d, total %d indices, total size %d bytes\n",
+	WWDEBUG_SAY(("Delete IB, %d indices, size %d bytes",index_count,index_count*sizeof(unsigned short)));
+	WWDEBUG_SAY(("Total IB count: %d, total %d indices, total size %d bytes",
 		_IndexBufferCount,
 		_IndexBufferTotalIndices,
 		_IndexBufferTotalSize));
@@ -141,14 +141,14 @@ void IndexBufferClass::Copy(unsigned int* indices,unsigned first_index,unsigned 
 		DX8IndexBufferClass::AppendLockClass l(this,first_index,count);
 		unsigned short* inds=l.Get_Index_Array();
 		for (unsigned v=0;v<count;++v) {
-			*inds++=unsigned short(*indices++);
+			*inds++=(unsigned short)(*indices++);
 		}
 	}
 	else {
 		DX8IndexBufferClass::WriteLockClass l(this);
 		unsigned short* inds=l.Get_Index_Array();
 		for (unsigned v=0;v<count;++v) {
-			*inds++=unsigned short(*indices++);
+			*inds++=(unsigned short)(*indices++);
 		}
 	}
 }

@@ -49,11 +49,6 @@
 #include "Lib/BaseType.h"
 #include "Common/GameMemory.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 //-----------------------------------------------------------------------------
 void userMemoryManagerGetDmaParms(Int *numSubPools, const PoolInitRec **pParms)
@@ -428,6 +423,7 @@ static PoolSizeRec sizes[] =
 	{ "Overridable", 32, 32 },
 
 	{ "W3DGameWindow", 700, 256 },
+	{ "GameWindowDummy", 700, 256 },
 	{ "SuccessState", 32, 32 },
 	{ "FailureState", 32, 32 },
 	{ "ContinueState", 32, 32 },
@@ -751,7 +747,7 @@ void userMemoryAdjustPoolSize(const char *poolName, Int& initialAllocationCount,
 		}
 	}
 
-	DEBUG_CRASH(("Initial size for pool %s not found -- you should add it to MemoryInit.cpp\n",poolName));
+	DEBUG_CRASH(("Initial size for pool %s not found -- you should add it to MemoryInit.cpp",poolName));
 }
 
 //-----------------------------------------------------------------------------

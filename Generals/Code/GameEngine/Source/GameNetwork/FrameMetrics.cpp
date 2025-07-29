@@ -72,7 +72,7 @@ void FrameMetrics::init() {
 	m_averageLatency = (Real)0.2;
 	m_minimumCushion = -1;
 
-	Int i = 0;
+	UnsignedInt i = 0;
 	for (; i < TheGlobalData->m_networkFPSHistoryLength; ++i) {
 		m_fpsList[i] = 30.0;
 	}
@@ -98,7 +98,7 @@ void FrameMetrics::doPerFrameMetrics(UnsignedInt frame) {
 		m_fpsList[m_fpsListIndex] = TheDisplay->getAverageFPS();
 //		m_fpsList[m_fpsListIndex] = TheGameClient->getFrame() - m_fpsStartingFrame;
 		m_averageFps += ((Real)(m_fpsList[m_fpsListIndex])) / TheGlobalData->m_networkFPSHistoryLength; // add the new value to the average.
-//		DEBUG_LOG(("average after: %f\n", m_averageFps));
+//		DEBUG_LOG(("average after: %f", m_averageFps));
 		++m_fpsListIndex;
 		m_fpsListIndex %= TheGlobalData->m_networkFPSHistoryLength;
 		m_lastFpsTimeThing = curTime;
@@ -120,7 +120,7 @@ void FrameMetrics::processLatencyResponse(UnsignedInt frame) {
 	m_averageLatency += m_latencyList[latencyListIndex] / TheGlobalData->m_networkLatencyHistoryLength;
 
 	if (frame % 16 == 0) {
-//		DEBUG_LOG(("ConnectionManager::processFrameInfoAck - average latency = %f\n", m_averageLatency));
+//		DEBUG_LOG(("ConnectionManager::processFrameInfoAck - average latency = %f", m_averageLatency));
 	}
 }
 

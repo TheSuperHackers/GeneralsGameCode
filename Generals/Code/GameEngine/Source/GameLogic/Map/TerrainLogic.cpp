@@ -59,11 +59,6 @@
 #include "WWMath/plane.h"
 #include "WWMath/tri.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 // GLOBALS ////////////////////////////////////////////////////////////////////////////////////////
 TerrainLogic *TheTerrainLogic = NULL;
@@ -136,7 +131,7 @@ Object *Bridge::createTower( Coord3D *worldPos,
 	if( towerTemplate == NULL || bridge == NULL )
 	{
 
-		DEBUG_CRASH(( "Bridge::createTower(): Invalid params\n" ));
+		DEBUG_CRASH(( "Bridge::createTower(): Invalid params" ));
 		return NULL;
 
 	}  // end if
@@ -171,7 +166,7 @@ Object *Bridge::createTower( Coord3D *worldPos,
 
 		// --------------------------------------------------------------------------------------------
 		default:
-			DEBUG_CRASH(( "Bridge::createTower - Unknown bridge tower type '%d'\n", towerType )); 
+			DEBUG_CRASH(( "Bridge::createTower - Unknown bridge tower type '%d'", towerType )); 
 			return NULL;
 
 	}  // end switch
@@ -182,13 +177,13 @@ Object *Bridge::createTower( Coord3D *worldPos,
 
 	// tie it to the bridge
 	BridgeBehaviorInterface *bridgeInterface = BridgeBehavior::getBridgeBehaviorInterfaceFromObject( bridge );
-	DEBUG_ASSERTCRASH( bridgeInterface != NULL, ("Bridge::createTower - no 'BridgeBehaviorInterface' found\n") );
+	DEBUG_ASSERTCRASH( bridgeInterface != NULL, ("Bridge::createTower - no 'BridgeBehaviorInterface' found") );
 	if( bridgeInterface )
 		bridgeInterface->setTower( towerType, tower );
 
 	// tie the bridge to us
 	BridgeTowerBehaviorInterface *bridgeTowerInterface = BridgeTowerBehavior::getBridgeTowerBehaviorInterfaceFromObject( tower );
-	DEBUG_ASSERTCRASH( bridgeTowerInterface != NULL, ("Bridge::createTower - no 'BridgeTowerBehaviorInterface' found\n") );
+	DEBUG_ASSERTCRASH( bridgeTowerInterface != NULL, ("Bridge::createTower - no 'BridgeTowerBehaviorInterface' found") );
 	if( bridgeTowerInterface )
 	{
 
@@ -274,7 +269,7 @@ m_bridgeInfo(theInfo)
 	// get the template of the bridge
 	TerrainRoadType *bridgeTemplate = TheTerrainRoads->findBridge( bridgeTemplateName );
 	if( bridgeTemplate == NULL ) {
-		DEBUG_LOG(( "*** Bridge Template Not Found '%s'.", bridgeTemplateName ));
+		DEBUG_LOG(( "*** Bridge Template Not Found '%s'.", bridgeTemplateName.str() ));
 		return;
 	}
 
@@ -335,7 +330,7 @@ Bridge::Bridge(Object *bridgeObj)
 	// save the template name
 	m_templateName = bridgeObj->getTemplate()->getName();
 
-	DEBUG_ASSERTLOG( bridgeObj->getGeometryInfo().getGeomType()==GEOMETRY_BOX, ("Bridges need to be rectangles.\n"));
+	DEBUG_ASSERTLOG( bridgeObj->getGeometryInfo().getGeomType()==GEOMETRY_BOX, ("Bridges need to be rectangles."));
 
 	const Coord3D *pos = bridgeObj->getPosition();
 	Real angle = bridgeObj->getOrientation();
@@ -385,7 +380,7 @@ Bridge::Bridge(Object *bridgeObj)
 	AsciiString bridgeTemplateName = bridgeObj->getTemplate()->getName();
 	TerrainRoadType *bridgeTemplate = TheTerrainRoads->findBridge( bridgeTemplateName );
 	if( bridgeTemplate == NULL ) {
-		DEBUG_LOG(( "*** Bridge Template Not Found '%s'.", bridgeTemplateName ));
+		DEBUG_LOG(( "*** Bridge Template Not Found '%s'.", bridgeTemplateName.str() ));
 		return;
 	}
 
@@ -861,7 +856,7 @@ Drawable *Bridge::pickBridge(const Vector3 &from, const Vector3 &to, Vector3 *po
 
 	if (isPointOnBridge(&loc)) {
 		*pos = intersectPos;
-		//DEBUG_LOG(("Picked bridge %.2f, %.2f, %.2f\n", intersectPos.X, intersectPos.Y, intersectPos.Z));
+		//DEBUG_LOG(("Picked bridge %.2f, %.2f, %.2f", intersectPos.X, intersectPos.Y, intersectPos.Z));
 		Object *bridge = TheGameLogic->findObjectByID(m_bridgeInfo.bridgeObjectID);
 		if (bridge) {
 			return bridge->getDrawable();
@@ -881,8 +876,8 @@ void Bridge::updateDamageState( void )
 	if (bridge) {
 		// get object damage state
 		{
-			enum BodyDamageType damageState = bridge->getBodyModule()->getDamageState(); 
-			enum BodyDamageType curState = m_bridgeInfo.curDamageState;
+			BodyDamageType damageState = bridge->getBodyModule()->getDamageState(); 
+			BodyDamageType curState = m_bridgeInfo.curDamageState;
 			if (damageState != curState) {
 				m_bridgeInfo.curDamageState = damageState;
 				if (damageState == BODY_RUBBLE) {
@@ -1216,7 +1211,7 @@ void TerrainLogic::enableWaterGrid( Bool enable )
 		if( waterSettingIndex == -1 )
 		{
 
-			DEBUG_CRASH(( "!!!!!! Deformable water won't work because there was no group of vertex water data defined in GameData.INI for this map name '%s' !!!!!! (C. Day)\n",
+			DEBUG_CRASH(( "!!!!!! Deformable water won't work because there was no group of vertex water data defined in GameData.INI for this map name '%s' !!!!!! (C. Day)",
 										TheGlobalData->m_mapName.str() ));
 			return;
 
@@ -1297,21 +1292,21 @@ Bool TerrainLogic::loadMap( AsciiString filename, Bool query )
 		count++;
 		Coord3D loc;
 		pWay->getLocation(&loc);
-		DEBUG_LOG(("Waypoint %d - '%s' id=%d ", count, pWay->getName().str(), pWay->getID()));
-		DEBUG_LOG(("{%.2f, %.2f, %.2f} ", loc.x, loc.y, loc.z));
+		DEBUG_LOG_RAW(("Waypoint %d - '%s' id=%d ", count, pWay->getName().str(), pWay->getID()));
+		DEBUG_LOG_RAW(("{%.2f, %.2f, %.2f} ", loc.x, loc.y, loc.z));
 		Int i;
 		if (pWay->getNumLinks()) {
-			DEBUG_LOG(("Links to: "));
+			DEBUG_LOG_RAW(("Links to: "));
 			for (i=0; i<pWay->getNumLinks(); i++) {
 				Waypoint *pLink = pWay->getLink(i);
-				DEBUG_LOG(("'%s' id=%d ", pLink->getName().str(), pLink->getID()));
+				DEBUG_LOG_RAW(("'%s' id=%d ", pLink->getName().str(), pLink->getID()));
 			}
 		} else {
-			DEBUG_LOG(("No links."));
+			DEBUG_LOG_RAW(("No links."));
 		}
-		DEBUG_LOG(("\n"));
+		DEBUG_LOG_RAW(("\n"));
 	}
-	DEBUG_LOG(("Total of %d waypoints.\n", count));
+	DEBUG_LOG(("Total of %d waypoints.", count));
 #endif
 
 	if (!query) {
@@ -1420,7 +1415,7 @@ void TerrainLogic::deleteWaypoints(void)
 	for (pWay = getFirstWaypoint(); pWay; pWay = pNext) {
 		pNext = pWay->getNext();
 		pWay->setNext(NULL);
-		pWay->deleteInstance();
+		deleteInstance(pWay);
 	}
 	m_waypointListHead = NULL;
 }
@@ -1497,7 +1492,7 @@ void makeAlignToNormalMatrix( Real angle, const Coord3D& pos, const Coord3D& nor
 		x.normalize();
 	}
 
-	DEBUG_ASSERTCRASH(fabs(x.x*z.x + x.y*z.y + x.z*z.z)<0.0001,("dot is not zero (%f)\n",fabs(x.x*z.x + x.y*z.y + x.z*z.z)));
+	DEBUG_ASSERTCRASH(fabs(x.x*z.x + x.y*z.y + x.z*z.z)<0.0001,("dot is not zero (%f)",fabs(x.x*z.x + x.y*z.y + x.z*z.z)));
 
 	// now computing the y vector is trivial.
 	y.crossProduct( &z, &x, &y );
@@ -1591,7 +1586,7 @@ Waypoint *TerrainLogic::getClosestWaypointOnPath( const Coord3D *pos, AsciiStrin
 	Real distSqr = 0;
 	Waypoint *pClosestWay = NULL;
 	if (label.isEmpty()) {
-		DEBUG_LOG(("***Warning - asking for empty path label.\n"));
+		DEBUG_LOG(("***Warning - asking for empty path label."));
 		return NULL;
 	}
 
@@ -1622,7 +1617,7 @@ Waypoint *TerrainLogic::getClosestWaypointOnPath( const Coord3D *pos, AsciiStrin
 Bool TerrainLogic::isPurposeOfPath( Waypoint *pWay, AsciiString label )
 {
 	if (label.isEmpty() || pWay==NULL) {
-		DEBUG_LOG(("***Warning - asking for empth path label.\n"));
+		DEBUG_LOG(("***Warning - asking for empth path label."));
 		return false;
 	}
 
@@ -1994,7 +1989,7 @@ void TerrainLogic::deleteBridges(void)
 	for (pBridge = getFirstBridge(); pBridge; pBridge = pNext) {
 		pNext = pBridge->getNext();
 		pBridge->setNext(NULL);
-		pBridge->deleteInstance();
+		deleteInstance(pBridge);
 	}
 	m_bridgeListHead = NULL;
 }
@@ -2050,7 +2045,7 @@ void TerrainLogic::deleteBridge( Bridge *bridge )
 		TheGameLogic->destroyObject( bridgeObj );
 
 	// delete the bridge in question
-	bridge->deleteInstance();
+	deleteInstance(bridge);
 
 }  // end deleteBridge
 
@@ -2213,6 +2208,8 @@ const WaterHandle* TerrainLogic::getWaterHandle( Real x, Real y )
 
 	/**@todo: Remove this after we have all water types included
 		in water triggers.  For now do special check for water grid mesh. */
+	// TheSuperHackers @logic-client-separation helmutbuhler 11/04/2025
+	// We shouldn't depend on TerrainVisual here.
 	Real meshZ;
 	if( TheTerrainVisual->getWaterGridHeight( x, y, &meshZ ) )
 	{	
@@ -2271,13 +2268,13 @@ Real TerrainLogic::getWaterHeight( const WaterHandle *water )
 	if( water == &m_gridWaterHandle )
 	{
 
-		DEBUG_CRASH(( "TerrainLogic::getWaterHeight( WaterHandle *water ) - water is a grid handle, cannot make this query\n" ));
+		DEBUG_CRASH(( "TerrainLogic::getWaterHeight( WaterHandle *water ) - water is a grid handle, cannot make this query" ));
 		return 0.0f;
 
 	}  //  end if
 
 	// sanity
-	DEBUG_ASSERTCRASH( water->m_polygon != NULL, ("getWaterHeight: polygon trigger in water handle is NULL\n") );
+	DEBUG_ASSERTCRASH( water->m_polygon != NULL, ("getWaterHeight: polygon trigger in water handle is NULL") );
 
 	// return the height of the water using the polygon trigger
 	return water->m_polygon->getPoint( 0 )->z;
@@ -2420,7 +2417,7 @@ void TerrainLogic::changeWaterHeightOverTime( const WaterHandle *water,
 	if( m_numWaterToUpdate >= MAX_DYNAMIC_WATER )
 	{
 
-		DEBUG_CRASH(( "Only '%d' simultaneous water table changes are supported\n", MAX_DYNAMIC_WATER ));
+		DEBUG_CRASH(( "Only '%d' simultaneous water table changes are supported", MAX_DYNAMIC_WATER ));
 		return;
 
 	}  // end if
@@ -2912,7 +2909,7 @@ void TerrainLogic::xfer( Xfer *xfer )
 				if( poly == NULL )
 				{
 				
-					DEBUG_CRASH(( "TerrainLogic::xfer - Unable to find polygon trigger for water table with trigger ID '%d'\n",
+					DEBUG_CRASH(( "TerrainLogic::xfer - Unable to find polygon trigger for water table with trigger ID '%d'",
 												triggerID ));
 					throw SC_INVALID_DATA;
 
@@ -2925,7 +2922,7 @@ void TerrainLogic::xfer( Xfer *xfer )
 				if( m_waterToUpdate[ i ].waterTable == NULL )
 				{
 
-					DEBUG_CRASH(( "TerrainLogic::xfer - Polygon trigger to use for water handle has no water handle!\n" ));
+					DEBUG_CRASH(( "TerrainLogic::xfer - Polygon trigger to use for water handle has no water handle!" ));
 					throw SC_INVALID_DATA;
 
 				}  // end if

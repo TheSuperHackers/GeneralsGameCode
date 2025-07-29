@@ -31,11 +31,6 @@
 #include "Common/PlayerList.h"
 #include "GameLogic/GameLogic.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 //-------------------------------------------------------------------------------------------------
 const char *TheEvaMessageNames[] = 
@@ -178,7 +173,7 @@ Eva::~Eva()
 	EvaCheckInfoPtrVecIt it;
 	for (it = m_allCheckInfos.begin(); it != m_allCheckInfos.end(); ++it) {
 		if (*it)
-			(*it)->deleteInstance();
+			deleteInstance(*it);
 	}
 }
 

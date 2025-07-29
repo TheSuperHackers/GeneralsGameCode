@@ -28,7 +28,7 @@
 //////////////////////////////////////////////////////////////////////////////
 #include "_pch.h"
 #include <new>
-#include <stdio.h>
+#include <Utility/stdio_adapter.h>
 
 // our own fast critical section
 static ProfileFastCS cs;
@@ -202,7 +202,7 @@ const char *ProfileId::AsString(double v) const
   for (k=m_exp10;k<0;k++) mul*=10.0;
   for (;k>0;k--) mul/=10.0;
 
-  unsigned len=_snprintf(help,sizeof(help),help1,v*mul)+1;
+  unsigned len=snprintf(help,sizeof(help),help1,v*mul)+1;
 
   ProfileFastCS::Lock lock(cs);
   if (stringBufUnused+len>STRING_BUFFER_SIZE)

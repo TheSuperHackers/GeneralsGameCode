@@ -66,32 +66,32 @@ Bool CachedFileInputStream::open(AsciiString path)
 
 	if (CompressionManager::isDataCompressed(m_buffer, m_size) == 0)
 	{
-		//DEBUG_LOG(("CachedFileInputStream::open() - file %s is uncompressed at %d bytes!\n", path.str(), m_size));
+		//DEBUG_LOG(("CachedFileInputStream::open() - file %s is uncompressed at %d bytes!", path.str(), m_size));
 	}
 	else
 	{
 		Int uncompLen = CompressionManager::getUncompressedSize(m_buffer, m_size);
-		//DEBUG_LOG(("CachedFileInputStream::open() - file %s is compressed!  It should go from %d to %d\n", path.str(),
+		//DEBUG_LOG(("CachedFileInputStream::open() - file %s is compressed!  It should go from %d to %d", path.str(),
 		//	m_size, uncompLen));
 		char *uncompBuffer = NEW char[uncompLen];
 		Int actualLen = CompressionManager::decompressData(m_buffer, m_size, uncompBuffer, uncompLen);
 		if (actualLen == uncompLen)
 		{
-			//DEBUG_LOG(("Using uncompressed data\n"));
+			//DEBUG_LOG(("Using uncompressed data"));
 			delete[] m_buffer;
 			m_buffer = uncompBuffer;
 			m_size = uncompLen;
 		}
 		else
 		{
-			//DEBUG_LOG(("Decompression failed - using compressed data\n"));
+			//DEBUG_LOG(("Decompression failed - using compressed data"));
 			// decompression failed.  Maybe we invalidly thought it was compressed?
 			delete[] uncompBuffer;
 		}
 	}
 	//if (m_size >= 4)
 	//{
-	//	DEBUG_LOG(("File starts as '%c%c%c%c'\n", m_buffer[0], m_buffer[1],
+	//	DEBUG_LOG(("File starts as '%c%c%c%c'", m_buffer[0], m_buffer[1],
 	//		m_buffer[2], m_buffer[3]));
 	//}
 
@@ -295,7 +295,7 @@ void DataChunkOutput::openDataChunk( const char *name, DataChunkVersionType ver 
 	// remember this m_tmp_file position so we can write the real data size later
 	c->filepos = ::ftell(m_tmp_file);
 #ifdef VERBOSE
-	DEBUG_LOG(("Writing chunk %s at %d (%x)\n", name, ::ftell(m_tmp_file), ::ftell(m_tmp_file)));
+	DEBUG_LOG(("Writing chunk %s at %d (%x)", name, ::ftell(m_tmp_file), ::ftell(m_tmp_file)));
 #endif
 	// store a placeholder for the data size
 	Int dummy = 0xffff;
@@ -328,10 +328,10 @@ void DataChunkOutput::closeDataChunk( void )
 	// pop the chunk off the stack
 	OutputChunk *c = m_chunkStack;
 #ifdef VERBOSE
-	DEBUG_LOG(("Closing chunk %s at %d (%x)\n", m_contents.getName(c->id).str(), here, here));
+	DEBUG_LOG(("Closing chunk %s at %d (%x)", m_contents.getName(c->id).str(), here, here));
 #endif
 	m_chunkStack = m_chunkStack->next;
-	c->deleteInstance();
+	deleteInstance(c);
 }
 
 void DataChunkOutput::writeReal( Real r ) 
@@ -437,7 +437,7 @@ DataChunkTableOfContents::~DataChunkTableOfContents()
 	for( m=m_list; m; m=next )
 	{
 		next = m->next;
-		m->deleteInstance();
+		deleteInstance(m);
 	}
 }
 
@@ -461,7 +461,7 @@ UnsignedInt DataChunkTableOfContents::getID( const AsciiString& name )
 	if (m)
 		return m->id;
 
-	DEBUG_CRASH(("name not found in DataChunkTableOfContents::getName for name %s\n",name.str()));
+	DEBUG_CRASH(("name not found in DataChunkTableOfContents::getName for name %s",name.str()));
 	return 0;
 }
 
@@ -474,7 +474,7 @@ AsciiString DataChunkTableOfContents::getName( UnsignedInt id )
 		if (m->id == id)
 			return m->name;
 
-	DEBUG_CRASH(("name not found in DataChunkTableOfContents::getName for id %d\n",id));
+	DEBUG_CRASH(("name not found in DataChunkTableOfContents::getName for id %d",id));
 	return AsciiString::TheEmptyString;
 }
 
@@ -601,7 +601,7 @@ DataChunkInput::~DataChunkInput()
 	UserParser *p, *next;
 	for (p=m_parserList; p; p=next) {
 		next = p->next;
-		p->deleteInstance();
+		deleteInstance(p);
 	}
 
 }
@@ -699,7 +699,7 @@ void DataChunkInput::clearChunkStack( void )
 	for( c=m_chunkStack; c; c=next )
 	{
 		next = c->next;
-		c->deleteInstance();
+		deleteInstance(c);
 	}
 
 	m_chunkStack = NULL;
@@ -725,7 +725,7 @@ AsciiString DataChunkInput::openDataChunk(DataChunkVersionType *ver )
 	c->id = 0;
 	c->version = 0;
 	c->dataSize = 0;
-	//DEBUG_LOG(("Opening data chunk at offset %d (%x)\n", m_file->tell(), m_file->tell()));
+	//DEBUG_LOG(("Opening data chunk at offset %d (%x)", m_file->tell(), m_file->tell()));
 	// read the chunk ID
 	m_file->read( (char *)&c->id, sizeof(UnsignedInt) );
 	decrementDataLeft( sizeof(UnsignedInt) );
@@ -772,7 +772,7 @@ void DataChunkInput::closeDataChunk( void )
 	// pop the chunk off the stack
 	InputChunk *c = m_chunkStack;
 	m_chunkStack = m_chunkStack->next;
-	c->deleteInstance();
+	deleteInstance(c);
 }
 
 

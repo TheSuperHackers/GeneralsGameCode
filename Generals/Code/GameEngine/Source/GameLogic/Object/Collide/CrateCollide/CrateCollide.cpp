@@ -39,11 +39,6 @@
 #include "GameLogic/Object.h"
 #include "GameLogic/Module/CrateCollide.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -163,7 +158,7 @@ Bool CrateCollide::isValidToExecute( const Object *other ) const
 		return FALSE;
 
 	// must match our kindof flags (if any)
-	if (md && !other->isKindOfMulti(md->m_kindof, md->m_kindofnot))
+	if ( !other->isKindOfMulti(md->m_kindof, md->m_kindofnot) )
 		return FALSE;
 
 	if( other->isEffectivelyDead() )

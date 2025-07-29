@@ -52,11 +52,6 @@
 #include "GameClient/Drawable.h"
 #include "GameClient/GameText.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 //-----------------------------------------------------------------------------
 ProductionPrerequisite::ProductionPrerequisite() 
@@ -80,7 +75,7 @@ void ProductionPrerequisite::init()
 //=============================================================================
 void ProductionPrerequisite::resolveNames()
 {
-	for (Int i = 0; i < m_prereqUnits.size(); i++)
+	for (size_t i = 0; i < m_prereqUnits.size(); i++)
 	{
 
 		//
@@ -95,7 +90,7 @@ void ProductionPrerequisite::resolveNames()
  			/** @todo for now removing this assert until we can completely remove
  			the GDF stuff, the problem is that some INI files refer to GDF names, and they
  			aren't yet loaded in the world builder but will all go away later anyway etc */
-			DEBUG_ASSERTCRASH(m_prereqUnits[i].unit,("could not find prereq %s\n",m_prereqUnits[i].name.str()));
+			DEBUG_ASSERTCRASH(m_prereqUnits[i].unit,("could not find prereq %s",m_prereqUnits[i].name.str()));
 
 			m_prereqUnits[i].name.clear(); // we're done with it
 		}
@@ -121,7 +116,7 @@ Int ProductionPrerequisite::calcNumPrereqUnitsOwned(const Player *player, Int co
 Int ProductionPrerequisite::getAllPossibleBuildFacilityTemplates(const ThingTemplate* tmpls[], Int maxtmpls) const
 {
 	Int count = 0;
-	for (int i = 0; i < m_prereqUnits.size(); i++)
+	for (size_t i = 0; i < m_prereqUnits.size(); i++)
 	{
 		if (i > 0 && !(m_prereqUnits[i].flags & UNIT_OR_WITH_PREV))
 			break;
@@ -216,7 +211,7 @@ void ProductionPrerequisite::addUnitPrereq( AsciiString unit, Bool orUnitWithPre
 void ProductionPrerequisite::addUnitPrereq( const std::vector<AsciiString>& units )
 {
 	Bool orWithPrevious = false;
-	for (int i = 0; i < units.size(); ++i)
+	for (size_t i = 0; i < units.size(); ++i)
 	{
 		addUnitPrereq(units[i], orWithPrevious);
 		orWithPrevious = true;

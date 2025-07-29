@@ -53,12 +53,12 @@
 	#define DISABLE_MEMORYPOOL_CHECKPOINTING 1
 #endif
 
-#if (defined(RTS_DEBUG) || defined(RTS_INTERNAL)) && !defined(MEMORYPOOL_DEBUG_CUSTOM_NEW) && !defined(DISABLE_MEMORYPOOL_DEBUG_CUSTOM_NEW)
+#if defined(RTS_DEBUG) && !defined(MEMORYPOOL_DEBUG_CUSTOM_NEW) && !defined(DISABLE_MEMORYPOOL_DEBUG_CUSTOM_NEW)
 	#define MEMORYPOOL_DEBUG_CUSTOM_NEW
 #endif
 
-//#if (defined(RTS_DEBUG) || defined(RTS_INTERNAL)) && !defined(MEMORYPOOL_DEBUG) && !defined(DISABLE_MEMORYPOOL_DEBUG)
-#if (defined(RTS_DEBUG)) && !defined(MEMORYPOOL_DEBUG) && !defined(DISABLE_MEMORYPOOL_DEBUG)
+//#if defined(RTS_DEBUG) && !defined(MEMORYPOOL_DEBUG) && !defined(DISABLE_MEMORYPOOL_DEBUG)
+#if defined(RTS_DEBUG) && !defined(MEMORYPOOL_DEBUG) && !defined(DISABLE_MEMORYPOOL_DEBUG)
 	#define MEMORYPOOL_DEBUG
 #endif
 
@@ -592,11 +592,11 @@ private: \
 			order-of-execution problem for static variables, ensuring this is not executed \
 			prior to the initialization of TheMemoryPoolFactory. \
 		*/ \
-		DEBUG_ASSERTCRASH(TheMemoryPoolFactory, ("TheMemoryPoolFactory is NULL\n")); \
+		DEBUG_ASSERTCRASH(TheMemoryPoolFactory, ("TheMemoryPoolFactory is NULL")); \
 		static MemoryPool *The##ARGCLASS##Pool = TheMemoryPoolFactory->findMemoryPool(ARGPOOLNAME); \
-		DEBUG_ASSERTCRASH(The##ARGCLASS##Pool, ("Pool \"%s\" not found (did you set it up in initMemoryPools?)\n", ARGPOOLNAME)); \
-		DEBUG_ASSERTCRASH(The##ARGCLASS##Pool->getAllocationSize() >= sizeof(ARGCLASS), ("Pool \"%s\" is too small for this class (currently %d, need %d)\n", ARGPOOLNAME, The##ARGCLASS##Pool->getAllocationSize(), sizeof(ARGCLASS))); \
-		DEBUG_ASSERTCRASH(The##ARGCLASS##Pool->getAllocationSize() <= sizeof(ARGCLASS)+MEMORY_POOL_OBJECT_ALLOCATION_SLOP, ("Pool \"%s\" is too large for this class (currently %d, need %d)\n", ARGPOOLNAME, The##ARGCLASS##Pool->getAllocationSize(), sizeof(ARGCLASS))); \
+		DEBUG_ASSERTCRASH(The##ARGCLASS##Pool, ("Pool \"%s\" not found (did you set it up in initMemoryPools?)", ARGPOOLNAME)); \
+		DEBUG_ASSERTCRASH(The##ARGCLASS##Pool->getAllocationSize() >= sizeof(ARGCLASS), ("Pool \"%s\" is too small for this class (currently %d, need %d)", ARGPOOLNAME, The##ARGCLASS##Pool->getAllocationSize(), sizeof(ARGCLASS))); \
+		DEBUG_ASSERTCRASH(The##ARGCLASS##Pool->getAllocationSize() <= sizeof(ARGCLASS)+MEMORY_POOL_OBJECT_ALLOCATION_SLOP, ("Pool \"%s\" is too large for this class (currently %d, need %d)", ARGPOOLNAME, The##ARGCLASS##Pool->getAllocationSize(), sizeof(ARGCLASS))); \
 		return The##ARGCLASS##Pool; \
 	} 
 
@@ -611,11 +611,11 @@ private: \
 			order-of-execution problem for static variables, ensuring this is not executed \
 			prior to the initialization of TheMemoryPoolFactory. \
 		*/ \
-		DEBUG_ASSERTCRASH(TheMemoryPoolFactory, ("TheMemoryPoolFactory is NULL\n")); \
+		DEBUG_ASSERTCRASH(TheMemoryPoolFactory, ("TheMemoryPoolFactory is NULL")); \
 		static MemoryPool *The##ARGCLASS##Pool = TheMemoryPoolFactory->createMemoryPool(ARGPOOLNAME, sizeof(ARGCLASS), ARGINITIAL, ARGOVERFLOW); \
-		DEBUG_ASSERTCRASH(The##ARGCLASS##Pool, ("Pool \"%s\" not found (did you set it up in initMemoryPools?)\n", ARGPOOLNAME)); \
-		DEBUG_ASSERTCRASH(The##ARGCLASS##Pool->getAllocationSize() >= sizeof(ARGCLASS), ("Pool \"%s\" is too small for this class (currently %d, need %d)\n", ARGPOOLNAME, The##ARGCLASS##Pool->getAllocationSize(), sizeof(ARGCLASS))); \
-		DEBUG_ASSERTCRASH(The##ARGCLASS##Pool->getAllocationSize() <= sizeof(ARGCLASS)+MEMORY_POOL_OBJECT_ALLOCATION_SLOP, ("Pool \"%s\" is too large for this class (currently %d, need %d)\n", ARGPOOLNAME, The##ARGCLASS##Pool->getAllocationSize(), sizeof(ARGCLASS))); \
+		DEBUG_ASSERTCRASH(The##ARGCLASS##Pool, ("Pool \"%s\" not found (did you set it up in initMemoryPools?)", ARGPOOLNAME)); \
+		DEBUG_ASSERTCRASH(The##ARGCLASS##Pool->getAllocationSize() >= sizeof(ARGCLASS), ("Pool \"%s\" is too small for this class (currently %d, need %d)", ARGPOOLNAME, The##ARGCLASS##Pool->getAllocationSize(), sizeof(ARGCLASS))); \
+		DEBUG_ASSERTCRASH(The##ARGCLASS##Pool->getAllocationSize() <= sizeof(ARGCLASS)+MEMORY_POOL_OBJECT_ALLOCATION_SLOP, ("Pool \"%s\" is too large for this class (currently %d, need %d)", ARGPOOLNAME, The##ARGCLASS##Pool->getAllocationSize(), sizeof(ARGCLASS))); \
 		return The##ARGCLASS##Pool; \
 	} 
 	
@@ -756,17 +756,21 @@ protected:
 	
 public: 
 
-	void deleteInstance() 
+	static void deleteInstanceInternal(MemoryPoolObject* mpo) 
 	{	
-		if (this)
+		if (mpo)
 		{
-			MemoryPool *pool = this->getObjectMemoryPool(); // save this, since the dtor will nuke our vtbl
-			this->~MemoryPoolObject();	// it's virtual, so the right one will be called.
-			pool->freeBlock((void *)this); 
+			MemoryPool *pool = mpo->getObjectMemoryPool(); // save this, since the dtor will nuke our vtbl
+			mpo->~MemoryPoolObject();	// it's virtual, so the right one will be called.
+			pool->freeBlock((void *)mpo); 
 		}
 	} 
 };
 
+inline void deleteInstance(MemoryPoolObject* mpo)
+{
+	MemoryPoolObject::deleteInstanceInternal(mpo);
+}
 
 
 // INLINING ///////////////////////////////////////////////////////////////////
@@ -906,20 +910,8 @@ public:
 	MemoryPoolObjectHolder(MemoryPoolObject *mpo = NULL) : m_mpo(mpo) { }
 	void hold(MemoryPoolObject *mpo) { DEBUG_ASSERTCRASH(!m_mpo, ("already holding")); m_mpo = mpo; }
 	void release() { m_mpo = NULL; }
-	~MemoryPoolObjectHolder() { m_mpo->deleteInstance(); }
+	~MemoryPoolObjectHolder() { deleteInstance(m_mpo); }
 };
-
-
-// ----------------------------------------------------------------------------
-/**
-	Sometimes you want to make a class's destructor protected so that it can only
-	be destroyed under special circumstances. MemoryPoolObject short-circuits this
-	by making the destructor always be protected, and the true delete technique
-	(namely, deleteInstance) always public by default. You can simulate the behavior
-	you really want by including this macro 
-*/
-#define MEMORY_POOL_DELETEINSTANCE_VISIBILITY(ARGVIS)\
-ARGVIS:	void deleteInstance() { MemoryPoolObject::deleteInstance(); } public: 
 
 
 #define EMPTY_DTOR(CLASS) inline CLASS::~CLASS() { }

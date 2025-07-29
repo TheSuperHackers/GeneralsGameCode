@@ -37,11 +37,6 @@
 #include "GameLogic/Object.h"
 #include "Common/BitFlagsIO.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 // GLOBAL /////////////////////////////////////////////////////////////////////////////////////////
 SpecialPowerStore *TheSpecialPowerStore = NULL;
@@ -53,6 +48,7 @@ SpecialPowerStore *TheSpecialPowerStore = NULL;
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // Externs ////////////////////////////////////////////////////////////////////////////////////////
+template<>
 const char* SpecialPowerMaskType::s_bitNameList[] = 
 {
 	"SPECIAL_INVALID",
@@ -225,8 +221,8 @@ SpecialPowerStore::~SpecialPowerStore( void )
 {
 
 	// delete all templates
-	for( Int i = 0; i < m_specialPowerTemplates.size(); ++i )
-		m_specialPowerTemplates[ i ]->deleteInstance();
+	for( size_t i = 0; i < m_specialPowerTemplates.size(); ++i )
+		deleteInstance(m_specialPowerTemplates[ i ]);
 
 	// erase the list
 	m_specialPowerTemplates.clear();
@@ -242,7 +238,7 @@ SpecialPowerTemplate* SpecialPowerStore::findSpecialPowerTemplatePrivate( AsciiS
 {
 
 	// search the template list for matching name
-	for( Int i = 0; i < m_specialPowerTemplates.size(); ++i )
+	for( size_t i = 0; i < m_specialPowerTemplates.size(); ++i )
 		if( m_specialPowerTemplates[ i ]->getName() == name )
 			return m_specialPowerTemplates[ i ];
 
@@ -257,7 +253,7 @@ const SpecialPowerTemplate *SpecialPowerStore::findSpecialPowerTemplateByID( Uns
 {
 
 	// search the template list for matching name
-	for( Int i = 0; i < m_specialPowerTemplates.size(); ++i )
+	for( size_t i = 0; i < m_specialPowerTemplates.size(); ++i )
 		if( m_specialPowerTemplates[ i ]->getID() == id )
 			return m_specialPowerTemplates[ i ];
 

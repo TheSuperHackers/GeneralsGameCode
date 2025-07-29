@@ -37,7 +37,7 @@
 #include "wwstring.h"
 #include "wwmemlog.h"
 #include "mutex.h"
-#include <stdio.h>
+#include <Utility/stdio_adapter.h>
 
 
 ///////////////////////////////////////////////////////////////////
@@ -249,9 +249,9 @@ StringClass::Format_Args (const TCHAR *format, va_list arg_list )
 	//	Format the string
 	//
 	#ifdef _UNICODE
-		retval = _vsnwprintf (temp_buffer, 512, format, arg_list);
+		retval = vswprintf (temp_buffer, 512, format, arg_list);
 	#else
-		retval = _vsnprintf (temp_buffer, 512, format, arg_list);
+		retval = vsnprintf (temp_buffer, 512, format, arg_list);
 	#endif
 	
 	//
@@ -284,9 +284,9 @@ StringClass::Format (const TCHAR *format, ...)
 	//	Format the string
 	//
 	#ifdef _UNICODE
-		retval = _vsnwprintf (temp_buffer, 512, format, arg_list);
+		retval = vswprintf (temp_buffer, 512, format, arg_list);
 	#else
-		retval = _vsnprintf (temp_buffer, 512, format, arg_list);
+		retval = vsnprintf (temp_buffer, 512, format, arg_list);
 	#endif
 	
 	//

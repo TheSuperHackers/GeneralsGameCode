@@ -48,12 +48,16 @@ public:
 enum RecorderModeType CPP_11(: Int) {
 	RECORDERMODETYPE_RECORD,
 	RECORDERMODETYPE_PLAYBACK,
+	RECORDERMODETYPE_SIMULATION_PLAYBACK, // Play back replay without any graphics
 	RECORDERMODETYPE_NONE // this is a valid state to be in on the shell map, or in saved games
 };
 
 class CRCInfo;
 
 class RecorderClass : public SubsystemInterface {
+public:
+	struct ReplayHeader;
+
 public:
 	RecorderClass();																	///< Constructor.
 	virtual ~RecorderClass();													///< Destructor.
@@ -68,13 +72,16 @@ public:
 	// Methods dealing with playback.
 	void updatePlayback();														///< The update function for playing back a file.
 	Bool playbackFile(AsciiString filename);					///< Starts playback of the specified file.
-	Bool testVersionPlayback(AsciiString filename);   ///< Returns if the playback is a valid playback file for this version or not.
+	Bool replayMatchesGameVersion(AsciiString filename); ///< Returns true if the playback is a valid playback file for this version.
+	static Bool replayMatchesGameVersion(const ReplayHeader& header); ///< Returns true if the playback is a valid playback file for this version.
 	AsciiString getCurrentReplayFilename( void );			///< valid during playback only
+	UnsignedInt getPlaybackFrameCount() const { return m_playbackFrameCount; }			///< valid during playback only
 	void stopPlayback();															///< Stops playback.  Its fine to call this even if not playing back a file.
-#if defined RTS_DEBUG || defined RTS_INTERNAL
+	Bool simulateReplay(AsciiString filename);
+#if defined(RTS_DEBUG)
 	Bool analyzeReplay( AsciiString filename );
-	Bool isAnalysisInProgress( void );
 #endif
+	Bool isPlaybackInProgress() const;
 
 public:
 	void handleCRCMessage(UnsignedInt newCRC, Int playerIndex, Bool fromPlayback);
@@ -96,7 +103,7 @@ public:
 		UnsignedInt iniCRC;
 		time_t startTime;
 		time_t endTime;
-		UnsignedInt frameDuration;
+		UnsignedInt frameCount;
 		Bool quitEarly;
 		Bool desyncGame;
 		Bool playerDiscons[MAX_SLOTS];
@@ -106,10 +113,11 @@ public:
 	Bool readReplayHeader( ReplayHeader& header );
 
 	RecorderModeType getMode();												///< Returns the current operating mode.
+	Bool isPlaybackMode() const { return m_mode == RECORDERMODETYPE_PLAYBACK || m_mode == RECORDERMODETYPE_SIMULATION_PLAYBACK; }
 	void initControls();															///< Show or Hide the Replay controls
 
 	AsciiString getReplayDir();												///< Returns the directory that holds the replay files.
-	AsciiString getReplayExtention();									///< Returns the file extention for replay files.
+	static AsciiString getReplayExtention();									///< Returns the file extention for replay files.
 	AsciiString getLastReplayFileName();							///< Returns the filename used for the default replay.
 
 	GameInfo *getGameInfo( void ) { return &m_gameInfo; }	///< Returns the slot list for playback game start
@@ -120,6 +128,7 @@ public:
 
 	void logPlayerDisconnect(UnicodeString player, Int slot);
 	void logCRCMismatch( void );
+	Bool sawCRCMismatch() const;
 	void cleanUpReplayFile( void );										///< after a crash, send replay/debug info to a central repository
 
 	void stopRecording();															///< Stop recording and close m_file.
@@ -137,13 +146,20 @@ protected:
 	void writeArgument(GameMessageArgumentDataType type, const GameMessageArgumentType arg);
 	void readArgument(GameMessageArgumentDataType type, GameMessage *msg);
 
-	void cullBadCommands();														///< prevent the user from giving mouse commands that he shouldn't be able to do during playback.
+	struct CullBadCommandsResult
+	{
+		CullBadCommandsResult() : hasClearGameDataMessage(false) {}
+		Bool hasClearGameDataMessage;
+	};
+
+	CullBadCommandsResult cullBadCommands(); ///< prevent the user from giving mouse commands that he shouldn't be able to do during playback.
 
 	FILE *m_file;
 	AsciiString m_fileName;
 	Int m_currentFilePosition;
 	RecorderModeType m_mode;
 	AsciiString m_currentReplayFilename;							///< valid during playback only
+	UnsignedInt m_playbackFrameCount;
 
 	ReplayGameInfo m_gameInfo;
 	Bool m_wasDesync;

@@ -35,11 +35,6 @@
 #include "RANDOM.H"
 #include "v3_rnd.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-// #pragma optimize("", off)
-// #pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 /* We have chunking logic which handles N segments at a time. To simplify the subdivision logic,
 ** we will ensure that N is a power of two and that N >= 2^MAX_STREAK_SUBDIV_LEVELS, so that the
@@ -179,7 +174,7 @@ TextureClass * StreakRendererClass::Get_Texture(void) const
 // {
 // 	if (factor > 8.0f) {
 //		factor = 8.0f;
-//		WWDEBUG_SAY(("Texture Tile Factor too large in StreakRendererClass!\r\n"));
+//		WWDEBUG_SAY(("Texture Tile Factor too large in StreakRendererClass!"));
 //	} else {
 //		factor = MAX(factor, 0.0f);
 //	}
@@ -1414,7 +1409,7 @@ VertexFormatXYZUV1 *StreakRendererClass::getVertexBuffer(unsigned int number)
 		m_vertexBufferSize = numberToAlloc;
 	}
 
-#ifdef RTS_INTERNAL
+#ifdef RTS_DEBUG
 	for (unsigned i = 0; i < number; ++i)
 	{
 	  m_vertexBuffer[i].x = m_vertexBuffer[i].y = m_vertexBuffer[i].z = m_vertexBuffer[i].u1 = m_vertexBuffer[i].v1 = (float)0xdeadbeef;

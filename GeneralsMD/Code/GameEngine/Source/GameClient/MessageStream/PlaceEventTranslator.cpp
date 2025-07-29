@@ -46,11 +46,6 @@
 #include "GameLogic/Module/ProductionUpdate.h"
 
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 //-------------------------------------------------------------------------------------------------
 PlaceEventTranslator::PlaceEventTranslator() : m_frameOfUpButton(-1)
@@ -181,11 +176,7 @@ GameMessageDisposition PlaceEventTranslator::translateGameMessage(const GameMess
 				// translate the screen position of start to world target location
 				TheTacticalView->screenToTerrain( &anchorStart, &world );
 
-				// get the source object ID of the thing that is "building" the object 
-				ObjectID builderID = INVALID_ID;
 				Object *builderObj = TheGameLogic->findObjectByID( TheInGameUI->getPendingPlaceSourceObjectID() );
-				if( builderObj )
-					builderID = builderObj->getID();
 
 				//Kris: September 27, 2002
 				//Make sure we have enough CASH to build it! It's possible that between the
@@ -219,6 +210,8 @@ GameMessageDisposition PlaceEventTranslator::translateGameMessage(const GameMess
 					TheInGameUI->placeBuildAvailable( NULL, NULL );
 					break;
 				} 
+
+				DEBUG_ASSERTCRASH(builderObj != NULL, ("builderObj is NULL"));
 
 				// check to see if this is a legal location to build something at
 				LegalBuildCode lbc;

@@ -222,7 +222,7 @@ void ScorchOptions::changeScorch(void)
 
 	Dict newDict;
 	newDict.setInt(TheKey_scorchType, (Int)m_scorchtype);
-	DictItemUndoable *pUndo = new DictItemUndoable(&m_allSelectedDicts.front(), newDict, newDict.getNthKey(0), m_allSelectedDicts.size());
+	DictItemUndoable *pUndo = new DictItemUndoable(getAllSelectedDictsData(), newDict, newDict.getNthKey(0), m_allSelectedDicts.size());
 	CWorldBuilderDoc* pDoc = CWorldBuilderDoc::GetActiveDoc();
 	pDoc->AddAndDoUndoable(pUndo);
 	REF_PTR_RELEASE(pUndo); // belongs to pDoc now.
@@ -237,7 +237,7 @@ void ScorchOptions::changeSize(void)
 
 	Dict newDict;
 	newDict.setReal(TheKey_objectRadius, m_scorchsize);
-	DictItemUndoable *pUndo = new DictItemUndoable(&m_allSelectedDicts.front(), newDict, newDict.getNthKey(0), m_allSelectedDicts.size());
+	DictItemUndoable *pUndo = new DictItemUndoable(getAllSelectedDictsData(), newDict, newDict.getNthKey(0), m_allSelectedDicts.size());
 	CWorldBuilderDoc* pDoc = CWorldBuilderDoc::GetActiveDoc();
 	pDoc->AddAndDoUndoable(pUndo);
 	REF_PTR_RELEASE(pUndo); // belongs to pDoc now.
@@ -256,4 +256,13 @@ void ScorchOptions::getAllSelectedDicts(void)
 		}
 		m_allSelectedDicts.push_back(pMapObj->getProperties());
 	}
+}
+
+Dict** ScorchOptions::getAllSelectedDictsData()
+{
+#if defined(USING_STLPORT) || __cplusplus < 201103L
+	return !m_allSelectedDicts.empty() ? &m_allSelectedDicts.front() : NULL;
+#else
+	return m_allSelectedDicts.data();
+#endif
 }

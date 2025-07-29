@@ -66,11 +66,6 @@
 CampaignManager *TheCampaignManager = NULL;
 
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 
 const FieldParse CampaignManager::m_campaignFieldParseTable[] = 
@@ -102,7 +97,7 @@ void INI::parseCampaignDefinition( INI *ini )
 	name.set( c );	
 
 	// find existing item if present
-	DEBUG_ASSERTCRASH( TheCampaignManager, ("parseCampaignDefinition: Unable to Get TheCampaignManager\n") );
+	DEBUG_ASSERTCRASH( TheCampaignManager, ("parseCampaignDefinition: Unable to Get TheCampaignManager") );
 	if( !TheCampaignManager )
 		return;
 
@@ -110,7 +105,7 @@ void INI::parseCampaignDefinition( INI *ini )
 	campaign = TheCampaignManager->newCampaign( name );
 
 	// sanity
-	DEBUG_ASSERTCRASH( campaign, ("parseCampaignDefinition: Unable to allocate campaign '%s'\n", name.str()) );
+	DEBUG_ASSERTCRASH( campaign, ("parseCampaignDefinition: Unable to allocate campaign '%s'", name.str()) );
 
 	// parse the ini definition
 	ini->initFromINI( campaign, TheCampaignManager->getFieldParse() );
@@ -136,7 +131,7 @@ Campaign::~Campaign( void )
 		Mission *mission = *it;
 		it = m_missions.erase( it );
 		if(mission)
-			mission->deleteInstance();
+			deleteInstance(mission);
 	}
 }
 
@@ -157,7 +152,7 @@ Mission *Campaign::newMission( AsciiString name )
 		if(mission->m_name.compare(name) == 0)
 		{
 			m_missions.erase( it );
-			mission->deleteInstance();
+			deleteInstance(mission);
 			break;
 		}
 		else
@@ -242,7 +237,7 @@ CampaignManager::~CampaignManager( void )
 		Campaign *campaign = *it;
 		it = m_campaignList.erase( it );
 		if(campaign)
-			campaign->deleteInstance();
+			deleteInstance(campaign);
 	}
 }
 
@@ -404,7 +399,7 @@ Campaign *CampaignManager::newCampaign(AsciiString name)
 		if(campaign->m_name.compare(name) == 0)
 		{
 			m_campaignList.erase( it );
-			campaign->deleteInstance();
+			deleteInstance(campaign);
 			break;
 		}
 		else

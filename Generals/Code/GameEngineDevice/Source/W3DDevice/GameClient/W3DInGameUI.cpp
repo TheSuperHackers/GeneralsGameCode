@@ -52,11 +52,6 @@
 
 #include "Common/UnitTimings.h" //Contains the DO_UNIT_TIMINGS define jba.		 
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 
 #ifdef RTS_DEBUG
@@ -194,7 +189,7 @@ void DebugHintObject::initData(void)
 	m_vertexMaterialClass = VertexMaterialClass::Get_Preset(VertexMaterialClass::PRELIT_DIFFUSE);
 
 	//use a multi-texture shader: (text1*diffuse)*text2.
-	m_shaderClass = ShaderClass::ShaderClass(SC_ALPHA);
+	m_shaderClass = ShaderClass(SC_ALPHA);
 }
 
 void DebugHintObject::setLocAndColorAndSize(const Coord3D *loc, Int argb, Int size)
@@ -437,6 +432,8 @@ void W3DInGameUI::draw( void )
 	postDraw();
 
 	TheWindowManager->winRepaint();
+
+	postWindowDraw();
 	
 #ifdef EXTENDED_STATS
 	}

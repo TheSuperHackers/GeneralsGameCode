@@ -73,7 +73,8 @@ W3DDebrisDraw::~W3DDebrisDraw(void)
 	}
 	if (m_renderObject)
 	{
-		W3DDisplay::m_3DScene->Remove_Render_Object(m_renderObject);
+		if (W3DDisplay::m_3DScene != NULL)
+			W3DDisplay::m_3DScene->Remove_Render_Object(m_renderObject);
   	REF_PTR_RELEASE(m_renderObject);
  		m_renderObject = NULL; 	
 	}
@@ -108,10 +109,11 @@ void W3DDebrisDraw::setModelName(AsciiString name, Color color, ShadowType t)
 		if (color != 0)
 			hexColor = color | 0xFF000000;
 		m_renderObject = W3DDisplay::m_assetManager->Create_Render_Obj(name.str(), getDrawable()->getScale(), hexColor);
-		DEBUG_ASSERTCRASH(m_renderObject, ("Debris model %s not found!\n",name.str()));
+		DEBUG_ASSERTCRASH(m_renderObject, ("Debris model %s not found!",name.str()));
 		if (m_renderObject)
 		{
-			W3DDisplay::m_3DScene->Add_Render_Object(m_renderObject);
+			if (W3DDisplay::m_3DScene != NULL)
+				W3DDisplay::m_3DScene->Add_Render_Object(m_renderObject);
 
 			m_renderObject->Set_User_Data(getDrawable()->getDrawableInfo());
 			

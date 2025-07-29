@@ -44,11 +44,6 @@
 #include "GameClient/MapUtil.h"
 #include "GameNetwork/GUIUtil.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 // PRIVATE DATA ///////////////////////////////////////////////////////////////////////////////////
 static NameKeyType buttonBack = NAMEKEY_INVALID;
@@ -77,8 +72,12 @@ static GameWindow *winMapWindow = NULL;
 static void NullifyControls(void)
 {
 	parent = NULL;
-	winMapPreview = NULL;
 	mapList = NULL;
+	if (winMapPreview)
+	{
+		winMapPreview->winSetUserData(NULL);
+		winMapPreview = NULL;
+	}
 	for (Int i=0; i<MAX_SLOTS; ++i)
 	{
 		buttonMapStartPosition[i] = NULL;
@@ -393,9 +392,13 @@ WindowMsgHandledType WOLMapSelectMenuSystem( GameWindow *window, UnsignedInt msg
 			{
 				showGameSpyGameOptionsUnderlyingGUIElements( TRUE );
 
-				WOLMapSelectLayout->destroyWindows();
-				WOLMapSelectLayout->deleteInstance();
-				WOLMapSelectLayout = NULL;
+				if (WOLMapSelectLayout)
+				{
+					WOLMapSelectLayout->destroyWindows();
+					deleteInstance(WOLMapSelectLayout);
+					WOLMapSelectLayout = NULL;
+				}
+
 				WOLPositionStartSpots();
 			}  // end if
 			else if ( controlID == radioButtonSystemMapsID )
@@ -457,9 +460,12 @@ WindowMsgHandledType WOLMapSelectMenuSystem( GameWindow *window, UnsignedInt msg
 					WOLDisplaySlotList();
 					WOLDisplayGameOptions();
 
-					WOLMapSelectLayout->destroyWindows();
-					WOLMapSelectLayout->deleteInstance();
-					WOLMapSelectLayout = NULL;
+					if (WOLMapSelectLayout)
+					{
+						WOLMapSelectLayout->destroyWindows();
+						deleteInstance(WOLMapSelectLayout);
+						WOLMapSelectLayout = NULL;
+					}
 
 					showGameSpyGameOptionsUnderlyingGUIElements( TRUE );
 

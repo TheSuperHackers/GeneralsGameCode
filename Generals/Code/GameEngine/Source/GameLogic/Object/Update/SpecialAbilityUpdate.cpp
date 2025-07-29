@@ -63,11 +63,6 @@
 #include "GameLogic/Module/StealthUpdate.h"
 #include "GameLogic/Module/ContainModule.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 
 //-------------------------------------------------------------------------------------------------
@@ -776,6 +771,7 @@ Bool SpecialAbilityUpdate::isWithinStartAbilityRange() const
 			PartitionFilterLineOfSight	filterLOS( self );
 			PartitionFilter *filters[] = { &filterLOS, NULL };
 			ObjectIterator *iter = ThePartitionManager->iterateObjectsInRange( self, range, FROM_BOUNDINGSPHERE_2D, filters, ITER_SORTED_NEAR_TO_FAR );
+			MemoryPoolObjectHolder hold(iter);
 			for( Object *theTarget = iter->first(); theTarget; theTarget = iter->next() ) 
 			{
 				//LOS check succeeded.

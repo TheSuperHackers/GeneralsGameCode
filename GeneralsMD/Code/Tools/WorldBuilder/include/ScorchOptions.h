@@ -80,6 +80,7 @@ private:
 	void changeSize(void);
 	void changeScorch(void);
 	void getAllSelectedDicts(void);
+	Dict** getAllSelectedDictsData();
 
 public:
 	static void update(void);

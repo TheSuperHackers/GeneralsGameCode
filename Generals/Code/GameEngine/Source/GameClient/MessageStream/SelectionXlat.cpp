@@ -56,16 +56,11 @@
 #include "GameClient/SelectionXlat.h"
 #include "GameClient/TerrainVisual.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 static Bool TheHurtSelectionMode = false;
 static Bool TheHandOfGodSelectionMode = false;
 static Bool TheDebugSelectionMode = false;
@@ -511,9 +506,9 @@ GameMessageDisposition SelectionTranslator::translateGameMessage(const GameMessa
 
 				// Yay. Either select across the screen or the world depending on selectAcrossMap
 				if (selectAcrossMap)
-					TheInGameUI->selectAcrossMap();
+					TheInGameUI->selectMatchingAcrossMap();
 				else 
-					TheInGameUI->selectAcrossScreen();
+					TheInGameUI->selectMatchingAcrossScreen();
 
 				// emit "picked" message
 				GameMessage *pickMsg = TheMessageStream->appendMessage( GameMessage::MSG_AREA_SELECTION );
@@ -783,7 +778,7 @@ GameMessageDisposition SelectionTranslator::translateGameMessage(const GameMessa
 
 				if (newDrawablesSelected == 1 && draw) 
 				{
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 					if (TheHandOfGodSelectionMode && draw)
 					{
 						Object* obj = draw->getObject();
@@ -870,6 +865,30 @@ GameMessageDisposition SelectionTranslator::translateGameMessage(const GameMessa
 				buildRegion( &m_selectFeedbackAnchor, &msg->getArgument(0)->pixel, &selectionRegion );
 				dragMsg->appendPixelRegionArgument( selectionRegion );
 			}
+			else 
+			{
+				// left click behavior (not right drag)
+
+				//Added support to cancel the GUI command without deselecting the unit(s) involved
+				//when you right click.
+				if( !TheInGameUI->getGUICommand() && !TheKeyboard->isShift() && !TheKeyboard->isCtrl() && !TheKeyboard->isAlt() )
+				{
+					//No GUI command mode, so deselect everyone if we're in alternate mouse mode.
+					if( TheGlobalData->m_useAlternateMouse && TheInGameUI->getPendingPlaceSourceObjectID() == INVALID_ID )
+					{
+						if( !TheInGameUI->getPreventLeftClickDeselectionInAlternateMouseModeForOneClick() )
+						{
+							deselectAll();
+						}
+						else
+						{
+							//Prevent deselection of unit if it just issued some type of UI order such as attack move, guard, 
+							//initiating construction of a new structure.
+							TheInGameUI->setPreventLeftClickDeselectionInAlternateMouseModeForOneClick( FALSE );
+						}
+					}
+				}
+			}
 
 			break;
 		}
@@ -905,9 +924,7 @@ GameMessageDisposition SelectionTranslator::translateGameMessage(const GameMessa
 			delta.y = m_deselectFeedbackAnchor.y - pixel.y;
 
 			Bool isClick = TRUE;
-			if (isClick && 
-					abs(delta.x) > TheMouse->m_dragTolerance || 
-					abs(delta.y) > TheMouse->m_dragTolerance)
+			if (abs(delta.x) > TheMouse->m_dragTolerance || abs(delta.y) > TheMouse->m_dragTolerance)
 			{
 				isClick = FALSE;
 			}
@@ -967,7 +984,7 @@ GameMessageDisposition SelectionTranslator::translateGameMessage(const GameMessa
 			Int group = t - GameMessage::MSG_META_CREATE_TEAM0;
 			if ( group >= 0 && group < 10 )
 			{
-				DEBUG_LOG(("META: create team %d\n",group));
+				DEBUG_LOG(("META: create team %d",group));
 				// Assign selected items to a group
 				GameMessage *newmsg = TheMessageStream->appendMessage((GameMessage::Type)(GameMessage::MSG_CREATE_TEAM0 + group));
 				Drawable *drawable = TheGameClient->getDrawableList();
@@ -999,7 +1016,7 @@ GameMessageDisposition SelectionTranslator::translateGameMessage(const GameMessa
 			Int group = t - GameMessage::MSG_META_SELECT_TEAM0;
 			if ( group >= 0 && group < 10 )
 			{
-				DEBUG_LOG(("META: select team %d\n",group));
+				DEBUG_LOG(("META: select team %d",group));
 
 				UnsignedInt now = TheGameLogic->getFrame();
 				if ( m_lastGroupSelTime == 0 )
@@ -1010,7 +1027,7 @@ GameMessageDisposition SelectionTranslator::translateGameMessage(const GameMessa
 				// check for double-press to jump view
 				if ( now - m_lastGroupSelTime < 20 && group == m_lastGroupSelGroup )
 				{
-					DEBUG_LOG(("META: DOUBLETAP select team %d\n",group));
+					DEBUG_LOG(("META: DOUBLETAP select team %d",group));
 					Player *player = ThePlayerList->getLocalPlayer();
 					if (player)
 					{
@@ -1072,7 +1089,7 @@ GameMessageDisposition SelectionTranslator::translateGameMessage(const GameMessa
 			Int group = t - GameMessage::MSG_META_ADD_TEAM0;
 			if ( group >= 0 && group < 10 )
 			{
-				DEBUG_LOG(("META: select team %d\n",group));
+				DEBUG_LOG(("META: select team %d",group));
 
 				UnsignedInt now = TheGameLogic->getFrame();
 				if ( m_lastGroupSelTime == 0 )
@@ -1084,7 +1101,7 @@ GameMessageDisposition SelectionTranslator::translateGameMessage(const GameMessa
 
 				if ( now - m_lastGroupSelTime < 20 && group == m_lastGroupSelGroup )
 				{
-					DEBUG_LOG(("META: DOUBLETAP select team %d\n",group));
+					DEBUG_LOG(("META: DOUBLETAP select team %d",group));
 					Player *player = ThePlayerList->getLocalPlayer();
 					if (player)
 					{
@@ -1104,6 +1121,15 @@ GameMessageDisposition SelectionTranslator::translateGameMessage(const GameMessa
 				}
 				else
 				{
+
+					Drawable *draw = TheInGameUI->getFirstSelectedDrawable();
+					if( draw && draw->isKindOf( KINDOF_STRUCTURE ) )
+					{
+						//Kris: Jan 12, 2005
+						//Can't select other units if you have a structure selected. So deselect the structure to prevent
+						//group force attack exploit.
+						TheInGameUI->deselectAllDrawables();
+					}
 
 					// no need to send two messages for selecting the same group.
 					TheMessageStream->appendMessage((GameMessage::Type)(GameMessage::MSG_ADD_TEAM0 + group));
@@ -1144,7 +1170,7 @@ GameMessageDisposition SelectionTranslator::translateGameMessage(const GameMessa
 			Int group = t - GameMessage::MSG_META_VIEW_TEAM0;
 			if ( group >= 1 && group <= 10 )
 			{
-				DEBUG_LOG(("META: view team %d\n",group));
+				DEBUG_LOG(("META: view team %d",group));
 				Player *player = ThePlayerList->getLocalPlayer();
 				if (player) 
 				{
@@ -1175,7 +1201,7 @@ GameMessageDisposition SelectionTranslator::translateGameMessage(const GameMessa
 		}
 
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 		//-----------------------------------------------------------------------------------------
 		case GameMessage::MSG_META_DEMO_TOGGLE_HAND_OF_GOD_MODE:
 		{
@@ -1186,7 +1212,7 @@ GameMessageDisposition SelectionTranslator::translateGameMessage(const GameMessa
 		}
 #endif
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 		//-----------------------------------------------------------------------------------------
 		case GameMessage::MSG_META_DEMO_TOGGLE_HURT_ME_MODE:
 		{
@@ -1197,7 +1223,7 @@ GameMessageDisposition SelectionTranslator::translateGameMessage(const GameMessa
 		}
 #endif
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 		//-----------------------------------------------------------------------------------------
 		case GameMessage::MSG_META_DEMO_DEBUG_SELECTION:
 		{

@@ -95,7 +95,7 @@ PickUnitDialog::PickUnitDialog(UINT id, CWnd* pParent /*=NULL*/)
 PickUnitDialog::~PickUnitDialog()
 {
 	if (m_objectsList) {
-		m_objectsList->deleteInstance();
+		deleteInstance(m_objectsList);
 	}
 	m_objectsList = NULL;
 }
@@ -308,7 +308,7 @@ void PickUnitDialog::addObject( MapObject *mapObject, const char *pPath, Int ind
 	
 		// first sort by side, either create or find the tree item with matching side name
 		AsciiString side = thingTemplate->getDefaultOwningSide();
-		DEBUG_ASSERTCRASH( !side.isEmpty(), ("NULL default side in template\n") );
+		DEBUG_ASSERTCRASH( !side.isEmpty(), ("NULL default side in template") );
 		strcpy( buffer, side.str() );
 		parent = findOrAdd( parent, buffer );
 

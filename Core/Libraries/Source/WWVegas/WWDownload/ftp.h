@@ -67,7 +67,7 @@ private:
 	char	m_szRemoteFilePath[128];				
 	char	m_szRemoteFileName[128];
 	char	m_szLocalFilePath[128];
-	char	m_szLocalFileName[128];
+	char	m_szLocalFileName[256];
 	char	m_szServerName[128];
 	char	m_szUserName[128];
 	char	m_szPassword[128];

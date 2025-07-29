@@ -93,11 +93,6 @@
 #include "GameLogic/ScriptEngine.h"
 
 #include "GameNetwork/NetworkInterface.h"
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 static WindowLayout *theLayout = NULL;
 static GameWindow *theWindow = NULL;
@@ -145,7 +140,7 @@ void ControlBar::showBuildTooltipLayout( GameWindow *cmdButton )
 		m_showBuildToolTipLayout = TRUE;
 		if(!isInitialized &&  beginWaitTime + cmdButton->getTooltipDelay() < timeGetTime())
 		{
-			//DEBUG_LOG(("%d beginwaittime, %d tooltipdelay, %dtimegettime\n", beginWaitTime, cmdButton->getTooltipDelay(), timeGetTime()));
+			//DEBUG_LOG(("%d beginwaittime, %d tooltipdelay, %dtimegettime", beginWaitTime, cmdButton->getTooltipDelay(), timeGetTime()));
 			passedWaitTime = TRUE;
 		}
 		
@@ -163,7 +158,7 @@ void ControlBar::showBuildTooltipLayout( GameWindow *cmdButton )
 		else
 		{
 //			m_buildToolTipLayout->destroyWindows();
-//			m_buildToolTipLayout->deleteInstance();
+//			deleteInstance(m_buildToolTipLayout);
 //			m_buildToolTipLayout = NULL;
 			m_buildToolTipLayout->hide(TRUE);
 			prevWindow = NULL;
@@ -206,7 +201,7 @@ void ControlBar::showBuildTooltipLayout( GameWindow *cmdButton )
 		//	if (m_buildToolTipLayout)
 		//	{
 		//		m_buildToolTipLayout->destroyWindows();
-		//		m_buildToolTipLayout->deleteInstance();
+		//		deleteInstance(m_buildToolTipLayout);
 		//
 		//	}
 
@@ -266,7 +261,7 @@ void ControlBar::populateBuildTooltipLayout( const CommandButton *commandButton,
 		ScienceType	st = SCIENCE_INVALID; 
 		if(commandButton->getScienceVec().size() > 1)
 		{
-			for(Int j = 0; j < commandButton->getScienceVec().size(); ++j)
+			for(size_t j = 0; j < commandButton->getScienceVec().size(); ++j)
 			{
 				st = commandButton->getScienceVec()[ j ];
 				
@@ -649,7 +644,7 @@ void ControlBar::deleteBuildTooltipLayout( void )
 //		return;
 //	
 //	m_buildToolTipLayout->destroyWindows();
-//	m_buildToolTipLayout->deleteInstance();
+//	deleteInstance(m_buildToolTipLayout);
 //	m_buildToolTipLayout = NULL;
 	if(theAnimateWindowManager)
 		delete theAnimateWindowManager;

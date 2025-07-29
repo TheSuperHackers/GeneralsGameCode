@@ -41,11 +41,6 @@
 #define DEFINE_PARTICLE_SYSTEM_NAMES
 #include "GameClient/ParticleSys.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 #define PROFILE_ERROR_LIMIT	0.94f	//fraction of profiled result needed to get a match.  Allows some room for error/fluctuation.
 
@@ -247,19 +242,23 @@ BenchProfile *GameLODManager::newBenchProfile(void)
 		return &m_benchProfiles[m_numBenchProfiles-1];
 	}
 
-	DEBUG_CRASH(( "GameLODManager::newBenchProfile - Too many profiles defined\n"));
+	DEBUG_CRASH(( "GameLODManager::newBenchProfile - Too many profiles defined"));
 	return NULL;
 }
 
 LODPresetInfo *GameLODManager::newLODPreset(StaticGameLODLevel index)
 {
-	if (m_numLevelPresets[index] < MAX_LOD_PRESETS_PER_LEVEL)
-	{	
-		m_numLevelPresets[index]++;
-		return &m_lodPresets[index][m_numLevelPresets[index]-1];
+	if (index >= 0 && index < STATIC_GAME_LOD_COUNT)
+	{
+		if (m_numLevelPresets[index] < MAX_LOD_PRESETS_PER_LEVEL)
+		{
+			m_numLevelPresets[index]++;
+			return &m_lodPresets[index][m_numLevelPresets[index]-1];
+		}
+
+		DEBUG_CRASH(( "GameLODManager::newLODPreset - Too many presets defined for '%s'", TheGameLODManager->getStaticGameLODLevelName(index)));
 	}
 
-	DEBUG_CRASH(( "GameLODManager::newLODPreset - Too many presets defined for '%s'\n", TheGameLODManager->getStaticGameLODLevelName(index)));
 	return NULL;
 }
 
@@ -390,7 +389,7 @@ Int GameLODManager::getStaticGameLODIndex(AsciiString name)
 			return i;
 	}
 
-	DEBUG_CRASH(( "GameLODManager::getGameLODIndex - Invalid LOD name '%s'\n", name.str() ));
+	DEBUG_CRASH(( "GameLODManager::getGameLODIndex - Invalid LOD name '%s'", name.str() ));
 	return STATIC_GAME_LOD_UNKNOWN;
 }
 
@@ -427,7 +426,7 @@ void INI::parseStaticGameLODLevel( INI* ini, void * , void *store, const void*)
 			return;
 		}
 
-	DEBUG_CRASH(("invalid GameLODLevel token %s -- expected LOW/MEDIUM/HIGH\n",tok));
+	DEBUG_CRASH(("invalid GameLODLevel token %s -- expected LOW/MEDIUM/HIGH",tok));
 	throw INI_INVALID_DATA;
 }
 
@@ -577,9 +576,10 @@ void GameLODManager::applyStaticLODLevel(StaticGameLODLevel level)
 		TheWritableGlobalData->m_enableDynamicLOD = lodInfo->m_enableDynamicLOD;
 		TheWritableGlobalData->m_useFpsLimit = lodInfo->m_useFpsLimit;
 		TheWritableGlobalData->m_useTrees = requestedTrees;
-	}
-	if (!m_memPassed || isReallyLowMHz()) {
-		TheWritableGlobalData->m_shellMapOn = false;
+
+		if (!m_memPassed || isReallyLowMHz()) {
+			TheWritableGlobalData->m_shellMapOn = false;
+		}
 	}
 	if (TheTerrainVisual)
 		TheTerrainVisual->setTerrainTracksDetail();
@@ -619,7 +619,7 @@ void INI::parseDynamicGameLODLevel( INI* ini, void * , void *store, const void*)
 			return;
 		}
 
-	DEBUG_CRASH(("invalid GameLODLevel token %s -- expected LOW/MEDIUM/HIGH\n",tok));
+	DEBUG_CRASH(("invalid GameLODLevel token %s -- expected LOW/MEDIUM/HIGH",tok));
 	throw INI_INVALID_DATA;
 }
 
@@ -632,7 +632,7 @@ Int GameLODManager::getDynamicGameLODIndex(AsciiString name)
 			return i;
 	}
 
-	DEBUG_CRASH(( "GameLODManager::getGameLODIndex - Invalid LOD name '%s'\n", name.str() ));
+	DEBUG_CRASH(( "GameLODManager::getGameLODIndex - Invalid LOD name '%s'", name.str() ));
 	return STATIC_GAME_LOD_UNKNOWN;
 }
 
@@ -686,6 +686,9 @@ Int GameLODManager::getRecommendedTextureReduction(void)
 		findStaticLODLevel();	//it was never tested, so test now.
 
 	if (!m_memPassed)	//if they have < 256 MB, force them to low res textures.
+		return m_staticGameLODInfo[STATIC_GAME_LOD_LOW].m_textureReduction;
+
+	if (m_idealDetailLevel < 0 || m_idealDetailLevel >= STATIC_GAME_LOD_COUNT)
 		return m_staticGameLODInfo[STATIC_GAME_LOD_LOW].m_textureReduction;
 
 	return m_staticGameLODInfo[m_idealDetailLevel].m_textureReduction;

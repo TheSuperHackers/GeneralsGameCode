@@ -43,6 +43,7 @@
 // FORWARD DECLARATIONS ///////////////////////////////////////////////////////////////////////////
 struct FieldParse;
 enum _TerrainLOD CPP_11(: Int);
+class CommandLine;
 class GlobalData;
 class INI;
 class WeaponBonusSet;
@@ -51,13 +52,29 @@ enum AIDebugOptions CPP_11(: Int);
 
 // PUBLIC /////////////////////////////////////////////////////////////////////////////////////////
 
-const Int MAX_GLOBAL_LIGHTS	= 3;
+CONSTEXPR const Int MAX_GLOBAL_LIGHTS = 3;
+CONSTEXPR const Int SIMULATE_REPLAYS_SEQUENTIAL = -1;
+
+//-------------------------------------------------------------------------------------------------
+class CommandLineData
+{
+	friend class CommandLine;
+	friend class GlobalData;
+
+	CommandLineData()
+		: m_hasParsedCommandLineForStartup(false)
+		, m_hasParsedCommandLineForEngineInit(false)
+	{}
+
+	Bool m_hasParsedCommandLineForStartup;
+	Bool m_hasParsedCommandLineForEngineInit;
+};
 
 //-------------------------------------------------------------------------------------------------
 /** Global data container class
   *	Defines all global game data used by the system
 	* @todo Change this entire system. Otherwise this will end up a huge class containing tons of variables,
-	* and will cause re-compilation dependancies throughout the codebase. */
+	* and will cause re-compilation dependencies throughout the code base. */
 //-------------------------------------------------------------------------------------------------
 class GlobalData : public SubsystemInterface
 {
@@ -67,9 +84,9 @@ public:
 	GlobalData();
 	virtual ~GlobalData();
 
-	void init();
-	void reset();
-	void update() { }
+	virtual void init();
+	virtual void reset();
+	virtual void update() { }
 
 	Bool setTimeOfDay( TimeOfDay tod );		///< Use this function to set the Time of day;
 
@@ -87,6 +104,8 @@ public:
 	//-----------------------------------------------------------------------------------------------
 	//-----------------------------------------------------------------------------------------------
 
+	CommandLineData m_commandLineData;
+
 	AsciiString m_mapName;  ///< hack for now, this whole this is going away
 	AsciiString m_moveHintName;
 	Bool m_useTrees;
@@ -96,6 +115,11 @@ public:
 	Bool m_dumpAssetUsage;
 	Int m_framesPerSecondLimit;
 	Int	m_chipSetType;	///<See W3DShaderManager::ChipsetType for options
+
+	// TheSuperHackers @feature helmutbuhler 11/04/2025
+	// Run game without graphics, input or audio.
+	Bool m_headless;
+
 	Bool m_windowed;
 	Int m_xResolution;
 	Int m_yResolution;
@@ -315,8 +339,11 @@ public:
 	Real m_cameraAdjustSpeed;					///< Rate at which we adjust camera height
 	Bool m_enforceMaxCameraHeight;		///< Enfoce max camera height while scrolling?
 	Bool m_buildMapCache;
-	AsciiString m_initialFile;				///< If this is specified, load a specific map/replay from the command-line
+	AsciiString m_initialFile;				///< If this is specified, load a specific map from the command-line
 	AsciiString m_pendingFile;				///< If this is specified, use this map at the next game start
+
+	std::vector<AsciiString> m_simulateReplays; ///< If not empty, simulate this list of replays and exit.
+	Int m_simulateReplayJobs; ///< Maximum number of processes to use for simulation, or SIMULATE_REPLAYS_SEQUENTIAL for sequential simulation
 
 	Int m_maxParticleCount;						///< maximum number of particles that can exist
 	Int m_maxFieldParticleCount;			///< maximum number of field-type particles that can exist (roughly)
@@ -335,11 +362,6 @@ public:
 
 	Real m_keyboardScrollFactor;			///< Factor applied to game scrolling speed via keyboard scrolling
 	Real m_keyboardDefaultScrollFactor;			///< Factor applied to game scrolling speed via keyboard scrolling
-	
-  Real m_musicVolumeFactor;         ///< Factor applied to loudness of music volume
-  Real m_SFXVolumeFactor;           ///< Factor applied to loudness of SFX volume
-  Real m_voiceVolumeFactor;         ///< Factor applied to loudness of voice volume
-  Bool m_3DSoundPref;               ///< Whether user wants to use 3DSound or not
 
 	Bool m_animateWindows;						///< Should we animate window transitions?
 
@@ -372,6 +394,10 @@ public:
 
 	Bool m_saveCameraInReplay;
 	Bool m_useCameraInReplay;
+
+	// TheSuperHackers @feature Mauller 21/06/2025 allow the system time and game time font size to be set, a size of zero disables them
+	Int m_systemTimeFontSize;
+	Int m_gameTimeFontSize;
 
 	Real m_shakeSubtleIntensity;			///< Intensity for shaking a camera with SHAKE_SUBTLE
 	Real m_shakeNormalIntensity;			///< Intensity for shaking a camera with SHAKE_NORMAL
@@ -438,15 +464,16 @@ public:
   Int					m_playStats;									///< Int whether we want to log play stats or not, if <= 0 then we don't log
 
   Bool m_TiVOFastMode;            ///< When true, the client speeds up the framerate... set by HOTKEY!
-  
 
+#if defined(RTS_DEBUG) || ENABLE_CONFIGURABLE_SHROUD
+	Bool m_shroudOn;
+#endif
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	Bool m_wireframe;
 	Bool m_stateMachineDebug;
 	Bool m_useCameraConstraints;
 	Bool m_specialPowerUsesDelay;
-	Bool m_shroudOn;
 	Bool m_fogOfWarOn;
 	Bool m_jabberOn;
 	Bool m_munkeeOn;
@@ -509,6 +536,8 @@ public:
 
 private:
 
+	static UnsignedInt generateExeCRC();
+
 	static const FieldParse s_GlobalDataFieldParseTable[];
 
 	// this is private, since we read the info from Windows and cache it for
@@ -537,6 +566,11 @@ private:
 // singleton
 extern GlobalData* TheWritableGlobalData;
 
+// use TheGlobalData for all read-only accesses
+#if __cplusplus >= 201703L
+inline const GlobalData* const& TheGlobalData = TheWritableGlobalData;
+#else
 #define TheGlobalData ((const GlobalData*)TheWritableGlobalData)
+#endif
 
 #endif

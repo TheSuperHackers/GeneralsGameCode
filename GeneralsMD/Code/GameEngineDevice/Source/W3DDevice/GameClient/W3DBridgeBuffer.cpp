@@ -72,11 +72,6 @@
 #include "WW3D2/meshmdl.h"
 #include "WW3D2/scene.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 //-----------------------------------------------------------------------------
 //         Private Data                                                     
@@ -194,7 +189,7 @@ void W3DBridge::init(Vector3 fromLoc, Vector3 toLoc, AsciiString bridgeTemplateN
 /** Loads a bridge model(if not already loaded) and gets meshes for use at 
 specified location.  */
 //=============================================================================
-Bool W3DBridge::load(enum BodyDamageType curDamageState)
+Bool W3DBridge::load(BodyDamageType curDamageState)
 {
 	REF_PTR_RELEASE(m_bridgeTexture);
 	REF_PTR_RELEASE(m_leftMesh);
@@ -272,7 +267,7 @@ Bool W3DBridge::load(enum BodyDamageType curDamageState)
 			strcpy(right, pSub->Get_Name());
 		}
 		REF_PTR_RELEASE(pSub);
-		//DEBUG_LOG(("Sub obj name %s\n", pSub->Get_Name()));
+		//DEBUG_LOG(("Sub obj name %s", pSub->Get_Name()));
 	}
 
 	REF_PTR_RELEASE(pObj);
@@ -525,13 +520,13 @@ void W3DBridge::getIndicesNVertices(UnsignedShort *destination_ib, VertexFormatX
 		numV = getModelVerticesFixed(destination_vb, *curVertexP, m_leftMtx, m_leftMesh, pLightsIterator);
 		if (!numV)
 		{	//not enough room for vertices
-			DEBUG_ASSERTCRASH( numV, ("W3DBridge::GetIndicesNVertices(). Vertex overflow.\n") );
+			DEBUG_ASSERTCRASH( numV, ("W3DBridge::GetIndicesNVertices(). Vertex overflow.") );
 			return;
 		}
 		numI = getModelIndices( destination_ib, *curIndexP, *curVertexP, m_leftMesh);
 		if (!numI)
 		{	//not enough room for indices
-			DEBUG_ASSERTCRASH( numI, ("W3DBridge::GetIndicesNVertices(). Index overflow.\n") );
+			DEBUG_ASSERTCRASH( numI, ("W3DBridge::GetIndicesNVertices(). Index overflow.") );
 			return;
 		}
 		*curIndexP += numI;
@@ -575,13 +570,13 @@ void W3DBridge::getIndicesNVertices(UnsignedShort *destination_ib, VertexFormatX
 		m_leftMtx, m_leftMesh, pLightsIterator);
 	if (!numV)
 	{	//not enough room for vertices
-		DEBUG_ASSERTCRASH( numV, ("W3DBridge::GetIndicesNVertices(). Vertex overflow.\n") );
+		DEBUG_ASSERTCRASH( numV, ("W3DBridge::GetIndicesNVertices(). Vertex overflow.") );
 		return;
 	}
 	numI = getModelIndices( destination_ib, *curIndexP, *curVertexP, m_leftMesh);
 	if (!numI)
 	{	//not enough room for indices
-		DEBUG_ASSERTCRASH( numI, ("W3DBridge::GetIndicesNVertices(). Index overflow.\n") );
+		DEBUG_ASSERTCRASH( numI, ("W3DBridge::GetIndicesNVertices(). Index overflow.") );
 		return;
 	}
 	*curIndexP += numI;
@@ -596,13 +591,13 @@ void W3DBridge::getIndicesNVertices(UnsignedShort *destination_ib, VertexFormatX
 			m_sectionMtx, m_sectionMesh, pLightsIterator);
 		if (!numV)
 		{	//not enough room for vertices
-			DEBUG_ASSERTCRASH( numV, ("W3DBridge::GetIndicesNVertices(). Vertex overflow.\n") );
+			DEBUG_ASSERTCRASH( numV, ("W3DBridge::GetIndicesNVertices(). Vertex overflow.") );
 			return;
 		}
 		numI = getModelIndices( destination_ib, *curIndexP, *curVertexP, m_sectionMesh);
 		if (!numI)
 		{	//not enough room for indices
-			DEBUG_ASSERTCRASH( numI, ("W3DBridge::GetIndicesNVertices(). Index overflow.\n") );
+			DEBUG_ASSERTCRASH( numI, ("W3DBridge::GetIndicesNVertices(). Index overflow.") );
 			return;
 		}
 		*curIndexP += numI;
@@ -616,13 +611,13 @@ void W3DBridge::getIndicesNVertices(UnsignedShort *destination_ib, VertexFormatX
 		m_rightMtx, m_rightMesh, pLightsIterator);
 	if (!numV)
 	{	//not enough room for vertices
-		DEBUG_ASSERTCRASH( numV, ("W3DBridge::GetIndicesNVertices(). Vertex overflow.\n") );
+		DEBUG_ASSERTCRASH( numV, ("W3DBridge::GetIndicesNVertices(). Vertex overflow.") );
 		return;
 	}
 	numI = getModelIndices( destination_ib, *curIndexP, *curVertexP, m_rightMesh);
 	if (!numI)
 	{	//not enough room for indices
-		DEBUG_ASSERTCRASH( numI, ("W3DBridge::GetIndicesNVertices(). Index overflow.\n") );
+		DEBUG_ASSERTCRASH( numI, ("W3DBridge::GetIndicesNVertices(). Index overflow.") );
 		return;
 	}
 	*curIndexP += numI;
@@ -768,6 +763,8 @@ void W3DBridgeBuffer::freeBridgeBuffers(void)
 //=============================================================================
 void W3DBridgeBuffer::allocateBridgeBuffers(void)
 {
+	if (TheGlobalData->m_headless)
+		return;
 	m_vertexBridge=NEW_REF(DX8VertexBufferClass,(DX8_FVF_XYZNDUV1,MAX_BRIDGE_VERTEX+4,DX8VertexBufferClass::USAGE_DYNAMIC));
 	m_indexBridge=NEW_REF(DX8IndexBufferClass,(MAX_BRIDGE_INDEX+4, DX8IndexBufferClass::USAGE_DYNAMIC));
 	m_vertexMaterial=VertexMaterialClass::Get_Preset(VertexMaterialClass::PRELIT_DIFFUSE);
@@ -808,6 +805,8 @@ void W3DBridgeBuffer::clearAllBridges(void)
 //=============================================================================
 void W3DBridgeBuffer::loadBridges(W3DTerrainLogic *pTerrainLogic, Bool saveGame)
 {
+	// TheSuperHackers @logic-client-separation helmutbuhler 26/4/2025
+	// W3DBridgeBuffer shouldn't add objects to W3DTerrainLogic
 	clearAllBridges();
 	MapObject *pMapObj;
 	MapObject *pMapObj2;
@@ -815,7 +814,7 @@ void W3DBridgeBuffer::loadBridges(W3DTerrainLogic *pTerrainLogic, Bool saveGame)
 		if (pMapObj->getFlag(FLAG_BRIDGE_POINT1)) {
 			pMapObj2 = pMapObj->getNext();
 			if ( !pMapObj2 || !pMapObj2->getFlag(FLAG_BRIDGE_POINT2)) {
-				DEBUG_LOG(("Missing second bridge point.  Ignoring first.\n"));
+				DEBUG_LOG(("Missing second bridge point.  Ignoring first."));
 			}
 			if (pMapObj2==NULL) break;
 			if (!pMapObj2->getFlag(FLAG_BRIDGE_POINT2)) continue;
@@ -852,7 +851,7 @@ static RenderObjClass* createTower( SimpleSceneClass *scene,
 		return NULL;
 
 	// get template for this bridge
-	DEBUG_ASSERTCRASH( TheTerrainRoads, ("createTower: TheTerrainRoads is NULL\n") );
+	DEBUG_ASSERTCRASH( TheTerrainRoads, ("createTower: TheTerrainRoads is NULL") );
 	TerrainRoadType *bridgeTemplate = TheTerrainRoads->findBridge( mapObject->getName() );
 	if( bridgeTemplate == NULL )
 		return NULL;
@@ -875,7 +874,7 @@ static RenderObjClass* createTower( SimpleSceneClass *scene,
 
 	// find the thing template for the tower we want to construct
 	AsciiString towerTemplateName = bridgeTemplate->getTowerObjectName( type );
-	DEBUG_ASSERTCRASH( TheThingFactory, ("createTower: TheThingFactory is NULL\n") );
+	DEBUG_ASSERTCRASH( TheThingFactory, ("createTower: TheThingFactory is NULL") );
 	const ThingTemplate *towerTemplate = TheThingFactory->findTemplate( towerTemplateName );
 	if( towerTemplate == NULL )
 		return NULL;
@@ -988,7 +987,7 @@ void W3DBridgeBuffer::worldBuilderUpdateBridgeTowers( W3DAssetManager *assetMana
 
 			pMapObj2 = pMapObj->getNext();
 			if( !pMapObj2 || !pMapObj2->getFlag( FLAG_BRIDGE_POINT2 ) ) 
-				DEBUG_LOG(("Missing second bridge point.  Ignoring first.\n"));
+				DEBUG_LOG(("Missing second bridge point.  Ignoring first."));
 
 			if( pMapObj2 == NULL ) 
 				break;
@@ -1037,7 +1036,7 @@ void W3DBridgeBuffer::worldBuilderUpdateBridgeTowers( W3DAssetManager *assetMana
 						}  // end if
 
 						// sanity
-						DEBUG_ASSERTCRASH( towerRenderObj != NULL, ("worldBuilderUpdateBridgeTowers: unable to create tower for bridge '%s'\n",
+						DEBUG_ASSERTCRASH( towerRenderObj != NULL, ("worldBuilderUpdateBridgeTowers: unable to create tower for bridge '%s'",
 															 m_bridges[ i ].getTemplateName().str()) );
 															  
 						// update the position of the towers
@@ -1127,7 +1126,7 @@ void W3DBridgeBuffer::drawBridges(CameraClass * camera, Bool wireframe, TextureC
 			m_bridges[info.bridgeIndex].setEnabled(true);
 			if (m_bridges[info.bridgeIndex].getDamageState() != info.curDamageState) {
 				changed = true;
-				enum BodyDamageType curState = m_bridges[info.bridgeIndex].getDamageState();
+				BodyDamageType curState = m_bridges[info.bridgeIndex].getDamageState();
 				m_bridges[info.bridgeIndex].setDamageState(info.curDamageState);
 				if (!m_bridges[info.bridgeIndex].load(info.curDamageState)) {
 					// put the old model back.

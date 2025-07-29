@@ -442,6 +442,7 @@ void SortingRendererClass::Insert_To_Sorting_Pool(SortingNodeStruct* state)
 {
 	if (overlapping_node_count>=MAX_OVERLAPPING_NODES) {
 		Release_Refs(state);
+		delete state;
 		WWASSERT(0);
 		return;
 	}
@@ -517,7 +518,7 @@ void SortingRendererClass::Flush_Sorting_Pool()
 {
 	if (!overlapping_node_count) return;
 
-	SNAPSHOT_SAY(("SortingSystem - Flush \n"));
+	SNAPSHOT_SAY(("SortingSystem - Flush"));
 
 	unsigned node_id;
 	// Fill dynamic index buffer with sorting index buffer vertices
@@ -687,7 +688,7 @@ void SortingRendererClass::Flush_Sorting_Pool()
 	overlapping_polygon_count=0;
 	overlapping_vertex_count=0;
 
-	SNAPSHOT_SAY(("SortingSystem - Done flushing\n"));
+	SNAPSHOT_SAY(("SortingSystem - Done flushing"));
 
 }
 

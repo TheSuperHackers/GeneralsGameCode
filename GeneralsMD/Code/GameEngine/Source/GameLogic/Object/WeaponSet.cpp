@@ -204,7 +204,7 @@ WeaponSet::~WeaponSet()
 {
 	for (Int i = 0; i < WEAPONSLOT_COUNT; ++i)
 		if (m_weapons[i])
-			m_weapons[i]->deleteInstance();
+			deleteInstance(m_weapons[i]);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -351,14 +351,14 @@ void WeaponSet::updateWeaponSet(const Object* obj)
 
 				if (prevWeapon != NULL)
 				{
-					prevWeapon->deleteInstance();
+					deleteInstance(prevWeapon);
 					prevWeapon = NULL;
 				}
 			}
 			else { // Regular old behaviour
 				if (m_weapons[i] != NULL)
 				{
-					m_weapons[i]->deleteInstance();
+					deleteInstance(m_weapons[i]);
 					m_weapons[i] = NULL;
 				}
 

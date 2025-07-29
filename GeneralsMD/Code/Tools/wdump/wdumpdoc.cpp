@@ -21,7 +21,7 @@
 
 #include "stdafx.h"
 #include "wdump.h"
-#include "wdumpDoc.h"
+#include "wdumpdoc.h"
 
 
 #ifdef RTS_DEBUG

@@ -55,11 +55,6 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 
 //-------------------------------------------------------------------------------------------------
@@ -358,7 +353,7 @@ UpdateSleepTime HelicopterSlowDeathBehavior::update( void )
 
 		// get the physics update module
 		PhysicsBehavior *physics = copter->getPhysics();
-		DEBUG_ASSERTCRASH( physics, ("HelicopterSlowDeathBehavior: object '%s' does not have a physics module\n", 
+		DEBUG_ASSERTCRASH( physics, ("HelicopterSlowDeathBehavior: object '%s' does not have a physics module", 
 																 copter->getTemplate()->getName().str()) );
 
 		//

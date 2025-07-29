@@ -61,11 +61,6 @@
 #include "GameLogic/Scripts.h"
 #include "GameLogic/VictoryConditions.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 class ObjectTypesTemp
 {
@@ -80,7 +75,7 @@ public:
 	~ObjectTypesTemp()
 	{
 		if (m_types)
-			m_types->deleteInstance();
+			deleteInstance(m_types);
 	}
 };
 
@@ -120,7 +115,7 @@ public:
 TransportStatus::~TransportStatus() 
 { 
 	if (m_nextStatus) 
-		m_nextStatus->deleteInstance(); 
+		deleteInstance(m_nextStatus); 
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -156,7 +151,7 @@ void ScriptConditions::init( void )
 void ScriptConditions::reset( void )
 {
 
-	s_transportStatuses->deleteInstance();
+	deleteInstance(s_transportStatuses);
 	s_transportStatuses = NULL;
 	// Empty for now.  jba.
 }  // end reset
@@ -1074,6 +1069,10 @@ Bool ScriptConditions::evaluateEnemySighted(Parameter *pItemParm, Parameter *pAl
 			break;
 		case Parameter::REL_ENEMY:
 			relationDescriber = PartitionFilterRelationship::ALLOW_ENEMIES;
+			break;
+		default:
+			DEBUG_CRASH(("Unhandled case in ScriptConditions::evaluateEnemySighted()"));
+			relationDescriber = 0;
 			break;
 	}
 	PartitionFilterRelationship	filterTeam(theObj, relationDescriber);
@@ -2872,7 +2871,7 @@ Bool ScriptConditions::evaluateCondition( Condition *pCondition )
 			return evaluateNamedHasFreeContainerSlots(pCondition->getParameter(0));
 		case Condition::DEFUNCT_PLAYER_SELECTED_GENERAL:
 		case Condition::DEFUNCT_PLAYER_SELECTED_GENERAL_FROM_NAMED:
-			DEBUG_CRASH(("PLAYER_SELECTED_GENERAL script conditions are no longer in use\n")); 
+			DEBUG_CRASH(("PLAYER_SELECTED_GENERAL script conditions are no longer in use")); 
 			return false;
 		case Condition::PLAYER_BUILT_UPGRADE:
 			return evaluateUpgradeFromUnitComplete(pCondition->getParameter(0), pCondition->getParameter(1), NULL);

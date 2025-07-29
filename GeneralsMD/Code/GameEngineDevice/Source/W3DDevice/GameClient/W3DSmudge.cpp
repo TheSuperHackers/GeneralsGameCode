@@ -41,11 +41,6 @@
 #include "WW3D2/camera.h"
 #include "WW3D2/sortingrenderer.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 SmudgeManager *TheSmudgeManager=NULL;
 
@@ -191,6 +186,8 @@ Int copyRect(unsigned char *buf, Int bufSize, int oX, int oY, int width, int hei
 		
 	memcpy(buf,lrect.pBits,bufSize);
 	result = bufSize;
+
+	tempSurface->UnlockRect();
 
 error:
 	if (surface)

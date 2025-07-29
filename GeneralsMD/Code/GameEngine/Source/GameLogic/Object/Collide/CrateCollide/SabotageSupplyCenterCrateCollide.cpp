@@ -61,11 +61,6 @@
 #include "GameLogic/Module/SabotageSupplyCenterCrateCollide.h"
 
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -149,7 +144,7 @@ Bool SabotageSupplyCenterCrateCollide::executeCrateBehavior( Object *other )
 				controller->getScoreKeeper()->addMoneyEarned( cash );
 
 			//Play the "cash stolen" EVA event if the local player is the victim!
-			if( other && other->isLocallyControlled() )
+			if( other->isLocallyControlled() )
 			{
 				TheEva->setShouldPlay( EVA_CashStolen );
 			}

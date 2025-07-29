@@ -55,11 +55,6 @@
 
 const Real CLOSE_ENOUGH = (25.0f);
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 static Bool hasAttackedMeAndICanReturnFire( State *thisState, void* /*userData*/ )
 {
@@ -324,13 +319,19 @@ void AITNGuardInnerState::loadPostProcess( void )
 	onEnter();
 }  // end loadPostProcess
 
+// ------------------------------------------------------------------------------------------------
+AITNGuardInnerState::~AITNGuardInnerState(void)
+{
+	deleteInstance(m_attackState);
+}
+
 //--------------------------------------------------------------------------------------
 StateReturnType AITNGuardInnerState::onEnter( void )
 {
 	Object* nemesis = TheGameLogic->findObjectByID(getGuardMachine()->getNemesisID()) ;
 	if (nemesis == NULL) 
 	{
-		DEBUG_LOG(("Unexpected NULL nemesis in AITNGuardInnerState.\n"));
+		DEBUG_LOG(("Unexpected NULL nemesis in AITNGuardInnerState."));
 		return STATE_SUCCESS;
 	}
 	m_exitConditions.m_attackGiveUpFrame = TheGameLogic->getFrame() + TheAI->getAiData()->m_guardChaseUnitFrames;
@@ -429,7 +430,7 @@ void AITNGuardInnerState::onExit( StateExitType status )
 	if (m_attackState) 
 	{
 		m_attackState->onExit(status);
-		m_attackState->deleteInstance();
+		deleteInstance(m_attackState);
 		m_attackState = NULL;
 	}
 }
@@ -462,6 +463,12 @@ void AITNGuardOuterState::loadPostProcess( void )
 	onEnter();
 }  // end loadPostProcess
 
+// ------------------------------------------------------------------------------------------------
+AITNGuardOuterState::~AITNGuardOuterState(void)
+{
+	deleteInstance(m_attackState);
+}
+
 //--------------------------------------------------------------------------------------
 StateReturnType AITNGuardOuterState::onEnter( void )
 {
@@ -474,7 +481,7 @@ StateReturnType AITNGuardOuterState::onEnter( void )
 	Object* nemesis = TheGameLogic->findObjectByID(getGuardMachine()->getNemesisID()) ;
 	if (nemesis == NULL) 
 	{
-		DEBUG_LOG(("Unexpected NULL nemesis in AITNGuardOuterState.\n"));
+		DEBUG_LOG(("Unexpected NULL nemesis in AITNGuardOuterState."));
 		return STATE_SUCCESS;
 	}
 
@@ -526,7 +533,7 @@ void AITNGuardOuterState::onExit( StateExitType status )
 	if (m_attackState) 
 	{
 		m_attackState->onExit(status);
-		m_attackState->deleteInstance();
+		deleteInstance(m_attackState);
 		m_attackState = NULL;
 	}
 }
@@ -669,7 +676,7 @@ StateReturnType AITNGuardIdleState::onEnter( void )
 //--------------------------------------------------------------------------------------
 StateReturnType AITNGuardIdleState::update( void )
 {
-	//DEBUG_LOG(("AITNGuardIdleState frame %d: %08lx\n",TheGameLogic->getFrame(),getMachineOwner()));
+	//DEBUG_LOG(("AITNGuardIdleState frame %d: %08lx",TheGameLogic->getFrame(),getMachineOwner()));
 
 	UnsignedInt now = TheGameLogic->getFrame();
 	if (now < m_nextEnemyScanTime)
@@ -697,7 +704,7 @@ StateReturnType AITNGuardIdleState::update( void )
 		Object *nemesis = TheGameLogic->findObjectByID(getGuardMachine()->getNemesisID());
 		if (nemesis == NULL) 
 		{
-			DEBUG_LOG(("Unexpected NULL nemesis in AITNGuardAttackAggressorState.\n"));
+			DEBUG_LOG(("Unexpected NULL nemesis in AITNGuardAttackAggressorState."));
 			return STATE_SLEEP(0);
 		}
 		if (getMachineOwner()->getContainedBy()) {
@@ -771,6 +778,12 @@ AITNGuardAttackAggressorState::AITNGuardAttackAggressorState( StateMachine *mach
 	m_attackState = NULL;
 }
 
+// ------------------------------------------------------------------------------------------------
+AITNGuardAttackAggressorState::~AITNGuardAttackAggressorState(void)
+{
+	deleteInstance(m_attackState);
+}
+
 //-------------------------------------------------------------------------------------------------
 StateReturnType AITNGuardAttackAggressorState::onEnter( void )
 {
@@ -786,7 +799,7 @@ StateReturnType AITNGuardAttackAggressorState::onEnter( void )
 	Object *nemesis = TheGameLogic->findObjectByID(getGuardMachine()->getNemesisID());
 	if (nemesis == NULL) 
 	{
-		DEBUG_LOG(("Unexpected NULL nemesis in AITNGuardAttackAggressorState.\n"));
+		DEBUG_LOG(("Unexpected NULL nemesis in AITNGuardAttackAggressorState."));
 		return STATE_SUCCESS;
 	}
 
@@ -832,7 +845,7 @@ void AITNGuardAttackAggressorState::onExit( StateExitType status )
 	if (m_attackState) 
 	{
 		m_attackState->onExit(status);
-		m_attackState->deleteInstance();
+		deleteInstance(m_attackState);
 		m_attackState = NULL;
 	}
 

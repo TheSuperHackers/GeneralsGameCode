@@ -108,7 +108,7 @@ void StatsCollector::reset( void )
 {
 
 	// make sure we have a stats Dir.
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	if (TheGlobalData->m_saveStats)
 	{
 		AsciiString playtestDir = TheGlobalData->m_baseStatsDir;
@@ -254,7 +254,7 @@ void StatsCollector::writeFileEnd( void )
 	fprintf(f, "===================================================\n");
 	fprintf(f, "* Times are in Game Seconds which are based off of frames. Current fps is set to %d\n", LOGICFRAMES_PER_SECOND);
 	
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	if (TheGlobalData->m_benchmarkTimer > 0)
 	{
 		fprintf(f, "\n*** BENCHMARK MODE STATS ***\n");
@@ -317,12 +317,9 @@ void StatsCollector::createFileName( void )
 	const char *fname = name.reverseFind('\\');
 	if (fname)
 		name = fname+1;
-	name.removeLastChar(); // p
-	name.removeLastChar(); // a
-	name.removeLastChar(); // m
-	name.removeLastChar(); // .
+	name.truncateBy(4); // ".map"
 	m_statsFileName.clear();
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	if (TheGlobalData->m_saveStats)
 	{
 		m_statsFileName.set(TheGlobalData->m_baseStatsDir);

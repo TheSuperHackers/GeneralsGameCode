@@ -133,6 +133,31 @@ void DisplayString::removeLastChar( void )
 
 }  // end removeLastChar
 
+// DisplayString::truncateBy ==================================================
+/** Remove the last charCount characters from the string text */
+//=============================================================================
+void DisplayString::truncateBy( const Int charCount )
+{
+	m_textString.truncateBy(charCount);
+
+	// our text has now changed
+	notifyTextChanged();
+
+}  // end truncateBy
+
+// DisplayString::truncateTo ==================================================
+/** Remove the last characters from the string text so it's at the most
+	* maxLength characters long */
+//=============================================================================
+void DisplayString::truncateTo( const Int maxLength )
+{
+	m_textString.truncateTo(maxLength);
+
+	// our text has now changed
+	notifyTextChanged();
+
+}  // end truncateTo
+
 // DisplayString::appendChar ==================================================
 /** Append character to the end of the string */
 //=============================================================================

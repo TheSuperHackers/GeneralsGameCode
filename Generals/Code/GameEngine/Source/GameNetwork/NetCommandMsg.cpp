@@ -66,12 +66,12 @@ void NetCommandMsg::attach() {
 void NetCommandMsg::detach() {
 	--m_referenceCount;
 	if (m_referenceCount == 0) {
-		deleteInstance();
+		deleteInstance(this);
 		return;
 	}
 	DEBUG_ASSERTCRASH(m_referenceCount > 0, ("Invalid reference count for NetCommandMsg")); // Just to make sure...
 	if (m_referenceCount < 0) {
-		deleteInstance();
+		deleteInstance(this);
 	}
 }
 
@@ -123,7 +123,7 @@ NetGameCommandMsg::~NetGameCommandMsg() {
 	GameMessageArgument *arg = m_argList;
 	while (arg != NULL) {
 		m_argList = m_argList->m_next;
-		arg->deleteInstance();
+		deleteInstance(arg);
 		arg = m_argList;
 	}
 }
@@ -214,15 +214,6 @@ GameMessage *NetGameCommandMsg::constructGameMessage()
  */
 void NetGameCommandMsg::setGameMessageType(GameMessage::Type type) {
 	m_type = type;
-}
-
-AsciiString NetGameCommandMsg::getContentsAsAsciiString(void)
-{
-	AsciiString ret;
-	//AsciiString tmp;
-	ret.format("Type:%s", GameMessage::getCommandTypeAsAsciiString((GameMessage::Type)m_type).str());
-
-	return ret;
 }
 
 //-------------------------

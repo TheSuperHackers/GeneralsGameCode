@@ -73,11 +73,6 @@
 
 #include "Common/UnitTimings.h" //Contains the DO_UNIT_TIMINGS define jba.	
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -310,7 +305,7 @@ void ModuleInfo::addModuleInfo(ThingTemplate *thingTemplate,
 	// there must be a module tag present, and it must be unique across all module infos
 	// for this thing template
 	//
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	// get module info
 	const Nugget *nugget;
 	
@@ -320,7 +315,7 @@ void ModuleInfo::addModuleInfo(ThingTemplate *thingTemplate,
 
 		// compare this nugget tag against the tag for the new data we're going to submit
 		DEBUG_ASSERTCRASH( nugget->m_moduleTag != moduleTag,
-											 ("addModuleInfo - ERROR defining module '%s' on thing template '%s'.  The module '%s' has the tag '%s' which must be unique among all modules for this object, but the tag '%s' is also already on module '%s' within this object.\n\nPlease make unique tag names within an object definition\n",
+											 ("addModuleInfo - ERROR defining module '%s' on thing template '%s'.  The module '%s' has the tag '%s' which must be unique among all modules for this object, but the tag '%s' is also already on module '%s' within this object.\n\nPlease make unique tag names within an object definition",
 												name.str(),
 												thingTemplate->getName().str(),
 												name.str(),
@@ -338,7 +333,7 @@ void ModuleInfo::addModuleInfo(ThingTemplate *thingTemplate,
 
 		// compare this nugget tag against the tag for the new data we're going to submit
 		DEBUG_ASSERTCRASH( nugget->m_moduleTag != moduleTag,
-											 ("addModuleInfo - ERROR defining module '%s' on thing template '%s'.  The module '%s' has the tag '%s' which must be unique among all modules for this object, but the tag '%s' is also already on module '%s' within this object.\n\nPlease make unique tag names within an object definition\n",
+											 ("addModuleInfo - ERROR defining module '%s' on thing template '%s'.  The module '%s' has the tag '%s' which must be unique among all modules for this object, but the tag '%s' is also already on module '%s' within this object.\n\nPlease make unique tag names within an object definition",
 												name.str(),
 												thingTemplate->getName().str(),
 												name.str(),
@@ -356,7 +351,7 @@ void ModuleInfo::addModuleInfo(ThingTemplate *thingTemplate,
 
 		// compare this nugget tag against the tag for the new data we're going to submit
 		DEBUG_ASSERTCRASH( nugget->m_moduleTag != moduleTag,
-											 ("addModuleInfo - ERROR defining module '%s' on thing template '%s'.  The module '%s' has the tag '%s' which must be unique among all modules for this object, but the tag '%s' is also already on module '%s' within this object.\n\nPlease make unique tag names within an object definition\n",
+											 ("addModuleInfo - ERROR defining module '%s' on thing template '%s'.  The module '%s' has the tag '%s' which must be unique among all modules for this object, but the tag '%s' is also already on module '%s' within this object.\n\nPlease make unique tag names within an object definition",
 												name.str(),
 												thingTemplate->getName().str(),
 												name.str(),
@@ -525,7 +520,7 @@ void ThingTemplate::parseModuleName(INI* ini, void *instance, void* store, const
 	catch( ... )
 	{
 
-		DEBUG_CRASH(( "[LINE: %d - FILE: '%s'] Module tag not found for module '%s' on thing template '%s'.  Module tags are required and must be unique for all modules within an object definition\n",
+		DEBUG_CRASH(( "[LINE: %d - FILE: '%s'] Module tag not found for module '%s' on thing template '%s'.  Module tags are required and must be unique for all modules within an object definition",
 									ini->getLineNum(), ini->getFilename().str(), 
 									tokenStr.str(), self->getName().str() ));
 		throw;
@@ -565,7 +560,7 @@ void ThingTemplate::parseModuleName(INI* ini, void *instance, void* store, const
 		}
 		else
 		{
-			DEBUG_CRASH(("[LINE: %d - FILE: '%s'] You must use AddModule to add modules in override INI files.\n",
+			DEBUG_CRASH(("[LINE: %d - FILE: '%s'] You must use AddModule to add modules in override INI files.",
 				ini->getLineNum(), ini->getFilename().str(), self->getName().str()));
 			throw INI_INVALID_DATA;
 		}
@@ -585,7 +580,7 @@ void ThingTemplate::parseModuleName(INI* ini, void *instance, void* store, const
 			&& self->m_moduleBeingReplacedName.isNotEmpty()
 			&& self->m_moduleBeingReplacedName != tokenStr)
 	{
-		DEBUG_CRASH(("[LINE: %d - FILE: '%s'] ReplaceModule must replace modules with another module of the same type, but you are attempting to replace a %s with a %s for Object %s.\n",
+		DEBUG_CRASH(("[LINE: %d - FILE: '%s'] ReplaceModule must replace modules with another module of the same type, but you are attempting to replace a %s with a %s for Object %s.",
 			ini->getLineNum(), ini->getFilename().str(), self->m_moduleBeingReplacedName.str(), tokenStr.str(), self->getName().str()));
 		throw INI_INVALID_DATA;
 	}
@@ -594,7 +589,7 @@ void ThingTemplate::parseModuleName(INI* ini, void *instance, void* store, const
 			&& self->m_moduleBeingReplacedTag.isNotEmpty()
 			&& self->m_moduleBeingReplacedTag == moduleTagStr)
 	{
-		DEBUG_CRASH(("[LINE: %d - FILE: '%s'] ReplaceModule must specify a new, unique tag for the replaced module, but you are not doing so for %s (%s) for Object %s.\n",
+		DEBUG_CRASH(("[LINE: %d - FILE: '%s'] ReplaceModule must specify a new, unique tag for the replaced module, but you are not doing so for %s (%s) for Object %s.",
 			ini->getLineNum(), ini->getFilename().str(), moduleTagStr.str(), self->m_moduleBeingReplacedName.str(), self->getName().str()));
 		throw INI_INVALID_DATA;
 	}
@@ -607,7 +602,7 @@ void ThingTemplate::parseModuleName(INI* ini, void *instance, void* store, const
 		if (replaced)
 		{
 			//Kris: Commented this out for SPAM reasons. Do we really need this?
-			//DEBUG_LOG(("replaced an AI for %s!\n",self->getName().str()));
+			//DEBUG_LOG(("replaced an AI for %s!",self->getName().str()));
 		}
 	}
 
@@ -683,7 +678,7 @@ static void parseArbitraryFXIntoMap( INI* ini, void *instance, void* /* store */
 	const char* name = (const char*)userData;
 	const char* token = ini->getNextToken();
 	const FXList* fxl = TheFXListStore->findFXList(token);	// could be null!
-	DEBUG_ASSERTCRASH(fxl != NULL || stricmp(token, "None") == 0, ("FXList %s not found!\n",token));
+	DEBUG_ASSERTCRASH(fxl != NULL || stricmp(token, "None") == 0, ("FXList %s not found!",token));
 	mapFX->insert(std::make_pair(AsciiString(name), fxl));	
 }
 
@@ -771,7 +766,7 @@ void ThingTemplate::parseRemoveModule(INI *ini, void *instance, void *store, con
 	Bool removed = self->removeModuleInfo(modToRemove, removedModuleName);
 	if (!removed)
 	{
-		DEBUG_ASSERTCRASH(removed, ("RemoveModule %s was not found for %s. The game will crash now!\n",modToRemove, self->getName().str()));
+		DEBUG_ASSERTCRASH(removed, ("RemoveModule %s was not found for %s. The game will crash now!",modToRemove, self->getName().str()));
 		throw INI_INVALID_DATA;
 	}
 
@@ -796,7 +791,7 @@ void ThingTemplate::parseReplaceModule(INI *ini, void *instance, void *store, co
 	Bool removed = self->removeModuleInfo(modToRemove, removedModuleName);
 	if (!removed)
 	{
-		DEBUG_CRASH(("[LINE: %d - FILE: '%s'] ReplaceModule %s was not found for %s; cannot continue.\n",
+		DEBUG_CRASH(("[LINE: %d - FILE: '%s'] ReplaceModule %s was not found for %s; cannot continue.",
 															ini->getLineNum(), ini->getFilename().str(), modToRemove, self->getName().str()));
 		throw INI_INVALID_DATA;
 	}
@@ -909,14 +904,14 @@ void ThingTemplate::parseArmorTemplateSet( INI* ini, void *instance, void * /*st
 
 	ArmorTemplateSet ws;
 	ws.parseArmorTemplateSet(ini);
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	if (ini->getLoadType() != INI_LOAD_CREATE_OVERRIDES)
 	{
 		for (ArmorTemplateSetVector::const_iterator it = self->m_armorTemplateSets.begin(); it != self->m_armorTemplateSets.end(); ++it)
 		{
 			if (it->getNthConditionsYes(0) == ws.getNthConditionsYes(0))
 			{
-				DEBUG_CRASH(("dup armorset condition in %s\n",self->getName().str()));
+				DEBUG_CRASH(("dup armorset condition in %s",self->getName().str()));
 			}
 		}
 	}
@@ -937,14 +932,14 @@ void ThingTemplate::parseWeaponTemplateSet( INI* ini, void *instance, void * /*s
 
 	WeaponTemplateSet ws;
 	ws.parseWeaponTemplateSet(ini, self);
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	if (ini->getLoadType() != INI_LOAD_CREATE_OVERRIDES)
 	{
 		for (WeaponTemplateSetVector::const_iterator it = self->m_weaponTemplateSets.begin(); it != self->m_weaponTemplateSets.end(); ++it)
 		{
 			if (it->getNthConditionsYes(0) == ws.getNthConditionsYes(0))
 			{
-				DEBUG_CRASH(("dup weaponset condition in %s\n",self->getName().str()));
+				DEBUG_CRASH(("dup weaponset condition in %s",self->getName().str()));
 			}
 		}
 	}
@@ -1070,11 +1065,11 @@ AIUpdateModuleData *ThingTemplate::friend_getAIModuleInfo(void)
 //-------------------------------------------------------------------------------------------------
 void ThingTemplate::validateAudio()
 {
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 
 	#define AUDIO_TEST(y) \
 		if (!get##y()->getEventName().isEmpty() && get##y()->getEventName().compareNoCase("NoSound") != 0) { \
-			DEBUG_ASSERTLOG(TheAudio->isValidAudioEvent(get##y()), ("Invalid Sound '%s' in Object '%s'. (%s?)\n", #y, getName().str(), get##y()->getEventName().str())); \
+			DEBUG_ASSERTLOG(TheAudio->isValidAudioEvent(get##y()), ("Invalid Sound '%s' in Object '%s'. (%s?)", #y, getName().str(), get##y()->getEventName().str())); \
 		}
 
 	AUDIO_TEST(VoiceSelect)
@@ -1160,7 +1155,7 @@ void ThingTemplate::validate()
 
 	validateAudio();
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	
 	if (getName() == "DefaultThingTemplate")
 		return;
@@ -1190,25 +1185,25 @@ void ThingTemplate::validate()
 
 	if (isKindOf(KINDOF_STRUCTURE) && !isImmobile)
 	{
-		DEBUG_CRASH(("Structure %s is not marked immobile, but probably should be -- please fix it. (If we ever add mobile structures, this debug sniffer will need to be revised.)\n",getName().str()));
+		DEBUG_CRASH(("Structure %s is not marked immobile, but probably should be -- please fix it. (If we ever add mobile structures, this debug sniffer will need to be revised.)",getName().str()));
 	}
 
 	if (isKindOf(KINDOF_STICK_TO_TERRAIN_SLOPE) && !isImmobile)
 	{
-		DEBUG_CRASH(("item %s is marked STICK_TO_TERRAIN_SLOPE but not IMMOBILE -- please fix it.\n",getName().str()));
+		DEBUG_CRASH(("item %s is marked STICK_TO_TERRAIN_SLOPE but not IMMOBILE -- please fix it.",getName().str()));
 	}
 
 	if (isKindOf(KINDOF_STRUCTURE))
 	{
 		if (m_armorTemplateSets.empty() || (m_armorTemplateSets.size() == 1 && m_armorTemplateSets[0].getArmorTemplate() == NULL))
 		{
-			DEBUG_CRASH(("Structure %s has no armor, but probably should (StructureArmor) -- please fix it.)\n",getName().str()));
+			DEBUG_CRASH(("Structure %s has no armor, but probably should (StructureArmor) -- please fix it.)",getName().str()));
 		}
 		for (ArmorTemplateSetVector::const_iterator it = m_armorTemplateSets.begin(); it != m_armorTemplateSets.end(); ++it)
 		{
 			if (it->getDamageFX() == NULL)
 			{
-				DEBUG_CRASH(("Structure %s has no ArmorDamageFX, and really should.\n",getName().str()));
+				DEBUG_CRASH(("Structure %s has no ArmorDamageFX, and really should.",getName().str()));
 			}
 		}
 	}
@@ -1300,7 +1295,7 @@ void ThingTemplate::resolveNames()
 			// but ThingTemplate can muck with stuff with gleeful abandon. (srj)
 			if( tmpls[ j ] )
 				const_cast<ThingTemplate*>(tmpls[j])->m_isBuildFacility = true;
-			// DEBUG_LOG(("BF: %s is a buildfacility for %s\n",tmpls[j]->m_nameString.str(),this->m_nameString.str()));
+			// DEBUG_LOG(("BF: %s is a buildfacility for %s",tmpls[j]->m_nameString.str(),this->m_nameString.str()));
 		}
 	}
 	
@@ -1448,7 +1443,7 @@ const FXList *ThingTemplate::getPerUnitFX(const AsciiString& fxName) const
 	PerUnitFXMap::const_iterator it = m_perUnitFX.find(fxName);
 	if (it == m_perUnitFX.end()) 
 	{
-		DEBUG_CRASH(("Unknown FX name (%s) asked for in ThingTemplate (%s). ", fxName.str(), m_nameString.str()));
+		DEBUG_CRASH(("Unknown FX name (%s) asked for in ThingTemplate (%s)", fxName.str(), m_nameString.str()));
 		return NULL;
 	}
 
@@ -1467,7 +1462,7 @@ const AudioEventRTS *ThingTemplate::getPerUnitSound(const AsciiString& soundName
 	if (it == m_perUnitSounds.end()) 
 	{
 #ifndef DO_UNIT_TIMINGS
-    DEBUG_LOG(("Unknown Audio name (%s) asked for in ThingTemplate (%s).\n", soundName.str(), m_nameString.str()));
+    DEBUG_LOG(("Unknown Audio name (%s) asked for in ThingTemplate (%s).", soundName.str(), m_nameString.str()));
 #endif
     return &s_audioEventNoSound;
 	}
@@ -1493,7 +1488,7 @@ UnsignedInt ThingTemplate::getMaxSimultaneousOfType() const
 Bool ThingTemplate::isEquivalentTo(const ThingTemplate* tt) const
 {
 	// sanity
-	if (!(this && tt)) 
+	if (!tt)
 		return false;
 
 	// sanity
@@ -1569,7 +1564,7 @@ Int ThingTemplate::calcTimeToBuild( const Player* player) const
 	factionModifier *= player->getProductionTimeChangeBasedOnKindOf(m_kindof);
 	buildTime *= factionModifier;
 
-#if defined (RTS_DEBUG) || defined (RTS_INTERNAL) || defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
+#if defined(RTS_DEBUG) || defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
 	if( player->buildsInstantly() )
 	{
 		buildTime = 1;

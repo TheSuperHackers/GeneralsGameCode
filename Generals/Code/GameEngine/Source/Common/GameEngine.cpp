@@ -110,11 +110,6 @@
 
 #include "Common/version.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 //-------------------------------------------------------------------------------------------------
 
@@ -143,7 +138,7 @@ void DeepCRCSanityCheck::reset(void)
 	fname.format("%sCRCAfter%dMaps.dat", TheGlobalData->getPath_UserData().str(), timesThrough);
 	UnsignedInt thisCRC = TheGameLogic->getCRC( CRC_RECALC, fname );
 
-	DEBUG_LOG(("DeepCRCSanityCheck: CRC is %X\n", thisCRC));
+	DEBUG_LOG(("DeepCRCSanityCheck: CRC is %X", thisCRC));
 	DEBUG_ASSERTCRASH(timesThrough == 0 || thisCRC == lastCRC,
 		("CRC after reset did not match beginning CRC!\nNetwork games won't work after this.\nOld: 0x%8.8X, New: 0x%8.8X",
 		lastCRC, thisCRC));
@@ -209,6 +204,10 @@ GameEngine::~GameEngine()
 
 	TheGameResultsQueue->endThreads();
 
+	// TheSuperHackers @fix helmutbuhler 03/06/2025
+	// Reset all subsystems before deletion to prevent crashing due to cross dependencies.
+	reset();
+
 	TheSubsystemList->shutdownAll();
 	delete TheSubsystemList;
 	TheSubsystemList = NULL;
@@ -239,15 +238,14 @@ GameEngine::~GameEngine()
 
 void GameEngine::setFramesPerSecondLimit( Int fps )
 {
-	DEBUG_LOG(("GameEngine::setFramesPerSecondLimit() - setting max fps to %d (TheGlobalData->m_useFpsLimit == %d)\n", fps, TheGlobalData->m_useFpsLimit));
+	DEBUG_LOG(("GameEngine::setFramesPerSecondLimit() - setting max fps to %d (TheGlobalData->m_useFpsLimit == %d)", fps, TheGlobalData->m_useFpsLimit));
 	m_maxFPS = fps;
 }
 
 /** -----------------------------------------------------------------------------------------------
  * Initialize the game engine by initializing the GameLogic and GameClient.
  */
-void GameEngine::init( void ) {} /// @todo: I changed this to take argc & argv so we can parse those after the GDF is loaded.  We need to rethink this immediately as it is a nasty hack
-void GameEngine::init( int argc, char *argv[] )
+void GameEngine::init()
 {
 	try {
 		//create an INI object to use for loading stuff
@@ -255,21 +253,16 @@ void GameEngine::init( int argc, char *argv[] )
 
 		if (TheVersion)
 		{
-			DEBUG_LOG(("================================================================================\n"));
-#ifdef DEBUG_LOGGING
-	#if defined RTS_DEBUG
-			const char *buildType = "Debug";
-	#elif defined RTS_INTERNAL
-			const char *buildType = "Internal";
-	#else
-			const char *buildType = "Release";
-	#endif
-#endif // DEBUG_LOGGING
-			DEBUG_LOG(("Generals version %s (%s)\n", TheVersion->getAsciiVersion().str(), buildType));
-			DEBUG_LOG(("Build date: %s\n", TheVersion->getAsciiBuildTime().str()));
-			DEBUG_LOG(("Build location: %s\n", TheVersion->getAsciiBuildLocation().str()));
-			DEBUG_LOG(("Built by: %s\n", TheVersion->getAsciiBuildUser().str()));
-			DEBUG_LOG(("================================================================================\n"));
+			DEBUG_LOG(("================================================================================"));
+			DEBUG_LOG(("Generals version %s", TheVersion->getAsciiVersion().str()));
+			DEBUG_LOG(("Build date: %s", TheVersion->getAsciiBuildTime().str()));
+			DEBUG_LOG(("Build location: %s", TheVersion->getAsciiBuildLocation().str()));
+			DEBUG_LOG(("Build user: %s", TheVersion->getAsciiBuildUser().str()));
+			DEBUG_LOG(("Build git revision: %s", TheVersion->getAsciiGitCommitCount().str()));
+			DEBUG_LOG(("Build git version: %s", TheVersion->getAsciiGitTagOrHash().str()));
+			DEBUG_LOG(("Build git commit time: %s", TheVersion->getAsciiGitCommitTime().str()));
+			DEBUG_LOG(("Build git commit author: %s", Version::getGitCommitAuthorName()));
+			DEBUG_LOG(("================================================================================"));
 		}
 		
 		m_maxFPS = DEFAULT_MAX_FPS;
@@ -297,15 +290,26 @@ void GameEngine::init( int argc, char *argv[] )
 
 		initSubsystem(TheLocalFileSystem, "TheLocalFileSystem", createLocalFileSystem(), NULL);
 		initSubsystem(TheArchiveFileSystem, "TheArchiveFileSystem", createArchiveFileSystem(), NULL); // this MUST come after TheLocalFileSystem creation
-		initSubsystem(TheWritableGlobalData, "TheWritableGlobalData", MSGNEW("GameEngineSubsystem") GlobalData(), &xferCRC, "Data\\INI\\Default\\GameData.ini", "Data\\INI\\GameData.ini");
+		
+		DEBUG_ASSERTCRASH(TheWritableGlobalData,("TheWritableGlobalData expected to be created"));
+		initSubsystem(TheWritableGlobalData, "TheWritableGlobalData", TheWritableGlobalData, &xferCRC, "Data\\INI\\Default\\GameData.ini", "Data\\INI\\GameData.ini");
+		
+		// TheSuperHackers @bugfix helmutbuhler 14/04/2025
+		// Pump messages during startup to ensure that the application window is correctly
+		// positioned on slower computers and in debug builds by a later call to SetWindowPos.
+		// It is unclear what the issue with SetWindowPos is when it fails to reposition the window.
+		serviceWindowsOS();
 
-	#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
-		// If we're in Debug or Internal, load the Debug info as well.
+
+	#if defined(RTS_DEBUG)
+		// If we're in Debug, load the Debug settings as well.
 		ini.load( AsciiString( "Data\\INI\\GameDataDebug.ini" ), INI_LOAD_OVERWRITE, NULL );
 	#endif
 		
 		// special-case: parse command-line parameters after loading global data
-		parseCommandLine(argc, argv);
+		CommandLine::parseCommandLineForEngineInit();
+
+		TheArchiveFileSystem->loadMods();
 
 		// doesn't require resets so just create a single instance here.
 		TheGameLODManager = MSGNEW("GameEngineSubsystem") GameLODManager;
@@ -318,7 +322,7 @@ void GameEngine::init( int argc, char *argv[] )
 		}
 
 	#if defined(PERF_TIMERS) || defined(DUMP_PERF_STATS)
-		DEBUG_LOG(("Calculating CPU frequency for performance timers.\n"));
+		DEBUG_LOG(("Calculating CPU frequency for performance timers."));
 		InitPrecisionTimer();
 	#endif
 	#ifdef PERF_TIMERS
@@ -339,7 +343,7 @@ void GameEngine::init( int argc, char *argv[] )
 		initSubsystem(TheTerrainRoads,"TheTerrainRoads", MSGNEW("GameEngineSubsystem") TerrainRoadCollection(), &xferCRC, "Data\\INI\\Default\\Roads.ini", "Data\\INI\\Roads.ini");
 		initSubsystem(TheGlobalLanguageData,"TheGlobalLanguageData",MSGNEW("GameEngineSubsystem") GlobalLanguage, NULL); // must be before the game text
 		initSubsystem(TheCDManager,"TheCDManager", CreateCDManager(), NULL);
-		initSubsystem(TheAudio,"TheAudio", createAudioManager(), NULL);
+		initSubsystem(TheAudio,"TheAudio", TheGlobalData->m_headless ? NEW AudioManagerDummy : createAudioManager(), NULL);
 		if (!TheAudio->isMusicAlreadyLoaded())
 			setQuitting(TRUE);
 		initSubsystem(TheFunctionLexicon,"TheFunctionLexicon", createFunctionLexicon(), NULL);
@@ -367,14 +371,16 @@ void GameEngine::init( int argc, char *argv[] )
 		initSubsystem(TheCrateSystem,"TheCrateSystem", MSGNEW("GameEngineSubsystem") CrateSystem(), &xferCRC, "Data\\INI\\Default\\Crate.ini", "Data\\INI\\Crate.ini");
 		initSubsystem(ThePlayerList,"ThePlayerList", MSGNEW("GameEngineSubsystem") PlayerList(), NULL);
 		initSubsystem(TheRecorder,"TheRecorder", createRecorder(), NULL);
-		initSubsystem(TheRadar,"TheRadar", createRadar(), NULL);
+		initSubsystem(TheRadar,"TheRadar", TheGlobalData->m_headless ? NEW RadarDummy : createRadar(), NULL);
 		initSubsystem(TheVictoryConditions,"TheVictoryConditions", createVictoryConditions(), NULL);
 
 		AsciiString fname;
 		fname.format("Data\\%s\\CommandMap.ini", GetRegistryLanguage().str());
 		initSubsystem(TheMetaMap,"TheMetaMap", MSGNEW("GameEngineSubsystem") MetaMap(), NULL, fname.str(), "Data\\INI\\CommandMap.ini");
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+		TheMetaMap->generateMetaMap();
+
+#if defined(RTS_DEBUG)
 		ini.load("Data\\INI\\CommandMapDebug.ini", INI_LOAD_MULTIFILE, NULL);
 #endif
 
@@ -388,7 +394,7 @@ void GameEngine::init( int argc, char *argv[] )
 
 		xferCRC.close();
 		TheWritableGlobalData->m_iniCRC = xferCRC.getCRC();
-		DEBUG_LOG(("INI CRC is 0x%8.8X\n", TheGlobalData->m_iniCRC));
+		DEBUG_LOG(("INI CRC is 0x%8.8X", TheGlobalData->m_iniCRC));
 
 		TheSubsystemList->postProcessLoadAll();
 
@@ -425,7 +431,7 @@ void GameEngine::init( int argc, char *argv[] )
 		// load the initial shell screen
 		//TheShell->push( AsciiString("Menus/MainMenu.wnd") );
 		
-		// This allows us to run a map/reply from the command line
+		// This allows us to run a map from the command line
 		if (TheGlobalData->m_initialFile.isEmpty() == FALSE)
 		{
 			AsciiString fname = TheGlobalData->m_initialFile;
@@ -446,10 +452,6 @@ void GameEngine::init( int argc, char *argv[] )
 				msg->appendIntegerArgument(DIFFICULTY_NORMAL);
 				msg->appendIntegerArgument(0);
 				InitRandom(0);
-			}
-			else if (fname.endsWithNoCase(".rep"))
-			{
-				TheRecorder->playbackFile(fname);
 			}
 		}
 
@@ -497,7 +499,8 @@ void GameEngine::init( int argc, char *argv[] )
 
 	initDisabledMasks();
 
-	TheSubsystemList->resetAll();
+	resetSubsystems();
+
 	HideControlBar();
 }  // end init
 
@@ -516,7 +519,7 @@ void GameEngine::reset( void )
 	if (TheGameLogic->isInMultiplayerGame())
 		deleteNetwork = true;
 
-	TheSubsystemList->resetAll();
+	resetSubsystems();
 
 	if (deleteNetwork)
 	{
@@ -528,9 +531,19 @@ void GameEngine::reset( void )
 	if(background)
 	{
 		background->destroyWindows();
-		background->deleteInstance();
+		deleteInstance(background);
 		background = NULL;
 	}
+}
+
+/// -----------------------------------------------------------------------------------------------
+void GameEngine::resetSubsystems( void )
+{
+	// TheSuperHackers @fix xezon 09/06/2025 Reset GameLogic first to purge all world objects early.
+	// This avoids potentially catastrophic issues when objects and subsystems have cross dependencies.
+	TheGameLogic->reset();
+
+	TheSubsystemList->resetAll();
 }
 
 /// -----------------------------------------------------------------------------------------------
@@ -567,6 +580,7 @@ void GameEngine::update( void )
 			TheCDManager->UPDATE();
 		}
 
+		TheGameLogic->preUpdate();
 
 		if ((TheNetwork == NULL && !TheGameLogic->isGamePaused()) || (TheNetwork && TheNetwork->isFrameDataReady()))
 		{
@@ -588,7 +602,7 @@ void GameEngine::execute( void )
 {
 	
 	DWORD prevTime = timeGetTime();
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	DWORD startTime = timeGetTime() / 1000;
 #endif
 
@@ -605,7 +619,7 @@ void GameEngine::execute( void )
 
 		{
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 			{
 				// enter only if in benchmark mode
 				if (TheGlobalData->m_benchmarkTimer > 0)
@@ -663,7 +677,7 @@ void GameEngine::execute( void )
 
 		// I'm disabling this in internal because many people need alt-tab capability.  If you happen to be
 		// doing performance tuning, please just change this on your local system. -MDC
-		#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+		#if defined(RTS_DEBUG)
 					::Sleep(1); // give everyone else a tiny time slice.
 		#endif
 
@@ -683,7 +697,7 @@ void GameEngine::execute( void )
 						  now = timeGetTime();
 					  }
 					  //Int slept = now - prevTime;
-					  //DEBUG_LOG(("delayed %d\n",slept));
+					  //DEBUG_LOG(("delayed %d",slept));
 
 					  prevTime = now;
 
@@ -750,11 +764,11 @@ void GameEngine::checkAbnormalQuitting(void)
 
 		Int ptIdx;
 		const PlayerTemplate *myTemplate = player->getPlayerTemplate();
-		DEBUG_LOG(("myTemplate = %X(%s)\n", myTemplate, myTemplate->getName().str()));
+		DEBUG_LOG(("myTemplate = %X(%s)", myTemplate, myTemplate->getName().str()));
 		for (ptIdx = 0; ptIdx < ThePlayerTemplateStore->getPlayerTemplateCount(); ++ptIdx)
 		{
 			const PlayerTemplate *nthTemplate = ThePlayerTemplateStore->getNthPlayerTemplate(ptIdx);
-			DEBUG_LOG(("nthTemplate = %X(%s)\n", nthTemplate, nthTemplate->getName().str()));
+			DEBUG_LOG(("nthTemplate = %X(%s)", nthTemplate, nthTemplate->getName().str()));
 			if (nthTemplate == myTemplate)
 			{
 					break;
@@ -775,35 +789,35 @@ void GameEngine::checkAbnormalQuitting(void)
 		UserPreferences pref;
 		AsciiString userPrefFilename;
 		userPrefFilename.format("GeneralsOnline\\MiscPref%d.ini", stats.id);
-		DEBUG_LOG(("using the file %s\n", userPrefFilename.str()));
+		DEBUG_LOG(("using the file %s", userPrefFilename.str()));
 		pref.load(userPrefFilename);
 
 		Int addedInDesyncs2 = pref.getInt("0", 0);
-		DEBUG_LOG(("addedInDesyncs2 = %d\n", addedInDesyncs2));
+		DEBUG_LOG(("addedInDesyncs2 = %d", addedInDesyncs2));
 		if (addedInDesyncs2 < 0)
 			addedInDesyncs2 = 10;
 		Int addedInDesyncs3 = pref.getInt("1", 0);
-		DEBUG_LOG(("addedInDesyncs3 = %d\n", addedInDesyncs3));
+		DEBUG_LOG(("addedInDesyncs3 = %d", addedInDesyncs3));
 		if (addedInDesyncs3 < 0)
 			addedInDesyncs3 = 10;
 		Int addedInDesyncs4 = pref.getInt("2", 0);
-		DEBUG_LOG(("addedInDesyncs4 = %d\n", addedInDesyncs4));
+		DEBUG_LOG(("addedInDesyncs4 = %d", addedInDesyncs4));
 		if (addedInDesyncs4 < 0)
 			addedInDesyncs4 = 10;
 		Int addedInDiscons2 = pref.getInt("3", 0);
-		DEBUG_LOG(("addedInDiscons2 = %d\n", addedInDiscons2));
+		DEBUG_LOG(("addedInDiscons2 = %d", addedInDiscons2));
 		if (addedInDiscons2 < 0)
 			addedInDiscons2 = 10;
 		Int addedInDiscons3 = pref.getInt("4", 0);
-		DEBUG_LOG(("addedInDiscons3 = %d\n", addedInDiscons3));
+		DEBUG_LOG(("addedInDiscons3 = %d", addedInDiscons3));
 		if (addedInDiscons3 < 0)
 			addedInDiscons3 = 10;
 		Int addedInDiscons4 = pref.getInt("5", 0);
-		DEBUG_LOG(("addedInDiscons4 = %d\n", addedInDiscons4));
+		DEBUG_LOG(("addedInDiscons4 = %d", addedInDiscons4));
 		if (addedInDiscons4 < 0)
 			addedInDiscons4 = 10;
 
-		DEBUG_LOG(("req.addDesync=%d, req.addDiscon=%d, addedInDesync=%d,%d,%d, addedInDiscon=%d,%d,%d\n",
+		DEBUG_LOG(("req.addDesync=%d, req.addDiscon=%d, addedInDesync=%d,%d,%d, addedInDiscon=%d,%d,%d",
 			req.addDesync, req.addDiscon, addedInDesyncs2, addedInDesyncs3, addedInDesyncs4,
 			addedInDiscons2, addedInDiscons3, addedInDiscons4));
 
@@ -816,7 +830,7 @@ void GameEngine::checkAbnormalQuitting(void)
 				pref["0"] = val;
 				val.format("%d", addedInDiscons2 + req.addDiscon);
 				pref["3"] = val;
-				DEBUG_LOG(("house 2 req.addDesync || req.addDiscon: %d %d\n",
+				DEBUG_LOG(("house 2 req.addDesync || req.addDiscon: %d %d",
 					addedInDesyncs2 + req.addDesync, addedInDiscons2 + req.addDiscon));
 			}
 			else if (req.lastHouse == 3)
@@ -825,7 +839,7 @@ void GameEngine::checkAbnormalQuitting(void)
 				pref["1"] = val;
 				val.format("%d", addedInDiscons3 + req.addDiscon);
 				pref["4"] = val;
-				DEBUG_LOG(("house 3 req.addDesync || req.addDiscon: %d %d\n",
+				DEBUG_LOG(("house 3 req.addDesync || req.addDiscon: %d %d",
 					addedInDesyncs3 + req.addDesync, addedInDiscons3 + req.addDiscon));
 			}
 			else
@@ -834,7 +848,7 @@ void GameEngine::checkAbnormalQuitting(void)
 				pref["2"] = val;
 				val.format("%d", addedInDiscons4 + req.addDiscon);
 				pref["5"] = val;
-				DEBUG_LOG(("house 4 req.addDesync || req.addDiscon: %d %d\n",
+				DEBUG_LOG(("house 4 req.addDesync || req.addDiscon: %d %d",
 					addedInDesyncs4 + req.addDesync, addedInDiscons4 + req.addDiscon));
 			}
 			pref.write();
@@ -880,9 +894,7 @@ void updateTGAtoDDS()
 		}
 
 		// replace tga with dds
-		filenameDDS.removeLastChar();	// a
-		filenameDDS.removeLastChar();	// g
-		filenameDDS.removeLastChar();	// t
+		filenameDDS.truncateBy(3);	// "tga"
 		filenameDDS.concat("dds");
 
 		Bool needsToBeUpdated = FALSE;

@@ -42,11 +42,6 @@
 #include "WaypointOptions.h"
 #include "Common/UnicodeString.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 static const Int K_LOCAL_TEAMS_VERSION_1 = 1;
 
@@ -929,7 +924,7 @@ void ScriptDialog::OnNewFolder()
 			savSel.m_objType = ListType::GROUP_TYPE;
 			updateSelection(savSel);
 		} else {
-			pNewGroup->deleteInstance();
+			deleteInstance(pNewGroup);
 		}
 	}
 	updateIcons(TVI_ROOT);
@@ -970,7 +965,7 @@ void ScriptDialog::OnNewScript()
 	if (IDOK == editDialog.DoModal()) {
 		insertScript(pNewScript);
 	}	else {
-		pNewScript->deleteInstance();
+		deleteInstance(pNewScript);
 	}
 	updateIcons(TVI_ROOT);
 }		
@@ -1069,7 +1064,7 @@ void ScriptDialog::OnEditScript()
 		}
 	}
 	updateIcons(TVI_ROOT);
-	pDup->deleteInstance();
+	deleteInstance(pDup);
 }
 
 void ScriptDialog::OnCopyScript() 
@@ -1508,7 +1503,7 @@ void ScriptDialog::OnSave()
 			DEBUG_CRASH(("threw exception in ScriptDialog::OnSave"));
 	}
 	if (!doAllScripts) {
-		scripts[0]->deleteInstance();
+		deleteInstance(scripts[0]);
 	}
 	theFile.Close();
 }
@@ -1698,7 +1693,7 @@ Bool ScriptDialog::ParseObjectDataChunk(DataChunkInput &file, DataChunkInfo *inf
 		if (pThis->m_maxWaypoint < pThisOne->getWaypointID()) pThis->m_maxWaypoint = pThisOne->getWaypointID();
 	}
 
-	DEBUG_LOG(("Adding object %s (%s)\n", name.str(), pThisOne->getProperties()->getAsciiString(TheKey_originalOwner).str()));
+	DEBUG_LOG(("Adding object %s (%s)", name.str(), pThisOne->getProperties()->getAsciiString(TheKey_originalOwner).str()));
 	// Check for duplicates.
 
 	MapObject *pObj;
@@ -1725,7 +1720,7 @@ Bool ScriptDialog::ParseObjectDataChunk(DataChunkInput &file, DataChunkInfo *inf
 		if (duplicate) break;
 	}
 	if (duplicate) {
-		pThisOne->deleteInstance();
+		deleteInstance(pThisOne);
 		return true;
 	}
 
@@ -1778,7 +1773,7 @@ Bool ScriptDialog::ParseTeamsDataChunk(DataChunkInput &file, DataChunkInfo *info
 		if (pThis->m_sides.findTeamInfo(teamName)) {
 			continue;
 		}
-		DEBUG_LOG(("Adding team %s\n", teamName.str()));
+		DEBUG_LOG(("Adding team %s", teamName.str()));
 		AsciiString player = teamDict.getAsciiString(TheKey_teamOwner);
 		if (pThis->m_sides.findSideInfo(player)) {
 			// player exists, so just add it.
@@ -1920,7 +1915,7 @@ Bool ScriptDialog::ParsePolygonTriggersDataChunk(DataChunkInput &file, DataChunk
 			}
 		}
 		if (duplicate ) {
-			pTrig->deleteInstance();
+			deleteInstance(pTrig);
 		} else {
 			if (pPrevTrig) {
 				pPrevTrig->setNextPoly(pTrig);

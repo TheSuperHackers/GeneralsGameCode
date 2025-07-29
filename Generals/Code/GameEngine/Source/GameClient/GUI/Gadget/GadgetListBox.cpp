@@ -63,11 +63,6 @@
 #include "GameClient/GameWindowGlobal.h"
 #include "GameClient/Keyboard.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 // DEFINES ////////////////////////////////////////////////////////////////////
 // Sets up the user's OS set doubleclick time so if they don't like it... they can
@@ -1980,7 +1975,11 @@ WindowMsgHandledType GadgetListBoxSystem( GameWindow *window, UnsignedInt msg,
 				delete[]( list->columnWidthPercentage );
 			if( list->multiSelect )
 				delete[]( list->selections );
-			delete( list );
+
+			delete (ListboxData *)window->winGetUserData();
+			window->winSetUserData( NULL );
+			list = NULL;
+
 			break;
 
 		}  // end destroy
@@ -2221,6 +2220,8 @@ Int GadgetListBoxAddEntryText( GameWindow *listbox,
 	addInfo.width = -1;
 
 	ListboxData *listData = (ListboxData *)listbox->winGetUserData();
+	if (listData == NULL)
+		return -1;
 	Bool wasFull = (listData->listLength <= listData->endPos);
 	Int newEntryOffset = (wasFull)?0:1;
 	Int oldBottomIndex = GadgetListBoxGetBottomVisibleEntry(listbox);
@@ -2228,7 +2229,7 @@ Int GadgetListBoxAddEntryText( GameWindow *listbox,
 	/// @TODO: Don't do this type cast!
 	index = (Int) TheWindowManager->winSendSystemMsg( listbox, GLM_ADD_ENTRY, (WindowMsgData)&addInfo, color );
 
-	//DEBUG_ASSERTLOG(!listData->scrollIfAtEnd, ("Adding line %d (orig end was %d, newEntryOffset is %d, (%d-%d)?=%d, isFull=%d/%d ll=%d, end=%d\n",
+	//DEBUG_ASSERTLOG(!listData->scrollIfAtEnd, ("Adding line %d (orig end was %d, newEntryOffset is %d, (%d-%d)?=%d, isFull=%d/%d ll=%d, end=%d",
 		//index, oldBottomIndex, newEntryOffset, index, oldBottomIndex, newEntryOffset, wasFull, GadgetListBoxIsFull(listbox), listData->listLength, listData->endPos));
 	if(listData->scrollIfAtEnd && index - oldBottomIndex == newEntryOffset && GadgetListBoxIsFull(listbox))
 	{
@@ -2428,7 +2429,7 @@ void GadgetListBoxAddMultiSelect( GameWindow *listbox )
 
 	DEBUG_ASSERTCRASH(listboxData && listboxData->selections == NULL, ("selections is not NULL"));
 	listboxData->selections = NEW Int [listboxData->listLength];
-	DEBUG_LOG(( "Enable list box multi select: listLength (select) = %d * %d = %d bytes;\n",
+	DEBUG_LOG(( "Enable list box multi select: listLength (select) = %d * %d = %d bytes;",
 					 listboxData->listLength, sizeof(Int), 
 					 listboxData->listLength *sizeof(Int) ));
 
@@ -2568,7 +2569,7 @@ void GadgetListBoxSetListLength( GameWindow *listbox, Int newLength )
 	if( listboxData->listData == NULL )
 	{
 
-		DEBUG_LOG(( "Unable to allocate listbox data pointer\n" ));
+		DEBUG_LOG(( "Unable to allocate listbox data pointer" ));
 		assert( 0 );
 		return;
 

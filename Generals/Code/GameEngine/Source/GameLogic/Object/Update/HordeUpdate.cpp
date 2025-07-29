@@ -47,11 +47,6 @@
 //-------------------------------------------------------------------------------------------------
 
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 
 static HordeUpdateInterface* getHUI(Object* obj)
@@ -79,7 +74,7 @@ public:
 
 	PartitionFilterHordeMember(Object* obj, const HordeUpdateModuleData* data) : m_obj(obj), m_data(data) { }
 	
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	virtual const char* debugGetName() { return "PartitionFilterHordeMember"; }
 #endif
 
@@ -207,7 +202,7 @@ void HordeUpdate::joinOrLeaveHorde(SimpleObjectIterator *iter, Bool join)
 					if( ai )
 						ai->evaluateMoraleBonus();
 					else
-						DEBUG_CRASH(( "HordeUpdate::joinOrLeaveHorde - We (%s) must have an AI to benefit from horde\n",
+						DEBUG_CRASH(( "HordeUpdate::joinOrLeaveHorde - We (%s) must have an AI to benefit from horde",
 													getObject()->getTemplate()->getName().str() ));
 				}  // end if
 

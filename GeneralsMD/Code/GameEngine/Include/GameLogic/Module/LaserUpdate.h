@@ -68,6 +68,30 @@ private:
 };
 
 
+
+//-------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------
+class LaserRadiusUpdate
+{
+public:
+	LaserRadiusUpdate();
+
+	void initRadius(Int sizeDeltaFrames);
+	bool updateRadius();
+	void setDecayFrames(UnsignedInt decayFrames);
+	void xfer(Xfer* xfer);
+	Real getWidthScale() const { return m_currentWidthScalar; }
+
+private:
+	Bool m_widening;
+	Bool m_decaying;
+	UnsignedInt m_widenStartFrame;
+	UnsignedInt m_widenFinishFrame;
+	Real m_currentWidthScalar;
+	UnsignedInt m_decayStartFrame;
+	UnsignedInt m_decayFinishFrame;
+};
+
 //-------------------------------------------------------------------------------------------------
 /** The default	update module */
 //-------------------------------------------------------------------------------------------------
@@ -84,11 +108,16 @@ public:
 
 	//Actually puts the laser in the world.
 	void initLaser( const Object *parent, const Object *target, const Coord3D *startPos, const Coord3D *endPos, AsciiString parentBoneName, Int sizeDeltaFrames = 0 );
+	
+	// TODO: clean this Xhit
+	const LaserRadiusUpdate& getLaserRadiusUpdate() const { return m_laserRadius; }
+
 	void setDecayFrames( UnsignedInt decayFrames );
 
 	const Coord3D* getStartPos() { return &m_startPos; }
 	const Coord3D* getEndPos() { return &m_endPos; }
 
+	Real getTemplateLaserRadius() const;
 	Real getCurrentLaserRadius() const;
 
 	void setDirty( Bool dirty ) { m_dirty = dirty; }
@@ -144,8 +173,9 @@ protected:
 	Int m_hexColor;
 
 	// Bool m_isMultiDraw;
-};
 
+	LaserRadiusUpdate m_laserRadius;
+};
 
 #endif
 

@@ -47,11 +47,6 @@
 
 extern void addIcon(const Coord3D *pos, Real width, Int numFramesDuration, RGBColor color);
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // PRIVATE CLASS ///////////////////////////////////////////////////////////////////////////////////
@@ -69,11 +64,11 @@ void TAiData::addFactionBuildList(AISideBuildList *buildList)
 	while (info) {
 		if (buildList->m_side == info->m_side) {
 			if (info->m_buildList)
-				info->m_buildList->deleteInstance();
+				deleteInstance(info->m_buildList);
 			info->m_buildList = buildList->m_buildList;
 			buildList->m_buildList = NULL;
 			buildList->m_next = NULL;
-			buildList->deleteInstance();
+			deleteInstance(buildList);
 			return;
 		}
 		info = info->m_next;
@@ -89,7 +84,7 @@ TAiData::~TAiData()
 	while (info) { 
 		AISideInfo *cur = info;
 		info = info->m_next;
-		cur->deleteInstance();
+		deleteInstance(cur);
 	}
 
 	AISideBuildList *build = m_sideBuildLists;
@@ -97,7 +92,7 @@ TAiData::~TAiData()
 	while (build) { 
 		AISideBuildList *cur = build;
 		build = build->m_next;
-		cur->deleteInstance();
+		deleteInstance(cur);
 	}
 
 }
@@ -115,7 +110,7 @@ AISideBuildList::AISideBuildList( AsciiString side ) :
 AISideBuildList::~AISideBuildList()
 {
 	if (m_buildList) {
-		m_buildList->deleteInstance(); // note - deletes all in the list.
+		deleteInstance(m_buildList); // note - deletes all in the list.
 	}
 	m_buildList = NULL;
 }
@@ -330,6 +325,8 @@ void AI::reset( void )
 		m_aiData = m_aiData->m_next;
 		delete cur;
 	}
+
+#if RETAIL_COMPATIBLE_AIGROUP
 	while (m_groupList.size())
 	{
 		AIGroup *groupToRemove = m_groupList.front();
@@ -342,6 +339,12 @@ void AI::reset( void )
 			m_groupList.pop_front(); // NULL group, just kill from list.  Shouldn't really happen, but just in case.
 		}
 	}
+#else
+	DEBUG_ASSERTCRASH(m_groupList.empty(), ("AI::m_groupList is expected empty already"));
+
+	m_groupList.clear(); // Clear just in case...
+#endif
+
 	m_nextGroupID = 0;
 	m_nextFormationID = NO_FORMATION_ID;
 	getNextFormationID(); // increment once past NO_FORMATION_ID.  jba.
@@ -427,11 +430,10 @@ void AI::parseAiDataDefinition( INI* ini )
 		if( ini->getLoadType() == INI_LOAD_CREATE_OVERRIDES )
 			TheAI->newOverride();
 
+		// parse the ini weapon definition
+		ini->initFromINI( TheAI->m_aiData, TheAIFieldParseTable );
+
 	}  // end if
-
-	// parse the ini weapon definition
-	ini->initFromINI( TheAI->m_aiData, TheAIFieldParseTable );
-
 }
 
 
@@ -441,14 +443,22 @@ void AI::parseAiDataDefinition( INI* ini )
 /**
  * Create a new AI Group
  */
-AIGroup *AI::createGroup( void )
+AIGroupPtr AI::createGroup( void )
 {
 	// create a new instance
+#if RETAIL_COMPATIBLE_AIGROUP
 	AIGroup *group = newInstance(AIGroup);
+#else
+	AIGroupPtr group = AIGroupPtr::Create_NoAddRef(newInstance(AIGroup));
+#endif
 
 	// add it to the list
-//	DEBUG_LOG(("***AIGROUP %x is being added to m_groupList.\n", group ));
+//	DEBUG_LOG(("***AIGROUP %x is being added to m_groupList.", group ));
+#if RETAIL_COMPATIBLE_AIGROUP
 	m_groupList.push_back( group );
+#else
+	m_groupList.push_back( group.Peek() );
+#endif
 
 	return group;
 }
@@ -467,11 +477,11 @@ void AI::destroyGroup( AIGroup *group )
 	DEBUG_ASSERTCRASH(group != NULL, ("A NULL group made its way into the AIGroup list.. jkmcd"));
 
 	// remove it
-//	DEBUG_LOG(("***AIGROUP %x is being removed from m_groupList.\n", group ));
+//	DEBUG_LOG(("***AIGROUP %x is being removed from m_groupList.", group ));
 	m_groupList.erase( i );
 
 	// destroy group
-	group->deleteInstance();
+	deleteInstance(group);
 }
 
 /**
@@ -524,7 +534,7 @@ public:
 		return true;
 	}
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	virtual const char* debugGetName() { return "PartitionFilterLiveMapEnemies"; }
 #endif
 };
@@ -554,7 +564,7 @@ public:
 		return false;
 	}
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	virtual const char* debugGetName() { return "PartitionFilterWithinAttackRange"; }
 #endif
 };
@@ -719,7 +729,7 @@ Object *AI::findClosestEnemy( const Object *me, Real range, UnsignedInt qualifie
 		}
 	}	
 	if (bestEnemy) {
-		//DEBUG_LOG(("Find closest found %s, hunter %s, info %s\n", bestEnemy->getTemplate()->getName().str(), 
+		//DEBUG_LOG(("Find closest found %s, hunter %s, info %s", bestEnemy->getTemplate()->getName().str(), 
 		//	me->getTemplate()->getName().str(), info->getName().str()));
 	}
 	return bestEnemy;
@@ -860,7 +870,7 @@ Real AI::getAdjustedVisionRangeForObject(const Object *object, Int factorsToCons
 		}
 	}
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	if (TheGlobalData->m_debugVisibility) 
 	{
 		// ICK. This really nasty statement is used so that we only initialize this color once.
@@ -969,7 +979,7 @@ void TAiData::crc( Xfer *xfer )
 	xfer->xferReal( &m_maxRecruitDistance );
 	xfer->xferReal( &m_repulsedDistance );
 	xfer->xferBool( &m_enableRepulsors );
-	CRCGEN_LOG(("CRC after AI TAiData for frame %d is 0x%8.8X\n", TheGameLogic->getFrame(), ((XferCRC *)xfer)->getCRC()));
+	CRCGEN_LOG(("CRC after AI TAiData for frame %d is 0x%8.8X", TheGameLogic->getFrame(), ((XferCRC *)xfer)->getCRC()));
 
 }  // end crc
 
@@ -995,7 +1005,7 @@ void AI::crc( Xfer *xfer )
 {
 
 	xfer->xferSnapshot( m_pathfinder );
-	CRCGEN_LOG(("CRC after AI pathfinder for frame %d is 0x%8.8X\n", TheGameLogic->getFrame(), ((XferCRC *)xfer)->getCRC()));
+	CRCGEN_LOG(("CRC after AI pathfinder for frame %d is 0x%8.8X", TheGameLogic->getFrame(), ((XferCRC *)xfer)->getCRC()));
 
 	AsciiString marker;
 	TAiData *aiData = m_aiData;

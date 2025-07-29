@@ -28,7 +28,7 @@
 //////////////////////////////////////////////////////////////////////////////
 #include "_pch.h"
 #include <stdlib.h>
-#include <stdio.h>
+#include <Utility/stdio_adapter.h>
 #include <string.h>
 #include <new>      // needed for placement new prototype
 
@@ -240,7 +240,7 @@ Debug::Format::Format(const char *format, ...)
 {
   va_list va;
   va_start(va,format);
-  _vsnprintf(m_buffer,sizeof(m_buffer)-1,format,va);
+  vsnprintf(m_buffer,sizeof(m_buffer)-1,format,va);
   va_end(va);
 }
 
@@ -783,7 +783,7 @@ Debug& Debug::operator<<(float val)
 {
   /// @todo_opt shouldn't use snprintf here - brings in most of the old C IO lib...
   char help[200];
-  _snprintf(help,sizeof(help),"%f",val);
+  snprintf(help,sizeof(help),"%f",val);
   return (*this) << help;
 }
 
@@ -791,7 +791,7 @@ Debug& Debug::operator<<(double val)
 {
   /// @todo_opt shouldn't use snprintf here - brings in most of the old C IO lib...
   char help[200];
-  _snprintf(help,sizeof(help),"%f",val);
+  snprintf(help,sizeof(help),"%f",val);
   return (*this) << help;
 }
 
@@ -1437,9 +1437,7 @@ void Debug::WriteBuildInfo(void)
     (*this) << " " << m_version;
   if (*m_intVersion)
     (*this) << " internal " << m_intVersion;
-  #if defined(RTS_INTERNAL)
-    operator<<(" internal");
-  #elif defined(RTS_DEBUG)
+  #if defined(RTS_DEBUG)
     operator<<(" debug");
   #elif defined(RTS_PROFILE)
     operator<<(" profile");

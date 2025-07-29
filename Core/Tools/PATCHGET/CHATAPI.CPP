@@ -186,7 +186,7 @@ static void startOnline( void )
 	{
 		if (MessageBox(NULL, "Patches Available.  Download?", GAME_NAME, MB_YESNO) == IDYES)
 		{
-			DEBUG_LOG(("Downloading patches\n"));
+			DEBUG_LOG(("Downloading patches"));
 			while (queuedDownloads.size())
 			{
 				TheDownload = queuedDownloads.front();
@@ -196,7 +196,7 @@ static void startOnline( void )
 		    int retVal = DialogBox(Global_instance, MAKEINTRESOURCE(IDD_DOWNLOAD_DIALOG), g_PrimaryWindow, downloadDialogProc);
 				if (retVal)
 				{
-					DEBUG_LOG(("Error %d\n", GetLastError()));
+					DEBUG_LOG(("Error %d", GetLastError()));
 				}
 				/**/
 				/*
@@ -369,7 +369,7 @@ static void queuePatch(bool mandatory, std::string downloadURL)
 	}
 	fileDir.append(fileName);
 
-	DEBUG_LOG(("download URL split: %d [%s] [%s] [%s] [%s] [%s] [%s] [%s]\n",
+	DEBUG_LOG(("download URL split: %d [%s] [%s] [%s] [%s] [%s] [%s] [%s]",
 		success, connectionType.c_str(), server.c_str(), user.c_str(), pass.c_str(),
 		filePath.c_str(), fileName.c_str(), fileDir.c_str()));
 
@@ -402,7 +402,7 @@ static GHTTPBool patchCheckCallback( GHTTPRequest request, GHTTPResult result, c
 	--checksLeft;
 	DEBUG_ASSERTCRASH(checksLeft>=0, ("Too many callbacks"));
 
-	DEBUG_LOG(("Result=%d, buffer=[%s], len=%d\n", result, buffer, bufferLen));
+	DEBUG_LOG(("Result=%d, buffer=[%s], len=%d", result, buffer, bufferLen));
 	if (result != GHTTPSuccess)
 	{
 		cantConnect = true;
@@ -424,7 +424,7 @@ static GHTTPBool patchCheckCallback( GHTTPRequest request, GHTTPResult result, c
 		ok = ok && nextToken(line, url, " ");
 		if (ok && type == "patch")
 		{
-			DEBUG_LOG(("Saw a patch: %d/[%s]\n", atoi(req.c_str()), url.c_str()));
+			DEBUG_LOG(("Saw a patch: %d/[%s]", atoi(req.c_str()), url.c_str()));
 			queuePatch( atoi(req.c_str()), url );
 		}
 		else if (ok && type == "server")
@@ -465,7 +465,7 @@ static void StartPatchCheck( void )
 	ghttpGet(gameURL.c_str(), GHTTPFalse, patchCheckCallback, NULL);
 	ghttpGet(mapURL.c_str(), GHTTPFalse, patchCheckCallback, NULL);
 
-	DEBUG_LOG(("Started looking for patches at '%s' && '%s'\n", gameURL.c_str(), mapURL.c_str()));
+	DEBUG_LOG(("Started looking for patches at '%s' && '%s'", gameURL.c_str(), mapURL.c_str()));
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -541,15 +541,15 @@ BOOL CALLBACK downloadDialogProc( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM
 			break;
 			
 		case WM_TIMER:
-			DEBUG_LOG(("TIMER\n"));
+			DEBUG_LOG(("TIMER"));
 			if( g_Finished == 0 )
 			{
-				DEBUG_LOG(("Entering PumpMsgs\n"));
+				DEBUG_LOG(("Entering PumpMsgs"));
 				TheDownloadManager->update();
 				/*
 				pDownload->PumpMessages();
 				*/
-				DEBUG_LOG(("Done with PumpMsgs\n"));
+				DEBUG_LOG(("Done with PumpMsgs"));
 				if (strlen(g_DLTimeRem))
 					SetDlgItemText( hwndDlg, IDC_TIMEREM, g_DLTimeRem );
 				if (strlen(g_DLBytesLeft))
@@ -559,7 +559,7 @@ BOOL CALLBACK downloadDialogProc( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM
 			}
 			else
 			{
-				DEBUG_LOG(("TIMER: Finished\n"));
+				DEBUG_LOG(("TIMER: Finished"));
 				EndDialog( hwndDlg, g_Finished );
 				DestroyWindow( hwndDlg );
 			}

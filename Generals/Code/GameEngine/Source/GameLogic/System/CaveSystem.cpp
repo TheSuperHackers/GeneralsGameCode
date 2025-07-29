@@ -55,7 +55,7 @@ void CaveSystem::reset()
 		TunnelTracker *currentTracker = *iter;
 		if( currentTracker )// could be NULL, since we don't slide back to fill deleted entries so offsets don't shift
 		{
-			currentTracker->deleteInstance();
+			deleteInstance(currentTracker);
 		}
 	}
 	m_tunnelTrackerVector.clear();
@@ -169,7 +169,7 @@ void CaveSystem::xfer( Xfer *xfer )
 		if( m_tunnelTrackerVector.empty() == FALSE )
 		{
 
-			DEBUG_CRASH(( "CaveSystem::xfer - m_tunnelTrackerVector should be empty but is not\n" ));
+			DEBUG_CRASH(( "CaveSystem::xfer - m_tunnelTrackerVector should be empty but is not" ));
 			throw SC_INVALID_DATA;
 
 		}  // end if

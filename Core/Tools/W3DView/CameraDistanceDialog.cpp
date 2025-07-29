@@ -19,11 +19,11 @@
 // CameraDistanceDialog.cpp : implementation file
 //
 
-#include "stdafx.h"
-#include "w3dview.h"
-#include "cameradistancedialog.h"
-#include "utils.h"
-#include "graphicview.h"
+#include "StdAfx.h"
+#include "W3DView.h"
+#include "CameraDistanceDialog.h"
+#include "Utils.h"
+#include "GraphicView.h"
 
 
 #ifdef RTS_DEBUG

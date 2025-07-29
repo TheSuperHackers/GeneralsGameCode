@@ -112,7 +112,7 @@ const FieldParse TerrainRoadType::m_terrainBridgeFieldParseTable[] =
 	else
 	{
 
-		DEBUG_CRASH(( "Expected Damage/Repair transition keyword\n" ));
+		DEBUG_CRASH(( "Expected Damage/Repair transition keyword" ));
 		throw INI_INVALID_DATA;
 
 	}  // end else
@@ -132,7 +132,7 @@ const FieldParse TerrainRoadType::m_terrainBridgeFieldParseTable[] =
 	if( effectNum < 0 || effectNum >= MAX_BRIDGE_BODY_FX )
 	{
 
-		DEBUG_CRASH(( "Effect number max on bridge transitions is '%d'\n", MAX_BRIDGE_BODY_FX ));
+		DEBUG_CRASH(( "Effect number max on bridge transitions is '%d'", MAX_BRIDGE_BODY_FX ));
 		throw INI_INVALID_DATA;
 
 	}  // end if
@@ -168,7 +168,7 @@ const FieldParse TerrainRoadType::m_terrainBridgeFieldParseTable[] =
 	else
 	{
 
-		DEBUG_CRASH(( "Expected Damage/Repair transition keyword\n" ));
+		DEBUG_CRASH(( "Expected Damage/Repair transition keyword" ));
 		throw INI_INVALID_DATA;
 
 	}  // end else
@@ -188,7 +188,7 @@ const FieldParse TerrainRoadType::m_terrainBridgeFieldParseTable[] =
 	if( effectNum < 0 || effectNum >= MAX_BRIDGE_BODY_FX )
 	{
 
-		DEBUG_CRASH(( "Effect number max on bridge transitions is '%d'\n", MAX_BRIDGE_BODY_FX ));
+		DEBUG_CRASH(( "Effect number max on bridge transitions is '%d'", MAX_BRIDGE_BODY_FX ));
 		throw INI_INVALID_DATA;
 
 	}  // end if
@@ -258,7 +258,7 @@ TerrainRoadCollection::~TerrainRoadCollection( void )
 		temp = m_roadList->friend_getNext();
 
 		// delete this road
-		m_roadList->deleteInstance();
+		deleteInstance(m_roadList);
 
 		// set the new head of the list
 		m_roadList = temp;
@@ -273,7 +273,7 @@ TerrainRoadCollection::~TerrainRoadCollection( void )
 		temp = m_bridgeList->friend_getNext();
 
 		// delete this bridge
-		m_bridgeList->deleteInstance();
+		deleteInstance(m_bridgeList);
 
 		// set the new head of the list
 		m_bridgeList = temp;
@@ -440,7 +440,7 @@ TerrainRoadType *TerrainRoadCollection::newBridge( AsciiString name )
 TerrainRoadType *TerrainRoadCollection::nextRoad( TerrainRoadType *road )
 {
 
-	DEBUG_ASSERTCRASH( road->isBridge() == FALSE, ("nextRoad: road not a road\n") );
+	DEBUG_ASSERTCRASH( road->isBridge() == FALSE, ("nextRoad: road not a road") );
 	return road->friend_getNext();
 
 }  // end nextRoad
@@ -451,7 +451,7 @@ TerrainRoadType *TerrainRoadCollection::nextRoad( TerrainRoadType *road )
 TerrainRoadType *TerrainRoadCollection::nextBridge( TerrainRoadType *bridge )
 {
 
-	DEBUG_ASSERTCRASH( bridge->isBridge() == TRUE, ("nextBridge, bridge is not a bridge\n") );
+	DEBUG_ASSERTCRASH( bridge->isBridge() == TRUE, ("nextBridge, bridge is not a bridge") );
 	return bridge->friend_getNext();
 
 }  // end nextBridge

@@ -24,7 +24,7 @@
 #include "dx8caps.h"
 #include "textureloader.h"
 #include "texture.h"
-#include <cstdio>
+#include <Utility/stdio_adapter.h>
 
 #include <memory.h>
 #ifdef _UNIX
@@ -94,7 +94,7 @@ static void Record_Texture_End()
 	texture_statistics_string="";
 	if (record_texture_mode==Debug_Statistics::RECORD_TEXTURE_DETAILS) {
 		char tmp_text[1024];
-		_snprintf(tmp_text,sizeof(tmp_text),
+		snprintf(tmp_text,sizeof(tmp_text),
 			"Set_DX8_Texture count: %d\nactual changes: %d\n\n"
 			"id      refs changes  size      name\n"
 			"--------------------------------------\n",
@@ -113,7 +113,7 @@ static void Record_Texture_End()
 //				if (tfc->Get_Texture_Flash()) flash="F";
 //			}
 
-			working_string.Format("%4.4d  %3.3d   %3.3d     %s ",id,texture_statistics[a].usage_count,texture_statistics[a].change_count,flash.Peek_Buffer());
+			working_string.Format("%4.4d  %3.3d   %3.3d     %s ",id,texture_statistics[a].usage_count,texture_statistics[a].change_count,flash.str());
 			texture_statistics_string+=working_string;
 
 			StringClass error="";
@@ -132,11 +132,11 @@ static void Record_Texture_End()
 //				int percents=100-100*bytes/non_red_bytes;
 				working_string.Format("%4.4dkb         ",bytes/1024);
 				texture_statistics_string+=working_string;
+				texture_statistics_string+=t->Get_Texture_Name();//getTextureName();
 			}
 			else {
 				texture_statistics_string+="N/A  ";
 			}
-			texture_statistics_string+=t->Get_Texture_Name();//getTextureName();
 			texture_statistics_string+=error;
 			texture_statistics_string+="\n";
 		}

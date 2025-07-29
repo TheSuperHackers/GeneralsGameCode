@@ -86,11 +86,6 @@
 #include "GameLogic/VictoryConditions.h"
 #include "GameLogic/AIPathfind.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 // Kind of hacky, but we need to dance on the guts of the terrain.
 extern void oversizeTheTerrain(Int amount);
@@ -419,16 +414,19 @@ void ScriptActions::doMoveToWaypoint(const AsciiString& team, const AsciiString&
 	// The team is the team based on the name, and the calling team (if any) and the team that
 	// triggered the condition.  jba. :)
 	if (theTeam) {
-		AIGroup* theGroup = TheAI->createGroup();
+		AIGroupPtr theGroup = TheAI->createGroup();
 		if (!theGroup) {
 			return;
 		}
-
+#if RETAIL_COMPATIBLE_AIGROUP
 		theTeam->getTeamAsAIGroup(theGroup);
+#else
+		theTeam->getTeamAsAIGroup(theGroup.Peek());
+#endif
 		Waypoint *way = TheTerrainLogic->getWaypointByName(waypoint);
 		if (way) {
 			Coord3D destination = *way->getLocation();
-			//DEBUG_LOG(("Moving team to waypoint %f, %f, %f\n", destination.x, destination.y, destination.z));
+			//DEBUG_LOG(("Moving team to waypoint %f, %f, %f", destination.x, destination.y, destination.z));
  			theGroup->groupMoveToPosition( &destination, false, CMD_FROM_SCRIPT );
 		}
 	}
@@ -517,7 +515,7 @@ void ScriptActions::doCreateReinforcements(const AsciiString& team, const AsciiS
 
 	destination = *way->getLocation();
 	if (!theTeamProto) {
-		DEBUG_LOG(("***WARNING - Team %s not found.\n", team));
+		DEBUG_LOG(("***WARNING - Team %s not found.", team.str()));
 		return;
 	}
 	const TeamTemplateInfo *pInfo = theTeamProto->getTemplateInfo();
@@ -643,7 +641,7 @@ void ScriptActions::doCreateReinforcements(const AsciiString& team, const AsciiS
 		PartitionSolver partition(vecOfUnits, vecOfTransports, PREFER_FAST_SOLUTION);
 		partition.solve();
 		SolutionVec solution = partition.getSolution();
-		for (int i = 0; i < solution.size(); ++i) {
+		for (size_t i = 0; i < solution.size(); ++i) {
 			Object *unit = TheGameLogic->findObjectByID(solution[i].first);
 			Object *trans = TheGameLogic->findObjectByID(solution[i].second);
 			if (!unit || !trans) {
@@ -783,12 +781,16 @@ void ScriptActions::doCreateReinforcements(const AsciiString& team, const AsciiS
 			theTeam->setActive();
 			if (needToMoveToDestination) 
 			{
-				AIGroup* theGroup = TheAI->createGroup();
+				AIGroupPtr theGroup = TheAI->createGroup();
 				if (!theGroup) 
 				{
 					return;
 				}
+#if RETAIL_COMPATIBLE_AIGROUP
 				theTeam->getTeamAsAIGroup(theGroup);
+#else
+				theTeam->getTeamAsAIGroup(theGroup.Peek());
+#endif
 				theGroup->groupMoveToPosition( &destination, false, CMD_FROM_SCRIPT );
 			}
 		}
@@ -1000,7 +1002,7 @@ void ScriptActions::doCreateObject(const AsciiString& objectName, const AsciiStr
 	if (!theTeam) {
 		TheScriptEngine->AppendDebugMessage("***WARNING - Team not found:***", false);
 		TheScriptEngine->AppendDebugMessage(teamName, true);
-		DEBUG_LOG(("WARNING - Team %s not found.\n", teamName.str()));
+		DEBUG_LOG(("WARNING - Team %s not found.", teamName.str()));
 		return;
 	}
 	const ThingTemplate *thingTemplate;
@@ -1032,7 +1034,7 @@ void ScriptActions::doCreateObject(const AsciiString& objectName, const AsciiStr
 
 		}  // end if
 	} else {
-		DEBUG_LOG(("WARNING - ThingTemplate '%s' not found.\n", thingName.str()));
+		DEBUG_LOG(("WARNING - ThingTemplate '%s' not found.", thingName.str()));
 	}
 }
 
@@ -1050,12 +1052,16 @@ void ScriptActions::doAttack(const AsciiString& attackerName, const AsciiString&
 	if( attackingTeam == NULL || victimTeam == NULL )
 		return;
 
-	AIGroup *aiGroup = TheAI->createGroup();
+	AIGroupPtr aiGroup = TheAI->createGroup();
 	if (!aiGroup) {
 		return;
 	}
 
+#if RETAIL_COMPATIBLE_AIGROUP
 	attackingTeam->getTeamAsAIGroup(aiGroup);
+#else
+	attackingTeam->getTeamAsAIGroup(aiGroup.Peek());
+#endif
 	aiGroup->groupAttackTeam(victimTeam, NO_MAX_SHOTS_LIMIT, CMD_FROM_SCRIPT);
 
 }
@@ -1187,7 +1193,7 @@ void ScriptActions::createUnitOnTeamAt(const AsciiString& unitName, const AsciiS
 	if (!theTeam) {
 		TheScriptEngine->AppendDebugMessage("***WARNING - Team not found:***", false);
 		TheScriptEngine->AppendDebugMessage(teamName, true);
-		DEBUG_LOG(("WARNING - Team %s not found.\n", teamName.str()));
+		DEBUG_LOG(("WARNING - Team %s not found.", teamName.str()));
 		return;
 	}
 	const ThingTemplate *thingTemplate;
@@ -1215,7 +1221,7 @@ void ScriptActions::createUnitOnTeamAt(const AsciiString& unitName, const AsciiS
 			}
 		}  // end if
 	} else {
-		DEBUG_LOG(("WARNING - ThingTemplate '%s' not found.\n", objType.str()));
+		DEBUG_LOG(("WARNING - ThingTemplate '%s' not found.", objType.str()));
 	}
 }
 
@@ -1308,12 +1314,16 @@ void ScriptActions::updateTeamSetAttitude(const AsciiString& teamName, Int attit
 		return;
 	}
 
-	AIGroup *pAIGroup = TheAI->createGroup();
+	AIGroupPtr pAIGroup = TheAI->createGroup();
 	if (!pAIGroup) {
 		return;
 	}
 
+#if RETAIL_COMPATIBLE_AIGROUP
 	theSrcTeam->getTeamAsAIGroup(pAIGroup);
+#else
+	theSrcTeam->getTeamAsAIGroup(pAIGroup.Peek());
+#endif
 	pAIGroup->setAttitude((AttitudeType) attitude);
 }
 
@@ -1417,12 +1427,16 @@ void ScriptActions::doTeamAttackArea(const AsciiString& teamName, const AsciiStr
 		return;
 	}
 
-	AIGroup* theGroup = TheAI->createGroup();
+	AIGroupPtr theGroup = TheAI->createGroup();
 	if (!theGroup) {
 		return;
 	}
 
+#if RETAIL_COMPATIBLE_AIGROUP
 	theTeam->getTeamAsAIGroup(theGroup);
+#else
+	theTeam->getTeamAsAIGroup(theGroup.Peek());
+#endif
 
 	PolygonTrigger *pTrig = TheScriptEngine->getQualifiedTriggerAreaByName(areaName);
 	if (!pTrig) {
@@ -1449,12 +1463,16 @@ void ScriptActions::doTeamAttackNamed(const AsciiString& teamName, const AsciiSt
 		return;
 	}
 
-	AIGroup* theGroup = TheAI->createGroup();
+	AIGroupPtr theGroup = TheAI->createGroup();
 	if (!theGroup) {
 		return;
 	}
 
+#if RETAIL_COMPATIBLE_AIGROUP
 	theTeam->getTeamAsAIGroup(theGroup);
+#else
+	theTeam->getTeamAsAIGroup(theGroup.Peek());
+#endif
 	theGroup->groupAttackObject(theVictim, NO_MAX_SHOTS_LIMIT, CMD_FROM_SCRIPT);
 }
 
@@ -1503,7 +1521,7 @@ void ScriptActions::doLoadAllTransports(const AsciiString& teamName)
 	PartitionSolver partition(vecOfUnits, vecOfTransports, PREFER_FAST_SOLUTION);
 	partition.solve();
 	SolutionVec solution = partition.getSolution();
-	for (int i = 0; i < solution.size(); ++i) {
+	for (size_t i = 0; i < solution.size(); ++i) {
 		Object *unit = TheGameLogic->findObjectByID(solution[i].first);
 		Object *trans = TheGameLogic->findObjectByID(solution[i].second);
 		if (!unit || !trans) {
@@ -1556,9 +1574,13 @@ void ScriptActions::doTeamEnterNamed(const AsciiString& teamName, const AsciiStr
 		return;
 	}
 
-	AIGroup* theGroup = TheAI->createGroup();
-	theSrcTeam->getTeamAsAIGroup(theGroup);
+	AIGroupPtr theGroup = TheAI->createGroup();
 
+#if RETAIL_COMPATIBLE_AIGROUP
+	theSrcTeam->getTeamAsAIGroup(theGroup);
+#else
+	theSrcTeam->getTeamAsAIGroup(theGroup.Peek());
+#endif
 	theGroup->groupEnter(theTransport, CMD_FROM_SCRIPT);
 }
 
@@ -1592,9 +1614,13 @@ void ScriptActions::doTeamExitAll(const AsciiString& teamName)
 		return;
 	}
 
-	AIGroup* theGroup = TheAI->createGroup();
-	theTeamOfTransports->getTeamAsAIGroup(theGroup);
+	AIGroupPtr theGroup = TheAI->createGroup();
 
+#if RETAIL_COMPATIBLE_AIGROUP
+	theTeamOfTransports->getTeamAsAIGroup(theGroup);
+#else
+	theTeamOfTransports->getTeamAsAIGroup(theGroup.Peek());
+#endif
 	theGroup->groupEvacuate( CMD_FROM_SCRIPT );
 }
 
@@ -1640,7 +1666,7 @@ void ScriptActions::doNamedFollowWaypoints(const AsciiString& unitName, const As
 		return;
 	}
 
-	DEBUG_ASSERTLOG(TheTerrainLogic->isPurposeOfPath(way, waypointPathLabel), ("***Wrong waypoint purpose. Make jba fix this.\n"));
+	DEBUG_ASSERTLOG(TheTerrainLogic->isPurposeOfPath(way, waypointPathLabel), ("***Wrong waypoint purpose. Make jba fix this."));
 	
 	theUnit->leaveGroup();
 	aiUpdate->chooseLocomotorSet(LOCOMOTORSET_NORMAL);
@@ -1667,7 +1693,7 @@ void ScriptActions::doNamedFollowWaypointsExact(const AsciiString& unitName, con
 		return;
 	}
 
-	DEBUG_ASSERTLOG(TheTerrainLogic->isPurposeOfPath(way, waypointPathLabel), ("***Wrong waypoint purpose. Make jba fix this.\n"));
+	DEBUG_ASSERTLOG(TheTerrainLogic->isPurposeOfPath(way, waypointPathLabel), ("***Wrong waypoint purpose. Make jba fix this."));
 	
 	theUnit->leaveGroup();
 	aiUpdate->chooseLocomotorSet(LOCOMOTORSET_NORMAL);
@@ -1684,11 +1710,15 @@ void ScriptActions::doTeamFollowSkirmishApproachPath(const AsciiString& teamName
 		return;
 	}
 
-	AIGroup* theGroup = TheAI->createGroup();
+	AIGroupPtr theGroup = TheAI->createGroup();
 	if (!theGroup) {
 		return;
 	}
+#if RETAIL_COMPATIBLE_AIGROUP
 	theTeam->getTeamAsAIGroup(theGroup);
+#else
+	theTeam->getTeamAsAIGroup(theGroup.Peek());
+#endif
 	Int count = 0;
 	Coord3D pos;
 	pos.x=pos.y=pos.z=0;
@@ -1728,7 +1758,7 @@ void ScriptActions::doTeamFollowSkirmishApproachPath(const AsciiString& teamName
 		aiPlayer->checkBridges(firstUnit, way);
 	}
 
-	DEBUG_ASSERTLOG(TheTerrainLogic->isPurposeOfPath(way, pathLabel), ("***Wrong waypoint purpose. Make jba fix this.\n"));
+	DEBUG_ASSERTLOG(TheTerrainLogic->isPurposeOfPath(way, pathLabel), ("***Wrong waypoint purpose. Make jba fix this."));
 	if (asTeam) 
 	{
 		theGroup->groupFollowWaypointPathAsTeam(way, CMD_FROM_SCRIPT);
@@ -1747,11 +1777,15 @@ void ScriptActions::doTeamMoveToSkirmishApproachPath(const AsciiString& teamName
 		return;
 	}
 
-	AIGroup* theGroup = TheAI->createGroup();
+	AIGroupPtr theGroup = TheAI->createGroup();
 	if (!theGroup) {
 		return;
 	}
+#if RETAIL_COMPATIBLE_AIGROUP
 	theTeam->getTeamAsAIGroup(theGroup);
+#else
+	theTeam->getTeamAsAIGroup(theGroup.Peek());
+#endif
 	Int count = 0;
 	Coord3D pos;
 	pos.x=pos.y=pos.z=0;
@@ -1781,7 +1815,7 @@ void ScriptActions::doTeamMoveToSkirmishApproachPath(const AsciiString& teamName
 	if (!way) {
 		return;
 	}
-	DEBUG_ASSERTLOG(TheTerrainLogic->isPurposeOfPath(way, pathLabel), ("***Wrong waypoint purpose. Make jba fix this.\n"));
+	DEBUG_ASSERTLOG(TheTerrainLogic->isPurposeOfPath(way, pathLabel), ("***Wrong waypoint purpose. Make jba fix this."));
 	theGroup->groupMoveToPosition(way->getLocation(), false, CMD_FROM_SCRIPT);
 }
 
@@ -1795,11 +1829,15 @@ void ScriptActions::doTeamFollowWaypoints(const AsciiString& teamName, const Asc
 		return;
 	}
 
-	AIGroup* theGroup = TheAI->createGroup();
+	AIGroupPtr theGroup = TheAI->createGroup();
 	if (!theGroup) {
 		return;
 	}
+#if RETAIL_COMPATIBLE_AIGROUP
 	theTeam->getTeamAsAIGroup(theGroup);
+#else
+	theTeam->getTeamAsAIGroup(theGroup.Peek());
+#endif
 	Int count = 0;
 	Coord3D pos;
 	pos.x=pos.y=pos.z=0;
@@ -1823,7 +1861,7 @@ void ScriptActions::doTeamFollowWaypoints(const AsciiString& teamName, const Asc
 	if (!way) {
 		return;
 	}
-	DEBUG_ASSERTLOG(TheTerrainLogic->isPurposeOfPath(way, waypointPathLabel), ("***Wrong waypoint purpose. Make jba fix this.\n"));
+	DEBUG_ASSERTLOG(TheTerrainLogic->isPurposeOfPath(way, waypointPathLabel), ("***Wrong waypoint purpose. Make jba fix this."));
 	if (asTeam) 
 	{
 		theGroup->groupFollowWaypointPathAsTeam(way, CMD_FROM_SCRIPT);
@@ -1842,11 +1880,15 @@ void ScriptActions::doTeamFollowWaypointsExact(const AsciiString& teamName, cons
 		return;
 	}
 
-	AIGroup* theGroup = TheAI->createGroup();
+	AIGroupPtr theGroup = TheAI->createGroup();
 	if (!theGroup) {
 		return;
 	}
+#if RETAIL_COMPATIBLE_AIGROUP
 	theTeam->getTeamAsAIGroup(theGroup);
+#else
+	theTeam->getTeamAsAIGroup(theGroup.Peek());
+#endif
 	Int count = 0;
 	Coord3D pos;
 	pos.x=pos.y=pos.z=0;
@@ -1870,7 +1912,7 @@ void ScriptActions::doTeamFollowWaypointsExact(const AsciiString& teamName, cons
 	if (!way) {
 		return;
 	}
-	DEBUG_ASSERTLOG(TheTerrainLogic->isPurposeOfPath(way, waypointPathLabel), ("***Wrong waypoint purpose. Make jba fix this.\n"));
+	DEBUG_ASSERTLOG(TheTerrainLogic->isPurposeOfPath(way, waypointPathLabel), ("***Wrong waypoint purpose. Make jba fix this."));
 	if (asTeam) 
 	{
 		theGroup->groupFollowWaypointPathAsTeamExact(way, CMD_FROM_SCRIPT);
@@ -1934,11 +1976,15 @@ void ScriptActions::doTeamGuardPosition(const AsciiString& teamName, const Ascii
 		return;
 	}
 
-	AIGroup* theGroup = TheAI->createGroup();
+	AIGroupPtr theGroup = TheAI->createGroup();
 	if (!theGroup) {
 		return;
 	}
+#if RETAIL_COMPATIBLE_AIGROUP
 	theTeam->getTeamAsAIGroup(theGroup);
+#else
+	theTeam->getTeamAsAIGroup(theGroup.Peek());
+#endif
 	Coord3D position = *way->getLocation();
 
 	theGroup->groupGuardPosition( &position, GUARDMODE_NORMAL, CMD_FROM_SCRIPT );
@@ -1955,12 +2001,15 @@ void ScriptActions::doTeamGuardObject(const AsciiString& teamName, const AsciiSt
 		return;
 	}
 
-	AIGroup* theGroup = TheAI->createGroup();
+	AIGroupPtr theGroup = TheAI->createGroup();
 	if (!theGroup) {
 		return;
 	}
+#if RETAIL_COMPATIBLE_AIGROUP
 	theTeam->getTeamAsAIGroup(theGroup);
-
+#else
+	theTeam->getTeamAsAIGroup(theGroup.Peek());
+#endif
 	theGroup->groupGuardObject( theUnit, GUARDMODE_NORMAL, CMD_FROM_SCRIPT );
 }
 
@@ -1975,12 +2024,15 @@ void ScriptActions::doTeamGuardArea(const AsciiString& teamName, const AsciiStri
 		return;
 	}
 
-	AIGroup* theGroup = TheAI->createGroup();
+	AIGroupPtr theGroup = TheAI->createGroup();
 	if (!theGroup) {
 		return;
 	}
+#if RETAIL_COMPATIBLE_AIGROUP
 	theTeam->getTeamAsAIGroup(theGroup);
-
+#else
+	theTeam->getTeamAsAIGroup(theGroup.Peek());
+#endif
 	theGroup->groupGuardArea( pTrig, GUARDMODE_NORMAL, CMD_FROM_SCRIPT );
 }
 
@@ -2013,12 +2065,15 @@ void ScriptActions::doTeamHunt(const AsciiString& teamName)
 		return;
 	}
 
-	AIGroup* theGroup = TheAI->createGroup();
+	AIGroupPtr theGroup = TheAI->createGroup();
 	if (!theGroup) {
 		return;
 	}
+#if RETAIL_COMPATIBLE_AIGROUP
 	theTeam->getTeamAsAIGroup(theGroup);
-
+#else
+	theTeam->getTeamAsAIGroup(theGroup.Peek());
+#endif
 	theGroup->groupHunt( CMD_FROM_SCRIPT );
 }
 //-------------------------------------------------------------------------------------------------
@@ -2628,6 +2683,7 @@ void ScriptActions::doCameoFlash(const AsciiString& name, Int timeInSeconds)
 	if( button == NULL )
 	{
 		DEBUG_CRASH(( "ScriptActions::doCameoFlash can't find AsciiString cameoflash" ));
+		return;
 	}
 
 	Int frames = LOGICFRAMES_PER_SECOND * timeInSeconds;
@@ -2970,7 +3026,7 @@ void ScriptActions::doCameraMotionBlur(Bool zoomIn, Bool saturate)
 {
 	if (TheTacticalView->setViewFilter(FT_VIEW_MOTION_BLUR_FILTER))
 	{
-		enum FilterModes mode;
+		FilterModes mode;
 		if (saturate) {
 			if (zoomIn) {
 				mode = FM_VIEW_MB_IN_SATURATE;
@@ -3001,7 +3057,7 @@ static PlayerMaskType getHumanPlayerMask( void )
 			mask &= player->getPlayerMask();
 	}
 
-	//DEBUG_LOG(("getHumanPlayerMask(): mask was %4.4X\n", mask));
+	//DEBUG_LOG(("getHumanPlayerMask(): mask was %4.4X", mask));
 	return mask;
 }
 
@@ -3060,22 +3116,22 @@ void ScriptActions::doShroudMapAtWaypoint(const AsciiString& waypointName, Real 
 //-------------------------------------------------------------------------------------------------
 void ScriptActions::doRevealMapEntire(const AsciiString& playerName)
 {
-	DEBUG_LOG(("ScriptActions::doRevealMapEntire() for player named '%s'\n", playerName.str()));
+	DEBUG_LOG(("ScriptActions::doRevealMapEntire() for player named '%s'", playerName.str()));
 	Player* player = TheScriptEngine->getPlayerFromAsciiString(playerName);
 	if (player && playerName.isNotEmpty())
 	{
-		DEBUG_LOG(("ScriptActions::doRevealMapEntire() for player named '%ls' in position %d\n", player->getPlayerDisplayName().str(), player->getPlayerIndex()));
+		DEBUG_LOG(("ScriptActions::doRevealMapEntire() for player named '%ls' in position %d", player->getPlayerDisplayName().str(), player->getPlayerIndex()));
 		ThePartitionManager->revealMapForPlayer( player->getPlayerIndex() );
 	}
 	else
 	{
-		DEBUG_LOG(("ScriptActions::doRevealMapEntire() - no player, so doing all human players\n"));
+		DEBUG_LOG(("ScriptActions::doRevealMapEntire() - no player, so doing all human players"));
 		for (Int i=0; i<ThePlayerList->getPlayerCount(); ++i)
 		{
 			Player *player = ThePlayerList->getNthPlayer(i);
 			if (player->getPlayerType() == PLAYER_HUMAN)
 			{
-				DEBUG_LOG(("ScriptActions::doRevealMapEntire() for player %d\n", i));
+				DEBUG_LOG(("ScriptActions::doRevealMapEntire() for player %d", i));
 				ThePartitionManager->revealMapForPlayer( i );
 			}
 		}
@@ -3099,7 +3155,7 @@ void ScriptActions::doRevealMapEntirePermanently( Bool reveal, const AsciiString
 			Player *player = ThePlayerList->getNthPlayer(i);
 			if (player->getPlayerType() == PLAYER_HUMAN)
 			{
-				DEBUG_LOG(("ScriptActions::doRevealMapEntirePermanently() for player %d\n", i));
+				DEBUG_LOG(("ScriptActions::doRevealMapEntirePermanently() for player %d", i));
 				if( reveal )
 					ThePartitionManager->revealMapForPlayerPermanently( i );
 				else
@@ -3126,7 +3182,7 @@ void ScriptActions::doShroudMapEntire(const AsciiString& playerName)
 			Player *player = ThePlayerList->getNthPlayer(i);
 			if (player->getPlayerType() == PLAYER_HUMAN)
 			{
-				DEBUG_LOG(("ScriptActions::doShroudMapEntire() for player %d\n", i));
+				DEBUG_LOG(("ScriptActions::doShroudMapEntire() for player %d", i));
 				ThePartitionManager->shroudMapForPlayer( i );
 			}
 		}
@@ -3200,7 +3256,7 @@ void ScriptActions::doMergeTeamIntoTeam(const AsciiString& teamSrcName, const As
 //-------------------------------------------------------------------------------------------------
 void ScriptActions::doDisableInput()
 {
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	if (!TheGlobalData->m_disableScriptedInputDisabling)
 #endif
 	{
@@ -3251,7 +3307,7 @@ void ScriptActions::doIdleAllPlayerUnits(const AsciiString& playerName)
 			Player *player = ThePlayerList->getNthPlayer(i);
 			if (player->getPlayerType() == PLAYER_HUMAN)
 			{
-				DEBUG_LOG(("ScriptActions::doIdleAllPlayerUnits() for player %d\n", i));
+				DEBUG_LOG(("ScriptActions::doIdleAllPlayerUnits() for player %d", i));
 				player->setUnitsShouldIdleOrResume(true);
 			}
 		}
@@ -3275,7 +3331,7 @@ void ScriptActions::doResumeSupplyTruckingForIdleUnits(const AsciiString& player
 			Player *player = ThePlayerList->getNthPlayer(i);
 			if (player->getPlayerType() == PLAYER_HUMAN)
 			{
-				DEBUG_LOG(("ScriptActions::doResumeSupplyTruckingForIdleUnits() for player %d\n", i));
+				DEBUG_LOG(("ScriptActions::doResumeSupplyTruckingForIdleUnits() for player %d", i));
 				player->setUnitsShouldIdleOrResume(false);
 			}
 		}
@@ -3337,12 +3393,15 @@ void ScriptActions::doTeamGarrisonSpecificBuilding(const AsciiString& teamName, 
 		return;
 	}
 	
-	AIGroup* theGroup = TheAI->createGroup();
+	AIGroupPtr theGroup = TheAI->createGroup();
 	if (!theGroup) {
 		return;
 	}
-	
+#if RETAIL_COMPATIBLE_AIGROUP
 	theTeam->getTeamAsAIGroup(theGroup);
+#else
+	theTeam->getTeamAsAIGroup(theGroup.Peek());
+#endif
 	theGroup->groupEnter(theBuilding, CMD_FROM_SCRIPT);
 }
 
@@ -3852,7 +3911,7 @@ void ScriptActions::doUnfreezeTime(void)
 //-------------------------------------------------------------------------------------------------
 void ScriptActions::doMilitaryCaption(const AsciiString& briefing, Int duration)
 {
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	if (TheGlobalData->m_disableMilitaryCaption)
 		duration = 1;
 #endif
@@ -4412,14 +4471,17 @@ void ScriptActions::doTeamUseCommandButtonAbility( const AsciiString& team, cons
 	}
 
 
-	AIGroup* theGroup = TheAI->createGroup();
+	AIGroupPtr theGroup = TheAI->createGroup();
 	if( !theGroup ) 
 	{
 		return;
 	}
 
-	theTeam->getTeamAsAIGroup( theGroup );
-	
+#if RETAIL_COMPATIBLE_AIGROUP
+	theTeam->getTeamAsAIGroup(theGroup);
+#else
+	theTeam->getTeamAsAIGroup(theGroup.Peek());
+#endif
 	theGroup->groupDoCommandButton( commandButton, CMD_FROM_SCRIPT );
 }
 
@@ -4447,14 +4509,17 @@ void ScriptActions::doTeamUseCommandButtonAbilityOnNamed( const AsciiString& tea
 	}
 
 
-	AIGroup* theGroup = TheAI->createGroup();
+	AIGroupPtr theGroup = TheAI->createGroup();
 	if( !theGroup ) 
 	{
 		return;
 	}
 
-	theTeam->getTeamAsAIGroup( theGroup );
-	
+#if RETAIL_COMPATIBLE_AIGROUP
+	theTeam->getTeamAsAIGroup(theGroup);
+#else
+	theTeam->getTeamAsAIGroup(theGroup.Peek());
+#endif
 	theGroup->groupDoCommandButtonAtObject( commandButton, theObj, CMD_FROM_SCRIPT );
 }
 
@@ -4482,14 +4547,17 @@ void ScriptActions::doTeamUseCommandButtonAbilityAtWaypoint( const AsciiString& 
 	}
 
 
-	AIGroup* theGroup = TheAI->createGroup();
+	AIGroupPtr theGroup = TheAI->createGroup();
 	if( !theGroup ) 
 	{
 		return;
 	}
 
-	theTeam->getTeamAsAIGroup( theGroup );
-	
+#if RETAIL_COMPATIBLE_AIGROUP
+	theTeam->getTeamAsAIGroup(theGroup);
+#else
+	theTeam->getTeamAsAIGroup(theGroup.Peek());
+#endif
 	theGroup->groupDoCommandButtonAtPosition( commandButton, pWaypoint->getLocation(), CMD_FROM_SCRIPT );
 }
 
@@ -4566,12 +4634,15 @@ void ScriptActions::doTeamStop(const AsciiString& teamName, Bool shouldDisband)
 		return;
 	}
 
-	AIGroup* theGroup = TheAI->createGroup();
+	AIGroupPtr theGroup = TheAI->createGroup();
 	if (!theGroup) {
 		return;
 	}
-
+#if RETAIL_COMPATIBLE_AIGROUP
 	theTeam->getTeamAsAIGroup(theGroup);
+#else
+	theTeam->getTeamAsAIGroup(theGroup.Peek());
+#endif
 	theGroup->groupIdle(CMD_FROM_SCRIPT);
 
 	if (shouldDisband) {
@@ -4698,7 +4769,7 @@ void ScriptActions::doUnitStartSequentialScript(const AsciiString& unitName, con
 	
 	TheScriptEngine->appendSequentialScript(seqScript);
 
-	seqScript->deleteInstance();
+	deleteInstance(seqScript);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -4755,7 +4826,7 @@ void ScriptActions::doNamedFireWeaponFollowingWaypointPath( const AsciiString& u
 		{
 			return;
 		}
-		DEBUG_ASSERTLOG(TheTerrainLogic->isPurposeOfPath(way, waypointPath), ("***Wrong waypoint purpose. Make jba fix this.\n"));
+		DEBUG_ASSERTLOG(TheTerrainLogic->isPurposeOfPath(way, waypointPath), ("***Wrong waypoint purpose. Make jba fix this."));
 		
 		projectile->leaveGroup();
 		aiUpdate->chooseLocomotorSet(LOCOMOTORSET_NORMAL);
@@ -4779,12 +4850,15 @@ void ScriptActions::doTeamStartSequentialScript(const AsciiString& teamName, con
 	}
 
 	// Idle the team so the seq script will start executing. jba.
-	AIGroup* theGroup = TheAI->createGroup();
+	AIGroupPtr theGroup = TheAI->createGroup();
 	if (!theGroup) {
 		return;
 	}
-
+#if RETAIL_COMPATIBLE_AIGROUP
 	team->getTeamAsAIGroup(theGroup);
+#else
+	team->getTeamAsAIGroup(theGroup.Peek());
+#endif
 	theGroup->groupIdle(CMD_FROM_SCRIPT);
 
 
@@ -4795,7 +4869,7 @@ void ScriptActions::doTeamStartSequentialScript(const AsciiString& teamName, con
 	
 	TheScriptEngine->appendSequentialScript(seqScript);
 
-	seqScript->deleteInstance();
+	deleteInstance(seqScript);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -4886,12 +4960,15 @@ void ScriptActions::doTeamIdleForFramecount(const AsciiString& teamName, Int fra
 		return;
 	}
 
-	AIGroup* theGroup = TheAI->createGroup();
+	AIGroupPtr theGroup = TheAI->createGroup();
 	if (!theGroup) {
 		return;
 	}
-
+#if RETAIL_COMPATIBLE_AIGROUP
 	theTeam->getTeamAsAIGroup(theGroup);
+#else
+	theTeam->getTeamAsAIGroup(theGroup.Peek());
+#endif
 	Coord3D center;
 	theGroup->getCenter(&center);
 
@@ -5207,7 +5284,7 @@ void ScriptActions::doMoveUnitTowardsNearest( const AsciiString& unitName, const
 			Real closestDist;
 			Real dist;
 
-			for( Int typeIndex = 0; typeIndex < objectTypes->getListSize(); typeIndex++ )
+			for( size_t typeIndex = 0; typeIndex < objectTypes->getListSize(); typeIndex++ )
 			{
 				AsciiString thisTypeName = objectTypes->getNthInList( typeIndex );
 				const ThingTemplate *thisType = TheThingFactory->findTemplate( thisTypeName );
@@ -5296,7 +5373,7 @@ void ScriptActions::doMoveTeamTowardsNearest( const AsciiString& teamName, const
 		{
 			Real closestDist;
 			Real dist;
-			for( Int typeIndex = 0; typeIndex < objectTypes->getListSize(); typeIndex++ )
+			for( size_t typeIndex = 0; typeIndex < objectTypes->getListSize(); typeIndex++ )
 			{
 				AsciiString thisTypeName = objectTypes->getNthInList( typeIndex );
 				const ThingTemplate *thisType = TheThingFactory->findTemplate( thisTypeName );
@@ -5365,8 +5442,12 @@ void ScriptActions::doSkirmishAttackNearestGroupWithValue( const AsciiString& te
 		return;
 	}
 
-	AIGroup* theGroup = TheAI->createGroup();
+	AIGroupPtr theGroup = TheAI->createGroup();
+#if RETAIL_COMPATIBLE_AIGROUP
 	team->getTeamAsAIGroup(theGroup);
+#else
+	team->getTeamAsAIGroup(theGroup.Peek());
+#endif
 
 	Player *player = team->getControllingPlayer();
 
@@ -5394,8 +5475,12 @@ void ScriptActions::doSkirmishCommandButtonOnMostValuable( const AsciiString& te
 		return;
 	}
 
-	AIGroup *theGroup = TheAI->createGroup();
+	AIGroupPtr theGroup = TheAI->createGroup();
+#if RETAIL_COMPATIBLE_AIGROUP
 	team->getTeamAsAIGroup(theGroup);
+#else
+	team->getTeamAsAIGroup(theGroup.Peek());
+#endif
 
 	Player *player = team->getControllingPlayer();
 	if (!player)
@@ -5457,8 +5542,12 @@ void ScriptActions::doTeamUseCommandButtonOnNamed( const AsciiString& teamName, 
 		return;
 	}
 
-	AIGroup *theGroup = TheAI->createGroup();
+	AIGroupPtr theGroup = TheAI->createGroup();
+#if RETAIL_COMPATIBLE_AIGROUP
 	team->getTeamAsAIGroup(theGroup);
+#else
+	team->getTeamAsAIGroup(theGroup.Peek());
+#endif
 
 	const CommandButton *commandButton = TheControlBar->findCommandButton(commandAbility);
 	if(!commandButton) {
@@ -5496,8 +5585,12 @@ void ScriptActions::doTeamUseCommandButtonOnNearestEnemy( const AsciiString& tea
 		return;
 	}
 
-	AIGroup *theGroup = TheAI->createGroup();
+	AIGroupPtr theGroup = TheAI->createGroup();
+#if RETAIL_COMPATIBLE_AIGROUP
 	team->getTeamAsAIGroup(theGroup);
+#else
+	team->getTeamAsAIGroup(theGroup.Peek());
+#endif
 
 	const CommandButton *commandButton = TheControlBar->findCommandButton(commandAbility);
 	if(!commandButton) {
@@ -5542,8 +5635,12 @@ void ScriptActions::doTeamUseCommandButtonOnNearestGarrisonedBuilding( const Asc
 		return;
 	}
 
-	AIGroup *theGroup = TheAI->createGroup();
+	AIGroupPtr theGroup = TheAI->createGroup();
+#if RETAIL_COMPATIBLE_AIGROUP
 	team->getTeamAsAIGroup(theGroup);
+#else
+	team->getTeamAsAIGroup(theGroup.Peek());
+#endif
 
 	const CommandButton *commandButton = TheControlBar->findCommandButton(commandAbility);
 	if(!commandButton) {
@@ -5590,8 +5687,12 @@ void ScriptActions::doTeamUseCommandButtonOnNearestKindof( const AsciiString& te
 		return;
 	}
 
-	AIGroup *theGroup = TheAI->createGroup();
+	AIGroupPtr theGroup = TheAI->createGroup();
+#if RETAIL_COMPATIBLE_AIGROUP
 	team->getTeamAsAIGroup(theGroup);
+#else
+	team->getTeamAsAIGroup(theGroup.Peek());
+#endif
 
 	const CommandButton *commandButton = TheControlBar->findCommandButton(commandAbility);
 	if (!commandButton) {
@@ -5637,8 +5738,12 @@ void ScriptActions::doTeamUseCommandButtonOnNearestBuilding( const AsciiString& 
 		return;
 	}
 
-	AIGroup *theGroup = TheAI->createGroup();
+	AIGroupPtr theGroup = TheAI->createGroup();
+#if RETAIL_COMPATIBLE_AIGROUP
 	team->getTeamAsAIGroup(theGroup);
+#else
+	team->getTeamAsAIGroup(theGroup.Peek());
+#endif
 
 	const CommandButton *commandButton = TheControlBar->findCommandButton(commandAbility);
 	if (!commandButton) {
@@ -5684,8 +5789,12 @@ void ScriptActions::doTeamUseCommandButtonOnNearestBuildingClass( const AsciiStr
 		return;
 	}
 
-	AIGroup *theGroup = TheAI->createGroup();
+	AIGroupPtr theGroup = TheAI->createGroup();
+#if RETAIL_COMPATIBLE_AIGROUP
 	team->getTeamAsAIGroup(theGroup);
+#else
+	team->getTeamAsAIGroup(theGroup.Peek());
+#endif
 
 	const CommandButton *commandButton = TheControlBar->findCommandButton(commandAbility);
 	if (!commandButton) {
@@ -5732,8 +5841,12 @@ void ScriptActions::doTeamUseCommandButtonOnNearestObjectType( const AsciiString
 		return;
 	}
 
-	AIGroup *theGroup = TheAI->createGroup();
+	AIGroupPtr theGroup = TheAI->createGroup();
+#if RETAIL_COMPATIBLE_AIGROUP
 	team->getTeamAsAIGroup(theGroup);
+#else
+	team->getTeamAsAIGroup(theGroup.Peek());
+#endif
 
 	const CommandButton *commandButton = TheControlBar->findCommandButton(commandAbility);
 	if (!commandButton) {
@@ -5786,7 +5899,7 @@ void ScriptActions::doTeamUseCommandButtonOnNearestObjectType( const AsciiString
 			Real closestDist;
 			Real dist;
 
-			for( Int typeIndex = 0; typeIndex < objectTypes->getListSize(); typeIndex++ )
+			for( size_t typeIndex = 0; typeIndex < objectTypes->getListSize(); typeIndex++ )
 			{
 				AsciiString thisTypeName = objectTypes->getNthInList( typeIndex );
 				const ThingTemplate *thisType = TheThingFactory->findTemplate( thisTypeName );
@@ -5862,8 +5975,12 @@ void ScriptActions::doTeamCaptureNearestUnownedFactionUnit( const AsciiString& t
 		return;
 	}
 
-	AIGroup *theGroup = TheAI->createGroup();
+	AIGroupPtr theGroup = TheAI->createGroup();
+#if RETAIL_COMPATIBLE_AIGROUP
 	team->getTeamAsAIGroup(theGroup);
+#else
+	team->getTeamAsAIGroup(theGroup.Peek());
+#endif
 
 	PartitionFilterPlayerAffiliation f1(team->getControllingPlayer(), ALLOW_ENEMIES | ALLOW_NEUTRAL, true);
 	PartitionFilterUnmannedObject f2(true);
@@ -5978,12 +6095,16 @@ void ScriptActions::doTeamEmoticon(const AsciiString& teamName, const AsciiStrin
 		return;
 	}
 
-	AIGroup* theGroup = TheAI->createGroup();
+	AIGroupPtr theGroup = TheAI->createGroup();
 	if( !theGroup ) 
 	{
 		return;
 	}
-	theTeam->getTeamAsAIGroup( theGroup );
+#if RETAIL_COMPATIBLE_AIGROUP
+	theTeam->getTeamAsAIGroup(theGroup);
+#else
+	theTeam->getTeamAsAIGroup(theGroup.Peek());
+#endif
 	
 	Int frames = (Int)( duration * LOGICFRAMES_PER_SECOND );
 	theGroup->groupSetEmoticon( emoticonName, frames );
@@ -6097,7 +6218,7 @@ void ScriptActions::doC3CameraShake
 )
 {
 	Waypoint *way = TheTerrainLogic->getWaypointByName(waypointName);
-	DEBUG_ASSERTLOG( (way != NULL), ("Camera shake with No Valid Waypoint\n") );
+	DEBUG_ASSERTLOG( (way != NULL), ("Camera shake with No Valid Waypoint") );
 	Coord3D pos = *way->getLocation();
 
 	TheTacticalView->Add_Camera_Shake(pos, radius, duration_seconds, amplitude);
@@ -6757,7 +6878,7 @@ void ScriptActions::executeAction( ScriptAction *pAction )
 			{
 				const char* MSG = "Your Script requested the following message be displayed:\n\n";
 				const char* MSG2 = "\n\nTHIS IS NOT A BUG. DO NOT REPORT IT.";
-				DEBUG_CRASH(("%s%s%s\n",MSG,pAction->getParameter(0)->getString().str(),MSG2));
+				DEBUG_CRASH(("%s%s%s",MSG,pAction->getParameter(0)->getString().str(),MSG2));
 			}
 #endif
 			return;
@@ -6970,7 +7091,7 @@ void ScriptActions::executeAction( ScriptAction *pAction )
 			doCameraMotionBlurJump(pAction->getParameter(0)->getString(), pAction->getParameter(1)->getInt());
 			return;
 		case ScriptAction::CAMERA_MOTION_BLUR_FOLLOW:
-			TheTacticalView->setViewFilterMode((enum FilterModes)(FM_VIEW_MB_PAN_ALPHA+pAction->getParameter(0)->getInt())); 						 
+			TheTacticalView->setViewFilterMode((FilterModes)(FM_VIEW_MB_PAN_ALPHA+pAction->getParameter(0)->getInt())); 						 
 			TheTacticalView->setViewFilter(FT_VIEW_MOTION_BLUR_FILTER);
 			return;
 		case ScriptAction::CAMERA_MOTION_BLUR_END_FOLLOW:
