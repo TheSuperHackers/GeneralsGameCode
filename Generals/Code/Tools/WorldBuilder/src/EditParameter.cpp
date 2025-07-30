@@ -64,11 +64,6 @@
 #include "W3DDevice/GameClient/W3DGameFont.h"
 #include "W3DDevice/GameClient/HeightMap.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma message("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 // TYPE DEFINES ///////////////////////////////////////////////////////////////////////////////////
 #define WORLDBUILDER_FONT_FILENAME		"GUIEFont.txt"

@@ -104,7 +104,7 @@ static const char* DeviceNamesNVidia[]={
 	"RIVA 128",
 	"TNT Vanta",
 	"NV1",
-	"GeForce2 MX"
+	"GeForce2 MX",
 	"GeForce4 Ti 4600",
 	"GeForce4 Ti 4400",
 	"GeForce4 Ti",
@@ -721,7 +721,7 @@ void DX8Caps::Check_Texture_Format_Support(WW3DFormat display_format,const D3DCA
 			if (SupportTextureFormat[i]) {
 				StringClass name(0,true);
 				Get_WW3D_Format_Name(format,name);
-				DXLOG(("Supports texture format: %s\r\n",name));
+				DXLOG(("Supports texture format: %s\r\n",name.str()));
 			}
 		}
 	}
@@ -753,7 +753,7 @@ void DX8Caps::Check_Render_To_Texture_Support(WW3DFormat display_format,const D3
 			if (SupportRenderToTextureFormat[i]) {
 				StringClass name(0,true);
 				Get_WW3D_Format_Name(format,name);
-				DXLOG(("Supports render-to-texture format: %s\r\n",name));
+				DXLOG(("Supports render-to-texture format: %s\r\n",name.str()));
 			}
 		}
 	}
@@ -802,7 +802,7 @@ void DX8Caps::Check_Depth_Stencil_Support(WW3DFormat display_format, const D3DCA
 			{
 				StringClass name(0,true);
 				Get_WW3D_ZFormat_Name(format,name);
-				DXLOG(("Supports depth stencil format: %s\r\n",name));
+				DXLOG(("Supports depth stencil format: %s\r\n",name.str()));
 			}
 		}
 	}

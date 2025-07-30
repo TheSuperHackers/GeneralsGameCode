@@ -48,11 +48,6 @@
 #include "GameClient/Drawable.h"
 #include "Common/INI.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-///#pragma optimize("", off)
-///#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 enum { TEMPLATE_HASH_SIZE = 12288 };
 
@@ -89,7 +84,7 @@ void ThingFactory::addTemplate( ThingTemplate *tmplate )
 	ThingTemplateHashMapIt tIt = m_templateHashMap.find(tmplate->getName());
 
 	if (tIt != m_templateHashMap.end()) {
-		DEBUG_CRASH(("Duplicate Thing Template name found: %s\n", tmplate->getName().str()));
+		DEBUG_CRASH(("Duplicate Thing Template name found: %s", tmplate->getName().str()));
 	}
 
 	// Link it to the list
@@ -174,11 +169,11 @@ ThingTemplate* ThingFactory::newOverride( ThingTemplate *thingTemplate )
 {
 
 	// sanity
-	DEBUG_ASSERTCRASH( thingTemplate, ("newOverride(): NULL 'parent' thing template\n") );
+	DEBUG_ASSERTCRASH( thingTemplate, ("newOverride(): NULL 'parent' thing template") );
 
 	// sanity just for debuging, the weapon must be in the master list to do overrides
 	DEBUG_ASSERTCRASH( findTemplate( thingTemplate->getName() ) != NULL,
-										 ("newOverride(): Thing template '%s' not in master list\n", 
+										 ("newOverride(): Thing template '%s' not in master list",
 										 thingTemplate->getName().str()) );
 
 	// find final override of the 'parent' template
@@ -263,7 +258,7 @@ const ThingTemplate *ThingFactory::findByTemplateID( UnsignedShort id )
 		if (tmpl->getTemplateID() == id)
 			return tmpl;
 	}
-	DEBUG_CRASH(("template %d not found\n",(Int)id));
+	DEBUG_CRASH(("template %d not found",(Int)id));
 	return NULL;
 }
 
@@ -297,7 +292,7 @@ ThingTemplate *ThingFactory::findTemplateInternal( const AsciiString& name )
 	
 #endif
 	
-	//DEBUG_LOG(("*** Object template %s not found\n",name.str()));
+	//DEBUG_LOG(("*** Object template %s not found",name.str()));
 	return NULL;
 
 }  // end getTemplate
@@ -317,7 +312,7 @@ Object *ThingFactory::newObject( const ThingTemplate *tmplate, Team *team, Objec
 			tmplate = tmp;
 	}
 
-	DEBUG_ASSERTCRASH(!tmplate->isKindOf(KINDOF_DRAWABLE_ONLY), ("You may not create Objects with the template %s, only Drawables\n",tmplate->getName().str()));
+	DEBUG_ASSERTCRASH(!tmplate->isKindOf(KINDOF_DRAWABLE_ONLY), ("You may not create Objects with the template %s, only Drawables",tmplate->getName().str()));
 
 	// have the game logic create an object of the correct type.
 	// (this will throw an exception on failure.)
@@ -363,7 +358,7 @@ Drawable *ThingFactory::newDrawable(const ThingTemplate *tmplate, DrawableStatus
 
 }  // end newDrawableByType
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL) || defined(DEBUG_CRASHING)
+#if defined(RTS_DEBUG) || defined(DEBUG_CRASHING)
 AsciiString TheThingTemplateBeingParsedName;
 #endif
 
@@ -372,7 +367,7 @@ AsciiString TheThingTemplateBeingParsedName;
 //-------------------------------------------------------------------------------------------------
 /*static*/ void ThingFactory::parseObjectDefinition( INI* ini, const AsciiString& name, const AsciiString& reskinFrom )
 {
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL) || defined(DEBUG_CRASHING)
+#if defined(RTS_DEBUG) || defined(DEBUG_CRASHING)
 	TheThingTemplateBeingParsedName = name;
 #endif
 
@@ -415,7 +410,7 @@ AsciiString TheThingTemplateBeingParsedName;
 		}
 		else
 		{
-			DEBUG_CRASH(("ObjectReskin must come after the original Object (%s, %s).\n",reskinFrom.str(),name.str()));
+			DEBUG_CRASH(("ObjectReskin must come after the original Object (%s, %s).",reskinFrom.str(),name.str()));
 			throw INI_INVALID_DATA;
 		}
 	}
@@ -426,7 +421,7 @@ AsciiString TheThingTemplateBeingParsedName;
 
 	thingTemplate->validate();
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL) || defined(DEBUG_CRASHING)
+#if defined(RTS_DEBUG) || defined(DEBUG_CRASHING)
 	TheThingTemplateBeingParsedName.clear();
 #endif
 }

@@ -388,7 +388,7 @@ void WorldHeightMapEdit::loadBaseImages(void)
 {
  
  	/// @todo - take this out when we are done evaluating terrain textures. 
-#if (defined(RTS_DEBUG) || defined(RTS_INTERNAL))
+#if defined(RTS_DEBUG)
  	loadDirectoryOfImages("..\\TestArt\\TestTerrain");
 #endif
 
@@ -1346,7 +1346,7 @@ void WorldHeightMapEdit::autoBlendOut(Int xIndex, Int yIndex, Int globalEdgeClas
 		delete pCurNode;
 	}
 
-	if (pProcessed) delete pProcessed;
+	if (pProcessed) delete[] pProcessed;
 	pProcessed = NULL;
 }
 
@@ -2208,7 +2208,7 @@ Bool WorldHeightMapEdit::selectInvalidTeam(void)
 
 	if (anySelected)
 	{
-		DEBUG_LOG(("%s\n", report.str()));
+		DEBUG_LOG(("%s", report.str()));
 		MessageBox(NULL, report.str(), "Missing team report", MB_OK);
 	}
 
@@ -2472,7 +2472,7 @@ Bool WorldHeightMapEdit::doCliffAdjustment(Int xIndex, Int yIndex)
  					ndx = (j*m_width)+i;
 					if (pProcessed[ndx]) continue;
 					CProcessNode *pNewNode = new CProcessNode(i,j);
-					DEBUG_LOG(("Adding node %d, %d\n", i, j));
+					DEBUG_LOG(("Adding node %d, %d", i, j));
 					pNodes[k++]	= pNewNode;
 					Real dx, dy;
 					if (i<pCurNode->m_x) {
@@ -2665,7 +2665,7 @@ Bool WorldHeightMapEdit::adjustForTiling( TCliffInfo &cliffInfo, Real textureWid
 //	Bool doOffset = false;
 	Real offset;					 
 
-	DEBUG_ASSERTLOG(minU<-delta && maxU > delta, ("Oops, wrong.\n")) ;
+	DEBUG_ASSERTLOG(minU<-delta && maxU > delta, ("Oops, wrong.")) ;
 
 	// Straddles the 0 line.
 	if (maxU > -minU) {
@@ -3273,7 +3273,7 @@ void WorldHeightMapEdit::updateFlatCellForAdjacentCliffs(Int xIndex, Int yIndex,
 	}
 
 	if (!gotXVec && !gotYVec) {
-		DEBUG_LOG(("Unexpected.  jba\n"));
+		DEBUG_LOG(("Unexpected.  jba"));
 		return; 
 	}
 	if (gotXVec && !gotYVec) {

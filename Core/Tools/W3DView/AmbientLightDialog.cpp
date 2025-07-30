@@ -19,14 +19,14 @@
 // AmbientLightDialog.cpp : implementation file
 //
 
-#include "stdafx.h"
+#include "StdAfx.h"
 
 #include "W3DView.h"
 #include "AmbientLightDialog.h"
-#include "MainFrm.H"
-#include "W3DViewDoc.H"
-#include "ViewerScene.H"
-#include "Utils.H"
+#include "MainFrm.h"
+#include "W3DViewDoc.h"
+#include "ViewerScene.h"
+#include "Utils.h"
 
 #ifdef RTS_DEBUG
 #define new DEBUG_NEW

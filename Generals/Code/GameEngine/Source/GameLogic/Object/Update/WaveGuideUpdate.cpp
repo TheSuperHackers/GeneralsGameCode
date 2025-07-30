@@ -179,7 +179,7 @@ Bool WaveGuideUpdate::startMoving( void )
 			if( verify->getNumLinks() > 1 )
 			{
 
-				DEBUG_CRASH(( "WaveGuideUpdate::startMoving - The waypoint path cannot have multiple link choices at any node\n" ));
+				DEBUG_CRASH(( "WaveGuideUpdate::startMoving - The waypoint path cannot have multiple link choices at any node" ));
 				return FALSE;
 
 			}  // end if
@@ -197,7 +197,7 @@ Bool WaveGuideUpdate::startMoving( void )
 		if( next == NULL )
 		{
 
-			DEBUG_CRASH(( "WaveGuideUpdate:startMoving - There must be a linked waypoint path to follow\n" ));
+			DEBUG_CRASH(( "WaveGuideUpdate:startMoving - There must be a linked waypoint path to follow" ));
 			return FALSE;
 
 		}  // end if

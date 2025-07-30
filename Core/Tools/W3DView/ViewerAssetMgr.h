@@ -41,7 +41,7 @@
 #ifndef __VIEWER_ASSETMGR_H
 #define __VIEWER_ASSETMGR_H
 
-#include "AssetMgr.H"
+#include "assetmgr.h"
 
 
 /////////////////////////////////////////////////////////////////////////////

@@ -60,11 +60,6 @@
 #include "GameClient/HeaderTemplate.h"
 #include "GameClient/GameFont.h"
 #include "GameClient/GlobalLanguage.h"
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 //-----------------------------------------------------------------------------
 // DEFINES ////////////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
@@ -191,7 +186,7 @@ GameFont *HeaderTemplateManager::getFontFromTemplate( AsciiString name )
 	HeaderTemplate *ht = findHeaderTemplate( name );
 	if(!ht)
 	{
-		//DEBUG_LOG(("HeaderTemplateManager::getFontFromTemplate - Could not find header %s\n", name.str()));
+		//DEBUG_LOG(("HeaderTemplateManager::getFontFromTemplate - Could not find header %s", name.str()));
 		return NULL;
 	}
 	
@@ -241,7 +236,7 @@ void HeaderTemplateManager::populateGameFonts( void )
 		HeaderTemplate *hTemplate = *it;
 		Real pointSize = TheGlobalLanguageData->adjustFontSize(hTemplate->m_point);
 		GameFont *font = TheFontLibrary->getFont(hTemplate->m_fontName, pointSize,hTemplate->m_bold);
-		DEBUG_ASSERTCRASH(font,("HeaderTemplateManager::populateGameFonts - Could not find font %s %d",hTemplate->m_fontName, hTemplate->m_point));
+		DEBUG_ASSERTCRASH(font,("HeaderTemplateManager::populateGameFonts - Could not find font %s %d",hTemplate->m_fontName.str(), hTemplate->m_point));
 
 		hTemplate->m_font = font;
 		

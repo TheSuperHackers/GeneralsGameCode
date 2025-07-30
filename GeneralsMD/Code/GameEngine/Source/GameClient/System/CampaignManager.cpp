@@ -66,11 +66,6 @@
 CampaignManager *TheCampaignManager = NULL;
 
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 
 const FieldParse CampaignManager::m_campaignFieldParseTable[] = 
@@ -102,7 +97,7 @@ void INI::parseCampaignDefinition( INI *ini )
 	name.set( c );	
 
 	// find existing item if present
-	DEBUG_ASSERTCRASH( TheCampaignManager, ("parseCampaignDefinition: Unable to Get TheCampaignManager\n") );
+	DEBUG_ASSERTCRASH( TheCampaignManager, ("parseCampaignDefinition: Unable to Get TheCampaignManager") );
 	if( !TheCampaignManager )
 		return;
 
@@ -110,7 +105,7 @@ void INI::parseCampaignDefinition( INI *ini )
 	campaign = TheCampaignManager->newCampaign( name );
 
 	// sanity
-	DEBUG_ASSERTCRASH( campaign, ("parseCampaignDefinition: Unable to allocate campaign '%s'\n", name.str()) );
+	DEBUG_ASSERTCRASH( campaign, ("parseCampaignDefinition: Unable to allocate campaign '%s'", name.str()) );
 
 	// parse the ini definition
 	ini->initFromINI( campaign, TheCampaignManager->getFieldParse() );

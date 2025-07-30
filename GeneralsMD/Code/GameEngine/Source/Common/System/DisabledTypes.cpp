@@ -30,6 +30,7 @@
 #include "Common/DisabledTypes.h"
 #include "Common/BitFlagsIO.h"
 
+template<>
 const char* DisabledMaskType::s_bitNameList[] = 
 {
 	"DEFAULT",

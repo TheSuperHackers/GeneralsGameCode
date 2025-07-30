@@ -37,6 +37,8 @@
 #include "Common/Snapshot.h"
 #include "Common/Xfer.h"
 
+#include "refcount.h"
+
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
@@ -48,9 +50,6 @@ class Object;
 //#undef STATE_MACHINE_DEBUG
 #if defined(RTS_DEBUG)
 	#define STATE_MACHINE_DEBUG
-#endif
-#if defined(RTS_INTERNAL)
-	#define STATE_MACHINE_DEBUG	//uncomment to debug state machines in internal.  jba.
 #endif
 
 //-----------------------------------------------------------------------------
@@ -263,6 +262,10 @@ public:
 
 	virtual StateReturnType setState( StateID newStateID );			///< change the current state of the machine (which may cause further state changes, due to onEnter)
 
+	void Add_Ref() const { m_refCount.Add_Ref(); }
+	void Release_Ref() const { m_refCount.Release_Ref(MemoryPoolObject::deleteInstanceInternal, this); }
+	UnsignedByte Num_Refs() const { return m_refCount.Num_Refs(); }
+
 	StateID getCurrentStateID() const { return m_currentState ? m_currentState->getID() : INVALID_STATE_ID; }	///< return the id of the current state of the machine
 	Bool isInIdleState() const { return m_currentState ? m_currentState->isIdle() : true; }	// stateless things are considered 'idle'
 	Bool isInAttackState() const { return m_currentState ? m_currentState->isAttack() : true; }	// stateless things are considered 'idle'
@@ -321,7 +324,7 @@ public:
 	//
 	StateReturnType internalSetState( StateID newStateID );	///< for internal use only - change the current state of the machine
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	UnsignedInt peekSleepTill() const { return m_sleepTill; }
 #endif
 
@@ -377,6 +380,8 @@ private:
 
 	Bool					m_locked;													///< whether this machine is locked or not
 	Bool					m_defaultStateInited;							///< if initDefaultState has been called
+
+	RefCountValue<UnsignedByte> m_refCount;
 
 #ifdef STATE_MACHINE_DEBUG
 	Bool					m_debugOutput;
@@ -473,6 +478,15 @@ protected:
 	virtual void loadPostProcess(){};
 };
 EMPTY_DTOR(SleepState)
+
+
+//-----------------------------------------------------------------------------------------------------------
+// TheSuperHackers @info Misappropriates deleteInstance to call Release_Ref to keep the StateMachine fix small.
+// @todo Replace calls to deleteInstance with RefCountPtr<StateMachine> when so appropriate.
+inline void deleteInstance(StateMachine* machine)
+{
+	machine->Release_Ref();
+}
 
 
 #endif // _STATE_MACHINE_H_

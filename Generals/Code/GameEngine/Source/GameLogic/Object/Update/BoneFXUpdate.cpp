@@ -508,9 +508,6 @@ void BoneFXUpdate::resolveBoneLocations() {
 	Drawable *drawable = building->getDrawable();
 	if (drawable == NULL) {
 		DEBUG_ASSERTCRASH(drawable != NULL, ("There is no drawable?"));
-	}
-
-	if (d == NULL) {
 		return;
 	}
 
@@ -601,7 +598,7 @@ void BoneFXUpdate::xfer( Xfer *xfer )
 		if( m_particleSystemIDs.empty() == FALSE )
 		{
 
-			DEBUG_CRASH(( "BoneFXUpdate::xfer - m_particleSystemIDs should be empty but is not\n" ));
+			DEBUG_CRASH(( "BoneFXUpdate::xfer - m_particleSystemIDs should be empty but is not" ));
 			throw SC_INVALID_DATA;
 
 		}  // end if

@@ -42,11 +42,6 @@
 #include "GameClient/Drawable.h"
 #include "GameClient/FXList.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 //-------------------------------------------------------------------------------------------------
 MissileLauncherBuildingUpdate::MissileLauncherBuildingUpdate( Thing *thing, const ModuleData* moduleData ) : SpecialPowerUpdateModule( thing, moduleData )
@@ -79,7 +74,7 @@ void MissileLauncherBuildingUpdate::switchToState(DoorStateType dst)
 	switch (dst)
 	{
 		case DOOR_CLOSED:
-			DEBUG_LOG(("switch to state DOOR_CLOSED at %d\n",now));
+			DEBUG_LOG(("switch to state DOOR_CLOSED at %d",now));
 			/// @todo srj -- for now, this assumes at most one door
 			clr.set(MODELCONDITION_DOOR_1_WAITING_TO_CLOSE);
 			clr.set(MODELCONDITION_DOOR_1_CLOSING);
@@ -99,7 +94,7 @@ void MissileLauncherBuildingUpdate::switchToState(DoorStateType dst)
 			break;
 
 		case DOOR_OPENING:
-			DEBUG_LOG(("switch to state DOOR_OPENING at %d\n",now));
+			DEBUG_LOG(("switch to state DOOR_OPENING at %d",now));
 			/// @todo srj -- for now, this assumes at most one door
 			clr.set(MODELCONDITION_DOOR_1_WAITING_TO_CLOSE);
 			clr.set(MODELCONDITION_DOOR_1_CLOSING);
@@ -121,7 +116,7 @@ void MissileLauncherBuildingUpdate::switchToState(DoorStateType dst)
 			break;
 
 		case DOOR_OPEN:
-			DEBUG_LOG(("switch to state DOOR_OPEN at %d\n",now));
+			DEBUG_LOG(("switch to state DOOR_OPEN at %d",now));
 			/// @todo srj -- for now, this assumes at most one door
 			clr.set(MODELCONDITION_DOOR_1_WAITING_TO_CLOSE);
 			clr.set(MODELCONDITION_DOOR_1_CLOSING);
@@ -141,7 +136,7 @@ void MissileLauncherBuildingUpdate::switchToState(DoorStateType dst)
 			break;
 
 		case DOOR_WAITING_TO_CLOSE:
-			DEBUG_LOG(("switch to state DOOR_WAITING_TO_CLOSE at %d\n",now));
+			DEBUG_LOG(("switch to state DOOR_WAITING_TO_CLOSE at %d",now));
 			/// @todo srj -- for now, this assumes at most one door
 			clr.set(MODELCONDITION_DOOR_1_CLOSING);
 			clr.set(MODELCONDITION_DOOR_1_OPENING);
@@ -161,7 +156,7 @@ void MissileLauncherBuildingUpdate::switchToState(DoorStateType dst)
 			break;
 
 		case DOOR_CLOSING:
-			DEBUG_LOG(("switch to state DOOR_CLOSING at %d\n",now));
+			DEBUG_LOG(("switch to state DOOR_CLOSING at %d",now));
 			/// @todo srj -- for now, this assumes at most one door
 			clr.set(MODELCONDITION_DOOR_1_WAITING_TO_CLOSE);
 			clr.set(MODELCONDITION_DOOR_1_WAITING_OPEN);
@@ -206,12 +201,21 @@ void MissileLauncherBuildingUpdate::switchToState(DoorStateType dst)
 //-------------------------------------------------------------------------------------------------
 Bool MissileLauncherBuildingUpdate::initiateIntentToDoSpecialPower( const SpecialPowerTemplate *specialPowerTemplate, const Object *targetObj, const Coord3D *targetPos, const Waypoint *way, UnsignedInt commandOptions )
 {
+#if RETAIL_COMPATIBLE_CRC
+	// TheSuperHackers @bugfix Mauller 29/06/2025 prevent a game crash when told to launch before ready to do so
+	if (!m_specialPowerModule) {
+		Object* us = getObject();
+		us->getSpecialPowerModule(specialPowerTemplate)->setReadyFrame(0xFFFFFFFF);
+		return FALSE;
+	}
+#endif
+
 	if( m_specialPowerModule->getSpecialPowerTemplate() != specialPowerTemplate )
 	{
 		return FALSE;
 	}
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL) || defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
+#if defined(RTS_DEBUG) || defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
 	DEBUG_ASSERTCRASH(!TheGlobalData->m_specialPowerUsesDelay || m_doorState == DOOR_OPEN, ("door is not fully open when specialpower is fired!"));
 #endif
 
@@ -258,13 +262,13 @@ UpdateSleepTime MissileLauncherBuildingUpdate::update( void )
 			switchToState(m_timeoutState);
 		}
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL) || defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
+#if defined(RTS_DEBUG) || defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
 		DEBUG_ASSERTCRASH(!TheGlobalData->m_specialPowerUsesDelay || !(m_specialPowerModule->isReady() && m_doorState != DOOR_OPEN), ("door is not fully open when specialpower is ready!"));
 #endif
 
 		if (m_doorState != DOOR_OPEN && m_specialPowerModule->isReady())
 		{
-			DEBUG_LOG(("*** had to POP the door open!\n"));
+			DEBUG_LOG(("*** had to POP the door open!"));
 			switchToState(DOOR_OPEN);
 		}
 		else if (m_doorState == DOOR_CLOSED && now >= whenToStartOpening)

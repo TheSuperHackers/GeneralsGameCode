@@ -211,10 +211,10 @@ VideoStreamInterface* FFmpegVideoPlayer::createStream( File* file )
 		// never let volume go to 0, as Bink will interpret that as "play at full volume".
 		Int mod = (Int) ((TheAudio->getVolume(AudioAffect_Speech) * 0.8f) * 100) + 1;
 		[[maybe_unused]]  Int volume = (32768 * mod) / 100;
-		DEBUG_LOG(("FFmpegVideoPlayer::createStream() - About to set volume (%g -> %d -> %d\n",
+		DEBUG_LOG(("FFmpegVideoPlayer::createStream() - About to set volume (%g -> %d -> %d",
 			TheAudio->getVolume(AudioAffect_Speech), mod, volume));
 		//BinkSetVolume( stream->m_handle,0, volume);
-		DEBUG_LOG(("FFmpegVideoPlayer::createStream() - set volume\n"));
+		DEBUG_LOG(("FFmpegVideoPlayer::createStream() - set volume"));
 	}
 
 	return stream;
@@ -230,14 +230,14 @@ VideoStreamInterface*	FFmpegVideoPlayer::open( AsciiString movieTitle )
 
 	const Video* pVideo = getVideo(movieTitle);
 	if (pVideo) {
-		DEBUG_LOG(("FFmpegVideoPlayer::createStream() - About to open bink file\n"));
+		DEBUG_LOG(("FFmpegVideoPlayer::createStream() - About to open bink file"));
 		
 		if (TheGlobalData->m_modDir.isNotEmpty())
 		{
 			char filePath[ _MAX_PATH ];
 			sprintf( filePath, "%s%s\\%s.%s", TheGlobalData->m_modDir.str(), VIDEO_PATH, pVideo->m_filename.str(), VIDEO_EXT );
 			File* file =  TheFileSystem->openFile(filePath);
-			DEBUG_ASSERTLOG(!file, ("opened bink file %s\n", filePath));
+			DEBUG_ASSERTLOG(!file, ("opened bink file %s", filePath));
 			if (file)
 			{
 				return createStream( file );
@@ -247,16 +247,16 @@ VideoStreamInterface*	FFmpegVideoPlayer::open( AsciiString movieTitle )
 		char localizedFilePath[ _MAX_PATH ];
 		sprintf( localizedFilePath, VIDEO_LANG_PATH_FORMAT, GetRegistryLanguage().str(), pVideo->m_filename.str(), VIDEO_EXT );
 		File* file =  TheFileSystem->openFile(localizedFilePath);
-		DEBUG_ASSERTLOG(!file, ("opened localized bink file %s\n", localizedFilePath));
+		DEBUG_ASSERTLOG(!file, ("opened localized bink file %s", localizedFilePath));
 		if (!file)
 		{
 			char filePath[ _MAX_PATH ];
 			sprintf( filePath, "%s\\%s.%s", VIDEO_PATH, pVideo->m_filename.str(), VIDEO_EXT );
 			file = TheFileSystem->openFile(filePath);
-			DEBUG_ASSERTLOG(!file, ("opened bink file %s\n", filePath));
+			DEBUG_ASSERTLOG(!file, ("opened bink file %s", filePath));
 		}
 
-		DEBUG_LOG(("FFmpegVideoPlayer::createStream() - About to create stream\n"));
+		DEBUG_LOG(("FFmpegVideoPlayer::createStream() - About to create stream"));
 		stream = createStream( file );
 	}
 

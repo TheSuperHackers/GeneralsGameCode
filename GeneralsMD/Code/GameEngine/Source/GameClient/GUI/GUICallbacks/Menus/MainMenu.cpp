@@ -78,11 +78,6 @@
 //for accessing the InGameUI
 #include "GameClient/InGameUI.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 
 // PRIVATE DATA ///////////////////////////////////////////////////////////////////////////////////
@@ -101,7 +96,7 @@ enum
 
 static Bool raiseMessageBoxes = TRUE;
 static Bool campaignSelected = FALSE;
-#if defined RTS_DEBUG || defined RTS_INTERNAL || defined RTS_PROFILE
+#if defined(RTS_DEBUG) || defined RTS_PROFILE
 static NameKeyType campaignID = NAMEKEY_INVALID;
 static GameWindow *buttonCampaign = NULL;
 #ifdef TEST_COMPRESSION
@@ -447,6 +442,28 @@ GameWindow *win = NULL;
 		win->winHide(TRUE);
 
 }
+
+// TheSuperHackers @tweak Now prints version information in an optional version label.
+// Originally this label does not exist in the Main Menu. It can be copied from the Options Menu.
+static void initLabelVersion()
+{
+	NameKeyType versionID = TheNameKeyGenerator->nameToKey( AsciiString("MainMenu.wnd:LabelVersion") );
+	GameWindow *labelVersion = TheWindowManager->winGetWindowFromId( NULL, versionID );
+
+	if (labelVersion)
+	{
+		if (TheVersion && TheGlobalData)
+		{
+			UnicodeString text = TheVersion->getUnicodeProductVersionHashString();
+			GadgetStaticTextSetText( labelVersion, text );
+		}
+		else
+		{
+			labelVersion->winHide( TRUE );
+		}
+	}
+}
+
 //-------------------------------------------------------------------------------------------------
 /** Initialize the main menu */
 //-------------------------------------------------------------------------------------------------
@@ -476,7 +493,6 @@ void MainMenuInit( WindowLayout *layout, void *userData )
 	exitID = TheNameKeyGenerator->nameToKey( AsciiString("MainMenu.wnd:ButtonExit") );
 	motdID = TheNameKeyGenerator->nameToKey( AsciiString("MainMenu.wnd:ButtonMOTD") );
 	worldBuilderID = TheNameKeyGenerator->nameToKey( AsciiString("MainMenu.wnd:ButtonWorldBuilder") );
-//	NameKeyType versionID = TheNameKeyGenerator->nameToKey( AsciiString("MainMenu.wnd:LabelVersion") );
 	getUpdateID = TheNameKeyGenerator->nameToKey( AsciiString("MainMenu.wnd:ButtonGetUpdate") );
 //	buttonTRAININGID = TheNameKeyGenerator->nameToKey( AsciiString("MainMenu.wnd:ButtonTRAINING") );
 	buttonChallengeID = TheNameKeyGenerator->nameToKey( AsciiString("MainMenu.wnd:ButtonChallenge") );
@@ -526,9 +542,6 @@ void MainMenuInit( WindowLayout *layout, void *userData )
 	buttonHard = TheWindowManager->winGetWindowFromId( parentMainMenu, buttonHardID );
 	buttonDiffBack = TheWindowManager->winGetWindowFromId( parentMainMenu, buttonDiffBackID );
 
-
-//	GameWindow *labelVersion = TheWindowManager->winGetWindowFromId( parentMainMenu, versionID );
-	
 	getUpdate = TheWindowManager->winGetWindowFromId( parentMainMenu, getUpdateID );
 //	buttonTRAINING = TheWindowManager->winGetWindowFromId( parentMainMenu, buttonTRAININGID );
 	buttonChallenge = TheWindowManager->winGetWindowFromId( parentMainMenu, buttonChallengeID );
@@ -554,7 +567,7 @@ void MainMenuInit( WindowLayout *layout, void *userData )
 	
 	showSelectiveButtons(SHOW_NONE);
 	// Set up the version number
-#if defined RTS_DEBUG || defined RTS_INTERNAL || defined RTS_PROFILE
+#if defined(RTS_DEBUG) || defined RTS_PROFILE
 	WinInstanceData instData;
 #ifdef TEST_COMPRESSION
 	instData.init();
@@ -578,21 +591,9 @@ void MainMenuInit( WindowLayout *layout, void *userData )
 																									 25, 54, 
 																									 180, 26, 
 																									 &instData, NULL, TRUE );
-	
-//	if (TheVersion)
-//	{
-//		UnicodeString version;
-//		version.format(L"%s\n%s", TheVersion->getUnicodeVersion().str(), TheVersion->getUnicodeBuildTime().str());
-//		GadgetStaticTextSetText( labelVersion, version );
-//	}
-//	else
-//	{
-//		labelVersion->winHide( TRUE );
-//	}
-//#else
-	
-//	GadgetStaticTextSetText( labelVersion, TheVersion->getUnicodeVersion() );
 #endif
+
+	initLabelVersion();
 
 	//TheShell->registerWithAnimateManager(buttonCampaign, WIN_ANIMATION_SLIDE_LEFT, TRUE, 800);
 	//TheShell->registerWithAnimateManager(buttonSkirmish, WIN_ANIMATION_SLIDE_LEFT, TRUE, 600);
@@ -612,7 +613,7 @@ void MainMenuInit( WindowLayout *layout, void *userData )
 		{
 			// wohoo - we're connected!  fire off a check for updates
 			checkedForUpdate = TRUE;
-			DEBUG_LOG(("Looking for a patch for productID=%d, versionStr=%s, distribution=%d\n",
+			DEBUG_LOG(("Looking for a patch for productID=%d, versionStr=%s, distribution=%d",
 				gameProductID, gameVersionUniqueIDStr, gameDistributionID));
 			ptCheckForPatch( gameProductID, gameVersionUniqueIDStr, gameDistributionID, patchAvailableCallback, PTFalse, NULL );
 			//ptCheckForPatch( productID, versionUniqueIDStr, distributionID, mapPackAvailableCallback, PTFalse, NULL );
@@ -627,7 +628,7 @@ void MainMenuInit( WindowLayout *layout, void *userData )
 
 	if (TheGameSpyPeerMessageQueue && !TheGameSpyPeerMessageQueue->isConnected())
 	{
-		DEBUG_LOG(("Tearing down GameSpy from MainMenuInit()\n"));
+		DEBUG_LOG(("Tearing down GameSpy from MainMenuInit()"));
 		TearDownGameSpy();
 	}
 	if (TheMapCache)
@@ -761,18 +762,9 @@ void DeclineResolution()
 		optionPref["Resolution"] = prefString;
 		optionPref.write();
 
-		// delete the shell
-		delete TheShell;
-		TheShell = NULL;
+		TheShell->recreateWindowLayouts();
 
-		// create the shell
-		TheShell = MSGNEW("GameClientSubsystem") Shell;
-		if( TheShell )
-			TheShell->init();
-		
 		TheInGameUI->recreateControlBar();
-
-		TheShell->push( AsciiString("Menus/MainMenu.wnd") );
 	}
 }
 
@@ -822,7 +814,7 @@ void ResolutionDialogUpdate()
 	//------------------------------------------------------------------------------------------------------
 	// Used for debugging purposes
 	//------------------------------------------------------------------------------------------------------
-	DEBUG_LOG(("Resolution Timer :  started at %d,  current time at %d, frameTicker is %d\n", timeStarted, 
+	DEBUG_LOG(("Resolution Timer :  started at %d,  current time at %d, frameTicker is %d", timeStarted, 
 							time(NULL) , currentTime));
 }
 */
@@ -1003,7 +995,7 @@ WindowMsgHandledType MainMenuInput( GameWindow *window, UnsignedInt msg,
 			if(abs(mouse.x - mousePosX) > 20 || abs(mouse.y - mousePosY) > 20)
 			{
 			
-				DEBUG_LOG(("Mouse X:%d, Y:%d\n", mouse.x, mouse.y));
+				DEBUG_LOG(("Mouse X:%d, Y:%d", mouse.x, mouse.y));
 				if(notShown)
 				{
 					initialGadgetDelay = 1;
@@ -1063,7 +1055,7 @@ WindowMsgHandledType MainMenuSystem( GameWindow *window, UnsignedInt msg,
 		case GWM_DESTROY:
 		{
 			ghttpCleanup();
-			DEBUG_LOG(("Tearing down GameSpy from MainMenuSystem(GWM_DESTROY)\n"));
+			DEBUG_LOG(("Tearing down GameSpy from MainMenuSystem(GWM_DESTROY)"));
 			TearDownGameSpy();
 			StopAsyncDNSCheck(); // kill off the async DNS check thread in case it is still running
 			break;
@@ -1309,7 +1301,7 @@ WindowMsgHandledType MainMenuSystem( GameWindow *window, UnsignedInt msg,
 			
 			if(buttonPushed)
 				break;
-#if defined RTS_DEBUG || defined RTS_INTERNAL || defined RTS_PROFILE
+#if defined(RTS_DEBUG) || defined RTS_PROFILE
 			if( control == buttonCampaign )
 			{
 				buttonPushed = TRUE;
@@ -1422,7 +1414,7 @@ WindowMsgHandledType MainMenuSystem( GameWindow *window, UnsignedInt msg,
 				dontAllowTransitions = TRUE;
 //				SaveLoadLayoutType layoutType = SLLT_LOAD_ONLY;
 //        WindowLayout *saveLoadMenuLayout = TheShell->getSaveLoadMenuLayout();
-//				DEBUG_ASSERTCRASH( saveLoadMenuLayout, ("Unable to get save load menu layout.\n") );
+//				DEBUG_ASSERTCRASH( saveLoadMenuLayout, ("Unable to get save load menu layout.") );
 //				saveLoadMenuLayout->runInit( &layoutType );
 //				saveLoadMenuLayout->hide( FALSE );
 //				saveLoadMenuLayout->bringForward();
@@ -1512,9 +1504,6 @@ WindowMsgHandledType MainMenuSystem( GameWindow *window, UnsignedInt msg,
 #if defined RTS_DEBUG
 				if(_spawnl(_P_NOWAIT,"WorldBuilderD.exe","WorldBuilderD.exe", NULL) < 0)
 					MessageBoxOk(TheGameText->fetch("GUI:WorldBuilder"), TheGameText->fetch("GUI:WorldBuilderLoadFailed"),NULL);
-#elif defined  RTS_INTERNAL
-				if(_spawnl(_P_NOWAIT,"WorldBuilderI.exe","WorldBuilderI.exe", NULL) < 0)
-					MessageBoxOk(TheGameText->fetch("GUI:WorldBuilder"), TheGameText->fetch("GUI:WorldBuilderLoadFailed"),NULL);
 #else
 				if(_spawnl(_P_NOWAIT,"WorldBuilder.exe","WorldBuilder.exe", NULL) < 0)
 					MessageBoxOk(TheGameText->fetch("GUI:WorldBuilder"), TheGameText->fetch("GUI:WorldBuilderLoadFailed"),NULL);
@@ -1527,7 +1516,7 @@ WindowMsgHandledType MainMenuSystem( GameWindow *window, UnsignedInt msg,
 			else if( controlID == exitID )
 			{
 				// If we ever want to add a dialog before we exit out of the game, uncomment this line and kill the quitCallback() line below.
-//#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+//#if defined(RTS_DEBUG)
 				
 				//Added By Sadullah Nader
 				//Changed the preprocessing code to normal code

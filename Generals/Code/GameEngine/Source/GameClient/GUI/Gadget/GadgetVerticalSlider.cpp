@@ -66,11 +66,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 // PUBLIC FUNCTIONS ///////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 // GadgetVerticlaSliderInput ==================================================
 /** Handle input for vertical slider */
@@ -426,6 +421,8 @@ WindowMsgHandledType GadgetVerticalSliderSystem( GameWindow *window, UnsignedInt
 		// ------------------------------------------------------------------------
 		case GWM_DESTROY:
 			delete( (SliderData *)window->winGetUserData() );
+			window->winSetUserData(NULL);
+			s = NULL;
 			break;
 
 		// ------------------------------------------------------------------------

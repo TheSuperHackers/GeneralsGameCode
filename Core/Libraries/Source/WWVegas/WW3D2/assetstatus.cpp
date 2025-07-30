@@ -43,11 +43,11 @@ AssetStatusClass::~AssetStatusClass()
 {
 #ifdef WWDEBUG
 	if (Reporting) {
-		StringClass report("Load-on-demand and missing assets report\r\n\r\n");
+		StringClass report("Load-on-demand and missing assets report\n\n");
 		for (int i=0;i<REPORT_COUNT;++i) {
 			report+="Category: ";
 			report+=ReportCategoryNames[i];
-			report+="\r\n\r\n";
+			report+="\n\n";
 
 			HashTemplateIterator<StringClass,int> ite(ReportHashTables[i]);
 			for (ite.First();!ite.Is_Done();ite.Next()) {
@@ -58,9 +58,9 @@ AssetStatusClass::~AssetStatusClass()
 					tmp.Format("\t(reported %d times)",count);
 					report+=tmp;
 				}
-				report+="\r\n";
+				report+="\n";
 			}
-			report+="\r\n";
+			report+="\n";
 		}
 		if (report.Get_Length()) {
 			RawFileClass raw_log_file("asset_report.txt");

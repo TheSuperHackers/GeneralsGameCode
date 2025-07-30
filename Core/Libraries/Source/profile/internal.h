@@ -37,6 +37,7 @@
 #include "internal_highlevel.h"
 #include "internal_cmd.h"
 #include "internal_result.h"
+#include "Utility/CppMacros.h"
 
 #if !(defined(_MSC_VER) && _MSC_VER < 1300)
 #include <atomic>
@@ -45,8 +46,8 @@
 
 class ProfileFastCS
 {
-  ProfileFastCS(const ProfileFastCS&);
-  ProfileFastCS& operator=(const ProfileFastCS&) {};
+  ProfileFastCS(const ProfileFastCS&) CPP_11(= delete);
+  ProfileFastCS& operator=(const ProfileFastCS&) CPP_11(= delete);
   
 	static HANDLE testEvent;
 
@@ -92,7 +93,7 @@ public:
 
 	void ThreadSafeSetFlag()
 	{
-		while (Flag.test_and_set(std::memory_order_acquire)) {
+		while (Flag.test_and_set(std::memory_order_acq_rel)) {
 			Flag.wait(true, std::memory_order_relaxed);
 		}
 	}
@@ -110,8 +111,8 @@ public:
 
 	class Lock
 	{
-    Lock(const Lock&);
-	Lock& operator=(const Lock&) {};
+    Lock(const Lock&) CPP_11(= delete);
+	Lock& operator=(const Lock&) CPP_11(= delete);
 
 		ProfileFastCS& CriticalSection;
 

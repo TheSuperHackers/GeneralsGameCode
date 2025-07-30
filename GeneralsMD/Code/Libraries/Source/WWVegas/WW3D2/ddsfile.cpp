@@ -63,7 +63,7 @@ DDSFileClass::DDSFileClass(const char* name,unsigned reduction_factor)
 	int result=file->Open();
 	if (!result)
 	{
-		WWASSERT("File would not open\n");
+		WWASSERT("File would not open");
 		return;
 	}
 
@@ -73,7 +73,7 @@ DDSFileClass::DDSFileClass(const char* name,unsigned reduction_factor)
 	unsigned read_bytes=file->Read(header,4);
 	if (!read_bytes)
 	{
-		WWASSERT("File loading failed trying to read header\n");
+		WWASSERT("File loading failed trying to read header");
 		return;
 	}
 	// Now, we read DDSURFACEDESC2 defining the compressed data
@@ -82,8 +82,8 @@ DDSFileClass::DDSFileClass(const char* name,unsigned reduction_factor)
 	if (read_bytes==0 || read_bytes!=SurfaceDesc.Size) 
 	{
 		StringClass tmp(0,true);
-		tmp.Format("File %s loading failed.\nTried to read %d bytes, got %d. (SurfDesc.size=%d)\n",name,sizeof(LegacyDDSURFACEDESC2),read_bytes,SurfaceDesc.Size);
-		WWASSERT_PRINT(0,tmp);
+		tmp.Format("File %s loading failed.\nTried to read %d bytes, got %d. (SurfDesc.size=%d)",name,sizeof(LegacyDDSURFACEDESC2),read_bytes,SurfaceDesc.Size);
+		WWASSERT_PRINT(0,tmp.str());
 		return;
 	}
 
@@ -384,7 +384,7 @@ void DDSFileClass::Copy_Level_To_Surface
 
 	if (!DDSMemory || !Get_Memory_Pointer(level))
 	{
-		WWASSERT_PRINT(DDSMemory,"Surface mip level pointer is missing\n");
+		WWASSERT_PRINT(DDSMemory,"Surface mip level pointer is missing");
 		return;
 	}
 
@@ -399,8 +399,8 @@ void DDSFileClass::Copy_Level_To_Surface
 				for (unsigned y=0;y<dest_height;y+=4) {
 					for (unsigned x=0;x<dest_width;x+=4) {
 						unsigned cols=*src_ptr++;		// Bytes 1-4 of color block
-						unsigned col0=RGB565_To_ARGB8888(unsigned short(cols>>16));
-						unsigned col1=RGB565_To_ARGB8888(unsigned short(cols&0xffff));
+						unsigned col0=RGB565_To_ARGB8888((unsigned short)(cols>>16));
+						unsigned col1=RGB565_To_ARGB8888((unsigned short)(cols&0xffff));
 						Recolor(col0,hsv_shift);
 						Recolor(col1,hsv_shift);
 						col0=ARGB8888_To_RGB565(col0);
@@ -420,8 +420,8 @@ void DDSFileClass::Copy_Level_To_Surface
 						*dest_ptr++=*src_ptr++;		// Bytes 1-4 of alpha block
 						*dest_ptr++=*src_ptr++;		// Bytes 5-8 of alpha block
 						unsigned cols=*src_ptr++;		// Bytes 1-4 of color block
-						unsigned col0=RGB565_To_ARGB8888(unsigned short(cols>>16));
-						unsigned col1=RGB565_To_ARGB8888(unsigned short(cols&0xffff));
+						unsigned col0=RGB565_To_ARGB8888((unsigned short)(cols>>16));
+						unsigned col1=RGB565_To_ARGB8888((unsigned short)(cols&0xffff));
 						Recolor(col0,hsv_shift);
 						Recolor(col1,hsv_shift);
 						col0=ARGB8888_To_RGB565(col0);
@@ -461,8 +461,8 @@ void DDSFileClass::Copy_Level_To_Surface
 //							*dest_ptr++=*src_ptr++;		// Bytes 1-4 of color block
 
 							unsigned cols=*src_ptr++;	// Bytes 1-4 of color block
-							unsigned col0=RGB565_To_ARGB8888(unsigned short(cols>>16));
-							unsigned col1=RGB565_To_ARGB8888(unsigned short(cols&0xffff));
+							unsigned col0=RGB565_To_ARGB8888((unsigned short)(cols>>16));
+							unsigned col1=RGB565_To_ARGB8888((unsigned short)(cols&0xffff));
 							Recolor(col0,hsv_shift);
 							Recolor(col1,hsv_shift);
 							col0=ARGB8888_To_RGB565(col0);
@@ -500,7 +500,7 @@ void DDSFileClass::Copy_Level_To_Surface
 					}
 				}
 				if (Format==WW3D_FORMAT_DXT1 && contains_alpha) {
-					WWDEBUG_SAY(("Warning: DXT1 format should not contain alpha information - file %s\n",Name));
+					WWDEBUG_SAY(("Warning: DXT1 format should not contain alpha information - file %s",Name));
 				}
 			}
 		}
@@ -535,7 +535,7 @@ void DDSFileClass::Copy_CubeMap_Level_To_Surface
 
 	if (!DDSMemory || !Get_CubeMap_Memory_Pointer(face,level))
 	{
-		WWASSERT_PRINT(DDSMemory,"Surface mip level pointer is missing\n");
+		WWASSERT_PRINT(DDSMemory,"Surface mip level pointer is missing");
 		return;
 	}
 
@@ -555,8 +555,8 @@ void DDSFileClass::Copy_CubeMap_Level_To_Surface
 					for (unsigned x=0;x<dest_width;x+=4) 
 					{
 						unsigned cols=*src_ptr++;		// Bytes 1-4 of color block
-						unsigned col0=RGB565_To_ARGB8888(unsigned short(cols>>16));
-						unsigned col1=RGB565_To_ARGB8888(unsigned short(cols&0xffff));
+						unsigned col0=RGB565_To_ARGB8888((unsigned short)(cols>>16));
+						unsigned col1=RGB565_To_ARGB8888((unsigned short)(cols&0xffff));
 						Recolor(col0,hsv_shift);
 						Recolor(col1,hsv_shift);
 						col0=ARGB8888_To_RGB565(col0);
@@ -579,8 +579,8 @@ void DDSFileClass::Copy_CubeMap_Level_To_Surface
 						*dest_ptr++=*src_ptr++;		// Bytes 1-4 of alpha block
 						*dest_ptr++=*src_ptr++;		// Bytes 5-8 of alpha block
 						unsigned cols=*src_ptr++;		// Bytes 1-4 of color block
-						unsigned col0=RGB565_To_ARGB8888(unsigned short(cols>>16));
-						unsigned col1=RGB565_To_ARGB8888(unsigned short(cols&0xffff));
+						unsigned col0=RGB565_To_ARGB8888((unsigned short)(cols>>16));
+						unsigned col1=RGB565_To_ARGB8888((unsigned short)(cols&0xffff));
 						Recolor(col0,hsv_shift);
 						Recolor(col1,hsv_shift);
 						col0=ARGB8888_To_RGB565(col0);
@@ -628,8 +628,8 @@ void DDSFileClass::Copy_CubeMap_Level_To_Surface
 //							*dest_ptr++=*src_ptr++;		// Bytes 1-4 of color block
 
 							unsigned cols=*src_ptr++;	// Bytes 1-4 of color block
-							unsigned col0=RGB565_To_ARGB8888(unsigned short(cols>>16));
-							unsigned col1=RGB565_To_ARGB8888(unsigned short(cols&0xffff));
+							unsigned col0=RGB565_To_ARGB8888((unsigned short)(cols>>16));
+							unsigned col1=RGB565_To_ARGB8888((unsigned short)(cols&0xffff));
 							Recolor(col0,hsv_shift);
 							Recolor(col1,hsv_shift);
 							col0=ARGB8888_To_RGB565(col0);
@@ -674,7 +674,7 @@ void DDSFileClass::Copy_CubeMap_Level_To_Surface
 				}
 				if (Format==WW3D_FORMAT_DXT1 && contains_alpha) 
 				{
-					WWDEBUG_SAY(("Warning: DXT1 format should not contain alpha information - file %s\n",Name));
+					WWDEBUG_SAY(("Warning: DXT1 format should not contain alpha information - file %s",Name));
 				}
 			}
 		}
@@ -705,7 +705,7 @@ void DDSFileClass::Copy_Volume_Level_To_Surface
 
 	if (!DDSMemory || !Get_Volume_Memory_Pointer(level))
 	{
-		WWASSERT_PRINT(DDSMemory,"Surface mip level pointer is missing\n");
+		WWASSERT_PRINT(DDSMemory,"Surface mip level pointer is missing");
 		return;
 	}
 
@@ -728,8 +728,8 @@ void DDSFileClass::Copy_Volume_Level_To_Surface
 					for (unsigned x=0;x<dest_width;x+=4) 
 					{
 						unsigned cols=*src_ptr++;		// Bytes 1-4 of color block
-						unsigned col0=RGB565_To_ARGB8888(unsigned short(cols>>16));
-						unsigned col1=RGB565_To_ARGB8888(unsigned short(cols&0xffff));
+						unsigned col0=RGB565_To_ARGB8888((unsigned short)(cols>>16));
+						unsigned col1=RGB565_To_ARGB8888((unsigned short)(cols&0xffff));
 						Recolor(col0,hsv_shift);
 						Recolor(col1,hsv_shift);
 						col0=ARGB8888_To_RGB565(col0);
@@ -752,8 +752,8 @@ void DDSFileClass::Copy_Volume_Level_To_Surface
 						*dest_ptr++=*src_ptr++;		// Bytes 1-4 of alpha block
 						*dest_ptr++=*src_ptr++;		// Bytes 5-8 of alpha block
 						unsigned cols=*src_ptr++;		// Bytes 1-4 of color block
-						unsigned col0=RGB565_To_ARGB8888(unsigned short(cols>>16));
-						unsigned col1=RGB565_To_ARGB8888(unsigned short(cols&0xffff));
+						unsigned col0=RGB565_To_ARGB8888((unsigned short)(cols>>16));
+						unsigned col1=RGB565_To_ARGB8888((unsigned short)(cols&0xffff));
 						Recolor(col0,hsv_shift);
 						Recolor(col1,hsv_shift);
 						col0=ARGB8888_To_RGB565(col0);
@@ -801,8 +801,8 @@ void DDSFileClass::Copy_Volume_Level_To_Surface
 //							*dest_ptr++=*src_ptr++;		// Bytes 1-4 of color block
 
 							unsigned cols=*src_ptr++;	// Bytes 1-4 of color block
-							unsigned col0=RGB565_To_ARGB8888(unsigned short(cols>>16));
-							unsigned col1=RGB565_To_ARGB8888(unsigned short(cols&0xffff));
+							unsigned col0=RGB565_To_ARGB8888((unsigned short)(cols>>16));
+							unsigned col1=RGB565_To_ARGB8888((unsigned short)(cols&0xffff));
 							Recolor(col0,hsv_shift);
 							Recolor(col1,hsv_shift);
 							col0=ARGB8888_To_RGB565(col0);
@@ -851,7 +851,7 @@ void DDSFileClass::Copy_Volume_Level_To_Surface
 					}
 					if (Format==WW3D_FORMAT_DXT1 && contains_alpha) 
 					{
-						WWDEBUG_SAY(("Warning: DXT1 format should not contain alpha information - file %s\n",Name));
+						WWDEBUG_SAY(("Warning: DXT1 format should not contain alpha information - file %s",Name));
 					}
 				}*/
 			}

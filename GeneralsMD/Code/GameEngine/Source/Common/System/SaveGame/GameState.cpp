@@ -59,11 +59,6 @@
 #include "GameLogic/SidesList.h"
 #include "GameLogic/TerrainLogic.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 // PUBLIC DATA ////////////////////////////////////////////////////////////////////////////////////
 GameState *TheGameState = NULL;
@@ -384,7 +379,7 @@ void GameState::addSnapshotBlock( AsciiString blockName, Snapshot *snapshot, Sna
 	if( blockName.isEmpty() || snapshot == NULL )
 	{
 
-		DEBUG_CRASH(( "addSnapshotBlock: Invalid parameters\n" ));
+		DEBUG_CRASH(( "addSnapshotBlock: Invalid parameters" ));
 		return;
 
 	}  // end if
@@ -413,8 +408,7 @@ static void findHighFileNumber( AsciiString filename, void *userData )
 
 	// strip off the extension at the end of the filename
 	AsciiString nameOnly = filename;
-	for( size_t count = 0; count < strlen( SAVE_GAME_EXTENSION ); count++ )
-		nameOnly.removeLastChar();
+	nameOnly.truncateBy( strlen( SAVE_GAME_EXTENSION ) );
 	
 	// convert filename (which is only numbers) to a number
 	Int fileNumber = atoi( nameOnly.str() );
@@ -524,7 +518,7 @@ AsciiString GameState::findNextSaveFilename( UnicodeString desc )
 	else
 	{
 
-		DEBUG_CRASH(( "GameState::findNextSaveFilename - Unknown file search type '%d'\n", searchType ));
+		DEBUG_CRASH(( "GameState::findNextSaveFilename - Unknown file search type '%d'", searchType ));
 		return AsciiString::TheEmptyString;
 
 	}  // end else
@@ -549,7 +543,7 @@ SaveCode GameState::saveGame( AsciiString filename, UnicodeString desc,
 	if( filename.isEmpty() )
 	{
 
-		DEBUG_CRASH(( "GameState::saveGame - Unable to find valid filename for save game\n" ));
+		DEBUG_CRASH(( "GameState::saveGame - Unable to find valid filename for save game" ));
 		return SC_NO_FILE_AVAILABLE;
 
 	}  // end if
@@ -570,7 +564,7 @@ SaveCode GameState::saveGame( AsciiString filename, UnicodeString desc,
 	} catch(...) {
 		// print error message to the user
 		TheInGameUI->message( "GUI:Error" );
-		DEBUG_LOG(( "Error opening file '%s'\n", filepath.str() ));
+		DEBUG_LOG(( "Error opening file '%s'", filepath.str() ));
 		return SC_ERROR;
 	}
 
@@ -783,7 +777,7 @@ AsciiString GameState::getFilePathInSaveDirectory(const AsciiString& leaf) const
 //-------------------------------------------------------------------------------------------------
 Bool GameState::isInSaveDirectory(const AsciiString& path) const
 {
-	return path.startsWithNoCase(getSaveDirectory());
+	return FileSystem::isPathInDirectory(path, getSaveDirectory());
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -799,7 +793,7 @@ AsciiString GameState::getMapLeafName(const AsciiString& in) const
 		// at the name only
 		//
 		++p;
-		DEBUG_ASSERTCRASH( p != NULL && *p != 0, ("GameState::xfer - Illegal map name encountered\n") );
+		DEBUG_ASSERTCRASH( p != NULL && *p != 0, ("GameState::xfer - Illegal map name encountered") );
 		return p;
 	}
 	else
@@ -902,10 +896,13 @@ AsciiString GameState::realMapPathToPortableMapPath(const AsciiString& in) const
 AsciiString GameState::portableMapPathToRealMapPath(const AsciiString& in) const
 {
 	AsciiString prefix;
+	// The directory where the real map path should be contained in.
+	AsciiString containingBasePath;
 	if (in.startsWithNoCase(PORTABLE_SAVE))
 	{
 		// the save dir ends with "\\"
 		prefix = getSaveDirectory();
+		containingBasePath = prefix;
 		prefix.concat(getMapLeafName(in));
 	}
 	else if (in.startsWithNoCase(PORTABLE_MAPS))
@@ -913,6 +910,7 @@ AsciiString GameState::portableMapPathToRealMapPath(const AsciiString& in) const
 		// the map dir DOES NOT end with "\\", must add it
 		prefix = TheMapCache->getMapDir();
 		prefix.concat("\\");
+		containingBasePath = prefix;
 		prefix.concat(getMapLeafAndDirName(in));
 	}
 	else if (in.startsWithNoCase(PORTABLE_USER_MAPS))
@@ -920,15 +918,22 @@ AsciiString GameState::portableMapPathToRealMapPath(const AsciiString& in) const
 		// the map dir DOES NOT end with "\\", must add it
 		prefix = TheMapCache->getUserMapDir();
 		prefix.concat("\\");
+		containingBasePath = prefix;
 		prefix.concat(getMapLeafAndDirName(in));
 	}
 	else
 	{
 		DEBUG_CRASH(("Map file was not found in any of the expected directories; this is impossible"));
-		//throw INI_INVALID_DATA;
-		// uncaught exceptions crash us. better to just use a bad path.
-		prefix = in;
+		// Empty string represents a failure, either caused by an invalid prefix or a relative path leading outside the base path.
+		return AsciiString::TheEmptyString;
 	}
+
+	if (!FileSystem::isPathInDirectory(prefix, containingBasePath))
+	{
+		DEBUG_LOG(("Normalized file path for '%s' was outside the expected base path of '%s'.", prefix.str(), containingBasePath.str()));
+		return AsciiString::TheEmptyString;
+	}
+
 	prefix.toLower();
 	return prefix;
 }
@@ -980,7 +985,7 @@ void GameState::getSaveGameInfoFromFile( AsciiString filename, SaveGameInfo *sav
 	if( filename.isEmpty() == TRUE || saveGameInfo == NULL )
 	{
 
-		DEBUG_CRASH(( "GameState::getSaveGameInfoFromFile - Illegal parameters\n" ));
+		DEBUG_CRASH(( "GameState::getSaveGameInfoFromFile - Illegal parameters" ));
 		return;
 
 	}  // end if
@@ -1007,7 +1012,7 @@ void GameState::getSaveGameInfoFromFile( AsciiString filename, SaveGameInfo *sav
 		{
 
 			// we should never get here, if we did, we didn't find block of data we needed
-			DEBUG_CRASH(( "GameState::getSaveGameInfoFromFile - Game info not found in file '%s'\n", filename.str() ));
+			DEBUG_CRASH(( "GameState::getSaveGameInfoFromFile - Game info not found in file '%s'", filename.str() ));
 			done = TRUE;
 
 		}  // end if
@@ -1038,7 +1043,7 @@ void GameState::getSaveGameInfoFromFile( AsciiString filename, SaveGameInfo *sav
 				catch( ... )
 				{
 
-					DEBUG_CRASH(( "GameState::getSaveGameInfoFromFile - Error loading block '%s' in file '%s'\n",
+					DEBUG_CRASH(( "GameState::getSaveGameInfoFromFile - Error loading block '%s' in file '%s'",
 												blockInfo->blockName.str(), filename.str() ));
 					throw;
 
@@ -1079,8 +1084,8 @@ static void addGameToAvailableList( AsciiString filename, void *userData )
 	AvailableGameInfo **listHead = (AvailableGameInfo **)userData;
 
 	// sanity
-	DEBUG_ASSERTCRASH( listHead != NULL, ("addGameToAvailableList - Illegal parameters\n") );
-	DEBUG_ASSERTCRASH( filename.isEmpty() == FALSE, ("addGameToAvailableList - Illegal filename\n") );
+	DEBUG_ASSERTCRASH( listHead != NULL, ("addGameToAvailableList - Illegal parameters") );
+	DEBUG_ASSERTCRASH( filename.isEmpty() == FALSE, ("addGameToAvailableList - Illegal filename") );
  
 	try {
 	// get header info from this listbox
@@ -1321,7 +1326,7 @@ void GameState::iterateSaveFiles( IterateSaveFileCallback callback, void *userDa
 // ------------------------------------------------------------------------------------------------
 void GameState::friend_xferSaveDataForCRC( Xfer *xfer, SnapshotType which )
 {
-	DEBUG_LOG(("GameState::friend_xferSaveDataForCRC() - SnapshotType %d\n", which));
+	DEBUG_LOG(("GameState::friend_xferSaveDataForCRC() - SnapshotType %d", which));
 	SaveGameInfo *gameInfo = getSaveGameInfo();
 	gameInfo->description.clear();
 	gameInfo->saveFileType = SAVE_FILE_TYPE_NORMAL;
@@ -1344,7 +1349,7 @@ void GameState::xferSaveData( Xfer *xfer, SnapshotType which )
 	// save or load all blocks
 	if( xfer->getXferMode() == XFER_SAVE )
 	{
-		DEBUG_LOG(("GameState::xferSaveData() - XFER_SAVE\n"));
+		DEBUG_LOG(("GameState::xferSaveData() - XFER_SAVE"));
 
 		// save all blocks
 		AsciiString blockName;
@@ -1359,7 +1364,7 @@ void GameState::xferSaveData( Xfer *xfer, SnapshotType which )
 			// get block name
 			blockName = blockInfo->blockName;
 
-			DEBUG_LOG(("Looking at block '%s'\n", blockName.str()));
+			DEBUG_LOG(("Looking at block '%s'", blockName.str()));
 
 			//
 			// for mission save files, we only save the game state block and campaign manager
@@ -1390,8 +1395,8 @@ void GameState::xferSaveData( Xfer *xfer, SnapshotType which )
 				catch( ... )
 				{
 
-					DEBUG_CRASH(( "Error saving block '%s' in file '%s'\n",
-												blockName.str(), xfer->getIdentifier() ));
+					DEBUG_CRASH(( "Error saving block '%s' in file '%s'",
+												blockName.str(), xfer->getIdentifier().str() ));
 					throw;
 
 				}  // end catch
@@ -1407,7 +1412,7 @@ void GameState::xferSaveData( Xfer *xfer, SnapshotType which )
 	}  // end if, save
 	else
 	{
-		DEBUG_LOG(("GameState::xferSaveData() - not XFER_SAVE\n"));
+		DEBUG_LOG(("GameState::xferSaveData() - not XFER_SAVE"));
 		AsciiString token;
 		Int blockSize;
 		Bool done = FALSE;
@@ -1437,7 +1442,7 @@ void GameState::xferSaveData( Xfer *xfer, SnapshotType which )
 				{
 
 					// log the block not found
-					DEBUG_LOG(( "GameState::xferSaveData - Skipping unknown block '%s'\n", token ));
+					DEBUG_LOG(( "GameState::xferSaveData - Skipping unknown block '%s'", token.str() ));
 
 					//
 					// block was not found, this could have been a block from an older file
@@ -1467,8 +1472,8 @@ void GameState::xferSaveData( Xfer *xfer, SnapshotType which )
 				catch( ... )
 				{
 
-					DEBUG_CRASH(( "Error loading block '%s' in file '%s'\n",
-												blockInfo->blockName.str(), xfer->getIdentifier() ));
+					DEBUG_CRASH(( "Error loading block '%s' in file '%s'",
+												blockInfo->blockName.str(), xfer->getIdentifier().str() ));
 					throw;
 
 				}  // end catch
@@ -1491,7 +1496,7 @@ void GameState::addPostProcessSnapshot( Snapshot *snapshot )
 	if( snapshot == NULL )
 	{
 
-		DEBUG_CRASH(( "GameState::addPostProcessSnapshot - invalid parameters\n" ));
+		DEBUG_CRASH(( "GameState::addPostProcessSnapshot - invalid parameters" ));
 		return;
 
 	}  // end if
@@ -1510,7 +1515,7 @@ void GameState::addPostProcessSnapshot( Snapshot *snapshot )
 		if( (*it) == snapshot )
 		{
 
-			DEBUG_CRASH(( "GameState::addPostProcessSnapshot - snapshot is already in list!\n" ));
+			DEBUG_CRASH(( "GameState::addPostProcessSnapshot - snapshot is already in list!" ));
 			return;
 
 		}  // end if

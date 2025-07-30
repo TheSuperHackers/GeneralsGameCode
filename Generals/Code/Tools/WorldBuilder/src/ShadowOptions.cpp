@@ -82,7 +82,7 @@ void ShadowOptions::setShadowColor(void)
 	if (b<0) b = 0;
 
 	UnsignedInt clr = (255<<24) + (r<<16) + (g<<8) + b;
-	DEBUG_LOG(("Setting shadows to %x\n", clr));
+	DEBUG_LOG(("Setting shadows to %x", clr));
 	TheW3DShadowManager->setShadowColor(clr);
 }
 

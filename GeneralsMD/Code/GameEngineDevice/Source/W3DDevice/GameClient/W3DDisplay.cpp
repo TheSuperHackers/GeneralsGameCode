@@ -109,14 +109,12 @@ static void drawFramerateBar(void);
 
 #include "WinMain.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 // DEFINE AND ENUMS ///////////////////////////////////////////////////////////
-#define W3D_DISPLAY_DEFAULT_BIT_DEPTH 32
+#define DEFAULT_DISPLAY_BIT_DEPTH 32
+#define MIN_DISPLAY_BIT_DEPTH 16
+#define MIN_DISPLAY_RESOLUTION_X 800
+#define MIN_DISPLAY_RESOLUTION_Y 600
 
 #define no_SAMPLE_DYNAMIC_LIGHT	1
 #ifdef SAMPLE_DYNAMIC_LIGHT
@@ -163,9 +161,9 @@ StatDumpClass::StatDumpClass( const char *fname )
 		}
 		pEnd--;
 	}
-	AsciiString fullPath;
-	fullPath.format( "%s\\%s", buffer, fname );
-	m_fp = fopen( fullPath.str(), "wt" );
+	// TheSuperHackers @fix Caball009 03/06/2025 Don't use AsciiString here anymore because its memory allocator may not have been initialized yet.
+	const std::string fullPath = std::string(buffer) + "\\" + fname;
+	m_fp = fopen(fullPath.c_str(), "wt");
 }
 
 //=============================================================================
@@ -322,7 +320,7 @@ void StatDumpClass::dumpStats( Bool brief, Bool flagSpikes )
 
 	fprintf( m_fp, "\n" );
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
   if ( ! beBrief )
   {
     TheAudio->audioDebugDisplay( NULL, NULL, m_fp );
@@ -401,7 +399,7 @@ W3DDisplay::W3DDisplay()
 	m_2DScene = NULL;
 	m_3DInterfaceScene = NULL;
 	m_averageFPS = TheGlobalData->m_framesPerSecondLimit;
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	m_timerAtCumuFPSStart = 0;
 #endif
 	for (i=0; i<LightEnvironmentClass::MAX_LIGHTS; i++)
@@ -478,20 +476,13 @@ W3DDisplay::~W3DDisplay()
 
 }  // end ~W3DDisplay
 
-#define MIN_DISPLAY_RESOLUTION_X	800
-#define MIN_DISPLAY_RESOLUTOIN_Y	600
-
-
-Bool IS_FOUR_BY_THREE_ASPECT( Real x, Real y )
+// TheSuperHackers @tweak valeronm 20/03/2025 No longer filters resolutions by a 4:3 aspect ratio.
+inline Bool isResolutionSupported(const ResolutionDescClass &res)
 {
-  if ( y == 0 )
-    return FALSE;
-  
-  Real aspectRatio = fabs( x / y ); 
-  return (( aspectRatio > 1.332f) && ( aspectRatio < 1.334f));
-  
-}
+	static const Int minBitDepth = 24;
 
+	return res.Width >= MIN_DISPLAY_RESOLUTION_X && res.BitDepth >= minBitDepth;
+}
 
 /*Return number of screen modes supported by the current device*/
 Int W3DDisplay::getDisplayModeCount(void)
@@ -516,8 +507,7 @@ Int W3DDisplay::getDisplayModeCount(void)
 	for (int res = 0; res < resolutions.Count ();  res ++)
 	{
 		// Is this the resolution we are looking for?
-		if (resolutions[res].BitDepth >= 24 && resolutions[res].Width >= MIN_DISPLAY_RESOLUTION_X 
-      && IS_FOUR_BY_THREE_ASPECT( (Real)resolutions[res].Width, (Real)resolutions[res].Height ) )	//only accept 4:3 aspect ratio modes.
+		if (isResolutionSupported(resolutions[res]))
 		{	
 			numResolutions++;
 		}
@@ -535,8 +525,7 @@ void W3DDisplay::getDisplayModeDescription(Int modeIndex, Int *xres, Int *yres, 
 	for (int res = 0; res < resolutions.Count ();  res ++)
 	{
 		// Is this the resolution we are looking for?
-		if ( resolutions[res].BitDepth >= 24 && resolutions[res].Width >= MIN_DISPLAY_RESOLUTION_X 
-      && IS_FOUR_BY_THREE_ASPECT( (Real)resolutions[res].Width, (Real)resolutions[res].Height ) )	//only accept 4:3 aspect ratio modes.
+		if (isResolutionSupported(resolutions[res]))
 		{	
 			if (numResolutions == modeIndex)
 			{	//found the mode
@@ -670,7 +659,7 @@ void W3DDisplay::init( void )
 
 		// create our 3D scene
 		m_3DScene =NEW_REF( RTS3DScene, () );
-	#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+	#if defined(RTS_DEBUG)
 		if( TheGlobalData->m_wireframe )
 			m_3DScene->Set_Polygon_Mode( SceneClass::LINE );
 	#endif
@@ -735,38 +724,73 @@ void W3DDisplay::init( void )
 		m_2DRender = NEW Render2DClass;
 		DEBUG_ASSERTCRASH( m_2DRender, ("Cannot create Render2DClass") );
 
-		// set our default width and height and bit depth
-		/// @todo we should set this according to options read from a file
-		setWidth( TheGlobalData->m_xResolution );
-		setHeight( TheGlobalData->m_yResolution );
-		setBitDepth( W3D_DISPLAY_DEFAULT_BIT_DEPTH );
-
-		if( WW3D::Set_Render_Device( 0, 
-																 getWidth(), 
-																 getHeight(), 
-																 getBitDepth(), 
-																 getWindowed(), 
-																 true ) != WW3D_ERROR_OK ) 
+		WW3DErrorType renderDeviceError;
+		Int attempt = 0;
+		do
 		{
-			// Getting the device at the default bit depth (32) didn't work, so try
-			// getting a 16 bit display.  (Voodoo 1-3 only supported 16 bit.) jba.
-			setBitDepth( 16 );
-			if( WW3D::Set_Render_Device( 0, 
-																	 getWidth(), 
-																	 getHeight(), 
-																	 getBitDepth(), 
-																	 getWindowed(), 
-																	 true ) != WW3D_ERROR_OK ) 
+			switch (attempt)
 			{
-
-				WW3D::Shutdown();
-				WWMath::Shutdown();
-				throw ERROR_INVALID_D3D;	//failed to initialize.  User probably doesn't have DX 8.1
-				DEBUG_ASSERTCRASH( 0, ("Unable to set render device\n") );
-				return;
+			case 0:
+			{
+				// set our default width and height and bit depth
+				setWidth( TheGlobalData->m_xResolution );
+				setHeight( TheGlobalData->m_yResolution );
+				setBitDepth( DEFAULT_DISPLAY_BIT_DEPTH );
+				break;
+			}
+			case 1:
+			{
+				// Getting the device at the default bit depth (32) didn't work, so try
+				// getting a 16 bit display.  (Voodoo 1-3 only supported 16 bit.) jba.
+				setBitDepth( MIN_DISPLAY_BIT_DEPTH );
+				break;
+			}
+			case 2:
+			{
+				// TheSuperHackers @bugfix xezon 11/06/2025 Now tries a safe default resolution
+				// if the custom resolution did not succeed. This is unlikely to happen but is possible
+				// if the user writes an unsupported resolution in the Option Preferences or if the
+				// graphics adapter does not support the minimum display resolution to begin with.
+				Int xres = MIN_DISPLAY_RESOLUTION_X;
+				Int yres = MIN_DISPLAY_RESOLUTION_Y;
+				Int bitDepth = DEFAULT_DISPLAY_BIT_DEPTH;
+				Int displayModeCount = getDisplayModeCount();
+				Int displayModeIndex = 0;
+				for (; displayModeIndex < displayModeCount; ++displayModeIndex)
+				{
+					getDisplayModeDescription(displayModeIndex, &xres, &yres, &bitDepth);
+					if (xres * yres >= MIN_DISPLAY_RESOLUTION_X * MIN_DISPLAY_RESOLUTION_Y)
+						break; // Is good enough. Use it.
+				}
+				TheWritableGlobalData->m_xResolution = xres;
+				TheWritableGlobalData->m_yResolution = yres;
+				setWidth( xres );
+				setHeight( yres );
+				setBitDepth( bitDepth );
+				break;
+			}
 			}
 
-		}  // end if
+			renderDeviceError = WW3D::Set_Render_Device(
+				0,
+				getWidth(),
+				getHeight(),
+				getBitDepth(),
+				getWindowed(),
+				true );
+
+			++attempt;
+		}
+		while (attempt < 3 && renderDeviceError != WW3D_ERROR_OK);
+
+		if (renderDeviceError != WW3D_ERROR_OK)
+		{
+			WW3D::Shutdown();
+			WWMath::Shutdown();
+			throw ERROR_INVALID_D3D;	//failed to initialize.  User probably doesn't have DX 8.1
+			DEBUG_ASSERTCRASH( 0, ("Unable to set render device") );
+			return;
+		}
 
 		//Check if level was never set and default to setting most suitable for system.
 		if (TheGameLODManager->getStaticLODLevel() == STATIC_GAME_LOD_UNKNOWN)
@@ -881,7 +905,7 @@ void W3DDisplay::updateAverageFPS(void)
 	Int64 freq64 = getPerformanceCounterFrequency();
 	Int64 time64 = getPerformanceCounter();
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	if (TheGameLogic->getFrame() == START_CUMU_FRAME)
 	{
 		m_timerAtCumuFPSStart = time64;
@@ -899,8 +923,8 @@ void W3DDisplay::updateAverageFPS(void)
 		if (historyOffset >= FPS_HISTORY_SIZE)
 			historyOffset = 0;
 
-		double currentFPS = 1.0/elapsedSeconds; 
-		fpsHistory[historyOffset++] = currentFPS;
+		m_currentFPS = 1.0/elapsedSeconds; 
+		fpsHistory[historyOffset++] = m_currentFPS;
 		numSamples++;
 		if (numSamples > FPS_HISTORY_SIZE)
 			numSamples = FPS_HISTORY_SIZE;
@@ -923,7 +947,7 @@ void W3DDisplay::updateAverageFPS(void)
 	lastUpdateTime64 = time64;
 }
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)	//debug hack to view object under mouse stats
+#if defined(RTS_DEBUG)	//debug hack to view object under mouse stats
 ICoord2D TheMousePos;
 #endif
 
@@ -1017,7 +1041,7 @@ void W3DDisplay::gatherDebugStats( void )
 		double ms = 1000.0f/fps;
 
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 		double cumuTime = ((double)(time64 - m_timerAtCumuFPSStart) / (double)(freq64));
 		if (cumuTime < 0.0) cumuTime = 0.0;
 		Int numFrames = (Int)TheGameLogic->getFrame() - (Int)START_CUMU_FRAME;
@@ -1315,7 +1339,7 @@ void W3DDisplay::gatherDebugStats( void )
 		}
 
 		Object *object = NULL;
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)	//debug hack to view object under mouse stats
+#if defined(RTS_DEBUG)	//debug hack to view object under mouse stats
 		Drawable *draw = 	TheTacticalView->pickDrawable(&TheMousePos, FALSE, (PickType)0xffffffff );
 #else
 		Drawable *draw = TheGameClient->findDrawableByID( TheInGameUI->getMousedOverDrawableID() );
@@ -1443,7 +1467,7 @@ void W3DDisplay::gatherDebugStats( void )
 			
 
 			// (gth) compute some stats about the rendering cost of this drawable
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)	
+#if defined(RTS_DEBUG)	
 			RenderCost rcost;
 			for (DrawModule** dm = draw->getDrawModules(); *dm; ++dm)
 			{
@@ -1647,6 +1671,11 @@ Real W3DDisplay::getAverageFPS()
 	return m_averageFPS;
 }
 
+Real W3DDisplay::getCurrentFPS()
+{
+	return m_currentFPS;
+}
+
 Int W3DDisplay::getLastFrameDrawCalls()
 {
 	return Debug_Statistics::Get_Draw_Calls();
@@ -1714,7 +1743,7 @@ AGAIN:
 
 	// compute debug statistics for display later
 	if ( m_debugDisplayCallback == StatDebugDisplay 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 				|| TheGlobalData->m_benchmarkTimer > 0
 #endif
 			)
@@ -1909,7 +1938,8 @@ AGAIN:
 
 				if ( m_videoStream && m_videoBuffer )
 				{
-					drawVideoBuffer( m_videoBuffer, 0, 0, getWidth(), getHeight() );
+					// TheSuperHackers @bugfix Mauller 20/07/2025 scale videos based on screen size so they are shown in their original aspect
+					drawScaledVideoBuffer( m_videoBuffer, m_videoStream );
 				}
 				if( m_copyrightDisplayString )
 				{
@@ -1957,7 +1987,7 @@ AGAIN:
 					drawCurrentDebugDisplay();
 				}
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 				if (TheGlobalData->m_benchmarkTimer > 0)
 				{
 					drawFPSStats();
@@ -1965,7 +1995,7 @@ AGAIN:
 #endif
 
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 				if (TheGlobalData->m_debugShowGraphicalFramerate)
 				{
 					drawFramerateBar();
@@ -1984,7 +2014,7 @@ AGAIN:
 				if (couldRender)
 				{
 					couldRender = false;
-					DEBUG_LOG(("Could not do WW3D::Begin_Render()!  Are we ALT-Tabbed out?\n"));
+					DEBUG_LOG(("Could not do WW3D::Begin_Render()!  Are we ALT-Tabbed out?"));
 				}
 			}
 		}
@@ -2662,6 +2692,7 @@ void W3DDisplay::drawImage( const Image *image, Int startX, Int startY,
 			m_2DRender->Enable_Additive(false);
 			m_2DRender->Enable_Alpha(false);
 			doAlphaReset = TRUE;
+			break;
 		default:
 			break;
 	}
@@ -2846,6 +2877,43 @@ VideoBuffer*	W3DDisplay::createVideoBuffer( void )
 	return buffer;
 }
 
+//============================================================================
+// W3DDisplay::drawScaledVideoBuffer
+//============================================================================
+
+void W3DDisplay::drawScaledVideoBuffer( VideoBuffer *buffer, VideoStreamInterface *stream )
+{
+	// TheSuperHackers @bugfix Mauller 20/07/2025 scale videos based on screen size so they are shown in their original aspect
+	Real videoAspect = (Real)stream->width() / (Real)stream->height();
+	Real displayAspect = (Real)getWidth() / (Real)getHeight();
+	Bool wideAspect = displayAspect >= videoAspect;
+
+	Int startX = 0;
+	Int endX = 0;
+	Int startY = 0;
+	Int endY = 0;
+
+	if (wideAspect)
+	{
+		// TheSuperHackers @info if we are in a wide aspect, we scale the videos width and fill the height
+		Real heightScale = (Real)getHeight() / (Real)stream->height();
+		startX = (getWidth() / 2.0f) - (stream->width() * heightScale / 2.0f);
+		endX = (getWidth() / 2.0f) + (stream->width() * heightScale / 2.0f);
+
+		endY = getHeight();
+	}
+	else
+	{
+		// TheSuperHackers @info if we are in a narrow aspect, we scale the videos height and fill the width
+		Real widthScale = (Real)getWidth() / (Real)stream->width();
+		startY = (getHeight() / 2.0f) - (stream->height() * widthScale / 2.0f);
+		endY = (getHeight() / 2.0f) + (stream->height() * widthScale / 2.0f);
+
+		endX = getWidth();
+	}
+
+	drawVideoBuffer( buffer, startX, startY, endX, endY );
+}
 
 //============================================================================
 // W3DDisplay::drawVideoBuffer
@@ -2919,75 +2987,77 @@ void W3DDisplay::setShroudLevel( Int x, Int y, CellShroudStatus setting )
 //=============================================================================
 ///Utility function to dump data into a .BMP file
 static void CreateBMPFile(LPTSTR pszFile, char *image, Int width, Int height)
-{ 
-     HANDLE hf;                 // file handle 
-    BITMAPFILEHEADER hdr;       // bitmap file-header 
-    PBITMAPINFOHEADER pbih;     // bitmap info-header 
-    LPBYTE lpBits;              // memory pointer 
-    DWORD dwTotal;              // total count of bytes 
-    DWORD cb;                   // incremental count of bytes 
-    BYTE *hp;                   // byte pointer 
-    DWORD dwTmp; 
+{
+	HANDLE hf;                  // file handle 
+	BITMAPFILEHEADER hdr;       // bitmap file-header 
+	PBITMAPINFOHEADER pbih;     // bitmap info-header 
+	LPBYTE lpBits;              // memory pointer 
+	DWORD dwTotal;              // total count of bytes 
+	DWORD cb;                   // incremental count of bytes 
+	BYTE *hp;                   // byte pointer 
+	DWORD dwTmp;
 
-    PBITMAPINFO pbmi; 
+	PBITMAPINFO pbmi;
 
-    pbmi = (PBITMAPINFO) LocalAlloc(LPTR,sizeof(BITMAPINFOHEADER));
-    pbmi->bmiHeader.biSize = sizeof(BITMAPINFOHEADER); 
-    pbmi->bmiHeader.biWidth = width; 
-    pbmi->bmiHeader.biHeight = height; 
-    pbmi->bmiHeader.biPlanes = 1; 
-    pbmi->bmiHeader.biBitCount = 24;
-    pbmi->bmiHeader.biCompression = BI_RGB;
-    pbmi->bmiHeader.biSizeImage = (pbmi->bmiHeader.biWidth + 7) /8 * pbmi->bmiHeader.biHeight * 24;
-    pbmi->bmiHeader.biClrImportant = 0; 
-
-
-    pbih = (PBITMAPINFOHEADER) pbmi; 
-    lpBits = (LPBYTE) image;
-
-    // Create the .BMP file. 
-    hf = CreateFile(pszFile, 
-                   GENERIC_READ | GENERIC_WRITE, 
-                   (DWORD) 0, 
-                    NULL, 
-                   CREATE_ALWAYS, 
-                   FILE_ATTRIBUTE_NORMAL, 
-                   (HANDLE) NULL); 
-    if (hf == INVALID_HANDLE_VALUE) 
-		return;
-    hdr.bfType = 0x4d42;        // 0x42 = "B" 0x4d = "M" 
-    // Compute the size of the entire file. 
-    hdr.bfSize = (DWORD) (sizeof(BITMAPFILEHEADER) + 
-                 pbih->biSize + pbih->biClrUsed 
-                 * sizeof(RGBQUAD) + pbih->biSizeImage); 
-    hdr.bfReserved1 = 0; 
-    hdr.bfReserved2 = 0; 
-
-    // Compute the offset to the array of color indices. 
-    hdr.bfOffBits = (DWORD) sizeof(BITMAPFILEHEADER) + 
-                    pbih->biSize + pbih->biClrUsed 
-                    * sizeof (RGBQUAD); 
-
-    // Copy the BITMAPFILEHEADER into the .BMP file. 
-    if (!WriteFile(hf, (LPVOID) &hdr, sizeof(BITMAPFILEHEADER), 
-        (LPDWORD) &dwTmp,  NULL)) 
+	pbmi = (PBITMAPINFO) LocalAlloc(LPTR,sizeof(BITMAPINFOHEADER));
+	if (pbmi == NULL)
 		return;
 
-    // Copy the BITMAPINFOHEADER and RGBQUAD array into the file. 
-    if (!WriteFile(hf, (LPVOID) pbih, sizeof(BITMAPINFOHEADER) + pbih->biClrUsed * sizeof (RGBQUAD),(LPDWORD) &dwTmp, NULL)) 
-		return;
+	pbmi->bmiHeader.biSize = sizeof(BITMAPINFOHEADER); 
+	pbmi->bmiHeader.biWidth = width; 
+	pbmi->bmiHeader.biHeight = height; 
+	pbmi->bmiHeader.biPlanes = 1; 
+	pbmi->bmiHeader.biBitCount = 24;
+	pbmi->bmiHeader.biCompression = BI_RGB;
+	pbmi->bmiHeader.biSizeImage = (pbmi->bmiHeader.biWidth + 7) /8 * pbmi->bmiHeader.biHeight * 24;
+	pbmi->bmiHeader.biClrImportant = 0; 
 
-    // Copy the array of color indices into the .BMP file. 
-    dwTotal = cb = pbih->biSizeImage; 
-    hp = lpBits; 
-    if (!WriteFile(hf, (LPSTR) hp, (int) cb, (LPDWORD) &dwTmp,NULL)) 
-		return;
+	pbih = (PBITMAPINFOHEADER) pbmi; 
+	lpBits = (LPBYTE) image;
 
-    // Close the .BMP file. 
-     if (!CloseHandle(hf))
-		 return;
+	// Create the .BMP file. 
+	hf = CreateFile(pszFile, 
+		GENERIC_READ | GENERIC_WRITE, 
+		(DWORD) 0, 
+		NULL, 
+		CREATE_ALWAYS, 
+		FILE_ATTRIBUTE_NORMAL, 
+		(HANDLE) NULL); 
 
-    // Free memory. 
+	if (hf != INVALID_HANDLE_VALUE) 
+	{
+		hdr.bfType = 0x4d42;        // 0x42 = "B" 0x4d = "M" 
+		// Compute the size of the entire file. 
+		hdr.bfSize = (DWORD) (sizeof(BITMAPFILEHEADER) + 
+									pbih->biSize + pbih->biClrUsed 
+									* sizeof(RGBQUAD) + pbih->biSizeImage); 
+		hdr.bfReserved1 = 0; 
+		hdr.bfReserved2 = 0; 
+
+		// Compute the offset to the array of color indices. 
+		hdr.bfOffBits = (DWORD) sizeof(BITMAPFILEHEADER) + 
+										pbih->biSize + pbih->biClrUsed 
+										* sizeof (RGBQUAD); 
+
+		// Copy the BITMAPFILEHEADER into the .BMP file. 
+		if (WriteFile(hf, (LPVOID) &hdr, sizeof(BITMAPFILEHEADER), 
+				(LPDWORD) &dwTmp,  NULL))
+		{
+			// Copy the BITMAPINFOHEADER and RGBQUAD array into the file. 
+			if (WriteFile(hf, (LPVOID) pbih, sizeof(BITMAPINFOHEADER) + pbih->biClrUsed * sizeof (RGBQUAD),(LPDWORD) &dwTmp, NULL)) 
+			{
+				// Copy the array of color indices into the .BMP file. 
+				dwTotal = cb = pbih->biSizeImage; 
+				hp = lpBits; 
+				WriteFile(hf, (LPSTR) hp, (int) cb, (LPDWORD) &dwTmp, NULL);
+			}
+		}
+
+		// Close the .BMP file. 
+		CloseHandle(hf);
+	}
+
+	// Free memory.
 	LocalFree( (HLOCAL) pbmi);
 }
 
@@ -3136,7 +3206,7 @@ void W3DDisplay::toggleMovieCapture(void)
 }
 
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 
 static FILE *AssetDumpFile=NULL;
 
@@ -3157,7 +3227,7 @@ void dumpMeshAssets(MeshClass *mesh)
 					{
 						if ((texture=model->Peek_Texture(i,pass,stage)) != NULL)
 						{
-							fprintf(AssetDumpFile,"\t%s\n",texture->Get_Texture_Name());
+							fprintf(AssetDumpFile,"\t%s\n",texture->Get_Texture_Name().str());
 						}
 					}
 				}
@@ -3165,7 +3235,7 @@ void dumpMeshAssets(MeshClass *mesh)
 				{
 					if ((texture=model->Peek_Single_Texture(pass,stage)) != NULL)
 					{
-						fprintf(AssetDumpFile,"\t%s\n",texture->Get_Texture_Name());
+						fprintf(AssetDumpFile,"\t%s\n",texture->Get_Texture_Name().str());
 					}
 				}
 			}
@@ -3289,7 +3359,7 @@ void W3DDisplay::doSmartAssetPurgeAndPreload(const char* usageFileName)
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 void W3DDisplay::dumpAssetUsage(const char* mapname)
 {
 	if (!m_assetManager || !mapname || !*mapname)

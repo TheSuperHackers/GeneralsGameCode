@@ -56,11 +56,6 @@
 #include "GameLogic/Module/SpecialPowerUpdateModule.h"
 #include "GameLogic/ObjectIter.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 /**
  * NOTE: Only AI objects (ie: having an AIUpdate module) can be in
@@ -75,14 +70,14 @@
  */
 AIGroup::AIGroup( void )
 {
-//	DEBUG_LOG(("***AIGROUP %x is being constructed.\n", this));
+//	DEBUG_LOG(("***AIGROUP %x is being constructed.", this));
 	m_groundPath = NULL;
 	m_speed = 0.0f;
 	m_dirty = false;
 	m_id = TheAI->getNextGroupID();
 	m_memberListSize = 0;
 	m_memberList.clear();
-	//DEBUG_LOG(( "AIGroup #%d created\n", m_id ));
+	//DEBUG_LOG(( "AIGroup #%d created", m_id ));
 }
 
 /**
@@ -90,8 +85,11 @@ AIGroup::AIGroup( void )
  */
 AIGroup::~AIGroup()
 {
-//	DEBUG_LOG(("***AIGROUP %x is being destructed.\n", this));
+//	DEBUG_LOG(("***AIGROUP %x is being destructed.", this));
 	// disassociate each member from the group
+
+#if RETAIL_COMPATIBLE_AIGROUP
+
 	std::list<Object *>::iterator i;
 	for( i = m_memberList.begin(); i != m_memberList.end(); /* empty */ )
 	{
@@ -106,11 +104,18 @@ AIGroup::~AIGroup()
 			i = m_memberList.erase(i);
 		}
 	}
+
+#else
+
+	removeAll();
+
+#endif
+
 	if (m_groundPath) {
 		deleteInstance(m_groundPath);
 		m_groundPath = NULL;
 	}
-	//DEBUG_LOG(( "AIGroup #%d destroyed\n", m_id ));
+	//DEBUG_LOG(( "AIGroup #%d destroyed", m_id ));
 }
 
 /**
@@ -169,7 +174,7 @@ Bool AIGroup::isMember( Object *obj )
  */
 void AIGroup::add( Object *obj )
 {
-//	DEBUG_LOG(("***AIGROUP %x is adding Object %x (%s).\n", this, obj, obj->getTemplate()->getName().str()));
+//	DEBUG_LOG(("***AIGROUP %x is adding Object %x (%s).", this, obj, obj->getTemplate()->getName().str()));
 	DEBUG_ASSERTCRASH(obj != NULL, ("trying to add null obj to AIGroup"));
 	if (obj == NULL)
 		return;
@@ -192,7 +197,7 @@ void AIGroup::add( Object *obj )
 	// add to group's list of objects
 	m_memberList.push_back( obj );
 	++m_memberListSize;
-//	DEBUG_LOG(("***AIGROUP %x has size %u now.\n", this, m_memberListSize));
+//	DEBUG_LOG(("***AIGROUP %x has size %u now.", this, m_memberListSize));
 
 	obj->enterGroup( this );
 
@@ -205,7 +210,12 @@ void AIGroup::add( Object *obj )
  */
 Bool AIGroup::remove( Object *obj )
 {
-//	DEBUG_LOG(("***AIGROUP %x is removing Object %x (%s).\n", this, obj, obj->getTemplate()->getName().str()));
+#if !RETAIL_COMPATIBLE_AIGROUP
+	// Defer deletion until the end of this function.
+	AIGroupPtr refThis = AIGroupPtr::Create_AddRef(this);
+#endif
+
+//	DEBUG_LOG(("***AIGROUP %x is removing Object %x (%s).", this, obj, obj->getTemplate()->getName().str()));
 	std::list<Object *>::iterator i = std::find( m_memberList.begin(), m_memberList.end(), obj );
 
 	// make sure object is actually in the group
@@ -215,7 +225,7 @@ Bool AIGroup::remove( Object *obj )
 	// remove it
 	m_memberList.erase( i );
 	--m_memberListSize;
-//	DEBUG_LOG(("***AIGROUP %x has size %u now.\n", this, m_memberListSize));
+//	DEBUG_LOG(("***AIGROUP %x has size %u now.", this, m_memberListSize));
 
 	// tell object to forget about group
 	obj->leaveGroup();
@@ -223,13 +233,40 @@ Bool AIGroup::remove( Object *obj )
 	// list has changed, properties need recomputation
 	m_dirty = true;
 
-	// if the group is empty, no-one is using it any longer, so destroy it
 	if (isEmpty()) {
+#if RETAIL_COMPATIBLE_AIGROUP
+		// if the group is empty, no-one is using it any longer, so destroy it
 		TheAI->destroyGroup( this );
+#endif
 		return TRUE;
 	}
 
 	return FALSE;
+}
+
+/**
+ * Remove all objects from group
+ */
+void AIGroup::removeAll( void )
+{
+#if !RETAIL_COMPATIBLE_AIGROUP
+	// Defer deletion until the end of this function.
+	AIGroupPtr refThis = AIGroupPtr::Create_AddRef(this);
+#endif
+
+	std::list<Object *> memberList;
+	memberList.swap(m_memberList);
+	m_memberListSize = 0;
+
+	std::list<Object *>::iterator i;
+	for ( i = memberList.begin(); i != memberList.end(); ++i )
+	{
+		Object *member = *i;
+		if (member)
+			member->leaveGroup();
+	}
+
+	m_dirty = true;
 }
 
 /**
@@ -1089,6 +1126,11 @@ void AIGroup::friend_moveFormationToPos( const Coord3D *pos, CommandSourceType c
 		}
 		Object *theUnit = (*i);
 		AIUpdateInterface *ai = theUnit->getAIUpdateInterface();
+		if (ai == NULL)
+		{
+			continue;
+		}
+
 		Bool isDifferentFormation = false;
 		Coord2D offset;
 		if (isDifferentFormation) {
@@ -2717,23 +2759,26 @@ void AIGroup::groupCheer( CommandSourceType cmdSource )
 	*/
 void AIGroup::groupSell( CommandSourceType cmdSource )
 {
-	std::list<Object *>::iterator i, thisIterator;
-	Object *obj;
+#if !RETAIL_COMPATIBLE_AIGROUP
+	// Defer deletion until the end of this function.
+	AIGroupPtr refThis = AIGroupPtr::Create_AddRef(this);
+#endif
 
+	std::list<Object *>::iterator i;
+	std::vector<Object *> groupObjectsCopy;
+	groupObjectsCopy.reserve(m_memberListSize);
+
+	// TheSuperHackers @bugfix Mauller 26/06/2025 when sellObject is called, the member list objects in this AIGroup get removed from it. This happens within the Object::deselectObject() function.
+	// This deletes the local AIGroup object from under the call to groupSell, therefore we need to make a local copy of the objects that need selling.
 	for( i = m_memberList.begin(); i != m_memberList.end(); /*empty*/ )
 	{
+		groupObjectsCopy.push_back( *i++ );
+	}
 
-		// work off of 'thisIterator' as we may change the contents of this list
-		thisIterator = i;
-		++i;
-
-		// get object
-		obj = *thisIterator;
-
-		// try to sell object
-		TheBuildAssistant->sellObject( obj );
-
-	}  // end for, i
+	for( size_t j = 0; j < groupObjectsCopy.size(); ++j )
+	{
+		TheBuildAssistant->sellObject( groupObjectsCopy[j] );
+	}
 
 }
 
@@ -3189,22 +3234,22 @@ void AIGroup::crc( Xfer *xfer )
 		if (*it)
 			id = (*it)->getID();
 		xfer->xferUser(&id, sizeof(ObjectID));
-		CRCGEN_LOG(("CRC after AI AIGroup m_memberList for frame %d is 0x%8.8X\n", TheGameLogic->getFrame(), ((XferCRC *)xfer)->getCRC()));
+		CRCGEN_LOG(("CRC after AI AIGroup m_memberList for frame %d is 0x%8.8X", TheGameLogic->getFrame(), ((XferCRC *)xfer)->getCRC()));
 	}
 
 	xfer->xferUnsignedInt( &m_memberListSize );
-	CRCGEN_LOG(("CRC after AI AIGroup m_memberListSize for frame %d is 0x%8.8X\n", TheGameLogic->getFrame(), ((XferCRC *)xfer)->getCRC()));
+	CRCGEN_LOG(("CRC after AI AIGroup m_memberListSize for frame %d is 0x%8.8X", TheGameLogic->getFrame(), ((XferCRC *)xfer)->getCRC()));
 
 	id = INVALID_ID;	// Used to be leader id, unused now. jba.
 	xfer->xferObjectID( &id );
-	CRCGEN_LOG(("CRC after AI AIGroup m_leader for frame %d is 0x%8.8X\n", TheGameLogic->getFrame(), ((XferCRC *)xfer)->getCRC()));
+	CRCGEN_LOG(("CRC after AI AIGroup m_leader for frame %d is 0x%8.8X", TheGameLogic->getFrame(), ((XferCRC *)xfer)->getCRC()));
 	xfer->xferReal( &m_speed );
-	CRCGEN_LOG(("CRC after AI AIGroup m_speed for frame %d is 0x%8.8X\n", TheGameLogic->getFrame(), ((XferCRC *)xfer)->getCRC()));
+	CRCGEN_LOG(("CRC after AI AIGroup m_speed for frame %d is 0x%8.8X", TheGameLogic->getFrame(), ((XferCRC *)xfer)->getCRC()));
 	xfer->xferBool( &m_dirty );
-	CRCGEN_LOG(("CRC after AI AIGroup m_dirty for frame %d is 0x%8.8X\n", TheGameLogic->getFrame(), ((XferCRC *)xfer)->getCRC()));
+	CRCGEN_LOG(("CRC after AI AIGroup m_dirty for frame %d is 0x%8.8X", TheGameLogic->getFrame(), ((XferCRC *)xfer)->getCRC()));
 
 	xfer->xferUnsignedInt( &m_id );
-	CRCGEN_LOG(("CRC after AI AIGroup m_id (%d) for frame %d is 0x%8.8X\n", m_id, TheGameLogic->getFrame(), ((XferCRC *)xfer)->getCRC()));
+	CRCGEN_LOG(("CRC after AI AIGroup m_id (%d) for frame %d is 0x%8.8X", m_id, TheGameLogic->getFrame(), ((XferCRC *)xfer)->getCRC()));
 
 }  // end crc
 

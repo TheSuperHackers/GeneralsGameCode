@@ -19,12 +19,12 @@
 // SphereSizePropPage.cpp : implementation file
 //
 
-#include "stdafx.h"
-#include "w3dview.h"
-#include "spheresizeproppage.h"
-#include "colorutils.h"
-#include "utils.h"
-#include "scaledialog.h"
+#include "StdAfx.h"
+#include "W3DView.h"
+#include "SphereSizePropPage.h"
+#include "ColorUtils.h"
+#include "Utils.h"
+#include "ScaleDialog.h"
 
 #ifdef RTS_DEBUG
 #define new DEBUG_NEW

@@ -102,6 +102,9 @@ public:
 	virtual void onSelling();///< Container is being sold.  Tunnel responds by kicking people out if this is the last tunnel.
 	virtual void onCapture( Player *oldOwner, Player *newOwner ); // Need to change who we are registered with.
 
+	virtual void orderAllPassengersToExit( CommandSourceType commandSource, Bool instantly ); ///< All of the smarts of exiting are in the passenger's AIExit. removeAllFrommContain is a last ditch system call, this is the game Evacuate
+	virtual void orderAllPassengersToIdle( CommandSourceType commandSource ); ///< Just like it sounds
+
 	virtual Bool isValidContainerFor(const Object* obj, Bool checkCapacity) const;
 	virtual void addToContainList( Object *obj );		///< The part of AddToContain that inheritors can override (Can't do whole thing because of all the private stuff involved)
 	virtual void removeFromContain( Object *obj, Bool exposeStealthUnits = FALSE );	///< remove 'obj' from contain list

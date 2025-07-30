@@ -813,6 +813,9 @@ bool HLodDefClass::SubObjectArrayClass::Load_W3D(ChunkLoadClass & cload)
 
 	ModelCount = header.ModelCount;
 	MaxScreenSize = header.MaxScreenSize;
+
+	DEBUG_ASSERTCRASH(ModelName == NULL, ("HLodDefClass::SubObjectArrayClass::Load_W3D: Leaking ModelName"));
+	DEBUG_ASSERTCRASH(BoneIndex == NULL, ("HLodDefClass::SubObjectArrayClass::Load_W3D: Leaking BoneIndex"));
 	ModelName = W3DNEWARRAY char * [ModelCount];
 	BoneIndex = W3DNEWARRAY int [ModelCount];
 
@@ -3524,7 +3527,7 @@ void HLodClass::Add_Lod_Model(int lod, RenderObjClass * robj, int boneindex)
 	// the bone that we're trying to use.  This happens when a skeleton is re-exported
 	// but the models that depend on it aren't re-exported...
 	if (boneindex >= HTree->Num_Pivots()) {
-		WWDEBUG_SAY(("ERROR: Model %s tried to use bone %d in skeleton %s.  Please re-export!\n",Get_Name(),boneindex,HTree->Get_Name()));
+		WWDEBUG_SAY(("ERROR: Model %s tried to use bone %d in skeleton %s.  Please re-export!",Get_Name(),boneindex,HTree->Get_Name()));
 		boneindex = 0;
 	}
 	

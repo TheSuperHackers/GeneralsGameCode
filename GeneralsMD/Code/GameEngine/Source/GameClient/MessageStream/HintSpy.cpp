@@ -64,9 +64,6 @@ GameMessageDisposition HintSpyTranslator::translateGameMessage(const GameMessage
 
 		//-----------------------------------------------------------------------------
 		case GameMessage::MSG_DEFECTOR_HINT:
-
-			disp = DESTROY_MESSAGE; //hint no longer needed by anyone.  Eat it.
-
 		case GameMessage::MSG_DO_MOVETO_HINT:
 		case GameMessage::MSG_DO_ATTACKMOVETO_HINT:
 		case GameMessage::MSG_DO_ATTACK_OBJECT_HINT:

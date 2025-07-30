@@ -90,7 +90,7 @@ void FrameDataManager::update() {
 void FrameDataManager::addNetCommandMsg(NetCommandMsg *msg) {
 	UnsignedInt frame = msg->getExecutionFrame();
 	UnsignedInt frameindex = frame % FRAME_DATA_LENGTH;
-	DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("FrameDataManager::addNetCommandMsg - about to add a command of type %s for frame %d, frame index %d\n", GetAsciiNetCommandType(msg->getNetCommandType()).str(), frame, frameindex));
+	DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("FrameDataManager::addNetCommandMsg - about to add a command of type %s for frame %d, frame index %d", GetAsciiNetCommandType(msg->getNetCommandType()).str(), frame, frameindex));
 	m_frameData[frameindex].addCommand(msg);
 
 	if (m_isLocal) {
@@ -168,7 +168,7 @@ UnsignedInt FrameDataManager::getFrameCommandCount(UnsignedInt frame) {
 void FrameDataManager::zeroFrames(UnsignedInt startingFrame, UnsignedInt numFrames) {
 	UnsignedInt frameIndex = startingFrame % FRAME_DATA_LENGTH;
 	for (UnsignedInt i = 0; i < numFrames; ++i) {
-		//DEBUG_LOG(("Calling zeroFrame for frame index %d\n", frameIndex));
+		//DEBUG_LOG(("Calling zeroFrame for frame index %d", frameIndex));
 		m_frameData[frameIndex].zeroFrame();
 		++frameIndex;
 		frameIndex = frameIndex % FRAME_DATA_LENGTH;

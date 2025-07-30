@@ -64,11 +64,6 @@
 #include "W3DDevice/GameClient/BaseHeightMap.h"
 #include "GameLogic/PartitionManager.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 
 
@@ -106,10 +101,7 @@ void W3DPropBuffer::cull(CameraClass * camera)
 //=============================================================================
 W3DPropBuffer::~W3DPropBuffer(void)
 {
-	Int i;
-	for (i=0; i<MAX_TYPES; i++) {
-		REF_PTR_RELEASE(m_propTypes[i].m_robj);
-	}
+	clearAllProps();
 	REF_PTR_RELEASE(m_light);
 	REF_PTR_RELEASE(m_propShroudMaterialPass);
 }
@@ -122,9 +114,9 @@ for the props. */
 //=============================================================================
 W3DPropBuffer::W3DPropBuffer(void)
 {
-	memset(this, sizeof(W3DPropBuffer), 0);
 	m_initialized = false;
-	clearAllProps();
+	m_numProps = 0;
+	m_numPropTypes = 0;
 	m_light = NEW_REF( LightClass, (LightClass::DIRECTIONAL) );
 	m_propShroudMaterialPass = NEW_REF(W3DShroudMaterialPassClass,());
 	m_initialized = true;
@@ -141,13 +133,16 @@ W3DPropBuffer::W3DPropBuffer(void)
 //=============================================================================
 void W3DPropBuffer::clearAllProps(void)
 {
-	m_numProps=0;
 	Int i;
-	for (i=0; i<MAX_TYPES; i++) {
+	for (i=0; i<m_numPropTypes; i++) {
 		REF_PTR_RELEASE(m_propTypes[i].m_robj);
 		m_propTypes[i].m_robjName.clear();
 	}
+	for (i=0; i<m_numProps; i++) {
+		REF_PTR_RELEASE(m_props[i].m_robj);
+	}
 	m_numPropTypes = 0;
+	m_numProps = 0;
 }
 
 //=============================================================================
@@ -164,7 +159,7 @@ Int W3DPropBuffer::addPropType(const AsciiString &modelName)
 
 	m_propTypes[m_numPropTypes].m_robj = WW3DAssetManager::Get_Instance()->Create_Render_Obj(modelName.str());
 	if (m_propTypes[m_numPropTypes].m_robj==NULL) {
-		DEBUG_CRASH(("Unable to find model for prop %s\n", modelName.str()));
+		DEBUG_CRASH(("Unable to find model for prop %s", modelName.str()));
 		return -1;
 	}
 	m_propTypes[m_numPropTypes].m_robjName = modelName;

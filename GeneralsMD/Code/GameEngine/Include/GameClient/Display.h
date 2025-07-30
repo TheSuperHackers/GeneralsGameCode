@@ -92,7 +92,7 @@ public:
  	virtual void setGamma(Real gamma, Real bright, Real contrast, Bool calibrate) {};
 	virtual Bool testMinSpecRequirements(Bool *videoPassed, Bool *cpuPassed, Bool *memPassed,StaticGameLODLevel *idealVideoLevel=NULL, Real *cpuTime=NULL) {*videoPassed=*cpuPassed=*memPassed=true; return true;}
 	virtual void doSmartAssetPurgeAndPreload(const char* usageFileName) = 0;
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	virtual void dumpAssetUsage(const char* mapname) = 0;
 #endif
 
@@ -146,6 +146,7 @@ public:
 													Int endX, Int endY, Color color = 0xFFFFFFFF, DrawImageMode mode=DRAW_IMAGE_ALPHA) = 0;
 
 	/// draw a video buffer fit within the screen coordinates
+	virtual void drawScaledVideoBuffer( VideoBuffer *buffer, VideoStreamInterface *stream ) = 0;
 	virtual void drawVideoBuffer( VideoBuffer *buffer, Int startX, Int startY, 
 													Int endX, Int endY ) = 0;
 
@@ -163,7 +164,7 @@ public:
 	virtual void clearShroud() = 0;														///< empty the entire shroud
 	virtual void setBorderShroudLevel(UnsignedByte level) = 0;	///<color that will appear in unused border terrain.
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	virtual void dumpModelAssets(const char *path) = 0;	///< dump all used models/textures to a file.
 #endif
 	virtual void preloadModelAssets( AsciiString model ) = 0;	///< preload model asset
@@ -181,6 +182,7 @@ public:
 	virtual void setCinematicTextFrames( Int frames ) { m_cinematicTextFrames = frames; }
 
 	virtual Real getAverageFPS( void ) = 0;	///< returns the average FPS.
+	virtual Real getCurrentFPS( void ) = 0;	///< returns the current FPS.
 	virtual Int getLastFrameDrawCalls( void ) = 0;  ///< returns the number of draw calls issued in the previous frame
 
 protected:

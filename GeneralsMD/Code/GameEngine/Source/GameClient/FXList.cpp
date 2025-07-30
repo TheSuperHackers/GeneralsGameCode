@@ -54,11 +54,6 @@
 // PUBLIC DATA ////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 FXListStore *TheFXListStore = NULL;					///< the FXList store definition
 
@@ -270,7 +265,7 @@ public:
 	virtual void doFXPos(const Coord3D *primary, const Matrix3D* /*primaryMtx*/, const Real /*primarySpeed*/, const Coord3D * secondary, const Real /*overrideRadius*/ ) const
 	{
 		const ThingTemplate* tmpl = TheThingFactory->findTemplate(m_templateName);
-		DEBUG_ASSERTCRASH(tmpl, ("RayEffect %s not found\n",m_templateName.str()));
+		DEBUG_ASSERTCRASH(tmpl, ("RayEffect %s not found",m_templateName.str()));
 		if (primary && secondary && tmpl)
 		{
 			Coord3D sourcePos = *primary;
@@ -600,7 +595,7 @@ protected:
 		}
 
 		const ParticleSystemTemplate *tmp = TheParticleSystemManager->findTemplate(m_name);
-		DEBUG_ASSERTCRASH(tmp, ("ParticleSystem %s not found\n",m_name.str()));
+		DEBUG_ASSERTCRASH(tmp, ("ParticleSystem %s not found",m_name.str()));
 		if (tmp)
 		{
 			for (Int i = 0; i < m_count; i++ )

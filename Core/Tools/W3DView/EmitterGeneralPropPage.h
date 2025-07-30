@@ -25,8 +25,8 @@
 // EmitterGeneralPropPage.h : header file
 //
 
-#include "Resource.H"
-#include "Shader.H"
+#include "resource.h"
+#include "shader.h"
 
 // Forward delcarations
 class EmitterInstanceListClass;

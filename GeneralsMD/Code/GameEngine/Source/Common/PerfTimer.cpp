@@ -40,11 +40,6 @@ __forceinline void ProfileGetTime(__int64 &t)
 	t = _rdtsc();
 }
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -193,7 +188,7 @@ void InitPrecisionTimer()
 			GetPrecisionTimer(&bogus[7]);
 		}
 		TheTicksToGetTicks = (bogus[7] - start) / (ITERS*8);
-		DEBUG_LOG(("TheTicksToGetTicks is %d (%f usec)\n",(int)TheTicksToGetTicks,TheTicksToGetTicks/s_ticksPerUSec));
+		DEBUG_LOG(("TheTicksToGetTicks is %d (%f usec)",(int)TheTicksToGetTicks,TheTicksToGetTicks/s_ticksPerUSec));
 	#endif
 		
 #endif
@@ -388,7 +383,7 @@ void PerfGather::reset()
 		}
 		GetPrecisionTimer(&end);
 		s_stopStartOverhead = (end - start) / (ITERS*8);
-		DEBUG_LOG(("s_stopStartOverhead is %d (%f usec)\n",(int)s_stopStartOverhead,s_stopStartOverhead/s_ticksPerUSec));
+		DEBUG_LOG(("s_stopStartOverhead is %d (%f usec)",(int)s_stopStartOverhead,s_stopStartOverhead/s_ticksPerUSec));
 	}
 }
 
@@ -597,7 +592,7 @@ void PerfTimer::outputInfo( void )
 		return;
 	}
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	double totalTimeInMS = 1000.0 * m_runningTime / s_ticksPerSec;
 	double avgTimePerFrame = totalTimeInMS / (m_lastFrame - m_startFrame + 1);
 	double avgTimePerCall = totalTimeInMS / m_callCount;
@@ -609,7 +604,7 @@ void PerfTimer::outputInfo( void )
 								 "Average Time (per frame): %.4f ms\n"
 								 "Average calls per frame: %.2f\n"
 								 "Number of calls: %d\n"
-								 "Max possible FPS: %.4f\n",
+								 "Max possible FPS: %.4f",
 								 m_identifier, 
 								 avgTimePerCall,
 								 avgTimePerFrame,
@@ -622,7 +617,7 @@ void PerfTimer::outputInfo( void )
 								 "Average Time (per frame): %.4f ms\n"
 								 "Average calls per frame: %.2f\n"
 								 "Number of calls: %d\n"
-								 "Max possible FPS: %.4f\n",
+								 "Max possible FPS: %.4f",
 								 m_identifier, 
 								 avgTimePerCall,
 								 avgTimePerFrame,
@@ -635,7 +630,7 @@ void PerfTimer::outputInfo( void )
 //-------------------------------------------------------------------------------------------------
 void PerfTimer::showMetrics( void )
 {
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	double totalTimeInMS = 1000.0 * m_runningTime / s_ticksPerSec;
 	double avgTimePerFrame = totalTimeInMS / (m_lastFrame - m_startFrame + 1);
 	double avgTimePerCall = totalTimeInMS / m_callCount;

@@ -49,11 +49,6 @@
 
 const Real BIGNUM = 99999.0f;
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 //-------------------------------------------------------------------------------------------------
 enum TaxiType CPP_11(: Int)
@@ -154,7 +149,7 @@ private:
 public:
 	PartitionFilterHasParkingPlace(ObjectID id) : m_id(id) { }
 protected:
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	virtual const char* debugGetName() { return "PartitionFilterHasParkingPlace"; }
 #endif
 	virtual Bool allow(Object *objOther)
@@ -2450,7 +2445,7 @@ void JetAIUpdate::aiDoCommand(const AICommandParms* parms)
 				if (isParkedAt(parms->m_obj))
 					return;
 			
-				// else fall thru to the default case!
+				FALLTHROUGH; // else fall thru to the default case!
 
 			default:
 			{

@@ -49,11 +49,6 @@
 const Real NO_START_Z = 1e10;
 
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 
 // PRIVATE ////////////////////////////////////////////////////////////////////////////////////////
@@ -167,17 +162,17 @@ void ParachuteContain::updateBonePositions()
 		{
 			if (parachuteDraw->getPristineBonePositions( "PARA_COG", 0, &m_paraSwayBone, NULL, 1) != 1)
 			{
-				DEBUG_CRASH(("PARA_COG not found\n"));
+				DEBUG_CRASH(("PARA_COG not found"));
 				m_paraSwayBone.zero();
 			}
 
 			if (parachuteDraw->getPristineBonePositions( "PARA_ATTCH", 0, &m_paraAttachBone, NULL, 1 ) != 1)
 			{
-				DEBUG_CRASH(("PARA_ATTCH not found\n"));
+				DEBUG_CRASH(("PARA_ATTCH not found"));
 				m_paraAttachBone.zero();
 			}
 		}
-		//DEBUG_LOG(("updating para bone positions %d...\n",TheGameLogic->getFrame()));
+		//DEBUG_LOG(("updating para bone positions %d...",TheGameLogic->getFrame()));
 	}
 
 	if (m_needToUpdateRiderBones)
@@ -191,13 +186,13 @@ void ParachuteContain::updateBonePositions()
 		{
 			if (riderDraw->getPristineBonePositions( "PARA_MAN", 0, &m_riderAttachBone, NULL, 1) != 1)
 			{
-				//DEBUG_LOG(("*** No parachute-attach bone... using object height!\n"));
+				//DEBUG_LOG(("*** No parachute-attach bone... using object height!"));
 				m_riderAttachBone.zero();
 				m_riderAttachBone.z += riderDraw->getDrawableGeometryInfo().getMaxHeightAbovePosition();
 			}
 		}
 
-		//DEBUG_LOG(("updating rider bone positions %d...\n",TheGameLogic->getFrame()));
+		//DEBUG_LOG(("updating rider bone positions %d...",TheGameLogic->getFrame()));
 	}
 }
 

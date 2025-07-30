@@ -97,6 +97,10 @@ void PolygonTrigger::reallocate(void)
 {	
 	DEBUG_ASSERTCRASH(m_numPoints <= m_sizePoints, ("Invalid m_numPoints."));
 	if (m_numPoints == m_sizePoints) {
+		if (m_sizePoints > INT_MAX / 2) {
+			DEBUG_CRASH(("Too many points to allocate."));
+			return;
+		}
 		// Reallocate.
 		m_sizePoints += m_sizePoints;
 		ICoord3D *newPts = NEW ICoord3D[m_sizePoints];
@@ -187,7 +191,7 @@ Bool PolygonTrigger::ParsePolygonTriggersDataChunk(DataChunkInput &file, DataChu
 			pTrig->addPoint(loc);
 		}
 		if (numPoints<2) {
-			DEBUG_LOG(("Deleting polygon trigger '%s' with %d points.\n", 
+			DEBUG_LOG(("Deleting polygon trigger '%s' with %d points.", 
 					pTrig->getTriggerName().str(), numPoints));
 			deleteInstance(pTrig);
 			continue;

@@ -44,11 +44,6 @@
 #include "Common/PlayerTemplate.h"
 #include "GameNetwork/LANAPICallbacks.h" // for acceptTrueColor, etc
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 // -----------------------------------------------------------------------------
 
@@ -140,7 +135,7 @@ void ShowUnderlyingGUIElements( Bool show, const char *layoutFilename, const cha
 	GameWindow *parent = TheWindowManager->winGetWindowFromId( NULL, parentID );
 	if (!parent)
 	{
-		DEBUG_CRASH(("Window %s not found\n", parentNameStr.str()));
+		DEBUG_CRASH(("Window %s not found", parentNameStr.str()));
 		return;
 	}
 
@@ -339,13 +334,14 @@ void UpdateSlotList( GameInfo *myGame, GameWindow *comboPlayer[],
 		for( int i =0; i < MAX_SLOTS; i++ )
 		{
 			GameSlot * slot = myGame->getSlot(i);
+
 			// if i'm host, enable the controls for AI
-			if(myGame->amIHost() && slot && slot->isAI())
+			if(myGame->amIHost() && slot->isAI())
 			{
 				EnableAcceptControls(TRUE, myGame, comboPlayer, comboColor, comboPlayerTemplate,
 					comboTeam, buttonAccept, buttonStart, buttonMapStartPosition, i);
 			}
-			else if (slot && myGame->getLocalSlotNum() == i)
+			else if (myGame->getLocalSlotNum() == i)
 			{
 				if(slot->isAccepted() && !myGame->amIHost())
 				{
@@ -371,7 +367,7 @@ void UpdateSlotList( GameInfo *myGame, GameWindow *comboPlayer[],
 				EnableAcceptControls(FALSE, myGame, comboPlayer, comboColor, comboPlayerTemplate,
 					comboTeam, buttonAccept, buttonStart, buttonMapStartPosition, i);
 			}
-			if(slot && slot->isHuman())
+			if(slot->isHuman())
 			{
 				UnicodeString newName = slot->getName();
 				UnicodeString oldName = GadgetComboBoxGetText(comboPlayer[i]);

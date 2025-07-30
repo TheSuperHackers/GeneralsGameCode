@@ -53,11 +53,6 @@
 #include "WW3D2/texture.h"
 #include "WW3D2/dx8caps.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 
 // PRIVATE DATA ///////////////////////////////////////////////////////////////////////////////////
@@ -91,7 +86,7 @@ static WW3DFormat findFormat(const WW3DFormat formats[])
 		}  // end if
 
 	}  // end for i
-	DEBUG_CRASH(("WW3DRadar: No appropriate texture format\n") );
+	DEBUG_CRASH(("WW3DRadar: No appropriate texture format") );
 	return WW3D_FORMAT_UNKNOWN;
 }
 
@@ -606,10 +601,10 @@ void W3DRadar::drawEvents( Int pixelX, Int pixelY, Int width, Int height )
 void W3DRadar::drawIcons( Int pixelX, Int pixelY, Int width, Int height )
 {
 	// draw the hero icons
-	std::list<const Coord3D *>::const_iterator iter = m_cachedHeroPosList.begin();
-	while (iter != m_cachedHeroPosList.end())
+	std::vector<const Object *>::const_iterator iter = m_cachedHeroObjectList.begin();
+	while (iter != m_cachedHeroObjectList.end())
 	{
-		drawHeroIcon( pixelX, pixelY, width, height, (*iter) );
+		drawHeroIcon( pixelX, pixelY, width, height, (*iter)->getPosition() );
 		++iter;
 	}
 }
@@ -638,7 +633,7 @@ void W3DRadar::renderObjectList( const RadarObject *listHead, TextureClass *text
 	if( calcHero )
 	{
 		// clear all entries from the cached hero object list
-		m_cachedHeroPosList.clear();
+		m_cachedHeroObjectList.clear();
 	}
 
 	for( const RadarObject *rObj = listHead; rObj; rObj = rObj->friend_getNext() )
@@ -650,10 +645,10 @@ void W3DRadar::renderObjectList( const RadarObject *listHead, TextureClass *text
 		// get object
 		const Object *obj = rObj->friend_getObject();
 
-		// cache hero object positions for drawing in icon layer
+		// cache hero objects for drawing in icon layer
 		if( calcHero && obj->isHero() )
 		{
-			m_cachedHeroPosList.push_back(obj->getPosition());
+			m_cachedHeroObjectList.push_back(obj);
 		}
     Bool skip = FALSE;
 
@@ -862,6 +857,13 @@ W3DRadar::~W3DRadar( void )
 }  // end ~W3DRadar
 
 //-------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------
+void W3DRadar::xfer( Xfer *xfer )
+{
+	Radar::xfer(xfer);
+}
+
+//-------------------------------------------------------------------------------------------------
 /** Radar initialization */
 //-------------------------------------------------------------------------------------------------
 void W3DRadar::init( void )
@@ -879,12 +881,12 @@ void W3DRadar::init( void )
 	// poolify
 	m_terrainTexture = MSGNEW("TextureClass") TextureClass( m_textureWidth, m_textureHeight, 
 																			 m_terrainTextureFormat, MIP_LEVELS_1 );
-	DEBUG_ASSERTCRASH( m_terrainTexture, ("W3DRadar: Unable to allocate terrain texture\n") );
+	DEBUG_ASSERTCRASH( m_terrainTexture, ("W3DRadar: Unable to allocate terrain texture") );
 
 	// allocate our overlay texture
 	m_overlayTexture = MSGNEW("TextureClass") TextureClass( m_textureWidth, m_textureHeight,
 																			 m_overlayTextureFormat, MIP_LEVELS_1 );
-	DEBUG_ASSERTCRASH( m_overlayTexture, ("W3DRadar: Unable to allocate overlay texture\n") );
+	DEBUG_ASSERTCRASH( m_overlayTexture, ("W3DRadar: Unable to allocate overlay texture") );
 
 	// set filter type for the overlay texture, try it and see if you like it, I don't ;)
 //	m_overlayTexture->Set_Min_Filter( TextureClass::FILTER_TYPE_NONE );
@@ -893,7 +895,7 @@ void W3DRadar::init( void )
 	// allocate our shroud texture
 	m_shroudTexture = MSGNEW("TextureClass") TextureClass( m_textureWidth, m_textureHeight,
 																			 m_shroudTextureFormat, MIP_LEVELS_1 );
-	DEBUG_ASSERTCRASH( m_shroudTexture, ("W3DRadar: Unable to allocate shroud texture\n") );
+	DEBUG_ASSERTCRASH( m_shroudTexture, ("W3DRadar: Unable to allocate shroud texture") );
 	m_shroudTexture->Get_Filter().Set_Min_Filter( TextureFilterClass::FILTER_TYPE_DEFAULT );
 	m_shroudTexture->Get_Filter().Set_Mag_Filter( TextureFilterClass::FILTER_TYPE_DEFAULT );
 
@@ -961,6 +963,8 @@ void W3DRadar::reset( void )
 	// extending functionality, call base class
 	Radar::reset();
 
+	m_cachedHeroObjectList.clear();
+
 	// clear our texture data, but do not delete the resources
 	SurfaceClass *surface;
 
@@ -994,6 +998,37 @@ void W3DRadar::update( void )
 	Radar::update();
 
 }  // end update
+
+//-------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------
+RadarObjectType W3DRadar::addObject( Object* obj )
+{
+	RadarObjectType addedType = Radar::addObject(obj);
+
+	if (addedType == RadarObjectType_Local)
+	{
+		if (obj->isHero() && !RadarObject::isTemporarilyHidden(obj))
+		{
+			m_cachedHeroObjectList.push_back(obj);
+		}
+	}
+
+	return addedType;
+}
+
+//-------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------
+RadarObjectType W3DRadar::removeObject( Object* obj )
+{
+	RadarObjectType removedType = Radar::removeObject(obj);
+
+	if (removedType == RadarObjectType_Local)
+	{
+		stl::find_and_erase_unordered(m_cachedHeroObjectList, obj);
+	}
+
+	return removedType;
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Reset the radar for the new map data being given to it */
@@ -1033,7 +1068,7 @@ void W3DRadar::buildTerrainTexture( TerrainLogic *terrain )
 
 	// get the terrain surface to draw in
 	surface = m_terrainTexture->Get_Surface_Level();
-	DEBUG_ASSERTCRASH( surface, ("W3DRadar: Can't get surface for terrain texture\n") );
+	DEBUG_ASSERTCRASH( surface, ("W3DRadar: Can't get surface for terrain texture") );
 
 	// build the terrain
 	RGBColor sampleColor;
@@ -1169,7 +1204,7 @@ void W3DRadar::buildTerrainTexture( TerrainLogic *terrain )
 									TerrainRoadType *bridgeTemplate = TheTerrainRoads->findBridge( bridgeTName );
 									
 									// sanity
-									DEBUG_ASSERTCRASH( bridgeTemplate, ("W3DRadar::buildTerrainTexture - Can't find bridge template for '%s'\n", bridgeTName.str()) );
+									DEBUG_ASSERTCRASH( bridgeTemplate, ("W3DRadar::buildTerrainTexture - Can't find bridge template for '%s'", bridgeTName.str()) );
 
 									// use bridge color
 									if ( bridgeTemplate )
@@ -1255,7 +1290,7 @@ void W3DRadar::buildTerrainTexture( TerrainLogic *terrain )
 //-------------------------------------------------------------------------------------------------
 void W3DRadar::clearShroud()
 {
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if ENABLE_CONFIGURABLE_SHROUD
 	if (!TheGlobalData->m_shroudOn)
 		return;
 #endif
@@ -1275,7 +1310,7 @@ void W3DRadar::clearShroud()
 //-------------------------------------------------------------------------------------------------
 void W3DRadar::setShroudLevel(Int shroudX, Int shroudY, CellShroudStatus setting)
 {
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if ENABLE_CONFIGURABLE_SHROUD
 	if (!TheGlobalData->m_shroudOn)
 		return;
 #endif
@@ -1285,7 +1320,7 @@ void W3DRadar::setShroudLevel(Int shroudX, Int shroudY, CellShroudStatus setting
 		return;
 
 	SurfaceClass* surface = m_shroudTexture->Get_Surface_Level();
-	DEBUG_ASSERTCRASH( surface, ("W3DRadar: Can't get surface for Shroud texture\n") );
+	DEBUG_ASSERTCRASH( surface, ("W3DRadar: Can't get surface for Shroud texture") );
 
 	Int mapMinX = shroudX * shroud->getCellWidth();
 	Int mapMinY = shroudY * shroud->getCellHeight();
@@ -1412,7 +1447,7 @@ void W3DRadar::draw( Int pixelX, Int pixelY, Int width, Int height )
  	TheDisplay->drawImage( m_overlayImage, ul.x, ul.y, lr.x, lr.y );
 
 	// draw the shroud image
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if ENABLE_CONFIGURABLE_SHROUD
 	if( TheGlobalData->m_shroudOn )
 #else
 	if (true)
@@ -1457,13 +1492,12 @@ void W3DRadar::refreshTerrain( TerrainLogic *terrain )
 
 
 
-
 ///The following is an "archive" of an attempt to foil the mapshroud hack... saved for later, since it is too close to release to try it
 
 
 /*
  *
-	void W3DRadar::renderObjectList( const RadarObject *listHead, TextureClass *texture, Bool calcHero )
+	void W3DRadar::renderObjectList( const RadarObject *listHead, TextureClass *texture )
 {
 
 	// sanity
@@ -1483,12 +1517,6 @@ void W3DRadar::refreshTerrain( TerrainLogic *terrain )
 
 	UnsignedByte minAlpha = 8;
 
-	if( calcHero )
-	{
-		// clear all entries from the cached hero object list
-		m_cachedHeroPosList.clear();
-	}
-
 	for( const RadarObject *rObj = listHead; rObj; rObj = rObj->friend_getNext() )
 	{
     UnsignedByte h = (UnsignedByte)(rObj->isTemporarilyHidden());
@@ -1500,12 +1528,6 @@ void W3DRadar::refreshTerrain( TerrainLogic *terrain )
 		// get object
 		const Object *obj = rObj->friend_getObject();
 		UnsignedByte r = 1;   // all decoys
-
-		// cache hero object positions for drawing in icon layer
-		if( calcHero && obj->isHero() )
-		{
-			m_cachedHeroPosList.push_back(obj->getPosition());
-		}
 
 		// get the color we're going to draw in
 		UnsignedInt c = 0xfe000000;// this is a decoy

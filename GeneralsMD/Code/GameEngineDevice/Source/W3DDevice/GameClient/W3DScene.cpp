@@ -64,11 +64,6 @@
 #include "WW3D2/colorspace.h"
 
 #include "WW3D2/shdlib.h"
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 ///////////////////////////////////////////////////////////////////////////////
 // DEFINITIONS ////////////////////////////////////////////////////////////////
@@ -105,7 +100,7 @@ RTS3DScene::RTS3DScene()
 	m_scratchLight = NEW_REF( LightClass, (LightClass::DIRECTIONAL) );
 //	REF_PTR_SET(m_globalLight[lightIndex], pLight);
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if ENABLE_CONFIGURABLE_SHROUD
 	if (TheGlobalData->m_shroudOn)
 		m_shroudMaterialPass = NEW_REF(W3DShroudMaterialPassClass,());
 	else
@@ -152,7 +147,7 @@ RTS3DScene::RTS3DScene()
 	//Allocate memory to hold queue of visible renderobjects that need to be drawn last
 	//because they are forced translucent.
 	m_translucentObjectsCount = 0;
-	if (TheGlobalData && TheGlobalData->m_maxVisibleTranslucentObjects)
+	if (TheGlobalData->m_maxVisibleTranslucentObjects > 0)
 		m_translucentObjectsBuffer = NEW RenderObjClass* [TheGlobalData->m_maxVisibleTranslucentObjects];
 	else
 		m_translucentObjectsBuffer = NULL;
@@ -162,18 +157,25 @@ RTS3DScene::RTS3DScene()
 	m_numNonOccluderOrOccludee=0;
 	m_occludedObjectsCount=0;
 
-	m_potentialOccluders=NULL;
-	m_potentialOccludees=NULL;
-	m_nonOccludersOrOccludees=NULL;
+	if (TheGlobalData->m_maxVisibleOccluderObjects > 0)
+		m_potentialOccluders = NEW RenderObjClass* [TheGlobalData->m_maxVisibleOccluderObjects];
+	else
+		m_potentialOccluders = NULL;
+
+	if (TheGlobalData->m_maxVisibleOccludeeObjects > 0)
+		m_potentialOccludees = NEW RenderObjClass* [TheGlobalData->m_maxVisibleOccludeeObjects];
+	else
+		m_potentialOccludees = NULL;
+
+	if (TheGlobalData->m_maxVisibleNonOccluderOrOccludeeObjects > 0)
+		m_nonOccludersOrOccludees = NEW RenderObjClass* [TheGlobalData->m_maxVisibleNonOccluderOrOccludeeObjects];
+	else
+		m_nonOccludersOrOccludees = NULL;
 
 	//Modify the shader to make occlusion transparent
 	ShaderClass shader = PlayerColorShader;
 	shader.Set_Src_Blend_Func(ShaderClass::SRCBLEND_SRC_ALPHA);
 	shader.Set_Dst_Blend_Func(ShaderClass::DSTBLEND_ONE_MINUS_SRC_ALPHA);
-
-    m_potentialOccluders = NEW RenderObjClass* [TheGlobalData->m_maxVisibleOccluderObjects];
-	m_potentialOccludees = NEW RenderObjClass* [TheGlobalData->m_maxVisibleOccludeeObjects];
-	m_nonOccludersOrOccludees = NEW RenderObjClass* [TheGlobalData->m_maxVisibleNonOccluderOrOccludeeObjects];
 
 #ifdef USE_NON_STENCIL_OCCLUSION
 	for (i=0; i<MAX_PLAYER_COUNT; i++)
@@ -408,8 +410,7 @@ void RTS3DScene::Visibility_Check(CameraClass * camera)
 	m_translucentObjectsCount=0;
 	m_numNonOccluderOrOccludee=0;
 
-	Int currentFrame=0;
-	if (TheGameLogic) currentFrame = TheGameLogic->getFrame();
+	Int currentFrame = TheGameLogic ? TheGameLogic->getFrame() : 0;
 	if (currentFrame <= TheGlobalData->m_defaultOcclusionDelay)
 		currentFrame = TheGlobalData->m_defaultOcclusionDelay+1;	//make sure occlusion is enabled when game starts (frame 0).
 
@@ -484,7 +485,7 @@ void RTS3DScene::Visibility_Check(CameraClass * camera)
 						{	drawInfo->m_flags |= DrawableInfo::ERF_IS_TRANSLUCENT;	//object is translucent
 							m_translucentObjectsBuffer[m_translucentObjectsCount++] = robj;
 						}
-						if (TheGlobalData->m_enableBehindBuildingMarkers && TheGameLogic->getShowBehindBuildingMarkers())
+						if (TheGlobalData->m_enableBehindBuildingMarkers && TheGameLogic && TheGameLogic->getShowBehindBuildingMarkers())
 						{
 							//visible drawable. Check if it's either an occluder or occludee
 							if (draw->isKindOf(KINDOF_STRUCTURE) && m_numPotentialOccluders < TheGlobalData->m_maxVisibleOccluderObjects)
@@ -790,7 +791,7 @@ void RTS3DScene::renderOneObject(RenderInfoClass &rinfo, RenderObjClass *robj, I
 
 		if (drawInfo)
 		{
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if ENABLE_CONFIGURABLE_SHROUD
 			if (!TheGlobalData->m_shroudOn)
 				ss = OBJECTSHROUD_CLEAR;
 #endif

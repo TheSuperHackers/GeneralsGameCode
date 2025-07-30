@@ -1,49 +1,82 @@
+[![GitHub Release](https://img.shields.io/github/v/release/TheSuperHackers/GeneralsGameCode?include_prereleases&sort=date&display_name=tag&style=flat&label=Release)](https://github.com/TheSuperHackers/GeneralsGameCode/releases)
+![GitHub milestone details](https://img.shields.io/github/milestones/progress-percent/TheSuperHackers/GeneralsGameCode/3)
+![GitHub milestone details](https://img.shields.io/github/milestones/progress-percent/TheSuperHackers/GeneralsGameCode/1)
+![GitHub milestone details](https://img.shields.io/github/milestones/progress-percent/TheSuperHackers/GeneralsGameCode/4)
+![GitHub milestone details](https://img.shields.io/github/milestones/progress-percent/TheSuperHackers/GeneralsGameCode/5)
+![GitHub milestone details](https://img.shields.io/github/milestones/progress-percent/TheSuperHackers/GeneralsGameCode/6)
 
-# Command & Conquer Generals (inc. Zero Hour) Source Code
+[![GitHub issues by-label](https://img.shields.io/github/issues/TheSuperHackers/GeneralsGameCode/bug?style=flat&label=Bug%20Issues&labelColor=%23c4c4c4&color=%23424242)](https://github.com/TheSuperHackers/GeneralsGameCode/issues?q=label%3ABug)
+[![GitHub issues by-label](https://img.shields.io/github/issues/TheSuperHackers/GeneralsGameCode/enhancement?style=flat&label=Enhancement%20Issues&labelColor=%23c4c4c4&color=%23424242)](https://github.com/TheSuperHackers/GeneralsGameCode/issues?q=label%3AEnhancement)
+[![GitHub issues by-label](https://img.shields.io/github/issues/TheSuperHackers/GeneralsGameCode/major?style=flat&label=Major%20Issues&labelColor=%23c4c4c4&color=%23424242)](https://github.com/TheSuperHackers/GeneralsGameCode/issues?q=label%3AMajor)
+[![GitHub issues by-label](https://img.shields.io/github/issues/TheSuperHackers/GeneralsGameCode/critical?style=flat&label=Critical%20Issues&labelColor=%23c4c4c4&color=%23424242)](https://github.com/TheSuperHackers/GeneralsGameCode/issues?q=label%3ACritical)
+[![GitHub issues by-label](https://img.shields.io/github/issues/TheSuperHackers/GeneralsGameCode/blocker?style=flat&label=Blocker%20Issues&labelColor=%23c4c4c4&color=%23424242)](https://github.com/TheSuperHackers/GeneralsGameCode/issues?q=label%3ABlocker)
 
-This repository includes source code for Command & Conquer Generals, and its expansion pack Zero Hour. This release provides support to the Steam Workshop for both games ([C&C Generals](https://steamcommunity.com/workshop/browse/?appid=2229870) and [C&C Generals - Zero Hour](https://steamcommunity.com/workshop/browse/?appid=2732960)).
+# Welcome to the Generals Game Code Project
+
+GeneralsGameCode is a community-driven project aimed at fixing and improving the classic RTS game, *Command &
+Conquer: Generals* and its expansion *Zero Hour*. This repository contains the source code for both games, with a
+primary focus on *Zero Hour*.
+
+Additionally, there is a complementary project repository for fixing and improving game data and assets such as
+INI scripts, GUI, AI, maps, models, textures, audio, localization. You can find it
+[here](https://github.com/TheSuperHackers/GeneralsGamePatch/) and contribute to it as well.
+
+## Project Overview
+
+The game was originally developed using Visual Studio 6 and C++98. We've updated the code to be compatible with Visual
+Studio 2022 and C++20.
+
+The initial goal of this project is to fix critical bugs and implement improvements while maintaining compatibility with
+the original *Generals* version 1.08 and *Zero Hour* version 1.04. Once we can break retail compatibility, more fixes
+and features will be possible to implement.
+
+## Current Focus and Future Plans
+
+Here's an overview of our current focus and future plans
+
+- **Modernizing the Codebase**: Transitioning to modern C++ standards and refactoring old code.
+- **Critical Bug Fixes**: Fixing game-breaking issues (e.g., fullscreen crash).
+- **Minor Bug Fixes**: Addressing minor bugs (e.g., UI issues, graphical glitches).
+- **Cross-Platform Support**: Adding support for more platforms (e.g., Linux, macOS).
+- **Engine Improvements**: Enhancing the game engine to improve performance and stability.
+- **Client-Side Features**: Enhancing the game's client with features such as an improved replay viewer and UI updates.
+- **Multiplayer Improvements**: Implementing a new game server and an upgraded matchmaking lobby.
+- **Tooling Improvements**: Developing new or improving existing tools for modding and game development.
+- **Community-Driven Improvements**: Once the community grows, we plan to incorporate more features, updates, and
+  changes based on player feedback.
+
+## Running the Game
+
+To run *Generals* or *Zero Hour* using this project, you need to have the original *Command & Conquer: Generals and Zero Hour* game
+installed. The easiest way to get it is through *Command & Conquer The Ultimate Collection*
+on [Steam](https://store.steampowered.com/bundle/39394). Once the game is ready, download the latest version of the
+project from [GitHub Releases](https://github.com/TheSuperHackers/GeneralsGameCode/releases), extract the necessary 
+files, and follow the instructions in the [Wiki](https://github.com/TheSuperHackers/GeneralsGameCode/wiki).
 
 
-## Dependencies
+## Joining the Community
 
-If you wish to rebuild the source code and tools successfully you will need to find or write new replacements (or remove the code using them entirely) for the following libraries;
+You can chat and discuss the development of the project on our [Discord channel](https://www.community-outpost.com/discord) to get the latest updates,
+report bugs, and contribute to the project!
 
-- DirectX SDK (Version 9.0 or higher) (expected path `\Code\Libraries\DirectX\`)
-- STLport (4.5.3) - (expected path `\Code\Libraries\STLport-4.5.3`)
-- 3DSMax 4 SDK - (expected path `\Code\Libraries\Max4SDK\`)
-- NVASM - (expected path `\Code\Tools\NVASM\`)
-- BYTEmark - (expected path `\Code\Libraries\Source\Benchmark`)
-- RAD Miles Sound System SDK - (expected path `\Code\Libraries\Source\WWVegas\Miles6\`)
-- RAD Bink SDK - (expected path `\Code\GameEngineDevice\Include\VideoDevice\Bink`)
-- SafeDisk API - (expected path `\Code\GameEngine\Include\Common\SafeDisk` and `\Code\Tools\Launcher\SafeDisk\`)
-- Miles Sound System "Asimp3" - (expected path `\Code\Libraries\WPAudio\Asimp3`)
-- GameSpy SDK - (expected path `\Code\Libraries\Source\GameSpy\`)
-- ZLib (1.1.4) - (expected path `\Code\Libraries\Source\Compression\ZLib\`)
-- LZH-Light (1.0) - (expected path `\Code\Libraries\Source\Compression\LZHCompress\CompLibSource` and `CompLibHeader`)
+## Building the Game Yourself
 
+We provide support for building the project using Visual Studio 6 (VS6) and Visual Studio 2022. For detailed build
+instructions, check the [Wiki](https://github.com/TheSuperHackers/GeneralsGameCode/wiki/build_guides), which also
+includes guides for building with Docker, CLion, and links to forks supporting additional versions.
 
-## Compiling (Win32 Only)
+## Contributing
 
-To use the compiled binaries, you must own the game. The C&C Ultimate Collection is available for purchase on [EA App](https://www.ea.com/en-gb/games/command-and-conquer/command-and-conquer-the-ultimate-collection/buy/pc) or [Steam](https://store.steampowered.com/bundle/39394/Command__Conquer_The_Ultimate_Collection/).
-
-The quickest way to build all configurations in the project is to open `rts.dsw` in Microsoft Visual Studio C++ 6.0 (SP6 recommended for binary matching to Generals patch 1.08 and Zero Hour patch 1.04) and select Build -> Batch Build, then hit the “Rebuild All” button.
-
-If you wish to compile the code under a modern version of Microsoft Visual Studio, you can convert the legacy project file to a modern MSVC solution by opening `rts.dsw` in Microsoft Visual Studio .NET 2003, and then opening the newly created project and solution file in MSVC 2015 or newer.
-
-NOTE: As modern versions of MSVC enforce newer revisions of the C++ standard, you will need to make extensive changes to the codebase before it successfully compiles, even more so if you plan on compiling for the Win64 platform.
-
-When the workspace has finished building, the compiled binaries will be copied to the folder called `/Run/` found in the root of each games directory. 
+We welcome contributions to the project! If you’re interested in contributing, you need to have knowledge of C++. Join
+the developer chat on Discord for more information on how to get started. Please make sure to read our
+[Contributing Guidelines](CONTRIBUTING.md) before submitting a pull request. You can also check out 
+the [Wiki](https://github.com/TheSuperHackers/GeneralsGameCode/wiki) for more detailed documentation.
 
 
-## Known Issues
+## License & Legal Disclaimer
 
-Windows has a policy where executables that contain words “version”, “update” or “install” in their filename will require UAC Elevation to run. This will affect “versionUpdate” and “buildVersionUpdate” projects from running as post-build events. Renaming the output binary name for these projects to not include these words should resolve the issue for you.
+EA has not endorsed and does not support this product. All trademarks are the property of their respective owners.
 
-
-## STLport
-STLport will require changes to successfully compile this source code. The file [stlport.diff](stlport.diff) has been provided for you so you can review and apply these changes. Please make sure you are using STLport 4.5.3 before attempting to apply the patch.
-
-
-## License
-
-This repository and its contents are licensed under the GPL v3 license, with additional terms applied. Please see [LICENSE.md](LICENSE.md) for details.
+This project is licensed under the [GPL-3.0 License](https://www.gnu.org/licenses/gpl-3.0.html), which allows you to
+freely modify and distribute the source code under the terms of this license. Please see [LICENSE.md](LICENSE.md) 
+for details.

@@ -59,11 +59,6 @@
 #include "GameClient/Shell.h"
 #include "GameLogic/GameLogic.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 // PRIVATE DATA ///////////////////////////////////////////////////////////////////////////////////
 static NameKeyType buttonBackKey					= NAMEKEY_INVALID;
@@ -140,7 +135,7 @@ void PopupReplayInit( WindowLayout *layout, void *userData )
 
 	// get the listbox that will have the save games in it
 	GameWindow *listboxGames = TheWindowManager->winGetWindowFromId( NULL, listboxGamesKey );
-	DEBUG_ASSERTCRASH( listboxGames != NULL, ("PopupReplayInit - Unable to find games listbox\n") );
+	DEBUG_ASSERTCRASH( listboxGames != NULL, ("PopupReplayInit - Unable to find games listbox") );
 
 	// populate the listbox with the save games on disk
 	PopulateReplayFileListbox(listboxGames);
@@ -301,7 +296,7 @@ void reallySaveReplay(void)
 
 			// get the listbox that will have the save games in it
 			GameWindow *listboxGames = TheWindowManager->winGetWindowFromId( parent, listboxGamesKey );
-			DEBUG_ASSERTCRASH( listboxGames != NULL, ("reallySaveReplay - Unable to find games listbox\n") );
+			DEBUG_ASSERTCRASH( listboxGames != NULL, ("reallySaveReplay - Unable to find games listbox") );
 
 			// populate the listbox with the save games on disk
 			PopulateReplayFileListbox(listboxGames);
@@ -328,7 +323,7 @@ void reallySaveReplay(void)
 
 	// get the listbox that will have the save games in it
 	GameWindow *listboxGames = TheWindowManager->winGetWindowFromId( parent, listboxGamesKey );
-	DEBUG_ASSERTCRASH( listboxGames != NULL, ("reallySaveReplay - Unable to find games listbox\n") );
+	DEBUG_ASSERTCRASH( listboxGames != NULL, ("reallySaveReplay - Unable to find games listbox") );
 
 	// populate the listbox with the save games on disk
 	PopulateReplayFileListbox(listboxGames);
@@ -380,7 +375,7 @@ WindowMsgHandledType PopupReplaySystem( GameWindow *window, UnsignedInt msg,
 			GameWindow *control = (GameWindow *)mData1;
 
 			GameWindow *listboxGames = TheWindowManager->winGetWindowFromId( window, listboxGamesKey );
-			DEBUG_ASSERTCRASH( listboxGames != NULL, ("PopupReplaySystem - Unable to find games listbox\n") );
+			DEBUG_ASSERTCRASH( listboxGames != NULL, ("PopupReplaySystem - Unable to find games listbox") );
 
 			//
 			// handle games listbox, when certain items are selected in the listbox only some
@@ -394,7 +389,7 @@ WindowMsgHandledType PopupReplaySystem( GameWindow *window, UnsignedInt msg,
 					UnicodeString filename;
 					filename = GadgetListBoxGetText(listboxGames, rowSelected);
 					GameWindow *textEntryReplayName = TheWindowManager->winGetWindowFromId( window, textEntryReplayNameKey );
-					DEBUG_ASSERTCRASH( textEntryReplayName != NULL, ("PopupReplaySystem - Unable to find text entry\n") );
+					DEBUG_ASSERTCRASH( textEntryReplayName != NULL, ("PopupReplaySystem - Unable to find text entry") );
 					GadgetTextEntrySetText(textEntryReplayName, filename);
 				}
 			}
@@ -432,7 +427,7 @@ WindowMsgHandledType PopupReplaySystem( GameWindow *window, UnsignedInt msg,
       {
 				// get the filename, and see if we are overwriting
 				GameWindow *textEntryReplayName = TheWindowManager->winGetWindowFromId( window, textEntryReplayNameKey );
-				DEBUG_ASSERTCRASH( textEntryReplayName != NULL, ("PopupReplaySystem - Unable to find text entry\n") );
+				DEBUG_ASSERTCRASH( textEntryReplayName != NULL, ("PopupReplaySystem - Unable to find text entry") );
 
 				UnicodeString filename = GadgetTextEntryGetText( textEntryReplayName );
 				if (filename.isEmpty())
@@ -476,6 +471,8 @@ WindowMsgHandledType PopupReplaySystem( GameWindow *window, UnsignedInt msg,
 					}
 				}
 			}
+
+			break;
 		}
 
 		default:

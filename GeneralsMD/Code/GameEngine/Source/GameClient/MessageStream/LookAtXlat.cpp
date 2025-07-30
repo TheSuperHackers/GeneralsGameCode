@@ -52,7 +52,7 @@
 
 LookAtTranslator *TheLookAtTranslator = NULL;
 
-static enum
+enum
 {
 	DIR_UP = 0,
 	DIR_DOWN,
@@ -62,7 +62,17 @@ static enum
 
 static Bool scrollDir[4] = { false, false, false, false };
 
-Int SCROLL_AMT = 100;
+// TheSuperHackers @tweak Introduces the SCROLL_MULTIPLIER for all scrolling to
+// 
+//  1. bring the RMB scroll speed back to how it was at 30 FPS in the retail game version
+//  2. increase the upper limit of the Scroll Factor when set from the Options Menu (0.20 to 2.90 instead of 0.10 to 1.45)
+//  3. increase the scroll speed for Edge/Key scrolling to better fit the high speeds of RMB scrolling
+// 
+// The multiplier of 2 was logically chosen because originally the Scroll Factor did practically not affect the RMB scroll speed
+// and because the default Scroll Factor is/was 0.5, it needs to be doubled to get to a neutral 1x multiplier.
+
+CONSTEXPR const Real SCROLL_MULTIPLIER = 2.0f;
+CONSTEXPR const Real SCROLL_AMT = 100.0f * SCROLL_MULTIPLIER;
 
 static const Int edgeScrollSize = 3;
 
@@ -296,21 +306,19 @@ GameMessageDisposition LookAtTranslator::translateGameMessage(const GameMessage 
 				break;
 			}
 
-			if (!TheGlobalData->m_windowed)
+			// TheSuperHackers @tweak Ayumi/xezon 26/07/2025 Enables edge scrolling in windowed mode.
+			if (m_isScrolling)
 			{
-				if (m_isScrolling)
+				if ( m_scrollType == SCROLL_SCREENEDGE && (m_currentPos.x >= edgeScrollSize && m_currentPos.y >= edgeScrollSize && m_currentPos.y < height-edgeScrollSize && m_currentPos.x < width-edgeScrollSize) )
 				{
-					if ( m_scrollType == SCROLL_SCREENEDGE && (m_currentPos.x >= edgeScrollSize && m_currentPos.y >= edgeScrollSize && m_currentPos.y < height-edgeScrollSize && m_currentPos.x < width-edgeScrollSize) )
-					{
-						stopScrolling();
-					}
+					stopScrolling();
 				}
-				else
+			}
+			else
+			{
+				if ( m_currentPos.x < edgeScrollSize || m_currentPos.y < edgeScrollSize || m_currentPos.y >= height-edgeScrollSize || m_currentPos.x >= width-edgeScrollSize )
 				{
-					if ( m_currentPos.x < edgeScrollSize || m_currentPos.y < edgeScrollSize || m_currentPos.y >= height-edgeScrollSize || m_currentPos.x >= width-edgeScrollSize )
-					{
-						setScrolling(SCROLL_SCREENEDGE);
-					}
+					setScrolling(SCROLL_SCREENEDGE);
 				}
 			}
 
@@ -336,7 +344,7 @@ GameMessageDisposition LookAtTranslator::translateGameMessage(const GameMessage 
 				m_anchor = msg->getArgument( 0 )->pixel;
 			}
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 			// adjust the field of view
 			if (m_isChangingFOV)
 			{
@@ -395,6 +403,13 @@ GameMessageDisposition LookAtTranslator::translateGameMessage(const GameMessage 
 			// scroll the view
 			if (m_isScrolling)
 			{
+
+				// TheSuperHackers @bugfix Mauller 07/06/2025 Adjust the viewport scrolling so it is independent of GameClient FPS
+				// The scaling is based on the current logic rate, this provides a consistent scroll speed at all GameClient FPS
+				// This also fixes scrolling within replays when fast forwarding due to the uncapped FPS
+				// When the FPS is in excess of the expected frame rate, the ratio will reduce the offset of the cameras movement
+				const Real logicToFpsRatio = TheGlobalData->m_framesPerSecondLimit / TheDisplay->getCurrentFPS();
+
 				switch (m_scrollType)
 				{
 				case SCROLL_RMB:
@@ -415,34 +430,34 @@ GameMessageDisposition LookAtTranslator::translateGameMessage(const GameMessage 
 								m_anchor.y = m_currentPos.y - maxY;
 						}
 
-						offset.x = TheGlobalData->m_horizontalScrollSpeedFactor * (m_currentPos.x - m_anchor.x);
-						offset.y = TheGlobalData->m_verticalScrollSpeedFactor * (m_currentPos.y - m_anchor.y);
+						// TheSuperHackers @fix Mauller 16/06/2025 fix RMB scrolling to allow it to scale with the user adjusted scroll factor
 						Coord2D vec;
-						vec.x = offset.x;
-						vec.y = offset.y;
+						vec.x = (m_currentPos.x - m_anchor.x);
+						vec.y = (m_currentPos.y - m_anchor.y);
+						// TheSuperHackers @info calculate the length of the vector to obtain the movement speed before the vector is normalized
+						float vecLength = vec.length();
 						vec.normalize();
-						// Add in the window scroll amount as the minimum.
-						offset.x += TheGlobalData->m_horizontalScrollSpeedFactor * vec.x * sqr(TheGlobalData->m_keyboardScrollFactor);
-						offset.y += TheGlobalData->m_verticalScrollSpeedFactor * vec.y * sqr(TheGlobalData->m_keyboardScrollFactor);
+						offset.x = TheGlobalData->m_horizontalScrollSpeedFactor * logicToFpsRatio * vecLength * vec.x * SCROLL_MULTIPLIER * TheGlobalData->m_keyboardScrollFactor;
+						offset.y = TheGlobalData->m_verticalScrollSpeedFactor * logicToFpsRatio * vecLength * vec.y * SCROLL_MULTIPLIER * TheGlobalData->m_keyboardScrollFactor;
 					}
 					break;
 				case SCROLL_KEY:
 					{
 						if (scrollDir[DIR_UP])
 						{
-							offset.y -= TheGlobalData->m_verticalScrollSpeedFactor * SCROLL_AMT * TheGlobalData->m_keyboardScrollFactor;
+							offset.y -= TheGlobalData->m_verticalScrollSpeedFactor * logicToFpsRatio * SCROLL_AMT * TheGlobalData->m_keyboardScrollFactor;
 						}
 						if (scrollDir[DIR_DOWN])
 						{
-							offset.y += TheGlobalData->m_verticalScrollSpeedFactor * SCROLL_AMT * TheGlobalData->m_keyboardScrollFactor;
+							offset.y += TheGlobalData->m_verticalScrollSpeedFactor * logicToFpsRatio * SCROLL_AMT * TheGlobalData->m_keyboardScrollFactor;
 						}
 						if (scrollDir[DIR_LEFT])
 						{
-							offset.x -= TheGlobalData->m_horizontalScrollSpeedFactor * SCROLL_AMT * TheGlobalData->m_keyboardScrollFactor;
+							offset.x -= TheGlobalData->m_horizontalScrollSpeedFactor * logicToFpsRatio * SCROLL_AMT * TheGlobalData->m_keyboardScrollFactor;
 						}
 						if (scrollDir[DIR_RIGHT])
 						{
-							offset.x += TheGlobalData->m_horizontalScrollSpeedFactor * SCROLL_AMT * TheGlobalData->m_keyboardScrollFactor;
+							offset.x += TheGlobalData->m_horizontalScrollSpeedFactor * logicToFpsRatio * SCROLL_AMT * TheGlobalData->m_keyboardScrollFactor;
 						}
 					}
 					break;
@@ -452,19 +467,19 @@ GameMessageDisposition LookAtTranslator::translateGameMessage(const GameMessage 
 						UnsignedInt width  = TheDisplay->getWidth();
 						if (m_currentPos.y < edgeScrollSize)
 						{
-							offset.y -= TheGlobalData->m_verticalScrollSpeedFactor * SCROLL_AMT * TheGlobalData->m_keyboardScrollFactor;
+							offset.y -= TheGlobalData->m_verticalScrollSpeedFactor * logicToFpsRatio * SCROLL_AMT * TheGlobalData->m_keyboardScrollFactor;
 						}
 						if (m_currentPos.y >= height-edgeScrollSize)
 						{
-							offset.y += TheGlobalData->m_verticalScrollSpeedFactor * SCROLL_AMT * TheGlobalData->m_keyboardScrollFactor;
+							offset.y += TheGlobalData->m_verticalScrollSpeedFactor * logicToFpsRatio * SCROLL_AMT * TheGlobalData->m_keyboardScrollFactor;
 						}
 						if (m_currentPos.x < edgeScrollSize)
 						{
-							offset.x -= TheGlobalData->m_horizontalScrollSpeedFactor * SCROLL_AMT * TheGlobalData->m_keyboardScrollFactor;
+							offset.x -= TheGlobalData->m_horizontalScrollSpeedFactor * logicToFpsRatio * SCROLL_AMT * TheGlobalData->m_keyboardScrollFactor;
 						}
 						if (m_currentPos.x >= width-edgeScrollSize)
 						{
-							offset.x += TheGlobalData->m_horizontalScrollSpeedFactor * SCROLL_AMT * TheGlobalData->m_keyboardScrollFactor;
+							offset.x += TheGlobalData->m_horizontalScrollSpeedFactor * logicToFpsRatio * SCROLL_AMT * TheGlobalData->m_keyboardScrollFactor;
 						}
 					}
 					break;
@@ -494,7 +509,7 @@ GameMessageDisposition LookAtTranslator::translateGameMessage(const GameMessage 
 		}
 
 		// ------------------------------------------------------------------------
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 		case GameMessage::MSG_META_DEMO_BEGIN_ADJUST_PITCH:
 		{
 			DEBUG_ASSERTCRASH(!m_isPitching, ("hmm, mismatched m_isPitching"));
@@ -502,10 +517,10 @@ GameMessageDisposition LookAtTranslator::translateGameMessage(const GameMessage 
 			disp = DESTROY_MESSAGE;
 			break;
 		}
-#endif // #if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#endif // #if defined(RTS_DEBUG)
 
 		// ------------------------------------------------------------------------
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 		case GameMessage::MSG_META_DEMO_END_ADJUST_PITCH:
 		{
 			DEBUG_ASSERTCRASH(m_isPitching, ("hmm, mismatched m_isPitching"));
@@ -513,16 +528,16 @@ GameMessageDisposition LookAtTranslator::translateGameMessage(const GameMessage 
 			disp = DESTROY_MESSAGE;
 			break;
 		}
-#endif // #if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#endif // #if defined(RTS_DEBUG)
 
 		// ------------------------------------------------------------------------
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 		case GameMessage::MSG_META_DEMO_DESHROUD:
 		{
 			ThePartitionManager->revealMapForPlayerPermanently( ThePlayerList->getLocalPlayer()->getPlayerIndex() );
 			break;
 		}
-#endif // #if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#endif // #if defined(RTS_DEBUG)
 
 		// ------------------------------------------------------------------------
 #if defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
@@ -537,7 +552,7 @@ GameMessageDisposition LookAtTranslator::translateGameMessage(const GameMessage 
 #endif // #if defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
 
 		// ------------------------------------------------------------------------
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 		case GameMessage::MSG_META_DEMO_ENSHROUD:
 		{
 			// Need to first undo the permanent Look laid down by DEMO_DESHROUD, then blast a shroud dollop.
@@ -545,10 +560,10 @@ GameMessageDisposition LookAtTranslator::translateGameMessage(const GameMessage 
 			ThePartitionManager->shroudMapForPlayer( ThePlayerList->getLocalPlayer()->getPlayerIndex() );
 			break;
 		}
-#endif // #if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#endif // #if defined(RTS_DEBUG)
 
 		// ------------------------------------------------------------------------
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 		case GameMessage::MSG_META_DEMO_BEGIN_ADJUST_FOV:
 		{
 			//DEBUG_ASSERTCRASH(!m_isChangingFOV, ("hmm, mismatched m_isChangingFOV"));
@@ -556,17 +571,17 @@ GameMessageDisposition LookAtTranslator::translateGameMessage(const GameMessage 
 			m_anchor = m_currentPos;
 			break;
 		}
-#endif // #if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#endif // #if defined(RTS_DEBUG)
 
 		// ------------------------------------------------------------------------
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 		case GameMessage::MSG_META_DEMO_END_ADJUST_FOV:
 		{
 		//	DEBUG_ASSERTCRASH(m_isChangingFOV, ("hmm, mismatched m_isChangingFOV"));
 			m_isChangingFOV = false;
 			break;
 		}
-#endif // #if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#endif // #if defined(RTS_DEBUG)
 
 		//-----------------------------------------------------------------------------------------
 		case GameMessage::MSG_META_SAVE_VIEW1:
@@ -610,7 +625,7 @@ GameMessageDisposition LookAtTranslator::translateGameMessage(const GameMessage 
 		}
 
 		//-----------------------------------------------------------------------------
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 		case GameMessage::MSG_META_DEMO_LOCK_CAMERA_TO_PLANES:
 		{
 			Drawable *first = NULL;
@@ -671,7 +686,7 @@ GameMessageDisposition LookAtTranslator::translateGameMessage(const GameMessage 
 			disp = DESTROY_MESSAGE;
 			break;
 		}
-#endif // #if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#endif // #if defined(RTS_DEBUG)
 
 	}  // end switch
 

@@ -19,12 +19,12 @@
 // EmitterSizePropPage.cpp : implementation file
 //
 
-#include "Stdafx.H"
-#include "W3dview.H"
-#include "EmitterSizePropPage.H"
-#include "Utils.H"
-#include "ParticleSizeDialog.H"
-#include "EmitterInstanceList.H"
+#include "StdAfx.h"
+#include "W3DView.h"
+#include "EmitterSizePropPage.h"
+#include "Utils.h"
+#include "ParticleSizeDialog.h"
+#include "EmitterInstanceList.h"
 
 #ifdef RTS_DEBUG
 #define new DEBUG_NEW

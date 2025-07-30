@@ -57,11 +57,6 @@
 #include "GameLogic/ScriptEngine.h"
 #include "GameLogic/SidesList.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 // These are for debugger window
 static int st_LastCurrentFrame;
@@ -105,7 +100,7 @@ Bool st_particleSystemNeedsStopping = FALSE; ///< Set along with st_particleSyst
 #define FORMAT_STRING_LEADING_STRING		"%s%.2f"
 // That's it for particle editor
 
-#if defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	#define DO_VTUNE_STUFF
 #endif
 
@@ -200,13 +195,13 @@ Int AttackPriorityInfo::getPriority(const ThingTemplate *tThing) const
 void AttackPriorityInfo::dumpPriorityInfo(void)
 {
 #ifdef DEBUG_LOGGING
-	DEBUG_LOG(("Attack priority '%s', default %d\n", m_name.str(), m_defaultPriority));
+	DEBUG_LOG(("Attack priority '%s', default %d", m_name.str(), m_defaultPriority));
 	if (m_priorityMap==NULL) return;
 	for (AttackPriorityMap::const_iterator it = m_priorityMap->begin(); it != m_priorityMap->end(); ++it) 
     {
 		const ThingTemplate *tThing = (*it).first;
 		Int priority = (*it).second;
-		DEBUG_LOG(("  Thing '%s' priority %d\n",tThing->getName().str(), priority));
+		DEBUG_LOG(("  Thing '%s' priority %d",tThing->getName().str(), priority));
 	}
 #endif
 }
@@ -304,7 +299,7 @@ void AttackPriorityInfo::xfer( Xfer *xfer )
 				thingTemplate = (*it).first;
 				thingTemplateName = thingTemplate->getName();
 				DEBUG_ASSERTCRASH( thingTemplateName.isEmpty() == FALSE, 
-													 ("AttackPriorityInfo::xfer - Writing an empty thing template name\n") );
+													 ("AttackPriorityInfo::xfer - Writing an empty thing template name") );
 				xfer->xferAsciiString( &thingTemplateName );
 
 				// write priority
@@ -315,7 +310,7 @@ void AttackPriorityInfo::xfer( Xfer *xfer )
 
 			// sanity
 			DEBUG_ASSERTCRASH( count == priorityMapCount, 
-												("AttackPriorityInfo::xfer - Mismatch in priority map size.  Size() method returned '%d' but actual iteration count was '%d'\n",
+												("AttackPriorityInfo::xfer - Mismatch in priority map size.  Size() method returned '%d' but actual iteration count was '%d'",
 												 priorityMapCount, count) );
 
 		}  // end if
@@ -334,7 +329,7 @@ void AttackPriorityInfo::xfer( Xfer *xfer )
 			if( thingTemplate == NULL )
 			{
 
-				DEBUG_CRASH(( "AttackPriorityInfo::xfer - Unable to find thing template '%s'\n",
+				DEBUG_CRASH(( "AttackPriorityInfo::xfer - Unable to find thing template '%s'",
 											thingTemplateName.str() ));
 				throw SC_INVALID_DATA;
 
@@ -402,7 +397,7 @@ void ScriptEngine::addActionTemplateInfo( Template *actionTemplate)
 			return;
 		}
 	}
-	DEBUG_LOG(("Couldn't find script action named %s\n", actionTemplate->m_internalName.str()));
+	DEBUG_LOG(("Couldn't find script action named %s", actionTemplate->m_internalName.str()));
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -513,12 +508,12 @@ ScriptEngine::~ScriptEngine()
 #ifdef COUNT_SCRIPT_USAGE
 	Int i;
 	for (i=0; i<ScriptAction::NUM_ITEMS; i++) {
-		DEBUG_LOG(("ScriptAction%d, %4d, %s, %s, %s\n", i, m_actionTemplates[i].m_numTimesUsed, 
+		DEBUG_LOG(("ScriptAction%d, %4d, %s, %s, %s", i, m_actionTemplates[i].m_numTimesUsed, 
 			m_actionTemplates[i].m_internalName.str(), m_actionTemplates[i].m_firstMapUsed.str(),
 			m_actionTemplates[i].m_uiName.str()));
 	}
 	for (i=0; i<Condition::NUM_ITEMS; i++) {
-		DEBUG_LOG(("ScriptCondition%d, %4d, %s, %s, %s\n", i, m_conditionTemplates[i].m_numTimesUsed, 
+		DEBUG_LOG(("ScriptCondition%d, %4d, %s, %s, %s", i, m_conditionTemplates[i].m_numTimesUsed, 
 			m_conditionTemplates[i].m_internalName.str(), m_conditionTemplates[i].m_firstMapUsed.str(),
 			m_conditionTemplates[i].m_uiName.str()));
 	}
@@ -603,7 +598,7 @@ void ScriptEngine::init( void )
 
 	curTemplate = &m_actionTemplates[ScriptAction::DEBUG_CRASH_BOX];
 	curTemplate->m_internalName = "DEBUG_CRASH_BOX";
-	curTemplate->m_uiName = "{INTERNAL}_/Debug/Display a crash box (debug/internal builds only).";
+	curTemplate->m_uiName = "{INTERNAL}_/Debug/Display a crash box (debug builds only).";
 	curTemplate->m_numParameters = 1;
 	curTemplate->m_parameters[0] = Parameter::TEXT_STRING;
 	curTemplate->m_numUiStrings = 1;
@@ -5328,9 +5323,10 @@ void ScriptEngine::reset( void )
 #ifdef SPECIAL_SCRIPT_PROFILING
 #ifdef DEBUG_LOGGING
 	if (m_numFrames > 1) {
-		DEBUG_LOG(("\n***SCRIPT ENGINE STATS %.0f frames:\n", m_numFrames));
-		DEBUG_LOG(("Avg time to update %.3f milisec\n", 1000*m_totalUpdateTime/m_numFrames));
-		DEBUG_LOG(("  Max time to update %.3f miliseconds.\n", m_maxUpdateTime*1000));
+		DEBUG_LOG_RAW(("\n"));
+		DEBUG_LOG(("***SCRIPT ENGINE STATS %.0f frames:", m_numFrames));
+		DEBUG_LOG(("Avg time to update %.3f milisec", 1000*m_totalUpdateTime/m_numFrames));
+		DEBUG_LOG(("  Max time to update %.3f miliseconds.", m_maxUpdateTime*1000));
 	}
 	m_numFrames=0;
 	m_totalUpdateTime=0;
@@ -5364,24 +5360,32 @@ void ScriptEngine::reset( void )
 				}
 			}
 			if (maxScript) {
-				DEBUG_LOG(("   SCRIPT %s total time %f seconds,\n        evaluated %d times, avg execution %2.3f msec (Goal less than 0.05)\n",
+				DEBUG_LOG(("   SCRIPT %s total time %f seconds,\n        evaluated %d times, avg execution %2.3f msec (Goal less than 0.05)",
 					maxScript->getName().str(),
 					maxScript->getConditionTime(), maxScript->getConditionCount(), 1000*maxScript->getConditionTime()/maxScript->getConditionCount()) );
 				maxScript->addToConditionTime(-2*maxTime); // reset to negative.
 			}
 
 		}
-		DEBUG_LOG(("***\n"));
+		DEBUG_LOG(("***"));
 	}
 #endif
 #endif
 
 	_updateCurrentParticleCap();
 
-	VecSequentialScriptPtrIt seqScriptIt;
-	for (seqScriptIt = m_sequentialScripts.begin(); seqScriptIt != m_sequentialScripts.end(); ) {
-		cleanupSequentialScript(seqScriptIt, TRUE);
+	// delete and clear all sequential scripts.
+	VecSequentialScriptPtrIt seqScriptIt = m_sequentialScripts.begin();
+	while (seqScriptIt != m_sequentialScripts.end()) {
+		SequentialScript* seqScript = *seqScriptIt;
+		while (seqScript != NULL) {
+			SequentialScript* scriptToDelete = seqScript;
+			seqScript = seqScript->m_nextScriptInSequence;
+			deleteInstance(scriptToDelete);
+		}
+		++seqScriptIt;
 	}
+	m_sequentialScripts.clear();
 
 	// clear out all the lists of object types that were in the old map.
 	for (AllObjectTypesIt it = m_allObjectTypeLists.begin(); it != m_allObjectTypeLists.end(); it = m_allObjectTypeLists.begin() ) {
@@ -5391,7 +5395,7 @@ void ScriptEngine::reset( void )
 			m_allObjectTypeLists.erase(it);
 		}
 	}
-	DEBUG_ASSERTCRASH( m_allObjectTypeLists.empty() == TRUE, ("ScriptEngine::reset - m_allObjectTypeLists should be empty but is not!\n") );
+	DEBUG_ASSERTCRASH( m_allObjectTypeLists.empty() == TRUE, ("ScriptEngine::reset - m_allObjectTypeLists should be empty but is not!") );
 
 	// reset all the reveals that have taken place.
 	m_namedReveals.clear();
@@ -5515,9 +5519,9 @@ void ScriptEngine::update( void )
 		AsciiString name = it->first;
 		Object * obj = it->second;
 		if (obj && obj->getAIUpdateInterface())
-			DEBUG_LOG(("%s=%x('%s'), isDead%d\n", name.str(), obj, obj->getName().str(), obj->getAIUpdateInterface()->isDead()));
+			DEBUG_LOG(("%s=%x('%s'), isDead%d", name.str(), obj, obj->getName().str(), obj->getAIUpdateInterface()->isDead()));
 	}
-	DEBUG_LOG(("\n\n"));
+	DEBUG_LOG(("\n"));
 */
 #endif
 #endif
@@ -6058,7 +6062,7 @@ void ScriptEngine::runScript(const AsciiString& scriptName, Team *pThisTeam)
 		}	else {
 				AppendDebugMessage("***Attempting to call script that is not a subroutine:***", false);
 				AppendDebugMessage(scriptName, false);
-				DEBUG_LOG(("Attempting to call script '%s' that is not a subroutine.\n", scriptName.str()));
+				DEBUG_LOG(("Attempting to call script '%s' that is not a subroutine.", scriptName.str()));
 		}
 	}	else {
 		pScript = findScript(scriptName);
@@ -6068,12 +6072,12 @@ void ScriptEngine::runScript(const AsciiString& scriptName, Team *pThisTeam)
 			} else {
 				AppendDebugMessage("***Attempting to call script that is not a subroutine:***", false);
 				AppendDebugMessage(scriptName, false);
-				DEBUG_LOG(("Attempting to call script '%s' that is not a subroutine.\n", scriptName.str()));
+				DEBUG_LOG(("Attempting to call script '%s' that is not a subroutine.", scriptName.str()));
 			}
 		} else {
 			AppendDebugMessage("***Script not defined:***", false);
 			AppendDebugMessage(scriptName, false);
-			DEBUG_LOG(("WARNING: Script '%s' not defined.\n", scriptName.str()));
+			DEBUG_LOG(("WARNING: Script '%s' not defined.", scriptName.str()));
 		}
 	}
 	// m_callingTeam is restored automatically via LatchRestore
@@ -6105,7 +6109,7 @@ void ScriptEngine::runObjectScript(const AsciiString& scriptName, Object *pThisO
 		}	else {
 				AppendDebugMessage("***Attempting to call script that is not a subroutine:***", false);
 				AppendDebugMessage(scriptName, false);
-				DEBUG_LOG(("Attempting to call script '%s' that is not a subroutine.\n", scriptName.str()));
+				DEBUG_LOG(("Attempting to call script '%s' that is not a subroutine.", scriptName.str()));
 		}
 	}	else {
 		pScript = findScript(scriptName);
@@ -6115,12 +6119,12 @@ void ScriptEngine::runObjectScript(const AsciiString& scriptName, Object *pThisO
 			} else {
 				AppendDebugMessage("***Attempting to call script that is not a subroutine:***", false);
 				AppendDebugMessage(scriptName, false);
-				DEBUG_LOG(("Attempting to call script '%s' that is not a subroutine.\n", scriptName.str()));
+				DEBUG_LOG(("Attempting to call script '%s' that is not a subroutine.", scriptName.str()));
 			}
 		} else {
 			AppendDebugMessage("***Script not defined:***", false);
 			AppendDebugMessage(scriptName, false);
-			DEBUG_LOG(("WARNING: Script '%s' not defined.\n", scriptName.str()));
+			DEBUG_LOG(("WARNING: Script '%s' not defined.", scriptName.str()));
 		}
 	}
 	m_callingObject = pSavCallingObject;
@@ -6139,7 +6143,7 @@ Int ScriptEngine::allocateCounter( const AsciiString& name)
 			return i;
 		}
 	}
-	DEBUG_ASSERTCRASH(m_numCounters<MAX_COUNTERS, ("Too many counters, failed to make '%s'.\n", name.str()));
+	DEBUG_ASSERTCRASH(m_numCounters<MAX_COUNTERS, ("Too many counters, failed to make '%s'.", name.str()));
 	if (m_numCounters < MAX_COUNTERS) {
 		m_counters[m_numCounters].name = name;
 		i = m_numCounters;
@@ -6173,7 +6177,7 @@ void ScriptEngine::createNamedMapReveal(const AsciiString& revealName, const Asc
 	// Will fail if there's already one in existence of the same name.
 	for (it = m_namedReveals.begin(); it != m_namedReveals.end(); ++it) {
 		if (it->m_revealName == revealName) {
-			DEBUG_CRASH(("ScriptEngine::createNamedMapReveal: Attempted to redefine named Reveal '%s', so I won't change it.\n", revealName.str()));
+			DEBUG_CRASH(("ScriptEngine::createNamedMapReveal: Attempted to redefine named Reveal '%s', so I won't change it.", revealName.str()));
 			return;
 		}
 	}
@@ -6277,7 +6281,7 @@ Int ScriptEngine::allocateFlag( const AsciiString& name)
 			return i;
 		}
 	}
-	DEBUG_ASSERTCRASH(m_numFlags < MAX_FLAGS, ("Too many flags, failed to make '%s'..\n", name.str()));
+	DEBUG_ASSERTCRASH(m_numFlags < MAX_FLAGS, ("Too many flags, failed to make '%s'..", name.str()));
 	if (m_numFlags < MAX_FLAGS) {
 		m_flags[m_numFlags].name = name;
 		i = m_numFlags;
@@ -6338,8 +6342,8 @@ Script  *ScriptEngine::findScript(const AsciiString& name)
 //-------------------------------------------------------------------------------------------------
 Bool ScriptEngine::evaluateCounter( Condition *pCondition )
 {
-	DEBUG_ASSERTCRASH(pCondition->getNumParameters() >= 3, ("Not enough parameters.\n"));
-	DEBUG_ASSERTCRASH(pCondition->getConditionType() == Condition::COUNTER, ("Wrong condition.\n"));
+	DEBUG_ASSERTCRASH(pCondition->getNumParameters() >= 3, ("Not enough parameters."));
+	DEBUG_ASSERTCRASH(pCondition->getConditionType() == Condition::COUNTER, ("Wrong condition."));
 	Int counterNdx = pCondition->getParameter(0)->getInt();
 	if (counterNdx == 0) {
 		counterNdx = allocateCounter(pCondition->getParameter(0)->getString());
@@ -6362,7 +6366,7 @@ Bool ScriptEngine::evaluateCounter( Condition *pCondition )
 //-------------------------------------------------------------------------------------------------
 void ScriptEngine::setCounter( ScriptAction *pAction )
 {
-	DEBUG_ASSERTCRASH(pAction->getNumParameters() >= 2, ("Not enough parameters.\n"));
+	DEBUG_ASSERTCRASH(pAction->getNumParameters() >= 2, ("Not enough parameters."));
 	Int counterNdx = pAction->getParameter(0)->getInt();
 	if (counterNdx == 0) {
 		counterNdx = allocateCounter(pAction->getParameter(0)->getString());
@@ -6377,7 +6381,7 @@ void ScriptEngine::setCounter( ScriptAction *pAction )
 //-------------------------------------------------------------------------------------------------
 void ScriptEngine::setFade( ScriptAction *pAction )
 {
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	if (TheGlobalData->m_disableCameraFade)
 	{
 		m_fade = FADE_NONE;
@@ -6385,7 +6389,7 @@ void ScriptEngine::setFade( ScriptAction *pAction )
 	}
 #endif
 
-	DEBUG_ASSERTCRASH(pAction->getNumParameters() >= 5, ("Not enough parameters.\n"));
+	DEBUG_ASSERTCRASH(pAction->getNumParameters() >= 5, ("Not enough parameters."));
 	switch (pAction->getActionType()) {
 		default:	m_fade = FADE_NONE; return;
 		case ScriptAction::CAMERA_FADE_ADD: m_fade = FADE_ADD; break;
@@ -6411,7 +6415,7 @@ void ScriptEngine::setFade( ScriptAction *pAction )
 //-------------------------------------------------------------------------------------------------
 void ScriptEngine::setSway( ScriptAction *pAction )
 {
-	DEBUG_ASSERTCRASH(pAction->getNumParameters() >= 5, ("Not enough parameters.\n"));
+	DEBUG_ASSERTCRASH(pAction->getNumParameters() >= 5, ("Not enough parameters."));
 	++m_breezeInfo.m_breezeVersion;
 	m_breezeInfo.m_direction = pAction->getParameter(0)->getReal();
 	m_breezeInfo.m_directionVec.x = Sin(m_breezeInfo.m_direction);
@@ -6430,7 +6434,7 @@ void ScriptEngine::setSway( ScriptAction *pAction )
 //-------------------------------------------------------------------------------------------------
 void ScriptEngine::addCounter( ScriptAction *pAction )
 {
-	DEBUG_ASSERTCRASH(pAction->getNumParameters() >= 2, ("Not enough parameters.\n"));
+	DEBUG_ASSERTCRASH(pAction->getNumParameters() >= 2, ("Not enough parameters."));
 	Int value = pAction->getParameter(0)->getInt();
 	Int counterNdx = pAction->getParameter(1)->getInt();
 	if (counterNdx == 0) {
@@ -6445,7 +6449,7 @@ void ScriptEngine::addCounter( ScriptAction *pAction )
 //-------------------------------------------------------------------------------------------------
 void ScriptEngine::subCounter( ScriptAction *pAction )
 {
-	DEBUG_ASSERTCRASH(pAction->getNumParameters() >= 2, ("Not enough parameters.\n"));
+	DEBUG_ASSERTCRASH(pAction->getNumParameters() >= 2, ("Not enough parameters."));
 	Int value = pAction->getParameter(0)->getInt();
 	Int counterNdx = pAction->getParameter(1)->getInt();
 	if (counterNdx == 0) {
@@ -6460,8 +6464,8 @@ void ScriptEngine::subCounter( ScriptAction *pAction )
 //-------------------------------------------------------------------------------------------------
 Bool ScriptEngine::evaluateFlag( Condition *pCondition )
 {
-	DEBUG_ASSERTCRASH(pCondition->getNumParameters() >= 2, ("Not enough parameters.\n"));
-	DEBUG_ASSERTCRASH(pCondition->getConditionType() == Condition::FLAG, ("Wrong condition.\n"));
+	DEBUG_ASSERTCRASH(pCondition->getNumParameters() >= 2, ("Not enough parameters."));
+	DEBUG_ASSERTCRASH(pCondition->getConditionType() == Condition::FLAG, ("Wrong condition."));
 	Int flagNdx = pCondition->getParameter(0)->getInt();
 	if (flagNdx == 0) {
 		flagNdx = allocateFlag(pCondition->getParameter(0)->getString());
@@ -6489,7 +6493,7 @@ Bool ScriptEngine::evaluateFlag( Condition *pCondition )
 //-------------------------------------------------------------------------------------------------
 void ScriptEngine::setFlag( ScriptAction *pAction )
 {
-	DEBUG_ASSERTCRASH(pAction->getNumParameters() >= 2, ("Not enough parameters.\n"));
+	DEBUG_ASSERTCRASH(pAction->getNumParameters() >= 2, ("Not enough parameters."));
 	Int flagNdx = pAction->getParameter(0)->getInt();
 	if (flagNdx == 0) {
 		flagNdx = allocateFlag(pAction->getParameter(0)->getString());
@@ -6552,7 +6556,7 @@ const AttackPriorityInfo *ScriptEngine::getAttackInfo(const AsciiString& name)
 //-------------------------------------------------------------------------------------------------
 void ScriptEngine::setPriorityThing( ScriptAction *pAction )
 {
-	DEBUG_ASSERTCRASH(pAction->getNumParameters() >= 3, ("Not enough parameters.\n"));
+	DEBUG_ASSERTCRASH(pAction->getNumParameters() >= 3, ("Not enough parameters."));
 	
 	AsciiString typeArgument = pAction->getParameter(1)->getString();
 
@@ -6628,7 +6632,7 @@ void ScriptEngine::setPriorityThing( ScriptAction *pAction )
 //-------------------------------------------------------------------------------------------------
 void ScriptEngine::setPriorityKind( ScriptAction *pAction )
 {
-	DEBUG_ASSERTCRASH(pAction->getNumParameters() >= 3, ("Not enough parameters.\n"));
+	DEBUG_ASSERTCRASH(pAction->getNumParameters() >= 3, ("Not enough parameters."));
 	AttackPriorityInfo *info = findAttackInfo(pAction->getParameter(0)->getString(), true);
 	if (info==NULL) {
 		AppendDebugMessage("***Error allocating attack priority set - fix or raise limit. ***", false);
@@ -6652,7 +6656,7 @@ void ScriptEngine::setPriorityKind( ScriptAction *pAction )
 //-------------------------------------------------------------------------------------------------
 void ScriptEngine::setPriorityDefault( ScriptAction *pAction )
 {
-	DEBUG_ASSERTCRASH(pAction->getNumParameters() >= 2, ("Not enough parameters.\n"));
+	DEBUG_ASSERTCRASH(pAction->getNumParameters() >= 2, ("Not enough parameters."));
 	AttackPriorityInfo *info = findAttackInfo(pAction->getParameter(0)->getString(), true);
 	if (info==NULL) {
 		AppendDebugMessage("***Error allocating attack priority set - fix or raise limit. ***", false);
@@ -6717,8 +6721,8 @@ void ScriptEngine::removeObjectTypes(ObjectTypes *typesToRemove)
 //-------------------------------------------------------------------------------------------------
 Bool ScriptEngine::evaluateTimer( Condition *pCondition )
 {
-	DEBUG_ASSERTCRASH(pCondition->getNumParameters() >= 1, ("Not enough parameters.\n"));
-	DEBUG_ASSERTCRASH(pCondition->getConditionType() == Condition::TIMER_EXPIRED, ("Wrong condition.\n"));
+	DEBUG_ASSERTCRASH(pCondition->getNumParameters() >= 1, ("Not enough parameters."));
+	DEBUG_ASSERTCRASH(pCondition->getConditionType() == Condition::TIMER_EXPIRED, ("Wrong condition."));
 	Int counterNdx = pCondition->getParameter(0)->getInt();
 	if (counterNdx == 0) {
 		counterNdx = allocateCounter(pCondition->getParameter(0)->getString());
@@ -6737,7 +6741,7 @@ Bool ScriptEngine::evaluateTimer( Condition *pCondition )
 //-------------------------------------------------------------------------------------------------
 void ScriptEngine::setTimer( ScriptAction *pAction, Bool millisecondTimer, Bool random )
 {
-	DEBUG_ASSERTCRASH(pAction->getNumParameters() >= 2, ("Not enough parameters.\n"));
+	DEBUG_ASSERTCRASH(pAction->getNumParameters() >= 2, ("Not enough parameters."));
 	Int counterNdx = pAction->getParameter(0)->getInt();
 	if (counterNdx == 0) {
 		counterNdx = allocateCounter(pAction->getParameter(0)->getString());
@@ -6766,7 +6770,7 @@ void ScriptEngine::setTimer( ScriptAction *pAction, Bool millisecondTimer, Bool 
 //-------------------------------------------------------------------------------------------------
 void ScriptEngine::pauseTimer( ScriptAction *pAction )
 {
-	DEBUG_ASSERTCRASH(pAction->getNumParameters() >= 1, ("Not enough parameters.\n"));
+	DEBUG_ASSERTCRASH(pAction->getNumParameters() >= 1, ("Not enough parameters."));
 	Int counterNdx = pAction->getParameter(0)->getInt();
 	if (counterNdx == 0) {
 		counterNdx = allocateCounter(pAction->getParameter(0)->getString());
@@ -6780,7 +6784,7 @@ void ScriptEngine::pauseTimer( ScriptAction *pAction )
 //-------------------------------------------------------------------------------------------------
 void ScriptEngine::restartTimer( ScriptAction *pAction )
 {
-	DEBUG_ASSERTCRASH(pAction->getNumParameters() >= 1, ("Not enough parameters.\n"));
+	DEBUG_ASSERTCRASH(pAction->getNumParameters() >= 1, ("Not enough parameters."));
 	Int counterNdx = pAction->getParameter(0)->getInt();
 	if (counterNdx == 0) {
 		counterNdx = allocateCounter(pAction->getParameter(0)->getString());
@@ -6796,7 +6800,7 @@ void ScriptEngine::restartTimer( ScriptAction *pAction )
 //-------------------------------------------------------------------------------------------------
 void ScriptEngine::adjustTimer( ScriptAction *pAction, Bool millisecondTimer, Bool add)
 {
-	DEBUG_ASSERTCRASH(pAction->getNumParameters() >= 2, ("Not enough parameters.\n"));
+	DEBUG_ASSERTCRASH(pAction->getNumParameters() >= 2, ("Not enough parameters."));
 	Int counterNdx = pAction->getParameter(1)->getInt();
 	if (counterNdx == 0) {
 		counterNdx = allocateCounter(pAction->getParameter(1)->getString());
@@ -6820,7 +6824,7 @@ void ScriptEngine::adjustTimer( ScriptAction *pAction, Bool millisecondTimer, Bo
 //-------------------------------------------------------------------------------------------------
 void ScriptEngine::enableScript( ScriptAction *pAction )
 {
-	DEBUG_ASSERTCRASH(pAction->getNumParameters() >= 1, ("Not enough parameters.\n"));
+	DEBUG_ASSERTCRASH(pAction->getNumParameters() >= 1, ("Not enough parameters."));
 	ScriptGroup *pGroup = findGroup(pAction->getParameter(0)->getString());
 	if (pGroup) {
 		pGroup->setActive(true);
@@ -6836,7 +6840,7 @@ void ScriptEngine::enableScript( ScriptAction *pAction )
 //-------------------------------------------------------------------------------------------------
 void ScriptEngine::disableScript( ScriptAction *pAction )
 {
-	DEBUG_ASSERTCRASH(pAction->getNumParameters() >= 1, ("Not enough parameters.\n"));
+	DEBUG_ASSERTCRASH(pAction->getNumParameters() >= 1, ("Not enough parameters."));
 	Script *pScript = findScript(pAction->getParameter(0)->getString());
 	if (pScript) {
 		pScript->setActive(false);
@@ -6852,7 +6856,7 @@ void ScriptEngine::disableScript( ScriptAction *pAction )
 //-------------------------------------------------------------------------------------------------
 void ScriptEngine::callSubroutine( ScriptAction *pAction )
 {
-	DEBUG_ASSERTCRASH(pAction->getNumParameters() >= 1, ("Not enough parameters.\n"));
+	DEBUG_ASSERTCRASH(pAction->getNumParameters() >= 1, ("Not enough parameters."));
 	AsciiString scriptName = pAction->getParameter(0)->getString();
 	Script  *pScript;
 	ScriptGroup *pGroup = findGroup(scriptName);
@@ -6864,7 +6868,7 @@ void ScriptEngine::callSubroutine( ScriptAction *pAction )
 		}	else {
 				AppendDebugMessage("***Attempting to call script that is not a subroutine:***", false);
 				AppendDebugMessage(scriptName, false);
-				DEBUG_LOG(("Attempting to call script '%s' that is not a subroutine.\n", scriptName.str()));
+				DEBUG_LOG(("Attempting to call script '%s' that is not a subroutine.", scriptName.str()));
 		}
 	}	else {
 		pScript = findScript(scriptName);
@@ -6874,12 +6878,12 @@ void ScriptEngine::callSubroutine( ScriptAction *pAction )
 			} else {
 				AppendDebugMessage("***Attempting to call script that is not a subroutine:***", false);
 				AppendDebugMessage(scriptName, false);
-				DEBUG_LOG(("Attempting to call script '%s' that is not a subroutine.\n", scriptName.str()));
+				DEBUG_LOG(("Attempting to call script '%s' that is not a subroutine.", scriptName.str()));
 			}
 		} else {
 			AppendDebugMessage("***Script not defined:***", false);
 			AppendDebugMessage(scriptName, false);
-			DEBUG_LOG(("WARNING: Script '%s' not defined.\n", scriptName.str()));
+			DEBUG_LOG(("WARNING: Script '%s' not defined.", scriptName.str()));
 		}
 	}
 }
@@ -6926,7 +6930,7 @@ void ScriptEngine::checkConditionsForTeamNames(Script *pScript)
 							AppendDebugMessage(scriptName, false);
 							AppendDebugMessage(multiTeamName, false);
 							AppendDebugMessage(teamName, false);
-							DEBUG_LOG(("WARNING: Script '%s' contains multiple non-singleton team conditions: %s & %s.\n", scriptName.str(), 
+							DEBUG_LOG(("WARNING: Script '%s' contains multiple non-singleton team conditions: %s & %s.", scriptName.str(), 
 								multiTeamName.str(), teamName.str()));
 						}
 					}
@@ -7105,14 +7109,14 @@ void ScriptEngine::addObjectToCache(Object* pNewObject)
 		if (it->first == objName) {
 			if (it->second == NULL) {
 				AsciiString newNameForDead;
-				newNameForDead.format("Reassigning dead object's name '%s' to object (%d) of type '%s'\n", objName.str(), pNewObject->getID(), pNewObject->getTemplate()->getName().str());
+				newNameForDead.format("Reassigning dead object's name '%s' to object (%d) of type '%s'", objName.str(), pNewObject->getID(), pNewObject->getTemplate()->getName().str());
 				TheScriptEngine->AppendDebugMessage(newNameForDead, FALSE);
 				DEBUG_LOG((newNameForDead.str()));
 				it->second = pNewObject;
 				return;
 			} else {
 				DEBUG_CRASH(("Attempting to assign the name '%s' to object (%d) of type '%s'," 
-										 " but object (%d) of type '%s' already has that name\n",
+										 " but object (%d) of type '%s' already has that name",
 										 objName.str(), pNewObject->getID(), pNewObject->getTemplate()->getName().str(), 
 										 it->second->getID(), it->second->getTemplate()->getName().str()));
 				return;
@@ -7693,9 +7697,9 @@ void ScriptEngine::executeScripts( Script *pScriptHead )
 //-------------------------------------------------------------------------------------------------
 const ActionTemplate * ScriptEngine::getActionTemplate( Int ndx )
 {
-	DEBUG_ASSERTCRASH(ndx >= 0 && ndx < ScriptAction::NUM_ITEMS, ("Out of range.\n"));
+	DEBUG_ASSERTCRASH(ndx >= 0 && ndx < ScriptAction::NUM_ITEMS, ("Out of range."));
 	if (ndx <0 || ndx >= ScriptAction::NUM_ITEMS) ndx = 0;
-	DEBUG_ASSERTCRASH (!m_actionTemplates[ndx].getName().isEmpty(), ("Need to initialize action enum=%d.\n", ndx));
+	DEBUG_ASSERTCRASH (!m_actionTemplates[ndx].getName().isEmpty(), ("Need to initialize action enum=%d.", ndx));
 	
 	return &m_actionTemplates[ndx];
 }  // end getActionTemplate
@@ -7705,9 +7709,9 @@ const ActionTemplate * ScriptEngine::getActionTemplate( Int ndx )
 //-------------------------------------------------------------------------------------------------
 const ConditionTemplate * ScriptEngine::getConditionTemplate( Int ndx )
 {
-	DEBUG_ASSERTCRASH(ndx >= 0 && ndx < ScriptAction::NUM_ITEMS, ("Out of range.\n"));
+	DEBUG_ASSERTCRASH(ndx >= 0 && ndx < ScriptAction::NUM_ITEMS, ("Out of range."));
 	if (ndx <0 || ndx >= Condition::NUM_ITEMS) ndx = 0;
-	DEBUG_ASSERTCRASH (!m_conditionTemplates[ndx].getName().isEmpty(), ("Need to initialize Condition enum=%d.\n", ndx));
+	DEBUG_ASSERTCRASH (!m_conditionTemplates[ndx].getName().isEmpty(), ("Need to initialize Condition enum=%d.", ndx));
 	return &m_conditionTemplates[ndx];
 }  // end getConditionTemplate
 
@@ -7898,7 +7902,7 @@ void ScriptEngine::evaluateAndProgressAllSequentialScripts( void )
 		if (spinCount > MAX_SPIN_COUNT) {
 			SequentialScript *seqScript = (*it);
 			if (seqScript) {
-				DEBUG_LOG(("Sequential script %s appears to be in an infinite loop.\n", 
+				DEBUG_LOG(("Sequential script %s appears to be in an infinite loop.", 
 					seqScript->m_scriptToExecuteSequentially->getName().str()));
 			}
 			++it;
@@ -7933,9 +7937,13 @@ void ScriptEngine::evaluateAndProgressAllSequentialScripts( void )
 		}
 
 		AIUpdateInterface *ai = obj ? obj->getAIUpdateInterface() : NULL;
-		AIGroup *aigroup = (team ? TheAI->createGroup() : NULL);
+		AIGroupPtr aigroup = (team ? TheAI->createGroup() : NULL);
 		if (aigroup) {
+#if RETAIL_COMPATIBLE_AIGROUP
 			team->getTeamAsAIGroup(aigroup);
+#else
+			team->getTeamAsAIGroup(aigroup.Peek());
+#endif
 		}
 
 		if( ai || aigroup ) {
@@ -8020,7 +8028,11 @@ void ScriptEngine::evaluateAndProgressAllSequentialScripts( void )
 					} else if (team) {
 						// attempt to rebuild the aigroup, as it probably expired during the action execution
 						aigroup = (team ? TheAI->createGroup() : NULL);
+#if RETAIL_COMPATIBLE_AIGROUP
 						team->getTeamAsAIGroup(aigroup);
+#else
+						team->getTeamAsAIGroup(aigroup.Peek());
+#endif
 					}
 
 					if (aigroup && aigroup->isIdle()) {
@@ -8170,7 +8182,7 @@ void SequentialScript::xfer( Xfer *xfer )
 		if( teamID != TEAM_ID_INVALID && m_teamToExecOn == NULL )
 		{
 
-			DEBUG_CRASH(( "SequentialScript::xfer - Unable to find team by ID (#%d) for m_teamToExecOn\n", 
+			DEBUG_CRASH(( "SequentialScript::xfer - Unable to find team by ID (#%d) for m_teamToExecOn", 
 										teamID ));
 			throw SC_INVALID_DATA;
 
@@ -8198,14 +8210,14 @@ void SequentialScript::xfer( Xfer *xfer )
 		xfer->xferAsciiString( &scriptName );
 
 		// script pointer
-		DEBUG_ASSERTCRASH( m_scriptToExecuteSequentially == NULL, ("SequentialScript::xfer - m_scripttoExecuteSequentially\n") );
+		DEBUG_ASSERTCRASH( m_scriptToExecuteSequentially == NULL, ("SequentialScript::xfer - m_scripttoExecuteSequentially") );
 			
 		// find script
 		m_scriptToExecuteSequentially = const_cast<Script*>(TheScriptEngine->findScriptByName(scriptName));
 
 		// sanity	
 		DEBUG_ASSERTCRASH( m_scriptToExecuteSequentially != NULL,
-											 ("SequentialScript::xfer - m_scriptToExecuteSequentially is NULL but should not be\n") );
+											 ("SequentialScript::xfer - m_scriptToExecuteSequentially is NULL but should not be") );
 
 	}  // end else, load
 
@@ -8492,7 +8504,7 @@ void ScriptEngine::forceUnfreezeTime(void)
 void ScriptEngine::AppendDebugMessage(const AsciiString& strToAdd, Bool forcePause)
 {
 #ifdef INTENSE_DEBUG
-	DEBUG_LOG(("-SCRIPT- %d %s\n", TheGameLogic->getFrame(), strToAdd.str()));
+	DEBUG_LOG(("-SCRIPT- %d %s", TheGameLogic->getFrame(), strToAdd.str()));
 #endif
 	typedef void (*funcptr)(const char*);
 	if (!st_DebugDLL) {
@@ -8536,7 +8548,7 @@ static void xferListAsciiString( Xfer *xfer, ListAsciiString *list )
 {
 
 	// sanity
-	DEBUG_ASSERTCRASH( list != NULL, ("xferListAsciiString - Invalid parameters\n") );
+	DEBUG_ASSERTCRASH( list != NULL, ("xferListAsciiString - Invalid parameters") );
 
 	// version
 	XferVersion currentVersion = 1;
@@ -8570,7 +8582,7 @@ static void xferListAsciiString( Xfer *xfer, ListAsciiString *list )
 		if( list->empty() == FALSE )
 		{
 
-			DEBUG_CRASH(( "xferListAsciiString - list should be empty upon loading but is not\n" ));
+			DEBUG_CRASH(( "xferListAsciiString - list should be empty upon loading but is not" ));
 			throw SC_INVALID_DATA;
 
 		}  // end if
@@ -8599,7 +8611,7 @@ static void xferListAsciiStringUINT( Xfer *xfer, ListAsciiStringUINT *list )
 {
 
 	// sanity
-	DEBUG_ASSERTCRASH( list != NULL, ("xferListAsciiStringUINT - Invalid parameters\n") );
+	DEBUG_ASSERTCRASH( list != NULL, ("xferListAsciiStringUINT - Invalid parameters") );
 
 	// version
 	XferVersion currentVersion = 1;
@@ -8640,7 +8652,7 @@ static void xferListAsciiStringUINT( Xfer *xfer, ListAsciiStringUINT *list )
 		if( list->empty() == FALSE )
 		{
 
-			DEBUG_CRASH(( "xferListAsciiStringUINT - list should be empty upon loading but is not\n" ));
+			DEBUG_CRASH(( "xferListAsciiStringUINT - list should be empty upon loading but is not" ));
 			throw SC_INVALID_DATA;
 
 		}  // end if
@@ -8674,7 +8686,7 @@ static void xferListAsciiStringObjectID( Xfer *xfer, ListAsciiStringObjectID *li
 {
 
 	// sanity
-	DEBUG_ASSERTCRASH( list != NULL, ("xferListAsciiStringObjectID - Invalid parameters\n") );
+	DEBUG_ASSERTCRASH( list != NULL, ("xferListAsciiStringObjectID - Invalid parameters") );
 
 	// version
 	XferVersion currentVersion = 1;
@@ -8715,7 +8727,7 @@ static void xferListAsciiStringObjectID( Xfer *xfer, ListAsciiStringObjectID *li
 		if( list->empty() == FALSE )
 		{
 
-			DEBUG_CRASH(( "xferListAsciiStringObjectID - list should be empty upon loading but is not\n" ));
+			DEBUG_CRASH(( "xferListAsciiStringObjectID - list should be empty upon loading but is not" ));
 			throw SC_INVALID_DATA;
 
 		}  // end if
@@ -8749,7 +8761,7 @@ static void xferListAsciiStringCoord3D( Xfer *xfer, ListAsciiStringCoord3D *list
 {
 
 	// sanity
-	DEBUG_ASSERTCRASH( list != NULL, ("xferListAsciiStringCoord3D - Invalid parameters\n") );
+	DEBUG_ASSERTCRASH( list != NULL, ("xferListAsciiStringCoord3D - Invalid parameters") );
 
 	// version
 	XferVersion currentVersion = 1;
@@ -8790,7 +8802,7 @@ static void xferListAsciiStringCoord3D( Xfer *xfer, ListAsciiStringCoord3D *list
 		if( list->empty() == FALSE )
 		{
 
-			DEBUG_CRASH(( "xferListAsciiStringCoord3D - list should be empty upon loading but is not\n" ));
+			DEBUG_CRASH(( "xferListAsciiStringCoord3D - list should be empty upon loading but is not" ));
 			throw SC_INVALID_DATA;
 
 		}  // end if
@@ -8820,7 +8832,7 @@ static void xferListAsciiStringCoord3D( Xfer *xfer, ListAsciiStringCoord3D *list
 // ------------------------------------------------------------------------------------------------
 void ScriptEngine::setGlobalDifficulty( GameDifficulty difficulty )
 {
-	DEBUG_LOG(("ScriptEngine::setGlobalDifficulty(%d)\n", ((Int)difficulty)));
+	DEBUG_LOG(("ScriptEngine::setGlobalDifficulty(%d)", ((Int)difficulty)));
 	m_gameDifficulty = difficulty;
 }
 
@@ -8871,7 +8883,7 @@ void ScriptEngine::xfer( Xfer *xfer )
 		if( m_sequentialScripts.size() != 0 )
 		{
 
-			DEBUG_CRASH(( "ScriptEngine::xfer - m_sequentialScripts should be empty but is not\n" ));
+			DEBUG_CRASH(( "ScriptEngine::xfer - m_sequentialScripts should be empty but is not" ));
 			throw SC_INVALID_DATA;
 
 		}  // end if
@@ -8899,7 +8911,7 @@ void ScriptEngine::xfer( Xfer *xfer )
 	if( countersSize > MAX_COUNTERS )
 	{
 
-		DEBUG_CRASH(( "ScriptEngine::xfer - MAX_COUNTERS has changed size, need to version this\n" ));
+		DEBUG_CRASH(( "ScriptEngine::xfer - MAX_COUNTERS has changed size, need to version this" ));
 		throw SC_INVALID_DATA;
 
 	}  // end if
@@ -8926,7 +8938,7 @@ void ScriptEngine::xfer( Xfer *xfer )
 	if( flagsSize > MAX_FLAGS )
 	{
 	
-		DEBUG_CRASH(( "ScriptEngine::xfer - MAX_FLAGS has changed size, need to version this\n" ));
+		DEBUG_CRASH(( "ScriptEngine::xfer - MAX_FLAGS has changed size, need to version this" ));
 		throw SC_INVALID_DATA;
 
 	}  // end if
@@ -8950,7 +8962,7 @@ void ScriptEngine::xfer( Xfer *xfer )
 	if( attackPriorityInfoSize > MAX_ATTACK_PRIORITIES )
 	{
 
-		DEBUG_CRASH(( "ScriptEngine::xfer - MAX_ATTACK_PRIORITIES size has changed, need to version this\n" ));
+		DEBUG_CRASH(( "ScriptEngine::xfer - MAX_ATTACK_PRIORITIES size has changed, need to version this" ));
 		throw SC_INVALID_DATA;
 
 	}  // end if
@@ -9018,7 +9030,7 @@ void ScriptEngine::xfer( Xfer *xfer )
 			if( obj == NULL && objectID != INVALID_ID )
 			{
 
-				DEBUG_CRASH(( "ScriptEngine::xfer - Unable to find object by ID for m_namedObjects\n" ));
+				DEBUG_CRASH(( "ScriptEngine::xfer - Unable to find object by ID for m_namedObjects" ));
 				throw SC_INVALID_DATA;
 
 			}  // end if
@@ -9077,7 +9089,7 @@ void ScriptEngine::xfer( Xfer *xfer )
 	if( triggeredSpecialPowersSize != MAX_PLAYER_COUNT )
 	{
 	
-		DEBUG_CRASH(( "ScriptEngine::xfer - MAX_PLAYER_COUNT has changed, m_triggeredSpecialPowers size is now different and we must version this\n" ));
+		DEBUG_CRASH(( "ScriptEngine::xfer - MAX_PLAYER_COUNT has changed, m_triggeredSpecialPowers size is now different and we must version this" ));
 		throw SC_INVALID_DATA;
 
 	}  // end if
@@ -9090,7 +9102,7 @@ void ScriptEngine::xfer( Xfer *xfer )
 	if( midwaySpecialPowersSize != MAX_PLAYER_COUNT )
 	{
 	
-		DEBUG_CRASH(( "ScriptEngine::xfer - MAX_PLAYER_COUNT has changed, m_midwaySpecialPowers size is now different and we must version this\n" ));
+		DEBUG_CRASH(( "ScriptEngine::xfer - MAX_PLAYER_COUNT has changed, m_midwaySpecialPowers size is now different and we must version this" ));
 		throw SC_INVALID_DATA;
 
 	}  // end if
@@ -9103,7 +9115,7 @@ void ScriptEngine::xfer( Xfer *xfer )
 	if( finishedSpecialPowersSize != MAX_PLAYER_COUNT )
 	{
 	
-		DEBUG_CRASH(( "ScriptEngine::xfer - MAX_PLAYER_COUNT has changed, m_finishedSpecialPowers size is now different and we must version this\n" ));
+		DEBUG_CRASH(( "ScriptEngine::xfer - MAX_PLAYER_COUNT has changed, m_finishedSpecialPowers size is now different and we must version this" ));
 		throw SC_INVALID_DATA;
 
 	}  // end if
@@ -9116,7 +9128,7 @@ void ScriptEngine::xfer( Xfer *xfer )
 	if( completedUpgradesSize != MAX_PLAYER_COUNT )
 	{
 	
-		DEBUG_CRASH(( "ScriptEngine::xfer - MAX_PLAYER_COUNT has changed, m_completedUpgrades size is now different and we must version this\n" ));
+		DEBUG_CRASH(( "ScriptEngine::xfer - MAX_PLAYER_COUNT has changed, m_completedUpgrades size is now different and we must version this" ));
 		throw SC_INVALID_DATA;
 
 	}  // end if
@@ -9129,7 +9141,7 @@ void ScriptEngine::xfer( Xfer *xfer )
 	if( acquiredSciencesSize != MAX_PLAYER_COUNT )
 	{
 	
-		DEBUG_CRASH(( "ScriptEngine::xfer - MAX_PLAYER_COUNT has changed, m_acquiredSciences size is now different and we must version this\n" ));
+		DEBUG_CRASH(( "ScriptEngine::xfer - MAX_PLAYER_COUNT has changed, m_acquiredSciences size is now different and we must version this" ));
 		throw SC_INVALID_DATA;
 
 	}  // end if
@@ -9194,7 +9206,7 @@ void ScriptEngine::xfer( Xfer *xfer )
 			if( m_namedReveals.empty() == FALSE )
 			{
 
-				DEBUG_CRASH(( "ScriptEngine::xfer - m_namedReveals should be empty but is not!\n" ));
+				DEBUG_CRASH(( "ScriptEngine::xfer - m_namedReveals should be empty but is not!" ));
 				throw SC_INVALID_DATA;
 
 			}  // end if
@@ -9253,7 +9265,7 @@ void ScriptEngine::xfer( Xfer *xfer )
 			if( m_allObjectTypeLists.empty() == FALSE )
 			{
 
-				DEBUG_CRASH(( "ScriptEngine::xfer - m_allObjectTypeLists should be empty but is not!\n" ));
+				DEBUG_CRASH(( "ScriptEngine::xfer - m_allObjectTypeLists should be empty but is not!" ));
 				throw SC_INVALID_DATA;
 
 			}  // end if
@@ -9332,7 +9344,7 @@ void ScriptEngine::loadPostProcess( void )
 
 }  // end loadPostProcess
 
-//#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+//#if defined(RTS_DEBUG)
 void ScriptEngine::debugVictory( void )
 {
 	ScriptAction *action = newInstance(ScriptAction)(ScriptAction::VICTORY);
@@ -9368,7 +9380,7 @@ void _appendMessage(const AsciiString& str, Bool isTrueMessage, Bool shouldPause
 	msg.concat(str);
 
 #ifdef INTENSE_DEBUG
-	DEBUG_LOG(("-SCRIPT- %s\n", msg.str()));
+	DEBUG_LOG(("-SCRIPT- %s", msg.str()));
 #endif
 	if (!st_DebugDLL) {
 		return;
@@ -10297,7 +10309,7 @@ static void _initVTune()
 	{
 		VTPause = (VTProc)::GetProcAddress(st_vTuneDLL, "VTPause");
 		VTResume = (VTProc)::GetProcAddress(st_vTuneDLL, "VTResume");
-		DEBUG_ASSERTCRASH(VTPause != NULL && VTResume != NULL, ("VTuneAPI procs not found!\n"));
+		DEBUG_ASSERTCRASH(VTPause != NULL && VTResume != NULL, ("VTuneAPI procs not found!"));
 	}
 	else
 	{
@@ -10312,7 +10324,7 @@ static void _initVTune()
 		if (VTPause)
 			VTPause();		
 		// only complain about it being missing if they were expecting it to be present
-		DEBUG_ASSERTCRASH(st_vTuneDLL != NULL, ("VTuneAPI DLL not found!\n"));
+		DEBUG_ASSERTCRASH(st_vTuneDLL != NULL, ("VTuneAPI DLL not found!"));
 	}
 	else
 	{

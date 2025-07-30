@@ -31,6 +31,7 @@
 #define _OBJECT_H_
 
 #include "Lib/BaseType.h"
+#include "ref_ptr.h"
 
 #include "Common/Geometry.h"
 #include "Common/Snapshot.h"
@@ -452,7 +453,7 @@ public:
 	Weapon* getWeaponInWeaponSlot(WeaponSlotType wslot) const { return m_weaponSet.getWeaponInWeaponSlot(wslot); }
 
 	// see if this current weapon set's weapons has shared reload times
-	const Bool isReloadTimeShared() const { return m_weaponSet.isSharedReloadTime(); }
+	Bool isReloadTimeShared() const { return m_weaponSet.isSharedReloadTime(); }
 
 	Weapon* getCurrentWeapon(WeaponSlotType* wslot = NULL);
 	const Weapon* getCurrentWeapon(WeaponSlotType* wslot = NULL) const;
@@ -663,7 +664,11 @@ private:
 
 	GeometryInfo	m_geometryInfo;
 
+#if RETAIL_COMPATIBLE_AIGROUP
 	AIGroup*			m_group;								///< if non-NULL, we are part of this group of agents
+#else
+	RefCountPtr<AIGroup> m_group; ///< if non-NULL, we are part of this group of agents
+#endif
 
 	// These will last for my lifetime.  I will reuse them and reset them.  The truly dynamic ones are in PartitionManager
 	SightingInfo	*m_partitionLastLook;		///< Where and for whom I last looked, so I can undo its effects when I stop
@@ -752,7 +757,7 @@ private:
 	// --------- BYTE-SIZED THINGS GO HERE
 	Bool													m_isSelectable;
 	Bool													m_modulesReady;
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	Bool													m_hasDiedAlready;
 #endif
 	UnsignedByte									m_scriptStatus;					///< status as set by scripting, corresponds to ORed ObjectScriptStatusBits
@@ -769,7 +774,7 @@ void deleteInstance(Object* object) CPP_11(= delete);
 // describe an object as an AsciiString: e.g. "Object 102 (KillerBuggy) [GLARocketBuggy, owned by player 2 (GLAIntroPlayer)]"
 AsciiString DebugDescribeObject(const Object *obj);
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	#define DEBUG_OBJECT_ID_EXISTS
 #else
 	#undef DEBUG_OBJECT_ID_EXISTS

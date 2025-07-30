@@ -53,11 +53,6 @@
 #include "GameClient/DisconnectMenu.h"
 #include "GameLogic/ScriptEngine.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 
 // PRIVATE DATA ///////////////////////////////////////////////////////////////////////////////////
@@ -132,6 +127,8 @@ void destroyQuitMenu()
 	}
 	quitMenuLayout = NULL;
 	isVisible = FALSE;
+
+	TheInGameUI->setQuitMenuVisible(FALSE);
 }
 
 /**
@@ -238,7 +235,7 @@ static void restartMissionMenu()
 		msg->appendIntegerArgument(diff);
 		msg->appendIntegerArgument(rankPointsStartedWith);
 		msg->appendIntegerArgument(fps);
-		DEBUG_LOG(("Restarting game mode %d, Diff=%d, RankPoints=%d\n", gameMode, 
+		DEBUG_LOG(("Restarting game mode %d, Diff=%d, RankPoints=%d", gameMode, 
 																																		TheScriptEngine->getGlobalDifficulty(), 
 																																		rankPointsStartedWith)
 							);

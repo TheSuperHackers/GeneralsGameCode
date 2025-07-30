@@ -141,10 +141,9 @@ WindowMsgHandledType GadgetTabControlSystem( GameWindow *tabControl, UnsignedInt
 		// ------------------------------------------------------------------------
 		case GWM_DESTROY:
 		{
-			TabControlData *tabData = (TabControlData *)tabControl->winGetUserData();
-
 			// free tab control user data
-			delete tabData;
+			delete (TabControlData *)tabControl->winGetUserData();
+			tabControl->winSetUserData( NULL );
 
 			break;
 		
@@ -164,6 +163,8 @@ WindowMsgHandledType GadgetTabControlSystem( GameWindow *tabControl, UnsignedInt
 
 			if( parent )
 				return TheWindowManager->winSendSystemMsg( parent, msg, mData1, mData2 );
+
+			break;
 		}
 
 		default:
@@ -302,7 +303,7 @@ void GadgetTabControlCreateSubPanes( GameWindow *tabControl )///< Create User Wi
 
 	for( Int paneIndex = 0; paneIndex < NUM_TAB_PANES; paneIndex++ )
 	{
-		if( (tabData->subPanes[paneIndex] == NULL) )//This one is blank
+		if( tabData->subPanes[paneIndex] == NULL )//This one is blank
 		{
 			tabData->subPanes[paneIndex] = TheWindowManager->winCreate( tabControl,
 																																	WIN_STATUS_NONE, x, y,

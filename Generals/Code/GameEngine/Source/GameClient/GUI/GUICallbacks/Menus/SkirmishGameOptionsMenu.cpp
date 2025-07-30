@@ -41,6 +41,7 @@
 #include "Common/SkirmishPreferences.h"
 #include "GameLogic/GameLogic.h"
 #include "GameClient/AnimateWindowManager.h"
+#include "GameClient/ClientInstance.h"
 #include "GameClient/WindowLayout.h"
 #include "GameClient/Gadget.h"
 #include "GameClient/Shell.h"
@@ -67,11 +68,6 @@
 #include "GameNetwork/IPEnumeration.h"
 #include "WWDownload/Registry.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 SkirmishGameInfo *TheSkirmishGameInfo = NULL;
 
@@ -172,12 +168,23 @@ static Int getNextSelectablePlayer(Int start)
 
 SkirmishPreferences::SkirmishPreferences( void )
 {
-	// note, the superclass will put this in the right dir automatically, this is just a leaf name
-	load("Skirmish.ini");
+	loadFromIniFile();
 }
 
 SkirmishPreferences::~SkirmishPreferences()
 {
+}
+
+Bool SkirmishPreferences::loadFromIniFile()
+{
+	if (rts::ClientInstance::getInstanceId() > 1u)
+	{
+		AsciiString fname;
+		fname.format("Skirmish_Instance%.2u.ini", rts::ClientInstance::getInstanceId());
+		return load(fname);
+	}
+
+	return load("Skirmish.ini");
 }
 
 AsciiString SkirmishPreferences::getSlotList(void)
@@ -368,7 +375,7 @@ void reallyDoStart( void )
 	//NameKeyType sliderGameSpeedID = TheNameKeyGenerator->nameToKey( AsciiString( "SkirmishGameOptionsMenu.wnd:SliderGameSpeed" ) );
 	GameWindow *sliderGameSpeed = TheWindowManager->winGetWindowFromId( parentSkirmishGameOptions, sliderGameSpeedID );
 	Int maxFPS = GadgetSliderGetPosition( sliderGameSpeed );
-	DEBUG_LOG(("GameSpeedSlider was at %d\n", maxFPS));
+	DEBUG_LOG(("GameSpeedSlider was at %d", maxFPS));
 	if (maxFPS > GREATER_NO_FPS_LIMIT)
 		maxFPS = 1000;
 	if (maxFPS < 15)
@@ -411,7 +418,7 @@ static MessageBoxReturnType cancelStartBecauseOfNoCD( void *userData )
 
 Bool IsFirstCDPresent(void)
 {
-#if !defined(RTS_INTERNAL) && !defined(RTS_DEBUG)
+#if !defined(RTS_DEBUG)
 	return TheFileSystem->areMusicFilesOnCD();
 #else
 	return TRUE;
@@ -1441,6 +1448,9 @@ WindowMsgHandledType SkirmishGameOptionsMenuSystem( GameWindow *window, Unsigned
 		//-------------------------------------------------------------------------------------------------
 		case GWM_DESTROY:
 			{
+				if (windowMap)
+					windowMap->winSetUserData(NULL);
+
 				break;
 			} // case GWM_DESTROY:
 		//-------------------------------------------------------------------------------------------------
@@ -1489,6 +1499,7 @@ WindowMsgHandledType SkirmishGameOptionsMenuSystem( GameWindow *window, Unsigned
 			{
 				setFPSTextBox(sliderPos);
 			}
+			break;
 		}
 		//-------------------------------------------------------------------------------------------------
 		case GBM_SELECTED:

@@ -55,11 +55,6 @@
 #include "GameLogic/Object.h"
 #include "GameLogic/ScriptEngine.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 // PUBLIC /////////////////////////////////////////////////////////////////////////////////////////
 
@@ -881,7 +876,7 @@ UpdateSleepTime ProductionUpdate::update( void )
 			{
 
 				// there is no exit interface, this is an error
-				DEBUG_ASSERTCRASH( 0, ("Cannot create '%s', there is no ExitUpdate interface defined for producer object '%s'\n", 
+				DEBUG_ASSERTCRASH( 0, ("Cannot create '%s', there is no ExitUpdate interface defined for producer object '%s'", 
 															production->m_objectToProduce->getName().str(),
 															creationBuilding->getTemplate()->getName().str()) );
 
@@ -1154,7 +1149,7 @@ void ProductionUpdate::cancelAndRefundAllProduction( void )
       else
       {
         // unknown production type
-        DEBUG_CRASH(( "ProductionUpdate::cancelAndRefundAllProduction - Unknown production type '%d'\n",
+        DEBUG_CRASH(( "ProductionUpdate::cancelAndRefundAllProduction - Unknown production type '%d'",
                       m_productionQueue->getProductionType() ));
         return;
       }  // end else
@@ -1288,7 +1283,7 @@ void ProductionUpdate::xfer( Xfer *xfer )
 		if( m_productionQueue != NULL )
 		{
 		
-			DEBUG_CRASH(( "ProductionUpdate::xfer - m_productionQueue is not empty, but should be\n" ));
+			DEBUG_CRASH(( "ProductionUpdate::xfer - m_productionQueue is not empty, but should be" ));
 			throw SC_INVALID_DATA;
 
 		}  // end if
@@ -1328,7 +1323,7 @@ void ProductionUpdate::xfer( Xfer *xfer )
 				if( production->m_objectToProduce == NULL )
 				{
 	
-					DEBUG_CRASH(( "ProductionUpdate::xfer - Cannot find template '%s'\n", name.str() ));
+					DEBUG_CRASH(( "ProductionUpdate::xfer - Cannot find template '%s'", name.str() ));
 					throw SC_INVALID_DATA;
 
 				}  // end if
@@ -1341,7 +1336,7 @@ void ProductionUpdate::xfer( Xfer *xfer )
 				if( production->m_upgradeToResearch == NULL )
 				{
 
-					DEBUG_CRASH(( "ProductionUpdate::xfer - Cannot find upgrade '%s'\n", name.str() ));
+					DEBUG_CRASH(( "ProductionUpdate::xfer - Cannot find upgrade '%s'", name.str() ));
 					throw SC_INVALID_DATA;
 
 				}  // end if

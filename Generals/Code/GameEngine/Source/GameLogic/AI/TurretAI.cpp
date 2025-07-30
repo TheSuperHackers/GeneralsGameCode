@@ -47,11 +47,6 @@
 
 const UnsignedInt WAIT_INDEFINITELY = 0xffffffff;
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -672,7 +667,7 @@ UpdateSleepTime TurretAI::updateTurretAI()
 {
 	USE_PERF_TIMER(TurretAI)
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	DEBUG_ASSERTCRASH(!m_enabled ||
 							m_turretStateMachine->peekSleepTill() == 0 || 
 							m_turretStateMachine->peekSleepTill() >= m_sleepUntil, ("Turret Machine is less sleepy than turret"));
@@ -684,7 +679,7 @@ UpdateSleepTime TurretAI::updateTurretAI()
 		return UPDATE_SLEEP(m_sleepUntil - now);
 	}
 
-	//DEBUG_LOG(("updateTurretAI frame %d: %08lx\n",TheGameLogic->getFrame(),getOwner()));
+	//DEBUG_LOG(("updateTurretAI frame %d: %08lx",TheGameLogic->getFrame(),getOwner()));
 	UpdateSleepTime subMachineSleep = UPDATE_SLEEP_FOREVER;	// assume the best!
 
 	// either we don't care about continuous fire stuff, or we care, but time has elapsed
@@ -731,7 +726,7 @@ UpdateSleepTime TurretAI::updateTurretAI()
 
 	m_sleepUntil = now + subMachineSleep;
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	DEBUG_ASSERTCRASH(!m_enabled ||
 							m_turretStateMachine->peekSleepTill() == 0 || 
 							m_turretStateMachine->peekSleepTill() >= m_sleepUntil, ("Turret Machine is less sleepy than turret"));
@@ -950,7 +945,7 @@ StateReturnType TurretAIAimTurretState::onEnter()
  */
 StateReturnType TurretAIAimTurretState::update()
 {
-	//DEBUG_LOG(("TurretAIAimTurretState frame %d: %08lx\n",TheGameLogic->getFrame(),getTurretAI()->getOwner()));
+	//DEBUG_LOG(("TurretAIAimTurretState frame %d: %08lx",TheGameLogic->getFrame(),getTurretAI()->getOwner()));
 
 	TurretAI* turret = getTurretAI();
 	Object* obj = turret->getOwner();
@@ -1053,7 +1048,7 @@ StateReturnType TurretAIAimTurretState::update()
 	Weapon *curWeapon = obj->getCurrentWeapon( &slot );
 	if (!curWeapon) 
 	{
-		DEBUG_CRASH(("TurretAIAimTurretState::update - curWeapon is NULL.\n"));
+		DEBUG_CRASH(("TurretAIAimTurretState::update - curWeapon is NULL."));
 		return STATE_FAILURE;
 	}
 
@@ -1208,7 +1203,7 @@ StateReturnType TurretAIRecenterTurretState::onEnter()
 
 StateReturnType TurretAIRecenterTurretState::update()
 {
-	//DEBUG_LOG(("TurretAIRecenterTurretState frame %d: %08lx\n",TheGameLogic->getFrame(),getTurretAI()->getOwner()));
+	//DEBUG_LOG(("TurretAIRecenterTurretState frame %d: %08lx",TheGameLogic->getFrame(),getTurretAI()->getOwner()));
 
 	TurretAI* turret = getTurretAI();
 	Bool angleAligned = turret->friend_turnTowardsAngle(turret->getNaturalTurretAngle(), 0.5f, 0.0f);
@@ -1287,7 +1282,7 @@ StateReturnType TurretAIIdleState::onEnter()
 //----------------------------------------------------------------------------------------------------------
 StateReturnType TurretAIIdleState::update()
 {
-	//DEBUG_LOG(("TurretAIIdleState frame %d: %08lx\n",TheGameLogic->getFrame(),getTurretAI()->getOwner()));
+	//DEBUG_LOG(("TurretAIIdleState frame %d: %08lx",TheGameLogic->getFrame(),getTurretAI()->getOwner()));
 
 	UnsignedInt now = TheGameLogic->getFrame();
 	if (now >= m_nextIdleScan)
@@ -1358,7 +1353,7 @@ StateReturnType TurretAIIdleScanState::onEnter()
 
 StateReturnType TurretAIIdleScanState::update()
 {
-	//DEBUG_LOG(("TurretAIIdleScanState frame %d: %08lx\n",TheGameLogic->getFrame(),getTurretAI()->getOwner()));
+	//DEBUG_LOG(("TurretAIIdleScanState frame %d: %08lx",TheGameLogic->getFrame(),getTurretAI()->getOwner()));
 
 	Bool angleAligned = getTurretAI()->friend_turnTowardsAngle(getTurretAI()->getNaturalTurretAngle() + m_desiredAngle, 0.5f, 0.0f);
 	Bool pitchAligned = getTurretAI()->friend_turnTowardsPitch(getTurretAI()->getNaturalTurretPitch(), 0.5f);
@@ -1429,7 +1424,7 @@ void TurretAIHoldTurretState::onExit( StateExitType status )
 
 StateReturnType TurretAIHoldTurretState::update()
 {
-	//DEBUG_LOG(("TurretAIHoldTurretState frame %d: %08lx\n",TheGameLogic->getFrame(),getTurretAI()->getOwner()));
+	//DEBUG_LOG(("TurretAIHoldTurretState frame %d: %08lx",TheGameLogic->getFrame(),getTurretAI()->getOwner()));
 
 	if (TheGameLogic->getFrame() >= m_timestamp)
 		return STATE_SUCCESS;

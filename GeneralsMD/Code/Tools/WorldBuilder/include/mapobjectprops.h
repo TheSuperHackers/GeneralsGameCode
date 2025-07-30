@@ -68,6 +68,7 @@ public:
 // Implementation
 protected:
 	void getAllSelectedDicts(void);
+	Dict** getAllSelectedDictsData();
 
 	static MapObjectProps *TheMapObjectProps; 
 

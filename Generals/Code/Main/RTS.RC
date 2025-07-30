@@ -65,6 +65,8 @@ IDB_LOAD_SCREEN         BITMAP  DISCARDABLE     "Install_Final.bmp"
 #endif    // English (U.S.) resources
 /////////////////////////////////////////////////////////////////////////////
 
+// Add manifest to specify that the app is DPI aware and prevent forced scaling by the system
+1 24 "app.manifest"
 
 
 #ifndef APSTUDIO_INVOKED

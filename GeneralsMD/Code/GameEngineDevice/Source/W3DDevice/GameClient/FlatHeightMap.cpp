@@ -92,11 +92,6 @@
 #include "Common/PerfTimer.h"
 #include "Common/UnitTimings.h" //Contains the DO_UNIT_TIMINGS define jba.		 
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 FlatHeightMapRenderObjClass *TheFlatHeightMap = NULL;
 
@@ -444,7 +439,7 @@ void FlatHeightMapRenderObjClass::updateCenter(CameraClass *camera , RefRenderOb
 		}
 	}
 	if (culled!=prevCulled || t4X!=prevT4X || t2X!=prevT2X) {
-		DEBUG_LOG(("%d of %d culled, %d 4X, %d 2X.\n", culled, m_numTiles, t4X, t2X));
+		DEBUG_LOG(("%d of %d culled, %d 4X, %d 2X.", culled, m_numTiles, t4X, t2X));
 		prevCulled = culled;
 		prevT2X = t2X;
 		prevT4X = t4X;

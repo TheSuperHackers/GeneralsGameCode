@@ -87,7 +87,7 @@ Sound3DHandleClass::Initialize (SoundBufferClass *buffer)
 		//
 		WWASSERT (success != 0);
 		if (success == 0) {
-			WWDEBUG_SAY (("WWAudio: Couldn't set 3d sample file.  Reason %s\r\n", ::AIL_last_error ()));
+			WWDEBUG_SAY (("WWAudio: Couldn't set 3d sample file.  Reason %s", ::AIL_last_error ()));
 		}
 
 	}

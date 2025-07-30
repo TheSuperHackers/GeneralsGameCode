@@ -70,11 +70,6 @@
 
 static const Real TEE_WIDTH_ADJUSTMENT = 1.03f;
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 //-----------------------------------------------------------------------------
 //         Private Data                                                     
@@ -1371,7 +1366,7 @@ void W3DRoadBuffer::moveRoadSegTo(Int fromNdx, Int toNdx)
 {
 	if (fromNdx<0 || fromNdx>=m_numRoads || toNdx<0 || toNdx>=m_numRoads) {
 #ifdef RTS_DEBUG
-		DEBUG_LOG(("bad moveRoadSegTo\n"));
+		DEBUG_LOG(("bad moveRoadSegTo"));
 #endif
 		return;
 	}
@@ -1404,9 +1399,9 @@ void W3DRoadBuffer::checkLinkBefore(Int ndx)
 
 	Vector2 loc2 = m_roads[ndx].m_pt2.loc;
 #ifdef RTS_DEBUG
-	DEBUG_ASSERTLOG(m_roads[ndx].m_pt1.loc == m_roads[ndx+1].m_pt2.loc, ("Bad link\n"));
+	DEBUG_ASSERTLOG(m_roads[ndx].m_pt1.loc == m_roads[ndx+1].m_pt2.loc, ("Bad link"));
 	if (ndx>0) {
-		DEBUG_ASSERTLOG(m_roads[ndx].m_pt2.loc != m_roads[ndx-1].m_pt1.loc, ("Bad Link\n"));
+		DEBUG_ASSERTLOG(m_roads[ndx].m_pt2.loc != m_roads[ndx-1].m_pt1.loc, ("Bad Link"));
 	}
 #endif
 
@@ -1421,7 +1416,7 @@ void W3DRoadBuffer::checkLinkBefore(Int ndx)
 	while (checkNdx < m_numRoads) {
 		if (m_roads[checkNdx].m_pt1.loc == loc2) {
 #ifdef RTS_DEBUG
-			DEBUG_ASSERTLOG(m_roads[checkNdx].m_pt1.count==1, ("Bad count\n"));
+			DEBUG_ASSERTLOG(m_roads[checkNdx].m_pt1.count==1, ("Bad count"));
 #endif
 			moveRoadSegTo(checkNdx, ndx);
 			loc2 = m_roads[ndx].m_pt2.loc;
@@ -1432,7 +1427,7 @@ void W3DRoadBuffer::checkLinkBefore(Int ndx)
 			if (m_roads[checkNdx].m_pt2.count!=1) {
 				::OutputDebugString("fooey.\n");
 			}
-			DEBUG_ASSERTLOG(m_roads[checkNdx].m_pt2.count==1, ("Bad count\n"));
+			DEBUG_ASSERTLOG(m_roads[checkNdx].m_pt2.count==1, ("Bad count"));
 #endif
 			flipTheRoad(&m_roads[checkNdx]);
 			moveRoadSegTo(checkNdx, ndx);
@@ -1466,14 +1461,14 @@ void W3DRoadBuffer::checkLinkAfter(Int ndx)
 
 	Vector2 loc1 = m_roads[ndx].m_pt1.loc;
 #ifdef RTS_DEBUG
-	DEBUG_ASSERTLOG(m_roads[ndx].m_pt2.loc == m_roads[ndx-1].m_pt1.loc, ("Bad link\n"));
+	DEBUG_ASSERTLOG(m_roads[ndx].m_pt2.loc == m_roads[ndx-1].m_pt1.loc, ("Bad link"));
 #endif
 
 	Int checkNdx = ndx+1;
 	while (checkNdx < m_numRoads && ndx < m_numRoads-1) {
 		if (m_roads[checkNdx].m_pt2.loc == loc1) {
 #ifdef RTS_DEBUG
-			DEBUG_ASSERTLOG(m_roads[checkNdx].m_pt2.count==1, ("Bad count\n"));
+			DEBUG_ASSERTLOG(m_roads[checkNdx].m_pt2.count==1, ("Bad count"));
 #endif
 			ndx++;
 			moveRoadSegTo(checkNdx, ndx);
@@ -1481,7 +1476,7 @@ void W3DRoadBuffer::checkLinkAfter(Int ndx)
 			if (m_roads[ndx].m_pt1.count != 1) return;
 		} else if (m_roads[checkNdx].m_pt1.loc == loc1) {
 #ifdef RTS_DEBUG
-			DEBUG_ASSERTLOG(m_roads[checkNdx].m_pt1.count==1, ("Wrong m_pt1.count.\n"));
+			DEBUG_ASSERTLOG(m_roads[checkNdx].m_pt1.count==1, ("Wrong m_pt1.count."));
 			if ( m_roads[checkNdx].m_pt1.count!=1) {
 				::OutputDebugString("Wrong m_pt1.count.\n");
 			}
@@ -1499,7 +1494,7 @@ void W3DRoadBuffer::checkLinkAfter(Int ndx)
 }
 
 static Bool warnSegments = true;
-#define CHECK_SEGMENTS {if (m_numRoads >= m_maxRoadSegments) { if (warnSegments) DEBUG_LOG(("****** Too many road segments.  Need to increase ini values.  See john a.\n")); warnSegments = false; return;}}
+#define CHECK_SEGMENTS {if (m_numRoads >= m_maxRoadSegments) { if (warnSegments) DEBUG_LOG(("****** Too many road segments.  Need to increase ini values.  See john a.")); warnSegments = false; return;}}
 
 //=============================================================================
 // W3DRoadBuffer::addMapObject
@@ -1604,7 +1599,7 @@ void W3DRoadBuffer::addMapObjects()
 		if (pMapObj->getFlag(FLAG_ROAD_POINT1)) {
 			pMapObj2 = pMapObj->getNext();
 #ifdef RTS_DEBUG
-			DEBUG_ASSERTLOG(pMapObj2 && pMapObj2->getFlag(FLAG_ROAD_POINT2), ("Bad Flag\n"));
+			DEBUG_ASSERTLOG(pMapObj2 && pMapObj2->getFlag(FLAG_ROAD_POINT2), ("Bad Flag"));
 #endif
 			if (pMapObj2==NULL) break;
 			if (!pMapObj2->getFlag(FLAG_ROAD_POINT2)) continue;
@@ -2705,13 +2700,13 @@ void W3DRoadBuffer::adjustStacking(Int topUniqueID, Int bottomUniqueID)
 	for (i=0; i<m_maxRoadTypes; i++) {
 		if (m_roadTypes[i].getUniqueID() == topUniqueID) break;
 	}
-	DEBUG_ASSERTLOG(i<m_maxRoadTypes, ("***** Wrong unique id- john a should fix.\n"));
+	DEBUG_ASSERTLOG(i<m_maxRoadTypes, ("***** Wrong unique id- john a should fix."));
 	if (i>=m_maxRoadTypes) return;
 
 	for (j=0; j<m_maxRoadTypes; j++) {
 		if (m_roadTypes[j].getUniqueID() == bottomUniqueID) break;
 	}
-	DEBUG_ASSERTLOG(j<m_maxRoadTypes, ("***** Wrong unique id- john a should fix.\n"));
+	DEBUG_ASSERTLOG(j<m_maxRoadTypes, ("***** Wrong unique id- john a should fix."));
 	if (j>=m_maxRoadTypes) return;
 
 	if (m_roadTypes[i].getStacking() > m_roadTypes[j].getStacking()) {
@@ -3363,7 +3358,7 @@ void W3DRoadBuffer::drawRoads(CameraClass * camera, TextureClass *cloudTexture, 
 	}
 #ifdef LOG_STATS
 	if (loadBuffers) {
-		DEBUG_LOG(("Road poly count %d\n", polys));
+		DEBUG_LOG(("Road poly count %d", polys));
 	}
 #endif
 

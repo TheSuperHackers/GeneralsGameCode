@@ -83,11 +83,6 @@
 #include "Win32Device/Common/Win32LocalFileSystem.h"
 #include "Win32Device/Common/Win32BIGFileSystem.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 static SubsystemInterfaceList TheSubsystemListRecord;
 
@@ -293,13 +288,10 @@ BOOL CWorldBuilderApp::InitInstance()
 	DebugSetFlags(DebugGetFlags() | DEBUG_FLAG_LOG_TO_CONSOLE);
 #endif
 
-	DEBUG_LOG(("starting Worldbuilder.\n"));
+	DEBUG_LOG(("starting Worldbuilder."));
 
-#ifdef RTS_INTERNAL
-	DEBUG_LOG(("RTS_INTERNAL defined.\n"));
-#endif
 #ifdef RTS_DEBUG
-	DEBUG_LOG(("RTS_DEBUG defined.\n"));
+	DEBUG_LOG(("RTS_DEBUG defined."));
 #endif
 	initMemoryManager();
 #ifdef MEMORYPOOL_CHECKPOINTING
@@ -352,7 +344,7 @@ BOOL CWorldBuilderApp::InitInstance()
 
 	initSubsystem(TheWritableGlobalData, new GlobalData(), "Data\\INI\\Default\\GameData.ini", "Data\\INI\\GameData.ini");
 	
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	ini.load( AsciiString( "Data\\INI\\GameDataDebug.ini" ), INI_LOAD_MULTIFILE, NULL );
 #endif
 
@@ -360,10 +352,7 @@ BOOL CWorldBuilderApp::InitInstance()
 	TheWritableGlobalData->m_debugIgnoreAsserts = false;
 #endif
 
-#if defined(RTS_INTERNAL)
-	// leave on asserts for a while. jba. [4/15/2003] TheWritableGlobalData->m_debugIgnoreAsserts = true;
-#endif
-	DEBUG_LOG(("TheWritableGlobalData %x\n", TheWritableGlobalData));
+	DEBUG_LOG(("TheWritableGlobalData %x", TheWritableGlobalData));
 #if 1
 	// srj sez: put INI into our user data folder, not the ap dir
 	free((void*)m_pszProfileName);
@@ -433,8 +422,8 @@ BOOL CWorldBuilderApp::InitInstance()
 	DEBUG_ASSERTCRASH(!TheGlobalData->m_useHalfHeightMap, ("TheGlobalData->m_useHalfHeightMap : Don't use this setting in WB."));
 	TheWritableGlobalData->m_useHalfHeightMap = false;
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
-	// WB never uses the shroud.
+#if ENABLE_CONFIGURABLE_SHROUD
+	// WB never uses the shroud. With shroud, terrain is black.
 	TheWritableGlobalData->m_shroudOn = FALSE;
 #endif
 

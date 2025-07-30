@@ -57,31 +57,31 @@ void Expander::expand( const std::string& input,
 			{
 				// first time
 				output.append(input.substr(0, pos));
-				//DEBUG_LOG(("First time, output='%s'\n", output.c_str()));
+				//DEBUG_LOG(("First time, output='%s'", output.c_str()));
 			}
 			else
 			{
 				// done this before
 				std::string sub = input.substr(lastpos, pos-lastpos);
-				//DEBUG_LOG(("*** lastpos = %d, pos=%d, sub='%s'\n", lastpos, pos, sub.c_str()));
+				//DEBUG_LOG(("*** lastpos = %d, pos=%d, sub='%s'", lastpos, pos, sub.c_str()));
 				output.append(sub);
-				//DEBUG_LOG(("output='%s'\n", output.c_str()));
+				//DEBUG_LOG(("output='%s'", output.c_str()));
 			}
 		}
 		else
 		{
-			//DEBUG_LOG(("pos == 0\n"));
+			//DEBUG_LOG(("pos == 0"));
 		}
 
 		// pos is the first position of a possible expansion
-		//DEBUG_LOG(("Looking for endpos via '%s' in '%s'\n", m_right.c_str(), input.substr(pos+m_left.length()).c_str()));
+		//DEBUG_LOG(("Looking for endpos via '%s' in '%s'", m_right.c_str(), input.substr(pos+m_left.length()).c_str()));
 		unsigned int endpos = input.find(m_right, pos+m_left.length());
-		//DEBUG_LOG(("substr is %d-%d of '%s'\n", pos, endpos, input.c_str()));
+		//DEBUG_LOG(("substr is %d-%d of '%s'", pos, endpos, input.c_str()));
 		if (endpos != input.npos)
 		{
 			// found a complete token - expand it
 			std::string sub = input.substr(pos+m_left.length(), endpos-pos-m_left.length());
-			//DEBUG_LOG(("found token: '%s'\n", sub.c_str()));
+			//DEBUG_LOG(("found token: '%s'", sub.c_str()));
 
 			ExpansionMap::iterator it = m_expansions.find(sub);
 			if (it == m_expansions.end())
@@ -100,9 +100,9 @@ void Expander::expand( const std::string& input,
 			{
 				std::string toExpand = it->second;
 				std::string expanded = "";
-				//DEBUG_LOG(("###### expanding '%s'\n", toExpand.c_str()));
+				//DEBUG_LOG(("###### expanding '%s'", toExpand.c_str()));
 				expand(toExpand, expanded, stripUnknown);
-				//DEBUG_LOG(("###### expanded '%s'\n", expanded.c_str()));
+				//DEBUG_LOG(("###### expanded '%s'", expanded.c_str()));
 				output.append(expanded);
 			}
 		}

@@ -53,11 +53,6 @@
 #include "GameLogic/Module/ContainModule.h"
 #include "GameLogic/Module/StealthUpdate.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 // GLOBALS ////////////////////////////////////////////////////////////////////////////////////////
 Radar *TheRadar = NULL;  ///< the radar global singleton
@@ -141,8 +136,15 @@ RadarObject::~RadarObject( void )
 //-------------------------------------------------------------------------------------------------
 Bool RadarObject::isTemporarilyHidden() const
 {
-	Drawable* draw = m_object->getDrawable();
-	if (draw->getStealthLook() == STEALTHLOOK_INVISIBLE || draw->isDrawableEffectivelyHidden())
+	return isTemporarilyHidden(m_object);
+}
+
+//-------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------
+Bool RadarObject::isTemporarilyHidden(const Object* obj)
+{
+	Drawable* draw = obj->getDrawable();
+	if (draw == NULL || draw->getStealthLook() == STEALTHLOOK_INVISIBLE || draw->isDrawableEffectivelyHidden())
 		return true;
 
 	return false;
@@ -180,7 +182,7 @@ void RadarObject::xfer( Xfer *xfer )
 		if( m_object == NULL )
 		{
 
-			DEBUG_CRASH(( "RadarObject::xfer - Unable to find object for radar data\n" ));
+			DEBUG_CRASH(( "RadarObject::xfer - Unable to find object for radar data" ));
 			throw SC_INVALID_DATA;
 
 		}  // end if
@@ -336,7 +338,7 @@ void Radar::newMap( TerrainLogic *terrain )
 	// keep a pointer for our radar window
 	Int id = NAMEKEY( "ControlBar.wnd:LeftHUD" );
 	m_radarWindow = TheWindowManager->winGetWindowFromId( NULL, id );
-	DEBUG_ASSERTCRASH( m_radarWindow, ("Radar::newMap - Unable to find radar game window\n") );
+	DEBUG_ASSERTCRASH( m_radarWindow, ("Radar::newMap - Unable to find radar game window") );
 
 	// reset all the data in the radar
 	reset();
@@ -397,13 +399,13 @@ void Radar::newMap( TerrainLogic *terrain )
 /** Add an object to the radar list.  The object will be sorted in the list to be grouped
 	* using it's radar priority */
 //-------------------------------------------------------------------------------------------------
-void Radar::addObject( Object *obj )
+RadarObjectType Radar::addObject( Object *obj )
 {
 
 	// get the radar priority for this object
 	RadarPriorityType newPriority = obj->getRadarPriority();
 	if( isPriorityVisible( newPriority ) == FALSE )
-		return;
+		return RadarObjectType_None;
 
 	// if this object is on the radar, remove it in favor of the new add
 	RadarObject **list;
@@ -411,7 +413,7 @@ void Radar::addObject( Object *obj )
 
 	// sanity
 	DEBUG_ASSERTCRASH( obj->friend_getRadarData() == NULL,
-										 ("Radar: addObject - non NULL radar data for '%s'\n", 
+										 ("Radar: addObject - non NULL radar data for '%s'", 
 										 obj->getTemplate()->getName().str()) );
 
 	// allocate a new object
@@ -469,14 +471,21 @@ void Radar::addObject( Object *obj )
 	// set a chunk of radar data in the object
 	obj->friend_setRadarData( newObj );
 
+	RadarObjectType objectType;
 	//
 	// we will put this on either the local object list for objects that belong to the
 	// local player, or on the regular object list for all other objects
 	//
 	if( obj->isLocallyControlled() )
+	{
 		list = &m_localObjectList;
+		objectType = RadarObjectType_Local;
+	}
 	else
+	{
 		list = &m_objectList;
+		objectType = RadarObjectType_Regular;
+	}
 
 	// link object to master list at the head of it's priority section
 	if( *list == NULL )
@@ -547,6 +556,7 @@ void Radar::addObject( Object *obj )
 
 	}  // end else
 
+	return objectType;
 }  // end addObject
 
 //-------------------------------------------------------------------------------------------------
@@ -593,24 +603,24 @@ Bool Radar::deleteFromList( Object *obj, RadarObject **list )
 //-------------------------------------------------------------------------------------------------
 /** Remove an object from the radar, the object may reside in any list */
 //-------------------------------------------------------------------------------------------------
-void Radar::removeObject( Object *obj )
+RadarObjectType Radar::removeObject( Object *obj )
 {
 
 	// sanity
 	if( obj->friend_getRadarData() == NULL )
-		return;
+		return RadarObjectType_None;
 
 	if( deleteFromList( obj, &m_localObjectList ) == TRUE )
-		return;
+		return RadarObjectType_Local;
 	else if( deleteFromList( obj, &m_objectList ) == TRUE )
-		return;
+		return RadarObjectType_Regular;
 	else
 	{
 
 		// sanity
-		DEBUG_ASSERTCRASH( 0, ("Radar: Tried to remove object '%s' which was not found\n",
+		DEBUG_ASSERTCRASH( 0, ("Radar: Tried to remove object '%s' which was not found",
 											 obj->getTemplate()->getName().str()) );
-
+		return RadarObjectType_None;
 	}  // end else
 
 }  // end removeObject
@@ -870,7 +880,7 @@ Object *Radar::searchListForRadarLocationMatch( RadarObject *listHead, ICoord2D 
 		if( obj == NULL )
 		{
 
-			DEBUG_CRASH(( "Radar::searchListForRadarLocationMatch - NULL object encountered in list\n" ));
+			DEBUG_CRASH(( "Radar::searchListForRadarLocationMatch - NULL object encountered in list" ));
 			continue;
 
 		}  // end if
@@ -1046,7 +1056,7 @@ void Radar::createEvent( const Coord3D *world, RadarEventType type, Real seconds
 		static RGBAColorInt color1 = { 255, 255, 255, 255 };
 		static RGBAColorInt color2 = { 255, 255, 255, 255 };
 
-		DEBUG_CRASH(( "Radar::createEvent - Event not found in color table, using default colors\n" ));
+		DEBUG_CRASH(( "Radar::createEvent - Event not found in color table, using default colors" ));
 		color[ 0 ] = color1;
 		color[ 1 ] = color2;
 
@@ -1389,7 +1399,7 @@ static void xferRadarObjectList( Xfer *xfer, RadarObject **head )
 	RadarObject *radarObject;
 
 	// sanity
-	DEBUG_ASSERTCRASH( head != NULL, ("xferRadarObjectList - Invalid parameters\n" ));
+	DEBUG_ASSERTCRASH( head != NULL, ("xferRadarObjectList - Invalid parameters" ));
 
 	// version
 	XferVersion currentVersion = 1;
@@ -1430,12 +1440,12 @@ static void xferRadarObjectList( Xfer *xfer, RadarObject **head )
 			{
 				if (!radarObject->friend_getObject()->isDestroyed())
 				{
-					DEBUG_CRASH(( "xferRadarObjectList - List head should be NULL, or contain only destroyed objects\n" ));
+					DEBUG_CRASH(( "xferRadarObjectList - List head should be NULL, or contain only destroyed objects" ));
 					throw SC_INVALID_DATA;
 				}
 			}
 #else
-			DEBUG_CRASH(( "xferRadarObjectList - List head should be NULL, but isn't\n" ));
+			DEBUG_CRASH(( "xferRadarObjectList - List head should be NULL, but isn't" ));
 			throw SC_INVALID_DATA;
 #endif
 		}  // end if
@@ -1504,7 +1514,7 @@ void Radar::xfer( Xfer *xfer )
 	if( eventCount != eventCountVerify )
 	{
 
-		DEBUG_CRASH(( "Radar::xfer - size of MAX_RADAR_EVENTS has changed, you must version this xfer method to accomodate the new array size.  Was '%d' and is now '%d'\n",
+		DEBUG_CRASH(( "Radar::xfer - size of MAX_RADAR_EVENTS has changed, you must version this xfer method to accomodate the new array size.  Was '%d' and is now '%d'",
 									eventCount, eventCountVerify ));
 		throw SC_INVALID_DATA;
 
@@ -1551,7 +1561,7 @@ void Radar::loadPostProcess( void )
 // ------------------------------------------------------------------------------------------------
 /** Is the priority type passed in a "visible" one that can show up on the radar */
 // ------------------------------------------------------------------------------------------------
-Bool Radar::isPriorityVisible( RadarPriorityType priority ) const 
+Bool Radar::isPriorityVisible( RadarPriorityType priority )
 {
 
 	switch( priority )

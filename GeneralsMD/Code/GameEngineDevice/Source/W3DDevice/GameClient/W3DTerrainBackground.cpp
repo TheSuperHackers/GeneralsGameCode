@@ -59,11 +59,6 @@
 #include "WW3D2/dx8renderer.h"
 #include "WW3D2/camera.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 //-----------------------------------------------------------------------------
 //         Private Data                                                     
@@ -562,7 +557,7 @@ void W3DTerrainBackground::doTesselatedUpdate(const IRegion2D &partialRange, Wor
 	DX8IndexBufferClass::WriteLockClass lockIdxBuffer(m_indexTerrain);
 	ib = lockIdxBuffer.Get_Index_Array();
 	fillVBRecursive(ib, 0, 0, m_width, ndx, m_curNumTerrainIndices);
-	delete ndx;
+	delete[] ndx;
 	ndx = NULL;
 
 	MinMaxAABoxClass bounds;

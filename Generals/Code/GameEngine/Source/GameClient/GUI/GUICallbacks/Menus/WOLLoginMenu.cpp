@@ -41,6 +41,7 @@
 #include "Common/Registry.h"
 #include "Common/UserPreferences.h"
 #include "GameClient/AnimateWindowManager.h"
+#include "GameClient/ClientInstance.h"
 #include "GameClient/WindowLayout.h"
 #include "GameClient/Gadget.h"
 #include "GameClient/GameText.h"
@@ -68,11 +69,6 @@
 
 #include "GameNetwork/WOLBrowser/WebBrowser.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 #ifdef ALLOW_NON_PROFILED_LOGIN
 Bool GameSpyUseProfiles = false;
@@ -91,8 +87,10 @@ static UnsignedInt loginAttemptTime = 0;
 class GameSpyLoginPreferences : public UserPreferences
 {
 public:
-	GameSpyLoginPreferences() { m_emailPasswordMap.clear(); m_emailNickMap.clear(); }
-	virtual ~GameSpyLoginPreferences() { m_emailPasswordMap.clear(); m_emailNickMap.clear(); }
+	GameSpyLoginPreferences();
+	virtual ~GameSpyLoginPreferences();
+
+	Bool loadFromIniFile();
 
 	virtual Bool load(AsciiString fname);
 	virtual Bool write(void);
@@ -130,9 +128,31 @@ static AsciiString obfuscate( AsciiString in )
 			c++, c2++;
 	}
 	AsciiString out = buf;
-	delete buf;
+	delete[] buf;
 	return out;
 }
+
+GameSpyLoginPreferences::GameSpyLoginPreferences()
+{
+	loadFromIniFile();
+}
+
+GameSpyLoginPreferences::~GameSpyLoginPreferences()
+{
+}
+
+Bool GameSpyLoginPreferences::loadFromIniFile()
+{
+	if (rts::ClientInstance::getInstanceId() > 1u)
+	{
+		AsciiString fname;
+		fname.format("GameSpyLogin_Instance%.2u.ini", rts::ClientInstance::getInstanceId());
+		return load(fname);
+	}
+
+	return load("GameSpyLogin.ini");
+}
+
 
 Bool GameSpyLoginPreferences::load( AsciiString fname )
 {
@@ -288,7 +308,6 @@ AsciiStringList GameSpyLoginPreferences::getEmails( void )
 	return theList;
 }
 
-static const char *PREF_FILENAME = "GameSpyLogin.ini";
 static GameSpyLoginPreferences *loginPref = NULL;
 
 static void startPings( void )
@@ -433,7 +452,6 @@ void WOLLoginMenuInit( WindowLayout *layout, void *userData )
 	if (!loginPref)
 	{
 		loginPref = NEW GameSpyLoginPreferences;
-		loginPref->load(PREF_FILENAME);
 	}
 	
 	// if the ESRB warning is blank (other country) hide the box
@@ -751,7 +769,7 @@ static void checkLogin( void )
 	{
 		// save off our ping string, and end those threads
 		AsciiString pingStr = ThePinger->getPingString( 1000 );
-		DEBUG_LOG(("Ping string is %s\n", pingStr.str()));
+		DEBUG_LOG(("Ping string is %s", pingStr.str()));
 		TheGameSpyInfo->setPingString(pingStr);
 		//delete ThePinger;
 		//ThePinger = NULL;
@@ -850,7 +868,7 @@ void WOLLoginMenuUpdate( WindowLayout * layout, void *userData)
 					// kill & restart the threads
 					AsciiString motd = TheGameSpyInfo->getMOTD();
 					AsciiString config = TheGameSpyInfo->getConfig();
-					DEBUG_LOG(("Tearing down GameSpy from WOLLoginMenuUpdate(PEERRESPONSE_DISCONNECT)\n"));
+					DEBUG_LOG(("Tearing down GameSpy from WOLLoginMenuUpdate(PEERRESPONSE_DISCONNECT)"));
 					TearDownGameSpy();
 					SetUpGameSpy( motd.str(), config.str() );
 				}
@@ -876,7 +894,7 @@ void WOLLoginMenuUpdate( WindowLayout * layout, void *userData)
 		// kill & restart the threads
 		AsciiString motd = TheGameSpyInfo->getMOTD();
 		AsciiString config = TheGameSpyInfo->getConfig();
-		DEBUG_LOG(("Tearing down GameSpy from WOLLoginMenuUpdate(login timeout)\n"));
+		DEBUG_LOG(("Tearing down GameSpy from WOLLoginMenuUpdate(login timeout)"));
 		TearDownGameSpy();
 		SetUpGameSpy( motd.str(), config.str() );
 	}
@@ -1048,17 +1066,13 @@ WindowMsgHandledType WOLLoginMenuSystem( GameWindow *window, UnsignedInt msg,
 				trimmedEmail.trim();
 				if (!trimmedNick.isEmpty())
 				{
-					if (trimmedNick.getCharAt(trimmedNick.getLength()-1) == L'\\')
-						trimmedNick.removeLastChar();
-					if (trimmedNick.getCharAt(trimmedNick.getLength()-1) == L'/')
-						trimmedNick.removeLastChar();
+					trimmedNick.trimEnd(L'\\');
+					trimmedNick.trimEnd(L'/');
 				}
 				if (!trimmedEmail.isEmpty())
 				{
-					if (trimmedEmail.getCharAt(trimmedEmail.getLength()-1) == L'\\')
-						trimmedEmail.removeLastChar();
-					if (trimmedEmail.getCharAt(trimmedEmail.getLength()-1) == L'/')
-						trimmedEmail.removeLastChar();
+					trimmedEmail.trimEnd(L'\\');
+					trimmedEmail.trimEnd(L'/');
 				}
 				if (trimmedEmail.getLength() != uEmail.getLength())
 				{
@@ -1255,7 +1269,7 @@ WindowMsgHandledType WOLLoginMenuSystem( GameWindow *window, UnsignedInt msg,
 							//TheGameSpyInfo->setLocalProfileID( resp.player.profileID );
 							TheGameSpyInfo->setLocalEmail( email );
 							TheGameSpyInfo->setLocalPassword( password );
-							DEBUG_LOG(("before create: TheGameSpyInfo->stuff(%s/%s/%s)\n", TheGameSpyInfo->getLocalBaseName().str(), TheGameSpyInfo->getLocalEmail().str(), TheGameSpyInfo->getLocalPassword().str()));
+							DEBUG_LOG(("before create: TheGameSpyInfo->stuff(%s/%s/%s)", TheGameSpyInfo->getLocalBaseName().str(), TheGameSpyInfo->getLocalEmail().str(), TheGameSpyInfo->getLocalPassword().str()));
 
 							TheGameSpyBuddyMessageQueue->addRequest( req );
 							if(checkBoxRememberPassword && GadgetCheckBoxIsChecked(checkBoxRememberPassword))
@@ -1344,7 +1358,7 @@ WindowMsgHandledType WOLLoginMenuSystem( GameWindow *window, UnsignedInt msg,
 							//TheGameSpyInfo->setLocalProfileID( resp.player.profileID );
 							TheGameSpyInfo->setLocalEmail( email );
 							TheGameSpyInfo->setLocalPassword( password );
-							DEBUG_LOG(("before login: TheGameSpyInfo->stuff(%s/%s/%s)\n", TheGameSpyInfo->getLocalBaseName().str(), TheGameSpyInfo->getLocalEmail().str(), TheGameSpyInfo->getLocalPassword().str()));
+							DEBUG_LOG(("before login: TheGameSpyInfo->stuff(%s/%s/%s)", TheGameSpyInfo->getLocalBaseName().str(), TheGameSpyInfo->getLocalEmail().str(), TheGameSpyInfo->getLocalPassword().str()));
 
 							TheGameSpyBuddyMessageQueue->addRequest( req );
 							if(checkBoxRememberPassword && GadgetCheckBoxIsChecked(checkBoxRememberPassword))
@@ -1448,26 +1462,14 @@ WindowMsgHandledType WOLLoginMenuSystem( GameWindow *window, UnsignedInt msg,
 								{
 									UnicodeString uniLine;
 									uniLine = UnicodeString(MultiByteToWideCharSingleLine(asciiLine.str()).c_str());
-									int len = uniLine.getLength();
-									for (int index = len-1; index >= 0; index--)
-									{
-										if (iswspace(uniLine.getCharAt(index)))
-										{
-											uniLine.removeLastChar();
-										}
-										else
-										{
-											break;
-										}
-									}
-									//uniLine.trim();
-									DEBUG_LOG(("adding TOS line: [%ls]\n", uniLine.str()));
+									uniLine.trimEnd();
+									DEBUG_LOG(("adding TOS line: [%ls]", uniLine.str()));
 									GadgetListBoxAddEntryText(listboxTOS, uniLine, tosColor, -1);
 								}
 
 							}
 
-							delete fileBuf;
+							delete[] fileBuf;
 							fileBuf = NULL;
 
 							theFile->close();

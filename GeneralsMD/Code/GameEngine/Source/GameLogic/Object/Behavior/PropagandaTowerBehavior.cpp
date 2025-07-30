@@ -44,11 +44,6 @@
 #include "GameLogic/Module/BodyModule.h"
 
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 
 // FORWARD REFERENCES /////////////////////////////////////////////////////////////////////////////
@@ -421,7 +416,7 @@ void PropagandaTowerBehavior::doScan( void )
 			default:
 			{
 
-				DEBUG_CRASH(( "PropagandaTowerBehavior::doScan - Unknown upgrade type '%d'\n",
+				DEBUG_CRASH(( "PropagandaTowerBehavior::doScan - Unknown upgrade type '%d'",
 											m_upgradeRequired->getUpgradeType() ));
 				break;
 
@@ -614,7 +609,7 @@ void PropagandaTowerBehavior::xfer( Xfer *xfer )
 		if( m_insideList != NULL )
 		{
 
-			DEBUG_CRASH(( "PropagandaTowerBehavior::xfer - m_insideList should be empty but is not\n" ));
+			DEBUG_CRASH(( "PropagandaTowerBehavior::xfer - m_insideList should be empty but is not" ));
 			throw SC_INVALID_DATA;
 
 		}  // end if

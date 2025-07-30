@@ -685,7 +685,8 @@ void DazzleRenderObjClass::Init_Type(const DazzleInitClass& i)
 		unsigned new_count=i.type+1;
 		DazzleTypeClass** new_types=W3DNEWARRAY DazzleTypeClass*[new_count];
 		unsigned a=0;
-		for (;a<type_count;++a) {
+		unsigned copy_count = min(type_count, new_count);
+		for (;a<copy_count;++a) {
 			new_types[a]=types[a];
 		}
 		for (;a<new_count;++a) {
@@ -709,7 +710,8 @@ void DazzleRenderObjClass::Init_Lensflare(const LensflareInitClass& i)
 		unsigned new_count=i.type+1;
 		LensflareTypeClass** new_lensflares=W3DNEWARRAY LensflareTypeClass*[new_count];
 		unsigned a=0;
-		for (;a<lensflare_count;++a) {
+		unsigned copy_count = min(lensflare_count, new_count);
+		for (;a<copy_count;++a) {
 			new_lensflares[a]=lensflares[a];
 		}
 		for (;a<new_count;++a) {
@@ -1480,7 +1482,7 @@ PersistClass *	DazzlePersistFactoryClass::Load(ChunkLoadClass & cload) const
 				break;
 
 			default:
-				WWDEBUG_SAY(("Unhandled Chunk: 0x%X File: %s Line: %d\r\n",__FILE__,__LINE__));
+				WWDEBUG_SAY(("Unhandled Chunk: 0x%X File: %s Line: %d",__FILE__,__LINE__));
 				break;
 		};
 		cload.Close_Chunk();
@@ -1501,8 +1503,8 @@ PersistClass *	DazzlePersistFactoryClass::Load(ChunkLoadClass & cload) const
 	if (new_obj == NULL) {
 		static int count = 0;
 		if ( ++count < 10 ) {
-			WWDEBUG_SAY(("DazzlePersistFactory failed to create dazzle of type: %s!!\r\n",dazzle_type));
-			WWDEBUG_SAY(("Replacing it with a NULL render object!\r\n"));
+			WWDEBUG_SAY(("DazzlePersistFactory failed to create dazzle of type: %s!!",dazzle_type));
+			WWDEBUG_SAY(("Replacing it with a NULL render object!"));
 		}
 		new_obj = WW3DAssetManager::Get_Instance()->Create_Render_Obj("NULL");
 	}

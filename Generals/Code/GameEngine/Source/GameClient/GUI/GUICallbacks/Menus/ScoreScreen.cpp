@@ -53,7 +53,6 @@
 #include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
 
 #include "Common/BattleHonors.h"
-#include "Common/CopyProtection.h"
 #include "Common/GameEngine.h"
 #include "Common/GameLOD.h"
 #include "Common/GameState.h"
@@ -65,6 +64,7 @@
 #include "Common/PlayerTemplate.h"
 #include "Common/RandomValue.h"
 #include "Common/Recorder.h"
+#include "Common/ReplaySimulation.h"
 #include "Common/ScoreKeeper.h"
 #include "Common/SkirmishBattleHonors.h"
 #include "Common/ThingFactory.h"
@@ -99,11 +99,6 @@
 //Added By Saad
 #include "GameClient/InGameUI.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 //-----------------------------------------------------------------------------
 // DEFINES ////////////////////////////////////////////////////////////////////
@@ -225,7 +220,7 @@ void ScoreScreenInit( WindowLayout *layout, void *userData )
 {
 	if (TheGameSpyInfo)
 	{
-		DEBUG_LOG(("ScoreScreenInit(): TheGameSpyInfo->stuff(%s/%s/%s)\n", TheGameSpyInfo->getLocalBaseName().str(), TheGameSpyInfo->getLocalEmail().str(), TheGameSpyInfo->getLocalPassword().str()));
+		DEBUG_LOG(("ScoreScreenInit(): TheGameSpyInfo->stuff(%s/%s/%s)", TheGameSpyInfo->getLocalBaseName().str(), TheGameSpyInfo->getLocalEmail().str(), TheGameSpyInfo->getLocalPassword().str()));
 	}
 
 	DontShowMainMenu = TRUE; //KRIS
@@ -412,6 +407,14 @@ WindowMsgHandledType ScoreScreenInput( GameWindow *window, UnsignedInt msg,
 
 }  // end MainMenuInput
 
+static Bool showReplayButtonContinue()
+{
+	bool hasSimulationReplay = ReplaySimulation::getReplayCount() > 0;
+	bool isLastSimulationReplay = ReplaySimulation::getCurrentReplayIndex() == ReplaySimulation::getReplayCount()-1;
+
+	return hasSimulationReplay && !isLastSimulationReplay;
+}
+
 /** System Function for the ScoreScreen */
 //-------------------------------------------------------------------------------------------------
 WindowMsgHandledType ScoreScreenSystem( GameWindow *window, UnsignedInt msg, 
@@ -450,23 +453,36 @@ WindowMsgHandledType ScoreScreenSystem( GameWindow *window, UnsignedInt msg,
 			{
 				TheShell->pop();
 				TheCampaignManager->setCampaign(AsciiString::TheEmptyString);
+
+				if ( ReplaySimulation::getReplayCount() > 0 )
+				{
+					ReplaySimulation::stop();
+					TheGameEngine->setQuitting(TRUE);
+				}
 			}
 			else if ( controlID == buttonContinueID )	
 			{
-				if(!buttonIsFinishCampaign)
-					ReplayWasPressed = TRUE;
-				if( screenType == SCORESCREEN_SINGLEPLAYER)	
+				if( ReplaySimulation::getReplayCount() > 0 )
 				{
-					AsciiString mapName = TheCampaignManager->getCurrentMap();
+					TheGameEngine->setQuitting(TRUE);
+				}
+				else
+				{
+					if(!buttonIsFinishCampaign)
+						ReplayWasPressed = TRUE;
+					if( screenType == SCORESCREEN_SINGLEPLAYER)
+					{
+						AsciiString mapName = TheCampaignManager->getCurrentMap();
 
-					if( mapName.isEmpty() )
-					{
-						ReplayWasPressed = FALSE;
-						TheShell->pop();
-					}
-					else
-					{
-						CheckForCDAtGameStart( startNextCampaignGame );
+						if( mapName.isEmpty() )
+						{
+							ReplayWasPressed = FALSE;
+							TheShell->pop();
+						}
+						else
+						{
+							CheckForCDAtGameStart( startNextCampaignGame );
+						}
 					}
 				}
 			}
@@ -478,7 +494,7 @@ WindowMsgHandledType ScoreScreenSystem( GameWindow *window, UnsignedInt msg,
 			{
 				ScoreScreenEnableControls(FALSE);
         WindowLayout *saveReplayLayout = TheShell->getPopupReplayLayout();
-				DEBUG_ASSERTCRASH( saveReplayLayout, ("Unable to get save replay menu layout.\n") );
+				DEBUG_ASSERTCRASH( saveReplayLayout, ("Unable to get save replay menu layout.") );
 				saveReplayLayout->runInit();
 				saveReplayLayout->hide( FALSE );
 				saveReplayLayout->bringForward();
@@ -528,9 +544,10 @@ WindowMsgHandledType ScoreScreenSystem( GameWindow *window, UnsignedInt msg,
 						req.arg.addbuddy.text[MAX_BUDDY_CHAT_LEN-1] = 0;
 						TheGameSpyBuddyMessageQueue->addRequest(req);
 					}
-					break;
 				}
 			}
+
+			break;
 		}
 
 		case GEM_EDIT_DONE:
@@ -556,6 +573,8 @@ WindowMsgHandledType ScoreScreenSystem( GameWindow *window, UnsignedInt msg,
 					//add the gamespy chat request here
 
 			}// if ( controlID == textEntryChatID )
+
+			break;
 		}
 	}		
 	return MSG_HANDLED;
@@ -677,11 +696,7 @@ void initSinglePlayer( void )
 
 void finishSinglePlayerInit( void )
 {
-	Bool copyProtectOK = TRUE;
-#ifdef DO_COPY_PROTECTION
-	copyProtectOK = CopyProtect::validate();
-#endif
-	if(copyProtectOK && TheCampaignManager->isVictorious())
+	if(TheCampaignManager->isVictorious())
 	{
 		TheCampaignManager->gotoNextMission();
 
@@ -805,7 +820,7 @@ void initReplaySinglePlayer( void )
 	if (chatBoxBorder)
 		chatBoxBorder->winHide(TRUE);
 	if (buttonContinue)
-		buttonContinue->winHide(TRUE);
+		buttonContinue->winHide(!showReplayButtonContinue());
 	if (buttonBuddies)
 		buttonBuddies->winHide(TRUE);
 	if (listboxChatWindowScoreScreen)
@@ -891,7 +906,7 @@ void initReplayMultiPlayer(void)
 	if (chatBoxBorder)
 		chatBoxBorder->winHide(TRUE);
 	if (buttonContinue)
-		buttonContinue->winHide(TRUE);
+		buttonContinue->winHide(!showReplayButtonContinue());
 	if (buttonBuddies)
 		buttonBuddies->winHide(TRUE);
 //	if (buttonRehost)
@@ -915,7 +930,7 @@ static Bool isSlotLocalAlly(GameInfo *game, const GameSlot *slot)
 
 static void updateSkirmishBattleHonors(SkirmishBattleHonors& stats)
 {
-	DEBUG_LOG(("Updating Skirmish battle honors\n"));
+	DEBUG_LOG(("Updating Skirmish battle honors"));
 	Player *localPlayer = ThePlayerList->getLocalPlayer();
 	ScoreKeeper *s = localPlayer->getScoreKeeper();
 
@@ -1017,7 +1032,7 @@ static void updateSkirmishBattleHonors(SkirmishBattleHonors& stats)
 
 static void updateMPBattleHonors(Int& honors, PSPlayerStats& stats)
 {
-	DEBUG_LOG(("Updating MP battle honors\n"));
+	DEBUG_LOG(("Updating MP battle honors"));
 	Player *localPlayer = ThePlayerList->getLocalPlayer();
 	ScoreKeeper *s = localPlayer->getScoreKeeper();
 
@@ -1164,7 +1179,7 @@ static void updateChallengeMedals(Int& medals)
 //-------------------------------------------------------------------------------------------------
 void populatePlayerInfo( Player *player, Int pos)
 {
-	if(!player || pos > MAX_SLOTS)
+	if(!player || pos < 0 || pos >= MAX_SLOTS)
 		return;
 	Color color = player->getPlayerColor();
 	ScoreKeeper *scoreKpr = player->getScoreKeeper();
@@ -1341,7 +1356,7 @@ winName.format("ScoreScreen.wnd:StaticTextScore%d", pos);
 			// If we died, and are watching sparring AIs, we still get the loss.
 			if (player->isPlayerActive())
 			{
-				DEBUG_LOG(("Skipping skirmish stats update: sandbox:%d defeat:%d victory:%d\n",
+				DEBUG_LOG(("Skipping skirmish stats update: sandbox:%d defeat:%d victory:%d",
 					TheGameInfo->isSandbox(), TheVictoryConditions->isLocalAlliedDefeat(), TheVictoryConditions->isLocalAlliedVictory()));
 				return;
 			}
@@ -1393,7 +1408,7 @@ winName.format("ScoreScreen.wnd:StaticTextScore%d", pos);
 					if (TheVictoryConditions->amIObserver())
 					{
 						// nothing to track
-						DEBUG_LOG(("populatePlayerInfo() - not tracking stats for observer\n"));
+						DEBUG_LOG(("populatePlayerInfo() - not tracking stats for observer"));
 						return;
 					}
 					PSPlayerStats stats = TheGameSpyPSMessageQueue->findPlayerStatsByID(localID);
@@ -1428,28 +1443,28 @@ winName.format("ScoreScreen.wnd:StaticTextScore%d", pos);
 							anyAI = TRUE;
 						}
 					}
-					DEBUG_LOG(("Game ended on frame %d - TheGameLogic->getFrame()=%d\n", lastFrameOfGame-1, TheGameLogic->getFrame()-1));
+					DEBUG_LOG(("Game ended on frame %d - TheGameLogic->getFrame()=%d", lastFrameOfGame-1, TheGameLogic->getFrame()-1));
 					for (i=0; i<MAX_SLOTS; ++i)
 					{
 						const GameSlot *slot = TheGameInfo->getConstSlot(i);
-						DEBUG_LOG(("latestHumanInGame=%d, slot->isOccupied()=%d, slot->disconnected()=%d, slot->isAI()=%d, slot->lastFrameInGame()=%d\n",
+						DEBUG_LOG(("latestHumanInGame=%d, slot->isOccupied()=%d, slot->disconnected()=%d, slot->isAI()=%d, slot->lastFrameInGame()=%d",
 							latestHumanInGame, slot->isOccupied(), slot->disconnected(), slot->isAI(), slot->lastFrameInGame()));
 						if (slot->isOccupied() && slot->disconnected())
 						{
-							DEBUG_LOG(("Marking game as a possible disconnect game\n"));
+							DEBUG_LOG(("Marking game as a possible disconnect game"));
 							sawAnyDisconnects = TRUE;
 						}
 						if (slot->isOccupied() && !slot->disconnected() && i != localSlotNum &&
 							(slot->isAI() || (slot->lastFrameInGame() >= lastFrameOfGame/*TheGameLogic->getFrame()*/-1)))
 						{
-							DEBUG_LOG(("Marking game as not ending in disconnect\n"));
+							DEBUG_LOG(("Marking game as not ending in disconnect"));
 							gameEndedInDisconnect = FALSE;
 						}
 					}
 
 					if (!sawAnyDisconnects)
 					{
-						DEBUG_LOG(("Didn't see any disconnects - making gameEndedInDisconnect == FALSE\n"));
+						DEBUG_LOG(("Didn't see any disconnects - making gameEndedInDisconnect == FALSE"));
 						gameEndedInDisconnect = FALSE;
 					}
 
@@ -1461,17 +1476,17 @@ winName.format("ScoreScreen.wnd:StaticTextScore%d", pos);
 							// check if we were to blame.
 							if (TheNetwork->getPingsRecieved() < max(1, TheNetwork->getPingsSent()/2)) /// @todo: what's a good percent of pings to have gotten?
 							{
-								DEBUG_LOG(("We were to blame.  Leaving gameEndedInDisconnect = true\n"));
+								DEBUG_LOG(("We were to blame.  Leaving gameEndedInDisconnect = true"));
 							}
 							else
 							{
-								DEBUG_LOG(("We were not to blame.  Changing gameEndedInDisconnect = false\n"));
+								DEBUG_LOG(("We were not to blame.  Changing gameEndedInDisconnect = false"));
 								gameEndedInDisconnect = FALSE;
 							}
 						}
 						else
 						{
-							DEBUG_LOG(("gameEndedInDisconnect, and we didn't ping on last frame.  What's up with that?\n"));
+							DEBUG_LOG(("gameEndedInDisconnect, and we didn't ping on last frame.  What's up with that?"));
 						}
 					}
 					
@@ -1482,7 +1497,7 @@ winName.format("ScoreScreen.wnd:StaticTextScore%d", pos);
 					}
 
  					//Remove the extra disconnection we add to all games when they start.
-					DEBUG_LOG(("populatePlayerInfo() - removing extra disconnect\n"));
+					DEBUG_LOG(("populatePlayerInfo() - removing extra disconnect"));
  					if (TheGameSpyInfo)
 						TheGameSpyInfo->updateAdditionalGameSpyDisconnections(-1);
 
@@ -1501,7 +1516,7 @@ winName.format("ScoreScreen.wnd:StaticTextScore%d", pos);
 					}
 					if (!sawEndOfGame)
 					{
-						DEBUG_LOG(("Not sending results - we didn't finish a game\n"));
+						DEBUG_LOG(("Not sending results - we didn't finish a game"));
 						return;
 					}
 
@@ -1512,7 +1527,7 @@ winName.format("ScoreScreen.wnd:StaticTextScore%d", pos);
 						gameResReq.hostname = TheGameSpyGame->getLadderIP().str();
 						gameResReq.port = TheGameSpyGame->getLadderPort();
 						gameResReq.results = TheGameSpyGame->generateLadderGameResultsPacket().str();
-						DEBUG_ASSERTCRASH(TheGameResultsQueue, ("No Game Results queue!\n"));
+						DEBUG_ASSERTCRASH(TheGameResultsQueue, ("No Game Results queue!"));
 						if (TheGameResultsQueue)
 						{
 							TheGameResultsQueue->addRequest(gameResReq);
@@ -1521,13 +1536,13 @@ winName.format("ScoreScreen.wnd:StaticTextScore%d", pos);
 
 					if (TheVictoryConditions->getEndFrame() < LOGICFRAMES_PER_SECOND * 25 && TheVictoryConditions->getEndFrame())
 					{
-						DEBUG_LOG(("populatePlayerInfo() - not tracking stats for short game\n"));
+						DEBUG_LOG(("populatePlayerInfo() - not tracking stats for short game"));
 						return;
 					}
 
 					// generate and send a gameres packet
 					AsciiString resultsPacket = TheGameSpyGame->generateGameSpyGameResultsPacket();
-					DEBUG_LOG(("About to send results packet: %s\n", resultsPacket.str()));
+					DEBUG_LOG(("About to send results packet: %s", resultsPacket.str()));
 					PSRequest grReq;
 					grReq.requestType = PSRequest::PSREQUEST_SENDGAMERESTOGAMESPY;
 					grReq.results = resultsPacket.str();
@@ -1535,11 +1550,11 @@ winName.format("ScoreScreen.wnd:StaticTextScore%d", pos);
 
 					Int ptIdx;
 					const PlayerTemplate *myTemplate = player->getPlayerTemplate();
-					DEBUG_LOG(("myTemplate = %X(%s)\n", myTemplate, myTemplate->getName().str()));
+					DEBUG_LOG(("myTemplate = %X(%s)", myTemplate, myTemplate->getName().str()));
 					for (ptIdx = 0; ptIdx < ThePlayerTemplateStore->getPlayerTemplateCount(); ++ptIdx)
 					{
 						const PlayerTemplate *nthTemplate = ThePlayerTemplateStore->getNthPlayerTemplate(ptIdx);
-						DEBUG_LOG(("nthTemplate = %X(%s)\n", nthTemplate, nthTemplate->getName().str()));
+						DEBUG_LOG(("nthTemplate = %X(%s)", nthTemplate, nthTemplate->getName().str()));
 						if (nthTemplate == myTemplate)
 						{
 							break;
@@ -1563,7 +1578,7 @@ winName.format("ScoreScreen.wnd:StaticTextScore%d", pos);
 							SetUnsignedIntInRegistry("", "dc", discons);
 							SetUnsignedIntInRegistry("", "se", syncs);
 							*/
-							DEBUG_LOG(("populatePlayerInfo() - need to save off info for disconnect games!\n"));
+							DEBUG_LOG(("populatePlayerInfo() - need to save off info for disconnect games!"));
 
 							PSRequest req;
 							req.requestType = PSRequest::PSREQUEST_UPDATEPLAYERSTATS;
@@ -1576,7 +1591,7 @@ winName.format("ScoreScreen.wnd:StaticTextScore%d", pos);
 							req.lastHouse = ptIdx;
 							TheGameSpyPSMessageQueue->addRequest(req);
 						}
-						DEBUG_CRASH(("populatePlayerInfo() - not tracking stats - we haven't gotten the original stuff yet\n"));
+						DEBUG_CRASH(("populatePlayerInfo() - not tracking stats - we haven't gotten the original stuff yet"));
 						return;
 					}
 
@@ -1732,7 +1747,7 @@ winName.format("ScoreScreen.wnd:StaticTextScore%d", pos);
 						updateChallengeMedals(stats.challengeMedals);
 					}
 
-					DEBUG_LOG(("populatePlayerInfo() - tracking stats for %s/%s/%s\n", TheGameSpyInfo->getLocalBaseName().str(), TheGameSpyInfo->getLocalEmail().str(), TheGameSpyInfo->getLocalPassword().str()));
+					DEBUG_LOG(("populatePlayerInfo() - tracking stats for %s/%s/%s", TheGameSpyInfo->getLocalBaseName().str(), TheGameSpyInfo->getLocalEmail().str(), TheGameSpyInfo->getLocalPassword().str()));
 
 					PSRequest req;
 					req.requestType = PSRequest::PSREQUEST_UPDATEPLAYERSTATS;
@@ -1882,20 +1897,23 @@ void grabSinglePlayerInfo( void )
 	{
 		Bool isFriend = TRUE;
 		
-		// set the string we'll be compairing to
+		// set the string we'll be comparing to
 		switch (j) {
 		case USA_ENEMY:
 			isFriend = FALSE;
+			FALLTHROUGH;
 		case USA_FRIEND:
 			side.set("America");
 			break;
 		case CHINA_ENEMY:
 			isFriend = FALSE;
+			FALLTHROUGH;
 		case CHINA_FRIEND:
 			side.set("China");
 			break;
 		case GLA_ENEMY:
-			isFriend = FALSE;	
+			isFriend = FALSE;
+			FALLTHROUGH;
 		case GLA_FRIEND:
 			side.set("GLA");
 			break;
@@ -2054,7 +2072,7 @@ winName.format("ScoreScreen.wnd:StaticTextScore%d", i);
 //-------------------------------------------------------------------------------------------------
 void setObserverWindows( Player *player, Int i )
 {
-	if(i < 0 || i >= MAX_SLOTS)
+	if(!player || i < 0 || i >= MAX_SLOTS)
 		return;
 	AsciiString winName;
 	GameWindow *win;
@@ -2065,16 +2083,10 @@ void setObserverWindows( Player *player, Int i )
 	winName.format("ScoreScreen.wnd:StaticTextPlayer%d", i);
 	win =  TheWindowManager->winGetWindowFromId( parent, TheNameKeyGenerator->nameToKey( winName ) );
 	DEBUG_ASSERTCRASH(win,("Could not find window %s on the score screen", winName.str()));
-	if (player)
-	{
-		GadgetStaticTextSetText(win, player->getPlayerDisplayName());
-		win->winHide(FALSE);
-		win->winSetEnabledTextColors(color, win->winGetEnabledTextBorderColor());
-	}
-	else
-	{
-		win->winHide(TRUE);
-	}
+
+	GadgetStaticTextSetText(win, player->getPlayerDisplayName());
+	win->winHide(FALSE);
+	win->winSetEnabledTextColors(color, win->winGetEnabledTextBorderColor());
 
 	// set the player name
 	winName.format("ScoreScreen.wnd:StaticTextObserver%d", i);

@@ -66,11 +66,6 @@
 #include "GameLogic/SidesList.h"
 
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 
 static Script *s_mtScript = NULL;
@@ -1776,7 +1771,7 @@ void Parameter::qualify(const AsciiString& qualifier,
 			if (m_string == THIS_TEAM) {
 				break;
 			}
-			/// otherwise drop down & qualify.
+			FALLTHROUGH; /// otherwise drop down & qualify.
 		case SCRIPT:
 		case COUNTER:
 		case FLAG:
@@ -1858,7 +1853,7 @@ AsciiString Parameter::getUiText(void) const
 			if (m_int >= KINDOF_FIRST && m_int < KINDOF_COUNT )
 				uiText.format("Kind is '%s'", KindOfMaskType::getNameFromSingleBit(m_int));
 			else 
-				uiText.format("Kind is '???'");
+				uiText.format("Kind is ???");
 			break;
 		case SIDE:
 			uiText.format("Player '%s'", uiString.str());
@@ -1915,7 +1910,7 @@ AsciiString Parameter::getUiText(void) const
 		case RADAR_EVENT_TYPE:
 			switch (m_int) {
 				//case RADAR_EVENT_INVALID: ++m_int;	// continue to the next case.
-				case RADAR_EVENT_INVALID: DEBUG_CRASH(("Invalid radar event\n")); uiText.format("Construction"); break;
+				case RADAR_EVENT_INVALID: DEBUG_CRASH(("Invalid radar event")); uiText.format("Construction"); break;
 				case RADAR_EVENT_CONSTRUCTION: uiText.format("Construction"); break;
 				case RADAR_EVENT_UPGRADE: uiText.format("Upgrade"); break;
 				case RADAR_EVENT_UNDER_ATTACK: uiText.format("Under Attack"); break;
@@ -1979,7 +1974,7 @@ AsciiString Parameter::getUiText(void) const
 			if (m_int >= BSTATUS_YES && m_int < BSTATUS_NUM_TYPES )
 				uiText.format("Buildable (%s)", BuildableStatusNames[m_int - BSTATUS_YES]);
 			else 
-				uiText.format("Buildable (???)");
+				uiText.format("Buildable ???");
 			break;
 		
 		case SURFACES_ALLOWED:
@@ -2003,7 +1998,7 @@ AsciiString Parameter::getUiText(void) const
 		case OBJECT_STATUS:
 		{
 			if (m_string.isEmpty()) {
-				uiText.format("Object Status is '???'");
+				uiText.format("Object Status is ???");
 			} else {
 				uiText.format("Object Status is '%s'", m_string.str());
 			}
@@ -2093,7 +2088,7 @@ Parameter *Parameter::ReadParameter(DataChunkInput &file)
 			strcpy(newName, "GLA");
 			strcat(newName, oldName+strlen("Fundamentalist"));
 			pParm->m_string.set(newName);
-			DEBUG_LOG(("Changing Script Ref from %s to %s\n", oldName, newName));
+			DEBUG_LOG(("Changing Script Ref from %s to %s", oldName, newName));
 		}
 	}
 
@@ -2372,10 +2367,10 @@ Bool ScriptAction::ParseActionDataChunk(DataChunkInput &file, DataChunkInfo *inf
 
 	pScriptAction->m_actionType = (enum ScriptActionType)file.readInt();
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	const ActionTemplate* at = TheScriptEngine->getActionTemplate(pScriptAction->m_actionType);
 	if (at && (at->getName().isEmpty() || (at->getName().compareNoCase("(placeholder)") == 0))) {
-		DEBUG_CRASH(("Invalid Script Action found in script '%s'\n", pScript->getName().str()));
+		DEBUG_CRASH(("Invalid Script Action found in script '%s'", pScript->getName().str()));
 	}
 #endif
 
@@ -2445,8 +2440,8 @@ Bool ScriptAction::ParseActionDataChunk(DataChunkInput &file, DataChunkInfo *inf
 				pScriptAction->m_numParms = 2;
 				// Default it to TRUE, as per conversation with JohnL
 				pScriptAction->m_parms[1] = newInstance(Parameter)(Parameter::BOOLEAN, 1);
-				break;
 			}
+			break;
 	}
 
 

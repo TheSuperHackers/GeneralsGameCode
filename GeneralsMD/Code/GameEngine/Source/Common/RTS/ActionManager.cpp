@@ -64,11 +64,6 @@
 
 #include "GameLogic/ExperienceTracker.h"//LORENZEN
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 // GLOBAL /////////////////////////////////////////////////////////////////////////////////////////
 ActionManager *TheActionManager = NULL;
@@ -488,12 +483,12 @@ Bool ActionManager::canResumeConstructionOf( const Object *obj,
 	if( builder )
 	{
 		AIUpdateInterface *ai = builder->getAI();
-		DEBUG_ASSERTCRASH( ai, ("Builder object does not have an AI interface!\n") );
+		DEBUG_ASSERTCRASH( ai, ("Builder object does not have an AI interface!") );
 
 		if( ai )
 		{
 			DozerAIInterface *dozerAI = ai->getDozerAIInterface();
-			DEBUG_ASSERTCRASH( dozerAI, ("Builder object doest not have a DozerAI interface!\n") );
+			DEBUG_ASSERTCRASH( dozerAI, ("Builder object doest not have a DozerAI interface!") );
 
 			if( dozerAI )
 			{

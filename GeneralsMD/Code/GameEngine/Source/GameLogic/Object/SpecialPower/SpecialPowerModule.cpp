@@ -54,11 +54,6 @@
 #include "GameClient/ControlBar.h"
 
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -101,7 +96,11 @@ SpecialPowerModule::SpecialPowerModule( Thing *thing, const ModuleData *moduleDa
 									: BehaviorModule( thing, moduleData )
 {
 
+#if RETAIL_COMPATIBLE_CRC
 	m_availableOnFrame = 0;
+#else
+	m_availableOnFrame = 0xFFFFFFFF;
+#endif
 	m_pausedCount = 0;
 	m_pausedOnFrame = 0;
 	m_pausedPercent = 0.0f;
@@ -288,7 +287,7 @@ Bool SpecialPowerModule::isModuleForPower( const SpecialPowerTemplate *specialPo
 //-------------------------------------------------------------------------------------------------
 Bool SpecialPowerModule::isReady() const
 {
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL) || defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
+#if defined(RTS_DEBUG) || defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
 	// this is a cheat ... remove this for release!
 	if( TheGlobalData->m_specialPowerUsesDelay == FALSE )
 		return TRUE;
@@ -326,7 +325,7 @@ Real SpecialPowerModule::getPercentReady() const
 		return 0.99999f;
 	}
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL) || defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
+#if defined(RTS_DEBUG) || defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
 	if( TheGlobalData->m_specialPowerUsesDelay == FALSE ) 
 		return 1.0f;
 #endif
@@ -388,7 +387,7 @@ Bool SpecialPowerModule::isScriptOnly() const
 //-------------------------------------------------------------------------------------------------
 void SpecialPowerModule::startPowerRecharge()
 {
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL) || defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
+#if defined(RTS_DEBUG) || defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
 	// this is a cheat ... remove this for release!
 	if( TheGlobalData->m_specialPowerUsesDelay == FALSE ) 
 		return;
@@ -455,14 +454,23 @@ Bool SpecialPowerModule::initiateIntentToDoSpecialPower( const Object *targetObj
 		}
 	}
 
+#if RETAIL_COMPATIBLE_CRC
+	// TheSuperHackers @info we need to leave early if we are in the MissileLauncherBuildingUpdate crash fix codepath
+	if (m_availableOnFrame == 0xFFFFFFFF)
+	{
+		DEBUG_ASSERTCRASH(!valid, ("Using MissileLauncherBuildingUpdate escape path when valid is set to true"));
+		return false;
+	}
+#endif
+
 	getObject()->getControllingPlayer()->getAcademyStats()->recordSpecialPowerUsed( getSpecialPowerModuleData()->m_specialPowerTemplate );
 	
 	//If we depend on our update module to trigger the special power, make sure we have the
 	//appropriate update module!
 	if( !valid && getSpecialPowerModuleData()->m_updateModuleStartsAttack )
 	{
-		DEBUG_CRASH( ("Object does not contain a special power module to execute.  Did you forget to add it to the object INI?\n"));
-		//DEBUG_CRASH(( "Object does not contain special power module (%s) to execute.  Did you forget to add it to the object INI?\n",
+		DEBUG_CRASH( ("Object does not contain a special power module to execute.  Did you forget to add it to the object INI?"));
+		//DEBUG_CRASH(( "Object does not contain special power module (%s) to execute.  Did you forget to add it to the object INI?",
 		//							command->m_specialPower->getName().str() ));
 	}
 
@@ -714,6 +722,12 @@ void SpecialPowerModule::doSpecialPowerAtLocation( const Coord3D *loc, Real angl
 	//This tells the update module that we want to do our special power. The update modules
 	//will then start processing each frame.
 	initiateIntentToDoSpecialPower( NULL, loc, NULL, commandOptions );
+
+#if RETAIL_COMPATIBLE_CRC
+	// TheSuperHackers @info we need to leave early if we are in the MissileLauncherBuildingUpdate crash fix codepath
+	if (m_availableOnFrame == 0xFFFFFFFF)
+		return;
+#endif
 
 	//Only trigger the special power immediately if the updatemodule doesn't start the attack.
 	//An example of a case that wouldn't trigger immediately is for a unit that needs to 

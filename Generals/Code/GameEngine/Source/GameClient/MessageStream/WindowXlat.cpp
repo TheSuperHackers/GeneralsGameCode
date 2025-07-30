@@ -55,11 +55,6 @@
 #include "GameClient/Shell.h"
 #include "GameClient/Display.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 // DEFINES ////////////////////////////////////////////////////////////////////
 
@@ -75,7 +70,7 @@
 // PRIVATE FUNCTIONS //////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)	//debug hack to view object under mouse stats
+#if defined(RTS_DEBUG)	//debug hack to view object under mouse stats
 extern ICoord2D TheMousePos;
 #endif
 
@@ -204,7 +199,7 @@ GameMessageDisposition WindowTranslator::translateGameMessage(const GameMessage 
 				//If we release the button outside
 				forceKeepMessage = TRUE;
 			}
-			//FALL THROUGH INTENTIONALLY!
+			FALLTHROUGH; //FALL THROUGH INTENTIONALLY!
 		}
 		case GameMessage::MSG_RAW_MOUSE_POSITION:
 		case GameMessage::MSG_RAW_MOUSE_LEFT_BUTTON_DOWN:
@@ -218,7 +213,7 @@ GameMessageDisposition WindowTranslator::translateGameMessage(const GameMessage 
 		{
 			// all window events have the position of the mouse as arg 0
 			ICoord2D mousePos = msg->getArgument( 0 )->pixel;
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)	//debug hack to view object under mouse stats
+#if defined(RTS_DEBUG)	//debug hack to view object under mouse stats
 			TheMousePos.x = mousePos.x;
 			TheMousePos.y = mousePos.y;
 #endif

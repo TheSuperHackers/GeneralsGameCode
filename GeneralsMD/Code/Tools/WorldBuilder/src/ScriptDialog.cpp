@@ -42,11 +42,6 @@
 #include "WaypointOptions.h"
 #include "Common/UnicodeString.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 static const Int K_LOCAL_TEAMS_VERSION_1 = 1;
 
@@ -1698,7 +1693,7 @@ Bool ScriptDialog::ParseObjectDataChunk(DataChunkInput &file, DataChunkInfo *inf
 		if (pThis->m_maxWaypoint < pThisOne->getWaypointID()) pThis->m_maxWaypoint = pThisOne->getWaypointID();
 	}
 
-	DEBUG_LOG(("Adding object %s (%s)\n", name.str(), pThisOne->getProperties()->getAsciiString(TheKey_originalOwner).str()));
+	DEBUG_LOG(("Adding object %s (%s)", name.str(), pThisOne->getProperties()->getAsciiString(TheKey_originalOwner).str()));
 	// Check for duplicates.
 
 	MapObject *pObj;
@@ -1778,7 +1773,7 @@ Bool ScriptDialog::ParseTeamsDataChunk(DataChunkInput &file, DataChunkInfo *info
 		if (pThis->m_sides.findTeamInfo(teamName)) {
 			continue;
 		}
-		DEBUG_LOG(("Adding team %s\n", teamName.str()));
+		DEBUG_LOG(("Adding team %s", teamName.str()));
 		AsciiString player = teamDict.getAsciiString(TheKey_teamOwner);
 		if (pThis->m_sides.findSideInfo(player)) {
 			// player exists, so just add it.

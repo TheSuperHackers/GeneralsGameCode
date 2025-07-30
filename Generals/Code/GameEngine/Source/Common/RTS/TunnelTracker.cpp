@@ -108,6 +108,13 @@ Int TunnelTracker::getContainMax() const
 }
 
 // ------------------------------------------------------------------------
+void TunnelTracker::swapContainedItemsList(ContainedItemsList& newList)
+{
+	m_containList.swap(newList);
+	m_containListSize = (Int)m_containList.size();
+}
+
+// ------------------------------------------------------------------------
 void TunnelTracker::updateNemesis(const Object *target)
 {
 	if (getCurNemesis()==NULL) {
@@ -363,7 +370,7 @@ void TunnelTracker::loadPostProcess( void )
 	if( m_containList.size() != 0 )
 	{
 
-		DEBUG_CRASH(( "TunnelTracker::loadPostProcess - m_containList should be empty but is not\n" ));
+		DEBUG_CRASH(( "TunnelTracker::loadPostProcess - m_containList should be empty but is not" ));
 		throw SC_INVALID_DATA;
 
 	}  // end if
@@ -378,7 +385,7 @@ void TunnelTracker::loadPostProcess( void )
 		if( obj == NULL )
 		{
 
-			DEBUG_CRASH(( "TunnelTracker::loadPostProcess - Unable to find object ID '%d'\n", *it ));
+			DEBUG_CRASH(( "TunnelTracker::loadPostProcess - Unable to find object ID '%d'", *it ));
 			throw SC_INVALID_DATA;
 
 		}  // end if

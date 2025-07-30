@@ -61,11 +61,6 @@
 #include "GameLogic/Scripts.h"
 #include "GameLogic/VictoryConditions.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 class ObjectTypesTemp
 {
@@ -1033,6 +1028,10 @@ Bool ScriptConditions::evaluateEnemySighted(Parameter *pItemParm, Parameter *pAl
 			break;
 		case Parameter::REL_ENEMY:
 			relationDescriber = PartitionFilterRelationship::ALLOW_ENEMIES;
+			break;
+		default:
+			DEBUG_CRASH(("Unhandled case in ScriptConditions::evaluateEnemySighted()"));
+			relationDescriber = 0;
 			break;
 	}
 	PartitionFilterRelationship	filterTeam(theObj, relationDescriber);
@@ -2761,7 +2760,7 @@ Bool ScriptConditions::evaluateCondition( Condition *pCondition )
 			return evaluateSciencePurchasePoints(pCondition->getParameter(0), pCondition->getParameter(1));
 		case Condition::DEFUNCT_PLAYER_SELECTED_GENERAL:
 		case Condition::DEFUNCT_PLAYER_SELECTED_GENERAL_FROM_NAMED:
-			DEBUG_CRASH(("PLAYER_SELECTED_GENERAL script conditions are no longer in use\n")); 
+			DEBUG_CRASH(("PLAYER_SELECTED_GENERAL script conditions are no longer in use")); 
 			return false;
 		case Condition::PLAYER_BUILT_UPGRADE:
 			return evaluateUpgradeFromUnitComplete(pCondition->getParameter(0), pCondition->getParameter(1), NULL);

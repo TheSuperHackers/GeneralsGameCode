@@ -145,7 +145,7 @@ NameKeyType NameKeyGenerator::nameToKey(const char* nameString)
 
 	NameKeyType result = b->m_key;
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	// reality-check to be sure our hasher isn't going bad.
 	const Int maxThresh = 3;
 	Int numOverThresh = 0;
@@ -162,7 +162,7 @@ NameKeyType NameKeyGenerator::nameToKey(const char* nameString)
 	// if more than a small percent of the sockets are getting deep, probably want to increase the socket count.
 	if (numOverThresh > SOCKET_COUNT/20)
 	{
-		DEBUG_CRASH(("hmm, might need to increase the number of bucket-sockets for NameKeyGenerator (numOverThresh %d = %f%%)\n",numOverThresh,(Real)numOverThresh/(Real)(SOCKET_COUNT/20)));
+		DEBUG_CRASH(("hmm, might need to increase the number of bucket-sockets for NameKeyGenerator (numOverThresh %d = %f%%)",numOverThresh,(Real)numOverThresh/(Real)(SOCKET_COUNT/20)));
 	}
 #endif
 
@@ -193,7 +193,7 @@ NameKeyType NameKeyGenerator::nameToLowercaseKey(const char* nameString)
 
 	NameKeyType result = b->m_key;
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	// reality-check to be sure our hasher isn't going bad.
 	const Int maxThresh = 3;
 	Int numOverThresh = 0;
@@ -210,7 +210,7 @@ NameKeyType NameKeyGenerator::nameToLowercaseKey(const char* nameString)
 	// if more than a small percent of the sockets are getting deep, probably want to increase the socket count.
 	if (numOverThresh > SOCKET_COUNT/20)
 	{
-		DEBUG_CRASH(("hmm, might need to increase the number of bucket-sockets for NameKeyGenerator (numOverThresh %d = %f%%)\n",numOverThresh,(Real)numOverThresh/(Real)(SOCKET_COUNT/20)));
+		DEBUG_CRASH(("hmm, might need to increase the number of bucket-sockets for NameKeyGenerator (numOverThresh %d = %f%%)",numOverThresh,(Real)numOverThresh/(Real)(SOCKET_COUNT/20)));
 	}
 #endif
 

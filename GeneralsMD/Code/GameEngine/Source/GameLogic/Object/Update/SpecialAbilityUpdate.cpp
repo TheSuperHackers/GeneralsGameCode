@@ -64,11 +64,6 @@
 #include "GameLogic/Module/StealthUpdate.h"
 #include "GameLogic/Module/ContainModule.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 
 //-------------------------------------------------------------------------------------------------
@@ -280,7 +275,7 @@ UpdateSleepTime SpecialAbilityUpdate::update( void )
             // it's been captured by a colleague! we should stop.
             shouldAbort = TRUE;
           }
-          //deliberately falling through...
+          FALLTHROUGH; //deliberately falling through...
         }
         case SPECIAL_BLACKLOTUS_STEAL_CASH_HACK:
         case SPECIAL_BOOBY_TRAP:
@@ -309,7 +304,7 @@ UpdateSleepTime SpecialAbilityUpdate::update( void )
         {
           if ( target->isKindOf( KINDOF_STRUCTURE ) )
             shouldAbort = TRUE;
-          //deliberately falling through
+          FALLTHROUGH; //deliberately falling through
         }
         case SPECIAL_BLACKLOTUS_DISABLE_VEHICLE_HACK:
         {

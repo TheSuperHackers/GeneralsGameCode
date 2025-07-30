@@ -456,9 +456,9 @@ static Bool ParseTeamsDataChunk(DataChunkInput &file, DataChunkInfo *info, void 
 		if (sides->findSkirmishSideInfo(player)) {
 			// player exists, so just add it.
 			sides->addSkirmishTeam(&teamDict);
-			//DEBUG_LOG(("Adding team %s\n", teamName.str()));
+			//DEBUG_LOG(("Adding team %s", teamName.str()));
 		} else {
-			//DEBUG_LOG(("Couldn't add team %s, no player %s\n", teamName.str(), player.str()));
+			//DEBUG_LOG(("Couldn't add team %s, no player %s", teamName.str(), player.str()));
 		}
 	}
 	DEBUG_ASSERTCRASH(file.atEndOfChunk(), ("Unexpected data left over."));
@@ -507,7 +507,7 @@ void SidesList::prepareForMP_or_Skirmish(void)
 	}
 	if (!gotScripts) {
 		AsciiString path = "data\\Scripts\\SkirmishScripts.scb";
-		DEBUG_LOG(("Skirmish map using standard scripts\n"));
+		DEBUG_LOG(("Skirmish map using standard scripts"));
 		m_skirmishTeamrec.clear();
 		CachedFileInputStream theInputStream;
 		if (theInputStream.open(path)) { 
@@ -517,7 +517,7 @@ void SidesList::prepareForMP_or_Skirmish(void)
 				file.registerParser( AsciiString("ScriptsPlayers"), AsciiString::TheEmptyString, ParsePlayersDataChunk );
 				file.registerParser( AsciiString("ScriptTeams"), AsciiString::TheEmptyString, ParseTeamsDataChunk );
 				if (!file.parse(this)) {
-					DEBUG_LOG(("ERROR - Unable to read in skirmish scripts.\n"));
+					DEBUG_LOG(("ERROR - Unable to read in skirmish scripts."));
 					return;
 				}
 				ScriptList *scripts[MAX_PLAYER_COUNT];
@@ -761,7 +761,7 @@ Bool SidesList::validateSides()
 		}
 		else
 		{
-			DEBUG_LOG(("*** default team for player %s missing (should not be possible), adding it...\n",tname.str()));
+			DEBUG_LOG(("*** default team for player %s missing (should not be possible), adding it...",tname.str()));
 			Dict d;
 			d.setAsciiString(TheKey_teamName, tname);
 			d.setAsciiString(TheKey_teamOwner, pname);
@@ -777,14 +777,14 @@ Bool SidesList::validateSides()
 		// (note that owners can be teams or players, but allies/enemies can only be teams.)
 		if (validateAllyEnemyList(pname, allies))
 		{
-			DEBUG_LOG(("bad allies...\n"));
+			DEBUG_LOG(("bad allies..."));
 			pdict->setAsciiString(TheKey_playerAllies, allies);
 			modified = true;
 		}
 
 		if (validateAllyEnemyList(pname, enemies))
 		{
-			DEBUG_LOG(("bad enemies...\n"));
+			DEBUG_LOG(("bad enemies..."));
 			pdict->setAsciiString(TheKey_playerEnemies, enemies);
 			modified = true;
 		}
@@ -799,7 +799,7 @@ validate_team_names:
 		AsciiString tname = tdict->getAsciiString(TheKey_teamName);
 		if (findSideInfo(tname))
 		{
-			DEBUG_CRASH(("name %s is duplicate between player and team, removing...\n",tname.str()));
+			DEBUG_CRASH(("name %s is duplicate between player and team, removing...",tname.str()));
 			removeTeam(i);
 			modified = true;
 			goto validate_team_names;
@@ -814,7 +814,7 @@ validate_team_names:
 		SidesInfo* si = findSideInfo(towner);
 		if (si == NULL || towner == tname)
 		{
-			DEBUG_LOG(("bad owner %s; reparenting to neutral...\n",towner.str()));
+			DEBUG_LOG(("bad owner %s; reparenting to neutral...",towner.str()));
 			tdict->setAsciiString(TheKey_teamOwner, AsciiString::TheEmptyString);
 			modified = true;
 		}
@@ -855,7 +855,7 @@ void SidesList::xfer( Xfer *xfer )
 	if( sideCount != getNumSides() )
 	{
 
-		DEBUG_CRASH(( "SidesList::xfer - The sides list size has changed, this was not supposed to happen, you must version this method and figure out how to translate between old and new versions now\n" ));
+		DEBUG_CRASH(( "SidesList::xfer - The sides list size has changed, this was not supposed to happen, you must version this method and figure out how to translate between old and new versions now" ));
 		throw SC_INVALID_DATA;
 
 	}  // end if
@@ -874,7 +874,7 @@ void SidesList::xfer( Xfer *xfer )
 				(scriptList != NULL && scriptListPresent == FALSE) )
 		{
 
-			DEBUG_CRASH(( "SidesList::xfer - script list missing/present mismatch\n" ));
+			DEBUG_CRASH(( "SidesList::xfer - script list missing/present mismatch" ));
 			throw SC_INVALID_DATA;
 
 		}  // end if
@@ -1090,7 +1090,7 @@ void TeamsInfoRec::clear()
 { 
 	Int i;
 
-	for (i = 0; i < m_numTeamsAllocated; i++) 
+	for (i = 0; i < m_numTeams; ++i)
 		m_teams[i].clear(); 
 
 	m_numTeams = 0; 
@@ -1101,7 +1101,7 @@ void TeamsInfoRec::clear()
 
 TeamsInfo *TeamsInfoRec::findTeamInfo(AsciiString name, Int* index /*= NULL*/)
 {
-	for (int i = 0; i < m_numTeams; i++) 
+	for (int i = 0; i < m_numTeams; ++i)
 	{
 		if (m_teams[i].getDict()->getAsciiString(TheKey_teamName) == name)
 		{
@@ -1123,24 +1123,22 @@ void TeamsInfoRec::addTeam(const Dict* d)
 	DEBUG_ASSERTCRASH(m_numTeams < 1024, ("hmm, seems like an awful lot of teams..."));
 	if (m_numTeams >= m_numTeamsAllocated)
 	{
-	// pool[]ify
-		TeamsInfo* nti = NEW TeamsInfo[m_numTeamsAllocated + TEAM_ALLOC_CHUNK];	// throws on failure
-		
+		// pool[]ify
+		const Int newNumTeamsAllocated = m_numTeams + TEAM_ALLOC_CHUNK;
+		TeamsInfo* nti = NEW TeamsInfo[newNumTeamsAllocated];
 		Int i;
 
-		for (i = 0; i < m_numTeams; i++)
+		for (i = 0; i < m_numTeams; ++i)
 			nti[i] = m_teams[i];
 
-		for ( ; i < m_numTeamsAllocated + TEAM_ALLOC_CHUNK; i++) 
-			nti[i].clear(); 
-		
 		delete [] m_teams;
-
 		m_teams = nti;
-		m_numTeamsAllocated += TEAM_ALLOC_CHUNK;
+		m_numTeamsAllocated = newNumTeamsAllocated;
 	}
 
-	m_teams[m_numTeams++].init(d);
+	m_teams[m_numTeams].init(d);
+
+	++m_numTeams;
 }
 
 void TeamsInfoRec::removeTeam(Int i)
@@ -1148,11 +1146,10 @@ void TeamsInfoRec::removeTeam(Int i)
 	if (i < 0 || i >= m_numTeams || m_numTeams <= 1)
 		return;
 
-	for ( ; i < m_numTeams-1; i++)
+	--m_numTeams;
+
+	for ( ; i < m_numTeams; ++i)
 		m_teams[i] = m_teams[i+1];
 
-	for ( ; i < m_numTeamsAllocated; i++)
-		m_teams[i].clear();
-
-	--m_numTeams;
+	m_teams[m_numTeams].clear();
 }

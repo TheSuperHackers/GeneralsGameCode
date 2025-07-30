@@ -42,11 +42,6 @@
 #include "GameLogic/Object.h"
 //#include "GameLogic/PartitionManager.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -131,16 +126,26 @@ void HackInternetAIUpdate::aiDoCommand(const AICommandParms* parms)
 	if (!isAllowedToRespondToAiCommands(parms))
 		return;
 
+	const StateID currentState = getStateMachine()->getCurrentStateID();
+
+#if !RETAIL_COMPATIBLE_CRC
+	// TheSuperHackers @bugfix andrew-2e128 / Mauller 14/07/2025 prevent hacking hackers packing and unpacking when commanded to hack the internet
+	if (parms->m_cmd == AICMD_HACK_INTERNET && ( currentState == HACK_INTERNET || currentState == UNPACKING ) )
+	{
+		return;
+	}
+#endif
+
 	//If our hacker is currently packing up his gear, we need to prevent him
 	//from moving until completed. In order to accomplish this, we'll detect,
 	//then 
-	if( getStateMachine()->getCurrentStateID() == HACK_INTERNET || getStateMachine()->getCurrentStateID() == PACKING )
+	if( currentState == HACK_INTERNET || currentState == PACKING )
 	{
 		// nuke any existing pending cmd
 		m_pendingCommand.store(*parms);
 		m_hasPendingCommand = true;
 
-		if( getStateMachine()->getCurrentStateID() == HACK_INTERNET )
+		if( currentState == HACK_INTERNET )
 		{
 			getStateMachine()->clear();
 			setLastCommandSource( CMD_FROM_AI );
@@ -506,28 +511,28 @@ StateReturnType HackInternetState::update()
 						{
 							break;
 						}
-						//If entry missing, fall through!
+						FALLTHROUGH; //If entry missing, fall through!
 					case LEVEL_ELITE:
 						amount = ai->getEliteCashAmount();
 						if( amount )
 						{
 							break;
 						}
-						//If entry missing, fall through!
+						FALLTHROUGH; //If entry missing, fall through!
 					case LEVEL_VETERAN:
 						amount = ai->getVeteranCashAmount();
 						if( amount )
 						{
 							break;
 						}
-						//If entry missing, fall through!
+						FALLTHROUGH; //If entry missing, fall through!
 					case LEVEL_REGULAR:
 						amount = ai->getRegularCashAmount();
 						if( amount )
 						{
 							break;
 						}
-						//If entry missing, fall through!
+						FALLTHROUGH; //If entry missing, fall through!
 					default:
 						amount = 1;
 						break;

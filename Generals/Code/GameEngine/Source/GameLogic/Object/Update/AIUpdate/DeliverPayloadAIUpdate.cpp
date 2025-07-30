@@ -49,11 +49,6 @@
 #include "GameLogic/Weapon.h"
 #include "GameLogic/WeaponSet.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 //-------------------------------------------------------------------------------------------------
 const FieldParse* DeliverPayloadData::getFieldParse()
@@ -382,7 +377,7 @@ Bool DeliverPayloadAIUpdate::isCloseEnoughToTarget()
 	if ( inBound )
 		allowedDistanceSqr = sqr(getAllowedDistanceToTarget() + getPreOpenDistance());
 
-	//DEBUG_LOG(("Dist to target is %f (allowed %f)\n",sqrt(currentDistanceSqr),sqrt(allowedDistanceSqr)));
+	//DEBUG_LOG(("Dist to target is %f (allowed %f)",sqrt(currentDistanceSqr),sqrt(allowedDistanceSqr)));
 
 
 	if ( allowedDistanceSqr > currentDistanceSqr )
@@ -944,10 +939,10 @@ StateReturnType ConsiderNewApproachState::onEnter() // Increment local counter o
 
 	++m_numberEntriesToState;
 
-	DEBUG_LOG(("Considering approach #%d...\n",m_numberEntriesToState));
+	DEBUG_LOG(("Considering approach #%d...",m_numberEntriesToState));
 	if( m_numberEntriesToState > ai->getMaxNumberAttempts() )
 	{
-		DEBUG_LOG(("Too many approaches! Time to give up.\n"));
+		DEBUG_LOG(("Too many approaches! Time to give up."));
 		return STATE_FAILURE;
 	}
 

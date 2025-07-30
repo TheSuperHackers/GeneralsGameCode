@@ -40,11 +40,6 @@
 #include "GameClient/InGameUI.h"
 #include "GameLogic/Object.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 
 
@@ -230,14 +225,14 @@ void ControlBar::populateMultiSelect( void )
 
 	// sanity
 	DEBUG_ASSERTCRASH( TheInGameUI->getSelectCount() > 1,
-										 ("populateMultiSelect: Can't populate multiselect context cause there are only '%d' things selected\n",
+										 ("populateMultiSelect: Can't populate multiselect context cause there are only '%d' things selected",
 										  TheInGameUI->getSelectCount()) );
 
 	// get the list of drawable IDs from the in game UI
 	const DrawableList *selectedDrawables = TheInGameUI->getAllSelectedDrawables();
 
 	// sanity
-	DEBUG_ASSERTCRASH( selectedDrawables->empty() == FALSE, ("populateMultiSelect: Drawable list is empty\n") );
+	DEBUG_ASSERTCRASH( selectedDrawables->empty() == FALSE, ("populateMultiSelect: Drawable list is empty") );
 
 	// loop through all the selected drawables
 	for( DrawableListCIt it = selectedDrawables->begin();
@@ -311,14 +306,14 @@ void ControlBar::updateContextMultiSelect( void )
 
 	// santiy
 	DEBUG_ASSERTCRASH( TheInGameUI->getSelectCount() > 1,
-										 ("updateContextMultiSelect: TheInGameUI only has '%d' things selected\n",
+										 ("updateContextMultiSelect: TheInGameUI only has '%d' things selected",
 										  TheInGameUI->getSelectCount()) );
 
 	// get the list of drawable IDs from the in game UI
 	const DrawableList *selectedDrawables = TheInGameUI->getAllSelectedDrawables();
 
 	// sanity
-	DEBUG_ASSERTCRASH( selectedDrawables->empty() == FALSE, ("populateMultiSelect: Drawable list is empty\n") );
+	DEBUG_ASSERTCRASH( selectedDrawables->empty() == FALSE, ("populateMultiSelect: Drawable list is empty") );
 
 	// loop through all the selected drawable IDs
 	for( DrawableListCIt it = selectedDrawables->begin();

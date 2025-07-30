@@ -44,11 +44,6 @@
 #include "GameLogic/Object.h"
 #include "GameLogic/PartitionManager.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -199,7 +194,7 @@ UpdateSleepTime AutoHealBehavior::update( void )
 		return UPDATE_SLEEP_FOREVER;
 	}
 
-//DEBUG_LOG(("doing auto heal %d\n",TheGameLogic->getFrame()));
+//DEBUG_LOG(("doing auto heal %d",TheGameLogic->getFrame()));
 
 	if( d->m_affectsWholePlayer )
 	{

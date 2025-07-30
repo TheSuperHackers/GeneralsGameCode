@@ -99,7 +99,7 @@ struct TransportMessage
 };
 #pragma pack(pop)
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 #pragma pack(push, 1)
 struct DelayedTransportMessage
 {
@@ -212,5 +212,6 @@ static const Int NETWORK_BASE_PORT_NUMBER = 8088;
 class NetworkInterface;
 extern NetworkInterface *TheNetwork;
 
+#define PRINTF_IP_AS_4_INTS(ip) ((ip) >> 24) & 0xff, ((ip) >> 16) & 0xff, ((ip) >> 8 ) & 0xff, (ip) & 0xff
 
 #endif

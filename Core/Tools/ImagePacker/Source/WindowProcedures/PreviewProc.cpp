@@ -112,7 +112,7 @@ LRESULT CALLBACK PreviewProc( HWND hWnd, UINT message,
 							page->getPixel( x, y, &r, &g, &b );
 
 							// create a new pen of the right color
-							pen = CreatePen( 1, 1, RGB( r, g, b, ) );
+							pen = CreatePen( 1, 1, RGB( r, g, b ) );
 							
 							// select pen into hdc
 							prevPen = (HPEN)SelectObject( hdc, pen );

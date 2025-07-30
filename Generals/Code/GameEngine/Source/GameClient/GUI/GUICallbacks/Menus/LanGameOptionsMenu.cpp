@@ -57,11 +57,6 @@
 #include "GameClient/GameText.h"
 #include "GameNetwork/GUIUtil.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 extern char *LANnextScreen;
 extern Bool LANisShuttingDown;
@@ -220,7 +215,13 @@ static void playerTooltip(GameWindow *window,
 		return;
 	}
 	UnicodeString tooltip;
-	tooltip.format(TheGameText->fetch("TOOLTIP:LANPlayer"), player->getName().str(), player->getLogin().str(), player->getHost().str());
+	tooltip.format(TheGameText->fetch("TOOLTIP:LANPlayer"), player->getLogin().str(), player->getHost().str());
+#if defined(RTS_DEBUG)
+	UnicodeString ip;
+	ip.format(L" - %d.%d.%d.%d", PRINTF_IP_AS_4_INTS(player->getIP()));
+	tooltip.concat(ip);
+#endif
+
 	TheMouse->setCursorTooltip( tooltip );
 }
 
@@ -670,11 +671,7 @@ void InitLanGameGadgets( void )
 		GadgetComboBoxReset(comboBoxPlayer[i]);
 		GadgetComboBoxGetEditBox(comboBoxPlayer[i])->winSetTooltipFunc(playerTooltip);
 
-		if(localSlotNum == i)
-		{
-			GadgetComboBoxAddEntry(comboBoxPlayer[i],TheLAN->GetMyName(),white);
-		}
-		else
+		if(localSlotNum != i)
 		{
 			GadgetComboBoxAddEntry(comboBoxPlayer[i],TheGameText->fetch("GUI:Open"),white);
 			GadgetComboBoxAddEntry(comboBoxPlayer[i],TheGameText->fetch("GUI:Closed"),white);
@@ -745,7 +742,11 @@ void DeinitLanGameGadgets( void )
 	listboxChatWindowLanGame = NULL;
 	textEntryChat = NULL;
 	textEntryMapDisplay = NULL;
-	windowMap = NULL;
+	if (windowMap)
+	{
+		windowMap->winSetUserData(NULL);
+		windowMap = NULL;
+	}
 	for (Int i = 0; i < MAX_SLOTS; i++)
 	{
 		comboBoxPlayer[i] = NULL;
@@ -767,7 +768,7 @@ void LanGameOptionsMenuInit( WindowLayout *layout, void *userData )
 	{
 		// If we init while the game is in progress, we are really returning to the menu
 		// after the game.  So, we pop the menu and go back to the lobby.  Whee!
-		DEBUG_LOG(("Popping to lobby after a game!\n"));
+		DEBUG_LOG(("Popping to lobby after a game!"));
 		TheShell->popImmediate();
 		return;
 	}
@@ -814,11 +815,14 @@ void LanGameOptionsMenuInit( WindowLayout *layout, void *userData )
 		lanUpdateSlotList();
 		updateGameOptions();
 		start = 1; // leave my combo boxes usable
+
+		// TheSuperHackers @tweak disable the combo box for the host's player name
+		comboBoxPlayer[0]->winEnable(FALSE);
 	}
 	else
 	{
 
-		//DEBUG_LOG(("LanGameOptionsMenuInit(): map is %s\n", TheLAN->GetMyGame()->getMap().str()));
+		//DEBUG_LOG(("LanGameOptionsMenuInit(): map is %s", TheLAN->GetMyGame()->getMap().str()));
 		buttonStart->winSetText(TheGameText->fetch("GUI:Accept"));
 		buttonSelectMap->winEnable( FALSE );
 		TheLAN->GetMyGame()->setMapCRC( TheLAN->GetMyGame()->getMapCRC() );		// force a recheck
@@ -1029,6 +1033,9 @@ WindowMsgHandledType LanGameOptionsMenuSystem( GameWindow *window, UnsignedInt m
 		//-------------------------------------------------------------------------------------------------
 		case GWM_DESTROY:
 			{
+				if (windowMap)
+					windowMap->winSetUserData(NULL);
+
 				break;
 			} // case GWM_DESTROY:
 		//-------------------------------------------------------------------------------------------------

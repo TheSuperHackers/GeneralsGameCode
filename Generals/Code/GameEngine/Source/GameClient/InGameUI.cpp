@@ -86,11 +86,6 @@
 #include "GameLogic/Module/SupplyWarehouseDockUpdate.h"
 #include "GameLogic/Module/MobMemberSlavedUpdate.h"//ML
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 
 // ------------------------------------------------------------------------------------------------
@@ -447,7 +442,7 @@ void InGameUI::xfer( Xfer *xfer )
 			}
 			else if (playerIndex < 0 || playerIndex >= MAX_PLAYER_COUNT)
 			{
-				DEBUG_CRASH(("SWInfo bad plyrindex\n"));
+				DEBUG_CRASH(("SWInfo bad plyrindex"));
 				throw INI_INVALID_DATA;
 			}
 
@@ -456,7 +451,7 @@ void InGameUI::xfer( Xfer *xfer )
 			const SpecialPowerTemplate* powerTemplate = TheSpecialPowerStore->findSpecialPowerTemplate(templateName);
 			if (powerTemplate == NULL)
 			{
-				DEBUG_CRASH(("power %s not found\n",templateName.str()));
+				DEBUG_CRASH(("power %s not found",templateName.str()));
 				throw INI_INVALID_DATA;
 			}
 
@@ -561,7 +556,7 @@ void InGameUI::addSuperweapon(Int playerIndex, const AsciiString& powerName, Obj
 	const Player* player = ThePlayerList->getNthPlayer(playerIndex);
 	Bool hiddenByScience = (powerTemplate->getRequiredScience() != SCIENCE_INVALID) && (player->hasScience(powerTemplate->getRequiredScience()) == false);
 
-	DEBUG_LOG(("Adding superweapon UI timer\n"));
+	DEBUG_LOG(("Adding superweapon UI timer"));
 	SuperweaponInfo *info = newInstance(SuperweaponInfo)(
 					id,
 					-1,			// timestamp
@@ -583,7 +578,7 @@ void InGameUI::addSuperweapon(Int playerIndex, const AsciiString& powerName, Obj
 // ------------------------------------------------------------------------------------------------
 Bool InGameUI::removeSuperweapon(Int playerIndex, const AsciiString& powerName, ObjectID id, const SpecialPowerTemplate *powerTemplate)
 {
-	DEBUG_LOG(("Removing superweapon UI timer\n"));
+	DEBUG_LOG(("Removing superweapon UI timer"));
 	SuperweaponMap::iterator mapIt = m_superweapons[playerIndex].find(powerName);
 	if (mapIt != m_superweapons[playerIndex].end())
 	{
@@ -847,6 +842,19 @@ const FieldParse InGameUI::s_fieldParseTable[] =
 	{ "RadarRadiusCursor",					RadiusDecalTemplate::parseRadiusDecalTemplate, NULL, offsetof( InGameUI, m_radiusCursors[	RADIUSCURSOR_RADAR] ) },
 	{ "SpyDroneRadiusCursor",				RadiusDecalTemplate::parseRadiusDecalTemplate, NULL, offsetof( InGameUI, m_radiusCursors[ RADIUSCURSOR_SPYDRONE] ) },
 
+	// TheSuperHackers @info ui enhancement configuration
+	{ "SystemTimeFont",         INI::parseAsciiString,  NULL, offsetof( InGameUI, m_systemTimeFont ) },
+	{ "SystemTimeBold",         INI::parseBool,         NULL, offsetof( InGameUI, m_systemTimeBold ) },
+	{ "SystemTimePosition",     INI::parseCoord2D,      NULL, offsetof( InGameUI, m_systemTimePosition ) },
+	{ "SystemTimeColor",        INI::parseColorInt,     NULL, offsetof( InGameUI, m_systemTimeColor ) },
+	{ "SystemTimeDropColor",    INI::parseColorInt,     NULL, offsetof( InGameUI, m_systemTimeDropColor ) },
+
+	{ "GameTimeFont",           INI::parseAsciiString,  NULL, offsetof( InGameUI, m_gameTimeFont ) },
+	{ "GameTimeBold",           INI::parseBool,         NULL, offsetof( InGameUI, m_gameTimeBold ) },
+	{ "GameTimePosition",       INI::parseCoord2D,      NULL, offsetof( InGameUI, m_gameTimePosition ) },
+	{ "GameTimeColor",          INI::parseColorInt,     NULL, offsetof( InGameUI, m_gameTimeColor ) },
+	{ "GameTimeDropColor",      INI::parseColorInt,     NULL, offsetof( InGameUI, m_gameTimeDropColor ) },
+
 	{ NULL,													NULL,										NULL,		0 }  // keep this last
 };
 
@@ -971,6 +979,26 @@ InGameUI::InGameUI()
 	m_replayWindow = NULL;
 	m_messagesOn = TRUE;
 
+	// TheSuperHackers @info the default font, size and positions of the system and game times were chosen based on GenTools implementation
+	m_systemTimeString = NULL;
+	m_systemTimeFont = "Tahoma";
+	m_systemTimePointSize = TheGlobalData->m_systemTimeFontSize;
+	m_systemTimeBold = TRUE;
+	m_systemTimePosition.x = 3; // TheSuperHackers @info relative to the left of the screen
+	m_systemTimePosition.y = -1;
+	m_systemTimeColor = GameMakeColor( 255, 255, 255, 255 );
+	m_systemTimeDropColor = GameMakeColor( 0, 0, 0, 255 );
+
+	m_gameTimeString = NULL;
+	m_gameTimeFrameString = NULL;
+	m_gameTimeFont = "Tahoma";
+	m_gameTimePointSize = TheGlobalData->m_gameTimeFontSize;
+	m_gameTimeBold = TRUE;
+	m_gameTimePosition.x = 3; // TheSuperHackers @info relative to the right of the screen
+	m_gameTimePosition.y = -1;
+	m_gameTimeColor = GameMakeColor( 255, 255, 255, 255 );
+	m_gameTimeDropColor = GameMakeColor( 0, 0, 0, 255 );
+
 	m_superweaponPosition.x = 0.7f;
 	m_superweaponPosition.y = 0.7f;
 	m_superweaponFlashDuration = 1.0f;
@@ -1051,6 +1079,9 @@ InGameUI::~InGameUI()
 
 	// delete the message resources
 	freeMessageResources();
+
+	// free custom ui strings
+	freeCustomUiResources();
 
 	// delete the array for the drawbles
 	delete [] m_placeIcon;
@@ -1695,7 +1726,7 @@ void InGameUI::update( void )
 					{
 						// if we've exceeded the allocated number of display strings, this will force us to essentially truncate the remaining text
 						m_militarySubtitle->index = m_militarySubtitle->subtitle.getLength();
-						DEBUG_CRASH(("You're Only Allowed to use %d lines of subtitle text\n",MAX_SUBTITLE_LINES));
+						DEBUG_CRASH(("You're Only Allowed to use %d lines of subtitle text",MAX_SUBTITLE_LINES));
 					}
 				}
 				else
@@ -1868,6 +1899,9 @@ void InGameUI::reset( void )
 	// free any message resources allocated
 	freeMessageResources();
 
+	// refresh custom ui strings - this will create the strings if required and update the fonts
+	refreshCustomUiResources();
+
 	Int i;
 	for (i=0; i<MAX_PLAYER_COUNT; ++i)
 	{
@@ -1953,6 +1987,16 @@ void InGameUI::freeMessageResources( void )
 
 }  // end freeMessageResources
 
+void InGameUI::freeCustomUiResources( void )
+{
+	TheDisplayStringManager->freeDisplayString(m_systemTimeString);
+	m_systemTimeString = NULL;
+	TheDisplayStringManager->freeDisplayString(m_gameTimeString);
+	m_gameTimeString = NULL;
+	TheDisplayStringManager->freeDisplayString(m_gameTimeFrameString);
+	m_gameTimeFrameString = NULL;
+}
+
 //-------------------------------------------------------------------------------------------------
 /** Same as the unicode message method, but this takes an ascii string which is assumed
 	* to me a string manager label */
@@ -1984,6 +2028,20 @@ void InGameUI::message( AsciiString stringManagerLabel, ... )
 		DEBUG_CRASH(("InGameUI::message failed with code:%d", result));
 	}
 }  // end 
+
+//-------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------
+void InGameUI::messageNoFormat( const UnicodeString& message )
+{
+	addMessageText( message, NULL );
+}
+
+//-------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------
+void InGameUI::messageNoFormat( const RGBColor *rgbColor, const UnicodeString& message )
+{
+	addMessageText( message, rgbColor );
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Interface for display text messages to the user */
@@ -2181,7 +2239,7 @@ void InGameUI::createGarrisonHint( const GameMessage *msg )
 	}
 }
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 #define AI_DEBUG_TOOLTIPS		1
 
 #ifdef AI_DEBUG_TOOLTIPS
@@ -2190,7 +2248,7 @@ void InGameUI::createGarrisonHint( const GameMessage *msg )
 #include "GameLogic/AIPathfind.h"
 #endif // AI_DEBUG_TOOLTIPS
 
-#endif // defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#endif // defined(RTS_DEBUG)
 
 //-------------------------------------------------------------------------------------------------
 /** Details of what is mouse hovered over right now are in this message.  Terrain might result
@@ -2262,7 +2320,7 @@ void InGameUI::createMouseoverHint( const GameMessage *msg )
  			else
  				m_mousedOverDrawableID = draw->getID();
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL) //Extra hacky, sorry, but I need to use this in constantdebug report
+#if defined(RTS_DEBUG) //Extra hacky, sorry, but I need to use this in constantdebug report
 			if ( TheGlobalData->m_constantDebugUpdate == TRUE )
 				m_mousedOverDrawableID = draw->getID();
 #endif
@@ -2434,7 +2492,7 @@ void InGameUI::createMouseoverHint( const GameMessage *msg )
 
 	if (oldID != m_mousedOverDrawableID)
 	{
-		//DEBUG_LOG(("Resetting tooltip delay\n"));
+		//DEBUG_LOG(("Resetting tooltip delay"));
 		TheMouse->resetTooltipDelay();
 	}
 
@@ -2488,7 +2546,7 @@ void InGameUI::createCommandHint( const GameMessage *msg )
 	{
 		const Object* obj = draw->getObject();
 		Int localPlayerIndex = ThePlayerList ? ThePlayerList->getLocalPlayer()->getPlayerIndex() : 0;
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if ENABLE_CONFIGURABLE_SHROUD
 		ObjectShroudStatus ss = (!obj || !TheGlobalData->m_shroudOn) ? OBJECTSHROUD_CLEAR : obj->getShroudedStatus(localPlayerIndex);
 #else
 		ObjectShroudStatus ss = (!obj) ? OBJECTSHROUD_CLEAR : obj->getShroudedStatus(localPlayerIndex);
@@ -2834,7 +2892,7 @@ void InGameUI::setGUICommand( const CommandButton *command )
 		if( BitIsSet( command->getOptions(), COMMAND_OPTION_NEED_TARGET ) == FALSE )
 		{
 
-			DEBUG_ASSERTCRASH( 0, ("setGUICommand: Command '%s' does not need additional user interaction\n",	
+			DEBUG_ASSERTCRASH( 0, ("setGUICommand: Command '%s' does not need additional user interaction",	
 														command->getName().str()) );
 			m_pendingGUICommand = NULL;
 			m_mouseMode = MOUSEMODE_DEFAULT;
@@ -2981,7 +3039,7 @@ void InGameUI::placeBuildAvailable( const ThingTemplate *build, Drawable *buildD
 				else
 					draw->setIndicatorColor(sourceObject->getControllingPlayer()->getPlayerColor());
 			}
-			DEBUG_ASSERTCRASH( draw, ("Unable to create icon at cursor for placement '%s'\n",
+			DEBUG_ASSERTCRASH( draw, ("Unable to create icon at cursor for placement '%s'",
 												 build->getName().str()) );
 
 			//
@@ -3036,7 +3094,7 @@ const ThingTemplate *InGameUI::getPendingPlaceType( void )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-const ObjectID InGameUI::getPendingPlaceSourceObjectID( void )
+ObjectID InGameUI::getPendingPlaceSourceObjectID( void )
 {
 
 	return m_pendingPlaceSourceObjectID;
@@ -3160,7 +3218,7 @@ void InGameUI::deselectDrawable( Drawable *draw )
 
 		// sanity
 		DEBUG_ASSERTCRASH( findIt != m_selectedDrawables.end(),
-											 ("deselectDrawable: Drawable not found in the selected drawable list '%s'\n",
+											 ("deselectDrawable: Drawable not found in the selected drawable list '%s'",
 											 draw->getTemplate()->getName().str()) );
 
 		// remove it from the selected drawable list		
@@ -3367,6 +3425,22 @@ void InGameUI::disregardDrawable( Drawable *draw )
 	// make sure drawable is no longer selected
 	deselectDrawable( draw );		
 
+}
+
+//-------------------------------------------------------------------------------------------------
+/** This is called after the WindowManager has drawn the menus. */
+//-------------------------------------------------------------------------------------------------
+void InGameUI::postWindowDraw( void )
+{
+	if (m_systemTimePointSize > 0)
+	{
+		drawSystemTime();
+	}
+
+	if ( (m_gameTimePointSize > 0) && !TheGameLogic->isInShellGame() && TheGameLogic->isInGame() )
+	{
+		drawGameTime();
+	}
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -4114,7 +4188,7 @@ CanAttackResult InGameUI::getCanSelectedObjectsAttack( ActionType action, const 
 			case ACTIONTYPE_MAKE_DEFECTOR:
 			case ACTIONTYPE_SET_RALLY_POINT:
 			default:
-				DEBUG_CRASH( ("Called InGameUI::getCanSelectedObjectsAttack() with actiontype %d. Only accepts attack types! Should you be calling InGameUI::canSelectedObjectsDoAction() instead?") );
+				DEBUG_CRASH( ("Called InGameUI::getCanSelectedObjectsAttack() with actiontype %d. Only accepts attack types! Should you be calling InGameUI::canSelectedObjectsDoAction() instead?", action) );
 				return ATTACKRESULT_INVALID_SHOT;
 
 		}
@@ -4844,7 +4918,7 @@ void InGameUI::addFloatingText(const UnicodeString& text,const Coord3D *pos, Col
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 inline Bool isClose(Real a, Real b) { return fabs(a-b) <= 1.0f; }
 inline Bool isClose(const Coord3D& a, const Coord3D& b) 
 {
@@ -4887,7 +4961,7 @@ try_again:
 	
 	m_floatingTextList.push_front( newFTD ); // add to the list
 
-	//DEBUG_LOG(("%s\n",text.str()));
+	//DEBUG_LOG(("%s",text.str()));
 }
 #endif
 
@@ -5158,24 +5232,18 @@ void InGameUI::addWorldAnimation( Anim2DTemplate *animTemplate,
 // ------------------------------------------------------------------------------------------------
 void InGameUI::clearWorldAnimations( void )
 {
-	WorldAnimationData *wad;
-
 	// iterate through all entries and delete the animation data
 	for( WorldAnimationListIterator it = m_worldAnimationList.begin();	
 			 it != m_worldAnimationList.end(); /*empty*/ )
 	{
 
-		wad = *it;
-		if( wad )
-		{
+		WorldAnimationData *wad = *it;
 
-			// delete the animation instance
-			deleteInstance(wad->m_anim);
+		// delete the animation instance
+		deleteInstance(wad->m_anim);
 
-			// delete the world animation data
-			delete wad;
-
-		}  // end if
+		// delete the world animation data
+		delete wad;
 
 		it = m_worldAnimationList.erase( it );
 
@@ -5189,15 +5257,13 @@ static const UnsignedInt FRAMES_BEFORE_EXPIRE_TO_FADE = LOGICFRAMES_PER_SECOND *
 // ------------------------------------------------------------------------------------------------
 void InGameUI::updateAndDrawWorldAnimations( void )
 {
-	WorldAnimationData *wad;
-
 	// go through all animations
 	for( WorldAnimationListIterator it = m_worldAnimationList.begin();
 			 it != m_worldAnimationList.end(); /*empty*/ )
 	{
 
 		// get data
-		wad = *it;
+		WorldAnimationData *wad = *it;
 
 		// update portion ... only when the game is in motion
 		if( TheGameLogic->isGamePaused() == FALSE )
@@ -5429,7 +5495,7 @@ void InGameUI::showIdleWorkerLayout( void )
 	if (!m_idleWorkerWin)
 	{
 		m_idleWorkerWin = TheWindowManager->winGetWindowFromId(NULL, TheNameKeyGenerator->nameToKey("ControlBar.wnd:ButtonIdleWorker"));
-		DEBUG_ASSERTCRASH(m_idleWorkerWin, ("InGameUI::showIdleWorkerLayout could not find IdleWorker.wnd to load "));
+		DEBUG_ASSERTCRASH(m_idleWorkerWin, ("InGameUI::showIdleWorkerLayout could not find IdleWorker.wnd to load"));
 		return;
 	}
 
@@ -5500,6 +5566,44 @@ void InGameUI::recreateControlBar( void )
 
 }
 
+void InGameUI::refreshCustomUiResources(void)
+{
+	refreshSystemTimeResources();
+	refreshGameTimeResources();
+}
+
+void InGameUI::refreshSystemTimeResources(void)
+{
+	if (!m_systemTimeString)
+	{
+		m_systemTimeString = TheDisplayStringManager->newDisplayString();
+	}
+
+	m_systemTimePointSize = TheGlobalData->m_systemTimeFontSize;
+	Int adjustedSystemTimeFontSize = TheGlobalLanguageData->adjustFontSize(m_systemTimePointSize);
+	GameFont* systemTimeFont = TheWindowManager->winFindFont(m_systemTimeFont, adjustedSystemTimeFontSize, m_systemTimeBold);
+	m_systemTimeString->setFont(systemTimeFont);
+}
+
+void InGameUI::refreshGameTimeResources(void)
+{
+	if (!m_gameTimeString)
+	{
+		m_gameTimeString = TheDisplayStringManager->newDisplayString();
+	}
+
+	if (!m_gameTimeFrameString)
+	{
+		m_gameTimeFrameString = TheDisplayStringManager->newDisplayString();
+	}
+
+	m_gameTimePointSize = TheGlobalData->m_gameTimeFontSize;
+	Int adjustedGameTimeFontSize = TheGlobalLanguageData->adjustFontSize(m_gameTimePointSize);
+	GameFont* gameTimeFont = TheWindowManager->winFindFont(m_gameTimeFont, adjustedGameTimeFontSize, m_gameTimeBold);
+	m_gameTimeString->setFont(gameTimeFont);
+	m_gameTimeFrameString->setFont(gameTimeFont);
+}
+
 void InGameUI::disableTooltipsUntil(UnsignedInt frameNum)
 {
 	if (frameNum > m_tooltipsDisabledUntil) 
@@ -5528,6 +5632,8 @@ WindowMsgHandledType IdleWorkerSystem( GameWindow *window, UnsignedInt msg,
 			// if we're givin the opportunity to take the keyboard focus we must say we don't want it
 			if( mData1 == TRUE )
 				*(Bool *)mData2 = FALSE;
+			break;
+
 		}
 		//---------------------------------------------------------------------------------------------
 		case GBM_SELECTED:
@@ -5552,4 +5658,40 @@ WindowMsgHandledType IdleWorkerSystem( GameWindow *window, UnsignedInt msg,
 
 }
 
+void InGameUI::drawSystemTime()
+{
+	// current system time
+	SYSTEMTIME systemTime;
+	GetLocalTime( &systemTime );
 
+    UnicodeString TimeString;
+    TimeString.format(L"%2.2d:%2.2d:%2.2d", systemTime.wHour, systemTime.wMinute, systemTime.wSecond);
+    m_systemTimeString->setText(TimeString);
+
+	m_systemTimeString->draw(m_systemTimePosition.x, m_systemTimePosition.y, m_systemTimeColor, m_systemTimeDropColor);
+}
+
+void InGameUI::drawGameTime()
+{
+	Int currentFrame = TheGameLogic->getFrame();
+	Int gameSeconds = (Int) (SECONDS_PER_LOGICFRAME_REAL * currentFrame );
+	Int hours = gameSeconds / 60 / 60;
+	Int minutes = (gameSeconds / 60) % 60;
+	Int seconds = gameSeconds % 60;
+	Int frame = currentFrame % 30;
+
+    UnicodeString gameTimeString;
+    gameTimeString.format(L"%2.2d:%2.2d:%2.2d", hours, minutes, seconds);
+    m_gameTimeString->setText(gameTimeString);
+
+	UnicodeString gameTimeFrameString;
+    gameTimeFrameString.format(L".%2.2d", frame);
+    m_gameTimeFrameString->setText(gameTimeFrameString);
+
+	// TheSuperHackers @info this implicitly offsets the game timer from the right instead of left of the screen
+	int horizontalTimerOffset = TheDisplay->getWidth() - (Int)m_gameTimePosition.x - m_gameTimeString->getWidth() - m_gameTimeFrameString->getWidth();
+	int horizontalFrameOffset = TheDisplay->getWidth() - (Int)m_gameTimePosition.x - m_gameTimeFrameString->getWidth();
+
+	m_gameTimeString->draw(horizontalTimerOffset, m_gameTimePosition.y, m_gameTimeColor, m_gameTimeDropColor);
+	m_gameTimeFrameString->draw(horizontalFrameOffset, m_gameTimePosition.y, GameMakeColor(180,180,180,255), m_gameTimeDropColor);
+}

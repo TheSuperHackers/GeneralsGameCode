@@ -42,14 +42,13 @@
 // USER INCLUDES //////////////////////////////////////////////////////////////
 #include "WinMain.h"
 #include "Lib/BaseType.h"
-#include "Common/CopyProtection.h"
+#include "Common/CommandLine.h"
 #include "Common/CriticalSection.h"
 #include "Common/GlobalData.h"
 #include "Common/GameEngine.h"
 #include "Common/GameSounds.h"
 #include "Common/Debug.h"
 #include "Common/GameMemory.h"
-#include "Common/SafeDisc/CdaPfn.h"
 #include "Common/StackDump.h"
 #include "Common/MessageStream.h"
 #include "Common/Team.h"
@@ -65,18 +64,11 @@
 #include "BuildVersion.h"
 #include "GeneratedVersion.h"
 #include "resource.h"
-#include "trim.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma message("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 // GLOBALS ////////////////////////////////////////////////////////////////////
 HINSTANCE ApplicationHInstance = NULL;  ///< our application instance
 HWND ApplicationHWnd = NULL;  ///< our application window handle
-Bool ApplicationIsWindowed = false;
 Win32Mouse *TheWin32Mouse= NULL;  ///< for the WndProc() only
 DWORD TheMessageTime = 0;	///< For getting the time that a message was posted from Windows.
 
@@ -313,11 +305,6 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message,
 				return TheIMEManager->result();
 			}
 		}
-		
-#ifdef DO_COPY_PROTECTION
-		// Check for messages from the launcher
-		CopyProtect::checkForMessage(message, lParam);
-#endif
 
 #ifdef	DEBUG_WINDOWS_MESSAGES
 		static msgCount=0;
@@ -332,7 +319,7 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message,
 			//-------------------------------------------------------------------------
 			case WM_NCHITTEST:
 			// Prevent the user from selecting the menu in fullscreen mode
-            if( !ApplicationIsWindowed )
+            if( !TheGlobalData->m_windowed )
                 return HTCLIENT;
             break;
 
@@ -371,7 +358,7 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message,
                 case SC_SIZE:
                 case SC_MAXIMIZE:
                 case SC_MONITORPOWER:
-                    if( FALSE == ApplicationIsWindowed )
+                    if( !TheGlobalData->m_windowed )
                         return 1;
                     break;
             }
@@ -636,14 +623,14 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message,
 	}
 	catch (...)
 	{
-		RELEASE_CRASH(("Uncaught exception in Main::WndProc... probably should not happen\n"));
+		RELEASE_CRASH(("Uncaught exception in Main::WndProc... probably should not happen"));
 		// no rethrow
 	}
 
 //In full-screen mode, only pass these messages onto the default windows handler.
 //Appears to fix issues with dual monitor systems but doesn't seem safe?
 ///@todo: Look into proper support for dual monitor systems.
-/*	if (!ApplicationIsWindowed)
+/*	if (!TheGlobalData->m_windowed)
 	switch (message)
 	{
 		case WM_PAINT:
@@ -739,80 +726,6 @@ static Bool initializeAppWindows( HINSTANCE hInstance, Int nCmdShow, Bool runWin
 
 }  // end initializeAppWindows
 
-void munkeeFunc(void);
-CDAPFN_DECLARE_GLOBAL(munkeeFunc, CDAPFN_OVERHEAD_L5, CDAPFN_CONSTRAINT_NONE);
-void munkeeFunc(void)
-{
-	CDAPFN_ENDMARK(munkeeFunc);
-}
-
-void checkProtection(void)
-{
-#ifdef RTS_INTERNAL
-	__try
-	{
-		munkeeFunc();
-	}
-	__except(EXCEPTION_EXECUTE_HANDLER)
-	{
-		exit(0); // someone is messing with us.
-	}
-#endif
-}
-
-char *nextParam(char *newSource, const char *seps)
-{
-	static char *source = NULL;
-	if (newSource)
-	{
-		source = newSource;
-	}
-	if (!source)
-	{
-		return NULL;
-	}
-
-	// find first separator
-	char *first = source;//strpbrk(source, seps);
-	if (first)
-	{
-		// go past separator
-		char *firstSep = strpbrk(first, seps);
-		char firstChar[2] = {0,0};
-		if (firstSep == first)
-		{
-			firstChar[0] = *first;
-			while (*first == firstChar[0]) first++;
-		}
-
-		// find end
-		char *end;
-		if (firstChar[0])
-			end = strpbrk(first, firstChar);
-		else
-			end = strpbrk(first, seps);
-
-		// trim string & save next start pos
-		if (end)
-		{
-			source = end+1;
-			*end = 0;
-
-			if (!*source)
-				source = NULL;
-		}
-		else
-		{
-			source = NULL;
-		}
-
-		if (first && !*first)
-			first = NULL;
-	}
-
-	return first;
-}
-
 // Necessary to allow memory managers and such to have useful critical sections
 static CriticalSection critSec1, critSec2, critSec3, critSec4, critSec5;
 
@@ -822,8 +735,7 @@ static CriticalSection critSec1, critSec2, critSec3, critSec4, critSec5;
 Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
                       LPSTR lpCmdLine, Int nCmdShow )
 {
-	checkProtection();
-
+	Int exitcode = 1;
 	try {
 
 		_set_se_translator( DumpExceptionInfo ); // Hook that allows stack trace.
@@ -841,6 +753,9 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 		TheMemoryPoolCriticalSection = &critSec4;
 		TheDebugLogCriticalSection = &critSec5;
 
+		// initialize the memory manager early
+		initMemoryManager();
+
 		/// @todo remove this force set of working directory later
 		Char buffer[ _MAX_PATH ];
 		GetModuleFileName( NULL, buffer, sizeof( buffer ) );
@@ -856,48 +771,6 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 		}
 		::SetCurrentDirectory(buffer);
 
-
-		/*
-		** Convert WinMain arguments to simple main argc and argv
-		*/
-		int argc = 1;
-		char * argv[20];
-		argv[0] = NULL;
-
-		Bool headless = false;
-
-		char *token;
-		token = nextParam(lpCmdLine, "\" ");
-		while (argc < 20 && token != NULL) {
-			argv[argc++] = strtrim(token);
-
-			//added a preparse step for this flag because it affects window creation style
-			if (stricmp(token, "-win") == 0)
-				ApplicationIsWindowed = true;
-
-			// preparse for headless as well. We need to know about this before we create the window.
-			if (stricmp(token, "-headless") == 0)
-				headless = true;
-
-			token = nextParam(NULL, "\" ");	   
-		}
-
-		if (argc>2 && strcmp(argv[1],"-DX")==0) {  
-			Int i;
-			DEBUG_LOG(("\n--- DX STACK DUMP\n"));
-			for (i=2; i<argc; i++) {
-				Int pc;
-				pc = 0;
-				sscanf(argv[i], "%x",  &pc);
-				char name[_MAX_PATH], file[_MAX_PATH];
-				unsigned int line;
-				unsigned int addr;
-				GetFunctionDetails((void*)pc, name, file, &line, &addr);
-				DEBUG_LOG(("0x%x - %s, %s, line %d address 0x%x\n", pc, name, file, line, addr));
-			}
-			DEBUG_LOG(("\n--- END OF DX STACK DUMP\n"));
-			return 0;
-		}
 
 		#ifdef RTS_DEBUG
 			// Turn on Memory heap tracking
@@ -917,9 +790,11 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 		// Force to be loaded from a file, not a resource so same exe can be used in germany and retail.
  		gLoadScreenBitmap = (HBITMAP)LoadImage(hInstance, "Install_Final.bmp",	IMAGE_BITMAP, 0, 0, LR_SHARED|LR_LOADFROMFILE);
 
+		CommandLine::parseCommandLineForStartup();
+
 		// register windows class and create application window
-		if(!headless && initializeAppWindows( hInstance, nCmdShow, ApplicationIsWindowed) == false )
-			return 0;
+		if(!TheGlobalData->m_headless && initializeAppWindows(hInstance, nCmdShow, TheGlobalData->m_windowed) == false)
+			return exitcode;
 		
 		// save our application instance for future use
 		ApplicationHInstance = hInstance;
@@ -933,9 +808,6 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 		// BGC - initialize COM
 	//	OleInitialize(NULL);
 
-		// start the log
-		DEBUG_INIT(DEBUG_FLAGS_DEFAULT);
-		initMemoryManager();
 
  
 		// Set up version info
@@ -943,19 +815,6 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 		TheVersion->setVersion(VERSION_MAJOR, VERSION_MINOR, VERSION_BUILDNUM, VERSION_LOCALBUILDNUM,
 			AsciiString(VERSION_BUILDUSER), AsciiString(VERSION_BUILDLOC),
 			AsciiString(__TIME__), AsciiString(__DATE__));
-
-#ifdef DO_COPY_PROTECTION
-		if (!CopyProtect::isLauncherRunning())
-		{
-			DEBUG_LOG(("Launcher is not running - about to bail\n"));
-			delete TheVersion;
-			TheVersion = NULL;
-			shutdownMemoryManager();
-			DEBUG_SHUTDOWN();
-			return 0;
-		}
-#endif
-
 
 		// TheSuperHackers @refactor The instance mutex now lives in its own class.
 
@@ -968,36 +827,17 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 				ShowWindow(ccwindow, SW_RESTORE);
 			}
 
-			DEBUG_LOG(("Generals is already running...Bail!\n"));
+			DEBUG_LOG(("Generals is already running...Bail!"));
 			delete TheVersion;
 			TheVersion = NULL;
 			shutdownMemoryManager();
-			DEBUG_SHUTDOWN();
-			return 0;
+			return exitcode;
 		}
-		DEBUG_LOG(("Create Generals Mutex okay.\n"));
-
-#ifdef DO_COPY_PROTECTION
-		if (!CopyProtect::notifyLauncher())
-		{
-			DEBUG_LOG(("Could not talk to the launcher - about to bail\n"));
-			delete TheVersion;
-			TheVersion = NULL;
-			shutdownMemoryManager();
-			DEBUG_SHUTDOWN();
-			return 0;
-		}
-#endif
-
-		DEBUG_LOG(("CRC message is %d\n", GameMessage::MSG_LOGIC_CRC));
+		DEBUG_LOG(("Create Generals Mutex okay."));
+		DEBUG_LOG(("CRC message is %d", GameMessage::MSG_LOGIC_CRC));
 
 		// run the game main loop
-		GameMain(argc, argv);
-
-#ifdef DO_COPY_PROTECTION
-		// Clean up copy protection
-		CopyProtect::shutdown();
-#endif
+		exitcode = GameMain();
 
 		delete TheVersion;
 		TheVersion = NULL;
@@ -1005,13 +845,11 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	#ifdef MEMORYPOOL_DEBUG
 		TheMemoryPoolFactory->debugMemoryReport(REPORT_POOLINFO | REPORT_POOL_OVERFLOW | REPORT_SIMPLE_LEAKS, 0, 0);
 	#endif
-	#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+	#if defined(RTS_DEBUG)
 		TheMemoryPoolFactory->memoryPoolUsageReport("AAAMemStats");
 	#endif
 
-		// close the log
 		shutdownMemoryManager();
-		DEBUG_SHUTDOWN();
 
 		// BGC - shut down COM
 	//	OleUninitialize();
@@ -1026,7 +864,7 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	TheDmaCriticalSection = NULL;
 	TheMemoryPoolCriticalSection = NULL;
 
-	return 0;
+	return exitcode;
 
 }  // end WinMain
 
