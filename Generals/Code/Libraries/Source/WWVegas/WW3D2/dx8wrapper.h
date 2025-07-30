@@ -100,6 +100,8 @@ class TextureClass;
 class LightClass;
 class SurfaceClass;
 
+class ZTextureClass;
+
 #define DX8_RECORD_MATRIX_CHANGE()				matrix_changes++
 #define DX8_RECORD_MATERIAL_CHANGE()			material_changes++
 #define DX8_RECORD_VERTEX_BUFFER_CHANGE()		vertex_buffer_changes++
@@ -458,6 +460,8 @@ public:
 
 	static void Set_Vertex_Shader_Constant(int reg, const void* data, int count);
 	static void Set_Pixel_Shader_Constant(int reg, const void* data, int count);
+
+	static ZTextureClass* Shadow_Map[MAX_SHADOW_MAPS];
 
 	static DWORD Get_Vertex_Processing_Behavior() { return Vertex_Processing_Behavior; }
 
