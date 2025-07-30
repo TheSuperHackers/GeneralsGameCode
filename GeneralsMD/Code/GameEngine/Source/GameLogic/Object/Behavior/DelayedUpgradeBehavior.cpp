@@ -31,30 +31,20 @@
 #include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
 
 
-//#include "Common/Thing.h"
-//#include "Common/ThingTemplate.h"
 #include "Common/INI.h"
-//#include "Common/RandomValue.h"
 #include "Common/Xfer.h"
 #include "Common/Player.h"
-//#include "GameClient/Drawable.h"
-//#include "GameClient/FXList.h"
-//#include "GameClient/InGameUI.h"
 #include "GameLogic/GameLogic.h"
-//#include "GameLogic/Module/BodyModule.h"
 #include "GameLogic/Module/DelayedUpgradeBehavior.h"
 #include "GameLogic/Module/AIUpdate.h"
 #include "GameLogic/Object.h"
-//#include "GameLogic/ObjectCreationList.h"
 #include "GameLogic/Weapon.h"
-//#include "GameClient/Drawable.h"
 
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 DelayedUpgradeBehavior::DelayedUpgradeBehavior(Thing* thing, const ModuleData* moduleData) : UpdateModule(thing, moduleData)
 {
-	DEBUG_LOG(("DelayedUpgradeBehavior::INIT\n"));
 	m_triggerCompleted = FALSE;
 	m_triggerFrame = 0;
 	//m_shotsLeft = 0;
@@ -78,7 +68,7 @@ DelayedUpgradeBehavior::~DelayedUpgradeBehavior(void)
 //-------------------------------------------------------------------------------------------------
 void DelayedUpgradeBehavior::upgradeImplementation(void)
 {
-	DEBUG_LOG(("DelayedUpgradeBehavior::upgradeImplementation() 1\n"));
+	// DEBUG_LOG(("DelayedUpgradeBehavior::upgradeImplementation() 1\n"));
 
 	const DelayedUpgradeBehaviorModuleData* d = getDelayedUpgradeBehaviorModuleData();
 
@@ -96,13 +86,13 @@ void DelayedUpgradeBehavior::upgradeImplementation(void)
 
 	if (delay > 0) {
 
-		DEBUG_LOG(("DelayedUpgradeBehavior::upgradeImplementation(): trigger_frame = %d\n", m_triggerFrame));
+		DEBUG_LOG(("DelayedUpgradeBehavior::upgradeImplementation(): trigger_frame = %d", m_triggerFrame));
 
 		setWakeFrame(getObject(), UPDATE_SLEEP(d->m_triggerDelay));
 		return;
 	}
 
-	DEBUG_LOG(("DelayedUpgradeBehavior::upgradeImplementation(): We have no trigger!!!\n"));
+	// DEBUG_LOG(("DelayedUpgradeBehavior::upgradeImplementation(): We have no trigger!!!"));
 
 }
 
@@ -111,12 +101,12 @@ void DelayedUpgradeBehavior::upgradeImplementation(void)
 UpdateSleepTime DelayedUpgradeBehavior::update(void)
 {
 	if (m_triggerCompleted) {
-		DEBUG_LOG(("DelayedUpgradeBehavior::Update(): Already triggered. We should not be awake!!!\n"));
+		DEBUG_LOG(("DelayedUpgradeBehavior::Update(): Already triggered. We should not be awake!!!"));
 		return UPDATE_SLEEP_FOREVER;
 	}
 
 	if (!isUpgradeActive()) {
-		DEBUG_LOG(("DelayedUpgradeBehavior::Update(): Upgrade not applied. We should not be awake!!!\n"));
+		DEBUG_LOG(("DelayedUpgradeBehavior::Update(): Upgrade not applied. We should not be awake!!!"));
 		return UPDATE_SLEEP_FOREVER;
 	}
 
@@ -125,7 +115,7 @@ UpdateSleepTime DelayedUpgradeBehavior::update(void)
 	if (d->m_triggerDelay > 0) {
 		UnsignedInt now = TheGameLogic->getFrame();
 		if (now >= m_triggerFrame) {
-			DEBUG_LOG(("DelayedUpgradeBehavior::update(): Trigger Frame reached.\n"));
+			// DEBUG_LOG(("DelayedUpgradeBehavior::update(): Trigger Frame reached."));
 			triggerUpgrade();
 			return UPDATE_SLEEP_FOREVER;
 		}
@@ -150,29 +140,63 @@ void DelayedUpgradeBehavior::triggerUpgrade(void)
 {
 
 	const DelayedUpgradeBehaviorModuleData* d = getDelayedUpgradeBehaviorModuleData();
-	const UpgradeTemplate* upgradeTemplate = TheUpgradeCenter->findUpgrade(d->m_upgradeToTrigger);
-	if (!upgradeTemplate)
-	{
-		DEBUG_ASSERTCRASH(0, ("DelayedUpgradeBehavior for %s can't find upgrade template %s.", getObject()->getName(), d->m_upgradeToTrigger));
-		return;
-	}
 
 	m_triggerCompleted = TRUE;
 
 	Player* player = getObject()->getControllingPlayer();
-	if (upgradeTemplate->getUpgradeType() == UPGRADE_TYPE_PLAYER)
-	{
-		// get the player
-		player->addUpgrade(upgradeTemplate, UPGRADE_STATUS_COMPLETE);
-	}
-	else
-	{
-		getObject()->giveUpgrade(upgradeTemplate);
+
+	if (!d->m_upgradesToTrigger.empty()) {
+
+		std::vector<AsciiString>::const_iterator it;
+		for (it = d->m_upgradesToTrigger.begin(); it != d->m_upgradesToTrigger.end(); it++)
+		{
+			const UpgradeTemplate* upgradeTemplate = TheUpgradeCenter->findUpgrade(*it);
+
+			if (!upgradeTemplate)
+			{
+				DEBUG_CRASH(("DelayedUpgradeBehavior for %s can't find upgrade template %s.", getObject()->getName(), it->str()));
+				throw INI_INVALID_DATA;
+			}
+
+			if (upgradeTemplate->getUpgradeType() == UPGRADE_TYPE_PLAYER)
+			{
+				player->addUpgrade(upgradeTemplate, UPGRADE_STATUS_COMPLETE);
+			}
+			else
+			{
+				getObject()->giveUpgrade(upgradeTemplate);
+			}
+
+			player->getAcademyStats()->recordUpgrade(upgradeTemplate, TRUE);
+		}
 	}
 
-	player->getAcademyStats()->recordUpgrade(upgradeTemplate, TRUE);
 
-	DEBUG_LOG(("DelayedUpgradeBehavior::triggerUpgrade() Done.\n"));
+	if (!d->m_upgradesToRemove.empty()) {
+
+		std::vector<AsciiString>::const_iterator it;
+		for (it = d->m_upgradesToRemove.begin(); it != d->m_upgradesToRemove.end(); it++)
+		{
+			const UpgradeTemplate* upgradeTemplate = TheUpgradeCenter->findUpgrade(*it);
+			if (!upgradeTemplate)
+			{
+				DEBUG_CRASH(("DelayedUpgradeBehavior for '%s' cannot find upgrade to remove '%s'", getObject()->getName(), it->str()));
+				throw INI_INVALID_DATA;
+			}
+
+			if (upgradeTemplate->getUpgradeType() == UPGRADE_TYPE_PLAYER)
+			{
+				player->removeUpgrade(upgradeTemplate);
+			}
+			else
+			{
+				getObject()->removeUpgrade(upgradeTemplate);
+			}
+		}
+	}
+
+	// DEBUG_LOG(("DelayedUpgradeBehavior::triggerUpgrade() Done."));
+
 
 }
 
@@ -180,7 +204,7 @@ void DelayedUpgradeBehavior::triggerUpgrade(void)
 //-------------------------------------------------------------------------------------------------
 Bool DelayedUpgradeBehavior::resetUpgrade(UpgradeMaskType keyMask)
 {
-	DEBUG_LOG(("DelayedUpgradeBehavior::resetUpgrade().\n"));
+	// DEBUG_LOG(("DelayedUpgradeBehavior::resetUpgrade()."));
 	if (UpgradeMux::resetUpgrade(keyMask)) {
 		m_triggerCompleted = FALSE;
 		m_triggerFrame = 0;

@@ -46,14 +46,19 @@ public:
 	UpgradeMuxData				m_upgradeMuxData;
 
 	Bool						m_initiallyActive;
-	AsciiString				    m_upgradeToTrigger;
+
+	// AsciiString				    m_upgradeToTrigger;
+	std::vector<AsciiString>	m_upgradesToTrigger;
+	std::vector<AsciiString>	m_upgradesToRemove;
+
 	UnsignedInt                 m_triggerDelay;
 	//UnsignedInt                 m_triggerNumShots;
 
 	DelayedUpgradeBehaviorModuleData()
 	{
+		m_upgradesToTrigger.clear();
+		m_upgradesToRemove.clear();
 		m_initiallyActive = false;
-		m_upgradeToTrigger.clear();
 		m_triggerDelay = 0;
 		//m_triggerNumShots = 0;
 	}
@@ -63,7 +68,8 @@ public:
 		static const FieldParse dataFieldParse[] =
 		{
 			{ "StartsActive",	INI::parseBool, NULL, offsetof(DelayedUpgradeBehaviorModuleData, m_initiallyActive) },
-			{ "UpgradeToTrigger", INI::parseAsciiString,	NULL, offsetof(DelayedUpgradeBehaviorModuleData, m_upgradeToTrigger) },
+			{ "UpgradesToTrigger", INI::parseAsciiStringVector,	NULL, offsetof(DelayedUpgradeBehaviorModuleData, m_upgradesToTrigger) },
+			{ "UpgradesToRemove", INI::parseAsciiStringVector,	NULL, offsetof(DelayedUpgradeBehaviorModuleData, m_upgradesToRemove) },
 			{ "TriggerAfterTime",	INI::parseDurationUnsignedInt, NULL, offsetof(DelayedUpgradeBehaviorModuleData, m_triggerDelay) },
 			//{ "TriggerAfterShotsFired",	INI::parseUnsignedInt, NULL, offsetof(DelayedUpgradeBehaviorModuleData, m_triggerNumShots) },
 			{ 0, 0, 0, 0 }
