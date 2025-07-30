@@ -34,7 +34,7 @@
 #include "Common/XferDeepCRC.h"
 #include "Common/crc.h"
 #include "Common/Snapshot.h"
-#include "winsock2.h" // for htonl
+#include "utility/endian_compat.h"
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -97,22 +97,8 @@ void XferCRC::endBlock( void )
 //-------------------------------------------------------------------------------------------------
 void XferCRC::addCRC( UnsignedInt val )
 {
-	int hibit;
 
-	val = htonl(val);
-
-	if (m_crc & 0x80000000)
-	{
-		hibit = 1;
-	}
-	else
-	{
-		hibit = 0;
-	}
-
-	m_crc <<= 1;
-	m_crc += val;
-	m_crc += hibit;
+	m_crc = (m_crc << 1) + htobe(val) + ((m_crc >> 31) & 0x01);
 
 }  // end addCRC
 
@@ -139,30 +125,33 @@ void XferCRC::xferSnapshot( Snapshot *snapshot )
 //-------------------------------------------------------------------------------------------------
 void XferCRC::xferImplementation( void *data, Int dataSize )
 {
-
-	if (!data || dataSize < 1)
-	{
-		return;
-	}
-
 	const UnsignedInt *uintPtr = (const UnsignedInt *) (data);
+	dataSize *= (data != NULL);
 
-	for (Int i=0 ; i<dataSize/4 ; i++)
+	int dataBytes = (dataSize / 4);
+
+	for (Int i=0 ; i<dataBytes; ++i)
 	{
 		addCRC (*uintPtr++);
 	}
 
-	int leftover = dataSize & 3;
-	if (leftover)
+	UnsignedInt val = 0;
+	const unsigned char *c = (const unsigned char *)uintPtr;
+
+	switch(dataSize & 3)
 	{
-		UnsignedInt val = 0;
-		const unsigned char *c = (const unsigned char *)uintPtr;
-		for (Int i=0; i<leftover; i++)
-		{
-			val += (c[i] << (i*8));
-		}
-		val = htonl(val);
-		addCRC (val);
+	case 3:
+		val += (c[2] << 16);
+		FALLTHROUGH;
+	case 2:
+		val += (c[1] << 8);
+		FALLTHROUGH;
+	case 1:
+		val += c[0];
+		m_crc = (m_crc << 1) + val + ((m_crc >> 31) & 0x01);
+		FALLTHROUGH;
+	default:
+		break;
 	}
 	
 }  // end xferImplementation
@@ -179,7 +168,7 @@ void XferCRC::skip( Int dataSize )
 UnsignedInt XferCRC::getCRC( void )
 {
 
-	return htonl(m_crc);
+	return htobe(m_crc);
 
 }  // end skip
 

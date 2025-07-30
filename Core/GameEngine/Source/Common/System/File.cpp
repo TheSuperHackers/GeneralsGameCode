@@ -122,7 +122,6 @@ File::File()
 
 File::~File()
 {
-	close();
 }
 
 //=================================================================
@@ -135,7 +134,7 @@ File::~File()
 	*/
 //=================================================================
 
-Bool File::open( const Char *filename, Int access )
+Bool File::open( const Char *filename, Int access, size_t bufferSize )
 {
 	if( m_open )
 	{
@@ -161,7 +160,7 @@ Bool File::open( const Char *filename, Int access )
 		access |= READ;
 	}
 
-	if ( !(access & (READ|APPEND)) )
+	if ( (access & (READ|APPEND)) == 0 )
 	{
 		access |= TRUNCATE;
 	}
@@ -194,6 +193,17 @@ void File::close( void )
 		{
 			deleteInstance(this); // on special cases File object will delete itself when closing
 		}
+	}
+}
+
+//=================================================================
+
+void File::closeWithoutDelete()
+{
+	if( m_open )
+	{
+		setName( "<no file>" );
+		m_open = FALSE;
 	}
 }
 

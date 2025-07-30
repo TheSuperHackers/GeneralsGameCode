@@ -120,7 +120,10 @@ class AITNGuardInnerState : public State
 {
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AITNGuardInnerState, "AITNGuardInnerState")		
 public:
-	AITNGuardInnerState( StateMachine *machine ) : State( machine, "AITNGuardInner" ) { }
+	AITNGuardInnerState( StateMachine *machine ) : State( machine, "AITNGuardInner" ) 
+	{
+		m_attackState = NULL;
+	}
 	virtual StateReturnType onEnter( void );
 	virtual StateReturnType update( void );
 	virtual void onExit( StateExitType status );
@@ -136,7 +139,6 @@ private:
 	Bool			m_scanForEnemy;
 	AIAttackState *m_attackState;
 };
-EMPTY_DTOR(AITNGuardInnerState)
 
 //--------------------------------------------------------------------------------------
 class AITNGuardIdleState : public State
@@ -183,7 +185,6 @@ private:
 	TunnelNetworkExitConditions m_exitConditions; 
 	AIAttackState *m_attackState;
 };
-EMPTY_DTOR(AITNGuardOuterState)
 
 //--------------------------------------------------------------------------------------
 class AITNGuardReturnState : public AIEnterState
@@ -243,8 +244,6 @@ private:
 	TunnelNetworkExitConditions m_exitConditions; 
 	AIAttackState *m_attackState;
 };
-
-EMPTY_DTOR(AITNGuardAttackAggressorState)
 
 //--------------------------------------------------------------------------------------
 

@@ -1551,7 +1551,8 @@ void MeshGeometryClass::Generate_Culling_Tree(void)
 	{
 		AABTreeBuilderClass builder;
 		builder.Build_AABTree(PolyCount,Poly->Get_Array(),VertexCount,Vertex->Get_Array());
-	
+
+		DEBUG_ASSERTCRASH(CullTree == NULL, ("MeshGeometryClass::Generate_Culling_Tree: Leaking CullTree"));
 		CullTree = NEW_REF(AABTreeClass,(&builder));
 		CullTree->Set_Mesh(this);
 	}

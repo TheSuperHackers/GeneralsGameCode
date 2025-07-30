@@ -126,29 +126,27 @@ RAMFile::RAMFile()
 
 RAMFile::~RAMFile()
 {
-	if (m_data != NULL) {
-		delete [] m_data;
-	}
-
-	File::close();
-
+	closeFile();
 }
 
 //=================================================================
 // RAMFile::open	
 //=================================================================
 /**
-  *	This function opens a file using the standard C open() call. Access flags
-	* are mapped to the appropriate open flags. Returns true if file was opened
-	* successfully.
+	* This function opens a file using the standard C open() or
+	* fopen() call. Access flags are mapped to the appropriate flags.
+	* Returns true if file was opened successfully.
 	*/
 //=================================================================
 
 //DECLARE_PERF_TIMER(RAMFile)
-Bool RAMFile::open( const Char *filename, Int access )
+Bool RAMFile::open( const Char *filename, Int access, size_t bufferSize )
 {
 	//USE_PERF_TIMER(RAMFile)
-	File *file = TheFileSystem->openFile( filename, access );
+
+	bufferSize = 0; // RAM File needs no file buffer because it is read in one go.
+
+	File *file = TheFileSystem->openFile( filename, access, bufferSize );
 
 	if ( file == NULL )
 	{
@@ -174,7 +172,7 @@ Bool RAMFile::open( File *file )
 		return NULL;
 	}
 
-	Int access = file->getAccess();
+	const Int access = file->getAccess();
 
 	if ( !File::open( file->getName(), access ))
 	{
@@ -247,13 +245,16 @@ Bool RAMFile::openFromArchive(File *archiveFile, const AsciiString& filename, In
 
 void RAMFile::close( void )
 {
-	if ( m_data )
-	{
-		delete [] m_data;
-		m_data = NULL;
-	}
-
+	closeFile();
 	File::close();
+}
+
+//=================================================================
+
+void RAMFile::closeFile()
+{
+	delete [] m_data;
+	m_data = NULL;
 }
 
 //=================================================================

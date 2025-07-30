@@ -2603,7 +2603,7 @@ void AIPlayer::recruitSpecificAITeam(TeamPrototype *teamProto, Real recruitRadiu
 						AIUpdateInterface *ai = unit->getAIUpdateInterface();
 						if (ai) 
 						{
-#if defined(RTS_DEBUG)
+#ifdef DEBUG_LOGGING
 							Coord3D pos = *unit->getPosition();
 							Coord3D to = teamProto->getTemplateInfo()->m_homeLocation;
 							DEBUG_LOG(("Moving unit from %f,%f to %f,%f", pos.x, pos.y , to.x, to.y ));

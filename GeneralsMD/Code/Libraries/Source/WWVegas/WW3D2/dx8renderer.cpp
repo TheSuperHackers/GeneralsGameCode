@@ -222,6 +222,8 @@ DX8TextureCategoryClass::~DX8TextureCategoryClass()
 	}
 
 	REF_PTR_RELEASE(material);
+
+	DEBUG_ASSERTCRASH(render_task_head == NULL, ("~DX8TextureCategoryClass: Leaking render tasks"));
 }
 
 void DX8TextureCategoryClass::Add_Render_Task(DX8PolygonRendererClass * p_renderer,MeshClass * p_mesh)
@@ -1957,8 +1959,19 @@ void DX8TextureCategoryClass::Render(void)
 	}
 
 	if (!renderTasksRemaining)
-	{	WWASSERT(!render_task_head);
+	{
+		WWASSERT(!render_task_head);
 		Clear_Render_List();
+	}
+}
+
+void DX8TextureCategoryClass::Clear_Render_List()
+{
+	while (render_task_head != NULL)
+	{
+		PolyRenderTaskClass* next = render_task_head->Get_Next_Visible();
+		delete render_task_head;
+		render_task_head = next;
 	}
 }
 
@@ -1974,22 +1987,20 @@ DX8MeshRendererClass::DX8MeshRendererClass()
 
 DX8MeshRendererClass::~DX8MeshRendererClass()
 {
-	Invalidate(true);
-	Clear_Pending_Delete_Lists();
-	if (texture_category_container_list_skin != NULL) {
-		delete texture_category_container_list_skin;
-	}
+	Shutdown();
 }
 
 void DX8MeshRendererClass::Init(void)
 {
-	// DMS - Only allocate one if we havent already (leak fix)
+	// DMS - Only allocate one if we have not already (leak fix)
 	if(!texture_category_container_list_skin)
 		texture_category_container_list_skin = W3DNEW FVFCategoryList;
 }
 
 void DX8MeshRendererClass::Shutdown(void)
 {
+	camera = NULL;
+	visible_decal_meshes = NULL;
 	Invalidate(true);
 	Clear_Pending_Delete_Lists();
 	_TempVertexBuffer.Clear();	//free memory

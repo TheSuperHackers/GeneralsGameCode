@@ -1057,14 +1057,7 @@ void InitWOLGameGadgets( void )
 		if (TheGameSpyInfo->amIHost())
 			staticTextPlayer[i]->winHide(TRUE);
 
-		if(i==0 && TheGameSpyInfo->amIHost())
-		{
-			UnicodeString uName;
-			uName.translate(TheGameSpyInfo->getLocalName());
-			GadgetComboBoxAddEntry(comboBoxPlayer[i],uName,GameSpyColor[GSCOLOR_PLAYER_OWNER]);
-			GadgetComboBoxSetSelectedPos(comboBoxPlayer[0],0);
-		}
-		else
+		if(theGameInfo->getLocalSlotNum() != i)
 		{
 			GadgetComboBoxAddEntry(comboBoxPlayer[i],TheGameText->fetch("GUI:Open"),GameSpyColor[GSCOLOR_PLAYER_NORMAL]);
 			GadgetComboBoxAddEntry(comboBoxPlayer[i],TheGameText->fetch("GUI:Closed"),GameSpyColor[GSCOLOR_PLAYER_NORMAL]);
@@ -1257,6 +1250,9 @@ void WOLGameSetupMenuInit( WindowLayout *layout, void *userData )
 
 		WOLDisplaySlotList();
 		WOLDisplayGameOptions();
+
+		// TheSuperHackers @tweak disable the combo box for the host's player name
+		comboBoxPlayer[0]->winEnable(FALSE);
 	}
 	else
 	{

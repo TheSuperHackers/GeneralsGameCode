@@ -2086,6 +2086,20 @@ void InGameUI::message( AsciiString stringManagerLabel, ... )
 }  // end 
 
 //-------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------
+void InGameUI::messageNoFormat( const UnicodeString& message )
+{
+	addMessageText( message, NULL );
+}
+
+//-------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------
+void InGameUI::messageNoFormat( const RGBColor *rgbColor, const UnicodeString& message )
+{
+	addMessageText( message, rgbColor );
+}
+
+//-------------------------------------------------------------------------------------------------
 /** Interface for display text messages to the user */
 //-------------------------------------------------------------------------------------------------
 // srj sez: passing as const-ref screws up varargs for some reason. dunno why. just pass by value.
@@ -4334,7 +4348,7 @@ CanAttackResult InGameUI::getCanSelectedObjectsAttack( ActionType action, const 
 			case ACTIONTYPE_MAKE_DEFECTOR:
 			case ACTIONTYPE_SET_RALLY_POINT:
 			default:
-				DEBUG_CRASH( ("Called InGameUI::getCanSelectedObjectsAttack() with actiontype %d. Only accepts attack types! Should you be calling InGameUI::canSelectedObjectsDoAction() instead?") );
+				DEBUG_CRASH( ("Called InGameUI::getCanSelectedObjectsAttack() with actiontype %d. Only accepts attack types! Should you be calling InGameUI::canSelectedObjectsDoAction() instead?", action) );
 				return ATTACKRESULT_INVALID_SHOT;
 
 		}

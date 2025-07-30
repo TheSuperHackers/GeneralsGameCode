@@ -6,6 +6,7 @@ option(RTS_BUILD_GENERALS "Build Generals code." ON)
 option(RTS_BUILD_OPTION_PROFILE "Build code with the \"Profile\" configuration." OFF)
 option(RTS_BUILD_OPTION_DEBUG "Build code with the \"Debug\" configuration." OFF)
 option(RTS_BUILD_OPTION_ASAN "Build code with Address Sanitizer." OFF)
+option(RTS_BUILD_OPTION_VC6_FULL_DEBUG "Build VC6 with full debug info." OFF)
 option(RTS_BUILD_OPTION_FFMPEG "Enable FFmpeg support" OFF)
 
 if(NOT RTS_BUILD_ZEROHOUR AND NOT RTS_BUILD_GENERALS)
@@ -20,6 +21,7 @@ add_feature_info(GeneralsStuff RTS_BUILD_GENERALS "Build Generals code")
 add_feature_info(ProfileBuild RTS_BUILD_OPTION_PROFILE "Building as a \"Profile\" build")
 add_feature_info(DebugBuild RTS_BUILD_OPTION_DEBUG "Building as a \"Debug\" build")
 add_feature_info(AddressSanitizer RTS_BUILD_OPTION_ASAN "Building with address sanitizer")
+add_feature_info(Vc6FullDebug RTS_BUILD_OPTION_VC6_FULL_DEBUG "Building VC6 with full debug info")
 add_feature_info(FFmpegSupport RTS_BUILD_OPTION_FFMPEG "Building with FFmpeg support")
 
 if(RTS_BUILD_ZEROHOUR)
@@ -47,7 +49,11 @@ if(NOT IS_VS6_BUILD)
     target_compile_features(core_config INTERFACE cxx_std_20)
 endif()
 
-target_compile_options(core_config INTERFACE ${RTS_FLAGS})
+if(IS_VS6_BUILD AND RTS_BUILD_OPTION_VC6_FULL_DEBUG)
+    target_compile_options(core_config INTERFACE ${RTS_FLAGS} /Zi)
+else()
+    target_compile_options(core_config INTERFACE ${RTS_FLAGS})
+endif()
 
 # This disables a lot of warnings steering developers to use windows only functions/function names.
 if(MSVC)

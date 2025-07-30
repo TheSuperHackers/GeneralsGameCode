@@ -47,8 +47,8 @@ public:
 
 	UnsignedInt getVersionNumber() const;           ///< Return a 4-byte integer suitable for WOLAPI
 
-	AsciiString getAsciiVersion() const;            ///< Return a human-readable version number
-	UnicodeString getUnicodeVersion() const;        ///< Return a human-readable version number. Is decorated with localized string
+	AsciiString getAsciiVersion() const;            ///< Return a human-readable game version number
+	UnicodeString getUnicodeVersion() const;        ///< Return a human-readable game version number. Is decorated with localized string
 
 	AsciiString getAsciiBuildTime() const;          ///< Return a formated date/time string for build time
 	UnicodeString getUnicodeBuildTime() const;      ///< Return a formated date/time string for build time. Is decorated with localized string
@@ -72,11 +72,17 @@ public:
 	AsciiString getAsciiGitCommitTime() const;         ///< Returns the git head commit time in YYYY-mm-dd HH:MM:SS format
 	UnicodeString getUnicodeGitCommitTime() const;     ///< Returns the git head commit time in YYYY-mm-dd HH:MM:SS format
 
-	AsciiString getAsciiGameAndGitVersion() const;     ///< Returns the game and git version
-	UnicodeString getUnicodeGameAndGitVersion() const; ///< Returns the game and git version. Is decorated with localized string
+	AsciiString getAsciiGitVersion() const;            ///< Returns the git version
+	UnicodeString getUnicodeGitVersion() const;        ///< Returns the git version
 
 	AsciiString getAsciiBuildUserOrGitCommitAuthorName() const;
 	UnicodeString getUnicodeBuildUserOrGitCommitAuthorName() const; ///< Is decorated with localized string
+
+	UnicodeString getUnicodeProductTitle() const;
+	UnicodeString getUnicodeProductVersion() const;
+	UnicodeString getUnicodeProductAuthor() const; ///< Is decorated with localized string
+	UnicodeString getUnicodeProductString() const; ///< Returns a string that contains product title, version and other, if specified. Is decorated with localized string
+	UnicodeString getUnicodeProductVersionHashString() const; ///< Returns a string that contains the product string, game version and hashes. Is decorated with localized string
 
 	Bool showFullVersion() const { return m_showFullVersion; }
 	void setShowFullVersion( Bool val ) { m_showFullVersion = val; }
