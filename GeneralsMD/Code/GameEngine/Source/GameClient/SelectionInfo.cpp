@@ -25,6 +25,7 @@
 #include "PreRTS.h"
 
 #include "GameLogic/Damage.h"
+#include "GameLogic/GameLogic.h"
 #include "GameLogic/Module/ContainModule.h"
 
 #include "Common/ActionManager.h"
@@ -348,6 +349,23 @@ Bool addDrawableToList( Drawable *draw, void *userData )
 
 	if (!pds->drawableListToFill)
 		return FALSE;
+
+	if (!draw->isSelectable())
+	{
+		const Object* obj = draw->getObject();
+		if (obj && obj->getProducerID() != INVALID_ID)
+		{
+			const Object* objProducer = TheGameLogic->findObjectByID(obj->getProducerID());
+			if (objProducer)
+			{
+				Drawable* drawProducer = objProducer->getDrawable();
+				if (drawProducer)
+				{
+					return addDrawableToList(drawProducer, userData);
+				}
+			}
+		}
+	}
 
 	if (!draw->getTemplate()->isAnyKindOf(pds->kindofsToMatch))
 		return FALSE;
