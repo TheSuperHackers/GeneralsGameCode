@@ -89,7 +89,7 @@ set(GAMEENGINE_SRC
     Include/Common/QuotedPrintable.h
     Include/Common/Radar.h
 #    Include/Common/RAMFile.h
-    Include/Common/RandomValue.h
+#    Include/Common/RandomValue.h
     Include/Common/Recorder.h
 #    Include/Common/ReplaySimulation.h
     Include/Common/Registry.h
@@ -135,7 +135,7 @@ set(GAMEENGINE_SRC
     Include/GameClient/CampaignManager.h
     Include/GameClient/CDCheck.h
     Include/GameClient/ClientInstance.h
-    Include/GameClient/ClientRandomValue.h
+#    Include/GameClient/ClientRandomValue.h
     Include/GameClient/Color.h
     Include/GameClient/CommandXlat.h
     Include/GameClient/ControlBar.h
@@ -240,7 +240,7 @@ set(GAMEENGINE_SRC
     Include/GameLogic/GhostObject.h
     Include/GameLogic/Locomotor.h
     Include/GameLogic/LocomotorSet.h
-    Include/GameLogic/LogicRandomValue.h
+#    Include/GameLogic/LogicRandomValue.h
     Include/GameLogic/Module/ActiveBody.h
     Include/GameLogic/Module/ActiveShroudUpgrade.h
     Include/GameLogic/Module/AIUpdate.h
@@ -567,7 +567,7 @@ set(GAMEENGINE_SRC
     Source/Common/NameKeyGenerator.cpp
     Source/Common/PartitionSolver.cpp
     Source/Common/PerfTimer.cpp
-    Source/Common/RandomValue.cpp
+#    Source/Common/RandomValue.cpp
     Source/Common/Recorder.cpp
     Source/Common/RTS/ActionManager.cpp
     Source/Common/RTS/Energy.cpp
