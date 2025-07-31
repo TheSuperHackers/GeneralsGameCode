@@ -5438,8 +5438,7 @@ void InGameUI::selectNextIdleWorker( void )
 			while (itObj->getContainedBy())
 				itObj = itObj->getContainedBy(); // Treat containers as a single idle selectable
 
-			if (std::find(uniqueIdleWorkers.begin(), uniqueIdleWorkers.end(), itObj) == uniqueIdleWorkers.end())
-				uniqueIdleWorkers.push_back(itObj);
+			stl::push_back_unique(uniqueIdleWorkers, itObj);
 		}
 		
 		ObjectPtrVector::iterator uit = uniqueIdleWorkers.begin();
