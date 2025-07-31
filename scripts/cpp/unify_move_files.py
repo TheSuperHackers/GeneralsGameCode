@@ -103,6 +103,12 @@ def unify_file(fromGame: Game, fromFile: str, toGame: Game, toFile: str):
 
 def main():
 
+    #unify_file(Game.ZEROHOUR, "GameEngine/Include/Common/GameMemory.h", Game.CORE, "GameEngine/Include/Common/GameMemory.h")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Include/Common/GameMemoryNull.h", Game.CORE, "GameEngine/Include/Common/GameMemoryNull.h")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Source/Common/System/GameMemory.cpp", Game.CORE, "GameEngine/Source/Common/System/GameMemory.cpp")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Source/Common/System/GameMemoryNull.cpp", Game.CORE, "GameEngine/Source/Common/System/GameMemoryNull.cpp")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Source/Common/System/MemoryInit.cpp", Game.CORE, "GameEngine/Source/Common/System/MemoryInit.cpp")
+
     return
 
 
