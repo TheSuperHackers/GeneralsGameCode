@@ -5600,19 +5600,8 @@ void InGameUI::selectNextIdleWorker( void )
 	else
 	{
 		Drawable *selectedDrawable = TheInGameUI->getFirstSelectedDrawable();	
-		std::vector<Object*> uniqueIdleWorkers;
-		uniqueIdleWorkers.reserve(m_idleWorkers->size());
+		std::vector<Object*> uniqueIdleWorkers = getUniqueIdleWorkers(m_idleWorkers[index]);
 
-		// Find unique selectables to avoid selecting the same or a previous container if multiple idle workers are contained
-		for (ObjectListIt it = m_idleWorkers[index].begin(); it != m_idleWorkers[index].end(); ++it)
-		{
-			Object* itObj = *it;
-			while (itObj->getContainedBy())
-				itObj = itObj->getContainedBy(); // Treat containers as a single idle selectable
-
-			stl::push_back_unique(uniqueIdleWorkers, itObj);
-		}
-		
 		ObjectPtrVector::iterator uit = uniqueIdleWorkers.begin();
 		while(uit != uniqueIdleWorkers.end())
 		{
@@ -5664,6 +5653,24 @@ void InGameUI::selectNextIdleWorker( void )
 		// center on the unit
 		TheTacticalView->lookAt(selectThisObject->getPosition());
 	}
+}
+
+// Finds unique selectables to avoid selecting the same or a previous container if multiple idle workers are contained
+std::vector<Object*> InGameUI::getUniqueIdleWorkers(const ObjectList& idleWorkers)
+{
+	std::vector<Object*> uniqueIdleWorkers;
+	uniqueIdleWorkers.reserve(idleWorkers.size());
+
+	for (ObjectList::const_iterator it = idleWorkers.begin(); it != idleWorkers.end(); ++it)
+	{
+		Object* itObj = *it;
+		while (itObj->getContainedBy())
+			itObj = itObj->getContainedBy();
+
+		stl::push_back_unique(uniqueIdleWorkers, itObj);
+	}
+
+	return uniqueIdleWorkers;
 }
 
 Int InGameUI::getIdleWorkerCount( void )

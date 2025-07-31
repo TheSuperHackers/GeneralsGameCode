@@ -323,7 +323,12 @@ class InGameUI : public SubsystemInterface, public Snapshot
 {
 	
 friend class Drawable;	// for selection/deselection transactions
-		
+
+protected:
+
+	typedef std::list<Object*> ObjectList;
+	typedef std::list<Object*>::iterator ObjectListIt;
+
 public:  // ***************************************************************************************
 
 	enum SelectionRules
@@ -561,6 +566,7 @@ public:  // ********************************************************************
 	virtual void addIdleWorker( Object *obj );
 	virtual void removeIdleWorker( Object *obj, Int playerNumber );
 	virtual void selectNextIdleWorker( void );
+	static std::vector<Object*> getUniqueIdleWorkers(const ObjectList& idleWorkers);
 
 	virtual void recreateControlBar( void );
 	virtual void refreshCustomUiResources( void );
@@ -670,9 +676,6 @@ protected:
 		Color color;															///< what color should we display the military subtitles
 	};
 
-	typedef std::list<Object *> ObjectList;
-	typedef std::list<Object *>::iterator ObjectListIt;
-	
 	// ----------------------------------------------------------------------------------------------
 	// Protected Methods ----------------------------------------------------------------------------
 	// ----------------------------------------------------------------------------------------------
