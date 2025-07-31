@@ -774,6 +774,7 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 		// default in a DevStudio project
 		//
 
+		TheAsciiStringCriticalSection = &critSec1;
 		TheUnicodeStringCriticalSection = &critSec2;
 		TheDmaCriticalSection = &critSec3;
 		TheMemoryPoolCriticalSection = &critSec4;
