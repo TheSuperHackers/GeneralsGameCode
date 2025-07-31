@@ -199,8 +199,7 @@ Int APIENTRY WinMain(HINSTANCE hInstance,
 	}
 	::SetCurrentDirectory(buffer);
 
-	// start the log
-	DEBUG_INIT(DEBUG_FLAGS_DEFAULT);
+	// initialize the memory manager early
 	initMemoryManager();
 
 	// register a class for our window with the OS
@@ -275,9 +274,7 @@ Int APIENTRY WinMain(HINSTANCE hInstance,
 	delete TheEditor;
 	TheEditor = NULL;
 
-	// close the log
 	shutdownMemoryManager();
-	DEBUG_SHUTDOWN();
 
 	return msg.wParam;
 
