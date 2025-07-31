@@ -5424,6 +5424,9 @@ void InGameUI::selectNextIdleWorker( void )
 	if(getSelectCount() == 0 || getSelectCount() > 1)
 	{
 		selectThisObject = *m_idleWorkers[index].begin();
+		// If our idle worker is contained by anything, we need to select the container instead.
+		while (selectThisObject->getContainedBy())
+			selectThisObject = selectThisObject->getContainedBy();
 	}
 	else
 	{
@@ -5446,19 +5449,12 @@ void InGameUI::selectNextIdleWorker( void )
 			++uit;
 		}
 		// if we had something selected that wasn't a worker, we'll get here
-		if(!selectThisObject)
-			selectThisObject = *m_idleWorkers[index].begin();
-
+		if (!selectThisObject)
+			selectThisObject = uniqueIdleWorkers.front();
 	}
 	DEBUG_ASSERTCRASH(selectThisObject, ("InGameUI::selectNextIdleWorker Could not select the next IDLE worker"));
 	if(selectThisObject)
 	{	
-		
-		//If our idle worker is contained by anything, we need to select the container instead.
-		while (selectThisObject->getContainedBy()) {
-			selectThisObject = selectThisObject->getContainedBy();
-		}
-
 		deselectAllDrawables();
 		GameMessage *teamMsg = TheMessageStream->appendMessage( GameMessage::MSG_CREATE_SELECTED_GROUP );
 
