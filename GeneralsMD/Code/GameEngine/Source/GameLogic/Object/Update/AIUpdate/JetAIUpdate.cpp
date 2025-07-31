@@ -1349,21 +1349,16 @@ public:
 
 		// always call this.
 		StateReturnType superStatus = AIFaceState::update();
-		UnsignedInt now = TheGameLogic->getFrame();
 
-#if !RETAIL_COMPATIBLE_CRC
-		if (m_resetTimer && now >= m_whenTransfer)
-		{
-			// once we start the final wait, release the runways for guys behind us, so they can start taxiing
-			ParkingPlaceBehaviorInterface* pp = getPP(jet->getProducerID());
-			if (pp)
-				pp->transferRunwayReservationToNextInLineForTakeoff(jet->getID());
-		}
-#endif
-
+#if RETAIL_COMPATIBLE_CRC
 		if (findWaiter())
 			return STATE_CONTINUE;
+#else
+		if (!m_resetTimer && findWaiter())
+			return STATE_CONTINUE;
+#endif
 
+		UnsignedInt now = TheGameLogic->getFrame();
 		if (!m_resetTimer)
 		{
 			// we had to wait, but now everyone else is ready, so restart our countdown.
@@ -1389,14 +1384,12 @@ public:
 		DEBUG_ASSERTCRASH(m_when != 0, ("hmm"));
 		DEBUG_ASSERTCRASH(m_whenTransfer != 0, ("hmm"));
 
-#if RETAIL_COMPATIBLE_CRC
-		// once we start the final wait, release the runways for guys behind us, so they can start taxiing
+			// once we start the final wait, release the runways for guys behind us, so they can start taxiing
 		ParkingPlaceBehaviorInterface* pp = getPP(jet->getProducerID());
 		if (pp && now >= m_whenTransfer)
 		{
 			pp->transferRunwayReservationToNextInLineForTakeoff(jet->getID());
 		}
-#endif
 
 		if (now >= m_when)
 			return superStatus;
