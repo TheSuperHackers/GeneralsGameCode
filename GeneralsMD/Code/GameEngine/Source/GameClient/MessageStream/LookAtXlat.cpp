@@ -62,7 +62,17 @@ enum
 
 static Bool scrollDir[4] = { false, false, false, false };
 
-Int SCROLL_AMT = 100;
+// TheSuperHackers @tweak Introduces the SCROLL_MULTIPLIER for all scrolling to
+// 
+//  1. bring the RMB scroll speed back to how it was at 30 FPS in the retail game version
+//  2. increase the upper limit of the Scroll Factor when set from the Options Menu (0.20 to 2.90 instead of 0.10 to 1.45)
+//  3. increase the scroll speed for Edge/Key scrolling to better fit the high speeds of RMB scrolling
+// 
+// The multiplier of 2 was logically chosen because originally the Scroll Factor did practically not affect the RMB scroll speed
+// and because the default Scroll Factor is/was 0.5, it needs to be doubled to get to a neutral 1x multiplier.
+
+CONSTEXPR const Real SCROLL_MULTIPLIER = 2.0f;
+CONSTEXPR const Real SCROLL_AMT = 100.0f * SCROLL_MULTIPLIER;
 
 static const Int edgeScrollSize = 3;
 
@@ -296,21 +306,19 @@ GameMessageDisposition LookAtTranslator::translateGameMessage(const GameMessage 
 				break;
 			}
 
-			if (!TheGlobalData->m_windowed)
+			// TheSuperHackers @tweak Ayumi/xezon 26/07/2025 Enables edge scrolling in windowed mode.
+			if (m_isScrolling)
 			{
-				if (m_isScrolling)
+				if ( m_scrollType == SCROLL_SCREENEDGE && (m_currentPos.x >= edgeScrollSize && m_currentPos.y >= edgeScrollSize && m_currentPos.y < height-edgeScrollSize && m_currentPos.x < width-edgeScrollSize) )
 				{
-					if ( m_scrollType == SCROLL_SCREENEDGE && (m_currentPos.x >= edgeScrollSize && m_currentPos.y >= edgeScrollSize && m_currentPos.y < height-edgeScrollSize && m_currentPos.x < width-edgeScrollSize) )
-					{
-						stopScrolling();
-					}
+					stopScrolling();
 				}
-				else
+			}
+			else
+			{
+				if ( m_currentPos.x < edgeScrollSize || m_currentPos.y < edgeScrollSize || m_currentPos.y >= height-edgeScrollSize || m_currentPos.x >= width-edgeScrollSize )
 				{
-					if ( m_currentPos.x < edgeScrollSize || m_currentPos.y < edgeScrollSize || m_currentPos.y >= height-edgeScrollSize || m_currentPos.x >= width-edgeScrollSize )
-					{
-						setScrolling(SCROLL_SCREENEDGE);
-					}
+					setScrolling(SCROLL_SCREENEDGE);
 				}
 			}
 
@@ -429,8 +437,8 @@ GameMessageDisposition LookAtTranslator::translateGameMessage(const GameMessage 
 						// TheSuperHackers @info calculate the length of the vector to obtain the movement speed before the vector is normalized
 						float vecLength = vec.length();
 						vec.normalize();
-						offset.x = TheGlobalData->m_horizontalScrollSpeedFactor * logicToFpsRatio * vecLength * vec.x * TheGlobalData->m_keyboardScrollFactor;
-						offset.y = TheGlobalData->m_verticalScrollSpeedFactor * logicToFpsRatio * vecLength * vec.y * TheGlobalData->m_keyboardScrollFactor;
+						offset.x = TheGlobalData->m_horizontalScrollSpeedFactor * logicToFpsRatio * vecLength * vec.x * SCROLL_MULTIPLIER * TheGlobalData->m_keyboardScrollFactor;
+						offset.y = TheGlobalData->m_verticalScrollSpeedFactor * logicToFpsRatio * vecLength * vec.y * SCROLL_MULTIPLIER * TheGlobalData->m_keyboardScrollFactor;
 					}
 					break;
 				case SCROLL_KEY:

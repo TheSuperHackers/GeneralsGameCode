@@ -5312,6 +5312,14 @@ StateReturnType AIAttackState::onEnter()
 	if (m_attackParameters && m_attackParameters->shouldExit(getMachine())) 
 		return STATE_SUCCESS;
 
+	//Kris: Jan 12, 2005
+	//Don't allow units under construction to attack! The selection/action manager system was responsible for preventing this
+	//from ever happening, but failed in two cases which I fixed. This is an extra check to mitigate cheats.
+	if( source->testStatus( OBJECT_STATUS_UNDER_CONSTRUCTION ) )
+	{
+		return STATE_FAILURE;
+	}
+
 	// if all of our weapons are out of ammo, can't attack.
 	// (this can happen for units which never auto-reload, like the Raptor)
 	if (source->isOutOfAmmo() && !source->isKindOf(KINDOF_PROJECTILE))

@@ -419,16 +419,8 @@ static void initLabelVersion()
 	{
 		if (TheVersion && TheGlobalData)
 		{
-			UnicodeString version;
-			version.format(
-				L"%s %s exe:%08X ini:%08X %s",
-				TheVersion->getUnicodeGameAndGitVersion().str(),
-				TheVersion->getUnicodeGitCommitTime().str(),
-				TheGlobalData->m_exeCRC,
-				TheGlobalData->m_iniCRC,
-				TheVersion->getUnicodeBuildUserOrGitCommitAuthorName().str()
-			);
-			GadgetStaticTextSetText( labelVersion, version );
+			UnicodeString text = TheVersion->getUnicodeProductVersionHashString();
+			GadgetStaticTextSetText( labelVersion, text );
 		}
 		else
 		{

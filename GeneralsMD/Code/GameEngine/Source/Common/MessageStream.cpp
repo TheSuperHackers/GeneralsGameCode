@@ -1019,6 +1019,13 @@ Bool isInvalidDebugCommand( GameMessage::Type t )
 	{
 		switch (t)
 		{
+		case GameMessage::MSG_META_DEMO_REMOVE_PREREQ:
+		case GameMessage::MSG_META_DEMO_INSTANT_BUILD:
+		case GameMessage::MSG_META_DEMO_FREE_BUILD:
+		case GameMessage::MSG_META_DEMO_GIVE_ALL_SCIENCES:
+			// TheSuperHackers @tweak Debug cheats are now multiplayer compatible. Happy cheating Munkees :)
+			return false;
+
 		case GameMessage::MSG_META_DEMO_SWITCH_TEAMS:
 		case GameMessage::MSG_META_DEMO_SWITCH_TEAMS_BETWEEN_CHINA_USA:
 		case GameMessage::MSG_META_DEMO_KILL_ALL_ENEMIES:
@@ -1028,9 +1035,6 @@ Bool isInvalidDebugCommand( GameMessage::Type t )
 		case GameMessage::MSG_META_DEMO_TOGGLE_SPECIAL_POWER_DELAYS:
 		case GameMessage::MSG_META_DEMO_TIME_OF_DAY:
 		case GameMessage::MSG_META_DEMO_LOCK_CAMERA_TO_PLANES:
-		case GameMessage::MSG_META_DEMO_REMOVE_PREREQ:
-		case GameMessage::MSG_META_DEMO_INSTANT_BUILD:
-		case GameMessage::MSG_META_DEMO_FREE_BUILD:
 		case GameMessage::MSG_META_DEMO_RUNSCRIPT1:
 		case GameMessage::MSG_META_DEMO_RUNSCRIPT2:
 		case GameMessage::MSG_META_DEMO_RUNSCRIPT3:
@@ -1044,7 +1048,6 @@ Bool isInvalidDebugCommand( GameMessage::Type t )
 		case GameMessage::MSG_META_DEMO_DESHROUD:
 		case GameMessage::MSG_META_DEBUG_GIVE_VETERANCY:
 		case GameMessage::MSG_META_DEBUG_TAKE_VETERANCY:
-//#pragma MESSAGE ("WARNING - DEBUG key in multiplayer!")
 		case GameMessage::MSG_META_DEMO_ADD_CASH:
 		case GameMessage::MSG_META_DEBUG_INCR_ANIM_SKATE_SPEED:
 		case GameMessage::MSG_META_DEBUG_DECR_ANIM_SKATE_SPEED:
@@ -1067,7 +1070,6 @@ Bool isInvalidDebugCommand( GameMessage::Type t )
 		case GameMessage::MSG_DEBUG_HURT_OBJECT:
 		case GameMessage::MSG_DEBUG_KILL_OBJECT:
 		case GameMessage::MSG_META_DEMO_GIVE_SCIENCEPURCHASEPOINTS:
-		case GameMessage::MSG_META_DEMO_GIVE_ALL_SCIENCES:
 		case GameMessage::MSG_META_DEMO_GIVE_RANKLEVEL:
 		case GameMessage::MSG_META_DEMO_TAKE_RANKLEVEL:
 		case GameMessage::MSG_META_DEBUG_WIN:

@@ -769,6 +769,19 @@ Real OptionPreferences::getMusicVolume(void)
 	return volume;
 }
 
+Real OptionPreferences::getMoneyTransactionVolume(void) const
+{
+	OptionPreferences::const_iterator it = find("MoneyTransactionVolume");
+	if (it == end())
+		return TheAudio->getAudioSettings()->m_defaultMoneyTransactionVolume * 100.0f;
+
+	Real volume = (Real) atof(it->second.str());
+	if (volume < 0.0f)
+		volume = 0.0f;
+
+	return volume;
+}
+
 Int OptionPreferences::getSystemTimeFontSize(void)
 {
 	OptionPreferences::const_iterator it = find("SystemTimeFontSize");
@@ -1204,7 +1217,6 @@ static void saveOptions( void )
 	val = GadgetSliderGetPosition(sliderMusicVolume);
 	if(val != -1)
 	{
-	  TheWritableGlobalData->m_musicVolumeFactor = val;
     AsciiString prefString;
     prefString.format("%d", val);
     (*pref)["MusicVolume"] = prefString;
@@ -1238,7 +1250,6 @@ static void saveOptions( void )
 		TheAudio->setVolume( sound3DVolume, (AudioAffect) (AudioAffect_Sound3D | AudioAffect_SystemSetting) );
 
 		//Save the settings in the options.ini.
-    TheWritableGlobalData->m_SFXVolumeFactor = val;
     AsciiString prefString;
     prefString.format("%d", REAL_TO_INT( sound2DVolume * 100.0f ) );
     (*pref)["SFXVolume"] = prefString;
@@ -1251,11 +1262,21 @@ static void saveOptions( void )
 	val = GadgetSliderGetPosition(sliderVoiceVolume);
 	if(val != -1)
 	{
-    TheWritableGlobalData->m_voiceVolumeFactor = val;
     AsciiString prefString;
     prefString.format("%d", val);
     (*pref)["VoiceVolume"] = prefString;
     TheAudio->setVolume(val / 100.0f, (AudioAffect) (AudioAffect_Speech | AudioAffect_SystemSetting));
+	}
+
+	//-------------------------------------------------------------------------------------------------
+	// Money tick volume
+	// TheSuperHackers @todo Add options slider ?
+	{
+		val = pref->getMoneyTransactionVolume();
+		AsciiString prefString;
+		prefString.format("%d", val);
+		(*pref)["MoneyTransactionVolume"] = prefString;
+		TheAudio->friend_getAudioSettings()->m_preferredMoneyTransactionVolume = val / 100.0f;
 	}
 
  	//-------------------------------------------------------------------------------------------------
@@ -1288,8 +1309,8 @@ static void saveOptions( void )
 
 	//-------------------------------------------------------------------------------------------------
 	// Set System Time Font Size
-	val = TheWritableGlobalData->m_systemTimeFontSize; // TheSuperHackers @todo replace with options input when applicable
-	if (val)
+	val = pref->getSystemTimeFontSize(); // TheSuperHackers @todo replace with options input when applicable
+	if (val >= 0)
 	{
 		AsciiString prefString;
 		prefString.format("%d", val);
@@ -1299,8 +1320,8 @@ static void saveOptions( void )
 
 	//-------------------------------------------------------------------------------------------------
 	// Set Game Time Font Size
-	val = TheWritableGlobalData->m_gameTimeFontSize; // TheSuperHackers @todo replace with options input when applicable
-	if (val)
+	val = pref->getGameTimeFontSize(); // TheSuperHackers @todo replace with options input when applicable
+	if (val >= 0)
 	{
 		AsciiString prefString;
 		prefString.format("%d", val);
@@ -1410,16 +1431,8 @@ static void initLabelVersion()
 	{
 		if (TheVersion && TheGlobalData)
 		{
-			UnicodeString version;
-			version.format(
-				L"%s %s exe:%08X ini:%08X %s",
-				TheVersion->getUnicodeGameAndGitVersion().str(),
-				TheVersion->getUnicodeGitCommitTime().str(),
-				TheGlobalData->m_exeCRC,
-				TheGlobalData->m_iniCRC,
-				TheVersion->getUnicodeBuildUserOrGitCommitAuthorName().str()
-			);
-			GadgetStaticTextSetText( labelVersion, version );
+			UnicodeString text = TheVersion->getUnicodeProductVersionHashString();
+			GadgetStaticTextSetText( labelVersion, text );
 		}
 		else
 		{

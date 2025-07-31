@@ -310,14 +310,17 @@ public:
 #if defined(RTS_DEBUG)
 	/// Prereq disabling cheat key
 	void toggleIgnorePrereqs(){ m_DEMO_ignorePrereqs = !m_DEMO_ignorePrereqs; }
+	void enableIgnorePrereqs(Bool enable) { m_DEMO_ignorePrereqs = enable; }
 	Bool ignoresPrereqs() const { return m_DEMO_ignorePrereqs; }
 
 	/// No cost building cheat key
 	void toggleFreeBuild(){ m_DEMO_freeBuild = !m_DEMO_freeBuild; }
+	void enableFreeBuild(Bool enable) { m_DEMO_freeBuild = enable; }
 	Bool buildsForFree() const { return m_DEMO_freeBuild; }
 
 	/// No time building cheat key
 	void toggleInstantBuild(){ m_DEMO_instantBuild = !m_DEMO_instantBuild; }
+	void enableInstantBuild(Bool enable) { m_DEMO_instantBuild = enable; }
 	Bool buildsInstantly() const { return m_DEMO_instantBuild; }
 #endif
 

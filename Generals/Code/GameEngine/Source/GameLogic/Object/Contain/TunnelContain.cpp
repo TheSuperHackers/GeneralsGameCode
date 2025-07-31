@@ -65,6 +65,10 @@ TunnelContain::~TunnelContain()
 void TunnelContain::addToContainList( Object *obj )
 {
 	Player *owningPlayer = getObject()->getControllingPlayer();
+
+	if(!owningPlayer->getTunnelSystem())
+		return;
+
 	owningPlayer->getTunnelSystem()->addToContainList( obj );
 }
 
@@ -97,6 +101,9 @@ void TunnelContain::removeFromContain( Object *obj, Bool exposeStealthUnits )
 	if( owningPlayer == NULL )
 		return; //game tear down.  We do the onRemove* stuff first because this is allowed to fail but that still needs to be done
 
+	if(!owningPlayer->getTunnelSystem())
+		return;
+
 	owningPlayer->getTunnelSystem()->removeFromContain( obj, exposeStealthUnits );
 
 }
@@ -106,8 +113,12 @@ void TunnelContain::removeFromContain( Object *obj, Bool exposeStealthUnits )
 //-------------------------------------------------------------------------------------------------
 void TunnelContain::removeAllContained( Bool exposeStealthUnits )
 {
-	ContainedItemsList list;
 	Player *owningPlayer = getObject()->getControllingPlayer();
+
+	if(!owningPlayer->getTunnelSystem())
+		return;
+
+	ContainedItemsList list;
 	owningPlayer->getTunnelSystem()->swapContainedItemsList(list);
 
 	ContainedItemsList::iterator it = list.begin();
@@ -127,6 +138,10 @@ void TunnelContain::removeAllContained( Bool exposeStealthUnits )
 void TunnelContain::iterateContained( ContainIterateFunc func, void *userData, Bool reverse )
 {
 	Player *owningPlayer = getObject()->getControllingPlayer();
+
+	if(!owningPlayer->getTunnelSystem())
+		return;
+
 	owningPlayer->getTunnelSystem()->iterateContained( func, userData, reverse );
 }
 
@@ -190,7 +205,11 @@ void TunnelContain::onSelling()
 Bool TunnelContain::isValidContainerFor(const Object* obj, Bool checkCapacity) const
 {
 	Player *owningPlayer = getObject()->getControllingPlayer();
-	return owningPlayer->getTunnelSystem()->isValidContainerFor( obj, checkCapacity );
+	if( owningPlayer && owningPlayer->getTunnelSystem() )
+	{
+		return owningPlayer->getTunnelSystem()->isValidContainerFor( obj, checkCapacity );
+	}
+	return false;
 }
 
 UnsignedInt TunnelContain::getContainCount() const
@@ -206,13 +225,21 @@ UnsignedInt TunnelContain::getContainCount() const
 Int TunnelContain::getContainMax( void ) const 
 { 
 	Player *owningPlayer = getObject()->getControllingPlayer();
-	return owningPlayer->getTunnelSystem()->getContainMax();
+	if( owningPlayer && owningPlayer->getTunnelSystem() )
+	{
+		return owningPlayer->getTunnelSystem()->getContainMax();
+	}
+	return 0;
 }
 
 const ContainedItemsList* TunnelContain::getContainedItemsList() const
 {
 	Player *owningPlayer = getObject()->getControllingPlayer();
-	return owningPlayer->getTunnelSystem()->getContainedItemsList();
+	if( owningPlayer && owningPlayer->getTunnelSystem() )
+	{
+		return owningPlayer->getTunnelSystem()->getContainedItemsList();
+	}
+	return NULL;
 }
 
 
@@ -338,6 +365,16 @@ void TunnelContain::onBuildComplete( void )
 	tunnelTracker->onTunnelCreated( getObject() );
 	m_isCurrentlyRegistered = TRUE;
 } 
+
+//-------------------------------------------------------------------------------------------------
+void TunnelContain::orderAllPassengersToExit( CommandSourceType commandSource )
+{
+	Player *owningPlayer = getObject()->getControllingPlayer();
+	if( !owningPlayer || !owningPlayer->getTunnelSystem() )
+		return;
+
+	OpenContain::orderAllPassengersToExit( commandSource );
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Per frame update */

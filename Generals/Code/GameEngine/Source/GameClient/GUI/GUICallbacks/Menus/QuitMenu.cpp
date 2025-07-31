@@ -127,6 +127,8 @@ void destroyQuitMenu()
 	}
 	quitMenuLayout = NULL;
 	isVisible = FALSE;
+
+	TheInGameUI->setQuitMenuVisible(FALSE);
 }
 
 /**

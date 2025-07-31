@@ -353,7 +353,7 @@ static const char * findGameMessageNameByType(GameMessage::Type type)
 		if (metaNames->value == (Int)type)
 			return metaNames->name;
 
-	DEBUG_CRASH(("MetaTypeName %d not found -- did you remember to add it to GameMessageMetaTypeNames[] ?"));
+	DEBUG_CRASH(("MetaTypeName %d not found -- did you remember to add it to GameMessageMetaTypeNames[] ?", (Int)type));
 	return "???";
 }
 
@@ -692,6 +692,31 @@ MetaMapRec *MetaMap::getMetaMapRec(GameMessage::Type t)
 			map->m_usableIn = COMMANDUSABLE_GAME;
 		}
 	}
+
+#if defined(RTS_DEBUG)
+	{
+		// Is useful for Generals and Zero Hour.
+		MetaMapRec *map = TheMetaMap->getMetaMapRec(GameMessage::MSG_META_DEMO_REMOVE_PREREQ);
+		if (map->m_key == MK_NONE)
+		{
+			map->m_key = MK_P;
+			map->m_transition = DOWN;
+			map->m_modState = ALT;
+			map->m_usableIn = COMMANDUSABLE_GAME;
+		}
+	}
+	{
+		// Is useful for Generals and Zero Hour.
+		MetaMapRec *map = TheMetaMap->getMetaMapRec(GameMessage::MSG_META_DEMO_FREE_BUILD);
+		if (map->m_key == MK_NONE)
+		{
+			map->m_key = MK_B;
+			map->m_transition = DOWN;
+			map->m_modState = ALT;
+			map->m_usableIn = COMMANDUSABLE_GAME;
+		}
+	}
+#endif // defined(RTS_DEBUG)
 }
 
 //-------------------------------------------------------------------------------------------------

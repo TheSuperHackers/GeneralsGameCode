@@ -101,7 +101,7 @@ public:
 
 	void									Render(void);
 	bool									Anything_To_Render() { return (render_task_head != NULL); }
-	void									Clear_Render_List() { render_task_head = NULL; }
+	void									Clear_Render_List();
 
 	TextureClass *						Peek_Texture(int stage)	{ return textures[stage]; }
 	const VertexMaterialClass *	Peek_Material() { return material; }	

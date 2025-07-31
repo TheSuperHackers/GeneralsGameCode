@@ -126,6 +126,7 @@ static const FieldParse audioSettingsFieldParseTable[] =
 	{ "Default3DSoundVolume",	INI::parsePercentToReal,						NULL,							offsetof( AudioSettings, m_default3DSoundVolume) },
 	{ "DefaultSpeechVolume",	INI::parsePercentToReal,						NULL,							offsetof( AudioSettings, m_defaultSpeechVolume) },
 	{ "DefaultMusicVolume",		INI::parsePercentToReal,						NULL,							offsetof( AudioSettings, m_defaultMusicVolume) },
+	{ "DefaultMoneyTransactionVolume", INI::parsePercentToReal,		NULL,							offsetof( AudioSettings, m_defaultMoneyTransactionVolume) },
 	{ "MicrophoneDesiredHeightAboveTerrain",	INI::parseReal,			NULL,							offsetof( AudioSettings, m_microphoneDesiredHeightAboveTerrain ) },
 	{ "MicrophoneMaxPercentageBetweenGroundAndCamera", INI::parsePercentToReal,	NULL,	offsetof( AudioSettings, m_microphoneMaxPercentageBetweenGroundAndCamera ) },
   { "ZoomMinDistance",		INI::parseReal,									NULL,							offsetof( AudioSettings, m_zoomMinDistance ) },
@@ -231,7 +232,7 @@ void AudioManager::init()
 	
 	// determine if one of the music tracks exists. Since their now BIGd, one implies all.
 	// If they don't exist, then attempt to load them from the CD. 
-	if (!isMusicAlreadyLoaded()) 
+	if (!TheGlobalData->m_headless && !isMusicAlreadyLoaded()) 
 	{
 		m_musicPlayingFromCD = TRUE;
 		while (TRUE) 
@@ -262,10 +263,10 @@ void AudioManager::init()
 	m_sound = NEW SoundManager;
 
 	// Set our system volumes from the user's preferred settings, not the defaults.
-	m_systemMusicVolume = getAudioSettings() ? getAudioSettings()->m_preferredMusicVolume : 0.55f;
-	m_systemSoundVolume = getAudioSettings() ? getAudioSettings()->m_preferredSoundVolume : 0.75f;
-	m_systemSound3DVolume = getAudioSettings() ? getAudioSettings()->m_preferred3DSoundVolume: 0.75f;
-	m_systemSpeechVolume = getAudioSettings() ? getAudioSettings()->m_preferredSpeechVolume : 0.55f;
+	m_systemMusicVolume = m_audioSettings->m_preferredMusicVolume;
+	m_systemSoundVolume = m_audioSettings->m_preferredSoundVolume;
+	m_systemSound3DVolume = m_audioSettings->m_preferred3DSoundVolume;
+	m_systemSpeechVolume = m_audioSettings->m_preferredSpeechVolume;
 
 	m_scriptMusicVolume = 1.0f;
 	m_scriptSoundVolume = 1.0f;
@@ -316,8 +317,8 @@ void AudioManager::update()
 	Vector3 forward( 0, 1, 0 );
 	rot.mulVector3( forward );
 
-	Real desiredHeight = TheAudio->getAudioSettings()->m_microphoneDesiredHeightAboveTerrain;
-	Real maxPercentage = TheAudio->getAudioSettings()->m_microphoneMaxPercentageBetweenGroundAndCamera;
+	Real desiredHeight = m_audioSettings->m_microphoneDesiredHeightAboveTerrain;
+	Real maxPercentage = m_audioSettings->m_microphoneMaxPercentageBetweenGroundAndCamera;
 
 	Coord3D lookTo;
 	lookTo.set(forward.X, forward.Y, forward.Z);
@@ -359,9 +360,9 @@ void AudioManager::update()
 
 
 	//Now determine if we would like to boost the volume based on the camera being close to the microphone!
-	Real maxBoostScalar = TheAudio->getAudioSettings()->m_zoomSoundVolumePercentageAmount;
-	Real minDist = TheAudio->getAudioSettings()->m_zoomMinDistance;
-	Real maxDist = TheAudio->getAudioSettings()->m_zoomMaxDistance;
+	Real maxBoostScalar = m_audioSettings->m_zoomSoundVolumePercentageAmount;
+	Real minDist = m_audioSettings->m_zoomMinDistance;
+	Real maxDist = m_audioSettings->m_zoomMaxDistance;
 
 	//We can't boost a sound above 100%, instead reduce the normal sound level.
 	m_zoomVolume = 1.0f - maxBoostScalar;
@@ -468,7 +469,7 @@ AudioHandle AudioManager::addAudioEvent(const AudioEventRTS *eventToAdd)
 	}
 
 	// cull muted audio
-	if (audioEvent->getVolume() < TheAudio->getAudioSettings()->m_minVolume) {
+	if (audioEvent->getVolume() < m_audioSettings->m_minVolume) {
 #ifdef INTENSIVE_AUDIO_DEBUG
 		DEBUG_LOG((" - culled due to muting (%d).", audioEvent->getVolume()));
 #endif
@@ -998,7 +999,7 @@ void AudioManager::findAllAudioEventsOfType( AudioType audioType, std::vector<Au
 Bool AudioManager::isCurrentProviderHardwareAccelerated()
 {
 	for (Int i = 0; i < MAX_HW_PROVIDERS; ++i) {
-		if (getProviderName(getSelectedProvider()) == TheAudio->getAudioSettings()->m_preferred3DProvider[i]) {
+		if (getProviderName(getSelectedProvider()) == m_audioSettings->m_preferred3DProvider[i]) {
 			return TRUE;
 		}
 	}
@@ -1009,7 +1010,7 @@ Bool AudioManager::isCurrentProviderHardwareAccelerated()
 //-------------------------------------------------------------------------------------------------
 Bool AudioManager::isCurrentSpeakerTypeSurroundSound()
 {
-	return (getSpeakerType() == TheAudio->getAudioSettings()->m_defaultSpeakerType3D);
+	return (getSpeakerType() == m_audioSettings->m_defaultSpeakerType3D);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -1042,7 +1043,7 @@ Bool AudioManager::shouldPlayLocally(const AudioEventRTS *audioEvent)
 	Player *owningPlayer = ThePlayerList->getNthPlayer(audioEvent->getPlayerIndex());
 
 	if (BitIsSet(ei->m_type, ST_PLAYER) && BitIsSet(ei->m_type, ST_UI) && owningPlayer == NULL) {
-		DEBUG_ASSERTCRASH(!TheGameLogic->isInGameLogicUpdate(), ("Playing %s sound -- player-based UI sound without specifying a player."));
+		DEBUG_ASSERTCRASH(!TheGameLogic->isInGameLogicUpdate(), ("Playing %s sound -- player-based UI sound without specifying a player.", ei->m_audioName.str()));
 		return TRUE;
 	}
 
@@ -1098,13 +1099,15 @@ void AudioManager::releaseAudioEventRTS( AudioEventRTS *&eventToRelease )
 //-------------------------------------------------------------------------------------------------
 void AudioManager::loseFocus( void )
 {
-	DEBUG_ASSERTLOG(m_savedValues == NULL, ("AudioManager::loseFocus() - leak - jkmcd"));
+	if (m_savedValues)
+		return;
+
 	// In this case, make all the audio go silent.
 	m_savedValues = NEW Real[NUM_VOLUME_TYPES];
-	m_savedValues[0] = m_systemMusicVolume;
-	m_savedValues[1] = m_systemSoundVolume;
-	m_savedValues[2] = m_systemSound3DVolume;
-	m_savedValues[3] = m_systemSpeechVolume;
+	m_savedValues[VOLUME_TYPE_MUSIC] = m_systemMusicVolume;
+	m_savedValues[VOLUME_TYPE_SOUND] = m_systemSoundVolume;
+	m_savedValues[VOLUME_TYPE_SOUND3D] = m_systemSound3DVolume;
+	m_savedValues[VOLUME_TYPE_SPEECH] = m_systemSpeechVolume;
 
 	// Now, set them all to 0.
 	setVolume(0.0f, (AudioAffect) (AudioAffect_All | AudioAffect_SystemSetting));
@@ -1113,15 +1116,14 @@ void AudioManager::loseFocus( void )
 //-------------------------------------------------------------------------------------------------
 void AudioManager::regainFocus( void )
 {
-	if (!m_savedValues) {
+	if (!m_savedValues)
 		return;
-	}
 
 	// We got focus back. Restore the previous audio values.
-	setVolume(m_savedValues[0], (AudioAffect) (AudioAffect_Music | AudioAffect_SystemSetting));
-	setVolume(m_savedValues[1], (AudioAffect) (AudioAffect_Sound | AudioAffect_SystemSetting));
-	setVolume(m_savedValues[2], (AudioAffect) (AudioAffect_Sound3D | AudioAffect_SystemSetting));
-	setVolume(m_savedValues[3], (AudioAffect) (AudioAffect_Speech | AudioAffect_SystemSetting));
+	setVolume(m_savedValues[VOLUME_TYPE_MUSIC], (AudioAffect) (AudioAffect_Music | AudioAffect_SystemSetting));
+	setVolume(m_savedValues[VOLUME_TYPE_SOUND], (AudioAffect) (AudioAffect_Sound | AudioAffect_SystemSetting));
+	setVolume(m_savedValues[VOLUME_TYPE_SOUND3D], (AudioAffect) (AudioAffect_Sound3D | AudioAffect_SystemSetting));
+	setVolume(m_savedValues[VOLUME_TYPE_SPEECH], (AudioAffect) (AudioAffect_Speech | AudioAffect_SystemSetting));
 
 	// Now, blow away the old volumes.
 	delete [] m_savedValues;
@@ -1149,6 +1151,7 @@ void INI::parseAudioSettingsDefinition( INI *ini )
 	TheAudio->friend_getAudioSettings()->m_preferred3DSoundVolume	= prefs.get3DSoundVolume() / 100.0f;
 	TheAudio->friend_getAudioSettings()->m_preferredSpeechVolume	= prefs.getSpeechVolume() / 100.0f;
 	TheAudio->friend_getAudioSettings()->m_preferredMusicVolume		= prefs.getMusicVolume() / 100.0f;
+	TheAudio->friend_getAudioSettings()->m_preferredMoneyTransactionVolume = prefs.getMoneyTransactionVolume() / 100.0f;
 }
 
 //-------------------------------------------------------------------------------------------------

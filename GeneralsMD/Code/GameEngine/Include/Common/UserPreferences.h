@@ -106,6 +106,7 @@ public:
 	Real get3DSoundVolume(void);							// convenience function
 	Real getSpeechVolume(void);								// convenience function
 	Real getMusicVolume(void);								// convenience function
+	Real getMoneyTransactionVolume(void) const;
 	Bool saveCameraInReplays(void);
 	Bool useCameraInReplays(void);
 	Int	 getStaticGameDetail(void);	// detail level selected by the user.

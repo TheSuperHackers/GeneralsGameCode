@@ -2260,7 +2260,7 @@ void BaseHeightMapRenderObjClass::addProp(Int id, Coord3D location, Real angle, 
 //=============================================================================
 // BaseHeightMapRenderObjClass::removeProp
 //=============================================================================
-/** Adds a prop to the prop buffer.*/
+/** Removes a prop from the prop buffer.*/
 //=============================================================================
 void BaseHeightMapRenderObjClass::removeProp(Int id)
 {
@@ -2272,7 +2272,7 @@ void BaseHeightMapRenderObjClass::removeProp(Int id)
 //=============================================================================
 // BaseHeightMapRenderObjClass::removeAllProps
 //=============================================================================
-/** Adds a prop to the prop buffer.*/
+/** Removes all props from the prop buffer.*/
 //=============================================================================
 void BaseHeightMapRenderObjClass::removeAllProps()
 {

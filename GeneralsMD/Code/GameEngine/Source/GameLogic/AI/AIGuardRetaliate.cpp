@@ -359,6 +359,13 @@ void AIGuardRetaliateInnerState::loadPostProcess( void )
 	onEnter();
 }  // end loadPostProcess
 
+// ------------------------------------------------------------------------------------------------
+AIGuardRetaliateInnerState::~AIGuardRetaliateInnerState(void)
+{
+	deleteInstance(m_attackState);
+	deleteInstance(m_enterState);
+}
+
 //--------------------------------------------------------------------------------------
 StateReturnType AIGuardRetaliateInnerState::onEnter( void )
 {
@@ -474,6 +481,12 @@ void AIGuardRetaliateOuterState::loadPostProcess( void )
 {						 AIGuardRetaliateOuterState
 	onEnter();
 }  // end loadPostProcess
+
+// ------------------------------------------------------------------------------------------------
+AIGuardRetaliateOuterState::~AIGuardRetaliateOuterState(void)
+{
+	deleteInstance(m_attackState);
+}
 
 //--------------------------------------------------------------------------------------
 StateReturnType AIGuardRetaliateOuterState::onEnter( void )
@@ -755,6 +768,12 @@ AsciiString AIGuardRetaliateAttackAggressorState::getName(  ) const
 	return name;
 }
 #endif
+
+// ------------------------------------------------------------------------------------------------
+AIGuardRetaliateAttackAggressorState::~AIGuardRetaliateAttackAggressorState(void)
+{
+	deleteInstance(m_attackState);
+}
 
 //-------------------------------------------------------------------------------------------------
 StateReturnType AIGuardRetaliateAttackAggressorState::onEnter( void )

@@ -149,7 +149,6 @@ private:
 	AIAttackState *m_attackState;
 	AIEnterState *m_enterState;
 };
-EMPTY_DTOR(AIGuardRetaliateInnerState)
 
 //--------------------------------------------------------------------------------------
 class AIGuardRetaliateIdleState : public State
@@ -196,7 +195,6 @@ private:
 	GuardRetaliateExitConditions m_exitConditions; 
 	AIAttackState *m_attackState;
 };
-EMPTY_DTOR(AIGuardRetaliateOuterState)
 
 //--------------------------------------------------------------------------------------
 class AIGuardRetaliateReturnState : public AIInternalMoveToState
@@ -257,8 +255,6 @@ private:
 	GuardRetaliateExitConditions m_exitConditions; 
 	AIAttackState *m_attackState;
 };
-
-EMPTY_DTOR(AIGuardRetaliateAttackAggressorState)
 
 //--------------------------------------------------------------------------------------
 

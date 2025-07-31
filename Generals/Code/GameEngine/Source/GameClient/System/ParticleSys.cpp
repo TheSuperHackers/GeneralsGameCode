@@ -2389,7 +2389,6 @@ ParticleInfo ParticleSystem::mergeRelatedParticleSystems( ParticleSystem *master
 	if (!masterParticleSystem || !slaveParticleSystem) {
 		DEBUG_CRASH(("masterParticleSystem or slaveParticleSystem was NULL. Should not happen. JKMCD"));
 		ParticleInfo bogus;
-		memset( &bogus, 0, sizeof( bogus ) );
 		return bogus;
 	}
 
@@ -2987,11 +2986,12 @@ void ParticleSystemManager::init( void )
 // ------------------------------------------------------------------------------------------------
 void ParticleSystemManager::reset( void )
 {
-	while (getParticleSystemCount()) {
-		if (m_allParticleSystemList.front()) {
-			deleteInstance(m_allParticleSystemList.front());
-		}
+	while (!m_allParticleSystemList.empty())
+	{
+		DEBUG_ASSERTCRASH(m_allParticleSystemList.front() != NULL, ("ParticleSystemManager::reset: ParticleSystem is null"));
+		deleteInstance(m_allParticleSystemList.front());
 	}
+	DEBUG_ASSERTCRASH(m_particleSystemCount == 0, ("ParticleSystemManager::reset: m_particleSystemCount is %u, not 0", m_particleSystemCount));
 
 	// sanity, our lists must be empty!!
 	for( Int i = 0; i < NUM_PARTICLE_PRIORITIES; ++i )
@@ -3036,10 +3036,7 @@ void ParticleSystemManager::update( void )
 	{
 		// TheSuperHackers @info Must increment the list iterator before potential element erasure from the list.
 		ParticleSystem* sys = *it++;
-
-		if (!sys) {
-			continue;
-		}
+		DEBUG_ASSERTCRASH(sys != NULL, ("ParticleSystemManager::update: ParticleSystem is null"));
 
 		if (sys->update(m_localPlayerIndex) == false)
 		{
@@ -3096,9 +3093,7 @@ ParticleSystem *ParticleSystemManager::findParticleSystem( ParticleSystemID id )
 
 	for( ParticleSystemListIt it = m_allParticleSystemList.begin(); it != m_allParticleSystemList.end(); ++it ) {
 		system = *it;
-		if (!system) {
-			continue;
-		}
+		DEBUG_ASSERTCRASH(system != NULL, ("ParticleSystemManager::findParticleSystem: ParticleSystem is null"));
 
 		if( system->getSystemID() == id ) {
 			return system;
@@ -3186,16 +3181,13 @@ void ParticleSystemManager::destroyAttachedSystems( Object *obj )
 		return;
 
 	// iterate through all systems
-	ParticleSystem *system = NULL;
-
 	for( ParticleSystemListIt it = m_allParticleSystemList.begin(); 
 			 it != m_allParticleSystemList.end(); 
 			 ++it ) 
 	{
 
-		system = *it;
-		if( system == NULL )
-			continue;
+		ParticleSystem *system = *it;
+		DEBUG_ASSERTCRASH(system != NULL, ("ParticleSystemManager::destroyAttachedSystems: ParticleSystem is null"));
 		
 		if( system->getAttachedObject() == obj->getID() )
 			system->destroy();
@@ -3271,6 +3263,7 @@ void ParticleSystemManager::removeParticle( Particle *particleToRemove)
 // ------------------------------------------------------------------------------------------------
 void ParticleSystemManager::friend_addParticleSystem( ParticleSystem *particleSystemToAdd )
 {
+	DEBUG_ASSERTCRASH(particleSystemToAdd != NULL, ("ParticleSystemManager::friend_addParticleSystem: ParticleSystem is null"));
 	m_allParticleSystemList.push_back(particleSystemToAdd);
 	++m_particleSystemCount;
 }
@@ -3284,8 +3277,9 @@ void ParticleSystemManager::friend_removeParticleSystem( ParticleSystem *particl
 	if (it != m_allParticleSystemList.end()) {
 		m_allParticleSystemList.erase(it);
 		--m_particleSystemCount;
+	} else {
+		DEBUG_CRASH(("ParticleSystemManager::friend_removeParticleSystem: ParticleSystem to remove was not recognized"));
 	}
-
 }
 
 // ------------------------------------------------------------------------------------------------

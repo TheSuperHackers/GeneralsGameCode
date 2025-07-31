@@ -800,23 +800,22 @@ AsciiString AudioEventRTS::generateFilenameExtension( AudioType audioTypeToPlay 
 //-------------------------------------------------------------------------------------------------
 void AudioEventRTS::adjustForLocalization(AsciiString &strToAdjust)
 {
-	const char *str = strToAdjust.reverseFind('\\');
-	if (!str) {
-		return;
+	const char *filename = strToAdjust.reverseFind('\\');
+	if (filename) {
+		filename += 1;
+	} else {
+		filename = strToAdjust.str();
 	}
 
-	// try the localized version first so that we're guarenteed to get it
+	// try the localized version first so that we're guaranteed to get it
 	// even if the generic data directory holds a version of the file
 	AsciiString localizedFilePath = generateFilenamePrefix(m_eventInfo->m_soundType, TRUE);
-	AsciiString filename = str;
 	localizedFilePath.concat(filename);
 
 	if (TheFileSystem->doesFileExist(localizedFilePath.str())) {
 		strToAdjust = localizedFilePath;
 	}
 	// else there was no localized version, so leave the path we received unchanged
-
-	return;
 }
 
 //-------------------------------------------------------------------------------------------------

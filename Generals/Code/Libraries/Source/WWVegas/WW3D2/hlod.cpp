@@ -813,6 +813,9 @@ bool HLodDefClass::SubObjectArrayClass::Load_W3D(ChunkLoadClass & cload)
 
 	ModelCount = header.ModelCount;
 	MaxScreenSize = header.MaxScreenSize;
+
+	DEBUG_ASSERTCRASH(ModelName == NULL, ("HLodDefClass::SubObjectArrayClass::Load_W3D: Leaking ModelName"));
+	DEBUG_ASSERTCRASH(BoneIndex == NULL, ("HLodDefClass::SubObjectArrayClass::Load_W3D: Leaking BoneIndex"));
 	ModelName = W3DNEWARRAY char * [ModelCount];
 	BoneIndex = W3DNEWARRAY int [ModelCount];
 

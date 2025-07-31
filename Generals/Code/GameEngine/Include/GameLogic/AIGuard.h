@@ -140,7 +140,10 @@ class AIGuardInnerState : public State
 {
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIGuardInnerState, "AIGuardInnerState")		
 public:
-	AIGuardInnerState( StateMachine *machine ) : State( machine, "AIGuardInner" ) { }
+	AIGuardInnerState( StateMachine *machine ) : State( machine, "AIGuardInner" ) 
+	{
+		m_attackState = NULL;
+	}
 	virtual StateReturnType onEnter( void );
 	virtual StateReturnType update( void );
 	virtual void onExit( StateExitType status );
@@ -155,7 +158,6 @@ private:
 	ExitConditions m_exitConditions; 
 	AIAttackState *m_attackState;
 };
-EMPTY_DTOR(AIGuardInnerState)
 
 //--------------------------------------------------------------------------------------
 class AIGuardIdleState : public State
@@ -202,7 +204,6 @@ private:
 	ExitConditions m_exitConditions; 
 	AIAttackState *m_attackState;
 };
-EMPTY_DTOR(AIGuardOuterState)
 
 //--------------------------------------------------------------------------------------
 class AIGuardReturnState : public AIInternalMoveToState
@@ -260,8 +261,6 @@ private:
 	ExitConditions m_exitConditions; 
 	AIAttackState *m_attackState;
 };
-
-EMPTY_DTOR(AIGuardAttackAggressorState)
 
 //--------------------------------------------------------------------------------------
 

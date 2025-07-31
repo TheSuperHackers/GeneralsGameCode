@@ -362,11 +362,6 @@ public:
 
 	Real m_keyboardScrollFactor;			///< Factor applied to game scrolling speed via keyboard scrolling
 	Real m_keyboardDefaultScrollFactor;			///< Factor applied to game scrolling speed via keyboard scrolling
-	
-  Real m_musicVolumeFactor;         ///< Factor applied to loudness of music volume
-  Real m_SFXVolumeFactor;           ///< Factor applied to loudness of SFX volume
-  Real m_voiceVolumeFactor;         ///< Factor applied to loudness of voice volume
-  Bool m_3DSoundPref;               ///< Whether user wants to use 3DSound or not
 
 	Bool m_animateWindows;						///< Should we animate window transitions?
 
