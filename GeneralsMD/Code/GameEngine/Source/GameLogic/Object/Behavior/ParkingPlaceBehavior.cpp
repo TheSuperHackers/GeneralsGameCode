@@ -472,7 +472,7 @@ void ParkingPlaceBehavior::transferRunwayReservationToNextInLineForTakeoff(Objec
 //-------------------------------------------------------------------------------------------------
 Bool ParkingPlaceBehavior::deferUnsequencedRunwayReservationForTakeoff(UnsignedInt spaceIndex, Bool forLanding)
 {
-	if (spaceIndex == 2 || spaceIndex == 3)
+	if (spaceIndex >= m_runways.size())
 	{
 		Bool& deferred = m_spaces[spaceIndex].m_deferredRunwayReservationForTakeoff;
 		if (forLanding)
