@@ -428,8 +428,8 @@ void DebugLog(const char *format, ...)
 	ScopedCriticalSection scopedCriticalSection(TheDebugLogCriticalSection);
 #endif
 
-	if (theDebugFlags == 0)
-		MessageBoxWrapper("DebugLog - Debug not inited properly", "", MB_OK|MB_TASKMODAL);
+//	if (theDebugFlags == 0)
+//	MessageBoxWrapper("DebugLog - Debug not inited properly", "", MB_OK|MB_TASKMODAL);
 
 	prepBuffer(theBuffer);
 
