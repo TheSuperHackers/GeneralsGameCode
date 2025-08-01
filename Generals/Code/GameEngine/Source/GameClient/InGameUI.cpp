@@ -5430,7 +5430,10 @@ void InGameUI::selectNextIdleWorker( void )
 	}
 	else
 	{
-		Drawable *selectedDrawable = TheInGameUI->getFirstSelectedDrawable();	
+		Drawable *selectedDrawable = TheInGameUI->getFirstSelectedDrawable();
+		// The SuperHackers @tweak Stubbjax 22/07/2025 Idle worker iteration now correctly identifies and
+		// iterates contained idle workers. Previous iteration logic would not go past contained workers,
+		// and was not guaranteed to select top-level containers.
 		ObjectPtrVector uniqueIdleWorkers = getUniqueIdleWorkers(m_idleWorkers[index]);
 
 		ObjectPtrVector::iterator it = uniqueIdleWorkers.begin();
@@ -5455,6 +5458,7 @@ void InGameUI::selectNextIdleWorker( void )
 	DEBUG_ASSERTCRASH(selectThisObject, ("InGameUI::selectNextIdleWorker Could not select the next IDLE worker"));
 	if(selectThisObject)
 	{	
+		DEBUG_ASSERTCRASH(selectThisObject->getContainedBy() == NULL, ("InGameUI::selectNextIdleWorker Selected idle object should not be contained"));
 		deselectAllDrawables();
 		GameMessage *teamMsg = TheMessageStream->appendMessage( GameMessage::MSG_CREATE_SELECTED_GROUP );
 
@@ -5479,7 +5483,7 @@ void InGameUI::selectNextIdleWorker( void )
 	}
 }
 
-// Finds unique selectables to avoid selecting the same or a previous container if multiple idle workers are contained
+// Finds unique selectables to avoid selecting the same or a previous container if multiple idle workers are contained.
 ObjectPtrVector InGameUI::getUniqueIdleWorkers(const ObjectList& idleWorkers)
 {
 	ObjectPtrVector uniqueIdleWorkers;
