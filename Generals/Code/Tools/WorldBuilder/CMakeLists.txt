@@ -226,3 +226,7 @@ else()
 endif()
 
 target_sources(g_worldbuilder PRIVATE ${WORLDBUILDER_SRC})
+
+if(IS_VS6_BUILD)
+    target_compile_options(g_worldbuilder PRIVATE /Zd)
+endif()
