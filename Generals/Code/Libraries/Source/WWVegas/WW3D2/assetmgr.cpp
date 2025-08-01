@@ -1044,6 +1044,8 @@ HTreeClass *	WW3DAssetManager::Get_HTree(const char * name)
 	return htree;
 }
 
+//doesn't exist in ZH
+
 /***********************************************************************************************
  * WW3DAssetManager::Get_Bumpmap_Based_On_Texture -- Generate a bumpmap from texture. The      *
  * resulting texture is stored to the hash table so that any further requests will share it.   *
@@ -1058,31 +1060,31 @@ HTreeClass *	WW3DAssetManager::Get_HTree(const char * name)
  *   1/31/2001  NH : Created.                                                                  *
  *=============================================================================================*/
 
-TextureClass* WW3DAssetManager::Get_Bumpmap_Based_On_Texture(TextureClass* texture)
-{
-	WWASSERT(texture->Get_Texture_Name() && strlen(texture->Get_Texture_Name()));
-	StringClass bump_name="__Bumpmap-";
-	bump_name+=texture->Get_Texture_Name();
-	_strlwr(bump_name.Peek_Buffer());	// lower case
-
-	/*
-	** See if the texture has already been generated.
-	*/
-
-	TextureClass* tex = TextureHash.Get(bump_name);
-
-	/*
-	** Didn't have it so we have to create a new texture
-	*/
-	if (!tex) {
-		tex = NEW_REF(BumpmapTextureClass,(texture));
-		tex->Set_Texture_Name(bump_name);
-		TextureHash.Insert(tex->Get_Texture_Name(),tex);
-	}
-
-	tex->Add_Ref();
-	return tex;
-}
+//TextureClass* WW3DAssetManager::Get_Bumpmap_Based_On_Texture(TextureClass* texture)
+//{
+//	WWASSERT(texture->Get_Texture_Name() && strlen(texture->Get_Texture_Name()));
+//	StringClass bump_name="__Bumpmap-";
+//	bump_name+=texture->Get_Texture_Name();
+//	_strlwr(bump_name.Peek_Buffer());	// lower case
+//
+//	/*
+//	** See if the texture has already been generated.
+//	*/
+//
+//	TextureClass* tex = TextureHash.Get(bump_name);
+//
+//	/*
+//	** Didn't have it so we have to create a new texture
+//	*/
+//	if (!tex) {
+//		tex = NEW_REF(BumpmapTextureClass,(texture));
+//		tex->Set_Texture_Name(bump_name);
+//		TextureHash.Insert(tex->Get_Texture_Name(),tex);
+//	}
+//
+//	tex->Add_Ref();
+//	return tex;
+//}
 
 /***********************************************************************************************
  * WW3DAssetManager::Get_Texture -- get a TextureClass from the specified file                 *

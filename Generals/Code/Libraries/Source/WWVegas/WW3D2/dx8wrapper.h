@@ -357,6 +357,35 @@ public:
 	** Resources
 	*/
 
+	static IDirect3DVolumeTexture8* _Create_DX8_Volume_Texture
+	(
+		unsigned int width,
+		unsigned int height,
+		unsigned int depth,
+		WW3DFormat format,
+		MipCountType mip_level_count,
+		D3DPOOL pool = D3DPOOL_MANAGED
+	);
+
+	static IDirect3DCubeTexture8* _Create_DX8_Cube_Texture
+	(
+		unsigned int width,
+		unsigned int height,
+		WW3DFormat format,
+		MipCountType mip_level_count,
+		D3DPOOL pool = D3DPOOL_MANAGED,
+		bool rendertarget = false
+	);
+
+	static IDirect3DTexture8* _Create_DX8_ZTexture
+	(
+		unsigned int width,
+		unsigned int height,
+		WW3DZFormat zformat,
+		MipCountType mip_level_count,
+		D3DPOOL pool = D3DPOOL_MANAGED
+	);
+
 	static IDirect3DTexture8 * _Create_DX8_Texture
 	(
 		unsigned int width,
@@ -448,9 +477,12 @@ public:
 	*/
 	static TextureClass *	Create_Render_Target (int width, int height, bool alpha=false);
 	
-	static void					Set_Render_Target (TextureBaseClass * texture);
-	static void					Set_Render_Target (IDirect3DSurface8 *render_target);
-	static void					Set_Render_Target (IDirect3DSwapChain8 *swap_chain);
+	static void					Set_Render_Target_With_Z(TextureClass* texture, ZTextureClass* ztexture = NULL);
+
+	static void					Set_Render_Target(IDirect3DSurface8* render_target, bool use_default_depth_buffer = false);
+	static void					Set_Render_Target(IDirect3DSurface8* render_target, IDirect3DSurface8* dpeth_buffer);
+
+	static void					Set_Render_Target(IDirect3DSwapChain8* swap_chain);
 	static bool					Is_Render_To_Texture(void) { return IsRenderToTexture; }
 
 	// shader system udpates KJM v
@@ -641,7 +673,9 @@ protected:
 	static IDirect3DDevice8 *			D3DDevice;				//d3ddevice8;
 
 	static IDirect3DSurface8 *			CurrentRenderTarget;
+	static IDirect3DSurface8* CurrentDepthBuffer;
 	static IDirect3DSurface8 *			DefaultRenderTarget;
+	static IDirect3DSurface8* DefaultDepthBuffer;
 	static unsigned							DrawPolygonLowBoundLimit;
 
 	static bool								IsRenderToTexture;

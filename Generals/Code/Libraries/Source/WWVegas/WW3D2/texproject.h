@@ -58,7 +58,7 @@ class SpecialRenderInfoClass;
 class RenderObjClass;
 class MaterialPassClass;
 class SurfaceClass;
-
+class ZTextureClass;
 
 
 /**
@@ -156,7 +156,7 @@ public:
 
 	bool						Needs_Render_Target(void);
 	void						Set_Render_Target(TextureClass * render_target);
-	TextureClass *			Peek_Render_Target(void);
+	TextureClass* Peek_Render_Target(TextureClass** rtarget = NULL, ZTextureClass** ztarget = NULL);
 
 	bool						Compute_Texture(RenderObjClass * model,SpecialRenderInfoClass * context);
 
@@ -213,7 +213,8 @@ protected:
 	MaterialPassClass *		MaterialPass;
 	MatrixMapperClass *		Mapper1;
 	TextureClass *				RenderTarget;
-	
+	ZTextureClass* DepthStencilTarget;
+
 	/*
 	** I have to remember all of these values so that I can properly initialize a CameraClass
 	** when we do render-to-texture.  Some day we will merge CameraClass and ProjectorClass.
