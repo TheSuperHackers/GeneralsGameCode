@@ -339,7 +339,7 @@ void SortingRendererClass::Insert_Triangles(
 
  	WWASSERT(
 		((state->sorting_state.index_buffer_type==BUFFER_TYPE_SORTING || state->sorting_state.index_buffer_type==BUFFER_TYPE_DYNAMIC_SORTING) &&
-		(state->sorting_state.vertex_buffer_type==BUFFER_TYPE_SORTING || state->sorting_state.vertex_buffer_type==BUFFER_TYPE_DYNAMIC_SORTING)));
+		(state->sorting_state.vertex_buffer_types[0] == BUFFER_TYPE_SORTING || state->sorting_state.vertex_buffer_types[0] == BUFFER_TYPE_DYNAMIC_SORTING)));
 
 
 	state->bounding_sphere=bounding_sphere;
@@ -811,7 +811,7 @@ void SortingRendererClass::Insert_VolumeParticle(
 
 	WWASSERT(
 		((state->sorting_state.index_buffer_type==BUFFER_TYPE_SORTING || state->sorting_state.index_buffer_type==BUFFER_TYPE_DYNAMIC_SORTING) &&
-		(state->sorting_state.vertex_buffer_type==BUFFER_TYPE_SORTING || state->sorting_state.vertex_buffer_type==BUFFER_TYPE_DYNAMIC_SORTING)));
+		(state->sorting_state.vertex_buffer_types[0] ==BUFFER_TYPE_SORTING || state->sorting_state.vertex_buffer_types[0] ==BUFFER_TYPE_DYNAMIC_SORTING)));
 
 	state->bounding_sphere=bounding_sphere;
 	state->start_index=start_index;
