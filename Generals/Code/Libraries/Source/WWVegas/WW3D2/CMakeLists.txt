@@ -60,8 +60,8 @@ set(WW3D2_SRC
     dx8vertexbuffer.h
     #dx8webbrowser.cpp
     #dx8webbrowser.h
-    dx8wrapper.cpp
-    dx8wrapper.h
+    #dx8wrapper.cpp
+    #dx8wrapper.h
     #dynamesh.cpp
     #dynamesh.h
     #font3d.cpp
