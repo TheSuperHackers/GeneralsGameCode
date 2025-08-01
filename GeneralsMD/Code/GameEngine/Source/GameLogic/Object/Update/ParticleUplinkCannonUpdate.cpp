@@ -295,7 +295,7 @@ Bool ParticleUplinkCannonUpdate::initiateIntentToDoSpecialPower(const SpecialPow
 		UnsignedInt now = TheGameLogic->getFrame();
 
 		Coord3D pos;
-		pos.set(way->getLocation());
+		pos.set( way->getLocation() );
 
 		m_startAttackFrame = max( now, (UnsignedInt)1 );
 #if !RETAIL_COMPATIBLE_CRC
