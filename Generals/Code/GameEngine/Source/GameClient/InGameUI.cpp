@@ -5431,7 +5431,7 @@ void InGameUI::selectNextIdleWorker( void )
 	else
 	{
 		Drawable *selectedDrawable = TheInGameUI->getFirstSelectedDrawable();	
-		std::vector<Object*> uniqueIdleWorkers = getUniqueIdleWorkers(m_idleWorkers[index]);
+		ObjectPtrVector uniqueIdleWorkers = getUniqueIdleWorkers(m_idleWorkers[index]);
 
 		ObjectPtrVector::iterator uit = uniqueIdleWorkers.begin();
 		while(uit != uniqueIdleWorkers.end())
@@ -5480,9 +5480,9 @@ void InGameUI::selectNextIdleWorker( void )
 }
 
 // Finds unique selectables to avoid selecting the same or a previous container if multiple idle workers are contained
-std::vector<Object*> InGameUI::getUniqueIdleWorkers(const ObjectList& idleWorkers)
+ObjectPtrVector InGameUI::getUniqueIdleWorkers(const ObjectList& idleWorkers)
 {
-	std::vector<Object*> uniqueIdleWorkers;
+	ObjectPtrVector uniqueIdleWorkers;
 	uniqueIdleWorkers.reserve(idleWorkers.size());
 
 	for (ObjectList::const_iterator it = idleWorkers.begin(); it != idleWorkers.end(); ++it)
