@@ -173,7 +173,7 @@ void ChronoDeathBehavior::beginChronoDeath(const DamageInfo* damageInfo)
 				if (update) {
 					Real objRadius = getObject()->getGeometryInfo().getBoundingCircleRadius();
 
-					DEBUG_LOG((">>> CDB - objRadius = %f", objRadius));
+					// DEBUG_LOG((">>> CDB - objRadius = %f", objRadius));
 
 					objRadius = MAX(10.0, MIN(objRadius, 100.0));
 					update->setScaleMultiplier(objRadius / d->m_oclScaleFactor);

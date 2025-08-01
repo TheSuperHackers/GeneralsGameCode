@@ -191,7 +191,7 @@ void DynamicGeometryClientUpdate::clientUpdate( void )
 		progress = 0.5 - (Cos(progress * PI) * 0.5);
 	}
 
-	DEBUG_LOG((">>> DGCU - progress = %f", progress));
+	// DEBUG_LOG((">>> DGCU - progress = %f", progress));
 
 	Real alpha = (1.0 - progress) * alpha0 + progress * alpha1;
 	Real scale = (1.0 - progress) * scale0 + progress * scale1;
