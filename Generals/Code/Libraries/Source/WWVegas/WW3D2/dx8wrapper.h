@@ -473,9 +473,9 @@ public:
 	static IDirect3DSwapChain8 *	Create_Additional_Swap_Chain (HWND render_window);
 
 	/*
-	** Render target interface
+	** Render target interface. If render target format is WW3D_FORMAT_UNKNOWN, current display format is used.
 	*/
-	static TextureClass *	Create_Render_Target (int width, int height, bool alpha=false);
+	static TextureClass* Create_Render_Target(int width, int height, WW3DFormat format = WW3D_FORMAT_UNKNOWN);
 	
 	static void					Set_Render_Target_With_Z(TextureClass* texture, ZTextureClass* ztexture = NULL);
 

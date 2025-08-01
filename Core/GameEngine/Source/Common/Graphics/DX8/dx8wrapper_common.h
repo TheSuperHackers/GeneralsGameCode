@@ -2915,3 +2915,90 @@ void DX8Wrapper::Set_Light_Environment(LightEnvironmentClass* light_env)
 	*/
 }
 
+
+IDirect3DSurface8* DX8Wrapper::_Get_DX8_Front_Buffer()
+{
+	DX8_THREAD_ASSERT();
+	D3DDISPLAYMODE mode;
+
+	DX8CALL(GetDisplayMode(&mode));
+
+	IDirect3DSurface8* fb = NULL;
+
+	DX8CALL(CreateImageSurface(mode.Width, mode.Height, D3DFMT_A8R8G8B8, &fb));
+
+	DX8CALL(GetFrontBuffer(fb));
+	return fb;
+}
+
+SurfaceClass* DX8Wrapper::_Get_DX8_Back_Buffer(unsigned int num)
+{
+	DX8_THREAD_ASSERT();
+
+	IDirect3DSurface8* bb;
+	SurfaceClass* surf = NULL;
+	DX8CALL(GetBackBuffer(num, D3DBACKBUFFER_TYPE_MONO, &bb));
+	if (bb)
+	{
+		surf = NEW_REF(SurfaceClass, (bb));
+		bb->Release();
+	}
+
+	return surf;
+}
+
+TextureClass*
+DX8Wrapper::Create_Render_Target(int width, int height, WW3DFormat format)
+{
+	DX8_THREAD_ASSERT();
+	DX8_Assert();
+	number_of_DX8_calls++;
+
+	// Use the current display format if format isn't specified
+	if (format == WW3D_FORMAT_UNKNOWN) {
+		D3DDISPLAYMODE mode;
+		DX8CALL(GetDisplayMode(&mode));
+		format = D3DFormat_To_WW3DFormat(mode.Format);
+	}
+
+	// If render target format isn't supported return NULL
+	if (!Get_Current_Caps()->Support_Render_To_Texture_Format(format)) {
+		WWDEBUG_SAY(("DX8Wrapper - Render target format is not supported"));
+		return NULL;
+	}
+
+	//
+	//	Note: We're going to force the width and height to be powers of two and equal
+	//
+	const D3DCAPS8& dx8caps = Get_Current_Caps()->Get_DX8_Caps();
+	float poweroftwosize = width;
+	if (height > 0 && height < width) {
+		poweroftwosize = height;
+	}
+	poweroftwosize = ::Find_POT(poweroftwosize);
+
+	if (poweroftwosize > dx8caps.MaxTextureWidth) {
+		poweroftwosize = dx8caps.MaxTextureWidth;
+	}
+	if (poweroftwosize > dx8caps.MaxTextureHeight) {
+		poweroftwosize = dx8caps.MaxTextureHeight;
+	}
+
+	width = height = poweroftwosize;
+
+	//
+	//	Attempt to create the render target
+	//
+	TextureClass* tex = NEW_REF(TextureClass, (width, height, format, MIP_LEVELS_1, TextureClass::POOL_DEFAULT, true));
+
+	// 3dfx drivers are lying in the CheckDeviceFormat call and claiming
+	// that they support render targets!
+	if (tex->Peek_D3D_Base_Texture() == NULL)
+	{
+		WWDEBUG_SAY(("DX8Wrapper - Render target creation failed!"));
+		REF_PTR_RELEASE(tex);
+	}
+
+	return tex;
+}
+
