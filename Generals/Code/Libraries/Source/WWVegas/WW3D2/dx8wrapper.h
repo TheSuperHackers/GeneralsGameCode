@@ -477,6 +477,17 @@ public:
 	*/
 	static TextureClass* Create_Render_Target(int width, int height, WW3DFormat format = WW3D_FORMAT_UNKNOWN);
 	
+	// for depth map support KJM V
+	static void Create_Render_Target
+	(
+		int width,
+		int height,
+		WW3DFormat format,
+		WW3DZFormat zformat,
+		TextureClass** target,
+		ZTextureClass** depth_buffer
+	);
+
 	static void					Set_Render_Target_With_Z(TextureClass* texture, ZTextureClass* ztexture = NULL);
 
 	static void					Set_Render_Target(IDirect3DSurface8* render_target, bool use_default_depth_buffer = false);
