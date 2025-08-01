@@ -72,8 +72,8 @@ ChronoDeathBehaviorModuleData::ChronoDeathBehaviorModuleData()
 		{ "OCL",				INI::parseObjectCreationList,	NULL, offsetof(ChronoDeathBehaviorModuleData, m_ocl) },
 		{ "StartScale",			INI::parseReal,			        NULL, offsetof(ChronoDeathBehaviorModuleData, m_startScale) },
 		{ "EndScale",			INI::parseReal,		            NULL, offsetof(ChronoDeathBehaviorModuleData, m_endScale) },
-		{ "StartOpacity",			INI::parseReal,		            NULL, offsetof(ChronoDeathBehaviorModuleData, m_startAlpha) },
-		{ "EndOpacity",			INI::parseReal,		            NULL, offsetof(ChronoDeathBehaviorModuleData, m_endAlpha) },
+		{ "StartOpacity",		INI::parsePercentToReal,		NULL, offsetof(ChronoDeathBehaviorModuleData, m_startAlpha) },
+		{ "EndOpacity",			INI::parsePercentToReal,		NULL, offsetof(ChronoDeathBehaviorModuleData, m_endAlpha) },
 		{ "DestructionDelay",	INI::parseDurationUnsignedInt,	NULL, offsetof(ChronoDeathBehaviorModuleData, m_destructionDelay) },
 		{ 0, 0, 0, 0 }
 	};
