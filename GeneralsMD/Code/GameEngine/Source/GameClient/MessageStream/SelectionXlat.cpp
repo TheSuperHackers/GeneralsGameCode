@@ -1120,7 +1120,7 @@ GameMessageDisposition SelectionTranslator::translateGameMessage(const GameMessa
 								// if theres someone in the group, center the camera on them.
 								Drawable* drawable = objlist[numObjs - 1]->getDrawable();
 								TheTacticalView->lookAt( drawable->getPosition() );
-								performSelection = !TheInGameUI->isDrawableSelected( drawable->getID() );
+								performSelection = !TheInGameUI->areAllObjectsSelected( objlist );
 							}
 						}
 					}
