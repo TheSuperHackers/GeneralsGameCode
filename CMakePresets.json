@@ -1,8 +1,8 @@
 {
-    "version": 4,
+    "version": 6,
     "cmakeMinimumRequired": {
         "major": 3,
-        "minor": 24,
+        "minor": 25,
         "patch": 0
     },
     "configurePresets": [
@@ -212,6 +212,137 @@
             "description": "Build Unix 32bit VCPKG Release",
             "configuration": "Release"
         }
+    ],
+    "workflowPresets": [
+        {
+            "name": "vc6",
+            "steps": [
+                {
+                    "type": "configure",
+                    "name": "vc6"
+                },
+                {
+                    "type": "build",
+                    "name": "vc6"
+                }
+            ]
+        },
+        {
+            "name": "vc6-debug",
+            "steps": [
+                {
+                    "type": "configure",
+                    "name": "vc6-debug"
+                },
+                {
+                    "type": "build",
+                    "name": "vc6-debug"
+                }
+            ]
+        },
+        {
+            "name": "vc6-profile",
+            "steps": [
+                {
+                    "type": "configure",
+                    "name": "vc6-profile"
+                },
+                {
+                    "type": "build",
+                    "name": "vc6-profile"
+                }
+            ]
+        },
+        {
+            "name": "win32",
+            "steps": [
+                {
+                    "type": "configure",
+                    "name": "win32"
+                },
+                {
+                    "type": "build",
+                    "name": "win32"
+                }
+            ]
+        },
+        {
+            "name": "win32-profile",
+            "steps": [
+                {
+                    "type": "configure",
+                    "name": "win32-profile"
+                },
+                {
+                    "type": "build",
+                    "name": "win32-profile"
+                }
+            ]
+        },
+        {
+            "name": "win32-debug",
+            "steps": [
+                {
+                    "type": "configure",
+                    "name": "win32-debug"
+                },
+                {
+                    "type": "build",
+                    "name": "win32-debug"
+                }
+            ]
+        },
+        {
+            "name": "win32-vcpkg",
+            "steps": [
+                {
+                    "type": "configure",
+                    "name": "win32-vcpkg"
+                },
+                {
+                    "type": "build",
+                    "name": "win32-vcpkg"
+                }
+            ]
+        },
+        {
+            "name": "win32-vcpkg-profile",
+            "steps": [
+                {
+                    "type": "configure",
+                    "name": "win32-vcpkg-profile"
+                },
+                {
+                    "type": "build",
+                    "name": "win32-vcpkg-profile"
+                }
+            ]
+        },
+        {
+            "name": "win32-vcpkg-debug",
+            "steps": [
+                {
+                    "type": "configure",
+                    "name": "win32-vcpkg-debug"
+                },
+                {
+                    "type": "build",
+                    "name": "win32-vcpkg-debug"
+                }
+            ]
+        },
+        {
+            "name": "unix",
+            "steps": [
+                {
+                    "type": "configure",
+                    "name": "unix"
+                },
+                {
+                    "type": "build",
+                    "name": "unix"
+                }
+            ]
+        }
     ]
-        
 }

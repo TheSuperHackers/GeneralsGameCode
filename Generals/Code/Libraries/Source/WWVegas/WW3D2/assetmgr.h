@@ -272,9 +272,6 @@ public:
 		bool allow_reduction=true
 	);
 
-	//doesn't exist in ZH
-	//TextureClass*						Get_Bumpmap_Based_On_Texture(TextureClass* texture);
-
 	virtual void						Release_All_Textures(void);
 	virtual void						Release_Unused_Textures(void);
 	virtual void						Release_Texture(TextureClass *);

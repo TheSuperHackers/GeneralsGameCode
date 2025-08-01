@@ -1475,7 +1475,6 @@ Char	GameTextManager::readChar( File *file )
 void GameTextManager::updateWindowTitle()
 {
 	// TheSuperHackers @tweak Now prints product and version information in the Window title.
-	return;
 
 	DEBUG_ASSERTCRASH(TheVersion != NULL, ("TheVersion is NULL"));
 
