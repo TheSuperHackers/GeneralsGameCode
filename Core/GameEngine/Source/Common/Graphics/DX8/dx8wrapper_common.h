@@ -144,3 +144,111 @@ void DX8Wrapper::Do_Onetime_Device_Dependent_Inits(void)
 	Set_Default_Global_Render_States();
 }
 
+inline DWORD F2DW(float f) { return *((unsigned*)&f); }
+void DX8Wrapper::Set_Default_Global_Render_States(void)
+{
+	DX8_THREAD_ASSERT();
+	const D3DCAPS8& caps = Get_Current_Caps()->Get_DX8_Caps();
+
+	Set_DX8_Render_State(D3DRS_RANGEFOGENABLE, (caps.RasterCaps & D3DPRASTERCAPS_FOGRANGE) ? TRUE : FALSE);
+	Set_DX8_Render_State(D3DRS_FOGTABLEMODE, D3DFOG_NONE);
+	Set_DX8_Render_State(D3DRS_FOGVERTEXMODE, D3DFOG_LINEAR);
+	Set_DX8_Render_State(D3DRS_SPECULARMATERIALSOURCE, D3DMCS_MATERIAL);
+	Set_DX8_Render_State(D3DRS_COLORVERTEX, TRUE);
+	Set_DX8_Render_State(D3DRS_ZBIAS, 0);
+	Set_DX8_Texture_Stage_State(1, D3DTSS_BUMPENVLSCALE, F2DW(1.0f));
+	Set_DX8_Texture_Stage_State(1, D3DTSS_BUMPENVLOFFSET, F2DW(0.0f));
+	Set_DX8_Texture_Stage_State(0, D3DTSS_BUMPENVMAT00, F2DW(1.0f));
+	Set_DX8_Texture_Stage_State(0, D3DTSS_BUMPENVMAT01, F2DW(0.0f));
+	Set_DX8_Texture_Stage_State(0, D3DTSS_BUMPENVMAT10, F2DW(0.0f));
+	Set_DX8_Texture_Stage_State(0, D3DTSS_BUMPENVMAT11, F2DW(1.0f));
+
+	//	Set_DX8_Render_State(D3DRS_CULLMODE, D3DCULL_CW);
+		// Set dither mode here?
+}
+
+//MW: I added this for 'Generals'.
+bool DX8Wrapper::Validate_Device(void)
+{
+	DWORD numPasses = 0;
+	HRESULT hRes;
+
+	hRes = _Get_D3D_Device8()->ValidateDevice(&numPasses);
+
+	return (hRes == D3D_OK);
+}
+
+void DX8Wrapper::Invalidate_Cached_Render_States(void)
+{
+	render_state_changed = 0;
+
+	int a;
+	for (a = 0; a < sizeof(RenderStates) / sizeof(unsigned); ++a) {
+		RenderStates[a] = 0x12345678;
+	}
+	for (a = 0; a < MAX_TEXTURE_STAGES; ++a)
+	{
+		for (int b = 0; b < 32; b++)
+		{
+			TextureStageStates[a][b] = 0x12345678;
+		}
+		//Need to explicitly set texture to NULL, otherwise app will not be able to
+		//set it to null because of redundant state checker. MW
+		if (_Get_D3D_Device8())
+			_Get_D3D_Device8()->SetTexture(a, NULL);
+		if (Textures[a] != NULL) {
+			Textures[a]->Release();
+		}
+		Textures[a] = NULL;
+	}
+
+	ShaderClass::Invalidate();
+
+	//Need to explicitly set render_state texture pointers to NULL. MW
+	Release_Render_State();
+
+	// (gth) clear the matrix shadows too
+	for (int i = 0; i < D3DTS_WORLD + 1; i++) {
+		DX8Transforms[i][0].Set(0, 0, 0, 0);
+		DX8Transforms[i][1].Set(0, 0, 0, 0);
+		DX8Transforms[i][2].Set(0, 0, 0, 0);
+		DX8Transforms[i][3].Set(0, 0, 0, 0);
+	}
+
+}
+
+void DX8Wrapper::Do_Onetime_Device_Dependent_Shutdowns(void)
+{
+	/*
+	** Shutdown ww3d systems
+	*/
+	int i;
+	for (i = 0; i < MAX_VERTEX_STREAMS; ++i) {
+		if (render_state.vertex_buffers[i]) render_state.vertex_buffers[i]->Release_Engine_Ref();
+		REF_PTR_RELEASE(render_state.vertex_buffers[i]);
+	}
+	if (render_state.index_buffer) render_state.index_buffer->Release_Engine_Ref();
+	REF_PTR_RELEASE(render_state.index_buffer);
+	REF_PTR_RELEASE(render_state.material);
+	for (i = 0; i < CurrentCaps->Get_Max_Textures_Per_Pass(); ++i) REF_PTR_RELEASE(render_state.Textures[i]);
+
+
+	TextureLoader::Deinit();
+	SortingRendererClass::Deinit();
+	DynamicVBAccessClass::_Deinit();
+	DynamicIBAccessClass::_Deinit();
+	ShatterSystem::Shutdown();
+	PointGroupClass::_Shutdown();
+	VertexMaterialClass::Shutdown();
+	BoxRenderObjClass::Shutdown();
+	SHD_SHUTDOWN;
+	TheDX8MeshRenderer.Shutdown();
+	MissingTexture::_Deinit();
+
+	if (CurrentCaps) {
+		delete CurrentCaps;
+		CurrentCaps = NULL;
+	}
+
+}
+

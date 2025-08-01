@@ -180,14 +180,15 @@ struct RenderStateStruct
 	TextureBaseClass * Textures[MAX_TEXTURE_STAGES];
 	D3DLIGHT8 Lights[4];
 	bool LightEnable[4];
+	//unsigned lightsHash;
 	Matrix4x4 world;
 	Matrix4x4 view;
-	unsigned vertex_buffer_type;
+	unsigned vertex_buffer_types[MAX_VERTEX_STREAMS];
 	unsigned index_buffer_type;
 	unsigned short vba_offset;
 	unsigned short vba_count;
 	unsigned short iba_offset;
-	VertexBufferClass* vertex_buffer;
+	VertexBufferClass* vertex_buffers[MAX_VERTEX_STREAMS];
 	IndexBufferClass* index_buffer;
 	unsigned short index_base_offset;
 
@@ -280,7 +281,7 @@ public:
 
 	static void	Set_Viewport(CONST D3DVIEWPORT8* pViewport);
 
-	static void Set_Vertex_Buffer(const VertexBufferClass* vb);
+	static void Set_Vertex_Buffer(const VertexBufferClass* vb, unsigned stream = 0);
 	static void Set_Vertex_Buffer(const DynamicVBAccessClass& vba);
 	static void Set_Index_Buffer(const IndexBufferClass* ib,unsigned short index_base_offset);
 	static void Set_Index_Buffer(const DynamicIBAccessClass& iba,unsigned short index_base_offset);
@@ -1255,94 +1256,137 @@ WWINLINE bool DX8Wrapper::Is_Light_Enabled(unsigned index)
 
 WWINLINE void DX8Wrapper::Set_Render_State(const RenderStateStruct& state)
 {
+	int i;
+
 	if (render_state.index_buffer) {
 		render_state.index_buffer->Release_Engine_Ref();
 	}
 
-	if (render_state.vertex_buffer) {
-		render_state.vertex_buffer->Release_Engine_Ref();
+	for (i = 0; i < MAX_VERTEX_STREAMS; ++i)
+	{
+		if (render_state.vertex_buffers[i])
+		{
+			render_state.vertex_buffers[i]->Release_Engine_Ref();
+		}
 	}
 
-	render_state=state;
-	render_state_changed=0xffffffff;
+	render_state = state;
+	render_state_changed = 0xffffffff;
 
 	if (render_state.index_buffer) {
 		render_state.index_buffer->Add_Engine_Ref();
 	}
 
-	if (render_state.vertex_buffer) {
-		render_state.vertex_buffer->Add_Engine_Ref();
+	for (i = 0; i < MAX_VERTEX_STREAMS; ++i)
+	{
+		if (render_state.vertex_buffers[i])
+		{
+			render_state.vertex_buffers[i]->Add_Engine_Ref();
+		}
 	}
 }
 
 WWINLINE void DX8Wrapper::Release_Render_State()
-{	
+{
+	int i;
+
 	if (render_state.index_buffer) {
 		render_state.index_buffer->Release_Engine_Ref();
 	}
 
-	if (render_state.vertex_buffer) {
-		render_state.vertex_buffer->Release_Engine_Ref();
+	for (i = 0; i < MAX_VERTEX_STREAMS; ++i) {
+		if (render_state.vertex_buffers[i]) {
+			render_state.vertex_buffers[i]->Release_Engine_Ref();
+		}
 	}
 
-	REF_PTR_RELEASE(render_state.vertex_buffer);
+	for (i = 0; i < MAX_VERTEX_STREAMS; ++i) {
+		REF_PTR_RELEASE(render_state.vertex_buffers[i]);
+	}
 	REF_PTR_RELEASE(render_state.index_buffer);
 	REF_PTR_RELEASE(render_state.material);
-	for (unsigned i=0;i<MAX_TEXTURE_STAGES;++i) REF_PTR_RELEASE(render_state.Textures[i]);
+
+
+	for (i = 0; i < MAX_TEXTURE_STAGES; ++i)
+	{
+		REF_PTR_RELEASE(render_state.Textures[i]);
+	}
 }
 
 
 WWINLINE RenderStateStruct::RenderStateStruct()
 	:
 	material(0),
-	vertex_buffer(0),
 	index_buffer(0)
 {
-	for (unsigned i=0;i<MAX_TEXTURE_STAGES;++i) Textures[i]=0;
+	unsigned i;
+	for (i = 0; i < MAX_VERTEX_STREAMS; ++i) vertex_buffers[i] = 0;
+	for (i = 0; i < MAX_TEXTURE_STAGES; ++i) Textures[i] = 0;
+	//lightsHash = (unsigned)this;
 }
 
 WWINLINE RenderStateStruct::~RenderStateStruct()
 {
+	unsigned i;
 	REF_PTR_RELEASE(material);
-	REF_PTR_RELEASE(vertex_buffer);
+	for (i = 0; i < MAX_VERTEX_STREAMS; ++i) {
+		REF_PTR_RELEASE(vertex_buffers[i]);
+	}
 	REF_PTR_RELEASE(index_buffer);
-	for (unsigned i=0;i<MAX_TEXTURE_STAGES;++i) REF_PTR_RELEASE(Textures[i]);
+
+	for (i = 0; i < MAX_TEXTURE_STAGES; ++i)
+	{
+		REF_PTR_RELEASE(Textures[i]);
+	}
 }
 
 
 WWINLINE RenderStateStruct& RenderStateStruct::operator= (const RenderStateStruct& src)
 {
-	REF_PTR_SET(material,src.material);
-	REF_PTR_SET(vertex_buffer,src.vertex_buffer);
-	REF_PTR_SET(index_buffer,src.index_buffer);
-	for (unsigned i=0;i<MAX_TEXTURE_STAGES;++i) REF_PTR_SET(Textures[i],src.Textures[i]);
+	unsigned i;
+	REF_PTR_SET(material, src.material);
+	for (i = 0; i < MAX_VERTEX_STREAMS; ++i) {
+		REF_PTR_SET(vertex_buffers[i], src.vertex_buffers[i]);
+	}
+	REF_PTR_SET(index_buffer, src.index_buffer);
 
-	LightEnable[0]=src.LightEnable[0];
-	LightEnable[1]=src.LightEnable[1];
-	LightEnable[2]=src.LightEnable[2];
-	LightEnable[3]=src.LightEnable[3];
+	for (i = 0; i < MAX_TEXTURE_STAGES; ++i)
+	{
+		REF_PTR_SET(Textures[i], src.Textures[i]);
+	}
+
+	LightEnable[0] = src.LightEnable[0];
+	LightEnable[1] = src.LightEnable[1];
+	LightEnable[2] = src.LightEnable[2];
+	LightEnable[3] = src.LightEnable[3];
 	if (LightEnable[0]) {
-		Lights[0]=src.Lights[0];
+		Lights[0] = src.Lights[0];
 		if (LightEnable[1]) {
-			Lights[1]=src.Lights[1];
+			Lights[1] = src.Lights[1];
 			if (LightEnable[2]) {
-				Lights[2]=src.Lights[2];
+				Lights[2] = src.Lights[2];
 				if (LightEnable[3]) {
-					Lights[3]=src.Lights[3];
+					Lights[3] = src.Lights[3];
 				}
 			}
 		}
+
+
+		//lightsHash = flimby((char*)(&Lights[0]), sizeof(D3DLIGHT8)-1 );
+
 	}
 
-	shader=src.shader;
-	world=src.world;
-	view=src.view;
-	vertex_buffer_type=src.vertex_buffer_type;
-	index_buffer_type=src.index_buffer_type;
-	vba_offset=src.vba_offset;
-	vba_count=src.vba_count;
-	iba_offset=src.iba_offset;
-	index_base_offset=src.index_base_offset;
+	shader = src.shader;
+	world = src.world;
+	view = src.view;
+	for (i = 0; i < MAX_VERTEX_STREAMS; ++i) {
+		vertex_buffer_types[i] = src.vertex_buffer_types[i];
+	}
+	index_buffer_type = src.index_buffer_type;
+	vba_offset = src.vba_offset;
+	vba_count = src.vba_count;
+	iba_offset = src.iba_offset;
+	index_base_offset = src.index_base_offset;
 
 	return *this;
 }
