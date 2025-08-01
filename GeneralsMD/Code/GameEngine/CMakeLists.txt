@@ -21,8 +21,8 @@ set(GAMEENGINE_SRC
     Include/Common/CDManager.h
     Include/Common/ClientUpdateModule.h
     Include/Common/CommandLine.h
-    Include/Common/crc.h
-    Include/Common/CRCDebug.h
+#    Include/Common/crc.h
+#    Include/Common/CRCDebug.h
     Include/Common/CriticalSection.h
     Include/Common/CustomMatchPreferences.h
     Include/Common/DamageFX.h
@@ -563,8 +563,8 @@ set(GAMEENGINE_SRC
     Source/Common/Bezier/BezierSegment.cpp
     Source/Common/BitFlags.cpp
     Source/Common/CommandLine.cpp
-    Source/Common/crc.cpp
-    Source/Common/CRCDebug.cpp
+#    Source/Common/crc.cpp
+#    Source/Common/CRCDebug.cpp
     Source/Common/DamageFX.cpp
     Source/Common/Dict.cpp
     Source/Common/DiscreteCircle.cpp
