@@ -119,6 +119,7 @@ static PoolSizeRec sizes[] =
 	{ "WindowLayoutPool", 32, 32 },
 	{ "AnimatedParticleSysBoneClientUpdate", 16, 16 },
 	{ "SwayClientUpdate", 32, 32 },
+	{ "DynamicGeometryClientUpdate", 32, 32 },
 	{ "BeaconClientUpdate", 64, 32 },
 	{ "AIGroupPool", 64, 32 },  
 	{ "AIDockMachinePool", 256, 32 },
