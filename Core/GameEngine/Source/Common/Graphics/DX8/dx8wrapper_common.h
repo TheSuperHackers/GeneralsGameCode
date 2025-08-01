@@ -2830,3 +2830,88 @@ void DX8Wrapper::Set_Light(unsigned index, const LightClass& light)
 	Set_Light(index, &dlight);
 }
 
+//**********************************************************************************************
+//! Set the light environment. This is a lighting model which used up to four
+//! directional lights to produce the lighting.
+/*! 5/27/02 KJM Added shader light environment support
+*/
+void DX8Wrapper::Set_Light_Environment(LightEnvironmentClass* light_env)
+{
+	// Shader light environment support															*
+//	if (Light_Environment && light_env && (*Light_Environment)==(*light_env)) return;
+
+	Light_Environment = light_env;
+
+	if (light_env)
+	{
+		int light_count = light_env->Get_Light_Count();
+		unsigned int color = Convert_Color(light_env->Get_Equivalent_Ambient(), 0.0f);
+		if (RenderStates[D3DRS_AMBIENT] != color)
+		{
+			Set_DX8_Render_State(D3DRS_AMBIENT, color);
+			//buggy Radeon 9700 driver doesn't apply new ambient unless the material also changes.
+#if 1
+			render_state_changed |= MATERIAL_CHANGED;
+#endif
+		}
+
+		D3DLIGHT8 light;
+		int l = 0;
+		for (; l < light_count; ++l) {
+
+			::ZeroMemory(&light, sizeof(D3DLIGHT8));
+
+			light.Type = D3DLIGHT_DIRECTIONAL;
+			(Vector3&)light.Diffuse = light_env->Get_Light_Diffuse(l);
+			Vector3 dir = -light_env->Get_Light_Direction(l);
+			light.Direction = (const D3DVECTOR&)(dir);
+
+			// (gth) TODO: put specular into LightEnvironment?  Much work to be done on lights :-)'
+			if (l == 0) {
+				light.Specular.r = light.Specular.g = light.Specular.b = 1.0f;
+			}
+
+			if (light_env->isPointLight(l)) {
+				light.Type = D3DLIGHT_POINT;
+				(Vector3&)light.Diffuse = light_env->getPointDiffuse(l);
+				(Vector3&)light.Ambient = light_env->getPointAmbient(l);
+				light.Position = (const D3DVECTOR&)light_env->getPointCenter(l);
+				light.Range = light_env->getPointOrad(l);
+
+				// Inverse linear light 1/(1+D)
+				double a, b;
+				b = light_env->getPointOrad(l);
+				a = light_env->getPointIrad(l);
+
+				//(gth) CNC3 Generals code for the attenuation factors is causing the lights to over-brighten
+				//I'm changing the Attenuation0 parameter to 1.0 to avoid this problem.				
+#if 0
+				light.Attenuation0 = 0.01f;
+#else
+				light.Attenuation0 = 1.0f;
+#endif
+				if (fabs(a - b) < 1e-5)
+					// if the attenuation range is too small assume uniform with cutoff
+					light.Attenuation1 = 0.0f;
+				else
+					// this will cause the light to drop to half intensity at the first far attenuation
+					light.Attenuation1 = (float)0.1 / a;
+
+				light.Attenuation2 = 8.0f / (b * b);
+			}
+
+			Set_Light(l, &light);
+		}
+
+		for (; l < 4; ++l) {
+			Set_Light(l, NULL);
+		}
+	}
+	/*	else {
+			for (int l=0;l<4;++l) {
+				Set_Light(l,NULL);
+			}
+		}
+	*/
+}
+
