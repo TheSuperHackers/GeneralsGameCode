@@ -75,3 +75,72 @@ bool DX8Wrapper::Init(void* hwnd, bool lite)
 
 	return(true);
 }
+
+void DX8Wrapper::Shutdown(void)
+{
+	if (D3DDevice) {
+
+		Set_Render_Target((IDirect3DSurface8*)NULL);
+		Release_Device();
+	}
+
+	if (D3DInterface) {
+		D3DInterface->Release();
+		D3DInterface = NULL;
+
+	}
+
+	if (CurrentCaps)
+	{
+		int max = CurrentCaps->Get_Max_Textures_Per_Pass();
+		for (int i = 0; i < max; i++)
+		{
+			if (Textures[i])
+			{
+				Textures[i]->Release();
+				Textures[i] = NULL;
+			}
+		}
+	}
+
+	if (D3DInterface) {
+		UINT newRefCount = D3DInterface->Release();
+		D3DInterface = NULL;
+	}
+
+	if (D3D8Lib) {
+		FreeLibrary(D3D8Lib);
+		D3D8Lib = NULL;
+	}
+
+	_RenderDeviceNameTable.Clear();		 // note - Delete_All() resizes the vector, causing a reallocation.  Clear is better. jba.
+	_RenderDeviceShortNameTable.Clear();
+	_RenderDeviceDescriptionTable.Clear();
+
+	DX8Caps::Shutdown();
+	IsInitted = false;		// 010803 srj
+}
+
+void DX8Wrapper::Do_Onetime_Device_Dependent_Inits(void)
+{
+	/*
+	** Set Global render states (some of which depend on caps)
+	*/
+	Compute_Caps(D3DFormat_To_WW3DFormat(DisplayFormat));
+
+	/*
+ ** Initalize any other subsystems inside of WW3D
+ */
+	MissingTexture::_Init();
+	TextureFilterClass::_Init_Filters((TextureFilterClass::TextureFilterMode)WW3D::Get_Texture_Filter());
+	TheDX8MeshRenderer.Init();
+	SHD_INIT;
+	BoxRenderObjClass::Init();
+	VertexMaterialClass::Init();
+	PointGroupClass::_Init(); // This needs the VertexMaterialClass to be initted
+	ShatterSystem::Init();
+	TextureLoader::Init();
+
+	Set_Default_Global_Render_States();
+}
+
