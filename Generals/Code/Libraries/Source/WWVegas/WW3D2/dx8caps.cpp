@@ -481,6 +481,27 @@ DX8Caps::DX8Caps(
 	Compute_Caps(display_format, adapter_id);
 }
 
+DX8Caps::DX8Caps(
+	IDirect3D8* direct3d,
+	const D3DCAPS8& caps,
+	WW3DFormat display_format,
+	const D3DADAPTER_IDENTIFIER8& adapter_id)
+	:
+	Direct3D(direct3d),
+	Caps(caps),
+	MaxDisplayWidth(0),
+	MaxDisplayHeight(0)
+{
+	if ((Caps.DevCaps & D3DDEVCAPS_HWTRANSFORMANDLIGHT) == D3DDEVCAPS_HWTRANSFORMANDLIGHT) {
+		SupportTnL = true;
+	}
+	else {
+		SupportTnL = false;
+	}
+
+	Compute_Caps(display_format, adapter_id);
+}
+
 //Don't really need this but I added this function to free static variables so
 //they don't show up in our memory manager as a leak. -MW 7-22-03
 void DX8Caps::Shutdown(void)
@@ -678,6 +699,15 @@ void DX8Caps::Check_Shader_Support(const D3DCAPS8& caps)
 {
 	VertexShaderVersion=caps.VertexShaderVersion;
 	PixelShaderVersion=caps.PixelShaderVersion;
+}
+
+bool DX8Caps::Is_Valid_Display_Format(int width, int height, WW3DFormat format)
+{
+	// If nothing limits the maximum resolution, accept any resolution
+	if (MaxDisplayWidth == 0 && MaxDisplayHeight == 0) return true;
+
+	if (width > MaxDisplayWidth || height > MaxDisplayHeight) return false;
+	return true;
 }
 
 // ----------------------------------------------------------------------------
