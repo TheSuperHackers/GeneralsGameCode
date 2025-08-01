@@ -1,6 +1,3 @@
-<<<<<<< HEAD
-#include "../../Core/GameEngine/Source/Common/Graphics/DX8/dx8wrapper_common.h"
-=======
 /*
 **	Command & Conquer Generals Zero Hour(tm)
 **	Copyright 2025 Electronic Arts Inc.
@@ -4498,4 +4495,3 @@ WW3DFormat	DX8Wrapper::getBackBufferFormat(void)
 {
 	return D3DFormat_To_WW3DFormat(_PresentParameters.BackBufferFormat);
 }
->>>>>>> 0122e54d (Setup proper linking)

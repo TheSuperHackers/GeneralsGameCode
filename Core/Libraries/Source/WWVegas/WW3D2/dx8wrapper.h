@@ -1,6 +1,3 @@
-<<<<<<< HEAD
-#include "../../Core/GameEngine/Source/Common/Graphics/DX8/dx8wrapper_header_common.h"
-=======
 /*
 **	Command & Conquer Generals Zero Hour(tm)
 **	Copyright 2025 Electronic Arts Inc.
@@ -1517,4 +1514,3 @@ WWINLINE RenderStateStruct& RenderStateStruct::operator= (const RenderStateStruc
 
 
 #endif
->>>>>>> 0122e54d (Setup proper linking)
