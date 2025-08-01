@@ -5433,20 +5433,20 @@ void InGameUI::selectNextIdleWorker( void )
 		Drawable *selectedDrawable = TheInGameUI->getFirstSelectedDrawable();	
 		ObjectPtrVector uniqueIdleWorkers = getUniqueIdleWorkers(m_idleWorkers[index]);
 
-		ObjectPtrVector::iterator uit = uniqueIdleWorkers.begin();
-		while(uit != uniqueIdleWorkers.end())
+		ObjectPtrVector::iterator it = uniqueIdleWorkers.begin();
+		while(it != uniqueIdleWorkers.end())
 		{
-			Object *itObj = *uit;
+			Object *itObj = *it;
 			if(itObj == selectedDrawable->getObject())
 			{
-				++uit;
-				if(uit != uniqueIdleWorkers.end())
-					selectThisObject = *uit;
+				++it;
+				if(it != uniqueIdleWorkers.end())
+					selectThisObject = *it;
 				else
 					selectThisObject = *uniqueIdleWorkers.begin();
 				break;
 			}
-			++uit;
+			++it;
 		}
 		// if we had something selected that wasn't a worker, we'll get here
 		if (!selectThisObject)
