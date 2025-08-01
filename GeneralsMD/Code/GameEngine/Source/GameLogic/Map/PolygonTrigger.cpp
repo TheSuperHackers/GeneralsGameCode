@@ -138,6 +138,7 @@ PolygonTrigger *PolygonTrigger::getPolygonTriggerByID(Int triggerID)
 */
 Bool PolygonTrigger::ParsePolygonTriggersDataChunk(DataChunkInput &file, DataChunkInfo *info, void *userData)
 {
+	DEBUG_ASSERTCRASH(info->version <= K_TRIGGERS_VERSION_4, ("PolygonTriggers chunk version newer than supported."));
 	Int count;
 	Int numPoints;
 	Int triggerID;
