@@ -55,8 +55,6 @@
 #include "Lib/BaseType.h"
 #include "Common/AsciiString.h"
 #include "Common/GameMemory.h"
-// include FileSystem.h as it will be used alot with File.h
-//#include "Common/FileSystem.h"
 
 //----------------------------------------------------------------------------
 //           Forward References
@@ -101,7 +99,7 @@ class File : public MemoryPoolObject
 			CREATE		= 0x00000008,				///< Create file if it does not exist
 			TRUNCATE	= 0x00000010,				///< Delete all data in file when opened
 
-			// NOTE: accesses file as text data if neither TEXT and BINARY are set
+			// NOTE: accesses file as binary data if neither TEXT and BINARY are set
 			TEXT			= 0x00000020,				///< Access file as text data
 			BINARY		= 0x00000040,				///< Access file as binary data
 
