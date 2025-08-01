@@ -217,6 +217,7 @@ public:
 	bool Support_NPatches() const { return SupportNPatches; }
 	bool Support_Bump_Envmap() const { return SupportBumpEnvmap; }
 	bool Support_Bump_Envmap_Luminance() const { return SupportBumpEnvmapLuminance; }
+	bool Support_ZBias() const { return SupportZBias; }
 	bool Support_Dot3() const { return SupportDot3; }
 	int Get_Max_Textures_Per_Pass() const { return MaxTexturesPerPass; }
 
@@ -281,6 +282,7 @@ private:
 	bool SupportTextureFormat[WW3D_FORMAT_COUNT];
 	bool SupportRenderToTextureFormat[WW3D_FORMAT_COUNT];
 	bool SupportDepthStencilFormat[WW3D_ZFORMAT_COUNT];
+	bool SupportZBias;
 	bool SupportDot3;
 	int MaxTexturesPerPass;
 	int VertexShaderVersion;

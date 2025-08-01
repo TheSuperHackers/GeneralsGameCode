@@ -547,6 +547,8 @@ void DX8Caps::Compute_Caps(WW3DFormat display_format, const D3DADAPTER_IDENTIFIE
 		SupportNPatches=false;
 	}
 
+	SupportZBias = ((Caps.RasterCaps & D3DPRASTERCAPS_ZBIAS) == D3DPRASTERCAPS_ZBIAS);
+
 	if ((caps.TextureOpCaps&D3DTEXOPCAPS_DOTPRODUCT3)==D3DTEXOPCAPS_DOTPRODUCT3) 
 	{
 		SupportDot3=true;
