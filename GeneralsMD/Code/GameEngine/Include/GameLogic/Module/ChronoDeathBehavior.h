@@ -54,6 +54,8 @@ public:
 	Real m_startAlpha;
 	Real m_endAlpha;
 
+	Real m_oclScaleFactor;
+
 	UnsignedInt	m_destructionDelay;
 
 	ChronoDeathBehaviorModuleData();
