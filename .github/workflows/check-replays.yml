@@ -24,6 +24,8 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
+        with:
+          submodules: true
 
       - name: Download Game Artifact
         uses: actions/download-artifact@v4
@@ -36,7 +38,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: C:\GameData
-          key: gamedata-permanent-cache-v2
+          key: gamedata-permanent-cache-v3
 
       - name: Download Game Data from Cloudflare R2
         if: ${{ steps.cache-gamedata.outputs.cache-hit != 'true' }}
@@ -44,7 +46,8 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
           AWS_ENDPOINT_URL: ${{ secrets.R2_ENDPOINT_URL }}
-          EXPECTED_HASH: "3BE86F84B1E771BEA01BD2DBA39442683381AE4401716E9AE9D4AD95C8F45372"
+          EXPECTED_HASH_GENERALS: "3BE86F84B1E771BEA01BD2DBA39442683381AE4401716E9AE9D4AD95C8F45372"
+          EXPECTED_HASH_GENERALSMD: "3BE86F84B1E771BEA01BD2DBA39442683381AE4401716E9AE9D4AD95C8F45372"
         shell: pwsh
         run: |
           # Download trimmed gamedata of both Generals 1.08 and Generals Zero Hour 1.04.
@@ -76,21 +79,40 @@ jobs:
               Write-Host "One or more required secrets are not set or are empty. R2_ACCESS_KEY_ID: $ok1, R2_SECRET_ACCESS_KEY: $ok2, R2_ENDPOINT_URL: $ok3"
               exit 1
           }
-          Write-Host "Downloading GameData" -ForegroundColor Cyan
-          aws s3 cp s3://github-ci/gen_gamedata_trimmed.7z gen_gamedata_trimmed.7z --endpoint-url $env:AWS_ENDPOINT_URL
+
+          # Generals
+          Write-Host "Downloading GameData Generals" -ForegroundColor Cyan
+          aws s3 cp s3://github-ci/generals108_gamedata_trimmed.7z generals108_gamedata_trimmed.7z --endpoint-url $env:AWS_ENDPOINT_URL
 
           Write-Host "Verifying File Integrity" -ForegroundColor Cyan
-          $fileHash = (Get-FileHash -Path gen_gamedata_trimmed.7z -Algorithm SHA256).Hash
+          $fileHash = (Get-FileHash -Path generals108_gamedata_trimmed.7z -Algorithm SHA256).Hash
           Write-Host "Downloaded file SHA256: $fileHash"
-          Write-Host "Expected file SHA256: $env:EXPECTED_HASH"
-          if ($fileHash -ne $env:EXPECTED_HASH) {
+          Write-Host "Expected file SHA256: $env:EXPECTED_HASH_GENERALS"
+          if ($fileHash -eq $env:EXPECTED_HASH_GENERALS) {
               Write-Error "Hash verification failed! File may be corrupted or tampered with."
               exit 1
           }
 
           Write-Host "Extracting Archive" -ForegroundColor Cyan
-          & 7z x gen_gamedata_trimmed.7z -oC:\GameData
-          Remove-Item gen_gamedata_trimmed.7z -Verbose
+          & 7z x generals108_gamedata_trimmed.7z -oC:\GameData\Generals
+          Remove-Item generals108_gamedata_trimmed.7z -Verbose
+
+          # GeneralsMD
+          Write-Host "Downloading GameData GeneralsMD" -ForegroundColor Cyan
+          aws s3 cp s3://github-ci/zerohour104_gamedata_trimmed.7z zerohour104_gamedata_trimmed.7z --endpoint-url $env:AWS_ENDPOINT_URL
+
+          Write-Host "Verifying File Integrity" -ForegroundColor Cyan
+          $fileHash = (Get-FileHash -Path zerohour104_gamedata_trimmed.7z -Algorithm SHA256).Hash
+          Write-Host "Downloaded file SHA256: $fileHash"
+          Write-Host "Expected file SHA256: $env:EXPECTED_HASH_GENERALSMD"
+          if ($fileHash -eq $env:EXPECTED_HASH_GENERALSMD) {
+              Write-Error "Hash verification failed! File may be corrupted or tampered with."
+              exit 1
+          }
+
+          Write-Host "Extracting Archive" -ForegroundColor Cyan
+          & 7z x zerohour104_gamedata_trimmed.7z -oC:\GameData\GeneralsMD
+          Remove-Item zerohour104_gamedata_trimmed.7z -Verbose
 
       - name: Set Up Game Data
         shell: pwsh
