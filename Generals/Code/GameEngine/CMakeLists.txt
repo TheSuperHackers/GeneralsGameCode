@@ -1061,6 +1061,8 @@ if(RTS_GAMEMEMORY_ENABLE)
     # Uses the original Game Memory implementation.
     list(APPEND GAMEENGINE_SRC
         Source/Common/System/GameMemory.cpp
+        Source/Common/System/GameMemoryInitDMA_Generals.inl
+        Source/Common/System/GameMemoryInitPools_Generals.inl
         Source/Common/System/MemoryInit.cpp
     )
 else()

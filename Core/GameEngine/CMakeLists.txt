@@ -1141,6 +1141,10 @@ if(RTS_GAMEMEMORY_ENABLE)
     list(APPEND GAMEENGINE_SRC
 #        Source/Common/System/GameMemory.cpp
 #        Source/Common/System/GameMemoryInit.cpp
+#        Source/Common/System/GameMemoryInitDMA_Generals.inl
+#        Source/Common/System/GameMemoryInitDMA_GeneralsMD.inl
+#        Source/Common/System/GameMemoryInitPools_Generals.inl
+#        Source/Common/System/GameMemoryInitPools_GeneralsMD.inl
     )
 else()
     # Uses the null implementation when disabled.
