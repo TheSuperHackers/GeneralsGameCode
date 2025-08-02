@@ -29,7 +29,7 @@ on:
 jobs:
   build:
     name: Preset ${{ inputs.preset }}${{ inputs.tools && '+t' || '' }}${{ inputs.extras && '+e' || '' }}
-    runs-on: windows-latest
+    runs-on: windows-2022
     timeout-minutes: 40
     steps:
       - name: Checkout Code
@@ -66,7 +66,7 @@ jobs:
           $fileHash = (Get-FileHash -Path VS6_VisualStudio6.7z -Algorithm SHA256).Hash
           Write-Host "Downloaded file SHA256: $fileHash"
           Write-Host "Expected file SHA256: $env:EXPECTED_HASH"
-          if ($hash -ne $env:EXPECTED_HASH) {
+          if ($fileHash -ne $env:EXPECTED_HASH) {
               Write-Error "Hash verification failed! File may be corrupted or tampered with."
               exit 1
           }
