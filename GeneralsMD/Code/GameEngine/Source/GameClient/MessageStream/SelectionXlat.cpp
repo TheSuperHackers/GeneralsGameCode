@@ -1106,6 +1106,8 @@ GameMessageDisposition SelectionTranslator::translateGameMessage(const GameMessa
 				if ( now - m_lastGroupSelTime < 20 && group == m_lastGroupSelGroup )
 				{
 					DEBUG_LOG(("META: DOUBLETAP select team %d",group));
+					// TheSuperHackers @bugfix Stubbjax 26/05/2025 Perform selection on double-press
+					// if the group or part of it is somehow deselected between presses.
 					performSelection = FALSE;
 					Player *player = ThePlayerList->getLocalPlayer();
 					if (player)

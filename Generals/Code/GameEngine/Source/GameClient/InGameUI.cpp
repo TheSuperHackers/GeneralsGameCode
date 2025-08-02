@@ -3336,7 +3336,7 @@ Bool InGameUI::isDrawableSelected( DrawableID idToCheck ) const
 }  // end isDrawableSelected
 
 //-------------------------------------------------------------------------------------------------
-/** Return true if all of the selected objects are in the drawable list */
+/** Return true if all of the given objects are selected */
 //-------------------------------------------------------------------------------------------------
 Bool InGameUI::areAllObjectsSelected(const std::vector<Object*>& objectsToCheck) const
 {
