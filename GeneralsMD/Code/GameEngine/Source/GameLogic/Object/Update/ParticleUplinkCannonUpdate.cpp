@@ -274,10 +274,10 @@ Bool ParticleUplinkCannonUpdate::initiateIntentToDoSpecialPower(const SpecialPow
 		return FALSE;
 	}
 
-//	getObject()->getControllingPlayer()->getAcademyStats()->recordSpecialPowerUsed( specialPowerTemplate );
-
 	if( !BitIsSet( commandOptions, COMMAND_FIRED_BY_SCRIPT ) )
 	{
+		DEBUG_ASSERTCRASH(targetPos, ("Particle Cannon target data must not be NULL"));
+
 		//All human players have manual control and must "drive" the beam around!
 		m_startAttackFrame = TheGameLogic->getFrame();
 		m_laserStatus = LASERSTATUS_NONE;
@@ -293,28 +293,21 @@ Bool ParticleUplinkCannonUpdate::initiateIntentToDoSpecialPower(const SpecialPow
 	{
 		//Script fired with a specific waypoint path, so set things up to follow the waypoint!
 		UnsignedInt now = TheGameLogic->getFrame();
-		
+
 		Coord3D pos;
-		if( way )
-		{
-			pos.set( way->getLocation() );
-		}
-		else if( targetObj )
-		{
-			pos.set( targetObj->getPosition() );
-		}
-   	m_startAttackFrame = max( now, (UnsignedInt)1 );
+		pos.set( way->getLocation() );
+
+		m_startAttackFrame = max( now, (UnsignedInt)1 );
 #if !RETAIL_COMPATIBLE_CRC
 		m_manualTargetMode = FALSE;
 #endif
 		m_scriptedWaypointMode = TRUE;
-   	m_laserStatus = LASERSTATUS_NONE;
+		m_laserStatus = LASERSTATUS_NONE;
 		setLogicalStatus( STATUS_READY_TO_FIRE );
 		m_specialPowerModule->setReadyFrame( now );
-	  m_initialTargetPosition.set( &pos );
+		m_initialTargetPosition.set( &pos );
 		m_currentTargetPosition.set( &pos );
 
-		m_nextDestWaypointID = way->getID();
 		Int linkCount = way->getNumLinks();
 		Int which = GameLogicRandomValue( 0, linkCount-1 );
 		Waypoint *next = way->getLink( which );
@@ -323,10 +316,15 @@ Bool ParticleUplinkCannonUpdate::initiateIntentToDoSpecialPower(const SpecialPow
 			m_nextDestWaypointID = next->getID();
 			m_overrideTargetDestination.set( next->getLocation() );
 		}
-
+		else
+		{
+			m_nextDestWaypointID = way->getID();
+		}
 	}
 	else
 	{
+		DEBUG_ASSERTCRASH(targetPos || targetObj, ("Particle Cannon target data must not be NULL"));
+
 		//All computer controlled players have automatic control -- the "S" curve.
 		UnsignedInt now = TheGameLogic->getFrame();
 		
@@ -343,12 +341,13 @@ Bool ParticleUplinkCannonUpdate::initiateIntentToDoSpecialPower(const SpecialPow
 		m_manualTargetMode = FALSE;
 		m_scriptedWaypointMode = FALSE;
 #endif
-   	m_initialTargetPosition.set( &pos );
-   	m_startAttackFrame = max( now, (UnsignedInt)1 );
-   	m_laserStatus = LASERSTATUS_NONE;
+		m_initialTargetPosition.set( &pos );
+		m_startAttackFrame = max( now, (UnsignedInt)1 );
+		m_laserStatus = LASERSTATUS_NONE;
 		setLogicalStatus( STATUS_READY_TO_FIRE );
 		m_specialPowerModule->setReadyFrame( now );
 	}
+
 	m_startDecayFrame = m_startAttackFrame + data->m_totalFiringFrames;
 
 	SpecialPowerModuleInterface *spmInterface = getObject()->getSpecialPowerModule( specialPowerTemplate );

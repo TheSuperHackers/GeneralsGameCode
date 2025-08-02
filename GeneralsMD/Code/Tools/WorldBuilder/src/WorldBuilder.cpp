@@ -280,8 +280,8 @@ BOOL CWorldBuilderApp::InitInstance()
 	// initialization
   _set_se_translator( DumpExceptionInfo ); // Hook that allows stack trace.
 
-	// start the log
-	DEBUG_INIT(DEBUG_FLAGS_DEFAULT);
+	// initialize the memory manager early
+	initMemoryManager();
 
 #ifdef DEBUG_LOGGING
 	// Turn on console output jba [3/20/2003]
@@ -293,7 +293,6 @@ BOOL CWorldBuilderApp::InitInstance()
 #ifdef RTS_DEBUG
 	DEBUG_LOG(("RTS_DEBUG defined."));
 #endif
-	initMemoryManager();
 #ifdef MEMORYPOOL_CHECKPOINTING
 	gFirstCP = TheMemoryPoolFactory->debugSetCheckpoint();
 #endif
@@ -667,7 +666,6 @@ int CWorldBuilderApp::ExitInstance()
 		TheMemoryPoolFactory->debugMemoryReport(REPORT_POOLINFO | REPORT_POOL_OVERFLOW | REPORT_SIMPLE_LEAKS, 0, 0);
 	#endif
 	shutdownMemoryManager();
-	DEBUG_SHUTDOWN();
 
 	return CWinApp::ExitInstance();
 }

@@ -4967,7 +4967,7 @@ NetCommandList * NetPacket::getCommandList() {
 
 			NetCommandMsg *msg = NULL;
 
-			//DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("NetPacket::getCommandList() - command of type %d(%s)", commandType, GetAsciiNetCommandType((NetCommandType)commandType).str()));
+			//DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("NetPacket::getCommandList() - command of type %d(%s)", commandType, GetNetCommandTypeAsString((NetCommandType)commandType)));
 
 			switch((NetCommandType)commandType)
 			{

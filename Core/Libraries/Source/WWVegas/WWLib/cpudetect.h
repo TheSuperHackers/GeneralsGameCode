@@ -194,12 +194,22 @@ public:
 	static unsigned Get_L1_Instruction_Trace_Cache_Set_Associative() { return L1InstructionTraceCacheSetAssociative; }
 
 	// System memory
+	
+#if defined(_MSC_VER) && _MSC_VER < 1300
 	static unsigned Get_Total_Physical_Memory() { return TotalPhysicalMemory; }
 	static unsigned Get_Available_Physical_Memory() { return AvailablePhysicalMemory; }
 	static unsigned Get_Total_Page_File_Size() { return TotalPageMemory; }
 	static unsigned Get_Available_Page_File_Size() { return AvailablePageMemory; }
 	static unsigned Get_Total_Virtual_Memory() { return TotalVirtualMemory; }
 	static unsigned Get_Available_Virtual_Memory() { return AvailableVirtualMemory; }
+#else
+	static unsigned long long Get_Total_Physical_Memory() { return TotalPhysicalMemory; }
+	static unsigned long long Get_Available_Physical_Memory() { return AvailablePhysicalMemory; }
+	static unsigned long long Get_Total_Page_File_Size() { return TotalPageMemory; }
+	static unsigned long long Get_Available_Page_File_Size() { return AvailablePageMemory; }
+	static unsigned long long Get_Total_Virtual_Memory() { return TotalVirtualMemory; }
+	static unsigned long long Get_Available_Virtual_Memory() { return AvailableVirtualMemory; }
+#endif
 
 	static unsigned Get_Processor_Type() { return ProcessorType; }
 
@@ -278,14 +288,21 @@ private:
 	// L1 instruction trace cache information
 	static unsigned L1InstructionTraceCacheSize;
 	static unsigned L1InstructionTraceCacheSetAssociative;
-
+#if defined(_MSC_VER) && _MSC_VER < 1300
 	static unsigned TotalPhysicalMemory;
 	static unsigned AvailablePhysicalMemory;
 	static unsigned TotalPageMemory;
 	static unsigned AvailablePageMemory;
 	static unsigned TotalVirtualMemory;
 	static unsigned AvailableVirtualMemory;
-
+#else
+	static unsigned long long TotalPhysicalMemory;
+	static unsigned long long AvailablePhysicalMemory;
+	static unsigned long long TotalPageMemory;
+	static unsigned long long AvailablePageMemory;
+	static unsigned long long TotalVirtualMemory;
+	static unsigned long long AvailableVirtualMemory;
+#endif
 	static unsigned OSVersionNumberMajor;
 	static unsigned OSVersionNumberMinor;
 	static unsigned OSVersionBuildNumber;

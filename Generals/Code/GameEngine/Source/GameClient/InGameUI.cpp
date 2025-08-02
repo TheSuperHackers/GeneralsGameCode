@@ -5424,42 +5424,41 @@ void InGameUI::selectNextIdleWorker( void )
 	if(getSelectCount() == 0 || getSelectCount() > 1)
 	{
 		selectThisObject = *m_idleWorkers[index].begin();
+		// If our idle worker is contained by anything, we need to select the container instead.
+		while (selectThisObject->getContainedBy())
+			selectThisObject = selectThisObject->getContainedBy();
 	}
 	else
 	{
-		Drawable *selectedDrawable = TheInGameUI->getFirstSelectedDrawable();	
-		
-		ObjectListIt it = m_idleWorkers[index].begin();
-		while(it != m_idleWorkers[index].end())
+		Drawable *selectedDrawable = TheInGameUI->getFirstSelectedDrawable();
+		// TheSuperHackers @tweak Stubbjax 22/07/2025 Idle worker iteration now correctly identifies and
+		// iterates contained idle workers. Previous iteration logic would not go past contained workers,
+		// and was not guaranteed to select top-level containers.
+		ObjectPtrVector uniqueIdleWorkers = getUniqueIdleWorkers(m_idleWorkers[index]);
+
+		ObjectPtrVector::iterator it = uniqueIdleWorkers.begin();
+		while(it != uniqueIdleWorkers.end())
 		{
 			Object *itObj = *it;
 			if(itObj == selectedDrawable->getObject())
 			{
 				++it;
-				if(it != m_idleWorkers[index].end())
+				if(it != uniqueIdleWorkers.end())
 					selectThisObject = *it;
 				else
-					selectThisObject = *m_idleWorkers[index].begin();
+					selectThisObject = *uniqueIdleWorkers.begin();
 				break;
 			}
 			++it;
 		}
 		// if we had something selected that wasn't a worker, we'll get here
-		if(!selectThisObject)
-			selectThisObject = *m_idleWorkers[index].begin();
-
+		if (!selectThisObject)
+			selectThisObject = uniqueIdleWorkers.front();
 	}
 	DEBUG_ASSERTCRASH(selectThisObject, ("InGameUI::selectNextIdleWorker Could not select the next IDLE worker"));
 	if(selectThisObject)
 	{	
-		
-		//If our idle worker is contained by anything, we need to select the container instead.
-		Object *containedBy = selectThisObject->getContainedBy();
-		if( containedBy )
-		{
-			selectThisObject = containedBy;
-		}
-
+		DEBUG_ASSERTCRASH(selectThisObject->getContainedBy() == NULL, ("InGameUI::selectNextIdleWorker Selected idle object should not be contained"));
 		deselectAllDrawables();
 		GameMessage *teamMsg = TheMessageStream->appendMessage( GameMessage::MSG_CREATE_SELECTED_GROUP );
 
@@ -5482,6 +5481,24 @@ void InGameUI::selectNextIdleWorker( void )
 		// center on the unit
 		TheTacticalView->lookAt(selectThisObject->getPosition());
 	}
+}
+
+// Finds unique selectables to avoid selecting the same or a previous container if multiple idle workers are contained.
+ObjectPtrVector InGameUI::getUniqueIdleWorkers(const ObjectList& idleWorkers)
+{
+	ObjectPtrVector uniqueIdleWorkers;
+	uniqueIdleWorkers.reserve(idleWorkers.size());
+
+	for (ObjectList::const_iterator it = idleWorkers.begin(); it != idleWorkers.end(); ++it)
+	{
+		Object* itObj = *it;
+		while (itObj->getContainedBy())
+			itObj = itObj->getContainedBy();
+
+		stl::push_back_unique(uniqueIdleWorkers, itObj);
+	}
+
+	return uniqueIdleWorkers;
 }
 
 Int InGameUI::getIdleWorkerCount( void )

@@ -419,6 +419,15 @@ Int LocalFile::seek( Int pos, seekMode mode)
 }
 
 //=================================================================
+// LocalFile::flush
+//=================================================================
+
+Bool LocalFile::flush()
+{
+	return fflush(m_file) != EOF;
+}
+
+//=================================================================
 // LocalFile::scanInt
 //=================================================================
 // skips preceding whitespace and stops at the first non-number
