@@ -1122,6 +1122,16 @@ void GameLogic::deleteLoadScreen( void )
 }  // end deleteLoadScreen
 
 // ------------------------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------------------------
+void GameLogic::setGameMode( GameMode mode )
+{
+	GameMode prev = m_gameMode;
+	m_gameMode = mode;
+
+	TheMouse->onGameModeChanged(prev, mode);
+}
+
+// ------------------------------------------------------------------------------------------------
 /** Entry point for starting a new game, the engine is already in clean state at this
 	* point and ready to load up with all the data */
 // ------------------------------------------------------------------------------------------------
@@ -4280,6 +4290,8 @@ void GameLogic::setGamePaused( Bool paused, Bool pauseMusic, Bool pauseInput )
 	pauseGameSound(paused);
 	pauseGameMusic(paused && pauseMusic);
 	pauseGameInput(paused && pauseInput);
+
+	TheMouse->onGamePaused(paused);
 }
 
 // ------------------------------------------------------------------------------------------------

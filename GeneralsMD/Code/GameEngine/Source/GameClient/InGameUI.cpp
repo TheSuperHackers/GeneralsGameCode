@@ -2890,7 +2890,6 @@ void InGameUI::setScrolling( Bool isScrolling )
 
 	if (isScrolling)
 	{
-		TheMouse->capture();
 		setMouseCursor( Mouse::SCROLL );
 
 		// break any camera locks
@@ -2900,7 +2899,6 @@ void InGameUI::setScrolling( Bool isScrolling )
 	else
 	{
 		setMouseCursor( Mouse::ARROW );
-		TheMouse->releaseCapture();
 	}
 
 	m_isScrolling = isScrolling;
@@ -3099,9 +3097,6 @@ void InGameUI::placeBuildAvailable( const ThingTemplate *build, Drawable *buildD
 
 			Drawable *draw;
 
-			// capture the mouse for our window, windows is lame and changes it if we don't
-			TheMouse->capture();
-
 			// hack for changing cursor
 			setMouseCursor( Mouse::CROSS );
 
@@ -3150,7 +3145,6 @@ void InGameUI::placeBuildAvailable( const ThingTemplate *build, Drawable *buildD
 				m_mouseModeCursor = Mouse::ARROW;
 			}
 
-			TheMouse->releaseCapture();
 			setMouseCursor( Mouse::ARROW );
 			setPlacementStart( NULL );
 
