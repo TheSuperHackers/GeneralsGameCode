@@ -11,6 +11,10 @@ on:
         required: true
         type: string
         description: "Game to check (only GeneralsMD for now)"
+      gamedata:
+        required: true
+        type: string
+        description: "path to folder with replays and maps"
       preset:
         required: true
         type: string
@@ -46,8 +50,8 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
           AWS_ENDPOINT_URL: ${{ secrets.R2_ENDPOINT_URL }}
-          EXPECTED_HASH_GENERALS: "3BE86F84B1E771BEA01BD2DBA39442683381AE4401716E9AE9D4AD95C8F45372"
-          EXPECTED_HASH_GENERALSMD: "3BE86F84B1E771BEA01BD2DBA39442683381AE4401716E9AE9D4AD95C8F45372"
+          EXPECTED_HASH_GENERALS: "37A351AA430199D1F05DEB9E404857DCE7B461A6AC272C5D4A0B5652CDB06372"
+          EXPECTED_HASH_GENERALSMD: "6837FE1E3009A4C239406C39B1598216C0943EE8ED46BB10626767029AC05E21"
         shell: pwsh
         run: |
           # Download trimmed gamedata of both Generals 1.08 and Generals Zero Hour 1.04.
@@ -88,7 +92,7 @@ jobs:
           $fileHash = (Get-FileHash -Path generals108_gamedata_trimmed.7z -Algorithm SHA256).Hash
           Write-Host "Downloaded file SHA256: $fileHash"
           Write-Host "Expected file SHA256: $env:EXPECTED_HASH_GENERALS"
-          if ($fileHash -eq $env:EXPECTED_HASH_GENERALS) {
+          if ($fileHash -ne $env:EXPECTED_HASH_GENERALS) {
               Write-Error "Hash verification failed! File may be corrupted or tampered with."
               exit 1
           }
@@ -105,7 +109,7 @@ jobs:
           $fileHash = (Get-FileHash -Path zerohour104_gamedata_trimmed.7z -Algorithm SHA256).Hash
           Write-Host "Downloaded file SHA256: $fileHash"
           Write-Host "Expected file SHA256: $env:EXPECTED_HASH_GENERALSMD"
-          if ($fileHash -eq $env:EXPECTED_HASH_GENERALSMD) {
+          if ($fileHash -ne $env:EXPECTED_HASH_GENERALSMD) {
               Write-Error "Hash verification failed! File may be corrupted or tampered with."
               exit 1
           }
@@ -144,13 +148,13 @@ jobs:
         run: |
           # These files are expected in the user dir, so we move them here.
 
-          $source = "${{ inputs.game }}\Test\Replays"
+          $source = "${{ inputs.gamedata }}\Replays"
           $destination = "$env:USERPROFILE\Documents\Command and Conquer Generals Zero Hour Data\Replays"
           Write-Host "Move replays to $destination"
           New-Item -ItemType Directory -Path $destination -Force | Out-Null
           Move-Item -Path "$source\*" -Destination $destination -Force
 
-          $source = "${{ inputs.game }}\Test\Maps"
+          $source = "${{ inputs.gamedata }}\Maps"
           $destination = "$env:USERPROFILE\Documents\Command and Conquer Generals Zero Hour Data\Maps"
           Write-Host "Move maps to $destination"
           New-Item -ItemType Directory -Path $destination -Force | Out-Null

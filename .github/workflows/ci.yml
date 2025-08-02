@@ -177,5 +177,6 @@ jobs:
     uses: ./.github/workflows/check-replays.yml
     with:
       game: "GeneralsMD"
+      gamedata: "GeneralsReplays/GeneralsZH/1.04"
       preset: ${{ matrix.preset }}
     secrets: inherit
