@@ -101,7 +101,42 @@ def unify_file(fromGame: Game, fromFile: str, toGame: Game, toFile: str):
     move_file(fromGame, fromFile, toGame, toFile)
 
 
+def unify_move_file(fromGame: Game, fromFile: str, toGame: Game, toFile: str):
+    assert(toGame == Game.CORE)
+
+    fromGamePath = get_game_path(fromGame)
+    toGamePath = get_game_path(toGame)
+
+    fromFirstFolderIndex = fromFile.find("/")
+    toFirstFolderIndex = toFile.find("/")
+    assert(fromFirstFolderIndex > 0)
+    assert(toFirstFolderIndex > 0)
+
+    fromFirstFolderName = fromFile[:fromFirstFolderIndex]
+    toFirstFolderName = toFile[:toFirstFolderIndex]
+    fromFileInCmake = fromFile[fromFirstFolderIndex+1:]
+    toFileInCmake = toFile[toFirstFolderIndex+1:]
+
+    fromCmakeFile = os.path.join(fromGamePath, fromFirstFolderName, "CMakeLists.txt")
+    toCmakeFile = os.path.join(toGamePath, toFirstFolderName, "CMakeLists.txt")
+
+    modify_cmakelists(fromCmakeFile, fromFileInCmake, CmakeModifyType.ADD_COMMENT)
+    modify_cmakelists(toCmakeFile, toFileInCmake, CmakeModifyType.REMOVE_COMMENT)
+
+    move_file(fromGame, fromFile, toGame, toFile)
+
+
 def main():
+
+    #unify_file(Game.ZEROHOUR, "GameEngine/Include/Common/GameMemory.h", Game.CORE, "GameEngine/Include/Common/GameMemory.h")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Include/Common/GameMemoryNull.h", Game.CORE, "GameEngine/Include/Common/GameMemoryNull.h")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Source/Common/System/GameMemory.cpp", Game.CORE, "GameEngine/Source/Common/System/GameMemory.cpp")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Source/Common/System/GameMemoryNull.cpp", Game.CORE, "GameEngine/Source/Common/System/GameMemoryNull.cpp")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Source/Common/System/MemoryInit.cpp", Game.CORE, "GameEngine/Source/Common/System/GameMemoryInit.cpp")
+    #unify_move_file(Game.GENERALS, "GameEngine/Source/Common/System/GameMemoryInitDMA_Generals.inl", Game.CORE, "GameEngine/Source/Common/System/GameMemoryInitDMA_Generals.inl")
+    #unify_move_file(Game.ZEROHOUR, "GameEngine/Source/Common/System/GameMemoryInitDMA_GeneralsMD.inl", Game.CORE, "GameEngine/Source/Common/System/GameMemoryInitDMA_GeneralsMD.inl")
+    #unify_move_file(Game.GENERALS, "GameEngine/Source/Common/System/GameMemoryInitPools_Generals.inl", Game.CORE, "GameEngine/Source/Common/System/GameMemoryInitPools_Generals.inl")
+    #unify_move_file(Game.ZEROHOUR, "GameEngine/Source/Common/System/GameMemoryInitPools_GeneralsMD.inl", Game.CORE, "GameEngine/Source/Common/System/GameMemoryInitPools_GeneralsMD.inl")
 
     return
 
