@@ -34,6 +34,7 @@
 #define __STICK_BOMB_UPDATE_H
 
 #include "GameLogic/Module/UpdateModule.h"
+#include "GameClient/Anim2D.h"
 
 class WeaponTemplate;
 class FXList;
@@ -47,11 +48,16 @@ public:
 	WeaponTemplate*	m_geometryBasedDamageWeaponTemplate;
 	FXList*					m_geometryBasedDamageFX;
 
+	AsciiString m_animBaseTemplate;
+	AsciiString m_animTimedTemplate;
+
 	StickyBombUpdateModuleData()
 	{
 		m_offsetZ = 10.0f;
 		m_geometryBasedDamageWeaponTemplate = NULL;
 		m_geometryBasedDamageFX = NULL;
+		m_animBaseTemplate = AsciiString::TheEmptyString;
+		m_animTimedTemplate = AsciiString::TheEmptyString;
 	}
 
 	static void buildFieldParse(MultiIniFieldParse& p) 
@@ -63,6 +69,8 @@ public:
 			{ "OffsetZ",									INI::parseReal,						NULL, offsetof( StickyBombUpdateModuleData, m_offsetZ ) },
 			{ "GeometryBasedDamageWeapon",INI::parseWeaponTemplate, NULL, offsetof( StickyBombUpdateModuleData, m_geometryBasedDamageWeaponTemplate ) },
 			{ "GeometryBasedDamageFX",		INI::parseFXList,					NULL, offsetof( StickyBombUpdateModuleData, m_geometryBasedDamageFX ) },
+			{ "Animation2DBase",		INI::parseAsciiString,					NULL, offsetof( StickyBombUpdateModuleData, m_animBaseTemplate) },
+			{ "Animation2DTimed",		INI::parseAsciiString,					NULL, offsetof( StickyBombUpdateModuleData, m_animTimedTemplate) },
 			{ 0, 0, 0, 0 }
 		};
     p.add(dataFieldParse);
@@ -92,11 +100,21 @@ public:
 	Object* getTargetObject() const;
 	void setTargetObject( Object *obj );
 
+	//AsciiString getAnimBaseTemplate() { return getStickyBombUpdateModuleData()->m_animBaseTemplate; }
+	//AsciiString getAnimTimedTemplate() { return getStickyBombUpdateModuleData()->m_animTimedTemplate; }
+
+	Anim2DTemplate* getAnimBaseTemplate();
+	Anim2DTemplate* getAnimTimedTemplate();
+
 private:
 
 	ObjectID			m_targetID;
 	UnsignedInt		m_dieFrame;
 	UnsignedInt   m_nextPingFrame;
+
+	Anim2DTemplate* m_animBaseTemplate;
+	Anim2DTemplate* m_animTimedTemplate;
+
 };
 
 #endif // __STICK_BOMB_UPDATE_H

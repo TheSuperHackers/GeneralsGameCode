@@ -285,6 +285,46 @@ void StickyBombUpdate::detonate()
 	getObject()->kill();// Most things just fire weapons in their death modules
 }
 
+
+
+// ------------------------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------------------------
+Anim2DTemplate* StickyBombUpdate::getAnimBaseTemplate() {
+
+	if (getStickyBombUpdateModuleData()->m_animBaseTemplate.isNotEmpty()) {
+		//DEBUG_LOG(("SBU::getAnimBaseTemplate - isNotEmpty"));
+		if (m_animBaseTemplate == NULL) {
+			m_animBaseTemplate = TheAnim2DCollection->findTemplate(getStickyBombUpdateModuleData()->m_animBaseTemplate);
+		}
+		//DEBUG_LOG(("SBU::getAnimBaseTemplate - isNull = %d", m_animBaseTemplate == NULL));
+		return m_animBaseTemplate;
+	}
+
+	//DEBUG_LOG(("SBU::getAnimBaseTemplate - is Empty ?!"));
+
+	return NULL;
+}
+// ------------------------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------------------------
+
+Anim2DTemplate* StickyBombUpdate::getAnimTimedTemplate() {
+	if (getStickyBombUpdateModuleData()->m_animTimedTemplate.isNotEmpty()) {
+		//DEBUG_LOG(("SBU::getAnimTimedTemplate - isNotEmpty"));
+		if (m_animTimedTemplate == NULL) {
+			m_animTimedTemplate = TheAnim2DCollection->findTemplate(getStickyBombUpdateModuleData()->m_animTimedTemplate);
+		}
+		//DEBUG_LOG(("SBU::getAnimTimedTemplate - isNull = %d", m_animTimedTemplate == NULL));
+		return m_animTimedTemplate;
+	}
+
+	//DEBUG_LOG(("SBU::getAnimTimedTemplate - is Empty ?!"));
+
+	return NULL;
+
+}
+// ------------------------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------------------------
+
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
