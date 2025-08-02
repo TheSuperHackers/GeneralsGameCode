@@ -5431,7 +5431,7 @@ void InGameUI::selectNextIdleWorker( void )
 	else
 	{
 		Drawable *selectedDrawable = TheInGameUI->getFirstSelectedDrawable();
-		// The SuperHackers @tweak Stubbjax 22/07/2025 Idle worker iteration now correctly identifies and
+		// TheSuperHackers @tweak Stubbjax 22/07/2025 Idle worker iteration now correctly identifies and
 		// iterates contained idle workers. Previous iteration logic would not go past contained workers,
 		// and was not guaranteed to select top-level containers.
 		ObjectPtrVector uniqueIdleWorkers = getUniqueIdleWorkers(m_idleWorkers[index]);
