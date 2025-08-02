@@ -125,50 +125,65 @@ void TextureLoader::Deinit()
 //
 // ----------------------------------------------------------------------------
 
-void TextureLoader::Validate_Texture_Size(unsigned& width, unsigned& height)
+void TextureLoader::Validate_Texture_Size
+(
+	unsigned& width, 
+	unsigned& height,
+	unsigned& depth
+)
 {
 	const D3DCAPS8& dx8caps=DX8Wrapper::Get_Current_Caps()->Get_DX8_Caps();
 
 	unsigned poweroftwowidth = 1;
-	while (poweroftwowidth < width) {
+	while (poweroftwowidth < width) 
+	{
 		poweroftwowidth <<= 1;
 	}
 
 	unsigned poweroftwoheight = 1;
-	while (poweroftwoheight < height) {
+	while (poweroftwoheight < height) 
+	{
 		poweroftwoheight <<= 1;
 	}
 
-//	unsigned size = MAX (width, height);
-//	unsigned poweroftwosize = 1;
-//	while (poweroftwosize < size) {
-//		poweroftwosize <<= 1;
-//	}
+	unsigned poweroftwodepth = 1;
+	while (poweroftwodepth< depth)
+	{
+		poweroftwodepth <<= 1;
+	}
 
-	if (poweroftwowidth>dx8caps.MaxTextureWidth) {
+	if (poweroftwowidth>dx8caps.MaxTextureWidth) 
+	{
 		poweroftwowidth=dx8caps.MaxTextureWidth;
 	}
-	if (poweroftwoheight>dx8caps.MaxTextureHeight) {
+	if (poweroftwoheight>dx8caps.MaxTextureHeight) 
+	{
 		poweroftwoheight=dx8caps.MaxTextureHeight;
 	}
+	if (poweroftwodepth>dx8caps.MaxVolumeExtent)
+	{
+		poweroftwodepth=dx8caps.MaxVolumeExtent;
+	}
 
-	if (poweroftwowidth>poweroftwoheight) {
-		while (poweroftwowidth/poweroftwoheight>8) {
+	if (poweroftwowidth>poweroftwoheight) 
+	{
+		while (poweroftwowidth/poweroftwoheight>8) 
+		{
 			poweroftwoheight*=2;
 		}
 	}
-	else {
-		while (poweroftwoheight/poweroftwowidth>8) {
+	else 
+	{
+		while (poweroftwoheight/poweroftwowidth>8) 
+		{
 			poweroftwowidth*=2;
 		}
 	}
 
-//	width = height = poweroftwosize;
 	width=poweroftwowidth;
 	height=poweroftwoheight;
+	depth=poweroftwodepth;
 }
-
-
 
 IDirect3DTexture8* TextureLoader::Load_Thumbnail(const StringClass& filename,WW3DFormat texture_format)
 {
@@ -1031,10 +1046,10 @@ void TextureLoadTaskClass::Begin_Texture_Load()
 			DDSFileClass dds_file(Texture->Get_Full_Path(),Get_Reduction());
 			if (dds_file.Is_Available()) {
 				// Destination size will be the next power of two square from the larger width and height...
-				unsigned width, height;
+				unsigned width, height, depth;
 				width=dds_file.Get_Width(0);
 				height=dds_file.Get_Height(0);
-				TextureLoader::Validate_Texture_Size(width,height);
+				TextureLoader::Validate_Texture_Size(width,height,depth);
 
 				// If the size doesn't match, try and see if texture reduction would help... (mainly for
 				// cases where loaded texture is larger than hardware limit)
@@ -1042,7 +1057,7 @@ void TextureLoadTaskClass::Begin_Texture_Load()
 					for (unsigned i=1;i<dds_file.Get_Mip_Level_Count();++i) {
 						unsigned w=dds_file.Get_Width(i);
 						unsigned h=dds_file.Get_Height(i);
-						TextureLoader::Validate_Texture_Size(width,height);
+						TextureLoader::Validate_Texture_Size(width,height,depth);
 						if (w==dds_file.Get_Width(i) || h==dds_file.Get_Height(i)) {
 							Reduction+=i;
 							width=w;
@@ -1105,7 +1120,7 @@ void TextureLoadTaskClass::Begin_Texture_Load()
 			}
 
 			// Destination size will be the next power of two square from the larger width and height...
-			unsigned width=targa.Header.Width, height=targa.Header.Height;
+			unsigned width=targa.Header.Width, height=targa.Header.Height, depth;
 			int ReductionFactor=Get_Reduction();
 			int MipLevels=0;
 
@@ -1126,7 +1141,7 @@ void TextureLoadTaskClass::Begin_Texture_Load()
 			height=targa.Header.Height>>ReductionFactor;
 			unsigned ow=width;
 			unsigned oh=height;
-			TextureLoader::Validate_Texture_Size(width,height);
+			TextureLoader::Validate_Texture_Size(width,height,depth);
 			if (width!=ow || height!=oh) {
 				WWDEBUG_SAY(("Invalid texture size, scaling required. Texture: %s, size: %d x %d -> %d x %d",Texture->Get_Full_Path().str(),ow,oh,width,height));
 			}

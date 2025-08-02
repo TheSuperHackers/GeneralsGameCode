@@ -225,7 +225,7 @@ VideoStreamInterface*	BinkVideoPlayer::open( AsciiString movieTitle )
 	const Video* pVideo = getVideo(movieTitle);
 	if (pVideo) {
 		DEBUG_LOG(("BinkVideoPlayer::createStream() - About to open bink file"));
-		
+
 		if (TheGlobalData->m_modDir.isNotEmpty())
 		{
 			char filePath[ _MAX_PATH ];

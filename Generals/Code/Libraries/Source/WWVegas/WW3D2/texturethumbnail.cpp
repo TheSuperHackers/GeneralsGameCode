@@ -92,7 +92,8 @@ ThumbnailClass::ThumbnailClass(const StringClass& filename)
 		// Destination size will be the next power of two square from the larger width and height...
 		Width=targa.Header.Width>>reduction_factor;
 		Height=targa.Header.Height>>reduction_factor;
-		TextureLoader::Validate_Texture_Size(Width,Height);
+		unsigned depth;
+		TextureLoader::Validate_Texture_Size(Width,Height,depth);
 		unsigned src_width=targa.Header.Width;
 		unsigned src_height=targa.Header.Height;
 

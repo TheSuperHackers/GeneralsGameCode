@@ -48,7 +48,7 @@
 #include "Common/GameMemory.h"
 #include "WW3D2/texture.h"
 #include "WW3D2/textureloader.h"
-#include "W3DDevice/GameClient/W3DVideobuffer.h"
+#include "W3DDevice/GameClient/W3DVideoBuffer.h"
 
 //----------------------------------------------------------------------------
 //         Externals                                                     
@@ -122,7 +122,8 @@ Bool W3DVideoBuffer::allocate( UnsignedInt width, UnsignedInt height )
 	m_height = height;
 	m_textureWidth = width;;
 	m_textureHeight = height;;
-	TextureLoader::Validate_Texture_Size( m_textureWidth, m_textureHeight);
+	unsigned int temp_depth=1;
+	TextureLoader::Validate_Texture_Size( m_textureWidth, m_textureHeight, temp_depth);
 
 	WW3DFormat w3dFormat = TypeToW3DFormat(  m_format );
  
