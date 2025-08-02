@@ -28,6 +28,8 @@
 #include "Common/MessageStream.h"
 #include "GameNetwork/GameInfo.h"
 
+class File;
+
 /**
   * The ReplayGameInfo class holds information about the replay game and
 	* the contents of its slot list for reconstructing multiplayer games.
@@ -51,6 +53,8 @@ enum RecorderModeType CPP_11(: Int) {
 	RECORDERMODETYPE_SIMULATION_PLAYBACK, // Play back replay without any graphics
 	RECORDERMODETYPE_NONE // this is a valid state to be in on the shell map, or in saved games
 };
+
+CONSTEXPR const UnsignedInt replayBufferSize = 8192;	// TheSuperHackers @info buffersize is in bytes
 
 class CRCInfo;
 
@@ -89,7 +93,7 @@ protected:
 	CRCInfo *m_crcInfo;
 public:
 
-	// read in info relating to a replay, conditionally setting up m_file for playback
+	// read in info relating to a replay, conditionally setting up m_replayFile for playback
 	struct ReplayHeader
 	{
 		AsciiString filename;
@@ -131,16 +135,16 @@ public:
 	Bool sawCRCMismatch() const;
 	void cleanUpReplayFile( void );										///< after a crash, send replay/debug info to a central repository
 
-	void stopRecording();															///< Stop recording and close m_file.
+	void stopRecording();															///< Stop recording and close m_replayFile.
 protected:
-	void startRecording(GameDifficulty diff, Int originalGameMode, Int rankPoints, Int maxFPS);					///< Start recording to m_file.
-	void writeToFile(GameMessage *msg);								///< Write this GameMessage to m_file.
+	void startRecording(GameDifficulty diff, Int originalGameMode, Int rankPoints, Int maxFPS);					///< Start recording to m_replayFile.
+	void writeToFile(GameMessage *msg);								///< Write this GameMessage to m_replayFile.
 
 	void logGameStart(AsciiString options);
 	void logGameEnd( void );
 
-	AsciiString readAsciiString();										///< Read the next string from m_file using ascii characters.
-	UnicodeString readUnicodeString();								///< Read the next string from m_file using unicode characters.
+	AsciiString readAsciiString();										///< Read the next string from m_replayFile using ascii characters.
+	UnicodeString readUnicodeString();								///< Read the next string from m_replayFile using unicode characters.
 	void readNextFrame();															///< Read the next frame number to execute a command on.
 	void appendNextCommand();													///< Read the next GameMessage and append it to TheCommandList.
 	void writeArgument(GameMessageArgumentDataType type, const GameMessageArgumentType arg);
@@ -154,7 +158,7 @@ protected:
 
 	CullBadCommandsResult cullBadCommands(); ///< prevent the user from giving mouse commands that he shouldn't be able to do during playback.
 
-	FILE *m_file;
+	File* m_replayFile;
 	AsciiString m_fileName;
 	Int m_currentFilePosition;
 	RecorderModeType m_mode;
