@@ -186,7 +186,7 @@ inline static bool Equal_Material(const VertexMaterialClass* mat1,const VertexMa
 DX8TextureCategoryClass::DX8TextureCategoryClass(
 	DX8FVFCategoryContainer* container_,
 	TextureClass** texs,
-	ShaderClass shd, 
+	ShaderClass shd,
 	VertexMaterialClass* mat,
 	int pass_)
 	:
@@ -196,13 +196,13 @@ DX8TextureCategoryClass::DX8TextureCategoryClass(
 	material(mat),
 	container(container_)
 {
-	WWASSERT(pass>=0);
-	WWASSERT(pass<DX8FVFCategoryContainer::MAX_PASSES);
+	WWASSERT(pass >= 0);
+	WWASSERT(pass < DX8FVFCategoryContainer::MAX_PASSES);
 
-
-	for (int a=0;a<MAX_TEXTURE_STAGES;++a) {
-		textures[a]=NULL;
-		REF_PTR_SET(textures[a],texs[a]);
+	for (int a = 0; a < MeshMatDescClass::MAX_TEX_STAGES; ++a)
+	{
+		textures[a] = NULL;
+		REF_PTR_SET(textures[a], texs[a]);
 	}
 
 	if (material) material->Add_Ref();
@@ -1175,7 +1175,8 @@ void DX8FVFCategoryContainer::Generate_Texture_Categories(Vertex_Split_Table& sp
 
 		for (int i=0;i<polygon_count;++i) {
 			TextureClass* textures[MeshMatDescClass::MAX_TEX_STAGES];
-			WWASSERT(MAX_TEXTURE_STAGES==MeshMatDescClass::MAX_TEX_STAGES);
+			// disabled this assert as MAX_TEXTURE_STAGES is now 8, but legacy MeshMat::MAX_TEX_STAGES is still 2
+	//		WWASSERT(MAX_TEXTURE_STAGES==MeshMatDescClass::MAX_TEX_STAGES);
 			for (int stage=0;stage<MeshMatDescClass::MAX_TEX_STAGES;stage++) {
 				textures[stage]=split_table.Peek_Texture(i,pass,stage);
 			}

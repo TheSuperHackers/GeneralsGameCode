@@ -206,7 +206,7 @@ public:
 		DEVICE_INTEL_815
 	};
 
-
+	DX8Caps(IDirect3D8* direct3d, const D3DCAPS8& caps, WW3DFormat display_format, const D3DADAPTER_IDENTIFIER8& adapter_id);
 	DX8Caps(IDirect3D8* direct3d, IDirect3DDevice8* D3DDevice,WW3DFormat display_format, const D3DADAPTER_IDENTIFIER8& adapter_id);
 	static void Shutdown(void);
 
@@ -217,8 +217,11 @@ public:
 	bool Support_NPatches() const { return SupportNPatches; }
 	bool Support_Bump_Envmap() const { return SupportBumpEnvmap; }
 	bool Support_Bump_Envmap_Luminance() const { return SupportBumpEnvmapLuminance; }
+	bool Support_ZBias() const { return SupportZBias; }
 	bool Support_Dot3() const { return SupportDot3; }
 	int Get_Max_Textures_Per_Pass() const { return MaxTexturesPerPass; }
+
+	bool Is_Valid_Display_Format(int width, int height, WW3DFormat format);
 
 	// -------------------------------------------------------------------------
 	//
@@ -266,6 +269,8 @@ private:
 	int MaxDisplayWidth;
 	int MaxDisplayHeight;
 
+	D3DCAPS8 Caps;
+
 	D3DCAPS8 hwVPCaps;
 	D3DCAPS8 swVPCaps;
 	bool SupportTnL;	
@@ -277,6 +282,7 @@ private:
 	bool SupportTextureFormat[WW3D_FORMAT_COUNT];
 	bool SupportRenderToTextureFormat[WW3D_FORMAT_COUNT];
 	bool SupportDepthStencilFormat[WW3D_ZFORMAT_COUNT];
+	bool SupportZBias;
 	bool SupportDot3;
 	int MaxTexturesPerPass;
 	int VertexShaderVersion;
