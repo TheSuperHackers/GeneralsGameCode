@@ -71,7 +71,6 @@
 #include "Common/GameLOD.h"
 #include "d3dx8tex.h"
 #include "dx8caps.h"
-#include "Common/GameLOD.h"
 
 
 /** Interface definition for custom shaders we define in our app.  These shaders can perform more complex
@@ -2801,12 +2800,12 @@ HRESULT W3DShaderManager::LoadAndCreateD3DShader(const char* strFilePath, const 
 #define MIN_ACCEPTED_TEXTURE_MEMORY	(1024*1024*30)	//30 MB
 
 /**Hack to give gameengine access to this function*/
-Bool testMinimumRequirements(ChipsetType *videoChipType, CpuType *cpuType, Int *cpuFreq, Int *numRAM, Real *intBenchIndex, Real *floatBenchIndex, Real *memBenchIndex)
+Bool testMinimumRequirements(ChipsetType *videoChipType, CpuType *cpuType, Int *cpuFreq, MemValueType *numRAM, Real *intBenchIndex, Real *floatBenchIndex, Real *memBenchIndex)
 {
 	return W3DShaderManager::testMinimumRequirements(videoChipType,cpuType,cpuFreq,numRAM,intBenchIndex,floatBenchIndex,memBenchIndex);
 }
 
-Bool W3DShaderManager::testMinimumRequirements(ChipsetType *videoChipType, CpuType *cpuType, Int *cpuFreq, Int *numRAM, Real *intBenchIndex, Real *floatBenchIndex, Real *memBenchIndex)
+Bool W3DShaderManager::testMinimumRequirements(ChipsetType *videoChipType, CpuType *cpuType, Int *cpuFreq, MemValueType *numRAM, Real *intBenchIndex, Real *floatBenchIndex, Real *memBenchIndex)
 {
 	if (videoChipType)
 		*videoChipType = getChipset();
@@ -2838,11 +2837,11 @@ Bool W3DShaderManager::testMinimumRequirements(ChipsetType *videoChipType, CpuTy
 
 	if (intBenchIndex && floatBenchIndex && memBenchIndex)
 	{
-        // TheSuperHackers @tweak Aliendroid1 19/06/2025 Legacy benchmarking code was removed. 
-		// Since modern hardware always meets the minimum requirements, we preset the benchmark "results" to a high value. 
-		*intBenchIndex   = 10.0f;
+		// TheSuperHackers @tweak Aliendroid1 19/06/2025 Legacy benchmarking code was removed.
+		// Since modern hardware always meets the minimum requirements, we preset the benchmark "results" to a high value.
+		*intBenchIndex = 10.0f;
 		*floatBenchIndex = 10.0f;
-		*memBenchIndex   = 10.0f;
+		*memBenchIndex = 10.0f;
 	}
 
 	return TRUE;
