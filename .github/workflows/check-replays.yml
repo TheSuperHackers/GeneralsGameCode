@@ -69,14 +69,14 @@ jobs:
 
           # Download Generals Game Files
           # The archive contains these files:
-          # Generals\BINKW32.DLL
-          # Generals\English.big
-          # Generals\INI.big
-          # Generals\Maps.big
-          # Generals\mss32.dll
-          # Generals\W3D.big
-          # Generals\Data\Scripts\MultiplayerScripts.scb
-          # Generals\Data\Scripts\SkirmishScripts.scb
+          # BINKW32.DLL
+          # English.big
+          # INI.big
+          # Maps.big
+          # mss32.dll
+          # W3D.big
+          # Data\Scripts\MultiplayerScripts.scb
+          # Data\Scripts\SkirmishScripts.scb
 
           Write-Host "Downloading GameData Generals" -ForegroundColor Cyan
           aws s3 cp s3://github-ci/generals108_gamedata_trimmed.7z generals108_gamedata_trimmed.7z --endpoint-url $env:AWS_ENDPOINT_URL
@@ -96,14 +96,14 @@ jobs:
 
           # Download GeneralsMD (ZH) Game Files
           # The archive contains these files:
-          # GeneralsMD\BINKW32.DLL
-          # GeneralsMD\INIZH.big
-          # GeneralsMD\MapsZH.big
-          # GeneralsMD\mss32.dll
-          # GeneralsMD\W3DZH.big
-          # GeneralsMD\Data\Scripts\MultiplayerScripts.scb
-          # GeneralsMD\Data\Scripts\Scripts.ini
-          # GeneralsMD\Data\Scripts\SkirmishScripts.scb
+          # BINKW32.DLL
+          # INIZH.big
+          # MapsZH.big
+          # mss32.dll
+          # W3DZH.big
+          # Data\Scripts\MultiplayerScripts.scb
+          # Data\Scripts\Scripts.ini
+          # Data\Scripts\SkirmishScripts.scb
 
           Write-Host "Downloading GameData GeneralsMD" -ForegroundColor Cyan
           aws s3 cp s3://github-ci/zerohour104_gamedata_trimmed.7z zerohour104_gamedata_trimmed.7z --endpoint-url $env:AWS_ENDPOINT_URL
