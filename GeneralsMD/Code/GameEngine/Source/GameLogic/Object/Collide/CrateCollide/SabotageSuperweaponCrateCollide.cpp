@@ -97,6 +97,18 @@ Bool SabotageSuperweaponCrateCollide::isValidToExecute( const Object *other ) co
 		return FALSE;
 	}
 
+	if (other->getStatusBits().test(OBJECT_STATUS_UNDER_CONSTRUCTION))
+	{
+		// nothing can be done with things that are under construction
+		return FALSE;
+	}
+
+	if (other->testStatus(OBJECT_STATUS_SOLD))
+	{
+		// Can't enter something being sold
+		return FALSE;
+	}
+
 	Relationship r = getObject()->getRelationship( other );
 	if( r != ENEMIES )
 	{
