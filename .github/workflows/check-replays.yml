@@ -226,37 +226,6 @@ jobs:
 
           Write-Host "Success!"
 
-      - name: List All Files in Directory (Recursive)
-        if: always()
-        shell: pwsh
-        run: |
-          $dir = "."
-          Write-Host "Listing all files in $dir recursively:"
-          Get-ChildItem -Path $dir -Recurse -File | ForEach-Object {
-            Write-Host $_.FullName
-          }
-
-      - name: List All Files in Directory (C:\GameData)
-        if: always()
-        shell: pwsh
-        run: |
-          $dir = "C:\GameData"
-          Write-Host "Listing all files in $dir recursively:"
-          Get-ChildItem -Path $dir -Recurse -File | ForEach-Object {
-            Write-Host $_.FullName
-          }
-
-      - name: List All Files in Directory (data)
-        if: always()
-        shell: pwsh
-        run: |
-          $dir = "$env:USERPROFILE\Documents\Command and Conquer Generals Zero Hour Data"
-          Write-Host "Listing all files in $dir recursively:"
-          Get-ChildItem -Path $dir -Recurse -File | ForEach-Object {
-            $sizeKB = "{0:N1}" -f ($_.Length / 1KB)
-            Write-Host "$($_.FullName) [$sizeKB KB]"
-          }
-
       - name: Upload Debug Log
         if: always()
         uses: actions/upload-artifact@v4
