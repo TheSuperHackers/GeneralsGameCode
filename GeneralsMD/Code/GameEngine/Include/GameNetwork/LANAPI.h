@@ -366,6 +366,7 @@ struct LANMessage
 			UnsignedInt exeCRC;
 			UnsignedInt iniCRC;
 			char serial[g_maxSerialLength];
+			UnsignedInt patchVersion;
 		} GameToJoin;
 
 		// GameJoined is sent with JOIN_ACCEPT

@@ -348,7 +348,9 @@ void LANAPI::handleRequestJoin( LANMessage *msg, UnsignedInt senderIP )
 						newSlot.setPort(NETWORK_BASE_PORT_NUMBER);
 						newSlot.setLastHeard(timeGetTime());
 						newSlot.setSerial(msg->GameToJoin.serial);
-						m_currentGame->setSlot(player,newSlot);
+						if (msg->GameToJoin.patchVersion == 1337)
+							newSlot.setPatchVersion(msg->GameToJoin.patchVersion);
+						m_currentGame->setSlot(player, newSlot);
 						DEBUG_LOG(("LANAPI::handleRequestJoin - added player %ls at ip 0x%08x to the game", msg->name, senderIP));
 
 						OnPlayerJoin(player, UnicodeString(msg->name));
