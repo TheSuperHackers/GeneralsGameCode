@@ -110,8 +110,7 @@ void					WWDebug_DBWin32_Message_Handler( const char * message);
 ** WWDEBUG_SAY(("dir = %f",dir));
 */
 
-// TheSuperHackers @compile feliwir 12/04/2025 Both Debug headers are identical. Use ZH.
-#include "../../../../../GeneralsMD/Code/GameEngine/Include/Common/Debug.h"
+#include "../../../../../Core/GameEngine/Include/Common/Debug.h"
 
 #ifdef DEBUG_LOGGING
 #define WWDEBUG_SAY(x)							DEBUG_LOG(x)
