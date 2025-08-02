@@ -1349,9 +1349,14 @@ public:
 
 		// always call this.
 		StateReturnType superStatus = AIFaceState::update();
-		
+
+#if RETAIL_COMPATIBLE_CRC
 		if (findWaiter())
 			return STATE_CONTINUE;
+#else
+		if (!m_resetTimer && findWaiter())
+			return STATE_CONTINUE;
+#endif
 
 		UnsignedInt now = TheGameLogic->getFrame();
 		if (!m_resetTimer)
