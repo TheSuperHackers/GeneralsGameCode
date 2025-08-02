@@ -197,6 +197,7 @@
 #include "GameLogic/Module/PowerPlantUpdate.h"
 #include "GameLogic/Module/CheckpointUpdate.h"
 #include "GameLogic/Module/EMPUpdate.h"
+#include "GameLogic/Module/ResetSpecialPowerTimerWhileAliveUpdate.h"
 
 // upgrade includes
 #include "GameLogic/Module/ActiveShroudUpgrade.h"
@@ -486,6 +487,7 @@ void ModuleFactory::init( void )
 	addModule( WorkerAIUpdate );
 	addModule( PowerPlantUpdate );
 	addModule( CheckpointUpdate );
+	addModule( ResetSpecialPowerTimerWhileAliveUpdate );
 
 	// upgrade modules
 	addModule( CostModifierUpgrade );
