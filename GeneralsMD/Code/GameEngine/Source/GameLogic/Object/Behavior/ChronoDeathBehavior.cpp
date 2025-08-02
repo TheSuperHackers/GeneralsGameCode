@@ -46,6 +46,7 @@
 #include "GameLogic/Object.h"
 #include "GameLogic/ObjectCreationList.h"
 #include "GameClient/Drawable.h"
+#include "GameClient/Module/DynamicGeometryClientUpdate.h"
 
 //-------------------------------------------------------------------------------------------------
 ChronoDeathBehaviorModuleData::ChronoDeathBehaviorModuleData()
@@ -58,6 +59,7 @@ ChronoDeathBehaviorModuleData::ChronoDeathBehaviorModuleData()
 	m_startAlpha = 1.0;
 	m_endAlpha = 1.0;
 	m_destructionDelay = 1;
+	m_oclScaleFactor = 1.0;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -70,6 +72,7 @@ ChronoDeathBehaviorModuleData::ChronoDeathBehaviorModuleData()
 		{ "StartFX",			INI::parseFXList,			    NULL, offsetof(ChronoDeathBehaviorModuleData, m_startFX) },
 		{ "EndFX",				INI::parseFXList,			    NULL, offsetof(ChronoDeathBehaviorModuleData, m_endFX) },
 		{ "OCL",				INI::parseObjectCreationList,	NULL, offsetof(ChronoDeathBehaviorModuleData, m_ocl) },
+		{ "OCLDynamicGeometryScaleFactor",  INI::parseReal,	    NULL, offsetof(ChronoDeathBehaviorModuleData, m_oclScaleFactor) },
 		{ "StartScale",			INI::parseReal,			        NULL, offsetof(ChronoDeathBehaviorModuleData, m_startScale) },
 		{ "EndScale",			INI::parseReal,		            NULL, offsetof(ChronoDeathBehaviorModuleData, m_endScale) },
 		{ "StartOpacity",		INI::parsePercentToReal,		NULL, offsetof(ChronoDeathBehaviorModuleData, m_startAlpha) },
@@ -160,8 +163,23 @@ void ChronoDeathBehavior::beginChronoDeath(const DamageInfo* damageInfo)
 
 	if (d->m_ocl)
 	{
-		// TODO: Create Dynamic Scale module and pass geometry size of parent object;
-		/* Object* newObject = */ ObjectCreationList::create(d->m_ocl, obj, NULL);
+		// pass geometry size of parent object;
+		Object* newObject = ObjectCreationList::create(d->m_ocl, obj, NULL);
+		if (newObject != NULL && d->m_oclScaleFactor != 0.0) {
+			Drawable* oclDraw = newObject->getDrawable();
+			if (oclDraw != NULL) {
+				static NameKeyType key_dynamicGeometryUpdate = NAMEKEY("DynamicGeometryClientUpdate");
+				DynamicGeometryClientUpdate* update = (DynamicGeometryClientUpdate*)oclDraw->findClientUpdateModule(key_dynamicGeometryUpdate);
+				if (update) {
+					Real objRadius = getObject()->getGeometryInfo().getBoundingCircleRadius();
+
+					// DEBUG_LOG((">>> CDB - objRadius = %f", objRadius));
+
+					objRadius = MAX(10.0, MIN(objRadius, 100.0));
+					update->setScaleMultiplier(objRadius / d->m_oclScaleFactor);
+				}
+			}
+		}
 	}
 
 	UnsignedInt now = TheGameLogic->getFrame();
