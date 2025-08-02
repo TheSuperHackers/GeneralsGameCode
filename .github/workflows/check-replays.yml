@@ -58,23 +58,6 @@ jobs:
           # This data cannot be used for playing because it's
           # missing textures, audio and gui files. But it's enough for replay checking.
           # It's also encrypted because it's not allowed to distribute these files.
-          # The archive contains these files:
-          # Generals\BINKW32.DLL
-          # Generals\English.big
-          # Generals\INI.big
-          # Generals\Maps.big
-          # Generals\mss32.dll
-          # Generals\W3D.big
-          # Generals\Data\Scripts\MultiplayerScripts.scb
-          # Generals\Data\Scripts\SkirmishScripts.scb
-          # GeneralsMD\BINKW32.DLL
-          # GeneralsMD\INIZH.big
-          # GeneralsMD\MapsZH.big
-          # GeneralsMD\mss32.dll
-          # GeneralsMD\W3DZH.big
-          # GeneralsMD\Data\Scripts\MultiplayerScripts.scb
-          # GeneralsMD\Data\Scripts\Scripts.ini
-          # GeneralsMD\Data\Scripts\SkirmishScripts.scb
 
           if (-not $env:AWS_ACCESS_KEY_ID -or -not $env:AWS_SECRET_ACCESS_KEY -or -not $env:AWS_ENDPOINT_URL) {
               $ok1 = [bool]$env:AWS_ACCESS_KEY_ID
@@ -84,7 +67,17 @@ jobs:
               exit 1
           }
 
-          # Generals
+          # Download Generals Game Files
+          # The archive contains these files:
+          # Generals\BINKW32.DLL
+          # Generals\English.big
+          # Generals\INI.big
+          # Generals\Maps.big
+          # Generals\mss32.dll
+          # Generals\W3D.big
+          # Generals\Data\Scripts\MultiplayerScripts.scb
+          # Generals\Data\Scripts\SkirmishScripts.scb
+
           Write-Host "Downloading GameData Generals" -ForegroundColor Cyan
           aws s3 cp s3://github-ci/generals108_gamedata_trimmed.7z generals108_gamedata_trimmed.7z --endpoint-url $env:AWS_ENDPOINT_URL
 
@@ -101,7 +94,17 @@ jobs:
           & 7z x generals108_gamedata_trimmed.7z -oC:\GameData\Generals
           Remove-Item generals108_gamedata_trimmed.7z -Verbose
 
-          # GeneralsMD
+          # Download GeneralsMD (ZH) Game Files
+          # The archive contains these files:
+          # GeneralsMD\BINKW32.DLL
+          # GeneralsMD\INIZH.big
+          # GeneralsMD\MapsZH.big
+          # GeneralsMD\mss32.dll
+          # GeneralsMD\W3DZH.big
+          # GeneralsMD\Data\Scripts\MultiplayerScripts.scb
+          # GeneralsMD\Data\Scripts\Scripts.ini
+          # GeneralsMD\Data\Scripts\SkirmishScripts.scb
+
           Write-Host "Downloading GameData GeneralsMD" -ForegroundColor Cyan
           aws s3 cp s3://github-ci/zerohour104_gamedata_trimmed.7z zerohour104_gamedata_trimmed.7z --endpoint-url $env:AWS_ENDPOINT_URL
 
