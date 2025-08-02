@@ -1,6 +1,6 @@
-# Test folder
+# Test Replays
 
-This folder contains replays and the required maps that are tested in CI to ensure that the game is retail compatible.
+The GeneralsReplays folder contains replays and the required maps that are tested in CI to ensure that the game is retail compatible.
 
 You can also test with these replays locally:
 - Copy the replays into a subfolder in your `%USERPROFILE%/Documents/Command and Conquer Generals Zero Hour Data/Replays` folder.
