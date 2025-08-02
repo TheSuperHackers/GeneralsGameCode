@@ -1,6 +1,6 @@
 /*
 **	Command & Conquer Generals Zero Hour(tm)
-**	Copyright 2025 Electronic Arts Inc.
+**	Copyright 2025 TheSuperHackers
 **
 **	This program is free software: you can redistribute it and/or modify
 **	it under the terms of the GNU General Public License as published by
@@ -16,71 +16,9 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-////////////////////////////////////////////////////////////////////////////////
-//																																						//
-//  (c) 2001-2003 Electronic Arts Inc.																				//
-//																																						//
-////////////////////////////////////////////////////////////////////////////////
-
-// FILE: MemoryInit.cpp 
-//-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
-//-----------------------------------------------------------------------------
-//
-// Project:   RTS3
-//
-// File name: MemoryInit.cpp
-//
-// Created:   Steven Johnson, August 2001
-//
-// Desc:      Memory manager
-//
-// ----------------------------------------------------------------------------
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
-
-// SYSTEM INCLUDES
-
-// USER INCLUDES 
-#include "Lib/BaseType.h"
-#include "Common/GameMemory.h"
-
-
-//-----------------------------------------------------------------------------
-void userMemoryManagerGetDmaParms(Int *numSubPools, const PoolInitRec **pParms)
-{
-	static const PoolInitRec defaultDMA[7] = 
-	{
-		// name, allocsize, initialcount, overflowcount
-		{ "dmaPool_16", 16,			130000,	10000 },
-		{ "dmaPool_32", 32,			250000,	10000 },
-		{ "dmaPool_64", 64,			100000,	10000 },
-		{ "dmaPool_128", 128,		80000,	10000 },
-		{ "dmaPool_256", 256,		20000,	5000 },
-		{ "dmaPool_512", 512,		16000,	5000 },
-		{ "dmaPool_1024", 1024, 6000,		1024}
-	};
-
-	*numSubPools = 7;
-	*pParms = defaultDMA;
-}
-
-//-----------------------------------------------------------------------------
-struct PoolSizeRec
-{
-	const char* name;
-	Int initial;
-	Int overflow;
-};
-
-//-----------------------------------------------------------------------------
 // And please be careful of duplicates.  They are not rejected.
 // not const -- we might override from INI
-static PoolSizeRec sizes[] = 
+static PoolSizeRec PoolSizes[] =
 {
 	{ "PartitionContactListNode", 2048, 512 },
 	{ "BattleshipUpdate", 32, 32 },
@@ -184,7 +122,7 @@ static PoolSizeRec sizes[] =
 	{ "DeliverPayloadAIUpdate", 32, 32 },
 	{ "DeletionUpdate", 128, 32 },
 	{ "SmartBombTargetHomingUpdate", 8, 8 },
-  { "DynamicAudioEventInfo", 16, 256 }, // Note: some levels have none, some have lots. Since all are allocated at level load time, we can set this low for the levels with none.
+	{ "DynamicAudioEventInfo", 16, 256 }, // Note: some levels have none, some have lots. Since all are allocated at level load time, we can set this low for the levels with none.
 	{ "HackInternetStateMachine", 32, 32 },
 	{ "HackInternetAIUpdate", 32, 32 },
 	{ "MissileAIUpdate", 512, 32 },
@@ -218,7 +156,7 @@ static PoolSizeRec sizes[] =
 	{ "PrisonBehavior", 32, 32 },
 	{ "PrisonVisual", 32, 32 },
 	{ "PropagandaCenterBehavior", 16, 16 },
-#endif 
+#endif
 	{ "PropagandaTowerBehavior", 16, 16 },
 	{ "BunkerBusterBehavior", 16, 16 },
 	{ "ObjectTracker", 128, 32 },
@@ -716,85 +654,3 @@ static PoolSizeRec sizes[] =
 	{ "Smudge", 128, 32},
 	{ 0, 0, 0 }
 };
-
-//-----------------------------------------------------------------------------
-void userMemoryAdjustPoolSize(const char *poolName, Int& initialAllocationCount, Int& overflowAllocationCount)
-{
-	if (initialAllocationCount > 0)
-		return;
-
-	for (const PoolSizeRec* p = sizes; p->name != NULL; ++p)
-	{
-		if (strcmp(p->name, poolName) == 0)
-		{
-			initialAllocationCount = p->initial;
-			overflowAllocationCount = p->overflow;
-			return;
-		}
-	}
-
-	DEBUG_CRASH(("Initial size for pool %s not found -- you should add it to MemoryInit.cpp",poolName));
-}
-
-//-----------------------------------------------------------------------------
-static Int roundUpMemBound(Int i)
-{
-	const int MEM_BOUND_ALIGNMENT = 4;
-
-	if (i < MEM_BOUND_ALIGNMENT)
-		return MEM_BOUND_ALIGNMENT;
-	else
-		return (i + (MEM_BOUND_ALIGNMENT-1)) & ~(MEM_BOUND_ALIGNMENT-1);
-}
-
-//-----------------------------------------------------------------------------
-void userMemoryManagerInitPools()
-{
-	// note that we MUST use stdio stuff here, and not the normal game file system
-	// (with bigfile support, etc), because that relies on memory pools, which
-	// aren't yet initialized properly! so rely ONLY on straight stdio stuff here.
-	// (not even AsciiString. thanks.)
-	
-	// since we're called prior to main, the cur dir might not be what
-	// we expect. so do it the hard way.
-	char buf[_MAX_PATH];
-	::GetModuleFileName(NULL, buf, sizeof(buf));
-	char* pEnd = buf + strlen(buf);
-	while (pEnd != buf) 
-	{
-		if (*pEnd == '\\') 
-		{
-			*pEnd = 0;
-			break;
-		}
-		--pEnd;
-	}
-	strcat(buf, "\\Data\\INI\\MemoryPools.ini");
-
-	FILE* fp = fopen(buf, "r");
-	if (fp)
-	{
-		char poolName[256];
-		int initial, overflow;
-		while (fgets(buf, _MAX_PATH, fp))
-		{
-			if (buf[0] == ';')
-				continue;
-			if (sscanf(buf, "%s %d %d", poolName, &initial, &overflow ) == 3)
-			{
-				for (PoolSizeRec* p = sizes; p->name != NULL; ++p)
-				{
-					if (stricmp(p->name, poolName) == 0)
-					{
-						// currently, these must be multiples of 4. so round up.
-						p->initial = roundUpMemBound(initial);
-						p->overflow = roundUpMemBound(overflow);
-						break;	// from for-p
-					}
-				}
-			}
-		}
-		fclose(fp);
-	}
-}
-

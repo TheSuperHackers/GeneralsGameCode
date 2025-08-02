@@ -59,3 +59,11 @@
 #ifndef ENABLE_FILESYSTEM_EXISTENCE_CACHE
 #define ENABLE_FILESYSTEM_EXISTENCE_CACHE (1)
 #endif
+
+// Enable obsolete code. This mainly refers to code that existed in Generals but was removed in GeneralsMD.
+// Disable and remove this when Generals and GeneralsMD are merged.
+#if RTS_GENERALS
+#ifndef USE_OBSOLETE_GENERALS_CODE
+#define USE_OBSOLETE_GENERALS_CODE (1)
+#endif
+#endif
