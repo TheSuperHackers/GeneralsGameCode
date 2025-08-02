@@ -499,7 +499,11 @@ Object::Object( const ThingTemplate *tt, const ObjectStatusMaskType &objectStatu
 	m_soleHealingBenefactorID = INVALID_ID; ///< who is the only other object that can give me this non-stacking heal benefit?
 	m_soleHealingBenefactorExpirationFrame = 0; ///< on what frame can I accept healing (thus to switch) from a new benefactor
 
+	// TheSuperHackers @bugfix Mauller/xezon 02/08/2025 sendObjectCreated needs calling before CreateModule's are initialized to prevent drawable related crashes
+	// This predominantly occurs with the veterancy create module when the chemical suits upgrade is unlocked as it tries to set the terrain decal.
 
+	// emit message announcing object's creation
+	TheGameLogic->sendObjectCreated( this );
 
 }  // end Object
 
@@ -523,9 +527,6 @@ void Object::initObject()
 
 	for (int i = 0; i < WEAPONSLOT_COUNT; ++i)
 		m_lastWeaponCondition[i] = WSF_INVALID;
-
-	// emit message announcing object's creation
-	TheGameLogic->sendObjectCreated( this );
 
 	// If I have a valid team assigned, I can run through my Upgrade modules with his flags
 	updateUpgradeModules();
