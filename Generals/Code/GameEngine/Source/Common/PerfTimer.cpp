@@ -35,6 +35,10 @@
 #include "GameClient/Display.h"
 #include "GameClient/GraphDraw.h"
 
+__forceinline void ProfileGetTime(__int64 &t)
+{
+	t = _rdtsc();
+}
 
 
 //-------------------------------------------------------------------------------------------------
@@ -54,63 +58,139 @@ void GetPrecisionTimerTicksPerSec(Int64* t)
 	*t = s_ticksPerSec;
 }
 
+//Kris: Plugged in Martin's code to optimize timer setup.
+#define HOFFESOMMER_REPLACEMENT_CODE
+
 //-------------------------------------------------------------------------------------------------
 void InitPrecisionTimer()
 {
-#ifdef USE_QPF
-	QueryPerformanceFrequency((LARGE_INTEGER*)&s_ticksPerSec);
-#else
-	// Init the precision timers
-	Int64 totalTime = 0;
-	Int64	TotalTicks = 0;
-	static int TESTS = 5;
+#ifdef HOFFESOMMER_REPLACEMENT_CODE
 
-	for (int i = 0; i < TESTS; ++i)
+  // measure clock cycles 3 times for 20 msec each
+  // then take the 2 counts that are closest, average
+  _int64 n[ 3 ];
+  for( int k = 0; k < 3; k++ )
+  {
+    // wait for end of current tick
+    unsigned timeEnd = timeGetTime() + 2;
+    while( timeGetTime() < timeEnd ); //do nothing
+
+    // get cycles
+    _int64 start, startQPC, endQPC;
+    QueryPerformanceCounter( (LARGE_INTEGER *)&startQPC );
+    ProfileGetTime( start );
+    timeEnd += 20;
+    while( timeGetTime() < timeEnd ); //do nothing
+    ProfileGetTime( n[ k ] );
+    n[ k ] -= start;
+
+    // convert to 1 second
+    if( QueryPerformanceCounter( (LARGE_INTEGER*)&endQPC ) )
+    {
+      QueryPerformanceFrequency( (LARGE_INTEGER*)&s_ticksPerSec );
+      n[ k ] = ( n[ k ] * s_ticksPerSec ) / ( endQPC - startQPC );
+    }
+    else
+    {
+      n[ k ] = ( n[ k ] * 1000 ) / 20;
+    }
+  }
+
+  // find two closest values
+  _int64 d01 = n[ 1 ] - n[ 0 ];
+	_int64 d02 = n[ 2 ] - n[ 0 ];
+	_int64 d12 = n[ 2 ] - n[ 1 ];
+
+  if( d01 < 0 )
 	{
-		int        TimeStart;
-		int        TimeStop;
-		Int64		   StartTicks;
-		Int64		   EndTicks;
-
-		TimeStart = timeGetTime();
-		GetPrecisionTimer(&StartTicks);
-		for(;;)
-		{
-			TimeStop = timeGetTime();
-			if ((TimeStop - TimeStart) > 1000)
-			{
-				GetPrecisionTimer(&EndTicks);
-				break;
-			}
-		}
-
-		TotalTicks += (EndTicks - StartTicks);
-
-		totalTime += (TimeStop - TimeStart);
+		d01 = -d01;
+	}
+  if( d02 < 0 )
+	{
+		d02 = -d02;
+	}
+  if( d12 < 0 )
+	{
+		d12 = -d12;
 	}
 
-	s_ticksPerMSec = 1.0 * TotalTicks / totalTime;
+  _int64 avg;
+  if( d01 < d02 )
+  {
+    avg = d01 < d12 ? n[ 0 ] + n[ 1 ] : n[ 1 ] + n[ 2 ];
+  }
+  else
+  {
+    avg = d02 < d12 ? n[ 0 ] + n[ 2 ] : n[ 1 ] + n[ 2 ];
+  }
+
+	//s_ticksPerMSec = 1.0 * TotalTicks / totalTime;
+	s_ticksPerMSec = avg / 2000.0f;
 	s_ticksPerSec = s_ticksPerMSec * 1000.0f;
-#endif
-	s_ticksPerMSec = s_ticksPerSec / 1000.0f;
 	s_ticksPerUSec = s_ticksPerSec / 1000000.0f;
 
-#ifdef NOT_IN_USE
-	Int64 bogus[8];
-	GetPrecisionTimer(&start);
-	for (Int ii = 0; ii < ITERS; ++ii)
-	{
-		GetPrecisionTimer(&bogus[0]);
-		GetPrecisionTimer(&bogus[1]);
-		GetPrecisionTimer(&bogus[2]);
-		GetPrecisionTimer(&bogus[3]);
-		GetPrecisionTimer(&bogus[4]);
-		GetPrecisionTimer(&bogus[5]);
-		GetPrecisionTimer(&bogus[6]);
-		GetPrecisionTimer(&bogus[7]);
-	}
-	TheTicksToGetTicks = (bogus[7] - start) / (ITERS*8);
-	DEBUG_LOG(("TheTicksToGetTicks is %d (%f usec)",(int)TheTicksToGetTicks,TheTicksToGetTicks/s_ticksPerUSec));
+
+#else
+
+	//Kris: With total disrespect, this code costs 5 real seconds of init time
+	//whenever we fire up the game.
+
+	#ifdef USE_QPF
+		QueryPerformanceFrequency((LARGE_INTEGER*)&s_ticksPerSec);
+	#else
+		// Init the precision timers
+		Int64 totalTime = 0;
+		Int64	TotalTicks = 0;
+		static int TESTS = 5;
+
+		for (int i = 0; i < TESTS; ++i)
+		{
+			int        TimeStart;
+			int        TimeStop;
+			Int64		   StartTicks;
+			Int64		   EndTicks;
+
+			TimeStart = timeGetTime();
+			GetPrecisionTimer(&StartTicks);
+			for(;;)
+			{
+				TimeStop = timeGetTime();
+				if ((TimeStop - TimeStart) > 1000)
+				{
+					GetPrecisionTimer(&EndTicks);
+					break;
+				}
+			}
+
+			TotalTicks += (EndTicks - StartTicks);
+
+			totalTime += (TimeStop - TimeStart);
+		}
+
+		s_ticksPerMSec = 1.0 * TotalTicks / totalTime;
+		s_ticksPerSec = s_ticksPerMSec * 1000.0f;
+	#endif
+		s_ticksPerMSec = s_ticksPerSec / 1000.0f;
+		s_ticksPerUSec = s_ticksPerSec / 1000000.0f;
+
+	#ifdef NOT_IN_USE
+		Int64 bogus[8];
+		GetPrecisionTimer(&start);
+		for (Int ii = 0; ii < ITERS; ++ii)
+		{
+			GetPrecisionTimer(&bogus[0]);
+			GetPrecisionTimer(&bogus[1]);
+			GetPrecisionTimer(&bogus[2]);
+			GetPrecisionTimer(&bogus[3]);
+			GetPrecisionTimer(&bogus[4]);
+			GetPrecisionTimer(&bogus[5]);
+			GetPrecisionTimer(&bogus[6]);
+			GetPrecisionTimer(&bogus[7]);
+		}
+		TheTicksToGetTicks = (bogus[7] - start) / (ITERS*8);
+		DEBUG_LOG(("TheTicksToGetTicks is %d (%f usec)",(int)TheTicksToGetTicks,TheTicksToGetTicks/s_ticksPerUSec));
+	#endif
+
 #endif
 
 }

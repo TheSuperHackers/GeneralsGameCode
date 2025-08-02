@@ -26,8 +26,7 @@
 
 #ifndef IG_DEBUG_STACKTRACE
 #define IG_DEBUG_STACKTRACE	1
-#endif
-
+#endif // Unsure about this one -ML 3/25/03
 #if defined(RTS_DEBUG) || defined(IG_DEBUG_STACKTRACE)
 
 // Writes a stackdump (provide a callback : gets called per line)

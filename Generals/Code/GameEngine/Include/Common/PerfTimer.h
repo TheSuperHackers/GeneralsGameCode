@@ -85,7 +85,8 @@ __forceinline void GetPrecisionTimer(Int64* t)
 class PerfGather
 {
 public:
-	PerfGather( const char *identifier );
+	// If net only (default), subtract perf timers running inside. [8/12/2003]
+	PerfGather( const char *identifier, Bool netOnly=true );
 	virtual ~PerfGather( );
 
 	__forceinline void startTimer();
@@ -126,6 +127,7 @@ private:
 	PerfGather*		m_next;
 	PerfGather*		m_prev;
 	Bool					m_ignore;
+	Bool					m_netTimeOnly;
 };
 
 //-------------------------------------------------------------------------------------------------
@@ -161,7 +163,9 @@ void PerfGather::stopTimer()
 	{
 		// don't add the time it took for us to actually get the ticks (in startTimer) to our parent...
 		(*m_activeHead)->m_runningTimeGross -= (s_stopStartOverhead);
-		(*m_activeHead)->m_runningTimeNet -= (runTime + s_stopStartOverhead);
+		if ((*m_activeHead)->m_netTimeOnly) {
+			(*m_activeHead)->m_runningTimeNet -= (runTime + s_stopStartOverhead);
+		}
 	}
 }
 
@@ -224,6 +228,7 @@ AutoPerfGatherIgnore::~AutoPerfGatherIgnore()
 }
 
 //-------------------------------------------------------------------------------------------------
+#define DECLARE_TOTAL_PERF_TIMER(id)					static PerfGather s_##id(#id, false);
 #define DECLARE_PERF_TIMER(id)					static PerfGather s_##id(#id);
 #define USE_PERF_TIMER(id)							AutoPerfGather a_##id(s_##id);
 #define IGNORE_PERF_TIMER(id)						AutoPerfGatherIgnore a_##id(s_##id);
@@ -308,6 +313,7 @@ extern void StatMetricsDisplay( DebugDisplayInterface *dd, void *, FILE *fp );
 #else		// PERF_TIMERS
 
 	#define DECLARE_PERF_TIMER(id)
+	#define  DECLARE_TOTAL_PERF_TIMER(id)
 	#define USE_PERF_TIMER(id)
 	#define IGNORE_PERF_TIMER(id)
 
