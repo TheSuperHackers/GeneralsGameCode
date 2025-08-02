@@ -37,6 +37,7 @@
 //#include "GameLogic/Locomotor.h"	// no, do not include this, unless you like long recompiles
 #include "GameLogic/LocomotorSet.h"
 #include "GameLogic/GameLogic.h"
+#include "Common/GameDefines.h"
 
 class Bridge;
 class Object;
@@ -50,6 +51,12 @@ class PathfindZoneManager;
 
 #define INFANTRY_MOVES_THROUGH_INFANTRY
 
+// TheSuperHackers @info This is here to easily toggle the retail compatible hacks for the pathfinding
+#if RETAIL_COMPATIBLE_CRC
+#define RETAIL_COMPATIBLE_PATHFINDING (1)
+#else
+#define RETAIL_COMPATIBLE_PATHFINDING (0)
+#endif
 
   typedef UnsignedShort zoneStorageType;
 
@@ -208,6 +215,9 @@ class PathfindCellInfo
 {
 	friend class PathfindCell;
 public:
+#if RETAIL_COMPATIBLE_PATHFINDING
+	static void forceCleanPathFindInfoCells(void);
+#endif
 	static void allocateCellInfos(void);
 	static void releaseCellInfos(void);
 
@@ -699,6 +709,9 @@ public:
 	Path *getDebugPath( void );
 	void setDebugPath( Path *debugpath );
 
+#if RETAIL_COMPATIBLE_PATHFINDING
+	void forceCleanCells(void);
+#endif
 	void cleanOpenAndClosedLists(void);
 
 	// Adjusts the destination to a spot near dest that is not occupied by other units.
