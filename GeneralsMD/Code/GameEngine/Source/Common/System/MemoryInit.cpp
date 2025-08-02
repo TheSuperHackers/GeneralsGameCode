@@ -184,7 +184,7 @@ static PoolSizeRec sizes[] =
 	{ "DeliverPayloadAIUpdate", 32, 32 },
 	{ "DeletionUpdate", 128, 32 },
 	{ "SmartBombTargetHomingUpdate", 8, 8 },
-  { "DynamicAudioEventInfo", 16, 256 }, // Note: some levels have none, some have lots. Since all are allocated at level load time, we can set this low for the levels with none.
+	{ "DynamicAudioEventInfo", 16, 256 }, // Note: some levels have none, some have lots. Since all are allocated at level load time, we can set this low for the levels with none.
 	{ "HackInternetStateMachine", 32, 32 },
 	{ "HackInternetAIUpdate", 32, 32 },
 	{ "MissileAIUpdate", 512, 32 },
@@ -218,7 +218,7 @@ static PoolSizeRec sizes[] =
 	{ "PrisonBehavior", 32, 32 },
 	{ "PrisonVisual", 32, 32 },
 	{ "PropagandaCenterBehavior", 16, 16 },
-#endif 
+#endif
 	{ "PropagandaTowerBehavior", 16, 16 },
 	{ "BunkerBusterBehavior", 16, 16 },
 	{ "ObjectTracker", 128, 32 },

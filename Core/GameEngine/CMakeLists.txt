@@ -646,13 +646,13 @@ set(GAMEENGINE_SRC
 #    Source/Common/System/FunctionLexicon.cpp
 #    Source/Common/System/GameCommon.cpp
     #Source/Common/System/GameMemory.cpp # is conditionally appended
+    #Source/Common/System/GameMemoryInit.cpp # is conditionally appended
 #    Source/Common/System/GameType.cpp
 #    Source/Common/System/Geometry.cpp
 #    Source/Common/System/KindOf.cpp
 #    Source/Common/System/List.cpp
     Source/Common/System/LocalFile.cpp
     Source/Common/System/LocalFileSystem.cpp
-    #Source/Common/System/MemoryInit.cpp # is conditionally appended
 #    Source/Common/System/ObjectStatusTypes.cpp
 #    Source/Common/System/QuotedPrintable.cpp
 #    Source/Common/System/Radar.cpp
@@ -1140,7 +1140,7 @@ if(RTS_GAMEMEMORY_ENABLE)
     # Uses the original Game Memory implementation.
     list(APPEND GAMEENGINE_SRC
 #        Source/Common/System/GameMemory.cpp
-#        Source/Common/System/MemoryInit.cpp
+#        Source/Common/System/GameMemoryInit.cpp
     )
 else()
     # Uses the null implementation when disabled.
