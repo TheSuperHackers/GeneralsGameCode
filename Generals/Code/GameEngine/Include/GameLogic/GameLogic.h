@@ -93,6 +93,7 @@ typedef void (*GameLogicFuncPtr)( Object *obj, void *userData );
 typedef std::hash_map<ObjectID, Object *, rts::hash<ObjectID>, rts::equal_to<ObjectID> > ObjectPtrHash;
 typedef ObjectPtrHash::const_iterator ObjectPtrIter;
 
+typedef std::vector<Object*> ObjectPtrVector;
 
 // ------------------------------------------------------------------------------------------------
 /**

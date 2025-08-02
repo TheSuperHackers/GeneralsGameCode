@@ -3428,11 +3428,11 @@ Bool InGameUI::isDrawableSelected( DrawableID idToCheck ) const
 //-------------------------------------------------------------------------------------------------
 /** Return true if all of the selected objects are in the drawable list */
 //-------------------------------------------------------------------------------------------------
-Bool InGameUI::areAllObjectsSelected(std::vector<Object*> objectsToCheck) const
+Bool InGameUI::areAllObjectsSelected(const ObjectPtrVector& objectsToCheck) const
 {
-	for (DrawableListCIt it = m_selectedDrawables.begin(); it != m_selectedDrawables.end(); ++it)
+	for (ObjectPtrVector::const_iterator it = objectsToCheck.begin(); it != objectsToCheck.end(); ++it)
 	{
-		if (std::find(objectsToCheck.begin(), objectsToCheck.end(), (*it)->getObject()) == objectsToCheck.end())
+		if (!(*it)->getDrawable()->isSelected())
 			return FALSE;
 	}
 
