@@ -122,7 +122,7 @@ typedef AllObjectTypes::iterator AllObjectTypesIt;
 typedef std::vector<NamedReveal> VecNamedReveal;
 typedef VecNamedReveal::iterator VecNamedRevealIt;
 
-// TheSuperHackers @compile xezon 17/03/2025 Fixes destructor visibility by removing MemoryPoolObject base class.
+// TheSuperHackers @build xezon 17/03/2025 Fixes destructor visibility by removing MemoryPoolObject base class.
 // MemoryPoolObject looks to be unnecessary because it is never dynamically allocated.
 class AttackPriorityInfo : public Snapshot
 {

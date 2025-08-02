@@ -41,7 +41,7 @@
 
 #include "refcount.h"
 
-// TheSuperHackers @compile feliwir 17/04/2025 include __debugbreak macros
+// TheSuperHackers @build feliwir 17/04/2025 include __debugbreak macros
 #include <Utility/intrin_compat.h>
 
 #ifndef NDEBUG

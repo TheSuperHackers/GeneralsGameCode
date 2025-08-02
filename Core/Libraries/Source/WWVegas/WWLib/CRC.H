@@ -42,7 +42,7 @@
 
 #include	<stdlib.h>
 
-// TheSuperHackers @compile feliwir 17/04/2025 include _ltrotl macros
+// TheSuperHackers @build feliwir 17/04/2025 include _ltrotl macros
 #include <Utility/intrin_compat.h>
 
 /*

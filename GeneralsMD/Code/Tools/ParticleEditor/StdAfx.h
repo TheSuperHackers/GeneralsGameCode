@@ -30,7 +30,7 @@
 
 #define VC_EXTRALEAN		// Exclude rarely-used stuff from Windows headers
 
-// TheSuperHackers @compile xezon 24/03/2025 Prevent afxwin.h from loading d3d9types.h, colliding with our own DirectX library.
+// TheSuperHackers @build xezon 24/03/2025 Prevent afxwin.h from loading d3d9types.h, colliding with our own DirectX library.
 #define _d3d9TYPES_H_
 
 #include <afxwin.h>         // MFC core and standard components
