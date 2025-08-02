@@ -1,6 +1,6 @@
 set(GAMEENGINEDEVICE_SRC
     Include/MilesAudioDevice/MilesAudioManager.h
-#    Include/VideoDevice/Bink/BinkVideoPlayer.h
+    Include/VideoDevice/Bink/BinkVideoPlayer.h
 #    Include/W3DDevice/Common/W3DConvert.h
 #    Include/W3DDevice/Common/W3DFunctionLexicon.h
 #    Include/W3DDevice/Common/W3DModuleFactory.h
@@ -70,7 +70,7 @@ set(GAMEENGINEDEVICE_SRC
 #    Include/W3DDevice/GameClient/W3DTerrainTracks.h
 #    Include/W3DDevice/GameClient/W3DTerrainVisual.h
 #    Include/W3DDevice/GameClient/W3DTreeBuffer.h
-#    Include/W3DDevice/GameClient/W3DVideoBuffer.h
+    Include/W3DDevice/GameClient/W3DVideoBuffer.h
 #    Include/W3DDevice/GameClient/W3DView.h
 #    Include/W3DDevice/GameClient/W3DVolumetricShadow.h
 #    Include/W3DDevice/GameClient/W3DWater.h
@@ -91,7 +91,7 @@ set(GAMEENGINEDEVICE_SRC
 #    Include/Win32Device/GameClient/Win32DIMouse.h
 #    Include/Win32Device/GameClient/Win32Mouse.h
     Source/MilesAudioDevice/MilesAudioManager.cpp
-#    Source/VideoDevice/Bink/BinkVideoPlayer.cpp
+    Source/VideoDevice/Bink/BinkVideoPlayer.cpp
 #    Source/W3DDevice/Common/System/W3DFunctionLexicon.cpp
 #    Source/W3DDevice/Common/System/W3DRadar.cpp
 #    Source/W3DDevice/Common/Thing/W3DModuleFactory.cpp
@@ -172,7 +172,7 @@ set(GAMEENGINEDEVICE_SRC
 #    Source/W3DDevice/GameClient/W3DTerrainTracks.cpp
 #    Source/W3DDevice/GameClient/W3DTerrainVisual.cpp
 #    Source/W3DDevice/GameClient/W3DTreeBuffer.cpp
-#    Source/W3DDevice/GameClient/W3DVideoBuffer.cpp
+    Source/W3DDevice/GameClient/W3DVideoBuffer.cpp
 #    Source/W3DDevice/GameClient/W3DView.cpp
 #    Source/W3DDevice/GameClient/W3dWaypointBuffer.cpp
 #    Source/W3DDevice/GameClient/W3DWebBrowser.cpp
@@ -229,20 +229,19 @@ target_link_libraries(corei_gameenginedevice_public INTERFACE
     milesstub
 )
 
-#if(RTS_BUILD_OPTION_FFMPEG)
-#    find_package(FFMPEG REQUIRED)
-#
-#    if(FFMPEG_FOUND)
-#        target_sources(z_gameenginedevice PRIVATE
-#            Include/VideoDevice/FFmpeg/FFmpegFile.h
-#            Include/VideoDevice/FFmpeg/FFmpegVideoPlayer.h
-#            Source/VideoDevice/FFmpeg/FFmpegFile.cpp
-#            Source/VideoDevice/FFmpeg/FFmpegVideoPlayer.cpp
-#        )
-#
-#        target_include_directories(z_gameenginedevice PRIVATE ${FFMPEG_INCLUDE_DIRS})
-#        target_link_directories(z_gameenginedevice PRIVATE ${FFMPEG_LIBRARY_DIRS})
-#        target_link_libraries(z_gameenginedevice PRIVATE ${FFMPEG_LIBRARIES})
-#        target_compile_definitions(z_gameenginedevice PUBLIC RTS_HAS_FFMPEG)
-#    endif()
-#endif()
+if(RTS_BUILD_OPTION_FFMPEG)
+    find_package(FFMPEG REQUIRED)
+
+    if(FFMPEG_FOUND)
+        target_sources(corei_gameenginedevice_private INTERFACE
+            Include/VideoDevice/FFmpeg/FFmpegFile.h
+            Include/VideoDevice/FFmpeg/FFmpegVideoPlayer.h
+            Source/VideoDevice/FFmpeg/FFmpegFile.cpp
+            Source/VideoDevice/FFmpeg/FFmpegVideoPlayer.cpp
+        )
+        target_include_directories(corei_gameenginedevice_private INTERFACE ${FFMPEG_INCLUDE_DIRS})
+        target_link_directories(corei_gameenginedevice_private INTERFACE ${FFMPEG_LIBRARY_DIRS})
+        target_link_libraries(corei_gameenginedevice_private INTERFACE ${FFMPEG_LIBRARIES})
+        target_compile_definitions(corei_gameenginedevice_public INTERFACE RTS_HAS_FFMPEG)
+    endif()
+endif()

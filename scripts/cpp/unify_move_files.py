@@ -141,6 +141,21 @@ def main():
     #unify_file(Game.ZEROHOUR, "GameEngine/Include/Common/Debug.h", Game.CORE, "GameEngine/Include/Common/Debug.h")
     #unify_file(Game.ZEROHOUR, "GameEngine/Source/Common/System/Debug.cpp", Game.CORE, "GameEngine/Source/Common/System/Debug.cpp")
 
+    #unify_file(Game.ZEROHOUR, "GameEngine/Include/GameClient/VideoPlayer.h", Game.CORE, "GameEngine/Include/GameClient/VideoPlayer.h")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Source/GameClient/VideoPlayer.cpp", Game.CORE, "GameEngine/Source/GameClient/VideoPlayer.cpp")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Source/GameClient/VideoStream.cpp", Game.CORE, "GameEngine/Source/GameClient/VideoStream.cpp")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Include/GameClient/WindowVideoManager.h", Game.CORE, "GameEngine/Include/GameClient/WindowVideoManager.h")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Source/GameClient/GUI/WindowVideoManager.cpp", Game.CORE, "GameEngine/Source/GameClient/GUI/WindowVideoManager.cpp")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Source/Common/INI/INIVideo.cpp", Game.CORE, "GameEngine/Source/Common/INI/INIVideo.cpp")
+    #unify_file(Game.ZEROHOUR, "GameEngineDevice/Include/VideoDevice/Bink/BinkVideoPlayer.h", Game.CORE, "GameEngineDevice/Include/VideoDevice/Bink/BinkVideoPlayer.h")
+    #unify_file(Game.ZEROHOUR, "GameEngineDevice/Source/VideoDevice/Bink/BinkVideoPlayer.cpp", Game.CORE, "GameEngineDevice/Source/VideoDevice/Bink/BinkVideoPlayer.cpp")
+    #unify_file(Game.ZEROHOUR, "GameEngineDevice/Include/W3DDevice/GameClient/W3DVideoBuffer.h", Game.CORE, "GameEngineDevice/Include/W3DDevice/GameClient/W3DVideoBuffer.h")
+    #unify_file(Game.ZEROHOUR, "GameEngineDevice/Source/W3DDevice/GameClient/W3DVideoBuffer.cpp", Game.CORE, "GameEngineDevice/Source/W3DDevice/GameClient/W3DVideoBuffer.cpp")
+    #unify_move_file(Game.ZEROHOUR, "GameEngineDevice/Include/VideoDevice/FFmpeg/FFmpegFile.h", Game.CORE, "GameEngineDevice/Include/VideoDevice/FFmpeg/FFmpegFile.h")
+    #unify_move_file(Game.ZEROHOUR, "GameEngineDevice/Include/VideoDevice/FFmpeg/FFmpegVideoPlayer.h", Game.CORE, "GameEngineDevice/Include/VideoDevice/FFmpeg/FFmpegVideoPlayer.h")
+    #unify_move_file(Game.ZEROHOUR, "GameEngineDevice/Source/VideoDevice/FFmpeg/FFmpegFile.cpp", Game.CORE, "GameEngineDevice/Source/VideoDevice/FFmpeg/FFmpegFile.cpp")
+    #unify_move_file(Game.ZEROHOUR, "GameEngineDevice/Source/VideoDevice/FFmpeg/FFmpegVideoPlayer.cpp", Game.CORE, "GameEngineDevice/Source/VideoDevice/FFmpeg/FFmpegVideoPlayer.cpp")
+
     return
 
 

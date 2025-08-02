@@ -224,11 +224,11 @@ set(GAMEENGINE_SRC
 #    Include/GameClient/Statistics.h
 #    Include/GameClient/TerrainRoads.h
 #    Include/GameClient/TerrainVisual.h
-#    Include/GameClient/VideoPlayer.h
+    Include/GameClient/VideoPlayer.h
 #    Include/GameClient/View.h
 #    Include/GameClient/Water.h
 #    Include/GameClient/WindowLayout.h
-#    Include/GameClient/WindowVideoManager.h
+    Include/GameClient/WindowVideoManager.h
 #    Include/GameClient/WindowXlat.h
 #    Include/GameClient/WinInstanceData.h
 #    Include/GameLogic/AI.h
@@ -597,7 +597,7 @@ set(GAMEENGINE_SRC
 #    Source/Common/INI/INITerrainBridge.cpp
 #    Source/Common/INI/INITerrainRoad.cpp
 #    Source/Common/INI/INIUpgrade.cpp
-#    Source/Common/INI/INIVideo.cpp
+    Source/Common/INI/INIVideo.cpp
 #    Source/Common/INI/INIWater.cpp
 #    Source/Common/INI/INIWeapon.cpp
 #    Source/Common/INI/INIWebpageURL.cpp
@@ -791,7 +791,7 @@ set(GAMEENGINE_SRC
 #    Source/GameClient/GUI/Shell/Shell.cpp
 #    Source/GameClient/GUI/Shell/ShellMenuScheme.cpp
 #    Source/GameClient/GUI/WindowLayout.cpp
-#    Source/GameClient/GUI/WindowVideoManager.cpp
+    Source/GameClient/GUI/WindowVideoManager.cpp
 #    Source/GameClient/GUI/WinInstanceData.cpp
 #    Source/GameClient/InGameUI.cpp
 #    Source/GameClient/Input/Keyboard.cpp
@@ -823,8 +823,8 @@ set(GAMEENGINE_SRC
 #    Source/GameClient/System/Smudge.cpp
 #    Source/GameClient/Terrain/TerrainRoads.cpp
 #    Source/GameClient/Terrain/TerrainVisual.cpp
-#    Source/GameClient/VideoPlayer.cpp
-#    Source/GameClient/VideoStream.cpp
+    Source/GameClient/VideoPlayer.cpp
+    Source/GameClient/VideoStream.cpp
 #    Source/GameClient/View.cpp
 #    Source/GameClient/Water.cpp
 #    Source/GameLogic/AI/AI.cpp
