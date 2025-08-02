@@ -3,6 +3,7 @@
 !.gitignore
 !.gitattributes
 !.github
+!.gitmodules
 
 *.user
 *.ncb
