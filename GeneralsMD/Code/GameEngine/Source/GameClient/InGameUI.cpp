@@ -1196,10 +1196,15 @@ void InGameUI::init( void )
 		TheTacticalView->init();
 		TheDisplay->attachView( TheTacticalView );
 
+		Int displayWidth = TheDisplay->getWidth();
+		Int displayHeight = TheDisplay->getHeight();
 		// make the tactical display the full screen width for now
-		TheTacticalView->setWidth( TheDisplay->getWidth());
+		TheTacticalView->setWidth(displayWidth);
 		// make the tactical display 0.76 of full screen so no drawing under GUI.
-		TheTacticalView->setHeight( TheDisplay->getHeight() * 0.77f);
+		TheTacticalView->setHeight(displayHeight * 0.77f);
+
+		// TheSuperHackers @tweak valeronm 25/03/2025 Adjust camera FOV according to display resolution
+		TheTacticalView->adjustFovToAspectRatio(displayWidth, displayHeight);
 	}
 	TheTacticalView->setDefaultView(0.0f, 0.0f, 1.0f);
 
