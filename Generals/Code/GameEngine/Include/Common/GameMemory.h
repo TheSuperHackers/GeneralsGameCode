@@ -730,7 +730,6 @@ private: \
 public: /* include this line at the end to reset visibility to 'public' */
 
 
-
 // ----------------------------------------------------------------------------
 /**
 	This class is provided as a simple and safe way to integrate C++ object allocation
@@ -894,10 +893,9 @@ public:
 	static void deallocate(void* __p, size_t);
 };
 
-#endif //DISABLE_GAMEMEMORY
+#endif // DISABLE_GAMEMEMORY
 
 
-// ----------------------------------------------------------------------------
 /**
 	A simple utility class to ensure exception safety; this holds a MemoryPoolObject
 	and deletes it in its destructor. Especially useful for iterators!
@@ -915,5 +913,6 @@ public:
 
 
 #define EMPTY_DTOR(CLASS) inline CLASS::~CLASS() { }
+
 
 #endif // _GAME_MEMORY_H_
