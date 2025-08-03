@@ -221,6 +221,7 @@ public:
 		MSG_META_SELECT_PREV_UNIT,									///< select 'prev' unit
 		MSG_META_SELECT_NEXT_WORKER,                ///< select 'next' worker
 		MSG_META_SELECT_PREV_WORKER,                ///< select 'prev' worker
+		MSG_META_SELECT_NEXT_IDLE_WORKER,                        ///< TheSuperHackers @feature L3-M 03/08/2025 select next idle worker
 		MSG_META_VIEW_COMMAND_CENTER,								///< center view on command center
 		MSG_META_VIEW_LAST_RADAR_EVENT,							///< center view on last radar event
 		MSG_META_SELECT_HERO,                       ///< selects player's hero character, if exists...
@@ -270,7 +271,6 @@ public:
 		MSG_META_TOGGLE_FAST_FORWARD_REPLAY,				///< Toggle the fast forward feature
 		MSG_META_TOGGLE_PAUSE,											///< TheSuperHackers @feature Toggle game pause (in replay playbacks)
 		MSG_META_STEP_FRAME,												///< TheSuperHackers @feature Step one frame (in replay playbacks)
-		MSG_META_SELECT_IDLE_WORKER,                        ///< TheSuperHackers @feature L3-M 03/08/2025 Select next idle worker
 
 
 		// META items that are really for debug/demo/development use only...

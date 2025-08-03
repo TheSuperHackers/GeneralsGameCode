@@ -2882,6 +2882,14 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 		}	// end select previous worker
 
 		//-----------------------------------------------------------------------------------------
+		case GameMessage::MSG_META_SELECT_NEXT_IDLE_WORKER:
+		{
+			if (TheInGameUI)
+				TheInGameUI->selectNextIdleWorker();
+			break;
+		}
+
+		//-----------------------------------------------------------------------------------------
 		case GameMessage::MSG_META_SELECT_HERO:
 		{
 			// if there is nothing on the screen, bail
@@ -3295,13 +3303,6 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 		case GameMessage::MSG_META_TOGGLE_CAMERA_TRACKING_DRAWABLE:
 			TheInGameUI->setCameraTrackingDrawable( true );
 			break;
-        //--------------------------------------------------------------------------------------
-		case GameMessage::MSG_META_SELECT_IDLE_WORKER:
-		{
-			if (TheInGameUI)
-				TheInGameUI->selectNextIdleWorker();
-			break;
-		}
 		//--------------------------------------------------------------------------------------
 		case GameMessage::MSG_META_TOGGLE_FAST_FORWARD_REPLAY:
 		{
