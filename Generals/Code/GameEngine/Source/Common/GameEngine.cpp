@@ -364,7 +364,8 @@ void GameEngine::init()
 		
 		DEBUG_ASSERTCRASH(TheWritableGlobalData,("TheWritableGlobalData expected to be created"));
 		initSubsystem(TheWritableGlobalData, "TheWritableGlobalData", TheWritableGlobalData, &xferCRC, "Data\\INI\\Default\\GameData.ini", "Data\\INI\\GameData.ini");
-		
+		TheWritableGlobalData->parseCustomDefinition();
+
 		// TheSuperHackers @bugfix helmutbuhler 14/04/2025
 		// Pump messages during startup to ensure that the application window is correctly
 		// positioned on slower computers and in debug builds by a later call to SetWindowPos.

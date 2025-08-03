@@ -176,6 +176,7 @@ GlobalData* GlobalData::m_theOriginal = NULL;
 	{ "SkyBoxPositionZ",				INI::parseReal,				NULL,			offsetof( GlobalData, m_skyBoxPositionZ ) },
 	{ "SkyBoxScale",				INI::parseReal,				NULL,			offsetof( GlobalData, m_skyBoxScale ) },
 	{ "DrawSkyBox",				INI::parseBool,				NULL,			offsetof( GlobalData, m_drawSkyBox ) },
+	{ "ViewportHeightScale", INI::parseReal, NULL, offsetof( GlobalData, m_viewportHeightScale ) },
 	{ "CameraPitch",								INI::parseReal,				NULL,			offsetof( GlobalData, m_cameraPitch ) },
 	{ "CameraYaw",									INI::parseReal,				NULL,			offsetof( GlobalData, m_cameraYaw ) },
 	{ "CameraHeight",								INI::parseReal,				NULL,			offsetof( GlobalData, m_cameraHeight ) },
@@ -824,6 +825,8 @@ GlobalData::GlobalData()
 
 	m_particleEdit = FALSE;
 
+	m_viewportHeightScale = 0.80f; // Default value for the original Control Bar.
+
 	m_cameraPitch = 0.0f;
 	m_cameraYaw = 0.0f;
 	m_cameraHeight = 0.0f;
@@ -1193,6 +1196,22 @@ void GlobalData::parseGameDataDefinition( INI* ini )
 	TheWritableGlobalData->m_yResolution = yres;
 }
 
+void GlobalData::parseCustomDefinition()
+{
+	{
+		// TheSuperHackers @feature xezon 03/08/2025 Force full viewport for 'Control Bar Pro' Addons like GenTool did it.
+		File* file = TheFileSystem->openFile("GenTool/fullviewport.dat", File::READ | File::BINARY);
+		if (file != NULL)
+		{
+			Char value = '0';
+			file->read(&value, 1);
+			if (value != '0')
+			{
+				m_viewportHeightScale = 1.0f;
+			}
+		}
+	}
+}
 
 UnsignedInt GlobalData::generateExeCRC()
 {

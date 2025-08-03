@@ -161,6 +161,15 @@ Int parseUseWaveEditor(char *args[], int num)
 	return 1;
 }
 
+//=============================================================================
+//=============================================================================
+Int parseFullViewport(char *args[], int num)
+{
+	TheWritableGlobalData->m_viewportHeightScale = 1.0f;
+
+	return 1;
+}
+
 #if defined(RTS_DEBUG)
 
 //=============================================================================
@@ -1170,6 +1179,9 @@ static CommandLineParam paramsForEngineInit[] =
 	{ "-noshaders", parseNoShaders },
 	{ "-quickstart", parseQuickStart },
 	{ "-useWaveEditor", parseUseWaveEditor },
+
+	// TheSuperHackers @feature xezon 03/08/2025 Force full viewport for 'Control Bar Pro' Addons like GenTool did it.
+	{ "-forcefullviewport", parseFullViewport },
 
 #if defined(RTS_DEBUG)
 	{ "-noaudio", parseNoAudio },

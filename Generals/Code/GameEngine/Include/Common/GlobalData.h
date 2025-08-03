@@ -91,6 +91,7 @@ public:
 	Bool setTimeOfDay( TimeOfDay tod );		///< Use this function to set the Time of day;
 
 	static void parseGameDataDefinition( INI* ini );
+	void parseCustomDefinition();
 
 	//-----------------------------------------------------------------------------------------------
 	struct TerrainLighting
@@ -178,6 +179,7 @@ public:
 	Real m_skyBoxPositionZ;
 	Real m_drawSkyBox;
 	Real m_skyBoxScale;
+	Real m_viewportHeightScale; // The height scale of the tactical view ranging 0..1. Used to hide the world behind the Control Bar.
 	Real m_cameraPitch;
 	Real m_cameraYaw;
 	Real m_cameraHeight;
