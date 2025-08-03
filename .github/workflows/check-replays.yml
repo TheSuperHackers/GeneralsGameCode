@@ -11,7 +11,7 @@ on:
         required: true
         type: string
         description: "Game to check (only GeneralsMD for now)"
-      gamedata:
+      userdata:
         required: true
         type: string
         description: "Path to folder with replays and maps"
@@ -160,13 +160,13 @@ jobs:
         run: |
           # These files are expected in the user dir, so we move them here.
 
-          $source = "${{ inputs.gamedata }}\Replays"
+          $source = "${{ inputs.userdata }}\Replays"
           $destination = "$env:USERPROFILE\Documents\Command and Conquer Generals Zero Hour Data\Replays"
           Write-Host "Move replays to $destination"
           New-Item -ItemType Directory -Path $destination -Force | Out-Null
           Move-Item -Path "$source\*" -Destination $destination -Force
 
-          $source = "${{ inputs.gamedata }}\Maps"
+          $source = "${{ inputs.userdata }}\Maps"
           $destination = "$env:USERPROFILE\Documents\Command and Conquer Generals Zero Hour Data\Maps"
           Write-Host "Move maps to $destination"
           New-Item -ItemType Directory -Path $destination -Force | Out-Null
