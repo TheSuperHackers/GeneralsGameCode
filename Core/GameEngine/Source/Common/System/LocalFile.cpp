@@ -47,7 +47,6 @@
 
 #include "PreRTS.h"
 
-#include <stdio.h>
 #include <fcntl.h>
 #include <io.h>
 #include <string.h>
@@ -379,6 +378,38 @@ Int LocalFile::write( const void *buffer, Int bytes )
 	Int ret = _write( m_handle, buffer, bytes );
 #endif
 	return ret;
+}
+
+//=================================================================
+// LocalFile::writeFormat - Ascii
+//=================================================================
+
+Int LocalFile::writeFormat( const Char* format, ... )
+{
+	char buffer[1024];
+
+	va_list args;
+	va_start(args, format);
+	Int length = vsnprintf(buffer, sizeof(buffer), format, args);
+	va_end(args);
+
+	return write( buffer, length );
+}
+
+//=================================================================
+// LocalFile::writeFormat - Wide character
+//=================================================================
+
+Int LocalFile::writeFormat( const WideChar* format, ... )
+{
+	WideChar buffer[1024];
+
+	va_list args;
+	va_start(args, format);
+	Int length = vswprintf(buffer, sizeof(buffer) / sizeof(WideChar), format, args);
+	va_end(args);
+
+	return write( buffer, length * sizeof(WideChar) );
 }
 
 //=================================================================

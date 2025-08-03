@@ -1279,6 +1279,8 @@ void OpenContain::orderAllPassengersToExit( CommandSourceType commandSource )
 //-------------------------------------------------------------------------------------------------
 void OpenContain::processDamageToContained()
 {
+	const OpenContainModuleData* data = getOpenContainModuleData();
+
 #if RETAIL_COMPATIBLE_CRC
 
 	const ContainedItemsList* items = getContainedItemsList();
@@ -1292,7 +1294,7 @@ void OpenContain::processDamageToContained()
 			Object *object = *it++;
 
 			//Calculate the damage to be inflicted on each unit.
-			Real damage = object->getBodyModule()->getMaxHealth() * getOpenContainModuleData()->m_damagePercentageToUnits;
+			Real damage = object->getBodyModule()->getMaxHealth() * data->m_damagePercentageToUnits;
 
 			DamageInfo damageInfo;
 			damageInfo.in.m_damageType = DAMAGE_UNRESISTABLE;
@@ -1301,7 +1303,7 @@ void OpenContain::processDamageToContained()
 			damageInfo.in.m_amount = damage;
 			object->attemptDamage( &damageInfo );
 
-			if( !object->isEffectivelyDead() && getOpenContainModuleData()->m_damagePercentageToUnits == 1.0f )
+			if( !object->isEffectivelyDead() && data->m_damagePercentageToUnits == 1.0f )
 				object->kill(); // in case we are carrying flame proof troops we have been asked to kill
 
 			// TheSuperHackers @info Calls to Object::attemptDamage and Object::kill will not remove
@@ -1349,16 +1351,16 @@ void OpenContain::processDamageToContained()
 		DEBUG_ASSERTCRASH( object, ("Contain list must not contain NULL element") );
 
 		// Calculate the damage to be inflicted on each unit.
-		Real damage = object->getBodyModule()->getMaxHealth() * percentDamage;
+		Real damage = object->getBodyModule()->getMaxHealth() * data->m_damagePercentageToUnits;
 
 		DamageInfo damageInfo;
 		damageInfo.in.m_damageType = DAMAGE_UNRESISTABLE;
-		damageInfo.in.m_deathType = data->m_isBurnedDeathToUnits ? DEATH_BURNED : DEATH_NORMAL;
+		damageInfo.in.m_deathType = DEATH_BURNED;
 		damageInfo.in.m_sourceID = getObject()->getID();
 		damageInfo.in.m_amount = damage;
 		object->attemptDamage( &damageInfo );
 
-		if( !object->isEffectivelyDead() && percentDamage == 1.0f )
+		if( !object->isEffectivelyDead() && data->m_damagePercentageToUnits == 1.0f )
 			object->kill(); // in case we are carrying flame proof troops we have been asked to kill
 
 		if ( object->isEffectivelyDead() )

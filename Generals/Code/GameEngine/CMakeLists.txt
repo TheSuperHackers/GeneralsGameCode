@@ -19,13 +19,13 @@ set(GAMEENGINE_SRC
     Include/Common/CDManager.h
     Include/Common/ClientUpdateModule.h
     Include/Common/CommandLine.h
-    Include/Common/crc.h
-    Include/Common/CRCDebug.h
+#    Include/Common/crc.h
+#    Include/Common/CRCDebug.h
     Include/Common/CriticalSection.h
     Include/Common/CustomMatchPreferences.h
     Include/Common/DamageFX.h
     Include/Common/DataChunk.h
-    Include/Common/Debug.h
+#    Include/Common/Debug.h
     Include/Common/Dict.h
     Include/Common/Directory.h
     Include/Common/DisabledTypes.h
@@ -89,7 +89,7 @@ set(GAMEENGINE_SRC
     Include/Common/QuotedPrintable.h
     Include/Common/Radar.h
 #    Include/Common/RAMFile.h
-    Include/Common/RandomValue.h
+#    Include/Common/RandomValue.h
     Include/Common/Recorder.h
 #    Include/Common/ReplaySimulation.h
     Include/Common/Registry.h
@@ -135,7 +135,7 @@ set(GAMEENGINE_SRC
     Include/GameClient/CampaignManager.h
     Include/GameClient/CDCheck.h
     Include/GameClient/ClientInstance.h
-    Include/GameClient/ClientRandomValue.h
+#    Include/GameClient/ClientRandomValue.h
     Include/GameClient/Color.h
     Include/GameClient/CommandXlat.h
     Include/GameClient/ControlBar.h
@@ -240,7 +240,7 @@ set(GAMEENGINE_SRC
     Include/GameLogic/GhostObject.h
     Include/GameLogic/Locomotor.h
     Include/GameLogic/LocomotorSet.h
-    Include/GameLogic/LogicRandomValue.h
+#    Include/GameLogic/LogicRandomValue.h
     Include/GameLogic/Module/ActiveBody.h
     Include/GameLogic/Module/ActiveShroudUpgrade.h
     Include/GameLogic/Module/AIUpdate.h
@@ -523,8 +523,8 @@ set(GAMEENGINE_SRC
     Source/Common/Bezier/BezierSegment.cpp
     Source/Common/BitFlags.cpp
     Source/Common/CommandLine.cpp
-    Source/Common/crc.cpp
-    Source/Common/CRCDebug.cpp
+#    Source/Common/crc.cpp
+#    Source/Common/CRCDebug.cpp
     Source/Common/DamageFX.cpp
     Source/Common/Dict.cpp
     Source/Common/DiscreteCircle.cpp
@@ -567,7 +567,7 @@ set(GAMEENGINE_SRC
     Source/Common/NameKeyGenerator.cpp
     Source/Common/PartitionSolver.cpp
     Source/Common/PerfTimer.cpp
-    Source/Common/RandomValue.cpp
+#    Source/Common/RandomValue.cpp
     Source/Common/Recorder.cpp
     Source/Common/RTS/ActionManager.cpp
     Source/Common/RTS/Energy.cpp
@@ -594,7 +594,7 @@ set(GAMEENGINE_SRC
     Source/Common/System/CDManager.cpp
     Source/Common/System/CriticalSection.cpp
     Source/Common/System/DataChunk.cpp
-    Source/Common/System/Debug.cpp
+#    Source/Common/System/Debug.cpp
     Source/Common/System/Directory.cpp
     Source/Common/System/DisabledTypes.cpp
     Source/Common/System/encrypt.cpp

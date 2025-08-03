@@ -154,9 +154,14 @@ public:
 	~AsciiString();
 
 	/**
-		Return the length, in characters (not bytes!), of the string.
+		Return the length, in characters, of the string up to the first zero or null terminator.
 	*/
 	int getLength() const;
+
+	/**
+		Return the number of bytes used by the string up to the first zero or null terminator.
+	*/
+	int getByteCount() const;
 	/**
 		Return true iff the length of the string is zero. Equivalent
 		to (getLength() == 0) but slightly more efficient.
@@ -389,6 +394,13 @@ inline int AsciiString::getLength() const
 {
 	validate();
 	return m_data ? strlen(peek()) : 0;
+}
+
+// -----------------------------------------------------
+inline int AsciiString::getByteCount() const
+{
+	validate();
+	return m_data ? getLength() : 0;
 }
 
 // -----------------------------------------------------

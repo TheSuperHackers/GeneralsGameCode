@@ -40,6 +40,8 @@
 #ifndef ALWAYS_H
 #define ALWAYS_H
 
+#include "WWCommon.h"
+
 #include <assert.h>
 #include <new>
 

@@ -214,7 +214,7 @@ protected:
 	StaticGameLODLevel m_idealDetailLevel;
 	ChipsetType m_videoChipType;
 	CpuType m_cpuType;
-	Int m_numRAM;
+	MemValueType m_numRAM;
 	Int m_cpuFreq;
 	Real m_intBenchIndex;
 	Real m_floatBenchIndex;
