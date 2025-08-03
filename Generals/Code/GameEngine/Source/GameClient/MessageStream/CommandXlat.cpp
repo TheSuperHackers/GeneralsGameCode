@@ -3107,6 +3107,13 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 		}  
 
 		//-----------------------------------------------------------------------------------------
+		case GameMessage::MSG_META_SELECT_IDLE_WORKER:
+		{
+			if (TheInGameUI)
+				TheInGameUI->selectNextIdleWorker();
+			break;
+		}
+		//-----------------------------------------------------------------------------------------
 		case GameMessage::MSG_META_TOGGLE_ATTACKMOVE:
 			TheInGameUI->toggleAttackMoveToMode( );
 			break;

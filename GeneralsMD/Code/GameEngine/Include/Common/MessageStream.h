@@ -272,6 +272,7 @@ public:
 		MSG_META_TOGGLE_PAUSE,											///< TheSuperHackers @feature Toggle game pause (in replay playbacks)
 		MSG_META_STEP_FRAME,												///< TheSuperHackers @feature Step one frame (in replay playbacks)
 		MSG_META_DEMO_INSTANT_QUIT,									///< bail out of game immediately
+		MSG_META_SELECT_IDLE_WORKER,                        ///< TheSuperHackers @feature L3-M 03/08/2025 Select next idle worker
 
     
 #if defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)//may be defined in GameCommon.h

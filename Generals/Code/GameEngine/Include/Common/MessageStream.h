@@ -270,6 +270,7 @@ public:
 		MSG_META_TOGGLE_FAST_FORWARD_REPLAY,				///< Toggle the fast forward feature
 		MSG_META_TOGGLE_PAUSE,											///< TheSuperHackers @feature Toggle game pause (in replay playbacks)
 		MSG_META_STEP_FRAME,												///< TheSuperHackers @feature Step one frame (in replay playbacks)
+		MSG_META_SELECT_IDLE_WORKER,                        ///< TheSuperHackers @feature L3-M 03/08/2025 Select next idle worker
 
 
 		// META items that are really for debug/demo/development use only...

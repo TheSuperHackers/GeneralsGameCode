@@ -180,6 +180,7 @@ static const LookupListRec GameMessageMetaTypeNames[] =
 	{ "TOGGLE_PAUSE",															GameMessage::MSG_META_TOGGLE_PAUSE },
 	{ "STEP_FRAME",																GameMessage::MSG_META_STEP_FRAME },
   	{ "DEMO_INSTANT_QUIT",												GameMessage::MSG_META_DEMO_INSTANT_QUIT },
+	{ "SELECT_IDLE_WORKER",											    GameMessage::MSG_META_SELECT_IDLE_WORKER },
 
 #if defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)//may be defined in GameCommon.h
 	{ "CHEAT_RUNSCRIPT1",								        	GameMessage::MSG_CHEAT_RUNSCRIPT1 },																	
@@ -749,6 +750,16 @@ MetaMapRec *MetaMap::getMetaMapRec(GameMessage::Type t)
 		if (map->m_key == MK_NONE)
 		{
 			map->m_key = MK_O;
+			map->m_transition = DOWN;
+			map->m_modState = NONE;
+			map->m_usableIn = COMMANDUSABLE_GAME;
+		}
+	}
+	{
+		// Is useful for Generals and Zero Hour.
+		MetaMapRec* map = TheMetaMap->getMetaMapRec(GameMessage::MSG_META_SELECT_IDLE_WORKER);
+		if (map->m_key == MK_NONE) {
+			map->m_key = MK_I;
 			map->m_transition = DOWN;
 			map->m_modState = NONE;
 			map->m_usableIn = COMMANDUSABLE_GAME;

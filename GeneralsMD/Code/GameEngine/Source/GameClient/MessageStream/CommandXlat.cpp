@@ -3296,6 +3296,13 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 			TheInGameUI->setCameraTrackingDrawable( true );
 			break;
         //--------------------------------------------------------------------------------------
+		case GameMessage::MSG_META_SELECT_IDLE_WORKER:
+		{
+			if (TheInGameUI)
+				TheInGameUI->selectNextIdleWorker();
+			break;
+		}
+		//--------------------------------------------------------------------------------------
 		case GameMessage::MSG_META_TOGGLE_FAST_FORWARD_REPLAY:
 		{
 			if( TheGlobalData )
