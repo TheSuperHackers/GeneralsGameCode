@@ -41,7 +41,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: C:\VC6
-          key: vc6-permanent-cache-v1
+          key: vc6-permanent-cache-v2
 
       - name: Cache CMake Dependencies
         id: cache-cmake-deps
@@ -50,20 +50,18 @@ jobs:
           path: build\${{ inputs.preset }}\_deps
           key: cmake-deps-${{ inputs.preset }}-${{ hashFiles('CMakePresets.json','cmake/**/*.cmake','**/CMakeLists.txt') }}
 
-      - name: Download VC6 Portable from Cloudflare R2
+      - name: Download VC6 Portable from itsmattkc repo
         if: ${{ startsWith(inputs.preset, 'vc6') && steps.cache-vc6.outputs.cache-hit != 'true' }}
         env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
-          AWS_ENDPOINT_URL: ${{ secrets.R2_ENDPOINT_URL }}
-          EXPECTED_HASH: "118D0F1ACBBD70C3F8B081CA4DBAF955FE0C6C359A76636E930AA89FDC551091"
+          EXPECTED_HASH: "D0EE1F6DCEF7DB3AD703120D9FB4FAD49EBCA28F44372E40550348B1C00CA583"
+          COMMIT: "001c4bafdcf2ef4b474d693acccd35a91e848f40"
         shell: pwsh
         run: |
           Write-Host "Downloading VC6 Portable Installation" -ForegroundColor Cyan
-          aws s3 cp s3://github-ci/VS6_VisualStudio6.7z VS6_VisualStudio6.7z --endpoint-url $env:AWS_ENDPOINT_URL
+          Invoke-WebRequest -Uri https://github.com/itsmattkc/MSVC600/archive/$env:COMMIT.zip -OutFile VS6_VisualStudio6.zip
 
           Write-Host "Verifying File Integrity" -ForegroundColor Cyan
-          $fileHash = (Get-FileHash -Path VS6_VisualStudio6.7z -Algorithm SHA256).Hash
+          $fileHash = (Get-FileHash -Path VS6_VisualStudio6.zip -Algorithm SHA256).Hash
           Write-Host "Downloaded file SHA256: $fileHash"
           Write-Host "Expected file SHA256: $env:EXPECTED_HASH"
           if ($fileHash -ne $env:EXPECTED_HASH) {
@@ -72,8 +70,9 @@ jobs:
           }
 
           Write-Host "Extracting Archive" -ForegroundColor Cyan
-          & 7z x VS6_VisualStudio6.7z -oC:\VC6
-          Remove-Item VS6_VisualStudio6.7z -Verbose
+          & Expand-Archive -Path VS6_VisualStudio6.zip -DestinationPath C:\VC6
+          Move-Item -Path C:\VC6\MSVC600-$env:COMMIT -Destination C:\VC6\VC6SP6
+          Remove-Item VS6_VisualStudio6.zip -Verbose
 
       - name: Set Up VC6 Environment
         if: startsWith(inputs.preset, 'vc6')
