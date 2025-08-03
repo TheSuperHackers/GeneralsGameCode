@@ -215,7 +215,11 @@ UpdateSleepTime BattleBusSlowDeathBehavior::update( void )
 				me->getPhysics()->clearAcceleration();
 				me->getPhysics()->scrubVelocity2D(0);
 			}
+#if RETAIL_COMPATIBLE_CRC
 			me->setDisabled(DISABLED_HELD);
+#else
+			me->setStatus(MAKE_OBJECT_STATUS_MASK(OBJECT_STATUS_IMMOBILE));
+#endif
 
 			// We can only sleep if we don't have to watch out for being empty.
 			if( data->m_emptyHulkDestructionDelay == 0 )
