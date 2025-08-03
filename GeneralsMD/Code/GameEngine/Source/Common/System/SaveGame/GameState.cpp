@@ -39,6 +39,7 @@
 #include "Common/PlayerList.h"
 #include "Common/RandomValue.h"
 #include "Common/Radar.h"
+#include "Common/SkirmishPreferences.h"
 #include "Common/Team.h"
 #include "Common/WellKnownKeys.h"
 #include "Common/XferLoad.h"
@@ -674,6 +675,9 @@ SaveCode GameState::loadGame( AvailableGameInfo gameInfo )
 
 	// clear out the game engine
 	TheGameEngine->reset();
+
+	// TheSuperHackers @tweak Caball009 03/08/2025 Use the fps preference from the skirmish settings as fps limit after game engine reset.
+	TheGameEngine->setFramesPerSecondLimit(SkirmishPreferences().getInt("FPS", TheGlobalData->m_framesPerSecondLimit));
 
 	// lock creation of new ghost objects
 	TheGhostObjectManager->saveLockGhostObjects( TRUE );
