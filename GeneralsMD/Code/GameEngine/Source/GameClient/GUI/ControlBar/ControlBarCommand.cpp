@@ -1092,6 +1092,19 @@ CommandAvailability ControlBar::getCommandAvailability( const CommandButton *com
 		}
  	}
 
+	if (obj->isKindOf(KINDOF_IMMOBILE) || obj->getStatusBits().test(OBJECT_STATUS_IMMOBILE))
+	{
+		GUICommandType commandType = command->getCommandType();
+		if (commandType == GUI_COMMAND_ATTACK_MOVE ||
+			commandType == GUI_COMMAND_GUARD ||
+			commandType == GUI_COMMAND_GUARD_WITHOUT_PURSUIT ||
+			commandType == GUI_COMMAND_GUARD_FLYING_UNITS_ONLY)
+		{
+			// If the object is immobile, it can't attack-move or guard.
+			return COMMAND_RESTRICTED;
+		}
+	}
+
 	// if the command requires an upgrade and we don't have it we can't do it
 	if( BitIsSet( command->getOptions(), NEED_UPGRADE ) )
 	{
