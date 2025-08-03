@@ -25,6 +25,10 @@ jobs:
     name: ${{ inputs.preset }}
     runs-on: windows-latest
     timeout-minutes: 15
+    env:
+      GAME_PATH: C:\GameData
+      GENERALS_PATH: C:\GameData\Generals
+      GENERALSMD_PATH: C:\GameData\GeneralsMD
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -41,7 +45,7 @@ jobs:
         id: cache-gamedata
         uses: actions/cache@v4
         with:
-          path: C:\GameData
+          path: ${{ env.GAME_PATH }}
           key: gamedata-permanent-cache-v3
 
       - name: Download Game Data from Cloudflare R2
@@ -58,10 +62,6 @@ jobs:
           # This data cannot be used for playing because it's
           # missing textures, audio and gui files. But it's enough for replay checking.
           # It's also encrypted because it's not allowed to distribute these files.
-
-          $gamePath = "C:\GameData"
-          $generalsPath = "$gamePath\Generals"
-          $generalsMDPath = "$gamePath\GeneralsMD"
 
           if (-not $env:AWS_ACCESS_KEY_ID -or -not $env:AWS_SECRET_ACCESS_KEY -or -not $env:AWS_ENDPOINT_URL) {
               $ok1 = [bool]$env:AWS_ACCESS_KEY_ID
@@ -95,7 +95,7 @@ jobs:
           }
 
           Write-Host "Extracting Archive" -ForegroundColor Cyan
-          & 7z x generals108_gamedata_trimmed.7z -o$generalsPath
+          & 7z x generals108_gamedata_trimmed.7z -o$env:GENERALS_PATH
           Remove-Item generals108_gamedata_trimmed.7z -Verbose
 
           # Download GeneralsMD (ZH) Game Files
@@ -122,15 +122,13 @@ jobs:
           }
 
           Write-Host "Extracting Archive" -ForegroundColor Cyan
-          & 7z x zerohour104_gamedata_trimmed.7z -o$generalsMDPath
+          & 7z x zerohour104_gamedata_trimmed.7z -o$env:GENERALSMD_PATH
           Remove-Item zerohour104_gamedata_trimmed.7z -Verbose
 
       - name: Set Up Game Data
         shell: pwsh
         run: |
-          $gamePath = "C:\GameData"
-          
-          $source = "$gamePath\${{ inputs.game }}"
+          $source = "$env:GAME_PATH\${{ inputs.game }}"
           $destination = "build"
           Copy-Item -Path $source\* -Destination $destination -Recurse -Force
 
@@ -140,11 +138,8 @@ jobs:
           # Zero Hour loads some Generals files and needs this registry key to find the
           # Generals data files.
 
-          $gamePath = "C:\GameData"
-          $generalsPath = "$gamePath\Generals"
-
           $regPath = "HKCU:\SOFTWARE\Electronic Arts\EA Games\Generals"
-          $installPath = "$generalsPath\"
+          $installPath = "$env:GENERALS_PATH\"
 
           # Ensure the key exists
           if (-not (Test-Path $regPath)) {
