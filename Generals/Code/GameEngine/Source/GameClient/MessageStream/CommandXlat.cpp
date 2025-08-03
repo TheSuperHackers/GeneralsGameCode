@@ -2736,11 +2736,9 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 
 		//-----------------------------------------------------------------------------------------
 		case GameMessage::MSG_META_SELECT_NEXT_IDLE_WORKER:
-		{
 			if (TheInGameUI)
 				TheInGameUI->selectNextIdleWorker();
 			break;
-		}
 
 		//-----------------------------------------------------------------------------------------
 		case GameMessage::MSG_META_SELECT_HERO:
