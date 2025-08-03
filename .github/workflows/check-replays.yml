@@ -59,6 +59,10 @@ jobs:
           # missing textures, audio and gui files. But it's enough for replay checking.
           # It's also encrypted because it's not allowed to distribute these files.
 
+          $gamePath = "C:\GameData"
+          $generalsPath = "$gamePath\Generals"
+          $generalsMDPath = "$gamePath\GeneralsMD"
+
           if (-not $env:AWS_ACCESS_KEY_ID -or -not $env:AWS_SECRET_ACCESS_KEY -or -not $env:AWS_ENDPOINT_URL) {
               $ok1 = [bool]$env:AWS_ACCESS_KEY_ID
               $ok2 = [bool]$env:AWS_SECRET_ACCESS_KEY
@@ -91,7 +95,7 @@ jobs:
           }
 
           Write-Host "Extracting Archive" -ForegroundColor Cyan
-          & 7z x generals108_gamedata_trimmed.7z -oC:\GameData\Generals
+          & 7z x generals108_gamedata_trimmed.7z -o$generalsPath
           Remove-Item generals108_gamedata_trimmed.7z -Verbose
 
           # Download GeneralsMD (ZH) Game Files
@@ -118,13 +122,15 @@ jobs:
           }
 
           Write-Host "Extracting Archive" -ForegroundColor Cyan
-          & 7z x zerohour104_gamedata_trimmed.7z -oC:\GameData\GeneralsMD
+          & 7z x zerohour104_gamedata_trimmed.7z -o$generalsMDPath
           Remove-Item zerohour104_gamedata_trimmed.7z -Verbose
 
       - name: Set Up Game Data
         shell: pwsh
         run: |
-          $source = "C:\GameData\${{ inputs.game }}"
+          $gamePath = "C:\GameData"
+          
+          $source = "$gamePath\${{ inputs.game }}"
           $destination = "build"
           Copy-Item -Path $source\* -Destination $destination -Recurse -Force
 
@@ -134,8 +140,11 @@ jobs:
           # Zero Hour loads some Generals files and needs this registry key to find the
           # Generals data files.
 
+          $gamePath = "C:\GameData"
+          $generalsPath = "$gamePath\Generals"
+
           $regPath = "HKCU:\SOFTWARE\Electronic Arts\EA Games\Generals"
-          $installPath = "C:\GameData\Generals\"
+          $installPath = "$generalsPath\"
 
           # Ensure the key exists
           if (-not (Test-Path $regPath)) {
