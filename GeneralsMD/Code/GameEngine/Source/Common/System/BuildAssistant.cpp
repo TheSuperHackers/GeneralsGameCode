@@ -726,7 +726,11 @@ LegalBuildCode BuildAssistant::isLocationClearOfObjects( const Coord3D *worldPos
 		}
 
 		// an immobile object may obstruct our building depending on flags.
+#if RETAIL_COMPATIBLE_CRC
 		if( them->isKindOf( KINDOF_IMMOBILE ) )
+#else
+		if (them->isKindOf(KINDOF_IMMOBILE) || them->getStatusBits().test(OBJECT_STATUS_IMMOBILE))
+#endif
 		{
 			if( feedbackWithFailure )
 			{
