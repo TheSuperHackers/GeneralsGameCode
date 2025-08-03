@@ -82,7 +82,7 @@ jobs:
           # Data\Scripts\MultiplayerScripts.scb
           # Data\Scripts\SkirmishScripts.scb
 
-          Write-Host "Downloading GameData Generals" -ForegroundColor Cyan
+          Write-Host "Downloading Game Data for Generals" -ForegroundColor Cyan
           aws s3 cp s3://github-ci/generals108_gamedata_trimmed.7z generals108_gamedata_trimmed.7z --endpoint-url $env:AWS_ENDPOINT_URL
 
           Write-Host "Verifying File Integrity" -ForegroundColor Cyan
@@ -109,7 +109,7 @@ jobs:
           # Data\Scripts\Scripts.ini
           # Data\Scripts\SkirmishScripts.scb
 
-          Write-Host "Downloading GameData GeneralsMD" -ForegroundColor Cyan
+          Write-Host "Downloading Game Data for GeneralsMD" -ForegroundColor Cyan
           aws s3 cp s3://github-ci/zerohour104_gamedata_trimmed.7z zerohour104_gamedata_trimmed.7z --endpoint-url $env:AWS_ENDPOINT_URL
 
           Write-Host "Verifying File Integrity" -ForegroundColor Cyan
