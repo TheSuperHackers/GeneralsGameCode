@@ -428,6 +428,7 @@ void GameEngine::init()
 
 		DEBUG_ASSERTCRASH(TheWritableGlobalData,("TheWritableGlobalData expected to be created"));
 		initSubsystem(TheWritableGlobalData, "TheWritableGlobalData", TheWritableGlobalData, &xferCRC, "Data\\INI\\Default\\GameData.ini", "Data\\INI\\GameData.ini");
+		TheWritableGlobalData->parseCustomDefinition();
 
 
 	#ifdef DUMP_PERF_STATS///////////////////////////////////////////////////////////////////////////

@@ -704,7 +704,9 @@ public:
 	void showSpecialPowerShortcut( void );
 	void hideSpecialPowerShortcut( void );
 	void animateSpecialPowerShortcut( Bool isOn );
-	
+
+	void setFullViewportHeight();
+	void setScaledViewportHeight();
 
 	/// set the control bar to the proper scheme based off a player template that's passed in
 	ControlBarSchemeManager *getControlBarSchemeManager( void ) { return m_controlBarSchemeManager; }

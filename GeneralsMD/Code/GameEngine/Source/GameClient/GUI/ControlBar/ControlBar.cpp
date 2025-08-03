@@ -3031,7 +3031,7 @@ void ControlBar::setDefaultControlBarConfig( void )
 //		m_controlBarSchemeManager->setControlBarSchemeByPlayerTemplate(ThePlayerList->getLocalPlayer()->getPlayerTemplate(), FALSE);
 //	}
 	m_currentControlBarStage = CONTROL_BAR_STAGE_DEFAULT;
-	TheTacticalView->setHeight((Int)(TheDisplay->getHeight() * 0.80f)); 
+	setScaledViewportHeight();
 	m_contextParent[ CP_MASTER ]->winSetPosition(m_defaultControlBarPosition.x, m_defaultControlBarPosition.y);
 	m_contextParent[ CP_MASTER ]->winHide(FALSE);
 	repopulateBuildTooltipLayout();
@@ -3048,7 +3048,7 @@ void ControlBar::setSquishedControlBarConfig( void )
 	
 //	m_controlBarResizer->sizeWindowsAlt();
 	repopulateBuildTooltipLayout();	
-	TheTacticalView->setHeight((Int)(TheDisplay->getHeight())); 
+	setFullViewportHeight();
 	m_controlBarSchemeManager->setControlBarSchemeByPlayerTemplate(ThePlayerList->getLocalPlayer()->getPlayerTemplate(), TRUE);
 }
 
@@ -3064,7 +3064,7 @@ void ControlBar::setLowControlBarConfig( void )
 	ICoord2D pos;
 	pos.x = m_defaultControlBarPosition.x;
 	pos.y = TheDisplay->getHeight() - .1 * TheDisplay->getHeight();
-	TheTacticalView->setHeight((Int)(TheDisplay->getHeight())); 
+	setFullViewportHeight();
 	m_contextParent[ CP_MASTER ]->winSetPosition(pos.x, pos.y);
 	m_contextParent[ CP_MASTER ]->winHide(FALSE);
 	setUpDownImages();
@@ -3769,4 +3769,14 @@ void ControlBar::hideSpecialPowerShortcut( void )
 	
 	m_specialPowerShortcutParent->winHide(TRUE);
 		
+}
+
+void ControlBar::setFullViewportHeight()
+{
+	TheTacticalView->setHeight(TheDisplay->getHeight());
+}
+
+void ControlBar::setScaledViewportHeight()
+{
+	TheTacticalView->setHeight(TheDisplay->getHeight() * TheGlobalData->m_viewportHeightScale);
 }

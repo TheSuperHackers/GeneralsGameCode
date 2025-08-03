@@ -500,7 +500,7 @@ extern void toggleReplayControls( void );
 //-------------------------------------------------------------------------------------------------
 void ShowControlBar( Bool immediate )
 {
-	if (!TheWindowManager || !TheControlBar || !TheTacticalView)
+	if (!TheWindowManager || !TheControlBar)
 		return;
 
 	showReplayControls();
@@ -513,7 +513,7 @@ void ShowControlBar( Bool immediate )
 	if (window)
 	{
 		TheControlBar->switchControlBarStage(CONTROL_BAR_STAGE_DEFAULT);
-		TheTacticalView->setHeight((Int)(TheDisplay->getHeight() * 0.80f));
+		TheControlBar->setScaledViewportHeight();
 
 		if (TheControlBar->m_animateWindowManager && !immediate)
 		{
@@ -535,7 +535,7 @@ void ShowControlBar( Bool immediate )
 //-------------------------------------------------------------------------------------------------
 void HideControlBar( Bool immediate )
 {
-	if (!TheWindowManager || !TheControlBar || !TheTacticalView)
+	if (!TheWindowManager || !TheControlBar)
 		return;
 
 	hideReplayControls();
@@ -548,9 +548,9 @@ void HideControlBar( Bool immediate )
 	if (window)
 	{
 #ifdef SLIDE_LETTERBOX
-		TheTacticalView->setHeight((Int)(TheDisplay->getHeight() * 0.80f)); 
+		TheControlBar->setScaledViewportHeight();
 #else
-		TheTacticalView->setHeight(TheDisplay->getHeight());
+		TheControlBar->setFullViewportHeight();
 #endif
 		if (immediate)
 		{
@@ -573,7 +573,7 @@ void HideControlBar( Bool immediate )
 //-------------------------------------------------------------------------------------------------
 void ToggleControlBar( Bool immediate )
 {
-	if (!TheWindowManager || !TheControlBar || !TheTacticalView)
+	if (!TheWindowManager || !TheControlBar)
 		return;
 
 	toggleReplayControls();
@@ -588,7 +588,7 @@ void ToggleControlBar( Bool immediate )
 			TheControlBar->showSpecialPowerShortcut();
 
 			//now hidden, we're making it visible again so shrink viewport under the window
-			TheTacticalView->setHeight((Int)(TheDisplay->getHeight() * 0.80f));
+			TheControlBar->setScaledViewportHeight();
 			window->winHide(FALSE);
 			TheControlBar->switchControlBarStage(CONTROL_BAR_STAGE_DEFAULT);
 
@@ -603,7 +603,7 @@ void ToggleControlBar( Bool immediate )
 		else
 		{
 			TheControlBar->hideSpecialPowerShortcut();
-			TheTacticalView->setHeight(TheDisplay->getHeight());
+			TheControlBar->setFullViewportHeight();
 			window->winHide(TRUE);
 		}
 	}
