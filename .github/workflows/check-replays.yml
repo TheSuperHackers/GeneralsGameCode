@@ -14,7 +14,7 @@ on:
       gamedata:
         required: true
         type: string
-        description: "path to folder with replays and maps"
+        description: "Path to folder with replays and maps"
       preset:
         required: true
         type: string
