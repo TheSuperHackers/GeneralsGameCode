@@ -677,7 +677,7 @@ SaveCode GameState::loadGame( AvailableGameInfo gameInfo )
 	TheGameEngine->reset();
 
 	// TheSuperHackers @tweak Caball009 03/08/2025 Use the fps preference from the skirmish settings as fps limit after game engine reset.
-	if (!gameInfo.saveGameInfo.saveFileType == SAVE_FILE_TYPE_MISSION)
+	if (gameInfo.saveGameInfo.saveFileType != SAVE_FILE_TYPE_MISSION)
 		TheGameEngine->setFramesPerSecondLimit(SkirmishPreferences().getInt("FPS", TheGlobalData->m_framesPerSecondLimit));
 
 	// lock creation of new ghost objects
