@@ -180,6 +180,10 @@ static PoolSizeRec sizes[] =
 	{ "EjectPilotDie", 1024, 32 },
 	{ "CrushDie", 1024, 32 },
 	{ "DamDie", 8, 8 },
+#if USE_OBSOLETE_GENERALS_CODE
+	{ "DelayedUpgrade", 32, 32 },
+	{ "DelayedWeaponSetUpgradeUpdate", 32, 32 },
+#endif
 	{ "DeliverPayloadStateMachine", 32, 32 },
 	{ "DeliverPayloadAIUpdate", 32, 32 },
 	{ "DeletionUpdate", 128, 32 },
@@ -218,7 +222,7 @@ static PoolSizeRec sizes[] =
 	{ "PrisonBehavior", 32, 32 },
 	{ "PrisonVisual", 32, 32 },
 	{ "PropagandaCenterBehavior", 16, 16 },
-#endif 
+#endif
 	{ "PropagandaTowerBehavior", 16, 16 },
 	{ "BunkerBusterBehavior", 16, 16 },
 	{ "ObjectTracker", 128, 32 },
@@ -659,7 +663,7 @@ static PoolSizeRec sizes[] =
 	{ "HTreeClass", 2048, 512 },
 	{ "HLodClass", 2048, 512 },
 	{ "MeshModelClass", 8192, 32 },
-	{ "ShareBufferClass", 32768, 1024 }, 
+	{ "ShareBufferClass", 32768, 1024 },
 	{ "AABTreeClass", 300, 128 },
 	{ "MotionChannelClass", 16384, 32 },
 	{ "BitChannelClass", 84, 32 },
