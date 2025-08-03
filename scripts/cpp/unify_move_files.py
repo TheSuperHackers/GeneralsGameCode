@@ -1,6 +1,6 @@
 # Created with python 3.11.4
 
-# This script helps moving cpp files from Generals or GeneralsMD to Core
+# This script helps with moving cpp files from Generals or GeneralsMD to Core
 
 import os
 import shutil
