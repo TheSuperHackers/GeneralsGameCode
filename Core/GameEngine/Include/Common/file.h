@@ -153,6 +153,14 @@ class File : public MemoryPoolObject
 																																			  *	 memory pointed at by buffer to the file. Returns the number of bytes written.
 																																			  *	 Returns -1 if an error occurred.
 																																			  */
+		virtual Int		writeFormat( const Char* format, ... ) = 0 ;						/**< Write an unterminated formatted string to the file
+																																			  *	 Returns the number of bytes written.
+																																			  *	 Returns -1 if an error occurred.
+																																			  */
+		virtual Int		writeFormat( const WideChar* format, ... ) = 0 ;						/**< Write an unterminated formatted wide character string to the file
+																																			  *	 Returns the number of bytes written.
+																																			  *	 Returns -1 if an error occurred.
+																																			  */
 		virtual Int		seek( Int bytes, seekMode mode = CURRENT ) = 0;	/**< Sets the file position of the next read/write operation. Returns the new file
 																																				*  position as the number of bytes from the start of the file.
 																																				*  Returns -1 if an error occurred.

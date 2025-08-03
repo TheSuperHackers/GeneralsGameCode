@@ -55,7 +55,7 @@
 #include "Common/file.h"
 
 #if USE_BUFFERED_IO
-#include <stdio.h>
+#include "Utility/stdio_adapter.h"
 #endif
 
 //----------------------------------------------------------------------------
@@ -100,6 +100,8 @@ class LocalFile : public File
 		virtual void	close( void );																			///< Close the file
 		virtual Int		read( void *buffer, Int bytes );										///< Read the specified number of bytes in to buffer: See File::read
 		virtual Int		write( const void *buffer, Int bytes );							///< Write the specified number of bytes from the buffer: See File::write
+		virtual Int		writeFormat( const Char* format, ... );							///< Write an unterminated formatted string to the file
+		virtual Int		writeFormat( const WideChar* format, ... );						///< Write an unterminated formatted string to the file
 		virtual Int		seek( Int new_pos, seekMode mode = CURRENT );				///< Set file position: See File::seek
 		virtual Bool	flush();													///< flush data to disk
 		virtual void	nextLine(Char *buf = NULL, Int bufSize = 0);				///< moves file position to after the next new-line

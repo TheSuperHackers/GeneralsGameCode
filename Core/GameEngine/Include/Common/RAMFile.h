@@ -91,6 +91,8 @@ class RAMFile : public File
 		virtual void	close( void );																			///< Close the file
 		virtual Int		read( void *buffer, Int bytes );										///< Read the specified number of bytes in to buffer: See File::read
 		virtual Int		write( const void *buffer, Int bytes );							///< Write the specified number of bytes from the buffer: See File::write
+		virtual Int		writeFormat( const Char* format, ... );							///< Write the formatted string to the file
+		virtual Int		writeFormat( const WideChar* format, ... );						///< Write the formatted string to the file
 		virtual Int		seek( Int new_pos, seekMode mode = CURRENT );				///< Set file position: See File::seek
 		virtual Bool	flush();													///< flush data to disk
 		virtual void	nextLine(Char *buf = NULL, Int bufSize = 0);				///< moves current position to after the next new-line
