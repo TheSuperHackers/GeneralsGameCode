@@ -699,7 +699,7 @@ MetaMapRec *MetaMap::getMetaMapRec(GameMessage::Type t)
 		if (map->m_key == MK_NONE) {
 			map->m_key = MK_I;
 			map->m_transition = DOWN;
-			map->m_modState = NONE;
+			map->m_modState = CTRL;
 			map->m_usableIn = COMMANDUSABLE_GAME;
 		}
 	}
