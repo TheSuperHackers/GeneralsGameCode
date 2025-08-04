@@ -1111,45 +1111,56 @@ bool TexProjectClass::Compute_Ortho_Projection
  *=============================================================================================*/
 bool TexProjectClass::Compute_Texture
 (
-	RenderObjClass * model,
-	SpecialRenderInfoClass * context
+	RenderObjClass* model,
+	SpecialRenderInfoClass* context
 )
 {
-	if ((model == NULL) || (context == NULL)) 
+	if ((model == NULL) || (context == NULL))
 	{
 		return false;
 	}
 	/*
 	** Render to texture
 	*/
-	TextureClass * rtarget = Peek_Render_Target();
+	TextureClass* rtarget = NULL;
+	ZTextureClass* ztarget = NULL;
 
-	if (rtarget != NULL) 
+	Peek_Render_Target(&rtarget, &ztarget);
+
+	if (rtarget != NULL)
 	{
+		// set projector for render context KJM
+		context->Texture_Projector = this;
 
 		/*
 		** Set the render target
 		*/
-		DX8Wrapper::Set_Render_Target(rtarget);
+		DX8Wrapper::Set_Render_Target_With_Z(rtarget, ztarget);
 
 		/*
 		** Set up the camera
 		*/
 		Configure_Camera(context->Camera);
-		
+
 		/*
 		** Render the object
 		*/
-		Vector3 color(0.0f,0.0f,0.0f);
+		Vector3 color(0.0f, 0.0f, 0.0f);
 		if (Get_Flag(ADDITIVE) == false) {
-			color.Set(1.0f,1.0f,1.0f);
+			color.Set(1.0f, 1.0f, 1.0f);
 		}
 
-		WW3D::Begin_Render(true,true,color);
-		WW3D::Render(*model,*context);
-		WW3D::End_Render(false);
+		bool zclear = ztarget != NULL;
 
-		DX8Wrapper::Set_Render_Target((IDirect3DSurface8 *)NULL);
+		bool snapshot = WW3D::Is_Snapshot_Activated();
+		SNAPSHOT_SAY(("TexProjectCLass::Begin_Render()"));
+		WW3D::Begin_Render(true, zclear, color);	// false to zclear as we don't have z-buffer
+		WW3D::Render(*model, *context);
+		SNAPSHOT_SAY(("TexProjectCLass::End_Render()"));
+		WW3D::End_Render(false);
+		WW3D::Activate_Snapshot(snapshot);	// End_Render() ends the shapsnot, so restore the state
+
+		DX8Wrapper::Set_Render_Target((IDirect3DSurface8*)NULL);
 
 	}
 
@@ -1218,12 +1229,23 @@ void TexProjectClass::Set_Render_Target
  *                                                                                             *
  * HISTORY:                                                                                    *
  *   4/5/2001   gth : Created.                                                                 *
+ *   5/16/2002  kjm : Added optional custom zbuffer                                            *
  *=============================================================================================*/
 TextureClass* TexProjectClass::Peek_Render_Target
 (
-	void
+	TextureClass** rtarget,
+	ZTextureClass** ztarget
 )
 {
+	// some uses of this function just want to know if a render target exists
+	if (rtarget == NULL) return RenderTarget;
+
+	*rtarget = RenderTarget;
+
+	// don't set if pointer isn't supplied
+	if (ztarget != NULL)
+		*ztarget = DepthStencilTarget;
+
 	return RenderTarget;
 }
 
