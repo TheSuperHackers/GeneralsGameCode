@@ -27,8 +27,8 @@ jobs:
     timeout-minutes: 15
     env:
       GAME_PATH: C:\GameData
-      GENERALS_PATH: ${{ env.GAME_PATH }}\Generals
-      GENERALSMD_PATH: ${{ env.GAME_PATH }}\GeneralsMD
+      GENERALS_PATH: C:\GameData\Generals
+      GENERALSMD_PATH: C:\GameData\GeneralsMD
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
