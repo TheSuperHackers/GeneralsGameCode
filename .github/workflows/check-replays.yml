@@ -27,8 +27,8 @@ jobs:
     timeout-minutes: 15
     env:
       GAME_PATH: C:\GameData
-      GENERALS_PATH: C:\GameData\Generals
-      GENERALSMD_PATH: C:\GameData\GeneralsMD
+      GENERALS_PATH: ${{ env.GAME_PATH }}\Generals
+      GENERALSMD_PATH: ${{ env.GAME_PATH }}\GeneralsMD
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -46,7 +46,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ${{ env.GAME_PATH }}
-          key: gamedata-permanent-cache-v3
+          key: gamedata-permanent-cache-v4
 
       - name: Download Game Data from Cloudflare R2
         if: ${{ steps.cache-gamedata.outputs.cache-hit != 'true' }}
@@ -95,7 +95,8 @@ jobs:
           }
 
           Write-Host "Extracting Archive" -ForegroundColor Cyan
-          & 7z x generals108_gamedata_trimmed.7z -o$env:GENERALS_PATH
+          $extractPath = $env:GENERALS_PATH
+          & 7z x generals108_gamedata_trimmed.7z -o"$extractPath"
           Remove-Item generals108_gamedata_trimmed.7z -Verbose
 
           # Download GeneralsMD (ZH) Game Files
@@ -122,7 +123,8 @@ jobs:
           }
 
           Write-Host "Extracting Archive" -ForegroundColor Cyan
-          & 7z x zerohour104_gamedata_trimmed.7z -o$env:GENERALSMD_PATH
+          $extractPath = $env:GENERALSMD_PATH
+          & 7z x zerohour104_gamedata_trimmed.7z -o"$extractPath"
           Remove-Item zerohour104_gamedata_trimmed.7z -Verbose
 
       - name: Set Up Game Data
