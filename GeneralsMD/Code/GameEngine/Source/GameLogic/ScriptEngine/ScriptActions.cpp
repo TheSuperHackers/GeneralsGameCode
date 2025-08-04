@@ -5888,10 +5888,6 @@ void ScriptActions::doTeamUseCommandButtonOnNearestObjectType( const AsciiString
 		theGroup->getCenter(&pos);
 
 		bestObj = ThePartitionManager->getClosestObject(&pos, REALLY_FAR, FROM_CENTER_2D, filters);
-		if( !bestObj )
-		{
-			return;
-		}
 	}
 	else
 	{
@@ -5928,11 +5924,11 @@ void ScriptActions::doTeamUseCommandButtonOnNearestObjectType( const AsciiString
 				}
 			}
 		}
+	}
 
-		if (!bestObj)
-		{
-			return;
-		}
+	if (!bestObj)
+	{
+		return;
 	}
 
 	// already been checked for validity
