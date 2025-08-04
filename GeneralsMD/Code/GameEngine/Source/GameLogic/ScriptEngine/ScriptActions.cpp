@@ -5928,6 +5928,11 @@ void ScriptActions::doTeamUseCommandButtonOnNearestObjectType( const AsciiString
 				}
 			}
 		}
+
+		if (!bestObj)
+		{
+			return;
+		}
 	}
 
 	// already been checked for validity
