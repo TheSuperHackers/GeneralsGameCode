@@ -378,6 +378,24 @@ Real OptionPreferences::getScrollFactor(void)
 	return factor/100.0f;
 }
 
+CursorCaptureMode OptionPreferences::getCursorCaptureMode() const
+{
+	CursorCaptureMode mode = CursorCaptureMode_Default;
+	OptionPreferences::const_iterator it = find("CursorCaptureMode");
+	if (it != end())
+	{
+		for (Int i = 0; i < CursorCaptureMode_Count; ++i)
+		{
+			if (stricmp(it->second.str(), TheCursorCaptureModeNames[i]) == 0)
+			{
+				mode = static_cast<CursorCaptureMode>(i);
+				break;
+			}
+		}
+	}
+	return mode;
+}
+
 Bool OptionPreferences::usesSystemMapDir(void)
 {
 	OptionPreferences::const_iterator it = find("UseSystemMapDir");
@@ -1199,6 +1217,13 @@ static void saveOptions( void )
 
 	TheWritableGlobalData->m_doubleClickAttackMove = GadgetCheckBoxIsChecked( checkDoubleClickAttackMove );
 	(*pref)["UseDoubleClickAttackMove"] = TheWritableGlobalData->m_doubleClickAttackMove ? AsciiString("yes") : AsciiString("no");
+
+	// TheSuperHackers @todo Add combo box ?
+	{
+		CursorCaptureMode mode = pref->getCursorCaptureMode();
+		(*pref)["CursorCaptureMode"] = TheCursorCaptureModeNames[mode];
+		TheMouse->setCursorCaptureMode(mode);
+	}
 
 	//-------------------------------------------------------------------------------------------------
 	// scroll speed val
