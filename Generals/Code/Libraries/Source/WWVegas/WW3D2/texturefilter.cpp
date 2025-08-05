@@ -101,7 +101,11 @@ void TextureFilterClass::Apply(unsigned int stage)
 //! Init filters (legacy)
 /*!
 */
-void TextureFilterClass::_Init_Filters(void)
+void TextureFilterClass::_Init_Filters()
+{
+	_Init_Filters((TextureFilterClass::TextureFilterMode)WW3D::Get_Texture_Filter());
+}
+void TextureFilterClass::_Init_Filters(TextureFilterMode texture_filter)
 {
 	const D3DCAPS8& dx8caps=DX8Wrapper::Get_Current_Caps()->Get_DX8_Caps();
 
