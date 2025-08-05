@@ -50,6 +50,7 @@ public:
 
 	AsciiString m_animBaseTemplate;
 	AsciiString m_animTimedTemplate;
+	Bool m_showTimer;
 
 	StickyBombUpdateModuleData()
 	{
@@ -58,6 +59,7 @@ public:
 		m_geometryBasedDamageFX = NULL;
 		m_animBaseTemplate = AsciiString::TheEmptyString;
 		m_animTimedTemplate = AsciiString::TheEmptyString;
+		m_showTimer = TRUE;
 	}
 
 	static void buildFieldParse(MultiIniFieldParse& p) 
@@ -71,6 +73,7 @@ public:
 			{ "GeometryBasedDamageFX",		INI::parseFXList,					NULL, offsetof( StickyBombUpdateModuleData, m_geometryBasedDamageFX ) },
 			{ "Animation2DBase",		INI::parseAsciiString,					NULL, offsetof( StickyBombUpdateModuleData, m_animBaseTemplate) },
 			{ "Animation2DTimed",		INI::parseAsciiString,					NULL, offsetof( StickyBombUpdateModuleData, m_animTimedTemplate) },
+			{ "ShowTimer",		INI::parseBool,					NULL, offsetof( StickyBombUpdateModuleData, m_showTimer) },
 			{ 0, 0, 0, 0 }
 		};
     p.add(dataFieldParse);
@@ -95,7 +98,7 @@ public:
 
 	void initStickyBomb( Object *object, const Object *bomber, const Coord3D *specificPos = NULL );
 	void detonate();
-	Bool isTimedBomb() const { return m_dieFrame > 0; }
+	Bool isTimedBomb() const { return (m_dieFrame > 0) && getStickyBombUpdateModuleData()->m_showTimer; }
 	UnsignedInt getDetonationFrame() const { return m_dieFrame; }
 	Object* getTargetObject() const;
 	void setTargetObject( Object *obj );

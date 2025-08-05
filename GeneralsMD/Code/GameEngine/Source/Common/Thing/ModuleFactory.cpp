@@ -253,6 +253,7 @@
 #include "GameLogic/Module/SabotageSupplyCenterCrateCollide.h"
 #include "GameLogic/Module/SabotageSupplyDropzoneCrateCollide.h"
 #include "GameLogic/Module/SalvageCrateCollide.h"
+#include "GameLogic/Module/StickyBombCrateCollide.h"
 #include "GameLogic/Module/ShroudCrateCollide.h"
 #include "GameLogic/Module/UnitCrateCollide.h"
 #include "GameLogic/Module/VeterancyCrateCollide.h"
@@ -545,6 +546,7 @@ void ModuleFactory::init( void )
 	addModule( SabotageSupplyCenterCrateCollide );
 	addModule( SabotageSupplyDropzoneCrateCollide );
 	addModule( SalvageCrateCollide );
+	addModule( StickyBombCrateCollide );
 
 	// body modules
 	addModule( InactiveBody );

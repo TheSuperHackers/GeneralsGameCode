@@ -311,6 +311,8 @@ public:
 
   Bool                              m_receivesDynamicLights; ///< just like it sounds... it sets a property of Drawable, actually
 
+  Bool                              m_ignoreAnimScaling; ///< ignore external scaling of animation speed, e.g. for PreAttack.
+
 
 	W3DModelDrawModuleData();
 	~W3DModelDrawModuleData();
@@ -396,6 +398,7 @@ public:
 		Note that you must call this AFTER setting the condition codes.
 	*/
 	virtual void setAnimationLoopDuration(UnsignedInt numFrames);
+	virtual bool isIgnoreAnimLoopDuration() const { return getW3DModelDrawModuleData()->m_ignoreAnimScaling; }
 
 	/**
 		similar to the above, but assumes that the current state is a "ONCE",

@@ -48,8 +48,10 @@ public:
 	KindOfMaskType	m_kindof;				///< the kind(s) of units that can be collided with
 	KindOfMaskType	m_kindofnot;		///< the kind(s) of units that CANNOT be collided with
 	Bool m_isForbidOwnerPlayer;			///< This crate cannot be picked up by the player of the dead thing that made it.
+	Bool m_isAllowNeutralPlayer;		///< This crate can be picked up by the neutral player
 	Bool m_isBuildingPickup;			///< This crate can be picked up by a Building (bypassing AI requirement)
 	Bool m_isHumanOnlyPickup;				///< Can this crate only be picked up by a human player?  (Mission thing)
+	Bool m_isAllowPickAboveTerrain;				///< Can this crate only be picked when on the ground´?
 	ScienceType m_pickupScience;		///< Can only be picked up by a unit whose player has this science
 	FXList *m_executeFX;						///< FXList to play when activated
 	

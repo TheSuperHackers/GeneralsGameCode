@@ -726,7 +726,7 @@ void Drawable::setAnimationLoopDuration(UnsignedInt numFrames)
 	for (DrawModule** dm = getDrawModules(); *dm; ++dm)
 	{
 		ObjectDrawInterface* di = (*dm)->getObjectDrawInterface();
-		if (di)
+		if (di && !di->isIgnoreAnimLoopDuration())
 			di->setAnimationLoopDuration(numFrames);
 	}
 }

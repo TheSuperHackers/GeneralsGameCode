@@ -48,11 +48,13 @@
 CrateCollideModuleData::CrateCollideModuleData()
 {
 	m_isForbidOwnerPlayer = FALSE;
+	m_isAllowNeutralPlayer = FALSE;
 	m_executeAnimationDisplayTimeInSeconds = 0.0f;
 	m_executeAnimationZRisePerSecond = 0.0f;
 	m_executeAnimationFades = TRUE;
 	m_isBuildingPickup = FALSE;
 	m_isHumanOnlyPickup = FALSE;
+	m_isAllowPickAboveTerrain = FALSE;
 	m_executeFX = NULL;
 	m_pickupScience = SCIENCE_INVALID;
 
@@ -75,8 +77,10 @@ void CrateCollideModuleData::buildFieldParse(MultiIniFieldParse& p)
 		{ "RequiredKindOf", KindOfMaskType::parseFromINI, NULL, offsetof( CrateCollideModuleData, m_kindof ) },
 		{ "ForbiddenKindOf", KindOfMaskType::parseFromINI, NULL, offsetof( CrateCollideModuleData, m_kindofnot ) },
 		{ "ForbidOwnerPlayer", INI::parseBool,	NULL,	offsetof( CrateCollideModuleData, m_isForbidOwnerPlayer ) },
+		{ "AllowNeutralPlayer", INI::parseBool,	NULL,	offsetof( CrateCollideModuleData, m_isAllowNeutralPlayer ) },
 		{ "BuildingPickup", INI::parseBool,	NULL,	offsetof( CrateCollideModuleData, m_isBuildingPickup ) },
 		{ "HumanOnly", INI::parseBool,	NULL,	offsetof( CrateCollideModuleData, m_isHumanOnlyPickup ) },
+		{ "AllowPickAboveTerrain", INI::parseBool,	NULL,	offsetof( CrateCollideModuleData, m_isAllowPickAboveTerrain ) },
 		{ "PickupScience", INI::parseScience,	NULL,	offsetof( CrateCollideModuleData, m_pickupScience ) },
 		{ "ExecuteFX", INI::parseFXList, NULL, offsetof( CrateCollideModuleData, m_executeFX ) },
 		{ "ExecuteAnimation", INI::parseAsciiString, NULL, offsetof( CrateCollideModuleData, m_executionAnimationTemplate ) },
@@ -149,11 +153,12 @@ Bool CrateCollide::isValidToExecute( const Object *other ) const
 	if( other == NULL )
 		return FALSE;
 
+	const CrateCollideModuleData* md = getCrateCollideModuleData();
+
 	//Nothing Neutral can pick up any type of crate
-	if( other->isNeutralControlled() )
+	if(other->isNeutralControlled() && !md->m_isAllowNeutralPlayer)
 		return FALSE;
 
-	const CrateCollideModuleData* md = getCrateCollideModuleData();
 	Bool validBuildingAttempt = md->m_isBuildingPickup && other->isKindOf( KINDOF_STRUCTURE );
 
 	// Must be a "Unit" type thing.  Real Game Object, not just Object
@@ -168,7 +173,7 @@ Bool CrateCollide::isValidToExecute( const Object *other ) const
 		return FALSE;
 
 	// crates cannot be claimed while in the air, except by buildings
-	if( getObject()->isAboveTerrain() && !validBuildingAttempt )
+	if( getObject()->isAboveTerrain() && !(validBuildingAttempt || md->m_isAllowPickAboveTerrain))
 		return FALSE;
 
 	if( md->m_isForbidOwnerPlayer  &&  (getObject()->getControllingPlayer() == other->getControllingPlayer()) )
