@@ -52,7 +52,7 @@ int DebugIONet::Read(char *buf, int maxchar)
     read=0;
   mode=PIPE_READMODE_MESSAGE|PIPE_WAIT;
   SetNamedPipeHandleState(m_pipe,&mode,NULL,NULL);
-  
+
   return read;
 }
 
@@ -64,7 +64,7 @@ void DebugIONet::Write(StringType type, const char *src, const char *str)
   DWORD dummy;
   WriteFile(m_pipe,&type,1,&dummy,NULL);
 
-  unsigned len; 
+  unsigned len;
   len=src?strlen(src):0;
   WriteFile(m_pipe,&len,4,&dummy,NULL);
   if (len)
@@ -95,7 +95,7 @@ void DebugIONet::Execute(class Debug& dbg, const char *cmd, bool structuredCmd,
 
     char buf[256];
     wsprintf(buf,"\\\\%s\\pipe\\ea_debug_v1",machine);
-    m_pipe=CreateFile(buf,GENERIC_READ|GENERIC_WRITE, 
+    m_pipe=CreateFile(buf,GENERIC_READ|GENERIC_WRITE,
                       0,NULL,OPEN_EXISTING,0,NULL);
     if (m_pipe==INVALID_HANDLE_VALUE)
     {

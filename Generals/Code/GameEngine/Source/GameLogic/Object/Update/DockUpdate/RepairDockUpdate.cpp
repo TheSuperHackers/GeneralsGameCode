@@ -51,7 +51,7 @@ RepairDockUpdateModuleData::RepairDockUpdateModuleData( void )
 
 	DockUpdateModuleData::buildFieldParse( p );
 
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
 		{ "TimeForFullHeal", INI::parseDurationReal, NULL, offsetof( RepairDockUpdateModuleData, m_framesForFullHeal ) },
 		{ 0, 0, 0, 0 }
@@ -147,7 +147,7 @@ Bool RepairDockUpdate::action( Object *docker, Object *drone )
 		healingInfo.in.m_amount = body->getMaxHealth();
 		body->attemptHealing( &healingInfo );
 	}
-	
+
 	// stay docked
 	return TRUE;
 

@@ -57,7 +57,7 @@ ParameterClass::Construct (Type type, void *data, const char *name)
 {
 	ParameterClass *new_param = NULL;
 	switch (type) {
-		
+
 		case TYPE_INT:
 			new_param = W3DNEW IntParameterClass (data, name);
 			break;
@@ -146,7 +146,7 @@ ParameterClass::Construct (Type type, void *data, const char *name)
 		case TYPE_EXPLOSIONDEFINITIONID:
 			new_param = W3DNEW ExplosionObjDefParameterClass ((int *)data);
 			new_param->Set_Name (name);
-			break;		
+			break;
 
 		case TYPE_SOUNDDEFINITIONID:
 			new_param = W3DNEW SoundDefParameterClass ((int *)data);
@@ -201,7 +201,7 @@ ParameterClass::Construct (Type type, void *data, const char *name)
 /////////////////////////////////////////////////////////////////////
 StringParameterClass::StringParameterClass (StringClass *string)
 	:	m_String (string)
-{	
+{
 	return ;
 }
 
@@ -333,7 +333,7 @@ StringParameterClass::Set_String (const char * string)
 /////////////////////////////////////////////////////////////////////
 FilenameParameterClass::FilenameParameterClass (StringClass *string)
 	:	StringParameterClass (string)
-{	
+{
 	return ;
 }
 
@@ -420,7 +420,7 @@ TextureFilenameParameterClass::TextureFilenameParameterClass (StringClass *strin
 :	FilenameParameterClass (string),
 	Show_Alpha(false),
 	Show_Texture(false)
-{	
+{
 }
 
 
@@ -443,7 +443,7 @@ TextureFilenameParameterClass::TextureFilenameParameterClass (const TextureFilen
 /////////////////////////////////////////////////////////////////////
 void TextureFilenameParameterClass::Copy_Value (const ParameterClass &src)
 {
-	if (src.Is_Type (ParameterClass::TYPE_TEXTURE_FILENAME)) 
+	if (src.Is_Type (ParameterClass::TYPE_TEXTURE_FILENAME))
 	{
 		Set_String (((FilenameParameterClass &)src).Get_String ());
 	}
@@ -467,7 +467,7 @@ void TextureFilenameParameterClass::Copy_Value (const ParameterClass &src)
 /////////////////////////////////////////////////////////////////////
 SoundFilenameParameterClass::SoundFilenameParameterClass (StringClass *string)
 	:	FilenameParameterClass (string)
-{	
+{
 	return ;
 }
 
@@ -525,7 +525,7 @@ SoundFilenameParameterClass::operator== (const SoundFilenameParameterClass &src)
 /////////////////////////////////////////////////////////////////////
 EnumParameterClass::EnumParameterClass (int *value)
 	:	m_Value (value)
-{	
+{
 	return ;
 }
 
@@ -633,7 +633,7 @@ EnumParameterClass::Add_Value (const char *display_name, int value)
 //	Add_Value
 //
 /////////////////////////////////////////////////////////////////////
-void __cdecl 
+void __cdecl
 EnumParameterClass::Add_Values (const char *first_name, int first_value, ...)
 {
 	m_List.Add (ENUM_VALUE(first_name, first_value));
@@ -645,7 +645,7 @@ EnumParameterClass::Add_Values (const char *first_name, int first_value, ...)
 	//	Add all the params on the stack (until we found
 	// the terminator)
 	//
-	bool more_params = true;	
+	bool more_params = true;
 	while (more_params) {
 
 		//
@@ -655,15 +655,15 @@ EnumParameterClass::Add_Values (const char *first_name, int first_value, ...)
 		if (name == NULL) {
 			more_params = false;
 		} else {
-			
+
 			//
 			//	Add the string/id pair to the enum list
 			//
 			int value = va_arg (arg_list, int);
 			m_List.Add (ENUM_VALUE(name, value));
-		}		
+		}
 	}
-	
+
 	va_end (arg_list);
 	return ;
 }
@@ -684,7 +684,7 @@ EnumParameterClass::Add_Values (const char *first_name, int first_value, ...)
 /////////////////////////////////////////////////////////////////////
 PhysDefParameterClass::PhysDefParameterClass (int *id)
 	:	m_Value (id)
-{	
+{
 	return ;
 }
 
@@ -782,7 +782,7 @@ PhysDefParameterClass::Copy_Value (const ParameterClass &/*src*/)
 /////////////////////////////////////////////////////////////////////
 ModelDefParameterClass::ModelDefParameterClass (int *id)
 	:	m_Value (id)
-{	
+{
 	return ;
 }
 
@@ -879,7 +879,7 @@ ModelDefParameterClass::Copy_Value (const ParameterClass &/*src*/)
 /////////////////////////////////////////////////////////////////////
 DefParameterClass::DefParameterClass (int *id)
 	:	m_Value (id)
-{	
+{
 	return ;
 }
 
@@ -982,7 +982,7 @@ DefParameterClass::Copy_Value (const ParameterClass &src)
 GenericDefParameterClass::GenericDefParameterClass (int *id)
 	:	m_ClassID (0),
 		DefParameterClass (id)
-{	
+{
 	return ;
 }
 
@@ -1083,7 +1083,7 @@ GenericDefParameterClass::Copy_Value (const ParameterClass &src)
 /////////////////////////////////////////////////////////////////////
 GameObjDefParameterClass::GameObjDefParameterClass (int *id)
 	:	DefParameterClass (id)
-{	
+{
 	return ;
 }
 
@@ -1183,7 +1183,7 @@ GameObjDefParameterClass::Copy_Value (const ParameterClass &src)
 /////////////////////////////////////////////////////////////////////
 WeaponObjDefParameterClass::WeaponObjDefParameterClass (int *id)
 	:	GameObjDefParameterClass (id)
-{	
+{
 	return ;
 }
 
@@ -1284,7 +1284,7 @@ WeaponObjDefParameterClass::Copy_Value (const ParameterClass &src)
 /////////////////////////////////////////////////////////////////////
 AmmoObjDefParameterClass::AmmoObjDefParameterClass (int *id)
 	:	GameObjDefParameterClass (id)
-{	
+{
 	return ;
 }
 
@@ -1385,7 +1385,7 @@ AmmoObjDefParameterClass::Copy_Value (const ParameterClass &src)
 /////////////////////////////////////////////////////////////////////
 ExplosionObjDefParameterClass::ExplosionObjDefParameterClass (int *id)
 	:	GameObjDefParameterClass (id)
-{	
+{
 	return ;
 }
 
@@ -1486,7 +1486,7 @@ ExplosionObjDefParameterClass::Copy_Value (const ParameterClass &src)
 /////////////////////////////////////////////////////////////////////
 SoundDefParameterClass::SoundDefParameterClass (int *id)
 	:	DefParameterClass (id)
-{	
+{
 	return ;
 }
 
@@ -1569,7 +1569,7 @@ SoundDefParameterClass::operator== (const ParameterClass &src)
 ScriptParameterClass::ScriptParameterClass (StringClass *name, StringClass *params)
 	:	m_ScriptName (name),
 		m_ScriptParams (params)
-{	
+{
 	return ;
 }
 
@@ -1618,7 +1618,7 @@ ScriptParameterClass::operator== (const ScriptParameterClass &src)
 	if (	(m_ScriptName != NULL) && (src.m_ScriptName != NULL) &&
 			(m_ScriptParams != NULL) && (src.m_ScriptParams != NULL))
 	{
-	
+
 		//
 		//	Simple string compares should workd
 		//
@@ -1685,7 +1685,7 @@ DefIDListParameterClass::DefIDListParameterClass (DynamicVectorClass<int> *list)
 	:	m_IDList (list),
 		m_ClassID (0),
 		m_SelectedClassID (NULL)
-{	
+{
 	return ;
 }
 
@@ -1789,8 +1789,8 @@ DefIDListParameterClass::Copy_Value (const ParameterClass &src)
 {
 	if (src.Is_Type (ParameterClass::TYPE_DEFINITIONIDLIST)) {
 		DefIDListParameterClass real_src = (DefIDListParameterClass &)src;
-		
-		m_ClassID				= real_src.m_ClassID;		
+
+		m_ClassID				= real_src.m_ClassID;
 		(*m_IDList)				= (*real_src.m_IDList);
 
 		if (m_SelectedClassID != NULL && real_src.m_SelectedClassID != NULL) {
@@ -1817,7 +1817,7 @@ DefIDListParameterClass::Copy_Value (const ParameterClass &src)
 /////////////////////////////////////////////////////////////////////
 ZoneParameterClass::ZoneParameterClass (OBBoxClass *box)
 	:	m_OBBox (box)
-{	
+{
 	return ;
 }
 
@@ -1899,7 +1899,7 @@ ZoneParameterClass::Copy_Value (const ParameterClass &src)
 {
 	if (src.Is_Type (ParameterClass::TYPE_ZONE)) {
 		ZoneParameterClass real_src = (ZoneParameterClass &)src;
-		
+
 		(*m_OBBox)	= (*real_src.m_OBBox);
 	}
 
@@ -1921,8 +1921,8 @@ ZoneParameterClass::Copy_Value (const ParameterClass &src)
 //
 /////////////////////////////////////////////////////////////////////
 FilenameListParameterClass::FilenameListParameterClass (DynamicVectorClass<StringClass> *list)
-	:	m_FilenameList (list)		
-{	
+	:	m_FilenameList (list)
+{
 	return ;
 }
 
@@ -2015,7 +2015,7 @@ void
 FilenameListParameterClass::Copy_Value (const ParameterClass &src)
 {
 	if (src.Is_Type (ParameterClass::TYPE_FILENAMELIST)) {
-		FilenameListParameterClass real_src = (FilenameListParameterClass &)src;		
+		FilenameListParameterClass real_src = (FilenameListParameterClass &)src;
 		(*m_FilenameList) = (*real_src.m_FilenameList);
 	}
 
@@ -2043,7 +2043,7 @@ ScriptListParameterClass::ScriptListParameterClass
 )
 	:	m_NameList (name_list),
 		m_ParamList (param_list)
-{	
+{
 	return ;
 }
 
@@ -2158,7 +2158,7 @@ void
 ScriptListParameterClass::Copy_Value (const ParameterClass &src)
 {
 	if (src.Is_Type (ParameterClass::TYPE_SCRIPTLIST)) {
-		ScriptListParameterClass &real_src = (ScriptListParameterClass &)src;		
+		ScriptListParameterClass &real_src = (ScriptListParameterClass &)src;
 		(*m_NameList)	= (*real_src.m_NameList);
 		(*m_ParamList)	= (*real_src.m_ParamList);
 	}

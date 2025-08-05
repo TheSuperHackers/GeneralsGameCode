@@ -52,7 +52,7 @@ public:
 	CommandButtonHuntUpdateModuleData();
 	static void buildFieldParse(MultiIniFieldParse& p);
 
-private: 
+private:
 
 };
 

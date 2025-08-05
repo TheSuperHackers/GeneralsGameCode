@@ -37,7 +37,7 @@ Streamer::Streamer() : streambuf(), Output_Device(NULL), Buf(NULL)
   static_assert(STREAMER_UNBUFFERED==0, "std::streambuf is assumed to be buffered by default");
 #endif
 }
- 
+
 Streamer::~Streamer()
 {
   ///////// calling sync seems to cause crashes here on Win32
@@ -111,14 +111,14 @@ int Streamer::doallocate()
     setb(
        Buf,         // base pointer
        Buf+STREAMER_BUFSIZ,  // ebuf pointer (end of buffer);
-       0);          // 0 = manual deletion of buff 
+       0);          // 0 = manual deletion of buff
 #else
     pubsetbuf(Buf, 2*STREAMER_BUFSIZ);
 #endif
 
     // Get area
     setg(
-        Buf,   // eback 
+        Buf,   // eback
         Buf,   // gptr
         Buf);  // egptr
 

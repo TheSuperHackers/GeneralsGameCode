@@ -72,13 +72,13 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // CAnimMixingPage message handlers
 
-BOOL CAnimMixingPage::OnInitDialog() 
+BOOL CAnimMixingPage::OnInitDialog()
 {
 	CPropertyPage::OnInitDialog();
 
 	ASSERT(m_Sheet != NULL);
 	FillListCtrl();
-	
+
 	return TRUE;  // return TRUE unless you set the focus to a control
 	              // EXCEPTION: OCX Property Pages should return FALSE
 }
@@ -105,7 +105,7 @@ void CAnimMixingPage::FillListCtrl (void)
 		m_AnimList.InsertItem(i, anim[i]->Get_Name());
 }
 
-void CAnimMixingPage::OnOK() 
+void CAnimMixingPage::OnOK()
 {
 	/*
 	** Create a new HAnimCombo class containing the animations selected by the user.
@@ -138,11 +138,11 @@ void CAnimMixingPage::OnOK()
 		::GetCurrentDocument()->PlayAnimation(robj, combo);
 		robj->Release_Ref();
 	}
-	
+
 	CPropertyPage::OnOK();
 }
 
-BOOL CAnimMixingPage::OnKillActive() 
+BOOL CAnimMixingPage::OnKillActive()
 {
 	/*
 	** Update the parent with info on the current selection.
@@ -164,6 +164,6 @@ BOOL CAnimMixingPage::OnKillActive()
 		}
 		i++;
 	}
-	
+
 	return CPropertyPage::OnKillActive();
 }

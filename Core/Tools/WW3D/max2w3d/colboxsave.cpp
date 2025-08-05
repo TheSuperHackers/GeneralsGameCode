@@ -111,7 +111,7 @@ CollisionBoxSaveClass::CollisionBoxSaveClass
 	Matrix3 node_matrix = inode->GetObjectTM(curtime);
 	Matrix3 offset_matrix = node_matrix * Inverse(exportspace);
 	int ivert;
-	
+
 	for (ivert = 0; ivert < mesh.getNumVerts (); ++ivert) {
 		mesh.verts[ivert] = mesh.verts[ivert] * offset_matrix;
 	}
@@ -129,7 +129,7 @@ CollisionBoxSaveClass::CollisionBoxSaveClass
 		if (mesh.verts[ivert].y > max_point.y) max_point.y = mesh.verts[ivert].y;
 		if (mesh.verts[ivert].z > max_point.z) max_point.z = mesh.verts[ivert].z;
 	}
-		
+
 	Point3 center = (max_point + min_point) / 2.0f;
 	Point3 extent = (max_point - min_point) / 2.0f;
 
@@ -153,4 +153,4 @@ int CollisionBoxSaveClass::Write_To_File(ChunkSaveClass & csave)
 }
 
 
-	
+

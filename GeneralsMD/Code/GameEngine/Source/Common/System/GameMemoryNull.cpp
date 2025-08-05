@@ -25,7 +25,7 @@
 static Bool theMainInitFlag = false;
 
 // ----------------------------------------------------------------------------
-// PUBLIC DATA 
+// PUBLIC DATA
 // ----------------------------------------------------------------------------
 
 MemoryPoolFactory *TheMemoryPoolFactory = NULL;
@@ -52,7 +52,7 @@ void *DynamicMemoryAllocator::allocateBytesDoNotZeroImplementation(Int numBytes)
 
 /**
 	allocate a chunk-o-bytes from this DMA and return it, and zero out the contents first.
-	if unable to allocate, throw ERROR_OUT_OF_MEMORY. 
+	if unable to allocate, throw ERROR_OUT_OF_MEMORY.
 	this function will never return null.
 */
 void *DynamicMemoryAllocator::allocateBytesImplementation(Int numBytes)

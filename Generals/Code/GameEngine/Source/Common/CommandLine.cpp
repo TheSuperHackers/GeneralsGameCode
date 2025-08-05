@@ -666,7 +666,7 @@ Int parsePreload( char *args[], int num )
 #endif
 
 
-#if defined(RTS_DEBUG) 
+#if defined(RTS_DEBUG)
 Int parseDisplayDebug(char *args[], int)
 {
 	TheWritableGlobalData->m_displayDebug = TRUE;
@@ -1192,7 +1192,7 @@ static CommandLineParam paramsForEngineInit[] =
 	{ "-FPUPreserve", parseFPUPreserve },
 	{ "-benchmark", parseBenchmark },
 #ifdef DUMP_PERF_STATS
-	{ "-stats", parseStats }, 
+	{ "-stats", parseStats },
 #endif
 	{ "-saveStats", parseSaveStats },
 	{ "-localMOTD", parseLocalMOTD },
@@ -1276,7 +1276,7 @@ static CommandLineParam paramsForEngineInit[] =
 	{ "-file", parseFile },
 
 //	{ "-preload", parsePreload },
-	
+
 	{ "-preloadEverything", parsePreloadEverything },
 	{ "-logAssets", parseLogAssets },
 	{ "-netMinPlayers", parseNetMinPlayers },

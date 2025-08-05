@@ -182,7 +182,7 @@ NetCommandRef * NetCommandList::addMessage(NetCommandMsg *cmdMsg) {
 			return msg;
 		}
 	}
-	
+
 	if (msg->getCommand()->getNetCommandType() > m_last->getCommand()->getNetCommandType()) {
 		// easy optimization for a command that goes at the end of the list
 		// since they are likely to be added in order.
@@ -203,7 +203,7 @@ NetCommandRef * NetCommandList::addMessage(NetCommandMsg *cmdMsg) {
 		m_lastMessageInserted = msg;
 		return msg;
 	}
-	
+
 	if (msg->getCommand()->getNetCommandType() < m_first->getCommand()->getNetCommandType()) {
 		// Make sure this command isn't already in the list.
 		if (isEqualCommandMsg(m_first->getCommand(), msg->getCommand())) {
@@ -222,8 +222,8 @@ NetCommandRef * NetCommandList::addMessage(NetCommandMsg *cmdMsg) {
 		m_lastMessageInserted = msg;
 		return msg;
 	}
-	
-	
+
+
 	// Find the start of the command type we're looking for.
 	NetCommandRef *tempmsg = m_first;
 	while ((tempmsg != NULL) && (msg->getCommand()->getNetCommandType() > tempmsg->getCommand()->getNetCommandType())) {
@@ -408,7 +408,7 @@ Bool NetCommandList::isEqualCommandMsg(NetCommandMsg *msg1, NetCommandMsg *msg2)
 	if (msg1->getNetCommandType() == NETCOMMANDTYPE_ACKSTAGE1) {
 		NetAckStage1CommandMsg *ack1 = (NetAckStage1CommandMsg *)msg1;
 		NetAckStage1CommandMsg *ack2 = (NetAckStage1CommandMsg *)msg2;
-		
+
 		if (ack1->getOriginalPlayerID() != ack2->getOriginalPlayerID()) {
 			return FALSE;
 		}
@@ -424,7 +424,7 @@ Bool NetCommandList::isEqualCommandMsg(NetCommandMsg *msg1, NetCommandMsg *msg2)
 	if (msg1->getNetCommandType() == NETCOMMANDTYPE_ACKSTAGE2) {
 		NetAckStage2CommandMsg *ack1 = (NetAckStage2CommandMsg *)msg1;
 		NetAckStage2CommandMsg *ack2 = (NetAckStage2CommandMsg *)msg2;
-		
+
 		if (ack1->getOriginalPlayerID() != ack2->getOriginalPlayerID()) {
 			return FALSE;
 		}
@@ -440,7 +440,7 @@ Bool NetCommandList::isEqualCommandMsg(NetCommandMsg *msg1, NetCommandMsg *msg2)
 	if (msg1->getNetCommandType() == NETCOMMANDTYPE_ACKBOTH) {
 		NetAckBothCommandMsg *ack1 = (NetAckBothCommandMsg *)msg1;
 		NetAckBothCommandMsg *ack2 = (NetAckBothCommandMsg *)msg2;
-		
+
 		if (ack1->getOriginalPlayerID() != ack2->getOriginalPlayerID()) {
 			return FALSE;
 		}

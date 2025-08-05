@@ -91,12 +91,12 @@ static void debugDumpPlayerStats( const PSPlayerStats& stats )
 	DEBUG_MAP(gamesOf8p);
 	DEBUG_MAP(customGames);
 	DEBUG_MAP(QMGames);
-	
+
 	if (stats.locale > 0)
 	{
 		DEBUG_LOG(("Locale: %d", stats.locale));
 	}
-	
+
 	if (stats.gamesAsRandom > 0)
 	{
 		DEBUG_LOG(("gamesAsRandom: %d", stats.gamesAsRandom));
@@ -235,12 +235,12 @@ void PSPlayerStats::incorporate( const PSPlayerStats& other )
 	INCORPORATE_MAP(gamesOf8p);
 	INCORPORATE_MAP(customGames);
 	INCORPORATE_MAP(QMGames);
-	
+
 	if (other.locale > 0)
 	{
 		locale = other.locale;
 	}
-	
+
 	if (other.gamesAsRandom > 0)
 	{
 		gamesAsRandom = other.gamesAsRandom;
@@ -425,10 +425,10 @@ class PSThreadClass : public ThreadClass
 {
 
 public:
-	PSThreadClass() : ThreadClass() 
-	{ 
-		m_loginOK = m_sawLocalData = m_doneTryingToLogin = false; 
-		m_opCount = 0; 
+	PSThreadClass() : ThreadClass()
+	{
+		m_loginOK = m_sawLocalData = m_doneTryingToLogin = false;
+		m_opCount = 0;
 	}
 
 	void Thread_Function();
@@ -847,7 +847,7 @@ void PSThreadClass::Thread_Function()
 	gcd_secret_key[0]='h';gcd_secret_key[1]='5';gcd_secret_key[2]='T';gcd_secret_key[3]='2';
 	gcd_secret_key[4]='f';gcd_secret_key[5]='6';gcd_secret_key[6]='\0';
 	/**/
-	
+
 	//strcpy(StatsServerHostname, "sdkdev.gamespy.com");
 
 	PSRequest req;
@@ -864,7 +864,7 @@ void PSThreadClass::Thread_Function()
 					{
 						NewGame(0);
 #ifdef DEBUG_LOGGING
-						Int res = 
+						Int res =
 #endif // DEBUG_LOGGING
 							SendGameSnapShot(NULL, req.results.c_str(), SNAP_FINAL);
 						DEBUG_LOG(("Just sent game results - res was %d", res));
@@ -1198,7 +1198,7 @@ PSPlayerStats GameSpyPSMessageQueueInterface::parsePlayerKVPairs( std::string kv
 		CHECK(gamesOf8p);
 		CHECK(customGames);
 		CHECK(QMGames);
-		
+
 		if (k == "locale" && generalMarker < 0)
 		{
 			s.locale = atoi(v.c_str());
@@ -1228,7 +1228,7 @@ PSPlayerStats GameSpyPSMessageQueueInterface::parsePlayerKVPairs( std::string kv
 			s.lastFPS = atof(v.c_str());
 			continue;
 		}
-		
+
 		if (k == "lastGeneral" && generalMarker < 0)
 		{
 			s.lastGeneral = atoi(v.c_str());
@@ -1354,8 +1354,8 @@ std::string GameSpyPSMessageQueueInterface::formatPlayerKVPairs( PSPlayerStats s
 	ITERATE_OVER(buildingsBuilt);
 	ITERATE_OVER(earnings);
 	ITERATE_OVER(techCaptured);
-	
-	//GS  Report all disconnects, even if zero, because might have been 
+
+	//GS  Report all disconnects, even if zero, because might have been
 	//previously reported as 1 by updateAdditionalGameSpyDisconnections
 //	ITERATE_OVER(discons);
 	for (Int ptIdx = 0; ptIdx < ThePlayerTemplateStore->getPlayerTemplateCount(); ++ptIdx)
@@ -1381,7 +1381,7 @@ std::string GameSpyPSMessageQueueInterface::formatPlayerKVPairs( PSPlayerStats s
 	ITERATE_OVER(gamesOf8p);
 	ITERATE_OVER(customGames);
 	ITERATE_OVER(QMGames);
-	
+
 	if (stats.locale > 0)
 	{
 		sprintf(kvbuf, "\\locale\\%d", stats.locale);

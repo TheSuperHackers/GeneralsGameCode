@@ -47,7 +47,7 @@
 
 class Connection : public MemoryPoolObject
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(Connection, "Connection")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(Connection, "Connection")
 public:
 	Connection();
 	//~Connection();

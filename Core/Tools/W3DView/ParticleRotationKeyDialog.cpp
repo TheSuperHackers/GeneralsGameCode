@@ -35,7 +35,7 @@ static char THIS_FILE[] = __FILE__;
 // ParticleRotationKeyDialogClass constructor
 //
 /////////////////////////////////////////////////////////////////////////////
-ParticleRotationKeyDialogClass::ParticleRotationKeyDialogClass(float rotation,CWnd* pParent /*=NULL*/) : 
+ParticleRotationKeyDialogClass::ParticleRotationKeyDialogClass(float rotation,CWnd* pParent /*=NULL*/) :
 	CDialog(ParticleRotationKeyDialogClass::IDD, pParent),
 	m_Rotation(rotation)
 {
@@ -73,13 +73,13 @@ END_MESSAGE_MAP()
 // OnInitDialog
 //
 /////////////////////////////////////////////////////////////////////////////
-BOOL 
-ParticleRotationKeyDialogClass::OnInitDialog() 
+BOOL
+ParticleRotationKeyDialogClass::OnInitDialog()
 {
 	CDialog::OnInitDialog();
-	
+
 	Initialize_Spinner (m_RotationSpin, m_Rotation, -10000, 10000);
-	
+
 	return TRUE;  // return TRUE unless you set the focus to a control
 	              // EXCEPTION: OCX Property Pages should return FALSE
 }
@@ -89,8 +89,8 @@ ParticleRotationKeyDialogClass::OnInitDialog()
 // OnOk
 //
 /////////////////////////////////////////////////////////////////////////////
-void 
-ParticleRotationKeyDialogClass::OnOK() 
+void
+ParticleRotationKeyDialogClass::OnOK()
 {
 	m_Rotation = GetDlgItemFloat (m_hWnd, IDC_ROTATION_EDIT);
 	CDialog::OnOK();
@@ -102,14 +102,14 @@ ParticleRotationKeyDialogClass::OnOK()
 // OnNotify
 //
 /////////////////////////////////////////////////////////////////////////////
-BOOL ParticleRotationKeyDialogClass::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult) 
+BOOL ParticleRotationKeyDialogClass::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult)
 {
 	//
 	//	Update the spinner control if necessary
 	//
 	NMHDR *pheader = (NMHDR *)lParam;
 	if ((pheader != NULL) && (pheader->code == UDN_DELTAPOS)) {
-		LPNMUPDOWN pupdown = (LPNMUPDOWN)lParam;		
+		LPNMUPDOWN pupdown = (LPNMUPDOWN)lParam;
 		::Update_Spinner_Buddy (pheader->hwndFrom, pupdown->iDelta);
 	}
 

@@ -26,14 +26,14 @@
  *                                                                                             *
  *                   Org Author:: Greg_h                                                       *
  *                                                                                             *
- *                       Author : Kenny Mitchell                                               * 
- *                                                                                             * 
+ *                       Author : Kenny Mitchell                                               *
+ *                                                                                             *
  *								$Modtime:: 08/05/02 10:03a                                             $*
  *                                                                                             *
  *                    $Revision:: 98                                                          $*
  *                                                                                             *
  * 07/01/02 KM Scalable shader library integration				                               *
- * 08/05/02 KM Texture class redesign 
+ * 08/05/02 KM Texture class redesign
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
  *   WW3D::Init -- Initialize the WW3D Library                                                 *
@@ -1117,8 +1117,8 @@ WW3DErrorType WW3D::End_Render(bool flip_frame)
 	SNAPSHOT_SAY(("==========================================\n"));
 
 	Activate_Snapshot(false);
-	
-	// (gth) I've found some cases where its not safe to rely on our "shadow" copy (of 
+
+	// (gth) I've found some cases where its not safe to rely on our "shadow" copy (of
 	// matrices for example) across multiple frames.  So even though this is slightly
 	// less "optimal", lets just reset the caches each frame.
 	DX8Wrapper::Invalidate_Cached_Render_States();
@@ -1436,7 +1436,7 @@ void WW3D::Make_Screen_Shot( const char * filename_base , const float gamma, con
 				header.biXPelsPerMeter = 0xB12;
 				header.biYPelsPerMeter = 0xB12;
 				int len = ((width * 24 +31) & ~31) /8;
-    
+
 				memset(&fileheader, 0, sizeof(BITMAPFILEHEADER));
 				fileheader.bfType = 19778; // BM
 				fileheader.bfOffBits = sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFOHEADER);

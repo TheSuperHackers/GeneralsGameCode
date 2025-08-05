@@ -127,7 +127,7 @@ protected:
 	Real m_currentClearingRange;							///<ToKeepTrackOfWhere We are at
 
 	RadiusDecal m_gridDecal[GRID_FX_DECAL_COUNT];///< For the pseudo-wireframe decal effect
-	
+
 };
 
 #endif

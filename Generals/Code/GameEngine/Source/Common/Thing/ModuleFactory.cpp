@@ -27,7 +27,7 @@
 // Desc:	 TheModuleFactory is where we actually instance modules for objects
 //				 and drawbles.  Those modules are things such as an UpdateModule
 //			   or DamageModule or DrawModule etc.
-//	
+//
 //				 TheModuleFactory will contain a list of ModuleTemplates, when we
 //				 request a new module, we will look for that template in our
 //				 list and create it
@@ -100,7 +100,7 @@
 #include "GameLogic/Module/BoneFXUpdate.h"
 #include "GameLogic/Module/ChinookAIUpdate.h"
 #include "GameLogic/Module/DefaultProductionExitUpdate.h"
-#include "GameLogic/Module/DelayedWeaponSetUpgradeUpdate.h" 
+#include "GameLogic/Module/DelayedWeaponSetUpgradeUpdate.h"
 #include "GameLogic/Module/DeletionUpdate.h"
 #include "GameLogic/Module/DeliverPayloadAIUpdate.h"
 #include "GameLogic/Module/DozerAIUpdate.h"
@@ -266,7 +266,7 @@ ModuleFactory::ModuleFactory( void )
 {
 	m_moduleTemplateMap.clear();
 	m_moduleDataList.clear();
-	
+
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -557,7 +557,7 @@ const ModuleFactory::ModuleTemplate* ModuleFactory::findModuleTemplate(const Asc
 	NameKeyType namekey = makeDecoratedNameKey(name, type);
 
   ModuleTemplateMap::const_iterator it = m_moduleTemplateMap.find(namekey);
-  if (it == m_moduleTemplateMap.end()) 
+  if (it == m_moduleTemplateMap.end())
 	{
 		DEBUG_CRASH(( "Module name '%s' not found", name.str() ));
 		return NULL;
@@ -590,34 +590,34 @@ Module *ModuleFactory::newModule( Thing *thing, const AsciiString& name, const M
 			BehaviorModule* bm = (BehaviorModule*)mod;
 
 			DEBUG_ASSERTCRASH(
-				((mt->m_whichInterfaces & (MODULEINTERFACE_BODY)) != 0) == (bm->getBody() != NULL), 
+				((mt->m_whichInterfaces & (MODULEINTERFACE_BODY)) != 0) == (bm->getBody() != NULL),
 				("getInterfaceMask bad for MODULE_BODY (%s)",name.str()));
 			DEBUG_ASSERTCRASH(
-				((mt->m_whichInterfaces & (MODULEINTERFACE_COLLIDE)) != 0) == (bm->getCollide() != NULL), 
+				((mt->m_whichInterfaces & (MODULEINTERFACE_COLLIDE)) != 0) == (bm->getCollide() != NULL),
 				("getInterfaceMask bad for MODULE_COLLIDE (%s)",name.str()));
 			DEBUG_ASSERTCRASH(
-				((mt->m_whichInterfaces & (MODULEINTERFACE_CONTAIN)) != 0) == (bm->getContain() != NULL), 
+				((mt->m_whichInterfaces & (MODULEINTERFACE_CONTAIN)) != 0) == (bm->getContain() != NULL),
 				("getInterfaceMask bad for MODULE_CONTAIN (%s)",name.str()));
 			DEBUG_ASSERTCRASH(
-				((mt->m_whichInterfaces & (MODULEINTERFACE_CREATE)) != 0) == (bm->getCreate() != NULL), 
+				((mt->m_whichInterfaces & (MODULEINTERFACE_CREATE)) != 0) == (bm->getCreate() != NULL),
 				("getInterfaceMask bad for MODULE_CREATE (%s)",name.str()));
 			DEBUG_ASSERTCRASH(
-				((mt->m_whichInterfaces & (MODULEINTERFACE_DAMAGE)) != 0) == (bm->getDamage() != NULL), 
+				((mt->m_whichInterfaces & (MODULEINTERFACE_DAMAGE)) != 0) == (bm->getDamage() != NULL),
 				("getInterfaceMask bad for MODULE_DAMAGE (%s)",name.str()));
 			DEBUG_ASSERTCRASH(
-				((mt->m_whichInterfaces & (MODULEINTERFACE_DESTROY)) != 0) == (bm->getDestroy() != NULL), 
+				((mt->m_whichInterfaces & (MODULEINTERFACE_DESTROY)) != 0) == (bm->getDestroy() != NULL),
 				("getInterfaceMask bad for MODULE_DESTROY (%s)",name.str()));
 			DEBUG_ASSERTCRASH(
-				((mt->m_whichInterfaces & (MODULEINTERFACE_DIE)) != 0) == (bm->getDie() != NULL), 
+				((mt->m_whichInterfaces & (MODULEINTERFACE_DIE)) != 0) == (bm->getDie() != NULL),
 				("getInterfaceMask bad for MODULE_DIE (%s)",name.str()));
 			DEBUG_ASSERTCRASH(
-				((mt->m_whichInterfaces & (MODULEINTERFACE_SPECIAL_POWER)) != 0) == (bm->getSpecialPower() != NULL), 
+				((mt->m_whichInterfaces & (MODULEINTERFACE_SPECIAL_POWER)) != 0) == (bm->getSpecialPower() != NULL),
 				("getInterfaceMask bad for MODULE_SPECIAL_POWER (%s)",name.str()));
 			DEBUG_ASSERTCRASH(
-				((mt->m_whichInterfaces & (MODULEINTERFACE_UPDATE)) != 0) == (bm->getUpdate() != NULL), 
+				((mt->m_whichInterfaces & (MODULEINTERFACE_UPDATE)) != 0) == (bm->getUpdate() != NULL),
 				("getInterfaceMask bad for MODULE_UPDATE (%s)",name.str()));
 			DEBUG_ASSERTCRASH(
-				((mt->m_whichInterfaces & (MODULEINTERFACE_UPGRADE)) != 0) == (bm->getUpgrade() != NULL), 
+				((mt->m_whichInterfaces & (MODULEINTERFACE_UPGRADE)) != 0) == (bm->getUpgrade() != NULL),
 				("getInterfaceMask bad for MODULE_UPGRADE (%s)",name.str()));
 		}
 #endif

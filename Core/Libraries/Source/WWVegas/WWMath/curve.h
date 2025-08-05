@@ -88,9 +88,9 @@ public:
 	virtual bool		Load (ChunkLoadClass &cload);
 
 protected:
-	
+
 	void					Find_Interval(float time,int * i0,int * i1,float * t);
-	
+
 	class KeyClass
 	{
 	public:
@@ -99,7 +99,7 @@ protected:
 		bool operator == (const KeyClass & that) { return ((Point == that.Point) && (Time == that.Time)); }
 		bool operator != (const KeyClass & that) { return !KeyClass::operator==(that); }
 	};
-	
+
 	bool									IsLooping;
 	DynamicVectorClass<KeyClass>	Keys;
 };
@@ -146,9 +146,9 @@ public:
 	virtual bool		Load (ChunkLoadClass &cload);
 
 protected:
-	
+
 	void				Find_Interval(float time,int * i0,int * i1,float * t);
-	
+
 	class KeyClass
 	{
 	public:

@@ -27,7 +27,7 @@
 #include "Common/Dict.h"
 #include "Common/WellKnownKeys.h"
 
-static const UINT s_allControls[][2] = 
+static const UINT s_allControls[][2] =
 {
 	{ IDC_SCRIPT_PREFIX1,		IDC_TeamGeneric_Script1,	},
 	{ IDC_SCRIPT_PREFIX2,		IDC_TeamGeneric_Script2,	},
@@ -50,7 +50,7 @@ static const UINT s_allControls[][2] =
 
 TeamGeneric::TeamGeneric() : CPropertyPage(TeamGeneric::IDD)
 {
-	
+
 }
 
 BOOL TeamGeneric::OnInitDialog()

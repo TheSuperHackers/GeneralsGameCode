@@ -27,7 +27,7 @@
 /////////////////////////////////////////////////
 
 //----------------------------------------------------------------------------
-//         Includes                                                      
+//         Includes
 //----------------------------------------------------------------------------
 
 #include "Lib/BaseType.h"
@@ -39,7 +39,7 @@
 #include "Common/Registry.h"
 #include "Common/FileSystem.h"
 
-#include "VideoDevice/FFmpeg/FFmpegFile.h"  
+#include "VideoDevice/FFmpeg/FFmpegFile.h"
 
 extern "C" {
 	#include <libavcodec/avcodec.h>
@@ -54,13 +54,13 @@ extern "C" {
 #include <chrono>
 
 //----------------------------------------------------------------------------
-//         Externals                                                     
+//         Externals
 //----------------------------------------------------------------------------
 
 
- 
+
 //----------------------------------------------------------------------------
-//         Defines                                                         
+//         Defines
 //----------------------------------------------------------------------------
 #define VIDEO_LANG_PATH_FORMAT "Data/%s/Movies/%s.%s"
 #define VIDEO_PATH	"Data\\Movies"
@@ -69,37 +69,37 @@ extern "C" {
 
 
 //----------------------------------------------------------------------------
-//         Private Types                                                     
+//         Private Types
 //----------------------------------------------------------------------------
 
 
 
 //----------------------------------------------------------------------------
-//         Private Data                                                     
+//         Private Data
 //----------------------------------------------------------------------------
 
 
 
 //----------------------------------------------------------------------------
-//         Public Data                                                      
+//         Public Data
 //----------------------------------------------------------------------------
 
 
 
 //----------------------------------------------------------------------------
-//         Private Prototypes                                               
+//         Private Prototypes
 //----------------------------------------------------------------------------
 
 
 
 //----------------------------------------------------------------------------
-//         Private Functions                                               
+//         Private Functions
 //----------------------------------------------------------------------------
 
 
 
 //----------------------------------------------------------------------------
-//         Public Functions                                                
+//         Public Functions
 //----------------------------------------------------------------------------
 
 
@@ -231,7 +231,7 @@ VideoStreamInterface*	FFmpegVideoPlayer::open( AsciiString movieTitle )
 	const Video* pVideo = getVideo(movieTitle);
 	if (pVideo) {
 		DEBUG_LOG(("FFmpegVideoPlayer::createStream() - About to open bink file"));
-		
+
 		if (TheGlobalData->m_modDir.isNotEmpty())
 		{
 			char filePath[ _MAX_PATH ];
@@ -260,7 +260,7 @@ VideoStreamInterface*	FFmpegVideoPlayer::open( AsciiString movieTitle )
 		stream = createStream( file );
 	}
 
-	return stream;	
+	return stream;
 }
 
 //============================================================================
@@ -289,8 +289,8 @@ void FFmpegVideoPlayer::notifyVideoPlayerOfNewProvider( Bool nowHasValid )
 void FFmpegVideoPlayer::initializeBinkWithMiles()
 {
 	Int retVal = 0;
-	void *driver = TheAudio->getHandleForBink();	
-	
+	void *driver = TheAudio->getHandleForBink();
+
 	if ( driver )
 	{
 		//retVal = BinkSoundUseDirectSound(driver);
@@ -505,7 +505,7 @@ void FFmpegVideoStream::frameNext( void )
 
 Int FFmpegVideoStream::frameIndex( void )
 {
-	return m_ffmpegFile->getCurrentFrame(); 
+	return m_ffmpegFile->getCurrentFrame();
 }
 
 //============================================================================

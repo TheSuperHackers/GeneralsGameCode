@@ -24,12 +24,12 @@
 
 // FILE: W3DDisplayString.cpp /////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:    RTS3
@@ -76,7 +76,7 @@
 //=============================================================================
 W3DDisplayString::W3DDisplayString( void )
 {
-	
+
 	m_textChanged = FALSE;
 	m_textPos.x = 0;
 	m_textPos.y = 0;
@@ -94,7 +94,7 @@ W3DDisplayString::W3DDisplayString( void )
 	m_hotKeyPos.x = 0;
 	m_hotKeyPos.y = 0;
 	m_hotKeyColor = GameMakeColor(255,255,255,255);
-	
+
 }  // end W3DDisplayString
 
 // W3DDisplayString::~W3DDisplayString ========================================
@@ -118,12 +118,12 @@ void W3DDisplayString::notifyTextChanged( void )
 	if(TheGlobalLanguageData)
 	{
 		if(TheGlobalLanguageData->m_useHardWrap == TRUE)
-		{	
+		{
 			m_textRenderer.Set_Use_Hard_Word_Wrap(true);
 			m_textRendererHotKey.Set_Use_Hard_Word_Wrap(true);
 		}
 		else
-		{	
+		{
 			m_textRenderer.Set_Use_Hard_Word_Wrap(false);
 			m_textRendererHotKey.Set_Use_Hard_Word_Wrap(false);
 		}
@@ -161,9 +161,9 @@ void W3DDisplayString::draw( Int x, Int y, Color color, Color dropColor, Int xDr
 	Bool needNewPolys = FALSE;
 
 	// sanity
-	if( getTextLength() == 0 )	
+	if( getTextLength() == 0 )
 		return;  // nothing to draw
-	
+
 	// if our font or text has changed we need to build a new sentence
 	if( m_fontChanged || m_textChanged )
 	{
@@ -193,9 +193,9 @@ void W3DDisplayString::draw( Int x, Int y, Color color, Color dropColor, Int xDr
 	// text data has changed, we need to redo the texture quads
 	//
 	if( needNewPolys ||
-			x != m_textPos.x || 
-			y != m_textPos.y || 
-			color != m_currTextColor || 
+			x != m_textPos.x ||
+			y != m_textPos.y ||
+			color != m_currTextColor ||
 			dropColor != m_currDropColor )
 	{
 
@@ -207,7 +207,7 @@ void W3DDisplayString::draw( Int x, Int y, Color color, Color dropColor, Int xDr
 
 		// reset the quads
 		m_textRenderer.Reset_Polys();
-					
+
 		// draw the shadow
 		m_textRenderer.Set_Location( Vector2( m_textPos.x + xDrop, m_textPos.y + yDrop) );
 		m_textRenderer.Draw_Sentence( m_currDropColor );
@@ -215,7 +215,7 @@ void W3DDisplayString::draw( Int x, Int y, Color color, Color dropColor, Int xDr
 		// draw the text
 		m_textRenderer.Set_Location( Vector2( m_textPos.x, m_textPos.y ) );
 		m_textRenderer.Draw_Sentence( m_currTextColor );
-		
+
 		if(m_useHotKey)
 		{
 			m_textRendererHotKey.Reset_Polys();
@@ -223,7 +223,7 @@ void W3DDisplayString::draw( Int x, Int y, Color color, Color dropColor, Int xDr
 			m_textRendererHotKey.Draw_Sentence( m_hotKeyColor );
 			m_textRendererHotKey.Render();
 		}
-	
+
 	}  // end if
 
 	// render the text
@@ -246,7 +246,7 @@ void W3DDisplayString::getSize( Int *width, Int *height )
 	if( width )
 		*width = m_size.x;
 	if( height )
-		*height = m_size.y;		
+		*height = m_size.y;
 
 }  // end getSize
 
@@ -267,9 +267,9 @@ Int W3DDisplayString::getWidth( Int charPos )
 		const WideChar *text = m_textString.str();
 		WideChar ch;
 
-		while ( (ch = *text++ ) != 0 && ( charPos == -1 || count < charPos ) ) 
+		while ( (ch = *text++ ) != 0 && ( charPos == -1 || count < charPos ) )
 		{
-			if ( ch != (WideChar)'\n' ) 
+			if ( ch != (WideChar)'\n' )
 			{
 				width += font->Get_Char_Spacing( ch );
 			}
@@ -299,7 +299,7 @@ void W3DDisplayString::setFont( GameFont *font )
 
 	// set the font in our renderer
 	m_textRenderer.Set_Font( static_cast<FontCharsClass *>(m_font->fontData) );
-	
+
 	m_textRendererHotKey.Set_Font( static_cast<FontCharsClass *>(TheFontLibrary->getFont(font->nameString,font->pointSize, TRUE)->fontData) );
 	// recompute extents for text with new font
 	computeExtents();

@@ -57,25 +57,25 @@ enum AcademyClassificationType CPP_11(: Int);
 
 #define MAKE_SPECIALPOWER_MASK(k) SpecialPowerMaskType(SpecialPowerMaskType::kInit, (k))
 
-inline Bool TEST_SPECIALPOWERMASK(const SpecialPowerMaskType& m, SpecialPowerType t) 
-{ 
-	return m.test(t); 
+inline Bool TEST_SPECIALPOWERMASK(const SpecialPowerMaskType& m, SpecialPowerType t)
+{
+	return m.test(t);
 }
-inline Bool TEST_SPECIALPOWERMASK_ANY(const SpecialPowerMaskType& m, const SpecialPowerMaskType& mask) 
-{ 
+inline Bool TEST_SPECIALPOWERMASK_ANY(const SpecialPowerMaskType& m, const SpecialPowerMaskType& mask)
+{
 	return m.anyIntersectionWith(mask);
 }
 inline Bool TEST_SPECIALPOWERMASK_MULTI(const SpecialPowerMaskType& m, const SpecialPowerMaskType& mustBeSet, const SpecialPowerMaskType& mustBeClear)
 {
 	return m.testSetAndClear(mustBeSet, mustBeClear);
 }
-inline Bool SPECIALPOWERMASK_ANY_SET(const SpecialPowerMaskType& m) 
-{ 
-	return m.any(); 
+inline Bool SPECIALPOWERMASK_ANY_SET(const SpecialPowerMaskType& m)
+{
+	return m.any();
 }
-inline void CLEAR_SPECIALPOWERMASK(SpecialPowerMaskType& m) 
-{ 
-	m.clear(); 
+inline void CLEAR_SPECIALPOWERMASK(SpecialPowerMaskType& m)
+{
+	m.clear();
 }
 inline void SET_SPECIALPOWERMASK( SpecialPowerMaskType& m, SpecialPowerType t, Int val = 1 )
 {
@@ -127,7 +127,7 @@ public:
 	Bool isShortcutPower() const { return getFO()->m_shortcutPower; }
 	AcademyClassificationType getAcademyClassificationType() const { return m_academyClassificationType; }
 
-private: 
+private:
 
 	const SpecialPowerTemplate* getFO() const { return (const SpecialPowerTemplate*)friend_getFinalOverride(); }
 
@@ -139,7 +139,7 @@ private:
 	AudioEventRTS			m_initiateSound;			///< sound to play when initiated
 	AudioEventRTS			m_initiateAtLocationSound;		///< sound to play at target location (if any)
 	AcademyClassificationType m_academyClassificationType; ///< A value used by the academy to evaluate advice based on what players do.
-	UnsignedInt				m_detectionTime;			///< (frames) after using infiltration power (defection, etc.), 
+	UnsignedInt				m_detectionTime;			///< (frames) after using infiltration power (defection, etc.),
 																					///< how long it takes for ex comrades to realize it on their own
 	UnsignedInt				m_viewObjectDuration;	///< Lifetime of a looking object we slap down so you can watch the effect
 	Real							m_viewObjectRange;		///< And how far that object can see.

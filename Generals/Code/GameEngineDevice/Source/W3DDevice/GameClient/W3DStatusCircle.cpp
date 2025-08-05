@@ -65,7 +65,7 @@
 	ShaderClass::DETAILCOLOR_DISABLE, ShaderClass::DETAILALPHA_DISABLE) )
 
 #define VERTEX_BUFFER_TILE_LENGTH	32		//tiles of side length 32 (grid of 33x33 vertices).
-#define VERTS_IN_BLOCK_ROW			(VERTEX_BUFFER_TILE_LENGTH+1)	
+#define VERTS_IN_BLOCK_ROW			(VERTEX_BUFFER_TILE_LENGTH+1)
 
 
 static ShaderClass detailOpaqueShader(SC_ALPHA);
@@ -89,7 +89,7 @@ W3DStatusCircle::W3DStatusCircle(void)
 bool W3DStatusCircle::Cast_Ray(RayCollisionTestClass & raytest)
 {
 
-	return false;	
+	return false;
 
 }
 
@@ -110,7 +110,7 @@ void W3DStatusCircle::Get_Obj_Space_Bounding_Sphere(SphereClass & sphere) const
 {
 	Vector3	ObjSpaceCenter((float)1000*0.5f,(float)1000*0.5f,(float)0);
 	float length = ObjSpaceCenter.Length();
-	
+
 	sphere.Init(ObjSpaceCenter, length);
 }
 
@@ -146,7 +146,7 @@ Int W3DStatusCircle::freeMapResources(void)
 //Allocate a heightmap of x by y vertices.
 //data must be an array matching this size.
 Int W3DStatusCircle::initData(void)
-{	
+{
 	Int i;
 
 	m_needUpdate = true;
@@ -158,7 +158,7 @@ Int W3DStatusCircle::initData(void)
 	// Fill up the IB
 	DX8IndexBufferClass::WriteLockClass lockIdxBuffer(m_indexBuffer);
 	UnsignedShort *ib=lockIdxBuffer.Get_Index_Array();
-		
+
 	for (i=0; i<3*m_numTriangles; i+=3)
 	{
 		ib[0]=i;
@@ -193,17 +193,17 @@ Int W3DStatusCircle::updateCircleVB(void)
 		m_needUpdate = false;
 		DX8VertexBufferClass::WriteLockClass lockVtxBuffer(pVB);
 		VertexFormatXYZDUV1 *vb = (VertexFormatXYZDUV1*)lockVtxBuffer.Get_Vertex_Array();
-		
+
 		const Real theZ = 0.0f;
 		const Real theRadius = 0.02f;
 		const Int theAlpha = 127;
-	  Int diffuse = m_diffuse + (theAlpha<<24);	 // b g<<8 r<<16 a<<24.		 
+	  Int diffuse = m_diffuse + (theAlpha<<24);	 // b g<<8 r<<16 a<<24.
 		Int limit = m_numTriangles;
 		float curAngle = 0;
 		float deltaAngle = 2*PI/limit;
 		for (i=0; i<limit; i++)
 		{
-			
+
 			shade=0.7f*255.0f;
 			for (k=0; k<3; k++) {
 				vb->z=  theZ;
@@ -219,19 +219,19 @@ Int W3DStatusCircle::updateCircleVB(void)
 					Real angle = curAngle+deltaAngle;
 					if (i==limit-1) {
 						angle = 0;
-					} 
+					}
 					Vector3 vec(theRadius,0,theZ);
 					vec.Rotate_Z(angle);
 					vb->x=	vec.X;
 					vb->y=	vec.Y;
 				}
-				vb->diffuse = diffuse; 
+				vb->diffuse = diffuse;
 				vb->u1=0;
 				vb->v1=0;
 				vb++;
 			}
 			curAngle += deltaAngle;
-			
+
 		}
 		return 0; //success.
 	}
@@ -248,60 +248,60 @@ Int W3DStatusCircle::updateScreenVB(Int diffuse)
 		m_needUpdate = false;
 		DX8VertexBufferClass::WriteLockClass lockVtxBuffer(pVB);
 		VertexFormatXYZDUV1 *vb = (VertexFormatXYZDUV1*)lockVtxBuffer.Get_Vertex_Array();
-							
-		vb->x =	-1;
-		vb->y =	-1;
-		vb->z = 0;
-		vb->diffuse = diffuse; 
-		vb->u1=0;
-		vb->v1=0;
-		vb++;	
-
-		vb->x =	1;
-		vb->y =	1;
-		vb->z = 0;
-		vb->diffuse = diffuse; 
-		vb->u1=0;
-		vb->v1=0;
-		vb++;	
-
-		vb->x =	-1;
-		vb->y =	1;
-		vb->z = 0;
-		vb->diffuse = diffuse; 
-		vb->u1=0;
-		vb->v1=0;
-		vb++;	
 
 		vb->x =	-1;
 		vb->y =	-1;
 		vb->z = 0;
-		vb->diffuse = diffuse; 
+		vb->diffuse = diffuse;
 		vb->u1=0;
 		vb->v1=0;
-		vb++;	
-
-		vb->x =	1;
-		vb->y =	-1;
-		vb->z = 0;
-		vb->diffuse = diffuse; 
-		vb->u1=0;
-		vb->v1=0;
-		vb++;	
+		vb++;
 
 		vb->x =	1;
 		vb->y =	1;
 		vb->z = 0;
-		vb->diffuse = diffuse; 
+		vb->diffuse = diffuse;
 		vb->u1=0;
 		vb->v1=0;
-		vb++;	
+		vb++;
+
+		vb->x =	-1;
+		vb->y =	1;
+		vb->z = 0;
+		vb->diffuse = diffuse;
+		vb->u1=0;
+		vb->v1=0;
+		vb++;
+
+		vb->x =	-1;
+		vb->y =	-1;
+		vb->z = 0;
+		vb->diffuse = diffuse;
+		vb->u1=0;
+		vb->v1=0;
+		vb++;
+
+		vb->x =	1;
+		vb->y =	-1;
+		vb->z = 0;
+		vb->diffuse = diffuse;
+		vb->u1=0;
+		vb->v1=0;
+		vb++;
+
+		vb->x =	1;
+		vb->y =	1;
+		vb->z = 0;
+		vb->diffuse = diffuse;
+		vb->u1=0;
+		vb->v1=0;
+		vb++;
 		return 0; //success.
 	}
 	return -1;
 }
 
-void W3DStatusCircle::Render(RenderInfoClass & rinfo)	 
+void W3DStatusCircle::Render(RenderInfoClass & rinfo)
 {
 	if (!TheGameLogic->isInGame() || TheGameLogic->getGameMode() == GAME_SHELL)
 		return;
@@ -351,7 +351,7 @@ void W3DStatusCircle::Render(RenderInfoClass & rinfo)
 	tm.Make_Identity();
 	Real intensity = TheScriptEngine->getFadeValue();
 	Int clr = 255*intensity;
-	Int diffuse = (0xff<<24)|(clr<<16)|(clr<<8)|clr;	 // b g<<8 r<<16 a<<24.		 
+	Int diffuse = (0xff<<24)|(clr<<16)|(clr<<8)|clr;	 // b g<<8 r<<16 a<<24.
 	updateScreenVB(diffuse);
 	DX8Wrapper::Set_Transform(D3DTS_WORLD,tm);
 	DX8Wrapper::Set_Shader(ShaderClass(SC_ADD));

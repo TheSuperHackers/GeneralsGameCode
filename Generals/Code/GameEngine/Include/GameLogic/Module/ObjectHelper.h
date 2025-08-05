@@ -51,9 +51,9 @@ protected:
 
 public:
 
-	ObjectHelper( Thing *thing, const ModuleData *modData ) : 
-		UpdateModule( thing, modData ) 
-	{ 
+	ObjectHelper( Thing *thing, const ModuleData *modData ) :
+		UpdateModule( thing, modData )
+	{
 		setWakeFrame(getObject(), UPDATE_SLEEP_FOREVER);
 	}
 

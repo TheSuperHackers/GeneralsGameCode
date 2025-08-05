@@ -67,7 +67,7 @@ W3dMapClass::W3dMapClass(const W3dMapClass & that)
 		Set_Anim_Info(that.AnimInfo);
 	}
 }
-	
+
 W3dMapClass & W3dMapClass::operator = (const W3dMapClass & that)
 {
 	if (this != &that) {
@@ -91,10 +91,10 @@ void W3dMapClass::Reset(void)
 	AnimInfo = NULL;
 }
 
-void W3dMapClass::Set_Filename(const char * fullpath) 
-{ 
+void W3dMapClass::Set_Filename(const char * fullpath)
+{
 	if (Filename) {
-		free(Filename); 
+		free(Filename);
 	}
 	if (fullpath) {
 		char name[_MAX_FNAME];
@@ -104,14 +104,14 @@ void W3dMapClass::Set_Filename(const char * fullpath)
 		_splitpath(fullpath,NULL,NULL,name,exten);
 		_makepath(fname,NULL,NULL,name,exten);
 		//strupr(fname);						(gth) need to preserve case since unix/PS2 is case sensitive...
-		Filename = strdup(fname); 
+		Filename = strdup(fname);
 	} else {
 		Filename = NULL;
 	}
 }
 
-void W3dMapClass::Set_Anim_Info(const W3dTextureInfoStruct * info) 
-{ 
+void W3dMapClass::Set_Anim_Info(const W3dTextureInfoStruct * info)
+{
 	if (info == NULL) {
 		if (AnimInfo) {
 			delete AnimInfo;
@@ -139,7 +139,7 @@ void W3dMapClass::Set_Anim_Info(int framecount,float framerate)
 
 
 /*
- 
+
 
 	Implementation of W3dMaterialClass
 
@@ -170,7 +170,7 @@ W3dMaterialClass::~W3dMaterialClass(void)
 void W3dMaterialClass::Free(void)
 {
 	for (int pass = 0; pass < MAX_PASSES; pass++) {
-		
+
 		if (Materials[pass]) {
 			delete Materials[pass];
 			Materials[pass] = NULL;
@@ -196,7 +196,7 @@ void W3dMaterialClass::Reset(void)
 	SortLevel = SORT_LEVEL_NONE;
 	for (int pass=0; pass < MAX_PASSES; pass++) {
 		W3d_Shader_Reset(&(Shaders[pass]));
-	
+
 		for (int stage=0; stage < MAX_STAGES; stage++) {
 			MapChannel[pass][stage] = 1;
 		}
@@ -255,7 +255,7 @@ void W3dMaterialClass::Set_Shader(const W3dShaderStruct & shader,int pass)
 	assert(pass >= 0);
 	assert(pass < PassCount);
 
-	Shaders[pass] = shader;	
+	Shaders[pass] = shader;
 }
 
 void W3dMaterialClass::Set_Texture(const W3dMapClass & map,int pass,int stage)
@@ -273,7 +273,7 @@ void W3dMaterialClass::Set_Map_Channel(int pass,int stage,int channel)
 {
 	assert(pass >= 0);
 	assert(pass < PassCount);
-	MapChannel[pass][stage] = channel;	
+	MapChannel[pass][stage] = channel;
 }
 
 unsigned int W3dMaterialClass::Get_Surface_Type(void) const
@@ -295,7 +295,7 @@ W3dVertexMaterialStruct * W3dMaterialClass::Get_Vertex_Material(int pass ) const
 {
 	assert(pass >= 0);
 	assert(pass < PassCount);
-	
+
 	return Materials[pass];
 }
 
@@ -305,7 +305,7 @@ const char * W3dMaterialClass::Get_Mapper_Args(int pass, int stage) const
 	assert(pass < PassCount);
 	assert(stage >= 0);
 	assert(stage < MAX_STAGES);
-	
+
 	return MapperArgs[pass][stage];
 }
 
@@ -313,7 +313,7 @@ W3dShaderStruct W3dMaterialClass::Get_Shader(int pass) const
 {
 	assert(pass >= 0);
 	assert(pass < PassCount);
-	return Shaders[pass];	
+	return Shaders[pass];
 }
 
 W3dMapClass * W3dMaterialClass::Get_Texture(int pass,int stage) const
@@ -322,7 +322,7 @@ W3dMapClass * W3dMaterialClass::Get_Texture(int pass,int stage) const
 	assert(pass < PassCount);
 	assert(stage >= 0);
 	assert(stage < MAX_STAGES);
-	
+
 	return Textures[pass][stage];
 }
 
@@ -370,16 +370,16 @@ void W3dMaterialClass::Init(Mtl * mtl, char *materialColorTexture)
 
 	mat.Attributes = 0;
 	mat.Emissive.R = mat.Emissive.G = mat.Emissive.B = 0; //(uint8)(255 .0f * mtl->GetSelfIllum());
-	
+
 	Color diffuse =			mtl->GetDiffuse();
 	mat.Diffuse.R =			(uint8)(diffuse.r * 255.0f);
-	mat.Diffuse.G =			(uint8)(diffuse.g * 255.0f);		
+	mat.Diffuse.G =			(uint8)(diffuse.g * 255.0f);
 	mat.Diffuse.B =			(uint8)(diffuse.b * 255.0f);
 	mat.Ambient =				mat.Diffuse;
 
 	Color specular =			mtl->GetSpecular();
 	mat.Specular.R =			(uint8)(specular.r * 255.0f);
-	mat.Specular.G =			(uint8)(specular.g * 255.0f);		
+	mat.Specular.G =			(uint8)(specular.g * 255.0f);
 	mat.Specular.B =			(uint8)(specular.b * 255.0f);
 
 	mat.Shininess =			mtl->GetShininess();
@@ -404,9 +404,9 @@ void W3dMaterialClass::Init(Mtl * mtl, char *materialColorTexture)
 		W3d_Shader_Set_Texturing(&shader,W3DSHADER_TEXTURING_ENABLE);
 		//This texture will hold solid pixels of material color, don't need any filtering.
 //		W3dTextureInfoStruct texinfo;
-//		memset(&texinfo,0,sizeof(texinfo));			
+//		memset(&texinfo,0,sizeof(texinfo));
 //		texinfo.Attributes = texinfo.Attributes | /*W3DTEXTURE_NO_LOD|*/W3DTEXTURE_CLAMP_U | W3DTEXTURE_CLAMP_V;
-//		tex.Set_Anim_Info(&texinfo);	
+//		tex.Set_Anim_Info(&texinfo);
 		Set_Texture(tex,0,0);
 	}
 
@@ -414,7 +414,7 @@ void W3dMaterialClass::Init(Mtl * mtl, char *materialColorTexture)
 		W3d_Shader_Set_Dest_Blend_Func(&shader,W3DSHADER_DESTBLENDFUNC_ONE_MINUS_SRC_ALPHA);
 		W3d_Shader_Set_Src_Blend_Func(&shader,W3DSHADER_SRCBLENDFUNC_SRC_ALPHA);
 	}
-	
+
 	Set_Vertex_Material(mat,0);
 	Set_Shader(shader,0);
 
@@ -428,7 +428,7 @@ void W3dMaterialClass::Init(Mtl * mtl, char *materialColorTexture)
 		if (ps2_mat)
 		{
 			W3d_Shader_Set_Pri_Gradient(&shader,PSS_PRIGRADIENT_MODULATE);
-		} 
+		}
 		else
 		{
 			W3d_Shader_Set_Pri_Gradient(&shader,W3DSHADER_PRIGRADIENT_MODULATE);
@@ -503,12 +503,12 @@ void W3dMaterialClass::Init(GameMtl * gamemtl, char *materialColorTexture)
 		*/
 		W3dVertexMaterialStruct mat;
 		mat.Attributes = 0;
-		
+
 		if (gamemtl->Get_Copy_Specular_To_Diffuse(pass)) {
 			mat.Attributes |= W3DVERTMAT_COPY_SPECULAR_TO_DIFFUSE;
 		}
 
-		// mapping type for stage 0		
+		// mapping type for stage 0
 		switch(gamemtl->Get_Mapping_Type(pass, 0))
 		{
 			case GAMEMTL_MAPPING_UV:					mat.Attributes |= W3DVERTMAT_STAGE0_MAPPING_UV;						break;
@@ -586,21 +586,21 @@ void W3dMaterialClass::Init(GameMtl * gamemtl, char *materialColorTexture)
 		BitmapTex * tex = NULL;
 
 		for (int stage=0; stage < MAX_STAGES; stage++) {
-				
+
 			if (gamemtl->Get_Texture_Enable(pass,stage) && gamemtl->Get_Texture(pass,stage)) {
-				
+
 				w3dmap.Reset();
-								
+
 				// get the filename for the w3dmap texture
 				tex = (BitmapTex *)gamemtl->Get_Texture(pass,stage);
 				assert(tex->GetMapName());
 				w3dmap.Set_Filename(tex->GetMapName());
-				
-				// get the animation and flags for the w3dmap texture 
+
+				// get the animation and flags for the w3dmap texture
 				W3dTextureInfoStruct texinfo;
-				memset(&texinfo,0,sizeof(texinfo));			
-				
-				texinfo.AnimType = gamemtl->Get_Texture_Anim_Type(pass,stage);	
+				memset(&texinfo,0,sizeof(texinfo));
+
+				texinfo.AnimType = gamemtl->Get_Texture_Anim_Type(pass,stage);
 
 				if (gamemtl->Get_Texture_Publish(pass,stage)) {
 					texinfo.Attributes = texinfo.Attributes | W3DTEXTURE_PUBLISH;
@@ -630,16 +630,16 @@ void W3dMaterialClass::Init(GameMtl * gamemtl, char *materialColorTexture)
 				texinfo.FrameRate = gamemtl->Get_Texture_Frame_Rate(pass,stage);
 
 				if ((texinfo.FrameCount > 1) || (texinfo.Attributes != 0)) {
-					w3dmap.Set_Anim_Info(&texinfo);	
+					w3dmap.Set_Anim_Info(&texinfo);
 				}
-				
+
 				// plug it in and turn on texturing in the shader
 				Set_Texture(w3dmap,pass,stage);
 				shader.Texturing = W3DSHADER_TEXTURING_ENABLE;
-							
+
 				// copy over the mapping channel
 				Set_Map_Channel(pass,stage,gamemtl->Get_Map_Channel(pass,stage));
-	
+
 				// copy over the mapper args
 				Set_Mapper_Args(gamemtl->Get_Mapping_Arg_Buffer(pass, stage), pass, stage);
 
@@ -648,7 +648,7 @@ void W3dMaterialClass::Init(GameMtl * gamemtl, char *materialColorTexture)
 						{	//no textures on material, substitute textures to improve rendering speed.
 							w3dmap.Reset();
 							w3dmap.Set_Filename(materialColorTexture);
-							
+
 							// plug it in and turn on texturing in the shader
 							Set_Texture(w3dmap,pass,stage);
 							shader.Texturing = W3DSHADER_TEXTURING_ENABLE;
@@ -670,14 +670,14 @@ bool W3dMaterialClass::Is_Multi_Pass_Transparent(void) const
 
 
 /*
- 
+
 
 	Implementation of W3dMaterialDescClass::VertClass
 
 
 */
-W3dMaterialDescClass::VertMatClass::VertMatClass(void) : 
-	PassIndex(-1), 
+W3dMaterialDescClass::VertMatClass::VertMatClass(void) :
+	PassIndex(-1),
 	Crc(0),
 	Name(NULL)
 {
@@ -686,19 +686,19 @@ W3dMaterialDescClass::VertMatClass::VertMatClass(void) :
 	}
 }
 
-W3dMaterialDescClass::VertMatClass::~VertMatClass(void) 
-{ 
+W3dMaterialDescClass::VertMatClass::~VertMatClass(void)
+{
 	if (Name) free(Name);
 
 	for (int stage=0; stage < W3dMaterialClass::MAX_STAGES; ++stage) {
 		if (MapperArgs[stage]) {
-			delete [] (MapperArgs[stage]); 
+			delete [] (MapperArgs[stage]);
 			MapperArgs[stage] = NULL;
 		}
 	}
 }
 
-W3dMaterialDescClass::VertMatClass & 
+W3dMaterialDescClass::VertMatClass &
 W3dMaterialDescClass::VertMatClass::operator = (const VertMatClass & that)
 {
 	if (this != &that) {
@@ -713,46 +713,46 @@ W3dMaterialDescClass::VertMatClass::operator = (const VertMatClass & that)
 	return *this;
 }
 
-bool W3dMaterialDescClass::VertMatClass::operator != (const VertMatClass & that)	
-{ 
-	return !(*this == that); 
+bool W3dMaterialDescClass::VertMatClass::operator != (const VertMatClass & that)
+{
+	return !(*this == that);
 }
 
-bool W3dMaterialDescClass::VertMatClass::operator == (const VertMatClass & that) 
-{ 
-	assert(0); return false; 
+bool W3dMaterialDescClass::VertMatClass::operator == (const VertMatClass & that)
+{
+	assert(0); return false;
 }
 
-void W3dMaterialDescClass::VertMatClass::Set_Name(const char * name) 
-{ 
-	if (Name) free(Name); 
-	
-	if (name) { 
-		Name = strdup(name); 
-	} else { 
-		Name = NULL; 
-	} 
+void W3dMaterialDescClass::VertMatClass::Set_Name(const char * name)
+{
+	if (Name) free(Name);
+
+	if (name) {
+		Name = strdup(name);
+	} else {
+		Name = NULL;
+	}
 }
 
-void W3dMaterialDescClass::VertMatClass::Set_Mapper_Args(const char * args, int stage) 
-{ 
+void W3dMaterialDescClass::VertMatClass::Set_Mapper_Args(const char * args, int stage)
+{
 	if (MapperArgs[stage]) {
-		delete [] (MapperArgs[stage]); 
+		delete [] (MapperArgs[stage]);
 		MapperArgs[stage] = NULL;
 	}
-	
+
 	if (args) {
 		int len = strlen(args);
 		MapperArgs[stage] = new char [len + 1];
 		strcpy(MapperArgs[stage], args);
-	} else { 
-		MapperArgs[stage] = NULL; 
-	} 
+	} else {
+		MapperArgs[stage] = NULL;
+	}
 }
 
 
 /*
- 
+
 
 	Implementation of W3dMaterialDescClass
 
@@ -778,12 +778,12 @@ bool W3dMaterialDescClass::MaterialRemapClass::operator != (const MaterialRemapC
 bool W3dMaterialDescClass::MaterialRemapClass::operator == (const MaterialRemapClass & that)
 {
 	for (int pass=0; pass<W3dMaterialClass::MAX_PASSES; pass++) {
-		
+
 		if (VertexMaterialIdx[pass] != that.VertexMaterialIdx[pass]) return false;
 		if (ShaderIdx[pass] != that.ShaderIdx[pass]) return false;
 
 		for (int stage=0; stage<W3dMaterialClass::MAX_STAGES; stage++) {
-		
+
 			if (TextureIdx[pass][stage] != that.TextureIdx[pass][stage]) return false;
 		}
 	}
@@ -802,7 +802,7 @@ W3dMaterialDescClass::~W3dMaterialDescClass(void)
 }
 
 void W3dMaterialDescClass::Reset(void)
-{	
+{
 	PassCount = -1;
 	SortLevel = -1;
 	MaterialRemaps.Clear();
@@ -851,7 +851,7 @@ W3dMaterialDescClass::ErrorType W3dMaterialDescClass::Add_Material(const W3dMate
 	if (mat.Get_Sort_Level() != SortLevel) {
 		return INCONSISTENT_SORT_LEVEL;
 	}
-	
+
 	/*
 	** Ok, lets re-index this material and store the unique parts
 	*/
@@ -863,12 +863,12 @@ W3dMaterialDescClass::ErrorType W3dMaterialDescClass::Add_Material(const W3dMate
 			mat.Get_Vertex_Material(pass),mat.Get_Mapper_Args(pass, 0),mat.Get_Mapper_Args(pass, 1),pass,name);
 
 		remap.ShaderIdx[pass] = Add_Shader(mat.Get_Shader(pass),pass);
-		
+
 		for (int stage=0; stage<W3dMaterialClass::MAX_STAGES; stage++) {
 
 			remap.TextureIdx[pass][stage] = Add_Texture(mat.Get_Texture(pass,stage),pass,stage);
 			remap.MapChannel[pass][stage] = mat.Get_Map_Channel(pass,stage);
-		
+
 		}
 	}
 
@@ -1030,7 +1030,7 @@ bool W3dMaterialDescClass::Stage_Needs_Texture_Coordinates(int pass,int stage)
 {
 	for (int mi=0; mi<MaterialRemaps.Count();mi++) {
 		W3dShaderStruct * shader = Get_Shader(mi,pass);
-		
+
 		if (shader) {
 			if (stage == 0) {
 				if (W3d_Shader_Get_Texturing(shader) == W3DSHADER_TEXTURING_ENABLE) return true;
@@ -1062,12 +1062,12 @@ bool W3dMaterialDescClass::Pass_Uses_Vertex_Alpha(int pass)
 }
 
 
-bool W3dMaterialDescClass::Pass_Uses_Alpha(int pass) 
+bool W3dMaterialDescClass::Pass_Uses_Alpha(int pass)
 {
 	for (int mi=0; mi<MaterialRemaps.Count(); mi++) {
 
 		W3dShaderStruct * shader = Get_Shader(mi,pass);
-		
+
 		int dst_blend = W3d_Shader_Get_Dest_Blend_Func(shader);
 		int src_blend = W3d_Shader_Get_Src_Blend_Func(shader);
 		int alpha_test = W3d_Shader_Get_Alpha_Test(shader);
@@ -1108,7 +1108,7 @@ int W3dMaterialDescClass::Add_Vertex_Material(W3dVertexMaterialStruct * vmat,
 		vm.Set_Mapper_Args(mapper_args1, 1);
 		VertexMaterials.Add(vm);
 	}
-	
+
 	return vi;
 }
 
@@ -1118,14 +1118,14 @@ int W3dMaterialDescClass::Add_Shader(const W3dShaderStruct & shader,int pass)
 	for (int si=0; si<Shaders.Count(); si++) {
 		if (crc == Shaders[si].Crc) break;
 	}
-	
+
 	if (si == Shaders.Count()) {
 		ShadeClass s;
 		s.Shader = shader;
 		s.Crc = crc;
 		Shaders.Add(s);
-	} 
-	
+	}
+
 	return si;
 }
 

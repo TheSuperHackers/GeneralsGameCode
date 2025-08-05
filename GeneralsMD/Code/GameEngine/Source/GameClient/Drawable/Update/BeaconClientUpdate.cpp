@@ -52,11 +52,11 @@ BeaconClientUpdateModuleData::~BeaconClientUpdateModuleData()
 }
 
 //-------------------------------------------------------------------------------------------------
-void BeaconClientUpdateModuleData::buildFieldParse(MultiIniFieldParse& p) 
+void BeaconClientUpdateModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
   ClientUpdateModuleData::buildFieldParse(p);
 
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
 		{ "RadarPulseFrequency",	INI::parseDurationUnsignedInt, NULL, offsetof(BeaconClientUpdateModuleData, m_framesBetweenRadarPulses) },
 		{ "RadarPulseDuration",		INI::parseDurationUnsignedInt, NULL, offsetof(BeaconClientUpdateModuleData, m_radarPulseDuration) },
@@ -96,7 +96,7 @@ static ParticleSystem* createParticleSystem( Drawable *draw )
 			const ParticleSystemTemplate *particleTemplate = TheParticleSystemManager->findTemplate( templateName );
 
 			DEBUG_ASSERTCRASH(particleTemplate, ("Could not find particle system %s", templateName.str()));
-			
+
 			if (particleTemplate)
 			{
 				system = TheParticleSystemManager->createParticleSystem( particleTemplate );
@@ -151,7 +151,7 @@ void BeaconClientUpdate::hideBeacon( void )
 			system->stop();
 
 	}  // end if
-	
+
 //	DEBUG_LOG(("in hideBeacon(): draw=%d, m_particleSystemID=%d", draw, m_particleSystemID));
 
 }
@@ -188,7 +188,7 @@ void BeaconClientUpdate::clientUpdate( void )
 // ------------------------------------------------------------------------------------------------
 void BeaconClientUpdate::crc( Xfer *xfer )
 {
-	
+
 	// extend base class
 	ClientUpdateModule::crc( xfer );
 

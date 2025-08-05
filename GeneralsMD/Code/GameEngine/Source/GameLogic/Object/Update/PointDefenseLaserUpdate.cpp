@@ -62,7 +62,7 @@ PointDefenseLaserUpdateModuleData::PointDefenseLaserUpdateModuleData()
 {
 	ModuleData::buildFieldParse(p);
 
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
 		{ "WeaponTemplate",				INI::parseWeaponTemplate,				NULL, offsetof( PointDefenseLaserUpdateModuleData, m_weaponTemplate ) },
 		{ "PrimaryTargetTypes",		KindOfMaskType::parseFromINI,								NULL, offsetof( PointDefenseLaserUpdateModuleData, m_primaryTargetKindOf ) },
@@ -83,7 +83,7 @@ PointDefenseLaserUpdate::PointDefenseLaserUpdate( Thing *thing, const ModuleData
 	m_nextShotAvailableInFrames = 0;
 	m_inRange  					= false;
 	setWakeFrame(getObject(), UPDATE_SLEEP_NONE);// No starting sleep, but we want to sleep later.
-} 
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -97,11 +97,11 @@ PointDefenseLaserUpdate::~PointDefenseLaserUpdate( void )
 void PointDefenseLaserUpdate::onObjectCreated()
 {
 	const PointDefenseLaserUpdateModuleData *data = getPointDefenseLaserUpdateModuleData();
-	
+
 	//Make sure we have a weapon template
 	if( !data->m_weaponTemplate )
 	{
-		DEBUG_CRASH( ("PointDefenseLaserUpdate for %s doesn't have a valid weapon template", 
+		DEBUG_CRASH( ("PointDefenseLaserUpdate for %s doesn't have a valid weapon template",
 			getObject()->getTemplate()->getName().str() ) );
 		return;
 	}
@@ -121,15 +121,15 @@ void PointDefenseLaserUpdate::onObjectCreated()
 /** The update callback. */
 //-------------------------------------------------------------------------------------------------
 UpdateSleepTime PointDefenseLaserUpdate::update()
-{	
+{
 /// @todo srj use SLEEPY_UPDATE here
 	//*** HERE'S THE UPDATE PHILOSOPHY ***
-	//The point defense laser typically has short range, high rate of fire, and shoots at incoming projectiles 
+	//The point defense laser typically has short range, high rate of fire, and shoots at incoming projectiles
 	//that move fast. This amounts to a potentially very expensive system. Instead of frantically scanning for
 	//targets, we will scan less frequently (data->m_scanFrames) in a larger radius (data->m_scanRange). When
 	//this occurs, we'll store the "best" target, and track only that target until the next update or if it is
 	//killed.
-	
+
 	Object *me = getObject();
 	if( me->isEffectivelyDead() )
 		return UPDATE_SLEEP_FOREVER;//No more laser fo you.
@@ -177,7 +177,7 @@ void PointDefenseLaserUpdate::fireWhenReady()
 		{
 			if( m_inRange )
 			{
-				//We were in range last frame, but the target has moved out of firing range, so 
+				//We were in range last frame, but the target has moved out of firing range, so
 				//re-evaluate by forcing a new scan.
 				m_nextScanFrames = GameLogicRandomValue( 0, 3 );
 				m_bestTargetID = INVALID_ID;
@@ -195,14 +195,14 @@ void PointDefenseLaserUpdate::fireWhenReady()
 			}
 		}
 	}
-	
+
 	if( m_nextShotAvailableInFrames > 0 )
 	{
 		//We can't fire this frame.
 		m_nextShotAvailableInFrames--;
 		return;
 	}
-	
+
 	WeaponTemplate *wt = data->m_weaponTemplate;
 	if( wt )
 	{
@@ -315,7 +315,7 @@ Object* PointDefenseLaserUpdate::scanClosestTarget()
 					pos.set( physics->getVelocity() );
 					pos.scale( data->m_velocityFactor );
 					pos.add( other->getPosition() );
-					
+
 					//Recalculate the distance.
 					fDist = sqrt( ThePartitionManager->getDistanceSquared( me, other, FROM_CENTER_2D ) );
 				}
@@ -361,7 +361,7 @@ Object* PointDefenseLaserUpdate::scanClosestTarget()
 		m_inRange = false;
 		return bestTargetOutOfRange[ 1 ];
 	}
-	
+
 	//Utter failure -- nothing on the scope.
 	m_bestTargetID = INVALID_ID;
 	m_inRange = false;

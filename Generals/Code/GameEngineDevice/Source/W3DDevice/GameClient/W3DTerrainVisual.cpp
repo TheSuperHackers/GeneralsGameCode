@@ -56,7 +56,7 @@
 #include "WW3D2/coltest.h"
 #include "WW3D2/assetmgr.h"
 
-#include "Common/UnitTimings.h" //Contains the DO_UNIT_TIMINGS define jba.		 
+#include "Common/UnitTimings.h" //Contains the DO_UNIT_TIMINGS define jba.
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 W3DTerrainVisual::W3DTerrainVisual()
@@ -85,7 +85,7 @@ W3DTerrainVisual::~W3DTerrainVisual()
 	}
 
 	if (TheW3DShadowManager)
-	{	
+	{
 		delete TheW3DShadowManager;
 		TheW3DShadowManager=NULL;
 	}
@@ -118,7 +118,7 @@ void W3DTerrainVisual::init( void )
 		// initialize object shadow drawing system
 		TheW3DShadowManager = NEW W3DShadowManager;
  		TheW3DShadowManager->init();
-	
+
 		// create a water plane render object
 		TheWaterRenderObj=m_waterRenderObject = NEW_REF( WaterRenderObjClass, () );
 		m_waterRenderObject->init(TheGlobalData->m_waterPositionZ, TheGlobalData->m_waterExtentX, TheGlobalData->m_waterExtentY, W3DDisplay::m_3DScene, (WaterRenderObjClass::WaterType)TheGlobalData->m_waterType);	//create a water plane that's 128x128 units
@@ -126,7 +126,7 @@ void W3DTerrainVisual::init( void )
 
 #ifdef DO_UNIT_TIMINGS
 #pragma MESSAGE("********************* WARNING- Doing UNIT TIMINGS. ")
-#else 
+#else
 		if (TheGlobalData->m_waterType == WaterRenderObjClass::WATER_TYPE_1_FB_REFLECTION)
 		{	// add water render object to the pre-pass scene (to be rendered before main scene)
  			//W3DDisplay::m_prePass3DScene->Add_Render_Object( m_waterRenderObject);
@@ -144,23 +144,23 @@ void W3DTerrainVisual::init( void )
 
 	// set the vertex animated water properties
 	Int waterSettingIndex = 0;  // use index 0 settings by default
-	TheTerrainVisual->setWaterGridHeightClamps( NULL, 
-																							TheGlobalData->m_vertexWaterHeightClampLow[ waterSettingIndex ], 
+	TheTerrainVisual->setWaterGridHeightClamps( NULL,
+																							TheGlobalData->m_vertexWaterHeightClampLow[ waterSettingIndex ],
 																							TheGlobalData->m_vertexWaterHeightClampHi[ waterSettingIndex ] );
-	TheTerrainVisual->setWaterTransform( NULL, 
-																			 TheGlobalData->m_vertexWaterAngle[ waterSettingIndex ], 
-																			 TheGlobalData->m_vertexWaterXPosition[ waterSettingIndex ], 
-																			 TheGlobalData->m_vertexWaterYPosition[ waterSettingIndex ], 
+	TheTerrainVisual->setWaterTransform( NULL,
+																			 TheGlobalData->m_vertexWaterAngle[ waterSettingIndex ],
+																			 TheGlobalData->m_vertexWaterXPosition[ waterSettingIndex ],
+																			 TheGlobalData->m_vertexWaterYPosition[ waterSettingIndex ],
 																			 TheGlobalData->m_vertexWaterZPosition[ waterSettingIndex ] );
-	TheTerrainVisual->setWaterGridResolution( NULL, 
-																						TheGlobalData->m_vertexWaterXGridCells[ waterSettingIndex ], 
-																						TheGlobalData->m_vertexWaterYGridCells[ waterSettingIndex ], 
+	TheTerrainVisual->setWaterGridResolution( NULL,
+																						TheGlobalData->m_vertexWaterXGridCells[ waterSettingIndex ],
+																						TheGlobalData->m_vertexWaterYGridCells[ waterSettingIndex ],
 																						TheGlobalData->m_vertexWaterGridSize[ waterSettingIndex ] );
-	TheTerrainVisual->setWaterAttenuationFactors( NULL, 
-																								TheGlobalData->m_vertexWaterAttenuationA[ waterSettingIndex ], 
-																								TheGlobalData->m_vertexWaterAttenuationB[ waterSettingIndex ], 
-																								TheGlobalData->m_vertexWaterAttenuationC[ waterSettingIndex ], 
-																								TheGlobalData->m_vertexWaterAttenuationRange[ waterSettingIndex ] );	
+	TheTerrainVisual->setWaterAttenuationFactors( NULL,
+																								TheGlobalData->m_vertexWaterAttenuationA[ waterSettingIndex ],
+																								TheGlobalData->m_vertexWaterAttenuationB[ waterSettingIndex ],
+																								TheGlobalData->m_vertexWaterAttenuationC[ waterSettingIndex ],
+																								TheGlobalData->m_vertexWaterAttenuationRange[ waterSettingIndex ] );
 	m_isWaterGridRenderingEnabled = FALSE;
 
 }  // end init
@@ -220,11 +220,11 @@ void W3DTerrainVisual::update( void )
 //-------------------------------------------------------------------------------------------------
 Bool W3DTerrainVisual::load( AsciiString filename )
 {
-	
-#if 0	
+
+#if 0
 	// (gth) Testing exclusion list asset releasing
 	DynamicVectorClass<StringClass> exclusion_list(8000);
-	
+
 	WW3DAssetManager::Get_Instance()->Create_Asset_List(exclusion_list);
 
 	exclusion_list.Add(StringClass("avcomanche"));
@@ -265,11 +265,11 @@ Bool W3DTerrainVisual::load( AsciiString filename )
 
 	// Add any lights loaded by map.
 	MapObject *pMapObj = MapObject::getFirstMapObject();
-	while (pMapObj) 
+	while (pMapObj)
 	{
 		Dict *d = pMapObj->getProperties();
-		if (pMapObj->isLight()) 
-		{ 
+		if (pMapObj->isLight())
+		{
 			Coord3D loc = *pMapObj->getLocation();
 			if (loc.z < 0) {
 				Vector3 vec;
@@ -298,7 +298,7 @@ Bool W3DTerrainVisual::load( AsciiString filename )
 
 	RefRenderObjListIterator *it = W3DDisplay::m_3DScene ? W3DDisplay::m_3DScene->createLightsIterator() : NULL;
 	// apply the heightmap to the terrain render object
-	m_terrainRenderObject->initHeightData( m_terrainHeightMap->getDrawWidth(), 
+	m_terrainRenderObject->initHeightData( m_terrainHeightMap->getDrawWidth(),
 																				 m_terrainHeightMap->getDrawHeight(),
 																				 m_terrainHeightMap,
 																				 it);
@@ -322,7 +322,7 @@ Bool W3DTerrainVisual::load( AsciiString filename )
 
 #ifdef DO_UNIT_TIMINGS
 #pragma MESSAGE("********************* WARNING- Doing UNIT TIMINGS. ")
-#else 
+#else
 	if (m_waterRenderObject)
 	{
 		W3DDisplay::m_3DScene->Add_Render_Object( m_waterRenderObject);
@@ -331,7 +331,7 @@ Bool W3DTerrainVisual::load( AsciiString filename )
 #endif
 
 	pMapObj = MapObject::getFirstMapObject();
-	while (pMapObj) 
+	while (pMapObj)
 	{
 		Dict *d = pMapObj->getProperties();
 		if (pMapObj->isScorch()) {
@@ -372,8 +372,8 @@ void W3DTerrainVisual::enableWaterGrid( Bool enable )
 /** intersect the ray with the terrain, if a hit occurs TRUE is returned
 	* and the result point on the terrain is returned in "result" */
 //-------------------------------------------------------------------------------------------------
-Bool W3DTerrainVisual::intersectTerrain( Coord3D *rayStart, 
-																				 Coord3D *rayEnd, 
+Bool W3DTerrainVisual::intersectTerrain( Coord3D *rayStart,
+																				 Coord3D *rayEnd,
 																				 Coord3D *result )
 {
 	Bool hit = FALSE;
@@ -396,10 +396,10 @@ Bool W3DTerrainVisual::intersectTerrain( Coord3D *rayStart,
 
 			result->x = point.X;
 			result->y = point.Y;
-			result->z = point.Z;	
+			result->z = point.Z;
 
 		}  // end if
-		
+
 	}  // end if
 
 	// return hit result
@@ -438,7 +438,7 @@ TerrainType *W3DTerrainVisual::getTerrainTile( Real x, Real y )
 // ------------------------------------------------------------------------------------------------
 /** set min/max height values allowed in water grid pointed to by waterTable */
 // ------------------------------------------------------------------------------------------------
-void W3DTerrainVisual::setWaterGridHeightClamps( const WaterHandle *waterTable, 
+void W3DTerrainVisual::setWaterGridHeightClamps( const WaterHandle *waterTable,
 																								 Real minZ, Real maxZ )
 {
 
@@ -450,7 +450,7 @@ void W3DTerrainVisual::setWaterGridHeightClamps( const WaterHandle *waterTable,
 // ------------------------------------------------------------------------------------------------
 /** adjust fallof parameters for grid change method */
 // ------------------------------------------------------------------------------------------------
-void W3DTerrainVisual::setWaterAttenuationFactors( const WaterHandle *waterTable, 
+void W3DTerrainVisual::setWaterAttenuationFactors( const WaterHandle *waterTable,
 																									 Real a, Real b, Real c, Real range )
 {
 
@@ -462,7 +462,7 @@ void W3DTerrainVisual::setWaterAttenuationFactors( const WaterHandle *waterTable
 // ------------------------------------------------------------------------------------------------
 /** set the water table position and orientation in world space */
 // ------------------------------------------------------------------------------------------------
-void W3DTerrainVisual::setWaterTransform( const WaterHandle *waterTable, 
+void W3DTerrainVisual::setWaterTransform( const WaterHandle *waterTable,
 																					Real angle, Real x, Real y, Real z )
 {
 
@@ -479,7 +479,7 @@ void W3DTerrainVisual::setWaterTransform( const Matrix3D *transform )
 
 	if( m_waterRenderObject )
 		m_waterRenderObject->setGridTransform( transform );
-			
+
 }  // end setWaterTransform
 
 // ------------------------------------------------------------------------------------------------
@@ -508,7 +508,7 @@ void W3DTerrainVisual::setWaterGridResolution( const WaterHandle *waterTable,
 // ------------------------------------------------------------------------------------------------
 /** get water grid resolution spacing */
 // ------------------------------------------------------------------------------------------------
-void W3DTerrainVisual::getWaterGridResolution( const WaterHandle *waterTable,	
+void W3DTerrainVisual::getWaterGridResolution( const WaterHandle *waterTable,
 																							 Real *gridCellsX, Real *gridCellsY, Real *cellSize )
 {
 
@@ -530,7 +530,7 @@ void W3DTerrainVisual::changeWaterHeight( Real x, Real y, Real delta )
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void W3DTerrainVisual::addWaterVelocity( Real worldX, Real worldY, 
+void W3DTerrainVisual::addWaterVelocity( Real worldX, Real worldY,
 																				 Real velocity, Real preferredHeight )
 {
 
@@ -562,7 +562,7 @@ void W3DTerrainVisual::setRawMapHeight(const ICoord2D *gridPos, Int height)
 		Int x = gridPos->x+m_terrainHeightMap->getBorderSize();
 		Int y = gridPos->y+m_terrainHeightMap->getBorderSize();
  		//if (m_terrainHeightMap->getHeight(x,y) != height) //ML changed to prevent scissoring with roads
- 		if (m_terrainHeightMap->getHeight(x,y) > height) 
+ 		if (m_terrainHeightMap->getHeight(x,y) > height)
 		{
 			m_terrainHeightMap->setRawHeight(x, y, height);
 			m_terrainRenderObject->staticLightingChanged();
@@ -679,7 +679,7 @@ void W3DTerrainVisual::removeBibHighlighting(void)
 		m_terrainRenderObject->removeTerrainBibHighlighting();
 	}
 }
- 
+
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 void W3DTerrainVisual::setTerrainTracksDetail(void)
@@ -692,7 +692,7 @@ void W3DTerrainVisual::setTerrainTracksDetail(void)
 // ------------------------------------------------------------------------------------------------
 void W3DTerrainVisual::setShoreLineDetail(void)
 {
-	if (m_terrainRenderObject) 
+	if (m_terrainRenderObject)
 		m_terrainRenderObject->setShoreLineDetail();
 }
 
@@ -803,8 +803,8 @@ void W3DTerrainVisual::xfer( Xfer *xfer )
 				len = xferLen;
 			}
 		}
-		xfer->xferUser(data, len);	
-		if (xfer->getXferMode() == XFER_LOAD)	{	
+		xfer->xferUser(data, len);
+		if (xfer->getXferMode() == XFER_LOAD)	{
 			// Update the display height map.
 			m_terrainRenderObject->staticLightingChanged();
 		}

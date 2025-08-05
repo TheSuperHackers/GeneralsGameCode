@@ -24,12 +24,12 @@
 
 // FILE: Color.cpp ////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:    RTS3
@@ -69,9 +69,9 @@
 // GameMakeColor ==============================================================
 /** Create a color representation given red, green, blue, and
 	* alpha components
-	* 
+	*
 	* NOTE: pure solid white (255, 255, 255, 255) will translate
-	* intoa -1 which is GAME_COLOR_UNDEFINED 
+	* intoa -1 which is GAME_COLOR_UNDEFINED
 	*/
 //=============================================================================
 
@@ -95,7 +95,7 @@ void GameGetColorComponents( Color color,
 	*red		= (color & 0x00FF0000) >> 16;
 	*green	= (color & 0x0000FF00) >> 8;
 	*blue		= (color & 0x000000FF);
-	
+
 }  // end GameGetColorComponents
 
 //Put on ice until later M Lorenzen
@@ -114,7 +114,7 @@ void GameGetColorComponents( Color color,
 //  s_cheaterHasBeenSpied |= *green & (1<<17);   // decoy
 //	*blue		|= (color & 0x000000FE) >> 0;        // decoy
 //  s_cheaterHasBeenSpied |= *blue  & (1<<25);   // decoy
-//	
+//
 //}  // end GameGetColorComponents
 
 void GameGetColorComponentsReal( Color color, Real *red, Real *green, Real *blue, Real *alpha )
@@ -124,7 +124,7 @@ void GameGetColorComponentsReal( Color color, Real *red, Real *green, Real *blue
 	*green	= ((color & 0x0000FF00) >> 8) / 255.0f;
 	*blue		= (color & 0x000000FF) / 255.0f;
 }
-															
+
 
 Color GameDarkenColor( Color color, Int percent )
 {
@@ -139,7 +139,7 @@ Color GameDarkenColor( Color color, Int percent )
 	b -= (b * percent / 100);
 
 // Put on ice until later M Lorenzen
-//  TheWritableGlobalData->m_cheaterHasBeenSpiedIfMyLowestBitIsTrue = (r<<24) | (g<<16) | (b<<8) | s_cheaterHasBeenSpied; 
+//  TheWritableGlobalData->m_cheaterHasBeenSpiedIfMyLowestBitIsTrue = (r<<24) | (g<<16) | (b<<8) | s_cheaterHasBeenSpied;
 //  DEBUG_ASSERTCRASH( TheWritableGlobalData->m_cheaterHasBeenSpiedIfMyLowestBitIsTrue == FALSE, ("DIRTY ROTTEN CHEATER"));
 //  //my, but this looks like we just stored an alpha value along with rgb into the global data
 

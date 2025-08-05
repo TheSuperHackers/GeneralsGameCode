@@ -26,7 +26,7 @@
  *                                                                                             *
  *                    Org Author:: Greg_h                                                       *
  *                                                                                             *
- *                       Author : Kenny Mitchell                                               * 
+ *                       Author : Kenny Mitchell                                               *
  *                                                                                             *
  *                     $Modtime:: 06/26/02 4:04p                                             $*
  *                                                                                             *
@@ -64,12 +64,12 @@ class PlaneClass;
 ** OBBoxClass
 **
 ** Oriented-Bounding-Box Class.
-** This is a collision box in world space.  
+** This is a collision box in world space.
 ** Center - position of the center of the box
 ** Extents - size of the box
 ** Basis - rotation matrix defining the orientation of the box
 **
-** To find the world space coordinates of the "+x,+y,+z" corner of 
+** To find the world space coordinates of the "+x,+y,+z" corner of
 ** the bounding box you could use this equation:
 ** Vector3 corner = Center + Basis * Extent;
 */
@@ -85,12 +85,12 @@ public:
 		Extent(that.Extent)
 	{ }
 
-	OBBoxClass(const Vector3 & center,const Vector3 & extent) : 
+	OBBoxClass(const Vector3 & center,const Vector3 & extent) :
 		Basis(1),
 		Center(center),
 		Extent(extent)
 	{ }
-	
+
 	OBBoxClass(const Vector3 & center,const Vector3 & extent,const Matrix3x3 & basis) :
 		Basis(basis),
 		Center(center),
@@ -220,15 +220,15 @@ inline void OBBoxClass::Compute_Axis_Aligned_Extent(Vector3 * set_extent) const
 
 	// x extent is the box projected onto the x axis
 	set_extent->X =	WWMath::Fabs(Extent[0] * Basis[0][0]) +
-							WWMath::Fabs(Extent[1] * Basis[0][1]) +	
+							WWMath::Fabs(Extent[1] * Basis[0][1]) +
 							WWMath::Fabs(Extent[2] * Basis[0][2]);
-	
+
 	set_extent->Y =	WWMath::Fabs(Extent[0] * Basis[1][0]) +
-							WWMath::Fabs(Extent[1] * Basis[1][1]) +	
+							WWMath::Fabs(Extent[1] * Basis[1][1]) +
 							WWMath::Fabs(Extent[2] * Basis[1][2]);
 
 	set_extent->Z =	WWMath::Fabs(Extent[0] * Basis[2][0]) +
-							WWMath::Fabs(Extent[1] * Basis[2][1]) +	
+							WWMath::Fabs(Extent[1] * Basis[2][1]) +
 							WWMath::Fabs(Extent[2] * Basis[2][2]);
 }
 

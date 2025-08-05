@@ -50,9 +50,9 @@ public:
 	Bool									m_initiallyActive;
 	Bool									m_singleBurst;
 	Int										m_healingAmount;
-	Real									m_startRadius; 
-	Real									m_finalRadius; 
-	Real									m_radiusGrowRate; 
+	Real									m_startRadius;
+	Real									m_finalRadius;
+	Real									m_radiusGrowRate;
 	KindOfMaskType				m_kindOf;	//Only these types can heal -- defaults to everything.
 	const ParticleSystemTemplate*				m_radiusParticleSystemTmpl;					//Optional particle system meant to apply to entire effect for entire duration.
 
@@ -65,16 +65,16 @@ public:
 		SET_ALL_KINDOFMASK_BITS( m_kindOf );
 	}
 
-	static void buildFieldParse( MultiIniFieldParse& p ) 
+	static void buildFieldParse( MultiIniFieldParse& p )
 	{
 		UpdateModuleData::buildFieldParse( p );
-    
-		static const FieldParse dataFieldParse[] = 
+
+		static const FieldParse dataFieldParse[] =
 		{
 			{ "StartRadius",						         INI::parseReal,									 NULL, offsetof( GrantStealthBehaviorModuleData, m_startRadius ) },
 			{ "FinalRadius",						         INI::parseReal,									 NULL, offsetof( GrantStealthBehaviorModuleData, m_finalRadius ) },
 			{ "RadiusGrowRate",						       INI::parseReal,									 NULL, offsetof( GrantStealthBehaviorModuleData, m_radiusGrowRate ) },
-			{ "KindOf",						    KindOfMaskType::parseFromINI,					       NULL, offsetof( GrantStealthBehaviorModuleData, m_kindOf ) },		
+			{ "KindOf",						    KindOfMaskType::parseFromINI,					       NULL, offsetof( GrantStealthBehaviorModuleData, m_kindOf ) },
 			{ "RadiusParticleSystemName",				 INI::parseParticleSystemTemplate, NULL, offsetof( GrantStealthBehaviorModuleData, m_radiusParticleSystemTmpl ) },
 			{ 0, 0, 0, 0 }
 		};
@@ -87,7 +87,7 @@ public:
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-class GrantStealthBehavior : public UpdateModule 
+class GrantStealthBehavior : public UpdateModule
 {
 
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( GrantStealthBehavior, "GrantStealthBehavior" )

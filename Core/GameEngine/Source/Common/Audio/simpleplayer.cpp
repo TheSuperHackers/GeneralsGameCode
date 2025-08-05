@@ -131,7 +131,7 @@ ULONG STDMETHODCALLTYPE CSimplePlayer::Release()
 
 
 ///////////////////////////////////////////////////////////////////////////////
-HRESULT STDMETHODCALLTYPE CSimplePlayer::OnSample( 
+HRESULT STDMETHODCALLTYPE CSimplePlayer::OnSample(
         /* [in] */ DWORD dwOutputNum,
         /* [in] */ QWORD cnsSampleTime,
         /* [in] */ QWORD cnsSampleDuration,
@@ -159,7 +159,7 @@ HRESULT STDMETHODCALLTYPE CSimplePlayer::OnSample(
         return( E_UNEXPECTED );
     }
 
-    DEBUG_LOG(( " New Sample of length %d and PS time %d ms", 
+    DEBUG_LOG(( " New Sample of length %d and PS time %d ms",
               cbData, ( DWORD ) ( cnsSampleTime / 10000 ) ));
 
     LPWAVEHDR pwh = (LPWAVEHDR) new BYTE[ sizeof( WAVEHDR ) + cbData ];
@@ -300,7 +300,7 @@ HRESULT CSimplePlayer::Play( LPCWSTR pszUrl, DWORD dwSecDuration, HANDLE hComple
         DEBUG_LOG(( "failed to open (hr=0x%08x)", hr ));
         return( hr );
     }
-         
+
 
     //
     // It worked!  Display various attributes
@@ -332,7 +332,7 @@ HRESULT CSimplePlayer::Play( LPCWSTR pszUrl, DWORD dwSecDuration, HANDLE hComple
         WORD cbLength = 0;
 
         hr = m_pHeader->GetAttributeByIndex( i, &wStream, NULL, &cchNamelen, &type, NULL, &cbLength );
-        if ( FAILED( hr ) ) 
+        if ( FAILED( hr ) )
         {
             DEBUG_LOG(( "GetAttributeByIndex Failed (hr=0x%08x)" , hr ));
             break;
@@ -348,7 +348,7 @@ HRESULT CSimplePlayer::Play( LPCWSTR pszUrl, DWORD dwSecDuration, HANDLE hComple
         }
 
         hr = m_pHeader->GetAttributeByIndex( i, &wStream, pwszName, &cchNamelen, &type, pValue, &cbLength );
-        if ( FAILED( hr ) ) 
+        if ( FAILED( hr ) )
         {
             DEBUG_LOG(( "GetAttributeByIndex Failed (hr=0x%08x)" , hr ));
             break;
@@ -435,7 +435,7 @@ HRESULT CSimplePlayer::Play( LPCWSTR pszUrl, DWORD dwSecDuration, HANDLE hComple
         DEBUG_LOG(( "GetMediaType failed (hr=0x%08x)" , hr ));
         return( hr );
     }
-    
+
 	WM_MEDIA_TYPE *pMediaType = ( WM_MEDIA_TYPE * ) new BYTE[cbBuffer] ;
 
 	hr = pProps->GetMediaType( pMediaType, &cbBuffer );
@@ -454,29 +454,29 @@ HRESULT CSimplePlayer::Play( LPCWSTR pszUrl, DWORD dwSecDuration, HANDLE hComple
         DEBUG_LOG(( "Not audio only (major type mismatch)."  ));
         return( E_UNEXPECTED );
     }
-    
+
     //
     // Set up for audio playback
     //
     WAVEFORMATEX *pwfx = ( WAVEFORMATEX * )pMediaType->pbFormat;
     memcpy( &m_wfx, pwfx, sizeof( WAVEFORMATEX ) + pwfx->cbSize );
-    
+
     delete[] (BYTE *)pMediaType ;
 	pMediaType = NULL ;
 
     MMRESULT mmr;
 
     mmr = waveOutOpen( &m_hwo,
-                       WAVE_MAPPER, 
-                       &m_wfx, 
-                       (DWORD)WaveProc, 
-                       (DWORD)this, 
+                       WAVE_MAPPER,
+                       &m_wfx,
+                       (DWORD)WaveProc,
+                       (DWORD)this,
                        CALLBACK_FUNCTION );
     mmr = MMSYSERR_NOERROR;
 
     if( mmr != MMSYSERR_NOERROR  )
     {
-        
+
         DEBUG_LOG(( "failed to open wav output device, error=%lu" , mmr ));
         return( E_UNEXPECTED );
     }
@@ -498,7 +498,7 @@ HRESULT CSimplePlayer::Play( LPCWSTR pszUrl, DWORD dwSecDuration, HANDLE hComple
 
 
 ///////////////////////////////////////////////////////////////////////////////
-HRESULT STDMETHODCALLTYPE CSimplePlayer::OnStatus( 
+HRESULT STDMETHODCALLTYPE CSimplePlayer::OnStatus(
         /* [in] */ WMT_STATUS Status,
         /* [in] */ HRESULT hr,
         /* [in] */ WMT_ATTR_DATATYPE dwType,
@@ -660,11 +660,11 @@ void CSimplePlayer::OnWaveOutMsg( UINT uMsg, DWORD dwParam1, DWORD dwParam2 )
 
 
 ///////////////////////////////////////////////////////////////////////////////
-void CALLBACK CSimplePlayer::WaveProc( 
-                                HWAVEOUT hwo, 
-                                UINT uMsg, 
-                                DWORD dwInstance, 
-                                DWORD dwParam1, 
+void CALLBACK CSimplePlayer::WaveProc(
+                                HWAVEOUT hwo,
+                                UINT uMsg,
+                                DWORD dwInstance,
+                                DWORD dwParam1,
                                 DWORD dwParam2 )
 {
     CSimplePlayer *pThis = (CSimplePlayer*)dwInstance;

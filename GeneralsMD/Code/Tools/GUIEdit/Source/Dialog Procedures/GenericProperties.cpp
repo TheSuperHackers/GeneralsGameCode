@@ -24,12 +24,12 @@
 
 // FILE: GenericProperties.cpp ////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:    GUIEdit
@@ -89,7 +89,7 @@ static LRESULT CALLBACK genericPropertiesCallback( HWND hWndDialog,
 	// are designed to have controls doing the same functionality
 	// and names
 	//
-	if( HandleCommonDialogMessages( hWndDialog, message, 
+	if( HandleCommonDialogMessages( hWndDialog, message,
 																	wParam, lParam, &returnCode ) == TRUE )
 		return returnCode;
 
@@ -99,8 +99,8 @@ static LRESULT CALLBACK genericPropertiesCallback( HWND hWndDialog,
 		// ------------------------------------------------------------------------
 		case WM_DRAWITEM:
 		{
-      UINT controlID = (UINT)wParam;  // control identifier 
-      LPDRAWITEMSTRUCT drawItem = (LPDRAWITEMSTRUCT)lParam; // item drawing 
+      UINT controlID = (UINT)wParam;  // control identifier
+      LPDRAWITEMSTRUCT drawItem = (LPDRAWITEMSTRUCT)lParam; // item drawing
 			RGBColorInt *color = GetControlColor( controlID );
 
 			// we only care about color button controls
@@ -148,7 +148,7 @@ static LRESULT CALLBACK genericPropertiesCallback( HWND hWndDialog,
 //			Int notifyCode = HIWORD( wParam );  // notification code
 			Int controlID = LOWORD( wParam );  // control ID
 			HWND hWndControl = (HWND)lParam;  // control window handle
- 
+
       switch( controlID )
       {
 
@@ -167,9 +167,9 @@ static LRESULT CALLBACK genericPropertiesCallback( HWND hWndDialog,
 					{
 						RGBColorInt *newColor;
 						POINT mouse;
-						
+
 						GetCursorPos( &mouse );
-						newColor = SelectColor( currColor->red, currColor->green, 
+						newColor = SelectColor( currColor->red, currColor->green,
 																		currColor->blue, currColor->alpha,
 																		mouse.x, mouse.y );
 
@@ -445,7 +445,7 @@ HWND InitUserWinPropertiesDialog( GameWindow *window )
 	// initialize the dialog with values from the window
 	//
 
-	// fill out the image combo boxes	
+	// fill out the image combo boxes
 	LoadImageListComboBox( GetDlgItem( dialog, COMBO_ENABLED_IMAGE ) );
 	LoadImageListComboBox( GetDlgItem( dialog, COMBO_DISABLED_IMAGE ) );
 	LoadImageListComboBox( GetDlgItem( dialog, COMBO_HILITE_IMAGE ) );
@@ -455,15 +455,15 @@ HWND InitUserWinPropertiesDialog( GameWindow *window )
 
 	image = window->winGetEnabledImage( 0 );
 	if( image )
-		SendDlgItemMessage( dialog, COMBO_ENABLED_IMAGE, CB_SELECTSTRING, 
+		SendDlgItemMessage( dialog, COMBO_ENABLED_IMAGE, CB_SELECTSTRING,
 												-1, (LPARAM)image->getName().str() );
 	image = window->winGetDisabledImage( 0 );
 	if( image )
-		SendDlgItemMessage( dialog, COMBO_DISABLED_IMAGE, CB_SELECTSTRING, 
+		SendDlgItemMessage( dialog, COMBO_DISABLED_IMAGE, CB_SELECTSTRING,
 												-1, (LPARAM)image->getName().str() );
 	image = window->winGetHiliteImage( 0 );
 	if( image )
-		SendDlgItemMessage( dialog, COMBO_HILITE_IMAGE, CB_SELECTSTRING, 
+		SendDlgItemMessage( dialog, COMBO_HILITE_IMAGE, CB_SELECTSTRING,
 												-1, (LPARAM)image->getName().str() );
 
 	// initialize the color buttons

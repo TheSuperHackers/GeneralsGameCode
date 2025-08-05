@@ -64,7 +64,7 @@ WindowLayout::~WindowLayout( void )
 	// use them in any you see fit, as long as they are clean when they go away
 	//
 	DEBUG_ASSERTCRASH( m_windowList == NULL, ("Window layout being destroyed still has window references") );
-	DEBUG_ASSERTCRASH( m_windowTail == NULL, ("Window layout being destroyed still has window references") );	
+	DEBUG_ASSERTCRASH( m_windowTail == NULL, ("Window layout being destroyed still has window references") );
 
 }  // end ~WindowLayout
 
@@ -95,7 +95,7 @@ void WindowLayout::addWindow( GameWindow *window )
 {
 	GameWindow *win = findWindow( window );
 
-	// only add window if window is not in this layout already	
+	// only add window if window is not in this layout already
 	if( win == NULL )
 	{
 

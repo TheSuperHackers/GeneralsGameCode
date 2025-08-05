@@ -55,7 +55,7 @@ public:
 	LaserUpdateModuleData();
 	static void buildFieldParse(MultiIniFieldParse& p);
 
-private: 
+private:
 
 };
 
@@ -105,7 +105,7 @@ public:
 
 	const Coord3D* getStartPos() const { return &m_startPos; }
 	const Coord3D* getEndPos() const { return &m_endPos; }
- 
+
 	Real getTemplateLaserRadius() const;
 	Real getCurrentLaserRadius() const;
 

@@ -23,13 +23,13 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-//	
-// FILE: SabotageSupplyCenterCrateCollide.cpp 
+//
+// FILE: SabotageSupplyCenterCrateCollide.cpp
 // Author: Kris Morness, June 2003
 // Desc:   A crate (actually a saboteur - mobile crate) that steals cash from the target supply center.
-//	
+//
 ///////////////////////////////////////////////////////////////////////////////////////////////////
- 
+
 
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
@@ -66,13 +66,13 @@
 //-------------------------------------------------------------------------------------------------
 SabotageSupplyCenterCrateCollide::SabotageSupplyCenterCrateCollide( Thing *thing, const ModuleData* moduleData ) : CrateCollide( thing, moduleData )
 {
-} 
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 SabotageSupplyCenterCrateCollide::~SabotageSupplyCenterCrateCollide( void )
 {
-}  
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -156,7 +156,7 @@ Bool SabotageSupplyCenterCrateCollide::executeCrateBehavior( Object *other )
 			pos.set( obj->getPosition() );
 			pos.z += 20.0f; //add a little z to make it show up above the unit.
 			TheInGameUI->addFloatingText( moneyString, &pos, GameMakeColor( 0, 255, 0, 255 ) );
-		
+
 			//Display cash lost floating over the target
 			moneyString.format( TheGameText->fetch( "GUI:LoseCash" ), cash );
 			pos.set( other->getPosition() );
@@ -171,7 +171,7 @@ Bool SabotageSupplyCenterCrateCollide::executeCrateBehavior( Object *other )
 			}
 		}
 	}
-		
+
 	return TRUE;
 }
 

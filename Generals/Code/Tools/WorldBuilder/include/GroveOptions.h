@@ -46,7 +46,7 @@ class GroveOptions : public COptionsPanel
 		VecPairNameDisplayName mVecDisplayNames;
 
 		Int	mNumTrees;
-	
+
 	public:
 		GroveOptions(CWnd* pParent = NULL);
 		~GroveOptions();

@@ -34,7 +34,7 @@
 
 //-------------------------------------------------------------------------------------------------
 /**
-	One horizontal line of the circle we are going to generate, the points drawn should be from 
+	One horizontal line of the circle we are going to generate, the points drawn should be from
 	(xStart, yPos)-(xEnd, yPos), inclusive.
 */
 struct HorzLine
@@ -54,8 +54,8 @@ typedef VecHorzLine::iterator VecHorzLineIt;
 typedef void (*ScanlineDrawFunc)(Int xStart, Int xEnd, Int yPos, void *otherParms);
 
 /**
-	DiscreteCircle generates a circle centered at xCenter, yCenter, including radius. It generates 
-	horizontal segments for the top half of the circle only, so they need to be duplicated for the 
+	DiscreteCircle generates a circle centered at xCenter, yCenter, including radius. It generates
+	horizontal segments for the top half of the circle only, so they need to be duplicated for the
 	bottom half.
 */
 class DiscreteCircle
@@ -69,7 +69,7 @@ class DiscreteCircle
 		__inline const VecHorzLine &getEdges(void) const { return m_edges; }
 		__inline Int getEdgeCount(void) const { return m_edges.size(); }
 		void drawCircle(ScanlineDrawFunc functionToDrawWith, void *parmToPass);
-		
+
 	protected:
 		void generateEdgePairs(Int xCenter, Int yCenter, Int radius);
 		void removeDuplicates();

@@ -94,11 +94,11 @@ void PointerRemapClass::Process_Request_Table(DynamicVectorClass<PtrRemapStruct>
 
 		// Find the pair which contains the pointer we are looking for as its "old" pointer
 		while (	(pair_index < PointerPairTable.Count()) &&
-					(PointerPairTable[pair_index].OldPointer < pointer_to_remap)  ) 
+					(PointerPairTable[pair_index].OldPointer < pointer_to_remap)  )
 		{
 			pair_index++;
 		}
-	
+
 		if ((pair_index < PointerPairTable.Count()) && (PointerPairTable[pair_index].OldPointer == pointer_to_remap)) {
 
 			// we found the match, plug in the new pointer and add a ref if needed.
@@ -110,13 +110,13 @@ void PointerRemapClass::Process_Request_Table(DynamicVectorClass<PtrRemapStruct>
 			}
 
 		} else {
-			
+
 			// Failed to re-map the pointer.
 			// warn the user, set pointer to NULL, reset index to the pre_search_index.
 			// If this happens, things could be going very wrong.  (find out why its happening!)
 			pair_index = pre_search_index;
 			*request_table[pointer_index].PointerToRemap = NULL;
-#ifdef WWDEBUG			
+#ifdef WWDEBUG
 			const char * file = request_table[pointer_index].File;
 			int line = request_table[pointer_index].Line;
 			WWDEBUG_SAY(("Warning! Failed to re-map pointer! old_ptr = 0x%X  file = %s  line = %d",(unsigned int)pointer_to_remap,file,line));
@@ -194,7 +194,7 @@ int __cdecl PointerRemapClass::ptr_request_compare_function(void const * ptr1, v
 {
 	PtrRemapStruct * remap1 = (PtrRemapStruct *)ptr1;
 	PtrRemapStruct * remap2 = (PtrRemapStruct *)ptr2;
-	
+
 	void * old1 = *(remap1->PointerToRemap);
 	void * old2 = *(remap2->PointerToRemap);
 

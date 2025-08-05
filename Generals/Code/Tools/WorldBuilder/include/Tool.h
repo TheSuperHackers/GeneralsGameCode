@@ -53,7 +53,7 @@ class WbView;
 /*************************************************************************
 **                             Tool
 ***************************************************************************/
-class Tool  
+class Tool
 {
 protected:
 	Int	m_toolID;  //< Tool button ui id in resource.
@@ -83,9 +83,9 @@ public:
 	static Real calcRoundBlendFactor(CPoint center, Int x, Int y, Int brushWidth, Int featherWidth);
 	static Real calcSquareBlendFactor(CPoint center, Int x, Int y, Int brushWidth, Int featherWidth);
 	static void getCenterIndex(Coord3D *docLocP, Int brushWidth, CPoint *center, CWorldBuilderDoc *pDoc);
-	static void getAllIndexesIn(const Coord3D *bl, const Coord3D *br, 
-															const Coord3D *tl, const Coord3D *tr, 
-															Int widthOutside, CWorldBuilderDoc *pDoc, 
+	static void getAllIndexesIn(const Coord3D *bl, const Coord3D *br,
+															const Coord3D *tl, const Coord3D *tr,
+															Int widthOutside, CWorldBuilderDoc *pDoc,
 															VecHeightMapIndexes* allIndices);
 };
 

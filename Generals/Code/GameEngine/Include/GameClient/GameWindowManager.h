@@ -25,7 +25,7 @@
 // FILE: GameWindowManager.h //////////////////////////////////////////////////////////////////////
 // Created:    Colin Day, June 2001
 // Desc:       The game window manager is the interface for interacting with
-//						 the windowing system for purposes of any menus, or GUI 
+//						 the windowing system for purposes of any menus, or GUI
 //						 controls.
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -70,7 +70,7 @@ public:
 };
 
 //-------------------------------------------------------------------------------------------------
-/** There exists a singleton GameWindowManager that defines how we can 
+/** There exists a singleton GameWindowManager that defines how we can
 	* interact with the game windowing system */
 //-------------------------------------------------------------------------------------------------
 class GameWindowManager : public SubsystemInterface
@@ -145,54 +145,54 @@ public:
 	//---------------------------------------------------------------------------
 	// gadget creation
 	virtual GameWindow *gogoGadgetPushButton( GameWindow *parent, UnsignedInt status,
-																						Int x, Int y, Int width, Int height,	
-																						WinInstanceData *instData, 
+																						Int x, Int y, Int width, Int height,
+																						WinInstanceData *instData,
 																						GameFont *defaultFont, Bool defaultVisual );
 	virtual GameWindow *gogoGadgetCheckbox( GameWindow *parent, UnsignedInt status,
-																					Int x, Int y, Int width, Int height, 
+																					Int x, Int y, Int width, Int height,
 																					WinInstanceData *instData,
 																					GameFont *defaultFont, Bool defaultVisual );
 	virtual GameWindow *gogoGadgetRadioButton( GameWindow *parent, UnsignedInt status,
-																						 Int x, Int y, Int width, Int height, 
-																						 WinInstanceData *instData, 
+																						 Int x, Int y, Int width, Int height,
+																						 WinInstanceData *instData,
 																						 RadioButtonData *rData,
 																						 GameFont *defaultFont, Bool defaultVisual );
 	virtual GameWindow *gogoGadgetTabControl( GameWindow *parent, UnsignedInt status,
-																						 Int x, Int y, Int width, Int height, 
-																						 WinInstanceData *instData, 
+																						 Int x, Int y, Int width, Int height,
+																						 WinInstanceData *instData,
 																						 TabControlData *rData,
 																						 GameFont *defaultFont, Bool defaultVisual );
 	virtual GameWindow *gogoGadgetListBox( GameWindow *parent, UnsignedInt status,
 																				 Int x, Int y, Int width, Int height,
-																				 WinInstanceData *instData, 
+																				 WinInstanceData *instData,
 																				 ListboxData *listboxData,
 																				 GameFont *defaultFont, Bool defaultVisual );
 	virtual GameWindow *gogoGadgetSlider( GameWindow *parent, UnsignedInt status,
 																				Int x, Int y, Int width, Int height,
-																				WinInstanceData *instData, 
+																				WinInstanceData *instData,
 																				SliderData *sliderData,
 																				GameFont *defaultFont, Bool defaultVisual );
 	virtual GameWindow *gogoGadgetProgressBar( GameWindow *parent, UnsignedInt status,
-																						 Int x, Int y, Int width, Int height, 
+																						 Int x, Int y, Int width, Int height,
 																						 WinInstanceData *instData,
 																						 GameFont *defaultFont, Bool defaultVisual );
 	virtual GameWindow *gogoGadgetStaticText( GameWindow *parent, UnsignedInt status,
 																						Int x, Int y, Int width, Int height,
-																						WinInstanceData *instData, 
+																						WinInstanceData *instData,
 																						TextData *textData,
 																						GameFont *defaultFont, Bool defaultVisual );
 	virtual GameWindow *gogoGadgetTextEntry( GameWindow *parent, UnsignedInt status,
 																					 Int x, Int y, Int width, Int height,
-																					 WinInstanceData *instData, 
+																					 WinInstanceData *instData,
 																					 EntryData *entryData,
 																					 GameFont *defaultFont, Bool defaultVisual );
 	virtual GameWindow *gogoGadgetComboBox( GameWindow *parent, UnsignedInt status,
 										                              Int x, Int y, Int width, Int height,
-																									WinInstanceData *instData, 
+																									WinInstanceData *instData,
 																									ComboBoxData *comboBoxDataTemplate,
 																								  GameFont *defaultFont, Bool defaultVisual );
 
-	/** Use this method to assign the default images to gadgets as 
+	/** Use this method to assign the default images to gadgets as
 		* they area created */
 	virtual void assignDefaultGadgetLook( GameWindow *gadget,
 																				GameFont *defaultFont,
@@ -226,7 +226,7 @@ public:
 																	 Bool hideFlag );
 	/// enable all windows in a range of id's (inclusive)
 	virtual void enableWindowsInRange( GameWindow *baseWindow, Int first, Int last,
-																		 Bool enableFlag );	
+																		 Bool enableFlag );
 
 	/// this gets called from winHide() when a window hides itself
 	virtual void windowHiding( GameWindow *window );
@@ -246,7 +246,7 @@ public:
 														 ICoord2D *mousePos,
 														 void *data );
 	/// process a singke key event
-	virtual WinInputReturnCode winProcessKey( UnsignedByte key, 
+	virtual WinInputReturnCode winProcessKey( UnsignedByte key,
 																						UnsignedByte state );
 	// --------------------------------------------------------------------------
 
@@ -271,7 +271,7 @@ public:
 
 	/** get the window pointer from id, starting at 'window' and searching
 	down the heirarchy.  If 'window' is NULL then all windows will
-	be searched */ 
+	be searched */
 	virtual GameWindow *winGetWindowFromId( GameWindow *window, Int id );
 	virtual Int winCapture( GameWindow *window );  ///< captures the mouse
 	virtual Int winRelease( GameWindow *window );  ///< release mouse capture
@@ -313,14 +313,14 @@ public:
 	virtual Int winIsAlNum( Int c );  ///< is character alpha-numeric
 	virtual void winFormatText( GameFont *font, UnicodeString text, Color color,
 															Int x, Int y, Int width, Int height );
-	virtual void winGetTextSize( GameFont *font, UnicodeString text, 
+	virtual void winGetTextSize( GameFont *font, UnicodeString text,
 															 Int *width, Int *height, Int maxWidth );
 	virtual UnicodeString winTextLabelToText( AsciiString label );  ///< convert localizable text label to real text
 	virtual GameFont *winFindFont( AsciiString fontName, Int pointSize, Bool bold );  ///< get a font given a name
 
 	/// @todo just for testing, remov this
 	Bool initTestGUI( void );
-	
+
 	virtual GameWindow *getWindowUnderCursor( Int x, Int y, Bool ignoreEnabled = FALSE );	///< find the top window at the given coordinates
 
 	//---------------------------------------------------------------------------
@@ -367,16 +367,16 @@ inline GameWinTooltipFunc GameWindowManager::getDefaultTooltip( void ) { return 
 extern GameWindowManager *TheWindowManager;			///< singleton extern definition
 extern UnsignedInt WindowLayoutCurrentVersion;  ///< current version of our window layouts
 
-// this function lets us generically pass button selections to our parent, we may 
+// this function lets us generically pass button selections to our parent, we may
 // frequently want to do this because we want windows grouped on child windows for
 // convenience, but only want one logical system procedure responding to them all
-extern WindowMsgHandledType PassSelectedButtonsToParentSystem( GameWindow *window, 
+extern WindowMsgHandledType PassSelectedButtonsToParentSystem( GameWindow *window,
 																															 UnsignedInt msg,
-																															 WindowMsgData mData1, 
+																															 WindowMsgData mData1,
 																															 WindowMsgData mData2 );
-extern WindowMsgHandledType PassMessagesToParentSystem( GameWindow *window, 
+extern WindowMsgHandledType PassMessagesToParentSystem( GameWindow *window,
 																															 UnsignedInt msg,
-																															 WindowMsgData mData1, 
+																															 WindowMsgData mData1,
 																															 WindowMsgData mData2 );
 
 // TheSuperHackers @feature helmutbuhler 24/04/2025

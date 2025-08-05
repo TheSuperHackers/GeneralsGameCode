@@ -23,8 +23,8 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 // FILE: ToppleUpdate.h /////////////////////////////////////////////////////////////////////////////
-// Author: 
-// Desc:   
+// Author:
+// Desc:
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
@@ -95,8 +95,8 @@ public:
 	Bool isAbleToBeToppled() const;
 
 	// UpdateModuleInterface
-	virtual UpdateSleepTime update();	
-	
+	virtual UpdateSleepTime update();
+
 	// CollideModuleInterface
 	virtual void onCollide( Object *other, const Coord3D *loc, const Coord3D *normal );
 	/// this is used for things like pilots, to determine if they can "enter" something

@@ -345,7 +345,7 @@ Sound2DHandleClass::Get_Sample_User_Data (S32 i)
 //////////////////////////////////////////////////////////////////////
 S32
 Sound2DHandleClass::Get_Sample_Playback_Rate (void)
-{	
+{
 	S32 retval = 0;
 
 	if (SampleHandle != (HSAMPLE)INVALID_MILES_HANDLE) {

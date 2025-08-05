@@ -36,7 +36,7 @@
 #include "Common/AudioEventRTS.h"
 #include "Common/INI.h"
 #include "GameLogic/Module/SpecialPowerUpdateModule.h"
-#include "GameClient/ParticleSys.h"	
+#include "GameClient/ParticleSys.h"
 
 class DamageInfo;
 class SpecialPowerTemplate;
@@ -118,11 +118,11 @@ public:
     m_persistenceRequiresRecharge = FALSE;
 	}
 
-	static void buildFieldParse(MultiIniFieldParse& p) 
+	static void buildFieldParse(MultiIniFieldParse& p)
 	{
     UpdateModuleData::buildFieldParse(p);
 
-		static const FieldParse dataFieldParse[] = 
+		static const FieldParse dataFieldParse[] =
 		{
 			//Primary data values
 			{ "SpecialPowerTemplate",				INI::parseSpecialPowerTemplate,		NULL, offsetof( SpecialAbilityUpdateModuleData, m_specialPowerTemplate ) },
@@ -135,7 +135,7 @@ public:
 			{ "PreTriggerUnstealthTime",	  INI::parseDurationUnsignedInt,		NULL, offsetof( SpecialAbilityUpdateModuleData, m_preTriggerUnstealthFrames ) },
 			{ "SkipPackingWithNoTarget",		INI::parseBool,										NULL, offsetof( SpecialAbilityUpdateModuleData, m_skipPackingWithNoTarget ) },
 			{ "PackUnpackVariationFactor",	INI::parseReal,										NULL, offsetof( SpecialAbilityUpdateModuleData, m_packUnpackVariationFactor ) },
- 
+
 			//Secondary data values
 			{ "SpecialObject",							INI::parseAsciiString,						NULL, offsetof( SpecialAbilityUpdateModuleData, m_specialObjectName ) },
 			{ "SpecialObjectAttachToBone",	INI::parseAsciiString,						NULL, offsetof( SpecialAbilityUpdateModuleData, m_specialObjectAttachToBoneName ) },
@@ -195,7 +195,7 @@ public:
 	// UpdateModule
 	virtual SpecialPowerUpdateInterface* getSpecialPowerUpdateInterface() { return this; }
 	virtual CommandOption getCommandOption() const { return (CommandOption)0; }
-	virtual UpdateSleepTime update();	
+	virtual UpdateSleepTime update();
 
 	// ??? ugh, public stuff that shouldn't be -- hell yeah!
 	UnsignedInt getSpecialObjectCount() const;
@@ -261,13 +261,13 @@ private:
 
 	enum PackingState
 	{
-		STATE_NONE, 
-		STATE_PACKING, 
+		STATE_NONE,
+		STATE_PACKING,
 		STATE_UNPACKING,
-		STATE_PACKED,		
-		STATE_UNPACKED,	
+		STATE_PACKED,
+		STATE_UNPACKED,
 	};
-	
+
 	AudioEventRTS									m_prepSoundLoop;
 	UnsignedInt										m_prepFrames;
 	UnsignedInt										m_animFrames;	//Used for packing/unpacking unit before or after using ability.

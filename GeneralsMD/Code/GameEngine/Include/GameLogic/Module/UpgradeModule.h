@@ -71,7 +71,7 @@ public:
 	mutable std::vector<AsciiString>	m_activationUpgradeNames;
 	mutable std::vector<AsciiString>	m_conflictingUpgradeNames;
 	mutable std::vector<AsciiString>	m_removalUpgradeNames;
-	
+
 	mutable const FXList*							m_fxListUpgrade;
 	mutable UpgradeMaskType						m_activationMask;				///< Activation only supports a single name currently
 	mutable UpgradeMaskType						m_conflictingMask;			///< Conflicts support multiple listings, and they are an OR
@@ -90,9 +90,9 @@ public:
 		m_requiresAllTriggers = false;
 	}
 
-	static const FieldParse* getFieldParse() 
+	static const FieldParse* getFieldParse()
 	{
-		static const FieldParse dataFieldParse[] = 
+		static const FieldParse dataFieldParse[] =
 		{
 			{ "TriggeredBy",		INI::parseAsciiStringVector, NULL, offsetof( UpgradeMuxData, m_activationUpgradeNames ) },
 			{ "ConflictsWith",	INI::parseAsciiStringVector, NULL, offsetof( UpgradeMuxData, m_conflictingUpgradeNames ) },
@@ -136,7 +136,7 @@ protected:
 	virtual Bool requiresAllActivationUpgrades() const = 0;
 	virtual Bool isSubObjectsUpgrade() = 0;
 	virtual void processUpgradeRemoval() = 0;
-	
+
 	void giveSelfUpgrade();
 
 	//
@@ -159,7 +159,7 @@ struct UpgradeModuleData : public BehaviorModuleData
 public:
 	UpgradeMuxData				m_upgradeMuxData;
 
-	static void buildFieldParse(MultiIniFieldParse& p) 
+	static void buildFieldParse(MultiIniFieldParse& p)
 	{
     ModuleData::buildFieldParse(p);
 		p.add(UpgradeMuxData::getFieldParse(), offsetof( UpgradeModuleData, m_upgradeMuxData ));

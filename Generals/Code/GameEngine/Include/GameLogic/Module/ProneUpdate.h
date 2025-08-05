@@ -49,7 +49,7 @@ public:
 	ProneUpdateModuleData();
 	static void buildFieldParse(MultiIniFieldParse& p);
 
-private: 
+private:
 
 };
 

@@ -23,12 +23,12 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 //----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information					                  
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //----------------------------------------------------------------------------
 //
 // Project:    Generals
@@ -46,7 +46,7 @@
 
 
 //----------------------------------------------------------------------------
-//           Includes                                                      
+//           Includes
 //----------------------------------------------------------------------------
 
 #include "GameClient/VideoPlayer.h"
@@ -74,12 +74,12 @@ class BinkVideoStream : public VideoStream
 
 		HBINK					m_handle;														///< Bink streaming handle;
 		Char					*m_memFile;													///< Pointer to memory resident file
-																											
+
 		BinkVideoStream();																///< only BinkVideoPlayer can create these
-		virtual ~BinkVideoStream();												
-																											
-	public:																							
-																											
+		virtual ~BinkVideoStream();
+
+	public:
+
 		virtual void update( void );											///< Update bink stream
 
 		virtual Bool	isFrameReady( void );								///< Is the frame ready to be displayed
@@ -116,17 +116,17 @@ class BinkVideoPlayer : public VideoPlayer
 		virtual void	init( void );														///< Initialize video playback code
 		virtual void	reset( void );													///< Reset video playback
 		virtual void	update( void );													///< Services all audio tasks. Should be called frequently
-																													
+
 		virtual void	deinit( void );													///< Close down player
-																														
-																													
-		BinkVideoPlayer();																				
-		~BinkVideoPlayer();																				
-																													
-		// service																						
+
+
+		BinkVideoPlayer();
+		~BinkVideoPlayer();
+
+		// service
 		virtual void	loseFocus( void );											///< Should be called when application loses focus
 		virtual void	regainFocus( void );										///< Should be called when application regains focus
-																												
+
 		virtual VideoStreamInterface*	open( AsciiString movieTitle );	///< Open video file for playback
 		virtual VideoStreamInterface*	load( AsciiString movieTitle );	///< Load video file in to memory for playback
 
@@ -136,7 +136,7 @@ class BinkVideoPlayer : public VideoPlayer
 
 
 //----------------------------------------------------------------------------
-//           Inlining                                                       
+//           Inlining
 //----------------------------------------------------------------------------
 
 

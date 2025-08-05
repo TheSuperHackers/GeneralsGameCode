@@ -142,7 +142,7 @@ ArchiveFile * StdBIGFileSystem::openArchiveFile(const Char *filename) {
 		fileInfo->m_archiveFilename = archiveFileName;
 		fileInfo->m_offset = fileOffset;
 		fileInfo->m_size = filesize;
-		
+
 		// read in the path name of the file.
 		Int pathIndex = -1;
 		do {
@@ -196,7 +196,7 @@ void StdBIGFileSystem::closeArchiveFile(const Char *filename) {
 	DEBUG_ASSERTCRASH(stricmp(filename, MUSIC_BIG) == 0, ("Attempting to close Archive file '%s', need to add code to handle its shutdown correctly.", filename));
 
 	// may need to do some other processing here first.
-	
+
 	delete (it->second);
 	m_archiveFileMap.erase(it);
 }

@@ -160,7 +160,7 @@ AudibleSoundClass::AudibleSoundClass (void)
 		m_LogicalSound (NULL),
 		m_StartOffset (0),
 		m_PitchFactor (1.0F)
-{	
+{
 	return ;
 }
 
@@ -233,7 +233,7 @@ AudibleSoundClass::~AudibleSoundClass (void)
 const AudibleSoundClass &
 AudibleSoundClass::operator= (const AudibleSoundClass &src)
 {
-	m_Timestamp			= src.m_Timestamp;	
+	m_Timestamp			= src.m_Timestamp;
 	m_Type				= src.m_Type;
 	m_LoopCount			= src.m_LoopCount;
 	m_LoopsLeft			= src.m_LoopsLeft;
@@ -274,7 +274,7 @@ AudibleSoundClass::Set_Buffer (SoundBufferClass *buffer)
 		m_Buffer = NULL;
 	}
 	REF_PTR_SET (m_Buffer, buffer);
-	
+
 	// Stop playing if necessary
 	bool resume = false;
 	if (m_State == STATE_PLAYING) {
@@ -346,7 +346,7 @@ AudibleSoundClass::Play (bool alloc_handle)
 		WWAudioClass::Get_Instance ()->Add_To_Playlist (this);
 		m_State				= STATE_PLAYING;
 		m_Timestamp			= ::GetTickCount ();
-		m_LoopsLeft			= m_LoopCount;		
+		m_LoopsLeft			= m_LoopCount;
 
 		// If we have a valid handle, then start playing the sample
 		if (m_SoundHandle != NULL) {
@@ -368,7 +368,7 @@ AudibleSoundClass::Play (bool alloc_handle)
 		if (m_LogicalSound == NULL && m_Definition != NULL) {
 			m_LogicalSound = m_Definition->Create_Logical ();
 		}
-		
+
 		//
 		//	Add this logical sound to the scene
 		//
@@ -509,7 +509,7 @@ AudibleSoundClass::Seek (unsigned long milliseconds)
 	MMSLockClass lock;
 
 	if ((milliseconds >= 0) && (milliseconds < m_Length)) {
-		
+
 		// Record our new position and recalculate the 'starting' timestamp
 		// from this information
 		m_CurrentPosition = milliseconds;
@@ -544,7 +544,7 @@ AudibleSoundClass::Set_Miles_Handle (MILES_HANDLE handle)
 	//	Is our data valid?
 	//
 	if (handle != INVALID_MILES_HANDLE && m_Buffer != NULL) {
-		
+
 		//
 		//	Determine which type of sound handle to create, streaming or standard 2D
 		//
@@ -588,7 +588,7 @@ AudibleSoundClass::Initialize_Miles_Handle (void)
 
 	// Do we have a valid sample handle from miles?
 	if (m_SoundHandle != NULL) {
-		
+
 		//
 		//	Initialize the handle
 		//
@@ -625,7 +625,7 @@ AudibleSoundClass::Initialize_Miles_Handle (void)
 		// Seek to the position of the sound where we last left off.
 		// For example, this sound could have gotten bumped due to a low priority,
 		// but is now back and ready to resume at the position it would have been
-		// at if it was never bumped.			
+		// at if it was never bumped.
 		Seek (m_CurrentPosition);
 
 		//
@@ -639,7 +639,7 @@ AudibleSoundClass::Initialize_Miles_Handle (void)
 		//
 		m_SoundHandle->Set_Sample_User_Data (INFO_OBJECT_PTR, (S32)this);
 	}
-		
+
 	return ;
 }
 
@@ -662,19 +662,19 @@ AudibleSoundClass::Free_Miles_Handle (void)
 		//
 		m_SoundHandle->Set_Sample_User_Data (INFO_OBJECT_PTR, NULL);
 		m_SoundHandle->End_Sample ();
-		
+
 		//
 		// Remove the association between file handle and AudibleSoundClass object
 		//
 		//m_SoundHandle->Set_Sample_User_Data (INFO_OBJECT_PTR, NULL);
-		
+
 		//
 		//	Free the sound handle object
 		//
 		delete m_SoundHandle;
 		m_SoundHandle = NULL;
 	}
-		
+
 	return ;
 }
 
@@ -695,7 +695,7 @@ AudibleSoundClass::Get_Pan (void)
 	if (m_SoundHandle != NULL) {
 		m_Pan = ((float)m_SoundHandle->Get_Sample_Pan ()) / 127.0F;
 	}
-		
+
 	return m_Pan;
 }
 
@@ -722,7 +722,7 @@ AudibleSoundClass::Set_Pan (float pan)
 	if (m_SoundHandle != NULL) {
 		m_SoundHandle->Set_Sample_Pan (int(m_Pan * 127.0F));
 	}
-		
+
 	return ;
 }
 
@@ -742,10 +742,10 @@ AudibleSoundClass::Set_Pitch_Factor (float factor)
 	//
 	// Do we have a valid sample handle from miles?
 	//
-	if (m_SoundHandle != NULL) {		
-		
+	if (m_SoundHandle != NULL) {
+
 		if (m_Buffer != NULL) {
-			
+
 			//
 			//	Get the base rate of the sound and scale our playback rate
 			// based on the factor
@@ -755,7 +755,7 @@ AudibleSoundClass::Set_Pitch_Factor (float factor)
 			m_SoundHandle->Set_Sample_Playback_Rate (new_rate);
 		}
 	}
-		
+
 	return ;
 }
 
@@ -775,7 +775,7 @@ AudibleSoundClass::Get_Playback_Rate (void)
 	if (m_SoundHandle != NULL) {
 		retval = m_SoundHandle->Get_Sample_Playback_Rate ();
 	}
-		
+
 	return retval;
 }
 
@@ -794,7 +794,7 @@ AudibleSoundClass::Set_Playback_Rate (int rate_in_hz)
 	if (m_SoundHandle != NULL) {
 		m_SoundHandle->Set_Sample_Playback_Rate (rate_in_hz);
 	}
-		
+
 	return ;
 }
 
@@ -813,7 +813,7 @@ AudibleSoundClass::Get_Volume (void)
 	if (m_SoundHandle != NULL) {
 		m_Volume = ((float)m_SoundHandle->Get_Sample_Volume ()) / 127.0F;
 	}
-		
+
 	// Return the current pan value
 	return m_Volume;
 }
@@ -841,7 +841,7 @@ AudibleSoundClass::Set_Volume (float volume)
 		float real_volume = Determine_Real_Volume ();
 		m_SoundHandle->Set_Sample_Volume (int(real_volume * 127.0F));
 	}
-		
+
 	return ;
 }
 
@@ -875,7 +875,7 @@ AudibleSoundClass::Set_Loop_Count (int count)
 	if (m_SoundHandle != NULL) {
 		m_SoundHandle->Set_Sample_Loop_Count (m_LoopCount);
 	}
-		
+
 	return ;
 }
 
@@ -1021,9 +1021,9 @@ AudibleSoundClass::Determine_Real_Volume (void) const
 
 	// Is this a piece of music or is it a sound effect?
 	if (m_Type == TYPE_MUSIC) {
-		volume = volume * WWAudioClass::Get_Instance ()->Get_Music_Volume ();	
+		volume = volume * WWAudioClass::Get_Instance ()->Get_Music_Volume ();
 	} else if (m_Type == TYPE_SOUND_EFFECT) {
-		volume = volume * WWAudioClass::Get_Instance ()->Get_Sound_Effects_Volume ();	
+		volume = volume * WWAudioClass::Get_Instance ()->Get_Sound_Effects_Volume ();
 	}
 
 	// Return the 'real' volume
@@ -1085,7 +1085,7 @@ AudibleSoundClass::Cull_Sound (bool culled)
 ////////////////////////////////////////////////////////////////////////////////////////////////
 void
 AudibleSoundClass::Set_Transform (const Matrix3D &transform)
-{	
+{
 	// Update our internal transform
 	m_PrevTransform	= m_Transform;
 	m_Transform			= transform;
@@ -1119,7 +1119,7 @@ AudibleSoundClass::Add_To_Scene (bool start_playing)
 {
 	SoundSceneClass *scene = WWAudioClass::Get_Instance ()->Get_Sound_Scene ();
 	if ((scene != NULL) && (m_Scene == NULL)) {
-		
+
 		//
 		//	Add this sound to the static culling system
 		//
@@ -1185,12 +1185,12 @@ AudibleSoundClass::Re_Sync (AudibleSoundClass &src)
 	m_bDirty				= src.m_bDirty;
 	m_DropOffRadius	= src.m_DropOffRadius;
 	m_PrevTransform	= src.m_PrevTransform;
-	
+
 	Cull_Sound (src.m_IsCulled);
 	Set_Volume (src.m_Volume);
 	Set_Pan (src.m_Pan);
 	Set_Priority (src.m_Priority);
-	Set_Transform (src.m_Transform);	
+	Set_Transform (src.m_Transform);
 	Set_Listener_Transform (src.m_ListenerTransform);
 
 	if (m_State != STATE_PLAYING) {
@@ -1234,7 +1234,7 @@ void
 AudibleSoundClass::Convert_To_Filtered (void)
 {
 	if (m_pConvertedFormat == NULL) {
-		
+
 		//
 		//	Make a copy of the sound in its new format
 		//
@@ -1256,7 +1256,7 @@ AudibleSoundClass::Convert_To_Filtered (void)
 			default:
 				(*m_pConvertedFormat) = (*this);
 				break;
-		}		
+		}
 
 		Free_Miles_Handle ();
 	}
@@ -1288,7 +1288,7 @@ AudibleSoundClass::As_Converted_Format (void)
 ////////////////////////////////////////////////////////////////////////////////////////////////
 const PersistFactoryClass &
 AudibleSoundClass::Get_Factory (void) const
-{	
+{
 	return _AudibleSoundPersistFactory;
 }
 
@@ -1326,7 +1326,7 @@ AudibleSoundDefinitionClass::AudibleSoundDefinitionClass (void)
 	//
 	NAMED_EDITABLE_PARAM (AudibleSoundDefinitionClass, ParameterClass::TYPE_SOUND_FILENAME, m_Filename, "Filename");
 	NAMED_EDITABLE_PARAM (AudibleSoundDefinitionClass, ParameterClass::TYPE_FLOAT, m_DropOffRadius, "Drop-off Radius");
-	NAMED_EDITABLE_PARAM (AudibleSoundDefinitionClass, ParameterClass::TYPE_FLOAT, m_MaxVolRadius, "Max-Vol Radius");	
+	NAMED_EDITABLE_PARAM (AudibleSoundDefinitionClass, ParameterClass::TYPE_FLOAT, m_MaxVolRadius, "Max-Vol Radius");
 	NAMED_EDITABLE_PARAM (AudibleSoundDefinitionClass, ParameterClass::TYPE_BOOL, m_Is3D, "Is 3D Sound");
 	INT_EDITABLE_PARAM   (AudibleSoundDefinitionClass, m_LoopCount, 0, 1000000);
 	FLOAT_EDITABLE_PARAM (AudibleSoundDefinitionClass, m_Volume, 0, 1.0F);
@@ -1341,24 +1341,24 @@ AudibleSoundDefinitionClass::AudibleSoundDefinitionClass (void)
 	//	Logical sound params
 	//
 	NAMED_EDITABLE_PARAM (AudibleSoundDefinitionClass, ParameterClass::TYPE_BOOL, m_CreateLogical, "Create Logical Sound");
-	NAMED_EDITABLE_PARAM (AudibleSoundDefinitionClass, ParameterClass::TYPE_FLOAT, m_LogicalDropOffRadius, "Logical Drop-off Radius");	
-	NAMED_EDITABLE_PARAM (AudibleSoundDefinitionClass, ParameterClass::TYPE_FLOAT, m_LogicalNotifyDelay, "Logical Notif Delay");		
+	NAMED_EDITABLE_PARAM (AudibleSoundDefinitionClass, ParameterClass::TYPE_FLOAT, m_LogicalDropOffRadius, "Logical Drop-off Radius");
+	NAMED_EDITABLE_PARAM (AudibleSoundDefinitionClass, ParameterClass::TYPE_FLOAT, m_LogicalNotifyDelay, "Logical Notif Delay");
 
 #ifdef	PARAM_EDITING_ON
 	//
 	//	Configure the logical type mask enumeration
-	//	
+	//
 	EnumParameterClass *param = W3DNEW EnumParameterClass (&m_LogicalTypeMask);
 	param->Set_Name ("Logical Type");
 	int count = WWAudioClass::Get_Instance ()->Get_Logical_Type_Count ();
-	for (int index = 0; index < count; index ++) {					
+	for (int index = 0; index < count; index ++) {
 		StringClass display_name(0,true);
 		int id = WWAudioClass::Get_Instance ()->Get_Logical_Type (index, display_name);
 		param->Add_Value (display_name, id);
 	}
 	GENERIC_EDITABLE_PARAM(AudibleSoundDefinitionClass, param);
 #endif
-	
+
 	NAMED_EDITABLE_PARAM (AudibleSoundDefinitionClass, ParameterClass::TYPE_COLOR, m_AttenuationSphereColor, "Sphere Color");
 
 	return ;
@@ -1367,7 +1367,7 @@ AudibleSoundDefinitionClass::AudibleSoundDefinitionClass (void)
 // SKB: Put here because of conficts with CLASSID_???? with other projects.
 uint32 AudibleSoundDefinitionClass::Get_Class_ID (void) const
 {
-	return CLASSID_SOUND; 
+	return CLASSID_SOUND;
 }
 
 
@@ -1400,7 +1400,7 @@ AudibleSoundDefinitionClass::Initialize_From_Sound (AudibleSoundClass *sound)
 		//	Copy the values that we can from the sound object
 		//
 		m_Filename			= sound->Get_Filename ();
-		m_DropOffRadius	= sound->Get_DropOff_Radius ();		
+		m_DropOffRadius	= sound->Get_DropOff_Radius ();
 		m_Priority			= sound->Peek_Priority ();
 		m_Is3D				= (sound_3d != NULL);
 		m_Type				= sound->Get_Type ();
@@ -1425,7 +1425,7 @@ AudibleSoundDefinitionClass::Initialize_From_Sound (AudibleSoundClass *sound)
 ////////////////////////////////////////////////////////////////////////////////////////////////
 const PersistFactoryClass &
 AudibleSoundDefinitionClass::Get_Factory (void) const
-{	
+{
 	return _AudibleSoundDefPersistFactory;
 }
 
@@ -1466,7 +1466,7 @@ AudibleSoundDefinitionClass::Load (ChunkLoadClass &cload)
 
 	while (cload.Open_Chunk ()) {
 		switch (cload.Cur_Chunk_ID ()) {
-			
+
 			case CHUNKID_VARIABLES:
 				retval &= Load_Variables (cload);
 				break;
@@ -1507,7 +1507,7 @@ AudibleSoundDefinitionClass::Save_Variables (ChunkSaveClass &csave)
 	WRITE_MICRO_CHUNK_WWSTRING (csave, VARID_FILENAME,			m_Filename)
 	WRITE_MICRO_CHUNK_WWSTRING (csave, VARID_DISPLAY_TEXT,	m_DisplayText)
 	WRITE_MICRO_CHUNK (csave, VARID_START_OFFSET,				m_StartOffset);
-	WRITE_MICRO_CHUNK (csave, VARID_PITCH_FACTOR,				m_PitchFactor);	
+	WRITE_MICRO_CHUNK (csave, VARID_PITCH_FACTOR,				m_PitchFactor);
 
 	//
 	//	Save the logical variables
@@ -1536,7 +1536,7 @@ AudibleSoundDefinitionClass::Load_Variables (ChunkLoadClass &cload)
 	//
 	while (cload.Open_Micro_Chunk ()) {
 		switch (cload.Cur_Micro_Chunk_ID ()) {
-			
+
 			READ_MICRO_CHUNK (cload, VARID_PRIORITY,					m_Priority)
 			READ_MICRO_CHUNK (cload, VARID_VOLUME,						m_Volume)
 			READ_MICRO_CHUNK (cload, VARID_PAN,							m_Pan)
@@ -1545,12 +1545,12 @@ AudibleSoundDefinitionClass::Load_Variables (ChunkLoadClass &cload)
 			READ_MICRO_CHUNK (cload, VARID_MAX_VOL,					m_MaxVolRadius)
 			READ_MICRO_CHUNK (cload, VARID_TYPE,						m_Type)
 			READ_MICRO_CHUNK (cload, VARID_IS3D,						m_Is3D)
-			READ_MICRO_CHUNK_WWSTRING (cload, VARID_FILENAME,		m_Filename)			
+			READ_MICRO_CHUNK_WWSTRING (cload, VARID_FILENAME,		m_Filename)
 			READ_MICRO_CHUNK_WWSTRING (cload, VARID_DISPLAY_TEXT,	m_DisplayText)
 			READ_MICRO_CHUNK (cload, VARID_LOGICAL_MASK,				m_LogicalTypeMask)
 			READ_MICRO_CHUNK (cload, VARID_LOGICAL_DELAY,			m_LogicalNotifyDelay)
 			READ_MICRO_CHUNK (cload, VARID_CREATE_LOGICAL,			m_CreateLogical)
-			READ_MICRO_CHUNK (cload, VARID_LOGICAL_DROP_OFF,		m_LogicalDropOffRadius)	
+			READ_MICRO_CHUNK (cload, VARID_LOGICAL_DROP_OFF,		m_LogicalDropOffRadius)
 			READ_MICRO_CHUNK (cload, VARID_SPHERE_COLOR,				m_AttenuationSphereColor)
 			READ_MICRO_CHUNK (cload, VARID_START_OFFSET,				m_StartOffset);
 			READ_MICRO_CHUNK (cload, VARID_PITCH_FACTOR,				m_PitchFactor);
@@ -1607,7 +1607,7 @@ AudibleSoundDefinitionClass::Create_Sound (int classid_hint) const
 	//	Did we successfully create the sound?
 	//
 	if (new_sound != NULL) {
-		
+
 		//
 		//	Configure the sound
 		//
@@ -1618,7 +1618,7 @@ AudibleSoundDefinitionClass::Create_Sound (int classid_hint) const
 		new_sound->Set_DropOff_Radius (m_DropOffRadius);
 		new_sound->Set_Definition ((AudibleSoundDefinitionClass *)this);
 		new_sound->Set_Start_Offset (m_StartOffset);
-		new_sound->Set_Pitch_Factor (m_PitchFactor);		
+		new_sound->Set_Pitch_Factor (m_PitchFactor);
 
 		if (m_Is3D) {
 			((Sound3DClass *)new_sound)->Set_Max_Vol_Radius (m_MaxVolRadius);
@@ -1640,13 +1640,13 @@ AudibleSoundDefinitionClass::Create_Logical (void)
 	LogicalSoundClass *logical_sound = NULL;
 
 	if (m_CreateLogical) {
-		
+
 		//
 		//	Create and configure the logical sound
 		//
 		logical_sound = W3DNEW LogicalSoundClass;
 		logical_sound->Set_Type_Mask (m_LogicalTypeMask);
-		logical_sound->Set_Notify_Delay (m_LogicalNotifyDelay);		
+		logical_sound->Set_Notify_Delay (m_LogicalNotifyDelay);
 		logical_sound->Set_Single_Shot (m_LoopCount != 0);
 
 		//
@@ -1656,7 +1656,7 @@ AudibleSoundDefinitionClass::Create_Logical (void)
 		if (m_LogicalDropOffRadius < 0) {
 			logical_sound->Set_DropOff_Radius (m_DropOffRadius);
 		} else {
-			logical_sound->Set_DropOff_Radius (m_LogicalDropOffRadius);			
+			logical_sound->Set_DropOff_Radius (m_LogicalDropOffRadius);
 		}
 	}
 
@@ -1693,12 +1693,12 @@ AudibleSoundClass::Save (ChunkSaveClass &csave)
 		WRITE_MICRO_CHUNK (csave, VARID_TRANSFORM, m_Transform);
 		WRITE_MICRO_CHUNK (csave, VARID_PREV_TRANSFORM, m_PrevTransform);
 		WRITE_MICRO_CHUNK (csave, VARID_IS_CULLED, m_IsCulled);
-		WRITE_MICRO_CHUNK (csave, VARID_IS_DIRTY, m_bDirty);			
+		WRITE_MICRO_CHUNK (csave, VARID_IS_DIRTY, m_bDirty);
 		WRITE_MICRO_CHUNK (csave, VARID_DROP_OFF, m_DropOffRadius);
 		WRITE_MICRO_CHUNK (csave, VARID_START_OFFSET, m_StartOffset);
 		WRITE_MICRO_CHUNK (csave, VARID_PITCH_FACTOR, m_PitchFactor);
 		WRITE_MICRO_CHUNK (csave, VARID_LISTENER_TRANSFORM, m_ListenerTransform);
-		
+
 		if (m_Buffer != NULL) {
 			WRITE_MICRO_CHUNK_STRING (csave, VARID_FILENAME, m_Buffer->Get_Filename ());
 		}
@@ -1723,7 +1723,7 @@ AudibleSoundClass::Load (ChunkLoadClass &cload)
 	using namespace AUDIBLE_SOUND_SAVELOAD;
 
 	StringClass filename(0,true);
-	while (cload.Open_Chunk ()) {		
+	while (cload.Open_Chunk ()) {
 		switch (cload.Cur_Chunk_ID ()) {
 
 			case CHUNKID_BASE_CLASS:
@@ -1751,14 +1751,14 @@ AudibleSoundClass::Load (ChunkLoadClass &cload)
 						READ_MICRO_CHUNK (cload, VARID_TRANSFORM, m_Transform);
 						READ_MICRO_CHUNK (cload, VARID_PREV_TRANSFORM, m_PrevTransform);
 						READ_MICRO_CHUNK (cload, VARID_IS_CULLED, m_IsCulled);
-						READ_MICRO_CHUNK (cload, VARID_IS_DIRTY, m_bDirty);			
+						READ_MICRO_CHUNK (cload, VARID_IS_DIRTY, m_bDirty);
 						READ_MICRO_CHUNK (cload, VARID_DROP_OFF, m_DropOffRadius);
 						READ_MICRO_CHUNK (cload, VARID_START_OFFSET, m_StartOffset);
 						READ_MICRO_CHUNK (cload, VARID_PITCH_FACTOR, m_PitchFactor);
 						READ_MICRO_CHUNK (cload, VARID_LISTENER_TRANSFORM, m_ListenerTransform);
-						
+
 						READ_MICRO_CHUNK_WWSTRING (cload, VARID_FILENAME, filename);
-						
+
 						case VARID_THIS_PTR:
 						{
 							AudibleSoundClass *old_ptr = NULL;

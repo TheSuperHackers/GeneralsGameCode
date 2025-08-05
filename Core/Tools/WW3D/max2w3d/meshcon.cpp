@@ -17,24 +17,24 @@
 */
 
 /* $Header: /Commando/Code/Tools/max2w3d/meshcon.cpp 34    10/27/00 4:12p Greg_h $ */
-/*********************************************************************************************** 
- ***                            Confidential - Westwood Studios                              *** 
- *********************************************************************************************** 
- *                                                                                             * 
- *                 Project Name : Commando / G Math Library                                    * 
- *                                                                                             * 
- *                     $Archive:: /Commando/Code/Tools/max2w3d/meshcon.cpp                    $* 
- *                                                                                             * 
- *                      $Author:: Greg_h                                                      $* 
- *                                                                                             * 
- *                     $Modtime:: 10/27/00 10:39a                                             $* 
- *                                                                                             * 
- *                    $Revision:: 34                                                          $* 
- *                                                                                             * 
- *---------------------------------------------------------------------------------------------* 
- * Functions:                                                                                  * 
- *   MeshConnectionsClass::MeshConnectionsClass -- Constructor                                 * 
- *   MeshConnectionsClass::~MeshConnectionsClass -- Destructor                                 * 
+/***********************************************************************************************
+ ***                            Confidential - Westwood Studios                              ***
+ ***********************************************************************************************
+ *                                                                                             *
+ *                 Project Name : Commando / G Math Library                                    *
+ *                                                                                             *
+ *                     $Archive:: /Commando/Code/Tools/max2w3d/meshcon.cpp                    $*
+ *                                                                                             *
+ *                      $Author:: Greg_h                                                      $*
+ *                                                                                             *
+ *                     $Modtime:: 10/27/00 10:39a                                             $*
+ *                                                                                             *
+ *                    $Revision:: 34                                                          $*
+ *                                                                                             *
+ *---------------------------------------------------------------------------------------------*
+ * Functions:                                                                                  *
+ *   MeshConnectionsClass::MeshConnectionsClass -- Constructor                                 *
+ *   MeshConnectionsClass::~MeshConnectionsClass -- Destructor                                 *
  *   MeshConnectionsClass::Get_Aggregate_Data -- name and bone for the given aggregate         *
  *   MeshConnectionsClass::Get_Proxy_Data -- name and transform for the specified proxy object *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
@@ -48,22 +48,22 @@
 #include "geometryexportcontext.h"
 
 
-/*********************************************************************************************** 
- * MeshConnectionsClass::MeshConnectionsClass -- Constructor                                   * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
+/***********************************************************************************************
+ * MeshConnectionsClass::MeshConnectionsClass -- Constructor                                   *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
  *   10/19/2000 gth : New version which uses the GeometryExportTasks                           *
  *=============================================================================================*/
 MeshConnectionsClass::MeshConnectionsClass
-(	
+(
 	DynamicVectorClass<GeometryExportTaskClass *> sub_object_list,
-	GeometryExportContextClass & context 
+	GeometryExportContextClass & context
 ) :
 	CurTime(context.CurTime),
 	Origin(context.Origin)
@@ -75,7 +75,7 @@ MeshConnectionsClass::MeshConnectionsClass
 	** Set the name, count the sub-objects and aggregates
 	*/
 	Set_W3D_Name(Name,context.ModelName);
-	
+
 	/*
 	** For each sub-object, record the bone it is attached to and its name
 	*/
@@ -98,17 +98,17 @@ MeshConnectionsClass::MeshConnectionsClass
 }
 
 
-/*********************************************************************************************** 
- * MeshConnectionsClass::~MeshConnectionsClass -- Destructor                                   * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   07/24/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * MeshConnectionsClass::~MeshConnectionsClass -- Destructor                                   *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   07/24/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
 MeshConnectionsClass::~MeshConnectionsClass(void)
 {

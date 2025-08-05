@@ -50,7 +50,7 @@ friend class XferSave;
 friend class XferCRC;
 
 public:
-	
+
 	Snapshot( void );
 	~Snapshot( void );
 

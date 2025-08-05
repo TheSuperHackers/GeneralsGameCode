@@ -135,7 +135,7 @@ protected:
 	RenderObjClass **m_nonOccludersOrOccludees;	///<objects which are neither bockers or blockees (small rocks, shrubs, etc.).
 	Int m_numPotentialOccluders;
 	Int m_numPotentialOccludees;
-	Int m_numNonOccluderOrOccludee;	
+	Int m_numNonOccluderOrOccludee;
 
 	CameraClass *m_camera;
 };  // end class RTS3DScene
@@ -160,7 +160,7 @@ public:
 	void draw();
 	void reset(){}
 	void doRender(CameraClass * cam);
-	
+
 protected:
 	RenderObjClass *m_status;
 	CameraClass *m_camera;

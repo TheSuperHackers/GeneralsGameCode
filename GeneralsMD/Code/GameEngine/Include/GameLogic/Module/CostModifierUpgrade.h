@@ -24,12 +24,12 @@
 
 // FILE: CostModifierUpgrade.h /////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Electronic Arts Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2002 - All Rights Reserved                  
-//                                                                          
+//
+//                       Electronic Arts Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2002 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 //	created:	Aug 2002
@@ -37,8 +37,8 @@
 //	Filename: 	CostModifierUpgrade.h
 //
 //	author:		Chris Huybregts
-//	
-//	purpose:	
+//
+//	purpose:
 //
 //-----------------------------------------------------------------------------
 ///////////////////////////////////////////////////////////////////////////////
@@ -107,7 +107,7 @@ public:
 	// virtual destructor prototype defined by MemoryPoolObject
 
 	virtual void onDelete( void );																///< we have some work to do when this module goes away
-	virtual void onCapture( Player *oldOwner, Player *newOwner ); 
+	virtual void onCapture( Player *oldOwner, Player *newOwner );
 
 protected:
 

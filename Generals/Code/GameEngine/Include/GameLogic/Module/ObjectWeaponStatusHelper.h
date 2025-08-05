@@ -50,7 +50,7 @@ class ObjectWeaponStatusHelper : public ObjectHelper
 {
 
 	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( ObjectWeaponStatusHelper, ObjectWeaponStatusHelperModuleData )
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(ObjectWeaponStatusHelper, "ObjectWeaponStatusHelperPool" )	
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(ObjectWeaponStatusHelper, "ObjectWeaponStatusHelperPool" )
 
 protected:
 
@@ -65,9 +65,9 @@ protected:
 	}
 public:
 
-	ObjectWeaponStatusHelper( Thing *thing, const ModuleData *modData ) : 
-		ObjectHelper( thing, modData ) 
-	{ 
+	ObjectWeaponStatusHelper( Thing *thing, const ModuleData *modData ) :
+		ObjectHelper( thing, modData )
+	{
 		// unlike other helpers, this one needs to start active.
 		DEBUG_ASSERTCRASH(getObject()->getTemplate()->canPossiblyHaveAnyWeapon(), ("should not be instantiated if we have no weapon"));
 		setWakeFrame(getObject(), UPDATE_SLEEP_NONE);
@@ -78,7 +78,7 @@ public:
 	{
 		getObject()->adjustModelConditionForWeaponStatus();
 		// unlike other helpers, this one must run every frame.
-		return UPDATE_SLEEP_NONE; 
+		return UPDATE_SLEEP_NONE;
 	}
 };
 

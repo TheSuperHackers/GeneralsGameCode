@@ -26,8 +26,8 @@
  *                                                                                             *
  *              Original Author:: Nathaniel Hoffman                                            *
  *                                                                                             *
- *                       Author : Kenny Mitchell                                               * 
- *                                                                                             * 
+ *                       Author : Kenny Mitchell                                               *
+ *                                                                                             *
  *                     $Modtime:: 06/27/02 1:27p                                              $*
  *                                                                                             *
  *                    $Revision:: 12                                                          $*
@@ -105,13 +105,13 @@ enum WW3DFormat {
 enum WW3DZFormat
 {
 	WW3D_ZFORMAT_UNKNOWN=0,
-	WW3D_ZFORMAT_D16_LOCKABLE, // 16-bit z-buffer bit depth. This is an application-lockable surface format. 
-	WW3D_ZFORMAT_D32, // 32-bit z-buffer bit depth. 
-	WW3D_ZFORMAT_D15S1, // 16-bit z-buffer bit depth where 15 bits are reserved for the depth channel and 1 bit is reserved for the stencil channel. 
-	WW3D_ZFORMAT_D24S8, // 32-bit z-buffer bit depth using 24 bits for the depth channel and 8 bits for the stencil channel. 
-	WW3D_ZFORMAT_D16, // 16-bit z-buffer bit depth. 
-	WW3D_ZFORMAT_D24X8, // 32-bit z-buffer bit depth using 24 bits for the depth channel. 
-	WW3D_ZFORMAT_D24X4S4, // 32-bit z-buffer bit depth using 24 bits for the depth channel and 4 bits for the stencil channel. 
+	WW3D_ZFORMAT_D16_LOCKABLE, // 16-bit z-buffer bit depth. This is an application-lockable surface format.
+	WW3D_ZFORMAT_D32, // 32-bit z-buffer bit depth.
+	WW3D_ZFORMAT_D15S1, // 16-bit z-buffer bit depth where 15 bits are reserved for the depth channel and 1 bit is reserved for the stencil channel.
+	WW3D_ZFORMAT_D24S8, // 32-bit z-buffer bit depth using 24 bits for the depth channel and 8 bits for the stencil channel.
+	WW3D_ZFORMAT_D16, // 16-bit z-buffer bit depth.
+	WW3D_ZFORMAT_D24X8, // 32-bit z-buffer bit depth using 24 bits for the depth channel.
+	WW3D_ZFORMAT_D24X4S4, // 32-bit z-buffer bit depth using 24 bits for the depth channel and 4 bits for the stencil channel.
 #ifdef _XBOX
 	WW3D_ZFORMAT_LIN_D24S8,
 	WW3D_ZFORMAT_LIN_F24S8,

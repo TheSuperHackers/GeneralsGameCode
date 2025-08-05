@@ -33,8 +33,8 @@ static const char *THUMBNAIL_FILENAME = "thumbnails.dat";
 
 ThumbnailClass::ThumbnailClass(const char* name, unsigned char* bitmap, unsigned w, unsigned h, bool allocated)
 	:
-	Name(name), 
-	Bitmap(bitmap), 
+	Name(name),
+	Bitmap(bitmap),
 	Allocated(allocated),
 	Width(w),
 	Height(h)
@@ -53,8 +53,8 @@ ThumbnailClass::ThumbnailClass(const char* name, unsigned char* bitmap, unsigned
 
 ThumbnailClass::ThumbnailClass(const StringClass& filename)
 	:
-	Bitmap(0), 
-	Name(filename), 
+	Bitmap(0),
+	Name(filename),
 	Allocated(false),
 	Width(0),
 	Height(0)
@@ -70,10 +70,10 @@ ThumbnailClass::ThumbnailClass(const StringClass& filename)
 		Allocated=true;
 		dds_file.Copy_Level_To_Surface(
 			0,			// Level
-			WW3D_FORMAT_A8R8G8B8, 
-			Width, 
-			Height, 
-			Bitmap, 
+			WW3D_FORMAT_A8R8G8B8,
+			Width,
+			Height,
+			Bitmap,
 			Width*4);
 	}
 	// If DDS file can't be used try loading from TGA
@@ -109,7 +109,7 @@ ThumbnailClass::ThumbnailClass(const StringClass& filename)
 
 		dest_format=WW3D_FORMAT_A8R8G8B8;
 		BitmapHandlerClass::Copy_Image(
-			Bitmap, 
+			Bitmap,
 			Width,
 			Height,
 			Width*4,
@@ -181,13 +181,13 @@ void ThumbnailClass::Init()
 
 
 					// Make sure the file is available and the timestamp matches
-					file_auto_ptr myfile(_TheFileFactory,name);	
+					file_auto_ptr myfile(_TheFileFactory,name);
 					if (myfile->Is_Available()) {
 						myfile->Open(FileClass::READ);
 						if (date_time==myfile->Get_Date_Time()) {
 							W3DNEW ThumbnailClass(
-								name, 
-								_ThumbnailMemory+offset-total_header_length, 
+								name,
+								_ThumbnailMemory+offset-total_header_length,
 								width,
 								height,
 								false);
@@ -251,7 +251,7 @@ void ThumbnailClass::Deinit()
 			int width=thumb->Get_Width();
 			int height=thumb->Get_Height();
 			unsigned long date_time=0;
-			file_auto_ptr myfile(_TheFileFactory,name);	
+			file_auto_ptr myfile(_TheFileFactory,name);
 			if (myfile->Is_Available()) {
 				myfile->Open(FileClass::READ);
 				date_time=myfile->Get_Date_Time();
@@ -275,7 +275,7 @@ void ThumbnailClass::Deinit()
 			thumb_file->Write(thumb->Peek_Bitmap(),width*height*4);
 		}
 
-		thumb_file->Close();							
+		thumb_file->Close();
 #endif
 	}
 

@@ -88,7 +88,7 @@ protected:
 	Bool isWindowInClipboard( GameWindow *window, GameWindow **list );
 	void linkToClipboard( GameWindow *window, GameWindow **list );  ///< add window to clipboard
 	void unlinkFromClipboard( GameWindow *window, GameWindow **list );  ///< remove window from clipboard
-		
+
 	/** remove selected children from the select list that have a parent
 	also in the select list */
 	void removeSupervisedChildSelections( void );

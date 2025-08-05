@@ -23,13 +23,13 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-//	
-// FILE: SabotageInternetCenterCrateCollide.cpp 
+//
+// FILE: SabotageInternetCenterCrateCollide.cpp
 // Author: Kris Morness, July 2003
 // Desc:   A crate (actually a saboteur - mobile crate) that temporarily disables an internet center
-//	
+//
 ///////////////////////////////////////////////////////////////////////////////////////////////////
- 
+
 
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
@@ -68,13 +68,13 @@
 //-------------------------------------------------------------------------------------------------
 SabotageInternetCenterCrateCollide::SabotageInternetCenterCrateCollide( Thing *thing, const ModuleData* moduleData ) : CrateCollide( thing, moduleData )
 {
-} 
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 SabotageInternetCenterCrateCollide::~SabotageInternetCenterCrateCollide( void )
 {
-}  
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -131,7 +131,7 @@ static void disableInternetCenterSpyVision( Object *obj, void *userData )
 			if( svUpdate )
 			{
 				//Turn off the vision temporarily. When it recovers from being disabled, the
-				//timer will need to start over from scratch so it won't come on right away unless 
+				//timer will need to start over from scratch so it won't come on right away unless
 				//it's a permanent spy vision.
 				svUpdate->setDisabledUntilFrame( frame );
 			}
@@ -165,7 +165,7 @@ Bool SabotageInternetCenterCrateCollide::executeCrateBehavior( Object *other )
 
 	//Loop through every internet center to temporarily disable the spy vision upgrades.
 	UnsignedInt frame = TheGameLogic->getFrame() + getSabotageInternetCenterCrateCollideModuleData()->m_sabotageFrames;
-	
+
 	//Disable all internet center spy visions (they stack) without visually disabling the other centers.
 	//Kris: Note -- Design has changed that we only can have one center at a time... logically, this code
 	//doesn't need to change.
@@ -181,7 +181,7 @@ Bool SabotageInternetCenterCrateCollide::executeCrateBehavior( Object *other )
 	//Disable all the hackers inside.
 	ContainModuleInterface *contain = other->getContain();
 	contain->iterateContained( disableHacker, (void*)frame, FALSE );
-		
+
 	return TRUE;
 }
 

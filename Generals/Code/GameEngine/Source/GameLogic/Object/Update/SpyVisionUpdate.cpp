@@ -24,7 +24,7 @@
 
 // FILE: SpyVisionUpdate.cpp /////////////////////////////////////////////////////////////////
 // Author: Graham Smallwood, September 2002
-// Desc:   Special Power will spy on the vision of all enemy players.  
+// Desc:   Special Power will spy on the vision of all enemy players.
 //				Putting a SpecialPower in a behavior takes a big huge amount of code duplication and
 //				has no precedent.
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -40,10 +40,10 @@
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void SpyVisionUpdateModuleData::buildFieldParse(MultiIniFieldParse& p) 
+void SpyVisionUpdateModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
   UpdateModuleData::buildFieldParse(p);
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
 		{ 0, 0, 0, 0 }
 	};
@@ -72,7 +72,7 @@ void SpyVisionUpdate::activateSpyVision( UnsignedInt duration )
 	m_deactivateFrame = now + duration;
 
 	doActivationWork( TRUE );
-		
+
 	setWakeFrame( getObject(), UPDATE_SLEEP(duration) );
 }
 
@@ -96,7 +96,7 @@ void SpyVisionUpdate::doActivationWork( Bool setting )
 	Player *ourPlayer = getObject()->getControllingPlayer();
 	if( ourPlayer == NULL  ||  ThePlayerList == NULL )
 		return;
-	
+
 	for (Int i=0; i < ThePlayerList->getPlayerCount(); ++i)
 	{
 		Player *player = ThePlayerList->getNthPlayer(i);
@@ -112,7 +112,7 @@ void SpyVisionUpdate::onDelete( void )
 	// If I was left on at the time of death, then turn me off.
 	if( m_deactivateFrame )
 		doActivationWork( FALSE );
-} 
+}
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */

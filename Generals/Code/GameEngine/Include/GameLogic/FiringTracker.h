@@ -52,7 +52,7 @@ class FiringTrackerModuleData : public ModuleData
 class FiringTracker : public UpdateModule
 {
 	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( FiringTracker, FiringTrackerModuleData )
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(FiringTracker, "FiringTrackerPool" )	
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(FiringTracker, "FiringTrackerPool" )
 public:
 	FiringTracker(Thing *thing, const ModuleData *modData);
 	void shotFired(const Weapon* weaponFired, ObjectID victimID );			///< Owner just fired this weapon at this Object

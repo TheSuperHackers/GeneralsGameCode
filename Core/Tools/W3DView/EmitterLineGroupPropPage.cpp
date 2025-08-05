@@ -87,7 +87,7 @@ void
 EmitterLineGroupPropPageClass::Initialize (void)
 {
 	SAFE_DELETE_ARRAY (m_BlurTimes.KeyTimes);
-	SAFE_DELETE_ARRAY (m_BlurTimes.Values);	
+	SAFE_DELETE_ARRAY (m_BlurTimes.Values);
 
 	if (m_pEmitterList != NULL) {
 		m_Lifetime = m_pEmitterList->Get_Lifetime ();
@@ -115,15 +115,15 @@ EmitterLineGroupPropPageClass::Initialize (void)
 /////////////////////////////////////////////////////////////////////////////
 // EmitterLineGroupPropPageClass message handlers
 
-BOOL EmitterLineGroupPropPageClass::OnInitDialog() 
+BOOL EmitterLineGroupPropPageClass::OnInitDialog()
 {
 	CPropertyPage::OnInitDialog();
-	
+
 	//
 	// Create the keyframe control
 	//
 	m_BlurTimeBar = ColorBarClass::Get_Color_Bar (::GetDlgItem (m_hWnd, IDC_BLUR_TIME_BAR));
-	
+
 	//
 	// Setup the spinners
 	//
@@ -148,7 +148,7 @@ BOOL EmitterLineGroupPropPageClass::OnInitDialog()
 										0);
 		m_BlurTimeBar->Set_Graph_Percent (index + 1, Normalize_Blur_Time(m_BlurTimes.Values[index]));
 	}
-	
+
 	return TRUE;  // return TRUE unless you set the focus to a control
 	              // EXCEPTION: OCX Property Pages should return FALSE
 }
@@ -188,9 +188,9 @@ EmitterLineGroupPropPageClass::Update_Blur_Times (void)
 
 		//
 		//	Get all the key frames and add them to our structure
-		//	
+		//
 		for (int index = 1; index < count; index ++) {
-			m_BlurTimeBar->Get_Point (index, &position, &red, &green, &blue);			
+			m_BlurTimeBar->Get_Point (index, &position, &red, &green, &blue);
 			m_BlurTimes.KeyTimes[index - 1] = position * m_Lifetime;
 			m_BlurTimes.Values[index - 1] = Denormalize_Blur_Time(m_BlurTimeBar->Get_Graph_Percent (index) );
 		}
@@ -227,7 +227,7 @@ EmitterLineGroupPropPageClass::On_Lifetime_Changed (float lifetime)
 	return ;
 }
 
-BOOL EmitterLineGroupPropPageClass::OnCommand(WPARAM wParam, LPARAM lParam) 
+BOOL EmitterLineGroupPropPageClass::OnCommand(WPARAM wParam, LPARAM lParam)
 {
 	switch (LOWORD (wParam))
 	{
@@ -235,7 +235,7 @@ BOOL EmitterLineGroupPropPageClass::OnCommand(WPARAM wParam, LPARAM lParam)
 		{
 			// Update the emitter
 			if ((HIWORD (wParam) == EN_KILLFOCUS) &&
-				SendDlgItemMessage (LOWORD (wParam), EM_GETMODIFY)) 
+				SendDlgItemMessage (LOWORD (wParam), EM_GETMODIFY))
 			{
 				SendDlgItemMessage (LOWORD (wParam), EM_SETMODIFY, (WPARAM)0);
 				m_BlurTimes.Rand = ::GetDlgItemFloat (m_hWnd, IDC_BLUR_TIME_RANDOM_EDIT);
@@ -244,14 +244,14 @@ BOOL EmitterLineGroupPropPageClass::OnCommand(WPARAM wParam, LPARAM lParam)
 			} else if (HIWORD (wParam) == EN_CHANGE) {
 				SetModified ();
 			}
-		}		
+		}
 		break;
-	}	
-		
+	}
+
 	return CPropertyPage::OnCommand(wParam, lParam);
 }
 
-BOOL EmitterLineGroupPropPageClass::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult) 
+BOOL EmitterLineGroupPropPageClass::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult)
 {
 	CBR_NMHDR *color_bar_hdr = (CBR_NMHDR *)lParam;
 
@@ -260,7 +260,7 @@ BOOL EmitterLineGroupPropPageClass::OnNotify(WPARAM wParam, LPARAM lParam, LRESU
 	//
 	NMHDR *pheader = (NMHDR *)lParam;
 	if ((pheader != NULL) && (pheader->code == UDN_DELTAPOS)) {
-		LPNMUPDOWN pupdown = (LPNMUPDOWN)lParam;		
+		LPNMUPDOWN pupdown = (LPNMUPDOWN)lParam;
 		::Update_Spinner_Buddy (pheader->hwndFrom, pupdown->iDelta);
 	}
 
@@ -271,8 +271,8 @@ BOOL EmitterLineGroupPropPageClass::OnNotify(WPARAM wParam, LPARAM lParam, LRESU
 	{
 		case IDC_BLUR_TIME_BAR:
 		{
-			if (color_bar_hdr->hdr.code == CBRN_DBLCLK_POINT) {			
-				
+			if (color_bar_hdr->hdr.code == CBRN_DBLCLK_POINT) {
+
 				//
 				//	Allow the user to edit the keyframe
 				//
@@ -285,7 +285,7 @@ BOOL EmitterLineGroupPropPageClass::OnNotify(WPARAM wParam, LPARAM lParam, LRESU
 
 					m_BlurTimeBar->Set_Redraw (false);
 					m_BlurTimeBar->Set_Graph_Percent (color_bar_hdr->key_index, norm_val);
-					
+
 					//
 					//	Determine if the user changed the 'max' or 'min' frame
 					//
@@ -307,10 +307,10 @@ BOOL EmitterLineGroupPropPageClass::OnNotify(WPARAM wParam, LPARAM lParam, LRESU
 					//	Renormalize the BlurTimeBar key frame points if necessary
 					//
 					if ((new_max != m_MaxBlurTime) || (new_min != m_MinBlurTime)) {
-						
+
 						int count = m_BlurTimeBar->Get_Point_Count ();
 						for (int index = 0; index < count; index ++) {
-							
+
 							float frame = Denormalize_Blur_Time(m_BlurTimeBar->Get_Graph_Percent (index));
 							float new_norm = Normalize_Blur_Time(frame,new_min,new_max);
 
@@ -325,20 +325,20 @@ BOOL EmitterLineGroupPropPageClass::OnNotify(WPARAM wParam, LPARAM lParam, LRESU
 
 					//
 					// Update the emitter
-					//					
+					//
 					Update_Blur_Times ();
 					m_pEmitterList->Set_Blur_Time_Keyframes (m_BlurTimes);
 					SetModified ();
 				}
 			} else if ((color_bar_hdr->hdr.code == CBRN_MOVING_POINT) ||
-						  (color_bar_hdr->hdr.code == CBRN_DELETED_POINT)) {			
-				
+						  (color_bar_hdr->hdr.code == CBRN_DELETED_POINT)) {
+
 				//
 				// Update the emitter
 				//
 				Update_Blur_Times ();
 				m_pEmitterList->Set_Blur_Time_Keyframes (m_BlurTimes);
-				SetModified ();					
+				SetModified ();
 			}
 		}
 		break;
@@ -352,7 +352,7 @@ BOOL EmitterLineGroupPropPageClass::OnNotify(WPARAM wParam, LPARAM lParam, LRESU
 		}
 		break;
 	}
-	
+
 	return CPropertyPage::OnNotify(wParam, lParam, pResult);
 }
 

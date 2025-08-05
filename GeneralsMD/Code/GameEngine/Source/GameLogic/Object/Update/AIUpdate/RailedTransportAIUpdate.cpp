@@ -53,7 +53,7 @@ void RailedTransportAIUpdateModuleData::buildFieldParse( MultiIniFieldParse &p )
 {
   AIUpdateModuleData::buildFieldParse( p );
 
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
 		{ "PathPrefixName",		INI::parseAsciiString, NULL,	offsetof( RailedTransportAIUpdateModuleData, m_pathPrefixName ) },
 		{ 0, 0, 0, 0 }
@@ -66,7 +66,7 @@ void RailedTransportAIUpdateModuleData::buildFieldParse( MultiIniFieldParse &p )
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 RailedTransportAIUpdate::RailedTransportAIUpdate( Thing *thing, const ModuleData *moduleData )
-											 : AIUpdateInterface( thing, moduleData )              
+											 : AIUpdateInterface( thing, moduleData )
 {
 
 	m_inTransit = FALSE;
@@ -203,7 +203,7 @@ UpdateSleepTime RailedTransportAIUpdate::update( void )
 	Locomotor *currentLocomotor = getCurLocomotor();
 	if( currentLocomotor )
 		currentLocomotor->setUltraAccurate( TRUE );
-	
+
 	//
 	// if we have no current path selected pick one and move to the end waypoint of that
 	// path.  this will set us up in an initial position at the end of the closest path
@@ -218,14 +218,14 @@ UpdateSleepTime RailedTransportAIUpdate::update( void )
 	//
 	if( m_inTransit )
 	{
-	
+
 		// sanity
 		DEBUG_ASSERTCRASH( m_currentPath != INVALID_PATH,
 											 ("RailedTransportAIUpdate: Invalid current path '%s'", m_currentPath) );
 
 		// get our target waypoint
 		Waypoint *waypoint = TheTerrainLogic->getWaypointByID( m_path[ m_currentPath ].endWaypointID );
-		
+
 		// sanity
 		DEBUG_ASSERTCRASH( waypoint, ("RailedTransportAIUpdate: Invalid target waypoint") );
 
@@ -268,14 +268,14 @@ void RailedTransportAIUpdate::aiDoCommand( const AICommandParms *parms )
 		return;
 
 	// we ignore all commands from the player except the one to start a transit and to unload
-	if( parms->m_cmdSource == CMD_FROM_PLAYER && 
+	if( parms->m_cmdSource == CMD_FROM_PLAYER &&
 			parms->m_cmd != AICMD_EXECUTE_RAILED_TRANSPORT &&
 			parms->m_cmd != AICMD_EVACUATE )
 		return;
 
 	// call the default do command
 	AIUpdateInterface::aiDoCommand( parms );
-	
+
 }  // end aiDoCommand
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -386,7 +386,7 @@ void RailedTransportAIUpdate::xfer( Xfer *xfer )
   XferVersion currentVersion = 1;
   XferVersion version = currentVersion;
   xfer->xferVersion( &version, currentVersion );
- 
+
  // extend base class
 	AIUpdateInterface::xfer(xfer);
 

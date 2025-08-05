@@ -67,7 +67,7 @@ public:
 	virtual void doSpecialPowerAtLocation( const Coord3D *loc, Real angle, UnsignedInt commandOptions ) = 0;
 	virtual void doSpecialPowerUsingWaypoints( const Waypoint *way, UnsignedInt commandOptions ) = 0;
 	virtual void markSpecialPowerTriggered( const Coord3D *location ) = 0;
-	virtual void startPowerRecharge() = 0;	
+	virtual void startPowerRecharge() = 0;
 	virtual const AudioEventRTS& getInitiateSound() const = 0;
 };
 
@@ -89,7 +89,7 @@ public:
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-class SpecialPowerModule : public BehaviorModule, 
+class SpecialPowerModule : public BehaviorModule,
 													 public SpecialPowerModuleInterface
 {
 
@@ -108,7 +108,7 @@ public:
 	Bool isModuleForPower( const SpecialPowerTemplate *specialPowerTemplate ) const;	///< is this module for the specified special power
 	Bool isReady( void ) const; 						///< is this special power available now
 //  This is the althernate way to one-at-a-time BlackLotus' specials; we'll keep it commented her until Dustin decides, or until 12/10/02
-//	Bool isBusy( void ) const { return FALSE; } 
+//	Bool isBusy( void ) const { return FALSE; }
 
 	Real getPercentReady( void ) const;		///< get the percent ready (1.0 = ready now, 0.5 = half charged up etc.)
 
@@ -139,13 +139,13 @@ public:
 
 	/**
 	 Now, there are special powers that require some preliminary processing before the actual
-	 special power triggers. When the ini setting "UpdateModuleStartsAttack" is true, then 
-	 the update module will call the doSpecialPower a second time. This function then resets 
+	 special power triggers. When the ini setting "UpdateModuleStartsAttack" is true, then
+	 the update module will call the doSpecialPower a second time. This function then resets
 	 the power recharge, and tells the scriptengine that the attack has started.
-	 
-	 A good example of something that uses this is the Black Lotus - capture building hack attack. 
-	 When the user initiates the attack, the doSpecialPower is called, which triggers the update 
-	 module. The update module then orders the unit to move within range, and it isn't until the 
+
+	 A good example of something that uses this is the Black Lotus - capture building hack attack.
+	 When the user initiates the attack, the doSpecialPower is called, which triggers the update
+	 module. The update module then orders the unit to move within range, and it isn't until the
 	 hacker start the physical attack, that the timer is reset and the attack technically begins.
 	*/
 	virtual void markSpecialPowerTriggered( const Coord3D *location );

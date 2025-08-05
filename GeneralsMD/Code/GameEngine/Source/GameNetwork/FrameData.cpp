@@ -31,7 +31,7 @@
 /**
  * Constructor
  */
-FrameData::FrameData() 
+FrameData::FrameData()
 {
 	m_frame = 0;
 	m_commandList = NULL;
@@ -47,7 +47,7 @@ FrameData::FrameData()
 /**
  * Destructor
  */
-FrameData::~FrameData() 
+FrameData::~FrameData()
 {
 	if (m_commandList != NULL) {
 		deleteInstance(m_commandList);
@@ -58,7 +58,7 @@ FrameData::~FrameData()
 /**
  * Initialize this thing.
  */
-void FrameData::init() 
+void FrameData::init()
 {
 	m_frame = 0;
 	if (m_commandList == NULL) {

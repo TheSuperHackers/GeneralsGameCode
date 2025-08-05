@@ -59,7 +59,7 @@ public:
 	RectClass( const Vector2 & top_left, const Vector2 & bottom_right )	{ Left = top_left.X; Top = top_left.Y; Right = bottom_right.X; Bottom = bottom_right.Y; }
 
 	// Assignment
-	RectClass & operator = (const RectClass & r) { Left = r.Left; Top = r.Top; Right = r.Right; Bottom = r.Bottom; return *this; }	
+	RectClass & operator = (const RectClass & r) { Left = r.Left; Top = r.Top; Right = r.Right; Bottom = r.Bottom; return *this; }
 	void	Set(float left, float top, float right, float bottom) { Left = left; Top = top; Right = right; Bottom = bottom; }
 	void	Set( const Vector2 & top_left, const Vector2 & bottom_right )	{ Left = top_left.X; Top = top_left.Y; Right = bottom_right.X; Bottom = bottom_right.Y; }
 	void	Set(const RectClass & r) { Left = r.Left; Top = r.Top; Right = r.Right; Bottom = r.Bottom; }

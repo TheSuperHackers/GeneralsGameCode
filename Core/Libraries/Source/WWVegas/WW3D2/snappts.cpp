@@ -44,7 +44,7 @@ WW3DErrorType SnapPointsClass::Load_W3D(ChunkLoadClass & cload)
 	// this function assumes that a W3D_CHUNK_POINTS has been opened
 	int size = cload.Cur_Chunk_Length();
 	int count = size / sizeof (W3dVectorStruct);
-	
+
 	Resize(count);
 	for (int i=0; i<count; i++) {
 		W3dVectorStruct vec;

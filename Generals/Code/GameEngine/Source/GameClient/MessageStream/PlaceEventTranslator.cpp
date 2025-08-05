@@ -90,7 +90,7 @@ GameMessageDisposition PlaceEventTranslator::translateGameMessage(const GameMess
 				}  // end if
 
 				// set this location as the placement anchor
-				TheInGameUI->setPlacementStart( &mouse );	
+				TheInGameUI->setPlacementStart( &mouse );
 
 /*
 //
@@ -107,12 +107,12 @@ GameMessageDisposition PlaceEventTranslator::translateGameMessage(const GameMess
 				//
 				LegalBuildCode lbc;
 				lbc = TheBuildAssistant->isLocationLegalToBuild( &world,
-																												 whatToBuild, 
+																												 whatToBuild,
 																												 TheInGameUI->getPlacementAngle(),
 																												 BuildAssistant::USE_QUICK_PATHFIND |
-																												 BuildAssistant::TERRAIN_RESTRICTIONS | 
+																												 BuildAssistant::TERRAIN_RESTRICTIONS |
 																												 BuildAssistant::CLEAR_PATH |
-																												 BuildAssistant::NO_OBJECT_OVERLAP, 
+																												 BuildAssistant::NO_OBJECT_OVERLAP,
 																												 builderObject );
 				if( lbc != LBC_OK )
 				{
@@ -129,17 +129,17 @@ GameMessageDisposition PlaceEventTranslator::translateGameMessage(const GameMess
 				{
 
 					// start placement anchor
-					TheInGameUI->setPlacementStart(&mouse);	
+					TheInGameUI->setPlacementStart(&mouse);
 
 				}  // end else
 */
-															
+
 				// used the input
 				disp = DESTROY_MESSAGE;
 
-			}  
+			}
 			break;
-		}  
+		}
 
 		//---------------------------------------------------------------------------------------------
 		case GameMessage::MSG_MOUSE_LEFT_DOUBLE_CLICK:
@@ -184,7 +184,7 @@ GameMessageDisposition PlaceEventTranslator::translateGameMessage(const GameMess
 						TheEva->setShouldPlay(EVA_InsufficientFunds);
 						TheInGameUI->message( "GUI:NotEnoughMoneyToBuild" );
 						break;
-					} 
+					}
 					else if (cmt == CANMAKE_QUEUE_FULL)
 					{
 						TheInGameUI->message( "GUI:ProductionQueueFull" );
@@ -199,11 +199,11 @@ GameMessageDisposition PlaceEventTranslator::translateGameMessage(const GameMess
 					{
 						TheInGameUI->message( "GUI:UnitMaxedOut" );
 						break;
-					} 
+					}
 					// get out of pending placement mode, this will also clear the arrow anchor status
 					TheInGameUI->placeBuildAvailable( NULL, NULL );
 					break;
-				} 
+				}
 
 				DEBUG_ASSERTCRASH(builderObj != NULL, ("builderObj is NULL"));
 
@@ -213,10 +213,10 @@ GameMessageDisposition PlaceEventTranslator::translateGameMessage(const GameMess
 																												 build,
 																												 angle,
 																												 BuildAssistant::USE_QUICK_PATHFIND |
-																												 BuildAssistant::TERRAIN_RESTRICTIONS | 
+																												 BuildAssistant::TERRAIN_RESTRICTIONS |
 																												 BuildAssistant::CLEAR_PATH |
 																												 BuildAssistant::NO_OBJECT_OVERLAP |
-																												 BuildAssistant::SHROUD_REVEALED, 
+																												 BuildAssistant::SHROUD_REVEALED,
 																												 builderObj, NULL );
 				if( lbc == LBC_OK )
 				{
@@ -266,19 +266,19 @@ GameMessageDisposition PlaceEventTranslator::translateGameMessage(const GameMess
 					TheInGameUI->setPlacementStart( NULL );
 
 				}  // end else
-								
+
 				// used the input
 				disp = DESTROY_MESSAGE;
 				m_frameOfUpButton = TheGameLogic->getFrame();
 
 			}
 
-			if (disp == DESTROY_MESSAGE) 
+			if (disp == DESTROY_MESSAGE)
 				TheInGameUI->clearAttackMoveToMode();
 
 			break;
 
-		}  
+		}
 
 		//---------------------------------------------------------------------------------------------
 		case GameMessage::MSG_RAW_MOUSE_POSITION:
@@ -295,24 +295,24 @@ GameMessageDisposition PlaceEventTranslator::translateGameMessage(const GameMess
 				//
 				ICoord2D start;
 				TheInGameUI->getPlacementPoints( &start, NULL );
-				
+
 				Int x, y;
 				x = mouse.x - start.x;
 				y = mouse.y - start.y;
 				if( sqrt( (x * x) + (y * y) ) >= PLACEMENT_DRAG_THRESHOLD_DIST )
 				{
-				
+
 					TheInGameUI->setPlacementEnd(&mouse);
 					disp = DESTROY_MESSAGE;
 
 				}  // end if
 
-			}  
+			}
 			break;
 		}
-	}  
+	}
 
 	return disp;
-}  
+}
 
 

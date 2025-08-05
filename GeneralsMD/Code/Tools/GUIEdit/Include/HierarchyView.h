@@ -24,12 +24,12 @@
 
 // FILE: HierarchyView.h //////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information					         
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:    GUIEdit
@@ -106,7 +106,7 @@ public:
 	void getDialogPos( ICoord2D *pos );
 	void setDialogSize( ICoord2D *size );
 	void getDialogSize( ICoord2D *size );
-	
+
 	void setDragWindow( GameWindow *window );
 	void setDragTarget( GameWindow *window );
 	GameWindow *getDragWindow( void );
@@ -121,7 +121,7 @@ public:
 
 	HTREEITEM treePointToItem( Int x, Int y );  ///< translate mouse pos to item location
 	GameWindow *getWindowFromItem( HTREEITEM treeItem );  ///< get game window from user data in the tree item
-	
+
 protected:
 
 	static LRESULT CALLBACK dialogProc( HWND hWndDialog, UINT message,
@@ -135,7 +135,7 @@ protected:
 
 	HWND m_dialog;  ///< window handle for our control dialog
 	HWND m_tree;  ///< window handle for the tree control
-	
+
 	GameWindow *m_dragWindow;  ///< for drag drop operations
 	GameWindow *m_dragTarget;  ///< target for drag and drop operations while mouse is moving
 	GameWindow *m_popupTarget;  ///< the target for right mouse popup menus
@@ -151,9 +151,9 @@ protected:
  			return hasher((UnsignedInt)p);
  		}
  	};
- 
+
  	typedef std::hash_map< ConstGameWindowPtr, HTREEITEM, hashConstGameWindowPtr, std::equal_to<ConstGameWindowPtr> > TreeHash;
- 
+
  	TreeHash 		m_treeHash;	///< Speed up the search with a nice hash.
 #endif
 

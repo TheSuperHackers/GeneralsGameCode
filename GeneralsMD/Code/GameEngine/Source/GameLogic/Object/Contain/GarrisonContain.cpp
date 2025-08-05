@@ -87,7 +87,7 @@ inline Real calcDistSqr(const Coord3D& a, const Coord3D& b)
 // ------------------------------------------------------------------------------------------------
 /** Given the target position, find the garrison point that is closest to it */
 // ------------------------------------------------------------------------------------------------
-Int GarrisonContain::findClosestFreeGarrisonPointIndex( Int conditionIndex, 
+Int GarrisonContain::findClosestFreeGarrisonPointIndex( Int conditionIndex,
 																												const Coord3D *targetPos )
 {
 // TheSuperHackers @info helmutbuhler 05/05/2025 This debug mutates the code to become CRC incompatible
@@ -139,7 +139,7 @@ Int GarrisonContain::getObjectGarrisonPointIndex( Object *obj )
 		return GARRISON_INDEX_INVALID;
 
 	for( Int i = 0; i < MAX_GARRISON_POINTS; ++i )
-		if( m_garrisonPointData[ i ].object == obj ) 
+		if( m_garrisonPointData[ i ].object == obj )
 			return i;
 
 	return GARRISON_INDEX_INVALID;
@@ -149,9 +149,9 @@ Int GarrisonContain::getObjectGarrisonPointIndex( Object *obj )
 // ------------------------------------------------------------------------------------------------
 /** Put the object at the specified garrison point by index */
 // ------------------------------------------------------------------------------------------------
-void GarrisonContain::putObjectAtGarrisonPoint( Object *obj, 
+void GarrisonContain::putObjectAtGarrisonPoint( Object *obj,
 																								ObjectID targetID,
-																								Int conditionIndex, 
+																								Int conditionIndex,
 																								Int pointIndex )
 {
 	DEBUG_ASSERTCRASH(m_garrisonPointsInitialized, ("garrisonPoints are not inited"));
@@ -170,13 +170,13 @@ void GarrisonContain::putObjectAtGarrisonPoint( Object *obj,
 	if( m_garrisonPointData[ pointIndex ].object != NULL )
 	{
 
-		DEBUG_CRASH(( "GarrisonContain::putObjectAtGarrisonPoint - Garrison Point '%d' is not empty", 
+		DEBUG_CRASH(( "GarrisonContain::putObjectAtGarrisonPoint - Garrison Point '%d' is not empty",
 									pointIndex ));
 		return;
 
 	}  // end if
 
-	// get the position we're going to use 
+	// get the position we're going to use
 	Coord3D pos = m_garrisonPoint[ conditionIndex ][ pointIndex ];
 
 	// set the object position
@@ -218,7 +218,7 @@ void GarrisonContain::putObjectAtGarrisonPoint( Object *obj,
 
 /*
 UnicodeString msg;
-msg.format( L"Added object '%S'(%d) to point '%d'", 
+msg.format( L"Added object '%S'(%d) to point '%d'",
 						obj->getTemplate()->getName().str(),
 						obj->getID(),
 						pointIndex );
@@ -243,7 +243,7 @@ Int GarrisonContain::findConditionIndex( void )
 		// --------------------------------------------------------------------------------------------
 		case BODY_PRISTINE:
 
-			index = GARRISON_POINT_PRISTINE; 
+			index = GARRISON_POINT_PRISTINE;
 			break;
 
 		// --------------------------------------------------------------------------------------------
@@ -256,7 +256,7 @@ Int GarrisonContain::findConditionIndex( void )
 		case BODY_REALLYDAMAGED:
 		case BODY_RUBBLE:
 
-			index = GARRISON_POINT_REALLY_DAMAGED; 
+			index = GARRISON_POINT_REALLY_DAMAGED;
 			break;
 
 		// --------------------------------------------------------------------------------------------
@@ -414,8 +414,8 @@ void GarrisonContain::putObjectAtBestGarrisonPoint( Object *obj, Object *target,
 
 	// get the index of the garrison point that is closest to the target position
 	Int placeIndex = findClosestFreeGarrisonPointIndex( conditionIndex, targetPos );
-	DEBUG_ASSERTCRASH( placeIndex != GARRISON_INDEX_INVALID, 
-										 ("GarrisonContain::putObjectAtBestGarrisonPoint - Unable to find suitable garrison point for '%s'", 
+	DEBUG_ASSERTCRASH( placeIndex != GARRISON_INDEX_INVALID,
+										 ("GarrisonContain::putObjectAtBestGarrisonPoint - Unable to find suitable garrison point for '%s'",
 										 obj->getTemplate()->getName().str()) );
 
 	// put it here
@@ -490,7 +490,7 @@ void GarrisonContain::removeObjectFromGarrisonPoint( Object *obj, Int index )
 
 /*
 UnicodeString msg;
-msg.format( L"Removed object '%S'(%d) from point '%d'", 
+msg.format( L"Removed object '%S'(%d) from point '%d'",
 						obj->getTemplate()->getName().str(),
 						obj->getID(),
 						removeIndex );
@@ -501,7 +501,7 @@ TheInGameUI->message( msg );
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-GarrisonContain::GarrisonContain( Thing *thing, const ModuleData *moduleData ) : 
+GarrisonContain::GarrisonContain( Thing *thing, const ModuleData *moduleData ) :
 								 OpenContain( thing, moduleData )
 {
 	Int i, j;
@@ -514,7 +514,7 @@ GarrisonContain::GarrisonContain( Thing *thing, const ModuleData *moduleData ) :
 
 	for( i = 0; i < MAX_GARRISON_POINTS; i++ )
 	{
-		
+
 		m_garrisonPointData[ i ].object = NULL;
 		m_garrisonPointData[ i ].targetID = INVALID_ID;
 		m_garrisonPointData[ i ].placeFrame = 0;
@@ -533,7 +533,7 @@ GarrisonContain::GarrisonContain( Thing *thing, const ModuleData *moduleData ) :
   m_evacDisposition = EVAC_BURST_FROM_CENTER; // default, anyway
 
 
-  m_stationPointList.clear(); 
+  m_stationPointList.clear();
 
 }  // end GarrisonContain
 
@@ -545,8 +545,8 @@ GarrisonContain::~GarrisonContain( void )
 }  // end ~GarrisonContain
 
 //-------------------------------------------------------------------------------------------------
-/** can this container contain this kind of object? 
-	and, if checkCapacity is TRUE, does this container have enough space 
+/** can this container contain this kind of object?
+	and, if checkCapacity is TRUE, does this container have enough space
 	left to hold the given unit? */
 // ------------------------------------------------------------------------------------------------
 Bool GarrisonContain::isValidContainerFor(const Object* obj, Bool checkCapacity) const
@@ -610,15 +610,15 @@ void GarrisonContain::removeInvalidObjectsFromGarrisonPoints( void )
 				Weapon *weapon = obj->getCurrentWeapon();
 				if( !weapon || !weapon->isWithinAttackRange( obj, goalObject ) )
 				{
-					//As a garrisoned member, if our target is out of range, 
+					//As a garrisoned member, if our target is out of range,
 					//then get out of the space, because someone else might
 					//be able to shoot it.
 					targetIsValid = false;
 				}
 			}
-			
+
 			// note that we can be attacking a position, rather than an object...
-			if( !obj->testStatus(OBJECT_STATUS_IS_ATTACKING) || !targetIsValid ) 
+			if( !obj->testStatus(OBJECT_STATUS_IS_ATTACKING) || !targetIsValid )
 			{
 				removeObjectFromGarrisonPoint( obj, i );
 			}
@@ -656,7 +656,7 @@ void GarrisonContain::addValidObjectsToGarrisonPoints( void )
 		{
 			Object *victim = ai->getCurrentVictim();
 			const Coord3D *victimPos = ai->getCurrentVictimPos();
-			
+
 			//
 			// add this object to the garrison point that is closest to its target if it's not
 			// already in there
@@ -719,7 +719,7 @@ void GarrisonContain::trackTargets( void )
 					const Coord3D *ourPos = obj->getPosition();
 
 					// find the closest free (of all remaining) garrison points to our target
-					Int newIndex = findClosestFreeGarrisonPointIndex( conditionIndex, 
+					Int newIndex = findClosestFreeGarrisonPointIndex( conditionIndex,
 																														victimPos );
 
 					// if unable to find another garrison point, don't bother
@@ -868,15 +868,15 @@ void GarrisonContain::updateEffects( void )
 					{
 						// set the model condition
 						effect->setModelConditionState( MODELCONDITION_FIRING_A );
-						
+
 						// mark this "fire frame" so we can turn it off in a little while
 						m_garrisonPointData[ garrisonIndex ].lastEffectFrame = currentFrame;
-					
+
 					}
 				}  // end if
 
 			}  // end if, object is at garrision point
-						
+
 		}  // end if, object shot last frame
 
 	}  // end for containment iterator
@@ -885,8 +885,8 @@ void GarrisonContain::updateEffects( void )
 	for( Int i = 0; i < MAX_GARRISON_POINTS; ++i )
 	{
 
-		if( m_garrisonPointData[ i ].effect && 
-				m_garrisonPointData[ i ].lastEffectFrame != 0 && 
+		if( m_garrisonPointData[ i ].effect &&
+				m_garrisonPointData[ i ].lastEffectFrame != 0 &&
 				currentFrame - m_garrisonPointData[ i ].lastEffectFrame > MUZZLE_FLASH_LIFETIME  )
 		{
 
@@ -937,7 +937,7 @@ UpdateSleepTime GarrisonContain::update( void )
 		}  // end if
 
 	}  // end for, it
-	
+
 // Lorenzen changed, 6/11/03, so that garrisoncontains that are not enclosing will keep units at their assigned stations,
 // rather than Bamphing them all over the building as they fire.
 //	// are there any objects at the garrison points who now need to go back to the center of the structure
@@ -952,7 +952,7 @@ UpdateSleepTime GarrisonContain::update( void )
 
 	healObjects();
 
-	if (modData->m_mobileGarrison && (getObject()->isMobile() == TRUE) ) 
+	if (modData->m_mobileGarrison && (getObject()->isMobile() == TRUE) )
 	{
 		moveObjectsWithMe();
 	}
@@ -1019,7 +1019,7 @@ void GarrisonContain::positionObjectsAtStationGarrisonPoints()
     // now lets find him in our station point list, and make sure he stays put there.
     for( std::vector<StationPointData>::const_iterator pt = m_stationPointList.begin();
     pt != m_stationPointList.end();
-    ++pt) 
+    ++pt)
     {
       const StationPointData *spd = &*pt;
 
@@ -1029,14 +1029,14 @@ void GarrisonContain::positionObjectsAtStationGarrisonPoints()
         foundHisSpot = TRUE;
         break;
       }
-      
+
     }
 
     if ( ! foundHisSpot && ! pickAStationForMe( contained ))
     {
       DEBUG_ASSERTCRASH( foundHisSpot, ("GarrisonContain::positionObjectsAtStationGarrisonPoints found something terribly wrong... \nthere is either a station point shortage, or some other bug."));
     }
-  
+
 	}  // end for, it
 
 }
@@ -1049,7 +1049,7 @@ void GarrisonContain::positionObjectsAtStationGarrisonPoints()
 Bool GarrisonContain::pickAStationForMe( const Object *obj )
 {
   Bool foundVacancy = FALSE;
-  for( std::vector<StationPointData>::iterator pt = m_stationPointList.begin(); pt != m_stationPointList.end(); ++pt) 
+  for( std::vector<StationPointData>::iterator pt = m_stationPointList.begin(); pt != m_stationPointList.end(); ++pt)
   {
     StationPointData *spd = &*pt; // non const
     if ( spd->occupantID  == INVALID_ID ) // found a vacancy
@@ -1074,7 +1074,7 @@ void GarrisonContain::removeObjectFromStationPoint( const Object *obj )
     return;
 
   Bool foundOccupant = FALSE;
-  for( std::vector<StationPointData>::iterator pt = m_stationPointList.begin(); pt != m_stationPointList.end(); ++pt) 
+  for( std::vector<StationPointData>::iterator pt = m_stationPointList.begin(); pt != m_stationPointList.end(); ++pt)
   {
     StationPointData *spd = &*pt; // non const
     if ( spd->occupantID  == obj->getID() ) // found him sitting there
@@ -1110,7 +1110,7 @@ void GarrisonContain::onDamage( DamageInfo * /*info*/ )
 //
 //		healSingleObject(obj, modData->m_framesForFullHeal);
 //	}
-  
+
 
 
 }
@@ -1159,10 +1159,10 @@ void GarrisonContain::healSingleObject( Object *obj, Real framesForFullHeal)
 	// if we've been in here long enough ... set our health to max
 	if( TheGameLogic->getFrame() - obj->getContainedByFrame() >= framesForFullHeal )
 	{
-	
+
 		// set the amount to max just to be sure we're at the top
 		healInfo.in.m_amount = body->getMaxHealth();
-		
+
 		// set max health
 		body->attemptHealing( &healInfo );
 
@@ -1183,7 +1183,7 @@ void GarrisonContain::healSingleObject( Object *obj, Real framesForFullHeal)
 }
 
 //-------------------------------------------------------------------------------------------------
-/** return the player that *appears* to control this unit. if null, 
+/** return the player that *appears* to control this unit. if null,
 		use getObject()->getControllingPlayer() instead. */
 // ------------------------------------------------------------------------------------------------
 const Player* GarrisonContain::getApparentControllingPlayer( const Player* observingPlayer ) const
@@ -1224,7 +1224,7 @@ void GarrisonContain::recalcApparentControllingPlayer( void )
 		// since the Radar refresh in setTeam will want to use it to decide our color.
 		Bool detected = rider->getStatusBits().test( OBJECT_STATUS_DETECTED );
 		m_hideGarrisonedStateFromNonallies = ( !detected && ( getStealthUnitsContained() == getContainCount() ) );
-		
+
 		Player* controller = rider->getControllingPlayer();
 		Team *team = controller ? controller->getDefaultTeam() : NULL;
 		if( team )
@@ -1352,7 +1352,7 @@ void GarrisonContain::loadGarrisonPoints( void )
 		conditionIndex = GARRISON_POINT_PRISTINE;
 
 		count = structure->getMultiLogicalBonePosition("FIREPOINT", MAX_GARRISON_POINTS, m_garrisonPoint[ conditionIndex ], NULL);
-		
+
 		if ( count > 0) gBonesFound = TRUE;
 
 		// damaged garrisoned
@@ -1385,15 +1385,15 @@ void GarrisonContain::loadGarrisonPoints( void )
 
 		// restore the original condition flags
 		draw->replaceModelConditionFlags( originalFlags );
-		
+
 	}  // end if, draw
 
-	// garrison points are now initialized 
+	// garrison points are now initialized
 	m_garrisonPointsInitialized = TRUE;
 
 
 
-	if (gBonesFound && modData->m_mobileGarrison && (getObject()->isMobile() == TRUE) ) 
+	if (gBonesFound && modData->m_mobileGarrison && (getObject()->isMobile() == TRUE) )
 	{
 		DEBUG_ASSERTCRASH( getObject()->isMobile() == FALSE,
 		 ("GarrisonContain::update - You have specified this garrisonContain as mobile,\n yet you want garrison point placement bones... \n what are you thinking?") );
@@ -1496,7 +1496,7 @@ void GarrisonContain::exitObjectViaDoor( Object *exitObj, ExitDoorType exitDoor 
 {
 	DEBUG_ASSERTCRASH(exitDoor == DOOR_1, ("multiple exit doors not supported here"));
 
-	// We don't use the ExitPath system of the general OpenContain, we just send people out.  The 
+	// We don't use the ExitPath system of the general OpenContain, we just send people out.  The
 	// direction of outing has been picked by Design to be the Screen Down at the default camera angle.
 	removeFromContain( exitObj );
 
@@ -1505,14 +1505,14 @@ void GarrisonContain::exitObjectViaDoor( Object *exitObj, ExitDoorType exitDoor 
 
 	Real exitAngle = getObject()->getOrientation();
 
-  // Garrison doesn't have reserveDoor or exitDelay, so if we do nothing, everyone will appear on top 
+  // Garrison doesn't have reserveDoor or exitDelay, so if we do nothing, everyone will appear on top
 	// of each other and get stuck inside each others' extent (except for the first guy).  So we'll
 	// scatter the start point around a little to make it better.
 	startPosition = *getObject()->getPosition();
 	// In the case of cliff bunkers, the units start in a cliff.  So we want to adjust.
 	AIUpdateInterface  *ai = exitObj->getAI();
 	if (ai) {
-		Locomotor *loco = ai->getCurLocomotor(); 
+		Locomotor *loco = ai->getCurLocomotor();
 		if (loco && !TheAI->pathfinder()->validMovementTerrain( LAYER_GROUND, loco, &startPosition)) {
 			// try front & back.
 			Real offset = getObject()->getGeometryInfo().getMajorRadius();
@@ -1528,7 +1528,7 @@ void GarrisonContain::exitObjectViaDoor( Object *exitObj, ExitDoorType exitDoor 
 		}
 	}
 
-  
+
 
 
   if ( m_evacDisposition == EVAC_TO_LEFT || m_evacDisposition == EVAC_TO_RIGHT  )
@@ -1538,7 +1538,7 @@ void GarrisonContain::exitObjectViaDoor( Object *exitObj, ExitDoorType exitDoor 
 
     Real containerHalfLength = getObject()->getGeometryInfo().getMajorRadius() ;
     Real containerHalfWidth = getObject()->getGeometryInfo().getMinorRadius() ;
-    
+
     Vector3 doorPosition;
     doorPosition.X = GameLogicRandomValueReal( -containerHalfLength/4, containerHalfLength/4 );// a rectangular pocket to act as the "doorway"
     doorPosition.Y = GameLogicRandomValueReal( containerHalfWidth/2, containerHalfWidth * 2) * EVAC__SCALAR;
@@ -1561,7 +1561,7 @@ void GarrisonContain::exitObjectViaDoor( Object *exitObj, ExitDoorType exitDoor 
 
 	  exitObj->setPosition( &startPosition );
 	  exitObj->setOrientation( exitAngle );
-  
+
 	  ///< @todo This really should be automatically wrapped up in an activation sequence	for objects in general
 	  // tell the AI about it
 	  TheAI->pathfinder()->addObjectToPathfindMap( exitObj );
@@ -1634,7 +1634,7 @@ void GarrisonContain::onContaining( Object *obj, Bool wasSelected )
 
 	//
 	// the team of the building is now the same as those that have garrisoned it, be sure
-	// to save our original team tho so that we can revert back to it when all the 
+	// to save our original team tho so that we can revert back to it when all the
 	// occupants are gone
 	//
 	recalcApparentControllingPlayer();
@@ -1774,7 +1774,7 @@ void GarrisonContain::onObjectCreated()
 		}
 		else
 		{
-			DEBUG_CRASH( ( "DeliverPayload: PutInContainer %s is full, or not valid for the payload %s!", 
+			DEBUG_CRASH( ( "DeliverPayload: PutInContainer %s is full, or not valid for the payload %s!",
 				object->getName().str(), self->m_initialRoster.templateName.str() ) );
 		}
 	}
@@ -1850,7 +1850,7 @@ void GarrisonContain::xfer( Xfer *xfer )
 
 			// target
 			xfer->xferObjectID( &m_garrisonPointData[ i ].targetID );
-			
+
 			// placement frame
 			xfer->xferUnsignedInt( &m_garrisonPointData[ i ].placeFrame );
 
@@ -1873,7 +1873,7 @@ void GarrisonContain::xfer( Xfer *xfer )
 			// target
 			ObjectID targetID;
 			xfer->xferObjectID( &targetID );
-			
+
 			// placement frame
 			UnsignedInt placeFrame;
 			xfer->xferUnsignedInt( &placeFrame );
@@ -1932,7 +1932,7 @@ void GarrisonContain::loadPostProcess( void )
 	for( Int i = 0; i < MAX_GARRISON_POINTS; i++ )
 	{
 
-		// object pointer		
+		// object pointer
 		if( m_garrisonPointData[ i ].objectID != INVALID_ID )
 		{
 
@@ -1987,7 +1987,7 @@ void GarrisonContain::loadStationGarrisonPoints( void )
 
 	//
 	// in order to get all the station point positions we will actually switch the model
-	// condition to garrisoned pristine, and use these for any modelcondition 
+	// condition to garrisoned pristine, and use these for any modelcondition
 	{
 		Int conditionIndex;
 		Int count = 0;
@@ -2032,15 +2032,15 @@ void GarrisonContain::loadStationGarrisonPoints( void )
 		draw->replaceModelConditionFlags( originalFlags );
 
     //tempBuffer pops
-    
-	} 
 
-	// garrison points are now initialized 
+	}
+
+	// garrison points are now initialized
 	m_stationGarrisonPointsInitialized = TRUE;
 
 
 
-	if (stationBonesFound && modData->m_mobileGarrison && (getObject()->isMobile() == TRUE) ) 
+	if (stationBonesFound && modData->m_mobileGarrison && (getObject()->isMobile() == TRUE) )
 	{
 		DEBUG_ASSERTCRASH( getObject()->isMobile() == FALSE,
 		 ("GarrisonContain::update - You have specified this garrisonContain as mobile,\n yet you want station garrison point placement bones... \n what are you thinking?") );

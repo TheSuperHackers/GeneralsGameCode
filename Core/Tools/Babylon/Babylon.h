@@ -59,7 +59,7 @@ public:
 
 int ExcelRunning( void );
 extern TransDB				*BabylonstrDB;
-extern TransDB				*MainDB; 
+extern TransDB				*MainDB;
 extern char						BabylonstrFilename[];
 extern char						MainXLSFilename[];
 extern char						RootPath[];

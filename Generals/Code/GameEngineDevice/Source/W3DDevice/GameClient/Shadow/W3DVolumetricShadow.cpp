@@ -88,7 +88,7 @@ const Real cosAngleToCare = cos ((0.2 * PI) / 180.0);	//1.5 degree difference
 struct SHADOW_STATIC_VOLUME_VERTEX	//vertex structure passed to D3D
 {
 		float x,y,z;
-}; 
+};
 #define SHADOW_STATIC_VOLUME_FVF	D3DFVF_XYZ
 
 #ifdef SV_DEBUG	//in debug mode, dynamic shadows are rendered with random diffuse color
@@ -96,7 +96,7 @@ struct SHADOW_STATIC_VOLUME_VERTEX	//vertex structure passed to D3D
 	{
 			float x,y,z;
 			DWORD diffuse;
-	}; 
+	};
 	#define SHADOW_DYNAMIC_VOLUME_FVF	D3DFVF_XYZ|D3DFVF_DIFFUSE
 #else
 	typedef struct SHADOW_STATIC_VOLUME_VERTEX	SHADOW_DYNAMIC_VOLUME_VERTEX;
@@ -225,8 +225,8 @@ private:
 };
 
 // CONST //////////////////////////////////////////////////////////////////////
-const Int MAX_POLYGON_NEIGHBORS = 3;  // we use nothing but triangles for 
-																			// geometry polygons so we have at 
+const Int MAX_POLYGON_NEIGHBORS = 3;  // we use nothing but triangles for
+																			// geometry polygons so we have at
 																			// most 3 neighbors
 const Int NO_NEIGHBOR = -1;  // entry value for neighbor when there isn't one
 
@@ -265,7 +265,7 @@ class W3DShadowGeometryMesh
 	//for the sake of speed, give direct access to classes that need this data.
 	friend class W3DShadowGeometry;
 	friend class W3DVolumetricShadow;
-	
+
 public:
 	W3DShadowGeometryMesh( void );
 	~W3DShadowGeometryMesh( void );
@@ -279,7 +279,7 @@ public:
 		Vector3 vertexList[3];
 		//get vertex indices for this polygon
 		GetPolygonIndex(dwPolyNormId,indexList,3);
-		//get the vertices	
+		//get the vertices
 		GetVertex(indexList[0],&vertexList[0]);
 		GetVertex(indexList[1],&vertexList[1]);
 		GetVertex(indexList[2],&vertexList[2]);
@@ -554,7 +554,7 @@ void W3DVolumetricShadowManager::loadTerrainShadows(void)
 /*	W3DShadow *shadow = NEW W3DShadow;
 	// add to our shadow list through the shadow next links
 	shadow->m_next = m_shadowList;
-	m_shadowList = shadow;	
+	m_shadowList = shadow;
 */
 }
 
@@ -586,7 +586,7 @@ class W3DShadowGeometry : public RefCountClass, public	HashableClass
 		Int					getMeshCount(void)	{ return m_meshCount;}
 		W3DShadowGeometryMesh	*getMesh(Int index)	{ return &m_meshList[index];}
 
-		
+
 		int GetNumTotalVertex (void)	{	return m_numTotalsVerts;}	///<total number of vertices in all meshes of this geometry
 
 	private:
@@ -597,7 +597,7 @@ class W3DShadowGeometry : public RefCountClass, public	HashableClass
 		Int m_meshCount;							///<number of meshes in hierarchy
 		Int m_numTotalsVerts;						///<number of verts in entire hierarchy
 };
-  
+
 #define MAX_SHADOW_VOLUME_VERTS 16384
 
 Int W3DShadowGeometry::initFromHLOD(RenderObjClass *robj)
@@ -665,12 +665,12 @@ Int W3DShadowGeometry::initFromHLOD(RenderObjClass *robj)
 
 			// build our neighboring polygon information
 			geomMesh->buildPolygonNeighbors();
-			
+
 			geomMesh++;
 			m_meshCount++;
 		}
 	}
-	
+
 //	for (i = 0; i < AdditionalModels.Count(); i++) {
 //		res |= AdditionalModels[i].Model->Cast_Ray(raytest);
 //	}
@@ -752,7 +752,7 @@ Int W3DShadowGeometry::init(RenderObjClass *robj)
 // W3DShadowGeometry =============================================================
 // ============================================================================
 W3DShadowGeometryMesh::W3DShadowGeometryMesh( void )
-{	
+{
 	// init polygon neighbor information
 	m_polyNeighbors = NULL;
 	m_numPolyNeighbors = 0;
@@ -914,7 +914,7 @@ void W3DShadowGeometryMesh::buildPolygonNeighbors( void )
 							{	Vector3 vOtherNorm;
 
 								GetPolygonNormal(j,&vOtherNorm);
-								
+
 								//Check if the 2 polygons face in exactly opposite directions - don't allow this type of neighbor.
 								if (fabs(Vector3::Dot_Product(vOtherNorm,vNorm) + 1.0f) <= 0.01f)
 									continue;
@@ -927,7 +927,7 @@ void W3DShadowGeometryMesh::buildPolygonNeighbors( void )
 						else
 						{//This is the same poly facing opposite direction.	//assert( 0 );  // should never match 3 vertices!
 							index1=index2=-1;
-							continue; 
+							continue;
 						}
 					}  // end if
 			if( index1 != -1 && index2 != -1  )
@@ -1123,10 +1123,10 @@ void W3DVolumetricShadow::updateOptimalExtrusionPadding(void)
 				{
 					terrainPoint = Corners[i] + shadowRay*t;
 					terrainPoint.Z=0;	//ignore height
-					
+
 					Real terrainHeight=TheTerrainRenderObject->getHeightMapHeight(terrainPoint.X,terrainPoint.Y,NULL);
 					if (terrainHeight < (objPos.Z - MAX_SHADOW_EXTRUSION_UNDER_OBJECT_BEFORE_CLAMP))	//check if terrain dips more than 10 units under object.
-					{	
+					{
 						if (j == 0)	//this is the initial point so object must be right on the edge of a cliff.
 						{	baseGroundHeight = terrainHeight;	//force extrusion all the way down cliff.
 							Real tanAngle=tan(OVERHANGING_OBJECT_CLAMP_ANGLE);	//clamp to about 89 degrees or close to vertical lightpos.
@@ -1166,7 +1166,7 @@ void W3DVolumetricShadow::updateOptimalExtrusionPadding(void)
 // getRenderCost ============================================================
 // Returns number of draw calls for this shadow.
 // ============================================================================
-#if defined(RTS_DEBUG)	
+#if defined(RTS_DEBUG)
 void W3DVolumetricShadow::getRenderCost(RenderCost & rc) const
 {
 	Int drawCount = 0;
@@ -1258,7 +1258,7 @@ void W3DVolumetricShadow::RenderMeshVolume(Int meshIndex, Int lightIndex, const 
 	///@todo: W3D always does transpose on all of matrix sets.  Slow???  Better to hack view matrix.
 	Matrix4x4 mWorldTransposed = mWorld.Transpose();
 	m_pDev->SetTransform(D3DTS_WORLD,(_D3DMATRIX *)&mWorldTransposed);
-	
+
 	W3DBufferManager::W3DVertexBufferSlot *vbSlot=m_shadowVolumeVB[lightIndex][ meshIndex ];
 	if (!vbSlot)
 		return;
@@ -1369,7 +1369,7 @@ void W3DVolumetricShadow::RenderDynamicMeshVolume(Int meshIndex, Int lightIndex,
 	shadowIndexBufferD3D->Unlock();
 
 	m_pDev->SetIndices(shadowIndexBufferD3D,nShadowStartBatchVertex);
-	
+
 	Matrix4x4 mWorld(*meshXform);
 	Matrix4x4 mWorldTransposed = mWorld.Transpose();
 	m_pDev->SetTransform(D3DTS_WORLD,(_D3DMATRIX *)&mWorldTransposed);
@@ -1400,7 +1400,7 @@ void W3DVolumetricShadow::RenderMeshVolumeBounds(Int meshIndex, Int lightIndex, 
 	SHADOW_DYNAMIC_VOLUME_VERTEX* pvVertices;
 	UnsignedShort *pvIndices;
 	// Vertex Positions as a function of the box extents
-	static Vector3						_BoxVerts[8] = 
+	static Vector3						_BoxVerts[8] =
 	{
 		Vector3(  1.0f, 1.0f, 1.0f ),		// +z ring of 4 verts
 		Vector3( -1.0f, 1.0f, 1.0f ),
@@ -1413,10 +1413,10 @@ void W3DVolumetricShadow::RenderMeshVolumeBounds(Int meshIndex, Int lightIndex, 
 		Vector3(  1.0f,-1.0f,-1.0f ),
 	};
 	// Face Connectivity
-	static Vector3i					_BoxFaces[12] = 
+	static Vector3i					_BoxFaces[12] =
 	{
 		Vector3i( 0,1,2 ),		// +z faces
-		Vector3i( 0,2,3 ),		
+		Vector3i( 0,2,3 ),
 		Vector3i( 4,7,6 ),		// -z faces
 		Vector3i( 4,6,5 ),
 		Vector3i( 0,3,7 ),		// +x faces
@@ -1528,7 +1528,7 @@ void W3DVolumetricShadow::RenderMeshVolumeBounds(Int meshIndex, Int lightIndex, 
 	Matrix4x4 mWorld(1);	//identity since boxes are pre-transformed to world space.
 	Matrix4x4 mWorldTransposed = mWorld.Transpose();
 	m_pDev->SetTransform(D3DTS_WORLD,(_D3DMATRIX *)&mWorldTransposed);
-	
+
 	m_pDev->SetStreamSource(0,shadowVertexBufferD3D,sizeof(SHADOW_DYNAMIC_VOLUME_VERTEX));
 	m_pDev->SetVertexShader(SHADOW_DYNAMIC_VOLUME_FVF);
 
@@ -1690,19 +1690,19 @@ void W3DVolumetricShadow::Update()
 		//buggies from being flagged as "flying".  We minimize the number of flying units because their shadow
 		//volumes are extruded longer to reach the lowest point on the map.  Regular shadows only extend far
 		//enough to reach the base of the model (presumes base is already touching the ground).
-		Real groundHeight; 
+		Real groundHeight;
 		if (TheTerrainLogic)
 			groundHeight=TheTerrainLogic->getGroundHeight(pos.X,pos.Y);	//logic knows about bridges so use if available.
 		else
 			groundHeight=TheTerrainRenderObject->getHeightMapHeight(pos.X,pos.Y, NULL);
    		if (fabs(pos.Z - groundHeight) >= AIRBORNE_UNIT_GROUND_DELTA)
-   		{	
+   		{
  			Real extent = MAX_SHADOW_LENGTH_EXTRA_AIRBORNE_SCALE_FACTOR * m_robjExtent;
  			if (WWMath::Fabs(pos.X - bcX) > (beX + extent) ||
  				WWMath::Fabs(pos.Y - bcY) > (beY + extent) ||
  				WWMath::Fabs(pos.Z - bcZ) > (beZ + extent))
  				return;	//shadow can't be visible so no point in updating.
- 
+
 			//this unit is above ground, extend shadow volume to reach lowest point on the terrain plus extra bit to make
 			//sure shadow goes under ground.
    			updateVolumes(fabs(pos.Z - TheTerrainRenderObject->getMinHeight()) + SHADOW_EXTRUSION_BUFFER);
@@ -1715,7 +1715,7 @@ void W3DVolumetricShadow::Update()
  				WWMath::Fabs(pos.Y - bcY) > (beY + m_robjExtent) ||
  				WWMath::Fabs(pos.Z - bcZ) > (beZ + m_robjExtent))
  				return;	//shadow can't be visible so no point in updating.
- 
+
 				//check if this object has never had it's extrusion length updated.  Will only be true for
 				//immobile objects because finding an optimal extrusion length is expensive.
 				if (!m_extraExtrusionPadding)
@@ -1727,7 +1727,7 @@ void W3DVolumetricShadow::Update()
 
 	//	floorZ = 2.0f;	//lower slightly so shadows go under ground.
 
-	
+
 		// update delay time
 		lastTime = currentTime;
 	}  // end if
@@ -1762,8 +1762,8 @@ void W3DVolumetricShadow::updateVolumes(Real zoffset)
 			else
 				mesh = (MeshClass *)m_robj;
 
-			if (mesh) 
-			{	
+			if (mesh)
+			{
 				if (!mesh->Is_Not_Hidden_At_All())
 					continue;
 				/**@todo: Getting the transform of the mesh may be forcing a full hierarchy evaluation.
@@ -1840,7 +1840,7 @@ void W3DVolumetricShadow::updateMeshVolume(Int meshIndex, Int lightIndex, const 
 
 	//
 	// build the shadow silhouette and construct shadow volume from
-	// this light location.  The for loop wrapped around this is 
+	// this light location.  The for loop wrapped around this is
 	// theoretical code for future enhancements of multiple lights that
 	// cast shadows
 	//
@@ -1983,7 +1983,7 @@ void W3DVolumetricShadow::updateMeshVolume(Int meshIndex, Int lightIndex, const 
 		CollisionMath::OverlapType result=CollisionMath::Overlap_Test(*shadowCameraFrustum,sphere);
 		if (result == CollisionMath::OVERLAPPED)	//do a more accurate test
 			result=CollisionMath::Overlap_Test(*shadowCameraFrustum, box);
-		
+
 		if (result != CollisionMath::OUTSIDE)
 		{
 			//
@@ -2065,7 +2065,7 @@ void W3DVolumetricShadow::updateMeshVolume(Int meshIndex, Int lightIndex, const 
 // addSilhouetteEdge ==========================================================
 // It has been determined that the polygon neighbor in the "neighborIndex"
 // of "visible" needs to be added to the silhouette.  We will add those two
-// vertex indices to the silhouette in the order they were specified in 
+// vertex indices to the silhouette in the order they were specified in
 // "visible" to assure that the constructed edge is in counter clockwise order
 // ============================================================================
 void W3DVolumetricShadow::addSilhouetteEdge(Int meshIndex, PolyNeighbor *visible, PolyNeighbor *hidden )
@@ -2081,7 +2081,7 @@ void W3DVolumetricShadow::addSilhouetteEdge(Int meshIndex, PolyNeighbor *visible
 	assert( visible && hidden );
 
 	//
-	// which index in the neighbor list of "visible" refers to the 
+	// which index in the neighbor list of "visible" refers to the
 	// polygon "hidden"
 	//
 	for( i = 0; i < MAX_POLYGON_NEIGHBORS; i++ )
@@ -2102,7 +2102,7 @@ void W3DVolumetricShadow::addSilhouetteEdge(Int meshIndex, PolyNeighbor *visible
 
 	//
 	// we know that 2 of the 3 vertex indices will be present in the edge.
-	// will construct the edge as follows to ensure we have counter 
+	// will construct the edge as follows to ensure we have counter
 	// clockwise order.  note that this assumes the vertices of the
 	// polygons specified in the geometry are in counter clockwise order,
 	// which they are
@@ -2111,9 +2111,9 @@ void W3DVolumetricShadow::addSilhouetteEdge(Int meshIndex, PolyNeighbor *visible
 	// 2) [ v1 Present, v2  Absent, v3 Present ] -> edge = (v3, v1)
 	// 3) [ v1 Present, v2 Present, v3 Absent  ] -> edge = (v1, v2)
 	//
-	if( (visibleIndexList[ 0 ] != 
+	if( (visibleIndexList[ 0 ] !=
 			 visible->neighbor[ neighborIndex ].neighborEdgeIndex[ 0 ]) &&
-			(visibleIndexList[ 0 ] != 
+			(visibleIndexList[ 0 ] !=
 			visible->neighbor[ neighborIndex ].neighborEdgeIndex[ 1 ]) )
 	{
 
@@ -2122,9 +2122,9 @@ void W3DVolumetricShadow::addSilhouetteEdge(Int meshIndex, PolyNeighbor *visible
 		edgeEnd = visibleIndexList[ 2 ];
 
 	}  // end if
-	else if( (visibleIndexList[ 1 ] != 
+	else if( (visibleIndexList[ 1 ] !=
 					 visible->neighbor[ neighborIndex ].neighborEdgeIndex[ 0 ]) &&
-					 (visibleIndexList[ 1 ] != 
+					 (visibleIndexList[ 1 ] !=
 					 visible->neighbor[ neighborIndex ].neighborEdgeIndex[ 1 ]) )
 	{
 
@@ -2149,7 +2149,7 @@ void W3DVolumetricShadow::addSilhouetteEdge(Int meshIndex, PolyNeighbor *visible
 
 // addNeighborlessEdges =======================================================
 // Given a polygon neighbor information, it has been determined that this
-// polygon is visible and has edges which are not connected to other 
+// polygon is visible and has edges which are not connected to other
 // polygons, these edges need to be added to the silhouette.  The edge(s)
 // must be added in such an order that we create silhouette edges in a
 // counter clockwise order.
@@ -2327,8 +2327,8 @@ void W3DVolumetricShadow::buildSilhouette(Int meshIndex, Vector3 *lightPosObject
 			{
 
 				// get the jth polygon neighbor ... this is "them"
-				otherNeighbor = 
-					geomMesh->GetPolyNeighbor( 
+				otherNeighbor =
+					geomMesh->GetPolyNeighbor(
 						polyNeighbor->neighbor[ j ].neighborIndex );
 
 				//
@@ -2341,7 +2341,7 @@ void W3DVolumetricShadow::buildSilhouette(Int meshIndex, Vector3 *lightPosObject
 			}  // end if
 
 			//
-			// finally, if our own visible status is different from our 
+			// finally, if our own visible status is different from our
 			// neighbor visible status then that defines an edge we must
 			// add to the silhouette.  Also, a visible polygon that has
 			// no neighbor automatically makes a silhouette edge.  Note that
@@ -2397,19 +2397,19 @@ void W3DVolumetricShadow::buildSilhouette(Int meshIndex, Vector3 *lightPosObject
 		BitSet( polyNeighbor->status, POLY_PROCESSED );
 
 	}  // end for i
-	
+
 	//record number of edge indices contrinuted by this mesh
 	m_numIndicesPerMesh[meshIndex]=m_numSilhouetteIndices[meshIndex]-meshEdgeStart;
-	
+
 }  // end buildSilhouette
 
 // constructVolume ============================================================
 // Given a fresh new geometry class called "shadowVolume" to hold the actual
 // shadow volume data, this method will create the shadow volume polygons
 // given the information in the current silhouette of this Shadow and the
-// light source position.  
+// light source position.
 //
-// The light source should be in object space and the shadow volume polygon 
+// The light source should be in object space and the shadow volume polygon
 // data is also constructed in object space.
 //
 // The polygon we will create for a given edge will be that edge extruded
@@ -2433,7 +2433,7 @@ void W3DVolumetricShadow::constructVolume( Vector3 *lightPosObject,Real shadowEx
 	W3DShadowGeometryMesh *geomMesh;
 
 	// sanity
-	if( volumeIndex < 0 || 
+	if( volumeIndex < 0 ||
 			volumeIndex >= MAX_SHADOW_LIGHTS ||
 			lightPosObject == NULL )
 	{
@@ -2569,7 +2569,7 @@ void W3DVolumetricShadow::constructVolume( Vector3 *lightPosObject,Real shadowEx
 #endif
 				break;	//reached end of all edges
 			}
-	
+
 			//Start a new strip by adding first vertex and extrusion.
 			geomMesh->GetVertex( silhouetteIndices[ i+2 ], &edgeVertex2 );
 			// take one edge point and extrude away from the light
@@ -2642,9 +2642,9 @@ void W3DVolumetricShadow::constructVolume( Vector3 *lightPosObject,Real shadowEx
 // Given a fresh new geometry class called "shadowVolume" to hold the actual
 // shadow volume data, this method will create the shadow volume polygons
 // given the information in the current silhouette of this Shadow and the
-// light source position.  
+// light source position.
 //
-// The light source should be in object space and the shadow volume polygon 
+// The light source should be in object space and the shadow volume polygon
 // data is also constructed in object space.
 //
 // The polygon we will create for a given edge will be that edge extruded
@@ -2672,7 +2672,7 @@ void W3DVolumetricShadow::constructVolumeVB( Vector3 *lightPosObject,Real shadow
 	W3DBufferManager::W3DIndexBufferSlot *ibSlot;
 
 	// sanity
-	if( volumeIndex < 0 || 
+	if( volumeIndex < 0 ||
 			volumeIndex >= MAX_SHADOW_LIGHTS ||
 			lightPosObject == NULL )
 	{
@@ -2764,7 +2764,7 @@ void W3DVolumetricShadow::constructVolumeVB( Vector3 *lightPosObject,Real shadow
 	#endif
 					break;	//reached end of all edges
 				}
-		
+
 				lastEdgeVertex2Index=vertexCount;
 				lastExtrude2Index=vertexCount + 1;
 				//record start of new strip info
@@ -2828,7 +2828,7 @@ void W3DVolumetricShadow::constructVolumeVB( Vector3 *lightPosObject,Real shadow
 
 		m_shadowVolumeIB[ volumeIndex ][meshIndex]=NULL;
 		m_shadowVolumeVB[ volumeIndex ][meshIndex]=NULL;
-		return; 
+		return;
 	}
 
 	geomMesh = m_geometry->getMesh(meshIndex);
@@ -2924,7 +2924,7 @@ void W3DVolumetricShadow::constructVolumeVB( Vector3 *lightPosObject,Real shadow
 				polygonCount += 2;
 				break;	//reached end of all edges
 			}
-	
+
 			//Start a new strip by adding first vertex and extrusion.
 			geomMesh->GetVertex( silhouetteIndices[ i+2 ], &edgeVertex2 );
 			// take one edge point and extrude away from the light
@@ -2967,7 +2967,7 @@ void W3DVolumetricShadow::constructVolumeVB( Vector3 *lightPosObject,Real shadow
 
 			// add the one new vertex
 			*vb++ = *(VertexFormatXYZ *)&extrude2;
-			
+
 			lastEdgeVertex2Index=vertexCount;
 			lastExtrude2Index=vertexCount+1;
 
@@ -2998,7 +2998,7 @@ Bool W3DVolumetricShadow::allocateShadowVolume( Int volumeIndex, Int meshIndex )
 	}  // end if
 
 	if ((shadowVolume = m_shadowVolume[ volumeIndex ][meshIndex]) == 0)
-	{	
+	{
 		// poolify
 		shadowVolume = NEW Geometry;		// create the new geometry
 		// we now have one more valid geometry volume
@@ -3145,7 +3145,7 @@ Bool W3DVolumetricShadow::allocateSilhouette(Int meshIndex, Int numVertices )
 	Int numEntries = numVertices * 5;	///@todo: HACK, HACK... Should be 2!
 
 	// sanity
-	assert( m_silhouetteIndex[meshIndex] == NULL && 
+	assert( m_silhouetteIndex[meshIndex] == NULL &&
 					m_numSilhouetteIndices[meshIndex] == 0 &&
 					numEntries > 0 );
 
@@ -3153,16 +3153,16 @@ Bool W3DVolumetricShadow::allocateSilhouette(Int meshIndex, Int numVertices )
 	m_silhouetteIndex[meshIndex] = NEW short[ numEntries ];
 	if( m_silhouetteIndex[meshIndex] == NULL )
 	{
-	
+
 //		DBGPRINTF(( "Unable to allcoate silhouette storage '%d'\n", numEntries ));
 		assert( 0 );
 		return FALSE;
 
 	}  // end if
-		
+
 	// set our list to empty just to be clean
 	m_numSilhouetteIndices[meshIndex] = 0;
-	
+
 	// save the size of our silhouette list
 	m_maxSilhouetteEntries[meshIndex] = numEntries;
 
@@ -3208,7 +3208,7 @@ void W3DVolumetricShadowManager::renderStencilShadows( void )
 
 	struct _TRANSLITVERTEX {
 	    D3DXVECTOR4 p;
-		DWORD color;   // diffuse color    
+		DWORD color;   // diffuse color
 	} v[4];
 
 	Int xpos, ypos, width, height;
@@ -3272,13 +3272,13 @@ void W3DVolumetricShadowManager::renderShadows( Bool forceStencilFill )
 
  	AABoxClass bbox;
 	SphereClass bsphere;
- 
+
  	//Get a bounding box around our visible universe.  Bounded by terrain and the sky
  	//so much tighter fitting volume than what's actually visible.  This will cull
  	//particles falling under the ground.
- 
+
  	TheTerrainRenderObject->getMaximumVisibleBox(*shadowCameraFrustum, &bbox, TRUE);
- 
+
  	bcX = bbox.Center.X;
  	bcY = bbox.Center.Y;
  	bcZ = bbox.Center.Z;
@@ -3369,7 +3369,7 @@ void W3DVolumetricShadowManager::renderShadows( Bool forceStencilFill )
 		m_pDev->SetRenderState( D3DRS_STENCILZFAIL, D3DSTENCILOP_KEEP );
 		m_pDev->SetRenderState( D3DRS_STENCILFAIL,  D3DSTENCILOP_KEEP );
 		m_pDev->SetRenderState( D3DRS_STENCILPASS,  D3DSTENCILOP_INCR );
-		
+
 		m_pDev->SetVertexShader(SHADOW_DYNAMIC_VOLUME_FVF);
 
 		m_pDev->SetRenderState(D3DRS_CULLMODE,D3DCULL_CW);
@@ -3381,7 +3381,7 @@ void W3DVolumetricShadowManager::renderShadows( Bool forceStencilFill )
 
 		m_dynamicShadowVolumesToRender=NULL;	//clear list of pending dynamic shadows
 		W3DVolumetricShadowRenderTask *shadowDynamicTasksStart,*shadowDynamicTask;
-		
+
 		// step through each of our shadows and render
 		for( shadow = m_shadowList; shadow; shadow = shadow->m_next )
 		{
@@ -3613,10 +3613,10 @@ Bool W3DVolumetricShadowManager::ReAcquireResources(void)
 
 	if (FAILED(m_pDev->CreateIndexBuffer
 	(
-		SHADOW_INDEX_SIZE*sizeof(WORD), 
-		D3DUSAGE_WRITEONLY|D3DUSAGE_DYNAMIC, 
-		D3DFMT_INDEX16, 
-		D3DPOOL_DEFAULT, 
+		SHADOW_INDEX_SIZE*sizeof(WORD),
+		D3DUSAGE_WRITEONLY|D3DUSAGE_DYNAMIC,
+		D3DFMT_INDEX16,
+		D3DPOOL_DEFAULT,
 		&shadowIndexBufferD3D
 	)))
 		return FALSE;
@@ -3627,9 +3627,9 @@ Bool W3DVolumetricShadowManager::ReAcquireResources(void)
 		if (FAILED(m_pDev->CreateVertexBuffer
 		(
 			SHADOW_VERTEX_SIZE*sizeof(SHADOW_DYNAMIC_VOLUME_VERTEX),
-			D3DUSAGE_WRITEONLY|D3DUSAGE_DYNAMIC, 
+			D3DUSAGE_WRITEONLY|D3DUSAGE_DYNAMIC,
 			0,
-			D3DPOOL_DEFAULT, 
+			D3DPOOL_DEFAULT,
 			&shadowVertexBufferD3D
 		)))
 			return FALSE;
@@ -3715,7 +3715,7 @@ W3DVolumetricShadow* W3DVolumetricShadowManager::addShadow(RenderObjClass *robj,
 
 	// add to our shadow list through the shadow next links
 	shadow->m_next = m_shadowList;
-	m_shadowList = shadow;	
+	m_shadowList = shadow;
 	return shadow;
 }
 
@@ -3765,7 +3765,7 @@ void W3DVolumetricShadowManager::removeAllShadows(void)
 	}  // end for
 }
 
-W3DShadowGeometryManager::W3DShadowGeometryManager(void) 
+W3DShadowGeometryManager::W3DShadowGeometryManager(void)
 {
 	// Create the hash tables
 	GeomPtrTable = NEW HashTableClass( 2048 );
@@ -3805,7 +3805,7 @@ W3DShadowGeometry * W3DShadowGeometryManager::Peek_Geom(const char * name)
 
 /** Get animation from cache and increment its reference count */
 W3DShadowGeometry * W3DShadowGeometryManager::Get_Geom(const char * name)
-{	
+{
 	W3DShadowGeometry * geom = Peek_Geom( name );
 	if ( geom != NULL ) {
 		geom->Add_Ref();
@@ -3908,7 +3908,7 @@ Error:
 /*
 ** Iterator converter from HashableClass to W3DShadowGeometry
 */
-W3DShadowGeometry * W3DShadowGeometryManagerIterator::Get_Current_Geom( void )	
-{ 
-	return (W3DShadowGeometry *)Get_Current(); 
+W3DShadowGeometry * W3DShadowGeometryManagerIterator::Get_Current_Geom( void )
+{
+	return (W3DShadowGeometry *)Get_Current();
 }

@@ -154,7 +154,7 @@ public:
 	static void setZoomToPos(const Coord3D *pos) {m_zoomToPos = *pos; m_zoomToValid = true;}
 
 protected:
-	enum {MAX_COUNT = 60, 
+	enum {MAX_COUNT = 60,
 				MAX_LIMIT = 30,
 				COUNT_STEP = 5,
 				DEFAULT_PAN_FACTOR = 30};

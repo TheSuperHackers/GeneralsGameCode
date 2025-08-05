@@ -54,7 +54,7 @@ class FlammableUpdateModuleData : public UpdateModuleData
 {
 public:
 	UnsignedInt		m_burnedDelay;	///< How long before I am ::Burned.  0 means never
-	UnsignedInt		m_aflameDuration; ///< How long I stay ::Aflame.  Independent of Burned.  
+	UnsignedInt		m_aflameDuration; ///< How long I stay ::Aflame.  Independent of Burned.
 	// When aflame wears out is when I check to be normal or burned,  So my model can
 	// change to burned while I am still aflame.
 	UnsignedInt		m_aflameDamageDelay;	///< While ::Aflame, I take damage this often.  If 0, never.
@@ -96,12 +96,12 @@ public:
 	//DamageModuleInterface
 	virtual void onDamage( DamageInfo *damageInfo );
 	virtual void onHealing( DamageInfo *damageInfo ) { }
-	virtual void onBodyDamageStateChange( const DamageInfo *damageInfo, 
-																				BodyDamageType oldState, 
+	virtual void onBodyDamageStateChange( const DamageInfo *damageInfo,
+																				BodyDamageType oldState,
 																				BodyDamageType newState ) { }
 
 protected:
-	
+
 	UpdateSleepTime calcSleepTime();
 	void doAflameDamage();
 	void startBurningSound();

@@ -109,7 +109,7 @@ SoundRenderObjClass::~SoundRenderObjClass (void)
 //////////////////////////////////////////////////////////////////////////////////
 const SoundRenderObjClass &
 SoundRenderObjClass::operator= (const SoundRenderObjClass &src)
-{	
+{
 	//
 	//	Create a definition from the src sound object
 	//
@@ -195,7 +195,7 @@ SoundRenderObjClass::Set_Hidden (int onoff)
 	//
 	if (IsInitialized == false || Is_Not_Hidden_At_All () != before) {
 		IsInitialized = true;
-		Update_On_Visibilty ();		
+		Update_On_Visibilty ();
 	}
 
 	return ;
@@ -296,7 +296,7 @@ SoundRenderObjClass::Update_On_Visibilty (void)
 	if (	Is_Not_Hidden_At_All () &&
 			Sound->Is_In_Scene () == false &&
 			Peek_Scene () != NULL)
-	{		
+	{
 		//
 		//	Make sure the sound is properly attached to this render
 		// object and then add it to the scene
@@ -305,7 +305,7 @@ SoundRenderObjClass::Update_On_Visibilty (void)
 		Sound->Add_To_Scene (true);
 
 	} else if ((Is_Not_Hidden_At_All () == false) || (Peek_Scene () == NULL)) {
-		
+
 		//
 		//	Remove the sound from the scene (it will stop playing)
 		//
@@ -579,7 +579,7 @@ SoundRenderObjDefClass::Save_W3D (ChunkSaveClass &csave)
 	// Begin a chunk that identifies a sound render object
 	//
 	if (csave.Begin_Chunk (W3D_CHUNK_SOUNDROBJ) == TRUE) {
-		
+
 		//
 		// Attempt to save the different sections of the aggregate definition
 		//
@@ -655,9 +655,9 @@ SoundRenderObjDefClass::Read_Definition (ChunkLoadClass &cload)
 		//
 		if (Definition.Load (cload)) {
 			retval = WW3D_ERROR_OK;
-		}		
-		
-		cload.Close_Chunk ();		
+		}
+
+		cload.Close_Chunk ();
 	}
 
 	return retval;
@@ -678,7 +678,7 @@ SoundRenderObjDefClass::Write_Header (ChunkSaveClass &csave)
 	// Begin a chunk that identifies the aggregate
 	//
 	if (csave.Begin_Chunk (W3D_CHUNK_SOUNDROBJ_HEADER) == TRUE) {
-		
+
 		//
 		// Fill the header structure
 		//
@@ -716,7 +716,7 @@ SoundRenderObjDefClass::Write_Definition (ChunkSaveClass &csave)
 	//
 	// Save the definition to its own chunk
 	//
-	if (csave.Begin_Chunk (W3D_CHUNK_SOUNDROBJ_DEFINITION) == TRUE) {		
+	if (csave.Begin_Chunk (W3D_CHUNK_SOUNDROBJ_DEFINITION) == TRUE) {
 		if (Definition.Save (csave)) {
 			retval = WW3D_ERROR_OK;
 		}
@@ -749,7 +749,7 @@ SoundRenderObjLoaderClass::Load_W3D (ChunkLoadClass &cload)
 	//
 	SoundRenderObjDefClass *definition = W3DNEW SoundRenderObjDefClass;
 	if (definition != NULL) {
-		
+
 		//
 		// Ask the definition object to load the sound data
 		//

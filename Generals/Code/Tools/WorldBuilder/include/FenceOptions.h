@@ -81,7 +81,7 @@ protected:
 	Bool							m_customSpacing;
 
 protected:
-	void addObject( MapObject *mapObject, const char *pPath, const char *name, 
+	void addObject( MapObject *mapObject, const char *pPath, const char *name,
 									Int objectNdx, HTREEITEM parent );
 	HTREEITEM findOrAdd(HTREEITEM parent, const char *pLabel);
 	Bool setObjectTreeViewSelection(HTREEITEM parent, Int selection);
@@ -92,7 +92,7 @@ public:
 	static Bool hasSelectedObject(void);
 	static Real getFenceSpacing(void) {return m_fenceSpacing;}
 	static Real getFenceOffset(void) {return m_fenceOffset;}
-}; 
+};
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.

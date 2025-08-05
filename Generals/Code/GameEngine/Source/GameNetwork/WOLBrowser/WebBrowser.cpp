@@ -61,7 +61,7 @@ public:
 	 }
 	~OLEInitializer()
 	{
-		OleUninitialize(); 
+		OleUninitialize();
 	}
 };
 OLEInitializer g_OLEInitializer;
@@ -129,7 +129,7 @@ WebBrowser::~WebBrowser()
 //-------------------------------------------------------------------------------------------------
 /** The INI data fields for Webpage URL's */
 //-------------------------------------------------------------------------------------------------
-const FieldParse WebBrowserURL::m_URLFieldParseTable[] = 
+const FieldParse WebBrowserURL::m_URLFieldParseTable[] =
 {
 
 	{ "URL",										INI::parseAsciiString,							NULL, offsetof( WebBrowserURL, m_url ) },
@@ -137,14 +137,14 @@ const FieldParse WebBrowserURL::m_URLFieldParseTable[] =
 
 };
 
-WebBrowserURL::WebBrowserURL() 
+WebBrowserURL::WebBrowserURL()
 {
 	m_next = NULL;
 	m_tag.clear();
 	m_url.clear();
 }
 
-WebBrowserURL::~WebBrowserURL() 
+WebBrowserURL::~WebBrowserURL()
 {
 }
 /******************************************************************************
@@ -163,7 +163,7 @@ WebBrowserURL::~WebBrowserURL()
 *
 ******************************************************************************/
 
-void WebBrowser::init() 
+void WebBrowser::init()
 {
 	m_urlList = NULL;
 	INI ini;
@@ -186,19 +186,19 @@ void WebBrowser::init()
 *
 ******************************************************************************/
 
-void WebBrowser::reset() 
+void WebBrowser::reset()
 {
 }
 
-void WebBrowser::update( void ) 
+void WebBrowser::update( void )
 {
 }
 
-WebBrowserURL * WebBrowser::findURL(AsciiString tag) 
+WebBrowserURL * WebBrowser::findURL(AsciiString tag)
 {
 	WebBrowserURL *retval = m_urlList;
 
-	while ((retval != NULL) && tag.compareNoCase(retval->m_tag.str())) 
+	while ((retval != NULL) && tag.compareNoCase(retval->m_tag.str()))
 	{
 		retval = retval->m_next;
 	}
@@ -206,7 +206,7 @@ WebBrowserURL * WebBrowser::findURL(AsciiString tag)
 	return retval;
 }
 
-WebBrowserURL * WebBrowser::makeNewURL(AsciiString tag) 
+WebBrowserURL * WebBrowser::makeNewURL(AsciiString tag)
 {
 	WebBrowserURL *newURL = newInstance(WebBrowserURL);
 
@@ -303,7 +303,7 @@ ULONG STDMETHODCALLTYPE WebBrowser::Release(void) IUNKNOWN_NOEXCEPT
 	return mRefCount;
 }
 
-STDMETHODIMP WebBrowser::TestMethod(Int num1) 
+STDMETHODIMP WebBrowser::TestMethod(Int num1)
 {
 	DEBUG_LOG(("WebBrowser::TestMethod - num1 = %d", num1));
 	return S_OK;

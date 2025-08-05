@@ -67,7 +67,7 @@ void StackDumpDefaultHandler(const char*line)
 //*****************************************************************************
 void StackDump(void (*callback)(const char*))
 {
-	if (callback == NULL) 
+	if (callback == NULL)
 	{
 		callback = StackDumpDefaultHandler;
 	}
@@ -96,7 +96,7 @@ MYEIP1:
 //*****************************************************************************
 void StackDumpFromContext(DWORD eip,DWORD esp,DWORD ebp, void (*callback)(const char*))
 {
-	if (callback == NULL) 
+	if (callback == NULL)
 	{
 		callback = StackDumpDefaultHandler;
 	}
@@ -111,7 +111,7 @@ void StackDumpFromContext(DWORD eip,DWORD esp,DWORD ebp, void (*callback)(const 
 //*****************************************************************************
 BOOL InitSymbolInfo()
 {
-	if (gsInit == TRUE) 
+	if (gsInit == TRUE)
 		return TRUE;
 
 	gsInit = TRUE;
@@ -242,9 +242,9 @@ stack_frame.AddrFrame.Offset = myebp;
 											SymFunctionTableAccess,
 											SymGetModuleBase,
 											NULL);
-					
 
-					
+
+
 					if (b_ret) WriteStackLine((void *) stack_frame.AddrPC.Offset, callback);
 					skip--;
 			}
@@ -302,7 +302,7 @@ void GetFunctionDetails(void *pointer, char*name, char*filename, unsigned int* l
 			memset(&line,0,sizeof(line));
 			line.SizeOfStruct = sizeof(line);
 
-		
+
 			if (gsSymGetLineFromAddr(process, (DWORD) pointer, &displacement, &line))
 			{
 				if (filename)
@@ -317,7 +317,7 @@ void GetFunctionDetails(void *pointer, char*name, char*filename, unsigned int* l
 				{
 					*address = (unsigned int)line.Address;
 				}
-			} 					
+			}
 		}
     }
 }
@@ -332,7 +332,7 @@ void FillStackAddresses(void**addresses, unsigned int count, unsigned int skip)
 
 	STACKFRAME	stack_frame;
 
-	
+
 	HANDLE thread = GetCurrentThread();
 	HANDLE process = GetCurrentProcess();
 
@@ -403,7 +403,7 @@ stack_frame.AddrFrame.Offset = myebp;
 								NULL) != 0;
 			if (stillgoing)
 			{
-				*addresses  = (void*)stack_frame.AddrPC.Offset;				
+				*addresses  = (void*)stack_frame.AddrPC.Offset;
 				addresses++;
 				count--;
 			}
@@ -423,7 +423,7 @@ stack_frame.AddrFrame.Offset = myebp;
 	{
 		memset(addresses,NULL,count*sizeof(void*));
 	}
-*/	
+*/
 }
 
 
@@ -433,7 +433,7 @@ stack_frame.AddrFrame.Offset = myebp;
 //*****************************************************************************
 void StackDumpFromAddresses(void**addresses, unsigned int count, void (*callback)(const char *))
 {
-	if (callback == NULL) 
+	if (callback == NULL)
 	{
 		callback = StackDumpDefaultHandler;
 	}
@@ -442,9 +442,9 @@ void StackDumpFromAddresses(void**addresses, unsigned int count, void (*callback
 
 	while ((count--) && (*addresses!=NULL))
 	{
-		WriteStackLine(*addresses,callback);	
+		WriteStackLine(*addresses,callback);
 		addresses++;
-	}	
+	}
 }
 
 
@@ -478,7 +478,7 @@ void DumpExceptionInfo( unsigned int u, EXCEPTION_POINTERS* e_info )
 	/*
 	** List of possible exceptions
 	*/
-	 g_LastErrorDump.clear(); 
+	 g_LastErrorDump.clear();
 
 	static const unsigned int _codes[] = {
 		EXCEPTION_ACCESS_VIOLATION,
@@ -538,7 +538,7 @@ void DumpExceptionInfo( unsigned int u, EXCEPTION_POINTERS* e_info )
 	*/
 	int access_read_write=-1;
 	unsigned long access_address = 0;
-	AsciiString msg; 
+	AsciiString msg;
 
 // DOUBLE_DEBUG does a DEBUG_LOG, and concats to g_LastErrorDump.  jba.
 #define DOUBLE_DEBUG(x) { msg.format x; g_LastErrorDump.concat(msg); DEBUG_LOG( x ); }

@@ -43,7 +43,7 @@ void INI::parseTerrainBridgeDefinition( INI* ini )
 
 	// read the name
 	const char* c = ini->getNextToken();
-	name.set( c );	
+	name.set( c );
 
 	// find existing item if present or allocate new one
 	bridge = TheTerrainRoads->findBridge( name );
@@ -53,13 +53,13 @@ void INI::parseTerrainBridgeDefinition( INI* ini )
 	{
 
 		// sanity
-		DEBUG_ASSERTCRASH( bridge->isBridge(), ("Redefining road '%s' as a bridge!", 
+		DEBUG_ASSERTCRASH( bridge->isBridge(), ("Redefining road '%s' as a bridge!",
 											 bridge->getName().str()) );
 		throw INI_INVALID_DATA;
 
 	}  // end if
 
-	if( bridge == NULL )	
+	if( bridge == NULL )
 		bridge = TheTerrainRoads->newBridge( name );
 
 	DEBUG_ASSERTCRASH( bridge, ("Unable to allcoate bridge '%s'", name.str()) );

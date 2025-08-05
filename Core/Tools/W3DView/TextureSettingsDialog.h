@@ -106,7 +106,7 @@ protected:
 		void					Fill_Animation_Controls (TextureClass *ptexture);
 		void					Load_Textures_Into_Combo (void);
 		void					Load_Texture_Settings (void);
-		void					Paint_Thumbnail (void);		
+		void					Paint_Thumbnail (void);
 
 	private:
 

@@ -56,7 +56,7 @@ class ObjectTypes;
 
 // Slightly odd place to put breeze info, but the breeze info is
 // set by script, so it's as good a place as any.  john a.
-struct BreezeInfo 
+struct BreezeInfo
 {
 	Real		m_direction;				///< Direction of the breeze in radians. 0 == +x direction.
 	Coord2D	m_directionVec;			///< sin/cos of direction, for efficiency.
@@ -73,7 +73,7 @@ struct NamedReveal
 	AsciiString m_revealName;
 	AsciiString m_waypointName;
 	Real				m_radiusToReveal;
-	AsciiString m_playerName; 
+	AsciiString m_playerName;
 };
 
 struct TScriptListReadInfo
@@ -160,7 +160,7 @@ protected:
 
 class SequentialScript : public MemoryPoolObject, public Snapshot
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(SequentialScript, "SequentialScript")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(SequentialScript, "SequentialScript")
 
 public:
 
@@ -190,7 +190,7 @@ EMPTY_DTOR(SequentialScript)
 #ifdef NOT_IN_USE
 class SequentialScriptStatus : public MemoryPoolObject, public Snapshot
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(SequentialScriptStatus, "SequentialScriptStatus")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(SequentialScriptStatus, "SequentialScriptStatus")
 
 public:
 
@@ -234,7 +234,7 @@ public:
 	UnsignedInt getFrameObjectCountChanged(void) {return m_frameObjectCountChanged;}
 	void setSequentialTimer(Object *obj, Int frameCount);
 	void setSequentialTimer(Team *team, Int frameCount);
-	
+
 	void removeAllSequentialScripts(Object *obj);
 	void removeAllSequentialScripts(Team *team);
 
@@ -263,7 +263,7 @@ public:
 	Bool hasShownMPLocalDefeatWindow(void);
 	void markMPLocalDefeatWindowShown(void);
 
-	// NOTE NOTE NOTE: do not store of the return value of this call (getObjectTypeList) beyond the life of the 
+	// NOTE NOTE NOTE: do not store of the return value of this call (getObjectTypeList) beyond the life of the
 	// function it will be used in, as it can be deleted from under you if maintenance is performed on the object.
 	virtual ObjectTypes *getObjectTypes(const AsciiString& objectTypeList);
 	virtual void doObjectTypeListMaintenance(const AsciiString& objectTypeList, const AsciiString& objectType, Bool addObject);
@@ -274,7 +274,7 @@ public:
 	// For other systems to evaluate Conditions, execute Actions, etc.
 
 	///< if pThisTeam is specified, then scripts in here can use <This Team> to mean the team this script is attached to.
-	virtual Bool evaluateConditions( Script *pScript, Team *pThisTeam = NULL, Player *pPlayer=NULL );	
+	virtual Bool evaluateConditions( Script *pScript, Team *pThisTeam = NULL, Player *pPlayer=NULL );
 	virtual void friend_executeAction( ScriptAction *pActionHead, Team *pThisTeam = NULL);	///< Use this at yer peril.
 
 	virtual Object *getUnitNamed(const AsciiString& unitName); ///< Gets the named unit. May be null.
@@ -289,7 +289,7 @@ public:
 	virtual void notifyOfCompletedSpecialPower( Int playerIndex, const AsciiString& completedPower, ObjectID sourceObj );
 	virtual void notifyOfCompletedUpgrade			( Int playerIndex, const AsciiString& upgrade,				 ObjectID sourceObj );
 	virtual void notifyOfAcquiredScience				( Int playerIndex, ScienceType science );
-	
+
 	virtual void signalUIInteract(const AsciiString& hookName);	///< Notify that a UI button was pressed and some flag should go true, for one frame only.
 
 	virtual Bool isVideoComplete( const AsciiString& completedVideo, Bool removeFromList );	///< Determine whether a video has completed
@@ -305,9 +305,9 @@ public:
 	virtual void adjustToppleDirection( Object *object, Coord2D *direction);
 	virtual void adjustToppleDirection( Object *object, Coord3D *direction);
 	virtual const Script *findScriptByName(const AsciiString& scriptName) {return findScript(scriptName);} ///<  Finds a script.
-		
+
 	const BreezeInfo& getBreezeInfo() const {return m_breezeInfo;}
-	
+
 	Bool isTimeFrozenScript( void );		///< Ask whether a script has frozen time or not
 	void doFreezeTime( void );
 	void doUnfreezeTime( void );
@@ -334,9 +334,9 @@ public:
 	/// Attack priority stuff.
 	const AttackPriorityInfo *getDefaultAttackInfo(void);
 	const AttackPriorityInfo *getAttackInfo(const AsciiString& name);
-	
-	const TCounter *getCounter(const AsciiString& counterName);	
-	
+
+	const TCounter *getCounter(const AsciiString& counterName);
+
 	void createNamedMapReveal(const AsciiString& revealName, const AsciiString& waypointName, Real radiusToReveal, const AsciiString& playerName);
 	void doNamedMapReveal(const AsciiString& revealName);
 	void undoNamedMapReveal(const AsciiString& revealName);
@@ -406,13 +406,13 @@ protected:
 	typedef VecSequentialScriptPtr::iterator VecSequentialScriptPtrIt;
 
 	VecSequentialScriptPtr m_sequentialScripts;
-	
+
 	void evaluateAndProgressAllSequentialScripts( void );
 	VecSequentialScriptPtrIt cleanupSequentialScript(VecSequentialScriptPtrIt it, Bool cleanDanglers);
 
 	Bool hasUnitCompletedSequentialScript( Object *object, const AsciiString& sequentialScriptName );
 	Bool hasTeamCompletedSequentialScript( Team *team, const AsciiString& sequentialScriptName );
-	
+
 
 
 
@@ -432,7 +432,7 @@ protected:
 	Team							*m_conditionTeam;				///< Team that is being used to evaluate conditions, used for THIS_TEAM
 	Object						*m_conditionObject;				///< Unit that is being used to evaluate conditions, used for THIS_OBJECT
 	VecNamedRequests	m_namedObjects;
-	Bool							m_firstUpdate;			
+	Bool							m_firstUpdate;
 	Player						*m_currentPlayer;
 	Player						*m_skirmishHumanPlayer;
 	AsciiString				m_currentTrackName;
@@ -456,7 +456,7 @@ protected:
 	ListAsciiStringUINT		m_testingAudio;
 
 	ListAsciiString				m_uiInteractions;
-	
+
 	ListAsciiStringObjectID	m_triggeredSpecialPowers[MAX_PLAYER_COUNT];
 	ListAsciiStringObjectID	m_midwaySpecialPowers		[MAX_PLAYER_COUNT];
 	ListAsciiStringObjectID	m_finishedSpecialPowers	[MAX_PLAYER_COUNT];
@@ -474,7 +474,7 @@ protected:
 	AllObjectTypes		m_allObjectTypeLists;
 	Bool							m_objectsShouldReceiveDifficultyBonus;
 	Bool							m_ChooseVictimAlwaysUsesNormal;
-	
+
 	Bool							m_shownMPLocalDefeatWindow;
 
 #ifdef SPECIAL_SCRIPT_PROFILING
@@ -489,6 +489,6 @@ protected:
 };  // end class ScriptEngine
 
 extern ScriptEngine *TheScriptEngine;   ///< singleton definition
-																				
+
 
 #endif  // end __SCRIPTENGINE_H_

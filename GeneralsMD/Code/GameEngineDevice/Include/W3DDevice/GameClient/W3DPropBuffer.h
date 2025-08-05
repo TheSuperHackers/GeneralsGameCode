@@ -24,12 +24,12 @@
 
 // FILE: W3DPropBuffer.h //////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information					         
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:    RTS3
@@ -48,7 +48,7 @@
 #define __W3DPROP_BUFFER_H_
 
 //-----------------------------------------------------------------------------
-//           Includes                                                      
+//           Includes
 //-----------------------------------------------------------------------------
 #include "always.h"
 #include "rendobj.h"
@@ -76,7 +76,7 @@ typedef struct {
 	RenderObjClass *m_robj;			///< Render object for this kind of prop.
 	Int					id;
 	Coord3D			location;			///< Drawing location
-	Int					propType;					///< Type of prop. Index into m_propTypes 
+	Int					propType;					///< Type of prop. Index into m_propTypes
 	ObjectShroudStatus ss;
 	Bool				visible;					///< Visible flag, updated each frame.
 	SphereClass bounds;				///< Bounding sphere for culling to set the visible flag.
@@ -94,7 +94,7 @@ typedef struct {
 //
 //
 class W3DPropBuffer : Snapshot
-{	
+{
 friend class BaseHeightMapRenderObjClass;
 
 
@@ -112,7 +112,7 @@ public:
 	void notifyShroudChanged(void);
 
 	void removePropsForConstruction(
-		const Coord3D* pos, 
+		const Coord3D* pos,
 		const GeometryInfo& geom,
 		Real angle
 	);
@@ -144,7 +144,7 @@ protected:
 	TPropType m_propTypes[MAX_TYPES];	///< Info about a kind of prop.
 	Int			m_numPropTypes;						///< Number of entries in m_propTypes.
 	W3DShroudMaterialPassClass	*m_propShroudMaterialPass;	///< Custom render pass which applies shrouds to objects
-	
+
 	LightClass *m_light;
 
 	void cull(CameraClass * camera);						 ///< Culls the props.

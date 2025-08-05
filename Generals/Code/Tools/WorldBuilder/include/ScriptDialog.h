@@ -52,7 +52,7 @@ class Parameter;
 class CSDTreeCtrl : public CTreeCtrl
 {
 	public:
-	
+
 	protected:
 		virtual void OnRButtonDown(UINT nFlags, CPoint point);
 		DECLARE_MESSAGE_MAP()

@@ -247,7 +247,7 @@ public:
 	virtual void scrollInView(Real x, Real y, Bool end);
 
 	virtual void setDefaultCamera();
-	virtual void rotateCamera(Real delta);	 
+	virtual void rotateCamera(Real delta);
 	virtual void pitchCamera(Real delta);
 	void setCameraPitch(Real absolutePitch);
 	Real getCameraPitch(void);
@@ -275,7 +275,7 @@ public:
 	AsciiString getModelNameAndScale(MapObject *pMapObj, Real *scale, BodyDamageType curDamageState);
 
 	virtual Int getPickPixels(void) {return m_pickPixels;}
-	virtual Bool viewToDocCoordZ(CPoint curPt, Coord3D *newPt, Real Z); 
+	virtual Bool viewToDocCoordZ(CPoint curPt, Coord3D *newPt, Real Z);
 public:
 
 //	void init(CWorldBuilderView *pMainView, HINSTANCE hInstance, CWnd* parent);

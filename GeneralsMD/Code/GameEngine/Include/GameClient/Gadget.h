@@ -24,12 +24,12 @@
 
 // FILE: Gadget.h /////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information					         
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:    RTS3
@@ -90,7 +90,7 @@ enum
 // Gadget window styles, keep in same order as WindowStyleNames[]
 enum
 {
-						
+
 	GWS_PUSH_BUTTON				= 0x00000001,
 	GWS_RADIO_BUTTON			= 0x00000002,
 	GWS_CHECK_BOX					= 0x00000004,
@@ -191,7 +191,7 @@ enum GadgetGameMessage CPP_11(: Int)
 	GCM_GET_SELECTION,
 	GCM_SET_SELECTION,
 	GCM_UPDATE_TEXT,
-	
+
 	// Entry field messages
 	GEM_GET_TEXT,
 	GEM_SET_TEXT,
@@ -226,7 +226,7 @@ enum
 
 // GadgetMsg ------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-typedef struct _GadgetMsg 
+typedef struct _GadgetMsg
 {
 
 	GameWindow *window;           // Originator of message
@@ -237,7 +237,7 @@ typedef struct _GadgetMsg
 
 // SliderMsg ------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-typedef struct _SliderMsg 
+typedef struct _SliderMsg
 {
 
 	GameWindow *window;						// Originator of message
@@ -249,7 +249,7 @@ typedef struct _SliderMsg
 
 // ListboxMsg -----------------------------------------------------------------
 //-----------------------------------------------------------------------------
-typedef struct _ListboxMsg 
+typedef struct _ListboxMsg
 {
 
 	GameWindow *window;						// Originator of message
@@ -259,7 +259,7 @@ typedef struct _ListboxMsg
 
 // SliderData -----------------------------------------------------------------
 //-----------------------------------------------------------------------------
-typedef struct _SliderData 
+typedef struct _SliderData
 {
 
 	Int					minVal;						// Minimum slider value
@@ -274,7 +274,7 @@ typedef struct _SliderData
 
 // EntryData ------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-typedef struct _EntryData 
+typedef struct _EntryData
 {
 
 	DisplayString *text;						///< the entry text
@@ -305,7 +305,7 @@ typedef struct _EntryData
 
 // TextData -------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-typedef struct _TextData 
+typedef struct _TextData
 {
 
 	DisplayString *text;  ///< the text data
@@ -322,7 +322,7 @@ typedef struct _ListEntryCell
 {
 	Int cellType;									// Holds either LISTBOX_TEXT or LISTBOX_IMAGE
 	Color						color;				// use this color
-	void						*data;				// pointer to either a DisplayString or an image	
+	void						*data;				// pointer to either a DisplayString or an image
 	void						*userData;		// Attach user data to the cell
 	Int							width;				// Used if this is an image and we don't want to use the default
 	Int							height;				// used if this is an image and we don't want ot use the default
@@ -338,12 +338,12 @@ typedef struct _ListEntryRow
 	Int							listHeight;		// calculated total Height at the bottom of this entry
 	Int							height;				// Maintain the height of the row
 	ListEntryCell		*cell;				// Holds the array of ListEntry Cells
-	
+
 } ListEntryRow;
 
 // ListboxData ----------------------------------------------------------------
 //-----------------------------------------------------------------------------
-typedef struct _ListboxData 
+typedef struct _ListboxData
 {
 
 	Short				listLength;				// Max Number of entries in the list
@@ -362,7 +362,7 @@ typedef struct _ListboxData
 	Bool				audioFeedback;		// Audio click feedback?
 
 	//
-	// The following fields are for internal use and should not be initialized 
+	// The following fields are for internal use and should not be initialized
 	// by the user
 	//
 	Int					*columnWidth;			// Pointer to array of column widths based off of user input
@@ -397,7 +397,7 @@ typedef struct _ComboBoxData
 	ListboxData *listboxData;			// Needed for the listbox component of the combo box
 	EntryData		*entryData;				// Needed for the text entry component of the combo box
 	//
-	// The following fields are for internal use and should not be initialized 
+	// The following fields are for internal use and should not be initialized
 	// by the user
 	//
 	Bool dontHide;								// A flag we'll use that'll determine if we hide the listbox or not when selected
@@ -409,7 +409,7 @@ typedef struct _ComboBoxData
 
 // RadioButtonData ------------------------------------------------------------
 //-----------------------------------------------------------------------------
-typedef struct _RadioButtonData	
+typedef struct _RadioButtonData
 {
 
 	Int screen;  ///< screen identifier
@@ -455,7 +455,7 @@ enum
 	NUM_TAB_PANES = 8,//(MAX_DRAW_DATA - 1)
 };
 
-typedef struct _TabControlData	
+typedef struct _TabControlData
 {
 	//Set in editor
 	Int tabOrientation;
@@ -467,7 +467,7 @@ typedef struct _TabControlData
 
 	GameWindow *subPanes[NUM_TAB_PANES];
 	Bool subPaneDisabled[NUM_TAB_PANES];//tabCount will control how many even exist.  Individual ones can be disabled
-	Int paneBorder; 
+	Int paneBorder;
 
 	//Working computations
 	Int activeTab;

@@ -17,22 +17,22 @@
 */
 
 /* $Header: /Commando/Code/Tools/max2w3d/w3dquat.h 27    2/03/00 4:55p Jason_a $ */
-/*************************************************************************** 
- ***                  Confidential - Westwood Studios                    *** 
- *************************************************************************** 
- *                                                                         * 
- *                 Project Name : Voxel Technology                         * 
- *                                                                         * 
- *                    File Name : QUAT.H                                   * 
- *                                                                         * 
- *                   Programmer : Greg Hjelstrom                           * 
- *                                                                         * 
- *                   Start Date : 02/24/97                                 * 
- *                                                                         * 
- *                  Last Update : February 24, 1997 [GH]                   * 
- *                                                                         * 
- *-------------------------------------------------------------------------* 
- * Functions:                                                              * 
+/***************************************************************************
+ ***                  Confidential - Westwood Studios                    ***
+ ***************************************************************************
+ *                                                                         *
+ *                 Project Name : Voxel Technology                         *
+ *                                                                         *
+ *                    File Name : QUAT.H                                   *
+ *                                                                         *
+ *                   Programmer : Greg Hjelstrom                           *
+ *                                                                         *
+ *                   Start Date : 02/24/97                                 *
+ *                                                                         *
+ *                  Last Update : February 24, 1997 [GH]                   *
+ *                                                                         *
+ *-------------------------------------------------------------------------*
+ * Functions:                                                              *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #if defined(_MSC_VER)
@@ -74,13 +74,13 @@ public:
 	void		Scale(float s) { X = (float)(s*X); Y = (float)(s*Y); Z = (float)(s*Z); W = (float)(s*W); }
 
 	// Array access
-	float &	operator [](int i) { return (&X)[i]; }     
-	const float &  operator [](int i) const { return (&X)[i]; }  
+	float &	operator [](int i) { return (&X)[i]; }
+	const float &  operator [](int i) const { return (&X)[i]; }
 
-	// Unary operators.  
-	// Remember that q and -q represent the same 3D rotation.  
-	Quaternion operator-() const { return(Quaternion(-X,-Y,-Z,-W)); } 
-	Quaternion operator+() const { return *this; } 
+	// Unary operators.
+	// Remember that q and -q represent the same 3D rotation.
+	Quaternion operator-() const { return(Quaternion(-X,-Y,-Z,-W)); }
+	Quaternion operator+() const { return *this; }
 
 	// Every 3D rotation can be expressed by two different quaternions,  This
 	// function makes the current quaternion convert itself to the representation
@@ -237,7 +237,7 @@ inline Vector3 Quaternion::Rotate_Vector(const Vector3 & v) const
 inline void Quaternion::Rotate_Vector(const Vector3 & v,Vector3 * result) const
 {
 	assert(result != NULL);
-	
+
 	float x = W*v.X + (Y*v.Z - v.Y*Z);
 	float y = W*v.Y - (X*v.Z - v.X*Z);
 	float z = W*v.Z + (X*v.Y - v.X*Y);
@@ -250,8 +250,8 @@ inline void Quaternion::Rotate_Vector(const Vector3 & v,Vector3 * result) const
 
 inline bool Quaternion::Is_Valid(void) const
 {
-	return (	WWMath::Is_Valid_Float(X) && 
-				WWMath::Is_Valid_Float(Y) && 
+	return (	WWMath::Is_Valid_Float(X) &&
+				WWMath::Is_Valid_Float(Y) &&
 				WWMath::Is_Valid_Float(Z) &&
 				WWMath::Is_Valid_Float(W) );
 }

@@ -280,7 +280,7 @@ void PingThreadClass::Thread_Function()
 				if (hostStruct == NULL)
 				{
 					DEBUG_LOG(("pinging %s - host lookup failed", hostnameBuffer));
-					
+
 					// Even though this failed to resolve IP, still need to send a
 					//   callback.
 					IP = 0xFFFFFFFF;   // flag for IP resolve failed
@@ -342,7 +342,7 @@ HANDLE WINAPI IcmpCreateFile(VOID); /* INVALID_HANDLE_VALUE on error */
 BOOL WINAPI IcmpCloseHandle(HANDLE IcmpHandle); /* FALSE on error */
 
 /* Note 2: For the most part, you can refer to RFC 791 for detials
- * on how to fill in values for the IP option information structure. 
+ * on how to fill in values for the IP option information structure.
  */
 typedef struct ip_option_information
 {
@@ -358,7 +358,7 @@ IPINFO, *PIPINFO, FAR *LPIPINFO;
 /* Note 1: The Reply Buffer will have an array of ICMP_ECHO_REPLY
  * structures, followed by options and the data in ICMP echo reply
  * datagram received. You must have room for at least one ICMP
- * echo reply structure, plus 8 bytes for an ICMP header. 
+ * echo reply structure, plus 8 bytes for an ICMP header.
  */
 typedef struct icmp_echo_reply
 {
@@ -422,7 +422,7 @@ DWORD WINAPI IcmpSendEcho(
 Int PingThreadClass::doPing(UnsignedInt IP, Int timeout)
 {
    /*
-    * Initialize default settings 
+    * Initialize default settings
     */
 
    IPINFO stIPInfo, *lpstIPInfo;
@@ -491,7 +491,7 @@ Int PingThreadClass::doPing(UnsignedInt IP, Int timeout)
    }
 
    /*
-    * Init data buffer printable ASCII 
+    * Init data buffer printable ASCII
     *  32 (space) through 126 (tilde)
     */
    for (j = 0, i = 32; j < nDataLen; j++, i++)

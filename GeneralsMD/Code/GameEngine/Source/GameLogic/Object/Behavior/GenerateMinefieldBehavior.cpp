@@ -24,7 +24,7 @@
 
 // FILE: GenerateMinefieldBehavior.cpp ///////////////////////////////////////////////////////////////////////
 // Author:
-// Desc:  
+// Desc:
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -76,10 +76,10 @@ GenerateMinefieldBehaviorModuleData::GenerateMinefieldBehaviorModuleData()
 }
 
 //-------------------------------------------------------------------------------------------------
-/*static*/ void GenerateMinefieldBehaviorModuleData::buildFieldParse(MultiIniFieldParse& p) 
+/*static*/ void GenerateMinefieldBehaviorModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
 
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
 		{ "MineName", INI::parseAsciiString,	NULL, offsetof( GenerateMinefieldBehaviorModuleData, m_mineName ) },
 		{ "UpgradedMineName", INI::parseAsciiString,	NULL, offsetof( GenerateMinefieldBehaviorModuleData, m_mineNameUpgraded ) },
@@ -265,7 +265,7 @@ void GenerateMinefieldBehavior::placeMinesAlongLine(const Coord3D& posStart, con
 		pt.z = TheTerrainLogic->getGroundHeight( pt.x, pt.y );
 		offsetBySmallRandomAmount(pt, mineJitter);
 		placeMineAt(pt, mineTemplate, team, obj);
-	} 
+	}
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -326,7 +326,7 @@ void GenerateMinefieldBehavior::placeMinesAroundCircle(const Coord3D& pos, Real 
 		pt.z = TheTerrainLogic->getGroundHeight( pt.x, pt.y );
 		offsetBySmallRandomAmount(pt, mineJitter);
 		placeMineAt(pt, mineTemplate, team, obj);
-	} 
+	}
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -349,7 +349,7 @@ void GenerateMinefieldBehavior::placeMinesInFootprint(const GeometryInfo& geom, 
 	{
 		Coord3D pt;
 		Int maxRetry = 100;
-		do 
+		do
 		{
 			geom.makeRandomOffsetWithinFootprint(pt);
 			pt.x += target->x;
@@ -456,7 +456,7 @@ void GenerateMinefieldBehavior::placeMines()
 UpdateSleepTime GenerateMinefieldBehavior::update()
 {
 	// Test to see if we need to replace the current mines with upgraded ones
-	if (!m_upgraded && getGenerateMinefieldBehaviorModuleData()->m_upgradable) 
+	if (!m_upgraded && getGenerateMinefieldBehaviorModuleData()->m_upgradable)
 	{
 		if (m_generated)
 		{
@@ -470,7 +470,7 @@ UpdateSleepTime GenerateMinefieldBehavior::update()
 				if (objMask.testForAny(upgradeMask))
 				{
 					m_upgraded = TRUE;
-					
+
 					// Remove all old mine objects if present
 					for (std::list<ObjectID>::iterator it = m_mineList.begin(); it != m_mineList.end(); ++it)
 					{
@@ -533,7 +533,7 @@ void GenerateMinefieldBehavior::xfer( Xfer *xfer )
 	xfer->xferBool( &m_generated );
 	xfer->xferBool( &m_hasTarget );
 	xfer->xferBool( &m_upgraded );
-	
+
 	xfer->xferCoord3D( &m_target );
 
 		// spaces info count and objectID data
@@ -566,7 +566,7 @@ void GenerateMinefieldBehavior::xfer( Xfer *xfer )
 			m_mineList.push_back(objectID);
 		}  // end for, i
 	}  // end else, load
-	
+
 }  // end xfer
 
 // ------------------------------------------------------------------------------------------------

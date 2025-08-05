@@ -50,18 +50,18 @@
 //=============================================================================
 /** Constructor */
 //=============================================================================
-Thing::Thing( const ThingTemplate *thingTemplate ) 
+Thing::Thing( const ThingTemplate *thingTemplate )
 {
 	// sanity
 	if( thingTemplate == NULL )
 	{
-	
+
 		// cannot create thing without template
 		DEBUG_CRASH(( "no template" ));
 		return;
 
 	}  // end if
-		
+
 	m_template = thingTemplate;
 #if defined(RTS_DEBUG)
 	m_templateName = thingTemplate->getName();
@@ -151,7 +151,7 @@ void Thing::setPositionZ( Real z )
 	else
 	{
 		Matrix3D mtx;
-		const Bool stickToGround = true;	// yes, set the "z" pos		
+		const Bool stickToGround = true;	// yes, set the "z" pos
 		Coord3D pos = m_cachedPos;
 		pos.z = z;
 		TheTerrainLogic->alignOnTerrain(getOrientation(), pos, stickToGround, mtx );
@@ -182,7 +182,7 @@ void Thing::setPosition( const Coord3D *pos )
 	else
 	{
 		Matrix3D mtx;
-		const Bool stickToGround = true;	// yes, set the "z" pos				
+		const Bool stickToGround = true;	// yes, set the "z" pos
 		TheTerrainLogic->alignOnTerrain(getOrientation(), *pos, stickToGround, mtx );
 		setTransformMatrix(&mtx);
 	}
@@ -209,7 +209,7 @@ void Thing::setOrientation( Real angle )
 	if( m_template->isKindOf( KINDOF_STICK_TO_TERRAIN_SLOPE) )
 	{
 		Matrix3D mtx;
-		const Bool stickToGround = true;	// yes, set the "z" pos				
+		const Bool stickToGround = true;	// yes, set the "z" pos
 		TheTerrainLogic->alignOnTerrain(angle, pos, stickToGround, m_transform );
 	}
 	else
@@ -261,15 +261,15 @@ void Thing::setTransformMatrix( const Matrix3D *mx )
 }
 
 //-------------------------------------------------------------------------------------------------
-Bool Thing::isKindOf(KindOfType t) const 
-{ 
-	return getTemplate()->isKindOf(t); 
+Bool Thing::isKindOf(KindOfType t) const
+{
+	return getTemplate()->isKindOf(t);
 }
 
 //-------------------------------------------------------------------------------------------------
-Bool Thing::isKindOfMulti(const KindOfMaskType& mustBeSet, const KindOfMaskType& mustBeClear) const 
-{ 
-	return getTemplate()->isKindOfMulti(mustBeSet, mustBeClear); 
+Bool Thing::isKindOfMulti(const KindOfMaskType& mustBeSet, const KindOfMaskType& mustBeClear) const
+{
+	return getTemplate()->isKindOfMulti(mustBeSet, mustBeClear);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -279,7 +279,7 @@ Bool Thing::isAnyKindOf( const KindOfMaskType& anyKindOf ) const
 }
 
 // ------------------------------------------------------------------------------------------------
-Real Thing::calculateHeightAboveTerrain() const 
+Real Thing::calculateHeightAboveTerrain() const
 {
 	//USE_PERF_TIMER(ThingMatrixStuff)
 	const Coord3D* pos = getPosition();
@@ -307,10 +307,10 @@ Real Thing::getHeightAboveTerrainOrWater() const
 	{
 		const Coord3D* pos = getPosition();
 		Real waterZ;
-		if (TheTerrainLogic->isUnderwater(pos->x, pos->y, &waterZ)) 
+		if (TheTerrainLogic->isUnderwater(pos->x, pos->y, &waterZ))
 		{
 			m_cachedAltitudeAboveTerrainOrWater = pos->z - waterZ;
-		} 
+		}
 		else
 		{
 			m_cachedAltitudeAboveTerrainOrWater = getHeightAboveTerrain();
@@ -324,7 +324,7 @@ Real Thing::getHeightAboveTerrainOrWater() const
 /** If we treat this as airborne, then they slide down slopes.  This checks whether
 they are high enough that we should let them act like they're flying. jba. */
 //=============================================================================
-Bool Thing::isSignificantlyAboveTerrain() const 
+Bool Thing::isSignificantlyAboveTerrain() const
 {
 	// If it's high enough that it will take more than 3 frames to return to the ground,
 	// then it's significantly airborne.  jba

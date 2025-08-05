@@ -51,14 +51,14 @@ class ChunkSaveClass;
 
 
 /**
-** LightClass 
-** This "render object" is a light source.  
+** LightClass
+** This "render object" is a light source.
 */
 class LightClass : public RenderObjClass
 {
 public:
-	
-	enum LightType 
+
+	enum LightType
 	{
 		POINT = 0,
 		DIRECTIONAL,
@@ -68,7 +68,7 @@ public:
 	enum FlagsType
 	{
 		NEAR_ATTENUATION				= 0,
-		FAR_ATTENUATION,					
+		FAR_ATTENUATION,
 	};
 
 	LightClass(LightType type = POINT);
@@ -84,7 +84,7 @@ public:
 	/////////////////////////////////////////////////////////////////////////////
 	virtual void			Render(RenderInfoClass & rinfo)							{ }
 	virtual bool			Is_Vertex_Processor(void)									{ return true; }
-	
+
 	/////////////////////////////////////////////////////////////////////////////
 	// Render Object Interface - "Scene Graph"
 	// Lights register themselves with the scene as VertexProcessors.
@@ -103,7 +103,7 @@ public:
 	// LightClass Interface
 	/////////////////////////////////////////////////////////////////////////////
 	LightType				Get_Type() {return (Type);}
-	
+
 	void						Set_Intensity(float inten) { Intensity = inten; }
 	float						Get_Intensity(void) const { return Intensity; }
 
@@ -120,8 +120,8 @@ public:
 	void						Get_Far_Attenuation_Range(double& fStart, double& fEnd) const	{ fStart = FarAttenStart; fEnd = FarAttenEnd; }
 	void						Set_Near_Attenuation_Range(double nStart, double nEnd)			{ NearAttenStart = nStart; NearAttenEnd = nEnd; }
 	void						Get_Near_Attenuation_Range(double& nStart, double& nEnd)	const	{ nStart = NearAttenStart; nEnd = NearAttenEnd; }
-	float						Get_Attenuation_Range(void) const										{ return FarAttenEnd; } 
-	
+	float						Get_Attenuation_Range(void) const										{ return FarAttenEnd; }
+
 	/////////////////////////////////////////////////////////////////////////////
 	// Control over the light flags
 	/////////////////////////////////////////////////////////////////////////////
@@ -167,12 +167,12 @@ protected:
 	Vector3					Ambient;
 	Vector3					Diffuse;
 	Vector3					Specular;
-	
+
 	float						NearAttenStart;
 	float						NearAttenEnd;
 	float						FarAttenStart;
 	float						FarAttenEnd;
-	
+
 	float						SpotAngle;
 	float						SpotAngleCos;
 	float						SpotExponent;

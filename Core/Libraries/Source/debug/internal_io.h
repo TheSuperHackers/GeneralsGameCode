@@ -39,7 +39,7 @@ class DebugIOCon: public DebugIOInterface
     true if we allocated the console, false if there has already
     been a console
   */
-  bool m_allocatedConsole;    
+  bool m_allocatedConsole;
 
   /**
     internal input buffer
@@ -57,7 +57,7 @@ class DebugIOCon: public DebugIOInterface
     received.
   */
   unsigned m_inputRead;
-  
+
 public:
   explicit DebugIOCon(void);
   virtual ~DebugIOCon();
@@ -111,7 +111,7 @@ class DebugIOFlat: public DebugIOInterface
       \param len number of bytes to write
     */
     void InternalWrite(const char *src, unsigned len);
-    
+
   public:
 
     /**
@@ -167,7 +167,7 @@ class DebugIOFlat: public DebugIOInterface
 
     /// split name
     char name[256];
-    
+
     /// into which stream? (note: pointer not owned by this!)
     OutputStream *stream;
   };
@@ -205,7 +205,7 @@ class DebugIOFlat: public DebugIOInterface
 
     \param src magic filename or real filename
     \param splitName split name, NULL for default stream
-    \param buf output buffer, must have a size of at least 256 char's 
+    \param buf output buffer, must have a size of at least 256 char's
   */
   static void ExpandMagic(const char *src, const char *splitName, char *buf);
 
@@ -226,7 +226,7 @@ class DebugIONet: public DebugIOInterface
 {
   /// our pipe handle
   HANDLE m_pipe;
-  
+
 public:
   explicit DebugIONet(void);
   virtual ~DebugIONet();

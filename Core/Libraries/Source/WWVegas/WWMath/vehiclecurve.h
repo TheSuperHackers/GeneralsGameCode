@@ -87,12 +87,12 @@ public:
 
 	//
 	//	Initialization
-	//	
+	//
 	void			Initialize_Arc (float radius);
-	
+
 	//
 	//	From Curve3DClass
-	//	
+	//
 	void			Evaluate (float time, Vector3 *set_val);
 	void			Set_Key (int i,const Vector3 & point);
 	int			Add_Key (const Vector3 & point,float t);
@@ -113,7 +113,7 @@ public:
 	virtual bool								Load(ChunkLoadClass &cload);
 
 protected:
-	
+
 	///////////////////////////////////////////////////////////////////////////
 	//	Protected methods
 	///////////////////////////////////////////////////////////////////////////
@@ -155,7 +155,7 @@ protected:
 	///////////////////////////////////////////////////////////////////////////
 	bool			m_IsDirty;
 	float			m_Radius;
-	ARC_LIST		m_ArcList;	
+	ARC_LIST		m_ArcList;
 
 	float			m_LastTime;
 	float			m_Sharpness;
@@ -192,7 +192,7 @@ VehicleCurveClass::Remove_Key (int i)
 	m_IsDirty = true;
 	Curve3DClass::Remove_Key (i);
 	return ;
-}	
+}
 
 ///////////////////////////////////////////////////////////////////////////
 //	Clear_Keys
@@ -203,7 +203,7 @@ VehicleCurveClass::Clear_Keys (void)
 	m_IsDirty = true;
 	Curve3DClass::Clear_Keys ();
 	return ;
-}	
+}
 
 
 #endif //__VEHICLE_CURVE_H

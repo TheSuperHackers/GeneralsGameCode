@@ -81,7 +81,7 @@ EnumeratedIP * IPEnumeration::getAddresses( void )
 		return NULL;
 	}
 	DEBUG_LOG(("Hostname is '%s'", hostname));
-	
+
 	// get host information from the host name
 	HOSTENT* hostEnt = gethostbyname(hostname);
 	if (hostEnt == NULL)
@@ -89,7 +89,7 @@ EnumeratedIP * IPEnumeration::getAddresses( void )
 		DEBUG_LOG(("Failed call to gethostbyname; WSAGetLastError returned %d", WSAGetLastError()));
 		return NULL;
 	}
-	
+
 	// sanity-check the length of the IP adress
 	if (hostEnt->h_length != 4)
 	{

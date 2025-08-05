@@ -50,7 +50,7 @@ class TeamRelationMap : public MemoryPoolObject,
 												public Snapshot
 {
 
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( TeamRelationMap, "TeamRelationMapPool" )	
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( TeamRelationMap, "TeamRelationMapPool" )
 
 public:
 
@@ -82,14 +82,14 @@ typedef void (*ObjectIterateFunc)( Object *obj, void *userData );		///< callback
 	-- All Teams (toplevel and subteams) are in the list
 	-- Each TeamDict contains:
 		-- Team Name (an internal ascii str)
-		-- Owning Team (or Player), by Name 
+		-- Owning Team (or Player), by Name
 		-- Misc Flags
 		-- Teams we are allies with, by name (only for toplevel teams)
 		-- Teams we are enemies with, by name (only for toplevel teams)
 
 	-- Note that Players and Teams share the same namespace, so you cannot have a team
-		with the same name as a player (or vice versa). 
-	
+		with the same name as a player (or vice versa).
+
 	-- MapObject Dicts will be revised to have an "owning team" rather than "owning player" entry
 
 	-- BuildLists must also have a way to assign units to Teams, as appropriate
@@ -160,7 +160,7 @@ public:
 	AsciiString				m_transportUnitType;					///< Unit used to transport the team.
 	AsciiString				m_startReinforceWaypoint;			///< Waypoint where the reinforcement team starts.
 	Bool							m_teamStartsFull;							///< If true, team loads into member transports.
-	Bool							m_transportsExit;							///< True if the transports leave after deploying team.	
+	Bool							m_transportsExit;							///< True if the transports leave after deploying team.
 	VeterancyLevel		m_veterancy;								///< Veterancy level;
 
 	// Production scripts stuff
@@ -182,7 +182,7 @@ class Team : public MemoryPoolObject,
 						 public Snapshot
 {
 
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(Team, "TeamPool" )		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(Team, "TeamPool" )
 
 private:
 
@@ -248,14 +248,14 @@ public:
 	/// return the prototype used to create this team
 	const TeamPrototype *getPrototype( void ) { return m_proto; }
 
-	void setID( TeamID id ) { m_id = id; }	
+	void setID( TeamID id ) { m_id = id; }
 	TeamID getID() const { return m_id; }
 
 	/**
 		 Set the attack priority name for a team.
 	*/
 	void setAttackPriorityName(AsciiString name);
-	
+
 	/**
 		return the player currently controlling this team (backtracking up if necessary)
 	*/
@@ -266,7 +266,7 @@ public:
 	*/
 	void setControllingPlayer(Player *newController);
 
-	/** 
+	/**
 		Get the team's state
 	*/
 	const AsciiString& getState(void) const {return m_state;}
@@ -276,7 +276,7 @@ public:
 	*/
 	void getTeamAsAIGroup(AIGroup *pAIGroup);
 
-	/** 
+	/**
 		Get the team's state
 	*/
 	inline const AsciiString& getName() const;
@@ -286,52 +286,52 @@ public:
 	*/
 	Int getTargetableCount() const;
 
-	/** 
+	/**
 		Set the team's AI state.
 	*/
 	void setState(const AsciiString& state) {m_state = state;}
 
-	/** 
+	/**
 		Set the team's AI recruitablity.
 	*/
 	void setRecruitable(Bool recruitable) {m_isRecruitablitySet = true; m_isRecruitable = recruitable;}
 
-	/** 
+	/**
 		Set the team's target object.
 	*/
 	void setTeamTargetObject(const Object *target) ;
 
-	/** 
+	/**
 		Set the team's target object.
 	*/
-	Object *getTeamTargetObject(void); 
+	Object *getTeamTargetObject(void);
 
-	/** 
+	/**
 		Set the team as active.  A team is considered created when set active.
 	*/
 	void setActive(void) {if (!m_active) { m_created = true;m_active = true;}}
 
-	/** 
+	/**
 		Is this team active?
 	*/
 	Bool isActive(void) {return m_active;}
 
-	/** 
+	/**
 		Is this team just createc?  (stays true one logic frame.)
 	*/
 	Bool isCreated(void) {return m_created;}
 
-	/** 
+	/**
 		Note that a team member entered or exited a trigger area.
 	*/
 	void setEnteredExited(void) {m_enteredOrExited = true;}
 
-	/** 
+	/**
 		Did a team member enter or exit a trigger area.
 	*/
 	Bool didEnterOrExit(void) {return m_enteredOrExited;}
 
-	/** 
+	/**
 		Clear the flag that a team member entered or exited a trigger area.
 		Also checks and executes any onCreate scripts, and clears the created flag.
 	*/
@@ -352,7 +352,7 @@ public:
 	/**
 		return our relationship with the other team.
 		this is done as follows:
-		
+
 		-- if there's a TeamRelationship between this team and that team, return it.
 		-- otherwise, we use the relationship between our players.
 
@@ -367,7 +367,7 @@ public:
 	void setOverrideTeamRelationship( TeamID teamID, Relationship r );
 
 	/**
-		remove the special relation (if any) between this and that. 
+		remove the special relation (if any) between this and that.
 		remove all special relations for 'this' if that==null.
 		return true if anything removed.
 	*/
@@ -382,7 +382,7 @@ public:
 	void setOverridePlayerRelationship( Int playerIndex, Relationship r );
 
 	/**
-		remove the special relation (if any) between this and that. 
+		remove the special relation (if any) between this and that.
 		remove all special relations for 'this' if that==null.
 		return true if anything removed.
 	*/
@@ -395,13 +395,13 @@ public:
 		the team's list-of-objects only once.
 	*/
 	void countObjectsByThingTemplate(Int numTmplates, const ThingTemplate* const* things, Bool ignoreDead, Int *counts, Bool ignoreUnderConstruction = TRUE ) const;
-	
-	
+
+
 	/**
 		returns the number of buildings on this team, by checking each things' template kindof against KINDOF_STRUCTURE
 	*/
 	Int countBuildings(void);
-	
+
 	/**
 		simply returns the number of objects on this team with a specific KindOfMaskType
 	*/
@@ -440,7 +440,7 @@ public:
 	/**
 		a convenience routine to quickly check if all the units are idle.
 	*/
-	Bool isIdle(void) const;		
+	Bool isIdle(void) const;
 
 	/**
 		a convenience routine to quickly check if any objects are in a trigger area.
@@ -464,7 +464,7 @@ public:
 
 	/**
 		a convenience routine to destroy this team. The team goes through all shutdown stuff.
-		Note that this doesn't actually call deleteInstance, the team will actually be 
+		Note that this doesn't actually call deleteInstance, the team will actually be
 		deleted on the next update, if it is a deletable team.
 		IgnoreDead lets you not delete people who are dying anyway.  Needed for scripts.
 	*/
@@ -475,18 +475,18 @@ public:
 		of the first member of the team
 		*/
 	const Coord3D* getEstimateTeamPosition(void) const;
-	
+
 	/**
 		a convenience routine to move a team's units to another team.
 	*/
 	void transferUnitsTo(Team *newTeam);
 
-	/** 
+	/**
 		a function to kill all members of a team
 	*/
 	void killTeam(void);
 
-	/** 
+	/**
 		a function to make all containers on a team to dump contents
 	*/
 	void evacuateTeam(void);
@@ -497,17 +497,17 @@ public:
 	const Waypoint *getCurrentWaypoint(void) {return m_currentWaypoint;}
 	void setCurrentWaypoint(const Waypoint *way) {m_currentWaypoint = way;}
 
-	/** 
+	/**
 		Update the generic scripts, allow them to see if they should run, etc.
 	*/
 
 	void updateGenericScripts(void);
-	
+
 };
 
 // ------------------------------------------------------------------------
 /**
-	Note that TeamPrototype is used to hold information that is invariant between 
+	Note that TeamPrototype is used to hold information that is invariant between
 	multiple instances of a given Team (e.g., alliance info).
 
 	However, a TeamPrototype doesn't contain any build-list style info; that is handled
@@ -516,14 +516,14 @@ public:
 class TeamPrototype : public MemoryPoolObject,
 											public Snapshot
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(TeamPrototype, "TeamPrototypePool" )	
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(TeamPrototype, "TeamPrototypePool" )
 
 public:
 
-	TeamPrototype( TeamFactory *tf, 
-								 const AsciiString& name, 
-								 Player *ownerPlayer, 
-								 Bool isSingleton, 
+	TeamPrototype( TeamFactory *tf,
+								 const AsciiString& name,
+								 Player *ownerPlayer,
+								 Bool isSingleton,
 								 Dict *d,
 								 TeamPrototypeID id );
 	// virtual destructor prototype provided by memory pool object
@@ -541,13 +541,13 @@ public:
 		* Return a team with matching team ID if present
 	*/
 	Team *findTeamByID( TeamID teamID );
-		
+
 	/**
 		set the team's owner. (NULL is not allowed)
 	*/
 	void setControllingPlayer(Player *newController);
 
-	/** 
+	/**
 		Evaluate team's production condition.
 	*/
 	Bool evaluateProductionCondition(void);
@@ -580,7 +580,7 @@ public:
 	/// count the number of teams that have been instanced by this prototype
 	Int countTeamInstances( void );
 
-	/** 
+	/**
 		Checks & clears the flags that a team member entered or exited a trigger area, or was created.
 	*/
 	void updateState(void);
@@ -588,7 +588,7 @@ public:
 	/**
 		a convenience routine to quickly check if any buildings are owned.
 	*/
-	Bool hasAnyBuildings(void) const;		
+	Bool hasAnyBuildings(void) const;
 
 	/**
 		a convenience routine to quickly check if any buildings with a specific KindOfType flag are owned.
@@ -598,12 +598,12 @@ public:
 	/**
 		a convenience routine to quickly check if any units are owned.
 	*/
-	Bool hasAnyUnits(void) const;		
+	Bool hasAnyUnits(void) const;
 
 	/**
 		a convenience routine to quickly check if any objects are owned.
 	*/
-	Bool hasAnyObjects(void) const;		
+	Bool hasAnyObjects(void) const;
 
 	/**
 		a convenience routine to quickly check if any buildfacilities are owned.
@@ -648,7 +648,7 @@ private:
 	{
 		/**
 			if set, this prototype should only produce one team. if there's already a team
-			by this name, newly produced team members are added to it, rather than 
+			by this name, newly produced team members are added to it, rather than
 			put into a new team of the same name.
 		*/
 		TEAM_SINGLETON = 0x01
@@ -663,10 +663,10 @@ private:
 
 	Bool									m_productionConditionAlwaysFalse; ///< Flag set to true if we don't have a production condition.
 	Script								*m_productionConditionScript; ///< Script to evaluate for production condition.
-	
+
 	Bool									m_retrievedGenericScripts;
 	Script								*m_genericScriptsToRun[MAX_GENERIC_SCRIPTS];
-	
+
 	TeamTemplateInfo			m_teamTemplate;						///< Team template info.
 
 	AsciiString						m_attackPriorityName;

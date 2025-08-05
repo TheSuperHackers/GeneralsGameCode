@@ -94,9 +94,9 @@ public:
 	U32							Get_Sample_User_Data (S32 i);
 	S32							Get_Sample_Playback_Rate (void);
 	void							Set_Sample_Playback_Rate (S32 rate);
-	
+
 protected:
-	
+
 	///////////////////////////////////////////////////////////////////
 	//	Protected member data
 	///////////////////////////////////////////////////////////////////

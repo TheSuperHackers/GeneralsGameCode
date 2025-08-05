@@ -96,7 +96,7 @@ GameClient::GameClient()
 		m_translators[ i ] = TRANSLATOR_ID_INVALID;
 	m_numTranslators = 0;
 	m_commandTranslator = NULL;
-	
+
 	// Added By Sadullah Nader
 	// Initializations missing and needed
 	m_drawableTOC.clear();
@@ -106,7 +106,7 @@ GameClient::GameClient()
 	m_frame = 0;
 
 	m_drawableList = NULL;
-	
+
 	m_nextDrawableID = (DrawableID)1;
 	TheDrawGroupInfo = new DrawGroupInfo;
 }
@@ -122,7 +122,7 @@ GameClient::~GameClient()
 	TheGraphDraw = NULL;
 #endif
 
-	if (TheDrawGroupInfo) 
+	if (TheDrawGroupInfo)
 	{
 		delete TheDrawGroupInfo;
 		TheDrawGroupInfo = NULL;
@@ -200,7 +200,7 @@ GameClient::~GameClient()
 
 	delete TheHeaderTemplateManager;
 	TheHeaderTemplateManager = NULL;
-	
+
 	delete TheLanguageFilter;
 	TheLanguageFilter = NULL;
 
@@ -209,16 +209,16 @@ GameClient::~GameClient()
 
 	// destroy all translators
 	for( UnsignedInt i = 0; i < m_numTranslators; i++ )
-		TheMessageStream->removeTranslator( m_translators[ i ] );	
+		TheMessageStream->removeTranslator( m_translators[ i ] );
 	m_numTranslators = 0;
 	m_commandTranslator = NULL;
 
 	delete TheAnim2DCollection;
-	TheAnim2DCollection = NULL;	
+	TheAnim2DCollection = NULL;
 
 	delete TheMappedImageCollection;
-	TheMappedImageCollection = NULL;	
-	
+	TheMappedImageCollection = NULL;
+
 	delete TheKeyboard;
 	TheKeyboard = NULL;
 
@@ -241,7 +241,7 @@ void GameClient::init( void )
 	INI ini;
 	// Load the DrawGroupInfo here, before the Display Manager is loaded.
 	ini.load("Data\\INI\\DrawGroupInfo.ini", INI_LOAD_OVERWRITE, NULL);
-	
+
 	// Override the ini values with localized versions:
 	if (TheGlobalLanguageData && TheGlobalLanguageData->m_drawGroupInfoFont.name.isNotEmpty())
 	{
@@ -256,7 +256,7 @@ void GameClient::init( void )
 		TheDisplayStringManager->init();
 		TheDisplayStringManager->setName("TheDisplayStringManager");
 	}
-	
+
 	if (!TheGlobalData->m_headless)
 	{
 		// create the keyboard
@@ -304,7 +304,7 @@ void GameClient::init( void )
 		//
 		m_translators[ m_numTranslators++ ] =	TheMessageStream->attachTranslator( MSGNEW("GameClientSubsystem") GameClientMessageDispatcher, 999999999 );
 
-	}  
+	}
 
 	// create the font library
 	TheFontLibrary = createFontLibrary();
@@ -323,7 +323,7 @@ void GameClient::init( void )
 		TheDisplay->init();
  		TheDisplay->setName("TheDisplay");
 	}
-	
+
 	TheHeaderTemplateManager = MSGNEW("GameClientSubsystem") HeaderTemplateManager;
 	if(TheHeaderTemplateManager){
 		TheHeaderTemplateManager->init();
@@ -434,7 +434,7 @@ void GameClient::reset( void )
 #else
 	m_drawableHash.reserve(DRAWABLE_HASH_SIZE);
 #endif
-	
+
 	// need to reset the in game UI to clear drawables before they are destroyed
 	TheInGameUI->reset();
 
@@ -474,7 +474,7 @@ DrawableID GameClient::allocDrawableID( void )
 /** -----------------------------------------------------------------------------------------------
  * Given a drawable, register it with the GameClient and give it a unique ID.
  */
-void GameClient::registerDrawable( Drawable *draw ) 
+void GameClient::registerDrawable( Drawable *draw )
 {
 
 	// assign this drawable a unique ID, this will add it to the fast lookup table too
@@ -509,7 +509,7 @@ void GameClient::update( void )
 		playSizzle = TRUE;
 	}
 
-	//Initial Game Codition.  We must show the movie first and then we can display the shell	
+	//Initial Game Codition.  We must show the movie first and then we can display the shell
 	if(TheGlobalData->m_afterIntro && !TheDisplay->isMoviePlaying())
 	{
 		if( playSizzle && TheGlobalData->m_playSizzle )
@@ -532,7 +532,7 @@ void GameClient::update( void )
 
 				WindowLayout *legal = TheWindowManager->winCreateLayout("Menus/LegalPage.wnd");
 				if(legal)
-				{				
+				{
 					legal->hide(FALSE);
 					legal->bringForward();
 					Int beginTime = timeGetTime();
@@ -552,7 +552,7 @@ void GameClient::update( void )
 				}
 				TheWritableGlobalData->m_breakTheMovie = TRUE;
 
-				
+
 			}
 
 			TheShell->showShellMap(TRUE);
@@ -582,7 +582,7 @@ void GameClient::update( void )
 		TheMouse->createStreamMessages();
 
 	}  // end if
-	
+
 	if(TheGlobalData->m_playIntro || TheGlobalData->m_afterIntro)
 	{
 		// redraw all views, update the GUI
@@ -619,7 +619,7 @@ void GameClient::update( void )
 #else
 		if (true)
 #endif
-		{	
+		{
 			//localPlayerIndex=TheGhostObjectManager->getLocalPlayerIndex();	//always use the first local player set since normally can't change.  Doesn't work with debug "CTRL_SHIFT_SPACE"
 #ifdef DEBUG_FOG_MEMORY
 			//Find indices of all active players
@@ -684,7 +684,7 @@ void GameClient::update( void )
 
 #if defined(RTS_DEBUG)
 	// need to draw the first frame, then don't draw again until TheGlobalData->m_noDraw
-	if (TheGlobalData->m_noDraw > TheGameLogic->getFrame() && TheGameLogic->getFrame() > 0) 
+	if (TheGlobalData->m_noDraw > TheGameLogic->getFrame() && TheGameLogic->getFrame() > 0)
 	{
 		return;
 	}
@@ -711,10 +711,10 @@ void GameClient::update( void )
 
 	{
 		USE_PERF_TIMER(GameClient_draw)
-			
+
 	// redraw all views, update the GUI
 	//if(TheGameLogic->getFrame() >= 2)
-		
+
 		TheDisplay->DRAW();
 	}
 
@@ -729,7 +729,7 @@ void GameClient::update( void )
 	}
 
 	{
-		// update the in game UI 
+		// update the in game UI
 		TheInGameUI->UPDATE();
 	}
 }  // end update
@@ -778,7 +778,7 @@ Drawable* GameClient::findDrawableByID( const DrawableID id )
 {
 	DrawablePtrHashIt it = m_drawableHash.find(id);
 	if (it == m_drawableHash.end()) {
-		// no such drawable	
+		// no such drawable
 		return NULL;
 	}
 
@@ -896,7 +896,7 @@ void GameClient::assignSelectedDrawablesToGroup( Int group )
 	Drawable *draw = firstDrawable();
 	while( draw )
 	{
-	
+
 		if( draw->isSelected() && draw->getObject()->isLocallyControlled())
 		{
 			draw->setDrawableGroup( group );
@@ -929,7 +929,7 @@ void GameClient::selectDrawablesInGroup( Int group )
 	while( draw )
 	{
 		int counter = 0;
-	
+
 		const Object *object = draw->getObject();
 
 		if( object && draw->getDrawableGroup() == group && object->isLocallyControlled() && !object->isContained() )
@@ -1043,7 +1043,7 @@ void GameClient::preloadAssets( TimeOfDay timeOfDay )
 			 tTemplate;
 			 tTemplate = tTemplate->friend_getNextTemplate() )
 	{
-			
+
 		// if this isn't one of the objects that can be preloaded ignore it
 		if( tTemplate->isKindOf( KINDOF_PRELOAD ) == FALSE && !TheGlobalData->m_preloadEverything )
 			continue;
@@ -1262,7 +1262,7 @@ void GameClient::xferDrawableTOC( Xfer *xfer )
 			// if is this drawable name already in the TOC, skip it
 			if( findTOCEntryByName( templateName ) != NULL )
 				continue;
-			
+
 			// add this entry to the TOC
 			addTOCEntry( draw->getTemplate()->getName(), ++tocCount );
 
@@ -1306,10 +1306,10 @@ void GameClient::xferDrawableTOC( Xfer *xfer )
 
 			// read the id
 			xfer->xferUnsignedShort( &id );
-			
+
 			// add this to the TOC
 			addTOCEntry( templateName, id );
-					
+
 		}  // end for i
 
 	}  // end else
@@ -1340,7 +1340,7 @@ void GameClient::xfer( Xfer *xfer )
 	// note that we do not do the id counter here, we did it in the game state block because
 	// it's important to do that part very early in the load process
 	//
-	// !!!DON'T DO THIS!!! ----> xfer->xferDrawableID( &m_nextDrawableID ); <---- !!!DON'T DO THIS!!! 
+	// !!!DON'T DO THIS!!! ----> xfer->xferDrawableID( &m_nextDrawableID ); <---- !!!DON'T DO THIS!!!
 
 	//
 	// xfer a table of contents that contain thing template and indentifier pairs.  this
@@ -1365,7 +1365,7 @@ void GameClient::xfer( Xfer *xfer )
 	ObjectID objectID;
 	if( xfer->getXferMode() == XFER_SAVE )
 	{
-	
+
 		// iterate all drawables
 		for( draw = getDrawableList(); draw; draw = draw->getNextDrawable() )
 		{
@@ -1495,7 +1495,7 @@ void GameClient::xfer( Xfer *xfer )
 				// whole brand new drawable now
 				//
 				draw = TheThingFactory->newDrawable( thingTemplate );
-				
+
 				// sanity
 				if( draw == NULL )
 				{
@@ -1517,7 +1517,7 @@ void GameClient::xfer( Xfer *xfer )
 		}  // end for, i
 
 	}  // end else, load
-	
+
 	// xfer the in-game mission briefing history list
 	if (version >= 2)
 	{

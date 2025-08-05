@@ -103,7 +103,7 @@ const Char *g_strFile = "data\\Generals.str";
 const Char *g_csfFile = "data\\%s\\Generals.csf";
 
 /////////////////////////////////////////////////////////////////////////////
-// WBGameFileClass - extends the file system a bit so we can get at some 
+// WBGameFileClass - extends the file system a bit so we can get at some
 // wb only data.  jba.
 
 class WBGameFileClass : public GameFileClass
@@ -134,7 +134,7 @@ char const * WBGameFileClass::Set_Name( char const *filename )
 
 
 /////////////////////////////////////////////////////////////////////////////
-// WB_W3DFileSystem - extends the file system a bit so we can get at some 
+// WB_W3DFileSystem - extends the file system a bit so we can get at some
 // wb only data.  jba.
 
 class	WB_W3DFileSystem : public W3DFileSystem {
@@ -220,7 +220,7 @@ CWorldBuilderApp::CWorldBuilderApp() :
 	m_tools[10] = &m_pointerTool;
 	m_tools[11] = &m_blendEdgeTool;
 	m_tools[12] = &m_groveTool;
-	m_tools[13] = &m_meshMoldTool;	 
+	m_tools[13] = &m_meshMoldTool;
 	m_tools[14] = &m_roadTool;
 	m_tools[15] = &m_handScrollTool;
 	m_tools[16] = &m_waypointTool;
@@ -302,7 +302,7 @@ BOOL CWorldBuilderApp::InitInstance()
 	loadWindow.SetWindowText("Loading Worldbuilder");
 	loadWindow.ShowWindow(SW_SHOW);
 	loadWindow.UpdateWindow();
-	
+
 	CRect rect(15, 315, 230, 333);
 	loadWindow.setTextOutputLocation(rect);
 	loadWindow.outputText(IDS_SPLASH_LOADING);
@@ -342,7 +342,7 @@ BOOL CWorldBuilderApp::InitInstance()
 	INI ini;
 
 	initSubsystem(TheWritableGlobalData, new GlobalData(), "Data\\INI\\Default\\GameData.ini", "Data\\INI\\GameData.ini");
-	
+
 #if defined(RTS_DEBUG)
 	ini.load( AsciiString( "Data\\INI\\GameDataDebug.ini" ), INI_LOAD_MULTIFILE, NULL );
 #endif
@@ -437,20 +437,20 @@ BOOL CWorldBuilderApp::InitInstance()
 
 	// Register the application's document templates.  Document templates
 	//  serve as the connection between documents, frame windows and views.
- 
+
 	m_3dtemplate = new CSingleDocTemplate(
 		IDR_MAPDOC,
 		RUNTIME_CLASS(CWorldBuilderDoc),
-		RUNTIME_CLASS(CWB3dFrameWnd), 
+		RUNTIME_CLASS(CWB3dFrameWnd),
 		RUNTIME_CLASS(WbView3d));
 
 	AddDocTemplate(m_3dtemplate);
 
 #ifdef MDI
-	CMainFrame* pMainFrame = new CMainFrame; 
-	if (!pMainFrame->LoadFrame(IDR_MAPDOC)) 
-		return FALSE; 
-	m_pMainWnd = pMainFrame; 
+	CMainFrame* pMainFrame = new CMainFrame;
+	if (!pMainFrame->LoadFrame(IDR_MAPDOC))
+		return FALSE;
+	m_pMainWnd = pMainFrame;
 #endif
 
 	// Parse command line for standard shell commands, DDE, file open
@@ -473,7 +473,7 @@ BOOL CWorldBuilderApp::InitInstance()
 //	if (!ProcessShellCommand(cmdInfo))
 //		return FALSE;
 
-	selectPointerTool();   
+	selectPointerTool();
 
 	CString openDir = this->GetProfileString(APP_SECTION, OPEN_FILE_DIR);
 	m_currentDirectory = openDir;
@@ -503,7 +503,7 @@ BOOL CWorldBuilderApp::OnCmdMsg(UINT nID, int nCode, void* pExtra,
 				{
 					// Update UI element state
 					CCmdUI *pUI = (CCmdUI*)pExtra;
-					pUI->SetCheck(m_curTool == pTool?1:0);	
+					pUI->SetCheck(m_curTool == pTool?1:0);
 					pUI->Enable(true);
 				}
 				return TRUE;
@@ -521,7 +521,7 @@ BOOL CWorldBuilderApp::OnCmdMsg(UINT nID, int nCode, void* pExtra,
 //=============================================================================
 /** Sets the active tool to the pointer, and clears the selection. */
 //=============================================================================
-void CWorldBuilderApp::selectPointerTool(void) 
+void CWorldBuilderApp::selectPointerTool(void)
 {
 	setActiveTool(&m_pointerTool);
 	// Clear selection.
@@ -533,7 +533,7 @@ void CWorldBuilderApp::selectPointerTool(void)
 //=============================================================================
 /** Sets the active tool, and activates it after deactivating the current tool. */
 //=============================================================================
-void CWorldBuilderApp::setActiveTool(Tool *pNewTool) 
+void CWorldBuilderApp::setActiveTool(Tool *pNewTool)
 {
 	if (m_curTool == pNewTool) {
 		// same tool
@@ -552,7 +552,7 @@ void CWorldBuilderApp::setActiveTool(Tool *pNewTool)
 //=============================================================================
 // CWorldBuilderApp::updateCurTool
 //=============================================================================
-/** Checks to see if any key modifiers (ctrl or alt) are pressed.  If so, 
+/** Checks to see if any key modifiers (ctrl or alt) are pressed.  If so,
 selectes the appropriate tool, else uses the normal tool. */
 //=============================================================================
 void CWorldBuilderApp::updateCurTool(Bool forceHand)
@@ -635,7 +635,7 @@ void CWorldBuilderApp::OnAppAbout()
 /////////////////////////////////////////////////////////////////////////////
 // CWorldBuilderApp message handlers
 
-int CWorldBuilderApp::ExitInstance() 
+int CWorldBuilderApp::ExitInstance()
 {
 
 	WriteProfileString(APP_SECTION, OPEN_FILE_DIR, m_currentDirectory.str());
@@ -670,15 +670,15 @@ int CWorldBuilderApp::ExitInstance()
 	return CWinApp::ExitInstance();
 }
 
-void CWorldBuilderApp::OnResetWindows() 
+void CWorldBuilderApp::OnResetWindows()
 {
 	if (CMainFrame::GetMainFrame()) {
 		CMainFrame::GetMainFrame()->ResetWindowPositions();
 	}
-	
+
 }
 
-void CWorldBuilderApp::OnFileOpen() 
+void CWorldBuilderApp::OnFileOpen()
 {
 #ifdef DO_MAPS_IN_DIRECTORIES
 	TOpenMapInfo info;
@@ -706,15 +706,15 @@ void CWorldBuilderApp::OnFileOpen()
 	CWinApp::OnFileOpen();
 }
 
-void CWorldBuilderApp::OnTexturesizingMapclifftextures() 
+void CWorldBuilderApp::OnTexturesizingMapclifftextures()
 {
 	setActiveTool(&m_floodFillTool);
 	m_floodFillTool.setAdjustCliffs(true);
-	
+
 }
 
-void CWorldBuilderApp::OnUpdateTexturesizingMapclifftextures(CCmdUI* pCmdUI) 
+void CWorldBuilderApp::OnUpdateTexturesizingMapclifftextures(CCmdUI* pCmdUI)
 {
 	// TODO: Add your command update UI handler code here
-	
+
 }

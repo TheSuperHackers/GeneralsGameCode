@@ -156,7 +156,7 @@ void Connection::sendNetCommandMsg(NetCommandMsg *msg, UnsignedByte relay) {
 
 	if (m_netCommandList != NULL) {
 		// check to see if this command will fit in a packet.  If not, we need to split it up.
-		// we are splitting up the command here so that the retry logic will not try to 
+		// we are splitting up the command here so that the retry logic will not try to
 		// resend the ENTIRE command (i.e. multiple packets work of data) and only do the retry
 		// one wrapper command at a time.
 		packet->reset();
@@ -276,7 +276,7 @@ UnsignedInt Connection::doSend() {
 //		DEBUG_LOG(("not sending packet, time = %d, m_lastFrameSent = %d, m_frameGrouping = %d", curtime, m_lastTimeSent, m_frameGrouping));
 		return 0;
 	}
-	
+
 	// iterate through all the messages and put them into a packet(s).
 	NetCommandRef *msg = m_netCommandList->getFirstMessage();
 

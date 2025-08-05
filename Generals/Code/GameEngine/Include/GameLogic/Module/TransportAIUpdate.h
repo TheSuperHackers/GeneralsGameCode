@@ -23,9 +23,9 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 // TransportAIUpdate.cpp //////////
-// Needs to check legality of evacuate, and may move to a place that is better to evacuate at 
+// Needs to check legality of evacuate, and may move to a place that is better to evacuate at
 // Author: Graham Smallwood, July 2002
- 
+
 #pragma once
 
 #ifndef _TRANSPORT_AI_UPDATE_H_
@@ -34,7 +34,7 @@
 #include "GameLogic/Module/AIUpdate.h"
 
 //-------------------------------------------------------------------------------------------------
-/** 
+/**
  * Soldier behavior implementation.
  * Override or extend AIUpdate methods to customize the Soldier's behavior.
  */

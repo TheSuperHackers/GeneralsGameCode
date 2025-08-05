@@ -63,10 +63,10 @@ END_MESSAGE_MAP()
 
 MapObject *ScorchOptions::getSingleSelectedScorch(void)
 {
-	MapObject *theMapObj = NULL; 
+	MapObject *theMapObj = NULL;
 //	Bool found = false;
 	Int selCount=0;
-	MapObject *pMapObj; 
+	MapObject *pMapObj;
 	for (pMapObj = MapObject::getFirstMapObject(); pMapObj; pMapObj = pMapObj->getNext()) {
 		if (pMapObj->isSelected()) {
 			if (pMapObj->isScorch()) {
@@ -82,10 +82,10 @@ MapObject *ScorchOptions::getSingleSelectedScorch(void)
 	return(NULL);
 }
 
-void ScorchOptions::updateTheUI(void) 
+void ScorchOptions::updateTheUI(void)
 {
 	m_updating = true;
-	MapObject *theMapObj = getSingleSelectedScorch(); 
+	MapObject *theMapObj = getSingleSelectedScorch();
 	CString str;
 	CWnd *pEdit;
 	if (theMapObj) {
@@ -102,7 +102,7 @@ void ScorchOptions::updateTheUI(void)
 	m_updating = false;
 }
 
-void ScorchOptions::update(void) 
+void ScorchOptions::update(void)
 {
 	if (m_staticThis) {
 		m_staticThis->updateTheUI();
@@ -112,11 +112,11 @@ void ScorchOptions::update(void)
 /////////////////////////////////////////////////////////////////////////////
 // ScorchOptions message handlers
 
-BOOL ScorchOptions::OnInitDialog() 
+BOOL ScorchOptions::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 	m_staticThis = this;
-	
+
 
 	m_radiusPopup.SetupPopSliderButton(this, IDC_SIZE_POPUP, this);
 
@@ -138,7 +138,7 @@ BOOL ScorchOptions::OnInitDialog()
 	              // EXCEPTION: OCX Property Pages should return FALSE
 }
 
-void ScorchOptions::OnChangeScorchtype() 
+void ScorchOptions::OnChangeScorchtype()
 {
 	if (m_updating)
 		return;
@@ -148,7 +148,7 @@ void ScorchOptions::OnChangeScorchtype()
 	changeScorch();
 }
 
-void ScorchOptions::OnChangeSizeEdit() 
+void ScorchOptions::OnChangeSizeEdit()
 {
 	if (m_updating)
 		return;

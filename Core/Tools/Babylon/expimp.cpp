@@ -253,7 +253,7 @@ static int export_trans ( TransDB *db, LangID langid, TROPTIONS *options, void (
 	{
 		int label_written = FALSE;
 		text = label->FirstText ( sh_text );
-		
+
 		while ( text )
 		{
 			int do_export;
@@ -344,7 +344,7 @@ static int export_trans ( TransDB *db, LangID langid, TROPTIONS *options, void (
 
 						if ( langid == LANGID_JABBER || (trans && ( options->include_translations || too_long || bad_format )))
 						{
-						
+
 							if ( langid == LANGID_JABBER )
 							{
 								translateCopy ( olebuf, text->Get() );
@@ -571,7 +571,7 @@ static int import_trans ( TransDB *db, LangID langid, void (*cb) ( void ), CBaby
 		}
 
 		revision = GetInt ( row, CELL_REVISION );
-				
+
 		if ( text->Revision() > revision )
 		{
 			// old translation
@@ -589,7 +589,7 @@ static int import_trans ( TransDB *db, LangID langid, void (*cb) ( void ), CBaby
 			error_count++;
 			goto next;
 		}
-				
+
 		// first see if there is any translation there
 		GetString ( row, CELL_LOCALIZED, oletrans );
 		DecodeFormat ( oletrans );
@@ -603,13 +603,13 @@ static int import_trans ( TransDB *db, LangID langid, void (*cb) ( void ), CBaby
 		// verify that the translated engish is the same as the current english
 		GetString ( row, CELL_ENGLISH, olebuf );
 		DecodeFormat ( olebuf );
-		
+
 		if ( wcscmp ( text->Get(), olebuf ) )
 		{
 			// they are two possible reasons for the text to mismatch
 			// 1. text was modified but not re-translated
 			// 2. the IDs are wrong
-			// 
+			//
 			// to check for the first case we search for the label in the xl file
 			// and make sure it is the same. If not then we have problems
 
@@ -632,11 +632,11 @@ static int import_trans ( TransDB *db, LangID langid, void (*cb) ( void ), CBaby
 				sprintf ( buffer, "%S", olebuf );
 				CVerifyTextDlg dlg(buffer, text->GetSB());
 
-				// didnt find label or label doesn't match 
+				// didnt find label or label doesn't match
 				// It is possible that the xl was resorted so ask user to do a visual confirmation
 
 				bad_id = dlg.DoModal ()==IDNO;
-			} 
+			}
 			else if ( text->Label()->FindText( olebuf ))
 			{
 				// we did find the label but text other than the current ID sourced text matches with the import text
@@ -658,17 +658,17 @@ static int import_trans ( TransDB *db, LangID langid, void (*cb) ( void ), CBaby
 		// ok import the translation
 
 		Translation *trans;
-						
+
 		if ( ! (trans = text->GetTranslation ( langid )))
 		{
 				new_count++;
-		
+
 				trans = new Translation	 ();
 				trans->SetLangID ( langid );
 				text->AddTranslation ( trans );
 		}
-		
-		
+
+
 		if ( trans->Revision () == revision && !wcscmp ( trans->Get (), oletrans ))
 		{
 			// already up to date
@@ -679,11 +679,11 @@ static int import_trans ( TransDB *db, LangID langid, void (*cb) ( void ), CBaby
 		trans->WaveInfo.SetValid ( FALSE );
 		trans->SetRevision ( revision );
 		changes_count++;
-		
 
-		next:				
+
+		next:
 				count++;
-				
+
 				if ( cb )
 				{
 					cb ();
@@ -765,7 +765,7 @@ static int update_sent_trans ( TransDB *db, LangID langid, void (*cb) ( void ), 
 		}
 
 		revision = GetInt ( row, CELL_REVISION );
-				
+
 		if ( text->Revision() > revision )
 		{
 			// old translation
@@ -784,17 +784,17 @@ static int update_sent_trans ( TransDB *db, LangID langid, void (*cb) ( void ), 
 			goto next;
 		}
 
-				
+
 		// verify that the translated engish is the same as the current english
 		GetString ( row, CELL_ENGLISH, olebuf );
 		DecodeFormat ( olebuf );
-		
+
 		if ( wcscmp ( text->Get(), olebuf ) )
 		{
 			// they are two possible reasons for the text to mismatch
 			// 1. text was modified but not re-translated
 			// 2. the IDs are wrong
-			// 
+			//
 			// to check for the first case we search for the label in the xl file
 			// and make sure it is the same. If not then we have problems
 
@@ -817,11 +817,11 @@ static int update_sent_trans ( TransDB *db, LangID langid, void (*cb) ( void ), 
 				sprintf ( buffer, "%S", olebuf );
 				CVerifyTextDlg dlg(buffer, text->GetSB());
 
-				// didnt find label or label doesn't match 
+				// didnt find label or label doesn't match
 				// It is possible that the xl was resorted so ask user to do a visual confirmation
 
 				bad_id = dlg.DoModal ()==IDNO;
-			} 
+			}
 			else if ( text->Label()->FindText( olebuf ))
 			{
 				// we did find the label but text other than the current ID sourced text matches with the import text
@@ -847,9 +847,9 @@ static int update_sent_trans ( TransDB *db, LangID langid, void (*cb) ( void ), 
 
 		}
 
-		next:				
+		next:
 				count++;
-				
+
 				if ( cb )
 				{
 					cb ();
@@ -982,13 +982,13 @@ static int generate_Babylonstr ( TransDB *db, const char *filename, LangID langi
 		ListSearch sh_label, sh_text;
 
 		label = db->FirstLabel ( sh_label );
-	
+
 		while ( label )
 		{
 			text = label->FirstText ( sh_text );
-		
+
 			fprintf ( file, "\n\n%s\n", label->NameSB ());
-				
+
 			while ( text )
 			{
 				const char *string;
@@ -1034,7 +1034,7 @@ static int generate_Babylonstr ( TransDB *db, const char *filename, LangID langi
 				fprintf ( file, "\"%s\" %s\n", string, text->WaveSB() );
 				text = label->NextText ( sh_text );
 			}
-	
+
 			fprintf ( file, "END\n" );
 			label = db->NextLabel ( sh_label );
 		}
@@ -1095,7 +1095,7 @@ static int writeCSFString ( FILE *file, const OLECHAR *string, char *wave, LANGI
 	{
 		id = CSF_STRINGWITHWAVE;
 	}
-	
+
 	wcscpy ( olebuf, string );
 	StripSpaces ( olebuf );
 	ConvertMetaChars ( olebuf );
@@ -1135,7 +1135,7 @@ static int writeCSFString ( FILE *file, const OLECHAR *string, char *wave, LANGI
 		{
 			return FALSE;
 		}
-		
+
 		if ( fwrite ( wave, wlen-1, 1, file ) != 1 )
 		{
 			return FALSE;
@@ -1178,17 +1178,17 @@ static int generate_csf ( TransDB *db, const char *filename, LangID langid, GNOP
 		ListSearch sh_label, sh_text;
 
 		label = db->FirstLabel ( sh_label );
-	
+
 		while ( label )
 		{
 			text = label->FirstText ( sh_text );
-		
+
 			if ( !writeCSFLabel ( file, label ) )
 			{
 				goto error;
 			}
 			header.num_labels++;
-				
+
 			while ( text )
 			{
 				const OLECHAR *string;
@@ -1234,7 +1234,7 @@ static int generate_csf ( TransDB *db, const char *filename, LangID langid, GNOP
 
 				text = label->NextText ( sh_text );
 			}
-	
+
 			label = db->NextLabel ( sh_label );
 		}
 
@@ -1408,7 +1408,7 @@ void ProcessWaves ( TransDB *db, const char *filename, CBabylonDlg *dlg )
 		int last_row = 1;
 		int matches = 0;
 		int unmatched = 0;
-		FILE *file = NULL; 
+		FILE *file = NULL;
 		char *ptr;
 
 		strcpy ( buffer, filename );
@@ -1543,7 +1543,7 @@ int GenerateReport ( TransDB *db, const char *filename, RPOPTIONS *options, Lang
 			int count;
 
 			count = db->ReportTranslations ( &tr_report, langid );
-			
+
 			fprintf ( file, "\n\tText Summary: %s\n", info->name );
 			fprintf ( file,   "\t-------------\n\n");
 
@@ -1571,7 +1571,7 @@ int GenerateReport ( TransDB *db, const char *filename, RPOPTIONS *options, Lang
 			int count;
 
 			count = db->ReportDialog ( &dlg_report, langid );
-			
+
 			fprintf ( file, "\n\tDialog Summary: %s\n", info->name );
 			fprintf ( file,   "\t-------------\n\n");
 

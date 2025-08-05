@@ -24,12 +24,12 @@
 
 // FILE: GadgetTextEntry.h ////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information					         
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:    RTS3
@@ -40,7 +40,7 @@
 //
 // Desc:       Helpful interface for TextEntrys
 //
-// TextEntry IMAGE/COLOR organization 
+// TextEntry IMAGE/COLOR organization
 //
 // note that windows that have an outlined text field will use the color
 // for the outline specified with the TextBorder... functions
@@ -67,9 +67,9 @@ class GameWindow;
 // INLINING ///////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 
-inline void GadgetTextEntrySetText( GameWindow *g, UnicodeString text ) 
-{ 
-	TheWindowManager->winSendSystemMsg( g, GEM_SET_TEXT, (WindowMsgData)&text, 0 ); 
+inline void GadgetTextEntrySetText( GameWindow *g, UnicodeString text )
+{
+	TheWindowManager->winSendSystemMsg( g, GEM_SET_TEXT, (WindowMsgData)&text, 0 );
 }
 extern UnicodeString GadgetTextEntryGetText( GameWindow *textentry ); ///< Get the text from the text entry field
 extern void GadgetTextEntrySetFont( GameWindow *g, GameFont *font );  ///< set font for window and edit text display strings

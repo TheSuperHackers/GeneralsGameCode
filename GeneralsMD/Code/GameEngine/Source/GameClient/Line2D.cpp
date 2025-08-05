@@ -49,7 +49,7 @@ const static Coord2D reallyFarPoint = { 1000000.0, 1000000.0 };
 /** Clip a line to the region provided.  The source line runs from p1 to p2, and is clipped
 	* using the clipRegion.  The resulting line goes from c1 to c2
 	*
-	* Return values: 
+	* Return values:
 	*				TRUE  - Line is visible
 	*				FALSE - Line is not visible
 	*/
@@ -87,7 +87,7 @@ Bool ClipLine2D( ICoord2D *p1, ICoord2D *p2, ICoord2D *c1, ICoord2D *c2,
 	y1 = p1->y;
 	x2 = p2->x;
 	y2 = p2->y;
-		
+
 	// Test first point
 	clipCode1 = 0;
 
@@ -227,11 +227,11 @@ Bool ClipLine2D( ICoord2D *p1, ICoord2D *p2, ICoord2D *c1, ICoord2D *c2,
 }  // end ClipLine2D
 
 
-// This solution uses the 
-// http://www.faqs.org/faqs/graphics/algorithms-faq/ 
+// This solution uses the
+// http://www.faqs.org/faqs/graphics/algorithms-faq/
 // Subject 1.03
-Bool IntersectLine2D( const Coord2D *a, const Coord2D *b, 
-										   const Coord2D *c, const Coord2D *d, 
+Bool IntersectLine2D( const Coord2D *a, const Coord2D *b,
+										   const Coord2D *c, const Coord2D *d,
 											 Coord2D *intersection)
 {
 	if (!a || !b || !c || !d) {
@@ -265,7 +265,7 @@ Bool IntersectLine2D( const Coord2D *a, const Coord2D *b,
 
 // determines whether a point lies within a rectangle. Doesnt' determine whether the shape is
 // actually a rectangle or not.
-Bool PointInsideRect2D(const Coord2D *bl, const Coord2D *tl, const Coord2D *br, const Coord2D *tr, 
+Bool PointInsideRect2D(const Coord2D *bl, const Coord2D *tl, const Coord2D *br, const Coord2D *tr,
 											 const Coord2D *inputPoint)
 {
 	if (!(bl && br && tl && tr && inputPoint)) {
@@ -379,7 +379,7 @@ void ShortestDistancePointToSegment2D( const Coord2D *a, const Coord2D *b, const
 		Coord2D segment;
 		segment.x = pt->x - a->x;
 		segment.y = pt->y - a->y;
-		if (outDistance) {		
+		if (outDistance) {
 			(*outDistance) = segment.length();
 		}
 
@@ -415,7 +415,7 @@ void ShortestDistancePointToSegment2D( const Coord2D *a, const Coord2D *b, const
 	if (outDistance) {
 		(*outDistance) = intersectSegment.length();
 	}
-	
+
 	if (outU) {
 		(*outU) = u;
 	}

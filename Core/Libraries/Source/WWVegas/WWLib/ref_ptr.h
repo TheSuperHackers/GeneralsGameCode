@@ -50,7 +50,7 @@
 
 /*
 	RefCountPtr<T> is a smart pointer for reference counted objects.
-	
+
 	  RefCountPtr<T> is designed to support objects derived from RefCountClass, although any class
 	  supporting the required interface may also be used.
 
@@ -74,7 +74,7 @@
 
   Using RefCountPtr<T>
 		Example of usage :
-				
+
 				class MyClass : public RefCountClass
 				{
 					public:
@@ -153,10 +153,10 @@
 		care and typically requires the client to Add_Ref/Release_Ref the Peek'd object.
 
 		Rewrapping and Peeking reference counted objects is primarily useful when converting old code to
-		use RefCountPtr instead of manually managing the reference count.  These two functions are designed 
+		use RefCountPtr instead of manually managing the reference count.  These two functions are designed
 		for safety, NOT convenience.
 
-		Automatic construction of a RefCountPtr from a raw pointer is enabled if 
+		Automatic construction of a RefCountPtr from a raw pointer is enabled if
 		ALLOW_AUTOMATIC_REF_COUNT_PTR_CONSTRUCTION is defined.
 		This may be useful when migrating existing code to use RefCountPtr, but is not completely safe,
 		since it is not possible to determine if the pointer is being Get'd or Peek'd.
@@ -205,7 +205,7 @@
 							// Get using an OUT parameter
 							void Get(RefCountPtr<T> & thing)
 							{
-								thing = MyThing;								
+								thing = MyThing;
 							}
 
 							// Get using a return value.  Preferable to above
@@ -239,7 +239,7 @@ class RefCountPtr
 			return RefCountPtr<T>(t, RefCountPtr<T>::PEEK);
 		}
 
-		RefCountPtr(void) 
+		RefCountPtr(void)
 			: Referent(0)
 		{
 		}
@@ -377,7 +377,7 @@ class RefCountPtr
 			return *Referent;
 		}
 
-		// Note : This should typically only be used when mixing code that uses RefCountPtr and 
+		// Note : This should typically only be used when mixing code that uses RefCountPtr and
 		//   manually managed ref counts on raw points.
 		// Code that consistently uses RefCountPtr should never get a hold of a raw T*
 		T * Peek(void) const
@@ -444,11 +444,11 @@ bool operator !=(DummyPtrType * dummy, const RefCountPtr<RHS> & rhs)
 		return true;
 	}
 
-	return 0 != rhs.Peek();	
+	return 0 != rhs.Peek();
 }
 
 template <class Derived, class Base>
-RefCountPtr<Derived> Static_Cast(const RefCountPtr<Base> & base) 
+RefCountPtr<Derived> Static_Cast(const RefCountPtr<Base> & base)
 {
 	return RefCountPtr<Derived>::Create_AddRef((Derived *)base.Peek());
 }

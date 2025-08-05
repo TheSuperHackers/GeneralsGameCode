@@ -53,7 +53,7 @@ DX8PolygonRendererClass::DX8PolygonRendererClass(
 	bool strip_,
 	unsigned pass_)
 	:
-	mmc(mmc_), 
+	mmc(mmc_),
 	texture_category(tex_cat),
 	index_offset(index_offset_),
 	vertex_offset(vertex_offset_),
@@ -69,7 +69,7 @@ DX8PolygonRendererClass::DX8PolygonRendererClass(
 
 DX8PolygonRendererClass::DX8PolygonRendererClass(const DX8PolygonRendererClass& src,MeshModelClass* mmc_)
 	:
-	mmc(mmc_), 
+	mmc(mmc_),
 	texture_category(src.texture_category),
 	index_offset(src.index_offset),
 	vertex_offset(src.vertex_offset),

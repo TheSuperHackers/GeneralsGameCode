@@ -70,7 +70,7 @@ MetaMap *TheMetaMap = NULL;
 
 // PRIVATE DATA ///////////////////////////////////////////////////////////////////////////////////
 
-static const LookupListRec GameMessageMetaTypeNames[] = 
+static const LookupListRec GameMessageMetaTypeNames[] =
 {
 	{ "SAVE_VIEW1",																GameMessage::MSG_META_SAVE_VIEW1 },
 	{ "SAVE_VIEW2",																GameMessage::MSG_META_SAVE_VIEW2 },
@@ -182,23 +182,23 @@ static const LookupListRec GameMessageMetaTypeNames[] =
   	{ "DEMO_INSTANT_QUIT",												GameMessage::MSG_META_DEMO_INSTANT_QUIT },
 
 #if defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)//may be defined in GameCommon.h
-	{ "CHEAT_RUNSCRIPT1",								        	GameMessage::MSG_CHEAT_RUNSCRIPT1 },																	
-	{ "CHEAT_RUNSCRIPT2",								        	GameMessage::MSG_CHEAT_RUNSCRIPT2 },																	
-	{ "CHEAT_RUNSCRIPT3",								        	GameMessage::MSG_CHEAT_RUNSCRIPT3 },																	
-	{ "CHEAT_RUNSCRIPT4",								        	GameMessage::MSG_CHEAT_RUNSCRIPT4 },																	
-	{ "CHEAT_RUNSCRIPT5",								        	GameMessage::MSG_CHEAT_RUNSCRIPT5 },																	
-	{ "CHEAT_RUNSCRIPT6",								        	GameMessage::MSG_CHEAT_RUNSCRIPT6 },																	
-	{ "CHEAT_RUNSCRIPT7",								        	GameMessage::MSG_CHEAT_RUNSCRIPT7 },																	
-	{ "CHEAT_RUNSCRIPT8",								        	GameMessage::MSG_CHEAT_RUNSCRIPT8 },																	
-	{ "CHEAT_RUNSCRIPT9",								        	GameMessage::MSG_CHEAT_RUNSCRIPT9 },																	
-	{ "CHEAT_TOGGLE_SPECIAL_POWER_DELAYS",	      GameMessage::MSG_CHEAT_TOGGLE_SPECIAL_POWER_DELAYS },	
-  { "CHEAT_SWITCH_TEAMS",							        	GameMessage::MSG_CHEAT_SWITCH_TEAMS },															
-	{ "CHEAT_KILL_SELECTION",						        	GameMessage::MSG_CHEAT_KILL_SELECTION },													
-	{ "CHEAT_TOGGLE_HAND_OF_GOD_MODE",		        GameMessage::MSG_CHEAT_TOGGLE_HAND_OF_GOD_MODE },					
-	{ "CHEAT_INSTANT_BUILD",							        GameMessage::MSG_CHEAT_INSTANT_BUILD },															
-	{ "CHEAT_DESHROUD",									          GameMessage::MSG_CHEAT_DESHROUD },																			
-	{ "CHEAT_ADD_CASH",									          GameMessage::MSG_CHEAT_ADD_CASH },																			
-	{ "CHEAT_GIVE_ALL_SCIENCES",					        GameMessage::MSG_CHEAT_GIVE_ALL_SCIENCES },											
+	{ "CHEAT_RUNSCRIPT1",								        	GameMessage::MSG_CHEAT_RUNSCRIPT1 },
+	{ "CHEAT_RUNSCRIPT2",								        	GameMessage::MSG_CHEAT_RUNSCRIPT2 },
+	{ "CHEAT_RUNSCRIPT3",								        	GameMessage::MSG_CHEAT_RUNSCRIPT3 },
+	{ "CHEAT_RUNSCRIPT4",								        	GameMessage::MSG_CHEAT_RUNSCRIPT4 },
+	{ "CHEAT_RUNSCRIPT5",								        	GameMessage::MSG_CHEAT_RUNSCRIPT5 },
+	{ "CHEAT_RUNSCRIPT6",								        	GameMessage::MSG_CHEAT_RUNSCRIPT6 },
+	{ "CHEAT_RUNSCRIPT7",								        	GameMessage::MSG_CHEAT_RUNSCRIPT7 },
+	{ "CHEAT_RUNSCRIPT8",								        	GameMessage::MSG_CHEAT_RUNSCRIPT8 },
+	{ "CHEAT_RUNSCRIPT9",								        	GameMessage::MSG_CHEAT_RUNSCRIPT9 },
+	{ "CHEAT_TOGGLE_SPECIAL_POWER_DELAYS",	      GameMessage::MSG_CHEAT_TOGGLE_SPECIAL_POWER_DELAYS },
+  { "CHEAT_SWITCH_TEAMS",							        	GameMessage::MSG_CHEAT_SWITCH_TEAMS },
+	{ "CHEAT_KILL_SELECTION",						        	GameMessage::MSG_CHEAT_KILL_SELECTION },
+	{ "CHEAT_TOGGLE_HAND_OF_GOD_MODE",		        GameMessage::MSG_CHEAT_TOGGLE_HAND_OF_GOD_MODE },
+	{ "CHEAT_INSTANT_BUILD",							        GameMessage::MSG_CHEAT_INSTANT_BUILD },
+	{ "CHEAT_DESHROUD",									          GameMessage::MSG_CHEAT_DESHROUD },
+	{ "CHEAT_ADD_CASH",									          GameMessage::MSG_CHEAT_ADD_CASH },
+	{ "CHEAT_GIVE_ALL_SCIENCES",					        GameMessage::MSG_CHEAT_GIVE_ALL_SCIENCES },
   { "CHEAT_GIVE_SCIENCEPURCHASEPOINTS",        	GameMessage::MSG_CHEAT_GIVE_SCIENCEPURCHASEPOINTS },
   { "CHEAT_SHOW_HEALTH",                        GameMessage::MSG_CHEAT_SHOW_HEALTH },
   { "CHEAT_TOGGLE_MESSAGE_TEXT",                GameMessage::MSG_CHEAT_TOGGLE_MESSAGE_TEXT },
@@ -294,19 +294,19 @@ static const LookupListRec GameMessageMetaTypeNames[] =
 	{ "DEMO_TOGGLE_NO_DRAW",											GameMessage::MSG_NO_DRAW },
 	{ "DEMO_CYCLE_LOD_LEVEL",											GameMessage::MSG_META_DEMO_CYCLE_LOD_LEVEL },
 	{ "DEMO_DUMP_ASSETS",													GameMessage::MSG_META_DEBUG_DUMP_ASSETS},
-																								
+
 	{ "DEMO_INSTANT_BUILD",												GameMessage::MSG_META_DEMO_INSTANT_BUILD },
 	{ "DEMO_TOGGLE_CAMERA_DEBUG",									GameMessage::MSG_META_DEMO_TOGGLE_CAMERA_DEBUG },
-																								
-	/// Begin VTUNE																
+
+	/// Begin VTUNE
 	{ "DEMO_VTUNE_ON",														GameMessage::MSG_META_DEBUG_VTUNE_ON },
 	{ "DEMO_VTUNE_OFF",														GameMessage::MSG_META_DEBUG_VTUNE_OFF },
-	/// End VTUNE	
-																	
-																								
-	//lorenzen's feather water										
+	/// End VTUNE
+
+
+	//lorenzen's feather water
 	{ "DEMO_TOGGLE_FEATHER_WATER",								GameMessage::MSG_META_DEBUG_TOGGLE_FEATHER_WATER },
-																								
+
 	{ "DEMO_INCR_ANIM_SKATE_SPEED",								GameMessage::MSG_META_DEBUG_INCR_ANIM_SKATE_SPEED },
 	{ "DEMO_DECR_ANIM_SKATE_SPEED",								GameMessage::MSG_META_DEBUG_DECR_ANIM_SKATE_SPEED },
 	{ "DEMO_CYCLE_EXTENT_TYPE",										GameMessage::MSG_META_DEBUG_CYCLE_EXTENT_TYPE },
@@ -333,7 +333,7 @@ static const LookupListRec GameMessageMetaTypeNames[] =
 #endif // defined(RTS_DEBUG)
 
 
-#if defined(RTS_DEBUG) 
+#if defined(RTS_DEBUG)
 	{ "DEMO_TOGGLE_AUDIODEBUG",										GameMessage::MSG_META_DEMO_TOGGLE_AUDIODEBUG },
 #endif//defined(RTS_DEBUG)
 #ifdef DUMP_PERF_STATS
@@ -348,17 +348,17 @@ static const LookupListRec GameMessageMetaTypeNames[] =
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // PRIVATE DATA ///////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-static const FieldParse TheMetaMapFieldParseTable[] = 
+static const FieldParse TheMetaMapFieldParseTable[] =
 {
 
-	{ "Key",								INI::parseLookupList,						KeyNames, offsetof( MetaMapRec, m_key ) },	
-	{ "Transition",					INI::parseLookupList,						TransitionNames, offsetof( MetaMapRec, m_transition ) },		
-	{ "Modifiers",					INI::parseLookupList,						ModifierNames, offsetof( MetaMapRec, m_modState ) },		
-	{ "UseableIn",					INI::parseBitString32,					TheCommandUsableInNames, offsetof( MetaMapRec, m_usableIn ) },		
-	{ "Category",						INI::parseLookupList,						CategoryListName, offsetof( MetaMapRec, m_category ) },		
-	{ "Description",				INI::parseAndTranslateLabel,		0, offsetof( MetaMapRec, m_description ) },		
-	{ "DisplayName",				INI::parseAndTranslateLabel,		0, offsetof( MetaMapRec, m_displayName ) },		
-	
+	{ "Key",								INI::parseLookupList,						KeyNames, offsetof( MetaMapRec, m_key ) },
+	{ "Transition",					INI::parseLookupList,						TransitionNames, offsetof( MetaMapRec, m_transition ) },
+	{ "Modifiers",					INI::parseLookupList,						ModifierNames, offsetof( MetaMapRec, m_modState ) },
+	{ "UseableIn",					INI::parseBitString32,					TheCommandUsableInNames, offsetof( MetaMapRec, m_usableIn ) },
+	{ "Category",						INI::parseLookupList,						CategoryListName, offsetof( MetaMapRec, m_category ) },
+	{ "Description",				INI::parseAndTranslateLabel,		0, offsetof( MetaMapRec, m_description ) },
+	{ "DisplayName",				INI::parseAndTranslateLabel,		0, offsetof( MetaMapRec, m_displayName ) },
+
 	{ NULL,									NULL,														0, 0 }  // keep this last
 
 };
@@ -368,7 +368,7 @@ static const FieldParse TheMetaMapFieldParseTable[] =
 // PUBLIC FUNCTIONS ///////////////////////////////////////////////////////////////////////////////
 
 //-------------------------------------------------------------------------------------------------
-MetaEventTranslator::MetaEventTranslator() : 
+MetaEventTranslator::MetaEventTranslator() :
 	m_lastKeyDown(MK_NONE),
 	m_lastModState(0)
 {
@@ -428,9 +428,9 @@ GameMessageDisposition MetaEventTranslator::translateGameMessage(const GameMessa
 
     for (const MetaMapRec *map = TheMetaMap->getFirstMetaMapRec(); map; map = map->m_next)
 		{
-			DEBUG_ASSERTCRASH(map->m_meta > GameMessage::MSG_BEGIN_META_MESSAGES && 
+			DEBUG_ASSERTCRASH(map->m_meta > GameMessage::MSG_BEGIN_META_MESSAGES &&
 				map->m_meta < GameMessage::MSG_END_META_MESSAGES, ("hmm, expected only meta-msgs here"));
-			
+
 			//
 			// if this command is *only* usable in the game, we will ignore it if the game client
 			// has not yet incremented to frame 1 (keeps us from doing in-game commands during
@@ -446,7 +446,7 @@ GameMessageDisposition MetaEventTranslator::translateGameMessage(const GameMessa
 			if (TheShell && TheShell->isShellActive() && !(map->m_usableIn & COMMANDUSABLE_SHELL) )
 				continue;
 
-			// if the shell is not active and this command is not usable in the game, continue			
+			// if the shell is not active and this command is not usable in the game, continue
 			if (TheShell && !TheShell->isShellActive() && !(map->m_usableIn & COMMANDUSABLE_GAME) )
 				continue;
 
@@ -456,7 +456,7 @@ GameMessageDisposition MetaEventTranslator::translateGameMessage(const GameMessa
 
 			// check for the special case of mods-only-changed.
 			if (
-						map->m_key == MK_NONE && 
+						map->m_key == MK_NONE &&
 						newModState != m_lastModState &&
 						(
 							(map->m_transition == UP && map->m_modState == m_lastModState) ||
@@ -472,19 +472,19 @@ GameMessageDisposition MetaEventTranslator::translateGameMessage(const GameMessa
 
 			// ok, now check for "normal" key transitions.
 			if (
-						map->m_key == key && 
+						map->m_key == key &&
 						map->m_modState == newModState &&
 						(
 							(map->m_transition == UP && (keyState & KEY_STATE_UP)) ||
 							(map->m_transition == DOWN && (keyState & KEY_STATE_DOWN)) //||
 							//(map->m_transition == DOUBLEDOWN && (keyState & KEY_STATE_DOWN) && m_lastKeyDown == key)
 						)
-					)			
+					)
 			{
 
 				if( keyState & KEY_STATE_AUTOREPEAT )
 				{
-					// if it's an autorepeat of a "known" key, don't generate the meta-event, 
+					// if it's an autorepeat of a "known" key, don't generate the meta-event,
 					// but DO eat the keystroke so no one else can mess with it
 					//DEBUG_LOG(("Frame %d: MetaEventTranslator::translateGameMessage() auto-repeat: %s", TheGameLogic->getFrame(), findGameMessageNameByType(map->m_meta)));
 				}
@@ -505,10 +505,10 @@ GameMessageDisposition MetaEventTranslator::translateGameMessage(const GameMessa
 
               if ( TheInGameUI )
   				      TheInGameUI->message( TheGlobalData->m_TiVOFastMode ? TheGameText->fetch("GUI:FF_ON") : TheGameText->fetch("GUI:FF_OFF") );
-			      }  
+			      }
 			      disp = KEEP_MESSAGE; // cause for goodness sake, this key gets used a lot by non-replay hotkeys
 			      break;
-		      }  
+		      }
 
 
 					/*GameMessage *metaMsg =*/ TheMessageStream->appendMessage(map->m_meta);
@@ -517,7 +517,7 @@ GameMessageDisposition MetaEventTranslator::translateGameMessage(const GameMessa
 				disp = DESTROY_MESSAGE;
 				break;
 			}
-		} 
+		}
 
 
 
@@ -561,7 +561,7 @@ GameMessageDisposition MetaEventTranslator::translateGameMessage(const GameMessa
 				// else index == 0
 				m_mouseDownPosition[index] = msg->getArgument(0)->pixel;
 				m_nextUpShouldCreateDoubleClick[index] = FALSE;
-				
+
 				break;
 			}
 
@@ -593,14 +593,14 @@ GameMessageDisposition MetaEventTranslator::translateGameMessage(const GameMessa
 				// else index == 0
 
 				GameMessage *newMessage = NULL;
-				if (t == GameMessage::MSG_RAW_MOUSE_LEFT_BUTTON_UP) 
+				if (t == GameMessage::MSG_RAW_MOUSE_LEFT_BUTTON_UP)
 				{
 					if (m_nextUpShouldCreateDoubleClick[index])
 						newMessage = TheMessageStream->insertMessage(GameMessage::MSG_MOUSE_LEFT_DOUBLE_CLICK, const_cast<GameMessage*>(msg));
 					else
 						newMessage = TheMessageStream->insertMessage(GameMessage::MSG_MOUSE_LEFT_CLICK, const_cast<GameMessage*>(msg));
 					m_nextUpShouldCreateDoubleClick[index] = FALSE;
-				} 
+				}
 				else if (t == GameMessage::MSG_RAW_MOUSE_MIDDLE_BUTTON_UP)
 				{
 					if (m_nextUpShouldCreateDoubleClick[index])
@@ -609,7 +609,7 @@ GameMessageDisposition MetaEventTranslator::translateGameMessage(const GameMessa
 						newMessage = TheMessageStream->insertMessage(GameMessage::MSG_MOUSE_MIDDLE_CLICK, const_cast<GameMessage*>(msg));
 					m_nextUpShouldCreateDoubleClick[index] = FALSE;
 				}
-				else if (t == GameMessage::MSG_RAW_MOUSE_RIGHT_BUTTON_UP) 
+				else if (t == GameMessage::MSG_RAW_MOUSE_RIGHT_BUTTON_UP)
 				{
 					if (m_nextUpShouldCreateDoubleClick[index])
 						newMessage = TheMessageStream->insertMessage(GameMessage::MSG_MOUSE_RIGHT_DOUBLE_CLICK, const_cast<GameMessage*>(msg));
@@ -628,12 +628,12 @@ GameMessageDisposition MetaEventTranslator::translateGameMessage(const GameMessa
 				}
 
 				newMessage->appendPixelRegionArgument( pixelRegion );
-				
+
 				// append the modifier keys to the message.
 				newMessage->appendIntegerArgument( msg->getArgument(1)->integer );
 				break;
 			}
-		
+
 		}
 
 	}
@@ -646,7 +646,7 @@ GameMessageDisposition MetaEventTranslator::translateGameMessage(const GameMessa
 //-------------------------------------------------------------------------------------------------
 
 //-------------------------------------------------------------------------------------------------
-MetaMap::MetaMap() : 
+MetaMap::MetaMap() :
 	m_metaMaps(NULL)
 {
 }
@@ -694,7 +694,7 @@ MetaMapRec *MetaMap::getMetaMapRec(GameMessage::Type t)
 	m->m_displayName.clear();
 	m->m_next = m_metaMaps;
 	m_metaMaps = m;
-	
+
 	return m;
 }
 

@@ -64,7 +64,7 @@ GlobalData* GlobalData::m_theOriginal = NULL;
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // PRIVATE DATA ///////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-/*static*/ const FieldParse GlobalData::s_GlobalDataFieldParseTable[] = 
+/*static*/ const FieldParse GlobalData::s_GlobalDataFieldParseTable[] =
 {
 	{ "Windowed",									INI::parseBool,				NULL,			offsetof( GlobalData, m_windowed ) },
 	{ "XResolution",							INI::parseInt,				NULL,			offsetof( GlobalData, m_xResolution ) },
@@ -87,8 +87,8 @@ GlobalData* GlobalData::m_theOriginal = NULL;
 	{ "StretchTerrain",						INI::parseBool,				NULL,			offsetof( GlobalData, m_stretchTerrain ) },
 	{ "UseHalfHeightMap",					INI::parseBool,				NULL,			offsetof( GlobalData, m_useHalfHeightMap ) },
 	{ "UserDataLeafName",					INI::parseQuotedAsciiString,	NULL,			offsetof( GlobalData, m_userDataLeafName ) },
-	
-	
+
+
 	{ "DrawEntireTerrain",					INI::parseBool,				NULL,			offsetof( GlobalData, m_drawEntireTerrain ) },
 	{ "TerrainLOD",									INI::parseIndexList,	TerrainLODNames,	offsetof( GlobalData, m_terrainLOD ) },
 	{ "TerrainLODTargetTimeMS",			INI::parseInt,				NULL,			offsetof( GlobalData, m_terrainLODTargetTimeMS ) },
@@ -190,7 +190,7 @@ GlobalData* GlobalData::m_theOriginal = NULL;
 	{ "Gravity",									INI::parseAccelerationReal,				NULL,				offsetof( GlobalData, m_gravity ) },
 	{ "StealthFriendlyOpacity",		INI::parsePercentToReal,				NULL,				offsetof( GlobalData, m_stealthFriendlyOpacity ) },
 	{ "DefaultOcclusionDelay",				INI::parseDurationUnsignedInt,				NULL,			offsetof( GlobalData, m_defaultOcclusionDelay ) },
-	
+
 	{ "PartitionCellSize",				INI::parseReal,				NULL,			offsetof( GlobalData, m_partitionCellSize ) },
 
 	{ "AmmoPipScaleFactor",				INI::parseReal,				NULL,			offsetof( GlobalData, m_ammoPipScaleFactor ) },
@@ -244,7 +244,7 @@ GlobalData* GlobalData::m_theOriginal = NULL;
 	{ "TerrainObjectsLightingNightDiffuse",				INI::parseRGBColor,			NULL,			offsetof( GlobalData, m_terrainObjectsLighting[ TIME_OF_DAY_NIGHT ][0].diffuse ) },
 	{ "TerrainObjectsLightingNightLightPos",			INI::parseCoord3D,			NULL,			offsetof( GlobalData, m_terrainObjectsLighting[ TIME_OF_DAY_NIGHT ][0].lightPos ) },
 
-	//Secondary global light	
+	//Secondary global light
 	{ "TerrainLightingMorningAmbient2",			INI::parseRGBColor,			NULL,			offsetof( GlobalData, m_terrainLighting[ TIME_OF_DAY_MORNING ][1].ambient ) },
 	{ "TerrainLightingMorningDiffuse2",			INI::parseRGBColor,			NULL,			offsetof( GlobalData, m_terrainLighting[ TIME_OF_DAY_MORNING ][1].diffuse ) },
 	{ "TerrainLightingMorningLightPos2",		INI::parseCoord3D,			NULL,			offsetof( GlobalData, m_terrainLighting[ TIME_OF_DAY_MORNING ][1].lightPos ) },
@@ -298,7 +298,7 @@ GlobalData* GlobalData::m_theOriginal = NULL;
 	{ "TerrainObjectsLightingNightDiffuse3",				INI::parseRGBColor,			NULL,			offsetof( GlobalData, m_terrainObjectsLighting[ TIME_OF_DAY_NIGHT ][2].diffuse ) },
 	{ "TerrainObjectsLightingNightLightPos3",			INI::parseCoord3D,			NULL,			offsetof( GlobalData, m_terrainObjectsLighting[ TIME_OF_DAY_NIGHT ][2].lightPos ) },
 
-	
+
 	{ "NumberGlobalLights",								INI::parseInt,				NULL,			offsetof( GlobalData, m_numGlobalLights)},
 	{ "InfantryLightMorningScale",				INI::parseReal,			NULL,			offsetof( GlobalData, m_infantryLightScale[TIME_OF_DAY_MORNING] ) },
 	{ "InfantryLightAfternoonScale",				INI::parseReal,			NULL,			offsetof( GlobalData, m_infantryLightScale[TIME_OF_DAY_AFTERNOON] ) },
@@ -308,7 +308,7 @@ GlobalData* GlobalData::m_theOriginal = NULL;
 	{ "MaxTranslucentObjects",						INI::parseInt,				NULL,			offsetof( GlobalData, m_maxVisibleTranslucentObjects) },
 	{ "OccludedColorLuminanceScale",				INI::parseReal,				NULL,			offsetof( GlobalData, m_occludedLuminanceScale) },
 
-/* These are internal use only, they do not need file definitons 
+/* These are internal use only, they do not need file definitons
 	{ "TerrainAmbientRGB",				INI::parseRGBColor,		NULL,			offsetof( GlobalData, m_terrainAmbient ) },
 	{ "TerrainDiffuseRGB",				INI::parseRGBColor,		NULL,			offsetof( GlobalData, m_terrainDiffuse ) },
 	{ "TerrainLightPos",					INI::parseCoord3D,		NULL,			offsetof( GlobalData, m_terrainLightPos ) },
@@ -319,7 +319,7 @@ GlobalData* GlobalData::m_theOriginal = NULL;
 	{ "MaxRoadTypes",								INI::parseInt,				NULL,			offsetof( GlobalData, m_maxRoadTypes ) },
 
 	{ "ValuePerSupplyBox",					INI::parseInt,				NULL,			offsetof( GlobalData, m_baseValuePerSupplyBox ) },
-	
+
 	{ "AudioOn",										INI::parseBool,				NULL,			offsetof( GlobalData, m_audioOn ) },
 	{ "MusicOn",										INI::parseBool,				NULL,			offsetof( GlobalData, m_musicOn ) },
 	{ "SoundsOn",										INI::parseBool,				NULL,			offsetof( GlobalData, m_soundsOn ) },
@@ -328,7 +328,7 @@ GlobalData* GlobalData::m_theOriginal = NULL;
 	{ "VideoOn",										INI::parseBool,				NULL,			offsetof( GlobalData, m_videoOn ) },
 	{ "DisableCameraMovements",			INI::parseBool,				NULL,			offsetof( GlobalData, m_disableCameraMovement ) },
 
-/* These are internal use only, they do not need file definitons 		
+/* These are internal use only, they do not need file definitons
 	/// @todo remove this hack
 	{ "InGame",											INI::parseBool,				NULL,			offsetof( GlobalData, m_inGame ) },
 */
@@ -362,7 +362,7 @@ GlobalData* GlobalData::m_theOriginal = NULL;
 	{ "AutoAflameParticleSystem",					INI::parseAsciiString,  NULL,  offsetof( GlobalData, m_autoAflameParticleSystem ) },
 	{ "AutoAflameParticleMax",						INI::parseInt,					NULL,	 offsetof( GlobalData, m_autoAflameParticleMax ) },
 
-/* These are internal use only, they do not need file definitons 	
+/* These are internal use only, they do not need file definitons
 	{ "LatencyAverage",							INI::parseInt,				NULL,			offsetof( GlobalData, m_latencyAverage ) },
 	{ "LatencyAmplitude",						INI::parseInt,				NULL,			offsetof( GlobalData, m_latencyAmplitude ) },
 	{ "LatencyPeriod",							INI::parseInt,				NULL,			offsetof( GlobalData, m_latencyPeriod ) },
@@ -463,7 +463,7 @@ GlobalData* GlobalData::m_theOriginal = NULL;
 
 // NOTE: m_doubleClickTimeMS is still in use, but we disallow setting it from the GameData.ini file. It is now set in the constructor according to the windows parameter.
 //	{ "DoubleClickTimeMS",									INI::parseUnsignedInt,			NULL, offsetof( GlobalData, m_doubleClickTimeMS ) },
-	
+
 	{ "ShroudColor",		INI::parseRGBColor,						NULL,	offsetof( GlobalData, m_shroudColor) },
 	{ "ClearAlpha",			INI::parseUnsignedByte,				NULL,	offsetof( GlobalData, m_clearAlpha) },
 	{ "FogAlpha",				INI::parseUnsignedByte,				NULL,	offsetof( GlobalData, m_fogAlpha) },
@@ -485,7 +485,7 @@ GlobalData* GlobalData::m_theOriginal = NULL;
 	{ "NetworkDisconnectTime", INI::parseInt, NULL, offsetof(GlobalData, m_networkDisconnectTime) },
 	{ "NetworkPlayerTimeoutTime", INI::parseInt, NULL, offsetof(GlobalData, m_networkPlayerTimeoutTime) },
 	{ "NetworkDisconnectScreenNotifyTime", INI::parseInt, NULL, offsetof(GlobalData, m_networkDisconnectScreenNotifyTime) },
-	
+
 	{ "KeyboardCameraRotateSpeed", INI::parseReal, NULL, offsetof( GlobalData, m_keyboardCameraRotateSpeed ) },
 	{ "PlayStats",									INI::parseInt,				NULL,			offsetof( GlobalData, m_playStats ) },
 
@@ -536,7 +536,7 @@ GlobalData::GlobalData()
 
 	//
 	// we have now instanced a global data instance, if theOriginal is NULL, this is
-	// *the* very first instance and it shall be recorded.  This way, when we load 
+	// *the* very first instance and it shall be recorded.  This way, when we load
 	// overrides of the global data, we can revert to the common, original data
 	// in m_theOriginal
 	//
@@ -651,7 +651,7 @@ GlobalData::GlobalData()
 	m_waterPositionX = 0.0f;
 	m_waterPositionY = 0.0f;
 	m_waterPositionZ = 0.0f;
-	m_waterExtentX = 0.0f;	
+	m_waterExtentX = 0.0f;
 	m_waterExtentY = 0.0f;
 	m_waterType = 0;
 	m_featherWater = FALSE;
@@ -750,7 +750,7 @@ GlobalData::GlobalData()
 
 	for (j=TIME_OF_DAY_FIRST; j<TIME_OF_DAY_COUNT; j++)
 		m_infantryLightScale[j] = 1.5f;
-	
+
 	m_scriptOverrideInfantryLightScale = -1.0f;
 
 	m_numGlobalLights = 3;
@@ -776,7 +776,7 @@ GlobalData::GlobalData()
 
 	m_useFX = TRUE;
 
-//	m_inGame = FALSE;	
+//	m_inGame = FALSE;
 
 	m_noDraw = 0;
 	m_particleScale = 1.0f;
@@ -788,7 +788,7 @@ GlobalData::GlobalData()
 	m_autoSmokeParticleMediumMax = 0;
 	m_autoSmokeParticleLargeMax = 0;
 	m_autoAflameParticleMax = 0;
-  
+
 	// Added By Sadullah Nader
 	// Initializations missing and needed
 	m_autoFireParticleSmallPrefix.clear();
@@ -813,7 +813,7 @@ GlobalData::GlobalData()
 	m_drawEntireTerrain = FALSE;
 	m_maxParticleCount = 0;
 	m_maxFieldParticleCount = 30;
-	
+
 	// End Add
 
 	m_debugAI = AI_DEBUG_NONE;
@@ -867,7 +867,7 @@ GlobalData::GlobalData()
 
 	m_standardMinefieldDensity = 0.01f;
 	m_standardMinefieldDistance = 40.0f;
-	
+
 	m_groupSelectMinSelectSize = 5;
 	m_groupSelectVolumeBase = 0.5f;
 	m_groupSelectVolumeIncrement = 0.02f;
@@ -921,7 +921,7 @@ GlobalData::GlobalData()
 	m_firewallPortAllocationDelta = 0;
 	m_loadScreenDemo = FALSE;
 	m_disableRender = false;
-	
+
 	m_saveCameraInReplay = FALSE;
 	m_useCameraInReplay = FALSE;
 
@@ -985,19 +985,19 @@ GlobalData::GlobalData()
 	m_scrollAmountCutoff = 10.0f;
 	m_cameraAdjustSpeed = 0.1f;
 	m_enforceMaxCameraHeight = TRUE;
-	
+
 	m_animateWindows = TRUE;
-	
+
 	m_iniCRC = 0;
 	m_exeCRC = 0;
-	
+
 	m_movementPenaltyDamageState = BODY_REALLYDAMAGED;
-	
+
 	m_shouldUpdateTGAToDDS = FALSE;
-	
+
 	// Default DoubleClickTime to System double click time.
 	m_doubleClickTimeMS = GetDoubleClickTime(); // Note: This is actual MS, not frames.
-	
+
 #ifdef DUMP_PERF_STATS
 	m_dumpPerformanceStatistics = FALSE;
 #endif
@@ -1127,7 +1127,7 @@ void GlobalData::parseGameDataDefinition( INI* ini )
 	if( TheWritableGlobalData && ini->getLoadType() != INI_LOAD_MULTIFILE)
 	{
 
-		// 
+		//
 		// if the type of loading we're doing creates override data, we need to
 		// be loading into a new override item
 		//
@@ -1169,13 +1169,13 @@ void GlobalData::parseGameDataDefinition( INI* ini )
 	TheWritableGlobalData->m_firewallBehavior = optionPref.getFirewallBehavior();
 	TheWritableGlobalData->m_firewallPortAllocationDelta = optionPref.getFirewallPortAllocationDelta();
 	TheWritableGlobalData->m_firewallPortOverride = optionPref.getFirewallPortOverride();
-	
+
 	TheWritableGlobalData->m_saveCameraInReplay = optionPref.saveCameraInReplays();
 	TheWritableGlobalData->m_useCameraInReplay = optionPref.useCameraInReplays();
 
 	TheWritableGlobalData->m_systemTimeFontSize = optionPref.getSystemTimeFontSize();
 	TheWritableGlobalData->m_gameTimeFontSize = optionPref.getGameTimeFontSize();
-	
+
 	Int val=optionPref.getGammaValue();
 	//generate a value between 0.6 and 2.0.
 	if (val < 50)

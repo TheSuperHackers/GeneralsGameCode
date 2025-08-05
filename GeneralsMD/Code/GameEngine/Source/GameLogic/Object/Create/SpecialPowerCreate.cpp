@@ -47,7 +47,7 @@ SpecialPowerCreate::SpecialPowerCreate( Thing *thing, const ModuleData* moduleDa
 SpecialPowerCreate::~SpecialPowerCreate( void )
 {
 
-} 
+}
 
 //-------------------------------------------------------------------------------------------------
 void SpecialPowerCreate::onCreate( void )
@@ -70,7 +70,7 @@ void SpecialPowerCreate::onBuildComplete( void )
 
 		sp->onSpecialPowerCreation();
 	}
-} 
+}
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */

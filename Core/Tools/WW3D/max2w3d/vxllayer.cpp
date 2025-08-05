@@ -17,34 +17,34 @@
 */
 
 /* $Header: /Commando/Code/Tools/max2w3d/vxllayer.cpp 4     10/28/97 6:08p Greg_h $ */
-/*********************************************************************************************** 
- ***                            Confidential - Westwood Studios                              *** 
- *********************************************************************************************** 
- *                                                                                             * 
- *                 Project Name : Commando / G                                                 * 
- *                                                                                             * 
- *                    File Name : VXLLAYER.CPP                                                 * 
- *                                                                                             * 
- *                   Programmer : Greg Hjelstrom                                               * 
- *                                                                                             * 
- *                   Start Date : 06/10/97                                                     * 
- *                                                                                             * 
- *                  Last Update : June 10, 1997 [GH]                                           * 
- *                                                                                             * 
- *---------------------------------------------------------------------------------------------* 
- * Functions:                                                                                  * 
- *   VoxelLayerClass::VoxelLayerClass -- Constructor for VoxelLayerClass                       * 
- *   VoxelLayerClass::Intersect_Triangle -- Intersect a triangle with the slab                 * 
- *   VoxelLayerClass::Draw_Line -- Draw a line of voxels into the slab                         * 
- *   VoxelLayerClass::Scan_Triangle -- Clip and scan-convert a triangle into the slab          * 
- *   clip_tri_to_slab -- Clips a triangle against a voxel slab                                 * 
- *   clip_poly -- clip a polygon against a single 3D plane                                     * 
- *   output -- Emit a vertex into a polygons vertex list                                       * 
- *   inside -- Test whether a point is in the front half-space of a plane                      * 
- *   intersect -- compute intersection between a line and a plane                              * 
- *   clear_scan_table -- clears the static scanline table                                      * 
- *   fixup_scan_table -- ensure all spans are left->right in order                             * 
- *   scan_edge -- Scan convert an edge                                                         * 
+/***********************************************************************************************
+ ***                            Confidential - Westwood Studios                              ***
+ ***********************************************************************************************
+ *                                                                                             *
+ *                 Project Name : Commando / G                                                 *
+ *                                                                                             *
+ *                    File Name : VXLLAYER.CPP                                                 *
+ *                                                                                             *
+ *                   Programmer : Greg Hjelstrom                                               *
+ *                                                                                             *
+ *                   Start Date : 06/10/97                                                     *
+ *                                                                                             *
+ *                  Last Update : June 10, 1997 [GH]                                           *
+ *                                                                                             *
+ *---------------------------------------------------------------------------------------------*
+ * Functions:                                                                                  *
+ *   VoxelLayerClass::VoxelLayerClass -- Constructor for VoxelLayerClass                       *
+ *   VoxelLayerClass::Intersect_Triangle -- Intersect a triangle with the slab                 *
+ *   VoxelLayerClass::Draw_Line -- Draw a line of voxels into the slab                         *
+ *   VoxelLayerClass::Scan_Triangle -- Clip and scan-convert a triangle into the slab          *
+ *   clip_tri_to_slab -- Clips a triangle against a voxel slab                                 *
+ *   clip_poly -- clip a polygon against a single 3D plane                                     *
+ *   output -- Emit a vertex into a polygons vertex list                                       *
+ *   inside -- Test whether a point is in the front half-space of a plane                      *
+ *   intersect -- compute intersection between a line and a plane                              *
+ *   clear_scan_table -- clears the static scanline table                                      *
+ *   fixup_scan_table -- ensure all spans are left->right in order                             *
+ *   scan_edge -- Scan convert an edge                                                         *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 
@@ -127,17 +127,17 @@ static void scan_edge(
 
 
 
-/*********************************************************************************************** 
- * VoxelLayerClass::VoxelLayerClass -- Constructor for VoxelLayerClass                         * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   06/10/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * VoxelLayerClass::VoxelLayerClass -- Constructor for VoxelLayerClass                         *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   06/10/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
 VoxelLayerClass::VoxelLayerClass
 (
@@ -150,7 +150,7 @@ VoxelLayerClass::VoxelLayerClass
 	float					sliceh,
 	int					bmwidth,
 	int					bmheight
-) 
+)
 {
 	unsigned i;
 
@@ -177,13 +177,13 @@ VoxelLayerClass::VoxelLayerClass
 
 		// Compute a delta matrix which puts vertices into the parent space
 		Matrix3 delta = objtm * Inverse(parenttm);
-		
+
 		// Loop through each face, intersecting it with the slice.
 		unsigned faces = mesh->getNumFaces();
 		for ( unsigned face_index = 0; face_index < faces; ++ face_index )
 		{
 			Face & face = mesh->faces [ face_index ];
-			
+
 			// transform the vertices into the parent space
 			Point3 a = mesh->verts [ face.v[0] ] * delta;
 			Point3 b = mesh->verts [ face.v[1] ] * delta;
@@ -213,17 +213,17 @@ VoxelLayerClass::VoxelLayerClass
 
 
 
-/*********************************************************************************************** 
- * VoxelLayerClass::Intersect_Triangle -- Intersect a triangle with the slab                   * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   06/10/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * VoxelLayerClass::Intersect_Triangle -- Intersect a triangle with the slab                   *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   06/10/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
 void VoxelLayerClass::Intersect_Triangle
 (
@@ -292,17 +292,17 @@ void VoxelLayerClass::Intersect_Triangle
 }
 
 
-/*********************************************************************************************** 
- * VoxelLayerClass::Draw_Line -- Draw a line of voxels into the slab                           * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   06/10/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * VoxelLayerClass::Draw_Line -- Draw a line of voxels into the slab                           *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   06/10/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
 void VoxelLayerClass::Draw_Line
 (
@@ -380,17 +380,17 @@ void VoxelLayerClass::Draw_Line
 
 
 
-/*********************************************************************************************** 
- * VoxelLayerClass::Scan_Triangle -- Clip and scan-convert a triangle into the slab            * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   06/10/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * VoxelLayerClass::Scan_Triangle -- Clip and scan-convert a triangle into the slab            *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   06/10/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
 void VoxelLayerClass::Scan_Triangle
 (
@@ -400,7 +400,7 @@ void VoxelLayerClass::Scan_Triangle
 )
 {
 	int i;
-	
+
 	// check if the entire triangle is above or below the slab:
 	if (p0.z < SliceZ0 && p1.z < SliceZ0 && p2.z < SliceZ1) return;
 	if (p0.z > SliceZ1 && p1.z > SliceZ1 && p2.z > SliceZ1) return;
@@ -414,7 +414,7 @@ void VoxelLayerClass::Scan_Triangle
 
 	// clear the scanline table, get y-extents of polygon
 	clear_scan_table();
-	
+
 	float miny = polyvert[0].Pos.y;
 	float maxy = polyvert[0].Pos.y;
 
@@ -422,7 +422,7 @@ void VoxelLayerClass::Scan_Triangle
 		if (polyvert[i].Pos.y < miny) miny = polyvert[i].Pos.y;
 		if (polyvert[i].Pos.y > maxy) maxy = polyvert[i].Pos.y;
 	}
-	
+
 	// scanconvert the triangle
 	int start = numverts - 1;
 	for (i=0; i<numverts; i++) {
@@ -448,17 +448,17 @@ void VoxelLayerClass::Scan_Triangle
 }
 
 
-/*********************************************************************************************** 
- * clip_tri_to_slab -- Clips a triangle against a voxel slab                                   * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   06/10/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * clip_tri_to_slab -- Clips a triangle against a voxel slab                                   *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   06/10/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
 static void clip_tri_to_slab
 (
@@ -486,36 +486,36 @@ static void clip_tri_to_slab
 
 	// clip from the out buffer to the tmp buffer against bottom of slab:
 	clip_poly(outverts,3,tmpverts,setnum,PlaneClass(Vector3(0.0f,0.0f,1.0f),-z0));
-	
+
 	// clip from the tmp buffer to the out buffer against top of slab:
 	clip_poly(tmpverts,*setnum,outverts,setnum,PlaneClass(Vector3(0.0f,0.0f,-1.0f),z1));
 }
 
 
-/*********************************************************************************************** 
- * clip_poly -- clip a polygon against a single 3D plane                                       * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   06/10/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * clip_poly -- clip a polygon against a single 3D plane                                       *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   06/10/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
 static void clip_poly
 (
-	vertexstruct *			inverts, 
-	int						innum, 
-	vertexstruct *			outverts, 
+	vertexstruct *			inverts,
+	int						innum,
+	vertexstruct *			outverts,
 	int *						outnum,
 	const PlaneClass &	clipplane
 )
 {
 	vertexstruct p0,p1;	// start and end of current edge
 	vertexstruct pi;		// intersection point
-	int i;					
+	int i;
 
 	// start with zero vertices
 	*outnum = 0;
@@ -524,7 +524,7 @@ static void clip_poly
 	for (i=0; i<innum; i++) {
 		p1 = inverts[i];
 
-		if (inside(p1,clipplane)) { 
+		if (inside(p1,clipplane)) {
 			if (inside(p0,clipplane)) {
 				output(p1,outverts,outnum);			//both inside: output p1
 			} else {
@@ -543,17 +543,17 @@ static void clip_poly
 }
 
 
-/*********************************************************************************************** 
- * output -- Emit a vertex into a polygons vertex list                                         * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   06/10/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * output -- Emit a vertex into a polygons vertex list                                         *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   06/10/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
 static void output
 (
@@ -567,17 +567,17 @@ static void output
 }
 
 
-/*********************************************************************************************** 
- * inside -- Test whether a point is in the front half-space of a plane                        * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   06/10/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * inside -- Test whether a point is in the front half-space of a plane                        *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   06/10/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
 static int inside
 (
@@ -592,19 +592,19 @@ static int inside
 		return 0;
 	}
 }
-	
 
-/*********************************************************************************************** 
- * intersect -- compute intersection between a line and a plane                                * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   06/10/1997 GH  : Created.                                                                 * 
+
+/***********************************************************************************************
+ * intersect -- compute intersection between a line and a plane                                *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   06/10/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
 static vertexstruct intersect
 (
@@ -618,9 +618,9 @@ static vertexstruct intersect
 	Point3 delta = p1.Pos - p0.Pos;
 
 	float num = -( plane.N[0] * p0.Pos.x +
-					   plane.N[1] * p0.Pos.y + 
+					   plane.N[1] * p0.Pos.y +
 					   plane.N[2] * p0.Pos.z + plane.D );
-	
+
 	float den = plane.N[0] * delta.x +
 					plane.N[1] * delta.y +
 					plane.N[2] * delta.z;
@@ -638,17 +638,17 @@ static vertexstruct intersect
 }
 
 
-/*********************************************************************************************** 
- * clear_scan_table -- clears the static scanline table                                        * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   06/10/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * clear_scan_table -- clears the static scanline table                                        *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   06/10/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
 static void clear_scan_table(void)
 {
@@ -659,17 +659,17 @@ static void clear_scan_table(void)
 	}
 }
 
-/*********************************************************************************************** 
- * fixup_scan_table -- ensure all spans are left->right in order                               * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   06/10/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * fixup_scan_table -- ensure all spans are left->right in order                               *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   06/10/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
 static void fixup_scan_table(int y0,int y1)
 {
@@ -688,11 +688,11 @@ static void fixup_scan_table(int y0,int y1)
 	// Ensure that we leave no gaps.
 	for (i=y0; i<y1; i++) {
 		if (_scantab[i+1].P[RIGHT].Pos.x < _scantab[i].P[LEFT].Pos.x) {
-			
+
 			_scantab[i+1].P[RIGHT].Pos.x = _scantab[i].P[LEFT].Pos.x;
 
 		} else if (_scantab[i+1].P[LEFT].Pos.x > _scantab[i].P[RIGHT].Pos.x) {
-			
+
 			_scantab[i+1].P[LEFT].Pos.x = _scantab[i].P[RIGHT].Pos.x;
 
 		}
@@ -700,17 +700,17 @@ static void fixup_scan_table(int y0,int y1)
 }
 
 
-/*********************************************************************************************** 
- * scan_edge -- Scan convert an edge                                                           * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   06/10/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * scan_edge -- Scan convert an edge                                                           *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   06/10/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
 static void scan_edge
 (
@@ -720,7 +720,7 @@ static void scan_edge
 {
 	// is this a perfectly horizontal edge:
 	if (floor(p0.Pos.y) == floor(p1.Pos.y)) {
-		
+
 		int si = (int)floor(p0.Pos.y);
 		const vertexstruct *left, *right;
 
@@ -736,12 +736,12 @@ static void scan_edge
 		if (_scantab[si].P[0].Pos.x != EMPTY_SPAN) {
 
 			// yes, expand this scanline's span to include this span
-			if (left->Pos.x < _scantab[si].P[LEFT].Pos.x) {	
-				_scantab[si].P[LEFT] =  *left;		
+			if (left->Pos.x < _scantab[si].P[LEFT].Pos.x) {
+				_scantab[si].P[LEFT] =  *left;
 			}
 
 			if (right->Pos.x > _scantab[si].P[RIGHT].Pos.x) {
-				_scantab[si].P[RIGHT] =  *right;		
+				_scantab[si].P[RIGHT] =  *right;
 			}
 
 		} else {

@@ -52,22 +52,22 @@ CommandList *TheCommandList = NULL;
 /**
  * Constructor
  */
-GameMessage::GameMessage( GameMessage::Type type ) 
-{ 
+GameMessage::GameMessage( GameMessage::Type type )
+{
 	m_playerIndex = ThePlayerList->getLocalPlayer()->getPlayerIndex();
-	m_type = type; 
+	m_type = type;
 	m_argList = NULL;
 	m_argTail = NULL;
-	m_argCount = 0; 
-	m_list = 0; 
+	m_argCount = 0;
+	m_list = 0;
 }
 
 
 /**
  * Destructor
  */
-GameMessage::~GameMessage( ) 
-{ 
+GameMessage::~GameMessage( )
+{
 	// free all arguments
 	GameMessageArgument *arg, *nextArg;
 
@@ -121,10 +121,10 @@ GameMessageArgumentDataType GameMessage::getArgumentDataType( Int argIndex )
 /**
  * Allocate a new argument, add it to the argument list, and increment the total arg count
  */
-GameMessageArgument *GameMessage::allocArg( void ) 
-{ 
+GameMessageArgument *GameMessage::allocArg( void )
+{
 	// allocate a new argument
-	GameMessageArgument *arg = newInstance(GameMessageArgument); 
+	GameMessageArgument *arg = newInstance(GameMessageArgument);
 
 	// add to end of argument list
 	if (m_argTail)
@@ -724,10 +724,10 @@ void GameMessageList::insertMessage( GameMessage *msg, GameMessage *messageToIns
 {
 	// First, set msg's next to be messageToInsertAfter's next.
 	msg->friend_setNext(messageToInsertAfter->next());
-	
+
 	// Next, set msg's prev to be messageToInsertAfter
 	msg->friend_setPrev(messageToInsertAfter);
-	
+
 	// Now update the next message's prev to be msg
 	if (msg->next())
 		msg->next()->friend_setPrev(msg);
@@ -809,7 +809,7 @@ void MessageStream::init( void )
 {
 	// extend
 	GameMessageList::init();
-} 
+}
 
 /**
 	* Reset
@@ -869,7 +869,7 @@ GameMessage *MessageStream::insertMessage( GameMessage::Type type, GameMessage *
  * Translators share a priority, they are kept in the same order they
  * were attached.
  */
-TranslatorID MessageStream::attachTranslator( GameMessageTranslator *translator, 
+TranslatorID MessageStream::attachTranslator( GameMessageTranslator *translator,
 																							UnsignedInt priority)
 {
 	MessageStream::TranslatorData *newSS = NEW MessageStream::TranslatorData;
@@ -927,7 +927,7 @@ TranslatorID MessageStream::attachTranslator( GameMessageTranslator *translator,
 }
 
 /**
-	* Find a translator attached to this message stream given the ID 
+	* Find a translator attached to this message stream given the ID
 	*/
 GameMessageTranslator* MessageStream::findTranslator( TranslatorID id )
 {
@@ -982,7 +982,7 @@ Bool isInvalidDebugCommand( GameMessage::Type t )
 {
 	// see if this is something that should be prevented in multiplayer games
 	// Don't reject this stuff in skirmish games.
-	if (TheGameLogic && !TheGameLogic->isInSkirmishGame() && 
+	if (TheGameLogic && !TheGameLogic->isInSkirmishGame() &&
 			(TheRecorder && TheRecorder->isMultiplayer() && TheRecorder->getMode() == RECORDERMODETYPE_RECORD))
 	{
 		switch (t)
@@ -1065,8 +1065,8 @@ void MessageStream::propagateMessages( void )
 	for( ss=m_firstTranslator; ss; ss=ss->m_next )
 	{
 		for( msg=m_firstMessage; msg; msg=next )
-		{			
-			if (ss->m_translator 
+		{
+			if (ss->m_translator
 #if defined(RTS_DEBUG)
 				&& !isInvalidDebugCommand(msg->getType())
 #endif
@@ -1078,8 +1078,8 @@ void MessageStream::propagateMessages( void )
 				{
 					deleteInstance(msg);
 				}
-			} 
-			else 
+			}
+			else
 			{
 				next = msg->next();
 			}
@@ -1125,7 +1125,7 @@ void CommandList::init( void )
 	// extend
 	GameMessageList::init();
 
-} 
+}
 
 /**
 	* Destroy all messages on the list, and reset list to empty
@@ -1165,20 +1165,20 @@ void CommandList::destroyAllMessages( void )
 		next = msg->next();
 		deleteInstance(msg);
 	}
-	
+
 	m_firstMessage = NULL;
 	m_lastMessage = NULL;
 
 }
 
-/** 
+/**
  * Adds messages to the end of TheCommandList.
- * Primarily used by TheMessageStream to put the final messages that reach the end of the 
- * stream on TheCommandList. Since TheGameClient will update faster than TheNetwork 
+ * Primarily used by TheMessageStream to put the final messages that reach the end of the
+ * stream on TheCommandList. Since TheGameClient will update faster than TheNetwork
  * and TheGameLogic, messages will accumulate on this list.
  */
-void CommandList::appendMessageList( GameMessage *list ) 
-{ 
+void CommandList::appendMessageList( GameMessage *list )
+{
 	GameMessage *msg, *next;
 
 	for( msg = list; msg; msg = next )

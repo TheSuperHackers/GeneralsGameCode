@@ -92,7 +92,7 @@ protected:
 	/////////////////////////////////////////////////////////
 	//
 	//	Protected methods
-	//		
+	//
 	void								Initialize (void);
 	void								Update_Rotations (void);
 
@@ -105,11 +105,11 @@ private:
 	/////////////////////////////////////////////////////////
 	//
 	//	Private member data
-	//		
+	//
 	EmitterInstanceListClass *			m_pEmitterList;
 	bool										m_bValid;
 	ColorBarClass *						m_RotationBar;
-	
+
 	ParticlePropertyStruct<float>		m_Rotations;
 
 	float										m_Lifetime;

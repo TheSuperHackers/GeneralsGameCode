@@ -158,7 +158,7 @@ SubsystemInterfaceList* TheSubsystemList = NULL;
 
 //-------------------------------------------------------------------------------------------------
 template<class SUBSYSTEM>
-void initSubsystem(SUBSYSTEM*& sysref, AsciiString name, SUBSYSTEM* sys, Xfer *pXfer,  const char* path1 = NULL, 
+void initSubsystem(SUBSYSTEM*& sysref, AsciiString name, SUBSYSTEM* sys, Xfer *pXfer,  const char* path1 = NULL,
 									 const char* path2 = NULL, const char* dirpath = NULL)
 {
 	sysref = sys;
@@ -335,11 +335,11 @@ void GameEngine::init()
 			DEBUG_LOG(("Build git commit author: %s", Version::getGitCommitAuthorName()));
 			DEBUG_LOG(("================================================================================"));
 		}
-		
+
 		m_maxFPS = DEFAULT_MAX_FPS;
 
 		TheSubsystemList = MSGNEW("GameEngineSubsystem") SubsystemInterfaceList;
-		
+
 		TheSubsystemList->addSubsystem(this);
 
 		// initialize the random number system
@@ -361,7 +361,7 @@ void GameEngine::init()
 
 		initSubsystem(TheLocalFileSystem, "TheLocalFileSystem", createLocalFileSystem(), NULL);
 		initSubsystem(TheArchiveFileSystem, "TheArchiveFileSystem", createArchiveFileSystem(), NULL); // this MUST come after TheLocalFileSystem creation
-		
+
 		DEBUG_ASSERTCRASH(TheWritableGlobalData,("TheWritableGlobalData expected to be created"));
 		initSubsystem(TheWritableGlobalData, "TheWritableGlobalData", TheWritableGlobalData, &xferCRC, "Data\\INI\\Default\\GameData.ini", "Data\\INI\\GameData.ini");
 		TheWritableGlobalData->parseCustomDefinition();
@@ -377,7 +377,7 @@ void GameEngine::init()
 		// If we're in Debug, load the Debug settings as well.
 		ini.load( AsciiString( "Data\\INI\\GameDataDebug.ini" ), INI_LOAD_OVERWRITE, NULL );
 	#endif
-		
+
 		// special-case: parse command-line parameters after loading global data
 		CommandLine::parseCommandLineForEngineInit();
 
@@ -386,7 +386,7 @@ void GameEngine::init()
 		// doesn't require resets so just create a single instance here.
 		TheGameLODManager = MSGNEW("GameEngineSubsystem") GameLODManager;
 		TheGameLODManager->init();
-		
+
 		// after parsing the command line, we may want to perform dds stuff. Do that here.
 		if (TheGlobalData->m_shouldUpdateTGAToDDS) {
 			// update any out of date targas here.
@@ -477,7 +477,7 @@ void GameEngine::init()
 		TheAudio->setOn(TheGlobalData->m_audioOn && TheGlobalData->m_soundsOn, AudioAffect_Sound);
 		TheAudio->setOn(TheGlobalData->m_audioOn && TheGlobalData->m_sounds3DOn, AudioAffect_Sound3D);
 		TheAudio->setOn(TheGlobalData->m_audioOn && TheGlobalData->m_speechOn, AudioAffect_Speech);
-			
+
 		// We're not in a network game yet, so set the network singleton to NULL.
 		TheNetwork = NULL;
 
@@ -486,7 +486,7 @@ void GameEngine::init()
 
 		// If we turn m_quitting to FALSE here, then we throw away any requests to quit that
 		// took place during loading. :-\ - jkmcd
-		// If this really needs to take place, please make sure that pressing cancel on the audio 
+		// If this really needs to take place, please make sure that pressing cancel on the audio
 		// load music dialog will still cause the game to quit.
 		// m_quitting = FALSE;
 
@@ -500,10 +500,10 @@ void GameEngine::init()
 			//populateMapListbox(NULL, true, true);
 			m_quitting = TRUE;
 		}
-		
+
 		// load the initial shell screen
 		//TheShell->push( AsciiString("Menus/MainMenu.wnd") );
-		
+
 		// This allows us to run a map from the command line
 		if (TheGlobalData->m_initialFile.isEmpty() == FALSE)
 		{
@@ -528,7 +528,7 @@ void GameEngine::init()
 			}
 		}
 
-		// 
+		//
 		if (TheMapCache && TheGlobalData->m_shellMapOn)
 		{
 			AsciiString lowerName = TheGlobalData->m_shellMapName;
@@ -578,7 +578,7 @@ void GameEngine::init()
 }  // end init
 
 /** -----------------------------------------------------------------------------------------------
-	* Reset all necessary parts of the game engine to be ready to accept new game data 
+	* Reset all necessary parts of the game engine to be ready to accept new game data
 	*/
 void GameEngine::reset( void )
 {
@@ -628,19 +628,19 @@ DECLARE_PERF_TIMER(GameEngine_update)
  * of TheNetwork and TheGameLogic to a fixed framerate.
  */
 void GameEngine::update( void )
-{ 
+{
 	USE_PERF_TIMER(GameEngine_update)
 	{
 
 		{
-			
+
 			// VERIFY CRC needs to be in this code block.  Please to not pull TheGameLogic->update() inside this block.
 			VERIFY_CRC
 
 			TheRadar->UPDATE();
 
 			/// @todo Move audio init, update, etc, into GameClient update
-			
+
 			TheAudio->UPDATE();
 			TheGameClient->UPDATE();
 			TheMessageStream->propagateMessages();
@@ -649,7 +649,7 @@ void GameEngine::update( void )
 			{
 				TheNetwork->UPDATE();
 			}
-			 
+
 			TheCDManager->UPDATE();
 		}
 
@@ -669,11 +669,11 @@ extern bool DX8Wrapper_IsWindowed;
 extern HWND ApplicationHWnd;
 
 /** -----------------------------------------------------------------------------------------------
- * The "main loop" of the game engine. It will not return until the game exits. 
+ * The "main loop" of the game engine. It will not return until the game exits.
  */
 void GameEngine::execute( void )
 {
-	
+
 	DWORD prevTime = timeGetTime();
 #if defined(RTS_DEBUG)
 	DWORD startTime = timeGetTime() / 1000;
@@ -713,9 +713,9 @@ void GameEngine::execute( void )
 				}
 			}
 #endif
-			
+
 			{
-				try 
+				try
 				{
 					// compute a frame
 					update();
@@ -731,7 +731,7 @@ void GameEngine::execute( void )
 				catch (...)
 				{
 					// try to save info off
-					try 
+					try
 					{
 						if (TheRecorder && TheRecorder->getMode() == RECORDERMODETYPE_RECORD && TheRecorder->isMultiplayer())
 							TheRecorder->cleanUpReplayFile();
@@ -745,7 +745,7 @@ void GameEngine::execute( void )
 
 			{
 
-				if (TheTacticalView->getTimeMultiplier()<=1 && !TheScriptEngine->isTimeFast()) 
+				if (TheTacticalView->getTimeMultiplier()<=1 && !TheScriptEngine->isTimeFast())
 				{
 
 		// I'm disabling this in internal because many people need alt-tab capability.  If you happen to be
@@ -764,7 +764,7 @@ void GameEngine::execute( void )
             // limit the framerate
 					  DWORD now = timeGetTime();
 					  DWORD limit = (1000.0f/m_maxFPS)-1;
-					  while (TheGlobalData->m_useFpsLimit && (now - prevTime) < limit) 
+					  while (TheGlobalData->m_useFpsLimit && (now - prevTime) < limit)
 					  {
 						  ::Sleep(0);
 						  now = timeGetTime();
@@ -774,8 +774,8 @@ void GameEngine::execute( void )
 
 					  prevTime = now;
 
-          }        
-        
+          }
+
         }
 			}
 
@@ -832,7 +832,7 @@ void GameEngine::checkAbnormalQuitting(void)
 
 		Int localID = TheGameSpyInfo->getLocalProfileID();
 		PSPlayerStats stats = TheGameSpyPSMessageQueue->findPlayerStatsByID(localID);
-		
+
 		Player *player=ThePlayerList->getLocalPlayer();
 
 		Int ptIdx;
@@ -937,9 +937,9 @@ void GameEngine::checkAbnormalQuitting(void)
 void updateTGAtoDDS()
 {
 	// Here's the scoop. We're going to traverse through all of the files in the Art\Textures folder
-	// and determine if there are any .tga files that are newer than associated .dds files. If there 
+	// and determine if there are any .tga files that are newer than associated .dds files. If there
 	// are, then we will re-run the compression tool on them.
-	
+
 	File *fp = TheLocalFileSystem->openFile("buildDDS.txt", File::WRITE | File::CREATE | File::TRUNCATE | File::TEXT);
 	if (!fp) {
 		return;
@@ -974,8 +974,8 @@ void updateTGAtoDDS()
 		FileInfo infoDDS;
 		if (TheFileSystem->doesFileExist(filenameDDS.str())) {
 			TheFileSystem->getFileInfo(filenameDDS, &infoDDS);
-			if (infoTGA.timestampHigh > infoDDS.timestampHigh || 
-					(infoTGA.timestampHigh == infoDDS.timestampHigh && 
+			if (infoTGA.timestampHigh > infoDDS.timestampHigh ||
+					(infoTGA.timestampHigh == infoDDS.timestampHigh &&
 					 infoTGA.timestampLow > infoDDS.timestampLow)) {
 				needsToBeUpdated = TRUE;
 			}

@@ -118,7 +118,7 @@ static const char *qmperPlayerGadgetsToHide[] =
 static void showGameSpyGameOptionsUnderlyingGUIElements( Bool show )
 {
 	ShowUnderlyingGUIElements( show, layoutFilename, parentName, gadgetsToHide, perPlayerGadgetsToHide );
-	
+
 }
 static void showGameSpyQMUnderlyingGUIElements( Bool show )
 {

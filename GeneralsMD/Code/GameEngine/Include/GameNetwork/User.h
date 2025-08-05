@@ -36,7 +36,7 @@
 
 class User : public MemoryPoolObject
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(User, "User")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(User, "User")
 public:
 	User() {}
 	User(UnicodeString name, UnsignedInt addr, UnsignedInt port);

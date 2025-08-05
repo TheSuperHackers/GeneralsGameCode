@@ -64,7 +64,7 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // CExportDlg message handlers
 
-void CExportDlg::OnOK() 
+void CExportDlg::OnOK()
 {
 	char buffer[100];
 	char *ptr;
@@ -79,7 +79,7 @@ void CExportDlg::OnOK()
 	CButton *missing = (CButton *) GetDlgItem ( IDC_RADIOMISSING );
 	CButton *unsent = (CButton *) GetDlgItem ( IDC_RADIOUNSENT );
 
-	edit->GetWindowText ( buffer, sizeof ( filename) -1 );	
+	edit->GetWindowText ( buffer, sizeof ( filename) -1 );
 	_getcwd ( filename, sizeof (filename ) -1 );
 	strcat ( filename, "\\" );
 	if ( ( ptr = strchr ( buffer, '.' )))
@@ -123,18 +123,18 @@ void CExportDlg::OnOK()
 	options.include_comments = FALSE;
 	button = (CButton *) GetDlgItem ( IDC_CHECKTRANS );
 	options.include_translations = button->GetCheck ();
-	
+
 	CDialog::OnOK();
 }
 
-void CExportDlg::OnCancel() 
+void CExportDlg::OnCancel()
 {
 	// TODO: Add extra cleanup here
 	langid = LANGID_UNKNOWN;
 	CDialog::OnCancel();
 }
 
-BOOL CExportDlg::OnInitDialog() 
+BOOL CExportDlg::OnInitDialog()
 {
 	int index;
 	int lang_index;
@@ -145,7 +145,7 @@ BOOL CExportDlg::OnInitDialog()
 
 
 	CDialog::OnInitDialog();
-	
+
 	// TODO: Add extra initialization here
 	combo = (CComboBox *) GetDlgItem ( IDC_COMBOLANG );
 
@@ -177,7 +177,7 @@ BOOL CExportDlg::OnInitDialog()
 			index++;
 		}
 
-		lang_index++; 
+		lang_index++;
 	}
 	max_index = index;
 
@@ -190,12 +190,12 @@ BOOL CExportDlg::OnInitDialog()
 
 	edit->SetLimitText ( 8 );
 	OnSelchangeCombolang ();
-	
+
 	return TRUE;  // return TRUE unless you set the focus to a control
 	              // EXCEPTION: OCX Property Pages should return FALSE
 }
 
-void CExportDlg::OnSelchangeCombolang() 
+void CExportDlg::OnSelchangeCombolang()
 {
 	// TODO: Add your control notification handler code here
 	LANGINFO *info = NULL;
@@ -210,7 +210,7 @@ void CExportDlg::OnSelchangeCombolang()
 	{
 		info = (LANGINFO *) combo->GetItemDataPtr ( index );
 	}
-	
+
 	if ( info )
 	{
 		char buffer[10];
@@ -236,7 +236,7 @@ void CExportDlg::OnSelchangeCombolang()
 
 }
 
-void CExportDlg::OnSelendokCombolang() 
+void CExportDlg::OnSelendokCombolang()
 {
 	// TODO: Add your control notification handler code here
 	int i = 0;

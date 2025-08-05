@@ -34,7 +34,7 @@
 
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
 
-#include "GameLogic/Module/DamageModule.h" 
+#include "GameLogic/Module/DamageModule.h"
 
 //#include "GameLogic/Module/BodyModule.h" -- Yikes... not necessary to include this! (KM)
 enum BodyDamageType CPP_11(: Int); //Ahhhh much better!
@@ -57,8 +57,8 @@ public:
 	// damage module methods
 	virtual void onDamage( DamageInfo *damageInfo ) { }
 	virtual void onHealing( DamageInfo *damageInfo ) { }
-	virtual void onBodyDamageStateChange( const DamageInfo* damageInfo, 
-																				BodyDamageType oldState, 
+	virtual void onBodyDamageStateChange( const DamageInfo* damageInfo,
+																				BodyDamageType oldState,
 																				BodyDamageType newState );
 
 protected:

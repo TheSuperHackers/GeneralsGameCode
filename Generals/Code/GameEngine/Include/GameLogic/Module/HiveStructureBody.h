@@ -49,10 +49,10 @@ public:
 
 	HiveStructureBodyModuleData();
 
-	static void buildFieldParse(MultiIniFieldParse& p) 
+	static void buildFieldParse(MultiIniFieldParse& p)
 	{
     StructureBodyModuleData::buildFieldParse(p);
-		static const FieldParse dataFieldParse[] = 
+		static const FieldParse dataFieldParse[] =
 		{
 			{ "PropagateDamageTypesToSlavesWhenExisting",   INI::parseDamageTypeFlags, NULL, offsetof( HiveStructureBodyModuleData, m_damageTypesToPropagateToSlaves ) },
 			{ "SwallowDamageTypesIfSlavesNotExisting",			INI::parseDamageTypeFlags, NULL, offsetof( HiveStructureBodyModuleData, m_damageTypesToSwallow ) },

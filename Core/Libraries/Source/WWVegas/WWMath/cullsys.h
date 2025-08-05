@@ -63,8 +63,8 @@ class CullLinkClass
 public:
 	WWINLINE CullLinkClass(CullSystemClass * system)								{ System = system; WWASSERT(System); }
 	virtual ~CullLinkClass(void)												{ WWASSERT(System == NULL); }
-	
-	WWINLINE void					Set_Culling_System(CullSystemClass * sys)		{ System = sys; }	
+
+	WWINLINE void					Set_Culling_System(CullSystemClass * sys)		{ System = sys; }
 	WWINLINE CullSystemClass * Get_Culling_System(void)							{ return System; }
 
 protected:
@@ -81,10 +81,10 @@ protected:
 class CullableClass : public RefCountClass
 {
 public:
-	
+
 	CullableClass(void);
 	virtual ~CullableClass(void);
-	
+
 	/*
 	** Access to the culling box for this object.  When you set the cull box, you are
 	** basically guaranteeing that the object is contained within the given box.  The
@@ -95,7 +95,7 @@ public:
 	void								Set_Cull_Box(const AABoxClass & box,bool just_loaded = false);
 
 	/*
-	** These functions are used by various culling systems to manage the linkage 
+	** These functions are used by various culling systems to manage the linkage
 	** pointers.  *The average user should NEVER call these*
 	*/
 	void								Set_Culling_System(CullSystemClass * sys);
@@ -112,7 +112,7 @@ private:
 	** Culling Data
 	** Each object can be linked into various types of culling systems.
 	** Each culling system can use its own linkage data structure (derived
-	** from CullLinkClass) to keep track of the object.  The CullData pointer 
+	** from CullLinkClass) to keep track of the object.  The CullData pointer
 	** will point to one of the culling link objects and NULL
 	** if its not in any system.
 	*/
@@ -128,8 +128,8 @@ private:
 
 	/*
 	** NextCollected
-	** This pointer is used by the culling system to keep a singly linked 
-	** list of cullable object that have been "collected". 
+	** This pointer is used by the culling system to keep a singly linked
+	** list of cullable object that have been "collected".
 	*/
 	CullableClass *				NextCollected;
 
@@ -157,10 +157,10 @@ public:
 
 	/*
 	** Collect_Objects.  Updates the internal collection list with the
-	** objects that overlap the given primitive. 
+	** objects that overlap the given primitive.
 	** WARNING: This builds an internal list that is only valid until
 	** another list is built, only one list can be valid at any time.
-	** WARNING: Always call Reset_Collection if you want to start a 
+	** WARNING: Always call Reset_Collection if you want to start a
 	** fresh collection!
 	*/
 	void					Reset_Collection(void);

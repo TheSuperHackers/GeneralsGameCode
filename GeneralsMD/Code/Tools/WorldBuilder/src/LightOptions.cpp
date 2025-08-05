@@ -35,7 +35,7 @@ LightOptions *LightOptions::m_staticThis = NULL;
 
 LightOptions::LightOptions(CWnd* pParent /*=NULL*/)
 {
-	//{{AFX_DATA_INIT(LightOptions) 
+	//{{AFX_DATA_INIT(LightOptions)
 		// NOTE: the ClassWizard will add member initialization here
 	//}}AFX_DATA_INIT
 }
@@ -51,8 +51,8 @@ void LightOptions::DoDataExchange(CDataExchange* pDX)
 
 MapObject *LightOptions::getSingleSelectedLight(void)
 {
-	MapObject *pMapObj; 
-	MapObject *theMapObj = NULL; 
+	MapObject *pMapObj;
+	MapObject *theMapObj = NULL;
 //	Bool found = false;
 	Int selCount=0;
 	for (pMapObj = MapObject::getFirstMapObject(); pMapObj; pMapObj = pMapObj->getNext()) {
@@ -70,9 +70,9 @@ MapObject *LightOptions::getSingleSelectedLight(void)
 }
 
 
-void LightOptions::updateTheUI(void) 
+void LightOptions::updateTheUI(void)
 {
-	MapObject *theMapObj = getSingleSelectedLight(); 
+	MapObject *theMapObj = getSingleSelectedLight();
 	if (!theMapObj) return;
 	Dict *props = theMapObj->getProperties();
 
@@ -114,7 +114,7 @@ void LightOptions::updateTheUI(void)
 	}
 }
 
-void LightOptions::update(void) 
+void LightOptions::update(void)
 {
 	if (m_staticThis) {
 		m_staticThis->updateTheUI();
@@ -125,12 +125,12 @@ void LightOptions::update(void)
 // LightOptions message handlers
 
 /// Dialog UI initialization.
-/** Creates the slider controls, and sets the initial values for 
+/** Creates the slider controls, and sets the initial values for
 width and feather in the ui controls. */
-BOOL LightOptions::OnInitDialog() 
+BOOL LightOptions::OnInitDialog()
 {
 	CDialog::OnInitDialog();
-	
+
 	m_updating = true;
 
 	m_staticThis = this;
@@ -151,9 +151,9 @@ BEGIN_MESSAGE_MAP(LightOptions, COptionsPanel)
 END_MESSAGE_MAP()
 
 
-void LightOptions::OnChangeLightEdit() 
+void LightOptions::OnChangeLightEdit()
 {
-	MapObject *theMapObj = getSingleSelectedLight(); 
+	MapObject *theMapObj = getSingleSelectedLight();
 	if (!theMapObj) return;
 	if (!theMapObj->isLight()) return;
 
@@ -207,7 +207,7 @@ void LightOptions::OnChangeLightEdit()
 	props->setInt(TheKey_lightAmbientColor, lightAmbientColor.getAsInt());
 	props->setInt(TheKey_lightDiffuseColor, lightDiffuseColor.getAsInt());
 
-	WbView3d * pView = CWorldBuilderDoc::GetActive3DView();	
+	WbView3d * pView = CWorldBuilderDoc::GetActive3DView();
 	if (pView) {
 		pView->invalObjectInView(theMapObj);
 	}

@@ -86,10 +86,10 @@ protected:
 	void buildTerrainTexture( TerrainLogic *terrain );	 ///< create the terrain texture of the radar
 	void drawIcons( Int pixelX, Int pixelY, Int width, Int height );	///< draw all of the radar icons
 	void renderObjectList( const RadarObject *listHead, TextureClass *texture, Bool calcHero = FALSE );			 ///< render an object list to the texture
-	void interpolateColorForHeight( RGBColor *color, 
-																	Real height, 
-																	Real hiZ, 
-																	Real midZ, 
+	void interpolateColorForHeight( RGBColor *color,
+																	Real height,
+																	Real hiZ,
+																	Real midZ,
 																	Real loZ );		///< "shade" color according to height value
 	void reconstructViewBox( void );							///< remake the view box
 	void radarToPixel( const ICoord2D *radar, ICoord2D *pixel,
@@ -98,7 +98,7 @@ protected:
 
 	WW3DFormat m_terrainTextureFormat;						///< format to use for terrain texture
 	Image *m_terrainImage;												///< terrain image abstraction for drawing
-	TextureClass *m_terrainTexture;								///< terrain background texture	
+	TextureClass *m_terrainTexture;								///< terrain background texture
 
 	WW3DFormat m_overlayTextureFormat;						///< format to use for overlay texture
 	Image *m_overlayImage;												///< overlay image abstraction for drawing
@@ -114,13 +114,13 @@ protected:
 	//
 	// we want to keep a flag that tells us when to reconstruct the view box, we want
 	// to reconstruct the box on map change, and when the camera changes height
-	// or orientation.  We want to avoid making the view box every frame because 
+	// or orientation.  We want to avoid making the view box every frame because
 	// the 4 points visible on the edge of the screen will "jitter" unevenly as we
 	// translate real world coords to integer radar spots
 	//
 	Bool m_reconstructViewBox;										///< true when we need to reconstruct the box
 	Real m_viewAngle;															///< camera angle used for the view box we have
-	Real m_viewZoom;															///< camera zoom used for the view box we have	
+	Real m_viewZoom;															///< camera zoom used for the view box we have
 	ICoord2D m_viewBox[ 4 ];											///< radar cell points for the 4 corners of view box
 
 	std::vector<const Object *> m_cachedHeroObjectList; //< cache of hero objects for drawing icons in radar overlay

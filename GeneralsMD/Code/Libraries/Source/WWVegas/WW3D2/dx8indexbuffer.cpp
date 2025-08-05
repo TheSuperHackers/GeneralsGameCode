@@ -50,12 +50,12 @@
 static bool _DynamicSortingIndexArrayInUse=false;
 static SortingIndexBufferClass* _DynamicSortingIndexArray;
 static unsigned short _DynamicSortingIndexArraySize=0;
-static unsigned short _DynamicSortingIndexArrayOffset=0;	
+static unsigned short _DynamicSortingIndexArrayOffset=0;
 
 static bool _DynamicDX8IndexBufferInUse=false;
 static DX8IndexBufferClass* _DynamicDX8IndexBuffer=NULL;
 static unsigned short _DynamicDX8IndexBufferSize=DEFAULT_IB_SIZE;
-static unsigned short _DynamicDX8IndexBufferOffset=0;	
+static unsigned short _DynamicDX8IndexBufferOffset=0;
 
 static int _IndexBufferCount;
 static int _IndexBufferTotalIndices;
@@ -119,7 +119,7 @@ unsigned IndexBufferClass::Get_Total_Allocated_Memory()
 
 void IndexBufferClass::Add_Engine_Ref() const
 {
-	engine_refs++; 
+	engine_refs++;
 }
 
 void IndexBufferClass::Release_Engine_Ref() const
@@ -410,7 +410,7 @@ void DynamicIBAccessClass::_Deinit()
 	REF_PTR_RELEASE(_DynamicSortingIndexArray);
 	_DynamicSortingIndexArrayInUse=false;
 	_DynamicSortingIndexArraySize=0;
-	_DynamicSortingIndexArrayOffset=0;	
+	_DynamicSortingIndexArrayOffset=0;
 }
 
 // ----------------------------------------------------------------------------

@@ -61,7 +61,7 @@ private:
 	Bool selectFriends( Drawable *draw, GameMessage *createTeamMsg, Bool dragSelecting );
 	Bool killThemKillThemAll( Drawable *draw, GameMessage *killThemAllMsg );
 
-  
+
 
 public:
 	SelectionTranslator();
@@ -73,13 +73,13 @@ public:
 	//changes the mode of drag selecting to it's opposite
 	void setDragSelecting(Bool dragSelect);
 	void setLeftMouseButton(Bool state);
-  
+
 #if defined(RTS_DEBUG) || defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
   Bool m_HandOfGodSelectionMode;
   Bool isHandOfGodSelectionMode( void) { return m_HandOfGodSelectionMode; };
 #endif
 
-};	
+};
 
 Bool CanSelectDrawable( const Drawable *draw, Bool dragSelecting );
 extern SelectionTranslator *TheSelectionTranslator;

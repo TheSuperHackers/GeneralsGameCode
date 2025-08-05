@@ -32,15 +32,15 @@
 
 #include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
-#include "Common/BitFlags.h" 
+#include "Common/BitFlags.h"
 #include "Common/BitFlagsIO.h"
 #include "Common/ModelState.h"
 #include "GameLogic/ArmorSet.h"
 
 template<>
-const char* ModelConditionFlags::s_bitNameList[] = 
-{	
-	"TOPPLED", 
+const char* ModelConditionFlags::s_bitNameList[] =
+{
+	"TOPPLED",
 	"FRONTCRUSHED",
 	"BACKCRUSHED",
 	"DAMAGED",
@@ -126,7 +126,7 @@ const char* ModelConditionFlags::s_bitNameList[] =
 	"RAPPELLING",
 	"ARMED",
 	"POWER_PLANT_UPGRADING",
-	
+
 	"SPECIAL_CHEERING",
 
 	"CONTINUOUS_FIRE_SLOW",
@@ -145,7 +145,7 @@ const char* ModelConditionFlags::s_bitNameList[] =
 	"USING_WEAPON_C",
 
 	"PREORDER",
-	
+
 	"CENTER_TO_LEFT",
 	"LEFT_TO_CENTER",
 	"CENTER_TO_RIGHT",
@@ -167,16 +167,16 @@ const char* ModelConditionFlags::s_bitNameList[] =
 	"ARMORSET_CRATEUPGRADE_ONE",
 	"ARMORSET_CRATEUPGRADE_TWO",
 
-	"USER_1",	
+	"USER_1",
 	"USER_2",
-	
+
 	"DISGUISED",
-	
+
 	NULL
 };
 
 template<>
-const char* ArmorSetFlags::s_bitNameList[] = 
+const char* ArmorSetFlags::s_bitNameList[] =
 {
 	"VETERAN",
 	"ELITE",

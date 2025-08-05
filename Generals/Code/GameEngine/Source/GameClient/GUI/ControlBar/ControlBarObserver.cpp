@@ -24,12 +24,12 @@
 
 // FILE: ControlBarObserver.cpp /////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Electronic Arts Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2002 - All Rights Reserved                  
-//                                                                          
+//
+//                       Electronic Arts Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2002 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 //	created:	Aug 2002
@@ -37,7 +37,7 @@
 //	Filename: 	ControlBarObserver.cpp
 //
 //	author:		Chris Huybregts
-//	
+//
 //	purpose:	All things related to the Observer Control bar, are in here.
 //
 //-----------------------------------------------------------------------------
@@ -115,7 +115,7 @@ void ControlBar::initObserverControls( void )
 		staticTextPlayerID[i] = TheNameKeyGenerator->nameToKey( tmpString );
 		staticTextPlayer[i] = TheWindowManager->winGetWindowFromId( ObserverPlayerListWindow, staticTextPlayerID[i] );
 	}
-	
+
 	staticTextNumberOfUnits = TheWindowManager->winGetWindowFromId(NULL, TheNameKeyGenerator->nameToKey("ControlBar.wnd:StaticTextNumberOfUnits"));
 	staticTextNumberOfBuildings = TheWindowManager->winGetWindowFromId(NULL, TheNameKeyGenerator->nameToKey("ControlBar.wnd:StaticTextNumberOfBuildings"));
 	staticTextNumberOfUnitsKilled = TheWindowManager->winGetWindowFromId(NULL, TheNameKeyGenerator->nameToKey("ControlBar.wnd:StaticTextNumberOfUnitsKilled"));
@@ -123,19 +123,19 @@ void ControlBar::initObserverControls( void )
 	staticTextPlayerName = TheWindowManager->winGetWindowFromId(NULL, TheNameKeyGenerator->nameToKey("ControlBar.wnd:StaticTextPlayerName"));
 	winFlag = TheWindowManager->winGetWindowFromId(NULL, TheNameKeyGenerator->nameToKey("ControlBar.wnd:WinFlag"));
 	winGeneralPortrait = TheWindowManager->winGetWindowFromId(NULL, TheNameKeyGenerator->nameToKey("ControlBar.wnd:WinGeneralPortrait"));
-	
+
 	buttonCancelID = TheNameKeyGenerator->nameToKey("ControlBar.wnd:ButtonCancel");
 }
 
 //-------------------------------------------------------------------------------------------------
 /** System callback for the ControlBarObserverSystem */
 //-------------------------------------------------------------------------------------------------
-WindowMsgHandledType ControlBarObserverSystem( GameWindow *window, UnsignedInt msg, 
+WindowMsgHandledType ControlBarObserverSystem( GameWindow *window, UnsignedInt msg,
 																			 WindowMsgData mData1, WindowMsgData mData2 )
 {
 	static NameKeyType buttonCommunicator = NAMEKEY_INVALID;
-	
-	switch( msg ) 
+
+	switch( msg )
 	{
 		// --------------------------------------------------------------------------------------------
 		case GWM_CREATE:
@@ -178,7 +178,7 @@ WindowMsgHandledType ControlBarObserverSystem( GameWindow *window, UnsignedInt m
 					return MSG_HANDLED;
 				}
 			}
-			
+
 		//	if( controlID == buttonCommunicator && TheGameLogic->getGameMode() == GAME_INTERNET )
 	/*
 		{
@@ -212,7 +212,7 @@ void ControlBar::populateObserverList( void )
 	Int currentButton = 0, i;
 	if(TheRecorder->isMultiplayer())
 	{
-	
+
 		for (i = 0; i < MAX_SLOTS; ++i)
 		{
 			AsciiString name;
@@ -304,12 +304,12 @@ void ControlBar::populateObserverInfoWindow ( void )
 		populateObserverList();
 		return;
 	}
-							
+
 	UnicodeString uString;
 	KindOfMaskType mask,clearmask;
 	mask.set(KINDOF_SCORE);
 	clearmask.set(KINDOF_STRUCTURE);
-	
+
 	uString.format(L"%d",m_observerLookAtPlayer->countObjects(mask,clearmask));
 	GadgetStaticTextSetText(staticTextNumberOfUnits, uString);
 

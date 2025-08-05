@@ -26,8 +26,8 @@
  *                                                                                             *
  *              Original Author:: Greg Hjelstrom                                               *
  *                                                                                             *
- *                      $Author:: Kenny Mitchell                                               * 
- *                                                                                             * 
+ *                      $Author:: Kenny Mitchell                                               *
+ *                                                                                             *
  *                     $Modtime:: 06/26/02 4:04p                                             $*
  *                                                                                             *
  *                    $Revision:: 24                                                          $*
@@ -69,13 +69,13 @@
 
 /**
 ** DecalPolyClass - This class is used to clip polygons as they are
-** added to a RigidDecalMesh. 
+** added to a RigidDecalMesh.
 **
 ** Data needed to add a poly to the decal mesh:
 ** connectivity - generated on the fly after the poly is clipped
 ** planeeq - constant for entire poly, copy from source after done
 ** verts - plug into DecalPolyClass, clip, pull back out
-** vnorms - plug into DecalPolyClass, clip, copy back out 
+** vnorms - plug into DecalPolyClass, clip, copy back out
 ** texcoords - compute after poly is clipped
 ** material - contstant for entire poly, get from generator
 ** shader - constant for entire poly, get from generator
@@ -116,7 +116,7 @@ void DecalPolyClass::Clip(const PlaneClass & plane,DecalPolyClass & dest) const
 	int iprev = Verts.Count() - 1;
 	bool cur_point_in_front;
 	bool prev_point_in_front;
-	
+
 	float alpha;
 	Vector3 int_point;
 	Vector3 int_normal;
@@ -127,22 +127,22 @@ void DecalPolyClass::Clip(const PlaneClass & plane,DecalPolyClass & dest) const
 	prev_point_in_front = true;
 #endif
 
-	for (int j=0; j<Verts.Count(); j++) { 
-		
+	for (int j=0; j<Verts.Count(); j++) {
+
 		cur_point_in_front = plane.In_Front(Verts[i]);
 #if DISABLE_CLIPPING
-		cur_point_in_front = true;		
+		cur_point_in_front = true;
 #endif
 
 		if (prev_point_in_front) {
 
 			if (cur_point_in_front) {
-			
+
 				// Previous vertex was in front of plane and this vertex is in
 				// front of the plane so we emit this vertex.
 				dest.Add_Vertex(Verts[i],VertNorms[i]);
 
-			} else { 
+			} else {
 
 				// Previous vert was in front, this vert is behind, compute
 				// the intersection and emit the point.
@@ -165,9 +165,9 @@ void DecalPolyClass::Clip(const PlaneClass & plane,DecalPolyClass & dest) const
 				Vector3::Lerp(VertNorms[iprev],VertNorms[i],alpha,&int_normal);
 				dest.Add_Vertex(int_point,int_normal);
 				dest.Add_Vertex(Verts[i],VertNorms[i]);
-			
-			} 
-		} 
+
+			}
+		}
 
 		prev_point_in_front = cur_point_in_front;
 		iprev = i;
@@ -265,7 +265,7 @@ RigidDecalMeshClass::~RigidDecalMeshClass(void)
 		DecalSystem->Decal_Mesh_Destroyed(Decals[i].DecalID,this);
 	}
 
-	// Release all of our references.  The memory in the arrays will automatically be 
+	// Release all of our references.  The memory in the arrays will automatically be
 	// released by the SimpleDynVecClass...
 	for (i=0; i<Polys.Count(); i++) {
 		REF_PTR_RELEASE(Textures[i]);
@@ -292,7 +292,7 @@ RigidDecalMeshClass::~RigidDecalMeshClass(void)
 void RigidDecalMeshClass::Render(void)
 {
 	if ((Decals.Count() == 0) || (WW3D::Are_Decals_Enabled() == false)) return;
-	
+
 	/*
 	** Install the mesh'es transform.  NOTE, this could go wrong if someone changes the
 	** transform between the time that the mesh is rendered and the time that the decal
@@ -304,12 +304,12 @@ void RigidDecalMeshClass::Render(void)
 	** Copy the vertices into the dynamic vb
 	*/
 	DynamicVBAccessClass dynamic_vb(BUFFER_TYPE_DYNAMIC_DX8,dynamic_fvf_type,Verts.Count());
-	{	
+	{
 		DynamicVBAccessClass::WriteLockClass lock(&dynamic_vb);
 		VertexFormatXYZNDUV2 * vertex = lock.Get_Formatted_Vertex_Array();
 
 		for (int i=0; i<Verts.Count(); i++) {
-			
+
 			vertex->x = Verts[i].X;
 			vertex->y = Verts[i].Y;
 			vertex->z = Verts[i].Z;
@@ -329,7 +329,7 @@ void RigidDecalMeshClass::Render(void)
 			vertex++;
 		}
 	}
-	
+
 	/*
 	** Copy the indices into the dynamic ib
 	*/
@@ -358,11 +358,11 @@ void RigidDecalMeshClass::Render(void)
 		DX8Wrapper::Set_Vertex_Buffer(dynamic_vb);
 		DX8Wrapper::Draw_Triangles(	3*cur_poly_index,
 												(next_poly_index - cur_poly_index), // poly count
-												Polys[cur_poly_index].I, 
+												Polys[cur_poly_index].I,
 												1 + Polys[next_poly_index-1].K - Polys[cur_poly_index].I);
 		cur_poly_index = next_poly_index;
 	}
-		
+
 }
 
 
@@ -388,10 +388,10 @@ int RigidDecalMeshClass::Process_Material_Run(int start_index)
 	DX8Wrapper::Set_Shader(Shaders[start_index]);
 
 	int next_index = start_index;
-	while (	(next_index < Polys.Count()) && 
+	while (	(next_index < Polys.Count()) &&
 				(Textures[next_index] == Textures[start_index]) &&
 				(Shaders[next_index] == Shaders[start_index]) &&
-				(VertexMaterials[next_index] == VertexMaterials[start_index])) 
+				(VertexMaterials[next_index] == VertexMaterials[start_index]))
 	{
 		next_index++;
 	}
@@ -423,7 +423,7 @@ bool RigidDecalMeshClass::Create_Decal
 	// the decal polygons along the normal of the decal generator.  If we could instead rely
 	// on hardware "polygon offset" we could remove this code and we could make decals non-sorting
 	Vector3 zbias_offset(0.0f,0.0f,0.0f);
-	
+
 	if (!DX8Wrapper::Get_Current_Caps()->Support_ZBias()) {
 		const float ZBIAS_DISTANCE = 0.01f;
 		generator->Get_Transform().Get_Z_Vector(&zbias_offset);
@@ -438,7 +438,7 @@ bool RigidDecalMeshClass::Create_Decal
 
 	int i,j;
 	WWASSERT(generator->Peek_Decal_System() == DecalSystem);
-	
+
 	/*
 	** If any polys were collected, add a new MeshDecalStruct
 	*/
@@ -452,7 +452,7 @@ bool RigidDecalMeshClass::Create_Decal
 	newdecal.FaceCount = 0;								// init facecount to zero
 	newdecal.VertexStartIndex = Verts.Count();	// start vertices at the end of the current array
 	newdecal.VertexCount = 0;							// init vertcount to zero
-	
+
 	/*
 	** Grab pointers to the parent mesh's components
 	*/
@@ -465,12 +465,12 @@ bool RigidDecalMeshClass::Create_Decal
 	** Grab a pointer to the material settings
 	*/
 	MaterialPassClass * material = generator->Get_Material();
-	
+
 	/*
 	** Set up the generator for our coordinate system
 	*/
 	generator->Set_Mesh_Transform(Parent->Get_Transform());
-	
+
 	/*
 	** Compute the clipping planes
 	*/
@@ -479,13 +479,13 @@ bool RigidDecalMeshClass::Create_Decal
 
 	Matrix3x3::Rotate_Vector(localbox.Basis,Vector3(localbox.Extent.X,0,0),&extent);
 	Vector3 direction(localbox.Basis.Get_X_Vector());
-	
+
 	planes[0].Set(-direction,localbox.Center + extent);
 	planes[1].Set(direction,localbox.Center - extent);
-	
+
 	Matrix3x3::Rotate_Vector(localbox.Basis,Vector3(0,localbox.Extent.Y,0),&extent);
 	direction.Set(localbox.Basis.Get_Y_Vector());
-	
+
 	planes[2].Set(-direction,localbox.Center + extent);
 	planes[3].Set(direction,localbox.Center - extent);
 
@@ -578,11 +578,11 @@ bool RigidDecalMeshClass::Create_Decal
 		** tell the generator that we added a decal
 		*/
 		generator->Add_Mesh(Parent);
-	} 
+	}
 
 	material->Release_Ref();
-	
-#ifdef WWDEBUG	
+
+#ifdef WWDEBUG
 	/*
 	** Some paranoid debug code: ensure all tris have valid vertex indices
 	*/
@@ -637,7 +637,7 @@ bool RigidDecalMeshClass::Delete_Decal(uint32 id)
 	DecalStruct * decal = &Decals[decal_index];
 
 	/*
-	** Remove all geometry used by this decal 
+	** Remove all geometry used by this decal
 	*/
 	Polys.Delete_Range(decal->FaceStartIndex,decal->FaceCount);
 	Verts.Delete_Range(decal->VertexStartIndex,decal->VertexCount);
@@ -675,7 +675,7 @@ bool RigidDecalMeshClass::Delete_Decal(uint32 id)
 	}
 	Decals.Delete(decal_index);
 
-#ifdef WWDEBUG	
+#ifdef WWDEBUG
 	/*
 	** Some paranoid debug code: ensure all tris have valid vertex indices
 	*/
@@ -697,8 +697,8 @@ bool RigidDecalMeshClass::Delete_Decal(uint32 id)
 
 /*
 ** Temporary Buffers
-** These buffers are used by the skin code for temporary storage of the deformed vertices and 
-** vertex normals.  
+** These buffers are used by the skin code for temporary storage of the deformed vertices and
+** vertex normals.
 */
 static SimpleVecClass<Vector3>	_TempVertexBuffer;
 static SimpleVecClass<Vector3>	_TempNormalBuffer;
@@ -748,7 +748,7 @@ SkinDecalMeshClass::~SkinDecalMeshClass(void)
 		DecalSystem->Decal_Mesh_Destroyed(Decals[i].DecalID,this);
 	}
 
-	// Release all of our references.  The memory in the arrays will automatically be 
+	// Release all of our references.  The memory in the arrays will automatically be
 	// released by the SimpleDynVecClass...
 	for (i=0; i<Polys.Count(); i++) {
 		REF_PTR_RELEASE(Textures[i]);
@@ -792,7 +792,7 @@ void SkinDecalMeshClass::Render(void)
 
 	/*
 	** Skin decals have to get the deformed vertices of their parent meshes.  For this
-	** reason, decals on skins is not a very good idea...  
+	** reason, decals on skins is not a very good idea...
 	*/
 	_TempVertexBuffer.Uninitialised_Grow(model->Get_Vertex_Count());
 	_TempNormalBuffer.Uninitialised_Grow(model->Get_Vertex_Count());
@@ -802,7 +802,7 @@ void SkinDecalMeshClass::Render(void)
 	** Copy the vertices into the dynamic vb
 	*/
 	DynamicVBAccessClass dynamic_vb(BUFFER_TYPE_DYNAMIC_DX8,dynamic_fvf_type,ParentVertexIndices.Count());
-	{	
+	{
 		DynamicVBAccessClass::WriteLockClass lock(&dynamic_vb);
 		VertexFormatXYZNDUV2 * vertex = lock.Get_Formatted_Vertex_Array();
 
@@ -823,7 +823,7 @@ void SkinDecalMeshClass::Render(void)
 
 			vertex->u2 = 0.0f;
 			vertex->v2 = 0.0f;
-			
+
 			vertex++;
 		}
 	}
@@ -856,9 +856,9 @@ void SkinDecalMeshClass::Render(void)
 		DX8Wrapper::Set_Vertex_Buffer(dynamic_vb);
 		DX8Wrapper::Draw_Triangles(3*cur_poly_index,
 											(next_poly_index - cur_poly_index), // poly count
-											Polys[cur_poly_index].I, 
+											Polys[cur_poly_index].I,
 											1 + Polys[next_poly_index-1].K - Polys[cur_poly_index].I);
-		
+
 		cur_poly_index = next_poly_index;
 	}
 }
@@ -886,10 +886,10 @@ int SkinDecalMeshClass::Process_Material_Run(int start_index)
 	DX8Wrapper::Set_Shader(Shaders[start_index]);
 
 	int next_index = start_index;
-	while (	(next_index < Polys.Count()) && 
+	while (	(next_index < Polys.Count()) &&
 				(Textures[next_index] == Textures[start_index]) &&
 				(Shaders[next_index] == Shaders[start_index]) &&
-				(VertexMaterials[next_index] == VertexMaterials[start_index])) 
+				(VertexMaterials[next_index] == VertexMaterials[start_index]))
 	{
 		next_index++;
 	}
@@ -919,7 +919,7 @@ bool SkinDecalMeshClass::Create_Decal(DecalGeneratorClass * generator,
 
 	// The dynamically updated vertex locations are needed - we have no static geometry
 	WWASSERT(world_vertex_locs);
-	
+
 	/*
 	** If any polys were collected, add a new MeshDecalStruct
 	*/
@@ -933,7 +933,7 @@ bool SkinDecalMeshClass::Create_Decal(DecalGeneratorClass * generator,
 	newdecal.FaceCount = 0;												// init facecount to zero
 	newdecal.VertexStartIndex = ParentVertexIndices.Count();	// start vertices at the end of the current array
 	newdecal.VertexCount = 0;											// init vertcount to zero
-	
+
 	/*
 	** Grab pointers to the parent mesh's components
 	*/
@@ -944,12 +944,12 @@ bool SkinDecalMeshClass::Create_Decal(DecalGeneratorClass * generator,
 	** Grab a pointer to the material settings
 	*/
 	MaterialPassClass * material = generator->Get_Material();
-	
+
 	/*
 	** Set up the generator for the world coordinate system (the deformed vertices are in worldspace)
 	*/
 	generator->Set_Mesh_Transform(Matrix3D::Identity);
-	
+
 	/*
 	** Generate the faces and per-face info (remember to add-ref's)
 	** TODO: rewrite this to take advantage of vertex sharing...
@@ -959,7 +959,7 @@ bool SkinDecalMeshClass::Create_Decal(DecalGeneratorClass * generator,
 	for (i = 0; i < apt.Count(); i++) {
 		int offset = first_vert + i * 3;
 		Polys.Add(TriIndex(offset, offset + 1, offset + 2), face_size_hint);
-		
+
 		Shaders.Add(material->Peek_Shader(), face_size_hint);
 		Textures.Add(material->Get_Texture(), face_size_hint);		// Get_Texture gives us a reference...
 	}
@@ -1001,7 +1001,7 @@ bool SkinDecalMeshClass::Create_Decal(DecalGeneratorClass * generator,
 	*/
 	generator->Add_Mesh(Parent);
 
-#ifdef WWDEBUG	
+#ifdef WWDEBUG
 	/*
 	** Some paranoid debug code: ensure all tris have valid vertex indices
 	*/
@@ -1016,7 +1016,7 @@ bool SkinDecalMeshClass::Create_Decal(DecalGeneratorClass * generator,
 		WWASSERT (Polys[poly_idx].K >= 0);
 	}
 #endif
-	
+
 	// WWDEBUG_SAY(("Decal mesh now has: %d polys",Polys.Count()));
 	return true;
 }
@@ -1054,7 +1054,7 @@ bool SkinDecalMeshClass::Delete_Decal(uint32 id)
 	DecalStruct * decal = &Decals[decal_index];
 
 	/*
-	** Remove all geometry used by this decal 
+	** Remove all geometry used by this decal
 	*/
 	Polys.Delete_Range(decal->FaceStartIndex, decal->FaceCount);
 	ParentVertexIndices.Delete_Range(decal->VertexStartIndex, decal->VertexCount);
@@ -1091,7 +1091,7 @@ bool SkinDecalMeshClass::Delete_Decal(uint32 id)
 	}
 	Decals.Delete(decal_index);
 
-#ifdef WWDEBUG	
+#ifdef WWDEBUG
 	/*
 	** Some paranoid debug code: ensure all tris have valid vertex indices
 	*/

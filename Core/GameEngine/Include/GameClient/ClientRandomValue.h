@@ -66,12 +66,12 @@ public:
 	 * HIGH_BIAS represents a distribution of random values with
 	 *		zero probability at low, and maximum probability at high.
 	 */
-	enum DistributionType 
-	{ 
+	enum DistributionType
+	{
 		CONSTANT, UNIFORM, GAUSSIAN, TRIANGULAR, LOW_BIAS, HIGH_BIAS
 	};
 
-	static const char *DistributionTypeNames[]; 
+	static const char *DistributionTypeNames[];
 
 	/// define the range of random values, and the distribution of values
 	void setRange( Real low, Real high, DistributionType type = UNIFORM );

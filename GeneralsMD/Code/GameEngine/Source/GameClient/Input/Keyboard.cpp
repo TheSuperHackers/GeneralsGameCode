@@ -49,7 +49,7 @@ Keyboard *TheKeyboard = NULL;
 //-------------------------------------------------------------------------------------------------
 void Keyboard::createStreamMessages( void )
 {
-	
+
 	// santiy
 	if( TheMessageStream == NULL )
 		return;
@@ -78,7 +78,7 @@ void Keyboard::createStreamMessages( void )
 		{
 
 			DEBUG_CRASH(( "Unknown key state when creating msg stream" ));
-			
+
 		}  // end else
 
 		// fill out message arguments
@@ -126,7 +126,7 @@ void Keyboard::updateKeys( void )
 
 		}
 		while( m_keys[ index ].key == KEY_LOST );
-	} 
+	}
 	while( m_keys[ index++ ].key != KEY_NONE );
 
 	// update keyboard status array
@@ -202,7 +202,7 @@ Bool Keyboard::checkKeyRepeat( void )
 	Int index = 0;
 	Int key;
 
-	/** @todo we shouldn't think about repeating any keys while we 
+	/** @todo we shouldn't think about repeating any keys while we
 	don't have the focus */
 //	if( currentFocus == FOCUS_OUT )
 //		return FALSE;
@@ -228,7 +228,7 @@ Bool Keyboard::checkKeyRepeat( void )
 
 				// Set End Flag
 				m_keys[ ++index ].key = KEY_NONE;
-			
+
 				// Set all keys as new to prevent multiple keys repeating
 				for( index = 0; index< NUM_KEYS; index++ )
 					m_keyStatus[ index ].sequence = m_inputFrame;
@@ -749,7 +749,7 @@ void Keyboard::resetKeys( void )
 
 	memset( m_keys, 0, sizeof( m_keys ) );
 	memset( m_keyStatus, 0, sizeof( m_keyStatus ) );
-	m_modifiers = KEY_STATE_NONE; 
+	m_modifiers = KEY_STATE_NONE;
 	if( getCapsState() )
 	{
 		m_modifiers |= KEY_STATE_CAPSLOCK;
@@ -762,7 +762,7 @@ void Keyboard::resetKeys( void )
 //-------------------------------------------------------------------------------------------------
 KeyboardIO *Keyboard::getFirstKey( void )
 {
-	return &m_keys[ 0 ];	
+	return &m_keys[ 0 ];
 }  // end getFirstKey
 
 //-------------------------------------------------------------------------------------------------
@@ -926,12 +926,12 @@ WideChar Keyboard::translateKey( WideChar keyCode )
 			{
 				return( m_keyNames[ ubKeyCode ].shifted2 );
 			}
-			
+
 			if( isShift() || getCapsState() && GameIsAlpha( m_keyNames[ ubKeyCode ].stdKey ) )
 			{
 				return( m_keyNames[ ubKeyCode ].shifted );
 			}
-			
+
 			return( m_keyNames[ubKeyCode ].stdKey );
 	}  // end switch( ubKeyCode )
 }  // end translateKey
@@ -981,7 +981,7 @@ WideChar Keyboard::getPrintableKey( UnsignedByte key,  Int state )
 		return m_keyNames[key].stdKey;
 	else if(state == 1)
 		return m_keyNames[key].shifted;
-	else 
+	else
 		return m_keyNames[key].shifted2;
 
 

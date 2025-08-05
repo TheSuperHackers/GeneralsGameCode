@@ -81,7 +81,7 @@ sint32 UDP::Bind(uint32 IP,uint16 Port)
   }
 
   int namelen=sizeof(addr);
-  getsockname(fd, (struct sockaddr *)&addr, &namelen); 
+  getsockname(fd, (struct sockaddr *)&addr, &namelen);
 
   myIP=ntohl(addr.sin_addr.s_addr);
   myPort=ntohs(addr.sin_port);
@@ -149,7 +149,7 @@ sint32 UDP::Write(uint8 *msg,uint32 len,uint32 IP,uint16 port)
   if (retval==SOCKET_ERROR)
     retval=-1;
   #endif
-  
+
   return(retval);
 }
 
@@ -227,13 +227,13 @@ UDP::sockStat UDP::GetStatus(void)
 int UDP::Wait(sint32 sec,sint32 usec,fd_set &returnSet)
 {
   fd_set inputSet;
- 
+
   FD_ZERO(&inputSet);
   FD_SET(fd,&inputSet);
- 
+
   return(Wait(sec,usec,inputSet,returnSet));
 }
- 
+
 //
 // Wait for net activity on a list of sockets
 //
@@ -244,17 +244,17 @@ int UDP::Wait(sint32 sec,sint32 usec,fd_set &givenSet,fd_set &returnSet)
   int          retval=0,done,givenMax;
   bit8         noTimeout=FALSE;
   timeval      tv;
- 
+
   returnSet=givenSet;
   backupSet=returnSet;
- 
+
   if ((sec==-1)&&(usec==-1))
     noTimeout=TRUE;
- 
+
   timeout.SetSec(sec);
   timeout.SetUsec(usec);
   timethen+=timeout;
- 
+
   givenMax=fd;
   for (uint32 i=0; i<(sizeof(fd_set)*8); i++)   // i=maxFD+1
   {
@@ -262,7 +262,7 @@ int UDP::Wait(sint32 sec,sint32 usec,fd_set &givenSet,fd_set &returnSet)
       givenMax=i;
   }
   ///DBGMSG("WAIT  fd="<<fd<<"  givenMax="<<givenMax);
- 
+
   done=0;
   while( ! done)
   {
@@ -273,7 +273,7 @@ int UDP::Wait(sint32 sec,sint32 usec,fd_set &givenSet,fd_set &returnSet)
       timeout.GetTimevalMT(tv);
       retval=select(givenMax+1,&returnSet,0,0,&tv);
     }
- 
+
     if (retval>=0)
       done=1;
 
@@ -342,7 +342,7 @@ bit8 UDP::SetOutputBuffer(uint32 bytes)
   #endif
 }
 
-// Get the system buffer sizes 
+// Get the system buffer sizes
 
 int UDP::GetInputBuffer(void)
 {

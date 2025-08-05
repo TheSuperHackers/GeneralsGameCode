@@ -57,7 +57,7 @@ DamDieModuleData::DamDieModuleData( void )
 
   DieModuleData::buildFieldParse( p );
 
-//	static const FieldParse dataFieldParse[] = 
+//	static const FieldParse dataFieldParse[] =
 //	{
 //		{ 0, 0, 0, 0 }
 //	};

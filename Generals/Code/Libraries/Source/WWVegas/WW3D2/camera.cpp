@@ -26,8 +26,8 @@
  *                                                                                             *
  *                    Org Author:: Greg_h                                                       *
  *                                                                                             *
- *                       $Author:: Kenny Mitchell                                               * 
- *                                                                                             * 
+ *                       $Author:: Kenny Mitchell                                               *
+ *                                                                                             *
  *                     $Modtime:: 06/26/02 4:04p                                             $*
  *                                                                                             *
  *                    $Revision:: 24                                                          $*
@@ -117,7 +117,7 @@ CameraClass::CameraClass(void) :
  *   3/21/98    GTH : Created.                                                                 *
  *   4/13/2001  hy : added in copy code for new member functions                               *
  *=============================================================================================*/
-CameraClass::CameraClass(const CameraClass & src) : 
+CameraClass::CameraClass(const CameraClass & src) :
 	RenderObjClass(src),
 	Projection(src.Projection),
 	Viewport(src.Viewport),
@@ -154,7 +154,7 @@ CameraClass & CameraClass::operator = (const CameraClass & that)
 {
 	if (this != &that) {
 		RenderObjClass::operator = (that);
-	
+
 		Projection = that.Projection;
 		Viewport = that.Viewport;
 		ViewPlane = that.ViewPlane;
@@ -165,13 +165,13 @@ CameraClass & CameraClass::operator = (const CameraClass & that)
 		NearClipBBox = that.NearClipBBox;
 		ProjectionTransform = that.ProjectionTransform;
 		CameraInvTransform = that.CameraInvTransform;
-		
+
 		// just being paraniod in case any parent class doesn't completely copy the entire state...
 		FrustumValid = false;
 	}
 
 	return * this;
-}  	
+}
 
 
 /***********************************************************************************************
@@ -261,10 +261,10 @@ void CameraClass::Get_Obj_Space_Bounding_Box(AABoxClass & box) const
  * HISTORY:                                                                                    *
  *   5/29/98    GTH : Created.                                                                 *
  *=============================================================================================*/
-void CameraClass::Set_Transform(const Matrix3D &m)	
-{ 
+void CameraClass::Set_Transform(const Matrix3D &m)
+{
 	RenderObjClass::Set_Transform(m);
-	FrustumValid = false; 
+	FrustumValid = false;
 }
 
 
@@ -283,9 +283,9 @@ void CameraClass::Set_Transform(const Matrix3D &m)
  *   5/29/98    GTH : Created.                                                                 *
  *=============================================================================================*/
 void CameraClass::Set_Position(const Vector3 &v)
-{ 
-	RenderObjClass::Set_Position(v); 
-	FrustumValid = false; 
+{
+	RenderObjClass::Set_Position(v);
+	FrustumValid = false;
 }
 
 
@@ -329,17 +329,17 @@ void CameraClass::Set_View_Plane(float hfov,float vfov)
 
 	float width_half = tan(hfov/2.0);
 	float height_half = 0.0f;
-	
-	if (vfov == -1) {									
+
+	if (vfov == -1) {
 		height_half = (1.0f / AspectRatio) * width_half;		// use the aspect ratio
 	} else {
 		height_half = tan(vfov/2.0);
 		AspectRatio = width_half / height_half;					// or, initialize the aspect ratio
 	}
-	
+
 	ViewPlane.Min.Set(-width_half,-height_half);
 	ViewPlane.Max.Set(width_half,height_half);
-	
+
 	FrustumValid = false;
 }
 
@@ -424,7 +424,7 @@ CameraClass::ProjectionResType CameraClass::Project(Vector3 & dest,const Vector3
 
 	if ((dest.X < -1.0f) || (dest.X > 1.0f) || (dest.Y < -1.0f) || (dest.Y > 1.0f)) {
 		return OUTSIDE_FRUSTUM;
-	}	
+	}
 
 	return INSIDE_FRUSTUM;
 }
@@ -445,7 +445,7 @@ CameraClass::ProjectionResType CameraClass::Project(Vector3 & dest,const Vector3
  * HISTORY:                                                                                    *
  *   11/17/2000 gth : Created.                                                                 *
  *=============================================================================================*/
-CameraClass::ProjectionResType 
+CameraClass::ProjectionResType
 CameraClass::Project_Camera_Space_Point(Vector3 & dest,const Vector3 & cam_point) const
 {
 	Update_Frustum();
@@ -467,7 +467,7 @@ CameraClass::Project_Camera_Space_Point(Vector3 & dest,const Vector3 & cam_point
 
 	if ((dest.X < -1.0f) || (dest.X > 1.0f) || (dest.Y < -1.0f) || (dest.Y > 1.0f)) {
 		return OUTSIDE_FRUSTUM;
-	}	
+	}
 
 	return INSIDE_FRUSTUM;
 }
@@ -497,7 +497,7 @@ void CameraClass::Un_Project(Vector3 & dest,const Vector2 & view_point) const
 	*/
 	float vpdx = ViewPlane.Max.X - ViewPlane.Min.X;
 	float vpdy = ViewPlane.Max.Y - ViewPlane.Min.Y;
-	
+
 	Vector3 point;
 	point.X = ViewPlane.Min.X + vpdx * (view_point.X + 1.0f) * 0.5f;
 	point.Y = ViewPlane.Min.Y + vpdy * (view_point.Y + 1.0f) * 0.5f;
@@ -505,7 +505,7 @@ void CameraClass::Un_Project(Vector3 & dest,const Vector2 & view_point) const
 
 	Matrix3D::Transform_Vector(Transform,point,&dest);
 }
-	
+
 
 /***********************************************************************************************
  * CameraClass::Transform_To_View_Space -- transforms the given world space point to camera sp *
@@ -524,7 +524,7 @@ void CameraClass::Transform_To_View_Space(Vector3 & dest,const Vector3 & ws_poin
 	Update_Frustum();
 	Matrix3D::Transform_Vector(CameraInvTransform,ws_point,&dest);
 }
-	
+
 
 /***********************************************************************************************
  * CameraClass::Rotate_To_View_Space -- rotates the given world space vector to camera space   *
@@ -561,8 +561,8 @@ void CameraClass::Rotate_To_View_Space(Vector3 & dest,const Vector3 & ws_vector)
 const OBBoxClass & CameraClass::Get_Near_Clip_Bounding_Box(void) const
 {
 	Update_Frustum();
-	return NearClipBBox;	
-}	
+	return NearClipBBox;
+}
 
 
 /***********************************************************************************************
@@ -639,7 +639,7 @@ void CameraClass::Update_Frustum(void) const
 															znear_dist, zfar_dist );
 
 	} else {
-		
+
 		ProjectionTransform.Init_Ortho( vpmin.X,vpmax.X,vpmin.Y,vpmax.Y,znear_dist,zfar_dist);
 
 	}
@@ -676,7 +676,7 @@ void CameraClass::Device_To_View_Space(const Vector2 & device_coord,Vector3 * se
 	Vector2 vs_min;
 	Vector2 vs_max;
 	Get_View_Plane(vs_min,vs_max);
-	
+
 	// mapping from the viewport coordinates to view space coordinates
 	set_view->X = vs_min.X + (ndev.X - Viewport.Min.X) * (vs_max.X - vs_min.X) / (Viewport.Width());
 	set_view->Y = vs_max.Y - (ndev.Y - Viewport.Min.Y) * (vs_max.Y - vs_min.Y) / (Viewport.Height());
@@ -723,7 +723,7 @@ void CameraClass::Apply(void)
 	int width,height,bits;
 	bool windowed;
 	WW3D::Get_Render_Target_Resolution(width,height,bits,windowed);
-	
+
 	D3DVIEWPORT8 vp;
 	vp.X = (DWORD)(Viewport.Min.X * (float)width);
 	vp.Y = (DWORD)(Viewport.Min.Y * (float)height);
@@ -739,40 +739,40 @@ void CameraClass::Apply(void)
 	DX8Wrapper::Set_Transform(D3DTS_VIEW,CameraInvTransform);
 }
 
-void CameraClass::Set_Clip_Planes(float znear,float zfar)						
-{ 
+void CameraClass::Set_Clip_Planes(float znear,float zfar)
+{
 	FrustumValid = false;
 	ZNear = znear;
 	ZFar = zfar;
 }
 
-void CameraClass::Get_Clip_Planes(float & znear,float & zfar) const		
-{ 
+void CameraClass::Get_Clip_Planes(float & znear,float & zfar) const
+{
 	znear = ZNear;
 	zfar = ZFar;
 }
 
-float CameraClass::Get_Horizontal_FOV(void) const 
-{ 
+float CameraClass::Get_Horizontal_FOV(void) const
+{
 	float width = ViewPlane.Max.X - ViewPlane.Min.X;
 	return 2*WWMath::Atan2(width,2.0);
 }
 
-float CameraClass::Get_Vertical_FOV(void) const 
-{ 
+float CameraClass::Get_Vertical_FOV(void) const
+{
 	float height = ViewPlane.Max.Y - ViewPlane.Min.Y;
 	return 2*WWMath::Atan2(height,2.0);
 }
 
-float CameraClass::Get_Aspect_Ratio(void) const 
-{ 
+float CameraClass::Get_Aspect_Ratio(void) const
+{
 	return AspectRatio;
 }
 
 void CameraClass::Get_Projection_Matrix(Matrix4x4 * set_tm)
 {
 	WWASSERT(set_tm != NULL);
-	
+
 	Update_Frustum();
 	*set_tm = ProjectionTransform;
 }

@@ -22,14 +22,14 @@
 //																																						//
 ////////////////////////////////////////////////////////////////////////////////
 
-// FILE: Memory.h 
+// FILE: Memory.h
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information					         
-//                Copyright (C); 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C); 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:    RTS3
@@ -45,7 +45,7 @@
 
 #pragma once
 
-#ifndef _GAME_MEMORY_H_ 
+#ifndef _GAME_MEMORY_H_
 #define _GAME_MEMORY_H_
 
 // Turn off memory pool checkpointing for now.
@@ -95,7 +95,7 @@
 	#endif
 
 	// flags for the memory-report options.
-	enum 
+	enum
 	{
 
 #ifdef MEMORYPOOL_CHECKPOINTING
@@ -116,27 +116,27 @@
 #endif // MEMORYPOOL_CHECKPOINTING
 
 #ifdef MEMORYPOOL_CHECKPOINTING
-		/** display the stacktrace for allocation location for all blocks found. 
+		/** display the stacktrace for allocation location for all blocks found.
 			this bit may be mixed-n-matched with any other flag.
 		*/
 		REPORT_CP_STACKTRACE		= 0x0100,
 #endif
-		
+
 		/** display stats for each pool, in addition to each block.
 			(this is useful for finding suitable allocation counts for the pools.)
 			this bit may be mixed-n-matched with any other flag.
 		*/
-		REPORT_POOLINFO					= 0x0200, 
+		REPORT_POOLINFO					= 0x0200,
 
 		/** report on the overall memory situation (including all pools and dma's).
 			this bit may be mixed-n-matched with any other flag.
 		*/
-		REPORT_FACTORYINFO			= 0x0400,	
+		REPORT_FACTORYINFO			= 0x0400,
 
 		/** report on pools that have overflowed their initial allocation.
 			this bit may be mixed-n-matched with any other flag.
 		*/
-		REPORT_POOL_OVERFLOW		= 0x0800,	
+		REPORT_POOL_OVERFLOW		= 0x0800,
 
 		/** simple-n-cheap leak checking */
 		REPORT_SIMPLE_LEAKS			= 0x1000,
@@ -145,12 +145,12 @@
 		/** report on blocks that were allocated between the checkpoints.
 		 (don't care if they were freed or not.)
 		*/
-		REPORT_CP_ALLOCATES	= (_REPORT_CP_ALLOCATED_BETWEEN | _REPORT_CP_FREED_DONTCARE),	
+		REPORT_CP_ALLOCATES	= (_REPORT_CP_ALLOCATED_BETWEEN | _REPORT_CP_FREED_DONTCARE),
 
 		/** report on blocks that were freed between the checkpoints.
 		 (don't care when they were allocated.)
 		*/
-		REPORT_CP_FREES			= (_REPORT_CP_ALLOCATED_DONTCARE | _REPORT_CP_FREED_BETWEEN),	
+		REPORT_CP_FREES			= (_REPORT_CP_ALLOCATED_DONTCARE | _REPORT_CP_FREED_BETWEEN),
 
 		/** report on blocks that were allocated between the checkpoints, and still exist
 		 (note that this reports *potential* leaks -- some such blocks may be desired)
@@ -160,7 +160,7 @@
 		/** report on blocks that existed before checkpoint #1 and still exist now.
 		*/
 		REPORT_CP_LONGTERM		= (_REPORT_CP_ALLOCATED_BEFORE | _REPORT_CP_FREED_NEVER),
-		
+
 		/** report on blocks that were allocated-and-freed between the checkpoints.
 		*/
 		REPORT_CP_TRANSIENT		= (_REPORT_CP_ALLOCATED_BETWEEN | _REPORT_CP_FREED_BETWEEN),
@@ -174,7 +174,7 @@
 		*/
 		REPORT_CP_ALL					= (_REPORT_CP_ALLOCATED_DONTCARE | _REPORT_CP_FREED_DONTCARE)
 #endif // MEMORYPOOL_CHECKPOINTING
-		
+
 	};
 
 #endif // MEMORYPOOL_DEBUG
@@ -205,7 +205,7 @@
 #else
 
 	#define DECLARE_LITERALSTRING_ARG1
-	#define PASS_LITERALSTRING_ARG1	
+	#define PASS_LITERALSTRING_ARG1
 	#define DECLARE_LITERALSTRING_ARG2
 	#define PASS_LITERALSTRING_ARG2
 
@@ -244,7 +244,7 @@ struct PoolInitRec
 	Int overflowAllocationCount;	///< when the pool runs out of space, allocate more blocks in this increment
 };
 
-enum 
+enum
 {
 	MAX_DYNAMICMEMORYALLOCATOR_SUBPOOLS = 8	///< The max number of subpools allowed in a DynamicMemoryAllocator
 };
@@ -290,7 +290,7 @@ public:
 	additional blobs as necessary. A given pool can allocate blocks of only one size;
 	if you need a different size, you should use a different pool.
 */
-class MemoryPool 
+class MemoryPool
 #ifdef MEMORYPOOL_CHECKPOINTING
 	: public Checkpointable
 #endif
@@ -347,7 +347,7 @@ public:
 
 	/// same as allocateBlockImplementation, but memory returned is not zeroed
 	void *allocateBlockDoNotZeroImplementation(DECLARE_LITERALSTRING_ARG1);
-	
+
 	/// free the block. it is OK to pass null.
 	void freeBlock(void *pMem);
 
@@ -397,7 +397,7 @@ public:
 	(Requests too large for any of the pool are routed to the system memory allocator.)
 	You should normally use this in place of malloc/free or (global) new/delete.
 */
-class DynamicMemoryAllocator 
+class DynamicMemoryAllocator
 #ifdef MEMORYPOOL_CHECKPOINTING
 	: public Checkpointable
 #endif
@@ -437,7 +437,7 @@ public:
 
 	/// initialize the dma. pass 0/null for numSubPool/parms to get some reasonable default subpools.
 	void init(MemoryPoolFactory *factory, Int numSubPools, const PoolInitRec pParms[]);
-	
+
 	~DynamicMemoryAllocator();
 
 	/// allocate bytes from this pool. (don't call directly; use allocateBytes() macro)
@@ -454,7 +454,7 @@ public:
 	void freeBytes(void* pMem);
 
 	/**
-		return the actual number of bytes that would be allocated 
+		return the actual number of bytes that would be allocated
 		if you tried to allocate the given size. (It will generally be slightly
 		larger than you request.) This lets you use extra space if you're gonna get it anyway...
 		The idea is that you will call this before doing a memory allocation, to see if
@@ -522,7 +522,7 @@ public:
 	#endif
 
 public:
-	
+
 	MemoryPoolFactory();
 	void init();
 	~MemoryPoolFactory();
@@ -532,7 +532,7 @@ public:
 
 	/// overloaded version of createMemoryPool with explicit parms.
 	MemoryPool *createMemoryPool(const char *poolName, Int allocationSize, Int initialAllocationCount, Int overflowAllocationCount);
-	
+
 	/// return the pool with the given name. if no such pool exists, return null.
 	MemoryPool *findMemoryPool(const char *poolName);
 
@@ -558,7 +558,7 @@ public:
 		/// return true iff the block was allocated by any pool or dma owned by this factory.
 		Bool debugIsBlockInAnyPool(void *pBlock);
 
-		/// return the tag string for the block. 
+		/// return the tag string for the block.
 		const char *debugGetBlockTagString(void *pBlock);
 
 		/// dump a report with the given options to the logfile.
@@ -568,7 +568,7 @@ public:
 
 	#endif
 	#ifdef MEMORYPOOL_CHECKPOINTING
-		
+
 		/// set a new checkpoint.
 		Int debugSetCheckpoint();
 
@@ -598,7 +598,7 @@ private: \
 		DEBUG_ASSERTCRASH(The##ARGCLASS##Pool->getAllocationSize() >= sizeof(ARGCLASS), ("Pool \"%s\" is too small for this class (currently %d, need %d)", ARGPOOLNAME, The##ARGCLASS##Pool->getAllocationSize(), sizeof(ARGCLASS))); \
 		DEBUG_ASSERTCRASH(The##ARGCLASS##Pool->getAllocationSize() <= sizeof(ARGCLASS)+MEMORY_POOL_OBJECT_ALLOCATION_SLOP, ("Pool \"%s\" is too large for this class (currently %d, need %d)", ARGPOOLNAME, The##ARGCLASS##Pool->getAllocationSize(), sizeof(ARGCLASS))); \
 		return The##ARGCLASS##Pool; \
-	} 
+	}
 
 // ----------------------------------------------------------------------------
 #define GCMP_CREATE(ARGCLASS, ARGPOOLNAME, ARGINITIAL, ARGOVERFLOW) \
@@ -617,8 +617,8 @@ private: \
 		DEBUG_ASSERTCRASH(The##ARGCLASS##Pool->getAllocationSize() >= sizeof(ARGCLASS), ("Pool \"%s\" is too small for this class (currently %d, need %d)", ARGPOOLNAME, The##ARGCLASS##Pool->getAllocationSize(), sizeof(ARGCLASS))); \
 		DEBUG_ASSERTCRASH(The##ARGCLASS##Pool->getAllocationSize() <= sizeof(ARGCLASS)+MEMORY_POOL_OBJECT_ALLOCATION_SLOP, ("Pool \"%s\" is too large for this class (currently %d, need %d)", ARGPOOLNAME, The##ARGCLASS##Pool->getAllocationSize(), sizeof(ARGCLASS))); \
 		return The##ARGCLASS##Pool; \
-	} 
-	
+	}
+
 // ----------------------------------------------------------------------------
 #define MEMORY_POOL_GLUE_WITHOUT_GCMP(ARGCLASS) \
 protected: \
@@ -672,7 +672,7 @@ private: \
 	{ \
 		return ARGCLASS::getClassMemoryPool(); \
 	} \
-public: /* include this line at the end to reset visibility to 'public' */ 
+public: /* include this line at the end to reset visibility to 'public' */
 
 // ----------------------------------------------------------------------------
 #define MEMORY_POOL_GLUE(ARGCLASS, ARGPOOLNAME) \
@@ -727,7 +727,7 @@ private: \
 		throw ERROR_BUG; \
 		return 0; \
 	} \
-public: /* include this line at the end to reset visibility to 'public' */ 
+public: /* include this line at the end to reset visibility to 'public' */
 
 
 // ----------------------------------------------------------------------------
@@ -745,25 +745,25 @@ protected:
 	/** ensure that all destructors are virtual */
 	virtual ~MemoryPoolObject() { }
 
-protected: 
+protected:
 	inline void *operator new(size_t s) { DEBUG_CRASH(("This should be impossible")); return 0; }
 	inline void operator delete(void *p) { DEBUG_CRASH(("This should be impossible")); }
 
-protected: 
+protected:
 
 	virtual MemoryPool *getObjectMemoryPool() = 0;
-	
-public: 
 
-	static void deleteInstanceInternal(MemoryPoolObject* mpo) 
-	{	
+public:
+
+	static void deleteInstanceInternal(MemoryPoolObject* mpo)
+	{
 		if (mpo)
 		{
 			MemoryPool *pool = mpo->getObjectMemoryPool(); // save this, since the dtor will nuke our vtbl
 			mpo->~MemoryPoolObject();	// it's virtual, so the right one will be called.
-			pool->freeBlock((void *)mpo); 
+			pool->freeBlock((void *)mpo);
 		}
-	} 
+	}
 };
 
 inline void deleteInstance(MemoryPoolObject* mpo)
@@ -791,9 +791,9 @@ inline DynamicMemoryAllocator *DynamicMemoryAllocator::getNextDmaInList() { retu
 // EXTERNALS //////////////////////////////////////////////////////////////////
 
 /**
-	Initialize the memory manager. Construct a new MemoryPoolFactory and 
+	Initialize the memory manager. Construct a new MemoryPoolFactory and
 	DynamicMemoryAllocator and store 'em in the singletons of the relevant
-	names. 
+	names.
 */
 extern void initMemoryManager();
 
@@ -815,7 +815,7 @@ extern Bool isMemoryManagerOfficiallyInited();
 /* extern void preMainInitMemoryManager(); */
 
 /**
-	Shut down the memory manager. Throw away TheMemoryPoolFactory and 
+	Shut down the memory manager. Throw away TheMemoryPoolFactory and
 	TheDynamicMemoryAllocator.
 */
 extern void shutdownMemoryManager();
@@ -827,7 +827,7 @@ extern DynamicMemoryAllocator *TheDynamicMemoryAllocator;
 	This function is declared in this header, but is not defined anywhere -- you must provide
 	it in your code. It is called by initMemoryManager() or preMainInitMemoryManager() in order
 	to get the specifics of the subpool for the dynamic memory allocator. (If you just want
-	some defaults, set both return arguments to zero.) The reason for this odd setup is that 
+	some defaults, set both return arguments to zero.) The reason for this odd setup is that
 	we may need to init the memory manager prior to main() [due to static C++ ctors] and
 	this allows us a way to get the necessary parameters.
 */
@@ -842,7 +842,7 @@ extern void userMemoryManagerInitPools();
 
 /**
 	This function is declared in this header, but is not defined anywhere -- you must provide
-	it in your code. It is called by createMemoryPool to adjust the allocation size(s) for a 
+	it in your code. It is called by createMemoryPool to adjust the allocation size(s) for a
 	given pool. Note that the counts are in-out parms!
 */
 extern void userMemoryAdjustPoolSize(const char *poolName, Int& initialAllocationCount, Int& overflowAllocationCount);
@@ -886,7 +886,7 @@ extern void userMemoryAdjustPoolSize(const char *poolName, Int& initialAllocatio
 
 #endif
 
-class STLSpecialAlloc 
+class STLSpecialAlloc
 {
 public:
 	static void* allocate(size_t __n);

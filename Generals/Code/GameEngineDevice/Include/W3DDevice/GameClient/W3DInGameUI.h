@@ -24,8 +24,8 @@
 
 // FILE: W3DInGameUI.h ////////////////////////////////////////////////////////
 //
-// W3D implementation of the in game user interface, the in game ui is 
-// responsible for 
+// W3D implementation of the in game user interface, the in game ui is
+// responsible for
 //
 // Author: Colin Day, April 2001
 //
@@ -49,7 +49,7 @@
 class HAnimClass;
 
 // W3DInGameUI ----------------------------------------------------------------
-/** Implementation for the W3D game user interface.  This singleton is 
+/** Implementation for the W3D game user interface.  This singleton is
   * responsible for all user interaction and feedback with as part of the
 	* user interface */
 //-----------------------------------------------------------------------------

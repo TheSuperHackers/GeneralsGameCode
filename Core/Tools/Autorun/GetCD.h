@@ -197,7 +197,7 @@ struct	StopType {
 #define MAX_CD_DRIVES	26
 #define NO_CD_DRIVE		-1
 
-class	GetCDClass 
+class	GetCDClass
 {
 	public:
 		GetCDClass	( void );							// This is the default constructor
@@ -277,7 +277,7 @@ inline int GetCDClass::Get_Next_CD_Drive(void)
  *==================================================================================*/
 
 #ifdef NOT_FOR_WIN95
-class RedBookClass : public GetCDClass 
+class RedBookClass : public GetCDClass
 {
 	public:
 

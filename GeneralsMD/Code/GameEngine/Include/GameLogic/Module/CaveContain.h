@@ -25,7 +25,7 @@
 // FILE: CaveContain.h ////////////////////////////////////////////////////////////////////////////
 // Author: Graham Smallwood, July 2002
 // Desc:   A version of OpenContain that overrides where the passengers are stored: one of CaveManager's
-//					entries. Changing entry is a script or ini command.  All queries about capacity and 
+//					entries. Changing entry is a script or ini command.  All queries about capacity and
 //					contents are also redirected.
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -52,11 +52,11 @@ public:
 		m_caveIndexData = 0;// By default, all Caves will be grouped together as number 0
 	}
 
-	static void buildFieldParse(MultiIniFieldParse& p) 
+	static void buildFieldParse(MultiIniFieldParse& p)
 	{
     OpenContainModuleData::buildFieldParse(p);
 
-		static const FieldParse dataFieldParse[] = 
+		static const FieldParse dataFieldParse[] =
 		{
 			{ "CaveIndex", INI::parseInt, NULL, offsetof( CaveContainModuleData, m_caveIndexData ) },
 			{ 0, 0, 0, 0 }
@@ -71,7 +71,7 @@ class CaveContain : public OpenContain, public CreateModuleInterface, public Cav
 
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( CaveContain, "CaveContain" )
 	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( CaveContain, CaveContainModuleData )
-	
+
 public:
 
 	CaveContain( Thing *thing, const ModuleData* moduleData );
@@ -103,7 +103,7 @@ public:
 	virtual void iterateContained( ContainIterateFunc func, void *userData, Bool reverse );
 	virtual UnsignedInt getContainCount() const;
 	virtual Int getContainMax( void ) const;
-	virtual const ContainedItemsList* getContainedItemsList() const;	
+	virtual const ContainedItemsList* getContainedItemsList() const;
 	virtual Bool isKickOutOnCapture(){ return FALSE; }///< Caves and Tunnels don't kick out on capture.
 
 	// override the onDie we inherit from OpenContain
@@ -121,7 +121,7 @@ protected:
 
 	void changeTeamOnAllConnectedCaves( Team *newTeam, Bool setOriginalTeams );	///< When one gets captured, all connected ones get captured.  DistributedGarrison.
 
-	Bool m_needToRunOnBuildComplete; 
+	Bool m_needToRunOnBuildComplete;
 	Int m_caveIndex;
 
 	Team *m_originalTeam;												///< our original team before we were garrisoned

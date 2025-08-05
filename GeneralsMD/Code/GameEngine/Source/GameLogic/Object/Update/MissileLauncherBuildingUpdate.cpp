@@ -51,16 +51,16 @@ MissileLauncherBuildingUpdate::MissileLauncherBuildingUpdate( Thing *thing, cons
 	m_timeoutFrame = 0;
 	m_openIdleAudio = getMissileLauncherBuildingUpdateModuleData()->m_openIdleAudio;
 	m_openIdleAudio.setObjectID(getObject()->getID());
-} 
+}
 
 //-------------------------------------------------------------------------------------------------
 MissileLauncherBuildingUpdate::~MissileLauncherBuildingUpdate( void )
 {
-	if (m_openIdleAudio.isCurrentlyPlaying()) 
+	if (m_openIdleAudio.isCurrentlyPlaying())
 	{
 		TheAudio->removeAudioEvent(m_openIdleAudio.getPlayingHandle());
 	}
-} 
+}
 
 //-------------------------------------------------------------------------------------------------
 void MissileLauncherBuildingUpdate::switchToState(DoorStateType dst)
@@ -87,7 +87,7 @@ void MissileLauncherBuildingUpdate::switchToState(DoorStateType dst)
 				const Coord3D *pos = getObject()->getPosition();
 				FXList::doFXPos(d->m_closedFX, pos);
 			}
-			if (m_openIdleAudio.isCurrentlyPlaying()) 
+			if (m_openIdleAudio.isCurrentlyPlaying())
 			{
 				TheAudio->removeAudioEvent(m_openIdleAudio.getPlayingHandle());
 			}
@@ -109,7 +109,7 @@ void MissileLauncherBuildingUpdate::switchToState(DoorStateType dst)
 				const Coord3D *pos = getObject()->getPosition();
 				FXList::doFXPos(d->m_openingFX, pos);
 			}
-			if (m_openIdleAudio.isCurrentlyPlaying()) 
+			if (m_openIdleAudio.isCurrentlyPlaying())
 			{
 				TheAudio->removeAudioEvent(m_openIdleAudio.getPlayingHandle());
 			}
@@ -149,7 +149,7 @@ void MissileLauncherBuildingUpdate::switchToState(DoorStateType dst)
 				const Coord3D *pos = getObject()->getPosition();
 				FXList::doFXPos(d->m_waitingToCloseFX, pos);
 			}
-			if (m_openIdleAudio.isCurrentlyPlaying()) 
+			if (m_openIdleAudio.isCurrentlyPlaying())
 			{
 				TheAudio->removeAudioEvent(m_openIdleAudio.getPlayingHandle());
 			}
@@ -176,7 +176,7 @@ void MissileLauncherBuildingUpdate::switchToState(DoorStateType dst)
 				const Coord3D *pos = getObject()->getPosition();
 				FXList::doFXPos(d->m_closingFX, pos);
 			}
-			if (m_openIdleAudio.isCurrentlyPlaying()) 
+			if (m_openIdleAudio.isCurrentlyPlaying())
 			{
 				TheAudio->removeAudioEvent(m_openIdleAudio.getPlayingHandle());
 			}
@@ -228,7 +228,7 @@ Bool MissileLauncherBuildingUpdate::initiateIntentToDoSpecialPower( const Specia
 Bool MissileLauncherBuildingUpdate::isPowerCurrentlyInUse( const CommandButton *command ) const
 {
 	//@todo -- Implement me in such a way that it still works with Ctrl+s cheat key...
-	//In fact, this code doesn't really care because in legit mode, the game will 
+	//In fact, this code doesn't really care because in legit mode, the game will
 	//never require this check to disable the cameo button.
 	return false;
 }
@@ -239,7 +239,7 @@ UpdateSleepTime MissileLauncherBuildingUpdate::update( void )
 	const MissileLauncherBuildingUpdateModuleData* d = getMissileLauncherBuildingUpdateModuleData();
 
 	UnsignedInt now = TheGameLogic->getFrame();
-	
+
 	// If we are under construction, any decision we make about door status could be wrong.
 	// Our special power module is randomly going to be initialized or not (which would result
 	// in him reporting a 0 frame ready, which means we will start open).
@@ -251,7 +251,7 @@ UpdateSleepTime MissileLauncherBuildingUpdate::update( void )
 		m_specialPowerModule = getObject()->getSpecialPowerModule(d->m_specialPowerTemplate);
 		DEBUG_ASSERTCRASH(m_specialPowerModule, ("Missing special power"));
 	}
-	
+
 	if (m_specialPowerModule)
 	{
 		UnsignedInt readyFrame = m_specialPowerModule->getReadyFrame();

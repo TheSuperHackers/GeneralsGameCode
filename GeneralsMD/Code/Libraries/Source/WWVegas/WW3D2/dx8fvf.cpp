@@ -26,8 +26,8 @@
  *                                                                                             *
  *              Original Author:: Jani Penttinen                                               *
  *                                                                                             *
- *                      $Author:: Kenny Mitchell                                               * 
- *                                                                                             * 
+ *                      $Author:: Kenny Mitchell                                               *
+ *                                                                                             *
  *                     $Modtime:: 06/26/02 5:06p                                             $*
  *                                                                                             *
  *                    $Revision:: 7                                                          $*
@@ -48,14 +48,14 @@ static unsigned Get_FVF_Vertex_Size(unsigned FVF)
 	return D3DXGetFVFVertexSize(FVF);
 }
 
-FVFInfoClass::FVFInfoClass(unsigned FVF_, unsigned vertex_size) 
+FVFInfoClass::FVFInfoClass(unsigned FVF_, unsigned vertex_size)
 	:
 	FVF(FVF_),
 	fvf_size(FVF!=0 ? Get_FVF_Vertex_Size(FVF) : vertex_size)
 {
 	location_offset=0;
 	blend_offset=location_offset;
-	
+
 	if ((FVF&D3DFVF_XYZ)==D3DFVF_XYZ) blend_offset+=3*sizeof(float);
 	normal_offset=blend_offset;
 
@@ -69,7 +69,7 @@ FVFInfoClass::FVFInfoClass(unsigned FVF_, unsigned vertex_size)
 	if ((FVF&D3DFVF_DIFFUSE)==D3DFVF_DIFFUSE) specular_offset+=sizeof(DWORD);
 	texcoord_offset[0]=specular_offset;
 
-	if ((FVF&D3DFVF_SPECULAR)==D3DFVF_SPECULAR) texcoord_offset[0]+=sizeof(DWORD);	
+	if ((FVF&D3DFVF_SPECULAR)==D3DFVF_SPECULAR) texcoord_offset[0]+=sizeof(DWORD);
 
 	for (unsigned int i=1; i<D3DDP_MAXTEXCOORD; i++)
 	{

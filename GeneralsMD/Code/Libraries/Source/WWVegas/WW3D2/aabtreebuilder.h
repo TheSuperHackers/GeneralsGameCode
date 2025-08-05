@@ -65,19 +65,19 @@ struct W3dMeshAABTreeNode;
 class AABTreeBuilderClass
 {
 public:
-	
+
 	AABTreeBuilderClass(void);
 	~AABTreeBuilderClass(void);
 
 	void					Build_AABTree(int polycount,TriIndex * polys,int vertcount,Vector3 * verts);
 	void					Build_AABTree(int polycount,Vector3i* polys,int vertcount,Vector3 * verts);
 	void					Export(ChunkSaveClass & csave);
-	
+
 	int					Node_Count(void);
 	int					Poly_Count(void);
 
-	enum 
-	{ 
+	enum
+	{
 		MIN_POLYS_PER_NODE =		4,
 		SMALL_VERTEX =				-100000,
 		BIG_VERTEX =				100000
@@ -90,12 +90,12 @@ private:
 	** wasteful in terms of memory footprint and number of allocations than the
 	** streamlined version found in the actual AABTreeClass.
 	*/
-	struct CullNodeStruct 
+	struct CullNodeStruct
 	{
 		CullNodeStruct(void) : Index(0),Min(0,0,0),Max(0,0,0),Front(NULL),Back(NULL),PolyCount(0),PolyIndices(NULL) {}
-		~CullNodeStruct(void) 
+		~CullNodeStruct(void)
 		{
-			if (Front) { delete Front; } 
+			if (Front) { delete Front; }
 			if (Back) { delete Back; }
 			if (PolyIndices) { delete[] PolyIndices; }
 		}
@@ -114,7 +114,7 @@ private:
 	*/
 	struct SplitChoiceStruct
 	{
-		SplitChoiceStruct(void) : 
+		SplitChoiceStruct(void) :
 			Cost(FLT_MAX),
 			FrontCount(0),
 			BackCount(0),
@@ -122,10 +122,10 @@ private:
 			BMax(SMALL_VERTEX,SMALL_VERTEX,SMALL_VERTEX),
 			FMin(BIG_VERTEX,BIG_VERTEX,BIG_VERTEX),
 			FMax(SMALL_VERTEX,SMALL_VERTEX,SMALL_VERTEX),
-			Plane(AAPlaneClass::XNORMAL,0) 
+			Plane(AAPlaneClass::XNORMAL,0)
 		{
 		}
-		
+
 		float						Cost;				// try to minimize this!
 		int						FrontCount;		// number of polys in front of the plane
 		int						BackCount;		// number of polys behind the plane
@@ -138,7 +138,7 @@ private:
 
 	struct SplitArraysStruct
 	{
-		SplitArraysStruct(void) : 
+		SplitArraysStruct(void) :
 			FrontCount(0),
 			BackCount(0),
 			FrontPolys(NULL),
@@ -181,14 +181,14 @@ private:
 	void								Update_Min(int poly_index,Vector3 & set_min);
 	void								Update_Max(int poly_index,Vector3 & set_max);
 	void								Update_Min_Max(int poly_index, Vector3 & set_min, Vector3 & set_max);
-	
+
 	void								Build_W3D_AABTree_Recursive(CullNodeStruct *	node,
 											W3dMeshAABTreeNode * w3dnodes,
 											uint32 * poly_indices,
 											int & cur_node,
 											int &	cur_poly);
 	/*
-	** Tree 
+	** Tree
 	*/
 	CullNodeStruct *				Root;
 	int								CurPolyIndex;

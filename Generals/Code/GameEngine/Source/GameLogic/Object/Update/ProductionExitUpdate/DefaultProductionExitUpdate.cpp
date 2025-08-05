@@ -109,7 +109,7 @@ void DefaultProductionExitUpdate::exitObjectViaDoor( Object *newObj, ExitDoorTyp
 		if (m_rallyPointExists)
 		{
 			tmp = m_rallyPoint;
-			if (ai && ai->isDoingGroundMovement()) 
+			if (ai && ai->isDoingGroundMovement())
 			{
 				if (TheAI->pathfinder()->adjustDestination(newObj, ai->getLocomotorSet(), &tmp))
 					exitPath.push_back(tmp);
@@ -142,7 +142,7 @@ Bool DefaultProductionExitUpdate::getExitPosition( Coord3D& exitPosition ) const
 	exitPosition.x = loc.X;
 	exitPosition.y = loc.Y;
 	exitPosition.z = loc.Z;
-	
+
 	return TRUE;
 
 }

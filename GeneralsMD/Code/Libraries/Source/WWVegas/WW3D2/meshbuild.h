@@ -26,13 +26,13 @@
  *                                                                                             *
  *                   Org Author:: Greg_h                                                       *
  *                                                                                             *
- *                       Author : Kenny Mitchell                                               * 
- *                                                                                             * 
+ *                       Author : Kenny Mitchell                                               *
+ *                                                                                             *
  *                     $Modtime:: 06/27/02 9:23a                                              $*
  *                                                                                             *
  *                    $Revision:: 2                                                           $*
  *                                                                                             *
- * 
+ *
  * 06/27/02 KM Shader system MAX plugin updates                                       *
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
@@ -64,7 +64,7 @@ class WorldInfoClass
 		WorldInfoClass(void)				{ }
 		virtual ~WorldInfoClass(void)	{ }
 
-		// Public methods		
+		// Public methods
 		virtual Vector3	Get_Shared_Vertex_Normal (Vector3 pos, int smgroup) = 0;
 		virtual bool		Are_Meshes_Smoothed (void) const { return true; }
 };
@@ -86,7 +86,7 @@ class WorldInfoClass
 ** 2. Loop through the verts, looking at each one using Get_Vertex
 ** 3. Loop through the faces, looking at each one using Get_Face
 **
-** *NOTE*  This class is meant to be relatively self-sufficient.  It is used in a 
+** *NOTE*  This class is meant to be relatively self-sufficient.  It is used in a
 ** variety of different applications which are built on completely different
 ** code-bases.  Do not introduce dependencies into this module lightly! :-)
 */
@@ -98,7 +98,7 @@ public:
 	enum {
 		STATE_ACCEPTING_INPUT = 0,		// mesh builder is accepting input triangles
 		STATE_MESH_PROCESSED,			// mesh builder has processed the mesh
-	
+
 		MAX_PASSES = 4,					// maximum number of material passes supported
 		MAX_STAGES = 8,					// maximum number of texture stages supported in a single pass
 	};
@@ -110,12 +110,12 @@ public:
 	~MeshBuilderClass(void);
 
 	/*
-	** VertClass.  The MeshBuilder deals with vertices in this format.  
+	** VertClass.  The MeshBuilder deals with vertices in this format.
 	*/
 	class VertClass
 	{
 	public:
-		VertClass(void)		{ Reset(); } 
+		VertClass(void)		{ Reset(); }
 		void						Reset(void);
 
 	public:
@@ -127,8 +127,8 @@ public:
 		int						BoneIndex;			// bone influence if the mesh is a skin
 
 		int						MaxVertColIndex;	// Index into the Max mesh.vertCol array of this vertex.
-		
-		Vector2					TexCoord[MAX_PASSES][MAX_STAGES];				
+
+		Vector2					TexCoord[MAX_PASSES][MAX_STAGES];
 		Vector3					DiffuseColor[MAX_PASSES];			// diffuse color
 		Vector3					SpecularColor[MAX_PASSES];			// specular color
 		Vector3					DiffuseIllumination[MAX_PASSES];	// pre-calced diffuse illum
@@ -144,7 +144,7 @@ public:
 		int						UniqueIndex;		// used internally!
 		int						ShadeIndex;			// used internally!
 		VertClass *				NextHash;			// used internally!
-	
+
 	};
 
 	/*
@@ -157,7 +157,7 @@ public:
 	public:
 		FaceClass(void)		{ Reset(); }
 		void						Reset(void);									// reset this face
-		
+
 	public:
 		VertClass				Verts[3];										// array of 3 verts
 		int						SmGroup;											// smoothing group
@@ -171,7 +171,7 @@ public:
 		int						VertIdx[3];			// set by builder: "optimized" vertex indices
 		Vector3					Normal;		 		// set by builder: Face normal
 		float32					Dist;			 		// set by builder: Plane distance
-	
+
 		void						Compute_Plane(void);
 		bool						operator != (const FaceClass & that)		{ return !(*this == that); }
 		bool						operator == (const FaceClass & /*that*/)	{ return false; }
@@ -179,27 +179,27 @@ public:
 
 		friend class MeshBuilderClass;
 	};
-	
+
 	/*
 	** To "build" a mesh:
 	** 1. Reset the builder with the approximate number of polys you're going to sumbit, etc.
 	** 3. Submit each face in the form of a FaceClass, set only the fields you need (leave others at default)
 	** 4. Call Build_Mesh
-	*/ 
+	*/
 	void							Reset(int pass_count,int face_count_guess,int face_count_growth_rate);
 	int							Add_Face(const FaceClass & face);
 	void							Build_Mesh(bool compute_normals);
 
 	/*
-	** Optional controls: 
+	** Optional controls:
 	** If one of your passes has more textures than another, you may wish to do the
-	** stripping and sorting based on that channel.  By default, everything will 
+	** stripping and sorting based on that channel.  By default, everything will
 	** be stripped and sorted based on pass 0, stage 0
 	** Sort_Vertices can be used to order the vertices arbitrarily.  I use it to
 	** sort them according to the bone they are attached for skin meshes.
 	*/
 	void							Set_Polygon_Ordering_Channel(int pass,int texstage);
-	
+
 	/*
 	** To use the results:
 	** 1. Call Get_Vertex_Count and Get_Face_Count to get the counts
@@ -237,9 +237,9 @@ public:
 	*/
 	WorldInfoClass *			Peek_World_Info(void) const						{ return WorldInfo; }
 	void							Set_World_Info(WorldInfoClass *world_info)	{ WorldInfo = world_info; }
-	
+
 	/*
-	** Mesh Stats, mainly lots of flags for whether this mesh has various 
+	** Mesh Stats, mainly lots of flags for whether this mesh has various
 	** channels of information.
 	*/
 	struct MeshStatsStruct
@@ -251,7 +251,7 @@ public:
 		bool		HasVertexMaterial[MAX_PASSES];					// has at least one vert material in given pass
 
 		bool		HasPerPolyTexture[MAX_PASSES][MAX_STAGES];	// has 2+ textures in given pass/stage
-		bool		HasPerPolyShader[MAX_PASSES];						// has 2+ shaders in given pass 
+		bool		HasPerPolyShader[MAX_PASSES];						// has 2+ shaders in given pass
 		bool		HasPerVertexMaterial[MAX_PASSES];				// has 2+ vertex materials in given pass
 
 		bool		HasDiffuseColor[MAX_PASSES];						// has diffuse colors in given pass
@@ -350,7 +350,7 @@ inline const MeshBuilderClass::VertClass & MeshBuilderClass::Get_Vertex(int inde
 	assert(State == STATE_MESH_PROCESSED);
 	assert(index >= 0);
 	assert(index < VertCount);
-	return Verts[index];	
+	return Verts[index];
 }
 
 inline const MeshBuilderClass::FaceClass & MeshBuilderClass::Get_Face(int index) const
@@ -366,7 +366,7 @@ inline MeshBuilderClass::VertClass & MeshBuilderClass::Get_Vertex(int index)
 	assert(State == STATE_MESH_PROCESSED);
 	assert(index >= 0);
 	assert(index < VertCount);
-	return Verts[index];	
+	return Verts[index];
 }
 
 inline MeshBuilderClass::FaceClass & MeshBuilderClass::Get_Face(int index)

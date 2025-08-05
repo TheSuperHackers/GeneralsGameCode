@@ -87,7 +87,7 @@ void main(void)
       calcThis();
 
   recursionShell();
-  
+
   showResults();
 }
 

@@ -24,12 +24,12 @@
 
 // FILE: WeaponBonusUpgrade.cpp /////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Electronic Arts Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2002 - All Rights Reserved                  
-//                                                                          
+//
+//                       Electronic Arts Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2002 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 //	created:	May 2002
@@ -37,8 +37,8 @@
 //	Filename: 	WeaponBonusUpgrade.cpp
 //
 //	author:		Chris Huybregts
-//	
-//	purpose:	
+//
+//	purpose:
 //
 //-----------------------------------------------------------------------------
 ///////////////////////////////////////////////////////////////////////////////
@@ -85,11 +85,11 @@ WeaponBonusUpgrade::~WeaponBonusUpgrade( void )
 //-------------------------------------------------------------------------------------------------
 void WeaponBonusUpgrade::upgradeImplementation( )
 {
-	// Very simple; just need to flag the Object as having the player upgrade, and the WeaponSet chooser 
+	// Very simple; just need to flag the Object as having the player upgrade, and the WeaponSet chooser
 	// will do the work of picking the right one from ini.  This comment is as long as the code.
 	Object *obj = getObject();
 	obj->setWeaponBonusCondition( WEAPONBONUSCONDITION_PLAYER_UPGRADE );
-	
+
 }
 
 // ------------------------------------------------------------------------------------------------

@@ -75,7 +75,7 @@ public:
 };
 
 
-class FontCharsClass : public W3DMPO, public RefCountClass 
+class FontCharsClass : public W3DMPO, public RefCountClass
 {
 	W3DMPO_GLUE(FontCharsClass)
 
@@ -84,17 +84,17 @@ public:
 	~FontCharsClass();
 
 	// TR: Hack for unicode font support
-	FontCharsClass					*AlternateUnicodeFont;		
+	FontCharsClass					*AlternateUnicodeFont;
 
 
 	void	Initialize_GDI_Font( const char *font_name, int point_size, bool is_bold );
 	bool	Is_Font( const char *font_name, int point_size, bool is_bold );
-	const char * Get_Name( void )			{ return Name; }	
+	const char * Get_Name( void )			{ return Name; }
 
 	int	Get_Char_Height( void )			{ return CharHeight; }
 	int	Get_Char_Width( WCHAR ch );
 	int	Get_Char_Spacing( WCHAR ch );
-	
+
 	int Get_Extra_Overlap(void) {return PixelOverlap;}
 
 	void	Blit_Char( WCHAR ch, uint16 *dest_ptr, int dest_stride, int x, int y );
@@ -121,13 +121,13 @@ private:
 	int									CurrPixelOffset;
 	int									CharHeight;
 	int									CharAscent;
-	int									CharOverhang;	
+	int									CharOverhang;
 	int									PixelOverlap;
 	int									PointSize;
 	StringClass							GDIFontName;
 	HFONT									OldGDIFont;
 	HBITMAP								OldGDIBitmap;
-	HBITMAP								GDIBitmap;	
+	HBITMAP								GDIBitmap;
 	HFONT									GDIFont;
 	uint8 *								GDIBitmapBits;
 	HDC									MemDC;
@@ -158,11 +158,11 @@ public:
 	void	Set_Base_Location( const Vector2 & loc );
 	bool	Set_Wrapping_Width (float width)					{ if(WrapWidth == width)
 																											return false;
-																										WrapWidth = width; 
+																										WrapWidth = width;
 																										return true;	}
 	bool	Set_Word_Wrap_Centered( bool isCentered ) { if(Centered == isCentered)
 																											return false;
-																										Centered = isCentered; 
+																										Centered = isCentered;
 																										return true;}
 	void Set_Hot_Key_Parse( bool parseHotKey ){ ParseHotKey = parseHotKey; }
 	void Set_Use_Hard_Word_Wrap( bool useHardWrap){ useHardWordWrap = useHardWrap;	}
@@ -242,7 +242,7 @@ private:
 	void	Allocate_New_Surface (const WCHAR *text, bool justCalcExtents = false);
 	void	Release_Pending_Surfaces (void);
 	void	Build_Sentence_Centered (const WCHAR *text, int *hkX, int *hkY);
-	Vector2	Build_Sentence_Not_Centered (const WCHAR *text, int *hkX, int *hkY,bool justCalcExtents = false );		
+	Vector2	Build_Sentence_Not_Centered (const WCHAR *text, int *hkX, int *hkY,bool justCalcExtents = false );
 	//
 	//	Private member data
 	//
@@ -266,7 +266,7 @@ private:
 	bool												IsClippedEnabled;
 	bool												ParseHotKey;
 	bool												useHardWordWrap;
-														
+
 	uint16 *										LockedPtr;
 	int													LockedStride;
 	TextureClass *							CurTexture;

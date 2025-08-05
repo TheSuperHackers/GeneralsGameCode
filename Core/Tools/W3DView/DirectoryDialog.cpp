@@ -98,7 +98,7 @@ Browse_For_Folder (HWND parent_wnd, LPCTSTR initial_path, CString &path)
 	if (::GetOpenFileName (&openfilename) == IDOK) {
 		path		= ::Strip_Filename_From_Path (filename);
 		retval	= true;
-	}	
+	}
 
 	return retval;
 }

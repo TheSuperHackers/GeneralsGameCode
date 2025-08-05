@@ -38,13 +38,13 @@
 #include "W3DDevice/GameClient/W3DDisplayStringManager.h"
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-// PUBLIC FUNCTIONS 
+// PUBLIC FUNCTIONS
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 //-------------------------------------------------------------------------------------------------
 W3DDisplayStringManager::W3DDisplayStringManager( void )
 {
-	for (Int i = 0; i < MAX_GROUPS; ++i) 
+	for (Int i = 0; i < MAX_GROUPS; ++i)
 	{
 		m_groupNumeralStrings[i] = NULL;
 	}
@@ -56,7 +56,7 @@ W3DDisplayStringManager::W3DDisplayStringManager( void )
 //-------------------------------------------------------------------------------------------------
 W3DDisplayStringManager::~W3DDisplayStringManager( void )
 {
-	for (Int i = 0; i < MAX_GROUPS; ++i) 
+	for (Int i = 0; i < MAX_GROUPS; ++i)
 	{
 		if (m_groupNumeralStrings[i])
 			freeDisplayString(m_groupNumeralStrings[i]);
@@ -78,8 +78,8 @@ void W3DDisplayStringManager::postProcessLoad( void )
 		TheDrawGroupInfo->m_fontName,
 		TheDrawGroupInfo->m_fontSize,
 		TheDrawGroupInfo->m_fontIsBold );
-	
-	for (Int i = 0; i < MAX_GROUPS; ++i) 
+
+	for (Int i = 0; i < MAX_GROUPS; ++i)
 	{
 		m_groupNumeralStrings[i] = newDisplayString();
 		m_groupNumeralStrings[i]->setFont(font);
@@ -150,7 +150,7 @@ void W3DDisplayStringManager::freeDisplayString( DisplayString *string )
 	// sanity
 	if( string == NULL )
 		return;
-			
+
 	// unlink
 	unLink( string );
 
@@ -177,7 +177,7 @@ void W3DDisplayStringManager::update( void )
 	DisplayStringManager::update();
 
 	W3DDisplayString *string = static_cast<W3DDisplayString *>(m_stringList);
-	
+
 	// if the m_currentCheckpoint is valid, use it for the starting point for the search
 	if (m_currentCheckpoint) {
 		string = static_cast<W3DDisplayString *>(m_currentCheckpoint);
@@ -189,7 +189,7 @@ void W3DDisplayStringManager::update( void )
 																					render resources freed */
 
 	int numStrings = 10;
-	// looping through all the strings eats up a lot of ambient time. Instead, 
+	// looping through all the strings eats up a lot of ambient time. Instead,
 	// loop through 10 (arbitrarily chosen) or till the end is hit.
 	while ( numStrings-- && string)
 	{
@@ -216,14 +216,14 @@ void W3DDisplayStringManager::update( void )
 			// in future cleanup passes of this update routine
 			//
 			string->m_lastResourceFrame = 0;
-			
+
 		}  // end if
 
 		// move to next string
 		string = static_cast<W3DDisplayString *>(string->next());
 
 	}  // end while
-	
+
 	// reset the starting point for our next search
 	m_currentCheckpoint = string;
 }  // end update
@@ -231,7 +231,7 @@ void W3DDisplayStringManager::update( void )
 //-------------------------------------------------------------------------------------------------
 DisplayString *W3DDisplayStringManager::getGroupNumeralString( Int numeral )
 {
-	if (numeral < 0 || numeral > MAX_GROUPS - 1 ) 
+	if (numeral < 0 || numeral > MAX_GROUPS - 1 )
 	{
 		DEBUG_CRASH(("Numeral '%d' out of range.", numeral));
 		return m_groupNumeralStrings[0];

@@ -54,9 +54,9 @@ union GameMessageArgumentType														///< Union of possible data for given
 	Int							integer;
 	Real 						real;
 	Bool						boolean;
-	ObjectID				objectID;									
-	DrawableID			drawableID;									
-	UnsignedInt			teamID;	
+	ObjectID				objectID;
+	DrawableID			drawableID;
+	UnsignedInt			teamID;
 	UnsignedInt			squadID;
 	Coord3D					location;
 	ICoord2D				pixel;
@@ -65,7 +65,7 @@ union GameMessageArgumentType														///< Union of possible data for given
 	WideChar				wChar;
 };
 
-enum GameMessageArgumentDataType CPP_11(: Int) 
+enum GameMessageArgumentDataType CPP_11(: Int)
 {
 	ARGUMENTDATATYPE_INTEGER,
 	ARGUMENTDATATYPE_REAL,
@@ -83,7 +83,7 @@ enum GameMessageArgumentDataType CPP_11(: Int)
 
 class GameMessageArgument : public MemoryPoolObject
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(GameMessageArgument, "GameMessageArgument")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(GameMessageArgument, "GameMessageArgument")
 public:
 	GameMessageArgument*				m_next;									///< The next argument
 	GameMessageArgumentType			m_data;									///< The data storage of an argument
@@ -100,13 +100,13 @@ EMPTY_DTOR(GameMessageArgument)
 class GameMessage : public MemoryPoolObject
 {
 
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(GameMessage, "GameMessage")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(GameMessage, "GameMessage")
 
 public:
 
 	/// The various messages which can be sent in a MessageStream
 	/// @todo Replace this hardcoded enum with a generalized system that can be easily changed and updated
-	/** @todo Because the Client will run faster than Logic, we'll need "superceding" messages for events 
+	/** @todo Because the Client will run faster than Logic, we'll need "superceding" messages for events
 						such as mouse movements so we only send the latest one over the net */
 	/**	@todo Create two classes of message: raw input messages, and command messages. Raw input messages
 						will be destroyed when they reach the end of the stream, whereas command messages will be
@@ -141,7 +141,7 @@ public:
 		MSG_RAW_KEY_UP,															///< (KeyDefType) the given key was released
 
 		// Refined Mouse messages
-		// NOTE: All processing should attempt to use these refined mouse messages, rather than the 
+		// NOTE: All processing should attempt to use these refined mouse messages, rather than the
 		// RAW_* variants. (Please.) :-) jkmcd
 		MSG_MOUSE_LEFT_CLICK,												///< (pixelRegion, 0 sized means its a point), (Int, modifier keys)
 		MSG_MOUSE_LEFT_DOUBLE_CLICK,								///< (pixelRegion, 0 sized means its a point), (Int, modifier keys)
@@ -158,7 +158,7 @@ public:
 		// solely to provide an abstraction layer useful for keyboard/mouse remapping.
 		// they should NEVER be sent over the network.
 		MSG_BEGIN_META_MESSAGES,										///< Marker to delineate "meta" messages
-		
+
 		MSG_META_SAVE_VIEW1,												///< save current view as the given user-defined view
 		MSG_META_SAVE_VIEW2,												///< save current view as the given user-defined view
 		MSG_META_SAVE_VIEW3,												///< save current view as the given user-defined view
@@ -216,7 +216,7 @@ public:
 		MSG_META_VIEW_TEAM8,												///< center view on given user-defined team (but do not affect selection)
 		MSG_META_VIEW_TEAM9,												///< center view on given user-defined team (but do not affect selection)
 
-		MSG_META_SELECT_MATCHING_UNITS,              ///< selects mathcing units, used for both on screen and across map 
+		MSG_META_SELECT_MATCHING_UNITS,              ///< selects mathcing units, used for both on screen and across map
 		MSG_META_SELECT_NEXT_UNIT,									///< select 'next' unit
 		MSG_META_SELECT_PREV_UNIT,									///< select 'prev' unit
 		MSG_META_SELECT_NEXT_WORKER,                ///< select 'next' worker
@@ -257,7 +257,7 @@ public:
 		MSG_META_TAKE_SCREENSHOT,										///< take screenshot
 		MSG_META_ALL_CHEER,													///< Yay! :)
 		MSG_META_TOGGLE_ATTACKMOVE,									///< enter attack-move mode
-		
+
 		MSG_META_BEGIN_CAMERA_ROTATE_LEFT,
 		MSG_META_END_CAMERA_ROTATE_LEFT,
 		MSG_META_BEGIN_CAMERA_ROTATE_RIGHT,
@@ -368,7 +368,7 @@ public:
 		MSG_META_DEBUG_VTUNE_OFF,										///< turn on/off Vtune
 		MSG_META_DEBUG_TOGGLE_FEATHER_WATER, 			///< toggle lorenzen's feather water
 
-		MSG_META_DEBUG_DUMP_ASSETS,						///< dumps currently used map assets to a file. 
+		MSG_META_DEBUG_DUMP_ASSETS,						///< dumps currently used map assets to a file.
 
 		MSG_NO_DRAW,																///< show/hide all objects to test Drawing code
 		MSG_META_DEMO_TOGGLE_METRICS,								///< Toggle the metrics on/off
@@ -505,7 +505,7 @@ public:
 		MSG_DO_SPECIAL_POWER,												///< do special
 		MSG_DO_SPECIAL_POWER_AT_LOCATION,						///< do special with target location
 		MSG_DO_SPECIAL_POWER_AT_OBJECT,							///< do special at with target object
-		MSG_SET_RALLY_POINT,												///< (objectID, location) 
+		MSG_SET_RALLY_POINT,												///< (objectID, location)
 		MSG_PURCHASE_SCIENCE,												///< purchase a science
 		MSG_QUEUE_UPGRADE,													///< queue the "research" of an upgrade
 		MSG_CANCEL_UPGRADE,													///< cancel the "research" of an upgrade
@@ -513,10 +513,10 @@ public:
 		MSG_CANCEL_UNIT_CREATE,											///< clicked on UI button to cancel production of a unit
 		MSG_DOZER_CONSTRUCT,												/**< building things requires clicking on a dozer
 																										 selecting what to build, selecting where to
-																										 build it ... this construct message will 
+																										 build it ... this construct message will
 																										 start the actual build process */
 		MSG_DOZER_CONSTRUCT_LINE,										///< Like MSG_CONSTRUCT, but for build procesess that occur in a line (like walls)
-		MSG_DOZER_CANCEL_CONSTRUCT,									///< cancel construction of a building 
+		MSG_DOZER_CANCEL_CONSTRUCT,									///< cancel construction of a building
 		MSG_SELL,																		///< sell a structure
 		MSG_EXIT,																		///< WE want to exit from whatever WE are inside of
 		MSG_EVACUATE,																///< Dump out all of OUR contained objects
@@ -534,8 +534,8 @@ public:
 		MSG_ENTER,																	///< Enter object
 		MSG_DOCK,																		///< Dock with this object
 		MSG_DO_MOVETO,															///< location
-		MSG_DO_ATTACKMOVETO,												///< location 
-		MSG_DO_FORCEMOVETO,													///< location 
+		MSG_DO_ATTACKMOVETO,												///< location
+		MSG_DO_FORCEMOVETO,													///< location
 		MSG_ADD_WAYPOINT,														///< location
 		MSG_DO_GUARD_POSITION,											///< Guard with the currently selected group
 		MSG_DO_GUARD_OBJECT,												///< Guard with the currently selected group
@@ -666,7 +666,7 @@ public:
 	virtual void reset( void ) { };			///< Reset system
 	virtual void update( void ) { };		///< Update system
 
-	GameMessage *getFirstMessage( void ) { return m_firstMessage; }	///< Return the first message 
+	GameMessage *getFirstMessage( void ) { return m_firstMessage; }	///< Return the first message
 
 	virtual void appendMessage( GameMessage *msg );			///< Add message to end of the list
 	virtual void insertMessage( GameMessage *msg, GameMessage *messageToInsertAfter );	// Insert message after messageToInsertAfter.
@@ -680,7 +680,7 @@ protected:
 	GameMessage *m_lastMessage;									///< The last message on the list
 };
 
-/** 
+/**
 	What to do with a GameMessage after a translator has handled it.
 	Use a custom enum (rather than a Bool) to make the code more obvious.
 */
@@ -698,7 +698,7 @@ public:
 };
 
 /**
- * A MessageStream contains an ordered list of messages which can have one or more 
+ * A MessageStream contains an ordered list of messages which can have one or more
  * prioritized message handler functions ("translators") attached to it.
  */
 class MessageStream : public GameMessageList
@@ -720,7 +720,7 @@ public:
 	// Methods NOT Inherited ------------------------------------------------------------------------
 	void propagateMessages( void );													///< Propagate messages through attached translators
 
-	/** 
+	/**
 		Attach a translator function to the stream at a priority value. Lower priorities are executed first.
 		Note that MessageStream assumes ownership of the translator, and is responsible for freeing it!
 	*/

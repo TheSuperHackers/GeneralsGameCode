@@ -23,12 +23,12 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 //----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information					                  
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //----------------------------------------------------------------------------
 //
 // Project:    Generals
@@ -46,7 +46,7 @@
 
 
 //----------------------------------------------------------------------------
-//           Includes                                                      
+//           Includes
 //----------------------------------------------------------------------------
 
 #include <Lib/BaseType.h>
@@ -70,7 +70,7 @@ typedef std::vector<Video>	VecVideo;
 typedef std::vector<Video>::iterator	VecVideoIt;
 
 //----------------------------------------------------------------------------
-//           Video (Struct)                                                   
+//           Video (Struct)
 //----------------------------------------------------------------------------
 struct Video
 {
@@ -146,7 +146,7 @@ class VideoBuffer
 // VideoStreamInterface
 //===============================
 /**
-  * Video stream interface class. 
+  * Video stream interface class.
 	*/
 //===============================
 
@@ -164,7 +164,7 @@ class VideoStreamInterface
 		virtual	VideoStreamInterface* next( void ) = 0;		///< Returns next open stream
 		virtual void update( void ) = 0;									///< Update stream
 		virtual void close( void ) = 0;										///< Close and free stream
-																											
+
 		virtual Bool	isFrameReady( void ) = 0;						///< Is the frame ready to be displayed
 		virtual void	frameDecompress( void ) = 0;				///< Render current frame in to buffer
 		virtual void	frameRender( VideoBuffer *buffer ) = 0; ///< Render current frame in to buffer
@@ -178,7 +178,7 @@ class VideoStreamInterface
 };
 
 //===============================
-// VideoStream 
+// VideoStream
 //===============================
 
 
@@ -191,7 +191,7 @@ class VideoStream : public VideoStreamInterface
 
 		VideoPlayer							*m_player;								///< Video player we were created with
 		VideoStream							*m_next;									///< Next open stream
-																											
+
 		VideoStream();																		///< only VideoPlayer can create these
 		virtual ~VideoStream();
 
@@ -200,7 +200,7 @@ class VideoStream : public VideoStreamInterface
  		virtual	VideoStreamInterface* next( void );				///< Returns next open stream
 		virtual void update( void );											///< Update stream
 		virtual void close( void );												///< Close and free stream
-																											
+
 		virtual Bool	isFrameReady( void );								///< Is the frame ready to be displayed
 		virtual void	frameDecompress( void );						///< Render current frame in to buffer
 		virtual void	frameRender( VideoBuffer *buffer ); ///< Render current frame in to buffer
@@ -215,7 +215,7 @@ class VideoStream : public VideoStreamInterface
 };
 
 //===============================
-// VideoPlayerInterface 
+// VideoPlayerInterface
 //===============================
 /**
   *	Interface for video playback.
@@ -230,12 +230,12 @@ class VideoPlayerInterface : public SubsystemInterface
 		virtual void	init( void ) = 0;														///< Initialize video playback
 		virtual void	reset( void ) = 0;													///< Reset video playback
 		virtual void	update( void ) = 0;													///< Services all video tasks. Should be called frequently
-																															
+
 		virtual void	deinit( void ) = 0;													///< Close down player
-																															
+
 		virtual				~VideoPlayerInterface() {};
-																															
-		// service																								
+
+		// service
 		virtual void	loseFocus( void ) = 0;											///< Should be called when application loses focus
 		virtual void	regainFocus( void ) = 0;										///< Should be called when application regains focus
 
@@ -278,17 +278,17 @@ class VideoPlayer : public VideoPlayerInterface
 		virtual void	init( void );														///< Initialize video playback code
 		virtual void	reset( void );													///< Reset video playback
 		virtual void	update( void );													///< Services all audio tasks. Should be called frequently
-																													
+
 		virtual void	deinit( void );													///< Close down player
-																													
-																													
-		VideoPlayer();																				
-		~VideoPlayer();																				
-																													
-		// service																						
+
+
+		VideoPlayer();
+		~VideoPlayer();
+
+		// service
 		virtual void	loseFocus( void );											///< Should be called when application loses focus
 		virtual void	regainFocus( void );										///< Should be called when application regains focus
-																												
+
 		virtual VideoStreamInterface*	open( AsciiString movieTitle );	///< Open video file for playback
 		virtual VideoStreamInterface*	load( AsciiString movieTitle );	///< Load video file in to memory for playback
 		virtual VideoStreamInterface* firstStream( void );		///< Return the first open/loaded video stream
@@ -305,13 +305,13 @@ class VideoPlayer : public VideoPlayerInterface
 
 		// Implementation specific
 		void remove( VideoStream *stream );										///< remove stream from active list
-		
+
 };
 
 extern VideoPlayerInterface *TheVideoPlayer;
 
 //----------------------------------------------------------------------------
-//           Inlining                                                       
+//           Inlining
 //----------------------------------------------------------------------------
 
 #endif // __GAMECLIENT_VIDEOPLAYER_H_

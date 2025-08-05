@@ -83,7 +83,7 @@ static int vertex_compare(const void *elem1, const void *elem2);
 
 typedef int (*COMPARE_FUNC_TYPE)(const void * elem1,const void * elem2);
 
-COMPARE_FUNC_TYPE Texture_Compare_Funcs[MeshBuilderClass::MAX_PASSES][MeshBuilderClass::MAX_STAGES] = 
+COMPARE_FUNC_TYPE Texture_Compare_Funcs[MeshBuilderClass::MAX_PASSES][MeshBuilderClass::MAX_STAGES] =
 {
 	{ pass0_stage0_compare, pass0_stage1_compare },
 	{ pass1_stage0_compare, pass1_stage1_compare },
@@ -95,7 +95,7 @@ COMPARE_FUNC_TYPE Texture_Compare_Funcs[MeshBuilderClass::MAX_PASSES][MeshBuilde
 /************************************************************************************
 **
 ** FaceHasherClass, support class for the unique faces hash table.  The unique
-** faces table is going to detect exactly duplicated faces and discard them.  It 
+** faces table is going to detect exactly duplicated faces and discard them.  It
 ** appears that the artists occasionally accidentally duplicate a face which causes
 ** problems in the stripping algorithm...
 **
@@ -104,40 +104,40 @@ class FaceHasherClass : public HashCalculatorClass<MeshBuilderClass::FaceClass>
 {
 public:
 
-	virtual bool	Items_Match(const MeshBuilderClass::FaceClass & a, const MeshBuilderClass::FaceClass & b) 
+	virtual bool	Items_Match(const MeshBuilderClass::FaceClass & a, const MeshBuilderClass::FaceClass & b)
 	{
 		// Note: if we want this to detect duplicates that are "rotated", must change
 		// both this function and the Compute_Hash function...
-		return 
+		return
 		(
-			(a.VertIdx[0] == b.VertIdx[0]) && 
-			(a.VertIdx[1] == b.VertIdx[1]) && 
+			(a.VertIdx[0] == b.VertIdx[0]) &&
+			(a.VertIdx[1] == b.VertIdx[1]) &&
 			(a.VertIdx[2] == b.VertIdx[2])
 		);
 	}
 
 	virtual void	Compute_Hash(const MeshBuilderClass::FaceClass & item)
 	{
-		HashVal = (int)(item.VertIdx[0]*12345.6f + item.VertIdx[1]*1714.38484f + item.VertIdx[2]*27561.3f)&1023; 
+		HashVal = (int)(item.VertIdx[0]*12345.6f + item.VertIdx[1]*1714.38484f + item.VertIdx[2]*27561.3f)&1023;
 	}
 
-	virtual int		Num_Hash_Bits(void) 
-	{ 
-		return 10;  
+	virtual int		Num_Hash_Bits(void)
+	{
+		return 10;
 	}
-	
+
 	virtual int		Num_Hash_Values(void)
 	{
-		return 1;	
+		return 1;
 	}
-	
+
 	virtual int		Get_Hash_Value(int /*index*/)
 	{
 		return HashVal;
 	}
 
 private:
-	
+
 	int HashVal;
 
 };
@@ -154,12 +154,12 @@ class VertexArrayClass
 {
 public:
 
-	enum 
-	{ 
+	enum
+	{
 		HASH_TABLE_SIZE = 4096,
 	};
 
-	VertexArrayClass(int maxsize,int match_normals = 0) 
+	VertexArrayClass(int maxsize,int match_normals = 0)
 	{
 		Verts = NULL;
 		assert(maxsize > 0);
@@ -217,9 +217,9 @@ public:
 
 		for (x = xstart - EPSILON; x <= xstart + EPSILON + 0.0000001; x+= EPSILON) {
 			for (y = ystart - EPSILON; y <= ystart + EPSILON + 0.000001; y+= EPSILON) {
-				
+
 				hash = compute_hash((float)x,(float)y);
-		
+
 				if (hash != lasthash) {
 					MeshBuilderClass::VertClass * test_vert = HashTable[hash];
 					while (test_vert) {
@@ -227,13 +227,13 @@ public:
 						if (Verts_Shading_Match(vert,*test_vert)) {
 							if (shadeindex == 0xFFFFFFFF) {
 								shadeindex = test_vert->UniqueIndex;
-							
+
 								// mask the "master" smoothed vertex's smoothing group with our
 								// face's smoothing group since we are going to be smoothed with it.
 								Verts[shadeindex].SharedSmGroup &= vert.SmGroup;
 							}
 						}
-							
+
 						if (Verts_Match(vert,*test_vert)) {
 							return test_vert->UniqueIndex;
 						}
@@ -263,10 +263,10 @@ public:
 			Verts[newindex].ShadeIndex = shadeindex;
 
 		}
-		
+
 		// This is a new vertex, store the face's smoothing group with it
 		//Verts[newindex].SmoothingGroup = face_smooth_group;
-		
+
 		// And add to the hash table
 		x = (vert.Position.X - Center.X) / Extent.X;
 		y = (vert.Position.Y - Center.Y) / Extent.Y;
@@ -310,7 +310,7 @@ public:
 				return 0;
 			if (v0.VertexMaterialIndex[pass] != v1.VertexMaterialIndex[pass])
 				return 0;
-			
+
 		}
 
 		// texcoords must match for all passes and stages
@@ -331,13 +331,13 @@ public:
 	{
 		float dv = (v0.Position - v1.Position).Length();
 		int smgroup_match = ((v0.SmGroup & v1.SmGroup) || (v0.SmGroup == v1.SmGroup));
-	
-		if (	(dv < EPSILON) && 
+
+		if (	(dv < EPSILON) &&
 				(smgroup_match) &&
-				(v0.Id == v1.Id)) 
+				(v0.Id == v1.Id))
 		{
 			return 1;
-		} 
+		}
 		return 0;
 	}
 
@@ -360,7 +360,7 @@ private:
 
 	MeshBuilderClass::VertClass * *	HashTable;
 	int										MatchNormals;
-	
+
 	Vector3									Center;
 	Vector3									Extent;
 
@@ -396,7 +396,7 @@ void MeshBuilderClass::VertClass::Reset(void)
 	MaxVertColIndex = 0;
 
 	for (int pass = 0; pass < MeshBuilderClass::MAX_PASSES; pass++) {
-		
+
 		DiffuseColor[pass].Set(1,1,1);
 		SpecularColor[pass].Set(1,1,1);
 		DiffuseIllumination[pass].Set(0,0,0);
@@ -497,8 +497,8 @@ bool MeshBuilderClass::FaceClass::Is_Degenerate(void)
 				return true;
 			}
 
-			if (	(Verts[v0].Position.X == Verts[v1].Position.X) && 
-					(Verts[v0].Position.Y == Verts[v1].Position.Y) && 
+			if (	(Verts[v0].Position.X == Verts[v1].Position.X) &&
+					(Verts[v0].Position.Y == Verts[v1].Position.Y) &&
 					(Verts[v0].Position.Z == Verts[v1].Position.Z) )
 			{
 				return true;
@@ -571,7 +571,7 @@ MeshBuilderClass::MeshBuilderClass(int pass_count,int face_count_guess,int face_
 	PolyOrderStage(0),
 	WorldInfo (NULL)
 {
-	Reset(pass_count,face_count_guess,face_count_growth_rate);		
+	Reset(pass_count,face_count_guess,face_count_growth_rate);
 }
 
 /***********************************************************************************************
@@ -639,7 +639,7 @@ void MeshBuilderClass::Free(void)
 void MeshBuilderClass::Reset(int passcount,int face_count_guess,int face_count_growth_rate)
 {
 	Free();
-	
+
 	State = STATE_ACCEPTING_INPUT;
 	PassCount = passcount;
 	AllocFaceCount = face_count_guess;
@@ -673,11 +673,11 @@ int MeshBuilderClass::Add_Face(const FaceClass & face)
 
 	// copy the face
 	Faces[CurFace] = face;
-	
+
 	// calculate the normal
 	Faces[CurFace].Compute_Plane();
 
-	// set the "add index" 
+	// set the "add index"
 	Faces[CurFace].AddIndex = CurFace;
 
 	// copy the smoothing group into each vert
@@ -820,7 +820,7 @@ void MeshBuilderClass::Compute_Vertex_Normals(void)
 			int shadeindex = Verts[vertindex].ShadeIndex;
 			Verts[shadeindex].Normal += Faces[faceidx].Normal;
 		}
-	}	
+	}
 
 	/*
 	** Smooth this mesh with neighboring meshes!
@@ -860,7 +860,7 @@ void MeshBuilderClass::Remove_Degenerate_Faces(void)
 	int faceidx;
 	FaceHasherClass facehasher;
 	UniqueArrayClass<MeshBuilderClass::FaceClass> uniquefaces(FaceCount,FaceCount/4,&facehasher);
-	
+
 	for (faceidx = 0; faceidx < FaceCount; faceidx++) {
 		if (!Faces[faceidx].Is_Degenerate()) {
 			uniquefaces.Add(Faces[faceidx]);
@@ -905,7 +905,7 @@ void MeshBuilderClass::Compute_Mesh_Stats(void)
 	int	vmat_index[MAX_PASSES];
 
 	Stats.Reset();
-	
+
 	for (pass = 0; pass<MAX_PASSES; pass++) {
 		for (stage = 0; stage < MAX_STAGES; stage++) {
 			tex_index[pass][stage] = Faces[0].TextureIndex[pass][stage];
@@ -915,7 +915,7 @@ void MeshBuilderClass::Compute_Mesh_Stats(void)
 	}
 
 	for (pass = 0; pass<MAX_PASSES; pass++) {
-		
+
 		for (stage = 0; stage<MAX_STAGES; stage++) {
 			for (face_index=0; face_index < FaceCount; face_index++) {
 				if (Faces[face_index].TextureIndex[pass][stage] != tex_index[pass][stage]) {
@@ -961,7 +961,7 @@ void MeshBuilderClass::Compute_Mesh_Stats(void)
 				break;
 			}
 		}
-	
+
 		for (vert_index=0; vert_index < VertCount; vert_index++) {
 			if (Verts[vert_index].DiffuseIllumination[pass] != Vector3(0,0,0)) {
 				Stats.HasDiffuseIllumination[pass] = true;
@@ -969,7 +969,7 @@ void MeshBuilderClass::Compute_Mesh_Stats(void)
 			}
 		}
 
-		
+
 		for (stage = 0; stage<MAX_STAGES; stage++) {
 			for (face_index=0; face_index < FaceCount; face_index++) {
 				if (Faces[face_index].TextureIndex[pass][stage] != -1) {
@@ -1087,7 +1087,7 @@ void MeshBuilderClass::Compute_Bounding_Sphere(Vector3 * set_center,float * set_
 			zmax.X = Verts[i].Position.X; zmax.Y = Verts[i].Position.Y; zmax.Z = Verts[i].Position.Z;
 		}
 	}
-	
+
 	// xspan = distance between the 2 points xmin and xmax squared.
 	// same goes for yspan and zspan.
 	dx = xmax.X - xmin.X;
@@ -1123,7 +1123,7 @@ void MeshBuilderClass::Compute_Bounding_Sphere(Vector3 * set_center,float * set_
 		dia2 = zmax;
 	}
 
-	
+
 	// Compute initial center and radius and radius squared
 	Vector3 center;
 	center.X = (dia1.X + dia2.X) / 2.0f;
@@ -1137,7 +1137,7 @@ void MeshBuilderClass::Compute_Bounding_Sphere(Vector3 * set_center,float * set_
 	double radsqr = dx*dx + dy*dy + dz*dz;
 	double radius = sqrt(radsqr);
 
-	
+
 	// SECOND PASS:
 	// Increment current sphere if any points fall outside of it.
 	for (i=0; i<VertCount; i++) {
@@ -1145,15 +1145,15 @@ void MeshBuilderClass::Compute_Bounding_Sphere(Vector3 * set_center,float * set_
 		dx = Verts[i].Position.X - center.X;
 		dy = Verts[i].Position.Y - center.Y;
 		dz = Verts[i].Position.Z - center.Z;
-		
+
 		double testrad2 = dx*dx + dy*dy + dz*dz;
 
 		if (testrad2 > radsqr) {
-			
+
 			// this point was outside the old sphere, compute a new
 			// center point and radius which contains this point
 			double testrad = sqrt(testrad2);
-			
+
 			// adjust center and radius
 			radius = (radius + testrad) / 2.0;
 			radsqr = radius * radius;
@@ -1196,7 +1196,7 @@ void MeshBuilderClass::Optimize_Mesh(bool compute_normals)
 	}
 
 	VertexArrayClass unique_verts(FaceCount * 3,match_normals);
-	
+
 	/*
 	** Find the min and max of the array of vertices
 	*/
@@ -1205,7 +1205,7 @@ void MeshBuilderClass::Optimize_Mesh(bool compute_normals)
 
 	for (faceidx = 0; faceidx < FaceCount; faceidx++) {
 		for (facevertidx = 0; facevertidx < 3; facevertidx++) {
-			
+
 			minv.Update_Min(Faces[faceidx].Verts[facevertidx].Position);
 			maxv.Update_Max(Faces[faceidx].Verts[facevertidx].Position);
 		}
@@ -1221,9 +1221,9 @@ void MeshBuilderClass::Optimize_Mesh(bool compute_normals)
 	*/
 	for (faceidx = 0; faceidx < FaceCount; faceidx++) {
 		for (facevertidx = 0; facevertidx < 3; facevertidx++) {
-			Faces[faceidx].VertIdx[facevertidx] = 
+			Faces[faceidx].VertIdx[facevertidx] =
 				unique_verts.Submit_Vertex(Faces[faceidx].Verts[facevertidx]);
-		}		
+		}
 	}
 
 	/*
@@ -1241,7 +1241,7 @@ void MeshBuilderClass::Optimize_Mesh(bool compute_normals)
 	for (vertidx=0; vertidx<VertCount;vertidx++) {
 		Verts[vertidx] = unique_verts[vertidx];
 	}
-	
+
 	/*
 	** Build a new array of faces, removing degenerate faces
 	*/
@@ -1259,12 +1259,12 @@ void MeshBuilderClass::Optimize_Mesh(bool compute_normals)
 
 	/*
 	** An "Optimal" mesh will follow the following rules:
-	** 
+	**
 	** Triangle Ordering:
 	** - Triangles are in strip order
 	** - Triangles are sorted by textures and detail textures in all passes (!?)
 	** - Triangles are sorted by shader in all passes(!)
-	** 
+	**
 	** Vertex Ordering:
 	** - Skin matrix order if the mesh is being "skinned"
    ** - Few vertex material switches
@@ -1272,7 +1272,7 @@ void MeshBuilderClass::Optimize_Mesh(bool compute_normals)
 	**
 	** All verts should use the same data fields in each pass (alpha, dcg, ect)
 	** All triangles must use same number of passes.
-	** 
+	**
 	** Here is how I will attempt to get as "close as possible" to this
 	** - find the pass and stage which has the "worst-case" number of textures
 	**   and sort all polys with respect to the textures in that pass and stage
@@ -1285,14 +1285,14 @@ void MeshBuilderClass::Optimize_Mesh(bool compute_normals)
 	** We should throw up a warning flag in the asset manager whenever we encounter
 	** a mesh which uses more than one of these per pass...
 	*/
-	Compute_Mesh_Stats();	
+	Compute_Mesh_Stats();
 	Stats.UVSplitCount = unique_verts.UVSplits;
 
 	/*
 	** Sort the polys by texture
 	*/
 	qsort(Faces,FaceCount,sizeof(FaceClass),Texture_Compare_Funcs[PolyOrderPass][PolyOrderStage]);
-		
+
 	/*
 	** Sort the vertices by bone index and vertex material
 	*/
@@ -1325,21 +1325,21 @@ void MeshBuilderClass::Optimize_Mesh(bool compute_normals)
  *=============================================================================================*/
 void MeshBuilderClass::Strip_Optimize_Mesh(void)
 {
-	WingedEdgeStruct *		edgehash[512];		
+	WingedEdgeStruct *		edgehash[512];
 	WingedEdgeStruct *		edgetab			= new WingedEdgeStruct[FaceCount*3];
 	WingedEdgePolyStruct *	pedges			= new WingedEdgePolyStruct[FaceCount];
-	
+
 	FaceClass *					newpolys			= new FaceClass[FaceCount];
 	int *							newmat			= new int[FaceCount];
 	int *							premap			= new int[FaceCount];
 	int *							vtimestamp		= new int[VertCount];
-	
+
 	int							vcount			= 0;
 	int							polysinserted	= 0;
 	int							lastmat			= 0;
 	int							edgecount		= 0;
 	int							i,j;
-	
+
 	// init the tables
 	memset(edgehash,0,sizeof(WingedEdgeStruct *) * 512);
 	memset(edgetab,0,sizeof(WingedEdgeStruct) * FaceCount * 3);
@@ -1349,12 +1349,12 @@ void MeshBuilderClass::Strip_Optimize_Mesh(void)
 	for (i=0; i<VertCount; i++) {
 		vtimestamp[i] = -1;
 	}
-	
+
 	// Build the edge table for the mesh
 	// Oct 20,1998: modifying so that every place we were looking at the
 	// material index, we now use TextureIndex[PolyOrderPass][PolyOrderStage]
 	for (i=0; i<FaceCount; i++) {
-		
+
 		int mat = Faces[i].TextureIndex[PolyOrderPass][PolyOrderStage];
 
 		for (j=0; j<3; j++) {
@@ -1368,7 +1368,7 @@ void MeshBuilderClass::Strip_Optimize_Mesh(void)
 
 			v0 = j;
 			if (v0 < 2) v1 = v0+1; else v1 = 0;
-			
+
 			v0 = Faces[i].VertIdx[v0];
 			v1 = Faces[i].VertIdx[v1];
 
@@ -1388,7 +1388,7 @@ void MeshBuilderClass::Strip_Optimize_Mesh(void)
 
 				// found the edge
 				edge->Poly[1] = i;
-			
+
 			} else {
 
 				// create new edge and link it to hash table
@@ -1400,7 +1400,7 @@ void MeshBuilderClass::Strip_Optimize_Mesh(void)
 				edge->Poly[0] = i;
 				edge->Poly[1] = -1;
 				edge->MaterialIdx  = mat;
-			}			
+			}
 
 			pedges[i].Edge[j] = edge;
 		}
@@ -1421,8 +1421,8 @@ void MeshBuilderClass::Strip_Optimize_Mesh(void)
 
 		// first attempt to minimize material switches by choosing a polygon with same material
 		// as the starting poly. Basically what we want is the poly with same material with
-		// least shared edges and most recent vertices (as we'd like to start the strip from 
-		// a 'corner polygon'). This pass is done only if mesh has multiple materials. 
+		// least shared edges and most recent vertices (as we'd like to start the strip from
+		// a 'corner polygon'). This pass is done only if mesh has multiple materials.
 		// The second pass scans through all polygons.
 
 		// this loop is O(N*N) -> might turn a bit nasty on larger meshes. Try
@@ -1432,18 +1432,18 @@ void MeshBuilderClass::Strip_Optimize_Mesh(void)
 		{
 			// loop through all polygons
 			for (i = 0; i < FaceCount; i++) {
-			
+
 				// if polygon not picked yet
 				if (premap[i]==-1) {
 
 					// if material mismatch, cannot choose poly (except in pass 1)
-					if (findpass == 0 && Faces[i].TextureIndex[PolyOrderPass][PolyOrderStage] != lastmat)		
+					if (findpass == 0 && Faces[i].TextureIndex[PolyOrderPass][PolyOrderStage] != lastmat)
 						continue;
 
 					// calculate number of shared edges
 					for (c = 0, j = 0; j < 3; j++) {
-						
-						// if edge j is shared by two tris, 
+
+						// if edge j is shared by two tris,
 						// use a weight factor of vCount for each edge
 						if (pedges[i].Edge[j]->Poly[1] >= 0) {
 							c += (vcount+1);
@@ -1486,7 +1486,7 @@ void MeshBuilderClass::Strip_Optimize_Mesh(void)
 		for (int edge_index = 0; (edge_index < 3) && !found_shared_edge; edge_index++) {
 
 			for (int side_index = 0; (side_index < 2) && !found_shared_edge; side_index++) {
-				
+
 				// if this polygon is not the startpoly and it is not "taken", then this edge is ok!
 				int poly = pedges[startpoly].Edge[edge_index]->Poly[side_index];
 				if ((poly != -1) && (poly != startpoly) && (premap[poly] == -1)) {
@@ -1496,7 +1496,7 @@ void MeshBuilderClass::Strip_Optimize_Mesh(void)
 					for (int vidx=0; vidx<3; vidx++) {
 						if (	(newpoly->VertIdx[vidx] != pedges[startpoly].Edge[edge_index]->Vertex[0]) &&
 								(newpoly->VertIdx[vidx] != pedges[startpoly].Edge[edge_index]->Vertex[1])) {
-						
+
 								first_vert = newpoly->VertIdx[vidx];
 								break;
 						}
@@ -1509,16 +1509,16 @@ void MeshBuilderClass::Strip_Optimize_Mesh(void)
 						newpoly->VertIdx[0] = newpoly->VertIdx[1];
 						newpoly->VertIdx[1] = newpoly->VertIdx[2];
 						newpoly->VertIdx[2] = tmp;
-					}	
+					}
 
-					// ok, we found a shareable edge and adjusted our poly so the strip 
+					// ok, we found a shareable edge and adjusted our poly so the strip
 					// will start with it.  Now break out of this loop...
 					found_shared_edge = true;
 					break;
 				}
 			}
 		}
-		
+
 		// if a shared edge wasn't found, just copy the poly
 		if (!found_shared_edge) {
 			newpolys[polysinserted] = Faces[startpoly];
@@ -1535,9 +1535,9 @@ void MeshBuilderClass::Strip_Optimize_Mesh(void)
 		}
 
 		// If we have no shared edges, this is a lone poly, start another strip
-		if (pedges[startpoly].Edge[0]->Poly[1] == -1 &&					
+		if (pedges[startpoly].Edge[0]->Poly[1] == -1 &&
 			pedges[startpoly].Edge[1]->Poly[1] == -1 &&
-			pedges[startpoly].Edge[2]->Poly[1] == -1) 
+			pedges[startpoly].Edge[2]->Poly[1] == -1)
 				continue;
 
 		// Build the strip starting from the polygon chosen in the previous loop
@@ -1554,16 +1554,16 @@ void MeshBuilderClass::Strip_Optimize_Mesh(void)
 			nextpoly		= -1;
 
 			for (i = 0; i < 3; i++) {
-				
+
 				// if edge 'i' of startpoly matches the vertices in the fifo
 				if	((pedges[startpoly].Edge[i]->Vertex[0] == vFIFO[0] && pedges[startpoly].Edge[i]->Vertex[1] == vFIFO[1]) ||
 					(pedges[startpoly].Edge[i]->Vertex[1] == vFIFO[0] && pedges[startpoly].Edge[i]->Vertex[0] == vFIFO[1]))
 				{
 
 					for (j = 0; j < 2; j++) {
-						
+
 						// if poly 'j' attached to this edge has not been used already, use it!
-						if (pedges[startpoly].Edge[i]->Poly[j] > -1 && 
+						if (pedges[startpoly].Edge[i]->Poly[j] > -1 &&
 							premap[pedges[startpoly].Edge[i]->Poly[j]] == -1)
 						{
 							nextpoly = pedges[startpoly].Edge[i]->Poly[j];
@@ -1577,7 +1577,7 @@ void MeshBuilderClass::Strip_Optimize_Mesh(void)
 			break;
 
 			found:;
-	
+
 			// now, find the new vertex (two verts are on the edge, find the third)
 			int nw = -1;
 			for (i = 0; i < 3; i++) {
@@ -1623,7 +1623,7 @@ void MeshBuilderClass::Strip_Optimize_Mesh(void)
 		}
 	}
 
-	// Use the premap array to get the rest of the info into the new face table, 
+	// Use the premap array to get the rest of the info into the new face table,
 	for (i=0; i<FaceCount; i++) {
 
 		int old_idx = i;
@@ -1690,7 +1690,7 @@ void MeshBuilderClass::Grow_Face_Array(void)
 	for (int i=0; i<oldcount; i++) {
 		Faces[i] = oldfaces[i];
 	}
-	
+
 	delete[] oldfaces;
 }
 
@@ -1749,7 +1749,7 @@ int face_material_compare(const void *elem1, const void *elem2 )
 {
 	MeshBuilderClass::FaceClass * f0 = (MeshBuilderClass::FaceClass *)elem1;
 	MeshBuilderClass::FaceClass * f1 = (MeshBuilderClass::FaceClass *)elem2;
-	
+
 	if (f0->TextureIndex[0][0] < f1->TextureIndex[0][0]) return -1;
 	if (f0->TextureIndex[0][0] > f1->TextureIndex[0][0]) return 1;
 	return 0;

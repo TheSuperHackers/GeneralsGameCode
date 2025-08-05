@@ -66,7 +66,7 @@ void ControlBar::updateOCLTimerTextDisplay( UnsignedInt totalSeconds, Real perce
 		text.format( TheGameText->fetch( "CONTROLBAR:OCLTimerDesc" ), minutes, seconds );
 
 	GadgetStaticTextSetText( descWindow, text );
-	GadgetProgressBarSetProgress(barWindow, (percent * 100));  
+	GadgetProgressBarSetProgress(barWindow, (percent * 100));
 
 	// record this as the last time displayed
 	m_displayedOCLTimerSeconds = totalSeconds;
@@ -95,7 +95,7 @@ void ControlBar::populateOCLTimer( Object *creatorObject )
 	setControlCommand( win, commandButton );
 	win->winSetStatus( WIN_STATUS_USE_OVERLAY_STATES );
 
-	
+
 	// set the text percent and bar of our timer we are displaying
 	updateContextOCLTimer( );
 
@@ -117,7 +117,7 @@ void ControlBar::updateContextOCLTimer( void )
 	UnsignedInt seconds = frames / LOGICFRAMES_PER_SECOND;
 
 	Real percent = update->getCountdownPercent();
-	
+
 	// if the time has changed since what was last shown to the user update the text
 	if( m_displayedOCLTimerSeconds != seconds )
 		updateOCLTimerTextDisplay( seconds, percent );

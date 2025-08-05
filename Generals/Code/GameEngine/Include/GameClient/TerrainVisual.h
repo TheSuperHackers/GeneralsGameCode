@@ -46,7 +46,7 @@ class Drawable;
 /** LOD values for terrain, keep this in sync with TerrainLODNames[] */
 //-------------------------------------------------------------------------------------------------
 typedef enum _TerrainLOD CPP_11(: Int)
-{ 
+{
 	TERRAIN_LOD_INVALID								= 0,
 	TERRAIN_LOD_MIN										= 1,  // note that this is less than max
 	TERRAIN_LOD_STRETCH_NO_CLOUDS			= 2,
@@ -62,7 +62,7 @@ typedef enum _TerrainLOD CPP_11(: Int)
 
 } TerrainLOD;
 #ifdef DEFINE_TERRAIN_LOD_NAMES
-static const char * TerrainLODNames[] = 
+static const char * TerrainLODNames[] =
 {
 	"NONE",
 	"MIN",
@@ -107,8 +107,8 @@ public:
 
 	/** intersect the ray with the terrain, if a hit occurs TRUE is returned
 	and the result point on the terrain is returned in "result" */
-	virtual Bool intersectTerrain( Coord3D *rayStart, 
-																 Coord3D *rayEnd, 
+	virtual Bool intersectTerrain( Coord3D *rayStart,
+																 Coord3D *rayEnd,
 																 Coord3D *result ) { return FALSE; }
 
 	//
@@ -137,15 +137,15 @@ public:
 	/// set detail of terrain tracks.
 	virtual void setTerrainTracksDetail(void)=0;
 	virtual void setShoreLineDetail(void)=0;
-		
-	/// Add a bib for an object at location.  
+
+	/// Add a bib for an object at location.
 	virtual void addFactionBib(Object *factionBuilding, Bool highlight, Real extra = 0)=0;
-	/// Remove a bib.  
+	/// Remove a bib.
 	virtual void removeFactionBib(Object *factionBuilding)=0;
 
-	/// Add a bib for a drawable at location.  
+	/// Add a bib for a drawable at location.
 	virtual void addFactionBibDrawable(Drawable *factionBuilding, Bool highlight, Real extra = 0)=0;
-	/// Remove a bib.  
+	/// Remove a bib.
 	virtual void removeFactionBibDrawable(Drawable *factionBuilding)=0;
 
 	virtual void removeAllBibs(void)=0;
@@ -156,7 +156,7 @@ public:
 	// Modify height.
 	//
 	virtual void setRawMapHeight(const ICoord2D *gridPos, Int height)=0;
-	
+
 	/// Replace the skybox texture
 	virtual void replaceSkyboxTextures(const AsciiString *oldTexName[NumSkyboxTextures], const AsciiString *newTexName[NumSkyboxTextures])=0;
 

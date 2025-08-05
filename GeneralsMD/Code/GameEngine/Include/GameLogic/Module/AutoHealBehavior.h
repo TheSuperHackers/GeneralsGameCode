@@ -27,7 +27,7 @@
 // Desc:   Update that heals itself
 //------------------------------------------
 // Modified by Kris Morness, September 2002
-// Kris: Added the ability to add effects, radius healing, and restricting the type of objects 
+// Kris: Added the ability to add effects, radius healing, and restricting the type of objects
 //       subjected to the heal (or repair).
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -81,16 +81,16 @@ public:
 		m_forbiddenKindOf.clear();
 	}
 
-	static void buildFieldParse(MultiIniFieldParse& p) 
+	static void buildFieldParse(MultiIniFieldParse& p)
 	{
-		static const FieldParse dataFieldParse[] = 
+		static const FieldParse dataFieldParse[] =
 		{
 			{ "StartsActive",	INI::parseBool, NULL, offsetof( AutoHealBehaviorModuleData, m_initiallyActive ) },
 			{ "SingleBurst",	INI::parseBool, NULL, offsetof( AutoHealBehaviorModuleData, m_singleBurst ) },
 			{ "HealingAmount",		INI::parseInt,												NULL, offsetof( AutoHealBehaviorModuleData, m_healingAmount ) },
 			{ "HealingDelay",			INI::parseDurationUnsignedInt,				NULL, offsetof( AutoHealBehaviorModuleData, m_healingDelay ) },
 			{ "Radius",						INI::parseReal,												NULL, offsetof( AutoHealBehaviorModuleData, m_radius ) },
-			{ "KindOf",						KindOfMaskType::parseFromINI,											NULL, offsetof( AutoHealBehaviorModuleData, m_kindOf ) },		
+			{ "KindOf",						KindOfMaskType::parseFromINI,											NULL, offsetof( AutoHealBehaviorModuleData, m_kindOf ) },
 			{ "ForbiddenKindOf",	KindOfMaskType::parseFromINI,											NULL, offsetof( AutoHealBehaviorModuleData, m_forbiddenKindOf ) },
 			{ "RadiusParticleSystemName",					INI::parseParticleSystemTemplate,	NULL, offsetof( AutoHealBehaviorModuleData, m_radiusParticleSystemTmpl ) },
 			{ "UnitHealPulseParticleSystemName",	INI::parseParticleSystemTemplate,	NULL, offsetof( AutoHealBehaviorModuleData, m_unitHealPulseParticleSystemTmpl ) },
@@ -109,7 +109,7 @@ public:
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-class AutoHealBehavior : public UpdateModule, 
+class AutoHealBehavior : public UpdateModule,
 												 public UpgradeMux,
 												 public DamageModuleInterface
 {
@@ -143,8 +143,8 @@ public:
 
 protected:
 
-	virtual void upgradeImplementation() 
-	{ 
+	virtual void upgradeImplementation()
+	{
 		setWakeFrame(getObject(), UPDATE_SLEEP_NONE);
 	}
 
@@ -170,7 +170,7 @@ protected:
 	}
 
 	inline Bool isUpgradeActive() const { return isAlreadyUpgraded(); }
-	
+
 	virtual Bool isSubObjectsUpgrade() { return false; }
 
 
@@ -180,7 +180,7 @@ private:
 
 	ParticleSystemID m_radiusParticleSystemID;
 
-	UnsignedInt m_soonestHealFrame;/** I need to record this, because with multiple wake up sources, 
+	UnsignedInt m_soonestHealFrame;/** I need to record this, because with multiple wake up sources,
 																		I can't rely solely on my sleeping.  So this will guard onDamage's wake up.
 																		I could guard the act of healing, but that would defeat the gain of being
 																		a sleepy module.  I never want to run update unless I am going to heal.

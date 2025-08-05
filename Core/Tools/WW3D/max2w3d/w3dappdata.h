@@ -61,7 +61,7 @@
 **  - There are bits stored in AppData for each node
 **  - These bits indicate wether something should be exported as hierarchy,
 **    geometry (and if so, what type of geometry: mesh, collision box, bitmap, etc)
-** 
+**
 ** When we say something is "Hierarchy" that means its transform should be put
 ** into any hierarchy tree or motion being created.  In some places I used
 ** the term "Bone" which means the same thing.
@@ -113,7 +113,7 @@ bool	Is_Shatterable(INode * node);
 bool	Is_NPatchable(INode * node);
 
 /*
-** Proxy support.  If a node has a name which contains a ~ it is considered a 
+** Proxy support.  If a node has a name which contains a ~ it is considered a
 ** proxy for an application defined named object.  This overrides all other
 ** settings (in the future, we shouldn't do things this way!)
 */
@@ -145,7 +145,7 @@ inline bool Is_Proxy(INode &node)
 
 
 /*
-** The W3DAppData0Struct contains a bitfield.  These #defines are 
+** The W3DAppData0Struct contains a bitfield.  These #defines are
 ** used to interpret the bits.
 ** (gth) NOTE: AppData0 is now OBSOLETE!!!  Use W3DAppData2Struct now.
 */
@@ -207,7 +207,7 @@ struct W3DAppData0Struct
 	bool	Is_Vertex_Alpha(void)				{ return (ExportFlags & EXPORT_VERTEX_ALPHA_FLAG) == EXPORT_VERTEX_ALPHA_FLAG; }
 	bool	Is_ZNormals(void)						{ return (ExportFlags & EXPORT_ZNORMALS_FLAG) == EXPORT_ZNORMALS_FLAG; }
 	bool	Is_Shadow(void)						{ return (ExportFlags & EXPORT_CAST_SHADOW_FLAG) == EXPORT_CAST_SHADOW_FLAG; }
-	
+
 	unsigned short ExportFlags;	// what was I thinking??? (gth)
 };
 
@@ -267,11 +267,11 @@ struct W3DAppData2Struct
 		GEO_TYPE_OBBOX =				0x00000003,
 		GEO_TYPE_AABOX =				0x00000004,
 		GEO_TYPE_CAMERA_ORIENTED =	0x00000005,
-		GEO_TYPE_NULL =				0x00000006,	
+		GEO_TYPE_NULL =				0x00000006,
 		GEO_TYPE_DAZZLE =				0x00000007,
 		GEO_TYPE_AGGREGATE =			0x00000008,
 	};
-	
+
 	/*
 	** Read Access
 	*/
@@ -345,11 +345,11 @@ protected:
 	{
 		EXPORT_TRANSFORM =					0x00000001,		// Export flags bit-field
 		EXPORT_GEOMETRY =						0x00000002,
-		
+
 		VERSION_MASK =							0xFFFF0000,		// upper 16bits is version number.
 		VERSION_SHIFT =						16,
 	};
-	
+
 	enum GeometryFlagsEnum
 	{
 		GEOMETRY_FLAG_HIDDEN =				0x00000001,		// Geometry Flags bitfield
@@ -370,8 +370,8 @@ protected:
 		COLLISION_FLAG_VEHICLE =			0x00000010,
 	};
 
-	unsigned int ExportFlags;				
-	unsigned int GeometryType;				
+	unsigned int ExportFlags;
+	unsigned int GeometryType;
 	unsigned int GeometryFlags;
 	unsigned int CollisionFlags;
 
@@ -384,7 +384,7 @@ protected:
 /*
 ** W3D Utility Dazzle App Data
 ** ----------------------------------------------------
-** This app-data struct is used to contain parameters 
+** This app-data struct is used to contain parameters
 ** specific to dazzle render objects.  It currently only
 ** contains a type name which is limited to 128 characters
 ** and some padding variables for future use.

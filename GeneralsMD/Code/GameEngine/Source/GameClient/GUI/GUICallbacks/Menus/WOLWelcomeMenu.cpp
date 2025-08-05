@@ -408,7 +408,7 @@ void UpdateLocalPlayerStats(void)
 	{
 		PopulatePlayerInfoWindows( "WOLQuickMatchMenu.wnd" );
 	}
-	
+
 	return;
 }
 
@@ -600,7 +600,7 @@ void WOLWelcomeMenuShutdown( WindowLayout *layout, void *userData )
 //-------------------------------------------------------------------------------------------------
 void WOLWelcomeMenuUpdate( WindowLayout * layout, void *userData)
 {
-	// We'll only be successful if we've requested to 
+	// We'll only be successful if we've requested to
 	if(isShuttingDown && TheShell->isAnimFinished() && TheTransitionHandler->isFinished())
 		shutdownComplete(layout);
 
@@ -619,7 +619,7 @@ void WOLWelcomeMenuUpdate( WindowLayout * layout, void *userData)
 			TheFirewallHelper->writeFirewallBehavior();
 
 			TheFirewallHelper->flagNeedToRefresh(FALSE); // 2/19/03 BGC, we're done, so we don't need to refresh the NAT anymore.
-			
+
 			// we are now done with the firewall helper
 			delete TheFirewallHelper;
 			TheFirewallHelper = NULL;
@@ -701,7 +701,7 @@ void WOLWelcomeMenuUpdate( WindowLayout * layout, void *userData)
 WindowMsgHandledType WOLWelcomeMenuInput( GameWindow *window, UnsignedInt msg,
 																			 WindowMsgData mData1, WindowMsgData mData2 )
 {
-	switch( msg ) 
+	switch( msg )
 	{
 
 		// --------------------------------------------------------------------------------------------
@@ -718,14 +718,14 @@ WindowMsgHandledType WOLWelcomeMenuInput( GameWindow *window, UnsignedInt msg,
 				// ----------------------------------------------------------------------------------------
 				case KEY_ESC:
 				{
-					
+
 					//
 					// send a simulated selected event to the parent window of the
 					// back/exit button
 					//
 					if( BitIsSet( state, KEY_STATE_UP ) )
 					{
-						TheWindowManager->winSendSystemMsg( window, GBM_SELECTED, 
+						TheWindowManager->winSendSystemMsg( window, GBM_SELECTED,
 																							(WindowMsgData)buttonBack, buttonBackID );
 
 					}  // end if
@@ -747,18 +747,18 @@ WindowMsgHandledType WOLWelcomeMenuInput( GameWindow *window, UnsignedInt msg,
 //-------------------------------------------------------------------------------------------------
 /** WOL Welcome Menu window system callback */
 //-------------------------------------------------------------------------------------------------
-WindowMsgHandledType WOLWelcomeMenuSystem( GameWindow *window, UnsignedInt msg, 
+WindowMsgHandledType WOLWelcomeMenuSystem( GameWindow *window, UnsignedInt msg,
 														 WindowMsgData mData1, WindowMsgData mData2 )
 {
 	UnicodeString txtInput;
 
 	switch( msg )
 	{
-		
-		
+
+
 		case GWM_CREATE:
 			{
-				
+
 				break;
 			} // case GWM_DESTROY:
 
@@ -768,7 +768,7 @@ WindowMsgHandledType WOLWelcomeMenuSystem( GameWindow *window, UnsignedInt msg,
 			} // case GWM_DESTROY:
 
 		case GWM_INPUT_FOCUS:
-			{	
+			{
 				// if we're givin the opportunity to take the keyboard focus we must say we want it
 				if( mData1 == TRUE )
 					*(Bool *)mData2 = TRUE;
@@ -788,7 +788,7 @@ WindowMsgHandledType WOLWelcomeMenuSystem( GameWindow *window, UnsignedInt msg,
 				{
 					//DEBUG_ASSERTCRASH(TheGameSpyChat->getPeer(), ("No GameSpy Peer object!"));
 					//TheGameSpyChat->disconnectFromChat();
-					
+
 					PeerRequest req;
 					req.peerRequestType = PeerRequest::PEERREQUEST_LOGOUT;
 					TheGameSpyPeerMessageQueue->addRequest( req );
@@ -823,7 +823,7 @@ WindowMsgHandledType WOLWelcomeMenuSystem( GameWindow *window, UnsignedInt msg,
 
 				} //if ( controlID == buttonBack )
 				else if (controlID == buttonOptionsID)
-				{					
+				{
 					GameSpyOpenOverlay( GSOVERLAY_OPTIONS );
 				}
 				else if (controlID == buttonQuickMatchID)
@@ -887,7 +887,7 @@ WindowMsgHandledType WOLWelcomeMenuSystem( GameWindow *window, UnsignedInt msg,
 				}
 				break;
 			}// case GBM_SELECTED:
-	
+
 		case GEM_EDIT_DONE:
 			{
 				break;

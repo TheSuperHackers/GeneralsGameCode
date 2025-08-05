@@ -27,7 +27,7 @@
 // Desc:      High level representation of images, this is currently being
 //						written so we have a way to refer to images in the windows
 //						GUI, this system should be replaced with something that can
-//						handle real image management or written to accomodate 
+//						handle real image management or written to accomodate
 //						all parts of the engine that need images.
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -42,7 +42,7 @@
 
 
 // PRIVATE DATA ///////////////////////////////////////////////////////////////////////////////////
-const FieldParse Image::m_imageFieldParseTable[] = 
+const FieldParse Image::m_imageFieldParseTable[] =
 {
 
 	{ "Texture",				INI::parseAsciiString,							NULL, 		offsetof( Image, m_filename ) },
@@ -81,7 +81,7 @@ void Image::parseImageCoords( INI* ini, void *instance, void *store, const void*
 	uvCoords.lo.y = (Real)top;
 	uvCoords.hi.x = (Real)right;
 	uvCoords.hi.y = (Real)bottom;
-	
+
 	// adjust the coords by texture size
 	const ICoord2D *textureSize = theImage->getTextureSize();
 	if( textureSize->x )
@@ -110,7 +110,7 @@ void Image::parseImageCoords( INI* ini, void *instance, void *store, const void*
 /** Parse the image status line */
 //-------------------------------------------------------------------------------------------------
 void Image::parseImageStatus( INI* ini, void *instance, void *store, const void* /*userData*/)
-{	
+{
 	// use existing INI parsing for the bit strings
 	INI::parseBitString32(ini, instance, store, imageStatusNames);
 
@@ -259,7 +259,7 @@ const Image *ImageCollection::findImageByName( const AsciiString& name )
 {
 	Image *image;
 
-	/** @todo this needs to be more intelligent if this image collection 
+	/** @todo this needs to be more intelligent if this image collection
 	becomes a real system we use a lot */
 
 	// search the images
@@ -289,7 +289,7 @@ const Image *ImageCollection::findImageByFilename( const AsciiString& filename )
 {
 	Image *image;
 
-	/** @todo this needs to be more intelligent if this image collection 
+	/** @todo this needs to be more intelligent if this image collection
 	becomes a real system we use a lot */
 
 	// search the images
@@ -318,7 +318,7 @@ void ImageCollection::load( Int textureSize )
 	INI ini;
 	// first load in the user created mapped image files if we have them.
 	WIN32_FIND_DATA findData;
-	AsciiString userDataPath;	
+	AsciiString userDataPath;
 	if(TheGlobalData)
 	{
 		userDataPath.format("%sINI\\MappedImages\\*.ini",TheGlobalData->getPath_UserData().str());

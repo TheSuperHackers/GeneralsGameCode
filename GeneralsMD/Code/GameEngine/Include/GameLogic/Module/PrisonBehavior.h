@@ -81,7 +81,7 @@ protected:
 	void removeVisual( Object *obj );						///< remove prisoner visual
 
 	PrisonVisual *m_visualList;									///< list of visual representation data (if needed)
-			
+
 };
 
 #endif

@@ -33,7 +33,7 @@
 
 class FrameDataManager : public MemoryPoolObject
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(FrameDataManager, "FrameDataManager")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(FrameDataManager, "FrameDataManager")
 public:
 	FrameDataManager(Bool isLocal);
 	//virtual ~FrameDataManager();

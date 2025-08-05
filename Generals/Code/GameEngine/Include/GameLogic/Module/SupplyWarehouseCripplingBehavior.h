@@ -56,7 +56,7 @@ private:
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-class SupplyWarehouseCripplingBehavior : public UpdateModule, 
+class SupplyWarehouseCripplingBehavior : public UpdateModule,
 																				 public DamageModuleInterface
 {
 

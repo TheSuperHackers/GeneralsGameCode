@@ -36,7 +36,7 @@
 class DebugStackwalk
 {
   friend class Debug;
-  
+
   DebugStackwalk(const DebugStackwalk&);
   DebugStackwalk& operator=(DebugStackwalk&);
 
@@ -66,14 +66,14 @@ public:
     Signature(const Signature &src);
     Signature& operator=(const Signature& src);
 
-    /** 
+    /**
       \brief Determine the number of addresses in this signature.
 
       \return number of addresses in this signature
     */
     unsigned Size(void) const { return m_numAddr; }
 
-    /** 
+    /**
       \brief Get a single address from the signature.
 
       The address at index 0 is always on top of the stack.
@@ -106,7 +106,7 @@ public:
     /**
       \brief Determines symbol for given address.
 
-      The data is returned in the form 
+      The data is returned in the form
       \<addr\> \<module\>+NN, \<sym\>+NN, \<file\>:\<line\>+NN
 
       \param addr function address
@@ -114,7 +114,7 @@ public:
       \param bufSize size of return buffer, minimum is 64 bytes (256 recommended)
     */
     static void GetSymbol(unsigned addr, char *buf, unsigned bufSize);
-    
+
     /**
       \brief Determines symbol for given address.
 

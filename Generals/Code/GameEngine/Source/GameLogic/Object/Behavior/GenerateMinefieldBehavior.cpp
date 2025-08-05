@@ -24,7 +24,7 @@
 
 // FILE: GenerateMinefieldBehavior.cpp ///////////////////////////////////////////////////////////////////////
 // Author:
-// Desc:  
+// Desc:
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -72,10 +72,10 @@ GenerateMinefieldBehaviorModuleData::GenerateMinefieldBehaviorModuleData()
 }
 
 //-------------------------------------------------------------------------------------------------
-/*static*/ void GenerateMinefieldBehaviorModuleData::buildFieldParse(MultiIniFieldParse& p) 
+/*static*/ void GenerateMinefieldBehaviorModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
 
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
 		{ "MineName", INI::parseAsciiString,	NULL, offsetof( GenerateMinefieldBehaviorModuleData, m_mineName ) },
 		{ "GenerationFX", INI::parseFXList,	NULL, offsetof( GenerateMinefieldBehaviorModuleData, m_genFX ) },
@@ -249,7 +249,7 @@ void GenerateMinefieldBehavior::placeMinesAlongLine(const Coord3D& posStart, con
 		pt.z = TheTerrainLogic->getGroundHeight( pt.x, pt.y );
 		offsetBySmallRandomAmount(pt, mineJitter);
 		placeMineAt(pt, mineTemplate, team, obj);
-	} 
+	}
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -310,7 +310,7 @@ void GenerateMinefieldBehavior::placeMinesAroundCircle(const Coord3D& pos, Real 
 		pt.z = TheTerrainLogic->getGroundHeight( pt.x, pt.y );
 		offsetBySmallRandomAmount(pt, mineJitter);
 		placeMineAt(pt, mineTemplate, team, obj);
-	} 
+	}
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -333,7 +333,7 @@ void GenerateMinefieldBehavior::placeMinesInFootprint(const GeometryInfo& geom, 
 	{
 		Coord3D pt;
 		Int maxRetry = 100;
-		do 
+		do
 		{
 			geom.makeRandomOffsetWithinFootprint(pt);
 			pt.x += target->x;

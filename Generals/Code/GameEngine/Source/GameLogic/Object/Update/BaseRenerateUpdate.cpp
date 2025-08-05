@@ -50,11 +50,11 @@ BaseRegenerateUpdateModuleData::BaseRegenerateUpdateModuleData()
 
 //-------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void BaseRegenerateUpdateModuleData::buildFieldParse( MultiIniFieldParse &p ) 
+void BaseRegenerateUpdateModuleData::buildFieldParse( MultiIniFieldParse &p )
 {
   UpdateModuleData::buildFieldParse( p );
 
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
 		{ 0, 0, 0, 0 }
 	};
@@ -69,7 +69,7 @@ void BaseRegenerateUpdateModuleData::buildFieldParse( MultiIniFieldParse &p )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-BaseRegenerateUpdate::BaseRegenerateUpdate( Thing *thing, const ModuleData* moduleData ) 
+BaseRegenerateUpdate::BaseRegenerateUpdate( Thing *thing, const ModuleData* moduleData )
 										: UpdateModule( thing, moduleData )
 {
 
@@ -114,7 +114,7 @@ UpdateSleepTime BaseRegenerateUpdate::update( void )
 {
 	// this is us!
 	Object *me = getObject();
-	
+
 	if( me->testStatus(OBJECT_STATUS_UNDER_CONSTRUCTION) )
 	{
 		return UPDATE_SLEEP_NONE;
@@ -137,7 +137,7 @@ UpdateSleepTime BaseRegenerateUpdate::update( void )
 		const Int HEAL_RATE = 3;
 
 		// do some healing
-		Real amount = HEAL_RATE * (body->getMaxHealth() * TheGlobalData->m_baseRegenHealthPercentPerSecond) / 
+		Real amount = HEAL_RATE * (body->getMaxHealth() * TheGlobalData->m_baseRegenHealthPercentPerSecond) /
 														 LOGICFRAMES_PER_SECOND;
 		me->attemptHealing(amount, me);
 

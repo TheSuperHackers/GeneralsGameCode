@@ -52,7 +52,7 @@ class RTS3DInterfaceScene;
 
 //=============================================================================
 /** W3D implementation of the game display which is responsible for creating
-  * all interaction with the screen and updating the display 
+  * all interaction with the screen and updating the display
 	*/
 class W3DDisplay : public Display
 {
@@ -84,17 +84,17 @@ public:
 	virtual void draw( void );  ///< redraw the entire display
 
 	/// @todo Replace these light management routines with a LightManager singleton
-	virtual void createLightPulse( const Coord3D *pos, const RGBColor *color, Real innerRadius,Real outerRadius, 
-																 UnsignedInt increaseFrameTime, UnsignedInt decayFrameTime//, Bool donut = FALSE 
+	virtual void createLightPulse( const Coord3D *pos, const RGBColor *color, Real innerRadius,Real outerRadius,
+																 UnsignedInt increaseFrameTime, UnsignedInt decayFrameTime//, Bool donut = FALSE
 																 );
 	virtual void setTimeOfDay ( TimeOfDay tod );
 
 	/// draw a line on the display in screen coordinates
-	virtual void drawLine( Int startX, Int startY, Int endX, Int endY, 
+	virtual void drawLine( Int startX, Int startY, Int endX, Int endY,
 												 Real lineWidth, UnsignedInt lineColor );
 
 	/// draw a line on the display in screen coordinates
-	virtual void drawLine( Int startX, Int startY, Int endX, Int endY, 
+	virtual void drawLine( Int startX, Int startY, Int endX, Int endY,
 												 Real lineWidth, UnsignedInt lineColor1, UnsignedInt lineColor2 );
 
 	/// draw a rect border on the display in pixel coordinates with the specified color
@@ -102,9 +102,9 @@ public:
 														 Real lineWidth, UnsignedInt lineColor );
 
 	/// draw a filled rect on the display in pixel coords with the specified color
-	virtual void drawFillRect( Int startX, Int startY, Int width, Int height, 
+	virtual void drawFillRect( Int startX, Int startY, Int width, Int height,
 														 UnsignedInt color );
-	
+
 	/// Draw a percentage of a rectangle, much like a clock (0 to x%)
 	virtual void drawRectClock(Int startX, Int startY, Int width, Int height, Int percent, UnsignedInt color);
 
@@ -112,12 +112,12 @@ public:
 	virtual void drawRemainingRectClock(Int startX, Int startY, Int width, Int height, Int percent, UnsignedInt color);
 
 	/// draw an image fit within the screen coordinates
-	virtual void drawImage( const Image *image, Int startX, Int startY, 
+	virtual void drawImage( const Image *image, Int startX, Int startY,
 													Int endX, Int endY, Color color = 0xFFFFFFFF, DrawImageMode mode=DRAW_IMAGE_ALPHA);
 
 	/// draw a video buffer fit within the screen coordinates
 	virtual void drawScaledVideoBuffer( VideoBuffer *buffer, VideoStreamInterface *stream );
-	virtual void drawVideoBuffer( VideoBuffer *buffer, Int startX, Int startY, 
+	virtual void drawVideoBuffer( VideoBuffer *buffer, Int startX, Int startY,
 													Int endX, Int endY );
 
 	virtual VideoBuffer*	createVideoBuffer( void ) ;							///< Create a video buffer that can be used for this display

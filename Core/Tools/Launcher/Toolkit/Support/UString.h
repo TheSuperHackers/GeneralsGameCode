@@ -99,10 +99,10 @@ class UString
 
 		//! Convert string to uppercase
 		void ToUpper(void);
-		
+
 		//! Convert string to lowercase
 		void ToLower(void);
-		
+
 		//! Reverse characters of string
 		void Reverse(void);
 
@@ -145,7 +145,7 @@ class UString
 
 		UString operator=(const WChar* ws)
 			{Copy(ws); return *this;};
-		
+
 		UString operator=(const UString& s)
 			{Copy(s); return *this;};
 
@@ -183,7 +183,7 @@ class UString
 
 		bool operator!=(const WChar* ws)
 			{return (Compare(ws) != 0);}
-		
+
 		bool operator!=(const UString& s)
 			{return (Compare(s) != 0);}
 

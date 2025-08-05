@@ -49,11 +49,11 @@ OCLUpdateModuleData::OCLUpdateModuleData()
 }
 
 //-------------------------------------------------------------------------------------------------
-/*static*/ void OCLUpdateModuleData::buildFieldParse(MultiIniFieldParse& p) 
+/*static*/ void OCLUpdateModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
   UpdateModuleData::buildFieldParse(p);
 
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
 		{ "OCL",					INI::parseObjectCreationList,		NULL, offsetof( OCLUpdateModuleData, m_ocl ) },
 		{ "MinDelay",			INI::parseDurationUnsignedInt,	NULL, offsetof( OCLUpdateModuleData, m_minDelay ) },
@@ -133,7 +133,7 @@ Bool OCLUpdate::shouldCreate()
 // ------------------------------------------------------------------------------------------------
 void OCLUpdate::setNextCreationFrame()
 {
-	UnsignedInt delay = GameLogicRandomValue( getOCLUpdateModuleData()->m_minDelay, 
+	UnsignedInt delay = GameLogicRandomValue( getOCLUpdateModuleData()->m_minDelay,
 																						getOCLUpdateModuleData()->m_maxDelay );
 	m_timerStartedFrame = TheGameLogic->getFrame();
 	m_nextCreationFrame = m_timerStartedFrame + delay;

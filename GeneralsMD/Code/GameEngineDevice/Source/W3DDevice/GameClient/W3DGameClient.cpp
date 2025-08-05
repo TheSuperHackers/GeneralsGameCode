@@ -122,7 +122,7 @@ Drawable *W3DGameClient::friend_createDrawable( const ThingTemplate *tmplate,
 	// sanity
 	if( tmplate == NULL )
 		return NULL;
-	
+
 	draw = newInstance(Drawable)( tmplate, statusBits );
 
 	return draw;
@@ -133,7 +133,7 @@ Drawable *W3DGameClient::friend_createDrawable( const ThingTemplate *tmplate,
 //-------------------------------------------------------------------------------------------------
 void W3DGameClient::addScorch(const Coord3D *pos, Real radius, Scorches type)
 {
-	if (TheTerrainRenderObject) 
+	if (TheTerrainRenderObject)
 	{
 		Vector3 loc(pos->x, pos->y, pos->z);
 		TheTerrainRenderObject->addScorch(loc, radius, type);
@@ -143,8 +143,8 @@ void W3DGameClient::addScorch(const Coord3D *pos, Real radius, Scorches type)
 //-------------------------------------------------------------------------------------------------
 /** create an effect that requires a start and end location */
 //-------------------------------------------------------------------------------------------------
-void W3DGameClient::createRayEffectByTemplate( const Coord3D *start, 
-																		 const Coord3D *end, 
+void W3DGameClient::createRayEffectByTemplate( const Coord3D *start,
+																		 const Coord3D *end,
 																		 const ThingTemplate* tmpl )
 {
 	Drawable *draw = TheThingFactory->newDrawable(tmpl);
@@ -161,7 +161,7 @@ void W3DGameClient::createRayEffectByTemplate( const Coord3D *start,
 
 		// add this ray effect to the list of ray effects
 		TheRayEffects->addRayEffect( draw, start, end );
-			
+
 	}  // end if
 
 }  // end createRayEffectByTemplate
@@ -198,9 +198,9 @@ void W3DGameClient::setTeamColor(Int red, Int green, Int blue)
 //-------------------------------------------------------------------------------------------------
 /** temporary entry point for adjusting LOD for development testing. */
 //-------------------------------------------------------------------------------------------------
-void W3DGameClient::adjustLOD( Int adj ) 
+void W3DGameClient::adjustLOD( Int adj )
 {
-	if (TheGlobalData == NULL) 
+	if (TheGlobalData == NULL)
 		return;
 
 	TheWritableGlobalData->m_textureReductionFactor += adj;
@@ -213,7 +213,7 @@ void W3DGameClient::adjustLOD( Int adj )
 	if (WW3D::Get_Texture_Reduction() != TheWritableGlobalData->m_textureReductionFactor)
 	{	WW3D::Set_Texture_Reduction(TheWritableGlobalData->m_textureReductionFactor,32);
 		TheGameLODManager->setCurrentTextureReduction(TheWritableGlobalData->m_textureReductionFactor);
-		if( TheTerrainRenderObject ) 
+		if( TheTerrainRenderObject )
   			TheTerrainRenderObject->setTextureLOD( TheWritableGlobalData->m_textureReductionFactor );
 	}
 

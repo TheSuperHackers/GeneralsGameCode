@@ -94,7 +94,7 @@ static Real zero = 0.0f;
 {
 	ModuleData::buildFieldParse(p);
 
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
 		{ "GunshipTemplateName",	    INI::parseAsciiString,				    NULL, offsetof( SpectreGunshipDeploymentUpdateModuleData, m_gunshipTemplateName ) },
 		{ "RequiredScience",					INI::parseScience,								NULL, offsetof( SpectreGunshipDeploymentUpdateModuleData, m_extraRequiredScience ) },
@@ -112,7 +112,7 @@ SpectreGunshipDeploymentUpdate::SpectreGunshipDeploymentUpdate( Thing *thing, co
 {
 	m_specialPowerModule = NULL;
   m_gunshipID  = INVALID_ID;
-} 
+}
 
 //-------------------------------------------------------------------------------------------------
 SpectreGunshipDeploymentUpdate::~SpectreGunshipDeploymentUpdate( void )
@@ -148,7 +148,7 @@ Bool SpectreGunshipDeploymentUpdate::initiateIntentToDoSpecialPower(const Specia
 	}
 
 //	getObject()->getControllingPlayer()->getAcademyStats()->recordSpecialPowerUsed( specialPowerTemplate );
-	
+
 	if( !BitIsSet( commandOptions, COMMAND_FIRED_BY_SCRIPT ) )
 	{
 /******CHANGE*******/		m_initialTargetPosition.set( targetPos );
@@ -169,11 +169,11 @@ Bool SpectreGunshipDeploymentUpdate::initiateIntentToDoSpecialPower(const Specia
     m_gunshipID = INVALID_ID;
     newGunship = NULL;
   }
-  
+
 
   // Lets make a gunship, since we have none.
 	{
-		newGunship = TheThingFactory->newObject( gunshipTemplate, getObject()->getTeam() ); 
+		newGunship = TheThingFactory->newObject( gunshipTemplate, getObject()->getTeam() );
   }
 
   DEBUG_ASSERTCRASH( newGunship, ("SpecterGunshipUpdate failed to find or create a gunship object"));
@@ -200,9 +200,9 @@ Bool SpectreGunshipDeploymentUpdate::initiateIntentToDoSpecialPower(const Specia
 			  creationCoord = TheTerrainLogic->findFarthestEdgePoint(targetPos);
 			  break;
 	  }
-    
-    
-    
+
+
+
 
       // HERE WE NEED TO CREATE THE POINT FURTHER OFF THE MAP SO WE CANT SEE THE LAME HOVER AND ACCELLERATE BEHAVIOR
     Coord3D deltaToCreationPoint = m_initialTargetPosition;
@@ -221,7 +221,7 @@ Bool SpectreGunshipDeploymentUpdate::initiateIntentToDoSpecialPower(const Specia
     //ORIENTATION
 		Real orient = atan2( m_initialTargetPosition.y - creationCoord.y, m_initialTargetPosition.x - creationCoord.x);
     newGunship->setOrientation( orient );
-    
+
     // ID
     m_gunshipID = newGunship->getID();
 
@@ -249,7 +249,7 @@ Bool SpectreGunshipDeploymentUpdate::initiateIntentToDoSpecialPower(const Specia
 		SpecialPowerModule *spModule = (SpecialPowerModule*)spmInterface;
 		spModule->markSpecialPowerTriggered( &m_initialTargetPosition );
 	}
-  
+
   return TRUE;
 }
 
@@ -260,7 +260,7 @@ Bool SpectreGunshipDeploymentUpdate::initiateIntentToDoSpecialPower(const Specia
 /** The update callback. */
 //-------------------------------------------------------------------------------------------------
 UpdateSleepTime SpectreGunshipDeploymentUpdate::update()
-{	
+{
 //	const SpectreGunshipDeploymentUpdateModuleData *data = getSpectreGunshipDeploymentUpdateModuleData();
 
 

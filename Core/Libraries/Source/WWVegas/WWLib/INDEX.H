@@ -549,7 +549,7 @@ bool IndexClass<INDEX, T>::Add_Index(INDEX const & id, T const & data)
 {
 #ifdef RTS_DEBUG
 	/*
-	**	Ensure that two elements with the same index are not added to the 
+	**	Ensure that two elements with the same index are not added to the
 	**	array.
 	*/
 	for (int index = 0; index < IndexCount; index++) {

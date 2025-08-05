@@ -83,7 +83,7 @@ Bool CaveSystem::canSwitchIndexToIndex( Int oldIndex, Int newIndex )
 			return FALSE;// You can't switch a connection if one of the two is non empty
 	}
 
-	// Both are either empty or non-existent, so go ahead.  
+	// Both are either empty or non-existent, so go ahead.
 	// (Remember non-exist is only a valid case because you are going to do the switch now.)
 
 	return TRUE;

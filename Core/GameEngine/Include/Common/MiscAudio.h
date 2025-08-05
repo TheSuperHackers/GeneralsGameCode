@@ -35,7 +35,7 @@
 struct MiscAudio
 {
 	static const FieldParse m_fieldParseTable[];
-	
+
 	AudioEventRTS m_radarUnitUnderAttackSound;						///< radar sounds to play when unit under attack
 	AudioEventRTS m_radarHarvesterUnderAttackSound;				///< radar sounds to play when harvester under attack
 	AudioEventRTS m_radarStructureUnderAttackSound;				///< radar sounds to play when structure under attack
@@ -69,8 +69,8 @@ struct MiscAudio
 	AudioEventRTS m_crateMoney;														///< When money crate is picked up.
 	AudioEventRTS m_unitPromoted;													///< Unit is promoted.
 	AudioEventRTS m_repairSparks;													///< Battle drone repairs unit.
-	AudioEventRTS m_sabotageShutDownBuilding;											///< When Saboteur hits a building 
-	AudioEventRTS m_sabotageResetTimerBuilding;											///< When Saboteur hits a building 
+	AudioEventRTS m_sabotageShutDownBuilding;											///< When Saboteur hits a building
+	AudioEventRTS m_sabotageResetTimerBuilding;											///< When Saboteur hits a building
 	AudioEventRTS m_aircraftWheelScreech;									///< When a jet lands on a runway.
 };
 

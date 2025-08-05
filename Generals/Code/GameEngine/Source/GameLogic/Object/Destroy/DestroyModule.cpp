@@ -34,7 +34,7 @@
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-DestroyModule::DestroyModule( Thing *thing, const ModuleData* moduleData ) 
+DestroyModule::DestroyModule( Thing *thing, const ModuleData* moduleData )
 							: BehaviorModule( thing, moduleData )
 {
 

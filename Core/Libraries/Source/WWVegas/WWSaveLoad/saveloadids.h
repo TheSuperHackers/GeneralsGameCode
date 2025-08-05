@@ -44,14 +44,14 @@
 
 //////////////////////////////////////////////////////////////////////////////////
 //
-//	Chunk ID Ranges.  
-// Here are the ranges to use for SubSystem and PersistFactory chunk id's 
-// and also the chunk id's used by the save-load system itself.  If you are 
-// creating a new library that is going to take advantage of this system, 
+//	Chunk ID Ranges.
+// Here are the ranges to use for SubSystem and PersistFactory chunk id's
+// and also the chunk id's used by the save-load system itself.  If you are
+// creating a new library that is going to take advantage of this system,
 // create a new range for it here.
 //
 //////////////////////////////////////////////////////////////////////////////////
-enum 
+enum
 {
 	CHUNKID_SAVELOAD_BEGIN				= 0x00000100,
 		CHUNKID_SAVELOAD_DEFMGR,

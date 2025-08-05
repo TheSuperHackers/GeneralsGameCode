@@ -62,7 +62,7 @@ template<typename T> class Signaler
 		Signaler() :
 				mConnection(NULL)
 			{}
-	
+
 		virtual ~Signaler()
 			{Disconnect();}
 

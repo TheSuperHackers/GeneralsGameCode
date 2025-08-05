@@ -24,12 +24,12 @@
 
 // FILE: CreditsMenu.cpp /////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Electronic Arts Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2002 - All Rights Reserved                  
-//                                                                          
+//
+//                       Electronic Arts Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2002 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 //	created:	Dec 2002
@@ -37,7 +37,7 @@
 //	Filename: 	CreditsMenu.cpp
 //
 //	author:		Chris Huybregts
-//	
+//
 //	purpose:	The credits screen...yay
 //
 //-----------------------------------------------------------------------------
@@ -85,7 +85,7 @@ void CreditsMenuInit( WindowLayout *layout, void *userData )
 	TheCredits = new CreditsManager;
 	TheCredits->load();
 	TheCredits->init();
-	
+
 	parentMainMenuID = TheNameKeyGenerator->nameToKey( AsciiString("CreditsMenu.wnd:ParentCreditsWindow") );
 	parentMainMenu = TheWindowManager->winGetWindowFromId( NULL, parentMainMenuID );
 
@@ -151,7 +151,7 @@ WindowMsgHandledType CreditsMenuInput( GameWindow *window, UnsignedInt msg,
 																						WindowMsgData mData1, WindowMsgData mData2 )
 {
 
-	switch( msg ) 
+	switch( msg )
 	{
 
 		// --------------------------------------------------------------------------------------------
@@ -166,7 +166,7 @@ WindowMsgHandledType CreditsMenuInput( GameWindow *window, UnsignedInt msg,
 				// ----------------------------------------------------------------------------------------
 				case KEY_ESC:
 				{
-					
+
 					//
 					// send a simulated selected event to the parent window of the
 					// back/exit button
@@ -196,18 +196,18 @@ WindowMsgHandledType CreditsMenuInput( GameWindow *window, UnsignedInt msg,
 //-------------------------------------------------------------------------------------------------
 /** single player menu window system callback */
 //-------------------------------------------------------------------------------------------------
-WindowMsgHandledType CreditsMenuSystem( GameWindow *window, UnsignedInt msg, 
+WindowMsgHandledType CreditsMenuSystem( GameWindow *window, UnsignedInt msg,
 														 WindowMsgData mData1, WindowMsgData mData2 )
 {
-	
-	switch( msg ) 
+
+	switch( msg )
 	{
 
 		// --------------------------------------------------------------------------------------------
 		case GWM_CREATE:
 		{
 
-			
+
 			break;
 
 		}  // end create
@@ -234,7 +234,7 @@ WindowMsgHandledType CreditsMenuSystem( GameWindow *window, UnsignedInt msg,
 		//---------------------------------------------------------------------------------------------
 		case GBM_SELECTED:
 		{
-			
+
 			break;
 		}  // end selected
 

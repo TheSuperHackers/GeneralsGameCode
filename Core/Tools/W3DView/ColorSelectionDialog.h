@@ -85,7 +85,7 @@ protected:
 		void						Set_Color (const Vector3 &color) { m_Color = color; }
 
 	protected:
-		
+
 		///////////////////////////////////////////////////////
 		//
 		//	Inline accessors

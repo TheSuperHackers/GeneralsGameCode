@@ -95,7 +95,7 @@ void CreateCrateDie::onDie( const DamageInfo * damageInfo )
 
 			if( KINDOFMASK_ANY_SET(currentCrateData->m_killedByTypeKindof) && !testKillerType( currentCrateData, killer ) )
 				continue; //If this is set up to test and it fails
-			
+
 			if( (currentCrateData->m_killerScience != SCIENCE_INVALID)  &&  !testKillerScience( currentCrateData, killer ) )
 				continue; //If this is set up to test and it fails
 
@@ -108,14 +108,14 @@ void CreateCrateDie::onDie( const DamageInfo * damageInfo )
 					crate->setTeam( me->getControllingPlayer()->getDefaultTeam() );
 				}
 
-				if (killer) 
+				if (killer)
 				{
 					// If the killer is a computer controlled player, notify that the crate exists.
-					if (killer->getControllingPlayer() &&	
-						killer->getControllingPlayer()->getPlayerType()==PLAYER_COMPUTER) 
+					if (killer->getControllingPlayer() &&
+						killer->getControllingPlayer()->getPlayerType()==PLAYER_COMPUTER)
 					{
 						AIUpdateInterface *ai = killer->getAIUpdateInterface();
-						if (ai) 
+						if (ai)
 						{
 							ai->notifyCrate( crate->getID() );
 						}
@@ -124,7 +124,7 @@ void CreateCrateDie::onDie( const DamageInfo * damageInfo )
 			}
 		}
 	}
-}  
+}
 
 Bool CreateCrateDie::testCreationChance( CrateTemplate const *currentCrateData )
 {
@@ -223,7 +223,7 @@ Object *CreateCrateDie::createCrate( CrateTemplate const *currentCrateData )
 		fpOptions.minRadius = 0.0f;
 		fpOptions.maxRadius = 125.0f;
 		fpOptions.relationshipObject = NULL;
-		fpOptions.flags = FPF_NONE; 
+		fpOptions.flags = FPF_NONE;
 		if( ThePartitionManager->findPositionAround( &centerPoint, &fpOptions, &creationPoint ) )
 		{
 			spotFound = TRUE;
@@ -242,7 +242,7 @@ Object *CreateCrateDie::createCrate( CrateTemplate const *currentCrateData )
 		if( crateDrawable )
 		{
 			crateDrawable->setTerrainDecal(TERRAIN_DECAL_CRATE);
-			crateDrawable->setTerrainDecalSize(2.5f * newCrate->getGeometryInfo().getMajorRadius(), 
+			crateDrawable->setTerrainDecalSize(2.5f * newCrate->getGeometryInfo().getMajorRadius(),
 																2.5f * newCrate->getGeometryInfo().getMajorRadius() )	;
 			crateDrawable->setTerrainDecalFadeTarget(1.0f, 0.03f);
 		}

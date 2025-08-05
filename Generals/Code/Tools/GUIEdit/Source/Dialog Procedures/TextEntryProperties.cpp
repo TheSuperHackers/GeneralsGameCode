@@ -24,12 +24,12 @@
 
 // FILE: TextEntryProperties.cpp //////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:    GUIEdit
@@ -80,7 +80,7 @@ static LRESULT CALLBACK textEntryPropertiesCallback( HWND hWndDialog,
 	// are designed to have controls doing the same functionality
 	// and names
 	//
-	if( HandleCommonDialogMessages( hWndDialog, message, 
+	if( HandleCommonDialogMessages( hWndDialog, message,
 																	wParam, lParam, &returnCode ) == TRUE )
 		return returnCode;
 
@@ -93,7 +93,7 @@ static LRESULT CALLBACK textEntryPropertiesCallback( HWND hWndDialog,
 //			Int notifyCode = HIWORD( wParam );  // notification code
 			Int controlID = LOWORD( wParam );  // control ID
 //			HWND hWndControl = (HWND)lParam;  // control window handle
- 
+
       switch( controlID )
       {
 
@@ -294,7 +294,7 @@ HWND InitTextEntryPropertiesDialog( GameWindow *window )
 		CheckDlgButton( dialog, RADIO_LETTERS_AND_NUMBERS, BST_CHECKED );
 	else
 		CheckDlgButton( dialog, RADIO_ANY_TEXT, BST_CHECKED );
-	
+
 	// select the button enabled state for display
 	SwitchToState( TEXT_ENTRY_ENABLED_LEFT, dialog );
 

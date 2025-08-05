@@ -88,7 +88,7 @@ void GameSpyInfo::reset( void )
 	m_localName = "";
 	m_localProfileID = 0;
 	m_maxMessagesPerUpdate = 100;
-	
+
 	// Added By Sadullah Nader
 	// Initialization missing and needed
 	m_disallowAsainText = FALSE;
@@ -108,7 +108,7 @@ void GameSpyInfo::reset( void )
 	m_preorderPlayers.clear();
 
 	m_cachedLocalPlayerStats.reset();
-	
+
 	m_additionalDisconnects = -1;
 }
 
@@ -450,7 +450,7 @@ void GameSpyInfo::clearStagingRoomList( void )
 	Int numRoomsRemoved = 0;
 	m_sawFullGameList = FALSE;
 	m_stagingRoomsDirty = FALSE;
-	
+
 	StagingRoomMap::iterator it = m_stagingRooms.begin();
 	while (it != m_stagingRooms.end())
 	{
@@ -524,7 +524,7 @@ void GameSpyInfo::markAsStagingRoomHost( void )
 {
 	m_localStagingRoomID = 0;
 	m_joinedStagingRoom = FALSE; m_isHosting = TRUE;
-  
+
   // There are a few options we don't want to reset when we are hosting (they carry over
   // from the the create game dialog).
   // Interesting fact: oldFactionsOnly will be carried over correctly if I remove these
@@ -535,7 +535,7 @@ void GameSpyInfo::markAsStagingRoomHost( void )
   m_localStagingRoom.reset();
 	m_localStagingRoom.enterGame();
 	m_localStagingRoom.setSeed(GetTickCount());
-  
+
   m_localStagingRoom.setUseStats( useStats );
   m_localStagingRoom.setOldFactionsOnly( oldFactionsOnly );
 
@@ -624,7 +624,7 @@ void SetUpGameSpy( const char *motdBuffer, const char *configBuffer )
 
 	TheGameSpyPeerMessageQueue = GameSpyPeerMessageQueueInterface::createNewMessageQueue();
 	TheGameSpyPeerMessageQueue->startThread();
-	
+
 	TheGameSpyPSMessageQueue = GameSpyPSMessageQueueInterface::createNewMessageQueue();
 	TheGameSpyPSMessageQueue->startThread();
 
@@ -639,7 +639,7 @@ void SetUpGameSpy( const char *motdBuffer, const char *configBuffer )
 	CustomMatchPreferences pref;
 	TheGameSpyInfo->setDisallowAsianText(pref.getDisallowAsianText());
 	TheGameSpyInfo->setDisallowNonAsianText( pref.getDisallowNonAsianText());
-	
+
 
 	TheGameSpyConfig = GameSpyConfigInterface::create(configBuffer);
 
@@ -828,7 +828,7 @@ void GameSpyInfo::loadSavedIgnoreList( void )
 {
 	m_savedIgnoreMap.clear();
 	IgnorePreferences prefs;
-	m_savedIgnoreMap = prefs.getIgnores();	
+	m_savedIgnoreMap = prefs.getIgnores();
 }
 
 void GameSpyInfo::setDisallowAsianText( Bool val )
@@ -869,10 +869,10 @@ before we can detect/log disconnections.*/
 void GameSpyInfo::updateAdditionalGameSpyDisconnections(Int count)
 {
 	if (TheRecorder->isMultiplayer() && TheGameLogic->isInInternetGame() && TheGameSpyGame && TheGameSpyGame->getUseStats())
-	{	
+	{
 		Int localID = TheGameSpyInfo->getLocalProfileID();
 		PSPlayerStats stats = TheGameSpyPSMessageQueue->findPlayerStatsByID(localID);
-		
+
 		Player *player=ThePlayerList->getLocalPlayer();
 
 		Int ptIdx;

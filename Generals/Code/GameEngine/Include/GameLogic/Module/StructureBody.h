@@ -40,16 +40,16 @@
 class Object;
 
 //-------------------------------------------------------------------------------------------------
-class StructureBodyModuleData : public ActiveBodyModuleData 
+class StructureBodyModuleData : public ActiveBodyModuleData
 {
 public:
 
-	StructureBodyModuleData(){}	
+	StructureBodyModuleData(){}
 
-	static void buildFieldParse(MultiIniFieldParse& p) 
+	static void buildFieldParse(MultiIniFieldParse& p)
 	{
     ActiveBodyModuleData::buildFieldParse(p);
-		static const FieldParse dataFieldParse[] = 
+		static const FieldParse dataFieldParse[] =
 		{
 			{ 0, 0, 0, 0 }
 		};

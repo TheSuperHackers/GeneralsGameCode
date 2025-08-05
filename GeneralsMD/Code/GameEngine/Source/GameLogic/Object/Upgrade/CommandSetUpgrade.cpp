@@ -36,11 +36,11 @@
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void CommandSetUpgradeModuleData::buildFieldParse(MultiIniFieldParse& p) 
+void CommandSetUpgradeModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
   UpgradeModuleData::buildFieldParse(p);
 
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
 		{ "CommandSet",			INI::parseAsciiString,	NULL, offsetof( CommandSetUpgradeModuleData, m_newCommandSet ) },
 		{ "CommandSetAlt",	INI::parseAsciiString,	NULL, offsetof( CommandSetUpgradeModuleData, m_newCommandSetAlt ) },
@@ -66,11 +66,11 @@ CommandSetUpgrade::~CommandSetUpgrade( void )
 //-------------------------------------------------------------------------------------------------
 void CommandSetUpgrade::upgradeImplementation( )
 {
-	Object *obj = getObject();	
+	Object *obj = getObject();
 
 	const char * upgradeAlt = getCommandSetUpgradeModuleData()->m_triggerAlt.str();
 	const UpgradeTemplate *upgradeTemplate = TheUpgradeCenter->findUpgrade( upgradeAlt );
-	
+
 	if (upgradeTemplate)
 	{
 		UpgradeMaskType upgradeMask = upgradeTemplate->getUpgradeMask();

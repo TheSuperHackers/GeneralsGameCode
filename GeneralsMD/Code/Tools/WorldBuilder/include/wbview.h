@@ -109,7 +109,7 @@ public:
 
 	virtual Bool viewToDocCoords(CPoint curPt, Coord3D *newPt, Bool constrained=true) { DEBUG_CRASH(("should not call")); newPt->zero(); return false; }
 	virtual Bool docToViewCoords(Coord3D curPt, CPoint* newPt) { DEBUG_CRASH(("should not call")); return false; }
- 
+
 	virtual Bool viewToDocCoordZ(CPoint curPt, Coord3D *newPt, Real Z) { return viewToDocCoords(curPt, newPt, false); }
 
 	/// Set the center for display.

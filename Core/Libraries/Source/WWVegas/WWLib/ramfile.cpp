@@ -16,22 +16,22 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/*********************************************************************************************** 
- ***              C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S               *** 
- *********************************************************************************************** 
- *                                                                                             * 
- *                 Project Name : Command & Conquer                                            * 
- *                                                                                             * 
- *                     $Archive:: /Commando/Code/wwlib/ramfile.cpp                            $* 
- *                                                                                             * 
+/***********************************************************************************************
+ ***              C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S               ***
+ ***********************************************************************************************
+ *                                                                                             *
+ *                 Project Name : Command & Conquer                                            *
+ *                                                                                             *
+ *                     $Archive:: /Commando/Code/wwlib/ramfile.cpp                            $*
+ *                                                                                             *
  *                      $Author:: Ian_l                                                       $*
- *                                                                                             * 
+ *                                                                                             *
  *                     $Modtime:: 10/31/01 2:36p                                              $*
- *                                                                                             * 
+ *                                                                                             *
  *                    $Revision:: 2                                                           $*
  *                                                                                             *
- *---------------------------------------------------------------------------------------------* 
- * Functions:                                                                                  * 
+ *---------------------------------------------------------------------------------------------*
+ * Functions:                                                                                  *
  *   RAMFileClass::Close -- This will 'close' the ram file.                                    *
  *   RAMFileClass::Create -- Effectively clears the buffer of data.                            *
  *   RAMFileClass::Delete -- Effectively clears the buffer of data.                            *
@@ -475,7 +475,7 @@ void RAMFileClass::Close(void)
 
 
 /***********************************************************************************************
- * RAMFileClass::Bias --																							  *	
+ * RAMFileClass::Bias --																							  *
  *                                                                                             *
  *                                                                                             *
  * INPUT:   none                                                                               *

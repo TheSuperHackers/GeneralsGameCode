@@ -34,7 +34,7 @@
 ////// NetCommandWrapperListNode ///////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-NetCommandWrapperListNode::NetCommandWrapperListNode(NetWrapperCommandMsg *msg) 
+NetCommandWrapperListNode::NetCommandWrapperListNode(NetWrapperCommandMsg *msg)
 {
 	//Added By Sadullah Nader
 	//Initializations inserted
@@ -177,7 +177,7 @@ void NetCommandWrapperList::processWrapper(NetCommandRef *ref) {
 	temp->copyChunkData(msg);
 }
 
-NetCommandList * NetCommandWrapperList::getReadyCommands() 
+NetCommandList * NetCommandWrapperList::getReadyCommands()
 {
 	NetCommandList *retlist = newInstance(NetCommandList);
 	retlist->init();

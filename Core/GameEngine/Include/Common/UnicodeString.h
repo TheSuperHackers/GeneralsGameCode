@@ -22,14 +22,14 @@
 //																																						//
 ////////////////////////////////////////////////////////////////////////////////
 
-// FILE: UnicodeString.h 
+// FILE: UnicodeString.h
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information					         
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:    RTS3
@@ -72,7 +72,7 @@ class AsciiString;
 	type, rather analogous to 'int' -- when passed by value, a new string
 	is created, and modifying the new string doesn't modify the original.
 	This is done fairly efficiently, so that no new memory allocation is done
-	unless the string is actually modified. 
+	unless the string is actually modified.
 
 	Naturally, UnicodeString handles all memory issues, so there's no need
 	to do anything to free memory... just allow the UnicodeString's
@@ -84,7 +84,7 @@ class AsciiString;
 class UnicodeString
 {
 private:
-	
+
 	// Note, this is a Plain Old Data Structure... don't
 	// add a ctor/dtor, 'cuz they won't ever be called.
 	struct UnicodeStringData
@@ -114,8 +114,8 @@ protected:
 
 public:
 
-	enum 
-	{ 
+	enum
+	{
 		MAX_FORMAT_BUF_LEN = 2048,		///< max total len of string created by format/format_va
 		MAX_LEN = 32767							///< max total len of any UnicodeString, in chars
 	};
@@ -178,8 +178,8 @@ public:
 	*/
 	WideChar getCharAt(int index) const;
 	/**
-		Return a pointer to the (null-terminated) string. Note that this is 
-		a const pointer: do NOT change this! It is imperative that it be 
+		Return a pointer to the (null-terminated) string. Note that this is
+		a const pointer: do NOT change this! It is imperative that it be
 		impossible (or at least, really difficuly) for someone to change our
 		private data, since it might be shared amongst other UnicodeStrings.
 	*/
@@ -188,7 +188,7 @@ public:
 	/**
 		Makes sure there is room for a string of len+1 characters, and
 		returns a pointer to the string buffer.  This ensures that the
-		string buffer is NOT shared.  This is intended for the file reader, 
+		string buffer is NOT shared.  This is intended for the file reader,
 		that is reading new strings in from a file. jba.
 	*/
 	WideChar* getBufferForRead(Int len);
@@ -245,7 +245,7 @@ public:
 
 	/**
 		Remove the final character in the string. If the string is empty,
-		do nothing. (This is a rather dorky method, but used a lot in 
+		do nothing. (This is a rather dorky method, but used a lot in
 		text editing, thus its presence here.)
 	*/
 	void removeLastChar();

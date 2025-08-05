@@ -25,7 +25,7 @@
 // WanderAIUpdate.h //////////
 // Will give self random move commands
 // Author: Graham Smallwood, April 2002
- 
+
 #pragma once
 
 #ifndef _WANDER_AI_UPDATE_H_
@@ -34,7 +34,7 @@
 #include "GameLogic/Module/AIUpdate.h"
 
 //-------------------------------------------------------------------------------------------------
-/** 
+/**
  * Soldier behavior implementation.
  * Override or extend AIUpdate methods to customize the Soldier's behavior.
  */

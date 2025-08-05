@@ -28,14 +28,14 @@
 #include "GameNetwork/GameMessageParser.h"
 
 //----------------------------------------------------------------------------
-GameMessageParser::GameMessageParser() 
+GameMessageParser::GameMessageParser()
 {
 	m_first = NULL;
 	m_argTypeCount = 0;
 }
 
 //----------------------------------------------------------------------------
-GameMessageParser::GameMessageParser(GameMessage *msg) 
+GameMessageParser::GameMessageParser(GameMessage *msg)
 {
 	m_first = NULL;
 	m_argTypeCount = 0;
@@ -63,7 +63,7 @@ GameMessageParser::GameMessageParser(GameMessage *msg)
 }
 
 //----------------------------------------------------------------------------
-GameMessageParser::~GameMessageParser() 
+GameMessageParser::~GameMessageParser()
 {
 	GameMessageParserArgumentType *temp = NULL;
 	while (m_first != NULL) {
@@ -74,7 +74,7 @@ GameMessageParser::~GameMessageParser()
 }
 
 //----------------------------------------------------------------------------
-void GameMessageParser::addArgType(GameMessageArgumentDataType type, Int argCount) 
+void GameMessageParser::addArgType(GameMessageArgumentDataType type, Int argCount)
 {
 	if (m_first == NULL) {
 		m_first = newInstance(GameMessageParserArgumentType)(type, argCount);
@@ -87,7 +87,7 @@ void GameMessageParser::addArgType(GameMessageArgumentDataType type, Int argCoun
 }
 
 //----------------------------------------------------------------------------
-GameMessageParserArgumentType::GameMessageParserArgumentType(GameMessageArgumentDataType type, Int argCount) 
+GameMessageParserArgumentType::GameMessageParserArgumentType(GameMessageArgumentDataType type, Int argCount)
 {
 	m_next = NULL;
 	m_type = type;
@@ -95,7 +95,7 @@ GameMessageParserArgumentType::GameMessageParserArgumentType(GameMessageArgument
 }
 
 //----------------------------------------------------------------------------
-GameMessageParserArgumentType::~GameMessageParserArgumentType() 
+GameMessageParserArgumentType::~GameMessageParserArgumentType()
 {
 }
 

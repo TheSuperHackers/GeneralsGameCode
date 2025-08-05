@@ -47,7 +47,7 @@ class FXList;
 class FXListDieModuleData : public DieModuleData
 {
 public:
-	const FXList					*m_defaultDeathFX;								///< default fx to make 
+	const FXList					*m_defaultDeathFX;								///< default fx to make
 	UpgradeMuxData				m_upgradeMuxData;
 	Bool									m_orientToObject;
 	Bool									m_initiallyActive;
@@ -59,11 +59,11 @@ public:
 		m_initiallyActive = TRUE; //Patch 1.02 -- Craptacular HACK -- should default to FALSE but only ONE case sets it false out of 847!
 	}
 
-	static void buildFieldParse(MultiIniFieldParse& p) 
+	static void buildFieldParse(MultiIniFieldParse& p)
 	{
     DieModuleData::buildFieldParse(p);
 
-		static const FieldParse dataFieldParse[] = 
+		static const FieldParse dataFieldParse[] =
 		{
 			{ "StartsActive",					INI::parseBool, NULL, offsetof( FXListDieModuleData, m_initiallyActive ) },
 			{ "DeathFX",							INI::parseFXList,		NULL, offsetof( FXListDieModuleData, m_defaultDeathFX ) },
@@ -94,7 +94,7 @@ public:
 	virtual UpgradeModuleInterface* getUpgrade() { return this; }
 	virtual DieModuleInterface* getDie() { return this; }
 
-	virtual void onDie( const DamageInfo *damageInfo ); 
+	virtual void onDie( const DamageInfo *damageInfo );
 
 protected:
 
@@ -125,7 +125,7 @@ protected:
 	}
 
 	inline Bool isUpgradeActive() const { return isAlreadyUpgraded(); }
-	
+
 	virtual Bool isSubObjectsUpgrade() { return false; }
 
 

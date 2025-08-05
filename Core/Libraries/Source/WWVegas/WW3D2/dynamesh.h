@@ -16,20 +16,20 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/*************************************************************************** 
- ***    C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S     *** 
- *************************************************************************** 
- *                                                                         * 
- *                 Project Name : Commando	                              * 
- *                                                                         * 
- *                     $Archive:: /Commando/Code/ww3d2/dynamesh.h         $* 
- *                                                                         * 
- *                      $Author:: Greg_h                                  $* 
- *                                                                         * 
- *                     $Modtime:: 12/03/01 4:20p                          $* 
- *                                                                         * 
- *                    $Revision:: 15                                      $* 
- *                                                                         * 
+/***************************************************************************
+ ***    C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S     ***
+ ***************************************************************************
+ *                                                                         *
+ *                 Project Name : Commando	                              *
+ *                                                                         *
+ *                     $Archive:: /Commando/Code/ww3d2/dynamesh.h         $*
+ *                                                                         *
+ *                      $Author:: Greg_h                                  $*
+ *                                                                         *
+ *                     $Modtime:: 12/03/01 4:20p                          $*
+ *                                                                         *
+ *                    $Revision:: 15                                      $*
+ *                                                                         *
  *-------------------------------------------------------------------------*/
 
 
@@ -88,7 +88,7 @@ public:
 	void			Set_Single_Material(VertexMaterialClass * vmat, int pass=0) { MatDesc->Set_Single_Material(vmat, pass); }
 	void			Set_Single_Texture(TextureClass * tex, int pass=0, int stage=0) { MatDesc->Set_Single_Texture(tex, pass, stage); }
 	void			Set_Single_Shader(ShaderClass shader, int pass=0) { MatDesc->Set_Single_Shader(shader, pass); }
-	
+
 	void			Set_Material(int vidx, VertexMaterialClass * vmat, int pass=0) { MatDesc->Set_Material(vidx, vmat, pass); }
 	void			Set_Shader(int pidx, ShaderClass shader, int pass=0)  { MatDesc->Set_Shader(pidx, shader, pass); }
 	void			Set_Texture(int pidx, TextureClass * tex, int pass=0, int stage=0)  { MatDesc->Set_Texture(pidx, tex, pass, stage); }
@@ -103,12 +103,12 @@ public:
 	MaterialInfoClass		*Peek_Material_Info(void)			{ return MatInfo; }
 	MaterialInfoClass		*Get_Material_Info(void)			{ if (MatInfo) MatInfo->Add_Ref(); return MatInfo;}
 	void Set_Material_Info(MaterialInfoClass *mat_info)
-	{ 
-		if (MatInfo) 
-			MatInfo->Release_Ref(); 
+	{
+		if (MatInfo)
+			MatInfo->Release_Ref();
 		WWASSERT(MatInfo != 0);
-		MatInfo = mat_info; 
-		MatInfo->Add_Ref(); 
+		MatInfo = mat_info;
+		MatInfo->Add_Ref();
 	}
 
 	// New geometry accessors (non-const)
@@ -131,7 +131,7 @@ private:
 };
 
 /*
-** Dynamic Meshes 
+** Dynamic Meshes
 */
 class DynamicMeshClass : public RenderObjClass {
 
@@ -181,7 +181,7 @@ public:
 
 	// Set the shader for the current triangle
 	int	Set_Shader( const ShaderClass & shader, int pass = 0) { Model->Set_Single_Shader(shader, pass); return 0; }
-	
+
 	// set the shader, texture, and vertex material as found in the polygon info object
 	void	Set_Polygon_Info(const PolygonInfoClass &polyInfo, bool dont_search_texture = false, bool dont_search_vertex_material = false, int pass = 0)
 	{
@@ -337,9 +337,9 @@ public:
 		return End_Vertex();
 	}
 
-	void End_Tri_Strip( void )	
-	{ 	
-		TriVertexCount = 0;	
+	void End_Tri_Strip( void )
+	{
+		TriVertexCount = 0;
 	}
 
 	void End_Tri_Fan( void )
@@ -407,9 +407,9 @@ public:
 	// features that DynamicMeshModel provides.  It may be dangerous to modify the model behind the
 	// DynamicMeshClass's back so use at your own risk!
 	DynamicMeshModel *		Peek_Model(void)	{ return Model; }
-	
+
 protected:
-	
+
 	inline void	Switch_To_Multi_Vertex_Color(int color_array_index = 0);
 
 	// tells when the triangle needs to be back flipped
@@ -434,7 +434,7 @@ protected:
 
 	// triangle vertex number
 	int TriVertexCount;
-	
+
 	// base vertex when submitting fans
 	int FanVertex;
 
@@ -447,11 +447,11 @@ protected:
 };
 
 inline Vector3 * DynamicMeshModel::Get_Non_Const_Vertex_Normal_Array(void)
-{ 
+{
 	if (Get_Flag(DIRTY_VNORMALS)) {
 		Compute_Vertex_Normals();
 	}
-	return get_vert_normals(); 
+	return get_vert_normals();
 }
 
 inline TriIndex * DynamicMeshModel::Get_Non_Const_Polygon_Array(void)
@@ -462,7 +462,7 @@ inline TriIndex * DynamicMeshModel::Get_Non_Const_Polygon_Array(void)
 inline void DynamicMeshClass::Get_Obj_Space_Bounding_Sphere(SphereClass & sphere) const
 {
 	if (!Bounding_Volumes_Valid()) {
-		Model->Compute_Bounds(NULL);	
+		Model->Compute_Bounds(NULL);
 	}
 	Model->Get_Bounding_Sphere(&sphere);
 }
@@ -470,7 +470,7 @@ inline void DynamicMeshClass::Get_Obj_Space_Bounding_Sphere(SphereClass & sphere
 inline void DynamicMeshClass::Get_Obj_Space_Bounding_Box(AABoxClass & box) const
 {
 	if (!Bounding_Volumes_Valid()) {
-		Model->Compute_Bounds(NULL);	
+		Model->Compute_Bounds(NULL);
 	}
 	Model->Get_Bounding_Box(&box);
 }
@@ -521,19 +521,19 @@ int DynamicMeshClass::Set_Vertex_Color(const Vector3 & color, int color_array_in
 
 
 /*
-** Dynamic Screen Meshes 
+** Dynamic Screen Meshes
 **
 ** Same as DynamicMesh, but mapped in Screen Coordinates
 **
 ** Screen -> 0,0		1,0
-**					 +---+	
+**					 +---+
 **					 |   |
 **					 +---+
 **				 0,1	   1,1
 **
 **
 ** View  -> -1,1		1,1
-**					 +---+	
+**					 +---+
 **					 |   |
 **					 +---+
 **				-1,-1    1,-1

@@ -24,12 +24,12 @@
 
 // FILE: GadgetComboBox.cpp ///////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:   RTS3
@@ -100,7 +100,7 @@ WindowMsgHandledType GadgetComboBoxInput( GameWindow *window, UnsignedInt msg,
 
 			switch (mData1)
 			{
-				
+
 				// --------------------------------------------------------------------
 				case KEY_DOWN:
 				case KEY_RIGHT:
@@ -178,7 +178,7 @@ WindowMsgHandledType GadgetComboBoxInput( GameWindow *window, UnsignedInt msg,
 						{
 							multiplier = comboData->entryCount;
 							listX = winSize.x;// + 16;
-							
+
 							if(listData->upButton)
 								listData->upButton->winHide(TRUE);
 							if(listData->downButton)
@@ -196,9 +196,9 @@ WindowMsgHandledType GadgetComboBoxInput( GameWindow *window, UnsignedInt msg,
 								listData->downButton->winHide(FALSE);
 							if(listData->slider)
 								listData->slider->winHide(FALSE);
-							
+
 						}
-						
+
 						newSize.y = ((TheWindowManager->winFontHeight( listInstData->getFont() ) ) * multiplier) + multiplier * 2 + 4;
 						window->winSetSize(winSize.x , winSize.y + newSize.y );
 						listBox->winSetPosition(0, winSize.y);
@@ -226,13 +226,13 @@ WindowMsgHandledType GadgetComboBoxInput( GameWindow *window, UnsignedInt msg,
 		case GWM_MOUSE_ENTERING:
 		{
 
-			if( BitIsSet( instData->getStyle(), GWS_MOUSE_TRACK ) ) 
+			if( BitIsSet( instData->getStyle(), GWS_MOUSE_TRACK ) )
 			{
 
 				BitSet( instData->m_state, WIN_STATE_HILITED );
-				TheWindowManager->winSendSystemMsg( window->winGetOwner(), 
+				TheWindowManager->winSendSystemMsg( window->winGetOwner(),
 																						GBM_MOUSE_ENTERING,
-																						(WindowMsgData)window, 
+																						(WindowMsgData)window,
 																						0 );
 				TheWindowManager->winSetFocus( window );
 
@@ -246,13 +246,13 @@ WindowMsgHandledType GadgetComboBoxInput( GameWindow *window, UnsignedInt msg,
 		case GWM_MOUSE_LEAVING:
 		{
 
-			if( BitIsSet( instData->getStyle(), GWS_MOUSE_TRACK )) 
+			if( BitIsSet( instData->getStyle(), GWS_MOUSE_TRACK ))
 			{
 
 				BitClear( instData->m_state, WIN_STATE_HILITED );
-				TheWindowManager->winSendSystemMsg( window->winGetOwner(), 
+				TheWindowManager->winSendSystemMsg( window->winGetOwner(),
 																						GBM_MOUSE_LEAVING,
-																						(WindowMsgData)window, 
+																						(WindowMsgData)window,
 																						0 );
 			}  // end if
 
@@ -265,9 +265,9 @@ WindowMsgHandledType GadgetComboBoxInput( GameWindow *window, UnsignedInt msg,
 		case GWM_LEFT_DRAG:
 
 			if (BitIsSet( instData->getStyle(), GWS_MOUSE_TRACK ) )
-				TheWindowManager->winSendSystemMsg( window->winGetOwner(), 
+				TheWindowManager->winSendSystemMsg( window->winGetOwner(),
 																						GGM_LEFT_DRAG,
-																						(WindowMsgData)window, 
+																						(WindowMsgData)window,
 																						0 );
 			break;
 
@@ -346,9 +346,9 @@ WindowMsgHandledType GadgetComboBoxSystem( GameWindow *window, UnsignedInt msg,
 
 		case GEM_UPDATE_TEXT:
 		{
-			TheWindowManager->winSendSystemMsg( window->winGetOwner(), 
+			TheWindowManager->winSendSystemMsg( window->winGetOwner(),
 																	GCM_UPDATE_TEXT,
-																	(WindowMsgData)window, 
+																	(WindowMsgData)window,
 																	0 );
 			if (comboData->listBox)
 			{
@@ -365,19 +365,19 @@ WindowMsgHandledType GadgetComboBoxSystem( GameWindow *window, UnsignedInt msg,
 			if ((GameWindow *)mData1 == comboData->editBox)
 			{
 				HideListBox(window);
-				TheWindowManager->winSendSystemMsg( window->winGetOwner(), 
+				TheWindowManager->winSendSystemMsg( window->winGetOwner(),
 																		GCM_SELECTED,
-																		(WindowMsgData)window, 
+																		(WindowMsgData)window,
 																		0 );
 			}
 			break;
 		}
 		// ------------------------------------------------------------------------
-		// Set the selection in the listbox, this will trigger the listbox selected message 
+		// Set the selection in the listbox, this will trigger the listbox selected message
 		// which will set the edit box.
 		case GCM_SET_SELECTION:
-		{		
-			GameWindow *listBox = GadgetComboBoxGetListBox(window);					
+		{
+			GameWindow *listBox = GadgetComboBoxGetListBox(window);
 			if(listBox)
 			{
 				if( !listBox->winIsHidden() && mData2 == TRUE )
@@ -433,8 +433,8 @@ WindowMsgHandledType GadgetComboBoxSystem( GameWindow *window, UnsignedInt msg,
 					}
 					else
 						HideListBox(window);
-					
-					// Nothing was actually selected, so we just want to 
+
+					// Nothing was actually selected, so we just want to
 					if( mData2 == -1)
 					{
 						break;
@@ -444,19 +444,19 @@ WindowMsgHandledType GadgetComboBoxSystem( GameWindow *window, UnsignedInt msg,
 					UnicodeString tempUString;
 					Color color;
 					tempUString = GadgetListBoxGetTextAndColor( comboData->listBox, &color, mData2, 0 );
-									
+
 					GadgetTextEntrySetTextColor(comboData->editBox, color);
-					
+
 					GadgetTextEntrySetText(comboData->editBox, tempUString);
-					
-					TheWindowManager->winSendSystemMsg( window->winGetOwner(), 
+
+					TheWindowManager->winSendSystemMsg( window->winGetOwner(),
 																		GCM_SELECTED,
-																		(WindowMsgData)window, 
+																		(WindowMsgData)window,
 																		0 );
 				}
 			break;
 		}
-		
+
 		// ------------------------------------------------------------------------
 		case GGM_LEFT_DRAG:
 		{
@@ -473,7 +473,7 @@ WindowMsgHandledType GadgetComboBoxSystem( GameWindow *window, UnsignedInt msg,
 			if ( comboData->editBox )
 				GadgetTextEntrySetText(comboData->editBox, UnicodeString::TheEmptyString );
 			comboData->entryCount = 0;
-			//HideListBox(window);	
+			//HideListBox(window);
 			break;
 
 		}  // end delete all
@@ -481,7 +481,7 @@ WindowMsgHandledType GadgetComboBoxSystem( GameWindow *window, UnsignedInt msg,
 		// ------------------------------------------------------------------------
 		case GCM_DEL_ENTRY:
 		{
-			
+
 			break;
 
 		}  // end delete entry
@@ -498,7 +498,7 @@ WindowMsgHandledType GadgetComboBoxSystem( GameWindow *window, UnsignedInt msg,
 		{
 			GameWindow *listBox = GadgetComboBoxGetListBox(window);
 			ListboxData *listData = (ListboxData *)listBox->winGetUserData();
-			
+
 			Int addedIndex = -1;
 			if( listBox )
 			{
@@ -522,7 +522,7 @@ WindowMsgHandledType GadgetComboBoxSystem( GameWindow *window, UnsignedInt msg,
 				editBox->winGetSize(&editBoxSize.x, &editBoxSize.y);
 				// If the listbox has less entries then the MaxDisplay, size it smaller
 				if(comboData->entryCount <= comboData->maxDisplay)
-				{							
+				{
 					multiplier = comboData->entryCount;
 					listX = winSize.x + 16;
 					if(listData->upButton)
@@ -551,8 +551,8 @@ WindowMsgHandledType GadgetComboBoxSystem( GameWindow *window, UnsignedInt msg,
 
 			return( (WindowMsgHandledType) addedIndex );
 		}  // end add entry
-	
-		
+
+
 		// ------------------------------------------------------------------------
 		case GWM_CREATE:
 			break;
@@ -565,15 +565,15 @@ WindowMsgHandledType GadgetComboBoxSystem( GameWindow *window, UnsignedInt msg,
 			ICoord2D dropDownSize;
 
 			// get needed window sizes
-			
+
 			comboData->dropDownButton->winGetSize( &dropDownSize.x, &dropDownSize.y );
-		
+
 			GameWindow *listBox = GadgetComboBoxGetListBox(window);
 			if (listBox->winIsHidden())
 			{
 				if (listBox)
 					listBox->winSetSize(width,height);
-					
+
 				if( comboData->dropDownButton )
 				{
 					comboData->dropDownButton->winSetPosition( width - dropDownSize.x, 0 );
@@ -615,16 +615,16 @@ WindowMsgHandledType GadgetComboBoxSystem( GameWindow *window, UnsignedInt msg,
 				BitSet( instData->m_state, WIN_STATE_HILITED );
 			}
 
-			TheWindowManager->winSendSystemMsg( window->winGetOwner(), 
+			TheWindowManager->winSendSystemMsg( window->winGetOwner(),
 																					GGM_FOCUS_CHANGE,
-																					mData1, 
+																					mData1,
 																					window->winGetWindowId() );
 
 			Bool wantsFocus = FALSE;
 			GameWindow *editBox = GadgetComboBoxGetEditBox(window);
 			// we need to tell the text entry box to take the focus.
 			TheWindowManager->winSendSystemMsg( editBox, GWM_INPUT_FOCUS, mData1, (WindowMsgData)&wantsFocus );
-			
+
 			*(Bool*)mData2 = TRUE;
 			break;
 
@@ -660,7 +660,7 @@ WindowMsgHandledType GadgetComboBoxSystem( GameWindow *window, UnsignedInt msg,
 						{
 							multiplier = comboData->entryCount;
 							listX = winSize.x;// + 16;
-							
+
 							if(listData->upButton)
 								listData->upButton->winHide(TRUE);
 							if(listData->downButton)
@@ -678,9 +678,9 @@ WindowMsgHandledType GadgetComboBoxSystem( GameWindow *window, UnsignedInt msg,
 								listData->downButton->winHide(FALSE);
 							if(listData->slider)
 								listData->slider->winHide(FALSE);
-							
+
 						}
-						
+
 						newSize.y = ((TheWindowManager->winFontHeight( listInstData->getFont() ) ) * multiplier) + multiplier * 2 + 4;
 						window->winSetSize(winSize.x , winSize.y + newSize.y );
 						listBox->winSetPosition(0, winSize.y);
@@ -707,21 +707,21 @@ WindowMsgHandledType GadgetComboBoxSystem( GameWindow *window, UnsignedInt msg,
 
 // GadgetComboBoxSetColors ====================================================
 /** Set the colors for a Combo box, note that this will also automatically
-	* change the colors of any attached slider, slider thumb, and slider 
+	* change the colors of any attached slider, slider thumb, and slider
 	* buttons */
 //=============================================================================
 void GadgetComboBoxSetColors( GameWindow *comboBox,
-														 Color enabledColor, 
+														 Color enabledColor,
 														 Color enabledBorderColor,
-														 Color enabledSelectedItemColor, 
+														 Color enabledSelectedItemColor,
 														 Color enabledSelectedItemBorderColor,
-														 Color disabledColor, 
+														 Color disabledColor,
 														 Color disabledBorderColor,
-														 Color disabledSelectedItemColor, 
+														 Color disabledSelectedItemColor,
 														 Color disabledSelectedItemBorderColor,
-														 Color hiliteColor, 
+														 Color hiliteColor,
 														 Color hiliteBorderColor,
-														 Color hiliteSelectedItemColor, 
+														 Color hiliteSelectedItemColor,
 														 Color hiliteSelectedItemBorderColor )
 {
 //	ComboBoxData *comboBoxData = (ComboBoxData *)comboBox->winGetUserData();
@@ -742,7 +742,7 @@ void GadgetComboBoxSetColors( GameWindow *comboBox,
 		GadgetComboBoxSetHiliteBorderColor( comboBox,hiliteBorderColor );
 		GadgetComboBoxSetHiliteSelectedItemColor( comboBox, hiliteSelectedItemColor );
 		GadgetComboBoxSetHiliteSelectedItemBorderColor( comboBox, hiliteSelectedItemBorderColor );
-	
+
 	GameWindow *editBox = GadgetComboBoxGetEditBox(comboBox);
 	if (editBox)
 	{
@@ -761,7 +761,7 @@ void GadgetComboBoxSetColors( GameWindow *comboBox,
 		GadgetButtonSetHiliteBorderColor( editBox, hiliteBorderColor );
 		GadgetButtonSetHiliteSelectedColor( editBox, hiliteSelectedItemColor );
 		GadgetButtonSetHiliteSelectedBorderColor( editBox, hiliteSelectedItemBorderColor );
-	}	
+	}
 
 	GameWindow *dropDownButton = GadgetComboBoxGetDropDownButton(comboBox);
 	if (dropDownButton)
@@ -781,23 +781,23 @@ void GadgetComboBoxSetColors( GameWindow *comboBox,
 		GadgetButtonSetHiliteBorderColor( dropDownButton, hiliteBorderColor );
 		GadgetButtonSetHiliteSelectedColor( dropDownButton, hiliteSelectedItemColor );
 		GadgetButtonSetHiliteSelectedBorderColor( dropDownButton, hiliteSelectedItemBorderColor );
-	}	
+	}
 
 	GameWindow * listBox = GadgetComboBoxGetListBox( comboBox );
 	if ( listBox )
 	{
 		GadgetListBoxSetColors(listBox,
-													enabledColor, 
+													enabledColor,
 													enabledBorderColor,
-													enabledSelectedItemColor, 
+													enabledSelectedItemColor,
 													enabledSelectedItemBorderColor,
-													disabledColor, 
+													disabledColor,
 													disabledBorderColor,
-													disabledSelectedItemColor, 
+													disabledSelectedItemColor,
 													disabledSelectedItemBorderColor,
-													hiliteColor, 
+													hiliteColor,
 													hiliteBorderColor,
-													hiliteSelectedItemColor, 
+													hiliteSelectedItemColor,
 													hiliteSelectedItemBorderColor );
 	}
 }  // end GadgetComboBoxSetColors
@@ -807,7 +807,7 @@ void GadgetComboBoxSetColors( GameWindow *comboBox,
 //=============================================================================
 void GadgetComboBoxSetIsEditable(GameWindow *comboBox, Bool isEditable  )
 {
-	ComboBoxData *comboData = (ComboBoxData *)comboBox->winGetUserData();	
+	ComboBoxData *comboData = (ComboBoxData *)comboBox->winGetUserData();
 	GameWindow *editBox = GadgetComboBoxGetEditBox(comboBox);
 	UnsignedInt status ;
 	if(!editBox)
@@ -817,7 +817,7 @@ void GadgetComboBoxSetIsEditable(GameWindow *comboBox, Bool isEditable  )
 	if (isEditable)
 	{
 		status = editBox->winGetStatus();
-		
+
 		BitClear(status, WIN_STATUS_NO_INPUT);
 //		BitClear(status, WIN_STATUS_NO_FOCUS);
 		editBox->winSetStatus(status);
@@ -825,7 +825,7 @@ void GadgetComboBoxSetIsEditable(GameWindow *comboBox, Bool isEditable  )
 	else
 	{
 		status = editBox->winGetStatus();
-		
+
 		BitSet(status, WIN_STATUS_NO_INPUT);
 //		BitSet(status, WIN_STATUS_NO_FOCUS);
 		editBox->winSetStatus(status);
@@ -836,7 +836,7 @@ void GadgetComboBoxSetIsEditable(GameWindow *comboBox, Bool isEditable  )
 /** Get the text the Combo Box */
 //=============================================================================
 void GadgetComboBoxSetLettersAndNumbersOnly(GameWindow *comboBox, Bool isLettersAndNumbersOnly)
-{	
+{
 	//sanity
 	if(comboBox == NULL)
 		return;
@@ -902,7 +902,7 @@ UnicodeString GadgetComboBoxGetText( GameWindow *comboBox )
 	// verify that this is a combo box
 	if( BitIsSet( comboBox->winGetStyle(), GWS_COMBO_BOX ) == FALSE )
 		return UnicodeString::TheEmptyString;
-	
+
 	return GadgetTextEntryGetText( GadgetComboBoxGetEditBox(comboBox) );
 }
 
@@ -988,7 +988,7 @@ void GadgetComboBoxSetEnabledTextColors(GameWindow *comboBox, Color color, Color
 	// sanity
 	if( comboBox == NULL )
 		return;
-	
+
 	ComboBoxData *comboBoxData = (ComboBoxData *)comboBox->winGetUserData();
 	if(comboBoxData->listBox)
 		comboBoxData->listBox->winSetEnabledTextColors( color,borderColor);
@@ -1018,9 +1018,9 @@ void GadgetComboBoxSetHiliteTextColors( GameWindow *comboBox,Color color, Color 
 	// sanity
 	if( comboBox == NULL )
 		return;
-	
+
 	ComboBoxData *comboBoxData = (ComboBoxData *)comboBox->winGetUserData();
-	
+
 	if(comboBoxData->listBox)
 		comboBoxData->listBox->winSetHiliteTextColors( color,borderColor);
 	if(comboBoxData->editBox)
@@ -1034,7 +1034,7 @@ void GadgetComboBoxSetIMECompositeTextColors(GameWindow *comboBox, Color color, 
 	// sanity
 	if( comboBox == NULL )
 		return;
-	
+
 	ComboBoxData *comboBoxData = (ComboBoxData *)comboBox->winGetUserData();
 
 	if(comboBoxData->listBox)
@@ -1084,7 +1084,7 @@ void GadgetComboBoxSetItemData( GameWindow *comboBox, Int index, void *data )
 void *GadgetComboBoxGetItemData( GameWindow *comboBox, Int index )
 {
 	void *data = NULL;
-	
+
 	if (comboBox)
 	{
 		TheWindowManager->winSendSystemMsg( comboBox, GCM_GET_ITEM_DATA, index, (WindowMsgData)&data);

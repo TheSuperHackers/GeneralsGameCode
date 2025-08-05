@@ -24,12 +24,12 @@
 
 // FILE: PopupCommunicator.cpp /////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Electronic Arts Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2002 - All Rights Reserved                  
-//                                                                          
+//
+//                       Electronic Arts Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2002 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:   RTS3
@@ -88,7 +88,7 @@ void PopupCommunicatorShutdown( WindowLayout *layout, void *userData )
 void PopupcommunicatorUpdate( WindowLayout *layout, void *userData )
 {
 
-}  // end PopupCommunicatorUpdate 
+}  // end PopupCommunicatorUpdate
 
 //-------------------------------------------------------------------------------------------------
 /** Popup Communicator input callback */
@@ -97,7 +97,7 @@ WindowMsgHandledType PopupCommunicatorInput( GameWindow *window, UnsignedInt msg
 																						WindowMsgData mData1, WindowMsgData mData2 )
 {
 
-	switch( msg ) 
+	switch( msg )
 	{
 
 		// --------------------------------------------------------------------------------------------
@@ -112,7 +112,7 @@ WindowMsgHandledType PopupCommunicatorInput( GameWindow *window, UnsignedInt msg
 				// ----------------------------------------------------------------------------------------
 				case KEY_ESC:
 				{
-					
+
 					//
 					// send a simulated selected event to the parent window of the
 					// back/exit button
@@ -120,7 +120,7 @@ WindowMsgHandledType PopupCommunicatorInput( GameWindow *window, UnsignedInt msg
 					if( BitIsSet( state, KEY_STATE_UP ) )
 					{
 
-						TheWindowManager->winSendSystemMsg( window, GBM_SELECTED, 
+						TheWindowManager->winSendSystemMsg( window, GBM_SELECTED,
 																								(WindowMsgData)buttonOk, buttonOkID );
 
 					}  // end if
@@ -143,11 +143,11 @@ WindowMsgHandledType PopupCommunicatorInput( GameWindow *window, UnsignedInt msg
 //-------------------------------------------------------------------------------------------------
 /** Popup Communicator window system callback */
 //-------------------------------------------------------------------------------------------------
-WindowMsgHandledType PopupCommunicatorSystem( GameWindow *window, UnsignedInt msg, 
+WindowMsgHandledType PopupCommunicatorSystem( GameWindow *window, UnsignedInt msg,
 																		 WindowMsgData mData1, WindowMsgData mData2 )
 {
 
-  switch( msg ) 
+  switch( msg )
 	{
 
 		// --------------------------------------------------------------------------------------------
@@ -181,7 +181,7 @@ WindowMsgHandledType PopupCommunicatorSystem( GameWindow *window, UnsignedInt ms
 		{
 			GameWindow *control = (GameWindow *)mData1;
 			Int controlID = control->winGetWindowId();
-      
+
 			if( controlID == buttonOkID )
 			{
 				WindowLayout *popupCommunicatorLayout = window->winGetLayout();
@@ -192,7 +192,7 @@ WindowMsgHandledType PopupCommunicatorSystem( GameWindow *window, UnsignedInt ms
 					popupCommunicatorLayout = NULL;
 				}
 			}  // end if
-	
+
 			break;
 
 		}  // end selected

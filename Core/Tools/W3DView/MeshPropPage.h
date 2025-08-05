@@ -33,7 +33,7 @@ class CMeshPropPage : public CPropertyPage
 	DECLARE_DYNCREATE(CMeshPropPage)
 
 // Construction
-public:	
+public:
     CMeshPropPage (const CString &stringMeshName);
 	~CMeshPropPage ();
 

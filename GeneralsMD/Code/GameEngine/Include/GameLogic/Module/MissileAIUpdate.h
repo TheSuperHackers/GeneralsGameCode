@@ -49,7 +49,7 @@ public:
 	Bool						m_tryToFollowTarget;	///< if true, attack object, not pos
 	UnsignedInt			m_fuelLifetime;				///< num frames till missile runs out of motive power (0 == inf)
 	UnsignedInt			m_ignitionDelay;			///< delay in frames from when missile is 'fired', to when it starts moving		15
-	Real						m_initialVel;			
+	Real						m_initialVel;
 	Real						m_initialDist;
 	Real						m_diveDistance;				///< If I get this close to my target, start ignoring my preferred height
 	const FXList*		m_ignitionFX;					///< FXList to do when missile 'ignites'
@@ -131,7 +131,7 @@ private:
 	Bool									m_isArmed;								///< if true, missile will explode on contact
 	Bool									m_noDamage;								///< if true, missile will not cause damage when it detonates. (Used for flares).
 	Bool									m_isJammed;								///< No target, just shooting at a scattered position
-	
+
 	void doPrelaunchState();
 	void doLaunchState();
 	void doIgnitionState();

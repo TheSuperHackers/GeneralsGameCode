@@ -67,7 +67,7 @@ public:
 protected:
 
 	Bool isOkayToFire();
-	
+
 	Weapon* m_weapon;
 
 };

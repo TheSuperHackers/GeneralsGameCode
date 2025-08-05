@@ -23,12 +23,12 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 //----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //----------------------------------------------------------------------------
 //
 // Project:   Generals
@@ -42,7 +42,7 @@
 //----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
-//         Includes                                                      
+//         Includes
 //----------------------------------------------------------------------------
 
 #include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
@@ -51,49 +51,49 @@
 #include "GameClient/VideoPlayer.h"
 
 //----------------------------------------------------------------------------
-//         Externals                                                     
+//         Externals
 //----------------------------------------------------------------------------
 
 
 
 //----------------------------------------------------------------------------
-//         Defines                                                         
+//         Defines
 //----------------------------------------------------------------------------
 
 
 
 //----------------------------------------------------------------------------
-//         Private Types                                                     
+//         Private Types
 //----------------------------------------------------------------------------
 
 
 
 //----------------------------------------------------------------------------
-//         Private Data                                                     
+//         Private Data
 //----------------------------------------------------------------------------
 
 
 
 //----------------------------------------------------------------------------
-//         Public Data                                                      
+//         Public Data
 //----------------------------------------------------------------------------
 
 VideoPlayerInterface *TheVideoPlayer = NULL;
 
 //----------------------------------------------------------------------------
-//         Private Prototypes                                               
+//         Private Prototypes
 //----------------------------------------------------------------------------
 
 
 
 //----------------------------------------------------------------------------
-//         Private Functions                                               
+//         Private Functions
 //----------------------------------------------------------------------------
 
 
 
 //----------------------------------------------------------------------------
-//         Public Functions                                                
+//         Public Functions
 //----------------------------------------------------------------------------
 
 //============================================================================
@@ -128,8 +128,8 @@ RectClass VideoBuffer::Rect( Real x1, Real y1, Real x2, Real y2 )
 
 	if ( valid() )
 	{
-		rect.Set( 
-						((Real)m_width/(Real)m_textureWidth)*x1, ((Real)m_height/(Real)m_textureHeight)*y1, 
+		rect.Set(
+						((Real)m_width/(Real)m_textureWidth)*x1, ((Real)m_height/(Real)m_textureHeight)*y1,
 						((Real)m_width/(Real)m_textureWidth)*x2, ((Real)m_height/(Real)m_textureHeight)*y2
 					);
 	}
@@ -503,7 +503,7 @@ Int		VideoStream::width( void )
 }
 
 
-const FieldParse VideoPlayer::m_videoFieldParseTable[] = 
+const FieldParse VideoPlayer::m_videoFieldParseTable[] =
 {
 	{ "Filename",								INI::parseAsciiString,							NULL, offsetof( Video, m_filename) },
 	{ "Comment",								INI::parseAsciiString,							NULL, offsetof( Video, m_commentForWB) },

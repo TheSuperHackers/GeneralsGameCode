@@ -70,7 +70,7 @@ bool ProfileCmdInterface::Execute(class Debug& dbg, const char *cmd, CommandMode
   {
     if (!normalMode)
       return true;
-    
+
     if (!argn)
     {
       dbg << "profile group help:\n"
@@ -152,14 +152,14 @@ bool ProfileCmdInterface::Execute(class Debug& dbg, const char *cmd, CommandMode
         dbg << "Could not add result function\n";
         return true;
       }
-      
+
       ++numResFunc;
       resFunc=(ProfileResultInterface **)ProfileReAllocMemory(resFunc,numResFunc*sizeof(ProfileResultInterface *));
       resFunc[numResFunc-1]=newIf;
       if (normalMode)
         dbg << "Result function " << argv[0] << " added\n";
     }
-    
+
     return true;
   }
 

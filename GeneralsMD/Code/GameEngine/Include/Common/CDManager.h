@@ -23,12 +23,12 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 //----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information					                  
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //----------------------------------------------------------------------------
 //
 // Project:    Generals
@@ -48,7 +48,7 @@
 
 
 //----------------------------------------------------------------------------
-//           Includes                                                      
+//           Includes
 //----------------------------------------------------------------------------
 
 #include "Common/List.h"
@@ -79,7 +79,7 @@ namespace CD
 };
 
 //===============================
-// CDDriveInterface 
+// CDDriveInterface
 //===============================
 /**
   *	Interface to a CD ROM drive
@@ -92,7 +92,7 @@ class CDDriveInterface
 
 		virtual ~CDDriveInterface() {};
 
-		virtual void refreshInfo( void ) = 0;					///< Update drive with least 
+		virtual void refreshInfo( void ) = 0;					///< Update drive with least
 
 		virtual AsciiString getDiskName( void ) = 0;	///< Returns the drive path for this drive
 		virtual AsciiString getPath( void ) = 0;			///< Returns the drive path for this drive
@@ -101,7 +101,7 @@ class CDDriveInterface
 };
 
 //===============================
-// CDDrive 
+// CDDrive
 //===============================
 
 class CDDrive : public CDDriveInterface
@@ -116,7 +116,7 @@ class CDDrive : public CDDriveInterface
 		virtual AsciiString getPath( void );			///< Returns the drive path for this drive
 		virtual AsciiString getDiskName( void );	///< Returns the drive path for this drive
 		virtual CD::Disk getDisk( void );					///< Returns ID of current disk in this drive
-		virtual void refreshInfo( void );					///< Update drive with least 
+		virtual void refreshInfo( void );					///< Update drive with least
 
 		// CDDrive operations
 		void setPath( const Char *path );					///< Set the drive's path
@@ -131,7 +131,7 @@ class CDDrive : public CDDriveInterface
 
 
 //===============================
-// CDManagerInterface 
+// CDManagerInterface
 //===============================
 
 class CDManagerInterface : public SubsystemInterface
@@ -155,7 +155,7 @@ class CDManagerInterface : public SubsystemInterface
 // CDManager
 //===============================
 
-class CDManager : public CDManagerInterface 
+class CDManager : public CDManagerInterface
 {
 	public:
 
@@ -182,7 +182,7 @@ class CDManager : public CDManagerInterface
 };
 
 //----------------------------------------------------------------------------
-//           Inlining                                                       
+//           Inlining
 //----------------------------------------------------------------------------
 
 extern CDManagerInterface *TheCDManager;

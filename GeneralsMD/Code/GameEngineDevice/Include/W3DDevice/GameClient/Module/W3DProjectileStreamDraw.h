@@ -62,14 +62,14 @@ class W3DProjectileStreamDraw : public DrawModule
 
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( W3DProjectileStreamDraw, "W3DProjectileStreamDraw" )
 	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( W3DProjectileStreamDraw, W3DProjectileStreamDrawModuleData )
-		
+
 public:
 
 	W3DProjectileStreamDraw( Thing *thing, const ModuleData* moduleData );
 	// virtual destructor prototype provided by memory pool declaration
 
 	virtual void doDrawModule(const Matrix3D* transformMtx);
-	virtual void releaseShadows(void) {};	///< we don't care about preserving temporary shadows.	
+	virtual void releaseShadows(void) {};	///< we don't care about preserving temporary shadows.
 	virtual void allocateShadows(void) {};	///< we don't care about preserving temporary shadows.
 	virtual void setShadowsEnabled(Bool ) { }
 	virtual void setFullyObscuredByShroud(Bool);

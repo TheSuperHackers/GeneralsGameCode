@@ -24,7 +24,7 @@
 
 // FILE:		DumbProjectileBehavior.h
 // Author:	Steven Johnson, July 2002
-// Desc:		
+// Desc:
 
 #pragma once
 

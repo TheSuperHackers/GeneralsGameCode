@@ -61,7 +61,7 @@ public:
 	virtual void init( void );
 	virtual void reset( void );
 	virtual void update( void );
-	
+
 	virtual Bool load( AsciiString filename );
 
 	void getTerrainColorAt( Real x, Real y, RGBColor *pColor );
@@ -81,36 +81,36 @@ public:
 	/// set min/max height values allowed in water grid pointed to by waterTable
 	virtual void setWaterGridHeightClamps( const WaterHandle *waterTable, Real minZ, Real maxZ );
 	/// adjust fallof parameters for grid change method
-	virtual void setWaterAttenuationFactors( const WaterHandle *waterTable, 
+	virtual void setWaterAttenuationFactors( const WaterHandle *waterTable,
 																					 Real a, Real b, Real c, Real range );
 	/// set the water table position and orientation in world space
-	virtual void setWaterTransform( const WaterHandle *waterTable, 
+	virtual void setWaterTransform( const WaterHandle *waterTable,
 																	Real angle, Real x, Real y, Real z );
 	virtual void setWaterTransform( const Matrix3D *transform );
 	virtual void getWaterTransform( const WaterHandle *waterTable, Matrix3D *transform );
 	/// water grid resolution spacing
 	virtual void setWaterGridResolution( const WaterHandle *waterTable,
 																			 Real gridCellsX, Real gridCellsY, Real cellSize );
-	virtual void getWaterGridResolution( const WaterHandle *waterTable, 
+	virtual void getWaterGridResolution( const WaterHandle *waterTable,
 																			 Real *gridCellsX, Real *gridCellsY, Real *cellSize );
 	/// adjust the water grid in world coords by the delta
 	virtual void changeWaterHeight( Real x, Real y, Real delta );
 	/// adjust the velocity at a water grid point corresponding to the world x,y
-	virtual void addWaterVelocity( Real worldX, Real worldY, 
+	virtual void addWaterVelocity( Real worldX, Real worldY,
 																 Real velocity, Real preferredHeight );
 	virtual Bool getWaterGridHeight( Real worldX, Real worldY, Real *height);
 
 	virtual void setTerrainTracksDetail(void);
 	virtual void setShoreLineDetail(void);
 
-	/// Add a bib at location.  
+	/// Add a bib at location.
 	void addFactionBib(Object *factionBuilding, Bool highlight, Real extra = 0);
-	/// Remove a bib.  
+	/// Remove a bib.
 	void removeFactionBib(Object *factionBuilding);
 
-	/// Add a bib at location.  
+	/// Add a bib at location.
 	void addFactionBibDrawable(Drawable *factionBuilding, Bool highlight, Real extra = 0);
-	/// Remove a bib.  
+	/// Remove a bib.
 	void removeFactionBibDrawable(Drawable *factionBuilding);
 
 	virtual void removeAllBibs(void);
@@ -119,7 +119,7 @@ public:
 	virtual void addProp(const ThingTemplate *tt, const Coord3D *pos, Real angle);
 
 	virtual void removeTreesAndPropsForConstruction(
-		const Coord3D* pos, 
+		const Coord3D* pos,
 		const GeometryInfo& geom,
 		Real angle
 	);
@@ -141,14 +141,14 @@ public:
   virtual void addSeismicSimulation( const SeismicSimulationNode& sim );
 #endif
   WorldHeightMap* getLogicHeightMap( void ) {return m_logicHeightMap;};
-  WorldHeightMap* getClientHeightMap( void ) 
+  WorldHeightMap* getClientHeightMap( void )
   {
 #ifdef DO_SEISMIC_SIMULATIONS
     return m_clientHeightMap;
 #else
     return m_logicHeightMap;
 #endif
-  } 
+  }
   ////////////////////////////////////////////////////
   ////////////////////////////////////////////////////
   ////////////////////////////////////////////////////
@@ -184,13 +184,13 @@ protected:
 	WaterRenderObjClass	*m_waterRenderObject;	///< W3D render object for water plane
 
   WorldHeightMap *m_logicHeightMap;  ///< height map used for render obj building
-  
+
 #ifdef DO_SEISMIC_SIMULATIONS
   WorldHeightMap *m_clientHeightMap; ///< this is a workspace for animating the terrain elevations
 #endif
-  
+
 	Bool m_isWaterGridRenderingEnabled;
-  
+
   AsciiString	m_currentSkyboxTexNames[NumSkyboxTextures];	///<store current texture names applied to skybox.
 	AsciiString m_initialSkyboxTexNames[NumSkyboxTextures];	///<store starting texture/default skybox textures.
 

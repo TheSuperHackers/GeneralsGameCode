@@ -102,7 +102,7 @@ public:
 		constructs the object, calls its create method,
 		and starts it running
 	*/
-	static void New(CWnd* pParentWnd, long kind, 
+	static void New(CWnd* pParentWnd, long kind,
 					PopupSliderOwner *pSliderOwner, long sliderID);
 
 // Attributes
@@ -162,7 +162,7 @@ private:
 	CPoint mOrigPt;
 	Bool mSetOrigPt;
 	Bool mEverMoved;
-	
+
 	// for the thumb icon
 	HICON mIcon;
 

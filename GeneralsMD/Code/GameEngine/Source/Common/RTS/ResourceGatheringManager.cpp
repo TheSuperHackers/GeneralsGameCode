@@ -108,14 +108,14 @@ void ResourceGatheringManager::removeSupplyWarehouse( Object *oldWarehouse )
 static Real computeRelativeCost( Object *queryObject, Object *destObject, Real *pureDistanceSquared )
 {
 	/** @todo This gets filled with Pathfinding computations, analysis of Boxes remaining,
-			Threat calculations, paths of other trucks, and other fancy stuff. 
+			Threat calculations, paths of other trucks, and other fancy stuff.
 	*/
 
 	//A good score is a very small number.
 
 	if( queryObject == NULL  ||  destObject == NULL )
 		return FLT_MAX;
-	
+
 	if( !TheActionManager->canTransferSuppliesAt(queryObject, destObject) )
 		return FLT_MAX;// Handles emptyness and alliances
 
@@ -129,7 +129,7 @@ static Real computeRelativeCost( Object *queryObject, Object *destObject, Real *
 
 	// I need the distance, but I don't want to count on the coincidence that
 	// the abstract 'cost' this function returns happens to be just the distance, since it could
-	// become more complicated	
+	// become more complicated
 	if( pureDistanceSquared )
 		*pureDistanceSquared = distSquared;
 

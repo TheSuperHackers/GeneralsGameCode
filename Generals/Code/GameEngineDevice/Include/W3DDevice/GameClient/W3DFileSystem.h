@@ -24,7 +24,7 @@
 
 // FILE: W3DFileSystem.h ////////////////////////////////////////////////////////
 //
-// W3D implementation of a file factory.  Uses GDI assets, so that 
+// W3D implementation of a file factory.  Uses GDI assets, so that
 // W3D files and targa files are loaded using the GDI file interface.
 //
 // Author: John Ahlquist, Sept 2001

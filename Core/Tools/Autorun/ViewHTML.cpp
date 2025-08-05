@@ -85,9 +85,9 @@ bool ViewHTML(const char* url, bool wait, const CallbackHook& callback)
 	char tempPath[MAX_PATH];
 	char filename1[MAX_PATH];
 	char filename2[MAX_PATH];
-	
-	// Expand the TMP environment variable. 
-	{ 
+
+	// Expand the TMP environment variable.
+	{
 		DWORD dwResult;
 		dwResult = ExpandEnvironmentStrings( "%TEMP%", tempPath,  MAX_PATH);
 		if(dwResult == 0)
@@ -108,12 +108,12 @@ bool ViewHTML(const char* url, bool wait, const CallbackHook& callback)
 	// Create file
 	//--------------------------------------------------------------------------
 	HANDLE file = CreateFile(
-					filename2, 
-					GENERIC_WRITE, 
-					0, 
-					NULL, 
+					filename2,
+					GENERIC_WRITE,
+					0,
+					NULL,
 					CREATE_ALWAYS,
-					FILE_ATTRIBUTE_NORMAL, 
+					FILE_ATTRIBUTE_NORMAL,
 					NULL);
 
 	if (file == INVALID_HANDLE_VALUE)
@@ -151,19 +151,19 @@ bool ViewHTML(const char* url, bool wait, const CallbackHook& callback)
 	STARTUPINFO startupInfo;
 	memset(&startupInfo, 0, sizeof(startupInfo));
 	startupInfo.cb = sizeof(startupInfo);
-  
+
 	PROCESS_INFORMATION processInfo;
 
 	BOOL createSuccess = CreateProcess(
-			exeName, 
-			commandLine, 
-			NULL, 
-			NULL, 
+			exeName,
+			commandLine,
+			NULL,
+			NULL,
 			FALSE,
-			0, 
-			NULL, 
-			NULL, 
-			&startupInfo, 
+			0,
+			NULL,
+			NULL,
+			&startupInfo,
 			&processInfo);
 
 	if (createSuccess == FALSE)
@@ -185,7 +185,7 @@ bool ViewHTML(const char* url, bool wait, const CallbackHook& callback)
 				{
 				break;
 				}
-			
+
 			Sleep(100);
 
 			DWORD exitCode;

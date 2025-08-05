@@ -119,7 +119,7 @@ void W3DShroud::init(WorldHeightMap *pMap, Real worldCellSizeX, Real worldCellSi
 
 	//Precompute a bounding box for entire shroud layer
 	if (pMap)
-	{	
+	{
 		m_numCellsX = REAL_TO_INT_CEIL((Real)(pMap->getXExtent() - 1 - pMap->getBorderSize()*2)*MAP_XY_FACTOR/m_cellWidth);
 		m_numCellsY = REAL_TO_INT_CEIL((Real)(pMap->getYExtent() - 1 - pMap->getBorderSize()*2)*MAP_XY_FACTOR/m_cellHeight);
 
@@ -225,7 +225,7 @@ Bool W3DShroud::ReAcquireResources(void)
 			return TRUE;	//nothing to reaquire since shroud was never initialized with valid data
 
 		DEBUG_ASSERTCRASH( m_pDstTexture == NULL, ("ReAcquire of existing shroud texture"));
-	
+
 		// Create destination texture (stored in video memory).
 		// Since we control the video memory copy, we can do partial updates more efficiently. Or do shift blits.
 #if defined(RTS_DEBUG)
@@ -259,7 +259,7 @@ W3DShroudLevel W3DShroud::getShroudLevel(Int x, Int y)
 	if (x < m_numCellsX && y < m_numCellsY)
 	{
 		UnsignedShort pixel=*(UnsignedShort *)((Byte *)m_srcTextureData + x*2 + y*m_srcTexturePitch);
-		
+
 #if defined(RTS_DEBUG)
 		if (TheGlobalData && TheGlobalData->m_fogOfWarOn)
 			//in this mode, alpha channel holds intensity
@@ -324,9 +324,9 @@ void W3DShroud::setShroudLevel(Int x, Int y, W3DShroudLevel level, Bool textureO
 
 //      For those interested, MLorenzen has this bock commented out until he gets back on Mon, Sept. 30 2002
 			// If this code is still here by mid october, nuke it!
-//			UnsignedInt texelRed =  ((*texel >> 8 ) & 0xf8); 
-//			UnsignedInt texelGreen =((*texel >> 3 ) & 0xfc);  
-//			UnsignedInt texelBlue = ((*texel << 3 ) & 0xf8);  
+//			UnsignedInt texelRed =  ((*texel >> 8 ) & 0xf8);
+//			UnsignedInt texelGreen =((*texel >> 3 ) & 0xfc);
+//			UnsignedInt texelBlue = ((*texel << 3 ) & 0xf8);
 //			if (texelRed < texelGreen && texelGreen > texelBlue)
 //			{
 //				bluepixel += redpixel;
@@ -384,7 +384,7 @@ void W3DShroud::fillShroudData(W3DShroudLevel level)
 	}
 
 	UnsignedShort *ptr=(UnsignedShort *)m_srcTextureData;
-	Int pitch = m_srcTexturePitch >> 1;	//2 bytes per pointer increment 
+	Int pitch = m_srcTexturePitch >> 1;	//2 bytes per pointer increment
 	for (y=0; y<m_numCellsY; y++)
 	{
 		for (x=0; x<m_numCellsX; x++)
@@ -469,7 +469,7 @@ void W3DShroud::fillBorderShroudData(W3DShroudLevel level, SurfaceClass* pDestSu
 		dstPoint.x=0;
 
 		for (x=0; x<numFullCopies; x++)
-		{	
+		{
 			dstPoint.x = x * srcRect.right;	//advance to next set of pixel in row.
 
 			DX8Wrapper::_Copy_DX8_Rects(
@@ -492,7 +492,7 @@ void W3DShroud::fillBorderShroudData(W3DShroudLevel level, SurfaceClass* pDestSu
 			srcRect.right = oldVal;
 		}
 	}
-	
+
 }
 
 /**Set the shroud color within the border area of the map*/
@@ -523,7 +523,7 @@ void W3DShroud::render(CameraClass *cam)
 
 #if defined(RTS_DEBUG)
 	if (TheGlobalData && TheGlobalData->m_fogOfWarOn != m_drawFogOfWar)
-	{	
+	{
 		//fog state has changed since last time shroud system was initialized
 		reset();
 		ReleaseResources();
@@ -537,10 +537,10 @@ void W3DShroud::render(CameraClass *cam)
 	DEBUG_ASSERTCRASH( m_pSrcTexture != NULL, ("Updating unallocated shroud texture"));
 
 #ifdef LOAD_DUMMY_SHROUD
-	
+
 	static doInit=1;
 	if (doInit)
-	{	
+	{
 		//some temporary code here to debug the shroud.
 
 		///@todo: remove this debug buffer fill.
@@ -620,7 +620,7 @@ void W3DShroud::render(CameraClass *cam)
 	Int visEndY=visStartY+REAL_TO_INT_FLOOR((Real)(hm->getDrawHeight()-1)*MAP_XY_FACTOR/m_cellHeight)+1;
 
 	if (visEndX > m_numCellsX)
-	{	
+	{
 		visStartX -= visEndX - m_numCellsX;	//shift visible rectangle to fall within terrain bounds
 		if (visStartX < 0)
 			visStartX = 0;
@@ -628,7 +628,7 @@ void W3DShroud::render(CameraClass *cam)
 	}
 
 	if (visEndY > m_numCellsY)
-	{	
+	{
 		visStartY -= visEndY - m_numCellsY;	//shift visible rectangle to fall within terrain bounds
 		if (visStartY < 0)
 			visStartY = 0;
@@ -646,7 +646,7 @@ void W3DShroud::render(CameraClass *cam)
 	pitch >>= 1;	//we have 2 bytes per pixel, so divide pitch by 2
 
 	Byte *sd=shroudData+visStartY*MAX_MAP_SHROUDSIZE;	//pointer to first shroud row
-	
+
 	for (Int y=visStartY; y<(visStartY+visSizeY); y++)
 	{
 		for (Int x=visStartX; x<(visStartX+visSizeX); x++)
@@ -673,7 +673,7 @@ void W3DShroud::render(CameraClass *cam)
 
 	RECT	srcRect;
 	POINT	dstPoint={1,1};	//first row/column is reserved for border.
-	
+
 	srcRect.left=visStartX;
 	srcRect.top=visStartY;
 	srcRect.right=visEndX;
@@ -688,7 +688,7 @@ void W3DShroud::render(CameraClass *cam)
 	{	//we need to clear unused parts of the destination texture to a known
 		//color in order to keep map border in the state we want.
 		m_clearDstTexture=FALSE;
-		
+
 		fillBorderShroudData(m_boderShroudLevel, pDestSurface);
 	}
 

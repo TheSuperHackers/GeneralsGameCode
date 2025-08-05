@@ -18,12 +18,12 @@
 
 // FILE: WinMain.cpp //////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:    ImagePacker
@@ -104,9 +104,9 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 		return 0;
 
 	}  // end if
-		
+
 	// load the dialog box
-	DialogBox( hInstance, (LPCTSTR)IMAGE_PACKER_DIALOG, 
+	DialogBox( hInstance, (LPCTSTR)IMAGE_PACKER_DIALOG,
 						 NULL, (DLGPROC)ImagePackerProc );
 
 	// delete the image packer

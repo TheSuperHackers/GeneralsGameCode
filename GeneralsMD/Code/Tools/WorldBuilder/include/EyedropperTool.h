@@ -29,10 +29,10 @@
 class WorldHeightMapEdit;
 /*************************************************************************/
 /**                             EyedropperTool
-	 Does the select tile from drawing window tool operation. 
+	 Does the select tile from drawing window tool operation.
 ***************************************************************************/
 ///  Select tile tool.
-class EyedropperTool : public Tool 
+class EyedropperTool : public Tool
 {
 public:
 	EyedropperTool(void);

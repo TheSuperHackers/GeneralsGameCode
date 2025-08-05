@@ -23,12 +23,12 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 //----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //----------------------------------------------------------------------------
 //
 // Project:   Generals
@@ -42,7 +42,7 @@
 //----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
-//         Includes                                                      
+//         Includes
 //----------------------------------------------------------------------------
 
 #include "PreRTS.h"
@@ -53,59 +53,59 @@
 
 
 //----------------------------------------------------------------------------
-//         Externals                                                     
+//         Externals
 //----------------------------------------------------------------------------
 
 
 
 //----------------------------------------------------------------------------
-//         Defines                                                         
+//         Defines
 //----------------------------------------------------------------------------
 
 
 
 //----------------------------------------------------------------------------
-//         Private Types                                                     
+//         Private Types
 //----------------------------------------------------------------------------
 
 
 //----------------------------------------------------------------------------
-//         Private Data                                                     
+//         Private Data
 //----------------------------------------------------------------------------
 
 
 
 //----------------------------------------------------------------------------
-//         Public Data                                                      
+//         Public Data
 //----------------------------------------------------------------------------
 
 ArchiveFileSystem *TheArchiveFileSystem = NULL;
 
 
 //----------------------------------------------------------------------------
-//         Private Prototypes                                               
+//         Private Prototypes
 //----------------------------------------------------------------------------
 
 
 
 //----------------------------------------------------------------------------
-//         Private Functions                                               
+//         Private Functions
 //----------------------------------------------------------------------------
 
 
 
 //----------------------------------------------------------------------------
-//         Public Functions                                                
+//         Public Functions
 //----------------------------------------------------------------------------
 
 //------------------------------------------------------
 // ArchivedFileInfo
 //------------------------------------------------------
-ArchiveFileSystem::ArchiveFileSystem() 
+ArchiveFileSystem::ArchiveFileSystem()
 {
 }
 
-ArchiveFileSystem::~ArchiveFileSystem() 
+ArchiveFileSystem::~ArchiveFileSystem()
 {
 	ArchiveFileMap::iterator iter = m_archiveFileMap.begin();
 	while (iter != m_archiveFileMap.end()) {
@@ -141,7 +141,7 @@ void ArchiveFileSystem::loadIntoDirectoryTree(const ArchiveFile *archiveFile, co
 
 		while (infoInPath && (!token.find('.') || path.find('.'))) {
 			ArchivedDirectoryInfoMap::iterator tempiter = dirInfo->m_directories.find(token);
-			if (tempiter == dirInfo->m_directories.end()) 
+			if (tempiter == dirInfo->m_directories.end())
 			{
 				dirInfo->m_directories[token].clear();
 				dirInfo->m_directories[token].m_directoryName = token;
@@ -203,10 +203,10 @@ Bool ArchiveFileSystem::doesFileExist(const Char *filename) const
 
 	path.nextToken(&token, "\\/");
 
-	while (!token.find('.') || path.find('.')) 
+	while (!token.find('.') || path.find('.'))
 	{
 		ArchivedDirectoryInfoMap::const_iterator tempiter = dirInfo->m_directories.find(token);
-		if (tempiter != dirInfo->m_directories.end()) 
+		if (tempiter != dirInfo->m_directories.end())
 		{
 			dirInfo = &tempiter->second;
 			path.nextToken(&token, "\\/");
@@ -225,7 +225,7 @@ Bool ArchiveFileSystem::doesFileExist(const Char *filename) const
 	return TRUE;
 }
 
-File * ArchiveFileSystem::openFile(const Char *filename, Int access /* = 0 */) 
+File * ArchiveFileSystem::openFile(const Char *filename, Int access /* = 0 */)
 {
 	AsciiString archiveFilename;
 	archiveFilename = getArchiveFilenameForFile(AsciiString(filename));

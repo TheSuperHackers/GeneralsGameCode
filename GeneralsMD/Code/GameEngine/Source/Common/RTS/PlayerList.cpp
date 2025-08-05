@@ -24,12 +24,12 @@
 
 // FILE: PlayerList.cpp /////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:   RTS3
@@ -76,7 +76,7 @@ PlayerList::PlayerList() :
 }
 
 //-----------------------------------------------------------------------------
-PlayerList::~PlayerList() 
+PlayerList::~PlayerList()
 {
 	// the world is happier if we reinit things before destroying them,
 	// to avoid debug warnings
@@ -87,14 +87,14 @@ PlayerList::~PlayerList()
 }
 
 //-----------------------------------------------------------------------------
-Player *PlayerList::getNthPlayer(Int i) 
-{ 
+Player *PlayerList::getNthPlayer(Int i)
+{
 	if( i < 0 || i >= MAX_PLAYER_COUNT )
 	{
 //		DEBUG_CRASH( ("Illegal player index") );
 		return NULL;
 	}
-	return m_players[i]; 
+	return m_players[i];
 }
 
 //-----------------------------------------------------------------------------
@@ -274,7 +274,7 @@ void PlayerList::teamAboutToBeDeleted(Team* team)
 }
 
 //=============================================================================
-void PlayerList::updateTeamStates(void) 
+void PlayerList::updateTeamStates(void)
 {
 	// Clear team flags for all players.
 	for( Int i = 0; i < MAX_PLAYER_COUNT; i++ )
@@ -291,7 +291,7 @@ Team *PlayerList::validateTeam( AsciiString owner )
 	if (t)
 	{
 		//DEBUG_LOG(("assigned obj %08lx to team %s",obj,owner.str()));
-	}	
+	}
 	else
 	{
 		DEBUG_CRASH(("no team or player named %s could be found!", owner.str()));
@@ -349,7 +349,7 @@ Player *PlayerList::getPlayerFromMask( PlayerMaskType mask )
 
 	for( i = 0; i < MAX_PLAYER_COUNT; i++ )
 	{
-		
+
 		player = getNthPlayer( i );
 		if( player && player->getPlayerMask() == mask )
 			return player;
@@ -369,7 +369,7 @@ Player *PlayerList::getEachPlayerFromMask( PlayerMaskType& maskToAdjust )
 
 	for( i = 0; i < MAX_PLAYER_COUNT; i++ )
 	{
-		
+
 		player = getNthPlayer( i );
 		if ( player && BitIsSet(player->getPlayerMask(), maskToAdjust ))
 		{

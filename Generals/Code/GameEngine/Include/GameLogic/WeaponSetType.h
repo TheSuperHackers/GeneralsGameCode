@@ -35,7 +35,7 @@
 // state is defined by the bit being off. That is, the typical "normal" condition
 // has all condition flags set to zero.
 //
-// IMPORTANT NOTE #2: if you add or modify this list, be sure to update TheWeaponSetNames, 
+// IMPORTANT NOTE #2: if you add or modify this list, be sure to update TheWeaponSetNames,
 // *and* TheWeaponSetTypeToModelConditionTypeMap!
 //
 enum WeaponSetType CPP_11(: Int)

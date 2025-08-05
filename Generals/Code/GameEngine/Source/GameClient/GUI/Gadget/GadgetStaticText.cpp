@@ -24,12 +24,12 @@
 
 // FILE: StaticText.cpp ///////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:   RTS3
@@ -76,13 +76,13 @@ WindowMsgHandledType GadgetStaticTextInput( GameWindow *window, UnsignedInt msg,
 											      WindowMsgData mData1, WindowMsgData mData2 )
 {
 
-  switch( msg ) 
+  switch( msg )
 	{
 		// ------------------------------------------------------------------------
     case GWM_CHAR:
       switch (mData1)
 			{
-					
+
         case KEY_DOWN:
         case KEY_RIGHT:
         case KEY_TAB:
@@ -108,7 +108,7 @@ WindowMsgHandledType GadgetStaticTextInput( GameWindow *window, UnsignedInt msg,
 
   }
 	return MSG_HANDLED;
- 
+
 
 }  // end GadgetStaticTextInput
 
@@ -129,7 +129,7 @@ WindowMsgHandledType GadgetStaticTextSystem( GameWindow *window, UnsignedInt msg
 			if (tData && tData->text)
 				*(UnicodeString*)mData2 = tData->text->getText();
 			break;
-		
+
 		}  // end get label
 
 		// ------------------------------------------------------------------------

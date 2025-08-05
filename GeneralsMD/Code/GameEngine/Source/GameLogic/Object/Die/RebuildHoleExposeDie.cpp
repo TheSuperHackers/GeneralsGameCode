@@ -62,7 +62,7 @@ RebuildHoleExposeDieModuleData::RebuildHoleExposeDieModuleData()
 {
 	DieModuleData::buildFieldParse(p);
 
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
 		{ "HoleName", INI::parseAsciiString, NULL, offsetof( RebuildHoleExposeDieModuleData, m_holeName ) },
 		{ "HoleMaxHealth", INI::parseReal, NULL, offsetof( RebuildHoleExposeDieModuleData, m_holeMaxHealth ) },
@@ -100,7 +100,7 @@ void RebuildHoleExposeDie::onDie( const DamageInfo *damageInfo )
 {
 	if (!isDieApplicable(damageInfo))
 		return;
-  
+
 
 #if defined(RTS_DEBUG) || defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
   if(TheSelectionTranslator->isHandOfGodSelectionMode())
@@ -124,8 +124,8 @@ void RebuildHoleExposeDie::onDie( const DamageInfo *damageInfo )
 	// if we are being constructed from either the first time or from a hole reconstruction
 	// we do not "spawn" a hole object
 	//
-	if( us->getControllingPlayer() != ThePlayerList->getNeutralPlayer() 
-		  && us->getControllingPlayer()->isPlayerActive() 
+	if( us->getControllingPlayer() != ThePlayerList->getNeutralPlayer()
+		  && us->getControllingPlayer()->isPlayerActive()
 			&& !us->getStatusBits().test( OBJECT_STATUS_UNDER_CONSTRUCTION ) )
 	{
 		Object *hole;

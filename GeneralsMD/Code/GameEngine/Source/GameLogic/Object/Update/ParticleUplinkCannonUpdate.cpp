@@ -97,7 +97,7 @@ ParticleUplinkCannonUpdateModuleData::ParticleUplinkCannonUpdateModuleData()
 {
 	ModuleData::buildFieldParse(p);
 
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
 		{ "SpecialPowerTemplate",									INI::parseSpecialPowerTemplate,	NULL, offsetof( ParticleUplinkCannonUpdateModuleData, m_specialPowerTemplate ) },
     { "BeginChargeTime",											INI::parseDurationUnsignedInt,	NULL, offsetof( ParticleUplinkCannonUpdateModuleData, m_beginChargeFrames ) },
@@ -107,7 +107,7 @@ ParticleUplinkCannonUpdateModuleData::ParticleUplinkCannonUpdateModuleData()
 		{ "BeamTravelTime",												INI::parseDurationUnsignedInt,	NULL, offsetof( ParticleUplinkCannonUpdateModuleData, m_beamTravelFrames ) },
 		{ "TotalFiringTime",											INI::parseDurationUnsignedInt,  NULL, offsetof( ParticleUplinkCannonUpdateModuleData, m_totalFiringFrames ) },
 		{ "RevealRange",													INI::parseReal,									NULL, offsetof( ParticleUplinkCannonUpdateModuleData, m_revealRange ) },
-		
+
 		{ "OuterEffectBoneName",									INI::parseAsciiString,					NULL, offsetof( ParticleUplinkCannonUpdateModuleData, m_outerEffectBaseBoneName ) },
 		{ "OuterEffectNumBones",									INI::parseUnsignedInt,					NULL, offsetof( ParticleUplinkCannonUpdateModuleData, m_outerEffectNumBones ) },
 		{ "OuterNodesLightFlareParticleSystem",		INI::parseAsciiString,					NULL, offsetof( ParticleUplinkCannonUpdateModuleData, m_outerNodesLightFlareParticleSystemName ) },
@@ -137,8 +137,8 @@ ParticleUplinkCannonUpdateModuleData::ParticleUplinkCannonUpdateModuleData()
 
 		{ "DamagePerSecond",											INI::parseReal,									NULL, offsetof( ParticleUplinkCannonUpdateModuleData, m_damagePerSecond ) },
 		{ "TotalDamagePulses",										INI::parseUnsignedInt,					NULL, offsetof( ParticleUplinkCannonUpdateModuleData, m_totalDamagePulses ) },
-		{ "DamageType",														DamageTypeFlags::parseSingleBitFromINI,	NULL,	offsetof( ParticleUplinkCannonUpdateModuleData, m_damageType ) },		
-		{ "DeathType",														INI::parseIndexList,						TheDeathNames,	offsetof( ParticleUplinkCannonUpdateModuleData, m_deathType ) },		
+		{ "DamageType",														DamageTypeFlags::parseSingleBitFromINI,	NULL,	offsetof( ParticleUplinkCannonUpdateModuleData, m_damageType ) },
+		{ "DeathType",														INI::parseIndexList,						TheDeathNames,	offsetof( ParticleUplinkCannonUpdateModuleData, m_deathType ) },
 		{ "DamageRadiusScalar",										INI::parseReal,									NULL, offsetof( ParticleUplinkCannonUpdateModuleData, m_damageRadiusScalar ) },
 
 		{ "PoweringUpSoundLoop",									INI::parseAsciiString,					NULL, offsetof( ParticleUplinkCannonUpdateModuleData, m_powerupSoundName ) },
@@ -198,7 +198,7 @@ ParticleUplinkCannonUpdate::ParticleUplinkCannonUpdate( Thing *thing, const Modu
 		m_outerNodePositions[ i ].zero();
 		m_outerNodeOrientations[ i ].Make_Identity();
 	}
-} 
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -327,7 +327,7 @@ Bool ParticleUplinkCannonUpdate::initiateIntentToDoSpecialPower(const SpecialPow
 
 		//All computer controlled players have automatic control -- the "S" curve.
 		UnsignedInt now = TheGameLogic->getFrame();
-		
+
 		Coord3D pos;
 		if( targetPos )
 		{
@@ -371,11 +371,11 @@ Bool ParticleUplinkCannonUpdate::isPowerCurrentlyInUse( const CommandButton *com
 
 //-------------------------------------------------------------------------------------------------
 void ParticleUplinkCannonUpdate::setSpecialPowerOverridableDestination( const Coord3D *loc )
-{ 
+{
 	if( !getObject()->isDisabled() )
 	{
-		m_overrideTargetDestination = *loc; 
-		m_manualTargetMode = TRUE; 
+		m_overrideTargetDestination = *loc;
+		m_manualTargetMode = TRUE;
 		m_2ndLastDrivingClickFrame = m_lastDrivingClickFrame;
 		m_lastDrivingClickFrame = TheGameLogic->getFrame();
 	}
@@ -386,7 +386,7 @@ void ParticleUplinkCannonUpdate::setSpecialPowerOverridableDestination( const Co
 /** The update callback. */
 //-------------------------------------------------------------------------------------------------
 UpdateSleepTime ParticleUplinkCannonUpdate::update()
-{	
+{
 	if( m_invalidSettings )
 	{
 		// can't return UPDATE_SLEEP_FOREVER unless we are sleepy...
@@ -432,7 +432,7 @@ UpdateSleepTime ParticleUplinkCannonUpdate::update()
 	{
 		if( m_startDecayFrame > now )
 		{
-			if( me->isDisabledByType( DISABLED_UNDERPOWERED ) || 
+			if( me->isDisabledByType( DISABLED_UNDERPOWERED ) ||
 					me->isDisabledByType( DISABLED_EMP ) ||
 					me->isDisabledByType( DISABLED_SUBDUED ) ||
 					me->isDisabledByType( DISABLED_HACKED ) )
@@ -454,7 +454,7 @@ UpdateSleepTime ParticleUplinkCannonUpdate::update()
 					createOrbitToTargetLaser( data->m_widthGrowFrames );
 					m_laserStatus = LASERSTATUS_BORN;
 					m_scorchMarksMade		= 0;
-					m_nextScorchMarkFrame = now; 
+					m_nextScorchMarkFrame = now;
 					m_damagePulsesMade = 0;
 					m_nextDamagePulseFrame = now;
 				}
@@ -514,11 +514,11 @@ UpdateSleepTime ParticleUplinkCannonUpdate::update()
 		const Bool isFiring = orbitalBirthFrame <= now && now < orbitalDeathFrame;
 		if ( isFiring )
 		{
-		
+
 			if( !m_manualTargetMode && !m_scriptedWaypointMode )
 			{
 				//Calculate the position of the beam because it swaths -- a nice S curve centering at the target location!
-				
+
 				//First determine the factor of time completed (ranges between 0.0 and 1.0)
 				Real factor = (Real)(now - orbitalBirthFrame) / (Real)(orbitalDeathFrame - orbitalBirthFrame);
 
@@ -711,7 +711,7 @@ UpdateSleepTime ParticleUplinkCannonUpdate::update()
 					{
 						body->attemptDamage( &damageInfo );
 					}
-				} 
+				}
 
 				if( data->m_damagePulseRemnantObjectName.isNotEmpty() )
 				{
@@ -733,7 +733,7 @@ UpdateSleepTime ParticleUplinkCannonUpdate::update()
 				m_nextDamagePulseFrame = orbitalBirthFrame + nextFactor * (orbitalDeathFrame - orbitalBirthFrame);
 			}
 		}
-		
+
 		if( endDecayFrame <= now )
 		{
 			setLogicalStatus( STATUS_PACKING );
@@ -1205,7 +1205,7 @@ void ParticleUplinkCannonUpdate::setLogicalStatus( PUCStatus newStatus )
 			}
 			TheAudio->removeAudioEvent( m_firingToIdleSound.getPlayingHandle() );
 			TheAudio->removeAudioEvent( m_annihilationSound.getPlayingHandle() );
-			
+
 			m_laserStatus = LASERSTATUS_NONE;
 			break;
 		}
@@ -1283,7 +1283,7 @@ void ParticleUplinkCannonUpdate::setClientStatus( PUCStatus newStatus, Bool reve
 
 	//This isn't the most efficient way to do this. Various effects can live in more than
 	//one status state, but keeping track of them properly is error-prone and hard to read.
-	//Therefore, the new philosophy is to delete EVERYTHING between status changes and 
+	//Therefore, the new philosophy is to delete EVERYTHING between status changes and
 	//create the ones we want!
 	removeAllEffects();
 
@@ -1477,7 +1477,7 @@ void ParticleUplinkCannonUpdate::xfer( Xfer *xfer )
 
 	// next scorch mark frame
 	xfer->xferUnsignedInt( &m_nextScorchMarkFrame );
-	
+
 	// next launch FX frame
 	xfer->xferUnsignedInt( &m_nextLaunchFXFrame );
 

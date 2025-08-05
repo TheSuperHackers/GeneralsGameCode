@@ -24,12 +24,12 @@
 
 // FILE: DisplayString.h //////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information					         
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:    RTS3
@@ -111,7 +111,7 @@ protected:
 
 	UnicodeString m_textString;
 	GameFont *m_font;			 ///< font to display this string with
-	
+
 	DisplayString *m_next;  ///< for the display string factory list ONLY
 	DisplayString *m_prev;	///< for the display string factory list ONLY
 

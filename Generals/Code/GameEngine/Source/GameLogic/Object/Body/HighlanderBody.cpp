@@ -37,7 +37,7 @@
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-HighlanderBody::HighlanderBody( Thing *thing, const ModuleData* moduleData ) 
+HighlanderBody::HighlanderBody( Thing *thing, const ModuleData* moduleData )
 						 : ActiveBody( thing, moduleData )
 {
 }

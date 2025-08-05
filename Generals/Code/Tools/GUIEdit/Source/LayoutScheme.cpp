@@ -24,12 +24,12 @@
 
 // FILE: LayoutScheme.cpp /////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:    GUIEdit
@@ -99,7 +99,7 @@ static void loadSchemeDataToDialog( HWND hWndDialog )
 {
 
 	// load the name of the current scheme
-	SetDlgItemText( hWndDialog, STATIC_CURRENT_SCHEME, 
+	SetDlgItemText( hWndDialog, STATIC_CURRENT_SCHEME,
 									theScheme->getSchemeFilename() );
 
 	// load the state combo box with every option available
@@ -112,7 +112,7 @@ static void loadSchemeDataToDialog( HWND hWndDialog )
 									GWS_HORZ_SLIDER |
 									GWS_VERT_SLIDER |
 									GWS_STATIC_TEXT |
-									GWS_ENTRY_FIELD | 
+									GWS_ENTRY_FIELD |
 									GWS_USER_WINDOW |
 									GWS_COMBO_BOX,
 									GetDlgItem( hWndDialog, COMBO_STATE ) );
@@ -122,7 +122,7 @@ static void loadSchemeDataToDialog( HWND hWndDialog )
 	LoadImageListComboBox( GetDlgItem( hWndDialog, COMBO_IMAGE ) );
 
 	//
-	// load our own internal table of images and colors to the 
+	// load our own internal table of images and colors to the
 	// property dialog tables
 	//
 	Int i;
@@ -292,7 +292,7 @@ static LRESULT CALLBACK layoutSchemeCallback( HWND hWndDialog,
 	// this is largely based on the property dialog code so lets just
 	// let the default handle code work here too
 	//
-	if( HandleCommonDialogMessages( hWndDialog, message, 
+	if( HandleCommonDialogMessages( hWndDialog, message,
 																	wParam, lParam, &returnCode ) == TRUE )
 		return returnCode;
 
@@ -315,7 +315,7 @@ static LRESULT CALLBACK layoutSchemeCallback( HWND hWndDialog,
 //			Int notifyCode = HIWORD( wParam );  // notification code
 			Int controlID = LOWORD( wParam );  // control ID
 //			HWND hWndControl = (HWND)lParam;  // control window handle
-		
+
 			switch( controlID )
 			{
 
@@ -367,7 +367,7 @@ static LRESULT CALLBACK layoutSchemeCallback( HWND hWndDialog,
 
 						saveData( hWndDialog );
 						theScheme->saveScheme( filename );
-						SetDlgItemText( hWndDialog, STATIC_CURRENT_SCHEME, 
+						SetDlgItemText( hWndDialog, STATIC_CURRENT_SCHEME,
 														theScheme->getSchemeFilename() );
 
 					}  // end if
@@ -375,7 +375,7 @@ static LRESULT CALLBACK layoutSchemeCallback( HWND hWndDialog,
 					break;
 
 				}  // end save
-				
+
 				// --------------------------------------------------------------------
 				case BUTTON_LOAD:
 				{
@@ -387,7 +387,7 @@ static LRESULT CALLBACK layoutSchemeCallback( HWND hWndDialog,
 						// load the new data
 						if( theScheme->loadScheme( filename ) )
 						{
-										
+
 							// load the dialog engine and items with the current data of the scheme
 							loadSchemeDataToDialog( hWndDialog );
 
@@ -405,7 +405,7 @@ static LRESULT CALLBACK layoutSchemeCallback( HWND hWndDialog,
 					break;
 
 				}  // end load
-							
+
 				// --------------------------------------------------------------------
 				case IDOK:
 
@@ -422,7 +422,7 @@ static LRESULT CALLBACK layoutSchemeCallback( HWND hWndDialog,
 					break;
 
 			}  // end switch
-				
+
 			break;
 
 		}  // end command
@@ -951,7 +951,7 @@ void LayoutScheme::applyPropertyTablesToWindow( GameWindow *root )
 			GadgetButtonSetHiliteSelectedColor( dropDownButton, info->color );
 			GadgetButtonSetHiliteSelectedBorderColor( dropDownButton, info->borderColor );
 		}// end if
-		
+
 		GameWindow *editBox = GadgetComboBoxGetEditBox( root );
 		if ( editBox )
 		{
@@ -1341,7 +1341,7 @@ void LayoutScheme::applyPropertyTablesToWindow( GameWindow *root )
 		GadgetTabControlSetEnabledBorderColorBackground( root, info->borderColor );
 
 
-	
+
 		info = GetStateInfo( TC_TAB_0_DISABLED );
 		GadgetTabControlSetDisabledImageTabZero( root, info->image );
 		GadgetTabControlSetDisabledColorTabZero( root, info->color );
@@ -1388,7 +1388,7 @@ void LayoutScheme::applyPropertyTablesToWindow( GameWindow *root )
 		GadgetTabControlSetDisabledBorderColorBackground( root, info->borderColor );
 
 
-		
+
 
 		info = GetStateInfo( TC_TAB_0_HILITE );
 		GadgetTabControlSetHiliteImageTabZero( root, info->image );
@@ -1457,7 +1457,7 @@ void LayoutScheme::applyPropertyTablesToWindow( GameWindow *root )
 	}  // end else
 
 	//
-	// apply changes to children of this window, unless this 
+	// apply changes to children of this window, unless this
 	// window is a gadget itself, those are "atomic" units remember ;)
 	//
 	if( TheEditor->windowIsGadget( root ) == FALSE )
@@ -1506,7 +1506,7 @@ LayoutScheme::~LayoutScheme( void )
 
 		if( m_imageAndColorTable[ i ].stateNameBuffer )
 		{
-			
+
 			delete [] m_imageAndColorTable[ i ].stateNameBuffer;
 			m_imageAndColorTable[ i ].stateNameBuffer = NULL;
 			m_imageAndColorTable[ i ].stateName = NULL;
@@ -1528,10 +1528,10 @@ void LayoutScheme::init( void )
 	// just up the default state values
 	for( i = FIRST_VALID_IDENTIFIER; i < NUM_STATE_IDENTIFIERS; i++ )
 	{
-	
+
 		// get info from the static table created for property editing
 		info = GetStateInfo( (StateIdentifier)i );
-		assert( info );	
+		assert( info );
 		m_imageAndColorTable[ i ].windowType = info->windowType;
 		m_imageAndColorTable[ i ].stateID = info->stateID;
 		m_imageAndColorTable[ i ].image = info->image;
@@ -1809,7 +1809,7 @@ void LayoutScheme::init( void )
 	image = TheMappedImageCollection->findImageByName( AsciiString(  "VSliderLargeThumbHiliteSelected" ) );
 	storeImageAndColor( LISTBOX_SLIDER_THUMB_HILITE_PUSHED, image, white, darkGreen );
 
-	// Combo Box 
+	// Combo Box
 	//---------------------------------------------------------------------------
 	image = TheMappedImageCollection->findImageByName( AsciiString( "ListBoxEnabled" ) );
 	storeImageAndColor( COMBOBOX_ENABLED, image, red, lightRed );
@@ -1879,7 +1879,7 @@ void LayoutScheme::init( void )
 	storeImageAndColor( COMBOBOX_EDIT_BOX_HILITE_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED );
 	image = TheMappedImageCollection->findImageByName( AsciiString( "TextEntryHiliteSmallRepeatingCenter" ) );
 	storeImageAndColor( COMBOBOX_EDIT_BOX_HILITE_SMALL_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED );
-	
+
 	image = TheMappedImageCollection->findImageByName( AsciiString( "ListBoxEnabled" ) );
 	storeImageAndColor( COMBOBOX_LISTBOX_ENABLED, image, red, lightRed );
 	image = TheMappedImageCollection->findImageByName( AsciiString( "ListBoxEnabledSelectedItemLeftEnd" ) );
@@ -2132,12 +2132,12 @@ void LayoutScheme::init( void )
 
 	storeImageAndColor( TAB_CONTROL_ENABLED, NULL, black, white );
 	storeImageAndColor( TAB_CONTROL_DISABLED, NULL, darkGray, white );
-	storeImageAndColor( TAB_CONTROL_HILITE, NULL, black, white );	
+	storeImageAndColor( TAB_CONTROL_HILITE, NULL, black, white );
 
 	// generic
 	storeImageAndColor( GENERIC_ENABLED, NULL, darkBlue, white );
 	storeImageAndColor( GENERIC_DISABLED, NULL, darkGray, white );
-	storeImageAndColor( GENERIC_HILITE, NULL, lightBlue, white );	
+	storeImageAndColor( GENERIC_HILITE, NULL, lightBlue, white );
 
 	// default text colors
 	m_enabledText.color = white;
@@ -2311,9 +2311,9 @@ Bool LayoutScheme::saveScheme( char *filename )
 		assert( info );
 
 		// get the color data in more RGB friendly output
-		GameGetColorComponents( info->color, &colorR, &colorG, 
+		GameGetColorComponents( info->color, &colorR, &colorG,
 														&colorB, &colorA );
-		GameGetColorComponents( info->borderColor, &bColorR, &bColorG, 
+		GameGetColorComponents( info->borderColor, &bColorR, &bColorG,
 														&bColorB, &bColorA );
 
 		// output it

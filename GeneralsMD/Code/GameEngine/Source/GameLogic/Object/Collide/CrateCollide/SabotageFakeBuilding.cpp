@@ -23,13 +23,13 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-//	
-// FILE: SabotageFakeBuildingCrateCollide.cpp 
+//
+// FILE: SabotageFakeBuildingCrateCollide.cpp
 // Author: Kris Morness, July 2003
 // Desc:   A crate (actually a saboteur - mobile crate) that destroys a fake building.
-//	
+//
 ///////////////////////////////////////////////////////////////////////////////////////////////////
- 
+
 
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
@@ -62,13 +62,13 @@
 //-------------------------------------------------------------------------------------------------
 SabotageFakeBuildingCrateCollide::SabotageFakeBuildingCrateCollide( Thing *thing, const ModuleData* moduleData ) : CrateCollide( thing, moduleData )
 {
-} 
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 SabotageFakeBuildingCrateCollide::~SabotageFakeBuildingCrateCollide( void )
 {
-}  
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -138,7 +138,7 @@ Bool SabotageFakeBuildingCrateCollide::executeCrateBehavior( Object *other )
 		damageInfo.in.m_amount = other->getBodyModule()->getMaxHealth();
 		other->attemptDamage( &damageInfo );
 	}
-	
+
 	return TRUE;
 }
 

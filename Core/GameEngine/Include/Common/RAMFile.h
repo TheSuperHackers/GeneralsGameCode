@@ -23,12 +23,12 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 //----------------------------------------------------------------------------=
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information					                  
-//                Copyright(C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright(C) 2001 - All Rights Reserved
+//
 //----------------------------------------------------------------------------
 //
 // Project:    WSYS Library
@@ -49,7 +49,7 @@
 
 
 //----------------------------------------------------------------------------
-//           Includes                                                      
+//           Includes
 //----------------------------------------------------------------------------
 
 #include "Common/file.h"
@@ -74,15 +74,15 @@
 
 class RAMFile : public File
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(RAMFile, "RAMFile")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(RAMFile, "RAMFile")
 	protected:
 
 		Char				*m_data;											///< File data in memory
 		Int					m_pos;												///< current read position
 		Int					m_size;												///< size of file in memory
-		
+
 	public:
-		
+
 		RAMFile();
 		//virtual				~RAMFile();
 
@@ -106,7 +106,7 @@ class RAMFile : public File
 		virtual Bool	copyDataToFile(File *localFile);										///< write the contents of the RAM file to the given local file.  This could be REALLY slow.
 
 		/**
-			Allocate a buffer large enough to hold entire file, read 
+			Allocate a buffer large enough to hold entire file, read
 			the entire file into the buffer, then close the file.
 			the buffer is owned by the caller, who is responsible
 			for freeing is (via delete[]). This is a Good Thing to
@@ -124,7 +124,7 @@ class RAMFile : public File
 
 
 //----------------------------------------------------------------------------
-//           Inlining                                                       
+//           Inlining
 //----------------------------------------------------------------------------
 
 

@@ -305,7 +305,7 @@ W3DBufferManager::W3DVertexBufferSlot * W3DBufferManager::allocateSlotStorage(VB
 		m_W3DVertexBuffers[fvfType] = &m_W3DEmptyVertexBuffers[m_numEmptyVertexBuffersAllocated];
 		m_W3DVertexBuffers[fvfType]->m_nextVB=pVB;	//link to list
 		m_numEmptyVertexBuffersAllocated++;
-		
+
 		pVB=m_W3DVertexBuffers[fvfType];	//get new list head
 
 		Int vbSize=__max(DEFAULT_VERTEX_BUFFER_SIZE,size);
@@ -425,7 +425,7 @@ W3DBufferManager::W3DIndexBufferSlot * W3DBufferManager::allocateSlotStorage(Int
 		m_W3DIndexBuffers = &m_W3DEmptyIndexBuffers[m_numEmptyIndexBuffersAllocated];
 		m_W3DIndexBuffers->m_nextIB=pIB;	//link to list
 		m_numEmptyIndexBuffersAllocated++;
-		
+
 		pIB=m_W3DIndexBuffers;	//get new list head
 
 		Int ibSize=__max(DEFAULT_INDEX_BUFFER_SIZE,size);

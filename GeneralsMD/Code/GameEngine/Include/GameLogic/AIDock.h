@@ -34,7 +34,7 @@
 #include "Common/GameMemory.h"
 #include "GameLogic/AIStateMachine.h"
 
-/** 
+/**
  * The states of the Docking state machine.
  */
 enum
@@ -58,7 +58,7 @@ class AIDockMachine : public StateMachine
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( AIDockMachine, "AIDockMachinePool" );
 
 public:
-	/** 
+	/**
 	 * The implementation of this constructor defines the states
 	 * used by this machine.
 	 */
@@ -77,12 +77,12 @@ protected:
 
 };
 
-// Please do not use these states in some other machine.  I know that wouldn't even make sense, but they 
+// Please do not use these states in some other machine.  I know that wouldn't even make sense, but they
 // cast their getMachine to an AIDock machine to store stuff across states so you'd crash.
 //-----------------------------------------------------------------------------------------------------------
 class AIDockApproachState : public AIInternalMoveToState
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIDockApproachState, "AIDockApproachState")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIDockApproachState, "AIDockApproachState")
 public:
 	AIDockApproachState( StateMachine *machine ) : AIInternalMoveToState( machine, "AIDockApproachState" ) { }
 	virtual StateReturnType onEnter( void );
@@ -99,7 +99,7 @@ EMPTY_DTOR(AIDockApproachState)
 //-----------------------------------------------------------------------------------------------------------
 class AIDockWaitForClearanceState : public State
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIDockWaitForClearanceState, "AIDockWaitForClearanceState")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIDockWaitForClearanceState, "AIDockWaitForClearanceState")
 public:
 	AIDockWaitForClearanceState( StateMachine *machine ) : State( machine, "AIDockWaitForClearanceState" ), m_enterFrame(0) { }
 	virtual StateReturnType onEnter( void );
@@ -118,7 +118,7 @@ EMPTY_DTOR(AIDockWaitForClearanceState)
 //-----------------------------------------------------------------------------------------------------------
 class AIDockAdvancePositionState : public AIInternalMoveToState
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIDockAdvancePositionState, "AIDockAdvancePositionState")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIDockAdvancePositionState, "AIDockAdvancePositionState")
 public:
 	AIDockAdvancePositionState( StateMachine *machine ) : AIInternalMoveToState( machine, "AIDockApproachState" ) { }
 	virtual StateReturnType onEnter( void );
@@ -130,7 +130,7 @@ EMPTY_DTOR(AIDockAdvancePositionState)
 //-----------------------------------------------------------------------------------------------------------
 class AIDockMoveToEntryState : public AIInternalMoveToState
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIDockMoveToEntryState, "AIDockMoveToEntryState")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIDockMoveToEntryState, "AIDockMoveToEntryState")
 public:
 	AIDockMoveToEntryState( StateMachine *machine ) : AIInternalMoveToState( machine, "AIDockMoveToEntryState" ) { }
 	virtual StateReturnType onEnter( void );
@@ -142,7 +142,7 @@ EMPTY_DTOR(AIDockMoveToEntryState)
 //-----------------------------------------------------------------------------------------------------------
 class AIDockMoveToDockState : public AIInternalMoveToState
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIDockMoveToDockState, "AIDockMoveToDockState")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIDockMoveToDockState, "AIDockMoveToDockState")
 public:
 	AIDockMoveToDockState( StateMachine *machine ) : AIInternalMoveToState( machine, "AIDockMoveToDockState" ) { }
 	virtual StateReturnType onEnter( void );
@@ -154,7 +154,7 @@ EMPTY_DTOR(AIDockMoveToDockState)
 //-----------------------------------------------------------------------------------------------------------
 class AIDockMoveToRallyState : public AIInternalMoveToState
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIDockMoveToRallyState, "AIDockMoveToRallyState")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIDockMoveToRallyState, "AIDockMoveToRallyState")
 public:
 	AIDockMoveToRallyState( StateMachine *machine ) : AIInternalMoveToState( machine, "AIDockMoveToRallyState" ) { }
 	virtual StateReturnType onEnter( void );
@@ -166,7 +166,7 @@ EMPTY_DTOR(AIDockMoveToRallyState)
 //-----------------------------------------------------------------------------------------------------------
 class AIDockProcessDockState : public State
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIDockProcessDockState, "AIDockProcessDockState")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIDockProcessDockState, "AIDockProcessDockState")
 public:
 	AIDockProcessDockState( StateMachine *machine );
 	virtual StateReturnType onEnter( void );
@@ -193,7 +193,7 @@ EMPTY_DTOR(AIDockProcessDockState)
 //-----------------------------------------------------------------------------------------------------------
 class AIDockMoveToExitState : public AIInternalMoveToState
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIDockMoveToExitState, "AIDockMoveToExitState")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIDockMoveToExitState, "AIDockMoveToExitState")
 public:
 	AIDockMoveToExitState( StateMachine *machine ) : AIInternalMoveToState( machine, "AIDockMoveToExitState" ) { }
 	virtual StateReturnType onEnter( void );

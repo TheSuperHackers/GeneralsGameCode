@@ -16,22 +16,22 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/*************************************************************************** 
- ***    C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S     *** 
- *************************************************************************** 
- *                                                                         * 
- *                 Project Name : G                                        * 
- *                                                                         * 
- *                     $Archive:: /Commando/Code/ww3d2/line3d.h           $* 
- *                                                                         * 
- *                      $Author:: Hector_y                                $* 
- *                                                                         * 
- *                     $Modtime:: 2/16/01 3:52p                           $* 
- *                                                                         * 
- *                    $Revision:: 2                                       $* 
- *                                                                         * 
- *-------------------------------------------------------------------------* 
- * Functions:                                                              * 
+/***************************************************************************
+ ***    C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S     ***
+ ***************************************************************************
+ *                                                                         *
+ *                 Project Name : G                                        *
+ *                                                                         *
+ *                     $Archive:: /Commando/Code/ww3d2/line3d.h           $*
+ *                                                                         *
+ *                      $Author:: Hector_y                                $*
+ *                                                                         *
+ *                     $Modtime:: 2/16/01 3:52p                           $*
+ *                                                                         *
+ *                    $Revision:: 2                                       $*
+ *                                                                         *
+ *-------------------------------------------------------------------------*
+ * Functions:                                                              *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #if defined(_MSC_VER)
@@ -72,7 +72,7 @@ class Line3DClass : public W3DMPO, public RenderObjClass
 
 		// class id of this render object
 		virtual int Class_ID(void) const { return CLASSID_LINE3D; }
-	
+
 		virtual void		Render(RenderInfoClass & rfinfo);
 
 		// scale the 3D line symmetrically about its center.
@@ -104,14 +104,14 @@ class Line3DClass : public W3DMPO, public RenderObjClass
 		void							Set_Sort_Level(int level)									{ SortLevel = level; }
 		int							Get_Sort_Level(void) const									{ return SortLevel; }
 
-	protected:		
+	protected:
 
 		// This is kept to facilitate changing the line endpoints.
 		float Length;
 
 		// This is kept to facilitate changing the line width.
 		float Width;
-		
+
 		// shader
 		ShaderClass				Shader;
 		// vertices

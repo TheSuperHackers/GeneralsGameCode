@@ -72,7 +72,7 @@ enum SpecialPowerType CPP_11(: Int)
 	//Special abilities
 	SPECIAL_MISSILE_DEFENDER_LASER_GUIDED_MISSILES,
 	SPECIAL_REMOTE_CHARGES,
-	SPECIAL_TIMED_CHARGES, 
+	SPECIAL_TIMED_CHARGES,
 	SPECIAL_HELIX_NAPALM_BOMB,
 	SPECIAL_HACKER_DISABLE_BUILDING,
 	SPECIAL_TANKHUNTER_TNT_ATTACK,
@@ -96,11 +96,11 @@ enum SpecialPowerType CPP_11(: Int)
 
   SPECIAL_SPECTRE_GUNSHIP,
   SPECIAL_GPS_SCRAMBLER,
-	
+
 	SPECIAL_FRENZY,
 	SPECIAL_SNEAK_ATTACK,
 
-	//Ack, this is ass. These enums fix a bug where new enums were missing for 
+	//Ack, this is ass. These enums fix a bug where new enums were missing for
 	//shortcut powers... but the real clincher was that if you were say USA and
 	//captured a Tank China command center, your US paradrop would be assigned
 	//to the china tank drop and when you tried to fire it from the shortcut
@@ -128,7 +128,7 @@ enum SpecialPowerType CPP_11(: Int)
 	SUPW_SPECIAL_NEUTRON_MISSILE,
 
 	SPECIAL_BATTLESHIP_BOMBARDMENT,
-		
+
 	SPECIALPOWER_COUNT,
 	// don't forget to add new strings to SpecialPowerMaskType::s_bitNameList[]
 };

@@ -38,12 +38,12 @@
 
 //----------------------------------------------------------------------------------------------------------
 /**
- * Create an AI state machine. Define all of the states the machine 
+ * Create an AI state machine. Define all of the states the machine
  * can possibly be in, and set the initial (default) state.
  */
 AIDockMachine::AIDockMachine( Object *obj ) : StateMachine( obj, "AIDockMachine" )
 {
-	static const StateConditionInfo waitForClearanceConditions[] = 
+	static const StateConditionInfo waitForClearanceConditions[] =
 	{
 		StateConditionInfo(ableToAdvance, AI_DOCK_ADVANCE_POSITION, NULL),
 		StateConditionInfo(NULL, NULL, NULL)	// keep last
@@ -67,10 +67,10 @@ AIDockMachine::~AIDockMachine()
 }
 
 //-----------------------------------------------------------------------------
-void AIDockMachine::halt() 
-{ 
+void AIDockMachine::halt()
+{
 	Object *goalObject = getGoalObject();
-		
+
 	// sanity
 	if( goalObject != NULL )
 	{
@@ -99,8 +99,8 @@ void AIDockMachine::crc( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void AIDockMachine::xfer( Xfer *xfer )
 {
-	XferVersion cv = 1;	
-	XferVersion v = cv; 
+	XferVersion cv = 1;
+	XferVersion v = cv;
 	xfer->xferVersion( &v, cv );
 
 	StateMachine::xfer(xfer);
@@ -167,7 +167,7 @@ void AIDockApproachState::xfer( Xfer *xfer )
 StateReturnType AIDockApproachState::onEnter( void )
 {
 	Object *goalObject = getMachineGoalObject();
-		
+
 	// sanity
 	if( goalObject == NULL )
 		return STATE_FAILURE;
@@ -301,10 +301,10 @@ void AIDockWaitForClearanceState::onExit( StateExitType status )
 }
 
 //----------------------------------------------------------------------------------------------
-void AIDockWaitForClearanceState::xfer(Xfer *xfer ) 
+void AIDockWaitForClearanceState::xfer(Xfer *xfer )
 {
-	XferVersion cv = 2;	
-	XferVersion v = cv; 
+	XferVersion cv = 2;
+	XferVersion v = cv;
 	xfer->xferVersion( &v, cv );
 	if (v >= 2) {
 		xfer->xferUnsignedInt(&m_enterFrame);
@@ -323,7 +323,7 @@ void AIDockWaitForClearanceState::xfer(Xfer *xfer )
 StateReturnType AIDockAdvancePositionState::onEnter( void )
 {
 	Object *goalObject = getMachineGoalObject();
-		
+
 	// sanity
 	if( goalObject == NULL )
 		return STATE_FAILURE;
@@ -422,7 +422,7 @@ StateReturnType AIDockMoveToEntryState::onEnter( void )
 	}
 
 	AIUpdateInterface *ai = getMachineOwner()->getAIUpdateInterface();
-	if( ai  &&  dock->isAllowPassthroughType() ) 
+	if( ai  &&  dock->isAllowPassthroughType() )
 	{
 		ai->ignoreObstacle( getMachineGoalObject() );
 	}
@@ -505,7 +505,7 @@ StateReturnType AIDockMoveToDockState::onEnter( void )
 	dock->getDockPosition( getMachineOwner(), &m_goalPosition );
 
 	AIUpdateInterface *ai = getMachineOwner()->getAIUpdateInterface();
-	if( ai  &&  dock->isAllowPassthroughType() ) 
+	if( ai  &&  dock->isAllowPassthroughType() )
 	{
 		ai->ignoreObstacle( getMachineGoalObject() );
 		setAdjustsDestination(false);
@@ -647,7 +647,7 @@ struct DroneInfo
 void findDrone( Object *obj, void *droneInfo )
 {
 	DroneInfo *dInfo = (DroneInfo*)droneInfo;
-	
+
 	if( !dInfo->found && obj )
 	{
 		if( obj->isKindOf( KINDOF_DRONE ) && obj->getProducerID() == dInfo->owner->getID() )
@@ -721,7 +721,7 @@ StateReturnType AIDockMoveToExitState::onEnter( void )
 	dock->getExitPosition( getMachineOwner(), &m_goalPosition );
 
 	AIUpdateInterface *ai = getMachineOwner()->getAIUpdateInterface();
-	if( ai  &&  dock->isAllowPassthroughType() ) 
+	if( ai  &&  dock->isAllowPassthroughType() )
 	{
 		ai->ignoreObstacle( getMachineGoalObject() );
 		setAdjustsDestination(false);

@@ -52,7 +52,7 @@ TechBuildingBehaviorModuleData::TechBuildingBehaviorModuleData( void )
 {
   UpdateModuleData::buildFieldParse( p );
 
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
 		{ "PulseFX",								INI::parseFXList,								NULL,	offsetof( TechBuildingBehaviorModuleData, m_pulseFX ) },
 		{ "PulseFXRate",						INI::parseDurationUnsignedInt,	NULL,	offsetof( TechBuildingBehaviorModuleData, m_pulseFXRate ) },
@@ -90,7 +90,7 @@ UpdateSleepTime TechBuildingBehavior::update( void )
 	Object *us = getObject();
 	const TechBuildingBehaviorModuleData* d = getTechBuildingBehaviorModuleData();
 	Bool captured = false;
-	
+
 	// update our model condition for the captured status
 	Player *player = us->getControllingPlayer();
 	if( player && player->isPlayableSide() )
@@ -163,7 +163,7 @@ void TechBuildingBehavior::xfer( Xfer *xfer )
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
 	xfer->xferVersion( &version, currentVersion );
-	
+
 	// extend base class
 	UpdateModule::xfer( xfer );
 

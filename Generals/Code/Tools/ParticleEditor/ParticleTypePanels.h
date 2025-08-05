@@ -16,7 +16,7 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-// FILE: ParticleTypePanels.h 
+// FILE: ParticleTypePanels.h
 /*---------------------------------------------------------------------------*/
 /* EA Pacific                                                                */
 /* Confidential Information	                                                 */
@@ -54,9 +54,9 @@ class ParticlePanelParticle : public ISwapablePanel
 
 		void InitPanel( void );
 
-		// if true, updates the UI from the Particle System. 
+		// if true, updates the UI from the Particle System.
 		// if false, updates the Particle System from the UI
-		void performUpdate( IN Bool toUI );	
+		void performUpdate( IN Bool toUI );
 	protected:
 		afx_msg void OnParticleSystemEdit();
 		DECLARE_MESSAGE_MAP()
@@ -73,9 +73,9 @@ class ParticlePanelDrawable : public ISwapablePanel
 		void InitPanel( void );
 		void clearAllThingTemplates( void );
 
-		// if true, updates the UI from the Particle System. 
+		// if true, updates the UI from the Particle System.
 		// if false, updates the Particle System from the UI
-		void performUpdate( IN Bool toUI );	
+		void performUpdate( IN Bool toUI );
 	protected:
 		afx_msg void OnParticleSystemEdit();
 		DECLARE_MESSAGE_MAP()
@@ -91,9 +91,9 @@ class ParticlePanelStreak : public ParticlePanelParticle
 
 		void InitPanel( void );
 
-		// if true, updates the UI from the Particle System. 
+		// if true, updates the UI from the Particle System.
 		// if false, updates the Particle System from the UI
-		void performUpdate( IN Bool toUI );	
+		void performUpdate( IN Bool toUI );
 	protected:
 		afx_msg void OnParticleSystemEdit();
 		DECLARE_MESSAGE_MAP()

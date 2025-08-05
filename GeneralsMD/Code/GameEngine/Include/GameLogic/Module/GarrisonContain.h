@@ -62,18 +62,18 @@ public:
 
 	GarrisonContainModuleData( void );
 
-	static void buildFieldParse(MultiIniFieldParse& p) 
+	static void buildFieldParse(MultiIniFieldParse& p)
 	{
     OpenContainModuleData::buildFieldParse(p);
 
-		static const FieldParse dataFieldParse[] = 
+		static const FieldParse dataFieldParse[] =
 		{
 			{ "MobileGarrison", INI::parseBool, NULL, offsetof( GarrisonContainModuleData, m_mobileGarrison ) },
 			{ "HealObjects", INI::parseBool, NULL, offsetof( GarrisonContainModuleData, m_doIHealObjects ) },
 			{ "TimeForFullHeal", INI::parseDurationReal, NULL, offsetof( GarrisonContainModuleData, m_framesForFullHeal ) },
 			{ "InitialRoster", parseInitialRoster, NULL, 0 },
 			{ "ImmuneToClearBuildingAttacks", INI::parseBool, NULL, offsetof( GarrisonContainModuleData, m_immuneToClearBuildingAttacks ) },
-      { "IsEnclosingContainer", INI::parseBool, NULL, offsetof( GarrisonContainModuleData, m_isEnclosingContainer ) },      
+      { "IsEnclosingContainer", INI::parseBool, NULL, offsetof( GarrisonContainModuleData, m_isEnclosingContainer ) },
 
 			{ 0, 0, 0, 0 }
 		};
@@ -86,7 +86,7 @@ public:
 		const char* name = ini->getNextToken();
 		const char* countStr = ini->getNextTokenOrNull();
 		Int count = countStr ? INI::scanInt(countStr) : 1;
-		
+
 		self->m_initialRoster.templateName.set(name);
 		self->m_initialRoster.count = count;
 	};
@@ -128,10 +128,10 @@ public:
 	virtual void onRemoving( Object *obj );					///< object no longer contains 'obj'
   virtual void onSelling( void );
 
-  
+
 	// A Garrison Contain must eject all passengers when it crosses the ReallyDamaged threshold.
-	virtual void onBodyDamageStateChange( const DamageInfo* damageInfo, 
-																				BodyDamageType oldState, 
+	virtual void onBodyDamageStateChange( const DamageInfo* damageInfo,
+																				BodyDamageType oldState,
 																				BodyDamageType newState);  ///< Die Interface state change callback
 
 	/**
@@ -156,7 +156,7 @@ protected:
 	virtual Bool calcBestGarrisonPosition( Coord3D *sourcePos, const Coord3D *targetPos );
 	virtual Bool attemptBestFirePointPosition( Object *source, Weapon *weapon, Object *victim );
 	virtual Bool attemptBestFirePointPosition( Object *source, Weapon *weapon, const Coord3D *targetPos );
-		
+
 	void updateEffects( void );										///< do any effects needed per frame
 	void loadGarrisonPoints( void );							///< load garrison point position data and save for later
 	void putObjectAtBestGarrisonPoint( Object *obj, Object *target, const Coord3D *targetPos );	///< place object at position of the best garrison point to use for its target
@@ -167,7 +167,7 @@ protected:
 	void removeInvalidObjectsFromGarrisonPoints( void );	///< remove objects with invalid targets from valid points
 	void trackTargets( void );										///< keep attackers at the closest garrison point to their active target
 
-  void matchObjectsToGarrisonPoints( void );                ///< Every frame, and whenever anyone enters or leaves 
+  void matchObjectsToGarrisonPoints( void );                ///< Every frame, and whenever anyone enters or leaves
   void positionObjectsAtStationGarrisonPoints( void );  ///< enforce that everybody stays at their pre-assigned space
   void loadStationGarrisonPoints( void );
   Bool pickAStationForMe( const Object *pbj );
@@ -176,7 +176,7 @@ protected:
 	enum { GARRISON_INDEX_INVALID = -1 };
 	Int findConditionIndex( void );										///< find the condition index to use given the current object body state
 	Int getObjectGarrisonPointIndex( Object *obj );		///< get the garrison point index object is at (if present)
-	Int findClosestFreeGarrisonPointIndex( Int conditionIndex, 
+	Int findClosestFreeGarrisonPointIndex( Int conditionIndex,
 																				 const Coord3D *targetPos );  ///< find closest free garrison point to the target location
 
 	void healObjects( void );	///< heal all the objects within me
@@ -195,7 +195,7 @@ private:
 	//
 	// ----------------------------------------------------------------------------------------------
 	struct GarrisonPointData
-	{	
+	{
 		union
 		{
 			Object *		object;							///< object at this garrison point
@@ -219,7 +219,7 @@ private:
   };
 
 	// ----------------------------------------------------------------------------------------------
-	enum 
+	enum
 	{
 		GARRISON_POINT_PRISTINE,
 		GARRISON_POINT_DAMAGED,
@@ -234,11 +234,11 @@ private:
 	Coord3D							m_garrisonPoint[ MAX_GARRISON_POINT_CONDITIONS ][ MAX_GARRISON_POINTS ];		///< the garrison point positions (in world coords) for pristine, damaged, and really damaged
 	Coord3D							m_exitRallyPoint;												///< Point to rally at when exiting structure (if possible)
 
-  std::vector<StationPointData> m_stationPointList; 
+  std::vector<StationPointData> m_stationPointList;
 
 	Bool		m_stationGarrisonPointsInitialized;	///< DO NOT XFER THIS!!!   TRUE once we have loaded the pre-assigned garrison point positions from the art
 	Bool		m_garrisonPointsInitialized;							///< TRUE once we have loaded the garrison point positions from the art
-	Bool		m_hideGarrisonedStateFromNonallies;								///< if T, don't appear to be garrisoned (all stealthy)										
+	Bool		m_hideGarrisonedStateFromNonallies;								///< if T, don't appear to be garrisoned (all stealthy)
 	Bool		m_rallyValid;															///< TRUE when m_exitRallyPoint is valid
 
   EvacDisposition m_evacDisposition;

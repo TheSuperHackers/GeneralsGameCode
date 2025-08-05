@@ -23,12 +23,12 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 //----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information					                  
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //----------------------------------------------------------------------------
 //
 // Project:    Generals
@@ -49,7 +49,7 @@
 #define MUSIC_BIG "Music.big"
 
 //----------------------------------------------------------------------------
-//           Includes                                                      
+//           Includes
 //----------------------------------------------------------------------------
 
 #include "Common/SubsystemInterface.h"
@@ -90,7 +90,7 @@ typedef std::map<AsciiString, ArchivedFileInfo> ArchivedFileInfoMap;
 typedef std::map<AsciiString, ArchiveFile *> ArchiveFileMap;
 typedef std::map<AsciiString, AsciiString> ArchivedFileLocationMap; // first string is the file name, second one is the archive filename.
 
-class ArchivedDirectoryInfo 
+class ArchivedDirectoryInfo
 {
 public:
 	AsciiString								m_directoryName;
@@ -106,7 +106,7 @@ public:
 
 };
 
-class DetailedArchivedDirectoryInfo 
+class DetailedArchivedDirectoryInfo
 {
 public:
 	AsciiString												m_directoryName;
@@ -121,7 +121,7 @@ public:
 	}
 };
 
-class ArchivedFileInfo 
+class ArchivedFileInfo
 {
 public:
 	AsciiString m_filename;
@@ -167,7 +167,7 @@ class ArchiveFileSystem : public SubsystemInterface
 
 	void					getFileListInDirectory(const AsciiString& currentDirectory, const AsciiString& originalDirectory, const AsciiString& searchName, FilenameList &filenameList, Bool searchSubdirectories) const; ///< search the given directory for files matching the searchName (egs. *.ini, *.rep).  Possibly search subdirectories.  Scans each Archive file.
 	Bool					getFileInfo(const AsciiString& filename, FileInfo *fileInfo) const; ///< see FileSystem.h
-	
+
 	virtual Bool	loadBigFilesFromDirectory(AsciiString dir, AsciiString fileMask, Bool overwrite = FALSE) = 0;
 
 	// Unprotected this for copy-protection routines
@@ -185,7 +185,7 @@ protected:
 extern ArchiveFileSystem *TheArchiveFileSystem;
 
 //----------------------------------------------------------------------------
-//           Inlining                                                       
+//           Inlining
 //----------------------------------------------------------------------------
 
 #endif // __ARCHIVEFILESYSTEM_H_

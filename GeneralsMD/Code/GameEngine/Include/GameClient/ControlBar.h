@@ -107,7 +107,7 @@ enum CommandOption CPP_11(: Int)
 };
 
 #ifdef DEFINE_COMMAND_OPTION_NAMES
-static const char *TheCommandOptionNames[] = 
+static const char *TheCommandOptionNames[] =
 {
 	"NEED_TARGET_ENEMY_OBJECT",
 	"NEED_TARGET_NEUTRAL_OBJECT",
@@ -143,7 +143,7 @@ static const char *TheCommandOptionNames[] =
 #endif  // end DEFINE_COMMAND_OPTION_NAMES
 
 // convenient bit masks to group some command options together
-const UnsignedInt COMMAND_OPTION_NEED_TARGET = 
+const UnsignedInt COMMAND_OPTION_NEED_TARGET =
 					NEED_TARGET_ENEMY_OBJECT |
 					NEED_TARGET_NEUTRAL_OBJECT |
 					NEED_TARGET_ALLY_OBJECT |
@@ -161,7 +161,7 @@ const UnsignedInt COMMAND_OPTION_NEED_OBJECT_TARGET =
 	* on all units, in fact, many commands are for a particular single command.  It will
 	* be up to the command GUI to translate the command assigned to a button into the
 	* appropriate game command and get it across the network to the game logic to perform the
-	* actual command logic 
+	* actual command logic
 	*
 	* IMPORTANT: Make sure the GUICommandType enum and the TheGuiCommandNames[] have the same
 	*						 entries in the same order */
@@ -213,7 +213,7 @@ enum GUICommandType CPP_11(: Int)
 	GUI_COMMAND_SPECIAL_POWER_FROM_SHORTCUT,			///< do a special power from localPlayer's command center, regardless of selection
 	GUI_COMMAND_SPECIAL_POWER_CONSTRUCT,					///< do a special power using the construct building interface
 	GUI_COMMAND_SPECIAL_POWER_CONSTRUCT_FROM_SHORTCUT, ///< do a shortcut special power using the construct building interface
-	
+
 	GUI_COMMAND_SELECT_ALL_UNITS_OF_TYPE,
 
 	// add more commands here, don't forget to update the string command list below too ...
@@ -222,7 +222,7 @@ enum GUICommandType CPP_11(: Int)
 };
 
 #ifdef DEFINE_GUI_COMMMAND_NAMES
-static const char *TheGuiCommandNames[] = 
+static const char *TheGuiCommandNames[] =
 {
 	"NONE",
 	"DOZER_CONSTRUCT",
@@ -262,8 +262,8 @@ static const char *TheGuiCommandNames[] =
 #endif
 	"PLACE_BEACON",
 	"SPECIAL_POWER_FROM_SHORTCUT",
-	"SPECIAL_POWER_CONSTRUCT",					
-	"SPECIAL_POWER_CONSTRUCT_FROM_SHORTCUT", 
+	"SPECIAL_POWER_CONSTRUCT",
+	"SPECIAL_POWER_CONSTRUCT_FROM_SHORTCUT",
 	"SELECT_ALL_UNITS_OF_TYPE",
 
 	NULL
@@ -281,18 +281,18 @@ enum CommandButtonMappedBorderType CPP_11(: Int)
 	COMMAND_BUTTON_BORDER_COUNT // keep this last
 };
 
-static const LookupListRec CommandButtonMappedBorderTypeNames[] = 
+static const LookupListRec CommandButtonMappedBorderTypeNames[] =
 {
 	{ "NONE",					COMMAND_BUTTON_BORDER_NONE },
 	{ "BUILD",				COMMAND_BUTTON_BORDER_BUILD },
 	{ "UPGRADE",			COMMAND_BUTTON_BORDER_UPGRADE },
 	{ "ACTION",				COMMAND_BUTTON_BORDER_ACTION },
 	{ "SYSTEM",				COMMAND_BUTTON_BORDER_SYSTEM },
-	
+
 	{ NULL, 0	}// keep this last!
 };
 //-------------------------------------------------------------------------------------------------
-/** Command buttons are used to load the buttons we place on throughout the command bar 
+/** Command buttons are used to load the buttons we place on throughout the command bar
 	* interface in different context sensitive windows depending on the situation and
 	* type of the object selected */
 //-------------------------------------------------------------------------------------------------
@@ -316,7 +316,7 @@ public:
 	Bool isValidObjectTarget(const Player* sourcePlayer, const Object* targetObj) const;
 	Bool isValidObjectTarget(const Object* sourceObj, const Object* targetObj) const;
 	Bool isValidObjectTarget(const Drawable* source, const Drawable* target) const;
-	
+
 	// Note: It is perfectly valid for either (or both!) of targetObj and targetLocation to be NULL.
 	// This is a convenience function to make several calls to other functions.
 	Bool isValidToUseOn(const Object *sourceObj, const Object *targetObj, const Coord3D *targetLocation, CommandSourceType commandSource) const;
@@ -355,20 +355,20 @@ public:
 
 	// bleah. shouldn't be const, but is. sue me. (srj)
 	void copyImagesFrom( const CommandButton *button, Bool markUIDirtyIfChanged ) const;
-	
+
 	// bleah. shouldn't be const, but is. sue me. (Kris) -snork!
 	void copyButtonTextFrom( const CommandButton *button, Bool shortcutButton, Bool markUIDirtyIfChanged ) const;
 
 	// bleah. shouldn't be const, but is. sue me. (srj)
 	void setFlashCount(Int c) const { m_flashCount = c; }
-	
+
 	// only for ControlBar!
 	void friend_addToList(CommandButton** list) {	m_next = *list;	*list = this; }
 	CommandButton* friend_getNext() { return m_next; }
 
 private:
 	AsciiString										m_name;												///< template name
-	GUICommandType								m_command;										///< type of command this button 
+	GUICommandType								m_command;										///< type of command this button
 	CommandButton*								m_next;
 	UnsignedInt										m_options;										///< command options (see CommandOption enum)
 	const ThingTemplate*					m_thingTemplate;							///< for commands that use thing templates in command data
@@ -381,7 +381,7 @@ private:
 	// bleah. shouldn't be mutable, but is. sue me. (Kris) -snork!
 	mutable AsciiString										m_textLabel;									///< string manager text label
 	mutable AsciiString										m_descriptionLabel;						///< The description of the current command, read in from the ini
-	
+
 	AsciiString										m_purchasedLabel;							///< Description for the current command if it has already been purchased.
 	AsciiString										m_conflictingLabel;						///< Description for the current command if it can't be selected due to multually-exclusive choice.
 	WeaponSlotType								m_weaponSlot;									///< for commands that refer to a weapon slot
@@ -405,7 +405,7 @@ private:
 //-------------------------------------------------------------------------------------------------
 enum { MAX_COMMANDS_PER_SET = 18 };  // user interface max is 14 (but internally it's 18 for script only buttons!)
 enum { MAX_RIGHT_HUD_UPGRADE_CAMEOS = 5};
-enum { 
+enum {
 			 MAX_PURCHASE_SCIENCE_RANK_1 = 4,
 			 MAX_PURCHASE_SCIENCE_RANK_3 = 15,
 			 MAX_PURCHASE_SCIENCE_RANK_8 = 4,
@@ -479,7 +479,7 @@ public:
 		//
 	}
 	~SideSelectWindowData(void);
-	
+
 	void init( ScienceType science, GameWindow *control );
 	void reset( void );
 	void update( void );
@@ -505,7 +505,7 @@ private:
 	GameWindow *m_gereralsNameWin;
 	GameWindow *m_sideNameWin;
 
-	
+
 	GameWindow *m_upgradeLabel1Win;
 	GameWindow *m_upgradeLabel2Win;
 	GameWindow *m_upgradeLabel3Win;
@@ -515,7 +515,7 @@ private:
 	GameWindow *m_upgradeImage2Win;
 	GameWindow *m_upgradeImage3Win;
 	GameWindow *m_upgradeImage4Win;
-	
+
 	Image *m_upgradeImage1;
 	Image *m_upgradeImage2;
 	Image *m_upgradeImage3;
@@ -523,7 +523,7 @@ private:
 
 	IRegion2D m_leftLineFromButton;
 	IRegion2D m_rightLineFromButton;
-	
+
 	IRegion2D m_upgradeLine1a;
 	IRegion2D m_upgradeLine2a;
 	IRegion2D m_upgradeLine3a;
@@ -533,7 +533,7 @@ private:
 	IRegion2D m_upgradeLine2;
 	IRegion2D m_upgradeLine3;
 	IRegion2D m_upgradeLine4;
-	
+
 	IRegion2D m_upgradeLine1MidReg;
 	IRegion2D m_upgradeLine2MidReg;
 	IRegion2D m_upgradeLine3MidReg;
@@ -548,12 +548,12 @@ private:
 	ICoord2D m_line1End;
 	ICoord2D m_line2End;
 
-	
+
 	ICoord2D m_upgradeLine1Mid;
 	ICoord2D m_upgradeLine2Mid;
 	ICoord2D m_upgradeLine3Mid;
 	ICoord2D m_upgradeLine4Mid;
-	
+
 	ICoord2D m_upgradeLine1End;
 	ICoord2D m_upgradeLine2End;
 	ICoord2D m_upgradeLine3End;
@@ -642,7 +642,7 @@ enum ControlBarStages CPP_11(: Int)
 	CONTROL_BAR_STAGE_SQUISHED,				///< squished just for expeirenced players
 	CONTROL_BAR_STAGE_LOW,						///< control bar a la minimalist
 	CONTROL_BAR_STAGE_HIDDEN,					///< yo, where be da control bar at?
-	
+
 	MAX_CONTROL_BAR_STAGES
 };
 
@@ -674,14 +674,14 @@ public:
 
 	/** if this button is part of the context sensitive command system, process a button click
 	the gadgetMessage is either a GBM_SELECTED or GBM_SELECTED_RIGHT */
-	CBCommandStatus processContextSensitiveButtonClick( GameWindow *button, 
+	CBCommandStatus processContextSensitiveButtonClick( GameWindow *button,
 																											GadgetGameMessage gadgetMessage );
 
 	/** if this button is part of the context sensitive command system, process the Transition
 	gadgetMessage is either a GBM_MOUSE_LEAVING or GBM_MOUSE_ENTERING */
-	CBCommandStatus processContextSensitiveButtonTransition( GameWindow *button, 
+	CBCommandStatus processContextSensitiveButtonTransition( GameWindow *button,
 																											GadgetGameMessage gadgetMessage );
-	
+
 
 	/// is the drawable the currently selected drawable for the context sensitive UI?
 	Bool isDrivingContextUI( Drawable *draw ) const { return draw == m_currentSelectedDrawable; }
@@ -719,7 +719,7 @@ public:
 
 	/// We need to sometime change what the images look like depending on what scheme we're using
 	void updateRightHUDImage( const Image *image );
-	
+
 	/// We need to be able to update the command marker image based on which scheme we're using.
 	void updateCommandMarkerImage( const Image *image );
 	void updateSlotExitImage( const Image *image);
@@ -744,7 +744,7 @@ public:
 	void populateObserverInfoWindow ( void );
 	void populateObserverList( void );
 	Bool isObserverControlBarOn( void ) { return m_isObserverCommandBar;}
-	
+
 //	ControlBarResizer *getControlBarResizer( void ) {return m_controlBarResizer;}
 
 	// Functions for repositioning/resizing the control bar
@@ -769,7 +769,7 @@ public:
 	void drawTransitionHandler( void );
 	const Image *getArrowImage( void ){ return m_genArrow;	}
 	void setArrowImage( const Image *arrowImage ){ m_genArrow = arrowImage;	}
-	
+
 	void initSpecialPowershortcutBar( Player *player);
 
 	void triggerRadarAttackGlow( void );
@@ -780,7 +780,7 @@ public:
 
 protected:
 	void updateRadarAttackGlow ( void );
-	
+
 	void setDefaultControlBarConfig( void );
 	void setSquishedControlBarConfig( void );
 	void setLowControlBarConfig( void );
@@ -788,7 +788,7 @@ protected:
 
 	/// find existing command button if present
 	CommandButton* findNonConstCommandButton( const AsciiString& name );
-	
+
 	/// allocate a new command button, link to list, initialize to default, and return
 	CommandButton *newCommandButton( const AsciiString& name );
 	CommandButton *newCommandButtonOverride( CommandButton *buttonToOverride );
@@ -850,12 +850,12 @@ protected:
 	void updateContextBeacon( void );
 	void updateContextUnderConstruction( void );
 	void updateContextOCLTimer( void );
-	
+
 	// the following methods are for the special power shortcut window
 
 	void populateSpecialPowerShortcut( Player *player);
 	void updateSpecialPowerShortcut( void );
-	
+
 	static const Image* calculateVeterancyOverlayForThing( const ThingTemplate *thingTemplate );
 	static const Image* calculateVeterancyOverlayForObject( const Object *obj );
 
@@ -891,7 +891,7 @@ protected:
 	Drawable *m_currentSelectedDrawable;					///< currently selected drawable for the context sensitive interface
 	ControlBarContext m_currContext;							///< our current displayed context
 
-	DrawableID m_rallyPointDrawableID;						///< rally point drawable for visual rally point 
+	DrawableID m_rallyPointDrawableID;						///< rally point drawable for visual rally point
 
 	Real m_displayedConstructPercent;							///< construct percent last displayed to user
 	UnsignedInt m_displayedOCLTimerSeconds;				///< OCL Timer seconds remaining last displayed to user
@@ -904,7 +904,7 @@ protected:
 	GameWindow *m_rightHUDUnitSelectParent;
 
 	GameWindow *m_communicatorButton;             ///< button for the communicator
-	
+
 	WindowLayout *m_scienceLayout;								///< the Science window layout
 	GameWindow *m_sciencePurchaseWindowsRank1[ MAX_PURCHASE_SCIENCE_RANK_1 ];			///< command window controls for easy access
 	GameWindow *m_sciencePurchaseWindowsRank3[ MAX_PURCHASE_SCIENCE_RANK_3 ];			///< command window controls for easy access
@@ -922,7 +922,7 @@ protected:
 	const CommandButton *m_commonCommands[ MAX_COMMANDS_PER_SET ];	///< shared commands we will use for multi-selection
 
 		// removed from multiplayer branch
-	//GameWindow *m_commandMarkers[ MAX_COMMANDS_PER_SET ];			///< When we don't have a command, they want to show an image	
+	//GameWindow *m_commandMarkers[ MAX_COMMANDS_PER_SET ];			///< When we don't have a command, they want to show an image
 // removed from multiplayer branch
 	//void showCommandMarkers( void );													///< function that compare's what's being shown in m_commandWindows and shows the ones that are hidden.
 
@@ -986,7 +986,7 @@ private:
 	Color m_commandButtonBorderActionColor;
 	Color m_commandButtonBorderUpgradeColor;
 	Color m_commandButtonBorderSystemColor;
-	
+
 	Color m_commandBarBorderColor;
 
 	void setCommandBarBorder( GameWindow *button, CommandButtonMappedBorderType type);
@@ -1021,10 +1021,10 @@ private:
 
 	Bool m_genStarFlash;
 	Int m_lastFlashedAtPointValue;
-	
+
 	ICoord2D m_controlBarForegroundMarkerPos;
 	ICoord2D m_controlBarBackgroundMarkerPos;
-	
+
 	Bool m_radarAttackGlowOn;
 	Int m_remainingRadarAttackGlowFrames;
 	GameWindow *m_radarAttackGlowWindow;
@@ -1035,7 +1035,7 @@ private:
 #endif
 //	ControlBarResizer *m_controlBarResizer;
 
-}; 
+};
 
 // EXTERNALS //////////////////////////////////////////////////////////////////////////////////////
 extern ControlBar *TheControlBar;

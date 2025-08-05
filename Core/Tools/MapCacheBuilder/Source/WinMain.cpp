@@ -18,12 +18,12 @@
 
 // FILE: WinMain.cpp //////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:    MapCacheBuilder
@@ -245,7 +245,7 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 		char * str = strtrim(token);
 		argvSet.push_back(str);
 		DEBUG_LOG(("Adding '%s'", str));
-		token = nextParam(NULL, "\" ");	   
+		token = nextParam(NULL, "\" ");
 	}
 
 	// not part of the subsystem list, because it should normally never be reset!
@@ -303,7 +303,7 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	TheMapCache = NULL;
 
 	// load the dialog box
-	//DialogBox( hInstance, (LPCTSTR)IMAGE_PACKER_DIALOG, 
+	//DialogBox( hInstance, (LPCTSTR)IMAGE_PACKER_DIALOG,
 	//					 NULL, (DLGPROC)ImagePackerProc );
 
 	// delete TheGlobalData

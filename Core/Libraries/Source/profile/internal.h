@@ -48,7 +48,7 @@ class ProfileFastCS
 {
   ProfileFastCS(const ProfileFastCS&) CPP_11(= delete);
   ProfileFastCS& operator=(const ProfileFastCS&) CPP_11(= delete);
-  
+
 	static HANDLE testEvent;
 
 #if defined(_MSC_VER) && _MSC_VER < 1300
@@ -84,7 +84,7 @@ class ProfileFastCS
 
 public:
 	ProfileFastCS(void):
-    m_Flag(0) 
+    m_Flag(0)
   {
   }
 #else
@@ -117,7 +117,7 @@ public:
 		ProfileFastCS& CriticalSection;
 
 	public:
-		Lock(ProfileFastCS& cs): 
+		Lock(ProfileFastCS& cs):
       CriticalSection(cs)
 		{
 			CriticalSection.ThreadSafeSetFlag();

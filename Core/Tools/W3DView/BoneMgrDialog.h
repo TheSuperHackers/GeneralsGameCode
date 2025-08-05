@@ -92,7 +92,7 @@ protected:
 		void						Update_Controls (HTREEITEM selected_item);
 		HTREEITEM				Get_Current_Bone_Item (void);
 		void						Remove_Object_From_Bone (HTREEITEM bone_item, const CString &name);
-		
+
 	private:
 
 		///////////////////////////////////////////////////////////////////

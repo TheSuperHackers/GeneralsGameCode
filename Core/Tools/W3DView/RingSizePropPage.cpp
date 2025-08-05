@@ -61,7 +61,7 @@ RingSizePropPageClass::RingSizePropPageClass (RingRenderObjClass *ring)
 	//{{AFX_DATA_INIT(RingSizePropPageClass)
 		// NOTE: the ClassWizard will add member initialization here
 	//}}AFX_DATA_INIT
-	
+
 	Initialize ();
 	return ;
 }
@@ -91,7 +91,7 @@ RingSizePropPageClass::DoDataExchange (CDataExchange* pDX)
 	DDX_Control(pDX, IDC_INNER_SIZE_X_SPIN, m_InnerSizeXSpin);
 	DDX_Control(pDX, IDC_INNER_SIZE_Y_SPIN, m_InnerSizeYSpin);
 	DDX_Control(pDX, IDC_OUTER_SIZE_X_SPIN, m_OuterSizeXSpin);
-	DDX_Control(pDX, IDC_OUTER_SIZE_Y_SPIN, m_OuterSizeYSpin);	
+	DDX_Control(pDX, IDC_OUTER_SIZE_Y_SPIN, m_OuterSizeYSpin);
 	//}}AFX_DATA_MAP
 	return ;
 }
@@ -152,7 +152,7 @@ RingSizePropPageClass::OnInitDialog (void)
 {
 	// Allow the base class to process this message
 	CPropertyPage::OnInitDialog ();
-	
+
 	m_InnerScaleXBar = ColorBarClass::Get_Color_Bar (::GetDlgItem (m_hWnd, IDC_INNER_SCALE_BAR_X));
 	m_InnerScaleYBar = ColorBarClass::Get_Color_Bar (::GetDlgItem (m_hWnd, IDC_INNER_SCALE_BAR_Y));
 	m_OuterScaleXBar = ColorBarClass::Get_Color_Bar (::GetDlgItem (m_hWnd, IDC_OUTER_SCALE_BAR_X));
@@ -197,7 +197,7 @@ RingSizePropPageClass::OnInitDialog (void)
 	for (index = 1; index < m_OrigInnerScaleChannel.Get_Key_Count (); index ++) {
 		const LERPAnimationChannelClass<Vector2>::KeyClass &prev_value = m_OrigInnerScaleChannel.Get_Key (index - 1);
 		const LERPAnimationChannelClass<Vector2>::KeyClass &curr_value = m_OrigInnerScaleChannel.Get_Key (index);
-		
+
 		//
 		//	Find out which channels are unique (we toss the others)
 		//
@@ -257,7 +257,7 @@ RingSizePropPageClass::OnInitDialog (void)
 	for (index = 1; index < m_OrigOuterScaleChannel.Get_Key_Count (); index ++) {
 		const LERPAnimationChannelClass<Vector2>::KeyClass &prev_value = m_OrigOuterScaleChannel.Get_Key (index - 1);
 		const LERPAnimationChannelClass<Vector2>::KeyClass &curr_value = m_OrigOuterScaleChannel.Get_Key (index);
-		
+
 		//
 		//	Find out which channels are unique (we toss the others)
 		//
@@ -355,7 +355,7 @@ RingSizePropPageClass::OnNotify
 	WPARAM wParam,
 	LPARAM lParam,
 	LRESULT *pResult
-) 
+)
 {
 	CBR_NMHDR *color_bar_hdr = (CBR_NMHDR *)lParam;
 
@@ -368,7 +368,7 @@ RingSizePropPageClass::OnNotify
 		case IDC_INNER_SCALE_BAR_Y:
 		case IDC_OUTER_SCALE_BAR_X:
 		case IDC_OUTER_SCALE_BAR_Y:
-		{			
+		{
 			//
 			//	Determine the timeline bar which sent the notification
 			//
@@ -386,7 +386,7 @@ RingSizePropPageClass::OnNotify
 			bool update =	(color_bar_hdr->hdr.code == CBRN_MOVING_POINT) ||
 								(color_bar_hdr->hdr.code == CBRN_DELETED_POINT);
 
-			if (color_bar_hdr->hdr.code == CBRN_DBLCLK_POINT) {			
+			if (color_bar_hdr->hdr.code == CBRN_DBLCLK_POINT) {
 
 				//
 				//	Allow the user to edit the keyframe
@@ -401,11 +401,11 @@ RingSizePropPageClass::OnNotify
 					timeline->Set_Graph_Percent (color_bar_hdr->key_index, dialog.Get_Scale ());
 					update = true;
 				}
-			} 
-			
+			}
+
 			//
 			//	Update the object
-			//			
+			//
 			if (update) {
 
 				if (	color_bar_hdr->hdr.idFrom == IDC_INNER_SCALE_BAR_X ||
@@ -445,7 +445,7 @@ RingSizePropPageClass::OnNotify
 		}
 		break;
 	}
-		
+
 	return CPropertyPage::OnNotify (wParam, lParam, pResult);
 }
 
@@ -541,7 +541,7 @@ RingSizePropPageClass::Update_Inner_Scale_Array (void)
 	float position	= 0;
 	float red		= 0;
 	float green		= 0;
-	float blue		= 0;	
+	float blue		= 0;
 
 	//
 	//	Allocate arrays we can store the 3 separate timelines in
@@ -550,21 +550,21 @@ RingSizePropPageClass::Update_Inner_Scale_Array (void)
 	int max_y = m_InnerScaleYBar->Get_Point_Count ();
 	LERPAnimationChannelClass<float> x_values;
 	LERPAnimationChannelClass<float> y_values;
-	
+
 	//
 	//	Build the X-axis timline
 	//
 	int index;
 	for (index = 0; index < max_x; index++) {
-		m_InnerScaleXBar->Get_Point (index, &position, &red, &green, &blue);		
+		m_InnerScaleXBar->Get_Point (index, &position, &red, &green, &blue);
 		x_values.Add_Key (m_InnerScaleXBar->Get_Graph_Percent (index), position);
 	}
 
 	//
 	//	Build the Y-axis timline
 	//
-	for (index = 0; index < max_y; index++) {		
-		m_InnerScaleYBar->Get_Point (index, &position, &red, &green, &blue);		
+	for (index = 0; index < max_y; index++) {
+		m_InnerScaleYBar->Get_Point (index, &position, &red, &green, &blue);
 		y_values.Add_Key (m_InnerScaleYBar->Get_Graph_Percent (index), position);
 	}
 
@@ -578,7 +578,7 @@ RingSizePropPageClass::Update_Inner_Scale_Array (void)
 	float y_val = y_values[0].Get_Value ();
 	while (	x_index < max_x ||
 				y_index < max_y)
-	{		
+	{
 		//
 		//	Find the smallest time
 		//
@@ -640,7 +640,7 @@ RingSizePropPageClass::Update_Outer_Scale_Array (void)
 	float position	= 0;
 	float red		= 0;
 	float green		= 0;
-	float blue		= 0;	
+	float blue		= 0;
 
 	//
 	//	Allocate arrays we can store the 3 separate timelines in
@@ -649,21 +649,21 @@ RingSizePropPageClass::Update_Outer_Scale_Array (void)
 	int max_y = m_OuterScaleYBar->Get_Point_Count ();
 	LERPAnimationChannelClass<float> x_values;
 	LERPAnimationChannelClass<float> y_values;
-	
+
 	//
 	//	Build the X-axis timline
 	//
 	int index;
 	for (index = 0; index < max_x; index++) {
-		m_OuterScaleXBar->Get_Point (index, &position, &red, &green, &blue);		
+		m_OuterScaleXBar->Get_Point (index, &position, &red, &green, &blue);
 		x_values.Add_Key (m_OuterScaleXBar->Get_Graph_Percent (index), position);
 	}
 
 	//
 	//	Build the Y-axis timline
 	//
-	for (index = 0; index < max_y; index++) {		
-		m_OuterScaleYBar->Get_Point (index, &position, &red, &green, &blue);		
+	for (index = 0; index < max_y; index++) {
+		m_OuterScaleYBar->Get_Point (index, &position, &red, &green, &blue);
 		y_values.Add_Key (m_OuterScaleYBar->Get_Graph_Percent (index), position);
 	}
 
@@ -677,7 +677,7 @@ RingSizePropPageClass::Update_Outer_Scale_Array (void)
 	float y_val = y_values[0].Get_Value ();
 	while (	x_index < max_x ||
 				y_index < max_y)
-	{		
+	{
 		//
 		//	Find the smallest time
 		//

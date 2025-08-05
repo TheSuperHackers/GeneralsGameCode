@@ -71,7 +71,7 @@ public:
 	//changes the mode of drag selecting to it's opposite
 	void setDragSelecting(Bool dragSelect);
 	void setLeftMouseButton(Bool state);
-};	
+};
 
 Bool CanSelectDrawable( const Drawable *draw, Bool dragSelecting );
 extern SelectionTranslator *TheSelectionTranslator;

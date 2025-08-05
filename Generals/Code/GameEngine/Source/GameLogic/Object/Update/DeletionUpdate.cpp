@@ -58,7 +58,7 @@ DeletionUpdate::~DeletionUpdate( void )
 //-------------------------------------------------------------------------------------------------
 void DeletionUpdate::setLifetimeRange( UnsignedInt minFrames, UnsignedInt maxFrames )
 {
-	
+
 #if defined RTS_DEBUG && defined CRISS_CROSS_GEOMETRY
 	setWakeFrame(getObject(), UPDATE_SLEEP(2));
 #else

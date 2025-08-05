@@ -49,7 +49,7 @@ virtually everything to do with the terrain, including: drawing, lighting,
 scorchmarks and intersection tests.
 */
 class FlatHeightMapRenderObjClass : public BaseHeightMapRenderObjClass
-{	
+{
 
 public:
 
@@ -65,7 +65,7 @@ public:
 	// Render Object Interface (W3D methods)
 	/////////////////////////////////////////////////////////////////////////////
 	virtual void					Render(RenderInfoClass & rinfo);
-	virtual void					On_Frame_Update(void); 
+	virtual void					On_Frame_Update(void);
 
 	///allocate resources needed to render heightmap
 	virtual int initHeightData(Int width, Int height, WorldHeightMap *pMap, RefRenderObjListIterator *pLightsIterator,Bool updateExtraPassTiles=TRUE);

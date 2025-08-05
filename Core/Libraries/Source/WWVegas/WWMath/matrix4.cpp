@@ -26,8 +26,8 @@
  *                                                                                             *
  *                   Org Author:: Greg_h                                                       *
  *                                                                                             *
- *                       Author : Kenny_m                                                      * 
- *                                                                                             * 
+ *                       Author : Kenny_m                                                      *
+ *                                                                                             *
  *                     $Modtime:: 06/26/02 4:04p                                             $*
  *                                                                                             *
  *                    $Revision:: 6                                                           $*
@@ -145,7 +145,7 @@ void Matrix4x4::Multiply(const Matrix3D &a,const Matrix4x4 &b,Matrix4x4 * res)
 void Matrix4x4::Multiply(const Matrix4x4 & a,const Matrix3D & b,Matrix4x4 * res)
 {
 	assert(res != &a);
-	
+
 	// ROWCOL multiplies a row of 'a' by one of the first three columns of 'b' (4th entry in b is zero)
 	// ROWCOL4 multiplies a row of 'a' by the fourth column of 'b' (4th entry in b is one)
 

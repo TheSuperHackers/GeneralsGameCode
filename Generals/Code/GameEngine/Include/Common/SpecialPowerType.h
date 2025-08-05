@@ -91,7 +91,7 @@ enum SpecialPowerType CPP_11(: Int)
 	SPECIAL_CLEANUP_AREA,
 	// don't forget to add new strings to SpecialPowerMaskType::s_bitNameList[]
 	SPECIAL_LAUNCH_BAIKONUR_ROCKET,
-		
+
 	SPECIALPOWER_COUNT,
 	// don't forget to add new strings to SpecialPowerMaskType::s_bitNameList[]
 };

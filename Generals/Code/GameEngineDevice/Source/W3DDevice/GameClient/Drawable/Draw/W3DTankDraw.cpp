@@ -66,11 +66,11 @@ W3DTankDrawModuleData::~W3DTankDrawModuleData()
 }
 
 //-------------------------------------------------------------------------------------------------
-void W3DTankDrawModuleData::buildFieldParse(MultiIniFieldParse& p) 
+void W3DTankDrawModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
   W3DModelDrawModuleData::buildFieldParse(p);
 
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
 		{ "TreadDebrisLeft", INI::parseAsciiString, NULL, offsetof(W3DTankDrawModuleData, m_treadDebrisNameLeft) },
 		{ "TreadDebrisRight", INI::parseAsciiString, NULL, offsetof(W3DTankDrawModuleData, m_treadDebrisNameRight) },
@@ -242,7 +242,7 @@ void W3DTankDraw::updateTreadPositions(Real uvDelta)
 	}
 }
 
-/**Grab pointers to the sub-meshes for each tread*/ 
+/**Grab pointers to the sub-meshes for each tread*/
 void W3DTankDraw::updateTreadObjects(void)
 {
 	RenderObjClass *robj=getRenderObject();
@@ -254,7 +254,7 @@ void W3DTankDraw::updateTreadObjects(void)
 
 	//Make sure this object has defined a speed for tread scrolling.
 	if (getW3DTankDrawModuleData() && getW3DTankDrawModuleData()->m_treadAnimationRate && robj)
-	{	
+	{
 		for (Int i=0; i < robj->Get_Num_Sub_Objects() && m_treadCount < MAX_TREADS_PER_TANK; i++)
 		{
 			RenderObjClass *subObj=robj->Get_Sub_Object(i);
@@ -378,7 +378,7 @@ void W3DTankDraw::doDrawModule(const Matrix3D* transformMtx)
 				Coord3D dir;
 				obj->getUnitDirectionVector2D(dir);
 				Real angleToGoal = dir.x * m_lastDirection.x + dir.y * m_lastDirection.y;
-				
+
 				if (fabs(1.0f-angleToGoal) > 0.00001f)	//check if difference in angle cosines is greater than some cutoff.
 				{
 					if (turn == TURN_NEGATIVE)	//turning right

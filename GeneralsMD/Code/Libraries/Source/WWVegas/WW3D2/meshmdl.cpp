@@ -26,8 +26,8 @@
  *                                                                                             *
  *                    Org Author:: Greg Hjelstrom                                               *
  *                                                                                             *
- *                      $Author:: Kenny Mitchell                                               * 
- *                                                                                             * 
+ *                      $Author:: Kenny Mitchell                                               *
+ *                                                                                             *
  *                     $Modtime:: 06/26/02 4:04p                                             $*
  *                                                                                             *
  *                    $Revision:: 48                                                          $*
@@ -52,8 +52,8 @@
 
 /*
 ** Temporary Buffers
-** These buffers are used by the skin code for temporary storage of the deformed vertices and 
-** vertex normals.  
+** These buffers are used by the skin code for temporary storage of the deformed vertices and
+** vertex normals.
 */
 static DynamicVectorClass<Vector3>	_TempVertexBuffer;
 static DynamicVectorClass<Vector3>	_TempNormalBuffer;
@@ -79,9 +79,9 @@ MeshModelClass::MeshModelClass(void) :
 
 	DefMatDesc = W3DNEW MeshMatDescClass;
 	CurMatDesc = DefMatDesc;
-	
+
 	MatInfo = NEW_REF( MaterialInfoClass, () );
-	
+
 	return ;
 }
 
@@ -234,7 +234,7 @@ void MeshModelClass::Replace_VertexMaterial(VertexMaterialClass* vmat,VertexMate
 {
 	WWASSERT(vmat);
 	WWASSERT(new_vmat);
-	
+
 	for (int pass=0;pass<Get_Pass_Count();++pass) {
 		if (Has_Material_Array(pass)) {
 			for (int i=0;i<Get_Vertex_Count();++i) {
@@ -254,7 +254,7 @@ void MeshModelClass::Replace_VertexMaterial(VertexMaterialClass* vmat,VertexMate
 		if (fvf_category) {
 			fvf_category->Change_Polygon_Renderer_Material(PolygonRendererList,vmat,new_vmat,pass);
 		}
-	}	
+	}
 }
 
 DX8FVFCategoryContainer* MeshModelClass::Peek_FVF_Category_Container()
@@ -293,13 +293,13 @@ void MeshModelClass::Make_Geometry_Unique()
 	ShareBufferClass<Vector3> * unique_verts = NEW_REF(ShareBufferClass<Vector3>,(*Vertex));
 	REF_PTR_SET(Vertex,unique_verts);
 	REF_PTR_RELEASE(unique_verts);
-	
+
 	ShareBufferClass<Vector3> * norms = NEW_REF(ShareBufferClass<Vector3>,(*VertexNorm));
 	REF_PTR_SET(VertexNorm,norms);
 	REF_PTR_RELEASE(norms);
 
 #if (!OPTIMIZE_PLANEEQ_RAM)
-	ShareBufferClass<Vector4> * peq = NEW_REF(ShareBufferClass<Vector4>,(*PlaneEq, "MeshModelClass::PlaneEq"));	
+	ShareBufferClass<Vector4> * peq = NEW_REF(ShareBufferClass<Vector4>,(*PlaneEq, "MeshModelClass::PlaneEq"));
 	REF_PTR_SET(PlaneEq,peq);
 	REF_PTR_RELEASE(peq);
 #endif
@@ -320,13 +320,13 @@ void MeshModelClass::Enable_Alternate_Material_Description(bool onoff)
 	if ((onoff == true) && (AlternateMatDesc != NULL)) {
 		if (CurMatDesc != AlternateMatDesc) {
 			CurMatDesc = AlternateMatDesc;
-			
+
 			if (Get_Flag(SORT) && WW3D::Is_Munge_Sort_On_Load_Enabled())
 				compute_static_sort_levels();
 
 			if (WW3D::Is_Overbright_Modify_On_Load_Enabled())
 				modify_for_overbright();
-			
+
 			// TODO: Invalidate just this meshes DX8 data!!!
 			TheDX8MeshRenderer.Invalidate();
 		}
@@ -387,7 +387,7 @@ struct TriangleSide
 	}
 	TriangleSide() {}
 
-	bool operator== (const TriangleSide& s) 
+	bool operator== (const TriangleSide& s)
 	{
 		unsigned i=*(unsigned*)&loc1[0]^*(unsigned*)&s.loc1[0];
 		i|=*(unsigned*)&loc1[1]^*(unsigned*)&s.loc1[1];

@@ -66,8 +66,8 @@ W3DTracerDraw::W3DTracerDraw( Thing *thing, const ModuleData* moduleData ) : Dra
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 void W3DTracerDraw::setTracerParms(Real speed, Real length, Real width, const RGBColor& color, Real initialOpacity)
-{ 
-	m_speedInDistPerFrame = speed; 
+{
+	m_speedInDistPerFrame = speed;
 	m_length = length;
 	m_width = width;
 	m_color = color;
@@ -97,8 +97,8 @@ W3DTracerDraw::~W3DTracerDraw( void )
 }
 
 //-------------------------------------------------------------------------------------------------
-void W3DTracerDraw::reactToTransformChange( const Matrix3D *oldMtx, 
-																							 const Coord3D *oldPos, 
+void W3DTracerDraw::reactToTransformChange( const Matrix3D *oldMtx,
+																							 const Coord3D *oldPos,
 																							 Real oldAngle )
 {
 	if( m_theTracer )

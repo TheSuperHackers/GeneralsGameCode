@@ -45,7 +45,7 @@ Bool WaterOptions::m_creatingWaterAreas = false;
 WaterOptions::WaterOptions(CWnd* pParent /*=NULL*/):
 m_moveUndoable(NULL)
 {
-	//{{AFX_DATA_INIT(WaterOptions) 
+	//{{AFX_DATA_INIT(WaterOptions)
 		// NOTE: the ClassWizard will add member initialization here
 	//}}AFX_DATA_INIT
 }
@@ -59,8 +59,8 @@ void WaterOptions::DoDataExchange(CDataExchange* pDX)
 	//}}AFX_DATA_MAP
 }
 
-void WaterOptions::setHeight(Int height) 
-{ 
+void WaterOptions::setHeight(Int height)
+{
 	char buffer[50];
 	sprintf(buffer, "%d", height);
 	m_waterHeight = height;
@@ -70,7 +70,7 @@ void WaterOptions::setHeight(Int height)
 	}
 }
 
-void WaterOptions::updateTheUI(void) 
+void WaterOptions::updateTheUI(void)
 {
 	PolygonTrigger *theTrigger = WaypointOptions::getSingleSelectedPolygon();
 
@@ -79,7 +79,7 @@ void WaterOptions::updateTheUI(void)
 	if (theTrigger && pWnd) {
 		pWnd->SetWindowText(theTrigger->getTriggerName().str());
 		setHeight(theTrigger->getPoint(0)->z);
-	}	
+	}
 	CButton *pButton = (CButton*)GetDlgItem(IDC_WATER_POLYGON);
 	pButton->SetCheck(m_creatingWaterAreas ? 1:0);
 	Bool isRiver = false;
@@ -98,7 +98,7 @@ void WaterOptions::updateTheUI(void)
 	}
 }
 
-void WaterOptions::update(void) 
+void WaterOptions::update(void)
 {
 	if (m_staticThis) {
 		m_staticThis->updateTheUI();
@@ -109,12 +109,12 @@ void WaterOptions::update(void)
 // WaterOptions message handlers
 
 /// Dialog UI initialization.
-/** Creates the slider controls, and sets the initial values for 
+/** Creates the slider controls, and sets the initial values for
 width and feather in the ui controls. */
-BOOL WaterOptions::OnInitDialog() 
+BOOL WaterOptions::OnInitDialog()
 {
 	CDialog::OnInitDialog();
-	
+
 	m_updating = true;
 
 	m_waterHeightPopup.SetupPopSliderButton(this, IDC_HEIGHT_POPUP, this);
@@ -130,15 +130,15 @@ BOOL WaterOptions::OnInitDialog()
 BEGIN_MESSAGE_MAP(WaterOptions, COptionsPanel)
 	//{{AFX_MSG_MAP(WaterOptions)
 	ON_CBN_KILLFOCUS(IDC_WATERNAME_EDIT, OnChangeWaterEdit)
-	ON_EN_CHANGE(IDC_HEIGHT_EDIT, OnChangeHeightEdit)	 
-	ON_EN_CHANGE(IDC_SPACING, OnChangeSpacingEdit)	 
+	ON_EN_CHANGE(IDC_HEIGHT_EDIT, OnChangeHeightEdit)
+	ON_EN_CHANGE(IDC_SPACING, OnChangeSpacingEdit)
 	ON_BN_CLICKED(IDC_WATER_POLYGON, OnWaterPolygon)
 	ON_BN_CLICKED(IDC_MAKE_RIVER, OnMakeRiver)
 	ON_CBN_SELENDOK(IDC_WATERNAME_EDIT, OnChangeWaterEdit)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
-void WaterOptions::OnChangeWaterEdit() 
+void WaterOptions::OnChangeWaterEdit()
 {
 	PolygonTrigger *theTrigger = WaypointOptions::getSingleSelectedPolygon();
 
@@ -185,13 +185,13 @@ void WaterOptions::OnChangeWaterEdit()
 }
 
 
-void WaterOptions::OnWaterPolygon() 
+void WaterOptions::OnWaterPolygon()
 {
 	CButton *pButton = (CButton*)GetDlgItem(IDC_WATER_POLYGON);
 	m_creatingWaterAreas = (pButton->GetCheck()==1);
 }
 
-void WaterOptions::OnMakeRiver() 
+void WaterOptions::OnMakeRiver()
 {
 	CButton *pButton = (CButton*)GetDlgItem(IDC_MAKE_RIVER);
 	Bool river = (pButton->GetCheck()==1);
@@ -222,7 +222,7 @@ void WaterOptions::OnMakeRiver()
 				// Now find the other end.
 //				Real sourceWidth = endLen;
 
-				endLen=0;	
+				endLen=0;
 				Int endPoint = 0;
 				for (i=0; i<theTrigger->getNumPoints()-1; i++) {
 					if (i>=newPoint-1 && i<=newPoint+1) continue;
@@ -267,7 +267,7 @@ PolygonTrigger * WaterOptions::adjustCount(PolygonTrigger *trigger, Int firstPt,
 {
 	PolygonTrigger *pNew = newInstance(PolygonTrigger)(trigger->getNumPoints());
 //	Real endLen=0;
-	Real totalLen=0;	
+	Real totalLen=0;
 	Real curSpacingLen = 10;
 	Int curPoint = lastPt;
 	ICoord3D pt;
@@ -278,7 +278,7 @@ PolygonTrigger * WaterOptions::adjustCount(PolygonTrigger *trigger, Int firstPt,
 		if (curPoint>=trigger->getNumPoints()) {
 			curPoint = 0;
 		}
-	}	
+	}
 
 	curPoint = firstPt;
 	while (curPoint != lastPt) {
@@ -413,7 +413,7 @@ void WaterOptions::startUpdateHeight(void)
 		return;
 	}
 	if (!theTrigger->isWaterArea()) {
-		REF_PTR_RELEASE(m_moveUndoable); 
+		REF_PTR_RELEASE(m_moveUndoable);
 		return;
 	}
 	if (m_moveUndoable && theTrigger == m_moveUndoable->getTrigger()) {
@@ -466,7 +466,7 @@ void WaterOptions::endUpdateHeight(void)
  /// Handles width edit ui messages.
 /** Gets the new edit control text, converts it to an int, then updates
 		the slider and brush tool. */
-void WaterOptions::OnChangeHeightEdit() 
+void WaterOptions::OnChangeHeightEdit()
 {
 	if (m_updating) return;
 	CWnd *pEdit = m_staticThis->GetDlgItem(IDC_HEIGHT_EDIT);
@@ -488,7 +488,7 @@ void WaterOptions::OnChangeHeightEdit()
  /// Handles width edit ui messages.
 /** Gets the new edit control text, converts it to an int, then updates
 		the slider and brush tool. */
-void WaterOptions::OnChangeSpacingEdit() 
+void WaterOptions::OnChangeSpacingEdit()
 {
 	if (m_updating) return;
 	CWnd *pEdit = m_staticThis->GetDlgItem(IDC_SPACING);

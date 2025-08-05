@@ -80,29 +80,29 @@ void RunGame(char *thePath, ConfigFile &config, Process &proc)
 	while (true)
 	{
 		int skuIndex;
-		
+
 		while ((skuIndex = Find_Patch(patchFile, MAX_PATH, config)) != 0)
 		{
 			Apply_Patch(patchFile, config, skuIndex);
 			launchgame = true;
 		}
-		
+
 		// launch the game if first pass, or found a patch
 		if (launchgame)
 		{
 			// don't relaunch unless we find a patch (or checking for patches)
 			launchgame = false;
 			myChdir(thePath);
-			
+
 			Create_Process(proc);
 			DWORD exit_code;
 			Wait_Process(proc, &exit_code);
-			
+
 			if (exit_code == UPDATE_RETVAL)
 			{
 				// They just want to check for patches
 				launchgame = true;
-				
+
 				// Start patchgrabber
 				Process patchgrab;
 				strcpy(patchgrab.directory,proc.directory);  // same dir as game
@@ -111,7 +111,7 @@ void RunGame(char *thePath, ConfigFile &config, Process &proc)
 				Create_Process(patchgrab);
 				Wait_Process(patchgrab);  // wait for completion
 			}
-			
+
 		}
 		else
 		{
@@ -137,27 +137,27 @@ int main(int argc, char *argv[])
 
 	char cwd[MAX_PATH];  // save current directory before game start
 	_getcwd(cwd, MAX_PATH);
-	
+
 	// Goto the folder where launcher is installed
 	myChdir(argv[0]);
-	
+
 	// extract the program name from argv[0].  Change the extension to
 	//   .lcf (Launcher ConFig).  This is the name of our config file.
 	char configName[MAX_PATH + 3];
 	strcpy(configName, argv[0]);
 	char* extension = configName;
 	char* tempptr;
-	
+
 	while ((tempptr = strchr(extension + 1, '.')))
 	{
 		extension = tempptr;
 	}
-	
+
 	if (*extension == '.')
 	{
 		*extension = 0;
 	}
-	
+
 #ifdef DEBUG
 	///MonoD outputDevice;
 	char debugFile[MAX_PATH + 3];
@@ -175,50 +175,50 @@ int main(int argc, char *argv[])
 	InitCommonControls();
 
 	strcat(configName, ".lcf");
-	
+
 	DBGMSG("Config Name: "<<configName);
-	
+
 	ConfigFile config;
 	FILE* in = fopen(configName, "r");
-	
+
 	if (in == NULL)
 	{
 		MessageBox(NULL,"You must run the game from its install directory.",
 			"Launcher config file missing",MB_OK);
 		exit(-1);
 	}
-	
+
 	bit8 ok = config.readFile(in);
 	fclose(in);
-	
+
 	if (ok == FALSE)
 	{
 		MessageBox(NULL,"File 'launcher.cfg' is corrupt","Error",MB_OK);
 		exit(-1);
 	}
-	
+
 	// Load process info
 	Process proc;
 	Read_Process_Info(config,proc);
-	
+
 	// Possible 2nd EXE
 	Process proc2;
 	int hasSecondEXE = Read_Process_Info(config,proc2,"RUN2");
-	
+
 	DBGMSG("Read process info");
-	
+
 	for (int i = 1; i < argc; i++)
 	{
 		strcat(proc.args, " ");
 		strcat(proc.args, argv[i]);
-		
+
 		if (hasSecondEXE)
 		{
 			strcat(proc2.args, " ");
 			strcat(proc2.args, argv[i]);
 		}
 	}
-	
+
 	DBGMSG("ARGS: "<<proc.args);
 
 	// Just spawn the patchgrabber & apply any patches it downloads
@@ -229,26 +229,26 @@ int main(int argc, char *argv[])
 
 		// same dir as game
 		strcpy(patchgrab.directory, proc.directory);
-		
+
 		// the program that grabs game patches
 		strcpy(patchgrab.command, "patchget.dat");
 		strcpy(patchgrab.args, "");
-		
+
 		Create_Process(patchgrab);
 		Wait_Process(patchgrab);
-		
+
 		// Apply any patches I find
 		int skuIndex;
-		
+
 		while ((skuIndex = Find_Patch(patchFile, MAX_PATH, config)) != 0)
 		{
 			Apply_Patch(patchFile, config, skuIndex);
 		}
-		
+
 		myChdir(cwd);
 		return 0;
 	}
-	
+
 	// Look for patch file(s) to apply
 	bool launchgame = true;
 
@@ -260,7 +260,7 @@ int main(int argc, char *argv[])
 		{
 			cutoffTime = atoi(timeStr.get());
 		}
-		
+
 		if (cutoffTime == 0)
 		{
 			// We didn't have the FLAG parameter; somebody's been hacking.  No game for you!  Bad hacker!
@@ -289,7 +289,7 @@ int main(int argc, char *argv[])
 	}
 
 	myChdir(cwd);
-	
+
 	// Exit normally
 	return 0;
 }
@@ -302,9 +302,9 @@ void CreatePrimaryWin(const char *prefix)
 {
 	char name[256];
 	sprintf(name, "launcher_%s", prefix);
-	
+
 	DBGMSG("CreatePrimary: "<<name);
-	
+
 	/*
 	** set up and register window class
 	*/
@@ -320,14 +320,14 @@ void CreatePrimaryWin(const char *prefix)
 	wc.lpszMenuName = name;
 	wc.lpszClassName = name;
 	RegisterClass(&wc);
-	
+
 	/*
 	** create a window
 	*/
 	HWND hwnd = CreateWindowEx(WS_EX_TOPMOST, name, name, WS_POPUP, 0, 0,
 		GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN),
 		NULL, NULL, Global_instance, NULL);
-	
+
 	if(!hwnd)
 	{
 		DBGMSG("Couldn't make window!");
@@ -359,16 +359,16 @@ void myChdir(char *path)
 	char ext[64];
 	char filepath[513];
 	int  abc;
-	
+
 	_splitpath( path, drive, dir, file, ext );
 	_makepath ( filepath,   drive, dir, NULL, NULL );
-	
-	if ( filepath[ strlen( filepath ) - 1 ] == '\\' ) 
+
+	if ( filepath[ strlen( filepath ) - 1 ] == '\\' )
 	{
 		filepath[ strlen( filepath ) - 1 ] = '\0';
 	}
-	abc = (unsigned)( toupper( filepath[0] ) - 'A' + 1 ); 
-	if ( !_chdrive( abc )) 
+	abc = (unsigned)( toupper( filepath[0] ) - 'A' + 1 );
+	if ( !_chdrive( abc ))
 	{
 		abc = chdir( filepath );  // Will fail with ending '\\'
 	}

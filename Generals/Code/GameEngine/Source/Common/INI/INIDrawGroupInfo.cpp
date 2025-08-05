@@ -39,7 +39,7 @@ void parseInt( INI* ini, void * /*instance*/, void *store, const void* userData 
 	if (userData == 0) {
 		store = &dgi->m_pixelOffsetX;
 		dgi->m_usingPixelOffsetX = TRUE;
-	} else { 
+	} else {
 		store = &dgi->m_pixelOffsetY;
 		dgi->m_usingPixelOffsetY = TRUE;
 	}
@@ -53,7 +53,7 @@ void parsePercentToReal( INI* ini, void * /*instance*/, void *store, const void*
 	if (userData == 0) {
 		store = &dgi->m_pixelOffsetX;
 		dgi->m_usingPixelOffsetX = FALSE;
-	} else { 
+	} else {
 		store = &dgi->m_pixelOffsetY;
 		dgi->m_usingPixelOffsetY = FALSE;
 	}
@@ -61,12 +61,12 @@ void parsePercentToReal( INI* ini, void * /*instance*/, void *store, const void*
 	INI::parsePercentToReal(ini, NULL, store, NULL);
 }
 
-const FieldParse DrawGroupInfo::s_fieldParseTable[] = 
+const FieldParse DrawGroupInfo::s_fieldParseTable[] =
 {
 	{ "UsePlayerColor",												INI::parseBool,						NULL, offsetof( DrawGroupInfo, m_usePlayerColor) },
 	{ "ColorForText",													INI::parseColorInt,				NULL, offsetof( DrawGroupInfo, m_colorForText ) },
 	{ "ColorForTextDropShadow",								INI::parseColorInt,				NULL, offsetof( DrawGroupInfo, m_colorForTextDropShadow ) },
-	
+
 	{ "FontName",															INI::parseQuotedAsciiString,		NULL, offsetof( DrawGroupInfo, m_fontName ) },
 	{ "FontSize",															INI::parseInt,						NULL, offsetof( DrawGroupInfo, m_fontSize ) },
 	{ "FontIsBold",														INI::parseBool,						NULL, offsetof( DrawGroupInfo, m_fontIsBold ) },
@@ -76,7 +76,7 @@ const FieldParse DrawGroupInfo::s_fieldParseTable[] =
 	{ "DrawPositionXPercent",			  					parsePercentToReal,				(void*)0, 0 },
 	{ "DrawPositionYPixel",			  						parseInt,									(void*)1, 0 },
 	{ "DrawPositionYPercent",			  					parsePercentToReal,				(void*)1, 0 },
-	
+
 	{ 0, 0, 0, 0 }
 };
 

@@ -16,7 +16,7 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-// FILE: LayersList.cpp 
+// FILE: LayersList.cpp
 /*---------------------------------------------------------------------------*/
 /* EA Pacific                                                                */
 /* Confidential Information	                                                 */
@@ -60,7 +60,7 @@ void CLLTreeCtrl::buildMoveMenu(CMenu* moveMenu, UINT firstID)
 
 	// to save the copy
 	const ListLayer& layer = pParent->GetAllLayers();
-	
+
 	ListLayer::const_iterator cit;
 
 	int i = 0;
@@ -120,7 +120,7 @@ void CLLTreeCtrl::OnRButtonDown(UINT nFlags, CPoint point)
 		if (contextIsLayer) {
 			CString itemText = GetItemText(item);
 			if ((itemText.CompareNoCase(LayersList::TheActiveLayerName.c_str()) == 0) ||
-				((LayersList::TheActiveLayerName.c_str() == NULL) && 
+				((LayersList::TheActiveLayerName.c_str() == NULL) &&
 				(LayersList::TheUnmutableDefaultLayerName.compare(LayersList::TheDefaultLayerName) == 0))) {
 				// Don't allow the current layer to be hidden.
 				// Because the objects will immediately disappear when placed.
@@ -130,7 +130,7 @@ void CLLTreeCtrl::OnRButtonDown(UINT nFlags, CPoint point)
 				Bool hidden = ll->isLayerHidden(AsciiString(itemText));
 				pPopup->CheckMenuItem(ID_HIDECURRENTLAYER, MF_BYCOMMAND | (hidden ? MF_CHECKED : MF_UNCHECKED));
 			}
-			
+
 			CMenu *moveMenu = pPopup->GetSubMenu(LAYERS_LIST_MERGE_LAYER_INTO);
 			moveMenu->RemoveMenu(0, MF_BYPOSITION);
 			buildMoveMenu(moveMenu, ID_LAYERSLIST_MERGELAYERINTO_BEGIN);
@@ -168,7 +168,7 @@ END_MESSAGE_MAP()
 // LayersList Implementation //////////////////////////////////////////////////////////////////////
 
 LayersList::LayersList(UINT nIDTemplate, CWnd *parentWnd) : CDialog(nIDTemplate, parentWnd)
-{ 
+{
 	mTree = NULL;
 	m_activatedLayer = false;
 	resetLayers();
@@ -306,7 +306,7 @@ void LayersList::addLayerNamed(IN AsciiString layerToAdd)
 		DEBUG_CRASH(("Already found a layer named %s", layerToAdd.str()));
 		return;
 	}
-	
+
 	if (layerToAdd.isEmpty()) {
 		return;
 	}
@@ -362,7 +362,7 @@ void LayersList::changeLayerName(IN AsciiString oldLayerName, AsciiString newLay
 }
 
 void LayersList::mergeLayerInto(IN ListLayerIt src, IN ListLayerIt dst)
-{	
+{
 	CWorldBuilderDoc* pDoc = CWorldBuilderDoc::GetActiveDoc();
 	if (!pDoc) {
 		return;
@@ -431,11 +431,11 @@ void LayersList::updateUIFromList(void)
 
 //	int index = 0;
 
-	for (ListLayerIt layersIt = mLayers.begin(); layersIt != mLayers.end(); ++layersIt) {		
-		// Add a branch for each Layer. 
+	for (ListLayerIt layersIt = mLayers.begin(); layersIt != mLayers.end(); ++layersIt) {
+		// Add a branch for each Layer.
 		int iconToShow = (layersIt->show ? 0 : 1);
 		HTREEITEM thisBranch = pTree->InsertItem(layersIt->layerName.str(), iconToShow, iconToShow);
-		
+
 		for (ListMapObjectPtrIt objIt = layersIt->objectsInLayer.begin(); objIt != layersIt->objectsInLayer.end(); ++objIt) {
 			Bool exists;
 			AsciiString uniqueID = (*objIt)->getProperties()->getAsciiString(TheKey_uniqueID, &exists);
@@ -444,8 +444,8 @@ void LayersList::updateUIFromList(void)
 			} else {
 				pTree->InsertItem((*objIt)->getName().str(), iconToShow, iconToShow, thisBranch);
 			}
-		} 
-		
+		}
+
 		for (ListPolygonTriggerPtrIt triggerIt = layersIt->polygonTriggersInLayer.begin(); triggerIt != layersIt->polygonTriggersInLayer.end(); ++triggerIt) {
 			AsciiString uniqueID = (*triggerIt)->getTriggerName();
 			pTree->InsertItem(uniqueID.str(), iconToShow, iconToShow, thisBranch);
@@ -563,7 +563,7 @@ void LayersList::addMapObjectToLayer(IN MapObject *objectToAdd, IN ListLayerIt *
 		int iconToShow = (layerToAddTo->show ? 0 : 1);
 		mTree->InsertItem(objName.str(), iconToShow, iconToShow, hItem);
 	}
-	
+
 	CWorldBuilderDoc *pDoc = CWorldBuilderDoc::GetActiveDoc();
 	if (!pDoc) {
 		return;
@@ -613,7 +613,7 @@ void LayersList::addPolygonTriggerToLayer(IN PolygonTrigger *triggerToAdd, IN Li
 		int iconToShow = (layerToAddTo->show ? 0 : 1);
 		mTree->InsertItem(triggerName.str(), iconToShow, iconToShow, hItem);
 	}
-	
+
 	CWorldBuilderDoc *pDoc = CWorldBuilderDoc::GetActiveDoc();
 	if (!pDoc) {
 		return;
@@ -665,7 +665,7 @@ void LayersList::removeMapObjectFromLayer(IN MapObject *objectToRemove, IN ListL
 
 	// layerToRemoveFrom and objectToRemove are now valid. Remove em.
 	layerToRemoveFrom->objectsInLayer.erase(objectBeingRemove);
-	
+
 }
 
 void LayersList::removePolygonTriggerFromLayer(IN PolygonTrigger *triggerToRemove, IN ListLayerIt *layerIt, IN ListPolygonTriggerPtrIt *triggerIt)
@@ -704,7 +704,7 @@ void LayersList::removePolygonTriggerFromLayer(IN PolygonTrigger *triggerToRemov
 
 	// layerToRemoveFrom and objectToRemove are now valid. Remove em.
 	layerToRemoveFrom->polygonTriggersInLayer.erase(triggerBeingRemove);
-	
+
 }
 
 
@@ -719,7 +719,7 @@ BOOL LayersList::OnInitDialog()
 	if (!pTree) {
 		return 1;
 	}
-	
+
 	CRect rect;
 	mTree = new CLLTreeCtrl;
 	pTree->GetWindowRect(&rect);
@@ -733,7 +733,7 @@ BOOL LayersList::OnInitDialog()
 	// pTree should == mTree now.
 
 	mImageList.Create(16, 16, ILC_COLOR8, 3, 3);
-	
+
 	// If the order of these are changed, please update the enum in updateTreeImages.
 	mImageList.Add(LoadIcon(AfxGetInstanceHandle(), MAKEINTRESOURCE(IDI_Show)));
 	mImageList.Add(LoadIcon(AfxGetInstanceHandle(), MAKEINTRESOURCE(IDI_Hide)));
@@ -744,10 +744,10 @@ BOOL LayersList::OnInitDialog()
 
 
 	return 1;
-	
+
 }
 
-// returning 0 means editing can continue. 
+// returning 0 means editing can continue.
 // returning 1 means editing is cancelled
 void LayersList::OnBeginEditLabel(NMHDR *pNotifyStruct, LRESULT* pResult)
 {
@@ -758,7 +758,7 @@ void LayersList::OnBeginEditLabel(NMHDR *pNotifyStruct, LRESULT* pResult)
 	}
 
 	TV_DISPINFO *ptvdi = (TV_DISPINFO*) pNotifyStruct;
-	if (ptvdi == NULL) { 
+	if (ptvdi == NULL) {
 		(*pResult) = 1;
 		return;
 	}
@@ -774,9 +774,9 @@ void LayersList::OnBeginEditLabel(NMHDR *pNotifyStruct, LRESULT* pResult)
 		return;
 	}
 
-	
+
 	CString str = pTree->GetItemText(ptvdi->item.hItem);
-	// if we can't find the layer of that name, then 
+	// if we can't find the layer of that name, then
 	if (!findLayerNamed(AsciiString(str))) {
 		// End the editing
 		(*pResult) = 1;
@@ -794,7 +794,7 @@ void LayersList::OnEndEditLabel(NMHDR *pNotifyStruct, LRESULT* pResult)
 	if (!pTree) {
 		return;
 	}
-	
+
 	TV_DISPINFO *ptvdi = (TV_DISPINFO*) pNotifyStruct;
 	if (!ptvdi->item.pszText) {
 		return;
@@ -815,7 +815,7 @@ void LayersList::OnEndEditLabel(NMHDR *pNotifyStruct, LRESULT* pResult)
 	pTree->SetItemText(ptvdi->item.hItem, layerIt->layerName.str());
 
 	mCurrentlyEditingLabel = AsciiString::TheEmptyString;
-	
+
 	return;
 }
 
@@ -917,7 +917,7 @@ HTREEITEM LayersList::findTreeObjectNamed(const AsciiString& objectToFind, HTREE
 	}
 
 	HTREEITEM hItem = mTree->GetChildItem(layerItem);
-	
+
 	while (hItem) {
 		if (objectToFind.compareNoCase(mTree->GetItemText(hItem)) == 0) {
 			return hItem;
@@ -966,7 +966,7 @@ void LayersList::OnCancel()
 	if (!pTree) {
 		return;
 	}
-	
+
 	// end editing in place with failure
 	TreeView_EndEditLabelNow(pTree->GetSafeHwnd(), true);
 }
@@ -987,20 +987,20 @@ void LayersList::OnMergeLayer(UINT commandID)
 	if (layerOffset < 0) {
 		return;
 	}
-	
+
 	ListLayerIt dstlayerIt = mLayers.begin();
 
 	while (layerOffset && dstlayerIt != mLayers.end()) {
 		++dstlayerIt;
 		--layerOffset;
 	}
-	
+
 	AsciiString lastClickedLayer = mTree->getLastClickedLayer();
 	ListLayerIt srclayerIt = mLayers.begin();
 	while (srclayerIt != mLayers.end() && srclayerIt->layerName.compareNoCase(lastClickedLayer) != 0) {
 		++srclayerIt;
 	}
-	
+
 	if (srclayerIt == mLayers.end()) {
 		return;
 	}
@@ -1024,14 +1024,14 @@ void LayersList::OnMergeObject(UINT commandID)
 	if (layerOffset < 0) {
 		return;
 	}
-	
+
 	ListLayerIt layerIt = mLayers.begin();
 
 	while (layerOffset && layerIt != mLayers.end()) {
 		++layerIt;
 		--layerOffset;
 	}
-	
+
 	AsciiString lastClickedObj = mTree->getLastClickedObject();
 	MapObject *objToMove = findObjectByUID(lastClickedObj);
 	if (objToMove) {
@@ -1049,7 +1049,7 @@ void LayersList::OnSelectActiveLayer()
 	while (srclayerIt != mLayers.end() && srclayerIt->layerName.compareNoCase(lastClickedLayer) != 0) {
 		++srclayerIt;
 	}
-	
+
 	if (srclayerIt == mLayers.end()) {
 		return;
 	}
@@ -1130,7 +1130,7 @@ void LayersList::updateTreeImages()
 		HTREEITEM item = mTree->GetChildItem(layer);
 		while (item) {
 			mTree->SetItemImage(item, childIcon, childIcon);
-			item = mTree->GetNextSiblingItem(item);	
+			item = mTree->GetNextSiblingItem(item);
 		}
 	}
 }
@@ -1141,7 +1141,7 @@ void LayersList::OnMergeViewSelection(UINT commandID)
 	if (layerOffset < 0) {
 		return;
 	}
-	
+
 	ListLayerIt layerIt = mLayers.begin();
 
 	while (layerOffset && layerIt != mLayers.end()) {
@@ -1155,8 +1155,8 @@ void LayersList::OnMergeViewSelection(UINT commandID)
 	while (mapObject) {
 		if (mapObject->isSelected()) {
 			allSelectedObjects.push(mapObject);
-		}	
-		
+		}
+
 		mapObject = mapObject->getNext();
 	}
 
@@ -1172,8 +1172,8 @@ void LayersList::OnMergeViewSelection(UINT commandID)
 	while (polygonTrigger) {
 		if (polygonTrigger->getSelected()) {
 			allSelectedTriggers.push(polygonTrigger);
-		}	
-		
+		}
+
 		polygonTrigger = polygonTrigger->getNext();
 	}
 
@@ -1297,7 +1297,7 @@ MapObject *LayersList::findObjectByUID(AsciiString objectIDToFind)
 		if (exists) {
 			if (testID.compareNoCase(objectIDToFind) == 0) {
 				return obj;
-			}			    
+			}
 		}
 		obj = obj->getNext();
 	}

@@ -61,7 +61,7 @@ protected:
 
 	Real			m_curValue;
 	Real			m_curAngle;
-	Real			m_curDelta;	 
+	Real			m_curDelta;
 	Real			m_curAngleLimit;
 	Real			m_leanAngle;							///<Angle that the tree leans away from the wind.
 	Short			m_curVersion;

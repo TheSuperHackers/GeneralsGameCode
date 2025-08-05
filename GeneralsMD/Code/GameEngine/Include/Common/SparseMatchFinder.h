@@ -24,7 +24,7 @@
 
 // FILE: SparseMatchFinder.h /////////////////////////////////////////////////////////////////////////
 // Author: Steven Johnson, March 2002
-// Desc:   
+// Desc:
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
@@ -105,7 +105,7 @@ private:
 	//-------------------------------------------------------------------------------------------------
 	// MEMBER VARS
 	//-------------------------------------------------------------------------------------------------
-	
+
 	mutable MatchMap m_bestMatches;
 	//mutable HashMatchMap m_bestHashMatches;
 
@@ -117,13 +117,13 @@ private:
 	inline static Int countConditionIntersection(const BITSET& a, const BITSET& b)
 	{
 		return a.countIntersection(b);
-	} 
+	}
 
 	//-------------------------------------------------------------------------------------------------
 	inline static Int countConditionInverseIntersection(const BITSET& a, const BITSET& b)
 	{
 		return a.countInverseIntersection(b);
-	} 
+	}
 
 	//-------------------------------------------------------------------------------------------------
 	const MATCHABLE* findBestInfoSlow(const std::vector<MATCHABLE>& v, const BITSET& bits) const
@@ -132,8 +132,8 @@ private:
 		Int bestYesMatch = 0;							// want to maximize this
 		Int bestYesExtraneousBits = 999;	// want to minimize this
 
-	#ifdef SPARSEMATCH_DEBUG 
-		Int numDupMatches = 0; 
+	#ifdef SPARSEMATCH_DEBUG
+		Int numDupMatches = 0;
 		AsciiString curBestMatchStr, dupMatchStr;
 	#endif
 
@@ -152,7 +152,7 @@ private:
 				Int yesExtraneousBits = countConditionInverseIntersection(bits, yesFlags);
 
 	#ifdef SPARSEMATCH_DEBUG
-				if (yesMatch == bestYesMatch && 
+				if (yesMatch == bestYesMatch &&
 						yesExtraneousBits == bestYesExtraneousBits)
 				{
 					++numDupMatches;
@@ -179,7 +179,7 @@ private:
 		if (numDupMatches > 0)
 		{
 			AsciiString curConditionStr;
-			bits.buildDescription(&curConditionStr); 
+			bits.buildDescription(&curConditionStr);
 			DEBUG_CRASH(("ambiguous model match in findBestInfoSlow \n\nbetween \n(%s)\n<and>\n(%s)\n\n(%d extra matches found)\n\ncurrent bits are (\n%s)",
 					curBestMatchStr.str(),
 					dupMatchStr.str(),
@@ -233,7 +233,7 @@ public:
 		if (first != NULL) {
 			return first;
 		}
-		
+
 		const MATCHABLE* info = findBestInfoSlow(v, bits);
 
 		DEBUG_ASSERTCRASH(info != NULL, ("no suitable match for criteria was found!"));

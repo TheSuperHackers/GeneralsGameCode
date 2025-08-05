@@ -93,7 +93,7 @@ void SupplyCenterProductionExitUpdate::exitObjectViaDoor( Object *newObj, ExitDo
 		for objects in general */
 		// tell the AI about it
 		TheAI->pathfinder()->addObjectToPathfindMap( newObj );
-		
+
 		Vector3 p;
 
 		//
@@ -151,7 +151,7 @@ Bool SupplyCenterProductionExitUpdate::getExitPosition( Coord3D& exitPosition ) 
 	exitPosition.x = loc.X;
 	exitPosition.y = loc.Y;
 	exitPosition.z = loc.Z;
-	
+
 	return TRUE;
 
 }

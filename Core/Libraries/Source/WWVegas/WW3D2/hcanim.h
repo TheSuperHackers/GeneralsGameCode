@@ -17,22 +17,22 @@
 */
 
 /* $Header: /Commando/Code/ww3d2/hcanim.h 2     6/29/01 6:41p Jani_p $ */
-/*********************************************************************************************** 
- ***                            Confidential - Westwood Studios                              *** 
- *********************************************************************************************** 
- *                                                                                             * 
- *                 Project Name : Commando / G 3D Library                                      * 
- *                                                                                             * 
- *                     $Archive:: /Commando/Code/ww3d2/hcanim.h                               $* 
- *                                                                                             * 
- *                       Author:: Greg_h                                                       * 
- *                                                                                             * 
- *                     $Modtime:: 6/27/01 7:35p                                               $* 
- *                                                                                             * 
- *                    $Revision:: 2                                                           $* 
- *                                                                                             * 
- *---------------------------------------------------------------------------------------------* 
- * Functions:                                                                                  * 
+/***********************************************************************************************
+ ***                            Confidential - Westwood Studios                              ***
+ ***********************************************************************************************
+ *                                                                                             *
+ *                 Project Name : Commando / G 3D Library                                      *
+ *                                                                                             *
+ *                     $Archive:: /Commando/Code/ww3d2/hcanim.h                               $*
+ *                                                                                             *
+ *                       Author:: Greg_h                                                       *
+ *                                                                                             *
+ *                     $Modtime:: 6/27/01 7:35p                                               $*
+ *                                                                                             *
+ *                    $Revision:: 2                                                           $*
+ *                                                                                             *
+ *---------------------------------------------------------------------------------------------*
+ * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 
@@ -74,13 +74,13 @@ class HCompressedAnimClass : public HAnimClass
 {
 
 public:
-	
+
 	enum
 	{
 		OK,
 		LOAD_ERROR
 	};
-	
+
 	HCompressedAnimClass(void);
 	~HCompressedAnimClass(void);
 
@@ -114,7 +114,7 @@ private:
 
 	char							Name[2*W3D_NAME_LEN];
 	char							HierarchyName[W3D_NAME_LEN];
-	
+
 	int							NumFrames;
 	int							NumNodes;
 	int							Flavor;
@@ -122,7 +122,7 @@ private:
 
 	NodeCompressedMotionStruct *		NodeMotion;
 
-	void Free(void);	
+	void Free(void);
 	bool read_channel(ChunkLoadClass & cload,TimeCodedMotionChannelClass * * newchan);
 	bool read_channel(ChunkLoadClass & cload,AdaptiveDeltaMotionChannelClass * * newchan);
 	void add_channel(TimeCodedMotionChannelClass * newchan);
@@ -136,4 +136,4 @@ private:
 
 
 #endif // hcanim.h
- 
+

@@ -56,7 +56,7 @@ Win32BIGFile::~Win32BIGFile()
 // Win32BIGFile::openFile
 //============================================================================
 
-File* Win32BIGFile::openFile( const Char *filename, Int access ) 
+File* Win32BIGFile::openFile( const Char *filename, Int access )
 {
 	const ArchivedFileInfo *fileInfo = getArchivedFileInfo(AsciiString(filename));
 
@@ -65,10 +65,10 @@ File* Win32BIGFile::openFile( const Char *filename, Int access )
 	}
 
 	RAMFile *ramFile = NULL;
-	
-	if (BitIsSet(access, File::STREAMING)) 
+
+	if (BitIsSet(access, File::STREAMING))
 		ramFile = newInstance( StreamingArchiveFile );
-	else 
+	else
 		ramFile = newInstance( RAMFile );
 
 	ramFile->deleteOnClose();
@@ -147,7 +147,7 @@ void Win32BIGFile::close( void )
 // Win32BIGFile::getFileInfo
 //============================================================================
 
-Bool Win32BIGFile::getFileInfo(const AsciiString& filename, FileInfo *fileInfo) const 
+Bool Win32BIGFile::getFileInfo(const AsciiString& filename, FileInfo *fileInfo) const
 {
 	const ArchivedFileInfo *tempFileInfo = getArchivedFileInfo(filename);
 

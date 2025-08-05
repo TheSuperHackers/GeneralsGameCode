@@ -38,7 +38,7 @@ class W3DShadowManager
 {
 
 public:
-	
+
 	W3DShadowManager( void );
 	~W3DShadowManager( void );
 	Bool init( void );	///<initialize resources used by manager, must have valid D3D device.

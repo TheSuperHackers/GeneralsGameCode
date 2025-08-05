@@ -24,7 +24,7 @@
 
 // FILE: ThingFactory.cpp /////////////////////////////////////////////////////////////////////////
 // Created:   Colin Day, April 2001
-// Desc:		This is how we go and make our things, we make our things, we make our things!	
+// Desc:		This is how we go and make our things, we make our things, we make our things!
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
@@ -212,25 +212,25 @@ void ThingFactory::reset( void )
 	for( t = m_firstTemplate; t; /* empty */ )
 	{
 		Bool possibleAdjustment = FALSE;
-		// t itself can be deleted if it is something created for this map only. Therefore, 
+		// t itself can be deleted if it is something created for this map only. Therefore,
 		// we need to store what the next item is so that we don't orphan a bunch of templates.
 		ThingTemplate *nextT = t->friend_getNextTemplate();
 		if (t == m_firstTemplate) {
 			possibleAdjustment = TRUE;
 		}
 
-		// if stillValid is NULL after we delete the overrides, then this template was created for 
+		// if stillValid is NULL after we delete the overrides, then this template was created for
 		// this map only. If it also happens to be m_firstTemplate, then we need to update m_firstTemplate
-		// as well. Finally, if it was only created for this map, we need to remove the name from the 
+		// as well. Finally, if it was only created for this map, we need to remove the name from the
 		// hash map, to prevent any crashes.
 
 		AsciiString templateName = t->getName();
-		
+
 		Overridable *stillValid = t->deleteOverrides();
 		if (stillValid == NULL && possibleAdjustment) {
 			m_firstTemplate = nextT;
 		}
-		
+
 		if (stillValid == NULL) {
 			// Also needs to be removed from the Hash map.
 			m_templateHashMap.erase(templateName);
@@ -274,7 +274,7 @@ ThingTemplate *ThingFactory::findTemplateInternal( const AsciiString& name )
 	}
 
 #ifdef LOAD_TEST_ASSETS
-	if (!strncmp(name.str(), TEST_STRING, strlen(TEST_STRING))) 
+	if (!strncmp(name.str(), TEST_STRING, strlen(TEST_STRING)))
 	{
 		ThingTemplate *tmplate = newTemplate( AsciiString( "Un-namedTemplate" ) );
 
@@ -289,9 +289,9 @@ ThingTemplate *ThingFactory::findTemplateInternal( const AsciiString& name )
 		return findTemplateInternal( name );
 
 	}
-	
+
 #endif
-	
+
 	//DEBUG_LOG(("*** Object template %s not found",name.str()));
 	return NULL;
 
@@ -326,12 +326,12 @@ Object *ThingFactory::newObject( const ThingTemplate *tmplate, Team *team, Objec
 		CreateModuleInterface* create = (*m)->getCreate();
 		if (!create)
 			continue;
-	
+
 		create->onCreate();
 	}
 
 	//
-	// all objects are part of the partition manager system, add it to that 
+	// all objects are part of the partition manager system, add it to that
 	// system now
 	//
 	ThePartitionManager->registerObject( obj );
@@ -340,7 +340,7 @@ Object *ThingFactory::newObject( const ThingTemplate *tmplate, Team *team, Objec
 
 	return obj;
 
-} 
+}
 
 //=============================================================================
 Drawable *ThingFactory::newDrawable(const ThingTemplate *tmplate, DrawableStatus statusBits)
@@ -387,9 +387,9 @@ AsciiString TheThingTemplateBeingParsedName;
 	else if( ini->getLoadType() != INI_LOAD_CREATE_OVERRIDES )
 	{
 		//Holy crap, this sucks to debug!!!
-		//If you have two different objects, the previous code would simply 
-		//allow you to define multiple objects with the same name, and just 
-		//nuke the old one with the new one. So, I (KM) have added this 
+		//If you have two different objects, the previous code would simply
+		//allow you to define multiple objects with the same name, and just
+		//nuke the old one with the new one. So, I (KM) have added this
 		//assert to notify in case of two same-name objects.
 		DEBUG_CRASH(( "[LINE: %d in '%s'] Duplicate factionunit %s found!", ini->getLineNum(), ini->getFilename().str(), name.str() ));
 	}
@@ -509,8 +509,8 @@ void ThingFactory::postProcessLoad()
 #endif
 
 	// go through all thing templates
-	for( ThingTemplate *thingTemplate = m_firstTemplate; 
-			 thingTemplate; 
+	for( ThingTemplate *thingTemplate = m_firstTemplate;
+			 thingTemplate;
 			 thingTemplate = thingTemplate->friend_getNextTemplate() )
 	{
 
@@ -532,7 +532,7 @@ void ThingFactory::postProcessLoad()
 		}
 #endif
 
-	}  // end for 
+	}  // end for
 
 #ifdef CHECK_THING_NAMES
 	dumpMissingStringNames();

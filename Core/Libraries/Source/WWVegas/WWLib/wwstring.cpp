@@ -97,7 +97,7 @@ StringClass::Get_String (int length, bool is_temp)
 			unsigned mask=1<<index;
 			if (!(ReservedMask&mask)) {
 				ReservedMask|=mask;
-				
+
 				//
 				//	Grab this unused buffer for our string
 				//
@@ -115,7 +115,7 @@ StringClass::Get_String (int length, bool is_temp)
 	}
 
 	if (string == NULL) {
-		
+
 		//
 		//	Allocate a new string as necessary
 		//
@@ -170,16 +170,16 @@ StringClass::Uninitialised_Grow (int new_len)
 
 	int allocated_len = Get_Allocated_Length ();
 	if (new_len > allocated_len) {
-		
+
 		//
 		//	Switch to a newly allocated buffer
 		//
 		TCHAR *new_buffer = Allocate_Buffer (new_len);
-		Set_Buffer_And_Allocated_Length (new_buffer, new_len);	
+		Set_Buffer_And_Allocated_Length (new_buffer, new_len);
 	}
-		
+
 	//
-	// Whenever this function is called, clear the cached length 
+	// Whenever this function is called, clear the cached length
 	//
 	Store_Length (0);
 	return ;
@@ -253,10 +253,10 @@ StringClass::Format_Args (const TCHAR *format, va_list arg_list )
 	#else
 		retval = vsnprintf (temp_buffer, 512, format, arg_list);
 	#endif
-	
+
 	//
 	//	Copy the string into our buffer
-	//	
+	//
 	(*this) = temp_buffer;
 
 	return retval;
@@ -288,10 +288,10 @@ StringClass::Format (const TCHAR *format, ...)
 	#else
 		retval = vsnprintf (temp_buffer, 512, format, arg_list);
 	#endif
-	
+
 	//
 	//	Copy the string into our buffer
-	//	
+	//
 	(*this) = temp_buffer;
 
 	va_end (arg_list);
@@ -321,7 +321,7 @@ bool StringClass::Copy_Wide (const WCHAR *source)
 
 		int  length;
 		int unmapped;
-			
+
 		length = WideCharToMultiByte (CP_ACP, 0 , source, -1, NULL, 0, NULL, &unmapped);
 		if (length > 0) {
 

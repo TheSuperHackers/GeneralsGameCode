@@ -266,7 +266,7 @@ WindowMsgHandledType InGameChatInput( GameWindow *window, UnsignedInt msg,
 																			WindowMsgData mData1, WindowMsgData mData2 )
 {
 
-	switch( msg ) 
+	switch( msg )
 	{
 
 		// --------------------------------------------------------------------------------------------
@@ -300,10 +300,10 @@ WindowMsgHandledType InGameChatInput( GameWindow *window, UnsignedInt msg,
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-WindowMsgHandledType InGameChatSystem( GameWindow *window, UnsignedInt msg, 
+WindowMsgHandledType InGameChatSystem( GameWindow *window, UnsignedInt msg,
 																			 WindowMsgData mData1, WindowMsgData mData2 )
 {
-	switch( msg ) 
+	switch( msg )
 	{
 		//---------------------------------------------------------------------------------------------
 		case GGM_FOCUS_CHANGE:
@@ -316,7 +316,7 @@ WindowMsgHandledType InGameChatSystem( GameWindow *window, UnsignedInt msg,
 
 		//---------------------------------------------------------------------------------------------
 		case GWM_INPUT_FOCUS:
-		{	
+		{
 			// if we're givin the opportunity to take the keyboard focus we must say we want it
 			if( mData1 == TRUE )
 				*(Bool *)mData2 = TRUE;

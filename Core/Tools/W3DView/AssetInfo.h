@@ -73,7 +73,7 @@ class AssetInfoClass
 			  m_AssetType (type),
 			  m_dwUserData (user_data),
 			  m_pRenderObj (NULL)			{ MEMBER_ADD (m_pRenderObj, prender_obj); Initialize (); }
-		
+
 		virtual ~AssetInfoClass (void)	{ MEMBER_RELEASE (m_pRenderObj); }
 
 		//////////////////////////////////////////////////////////////
@@ -105,14 +105,14 @@ class AssetInfoClass
 		bool					Can_Asset_Have_Animations (void) const	{ return bool(m_HierarchyName.GetLength () > 0); }
 
 	protected:
-		
+
 		//////////////////////////////////////////////////////////////
 		//
 		//  Protected methods
 		//
 		void					Initialize (void);
-		
-		
+
+
 	private:
 
 		//////////////////////////////////////////////////////////////

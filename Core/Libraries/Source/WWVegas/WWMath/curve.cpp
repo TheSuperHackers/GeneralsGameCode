@@ -54,11 +54,11 @@ DECLARE_FORCE_LINK(curve);
 SimplePersistFactoryClass<LinearCurve3DClass,WWMATH_CHUNKID_LINEARCURVE3D>	_LinearCurve3DFactory;
 SimplePersistFactoryClass<LinearCurve1DClass,WWMATH_CHUNKID_LINEARCURVE1D>	_LinearCurve1DFactory;
 
-enum 
+enum
 {
 	// ID's used by Curve3D
-	CURVE3D_CHUNK_VARIABLES					= 0x00020651,			
-	CURVE3D_CHUNK_KEYS,			
+	CURVE3D_CHUNK_VARIABLES					= 0x00020651,
+	CURVE3D_CHUNK_KEYS,
 
 	CURVE3D_VARIABLE_ISLOOPING				= 0x00,
 	CURVE3D_VARIABLE_KEYCOUNT,
@@ -67,8 +67,8 @@ enum
 	LINEARCURVE3D_CHUNK_CURVE3D			= 0x00020653,
 
 	// ID's used by Curve1D
-	CURVE1D_CHUNK_VARIABLES					= 0x00020655,			
-	CURVE1D_CHUNK_KEYS,			
+	CURVE1D_CHUNK_VARIABLES					= 0x00020655,
+	CURVE1D_CHUNK_KEYS,
 
 	CURVE1D_VARIABLE_ISLOOPING				= 0x00,
 	CURVE1D_VARIABLE_KEYCOUNT,
@@ -155,7 +155,7 @@ void Curve3DClass::Set_Key(int i,const Vector3 & point)
 	assert(i >= 0);
 	assert(i < Keys.Count());
 	Keys[i].Point = point;
-}	
+}
 
 
 int Curve3DClass::Add_Key(const Vector3 & point,float t)
@@ -171,13 +171,13 @@ int Curve3DClass::Add_Key(const Vector3 & point,float t)
 
 	Keys.Insert(idx,newkey);
 	return idx;
-}	
+}
 
 void Curve3DClass::Remove_Key(int i)
 {
 	assert(i >= 0);
 	assert(i < Keys.Count());
-	Keys.Delete(i);	
+	Keys.Delete(i);
 }
 
 void Curve3DClass::Clear_Keys(void)
@@ -209,7 +209,7 @@ bool Curve3DClass::Save(ChunkSaveClass & csave)
 
 	// Saving the keys, Note that if the format of a key changes we'll
 	// need a new chunk. (I didn't wrap each variable in its own chunk)
-	csave.Begin_Chunk(CURVE3D_CHUNK_KEYS);			
+	csave.Begin_Chunk(CURVE3D_CHUNK_KEYS);
 	for (int i=0; i<keycount; i++) {
 		csave.Write(&(Keys[i].Point),sizeof(Keys[i].Point));
 		csave.Write(&(Keys[i].Time),sizeof(Keys[i].Time));
@@ -229,17 +229,17 @@ bool Curve3DClass::Load(ChunkLoadClass & cload)
 
 	// read in the chunks
 	while (cload.Open_Chunk()) {
-		
-		switch(cload.Cur_Chunk_ID()) 
+
+		switch(cload.Cur_Chunk_ID())
 		{
 			case CURVE3D_CHUNK_VARIABLES:
-			
+
 				while (cload.Open_Micro_Chunk()) {
 					switch(cload.Cur_Micro_Chunk_ID()) {
 						READ_MICRO_CHUNK(cload,CURVE3D_VARIABLE_ISLOOPING,IsLooping);
 						READ_MICRO_CHUNK(cload,CURVE3D_VARIABLE_KEYCOUNT,keycount);
 					}
-					cload.Close_Micro_Chunk();	
+					cload.Close_Micro_Chunk();
 				}
 				break;
 
@@ -304,8 +304,8 @@ bool LinearCurve3DClass::Save(ChunkSaveClass & csave)
 bool LinearCurve3DClass::Load(ChunkLoadClass & cload)
 {
 	while (cload.Open_Chunk()) {
-		
-		switch(cload.Cur_Chunk_ID()) 
+
+		switch(cload.Cur_Chunk_ID())
 		{
 			case LINEARCURVE3D_CHUNK_CURVE3D:
 				Curve3DClass::Load(cload);
@@ -402,7 +402,7 @@ void Curve1DClass::Set_Key(int i,float point,unsigned int extra)
 	assert(i < Keys.Count());
 	Keys[i].Point = point;
 	Keys[i].Extra = extra;
-}	
+}
 
 
 int Curve1DClass::Add_Key(float point,float t,unsigned int extra)
@@ -419,13 +419,13 @@ int Curve1DClass::Add_Key(float point,float t,unsigned int extra)
 
 	Keys.Insert(idx,newkey);
 	return idx;
-}	
+}
 
 void Curve1DClass::Remove_Key(int i)
 {
 	assert(i >= 0);
 	assert(i < Keys.Count());
-	Keys.Delete(i);	
+	Keys.Delete(i);
 }
 
 void Curve1DClass::Clear_Keys(void)
@@ -496,17 +496,17 @@ bool Curve1DClass::Load(ChunkLoadClass & cload)
 
 	// read in the chunks
 	while (cload.Open_Chunk()) {
-		
-		switch(cload.Cur_Chunk_ID()) 
+
+		switch(cload.Cur_Chunk_ID())
 		{
 			case CURVE1D_CHUNK_VARIABLES:
-			
+
 				while (cload.Open_Micro_Chunk()) {
 					switch(cload.Cur_Micro_Chunk_ID()) {
 						READ_MICRO_CHUNK(cload,CURVE1D_VARIABLE_ISLOOPING,IsLooping);
 						READ_MICRO_CHUNK(cload,CURVE1D_VARIABLE_KEYCOUNT,keycount);
 					}
-					cload.Close_Micro_Chunk();	
+					cload.Close_Micro_Chunk();
 				}
 				break;
 
@@ -571,8 +571,8 @@ bool LinearCurve1DClass::Save(ChunkSaveClass & csave)
 bool LinearCurve1DClass::Load(ChunkLoadClass & cload)
 {
 	while (cload.Open_Chunk()) {
-		
-		switch(cload.Cur_Chunk_ID()) 
+
+		switch(cload.Cur_Chunk_ID())
 		{
 			case LINEARCURVE1D_CHUNK_CURVE1D:
 				Curve1DClass::Load(cload);

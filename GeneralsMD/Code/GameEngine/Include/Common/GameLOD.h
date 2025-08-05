@@ -112,7 +112,7 @@ struct StaticGameLODInfo
 	Int m_maxTankTrackFadeDelay;	///<maximum amount of time a tank track segment remains visible.
 	Bool m_useBuildupScaffolds;		///<draw scaffold during structure building.
 	Bool m_useTreeSway;		///<sway trees to simulate wind.
-	Bool m_useEmissiveNightMaterials; ///<perform second lighting pass on night buildings. 
+	Bool m_useEmissiveNightMaterials; ///<perform second lighting pass on night buildings.
 	Bool m_useHeatEffects;			///<draw heat distortion effects (i.e Microwave Tank).
 	Int m_textureReduction;	///<reduce texture resolution by dividing in half n times.
 	Bool m_useFpsLimit;	///<don't lock fps to 30hz

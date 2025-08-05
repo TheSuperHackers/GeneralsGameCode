@@ -60,8 +60,8 @@
  *=============================================================================================*/
 GameMtlVertexMaterialDlg::GameMtlVertexMaterialDlg
 (
-	HWND				parent, 
-	IMtlParams *	imp, 
+	HWND				parent,
+	IMtlParams *	imp,
 	GameMtl *		mtl,
 	int				pass
 ) :
@@ -140,12 +140,12 @@ GameMtlVertexMaterialDlg::~GameMtlVertexMaterialDlg()
  *   11/23/98   GTH : Created.                                                                 *
  *=============================================================================================*/
 BOOL GameMtlVertexMaterialDlg::Dialog_Proc(HWND dlg_wnd, UINT message, WPARAM wparam, LPARAM lparam)
-{ 
+{
 	int val;
 	int id = LOWORD(wparam);
 	int code = HIWORD(wparam);
 
-	switch (message) 
+	switch (message)
 	{
 		case WM_INITDIALOG:
 		{
@@ -161,7 +161,7 @@ BOOL GameMtlVertexMaterialDlg::Dialog_Proc(HWND dlg_wnd, UINT message, WPARAM wp
 			UVChannelSpin[1] = SetupIntSpinner(dlg_wnd,IDC_STAGE1UVCHAN_SPIN,IDC_STAGE1UVCHAN_EDIT,1,99,1);
 			break;
 		}
-		
+
 		case WM_LBUTTONDOWN:
 		case WM_LBUTTONUP:
 		case WM_MOUSEMOVE:
@@ -170,14 +170,14 @@ BOOL GameMtlVertexMaterialDlg::Dialog_Proc(HWND dlg_wnd, UINT message, WPARAM wp
 			return FALSE;
 		}
 
-		case WM_COMMAND: 
+		case WM_COMMAND:
 		{
-			switch (id) 
+			switch (id)
 			{
 				case IDC_COPY_SPECULAR_DIFFUSE:
 					TheMtl->Set_Copy_Specular_To_Diffuse(PassIndex,GetCheckBox(dlg_wnd, IDC_COPY_SPECULAR_DIFFUSE) == TRUE);
 					break;
-				
+
 				case IDC_MAPPING0_COMBO:
 					if (code == CBN_SELCHANGE) {
 						val = SendDlgItemMessage(dlg_wnd,IDC_MAPPING0_COMBO,CB_GETCURSEL,0,0);
@@ -231,11 +231,11 @@ BOOL GameMtlVertexMaterialDlg::Dialog_Proc(HWND dlg_wnd, UINT message, WPARAM wp
 				case IDC_100_TRANS:
 					TheMtl->Set_PSX_Translucency(PassIndex,GAMEMTL_PSX_TRANS_100);
 					break;
-				
+
 				case IDC_50_TRANS:
 					TheMtl->Set_PSX_Translucency(PassIndex,GAMEMTL_PSX_TRANS_50);
 					break;
-				
+
 				case IDC_25_TRANS:
 					TheMtl->Set_PSX_Translucency(PassIndex,GAMEMTL_PSX_TRANS_25);
 					break;
@@ -243,7 +243,7 @@ BOOL GameMtlVertexMaterialDlg::Dialog_Proc(HWND dlg_wnd, UINT message, WPARAM wp
 				case IDC_MINUS_100_TRANS:
 					TheMtl->Set_PSX_Translucency(PassIndex,GAMEMTL_PSX_TRANS_MINUS_100);
 					break;
-				
+
 				case IDC_NO_RT_LIGHTING:
 					TheMtl->Set_PSX_Lighting(PassIndex,!GetCheckBox(dlg_wnd, IDC_NO_RT_LIGHTING));
 					break;
@@ -252,7 +252,7 @@ BOOL GameMtlVertexMaterialDlg::Dialog_Proc(HWND dlg_wnd, UINT message, WPARAM wp
 		}
 
 		case CC_COLOR_CHANGE:
-		{			
+		{
 			// just update all of the colors
 			TheMtl->Set_Ambient(PassIndex,IParams->GetTime(),AmbientSwatch->GetColor());
 			TheMtl->Set_Diffuse(PassIndex,IParams->GetTime(),DiffuseSwatch->GetColor());
@@ -260,9 +260,9 @@ BOOL GameMtlVertexMaterialDlg::Dialog_Proc(HWND dlg_wnd, UINT message, WPARAM wp
 			TheMtl->Set_Emissive(PassIndex,IParams->GetTime(),EmissiveSwatch->GetColor());
 			TheMtl->Notify_Changed();
 			break;
-		}			
+		}
 
-		case CC_SPINNER_CHANGE:    
+		case CC_SPINNER_CHANGE:
 		{
 			TheMtl->Set_Shininess(PassIndex,IParams->GetTime(),ShininessSpin->GetFVal());
 			TheMtl->Set_Opacity(PassIndex,IParams->GetTime(),OpacitySpin->GetFVal());
@@ -273,12 +273,12 @@ BOOL GameMtlVertexMaterialDlg::Dialog_Proc(HWND dlg_wnd, UINT message, WPARAM wp
 			break;
 		}
 
-		case CC_SPINNER_BUTTONUP: 
+		case CC_SPINNER_BUTTONUP:
 		{
 			TheMtl->Notify_Changed();
 			break;
 		}
-	
+
 	}
 	return FALSE;
 }
@@ -307,7 +307,7 @@ void GameMtlVertexMaterialDlg::ReloadDialog(void)
 	DiffuseSwatch->InitColor(TheMtl->Get_Diffuse(PassIndex,IParams->GetTime()));
 	SpecularSwatch->InitColor(TheMtl->Get_Specular(PassIndex,IParams->GetTime()));
 	EmissiveSwatch->InitColor(TheMtl->Get_Emissive(PassIndex,IParams->GetTime()));
-	
+
 	ShininessSpin->SetValue(TheMtl->Get_Shininess(PassIndex,IParams->GetTime()),FALSE);
 	OpacitySpin->SetValue(TheMtl->Get_Opacity(PassIndex,IParams->GetTime()),FALSE);
 	TranslucencySpin->SetValue(TheMtl->Get_Translucency(PassIndex,IParams->GetTime()),FALSE);
@@ -317,16 +317,16 @@ void GameMtlVertexMaterialDlg::ReloadDialog(void)
 
 	SetCheckBox(m_hWnd,IDC_COPY_SPECULAR_DIFFUSE, TheMtl->Get_Copy_Specular_To_Diffuse(PassIndex));
 
-	SendDlgItemMessage(	m_hWnd, 
-								IDC_MAPPING0_COMBO, 
-								CB_SETCURSEL, 
-								TheMtl->Get_Mapping_Type(PassIndex, 0), 
+	SendDlgItemMessage(	m_hWnd,
+								IDC_MAPPING0_COMBO,
+								CB_SETCURSEL,
+								TheMtl->Get_Mapping_Type(PassIndex, 0),
 								0 );
 
-	SendDlgItemMessage(	m_hWnd, 
-								IDC_MAPPING1_COMBO, 
-								CB_SETCURSEL, 
-								TheMtl->Get_Mapping_Type(PassIndex, 1), 
+	SendDlgItemMessage(	m_hWnd,
+								IDC_MAPPING1_COMBO,
+								CB_SETCURSEL,
+								TheMtl->Get_Mapping_Type(PassIndex, 1),
 								0 );
 
 	// PSX Controls

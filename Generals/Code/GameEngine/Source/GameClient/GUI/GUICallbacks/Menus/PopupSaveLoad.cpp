@@ -24,12 +24,12 @@
 
 // FILE: PopupSaveLoad.cpp /////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Electronic Arts Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2002 - All Rights Reserved                  
-//                                                                          
+//
+//                       Electronic Arts Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2002 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:   RTS3
@@ -120,7 +120,7 @@ static void updateMenuActions( void )
 	buttonLoad->winEnable( selectedGameInfo != NULL );
 	GameWindow *buttonDelete = TheWindowManager->winGetWindowFromId( NULL, buttonDeleteKey );
 	buttonDelete->winEnable( selectedGameInfo != NULL );
-	
+
 }  // end updateMenuActions
 
 //-------------------------------------------------------------------------------------------------
@@ -193,7 +193,7 @@ void SaveLoadMenuFullScreenInit( WindowLayout *layout, void *userData )
 	isPopup = FALSE;
 	// set default behavior for this menu
 	currentLayoutType = SLLT_LOAD_ONLY;
-	
+
 	// get layout type if present
 	if( userData )
 		currentLayoutType = *((SaveLoadLayoutType *)userData);
@@ -256,7 +256,7 @@ void SaveLoadMenuFullScreenInit( WindowLayout *layout, void *userData )
 //-------------------------------------------------------------------------------------------------
 void SaveLoadMenuShutdown( WindowLayout *layout, void *userData )
 {
-	
+
 	Bool popImmediate = *(Bool *)userData;
 	if( popImmediate )
 	{
@@ -301,13 +301,13 @@ void SaveLoadMenuUpdate( WindowLayout *layout, void *userData )
 	if(isShuttingDown && TheShell->isAnimFinished()&& TheTransitionHandler->isFinished())
 		TheShell->shutdownComplete( layout );
 
-}  // end SaveLoadMenuUpdate 
+}  // end SaveLoadMenuUpdate
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 WindowMsgHandledType SaveLoadMenuInput( GameWindow *window, UnsignedInt msg, WindowMsgData mData1, WindowMsgData mData2 )
 {
-	switch( msg ) 
+	switch( msg )
 	{
 
 		// --------------------------------------------------------------------------------------------
@@ -322,7 +322,7 @@ WindowMsgHandledType SaveLoadMenuInput( GameWindow *window, UnsignedInt msg, Win
 				// ----------------------------------------------------------------------------------------
 				case KEY_ESC:
 				{
-					
+
 					//
 					// send a simulated selected event to the parent window of the
 					// back/exit button
@@ -330,7 +330,7 @@ WindowMsgHandledType SaveLoadMenuInput( GameWindow *window, UnsignedInt msg, Win
 					if( BitIsSet( state, KEY_STATE_UP ) )
 					{
 						GameWindow *button = TheWindowManager->winGetWindowFromId( parent, buttonBackKey );
-						TheWindowManager->winSendSystemMsg( window, GBM_SELECTED, 
+						TheWindowManager->winSendSystemMsg( window, GBM_SELECTED,
 																								(WindowMsgData)button, buttonBackKey );
 
 					}  // end if
@@ -387,7 +387,7 @@ static void doLoadGame( void )
 	// when loading a game we also close the quit/esc menu for the user when in-game
 	if( TheShell->isShellActive() == FALSE )
 	{
-		destroyQuitMenu();		
+		destroyQuitMenu();
 //		ToggleQuitMenu();
 //		TheTransitionHandler->remove("QuitNoSave");
 //		TheTransitionHandler->remove("QuitFull");
@@ -419,12 +419,12 @@ static void doLoadGame( void )
 // ------------------------------------------------------------------------------------------------
 static void closeSaveMenu( GameWindow *window )
 {
-	
+
 	if(isPopup)
 	{
 		WindowLayout *saveLoadMenuLayout = window->winGetLayout();
 		if( saveLoadMenuLayout )
-			saveLoadMenuLayout->hide( TRUE );	
+			saveLoadMenuLayout->hide( TRUE );
 	}
 	else
 		TheShell->hideShell();
@@ -439,12 +439,12 @@ static void setEditDescription( GameWindow *editControl )
 	Campaign *campaign = TheCampaignManager->getCurrentCampaign();
 
 	//
-	// if we have a campaign we will use a default description that describes the 
+	// if we have a campaign we will use a default description that describes the
 	// location and map in the campaign nicely, otherwise we will default to just
 	// the map name (which is really only used in debug)
 	//
 	if( campaign )
-		defaultDesc.format( L"%s %d", 
+		defaultDesc.format( L"%s %d",
 												TheGameText->fetch( campaign->m_campaignNameLabel ).str(),
 												TheCampaignManager->getCurrentMissionNumber() + 1 );
 	else
@@ -464,7 +464,7 @@ static void setEditDescription( GameWindow *editControl )
 }  // end setEditDescription
 
 //----------------------------------------------------------------------------------------------
-static void processLoadButtonPress(GameWindow *window) 
+static void processLoadButtonPress(GameWindow *window)
 {
 	// get the filename of the selected savegame in the listbox
 	AvailableGameInfo *selectedGameInfo = getSelectedSaveFileInfo( window );
@@ -505,11 +505,11 @@ static void processLoadButtonPress(GameWindow *window)
 //-------------------------------------------------------------------------------------------------
 /** SaveLoad menu system callback */
 //-------------------------------------------------------------------------------------------------
-WindowMsgHandledType SaveLoadMenuSystem( GameWindow *window, UnsignedInt msg, 
+WindowMsgHandledType SaveLoadMenuSystem( GameWindow *window, UnsignedInt msg,
 																				 WindowMsgData mData1, WindowMsgData mData2 )
 {
 
-  switch( msg ) 
+  switch( msg )
 	{
 
 		// --------------------------------------------------------------------------------------------
@@ -582,7 +582,7 @@ WindowMsgHandledType SaveLoadMenuSystem( GameWindow *window, UnsignedInt msg,
 		{
 			GameWindow *control = (GameWindow *)mData1;
 			Int controlID = control->winGetWindowId();
-      
+
       if( controlID == buttonLoadKey )
       {
 				processLoadButtonPress(window);
@@ -595,7 +595,7 @@ WindowMsgHandledType SaveLoadMenuSystem( GameWindow *window, UnsignedInt msg,
 													 currentLayoutType == SLLT_SAVE_ONLY,
 													 ("SaveLoadMenuSystem - layout type '%d' does not allow saving",
 													 currentLayoutType) );
-													 	
+
 				// get save file info
 				AvailableGameInfo *selectedGameInfo = getSelectedSaveFileInfo( window );
 
@@ -666,12 +666,12 @@ WindowMsgHandledType SaveLoadMenuSystem( GameWindow *window, UnsignedInt msg,
 					deleteConfirm->winHide( FALSE );
 
 				}  // end if
-								
+
 			}  // end else if
 			else if( controlID == buttonBackKey )
 			{
 				if(isPopup)
-				{				
+				{
 					// close the save/load menu
 					closeSaveMenu( window );
 				}
@@ -700,7 +700,7 @@ WindowMsgHandledType SaveLoadMenuSystem( GameWindow *window, UnsignedInt msg,
 
 					// delete the file
 					DeleteFile( filepath.str() );
-					
+
 					// repopulate the listbox
 					TheGameState->populateSaveGameListbox( listboxGames, currentLayoutType );
 
@@ -752,12 +752,12 @@ WindowMsgHandledType SaveLoadMenuSystem( GameWindow *window, UnsignedInt msg,
 					//GameWindow *buttonFrame  = TheWindowManager->winGetWindowFromId( parent, NAMEKEY( "PopupSaveLoad.wnd:MenuButtonFrame" ) );
 					buttonFrame->winEnable( TRUE );
 					updateMenuActions();
-					
+
 					//Added By Sadullah Nader
 					//Fix for bug
 					// close save menuu
 					closeSaveMenu( window );
-					
+
 					//
 					// given the context of this menu figure out which type of save game we're acutally
 					// saving right now.  As it turns out, when this menu is used in the save only
@@ -873,21 +873,21 @@ WindowMsgHandledType SaveLoadMenuSystem( GameWindow *window, UnsignedInt msg,
 				buttonFrame->winEnable( TRUE );
 				updateMenuActions();
 
-				
-				
+
+
 
 				// do the load game
 				if( controlID == buttonLoadConfirm )
 				{
 					//Moved by Sadullah Nader
-					//moved to fix the 
+					//moved to fix the
 					// close save/load layout menu
 					closeSaveMenu( window );
 					doLoadGame();
 				}
 
 			}  // end else if
-	
+
 			break;
 
 		}  // end selected

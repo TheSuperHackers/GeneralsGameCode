@@ -49,7 +49,7 @@ extern Bool testMinimumRequirements(ChipsetType *videoChipType, CpuType *cpuType
 
 GameLODManager *TheGameLODManager=NULL;
 
-static const FieldParse TheStaticGameLODFieldParseTable[] = 
+static const FieldParse TheStaticGameLODFieldParseTable[] =
 {
 	{ "MinimumFPS",						INI::parseInt,					NULL,	offsetof( StaticGameLODInfo, m_minFPS)},
 	{ "MinimumProcessorFps",			INI::parseInt,					NULL,	offsetof( StaticGameLODInfo, m_minProcessorFPS)},
@@ -107,7 +107,7 @@ StaticGameLODInfo::StaticGameLODInfo(void)
 	m_useTrees = TRUE;
 }
 
-static const FieldParse TheDynamicGameLODFieldParseTable[] = 
+static const FieldParse TheDynamicGameLODFieldParseTable[] =
 {
 	{ "MinimumFPS",						INI::parseInt,					NULL,	offsetof( DynamicGameLODInfo, m_minFPS)},
 	{ "ParticleSkipMask",				INI::parseInt,					NULL,	offsetof( DynamicGameLODInfo, m_dynamicParticleSkipMask)},
@@ -136,13 +136,13 @@ DynamicGameLODInfo::DynamicGameLODInfo(void)
 };
 
 //Keep this in sync with enum in GameLOD.h
-static const char *CPUNames[] = 
+static const char *CPUNames[] =
 {
 	"XX","P3", "P4","K7", NULL
 };
 
 //Keep this in sync with enum in GameLOD.h
-static const char *VideoNames[] = 
+static const char *VideoNames[] =
 {
 	"XX","V2","V3","V4","V5","TNT","TNT2","GF2","R100","PS11","GF3","GF4","PS14","R200","PS20","R300", NULL
 };
@@ -226,7 +226,7 @@ GameLODManager::GameLODManager(void)
 	m_numBenchProfiles=0;
 	m_currentTextureReduction=0;
 	m_reallyLowMHz = 400;
-	
+
 	for (Int i=0; i<STATIC_GAME_LOD_CUSTOM; i++)
 		m_numLevelPresets[i]=0;
 };
@@ -239,7 +239,7 @@ GameLODManager::~GameLODManager()
 BenchProfile *GameLODManager::newBenchProfile(void)
 {
 	if (m_numBenchProfiles < MAX_BENCH_PROFILES)
-	{	
+	{
 		m_numBenchProfiles++;
 		return &m_benchProfiles[m_numBenchProfiles-1];
 	}
@@ -296,7 +296,7 @@ void GameLODManager::init(void)
 		{
 			//need to run the benchmark
 			testMinimumRequirements(NULL,NULL,NULL,NULL,&m_intBenchIndex,&m_floatBenchIndex,&m_memBenchIndex);
-			
+
 			if (TheGlobalData->m_forceBenchmark)
 			{	//we want to see the numbers.  So dump them to a logfile.
 				FILE *fp=fopen("Benchmark.txt","w");
@@ -317,7 +317,7 @@ void GameLODManager::init(void)
 			{
 				//Check if we're within 5% of the performance of this cpu profile.
 				if (m_intBenchIndex/prof->m_intBenchIndex >= PROFILE_ERROR_LIMIT && m_floatBenchIndex/prof->m_floatBenchIndex >= PROFILE_ERROR_LIMIT && m_memBenchIndex/prof->m_memBenchIndex >= PROFILE_ERROR_LIMIT)
-				{	
+				{
 					for (Int i=STATIC_GAME_LOD_HIGH; i >= STATIC_GAME_LOD_LOW; i--)
 					{
 						LODPresetInfo *preset=&m_lodPresets[i][0];	//pointer to first preset at this LOD level.
@@ -405,7 +405,7 @@ void INI::parseStaticGameLODDefinition( INI* ini )
 
 	// read the name
 	c = ini->getNextToken();
-	name.set( c );	
+	name.set( c );
 
 	if( TheGameLODManager )
 	{
@@ -492,7 +492,7 @@ StaticGameLODLevel GameLODManager::findStaticLODLevel(void)
 Bool GameLODManager::setStaticLODLevel(StaticGameLODLevel level)
 {
 	if (!TheGlobalData->m_enableStaticLOD)
-	{	m_currentStaticLOD = STATIC_GAME_LOD_CUSTOM; 
+	{	m_currentStaticLOD = STATIC_GAME_LOD_CUSTOM;
 		return FALSE;
 	}
 
@@ -599,7 +599,7 @@ void INI::parseDynamicGameLODDefinition( INI* ini )
 
 	// read the name
 	c = ini->getNextToken();
-	name.set( c );	
+	name.set( c );
 
 	if( TheGameLODManager )
 	{
@@ -705,6 +705,6 @@ Int GameLODManager::getLevelTextureReduction(StaticGameLODLevel level)
 }
 
 Bool GameLODManager::didMemPass( void )
-{ 
-	return m_memPassed;	
+{
+	return m_memPassed;
 }

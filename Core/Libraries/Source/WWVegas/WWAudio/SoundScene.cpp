@@ -83,10 +83,10 @@ SoundSceneClass::SoundSceneClass (void)
 		m_MinExtents (-500, -500, -500),
 		m_MaxExtents (500, 500, 500),
 		m_IsBatchMode (false)
-{	
+{
 	WWMEMLOG(MEM_SOUND);
 	m_Listener = W3DNEW Listener3DClass;
-	m_DynamicCullingSystem.Re_Partition (m_MinExtents, m_MaxExtents, 100.00F);	
+	m_DynamicCullingSystem.Re_Partition (m_MinExtents, m_MaxExtents, 100.00F);
 	m_LogicalCullingSystem.Re_Partition (m_MinExtents, m_MaxExtents, 100.00F);
 	m_ListenerCullingSystem.Re_Partition (m_MinExtents, m_MaxExtents, 40.00F);
 	m_StaticCullingSystem.Re_Partition ();
@@ -153,7 +153,7 @@ SoundSceneClass::Collect_Logical_Sounds (unsigned int milliseconds, int listener
 
 	PriorityMultiListIterator<LogicalListenerClass> priority_queue (&m_LogicalListeners);
 	LogicalListenerClass *listener = NULL;
-	
+
 	//
 	//	Loop over as many of the listeners as we want to process this
 	// frame.
@@ -165,7 +165,7 @@ SoundSceneClass::Collect_Logical_Sounds (unsigned int milliseconds, int listener
 		LogicalListenerClass::Set_Oldest_Timestamp (listener->Get_Timestamp ());
 		listener->Set_Timestamp (LogicalListenerClass::Get_New_Timestamp ());
 		listener->On_Frame_Update (milliseconds);
-	
+
 		//
 		// Collect a list of the sounds this listener can hear.
 		//
@@ -197,7 +197,7 @@ SoundSceneClass::Collect_Logical_Sounds (unsigned int milliseconds, int listener
 			float scale						= listener->Get_Effective_Scale ();
 			float test_radius2			= (dropoff_radius * scale) * (dropoff_radius * scale);
 			if ((listener_pos - sound_pos).Length2 () <= test_radius2) {
-				
+
 				//
 				//	Is the sound ready to notify?
 				//
@@ -262,7 +262,7 @@ SoundSceneClass::Collect_Audible_Sounds
 	// they are 'really' audible.  The culling systems just check bounding boxes
 	// but we need to be able to check attenuation spheres.
 	//
-	SoundCullObjClass * cull_obj = NULL;	
+	SoundCullObjClass * cull_obj = NULL;
 	for (	cull_obj = m_DynamicCullingSystem.Get_First_Collected_Object();
 			cull_obj != NULL;
 			cull_obj = m_DynamicCullingSystem.Get_Next_Collected_Object(cull_obj))
@@ -277,12 +277,12 @@ SoundSceneClass::Collect_Audible_Sounds
 		float radius2 = radius * radius;
 		float length2 = (pos - listener_pos).Length2 ();
 		if (length2 <= radius2) {
-			
+
 			AudibleInfoClass *audible_info = new AudibleInfoClass (sound_obj, length2);
 			list.Add (audible_info);
-			
+
 			//
-			// Update this sound's runtime priority based on its distance			
+			// Update this sound's runtime priority based on its distance
 			// from the sound emitter.
 			//
 			float length	= (pos - listener_pos).Quick_Length ();
@@ -295,13 +295,13 @@ SoundSceneClass::Collect_Audible_Sounds
 	// Loop through all the static sounds that are currently audible and make sure
 	// they are 'really' audible.  The culling systems just check bounding boxes
 	// but we need to be able to check attenuation spheres.
-	//	
+	//
 	for (	cull_obj = m_StaticCullingSystem.Get_First_Collected_Object();
 			cull_obj != NULL;
 			cull_obj = m_StaticCullingSystem.Get_Next_Collected_Object(cull_obj))
 	{
 		AudibleSoundClass *sound_obj = (AudibleSoundClass *)cull_obj->Peek_Sound_Obj ();
-		
+
 		// Perform a quick sphere-cull check to make sure this
 		// sound should really be audible
 		Vector3 pos = sound_obj->Get_Position ();
@@ -309,7 +309,7 @@ SoundSceneClass::Collect_Audible_Sounds
 		float radius2 = radius * radius;
 		float length2 = (pos - listener_pos).Length2 ();
 		if (length2 <= radius2) {
-			
+
 			AudibleInfoClass *audible_info = new AudibleInfoClass (sound_obj, length2);
 			list.Add (audible_info);
 
@@ -356,10 +356,10 @@ SoundSceneClass::On_Frame_Update (unsigned int milliseconds)
 	// Update the listener's position/velocity, etc
 	//
 	m_Listener->On_Frame_Update (milliseconds);
-	
+
 	//
 	//	Collect the primary sounds that are audible
-	//	
+	//
 	Collect_Audible_Sounds (m_Listener, primary_sounds);
 
 	//
@@ -372,13 +372,13 @@ SoundSceneClass::On_Frame_Update (unsigned int milliseconds)
 
 	for (aux_iterator.First (); !aux_iterator.Is_Done (); aux_iterator.Next ()) {
 		AudibleInfoClass *aux_info = aux_iterator.Peek_Obj ();
-		
+
 		//
 		//	Loop through all the primary sounds and remove any
 		// that are 'overpowered' by the same sound in the
 		// other listener.
 		//
-		bool found = false;		
+		bool found = false;
 		for (pri_iterator.First (); !pri_iterator.Is_Done () && !found; pri_iterator.Next ()) {
 			AudibleInfoClass *pri_info = pri_iterator.Peek_Obj ();
 
@@ -400,7 +400,7 @@ SoundSceneClass::On_Frame_Update (unsigned int milliseconds)
 
 	//
 	//	Add the primary audible sounds into the master list
-	//		
+	//
 	for (pri_iterator.First (); !pri_iterator.Is_Done (); pri_iterator.Next ()) {
 		AudibleInfoClass *pri_info = pri_iterator.Peek_Obj ();
 		audible_sounds.Add (pri_info->sound_obj);
@@ -409,11 +409,11 @@ SoundSceneClass::On_Frame_Update (unsigned int milliseconds)
 		//	Let the sound know what it's listener's position is
 		//
 		pri_info->sound_obj->Set_Listener_Transform (m_Listener->Get_Transform ());
-		
+
 		//
 		//	Free the audible info object
 		//
-		pri_iterator.Remove_Current_Object ();	
+		pri_iterator.Remove_Current_Object ();
 		pri_iterator.Prev ();
 		delete pri_info;
 	}
@@ -429,7 +429,7 @@ SoundSceneClass::On_Frame_Update (unsigned int milliseconds)
 		//	Let the sound know what it's listener's position is
 		//
 		aux_info->sound_obj->Set_Listener_Transform (m_2ndListener->Get_Transform ());
-		
+
 		//
 		//	Convert the sound to a Pseudo-3D sound that has
 		// a 'tinny' filter applied to it.
@@ -439,11 +439,11 @@ SoundSceneClass::On_Frame_Update (unsigned int milliseconds)
 		if (tinny_sound != NULL) {
 			audible_sounds.Add (tinny_sound);
 		}*/
-		
+
 		//
 		//	Free the audible info object
 		//
-		aux_iterator.Remove_Current_Object ();	
+		aux_iterator.Remove_Current_Object ();
 		aux_iterator.Prev ();
 		delete aux_info;
 	}
@@ -460,14 +460,14 @@ SoundSceneClass::On_Frame_Update (unsigned int milliseconds)
 		// Is this sound still audible?
 		//
 		if (audible_sounds.Is_In_List (sound_obj)) {
-			
+
 			//
 			//	Make sure the sound is playing, then remove it from
 			// the newly-audible list so we don't process it again
 			//
 			sound_obj->Cull_Sound (false);
 			audible_sounds.Remove (sound_obj);
-		
+
 		} else {
 
 			//
@@ -476,7 +476,7 @@ SoundSceneClass::On_Frame_Update (unsigned int milliseconds)
 			//
 			audible_iterator.Remove_Current_Object ();
 			audible_iterator.Prev ();
-			
+
 			//
 			//	Make sure we cull the sound
 			//
@@ -493,7 +493,7 @@ SoundSceneClass::On_Frame_Update (unsigned int milliseconds)
 	MultiListIterator<AudibleSoundClass> newly_audible_it (&audible_sounds);
 	for (newly_audible_it.First (); !newly_audible_it.Is_Done (); newly_audible_it.Next ()) {
 		AudibleSoundClass *sound_obj = newly_audible_it.Peek_Obj ();
-		
+
 		//
 		//	Make sure the sound has a valid Miles handle (so it can make noise)
 		//
@@ -534,7 +534,7 @@ SoundSceneClass::Add_Sound
 
 		// Create a wrapper object for the sound that we can use
 		// with the different culling systems.
-		SoundCullObjClass *cullable_sound = W3DNEW SoundCullObjClass;		
+		SoundCullObjClass *cullable_sound = W3DNEW SoundCullObjClass;
 		cullable_sound->Set_Sound_Obj (sound_obj);
 		sound_obj->Set_Cullable_Wrapper (cullable_sound);
 
@@ -614,7 +614,7 @@ SoundSceneClass::Remove_Sound
 	//
 	SoundCullObjClass *cull_obj = sound_obj->Peek_Cullable_Wrapper ();
 	if (cull_obj != NULL && m_DynamicSounds.Is_In_List (cull_obj)) {
-				
+
 		//
 		//	Stop playing the sound if necessary
 		//
@@ -754,7 +754,7 @@ SoundSceneClass::Remove_Static_Sound
 	//
 	SoundCullObjClass *cull_obj = sound_obj->Peek_Cullable_Wrapper ();
 	if (cull_obj != NULL && m_StaticSounds.Is_In_List (cull_obj)) {
-				
+
 		//
 		//	Stop playing the sound if necessary
 		//
@@ -805,7 +805,7 @@ SoundSceneClass::Add_Logical_Sound
 		//
 		if (Is_Logical_Sound_In_Scene (sound_obj, single_shot) == false) {
 			sound_obj->Set_Listener_Timestamp (LogicalListenerClass::Get_Newest_Timestamp ());
-			
+
 			//
 			// Create a wrapper object for the sound that we can use
 			// with the different culling systems.
@@ -818,13 +818,13 @@ SoundSceneClass::Add_Logical_Sound
 			// Add this object to the logical culling system
 			//
 			m_LogicalCullingSystem.Add_Object (cullable_sound);
-			
+
 			//
 			//	Add this sound to our current sounds list
 			//
 			if (single_shot) {
 				m_SingleShotLogicalSounds.Add (sound_obj);
-			} else {				
+			} else {
 				m_LogicalSounds.Add (sound_obj);
 			}
 
@@ -882,14 +882,14 @@ SoundSceneClass::Remove_Logical_Sound
 			// Remove this sound from the culling system
 			//
 			SoundCullObjClass *cull_obj = sound_obj->Peek_Cullable_Wrapper ();
-			m_LogicalCullingSystem.Remove_Object (cull_obj);	
+			m_LogicalCullingSystem.Remove_Object (cull_obj);
 
 			//
 			// Remove this sound obj's wrapper
 			//
 			sound_obj->Set_Cullable_Wrapper (NULL);
 			WWAudioThreadsClass::Add_Delayed_Release_Object (cull_obj);
-			
+
 			//
 			//	Release our reference on this object
 			//
@@ -914,7 +914,7 @@ SoundSceneClass::Remove_Logical_Sound
 			// Remove this sound from the culling system
 			//
 			SoundCullObjClass *cull_obj = sound_obj->Peek_Cullable_Wrapper ();
-			m_LogicalCullingSystem.Remove_Object (cull_obj);	
+			m_LogicalCullingSystem.Remove_Object (cull_obj);
 
 			//
 			// Remove this sound obj's wrapper
@@ -926,7 +926,7 @@ SoundSceneClass::Remove_Logical_Sound
 			//	Release our reference on this object
 			//
 			REF_PTR_RELEASE (sound_obj);
-		}		
+		}
 	}
 
 	return ;
@@ -1050,9 +1050,9 @@ SoundSceneClass::Is_Logical_Sound_In_Scene
 	LogicalSoundClass *	sound_obj,
 	bool						single_shot
 )
-{	
+{
 	bool retval = false;
-	
+
 	//
 	//	Check to see if this sound is in either the continuous list or the single shot list.
 	//
@@ -1061,7 +1061,7 @@ SoundSceneClass::Is_Logical_Sound_In_Scene
 	} else {
 		retval = m_SingleShotLogicalSounds.Is_In_List (sound_obj);
 	}
-	
+
 	return retval;
 }
 
@@ -1073,19 +1073,19 @@ SoundSceneClass::Is_Logical_Sound_In_Scene
 ////////////////////////////////////////////////////////////////////////////////////////////////
 bool
 SoundSceneClass::Save_Static (ChunkSaveClass &csave)
-{	
+{
 	csave.Begin_Chunk (CHUNKID_VARIABLES);
 		WRITE_MICRO_CHUNK (csave, VARID_MIN_DIM, m_MinExtents);
 		WRITE_MICRO_CHUNK (csave, VARID_MAX_DIM, m_MaxExtents);
-	csave.End_Chunk ();	
-		
+	csave.End_Chunk ();
+
 	//
 	//	Save the list of static sounds that are currently in the scene
 	//
 	csave.Begin_Chunk (CHUNKID_STATIC_SOUNDS);
 		Save_Static_Sounds (csave);
 	csave.End_Chunk ();
-	
+
 	return true;
 }
 
@@ -1166,7 +1166,7 @@ SoundSceneClass::Load_Static (ChunkLoadClass &cload)
 {
 	m_IsBatchMode = true;
 
-	while (cload.Open_Chunk ()) {		
+	while (cload.Open_Chunk ()) {
 		switch (cload.Cur_Chunk_ID ()) {
 
 			case CHUNKID_STATIC_SOUNDS:
@@ -1181,7 +1181,7 @@ SoundSceneClass::Load_Static (ChunkLoadClass &cload)
 				while (cload.Open_Micro_Chunk ()) {
 					switch (cload.Cur_Micro_Chunk_ID ()) {
 						READ_MICRO_CHUNK (cload, VARID_MIN_DIM, m_MinExtents);
-						READ_MICRO_CHUNK (cload, VARID_MAX_DIM, m_MaxExtents);			
+						READ_MICRO_CHUNK (cload, VARID_MAX_DIM, m_MaxExtents);
 					}
 
 					cload.Close_Micro_Chunk ();
@@ -1192,7 +1192,7 @@ SoundSceneClass::Load_Static (ChunkLoadClass &cload)
 
 		cload.Close_Chunk ();
 	}
-	
+
 	Re_Partition (m_MinExtents, m_MaxExtents);
 	On_Frame_Update (0);
 	m_IsBatchMode = false;
@@ -1207,7 +1207,7 @@ SoundSceneClass::Load_Static (ChunkLoadClass &cload)
 ////////////////////////////////////////////////////////////////////////////////////////////////
 bool
 SoundSceneClass::Save_Dynamic (ChunkSaveClass &csave)
-{	
+{
 	return true;
 }
 
@@ -1256,7 +1256,7 @@ SoundSceneClass::Flush_Scene (void)
 	RefMultiListIterator<SoundCullObjClass> temp_static_it (&temp_static);
 	for (temp_static_it.First (); !temp_static_it.Is_Done (); temp_static_it.Next ()) {
 		SoundCullObjClass *cull_obj = temp_static_it.Peek_Obj ();
-		
+
 		AudibleSoundClass *sound_obj	= (AudibleSoundClass *)cull_obj->Peek_Sound_Obj ();
 		if (sound_obj != NULL) {
 			Remove_Static_Sound (sound_obj);
@@ -1269,7 +1269,7 @@ SoundSceneClass::Flush_Scene (void)
 	RefMultiListIterator<SoundCullObjClass> temp_dynamic_it (&temp_dynamic);
 	for (temp_dynamic_it.First (); !temp_dynamic_it.Is_Done (); temp_dynamic_it.Next ()) {
 		SoundCullObjClass *cull_obj = temp_dynamic_it.Peek_Obj ();
-		
+
 		AudibleSoundClass *sound_obj	= (AudibleSoundClass *)cull_obj->Peek_Sound_Obj ();
 		if (sound_obj != NULL) {
 			Remove_Sound (sound_obj);

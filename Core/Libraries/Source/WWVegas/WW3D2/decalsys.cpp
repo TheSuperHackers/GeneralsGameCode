@@ -26,8 +26,8 @@
  *                                                                                             *
  *              Original Author:: Greg Hjelstrom                                               *
  *                                                                                             *
- *                      $Author:: Kenny Mitchell                                               * 
- *                                                                                             * 
+ *                      $Author:: Kenny Mitchell                                               *
+ *                                                                                             *
  *                     $Modtime:: 06/26/02 4:04p                                             $*
  *                                                                                             *
  *                    $Revision:: 8                                                           $*
@@ -147,9 +147,9 @@ void DecalSystemClass::Unlock_Decal_Generator(DecalGeneratorClass * generator)
  * HISTORY:                                                                                    *
  *   1/26/00    gth : Created.                                                                 *
  *=============================================================================================*/
-uint32 DecalSystemClass::Generate_Unique_Global_Decal_Id(void)			
-{ 
-	return DecalIDGenerator++; 
+uint32 DecalSystemClass::Generate_Unique_Global_Decal_Id(void)
+{
+	return DecalIDGenerator++;
 }
 
 
@@ -300,7 +300,7 @@ MultiFixedPoolDecalSystemClass::MultiFixedPoolDecalSystemClass(uint32 num_pools,
 	Generator_PoolID(0),
 	Generator_SlotID(0)
 {
-	if (PoolCount) 
+	if (PoolCount)
 	{
 		WWASSERT(pool_sizes);
 		Pools = W3DNEWARRAY LogicalDecalPoolClass [PoolCount];
@@ -411,7 +411,7 @@ MultiFixedPoolDecalSystemClass::LogicalDecalClass & MultiFixedPoolDecalSystemCla
 	return find_logical_decal(pool_id, slot_id);
 }
 
-	
+
 /*
 ** MultiFixedPoolDecalSystemClass::LogicalDecalClass implementation
 */

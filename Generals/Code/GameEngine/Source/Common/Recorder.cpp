@@ -356,7 +356,7 @@ RecorderClass *TheRecorder = NULL;
 /**
  * Constructor
  */
-RecorderClass::RecorderClass() 
+RecorderClass::RecorderClass()
 {
 	m_originalGameMode = GAME_NONE;
 	m_mode = RECORDERMODETYPE_RECORD;
@@ -481,14 +481,14 @@ void RecorderClass::stopPlayback() {
  * Update function for recording a game. Basically all the pertinant logic commands for this frame are written out
  * to a file.
  */
-void RecorderClass::updateRecord() 
+void RecorderClass::updateRecord()
 {
 	Bool needFlush = FALSE;
 	static Int lastFrame = -1;
 	GameMessage *msg = TheCommandList->getFirstMessage();
 	while (msg != NULL) {
 		if (msg->getType() == GameMessage::MSG_NEW_GAME &&
-			 msg->getArgument(0)->integer != GAME_SHELL && 
+			 msg->getArgument(0)->integer != GAME_SHELL &&
 			 msg->getArgument(0)->integer != GAME_NONE) {
 			m_originalGameMode = msg->getArgument(0)->integer;
 			DEBUG_LOG(("RecorderClass::updateRecord() - original game is mode %d", m_originalGameMode));
@@ -544,7 +544,7 @@ void RecorderClass::startRecording(GameDifficulty diff, Int originalGameMode, In
 
 	AsciiString filepath = getReplayDir();
 
-	// We have to make sure the replay dir exists. 
+	// We have to make sure the replay dir exists.
 	TheFileSystem->createDirectory(filepath);
 
 	m_fileName = getLastReplayFileName();
@@ -1049,7 +1049,7 @@ void RecorderClass::handleCRCMessage(UnsignedInt newCRC, Int playerIndex, Bool f
 			// virtually every replay, the assumption is our CRC checking is faulty.  Since we're at the
 			// tail end of patch season, let's just disable the message, and hope the users believe the
 			// problem is fixed. -MDC 3/20/2003
-			// 
+			//
 			// TheSuperHackers @tweak helmutbuhler 03/04/2025
 			// More than 20 years later, but finally fixed and re-enabled!
 			TheInGameUI->message("GUI:CRCMismatch");
@@ -1123,7 +1123,7 @@ Bool RecorderClass::replayMatchesGameVersion(const ReplayHeader& header)
  * Start playback of the file. Return true or false depending on if the file is
  * a valid replay file or not.
  */
-Bool RecorderClass::playbackFile(AsciiString filename) 
+Bool RecorderClass::playbackFile(AsciiString filename)
 {
 	if (!m_doingAnalysis)
 	{
@@ -1214,12 +1214,12 @@ Bool RecorderClass::playbackFile(AsciiString filename)
 
 	Int rankPoints = 0;
 	fread(&rankPoints, sizeof(rankPoints), 1, m_file);
-	
+
 	Int maxFPS = 0;
 	fread(&maxFPS, sizeof(maxFPS), 1, m_file);
 
 	DEBUG_LOG(("RecorderClass::playbackFile() - original game was mode %d", m_originalGameMode));
-	
+
 	// TheSuperHackers @fix helmutbuhler 03/04/2025
 	// In case we restart a replay, we need to clear the command list.
 	// Otherwise a crc message remains and messes up the crc calculation on the restarted replay.
@@ -1565,7 +1565,7 @@ RecorderClass::CullBadCommandsResult RecorderClass::cullBadCommands() {
 /**
  * returns the directory that holds the replay files.
  */
-AsciiString RecorderClass::getReplayDir() 
+AsciiString RecorderClass::getReplayDir()
 {
 	const char* replayDir = "Replays\\";
 
@@ -1584,7 +1584,7 @@ AsciiString RecorderClass::getReplayExtention() {
 /**
  * returns the file name used for the replay file that is recorded to.
  */
-AsciiString RecorderClass::getLastReplayFileName() 
+AsciiString RecorderClass::getLastReplayFileName()
 {
 #if defined(RTS_DEBUG)
 	if (TheNetwork && TheGlobalData->m_saveStats)

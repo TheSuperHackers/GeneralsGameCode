@@ -145,7 +145,7 @@ extern CritSec DebugLibSemaphore;
   if (MsgManager::infoStream()) \
     (*(MsgManager::infoStream())) << X;\
   DEBUGUNLOCK; \
-}    
+}
 
 // Just get a stream to the warning device, no extra junk
 #define WRNSTREAM(X)\
@@ -154,7 +154,7 @@ extern CritSec DebugLibSemaphore;
   if (MsgManager::warnStream()) \
     (*(MsgManager::warnStream())) << X;\
   DEBUGUNLOCK; \
-}    
+}
 
 // Just get a stream to the error device, no extra junk
 #define ERRSTREAM(X)\
@@ -163,7 +163,7 @@ extern CritSec DebugLibSemaphore;
   if (MsgManager::errorStream()) \
     (*(MsgManager::errorStream())) << X;\
   DEBUGUNLOCK; \
-}    
+}
 
 #ifndef DEBUG
 
@@ -227,7 +227,7 @@ extern CritSec DebugLibSemaphore;
   OutputDebugString(STRSTREAM_CSTR(__s));\
   OutputDebugString("\n");\
   DEBUGUNLOCK; \
-}    
+}
 
 // Verbosely execute a statement
 #define VERBOSE(X)\
@@ -273,7 +273,7 @@ extern CritSec DebugLibSemaphore;
   if (MsgManager::debugStream()) \
     (*(MsgManager::debugStream())) << X;\
   DEBUGUNLOCK; \
-}    
+}
 
 // Verbosely execute a statement
 #define VERBOSE(X)\

@@ -73,17 +73,17 @@ public:
   {
     if (!buf||len<1)
       return;
-    
+
 #if !(defined(_MSC_VER) && _MSC_VER < 1300)
     // C++ version left in for reference purposes
 	  for (UnsignedByte *uintPtr=(UnsignedByte *)buf;len>0;len--,uintPtr++)
     {
     	int hibit;
-    	if (crc & 0x80000000) 
+    	if (crc & 0x80000000)
       {
 		    hibit = 1;
-	    } 
-      else 
+	    }
+      else
       {
 		    hibit = 0;
 	    }
@@ -116,10 +116,10 @@ public:
   }
 
   /// Clears the CRC to 0
-	void clear( void ) 
-  { 
-    crc = 0; 
-  }									
+	void clear( void )
+  {
+    crc = 0;
+  }
 
   ///< Get the combined CRC
 	UnsignedInt get( void ) const

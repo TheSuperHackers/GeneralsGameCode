@@ -52,10 +52,10 @@
 
 
 /*-----------------------------------------------------------------------------
-** Windows Version Information class.  This is a global object that is used to 
-** store information about the specific OS that we are running under.  This can 
-** be used to make special allowances for differences between OS's, such as when 
-** using the registry, or trying to work around a limitaion of a particular OS 
+** Windows Version Information class.  This is a global object that is used to
+** store information about the specific OS that we are running under.  This can
+** be used to make special allowances for differences between OS's, such as when
+** using the registry, or trying to work around a limitaion of a particular OS
 ** (their APIs are slightly different...)
 **-----------------------------------------------------------------------------*/
 class WindowsVersionInfo
@@ -127,9 +127,9 @@ class WindowsVersionInfo
 		bool IsWinNT;
 
 		/*-----------------------------------------------------------------------
-		** Windows 2000 (Formerly Windows NT 5.0) 
-		** As you've no doubt heard by now, Windows NT 5.0 has been officially 
-		** christened "Windows 2000." 
+		** Windows 2000 (Formerly Windows NT 5.0)
+		** As you've no doubt heard by now, Windows NT 5.0 has been officially
+		** christened "Windows 2000."
 		*/
 		bool IsWin2000;
 

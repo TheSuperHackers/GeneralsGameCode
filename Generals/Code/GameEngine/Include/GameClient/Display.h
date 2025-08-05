@@ -78,7 +78,7 @@ public:
 
 	//---------------------------------------------------------------------------------------
 	// Display attribute methods
-	virtual void setWidth( UnsignedInt width );										///< Sets the width of the display		
+	virtual void setWidth( UnsignedInt width );										///< Sets the width of the display
 	virtual void setHeight( UnsignedInt height );									///< Sets the height of the display
 	virtual UnsignedInt getWidth( void ) { return m_width; }			///< Returns the width of the display
 	virtual UnsignedInt getHeight( void ) { return m_height; }		///< Returns the height of the display
@@ -120,15 +120,15 @@ public:
 
 	virtual void draw( void );																		///< Redraw the entire display
 	virtual void setTimeOfDay( TimeOfDay tod ) = 0;								///< Set the time of day for this display
-	virtual void createLightPulse( const Coord3D *pos, const RGBColor *color, Real innerRadius,Real attenuationWidth, 
+	virtual void createLightPulse( const Coord3D *pos, const RGBColor *color, Real innerRadius,Real attenuationWidth,
 																 UnsignedInt increaseFrameTime, UnsignedInt decayFrameTime//, Bool donut = FALSE
 																 ) = 0;
 
 	/// draw a line on the display in pixel coordinates with the specified color
-	virtual void drawLine( Int startX, Int startY, Int endX, Int endY, 
+	virtual void drawLine( Int startX, Int startY, Int endX, Int endY,
 												 Real lineWidth, UnsignedInt lineColor ) = 0;
 	/// draw a line on the display in pixel coordinates with the specified 2 colors
-	virtual void drawLine( Int startX, Int startY, Int endX, Int endY, 
+	virtual void drawLine( Int startX, Int startY, Int endX, Int endY,
 												 Real lineWidth, UnsignedInt lineColor1, UnsignedInt lineColor2 ) = 0;
 	/// draw a rect border on the display in pixel coordinates with the specified color
 	virtual void drawOpenRect( Int startX, Int startY, Int width, Int height,
@@ -136,21 +136,21 @@ public:
 	/// draw a filled rect on the display in pixel coords with the specified color
 	virtual void drawFillRect( Int startX, Int startY, Int width, Int height,
 														 UnsignedInt color ) = 0;
-	
+
 	/// Draw a percentage of a rectange, much like a clock
 	virtual void drawRectClock(Int startX, Int startY, Int width, Int height, Int percent, UnsignedInt color) = 0;
 	virtual void drawRemainingRectClock(Int startX, Int startY, Int width, Int height, Int percent, UnsignedInt color) = 0;
 
 	/// draw an image fit within the screen coordinates
-	virtual void drawImage( const Image *image, Int startX, Int startY, 
+	virtual void drawImage( const Image *image, Int startX, Int startY,
 													Int endX, Int endY, Color color = 0xFFFFFFFF, DrawImageMode mode=DRAW_IMAGE_ALPHA) = 0;
 
 	/// draw a video buffer fit within the screen coordinates
 	virtual void drawScaledVideoBuffer( VideoBuffer *buffer, VideoStreamInterface *stream ) = 0;
-	virtual void drawVideoBuffer( VideoBuffer *buffer, Int startX, Int startY, 
+	virtual void drawVideoBuffer( VideoBuffer *buffer, Int startX, Int startY,
 													Int endX, Int endY ) = 0;
 
-	/// FullScreen video playback 
+	/// FullScreen video playback
 	virtual void playLogoMovie( AsciiString movieName, Int minMovieLength, Int minCopyrightLength );
 	virtual void playMovie( AsciiString movieName );
 	virtual void stopMovie( void );

@@ -187,7 +187,7 @@ AsciiString GetPreviewFromMap( AsciiString path )
 {
 	AsciiString fname = GetBaseFileFromFile(GetFileFromPath(path));
 	AsciiString base = GetBasePathFromPath(path);
-	
+
 	AsciiString out;
 	out.format("%s\\%s.tga", base.str(), fname.str());
 	return out;

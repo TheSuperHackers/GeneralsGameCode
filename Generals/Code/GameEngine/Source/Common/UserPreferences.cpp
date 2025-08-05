@@ -102,7 +102,7 @@ static AsciiString realAsStr(Real val)
 
 
 //-----------------------------------------------------------------------------
-// UserPreferences Class 
+// UserPreferences Class
 //-----------------------------------------------------------------------------
 
 UserPreferences::UserPreferences( void )
@@ -235,7 +235,7 @@ void UserPreferences::setAsciiString(AsciiString key, AsciiString val)
 }
 
 //-----------------------------------------------------------------------------
-// QuickMatchPreferences base class 
+// QuickMatchPreferences base class
 //-----------------------------------------------------------------------------
 
 QuickMatchPreferences::QuickMatchPreferences()
@@ -420,7 +420,7 @@ Int QuickMatchPreferences::getSide( void )
 }
 
 //-----------------------------------------------------------------------------
-// CustomMatchPreferences base class 
+// CustomMatchPreferences base class
 //-----------------------------------------------------------------------------
 
 CustomMatchPreferences::CustomMatchPreferences()
@@ -662,7 +662,7 @@ AsciiString CustomMatchPreferences::getPreferredMap(void)
 		ret = getDefaultMap(TRUE);
 		return ret;
 	}
-	
+
 	return ret;
 }
 
@@ -672,7 +672,7 @@ void CustomMatchPreferences::setPreferredMap(AsciiString val)
 }
 
 //-----------------------------------------------------------------------------
-// GameSpyMiscPreferences base class 
+// GameSpyMiscPreferences base class
 //-----------------------------------------------------------------------------
 
 GameSpyMiscPreferences::GameSpyMiscPreferences()
@@ -718,7 +718,7 @@ Int GameSpyMiscPreferences::getMaxMessagesPerUpdate( void )
 }
 
 //-----------------------------------------------------------------------------
-// IgnorePreferences base class 
+// IgnorePreferences base class
 //-----------------------------------------------------------------------------
 
 IgnorePreferences::IgnorePreferences()
@@ -751,7 +751,7 @@ void IgnorePreferences::setIgnore(const AsciiString& userName, Int profileID, Bo
 IgnorePrefMap IgnorePreferences::getIgnores(void)
 {
 	IgnorePrefMap ignores;
-	
+
 	IgnorePreferences::iterator it;
 	for (it = begin(); it != end(); ++it)
 	{
@@ -766,7 +766,7 @@ IgnorePrefMap IgnorePreferences::getIgnores(void)
 }
 
 //-----------------------------------------------------------------------------
-// LadderPreferences base class 
+// LadderPreferences base class
 //-----------------------------------------------------------------------------
 
 LadderPreferences::LadderPreferences()

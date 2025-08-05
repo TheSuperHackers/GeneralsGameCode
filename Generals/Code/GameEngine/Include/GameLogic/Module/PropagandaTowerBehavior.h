@@ -95,14 +95,14 @@ public:
 	// of our effect on people.  We don't say "Be affected for n frames", we toggle people.  We need to process
 	// so we can toggle everyone off.
 	virtual DisabledMaskType getDisabledTypesToProcess() const { return DISABLEDMASK_ALL; }
-	
+
 	// our own public module methods
 
 protected:
 
 	virtual void removeAllInfluence( void );			///< remove any influence we had on all objects we've affected
 	virtual void doScan( void );									///< do a scan
-	virtual void effectLogic( Object *obj, Bool giving, 
+	virtual void effectLogic( Object *obj, Bool giving,
 														const PropagandaTowerBehaviorModuleData *modData);///< give/remove effect on object
 
 	UnsignedInt m_lastScanFrame;									///< last frame we did a scan on

@@ -928,7 +928,7 @@ void CPUDetectClass::Init_OS()
 
 // TheSuperHackers @fix OmniBlade 30/07/2025
 // GetVersionEx only returns the version of Windows it was manifested for since Windows 8.
-// RtlGetVersion returns the correct information at least at the time of writing.	
+// RtlGetVersion returns the correct information at least at the time of writing.
 #if defined(_MSC_VER) && _MSC_VER < 1300
 	OSVERSIONINFO os;
    os.dwOSVersionInfoSize = sizeof(os);

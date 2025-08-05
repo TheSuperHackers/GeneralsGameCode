@@ -26,8 +26,8 @@
  *                                                                                             *
  *              Original Author:: Greg Hjelstrom                                               *
  *                                                                                             *
- *                      $Author:: Kenny Mitchell                                               * 
- *                                                                                             * 
+ *                      $Author:: Kenny Mitchell                                               *
+ *                                                                                             *
  *                     $Modtime:: 06/26/02 4:04p                                             $*
  *                                                                                             *
  *                    $Revision:: 6                                                           $*
@@ -150,7 +150,7 @@ void ProjectorClass::Set_Perspective_Projection(float hfov,float vfov,float znea
 {
 	Mapper->Set_Type(MatrixMapperClass::PERSPECTIVE_PROJECTION);
 	Projection.Init_Perspective(hfov,vfov,0.1f,zfar);					// don't use znear for the projection matrix
-	
+
 	float tan_hfov2 = tan(hfov) * 0.5f;
 	float tan_vfov2 = tan(vfov) * 0.5f;
 
@@ -231,6 +231,6 @@ void ProjectorClass::Update_WS_Bounding_Volume(void)
 	** Recompute our world-space bounding volume
 	*/
 	OBBoxClass localbox(LocalBoundingVolume.Center,LocalBoundingVolume.Extent,Matrix3x3(1));
-	OBBoxClass::Transform(Transform,localbox,&WorldBoundingVolume);	
+	OBBoxClass::Transform(Transform,localbox,&WorldBoundingVolume);
 }
 

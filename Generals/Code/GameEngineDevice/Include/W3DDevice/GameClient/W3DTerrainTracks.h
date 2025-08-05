@@ -48,7 +48,7 @@ class Drawable;
 This render object handles drawing tracks left by objects moving on the terrain.
 */
 class TerrainTracksRenderObjClass : public W3DMPO, public RenderObjClass
-{	
+{
 	W3DMPO_GLUE(TerrainTracksRenderObjClass)
 
 	friend class TerrainTracksRenderObjClassSystem;
@@ -81,7 +81,7 @@ protected:
 	Int			m_activeEdgeCount;			///<number of active edges in segment list
 	Int			m_totalEdgesAdded;		///<number of edges ever added to this track
 	const Drawable	*m_ownerDrawable;	///<logical object that's laying down tread marks.
-	
+
 	struct edgeInfo{
 		Vector3	endPointPos[2];			///<the 2 endpoints on the edge
 		Vector2	endPointUV[2];			///< uv coordinates at each end point

@@ -135,7 +135,7 @@ static void parseFXLocInfo( INI *ini, void *instance, FXLocInfo *locInfo )
 /** In the form of:
 	* FXListSlot = <<Bone:BoneName BoneRandom:<Yes|No>> | <Loc: X:x Y:y Z:z>> FXList:FXListName */
 //-------------------------------------------------------------------------------------------------
-void TransitionDamageFXModuleData::parseFXList( INI *ini, void *instance, 
+void TransitionDamageFXModuleData::parseFXList( INI *ini, void *instance,
 																								void *store, const void *userData )
 {
 	const char *token;
@@ -163,7 +163,7 @@ void TransitionDamageFXModuleData::parseFXList( INI *ini, void *instance,
 /** In the form of:
 	* OCLSlot = <<Bone:BoneName BoneRandom:<Yes|No>> | <Loc: X:x Y:y Z:z>> OCL:OCLName */
 //-------------------------------------------------------------------------------------------------
-void TransitionDamageFXModuleData::parseObjectCreationList( INI *ini, void *instance, 
+void TransitionDamageFXModuleData::parseObjectCreationList( INI *ini, void *instance,
 																														void *store, const void *userData )
 {
 	const char *token;
@@ -191,7 +191,7 @@ void TransitionDamageFXModuleData::parseObjectCreationList( INI *ini, void *inst
 /** In the form of:
 	* ParticleSlot = <<Bone:BoneName BoneRandom:<Yes|No>> | <Loc: X:x Y:y Z:z>> PSys:PSysName */
 //-------------------------------------------------------------------------------------------------
-void TransitionDamageFXModuleData::parseParticleSystem( INI *ini, void *instance, 
+void TransitionDamageFXModuleData::parseParticleSystem( INI *ini, void *instance,
 																												void *store, const void *userData )
 {
 	const char *token;
@@ -217,7 +217,7 @@ void TransitionDamageFXModuleData::parseParticleSystem( INI *ini, void *instance
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-TransitionDamageFX::TransitionDamageFX( Thing *thing, const ModuleData* moduleData ) 
+TransitionDamageFX::TransitionDamageFX( Thing *thing, const ModuleData* moduleData )
 																		  : DamageModule( thing, moduleData )
 {
 	Int i, j;
@@ -250,7 +250,7 @@ void TransitionDamageFX::onDelete( void )
 */
 
 //-------------------------------------------------------------------------------------------------
-/** Given an FXLoc info struct, return the effect position that we are supposed to use. 
+/** Given an FXLoc info struct, return the effect position that we are supposed to use.
 	* The position is local to to the object */
 //-------------------------------------------------------------------------------------------------
 static Coord3D getLocalEffectPos( const FXLocInfo *locInfo, Drawable *draw )
@@ -264,7 +264,7 @@ static Coord3D getLocalEffectPos( const FXLocInfo *locInfo, Drawable *draw )
 		if( locInfo->randomBone == FALSE )
 		{
 			Coord3D pos;
-		
+
 			// get the bone position
 			Int count = draw->getPristineBonePositions( locInfo->boneName.str(), 0, &pos, NULL, 1 );
 
@@ -304,8 +304,8 @@ static Coord3D getLocalEffectPos( const FXLocInfo *locInfo, Drawable *draw )
 //-------------------------------------------------------------------------------------------------
 /** Switching damage states */
 //-------------------------------------------------------------------------------------------------
-void TransitionDamageFX::onBodyDamageStateChange( const DamageInfo* damageInfo, 
-																									BodyDamageType oldState, 
+void TransitionDamageFX::onBodyDamageStateChange( const DamageInfo* damageInfo,
+																									BodyDamageType oldState,
 																									BodyDamageType newState )
 {
 	Object *damageSource = NULL;
@@ -316,7 +316,7 @@ void TransitionDamageFX::onBodyDamageStateChange( const DamageInfo* damageInfo,
 	// get the source of the damage if present
 	if( damageInfo )
 		damageSource = TheGameLogic->findObjectByID( damageInfo->in.m_sourceID );
-	
+
 	// remove any particle systems that might be emitting from our old state
 	for( i = 0; i < DAMAGE_MODULE_MAX_FX; i++ )
 	{
@@ -350,7 +350,7 @@ void TransitionDamageFX::onBodyDamageStateChange( const DamageInfo* damageInfo,
 			if( modData->m_fxList[ newState ][ i ].fx )
 			{
 
-				if( lastDamageInfo == NULL || 
+				if( lastDamageInfo == NULL ||
 						getDamageTypeFlag( modData->m_damageFXTypes, lastDamageInfo->in.m_damageType ) )
 				{
 
@@ -361,18 +361,18 @@ void TransitionDamageFX::onBodyDamageStateChange( const DamageInfo* damageInfo,
 				}  // end if
 
 			}  // end if
-					
+
 			// do any object creation list for our new state
 			if( damageSource && modData->m_OCL[ newState ][ i ].ocl )
 			{
 
-				if( lastDamageInfo == NULL || 
+				if( lastDamageInfo == NULL ||
 						getDamageTypeFlag( modData->m_damageOCLTypes, lastDamageInfo->in.m_damageType ) )
 				{
 
 					pos = getLocalEffectPos( &modData->m_OCL[ newState ][ i ].locInfo, draw );
 					getObject()->convertBonePosToWorldPos( &pos, NULL, &pos, NULL );
-					ObjectCreationList::create( modData->m_OCL[ newState ][ i ].ocl, 
+					ObjectCreationList::create( modData->m_OCL[ newState ][ i ].ocl,
 																			getObject(), &pos, damageSource->getPosition() );
 
 				}  // end if
@@ -384,7 +384,7 @@ void TransitionDamageFX::onBodyDamageStateChange( const DamageInfo* damageInfo,
 			if( pSystemT )
 			{
 
-				if( lastDamageInfo == NULL || 
+				if( lastDamageInfo == NULL ||
 						getDamageTypeFlag( modData->m_damageParticleTypes, lastDamageInfo->in.m_damageType ) )
 				{
 
@@ -392,7 +392,7 @@ void TransitionDamageFX::onBodyDamageStateChange( const DamageInfo* damageInfo,
 					ParticleSystem* pSystem = TheParticleSystemManager->createParticleSystem( pSystemT );
 					if( pSystem )
 					{
-			
+
 						// get the what is the position we're going to playe the effect at
 						pos = getLocalEffectPos( &modData->m_particleSystem[ newState ][ i ].locInfo, draw );
 
@@ -415,11 +415,11 @@ void TransitionDamageFX::onBodyDamageStateChange( const DamageInfo* damageInfo,
 				}  // end if
 
 			}  // end if
-						
+
 		}  // end for i
 
 	}  // end if
-			
+
 }  // end onBodyDamageStateChange
 
 // ------------------------------------------------------------------------------------------------

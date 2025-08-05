@@ -67,7 +67,7 @@ public:
 	virtual UpdateSleepTime update();
 
 protected:
-	
+
 };
 
 #endif

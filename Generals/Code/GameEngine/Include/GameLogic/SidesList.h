@@ -53,7 +53,7 @@ class Shadow;
 	Note that a side corresponds to a Player in the game.  The lightweight
 	Side is used to give the WB Editor somewhere to hang build lists.
 */
-class SidesInfo 
+class SidesInfo
 {
 protected:
 	BuildListInfo*	m_pBuildList;		///< linked list.
@@ -76,7 +76,7 @@ public:
 	void setScriptList(ScriptList *pScriptList) {m_scripts = pScriptList;};
 
 	// ug, I hate having to overload stuff, but this makes it a lot easier to make copies safely
-	SidesInfo& operator=(const SidesInfo& that);	
+	SidesInfo& operator=(const SidesInfo& that);
 };
 
 // ----------------------------------------------------------------------------------------------
@@ -110,22 +110,22 @@ public:
 	void addTeam(const Dict* d);
 	void removeTeam(Int i);
 	Int getNumTeams() const { return m_numTeams; }
-	TeamsInfo * getTeamInfo(Int team) 
+	TeamsInfo * getTeamInfo(Int team)
 	{
-		if (team>=0&&team<m_numTeams) 
+		if (team>=0&&team<m_numTeams)
 		{
 			return(&m_teams[team]);
 		}
-		DEBUG_CRASH(("Out of range.")); 
+		DEBUG_CRASH(("Out of range."));
 		throw ERROR_BAD_ARG;
 		return NULL;
-	}	
+	}
 };
 
 // ----------------------------------------------------------------------------------------------
 /**
 	This is a singleton class that maintains the list of Sides.
-	In RTS it is associated with the Player singleton.  
+	In RTS it is associated with the Player singleton.
 	Note that a side corresponds to a Player in the game.  The lightweight
 	Side is used to give the WB Editor somewhere to hang build lists, as
 	it doesn't instantiate the Player subsystem
@@ -173,7 +173,7 @@ public:
  	void addSkirmishTeam(const Dict* d);
 
 	TeamsInfo *findTeamInfo(AsciiString name, Int* index = NULL);
-	
+
 	Bool isPlayerDefaultTeam(TeamsInfo *t);
 
 	void clear();
@@ -206,37 +206,37 @@ protected:
 };
 
 
-inline TeamsInfo * SidesList::getTeamInfo(Int team) 
+inline TeamsInfo * SidesList::getTeamInfo(Int team)
 {
 	return m_teamrec.getTeamInfo(team);
-}	
+}
 
-inline TeamsInfo * SidesList::getSkirmishTeamInfo(Int team) 
+inline TeamsInfo * SidesList::getSkirmishTeamInfo(Int team)
 {
 	return m_skirmishTeamrec.getTeamInfo(team);
-}	
+}
 
-inline SidesInfo * SidesList::getSideInfo(Int side) 
+inline SidesInfo * SidesList::getSideInfo(Int side)
 {
-	if (side>=0&&side<m_numSides) 
+	if (side>=0&&side<m_numSides)
 	{
 		return(&m_sides[side]);
 	}
-	DEBUG_CRASH(("Out of range.")); 
+	DEBUG_CRASH(("Out of range."));
 	throw ERROR_BAD_ARG;
 	return NULL;
-}	
+}
 
-inline SidesInfo * SidesList::getSkirmishSideInfo(Int side) 
+inline SidesInfo * SidesList::getSkirmishSideInfo(Int side)
 {
-	if (side>=0&&side<m_numSkirmishSides) 
+	if (side>=0&&side<m_numSkirmishSides)
 	{
 		return(&m_skirmishSides[side]);
 	}
-	DEBUG_CRASH(("Out of range.")); 
+	DEBUG_CRASH(("Out of range."));
 	throw ERROR_BAD_ARG;
 	return NULL;
-}	
+}
 
 
 // ----------------------------------------------------------------------------------------------
@@ -249,7 +249,7 @@ extern SidesList *TheSidesList;	 ///< singleton instance of SidesList
 */
 class BuildListInfo : public MemoryPoolObject, public Snapshot
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(BuildListInfo, "BuildListInfo")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(BuildListInfo, "BuildListInfo")
 
 // friend doesn't play well with MPO... it reveals delete, which shouldn't be visible, even to friends (srj)
 //friend class SidesInfo;  // This is essentially a component of the SidesInfo data structure.
@@ -257,7 +257,7 @@ class BuildListInfo : public MemoryPoolObject, public Snapshot
 //friend class BuildList;  // This is the class in WB that edits build lists.
 //friend class BuildListTool; // Other class in wb that edits build lists.
 //friend class WBDocUndoable; // Other class in wb that edits build lists.
-//friend class Player; 
+//friend class Player;
 //friend class AISideBuildList;
 //friend class AISkirmishPlayer;
 
@@ -301,7 +301,7 @@ protected:
 	ObjectID m_objectID;								///< the object on the map instantiated by this info
 	UnsignedInt m_objectTimestamp;			///< frame when object was built
 	Bool		 m_underConstruction;				///< True if being constructed by dozer.
-	ObjectID m_resourceGatherers[MAX_RESOURCE_GATHERERS];	///< gatherers for this supply center type building. 
+	ObjectID m_resourceGatherers[MAX_RESOURCE_GATHERERS];	///< gatherers for this supply center type building.
 	Bool		 m_isSupplyBuilding;				///< Uses gatherers to get supplies.
 	Int			 m_desiredGatherers;				///< Number of gatherers desired.
 	Int			 m_currentGatherers;				///< Number of gatherers available.
@@ -371,15 +371,15 @@ public:
 	BuildListInfo *duplicate(void);
 };
 
-inline void BuildListInfo::decrementNumRebuilds(void)  
+inline void BuildListInfo::decrementNumRebuilds(void)
 {
-	if (m_numRebuilds > 0 && m_numRebuilds != UNLIMITED_REBUILDS) 
+	if (m_numRebuilds > 0 && m_numRebuilds != UNLIMITED_REBUILDS)
 		m_numRebuilds--;
 }
 
-inline void BuildListInfo::incrementNumRebuilds(void)  
+inline void BuildListInfo::incrementNumRebuilds(void)
 {
-	if (m_numRebuilds != UNLIMITED_REBUILDS) 
+	if (m_numRebuilds != UNLIMITED_REBUILDS)
 		m_numRebuilds++;
 }
 

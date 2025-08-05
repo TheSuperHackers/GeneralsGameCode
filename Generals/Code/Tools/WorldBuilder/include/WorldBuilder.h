@@ -64,7 +64,7 @@
 //
 
 // Force maps into a directory structure.
-#define DO_MAPS_IN_DIRECTORIES 1	
+#define DO_MAPS_IN_DIRECTORIES 1
 
 #define NONE_STRING "<none>"
 
@@ -137,11 +137,11 @@ protected:
 	MapObject					*m_pasteMapObjList;	///< List of copied/cut map objects.
 
 protected:
-	void deletePasteObjList(void) 
-	{ 
-		if (m_pasteMapObjList) 
-			deleteInstance(m_pasteMapObjList); 
-		m_pasteMapObjList = NULL; 
+	void deletePasteObjList(void)
+	{
+		if (m_pasteMapObjList)
+			deleteInstance(m_pasteMapObjList);
+		m_pasteMapObjList = NULL;
 	};
 
 public:

@@ -96,9 +96,9 @@
 DistLODLoaderClass			_DistLODLoader;
 
 
-RenderObjClass * DistLODPrototypeClass::Create(void)			
-{ 
-	DistLODClass * dist = NEW_REF( DistLODClass , ( *Definition ) ); 
+RenderObjClass * DistLODPrototypeClass::Create(void)
+{
+	DistLODClass * dist = NEW_REF( DistLODClass , ( *Definition ) );
 
 	// Have to pull each LOD out of the DistLOD, create a copy of the name
 	// and destroy the DistLOD so that the models are "containerless".  Also
@@ -110,12 +110,12 @@ RenderObjClass * DistLODPrototypeClass::Create(void)
 	RenderObjClass ** robj = W3DNEWARRAY RenderObjClass * [count];
 	int i=0;
 	for (; i<count; i++) {
-		
+
 		robj[count - 1 - i] = dist->Get_Sub_Object(i);
 		WWASSERT(robj[count - 1 - i] != NULL);
 	}
 	dist->Release_Ref();
-	
+
 	WWDEBUG_SAY(("OBSOLETE Dist-LOD model found! Please re-export %s!",name));
 	HLodClass * hlod = NEW_REF(HLodClass , (name,robj,count));
 
@@ -147,10 +147,10 @@ PrototypeClass *DistLODLoaderClass::Load_W3D( ChunkLoadClass &cload )
 		return NULL;
 
 	} else {
-	
-		// ok, accept this model! 
+
+		// ok, accept this model!
 		DistLODPrototypeClass *pCLODProto = W3DNEW DistLODPrototypeClass (pCDistLODClass);
-		return pCLODProto;	
+		return pCLODProto;
 	}
 }
 
@@ -168,7 +168,7 @@ PrototypeClass *DistLODLoaderClass::Load_W3D( ChunkLoadClass &cload )
  *                                                                                             *
  * HISTORY:                                                                                    *
  *=============================================================================================*/
-DistLODDefClass::DistLODDefClass(void) : 
+DistLODDefClass::DistLODDefClass(void) :
 	Name(NULL),
 	LodCount(0),
 	Lods(NULL)
@@ -242,7 +242,7 @@ DistLODDefClass::~DistLODDefClass(void)
  *=============================================================================================*/
 void DistLODDefClass::Free(void)
 {
-	if (Name != NULL) { 
+	if (Name != NULL) {
 		delete[] Name;
 		Name = NULL;
 	}
@@ -273,18 +273,18 @@ void DistLODDefClass::Free(void)
  *=============================================================================================*/
 WW3DErrorType DistLODDefClass::Load_W3D(ChunkLoadClass & cload)
 {
-	/* 
+	/*
 	** First make sure we release any memory in use
 	*/
 	Free();
 
-	if (read_header(cload) == false) {        
+	if (read_header(cload) == false) {
 	  return WW3D_ERROR_LOAD_FAILED;
 	}
 
 	/*
 	**	Loop through all the LODs and read the info from its chunk
-	*/    
+	*/
 	for (int iLOD = 0; iLOD < LodCount; iLOD ++) {
 
 		/*
@@ -506,7 +506,7 @@ void DistLODClass::Free(void)
  *=============================================================================================*/
 int DistLODClass::Get_Num_Polys(void) const
 {
-	return Lods[CurLod].Model->Get_Num_Polys();	
+	return Lods[CurLod].Model->Get_Num_Polys();
 }
 
 
@@ -586,7 +586,7 @@ RenderObjClass * DistLODClass::Get_Sub_Object(int index) const
 {
 	assert(index >= 0);
 	assert(index < LodCount);
-	
+
 	if (Lods[index].Model == NULL) {
 		return NULL;
 	} else {
@@ -598,7 +598,7 @@ RenderObjClass * DistLODClass::Get_Sub_Object(int index) const
 int DistLODClass::Add_Sub_Object_To_Bone(RenderObjClass * subobj,int bone_index)
 {
 	// NOTE: this is broken code, a render object cannot have two containers...
-	if (subobj->Class_ID() == CLASSID_DISTLOD) { 
+	if (subobj->Class_ID() == CLASSID_DISTLOD) {
 		// Add each lod of the sub object to a cooresponding model of mine
 		DistLODClass * sub_lod_obj = (DistLODClass *)subobj;
 		for (int i=0; i< LodCount; i++) {
@@ -721,7 +721,7 @@ void DistLODClass::Set_Animation( HAnimClass * motion0,float frame0,HAnimClass *
 	}
 }
 
- 
+
 /***********************************************************************************************
  * DistLODClass::Set_Animation -- set the animation state to a combination of anims            *
  *                                                                                             *
@@ -742,7 +742,7 @@ void DistLODClass::Set_Animation( HAnimComboClass * anim_combo)
 	}
 }
 
-	
+
 /***********************************************************************************************
  * DistLODClass::Peek_Animation													                          *
  *                                                                                             *
@@ -1099,7 +1099,7 @@ void DistLODClass::Update_Lod(const CameraClass & camera)
 {
 	// evaluate the distance from the camera and select an LOD based on it.
 	float dist =	(
-							camera.Get_Position() - 
+							camera.Get_Position() -
 							Lods[CurLod].Model->Get_Bounding_Sphere().Center
 						).Quick_Length();
 

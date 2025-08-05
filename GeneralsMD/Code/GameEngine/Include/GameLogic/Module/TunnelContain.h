@@ -62,11 +62,11 @@ public:
 
 	}
 
-	static void buildFieldParse(MultiIniFieldParse& p) 
+	static void buildFieldParse(MultiIniFieldParse& p)
 	{
     OpenContainModuleData::buildFieldParse(p);
 
-		static const FieldParse dataFieldParse[] = 
+		static const FieldParse dataFieldParse[] =
 		{
 			{ "TimeForFullHeal", INI::parseDurationReal, NULL, offsetof( TunnelContainModuleData, m_framesForFullHeal ) },
 			{ 0, 0, 0, 0 }
@@ -80,7 +80,7 @@ class TunnelContain : public OpenContain, public CreateModuleInterface
 
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( TunnelContain, "TunnelContain" )
 	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( TunnelContain, TunnelContainModuleData )
-	
+
 public:
 
 	TunnelContain( Thing *thing, const ModuleData* moduleData );
@@ -116,7 +116,7 @@ public:
 	virtual void iterateContained( ContainIterateFunc func, void *userData, Bool reverse );
 	virtual UnsignedInt getContainCount() const;
 	virtual Int getContainMax( void ) const;
-	virtual const ContainedItemsList* getContainedItemsList() const;	
+	virtual const ContainedItemsList* getContainedItemsList() const;
 	virtual Bool isDisplayedOnControlBar() const { return TRUE; } ///< Does this container display its contents on the ControlBar?
 	virtual Bool isKickOutOnCapture(){ return FALSE; }///< Caves and Tunnels don't kick out on capture.
 
@@ -129,13 +129,13 @@ public:
 	virtual void onBuildComplete();
 	virtual Bool shouldDoOnBuildComplete() const { return m_needToRunOnBuildComplete; }
 
-	// so that the ppl within the tunnel network can get healed	
+	// so that the ppl within the tunnel network can get healed
 	virtual UpdateSleepTime update();												///< called once per frame
 
 protected:
 
 	void scatterToNearbyPosition(Object* obj);
-	Bool m_needToRunOnBuildComplete; 
+	Bool m_needToRunOnBuildComplete;
 	Bool m_isCurrentlyRegistered; ///< Keeps track if this is registered with the player, so we don't double remove and mess up
 
 };

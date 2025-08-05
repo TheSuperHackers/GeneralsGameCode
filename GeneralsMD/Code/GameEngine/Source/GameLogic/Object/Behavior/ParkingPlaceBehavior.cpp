@@ -24,7 +24,7 @@
 
 // FILE: ParkingPlaceBehavior.cpp ///////////////////////////////////////////////////////////////////////
 // Author:	Steven Johnson, June 2002
-// Desc:  
+// Desc:
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
@@ -42,7 +42,7 @@
 #include "GameLogic/Module/JetAIUpdate.h"
 #include "GameLogic/Object.h"
 #include "GameLogic/TerrainLogic.h"
-#include "Common/Team.h" 
+#include "Common/Team.h"
 
 
 
@@ -51,12 +51,12 @@
 ParkingPlaceBehavior::ParkingPlaceBehavior( Thing *thing, const ModuleData* moduleData ) : UpdateModule( thing, moduleData )
 {
 	m_gotInfo = false;
-	
+
 	//Added By Sadullah Nader
-	//Initializations 
-	
+	//Initializations
+
 	m_heliRallyPoint.zero();
-	
+
 	//
 
 	m_heliRallyPointExists = FALSE;
@@ -95,7 +95,7 @@ void ParkingPlaceBehavior::buildInfo()
 			{
 				AsciiString tmp;
 				Matrix3D mtx;
-				
+
 				tmp.format("Runway%dPark%dHan",col+1,row+1);
 				getObject()->getSingleLogicalBonePosition(tmp.str(), &info.m_hangarStart, &mtx);
 				info.m_hangarStartOrient = mtx.Get_Z_Rotation();
@@ -132,7 +132,7 @@ void ParkingPlaceBehavior::buildInfo()
 
 			tmp.format("RunwayEnd%d",col+1);
 			getObject()->getSingleLogicalBonePosition(tmp.str(), &info.m_end, NULL);
-			
+
 			info.m_inUseBy = INVALID_ID;
 			info.m_nextInLineForTakeoff = INVALID_ID;
 			info.m_wasInLine = false;
@@ -209,7 +209,7 @@ void ParkingPlaceBehavior::purgeDead()
 		}
 		if (anythingPurged)
 			resetWakeFrame();
-	}	
+	}
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -297,7 +297,7 @@ Bool ParkingPlaceBehavior::hasAvailableSpaceFor(const ThingTemplate* thing) cons
 {
 	if (!m_gotInfo)	// degenerate case, shouldn't happen, but just in case...
 		return false;
-	
+
 	if (thing->isKindOf(KINDOF_PRODUCED_AT_HELIPAD))
 		return true;
 
@@ -345,7 +345,7 @@ Bool ParkingPlaceBehavior::reserveSpace(ObjectID id, Real parkingOffset, Parking
 
 	ppi->m_objectInSpace = id;
 	ppi->m_reservedForExit = false;
-	
+
 	if( d->m_landingDeckHeightOffset )
 	{
 		Object *obj = TheGameLogic->findObjectByID( id );
@@ -355,7 +355,7 @@ Bool ParkingPlaceBehavior::reserveSpace(ObjectID id, Real parkingOffset, Parking
 		}
 	}
 
-	if (info) 
+	if (info)
 	{
 		calcPPInfo( id, info );
 		if (parkingOffset != 0.0f)
@@ -604,7 +604,7 @@ void ParkingPlaceBehavior::defectAllParkedUnits(Team* newTeam, UnsignedInt detec
 			if (obj == NULL || obj->isEffectivelyDead())
 				continue;
 
-			// srj sez: evil. fix better someday. 
+			// srj sez: evil. fix better someday.
 			static NameKeyType jetKey = TheNameKeyGenerator->nameToKey("JetAIUpdate");
 			JetAIUpdate* ju = (JetAIUpdate *)obj->findUpdateModule(jetKey);
 			Bool takeoffOrLanding = ju ? ju->friend_isTakeoffOrLandingInProgress() : false;
@@ -643,14 +643,14 @@ void ParkingPlaceBehavior::killAllParkedUnits()
 			if (obj == NULL || obj->isEffectivelyDead())
 				continue;
 
-			// srj sez: evil. fix better someday. 
+			// srj sez: evil. fix better someday.
 			static NameKeyType jetKey = TheNameKeyGenerator->nameToKey("JetAIUpdate");
 			JetAIUpdate* ju = (JetAIUpdate *)obj->findUpdateModule(jetKey);
 			Bool takeoffOrLanding = ju ? ju->friend_isTakeoffOrLandingInProgress() : false;
 
 			if (obj->isAboveTerrain() && !takeoffOrLanding)
 				continue;
-		
+
 			obj->kill();
 		}
 	}
@@ -668,7 +668,7 @@ void ParkingPlaceBehavior::onDie( const DamageInfo *damageInfo )
 UpdateSleepTime ParkingPlaceBehavior::update()
 {
 	// alas, we need to keep the buildInfo and dead-purged stuff pretty much up to date, for
-	// the client to be able to peek at. at this late date, the most expedient way is to ensure 
+	// the client to be able to peek at. at this late date, the most expedient way is to ensure
 	// our update is run every frame, and do this manually. the extra cost should be trivial, since
 	// there are generally at most only a few airfields at any given time.
 	buildInfo();
@@ -826,7 +826,7 @@ void ParkingPlaceBehavior::exitObjectViaDoor( Object *newObj, ExitDoorType exitD
 			}
 			else
 			{
-				// Lorenzen sez: aiMoveToPosition has an added benefit. 
+				// Lorenzen sez: aiMoveToPosition has an added benefit.
 				// It invokes the pathfinder to find a vacant destination.
 	      ai->aiMoveToPosition( &ppinfo.parkingSpace, CMD_FROM_AI );
 			}
@@ -1091,6 +1091,6 @@ void ParkingPlaceBehavior::loadPostProcess( void )
 
 	// no, this is bad.. it is NOT SAFE to call setWakeFrame from the xfer system. crap. (srj)
 	// make sure we are awake... old save games let us sleep
-	//setWakeFrame(getObject(), UPDATE_SLEEP_NONE); 
+	//setWakeFrame(getObject(), UPDATE_SLEEP_NONE);
 
 }  // end loadPostProcess

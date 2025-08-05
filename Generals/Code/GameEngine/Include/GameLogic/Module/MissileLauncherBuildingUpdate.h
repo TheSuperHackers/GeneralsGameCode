@@ -67,11 +67,11 @@ public:
 		m_openingFX = m_openFX = m_waitingToCloseFX = m_closingFX = m_closedFX = NULL;
 	}
 
-	static void buildFieldParse(MultiIniFieldParse& p) 
+	static void buildFieldParse(MultiIniFieldParse& p)
 	{
     UpdateModuleData::buildFieldParse(p);
 
-		static const FieldParse dataFieldParse[] = 
+		static const FieldParse dataFieldParse[] =
 		{
 			{ "SpecialPowerTemplate",	INI::parseSpecialPowerTemplate,					NULL, offsetof( MissileLauncherBuildingUpdateModuleData, m_specialPowerTemplate ) },
 			{ "DoorOpenTime",					INI::parseDurationUnsignedInt,	NULL, offsetof( MissileLauncherBuildingUpdateModuleData, m_doorOpenTime ) },
@@ -126,7 +126,7 @@ private:
 		DOOR_WAITING_TO_CLOSE,
 		DOOR_CLOSING,
 	};
-	
+
 	void switchToState(DoorStateType dst);
 
 	const SpecialPowerModuleInterface*	m_specialPowerModule;

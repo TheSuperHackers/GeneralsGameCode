@@ -104,14 +104,14 @@ CBackgroundBMPDialog::OnInitDialog (void)
 //  OnOK
 //
 void
-CBackgroundBMPDialog::OnOK (void) 
+CBackgroundBMPDialog::OnOK (void)
 {
     // Gett a pointer to the current document
     CW3DViewDoc *pCDoc = ::GetCurrentDocument ();
     if (pCDoc)
     {
         CString stringBackgroundBMPName;
-        
+
         // Get the filename the user entered
         if (GetDlgItemText (IDC_FILENAME_EDIT, stringBackgroundBMPName) > 0)
         {
@@ -124,7 +124,7 @@ CBackgroundBMPDialog::OnOK (void)
             pCDoc->SetBackgroundBMP (NULL);
         }
     }
-	
+
 	// Allow the base class to process this message
     CDialog::OnOK ();
     return ;

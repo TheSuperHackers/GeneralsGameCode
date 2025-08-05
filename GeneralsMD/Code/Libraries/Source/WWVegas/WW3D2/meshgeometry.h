@@ -70,7 +70,7 @@ typedef Vector3i16 TriIndex;
 ** The following two defines control two space-saving optimizations.  In Renegade I've found
 ** that the plane equations are about 8% of the geometry space and vertex normals are about 10%
 ** so I'm trying to see if we can get by without them.  The plane equations are mainly used
-** by collision detection functions and those are culled pretty well.  Anyway, collision is 
+** by collision detection functions and those are culled pretty well.  Anyway, collision is
 ** already so expensive that adding a cross product to it doesn't seem to matter.
 **
 ** NOTE: currently with optimizations enabled, memory gets trashed if you use OPTIMIZE_VNORM_RAM
@@ -82,8 +82,8 @@ typedef Vector3i16 TriIndex;
 
 /**
 ** MeshGeometryClass
-** This class encapsulates the geometry data for a triangle mesh. 
-*/ 
+** This class encapsulates the geometry data for a triangle mesh.
+*/
 
 class MeshGeometryClass : public W3DMPO, public RefCountClass, public MultiListObjectClass
 {
@@ -108,7 +108,7 @@ public:
 		DISABLE_BOUNDING_SPHERE				= 0x00000040,
 		DISABLE_PLANE_EQ						= 0x00000080,
 		TWO_SIDED								= 0x00000100,
-	
+
 		ALIGNED									= 0x00000200,
 		SKIN										= 0x00000400,
 		ORIENTED									= 0x00000800,
@@ -143,7 +143,7 @@ public:
 	Vector3 *					Get_Vertex_Array(void)										{ WWASSERT(Vertex); return Vertex->Get_Array(); }
 	const Vector3 *			Get_Vertex_Normal_Array(void);
 	const Vector4 *			Get_Plane_Array(bool create = true);
-	void							Compute_Plane(int pidx,PlaneClass * set_plane) const;	
+	void							Compute_Plane(int pidx,PlaneClass * set_plane) const;
 	const uint32 *				Get_Vertex_Shade_Index_Array(bool create = true)	{ return get_shade_indices(create); }
 	const uint16 *				Get_Vertex_Bone_Links(void)								{ return get_bone_links(); }
 	uint8 *						Get_Poly_Surface_Type_Array(void)						{ WWASSERT(PolySurfaceType); return PolySurfaceType->Get_Array(); }
@@ -154,7 +154,7 @@ public:
 
 	// exposed culling support
 	bool							Has_Cull_Tree(void)											{ return CullTree != NULL; }
-	
+
 	void							Generate_Rigid_APT(const Vector3 & view_dir, SimpleDynVecClass<uint32> & apt);
 	void							Generate_Rigid_APT(const OBBoxClass & local_box, SimpleDynVecClass<uint32> & apt);
 	void							Generate_Rigid_APT(const OBBoxClass & local_box, const Vector3 & view_dir, SimpleDynVecClass<uint32> & apt);
@@ -184,7 +184,7 @@ public:
 	void							Scale(const Vector3 &sc);
 
 protected:
-	
+
 	// internal accessor functions that are not exposed to the user (non-const...)
 	TriIndex *					get_polys(void);
 	Vector3 *					get_vert_normals(void);
@@ -199,7 +199,7 @@ protected:
 	bool							cast_aabox_z90(AABoxCollisionTestClass & boxtest,const Vector3 & trans);
 	bool							cast_aabox_z180(AABoxCollisionTestClass & boxtest,const Vector3 & trans);
 	bool							cast_aabox_z270(AABoxCollisionTestClass & boxtest,const Vector3 & trans);
-	
+
 	bool							intersect_obbox_brute_force(OBBoxIntersectionTestClass & localtest);
 	bool							cast_ray_brute_force(RayCollisionTestClass & raytest);
 	bool							cast_aabox_brute_force(AABoxCollisionTestClass & boxtest);
@@ -211,7 +211,7 @@ protected:
 	virtual void				Compute_Bounds(Vector3 * verts);
 	void							Generate_Culling_Tree(void);
 
-	// W3D chunk reading	
+	// W3D chunk reading
 	WW3DErrorType				read_chunks(ChunkLoadClass & cload);
 	WW3DErrorType				read_vertices(ChunkLoadClass & cload);
 	WW3DErrorType				read_vertex_normals(ChunkLoadClass & cload);
@@ -226,18 +226,18 @@ protected:
 	void get_deformed_vertices(Vector3 *dst_vert, Vector3 *dst_norm, const HTreeClass * htree);
 	void get_deformed_vertices(Vector3 *dst_vert, const HTreeClass * htree);
 	void get_deformed_screenspace_vertices(Vector4 *dst_vert,const RenderInfoClass & rinfo,const Matrix3D & mesh_tm,const HTreeClass * htree);
-	
+
 	// General info
 	ShareBufferClass<char> *							MeshName;
 	ShareBufferClass<char> *							UserText;
 	int														Flags;
 	char														SortLevel;
 	uint32													W3dAttributes;
-	
+
 	// Geometry
 	int														PolyCount;
 	int														VertexCount;
-		
+
 	ShareBufferClass<TriIndex> *						Poly;
 	ShareBufferClass<Vector3> *						Vertex;
 	ShareBufferClass<Vector3> *						VertexNorm;

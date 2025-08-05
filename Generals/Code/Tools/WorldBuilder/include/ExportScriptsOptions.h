@@ -60,7 +60,7 @@ public:
 	Bool getDoWaypoints(void) {return m_waypoints;}
 	Bool getDoTriggers(void) {return m_triggers;}
 	Bool getDoAllScripts(void) {return m_allScripts;}
-	
+
 protected:
 
 	// Generated message map functions

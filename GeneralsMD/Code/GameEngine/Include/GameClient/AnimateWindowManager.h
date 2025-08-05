@@ -24,12 +24,12 @@
 
 // FILE: AnimateWindowManager.h /////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Electronic Arts Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2002 - All Rights Reserved                  
-//                                                                          
+//
+//                       Electronic Arts Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2002 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 //	created:	Mar 2002
@@ -37,7 +37,7 @@
 //	Filename: AnimateWindowManager.h
 //
 //	author:		Chris Huybregts
-//	
+//
 //	purpose:	The Animate Window class will be used by registering a window with
 //						the manager with stating what kind of animation to do. Then on every
 //						update, we'll move the windows.
@@ -100,7 +100,7 @@ namespace wnd
 {
 class AnimateWindow : public MemoryPoolObject
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AnimateWindow, "AnimateWindow")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AnimateWindow, "AnimateWindow")
 public:
 	AnimateWindow( void );
 	//~AnimateWindow( void );
@@ -141,7 +141,7 @@ public:
 
 private:
 	UnsignedInt m_delay;													///< Holds the delay time in which the animation will start (in milliseconds)
-	ICoord2D m_startPos;													///< Holds the starting position of the animation 
+	ICoord2D m_startPos;													///< Holds the starting position of the animation
 																								///<(usuall is also the end position of the animation when the animation is reversed)
 	ICoord2D m_endPos;														///< Holds the target End Position (usually is the same as the rest position)
 	ICoord2D m_curPos;														///< It's Current Position
@@ -169,9 +169,9 @@ public:
 	~AnimateWindowManager( void );
 
 	// Inhertited from subsystem ====================================================================
-	virtual void init( void );			
-	virtual void reset( void );			
-	virtual void update( void );		
+	virtual void init( void );
+	virtual void reset( void );
+	virtual void update( void );
 	//===============================================================================================
 
 	void registerGameWindow(GameWindow *win, AnimTypes animType, Bool needsToFinish, UnsignedInt ms = 0, UnsignedInt delayMs = 0);			// Registers a new window to animate.
@@ -194,7 +194,7 @@ private:
 	ProcessAnimateWindowSlideFromBottomTimed *m_slideFromBottomTimed;		///< Holds the process in which the windows slide from the Bottom in a time-based fashion
 	ProcessAnimateWindowSlideFromTopFast *m_slideFromTopFast;			///< holds the process in wich the windows slide from the top,fast
 	ProcessAnimateWindow *getProcessAnimate( AnimTypes animType);		///< returns the process for the kind of animation we need.
-	
+
 };
 
 //-----------------------------------------------------------------------------
@@ -229,7 +229,7 @@ namespace wnd
 	inline void	AnimateWindow::setNeedsToFinish( Bool needsToFinish)		{ m_needsToFinish = needsToFinish; };
 	inline Bool	AnimateWindow::needsToFinish( void )							{ return m_needsToFinish; };
 } // namespace wnd
-	
+
 	inline Bool AnimateWindowManager::isFinished( void )					{ return !m_needsUpdate;	};
 	inline Bool AnimateWindowManager::isReversed( void )						{ return m_reverse;	};
 	inline Bool AnimateWindowManager::isEmpty( void ){return (m_winList.size() == 0 && m_winMustFinishList.size() == 0);	}

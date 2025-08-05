@@ -76,10 +76,10 @@ SwayClientUpdate::~SwayClientUpdate( void )
 void SwayClientUpdate::updateSway()
 {
 	const BreezeInfo& info = TheScriptEngine->getBreezeInfo();
-	if (info.m_randomness == 0.0f) 
+	if (info.m_randomness == 0.0f)
 	{
 		m_curValue = 0;
-	} 
+	}
 	Real delta				= info.m_randomness * 0.5f;
 	m_curAngleLimit		= info.m_intensity * GameClientRandomValueReal(1.0f-delta, 1.0f+delta);
 	m_curDelta				= 2*PI/info.m_breezePeriod * GameClientRandomValueReal(1.0f-delta, 1.0f+delta);
@@ -100,10 +100,10 @@ void SwayClientUpdate::clientUpdate( void )
 
 	Drawable *draw = getDrawable();
 
-	// if breeze changes, always process the full update, even if not visible, 
+	// if breeze changes, always process the full update, even if not visible,
 	// so that things offscreen won't 'pop' when first viewed
 	const BreezeInfo& info = TheScriptEngine->getBreezeInfo();
-	if (info.m_breezeVersion != m_curVersion) 
+	if (info.m_breezeVersion != m_curVersion)
 	{
 		updateSway();
 	}
@@ -115,7 +115,7 @@ void SwayClientUpdate::clientUpdate( void )
 	}
 
 	m_curValue += m_curDelta;
-	if (m_curValue > 2*PI) 
+	if (m_curValue > 2*PI)
 		m_curValue -= 2*PI;
 	Real cosine = Cos(m_curValue);
 
@@ -128,7 +128,7 @@ void SwayClientUpdate::clientUpdate( void )
 	draw->setInstanceMatrix(&xfrm);
 
 	m_curAngle = targetAngle;
-	
+
 	// burned things don't sway.
 	Object* obj = draw->getObject();
 	if( obj && obj->getStatusBits().test( OBJECT_STATUS_BURNED ) )

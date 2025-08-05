@@ -43,7 +43,7 @@ MultiplayerSettings *TheMultiplayerSettings = NULL;				///< The MultiplayerSetti
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // PRIVATE DATA ///////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-const FieldParse MultiplayerColorDefinition::m_colorFieldParseTable[] = 
+const FieldParse MultiplayerColorDefinition::m_colorFieldParseTable[] =
 {
 
 	{ "TooltipName",	INI::parseAsciiString,	NULL,	offsetof( MultiplayerColorDefinition, m_tooltipName ) },
@@ -53,7 +53,7 @@ const FieldParse MultiplayerColorDefinition::m_colorFieldParseTable[] =
 
 };
 
-const FieldParse MultiplayerSettings::m_multiplayerSettingsFieldParseTable[] = 
+const FieldParse MultiplayerSettings::m_multiplayerSettingsFieldParseTable[] =
 {
 
 	{ "StartCountdownTimer",			INI::parseInt,	NULL,	offsetof( MultiplayerSettings, m_startCountdownTimerSeconds ) },
@@ -80,7 +80,7 @@ MultiplayerSettings::MultiplayerSettings()
 	m_showRandomPlayerTemplate = TRUE;
 	m_showRandomStartPos = TRUE;
 	m_showRandomColor = TRUE;
-	
+
 	m_observerColor;
 	m_randomColor;
 

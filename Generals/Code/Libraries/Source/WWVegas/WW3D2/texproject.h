@@ -71,30 +71,30 @@ class SurfaceClass;
 ** - Texture Projectors should be easy to place in the world and move around.
 **   solution: Store the bounding volume and any other parameters in a coordinate
 **   system local to the projector.  Update the world-space cache whenever needed.
-**   The automatically generated shadow texture projectors are a special case subset 
-**   of the general texture projection code.  For this reason, a local bounding 
-**   volume will be stored and its world-space equivalent will be updated whenever 
-**   needed.  
+**   The automatically generated shadow texture projectors are a special case subset
+**   of the general texture projection code.  For this reason, a local bounding
+**   volume will be stored and its world-space equivalent will be updated whenever
+**   needed.
 **
 ** - Texture projectors need to be compatible with the culling systems.
 **   solution: inherit the Cullable interface.
 **
 ** - Texture projectors need to be quickly pulled in and out of many lists during
 **   the rendering process.
-**   solution: list system similar to PhysListClass?  I really need to templatize this. 
+**   solution: list system similar to PhysListClass?  I really need to templatize this.
 **   - done:  MultiListClass!
-**  
-** - Dynamic Texture projectors need to be updated in stages.  Update/recompute only the 
+**
+** - Dynamic Texture projectors need to be updated in stages.  Update/recompute only the
 **   bounding volume first, then defer computing the actual texture until it is
-**   determined that the volume falls into the frustum and is applied to at least one 
+**   determined that the volume falls into the frustum and is applied to at least one
 **   object.
 **   solution: Code the bounding volume/projection paramter generation separate from
-**   the texture generation code.  A derived texture projection object. Let texture 
-**   projectors know about the object they are projecting so that they can have that 
-**   object rendered from the desired viewpoint.  Need a 'Dirty' flag and a pointer to 
-**   a 'parent' object.  Perhaps separate this code into a ShadowProjectClass since shadows 
-**   are the only case I can think of that need the ability to re-render their 'parent' 
-**   object.  Everything else should be a static texture-map either generated 'artistically' 
+**   the texture generation code.  A derived texture projection object. Let texture
+**   projectors know about the object they are projecting so that they can have that
+**   object rendered from the desired viewpoint.  Need a 'Dirty' flag and a pointer to
+**   a 'parent' object.  Perhaps separate this code into a ShadowProjectClass since shadows
+**   are the only case I can think of that need the ability to re-render their 'parent'
+**   object.  Everything else should be a static texture-map either generated 'artistically'
 **   or generated off-line.
 **
 */
@@ -104,7 +104,7 @@ public:
 
 	TexProjectClass(void);
 	virtual ~TexProjectClass(void);
-	
+
 	/*
 	** Material settings
 	*/
@@ -126,7 +126,7 @@ public:
 	*/
 	void						Enable_Affect_Dynamic_Objects(bool onoff)				{ Set_Flag(AFFECT_DYNAMIC_OBJS,onoff); }
 	bool						Is_Affect_Dynamic_Objects_Enabled(void)				{ return Get_Flag(AFFECT_DYNAMIC_OBJS); }
-	void						Enable_Affect_Static_Objects(bool onoff)				{ Set_Flag(AFFECT_STATIC_OBJS,onoff); } 
+	void						Enable_Affect_Static_Objects(bool onoff)				{ Set_Flag(AFFECT_STATIC_OBJS,onoff); }
 	bool						Is_Affect_Static_Objects_Enabled(void)					{ return Get_Flag(AFFECT_STATIC_OBJS); }
 	void						Enable_Depth_Gradient(bool onoff);
 	bool						Is_Depth_Gradient_Enabled(bool onoff);
@@ -143,14 +143,14 @@ public:
 	void						Set_Texture(TextureClass * texture);
 	TextureClass *			Get_Texture(void) const;
 	TextureClass *			Peek_Texture(void) const;
-	
+
 	/*
 	** Automatic initialization of a TexProjectClass.
 	** First set up your projection parameters, give the projector a render target, then call Compute_Texture
 	*/
 	bool						Compute_Perspective_Projection(RenderObjClass * obj,const Vector3 & lightpos,float znear=-1.0f,float zfar=-1.0f);
 	bool						Compute_Perspective_Projection(const AABoxClass & obj_box,const Matrix3D & tm,const Vector3 & lightpos,float znear=-1.0f,float zfar=-1.0f);
-	
+
 	bool						Compute_Ortho_Projection(RenderObjClass * obj,const Vector3 & lightdir,float znear=-1.0f,float zfar=-1.0f);
 	bool						Compute_Ortho_Projection(const AABoxClass & obj_box,const Matrix3D & tm,const Vector3 & lightdir,float znear=-1.0f,float zfar=-1.0f);
 
@@ -166,10 +166,10 @@ public:
 	virtual void			Pre_Render_Update(const Matrix3D & camera);
 
 	/*
-	** virtual interface for getting the pointer of the object that generated this shadow.  
+	** virtual interface for getting the pointer of the object that generated this shadow.
 	** defaults to returning NULL.  This is implemented by some derived classes and used by
 	** the system to prevent a projection from being applied to the object that generated
-	** the projection...  
+	** the projection...
 	** (gth) feels kludgy, this got a little messy when I moved this code into WW3D from WWPhys
 	*/
 	virtual void *			Get_Projection_Object_ID(void) const { return NULL; }
@@ -185,7 +185,7 @@ protected:
 	{
 		PERSPECTIVE				= 0x00000001,		// PERSPECTIVE or ORTHO
 		ADDITIVE					= 0x00000002,		// ADDITIVE or MULTIPLICATIVE
-		TEXTURE_DIRTY			= 0x00000004,		// used by derived DynTexProjectClass		
+		TEXTURE_DIRTY			= 0x00000004,		// used by derived DynTexProjectClass
 		VOLATILE					= 0x00000008,		// this is a volatile texture.
 		ATTENUATE				= 0x00000010,		// this projector should be attenuated based on distance to viewer
 		AFFECT_DYNAMIC_OBJS	= 0x00000020,		// this projector affects dynamic objects
@@ -197,7 +197,7 @@ protected:
 
 		DEFAULT_FLAGS			= ATTENUATE | AFFECT_DYNAMIC_OBJS | AFFECT_STATIC_OBJS | (64<<SIZE_SHIFT)
 	};
-	
+
 	uint32						Flags;
 
 	/*
@@ -213,7 +213,7 @@ protected:
 	MaterialPassClass *		MaterialPass;
 	MatrixMapperClass *		Mapper1;
 	TextureClass *				RenderTarget;
-	
+
 	/*
 	** I have to remember all of these values so that I can properly initialize a CameraClass
 	** when we do render-to-texture.  Some day we will merge CameraClass and ProjectorClass.

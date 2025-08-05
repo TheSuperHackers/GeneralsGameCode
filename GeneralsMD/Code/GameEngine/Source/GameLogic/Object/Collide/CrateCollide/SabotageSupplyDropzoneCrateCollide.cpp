@@ -23,13 +23,13 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-//	
-// FILE: SabotageSupplyDropzoneCrateCollide.cpp 
+//
+// FILE: SabotageSupplyDropzoneCrateCollide.cpp
 // Author: Kris Morness, June 2003
 // Desc:   A crate (actually a saboteur - mobile crate) that resets the timer on the target supply dropzone.
-//	
+//
 ///////////////////////////////////////////////////////////////////////////////////////////////////
- 
+
 
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
@@ -66,13 +66,13 @@
 //-------------------------------------------------------------------------------------------------
 SabotageSupplyDropzoneCrateCollide::SabotageSupplyDropzoneCrateCollide( Thing *thing, const ModuleData* moduleData ) : CrateCollide( thing, moduleData )
 {
-} 
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 SabotageSupplyDropzoneCrateCollide::~SabotageSupplyDropzoneCrateCollide( void )
 {
-}  
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -125,7 +125,7 @@ Bool SabotageSupplyDropzoneCrateCollide::executeCrateBehavior( Object *other )
 
   doSabotageFeedbackFX( other, CrateCollide::SAB_VICTIM_DROP_ZONE );
 
-	//Reset the timer on the dropzone. Um... only the dropzone has an OCLUpdate and one, so 
+	//Reset the timer on the dropzone. Um... only the dropzone has an OCLUpdate and one, so
 	//we can "assume" it's going to be safe. Otherwise, we'll have to write code to search for
 	//a specific OCLUpdate.
 	static NameKeyType key_ocl = NAMEKEY( "OCLUpdate" );
@@ -166,7 +166,7 @@ Bool SabotageSupplyDropzoneCrateCollide::executeCrateBehavior( Object *other )
 			pos.set( obj->getPosition() );
 			pos.z += 20.0f; //add a little z to make it show up above the unit.
 			TheInGameUI->addFloatingText( moneyString, &pos, GameMakeColor( 0, 255, 0, 255 ) );
-		
+
 			//Display cash lost floating over the target
 			moneyString.format( TheGameText->fetch( "GUI:LoseCash" ), cash );
 			pos.set( other->getPosition() );

@@ -56,7 +56,7 @@ public:
 	inline void setNext( LANPlayer *next ) { m_next = next; }
 	inline UnsignedInt getIP( void ) { return m_IP; }
 	inline void setIP( UnsignedInt IP ) { m_IP = IP; }
-	
+
 protected:
 	UnicodeString m_name;			///< Player name
 	UnicodeString m_login;		///< login name

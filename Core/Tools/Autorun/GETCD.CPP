@@ -191,9 +191,9 @@ int	GetCDClass::Get_CD_Drive_For_This_Volume ( const char *volume_label )
 				(unsigned long)0 )) {
 
 			//---------------------------------------------------------------------
-			// Windows '95 appears to have a volume name limit of 11 characters. 
-			// I cannot find a Win32 call that will return the maximum volume name 
-			// length so the value '11' is hard-coded here and the assumption made 
+			// Windows '95 appears to have a volume name limit of 11 characters.
+			// I cannot find a Win32 call that will return the maximum volume name
+			// length so the value '11' is hard-coded here and the assumption made
 			// that all OS's have this length or better.
 			//---------------------------------------------------------------------
 			if( WinVersion.Is_Win95()) {
@@ -208,16 +208,16 @@ int	GetCDClass::Get_CD_Drive_For_This_Volume ( const char *volume_label )
 
 #if RTS_DEBUG
 			LPVOID lpMsgBuf;
-			FormatMessage( 
-				FORMAT_MESSAGE_ALLOCATE_BUFFER | 
-				FORMAT_MESSAGE_FROM_SYSTEM | 
+			FormatMessage(
+				FORMAT_MESSAGE_ALLOCATE_BUFFER |
+				FORMAT_MESSAGE_FROM_SYSTEM |
 				FORMAT_MESSAGE_IGNORE_INSERTS,
 				NULL,
 				GetLastError(),
 				MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), // Default language
 				(LPTSTR) &lpMsgBuf,
 				0,
-				NULL 
+				NULL
 			);
 			Msg( __LINE__, __FILE__, (LPTSTR)lpMsgBuf );
 			LocalFree( lpMsgBuf );
@@ -292,16 +292,16 @@ const char *GetCDClass::Get_Volume_For_This_CD_Drive ( const char *path, char *v
 	} else {
 
 		LPVOID lpMsgBuf;
-		FormatMessage( 
-		    FORMAT_MESSAGE_ALLOCATE_BUFFER | 
-		    FORMAT_MESSAGE_FROM_SYSTEM | 
+		FormatMessage(
+		    FORMAT_MESSAGE_ALLOCATE_BUFFER |
+		    FORMAT_MESSAGE_FROM_SYSTEM |
 		    FORMAT_MESSAGE_IGNORE_INSERTS,
 		    NULL,
 		    GetLastError(),
 		    MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), // Default language
 		    (LPTSTR) &lpMsgBuf,
 		    0,
-		    NULL 
+		    NULL
 		);
 		Msg( __LINE__, __FILE__, (LPTSTR)lpMsgBuf );
 		LocalFree( lpMsgBuf );
@@ -310,9 +310,9 @@ const char *GetCDClass::Get_Volume_For_This_CD_Drive ( const char *path, char *v
 	}
 
 	//-------------------------------------------------------------------------
-	// Windows '95 appears to have a volume name limit of 11 characters. 
-	// I cannot find a Win32 call that will return the maximum volume name 
-	// length so the value '11' is hard-coded here and the assumption made 
+	// Windows '95 appears to have a volume name limit of 11 characters.
+	// I cannot find a Win32 call that will return the maximum volume name
+	// length so the value '11' is hard-coded here and the assumption made
 	// that all OS's have this length or better.
 	//-------------------------------------------------------------------------
 	bool winversion = WinVersion.Is_Win95();
@@ -347,7 +347,7 @@ bool CD_Volume_Verification ( int cd_drive, char *volume_label, char *volume_to_
 	unsigned	filename_length;
 
 	/***************************************************************************
-	** Get the volume label. If we get a 'not ready' error then retry for the 
+	** Get the volume label. If we get a 'not ready' error then retry for the
 	** timeout period.
 	*/
 	for (;;) {
@@ -372,9 +372,9 @@ bool CD_Volume_Verification ( int cd_drive, char *volume_label, char *volume_to_
 			*/
 
 			//---------------------------------------------------------------------
-			// Windows '95 appears to have a volume name limit of 11 characters. 
-			// I cannot find a Win32 call that will return the maximum volume name 
-			// length so the value '11' is hard-coded here and the assumption made 
+			// Windows '95 appears to have a volume name limit of 11 characters.
+			// I cannot find a Win32 call that will return the maximum volume name
+			// length so the value '11' is hard-coded here and the assumption made
 			// that all OS's have this length or better.
 			//---------------------------------------------------------------------
 			if( WinVersion.Is_Win95()) {
@@ -393,7 +393,7 @@ bool CD_Volume_Verification ( int cd_drive, char *volume_label, char *volume_to_
 				count++;
 			} else {
 				return FALSE;
-			} 
+			}
 
 		} else {
 

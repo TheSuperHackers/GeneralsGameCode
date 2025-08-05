@@ -81,7 +81,7 @@ IMPLEMENT_DYNCREATE(CDataTreeView, CTreeView)
 //
 ////////////////////////////////////////////////////////////////////////////
 CDataTreeView::CDataTreeView (void)
-        : m_hMaterialsRoot (NULL),          
+        : m_hMaterialsRoot (NULL),
 			 m_hMeshRoot  (NULL),
 			 m_hMeshCollectionRoot (NULL),
 			 m_hAggregateRoot (NULL),
@@ -160,7 +160,7 @@ void CDataTreeView::Dump(CDumpContext& dc) const
 //  PreCreateWindow
 //
 BOOL
-CDataTreeView::PreCreateWindow (CREATESTRUCT& cs) 
+CDataTreeView::PreCreateWindow (CREATESTRUCT& cs)
 {
     // Modify the style bits for the window so it will
     // have buttons and lines between nodes.
@@ -179,7 +179,7 @@ CDataTreeView::OnInitialUpdate (void)
 {
 	// Allow the base class to process this message
     CTreeView::OnInitialUpdate ();
-	
+
 	// TODO: Add your specialized code here and/or call the base class
 	return ;
 }
@@ -190,16 +190,16 @@ CDataTreeView::OnInitialUpdate (void)
 //  CreateRootNodes
 //
 void
-CDataTreeView::CreateRootNodes (void) 
+CDataTreeView::CreateRootNodes (void)
 {
 	// Insert all the root nodes
-	m_hMaterialsRoot		= GetTreeCtrl ().InsertItem ("Materials", m_iMaterialIcon, m_iMaterialIcon);	
+	m_hMaterialsRoot		= GetTreeCtrl ().InsertItem ("Materials", m_iMaterialIcon, m_iMaterialIcon);
 	m_hMeshRoot				= GetTreeCtrl ().InsertItem ("Mesh", m_iMeshIcon, m_iMeshIcon);
 	m_hHierarchyRoot		= GetTreeCtrl ().InsertItem ("Hierarchy", m_iHierarchyIcon, m_iHierarchyIcon);
 	m_hLODRoot				= GetTreeCtrl ().InsertItem ("H-LOD", m_iLODIcon, m_iLODIcon);
 	m_hMeshCollectionRoot = GetTreeCtrl ().InsertItem ("Mesh Collection", m_iMeshIcon, m_iMeshIcon);
-	m_hAggregateRoot		= GetTreeCtrl ().InsertItem ("Aggregate", m_iAggregateIcon, m_iAggregateIcon);    
-	m_hEmitterRoot			= GetTreeCtrl ().InsertItem ("Emitter", m_iEmitterIcon, m_iEmitterIcon);	
+	m_hAggregateRoot		= GetTreeCtrl ().InsertItem ("Aggregate", m_iAggregateIcon, m_iAggregateIcon);
+	m_hEmitterRoot			= GetTreeCtrl ().InsertItem ("Emitter", m_iEmitterIcon, m_iEmitterIcon);
 	m_hPrimitivesRoot		= GetTreeCtrl ().InsertItem ("Primitives", m_iPrimitivesIcon, m_iPrimitivesIcon);
 	m_hSoundRoot			= GetTreeCtrl ().InsertItem ("Sounds", m_iSoundIcon, m_iSoundIcon);
 	return ;
@@ -211,14 +211,14 @@ CDataTreeView::CreateRootNodes (void)
 //  OnCreate
 //
 int
-CDataTreeView::OnCreate (LPCREATESTRUCT lpCreateStruct) 
+CDataTreeView::OnCreate (LPCREATESTRUCT lpCreateStruct)
 {
 	if (CTreeView::OnCreate(lpCreateStruct) == -1)
 		return -1;
 
     CImageList imageList;
     imageList.Create (16, 18, ILC_COLOR | ILC_MASK, 5, 10);
-    
+
     // Add the icons to the imagelist
     m_iAnimationIcon		= imageList.Add (::LoadIcon (::AfxGetResourceHandle (), MAKEINTRESOURCE (IDI_ANIMATION)));
 	 m_iTCAnimationIcon	= imageList.Add (::LoadIcon (::AfxGetResourceHandle (), MAKEINTRESOURCE (IDI_ANIMATION_COMPRESSED)));
@@ -248,12 +248,12 @@ CDataTreeView::OnCreate (LPCREATESTRUCT lpCreateStruct)
 //  Load_Materials_Into_Tree
 //
 void
-CDataTreeView::Load_Materials_Into_Tree (void) 
+CDataTreeView::Load_Materials_Into_Tree (void)
 {
 	// Get an iterator from the asset manager that we can
 	// use to enumerate the currently loaded textures
 	HashTemplateIterator<StringClass,TextureClass*> ite(WW3DAssetManager::Get_Instance()->Texture_Hash());
-		
+
 	// Loop through all the textures in the manager
 	for (ite.First ();
 		  !ite.Is_Done ();
@@ -286,7 +286,7 @@ CDataTreeView::Load_Materials_Into_Tree (void)
 //  LoadAssetsIntoTree
 //
 void
-CDataTreeView::LoadAssetsIntoTree (void) 
+CDataTreeView::LoadAssetsIntoTree (void)
 {
 	// Turn off repainting
 	GetTreeCtrl ().SetRedraw (FALSE);
@@ -307,7 +307,7 @@ CDataTreeView::LoadAssetsIntoTree (void)
 			// Does this render obj really exist?
 			LPCTSTR pszItemName = pObjEnum->Current_Item_Name ();
 			if (WW3DAssetManager::Get_Instance()->Render_Obj_Exists (pszItemName)) {
-				
+
 				BOOL bInsert = FALSE;
 				HTREEITEM hParentNode = NULL;
 				ASSET_TYPE assetType = TypeUnknown;
@@ -316,7 +316,7 @@ CDataTreeView::LoadAssetsIntoTree (void)
 				// What type of asset is this?
 				switch (pObjEnum->Current_Item_Class_ID ()) {
 
-					case RenderObjClass::CLASSID_COLLECTION:						
+					case RenderObjClass::CLASSID_COLLECTION:
 						// This is a 'mesh collection', we want to add this under the 'collection' node.
 						bInsert = TRUE;
 						hParentNode = m_hMeshCollectionRoot;
@@ -327,7 +327,7 @@ CDataTreeView::LoadAssetsIntoTree (void)
 					//
 					// This is a mesh render object, we want to add this under the mesh node.
 					//
-					case RenderObjClass::CLASSID_MESH:						
+					case RenderObjClass::CLASSID_MESH:
 						bInsert			= TRUE;
 						hParentNode		= m_hMeshRoot;
 						assetType		= TypeMesh;
@@ -336,12 +336,12 @@ CDataTreeView::LoadAssetsIntoTree (void)
 
 					//
 					// This is a sound render obj, we want to add this under the sound node.
-					//					
+					//
 					case RenderObjClass::CLASSID_SOUND:
 						bInsert			= TRUE;
 						hParentNode		= m_hSoundRoot;
 						assetType		= TypeSound;
-						iIconIndex		= m_iSoundIcon;						
+						iIconIndex		= m_iSoundIcon;
 						break;
 
 					case RenderObjClass::CLASSID_HMODEL:
@@ -349,7 +349,7 @@ CDataTreeView::LoadAssetsIntoTree (void)
 						ASSERT (0);
 						break;
 
-					case RenderObjClass::CLASSID_PARTICLEEMITTER:							
+					case RenderObjClass::CLASSID_PARTICLEEMITTER:
 						// This is an 'emitter', we want to add this under the 'emitter' node.
 						bInsert = TRUE;
 						hParentNode = m_hEmitterRoot;
@@ -459,7 +459,7 @@ CDataTreeView::LoadAnimationsIntoTree (void)
 
             // Get an instance of the animation object
             HAnimClass *pHierarchyAnim = WW3DAssetManager::Get_Instance()->Get_HAnim (pszAnimName);
-            
+
             ASSERT (pHierarchyAnim);
             if (pHierarchyAnim)
             {
@@ -478,7 +478,7 @@ CDataTreeView::LoadAnimationsIntoTree (void)
                         // Add this animation as a child of the hierarchy
                         hAnimationNode = GetTreeCtrl ().InsertItem (pszAnimName, m_iAnimationIcon, m_iAnimationIcon, hNode, TVI_SORT);
                         ASSERT (hAnimationNode != NULL);
-                                    
+
                         // Associate the items name with its entry
                         GetTreeCtrl ().SetItemData (hAnimationNode, (ULONG)new AssetInfoClass (pszAnimName, TypeAnimation));
                     }
@@ -496,7 +496,7 @@ CDataTreeView::LoadAnimationsIntoTree (void)
                         // Add this animation as a child of the hierarchy
                         hAnimationNode = GetTreeCtrl ().InsertItem (pszAnimName, m_iAnimationIcon, m_iAnimationIcon, hNode, TVI_SORT);
                         ASSERT (hAnimationNode != NULL);
-                                    
+
                         // Associate the items name with its entry
                         GetTreeCtrl ().SetItemData (hAnimationNode, (ULONG)new AssetInfoClass (pszAnimName, TypeAnimation));
                     }
@@ -514,7 +514,7 @@ CDataTreeView::LoadAnimationsIntoTree (void)
                         // Add this animation as a child of the hierarchy
                         hAnimationNode = GetTreeCtrl ().InsertItem (pszAnimName, m_iAnimationIcon, m_iAnimationIcon, hNode, TVI_SORT);
                         ASSERT (hAnimationNode != NULL);
-                                    
+
                         // Associate the items name with its entry
                         GetTreeCtrl ().SetItemData (hAnimationNode, (ULONG)new AssetInfoClass (pszAnimName, TypeAnimation));
                     }
@@ -522,14 +522,14 @@ CDataTreeView::LoadAnimationsIntoTree (void)
 
                 // Release our hold on this animation...
 					 MEMBER_RELEASE (pHierarchyAnim);
-            }							
+            }
         }
-        
+
         // Free the object
         delete pAnimEnum;
         pAnimEnum = NULL;
     }
-    
+
     return ;
 }
 
@@ -559,7 +559,7 @@ CDataTreeView::LoadAnimationsIntoTree (HTREEITEM hItem)
 
             // Get an instance of the animation object
             HAnimClass *pHierarchyAnim = WW3DAssetManager::Get_Instance()->Get_HAnim (pszAnimName);
-            
+
             ASSERT (pHierarchyAnim);
             if (pHierarchyAnim)
             {
@@ -576,7 +576,7 @@ CDataTreeView::LoadAnimationsIntoTree (HTREEITEM hItem)
                         // Add this animation as a child of the hierarchy
                         hAnimationNode = GetTreeCtrl ().InsertItem (pszAnimName, m_iAnimationIcon, m_iAnimationIcon, hItem, TVI_SORT);
                         ASSERT (hAnimationNode != NULL);
-                                    
+
                         // Associate the items name with its entry
                         GetTreeCtrl ().SetItemData (hAnimationNode, (ULONG)new AssetInfoClass (pszAnimName, TypeAnimation));
                     }
@@ -584,17 +584,17 @@ CDataTreeView::LoadAnimationsIntoTree (HTREEITEM hItem)
 
                 // Release our hold on the animation object
                 MEMBER_RELEASE (pHierarchyAnim);
-            }				
+            }
         }
-        
+
         // Free the object
         delete pAnimEnum;
         pAnimEnum = NULL;
     }
-    
+
     return ;
 }
-   
+
 
 ////////////////////////////////////////////////////////////////////////////
 //
@@ -612,7 +612,7 @@ CDataTreeView::Determine_Tree_Location
 
 	// What class does this render object belong to?
 	switch (render_obj.Class_ID ()) {
-		
+
 		case RenderObjClass::CLASSID_COLLECTION:
 			hroot				= m_hMeshCollectionRoot;
 			type				= TypeMesh;
@@ -623,15 +623,15 @@ CDataTreeView::Determine_Tree_Location
 			hroot = m_hMeshRoot;
 			type = TypeMesh;
 			icon_index = m_iMeshIcon;
-			break;						  
-		
+			break;
+
 		case RenderObjClass::CLASSID_SOUND:
 			hroot				= m_hSoundRoot;
 			type				= TypeSound;
 			icon_index		= m_iSoundIcon;
-			break;						  		
+			break;
 
-		case RenderObjClass::CLASSID_HMODEL:			
+		case RenderObjClass::CLASSID_HMODEL:
 			// Shouldn't happen
 			ASSERT (0);
 			break;
@@ -648,7 +648,7 @@ CDataTreeView::Determine_Tree_Location
 			type				= TypePrimitives;
 			icon_index		= m_iPrimitivesIcon;
 			break;
-	
+
 		case RenderObjClass::CLASSID_DISTLOD:
 		case RenderObjClass::CLASSID_HLOD:
          hroot				= m_hHierarchyRoot;
@@ -758,7 +758,7 @@ CDataTreeView::Add_Asset_To_Tree
 
 		// Turn off repainting
 		GetTreeCtrl ().SetRedraw (FALSE);
-		
+
 		// Determime where this asset should go
 		HTREEITEM hparent = NULL;
 		int icon_index = 0;
@@ -774,7 +774,7 @@ CDataTreeView::Add_Asset_To_Tree
 																 icon_index,
 																 hparent,
 																 TVI_SORT);
-			
+
 			// Associate the render object with its entry in the tree
 			AssetInfoClass *asset_info = new AssetInfoClass (name, type);
 			GetTreeCtrl ().SetItemData (htree_item, (ULONG)asset_info);
@@ -905,7 +905,7 @@ CDataTreeView::FindSiblingItemBasedOnHierarchyName
             // This was the item we were looking for, return
             // its handle to the caller
             hSiblingItem = hTreeItem;
-        }        
+        }
     }
 
     // Return the sibling item handle
@@ -943,7 +943,7 @@ CDataTreeView::FindFirstChildItemBasedOnHierarchyName
             // This was the child item we were looking for, return
             // its handle to the caller
             hChildItem = hTreeItem;
-        }        
+        }
     }
 
     // Return the child item handle
@@ -984,7 +984,7 @@ CDataTreeView::Display_Asset (HTREEITEM htree_item)
 	//
 	// Get the object associated with this entry
 	//
-	AssetInfoClass *asset_info = NULL;	
+	AssetInfoClass *asset_info = NULL;
 	if (htree_item != NULL) {
 		asset_info = (AssetInfoClass *)GetTreeCtrl ().GetItemData (htree_item);
 	}
@@ -1006,7 +1006,7 @@ CDataTreeView::Display_Asset (HTREEITEM htree_item)
 					if (hParentItem != NULL) {
 
 						// Ask the document to start playing the animation for this object
-						RenderObjClass *prender_obj = Create_Render_Obj_To_Display (hParentItem);                         
+						RenderObjClass *prender_obj = Create_Render_Obj_To_Display (hParentItem);
 						pdoc->PlayAnimation (prender_obj,
 						asset_info->Get_Name ());
 						MEMBER_RELEASE (prender_obj);
@@ -1067,7 +1067,7 @@ CDataTreeView::Display_Asset (HTREEITEM htree_item)
 		ASSERT (pdoc != NULL);
 		if (pdoc != NULL) {
 			pdoc->DisplayObject ((RenderObjClass *)NULL);
-			
+
 			CMainFrame *main_wnd = (CMainFrame *)::AfxGetMainWnd ();
 			if (main_wnd != NULL) {
 				main_wnd->OnSelectionChanged (TypeUnknown);
@@ -1088,12 +1088,12 @@ CDataTreeView::OnDeleteItem
 (
 	NMHDR *pNMHDR,
 	LRESULT *pResult
-) 
+)
 {
 	// Get the information object for this asset
-	NM_TREEVIEW* pNMTreeView = (NM_TREEVIEW*)pNMHDR;	
+	NM_TREEVIEW* pNMTreeView = (NM_TREEVIEW*)pNMHDR;
 	AssetInfoClass *asset_info = (AssetInfoClass *)pNMTreeView->itemOld.lParam;
-	
+
 	// If this is a texture, then free our hold on its interface
 	if (asset_info && (asset_info->Get_Type () == TypeMaterial)) {
 		TextureClass *ptexture = (TextureClass *)asset_info->Get_User_Number ();
@@ -1197,7 +1197,7 @@ CDataTreeView::GetCurrentSelectionType (void)
 	// Get the currently selected node from the tree control
 	HTREEITEM htree_item = GetTreeCtrl ().GetSelectedItem ();
 	if (htree_item != NULL) {
-		
+
 		// Get the associated asset information for this node.
 		AssetInfoClass *asset_info = (AssetInfoClass *)GetTreeCtrl ().GetItemData (htree_item);
 		if (asset_info != NULL) {
@@ -1247,7 +1247,7 @@ CDataTreeView::Build_Render_Object_List
 	// Loop through all the children of this node
 	for (HTREEITEM htree_item = GetTreeCtrl ().GetChildItem (hparent);
 		  (htree_item != NULL);
-		  htree_item = GetTreeCtrl ().GetNextSiblingItem (htree_item)) {		
+		  htree_item = GetTreeCtrl ().GetNextSiblingItem (htree_item)) {
 
 		// Determine if this is an asset type we want to add to the list
 		AssetInfoClass *asset_info = (AssetInfoClass *)GetTreeCtrl ().GetItemData (htree_item);
@@ -1264,7 +1264,7 @@ CDataTreeView::Build_Render_Object_List
 			Build_Render_Object_List (asset_list, htree_item);
 		}
 	}
-	
+
 	return ;
 }
 
@@ -1281,7 +1281,7 @@ CDataTreeView::Create_Render_Obj_To_Display (HTREEITEM htree_item)
 	RenderObjClass *render_obj = NULL;
 	AssetInfoClass *asset_info = (AssetInfoClass *)GetTreeCtrl ().GetItemData (htree_item);
 	if (asset_info != NULL) {
-		
+
 		// Use the asset's instance if there is one, otherwise attempt to create one
 		render_obj = asset_info->Get_Render_Obj ();
 		if (render_obj == NULL) {
@@ -1298,7 +1298,7 @@ CDataTreeView::Create_Render_Obj_To_Display (HTREEITEM htree_item)
 			// Finally, if we aren't successful, create a new instance based on its name
 			//
 			if (render_obj == NULL) {
-				render_obj = WW3DAssetManager::Get_Instance()->Create_Render_Obj (asset_info->Get_Name ());				
+				render_obj = WW3DAssetManager::Get_Instance()->Create_Render_Obj (asset_info->Get_Name ());
 			}
 		}
 	}
@@ -1311,7 +1311,7 @@ CDataTreeView::Create_Render_Obj_To_Display (HTREEITEM htree_item)
 	{
 		Set_Highest_LOD (render_obj);
 	}
-	
+
 	return render_obj;
 }
 
@@ -1333,7 +1333,7 @@ CDataTreeView::Refresh_Asset
 
 		// Turn off repainting
 		GetTreeCtrl ().SetRedraw (FALSE);
-		
+
 		// Determime where this asset should go
 		HTREEITEM hparent = NULL;
 		int icon_index = 0;
@@ -1350,7 +1350,7 @@ CDataTreeView::Refresh_Asset
 			AssetInfoClass *asset_info = (AssetInfoClass *)GetTreeCtrl ().GetItemData (htree_item);
 			if (asset_info != NULL) {
 				asset_info->Set_Name (new_name);
-			}		
+			}
 		} else {
 
 			// This asset wasn't already in the tree, so add it...
@@ -1362,7 +1362,7 @@ CDataTreeView::Refresh_Asset
 
 		// Force the window to be repainted
 		Invalidate (FALSE);
-		UpdateWindow ();	
+		UpdateWindow ();
 	}
 
 	return ;
@@ -1457,7 +1457,7 @@ CDataTreeView::Free_Child_Models (HTREEITEM parent_item)
 		AssetInfoClass *asset_info = (AssetInfoClass *)GetTreeCtrl ().GetItemData (tree_item);
 		if (asset_info  != NULL) {
 			WW3DAssetManager::Get_Instance ()->Remove_Prototype (asset_info->Get_Name ());
-		}        
+		}
 	}
 
 	return ;
@@ -1470,7 +1470,7 @@ CDataTreeView::Free_Child_Models (HTREEITEM parent_item)
 //
 ////////////////////////////////////////////////////////////////////////////
 void
-Set_Highest_LOD (RenderObjClass *render_obj) 
+Set_Highest_LOD (RenderObjClass *render_obj)
 {
 	if (render_obj != NULL) {
 		for (int index = 0; index < render_obj->Get_Num_Sub_Objects (); index ++) {
@@ -1503,7 +1503,7 @@ CDataTreeView::Restrict_Anims (bool onoff)
 {
 	if (m_RestrictAnims != onoff) {
 		m_RestrictAnims = onoff;
-		
+
 		//
 		//	Reload the tree
 		//

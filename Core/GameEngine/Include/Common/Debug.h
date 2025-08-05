@@ -22,14 +22,14 @@
 //																																						//
 ////////////////////////////////////////////////////////////////////////////////
 
-// FILE: Debug.h 
+// FILE: Debug.h
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information					         
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:    RTS3
@@ -61,7 +61,7 @@ class AsciiString;
 #endif
 
 // These are stolen from the WW3D Debug file. REALLY useful. :-)
-#define STRING_IT(a) #a																				  
+#define STRING_IT(a) #a
 #define TOKEN_IT(a) STRING_IT(,##a)
 #define MESSAGE(a) message (__FILE__ "(" TOKEN_IT(__LINE__) ") : " a)
 
@@ -117,9 +117,9 @@ class AsciiString;
 
 #ifdef ALLOW_DEBUG_UTILS
 
-	enum 
+	enum
 	{
-		DEBUG_FLAG_LOG_TO_FILE = 0x01,	
+		DEBUG_FLAG_LOG_TO_FILE = 0x01,
 		DEBUG_FLAG_LOG_TO_CONSOLE = 0x02,
 		DEBUG_FLAG_PREPEND_TIME = 0x04,
 		DEBUG_FLAGS_DEFAULT = (DEBUG_FLAG_LOG_TO_FILE | DEBUG_FLAG_LOG_TO_CONSOLE),
@@ -181,7 +181,7 @@ class AsciiString;
 
 	/*
 		Yeah, it's a sleazy global, since we can't reasonably add
-		any args to DebugCrash due to the varargs nature of it. 
+		any args to DebugCrash due to the varargs nature of it.
 		We'll just let it slide in this case...
 	*/
 	DEBUG_EXTERN_C char* TheCurrentIgnoreCrashPtr;
@@ -253,7 +253,7 @@ public:
 	prof_##uniqueid.stopAndLog(msg, howoftentolog, howoftentoreset);
 
 #else
-	
+
 #define BEGIN_PROFILE(uniqueid)
 #define END_PROFILE(uniqueid, msg, howoftentolog, howoftentoreset)
 

@@ -16,22 +16,22 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/*********************************************************************************************** 
- ***              C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S               *** 
- *********************************************************************************************** 
- *                                                                                             * 
- *                 Project Name : Command & Conquer                                            * 
- *                                                                                             * 
- *                     $Archive:: /Commando/Code/wwlib/rawfile.cpp                            $* 
- *                                                                                             * 
+/***********************************************************************************************
+ ***              C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S               ***
+ ***********************************************************************************************
+ *                                                                                             *
+ *                 Project Name : Command & Conquer                                            *
+ *                                                                                             *
+ *                     $Archive:: /Commando/Code/wwlib/rawfile.cpp                            $*
+ *                                                                                             *
  *                      $Author:: Jani_p                                                      $*
- *                                                                                             * 
+ *                                                                                             *
  *                     $Modtime:: 11/25/01 1:26p                                              $*
- *                                                                                             * 
+ *                                                                                             *
  *                    $Revision:: 13                                                          $*
  *                                                                                             *
- *---------------------------------------------------------------------------------------------* 
- * Functions:                                                                                  * 
+ *---------------------------------------------------------------------------------------------*
+ * Functions:                                                                                  *
  *   RawFileClass::Bias -- Bias a file with a specific starting position and length.           *
  *   RawFileClass::Close -- Perform a closure of the file.                                     *
  *   RawFileClass::Create -- Creates an empty file.                                            *
@@ -216,7 +216,7 @@ void RawFileClass::Error(int, int, char const * )
  * HISTORY:                                                                                    *
  *   10/18/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-int RawFileClass::Transfer_Block_Size(void) 
+int RawFileClass::Transfer_Block_Size(void)
 {
 	return (int)((unsigned)UINT_MAX)-16L;
 }
@@ -567,7 +567,7 @@ void RawFileClass::Close(void)
 		**	Try to close the file. If there was an error (who knows what that could be), then
 		**	call the error routine.
 		*/
-		int closeok=(fclose(Handle)==0)?true:false;	
+		int closeok=(fclose(Handle)==0)?true:false;
 
 		if (!closeok) {
 			Error(errno, false, Filename);
@@ -837,10 +837,10 @@ int RawFileClass::Size(void)
 	if (Is_Open()) {
 
 		size_t curpos;
-		curpos = ftell(Handle);	
+		curpos = ftell(Handle);
 
 		fseek(Handle,0,SEEK_END);
-		size = ftell(Handle);	
+		size = ftell(Handle);
 
 		fseek(Handle,curpos,SEEK_SET);
 
@@ -1142,7 +1142,7 @@ int RawFileClass::Raw_Seek(int pos, int dir)
 void RawFileClass::Attach (void *handle, int rights)
 {
 	Reset ();
-	
+
 	Rights = rights;
 	BiasStart = 0;
 	BiasLength = -1;
@@ -1171,6 +1171,6 @@ void RawFileClass::Detach (void)
 	BiasLength = -1;
 	Date = 0;
 	Time = 0;
-	Handle = NULL_HANDLE;	
+	Handle = NULL_HANDLE;
 }
 

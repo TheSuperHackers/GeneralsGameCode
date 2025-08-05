@@ -36,9 +36,9 @@
 #undef DBGHELP
 
 #define DBGHELP(name,ret,par) name##Type _##name;
-static union 
+static union
 {
-  struct  
+  struct
   {
 #include "debug_stack.inl"
   };
@@ -80,7 +80,7 @@ static void InitDbghelp(void)
 	if (!g_dbghelp)
 		// load any version we can
 		g_dbghelp=::LoadLibrary("DBGHELP.DLL");
-  
+
   if (!g_dbghelp)
     return;
 
@@ -137,7 +137,7 @@ unsigned DebugStackwalk::Signature::GetAddress(int n) const
   return m_addr[n];
 }
 
-void DebugStackwalk::Signature::GetSymbol(unsigned addr, char *buf, unsigned bufSize) 
+void DebugStackwalk::Signature::GetSymbol(unsigned addr, char *buf, unsigned bufSize)
 {
   DFAIL_IF(!buf) return;
   DFAIL_IF(bufSize<64||bufSize>=0x80000000) return;
@@ -213,7 +213,7 @@ void DebugStackwalk::Signature::GetSymbol(unsigned addr,
   if (relMod) *relMod=0;
   if (bufSym) *bufSym=0;
   if (relSym) *relSym=0;
-  
+
   if (bufFile) *bufFile=0;
   if (linePtr) *linePtr=0;
   if (relLine) *relLine=0;
@@ -271,7 +271,7 @@ void DebugStackwalk::Signature::GetSymbol(unsigned addr,
       if (relSym)
         *relSym=displacement;
     }
-    else 
+    else
       strcpy(bufSym,"(unknown)");
   }
 
@@ -353,7 +353,7 @@ int DebugStackwalk::StackWalk(Signature &sig, struct _CONTEXT *ctx)
 	stackFrame.AddrFrame.Mode = AddrModeFlat;
 
 	// Use the context struct if it was provided.
-	if (ctx) 
+	if (ctx)
   {
 		stackFrame.AddrPC.Offset = ctx->Eip;
 		stackFrame.AddrStack.Offset = ctx->Esp;
@@ -363,7 +363,7 @@ int DebugStackwalk::StackWalk(Signature &sig, struct _CONTEXT *ctx)
   {
     // walk stack back using current call chain
 	  unsigned long reg_eip, reg_ebp, reg_esp;
-	  __asm 
+	  __asm
     {
     here:
 		  lea	eax,here

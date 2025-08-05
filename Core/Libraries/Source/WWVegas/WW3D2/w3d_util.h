@@ -69,7 +69,7 @@ public:
 
 	static void	Convert_Color(const W3dRGBAStruct & rgb,Vector4 * set);
 	static void	Convert_Color(const Vector4 & v,W3dRGBAStruct * set);
-	
+
 	static void Convert_Shader(const W3dShaderStruct & shader,ShaderClass * set);
 	static void Convert_Shader(const ShaderClass & shader,W3dShaderStruct * set);
 

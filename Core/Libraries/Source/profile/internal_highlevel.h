@@ -174,7 +174,7 @@ private:
     ProfileId's can't be destructed.
   */
   ~ProfileId() {}
-  
+
   enum
   {
     /// # of simultaneous frame recordings

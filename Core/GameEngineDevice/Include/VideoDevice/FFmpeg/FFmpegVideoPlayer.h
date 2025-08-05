@@ -33,7 +33,7 @@
 
 
 //----------------------------------------------------------------------------
-//           Includes                                                      
+//           Includes
 //----------------------------------------------------------------------------
 
 #include "GameClient/VideoPlayer.h"
@@ -65,15 +65,15 @@ class FFmpegVideoStream : public VideoStream
 		SwsContext 		*m_swsContext = nullptr;///< SWSContext for scaling
 		FFmpegFile		*m_ffmpegFile;			///< The AVUI abstraction											///< Bink streaming handle;
 		Char			*m_memFile;				///< Pointer to memory resident file
-		UnsignedInt64	m_startTime = 0;		///< Time the stream started		
+		UnsignedInt64	m_startTime = 0;		///< Time the stream started
 		UnsignedByte *	m_audioBuffer = nullptr;///< Audio buffer for the stream
 
 		FFmpegVideoStream(FFmpegFile* file);																///< only BinkVideoPlayer can create these
-		virtual ~FFmpegVideoStream();												
-												
+		virtual ~FFmpegVideoStream();
+
 		static void onFrame(AVFrame *frame, int stream_idx, int stream_type, void *user_data);
-	public:																							
-																											
+	public:
+
 		virtual void update( void );											///< Update bink stream
 
 		virtual Bool	isFrameReady( void );								///< Is the frame ready to be displayed
@@ -110,17 +110,17 @@ class FFmpegVideoPlayer : public VideoPlayer
 		virtual void	init( void );														///< Initialize video playback code
 		virtual void	reset( void );													///< Reset video playback
 		virtual void	update( void );													///< Services all audio tasks. Should be called frequently
-																													
+
 		virtual void	deinit( void );													///< Close down player
-																														
-																													
-		FFmpegVideoPlayer();																				
-		~FFmpegVideoPlayer();																				
-																													
-		// service																						
+
+
+		FFmpegVideoPlayer();
+		~FFmpegVideoPlayer();
+
+		// service
 		virtual void	loseFocus( void );											///< Should be called when application loses focus
 		virtual void	regainFocus( void );										///< Should be called when application regains focus
-																												
+
 		virtual VideoStreamInterface*	open( AsciiString movieTitle );	///< Open video file for playback
 		virtual VideoStreamInterface*	load( AsciiString movieTitle );	///< Load video file in to memory for playback
 
@@ -130,7 +130,7 @@ class FFmpegVideoPlayer : public VideoPlayer
 
 
 //----------------------------------------------------------------------------
-//           Inlining                                                       
+//           Inlining
 //----------------------------------------------------------------------------
 
 

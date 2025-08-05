@@ -17,7 +17,7 @@
 */
 
 //
-// If you link with this it will automatically call the COM initialization stuff 
+// If you link with this it will automatically call the COM initialization stuff
 //
 #include "COMINIT.H"
 #include <stdlib.h>

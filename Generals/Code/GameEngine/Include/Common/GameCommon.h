@@ -24,12 +24,12 @@
 
 // FILE: GameCommon.h ////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information					         
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:    RTS3
@@ -76,36 +76,36 @@ const Real SECONDS_PER_LOGICFRAME_REAL = 1.0f / LOGICFRAMES_PER_SECONDS_REAL;
 // ----------------------------------------------------------------------------------------------
 // note that this returns a REAL value, not an int... most callers will want to
 // call ceil() on the result, so that partial frames get converted to full frames!
-inline Real ConvertDurationFromMsecsToFrames(Real msec) 
-{	
-	return (msec * LOGICFRAMES_PER_MSEC_REAL); 
+inline Real ConvertDurationFromMsecsToFrames(Real msec)
+{
+	return (msec * LOGICFRAMES_PER_MSEC_REAL);
 }
 
 // ----------------------------------------------------------------------------------------------
-inline Real ConvertVelocityInSecsToFrames(Real distPerMsec) 
-{	
+inline Real ConvertVelocityInSecsToFrames(Real distPerMsec)
+{
 	// this looks wrong, but is the correct conversion factor.
-	return (distPerMsec * SECONDS_PER_LOGICFRAME_REAL); 
+	return (distPerMsec * SECONDS_PER_LOGICFRAME_REAL);
 }
 
 // ----------------------------------------------------------------------------------------------
-inline Real ConvertAccelerationInSecsToFrames(Real distPerSec2) 
-{	
+inline Real ConvertAccelerationInSecsToFrames(Real distPerSec2)
+{
 	// this looks wrong, but is the correct conversion factor.
 	const Real SEC_PER_LOGICFRAME_SQR = (SECONDS_PER_LOGICFRAME_REAL * SECONDS_PER_LOGICFRAME_REAL);
-	return (distPerSec2 * SEC_PER_LOGICFRAME_SQR); 
+	return (distPerSec2 * SEC_PER_LOGICFRAME_SQR);
 }
 
 // ----------------------------------------------------------------------------------------------
-inline Real ConvertAngularVelocityInDegreesPerSecToRadsPerFrame(Real degPerSec) 
-{	
+inline Real ConvertAngularVelocityInDegreesPerSecToRadsPerFrame(Real degPerSec)
+{
 	const Real RADS_PER_DEGREE = PI / 180.0f;
-	return (degPerSec * (SECONDS_PER_LOGICFRAME_REAL * RADS_PER_DEGREE)); 
+	return (degPerSec * (SECONDS_PER_LOGICFRAME_REAL * RADS_PER_DEGREE));
 }
 
 // ----------------------------------------------------------------------------------------------
-enum 
-{ 
+enum
+{
 	MAX_PLAYER_COUNT = 16											///< max number of Players.
 };
 
@@ -174,8 +174,8 @@ enum GuardMode CPP_11(: Int)
 };
 
 // ---------------------------------------------------
-enum 
-{ 
+enum
+{
 	NEVER				= 0,
 	FOREVER			= 0x3fffffff			// (we use 0x3fffffff so that we can add offsets and not overflow...
 																//		at 30fps we're still pretty safe!)
@@ -202,15 +202,15 @@ enum VeterancyLevel CPP_11(: Int)
 };
 
 // TheVeterancyNames is defined in GameCommon.cpp
-extern const char *TheVeterancyNames[]; 
+extern const char *TheVeterancyNames[];
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-enum CommandSourceType CPP_11(: Int) 
-{ 
+enum CommandSourceType CPP_11(: Int)
+{
 
-	CMD_FROM_PLAYER = 0, 
-	CMD_FROM_SCRIPT, 
+	CMD_FROM_PLAYER = 0,
+	CMD_FROM_SCRIPT,
 	CMD_FROM_AI,
 	CMD_FROM_DOZER,							// Special rare command when the dozer originates a command to attack a mine. Mines are not ai-attackable, and it seems deceitful for the dozer to generate a player or script command. jba.
 
@@ -233,7 +233,7 @@ enum AbleToAttackType CPP_11(: Int)
 		(The only current difference between this and ATTACK_NEW_TARGET is that disguised units
 		are force-attackable even when stealthed.)
 	*/
-	ATTACK_NEW_TARGET_FORCED= (_ATTACK_FORCED),	
+	ATTACK_NEW_TARGET_FORCED= (_ATTACK_FORCED),
 
 	/**
 		can we attack if this is continuation of an existing attack?
@@ -254,7 +254,7 @@ enum AbleToAttackType CPP_11(: Int)
 		For example, a unit inside couldn't normally see outside and would fail.
 	*/
 	ATTACK_TUNNEL_NETWORK_GUARD = (_ATTACK_TUNNELNETWORK_GUARD)
-	
+
 };
 
 //-------------------------------------------------------------------------------------------------
@@ -360,7 +360,7 @@ private:																																							\
 		inline ~DLINKHEAD_##LISTNAME()																										\
 			{ DEBUG_ASSERTCRASH(!m_head,("destroying dlinkhead still in a list " #LISTNAME)); }				\
 	};																																									\
-	DLINKHEAD_##LISTNAME m_dlinkhead_##LISTNAME;	
+	DLINKHEAD_##LISTNAME m_dlinkhead_##LISTNAME;
 
 // ----------------------------------------------------------------------------------------------
 #define MAKE_DLINK(OBJCLASS, LISTNAME)	\
@@ -414,11 +414,11 @@ private:																\
 		inline ~DLINK_##LISTNAME()					\
 			{ DEBUG_ASSERTCRASH(!m_prev && !m_next,("destroying dlink still in a list "  #LISTNAME)); } \
 	};																		\
-	DLINK_##LISTNAME m_dlink_##LISTNAME;	
+	DLINK_##LISTNAME m_dlink_##LISTNAME;
 
 // ------------------------------------------------------------------------
 // this is the weird C++ syntax for "call pointer-to-member-function"... see C++ FAQ LITE for details.
-#define callMemberFunction(object,ptrToMember)  ((object).*(ptrToMember)) 
+#define callMemberFunction(object,ptrToMember)  ((object).*(ptrToMember))
 
 // ------------------------------------------------------------------------
 template<class OBJCLASS>
@@ -426,29 +426,29 @@ class DLINK_ITERATOR
 {
 public:
 	// this is the weird C++ syntax for "pointer-to-member-function"
-	typedef OBJCLASS* (OBJCLASS::*GetNextFunc)() const;	
+	typedef OBJCLASS* (OBJCLASS::*GetNextFunc)() const;
 private:
 	OBJCLASS* m_cur;
 	GetNextFunc m_getNextFunc;	// this is the weird C++ syntax for "pointer-to-member-function"
 public:
-	DLINK_ITERATOR(OBJCLASS* cur, GetNextFunc getNextFunc) : m_cur(cur), m_getNextFunc(getNextFunc) 
-	{ 
+	DLINK_ITERATOR(OBJCLASS* cur, GetNextFunc getNextFunc) : m_cur(cur), m_getNextFunc(getNextFunc)
+	{
 	}
-	
+
 	void advance()
-	{ 
+	{
 		if (m_cur)
 			m_cur = callMemberFunction(*m_cur, m_getNextFunc)();
 	}
-	
+
 	Bool done() const
-	{ 
-		return m_cur == NULL; 
+	{
+		return m_cur == NULL;
 	}
 
-	OBJCLASS* cur() const 
-	{ 
-		return m_cur; 
+	OBJCLASS* cur() const
+	{
+		return m_cur;
 	}
 
 };

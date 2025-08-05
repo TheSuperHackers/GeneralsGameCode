@@ -58,7 +58,7 @@ SimplePersistFactoryClass<FilteredSoundClass, CHUNKID_FILTERED_SOUND> _FilteredS
 /////////////////////////////////////////////////////////////////////////////////
 FilteredSoundClass::FilteredSoundClass (void)
 	:	m_hFilter (INVALID_MILES_HANDLE)
-{	
+{
 	return ;
 }
 
@@ -83,7 +83,7 @@ FilteredSoundClass::FilteredSoundClass (const FilteredSoundClass &src)
 //
 /////////////////////////////////////////////////////////////////////////////////
 FilteredSoundClass::~FilteredSoundClass (void)
-{	
+{
 	return ;
 }
 
@@ -114,7 +114,7 @@ FilteredSoundClass::Initialize_Miles_Handle (void)
 	m_hFilter = WWAudioClass::Get_Instance ()->Get_Reverb_Filter ();
 	if ((m_SoundHandle != NULL) &&
 		 (m_hFilter != INVALID_MILES_HANDLE)) {
-		
+
 		//
 		//	Pass the filter onto the sample
 		//
@@ -138,7 +138,7 @@ FilteredSoundClass::Initialize_Miles_Handle (void)
 														"Reverb decay time",
 														&reverb_decay);
 	}
-	
+
 	Update_Volume ();
 	return ;
 }

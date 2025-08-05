@@ -22,14 +22,14 @@
 //																																						//
 ////////////////////////////////////////////////////////////////////////////////
 
-// FILE: Dict.cpp 
+// FILE: Dict.cpp
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information					         
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:    RTS3
@@ -130,7 +130,7 @@ Dict::DictPair* Dict::findPairByKey(NameKeyType key) const
 	DictPair* base = m_data->peek();
 	Int minIdx = 0;
 	Int maxIdx = m_data->m_numPairsUsed;
-	while (minIdx < maxIdx) 
+	while (minIdx < maxIdx)
 	{
 		Int midIdx = (((minIdx + maxIdx) - 1) >> 1);
 		DictPair* mid = base + midIdx;
@@ -165,7 +165,7 @@ Dict::DictPair *Dict::ensureUnique(int numPairsNeeded, Bool preserveData, DictPa
 		int minBytes = sizeof(Dict::DictPairData) + numPairsNeeded*sizeof(Dict::DictPair);
 		int actualBytes = TheDynamicMemoryAllocator->getActualAllocationSize(minBytes);
 		// note: be certain to alloc with zero; we'll take advantage of the fact that all-zero
-		// is a bit-pattern that happens to init all our pairs to legal values: 
+		// is a bit-pattern that happens to init all our pairs to legal values:
 		// type BOOL, key INVALID, value FALSE.
 		newData = (Dict::DictPairData*)TheDynamicMemoryAllocator->allocateBytes(actualBytes, "Dict::ensureUnique");
 		newData->m_refCount = 1;
@@ -421,7 +421,7 @@ Dict::DictPair *Dict::setPrep(NameKeyType key, Dict::DataType type)
 	Int pairsNeeded = getPairCount();
 	if (!pair)
 		++pairsNeeded;
-	pair = ensureUnique(pairsNeeded, true, pair);	
+	pair = ensureUnique(pairsNeeded, true, pair);
 	if (!pair)
 	{
 		pair = &m_data->peek()[m_data->m_numPairsUsed++];
@@ -438,21 +438,21 @@ void Dict::sortPairs()
 		return;
 
 	// yer basic shellsort.
-	for (Int gap = m_data->m_numPairsUsed >> 1; gap > 0; gap >>= 1) 
+	for (Int gap = m_data->m_numPairsUsed >> 1; gap > 0; gap >>= 1)
 	{
-		for (Int i = gap; i < m_data->m_numPairsUsed; i++) 
+		for (Int i = gap; i < m_data->m_numPairsUsed; i++)
 		{
-			for (Int j = i - gap; j >= 0; j -= gap) 
+			for (Int j = i - gap; j >= 0; j -= gap)
 			{
 				DictPair* a = m_data->peek() + j;
 				DictPair* b = m_data->peek() + j + gap;
-				if (a->getName() > b->getName()) 
+				if (a->getName() > b->getName())
 				{
 					DictPair tmp = *a;
 					*a = *b;
 					*b = tmp;
-				} 
-				else 
+				}
+				else
 				{
 					break;
 				}
@@ -518,7 +518,7 @@ Bool Dict::remove(NameKeyType key)
 	DictPair* pair = findPairByKey(key);
 	if (pair)
 	{
-		pair = ensureUnique(m_data->m_numPairsUsed, true, pair);	
+		pair = ensureUnique(m_data->m_numPairsUsed, true, pair);
 		pair->setNameAndType((NameKeyType)0x7fffffff, DICT_BOOL);
 		sortPairs();
 		--m_data->m_numPairsUsed;

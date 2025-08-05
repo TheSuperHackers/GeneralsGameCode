@@ -26,8 +26,8 @@
  *                                                                                             *
  *              Original Author:: Jani Penttinen                                               *
  *                                                                                             *
- *                       $Author:: Kenny Mitchell                                               * 
- *                                                                                             * 
+ *                       $Author:: Kenny Mitchell                                               *
+ *                                                                                             *
  *                     $Modtime:: 06/26/02 4:04p                                             $*
  *                                                                                             *
  *                    $Revision:: 32                                                          $*
@@ -311,7 +311,7 @@ const Vector2 DazzleINIClass::Get_Vector2(char const *section, char const *entry
 	return defvalue;
 }
 
-const Vector3 DazzleINIClass::Get_Vector3(char const *section, char const * entry, const Vector3 & defvalue ) 
+const Vector3 DazzleINIClass::Get_Vector3(char const *section, char const * entry, const Vector3 & defvalue )
 {
 	if (section != NULL && entry != NULL) {
 		INIEntry * entryptr = Find_Entry(section, entry);

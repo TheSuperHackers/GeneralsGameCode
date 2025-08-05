@@ -24,12 +24,12 @@
 
 // FILE: WinInstanceData.h ////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information					         
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:    RTS3
@@ -98,7 +98,7 @@ struct TextDrawData
 // NOTE if you add data to this make sure you update winSetInstanceData()
 // NOTE if you add data to this make sure you update winSetInstanceData()
 //-----------------------------------------------------------------------------
-class WinInstanceData 
+class WinInstanceData
 {
 
 public:
@@ -134,7 +134,7 @@ public:
 // NOTE if you add data to this make sure you update winSetInstanceData()
 
 	/** @todo you may want to make these data members protected, they are public
-	because of the legacy of porting all this code in from Nox, but they 
+	because of the legacy of porting all this code in from Nox, but they
 	really should be protected and have the rest of the code use access
 	functions to edit them */
 
@@ -167,10 +167,10 @@ public:
 
 	DisplayString *m_text;				 ///< generic text for any window to display
 	DisplayString *m_tooltip;		 ///< tooltip for display
-	
+
 	//NOTE Video Buffer cannot be transfered to another window.
 	VideoBuffer *m_videoBuffer;			///< Each window can be made to play a video in it.
-	
+
 // NOTE if you add data to this make sure you update winSetInstanceData()
 // NOTE if you add data to this make sure you update winSetInstanceData()
 // NOTE if you add data to this make sure you update winSetInstanceData()
@@ -184,9 +184,9 @@ protected:
 ///////////////////////////////////////////////////////////////////////////////
 inline UnsignedInt WinInstanceData::getStyle( void ) { return m_style; }
 inline UnsignedInt WinInstanceData::getStatus( void ) { return m_status; }
-inline UnsignedInt WinInstanceData::getState( void ) { return m_state; }  
-inline GameWindow *WinInstanceData::getOwner( void ) { return m_owner; }  
-inline GameFont		*WinInstanceData::getFont( void ) { return m_font; }    
+inline UnsignedInt WinInstanceData::getState( void ) { return m_state; }
+inline GameWindow *WinInstanceData::getOwner( void ) { return m_owner; }
+inline GameFont		*WinInstanceData::getFont( void ) { return m_font; }
 inline DisplayString *WinInstanceData::getTextDisplayString( void ) { return m_text; }
 inline DisplayString *WinInstanceData::getTooltipDisplayString( void ) { return m_tooltip; }
 inline UnicodeString WinInstanceData::getTooltipText( void )

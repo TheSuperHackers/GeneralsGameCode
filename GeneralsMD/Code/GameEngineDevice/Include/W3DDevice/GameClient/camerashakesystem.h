@@ -50,7 +50,7 @@ class CameraClass;
 /**
 ** CameraShakeSystemClass
 ** This class encapsulates all of the logic and data needed to implement camera "shakes"
-** These are used to simulate explosions, earthquakes, etc.  
+** These are used to simulate explosions, earthquakes, etc.
 */
 class CameraShakeSystemClass
 {
@@ -59,12 +59,12 @@ public:
 	CameraShakeSystemClass(void);
 	~CameraShakeSystemClass(void);
 
-	enum 
+	enum
 	{
 		FLAGS_NONE = 0,
 		FLAGS_IGNOREPOSITION,
 	};
-	
+
 	void		Add_Camera_Shake(		const Vector3 & position,
 											float radius = 50.0f,
 											float duration = 1.5f,
@@ -74,17 +74,17 @@ public:
 	void		Update_Camera_Shaker(Vector3 camera_position, Vector3 * shaker_angles);
 
 	/**
-	** CameraShakerClass 
+	** CameraShakerClass
 	** This class encapsulates the current state of a camera shaker.  It is a multi-list object
 	** and is allocated in pools.
 	*/
 	class CameraShakerClass : public MultiListObjectClass, public AutoPoolClass<CameraShakerClass,256>
-	{	
+	{
 	public:
 		CameraShakerClass(const Vector3 & position,float radius,float duration,float power);
 		~CameraShakerClass(void);
 
-		void					Timestep(float dt)							{ ElapsedTime += dt; }	
+		void					Timestep(float dt)							{ ElapsedTime += dt; }
 		bool					Is_Expired(void)								{ return (ElapsedTime >= Duration); }
 		void					Compute_Rotations(const Vector3 & pos,Vector3 * set_angles);
 
@@ -94,7 +94,7 @@ public:
 		float					Radius;
 		float					Duration;
 		float					Intensity;
-	
+
 		float					ElapsedTime;
 		Vector3				Omega;
 		Vector3				Phi;

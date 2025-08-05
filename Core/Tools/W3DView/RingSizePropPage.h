@@ -49,7 +49,7 @@ public:
 	CSpinButtonCtrl	m_InnerSizeXSpin;
 	CSpinButtonCtrl	m_InnerSizeYSpin;
 	CSpinButtonCtrl	m_OuterSizeXSpin;
-	CSpinButtonCtrl	m_OuterSizeYSpin;	
+	CSpinButtonCtrl	m_OuterSizeYSpin;
 	//}}AFX_DATA
 
 
@@ -84,7 +84,7 @@ public:
 	//
 	//	Inline accessors
 	//
-	
+
 	RingRenderObjClass *		Get_Ring (void) const					{ return m_RenderObj; }
 	void							Set_Ring (RingRenderObjClass *ring)	{ m_RenderObj = ring; Initialize (); }
 	bool							Is_Data_Valid (void) const				{ return m_bValid; }

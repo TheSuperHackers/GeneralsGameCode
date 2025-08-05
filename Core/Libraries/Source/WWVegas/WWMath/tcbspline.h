@@ -66,7 +66,7 @@ public:
 	virtual bool								Save(ChunkSaveClass &csave);
 	virtual bool								Load(ChunkLoadClass &cload);
 
-protected:	
+protected:
 
 	class TCBClass
 	{

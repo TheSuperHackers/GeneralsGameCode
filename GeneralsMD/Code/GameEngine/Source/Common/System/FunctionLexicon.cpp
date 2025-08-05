@@ -61,7 +61,7 @@ extern WindowMsgHandledType PopupReplayInput( GameWindow *window, UnsignedInt ms
 extern WindowMsgHandledType ExtendedMessageBoxSystem( GameWindow *window, UnsignedInt msg, WindowMsgData mData1, WindowMsgData mData2 );
 
 // game window draw table -----------------------------------------------------------------------
-static FunctionLexicon::TableEntry gameWinDrawTable[] = 
+static FunctionLexicon::TableEntry gameWinDrawTable[] =
 {
 	{ NAMEKEY_INVALID, "IMECandidateMainDraw",						IMECandidateMainDraw },
 	{ NAMEKEY_INVALID, "IMECandidateTextAreaDraw",				IMECandidateTextAreaDraw },
@@ -69,7 +69,7 @@ static FunctionLexicon::TableEntry gameWinDrawTable[] =
 };
 
 // game window system table -----------------------------------------------------------------------
-static FunctionLexicon::TableEntry gameWinSystemTable[] = 
+static FunctionLexicon::TableEntry gameWinSystemTable[] =
 {
 
 
@@ -142,7 +142,7 @@ static FunctionLexicon::TableEntry gameWinSystemTable[] =
 	{ NAMEKEY_INVALID, "DiplomacySystem",								DiplomacySystem },
 	{ NAMEKEY_INVALID, "GeneralsExpPointsSystem",				GeneralsExpPointsSystem },
 	{ NAMEKEY_INVALID, "DifficultySelectSystem",				DifficultySelectSystem },
-	
+
 	{ NAMEKEY_INVALID, "IdleWorkerSystem",							IdleWorkerSystem },
 	{ NAMEKEY_INVALID, "EstablishConnectionsControlSystem", EstablishConnectionsControlSystem },
 	{ NAMEKEY_INVALID, "GameInfoWindowSystem",					GameInfoWindowSystem },
@@ -154,7 +154,7 @@ static FunctionLexicon::TableEntry gameWinSystemTable[] =
 };
 
 // game window input table ------------------------------------------------------------------------
-static FunctionLexicon::TableEntry gameWinInputTable[] = 
+static FunctionLexicon::TableEntry gameWinInputTable[] =
 {
 
 	{ NAMEKEY_INVALID, "GameWinDefaultInput",						GameWinDefaultInput },
@@ -226,7 +226,7 @@ static FunctionLexicon::TableEntry gameWinInputTable[] =
 };
 
 // game window tooltip table ----------------------------------------------------------------------
-static FunctionLexicon::TableEntry gameWinTooltipTable[] = 
+static FunctionLexicon::TableEntry gameWinTooltipTable[] =
 {
 
 
@@ -237,7 +237,7 @@ static FunctionLexicon::TableEntry gameWinTooltipTable[] =
 };
 
 // window layout init table -----------------------------------------------------------------------
-static FunctionLexicon::TableEntry winLayoutInitTable[] = 
+static FunctionLexicon::TableEntry winLayoutInitTable[] =
 {
 
 	{ NAMEKEY_INVALID, "MainMenuInit",									MainMenuInit },
@@ -289,7 +289,7 @@ static FunctionLexicon::TableEntry winLayoutInitTable[] =
 };
 
 // window layout update table ---------------------------------------------------------------------
-static FunctionLexicon::TableEntry winLayoutUpdateTable[] = 
+static FunctionLexicon::TableEntry winLayoutUpdateTable[] =
 {
 
 	{ NAMEKEY_INVALID, "MainMenuUpdate",								MainMenuUpdate },
@@ -299,7 +299,7 @@ static FunctionLexicon::TableEntry winLayoutUpdateTable[] =
 	{ NAMEKEY_INVALID, "LanLobbyMenuUpdate",						LanLobbyMenuUpdate },
 	{ NAMEKEY_INVALID, "ReplayMenuUpdate",							ReplayMenuUpdate },
 	{ NAMEKEY_INVALID, "SaveLoadMenuUpdate",							SaveLoadMenuUpdate },
-	
+
 	{ NAMEKEY_INVALID, "CreditsMenuUpdate",							CreditsMenuUpdate },
 	{ NAMEKEY_INVALID, "LanGameOptionsMenuUpdate",			LanGameOptionsMenuUpdate },
 	{ NAMEKEY_INVALID, "LanMapSelectMenuUpdate",				LanMapSelectMenuUpdate },
@@ -330,13 +330,13 @@ static FunctionLexicon::TableEntry winLayoutUpdateTable[] =
 };
 
 // window layout shutdown table -------------------------------------------------------------------
-static FunctionLexicon::TableEntry winLayoutShutdownTable[] = 
+static FunctionLexicon::TableEntry winLayoutShutdownTable[] =
 {
 
 	{ NAMEKEY_INVALID, "MainMenuShutdown",							MainMenuShutdown },
 	{ NAMEKEY_INVALID, "OptionsMenuShutdown",						OptionsMenuShutdown },
 	{ NAMEKEY_INVALID, "SaveLoadMenuShutdown",          SaveLoadMenuShutdown },
-	{ NAMEKEY_INVALID, "PopupCommunicatorShutdown",     PopupCommunicatorShutdown },      
+	{ NAMEKEY_INVALID, "PopupCommunicatorShutdown",     PopupCommunicatorShutdown },
 	{ NAMEKEY_INVALID, "KeyboardOptionsMenuShutdown",   KeyboardOptionsMenuShutdown },
 	{ NAMEKEY_INVALID, "SinglePlayerMenuShutdown",			SinglePlayerMenuShutdown },
 	{ NAMEKEY_INVALID, "MapSelectMenuShutdown",					MapSelectMenuShutdown },
@@ -371,7 +371,7 @@ static FunctionLexicon::TableEntry winLayoutShutdownTable[] =
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-// PUBLIC DATA 
+// PUBLIC DATA
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 FunctionLexicon *TheFunctionLexicon = NULL;  ///< the function dictionary
 
@@ -381,7 +381,7 @@ FunctionLexicon *TheFunctionLexicon = NULL;  ///< the function dictionary
 	* components we might want to add to the table, such as generating
 	* a key based off the name supplied in the table for faster access */
 //-------------------------------------------------------------------------------------------------
-void FunctionLexicon::loadTable( TableEntry *table, 
+void FunctionLexicon::loadTable( TableEntry *table,
 																 TableIndex tableIndex )
 {
 
@@ -504,7 +504,7 @@ const char *FunctionLexicon::funcToName( void *func, TableEntry *table )
 #endif
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-// PUBLIC FUNCTIONS 
+// PUBLIC FUNCTIONS
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 //-------------------------------------------------------------------------------------------------
@@ -565,7 +565,7 @@ void FunctionLexicon::reset( void )
 }  // end reset
 
 //-------------------------------------------------------------------------------------------------
-/** Update */ 
+/** Update */
 //-------------------------------------------------------------------------------------------------
 void FunctionLexicon::update( void )
 {
@@ -581,7 +581,7 @@ void FunctionLexicon::update( void )
 //-------------------------------------------------------------------------------------------------
 char *FunctionLexicon::functionToName( void *func )
 {
-	
+
 	// sanity
 	if( func == NULL )
 		return NULL;
@@ -625,7 +625,7 @@ Bool FunctionLexicon::validate( void )
 		sourceEntry = m_tables[ i ];
 		while( sourceEntry && sourceEntry->key != NAMEKEY_INVALID )
 		{
-		
+
 			//
 			// scan all tables looking for the function in sourceEntry, do not bother
 			// of source entry is NULL (a valid entry in the table, but not a function)
@@ -649,7 +649,7 @@ Bool FunctionLexicon::validate( void )
 							if( sourceEntry->func == lookAtEntry->func )
 							{
 
-								DEBUG_LOG(( "WARNING! Function lexicon entries match same address! '%s' and '%s'", 
+								DEBUG_LOG(( "WARNING! Function lexicon entries match same address! '%s' and '%s'",
 														sourceEntry->name, lookAtEntry->name ));
 								valid = FALSE;
 
@@ -667,7 +667,7 @@ Bool FunctionLexicon::validate( void )
 			// next source entry
 			sourceEntry++;
 
-		}  // end while	
+		}  // end while
 
 	}  // end for i
 
@@ -681,21 +681,21 @@ Bool FunctionLexicon::validate( void )
 //============================================================================
 
 GameWinDrawFunc FunctionLexicon::gameWinDrawFunc( NameKeyType key, TableIndex index )
-{ 
+{
 	if ( index == TABLE_ANY )
 	{
 		// first search the device depended table then the device independent table
 		GameWinDrawFunc func;
 
-		func = (GameWinDrawFunc)findFunction( key, TABLE_GAME_WIN_DEVICEDRAW ); 
+		func = (GameWinDrawFunc)findFunction( key, TABLE_GAME_WIN_DEVICEDRAW );
 		if ( func == NULL )
 		{
-			func = (GameWinDrawFunc)findFunction( key, TABLE_GAME_WIN_DRAW ); 
+			func = (GameWinDrawFunc)findFunction( key, TABLE_GAME_WIN_DRAW );
 		}
 		return func;
 	}
 	// search the specified table
-	return (GameWinDrawFunc)findFunction( key, index ); 
+	return (GameWinDrawFunc)findFunction( key, index );
 }
 
 WindowLayoutInitFunc FunctionLexicon::winLayoutInitFunc( NameKeyType key, TableIndex index )
@@ -705,10 +705,10 @@ WindowLayoutInitFunc FunctionLexicon::winLayoutInitFunc( NameKeyType key, TableI
 		// first search the device depended table then the device independent table
 		WindowLayoutInitFunc func;
 
-		func = (WindowLayoutInitFunc)findFunction( key, TABLE_WIN_LAYOUT_DEVICEINIT ); 
+		func = (WindowLayoutInitFunc)findFunction( key, TABLE_WIN_LAYOUT_DEVICEINIT );
 		if ( func == NULL )
 		{
-			func = (WindowLayoutInitFunc)findFunction( key, TABLE_WIN_LAYOUT_INIT ); 
+			func = (WindowLayoutInitFunc)findFunction( key, TABLE_WIN_LAYOUT_INIT );
 		}
 		return func;
 	}

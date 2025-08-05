@@ -428,7 +428,7 @@ Int parseReplay(char *args[], int num)
 			exit(1);
 		}
 		TheWritableGlobalData->m_simulateReplays.push_back(filename);
-		
+
 		TheWritableGlobalData->m_playIntro = FALSE;
 		TheWritableGlobalData->m_afterIntro = TRUE;
 		TheWritableGlobalData->m_playSizzle = FALSE;
@@ -666,7 +666,7 @@ Int parsePreload( char *args[], int num )
 #endif
 
 
-#if defined(RTS_DEBUG) 
+#if defined(RTS_DEBUG)
 Int parseDisplayDebug(char *args[], int)
 {
 	TheWritableGlobalData->m_displayDebug = TRUE;
@@ -1192,7 +1192,7 @@ static CommandLineParam paramsForEngineInit[] =
 	{ "-FPUPreserve", parseFPUPreserve },
 	{ "-benchmark", parseBenchmark },
 #ifdef DUMP_PERF_STATS
-	{ "-stats", parseStats }, 
+	{ "-stats", parseStats },
 #endif
 	{ "-saveStats", parseSaveStats },
 	{ "-localMOTD", parseLocalMOTD },
@@ -1276,7 +1276,7 @@ static CommandLineParam paramsForEngineInit[] =
 	{ "-file", parseFile },
 
 //	{ "-preload", parsePreload },
-	
+
 	{ "-preloadEverything", parsePreloadEverything },
 	{ "-logAssets", parseLogAssets },
 	{ "-netMinPlayers", parseNetMinPlayers },
@@ -1395,7 +1395,7 @@ static void parseCommandLine(const CommandLineParam* params, int numParams)
 	while (token != NULL)
 	{
 		argv.push_back(strtrim(token));
-		token = nextParam(NULL, "\" ");	   
+		token = nextParam(NULL, "\" ");
 	}
 	int argc = argv.size();
 

@@ -23,8 +23,8 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 // FILE: W3DLaserDraw.h ///////////////////////////////////////////////////////////////////////////
-// Author: 
-// Desc:   
+// Author:
+// Desc:
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
@@ -72,14 +72,14 @@ class W3DLaserDraw : public DrawModule, public LaserDrawInterface
 
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( W3DLaserDraw, "W3DLaserDraw" )
 	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( W3DLaserDraw, W3DLaserDrawModuleData )
-		
+
 public:
 
 	W3DLaserDraw( Thing *thing, const ModuleData* moduleData );
 	// virtual destructor prototype provided by memory pool declaration
 
 	virtual void doDrawModule(const Matrix3D* transformMtx);
-	virtual void releaseShadows(void) {};	///< we don't care about preserving temporary shadows.	
+	virtual void releaseShadows(void) {};	///< we don't care about preserving temporary shadows.
 	virtual void allocateShadows(void) {};	///< we don't care about preserving temporary shadows.
 	virtual void setShadowsEnabled(Bool enable) { }
 	virtual void setFullyObscuredByShroud(Bool fullyObscured) { };
@@ -87,7 +87,7 @@ public:
 	virtual void reactToGeometryChange() { }
 	virtual Bool isLaser() const { return true; }
 	Real getLaserTemplateWidth() const;
-	
+
 	virtual LaserDrawInterface* getLaserDrawInterface() { return this; }
 	virtual const LaserDrawInterface* getLaserDrawInterface() const { return this; }
 

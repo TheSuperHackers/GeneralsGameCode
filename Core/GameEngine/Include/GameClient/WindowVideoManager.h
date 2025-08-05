@@ -24,12 +24,12 @@
 
 // FILE: WindowVideoManager.h /////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Electronic Arts Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2002 - All Rights Reserved                  
-//                                                                          
+//
+//                       Electronic Arts Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2002 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 //	created:	Mar 2002
@@ -37,8 +37,8 @@
 //	Filename: 	WindowVideoManager.h
 //
 //	author:		Chris Huybregts
-//	
-//	purpose:	
+//
+//	purpose:
 //
 //-----------------------------------------------------------------------------
 ///////////////////////////////////////////////////////////////////////////////
@@ -85,8 +85,8 @@ enum WindowVideoStates CPP_11(: Int)
 	WINDOW_VIDEO_STATE_PAUSE,
 	WINDOW_VIDEO_STATE_PLAY,
 	WINDOW_VIDEO_STATE_HIDDEN,
-	
-	WINDOW_VIDEO_STATE_COUNT	
+
+	WINDOW_VIDEO_STATE_COUNT
 };
 
 class WindowVideo
@@ -94,7 +94,7 @@ class WindowVideo
 public:
 	WindowVideo( void );
 	~WindowVideo( void );
-	
+
 	VideoStreamInterface *getVideoStream( void );
 	VideoBuffer *getVideoBuffer( void );
 	GameWindow *getWin( void );
@@ -105,9 +105,9 @@ public:
 	void setPlayType(WindowVideoPlayType playType);
 	void setWindowState( WindowVideoStates state );
 
-	void init( GameWindow *win, AsciiString movieName, WindowVideoPlayType playType,VideoBuffer *videoBuffer, 
+	void init( GameWindow *win, AsciiString movieName, WindowVideoPlayType playType,VideoBuffer *videoBuffer,
 	VideoStreamInterface *videoStream);
-	
+
 private:
 	WindowVideoPlayType m_playType;
 	GameWindow *m_win;
@@ -126,12 +126,12 @@ public:
 	~WindowVideoManager( void );
 
 	// Inhertited from subsystem ====================================================================
-	virtual void init( void );			
-	virtual void reset( void );			
-	virtual void update( void );		
+	virtual void init( void );
+	virtual void reset( void );
+	virtual void update( void );
 	//===============================================================================================
 
-	
+
 	void playMovie( GameWindow *win, AsciiString movieName, WindowVideoPlayType playType );
 	void hideMovie( GameWindow *win );							///< If the window becomes hidden while we're playing, stop the movie but test to see if we should resume
 	void pauseMovie( GameWindow *win );							///< Pause a movie and display it's current frame
@@ -142,7 +142,7 @@ public:
 	void pauseAllMovies( void );										///< Pauses all movies on their current frame
 	void resumeAllMovies( void );										///< Resume Playing all movies
 	Int getWinState( GameWindow *win );			///< return the current state of the window.
-	
+
 private:
 
 	typedef const GameWindow* ConstGameWindowPtr;
@@ -177,7 +177,7 @@ inline WindowVideoPlayType WindowVideo::getPlayType ( void ){ return m_playType;
 inline WindowVideoStates WindowVideo::getState( void ){ return m_state; };
 
 inline void WindowVideo::setPlayType(WindowVideoPlayType playType){ m_playType = playType; };
-	
+
 
 
 //-----------------------------------------------------------------------------

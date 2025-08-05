@@ -33,7 +33,7 @@
  */
 FrameDataManager::FrameDataManager(Bool isLocal) {
 	m_isLocal = isLocal;
-	
+
 	m_frameData = NEW FrameData[FRAME_DATA_LENGTH];
 
 	m_isQuitting = FALSE;

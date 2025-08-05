@@ -50,10 +50,10 @@ ProjectileStreamUpdate::ProjectileStreamUpdate( Thing *thing, const ModuleData* 
 	m_owningObject = INVALID_ID;
 	m_nextFreeIndex = 0;
 	m_firstValidIndex = 0;
-	
+
 	m_targetObject = INVALID_ID;
 	m_targetPosition.zero();
-} 
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -169,7 +169,7 @@ void ProjectileStreamUpdate::getAllPoints( Vector3 *points, Int *count )
 			points[pointCount].X = thisPoint.x;
 			points[pointCount].Y = thisPoint.y;
 			points[pointCount].Z = thisPoint.z;
-			
+
 
 			if ( obj && obj->isKindOf( KINDOF_VEHICLE ) )				// this makes the stream skim along my roof, if I have a roof
 			{
@@ -221,7 +221,7 @@ void ProjectileStreamUpdate::crc( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
 	* Version Info:
-	* 1: Initial version 
+	* 1: Initial version
 	* 2: Target tracking for line breaking
 */
 // ------------------------------------------------------------------------------------------------

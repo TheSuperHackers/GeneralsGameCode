@@ -36,7 +36,7 @@ Int ContourOptions::m_contourWidth = 1;
 ContourOptions::ContourOptions(CWnd* pParent /*=NULL*/)
 	: CDialog(ContourOptions::IDD, pParent)
 {
-	//{{AFX_DATA_INIT(ContourOptions) 
+	//{{AFX_DATA_INIT(ContourOptions)
 		// NOTE: the ClassWizard will add member initialization here
 	//}}AFX_DATA_INIT
 }
@@ -56,12 +56,12 @@ void ContourOptions::DoDataExchange(CDataExchange* pDX)
 // ContourOptions message handlers
 
 /// Dialog UI initialization.
-/** Creates the slider controls, and sets the initial values for 
+/** Creates the slider controls, and sets the initial values for
 width and feather in the ui controls. */
-BOOL ContourOptions::OnInitDialog() 
+BOOL ContourOptions::OnInitDialog()
 {
 	CDialog::OnInitDialog();
-	
+
 	CWnd *pWnd = GetDlgItem(IDC_SLIDER1);
 	CRect rect;
 	pWnd->GetWindowRect(&rect);
@@ -107,10 +107,10 @@ BOOL ContourOptions::OnInitDialog()
 }
 
 /// Handles slider ui messages.
-/** Gets the info, determines if it is the feather or width slider, 
+/** Gets the info, determines if it is the feather or width slider,
 		gets the new value, and updates the correspondig edit control
 		and the brush tool. */
-void ContourOptions::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar) 
+void ContourOptions::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 {
 	CString str;
 	m_updating = true;
@@ -121,12 +121,12 @@ void ContourOptions::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 			nPos = m_contourStepSlider.GetPos();
 		}
 		m_contourStep = MIN_CONTOUR_STEP + MAX_CONTOUR_STEP - nPos;
-	} else if (offset) { // width 
+	} else if (offset) { // width
 		if (nSBCode != TB_THUMBTRACK) {
 			nPos = m_contourOffsetSlider.GetPos();
 		}
 		m_contourOffset = nPos;
-	} else { // width 
+	} else { // width
 		if (nSBCode != TB_THUMBTRACK) {
 			nPos = m_contourWidthSlider.GetPos();
 		}
@@ -148,7 +148,7 @@ BEGIN_MESSAGE_MAP(ContourOptions, CDialog)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
-void ContourOptions::OnShowContours() 
+void ContourOptions::OnShowContours()
 {
 	CWorldBuilderView *pView = CWorldBuilderDoc::GetActive2DView();
 	if (pView) {

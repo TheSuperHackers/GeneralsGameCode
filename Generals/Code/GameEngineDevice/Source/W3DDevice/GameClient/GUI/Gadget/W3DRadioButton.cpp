@@ -24,12 +24,12 @@
 
 // FILE: W3DRadioButton.cpp ///////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:   RTS3
@@ -166,7 +166,7 @@ void W3DGadgetRadioButtonDraw( GameWindow *window, WinInstanceData *instData )
 	else if( BitIsSet( instData->getState(), WIN_STATE_HILITED ) )
 	{
 
-		// hilited background 
+		// hilited background
 		backColor			= GadgetRadioGetHiliteColor( window );
 		backBorder		= GadgetRadioGetHiliteBorderColor( window );
 
@@ -186,7 +186,7 @@ void W3DGadgetRadioButtonDraw( GameWindow *window, WinInstanceData *instData )
 	else
 	{
 
-		// enabled background 
+		// enabled background
 		backColor			= GadgetRadioGetEnabledColor( window );
 		backBorder		= GadgetRadioGetEnabledBorderColor( window );
 
@@ -209,7 +209,7 @@ void W3DGadgetRadioButtonDraw( GameWindow *window, WinInstanceData *instData )
 	start.y = origin.y;
 	end.x = start.x + size.x;
 	end.y = start.y + size.y;
-	TheWindowManager->winOpenRect( backBorder, WIN_DRAW_LINE_WIDTH, 
+	TheWindowManager->winOpenRect( backBorder, WIN_DRAW_LINE_WIDTH,
 																 start.x, start.y, end.x, end.y );
 
 	// draw the background
@@ -217,17 +217,17 @@ void W3DGadgetRadioButtonDraw( GameWindow *window, WinInstanceData *instData )
 	start.y++;
 	end.x--;
 	end.y--;
-	TheWindowManager->winFillRect( backColor, WIN_DRAW_LINE_WIDTH, 
+	TheWindowManager->winFillRect( backColor, WIN_DRAW_LINE_WIDTH,
 																 start.x, start.y, end.x, end.y );
 
 
-	
+
 	// draw box border
 	start.x = origin.x + size.y;
 	start.y = origin.y;
 	end.x = start.x;
 	end.y = start.y + size.y;
-	TheWindowManager->winDrawLine( backBorder, WIN_DRAW_LINE_WIDTH, 
+	TheWindowManager->winDrawLine( backBorder, WIN_DRAW_LINE_WIDTH,
 																 start.x, start.y, end.x, end.y );
 
 	// draw box for button
@@ -235,7 +235,7 @@ void W3DGadgetRadioButtonDraw( GameWindow *window, WinInstanceData *instData )
 	start.y = origin.y + 1;
 	end.x	= origin.x + size.y -1;
 	end.y = origin.y + size.y -1;
-	TheWindowManager->winFillRect( boxColor, WIN_DRAW_LINE_WIDTH, 
+	TheWindowManager->winFillRect( boxColor, WIN_DRAW_LINE_WIDTH,
 																 start.x, start.y, end.x, end.y );
 
 	// draw box border
@@ -243,7 +243,7 @@ void W3DGadgetRadioButtonDraw( GameWindow *window, WinInstanceData *instData )
 	start.y = origin.y;
 	end.x = start.x;
 	end.y = start.y + size.y;
-	TheWindowManager->winDrawLine( backBorder, WIN_DRAW_LINE_WIDTH, 
+	TheWindowManager->winDrawLine( backBorder, WIN_DRAW_LINE_WIDTH,
 																 start.x, start.y, end.x, end.y );
 
 	// draw box for button
@@ -251,18 +251,18 @@ void W3DGadgetRadioButtonDraw( GameWindow *window, WinInstanceData *instData )
 	start.y = origin.y + 1;
 	end.x	= origin.x + size.x -1;
 	end.y = origin.y + size.y -1;
-	TheWindowManager->winFillRect( boxColor, WIN_DRAW_LINE_WIDTH, 
+	TheWindowManager->winFillRect( boxColor, WIN_DRAW_LINE_WIDTH,
 																 start.x, start.y, end.x, end.y );
 	// draw the button text
 	if( instData->getTextLength() )
 		drawRadioButtonText( window, instData );
 
-	
+
 
 }  // end W3DGadgetRadioButtonDraw
 
 
-void W3DGadgetRadioButtonImageDraw( GameWindow *window, 
+void W3DGadgetRadioButtonImageDraw( GameWindow *window,
 																	WinInstanceData *instData )
 {
 	const Image *leftImage, *rightImage, *centerImage;
@@ -286,7 +286,7 @@ void W3DGadgetRadioButtonImageDraw( GameWindow *window,
 		leftImage					= GadgetRadioGetSelectedImage( window );
 		centerImage				= GadgetRadioGetSelectedUncheckedBoxImage( window );
 		rightImage				= GadgetRadioGetSelectedCheckedBoxImage( window );
-		
+
 	}
 	else if( BitIsSet( window->winGetStatus(), WIN_STATUS_ENABLED ) == FALSE )
 	{
@@ -294,27 +294,27 @@ void W3DGadgetRadioButtonImageDraw( GameWindow *window,
 		leftImage					= GadgetRadioGetDisabledImage( window );
 		centerImage				= GadgetRadioGetDisabledUncheckedBoxImage( window );
 		rightImage				= GadgetRadioGetDisabledCheckedBoxImage( window );
-		
+
 	}  // end if
 	else if( BitIsSet( instData->getState(), WIN_STATE_HILITED ) )
 	{
-		// hilited background 
+		// hilited background
 		leftImage					= GadgetRadioGetHiliteImage( window );
 		centerImage				= GadgetRadioGetHiliteUncheckedBoxImage( window );
 		rightImage				= GadgetRadioGetHiliteCheckedBoxImage( window );
-		
+
 	}  // end else if
 	else
 	{
-		// enabled background 
+		// enabled background
 		leftImage					= GadgetRadioGetEnabledImage( window );
 		centerImage				= GadgetRadioGetEnabledUncheckedBoxImage( window );
 		rightImage				= GadgetRadioGetEnabledCheckedBoxImage( window );
-		
+
 	}  // end else
 
 	// sanity, we need to have these images to make it look right
-	if( leftImage == NULL || centerImage == NULL || 
+	if( leftImage == NULL || centerImage == NULL ||
 			rightImage == NULL )
 		return;
 
@@ -347,7 +347,7 @@ void W3DGadgetRadioButtonImageDraw( GameWindow *window,
 	start.x = leftEnd.x;
 	start.y = origin.y + yOffset;
 	end.y =origin.y + size.y + yOffset;
-	
+
 	clipLeft.lo.x = leftEnd.x;
 	clipLeft.lo.y = origin.y;
 	clipLeft.hi.y = leftEnd.y;
@@ -355,17 +355,17 @@ void W3DGadgetRadioButtonImageDraw( GameWindow *window,
 
 
 	TheDisplay->setClipRegion(&clipLeft);
-	
+
 	for( i = 0; i < pieces; i++ )
 	{
 		end.x = start.x + centerImage->getImageWidth();
-		TheWindowManager->winDrawImage( centerImage, 
+		TheWindowManager->winDrawImage( centerImage,
 																		start.x, start.y,
-																		end.x, end.y );	
+																		end.x, end.y );
 		start.x += centerImage->getImageWidth();
 	}  // end for i
-	
-	TheDisplay->enableClipping(FALSE);	
+
+	TheDisplay->enableClipping(FALSE);
 	// draw left end
 	start.x = origin.x + xOffset;
 	start.y = origin.y + yOffset;
@@ -382,6 +382,6 @@ void W3DGadgetRadioButtonImageDraw( GameWindow *window,
 	if( instData->getTextLength() )
 		drawRadioButtonText( window, instData );
 
-	
+
 }  // end W3DGadgetHorizontalSliderImageDraw
 

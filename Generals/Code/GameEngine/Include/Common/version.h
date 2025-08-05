@@ -33,7 +33,7 @@
 
 #include <time.h>
 
-/** 
+/**
  * The Version class formats the version number into integer and string
  * values for different parts of the game.
  * @todo: increment build number on compile, and stamp exe with username

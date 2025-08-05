@@ -91,7 +91,7 @@
 
 	extern Int lastCRCDebugFrame;
 	extern Int lastCRCDebugIndex;
-	
+
 	extern Bool g_verifyClientCRC;
 	extern Bool g_clientDeepCRC;
 

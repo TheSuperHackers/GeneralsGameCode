@@ -24,12 +24,12 @@
 
 // FILE: InGamePopupMessage.cpp /////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Electronic Arts Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2002 - All Rights Reserved                  
-//                                                                          
+//
+//                       Electronic Arts Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2002 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 //	created:	Jul 2002
@@ -37,7 +37,7 @@
 //	Filename: 	InGamePopupMessage.cpp
 //
 //	author:		Chris Huybregts
-//	
+//
 //	purpose:	Init, input, and system for the in game message popup
 //
 //-----------------------------------------------------------------------------
@@ -96,16 +96,16 @@ void InGamePopupMessageInit( WindowLayout *layout, void *userData )
 	staticTextMessage = TheWindowManager->winGetWindowFromId(parent, staticTextMessageID);
 	buttonOkID = TheNameKeyGenerator->nameToKey(AsciiString("InGamePopupMessage.wnd:ButtonOk"));
 	buttonOk = TheWindowManager->winGetWindowFromId(parent, buttonOkID);
-	
+
 	PopupMessageData *pMData = TheInGameUI->getPopupMessageData();
-	
+
 	if(!pMData)
 	{
 		DEBUG_ASSERTCRASH(pMData, ("We're in InGamePopupMessage without a pointer to pMData") );
 		///< @todo: add a call to the close this bitch method when I implement it CLH
 		return;
 	}
-	
+
 	DisplayString *tempString = TheDisplayStringManager->newDisplayString();
 	tempString->setText(pMData->message);
 	tempString->setFont(staticTextMessage->winGetFont());
@@ -113,7 +113,7 @@ void InGamePopupMessageInit( WindowLayout *layout, void *userData )
 	Int width, height;
 	tempString->getSize(&width, &height);
 	TheDisplayStringManager->freeDisplayString(tempString);
-	
+
 	GadgetStaticTextSetText(staticTextMessage, pMData->message);
 	// set the positions/sizes
 	Int widthOk, heightOk;
@@ -127,7 +127,7 @@ void InGamePopupMessageInit( WindowLayout *layout, void *userData )
 	pause = pMData->pause;
 	if(pMData->pause)
 		TheWindowManager->winSetModal( parent );
-	
+
 	TheWindowManager->winSetFocus( parent );
 
 	parent->winHide(FALSE);
@@ -140,9 +140,9 @@ void InGamePopupMessageInit( WindowLayout *layout, void *userData )
 WindowMsgHandledType InGamePopupMessageInput( GameWindow *window, UnsignedInt msg, WindowMsgData mData1, WindowMsgData mData2 )
 {
 
-		switch( msg ) 
+		switch( msg )
 		{
-	
+
 			// --------------------------------------------------------------------------------------------
 			case GWM_CHAR:
 			{
@@ -150,38 +150,38 @@ WindowMsgHandledType InGamePopupMessageInput( GameWindow *window, UnsignedInt ms
 				UnsignedByte state = mData2;
 	//			if (buttonPushed)
 	//				break;
-	
+
 				switch( key )
 				{
-	
+
 					// ----------------------------------------------------------------------------------------
 					case KEY_ENTER:
 					case KEY_ESC:
 					{
-						
+
 						//
 						// send a simulated selected event to the parent window of the
 						// back/exit button
 						//
 						if( BitIsSet( state, KEY_STATE_UP ) )
 						{
-							TheWindowManager->winSendSystemMsg( window, GBM_SELECTED, 
+							TheWindowManager->winSendSystemMsg( window, GBM_SELECTED,
 																								(WindowMsgData)buttonOk, buttonOkID );
-	
+
 						}  // end if
-	
+
 						// don't let key fall through anywhere else
 						return MSG_HANDLED;
-	
+
 					}  // end escape
-	
+
 				}  // end switch( key )
-	
+
 			}  // end char
-	
+
 		}  // end switch( msg )
 		return MSG_IGNORED;
-	
+
 
 }
 
@@ -191,7 +191,7 @@ WindowMsgHandledType InGamePopupMessageInput( GameWindow *window, UnsignedInt ms
 WindowMsgHandledType InGamePopupMessageSystem( GameWindow *window, UnsignedInt msg, WindowMsgData mData1, WindowMsgData mData2 )
 {
 
-  switch( msg ) 
+  switch( msg )
 	{
 
 		// --------------------------------------------------------------------------------------------
@@ -225,7 +225,7 @@ WindowMsgHandledType InGamePopupMessageSystem( GameWindow *window, UnsignedInt m
 		{
 			GameWindow *control = (GameWindow *)mData1;
 			Int controlID = control->winGetWindowId();
-     
+
       if( controlID == buttonOkID )
 			{
 				if(!pause)

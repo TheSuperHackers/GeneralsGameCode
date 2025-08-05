@@ -24,12 +24,12 @@
 
 // FILE: ProductionPrerequisite.h //////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information					         
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:    RTS3
@@ -46,7 +46,7 @@
 #define __ProductionPrerequisite_H_
 
 //-----------------------------------------------------------------------------
-//           Includes                                                      
+//           Includes
 //-----------------------------------------------------------------------------
 #include "Common/GameMemory.h"
 #include "Common/GameCommon.h"
@@ -85,9 +85,9 @@ public:
 	/// return true iff the player satisfies our set of prerequisites
 	Bool isSatisfied(const Player *player) const;
 
-	/** 
-		return the BuildFacilityTemplate, if any. 
-		
+	/**
+		return the BuildFacilityTemplate, if any.
+
 		if this template needs no build facility, null is returned.
 
 		if the template needs a build facility but the given player doesn't have any in existence,
@@ -100,13 +100,13 @@ public:
 	Int getAllPossibleBuildFacilityTemplates(const ThingTemplate* tmpls[], Int maxtmpls) const;
 
 private:
-	
-	enum 
+
+	enum
 	{
 		UNIT_OR_WITH_PREV = 0x01	// if set, unit is "or-ed" with prev unit, so that either one's presence satisfies
 	};
 
-	struct PrereqUnitRec 
+	struct PrereqUnitRec
 	{
 		const ThingTemplate*	unit;
 		Int										flags;

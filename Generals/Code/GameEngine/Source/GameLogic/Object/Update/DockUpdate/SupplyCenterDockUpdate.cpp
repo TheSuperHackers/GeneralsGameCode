@@ -50,7 +50,7 @@ SupplyCenterDockUpdateModuleData::SupplyCenterDockUpdateModuleData( void )
 
 	DockUpdateModuleData::buildFieldParse( p );
 
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
 		{ 0, 0, 0, 0 }
 	};
@@ -93,13 +93,13 @@ Bool SupplyCenterDockUpdate::action( Object* docker, Object *drone )
 	Player *ownerPlayer = getObject()->getControllingPlayer();
 	while( supplyTruckAI->loseOneBox() )
 		value += ownerPlayer->getSupplyBoxValue();
-	
+
 	if( value > 0 )
 	{
 		Money *ownerPlayerMoney = ownerPlayer->getMoney();
 		ownerPlayerMoney->deposit(value);
 		ownerPlayer->getScoreKeeper()->addMoneyEarned(value);
-		
+
 		// Setup info for adding a floating text
 		Coord3D pos;
 		const Coord3D *dockerPos;
@@ -110,11 +110,11 @@ Bool SupplyCenterDockUpdate::action( Object* docker, Object *drone )
 		pos.y = dockerPos->y;
 		pos.z = TheTerrainLogic->getGroundHeight(pos.x, pos.y);//dockerPos->z + docker->getGeometryInfo().getHeight();
 		Color color = ownerPlayer->getPlayerColor() | GameMakeColor( 0, 0, 0, 230 );
-		
+
 		TheInGameUI->addFloatingText(moneys, &pos, color);
 	}
 
-		
+
 	return FALSE;
 }
 
@@ -130,7 +130,7 @@ UpdateSleepTime SupplyCenterDockUpdate::update()
 	SupplyCenterCreate* create = (SupplyCenterCreate*)getObject()->findCreateModule(key_SupplyCenterCreate);
 	DEBUG_ASSERTCRASH( create && ! create->shouldDoOnBuildComplete(), ("A Supply center did not call onBuildComplete.") );
 #endif
-	
+
 	return result;
 }
 

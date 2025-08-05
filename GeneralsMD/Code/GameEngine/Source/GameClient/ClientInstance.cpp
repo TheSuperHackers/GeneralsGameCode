@@ -37,7 +37,7 @@ bool ClientInstance::initialize()
 	{
 		return true;
 	}
-	
+
 	// Create a mutex with a unique name to Generals in order to determine if our app is already running.
 	// WARNING: DO NOT use this number for any other application except Generals.
 	while (true)

@@ -20,13 +20,13 @@
 // Terrain shaping tool for worldbuilder.
 // Author: John Ahlquist, Oct 2001
 
-#include "StdAfx.h" 
+#include "StdAfx.h"
 #include "resource.h"
 
 #include "MeshMoldTool.h"
 #include "CUndoable.h"
 #include "MainFrm.h"
-#include "WHeightMapEdit.h"							 
+#include "WHeightMapEdit.h"
 #include "WorldBuilderDoc.h"
 #include "WorldBuilderView.h"
 #include "WorldBuilder.h"
@@ -43,22 +43,22 @@ Bool MeshMoldTool::m_tracking = false;
 Coord3D MeshMoldTool::m_toolPos;
 WorldHeightMapEdit *MeshMoldTool::m_htMapEditCopy = NULL;
 
-/// Constructor 
+/// Constructor
 MeshMoldTool::MeshMoldTool(void) :
 	Tool(ID_MOLD_TOOL, IDC_MOLD_POINTER)
 {
 	m_offsettingZ = false;
 }
-	
+
 /// Destructor
-MeshMoldTool::~MeshMoldTool(void) 
+MeshMoldTool::~MeshMoldTool(void)
 {
 	REF_PTR_RELEASE(m_htMapEditCopy);
 }
 
 
 /// Shows the mesh mold options panel.
-void MeshMoldTool::activate() 
+void MeshMoldTool::activate()
 {
 	CMainFrame::GetMainFrame()->showOptionsDialog(IDD_MESHMOLD_OPTIONS);
 	m_prevXIndex = -1;
@@ -69,7 +69,7 @@ void MeshMoldTool::activate()
 }
 
 /// Shows the mesh mold options panel.
-void MeshMoldTool::deactivate() 
+void MeshMoldTool::deactivate()
 {
 	m_tracking = false;
 	DrawObject::setDoMeshFeedback(false);
@@ -87,7 +87,7 @@ void MeshMoldTool::deactivate()
 /// Start tool.
 /** Setup the tool to start mesh molding - make a copy of the height map
 to edit, another copy because we need it :), and call mouseMovedDown. */
-void MeshMoldTool::mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc) 
+void MeshMoldTool::mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc)
 {
 	if (m != TRACK_L) return;
 	Coord3D cpt;
@@ -112,9 +112,9 @@ void MeshMoldTool::mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWor
 }
 
 /// End tool.
-/** Finish the tool operation - create a command, pass it to the 
+/** Finish the tool operation - create a command, pass it to the
 doc to execute, and cleanup ref'd objects. */
-void MeshMoldTool::mouseUp(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc) 
+void MeshMoldTool::mouseUp(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc)
 {
 	if (m != TRACK_L) return;
 	m_offsettingZ = false;
@@ -148,8 +148,8 @@ void MeshMoldTool::updateMeshLocation(Bool changePreview)
 		m_toolPos.z = MeshMoldOptions::getHeight();
 		DrawObject::setFeedbackPos(m_toolPos);
 		if (MeshMoldOptions::isDoingPreview() || changePreview) {
-			// doing preview 
-			CWorldBuilderDoc *pDoc = CWorldBuilderDoc::GetActiveDoc(); 
+			// doing preview
+			CWorldBuilderDoc *pDoc = CWorldBuilderDoc::GetActiveDoc();
 			if (MeshMoldOptions::isDoingPreview()) {
 				applyMesh(pDoc);
 			} else if (m_htMapEditCopy) {
@@ -217,16 +217,16 @@ void MeshMoldTool::applyMesh(CWorldBuilderDoc *pDoc)
 				if (minX<0) minX = 0;
 				if (minY<0) minY = 0;
 				if (maxX > m_htMapEditCopy->getXExtent()) {
-					maxX = m_htMapEditCopy->getXExtent();	 
+					maxX = m_htMapEditCopy->getXExtent();
 				}
 				if (maxY > m_htMapEditCopy->getYExtent()) {
-					maxY = m_htMapEditCopy->getYExtent();	 
+					maxY = m_htMapEditCopy->getYExtent();
 				}
 				Int i, j;
 				for (j=minY; j<maxY; j++) {
 					for (i=minX; i<maxX; i++) {
-						Real X, Y; 
-						X = i*MAP_XY_FACTOR; 
+						Real X, Y;
+						X = i*MAP_XY_FACTOR;
 						X -= m_toolPos.x;
 						Y = j*MAP_XY_FACTOR;
 						Y -= m_toolPos.y;
@@ -245,7 +245,7 @@ void MeshMoldTool::applyMesh(CWorldBuilderDoc *pDoc)
 							Vector3 intersection = castResult.ContactPoint;
 							intersection.Z *= MeshMoldOptions::getScale();
 							Int newHeight = floor( ((intersection.Z+MeshMoldOptions::getHeight())/MAP_HEIGHT_SCALE)+0.5);
-							// check boundary values	
+							// check boundary values
 							if (newHeight < m_htMapEditCopy->getMinHeightValue()) newHeight = m_htMapEditCopy->getMinHeightValue();
 							if (newHeight > m_htMapEditCopy->getMaxHeightValue()) newHeight = m_htMapEditCopy->getMaxHeightValue();
 							Bool apply = true;
@@ -253,11 +253,11 @@ void MeshMoldTool::applyMesh(CWorldBuilderDoc *pDoc)
 								apply = newHeight > m_htMapEditCopy->getHeight(i+border, j+border);
 							} else if (MeshMoldOptions::isLoweringOnly()) {
 								apply = newHeight < m_htMapEditCopy->getHeight(i+border, j+border);
-							} 
+							}
 							if (apply) {
 								m_htMapEditCopy->setHeight(i+border, j+border, newHeight);
 							}
-						}		
+						}
 					}
 				}
 				IRegion2D partialRange;

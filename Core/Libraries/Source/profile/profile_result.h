@@ -35,8 +35,8 @@
 /**
   \brief Result function class.
 
-  Factories for instances of this class are registered using 
-  \ref Profile::AddResultFunction. 
+  Factories for instances of this class are registered using
+  \ref Profile::AddResultFunction.
 */
 class ProfileResultInterface
 {

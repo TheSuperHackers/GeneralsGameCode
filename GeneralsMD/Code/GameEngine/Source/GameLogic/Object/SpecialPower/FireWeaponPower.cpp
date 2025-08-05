@@ -24,12 +24,12 @@
 
 // FILE: FireWeaponPower.h /////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Electronic Arts Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2002 - All Rights Reserved                  
-//                                                                          
+//
+//                       Electronic Arts Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2002 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 //	Created:	August 2003
@@ -68,14 +68,14 @@ FireWeaponPowerModuleData::FireWeaponPowerModuleData( void )
 /*static*/ void FireWeaponPowerModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
 	SpecialPowerModuleData::buildFieldParse( p );
-	
-	static const FieldParse dataFieldParse[] = 
+
+	static const FieldParse dataFieldParse[] =
 	{
 		{ "MaxShotsToFire", INI::parseUnsignedInt, NULL, offsetof( FireWeaponPowerModuleData, m_maxShotsToFire ) },
 		{ 0, 0, 0, 0 }
 	};
 	p.add(dataFieldParse);
-	
+
 }  // end buildFieldParse
 
 
@@ -90,7 +90,7 @@ FireWeaponPower::FireWeaponPower( Thing *thing, const ModuleData *moduleData )
 FireWeaponPower::~FireWeaponPower( void )
 {
 
-} 
+}
 
 // ------------------------------------------------------------------------------------------------
 void FireWeaponPower::doSpecialPower( UnsignedInt commandOptions )
@@ -117,7 +117,7 @@ void FireWeaponPower::doSpecialPower( UnsignedInt commandOptions )
 			ai->setTurretTargetPosition( (WhichTurretType)i, self->getPosition() );
 		}
 	}
-}  
+}
 
 // ------------------------------------------------------------------------------------------------
 void FireWeaponPower::doSpecialPowerAtLocation( const Coord3D *loc, Real angle, UnsignedInt commandOptions )
@@ -145,7 +145,7 @@ void FireWeaponPower::doSpecialPowerAtLocation( const Coord3D *loc, Real angle, 
 		}
 	}
 
-}  
+}
 
 // ------------------------------------------------------------------------------------------------
 void FireWeaponPower::doSpecialPowerAtObject( Object *obj, UnsignedInt commandOptions )

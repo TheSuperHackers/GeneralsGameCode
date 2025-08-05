@@ -204,7 +204,7 @@ Bool CommandRequiresDirectSend(NetCommandMsg *msg) {
 }
 
 const char* GetNetCommandTypeAsString(NetCommandType type) {
-	
+
 	switch (type) {
 	case NETCOMMANDTYPE_ACKBOTH:
 		return "NETCOMMANDTYPE_ACKBOTH";

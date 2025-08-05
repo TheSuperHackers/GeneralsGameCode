@@ -23,12 +23,12 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 //----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information					                  
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //----------------------------------------------------------------------------
 //
 // Project:    RTS 3
@@ -46,7 +46,7 @@
 
 
 //----------------------------------------------------------------------------
-//           Includes                                                      
+//           Includes
 //----------------------------------------------------------------------------
 
 #include "Common/GameAudio.h"
@@ -70,8 +70,8 @@ struct FieldParse;
 //===============================
 
 //-------------------------------------------------------------------------------------------------
-/** The MusicTrack struct holds all information about a music track. 
-	* Place data in TrackInfo that is useful to the game code in determining 
+/** The MusicTrack struct holds all information about a music track.
+	* Place data in TrackInfo that is useful to the game code in determining
 	* what tracks to play. */
 //-------------------------------------------------------------------------------------------------
 
@@ -86,7 +86,7 @@ public:
 		// virtual destructor prototype defined by memory pool object
 
 		const FieldParse *getFieldParse( void ) const { return m_musicTrackFieldParseTable; }
-			
+
 		Int					index;									///< Track index
 		AsciiString name;										///< Logical name of track
 		AsciiString filename;								///< Filename with extension of music track

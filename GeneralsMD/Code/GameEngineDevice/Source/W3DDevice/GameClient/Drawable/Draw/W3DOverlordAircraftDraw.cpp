@@ -24,7 +24,7 @@
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-//  FILE: W3DOverlordAircraftDraw.h 
+//  FILE: W3DOverlordAircraftDraw.h
 //  Author: Mark Lorenzen, April 2003
 //  Desc: Units that recieve portable structure upgrades (like the OverlordTnk) have a super specific special need.
 //  He needs his rider to draw explicitly after him,
@@ -55,11 +55,11 @@ W3DOverlordAircraftDrawModuleData::~W3DOverlordAircraftDrawModuleData()
 }
 
 //-------------------------------------------------------------------------------------------------
-void W3DOverlordAircraftDrawModuleData::buildFieldParse(MultiIniFieldParse& p) 
+void W3DOverlordAircraftDrawModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
   W3DModelDrawModuleData::buildFieldParse(p);
 
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
 		{ 0, 0, 0, 0 }
 	};
@@ -71,7 +71,7 @@ void W3DOverlordAircraftDrawModuleData::buildFieldParse(MultiIniFieldParse& p)
 W3DOverlordAircraftDraw::W3DOverlordAircraftDraw( Thing *thing, const ModuleData* moduleData )
 : W3DModelDraw( thing, moduleData )
 {
-} 
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -87,7 +87,7 @@ void W3DOverlordAircraftDraw::doDrawModule(const Matrix3D* transformMtx)
 	// Our big thing is that we get our specific passenger (the turret thing) and then wake it up and make it draw
 	// It depends on us because our renderObject is only made correct in the act of drawing.
 	Object *me = getDrawable()->getObject();
-	if( me 
+	if( me
 		&& me->getContain()
 		&& me->getContain()->friend_getRider()
 		&& me->getContain()->friend_getRider()->getDrawable()
@@ -104,7 +104,7 @@ void W3DOverlordAircraftDraw::doDrawModule(const Matrix3D* transformMtx)
 		  riderDraw->draw( NULL );// What the hell?  This param isn't used for anything
     }
     DEBUG_ASSERTCRASH( riderDraw, ("OverlordAircraftDraw finds no rider's drawable") );
-		
+
 	}
 }
 
@@ -115,7 +115,7 @@ void W3DOverlordAircraftDraw::setHidden(Bool h)
 
 	// We need to hide our rider, since he won't realize he's being contained in a contained container
 	Object *me = getDrawable()->getObject();
-	if( me 
+	if( me
 		&& me->getContain()
 		&& me->getContain()->friend_getRider()
 		&& me->getContain()->friend_getRider()->getDrawable()
@@ -124,7 +124,7 @@ void W3DOverlordAircraftDraw::setHidden(Bool h)
 		me->getContain()->friend_getRider()->getDrawable()->setDrawableHidden(h);
 	}
 }
- 
+
 //-------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 /** CRC */

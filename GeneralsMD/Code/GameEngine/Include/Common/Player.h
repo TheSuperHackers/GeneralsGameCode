@@ -24,12 +24,12 @@
 
 // FILE: Player.h ////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information					         
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:    RTS3
@@ -101,7 +101,7 @@ enum ScienceAvailabilityType CPP_11(: Int)
 };
 
 #ifdef DEFINE_SCIENCE_AVAILABILITY_NAMES
-static const char *ScienceAvailabilityNames[] = 
+static const char *ScienceAvailabilityNames[] =
 {
 	"Available",
 	"Disabled",
@@ -121,7 +121,7 @@ typedef Int PlayerIndex;
 // ------------------------------------------------------------------------------------------------
 class KindOfPercentProductionChange : public MemoryPoolObject
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(KindOfPercentProductionChange, "KindOfPercentProductionChange")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(KindOfPercentProductionChange, "KindOfPercentProductionChange")
 public:
 	KindOfMaskType		m_kindOf;
 	Real							m_percent;
@@ -154,7 +154,7 @@ class PlayerRelationMap : public MemoryPoolObject,
 													public Snapshot
 {
 
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( PlayerRelationMap, "PlayerRelationMapPool" )	
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( PlayerRelationMap, "PlayerRelationMapPool" )
 
 public:
 
@@ -175,16 +175,16 @@ protected:
 
 // ----------------------------------------------------------------------------------------------
 /**
-	A "Player" as an entity that contains the persistent info of the Player, as well as containing 
+	A "Player" as an entity that contains the persistent info of the Player, as well as containing
 	transient mission data.
 
-	Some of the Player's attributes persist between missions, whereas others are "transient" and only 
-	have meaning in a mission, wherein they change a lot (current tech tree state, current buildings 
+	Some of the Player's attributes persist between missions, whereas others are "transient" and only
+	have meaning in a mission, wherein they change a lot (current tech tree state, current buildings
 	built, units trained, money, etc). (For clarity of nomenclature, we'll refer to all "persistent"
 	vs "non-persistent" attributes, since "transient" has an unclear duration.)
 
-	A "Player" consists of an entity controlling a single set of units in a mission. 
-	A Player may be human or computer controlled. 
+	A "Player" consists of an entity controlling a single set of units in a mission.
+	A Player may be human or computer controlled.
 
 	All Players have a (transient) "Player Index" associated which allows us to do some shorthand for
 	representing Players in some cases (mainly in bitfields). This is always a 0-based
@@ -192,8 +192,8 @@ protected:
 	is that it makes it desirable to limit the maximum number of simultaneous Players
 	to 32, but that seems quite reasonable.
 
-	All persistent data associated with the Player will be saved to local storage and/or 
-	synchronized with one of our servers for online play. 
+	All persistent data associated with the Player will be saved to local storage and/or
+	synchronized with one of our servers for online play.
 
 	Note, simple accessor methods are omitted for brevity... for now, you may infer
 	them from the data structures.
@@ -213,9 +213,9 @@ public:
 	virtual ~Player();
 
 	void update();			///< player update opportunity
-	
+
 	void newMap();			///< player after map loaded opportunity
-	
+
 	void init(const PlayerTemplate* pt);
 	void initFromDict(const Dict* d);
 	void setDefaultTeam(void);
@@ -259,7 +259,7 @@ public:
 
 	/// return a bitmask that is unique to this player.
 	inline PlayerMaskType getPlayerMask() const { return 1 << m_playerIndex; }
-	
+
 	/// a convenience function to test the ThingTemplate against the players canBuild flags
 	/// called by canBuild
 	Bool allowedToBuild(const ThingTemplate *tmplate) const;
@@ -269,25 +269,25 @@ public:
 
 	// Can we afford to build?
 	Bool canAffordBuild( const ThingTemplate *whatToBuild ) const;
-  
+
   // Check MaxSimultaneousOfType
   Bool canBuildMoreOfType( const ThingTemplate *whatToBuild ) const;
-  
+
 	/// Difficulty level for this player.
 	GameDifficulty getPlayerDifficulty(void) const;
 
 	/** return the player's command center. (must be one of his "normal" ones,
 			not a captured one.)
-			if he has none, return null. 
+			if he has none, return null.
 			if he has multiple, return one arbitrarily. */
 	Object* findNaturalCommandCenter();
-	
+
 	Object* findAnyExistingObjectWithThingTemplate( const ThingTemplate *thing );
 
-	// Finds a short-cut firing special power of specified type returning the first ready power or 
+	// Finds a short-cut firing special power of specified type returning the first ready power or
 	// the most ready if none ready.
 	Object* findMostReadyShortcutSpecialPowerOfType( SpecialPowerType spType );
-	
+
 	//Find specified thing template's most ready weapon.
 	Object* findMostReadyShortcutWeaponForThing( const ThingTemplate *thing, UnsignedInt &mostReadyPercentage );
 	Object* findMostReadyShortcutSpecialPowerForThing( const ThingTemplate *thing, UnsignedInt &mostReadyPercentage );
@@ -303,7 +303,7 @@ public:
 	Bool isScienceDisabled( ScienceType t ) const;	///< Can't purchase this science because of script reasons.
 	Bool isScienceHidden( ScienceType t ) const;		///< This science is effectively hidden due to  script reasons.
 
-	//Allows scripts to make specific sciences available, hidden, or disabled. 
+	//Allows scripts to make specific sciences available, hidden, or disabled.
 	void setScienceAvailability( ScienceType science, ScienceAvailabilityType type );
 
 	ScienceAvailabilityType getScienceAvailabilityTypeFromString( const AsciiString& name );
@@ -326,7 +326,7 @@ public:
 
 	void onUpgradeCompleted( const UpgradeTemplate *upgradeTemplate );				///< An upgrade just finished, do things like tell all objects to recheck UpgradeModules
 	void onUpgradeRemoved(){}					///< An upgrade just got removed, this doesn't do anything now.
- 
+
 #if defined(RTS_DEBUG)
 	/// Prereq disabling cheat key
 	void toggleIgnorePrereqs(){ m_DEMO_ignorePrereqs = !m_DEMO_ignorePrereqs; }
@@ -355,7 +355,7 @@ public:
 	///< one of my command centers just fired a special power, let us reset timers for all command centers.
 	void resetOrStartSpecialPowerReadyFrame( const SpecialPowerTemplate *temp );
 	///< my new command center wants to init his timers to the status quo
-	UnsignedInt getOrStartSpecialPowerReadyFrame( const SpecialPowerTemplate *temp); 
+	UnsignedInt getOrStartSpecialPowerReadyFrame( const SpecialPowerTemplate *temp);
 	void expressSpecialPowerReadyFrame( const SpecialPowerTemplate *temp, UnsignedInt frame );
 	void addNewSharedSpecialPowerTimer( const SpecialPowerTemplate *temp, UnsignedInt frame );
 
@@ -392,7 +392,7 @@ public:
 	/** Return bonus or penalty for construction of this thing.
 	*/
 	Real getProductionCostChangePercent( AsciiString buildTemplateName ) const;
-	
+
 	/** Return bonus or penalty for construction of this thing.
 	*/
 	Real getProductionTimeChangePercent( AsciiString buildTemplateName ) const;
@@ -486,7 +486,7 @@ public:
 		simply returns the number of objects owned by this player with a specific KindOfMaskType
 	*/
 	Int countObjects(KindOfMaskType setMask, KindOfMaskType clearMask);
-	
+
 	/// Returns the closest of a given type to the given object
 	Object *findClosestByKindOf( Object *queryObject, KindOfMaskType setMask, KindOfMaskType clearMask );
 
@@ -527,7 +527,7 @@ public:
 
 	/**
 		* Iterate all objects that this player has
-		*/	
+		*/
 	void iterateObjects( ObjectIterateFunc func, void *userData ) const;
 
 	/**
@@ -541,7 +541,7 @@ public:
 	void addToBuildList(Object *obj);			///< Adds this to the build list.	 Used for factories placed instead of in build list.
 	void addToPriorityBuildList(AsciiString templateName, Coord3D *pos, Real angle);			///< Adds this to the build list.	 Used for factories placed instead of in build list.
 
-	/// get the relationship between this->that. 
+	/// get the relationship between this->that.
 	Relationship getRelationship(const Team *that) const;
 
 	/// set the relationship between this->that. (note that this doesn't affect the that->this relationship.)
@@ -561,7 +561,7 @@ public:
 	/// Set that all units should begin hunting.
 	void setUnitsShouldHunt(Bool unitsShouldHunt, CommandSourceType source);
 	Bool getUnitsShouldHunt() const { return m_unitsShouldHunt; }
-	
+
 	/// All of our units are new spied upon; they sight for the given enemy
 	void setUnitsVisionSpied( Bool setting, KindOfMaskType whichUnits, PlayerIndex byWhom );
 
@@ -579,7 +579,7 @@ public:
 
 	/// Build a building near a supply dump with at least cash.  Gets passed to aiPlayer.
 	void buildBySupplies(Int minimumCash, const AsciiString &thingName);
-	
+
 	/// Build an instance of a specific building nearest specified team.  Gets passed to aiPlayer.
 	void buildSpecificBuildingNearestTeam( const AsciiString &thingName, const Team *team );
 
@@ -601,14 +601,14 @@ public:
 	/// Enable/Disable the construction of units
 	Bool getCanBuildUnits(void) { return m_canBuildUnits; }
 	void setCanBuildUnits(Bool canProduce) { m_canBuildUnits = canProduce; }
-	
+
 	/// Enable/Disable the construction of base buildings.
 	Bool getCanBuildBase(void) { return m_canBuildBase; }
 	void setCanBuildBase(Bool canProduce) { m_canBuildBase = canProduce; }
 
 	/// Transfer all assets from player that to this
 	void transferAssetsFromThat(Player* that);
-	
+
 	/// Sell everything this player owns.
 	void sellEverythingUnderTheSun(void);
 
@@ -616,7 +616,7 @@ public:
 	void ungarrisonAllUnits(CommandSourceType source);
 
 	void setUnitsShouldIdleOrResume(Bool idle);
-	
+
 	Bool isPlayableSide( void ) const;
 
 	Bool isPlayerObserver( void ) const; // Favor !isActive() - this is used for Observer GUI mostly, not in-game stuff
@@ -648,13 +648,13 @@ public:
 
 	// return the requested hotkey squad
 	Squad *getHotkeySquad(Int squadNumber);
-	
+
 	// return the hotkey squad that a unit is in, or NO_HOTKEY_SQUAD if it isn't in one.
 	Int getSquadNumberForObject(const Object *objToFind) const;
-	
+
 	// remove an object from any hotkey squads that its in.
 	void removeObjectFromHotkeySquad(Object *objToRemove);
-	
+
 	void setAttackedBy( Int playerNdx );
 	Bool getAttackedBy( Int playerNdx ) const;
 	UnsignedInt getAttackedFrame(void) {return m_attackedFrame;}  // Return last frame attacked.
@@ -689,7 +689,7 @@ public:
 	Int getRankLevel() const							{ return m_rankLevel; }
 	Int getSkillPointsLevelUp() const			{ return m_levelUp;	}
 	Int getSkillPointsLevelDown() const			{ return m_levelDown;	}
-	UnicodeString getGeneralName() const	{ return m_generalName; }	
+	UnicodeString getGeneralName() const	{ return m_generalName; }
 	void setGeneralName( UnicodeString name ){ m_generalName = name;	}
 	/// returns TRUE if rank level really changed.
 	Bool setRankLevel(Int level);
@@ -701,7 +701,7 @@ public:
 	Bool addSkillPointsForKill(const Object* killer, const Object* victim);
 
 	void addSciencePurchasePoints(Int delta);
-	
+
 	void setSkillPointsModifier(Real expMod) { m_skillPointsModifier = expMod; }
 	Real getSkillPointsModifier(void) const { return m_skillPointsModifier; }
 
@@ -711,13 +711,13 @@ public:
 	/// reset rank to 1.
 	void resetRank();
 
-	/** 
+	/**
 		attempt to purchase the science, but use prereqs, and charge points.
 		return true if successful.
 	*/
 	Bool attemptToPurchaseScience(ScienceType science);
 
-	/** 
+	/**
 		grant the science, ignore prereqs & charge no points,
 		but still restrict you to purchasable sciences (ie, intrinsic and rank sciences
 		are not allowed)
@@ -734,7 +734,7 @@ protected:
 	virtual void crc( Xfer *xfer );
 	virtual void xfer( Xfer *xfer );
 	virtual void loadPostProcess( void );
-	
+
 	void deleteUpgradeList( void );															///< delete all our upgrades
 
 private:
@@ -777,17 +777,17 @@ private:
 	ScienceVec						m_sciences;					///< (SAVE) sciences that we know (either intrinsically or via later purchases)
 	ScienceVec						m_sciencesDisabled;	///< (SAVE) sciences that we are not permitted to purchase "yet". Controlled by mission scripts.
 	ScienceVec						m_sciencesHidden;		///< (SAVE) sciences that aren't shown. Controlled by mission scripts.
-	
+
 	Int										m_rankLevel;			///< (SAVE) our RankLevel, 1...n
 	Int										m_skillPoints;		///< (SAVE) our cumulative SkillPoint total
 	Int										m_sciencePurchasePoints;		///< (SAVE) our unspent SciencePurchasePoint total
 	Int										m_levelUp, m_levelDown;			///< (NO-SAVE) skill points to go up/down a level (runtime only)
 	UnicodeString					m_generalName;		///< (SAVE) This is the name of the general the player is allowed to change.
-	
+
 	PlayerTeamList				m_playerTeamPrototypes;				///< ALL the teams we control, via prototype
 	PlayerRelationMap			*m_playerRelations;						///< allies & enemies
 	TeamRelationMap				*m_teamRelations;							///< allies & enemies
-	
+
 	AcademyStats					m_academyStats;				///< Keeps track of various statistics in order to provide advice to the player about how to improve playing.
 
 	Bool									m_canBuildUnits;		///< whether the current player is allowed to build units
@@ -801,7 +801,7 @@ private:
 
 	Bool									m_attackedBy[MAX_PLAYER_COUNT];	///< For each player, have they attacked me?
 	UnsignedInt						m_attackedFrame;	///< Last frame attacked.
-	
+
 	Real									m_cashBountyPercent;
 
 	/// @todo REMOVE (not disable) these cheat keys
@@ -819,7 +819,7 @@ private:
 	typedef std::list<KindOfPercentProductionChange*> KindOfPercentProductionChangeList;
 	typedef KindOfPercentProductionChangeList::iterator KindOfPercentProductionChangeListIt;
 	mutable KindOfPercentProductionChangeList m_kindOfPercentProductionChangeList;
-	
+
 
 	typedef std::list<SpecialPowerReadyTimerType> SpecialPowerReadyTimerList;
 	typedef SpecialPowerReadyTimerList::iterator SpecialPowerReadyTimerListIterator;

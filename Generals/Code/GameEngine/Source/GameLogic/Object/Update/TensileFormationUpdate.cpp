@@ -38,7 +38,7 @@
 #include "GameLogic/Module/TensileFormationUpdate.h"
 #include "GameLogic/Module/BodyModule.h"
 #include "GameLogic/PartitionManager.h"
-#include "GameLogic/GameLogic.h" 
+#include "GameLogic/GameLogic.h"
 #include "GameLogic/AI.h"
 #include "GameLogic/AIPathfind.h"
 
@@ -97,7 +97,7 @@ TensileFormationUpdateModuleData::TensileFormationUpdateModuleData( void )
 
 	UpdateModuleData::buildFieldParse( p );
 
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
 		{ "Enabled",	    INI::parseBool,	NULL, offsetof( TensileFormationUpdateModuleData, m_enabled ) },
 		{ "CrackSound",	INI::parseAudioEventRTS,	NULL,	offsetof( TensileFormationUpdateModuleData, m_crackSound) },
@@ -130,7 +130,7 @@ TensileFormationUpdate::TensileFormationUpdate( Thing *thing, const ModuleData *
 
 	for ( int t = 0; t < 4; ++t)
 	{
-		m_links[ t ].id = INVALID_ID; 
+		m_links[ t ].id = INVALID_ID;
 		m_links[ t ].tensor.set(0,0,0);
 	}
 
@@ -188,8 +188,8 @@ void TensileFormationUpdate::initLinks( void )
 		if ( closestDistance > thisDistance )
 		{
 			closestDistance = thisDistance;
-			
-			//push a new link 
+
+			//push a new link
 			for ( int t = 3; t > 0; --t )
 				m_links[ t ] = m_links[ t-1 ];
 
@@ -209,7 +209,7 @@ void TensileFormationUpdate::initLinks( void )
 
 
 
- 
+
 
 
 // ------------------------------------------------------------------------------------------------
@@ -267,7 +267,7 @@ UpdateSleepTime TensileFormationUpdate::update( void )
 	}
 
 
-	if ( m_life%30 == 29 )		
+	if ( m_life%30 == 29 )
 		propagateDislodgement( TRUE );
 
 
@@ -316,9 +316,9 @@ UpdateSleepTime TensileFormationUpdate::update( void )
 			desiredPos.sub( &tensor );
 
 			//Coord3D desiredPos = { theirPos->x - m_links[ t ].tensor.x, theirPos->y - m_links[ t ].tensor.y, theirPos->z - m_links[ t ].tensor.z };
-			
+
 			newPos.x = newPos.x*0.93f + desiredPos.x*0.07f;
-			newPos.y = newPos.y*0.93f + desiredPos.y*0.07f; 
+			newPos.y = newPos.y*0.93f + desiredPos.y*0.07f;
 			newPos.z = MIN( m_lowestSlideElevation, TheTerrainLogic->getGroundHeight(newPos.x, newPos.y) );//rest on surface here
 
 			tensor.normalize();
@@ -342,7 +342,7 @@ UpdateSleepTime TensileFormationUpdate::update( void )
 
 
 	draw->setModelConditionFlags(MAKE_MODELCONDITION_MASK(MODELCONDITION_POST_COLLAPSE));
-			
+
 	if ( m_life < 200 )
 		draw->setModelConditionFlags(MAKE_MODELCONDITION_MASK(MODELCONDITION_MOVING));
 	else
@@ -352,13 +352,13 @@ UpdateSleepTime TensileFormationUpdate::update( void )
 		draw->setModelConditionFlags(MAKE_MODELCONDITION_MASK(MODELCONDITION_FREEFALL));
 	else
 		draw->clearModelConditionFlags(MAKE_MODELCONDITION_MASK(MODELCONDITION_FREEFALL));
-		
+
 //	{
 //		RGBColor cyan = {0,1,1};
 //		draw->flashAsSelected(&cyan);
 //	}
 
-	
+
 
 	//else
 		//m_motionlessCounter = 0;
@@ -440,7 +440,7 @@ void TensileFormationUpdate::crc( Xfer *xfer )
 	// extend base class
 	UpdateModule::crc( xfer );
 
-}  // end crc  
+}  // end crc
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method

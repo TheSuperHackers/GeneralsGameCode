@@ -35,7 +35,7 @@
 #include "Vector3RndCombo.H"
 #include "v3_rnd.h"
 
-const char * const RANDOMIZER_NAMES[Vector3Randomizer::CLASSID_MAXKNOWN] = 
+const char * const RANDOMIZER_NAMES[Vector3Randomizer::CLASSID_MAXKNOWN] =
 {
 	"Solid Box",
 	"Solid Sphere",
@@ -74,7 +74,7 @@ int
 Combo_Index_From_Vector3_Rnd (Vector3Randomizer *randomizer)
 {
 	int index = 0;
-	if (randomizer != NULL) {		
+	if (randomizer != NULL) {
 		index = (int)randomizer->Class_ID ();
 	}
 

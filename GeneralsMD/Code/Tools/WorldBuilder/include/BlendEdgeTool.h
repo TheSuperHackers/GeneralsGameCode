@@ -29,10 +29,10 @@
 class WorldHeightMapEdit;
 /*************************************************************************/
 /**                             BlendEdgeTool
-	 Does the BlendEdgesOut tool operation. 
+	 Does the BlendEdgesOut tool operation.
 ***************************************************************************/
 ///  Blend edges out tool.
-class BlendEdgeTool : public Tool 
+class BlendEdgeTool : public Tool
 {
 protected:
 	Coord3D m_downPt;

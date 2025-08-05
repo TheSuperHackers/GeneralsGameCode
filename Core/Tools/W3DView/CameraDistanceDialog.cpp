@@ -76,7 +76,7 @@ END_MESSAGE_MAP()
 //
 /////////////////////////////////////////////////////////////////////////////
 BOOL
-CameraDistanceDialogClass::OnInitDialog (void) 
+CameraDistanceDialogClass::OnInitDialog (void)
 {
 	CDialog::OnInitDialog ();
 
@@ -116,17 +116,17 @@ CameraDistanceDialogClass::OnNotify
 	WPARAM wParam,
 	LPARAM lParam,
 	LRESULT *pResult
-) 
+)
 {
 	//
 	//	Update the spinner control if necessary
 	//
 	NMHDR *pheader = (NMHDR *)lParam;
 	if ((pheader != NULL) && (pheader->code == UDN_DELTAPOS)) {
-		LPNMUPDOWN pupdown = (LPNMUPDOWN)lParam;		
+		LPNMUPDOWN pupdown = (LPNMUPDOWN)lParam;
 		::Update_Spinner_Buddy (pheader->hwndFrom, pupdown->iDelta);
 	}
-	
+
 	// Allow the base class to process this message
 	return CDialog::OnNotify (wParam, lParam, pResult);
 }

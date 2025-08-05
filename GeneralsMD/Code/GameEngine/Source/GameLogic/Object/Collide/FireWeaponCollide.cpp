@@ -37,11 +37,11 @@
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void FireWeaponCollideModuleData::buildFieldParse(MultiIniFieldParse& p) 
+void FireWeaponCollideModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
   CollideModuleData::buildFieldParse(p);
 
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
 		{ "CollideWeapon",		INI::parseWeaponTemplate,						NULL, offsetof( FireWeaponCollideModuleData, m_collideWeaponTemplate ) },
 		{ "FireOnce",					INI::parseBool,											NULL, offsetof( FireWeaponCollideModuleData, m_fireOnce ) },
@@ -54,7 +54,7 @@ void FireWeaponCollideModuleData::buildFieldParse(MultiIniFieldParse& p)
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-FireWeaponCollide::FireWeaponCollide( Thing *thing, const ModuleData* moduleData ) : 
+FireWeaponCollide::FireWeaponCollide( Thing *thing, const ModuleData* moduleData ) :
 	CollideModule( thing, moduleData ),
 	m_collideWeapon(NULL)
 {
@@ -81,7 +81,7 @@ void FireWeaponCollide::onCollide( Object *other, const Coord3D *loc, const Coor
 	Object *me = getObject();
 
 	// This will fire at you every frame, because multiple people could be colliding and we want
-	// to hurt them all.  Another solution would be to keep a Map of other->objetIDs and 
+	// to hurt them all.  Another solution would be to keep a Map of other->objetIDs and
 	// delays for each individually.  However, this solution here is so quick and simple that it
 	// warrants the "do it eventually if we need it" clause.
 	if( shouldFireWeapon() )
@@ -97,14 +97,14 @@ Bool FireWeaponCollide::shouldFireWeapon()
 	const FireWeaponCollideModuleData *d = getFireWeaponCollideModuleData();
 
 	ObjectStatusMaskType status = getObject()->getStatusBits();
-	
+
 	//We need all required status or else we fail
 	if( !status.testForAll( d->m_requiredStatus ) )
-		return FALSE; 
+		return FALSE;
 
 	//If we have any forbidden statii, then fail
 	if( status.testForAny( d->m_forbiddenStatus ) )
-		return FALSE; 
+		return FALSE;
 
 	if( m_everFired && d->m_fireOnce )
 		return FALSE;// can only fire once ever

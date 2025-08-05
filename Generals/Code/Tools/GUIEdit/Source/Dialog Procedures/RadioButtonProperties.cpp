@@ -24,12 +24,12 @@
 
 // FILE: RadioButtonProperties.cpp ////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:    GUIEdit
@@ -87,7 +87,7 @@ static LRESULT CALLBACK radioButtonPropertiesCallback( HWND hWndDialog,
 	// are designed to have controls doing the same functionality
 	// and names
 	//
-	if( HandleCommonDialogMessages( hWndDialog, message, 
+	if( HandleCommonDialogMessages( hWndDialog, message,
 																	wParam, lParam, &returnCode ) == TRUE )
 		return returnCode;
 
@@ -100,7 +100,7 @@ static LRESULT CALLBACK radioButtonPropertiesCallback( HWND hWndDialog,
 //			Int notifyCode = HIWORD( wParam );  // notification code
 			Int controlID = LOWORD( wParam );  // control ID
 //			HWND hWndControl = (HWND)lParam;  // control window handle
- 
+
       switch( controlID )
       {
 
@@ -159,7 +159,7 @@ static LRESULT CALLBACK radioButtonPropertiesCallback( HWND hWndDialog,
 						GadgetRadioSetDisabledCheckedBoxImage( window, info->image );
 						GadgetRadioSetDisabledCheckedBoxColor( window, info->color );
 						GadgetRadioSetDisabledCheckedBoxBorderColor( window, info->borderColor );
-						
+
 						// ----------------------------------------------------------------
 						info = GetStateInfo( RADIO_HILITE );
 						GadgetRadioSetHiliteImage( window, info->image );
@@ -180,7 +180,7 @@ static LRESULT CALLBACK radioButtonPropertiesCallback( HWND hWndDialog,
 						Int group = GetDlgItemInt( hWndDialog, COMBO_GROUP, NULL, FALSE );
 						Int screen = TheNameKeyGenerator->nameToKey( AsciiString(TheEditor->getSaveFilename()) );
 						GadgetRadioSetGroup( window, group, screen );
-																	
+
 					}  // end if
 
           DestroyWindow( hWndDialog );
@@ -261,7 +261,7 @@ static void loadExistingGroupsCombo( HWND combo, GameWindow *window )
 
 	// search the next in line
 	loadExistingGroupsCombo( combo, window->winGetNext() );
-	
+
 }  // end loadExistingGroupsCombo
 
 // InitRadioButtonPropertiesDialog ============================================

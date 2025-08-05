@@ -19,7 +19,7 @@
 #include "StdAfx.h"
 #include "DebugWindowDialog.h"
 
-DebugWindowDialog::DebugWindowDialog(UINT nIDTemplate, CWnd* pParentWnd) : 
+DebugWindowDialog::DebugWindowDialog(UINT nIDTemplate, CWnd* pParentWnd) :
 	CDialog(nIDTemplate, pParentWnd)
 {
 	mStepping = false;
@@ -118,13 +118,13 @@ void DebugWindowDialog::AppendMessage(const std::string& messageToAppend)
 void DebugWindowDialog::AdjustVariable(const std::string& varName, const std::string& varValue)
 {
 	for (VecPairStringIt it = mVariables.begin(); it != mVariables.end(); it++) {
-		if (it->first == varName) { 
+		if (it->first == varName) {
 			it->second = varValue;
 			_RebuildVarsString();
 			return;
 		}
 	}
-	
+
 	PairString newPair;
 	newPair.first = varName;
 	newPair.second = varValue;

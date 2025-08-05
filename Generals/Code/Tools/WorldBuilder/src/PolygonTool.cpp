@@ -20,7 +20,7 @@
 // Texture tiling tool for worldbuilder.
 // Author: John Ahlquist, April 2001
 
-#include "StdAfx.h" 
+#include "StdAfx.h"
 #include "resource.h"
 
 #include "PolygonTool.h"
@@ -48,7 +48,7 @@ enum {SNAP_DISTANCE = 5};
 
 /// Constructor
 PolygonTool::PolygonTool(void) :
-	Tool(ID_POLYGON_TOOL, IDC_POLYGON), 
+	Tool(ID_POLYGON_TOOL, IDC_POLYGON),
 	m_poly_plusCursor(NULL),
 	m_poly_moveCursor(NULL)
 {
@@ -57,7 +57,7 @@ PolygonTool::PolygonTool(void) :
 
 
 /// Destructor
-PolygonTool::~PolygonTool(void) 
+PolygonTool::~PolygonTool(void)
 {
 	if (m_poly_plusCursor) {
 		::DestroyCursor(m_poly_plusCursor);
@@ -68,7 +68,7 @@ PolygonTool::~PolygonTool(void)
 }
 
 /// Clears it's is active flag.
-void PolygonTool::deactivate() 
+void PolygonTool::deactivate()
 {
 	m_poly_dragPointNdx = -1;
 	if (m_poly_curSelectedPolygon) {
@@ -82,7 +82,7 @@ void PolygonTool::deactivate()
 }
 
 /// Shows the terrain materials options panel.
-void PolygonTool::activate() 
+void PolygonTool::activate()
 {
 	CMainFrame::GetMainFrame()->showOptionsDialog(IDD_WAYPOINT_OPTIONS);
 	WaypointOptions::update();
@@ -119,7 +119,7 @@ Bool PolygonTool::poly_pickPoly(PolygonTrigger *pTrig, Coord3D loc, Int toleranc
 	}
 	if (count>0 && count<8) {
 		return true;
-	}		
+	}
 	return false;
 }
 
@@ -150,7 +150,7 @@ PolygonTrigger *PolygonTool::pickPolygon(Coord3D loc, CPoint viewPt, WbView* pVi
 			return pTrig;
 		}
 	}
-	return NULL; 
+	return NULL;
 }
 
 // Snap to other polys.
@@ -187,7 +187,7 @@ Int PolygonTool::poly_pickPoint(PolygonTrigger *pTrig, CPoint viewPt, WbView* pV
 		cpt.y = iLoc.y;
 		cpt.z = iLoc.z;
 		cpt.z = 0;
-		CPoint screenLoc; 
+		CPoint screenLoc;
 		pView->docToViewCoords(cpt, &screenLoc);
 		Int dx = screenLoc.x-viewPt.x;
 		Int dy = screenLoc.y - viewPt.y;
@@ -242,8 +242,8 @@ Int PolygonTool::poly_getInsertIndex(PolygonTrigger *pTrig, Coord3D loc) {
 }
 
 /** Do the pick on poly triggers. */
-void PolygonTool::poly_pickOnMouseDown(CPoint viewPt, WbView* pView) 
-{						 
+void PolygonTool::poly_pickOnMouseDown(CPoint viewPt, WbView* pView)
+{
 	m_poly_dragPointNdx = -1;
 	if (m_poly_curSelectedPolygon) {
 		Bool found = false;
@@ -274,7 +274,7 @@ void PolygonTool::poly_pickOnMouseDown(CPoint viewPt, WbView* pView)
 
 
 /// Perform the tool behavior on mouse down.
-void PolygonTool::mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc) 
+void PolygonTool::mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc)
 {
 	if (m != TRACK_L) return;
 	Coord3D docPt;
@@ -289,8 +289,8 @@ void PolygonTool::mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorl
 }
 
 /// Perform the tool behavior on mouse down.
-void PolygonTool::startMouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc) 
-{	
+void PolygonTool::startMouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc)
+{
 	// Clear any selected map objects.
 	if (!m_poly_curSelectedPolygon) PointerTool::clearSelection();
 
@@ -305,7 +305,7 @@ void PolygonTool::startMouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, 
 	m_poly_moveUndoable = NULL;
 	if (m_poly_curSelectedPolygon==NULL) {
 		// adding a new polygon.
-		m_poly_curSelectedPolygon = newInstance(PolygonTrigger)(32); 
+		m_poly_curSelectedPolygon = newInstance(PolygonTrigger)(32);
 		AsciiString name;
 		name.format("Area %d", m_poly_curSelectedPolygon->getID());
 		m_poly_curSelectedPolygon->setTriggerName(name);
@@ -353,7 +353,7 @@ void PolygonTool::startMouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, 
 }
 
 /// Delete the selected polygon or point.
-Bool PolygonTool::deleteSelectedPolygon(void) 
+Bool PolygonTool::deleteSelectedPolygon(void)
 {
 	if (m_poly_curSelectedPolygon) {
 		Bool found = false;
@@ -391,7 +391,7 @@ Bool PolygonTool::deleteSelectedPolygon(void)
 }
 
 /** Set the cursor. */
-void PolygonTool::setCursor(void) 
+void PolygonTool::setCursor(void)
 {
 	if (m_poly_mouseUpPlus || (m_poly_isAdding && m_poly_curSelectedPolygon)) {
 		if (m_poly_plusCursor == NULL) {
@@ -462,7 +462,7 @@ void PolygonTool::mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWor
 }
 
 /** Mouse up - not much. */
-void PolygonTool::mouseUp(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc) 
+void PolygonTool::mouseUp(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc)
 {
 	if (m != TRACK_L) return;
 	REF_PTR_RELEASE(m_poly_moveUndoable); // belongs to pDoc now.

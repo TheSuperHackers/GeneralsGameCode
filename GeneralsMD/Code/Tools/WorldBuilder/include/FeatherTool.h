@@ -29,10 +29,10 @@
 class WorldHeightMapEdit;
 /**************************************************************************/
 /**                             FeatherTool
-	 Does the smooth height map tool operation. 
+	 Does the smooth height map tool operation.
 ***************************************************************************/
 ///  smooth height map tool.
-class FeatherTool : public Tool 
+class FeatherTool : public Tool
 {
 protected:
 	WorldHeightMapEdit *m_htMapEditCopy; //< ref counted.

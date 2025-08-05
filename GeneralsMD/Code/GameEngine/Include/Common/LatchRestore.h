@@ -92,7 +92,7 @@
 
 */
 
-template <typename T> 
+template <typename T>
 class LatchRestore
 {
 	protected:

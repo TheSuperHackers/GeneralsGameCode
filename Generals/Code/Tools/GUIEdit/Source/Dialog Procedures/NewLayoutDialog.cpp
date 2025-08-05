@@ -24,12 +24,12 @@
 
 // FILE: NewLayoutDialog.cpp //////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:    GUIEdit
@@ -83,7 +83,7 @@ static void initNewLayoutDialog( HWND hWndDialog )
 /** Dialog procedure for the new layout dialog when starting an entire
 	* new layout in the editor */
 //=============================================================================
-LRESULT CALLBACK NewLayoutDialogProc( HWND hWndDialog, UINT message, 
+LRESULT CALLBACK NewLayoutDialogProc( HWND hWndDialog, UINT message,
 																			WPARAM wParam, LPARAM lParam )
 {
 

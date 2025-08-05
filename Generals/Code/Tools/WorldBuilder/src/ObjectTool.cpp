@@ -20,7 +20,7 @@
 // Texture tiling tool for worldbuilder.
 // Author: John Ahlquist, April 2001
 
-#include "StdAfx.h" 
+#include "StdAfx.h"
 #include "resource.h"
 
 #include "ObjectTool.h"
@@ -39,12 +39,12 @@
 	enum {HYSTERESIS = 3};
 /// Constructor
 ObjectTool::ObjectTool(void) :
-	Tool(ID_PLACE_OBJECT_TOOL, IDC_PLACE_OBJECT) 
+	Tool(ID_PLACE_OBJECT_TOOL, IDC_PLACE_OBJECT)
 {
 }
-	
+
 /// Destructor
-ObjectTool::~ObjectTool(void) 
+ObjectTool::~ObjectTool(void)
 {
 }
 
@@ -58,13 +58,13 @@ Real ObjectTool::calcAngle(Coord3D downPt, Coord3D curPt, WbView* pView)
 	if (dist < 0.1) // check for div-by-zero.
 	{
 		angle = 0;
-	} 
-	else if (abs(dx) > abs(dy)) 
+	}
+	else if (abs(dx) > abs(dy))
 	{
 		angle = acos(	(double)dx / dist);
 		if (dy<0) angle = -angle;
-	} 
-	else 
+	}
+	else
 	{
 		angle = asin(	((double)dy) / dist);
 		if (dx<0) angle = PI-angle;
@@ -81,7 +81,7 @@ Real ObjectTool::calcAngle(Coord3D downPt, Coord3D curPt, WbView* pView)
 
 
 /// Turn off object tracking.
-void ObjectTool::deactivate() 
+void ObjectTool::deactivate()
 {
 	CWorldBuilderDoc *pDoc = CWorldBuilderDoc::GetActiveDoc();
 	if (pDoc==NULL) return;
@@ -89,7 +89,7 @@ void ObjectTool::deactivate()
 	p3View->setObjTracking(NULL, m_downPt3d, 0, false);
 }
 /// Shows the object options panel
-void ObjectTool::activate() 
+void ObjectTool::activate()
 {
 	CMainFrame::GetMainFrame()->showOptionsDialog(IDD_OBJECT_OPTIONS);
 	DrawObject::setDoBrushFeedback(false);
@@ -100,7 +100,7 @@ void ObjectTool::activate()
 }
 
 /** Execute the tool on mouse down - Place an object. */
-void ObjectTool::mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc) 
+void ObjectTool::mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc)
 {
 	if (m != TRACK_L) return;
 
@@ -111,7 +111,7 @@ void ObjectTool::mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorld
 }
 
 /** Tracking - show the object. */
-void ObjectTool::mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc) 
+void ObjectTool::mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc)
 {
 	Bool justAClick = true;
 	Coord3D cpt;
@@ -131,17 +131,17 @@ void ObjectTool::mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWorl
 	WbView3d *p3View = pDoc->GetActive3DView();
 	p3View->setObjTracking(NULL, m_downPt3d, 0, false);
 	loc.z = ObjectOptions::getCurObjectHeight();
-	if (pCur) { 
+	if (pCur) {
 		// Display the transparent version of this object.
 		p3View->setObjTracking(pCur, loc, angle, true);
 	} else {
-		// Don't display anything. 
+		// Don't display anything.
 		p3View->setObjTracking(NULL, loc, angle, false);
 	}
 }
 
 /** Execute the tool on mouse up - Place an object. */
-void ObjectTool::mouseUp(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc) 
+void ObjectTool::mouseUp(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc)
 {
 	if (m != TRACK_L) return;
 

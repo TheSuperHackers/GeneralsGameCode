@@ -24,12 +24,12 @@
 
 // FILE: KeyDefs.h ////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information					         
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:    RTS3
@@ -42,10 +42,10 @@
 // Desc:       Basic keyboard key definitions.
 //
 /** @todo NOTE: These key definitions are currently tied directly to the
-*		Direct Input key codes, therefore making these definitions device 
+*		Direct Input key codes, therefore making these definitions device
 *		dependent even though this code lives on the device INdependent side
-*		of the engine.  In the future to be truly device independent we 
-*		need to define our own key codes, and have a translation between 
+*		of the engine.  In the future to be truly device independent we
+*		need to define our own key codes, and have a translation between
 *		what we read from the device to our own system*/
 //
 //-----------------------------------------------------------------------------
@@ -107,7 +107,7 @@
 
 enum KeyDefType CPP_11(: Int)
 {
-	// keypad keys ---------------------------------------------------------------- 
+	// keypad keys ----------------------------------------------------------------
 	KEY_KP0 								= DIK_NUMPAD0,
 	KEY_KP1 								= DIK_NUMPAD1,
 	KEY_KP2 								= DIK_NUMPAD2,

@@ -83,7 +83,7 @@ public:
 	typedef enum
 	{
 		FLAG_STOP_WHEN_HIDDEN	= 0x00000001,
-		
+
 	} FLAGS;
 
 	///////////////////////////////////////////////////////////
@@ -148,7 +148,7 @@ private:
 	///////////////////////////////////////////////////////////
 	//	Private member data
 	///////////////////////////////////////////////////////////
-	bool						IsInitialized;	
+	bool						IsInitialized;
 	StringClass				Name;
 	AudibleSoundClass *	Sound;
 	uint32					Flags;
@@ -171,7 +171,7 @@ public:
 	SoundRenderObjDefClass (SoundRenderObjClass &render_obj);
 	SoundRenderObjDefClass (const SoundRenderObjDefClass &src);
 	virtual ~SoundRenderObjDefClass (void);
-	
+
 	///////////////////////////////////////////////////////////
 	//	Public operators
 	///////////////////////////////////////////////////////////
@@ -179,12 +179,12 @@ public:
 
 	///////////////////////////////////////////////////////////
 	//	Public methods
-	///////////////////////////////////////////////////////////	
+	///////////////////////////////////////////////////////////
 	RenderObjClass *				Create (void);
 	WW3DErrorType					Load_W3D (ChunkLoadClass &cload);
 	WW3DErrorType					Save_W3D (ChunkSaveClass &csave);
 	const char *					Get_Name (void) const					{ return Name; }
-	void								Set_Name (const char *name)			{ Name = name; }	
+	void								Set_Name (const char *name)			{ Name = name; }
 	SoundRenderObjDefClass *	Clone (void) const						{ return NEW_REF( SoundRenderObjDefClass, (*this) ); }
 
 	//
@@ -197,7 +197,7 @@ protected:
 	///////////////////////////////////////////////////////////
 	//	Protected methods
 	///////////////////////////////////////////////////////////
-	
+
 	//
 	//	Loading methods
 	//
@@ -227,7 +227,7 @@ private:
 //	SoundRenderObjPrototypeClass
 //
 ///////////////////////////////////////////////////////////////////////////////////
-class SoundRenderObjPrototypeClass : public W3DMPO, public PrototypeClass 
+class SoundRenderObjPrototypeClass : public W3DMPO, public PrototypeClass
 {
 	W3DMPO_GLUE(SoundRenderObjPrototypeClass)
 public:
@@ -237,7 +237,7 @@ public:
 	///////////////////////////////////////////////////////////
 	SoundRenderObjPrototypeClass (SoundRenderObjDefClass *def)
 		: Definition (NULL)													{ Set_Definition (def); }
-	
+
 	///////////////////////////////////////////////////////////
 	//	Public methods
 	///////////////////////////////////////////////////////////
@@ -245,7 +245,7 @@ public:
 	int								Get_Class_ID(void) const			{ return RenderObjClass::CLASSID_SOUND; }
 	RenderObjClass *				Create (void)							{ return Definition->Create (); }
 	virtual void							DeleteSelf()										{ delete this; }
-	
+
 	SoundRenderObjDefClass	*	Peek_Definition (void) const						{ return Definition; }
 	void								Set_Definition (SoundRenderObjDefClass *def)	{ REF_PTR_SET (Definition, def); }
 

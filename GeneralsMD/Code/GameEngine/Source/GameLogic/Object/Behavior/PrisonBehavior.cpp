@@ -102,10 +102,10 @@ PrisonBehaviorModuleData::PrisonBehaviorModuleData( void )
 {
   OpenContainModuleData::buildFieldParse( p );
 
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
 
-		{ "ShowPrisoners",	INI::parseBool,					NULL,		offsetof( PrisonBehaviorModuleData, m_showPrisoners ) },		
+		{ "ShowPrisoners",	INI::parseBool,					NULL,		offsetof( PrisonBehaviorModuleData, m_showPrisoners ) },
 		{ "YardBonePrefix",	INI::parseAsciiString,	NULL,		offsetof( PrisonBehaviorModuleData, m_prisonYardBonePrefix ) },
 		{ 0, 0, 0, 0 }
 
@@ -227,9 +227,9 @@ void PrisonBehavior::pickVisualLocation( Coord3D *pos )
 																									 MAX_YARD_BONES,
 																									 yardPositions,
 																									 NULL );
-	
+
 	//
-	// we must have at least 3 bone locations to make a yard polygon, otherwise we'll 
+	// we must have at least 3 bone locations to make a yard polygon, otherwise we'll
 	// default to the object position
 	//
 	if( yardBones >= 3 )

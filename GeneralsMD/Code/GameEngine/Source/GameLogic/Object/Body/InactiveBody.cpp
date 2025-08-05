@@ -43,7 +43,7 @@
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-InactiveBody::InactiveBody( Thing *thing, const ModuleData* moduleData ) 
+InactiveBody::InactiveBody( Thing *thing, const ModuleData* moduleData )
 						: BodyModule( thing, moduleData ), m_dieCalled(false)
 {
 	getObject()->setEffectivelyDead(true);

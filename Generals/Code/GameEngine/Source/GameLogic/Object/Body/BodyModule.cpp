@@ -24,7 +24,7 @@
 
 // FILE: BodyModule.cpp ///////////////////////////////////////////////////////////////////////////
 // Author: Colin Day, September 2002
-// Desc:   BodyModule base class 
+// Desc:   BodyModule base class
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
@@ -57,7 +57,7 @@ void BodyModule::xfer( Xfer *xfer )
 	xfer->xferVersion( &version, currentVersion );
 
 	// call base class
-	BehaviorModule::xfer( xfer ); 
+	BehaviorModule::xfer( xfer );
 
 	// damage scalar
 	xfer->xferReal( &m_damageScalar );
@@ -72,5 +72,5 @@ void BodyModule::loadPostProcess( void )
 
 	// call base class
 	BehaviorModule::loadPostProcess();
-	
+
 }  // end loadPostProcess

@@ -80,8 +80,8 @@ public:
 	/*
 	** Use these methods to get access to the resultant mesh fragments
 	** Get_Fragment_Count - returns the number of meshes created
-	** Get_Fragment - returns a pointer (ref-counted!) to the 'n'th mesh 
-	** Relese_Fragments - call this when you are done, it causes the ShatterSystem 
+	** Get_Fragment - returns a pointer (ref-counted!) to the 'n'th mesh
+	** Relese_Fragments - call this when you are done, it causes the ShatterSystem
 	**                    to release its references to the fragments.
 	*/
 	static int		Get_Fragment_Count(void);

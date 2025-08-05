@@ -24,12 +24,12 @@
 
 // FILE: SliderProperties.cpp /////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:    GUIEdit
@@ -81,7 +81,7 @@ static LRESULT CALLBACK sliderPropertiesCallback( HWND hWndDialog,
 	// are designed to have controls doing the same functionality
 	// and names
 	//
-	if( HandleCommonDialogMessages( hWndDialog, message, 
+	if( HandleCommonDialogMessages( hWndDialog, message,
 																	wParam, lParam, &returnCode ) == TRUE )
 		return returnCode;
 
@@ -94,7 +94,7 @@ static LRESULT CALLBACK sliderPropertiesCallback( HWND hWndDialog,
 //			Int notifyCode = HIWORD( wParam );  // notification code
 			Int controlID = LOWORD( wParam );  // control ID
 //			HWND hWndControl = (HWND)lParam;  // control window handle
- 
+
       switch( controlID )
       {
 
@@ -172,7 +172,7 @@ static LRESULT CALLBACK sliderPropertiesCallback( HWND hWndDialog,
 							GadgetSliderSetEnabledImageTop( window, info->image );
 							GadgetSliderSetEnabledColor( window, info->color );
 							GadgetSliderSetEnabledBorderColor( window, info->borderColor );
-						
+
 							info = GetStateInfo( VSLIDER_ENABLED_BOTTOM );
 							GadgetSliderSetEnabledImageBottom( window, info->image );
 						}  // end if
@@ -182,7 +182,7 @@ static LRESULT CALLBACK sliderPropertiesCallback( HWND hWndDialog,
 							GadgetSliderSetEnabledImageLeft( window, info->image );
 							GadgetSliderSetEnabledColor( window, info->color );
 							GadgetSliderSetEnabledBorderColor( window, info->borderColor );
-							
+
 							info = GetStateInfo( HSLIDER_ENABLED_RIGHT );
 							GadgetSliderSetEnabledImageRight( window, info->image );
 						}  // end else
@@ -200,7 +200,7 @@ static LRESULT CALLBACK sliderPropertiesCallback( HWND hWndDialog,
 							GadgetSliderSetDisabledImageTop( window, info->image );
 							GadgetSliderSetDisabledColor( window, info->color );
 							GadgetSliderSetDisabledBorderColor( window, info->borderColor );
-						
+
 							info = GetStateInfo( VSLIDER_DISABLED_BOTTOM );
 							GadgetSliderSetDisabledImageBottom( window, info->image );
 						}  // end if
@@ -210,7 +210,7 @@ static LRESULT CALLBACK sliderPropertiesCallback( HWND hWndDialog,
 							GadgetSliderSetDisabledImageLeft( window, info->image );
 							GadgetSliderSetDisabledColor( window, info->color );
 							GadgetSliderSetDisabledBorderColor( window, info->borderColor );
-							
+
 							info = GetStateInfo( HSLIDER_DISABLED_RIGHT );
 							GadgetSliderSetDisabledImageRight( window, info->image );
 						}  // end else
@@ -228,7 +228,7 @@ static LRESULT CALLBACK sliderPropertiesCallback( HWND hWndDialog,
 							GadgetSliderSetHiliteImageTop( window, info->image );
 							GadgetSliderSetHiliteColor( window, info->color );
 							GadgetSliderSetHiliteBorderColor( window, info->borderColor );
-						
+
 							info = GetStateInfo( VSLIDER_HILITE_BOTTOM );
 							GadgetSliderSetHiliteImageBottom( window, info->image );
 						}  // end if
@@ -238,7 +238,7 @@ static LRESULT CALLBACK sliderPropertiesCallback( HWND hWndDialog,
 							GadgetSliderSetHiliteImageLeft( window, info->image );
 							GadgetSliderSetHiliteColor( window, info->color );
 							GadgetSliderSetHiliteBorderColor( window, info->borderColor );
-							
+
 							info = GetStateInfo( HSLIDER_HILITE_RIGHT );
 							GadgetSliderSetHiliteImageRight( window, info->image );
 						}  // end else
@@ -295,7 +295,7 @@ static LRESULT CALLBACK sliderPropertiesCallback( HWND hWndDialog,
 							sliderData->minVal = sliderData->maxVal;
 							sliderData->maxVal = temp;
 
-							MessageBox( NULL, "Slider min greated than max, the values were swapped", 
+							MessageBox( NULL, "Slider min greated than max, the values were swapped",
 													"Warning", MB_OK | MB_ICONINFORMATION );
 
 						}  // end if

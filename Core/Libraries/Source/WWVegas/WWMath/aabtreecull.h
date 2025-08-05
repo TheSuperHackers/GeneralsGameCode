@@ -74,13 +74,13 @@ public:
 	*/
 	void					Re_Partition(void);
 	void					Re_Partition(const AABoxClass & bounds,SimpleDynVecClass<AABoxClass> & boxes);
-	
+
 	/*
 	** Update_Bounding_Boxes.  This function causes all bounding boxes in the tree to update themselves.
-	** If any box is found to not bound the objects it is supposed to contain, the box is updated 
-	** Note that this is normally not necessary, the reason this function existsis due to the fact 
-	** that the renegade level editor tries to do everything possible to not discard the precalculated 
-	** visibilty data for a level.  In some cases, we want to load geometry that has been edited back 
+	** If any box is found to not bound the objects it is supposed to contain, the box is updated
+	** Note that this is normally not necessary, the reason this function existsis due to the fact
+	** that the renegade level editor tries to do everything possible to not discard the precalculated
+	** visibilty data for a level.  In some cases, we want to load geometry that has been edited back
 	** into the same AABTree without re-partitioning.
 	*/
 	void					Update_Bounding_Boxes(void);
@@ -122,7 +122,7 @@ public:
 	** Bounding box of the entire tree
 	*/
 	const AABoxClass & Get_Bounding_Box(void);
-	void					Get_Node_Bounds(int node_id,AABoxClass * set_bounds);	
+	void					Get_Node_Bounds(int node_id,AABoxClass * set_bounds);
 
 	/*
 	** Statistics
@@ -182,10 +182,10 @@ protected:
 
 	virtual void		Load_Node_Contents(AABTreeNodeClass * /*node*/,ChunkLoadClass & /*cload*/) { }
 	virtual void		Save_Node_Contents(AABTreeNodeClass * /*node*/,ChunkSaveClass & /*csave*/) { }
-	
+
 	AABTreeNodeClass *	RootNode;			// root of the AAB-Tree
 	int						ObjectCount;		// number of objects in the system
-	
+
 	int						NodeCount;			// number of nodes
 	AABTreeNodeClass **	IndexedNodes;		// index access to the nodes
 
@@ -204,7 +204,7 @@ class AABTreeIterator
 {
 public:
 	AABTreeIterator(AABTreeCullSystemClass * tree);
-	
+
 	void					Reset(void);
 	bool					Enter_Parent(void);
 	bool					Enter_Sibling(void);
@@ -226,14 +226,14 @@ private:
 };
 
 
-/** 
+/**
 ** TypedAABTreeCullSystemClass
 ** This template adds type-safety to an AABTree.  It allows you to create trees
 ** containing a particular type of object (the class must be derived from CullableClass though)
 */
 template <class T> class TypedAABTreeCullSystemClass : public AABTreeCullSystemClass
 {
-public: 
+public:
 
 	virtual void		Add_Object(T * obj,int node_index=-1)	{ Add_Object_Internal(obj,node_index); }
 	virtual void		Remove_Object(T * obj)						{ Remove_Object_Internal(obj); }
@@ -261,7 +261,7 @@ public:
 
 	AABTreeNodeClass(void);
 	~AABTreeNodeClass(void);
-	
+
 	void						Add_Object(CullableClass * obj,bool update_bounds = true);
 	void						Remove_Object(CullableClass * obj);
 	int						Object_Count(void);
@@ -278,9 +278,9 @@ public:
 	/*
 	** Construction support:
 	*/
-	struct SplitChoiceStruct 
+	struct SplitChoiceStruct
 	{
-		SplitChoiceStruct(void) : Cost(FLT_MAX),FrontCount(0),BackCount(0),Plane(AAPlaneClass::XNORMAL,0.0f) 
+		SplitChoiceStruct(void) : Cost(FLT_MAX),FrontCount(0),BackCount(0),Plane(AAPlaneClass::XNORMAL,0.0f)
 		{
 			FrontBox.Init_Empty();
 			BackBox.Init_Empty();
@@ -327,7 +327,7 @@ public:
 
 /*
 ** AABTreeLinkClass
-** This structure is used to link objects into an AAB-Tree culling system. 
+** This structure is used to link objects into an AAB-Tree culling system.
 */
 class AABTreeLinkClass : public CullLinkClass, public AutoPoolClass<AABTreeLinkClass,256>
 {

@@ -190,16 +190,16 @@ public:
 		m_sawEndOfEnumPlayers = m_sawMatchbot = FALSE;
 		m_sawCompleteGameList = FALSE;
 		//
-		m_isConnecting = m_isConnected = false; 
+		m_isConnecting = m_isConnected = false;
 		m_groupRoomID = m_profileID = 0;
 		m_nextStagingServer = 1; m_stagingServers.clear();
 		m_pingStr = ""; m_mapName = ""; m_ladderIP = ""; m_isHosting = false;
 		for (Int i=0; i<MAX_SLOTS; ++i)
 		{
 			m_playerNames[i] = "";
-			
+
 			//Added by Sadullah Nader
-			//Initializations 
+			//Initializations
 			m_playerColors[i] = 0;
 			m_playerFactions[i] = 0;
 			m_playerLosses[i] = 0;
@@ -1104,7 +1104,7 @@ static SerialAuthResult doCDKeyAuthentication( PEER peer )
 		CheckServers(peer);
 #endif // SERVER_DEBUGGING
 	}
-	
+
 	if (retval == SERIAL_OK)
 	{
 		PSRequest req;
@@ -1261,7 +1261,7 @@ void PeerThreadClass::Thread_Function()
 	crossPingRooms[TitleRoom] = PEERFalse;
 	crossPingRooms[GroupRoom] = PEERFalse;
 	crossPingRooms[StagingRoom] = PEERFalse;
-	
+
 	/*********
 	First step, set our game authentication info
 	We could do:
@@ -1492,7 +1492,7 @@ void PeerThreadClass::Thread_Function()
 #endif
 				}
 				break;
-				
+
 			case PeerRequest::PEERREQUEST_SETGAMEOPTIONS:
 				{
 					m_mapName = incomingRequest.gameOptsMapName;
@@ -1676,7 +1676,7 @@ void PeerThreadClass::Thread_Function()
 					peerStopListingGames( peer );
 				}
 				break;
-				
+
 			case PeerRequest::PEERREQUEST_STARTGAME:
 				{
 					peerStartGame( peer, NULL, PEER_STOP_REPORTING);
@@ -2355,7 +2355,7 @@ void roomMessageCallback(PEER peer, RoomType roomType, const char * nick, const 
 
 	UnsignedInt IP;
 	peerGetPlayerInfoNoWait(peer, nick, &IP, &resp.message.profileID);
-	
+
 	PeerThreadClass *t = (PeerThreadClass *)param;
 	DEBUG_ASSERTCRASH(t, ("No Peer thread!"));
 	if (t && (t->getQMStatus() != QM_IDLE && t->getQMStatus() != QM_STOPPED))

@@ -260,7 +260,7 @@ void GameResultsThreadClass::Thread_Function()
 				if (hostStruct == NULL)
 				{
 					DEBUG_LOG(("sending game results to %s - host lookup failed", hostnameBuffer));
-					
+
 					// Even though this failed to resolve IP, still need to send a
 					//   callback.
 					IP = 0xFFFFFFFF;   // flag for IP resolve failed

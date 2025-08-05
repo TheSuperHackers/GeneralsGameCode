@@ -102,7 +102,7 @@ void DirectInputMouse::openMouse( void )
 	}  // end if
 
 	// set the mouse buffer size
-	DIPROPDWORD prop;		
+	DIPROPDWORD prop;
 	prop.diph.dwSize = sizeof( DIPROPDWORD );
 	prop.diph.dwHeaderSize = sizeof( DIPROPHEADER );
 	prop.diph.dwObj = 0;
@@ -123,7 +123,7 @@ void DirectInputMouse::openMouse( void )
 	hr = m_pMouseDevice->Acquire();
 	if( FAILED( hr ) )
 	{
-	
+
 		DEBUG_LOG(( "ERROR - openMouse: Unabled to acquire mouse" ));
 		assert( 0 );
 		closeMouse();
@@ -154,7 +154,7 @@ void DirectInputMouse::openMouse( void )
 						 m_numButtons, m_forceFeedback ? "Yes" : "No", m_numAxes ));
 
 	}  // end else
-	
+
 	DEBUG_LOG(( "OK - Mouse initialized successfully" ));
 
 }  // end openMouse
@@ -275,7 +275,7 @@ UnsignedByte DirectInputMouse::getMouseEvent( MouseIO *result, Bool flush )
 //-------------------------------------------------------------------------------------------------
 /** Map the direct input codes to our own mouse format */
 //-------------------------------------------------------------------------------------------------
-void DirectInputMouse::mapDirectInputMouse( MouseIO *mouse, 
+void DirectInputMouse::mapDirectInputMouse( MouseIO *mouse,
 																						DIDEVICEOBJECTDATA *mdat )
 {
 
@@ -424,7 +424,7 @@ void DirectInputMouse::setMouseLimits( void )
 
 		// get the window rect
 		GetWindowRect( ApplicationHWnd, &windowRect );
-	
+
 		// keep the cursor clipped to these coords when running windowed
 		ClipCursor( &windowRect );
 

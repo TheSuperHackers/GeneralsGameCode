@@ -49,20 +49,20 @@
 Command_Line_Arguments *Args = NULL;
 
 //*****************************************************************************
-// COMMAND_LINE_ARGUMENTS::COMMAND_LINE_ARGUMENTS -- Constructor.															
-//                                                                         
-// INPUT:     	HINSTANCE hInstance													
-//		  		LPSTR lpszCmdLine														
-//                                                                         
-// OUTPUT:    	none.                                                    	
-//                                                                         
-// WARNINGS:  	none.                                                    
-//                                                                         
-// HISTORY:                                                       
-//   09/01/1997  ML/MG : Created.                                            
+// COMMAND_LINE_ARGUMENTS::COMMAND_LINE_ARGUMENTS -- Constructor.
+//
+// INPUT:     	HINSTANCE hInstance
+//		  		LPSTR lpszCmdLine
+//
+// OUTPUT:    	none.
+//
+// WARNINGS:  	none.
+//
+// HISTORY:
+//   09/01/1997  ML/MG : Created.
 //=============================================================================
 
-Command_Line_Arguments::Command_Line_Arguments ( 
+Command_Line_Arguments::Command_Line_Arguments (
 	HINSTANCE current_instance_handle,
 	LPTSTR windows_command_line_string )
 {
@@ -72,7 +72,7 @@ Command_Line_Arguments::Command_Line_Arguments (
 	assert( windows_command_line_string != NULL );
 
 	//--------------------------------------------------------------------------
-	// reset all class data 
+	// reset all class data
 	//--------------------------------------------------------------------------
 	memset( ArgV, 0, sizeof( ArgV ) );
 
@@ -152,16 +152,16 @@ Command_Line_Arguments::Command_Line_Arguments (
 }
 
 //*****************************************************************************
-// COMMAND_LINE_ARGUMENTS::COMMAND_LINE_ARGUMENTS -- Constructor.															
-//                                                                         
-// INPUT:     	HINSTANCE hInstance													
-//                                                                         
-// OUTPUT:    	none.                                                    	
-//                                                                         
-// WARNINGS:  	none.                                                    
-//                                                                         
-// HISTORY:                                                       
-//   09/01/1997  ML/MG : Created.                                            
+// COMMAND_LINE_ARGUMENTS::COMMAND_LINE_ARGUMENTS -- Constructor.
+//
+// INPUT:     	HINSTANCE hInstance
+//
+// OUTPUT:    	none.
+//
+// WARNINGS:  	none.
+//
+// HISTORY:
+//   09/01/1997  ML/MG : Created.
 //=============================================================================
 
 Command_Line_Arguments::Command_Line_Arguments ( HINSTANCE current_instance_handle )
@@ -175,7 +175,7 @@ Command_Line_Arguments::Command_Line_Arguments ( HINSTANCE current_instance_hand
 	assert( windows_command_line_string != NULL );
 
 	//--------------------------------------------------------------------------
-	// reset all class data 
+	// reset all class data
 	//--------------------------------------------------------------------------
 	memset( ArgV, 0, sizeof( ArgV ) );
 
@@ -251,16 +251,16 @@ Command_Line_Arguments::Command_Line_Arguments ( HINSTANCE current_instance_hand
 
 //*****************************************************************************
 // COMMAND_LINE_ARGUMENTS::~COMMAND_LINE_ARGUMENTS -- Destructor.
-//                                                                         
-// INPUT:     	HINSTANCE hInstance													
-//			  		LPSTR lpszCmdLine														
-//                                                                         
-// OUTPUT:    	none.                                                    	
-//                                                                         
-// WARNINGS:  	none.                                                    
-//                                                                         
-// HISTORY:                                                       
-//   09/01/1997  ML/MG : Created.                                            
+//
+// INPUT:     	HINSTANCE hInstance
+//			  		LPSTR lpszCmdLine
+//
+// OUTPUT:    	none.
+//
+// WARNINGS:  	none.
+//
+// HISTORY:
+//   09/01/1997  ML/MG : Created.
 //=============================================================================
 
 Command_Line_Arguments::~Command_Line_Arguments ( void )
@@ -273,16 +273,16 @@ Command_Line_Arguments::~Command_Line_Arguments ( void )
 }
 
 //*****************************************************************************
-// COMMAND_LINE_ARGUMENTS::GET_ARGC --	Return ArgC.															
-//                                                                         
-// INPUT:     	none.													
-//                                                                         
-// OUTPUT:    	int ArgC.                                                    	
-//                                                                         
-// WARNINGS:  	none.                                                    
-//                                                                         
-// HISTORY:                                                       
-//   09/01/1997  ML/MG : Created.                                            
+// COMMAND_LINE_ARGUMENTS::GET_ARGC --	Return ArgC.
+//
+// INPUT:     	none.
+//
+// OUTPUT:    	int ArgC.
+//
+// WARNINGS:  	none.
+//
+// HISTORY:
+//   09/01/1997  ML/MG : Created.
 //=============================================================================
 
 int Command_Line_Arguments::Get_argc ( void )
@@ -300,15 +300,15 @@ int Command_Line_Arguments::Get_argc ( void )
 
 //*****************************************************************************
 // COMMAND_LINE_ARGUMENTS::GET_ARGV --	Return ArgV.
-//                                                                         
-// INPUT:     	none.													
-//                                                                         
+//
+// INPUT:     	none.
+//
 // OUTPUT:    	int ArgV.
-//                                                                         
-// WARNINGS:  	none.                                                    
-//                                                                         
-// HISTORY:                                                       
-//   09/01/1997  ML/MG : Created.                                            
+//
+// WARNINGS:  	none.
+//
+// HISTORY:
+//   09/01/1997  ML/MG : Created.
 //=============================================================================
 
 const char *Command_Line_Arguments::Get_argv ( int argument_index )
@@ -341,7 +341,7 @@ void Command_Line_Arguments::Set_argv( int argument_index, char *arg )
 	assert( argument_index < ArgC );
 	assert( ArgC >= 1 );
 
-	if (( argument_index >= 0 ) && 
+	if (( argument_index >= 0 ) &&
 		( argument_index < MAX_COMMAND_LINE_ARGUMENTS ) &&
 		( argument_index < ArgC )) {
 

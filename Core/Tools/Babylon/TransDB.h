@@ -30,7 +30,7 @@
 
 class CBabylonDlg;
 
-typedef struct 
+typedef struct
 {
 	int numdialog;
 	int missing;
@@ -40,7 +40,7 @@ typedef struct
 
 } DLGREPORT;
 
-typedef struct 
+typedef struct
 {
 	int numlabels;
 	int numstrings;
@@ -55,7 +55,7 @@ typedef struct
 
 typedef enum
 {
-	
+
 	PMASK_NONE				= 0,
 	PMASK_MISSING			=	0x00000001,
 	PMASK_UNRESOLVED	=	0x00000002,
@@ -80,14 +80,14 @@ typedef enum
 	LANGID_UNKNOWN
 } LangID;
 
-typedef struct 
-{ 
-	LangID langid; 
-	const char *name; 
+typedef struct
+{
+	LangID langid;
+	const char *name;
 	const char *initials ;	// two character identifier
 	const char *character;	// single character identifier
 
-} LANGINFO; 
+} LANGINFO;
 
 LANGINFO*	GetLangInfo ( LangID langid );
 const char*	GetLangName ( LangID langid );
@@ -235,8 +235,8 @@ class BabylonText : public DBAttribs
 	OLECHAR*			Get					( void )									{ return text->Get (); } ;
 	int						Len					( void )									{ return text->Len (); };
 	char*					GetSB				( void )									{ return text->GetSB (); } ;
-	void					SetWave			( OLECHAR *string )				{ wavefile->Set ( string ); Changed(); InvalidateAllWaves (); }; 
-	void					SetWave			( char *string )					{ wavefile->Set ( string ); Changed(); InvalidateAllWaves (); }; 
+	void					SetWave			( OLECHAR *string )				{ wavefile->Set ( string ); Changed(); InvalidateAllWaves (); };
+	void					SetWave			( char *string )					{ wavefile->Set ( string ); Changed(); InvalidateAllWaves (); };
 	void					SetLabel		( BabylonLabel *new_label )		{ label = new_label; };
 	void					SetRetranslate ( int flag = TRUE )		{ retranslate = flag;};
 	int						Retranslate ( void )									{ return retranslate; };
@@ -259,7 +259,7 @@ class BabylonText : public DBAttribs
 	void					InvalidateWave ( LangID langid );
 	int						IsSent ( void );
 	void						Sent ( int val );
-	
+
 };
 
 
@@ -267,7 +267,7 @@ class BabylonLabel : public DBAttribs
 {
 	TransDB				*db;
 
-												
+
 	OLEString			*name;
 	OLEString			*comment;
 	OLEString			*context;
@@ -409,9 +409,9 @@ class TransDB : public DBAttribs
 
 
 class DupNode : public ListNode
-{				 
-	BabylonText *original;																	
-	BabylonText *duplicate;																	
+{
+	BabylonText *original;
+	BabylonText *duplicate;
 
 	public:
 	DupNode ( BabylonText *dup, BabylonText *orig ) { original = orig; duplicate = dup, SetPriority ( orig->LineNumber ());};

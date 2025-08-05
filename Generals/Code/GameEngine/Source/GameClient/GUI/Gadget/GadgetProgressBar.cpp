@@ -24,12 +24,12 @@
 
 // FILE: ProgressBar.cpp //////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:   RTS3
@@ -85,7 +85,7 @@ WindowMsgHandledType GadgetProgressBarSystem( GameWindow *window, UnsignedInt ms
 		// ------------------------------------------------------------------------
     case GPM_SET_PROGRESS:
     {
-      Int newPos = (Int)mData1; 
+      Int newPos = (Int)mData1;
 
       if (newPos < 0 || newPos > 100)
         break;
@@ -95,7 +95,7 @@ WindowMsgHandledType GadgetProgressBarSystem( GameWindow *window, UnsignedInt ms
 			break;
 
     }  // end set progress
-		
+
 		// ------------------------------------------------------------------------
 		default:
 			return MSG_IGNORED;

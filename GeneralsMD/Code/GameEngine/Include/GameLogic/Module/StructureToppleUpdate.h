@@ -46,7 +46,7 @@ class ObjectCreationList;
 typedef std::vector<const ObjectCreationList*> OCLVec;
 
 //-------------------------------------------------------------------------------------------------
-struct FXBoneInfo 
+struct FXBoneInfo
 {
 	AsciiString boneName;
 	const ParticleSystemTemplate* particleSystemTemplate;
@@ -73,7 +73,7 @@ enum StructureTopplePhaseType CPP_11(: Int)
 	ST_PHASE_COUNT	// keep last
 };
 
-static const char *TheStructureTopplePhaseNames[] = 
+static const char *TheStructureTopplePhaseNames[] =
 {
 	"INITIAL",
 	"DELAY",
@@ -183,7 +183,7 @@ protected:
 		TOPPLESTATE_WAITINGFORDONE,
 		TOPPLESTATE_DONE
 	};
-	
+
 	UnsignedInt m_toppleFrame;
 	Coord2D m_toppleDirection;
 	StructureToppleStateType m_toppleState;

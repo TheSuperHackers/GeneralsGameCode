@@ -24,12 +24,12 @@
 
 // FILE: GadgetComboBox.h //////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information					         
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:    RTS3
@@ -94,17 +94,17 @@ extern void GadgetComboBoxSetIMECompositeTextColors( GameWindow *comboBox, Color
 // and those slider buttons and thumb as well as the drop down button and edit box.
 //
 extern void GadgetComboBoxSetColors( GameWindow *comboBox,
-																	  Color enabledColor, 
+																	  Color enabledColor,
 																	  Color enabledBorderColor,
-																	  Color enabledSelectedItemColor, 
+																	  Color enabledSelectedItemColor,
 																	  Color enabledSelectedItemBorderColor,
-																	  Color disabledColor, 
+																	  Color disabledColor,
 																	  Color disabledBorderColor,
-																	  Color disabledSelectedItemColor, 
+																	  Color disabledSelectedItemColor,
 																	  Color disabledSelectedItemBorderColor,
-																	  Color hiliteColor, 
+																	  Color hiliteColor,
 																	  Color hiliteBorderColor,
-																	  Color hiliteSelectedItemColor, 
+																	  Color hiliteSelectedItemColor,
 																	  Color hiliteSelectedItemBorderColor );
 
 inline void GadgetComboBoxSetEnabledImage( GameWindow *g, const Image *image )													{ g->winSetEnabledImage( 0, image ); }

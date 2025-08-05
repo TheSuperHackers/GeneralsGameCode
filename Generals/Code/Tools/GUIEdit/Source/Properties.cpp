@@ -24,12 +24,12 @@
 
 // FILE: Properties.cpp ///////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:    GUIEdit
@@ -46,7 +46,7 @@
 //
 //-----------------------------------------------------------------------------
 ///////////////////////////////////////////////////////////////////////////////
- 
+
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 #include <stdlib.h>
 #include <assert.h>
@@ -83,7 +83,7 @@ static Int enabledTextIndex,
 			 disabledTextIndex,
 			 hiliteTextIndex;
 
-ColorControl colorControlTable[] = 
+ColorControl colorControlTable[] =
 {
 	{ BUTTON_ENABLED_COLOR, { 255, 255, 255, 255 } },
 	{ BUTTON_ENABLED_BORDER_COLOR, { 255, 255, 255, 255 } },
@@ -91,14 +91,14 @@ ColorControl colorControlTable[] =
 	{ BUTTON_DISABLED_BORDER_COLOR, { 255, 255, 255, 255 } },
 	{ BUTTON_HILITE_COLOR, { 255, 255, 255, 255 } },
 	{ BUTTON_HILITE_BORDER_COLOR, { 255, 255, 255, 255 } },
-	
+
 	{ BUTTON_COLOR, 0, },
 	{ BUTTON_BORDER_COLOR, 0 },
 
 	{ 0, { 0, 0, 0, 0 } }  // keep this last!
 };
 
-ImageAndColorInfo imageAndColorTable[] = 
+ImageAndColorInfo imageAndColorTable[] =
 {
 	{ GWS_PUSH_BUTTON, BUTTON_ENABLED, "[Button] Enabled (Normal)", NULL, 0, 0 },
 	{ GWS_PUSH_BUTTON, BUTTON_ENABLED_PUSHED, "[Button] Enabled (Pushed)", NULL, 0, 0 },
@@ -205,7 +205,7 @@ ImageAndColorInfo imageAndColorTable[] =
 	{ GWS_SCROLL_LISTBOX, LISTBOX_SLIDER_HILITE_BOTTOM, "[Slider [Listbox]] Hilite Bottom End", NULL, 0, 0 },
 	{ GWS_SCROLL_LISTBOX, LISTBOX_SLIDER_HILITE_CENTER, "[Slider [Listbox]] Hilite Repeating Center", NULL, 0, 0 },
 	{ GWS_SCROLL_LISTBOX, LISTBOX_SLIDER_HILITE_SMALL_CENTER, "[Slider [Listbox]] Hilite Repeating Small Cener", NULL, 0, 0 },
-	
+
 	{ GWS_SCROLL_LISTBOX, LISTBOX_SLIDER_THUMB_ENABLED, "[Slider Thumb [Listbox]] Enabled (Normal)", NULL, 0, 0 },
 	{ GWS_SCROLL_LISTBOX, LISTBOX_SLIDER_THUMB_ENABLED_PUSHED, "[Slider Thumb [Listbox]] Enabled (Pushed)", NULL, 0, 0 },
 	{ GWS_SCROLL_LISTBOX, LISTBOX_SLIDER_THUMB_DISABLED, "[Slider Thumb [Listbox]] Disabled (Normal)", NULL, 0, 0 },
@@ -248,7 +248,7 @@ ImageAndColorInfo imageAndColorTable[] =
 	{ GWS_COMBO_BOX, COMBOBOX_EDIT_BOX_HILITE_RIGHT, "[Text Entry [ComboBox]] Hilite Right End", NULL, 0, 0 },
 	{ GWS_COMBO_BOX, COMBOBOX_EDIT_BOX_HILITE_CENTER, "[Text Entry [ComboBox]] Hilite Repeating Center", NULL, 0, 0 },
 	{ GWS_COMBO_BOX, COMBOBOX_EDIT_BOX_HILITE_SMALL_CENTER, "[Text Entry [ComboBox]] Hilite Small Repeating Center", NULL, 0, 0 },
-	
+
 	{ GWS_COMBO_BOX, COMBOBOX_LISTBOX_ENABLED,															"[Listbox [ComboBox]] Enabled Surface", NULL, 0, 0 },
 	{ GWS_COMBO_BOX, COMBOBOX_LISTBOX_ENABLED_SELECTED_ITEM_LEFT,						"[Listbox [ComboBox]] Enabled Selected Item Left End (or colors)", NULL, 0, 0 },
 	{ GWS_COMBO_BOX, COMBOBOX_LISTBOX_ENABLED_SELECTED_ITEM_RIGHT,					"[Listbox [ComboBox]] Enabled Selected Item Right End", NULL, 0, 0 },
@@ -289,7 +289,7 @@ ImageAndColorInfo imageAndColorTable[] =
 	{ GWS_COMBO_BOX, COMBOBOX_LISTBOX_SLIDER_HILITE_BOTTOM, "[Slider [Listbox [ComboBox]]] Hilite Bottom End", NULL, 0, 0 },
 	{ GWS_COMBO_BOX, COMBOBOX_LISTBOX_SLIDER_HILITE_CENTER, "[Slider [Listbox [ComboBox]]] Hilite Repeating Center", NULL, 0, 0 },
 	{ GWS_COMBO_BOX, COMBOBOX_LISTBOX_SLIDER_HILITE_SMALL_CENTER, "[Slider [Listbox [ComboBox]]] Hilite Repeating Small Cener", NULL, 0, 0 },
-	
+
 	{ GWS_COMBO_BOX, COMBOBOX_LISTBOX_SLIDER_THUMB_ENABLED, "[Slider Thumb [Listbox [ComboBox]]] Enabled (Normal)", NULL, 0, 0 },
 	{ GWS_COMBO_BOX, COMBOBOX_LISTBOX_SLIDER_THUMB_ENABLED_PUSHED, "[Slider Thumb [Listbox [ComboBox]]] Enabled (Pushed)", NULL, 0, 0 },
 	{ GWS_COMBO_BOX, COMBOBOX_LISTBOX_SLIDER_THUMB_DISABLED, "[Slider Thumb [Listbox [ComboBox]]] Disabled (Normal)", NULL, 0, 0 },
@@ -609,7 +609,7 @@ static void loadTooltipTextLabel( HWND edit, GameWindow *window )
 
 	// load the text
 	WinInstanceData *instData = window->winGetInstanceData();
-	
+
 	SendMessage( edit, WM_SETTEXT, 0, (LPARAM)instData->m_tooltipString.str() );
 }  // end loadTooltipTextLabel
 
@@ -628,7 +628,7 @@ static void loadTooltipDelayTextLabel( HWND dialog, HWND edit, GameWindow *windo
 
 	// load the text
 //	WinInstanceData *instData = window->winGetInstanceData();
-	
+
 //	SetDlgItemInt( dialog, edit, instData->m_tooltipDelay, TRUE );
 }  // end loadTooltipDelayTextLabel
 
@@ -663,7 +663,7 @@ static void saveTooltipDelayTextLabel(HWND dialog, HWND edit, GameWindow *window
 //  WinInstanceData *instData = window->winGetInstanceData();
 
 //  instData->m_tooltipDelay = GetDlgItemInt( dialog, edit, NULL, TRUE );
-	
+
 }  // end saveTooltipDelayTextLabel
 
 
@@ -707,7 +707,7 @@ static void saveTextLabel( HWND edit, GameWindow *window )
 	//
 	UnicodeString text;
 	text = TheGameText->fetch( (char *)instData->m_textLabelString.str()); //TheWindowManager->winTextLabelToText( instData->m_textLabelString );
-	
+
 	UnsignedInt style = window->winGetStyle();
 	if( BitIsSet( style, GWS_PUSH_BUTTON ) )
 		GadgetButtonSetText( window, text );
@@ -727,7 +727,7 @@ static void saveTextLabel( HWND edit, GameWindow *window )
 // LoadTextStateCombo =========================================================
 /** Load the text state combo */
 //=============================================================================
-void LoadTextStateCombo( HWND comboBox, 
+void LoadTextStateCombo( HWND comboBox,
 												 Color enabled, Color enabledBorder,
 												 Color disabled, Color disabledBorder,
 												 Color hilite, Color hiliteBorder )
@@ -779,7 +779,7 @@ void LoadStateCombo( UnsignedInt style, HWND comboBox )
 
 		if( BitIsSet( entry->windowType, style ) )
 		{
-			
+
 			// add string
 			index = SendMessage( comboBox, CB_ADDSTRING, 0, (LPARAM)entry->stateName );
 
@@ -827,12 +827,12 @@ void CommonDialogInitialize( GameWindow *window, HWND dialog )
 		CheckDlgButton( dialog, CHECK_WRAP_CENTERED, BST_CHECKED );
 	if( BitIsSet( window->winGetStatus(), WIN_STATUS_CHECK_LIKE ) )
 		CheckDlgButton( dialog, CHECK_CHECK_LIKE, BST_CHECKED );
-		
+
 	//
 	// limit the window name box to the max name size minus some breathing
 	// room for the filename
 	//
-	SendMessage( GetDlgItem( dialog, EDIT_NAME ), EM_SETLIMITTEXT, 
+	SendMessage( GetDlgItem( dialog, EDIT_NAME ), EM_SETLIMITTEXT,
 							 MAX_WINDOW_NAME_LEN - 16, 0 );
 
 	// set the text explaining the name size limit to the user
@@ -840,7 +840,7 @@ void CommonDialogInitialize( GameWindow *window, HWND dialog )
 	sprintf( buffer, "Name length + layout filename length (.wnd) must not exceed %d characters.",
 					 MAX_WINDOW_NAME_LEN );
 	SetDlgItemText( dialog, STATIC_NAME_MAX, buffer );
-								
+
 	// set name
 	SetDlgItemText( dialog, EDIT_NAME, instData->m_decoratedNameString.str() );
 
@@ -849,7 +849,7 @@ void CommonDialogInitialize( GameWindow *window, HWND dialog )
 
 		// load listbox with image names
 	LoadHeaderTemplateListComboBox( GetDlgItem( dialog, COMBO_HEADER ), instData->m_headerTemplateName);
-	
+
 
 	// load the combo box for available properties
 	LoadStateCombo( window->winGetStyle(), GetDlgItem( dialog, COMBO_STATE ) );
@@ -882,7 +882,7 @@ void CommonDialogInitialize( GameWindow *window, HWND dialog )
 	HWND tooltipDelay = GetDlgItem( dialog, EDIT_TOOLTIP_DELAY );
 	if( tooltipDelay )
     SetDlgItemInt( dialog, EDIT_TOOLTIP_DELAY, instData->m_tooltipDelay, TRUE );
-		
+
 
 
 }  // end CommonDialogInitialize
@@ -944,7 +944,7 @@ static Bool validateName( GameWindow *root, GameWindow *exception, char *name )
 //=============================================================================
 static void adjustGadgetDrawMethods( Bool useImages, GameWindow *window )
 {
-	
+
 	// sanity
 	if( window == NULL )
 		return;
@@ -1148,7 +1148,7 @@ Bool SaveCommonDialogProperties( HWND dialog, GameWindow *window )
   	// save delay text label data if present
 	HWND editTooltipDelayText = GetDlgItem( dialog, EDIT_TOOLTIP_DELAY );
 	if( editTooltipDelayText )
-  	instData->m_tooltipDelay = GetDlgItemInt( dialog, EDIT_TOOLTIP_DELAY, NULL, TRUE ); 
+  	instData->m_tooltipDelay = GetDlgItemInt( dialog, EDIT_TOOLTIP_DELAY, NULL, TRUE );
 
 	HWND headerCombo = GetDlgItem( dialog, COMBO_HEADER );
 	if( headerCombo )
@@ -1158,7 +1158,7 @@ Bool SaveCommonDialogProperties( HWND dialog, GameWindow *window )
 	TheEditor->setUnsaved( TRUE );
 
 	return TRUE;
-								
+
 }  // end SaveCommonDialogProperties
 
 // LoadImageListComboBox ======================================================
@@ -1191,7 +1191,7 @@ void LoadImageListComboBox( HWND comboBox )
 
 	// select the [NONE] label
 	SendMessage( comboBox, CB_SETCURSEL, 0, 0 );
-	
+
 }  // end LoadImageListComboBox
 
 // LoadHeaderTemplateListComboBox =============================================
@@ -1227,8 +1227,8 @@ void LoadHeaderTemplateListComboBox( HWND comboBox, AsciiString selected )
 		SendMessage( comboBox, CB_SETCURSEL, 0, 0 );
 	else
 		SendMessage( comboBox, CB_SELECTSTRING, -1, (LPARAM)selected.str() );
-	
-		
+
+
 }  // end LoadHeaderTemplateListComboBox
 
 
@@ -1238,7 +1238,7 @@ void LoadHeaderTemplateListComboBox( HWND comboBox, AsciiString selected )
 	* image Loc from the GUI collection
 	*
 	* NOTE: The image list combo boxes have a [NONE] at index 0, if that
-	* is selected NULL will be returned 
+	* is selected NULL will be returned
 	*/
 //=============================================================================
 const Image *ComboBoxSelectionToImage( HWND comboBox )
@@ -1476,7 +1476,7 @@ void PositionWindowOnScreen( HWND window, Int x, Int y )
 		windowPos.y = screenRect.bottom - windowSize.y;
 
 	// place the window
-	MoveWindow( window, windowPos.x, windowPos.y, 
+	MoveWindow( window, windowPos.x, windowPos.y,
 							windowSize.x, windowSize.y, TRUE );
 
 	// show the window
@@ -1499,8 +1499,8 @@ Bool HandleCommonDialogMessages( HWND hWndDialog, UINT message,
 		// ------------------------------------------------------------------------
 		case WM_DRAWITEM:
 		{
-      UINT controlID = (UINT)wParam;  // control identifier 
-      LPDRAWITEMSTRUCT drawItem = (LPDRAWITEMSTRUCT)lParam; // item drawing 
+      UINT controlID = (UINT)wParam;  // control identifier
+      LPDRAWITEMSTRUCT drawItem = (LPDRAWITEMSTRUCT)lParam; // item drawing
 			Color color = GAME_COLOR_UNDEFINED;
 //			ImageAndColorInfo *info = GetCurrentStateInfo( hWndDialog );
 
@@ -1517,7 +1517,7 @@ Bool HandleCommonDialogMessages( HWND hWndDialog, UINT message,
 
 			}  // end if
 			else if( controlID == BUTTON_TEXT_COLOR || controlID == BUTTON_TEXT_BORDER_COLOR )
-			{		
+			{
 				TextDrawData textDraw = textDrawData[ currTextIndex ];
 
 				if( controlID == BUTTON_TEXT_COLOR )
@@ -1537,7 +1537,7 @@ Bool HandleCommonDialogMessages( HWND hWndDialog, UINT message,
 				// if this control is disabled just let windows handle drawing
 				if( IsWindowEnabled( hWndControl ) == FALSE )
 				{
-					
+
 					*returnCode = FALSE;
 					break;
 
@@ -1581,7 +1581,7 @@ Bool HandleCommonDialogMessages( HWND hWndDialog, UINT message,
 			Int notifyCode = HIWORD( wParam );  // notification code
 			Int controlID = LOWORD( wParam );  // control ID
 			HWND hWndControl = (HWND)lParam;  // control window handle
- 
+
       switch( controlID )
       {
 
@@ -1630,18 +1630,18 @@ Bool HandleCommonDialogMessages( HWND hWndDialog, UINT message,
 				// --------------------------------------------------------------------
 				case COMBO_IMAGE:
 				{
-					
+
 					// store image selection changes
 					if( notifyCode == CBN_SELCHANGE )
 					{
 						ImageAndColorInfo *info = GetCurrentStateInfo( hWndDialog );
 						const Image *newImage = ComboBoxSelectionToImage( hWndControl );
 
-						StoreImageAndColor( info->stateID, newImage, 
+						StoreImageAndColor( info->stateID, newImage,
 																info->color, info->borderColor );
 
 					}  // end if
-	
+
 					used = TRUE;
 					break;
 

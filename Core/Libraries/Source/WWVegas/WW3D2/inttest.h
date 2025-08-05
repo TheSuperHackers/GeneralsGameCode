@@ -54,8 +54,8 @@
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // IntersectionTestClass
 //
-// This is the base class for all of the 'Intersection' functions.  The intersection tests are 
-// purely boolean tests.  The base class only contains the CollisionType of the test.  
+// This is the base class for all of the 'Intersection' functions.  The intersection tests are
+// purely boolean tests.  The base class only contains the CollisionType of the test.
 //
 // Every IntersectionTestClass should have the following functions:
 //
@@ -64,10 +64,10 @@
 //		bool Intersect_Triangle(const TriClass & tri);
 //
 // These are not virtual because I don't want to pay the price of virtual function
-// calls at the point in the code where these are used.  It may be possible to 
-// write template functions if we use these exact function prototpyes for all 
+// calls at the point in the code where these are used.  It may be possible to
+// write template functions if we use these exact function prototpyes for all
 // collision test classes though.
-//  
+//
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 class IntersectionTestClass
 {
@@ -76,7 +76,7 @@ public:
 	IntersectionTestClass(const IntersectionTestClass & that) :	CollisionType(that.CollisionType)	{ }
 
 public:
-	int								CollisionType; 
+	int								CollisionType;
 };
 
 
@@ -84,7 +84,7 @@ public:
 // AABoxIntersectionTestClass
 //
 // This is an intersection test which uses an Axis-Aligned Box
-//  
+//
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 class AABoxIntersectionTestClass : public IntersectionTestClass
 {
@@ -114,7 +114,7 @@ inline bool AABoxIntersectionTestClass::Cull(const Vector3 & cull_min,const Vect
 {
 	Vector3 box_min;
 	Vector3::Subtract(Box.Center,Box.Extent,&box_min);
-	
+
 	Vector3 box_max;
 	Vector3::Add(Box.Center,Box.Extent,&box_max);
 
@@ -149,7 +149,7 @@ inline bool AABoxIntersectionTestClass::Intersect_Triangle(const TriClass & tri)
 // OBBoxIntersectionTestClass
 //
 // This is an intersection test which uses an Axis-Aligned Box
-//  
+//
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 class OBBoxIntersectionTestClass : public IntersectionTestClass
 {
@@ -164,7 +164,7 @@ public:
 	bool								Cull(const AABoxClass & box);
 	bool								Intersect_Triangle(const TriClass & tri);
 
-protected:	
+protected:
 	void								update_bounding_box(void);
 
 public:
@@ -215,14 +215,14 @@ inline bool OBBoxIntersectionTestClass::Cull(const Vector3 & cull_min,const Vect
 {
 	Vector3 box_min;
 	Vector3::Subtract(BoundingBox.Center,BoundingBox.Extent,&box_min);
-	
+
 	Vector3 box_max;
 	Vector3::Add(BoundingBox.Center,BoundingBox.Extent,&box_max);
 
 	if ((box_min.X > cull_max.X) || (box_max.X < cull_min.X)) return true;
 	if ((box_min.Y > cull_max.Y) || (box_max.Y < cull_min.Y)) return true;
 	if ((box_min.Z > cull_max.Z) || (box_max.Z < cull_min.Z)) return true;
-	
+
 	return false;
 }
 

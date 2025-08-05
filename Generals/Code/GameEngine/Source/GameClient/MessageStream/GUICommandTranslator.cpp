@@ -87,7 +87,7 @@ static Object *validUnderCursor( const ICoord2D *mouse, const CommandButton *com
 	Object *pickObj = NULL;
 
 	// pick a drawable at the mouse location
-	Drawable *pick = TheTacticalView->pickDrawable( mouse, FALSE, pickType );																																				 
+	Drawable *pick = TheTacticalView->pickDrawable( mouse, FALSE, pickType );
 
 	// only continue if there is something there
 	if( pick && pick->getObject() )
@@ -98,7 +98,7 @@ static Object *validUnderCursor( const ICoord2D *mouse, const CommandButton *com
 		pickObj = pick->getObject();
 
 		if (!command->isValidObjectTarget(player, pickObj))
-				pickObj = NULL;		
+				pickObj = NULL;
 
 	}  // end if
 
@@ -111,7 +111,7 @@ static Object *validUnderCursor( const ICoord2D *mouse, const CommandButton *com
 //-------------------------------------------------------------------------------------------------
 static CommandStatus doFireWeaponCommand( const CommandButton *command, const ICoord2D *mouse )
 {
-	
+
 	// sanity
 	if( command == NULL || mouse == NULL )
 		return COMMAND_COMPLETE;
@@ -124,7 +124,7 @@ static CommandStatus doFireWeaponCommand( const CommandButton *command, const IC
 	if( TheInGameUI->getSelectCount() == 1 )
 	{
 		Drawable *draw = TheInGameUI->getFirstSelectedDrawable();
-		
+
 		// sanity
 		if( draw == NULL || draw->getObject() == NULL )
 			return COMMAND_COMPLETE;
@@ -142,8 +142,8 @@ static CommandStatus doFireWeaponCommand( const CommandButton *command, const IC
 
 		// translate the mouse location into world coords
 		TheTacticalView->screenToTerrain( mouse, &world );
-			
-		// create the message and append arguments	
+
+		// create the message and append arguments
 		msg = TheMessageStream->appendMessage( GameMessage::MSG_DO_WEAPON_AT_LOCATION );
 		msg->appendIntegerArgument( command->getWeaponSlot() );
 		msg->appendLocationArgument( world );
@@ -191,7 +191,7 @@ static CommandStatus doFireWeaponCommand( const CommandButton *command, const IC
 
 		//This could be legit now -- think of firing a self destruct weapon
 		//-----------------------------------------------------------------
-		//DEBUG_ASSERTCRASH( 0, ("doFireWeaponCommand: Command options say it doesn't need additional user input '%s'", 
+		//DEBUG_ASSERTCRASH( 0, ("doFireWeaponCommand: Command options say it doesn't need additional user input '%s'",
 		//											command->m_name.str()) );
 		//return COMMAND_COMPLETE;
 
@@ -242,8 +242,8 @@ static CommandStatus doGuardCommand( const CommandButton *command, GuardMode gua
 				return COMMAND_COMPLETE;
 			world = *draw->getObject()->getPosition();
 		}
-			
-		// create the message and append arguments	
+
+		// create the message and append arguments
 		msg = TheMessageStream->appendMessage( GameMessage::MSG_DO_GUARD_POSITION );
 		msg->appendLocationArgument(world);
 		msg->appendIntegerArgument(guardMode);
@@ -397,11 +397,11 @@ GameMessageDisposition GUICommandTranslator::translateGameMessage(const GameMess
 					case GUI_COMMAND_FIRE_WEAPON:
 					{
 						commandStatus = doFireWeaponCommand( command, &mouse );
-						
+
 						PickAndPlayInfo info;
 						WeaponSlotType slot = command->getWeaponSlot();
 						info.m_weaponSlot = &slot;
-						
+
 	 					pickAndPlayUnitVoiceResponse( TheInGameUI->getAllSelectedDrawables(), GameMessage::MSG_DO_WEAPON_AT_LOCATION, &info );
 						break;
 
@@ -418,7 +418,7 @@ GameMessageDisposition GUICommandTranslator::translateGameMessage(const GameMess
 
 							GameMessage *msg = TheMessageStream->appendMessage(GameMessage::MSG_EVACUATE);
 							msg->appendLocationArgument(worldPos);
-							
+
 							pickAndPlayUnitVoiceResponse( TheInGameUI->getAllSelectedDrawables(), GameMessage::MSG_EVACUATE );
 
 							commandStatus = COMMAND_COMPLETE;
@@ -497,11 +497,11 @@ GameMessageDisposition GUICommandTranslator::translateGameMessage(const GameMess
 
 		}  // end left mouse up
 
-	}  // end switch 
+	}  // end switch
 
 	// If we're destroying the message, it means we used it. Therefore, destroy the current
 	// attack move instruction as well.
-	if (disp == DESTROY_MESSAGE) 
+	if (disp == DESTROY_MESSAGE)
 		TheInGameUI->clearAttackMoveToMode();
 
 

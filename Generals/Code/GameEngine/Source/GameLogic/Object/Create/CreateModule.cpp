@@ -34,7 +34,7 @@
 
 // ------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-CreateModule::CreateModule( Thing *thing, const ModuleData* moduleData ) 
+CreateModule::CreateModule( Thing *thing, const ModuleData* moduleData )
 						: BehaviorModule( thing, moduleData ),
 						  m_needToRunOnBuildComplete(TRUE)
 {

@@ -62,11 +62,11 @@ CullableClass::~CullableClass(void)
 void CullableClass::Set_Cull_Box(const AABoxClass & box,bool just_loaded)
 {
 	CullBox = box;
-	
+
 	WWPROFILE("Cullable::Set_Cull_Box");
 
 	// Just_loaded flag allows us to update the box without notifying the
-	// culling system.  Use this when you've saved and loaded the linkage 
+	// culling system.  Use this when you've saved and loaded the linkage
 	// so you know you're in the right node of the culling system...
 	if (!just_loaded) {
 		CullSystemClass * sys = Get_Culling_System();
@@ -95,7 +95,7 @@ CullSystemClass * CullableClass::Get_Culling_System(void) const
 /*************************************************************************
 **
 ** CullSystemClass Implementation
-** 
+**
 ** The base CullSystemClass mainly contains code for maintaining the
 ** current collection list and iterating through it.
 **

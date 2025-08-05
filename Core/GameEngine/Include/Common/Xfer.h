@@ -76,7 +76,7 @@ enum XferMode CPP_11(: Int)
 enum XferStatus CPP_11(: Int)
 {
 	XFER_STATUS_INVALID = 0,
-	
+
 	XFER_OK,														///< all is green and good
 	XFER_EOF,														///< end of file encountered
 	XFER_FILE_NOT_FOUND,								///< requested file does not exist
@@ -93,7 +93,7 @@ enum XferStatus CPP_11(: Int)
 	XFER_INVALID_PARAMETERS,						///< invalid parameters
 	XFER_LIST_NOT_EMPTY,								///< trying to xfer into a list that should be empty, but isn't
 	XFER_UNKNOWN_STRING,								///< unrecognized string value
-	
+
 	XFER_ERROR_UNKNOWN,									///< unknown error (isn't that useful!)
 
 	NUM_XFER_STATUS  // please keep this last
@@ -189,7 +189,7 @@ protected:
 	UnsignedInt m_options;					///< xfer options
 	XferMode m_xferMode;						///< the current xfer mode
 	AsciiString m_identifier;				///< the string identifier
-			
+
 };
 
 #endif // __XFER_H_

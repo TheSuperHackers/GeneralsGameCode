@@ -75,9 +75,9 @@ View::View( void )
 
 	// default field of view
 	m_FOV = 50.0f * PI/180.0f;
-	
+
 	m_mouseLocked = FALSE;
-	
+
 	m_guardBandBias.x = 0.0f;
 	m_guardBandBias.y = 0.0f;
 }
@@ -98,7 +98,7 @@ void View::init( void )
 	m_cameraLock = INVALID_ID;
 	m_cameraLockDrawable = NULL;
 	m_zoomLimited = TRUE;
-	
+
 	m_maxZoom = 1.3f;
 	m_minZoom = 0.2f;
 	m_zoom = m_maxZoom;
@@ -138,21 +138,21 @@ void View::zoomOut( void )
 /**
  * Center the view on the given coordinate.
  */
-void View::lookAt( const Coord3D *o ) 
-{ 
+void View::lookAt( const Coord3D *o )
+{
 
 	/// @todo this needs to be changed to be 3D, this is still old 2D stuff
 	Coord3D pos = *getPosition();
-	pos.x = o->x - m_width * 0.5f; 
-	pos.y = o->y - m_height * 0.5f; 
+	pos.x = o->x - m_width * 0.5f;
+	pos.y = o->y - m_height * 0.5f;
 	setPosition(&pos);
 }
 
 /**
  * Shift the view by the given delta.
  */
-void View::scrollBy( Coord2D *delta ) 
-{ 
+void View::scrollBy( Coord2D *delta )
+{
 	// update view's world position
 	m_pos.x += delta->x;
 	m_pos.y += delta->y;
@@ -163,7 +163,7 @@ void View::scrollBy( Coord2D *delta )
  */
 void View::setAngle( Real angle )
 {
-	m_angle = angle; 
+	m_angle = angle;
 }
 
 /**
@@ -185,7 +185,7 @@ void View::setPitch( Real angle )
  * Set the view angle back to default
  */
 void View::setAngleAndPitchToDefault( void )
-{ 
+{
 	m_angle = m_defaultAngle;
 	m_pitchAngle = m_defaultPitchAngle;
 }

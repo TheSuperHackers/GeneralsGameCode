@@ -55,7 +55,7 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // EditGroup message handlers
 
-void EditGroup::OnOK() 
+void EditGroup::OnOK()
 {
 	CString name;
 	GetDlgItem(IDC_GROUP_NAME)->GetWindowText(name);
@@ -67,10 +67,10 @@ void EditGroup::OnOK()
 	CDialog::OnOK();
 }
 
-BOOL EditGroup::OnInitDialog() 
+BOOL EditGroup::OnInitDialog()
 {
 	CDialog::OnInitDialog();
-	
+
 	CButton *pButton = (CButton*)GetDlgItem(IDC_GROUP_ACTIVE);
 	pButton->SetCheck(m_scriptGroup->isActive()?1:0);
 	pButton = (CButton*)GetDlgItem(IDC_GROUP_SUBROUTINE);
@@ -78,7 +78,7 @@ BOOL EditGroup::OnInitDialog()
 
 	CEdit *pEdit = (CEdit*)GetDlgItem(IDC_GROUP_NAME);
 	pEdit->SetWindowText(m_scriptGroup->getName().str());
-	
+
 	return TRUE;  // return TRUE unless you set the focus to a control
 	              // EXCEPTION: OCX Property Pages should return FALSE
 }

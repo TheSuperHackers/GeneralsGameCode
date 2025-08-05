@@ -92,10 +92,10 @@ class SoundCullObjClass : public MultiListObjectClass, public CullableClass
 		virtual SoundSceneObjClass *	Peek_Sound_Obj (void) const					{ return m_SoundObj; }
 
 	protected:
-		
+
 		//////////////////////////////////////////////////////////////////////
 		//	Protected methods
-		//////////////////////////////////////////////////////////////////////		
+		//////////////////////////////////////////////////////////////////////
 
 	private:
 
@@ -154,7 +154,7 @@ SoundCullObjClass::Set_Sound_Obj (SoundSceneObjClass *sound_obj)
 __inline const AABoxClass &
 SoundCullObjClass::Get_Bounding_Box (void) const
 {
-	// Get the 'real' values from the 
+	// Get the 'real' values from the
 	if (m_SoundObj != NULL) {
 		m_Transform = m_SoundObj->Get_Transform ();
 		m_AABox.Extent.X = m_SoundObj->Get_DropOff_Radius ();

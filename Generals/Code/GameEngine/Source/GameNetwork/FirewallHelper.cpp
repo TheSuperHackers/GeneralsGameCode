@@ -59,7 +59,7 @@
 
 FirewallHelperClass *TheFirewallHelper = NULL;
 
-FirewallHelperClass * createFirewallHelper() 
+FirewallHelperClass * createFirewallHelper()
 {
 	return NEW FirewallHelperClass();
 }
@@ -109,7 +109,7 @@ FirewallHelperClass::FirewallHelperClass(void)
 	{
 		m_manglers[i] = 0;
 	}
-	
+
 	m_currentState = DETECTIONSTATE_IDLE;
 
 	m_sourcePortPool = 4096 + ((timeGetTime() / 1000) % 1000); // do this to make sure we don't use the same source
@@ -448,7 +448,7 @@ UnsignedShort FirewallHelperClass::getManglerResponse(UnsignedShort packetID, In
 			}
 			Int retval = m_spareSockets[i].udp->Read((unsigned char *)message, sizeof(ManglerData), &addr);
 			if (retval > 0) {
-				
+
 				CRC crc;
 				crc.computeCRC((unsigned char *)(&(message->data.magic)), sizeof(ManglerData) - sizeof(unsigned int));
 				if (crc.get() != htonl(message->data.CRC)) {
@@ -1180,7 +1180,7 @@ Bool FirewallHelperClass::detectionTest4Stage2Update() {
 	}
 
 	m_currentState = DETECTIONSTATE_TEST5;
-	
+
 	return detectionTest5Update();
 }
 

@@ -121,9 +121,9 @@ HLodSaveClass::HLodSaveClass (MeshConnectionsClass **connections, int lod_count,
 	int i;
 	for (i = 0; i < lod_count; i++)
 	{
-	
+
 		ExportLog::printf(" Exporting LOD Array %d\n",i);
-		
+
 		INode *origin = connections[i]->Get_Origin();
 		int sub_obj_count = connections[i]->Get_Sub_Object_Count();
 		lod_array[i].Allocate_Sub_Objects(sub_obj_count);
@@ -162,7 +162,7 @@ HLodSaveClass::HLodSaveClass (MeshConnectionsClass **connections, int lod_count,
 	aggregate_array.Allocate_Sub_Objects(agg_count);
 	aggregate_array.header.ModelCount = agg_count;
 	aggregate_array.header.MaxScreenSize = 0.0f;
-	
+
 	ExportLog::printf(" Exporting Aggregates:\n");
 	ExportLog::printf(" aggregate count: %d\n",agg_count);
 
@@ -188,11 +188,11 @@ HLodSaveClass::HLodSaveClass (MeshConnectionsClass **connections, int lod_count,
 	proxy_array.Allocate_Sub_Objects(proxy_count);
 	proxy_array.header.ModelCount = proxy_count;
 	proxy_array.header.MaxScreenSize = 0.0f;
-	
+
 	ExportLog::printf(" Exporting Proxies\n");
 	ExportLog::printf(" proxy count: %d\n",proxy_count);
 	for (i=0; i<proxy_count; i++) {
-	
+
 		char	*mesh_name;
 		int	bone_index;
 		INode	*mesh_node;
@@ -260,7 +260,7 @@ bool HLodSaveClass::Save(ChunkSaveClass &csave)
 	if (!save_aggregate_array(csave))
 		return false;
 
-	if (!save_proxy_array(csave)) 
+	if (!save_proxy_array(csave))
 		return false;
 
 	if (!csave.End_Chunk())
@@ -401,7 +401,7 @@ bool HLodSaveClass::save_sub_object_array(ChunkSaveClass &csave, const HLodArray
 {
 	if (!csave.Begin_Chunk(W3D_CHUNK_HLOD_SUB_OBJECT_ARRAY_HEADER))
 		return false;
-	
+
 	if (csave.Write(&(array.header), sizeof(array.header)) != sizeof(array.header))
 		return false;
 

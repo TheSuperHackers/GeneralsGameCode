@@ -59,13 +59,13 @@ END_MESSAGE_MAP()
 // EditAction message handlers
 
 
-BOOL EditAction::OnInitDialog() 
+BOOL EditAction::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 
 
 //	CDC *pDc =GetDC();
-	
+
 	CWnd *pWnd = GetDlgItem(IDC_RICH_EDIT_HERE);
 	CRect rect;
 	pWnd->GetWindowRect(&rect);
@@ -96,7 +96,7 @@ BOOL EditAction::OnInitDialog()
 }
 
 
-void EditAction::formatScriptActionText(Int parameterNdx) 
+void EditAction::formatScriptActionText(Int parameterNdx)
 {
 	CHARFORMAT2 cf;
 	m_updating = true;
@@ -172,7 +172,7 @@ void EditAction::formatScriptActionText(Int parameterNdx)
 		GetDlgItem(IDC_WARNINGS_CAPTION)->EnableWindow(true);
 		GetDlgItem(IDC_WARNINGS)->SetWindowText(warningText.str());
 	}
-		
+
 	m_modifiedTextColor = false;
 	m_myEditCtrl.SetSel(startSel, endSel);
 	m_updating = false;
@@ -180,16 +180,16 @@ void EditAction::formatScriptActionText(Int parameterNdx)
 
 
 
-BOOL EditAction::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult) 
-{																											
-	if (LOWORD(wParam) == IDC_RICH_EDIT_HERE+1) 
+BOOL EditAction::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult)
+{
+	if (LOWORD(wParam) == IDC_RICH_EDIT_HERE+1)
 	{
 		NMHDR *pHdr = (NMHDR *)lParam;
-		if (pHdr->hwndFrom == m_myEditCtrl.m_hWnd && pHdr->code == EN_LINK) 
+		if (pHdr->hwndFrom == m_myEditCtrl.m_hWnd && pHdr->code == EN_LINK)
 		{
 			ENLINK *pLink = (ENLINK *)pHdr;
 			CHARRANGE chrg = pLink->chrg;
-			if (pLink->msg == WM_LBUTTONDOWN) 
+			if (pLink->msg == WM_LBUTTONDOWN)
 			{
 				// Determine which parameter.
 				Int numChars = 0;
@@ -197,21 +197,21 @@ BOOL EditAction::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult)
 				AsciiString strings[MAX_PARMS];
 				Int numStrings = m_action->getUiStrings(strings);
 				Int i;
-				for (i=0; i<MAX_PARMS; i++) 
+				for (i=0; i<MAX_PARMS; i++)
 				{
-					if (i<numStrings) 
+					if (i<numStrings)
 					{
 						curChar += strings[i].getLength();
 					}
-					if (i<m_action->getNumParameters()) 
+					if (i<m_action->getNumParameters())
 					{
 						numChars = m_action->getParameter(i)->getUiText().getLength();
-						if (curChar == chrg.cpMin && curChar+numChars == chrg.cpMax) 
+						if (curChar == chrg.cpMin && curChar+numChars == chrg.cpMax)
 						{
 							//Kris:
-							//Before we edit the parameter, there is a new prerequisite for parameters 
+							//Before we edit the parameter, there is a new prerequisite for parameters
 							//but only a few will ever care. We will store what we perceive as the unit,
-							//and for simplicity, we'll store the first occurrence of the unit, although 
+							//and for simplicity, we'll store the first occurrence of the unit, although
 							//this can change in the future should the need arise.
 							AsciiString unitName;
 							for( int j = 0; j < MAX_PARMS; j++ )
@@ -224,7 +224,7 @@ BOOL EditAction::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult)
 								}
 							}
 
-							if( EditParameter::edit( m_action->getParameter(i), unitName ) == IDOK ) 
+							if( EditParameter::edit( m_action->getParameter(i), unitName ) == IDOK )
 							{
 								m_myEditCtrl.SetWindowText(m_action->getUiText().str());
 								m_curEditParameter = i;
@@ -238,11 +238,11 @@ BOOL EditAction::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult)
 			}
 			CHARRANGE curChrg;
 			m_myEditCtrl.GetSel(curChrg);
-			if (curChrg.cpMin == chrg.cpMin && curChrg.cpMax == chrg.cpMax) 
+			if (curChrg.cpMin == chrg.cpMin && curChrg.cpMax == chrg.cpMax)
 			{
 				return true;
 			}
-			if (m_modifiedTextColor) 
+			if (m_modifiedTextColor)
 			{
 				formatScriptActionText(-1);
 			}
@@ -256,20 +256,20 @@ BOOL EditAction::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult)
 			m_myEditCtrl.SetSelectionCharFormat(cf);
 			m_modifiedTextColor = true;
 			return true;
-		}	
-		else 	if (pHdr->hwndFrom == m_myEditCtrl.m_hWnd && pHdr->code == EN_SELCHANGE) 
+		}
+		else 	if (pHdr->hwndFrom == m_myEditCtrl.m_hWnd && pHdr->code == EN_SELCHANGE)
 		{
-			if (m_updating) 
+			if (m_updating)
 			{
 				return true;
 			}
 			CHARRANGE curChrg;
 			m_myEditCtrl.GetSel(curChrg);
-			if (curChrg.cpMin == m_curLinkChrg.cpMin && curChrg.cpMax == m_curLinkChrg.cpMax) 
+			if (curChrg.cpMin == m_curLinkChrg.cpMin && curChrg.cpMax == m_curLinkChrg.cpMax)
 			{
 				return true;
 			}
-			if (m_modifiedTextColor) 
+			if (m_modifiedTextColor)
 			{
 				formatScriptActionText(-1);
 			}
@@ -278,11 +278,11 @@ BOOL EditAction::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult)
 	return CDialog::OnNotify(wParam, lParam, pResult);
 }
 
-void EditAction::OnSelchangeScriptActionType() 
+void EditAction::OnSelchangeScriptActionType()
 {
 	CComboBox *pCombo = (CComboBox *)GetDlgItem(IDC_CONDITION_TYPE);
 	Int index = 0;
-	CString str; 
+	CString str;
 	pCombo->GetWindowText(str);
 	Int i;
 	for (i=0; i<ScriptAction::NUM_ITEMS; i++) {
@@ -300,7 +300,7 @@ void EditAction::OnSelchangeScriptActionType()
 
 /** Not actually a timer - just used to send a delayed message to self because rich
 edit control is stupid.  jba. */
-void EditAction::OnTimer(UINT nIDEvent) 
+void EditAction::OnTimer(UINT nIDEvent)
 {
 	formatScriptActionText(m_curEditParameter);
 }
