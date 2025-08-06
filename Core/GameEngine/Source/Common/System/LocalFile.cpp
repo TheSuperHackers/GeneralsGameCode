@@ -361,6 +361,38 @@ Int LocalFile::read( void *buffer, Int bytes )
 }
 
 //=================================================================
+// LocalFile::readChar
+//=================================================================
+
+Int LocalFile::readChar( )
+{
+	Char character = '\0';
+
+	Int ret = read( &character, sizeof(character) );
+
+	if (ret == sizeof(character))
+		return (Int)character;
+
+	return EOF;
+}
+
+//=================================================================
+// LocalFile::readWideChar
+//=================================================================
+
+Int LocalFile::readWideChar( )
+{
+	WideChar character = L'\0';
+
+	Int ret = read( &character, sizeof(character) );
+
+	if (ret == sizeof(character))
+		return (Int)character;
+
+	return WEOF;
+}
+
+//=================================================================
 // LocalFile::write
 //=================================================================
 
@@ -410,6 +442,32 @@ Int LocalFile::writeFormat( const WideChar* format, ... )
 	va_end(args);
 
 	return write( buffer, length * sizeof(WideChar) );
+}
+
+//=================================================================
+// LocalFile::writeChar - Ascii
+//=================================================================
+
+Int LocalFile::writeChar( const Char* character )
+{
+	if ( write( character, sizeof(Char) ) == sizeof(Char) ) {
+		return (Int)character;
+	}
+
+	return EOF;
+}
+
+//=================================================================
+// LocalFile::writeChar - Wide character
+//=================================================================
+
+Int LocalFile::writeChar( const WideChar* character )
+{
+	if ( write( character, sizeof(WideChar) ) == sizeof(WideChar) ) {
+		return (Int)character;
+	}
+
+	return WEOF;
 }
 
 //=================================================================
