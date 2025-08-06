@@ -39,6 +39,7 @@ set(GAMEENGINE_SRC
 #    Include/Common/Errors.h
     Include/Common/file.h
     Include/Common/FileSystem.h
+    Include/Common/FrameRateLimit.h
 #    Include/Common/FunctionLexicon.h
     Include/Common/GameAudio.h
 #    Include/Common/GameCommon.h
@@ -569,6 +570,7 @@ set(GAMEENGINE_SRC
 #    Source/Common/DamageFX.cpp
 #    Source/Common/Dict.cpp
 #    Source/Common/DiscreteCircle.cpp
+    Source/Common/FrameRateLimit.cpp
 #    Source/Common/GameEngine.cpp
 #    Source/Common/GameLOD.cpp
 #    Source/Common/GameMain.cpp
