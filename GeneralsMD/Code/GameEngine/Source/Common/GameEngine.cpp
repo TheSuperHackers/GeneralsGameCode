@@ -44,6 +44,7 @@
 #include "Common/ThingFactory.h"
 #include "Common/file.h"
 #include "Common/FileSystem.h"
+#include "Common/FrameRateLimit.h"
 #include "Common/ArchiveFileSystem.h"
 #include "Common/LocalFileSystem.h"
 #include "Common/CDManager.h"
@@ -842,8 +843,8 @@ extern HWND ApplicationHWnd;
  */
 void GameEngine::execute( void )
 {
+	FrameRateLimit* frameRateLimit = new FrameRateLimit();
 
-	DWORD prevTime = timeGetTime();
 #if defined(RTS_DEBUG)
 	DWORD startTime = timeGetTime() / 1000;
 #endif
@@ -917,7 +918,7 @@ void GameEngine::execute( void )
 				if (TheTacticalView->getTimeMultiplier()<=1 && !TheScriptEngine->isTimeFast())
 				{
 
-		// I'm disabling this in internal because many people need alt-tab capability.  If you happen to be
+		// I'm disabling this in debug because many people need alt-tab capability.  If you happen to be
 		// doing performance tuning, please just change this on your local system. -MDC
 		#if defined(RTS_DEBUG)
 					::Sleep(1); // give everyone else a tiny time slice.
@@ -925,27 +926,20 @@ void GameEngine::execute( void )
 
 
 		#if defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
-          if ( ! TheGlobalData->m_TiVOFastMode )
-		#else	//always allow this cheatkey if we're in a replaygame.
-		  if ( ! (TheGlobalData->m_TiVOFastMode && TheGameLogic->isInReplayGame()))
+					if ( ! TheGlobalData->m_TiVOFastMode )
+		#else	//always allow this cheat key if we're in a replay game.
+					if ( ! (TheGlobalData->m_TiVOFastMode && TheGameLogic->isInReplayGame()))
 		#endif
-          {
-            // limit the framerate
-					  DWORD now = timeGetTime();
-					  DWORD limit = (1000.0f/m_maxFPS)-1;
-					  while (TheGlobalData->m_useFpsLimit && (now - prevTime) < limit)
-					  {
-						  ::Sleep(0);
-						  now = timeGetTime();
-					  }
-					  //Int slept = now - prevTime;
-					  //DEBUG_LOG(("delayed %d",slept));
+					{
+						// TheSuperHackers @bugfix xezon 05/08/2025 Re-implements the frame rate limiter
+						// with higher resolution counters to cap the frame rate more accurately to the desired limit.
+						if (TheGlobalData->m_useFpsLimit)
+						{
+							frameRateLimit->wait(m_maxFPS);
+						}
+					}
 
-					  prevTime = now;
-
-          }
-
-        }
+				}
 			}
 
 		}	// perfgather for execute_loop
@@ -961,6 +955,7 @@ void GameEngine::execute( void )
 
 	}
 
+	delete frameRateLimit;
 }
 
 /** -----------------------------------------------------------------------------------------------
