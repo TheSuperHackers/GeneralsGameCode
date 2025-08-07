@@ -5536,9 +5536,7 @@ void Object::doCommandButtonAtObject( const CommandButton *commandButton, Object
 			case GUI_COMMAND_COMBATDROP:
 #if RETAIL_COMPATIBLE_CRC
 				if (!obj)
-				{
 					return;
-				}
 #endif
 
 				if( ai )
@@ -5550,9 +5548,7 @@ void Object::doCommandButtonAtObject( const CommandButton *commandButton, Object
 			{
 #if RETAIL_COMPATIBLE_CRC
 				if (!obj)
-				{
 					return;
-				}
 #endif
 				
 				if( commandButton->getSpecialPowerTemplate() )

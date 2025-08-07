@@ -5890,9 +5890,7 @@ void ScriptActions::doTeamUseCommandButtonOnNearestObjectType( const AsciiString
 		bestObj = ThePartitionManager->getClosestObject(&pos, REALLY_FAR, FROM_CENTER_2D, filters);
 #if RETAIL_COMPATIBLE_CRC
 		if (!bestObj)
-		{
 			return;
-		}
 #endif
 	}
 	else
@@ -5934,9 +5932,7 @@ void ScriptActions::doTeamUseCommandButtonOnNearestObjectType( const AsciiString
 
 #if !RETAIL_COMPATIBLE_CRC
 	if (!bestObj)
-	{
 		return;
-	}
 #endif
 
 	// already been checked for validity
