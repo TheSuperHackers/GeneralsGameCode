@@ -1855,7 +1855,12 @@ void PartitionData::doCircleFill(
 
 	Int y = cellRadius - 1;
 	Int dec = 3 - 2*cellRadius;
+
+#if RETAIL_COMPATIBLE_CRC
 	for (Int x = 0; x < cellRadius; x++)
+#else
+	for (Int x = 0; x <= y; x++)
+#endif
 	{
 		hLineCircle(cellCenterX - x, cellCenterX + x, cellCenterY + y);
 		hLineCircle(cellCenterX - x, cellCenterX + x, cellCenterY - y);
