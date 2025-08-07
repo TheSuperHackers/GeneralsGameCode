@@ -199,6 +199,7 @@ public:
 		Note that you must call this AFTER setting the condition codes.
 	*/
 	virtual void setAnimationLoopDuration(UnsignedInt numFrames) = 0;
+	virtual bool isIgnoreAnimLoopDuration() const = 0;
 
 	/**
 		similar to the above, but assumes that the current state is a "ONCE",

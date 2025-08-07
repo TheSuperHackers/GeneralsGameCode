@@ -2866,6 +2866,8 @@ Bool Weapon::privateFireWeapon(
 
 			targetPos.z = TheTerrainLogic->getGroundHeight(targetPos.x, targetPos.y);
 
+			// Note AW: We have to ignore Ranges when using ScatterTargets, or else the weapon can fail in the next stage
+			ignoreRanges = TRUE;
 			m_template->fireWeaponTemplate(sourceObj, m_wslot, m_curBarrel, victimObj, &targetPos, bonus, isProjectileDetonation, ignoreRanges, this, projectileID, inflictDamage );
 		}
 		else

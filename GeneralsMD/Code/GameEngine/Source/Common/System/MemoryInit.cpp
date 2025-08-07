@@ -294,6 +294,7 @@ static PoolSizeRec sizes[] =
 	{ "RailedTransportContain", 16, 16 },
 	{ "RailroadBehavior", 16, 16 },
 	{ "SalvageCrateCollide", 32, 32 },
+	{ "StickyBombCrateCollide", 32, 32 },
 	{ "ShroudCrateCollide", 32, 32 },
 	{ "SlavedUpdate", 64, 32 },
 	{ "SlowDeathBehavior", 1400, 256 },

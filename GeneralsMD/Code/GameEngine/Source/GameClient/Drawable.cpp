@@ -726,7 +726,7 @@ void Drawable::setAnimationLoopDuration(UnsignedInt numFrames)
 	for (DrawModule** dm = getDrawModules(); *dm; ++dm)
 	{
 		ObjectDrawInterface* di = (*dm)->getObjectDrawInterface();
-		if (di)
+		if (di && !di->isIgnoreAnimLoopDuration())
 			di->setAnimationLoopDuration(numFrames);
 	}
 }
@@ -3679,6 +3679,7 @@ void Drawable::drawBombed(const IRegion2D* healthBarRegion)
 	StickyBombUpdate *update = (StickyBombUpdate*)obj->findUpdateModule( key_StickyBombUpdate );
 	if( update )
 	{
+
 		//This case is tricky. The object that is bombed doesn't know it... but the bomb itself does.
 		//So what we do is get it's target, then determine if the target has the icon or not.
 		Object *target = update->getTargetObject();
@@ -3689,8 +3690,20 @@ void Drawable::drawBombed(const IRegion2D* healthBarRegion)
 				//Timed bomb
 				if( !getIconInfo()->m_icon[ ICON_BOMB_TIMED ] )
 				{
-					getIconInfo()->m_icon[ ICON_BOMB_REMOTE ] = newInstance(Anim2D)( s_animationTemplates[ ICON_BOMB_REMOTE ], TheAnim2DCollection );
-					getIconInfo()->m_icon[ ICON_BOMB_TIMED ] = newInstance(Anim2D)( s_animationTemplates[ ICON_BOMB_TIMED ], TheAnim2DCollection );
+					Anim2DTemplate* templ = update->getAnimBaseTemplate();
+
+					if (templ == NULL)  // Default icon
+						templ = s_animationTemplates[ICON_BOMB_REMOTE];
+
+					getIconInfo()->m_icon[ICON_BOMB_REMOTE] = newInstance(Anim2D)(templ, TheAnim2DCollection);
+
+					templ = update->getAnimTimedTemplate();
+
+					if (templ == NULL)  // Default icon
+						templ = s_animationTemplates[ICON_BOMB_TIMED];
+
+					getIconInfo()->m_icon[ICON_BOMB_TIMED] = newInstance(Anim2D)(templ, TheAnim2DCollection);
+
 
 					//Because this is a counter icon that ranges from 0-60 seconds, we need to calculate which frame to 
 					//start the animation from. Because timers are second based -- 1000 ms equal 1 frame. So we simply
@@ -3752,7 +3765,13 @@ void Drawable::drawBombed(const IRegion2D* healthBarRegion)
 				//Timed bomb
 				if( !getIconInfo()->m_icon[ ICON_BOMB_REMOTE ] )
 				{
-					getIconInfo()->m_icon[ ICON_BOMB_REMOTE ] = newInstance(Anim2D)( s_animationTemplates[ ICON_BOMB_REMOTE ], TheAnim2DCollection );
+					Anim2DTemplate* templ = update->getAnimBaseTemplate();
+
+					if (templ == NULL)  // Default icon
+						templ = s_animationTemplates[ICON_BOMB_REMOTE];
+
+					getIconInfo()->m_icon[ICON_BOMB_REMOTE] = newInstance(Anim2D)(templ, TheAnim2DCollection);
+
 				}
 				if( getIconInfo()->m_icon[ ICON_BOMB_REMOTE ] )
 				{
