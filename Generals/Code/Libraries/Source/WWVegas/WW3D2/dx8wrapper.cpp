@@ -882,7 +882,7 @@ void DX8Wrapper::Resize_And_Position_Window()
 
 	// Is the window the correct size for this resolution?
 	if ((rect.right-rect.left) != ResolutionWidth ||
-			(rect.bottom-rect.top) != ResolutionHeight) {			
+			(rect.bottom-rect.top) != ResolutionHeight) {
 			
 		// Calculate what the main window's bounding rectangle should be to
 		// accommodate this resolution
