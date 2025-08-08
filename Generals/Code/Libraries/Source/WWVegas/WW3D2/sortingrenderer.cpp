@@ -339,7 +339,7 @@ void SortingRendererClass::Insert_Triangles(
 
  	WWASSERT(
 		((state->sorting_state.index_buffer_type==BUFFER_TYPE_SORTING || state->sorting_state.index_buffer_type==BUFFER_TYPE_DYNAMIC_SORTING) &&
-		(state->sorting_state.vertex_buffer_types[0] == BUFFER_TYPE_SORTING || state->sorting_state.vertex_buffer_types[0] == BUFFER_TYPE_DYNAMIC_SORTING)));
+		(state->sorting_state.vertex_buffer_types[0]==BUFFER_TYPE_SORTING || state->sorting_state.vertex_buffer_types[0]==BUFFER_TYPE_DYNAMIC_SORTING)));
 
 
 	state->bounding_sphere=bounding_sphere;
@@ -422,7 +422,7 @@ void SortingRendererClass::Insert_Triangles(
 void Release_Refs(SortingNodeStruct* state)
 {
 	int i;
-	for (i = 0; i < MAX_VERTEX_STREAMS; ++i) {
+	for (i=0;i<MAX_VERTEX_STREAMS;++i) {
 		REF_PTR_RELEASE(state->sorting_state.vertex_buffers[i]);
 	}
 	REF_PTR_RELEASE(state->sorting_state.index_buffer);
@@ -702,40 +702,40 @@ void SortingRendererClass::Flush()
 	WWPROFILE("SortingRenderer::Flush");
 	Matrix4x4 old_view;
 	Matrix4x4 old_world;
-	DX8Wrapper::Get_Transform(D3DTS_VIEW, old_view);
-	DX8Wrapper::Get_Transform(D3DTS_WORLD, old_world);
+	DX8Wrapper::Get_Transform(D3DTS_VIEW,old_view);
+	DX8Wrapper::Get_Transform(D3DTS_WORLD,old_world);
 
-	while (SortingNodeStruct* state = sorted_list.Head()) {
+	while (SortingNodeStruct* state=sorted_list.Head()) {
 		state->Remove();
-
-		if ((state->sorting_state.index_buffer_type == BUFFER_TYPE_SORTING || state->sorting_state.index_buffer_type == BUFFER_TYPE_DYNAMIC_SORTING) &&
-			(state->sorting_state.vertex_buffer_types[0] == BUFFER_TYPE_SORTING || state->sorting_state.vertex_buffer_types[0] == BUFFER_TYPE_DYNAMIC_SORTING)) {
+		
+		if ((state->sorting_state.index_buffer_type==BUFFER_TYPE_SORTING || state->sorting_state.index_buffer_type==BUFFER_TYPE_DYNAMIC_SORTING) &&
+			(state->sorting_state.vertex_buffer_types[0]==BUFFER_TYPE_SORTING || state->sorting_state.vertex_buffer_types[0]==BUFFER_TYPE_DYNAMIC_SORTING)) {
 			Insert_To_Sorting_Pool(state);
 		}
 		else {
 			DX8Wrapper::Set_Render_State(state->sorting_state);
-			DX8Wrapper::Draw_Triangles(state->start_index, state->polygon_count, state->min_vertex_index, state->vertex_count);
+			DX8Wrapper::Draw_Triangles(state->start_index,state->polygon_count,state->min_vertex_index,state->vertex_count);
 			DX8Wrapper::Release_Render_State();
 			Release_Refs(state);
 			clean_list.Add_Head(state);
 		}
 	}
 
-	bool old_enable = DX8Wrapper::_Is_Triangle_Draw_Enabled();
+	bool old_enable=DX8Wrapper::_Is_Triangle_Draw_Enabled();
 	DX8Wrapper::_Enable_Triangle_Draw(_EnableTriangleDraw);
 	Flush_Sorting_Pool();
 	DX8Wrapper::_Enable_Triangle_Draw(old_enable);
 
-	DX8Wrapper::Set_Index_Buffer(0, 0);
+	DX8Wrapper::Set_Index_Buffer(0,0);
 	DX8Wrapper::Set_Vertex_Buffer(0);
-	total_sorting_vertices = 0;
+	total_sorting_vertices=0;
 
 	DynamicIBAccessClass::_Reset(false);
 	DynamicVBAccessClass::_Reset(false);
 
 
-	DX8Wrapper::Set_Transform(D3DTS_VIEW, old_view);
-	DX8Wrapper::Set_Transform(D3DTS_WORLD, old_world);
+	DX8Wrapper::Set_Transform(D3DTS_VIEW,old_view);
+	DX8Wrapper::Set_Transform(D3DTS_WORLD,old_world);
 
 }
 
@@ -811,7 +811,7 @@ void SortingRendererClass::Insert_VolumeParticle(
 
 	WWASSERT(
 		((state->sorting_state.index_buffer_type==BUFFER_TYPE_SORTING || state->sorting_state.index_buffer_type==BUFFER_TYPE_DYNAMIC_SORTING) &&
-		(state->sorting_state.vertex_buffer_types[0] ==BUFFER_TYPE_SORTING || state->sorting_state.vertex_buffer_types[0] ==BUFFER_TYPE_DYNAMIC_SORTING)));
+		(state->sorting_state.vertex_buffer_types[0]==BUFFER_TYPE_SORTING || state->sorting_state.vertex_buffer_types[0]==BUFFER_TYPE_DYNAMIC_SORTING)));
 
 	state->bounding_sphere=bounding_sphere;
 	state->start_index=start_index;
