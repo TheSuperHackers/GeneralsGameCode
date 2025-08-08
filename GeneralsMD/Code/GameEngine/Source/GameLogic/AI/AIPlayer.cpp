@@ -1244,9 +1244,13 @@ Bool AIPlayer::computeSuperweaponTarget(const SpecialPowerTemplate *power, Coord
 			{
 				cash = curCash;
 				bestPos = pos;
+				success = true;
 			}
 		}
 	}
+
+	if (!success)
+		return false;
 
 	//Fine tune that position by looking at a even smaller radius.
 	Coord3D veryBestPos;
