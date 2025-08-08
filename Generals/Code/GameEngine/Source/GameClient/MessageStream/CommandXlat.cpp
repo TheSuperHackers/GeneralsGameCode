@@ -2736,12 +2736,12 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 
 		//-----------------------------------------------------------------------------------------
 		case GameMessage::MSG_META_SELECT_NEXT_IDLE_WORKER:
-			if (TheInGameUI)
-			{
-				TheInGameUI->selectNextIdleWorker();
-				disp = DESTROY_MESSAGE;
-			}
+		{
+			TheInGameUI->selectNextIdleWorker();
+
+			disp = DESTROY_MESSAGE;
 			break;
+		}
 
 		//-----------------------------------------------------------------------------------------
 		case GameMessage::MSG_META_SELECT_HERO:
