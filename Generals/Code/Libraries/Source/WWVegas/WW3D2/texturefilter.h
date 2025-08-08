@@ -116,7 +116,6 @@ public:
 
 	// This needs to be called after device has been created
 	static void _Init_Filters(TextureFilterMode texture_filter);
-	static void _Init_Filters();
 
 	static void _Set_Default_Min_Filter(FilterType filter);
 	static void _Set_Default_Mag_Filter(FilterType filter);
