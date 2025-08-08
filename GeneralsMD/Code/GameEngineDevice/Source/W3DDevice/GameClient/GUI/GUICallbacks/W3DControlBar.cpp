@@ -486,9 +486,16 @@ void W3DCommandBarGridDraw( GameWindow *window, WinInstanceData *instData )
 
 void W3DCommandBarGenExpDraw( GameWindow *window, WinInstanceData *instData )
 {
-	Player *player = ThePlayerList->getLocalPlayer();
-	if(!player->isPlayerActive())
+	Player* player = NULL;
+
+	if (TheControlBar->isObserverControlBarOn())
+		player = TheControlBar->getObserverLookAtPlayer();
+	else
+		player = ThePlayerList->getLocalPlayer();
+
+	if (!player)
 		return;
+
 	static const Image *endBar = TheMappedImageCollection->findImageByName("GenExpBarTop1");
 	static const Image *beginBar = TheMappedImageCollection->findImageByName("GenExpBarBottom1");
 	static const Image *centerBar = TheMappedImageCollection->findImageByName("GenExpBar1");
