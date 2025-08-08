@@ -1424,16 +1424,15 @@ void ControlBar::update( void )
 			// so we must isolate and evaluate only the Nexus
 			drawToEvaluateFor = TheGameClient->findDrawableByID( TheInGameUI->getSoloNexusSelectedDrawableID() ) ;
 			multiSelect = ( drawToEvaluateFor == NULL );
-
 		}
 		else // get the first and only drawble in the selection list
 			// TheSuperHackers @fix Mauller 07/04/2025 The first access to this can return an empty list
 			if (!TheInGameUI->getAllSelectedDrawables()->empty()) {
 				drawToEvaluateFor = TheInGameUI->getAllSelectedDrawables()->front();
-				Object *obj = drawToEvaluateFor ? drawToEvaluateFor->getObject() : NULL;
-				setPortraitByObject( obj );
 			}
 
+		Object* obj = drawToEvaluateFor ? drawToEvaluateFor->getObject() : NULL;
+		setPortraitByObject(obj);
 		return;
 	}
 
