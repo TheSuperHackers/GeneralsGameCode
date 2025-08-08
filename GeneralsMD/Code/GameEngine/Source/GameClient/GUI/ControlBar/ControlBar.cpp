@@ -1437,7 +1437,6 @@ void ControlBar::update( void )
 			populateObserverInfoWindow();
 
 		Drawable *drawToEvaluateFor = NULL;
-		Bool multiSelect = FALSE;
 		if( TheInGameUI->getSelectCount() > 1 )
 		{
 			// Attempt to isolate a Drawable here to evaluate
@@ -1446,7 +1445,6 @@ void ControlBar::update( void )
 			// but is represented in the UI as a single unit,
 			// so we must isolate and evaluate only the Nexus
 			drawToEvaluateFor = TheGameClient->findDrawableByID( TheInGameUI->getSoloNexusSelectedDrawableID() ) ;
-			multiSelect = ( drawToEvaluateFor == NULL );
 		}
 		else // get the first and only drawble in the selection list
 			// TheSuperHackers @fix Mauller 07/04/2025 The first access to this can return an empty list
