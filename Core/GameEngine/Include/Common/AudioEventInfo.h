@@ -80,6 +80,7 @@ enum AudioControl CPP_11(: Int)
 	AC_ALL									= 0x0004,
 	AC_POSTDELAY						= 0x0008,
 	AC_INTERRUPT						= 0x0010,
+	AC_STOPEARLY						= 0x0020,
 };
 
 class DynamicAudioEventInfo;
