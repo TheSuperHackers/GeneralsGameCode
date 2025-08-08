@@ -488,6 +488,7 @@ void W3DCommandBarGenExpDraw( GameWindow *window, WinInstanceData *instData )
 {
 	Player* player = NULL;
 
+	// TheSuperHackers @bugfix Stubbjax 08/08/2025 Show the experience bar for observers
 	if (TheControlBar->isObserverControlBarOn())
 		player = TheControlBar->getObserverLookAtPlayer();
 	else
