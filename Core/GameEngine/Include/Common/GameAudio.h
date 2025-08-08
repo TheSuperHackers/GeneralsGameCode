@@ -194,7 +194,7 @@ class AudioManager : public SubsystemInterface
 		virtual void *getDevice( void ) = 0;
 
 		// Debice Dependent notification functions
-		virtual void notifyOfAudioCompletion( UnsignedInt audioCompleted, UnsignedInt flags ) = 0;
+		virtual void notifyOfAudioCompletion( UnsignedInt audioCompleted, UnsignedInt flags, bool isEarlyStop = false) = 0;
 
 		// Device Dependent enumerate providers functions. It is okay for there to be only 1 provider (Miles provides a maximum of 64.
 		virtual UnsignedInt getProviderCount( void ) const = 0;
@@ -399,7 +399,7 @@ class AudioManagerDummy : public AudioManager
 	virtual void openDevice() {}
 	virtual void closeDevice() {}
 	virtual void* getDevice() { return NULL; }
-	virtual void notifyOfAudioCompletion(UnsignedInt audioCompleted, UnsignedInt flags) {}
+	virtual void notifyOfAudioCompletion(UnsignedInt audioCompleted, UnsignedInt flags, bool isEarlyStop=false) {}
 	virtual UnsignedInt getProviderCount(void) const { return 0; };
 	virtual AsciiString getProviderName(UnsignedInt providerNum) const { return ""; }
 	virtual UnsignedInt getProviderIndex(AsciiString providerName) const { return 0; }
