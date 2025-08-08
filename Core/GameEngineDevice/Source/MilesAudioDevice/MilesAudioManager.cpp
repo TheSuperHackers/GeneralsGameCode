@@ -894,6 +894,25 @@ void MilesAudioManager::playAudioEvent( AudioEventRTS *event )
 	}
 }
 
+//-------------------------------------------
+//void MilesAudioManager::handleLoopStopEarly(PlayingAudio* audio) {
+//	if (!(audio->m_audioEventRTS->getAudioEventInfo()->m_control & AC_STOPEARLY)) {
+//		// We shouldn't be here.
+//		DEBUG_LOG((">>> handleLoopStopEarly - invalid audio: %s\n", audio->m_audioEventRTS->getEventName().str()));
+//		return;
+//	}
+//
+//	// We assume we have a looping sound and jump right to Decay portion
+//	// -> create new event, and set old one as kill handle
+//
+//	//That's probably a bad idea actually, since it changes the handle. :(
+//
+//	if (audio->m_type == PAT_3DSample) {
+//
+//		// event->setHandleToKill((*it)->m_audioEventRTS->getPlayingHandle());
+//	}
+//}
+
 //-------------------------------------------------------------------------------------------------
 void MilesAudioManager::stopAudioEvent( AudioHandle handle )
 {
@@ -981,7 +1000,7 @@ void MilesAudioManager::stopAudioEvent( AudioHandle handle )
 				DEBUG_LOG((">>> stopAudioEvent (3DSounds): %s\n", audio->m_audioEventRTS->getEventName().str()));
 
 				//We should move to next loop instead?
-				//notifyOfAudioCompletion((UnsignedInt)(audio->m_3DSample), PAT_3DSample);
+				notifyOfAudioCompletion((UnsignedInt)(audio->m_3DSample), PAT_3DSample, true);
 			}
 
 			break;
@@ -1544,7 +1563,7 @@ Bool MilesAudioManager::isCurrentlyPlaying( AudioHandle handle )
 }
 
 //-------------------------------------------------------------------------------------------------
-void MilesAudioManager::notifyOfAudioCompletion( UnsignedInt audioCompleted, UnsignedInt flags )
+void MilesAudioManager::notifyOfAudioCompletion( UnsignedInt audioCompleted, UnsignedInt flags, bool isEarlyStop/*= false*/)
 {
 	PlayingAudio *playing = findPlayingAudioFrom(audioCompleted, flags);
 	if (!playing) {
@@ -1561,7 +1580,15 @@ void MilesAudioManager::notifyOfAudioCompletion( UnsignedInt audioCompleted, Uns
 		// Early stop
 		if (playing->m_audioEventRTS->getAudioEventInfo()->m_control & AC_STOPEARLY && playing->m_requestStop) {
 
-			//Bool isEarlyStop = 
+			if (!isEarlyStop) {
+				// We came here from the audio being stopped by other means.
+				// To avoid doing things twice, we just return here. I hope this doesn't break things.
+				DEBUG_LOG((">>> notifyOfAudioCompletion EARLYSTOP 1: %s (%s) - nextPP = %d - isEarlyStop = FALSE\n",
+					playing->m_audioEventRTS->getEventName().str(),
+					playing->m_audioEventRTS->getFilename().str(),
+					playing->m_audioEventRTS->getNextPlayPortion()));
+				return;
+			}
 
 			DEBUG_LOG((">>> notifyOfAudioCompletion EARLYSTOP 1: %s (%s) - nextPP = %d\n",
 				playing->m_audioEventRTS->getEventName().str(),
