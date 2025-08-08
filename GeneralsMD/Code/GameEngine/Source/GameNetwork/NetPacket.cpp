@@ -43,87 +43,130 @@ NetCommandRef * NetPacket::ConstructNetCommandMsgFromRawData(UnsignedByte *data,
 	UnsignedByte relay = 0;
 
 	Int offset = 0;
-	Bool notDone = TRUE;
 	NetCommandRef *ref = NULL;
 	NetCommandMsg *msg = NULL;
 
-	while ((offset < (Int)dataLength) && notDone) {
-		if (data[offset] == 'T') {
+	while (offset < (Int)dataLength) {
+
+		switch (data[offset]) {
+
+		case 'T':
 			++offset;
 			memcpy(&commandType, data + offset, sizeof(UnsignedByte));
 			offset += sizeof(UnsignedByte);
-		} else if (data[offset] == 'R') {
+			break;
+
+		case 'R':
 			++offset;
 			memcpy(&relay, data + offset, sizeof(UnsignedByte));
 			offset += sizeof(UnsignedByte);
-		} else if (data[offset] == 'P') {
+			break;
+
+		case 'P':
 			++offset;
 			memcpy(&playerID, data + offset, sizeof(UnsignedByte));
 			offset += sizeof(UnsignedByte);
-		} else if (data[offset] == 'C') {
+			break;
+
+		case 'C':
 			++offset;
 			memcpy(&commandID, data + offset, sizeof(UnsignedShort));
 			offset += sizeof(UnsignedShort);
-		} else if (data[offset] == 'F') {
+			break;
+
+		case 'F':
 			++offset;
 			memcpy(&frame, data + offset, sizeof(UnsignedInt));
 			offset += sizeof(UnsignedInt);
-		} else if (data[offset] == 'D') {
+			break;
+
+		case 'D':
 			++offset;
-			if (commandType == NETCOMMANDTYPE_GAMECOMMAND) {
+
+			switch (commandType) {
+
+			case NETCOMMANDTYPE_GAMECOMMAND:
 				msg = readGameMessage(data, offset);
-			} else if (commandType == NETCOMMANDTYPE_ACKBOTH) {
+				break;
+			case NETCOMMANDTYPE_ACKBOTH:
 				msg = readAckBothMessage(data, offset);
-			} else if (commandType == NETCOMMANDTYPE_ACKSTAGE1) {
+				break;
+			case NETCOMMANDTYPE_ACKSTAGE1:
 				msg = readAckStage1Message(data, offset);
-			} else if (commandType == NETCOMMANDTYPE_ACKSTAGE2) {
+				break;
+			case NETCOMMANDTYPE_ACKSTAGE2:
 				msg = readAckStage2Message(data, offset);
-			} else if (commandType == NETCOMMANDTYPE_FRAMEINFO) {
+				break;
+			case NETCOMMANDTYPE_FRAMEINFO:
 				msg = readFrameMessage(data, offset);
-			} else if (commandType == NETCOMMANDTYPE_PLAYERLEAVE) {
+				break;
+			case NETCOMMANDTYPE_PLAYERLEAVE:
 				msg = readPlayerLeaveMessage(data, offset);
-			} else if (commandType == NETCOMMANDTYPE_RUNAHEADMETRICS) {
+				break;
+			case NETCOMMANDTYPE_RUNAHEADMETRICS:
 				msg = readRunAheadMetricsMessage(data, offset);
-			} else if (commandType == NETCOMMANDTYPE_RUNAHEAD) {
+				break;
+			case NETCOMMANDTYPE_RUNAHEAD:
 				msg = readRunAheadMessage(data, offset);
-			} else if (commandType == NETCOMMANDTYPE_DESTROYPLAYER) {
+				break;
+			case NETCOMMANDTYPE_DESTROYPLAYER:
 				msg = readDestroyPlayerMessage(data, offset);
-			} else if (commandType == NETCOMMANDTYPE_KEEPALIVE) {
+				break;
+			case NETCOMMANDTYPE_KEEPALIVE:
 				msg = readKeepAliveMessage(data, offset);
-			} else if (commandType == NETCOMMANDTYPE_DISCONNECTKEEPALIVE) {
+				break;
+			case NETCOMMANDTYPE_DISCONNECTKEEPALIVE:
 				msg = readDisconnectKeepAliveMessage(data, offset);
-			} else if (commandType == NETCOMMANDTYPE_DISCONNECTPLAYER) {
+				break;
+			case NETCOMMANDTYPE_DISCONNECTPLAYER:
 				msg = readDisconnectPlayerMessage(data, offset);
-			} else if (commandType == NETCOMMANDTYPE_PACKETROUTERQUERY) {
+				break;
+			case NETCOMMANDTYPE_PACKETROUTERQUERY:
 				msg = readPacketRouterQueryMessage(data, offset);
-			} else if (commandType == NETCOMMANDTYPE_PACKETROUTERACK) {
+				break;
+			case NETCOMMANDTYPE_PACKETROUTERACK:
 				msg = readPacketRouterAckMessage(data, offset);
-			} else if (commandType == NETCOMMANDTYPE_DISCONNECTCHAT) {
+				break;
+			case NETCOMMANDTYPE_DISCONNECTCHAT:
 				msg = readDisconnectChatMessage(data, offset);
-			} else if (commandType == NETCOMMANDTYPE_DISCONNECTVOTE) {
+				break;
+			case NETCOMMANDTYPE_DISCONNECTVOTE:
 				msg = readDisconnectVoteMessage(data, offset);
-			} else if (commandType == NETCOMMANDTYPE_CHAT) {
+				break;
+			case NETCOMMANDTYPE_CHAT:
 				msg = readChatMessage(data, offset);
-			} else if (commandType == NETCOMMANDTYPE_PROGRESS) {
+				break;
+			case NETCOMMANDTYPE_PROGRESS:
 				msg = readProgressMessage(data, offset);
-			} else if (commandType == NETCOMMANDTYPE_LOADCOMPLETE) {
+				break;
+			case NETCOMMANDTYPE_LOADCOMPLETE:
 				msg = readLoadCompleteMessage(data, offset);
-			} else if (commandType == NETCOMMANDTYPE_TIMEOUTSTART) {
+				break;
+			case NETCOMMANDTYPE_TIMEOUTSTART:
 				msg = readTimeOutGameStartMessage(data, offset);
-			} else if (commandType == NETCOMMANDTYPE_WRAPPER) {
+				break;
+			case NETCOMMANDTYPE_WRAPPER:
 				msg = readWrapperMessage(data, offset);
-			} else if (commandType == NETCOMMANDTYPE_FILE) {
+				break;
+			case NETCOMMANDTYPE_FILE:
 				msg = readFileMessage(data, offset);
-			} else if (commandType == NETCOMMANDTYPE_FILEANNOUNCE) {
+				break;
+			case NETCOMMANDTYPE_FILEANNOUNCE:
 				msg = readFileAnnounceMessage(data, offset);
-			} else if (commandType == NETCOMMANDTYPE_FILEPROGRESS) {
+				break;
+			case NETCOMMANDTYPE_FILEPROGRESS:
 				msg = readFileProgressMessage(data, offset);
-			} else if (commandType == NETCOMMANDTYPE_DISCONNECTFRAME) {
+				break;
+			case NETCOMMANDTYPE_DISCONNECTFRAME:
 				msg = readDisconnectFrameMessage(data, offset);
-			} else if (commandType == NETCOMMANDTYPE_DISCONNECTSCREENOFF) {
+				break;
+			case NETCOMMANDTYPE_DISCONNECTSCREENOFF:
 				msg = readDisconnectScreenOffMessage(data, offset);
-			} else if (commandType == NETCOMMANDTYPE_FRAMERESENDREQUEST) {
+				break;
+			case NETCOMMANDTYPE_FRAMERESENDREQUEST:
 				msg = readFrameResendRequestMessage(data, offset);
+				break;
+
 			}
 
 			msg->setExecutionFrame(frame);
@@ -138,8 +181,10 @@ NetCommandRef * NetPacket::ConstructNetCommandMsgFromRawData(UnsignedByte *data,
 			msg->detach();
 			msg = NULL;
 
-			notDone = FALSE;
+			return ref;
+
 		}
+
 	}
 
 	return ref;
@@ -315,29 +360,45 @@ UnsignedInt NetPacket::GetGameCommandSize(NetCommandMsg *msg) {
 	while (arg != NULL) {
 		msglen += 2 * sizeof(UnsignedByte); // for the type and number of args of that type declaration.
 		GameMessageArgumentDataType type = arg->getType();
-		if (type == ARGUMENTDATATYPE_INTEGER) {
+
+		switch (type) {
+		
+		case ARGUMENTDATATYPE_INTEGER:
 			msglen += arg->getArgCount() * sizeof(Int);
-		} else if (type == ARGUMENTDATATYPE_REAL) {
+			break;
+		case ARGUMENTDATATYPE_REAL:
 			msglen += arg->getArgCount() * sizeof(Real);
-		} else if (type == ARGUMENTDATATYPE_BOOLEAN) {
+			break;
+		case ARGUMENTDATATYPE_BOOLEAN:
 			msglen += arg->getArgCount() * sizeof(Bool);
-		} else if (type == ARGUMENTDATATYPE_OBJECTID) {
+			break;
+		case ARGUMENTDATATYPE_OBJECTID:
 			msglen += arg->getArgCount() * sizeof(ObjectID);
-		} else if (type == ARGUMENTDATATYPE_DRAWABLEID) {
+			break;
+		case ARGUMENTDATATYPE_DRAWABLEID:
 			msglen += arg->getArgCount() * sizeof(DrawableID);
-		} else if (type == ARGUMENTDATATYPE_TEAMID) {
+			break;
+		case ARGUMENTDATATYPE_TEAMID:
 			msglen += arg->getArgCount() * sizeof(UnsignedInt);
-		} else if (type == ARGUMENTDATATYPE_LOCATION) {
+			break;
+		case ARGUMENTDATATYPE_LOCATION:
 			msglen += arg->getArgCount() * sizeof(Coord3D);
-		} else if (type == ARGUMENTDATATYPE_PIXEL) {
+			break;
+		case ARGUMENTDATATYPE_PIXEL:
 			msglen += arg->getArgCount() * sizeof(ICoord2D);
-		} else if (type == ARGUMENTDATATYPE_PIXELREGION) {
+			break;
+		case ARGUMENTDATATYPE_PIXELREGION:
 			msglen += arg->getArgCount() * sizeof(IRegion2D);
-		} else if (type == ARGUMENTDATATYPE_TIMESTAMP) {
+			break;
+		case ARGUMENTDATATYPE_TIMESTAMP:
 			msglen += arg->getArgCount() * sizeof(UnsignedInt);
-		} else if (type == ARGUMENTDATATYPE_WIDECHAR) {
+			break;
+		case ARGUMENTDATATYPE_WIDECHAR:
 			msglen += arg->getArgCount() * sizeof(WideChar);
+			break;
+
 		}
+
 		arg = arg->getNext();
 	}
 
@@ -888,42 +949,55 @@ void NetPacket::FillBufferWithGameCommand(UnsignedByte *buffer, NetCommandRef *m
 	for (Int i = 0; i < numArgs; ++i) {
 		GameMessageArgumentDataType type = gmsg->getArgumentDataType(i);
 		GameMessageArgumentType arg = *(gmsg->getArgument(i));
-//		writeGameMessageArgumentToPacket(type, arg);
 
-		if (type == ARGUMENTDATATYPE_INTEGER) {
+		switch (type) {
+
+		case ARGUMENTDATATYPE_INTEGER:
 			memcpy(buffer + offset, &(arg.integer), sizeof(arg.integer));
 			offset += sizeof(arg.integer);
-		} else if (type == ARGUMENTDATATYPE_REAL) {
+			break;
+		case ARGUMENTDATATYPE_REAL:
 			memcpy(buffer + offset, &(arg.real), sizeof(arg.real));
 			offset += sizeof(arg.real);
-		} else if (type == ARGUMENTDATATYPE_BOOLEAN) {
+			break;
+		case ARGUMENTDATATYPE_BOOLEAN:
 			memcpy(buffer + offset, &(arg.boolean), sizeof(arg.boolean));
 			offset += sizeof(arg.boolean);
-		} else if (type == ARGUMENTDATATYPE_OBJECTID) {
+			break;
+		case ARGUMENTDATATYPE_OBJECTID:
 			memcpy(buffer + offset, &(arg.objectID), sizeof(arg.objectID));
 			offset += sizeof(arg.objectID);
-		} else if (type == ARGUMENTDATATYPE_DRAWABLEID) {
+			break;
+		case ARGUMENTDATATYPE_DRAWABLEID:
 			memcpy(buffer + offset, &(arg.drawableID), sizeof(arg.drawableID));
 			offset += sizeof(arg.drawableID);
-		} else if (type == ARGUMENTDATATYPE_TEAMID) {
+			break;
+		case ARGUMENTDATATYPE_TEAMID:
 			memcpy(buffer + offset, &(arg.teamID), sizeof(arg.teamID));
 			offset += sizeof(arg.teamID);
-		} else if (type == ARGUMENTDATATYPE_LOCATION) {
+			break;
+		case ARGUMENTDATATYPE_LOCATION:
 			memcpy(buffer + offset, &(arg.location), sizeof(arg.location));
 			offset += sizeof(arg.location);
-		} else if (type == ARGUMENTDATATYPE_PIXEL) {
+			break;
+		case ARGUMENTDATATYPE_PIXEL:
 			memcpy(buffer + offset, &(arg.pixel), sizeof(arg.pixel));
 			offset += sizeof(arg.pixel);
-		} else if (type == ARGUMENTDATATYPE_PIXELREGION) {
+			break;
+		case ARGUMENTDATATYPE_PIXELREGION:
 			memcpy(buffer + offset, &(arg.pixelRegion), sizeof(arg.pixelRegion));
 			offset += sizeof(arg.pixelRegion);
-		} else if (type == ARGUMENTDATATYPE_TIMESTAMP) {
+			break;
+		case ARGUMENTDATATYPE_TIMESTAMP:
 			memcpy(buffer + offset, &(arg.timestamp), sizeof(arg.timestamp));
 			offset += sizeof(arg.timestamp);
-		} else if (type == ARGUMENTDATATYPE_WIDECHAR) {
+			break;
+		case ARGUMENTDATATYPE_WIDECHAR:
 			memcpy(buffer + offset, &(arg.wChar), sizeof(arg.wChar));
 			offset += sizeof(arg.wChar);
+			break;
 		}
+
 	}
 
 	deleteInstance(parser);
@@ -945,23 +1019,36 @@ void NetPacket::FillBufferWithAckCommand(UnsignedByte *buffer, NetCommandRef *ms
 	UnsignedShort commandID = 0;
 	UnsignedByte originalPlayerID = 0;
 
-	if (cmdMsg->getNetCommandType() == NETCOMMANDTYPE_ACKBOTH) {
-		NetAckBothCommandMsg *ackmsg = (NetAckBothCommandMsg *)msg;
-		commandID = ackmsg->getCommandID();
-		originalPlayerID = ackmsg->getOriginalPlayerID();
-	} else if (cmdMsg->getNetCommandType() == NETCOMMANDTYPE_ACKSTAGE1) {
-		NetAckStage1CommandMsg *ackmsg = (NetAckStage1CommandMsg *)msg;
-		commandID = ackmsg->getCommandID();
-		originalPlayerID = ackmsg->getOriginalPlayerID();
-	} else if (cmdMsg->getNetCommandType() == NETCOMMANDTYPE_ACKSTAGE2) {
-		NetAckStage2CommandMsg *ackmsg = (NetAckStage2CommandMsg *)msg;
-		commandID = ackmsg->getCommandID();
-		originalPlayerID = ackmsg->getOriginalPlayerID();
+	NetCommandType type = cmdMsg->getNetCommandType();
+
+	switch (type) {
+
+	case NETCOMMANDTYPE_ACKBOTH: {
+		NetAckBothCommandMsg* ackbothmsg = (NetAckBothCommandMsg*)msg;
+		commandID = ackbothmsg->getCommandID();
+		originalPlayerID = ackbothmsg->getOriginalPlayerID();
+		break;
+	}
+
+	case NETCOMMANDTYPE_ACKSTAGE1: {
+		NetAckStage1CommandMsg* ackstageonemsg = (NetAckStage1CommandMsg*)msg;
+		commandID = ackstageonemsg->getCommandID();
+		originalPlayerID = ackstageonemsg->getOriginalPlayerID();
+		break;
+	}
+
+	case NETCOMMANDTYPE_ACKSTAGE2: {
+		NetAckStage2CommandMsg* ackstagetwomsg = (NetAckStage2CommandMsg*)msg;
+		commandID = ackstagetwomsg->getCommandID();
+		originalPlayerID = ackstagetwomsg->getOriginalPlayerID();
+		break;
+	}
+
 	}
 
 	buffer[offset] = 'T';
 	++offset;
-	buffer[offset] = cmdMsg->getNetCommandType();
+	buffer[offset] = type;
 	offset += sizeof(UnsignedByte);
 
 	buffer[offset] = 'P';
@@ -4814,39 +4901,54 @@ Bool NetPacket::addGameCommand(NetCommandRef *msg) {
 }
 
 void NetPacket::writeGameMessageArgumentToPacket(GameMessageArgumentDataType type, GameMessageArgumentType arg) {
-	if (type == ARGUMENTDATATYPE_INTEGER) {
+
+	switch(type) {
+
+	case ARGUMENTDATATYPE_INTEGER:
 		memcpy(m_packet + m_packetLen, &(arg.integer), sizeof(arg.integer));
 		m_packetLen += sizeof(arg.integer);
-	} else if (type == ARGUMENTDATATYPE_REAL) {
+		break;
+	case ARGUMENTDATATYPE_REAL:
 		memcpy(m_packet + m_packetLen, &(arg.real), sizeof(arg.real));
 		m_packetLen += sizeof(arg.real);
-	} else if (type == ARGUMENTDATATYPE_BOOLEAN) {
+		break;
+	case ARGUMENTDATATYPE_BOOLEAN:
 		memcpy(m_packet + m_packetLen, &(arg.boolean), sizeof(arg.boolean));
 		m_packetLen += sizeof(arg.boolean);
-	} else if (type == ARGUMENTDATATYPE_OBJECTID) {
+		break;
+	case ARGUMENTDATATYPE_OBJECTID:
 		memcpy(m_packet + m_packetLen, &(arg.objectID), sizeof(arg.objectID));
 		m_packetLen += sizeof(arg.objectID);
-	} else if (type == ARGUMENTDATATYPE_DRAWABLEID) {
+		break;
+	case ARGUMENTDATATYPE_DRAWABLEID:
 		memcpy(m_packet + m_packetLen, &(arg.drawableID), sizeof(arg.drawableID));
 		m_packetLen += sizeof(arg.drawableID);
-	} else if (type == ARGUMENTDATATYPE_TEAMID) {
+		break;
+	case ARGUMENTDATATYPE_TEAMID:
 		memcpy(m_packet + m_packetLen, &(arg.teamID), sizeof(arg.teamID));
 		m_packetLen += sizeof(arg.teamID);
-	} else if (type == ARGUMENTDATATYPE_LOCATION) {
+		break;
+	case ARGUMENTDATATYPE_LOCATION:
 		memcpy(m_packet + m_packetLen, &(arg.location), sizeof(arg.location));
 		m_packetLen += sizeof(arg.location);
-	} else if (type == ARGUMENTDATATYPE_PIXEL) {
+		break;
+	case ARGUMENTDATATYPE_PIXEL:
 		memcpy(m_packet + m_packetLen, &(arg.pixel), sizeof(arg.pixel));
 		m_packetLen += sizeof(arg.pixel);
-	} else if (type == ARGUMENTDATATYPE_PIXELREGION) {
+		break;
+	case ARGUMENTDATATYPE_PIXELREGION:
 		memcpy(m_packet + m_packetLen, &(arg.pixelRegion), sizeof(arg.pixelRegion));
 		m_packetLen += sizeof(arg.pixelRegion);
-	} else if (type == ARGUMENTDATATYPE_TIMESTAMP) {
+		break;
+	case ARGUMENTDATATYPE_TIMESTAMP:
 		memcpy(m_packet + m_packetLen, &(arg.timestamp), sizeof(arg.timestamp));
 		m_packetLen += sizeof(arg.timestamp);
-	} else if (type == ARGUMENTDATATYPE_WIDECHAR) {
+		break;
+	case ARGUMENTDATATYPE_WIDECHAR:
 		memcpy(m_packet + m_packetLen, &(arg.wChar), sizeof(arg.wChar));
 		m_packetLen += sizeof(arg.wChar);
+		break;
+
 	}
 }
 
@@ -4888,30 +4990,47 @@ Bool NetPacket::isRoomForGameMessage(NetCommandRef *msg, GameMessage *gmsg) {
 	while (arg != NULL) {
 		msglen += 2 * sizeof(UnsignedByte); // for the type and number of args of that type declaration.
 		GameMessageArgumentDataType type = arg->getType();
-		if (type == ARGUMENTDATATYPE_INTEGER) {
+
+		switch (type) {
+
+		case ARGUMENTDATATYPE_INTEGER:
 			msglen += arg->getArgCount() * sizeof(Int);
-		} else if (type == ARGUMENTDATATYPE_REAL) {
+			break;
+		case ARGUMENTDATATYPE_REAL:
 			msglen += arg->getArgCount() * sizeof(Real);
-		} else if (type == ARGUMENTDATATYPE_BOOLEAN) {
+			break;
+		case ARGUMENTDATATYPE_BOOLEAN:
 			msglen += arg->getArgCount() * sizeof(Bool);
-		} else if (type == ARGUMENTDATATYPE_OBJECTID) {
+			break;
+		case ARGUMENTDATATYPE_OBJECTID:
 			msglen += arg->getArgCount() * sizeof(ObjectID);
-		} else if (type == ARGUMENTDATATYPE_DRAWABLEID) {
+			break;
+		case ARGUMENTDATATYPE_DRAWABLEID:
 			msglen += arg->getArgCount() * sizeof(DrawableID);
-		} else if (type == ARGUMENTDATATYPE_TEAMID) {
+			break;
+		case ARGUMENTDATATYPE_TEAMID:
 			msglen += arg->getArgCount() * sizeof(UnsignedInt);
-		} else if (type == ARGUMENTDATATYPE_LOCATION) {
+			break;
+		case ARGUMENTDATATYPE_LOCATION:
 			msglen += arg->getArgCount() * sizeof(Coord3D);
-		} else if (type == ARGUMENTDATATYPE_PIXEL) {
+			break;
+		case ARGUMENTDATATYPE_PIXEL:
 			msglen += arg->getArgCount() * sizeof(ICoord2D);
-		} else if (type == ARGUMENTDATATYPE_PIXELREGION) {
+			break;
+		case ARGUMENTDATATYPE_PIXELREGION:
 			msglen += arg->getArgCount() * sizeof(IRegion2D);
-		} else if (type == ARGUMENTDATATYPE_TIMESTAMP) {
+			break;
+		case ARGUMENTDATATYPE_TIMESTAMP:
 			msglen += arg->getArgCount() * sizeof(UnsignedInt);
-		} else if (type == ARGUMENTDATATYPE_WIDECHAR) {
+			break;
+		case ARGUMENTDATATYPE_WIDECHAR:
 			msglen += arg->getArgCount() * sizeof(WideChar);
+			break;
+
 		}
+
 		arg = arg->getNext();
+
 	}
 
 	deleteInstance(parser);
@@ -4942,27 +5061,35 @@ NetCommandList * NetPacket::getCommandList() {
 
 	Int i = 0;
 	while (i < m_packetLen) {
-		if (m_packet[i] == 'T') {
+
+		switch(m_packet[i]) {
+
+		case 'T':
 			++i;
 			memcpy(&commandType, m_packet + i, sizeof(UnsignedByte));
 			i += sizeof(UnsignedByte);
-		} else if (m_packet[i] == 'F') {
+			break;
+		case 'F':
 			++i;
 			memcpy(&frame, m_packet + i, sizeof(UnsignedInt));
 			i += sizeof(UnsignedInt);
-		} else if (m_packet[i] == 'P') {
+			break;
+		case 'P':
 			++i;
 			memcpy(&playerID, m_packet + i, sizeof(UnsignedByte));
 			i += sizeof(UnsignedByte);
-		} else if (m_packet[i] == 'R') {
+			break;
+		case 'R':
 			++i;
 			memcpy(&relay, m_packet + i, sizeof(UnsignedByte));
 			i += sizeof(UnsignedByte);
-		} else if (m_packet[i] == 'C') {
+			break;
+		case 'C':
 			++i;
 			memcpy(&commandID, m_packet + i, sizeof(UnsignedShort));
 			i += sizeof(UnsignedShort);
-		} else if (m_packet[i] == 'D') {
+			break;
+		case 'D': {
 			++i;
 
 			NetCommandMsg *msg = NULL;
@@ -5116,36 +5243,53 @@ NetCommandList * NetPacket::getCommandList() {
 
 			// since the message is part of the list now, we don't have to keep track of it.  So we'll just set it to NULL.
 			msg = NULL;
-		} else if (m_packet[i] == 'Z') {
+			break;
+		}
+
+		case 'Z': {
+
 			++i;
 			// Repeat the last command, doing some funky cool byte-saving stuff
 			if (lastCommand == NULL) {
 				DEBUG_CRASH(("Got a repeat command with no command to repeat."));
 			}
+
 			NetCommandMsg *msg = NULL;
-			if (commandType == NETCOMMANDTYPE_ACKSTAGE1) {
+
+			switch(commandType) {
+
+			case NETCOMMANDTYPE_ACKSTAGE1: {
 				msg = newInstance(NetAckStage1CommandMsg)();
-				NetAckStage1CommandMsg *last = (NetAckStage1CommandMsg *)(lastCommand->getCommand());
-				((NetAckStage1CommandMsg *)msg)->setCommandID(last->getCommandID() + 1);
-				((NetAckStage1CommandMsg *)msg)->setOriginalPlayerID(last->getOriginalPlayerID());
-			} else if (commandType == NETCOMMANDTYPE_ACKSTAGE2) {
+				NetAckStage1CommandMsg* laststageone = (NetAckStage1CommandMsg*)(lastCommand->getCommand());
+				((NetAckStage1CommandMsg*)msg)->setCommandID(laststageone->getCommandID() + 1);
+				((NetAckStage1CommandMsg*)msg)->setOriginalPlayerID(laststageone->getOriginalPlayerID());
+				break;
+			}
+			case NETCOMMANDTYPE_ACKSTAGE2: {
 				msg = newInstance(NetAckStage2CommandMsg)();
-				NetAckStage2CommandMsg *last = (NetAckStage2CommandMsg *)(lastCommand->getCommand());
-				((NetAckStage2CommandMsg *)msg)->setCommandID(last->getCommandID() + 1);
-				((NetAckStage2CommandMsg *)msg)->setOriginalPlayerID(last->getOriginalPlayerID());
-			} else if (commandType == NETCOMMANDTYPE_ACKBOTH) {
+				NetAckStage2CommandMsg* laststagetwo = (NetAckStage2CommandMsg*)(lastCommand->getCommand());
+				((NetAckStage2CommandMsg*)msg)->setCommandID(laststagetwo->getCommandID() + 1);
+				((NetAckStage2CommandMsg*)msg)->setOriginalPlayerID(laststagetwo->getOriginalPlayerID());
+				break;
+			}
+			case NETCOMMANDTYPE_ACKBOTH: {
 				msg = newInstance(NetAckBothCommandMsg)();
-				NetAckBothCommandMsg *last = (NetAckBothCommandMsg *)(lastCommand->getCommand());
-				((NetAckBothCommandMsg *)msg)->setCommandID(last->getCommandID() + 1);
-				((NetAckBothCommandMsg *)msg)->setOriginalPlayerID(last->getOriginalPlayerID());
-			} else if (commandType == NETCOMMANDTYPE_FRAMEINFO) {
+				NetAckBothCommandMsg* lastboth = (NetAckBothCommandMsg*)(lastCommand->getCommand());
+				((NetAckBothCommandMsg*)msg)->setCommandID(lastboth->getCommandID() + 1);
+				((NetAckBothCommandMsg*)msg)->setOriginalPlayerID(lastboth->getOriginalPlayerID());
+				break;
+			}
+			case NETCOMMANDTYPE_FRAMEINFO: {
 				msg = newInstance(NetFrameCommandMsg)();
 				++frame; // this is set below.
-				((NetFrameCommandMsg *)msg)->setCommandCount(0);
+				((NetFrameCommandMsg*)msg)->setCommandCount(0);
 				DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("Read a repeated frame command, frame = %d, player = %d, commandID = %d", frame, playerID, commandID));
-			} else {
+				break;
+			}
+			default:
 				DEBUG_CRASH(("Trying to repeat a command that shouldn't be repeated."));
 				continue;
+
 			}
 
 			msg->setExecutionFrame(frame);
@@ -5175,13 +5319,19 @@ NetCommandList * NetPacket::getCommandList() {
 
 			// since the message is part of the list now, we don't have to keep track of it.  So we'll just set it to NULL.
 			msg = NULL;
-		} else {
+			break;
+		}
+
+		default:
 			// we don't recognize this command, but we have to increment i so we don't fall into an infinite loop.
 			DEBUG_CRASH(("Unrecognized packet entry, ignoring."));
 			DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("NetPacket::getCommandList - Unrecognized packet entry at index %d", i));
 			dumpPacketToLog();
 			++i;
+			break;
+
 		}
+
 	}
 
 	if (lastCommand != NULL) {
@@ -5261,84 +5411,101 @@ NetCommandMsg * NetPacket::readGameMessage(UnsignedByte *data, Int &i)
 }
 
 void NetPacket::readGameMessageArgumentFromPacket(GameMessageArgumentDataType type, NetGameCommandMsg *msg, UnsignedByte *data, Int &i) {
-	if (type == ARGUMENTDATATYPE_INTEGER) {
-		GameMessageArgumentType arg;
+
+	GameMessageArgumentType arg;
+
+	switch (type) {
+
+	case ARGUMENTDATATYPE_INTEGER:
 		Int theint;
 		memcpy(&theint, data + i, sizeof(theint));
 		i += sizeof(theint);
 		arg.integer = theint;
 		msg->addArgument(type, arg);
-	} else if (type == ARGUMENTDATATYPE_REAL) {
-		GameMessageArgumentType arg;
+		break;
+
+	case ARGUMENTDATATYPE_REAL:
 		Real thereal;
 		memcpy(&thereal, data + i, sizeof(thereal));
 		i += sizeof(thereal);
 		arg.real = thereal;
 		msg->addArgument(type, arg);
-	} else if (type == ARGUMENTDATATYPE_BOOLEAN) {
-		GameMessageArgumentType arg;
+		break;
+
+	case ARGUMENTDATATYPE_BOOLEAN:
 		Bool thebool;
 		memcpy(&thebool, data + i, sizeof(thebool));
 		i += sizeof(thebool);
 		arg.boolean = thebool;
 		msg->addArgument(type, arg);
-	} else if (type == ARGUMENTDATATYPE_OBJECTID) {
-		GameMessageArgumentType arg;
-		ObjectID theint;
-		memcpy(&theint, data + i, sizeof(theint));
-		i += sizeof(theint);
-		arg.objectID = theint;
+		break;
+
+	case ARGUMENTDATATYPE_OBJECTID:
+		ObjectID theobjectid;
+		memcpy(&theobjectid, data + i, sizeof(theobjectid));
+		i += sizeof(theobjectid);
+		arg.objectID = theobjectid;
 		msg->addArgument(type, arg);
-	} else if (type == ARGUMENTDATATYPE_DRAWABLEID) {
-		GameMessageArgumentType arg;
-		DrawableID theint;
-		memcpy(&theint, data + i, sizeof(theint));
-		i += sizeof(theint);
-		arg.drawableID = theint;
+		break;
+
+	case ARGUMENTDATATYPE_DRAWABLEID:
+		DrawableID thedrawableid;
+		memcpy(&thedrawableid, data + i, sizeof(thedrawableid));
+		i += sizeof(thedrawableid);
+		arg.drawableID = thedrawableid;
 		msg->addArgument(type, arg);
-	} else if (type == ARGUMENTDATATYPE_TEAMID) {
-		GameMessageArgumentType arg;
-		UnsignedInt theint;
-		memcpy(&theint, data + i, sizeof(theint));
-		i += sizeof(theint);
-		arg.teamID = theint;
+		break;
+
+	case ARGUMENTDATATYPE_TEAMID:
+		UnsignedInt theunsignedint;
+		memcpy(&theunsignedint, data + i, sizeof(theunsignedint));
+		i += sizeof(theunsignedint);
+		arg.teamID = theunsignedint;
 		msg->addArgument(type, arg);
-	} else if (type == ARGUMENTDATATYPE_LOCATION) {
-		GameMessageArgumentType arg;
+		break;
+
+	case ARGUMENTDATATYPE_LOCATION:
 		Coord3D coord;
 		memcpy(&coord, data + i, sizeof(coord));
 		i += sizeof(coord);
 		arg.location = coord;
 		msg->addArgument(type, arg);
-	} else if (type == ARGUMENTDATATYPE_PIXEL) {
-		GameMessageArgumentType arg;
+		break;
+
+	case ARGUMENTDATATYPE_PIXEL:
 		ICoord2D pixel;
 		memcpy(&pixel, data + i, sizeof(pixel));
 		i += sizeof(pixel);
 		arg.pixel = pixel;
 		msg->addArgument(type, arg);
-	} else if (type == ARGUMENTDATATYPE_PIXELREGION) {
-		GameMessageArgumentType arg;
+		break;
+
+	case ARGUMENTDATATYPE_PIXELREGION:
 		IRegion2D reg;
 		memcpy(&reg, data + i, sizeof(reg));
 		i += sizeof(reg);
 		arg.pixelRegion = reg;
 		msg->addArgument(type, arg);
-	} else if (type == ARGUMENTDATATYPE_TIMESTAMP) {
-		GameMessageArgumentType arg;
+		break;
+
+	case ARGUMENTDATATYPE_TIMESTAMP:
 		UnsignedInt stamp;
 		memcpy(&stamp, data + i, sizeof(stamp));
 		i += sizeof(stamp);
 		arg.timestamp = stamp;
 		msg->addArgument(type, arg);
-	} else if (type == ARGUMENTDATATYPE_WIDECHAR) {
-		GameMessageArgumentType arg;
+		break;
+
+	case ARGUMENTDATATYPE_WIDECHAR:
 		WideChar c;
 		memcpy(&c, data + i, sizeof(c));
 		i += sizeof(c);
 		arg.wChar = c;
 		msg->addArgument(type, arg);
+		break;
+
 	}
+
 }
 
 /**

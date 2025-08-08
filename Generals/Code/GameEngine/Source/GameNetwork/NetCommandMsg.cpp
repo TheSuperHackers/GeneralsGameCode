@@ -176,34 +176,48 @@ GameMessage *NetGameCommandMsg::constructGameMessage()
 	AsciiString name;
 	name.format("player%d", getPlayerID());
 	retval->friend_setPlayerIndex( ThePlayerList->findPlayerWithNameKey(TheNameKeyGenerator->nameToKey(name))->getPlayerIndex());
-//	retval->friend_setPlayerIndex(indexFromMask(ThePlayerList->findPlayerWithNameKey(TheNameKeyGenerator->nameToKey(name))->getPlayerMask()));
 
 	GameMessageArgument *arg = m_argList;
 	while (arg != NULL) {
-//		retval->appendGenericArgument(arg->m_data);
-		if (arg->m_type == ARGUMENTDATATYPE_INTEGER) {
+
+		switch (arg->m_type) {
+
+		case ARGUMENTDATATYPE_INTEGER:
 			retval->appendIntegerArgument(arg->m_data.integer);
-		} else if (arg->m_type == ARGUMENTDATATYPE_REAL) {
+			break;
+		case ARGUMENTDATATYPE_REAL:
 			retval->appendRealArgument(arg->m_data.real);
-		} else if (arg->m_type == ARGUMENTDATATYPE_BOOLEAN) {
+			break;
+		case ARGUMENTDATATYPE_BOOLEAN:
 			retval->appendBooleanArgument(arg->m_data.boolean);
-		} else if (arg->m_type == ARGUMENTDATATYPE_OBJECTID) {
+			break;
+		case ARGUMENTDATATYPE_OBJECTID:
 			retval->appendObjectIDArgument(arg->m_data.objectID);
-		} else if (arg->m_type == ARGUMENTDATATYPE_DRAWABLEID) {
+			break;
+		case ARGUMENTDATATYPE_DRAWABLEID:
 			retval->appendDrawableIDArgument(arg->m_data.drawableID);
-		} else if (arg->m_type == ARGUMENTDATATYPE_TEAMID) {
+			break;
+		case ARGUMENTDATATYPE_TEAMID:
 			retval->appendTeamIDArgument(arg->m_data.teamID);
-		} else if (arg->m_type == ARGUMENTDATATYPE_LOCATION) {
+			break;
+		case ARGUMENTDATATYPE_LOCATION:
 			retval->appendLocationArgument(arg->m_data.location);
-		} else if (arg->m_type == ARGUMENTDATATYPE_PIXEL) {
+			break;
+		case ARGUMENTDATATYPE_PIXEL:
 			retval->appendPixelArgument(arg->m_data.pixel);
-		} else if (arg->m_type == ARGUMENTDATATYPE_PIXELREGION) {
+			break;
+		case ARGUMENTDATATYPE_PIXELREGION:
 			retval->appendPixelRegionArgument(arg->m_data.pixelRegion);
-		} else if (arg->m_type == ARGUMENTDATATYPE_TIMESTAMP) {
+			break;
+		case ARGUMENTDATATYPE_TIMESTAMP:
 			retval->appendTimestampArgument(arg->m_data.timestamp);
-		} else if (arg->m_type == ARGUMENTDATATYPE_WIDECHAR) {
+			break;
+		case ARGUMENTDATATYPE_WIDECHAR:
 			retval->appendWideCharArgument(arg->m_data.wChar);
+			break;
+
 		}
+
 		arg = arg->m_next;
 	}
 	return retval;
