@@ -956,10 +956,6 @@ void MilesAudioManager::stopAudioEvent( AudioHandle handle )
 			// found it
 			audio->m_requestStop = true;
 
-			if (audio->m_audioEventRTS->getAudioEventInfo()->m_control & AC_STOPEARLY) {
-				DEBUG_LOG((">>> stopAudioEvent (stream): %s\n", audio->m_audioEventRTS->getEventName().str()));
-			}
-
 			notifyOfAudioCompletion((UnsignedInt)(audio->m_stream), PAT_Stream);
 			break;
 		}
@@ -973,11 +969,12 @@ void MilesAudioManager::stopAudioEvent( AudioHandle handle )
 
 		if (audio->m_audioEventRTS->getPlayingHandle() == handle) {
 
+			audio->m_requestStop = true;
 			if (audio->m_audioEventRTS->getAudioEventInfo()->m_control & AC_STOPEARLY) {
-				DEBUG_LOG((">>> stopAudioEvent (sounds): %s\n", audio->m_audioEventRTS->getEventName().str()));
+				// DEBUG_LOG((">>> stopAudioEvent (sounds): %s\n", audio->m_audioEventRTS->getEventName().str()));
+				notifyOfAudioCompletion((UnsignedInt)(audio->m_sample), PAT_Sample, true);
 			}
 
-			audio->m_requestStop = true;
 			break;
 		}
 	}
@@ -993,13 +990,11 @@ void MilesAudioManager::stopAudioEvent( AudioHandle handle )
 			DEBUG_LOG((" (%s)", audio->m_audioEventRTS->getEventName()));
 		#endif
 
-
 			audio->m_requestStop = true;
 
 			if (audio->m_audioEventRTS->getAudioEventInfo()->m_control & AC_STOPEARLY) {
-				DEBUG_LOG((">>> stopAudioEvent (3DSounds): %s\n", audio->m_audioEventRTS->getEventName().str()));
+				// DEBUG_LOG((">>> stopAudioEvent (3DSounds): %s\n", audio->m_audioEventRTS->getEventName().str()));
 
-				//We should move to next loop instead?
 				notifyOfAudioCompletion((UnsignedInt)(audio->m_3DSample), PAT_3DSample, true);
 			}
 
@@ -1583,19 +1578,17 @@ void MilesAudioManager::notifyOfAudioCompletion( UnsignedInt audioCompleted, Uns
 			if (!isEarlyStop) {
 				// We came here from the audio being stopped by other means.
 				// To avoid doing things twice, we just return here. I hope this doesn't break things.
-				DEBUG_LOG((">>> notifyOfAudioCompletion EARLYSTOP 1: %s (%s) - nextPP = %d - isEarlyStop = FALSE\n",
-					playing->m_audioEventRTS->getEventName().str(),
-					playing->m_audioEventRTS->getFilename().str(),
-					playing->m_audioEventRTS->getNextPlayPortion()));
+				//DEBUG_LOG((">>> notifyOfAudioCompletion EARLYSTOP 1: %s (%s) - nextPP = %d - isEarlyStop = FALSE\n",
+				//	playing->m_audioEventRTS->getEventName().str(),
+				//	playing->m_audioEventRTS->getFilename().str(),
+				//	playing->m_audioEventRTS->getNextPlayPortion()));
 				return;
 			}
 
-			DEBUG_LOG((">>> notifyOfAudioCompletion EARLYSTOP 1: %s (%s) - nextPP = %d\n",
-				playing->m_audioEventRTS->getEventName().str(),
-				playing->m_audioEventRTS->getFilename().str(),
-				playing->m_audioEventRTS->getNextPlayPortion()));
-
-			//playing->m_requestStop = false;
+			//DEBUG_LOG((">>> notifyOfAudioCompletion EARLYSTOP 1: %s (%s) - nextPP = %d\n",
+			//	playing->m_audioEventRTS->getEventName().str(),
+			//	playing->m_audioEventRTS->getFilename().str(),
+			//	playing->m_audioEventRTS->getNextPlayPortion()));
 
 			// How to advance?
 			// - Attack -> Decay
@@ -1605,9 +1598,6 @@ void MilesAudioManager::notifyOfAudioCompletion( UnsignedInt audioCompleted, Uns
 			if (playing->m_audioEventRTS->getNextPlayPortion() == PP_Attack) {
 				playing->m_audioEventRTS->setNextPlayPortion(PP_Sound);
 			}
-
-			// Do we need to artificially stop the current sound?
-
 		}
 		// Normal loop behavior
 		else {
@@ -1622,7 +1612,6 @@ void MilesAudioManager::notifyOfAudioCompletion( UnsignedInt audioCompleted, Uns
 
 				// Now, try to start the next loop
 				if (startNextLoop(playing)) {
-					// DEBUG_LOG((">>> notifyOfAudioCompletion: %s - startNextLoop -> DONE?\n", playing->m_audioEventRTS->getEventName().str()));
 					return;
 				}
 			}
@@ -1630,14 +1619,6 @@ void MilesAudioManager::notifyOfAudioCompletion( UnsignedInt audioCompleted, Uns
 	}
 
 	playing->m_audioEventRTS->advanceNextPlayPortion();
-
-	if (playing->m_audioEventRTS->getAudioEventInfo()->m_control & AC_STOPEARLY) {
-
-		DEBUG_LOG((">>> notifyOfAudioCompletion EARLYSTOP 2: %s (%s) - nextPP = %d\n",
-			playing->m_audioEventRTS->getEventName().str(),
-			playing->m_audioEventRTS->getFilename().str(),
-			playing->m_audioEventRTS->getNextPlayPortion()));
-	}
 
 	if (playing->m_audioEventRTS->getNextPlayPortion() != PP_Done) {
 		if (playing->m_type == PAT_Sample) {
@@ -1650,23 +1631,12 @@ void MilesAudioManager::notifyOfAudioCompletion( UnsignedInt audioCompleted, Uns
 				return;
 			}
 		} else if (playing->m_type == PAT_3DSample) {
-			DEBUG_LOG((">>> notifyOfAudioCompletion EARLYSTOP 3a: %s (%s) - nextPP = %d\n",
-				playing->m_audioEventRTS->getEventName().str(),
-				playing->m_audioEventRTS->getFilename().str(),
-				playing->m_audioEventRTS->getNextPlayPortion()));
-
 			closeFile(playing->m_file);	// close it so as not to leak it.
 			playing->m_file = playSample3D(playing->m_audioEventRTS, playing->m_3DSample);
 
 			// If we don't have a file now, then we should drop to the stopped status so that 
 			// We correctly close this handle.
 			if (playing->m_file) {
-
-				DEBUG_LOG((">>> notifyOfAudioCompletion EARLYSTOP 3b - play next: %s (%s) - nextPP = %d\n",
-					playing->m_audioEventRTS->getEventName().str(),
-					playing->m_audioEventRTS->getFilename().str(),
-					playing->m_audioEventRTS->getNextPlayPortion()));
-
 				return;
 			}
 		} 
