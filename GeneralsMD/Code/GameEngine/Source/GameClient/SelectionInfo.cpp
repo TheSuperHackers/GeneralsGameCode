@@ -349,6 +349,9 @@ Bool addDrawableToList( Drawable *draw, void *userData )
 	if (!pds->drawableListToFill)
 		return FALSE;
 
+	if (draw->isDrawableEffectivelyHidden())
+		return FALSE;
+
 	if (!draw->getTemplate()->isAnyKindOf(pds->kindofsToMatch))
 		return FALSE;
 
