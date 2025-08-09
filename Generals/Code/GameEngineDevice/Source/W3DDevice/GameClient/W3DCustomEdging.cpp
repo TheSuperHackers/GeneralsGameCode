@@ -24,12 +24,12 @@
 
 // FILE: W3DCustomEdging.cpp ////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:   RTS3
@@ -43,7 +43,7 @@
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-//         Includes                                                      
+//         Includes
 //-----------------------------------------------------------------------------
 #include "W3DDevice/GameClient/W3DCustomEdging.h"
 
@@ -63,7 +63,7 @@
 #include "WW3D2/meshmdl.h"
 
 //-----------------------------------------------------------------------------
-//         Private Data                                                     
+//         Private Data
 //-----------------------------------------------------------------------------
 // A W3D shader that does alpha, texturing, tests zbuffer, doesn't update zbuffer.
 #define SC_ALPHA_DETAIL ( SHADE_CNST(ShaderClass::PASS_LEQUAL, ShaderClass::DEPTH_WRITE_DISABLE, ShaderClass::COLOR_WRITE_ENABLE, ShaderClass::SRCBLEND_SRC_ALPHA, \
@@ -95,7 +95,7 @@ static ShaderClass detailOpaqueShader(SC_DETAIL_BLEND);
 
 static ShaderClass mirrorAlphaShader(SC_ALPHA_DETAIL);
 
-// ShaderClass::PASS_ALWAYS, 
+// ShaderClass::PASS_ALWAYS,
 
 #define SC_ALPHA_2D ( SHADE_CNST(PASS_ALWAYS, DEPTH_WRITE_DISABLE, COLOR_WRITE_ENABLE, \
 	SRCBLEND_SRC_ALPHA, DSTBLEND_ONE_MINUS_SRC_ALPHA, FOG_DISABLE, GRADIENT_DISABLE, \
@@ -104,7 +104,7 @@ static ShaderClass mirrorAlphaShader(SC_ALPHA_DETAIL);
 ShaderClass ShaderClass::_PresetAlpha2DShader(SC_ALPHA_2D);
 */
 //-----------------------------------------------------------------------------
-//         Private Functions                                               
+//         Private Functions
 //-----------------------------------------------------------------------------
 
 //=============================================================================
@@ -219,9 +219,9 @@ void W3DCustomEdging::loadEdgingsInVertexAndIndexBuffers(WorldHeightMap *pMap, I
 
 					Int diffuse = TheTerrainRenderObject->getStaticDiffuse(column+i, row+j);
 					curVb->diffuse = 0x80000000 + (diffuse&0x00FFFFFF); // set alpha to 5b.
-					Real theZ; 
+					Real theZ;
 					theZ = ((float)pMap->getDataPtr()[cellNdx])*MAP_HEIGHT_SCALE;
-					Real X = (column+i)*MAP_XY_FACTOR; 
+					Real X = (column+i)*MAP_XY_FACTOR;
 					Real Y = (row+j)*MAP_XY_FACTOR;
 					curVb->u2 = uOffset + i*0.25f*range.width();
 					curVb->v2 = vOffset + (1-j)*0.25f*range.height();
@@ -247,8 +247,8 @@ void W3DCustomEdging::loadEdgingsInVertexAndIndexBuffers(WorldHeightMap *pMap, I
  				*curIb++ = startVertex + 1;
  				*curIb++ = startVertex + 1+yOffset;
 				*curIb++ = startVertex + yOffset;
-			}	
-			else 
+			}
+			else
 #endif
 			{
 				*curIb++ = startVertex;
@@ -265,7 +265,7 @@ void W3DCustomEdging::loadEdgingsInVertexAndIndexBuffers(WorldHeightMap *pMap, I
 }
 
 //-----------------------------------------------------------------------------
-//         Public Functions                                                
+//         Public Functions
 //-----------------------------------------------------------------------------
 
 //=============================================================================
@@ -327,7 +327,7 @@ void W3DCustomEdging::allocateEdgingBuffers(void)
 //=============================================================================
 void W3DCustomEdging::clearAllEdging(void)
 {
-	m_curNumEdgingVertices=0;				  
+	m_curNumEdgingVertices=0;
 	m_curNumEdgingIndices=0;
 	m_anythingChanged = true;
 }
@@ -340,8 +340,8 @@ void W3DCustomEdging::clearAllEdging(void)
 //=============================================================================
 /** Draws the trees.  Uses camera to cull. */
 //=============================================================================
-void W3DCustomEdging::drawEdging(WorldHeightMap *pMap, Int minX, Int maxX, Int minY, Int maxY,  
-		TextureClass * terrainTexture, TextureClass * cloudTexture, TextureClass * noiseTexture) 
+void W3DCustomEdging::drawEdging(WorldHeightMap *pMap, Int minX, Int maxX, Int minY, Int maxY,
+		TextureClass * terrainTexture, TextureClass * cloudTexture, TextureClass * noiseTexture)
 {
 	static Bool foo = false;
 	if (foo) {
@@ -360,8 +360,8 @@ void W3DCustomEdging::drawEdging(WorldHeightMap *pMap, Int minX, Int maxX, Int m
 	DX8Wrapper::Set_Shader(detailAlphaTestShader);
 #ifdef RTS_DEBUG
 	//DX8Wrapper::Set_Shader(detailShader); // shows clipping.
-#endif	
-	
+#endif
+
 	DX8Wrapper::Set_Texture(0,terrainTexture);
 	DX8Wrapper::Set_Texture(1,edgeTex);
 	DX8Wrapper::Apply_Render_State_Changes();

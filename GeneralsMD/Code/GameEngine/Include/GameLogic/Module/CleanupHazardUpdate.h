@@ -53,7 +53,7 @@ public:
 	CleanupHazardUpdateModuleData();
 	static void buildFieldParse(MultiIniFieldParse& p);
 
-private: 
+private:
 
 };
 

@@ -24,12 +24,12 @@
 
 // FILE: ShellMenuScheme.cpp /////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Electronic Arts Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2002 - All Rights Reserved                  
-//                                                                          
+//
+//                       Electronic Arts Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2002 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 //	created:	Jul 2002
@@ -37,8 +37,8 @@
 //	Filename: 	ShellMenuScheme.cpp
 //
 //	author:		Chris Huybregts
-//	
-//	purpose:	
+//
+//	purpose:
 //
 //-----------------------------------------------------------------------------
 ///////////////////////////////////////////////////////////////////////////////
@@ -60,7 +60,7 @@
 // DEFINES ////////////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
 
-const FieldParse ShellMenuSchemeManager::m_shellMenuSchemeFieldParseTable[] = 
+const FieldParse ShellMenuSchemeManager::m_shellMenuSchemeFieldParseTable[] =
 {
 
 	{ "ImagePart",						ShellMenuSchemeManager::parseImagePart,			NULL, NULL },
@@ -80,7 +80,7 @@ void INI::parseShellMenuSchemeDefinition( INI *ini )
 
 	// read the name
 	const char* c = ini->getNextToken();
-	name.set( c );	
+	name.set( c );
 
 	// find existing item if present
 	SMSchemeManager = TheShell->getShellMenuSchemeManager();
@@ -89,7 +89,7 @@ void INI::parseShellMenuSchemeDefinition( INI *ini )
 		return;
 
 	// If we have a previously allocated control bar, this will return a cleared out pointer to it so we
-	// can overwrite it	
+	// can overwrite it
 	SMScheme = SMSchemeManager->newShellMenuScheme( name );
 
 	// sanity
@@ -126,7 +126,7 @@ ShellMenuSchemeImage::~ShellMenuSchemeImage( void )
 
 ShellMenuScheme::ShellMenuScheme( void )
 {
-	
+
 }
 
 ShellMenuScheme::~ShellMenuScheme( void )
@@ -149,7 +149,7 @@ ShellMenuScheme::~ShellMenuScheme( void )
 			delete line;
 	}
 
-	
+
 }
 
 void ShellMenuScheme::addLine( ShellMenuSchemeLine* schemeLine )
@@ -188,7 +188,7 @@ void ShellMenuScheme::draw( void )
 	while(it != m_lineList.end())
 	{
 		ShellMenuSchemeLine *line = *it;
-		
+
 		if(line)
 		{
 			TheDisplay->drawLine(line->m_startPos.x, line->m_startPos.y, line->m_endPos.x,
@@ -218,12 +218,12 @@ ShellMenuSchemeManager::~ShellMenuSchemeManager( void )
 		if(scheme)
 			delete scheme;
 	}
-	
+
 }
 
 void ShellMenuSchemeManager::parseImagePart(INI *ini, void *instance, void* /*store*/, const void* /*userData*/)
 {
-	static const FieldParse myFieldParse[] = 
+	static const FieldParse myFieldParse[] =
 		{
 			{ "Position",				INI::parseICoord2D,				NULL, offsetof( ShellMenuSchemeImage, m_position ) },
 			{ "Size",						INI::parseICoord2D,				NULL, offsetof( ShellMenuSchemeImage, m_size ) },
@@ -239,13 +239,13 @@ void ShellMenuSchemeManager::parseImagePart(INI *ini, void *instance, void* /*st
 
 void ShellMenuSchemeManager::parseLinePart(INI *ini, void *instance, void* /*store*/, const void* /*userData*/)
 {
-	static const FieldParse myFieldParse[] = 
+	static const FieldParse myFieldParse[] =
 		{
 			{ "StartPosition",		INI::parseICoord2D,				NULL, offsetof( ShellMenuSchemeLine, m_startPos ) },
 			{ "EndPosition",			INI::parseICoord2D,				NULL, offsetof( ShellMenuSchemeLine, m_endPos ) },
       { "Color",						INI::parseColorInt,				NULL, offsetof( ShellMenuSchemeLine, m_color ) },
 			{ "Width",						INI::parseInt,						NULL, offsetof( ShellMenuSchemeLine, m_width ) },
-			
+
 			{ NULL,								NULL,											NULL, 0 }  // keep this last
 		};
 

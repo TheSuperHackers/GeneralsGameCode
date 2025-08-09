@@ -77,5 +77,5 @@ private:
 	void makeFeedbackLaser( const ThingTemplate *laserTemplate, const Object *from, const Object *to );
 };
 
-#endif 
+#endif
 

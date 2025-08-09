@@ -17,22 +17,22 @@
 */
 
 /* $Header: /Commando/Code/ww3d2/motchan.h 2     6/29/01 6:41p Jani_p $ */
-/*********************************************************************************************** 
- ***                            Confidential - Westwood Studios                              *** 
- *********************************************************************************************** 
- *                                                                                             * 
- *                 Project Name : Commando / G 3D Library                                      * 
- *                                                                                             * 
- *                     $Archive:: /Commando/Code/ww3d2/motchan.h                              $* 
- *                                                                                             * 
- *                      $Author:: Jani_p                                                      $* 
- *                                                                                             * 
- *                     $Modtime:: 6/27/01 6:29p                                               $* 
- *                                                                                             * 
- *                    $Revision:: 2                                                           $* 
- *                                                                                             * 
- *---------------------------------------------------------------------------------------------* 
- * Functions:                                                                                  * 
+/***********************************************************************************************
+ ***                            Confidential - Westwood Studios                              ***
+ ***********************************************************************************************
+ *                                                                                             *
+ *                 Project Name : Commando / G 3D Library                                      *
+ *                                                                                             *
+ *                     $Archive:: /Commando/Code/ww3d2/motchan.h                              $*
+ *                                                                                             *
+ *                      $Author:: Jani_p                                                      $*
+ *                                                                                             *
+ *                     $Modtime:: 6/27/01 6:29p                                               $*
+ *                                                                                             *
+ *                    $Revision:: 2                                                           $*
+ *                                                                                             *
+ *---------------------------------------------------------------------------------------------*
+ * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 
@@ -71,7 +71,7 @@ public:
 	MotionChannelClass(void);
 	~MotionChannelClass(void);
 
-	bool	Load_W3D(ChunkLoadClass & cload);		
+	bool	Load_W3D(ChunkLoadClass & cload);
 	WWINLINE int Get_Type(void) const { return Type; }
 	WWINLINE int Get_Pivot(void) const { return PivotIdx; }
 	WWINLINE void Get_Vector(int frame,float * setvec) const;
@@ -86,7 +86,7 @@ private:
 	uint32	PivotIdx;			// what pivot is this channel applied to
 	uint32	Type;					// what type of channel is this
 	int		VectorLen;			// size of each individual vector
-	
+
 	float	*	Data;					// pointer to the raw floating point data
 	int		FirstFrame;			// first frame which was non-identity
 	int		LastFrame;			// last frame which was non-identity
@@ -120,7 +120,7 @@ WWINLINE void	MotionChannelClass::Get_Vector(int frame,float * setvec) const
 		set_identity(setvec);
 
 	} else {
-	
+
 		int vframe = frame - FirstFrame;
 
 		for (int i=0; i<VectorLen; i++) {
@@ -137,7 +137,7 @@ WWINLINE void MotionChannelClass::Get_Vector_As_Quat(int frame, Quaternion& quat
 		quat.Set(0.0f, 0.0f, 0.0f, 1.0f);
 
 	} else {
-	
+
 		const float* d = &Data[(frame - FirstFrame) * VectorLen];
 		quat.Set(d[0], d[1], d[2], d[3]);
 
@@ -149,7 +149,7 @@ WWINLINE void MotionChannelClass::Get_Vector_As_Quat(int frame, Quaternion& quat
 /******************************************************************************
 
 	BitChannelClass is used to store a boolean "on/off" value for each frame
-	in an animation.  
+	in an animation.
 
 ******************************************************************************/
 
@@ -190,12 +190,12 @@ WWINLINE int BitChannelClass::Get_Bit(int frame) const
 		return DefaultVal;
 
 	} else {
-	
+
 		int bit = frame - FirstFrame;
 
 		uint8 mask = (uint8)(1 << (bit % 8));
 		return ((*(Bits + (bit/8)) & mask) != 0);
-		
+
 	}
 }
 
@@ -218,7 +218,7 @@ public:
 	TimeCodedMotionChannelClass(void);
 	~TimeCodedMotionChannelClass(void);
 
-	bool	Load_W3D(ChunkLoadClass & cload);		
+	bool	Load_W3D(ChunkLoadClass & cload);
 	int	Get_Type(void) { return Type; }
 	int	Get_Pivot(void) { return PivotIdx; }
 	void	Get_Vector(float32 frame, float * setvec);
@@ -231,12 +231,12 @@ private:
 	uint32	Type;					// what type of channel is this
 	int		VectorLen;			// size of each individual vector
 	uint32	PacketSize;			// size of each packet
-	
+
 	uint32	NumTimeCodes;		// Number of packets
 
 	uint32	LastTimeCodeIdx;	// absolute index to last time code
 	uint32	CachedIdx;			// Last Index Used
-  
+
 	uint32	*	Data;			 	// pointer to packet data
 
 	void 		Free(void);
@@ -256,7 +256,7 @@ public:
 	AdaptiveDeltaMotionChannelClass(void);
 	~AdaptiveDeltaMotionChannelClass(void);
 
-	bool	Load_W3D(ChunkLoadClass & cload);		
+	bool	Load_W3D(ChunkLoadClass & cload);
 	int	Get_Type(void) { return Type; }
 	int	Get_Pivot(void) { return PivotIdx; }
 	void	Get_Vector(float32 frame, float * setvec);
@@ -268,11 +268,11 @@ private:
 	uint32	PivotIdx;			// what pivot is this channel applied to
 	uint32	Type;					// what type of channel is this
 	int		VectorLen;			// size of each individual vector
-	
+
 	uint32	NumFrames;			// Number of frames
 
 	float		Scale;				// Scale Filter, this much
-  
+
 	uint32  *Data;				 	// pointer to packet data
 
 	uint32	CacheFrame;
@@ -292,7 +292,7 @@ private:
 /******************************************************************************
 
 	TimeCodedBitChannelClass is used to store a boolean "on/off" value for each frame
-	in an animation.  
+	in an animation.
 
 ******************************************************************************/
 
@@ -315,7 +315,7 @@ private:
 	uint32	PivotIdx;
 	uint32	Type;
 	int		DefaultVal;
-	
+
 	uint32	NumTimeCodes;
 	uint32	CachedIdx;
 

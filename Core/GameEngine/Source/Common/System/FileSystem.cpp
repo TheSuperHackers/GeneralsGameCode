@@ -23,12 +23,12 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 //----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright(C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright(C) 2001 - All Rights Reserved
+//
 //----------------------------------------------------------------------------
 //
 // Project:   WSYS Library
@@ -42,7 +42,7 @@
 //----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
-//         Includes                                                      
+//         Includes
 //----------------------------------------------------------------------------
 
 #include "PreRTS.h"
@@ -59,43 +59,43 @@
 DECLARE_PERF_TIMER(FileSystem)
 
 //----------------------------------------------------------------------------
-//         Externals                                                     
+//         Externals
 //----------------------------------------------------------------------------
 
 
 
 //----------------------------------------------------------------------------
-//         Defines                                                         
+//         Defines
 //----------------------------------------------------------------------------
 
 
 
 //----------------------------------------------------------------------------
-//         Private Types                                                     
+//         Private Types
 //----------------------------------------------------------------------------
 
 
 
 //----------------------------------------------------------------------------
-//         Private Data                                                     
+//         Private Data
 //----------------------------------------------------------------------------
 
 
 
 //----------------------------------------------------------------------------
-//         Public Data                                                      
+//         Public Data
 //----------------------------------------------------------------------------
 
 //===============================
-// TheFileSystem 
+// TheFileSystem
 //===============================
 /**
-  *	This is the FileSystem's singleton class. All file access 
+  *	This is the FileSystem's singleton class. All file access
 	* should be through TheFileSystem, unless code needs to use an explicit
 	* File or FileSystem derivative.
 	*
 	* Using TheFileSystem->open and File exclusively for file access, particularly
-	* in library or modular code, allows applications to transparently implement 
+	* in library or modular code, allows applications to transparently implement
 	* file access as they see fit. This is particularly important for code that
 	* needs to be shared between applications, such as games and tools.
 	*/
@@ -104,16 +104,16 @@ DECLARE_PERF_TIMER(FileSystem)
 FileSystem	*TheFileSystem = NULL;
 
 //----------------------------------------------------------------------------
-//         Private Prototypes                                               
+//         Private Prototypes
 //----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
-//         Private Functions                                               
+//         Private Functions
 //----------------------------------------------------------------------------
 
 
 //----------------------------------------------------------------------------
-//         Public Functions                                                
+//         Public Functions
 //----------------------------------------------------------------------------
 
 
@@ -212,14 +212,14 @@ Bool FileSystem::doesFileExist(const Char *filename) const
 		return i->second;
 #endif
 
-	if (TheLocalFileSystem->doesFileExist(filename)) 
+	if (TheLocalFileSystem->doesFileExist(filename))
 	{
 #if ENABLE_FILESYSTEM_EXISTENCE_CACHE
 		m_fileExist[key]=true;
 #endif
 		return TRUE;
 	}
-	if (TheArchiveFileSystem->doesFileExist(filename)) 
+	if (TheArchiveFileSystem->doesFileExist(filename))
 	{
 #if ENABLE_FILESYSTEM_EXISTENCE_CACHE
 		m_fileExist[key]=true;
@@ -253,7 +253,7 @@ Bool FileSystem::getFileInfo(const AsciiString& filename, FileInfo *fileInfo) co
 		return FALSE;
 	}
 	memset(fileInfo, 0, sizeof(*fileInfo));
-	
+
 	if (TheLocalFileSystem->getFileInfo(filename, fileInfo)) {
 		return TRUE;
 	}
@@ -268,7 +268,7 @@ Bool FileSystem::getFileInfo(const AsciiString& filename, FileInfo *fileInfo) co
 //============================================================================
 // FileSystem::createDirectory
 //============================================================================
-Bool FileSystem::createDirectory(AsciiString directory) 
+Bool FileSystem::createDirectory(AsciiString directory)
 {
 	USE_PERF_TIMER(FileSystem)
 	if (TheLocalFileSystem != NULL) {

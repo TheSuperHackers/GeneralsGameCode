@@ -64,7 +64,7 @@ PilotFindVehicleUpdateModuleData::PilotFindVehicleUpdateModuleData()
 {
 	ModuleData::buildFieldParse(p);
 
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
 		{ "ScanRate",							INI::parseDurationUnsignedInt,	NULL, offsetof( PilotFindVehicleUpdateModuleData, m_scanFrames ) },
 		{ "ScanRange",						INI::parseReal,									NULL, offsetof( PilotFindVehicleUpdateModuleData, m_scanRange ) },
@@ -79,7 +79,7 @@ PilotFindVehicleUpdate::PilotFindVehicleUpdate( Thing *thing, const ModuleData* 
 {
 	m_didMoveToBase = false;
 	setWakeFrame(getObject(), UPDATE_SLEEP_NONE);
-} 
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -92,19 +92,19 @@ PilotFindVehicleUpdate::~PilotFindVehicleUpdate( void )
 //-------------------------------------------------------------------------------------------------
 void PilotFindVehicleUpdate::onObjectCreated()
 {
-	
+
 }
 
 //-------------------------------------------------------------------------------------------------
 /** The update callback. */
 //-------------------------------------------------------------------------------------------------
 UpdateSleepTime PilotFindVehicleUpdate::update()
-{	
+{
 
 	Object *obj = getObject();
 	if (obj->getControllingPlayer()->getPlayerType() == PLAYER_HUMAN) {
 		// This is an ai only behavior.
-		return UPDATE_SLEEP_FOREVER; 
+		return UPDATE_SLEEP_FOREVER;
 	}
 	const PilotFindVehicleUpdateModuleData *data = getPilotFindVehicleUpdateModuleData();
 
@@ -151,7 +151,7 @@ Object* PilotFindVehicleUpdate::scanClosestTarget()
 	filters[3] = &filterMapStatus;
 	filters[4] = NULL;
 
-	ObjectIterator *iter = ThePartitionManager->iterateObjectsInRange( me->getPosition(), data->m_scanRange, 
+	ObjectIterator *iter = ThePartitionManager->iterateObjectsInRange( me->getPosition(), data->m_scanRange,
 		FROM_CENTER_2D, filters, ITER_SORTED_NEAR_TO_FAR );
 	MemoryPoolObjectHolder hold(iter);
 
@@ -161,7 +161,7 @@ Object* PilotFindVehicleUpdate::scanClosestTarget()
 		BodyModuleInterface *body = other->getBodyModule();
 		if (!body) continue;
 		//	If we're real healthy, don't bother looking for healing.
-		if (body->getHealth() < body->getMaxHealth()*data->m_minHealth) 
+		if (body->getHealth() < body->getMaxHealth()*data->m_minHealth)
 		{
 			continue;
 		}

@@ -16,18 +16,18 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/*********************************************************************************************** 
- ***              C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S               *** 
- *********************************************************************************************** 
- *                                                                                             * 
- *                 Project Name : Command & Conquer                                            * 
- *                                                                                             * 
- *                     $Archive:: /Commando/Code/wwlib/textfile.cpp                           $* 
- *                                                                                             * 
+/***********************************************************************************************
+ ***              C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S               ***
+ ***********************************************************************************************
+ *                                                                                             *
+ *                 Project Name : Command & Conquer                                            *
+ *                                                                                             *
+ *                     $Archive:: /Commando/Code/wwlib/textfile.cpp                           $*
+ *                                                                                             *
  *                      $Author:: Patrick                   $*
- *                                                                                             * 
+ *                                                                                             *
  *                     $Modtime:: 7/26/01 9:37p                                               $*
- *                                                                                             * 
+ *                                                                                             *
  *                    $Revision:: 4                                                           $*
  *                                                                                             *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
@@ -93,21 +93,21 @@ TextFileClass::Read_Line (StringClass &string)
 		//
 		// Read a chunk of characters from the file
 		//
-		int size = Read (buffer, BUFFER_SIZE - 1);		
+		int size = Read (buffer, BUFFER_SIZE - 1);
 
 		//
-		// Keep going if we still have more data to 
+		// Keep going if we still have more data to
 		// read from the file
 		//
 		keep_going = (size == BUFFER_SIZE - 1);
-		if (size > 0) {			
-			
+		if (size > 0) {
+
 			//
 			// Try to find the linefeed character
 			//
 			for (int index = 0; index < size; index ++) {
 				if (buffer[index] == '\n') {
-					
+
 					//
 					// Terminate the buffer after the linefeed
 					//
@@ -122,7 +122,7 @@ TextFileClass::Read_Line (StringClass &string)
 					break;
 				}
 			}
-			
+
 			//
 			//	Concat this buffer to the end of the string
 			//
@@ -132,13 +132,13 @@ TextFileClass::Read_Line (StringClass &string)
 
 	bool retval = (string.Get_Length () > 0);
 	if (retval) {
-		
+
 		int len				= string.Get_Length ();
 		const char *raw_string	= string.str();
-		
+
 		//
 		// Strip the CR\LF or LF from the string
-		//		
+		//
 		if (len > 1 && raw_string[len - 2] == '\r') {
 			string.Erase (len - 2, 2);
 			//raw_string[len - 2] = 0;
@@ -147,7 +147,7 @@ TextFileClass::Read_Line (StringClass &string)
 			//raw_string[len - 1] = 0;
 		}
 	}
-	
+
 	return retval;
 }
 

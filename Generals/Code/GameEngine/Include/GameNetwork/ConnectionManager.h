@@ -121,11 +121,11 @@ public:
 	void flushConnections();
 
 	void processChat(NetChatCommandMsg *msg); // this actually needs to be public because it is frame-synchronized
-	
+
 	void updateLoadProgress( Int progress );
 	void loadProgressComplete( void );
 	void sendTimeOutGameStart( void );
-	
+
 	Bool isPacketRouter( void );
 
 	Bool isPlayerConnected( Int playerID );
@@ -136,7 +136,7 @@ public:
 	void notifyOthersOfNewFrame(UnsignedInt frame);
 
 	UnsignedInt getNextPacketRouterSlot(UnsignedInt playerID); ///< returns the packet router player that comes after the given player.
-	
+
 	Int getAverageFPS( void );
 	Int getSlotAverageFPS(Int slot);
 

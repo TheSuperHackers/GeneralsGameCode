@@ -24,12 +24,12 @@
 
 // FILE: Save.cpp /////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:    GUIEdit
@@ -180,13 +180,13 @@ static Bool savePosition( GameWindow *window, FILE *fp, Int dataIndent )
 	// created them in (the edit window size) so we can scale them by
 	// that ratio if need be
 	//
-	sprintf( &buffer[ dataIndent ], "SCREENRECT = UPPERLEFT: %d %d,\n", 
+	sprintf( &buffer[ dataIndent ], "SCREENRECT = UPPERLEFT: %d %d,\n",
 					 screenRect.lo.x, screenRect.lo.y );
 	writeBufferToFile( fp, buffer );
-	sprintf( &buffer[ dataIndent ], "             BOTTOMRIGHT: %d %d,\n", 
+	sprintf( &buffer[ dataIndent ], "             BOTTOMRIGHT: %d %d,\n",
 					 screenRect.hi.x, screenRect.hi.y );
 	writeBufferToFile( fp, buffer );
-	sprintf( &buffer[ dataIndent ], "             CREATIONRESOLUTION: %d %d;\n", 
+	sprintf( &buffer[ dataIndent ], "             CREATIONRESOLUTION: %d %d;\n",
 					 TheDisplay->getWidth(), TheDisplay->getHeight() );
 	writeBufferToFile( fp, buffer );
 
@@ -201,7 +201,7 @@ static Bool saveName( GameWindow *window, FILE *fp, Int dataIndent )
 {
 	WinInstanceData *instData = window->winGetInstanceData();
 
-	sprintf( &buffer[ dataIndent ], "NAME = \"%s:%s\";\n", 
+	sprintf( &buffer[ dataIndent ], "NAME = \"%s:%s\";\n",
 					 TheEditor->getSaveFilename(), instData->m_decoratedNameString.str() );
 	writeBufferToFile( fp, buffer );
 
@@ -227,7 +227,7 @@ static Bool saveStatus( GameWindow *window, FILE *fp, Int dataIndent )
 		bit = 1 << i;
 		if( BitIsSet( window->winGetStatus(), bit ) )
 		{
-			
+
 			// if this is an additional bit add a +
 			if( bitWritten == TRUE )
 				strcat( buffer, "+");
@@ -240,7 +240,7 @@ static Bool saveStatus( GameWindow *window, FILE *fp, Int dataIndent )
 		i++;
 
 	}  // end while
-	
+
 	// if no bits written write NONE in the file
 	if( bitWritten == FALSE )
 		strcat( buffer, "NONE" );
@@ -271,7 +271,7 @@ static Bool saveStyle( GameWindow *window, FILE *fp, Int dataIndent )
 		bit = 1 << i;
 		if( BitIsSet( window->winGetStyle(), bit ) )
 		{
-			
+
 			// if this is an additional bit add a +
 			if( bitWritten == TRUE )
 				strcat( buffer, "+");
@@ -282,7 +282,7 @@ static Bool saveStyle( GameWindow *window, FILE *fp, Int dataIndent )
 
 		}  // end
 		i++;
-	
+
 	}  // end while
 
 	// if no bits written write NONE in the file
@@ -354,9 +354,9 @@ static Bool  saveHeaderTemplate(GameWindow *window, FILE *fp, Int dataIndent  )
 		headerName = GUIEDIT_NONE_STRING;
 	sprintf( &buffer[ dataIndent ], "HEADERTEMPLATE = \"%s\";\n", headerName.str() );
 	writeBufferToFile( fp, buffer );
-	
+
 	return TRUE;
-} 
+}
 
 // saveFont ===================================================================
 /** Save font name for a window */
@@ -366,14 +366,14 @@ static Bool saveFont( GameWindow *window, FILE *fp, Int dataIndent )
 	GameFont *font = window->winGetFont();
 
 	// if no font data don't write anything
-	if( font == NULL )	
+	if( font == NULL )
 		return TRUE;
 
 	// write the font data
-	sprintf( &buffer[ dataIndent ], "FONT = NAME: \"%s\", SIZE: %d, BOLD: %d;\n", 
+	sprintf( &buffer[ dataIndent ], "FONT = NAME: \"%s\", SIZE: %d, BOLD: %d;\n",
 					 font->nameString.str(), font->pointSize, font->bold );
 	writeBufferToFile( fp, buffer );
-	
+
 	return TRUE;
 
 }  // end saveFont
@@ -470,10 +470,10 @@ static Bool saveTextColor( GameWindow *window, FILE *fp, Int dataIndent )
 			sprintf( &buffer[ dataIndent ], "TEXTCOLOR = ENABLED:  %d %d %d %d, ENABLEDBORDER:  %d %d %d %d,\n",
 							 r, g, b, a, br, bg, bb, ba );
 		else if( i == max - 1 )
-			sprintf( &buffer[ dataIndent ], "            HILITE:   %d %d %d %d, HILITEBORDER:   %d %d %d %d;\n",			
+			sprintf( &buffer[ dataIndent ], "            HILITE:   %d %d %d %d, HILITEBORDER:   %d %d %d %d;\n",
 							 r, g, b, a, br, bg, bb, ba );
 		else
-			sprintf( &buffer[ dataIndent ], "            DISABLED: %d %d %d %d, DISABLEDBORDER: %d %d %d %d,\n",			
+			sprintf( &buffer[ dataIndent ], "            DISABLED: %d %d %d %d, DISABLEDBORDER: %d %d %d %d,\n",
 							 r, g, b, a, br, bg, bb, ba );
 		writeBufferToFile( fp, buffer );
 
@@ -501,7 +501,7 @@ static Bool tokenIsEnabledData( const char *token )
 		return TRUE;
 
 	return FALSE;
-	
+
 }  // end tokenIsEnabledData
 
 // tokenIsDisabledData ========================================================
@@ -521,7 +521,7 @@ static Bool tokenIsDisabledData( const char *token )
 		return TRUE;
 
 	return FALSE;
-	
+
 }  // end tokenIsDisabledData
 
 // tokenIsHiliteData ==========================================================
@@ -541,13 +541,13 @@ static Bool tokenIsHiliteData( const char *token )
 		return TRUE;
 
 	return FALSE;
-	
+
 }  // end tokenIsHiliteData
 
 // saveDrawData ===============================================================
 /** Save the draw data array */
 //=============================================================================
-static Bool saveDrawData( const char *token, GameWindow *window, 
+static Bool saveDrawData( const char *token, GameWindow *window,
 													FILE *fp, Int dataIndent )
 {
 	Int i;
@@ -616,7 +616,7 @@ static Bool saveListboxData( GameWindow *window, FILE *fp, Int dataIndent )
 	if( listData == NULL )
 	{
 
-		DEBUG_LOG(( "No listbox data to save for window '%d'", 
+		DEBUG_LOG(( "No listbox data to save for window '%d'",
 						 window->winGetWindowId() ));
 		assert( 0 );
 		return FALSE;
@@ -641,13 +641,13 @@ static Bool saveListboxData( GameWindow *window, FILE *fp, Int dataIndent )
 	{
 		for(Int i = 0; i < listData->columns; i++ )
 		{
-			sprintf( &buffer[ dataIndent ], "              COLUMNSWIDTH%%: %d,\n", listData->columnWidthPercentage[i] );	
-			writeBufferToFile( fp, buffer );	
+			sprintf( &buffer[ dataIndent ], "              COLUMNSWIDTH%%: %d,\n", listData->columnWidthPercentage[i] );
+			writeBufferToFile( fp, buffer );
 		}
 	}
-	sprintf( &buffer[ dataIndent ], "              FORCESELECT: %d;\n", listData->forceSelect );	
-	writeBufferToFile( fp, buffer );	
-	
+	sprintf( &buffer[ dataIndent ], "              FORCESELECT: %d;\n", listData->forceSelect );
+	writeBufferToFile( fp, buffer );
+
 	// save the up button draw data for the listbox
 	if( listData->upButton )
 	{
@@ -702,28 +702,28 @@ static Bool saveComboBoxData( GameWindow *window, FILE *fp, Int dataIndent )
 	if( comboData == NULL )
 	{
 
-		DEBUG_LOG(( "No comboData data to save for window '%d'", 
+		DEBUG_LOG(( "No comboData data to save for window '%d'",
 						 window->winGetWindowId() ));
 		assert( 0 );
 		return FALSE;
 
 	}  // end if
-	
+
 	sprintf( &buffer[ dataIndent ], "COMBOBOXDATA = ISEDITABLE: %d,\n", comboData->isEditable );
 	writeBufferToFile( fp, buffer );
-	sprintf( &buffer[ dataIndent ], "              MAXCHARS: %d,\n", comboData->maxChars );	
-	writeBufferToFile( fp, buffer );	
-	sprintf( &buffer[ dataIndent ], "              MAXDISPLAY: %d,\n", comboData->maxDisplay );	
-	writeBufferToFile( fp, buffer );	
-	sprintf( &buffer[ dataIndent ], "              ASCIIONLY: %d,\n", comboData->asciiOnly );	
-	writeBufferToFile( fp, buffer );	
-	sprintf( &buffer[ dataIndent ], "              LETTERSANDNUMBERS: %d;\n", comboData->lettersAndNumbersOnly );	
-	writeBufferToFile( fp, buffer );	
-	
+	sprintf( &buffer[ dataIndent ], "              MAXCHARS: %d,\n", comboData->maxChars );
+	writeBufferToFile( fp, buffer );
+	sprintf( &buffer[ dataIndent ], "              MAXDISPLAY: %d,\n", comboData->maxDisplay );
+	writeBufferToFile( fp, buffer );
+	sprintf( &buffer[ dataIndent ], "              ASCIIONLY: %d,\n", comboData->asciiOnly );
+	writeBufferToFile( fp, buffer );
+	sprintf( &buffer[ dataIndent ], "              LETTERSANDNUMBERS: %d;\n", comboData->lettersAndNumbersOnly );
+	writeBufferToFile( fp, buffer );
+
 	//Save teh dropDownButton draw data for the combo box
 	if( comboData->dropDownButton )
 	{
-									 
+
 		saveDrawData( "COMBOBOXDROPDOWNBUTTONENABLEDDRAWDATA", comboData->dropDownButton, fp, dataIndent );
 		saveDrawData( "COMBOBOXDROPDOWNBUTTONDISABLEDDRAWDATA", comboData->dropDownButton, fp, dataIndent );
 		saveDrawData( "COMBOBOXDROPDOWNBUTTONHILITEDRAWDATA", comboData->dropDownButton, fp, dataIndent );
@@ -746,7 +746,7 @@ static Bool saveComboBoxData( GameWindow *window, FILE *fp, Int dataIndent )
 			saveDrawData( "COMBOBOXLISTBOXENABLEDDRAWDATA", comboData->listBox, fp, dataIndent );
 			saveDrawData( "COMBOBOXLISTBOXDISABLEDDRAWDATA", comboData->listBox, fp, dataIndent );
 			saveDrawData( "COMBOBOXLISTBOXHILITEDRAWDATA", comboData->listBox, fp, dataIndent );
-		
+
 		// save the up button draw data for the listbox
 		if( listData->upButton )
 		{
@@ -802,7 +802,7 @@ static Bool saveRadioButtonData( GameWindow *window, FILE *fp, Int dataIndent )
 	{
 
 
-		DEBUG_LOG(( "No radio button data to save for window '%d'", 
+		DEBUG_LOG(( "No radio button data to save for window '%d'",
 						 window->winGetWindowId() ));
 		assert( 0 );
 		return FALSE;
@@ -827,7 +827,7 @@ static Bool saveSliderData( GameWindow *window, FILE *fp, Int dataIndent )
 	if( sliderData == NULL )
 	{
 
-		DEBUG_LOG(( "No slider data in window to save for window %d", 
+		DEBUG_LOG(( "No slider data in window to save for window %d",
 							window->winGetWindowId() ));
 		assert( 0 );
 		return FALSE;
@@ -865,7 +865,7 @@ static Bool saveStaticTextData( GameWindow *window, FILE *fp, Int dataIndent )
 	if( textData == NULL )
 	{
 
-		DEBUG_LOG(( "No text data in window to save for window %d", 
+		DEBUG_LOG(( "No text data in window to save for window %d",
 							window->winGetWindowId() ));
 		assert( 0 );
 		return FALSE;
@@ -890,7 +890,7 @@ static Bool saveTextEntryData( GameWindow *window, FILE *fp, Int dataIndent )
 	if( entryData == NULL )
 	{
 
-		DEBUG_LOG(( "No text entry data in window to save for window %d", 
+		DEBUG_LOG(( "No text entry data in window to save for window %d",
 							window->winGetWindowId() ));
 		assert( 0 );
 		return FALSE;
@@ -923,7 +923,7 @@ static Bool saveTabControlData( GameWindow *window, FILE *fp, Int dataIndent )
 	if( tabControlData == NULL )
 	{
 
-		DEBUG_LOG(( "No text entry data in window to save for window %d", 
+		DEBUG_LOG(( "No text entry data in window to save for window %d",
 							window->winGetWindowId() ));
 		assert( 0 );
 		return FALSE;
@@ -970,7 +970,7 @@ static Bool saveGadgetData( GameWindow *window, FILE *fp, Int dataIndent )
 		return saveComboBoxData( window, fp, dataIndent );
 	else if( BitIsSet( window->winGetStyle(), GWS_RADIO_BUTTON ) )
 		return saveRadioButtonData( window, fp, dataIndent );
-	else if( BitIsSet( window->winGetStyle(), GWS_VERT_SLIDER | 
+	else if( BitIsSet( window->winGetStyle(), GWS_VERT_SLIDER |
 																					 GWS_HORZ_SLIDER ) )
 		return saveSliderData( window, fp, dataIndent );
 	else if( BitIsSet( window->winGetStyle(), GWS_STATIC_TEXT ) )
@@ -1027,7 +1027,7 @@ static Bool saveWindow( FILE *fp, GameWindow *window, Int indent )
 	}
 
 	//
-	// save child data if present, we do not save child data of GUI controls 
+	// save child data if present, we do not save child data of GUI controls
 	// themselves, only generic stuff, except for the Tab Control again, which
 	// is the gadget with children exception
 	//
@@ -1041,7 +1041,7 @@ static Bool saveWindow( FILE *fp, GameWindow *window, Int indent )
 			// traverse to end of child list
 			while( child->winGetNext() != NULL )
 				child = child->winGetNext();
-					
+
 			// save children windows in reverse order
 			while( child )
 			{
@@ -1074,7 +1074,7 @@ static Bool saveWindow( FILE *fp, GameWindow *window, Int indent )
 		saveGadgetData( window, fp, dataIndent );
 
 	}  // end else
-			
+
 	// end of window definition
 	sprintf( &buffer[ indent ], "END\n" );
 	writeBufferToFile( fp, buffer );
@@ -1094,7 +1094,7 @@ static Bool saveWindow( FILE *fp, GameWindow *window, Int indent )
 //=============================================================================
 void GUIEdit::validateNames( GameWindow *root, char *filename, Bool *valid )
 {
-	
+
 	// the end of recursion
 	if( root == NULL )
 		return;
@@ -1229,7 +1229,7 @@ Bool GUIEdit::saveData( char *filePathAndFilename, char *filename )
 	if( valid == FALSE )
 	{
 
-		MessageBox( TheEditor->getWindowHandle(), offendingNames, "Window Name Error", MB_OK );	
+		MessageBox( TheEditor->getWindowHandle(), offendingNames, "Window Name Error", MB_OK );
 		return FALSE;
 
 	}  // end if

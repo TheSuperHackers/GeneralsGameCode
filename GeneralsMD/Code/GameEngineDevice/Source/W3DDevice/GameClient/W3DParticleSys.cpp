@@ -37,7 +37,7 @@
 #include "WW3D2/camera.h"
 
 
-//------------------------------------------------------------------------------ Performance Timers 
+//------------------------------------------------------------------------------ Performance Timers
 //#include "Common/PerfMetrics.h"
 //#include "Common/PerfTimer.h"
 
@@ -59,7 +59,7 @@ W3DParticleSystemManager::W3DParticleSystemManager()
 	m_pointGroup = NEW PointGroupClass();
 	//m_streakLine = NULL;
 	m_streakLine = NEW StreakLineClass();
-	
+
 	m_posBuffer = NEW_REF( ShareBufferClass<Vector3>, (MAX_POINTS_PER_GROUP, "W3DParticleSystemManager::m_posBuffer") );
 	m_RGBABuffer = NEW_REF( ShareBufferClass<Vector4>, (MAX_POINTS_PER_GROUP, "W3DParticleSystemManager::m_RGBABuffer") );
 	m_sizeBuffer = NEW_REF( ShareBufferClass<float>, (MAX_POINTS_PER_GROUP, "W3DParticleSystemManager::m_sizeBuffer") );
@@ -221,10 +221,10 @@ void W3DParticleSystemManager::doParticles(RenderInfoClass &rinfo)
 				continue;
 
 			m_fieldParticleCount += ( sys->getPriority() == AREA_EFFECT && sys->m_isGroundAligned != FALSE );
-			
+
 			//@todo lorenzen sez: use pointer arithmetic for these arrays
 			personalities[count] = p->getPersonality();
-			
+
 			posArray[count].X = pos->x;
 			posArray[count].Y = pos->y;
 			posArray[count].Z = pos->z;
@@ -236,9 +236,9 @@ void W3DParticleSystemManager::doParticles(RenderInfoClass &rinfo)
 			RGBAArray[count].Y = color->green;
 			RGBAArray[count].Z = color->blue;
 			RGBAArray[count].W = p->getAlpha();
-		
+
 			angleArray[count] = (uint8)(p->getAngle() * 255.0f / (2.0f * PI));
-			
+
 			if (++count == MAX_POINTS_PER_GROUP)
 				break;
 		}
@@ -247,8 +247,8 @@ void W3DParticleSystemManager::doParticles(RenderInfoClass &rinfo)
 			continue;	//this system has no particles to render
 
 		TextureClass *texture = W3DDisplay::m_assetManager->Get_Texture( sys->getParticleTypeName().str() );
-		
-		if ( m_streakLine && sys->isUsingStreak() && (count >= 2) ) 
+
+		if ( m_streakLine && sys->isUsingStreak() && (count >= 2) )
 		{
 			m_streakLine->Reset_Line();
 
@@ -269,9 +269,9 @@ void W3DParticleSystemManager::doParticles(RenderInfoClass &rinfo)
 					m_streakLine->Set_Shader( ShaderClass::_PresetMultiplicativeSpriteShader );
 					break;
 			}
-			
+
 			//UPDATE THE STREAK'S ARRAYS
-			m_streakLine->Set_LocsWidthsColors( 
+			m_streakLine->Set_LocsWidthsColors(
 				count,
 				m_posBuffer->Get_Array(),
 				m_sizeBuffer->Get_Array(),
@@ -290,9 +290,9 @@ void W3DParticleSystemManager::doParticles(RenderInfoClass &rinfo)
 
 			//RENDER STREAK!
 			m_streakLine->Render( rinfo );
-			
+
 		}
-		else 
+		else
 		{
 
 			WWASSERT( m_pointGroup );
@@ -336,7 +336,7 @@ void W3DParticleSystemManager::doParticles(RenderInfoClass &rinfo)
 				}
 				else
 					m_pointGroup->Render( rinfo );
-		
+
 			}
 		}
 

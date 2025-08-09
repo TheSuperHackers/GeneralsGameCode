@@ -40,7 +40,7 @@ static unsigned m_inputUsed;
 static void InitConsole(void)
 {
   AllocConsole();
-  
+
   HANDLE h=GetStdHandle(STD_INPUT_HANDLE);
   SetConsoleMode(h,0);
 
@@ -122,7 +122,7 @@ static char *InputConsole(void)
   if (GetTickCount()&512)
     ci[m_inputUsed].Attributes=BACKGROUND_BLUE|BACKGROUND_GREEN
                               |BACKGROUND_RED|BACKGROUND_INTENSITY|FOREGROUND_BLUE;
-  
+
   COORD srcSize,srcCoord;
   srcSize.X=sizeof(m_input); srcSize.Y=1;
   srcCoord.X=srcCoord.Y=0;
@@ -261,7 +261,7 @@ public:
     if (GetLastError()==ERROR_BROKEN_PIPE)
     {
       DisconnectNamedPipe(m_pipe);
-      
+
       DWORD dwDummy;
       WriteFile(GetStdHandle(STD_OUTPUT_HANDLE),"\n<disconnect>\n",14,&dwDummy,NULL);
       m_connected=false;
@@ -281,7 +281,7 @@ int CALLBACK WinMain(HINSTANCE,HINSTANCE,LPSTR,int)
   WriteFile(GetStdHandle(STD_OUTPUT_HANDLE),buf2,
             wsprintf(buf2,"\n\nSimple debug.net Server ready. Enter 'quit' to exit.\n\nLocal machine: %s\n\n",buf1),
             &dwDummy,NULL);
-  
+
   Pipe p[10];
   for (int k=0;k<10;k++)
     if (!p[k].Create("\\\\.\\pipe\\ea_debug_v1"))

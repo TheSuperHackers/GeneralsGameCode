@@ -40,39 +40,39 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 template<>
-const char* DamageTypeFlags::s_bitNameList[] = 
+const char* DamageTypeFlags::s_bitNameList[] =
 {
-	"EXPLOSION",			
-	"CRUSH",					
+	"EXPLOSION",
+	"CRUSH",
 	"ARMOR_PIERCING",
-	"SMALL_ARMS",		
-	"GATTLING",			
-	"RADIATION",			
-	"FLAME",					
-	"LASER",					
-	"SNIPER",				
-	"POISON",			
-	"HEALING",	
-	"UNRESISTABLE",	
+	"SMALL_ARMS",
+	"GATTLING",
+	"RADIATION",
+	"FLAME",
+	"LASER",
+	"SNIPER",
+	"POISON",
+	"HEALING",
+	"UNRESISTABLE",
 	"WATER",
-	"DEPLOY",	
-	"SURRENDER",	
-	"HACK",	
-	"KILL_PILOT",	
-	"PENALTY",	
-	"FALLING",	
-	"MELEE",	
-	"DISARM",	
-	"HAZARD_CLEANUP",	
+	"DEPLOY",
+	"SURRENDER",
+	"HACK",
+	"KILL_PILOT",
+	"PENALTY",
+	"FALLING",
+	"MELEE",
+	"DISARM",
+	"HAZARD_CLEANUP",
 	"PARTICLE_BEAM",
 	"TOPPLING",
-	"INFANTRY_MISSILE",	
-	"AURORA_BOMB",	
-	"LAND_MINE",	
-	"JET_MISSILES",	
-	"STEALTHJET_MISSILES",	
-	"MOLOTOV_COCKTAIL",	
-	"COMANCHE_VULCAN",	
+	"INFANTRY_MISSILE",
+	"AURORA_BOMB",
+	"LAND_MINE",
+	"JET_MISSILES",
+	"STEALTHJET_MISSILES",
+	"MOLOTOV_COCKTAIL",
+	"COMANCHE_VULCAN",
 	"SUBDUAL_MISSILE",
 	"SUBDUAL_VEHICLE",
 	"SUBDUAL_BUILDING",
@@ -116,7 +116,7 @@ void DamageInfo::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
 	* Version Info:
-	* 1: Initial version 
+	* 1: Initial version
 	* 2: Damage FX override
 */
 // ------------------------------------------------------------------------------------------------

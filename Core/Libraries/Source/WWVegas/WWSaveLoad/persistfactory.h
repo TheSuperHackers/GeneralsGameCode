@@ -97,7 +97,7 @@ public:
 	/*
 	** Internal chunk id's
 	*/
-	enum 
+	enum
 	{
 		SIMPLEFACTORY_CHUNKID_OBJPOINTER		=	 0x00100100,
 		SIMPLEFACTORY_CHUNKID_OBJDATA
@@ -105,8 +105,8 @@ public:
 };
 
 
-template<class T, int CHUNKID> PersistClass * 
-SimplePersistFactoryClass<T,CHUNKID>::Load(ChunkLoadClass & cload) const 
+template<class T, int CHUNKID> PersistClass *
+SimplePersistFactoryClass<T,CHUNKID>::Load(ChunkLoadClass & cload) const
 {
 	T * new_obj = W3DNEW T;
 	T * old_obj = NULL;
@@ -127,7 +127,7 @@ SimplePersistFactoryClass<T,CHUNKID>::Load(ChunkLoadClass & cload) const
 
 
 template<class T, int CHUNKID> void
-SimplePersistFactoryClass<T,CHUNKID>::Save(ChunkSaveClass & csave,PersistClass * obj) const 
+SimplePersistFactoryClass<T,CHUNKID>::Save(ChunkSaveClass & csave,PersistClass * obj) const
 {
 	uint32 objptr = (uint32)obj;
 	csave.Begin_Chunk(SIMPLEFACTORY_CHUNKID_OBJPOINTER);

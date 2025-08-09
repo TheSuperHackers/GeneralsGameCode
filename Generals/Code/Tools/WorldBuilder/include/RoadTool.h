@@ -31,10 +31,10 @@ class WorldHeightMapEdit;
 #define ROAD_SNAP_DISTANCE (1.0f)
 /*************************************************************************/
 /**                             RoadTool
-	 Does the Add a section of road tool operation. 
+	 Does the Add a section of road tool operation.
 ***************************************************************************/
 ///  Road segment tool.
-class RoadTool : public Tool 
+class RoadTool : public Tool
 {
 protected:
 	enum {HYSTERESIS = 3,

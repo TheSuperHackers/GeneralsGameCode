@@ -49,7 +49,7 @@ void CollisionMath::ColmathStatsStruct::Reset(void)
 {
 	TotalCollisionCount = 0;
 	TotalCollisionHitCount = 0;
-	
+
 	CollisionRayTriCount = 0;
 	CollisionRayTriHitCount = 0;
 

@@ -44,7 +44,7 @@ public:
 
 #define MAX_TILES_PER_CLASS 100
 /// Struct in memory.
-typedef struct 
+typedef struct
 {
 #ifdef DEBUG_CRASHING
 	Int forDebugOnly_fileTextureClass;
@@ -56,7 +56,7 @@ typedef struct
 	AsciiString filePath;
 	AsciiString uiName;
 	TileData *tiles[MAX_TILES_PER_CLASS];
-	TerrainType *terrainType;	
+	TerrainType *terrainType;
 } TGlobalTextureClass;
 
 
@@ -69,7 +69,7 @@ protected:
 	Bool m_warnTooManyBlend;  ///< warning message flag.
 
 	// Texture classes.  There is one texture class for each bitmap read in.
-	// A class may have more than one tile.  For example, if the grass bitmap is 
+	// A class may have more than one tile.  For example, if the grass bitmap is
 	// 128x128, it creates 4 64x64 tiles, so the grass texture class will have 4 tiles.
 	static int m_numGlobalTextureClasses;
 	static TGlobalTextureClass m_globalTextureClasses[NUM_TEXTURE_CLASSES];
@@ -91,10 +91,10 @@ protected:
 	Int getBlendTileNdxForClass(Int xIndex, Int yIndex, Int textureClass);
 	Int getTextureClassFromNdx(Int tileNdx);
 	void getTexClassNeighbors(Int xIndex, Int yIndex, Int textureClass, Int *pSideCount, Int *pTotalCount);
-	void updateForAdjacentCliffs(Int xIndex, Int yIndex, 
+	void updateForAdjacentCliffs(Int xIndex, Int yIndex,
 								UnsignedByte *pProcessed, TCliffInfo &cliffInfo);
 	Bool adjustForTiling(TCliffInfo &cliffInfo, Real textureWidth);
-	void updateFlatCellForAdjacentCliffs(Int xIndex, Int yIndex, 
+	void updateFlatCellForAdjacentCliffs(Int xIndex, Int yIndex,
 								Int curTileClass, UnsignedByte *pProcessed=NULL);
 
 public: // construction
@@ -136,7 +136,7 @@ public: // Editing methods.
 
 	Bool isTexClassUsed(Int textureClass);
 	Int getFirstTile(Int textureClass);
-	
+
 	Bool optimizeTiles(void); ///< Optimizes tile allocations.
 
 	void showTileStatusInfo(void); ///< pops up a dialog box with tile mem usage.
@@ -146,7 +146,7 @@ public: // Editing methods.
 	Bool selectSimilar(void); ///< Selects any dupicate map objects.
 	Bool selectInvalidTeam(void); ///< Selects any objects with invalid teams.
 
-	Bool resize(Int newXSize, Int newYSize, Int newHeight, Int newBorder, Bool anchorTop, Bool anchorBottom, 
+	Bool resize(Int newXSize, Int newYSize, Int newHeight, Int newBorder, Bool anchorTop, Bool anchorBottom,
 							Bool anchorLeft, Bool anchorRight, Coord3D *pObjOffset);
 	Bool remapTextures(void); ///< returns true if the operation had an effect.
 	void reloadTextures(void); ///< Reloads textures from disk.
@@ -157,7 +157,7 @@ public: // Editing methods.
 	void dbgVerifyAfterUndo(void); ///< Verifies the structures are still consistent.
 	Bool doCliffAdjustment(Int xIndex, Int yIndex);
 	Bool removeCliffMapping(void);
-	
+
 	Int getNumBoundaries(void) const ;
 	void getBoundary(Int ndx, ICoord2D* border) const;
 	void addBoundary(ICoord2D* boundaryToAdd);

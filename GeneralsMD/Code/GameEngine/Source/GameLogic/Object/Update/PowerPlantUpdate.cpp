@@ -94,9 +94,9 @@ void PowerPlantUpdate::extendRods( Bool extend )
 		// they de-extend instantly.
 		Drawable *draw = getObject()->getDrawable();
 		if( draw )
-			draw->clearModelConditionFlags( MAKE_MODELCONDITION_MASK2( MODELCONDITION_POWER_PLANT_UPGRADING, 
+			draw->clearModelConditionFlags( MAKE_MODELCONDITION_MASK2( MODELCONDITION_POWER_PLANT_UPGRADING,
 																														MODELCONDITION_POWER_PLANT_UPGRADED) );
-		
+
 		m_extended = FALSE;
 		setWakeFrame(getObject(), UPDATE_SLEEP_FOREVER);
 	}
@@ -112,7 +112,7 @@ UpdateSleepTime PowerPlantUpdate::update( void )
 	if( draw )
 		draw->clearAndSetModelConditionState( MODELCONDITION_POWER_PLANT_UPGRADING,
 																					MODELCONDITION_POWER_PLANT_UPGRADED );
-	
+
 	m_extended = TRUE;
 	return UPDATE_SLEEP_FOREVER;
 }  // end update

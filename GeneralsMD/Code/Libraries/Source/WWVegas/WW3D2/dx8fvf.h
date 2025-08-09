@@ -26,8 +26,8 @@
  *                                                                                             *
  *              Original Author:: Jani Penttinen                                               *
  *                                                                                             *
- *                      $Author:: Kenny Mitchell                                               * 
- *                                                                                             * 
+ *                      $Author:: Kenny Mitchell                                               *
+ *                                                                                             *
  *                     $Modtime:: 06/26/02 5:06p                                             $*
  *                                                                                             *
  *                    $Revision:: 7                                                          $*
@@ -260,7 +260,7 @@ class FVFInfoClass : public W3DMPO
 	unsigned							location_offset;
 	unsigned							normal_offset;
 	unsigned							blend_offset;
-	unsigned							texcoord_offset[D3DDP_MAXTEXCOORD];	
+	unsigned							texcoord_offset[D3DDP_MAXTEXCOORD];
 	unsigned							diffuse_offset;
 	unsigned							specular_offset;
 public:
@@ -269,9 +269,9 @@ public:
 	inline unsigned Get_Location_Offset() const { return location_offset; }
 	inline unsigned Get_Normal_Offset() const { return normal_offset; }
 #ifdef WWDEBUG
-	inline unsigned Get_Tex_Offset(unsigned int n) const { WWASSERT(n<D3DDP_MAXTEXCOORD); return texcoord_offset[n]; }	
+	inline unsigned Get_Tex_Offset(unsigned int n) const { WWASSERT(n<D3DDP_MAXTEXCOORD); return texcoord_offset[n]; }
 #else
-	inline unsigned Get_Tex_Offset(unsigned int n) const { return texcoord_offset[n]; }	
+	inline unsigned Get_Tex_Offset(unsigned int n) const { return texcoord_offset[n]; }
 #endif
 
 	inline unsigned Get_Diffuse_Offset() const { return diffuse_offset; }

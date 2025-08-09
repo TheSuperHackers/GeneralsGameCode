@@ -52,12 +52,12 @@ enum Dialog_Controls
 
 void AlphaModifierClass::ModifyObject(TimeValue t, ModContext &mc, ObjectState *os, INode *node)
 {
-	if (!os->obj->IsSubClassOf(triObjectClassID)) 
+	if (!os->obj->IsSubClassOf(triObjectClassID))
 	{
 		return;
 	}
 
-	
+
 	// Get a mesh from input object
 	TriObject *object = (TriObject*)os->obj;
 
@@ -70,13 +70,13 @@ void AlphaModifierClass::ModifyObject(TimeValue t, ModContext &mc, ObjectState *
 	float *vdata = NULL;
 
 	// Get parameters from pblock
-	float		sparam = 0.0f; 
+	float		sparam = 0.0f;
 	Interval	valid = LocalValidity(t);
 	int			pass = 1;
 
 	pblock->GetValue(DL_EDIT_VALUE, t, sparam, valid);
 
-	// If needed a control could be put into the dialog box to specify which 
+	// If needed a control could be put into the dialog box to specify which
 	// pass to apply the alpha values to.  At this time, it was decided to
 	// not implement this because of the complexity to the artist and the
 	// performance issues in game.
@@ -100,10 +100,10 @@ void AlphaModifierClass::ModifyObject(TimeValue t, ModContext &mc, ObjectState *
 
 		for (i = 0; i < numVert; i++)
 		{
-			if (mesh->VertSel()[i]) 
+			if (mesh->VertSel()[i])
 			{
 				vdata[i] = 0.0f;
-			} 
+			}
 		}
 
 	}
@@ -122,10 +122,10 @@ void AlphaModifierClass::ModifyObject(TimeValue t, ModContext &mc, ObjectState *
 		{
 			for (i = 0; i < numVert; i++)
 			{
-				if (SelectedVertices[i]) 
+				if (SelectedVertices[i])
 				{
 					vdata[i] = sparam;
-				} 
+				}
 			}
 		}
 	}
@@ -143,11 +143,11 @@ void AlphaModifierClass::ModifyObject(TimeValue t, ModContext &mc, ObjectState *
 		// Find the vertices that have the user entered value.
 		for (i = 0; i < numVert; i++)
 		{
-			if (vdata[i] == sparam) 
+			if (vdata[i] == sparam)
 			{
 				mesh->VertSel().Set(i);
 				SelectedVertices.Set(i);
-			} 
+			}
 			else
 			{
 				mesh->VertSel().Clear(i);
@@ -155,7 +155,7 @@ void AlphaModifierClass::ModifyObject(TimeValue t, ModContext &mc, ObjectState *
 			}
 
 		}
-	  
+
 	}
 
 	if (Message == AM_INITIALIZE)
@@ -166,13 +166,13 @@ void AlphaModifierClass::ModifyObject(TimeValue t, ModContext &mc, ObjectState *
 
 		for (i = 0; i < numVert; i++)
 		{
-			if (SelectedVertices[i]) 
+			if (SelectedVertices[i])
 			{
 				// Set the value in the dialog box to the value of the
 				// first selected vertex.
 				pblock->SetValue(DL_EDIT_VALUE, t, vdata[i]);
 				break;
-			} 
+			}
 		}
 
 	}
@@ -182,10 +182,10 @@ void AlphaModifierClass::ModifyObject(TimeValue t, ModContext &mc, ObjectState *
 	// This must be done because the mesh changes each time ModfiyObject is called.
 	for (i = 0; i < numVert; i++)
 	{
-		if (SelectedVertices[i]) 
+		if (SelectedVertices[i])
 		{
 			mesh->VertSel().Set(i);
-		} 
+		}
 		else
 		{
 			mesh->VertSel().Clear(i);
@@ -244,17 +244,17 @@ ClassDesc* Get_Alpha_Desc() {return &AlphaCD;}
 /*===========================================================================*\
  |	Paramblock2 Descriptor
 \*===========================================================================*/
-static ParamBlockDesc2 alpha_param_blk 
-(		
+static ParamBlockDesc2 alpha_param_blk
+(
 	//rollout
-		0, _T("AlphaModifierParams"),  0, &AlphaCD, P_AUTO_CONSTRUCT + P_AUTO_UI, 0, 
-		IDD_ALPHA_MODIFIER, IDS_PARAMETERS, 0, 0, NULL, 
+		0, _T("AlphaModifierParams"),  0, &AlphaCD, P_AUTO_CONSTRUCT + P_AUTO_UI, 0,
+		IDD_ALPHA_MODIFIER, IDS_PARAMETERS, 0, 0, NULL,
 
 	// params
-	   
+
 		DL_EDIT_VALUE,	_T("Custom Data Value"),	TYPE_FLOAT,	P_ANIMATABLE,	IDS_ALPHA_MODIFIER_CLASS,
 		p_default,		0.0f,
-		p_range, 		0.0f, 100.0f, 
+		p_range, 		0.0f, 100.0f,
 		p_ui,			TYPE_SPINNER, EDITTYPE_FLOAT, IDC_ALPHA_EDIT, IDC_ALPHA_SPIN, 1.0f,
 		end,
 
@@ -267,7 +267,7 @@ static ParamBlockDesc2 alpha_param_blk
 /*
 		DL_EDIT_PASS,	_T("2 Custom Data Value"),	TYPE_INT,	P_ANIMATABLE,	IDS_ALPHA_MODIFIER_CLASS,
 		p_default,		1,
-		p_range, 		1, 4, 
+		p_range, 		1, 4,
 		p_ui,			TYPE_SPINNER, EDITTYPE_INT, IDC_ALPHA_EDIT2, IDC_ALPHA_SPIN2, 1.0,
 		end,
 */
@@ -285,7 +285,7 @@ BOOL AlphaModDlgProc::DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg,
 	int id = LOWORD(wParam);
 	int code = HIWORD(wParam);
 
-	switch (msg) 
+	switch (msg)
 	{
 		case WM_INITDIALOG:
 			AlphaModifier->Message = AM_INITIALIZE;
@@ -293,7 +293,7 @@ BOOL AlphaModDlgProc::DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg,
 		case WM_DESTROY:
 			break;
 		case WM_COMMAND:
-			switch (code) 
+			switch (code)
 			{
 				case EN_UPDATE:
 				break;
@@ -366,7 +366,7 @@ void AlphaModifierClass::BeginEditParams( IObjParam *ip, ULONG flags,Animatable 
 
 	alpha_param_blk.SetUserDlgProc(new AlphaModDlgProc(this));
 }
-		
+
 void AlphaModifierClass::EndEditParams( IObjParam *ip, ULONG flags,Animatable *next )
 {
 	AlphaCD.EndEditParams(ip, this, flags, next);
@@ -379,9 +379,9 @@ void AlphaModifierClass::EndEditParams( IObjParam *ip, ULONG flags,Animatable *n
 \*===========================================================================*/
 
 
-RefTargetHandle AlphaModifierClass::Clone(RemapDir& remap) 
-{	
-	AlphaModifierClass* newmod = new AlphaModifierClass();	
+RefTargetHandle AlphaModifierClass::Clone(RemapDir& remap)
+{
+	AlphaModifierClass* newmod = new AlphaModifierClass();
 	newmod->ReplaceReference(0,pblock->Clone(remap));
 	return(newmod);
 }
@@ -393,18 +393,18 @@ RefTargetHandle AlphaModifierClass::Clone(RemapDir& remap)
  |	Subanim & References support
 \*===========================================================================*/
 
-Animatable* AlphaModifierClass::SubAnim(int i) 	
+Animatable* AlphaModifierClass::SubAnim(int i)
 {
-	switch (i) 
+	switch (i)
 	{
 		case 0: return pblock;
 		default: return NULL;
 	}
 }
 
-TSTR AlphaModifierClass::SubAnimName(int i) 
+TSTR AlphaModifierClass::SubAnimName(int i)
 {
-	switch (i) 
+	switch (i)
 	{
 		case 0: return Get_String(IDS_PARAMETERS);
 		default: return _T("");
@@ -413,10 +413,10 @@ TSTR AlphaModifierClass::SubAnimName(int i)
 
 RefTargetHandle AlphaModifierClass::GetReference(int i)
 {
-	switch (i) 
+	switch (i)
 	{
 		case 0: return pblock;
-		default: 
+		default:
 			assert(TRUE);
 			return NULL;
 	}
@@ -424,7 +424,7 @@ RefTargetHandle AlphaModifierClass::GetReference(int i)
 
 void AlphaModifierClass::SetReference(int i, RefTargetHandle rtarg)
 {
-	switch (i) 
+	switch (i)
 	{
 		case 0: pblock = (IParamBlock2*)rtarg; break;
 		default:
@@ -435,13 +435,13 @@ void AlphaModifierClass::SetReference(int i, RefTargetHandle rtarg)
 
 RefResult AlphaModifierClass::NotifyRefChanged
 (
-		Interval changeInt, 
+		Interval changeInt,
 		RefTargetHandle hTarget,
-		PartID& partID,  
+		PartID& partID,
 		RefMessage message
-) 
+)
 {
-	switch (message) 
+	switch (message)
 	{
 		case REFMSG_CHANGE:
 		{
@@ -462,7 +462,7 @@ RefResult AlphaModifierClass::NotifyRefChanged
 
 Interval AlphaModifierClass::GetValidity(TimeValue t)
 {
-	float f;	
+	float f;
 	Interval valid = FOREVER;
 	pblock->GetValue(DL_EDIT_VALUE, t, f, valid);
 	return valid;

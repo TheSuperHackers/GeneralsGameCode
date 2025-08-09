@@ -42,7 +42,7 @@ public:
 	AssetStatusClass();
 	~AssetStatusClass();
 
-	void Enable_Reporting(bool enable)					  { Reporting=enable; }	
+	void Enable_Reporting(bool enable)					  { Reporting=enable; }
 	void Enable_Load_On_Demand_Reporting(bool enable) { LoadOnDemandReporting=enable; }
 
 	void Report_Load_On_Demand_RObj(const char* name);

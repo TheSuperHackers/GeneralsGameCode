@@ -24,12 +24,12 @@
 
 // FILE: W3DRoadBuffer.h //////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information					         
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:    RTS3
@@ -48,7 +48,7 @@
 #define __W3DROAD_BUFFER_H_
 
 //-----------------------------------------------------------------------------
-//           Includes                                                      
+//           Includes
 //-----------------------------------------------------------------------------
 #include "always.h"
 #include "rendobj.h"
@@ -72,7 +72,7 @@
 //-----------------------------------------------------------------------------
 
 
-enum {bottomLeft=0, bottomRight=1, topLeft=2, topRight=3, NUM_CORNERS=4};												 
+enum {bottomLeft=0, bottomRight=1, topLeft=2, topRight=3, NUM_CORNERS=4};
 #define MAX_LINKS 6
 #define DEFAULT_ROAD_SCALE (8.0f)
 #define MIN_ROAD_SEGMENT (0.25f)
@@ -84,13 +84,13 @@ struct TRoadPt
 	Vector2 top;
 	Vector2 bottom;
 	Int			count;
-	Bool		last;	
+	Bool		last;
 	Bool		multi;
 	Bool		isAngled;
 	Bool		isJoin;
 };
 
-struct TRoadSegInfo 
+struct TRoadSegInfo
 {
 	Vector2 loc;
 	Vector2 roadNormal;
@@ -103,20 +103,20 @@ struct TRoadSegInfo
 
 // The individual data for a road segment.
 enum {MAX_SEG_VERTEX=500, MAX_SEG_INDEX=2000};
-enum TCorner CPP_11(: Int) 
+enum TCorner CPP_11(: Int)
 {
-	SEGMENT, 
-	CURVE, 
-	TEE, 
-	FOUR_WAY, 
-	THREE_WAY_Y, 
-	THREE_WAY_H, 
-	THREE_WAY_H_FLIP, 
-	ALPHA_JOIN, 
+	SEGMENT,
+	CURVE,
+	TEE,
+	FOUR_WAY,
+	THREE_WAY_Y,
+	THREE_WAY_H,
+	THREE_WAY_H_FLIP,
+	ALPHA_JOIN,
 	NUM_JOINS
 };
 
-class RoadSegment 
+class RoadSegment
 {
 public:
 	TRoadPt		m_pt1;					///< Drawing location pt1 to pt2.
@@ -191,14 +191,14 @@ class WorldHeightMap;
 // W3DRoadBuffer: Draw buffer for the roads.
 //
 //
-class W3DRoadBuffer 
-{	
+class W3DRoadBuffer
+{
 friend class HeightMapRenderObjClass;
 public:
 
 	W3DRoadBuffer(void);
 	~W3DRoadBuffer(void);
-	/// Loads the roads from the map objects list.  
+	/// Loads the roads from the map objects list.
 	void loadRoads();
 	/// Empties the road buffer.
 	void clearAllRoads(void);
@@ -251,7 +251,7 @@ protected:
 	void insertTee(Vector2 loc, Int index1, Real scale);
 	Bool insertY(Vector2 loc, Int index1, Real scale);
 	void insert4Way(Vector2 loc, Int index1, Real scale);
-	void offset4Way(TRoadPt *pc1, TRoadPt *pc2, TRoadPt *pc3, TRoadPt *pr3, TRoadPt *pc4, Vector2 loc, Vector2 alignVector, Real widthInTexture); 
+	void offset4Way(TRoadPt *pc1, TRoadPt *pc2, TRoadPt *pc3, TRoadPt *pr3, TRoadPt *pc4, Vector2 loc, Vector2 alignVector, Real widthInTexture);
 	void offset3Way(TRoadPt *pc1, TRoadPt *pc2, TRoadPt *pc3, Vector2 loc, Vector2 upVector, Vector2 teeVector, Real widthInTexture);
 	void offsetY(TRoadPt *pc1, TRoadPt *pc2, TRoadPt *pc3, Vector2 loc, Vector2 upVector, Real widthInTexture);
 	void offsetH(TRoadPt *pc1, TRoadPt *pc2, TRoadPt *pc3, Vector2 loc, Vector2 upVector, Vector2 teeVector, Bool flip, Bool mirror, Real widthInTexture);
@@ -262,11 +262,11 @@ protected:
 	void loadY(RoadSegment *pRoad, Vector2 loc1, Vector2 loc2, Real scale); ///< Fills the index and vertex buffers for drawing 1 Y intersection.
 	void loadAlphaJoin(RoadSegment *pRoad, Vector2 loc1, Vector2 loc2, Real scale); ///< Fills the index and vertex buffers for drawing 1 alpha blend cap.
 	void loadH(RoadSegment *pRoad, Vector2 loc1, Vector2 loc2, Bool flip, Real scale); ///< Fills the index and vertex buffers for drawing 1 h tee intersection.
-	void loadFloatSection(RoadSegment *pRoad, Vector2 loc, 
+	void loadFloatSection(RoadSegment *pRoad, Vector2 loc,
 														Vector2 roadVector, Real height, Real left, Real right, Real uOffset, Real vOffset, Real scale);
-	void loadFloat4PtSection(RoadSegment *pRoad, Vector2 loc, 
+	void loadFloat4PtSection(RoadSegment *pRoad, Vector2 loc,
 														Vector2 roadNormal, Vector2 roadVector,
-														Vector2 *cornersP, 
+														Vector2 *cornersP,
 														Real uOffset, Real vOffset, Real uScale, Real vScale);
 	void loadLit4PtSection(RoadSegment *pRoad, UnsignedShort *ib, VertexFormatXYZDUV1 *vb, RefRenderObjListIterator *pDynamicLightsIterator);
 	void loadRoadsInVertexAndIndexBuffers(void); ///< Fills the index and vertex buffers for drawing.

@@ -24,12 +24,12 @@
 
 // FILE: GadgetPushButton.h ///////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information					         
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:    RTS3
@@ -40,7 +40,7 @@
 //
 // Desc:       Helpful interface for PushButtons
 //
-// PushButton IMAGE/COLOR organization 
+// PushButton IMAGE/COLOR organization
 // When control is enabled:
 //   enabledDrawData[ 0 ] is the background image for the whole enabled control
 //   enabledDrawData[ 1 ] is the enabled, selected button graphic

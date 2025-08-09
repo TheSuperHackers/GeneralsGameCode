@@ -39,7 +39,7 @@
 #include "Common/UserPreferences.h"
 
 //-----------------------------------------------------------------------------
-// CustomMatchPreferences base class 
+// CustomMatchPreferences base class
 //-----------------------------------------------------------------------------
 class CustomMatchPreferences : public UserPreferences
 {

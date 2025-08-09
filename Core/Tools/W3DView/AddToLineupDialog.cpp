@@ -66,10 +66,10 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // CAddToLineupDialog message handlers
 
-BOOL CAddToLineupDialog::OnInitDialog() 
+BOOL CAddToLineupDialog::OnInitDialog()
 {
 	CDialog::OnInitDialog();
-	
+
 	if (m_pCScene)
 	{
 		// Get a pointer to the combo box control.
@@ -89,12 +89,12 @@ BOOL CAddToLineupDialog::OnInitDialog()
 		}
 		assets->Release_Render_Obj_Iterator(it);
 	}
-	
+
 	return TRUE;  // return TRUE unless you set the focus to a control
 	              // EXCEPTION: OCX Property Pages should return FALSE
 }
 
-void CAddToLineupDialog::OnOK() 
+void CAddToLineupDialog::OnOK()
 {
 	// Make sure the user actually chose a name.
 	CComboBox *pCombo = (CComboBox*)GetDlgItem(IDC_OBJECT);
@@ -106,6 +106,6 @@ void CAddToLineupDialog::OnOK()
 		::AfxMessageBox("Please select an object, or type in an object name.");
 		return;
 	}
-	
+
 	CDialog::OnOK();
 }

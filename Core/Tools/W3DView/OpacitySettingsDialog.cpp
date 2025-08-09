@@ -91,7 +91,7 @@ BOOL
 OpacitySettingsDialogClass::OnInitDialog (void)
 {
 	CDialog::OnInitDialog();
-	
+
 	m_OpacityBar = ColorBarClass::Get_Color_Bar (::GetDlgItem (m_hWnd, IDC_OPACITY_BAR));
 	ASSERT (m_OpacityBar);
 

@@ -63,11 +63,11 @@ enum
 static Bool scrollDir[4] = { false, false, false, false };
 
 // TheSuperHackers @tweak Introduces the SCROLL_MULTIPLIER for all scrolling to
-// 
+//
 //  1. bring the RMB scroll speed back to how it was at 30 FPS in the retail game version
 //  2. increase the upper limit of the Scroll Factor when set from the Options Menu (0.20 to 2.90 instead of 0.10 to 1.45)
 //  3. increase the scroll speed for Edge/Key scrolling to better fit the high speeds of RMB scrolling
-// 
+//
 // The multiplier of 2 was logically chosen because originally the Scroll Factor did practically not affect the RMB scroll speed
 // and because the default Scroll Factor is/was 0.5, it needs to be doubled to get to a neutral 1x multiplier.
 
@@ -101,7 +101,7 @@ void LookAtTranslator::stopScrolling( void )
 	TheTacticalView->setMouseLock( FALSE );
 	TheMouse->setCursor(prevCursor);
 	m_scrollType = SCROLL_NONE;
-		
+
 	// if we have a stats collectore increment the stats
 	if(TheStatsCollector)
 		TheStatsCollector->endScrollTime();
@@ -183,7 +183,7 @@ GameMessageDisposition LookAtTranslator::translateGameMessage(const GameMessage 
 			UnsignedByte key		= msg->getArgument( 0 )->integer;
 			UnsignedByte state	= msg->getArgument( 1 )->integer;
 			Bool isPressed = !(BitIsSet( state, KEY_STATE_UP ));
-			
+
 			if (TheShell && TheShell->isShellActive())
 				break;
 
@@ -296,7 +296,7 @@ GameMessageDisposition LookAtTranslator::translateGameMessage(const GameMessage 
 				m_lastMouseMoveFrame = TheGameLogic->getFrame();
 
 			m_currentPos = msg->getArgument( 0 )->pixel;
-			
+
 			UnsignedInt height = TheDisplay->getHeight();
 			UnsignedInt width  = TheDisplay->getWidth();
 
@@ -378,13 +378,13 @@ GameMessageDisposition LookAtTranslator::translateGameMessage(const GameMessage 
 					TheTacticalView->zoomOut();
 			}
 		}
-		
+
 		//-----------------------------------------------------------------------------
 		case GameMessage::MSG_META_OPTIONS:
 		{
 			// stop the scrolling
 			stopScrolling();
-			// let the message drop through, cause we need to process this message for 
+			// let the message drop through, cause we need to process this message for
 			// selection as well.
 			break;
 		}

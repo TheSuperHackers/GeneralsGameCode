@@ -59,7 +59,7 @@ static UINT indicators[] =
 CMainFrame::CMainFrame()
 {
 	// TODO: add member initialization code here
-	
+
 }
 
 CMainFrame::~CMainFrame()
@@ -70,7 +70,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
 	if (CFrameWnd::OnCreate(lpCreateStruct) == -1)
 		return -1;
-	
+
 	if (!m_wndToolBar.Create(this) ||
 		!m_wndToolBar.LoadToolBar(IDR_MAINFRAME))
 	{
@@ -102,11 +102,11 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 BOOL CMainFrame::OnCreateClient( LPCREATESTRUCT /*lpcs*/,
 	CCreateContext* pContext)
 {
-	CRect r; 
+	CRect r;
 	GetClientRect(r);
-	// TODO: Add your specialized code here and/or call the base class 
-	if (!m_SplitWnd.CreateStatic(this, 1,2) || 
-		!m_SplitWnd.CreateView(0, 0, RUNTIME_CLASS(CWDumpTreeView), CSize(300,0), pContext) || 
+	// TODO: Add your specialized code here and/or call the base class
+	if (!m_SplitWnd.CreateStatic(this, 1,2) ||
+		!m_SplitWnd.CreateView(0, 0, RUNTIME_CLASS(CWDumpTreeView), CSize(300,0), pContext) ||
 		!m_SplitWnd.CreateView(0, 1, RUNTIME_CLASS(CWDumpListView), CSize(0,0), pContext)) {
 		return FALSE;
 	} else {

@@ -54,7 +54,7 @@ bool							WWAudioThreadsClass::m_IsShuttingDown			= false;
 //
 ///////////////////////////////////////////////////////////////////////////////////////////
 WWAudioThreadsClass::WWAudioThreadsClass (void)
-{	
+{
 	return ;
 }
 
@@ -65,7 +65,7 @@ WWAudioThreadsClass::WWAudioThreadsClass (void)
 //
 ///////////////////////////////////////////////////////////////////////////////////////////
 WWAudioThreadsClass::~WWAudioThreadsClass (void)
-{	
+{
 	return ;
 }
 
@@ -80,7 +80,7 @@ WWAudioThreadsClass::Create_Delayed_Release_Thread (LPVOID param)
 	//
 	//	If the thread isn't already running, then
 	//
-	if (m_hDelayedReleaseThread == (HANDLE)-1) {		
+	if (m_hDelayedReleaseThread == (HANDLE)-1) {
 		m_hDelayedReleaseEvent	= ::CreateEvent (NULL, FALSE, FALSE, NULL);
 		m_hDelayedReleaseThread = (HANDLE)::_beginthread (Delayed_Release_Thread_Proc, 0, param);
 	}
@@ -129,12 +129,12 @@ WWAudioThreadsClass::Add_Delayed_Release_Object
 	if (m_IsShuttingDown) {
 		REF_PTR_RELEASE (object);
 	} else {
-			  
+
 		//
 		//	Make sure we have a thread running that will handle
 		// the operation for us.
 		//
-		if (m_hDelayedReleaseThread == (HANDLE)-1) {		
+		if (m_hDelayedReleaseThread == (HANDLE)-1) {
 			Create_Delayed_Release_Thread ();
 		}
 
@@ -180,7 +180,7 @@ WWAudioThreadsClass::Flush_Delayed_Release_Objects (void)
 	DELAYED_RELEASE_INFO *next = NULL;
 	for (info = m_ReleaseListHead; info != NULL; info = next) {
 		next = info->next;
-		
+
 		//
 		//	Free the object
 		//
@@ -227,7 +227,7 @@ WWAudioThreadsClass::Delayed_Release_Thread_Proc (LPVOID /*param*/)
 				//	If the time has expired, free the object
 				//
 				if (current_time >= curr->time) {
-					
+
 					//
 					//	Unlink the object
 					//

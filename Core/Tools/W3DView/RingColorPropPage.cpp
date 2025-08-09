@@ -114,7 +114,7 @@ RingColorPropPageClass::Initialize (void)
 
 		if (m_ColorChannel.Get_Key_Count () == 0) {
 			m_ColorChannel.Add_Key (m_RenderObj->Get_Color (), 0);
-			m_OrigColorChannel.Add_Key (m_RenderObj->Get_Color (), 0);			
+			m_OrigColorChannel.Add_Key (m_RenderObj->Get_Color (), 0);
 		}
 
 		if (m_AlphaChannel.Get_Key_Count () == 0) {
@@ -137,7 +137,7 @@ RingColorPropPageClass::OnInitDialog (void)
 {
 	// Allow the base class to process this message
 	CPropertyPage::OnInitDialog ();
-	
+
 	m_ColorBar		= ColorBarClass::Get_Color_Bar (::GetDlgItem (m_hWnd, IDC_COLOR_BAR));
 	m_OpacityBar	= ColorBarClass::Get_Color_Bar (::GetDlgItem (m_hWnd, IDC_OPACITY_BAR));
 
@@ -216,7 +216,7 @@ RingColorPropPageClass::OnNotify
 	WPARAM wParam,
 	LPARAM lParam,
 	LRESULT *pResult
-) 
+)
 {
 	CBR_NMHDR *color_bar_hdr = (CBR_NMHDR *)lParam;
 
@@ -227,8 +227,8 @@ RingColorPropPageClass::OnNotify
 	{
 		case IDC_OPACITY_BAR:
 		{
-			if (color_bar_hdr->hdr.code == CBRN_DBLCLK_POINT) {			
-				
+			if (color_bar_hdr->hdr.code == CBRN_DBLCLK_POINT) {
+
 				//
 				//	Allow the user to edit the keyframe
 				//
@@ -243,28 +243,28 @@ RingColorPropPageClass::OnNotify
 					//
 					// Update the object
 					//
-					Update_Opacities ();					
-					SetModified ();					
+					Update_Opacities ();
+					SetModified ();
 				}
 			} else if ((color_bar_hdr->hdr.code == CBRN_MOVING_POINT) ||
 						  (color_bar_hdr->hdr.code == CBRN_DELETED_POINT))
-			{				
+			{
 				//
 				// Update the object
 				//
 				Update_Opacities ();
-				SetModified ();					
+				SetModified ();
 			}
 		}
 		break;
 
 		case IDC_COLOR_BAR:
 		{
-			if (color_bar_hdr->hdr.code == CBRN_DBLCLK_POINT) {			
-				
+			if (color_bar_hdr->hdr.code == CBRN_DBLCLK_POINT) {
+
 				//
 				//	Allow the user to edit the keyframe
-				//				
+				//
 				int red		= (int)color_bar_hdr->red;
 				int green	= (int)color_bar_hdr->green;
 				int blue		= (int)color_bar_hdr->blue;
@@ -278,7 +278,7 @@ RingColorPropPageClass::OnNotify
 					//
 					// Update the object
 					//
-					Update_Colors ();					
+					Update_Colors ();
 					SetModified ();
 				}
 
@@ -294,7 +294,7 @@ RingColorPropPageClass::OnNotify
 		}
 		break;
 	}
-		
+
 	return CPropertyPage::OnNotify (wParam, lParam, pResult);
 }
 
@@ -332,10 +332,10 @@ RingColorPropPageClass::Update_Opacities (void)
 	float red		= 0;
 	float green		= 0;
 	float blue		= 0;
-	
+
 	//
 	//	Build the channel
-	//	
+	//
 	int count = m_OpacityBar->Get_Point_Count ();
 	for (int index = 0; index < count; index ++) {
 		m_OpacityBar->Get_Point (index, &position, &red, &green, &blue);
@@ -358,17 +358,17 @@ RingColorPropPageClass::Update_Opacities (void)
 /////////////////////////////////////////////////////////////
 void
 RingColorPropPageClass::Update_Colors (void)
-{		
+{
 	m_ColorChannel.Reset ();
 
 	float position	= 0;
 	float red		= 0;
 	float green		= 0;
-	float blue		= 0;	
-		
+	float blue		= 0;
+
 	//
 	//	Build the channel
-	//		
+	//
 	int count = m_ColorBar->Get_Point_Count ();
 	for (int index = 0; index < count; index ++) {
 		m_ColorBar->Get_Point (index, &position, &red, &green, &blue);

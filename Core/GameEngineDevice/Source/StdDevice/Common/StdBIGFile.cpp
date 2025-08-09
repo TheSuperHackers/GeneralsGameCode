@@ -56,7 +56,7 @@ StdBIGFile::~StdBIGFile()
 // StdBIGFile::openFile
 //============================================================================
 
-File* StdBIGFile::openFile( const Char *filename, Int access ) 
+File* StdBIGFile::openFile( const Char *filename, Int access )
 {
 	const ArchivedFileInfo *fileInfo = getArchivedFileInfo(AsciiString(filename));
 
@@ -65,10 +65,10 @@ File* StdBIGFile::openFile( const Char *filename, Int access )
 	}
 
 	RAMFile *ramFile = NULL;
-	
-	if (BitIsSet(access, File::STREAMING)) 
+
+	if (BitIsSet(access, File::STREAMING))
 		ramFile = newInstance( StreamingArchiveFile );
-	else 
+	else
 		ramFile = newInstance( RAMFile );
 
 	ramFile->deleteOnClose();
@@ -147,7 +147,7 @@ void StdBIGFile::close( void )
 // StdBIGFile::getFileInfo
 //============================================================================
 
-Bool StdBIGFile::getFileInfo(const AsciiString& filename, FileInfo *fileInfo) const 
+Bool StdBIGFile::getFileInfo(const AsciiString& filename, FileInfo *fileInfo) const
 {
 	const ArchivedFileInfo *tempFileInfo = getArchivedFileInfo(filename);
 

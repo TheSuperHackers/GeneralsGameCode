@@ -65,7 +65,7 @@ private:
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-class GenerateMinefieldBehavior : public BehaviorModule, 
+class GenerateMinefieldBehavior : public BehaviorModule,
 																	public DieModuleInterface,
 																	public UpgradeMux
 {
@@ -113,7 +113,7 @@ private:
 	Coord3D m_target;
 	Bool m_hasTarget;
 	Bool m_generated;
-	
+
 	const Coord3D* getMinefieldTarget() const;
 	void placeMines();
 	void placeMinesInFootprint(const GeometryInfo& geom, const ThingTemplate* mineTemplate);

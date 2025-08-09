@@ -16,7 +16,7 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-// FILE: EmissionTypePanels.cpp 
+// FILE: EmissionTypePanels.cpp
 /*---------------------------------------------------------------------------*/
 /* EA Pacific                                                                */
 /* Confidential Information	                                                 */
@@ -61,7 +61,7 @@ void EmissionPanelPoint::OnParticleSystemEdit()
 	if (!pParent) {
 		return;
 	}
-	
+
 	pParent->signalParticleSystemEdit();
 }
 
@@ -100,7 +100,7 @@ void EmissionPanelLine::performUpdate( IN Bool toUI )
 		if (pWnd) {
 			if (toUI) {
 				pParent->getLineFromSystem(0, linePoint);
-				
+
 				sprintf(buff, FORMAT_STRING, linePoint);
 				pWnd->SetWindowText(buff);
 			} else {
@@ -115,7 +115,7 @@ void EmissionPanelLine::performUpdate( IN Bool toUI )
 		if (pWnd) {
 			if (toUI) {
 				pParent->getLineFromSystem(1, linePoint);
-				
+
 				sprintf(buff, FORMAT_STRING, linePoint);
 				pWnd->SetWindowText(buff);
 			} else {
@@ -130,7 +130,7 @@ void EmissionPanelLine::performUpdate( IN Bool toUI )
 		if (pWnd) {
 			if (toUI) {
 				pParent->getLineFromSystem(2, linePoint);
-				
+
 				sprintf(buff, FORMAT_STRING, linePoint);
 				pWnd->SetWindowText(buff);
 			} else {
@@ -145,7 +145,7 @@ void EmissionPanelLine::performUpdate( IN Bool toUI )
 		if (pWnd) {
 			if (toUI) {
 				pParent->getLineFromSystem(3, linePoint);
-				
+
 				sprintf(buff, FORMAT_STRING, linePoint);
 				pWnd->SetWindowText(buff);
 			} else {
@@ -160,7 +160,7 @@ void EmissionPanelLine::performUpdate( IN Bool toUI )
 		if (pWnd) {
 			if (toUI) {
 				pParent->getLineFromSystem(4, linePoint);
-				
+
 				sprintf(buff, FORMAT_STRING, linePoint);
 				pWnd->SetWindowText(buff);
 			} else {
@@ -175,7 +175,7 @@ void EmissionPanelLine::performUpdate( IN Bool toUI )
 		if (pWnd) {
 			if (toUI) {
 				pParent->getLineFromSystem(5, linePoint);
-				
+
 				sprintf(buff, FORMAT_STRING, linePoint);
 				pWnd->SetWindowText(buff);
 			} else {
@@ -194,7 +194,7 @@ void EmissionPanelLine::OnParticleSystemEdit()
 	if (!pParent) {
 		return;
 	}
-	
+
 	pParent->signalParticleSystemEdit();
 }
 
@@ -237,7 +237,7 @@ void EmissionPanelBox::performUpdate( IN Bool toUI )
 		if (pWnd) {
 			if (toUI) {
 				pParent->getHalfSizeFromSystem(0, halfSize);
-				
+
 				sprintf(buff, FORMAT_STRING, halfSize);
 				pWnd->SetWindowText(buff);
 			} else {
@@ -252,7 +252,7 @@ void EmissionPanelBox::performUpdate( IN Bool toUI )
 		if (pWnd) {
 			if (toUI) {
 				pParent->getHalfSizeFromSystem(1, halfSize);
-				
+
 				sprintf(buff, FORMAT_STRING, halfSize);
 				pWnd->SetWindowText(buff);
 			} else {
@@ -267,7 +267,7 @@ void EmissionPanelBox::performUpdate( IN Bool toUI )
 		if (pWnd) {
 			if (toUI) {
 				pParent->getHalfSizeFromSystem(2, halfSize);
-				
+
 				sprintf(buff, FORMAT_STRING, halfSize);
 				pWnd->SetWindowText(buff);
 			} else {
@@ -285,7 +285,7 @@ void EmissionPanelBox::OnParticleSystemEdit()
 	if (!pParent) {
 		return;
 	}
-	
+
 	pParent->signalParticleSystemEdit();
 }
 
@@ -325,7 +325,7 @@ void EmissionPanelSphere::performUpdate( IN Bool toUI )
 		if (pWnd) {
 			if (toUI) {
 				pParent->getHalfSizeFromSystem(0, radius);
-				
+
 				sprintf(buff, FORMAT_STRING, radius);
 				pWnd->SetWindowText(buff);
 			} else {
@@ -343,7 +343,7 @@ void EmissionPanelSphere::OnParticleSystemEdit()
 	if (!pParent) {
 		return;
 	}
-	
+
 	pParent->signalParticleSystemEdit();
 }
 
@@ -381,7 +381,7 @@ void EmissionPanelCylinder::performUpdate( IN Bool toUI )
 			Real radius;
 			if (toUI) {
 				pParent->getCylinderRadiusFromSystem(radius);
-				
+
 				sprintf(buff, FORMAT_STRING, radius);
 				pWnd->SetWindowText(buff);
 			} else {
@@ -396,9 +396,9 @@ void EmissionPanelCylinder::performUpdate( IN Bool toUI )
 		if (pWnd) {
 			Real length;
 			if (toUI) {
-				
+
 				pParent->getCylinderLengthFromSystem(length);
-				
+
 				sprintf(buff, FORMAT_STRING, length);
 				pWnd->SetWindowText(buff);
 			} else {
@@ -416,7 +416,7 @@ void EmissionPanelCylinder::OnParticleSystemEdit()
 	if (!pParent) {
 		return;
 	}
-	
+
 	pParent->signalParticleSystemEdit();
 }
 

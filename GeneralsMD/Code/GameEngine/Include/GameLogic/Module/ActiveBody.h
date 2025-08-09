@@ -48,12 +48,12 @@ class ParticleSystemTemplate;
 //-------------------------------------------------------------------------------------------------
 
 //-------------------------------------------------------------------------------------------------
-class ActiveBodyModuleData : public BodyModuleData 
+class ActiveBodyModuleData : public BodyModuleData
 {
 public:
 	Real m_maxHealth;
 	Real m_initialHealth;
-	
+
 	Real m_subdualDamageCap;								///< Subdual damage will never accumulate past this
 	UnsignedInt m_subdualDamageHealRate;		///< Every this often, we drop subdual damage...
 	Real m_subdualDamageHealAmount;					///< by this much.
@@ -83,7 +83,7 @@ public:
 	virtual Real getHealth() const;													///< get current health
 	virtual BodyDamageType getDamageState() const;
 	virtual void setDamageState( BodyDamageType newState );	///< control damage state directly.  Will adjust hitpoints.
-	virtual void setAflame( Bool setting );///< This is a major change like a damage state.  
+	virtual void setAflame( Bool setting );///< This is a major change like a damage state.
 	virtual UnsignedInt getSubdualDamageHealRate() const;
 	virtual Real getSubdualDamageHealAmount() const;
 	virtual Bool hasAnySubdualDamage() const;
@@ -124,8 +124,8 @@ public:
 	virtual void updateBodyParticleSystems( void );// made public for topple anf building collapse updates -ML
 
 	// Subdual Damage
-	virtual Bool isSubdued() const; 
-	virtual Bool canBeSubdued() const; 
+	virtual Bool isSubdued() const;
+	virtual Bool canBeSubdued() const;
 	virtual void onSubdualChange( Bool isNowSubdued );///< Override this if you want a totally different effect than DISABLED_SUBDUED
 
 protected:
@@ -133,7 +133,7 @@ protected:
 	void validateArmorAndDamageFX() const;
 	void doDamageFX( const DamageInfo *damageInfo );
 
-	void createParticleSystems( const AsciiString &boneBaseName, 
+	void createParticleSystems( const AsciiString &boneBaseName,
 															const ParticleSystemTemplate *systemTemplate,
 															Int maxSystems );
 	void deleteAllParticleSystems( void );

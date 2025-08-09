@@ -74,7 +74,7 @@ RestrictedFileDialogClass::OnFileNameOK (void)
 {
 	// Force the original filename into the filename control
 	CommDlg_OpenSave_SetControlText (::GetParent (m_hWnd), 0x480, (LPCTSTR)m_ExpectedFilename);
-		
+
 	// Fill the filename fields of the OPENFILESTRUCT structure with the
 	// original filename and the new path
 	CString path = ::Strip_Filename_From_Path (m_ofn.lpstrFile);

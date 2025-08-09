@@ -24,12 +24,12 @@
 
 // FILE: WindowXlat.cpp ///////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:    RTS3
@@ -86,11 +86,11 @@ static GameWindowMessage rawMouseToWindowMessage( const GameMessage *msg )
 	{
 		// ------------------------------------------------------------------------
 		case GameMessage::MSG_RAW_MOUSE_POSITION:
-			gwm = GWM_MOUSE_POS; 
+			gwm = GWM_MOUSE_POS;
 			break;
 
 		// ------------------------------------------------------------------------
-		// Strange, but true. The window stuff really doesn't care about double clicks, so just 
+		// Strange, but true. The window stuff really doesn't care about double clicks, so just
 		// treat it as a down click.. Kinda like a second click.
 		case GameMessage::MSG_RAW_MOUSE_LEFT_DOUBLE_CLICK:
 		case GameMessage::MSG_RAW_MOUSE_LEFT_BUTTON_DOWN:
@@ -135,9 +135,9 @@ static GameWindowMessage rawMouseToWindowMessage( const GameMessage *msg )
 
 		// ------------------------------------------------------------------------
 		case GameMessage::MSG_RAW_MOUSE_WHEEL:
-			if( msg->getArgument( 1 )->integer > 0 ) 
+			if( msg->getArgument( 1 )->integer > 0 )
 				gwm = GWM_WHEEL_UP;
-			else 
+			else
 				gwm = GWM_WHEEL_DOWN;
 			break;
 
@@ -186,7 +186,7 @@ GameMessageDisposition WindowTranslator::translateGameMessage(const GameMessage 
 
 			if( TheWindowManager )
 				TheWindowManager->winProcessMouseEvent( GWM_NONE, &mousePos, NULL );
-			
+
 			// Force it to keep the message, regardless of what the window thinks it did with the input.
 			return KEEP_MESSAGE;
 		}
@@ -225,7 +225,7 @@ GameMessageDisposition WindowTranslator::translateGameMessage(const GameMessage 
 
 			if( TheShell && TheShell->isShellActive() )
 				returnCode = WIN_INPUT_USED;
-			
+
 			if ( TheInGameUI && TheInGameUI->getInputEnabled() == FALSE )
 				returnCode = WIN_INPUT_USED;
 
@@ -271,7 +271,7 @@ GameMessageDisposition WindowTranslator::translateGameMessage(const GameMessage 
 			// process wheel event
 			GameWindowMessage gwm = rawMouseToWindowMessage( msg );
 			if( TheWindowManager )
-				returnCode = TheWindowManager->winProcessMouseEvent( gwm, &mousePos,	
+				returnCode = TheWindowManager->winProcessMouseEvent( gwm, &mousePos,
 																														 &wheelPos );
 
 			if( TheShell && TheShell->isShellActive() )
@@ -298,8 +298,8 @@ GameMessageDisposition WindowTranslator::translateGameMessage(const GameMessage 
 
 
 			// If we're in a movie, we want to be able to escape out of it
-			if(returnCode != WIN_INPUT_USED 
-				&& (key == KEY_ESC) 
+			if(returnCode != WIN_INPUT_USED
+				&& (key == KEY_ESC)
 				&& (BitIsSet( state, KEY_STATE_UP ))
 				&& TheDisplay->isMoviePlaying()
 				&& TheGlobalData->m_allowExitOutOfMovies == TRUE )
@@ -308,8 +308,8 @@ GameMessageDisposition WindowTranslator::translateGameMessage(const GameMessage 
 				returnCode = WIN_INPUT_USED;
 			}
 
-			if(returnCode != WIN_INPUT_USED 
-				&& (key == KEY_ESC) 
+			if(returnCode != WIN_INPUT_USED
+				&& (key == KEY_ESC)
 				&& (BitIsSet( state, KEY_STATE_UP ))
 				&& (TheInGameUI && (TheInGameUI->getInputEnabled() == FALSE)) )
 			{
@@ -317,7 +317,7 @@ GameMessageDisposition WindowTranslator::translateGameMessage(const GameMessage 
 			}
 
 			break;
-						
+
 		}  // end key messages
 
 		// ------------------------------------------------------------------------

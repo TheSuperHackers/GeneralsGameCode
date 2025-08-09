@@ -18,12 +18,12 @@
 
 // FILE: TexturePage.cpp //////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:    ImagePacker
@@ -62,15 +62,15 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 // TexturePage::extendToRowIfOpen =============================================
-/** If the pixel at location 'row' is "open", then extend the pixel 
+/** If the pixel at location 'row' is "open", then extend the pixel
 	* at 'src' to that location
 	*
 	* NOTE this assumes 'src' and 'row' are pointers into the same
 	* buffer and the bits per pixel (buffBPP) are treated as the
 	* same for both */
 //=============================================================================
-void TexturePage::extendToRowIfOpen( char *src, 
-																		 Int buffWidth, 
+void TexturePage::extendToRowIfOpen( char *src,
+																		 Int buffWidth,
 																		 Int buffBPP,
 																		 Bool extendAlpha,
 																		 Int imageHeight,
@@ -102,7 +102,7 @@ void TexturePage::extendToRowIfOpen( char *src,
 
 	}  // end if
 	else if( srcY >= imageHeight / 2 &&
-					 (srcY != imageHeight - 1 || 
+					 (srcY != imageHeight - 1 ||
 						BitIsSet( fitBits, ImageInfo::FIT_YBORDER_BOTTOM )) )
 	{
 
@@ -262,14 +262,14 @@ void TexturePage::extendImageEdges( Byte *destBuffer,
 	{
 
 		// compute beginning of destination row
-		ptr = destBuffer + 
-				  ((destHeight - 1 - (image->m_pagePos.lo.y + y)) * destWidth * destBPP ) + 
+		ptr = destBuffer +
+				  ((destHeight - 1 - (image->m_pagePos.lo.y + y)) * destWidth * destBPP ) +
 				  (image->m_pagePos.lo.x * destBPP);
 
 		prevPixel = FALSE;
 		for( x = 0; x < imageWidth; x++ )
 		{
-	
+
 			// read the pixel
 			if( destBPP == 4 )
 			{
@@ -313,9 +313,9 @@ void TexturePage::extendImageEdges( Byte *destBuffer,
 			}  // end else
 
 			//
-			// if we're at the right edge we will extend this pixel off the 
+			// if we're at the right edge we will extend this pixel off the
 			// image to the right border if present, we dont' have to worry about
-			// the top and bottom edges because they are attempted to be 
+			// the top and bottom edges because they are attempted to be
 			// extended into when we detect an edge change moving across x
 			//
 			if( currPixel == TRUE && x == imageWidth - 1 &&
@@ -352,7 +352,7 @@ void TexturePage::extendImageEdges( Byte *destBuffer,
 			// or below row if that spot is empty
 			//
 			if( currPixel == TRUE )
-				extendToRowIfOpen( ptr, destWidth, destBPP, extendAlpha, 
+				extendToRowIfOpen( ptr, destWidth, destBPP, extendAlpha,
 													 imageHeight, image->m_fitBits, x, y );
 
 			//
@@ -389,7 +389,7 @@ void TexturePage::extendImageEdges( Byte *destBuffer,
 				//
 
 				//
-				// this assert should never happen because if x were 0, we are on the 
+				// this assert should never happen because if x were 0, we are on the
 				// first column in this image, and the prevPixel should be FALSE since
 				// previous would be "off" the image which is by definition "open"
 				//
@@ -429,7 +429,7 @@ void TexturePage::extendImageEdges( Byte *destBuffer,
 				char *dst = NULL;
 
 				// top left corner
-				if( x == 0 && y == 0 && 
+				if( x == 0 && y == 0 &&
 						BitIsSet( image->m_fitBits, ImageInfo::FIT_XBORDER_LEFT ) &&
 						BitIsSet( image->m_fitBits, ImageInfo::FIT_YBORDER_TOP ) )
 					dst = (ptr + (destWidth * destBPP)) - destBPP;
@@ -488,7 +488,7 @@ void TexturePage::extendImageEdges( Byte *destBuffer,
 			//
 			prevPixel = currPixel;
 
-		}  // end for x	
+		}  // end for x
 
 	}  // end for y
 
@@ -503,11 +503,11 @@ void TexturePage::extendImageEdges( Byte *destBuffer,
 	* assumption that we were packing images with an upper left
 	* corner at (0,0), but the targa files have the origin in the
 	* lower left corner ... thus the translation here to shift source
-	* images into the right positions 
+	* images into the right positions
 	*/
 //=============================================================================
 Bool TexturePage::addImageData( Byte *destBuffer,
-																Int destWidth, 
+																Int destWidth,
 																Int destHeight,
 																Int destBPP,
 																ImageInfo *image )
@@ -561,8 +561,8 @@ Bool TexturePage::addImageData( Byte *destBuffer,
 			src = sourceBuffer + ( (image->m_size.y - 1 - y) * image->m_size.x * sourceBPP);
 
 			// compute destination location
-			dest = destBuffer + 
-						 ((destHeight - 1 - (image->m_pagePos.lo.y + y)) * destWidth * destBPP ) + 
+			dest = destBuffer +
+						 ((destHeight - 1 - (image->m_pagePos.lo.y + y)) * destWidth * destBPP ) +
 						 (image->m_pagePos.lo.x * destBPP);
 
 			// copy a row from source to destination
@@ -599,7 +599,7 @@ Bool TexturePage::addImageData( Byte *destBuffer,
 				// skip past all these pixels
 				dest += destBPP;
 				src += sourceBPP;
-			
+
 			}  // end for x
 
 		}  // end for y
@@ -624,7 +624,7 @@ Bool TexturePage::addImageData( Byte *destBuffer,
 			{
 
 				// compute destination location
-				dest = destBuffer + 
+				dest = destBuffer +
 							 ( ( (destHeight - 1) - (image->m_pagePos.lo.y + x) ) * destWidth * destBPP ) +
 							 ((image->m_pagePos.lo.x + (image->m_size.y - 1 - y)) * destBPP);
 
@@ -669,7 +669,7 @@ Bool TexturePage::addImageData( Byte *destBuffer,
 	// the image we just copied into the texture page and "bleed" the edges outward
 	// and if a border is present, into the border
 	//
-	if( BitIsSet( TheImagePacker->getGapMethod(), 
+	if( BitIsSet( TheImagePacker->getGapMethod(),
 							 ImagePacker::GAP_METHOD_EXTEND_RGB ) )
 		extendImageEdges( destBuffer,
 											destWidth,
@@ -677,7 +677,7 @@ Bool TexturePage::addImageData( Byte *destBuffer,
 											destBPP,
 											image,
 											FALSE );
-		
+
 	return TRUE;  // all done
 
 }  // end addImageData
@@ -747,23 +747,23 @@ void TexturePage::markRegionUsed( IRegion2D *region )
 	* size
 	*
 	* Note that x and y Gutter sizes can be changed as a result of this
-	* method 
+	* method
 	*
 	* Returns a set of "fit bits" that describe what the components
 	* have been included in the region constructed
 	*/
 //=============================================================================
 UnsignedInt TexturePage::buildFitRegion( IRegion2D *region,
-																				 Int startX, Int startY, 
-																				 Int imageWidth, Int imageHeight, 
-																				 Int *xGutter, Int *yGutter, 
+																				 Int startX, Int startY,
+																				 Int imageWidth, Int imageHeight,
+																				 Int *xGutter, Int *yGutter,
 																				 Bool allSidesBorder )
 {
 
 	// sanity
 	if( region == NULL || xGutter == NULL || yGutter == NULL )
 		return 0;
-	
+
 	//
 	// create border size, if we have an 'allSidesBorder' then we need to
 	// add two pixels to width and height
@@ -791,7 +791,7 @@ UnsignedInt TexturePage::buildFitRegion( IRegion2D *region,
 	}  // end if
 	if( imageHeight == m_size.y )
 	{
-		
+
 		*yGutter = 0;
 		yBorder = 0;
 
@@ -819,7 +819,7 @@ UnsignedInt TexturePage::buildFitRegion( IRegion2D *region,
 	//
 	// build a set of region bit flags that tell what this region ACTUALLY
 	// used in its construction. Note that when we stripped off only ONE
-	// pixel off one dimension when talking about borders, we say that the 
+	// pixel off one dimension when talking about borders, we say that the
 	// border that we added was either on the right side of the image,
 	// or on the bottom of the image
 	//
@@ -894,7 +894,7 @@ TexturePage::~TexturePage( void )
 Bool TexturePage::addImage( ImageInfo *image )
 {
 	IRegion2D region;
-	
+
 	// santiy
 	if( image == NULL )
 	{
@@ -906,7 +906,7 @@ Bool TexturePage::addImage( ImageInfo *image )
 
 	// get our options for fitting
 	Bool useGutter, useRGBExtend;
-	useGutter = BitIsSet( TheImagePacker->getGapMethod(), 
+	useGutter = BitIsSet( TheImagePacker->getGapMethod(),
 											 ImagePacker::GAP_METHOD_GUTTER );
 	useRGBExtend = BitIsSet( TheImagePacker->getGapMethod(),
 													ImagePacker::GAP_METHOD_EXTEND_RGB );
@@ -997,8 +997,8 @@ Bool TexturePage::addImage( ImageInfo *image )
 				}  // end else
 
 				// build the region
-				fitBits = buildFitRegion( &region, x, y, 
-																	imageWidth, imageHeight, 
+				fitBits = buildFitRegion( &region, x, y,
+																	imageWidth, imageHeight,
 																	&xGutter, &yGutter,
 																	useRGBExtend );
 
@@ -1022,8 +1022,8 @@ Bool TexturePage::addImage( ImageInfo *image )
 						xGutter = m_size.x - imageWidth;
 
 					// rebuild region with new gutter size
-					fitBits = buildFitRegion( &region, x, y, 
-																		imageWidth, imageHeight, 
+					fitBits = buildFitRegion( &region, x, y,
+																		imageWidth, imageHeight,
 																		&xGutter, &yGutter,
 																		useRGBExtend );
 
@@ -1031,7 +1031,7 @@ Bool TexturePage::addImage( ImageInfo *image )
 				}  // end if
 				if( region.hi.y >= m_size.y )
 				{
-		
+
 					//
 					// attempt to shrink y gutter if image can still fit with
 					// a smaller gutter below
@@ -1040,8 +1040,8 @@ Bool TexturePage::addImage( ImageInfo *image )
 						yGutter = m_size.y - imageHeight;
 
 					// rebuild region with new gutter size
-					fitBits = buildFitRegion( &region, x, y, 
-																		imageWidth, imageHeight, 
+					fitBits = buildFitRegion( &region, x, y,
+																		imageWidth, imageHeight,
 																		&xGutter, &yGutter,
 																		useRGBExtend );
 
@@ -1050,7 +1050,7 @@ Bool TexturePage::addImage( ImageInfo *image )
 				// reject this location if the hi region goes off the texture page
 				if( region.hi.y >= m_size.y )
 				{
-					
+
 					y = m_size.y;  // skip to end, this isn't gonna work
 					continue;
 
@@ -1146,7 +1146,7 @@ Bool TexturePage::addImage( ImageInfo *image )
 					image->m_pagePos.hi.y--;
 				if( BitIsSet( fitBits, ImageInfo::FIT_XGUTTER ) )
 					image->m_pagePos.hi.x -= xGutter;
-				if( BitIsSet( fitBits, ImageInfo::FIT_YGUTTER ) )	
+				if( BitIsSet( fitBits, ImageInfo::FIT_YGUTTER ) )
 					image->m_pagePos.hi.y -= yGutter;
 
 				// link this image to the texture page
@@ -1230,7 +1230,7 @@ Bool TexturePage::generateTexture( void )
 
 	// zero the packed image to all zero
 	memset( m_packedImage, 0, sizeof( Byte ) * bufferSize );
-	
+
 	// setup the targa header
 	m_targa->Header.ImageType = TGA_TRUECOLOR;
 	m_targa->Header.Width = m_size.x;
@@ -1242,7 +1242,7 @@ Bool TexturePage::generateTexture( void )
 	for( image = m_imageList; image; image = image->m_nextPageImage )
 	{
 
-		if( addImageData( m_packedImage, m_size.x, m_size.y, 
+		if( addImageData( m_packedImage, m_size.x, m_size.y,
 											bpp, image ) == FALSE )
 		{
 
@@ -1281,7 +1281,7 @@ Bool TexturePage::writeFile( char *baseFilename )
 
 	// construct filename
 	char filePath[ _MAX_PATH ];
-	sprintf( filePath, "%s%s_%03d.tga", TheImagePacker->getOutputDirectory(), 
+	sprintf( filePath, "%s%s_%03d.tga", TheImagePacker->getOutputDirectory(),
 					 baseFilename, getID() );
 
 	// write the file

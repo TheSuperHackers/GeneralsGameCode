@@ -68,12 +68,12 @@ MinefieldBehaviorModuleData::MinefieldBehaviorModuleData()
 
 //-------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-/*static*/ void MinefieldBehaviorModuleData::buildFieldParse( MultiIniFieldParse &p ) 
+/*static*/ void MinefieldBehaviorModuleData::buildFieldParse( MultiIniFieldParse &p )
 {
 
   UpdateModuleData::buildFieldParse( p );
 
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
 		{ "DetonationWeapon", INI::parseWeaponTemplate,	NULL, offsetof( MinefieldBehaviorModuleData, m_detonationWeapon ) },
 		{ "DetonatedBy", INI::parseBitString32, TheRelationshipNames, offsetof( MinefieldBehaviorModuleData, m_detonatedBy ) },
@@ -91,7 +91,7 @@ MinefieldBehaviorModuleData::MinefieldBehaviorModuleData()
 
   p.add( dataFieldParse );
 
-} 
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -99,7 +99,7 @@ MinefieldBehaviorModuleData::MinefieldBehaviorModuleData()
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-MinefieldBehavior::MinefieldBehavior( Thing *thing, const ModuleData* moduleData ) 
+MinefieldBehavior::MinefieldBehavior( Thing *thing, const ModuleData* moduleData )
 								 : UpdateModule( thing, moduleData )
 {
 	const MinefieldBehaviorModuleData* d = getMinefieldBehaviorModuleData();
@@ -458,7 +458,7 @@ void MinefieldBehavior::onDamage( DamageInfo *damageInfo )
 	for (;;)
 	{
 		Real virtualMinesExpectedF = ((Real)d->m_numVirtualMines * body->getHealth() / body->getMaxHealth());
-		Int virtualMinesExpected = 
+		Int virtualMinesExpected =
 			damageInfo->in.m_damageType == DAMAGE_HEALING ?
 			REAL_TO_INT_FLOOR(virtualMinesExpectedF) :
 			REAL_TO_INT_CEIL(virtualMinesExpectedF);
@@ -470,7 +470,7 @@ void MinefieldBehavior::onDamage( DamageInfo *damageInfo )
 		}
 		else if (m_virtualMinesRemaining > virtualMinesExpected)
 		{
-			if (m_draining && 
+			if (m_draining &&
 						damageInfo->in.m_sourceID == getObject()->getID() &&
 						damageInfo->in.m_damageType == DAMAGE_UNRESISTABLE)
 			{
@@ -490,7 +490,7 @@ void MinefieldBehavior::onDamage( DamageInfo *damageInfo )
 
 	if (m_virtualMinesRemaining == 0)
 	{
-		// oops, if someone did weapon damage they may have nuked our health to zero, 
+		// oops, if someone did weapon damage they may have nuked our health to zero,
 		// which would be bad if we regen. prevent this. (srj)
 		if (m_regenerates && body->getHealth() < MIN_HEALTH)
 		{

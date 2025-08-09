@@ -117,7 +117,7 @@ UpdateSleepTime RadarUpdate::update( void )
 																						MODELCONDITION_RADAR_UPGRADED );
 
 	}  // end if
-	
+
 	return UPDATE_SLEEP_NONE;
 
 }  // end update

@@ -35,8 +35,8 @@
 
 /// @todo Doxygenize this file
 
-SimpleObjectIterator::ClumpCompareProc SimpleObjectIterator::theClumpCompareProcs[] = 
-{ 
+SimpleObjectIterator::ClumpCompareProc SimpleObjectIterator::theClumpCompareProcs[] =
+{
 	NULL,						// "fastest" gets no proc
 	SimpleObjectIterator::sortNearToFar,
 	SimpleObjectIterator::sortFarToNear,
@@ -99,7 +99,7 @@ Object *SimpleObjectIterator::nextWithNumeric(Real *num)
 			*num = m_curClump->m_numeric;
 		m_curClump = m_curClump->m_nextClump;
 	}
-		
+
 	return obj;
 }
 
@@ -150,7 +150,7 @@ void SimpleObjectIterator::sort(IterOrderType order)
 	// do a basic mergesort, which works nicely for linked lists,
 	// and is reasonably efficient (N log N).
 
-  for ( Int n = 1 ; ; n *= 2 ) 
+  for ( Int n = 1 ; ; n *= 2 )
 	{
 		Clump *to_do = m_firstClump;
 		Clump *tail = NULL;
@@ -158,19 +158,19 @@ void SimpleObjectIterator::sort(IterOrderType order)
 
 		Int mergeCount = 0;
 
-		while (to_do) 
+		while (to_do)
 		{
 			++mergeCount;
 
 			Int to_do_count = 0;
-			
+
 			// make two lists of length 'n' (to_do is one, sub is the other)
 			Clump *sub = to_do;
-			for (Int i = 0; i < n; i++) 
+			for (Int i = 0; i < n; i++)
 			{
 				++to_do_count;
 				sub = sub->m_nextClump;
-				if (!sub) 
+				if (!sub)
 					break;
 			}
 			Int subCount = sub ? n : 0;
@@ -180,44 +180,44 @@ void SimpleObjectIterator::sort(IterOrderType order)
 			while (to_do_count + subCount > 0) {
 
 				DEBUG_ASSERTCRASH(to_do_count + subCount >= 0, ("uhoh"));
-	
+
 				Clump *tmp;
-				
+
 				// bleah, coalesce into more elegant test case
 				if (subCount == 0)
 				{
 					DEBUG_ASSERTCRASH(to_do_count > 0, ("hmm, expected nonzero to_do_count"));
-					tmp = to_do; 
-					to_do = to_do->m_nextClump; 
+					tmp = to_do;
+					to_do = to_do->m_nextClump;
 					--to_do_count;
 				}
 				else if (to_do_count == 0)
 				{
 					DEBUG_ASSERTCRASH(subCount > 0, ("hmm, expected nonzero subCount"));
-					tmp = sub; 
-					sub = sub->m_nextClump; 
+					tmp = sub;
+					sub = sub->m_nextClump;
 					--subCount;
-				} 
-				else if ((*cmpProc)(to_do, sub) <= 0.0f) 
+				}
+				else if ((*cmpProc)(to_do, sub) <= 0.0f)
 				{
 					DEBUG_ASSERTCRASH(to_do_count > 0, ("hmm, expected nonzero to_do_count"));
-					tmp = to_do; 
-					to_do = to_do->m_nextClump; 
+					tmp = to_do;
+					to_do = to_do->m_nextClump;
 					--to_do_count;
-				} 
-				else 
+				}
+				else
 				{
 					DEBUG_ASSERTCRASH(subCount > 0, ("hmm, expected nonzero subCount"));
-					tmp = sub; 
-					sub = sub->m_nextClump; 
+					tmp = sub;
+					sub = sub->m_nextClump;
 					--subCount;
 				}
 				if (!sub) subCount = 0;
 				if (!to_do) to_do_count = 0;
 
-				if (tail) 
+				if (tail)
 					tail->m_nextClump = tmp;
-				else 
+				else
 					m_firstClump = tmp;
 				tail = tmp;
 			}

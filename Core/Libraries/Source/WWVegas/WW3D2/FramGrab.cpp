@@ -31,8 +31,8 @@
 
 FrameGrabClass::FrameGrabClass(const char *filename, MODE mode, int width, int height, int bitcount, float framerate)
 {
-	HRESULT          hr; 
-	
+	HRESULT          hr;
+
 	Mode = mode;
 	Filename = filename;
 	FrameRate = framerate;
@@ -43,7 +43,7 @@ FrameGrabClass::FrameGrabClass(const char *filename, MODE mode, int width, int h
 
 	if(Mode != AVI) return;
 
-	AVIFileInit();          // opens AVIFile library  
+	AVIFileInit();          // opens AVIFile library
 
 	// find the first free file with this prefix
 	int counter = 0;
@@ -54,8 +54,8 @@ FrameGrabClass::FrameGrabClass(const char *filename, MODE mode, int width, int h
 		result = _access(file, 0);
 	} while(result != -1);
 
-	// Create new AVI file using AVIFileOpen. 
-    hr = AVIFileOpen(&AVIFile, file, OF_WRITE | OF_CREATE, NULL); 
+	// Create new AVI file using AVIFileOpen.
+    hr = AVIFileOpen(&AVIFile, file, OF_WRITE | OF_CREATE, NULL);
     if (hr != 0) {
 		char buf[256];
 		sprintf(buf, "Unable to open %s\n", Filename);
@@ -63,9 +63,9 @@ FrameGrabClass::FrameGrabClass(const char *filename, MODE mode, int width, int h
 		CleanupAVI();
 		return;
 	}
-    
 
-    // Create a stream using AVIFileCreateStream. 
+
+    // Create a stream using AVIFileCreateStream.
 	AVIStreamInfo.fccType = streamtypeVIDEO;
 	AVIStreamInfo.fccHandler = mmioFOURCC('M','S','V','C');
 	AVIStreamInfo.dwFlags = 0;
@@ -80,22 +80,22 @@ FrameGrabClass::FrameGrabClass(const char *filename, MODE mode, int width, int h
 	AVIStreamInfo.dwSuggestedBufferSize = 0;
 	AVIStreamInfo.dwQuality = 0;
 	AVIStreamInfo.dwSampleSize = 0;
-	SetRect(&AVIStreamInfo.rcFrame, 0, 0, width, height);  
+	SetRect(&AVIStreamInfo.rcFrame, 0, 0, width, height);
 	AVIStreamInfo.dwEditCount = 0;
 	AVIStreamInfo.dwFormatChangeCount = 0;
 	sprintf(AVIStreamInfo.szName,"G");
 
-    hr = AVIFileCreateStream(AVIFile, &Stream, &AVIStreamInfo); 
-    if (hr != 0) {   
+    hr = AVIFileCreateStream(AVIFile, &Stream, &AVIStreamInfo);
+    if (hr != 0) {
 		CleanupAVI();
-		return;     
+		return;
 	}
-	
+
     // Set format of new stream
 	BitmapInfoHeader.biWidth = width;
-	BitmapInfoHeader.biHeight = height; 
+	BitmapInfoHeader.biHeight = height;
 	BitmapInfoHeader.biBitCount = (unsigned short)bitcount;
-    BitmapInfoHeader.biSizeImage = ((((UINT)BitmapInfoHeader.biBitCount * BitmapInfoHeader.biWidth + 31) & ~31) / 8) * BitmapInfoHeader.biHeight; 
+    BitmapInfoHeader.biSizeImage = ((((UINT)BitmapInfoHeader.biBitCount * BitmapInfoHeader.biWidth + 31) & ~31) / 8) * BitmapInfoHeader.biHeight;
 	BitmapInfoHeader.biSize = sizeof(BITMAPINFOHEADER); // size of structure
 	BitmapInfoHeader.biPlanes = 1; // must be set to 1
 	BitmapInfoHeader.biCompression = BI_RGB; // uncompressed
@@ -104,13 +104,13 @@ FrameGrabClass::FrameGrabClass(const char *filename, MODE mode, int width, int h
 	BitmapInfoHeader.biClrUsed = 0; // all colors are used
 	BitmapInfoHeader.biClrImportant = 0; // all colors are important
 
-    hr = AVIStreamSetFormat(Stream, 0, &BitmapInfoHeader, sizeof(BitmapInfoHeader)); 
+    hr = AVIStreamSetFormat(Stream, 0, &BitmapInfoHeader, sizeof(BitmapInfoHeader));
     if (hr != 0) {
 		CleanupAVI();
-		return;     
-	}  
+		return;
+	}
 
-    Bitmap = (long *) GlobalAllocPtr(GMEM_MOVEABLE, BitmapInfoHeader.biSizeImage); 
+    Bitmap = (long *) GlobalAllocPtr(GMEM_MOVEABLE, BitmapInfoHeader.biSizeImage);
 }
 
 FrameGrabClass::~FrameGrabClass()
@@ -124,22 +124,22 @@ void FrameGrabClass::CleanupAVI() {
 	if(Bitmap != 0) { GlobalFreePtr(Bitmap); Bitmap = 0; }
 	if(Stream != 0) { AVIStreamRelease(Stream); Stream = 0; }
 	if(AVIFile != 0) { AVIFileRelease(AVIFile); AVIFile = 0; }
-	
+
 	AVIFileExit();
 	Mode = RAW;
 }
 
 void FrameGrabClass::GrabAVI(void *BitmapPointer)
 {
-    // CompressDIB(&bi, lpOld, &biNew, lpNew);  
+    // CompressDIB(&bi, lpOld, &biNew, lpNew);
 
-    // Save the compressed data using AVIStreamWrite. 
-    HRESULT hr = AVIStreamWrite(Stream, Counter++, 1, BitmapPointer, BitmapInfoHeader.biSizeImage, AVIIF_KEYFRAME, NULL, NULL);     
+    // Save the compressed data using AVIStreamWrite.
+    HRESULT hr = AVIStreamWrite(Stream, Counter++, 1, BitmapPointer, BitmapInfoHeader.biSizeImage, AVIIF_KEYFRAME, NULL, NULL);
 	if(hr != 0) {
 		char buf[256];
 		sprintf(buf, "avi write error %x/%d\n", hr, hr);
 		OutputDebugString(buf);
-	} 
+	}
 }
 
 void FrameGrabClass::GrabRawFrame(void * /*BitmapPointer*/)
@@ -148,23 +148,23 @@ void FrameGrabClass::GrabRawFrame(void * /*BitmapPointer*/)
 }
 
 
-void FrameGrabClass::ConvertGrab(void *BitmapPointer) 
+void FrameGrabClass::ConvertGrab(void *BitmapPointer)
 {
 	ConvertFrame(BitmapPointer);
 	Grab( Bitmap );
 }
 
 
-void FrameGrabClass::Grab(void *BitmapPointer) 
+void FrameGrabClass::Grab(void *BitmapPointer)
 {
-	if(Mode == AVI) 
+	if(Mode == AVI)
 		GrabAVI(BitmapPointer);
 	else
 		GrabRawFrame(BitmapPointer);
 }
 
 
-void FrameGrabClass::ConvertFrame(void *BitmapPointer) 
+void FrameGrabClass::ConvertFrame(void *BitmapPointer)
 {
 
 	int width = BitmapInfoHeader.biWidth;

@@ -41,7 +41,7 @@ class Object;
 
 class ExperienceTracker : public MemoryPoolObject, public Snapshot
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(ExperienceTracker, "ExperienceTrackerPool" )	
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(ExperienceTracker, "ExperienceTrackerPool" )
 public:
 	ExperienceTracker(Object *parent);
 

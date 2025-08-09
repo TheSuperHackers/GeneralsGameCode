@@ -134,14 +134,14 @@ protected:
 
 	void doPhaseStuff(StructureCollapsePhaseType scphase, const Coord3D *target);
 
-	enum StructureCollapseStateType 
+	enum StructureCollapseStateType
 	{
 		COLLAPSESTATE_STANDING,
 		COLLAPSESTATE_WAITINGFORCOLLAPSESTART,
 		COLLAPSESTATE_COLLAPSING,
 		COLLAPSESTATE_DONE
 	};
-	
+
 	UnsignedInt									m_collapseFrame;
 	UnsignedInt									m_burstFrame;
 	StructureCollapseStateType	m_collapseState;

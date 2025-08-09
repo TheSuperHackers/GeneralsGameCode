@@ -71,7 +71,7 @@ class TextureClass : public W3DMPO, public RefCountClass
 {
 	W3DMPO_GLUE(TextureClass)
 
-	friend class DX8TextureTrackerClass;  //(gth) so it can call Poke_Texture, 
+	friend class DX8TextureTrackerClass;  //(gth) so it can call Poke_Texture,
 
 	friend DX8Wrapper;
 	friend TextureLoader;
@@ -93,8 +93,8 @@ class TextureClass : public W3DMPO, public RefCountClass
 
 		// Create texture with desired height, width and format.
 		TextureClass(
-			unsigned width, 
-			unsigned height, 
+			unsigned width,
+			unsigned height,
 			WW3DFormat format,
 			MipCountType mip_level_count=MIP_LEVELS_ALL,
 			PoolType pool=POOL_MANAGED,
@@ -112,8 +112,8 @@ class TextureClass : public W3DMPO, public RefCountClass
 
 		// Create texture from a surface.
 		TextureClass(
-			SurfaceClass *surface, 
-			MipCountType mip_level_count=MIP_LEVELS_ALL);		
+			SurfaceClass *surface,
+			MipCountType mip_level_count=MIP_LEVELS_ALL);
 
 		TextureClass(IDirect3DTexture8* d3d_texture);
 
@@ -131,7 +131,7 @@ class TextureClass : public W3DMPO, public RefCountClass
 
 		// The number of Mip levels in the texture
 		unsigned int Get_Mip_Level_Count(void);
-	
+
 		// Note! Width and Height may be zero and may change if texture uses mipmaps
 		int Get_Width() const
 		{
@@ -139,7 +139,7 @@ class TextureClass : public W3DMPO, public RefCountClass
 		}
 		int Get_Height() const
 		{
-			return Height; 
+			return Height;
 		}
 
 		// Get surface description of a Mip level (defaults to the highest-resolution one)

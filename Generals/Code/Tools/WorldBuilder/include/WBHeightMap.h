@@ -19,10 +19,10 @@
 #ifndef __WBHEIGHTMAP_H_
 #define __WBHEIGHTMAP_H_
 
-#include "W3DDevice/GameClient/HeightMap.h"	
-	
+#include "W3DDevice/GameClient/HeightMap.h"
+
 class WBHeightMap : public HeightMapRenderObjClass
-{	
+{
 
 public:
 	WBHeightMap(void);

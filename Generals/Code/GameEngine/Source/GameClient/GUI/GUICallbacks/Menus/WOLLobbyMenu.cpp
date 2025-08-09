@@ -171,7 +171,7 @@ Bool handleLobbySlashCommands(UnicodeString uText)
 	else if (token == "refresh")
 	{
 		// Added 2/19/03 added the game refresh
-		refreshGameList(TRUE);	
+		refreshGameList(TRUE);
 		refreshPlayerList(TRUE);
 		return TRUE; // was a slash command
 	}
@@ -313,7 +313,7 @@ static void playerTooltip(GameWindow *window,
 	rank = i;
 	AsciiString sideName = "GUI:RandomSide";
 	if (info->m_side > 0)
-	{		
+	{
 		const PlayerTemplate *fac = ThePlayerTemplateStore->getNthPlayerTemplate(info->m_side);
 		if (fac)
 		{
@@ -678,7 +678,7 @@ void WOLLobbyMenuInit( WindowLayout *layout, void *userData )
 //	TheShell->registerWithAnimateManager(parent, WIN_ANIMATION_SLIDE_TOP, TRUE);
 	TheShell->showShellMap(TRUE);
 	TheGameSpyGame->reset();
-	
+
 	CustomMatchPreferences pref;
 //	GameWindow *slider = TheWindowManager->winGetWindowFromId(parent, sliderChatAdjustID);
 //	if (slider)
@@ -843,7 +843,7 @@ static const char* getMessageString(Int t)
 #endif // PERF_TEST
 
 //-------------------------------------------------------------------------------------------------
-/** refreshGameList 
+/** refreshGameList
 		The Bool is used to force refresh if the refresh button was hit.*/
 //-------------------------------------------------------------------------------------------------
 static void refreshGameList( Bool forceRefresh )
@@ -866,7 +866,7 @@ static void refreshGameList( Bool forceRefresh )
 	}
 }
 //-------------------------------------------------------------------------------------------------
-/** refreshPlayerList 
+/** refreshPlayerList
 		The Bool is used to force refresh if the refresh button was hit.*/
 //-------------------------------------------------------------------------------------------------
 static void refreshPlayerList( Bool forceRefresh )
@@ -900,9 +900,9 @@ void WOLLobbyMenuUpdate( WindowLayout * layout, void *userData)
 	{
 		SignalUIInteraction(SHELL_SCRIPT_HOOK_GENERALS_ONLINE_ENTERED_FROM_GAME);
 	}
-	
 
-	// We'll only be successful if we've requested to 
+
+	// We'll only be successful if we've requested to
 	if(isShuttingDown && TheShell->isAnimFinished() && TheTransitionHandler->isFinished())
 		shutdownComplete(layout);
 
@@ -1286,7 +1286,7 @@ void WOLLobbyMenuUpdate( WindowLayout * layout, void *userData)
 #endif // PERF_TEST
 
 #if 0
-// Removed 2-17-03 to pull out into a function so we can do the same checks 
+// Removed 2-17-03 to pull out into a function so we can do the same checks
 		Int refreshInterval = gameListRefreshInterval;
 
 		if ((gameListRefreshTime == 0) || ((gameListRefreshTime + refreshInterval) <= timeGetTime()))
@@ -1315,7 +1315,7 @@ void WOLLobbyMenuUpdate( WindowLayout * layout, void *userData)
 WindowMsgHandledType WOLLobbyMenuInput( GameWindow *window, UnsignedInt msg,
 																			 WindowMsgData mData1, WindowMsgData mData2 )
 {
-	switch( msg ) 
+	switch( msg )
 	{
 
 		// --------------------------------------------------------------------------------------------
@@ -1332,14 +1332,14 @@ WindowMsgHandledType WOLLobbyMenuInput( GameWindow *window, UnsignedInt msg,
 				// ----------------------------------------------------------------------------------------
 				case KEY_ESC:
 				{
-					
+
 					//
 					// send a simulated selected event to the parent window of the
 					// back/exit button
 					//
 					if( BitIsSet( state, KEY_STATE_UP ) )
 					{
-						TheWindowManager->winSendSystemMsg( window, GBM_SELECTED, 
+						TheWindowManager->winSendSystemMsg( window, GBM_SELECTED,
 																							(WindowMsgData)buttonBack, buttonBackID );
 
 					}  // end if
@@ -1410,7 +1410,7 @@ WindowMsgHandledType WOLLobbyMenuInput( GameWindow *window, UnsignedInt msg,
 //-------------------------------------------------------------------------------------------------
 /** WOL Lobby Menu window system callback */
 //-------------------------------------------------------------------------------------------------
-WindowMsgHandledType WOLLobbyMenuSystem( GameWindow *window, UnsignedInt msg, 
+WindowMsgHandledType WOLLobbyMenuSystem( GameWindow *window, UnsignedInt msg,
 														 WindowMsgData mData1, WindowMsgData mData2 )
 {
 	UnicodeString txtInput;
@@ -1418,14 +1418,14 @@ WindowMsgHandledType WOLLobbyMenuSystem( GameWindow *window, UnsignedInt msg,
 
 	switch( msg )
 	{
-		
-		
+
+
 		//---------------------------------------------------------------------------------------------
 		case GWM_CREATE:
 			{
 				buttonGameListTypeToggleID = NAMEKEY("WOLCustomLobby.wnd:ButtonGameListToggle");
 //				sliderChatAdjustID = NAMEKEY("WOLCustomLobby.wnd:SliderChatAdjust");
-				
+
 				break;
 			} // case GWM_DESTROY:
 
@@ -1437,7 +1437,7 @@ WindowMsgHandledType WOLLobbyMenuSystem( GameWindow *window, UnsignedInt msg,
 
 		//---------------------------------------------------------------------------------------------
 		case GWM_INPUT_FOCUS:
-			{	
+			{
 				// if we're givin the opportunity to take the keyboard focus we must say we want it
 				if( mData1 == TRUE )
 					*(Bool *)mData2 = TRUE;
@@ -1515,7 +1515,7 @@ WindowMsgHandledType WOLLobbyMenuSystem( GameWindow *window, UnsignedInt msg,
 				else if ( controlID == buttonRefreshID )
 				{
 					// Added 2/17/03 added the game refresh button
-					refreshGameList(TRUE);	
+					refreshGameList(TRUE);
 					refreshPlayerList(TRUE);
 				}
 				else if ( controlID == buttonHostID )
@@ -1631,7 +1631,7 @@ WindowMsgHandledType WOLLobbyMenuSystem( GameWindow *window, UnsignedInt msg,
 						TheGameSpyInfo->sendChat( txtInput, FALSE, listboxLobbyPlayers ); // 'emote' button now just sends text
 					}
 				}
-				
+
 				break;
 			}// case GBM_SELECTED:
 
@@ -1642,11 +1642,11 @@ WindowMsgHandledType WOLLobbyMenuSystem( GameWindow *window, UnsignedInt msg,
 					break;
 				GameWindow *control = (GameWindow *)mData1;
 				Int controlID = control->winGetWindowId();
-				if( controlID == comboLobbyGroupRoomsID ) 
+				if( controlID == comboLobbyGroupRoomsID )
 				{
 					int rowSelected = -1;
 					GadgetComboBoxGetSelectedPos(control, &rowSelected);
-				
+
 					DEBUG_LOG(("Row selected = %d", rowSelected));
 					if (rowSelected >= 0)
 					{
@@ -1684,13 +1684,13 @@ WindowMsgHandledType WOLLobbyMenuSystem( GameWindow *window, UnsignedInt msg,
 				if (controlID == GetGameListBoxID())
 				{
 					int rowSelected = mData2;
-				
+
 					if (rowSelected >= 0)
 					{
 						GadgetListBoxSetSelected( control, rowSelected );
 						GameWindow *button = TheWindowManager->winGetWindowFromId( window, buttonJoinID );
 
-						TheWindowManager->winSendSystemMsg( window, GBM_SELECTED, 
+						TheWindowManager->winSendSystemMsg( window, GBM_SELECTED,
 																								(WindowMsgData)button, buttonJoinID );
 					}
 				}
@@ -1703,7 +1703,7 @@ WindowMsgHandledType WOLLobbyMenuSystem( GameWindow *window, UnsignedInt msg,
 				GameWindow *control = (GameWindow *)mData1;
 				Int controlID = control->winGetWindowId();
 
-				if( controlID == listboxLobbyPlayersID ) 
+				if( controlID == listboxLobbyPlayersID )
 				{
 					RightClickStruct *rc = (RightClickStruct *)mData2;
 					WindowLayout *rcLayout = NULL;
@@ -1723,7 +1723,7 @@ WindowMsgHandledType WOLLobbyMenuSystem( GameWindow *window, UnsignedInt msg,
 
 					Bool isBuddy = FALSE;
 					if (profileID <= 0)
-						rcLayout = TheWindowManager->winCreateLayout(AsciiString("Menus/RCNoProfileMenu.wnd"));	
+						rcLayout = TheWindowManager->winCreateLayout(AsciiString("Menus/RCNoProfileMenu.wnd"));
 					else
 					{
 						if (profileID == TheGameSpyInfo->getLocalProfileID())
@@ -1740,9 +1740,9 @@ WindowMsgHandledType WOLLobbyMenuSystem( GameWindow *window, UnsignedInt msg,
 					}
 					if(!rcLayout)
 						break;
-					
+
 					GadgetListBoxSetSelected(control, rc->pos);
-					
+
 					rcMenu = rcLayout->getFirstWindow();
 					rcMenu->winGetLayout()->runInit();
 					rcMenu->winBringToTop();
@@ -1757,7 +1757,7 @@ WindowMsgHandledType WOLLobbyMenuSystem( GameWindow *window, UnsignedInt msg,
 					if(rc->mouseY + rcSize.y > TheDisplay->getHeight())
 						rcPos.y = TheDisplay->getHeight() - rcSize.y;
 					rcMenu->winSetPosition(rcPos.x, rcPos.y);
-					
+
 					GameSpyRCMenuData *rcData = NEW GameSpyRCMenuData;
 					rcData->m_id = profileID;
 					rcData->m_nick = aName;
@@ -1765,7 +1765,7 @@ WindowMsgHandledType WOLLobbyMenuSystem( GameWindow *window, UnsignedInt msg,
 					rcMenu->winSetUserData((void *)rcData);
 					TheWindowManager->winSetLoneWindow(rcMenu);
 				}
-				else if( controlID == GetGameListBoxID() ) 
+				else if( controlID == GetGameListBoxID() )
 				{
 					RightClickStruct *rc = (RightClickStruct *)mData2;
 					WindowLayout *rcLayout = NULL;
@@ -1789,7 +1789,7 @@ WindowMsgHandledType WOLLobbyMenuSystem( GameWindow *window, UnsignedInt msg,
 							const LadderInfo *linfo = TheLadderList->findLadder(theRoom->getLadderIP(), theRoom->getLadderPort());
 							if (linfo)
 							{
-								rcLayout = TheWindowManager->winCreateLayout(AsciiString("Menus/RCGameDetailsMenu.wnd"));	
+								rcLayout = TheWindowManager->winCreateLayout(AsciiString("Menus/RCGameDetailsMenu.wnd"));
 								if (!rcLayout)
 									break;
 
@@ -1800,7 +1800,7 @@ WindowMsgHandledType WOLLobbyMenuSystem( GameWindow *window, UnsignedInt msg,
 								rcMenu->winBringToTop();
 								rcMenu->winHide(FALSE);
 								rcMenu->winSetPosition(rc->mouseX, rc->mouseY);
-								
+
 								rcMenu->winSetUserData((void *)selectedID);
 								TheWindowManager->winSetLoneWindow(rcMenu);
 							}

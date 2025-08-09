@@ -18,12 +18,12 @@
 
 // FILE: ImagePackerProc.cpp //////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:    ImagePacker
@@ -103,7 +103,7 @@ BOOL CALLBACK ImagePackerProc( HWND hWndDialog, UINT message,
 			size.y = rect.bottom - rect.top;
 
 			// center dialog on screen
-			MoveWindow( hWndDialog, 
+			MoveWindow( hWndDialog,
 									(x / 2) - (size.x / 2),
 									(y / 2) - (size.y / 2),
 									size.x,
@@ -115,7 +115,7 @@ BOOL CALLBACK ImagePackerProc( HWND hWndDialog, UINT message,
 
 			// set gutter size
 			SetDlgItemInt( hWndDialog, EDIT_GUTTER, TheImagePacker->getGutter(), FALSE );
-									
+
 			// set alpha check
 			if( TheImagePacker->getOutputAlpha() )
 				CheckDlgButton( hWndDialog, CHECK_ALPHA, BST_CHECKED );
@@ -176,7 +176,7 @@ BOOL CALLBACK ImagePackerProc( HWND hWndDialog, UINT message,
 					{
 
 						page--;
-						TheImagePacker->setTargetPreviewPage( page );				
+						TheImagePacker->setTargetPreviewPage( page );
 						UpdatePreviewWindow();
 
 					}  // end if
@@ -194,7 +194,7 @@ BOOL CALLBACK ImagePackerProc( HWND hWndDialog, UINT message,
 					{
 
 						page++;
-						TheImagePacker->setTargetPreviewPage( page );				
+						TheImagePacker->setTargetPreviewPage( page );
 						UpdatePreviewWindow();
 
 					}  // end if
@@ -275,7 +275,7 @@ BOOL CALLBACK ImagePackerProc( HWND hWndDialog, UINT message,
 					// bring up the add directory dialog
 					DialogBox( ApplicationHInstance,
 										 (LPCTSTR)DIRECTORY_SELECT_DIALOG,
-										 TheImagePacker->getWindowHandle(), 
+										 TheImagePacker->getWindowHandle(),
 										 (DLGPROC)DirectorySelectProc );
 					break;
 
@@ -357,7 +357,7 @@ BOOL CALLBACK ImagePackerProc( HWND hWndDialog, UINT message,
 							SetDlgItemText( hWndDialog, EDIT_HEIGHT, buffer );
 
 							break;
-															
+
 						}  // end update
 
 					}  // end switch

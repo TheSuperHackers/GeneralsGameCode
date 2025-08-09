@@ -31,7 +31,7 @@
 #include "Common/AsciiString.h"
 
 // The draw objects draw a circle of diameter 1.0 cells.
-#define THE_RADIUS (0.8f*MAP_XY_FACTOR) 
+#define THE_RADIUS (0.8f*MAP_XY_FACTOR)
 
 class MeshClass;
 class PolygonTrigger;
@@ -43,7 +43,7 @@ class Render2DClass;
 //
 //
 class DrawObject : public RenderObjClass
-{	
+{
 
 public:
 
@@ -53,13 +53,13 @@ public:
 	~DrawObject(void);
 
 	/////////////////////////////////////////////////////////////////////////////
-	// Render Object Interface 
+	// Render Object Interface
 	/////////////////////////////////////////////////////////////////////////////
 	virtual RenderObjClass *	Clone(void) const;
 	virtual int						Class_ID(void) const;
 	virtual void					Render(RenderInfoClass & rinfo);
 //	virtual void					Special_Render(SpecialRenderInfoClass & rinfo);
-//	virtual void 					Set_Transform(const Matrix3D &m); 
+//	virtual void 					Set_Transform(const Matrix3D &m);
 //	virtual void 					Set_Position(const Vector3 &v);
 //TODO: MW: do these later - only needed for collision detection
 	virtual Bool					Cast_Ray(RayCollisionTestClass & raytest);
@@ -83,15 +83,15 @@ public:
 	Int freeMapResources(void);
 	int initData(void);
 
-  void setDrawObjects(Bool val, Bool waypoints, Bool poly, Bool bounding, Bool sight, Bool weapon, Bool sound, Bool testart, Bool letterbox) { m_drawObjects = val; m_drawWaypoints=waypoints; m_drawPolygonAreas = poly; m_drawBoundingBoxes = bounding; m_drawSightRanges = sight; m_drawWeaponRanges = weapon; m_drawSoundRanges = sound; m_drawTestArtHighlight = testart, m_drawLetterbox = letterbox;}	
-	static void setDoBrushFeedback(Bool val) { m_toolWantsFeedback = val; m_meshFeedback=false;}	
-	static void setDoMeshFeedback(Bool val) { m_meshFeedback = val; }	
+  void setDrawObjects(Bool val, Bool waypoints, Bool poly, Bool bounding, Bool sight, Bool weapon, Bool sound, Bool testart, Bool letterbox) { m_drawObjects = val; m_drawWaypoints=waypoints; m_drawPolygonAreas = poly; m_drawBoundingBoxes = bounding; m_drawSightRanges = sight; m_drawWeaponRanges = weapon; m_drawSoundRanges = sound; m_drawTestArtHighlight = testart, m_drawLetterbox = letterbox;}
+	static void setDoBrushFeedback(Bool val) { m_toolWantsFeedback = val; m_meshFeedback=false;}
+	static void setDoMeshFeedback(Bool val) { m_meshFeedback = val; }
 	static void setDoRampFeedback(Bool val) { m_rampFeedback = val; }
 	static void setDoBoundaryFeedback(Bool val) { m_boundaryFeedback = val; }
 
 	static void setDoAmbientSoundFeedback(Bool val) { m_ambientSoundFeedback = val; }
-	
-	static void setBrushFeedbackParms(Bool square, Int width, Int featherWidth) 
+
+	static void setBrushFeedbackParms(Bool square, Int width, Int featherWidth)
 														{ m_squareFeedback = square; m_brushWidth=width;
 															m_meshFeedback = false; m_brushFeatherWidth = featherWidth;}
 	static void disableFeedback(void) {m_disableFeedback = true;};
@@ -102,16 +102,16 @@ public:
 	static void setWaypointDragFeedback(const Coord3D &start, const Coord3D &end);
 	static void setRampFeedbackParms(const Coord3D *start, const Coord3D *end, Real rampWidth);
 	static void stopWaypointDragFeedback();
-	
-	
-	
+
+
+
 
 	MeshClass *peekMesh(void) {return m_moldMesh;};
 	void getMeshBounds(SphereClass *pSphere) {*pSphere = m_moldMeshBounds;};
 
 protected:
 	enum {MAX_RADIUS = 50, NUM_FEEDBACK_VERTEX = 201*201, NUM_FEEDBACK_INDEX = 101*101*6};
-	Int	m_numTriangles;	//dimensions of list 
+	Int	m_numTriangles;	//dimensions of list
 
 	DX8IndexBufferClass				*m_indexBuffer;	///< indices defining a object icon
 	ShaderClass								m_shaderClass; ///< shader or rendering state for heightmap
@@ -188,7 +188,7 @@ protected:
 
 };
 
-void BuildRectFromSegmentAndWidth(const Coord3D* b, const Coord3D* t, Real width, 
+void BuildRectFromSegmentAndWidth(const Coord3D* b, const Coord3D* t, Real width,
 																	Coord3D* outBL, Coord3D* outTL, Coord3D* outBR, Coord3D* outTR);
 
 #endif  // end __DRAW_OBJECT_H_

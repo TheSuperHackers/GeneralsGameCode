@@ -59,7 +59,7 @@ class Wtime
              ~Wtime();
 
     void      Update();   // Update members sec & usec to system time
-                          
+
 
     void      PrintTime(FILE *out) const;
     void      PrintTime(char *out) const;
@@ -90,7 +90,7 @@ class Wtime
     bit8      GetSign(void) const;  // 0 = pos   1 = neg
 
     int       Compare(const Wtime &other) const;
-    
+
     // comparisons
     bit8   operator == ( const Wtime &other ) const;
     bit8   operator != ( const Wtime &other ) const;

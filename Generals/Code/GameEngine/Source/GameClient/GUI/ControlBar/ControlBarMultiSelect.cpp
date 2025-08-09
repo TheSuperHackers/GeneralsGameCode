@@ -147,14 +147,14 @@ void ControlBar::addCommonCommands( Drawable *draw, Bool firstDrawable )
 		// go through each command one by one
 		for( i = 0; i < MAX_COMMANDS_PER_SET; i++ )
 		{
-		
+
 			// our implementation doesn't necessarily make use of the max possible command buttons
 			if (! m_commandWindows[ i ]) continue;
 
 			// get the command
 			command = commandSet->getCommandButton(i);
-					
-			Bool attackMove = (command && command->getCommandType() == GUI_COMMAND_ATTACK_MOVE) || 
+
+			Bool attackMove = (command && command->getCommandType() == GUI_COMMAND_ATTACK_MOVE) ||
 												(m_commonCommands[ i ] && m_commonCommands[ i ]->getCommandType() == GUI_COMMAND_ATTACK_MOVE);
 
 			// Kris: When any units have attack move, they all get it. This is to allow
@@ -238,11 +238,11 @@ void ControlBar::populateMultiSelect( void )
 	for( DrawableListCIt it = selectedDrawables->begin();
 			 it != selectedDrawables->end(); ++it )
 	{
-	
+
 		// get the drawable
 		draw = *it;
 
-		
+
 		if (draw->getObject()->isKindOf(KINDOF_IGNORED_IN_GUI)) // ignore these guys
 			continue;
 
@@ -255,7 +255,7 @@ void ControlBar::populateMultiSelect( void )
 		// NOTE that we're not considering objects that are currently in the process of
 		// being sold as those objects can't be issued anymore commands
 		//
-		if( draw && draw->getObject() && 
+		if( draw && draw->getObject() &&
 				!draw->getObject()->getStatusBits().test( OBJECT_STATUS_SOLD ) )
 		{
 
@@ -271,7 +271,7 @@ void ControlBar::populateMultiSelect( void )
 			//
 			if( portraitSet == FALSE )
 			{
-			
+
 				portrait = draw->getTemplate()->getSelectedPortraitImage();
 				portraitObj = draw->getObject();
 				portraitSet = TRUE;
@@ -319,7 +319,7 @@ void ControlBar::updateContextMultiSelect( void )
 	for( DrawableListCIt it = selectedDrawables->begin();
 			 it != selectedDrawables->end(); ++it )
 	{
-	
+
 		// get the drawable from the ID
 		draw = *it;
 
@@ -410,7 +410,7 @@ void ControlBar::updateContextMultiSelect( void )
 		// don't consider slots that don't have commands
 		if( m_commonCommands[ i ] == NULL )
 			continue;
-		
+
 		// check the count of objects that can do the command and enable/disable the control,
 		if( objectsThatCanDoCommand[ i ] > 0 )
 			m_commandWindows[ i ]->winEnable( TRUE );

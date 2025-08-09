@@ -63,12 +63,12 @@ public:
 	// Player Info
 	Int getPointsForRank(Int rank);
 	virtual Bool isPlayerVIP(Int id);
-	
+
 	virtual Bool getManglerLocation(Int index, AsciiString& host, UnsignedShort& port);
 
 	// Ladder / Any other external parsing
 	AsciiString getLeftoverConfig(void)					{ return m_leftoverConfig; }
-	
+
 	// NAT Timeouts
 	virtual Int getTimeBetweenRetries() { return m_natRetryInterval; }
 	virtual Int getMaxManglerRetries() { return m_natMaxManglerRetries; }
@@ -343,7 +343,7 @@ m_qmChannel(0)
 			if (md)
 			{
 				m_qmMaps.push_back(mapName);
-			} 
+			}
 			#endif
 		}
 		else if (inQMBot)

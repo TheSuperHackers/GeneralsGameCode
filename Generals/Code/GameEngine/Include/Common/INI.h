@@ -48,7 +48,7 @@ enum ScienceType CPP_11(: Int);
 /** These control the behavior of loading the INI data into items */
 //-------------------------------------------------------------------------------------------------
 enum INILoadType CPP_11(: Int)
-{	
+{
 	INI_LOAD_INVALID,						///< invalid load type
 	INI_LOAD_OVERWRITE,					///< create new or load *over* existing data instance
 	INI_LOAD_CREATE_OVERRIDES,	///< create new or load into *new* override data instance
@@ -139,8 +139,8 @@ private:
 	Int								m_count;
 
 public:
-	MultiIniFieldParse() : m_count(0) 
-	{ 
+	MultiIniFieldParse() : m_count(0)
+	{
 		//Added By Sadullah Nader
 		//Initializations missing and needed
 		for(Int i = 0; i < MAX_MULTI_FIELDS; i++)
@@ -148,7 +148,7 @@ public:
 		//
 
 	}
-	
+
 	void add(const FieldParse* f, UnsignedInt e = 0);
 
 	inline Int getCount() const { return m_count; }
@@ -252,7 +252,7 @@ public:
 	void initFromINI( void *what, const FieldParse* parseTable );
 	void initFromINIMulti( void *what, const MultiIniFieldParse& parseTableList );
 	void initFromINIMultiProc( void *what, BuildMultiIniFieldProc proc );
-	
+
 	static void parseUnsignedByte( INI *ini, void *instance, void *store, const void* userData );
 	static void parseShort( INI *ini, void *instance, void *store, const void* userData );
 	static void parseUnsignedShort( INI *ini, void *instance, void *store, const void* userData );
@@ -312,11 +312,11 @@ public:
 	static void parseDeathTypeFlags(INI* ini, void* instance, void* store, const void* userData);
 	static void parseVeterancyLevelFlags(INI* ini, void* instance, void* store, const void* userData);
 	static void parseSoundsList( INI* ini, void *instance, void *store, const void* /*userData*/ );
-	
-	
+
+
 	/**
 		return the next token. if seps is null (or omitted), the standard seps are used.
-		
+
 		this will *never* return null; if there are no more tokens, an exception will be thrown.
 	*/
 	const char* getNextToken(const char* seps = NULL);
@@ -330,7 +330,7 @@ public:
 
 	/**
 		This is called when the next thing you expect is something like:
-			
+
 			Tag:value
 
 		pass "Tag" (without the colon) for 'expected', and you will have the 'value'
@@ -380,7 +380,7 @@ public:
 
 protected:
 
-	static Bool isValidINIFilename( const char *filename ); ///< is this a valid .ini filename		
+	static Bool isValidINIFilename( const char *filename ); ///< is this a valid .ini filename
 
 	void prepFile( AsciiString filename, INILoadType loadType );
 	void unPrepFile();

@@ -92,7 +92,7 @@ bool WorkerProcess::startProcess(UnicodeString command)
 	si.dwFlags |= STARTF_USESTDHANDLES;
 	si.hStdError = writeHandle;
 	si.hStdOutput = writeHandle;
-	
+
 	PROCESS_INFORMATION pi = { 0 };
 
 	if (!CreateProcessW(NULL, (LPWSTR)command.str(),
@@ -165,7 +165,7 @@ bool WorkerProcess::fetchStdOutput()
 		if (!success)
 			return true;
 		DEBUG_ASSERTCRASH(readBytes != 0, ("expected readBytes to be non null"));
-		
+
 		// Remove \r, otherwise each new line is doubled when we output it again
 		for (int i = 0; i < readBytes; i++)
 			if (buffer[i] == '\r')

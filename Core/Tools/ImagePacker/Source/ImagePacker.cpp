@@ -18,12 +18,12 @@
 
 // FILE: ImagePacker.cpp //////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:    ImagePacker
@@ -33,7 +33,7 @@
 // Created:    Colin Day, August 2001
 //
 // Desc:       Entry point for the image packer.  This program takes
-//						 separate image files and combines them into a single 
+//						 separate image files and combines them into a single
 //						 image as close as possible so that we can conserve texture
 //						 memory
 //
@@ -157,16 +157,16 @@ Bool ImagePacker::validateImages( void )
 		}  // end if
 
 		//
-		// if this image is not the right format we can't process it, at 
+		// if this image is not the right format we can't process it, at
 		// present we only understand 32 and 24 bit images
 		//
 		if( image->m_colorDepth != 32 && image->m_colorDepth != 24 )
 		{
-		
+
 			errors = TRUE;
 			BitSet( image->m_status, ImageInfo::INVALIDCOLORDEPTH );
 			BitSet( image->m_status, ImageInfo::CANTPROCESS );
-			
+
 		}  // end if
 
 	}  // end for i
@@ -177,9 +177,9 @@ Bool ImagePacker::validateImages( void )
 	if( errors == TRUE )
 	{
 
-		proceed = DialogBox( ApplicationHInstance, 
+		proceed = DialogBox( ApplicationHInstance,
 												 (LPCTSTR)IMAGE_ERRORS,
-												 TheImagePacker->getWindowHandle(), 
+												 TheImagePacker->getWindowHandle(),
 												 (DLGPROC)ImageErrorProc );
 
 	}  // end if
@@ -220,7 +220,7 @@ Bool ImagePacker::packImages( void )
 		// update status
 		sprintf( m_statusBuffer, "Fitting Image %d of %d.", i, m_imageCount );
 		statusMessage( m_statusBuffer );
-		 
+
 		// get this image out of the list
 		image = m_imageList[ i ];
 
@@ -284,14 +284,14 @@ void ImagePacker::writeFinalTextures( void )
 	{
 
 		// update status message
-		sprintf( buffer, "Generating texture #%d of %d.", 
+		sprintf( buffer, "Generating texture #%d of %d.",
 						 page->getID(), m_pageCount );
 		statusMessage( buffer );
 
 		// generate the final texture for this page
 		if( page->generateTexture() == FALSE )
 		{
-			
+
 			errors = TRUE;
 			continue;  // could not generate this page, but try to continue
 
@@ -315,9 +315,9 @@ void ImagePacker::writeFinalTextures( void )
 	if( errors == TRUE )
 	{
 
-		DialogBox( ApplicationHInstance, 
+		DialogBox( ApplicationHInstance,
 							 (LPCTSTR)PAGE_ERRORS,
-							 TheImagePacker->getWindowHandle(), 
+							 TheImagePacker->getWindowHandle(),
 							 (DLGPROC)PageErrorProc );
 
 	}  // end if
@@ -326,8 +326,8 @@ void ImagePacker::writeFinalTextures( void )
 
 // sortImageCompare ===========================================================
 /** Compare function for qsort
-	* -1 item1 less than item2 
-	*	0 item1 identical to item2 
+	* -1 item1 less than item2
+	*	0 item1 identical to item2
 	*	1 item1 greater than item2
 	*/
 //=============================================================================
@@ -378,19 +378,19 @@ void ImagePacker::addImagesInDirectory( char *dir )
 	// change into the directory
 	SetCurrentDirectory( dir );
 
-	// go through each item in the output directory		
+	// go through each item in the output directory
 	hFile = FindFirstFile( "*", &item);
 	if( hFile != INVALID_HANDLE_VALUE )
-	{  
+	{
 
 		// if this is a file count it
 		if( !(item.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) &&
-				strcmp( item.cFileName, "." ) && 
+				strcmp( item.cFileName, "." ) &&
 				strcmp( item.cFileName, ".." ) )
 		{
 
 			len = strlen( item.cFileName );
-			if( len > 4 && 
+			if( len > 4 &&
 					item.cFileName[ len - 4 ] == '.' &&
 					(item.cFileName[ len - 3 ] == 't' || item.cFileName[ len - 3 ] == 'T') &&
 					(item.cFileName[ len - 2 ] == 'g' || item.cFileName[ len - 2 ] == 'G') &&
@@ -410,12 +410,12 @@ void ImagePacker::addImagesInDirectory( char *dir )
 
 			// if this is a file count it
 			if( !(item.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) &&
-					strcmp( item.cFileName, "." ) && 
+					strcmp( item.cFileName, "." ) &&
 					strcmp( item.cFileName, ".." ) )
 			{
 
 				len = strlen( item.cFileName );
-				if( len > 4 && 
+				if( len > 4 &&
 						item.cFileName[ len - 4 ] == '.' &&
 						(item.cFileName[ len - 3 ] == 't' || item.cFileName[ len - 3 ] == 'T') &&
 						(item.cFileName[ len - 2 ] == 'g' || item.cFileName[ len - 2 ] == 'G') &&
@@ -456,7 +456,7 @@ Bool ImagePacker::checkOutputDirectory( void )
 	HANDLE hFile;  // handle for search resources
 	Int fileCount = 0;
 	char currDir[ _MAX_PATH ];
-	
+
 	// get the working directory
 	GetCurrentDirectory( _MAX_PATH, currDir );
 
@@ -466,14 +466,14 @@ Bool ImagePacker::checkOutputDirectory( void )
 	// change into the output directory
 	SetCurrentDirectory( m_outputDirectory );
 
-	// go through each item in the output directory		
+	// go through each item in the output directory
 	hFile = FindFirstFile( "*", &item);
 	if( hFile != INVALID_HANDLE_VALUE )
-	{  
+	{
 
 		// if this is a file count it
 		if( !(item.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) &&
-				 strcmp( item.cFileName, "." ) && 
+				 strcmp( item.cFileName, "." ) &&
 				 strcmp( item.cFileName, ".." ) )
 			fileCount++;
 
@@ -483,7 +483,7 @@ Bool ImagePacker::checkOutputDirectory( void )
 
 			// if this is a file count it
 			if( !(item.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) &&
-					 strcmp( item.cFileName, "." ) && 
+					 strcmp( item.cFileName, "." ) &&
 					 strcmp( item.cFileName, ".." ) )
 				fileCount++;
 
@@ -504,8 +504,8 @@ Bool ImagePacker::checkOutputDirectory( void )
 
 		sprintf( buffer, "The output directory (%s) must be empty before proceeding.  Delete '%d' files and continue with build process?",
 						 m_outputDirectory, fileCount );
-		response = MessageBox( NULL, buffer, 
-													 "Delete files to continue?", 
+		response = MessageBox( NULL, buffer,
+													 "Delete files to continue?",
 													 MB_YESNO | MB_ICONWARNING );
 
 		// if they said no, do not delete the files and abort the pack process
@@ -518,15 +518,15 @@ Bool ImagePacker::checkOutputDirectory( void )
 
 		// change into the output directory
 		SetCurrentDirectory( m_outputDirectory );
-		
-		// go through each item in the output directory		
+
+		// go through each item in the output directory
 		hFile = FindFirstFile( "*", &item);
 		if( hFile != INVALID_HANDLE_VALUE )
-		{  
+		{
 
 			// if this is a file count it
 			if( !(item.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) &&
-					 strcmp( item.cFileName, "." ) && 
+					 strcmp( item.cFileName, "." ) &&
 					 strcmp( item.cFileName, ".." ) )
 				DeleteFile( item.cFileName );
 
@@ -536,7 +536,7 @@ Bool ImagePacker::checkOutputDirectory( void )
 
 				// if this is a file count it
 				if( !(item.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) &&
-						 strcmp( item.cFileName, "." ) && 
+						 strcmp( item.cFileName, "." ) &&
 						 strcmp( item.cFileName, ".." ) )
 					DeleteFile( item.cFileName );
 
@@ -591,7 +591,7 @@ void ImagePacker::resetImageDirectoryList( void )
 		next = m_dirList->m_next;
 		delete m_dirList;
 		m_dirList = next;
-			
+
 	}  // end while
 
 	m_dirCount = 0;
@@ -646,8 +646,8 @@ void ImagePacker::addDirectory( char *path, Bool subDirs )
 	dir = new ImageDirectory;
 	if( dir == NULL )
 	{
-		
-		MessageBox( NULL, "Unable to allocate image directory", "Error", 
+
+		MessageBox( NULL, "Unable to allocate image directory", "Error",
 								MB_OK | MB_ICONERROR );
 		return;
 
@@ -673,7 +673,7 @@ void ImagePacker::addDirectory( char *path, Bool subDirs )
 	if( m_dirList )
 		m_dirList->m_prev = dir;
 	m_dirList = dir;
-	
+
 	// increase our directory count
 	m_dirCount++;
 
@@ -684,16 +684,16 @@ void ImagePacker::addDirectory( char *path, Bool subDirs )
 	// count how many image files are in this directory
 	hFile = FindFirstFile( "*", &item);
 	if( hFile != INVALID_HANDLE_VALUE )
-	{  
+	{
 
 		// if this is a file count it
 		if( !(item.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) &&
-				strcmp( item.cFileName, "." ) && 
+				strcmp( item.cFileName, "." ) &&
 				strcmp( item.cFileName, ".." ) )
 		{
 
 			len = strlen( item.cFileName );
-			if( len > 4 && 
+			if( len > 4 &&
 					item.cFileName[ len - 4 ] == '.' &&
 					(item.cFileName[ len - 3 ] == 't' || item.cFileName[ len - 3 ] == 'T') &&
 					(item.cFileName[ len - 2 ] == 'g' || item.cFileName[ len - 2 ] == 'G') &&
@@ -708,12 +708,12 @@ void ImagePacker::addDirectory( char *path, Bool subDirs )
 
 			// if this is a file count it
 			if( !(item.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) &&
-					strcmp( item.cFileName, "." ) && 
+					strcmp( item.cFileName, "." ) &&
 					strcmp( item.cFileName, ".." ) )
 			{
 
 				len = strlen( item.cFileName );
-				if( len > 4 && 
+				if( len > 4 &&
 						item.cFileName[ len - 4 ] == '.' &&
 						(item.cFileName[ len - 3 ] == 't' || item.cFileName[ len - 3 ] == 'T') &&
 						(item.cFileName[ len - 2 ] == 'g' || item.cFileName[ len - 2 ] == 'G') &&
@@ -737,14 +737,14 @@ void ImagePacker::addDirectory( char *path, Bool subDirs )
 	{
 		char subDir[ _MAX_PATH ];
 
-		// go through each item in the output directory		
+		// go through each item in the output directory
 		hFile = FindFirstFile( "*", &item);
 		if( hFile != INVALID_HANDLE_VALUE )
-		{  
+		{
 
 			// if this is a file count it
 			if( (item.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) &&
-					strcmp( item.cFileName, "." ) && 
+					strcmp( item.cFileName, "." ) &&
 					strcmp( item.cFileName, ".." ) )
 			{
 
@@ -759,7 +759,7 @@ void ImagePacker::addDirectory( char *path, Bool subDirs )
 
 				// if this is a file count it
 				if( (item.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) &&
-						strcmp( item.cFileName, "." ) && 
+						strcmp( item.cFileName, "." ) &&
 						strcmp( item.cFileName, ".." ) )
 				{
 
@@ -852,7 +852,7 @@ void ImagePacker::addImage( char *path )
 	m_imageList[ m_imageCount++ ] = info;
 
 	// update status
-	sprintf( m_statusBuffer, "Loading Image %d of %d.", 
+	sprintf( m_statusBuffer, "Loading Image %d of %d.",
 					 m_imageCount, m_imagesInDirs );
 	statusMessage( m_statusBuffer );
 
@@ -889,7 +889,7 @@ Bool ImagePacker::generateINIFile( void )
 	//
 	// loop through all the pages so that we write image definitions that
 	// are on the same page close together in the file, note we're
-	// going backwards through the page list because page 1 is at the 
+	// going backwards through the page list because page 1 is at the
 	// tail and I want them to print out in number order, but it
 	// doesn't really matter
 	//
@@ -903,8 +903,8 @@ Bool ImagePacker::generateINIFile( void )
 			continue;
 
 		// go through each image on this page
-		for( image = page->getFirstImage(); 
-				 image; 
+		for( image = page->getFirstImage();
+				 image;
 				 image = image->m_nextPageImage )
 		{
 
@@ -921,8 +921,8 @@ Bool ImagePacker::generateINIFile( void )
 			fprintf( fp, "  Coords = Left:%d Top:%d Right:%d Bottom:%d\n",
 							 image->m_pagePos.lo.x, image->m_pagePos.lo.y,
 							 image->m_pagePos.hi.x + 1, image->m_pagePos.hi.y + 1 );
-			fprintf( fp, "  Status = %s\n", 
-							 BitIsSet( image->m_status, ImageInfo::ROTATED90C ) ? 
+			fprintf( fp, "  Status = %s\n",
+							 BitIsSet( image->m_status, ImageInfo::ROTATED90C ) ?
 												"ROTATED_90_CLOCKWISE" : "NONE" );
 			fprintf( fp, "End\n\n" );
 
@@ -995,7 +995,7 @@ Bool ImagePacker::getSettingsFromDialog( HWND dialog )
 		return FALSE;
 
 	}  // end else
-	
+
 	// get alpha option
 	Bool outputAlpha = FALSE;
 	if( IsDlgButtonChecked( dialog, CHECK_ALPHA ) == BST_CHECKED )
@@ -1033,17 +1033,17 @@ Bool ImagePacker::getSettingsFromDialog( HWND dialog )
 	if( gutter < 0 )
 		gutter = 0;
 	setGutter( gutter );
-						
+
 	// save the filename to output
 	GetDlgItemText( dialog, EDIT_FILENAME, m_outputFile, MAX_OUTPUT_FILE_LEN - 1 );
-	
+
 	// check for illegal characters in the output name
 	Int len = strlen( m_outputFile );
 	for( i = 0; i < len; i++ )
 	{
 		const char *illegal = "/\\:*?<>|";
 		Int illegalLen = strlen( illegal );
-		
+
 		for( Int j = 0; j < illegalLen; j++ )
 		{
 
@@ -1051,7 +1051,7 @@ Bool ImagePacker::getSettingsFromDialog( HWND dialog )
 			{
 				char buffer[ 256 ];
 
-				sprintf( buffer, "Output filename '%s' contains one or more of the following illegal characters:\n\n%s", 
+				sprintf( buffer, "Output filename '%s' contains one or more of the following illegal characters:\n\n%s",
 								 m_outputFile, illegal );
 				MessageBox( NULL, buffer, "Illegal Filename", MB_OK | MB_ICONERROR );
 				return FALSE;
@@ -1078,7 +1078,7 @@ Bool ImagePacker::getSettingsFromDialog( HWND dialog )
 	{
 
 		// get text from the listbox
-		SendDlgItemMessage( dialog, LIST_FOLDERS,		
+		SendDlgItemMessage( dialog, LIST_FOLDERS,
 												LB_GETTEXT, i, (LPARAM)buffer );
 
 		// add the directory
@@ -1153,7 +1153,7 @@ Bool ImagePacker::init( void )
 	m_targa = new Targa;
 	if( m_targa == NULL )
 	{
-		
+
 		DEBUG_ASSERTCRASH( m_targa, ("Unable to allocate targa header during init") );
 		MessageBox( NULL, "ImagePacker can't init, unable to create targa",
 								"Internal Error", MB_OK | MB_ICONERROR );

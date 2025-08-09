@@ -43,7 +43,7 @@
 #include "GameClient/GameWindowManager.h"
 #include "GameClient/ExtendedMessageBox.h"
 
-WindowMsgHandledType ExtendedMessageBoxSystem( GameWindow *window, UnsignedInt msg, 
+WindowMsgHandledType ExtendedMessageBoxSystem( GameWindow *window, UnsignedInt msg,
 										 WindowMsgData mData1, WindowMsgData mData2 );
 
 //-------------------------------------------------------------------------------------------------
@@ -62,8 +62,8 @@ static GameWindow *gogoExMessageBox(Int x, Int y, Int width, Int height, Unsigne
 		return NULL;
 	}
 
-	GameWindow *parent = TheWindowManager->winCreateFromScript( AsciiString("Menus/MessageBox.wnd") ); 
-	TheWindowManager->winSetModal( parent ); 
+	GameWindow *parent = TheWindowManager->winCreateFromScript( AsciiString("Menus/MessageBox.wnd") );
+	TheWindowManager->winSetModal( parent );
 	TheWindowManager->winSetFocus( NULL ); // make sure we lose focus from other windows even if we refuse focus ourselves
 	TheWindowManager->winSetFocus( parent	 );
 
@@ -78,8 +78,8 @@ static GameWindow *gogoExMessageBox(Int x, Int y, Int width, Int height, Unsigne
 		ratioX = (float)width / (float)temp.x;
 		ratioY = (float)height / (float)temp.y;
 		//Set the window's new size
-		parent->winSetSize( width, height);	
-	
+		parent->winSetSize( width, height);
+
 		//Resize/reposition all the children windows based off the ratio
 		GameWindow *child;
 		for( child = parent->winGetChild(); child; child = child->winGetNext() )
@@ -95,14 +95,14 @@ static GameWindow *gogoExMessageBox(Int x, Int y, Int width, Int height, Unsigne
 			child->winSetPosition(temp.x, temp.y);
 		}
 	}
-	
+
 	// If the user wants to position the message box somewhere other then default
 	if( x >= 0 && y >= 0)
-		parent->winSetPosition(x, y);	
-	
-	// Reposition the buttons 
+		parent->winSetPosition(x, y);
+
+	// Reposition the buttons
 	Int buttonX[3], buttonY[3];
-		 	
+
 	//In the layout, buttonOk will be in the first button position
 	NameKeyType buttonOkID = TheNameKeyGenerator->nameToKey( AsciiString( "MessageBox.wnd:ButtonOk" ) );
 	GameWindow *buttonOk = TheWindowManager->winGetWindowFromId(parent, buttonOkID);
@@ -114,18 +114,18 @@ static GameWindow *gogoExMessageBox(Int x, Int y, Int width, Int height, Unsigne
 	NameKeyType buttonNoID = TheNameKeyGenerator->nameToKey( AsciiString( "MessageBox.wnd:ButtonNo" ) );
 	GameWindow *buttonNo = TheWindowManager->winGetWindowFromId(parent, buttonNoID);
 	buttonNo->winGetPosition(&buttonX[1], &buttonY[1]);
-	
+
 	//and buttonCancel in the third
 	NameKeyType buttonCancelID = TheNameKeyGenerator->nameToKey( AsciiString( "MessageBox.wnd:ButtonCancel" ) );
 	GameWindow *buttonCancel = TheWindowManager->winGetWindowFromId(parent, buttonCancelID);
 	buttonCancel->winGetPosition(&buttonX[2], &buttonY[2]);
-	
+
 	//we shouldn't have button OK and Yes on the same dialog
 	if((buttonFlags & (MSG_BOX_OK | MSG_BOX_YES)) == (MSG_BOX_OK | MSG_BOX_YES) )
 	{
 		DEBUG_ASSERTCRASH(false, ("Passed in MSG_BOX_OK and MSG_BOX_YES.  Big No No."));
 	}
-	
+
 	//Position the OK button if we have one
 	if( (buttonFlags & MSG_BOX_OK) == MSG_BOX_OK)
 	{
@@ -138,7 +138,7 @@ static GameWindow *gogoExMessageBox(Int x, Int y, Int width, Int height, Unsigne
 		buttonYes->winSetPosition(buttonX[0], buttonY[0]);
 		buttonYes->winHide(FALSE);
 	}
-	
+
 	if((buttonFlags & (MSG_BOX_NO | MSG_BOX_CANCEL)) == (MSG_BOX_NO | MSG_BOX_CANCEL) )
 	{
 		//If we have both the No and Cancel button, then the no should go in the middle position
@@ -159,17 +159,17 @@ static GameWindow *gogoExMessageBox(Int x, Int y, Int width, Int height, Unsigne
 		buttonCancel->winSetPosition(buttonX[2], buttonY[2]);
 		buttonCancel->winHide(FALSE);
 	}
-		
+
 	// Fill the text into the text boxes
 	NameKeyType staticTextTitleID = TheNameKeyGenerator->nameToKey( AsciiString( "MessageBox.wnd:StaticTextTitle" ) );
 	GameWindow *staticTextTitle = TheWindowManager->winGetWindowFromId(parent, staticTextTitleID);
 	GadgetStaticTextSetText(staticTextTitle,titleString);
-	
+
 	NameKeyType staticTextMessageID = TheNameKeyGenerator->nameToKey( AsciiString( "MessageBox.wnd:StaticTextMessage" ) );
 	GameWindow *staticTextMessage = TheWindowManager->winGetWindowFromId(parent, staticTextMessageID);
 	GadgetStaticTextSetText(staticTextMessage,bodyString);
 
-	// create a structure that will pass the functions to 
+	// create a structure that will pass the functions to
 	WindowExMessageBoxData *MsgBoxCallbacks = NEW WindowExMessageBoxData;
 	MsgBoxCallbacks->cancelCallback = cancelCallback;
 	MsgBoxCallbacks->noCallback = noCallback;
@@ -180,11 +180,11 @@ static GameWindow *gogoExMessageBox(Int x, Int y, Int width, Int height, Unsigne
 	parent->winSetUserData( MsgBoxCallbacks );
 
 	parent->winSetSystemFunc(ExtendedMessageBoxSystem);
-	
+
 	//make sure the dialog is showing and bring it to the top
 	parent->winHide(FALSE);
 	parent->winBringToTop();
-	
+
 	return parent;
 }// gogoExMessageBox
 
@@ -227,12 +227,12 @@ GameWindow *ExMessageBoxCancel			(UnicodeString titleString,UnicodeString bodySt
 //-------------------------------------------------------------------------------------------------
 /** Message Box window system callback */
 //-------------------------------------------------------------------------------------------------
-WindowMsgHandledType ExtendedMessageBoxSystem( GameWindow *window, UnsignedInt msg, 
+WindowMsgHandledType ExtendedMessageBoxSystem( GameWindow *window, UnsignedInt msg,
 										 WindowMsgData mData1, WindowMsgData mData2 )
 {
-	
-	
-	switch( msg ) 
+
+
+	switch( msg )
 	{
 
 		//---------------------------------------------------------------------------------------------
@@ -292,11 +292,11 @@ WindowMsgHandledType ExtendedMessageBoxSystem( GameWindow *window, UnsignedInt m
 
 			if (ret == MB_RETURN_CLOSE)
 				TheWindowManager->winDestroy(window);
-			
+
 			break;
 
 		}  // end selected
-		
+
 		//---------------------------------------------------------------------------------------------
 		default:
 			return MSG_IGNORED;

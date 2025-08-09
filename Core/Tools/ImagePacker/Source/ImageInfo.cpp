@@ -18,12 +18,12 @@
 
 // FILE: ImageInfo.cpp ////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:    ImagePacker
@@ -92,11 +92,11 @@ ImageInfo::ImageInfo( void )
 /** */
 //=============================================================================
 ImageInfo::~ImageInfo( void )
-{ 
-	
+{
+
 	// delete path name
 	if( m_path )
-		delete [] m_path; 
+		delete [] m_path;
 
 	if( m_filenameOnly )
 		delete [] m_filenameOnly;

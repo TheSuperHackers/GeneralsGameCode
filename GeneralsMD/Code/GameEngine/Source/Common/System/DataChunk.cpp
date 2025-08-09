@@ -214,7 +214,7 @@ Bool FileInputStream::eof(void)
 {
 	if (m_file != NULL) {
 		return (m_file->size() == m_file->position());
-	}	 
+	}
 	return(true);
 }
 
@@ -235,16 +235,16 @@ void FileInputStream::rewind()
 
 #define TEMP_FILENAME		"_tmpChunk.dat"
 
-DataChunkOutput::DataChunkOutput( OutputStream *pOut ) :  
+DataChunkOutput::DataChunkOutput( OutputStream *pOut ) :
 m_pOut(pOut)
 {
 	AsciiString tmpFileName = TheGlobalData->getPath_UserData();
 	tmpFileName.concat(TEMP_FILENAME);
-	m_tmp_file = ::fopen( tmpFileName.str(), "wb" );	
+	m_tmp_file = ::fopen( tmpFileName.str(), "wb" );
 	// Added Sadullah Nader
 	// Initializations missing and needed
 	m_chunkStack = NULL;
-	
+
 	// End Add
 }
 
@@ -259,7 +259,7 @@ DataChunkOutput::~DataChunkOutput()
 	AsciiString tmpFileName = TheGlobalData->getPath_UserData();
 	tmpFileName.concat(TEMP_FILENAME);
 
- 	m_tmp_file = ::fopen( tmpFileName.str(), "rb" );	
+ 	m_tmp_file = ::fopen( tmpFileName.str(), "rb" );
 	::fseek(m_tmp_file, 0, SEEK_SET);
 
 	// append the temp m_tmp_file m_contents
@@ -334,42 +334,42 @@ void DataChunkOutput::closeDataChunk( void )
 	deleteInstance(c);
 }
 
-void DataChunkOutput::writeReal( Real r ) 
-{ 
-	::fwrite( (const char *)&r, sizeof(float) , 1, m_tmp_file  ); 
+void DataChunkOutput::writeReal( Real r )
+{
+	::fwrite( (const char *)&r, sizeof(float) , 1, m_tmp_file  );
 }
 
-void DataChunkOutput::writeInt( Int i ) 
-{ 
-	::fwrite( (const char *)&i, sizeof(Int) , 1, m_tmp_file ); 
+void DataChunkOutput::writeInt( Int i )
+{
+	::fwrite( (const char *)&i, sizeof(Int) , 1, m_tmp_file );
 }
 
-void DataChunkOutput::writeByte( Byte b ) 
-{ 
-	::fwrite( (const char *)&b, sizeof(Byte) , 1, m_tmp_file ); 
+void DataChunkOutput::writeByte( Byte b )
+{
+	::fwrite( (const char *)&b, sizeof(Byte) , 1, m_tmp_file );
 }
 
-void DataChunkOutput::writeArrayOfBytes(char *ptr, Int len) 
-{ 
-	::fwrite( (const char *)ptr, 1, len , m_tmp_file ); 
+void DataChunkOutput::writeArrayOfBytes(char *ptr, Int len)
+{
+	::fwrite( (const char *)ptr, 1, len , m_tmp_file );
 }
 
-void DataChunkOutput::writeAsciiString( const AsciiString& theString ) 
-{ 
+void DataChunkOutput::writeAsciiString( const AsciiString& theString )
+{
 	UnsignedShort len = theString.getLength();
 	::fwrite( (const char *)&len, sizeof(UnsignedShort) , 1, m_tmp_file );
-	::fwrite( theString.str(), len , 1, m_tmp_file ); 
+	::fwrite( theString.str(), len , 1, m_tmp_file );
 }
 
-void DataChunkOutput::writeUnicodeString( UnicodeString theString ) 
-{ 
+void DataChunkOutput::writeUnicodeString( UnicodeString theString )
+{
 	UnsignedShort len = theString.getLength();
 	::fwrite( (const char *)&len, sizeof(UnsignedShort) , 1, m_tmp_file );
-	::fwrite( theString.str(), len*sizeof(WideChar) , 1, m_tmp_file ); 
+	::fwrite( theString.str(), len*sizeof(WideChar) , 1, m_tmp_file );
 }
 
-void DataChunkOutput::writeNameKey( const NameKeyType key ) 
-{ 
+void DataChunkOutput::writeNameKey( const NameKeyType key )
+{
 		AsciiString kname = TheNameKeyGenerator->keyToName(key);
 		Int keyAndType = m_contents.allocateID(kname);
 		keyAndType <<= 8;
@@ -378,8 +378,8 @@ void DataChunkOutput::writeNameKey( const NameKeyType key )
 		writeInt(keyAndType);
 }
 
-void DataChunkOutput::writeDict( const Dict& d ) 
-{ 
+void DataChunkOutput::writeDict( const Dict& d )
+{
 	UnsignedShort len = d.getPairCount();
 	::fwrite( (const char *)&len, sizeof(UnsignedShort) , 1, m_tmp_file );
 	for (int i = 0; i < len; i++)
@@ -421,9 +421,9 @@ void DataChunkOutput::writeDict( const Dict& d )
 // DataChunkTableOfContents
 //----------------------------------------------------------------------
 
-DataChunkTableOfContents::DataChunkTableOfContents( void ) : 
-m_list(NULL), 
-m_nextID(1), 
+DataChunkTableOfContents::DataChunkTableOfContents( void ) :
+m_list(NULL),
+m_nextID(1),
 m_listLength(0),
 m_headerOpened(false)
 {
@@ -454,7 +454,7 @@ Mapping *DataChunkTableOfContents::findMapping( const AsciiString& name )
 }
 
 // convert name to integer identifier
-UnsignedInt DataChunkTableOfContents::getID( const AsciiString& name )		
+UnsignedInt DataChunkTableOfContents::getID( const AsciiString& name )
 {
 	Mapping *m = findMapping( name );
 
@@ -466,7 +466,7 @@ UnsignedInt DataChunkTableOfContents::getID( const AsciiString& name )
 }
 
 // convert integer identifier to name
-AsciiString DataChunkTableOfContents::getName( UnsignedInt id )	
+AsciiString DataChunkTableOfContents::getName( UnsignedInt id )
 {
 	Mapping *m;
 
@@ -581,8 +581,8 @@ void DataChunkTableOfContents::read( ChunkInputStream &s)
 //----------------------------------------------------------------------
 // DataChunkInput
 //----------------------------------------------------------------------
-DataChunkInput::DataChunkInput( ChunkInputStream *pStream ) : m_file( pStream ), 
-																										m_userData(NULL), 
+DataChunkInput::DataChunkInput( ChunkInputStream *pStream ) : m_file( pStream ),
+																										m_userData(NULL),
 																										m_currentObject(NULL),
 																										m_chunkStack(NULL),
 																										m_parserList(NULL)
@@ -607,7 +607,7 @@ DataChunkInput::~DataChunkInput()
 }
 
 // register a user parsing function for a given DataChunk label
-void DataChunkInput::registerParser( const AsciiString& label, const AsciiString& parentLabel, 
+void DataChunkInput::registerParser( const AsciiString& label, const AsciiString& parentLabel,
 																		 DataChunkParserPtr parser, void *userData )
 {
 	UserParser *p = newInstance(UserParser);
@@ -633,8 +633,8 @@ Bool DataChunkInput::parse( void *userData )
 	UserParser *parser;
 	Bool scopeOK;
 	DataChunkInfo info;
-	
-	// If the header wasn't a chunk table of contents, we can't parse. 
+
+	// If the header wasn't a chunk table of contents, we can't parse.
 	if (!m_contents.isOpenedForRead()) {
 		return false;
 	}
@@ -645,7 +645,7 @@ Bool DataChunkInput::parse( void *userData )
 
 	while( atEndOfFile() == false )
 	{
-		if (m_chunkStack) { // If we are parsing chunks in a chunk, check current length. 
+		if (m_chunkStack) { // If we are parsing chunks in a chunk, check current length.
 			if (m_chunkStack->dataLeft < CHUNK_HEADER_BYTES) {
 				DEBUG_ASSERTCRASH( m_chunkStack->dataLeft==0, ("Unexpected extra data in chunk."));
 				break;
@@ -666,7 +666,7 @@ Bool DataChunkInput::parse( void *userData )
 				// make sure parent name (scope) also matches
 				scopeOK = true;
 
-				if (parentLabel != parser->parentLabel) 
+				if (parentLabel != parser->parentLabel)
 					scopeOK = false;
 
 				if (scopeOK)
@@ -679,7 +679,7 @@ Bool DataChunkInput::parse( void *userData )
 
 					if (parser->parser( *this, &info, userData ) == false)
 						return false;
-					break; 
+					break;
 				}
 			}
 		}
@@ -754,7 +754,7 @@ AsciiString DataChunkInput::openDataChunk(DataChunkVersionType *ver )
 
 // close chunk and move to start of next chunk
 void DataChunkInput::closeDataChunk( void )
-{										
+{
 	if (m_chunkStack == NULL)
 	{
 		// TODO: Throw exception
@@ -800,7 +800,7 @@ DataChunkVersionType DataChunkInput::getChunkVersion( void )
 	}
 
 	return m_chunkStack->version;
-}		
+}
 
 // return size of data stored in this chunk
 UnsignedInt DataChunkInput::getChunkDataSize( void )
@@ -838,7 +838,7 @@ Bool DataChunkInput::atEndOfChunk( void )
 		return false;
 	}
 
-	return true; 
+	return true;
 }
 
 // update data left in chunk(s)
@@ -856,37 +856,37 @@ void DataChunkInput::decrementDataLeft( Int size )
 	// The sizes of the parent chunks on the stack are adjusted in closeDataChunk.
 }
 
-Real DataChunkInput::readReal(void) 
-{ 
+Real DataChunkInput::readReal(void)
+{
 	Real r;
 	DEBUG_ASSERTCRASH(m_chunkStack->dataLeft>=sizeof(Real), ("Read past end of chunk."));
-	m_file->read( (char *)&r, sizeof(Real) ); 
+	m_file->read( (char *)&r, sizeof(Real) );
 	decrementDataLeft( sizeof(Real) );
-	return r; 
+	return r;
 }
 
-Int DataChunkInput::readInt(void) 
-{ 
+Int DataChunkInput::readInt(void)
+{
 	Int i;
 	DEBUG_ASSERTCRASH(m_chunkStack->dataLeft>=sizeof(Int), ("Read past end of chunk."));
-	m_file->read( (char *)&i, sizeof(Int) ); 
+	m_file->read( (char *)&i, sizeof(Int) );
 	decrementDataLeft( sizeof(Int) );
-	return i; 
+	return i;
 }
 
-Byte DataChunkInput::readByte(void) 
-{ 
+Byte DataChunkInput::readByte(void)
+{
 	Byte b;
 	DEBUG_ASSERTCRASH(m_chunkStack->dataLeft>=sizeof(Byte), ("Read past end of chunk."));
-	m_file->read( (char *)&b, sizeof(Byte) ); 
+	m_file->read( (char *)&b, sizeof(Byte) );
 	decrementDataLeft( sizeof(Byte) );
-	return b; 
+	return b;
 }
 
-void DataChunkInput::readArrayOfBytes(char *ptr, Int len) 
-{ 
+void DataChunkInput::readArrayOfBytes(char *ptr, Int len)
+{
 	DEBUG_ASSERTCRASH(m_chunkStack->dataLeft>=len, ("Read past end of chunk."));
-	m_file->read( ptr, len ); 
+	m_file->read( ptr, len );
 	decrementDataLeft( len );
 }
 
@@ -904,9 +904,9 @@ NameKeyType DataChunkInput::readNameKey(void)
 		return k;
 }
 
-Dict DataChunkInput::readDict() 
-{ 
-	UnsignedShort len;	
+Dict DataChunkInput::readDict()
+{
+	UnsignedShort len;
 	DEBUG_ASSERTCRASH(m_chunkStack->dataLeft>=sizeof(UnsignedShort), ("Read past end of chunk."));
 	m_file->read( &len, sizeof(UnsignedShort) );
 	decrementDataLeft( sizeof(UnsignedShort) );
@@ -949,9 +949,9 @@ Dict DataChunkInput::readDict()
 	return d;
 }
 
-AsciiString DataChunkInput::readAsciiString(void) 
-{ 
-	UnsignedShort len;	
+AsciiString DataChunkInput::readAsciiString(void)
+{
+	UnsignedShort len;
 	DEBUG_ASSERTCRASH(m_chunkStack->dataLeft>=sizeof(UnsignedShort), ("Read past end of chunk."));
 	m_file->read( &len, sizeof(UnsignedShort) );
 	decrementDataLeft( sizeof(UnsignedShort) );
@@ -965,12 +965,12 @@ AsciiString DataChunkInput::readAsciiString(void)
 		str[len] = '\000';
 	}
 
-	return theString; 
+	return theString;
 }
 
-UnicodeString DataChunkInput::readUnicodeString(void) 
-{ 
-	UnsignedShort len;	
+UnicodeString DataChunkInput::readUnicodeString(void)
+{
+	UnsignedShort len;
 	DEBUG_ASSERTCRASH(m_chunkStack->dataLeft>=sizeof(UnsignedShort), ("Read past end of chunk."));
 	m_file->read( &len, sizeof(UnsignedShort) );
 	decrementDataLeft( sizeof(UnsignedShort) );
@@ -984,5 +984,5 @@ UnicodeString DataChunkInput::readUnicodeString(void)
 		str[len] = '\000';
 	}
 
-	return theString; 
+	return theString;
 }

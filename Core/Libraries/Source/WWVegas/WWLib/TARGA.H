@@ -26,7 +26,7 @@
 *
 * FILE
 *     Targa.h
-* 
+*
 * DESCRIPTION
 *     Targa image file class definitions.
 *
@@ -270,16 +270,16 @@ class Targa
 		long Load(const char* name, char* palette, char* image,bool invert_image=true);
 		long Load(const char* name, long flags, bool invert_image=true);
 		long Save(const char* name, long flags, bool addextension = false);
-		
+
 		void XFlip(void);
 		void YFlip(void);
 
 		char* SetImage(char* buffer);
 		char* GetImage(void) const {return (mImage);}
-		
+
 		char* SetPalette(char* buffer);
 		char* GetPalette(void) const {return (mPalette);}
-		
+
 		bool IsCompressed(void);
 
 		TGA2Extension* GetExtension(void);

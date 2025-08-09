@@ -25,7 +25,7 @@ class FileD : public OutputDevice
 {
  public:
    FileD(IN char *filename, IN char *mode = "w")
-   { 
+   {
      out=fopen(filename,mode);
      if (out==NULL)
        out=fopen("FileDev.out",mode);

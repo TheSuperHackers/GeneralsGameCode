@@ -44,7 +44,7 @@ class SupplyWarehouseDockUpdateModuleData : public DockUpdateModuleData
 public:
 
   SupplyWarehouseDockUpdateModuleData( void );
-	
+
 	static void buildFieldParse(MultiIniFieldParse& p);
 
 	Int m_startingBoxesData;

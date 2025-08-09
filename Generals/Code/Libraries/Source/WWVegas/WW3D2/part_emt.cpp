@@ -16,22 +16,22 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/*************************************************************************** 
- ***    C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S     *** 
- *************************************************************************** 
- *                                                                         * 
- *                 Project Name : G                                        * 
- *                                                                         * 
- *                     $Archive:: /Commando/Code/ww3d2/part_emt.cpp       $* 
- *                                                                         * 
- *                      $Author:: Naty_h                                  $* 
- *                                                                         * 
- *                     $Modtime:: 8/01/01 3:36p                           $* 
- *                                                                         * 
- *                    $Revision:: 12                                      $* 
- *                                                                         * 
- *-------------------------------------------------------------------------* 
- * Functions:                                                              * 
+/***************************************************************************
+ ***    C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S     ***
+ ***************************************************************************
+ *                                                                         *
+ *                 Project Name : G                                        *
+ *                                                                         *
+ *                     $Archive:: /Commando/Code/ww3d2/part_emt.cpp       $*
+ *                                                                         *
+ *                      $Author:: Naty_h                                  $*
+ *                                                                         *
+ *                     $Modtime:: 8/01/01 3:36p                           $*
+ *                                                                         *
+ *                    $Revision:: 12                                      $*
+ *                                                                         *
+ *-------------------------------------------------------------------------*
+ * Functions:                                                              *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "part_emt.h"
@@ -67,9 +67,9 @@ bool ParticleEmitterClass::DefaultRemoveOnComplete = true;
 
 ParticleEmitterClass::ParticleEmitterClass(float emit_rate, unsigned int burst_size,
 			Vector3Randomizer *pos_rnd, Vector3 base_vel, Vector3Randomizer *vel_rnd, float out_vel,
-			float vel_inherit_factor, 
+			float vel_inherit_factor,
 			ParticlePropertyStruct<Vector3> &color,
-			ParticlePropertyStruct<float> &opacity, 
+			ParticlePropertyStruct<float> &opacity,
 			ParticlePropertyStruct<float> &size,
 			ParticlePropertyStruct<float> &rotation, float orient_rnd,
 			ParticlePropertyStruct<float> &frames,
@@ -216,7 +216,7 @@ ParticleEmitterClass::Create_From_Definition (const ParticleEmitterDefClass &def
 		);
 //			false);	// no compression for particle textures!
 	}
-	
+
 	ShaderClass shader;
 	definition.Get_Shader (shader);
 	if (WW3DAssetManager::Get_Instance()->Get_Activate_Fog_On_Load()) {
@@ -255,10 +255,10 @@ ParticleEmitterClass::Create_From_Definition (const ParticleEmitterDefClass &def
 	pemitter = NEW_REF( ParticleEmitterClass, (	definition.Get_Emission_Rate (),
 																definition.Get_Burst_Size (),
 																definition.Get_Creation_Volume (),
-																definition.Get_Velocity (), 
+																definition.Get_Velocity (),
 																definition.Get_Velocity_Random (),
 																definition.Get_Outward_Vel (),
-																definition.Get_Vel_Inherit (), 
+																definition.Get_Vel_Inherit (),
 																color_keys,
 																opacity_keys,
 																size_keys,
@@ -270,7 +270,7 @@ ParticleEmitterClass::Create_From_Definition (const ParticleEmitterDefClass &def
 																definition.Get_Lifetime (),
 																0.0f,
 																ptexture,
-																shader, 
+																shader,
 																definition.Get_Max_Emissions (),
 																0,
 																false,
@@ -361,7 +361,7 @@ void ParticleEmitterClass::On_Frame_Update(void)
 			// until it finds a non-NULL Scene), and then adds the particle
 			// buffer to it.
 			if ( BufferSceneNeeded ) {
-			
+
 				if (Is_In_Scene()) {
 					Buffer->Add(Scene);
 					BufferSceneNeeded = false;
@@ -403,7 +403,7 @@ void ParticleEmitterClass::Reset(void)
 
 	// Reset the number of particles to emit
 	ParticlesLeft = MaxParticles;
-	EmitRemain = 0;	
+	EmitRemain = 0;
 	IsComplete = false;
 }
 
@@ -474,7 +474,7 @@ Vector3Randomizer *ParticleEmitterClass::Get_Creation_Volume (void) const
 }
 
 
-Vector3Randomizer *ParticleEmitterClass::Get_Velocity_Random (void) const	
+Vector3Randomizer *ParticleEmitterClass::Get_Velocity_Random (void) const
 {
 	Vector3Randomizer *randomizer = NULL;
 	if (VelRand != NULL) {
@@ -516,7 +516,7 @@ void ParticleEmitterClass::Emit(void)
 	if (Active && !IsComplete) {
 		Quaternion curr_quat;   // Quaternion form of orientation.
 		Vector3 curr_orig;      // Origin.
-	   
+
 	   // Convert current matrix into quaternion + origin form.
 	   curr_quat = Build_Quaternion(Get_Transform());
 	   curr_orig = Get_Transform().Get_Translation();
@@ -537,8 +537,8 @@ void ParticleEmitterClass::Emit(void)
 // is only important to avoid affecting the collision spheres of composite
 // objects into which the emitter is inserted.
 void ParticleEmitterClass::Update_Cached_Bounding_Volumes(void) const
-{ 
-	CachedBoundingSphere.Init(Get_Position(),0.0); 
+{
+	CachedBoundingSphere.Init(Get_Position(),0.0);
 	CachedBoundingBox.Center = Get_Position();
 	CachedBoundingBox.Extent.Set(0,0,0);
 	Validate_Cached_Bounding_Volumes();
@@ -556,7 +556,7 @@ void ParticleEmitterClass::Create_New_Particles(const Quaternion & curr_quat, co
 {
    Quaternion quat;
    Vector3 orig;
-   
+
    // The emit remainder from the previous interval (the time remaining in
 	// the previous interval when the last particle was emitted) is added to
 	// the size of the current frame to yield the time currently available
@@ -599,9 +599,9 @@ void ParticleEmitterClass::Create_New_Particles(const Quaternion & curr_quat, co
 	} else {
 		InheritedWorldSpaceEmitterVel.Set(0.0, 0.0, 0.0);
 	}
-	
+
    for (; EmitRemain > EmitRate;) {
-		
+
 		// Calculate the new remainder.
 		EmitRemain -= EmitRate;
 
@@ -697,19 +697,19 @@ void ParticleEmitterClass::Initialize_Particle(NewParticleStruct * newpart,
 
 ParticleEmitterDefClass *
 ParticleEmitterClass::Build_Definition (void) const
-{	
+{
 	// Allocate a new emitter definition object
 	ParticleEmitterDefClass *pdefinition = W3DNEW ParticleEmitterDefClass;
 	WWASSERT (pdefinition != NULL);
 	if (pdefinition != NULL) {
-		
+
 		// Set the texture's filename
 		TextureClass *ptexture = Get_Texture ();
 		if (ptexture != NULL) {
 			pdefinition->Set_Texture_Filename (ptexture->Get_Texture_Name());
 			REF_PTR_RELEASE(ptexture);
 		}
-		
+
 		// Now fill the definition with data from this emitter instance
 		pdefinition->Set_Render_Mode (Get_Render_Mode());
 		pdefinition->Set_Frame_Mode (Get_Frame_Mode());
@@ -726,7 +726,7 @@ ParticleEmitterClass::Build_Definition (void) const
 		pdefinition->Set_Outward_Vel (Get_Outwards_Vel ());
 		pdefinition->Set_Vel_Inherit (Get_Velocity_Inherit ());
 		pdefinition->Set_Shader (Get_Shader ());
-		
+
 		//
 		//	Pass the creation volume onto the definition
 		//
@@ -795,7 +795,7 @@ ParticleEmitterClass::Build_Definition (void) const
 
 
 		//
-		// Set up the line parameters 
+		// Set up the line parameters
 		//
 		pdefinition->Set_Line_Texture_Mapping_Mode(Get_Line_Texture_Mapping_Mode());
 		pdefinition->Set_Merge_Intersections(Is_Merge_Intersections());

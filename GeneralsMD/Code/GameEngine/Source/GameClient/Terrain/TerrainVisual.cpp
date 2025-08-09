@@ -65,7 +65,7 @@ void TerrainVisual::init( void )
 }  // end init
 
 //-------------------------------------------------------------------------------------------------
-/** Reset */ 
+/** Reset */
 //-------------------------------------------------------------------------------------------------
 void TerrainVisual::reset( void )
 {
@@ -172,15 +172,15 @@ SeismicSimulationFilterBase::SeismicSimStatusCode DomeStyleSeismicFilter::filter
       {
 
         Real distance = sqrt( sqr(x) + sqr(y) );//Pythagoras
-    
+
         if ( distance < radius )
         {
           Real distScalar = cos( ( distance / radius * (PI/2) ) );
-          Real height = (offsScalar * distScalar); 
+          Real height = (offsScalar * distScalar);
 
           workspace[ (radius + x) +  workspaceWidth * (radius + y) ] = height + heightMap->getBilinearSampleSeismicZVelocity( centerX + x,  centerY + y ) ;//kaleidoscope
-          
-          if ( x != 0 ) // non-zero test prevents cross-shaped double stamp 
+
+          if ( x != 0 ) // non-zero test prevents cross-shaped double stamp
           {
       			workspace[ (radius - x) + workspaceWidth * (radius + y) ] = height + heightMap->getBilinearSampleSeismicZVelocity( centerX - x,  centerY + y ) ;
             if ( y != 0 )

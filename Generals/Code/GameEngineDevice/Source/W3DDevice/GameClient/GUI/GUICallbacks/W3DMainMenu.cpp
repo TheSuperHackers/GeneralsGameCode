@@ -24,12 +24,12 @@
 
 // FILE: W3DMainMenu.cpp /////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Electronic Arts Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2002 - All Rights Reserved                  
-//                                                                          
+//
+//                       Electronic Arts Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2002 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 //	created:	Apr 2002
@@ -37,7 +37,7 @@
 //	Filename: 	W3DMainMenu.cpp
 //
 //	author:		Chris Huybregts
-//	
+//
 //	purpose:	The Draw Routine for the main menu
 //
 //-----------------------------------------------------------------------------
@@ -92,7 +92,7 @@ static void advancePosition(GameWindow *window, const Image *image, UnsignedInt 
 		return;
 
 	static Bool goingForward = TRUE;
-	
+
 	ICoord2D pos, size;
 	if(!window)
 	{
@@ -107,14 +107,14 @@ static void advancePosition(GameWindow *window, const Image *image, UnsignedInt 
 		window->winGetSize(&size.x,&size.y);
 	}
 	static Int Width = size.x + image->getImageWidth();
-	
+
 	static Int x = -800;
 	static Int y = pos.y - (image->getImageHeight()/2);
 
 	static UnsignedInt m_startTime = timeGetTime();
 	Int time = timeGetTime() - m_startTime;
 	Real percentDone = INT_TO_REAL(time) / 10000;
-	
+
 	if(goingForward)
 	{
 		if(percentDone >= 1)
@@ -158,16 +158,16 @@ void W3DMainMenuDraw( GameWindow *window, WinInstanceData *instData )
 	//W3DGameWinDefaultDraw( window, instData );
 
 	//R:83 G:78 B:52
-	
+
 	static UnsignedInt color = BrownishColor;
 	static UnsignedInt colorDrop = GameMakeColor(38,30,21,255);
 	ICoord2D pos, size;
-	Int height = TheDisplay->getHeight();	
+	Int height = TheDisplay->getHeight();
 
 	window->winGetScreenPosition(&pos.x, &pos.y);
 	window->winGetSize(&size.x,&size.y);
 
-	
+
 
 	IRegion2D	topHorizontal1 ={pos.x, pos.y, pos.x + size.x, pos.y	};
 	IRegion2D	topHorizontal1drop ={pos.x, pos.y+1, pos.x + size.x, pos.y+1	};
@@ -210,7 +210,7 @@ void W3DMainMenuDraw( GameWindow *window, WinInstanceData *instData )
 
 
 
-	
+
 	advancePosition(NULL, TheMappedImageCollection->findImageByName("MainMenuPulse"),pos.x,pos.y,size.x, size.y);
 
 	//TheDisplay->drawLine();
@@ -222,16 +222,16 @@ void W3DMainMenuFourDraw( GameWindow *window, WinInstanceData *instData )
 	//W3DGameWinDefaultDraw( window, instData );
 
 	//R:83 G:78 B:52
-	
+
 	static UnsignedInt color = BrownishColor;
 	static UnsignedInt colorDrop = GameMakeColor(38,30,21,255);
 	ICoord2D pos, size;
-	Int height = TheDisplay->getHeight();	
+	Int height = TheDisplay->getHeight();
 
 	window->winGetScreenPosition(&pos.x, &pos.y);
 	window->winGetSize(&size.x,&size.y);
 
-	
+
 
 	IRegion2D	topHorizontal1 ={pos.x, pos.y, pos.x + size.x, pos.y	};
 	IRegion2D	topHorizontal1drop ={pos.x, pos.y+1, pos.x + size.x, pos.y+1	};
@@ -274,7 +274,7 @@ void W3DMainMenuFourDraw( GameWindow *window, WinInstanceData *instData )
 
 
 
-	
+
 	advancePosition(NULL, TheMappedImageCollection->findImageByName("MainMenuPulse"),pos.x,pos.y,size.x, size.y);
 
 	//TheDisplay->drawLine();
@@ -294,32 +294,32 @@ void W3DMetalBarMenuDraw( GameWindow *window, WinInstanceData *instData )
 //	TheDisplay->enableClipping(FALSE);
 }
 
-	
+
 	//W3DGameWinDefaultDraw( window, instData );
 //
 //	//R:83 G:78 B:52
-//	
-//	
+//
+//
 ////	UnsignedInt color = GameMakeColor(113,108,82,212);
 //	ICoord2D pos, size;
-//	
+//
 //	window->winGetScreenPosition(&pos.x, &pos.y);
 //	window->winGetSize(&size.x,&size.y);
 //
 //	const Image *image = TheMappedImageCollection->findImageByName("LogoGlow");
-//	
+//
 //	if(!image)
 //		return;
 //
 //	Int Width = size.x + image->getImageWidth();
-//	
+//
 //	static Int x = pos.x - image->getImageWidth();
 //	static Int y = pos.y - (image->getImageHeight()/2);
 //
 //	static UnsignedInt m_startTime = timeGetTime();
 //	Int time = timeGetTime() - m_startTime;
 //	Real percentDone = INT_TO_REAL(time) / 15624;
-//	
+//
 //	if(percentDone >= 1)
 //	{
 ////			y = pos.y + size.y - (image->getImageHeight()/2) - 2;
@@ -341,7 +341,7 @@ void W3DMetalBarMenuDraw( GameWindow *window, WinInstanceData *instData )
 //		alpha = ((1-percentDone) * 2) * 255;
 //	else
 //		alpha = ( percentDone * 2) * 255;
-//		
+//
 //	TheDisplay->drawImage(image,x, y , x + image->getImageWidth(), y + image->getImageHeight(), GameMakeColor(255,255,255,alpha));
 //	//TheDisplay->drawImage(image,x, y , x + image->getImageWidth(), y + image->getImageHeight(), GameMakeColor(255,200,250,alpha));
 //	TheDisplay->enableClipping(FALSE );
@@ -353,7 +353,7 @@ void W3DClockDraw( GameWindow *window, WinInstanceData *instData )
 {
 	W3DGameWinDefaultDraw( window, instData );
 	ICoord2D pos, size;
-	
+
 	window->winGetScreenPosition(&pos.x, &pos.y);
 	window->winGetSize(&size.x,&size.y);
 
@@ -366,21 +366,21 @@ void W3DClockDraw( GameWindow *window, WinInstanceData *instData )
 	UnicodeString temp;
 	temp.translate(datestr);
 	instData->setText(temp);
-	
+
 	DisplayString *dString;
 	dString = instData->getTextDisplayString();
-	
-	
+
+
 	dString->setFont(TheFontLibrary->getFont("Arial",16,0));
-	
+
 	Int textWidth, textHeight;
 	ICoord2D  textPos;
 	IRegion2D clockClipRegion;
 	// sanity
-		
+
 	// how much space will this text take up
 	dString->getSize( &textWidth, &textHeight );
-		
+
 	//Init the clip region
 	clockClipRegion.lo.x = pos.x + 1;
 	clockClipRegion.lo.y = pos.y + 1;
@@ -404,7 +404,7 @@ void W3DMainMenuMapBorder( GameWindow *window, WinInstanceData *instData )
 		BORDER_LINE_SIZE		= 20,
 	};
 	//( Int x, Int y, Int width, Int height )
-	
+
 // save original x, y
 	Int x, y, width, height;
 	window->winGetScreenPosition(&x, &y);
@@ -418,7 +418,7 @@ void W3DMainMenuMapBorder( GameWindow *window, WinInstanceData *instData )
 	Int x2, y2;			// used for simultaneous drawing of line pairs
 	Int size = 20;
 	Int halfSize = size / 2;
-	
+
 	const Image *image = NULL;
 
 	// Draw Horizontal Lines
@@ -430,24 +430,24 @@ void W3DMainMenuMapBorder( GameWindow *window, WinInstanceData *instData )
 	image = TheMappedImageCollection->findImageByName("FrameCornerHorizontal");
 	if(image)
 	{
-		
+
 		for( x=(originalX + 10); x <= x2; x += BORDER_LINE_SIZE )
 		{
-			
+
 			TheDisplay->drawImage( image,
 														 x, y, x + size, y + size );
 			TheDisplay->drawImage( image,
 														 x, y2, x + size, y2 + size );
 
 		}
-	
+
 
 		x2 = maxX - BORDER_CORNER_SIZE;
 
 		// x == place to draw remainder if any
 		if( (x2 - x) >= (BORDER_LINE_SIZE / 2) )
 		{
-			
+
 			//Blit Half piece
 			TheDisplay->drawImage( image,
 														 x, y, x + halfSize, y + size );
@@ -457,7 +457,7 @@ void W3DMainMenuMapBorder( GameWindow *window, WinInstanceData *instData )
 			x += (BORDER_LINE_SIZE / 2);
 
 		}
-	
+
 
 		// x2 - x ... must now be less than a half piece
 		// check for equals and if not blit an adjusted half piece border pieces have
@@ -545,7 +545,7 @@ void W3DMainMenuMapBorder( GameWindow *window, WinInstanceData *instData )
 	y = maxY - BORDER_CORNER_SIZE;
 	TheDisplay->drawImage(TheMappedImageCollection->findImageByName("FrameCornerLR"),
 												 x, y, x + size, y + size );
- 
+
 	TheDisplay->enableClipping(FALSE);
 
 }
@@ -555,7 +555,7 @@ void W3DMainMenuMapBorder( GameWindow *window, WinInstanceData *instData )
 // W3DMainMenuButtonDropShadowDraw ===============================================
 /** Draw pushbutton with user supplied images */
 //=============================================================================
-void W3DMainMenuButtonDropShadowDraw( GameWindow *window, 
+void W3DMainMenuButtonDropShadowDraw( GameWindow *window,
 																	 WinInstanceData *instData )
 {
 	const Image *leftImage, *rightImage, *centerImage;
@@ -635,7 +635,7 @@ void W3DMainMenuButtonDropShadowDraw( GameWindow *window,
 	}  // end else, enabled only
 
 	// sanity, we need to have these images to make it look right
-	if( leftImage == NULL || rightImage == NULL || 
+	if( leftImage == NULL || rightImage == NULL ||
 			centerImage == NULL )
 		return;
 
@@ -658,7 +658,7 @@ void W3DMainMenuButtonDropShadowDraw( GameWindow *window,
 
 	// get width we have to draw our repeating center in
 	centerWidth = rightStart.x - leftEnd.x;
-	
+
 	if( centerWidth <= 0)
 	{
 //		TheDisplay->setClipRegion(&clipRegion);
@@ -678,7 +678,7 @@ void W3DMainMenuButtonDropShadowDraw( GameWindow *window,
 	}
 	else
 	{
-		
+
 		// how many whole repeating pieces will fit in that width
 		pieces = centerWidth / centerImage->getImageWidth();
 
@@ -691,7 +691,7 @@ void W3DMainMenuButtonDropShadowDraw( GameWindow *window,
 		{
 
 			end.x = start.x + centerImage->getImageWidth();
-			TheWindowManager->winDrawImage( centerImage, 
+			TheWindowManager->winDrawImage( centerImage,
 																			start.x, start.y,
 																			end.x, end.y );
 			start.x += centerImage->getImageWidth();
@@ -728,7 +728,7 @@ void W3DMainMenuButtonDropShadowDraw( GameWindow *window,
 		end.y = start.y + size.y;
 		TheWindowManager->winDrawImage(rightImage, start.x, start.y, end.x, end.y);
 	}
-	
+
 	// draw the button text
 	if( instData->getTextLength() )
 		drawText( window, instData );
@@ -764,7 +764,7 @@ void W3DMainMenuButtonDropShadowDraw( GameWindow *window,
 			pData->drawClock = NO_CLOCK;
 			window->winSetUserData(pData);
 		}
-	
+
 		if( pData->drawBorder && pData->colorBorder != GAME_COLOR_UNDEFINED )
 		{
 			TheDisplay->drawOpenRect(start.x - 1, start.y - 1, size.x + 2, size.y + 2, 1, pData->colorBorder);
@@ -848,29 +848,29 @@ void W3DMainMenuRandomTextDraw( GameWindow *window, WinInstanceData *instData )
 
   if( !(tData->text && (textColor != WIN_COLOR_UNDEFINED)) )
 		return;
-	
+
 	DisplayString *text = tData->text;
 	//Init the clip region
 	textclipRegion.lo.x = origin.x + 1;
 	textclipRegion.lo.y = origin.y + 1;
 	textclipRegion.hi.x = origin.x + size.x - 1;
 	textclipRegion.hi.y = origin.y + size.y - 1;
-	
+
 	// how much space will this text take up
 	text->getSize( &textWidth, &textHeight );
-	
+
 	// draw the text
 	textPos.x = origin.x;
 	textPos.y = origin.y + (size.y / 2) - (textHeight / 2);
 	text->setClipRegion(&textclipRegion);
 	text->draw( textPos.x, textPos.y, textColor, textOutlineColor );
-  
+
 }
 void W3DThinBorderDraw( GameWindow *window, WinInstanceData *instData )
 {
 	ICoord2D start, size;
 	const Image *image;
-	
+
 	//W3DGameWinDefaultDraw( window, instData );
 //	TheDisplay->setClipRegion(&clipRegion);
 	window->winGetScreenPosition( &start.x, &start.y );
@@ -919,7 +919,7 @@ void W3DMainMenuInit( WindowLayout *layout, void *userData )
 	NameKeyType skirmishID = TheNameKeyGenerator->nameToKey( AsciiString("MainMenu.wnd:ButtonSkirmish") );
 	NameKeyType onlineID = TheNameKeyGenerator->nameToKey( AsciiString("MainMenu.wnd:ButtonOnline") );
 	NameKeyType networkID = TheNameKeyGenerator->nameToKey( AsciiString("MainMenu.wnd:ButtonNetwork") );
-	
+
 	GameWindow *button = TheWindowManager->winGetWindowFromId( parent, skirmishID );
 	if (button)
 		button->winSetDrawFunc(W3DMainMenuButtonDropShadowDraw);
@@ -933,7 +933,7 @@ void W3DMainMenuInit( WindowLayout *layout, void *userData )
 //GameWindow *getUpdate = TheWindowManager->winGetWindowFromId( parent, getUpdateID );
 		//	if (getUpdate)
 		//		getUpdate->winSetDrawFunc(W3DMainMenuButtonDropShadowDraw);
-		
+
 	GameWindow *buttonUSA = TheWindowManager->winGetWindowFromId( parent, buttonUSAID );
 	if (buttonUSA)
 		buttonUSA->winSetDrawFunc(W3DMainMenuButtonDropShadowDraw);

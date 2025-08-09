@@ -71,7 +71,7 @@ public:
 	virtual UpdateSleepTime update();
 
 protected:
-	
+
 
 	Bool m_hasDied;							///< TRUE once we have triggered death
 	Bool m_particlesDestroyed;	///< TRUE once we destroy attached systems (so we do it only once)

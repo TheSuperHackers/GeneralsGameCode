@@ -29,8 +29,8 @@
 #include "_pch.h"
 #include <process.h>
 
-bool DebugCmdInterfaceDebug::Execute(class Debug& dbg, const char *cmd, 
-                                     CommandMode cmdmode, unsigned argn, 
+bool DebugCmdInterfaceDebug::Execute(class Debug& dbg, const char *cmd,
+                                     CommandMode cmdmode, unsigned argn,
                                      const char * const * argv)
 {
   // just for convenience...
@@ -40,7 +40,7 @@ bool DebugCmdInterfaceDebug::Execute(class Debug& dbg, const char *cmd,
   {
     if (!normalMode)
       return true;
-    
+
     if (!argn)
     {
       dbg << "debug group help:\n"
@@ -265,7 +265,7 @@ bool DebugCmdInterfaceDebug::Execute(class Debug& dbg, const char *cmd,
           return true;
         }
       }
-      
+
       // now pass along I/O command
       if (!cur->io)
       {

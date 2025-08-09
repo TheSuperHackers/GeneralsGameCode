@@ -16,23 +16,23 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
- /*************************************************************************** 
- ***    C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S     *** 
- *************************************************************************** 
- *                                                                         * 
- *                 Project Name : G                                        * 
- *                                                                         * 
- *                     $Archive:: /G/wwlib/nstrdup.cpp                    $* 
- *                                                                         * 
- *                      $Author:: Neal_k                                  $* 
- *                                                                         * 
- *                     $Modtime:: 9/20/99 11:56a                          $* 
- *                                                                         * 
- *                    $Revision:: 6                                       $* 
- *                                                                         * 
- *-------------------------------------------------------------------------* 
- * Functions:                                                              * 
- *   nstrdup -- duplicates a string using new[]                            * 
+ /***************************************************************************
+ ***    C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S     ***
+ ***************************************************************************
+ *                                                                         *
+ *                 Project Name : G                                        *
+ *                                                                         *
+ *                     $Archive:: /G/wwlib/nstrdup.cpp                    $*
+ *                                                                         *
+ *                      $Author:: Neal_k                                  $*
+ *                                                                         *
+ *                     $Modtime:: 9/20/99 11:56a                          $*
+ *                                                                         *
+ *                    $Revision:: 6                                       $*
+ *                                                                         *
+ *-------------------------------------------------------------------------*
+ * Functions:                                                              *
+ *   nstrdup -- duplicates a string using new[]                            *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 
@@ -41,17 +41,17 @@
 #include "nstrdup.h"
 //#include "../app/main/gnew.h"
 
-/************************************************************************** 
- * nstrdup -- duplicates a string using new[]                             * 
- *                                                                        * 
- * INPUT:                                                                 * 
- *                                                                        * 
- * OUTPUT:                                                                * 
- *                                                                        * 
- * WARNINGS:                                                              * 
- *                                                                        * 
- * HISTORY:                                                               * 
- *   02/03/1998 PWG : Created.                                            * 
+/**************************************************************************
+ * nstrdup -- duplicates a string using new[]                             *
+ *                                                                        *
+ * INPUT:                                                                 *
+ *                                                                        *
+ * OUTPUT:                                                                *
+ *                                                                        *
+ * WARNINGS:                                                              *
+ *                                                                        *
+ * HISTORY:                                                               *
+ *   02/03/1998 PWG : Created.                                            *
  *========================================================================*/
 char * nstrdup(const char *str)
 {

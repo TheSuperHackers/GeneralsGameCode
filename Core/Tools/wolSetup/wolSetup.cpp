@@ -35,14 +35,14 @@ void registerDLL(const char *dllName)
 {
 	HINSTANCE hLib = LoadLibrary(dllName);
 	FARPROC lpDllEntryPoint;
-	
+
 	if (hLib < (HINSTANCE)HINSTANCE_ERROR)
 	{
 		return;
 	}
-	
+
 	// Find the entry point.
-	(FARPROC&)lpDllEntryPoint = GetProcAddress(hLib, 
+	(FARPROC&)lpDllEntryPoint = GetProcAddress(hLib,
 		"DllRegisterServer");
 	if (lpDllEntryPoint != NULL)
 		(*lpDllEntryPoint)();

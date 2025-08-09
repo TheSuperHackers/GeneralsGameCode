@@ -41,7 +41,7 @@
 // GLOBAL /////////////////////////////////////////////////////////////////////////////////////////
 SpecialPowerStore *TheSpecialPowerStore = NULL;
 
-#define DEFAULT_DEFECTION_DETECTION_PROTECTION_TIME_LIMIT (LOGICFRAMES_PER_SECOND * 10) 
+#define DEFAULT_DEFECTION_DETECTION_PROTECTION_TIME_LIMIT (LOGICFRAMES_PER_SECOND * 10)
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -49,23 +49,23 @@ SpecialPowerStore *TheSpecialPowerStore = NULL;
 
 // Externs ////////////////////////////////////////////////////////////////////////////////////////
 template<>
-const char* SpecialPowerMaskType::s_bitNameList[] = 
+const char* SpecialPowerMaskType::s_bitNameList[] =
 {
 	"SPECIAL_INVALID",
 
 	//Superweapons
-	"SPECIAL_DAISY_CUTTER", 
-	"SPECIAL_PARADROP_AMERICA", 
-	"SPECIAL_CARPET_BOMB", 
-	"SPECIAL_CLUSTER_MINES", 
-	"SPECIAL_EMP_PULSE", 
-	"SPECIAL_NAPALM_STRIKE", 
-	"SPECIAL_CASH_HACK", 
-	"SPECIAL_NEUTRON_MISSILE", 
-	"SPECIAL_SPY_SATELLITE", 
+	"SPECIAL_DAISY_CUTTER",
+	"SPECIAL_PARADROP_AMERICA",
+	"SPECIAL_CARPET_BOMB",
+	"SPECIAL_CLUSTER_MINES",
+	"SPECIAL_EMP_PULSE",
+	"SPECIAL_NAPALM_STRIKE",
+	"SPECIAL_CASH_HACK",
+	"SPECIAL_NEUTRON_MISSILE",
+	"SPECIAL_SPY_SATELLITE",
 	"SPECIAL_DEFECTOR",
-	"SPECIAL_TERROR_CELL", 
-	"SPECIAL_AMBUSH", 
+	"SPECIAL_TERROR_CELL",
+	"SPECIAL_AMBUSH",
 	"SPECIAL_BLACK_MARKET_NUKE",
 	"SPECIAL_ANTHRAX_BOMB",
 	"SPECIAL_SCUD_STORM",
@@ -80,15 +80,15 @@ const char* SpecialPowerMaskType::s_bitNameList[] =
 	"SPECIAL_ARTILLERY_BARRAGE",
 
 	//Special abilities
-	"SPECIAL_MISSILE_DEFENDER_LASER_GUIDED_MISSILES", 
-	"SPECIAL_REMOTE_CHARGES", 
-	"SPECIAL_TIMED_CHARGES", 
-	"SPECIAL_HELIX_NAPALM_BOMB", 
-	"SPECIAL_HACKER_DISABLE_BUILDING", 
-	"SPECIAL_TANKHUNTER_TNT_ATTACK", 
+	"SPECIAL_MISSILE_DEFENDER_LASER_GUIDED_MISSILES",
+	"SPECIAL_REMOTE_CHARGES",
+	"SPECIAL_TIMED_CHARGES",
+	"SPECIAL_HELIX_NAPALM_BOMB",
+	"SPECIAL_HACKER_DISABLE_BUILDING",
+	"SPECIAL_TANKHUNTER_TNT_ATTACK",
 	"SPECIAL_BLACKLOTUS_CAPTURE_BUILDING",
-	"SPECIAL_BLACKLOTUS_DISABLE_VEHICLE_HACK", 
-	"SPECIAL_BLACKLOTUS_STEAL_CASH_HACK", 
+	"SPECIAL_BLACKLOTUS_DISABLE_VEHICLE_HACK",
+	"SPECIAL_BLACKLOTUS_STEAL_CASH_HACK",
 	"SPECIAL_INFANTRY_CAPTURE_BUILDING",
 	"SPECIAL_RADAR_VAN_SCAN",
 	"SPECIAL_SPY_DRONE",
@@ -126,7 +126,7 @@ const char* SpecialPowerMaskType::s_bitNameList[] =
 	"SUPR_SPECIAL_CRUISE_MISSILE",
 	"LAZR_SPECIAL_PARTICLE_UPLINK_CANNON",
 	"SUPW_SPECIAL_NEUTRON_MISSILE",
-	
+
 	"SPECIAL_BATTLESHIP_BOMBARDMENT",
 
 	NULL
@@ -137,7 +137,7 @@ const char* SpecialPowerMaskType::s_bitNameList[] =
 void SpecialPowerStore::parseSpecialPowerDefinition( INI *ini )
 {
 	// read the name
-	AsciiString name = ini->getNextToken();	
+	AsciiString name = ini->getNextToken();
 
 	SpecialPowerTemplate* specialPower = TheSpecialPowerStore->findSpecialPowerTemplatePrivate( name );
 
@@ -187,9 +187,9 @@ void SpecialPowerStore::parseSpecialPowerDefinition( INI *ini )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-/* static */ const FieldParse SpecialPowerTemplate::m_specialPowerFieldParse[] = 
+/* static */ const FieldParse SpecialPowerTemplate::m_specialPowerFieldParse[] =
 {
-	
+
 	{ "ReloadTime",								INI::parseDurationUnsignedInt,		NULL,	offsetof( SpecialPowerTemplate, m_reloadTime ) },
 	{ "RequiredScience",					INI::parseScience,								NULL, offsetof( SpecialPowerTemplate, m_requiredScience ) },
 	{ "InitiateSound",						INI::parseAudioEventRTS,					NULL,	offsetof( SpecialPowerTemplate, m_initiateSound ) },
@@ -330,12 +330,12 @@ Bool SpecialPowerStore::canUseSpecialPower( Object *obj, const SpecialPowerTempl
 
 	//
 	// in order to execute the special powers we have attached special power modules to the objects
-	// that can use them.  However, just because an object has a module that is capable of 
+	// that can use them.  However, just because an object has a module that is capable of
 	// doing the power, does not mean the object and the player can actually execute the
 	// power because some powers require a specialized science that the player must select and
 	// they cannot have all of them.
 	//
-	
+
 	// check for requried science
 	ScienceType requiredScience = specialPowerTemplate->getRequiredScience();
 	if( requiredScience != SCIENCE_INVALID )
@@ -347,7 +347,7 @@ Bool SpecialPowerStore::canUseSpecialPower( Object *obj, const SpecialPowerTempl
 
 	}  // end if
 
-	
+
 	// I THINK THIS IS WHERE WE BAIL OUT IF A DIFFERENT CONYARD IS ALREADY CHARGIN THIS SPECIAL RIGHT NOW //LORENZEN
 
 

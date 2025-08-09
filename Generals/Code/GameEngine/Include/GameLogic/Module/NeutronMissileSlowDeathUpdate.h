@@ -40,7 +40,7 @@ class FXList;
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 enum NeutronBlast CPP_11(: Int)
-{ 
+{
 	NEUTRON_BLAST_1 = 0,
 	NEUTRON_BLAST_2,
 	NEUTRON_BLAST_3,
@@ -60,7 +60,7 @@ struct BlastInfo
 {
   Bool enabled;					///< this blast is enabled
 	Real delay;						///< delay after death to start the regular blast
-	Real scorchDelay;			///< delay after death to start a scorch blast 
+	Real scorchDelay;			///< delay after death to start a scorch blast
 	Real innerRadius;			///< inner radius of damage
 	Real outerRadius;			///< outer radius of damage
 	Real maxDamage;				///< max amount

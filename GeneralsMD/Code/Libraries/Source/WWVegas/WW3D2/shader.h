@@ -90,7 +90,7 @@ class ShaderClass
 
 	void	Apply();
 public:
-	
+
 	enum AlphaTestType
 	{
 		ALPHATEST_DISABLE= 0,// disable alpha testing (default)
@@ -104,7 +104,7 @@ public:
 		PASS_LESS,        	// pass if incoming less than stored
 		PASS_EQUAL,        	// pass if incoming equal to stored
 		PASS_LEQUAL,			// pass if incoming less than or equal to stored (default)
-		PASS_GREATER,        // pass if incoming greater than stored	
+		PASS_GREATER,        // pass if incoming greater than stored
 		PASS_NOTEQUAL,       // pass if incoming not equal to stored
 		PASS_GEQUAL,			// pass if incoming greater than or equal to stored
 		PASS_ALWAYS,			// pass always
@@ -113,14 +113,14 @@ public:
 
 	enum DepthMaskType
 	{
-		DEPTH_WRITE_DISABLE=0,	// disable depth buffer writes 
+		DEPTH_WRITE_DISABLE=0,	// disable depth buffer writes
 		DEPTH_WRITE_ENABLE,		// enable depth buffer writes		(default)
 		DEPTH_WRITE_MAX			// end of enumeration
 	};
 
 	enum ColorMaskType
 	{
-		COLOR_WRITE_DISABLE=0,	// disable color buffer writes 
+		COLOR_WRITE_DISABLE=0,	// disable color buffer writes
 		COLOR_WRITE_ENABLE,		// enable color buffer writes		(default)
 		COLOR_WRITE_MAX			// end of enumeration
 	};
@@ -201,11 +201,11 @@ public:
 	enum SecGradientType
 	{
 		SECONDARY_GRADIENT_DISABLE=0,	// don't draw secondary gradient (default)
-		SECONDARY_GRADIENT_ENABLE,    // add secondary gradient RGB to fragment RGB 
+		SECONDARY_GRADIENT_ENABLE,    // add secondary gradient RGB to fragment RGB
 		SECONDARY_GRADIENT_MAX			// end of enumeration
 	};
 
-	enum SrcBlendFuncType	
+	enum SrcBlendFuncType
   	{
   		SRCBLEND_ZERO=0,						// fragment not added to color buffer
   		SRCBLEND_ONE,							// fragment added unmodified to color buffer (default)
@@ -230,7 +230,7 @@ public:
 		SSCAT_OTHER
 	};
 
-	enum														
+	enum
 	{
 		MASK_DEPTHCOMPARE			= (7<<0),			// mask for depth comparison setting
 		MASK_DEPTHMASK				= (1<<3),			// mask for depth mask setting
@@ -302,7 +302,7 @@ public:
 		return false;
 		return ((Get_Post_Detail_Color_Func() != DETAILCOLOR_DISABLE) || (Get_Post_Detail_Alpha_Func() != DETAILALPHA_DISABLE));
 	}
-	
+
 	inline void	Reset(void);
 
 	inline DepthCompareType		Get_Depth_Compare(void)	const								{ return (DepthCompareType)(ShaderBits&MASK_DEPTHCOMPARE>>SHIFT_DEPTHCOMPARE); }
@@ -344,12 +344,12 @@ public:
 
 	// DX 8 state management routines
 	static inline void	Invalidate() { ShaderDirty=true; }
-	
+
 	// Global backface culling invert.  This interface can be used to globally invert all backface
-	// culling.  This is a global setting and will affect everything being rendered.  Typically it 
-	// should be left alone at the default setting.  Renegade uses this feature to render the entire 
-	// scene's backfacing polygons only; this is used in a VIS-debugging process.  In order for this 
-	// to work, you will have to ww3d::Flush all rendering before changing the setting back.  
+	// culling.  This is a global setting and will affect everything being rendered.  Typically it
+	// should be left alone at the default setting.  Renegade uses this feature to render the entire
+	// scene's backfacing polygons only; this is used in a VIS-debugging process.  In order for this
+	// to work, you will have to ww3d::Flush all rendering before changing the setting back.
 	// NORMAL USERS SHOULD NEVER CALL THESE FUNCTIONS!
 	static void				Invert_Backface_Culling(bool onoff);
 	static bool				Is_Backface_Culling_Inverted(void);
@@ -375,7 +375,7 @@ public:
 
 	// Texturing, zbuffer, primary gradient, multiplicative blending
 	static ShaderClass _PresetMultiplicativeShader;
-	
+
 	// Texturing, no zbuffer reading/writing, no gradients, no blending, no
 	// fogging - mostly for opaque 2D objects.
 	static ShaderClass _PresetOpaque2DShader;

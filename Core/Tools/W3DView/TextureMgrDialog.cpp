@@ -131,8 +131,8 @@ TextureMgrDialogClass::Fill_List_Ctrl_With_Meshes (void)
 {
 	m_ListCtrl.DeleteAllItems ();
 	m_ListCtrl.SetImageList (m_pImageList, LVSIL_NORMAL);
-	m_ListCtrl.SetImageList (m_pImageListSmall, LVSIL_SMALL);	
-	m_ListCtrl.DeleteColumn (COL_TEXTURE_TYPE);	
+	m_ListCtrl.SetImageList (m_pImageListSmall, LVSIL_SMALL);
+	m_ListCtrl.DeleteColumn (COL_TEXTURE_TYPE);
 	m_ListCtrl.DeleteColumn (COL_DIMENSIONS);
 
 	// Add the textures column
@@ -142,12 +142,12 @@ TextureMgrDialogClass::Fill_List_Ctrl_With_Meshes (void)
 
 	// Loop through the list of mesh's and add them to the list control
 	for (int index = 0; index < m_NodeList.Count (); index ++) {
-		
+
 		// Add this mesh to the list control
 		TextureListNodeClass *pnode = m_NodeList[index];
 		int list_index = m_ListCtrl.InsertItem (0, pnode->Get_Name (), pnode->Get_Icon_Index ());
 		if (list_index != -1) {
-			
+
 			// Insert the texture count in the second column
 			CString texture_string;
 			texture_string.Format ("%d textures", pnode->Get_Subobj_List ().Count ());
@@ -174,7 +174,7 @@ TextureMgrDialogClass::Fill_List_Ctrl_With_Meshes (void)
 //
 void
 TextureMgrDialogClass::Fill_List_Ctrl_With_Textures (TextureListNodeClass &parent_node)
-{	
+{
 	m_ListCtrl.DeleteAllItems ();
 	m_ListCtrl.SetImageList (m_pTextureImageList, LVSIL_NORMAL);
 	m_ListCtrl.SetImageList (m_pTextureImageListSmall, LVSIL_SMALL);
@@ -184,12 +184,12 @@ TextureMgrDialogClass::Fill_List_Ctrl_With_Textures (TextureListNodeClass &paren
 	CRect rect;
 	m_ListCtrl.GetClientRect (&rect);
 	m_ListCtrl.InsertColumn (COL_DIMENSIONS, "Dimensions", LVCFMT_LEFT, (rect.Width () / 4) - 10);
-	m_ListCtrl.InsertColumn (COL_TEXTURE_TYPE, "Texture Type", LVCFMT_LEFT, (rect.Width () / 4) - 10);	
+	m_ListCtrl.InsertColumn (COL_TEXTURE_TYPE, "Texture Type", LVCFMT_LEFT, (rect.Width () / 4) - 10);
 
 	// Loop through the list of textures and add them to the list control
 	TEXTURE_NODE_LIST &node_list = parent_node.Get_Subobj_List ();
 	for (int index = 0; index < node_list.Count (); index ++) {
-		
+
 		// Add this mesh to the list control
 		TextureListNodeClass *pnode = node_list[index];
 		int list_index = m_ListCtrl.InsertItem (0, pnode->Get_Name (), pnode->Get_Icon_Index ());
@@ -210,7 +210,7 @@ TextureMgrDialogClass::Fill_List_Ctrl_With_Textures (TextureListNodeClass &paren
 BOOL
 TextureMgrDialogClass::OnInitDialog (void)
 {
-	CWaitCursor wait_cursor;	
+	CWaitCursor wait_cursor;
 
 	// Allow the base class to process this message
 	CDialog::OnInitDialog ();
@@ -254,11 +254,11 @@ TextureMgrDialogClass::OnInitDialog (void)
 															  16,
 															  16,
 															  LR_SHARED));
-	
+
 	// Add the name column to the list control
 	m_ListCtrl.GetClientRect (&rect);
 	m_ListCtrl.InsertColumn (COL_NAME, "Name", LVCFMT_LEFT, (rect.Width () / 2) - 20);
-	
+
 	// Build a list of mesh's and textures
 	Add_Subobjs_To_List (m_pBaseModel);
 	Fill_List_Ctrl_With_Meshes ();
@@ -276,11 +276,11 @@ TextureMgrDialogClass::Add_Subobjs_To_List (RenderObjClass *prender_obj)
 	// Loop through all the subobjs in this render object
 	int subobj_count = prender_obj->Get_Num_Sub_Objects ();
 	for (int index = 0; index < subobj_count; index ++) {
-		
+
 		// Get a pointer to this subobject
 		RenderObjClass *psubobj = prender_obj->Get_Sub_Object (index);
 		if (psubobj != NULL) {
-			
+
 			// Recursively add subobjs to the list
 			Add_Subobjs_To_List (psubobj);
 			MEMBER_RELEASE (psubobj);
@@ -289,7 +289,7 @@ TextureMgrDialogClass::Add_Subobjs_To_List (RenderObjClass *prender_obj)
 
 	// If this is a mesh, then add it to the list
 	if (prender_obj->Class_ID () == RenderObjClass::CLASSID_MESH) {
-		
+
 		// Create a new node and add it to our list
 		TextureListNodeClass *pnode = new TextureListNodeClass (prender_obj->Get_Name ());
 		m_NodeList.Add (pnode);
@@ -315,7 +315,7 @@ TextureMgrDialogClass::Add_Textures_To_Node
 {
 	MaterialInfoClass *pmat_info = pmesh->Get_Material_Info ();
 	if (pmat_info != NULL) {
-		
+
 		// Loop through all the textures and add them as subobjs
 		for (int index = 0; index < pmat_info->Texture_Count (); index ++) {
 			TextureClass *ptexture = pmat_info->Get_Texture (index);
@@ -331,10 +331,10 @@ TextureMgrDialogClass::Add_Textures_To_Node
 				pnode->Set_Icon_Index (Get_Thumbnail (ptexture));
 
 				// Release our hold on this pointer
-				REF_PTR_RELEASE (ptexture);				
+				REF_PTR_RELEASE (ptexture);
 			}
 		}
-		
+
 		// Release our hold on this pointer
 		MEMBER_RELEASE (pmat_info);
 	}
@@ -383,7 +383,7 @@ TextureMgrDialogClass::OnOK (void)
 // OnCancel
 //
 void
-TextureMgrDialogClass::OnCancel (void) 
+TextureMgrDialogClass::OnCancel (void)
 {
 	// Allow the base class to process this message
 	CDialog::OnCancel ();
@@ -405,16 +405,16 @@ TextureMgrDialogClass::OnDblclkMeshTextureListCtrl
 	// Determine which item is selected
 	int index = m_ListCtrl.GetNextItem (-1, LVNI_ALL | LVNI_SELECTED);
 	if (index != -1) {
-		
+
 		// Get the node associated with this entry
 		TextureListNodeClass *pnode = (TextureListNodeClass *)m_ListCtrl.GetItemData (index);
 		if (pnode != NULL) {
-			
+
 			// Is this a mesh or a texture?
 			if (pnode->Get_Type () == TextureListNodeClass::TYPE_MESH) {
 				Fill_List_Ctrl_With_Textures (*pnode);
 			} else {
-				
+
 				// Is this a texture the user can modify?
 				TextureClass *ptexture = pnode->Peek_Texture ();
 				if (ptexture->getClassID () != ID_INDIRECT_TEXTURE_CLASS) {
@@ -427,11 +427,11 @@ TextureMgrDialogClass::OnDblclkMeshTextureListCtrl
 					RenderObjClass *prender_obj = WW3DAssetManager::Get_Instance ()->Create_Render_Obj (pmesh_node->Get_Name ());
 					TextureClass *poriginal_texture = NULL;
 					if (prender_obj != NULL) {
-						
+
 						// Get the material information for this render object
 						MaterialInfoClass *pmat_info = prender_obj->Get_Material_Info ();
 						if (pmat_info != NULL) {
-							
+
 							// Attempt to find the original texture
 							poriginal_texture = pmat_info->Get_Texture (pnode->Get_Texture_Index ());
 							if (poriginal_texture->getClassID () != ID_INDIRECT_TEXTURE_CLASS) {
@@ -441,7 +441,7 @@ TextureMgrDialogClass::OnDblclkMeshTextureListCtrl
 							MEMBER_RELEASE (pmat_info);
 						}
 					}
-					
+
 					// Show the user a dialog containing the texture's properties
 					TextureSettingsDialogClass dialog ((IndirectTextureClass *)ptexture,
 																  (IndirectTextureClass *)poriginal_texture,
@@ -450,11 +450,11 @@ TextureMgrDialogClass::OnDblclkMeshTextureListCtrl
 
 					// If the settings we modified, then update the list control information
 					if (dialog.Were_Settings_Modified ()) {
-						
+
 						// Recreate the thumbnail (if necessary)
 						pnode->Set_Icon_Index (Get_Thumbnail (ptexture));
 						pnode->Set_Name (::Get_Texture_Name (*ptexture));
-						
+
 						// Update the list control with the new settings
 						Insert_Texture_Details (pnode, index);
 						m_ListCtrl.Update (index);
@@ -486,13 +486,13 @@ TextureMgrDialogClass::OnKeydownMeshTextureListCtrl
 	// Did the user press the backspace key?
 	LV_KEYDOWN *pLVKeyDown = (LV_KEYDOWN *)pNMHDR;
 	if (pLVKeyDown && (pLVKeyDown->wVKey == VK_BACK)) {
-		
+
 		// Display the mesh list
 		if (m_bContainsMeshes == false) {
 			Fill_List_Ctrl_With_Meshes ();
 		}
 	}
-	
+
 	(*pResult) = 0;
 	return ;
 }
@@ -503,15 +503,15 @@ TextureMgrDialogClass::OnKeydownMeshTextureListCtrl
 // OnDestroy
 //
 void
-TextureMgrDialogClass::OnDestroy (void) 
+TextureMgrDialogClass::OnDestroy (void)
 {
 	// Free the state image list we associated with the control
 	m_ListCtrl.SetImageList (NULL, LVSIL_NORMAL);
 	m_ListCtrl.SetImageList (NULL, LVSIL_SMALL);
 	SAFE_DELETE (m_pImageList);
 	SAFE_DELETE (m_pImageListSmall);
-	SAFE_DELETE (m_pTextureImageList);	
-	SAFE_DELETE (m_pTextureImageListSmall);	
+	SAFE_DELETE (m_pTextureImageList);
+	SAFE_DELETE (m_pTextureImageListSmall);
 	m_TextureNames.Delete_All ();
 
 	// Loop through the list of nodes and free them
@@ -522,10 +522,10 @@ TextureMgrDialogClass::OnDestroy (void)
 
 	// Remove all the entries from the list
 	m_NodeList.Delete_All ();
-	
+
 	// Allow the base class to process this message
 	CDialog::OnDestroy ();
-	return ; 
+	return ;
 }
 
 
@@ -613,7 +613,7 @@ TextureMgrDialogClass::Get_Thumbnail (srTextureIFace *ptexture)
 		// Create a windows bitmap from this texture
 		HBITMAP hbmp = ::Make_Bitmap_From_Texture (*ptexture, TEXTURE_THUMB_X, TEXTURE_THUMB_Y);
 		if (hbmp != NULL) {
-			
+
 			// Insert this bitmap into our imagelist
 			CBitmap temp_obj;
 			temp_obj.Attach (hbmp);
@@ -627,11 +627,11 @@ TextureMgrDialogClass::Get_Thumbnail (srTextureIFace *ptexture)
 
 			// Add a name to our list to represent this texture
 			m_TextureNames.Add (::Get_Texture_Name (*ptexture));
-		}	
+		}
 	}
 
 	// Return the icon index
-	return icon_index;	
+	return icon_index;
 }
 
 
@@ -654,7 +654,7 @@ TextureMgrDialogClass::Insert_Texture_Details
 		if (ptexture->getClassID () == ID_INDIRECT_TEXTURE_CLASS) {
 			texture_name += " *";
 		}
-		
+
 		// Update the texture's icon and name in the list control
 		m_ListCtrl.SetItem (index,
 								  COL_NAME,
@@ -663,7 +663,7 @@ TextureMgrDialogClass::Insert_Texture_Details
 								  pnode->Get_Icon_Index (),
 								  0, 0, 0);
 
-		// Insert the texture dimensions in the second column		
+		// Insert the texture dimensions in the second column
 		SurfaceClass::SurfaceDescription surface_desc;
 		ptexture->Get_Level_Description(surface_desc);
 		CString dimension_string;
@@ -714,7 +714,7 @@ TextureMgrDialogClass::Insert_Texture_Details
 /////////////////////////////////////////////////////////////////////////////
 void
 TextureMgrDialogClass::OnPropagate (void)
-{	
+{
 	//
 	//	Determine the currently selected item
 	//
@@ -736,11 +736,11 @@ TextureMgrDialogClass::OnPropagate (void)
 	//
 	int counter = m_ListCtrl.GetItemCount ();
 	while (counter --) {
-		
+
 		//
 		//	Does this node have the same number of replaceable textures as the src node?
 		//
-		TextureListNodeClass *curr_node = (TextureListNodeClass *)m_ListCtrl.GetItemData (counter);		
+		TextureListNodeClass *curr_node = (TextureListNodeClass *)m_ListCtrl.GetItemData (counter);
 		if (	(curr_node != NULL) &&
 				(curr_node->Get_Subobj_List ().Count () == src_texture_count))
 		{
@@ -751,11 +751,11 @@ TextureMgrDialogClass::OnPropagate (void)
 			//
 			int texture_counter = src_texture_count;
 			while (texture_counter --) {
-				
+
 				TextureListNodeClass *curr_texture_node	= curr_texture_list[texture_counter];
 				TextureListNodeClass *src_texture_node		= src_texture_list[texture_counter];
 				if (curr_texture_node != NULL && src_texture_node != NULL) {
-					
+
 					TextureClass *curr_texture	= curr_texture_node->Peek_Texture ();
 					TextureClass *src_texture	= src_texture_node->Peek_Texture ();
 
@@ -767,7 +767,7 @@ TextureMgrDialogClass::OnPropagate (void)
 							src_texture->getClassID () == ID_INDIRECT_TEXTURE_CLASS)
 					{
 						TextureClass *real_texture = ((IndirectTextureClass *)src_texture)->Peek_Texture ();
-						((IndirectTextureClass *)curr_texture)->Set_Texture (real_texture);					
+						((IndirectTextureClass *)curr_texture)->Set_Texture (real_texture);
 					}
 				}
 			}

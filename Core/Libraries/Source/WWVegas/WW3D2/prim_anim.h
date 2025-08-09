@@ -55,7 +55,7 @@ class ChunkLoadClass;
 //
 //	PrimitiveAnimationChannelClass
 //
-//	This template class provides animated 'channels' of data for the 
+//	This template class provides animated 'channels' of data for the
 // RingRenderObjClass and SphereRenderObjClass objects.
 //
 /////////////////////////////////////////////////////////////////////
@@ -101,7 +101,7 @@ public:
 	/////////////////////////////////////////////////////////
 	const PrimitiveAnimationChannelClass<T> &operator= (const PrimitiveAnimationChannelClass<T> &src);
 	const KeyClass &		operator[] (int index)	{ return Get_Key (index); }
-	
+
 	/////////////////////////////////////////////////////////
 	//	Public methods
 	/////////////////////////////////////////////////////////
@@ -115,7 +115,7 @@ public:
 	void						Insert_Key (int index, const T &value, float time);
 	void						Delete_Key (int index);
 	void						Reset (void);
-	
+
 	virtual void			Save (ChunkSaveClass &csave);
 	virtual void			Load (ChunkLoadClass &cload);
 
@@ -265,7 +265,7 @@ PrimitiveAnimationChannelClass<T>::operator= (const PrimitiveAnimationChannelCla
 	//
 	//	Copy the data array
 	//
-	for (int index = 0; index < src.Get_Key_Count (); index ++) {		
+	for (int index = 0; index < src.Get_Key_Count (); index ++) {
 		m_Data.Add (src.Get_Key (index));
 	}
 
@@ -280,7 +280,7 @@ template<class T> void
 PrimitiveAnimationChannelClass<T>::Save (ChunkSaveClass &csave)
 {
 	csave.Begin_Chunk (CHUNKID_VARIABLES);
-		
+
 		//
 		//	Save each key
 		//
@@ -304,7 +304,7 @@ PrimitiveAnimationChannelClass<T>::Load (ChunkLoadClass &cload)
 
 	while (cload.Open_Chunk ()) {
 		switch (cload.Cur_Chunk_ID ()) {
-			
+
 			case CHUNKID_VARIABLES:
 				Load_Variables (cload);
 				break;
@@ -327,7 +327,7 @@ PrimitiveAnimationChannelClass<T>::Load_Variables (ChunkLoadClass &cload)
 	//
 	while (cload.Open_Micro_Chunk ()) {
 		switch (cload.Cur_Micro_Chunk_ID ()) {
-			
+
 			case VARID_KEY:
 			{
 				KeyClass value;
@@ -339,7 +339,7 @@ PrimitiveAnimationChannelClass<T>::Load_Variables (ChunkLoadClass &cload)
 
 		cload.Close_Micro_Chunk ();
 	}
-	
+
 	return ;
 }
 

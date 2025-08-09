@@ -24,12 +24,12 @@
 
 // FILE: Color.h //////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information					         
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:    RTS3
@@ -68,7 +68,7 @@ typedef Int Color;
 
 inline Color GameMakeColor( UnsignedByte red, UnsignedByte green, UnsignedByte blue, UnsignedByte alpha )
 {
-	return (alpha << 24) | (red << 16) | (green << 8) | (blue); 
+	return (alpha << 24) | (red << 16) | (green << 8) | (blue);
 }
 
 extern void GameGetColorComponents( Color color,

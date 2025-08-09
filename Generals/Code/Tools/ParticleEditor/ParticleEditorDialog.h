@@ -47,7 +47,7 @@ enum SwitchType
 	ST_ONESHOT,
 	ST_ALIGNXY,
 	ST_EMITABOVEGROUNDONLY,
-	ST_PARTICLEUPTOWARDSEMITTER, 
+	ST_PARTICLEUPTOWARDSEMITTER,
 };
 
 class DebugWindowDialog : public CDialog
@@ -56,7 +56,7 @@ class DebugWindowDialog : public CDialog
 		enum {IDD = IDD_PSEd};
 		DebugWindowDialog(UINT nIDTemplate = DebugWindowDialog::IDD, CWnd* pParentWnd = NULL);
 		virtual ~DebugWindowDialog();
-		
+
 		void InitPanel( void );
 		HWND GetMainWndHWND( void );
 		void addParticleSystem( IN const char *particleSystem );
@@ -78,11 +78,11 @@ class DebugWindowDialog : public CDialog
 
 		// The purpose of these is to add as few friends as possible to the particle system classes.
 		// Therefore, this class has ALL the access to ParticleSystems, and dances on the data directly.
-		// Child panels make calls here 
-		void getColorValueFromSystem( IN Int systemNum, 
+		// Child panels make calls here
+		void getColorValueFromSystem( IN Int systemNum,
 																  OUT RGBColorKeyframe &colorFrame ) const;
 
-		void updateColorValueToSystem( IN Int systemNum, 
+		void updateColorValueToSystem( IN Int systemNum,
 																	 IN const RGBColorKeyframe &colorFrame );
 
 		void getAlphaRangeFromSystem( IN Int systemNum,
@@ -108,7 +108,7 @@ class DebugWindowDialog : public CDialog
 
 		void getLineFromSystem( IN Int coordNum, // 0:X1, 1:Y1, 2:Z1, 3:X2, 4:Y2, 5:Z2
 														OUT Real& linePoint ) const;
-		
+
 		void updateLineToSystem( IN Int coordNum, // 0:X, 1:Y, 2:Z, 3:X2, 4:Y2, 5:Z2
 														 IN const Real &linePoint );
 
@@ -126,7 +126,7 @@ class DebugWindowDialog : public CDialog
 
 		void getVelOrthoFromSystem( IN Int coordNum, // 0:Xmin, 1:Ymin, 2:Zmin, 3:Xmax, 4:Ymax, 5:Zmax
 																OUT Real& ortho ) const;
-		
+
 		void updateVelOrthoToSystem( IN Int coordNum, // 0:Xmin, 1:Ymin, 2:Zmin, 3:Xmax, 4:Ymax, 5:Zmax
 																 IN const Real& ortho );
 
@@ -217,10 +217,10 @@ class DebugWindowDialog : public CDialog
 		void updateDriftVelocityToSystem( IN Int parmNum, // 0:min, 1:min
 																	 IN const Real& driftVelocity );
 
-		void getSwitchFromSystem( IN SwitchType switchType, 
+		void getSwitchFromSystem( IN SwitchType switchType,
 															OUT Bool& switchVal ) const;
 
-		void updateSwitchToSystem( IN SwitchType switchType, 
+		void updateSwitchToSystem( IN SwitchType switchType,
 															 IN const Bool& switchVal );
 
 		void getSlaveSystemFromSystem( OUT char *buffer, IN Int bufferSize) const;
@@ -250,10 +250,10 @@ class DebugWindowDialog : public CDialog
 
 
 
-		const std::list<std::string> &getAllThingTemplates( void ) const { return m_listOfThingTemplates; } 
+		const std::list<std::string> &getAllThingTemplates( void ) const { return m_listOfThingTemplates; }
 		const std::list<std::string> &getAllParticleSystems( void ) const { return m_listOfParticleSystems; }
 
-		ParticleSystemTemplate *getCurrentParticleSystem( void ) { return m_particleSystem; } 
+		ParticleSystemTemplate *getCurrentParticleSystem( void ) { return m_particleSystem; }
 
 	protected:
 		HWND			mMainWndHWND;
@@ -262,7 +262,7 @@ class DebugWindowDialog : public CDialog
 		std::list<std::string> m_listOfThingTemplates;
 		std::vector<std::string> m_particleParmValues;
 		std::list<std::string> m_listOfParticleSystems;
-		
+
 		Bool			m_shouldWriteINI;
 		Bool			m_showColorDlg;
 		Bool			m_showSwitchesDlg;
@@ -288,10 +288,10 @@ class DebugWindowDialog : public CDialog
 
 		void appendParticleSystemToList( IN const std::string &rString );
 		void appendThingTemplateToList( IN const std::string &rString );
-		
-		// if true, updates the UI from the Particle System. 
+
+		// if true, updates the UI from the Particle System.
 		// if false, updates the Particle System from the UI
-		void performUpdate( IN Bool toUI );	
+		void performUpdate( IN Bool toUI );
 
 
 	protected:

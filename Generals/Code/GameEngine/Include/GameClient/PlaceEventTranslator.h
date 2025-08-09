@@ -33,7 +33,7 @@
 #include "GameClient/InGameUI.h"
 
 //-----------------------------------------------------------------------------
-class PlaceEventTranslator : public GameMessageTranslator                          
+class PlaceEventTranslator : public GameMessageTranslator
 {
 private:
 	UnsignedInt m_frameOfUpButton;
@@ -42,6 +42,6 @@ public:
 	PlaceEventTranslator();
 	~PlaceEventTranslator();
 	virtual GameMessageDisposition translateGameMessage(const GameMessage *msg);
-};	
+};
 
 #endif

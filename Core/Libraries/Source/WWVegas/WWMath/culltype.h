@@ -45,7 +45,7 @@
 #include "always.h"
 
 /*
-** CullType is an enumeration of the possible results of a culling 
+** CullType is an enumeration of the possible results of a culling
 ** operation.  It is placed here so that all of the different cull functions
 ** (which are scattered throughout WWMath, WW3D, WWPhys, etc) can
 ** communicate the result in a consistent way

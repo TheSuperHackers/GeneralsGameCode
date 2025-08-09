@@ -69,7 +69,7 @@ public:
 	RebuildHoleExposeDie( Thing *thing, const ModuleData* moduleData );
 	// virtual destructor prototype provided by memory pool declaration
 
-	virtual void onDie( const DamageInfo *damageInfo ); 
+	virtual void onDie( const DamageInfo *damageInfo );
 
 };
 

@@ -98,7 +98,7 @@ protected:
 	Bool m_hidden;																	///< visible state of this screen
 
 	//
-	// These are callbacks you can attach to a "layout file" ... they are not 
+	// These are callbacks you can attach to a "layout file" ... they are not
 	// automatically called when using the WindowManager to load and create
 	// the layout.  You can incorporate when and where init, shutdown and update should
 	// be called for any system or code that is uses these window layouts

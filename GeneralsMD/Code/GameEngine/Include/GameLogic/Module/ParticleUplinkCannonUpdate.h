@@ -75,7 +75,7 @@ public:
 	AsciiString			m_laserBaseLightFlareParticleSystemName;
 	AsciiString			m_laserBaseMediumFlareParticleSystemName;
 	AsciiString			m_laserBaseIntenseFlareParticleSystemName;
-	
+
 	AsciiString			m_fireBoneName;
 	AsciiString			m_particleBeamLaserName;
 
@@ -110,7 +110,7 @@ public:
 	ParticleUplinkCannonUpdateModuleData();
 	static void buildFieldParse(MultiIniFieldParse& p);
 
-private: 
+private:
 
 };
 

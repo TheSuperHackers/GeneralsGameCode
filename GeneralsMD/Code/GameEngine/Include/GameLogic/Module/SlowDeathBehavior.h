@@ -58,7 +58,7 @@ enum SlowDeathPhaseType CPP_11(: Int)
 };
 
 #ifdef DEFINE_SLOWDEATHPHASE_NAMES
-static const char *TheSlowDeathPhaseNames[] = 
+static const char *TheSlowDeathPhaseNames[] =
 {
 	"INITIAL",
 	"MIDPOINT",
@@ -90,7 +90,7 @@ public:
 	Real							m_flingPitch;
 	Real							m_flingPitchVariance;
 
-	enum 
+	enum
 	{
 		//flags used by m_maskOfLoadedEffects
 		HAS_FX							= 1,
@@ -123,7 +123,7 @@ public:
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-class SlowDeathBehavior : public UpdateModule, 
+class SlowDeathBehavior : public UpdateModule,
 													public DieModuleInterface,
 													public SlowDeathBehaviorInterface
 {
@@ -142,7 +142,7 @@ public:
 	virtual DieModuleInterface* getDie() { return this; }
 
 	// UpdateModuleInterface
-	virtual UpdateSleepTime update();	
+	virtual UpdateSleepTime update();
 	virtual SlowDeathBehaviorInterface* getSlowDeathBehaviorInterface() { return this; }
 	// Disabled conditions to process -- all
 	virtual DisabledMaskType getDisabledTypesToProcess() const { return DISABLEDMASK_ALL; }
@@ -162,7 +162,7 @@ protected:
 	inline UnsignedInt getDestructionFrame() const { return m_destructionFrame; }
 
 private:
-	
+
 	enum
 	{
 		SLOW_DEATH_ACTIVATED,
@@ -173,7 +173,7 @@ private:
 
 	UnsignedInt m_sinkFrame;							///< Frame to be sunken into the ground on
 	UnsignedInt m_midpointFrame;					///< The midpoint is between .25 through life and .75 through life (eg)
-	UnsignedInt m_destructionFrame;	
+	UnsignedInt m_destructionFrame;
 	Real				m_acceleratedTimeScale;		///<used to speedup deaths when needed to improve game performance.
 	UnsignedInt	m_flags;
 };

@@ -43,13 +43,13 @@ W3DDynamicLight::~W3DDynamicLight(void)
 }
 
 void W3DDynamicLight::On_Frame_Update(void)
-{	
+{
 	if (!m_enabled) {
 		return;
 	}
 	Real factor = 1.0f;
 	if (m_curIncreaseFrameCount>0 && m_increaseFrameCount>0) {
-		// increasing 
+		// increasing
 		m_curIncreaseFrameCount--;
 		factor = (m_increaseFrameCount-m_curIncreaseFrameCount)/(Real)m_increaseFrameCount;
 

@@ -24,12 +24,12 @@
 
 // FILE: Handicap.cpp /////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:   RTS3
@@ -50,7 +50,7 @@
 #include "Common/ThingTemplate.h"
 
 //-----------------------------------------------------------------------------
-Handicap::Handicap() 
+Handicap::Handicap()
 {
 	init();
 }
@@ -66,10 +66,10 @@ void Handicap::init()
 //-----------------------------------------------------------------------------
 void Handicap::readFromDict(const Dict* d)
 {
-	// this isn't very efficient, but is only called at load times, 
+	// this isn't very efficient, but is only called at load times,
 	// so it probably doesn't really matter.
 
-	const char* htNames[HANDICAP_TYPE_COUNT] = 
+	const char* htNames[HANDICAP_TYPE_COUNT] =
 	{
 		"BUILDCOST",
 		"BUILDTIME",
@@ -80,7 +80,7 @@ void Handicap::readFromDict(const Dict* d)
 //		"INCOME"
 	};
 
-	const char* ttNames[THING_TYPE_COUNT] = 
+	const char* ttNames[THING_TYPE_COUNT] =
 	{
 		"GENERIC",
 		"BUILDINGS",

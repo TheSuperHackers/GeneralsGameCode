@@ -57,7 +57,7 @@ Display::Display()
 	m_letterBoxEnabled = FALSE;
 	m_cinematicText = AsciiString::TheEmptyString;
 	m_cinematicFont = NULL;
-	m_cinematicTextFrames = 0;  
+	m_cinematicTextFrames = 0;
 	m_movieHoldTime	= -1;
 	m_copyrightHoldTime = -1;
 	m_elapsedMovieTime = 0;
@@ -136,7 +136,7 @@ void Display::draw( void )
 {
 	// redraw all views
 	drawViews();
-	
+
 	// redraw the in-game user interface
 	/// @todo Switch between in-game and shell interfaces
 
@@ -202,7 +202,7 @@ void Display::setHeight( UnsignedInt height )
 
 void Display::playLogoMovie( AsciiString movieName, Int minMovieLength, Int minCopyrightLength )
 {
-	
+
 	stopMovie();
 
 	m_videoStream = TheVideoPlayer->open( movieName );
@@ -211,22 +211,22 @@ void Display::playLogoMovie( AsciiString movieName, Int minMovieLength, Int minC
 	{
 		return;
 	}
-	
+
 	m_currentlyPlayingMovie = movieName;
 	m_movieHoldTime = minMovieLength;
 	m_copyrightHoldTime = minCopyrightLength;
 	m_elapsedMovieTime = timeGetTime();  // we're using time get time becuase legal want's actual "Seconds"
-	
+
 	m_videoBuffer = createVideoBuffer();
-	if (	m_videoBuffer == NULL || 
-				!m_videoBuffer->allocate(	m_videoStream->width(), 
+	if (	m_videoBuffer == NULL ||
+				!m_videoBuffer->allocate(	m_videoStream->width(),
 													m_videoStream->height())
 		)
 	{
 		stopMovie();
 		return;
 	}
-	
+
 }
 
 //============================================================================
@@ -235,7 +235,7 @@ void Display::playLogoMovie( AsciiString movieName, Int minMovieLength, Int minC
 
 void Display::playMovie( AsciiString movieName)
 {
-	
+
 	stopMovie();
 
 
@@ -246,19 +246,19 @@ void Display::playMovie( AsciiString movieName)
 	{
 		return;
 	}
-	
+
 	m_currentlyPlayingMovie = movieName;
 
 	m_videoBuffer = createVideoBuffer();
-	if (	m_videoBuffer == NULL || 
-				!m_videoBuffer->allocate(	m_videoStream->width(), 
+	if (	m_videoBuffer == NULL ||
+				!m_videoBuffer->allocate(	m_videoStream->width(),
 													m_videoStream->height())
 		)
 	{
 		stopMovie();
 		return;
 	}
-	
+
 }
 
 //============================================================================
@@ -307,7 +307,7 @@ void Display::update( void )
 			{
 				if( m_elapsedCopywriteTime == 0 && m_elapsedCopywriteTime >= 0)
 				{
-					//display the copyrighttext;		
+					//display the copyrighttext;
 					if(m_copyrightDisplayString)
 						deleteInstance(m_copyrightDisplayString);
 					m_copyrightDisplayString = TheDisplayStringManager->newDisplayString();
@@ -316,14 +316,14 @@ void Display::update( void )
 					{	FontDesc	*fontdesc=&TheGlobalLanguageData->m_copyrightFont;
 						m_copyrightDisplayString->setFont(TheFontLibrary->getFont(fontdesc->name,
 							TheGlobalLanguageData->adjustFontSize(fontdesc->size),
-							fontdesc->bold));	
+							fontdesc->bold));
 					}
 					else
-						m_copyrightDisplayString->setFont(TheFontLibrary->getFont("Courier", 
-						TheGlobalLanguageData->adjustFontSize(12), TRUE));	
+						m_copyrightDisplayString->setFont(TheFontLibrary->getFont("Courier",
+						TheGlobalLanguageData->adjustFontSize(12), TRUE));
 					m_elapsedCopywriteTime = timeGetTime();
 				}
-				if(m_movieHoldTime + m_elapsedMovieTime < timeGetTime() && 
+				if(m_movieHoldTime + m_elapsedMovieTime < timeGetTime() &&
 						m_copyrightHoldTime + m_elapsedCopywriteTime < timeGetTime())
 				{
 					m_movieHoldTime = -1;

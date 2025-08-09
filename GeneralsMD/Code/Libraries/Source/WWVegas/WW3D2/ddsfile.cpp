@@ -54,8 +54,8 @@ DDSFileClass::DDSFileClass(const char* name,unsigned reduction_factor)
 	Name[len-2]='d';
 	Name[len-1]='s';
 
-	file_auto_ptr file(_TheFileFactory,Name);	
-	if (!file->Is_Available()) 
+	file_auto_ptr file(_TheFileFactory,Name);
+	if (!file->Is_Available())
 	{
 		return;
 	}
@@ -79,7 +79,7 @@ DDSFileClass::DDSFileClass(const char* name,unsigned reduction_factor)
 	// Now, we read DDSURFACEDESC2 defining the compressed data
 	read_bytes=file->Read(&SurfaceDesc,sizeof(LegacyDDSURFACEDESC2));
 	// Verify the structure size matches the read size
-	if (read_bytes==0 || read_bytes!=SurfaceDesc.Size) 
+	if (read_bytes==0 || read_bytes!=SurfaceDesc.Size)
 	{
 		StringClass tmp(0,true);
 		tmp.Format("File %s loading failed.\nTried to read %d bytes, got %d. (SurfDesc.size=%d)",name,sizeof(LegacyDDSURFACEDESC2),read_bytes,SurfaceDesc.Size);
@@ -145,19 +145,19 @@ DDSFileClass::DDSFileClass(const char* name,unsigned reduction_factor)
 	LevelSizes=W3DNEWARRAY unsigned[MipLevels];
 	LevelOffsets=W3DNEWARRAY unsigned[MipLevels];
 	unsigned level=0;
-	for (;level<ReductionFactor;++level) 
+	for (;level<ReductionFactor;++level)
 	{
-		if (level_size>16) 
+		if (level_size>16)
 		{	// If surface is bigger than one block (8 or 16 bytes)...
 			level_size/=level_mip_dec;
 		}
 	}
-	for (level=0;level<MipLevels;++level) 
+	for (level=0;level<MipLevels;++level)
 	{
 		LevelSizes[level]=level_size;
 		LevelOffsets[level]=level_offset;
 		level_offset+=level_size;
-		if (level_size>16) 
+		if (level_size>16)
 		{	// If surface is bigger than one block (8 or 16 bytes)...
 			level_size/=level_mip_dec;
 		}
@@ -188,7 +188,7 @@ DDSFileClass::~DDSFileClass()
 
 unsigned DDSFileClass::Get_Width(unsigned level) const
 {
-	WWASSERT(level<MipLevels); 
+	WWASSERT(level<MipLevels);
 	unsigned width=Width>>level;
 	if (width<4) width=4;
 	return width;
@@ -196,7 +196,7 @@ unsigned DDSFileClass::Get_Width(unsigned level) const
 
 unsigned DDSFileClass::Get_Height(unsigned level) const
 {
-	WWASSERT(level<MipLevels); 
+	WWASSERT(level<MipLevels);
 	unsigned height=Height>>level;
 	if (height<4) height=4;
 	return height;
@@ -212,26 +212,26 @@ unsigned DDSFileClass::Get_Depth(unsigned level) const
 
 const unsigned char* DDSFileClass::Get_Memory_Pointer(unsigned level) const
 {
-	WWASSERT(level<MipLevels); 
+	WWASSERT(level<MipLevels);
 	return DDSMemory+LevelOffsets[level];
 }
 
 unsigned DDSFileClass::Get_Level_Size(unsigned level) const
 {
-	WWASSERT(level<MipLevels); 
+	WWASSERT(level<MipLevels);
 	return LevelSizes[level];
 }
 
 // For some reason DX-Tex tool doesn't fill the surface size field, so we need to calculate it...
 unsigned DDSFileClass::Calculate_DXTC_Surface_Size
 (
-	unsigned width, 
-	unsigned height, 
+	unsigned width,
+	unsigned height,
 	WW3DFormat format
 )
 {
 	unsigned level_size=(width/4)*(height/4);
-	switch (format) 
+	switch (format)
 	{
 	case WW3D_FORMAT_DXT1:
 		level_size*=8;
@@ -254,8 +254,8 @@ bool DDSFileClass::Load()
 	if (DDSMemory) return false;
 	if (!LevelSizes || !LevelOffsets) return false;
 
-	file_auto_ptr file(_TheFileFactory,Name);	
-	if (!file->Is_Available()) 
+	file_auto_ptr file(_TheFileFactory,Name);
+	if (!file->Is_Available())
 	{
 		return false;
 	}
@@ -278,11 +278,11 @@ bool DDSFileClass::Load()
 	);
 
 	unsigned skipped_offset=0;
-	for (unsigned i=0;i<ReductionFactor;++i) 
+	for (unsigned i=0;i<ReductionFactor;++i)
 	{
 		skipped_offset+=level_size;
 		size-=level_size;
-		if (level_size>16) 
+		if (level_size>16)
 		{	// If surface is bigger than one block (8 or 16 bytes)...
 			level_size/=4;
 		}
@@ -292,7 +292,7 @@ bool DDSFileClass::Load()
 	unsigned seek_size=file->Seek(SurfaceDesc.Size+4+skipped_offset);
 	WWASSERT(seek_size==(SurfaceDesc.Size+4+skipped_offset));
 
-	if (size && size<0x80000000) 
+	if (size && size<0x80000000)
 	{
 		// Allocate memory for the data excluding the headers
 		DDSMemory=MSGW3DNEWARRAY("DDSMemory") unsigned char[size];
@@ -371,10 +371,10 @@ void DDSFileClass::Copy_Level_To_Surface(unsigned level,IDirect3DSurface8* d3d_s
 void DDSFileClass::Copy_Level_To_Surface
 (
 	unsigned level,
-	WW3DFormat dest_format, 
-	unsigned dest_width, 
-	unsigned dest_height, 
-	unsigned char* dest_surface, 
+	WW3DFormat dest_format,
+	unsigned dest_width,
+	unsigned dest_height,
+	unsigned char* dest_surface,
 	unsigned dest_pitch,
 	const Vector3& hsv_shift
 )
@@ -541,18 +541,18 @@ void DDSFileClass::Copy_CubeMap_Level_To_Surface
 
 	// If the format and size is a match just copy the contents
 	bool has_hsv_shift = hsv_shift[0]!=0.0f || hsv_shift[1]!=0.0f || hsv_shift[2]!=0.0f;
-	if (dest_format==Format && dest_width==Get_Width(level) && dest_height==Get_Height(level)) 
+	if (dest_format==Format && dest_width==Get_Width(level) && dest_height==Get_Height(level))
 	{
 		// If hue shift, we can't just copy...
-		if (has_hsv_shift) 
+		if (has_hsv_shift)
 		{
-			if (Format==WW3D_FORMAT_DXT1) 
+			if (Format==WW3D_FORMAT_DXT1)
 			{
 				const unsigned* src_ptr=reinterpret_cast<const unsigned*>(Get_CubeMap_Memory_Pointer(face,level));
 				unsigned* dest_ptr=reinterpret_cast<unsigned*>(dest_surface);
-				for (unsigned y=0;y<dest_height;y+=4) 
+				for (unsigned y=0;y<dest_height;y+=4)
 				{
-					for (unsigned x=0;x<dest_width;x+=4) 
+					for (unsigned x=0;x<dest_width;x+=4)
 					{
 						unsigned cols=*src_ptr++;		// Bytes 1-4 of color block
 						unsigned col0=RGB565_To_ARGB8888((unsigned short)(cols>>16));
@@ -568,13 +568,13 @@ void DDSFileClass::Copy_CubeMap_Level_To_Surface
 					}
 				}
 			}
-			else if (Format==WW3D_FORMAT_DXT5) 
+			else if (Format==WW3D_FORMAT_DXT5)
 			{
 				const unsigned* src_ptr=reinterpret_cast<const unsigned*>(Get_CubeMap_Memory_Pointer(face,level));
 				unsigned* dest_ptr=reinterpret_cast<unsigned*>(dest_surface);
-				for (unsigned y=0;y<dest_height;y+=4) 
+				for (unsigned y=0;y<dest_height;y+=4)
 				{
-					for (unsigned x=0;x<dest_width;x+=4) 
+					for (unsigned x=0;x<dest_width;x+=4)
 					{
 						*dest_ptr++=*src_ptr++;		// Bytes 1-4 of alpha block
 						*dest_ptr++=*src_ptr++;		// Bytes 5-8 of alpha block
@@ -592,7 +592,7 @@ void DDSFileClass::Copy_CubeMap_Level_To_Surface
 					}
 				}
 			}
-			else 
+			else
 			{
 				WWASSERT(0);
 			}
@@ -604,24 +604,24 @@ void DDSFileClass::Copy_CubeMap_Level_To_Surface
 			memcpy(dest_surface,Get_CubeMap_Memory_Pointer(face,level),compressed_size);
 		}
 	}
-	else 
+	else
 	{
 		// If size matches, copy each pixel linearly with color space conversion
-		if (dest_width==Get_Width(level) && dest_height==Get_Height(level)) 
+		if (dest_width==Get_Width(level) && dest_height==Get_Height(level))
 		{
 			// An exception here - if the source format is DXT1 and the destination
 			// is DXT2, just copy the contents and create an empty alpha channel.
 			// This is needed on NVidia cards that have problems with DXT1 compression.
-			if (Format==WW3D_FORMAT_DXT1 && dest_format==WW3D_FORMAT_DXT2) 
+			if (Format==WW3D_FORMAT_DXT1 && dest_format==WW3D_FORMAT_DXT2)
 			{
 				// If hue shift, we can't just copy...
-				if (has_hsv_shift) 
+				if (has_hsv_shift)
 				{
 					const unsigned* src_ptr=reinterpret_cast<const unsigned*>(Get_CubeMap_Memory_Pointer(face,level));
 					unsigned* dest_ptr=reinterpret_cast<unsigned*>(dest_surface);
-					for (unsigned y=0;y<dest_height;y+=4) 
+					for (unsigned y=0;y<dest_height;y+=4)
 					{
-						for (unsigned x=0;x<dest_width;x+=4) 
+						for (unsigned x=0;x<dest_width;x+=4)
 						{
 							*dest_ptr++=0xffffffff;		// Bytes 1-4 of alpha block
 							*dest_ptr++=0xffffffff;		// Bytes 5-8 of alpha block
@@ -641,13 +641,13 @@ void DDSFileClass::Copy_CubeMap_Level_To_Surface
 						}
 					}
 				}
-				else 
+				else
 				{
 					const unsigned* src_ptr=reinterpret_cast<const unsigned*>(Get_CubeMap_Memory_Pointer(face,level));
 					unsigned* dest_ptr=reinterpret_cast<unsigned*>(dest_surface);
-					for (unsigned y=0;y<dest_height;y+=4) 
+					for (unsigned y=0;y<dest_height;y+=4)
 					{
-						for (unsigned x=0;x<dest_width;x+=4) 
+						for (unsigned x=0;x<dest_width;x+=4)
 						{
 							*dest_ptr++=0xffffffff;		// Bytes 1-4 of alpha block
 							*dest_ptr++=0xffffffff;		// Bytes 5-8 of alpha block
@@ -657,22 +657,22 @@ void DDSFileClass::Copy_CubeMap_Level_To_Surface
 					}
 				}
 			}
-			else 
+			else
 			{
 				unsigned dest_bpp=Get_Bytes_Per_Pixel(dest_format);
 
 				// Copy 4x4 block at a time
 				bool contains_alpha=false;
-				for (unsigned y=0;y<dest_height;y+=4) 
+				for (unsigned y=0;y<dest_height;y+=4)
 				{
 					unsigned char* dest_ptr=dest_surface;
 					dest_ptr+=y*dest_pitch;
-					for (unsigned x=0;x<dest_width;x+=4,dest_ptr+=dest_bpp*4) 
+					for (unsigned x=0;x<dest_width;x+=4,dest_ptr+=dest_bpp*4)
 					{
 						contains_alpha|=Get_4x4_Block(dest_ptr,dest_pitch,dest_format,level,x,y,hsv_shift);
 					}
 				}
-				if (Format==WW3D_FORMAT_DXT1 && contains_alpha) 
+				if (Format==WW3D_FORMAT_DXT1 && contains_alpha)
 				{
 					WWDEBUG_SAY(("Warning: DXT1 format should not contain alpha information - file %s",Name));
 				}
@@ -714,18 +714,18 @@ void DDSFileClass::Copy_Volume_Level_To_Surface
 
 	// If the format and size is a match just copy the contents
 	bool has_hsv_shift = hsv_shift[0]!=0.0f || hsv_shift[1]!=0.0f || hsv_shift[2]!=0.0f;
-	if (dest_format==Format && dest_width==Get_Width(level) && dest_height==Get_Height(level)) 
+	if (dest_format==Format && dest_width==Get_Width(level) && dest_height==Get_Height(level))
 	{
 		// If hue shift, we can't just copy...
-		if (has_hsv_shift) 
+		if (has_hsv_shift)
 		{
-			if (Format==WW3D_FORMAT_DXT1) 
+			if (Format==WW3D_FORMAT_DXT1)
 			{
 				const unsigned* src_ptr=reinterpret_cast<const unsigned*>(Get_Volume_Memory_Pointer(level));
 				unsigned* dest_ptr=reinterpret_cast<unsigned*>(dest_surface);
-				for (unsigned y=0;y<dest_height;y+=4) 
+				for (unsigned y=0;y<dest_height;y+=4)
 				{
-					for (unsigned x=0;x<dest_width;x+=4) 
+					for (unsigned x=0;x<dest_width;x+=4)
 					{
 						unsigned cols=*src_ptr++;		// Bytes 1-4 of color block
 						unsigned col0=RGB565_To_ARGB8888((unsigned short)(cols>>16));
@@ -741,13 +741,13 @@ void DDSFileClass::Copy_Volume_Level_To_Surface
 					}
 				}
 			}
-			else if (Format==WW3D_FORMAT_DXT5) 
+			else if (Format==WW3D_FORMAT_DXT5)
 			{
 				const unsigned* src_ptr=reinterpret_cast<const unsigned*>(Get_Volume_Memory_Pointer(level));
 				unsigned* dest_ptr=reinterpret_cast<unsigned*>(dest_surface);
-				for (unsigned y=0;y<dest_height;y+=4) 
+				for (unsigned y=0;y<dest_height;y+=4)
 				{
-					for (unsigned x=0;x<dest_width;x+=4) 
+					for (unsigned x=0;x<dest_width;x+=4)
 					{
 						*dest_ptr++=*src_ptr++;		// Bytes 1-4 of alpha block
 						*dest_ptr++=*src_ptr++;		// Bytes 5-8 of alpha block
@@ -765,36 +765,36 @@ void DDSFileClass::Copy_Volume_Level_To_Surface
 					}
 				}
 			}
-			else 
+			else
 			{
 				WWASSERT(0);
 			}
 
 		}
-		else 
+		else
 		{
 			unsigned compressed_size=Get_Level_Size(level);
 			memcpy(dest_surface,Get_Volume_Memory_Pointer(level),compressed_size);
 		}
 	}
-	else 
+	else
 	{
 		// If size matches, copy each pixel linearly with color space conversion
-		if (dest_width==Get_Width(level) && dest_height==Get_Height(level)) 
+		if (dest_width==Get_Width(level) && dest_height==Get_Height(level))
 		{
 			// An exception here - if the source format is DXT1 and the destination
 			// is DXT2, just copy the contents and create an empty alpha channel.
 			// This is needed on NVidia cards that have problems with DXT1 compression.
-			if (Format==WW3D_FORMAT_DXT1 && dest_format==WW3D_FORMAT_DXT2) 
+			if (Format==WW3D_FORMAT_DXT1 && dest_format==WW3D_FORMAT_DXT2)
 			{
 				// If hue shift, we can't just copy...
-				if (has_hsv_shift) 
+				if (has_hsv_shift)
 				{
 					const unsigned* src_ptr=reinterpret_cast<const unsigned*>(Get_Volume_Memory_Pointer(level));
 					unsigned* dest_ptr=reinterpret_cast<unsigned*>(dest_surface);
-					for (unsigned y=0;y<dest_height;y+=4) 
+					for (unsigned y=0;y<dest_height;y+=4)
 					{
-						for (unsigned x=0;x<dest_width;x+=4) 
+						for (unsigned x=0;x<dest_width;x+=4)
 						{
 							*dest_ptr++=0xffffffff;		// Bytes 1-4 of alpha block
 							*dest_ptr++=0xffffffff;		// Bytes 5-8 of alpha block
@@ -814,13 +814,13 @@ void DDSFileClass::Copy_Volume_Level_To_Surface
 						}
 					}
 				}
-				else 
+				else
 				{
 					const unsigned* src_ptr=reinterpret_cast<const unsigned*>(Get_Volume_Memory_Pointer(level));
 					unsigned* dest_ptr=reinterpret_cast<unsigned*>(dest_surface);
-					for (unsigned y=0;y<dest_height;y+=4) 
+					for (unsigned y=0;y<dest_height;y+=4)
 					{
-						for (unsigned x=0;x<dest_width;x+=4) 
+						for (unsigned x=0;x<dest_width;x+=4)
 						{
 							*dest_ptr++=0xffffffff;		// Bytes 1-4 of alpha block
 							*dest_ptr++=0xffffffff;		// Bytes 5-8 of alpha block
@@ -830,7 +830,7 @@ void DDSFileClass::Copy_Volume_Level_To_Surface
 					}
 				}
 			}
-			else 
+			else
 			{
 				WWASSERT(0);
 			/*	todo
@@ -840,16 +840,16 @@ void DDSFileClass::Copy_Volume_Level_To_Surface
 				bool contains_alpha=false;
 				for (unsigned z=0;z<dest_depth;z++)
 				{
-					for (unsigned y=0;y<dest_height;y+=4) 
+					for (unsigned y=0;y<dest_height;y+=4)
 					{
 						unsigned char* dest_ptr=dest_surface;
 						row_ptr+=y*row_pitch;
-						for (unsigned x=0;x<dest_width;x+=4,dest_ptr+=dest_bpp*4) 
+						for (unsigned x=0;x<dest_width;x+=4,dest_ptr+=dest_bpp*4)
 						{
 							contains_alpha|=Get_4x4_Block(dest_ptr,dest_pitch,dest_format,level,x,y,hsv_shift);
 						}
 					}
-					if (Format==WW3D_FORMAT_DXT1 && contains_alpha) 
+					if (Format==WW3D_FORMAT_DXT1 && contains_alpha)
 					{
 						WWDEBUG_SAY(("Warning: DXT1 format should not contain alpha information - file %s",Name));
 					}
@@ -972,10 +972,10 @@ unsigned DDSFileClass::Get_Pixel(unsigned level,unsigned x,unsigned y) const
 			}
 			WWASSERT(alpha_index<8);
 
-			// 8-alpha or 6-alpha block?    
+			// 8-alpha or 6-alpha block?
 			unsigned alpha_value=0;
-			if (alpha0>alpha1) {    
-				// 8-alpha block:  derive the other six alphas.    
+			if (alpha0>alpha1) {
+				// 8-alpha block:  derive the other six alphas.
 				// Bit code 000 = alpha_0, 001 = alpha_1, others are interpolated.
 				switch (alpha_index) {
 				case 0: alpha_value=alpha0; break;
@@ -985,11 +985,11 @@ unsigned DDSFileClass::Get_Pixel(unsigned level,unsigned x,unsigned y) const
 				case 4: alpha_value=(4*alpha0+3*alpha1+3) / 7; break;    // bit code 100
 				case 5: alpha_value=(3*alpha0+4*alpha1+3) / 7; break;    // bit code 101
 				case 6: alpha_value=(2*alpha0+5*alpha1+3) / 7; break;    // bit code 110
-				case 7: alpha_value=(1*alpha0+6*alpha1+3) / 7; break;    // bit code 111  
+				case 7: alpha_value=(1*alpha0+6*alpha1+3) / 7; break;    // bit code 111
 				}
-			}    
-			else {  
-				// 6-alpha block.    
+			}
+			else {
+				// 6-alpha block.
 				// Bit code 000 = alpha_0, 001 = alpha_1, others are interpolated.
 				switch (alpha_index) {
 				case 0: alpha_value=alpha0; break;
@@ -1136,14 +1136,14 @@ bool DDSFileClass::Get_4x4_Block(
 			alphas[0]=alpha_block[0];
 			alphas[1]=alpha_block[1];
 
-			// 8-alpha or 6-alpha block?    
-			if (alphas[0]>alphas[1]) {    
+			// 8-alpha or 6-alpha block?
+			if (alphas[0]>alphas[1]) {
 				alphas[2]=(6*alphas[0]+1*alphas[1]+3) / 7;   // bit code 010
 				alphas[3]=(5*alphas[0]+2*alphas[1]+3) / 7;   // bit code 011
 				alphas[4]=(4*alphas[0]+3*alphas[1]+3) / 7;   // bit code 100
 				alphas[5]=(3*alphas[0]+4*alphas[1]+3) / 7;   // bit code 101
 				alphas[6]=(2*alphas[0]+5*alphas[1]+3) / 7;   // bit code 110
-				alphas[7]=(1*alphas[0]+6*alphas[1]+3) / 7;   // bit code 111  
+				alphas[7]=(1*alphas[0]+6*alphas[1]+3) / 7;   // bit code 111
 			}
 			else {
 				alphas[2]=(4*alphas[0]+1*alphas[1]+2) / 5;   // Bit code 010

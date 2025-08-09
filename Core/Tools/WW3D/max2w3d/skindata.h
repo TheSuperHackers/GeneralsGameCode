@@ -17,22 +17,22 @@
 */
 
 /* $Header: /Commando/Code/Tools/max2w3d/skindata.h 6     10/28/97 6:08p Greg_h $ */
-/*********************************************************************************************** 
- ***                            Confidential - Westwood Studios                              *** 
- *********************************************************************************************** 
- *                                                                                             * 
- *                 Project Name : Commando Tools - WWSkin                                      * 
- *                                                                                             * 
- *                     $Archive:: /Commando/Code/Tools/max2w3d/skindata.h                     $* 
- *                                                                                             * 
- *                      $Author:: Greg_h                                                      $* 
- *                                                                                             * 
- *                     $Modtime:: 10/21/97 2:04p                                              $* 
- *                                                                                             * 
- *                    $Revision:: 6                                                           $* 
- *                                                                                             * 
- *---------------------------------------------------------------------------------------------* 
- * Functions:                                                                                  * 
+/***********************************************************************************************
+ ***                            Confidential - Westwood Studios                              ***
+ ***********************************************************************************************
+ *                                                                                             *
+ *                 Project Name : Commando Tools - WWSkin                                      *
+ *                                                                                             *
+ *                     $Archive:: /Commando/Code/Tools/max2w3d/skindata.h                     $*
+ *                                                                                             *
+ *                      $Author:: Greg_h                                                      $*
+ *                                                                                             *
+ *                     $Modtime:: 10/21/97 2:04p                                              $*
+ *                                                                                             *
+ *                    $Revision:: 6                                                           $*
+ *                                                                                             *
+ *---------------------------------------------------------------------------------------------*
+ * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 
@@ -43,7 +43,7 @@
 #include "namedsel.h"
 
 /*
-** InfluenceStruct - structure which stores the bone 
+** InfluenceStruct - structure which stores the bone
 ** influence information for a single vertex.
 */
 struct InfluenceStruct
@@ -55,7 +55,7 @@ struct InfluenceStruct
 	float		BoneWeight[2];
 
 	InfluenceStruct(void) { BoneIdx[0] = -1; BoneIdx[1] = -1; BoneWeight[0] = 1.0f; BoneWeight[1] = 0.0f; }
-	
+
 	void Set_Influence(int boneidx) {
 		// TODO: make this actually let you set two bones with
 		// weighting values.  Need UI to furnish this info...
@@ -66,7 +66,7 @@ struct InfluenceStruct
 
 /*
 ** SkinDataClass - a class which contains the bone influence data
-** for the modifier.  One of these will be hung off of the 
+** for the modifier.  One of these will be hung off of the
 ** ModContext...
 */
 class SkinDataClass : public LocalModData
@@ -103,15 +103,15 @@ public:
 		}
 	}
 
-	virtual LocalModData * Clone(void) 
-	{ 
+	virtual LocalModData * Clone(void)
+	{
 		SkinDataClass * newdata = new SkinDataClass();
 		newdata->VertSel = VertSel;
 		newdata->VertData = VertData;
 		return newdata;
 	}
 
-	void Add_Influence(int boneidx) 
+	void Add_Influence(int boneidx)
 	{
 		/*
 		** Make this INode influence all currently selected vertices
@@ -130,12 +130,12 @@ public:
 
 	BOOL							Valid;
 	BOOL							Held;
-	
+
 	/*
 	** Current selection
 	*/
 	BitArray						VertSel;
-	
+
 	/*
 	** Named selection sets
 	*/
@@ -151,7 +151,7 @@ public:
 	*/
 	enum {
 		FLAGS_CHUNK = 				0x0000,
-		VERT_SEL_CHUNK = 			0x0010,	
+		VERT_SEL_CHUNK = 			0x0010,
 		NAMED_SEL_SETS_CHUNK =	0x0020,
 		INFLUENCE_DATA_CHUNK = 	0x0030
 	};

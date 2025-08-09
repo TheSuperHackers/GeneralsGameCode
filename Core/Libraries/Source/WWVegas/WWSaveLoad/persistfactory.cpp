@@ -38,7 +38,7 @@
 #include "persistfactory.h"
 #include "saveload.h"
 
-PersistFactoryClass::PersistFactoryClass(void) : 
+PersistFactoryClass::PersistFactoryClass(void) :
 	NextFactory(NULL)
 {
 	SaveLoadSystemClass::Register_Persist_Factory(this);

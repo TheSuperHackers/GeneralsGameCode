@@ -74,7 +74,7 @@ public:
 	float					Get_Length() const { return Length; }	// length of the segment
 
 	void					Compute_Point(float t,Vector3 * set) const	{ Vector3::Add(P0,t*DP,set); }
-	
+
 	Vector3				Find_Point_Closest_To(const Vector3 &pos) const;
 	bool					Find_Intersection (const LineSegClass &other_line, Vector3 *p1, float *fraction1, Vector3 *p2, float *fraction2) const;
 

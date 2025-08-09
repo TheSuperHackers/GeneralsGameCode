@@ -96,7 +96,7 @@ void W3DRightHUDDraw( GameWindow *window, WinInstanceData *instData )
 	// draw the default stuff
 	if( BitIsSet(window->winGetStatus(), WIN_STATUS_IMAGE ))
 		W3DGameWinDefaultDraw( window, instData );
-	
+
 }  // end W3DRightHUDDraw
 
 Real logN(Real value, Real logBase)
@@ -132,7 +132,7 @@ void W3DPowerDraw( GameWindow *window, WinInstanceData *instData )
 	}
 	else
 		player = ThePlayerList->getLocalPlayer();
-	
+
 
 
 	if(!player || !TheGlobalData)
@@ -142,7 +142,7 @@ void W3DPowerDraw( GameWindow *window, WinInstanceData *instData )
 		return;
 
 	Int consumption = energy->getConsumption();
-	Int production = energy->getProduction();	
+	Int production = energy->getProduction();
 
 	ICoord2D pos, size;
 	window->winGetScreenPosition( &pos.x, &pos.y );
@@ -150,7 +150,7 @@ void W3DPowerDraw( GameWindow *window, WinInstanceData *instData )
 
 	static Real pixelsPerInterval = size.x / TheGlobalData->m_powerBarIntervals;
 	Int delta = TheGlobalData->m_powerBarYellowRange;
-	
+
 	if((consumption > energy->getProduction() - delta) && (consumption <= energy->getProduction()))
 	{
 		// 6 and 1 is Green, 6 and 2 is yellow, 6 and 6 is yellow
@@ -202,10 +202,10 @@ void W3DPowerDraw( GameWindow *window, WinInstanceData *instData )
 
 	// get width we have to draw our repeating center in
 	centerWidth = range; //rightStart.x - leftEnd.x;
-	
+
 	if( centerWidth > 0)
 	{
-		
+
 		// how many whole repeating pieces will fit in that width
 		pieces = centerWidth / centerBar->getImageWidth();
 		ICoord2D start, end;
@@ -217,7 +217,7 @@ void W3DPowerDraw( GameWindow *window, WinInstanceData *instData )
 		{
 
 			end.x = start.x + centerBar->getImageWidth();
-			TheWindowManager->winDrawImage( centerBar, 
+			TheWindowManager->winDrawImage( centerBar,
 																			start.x, start.y,
 																			end.x, end.y );
 			start.x += centerBar->getImageWidth();
@@ -299,7 +299,7 @@ void W3DPowerDrawA( GameWindow *window, WinInstanceData *instData )
 	}
 	else
 		player = ThePlayerList->getLocalPlayer();
-	
+
 
 
 	if(!player || !TheGlobalData)
@@ -309,7 +309,7 @@ void W3DPowerDrawA( GameWindow *window, WinInstanceData *instData )
 		return;
 
 	Int consumption = energy->getConsumption();
-	Int production = energy->getProduction();	
+	Int production = energy->getProduction();
 
 	ICoord2D pos, size;
 	window->winGetScreenPosition( &pos.x, &pos.y );
@@ -317,7 +317,7 @@ void W3DPowerDrawA( GameWindow *window, WinInstanceData *instData )
 
 	static Real pixelsPerInterval = size.x / TheGlobalData->m_powerBarIntervals;
 	Int delta = TheGlobalData->m_powerBarYellowRange;
-	
+
 	if((consumption > energy->getProduction() - delta) && (consumption <= energy->getProduction()))
 	{
 		// 6 and 1 is Green, 6 and 2 is yellow, 6 and 6 is yellow
@@ -369,7 +369,7 @@ void W3DPowerDrawA( GameWindow *window, WinInstanceData *instData )
 
 	// get width we have to draw our repeating center in
 	centerWidth = rightStart.x - leftEnd.x;
-	
+
 	if( centerWidth <= 0)
 	{
 		// draw left end
@@ -388,7 +388,7 @@ void W3DPowerDrawA( GameWindow *window, WinInstanceData *instData )
 	}
 	else
 	{
-		
+
 		// how many whole repeating pieces will fit in that width
 		pieces = centerWidth / centerBar->getImageWidth();
 
@@ -400,7 +400,7 @@ void W3DPowerDrawA( GameWindow *window, WinInstanceData *instData )
 		{
 
 			end.x = start.x + centerBar->getImageWidth();
-			TheWindowManager->winDrawImage( centerBar, 
+			TheWindowManager->winDrawImage( centerBar,
 																			start.x, start.y,
 																			end.x, end.y );
 			start.x += centerBar->getImageWidth();
@@ -469,7 +469,7 @@ void W3DCommandBarGridDraw( GameWindow *window, WinInstanceData *instData )
 	ICoord2D pos, size;
 	window->winGetScreenPosition( &pos.x, &pos.y );
 	window->winGetSize( &size.x, &size.y );
-		
+
 	Color color = TheControlBar->getBorderColor();
 	window->winSetEnabledBorderColor(0, color);
 	W3DGameWinDefaultDraw( window, instData );
@@ -479,7 +479,7 @@ void W3DCommandBarGridDraw( GameWindow *window, WinInstanceData *instData )
 	TheDisplay->drawLine(pos.x + size.x * .33, pos.y, pos.x + size.x *.33, pos.y +size.y, 1,color);
 	TheDisplay->drawLine(pos.x + size.x  * .66, pos.y, pos.x + size.x *.66, pos.y + size.y, 1,color);
 
-	
+
 
 
 }
@@ -500,7 +500,7 @@ void W3DCommandBarGenExpDraw( GameWindow *window, WinInstanceData *instData )
 	{
 		progress = ( ((player->getSkillPoints() - player->getSkillPointsLevelDown()) * 100) / skillPointsRequired );
 	}
-	
+
 	if(progress <= 0)
 		return;
 
@@ -542,7 +542,7 @@ void W3DCommandBarGenExpDraw( GameWindow *window, WinInstanceData *instData )
 
 	// get width we have to draw our repeating center in
 	centerWidth = bottomEnd.y - topStart.y;
-	
+
 	if( centerWidth <= 0)
 	{
 		// draw left end
@@ -561,7 +561,7 @@ void W3DCommandBarGenExpDraw( GameWindow *window, WinInstanceData *instData )
 	}
 	else
 	{
-		
+
 		// how many whole repeating pieces will fit in that width
 		pieces = centerWidth / centerBar->getImageHeight();
 
@@ -573,7 +573,7 @@ void W3DCommandBarGenExpDraw( GameWindow *window, WinInstanceData *instData )
 		{
 
 			end.y = start.y + centerBar->getImageHeight();
-			TheWindowManager->winDrawImage( centerBar, 
+			TheWindowManager->winDrawImage( centerBar,
 																			start.x, start.y,
 																			end.x, end.y );
 			start.y += centerBar->getImageHeight();
@@ -619,7 +619,7 @@ void W3DCommandBarTopDraw( GameWindow *window, WinInstanceData *instData )
 	GameWindow *win = TheWindowManager->winGetWindowFromId(NULL, TheNameKeyGenerator->nameToKey("ControlBar.wnd:ButtonGeneral"));
 	if(!win || win->winIsHidden() || !ThePlayerList->getLocalPlayer()->isPlayerActive())
 		return;
-	
+
 //	TheControlBar->drawTransitionHandler();
 
 //	ICoord2D pos, size, imageStart, imageEnd;
@@ -688,7 +688,7 @@ void W3DNoDraw( GameWindow *window, WinInstanceData *instData )
 
 	// draw the default stuff
 //	W3DGameWinDefaultDraw( window, instData );
-	
+
 }  // end W3DRightHUDDraw
 
 void drawSkinnyBorder( Int x, Int y, Int width, Int height);
@@ -705,10 +705,10 @@ void W3DDrawMapPreview( GameWindow *window, WinInstanceData *instData)
 		drawSkinnyBorder(pixelX - 1, pixelY - 1, width + 2, height + 2);
 		return;
 	}
-	
-	
-	
-		
+
+
+
+
 	//
 	// given a upper left corner at pixelX|Y and a width and height to draw into, figure out
 	// where we should start and end the image so that the final drawn image has the
@@ -723,10 +723,10 @@ void W3DDrawMapPreview( GameWindow *window, WinInstanceData *instData)
 	// draw black border areas where we need map
 	Color fillColor = GameMakeColor( 0, 0, 0, 255 );
 	Color lineColor = GameMakeColor( 50, 50, 50, 255 );
-	
+
 	if( mmData->m_extent.width()/width >= mmData->m_extent.height()/height )
 	{
-		
+
 		// draw horizontal bars at top and bottom
 		TheDisplay->drawFillRect( pixelX, pixelY, width, ul.y - pixelY - 1, fillColor );
 		TheDisplay->drawFillRect( pixelX, lr.y + 1, width, pixelY + height - lr.y - 1, fillColor);
@@ -812,7 +812,7 @@ void drawSkinnyBorder( Int x, Int y, Int width, Int height)
 	// x == place to draw remainder if any
 	if( (x2 - x) >= (BORDER_LINE_SIZE / 2) )
 	{
-		
+
 		//Blit Half piece
 		TheDisplay->drawImage( image1,
 													 x, y, x + halfSize, y + size );
@@ -917,11 +917,11 @@ void drawSkinnyBorder( Int x, Int y, Int width, Int height)
 
 void W3DCommandBarHelpPopupDraw( GameWindow *window, WinInstanceData *instData )
 {
-	
+
 	static const Image *endBar = TheMappedImageCollection->findImageByName("Helpbox-top");
 	static const Image *beginBar = TheMappedImageCollection->findImageByName("Helpbox-bottom");
 	static const Image *centerBar = TheMappedImageCollection->findImageByName("Helpbox-middle");
-	
+
 	ICoord2D pos, size;
 	window->winGetScreenPosition( &pos.x, &pos.y );
 	window->winGetSize( &size.x, &size.y );
@@ -930,7 +930,7 @@ void W3DCommandBarHelpPopupDraw( GameWindow *window, WinInstanceData *instData )
 
 	if( !endBar || !beginBar || !centerBar)
 		return;
-	
+
 
 //	Int range;
 //	range = size.y;
@@ -955,7 +955,7 @@ void W3DCommandBarHelpPopupDraw( GameWindow *window, WinInstanceData *instData )
 
 	// get width we have to draw our repeating center in
 	centerWidth = size.y - topSize.y - bottomSize.y;
-	
+
 	if( centerWidth <= 0)
 	{
 		// draw left end
@@ -974,7 +974,7 @@ void W3DCommandBarHelpPopupDraw( GameWindow *window, WinInstanceData *instData )
 	}
 	else
 	{
-		
+
 		// how many whole repeating pieces will fit in that width
 		pieces = centerWidth / centerBar->getImageHeight();
 
@@ -986,7 +986,7 @@ void W3DCommandBarHelpPopupDraw( GameWindow *window, WinInstanceData *instData )
 		{
 
 			end.y = start.y + centerBar->getImageHeight();
-			TheWindowManager->winDrawImage( centerBar, 
+			TheWindowManager->winDrawImage( centerBar,
 																			start.x, start.y,
 																			end.x, end.y );
 			start.y += centerBar->getImageHeight();
@@ -1024,6 +1024,6 @@ void W3DCommandBarHelpPopupDraw( GameWindow *window, WinInstanceData *instData )
 		end.y = pos.y + topSize.y;
 		TheWindowManager->winDrawImage(endBar, start.x, start.y, end.x, end.y);
 	}
-	
+
 
 }

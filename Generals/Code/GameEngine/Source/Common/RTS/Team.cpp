@@ -83,7 +83,7 @@ void TeamRelationMap::crc( Xfer *xfer )
 }  // end crc
 
 // ------------------------------------------------------------------------------------------------
-/** Xfer method 
+/** Xfer method
 	* Version Info;
 	* 1: Initial version */
 // ------------------------------------------------------------------------------------------------
@@ -113,7 +113,7 @@ void TeamRelationMap::xfer( Xfer *xfer )
 			// write team ID
 			teamID = (*teamRelationIt).first;
 			xfer->xferUser( &teamID, sizeof( TeamID ) );
-			
+
 			// write relationship
 			r = (*teamRelationIt).second;
 			xfer->xferUser( &r, sizeof( Relationship ) );
@@ -135,7 +135,7 @@ void TeamRelationMap::xfer( Xfer *xfer )
 
 			// assign relationship
 			m_map[teamID] = r;
-			
+
 		}  // end for, i
 
 	}  // end else load
@@ -238,7 +238,7 @@ void TeamFactory::initTeam(const AsciiString& name, const AsciiString& owner, Bo
 	Player *pOwner = ThePlayerList->findPlayerWithNameKey(NAMEKEY(owner));
 	DEBUG_ASSERTCRASH(pOwner, ("no owner found for team %s (%s)",name.str(),owner.str()));
 	if (!pOwner)
-		pOwner = ThePlayerList->getNeutralPlayer(); 
+		pOwner = ThePlayerList->getNeutralPlayer();
 	/*TeamPrototype *tp =*/ newInstance(TeamPrototype)(this, name, pOwner, isSingleton, d, ++m_uniqueTeamPrototypeID);
 	if (isSingleton) {
 		// Create the singleton team.
@@ -288,14 +288,14 @@ TeamPrototype *TeamFactory::findTeamPrototypeByID( TeamPrototypeID id )
 
 	for( it = m_prototypes.begin(); it != m_prototypes.end(); ++it )
 	{
-	
+
 		prototype = it->second;
 		if( prototype->getID() == id )
 			return prototype;
 
 	}  // end for
-	
-	// not found	
+
+	// not found
 	return NULL;
 
 }
@@ -332,7 +332,7 @@ Team *TeamFactory::createInactiveTeam(const AsciiString& name)
 	TeamPrototype *tp = findTeamPrototype(name);
 	if (!tp)
 		throw ERROR_BAD_ARG;
-	
+
 	Team *t = NULL;
 	if (tp->getIsSingleton())
 	{
@@ -355,7 +355,7 @@ Team *TeamFactory::createInactiveTeam(const AsciiString& name)
 			TheScriptEngine->friend_executeAction(script->getAction());
 		}
 	}
-	
+
 	return t;
 }
 
@@ -392,7 +392,7 @@ Team* TeamFactory::findTeam(const AsciiString& name)
 	if (tp)
 	{
 		Team *t = tp->getFirstItemIn_TeamInstanceList();
-		if (t == NULL && !tp->getIsSingleton()) 
+		if (t == NULL && !tp->getIsSingleton())
 		{
 			t = createInactiveTeam(name);
 		}
@@ -474,7 +474,7 @@ void TeamFactory::xfer( Xfer *xfer )
 
 			// xfer prototype data
 			xfer->xferSnapshot( teamPrototype );
-		
+
 		}  //end for, it
 
 	}  // end if, saving
@@ -508,7 +508,7 @@ void TeamFactory::xfer( Xfer *xfer )
 	}  // end else, loading
 
 /*
-// SAVE_LOAD_DEBUG 
+// SAVE_LOAD_DEBUG
 if( xfer->getXferMode() == XFER_SAVE )
 {
 
@@ -524,7 +524,7 @@ for( prototypeIt = m_prototypes.begin(); prototypeIt != m_prototypes.end(); ++pr
 {
 	prototype = prototypeIt->second;
 fprintf( fp, "Prototype '%s' for player index '%d'\n", prototype->getName().str(), prototype->getControllingPlayer()->getPlayerIndex() );
-	for( DLINK_ITERATOR<Team> teamIt = prototype->iterate_TeamInstanceList(); !teamIt.done(); teamIt.advance() ) 
+	for( DLINK_ITERATOR<Team> teamIt = prototype->iterate_TeamInstanceList(); !teamIt.done(); teamIt.advance() )
 	{
 		team = teamIt.cur();
 fprintf( fp, "  Team Instance '%s', id is '%d'\n", team->getName().str(), team->getID() );
@@ -566,7 +566,7 @@ void TeamFactory::loadPostProcess( void )
 			m_uniqueTeamPrototypeID = prototype->getID() + 1;
 
 		// iterate team instances on each prototype and do the team ID check
-		for( DLINK_ITERATOR<Team> iter = prototype->iterate_TeamInstanceList(); !iter.done(); iter.advance() ) 
+		for( DLINK_ITERATOR<Team> iter = prototype->iterate_TeamInstanceList(); !iter.done(); iter.advance() )
 		{
 
 			team = iter.cur();
@@ -588,7 +588,7 @@ for( prototypeIt = m_prototypes.begin(); prototypeIt != m_prototypes.end(); ++pr
 {
 	prototype = prototypeIt->second;
 fprintf( fp, "Prototype '%s' for player index '%d'\n", prototype->getName().str(), prototype->getControllingPlayer()->getPlayerIndex() );
-	for( DLINK_ITERATOR<Team> teamIt = prototype->iterate_TeamInstanceList(); !teamIt.done(); teamIt.advance() ) 
+	for( DLINK_ITERATOR<Team> teamIt = prototype->iterate_TeamInstanceList(); !teamIt.done(); teamIt.advance() )
 	{
 		team = teamIt.cur();
 fprintf( fp, "  Team Instance '%s', id is '%d'\n", team->getName().str(), team->getID() );
@@ -736,11 +736,11 @@ TeamTemplateInfo::TeamTemplateInfo(Dict *d) :
 	m_productionCondition = d->getAsciiString(TheKey_teamProductionCondition, &exists);
 	m_executeActions = d->getBool(TheKey_teamExecutesActionsOnCreate, &exists);
 
-	
+
 	// Which scripts to attempt during run?
 	for (int i = 0; i < MAX_GENERIC_SCRIPTS; ++i) {
 		AsciiString keyName;
-		keyName.format("%s%d", TheNameKeyGenerator->keyToName(TheKey_teamGenericScriptHook).str(), i);			
+		keyName.format("%s%d", TheNameKeyGenerator->keyToName(TheKey_teamGenericScriptHook).str(), i);
 		m_teamGenericScripts[i] = d->getAsciiString(NAMEKEY(keyName), &exists);
 		if (!exists) {
 			m_teamGenericScripts[i].clear();
@@ -796,18 +796,18 @@ void TeamTemplateInfo::loadPostProcess( void )
 // ------------------------------------------------------------------------
 
 // ------------------------------------------------------------------------
-TeamPrototype::TeamPrototype( TeamFactory *tf, 
-															const AsciiString &name, 
-															Player *ownerPlayer, 
-															Bool isSingleton, 
-															Dict *d, 
-															TeamPrototypeID id ) : 
+TeamPrototype::TeamPrototype( TeamFactory *tf,
+															const AsciiString &name,
+															Player *ownerPlayer,
+															Bool isSingleton,
+															Dict *d,
+															TeamPrototypeID id ) :
 	m_id(id),
-	m_factory(tf), 
-	m_name(name), 
-	m_owningPlayer(ownerPlayer), 
+	m_factory(tf),
+	m_name(name),
+	m_owningPlayer(ownerPlayer),
 	m_flags(isSingleton ? TeamPrototype::TEAM_SINGLETON : 0),
-	m_teamTemplate(d), 
+	m_teamTemplate(d),
 	m_productionConditionAlwaysFalse(false),
 	m_productionConditionScript(NULL)
 {
@@ -817,7 +817,7 @@ TeamPrototype::TeamPrototype( TeamFactory *tf,
 
 	if (m_owningPlayer)
 		m_owningPlayer->addTeamToList(this);
-	
+
 	m_retrievedGenericScripts = false;
 	for (Int i = 0; i < MAX_GENERIC_SCRIPTS; ++i) {
 		m_genericScriptsToRun[i] = NULL;
@@ -845,15 +845,15 @@ TeamPrototype::~TeamPrototype()
 	if (m_factory)
 		m_factory->removeTeamPrototypeFromList(this);
 
-	if (m_productionConditionScript) 
+	if (m_productionConditionScript)
 	{
 		deleteInstance(m_productionConditionScript);
 	}
 	m_productionConditionScript = NULL;
 
-	for (Int i = 0; i < MAX_GENERIC_SCRIPTS; ++i) 
+	for (Int i = 0; i < MAX_GENERIC_SCRIPTS; ++i)
 	{
-		if (m_genericScriptsToRun[i]) 
+		if (m_genericScriptsToRun[i])
 		{
 			deleteInstance(m_genericScriptsToRun[i]);
 			m_genericScriptsToRun[i] = NULL;
@@ -879,7 +879,7 @@ Team *TeamPrototype::findTeamByID( TeamID teamID )
 }
 
 // ------------------------------------------------------------------------
-void TeamPrototype::setControllingPlayer(Player *newController) 
+void TeamPrototype::setControllingPlayer(Player *newController)
 {
 	DEBUG_ASSERTCRASH(newController, ("Attempted to set NULL player as team-owner, illegal."));
 	if (!newController) {
@@ -977,7 +977,7 @@ Int TeamPrototype::countObjects(KindOfMaskType setMask, KindOfMaskType clearMask
 // ------------------------------------------------------------------------
 void TeamPrototype::healAllObjects(void)
 {
-	for (DLINK_ITERATOR<Team> iter = iterate_TeamInstanceList(); !iter.done(); iter.advance()) 
+	for (DLINK_ITERATOR<Team> iter = iterate_TeamInstanceList(); !iter.done(); iter.advance())
 	{
 		iter.cur()->healAllObjects();
 	}
@@ -986,7 +986,7 @@ void TeamPrototype::healAllObjects(void)
 // ------------------------------------------------------------------------
 void TeamPrototype::iterateObjects( ObjectIterateFunc func, void *userData )
 {
-	for (DLINK_ITERATOR<Team> iter = iterate_TeamInstanceList(); !iter.done(); iter.advance()) 
+	for (DLINK_ITERATOR<Team> iter = iterate_TeamInstanceList(); !iter.done(); iter.advance())
 	{
 		iter.cur()->iterateObjects( func, userData );
 	}
@@ -1047,7 +1047,7 @@ Bool TeamPrototype::hasAnyObjects() const
 }
 
 // ------------------------------------------------------------------------
-void TeamPrototype::updateState(void) 
+void TeamPrototype::updateState(void)
 {
 	for (DLINK_ITERATOR<Team> iter = iterate_TeamInstanceList(); !iter.done(); iter.advance())
 	{
@@ -1058,16 +1058,16 @@ void TeamPrototype::updateState(void)
 	while (!done) {
 		done = true;
 		for (DLINK_ITERATOR<Team> iter = iterate_TeamInstanceList(); !iter.done(); iter.advance())
-		{	
-			if (iter.cur()->getFirstItemIn_TeamMemberList() == NULL) 
-			{ 
+		{
+			if (iter.cur()->getFirstItemIn_TeamMemberList() == NULL)
+			{
 				// Team has no members.
-				if (this->getIsSingleton())	
+				if (this->getIsSingleton())
 				{
 					continue; // Don't delete singleton teams, even if they are empty.
 				}
 
-				if (iter.cur()->getControllingPlayer() && iter.cur()->getControllingPlayer()->getDefaultTeam() == iter.cur()) 
+				if (iter.cur()->getControllingPlayer() && iter.cur()->getControllingPlayer()->getDefaultTeam() == iter.cur())
 				{
 					// This is the player's default team, so don't remove it.
 					continue;
@@ -1148,7 +1148,7 @@ Bool TeamPrototype::evaluateProductionCondition(void)
 	if (pScript) {
 		// Check difficulty.
 		switch (getControllingPlayer()->getPlayerDifficulty() ) {
-			case DIFFICULTY_EASY: 
+			case DIFFICULTY_EASY:
 				if (!pScript->isEasy()) {
 					m_productionConditionAlwaysFalse = true;
 					return false;
@@ -1218,7 +1218,7 @@ void TeamPrototype::xfer( Xfer *xfer )
 
 	// xfer team instance count
 	UnsignedShort teamInstanceCount = 0;
-	for( DLINK_ITERATOR<Team> iter = iterate_TeamInstanceList(); !iter.done(); iter.advance() ) 
+	for( DLINK_ITERATOR<Team> iter = iterate_TeamInstanceList(); !iter.done(); iter.advance() )
 		teamInstanceCount++;
 	xfer->xferUnsignedShort( &teamInstanceCount );
 
@@ -1229,7 +1229,7 @@ void TeamPrototype::xfer( Xfer *xfer )
 	{
 
 		// xfer each team instance
-		for( DLINK_ITERATOR<Team> iter = iterate_TeamInstanceList(); !iter.done(); iter.advance() ) 
+		for( DLINK_ITERATOR<Team> iter = iterate_TeamInstanceList(); !iter.done(); iter.advance() )
 		{
 
 			// get the team
@@ -1284,7 +1284,7 @@ void TeamPrototype::xfer( Xfer *xfer )
 		}  // end for, i
 
 	}  // end else, load
-	
+
 }  // end xfer
 
 // ------------------------------------------------------------------------
@@ -1304,24 +1304,24 @@ void TeamPrototype::loadPostProcess( void )
 // ------------------------------------------------------------------------
 
 // ------------------------------------------------------------------------
-Team::Team(TeamPrototype *proto, TeamID id ) : 
+Team::Team(TeamPrototype *proto, TeamID id ) :
   m_id( id ),
-	m_proto(proto), 
-	m_enteredOrExited(false), 
-	m_active(false), 
-	m_seeEnemy(false), 
-	m_prevSeeEnemy(false), 
+	m_proto(proto),
+	m_enteredOrExited(false),
+	m_active(false),
+	m_seeEnemy(false),
+	m_prevSeeEnemy(false),
 	m_checkEnemySighted(false),
 	m_isRecruitablitySet(false),
 	m_isRecruitable(false),
-	m_destroyThreshold(0), 
-	m_curUnits(0), 
+	m_destroyThreshold(0),
+	m_curUnits(0),
 	m_wasIdle(false)
 {
 	//Added By Sadullah Nader
 	//Initialization(s) inserted
 	m_created = FALSE;
-	
+
 	//
 	m_commonAttackTarget = INVALID_ID;
 
@@ -1337,18 +1337,18 @@ Team::Team(TeamPrototype *proto, TeamID id ) :
 		{
 			m_checkEnemySighted = true;	 // Only keep track of enemy sighted if there is a script that cares.
 		}
-		
+
 		AsciiString teamName = proto->getName();
 		teamName.concat(" - creating team instance.");
 		TheScriptEngine->AppendDebugMessage(teamName, false);
 	}
 
-	for (Int i = 0; i < MAX_GENERIC_SCRIPTS; ++i) 
+	for (Int i = 0; i < MAX_GENERIC_SCRIPTS; ++i)
 	{
 		m_shouldAttemptGenericScript[i] = true;
 	}
 
-	
+
 }
 
 // ------------------------------------------------------------------------
@@ -1401,19 +1401,19 @@ void Team::setControllingPlayer(Player *newController)
 	m_proto->setControllingPlayer(newController);
 
 	// This function is used by one script, and it is kind of odd.  The actual units
-	// are not getting captured, the team they are on is being reassigned to a new player.  
+	// are not getting captured, the team they are on is being reassigned to a new player.
 	// The Team doesn't change, it just starts to return a different answer when you ask for
 	// the controlling player.  I don't want to make the major change of onCapture on everyone,
 	// so I will do the minor fix for the specific bug, which is harmless even when misused.
 
 	// Tell all members to redo their looking status, as their Player has changed, but they don't know.
-	for (DLINK_ITERATOR<Object> iter = iterate_TeamMemberList(); !iter.done(); iter.advance()) 
+	for (DLINK_ITERATOR<Object> iter = iterate_TeamMemberList(); !iter.done(); iter.advance())
 	{
 		Object *obj = iter.cur();
-		if (!obj) 
+		if (!obj)
 			continue;
 
-		obj->handlePartitionCellMaintenance();		
+		obj->handlePartitionCellMaintenance();
 	}
 
 }
@@ -1431,7 +1431,7 @@ void Team::getTeamAsAIGroup(AIGroup *pAIGroup)
 		return;
 	}
 
-	// Should this clear out the pAIGroup that it receives? I don't think so, but that 
+	// Should this clear out the pAIGroup that it receives? I don't think so, but that
 	// would go here if so. jkmcd
 
 	for (DLINK_ITERATOR<Object> iter = iterate_TeamMemberList(); !iter.done(); iter.advance()) {
@@ -1451,7 +1451,7 @@ Int Team::getTargetableCount() const
 		if (!obj) {
 			continue;
 		}
-		
+
 		if (obj->isEffectivelyDead() || (obj->getAIUpdateInterface() == NULL && !obj->isKindOf(KINDOF_STRUCTURE))) {
 			continue;
 		}
@@ -1514,11 +1514,11 @@ Object *Team::getTeamTargetObject(void)
 {
 	if (m_commonAttackTarget == INVALID_ID) {
 		return NULL;
-	}			 
+	}
 	Object *target = TheGameLogic->findObjectByID(m_commonAttackTarget);
 	if (target) {
 		//If the enemy unit is stealthed and not detected, then we can't attack it!
-	if( target->testStatus( OBJECT_STATUS_STEALTHED ) && 
+	if( target->testStatus( OBJECT_STATUS_STEALTHED ) &&
 			!target->testStatus( OBJECT_STATUS_DETECTED ) )
 		{
 			target = NULL;
@@ -1664,7 +1664,7 @@ Int Team::countObjects(KindOfMaskType setMask, KindOfMaskType clearMask)
 // ------------------------------------------------------------------------
 void Team::healAllObjects(void)
 {
-	for (DLINK_ITERATOR<Object> iter = iterate_TeamMemberList(); !iter.done(); iter.advance()) 
+	for (DLINK_ITERATOR<Object> iter = iterate_TeamMemberList(); !iter.done(); iter.advance())
 	{
 		iter.cur()->healCompletely();
 	}
@@ -1673,7 +1673,7 @@ void Team::healAllObjects(void)
 // ------------------------------------------------------------------------
 void Team::iterateObjects( ObjectIterateFunc func, void *userData )
 {
-	for (DLINK_ITERATOR<Object> iter = iterate_TeamMemberList(); !iter.done(); iter.advance()) 
+	for (DLINK_ITERATOR<Object> iter = iterate_TeamMemberList(); !iter.done(); iter.advance())
 	{
 		func( iter.cur(), userData );
 	}
@@ -1687,7 +1687,7 @@ Bool Team::hasAnyBuildings() const
 		if (iter.cur()->isEffectivelyDead())
 			continue;
 
-		if (iter.cur()->isDestroyed()) 
+		if (iter.cur()->isDestroyed())
 			continue;
 
 		if (iter.cur()->isKindOf(KINDOF_STRUCTURE))
@@ -1704,7 +1704,7 @@ Bool Team::hasAnyBuildings(KindOfMaskType kindOf) const
 		if (iter.cur()->isEffectivelyDead())
 			continue;
 
-		if (iter.cur()->isDestroyed()) 
+		if (iter.cur()->isDestroyed())
 			continue;
 
 		kindOf.set(KINDOF_STRUCTURE);
@@ -1722,7 +1722,7 @@ Bool Team::hasAnyUnits() const
 		if (iter.cur()->isEffectivelyDead())
 			continue;
 
-		if (iter.cur()->isDestroyed()) 
+		if (iter.cur()->isDestroyed())
 			continue;
 
 		// If it's a structure, it's not  a unit.
@@ -1751,7 +1751,7 @@ Bool Team::isIdle() const
 		if (iter.cur()->isEffectivelyDead())
 			continue;
 
-		if (!ai->isIdle()) 
+		if (!ai->isIdle())
 		{
 			idle = false;
 			break;
@@ -1768,7 +1768,7 @@ Bool Team::hasAnyObjects() const
 		if (iter.cur()->isEffectivelyDead())
 			continue;
 
-		if (iter.cur()->isDestroyed()) 
+		if (iter.cur()->isDestroyed())
 			continue;
 
 		if (iter.cur()->isKindOf(KINDOF_PROJECTILE)) {
@@ -1793,18 +1793,18 @@ Bool Team::hasAnyObjects() const
 
 // ------------------------------------------------------------------------
 /** Clears m_enteredExited, checks & clears m_created. */
-void Team::updateState(void) 
+void Team::updateState(void)
 {
 	m_enteredOrExited = false;
 	if (!m_active) {
-		return; 
+		return;
 	}
 	const TeamTemplateInfo *pInfo = m_proto->getTemplateInfo();
-	if (m_created) 
+	if (m_created)
 	{
 		m_created = false;
 		// Run the on create script, if any.
-		if (!pInfo->m_scriptOnCreate.isEmpty()) 
+		if (!pInfo->m_scriptOnCreate.isEmpty())
 		{
 			TheScriptEngine->runScript(pInfo->m_scriptOnCreate, this);
 		}
@@ -1842,7 +1842,7 @@ void Team::updateState(void)
 			PartitionFilter *filters[] = { &filterTeam, &filterAlive, &filterMapStatus, NULL };
 			Real visionRange = iter.cur()->getVisionRange();
 			anyAliveInTeam = true;
-			Object *pObj = ThePartitionManager->getClosestObject( iter.cur(), visionRange, 
+			Object *pObj = ThePartitionManager->getClosestObject( iter.cur(), visionRange,
 				FROM_CENTER_2D, filters );
 			if (pObj) {
 				m_seeEnemy = true;
@@ -1850,9 +1850,9 @@ void Team::updateState(void)
 			}
 		}
 		if (anyAliveInTeam) {
-			if (m_prevSeeEnemy != m_seeEnemy) 
+			if (m_prevSeeEnemy != m_seeEnemy)
 			{
-				if (m_seeEnemy) 
+				if (m_seeEnemy)
 				{
 					// fire onEnemySighted
 					TheScriptEngine->runScript(pInfo->m_scriptOnEnemySighted, this);
@@ -1865,7 +1865,7 @@ void Team::updateState(void)
 	}
 
 	// Do onDestroyed checks.
-	if (!pInfo->m_scriptOnDestroyed.isEmpty()) 
+	if (!pInfo->m_scriptOnDestroyed.isEmpty())
 	{
 		Int prevUnits = m_curUnits;
 		m_curUnits = 0;
@@ -1876,7 +1876,7 @@ void Team::updateState(void)
 
 			m_curUnits++;
 		}
-		if (m_curUnits != prevUnits && m_curUnits <= m_destroyThreshold) 
+		if (m_curUnits != prevUnits && m_curUnits <= m_destroyThreshold)
 		{
 			TheScriptEngine->runScript(pInfo->m_scriptOnDestroyed, this);
 			m_destroyThreshold = -1; // don't trigger again.
@@ -1884,7 +1884,7 @@ void Team::updateState(void)
 	}
 
 	// Do onIdle checks.
-	if (!pInfo->m_scriptOnIdle.isEmpty()) 
+	if (!pInfo->m_scriptOnIdle.isEmpty())
 	{
 		Bool isIdle = true;
 		Bool anyAliveInTeam = false; // If we're all dead, don't do all clear.
@@ -1900,7 +1900,7 @@ void Team::updateState(void)
 				isIdle = false;
 			}
 		}
-		if (anyAliveInTeam && isIdle && m_wasIdle) 
+		if (anyAliveInTeam && isIdle && m_wasIdle)
 		{
 			TheScriptEngine->runScript(pInfo->m_scriptOnIdle, this);
 		}
@@ -1951,7 +1951,7 @@ Bool Team::didAllEnter(PolygonTrigger *pTrigger, UnsignedInt whichToConsider) co
 
 		if (iter.cur()->isEffectivelyDead())
 			continue;
-		
+
 		if (iter.cur()->isKindOf(KINDOF_INERT))
 			continue;
 
@@ -2000,7 +2000,7 @@ Bool Team::didPartialEnter(PolygonTrigger *pTrigger, UnsignedInt whichToConsider
 
 		if (iter.cur()->didEnter(pTrigger)) {
 			return true;
-		} 
+		}
 	}
 	return false;
 }
@@ -2036,7 +2036,7 @@ Bool Team::didPartialExit(PolygonTrigger *pTrigger, UnsignedInt whichToConsider)
 
 		if (iter.cur()->didExit(pTrigger)) {
 			return true;
-		} 
+		}
 	}
 	return false;
 }
@@ -2045,7 +2045,7 @@ Bool Team::didPartialExit(PolygonTrigger *pTrigger, UnsignedInt whichToConsider)
 Bool Team::didAllExit(PolygonTrigger *pTrigger, UnsignedInt whichToConsider) const
 {
 	// If any units entered or exited, they set this flag.
-	if (!m_enteredOrExited) 
+	if (!m_enteredOrExited)
 		return false;
 
 	Bool anyConsidered = false;
@@ -2070,7 +2070,7 @@ Bool Team::didAllExit(PolygonTrigger *pTrigger, UnsignedInt whichToConsider) con
 
 		if (iter.cur()->isEffectivelyDead())
 			continue;
-		
+
 		if (iter.cur()->isKindOf(KINDOF_INERT))
 			continue;
 
@@ -2209,7 +2209,7 @@ Bool Team::someInsideSomeOutside(PolygonTrigger *pTrigger, UnsignedInt whichToCo
 			anyOutside = true;
 		}
 
-		// In this particular case, this is unnecessary. However, unless it is a performance hit, please 
+		// In this particular case, this is unnecessary. However, unless it is a performance hit, please
 		// leave it.
 		anyConsidered = true;
 	}
@@ -2248,10 +2248,10 @@ void Team::deleteTeam(Bool ignoreDead)
 	if( this == getControllingPlayer()->getDefaultTeam() )
 	{
 		std::list<Object *> guysToMakeEvacuate;
-		for (DLINK_ITERATOR<Object> iter = iterate_TeamMemberList(); !iter.done(); iter.advance()) 
+		for (DLINK_ITERATOR<Object> iter = iterate_TeamMemberList(); !iter.done(); iter.advance())
 		{
 			Object *obj = iter.cur();
-			if (!obj) 
+			if (!obj)
 				continue;
 
 			if( obj->getContain()  &&  (obj->getContain()->getContainCount() > 0) )
@@ -2274,7 +2274,7 @@ void Team::deleteTeam(Bool ignoreDead)
 
 	// this doesn't actually delete the team, it deletes the members of the team.
 	// the team itself will be deleted in updateState.
-	for (DLINK_ITERATOR<Object> iter = iterate_TeamMemberList(); !iter.done(); iter.advance()) 
+	for (DLINK_ITERATOR<Object> iter = iterate_TeamMemberList(); !iter.done(); iter.advance())
 	{
 		Object *obj = iter.cur();
 		if (!obj) {
@@ -2286,7 +2286,7 @@ void Team::deleteTeam(Bool ignoreDead)
 		// they use it on a team with things that can't die, then yeah, the Team will last forever.  But then it is
 		// user error.
 		if( ignoreDead && obj->isEffectivelyDead() )
-			continue; 
+			continue;
 
 		TheGameLogic->destroyObject(obj);
 	}
@@ -2299,10 +2299,10 @@ void Team::transferUnitsTo(Team *newTeam)
 	if (this == newTeam) return;
 	if (newTeam == NULL) return;
 	Object *obj;
-	while ((obj = getFirstItemIn_TeamMemberList()) != 0) 
+	while ((obj = getFirstItemIn_TeamMemberList()) != 0)
 	{
 		obj->setTeam(newTeam);
-	} 
+	}
 }
 
 // ------------------------------------------------------------------------
@@ -2330,13 +2330,13 @@ Object *Team::tryToRecruit(const ThingTemplate *tTemplate, const Coord3D *teamHo
 	Object *recruit = NULL;
 	for( obj = TheGameLogic->getFirstObject(); obj; obj = obj->getNextObject() )
 	{
-		if (!obj->getTemplate()->isEquivalentTo(tTemplate)) 
+		if (!obj->getTemplate()->isEquivalentTo(tTemplate))
 		{
 			// it might be ok, if tTemplate is really just a "build-variations" template...
 			if (!isInBuildVariations(tTemplate, obj->getTemplate()))
 				continue;
 		}
-		if (obj->getControllingPlayer() != myPlayer) 
+		if (obj->getControllingPlayer() != myPlayer)
 			continue;
 		Team *team = obj->getTeam();
 		Bool isDefaultTeam = false;
@@ -2351,7 +2351,7 @@ Object *Team::tryToRecruit(const ThingTemplate *tTemplate, const Coord3D *teamHo
 		}
 		Bool teamIsRecruitable = isDefaultTeam;	 // Default team always recruitable.
 		if (team->getPrototype()->getTemplateInfo()->m_isAIRecruitable) {
-			teamIsRecruitable = true; 
+			teamIsRecruitable = true;
 		}
 		// Check & see if individual team has been marked for recruitability.
 		if (team->m_isRecruitablitySet) {
@@ -2363,7 +2363,7 @@ Object *Team::tryToRecruit(const ThingTemplate *tTemplate, const Coord3D *teamHo
 		if (obj->getAIUpdateInterface() && !obj->getAIUpdateInterface()->isRecruitable()) {
 			continue; // can't recruit this unit.
 		}
-		if( obj->isDisabledByType( DISABLED_HELD ) ) 
+		if( obj->isDisabledByType( DISABLED_HELD ) )
 		{
 			continue; // Don't recruit held units.
 		}
@@ -2385,7 +2385,7 @@ Object *Team::tryToRecruit(const ThingTemplate *tTemplate, const Coord3D *teamHo
 	if (recruit!=NULL) {
 		return recruit;
 	}
- 	return NULL;	 
+ 	return NULL;
 }
 
 // ------------------------------------------------------------------------
@@ -2463,14 +2463,14 @@ void Team::killTeam(void)
 }
 
 // ------------------------------------------------------------------------
-Bool Team::damageTeamMembers(Real amount) 
+Bool Team::damageTeamMembers(Real amount)
 {
 	for (DLINK_ITERATOR<Object> iter = iterate_TeamMemberList(); !iter.done(); iter.advance())
 	{
 		if (iter.cur()->isEffectivelyDead())
 			continue;
 
-		if (iter.cur()->isDestroyed()) 
+		if (iter.cur()->isDestroyed())
 			continue;
 
 		// do max amount of damage to object
@@ -2485,21 +2485,21 @@ Bool Team::damageTeamMembers(Real amount)
 			damageInfo.in.m_amount = amount;
 			iter.cur()->attemptDamage( &damageInfo );
 		}
-		
+
 	}
 	return false;
 }
 
 // ------------------------------------------------------------------------
 /// @todo This should give a "team move" command, not individual move orders (MSB)
-void Team::moveTeamTo(Coord3D destination) 
+void Team::moveTeamTo(Coord3D destination)
 {
 	for (DLINK_ITERATOR<Object> iter = iterate_TeamMemberList(); !iter.done(); iter.advance())
 	{
 		if (iter.cur()->isEffectivelyDead())
 			continue;
 
-		if (iter.cur()->isDestroyed()) 
+		if (iter.cur()->isDestroyed())
 			continue;
 	}
 }
@@ -2510,7 +2510,7 @@ Bool Team::hasAnyBuildFacility() const
 	for (DLINK_ITERATOR<Object> iter = iterate_TeamMemberList(); !iter.done(); iter.advance())
 	{
 		const ThingTemplate *objtmpl = iter.cur()->getTemplate();
-		if (objtmpl->isBuildFacility()) 
+		if (objtmpl->isBuildFacility())
 			return true;
 	}
 	return false;
@@ -2523,7 +2523,7 @@ void Team::updateGenericScripts(void)
 	//USE_PERF_TIMER(updateGenericScripts)
 	for (Int i = 0; i < MAX_GENERIC_SCRIPTS; ++i) {
 		if (m_shouldAttemptGenericScript[i]) {
-			// Does the condition succeed? If so, run it. If it is a run once script, also mark that we 
+			// Does the condition succeed? If so, run it. If it is a run once script, also mark that we
 			// shouldn't run it again.
 			Script *script = m_proto->getGenericScript(i);
 			if (script) {
@@ -2539,7 +2539,7 @@ void Team::updateGenericScripts(void)
 					msg.concat(getName());
 					TheScriptEngine->AppendDebugMessage(msg, false);
 				}
-			} else { 
+			} else {
 				m_shouldAttemptGenericScript[i] = false;
 			}
 		}
@@ -2578,22 +2578,22 @@ void Team::xfer( Xfer *xfer )
 		throw SC_INVALID_DATA;
 
 	}  // end if
-		
+
 	// member list count and data
 	ObjectID memberID;
 	UnsignedShort memberCount = 0;
-	for( DLINK_ITERATOR< Object > objIt = iterate_TeamMemberList(); 
-			 objIt.done() == FALSE; 
+	for( DLINK_ITERATOR< Object > objIt = iterate_TeamMemberList();
+			 objIt.done() == FALSE;
 			 objIt.advance() )
 		memberCount++;
 	xfer->xferUnsignedShort( &memberCount );
 	if( xfer->getXferMode() == XFER_SAVE )
 	{
 		Object *obj;
-		
+
 		// save all member info
-		for( DLINK_ITERATOR< Object > objIt = iterate_TeamMemberList(); 
-				 objIt.done() == FALSE; 
+		for( DLINK_ITERATOR< Object > objIt = iterate_TeamMemberList();
+				 objIt.done() == FALSE;
 				 objIt.advance() )
 		{
 
@@ -2673,7 +2673,7 @@ void Team::xfer( Xfer *xfer )
 
 	// recruitability set
 	xfer->xferBool( &m_isRecruitablitySet );
-	
+
 	// is recruitable
 	xfer->xferBool( &m_isRecruitable );
 
@@ -2685,7 +2685,7 @@ void Team::xfer( Xfer *xfer )
 
 	// player relations
 	xfer->xferSnapshot( m_playerRelations );
-			
+
 }  // ene xfer
 
 // ------------------------------------------------------------------------------------------------

@@ -23,7 +23,7 @@ Project Name:
 File Name   : wtypes.h
 Author      : Neal Kettler
 Start Date  : June 3, 1997
-Last Update : June 17, 1997  
+Last Update : June 17, 1997
 
 Standard type definitions for the sake of portability and readability.
 \***************************************************************************/
@@ -72,11 +72,11 @@ typedef unsigned int       uint32;
 #define MAX_UINT8   0xFF
 #define MAX_SINT32  0x7FFFFFFF
 #define MAX_SINT16  0x7FFF
-#define MAX_SINT8   0x7F   
+#define MAX_SINT8   0x7F
 
 #ifdef _WIN32
 #define strncasecmp _strnicmp
 #define strcasecmp  _stricmp
-#endif  
+#endif
 
 #endif

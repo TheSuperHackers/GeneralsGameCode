@@ -74,15 +74,15 @@ class View : public Snapshot
 public:
 
 	/// Add an impulse force to shake the camera
-	enum CameraShakeType 
-	{ 
-		SHAKE_SUBTLE = 0, 
-		SHAKE_NORMAL, 
-		SHAKE_STRONG, 
-		SHAKE_SEVERE, 
+	enum CameraShakeType
+	{
+		SHAKE_SUBTLE = 0,
+		SHAKE_NORMAL,
+		SHAKE_STRONG,
+		SHAKE_SEVERE,
 		SHAKE_CINE_EXTREME,		//Added for cinematics ONLY
 		SHAKE_CINE_INSANE,		//Added for cinematics ONLY
-		SHAKE_COUNT 
+		SHAKE_COUNT
 	};
 
   // Return values for worldToScreenTriReturn
@@ -125,7 +125,7 @@ public:
 	virtual Int getWidth( void ) { return m_width; }
 	virtual void setHeight( Int height ) { m_height = height; }
 	virtual Int getHeight( void ) { return m_height; }
-	virtual void setOrigin( Int x, Int y) { m_originX=x; m_originY=y;}				///< Sets location of top-left view corner on display 
+	virtual void setOrigin( Int x, Int y) { m_originX=x; m_originY=y;}				///< Sets location of top-left view corner on display
 	virtual void getOrigin( Int *x, Int *y) { *x=m_originX; *y=m_originY;}			///< Return location of top-left view corner on display
 
 	virtual void forceRedraw() = 0;
@@ -175,7 +175,7 @@ public:
 	virtual Real getAngle( void ) { return m_angle; }
 	virtual void setPitch( Real angle );																///< Rotate the view around the horizontal axis to the given angle
 	virtual Real getPitch( void ) { return m_pitchAngle; }							///< Return current camera pitch
-	virtual void setAngleAndPitchToDefault( void );											///< Set the view angle back to default 
+	virtual void setAngleAndPitchToDefault( void );											///< Set the view angle back to default
 	virtual void getPosition(Coord3D *pos)	{ *pos=m_pos;}							///< Returns position camera is looking at (z will be zero)
 
 	virtual const Coord3D& get3DCameraPosition() const = 0;							///< Returns the actual camera position
@@ -243,8 +243,8 @@ protected:
 	virtual void xfer( Xfer *xfer );
 	virtual void loadPostProcess( void ) { }
 
-	void setPosition( const Coord3D *pos ) { m_pos = *pos; }					
-	const Coord3D *getPosition( void ) const { return &m_pos; }					
+	void setPosition( const Coord3D *pos ) { m_pos = *pos; }
+	const Coord3D *getPosition( void ) const { return &m_pos; }
 
 	virtual View *prependViewToList( View *list );							///< Prepend this view to the given list, return the new list
 	virtual View *getNextView( void ) { return m_next; }				///< Return next view in the set
@@ -308,8 +308,8 @@ class ViewLocation
 
 	public:
 
-		ViewLocation() 
-		{ 
+		ViewLocation()
+		{
 			m_valid = FALSE;
 			//Added By Sadullah Nader
 			//Initialization(s) inserted
@@ -317,7 +317,7 @@ class ViewLocation
 			m_angle = m_pitch = m_zoom = 0.0;
 			//
 		}
-		
+
 		const Coord3D& getPosition() const { return m_pos; }
 		Bool isValid() const { return m_valid; }
 		Real getAngle() const { return m_angle; }

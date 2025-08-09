@@ -69,7 +69,7 @@ class DebugExceptionhandler
   static void LogFPURegisters(Debug &dbg, struct _EXCEPTION_POINTERS *exptr);
 
 public:
-  
+
   /** \internal
 
     \brief Determine exception type.
@@ -80,8 +80,8 @@ public:
   */
   static const char *GetExceptionType(struct _EXCEPTION_POINTERS *exptr, char *explanation);
 
-  /** \internal 
-  
+  /** \internal
+
     \brief System exception filter
   */
   static long __stdcall ExceptionFilter(struct _EXCEPTION_POINTERS* pExPtrs);

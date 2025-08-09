@@ -474,23 +474,23 @@ static void StartPatchCheck( void )
 BOOL CALLBACK downloadDialogProc( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
 	//   HRESULT res;
-	
+
 	int cmd = LOWORD(wParam);
 	switch( uMsg )
 	{
 		case WM_COMMAND:
 			if ( cmd == IDC_DLABORT )
 			{
-				
+
 				char abort[128];
 				char abortdload[256];
 				LoadString(Global_instance, TXT_ABORT_DOWNLOAD, abortdload, sizeof(abortdload));
 				LoadString(Global_instance, TXT_ABORT, abort, sizeof(abort));
-				
+
 				if (MessageBox(g_PrimaryWindow,abortdload,abort,MB_YESNO)==IDYES)
 				{
 					TheDownloadManager->reset();
-					
+
 					EndDialog( hwndDlg, g_Finished );
 					DestroyWindow(hwndDlg);
 				}
@@ -500,46 +500,46 @@ BOOL CALLBACK downloadDialogProc( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM
 				return FALSE;
 			}
 			break;
-			
+
 		case WM_INITDIALOG:
 			//SetupDownload();
-			
+
 			SendMessage(hwndDlg, WM_SETICON,(WPARAM)ICON_SMALL,
 				(LPARAM)LoadIcon(Global_instance, MAKEINTRESOURCE(IDI_ICON1)));
-			
+
 			g_DLTimeRem[0]=0;
 			g_DLBytesLeft[0]=0;
 			g_DLBPS[0]=0;
-			
+
 			//SetDlgItemText( hwndDlg, IDC_DOWNLOADTITLE, g_UpdateString);
 			//SetWindowText(hwndDlg, g_UpdateString);
-			
+
 			SetDlgItemText( hwndDlg, IDC_TIMEREM, g_DLTimeRem);
 			SetDlgItemText( hwndDlg, IDC_BYTESLEFT, g_DLBytesLeft);
 			// SetDlgItemText( hwndDlg, IDC_BPS, g_DLBPS );
-			
+
 			// Work out the full file name
 			//char    fullpath[_MAX_PATH];
 			//char    localfile[_MAX_PATH];
 			//sprintf( fullpath, "%s/%s", g_Update->patchpath,g_Update->patchfile);
 			//sprintf(localfile,"%s\\%s",g_Update->localpath,g_Update->patchfile);
-			
+
 			// Create the directory
 			//CreateDirectory((char *)g_Update->localpath, NULL );
-			
+
 			TheDownloadManager->downloadFile(TheDownload.server, TheDownload.userName, TheDownload.password,
 				TheDownload.file, TheDownload.localFile, TheDownload.regKey, TheDownload.tryResume);
 				/*
 				res=pDownload->DownloadFile((char *)g_Update->server, (char *)g_Update->login, (char *)g_Update->password,
 				fullpath, localfile, APP_REG_KEY);
-				
+
 			*/
 			g_DownloadWindow = hwndDlg;
 			g_Finished = 0;
 			SetTimer( hwndDlg, 1, 200, NULL );    // was 50
-			
+
 			break;
-			
+
 		case WM_TIMER:
 			DEBUG_LOG(("TIMER"));
 			if( g_Finished == 0 )
@@ -564,17 +564,17 @@ BOOL CALLBACK downloadDialogProc( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM
 				DestroyWindow( hwndDlg );
 			}
 			break;
-			
+
 		case WM_DESTROY:
 			KillTimer( hwndDlg, 1 );
 			//ClosedownDownload();
-			
+
 			//DBGMSG("WM_DESTROY");
 			break;
-			
+
 		case WM_SETFONT:
 			return TRUE;
-			
+
 		default:
 			return FALSE;
 	}
@@ -629,7 +629,7 @@ HWND CreatePrimaryWin(void)
   wc.lpszMenuName = name;
   wc.lpszClassName = name;
   RegisterClass( &wc );
-    
+
   /*
   ** create a window
   */
@@ -685,7 +685,7 @@ int main(int argc, char *argv[])
 
 	/*
   g_PrimaryWindow=CreatePrimaryWin();  // Create the main window
-  DispatchEvents();  // process some win messages 
+  DispatchEvents();  // process some win messages
 	*/
 
 /*
@@ -764,7 +764,7 @@ int main(int argc, char *argv[])
   // OK, have the current game version now
 
   g_PrimaryWindow=CreatePrimaryWin();  // Create the main window
-  DispatchEvents();  // process some win messages 
+  DispatchEvents();  // process some win messages
 
   // Popup the "contacting" window
   g_ContactWindow=CreateDialog(Global_instance,MAKEINTRESOURCE(IDD_CONNECTING),g_PrimaryWindow,Simple_Dialog_Proc);
@@ -856,11 +856,11 @@ char const * Fetch_String(int id)
 	_buffers[oldest].ID = id;
 	_buffers[oldest].TimeStamp = _time;
 
-   
+
 	if (LoadString(Global_instance, id, stringptr, sizeof(_buffers[oldest].String)) == 0) {
 		return("");
 	}
-   
+
    /******
    char resname[32];
    sprintf(resname,"#%d",id);
@@ -870,7 +870,7 @@ char const * Fetch_String(int id)
    {
      char message_buffer[256];
 	  FormatMessage( FORMAT_MESSAGE_FROM_SYSTEM, NULL, GetLastError(), MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), &message_buffer[0], 256, NULL );
-     
+
    }
    HGLOBAL resdata=LoadResource(NULL,hrsrc);
    LPVOID vdata=LockResource(resdata);

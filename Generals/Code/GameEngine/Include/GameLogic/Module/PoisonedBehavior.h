@@ -55,7 +55,7 @@ private:
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-class PoisonedBehavior : public UpdateModule, 
+class PoisonedBehavior : public UpdateModule,
 												 public DamageModuleInterface
 {
 

@@ -161,6 +161,15 @@ Int parseUseWaveEditor(char *args[], int num)
 	return 1;
 }
 
+//=============================================================================
+//=============================================================================
+Int parseFullViewport(char *args[], int num)
+{
+	TheWritableGlobalData->m_viewportHeightScale = 1.0f;
+
+	return 1;
+}
+
 #if defined(RTS_DEBUG)
 
 //=============================================================================
@@ -657,7 +666,7 @@ Int parsePreload( char *args[], int num )
 #endif
 
 
-#if defined(RTS_DEBUG) 
+#if defined(RTS_DEBUG)
 Int parseDisplayDebug(char *args[], int)
 {
 	TheWritableGlobalData->m_displayDebug = TRUE;
@@ -1171,6 +1180,9 @@ static CommandLineParam paramsForEngineInit[] =
 	{ "-quickstart", parseQuickStart },
 	{ "-useWaveEditor", parseUseWaveEditor },
 
+	// TheSuperHackers @feature xezon 03/08/2025 Force full viewport for 'Control Bar Pro' Addons like GenTool did it.
+	{ "-forcefullviewport", parseFullViewport },
+
 #if defined(RTS_DEBUG)
 	{ "-noaudio", parseNoAudio },
 	{ "-map", parseMapName },
@@ -1180,7 +1192,7 @@ static CommandLineParam paramsForEngineInit[] =
 	{ "-FPUPreserve", parseFPUPreserve },
 	{ "-benchmark", parseBenchmark },
 #ifdef DUMP_PERF_STATS
-	{ "-stats", parseStats }, 
+	{ "-stats", parseStats },
 #endif
 	{ "-saveStats", parseSaveStats },
 	{ "-localMOTD", parseLocalMOTD },
@@ -1264,7 +1276,7 @@ static CommandLineParam paramsForEngineInit[] =
 	{ "-file", parseFile },
 
 //	{ "-preload", parsePreload },
-	
+
 	{ "-preloadEverything", parsePreloadEverything },
 	{ "-logAssets", parseLogAssets },
 	{ "-netMinPlayers", parseNetMinPlayers },

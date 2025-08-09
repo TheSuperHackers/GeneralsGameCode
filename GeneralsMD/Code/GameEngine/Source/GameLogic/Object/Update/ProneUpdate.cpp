@@ -51,7 +51,7 @@ ProneUpdateModuleData::ProneUpdateModuleData() :
 {
 	ModuleData::buildFieldParse(p);
 
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
 		{ "DamageToFramesRatio", INI::parseReal, NULL, offsetof(ProneUpdateModuleData, m_damageToFramesRatio) },
 		{ 0, 0, 0, 0 }
@@ -63,7 +63,7 @@ ProneUpdateModuleData::ProneUpdateModuleData() :
 ProneUpdate::ProneUpdate( Thing *thing, const ModuleData* moduleData ) : UpdateModule( thing, moduleData )
 {
 	m_proneFrames = 0;
-} 
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------

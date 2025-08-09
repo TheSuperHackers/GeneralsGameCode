@@ -24,7 +24,7 @@
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 //
-// FILE: DefectorSpecialPower.cpp 
+// FILE: DefectorSpecialPower.cpp
 // Author: Mark Lorenzen, JULY 2002
 // Desc:   General can click command cursor on any enemy, and it becomes his
 //
@@ -58,14 +58,14 @@ DefectorSpecialPowerModuleData::DefectorSpecialPowerModuleData( void )
  void DefectorSpecialPowerModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
 	SpecialPowerModuleData::buildFieldParse( p );
-	
-	static const FieldParse dataFieldParse[] = 
+
+	static const FieldParse dataFieldParse[] =
 	{
 		{ "FatCursorRadius", INI::parseReal, NULL, offsetof( DefectorSpecialPowerModuleData, m_fatCursorRadius ) },
 		{ 0, 0, 0, 0 }
 	};
 	p.add(dataFieldParse);
-	
+
 }  // end buildFieldParse
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -87,7 +87,7 @@ DefectorSpecialPower::~DefectorSpecialPower( void )
 
 }  // end ~DefectorSpecialPower
 
- 
+
 // ------------------------------------------------------------------------------------------------
 
 void DefectorSpecialPower::doSpecialPowerAtLocation( const Coord3D *loc, Real angle, UnsignedInt commandOptions )
@@ -123,7 +123,7 @@ void DefectorSpecialPower::doSpecialPowerAtObject( Object *objectToMakeDefector,
 
 	//AIUpdateInterface *hisAI = objectToMakeDefector->getAIUpdateInterface();
 	//if (hisAI)
-	//{			
+	//{
 		// how do I get at SpecialPowerTemplate::getDetectionTime() from here?
 		const SpecialPowerTemplate *specPowTemp = getSpecialPowerTemplate();
 		UnsignedInt time = specPowTemp->getDetectionTime();
@@ -132,7 +132,7 @@ void DefectorSpecialPower::doSpecialPowerAtObject( Object *objectToMakeDefector,
 		objectToMakeDefector->defect(self->getControllingPlayer()->getDefaultTeam(), time );// @todo lorenzen hook into the new AIUpdateI methods
 	//}
 
-}  
+}
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */

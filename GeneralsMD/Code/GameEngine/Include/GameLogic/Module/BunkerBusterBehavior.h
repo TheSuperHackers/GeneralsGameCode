@@ -55,7 +55,7 @@ public:
 	static void buildFieldParse( MultiIniFieldParse &p );
 
 	AsciiString m_upgradeRequired;///< Upgrade required to kill garrisoned units
-	const FXList *m_detonationFX;						///< FXList to play upon detonation 
+	const FXList *m_detonationFX;						///< FXList to play upon detonation
   const FXList *m_crashThroughBunkerFX;  ///< FXList to play as the bomb goes smashing through the bunker
   UnsignedInt m_crashThroughBunkerFXFrequency;  ///< How often to play the above FX
 

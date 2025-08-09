@@ -35,7 +35,7 @@
 *     Const_Cast<X> replaces const_cast<X*> and const_cast<X&>
 *
 *     IsValid() replaces (x != NULL)
-*  
+*
 *     Member function Attach() or assigning RefPtr<X>() will NULL a pointer.
 *
 *     Generally, RefPtr<> and RefPtrConst<> behave like their raw pointer
@@ -106,7 +106,7 @@ class RefPtrBase
 			: mRefObject(object)
 			{
 			assert((mRefObject == NULL) || (mRefObject->mRefCount == 0));
-		
+
 			if (IsValid())
 				{
 				mRefObject->AddReference();
@@ -117,7 +117,7 @@ class RefPtrBase
 			: mRefObject(object.mRefObject)
 			{
 			assert(false); // why is this being called?
-	
+
 			if (IsValid())
 				{
 				mRefObject->AddReference();
@@ -128,7 +128,7 @@ class RefPtrBase
 			{Detach();}
 
 		const RefPtrBase& operator=(const RefPtrBase&);
-	
+
 		inline RefCounted* const GetRefObject(void)
 			{return mRefObject;}
 

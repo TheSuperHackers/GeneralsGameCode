@@ -47,12 +47,12 @@ MaxHealthUpgradeModuleData::MaxHealthUpgradeModuleData( void )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void MaxHealthUpgradeModuleData::buildFieldParse(MultiIniFieldParse& p) 
+void MaxHealthUpgradeModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
 
   UpgradeModuleData::buildFieldParse( p );
 
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
 		{ "AddMaxHealth",					INI::parseReal,					NULL,										offsetof( MaxHealthUpgradeModuleData, m_addMaxHealth ) },
 		{ "ChangeType",						INI::parseIndexList,		TheMaxHealthChangeTypeNames, offsetof( MaxHealthUpgradeModuleData, m_maxHealthChangeType ) },

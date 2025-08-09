@@ -39,7 +39,7 @@
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-StructureBody::StructureBody( Thing *thing, const ModuleData* moduleData ) 
+StructureBody::StructureBody( Thing *thing, const ModuleData* moduleData )
 							: ActiveBody( thing, moduleData )
 {
 
@@ -57,10 +57,10 @@ StructureBody::~StructureBody( void )
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 void StructureBody::setConstructorObject( Object *obj )
-{ 
+{
 
-	if( obj ) 
-		m_constructorObjectID = obj->getID(); 
+	if( obj )
+		m_constructorObjectID = obj->getID();
 
 }  // end setConstructorObject
 

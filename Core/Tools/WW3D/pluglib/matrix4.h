@@ -17,39 +17,39 @@
 */
 
 /* $Header: /Commando/Code/Tools/max2w3d/matrix4.h 15    2/03/00 4:55p Jason_a $ */
-/*********************************************************************************************** 
- ***                            Confidential - Westwood Studios                              *** 
- *********************************************************************************************** 
- *                                                                                             * 
- *                 Project Name : WW3D                                                         * 
- *                                                                                             * 
- *                    File Name : MATRIX4.H                                                    * 
- *                                                                                             * 
- *                   Programmer : Greg Hjelstrom                                               * 
- *                                                                                             * 
- *                   Start Date : 06/02/97                                                     * 
- *                                                                                             * 
- *                  Last Update : June 2, 1997 [GH]                                            * 
- *                                                                                             * 
- *---------------------------------------------------------------------------------------------* 
- * Functions:                                                                                  * 
- *   Matrix4::Matrix4 -- Constructor, optionally initialize to Identitiy matrix                * 
- *   Matrix4::Matrix4 -- Copy Constructor                                                      * 
- *   Matrix4::Matrix4 -- Convert a Matrix3D (fake 4x4) to a Matrix4                            * 
- *   Matrix4::Matrix4 -- Constructor                                                           * 
+/***********************************************************************************************
+ ***                            Confidential - Westwood Studios                              ***
+ ***********************************************************************************************
+ *                                                                                             *
+ *                 Project Name : WW3D                                                         *
+ *                                                                                             *
+ *                    File Name : MATRIX4.H                                                    *
+ *                                                                                             *
+ *                   Programmer : Greg Hjelstrom                                               *
+ *                                                                                             *
+ *                   Start Date : 06/02/97                                                     *
+ *                                                                                             *
+ *                  Last Update : June 2, 1997 [GH]                                            *
+ *                                                                                             *
+ *---------------------------------------------------------------------------------------------*
+ * Functions:                                                                                  *
+ *   Matrix4::Matrix4 -- Constructor, optionally initialize to Identitiy matrix                *
+ *   Matrix4::Matrix4 -- Copy Constructor                                                      *
+ *   Matrix4::Matrix4 -- Convert a Matrix3D (fake 4x4) to a Matrix4                            *
+ *   Matrix4::Matrix4 -- Constructor                                                           *
  *   Matrix4::Make_Identity -- Initializes the matrix to Identity                              *
  *   Matrix4::Init -- Initializes from the contents of the give Matrix3D                       *
  *   Matrix4::Init -- Initializes the rows from the given Vector4s                             *
  *   Matrix4::Init_Ortho -- Initialize to an orthographic projection matrix                    *
  *   Matrix4::Init_Perspective -- Initialize to a perspective projection matrix                *
  *   Matrix4::Init_Perspective -- Initialize to a perspective projection matrix                *
- *   Matrix4::Transpose -- Returns transpose of the matrix                                     * 
- *   Matrix4::Inverse -- returns the inverse of the matrix                                     * 
- *   Matrix4::operator = -- assignment operator                                                * 
- *   Matrix4::operator += -- "plus equals" operator                                            * 
- *   Matrix4::operator-= -- "minus equals" operator                                            * 
- *   Matrix4::operator *= -- "times equals" operator                                           * 
- *   Matrix4::operator /= -- "divide equals" operator                                          * 
+ *   Matrix4::Transpose -- Returns transpose of the matrix                                     *
+ *   Matrix4::Inverse -- returns the inverse of the matrix                                     *
+ *   Matrix4::operator = -- assignment operator                                                *
+ *   Matrix4::operator += -- "plus equals" operator                                            *
+ *   Matrix4::operator-= -- "minus equals" operator                                            *
+ *   Matrix4::operator *= -- "times equals" operator                                           *
+ *   Matrix4::operator /= -- "divide equals" operator                                          *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 
@@ -80,7 +80,7 @@ public:
 	explicit Matrix4(const Matrix3D & m);
 	explicit Matrix4(const Matrix3 & m);
 	explicit Matrix4(const Vector4 & v0, const Vector4 & v1, const Vector4 & v2, const Vector4 & v3);
-	
+
 	void		Make_Identity(void);
 	void		Init(const Matrix3D & m);
 	void		Init(const Matrix3 & m);
@@ -115,7 +115,7 @@ public:
 	** Negation
 	*/
 	friend Matrix4 operator - (const Matrix4& a);
-	
+
 	/*
 	** Scalar multiplication and division
 	*/
@@ -125,7 +125,7 @@ public:
 
 	/*
 	** matrix addition
-	*/ 
+	*/
 	friend Matrix4 operator + (const Matrix4& a, const Matrix4& b);
 	friend Matrix4 Add(const Matrix4& a);
 
@@ -140,7 +140,7 @@ public:
 	*/
 	friend Matrix4 operator * (const Matrix4 & a, const Matrix4 & b);
 	friend Matrix4 Multiply(const Matrix4 & a, const Matrix4 & b);
-	
+
 	/*
 	** Comparison operators
 	*/
@@ -174,17 +174,17 @@ protected:
 };
 
 
-/*********************************************************************************************** 
- * Matrix4::Matrix4 -- Constructor, optionally initialize to Identitiy matrix                  * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   06/02/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * Matrix4::Matrix4 -- Constructor, optionally initialize to Identitiy matrix                  *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   06/02/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
 inline Matrix4::Matrix4(bool identity)
 {
@@ -193,54 +193,54 @@ inline Matrix4::Matrix4(bool identity)
 	}
 }
 
-/*********************************************************************************************** 
- * Matrix4::Matrix4 -- Copy Constructor                                                        * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   06/02/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * Matrix4::Matrix4 -- Copy Constructor                                                        *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   06/02/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
 inline Matrix4::Matrix4(const Matrix4 & m)
 {
-	Row[0] = m.Row[0]; Row[1] = m.Row[1]; Row[2] = m.Row[2]; Row[3] = m.Row[3]; 
+	Row[0] = m.Row[0]; Row[1] = m.Row[1]; Row[2] = m.Row[2]; Row[3] = m.Row[3];
 }
 
-/*********************************************************************************************** 
- * Matrix4::Matrix4 -- Convert a Matrix3D (fake 4x4) to a Matrix4                              * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   06/02/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * Matrix4::Matrix4 -- Convert a Matrix3D (fake 4x4) to a Matrix4                              *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   06/02/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
 inline Matrix4::Matrix4(const Matrix3D & m)
 {
 	Init(m);
 }
 
-/*********************************************************************************************** 
- * Matrix4::Matrix4 -- Constructor                                                             * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   06/02/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * Matrix4::Matrix4 -- Constructor                                                             *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   06/02/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
 inline Matrix4::Matrix4(const Vector4 & r0, const Vector4 & r1, const Vector4 & r2, const Vector4 & r3)
-{ 
+{
 	Init(r0,r1,r2,r3);
 }
 
@@ -280,7 +280,7 @@ inline void Matrix4::Make_Identity(void)
  *=============================================================================================*/
 inline void Matrix4::Init(const Matrix3D & m)
 {
-	Row[0] = m[0]; Row[1] = m[1]; Row[2] = m[2]; Row[3] = Vector4(0.0,0.0,0.0,1.0); 
+	Row[0] = m[0]; Row[1] = m[1]; Row[2] = m[2]; Row[3] = Vector4(0.0,0.0,0.0,1.0);
 }
 
 
@@ -298,7 +298,7 @@ inline void Matrix4::Init(const Matrix3D & m)
  *=============================================================================================*/
 inline void Matrix4::Init(const Vector4 & r0, const Vector4 & r1, const Vector4 & r2, const Vector4 & r3)
 {
-	Row[0] = r0; Row[1] = r1; Row[2] = r2; Row[3] = r3; 
+	Row[0] = r0; Row[1] = r1; Row[2] = r2; Row[3] = r3;
 }
 
 
@@ -429,17 +429,17 @@ inline void Matrix4::Init_Perspective
 	Row[3][3] = 0.0f;
 }
 
-/*********************************************************************************************** 
- * Matrix4::Transpose -- Returns transpose of the matrix                                       * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   06/02/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * Matrix4::Transpose -- Returns transpose of the matrix                                       *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   06/02/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
 inline Matrix4 Matrix4::Transpose() const
 {
@@ -451,17 +451,17 @@ inline Matrix4 Matrix4::Transpose() const
 	);
 }
 
-/*********************************************************************************************** 
- * Matrix4::Inverse -- returns the inverse of the matrix                                       * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   06/02/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * Matrix4::Inverse -- returns the inverse of the matrix                                       *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   06/02/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
 inline Matrix4 Matrix4::Inverse() const    // Gauss-Jordan elimination with partial pivoting
 {
@@ -502,121 +502,121 @@ inline Matrix4 Matrix4::Inverse() const    // Gauss-Jordan elimination with part
 	return b;
 }
 
-/*********************************************************************************************** 
- * Matrix4::operator = -- assignment operator                                                  * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   06/02/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * Matrix4::operator = -- assignment operator                                                  *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   06/02/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
 inline Matrix4 & Matrix4::operator = (const Matrix4 & m)
 {
 	Row[0] = m.Row[0]; Row[1] = m.Row[1]; Row[2] = m.Row[2]; Row[3] = m.Row[3];
-	return *this; 
+	return *this;
 }
 
-/*********************************************************************************************** 
- * Matrix4::operator += -- "plus equals" operator                                              * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   06/02/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * Matrix4::operator += -- "plus equals" operator                                              *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   06/02/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
 inline Matrix4& Matrix4::operator += (const Matrix4 & m)
 {
 	Row[0] += m.Row[0]; Row[1] += m.Row[1]; Row[2] += m.Row[2]; Row[3] += m.Row[3];
-	return *this; 
+	return *this;
 }
 
-/*********************************************************************************************** 
- * Matrix4::operator-= -- "minus equals" operator                                              * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   06/02/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * Matrix4::operator-= -- "minus equals" operator                                              *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   06/02/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
 inline Matrix4& Matrix4::operator -= (const Matrix4 & m)
 {
 	Row[0] -= m.Row[0]; Row[1] -= m.Row[1]; Row[2] -= m.Row[2]; Row[3] -= m.Row[3];
-	return *this; 
+	return *this;
 }
 
-/*********************************************************************************************** 
- * Matrix4::operator *= -- "times equals" operator                                             * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   06/02/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * Matrix4::operator *= -- "times equals" operator                                             *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   06/02/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
 inline Matrix4& Matrix4::operator *= (float d)
 {
 	Row[0] *= d; Row[1] *= d; Row[2] *= d; Row[3] *= d;
-	return *this; 
+	return *this;
 }
 
-/*********************************************************************************************** 
- * Matrix4::operator /= -- "divide equals" operator                                            * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   06/02/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * Matrix4::operator /= -- "divide equals" operator                                            *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   06/02/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
 inline Matrix4& Matrix4::operator /= (float d)
 {
 	float ood = d;
 	Row[0] *= ood; Row[1] *= ood; Row[2] *= ood; Row[3] *= ood;
-	return *this; 
+	return *this;
 }
 
 inline Matrix4 operator - (const Matrix4 & a)
-{ 
-	return Matrix4(-a.Row[0], -a.Row[1], -a.Row[2], -a.Row[3]); 
+{
+	return Matrix4(-a.Row[0], -a.Row[1], -a.Row[2], -a.Row[3]);
 }
 
 inline Matrix4 operator * (const Matrix4 & a, float d)
-{ 
-	return Matrix4(a.Row[0] * d, a.Row[1] * d, a.Row[2] * d, a.Row[3] * d); 
+{
+	return Matrix4(a.Row[0] * d, a.Row[1] * d, a.Row[2] * d, a.Row[3] * d);
 }
 
 inline Matrix4 operator * (float d, const Matrix4 & a)
-{ 
-	return a*d; 
+{
+	return a*d;
 }
 
 inline Matrix4 operator / (const Matrix4 & a, float d)
-{ 
+{
 	float ood = 1.0f / d;
-	return Matrix4(a.Row[0] * ood, a.Row[1] * ood, a.Row[2] * ood, a.Row[3] * ood); 
+	return Matrix4(a.Row[0] * ood, a.Row[1] * ood, a.Row[2] * ood, a.Row[3] * ood);
 }
 
 /*
 ** matrix addition
-*/ 
+*/
 inline Matrix4 operator + (const Matrix4 & a, const Matrix4 & b)
 {
 	return Matrix4(
@@ -652,14 +652,14 @@ inline Matrix4 Subtract(const Matrix4 & a, const Matrix4 & b)
 inline Matrix4 operator * (const Matrix4 & a, const Matrix4 & b)
 {
 	#define ROWCOL(i, j) a[i][0]*b[0][j] + a[i][1]*b[1][j] + a[i][2]*b[2][j] + a[i][3]*b[3][j]
-    
+
 	return Matrix4(
 		Vector4(ROWCOL(0,0), ROWCOL(0,1), ROWCOL(0,2), ROWCOL(0,3)),
 		Vector4(ROWCOL(1,0), ROWCOL(1,1), ROWCOL(1,2), ROWCOL(1,3)),
 		Vector4(ROWCOL(2,0), ROWCOL(2,1), ROWCOL(2,2), ROWCOL(2,3)),
 		Vector4(ROWCOL(3,0), ROWCOL(3,1), ROWCOL(3,2), ROWCOL(3,3))
 	);
-	
+
 	#undef ROWCOL
 }
 

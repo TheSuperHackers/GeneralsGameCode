@@ -49,7 +49,7 @@
 //-------------------------------------------------------------------------------------------------
 FirestormDynamicGeometryInfoUpdateModuleData::FirestormDynamicGeometryInfoUpdateModuleData() : DynamicGeometryInfoUpdateModuleData()
 {
-	
+
 	for( Int i = 0; i < MAX_FIRESTORM_SYSTEMS; i++ )
 		m_particleSystem[ i ] = NULL;
 	m_fxList = NULL;
@@ -66,7 +66,7 @@ FirestormDynamicGeometryInfoUpdateModuleData::FirestormDynamicGeometryInfoUpdate
 {
 	DynamicGeometryInfoUpdateModuleData::buildFieldParse(p);
 
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
 		{ "DelayBetweenDamageFrames", INI::parseDurationReal, NULL, offsetof( FirestormDynamicGeometryInfoUpdateModuleData, m_delayBetweenDamageFrames ) },
 		{ "DamageAmount", INI::parseReal, NULL, offsetof( FirestormDynamicGeometryInfoUpdateModuleData, m_damageAmount ) },
@@ -98,14 +98,14 @@ FirestormDynamicGeometryInfoUpdateModuleData::FirestormDynamicGeometryInfoUpdate
 //-------------------------------------------------------------------------------------------------
 FirestormDynamicGeometryInfoUpdate::FirestormDynamicGeometryInfoUpdate( Thing *thing, const ModuleData* moduleData ) : DynamicGeometryInfoUpdate( thing, moduleData )
 {
-	
+
 	for( Int i = 0; i < MAX_FIRESTORM_SYSTEMS; i++ )
 		m_myParticleSystemID[ i ] = INVALID_PARTICLE_SYSTEM_ID;
 	m_effectsFired = FALSE;
 	m_scorchPlaced = FALSE;
 	m_lastDamageFrame = 0;
 
-} 
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -118,7 +118,7 @@ FirestormDynamicGeometryInfoUpdate::~FirestormDynamicGeometryInfoUpdate( void )
 //-------------------------------------------------------------------------------------------------
 UpdateSleepTime FirestormDynamicGeometryInfoUpdate::update( void )
 {
-	
+
 	// extend functionality
 	DynamicGeometryInfoUpdate::update();
 
@@ -135,7 +135,7 @@ UpdateSleepTime FirestormDynamicGeometryInfoUpdate::update( void )
 		ParticleSystem *sys;
 
 		//
-		// construct a position to play the particle effects ... that is on the ground, but 
+		// construct a position to play the particle effects ... that is on the ground, but
 		// note that we add a small amount to it to avoid particles from the system (especially
 		// flat XY particles) from popping up through the terrain
 		//
@@ -179,7 +179,7 @@ UpdateSleepTime FirestormDynamicGeometryInfoUpdate::update( void )
 		if( m_myParticleSystemID[ i ] )
 		{
 			ParticleSystem *sys = TheParticleSystemManager->findParticleSystem( m_myParticleSystemID[ i ] );
-		
+
 			if( sys )
 			{
 				ParticleSystemInfo::EmissionVolumeType type = sys->getEmisionVolumeType();
@@ -250,7 +250,7 @@ void FirestormDynamicGeometryInfoUpdate::doDamageScan( void )
 	{
 		ObjectIterator *iter = ThePartitionManager->iterateObjectsInRange( firestormPos,
 																																			 boundingCircle,
-																																			 FROM_BOUNDINGSPHERE_2D, 
+																																			 FROM_BOUNDINGSPHERE_2D,
 																																			 NULL );
 		MemoryPoolObjectHolder hold( iter );
 		Object *other;

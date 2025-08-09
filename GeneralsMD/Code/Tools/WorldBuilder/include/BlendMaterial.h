@@ -84,7 +84,7 @@ public:
 public:
 	Bool setTerrainTreeViewSelection(HTREEITEM parent, Int selection);
 
-}; 
+};
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.

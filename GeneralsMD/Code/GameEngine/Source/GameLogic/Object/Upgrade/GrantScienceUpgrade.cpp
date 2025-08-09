@@ -24,12 +24,12 @@
 
 // FILE: GrantScienceUpgrade.cpp /////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
+//
 //                       Electronic Arts Los Angeles
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2003 - All Rights Reserved                  
-//                                                                          
+//
+//                       Confidential Information
+//                Copyright (C) 2003 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 //	Created:	  August 2, 2003
@@ -37,7 +37,7 @@
 //	Filename: 	GrantScienceUpgrade.cpp
 //
 //	Author:		  Kris Morness
-//	
+//
 //	Purpose:	  Grants specified science once requirements met (typically an upgrade).
 //
 //-----------------------------------------------------------------------------
@@ -55,11 +55,11 @@
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void GrantScienceUpgradeModuleData::buildFieldParse(MultiIniFieldParse& p) 
+void GrantScienceUpgradeModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
   UpgradeModuleData::buildFieldParse(p);
 
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
 		{ "GrantScience",		INI::parseAsciiString,	NULL, offsetof( GrantScienceUpgradeModuleData, m_grantScienceName ) },
 		{ 0, 0, 0, 0 }
@@ -90,7 +90,7 @@ void GrantScienceUpgrade::upgradeImplementation( )
 		m_scienceType = TheScienceStore->getScienceFromInternalName( data->m_grantScienceName );
 	}
 
-	Object *obj = getObject();	
+	Object *obj = getObject();
 	Player *player = obj->getControllingPlayer();
 	if( player )
 	{

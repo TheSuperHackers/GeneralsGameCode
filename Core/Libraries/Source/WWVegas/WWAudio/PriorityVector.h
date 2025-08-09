@@ -71,9 +71,9 @@ class PriorityVectorClass : public DynamicVectorClass<T>
 template <class T>
 __inline bool PriorityVectorClass<T>::Process_Head (T &object)
 {
-	bool retval = false;	
+	bool retval = false;
 	if (Vector != NULL) {
-		
+
 		// Pass the object back to the caller
 		object = Vector[0];
 
@@ -95,7 +95,7 @@ __inline bool PriorityVectorClass<T>::Process_Head (T &object)
 
 ////////////////////////////////////////////////////////////////////
 //
-//	Add_Low 
+//	Add_Low
 //
 ////////////////////////////////////////////////////////////////////
 template <class T>

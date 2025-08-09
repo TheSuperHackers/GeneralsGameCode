@@ -64,9 +64,9 @@ class MaxWorldInfoClass : public WorldInfoClass
 				CurrentTime(0)					{ }
 		virtual ~MaxWorldInfoClass(void)	{ }
 
-		// Public methods		
+		// Public methods
 		virtual Vector3	Get_Shared_Vertex_Normal(Vector3 pos, int smgroup);
-		
+
 		virtual GeometryExportTaskClass *	Get_Current_Task(void) const								{ return CurrentTask; }
 		virtual void								Set_Current_Task(GeometryExportTaskClass * task)	{ CurrentTask = task; }
 
@@ -78,7 +78,7 @@ class MaxWorldInfoClass : public WorldInfoClass
 
 		virtual void		Allow_Mesh_Smoothing (bool onoff)	{ SmoothBetweenMeshes = onoff; }
 		virtual bool		Are_Meshes_Smoothed (void) const		{ return SmoothBetweenMeshes; }
-		
+
 	private:
 
 		DynamicVectorClass<GeometryExportTaskClass *> &	MeshList;

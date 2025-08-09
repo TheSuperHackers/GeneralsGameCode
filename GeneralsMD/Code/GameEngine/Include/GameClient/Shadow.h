@@ -40,17 +40,17 @@
 // shadow bit flags, keep this in sync with TheShadowNames
 enum ShadowType CPP_11(: Int)
 {
-	SHADOW_NONE											=	0x00000000, 
+	SHADOW_NONE											=	0x00000000,
 	SHADOW_DECAL										=	0x00000001,		//shadow decal applied via modulate blend
-	SHADOW_VOLUME										=	0x00000002, 
+	SHADOW_VOLUME										=	0x00000002,
 	SHADOW_PROJECTION								=	0x00000004,
 	SHADOW_DYNAMIC_PROJECTION				= 0x00000008,		//extra setting for shadows which need dynamic updates
 	SHADOW_DIRECTIONAL_PROJECTION		= 0x00000010,		//extra setting for shadow decals that rotate with sun direction
 	SHADOW_ALPHA_DECAL							= 0x00000020,		//not really for shadows but for other decal uses. Alpha blended.
-	SHADOW_ADDITIVE_DECAL						= 0x00000040		//not really for shadows but for other decal uses. Additive blended. 
+	SHADOW_ADDITIVE_DECAL						= 0x00000040		//not really for shadows but for other decal uses. Additive blended.
 };
 #ifdef DEFINE_SHADOW_NAMES
-static const char* TheShadowNames[] = 
+static const char* TheShadowNames[] =
 {
 	"SHADOW_DECAL",
 	"SHADOW_VOLUME",
@@ -73,9 +73,9 @@ class Shadow
 {
 
 public:
-		
+
 		struct	ShadowTypeInfo
-		{	
+		{
 				char	m_ShadowName[64];	//when set, overrides the default model shadow (used mostly for Decals).
 				ShadowType m_type;			//type of shadow
 				Bool	allowUpdates;			//whether to update the shadow image when object/light moves.
@@ -89,7 +89,7 @@ public:
 		Shadow(void) : m_diffuse(0xffffffff), m_color(0xffffffff), m_opacity (0x000000ff), m_localAngle(0.0f) {}
 
 		///<if this is set, then no render will occur, even if enableShadowRender() is enabled. Used by Shroud.
-		void enableShadowInvisible(Bool isEnabled);	
+		void enableShadowInvisible(Bool isEnabled);
 		void enableShadowRender(Bool isEnabled);
 		Bool isRenderEnabled(void) {return m_isEnabled;}
 		Bool isInvisibleEnabled(void) {return m_isInvisibleEnabled;}
@@ -101,22 +101,22 @@ public:
 
 		void setSize(Real sizeX, Real sizeY)
 		{
-			m_decalSizeX = sizeX; 
-			m_decalSizeY = sizeY; 
-			
-			if (sizeX == 0) 
+			m_decalSizeX = sizeX;
+			m_decalSizeY = sizeY;
+
+			if (sizeX == 0)
 				m_oowDecalSizeX = 0;
 			else
 				m_oowDecalSizeX = 1.0f/sizeX ;
 
-			if (sizeY == 0) 
+			if (sizeY == 0)
 				m_oowDecalSizeY = 0;
 			else
 				m_oowDecalSizeY = 1.0f/sizeY ;
 
 		};
 
-		#if defined(RTS_DEBUG)	
+		#if defined(RTS_DEBUG)
 		virtual void getRenderCost(RenderCost & rc) const = 0;
 		#endif
 
@@ -173,7 +173,7 @@ inline void Shadow::setOpacity(Int value)
 }
 
 inline void Shadow::setColor(Color value)
-{ 
+{
 	m_color = value & 0x00ffffff;	//filter out alpha
 
 	if (m_type & SHADOW_ALPHA_DECAL)

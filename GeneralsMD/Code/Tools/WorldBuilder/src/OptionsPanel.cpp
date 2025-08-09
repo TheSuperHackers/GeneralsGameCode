@@ -59,21 +59,21 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // COptionsPanel message handlers
 
-void COptionsPanel::OnMove(int x, int y) 
+void COptionsPanel::OnMove(int x, int y)
 {
 	CDialog::OnMove(x, y);
-	
+
 	if (this->IsWindowVisible() && !this->IsIconic()) {
 		CRect frameRect;
 		GetWindowRect(&frameRect);
 		::AfxGetApp()->WriteProfileInt(OPTIONS_PANEL_SECTION, "Top", frameRect.top);
 		::AfxGetApp()->WriteProfileInt(OPTIONS_PANEL_SECTION, "Left", frameRect.left);
 	}
-	
+
 }
 
 
-void COptionsPanel::OnEditRedo() 
+void COptionsPanel::OnEditRedo()
 {
 	// Redirect undo/redo to the doc so they get executed.
 	CWorldBuilderDoc *pDoc = CWorldBuilderDoc::GetActiveDoc();
@@ -82,7 +82,7 @@ void COptionsPanel::OnEditRedo()
 	}
 }
 
-void COptionsPanel::OnUpdateEditRedo(CCmdUI* pCmdUI) 
+void COptionsPanel::OnUpdateEditRedo(CCmdUI* pCmdUI)
 {
 	// Redirect undo/redo to the doc so they get executed.
 	CWorldBuilderDoc *pDoc = CWorldBuilderDoc::GetActiveDoc();
@@ -91,7 +91,7 @@ void COptionsPanel::OnUpdateEditRedo(CCmdUI* pCmdUI)
 	}
 }
 
-void COptionsPanel::OnEditUndo() 
+void COptionsPanel::OnEditUndo()
 {
 	// Redirect undo/redo to the doc so they get executed.
 	CWorldBuilderDoc *pDoc = CWorldBuilderDoc::GetActiveDoc();
@@ -100,7 +100,7 @@ void COptionsPanel::OnEditUndo()
 	}
 }
 
-void COptionsPanel::OnUpdateEditUndo(CCmdUI* pCmdUI) 
+void COptionsPanel::OnUpdateEditUndo(CCmdUI* pCmdUI)
 {
 	// Redirect undo/redo to the doc so they get executed.
 	CWorldBuilderDoc *pDoc = CWorldBuilderDoc::GetActiveDoc();

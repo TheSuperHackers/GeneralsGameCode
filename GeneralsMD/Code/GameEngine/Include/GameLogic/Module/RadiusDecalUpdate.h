@@ -46,10 +46,10 @@ public:
 		//m_deliveryDecalRadius = 0.0f;
 	}
 
-	static void buildFieldParse(MultiIniFieldParse& p) 
+	static void buildFieldParse(MultiIniFieldParse& p)
 	{
     UpdateModuleData::buildFieldParse(p);
-		static const FieldParse dataFieldParse[] = 
+		static const FieldParse dataFieldParse[] =
 		{
 			//{ "DeliveryDecal",						RadiusDecalTemplate::parseRadiusDecalTemplate,	NULL, offsetof( RadiusDecalUpdateModuleData, m_deliveryDecalTemplate ) },
 			//{ "DeliveryDecalRadius",			INI::parseReal,									NULL,	offsetof( RadiusDecalUpdateModuleData, m_deliveryDecalRadius ) },
@@ -75,7 +75,7 @@ public:
 	//void createRadiusDecal( const Coord3D& pos );
 	void createRadiusDecal( const RadiusDecalTemplate& tmpl, Real radius, const Coord3D& pos );
 	void killWhenNoLongerAttacking(Bool v) { m_killWhenNoLongerAttacking = v; }
-	void killRadiusDecal(); 
+	void killRadiusDecal();
 
 	virtual UpdateSleepTime update( void );
 

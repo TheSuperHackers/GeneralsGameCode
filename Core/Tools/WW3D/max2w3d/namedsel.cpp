@@ -17,22 +17,22 @@
 */
 
 /* $Header: /Commando/Code/Tools/max2w3d/namedsel.cpp 4     10/28/97 6:08p Greg_h $ */
-/*********************************************************************************************** 
- ***                            Confidential - Westwood Studios                              *** 
- *********************************************************************************************** 
- *                                                                                             * 
- *                 Project Name : Commando Tools - WWSkin                                      * 
- *                                                                                             * 
- *                     $Archive:: /Commando/Code/Tools/max2w3d/namedsel.cpp                   $* 
- *                                                                                             * 
- *                      $Author:: Greg_h                                                      $* 
- *                                                                                             * 
- *                     $Modtime:: 10/26/97 1:29p                                              $* 
- *                                                                                             * 
- *                    $Revision:: 4                                                           $* 
- *                                                                                             * 
- *---------------------------------------------------------------------------------------------* 
- * Functions:                                                                                  * 
+/***********************************************************************************************
+ ***                            Confidential - Westwood Studios                              ***
+ ***********************************************************************************************
+ *                                                                                             *
+ *                 Project Name : Commando Tools - WWSkin                                      *
+ *                                                                                             *
+ *                     $Archive:: /Commando/Code/Tools/max2w3d/namedsel.cpp                   $*
+ *                                                                                             *
+ *                      $Author:: Greg_h                                                      $*
+ *                                                                                             *
+ *                     $Modtime:: 10/26/97 1:29p                                              $*
+ *                                                                                             *
+ *                    $Revision:: 4                                                           $*
+ *                                                                                             *
+ *---------------------------------------------------------------------------------------------*
+ * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 
@@ -108,10 +108,10 @@ NamedSelSetList& NamedSelSetList::operator=(NamedSelSetList& from)
 
 
 int NamedSelSetList::Find_Set(TSTR &setname)
-{	
+{
 	for (int i=0; i<Names.Count(); i++) {
 		if (setname == *Names[i]) {
-			return i;			
+			return i;
 		}
 	}
 	return -1;
@@ -125,7 +125,7 @@ IOResult NamedSelSetList::Save(ISave *isave)
 	for (int i=0; i<Sets.Count(); i++) {
 
 		isave->BeginChunk(NAMED_SEL_SET_CHUNK);
-		
+
 			isave->BeginChunk(NAMED_SEL_NAME_CHUNK);
 			isave->WriteWString(*Names[i]);
 			isave->EndChunk();
@@ -144,7 +144,7 @@ IOResult NamedSelSetList::Save(ISave *isave)
 IOResult NamedSelSetList::Load(ILoad *iload)
 {
 	IOResult res;
-		
+
 	while (IO_OK==(res=iload->OpenChunk())) {
 
 		switch (iload->CurChunkID())  {
@@ -152,7 +152,7 @@ IOResult NamedSelSetList::Load(ILoad *iload)
 			case NAMED_SEL_SET_CHUNK:
 				res = Load_Set(iload);
 				break;
-			
+
 			default:
 				assert(0);
 				break;
@@ -174,12 +174,12 @@ IOResult NamedSelSetList::Load_Set(ILoad * iload)
 	BOOL gotname = FALSE;
 
 	res = iload->OpenChunk();
-		
+
 	while (IO_OK==(res=iload->OpenChunk())) {
 
 		switch (iload->CurChunkID())  {
 
-			case NAMED_SEL_BITS_CHUNK: 
+			case NAMED_SEL_BITS_CHUNK:
 			{
 				res = set.Load(iload);
 				gotset = TRUE;
@@ -199,6 +199,6 @@ IOResult NamedSelSetList::Load_Set(ILoad * iload)
 
 	assert(gotset && gotname);
 	Append_Set(set,TSTR(name));
-	
+
 	return IO_OK;
 }

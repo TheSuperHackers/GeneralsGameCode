@@ -17,30 +17,30 @@
 */
 
 /* $Header: /Commando/Code/wwmath/euler.cpp 5     4/27/01 11:51a Jani_p $ */
-/*********************************************************************************************** 
- ***                            Confidential - Westwood Studios                              *** 
- *********************************************************************************************** 
- *                                                                                             * 
- *                 Project Name : Commando / G Math Library                                    * 
- *                                                                                             * 
- *                     $Archive:: /Commando/Code/wwmath/euler.cpp                             $* 
- *                                                                                             * 
- *                       Author:: Greg_h                                                       * 
- *                                                                                             * 
- *                     $Modtime:: 4/23/01 6:08p                                               $* 
- *                                                                                             * 
- *                    $Revision:: 5                                                           $* 
- *                                                                                             * 
- *---------------------------------------------------------------------------------------------* 
- * Functions:                                                                                  * 
- *   EulerAnglesClass::EulerAnglesClass -- constructor                                         * 
- *   EulerAnglesClass::Get_Angle -- returns angle 'i' of the euler angles                      * 
- *   EulerAnglesClass::From_Matrix -- computes the equivalent euler angles for the given matrix* 
- *   EulerAnglesClass::To_Matrix -- Builds a matrix from the given euler angles                * 
+/***********************************************************************************************
+ ***                            Confidential - Westwood Studios                              ***
+ ***********************************************************************************************
+ *                                                                                             *
+ *                 Project Name : Commando / G Math Library                                    *
+ *                                                                                             *
+ *                     $Archive:: /Commando/Code/wwmath/euler.cpp                             $*
+ *                                                                                             *
+ *                       Author:: Greg_h                                                       *
+ *                                                                                             *
+ *                     $Modtime:: 4/23/01 6:08p                                               $*
+ *                                                                                             *
+ *                    $Revision:: 5                                                           $*
+ *                                                                                             *
+ *---------------------------------------------------------------------------------------------*
+ * Functions:                                                                                  *
+ *   EulerAnglesClass::EulerAnglesClass -- constructor                                         *
+ *   EulerAnglesClass::Get_Angle -- returns angle 'i' of the euler angles                      *
+ *   EulerAnglesClass::From_Matrix -- computes the equivalent euler angles for the given matrix*
+ *   EulerAnglesClass::To_Matrix -- Builds a matrix from the given euler angles                *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 
-#include "euler.h"	
+#include "euler.h"
 #include <float.h>
 
 
@@ -126,51 +126,51 @@ static int _euler_axis_k(int order);
 static int _euler_axis_h(int order);
 
 
-/*********************************************************************************************** 
- * EulerAnglesClass::EulerAnglesClass -- constructor                                           * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   08/11/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * EulerAnglesClass::EulerAnglesClass -- constructor                                           *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   08/11/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
 EulerAnglesClass::EulerAnglesClass(const Matrix3D & M,int order)
 {
 	this->From_Matrix(M,order);
 }
 
-/*********************************************************************************************** 
- * EulerAnglesClass::Get_Angle -- returns angle 'i' of the euler angles                        * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   08/11/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * EulerAnglesClass::Get_Angle -- returns angle 'i' of the euler angles                        *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   08/11/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
 double EulerAnglesClass::Get_Angle(int i)
 {
-	return Angle[i];		
+	return Angle[i];
 }
 
-/*********************************************************************************************** 
- * EulerAnglesClass::From_Matrix -- computes the equivalent euler angles for the given matrix  * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   08/11/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * EulerAnglesClass::From_Matrix -- computes the equivalent euler angles for the given matrix  *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   08/11/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
 void EulerAnglesClass::From_Matrix(const Matrix3D & M, int order)
 {
@@ -224,7 +224,7 @@ void EulerAnglesClass::From_Matrix(const Matrix3D & M, int order)
 		double x2 = PI + Angle[0];
 		double y2 = PI - Angle[1];
 		double z2 = PI + Angle[2];
-				
+
 		if (x2 > PI) {
 			x2 = x2 - 2*PI;
 		}
@@ -250,17 +250,17 @@ void EulerAnglesClass::From_Matrix(const Matrix3D & M, int order)
 
 
 
-/*********************************************************************************************** 
- * EulerAnglesClass::To_Matrix -- Builds a matrix from the given euler angles                  * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   08/11/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * EulerAnglesClass::To_Matrix -- Builds a matrix from the given euler angles                  *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   08/11/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
 void EulerAnglesClass::To_Matrix(Matrix3D & M)
 {
@@ -275,12 +275,12 @@ void EulerAnglesClass::To_Matrix(Matrix3D & M)
 	a2 = Angle[2];
 
 	_euler_unpack_order(Order,i,j,k,h,n,s,f);
-	if (f == EULER_FRAME_ROTATING) { 
-		double t = a0; a0 = a2; a2 = t; 
+	if (f == EULER_FRAME_ROTATING) {
+		double t = a0; a0 = a2; a2 = t;
 	}
-	
-	if (n == EULER_PARITY_ODD) { 
-		a0 = -a0; a1 = -a1; a2 = -a2; 
+
+	if (n == EULER_PARITY_ODD) {
+		a0 = -a0; a1 = -a1; a2 = -a2;
 	}
 
 	ti = a0;				tj = a1;				th = a2;
@@ -351,7 +351,7 @@ int _euler_axis_h(int order)
 
 void _euler_unpack_order(int order,int &i,int &j,int &k,int &h,int &n,int &s,int &f)
 {
-	
+
 	f = order & 1;
 	order >>= 1;
 

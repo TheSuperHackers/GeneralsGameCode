@@ -47,11 +47,11 @@ FireWeaponUpdateModuleData::FireWeaponUpdateModuleData()
 }
 
 //-------------------------------------------------------------------------------------------------
-/*static*/ void FireWeaponUpdateModuleData::buildFieldParse(MultiIniFieldParse& p) 
+/*static*/ void FireWeaponUpdateModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
   UpdateModuleData::buildFieldParse(p);
 
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
 		{ "Weapon",								INI::parseWeaponTemplate,	      NULL, offsetof( FireWeaponUpdateModuleData, m_weaponTemplate ) },
 		{ "InitialDelay",					INI::parseDurationUnsignedInt,	NULL, offsetof( FireWeaponUpdateModuleData, m_initialDelayFrames ) },
@@ -63,7 +63,7 @@ FireWeaponUpdateModuleData::FireWeaponUpdateModuleData()
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-FireWeaponUpdate::FireWeaponUpdate( Thing *thing, const ModuleData* moduleData ) : 
+FireWeaponUpdate::FireWeaponUpdate( Thing *thing, const ModuleData* moduleData ) :
 	UpdateModule( thing, moduleData ),
 	m_weapon(NULL)
 {
@@ -91,7 +91,7 @@ FireWeaponUpdate::~FireWeaponUpdate( void )
 //-------------------------------------------------------------------------------------------------
 UpdateSleepTime FireWeaponUpdate::update( void )
 {
-  
+
   if ( TheGameLogic->getFrame() < m_initialDelayFrame )
     return UPDATE_SLEEP_NONE;
 
@@ -117,7 +117,7 @@ Bool FireWeaponUpdate::isOkayToFire()
 	// Weapon is reloading
 	if( m_weapon->getStatus() != READY_TO_FIRE )
 		return FALSE;
-	
+
 	if( me->testStatus(OBJECT_STATUS_UNDER_CONSTRUCTION) )
 		return FALSE; // no hitting with a 0% building, cheater
 

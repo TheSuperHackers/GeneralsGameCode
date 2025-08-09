@@ -85,7 +85,7 @@ public:
 	{
 	}
 //	~GeneralPersona( void );
-	
+
 	Bool isStartingEnabled() const { return m_bStartsEnabled; }
 	const AsciiString& getBioName() const { return m_strBioName; }
 	const AsciiString& getBioDOB() const { return m_strBioDOB; }
@@ -108,7 +108,7 @@ public:
 	const AsciiString& getRandomTauntSound() const {
 		switch (rand()%3) // don't care about distribution or exactly how random this is
 		{
-			case 0:	return m_strTauntSound1; 
+			case 0:	return m_strTauntSound1;
 			case 1: return m_strTauntSound2;
 		}
 		return m_strTauntSound3;
@@ -140,7 +140,7 @@ public:
 	const GeneralPersona* getPlayerGeneralByCampaignName( AsciiString name ) const;
 	const GeneralPersona* getGeneralByGeneralName( AsciiString name ) const;
 	const GeneralPersona* getGeneralByTemplateName( AsciiString name ) const;
-	
+
 	void setCurrentPlayerTemplateNum( Int playerTemplateNum) { m_PlayerTemplateNum = playerTemplateNum; }
 	Int getCurrentPlayerTemplateNum( void ) { return m_PlayerTemplateNum; }
 

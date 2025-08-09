@@ -65,7 +65,7 @@ void GameSpyThreadClass::Thread_Function()
 
 	//poll network and update GameSpy object
 
-	while (running) 
+	while (running)
 	{
 		inThread = true;
 		if (m_doLogin)
@@ -1021,10 +1021,10 @@ void createRoomCallback(PEER peer, PEERBool success, PEERJoinResult result, Room
 	{
 		// set up the game info
 		UnsignedInt localIP = peerGetLocalIP(TheGameSpyChat->getPeer());
-		DEBUG_LOG(("createRoomCallback - peerGetLocalIP returned %d.%d.%d.%d as the local IP", 
+		DEBUG_LOG(("createRoomCallback - peerGetLocalIP returned %d.%d.%d.%d as the local IP",
 								localIP >> 24, (localIP >> 16) & 0xff, (localIP >> 8) & 0xff, localIP & 0xff));
 //		GetLocalChatConnectionAddress("peerchat.gamespy.com", 6667, localIP);
-//		DEBUG_LOG(("createRoomCallback - GetLocalChatConnectionAddress returned %d.%d.%d.%d as the local IP", 
+//		DEBUG_LOG(("createRoomCallback - GetLocalChatConnectionAddress returned %d.%d.%d.%d as the local IP",
 //								localIP >> 24, (localIP >> 16) & 0xff, (localIP >> 8) & 0xff, localIP & 0xff));
 		localIP = ntohl(localIP); // The IP returned from GetLocalChatConnectionAddress is in network byte order.
 		TheGameSpyGame->setLocalIP(localIP);
@@ -1055,7 +1055,7 @@ void createRoomCallback(PEER peer, PEERBool success, PEERJoinResult result, Room
 
 			TheGameSpyGame->adjustSlotsForMap(); // BGC- adjust the slots for the new map.
 		}
-		
+
 
 		// change to the proper screen
 		TheShell->pop();
@@ -1367,7 +1367,7 @@ void GameSpyChat::login(AsciiString loginName, AsciiString password, AsciiString
 	callbacks.GOAPlayers = GOAPlayersCallback;
 	//callbacks.globalKeyChanged = GlobalKeyChanged;
 	callbacks.param = NULL;
-	
+
 	// Init peer.
 	/////////////
 	m_peer = peerInitialize(&callbacks);
@@ -1376,7 +1376,7 @@ void GameSpyChat::login(AsciiString loginName, AsciiString password, AsciiString
 		GSMessageBoxOk(UnicodeString(L"No Peer"), UnicodeString(L"No Peer"), NULL);
 		return;
 	}
-	
+
 	// Setup which rooms to do pings and cross-pings in.
 	////////////////////////////////////////////////////
 	PEERBool pingRooms[NumRooms];
@@ -1387,7 +1387,7 @@ void GameSpyChat::login(AsciiString loginName, AsciiString password, AsciiString
 	crossPingRooms[TitleRoom] = PEERFalse;
 	crossPingRooms[GroupRoom] = PEERFalse;
 	crossPingRooms[StagingRoom] = PEERTrue;
-	
+
 	// Set the title.
 	/////////////////
 	if(!peerSetTitle(m_peer, "gmtest", "HA6zkS", "gmtest", "HA6zkS", 15, pingRooms, crossPingRooms))

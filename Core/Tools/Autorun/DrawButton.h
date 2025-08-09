@@ -45,7 +45,7 @@
 class DrawButton
 {
 	public:
-   
+
 		enum BUTTON_STATE {
    			NORMAL_STATE = 0,
 	      	PRESSED_STATE,
@@ -79,8 +79,8 @@ class DrawButton
 		TTFontClass		*Return_Font_Ptr		( void )						{ return( MyFontPtr ); };
 		wchar_t			*Return_Text			( void )						{ return( String ); };
 		void	 		Set_State				( BUTTON_STATE state )			{ ButtonState = state; };
-		int				Set_Stretched_Width		( int  );      
-		int				Set_Stretched_Height	( int  );      
+		int				Set_Stretched_Width		( int  );
+		int				Set_Stretched_Height	( int  );
 
 	protected:
 
@@ -105,4 +105,4 @@ class DrawButton
 
 
 
-#endif				
+#endif

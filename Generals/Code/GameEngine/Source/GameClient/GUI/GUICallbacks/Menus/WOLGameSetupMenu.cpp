@@ -268,7 +268,7 @@ void WOLPositionStartSpots( void )
 		if (listboxMap != NULL) {
 			Int selected;
 			UnicodeString map;
-			
+
 			// get the selected index
 			GadgetListBoxGetSelected( listboxMap, &selected );
 
@@ -277,8 +277,8 @@ void WOLPositionStartSpots( void )
 
 				// get text of the map to load
 				map = GadgetListBoxGetText( listboxMap, selected, 0 );
-				
-				
+
+
 				// set the map name in the global data map name
 				AsciiString asciiMap;
 				const char *mapFname = (const char *)GadgetListBoxGetItemData( listboxMap, selected );
@@ -290,7 +290,7 @@ void WOLPositionStartSpots( void )
 				}
 
 				positionStartSpots(asciiMap, buttonMapStartPosition, win);
-			}			
+			}
 		}
 
 	} else {
@@ -425,7 +425,7 @@ static void playerTooltip(GameWindow *window,
 	else if( stats.gamesAsRandom >= numGames )
 		favoriteSide = TheGameText->fetch("GUI:Random");
 	else
-	{		
+	{
 		const PlayerTemplate *fac = ThePlayerTemplateStore->getNthPlayerTemplate(favorite);
 		if (fac)
 		{
@@ -499,7 +499,7 @@ void pingTooltip(GameWindow *window, WinInstanceData *instData, UnsignedInt mous
 	x = LOLONGTOSHORT(mouse);
 	y = HILONGTOSHORT(mouse);
 
-	
+
 	Int winPosX, winPosY, winWidth, winHeight;
 
 	window->winGetScreenPosition(&winPosX, &winPosY);
@@ -641,7 +641,7 @@ static void handlePlayerTemplateSelection(int index)
 static void handleStartPositionSelection(Int player, int startPos)
 {
 	GameSpyStagingRoom *myGame = TheGameSpyInfo->getCurrentStagingRoom();
-	
+
 	if (myGame)
 	{
 		GameSpyGameSlot * slot = myGame->getGameSpySlot(player);
@@ -657,7 +657,7 @@ static void handleStartPositionSelection(Int player, int startPos)
 		}
 
 		if(!skip)
-		{	
+		{
 			Bool isAvailable = TRUE;
 			for(Int i = 0; i < MAX_SLOTS; ++i)
 			{
@@ -830,7 +830,7 @@ static void StartPressed(void)
 
 	// Check for too few teams
 	int numRandom = 0;
-	std::set<Int> teams; 
+	std::set<Int> teams;
 	for (i=0; i<MAX_SLOTS; ++i)
 	{
 		GameSlot *slot = myGame->getSlot(i);
@@ -1023,12 +1023,12 @@ void InitWOLGameGadgets( void )
 	textEntryMapDisplay = TheWindowManager->winGetWindowFromId( parentWOLGameSetup, textEntryMapDisplayID );
 	windowMap = TheWindowManager->winGetWindowFromId( parentWOLGameSetup,windowMapID  );
 	DEBUG_ASSERTCRASH(windowMap, ("Could not find the parentWOLGameSetup.wnd:MapWindow" ));
-	
+
 	//Added By Sadullah Nader
-	//Tooltip Function set 
+	//Tooltip Function set
 	windowMap->winSetTooltipFunc(MapSelectorTooltip);
 	//
-	
+
 	GameWindow *staticTextTitle = TheWindowManager->winGetWindowFromId( parentWOLGameSetup, staticTextTitleID );
 	if (staticTextTitle)
 	{
@@ -1073,7 +1073,7 @@ void InitWOLGameGadgets( void )
 		DEBUG_ASSERTCRASH(comboBoxColor[i], ("Could not find the comboBoxColor[%d]",i ));
 		PopulateColorComboBox(i, comboBoxColor, theGameInfo);
 		GadgetComboBoxSetSelectedPos(comboBoxColor[i], 0);
-		
+
 		tmpString.format("GameSpyGameOptionsMenu.wnd:ComboBoxPlayerTemplate%d", i);
 		comboBoxPlayerTemplateID[i] = TheNameKeyGenerator->nameToKey( tmpString );
 		comboBoxPlayerTemplate[i] = TheWindowManager->winGetWindowFromId( parentWOLGameSetup, comboBoxPlayerTemplateID[i] );
@@ -1086,13 +1086,13 @@ void InitWOLGameGadgets( void )
 		DEBUG_ASSERTCRASH(comboBoxTeam[i], ("Could not find the comboBoxTeam[%d]",i ));
 		PopulateTeamComboBox(i, comboBoxTeam, theGameInfo);
 
-		tmpString.format("GameSpyGameOptionsMenu.wnd:ButtonAccept%d", i); 
+		tmpString.format("GameSpyGameOptionsMenu.wnd:ButtonAccept%d", i);
 		buttonAcceptID[i] = TheNameKeyGenerator->nameToKey( tmpString );
 		buttonAccept[i] = TheWindowManager->winGetWindowFromId( parentWOLGameSetup, buttonAcceptID[i] );
 		DEBUG_ASSERTCRASH(buttonAccept[i], ("Could not find the buttonAccept[%d]",i ));
 		buttonAccept[i]->winSetTooltipFunc(gameAcceptTooltip);
 
-		tmpString.format("GameSpyGameOptionsMenu.wnd:GenericPing%d", i); 
+		tmpString.format("GameSpyGameOptionsMenu.wnd:GenericPing%d", i);
 		genericPingWindowID[i] = TheNameKeyGenerator->nameToKey( tmpString );
 		genericPingWindow[i] = TheWindowManager->winGetWindowFromId( parentWOLGameSetup, genericPingWindowID[i] );
 		DEBUG_ASSERTCRASH(genericPingWindow[i], ("Could not find the genericPingWindow[%d]",i ));
@@ -1303,10 +1303,10 @@ void WOLGameSetupMenuInit( WindowLayout *layout, void *userData )
 
 	// Show the Menu
 	layout->hide( FALSE );
-	
+
 	// Make sure the text fields are clear
 	GadgetListBoxReset( listboxGameSetupChat );
-	GadgetTextEntrySetText(textEntryChat, UnicodeString::TheEmptyString);	
+	GadgetTextEntrySetText(textEntryChat, UnicodeString::TheEmptyString);
 
 	initDone = true;
 	TheGameSpyInfo->setGameOptions();
@@ -1418,7 +1418,7 @@ static void fillPlayerInfo(const PeerResponse *resp, PlayerInfo *info)
 //-------------------------------------------------------------------------------------------------
 void WOLGameSetupMenuUpdate( WindowLayout * layout, void *userData)
 {
-	// We'll only be successful if we've requested to 
+	// We'll only be successful if we've requested to
 	if(isShuttingDown && TheShell->isAnimFinished() && TheTransitionHandler->isFinished())
 	{
 		shutdownComplete(layout);
@@ -1731,7 +1731,7 @@ void WOLGameSetupMenuUpdate( WindowLayout * layout, void *userData)
 						// send out new slotlist if I'm host
 						TheGameSpyInfo->setGameOptions();
 						WOLDisplaySlotList();
-						
+
 						if (game && !TheGameSpyInfo->amIHost())
 						{
 							Int idx = game->getSlotNum(resp.nick.c_str());
@@ -2250,7 +2250,7 @@ WindowMsgHandledType WOLGameSetupMenuInput( GameWindow *window, UnsignedInt msg,
 																			 WindowMsgData mData1, WindowMsgData mData2 )
 {
 	/*
-	switch( msg ) 
+	switch( msg )
 	{
 
 		//-------------------------------------------------------------------------------------------------
@@ -2284,7 +2284,7 @@ WindowMsgHandledType WOLGameSetupMenuInput( GameWindow *window, UnsignedInt msg,
 					//
 					if( BitIsSet( state, KEY_STATE_UP ) )
 					{
-						TheWindowManager->winSendSystemMsg( window, GBM_SELECTED, 
+						TheWindowManager->winSendSystemMsg( window, GBM_SELECTED,
 																							(WindowMsgData)buttonBack, buttonBackID );
 					}  // end if
 					// don't let key fall through anywhere else
@@ -2387,14 +2387,14 @@ static Int getFirstSelectablePlayer(const GameInfo *game)
 //-------------------------------------------------------------------------------------------------
 /** WOL Game Options menu window system callback */
 //-------------------------------------------------------------------------------------------------
-WindowMsgHandledType WOLGameSetupMenuSystem( GameWindow *window, UnsignedInt msg, 
+WindowMsgHandledType WOLGameSetupMenuSystem( GameWindow *window, UnsignedInt msg,
 														 WindowMsgData mData1, WindowMsgData mData2 )
 {
 	UnicodeString txtInput;
 	static Int buttonCommunicatorID = NAMEKEY_INVALID;
 	switch( msg )
 	{
-		//-------------------------------------------------------------------------------------------------	
+		//-------------------------------------------------------------------------------------------------
 		case GWM_CREATE:
 			{
 				buttonCommunicatorID = NAMEKEY("GameSpyGameOptionsMenu.wnd:ButtonCommunicator");
@@ -2410,7 +2410,7 @@ WindowMsgHandledType WOLGameSetupMenuSystem( GameWindow *window, UnsignedInt msg
 			} // case GWM_DESTROY:
 		//-------------------------------------------------------------------------------------------------
 		case GWM_INPUT_FOCUS:
-			{	
+			{
 				// if we're givin the opportunity to take the keyboard focus we must say we want it
 				if( mData1 == TRUE )
 					*(Bool *)mData2 = TRUE;
@@ -2618,7 +2618,7 @@ WindowMsgHandledType WOLGameSetupMenuSystem( GameWindow *window, UnsignedInt msg
    		{
    			if (buttonPushed)
    				break;
-   
+
    			GameWindow *control = (GameWindow *)mData1;
 				Int controlID = control->winGetWindowId();
 				for (Int i = 0; i < MAX_SLOTS; i++)
@@ -2659,7 +2659,7 @@ WindowMsgHandledType WOLGameSetupMenuSystem( GameWindow *window, UnsignedInt msg
 				// send it to the other clients on the lan
 				if ( controlID == textEntryChatID )
 				{
-					
+
 					// read the user's input
 					txtInput.set(GadgetTextEntryGetText( textEntryChat ));
 					// Clear the text entry line
@@ -2683,6 +2683,6 @@ WindowMsgHandledType WOLGameSetupMenuSystem( GameWindow *window, UnsignedInt msg
 			return MSG_IGNORED;
 	}//Switch
 	return MSG_HANDLED;
-}//WindowMsgHandledType WOLGameSetupMenuSystem( GameWindow *window, UnsignedInt msg, 
+}//WindowMsgHandledType WOLGameSetupMenuSystem( GameWindow *window, UnsignedInt msg,
 
 

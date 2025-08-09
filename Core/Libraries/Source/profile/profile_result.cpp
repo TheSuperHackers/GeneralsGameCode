@@ -143,7 +143,7 @@ void ProfileResultFileCSV::Delete(void)
 
 ProfileResultInterface *ProfileResultFileDOT::Create(int argn, const char * const *argv)
 {
-  return new (ProfileAllocMemory(sizeof(ProfileResultFileDOT))) 
+  return new (ProfileAllocMemory(sizeof(ProfileResultFileDOT)))
     ProfileResultFileDOT(argn>0?argv[0]:NULL,
                          argn>1?argv[1]:NULL,
                          argn>2?atoi(argv[2]):NULL);
@@ -254,7 +254,7 @@ void ProfileResultFileDOT::WriteResults(void)
       FoldHelper *cur2=fold;
       for (;cur2;cur2=cur2->next)
         cur2->mark=false;
-      
+
       for (k=0;k<cur->numId;k++)
       {
         ProfileFuncLevel::IdList idlist=id.GetCaller(frame);

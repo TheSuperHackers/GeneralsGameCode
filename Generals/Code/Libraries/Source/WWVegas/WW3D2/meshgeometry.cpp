@@ -210,7 +210,7 @@ MeshGeometryClass & MeshGeometryClass::operator = (const MeshGeometryClass & tha
 		REF_PTR_SET(MeshName,that.MeshName);
 		REF_PTR_SET(UserText,that.UserText);
 		REF_PTR_SET(Poly,that.Poly);
-		REF_PTR_SET(PolySurfaceType,that.PolySurfaceType);		
+		REF_PTR_SET(PolySurfaceType,that.PolySurfaceType);
 		REF_PTR_SET(Vertex,that.Vertex);
 		REF_PTR_SET(VertexNorm,that.VertexNorm);
 		REF_PTR_SET(PlaneEq,that.PlaneEq);
@@ -263,7 +263,7 @@ void MeshGeometryClass::Reset_Geometry(int polycount,int vertcount)
 	REF_PTR_RELEASE(MeshName);
 	REF_PTR_RELEASE(UserText);
 	REF_PTR_RELEASE(Poly);
-	REF_PTR_RELEASE(PolySurfaceType);	
+	REF_PTR_RELEASE(PolySurfaceType);
 	REF_PTR_RELEASE(Vertex);
 	REF_PTR_RELEASE(VertexNorm);
 	REF_PTR_RELEASE(PlaneEq);
@@ -310,7 +310,7 @@ const char * MeshGeometryClass::Get_Name(void) const
 {
 	if (MeshName) {
 		return MeshName->Get_Array();
-	} 
+	}
 	return NULL;
 }
 
@@ -401,7 +401,7 @@ void MeshGeometryClass::Get_Bounding_Box(AABoxClass * set_box)
 	WWASSERT(set_box != NULL);
 	set_box->Center = (BoundBoxMax + BoundBoxMin) * 0.5f;
 	set_box->Extent = (BoundBoxMax - BoundBoxMin) * 0.5f;
-}	
+}
 
 
 /***********************************************************************************************
@@ -449,7 +449,7 @@ void MeshGeometryClass::Generate_Rigid_APT(const Vector3 & view_dir, SimpleDynVe
 		tri.V[1] = &(loc[ polys[poly_counter][1] ]);
 		tri.V[2] = &(loc[ polys[poly_counter][2] ]);
 		tri.N = (Vector3*)&(norms[poly_counter]);
-		
+
 		if (Vector3::Dot_Product(*tri.N,view_dir) < 0.0f) {
 			apt.Add(poly_counter);
 		}
@@ -489,7 +489,7 @@ void MeshGeometryClass::Generate_Rigid_APT(const OBBoxClass & local_box, SimpleD
 			tri.V[1] = &(loc[ polys[poly_counter][1] ]);
 			tri.V[2] = &(loc[ polys[poly_counter][2] ]);
 			tri.N = (Vector3*)&(norms[poly_counter]);
-				
+
 			if (CollisionMath::Intersection_Test(local_box, tri)) {;
 				apt.Add(poly_counter);
 			}
@@ -528,11 +528,11 @@ void MeshGeometryClass::Generate_Rigid_APT(const OBBoxClass & local_box,const Ve
 			tri.V[1] = &(loc[ polys[poly_counter][1] ]);
 			tri.V[2] = &(loc[ polys[poly_counter][2] ]);
 			tri.N = (Vector3*)&(norms[poly_counter]);
-				
+
 			if (Vector3::Dot_Product(*tri.N,viewdir) < 0.0f) {
 				if (CollisionMath::Intersection_Test(local_box,tri)) {
 					apt.Add(poly_counter);
-				} 
+				}
 			}
 		}
 	}
@@ -571,7 +571,7 @@ void MeshGeometryClass::Generate_Skin_APT(const OBBoxClass & world_box, SimpleDy
 		// in the Intersection_Test, so we set it to a dummy value.
 		static const Vector3 dummy_vec(0.0f, 0.0f, 1.0f);
 		tri.N = &dummy_vec;
-			
+
 		if (CollisionMath::Intersection_Test(world_box,tri)) {;
 			apt.Add(poly_counter);
 		}
@@ -648,7 +648,7 @@ bool MeshGeometryClass::Cast_Ray(RayCollisionTestClass & raytest)
 	return hit;
 }
 
- 
+
 /***********************************************************************************************
  * MeshGeometryClass::Cast_AABox -- cast an AABox against this mesh                            *
  *                                                                                             *
@@ -664,7 +664,7 @@ bool MeshGeometryClass::Cast_Ray(RayCollisionTestClass & raytest)
 bool MeshGeometryClass::Cast_AABox(AABoxCollisionTestClass & boxtest)
 {
 	bool hit = false;
-	
+
 	if (CullTree) {
 		hit = CullTree->Cast_AABox(boxtest);
 	} else {
@@ -674,7 +674,7 @@ bool MeshGeometryClass::Cast_AABox(AABoxCollisionTestClass & boxtest)
 	return hit;
 }
 
-  
+
 /***********************************************************************************************
  * MeshGeometryClass::Cast_OBBox -- Cast an obbox against this mesh                            *
  *                                                                                             *
@@ -700,7 +700,7 @@ bool MeshGeometryClass::Cast_OBBox(OBBoxCollisionTestClass & boxtest)
 	return hit;
 }
 
-  
+
 /***********************************************************************************************
  * MeshGeometryClass::Intersect_OBBox -- test for intersection with the given OBBox            *
  *                                                                                             *
@@ -751,26 +751,26 @@ bool MeshGeometryClass::Cast_World_Space_AABox(AABoxCollisionTestClass & boxtest
 	** that these compares are done
 	*/
 	bool hit = false;
-	
+
 	if ((transform[0][0] == 1.0f) && (transform[1][1] == 1.0f)) {
 
 		hit = cast_aabox_identity(boxtest,-transform.Get_Translation());
-	
+
 	} else if ((transform[0][1] == -1.0f) && (transform[1][0] == 1.0f)) {
-	
+
 		// this mesh has been rotated 90 degrees about z
 		hit = cast_aabox_z90(boxtest,-transform.Get_Translation());
-	
+
 	} else if ((transform[0][0] == -1.0f) && (transform[1][1] == -1.0f)) {
-	
+
 		// this mesh has been rotated 180
 		hit = cast_aabox_z180(boxtest,-transform.Get_Translation());
-	
+
 	} else if ((transform[0][1] == 1.0f) && (transform[1][0] == -1.0f)) {
-	
-		// this mesh has been rotated 270 
+
+		// this mesh has been rotated 270
 		hit = cast_aabox_z270(boxtest,-transform.Get_Translation());
-	
+
 	} else {
 
 		/*
@@ -825,7 +825,7 @@ int MeshGeometryClass::cast_semi_infinite_axis_aligned_ray(const Vector3 & start
 	if (CullTree) {
 		count = CullTree->Cast_Semi_Infinite_Axis_Aligned_Ray(start_point, axis_dir, flags);
 	} else {
-	
+
 		const Vector3 * loc = Get_Vertex_Array();
 		const Vector4 * plane = Get_Plane_Array();
 		const TriIndex * polyverts = Get_Polygon_Array();
@@ -852,7 +852,7 @@ int MeshGeometryClass::cast_semi_infinite_axis_aligned_ray(const Vector3 & start
 		*/
 		int poly_count = Get_Polygon_Count();
 		for (int poly_counter=0; poly_counter < poly_count; poly_counter++) {
-		
+
 			const Vector3 &v0 = loc[ polyverts[poly_counter][0] ];
 			const Vector3 &v1 = loc[ polyverts[poly_counter][1] ];
 			const Vector3 &v2 = loc[ polyverts[poly_counter][2] ];
@@ -961,7 +961,7 @@ bool MeshGeometryClass::cast_aabox_z180(AABoxCollisionTestClass & boxtest, const
 	} else {
 		hit = cast_aabox_brute_force(newbox);
 	}
-	
+
 	// if we hit something, we need to rotate the normal back out of the mesh coordinate system
 	if (hit) {
 		// rotating the normal by 180 degrees about Z
@@ -1039,19 +1039,19 @@ bool MeshGeometryClass::intersect_obbox_brute_force(OBBoxIntersectionTestClass &
 	** Loop over each polygon
 	*/
 	for (int srtri=0; srtri < Get_Polygon_Count(); srtri++) {
-	
+
 		tri.V[0] = &(loc[ polyverts[srtri][0] ]);
 		tri.V[1] = &(loc[ polyverts[srtri][1] ]);
 		tri.V[2] = &(loc[ polyverts[srtri][2] ]);
 
-#ifdef COMPUTE_NORMALS					
+#ifdef COMPUTE_NORMALS
 		static Vector3 _normal;
 		tri.N = &_normal;
 		tri.Compute_Normal();
 #else
 		tri.N = (Vector3 *)&(norms[srtri]);
 #endif
-		
+
 		if (CollisionMath::Intersection_Test(localtest.Box, tri)) {
 			return true;
 		}
@@ -1089,25 +1089,25 @@ bool MeshGeometryClass::cast_ray_brute_force(RayCollisionTestClass & raytest)
 	*/
 	bool hit = false;
 	for (srtri=0; srtri < Get_Polygon_Count(); srtri++) {
-	
+
 		// TODO: find a better way to do this?
 		tri.V[0] = &(loc[ polyverts[srtri][0] ]);
 		tri.V[1] = &(loc[ polyverts[srtri][1] ]);
 		tri.V[2] = &(loc[ polyverts[srtri][2] ]);
 
-#ifdef COMPUTE_NORMALS					
+#ifdef COMPUTE_NORMALS
 		static Vector3 _normal;
 		tri.N = &_normal;
 		tri.Compute_Normal();
 #else
 		tri.N = (Vector3 *)&(norms[srtri]);
 #endif
-		
+
 		hit = hit | CollisionMath::Collide(raytest.Ray, tri, raytest.Result);
 		if (hit) {
 			raytest.Result->SurfaceType = Get_Poly_Surface_Type (srtri);
 		}
-	
+
 		if (raytest.Result->StartBad) return true;
 
 	}
@@ -1149,7 +1149,7 @@ bool MeshGeometryClass::cast_aabox_brute_force(AABoxCollisionTestClass & boxtest
 		tri.V[1] = &(loc[ polyverts[srtri][1] ]);
 		tri.V[2] = &(loc[ polyverts[srtri][2] ]);
 
-#ifdef COMPUTE_NORMALS					
+#ifdef COMPUTE_NORMALS
 		static Vector3 _normal;
 		tri.N = &_normal;
 		tri.Compute_Normal();
@@ -1207,7 +1207,7 @@ bool MeshGeometryClass::cast_obbox_brute_force(OBBoxCollisionTestClass & boxtest
 		tri.V[1] = &(loc[ polyverts[srtri][1] ]);
 		tri.V[2] = &(loc[ polyverts[srtri][2] ]);
 
-#ifdef COMPUTE_NORMALS					
+#ifdef COMPUTE_NORMALS
 		static Vector3 _normal;
 		tri.N = &_normal;
 		tri.Compute_Normal();
@@ -1305,18 +1305,18 @@ void MeshGeometryClass::Compute_Vertex_Normals(Vector3 * vnorm)
 			vnorm[poly[pidx].I].X += peq[pidx].X;
 			vnorm[poly[pidx].I].Y += peq[pidx].Y;
 			vnorm[poly[pidx].I].Z += peq[pidx].Z;
-			
+
 			vnorm[poly[pidx].J].X += peq[pidx].X;
 			vnorm[poly[pidx].J].Y += peq[pidx].Y;
 			vnorm[poly[pidx].J].Z += peq[pidx].Z;
-			
+
 			vnorm[poly[pidx].K].X += peq[pidx].X;
 			vnorm[poly[pidx].K].Y += peq[pidx].Y;
 			vnorm[poly[pidx].K].Z += peq[pidx].Z;
 		}
-	
+
 	} else {
-	
+
 		VectorProcessorClass::Clear (vnorm, VertexCount);
 
 		for (int pidx = 0; pidx < PolyCount; pidx++)	{
@@ -1427,15 +1427,15 @@ Vector3 * MeshGeometryClass::get_vert_normals(void)
  *   6/14/2001  gth : Created.                                                                 *
  *=============================================================================================*/
 const Vector3 * MeshGeometryClass::Get_Vertex_Normal_Array(void)
-{ 
+{
 #if (OPTIMIZE_VNORM_RAM)
 	Compute_Vertex_Normals(get_vert_normals());
-	return get_vert_normals(); 
+	return get_vert_normals();
 #else
 	if (Get_Flag(DIRTY_VNORMALS)) {
 		Compute_Vertex_Normals(get_vert_normals());
 	}
-	return get_vert_normals(); 
+	return get_vert_normals();
 #endif
 }
 
@@ -1483,7 +1483,7 @@ Vector4 * MeshGeometryClass::get_planes(bool create)
  *   6/14/2001  gth : Created.                                                                 *
  *=============================================================================================*/
 const Vector4 * MeshGeometryClass::Get_Plane_Array(bool create)
-{ 
+{
 #if (OPTIMIZE_PLANEEQ_RAM)
 	Vector4 * planes = get_planes(create);
 	Compute_Plane_Equations(planes);
@@ -1567,19 +1567,19 @@ WW3DErrorType MeshGeometryClass::Load_W3D(ChunkLoadClass & cload)
 	/*
 	** This function will initialize this MeshGeometryClass from the contents of a W3D file.
 	** Note that derived classes need to completely replace this function; only re-using the individual
-	** chunk handling functions.  
+	** chunk handling functions.
 	*/
 
 	/*
 	**	Open the first chunk, it should be the mesh header
 	*/
 	cload.Open_Chunk();
-	
+
 	if (cload.Cur_Chunk_ID() != W3D_CHUNK_MESH_HEADER3) {
 		WWDEBUG_SAY(("Old format mesh mesh, no longer supported."));
 		goto Error;
 	}
-	
+
 	W3dMeshHeader3Struct header;
 	if (cload.Read(&header,sizeof(W3dMeshHeader3Struct)) != sizeof(W3dMeshHeader3Struct)) {
 		goto Error;
@@ -1591,13 +1591,13 @@ WW3DErrorType MeshGeometryClass::Load_W3D(ChunkLoadClass & cload)
 	*/
 	char *	tmpname;
 	int		namelen;
-	
+
 	Reset_Geometry(header.NumTris,header.NumVertices);
-	
+
 	namelen = strlen(header.ContainerName);
 	namelen += strlen(header.MeshName);
 	namelen += 2;
-	W3dAttributes = header.Attributes;	
+	W3dAttributes = header.Attributes;
 	SortLevel = header.SortLevel;
 	tmpname = W3DNEWARRAY char[namelen];
 	memset(tmpname,0,namelen);
@@ -1627,7 +1627,7 @@ WW3DErrorType MeshGeometryClass::Load_W3D(ChunkLoadClass & cload)
 	*/
 	if (header.Version >= W3D_MAKE_VERSION(4,1)) {
 		int geometry_type = header.Attributes & W3D_MESH_FLAG_GEOMETRY_TYPE_MASK;
-		switch (geometry_type) 
+		switch (geometry_type)
 		{
 			case W3D_MESH_FLAG_GEOMETRY_TYPE_NORMAL:
 				break;
@@ -1640,7 +1640,7 @@ WW3DErrorType MeshGeometryClass::Load_W3D(ChunkLoadClass & cload)
 			case W3D_MESH_FLAG_GEOMETRY_TYPE_SKIN:
 				Set_Flag(SKIN,true);
 				break;
-		} 
+		}
 	}
 
 	if (header.Attributes & W3D_MESH_FLAG_TWO_SIDED) {
@@ -1661,7 +1661,7 @@ WW3DErrorType MeshGeometryClass::Load_W3D(ChunkLoadClass & cload)
 
 		uint16 * links = get_bone_links();
 		WWASSERT(links);
-		
+
 		for (int bi = 0; bi < Get_Vertex_Count(); bi++) {
 			links[bi] += 1;
 		}
@@ -1671,7 +1671,7 @@ WW3DErrorType MeshGeometryClass::Load_W3D(ChunkLoadClass & cload)
 	** If this mesh is collideable and no AABTree was in the file, generate one now
 	*/
 	if (	(((W3dAttributes & W3D_MESH_FLAG_COLLISION_TYPE_MASK) >> W3D_MESH_FLAG_COLLISION_TYPE_SHIFT) != 0) &&
-			(CullTree == NULL)) 
+			(CullTree == NULL))
 	{
 		Generate_Culling_Tree();
 	}
@@ -1699,7 +1699,7 @@ Error:
  * HISTORY:                                                                                    *
  *   11/9/2000  gth : Created.                                                                 *
  *=============================================================================================*/
-WW3DErrorType MeshGeometryClass::read_chunks(ChunkLoadClass & cload) 
+WW3DErrorType MeshGeometryClass::read_chunks(ChunkLoadClass & cload)
 {
 	/*
 	**	Read in the chunk header
@@ -1731,7 +1731,7 @@ WW3DErrorType MeshGeometryClass::read_chunks(ChunkLoadClass & cload)
 			case W3D_CHUNK_MESH_USER_TEXT:
 					error = read_user_text(cload);
 					break;
-			
+
 			case W3D_CHUNK_VERTEX_INFLUENCES:
 					error = read_vertex_influences(cload);
 					break;
@@ -1747,8 +1747,8 @@ WW3DErrorType MeshGeometryClass::read_chunks(ChunkLoadClass & cload)
 			default:
 					break;
 
-		}	
-		
+		}
+
 		cload.Close_Chunk();
 
 		if (error != WW3D_ERROR_OK) {
@@ -1783,13 +1783,13 @@ WW3DErrorType MeshGeometryClass::read_vertices(ChunkLoadClass & cload)
 		if (cload.Read(&vert,sizeof(W3dVectorStruct)) != sizeof(W3dVectorStruct)) {
 			return WW3D_ERROR_LOAD_FAILED;
 		}
-		
+
 		loc[i].X = vert.X;
 		loc[i].Y = vert.Y;
 		loc[i].Z = vert.Z;
 	}
 
-	return WW3D_ERROR_OK;	
+	return WW3D_ERROR_OK;
 }
 
 
@@ -1819,7 +1819,7 @@ WW3DErrorType MeshGeometryClass::read_vertex_normals(ChunkLoadClass & cload)
 		mdlnorms[i].Set(norm.X,norm.Y,norm.Z);
 	}
 
-	return WW3D_ERROR_OK;	
+	return WW3D_ERROR_OK;
 }
 
 
@@ -1868,7 +1868,7 @@ WW3DErrorType MeshGeometryClass::read_triangles(ChunkLoadClass & cload)
 		surface_types[i] = (uint8)(tri.Attributes);
 	}
 
-	return WW3D_ERROR_OK;	
+	return WW3D_ERROR_OK;
 }
 
 
@@ -1897,7 +1897,7 @@ WW3DErrorType MeshGeometryClass::read_user_text(ChunkLoadClass & cload)
 	if (UserText != NULL) {
 		return WW3D_ERROR_OK;
 	}
-	
+
 	/*
 	** Allocate the buffer and read in the text
 	*/
@@ -1907,7 +1907,7 @@ WW3DErrorType MeshGeometryClass::read_user_text(ChunkLoadClass & cload)
 		return WW3D_ERROR_LOAD_FAILED;
 	}
 
-	return WW3D_ERROR_OK;	
+	return WW3D_ERROR_OK;
 }
 
 
@@ -1934,11 +1934,11 @@ WW3DErrorType MeshGeometryClass::read_vertex_influences(ChunkLoadClass & cload)
 		if (cload.Read(&vinf,sizeof(W3dVertInfStruct)) != sizeof(W3dVertInfStruct)) {
 			return WW3D_ERROR_LOAD_FAILED;
 		}
-		links[i] = vinf.BoneIdx;		
-	}	
+		links[i] = vinf.BoneIdx;
+	}
 	Set_Flag(SKIN,true);
 
-	return WW3D_ERROR_OK;	
+	return WW3D_ERROR_OK;
 }
 
 
@@ -1994,17 +1994,17 @@ void MeshGeometryClass::Scale(const Vector3 &sc)
 {
 	WWASSERT(Vertex);
 	Vector3 * vert = Vertex->Get_Array();
-	
+
 	for (int i=0;i<VertexCount; i++) {
 		vert[i].X *= sc.X;
 		vert[i].Y *= sc.Y;
 		vert[i].Z *= sc.Z;
 	}
-		
+
 	BoundBoxMin.Scale(sc);
 	BoundBoxMax.Scale(sc);
 	BoundSphereCenter.Scale(sc);
-	
+
 	float max;
 	max = (sc.X > sc.Y)	? sc.X	: sc.Y;
 	max = (max > sc.Z)	? max		: sc.Z;

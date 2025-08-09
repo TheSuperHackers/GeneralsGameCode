@@ -75,7 +75,7 @@ Anim2DTemplate::~Anim2DTemplate( void )
 // ------------------------------------------------------------------------------------------------
 /** Field parse table for 2D animation templates */
 // ---------i---------------------------------------------------------------------------------------
-const FieldParse Anim2DTemplate::s_anim2DFieldParseTable[] = 
+const FieldParse Anim2DTemplate::s_anim2DFieldParseTable[] =
 {
 
 	{ "NumberImages",					Anim2DTemplate::parseNumImages,			NULL,							0 },
@@ -159,7 +159,7 @@ void Anim2DTemplate::parseImage( INI *ini, void *instance, void *store, const vo
 	// assign the image to the animation template list of images ... note since we've pre-allocated
 	// the array of images and the index an image is loaded into depends on its order specified
 	// in INI, we need to get the number of images currently loaded into this animation template
-	// so that we can put it at the next free image spot ... and then tell the animation 
+	// so that we can put it at the next free image spot ... and then tell the animation
 	// template we've loaded one more
 	//
 	Anim2DTemplate *animTemplate = (Anim2DTemplate *)instance;
@@ -171,15 +171,15 @@ void Anim2DTemplate::parseImage( INI *ini, void *instance, void *store, const vo
 /** This will parse the image sequence of an animation.  You can use this as a shortcut to
 	* specifying a series of images for an animation instead of having to specify them all
 	* individually.  Image names will be assumed to start with an appended "000" to the end
-	* end of the first image name and incremented up to the number of images for the 
+	* end of the first image name and incremented up to the number of images for the
 	* animation.  NOTE: That the number images *must* have already been specified before
 	* we can parse this entry so we know how many images to allocate and look for */
 // ------------------------------------------------------------------------------------------------
-/*static*/ void Anim2DTemplate::parseImageSequence( INI *ini, void *instance, 
+/*static*/ void Anim2DTemplate::parseImageSequence( INI *ini, void *instance,
 																										void *store, const void *userData )
 {
-	
-	// get the animation template 
+
+	// get the animation template
 	Anim2DTemplate *animTemplate = (Anim2DTemplate *)instance;
 
 	//
@@ -263,17 +263,17 @@ void Anim2DTemplate::storeImage( const Image *image )
 /** Return the Image* for the frame number requested */
 // ------------------------------------------------------------------------------------------------
 const Image* Anim2DTemplate::getFrame( UnsignedShort frameNumber ) const
-{ 
+{
 
 	// sanity
-	DEBUG_ASSERTCRASH( m_images != NULL, 
+	DEBUG_ASSERTCRASH( m_images != NULL,
 										 ("Anim2DTemplate::getFrame - Image data is NULL for animation '%s'",
 										  getName().str()) );
-	
-	// sanity										
+
+	// sanity
 	if( frameNumber < 0 || frameNumber >= m_numFrames )
 	{
-		
+
 		DEBUG_CRASH(( "Anim2DTemplate::getFrame - Illegal frame number '%d' for animation '%s'",
 									frameNumber, getName().str() ));
 		return NULL;
@@ -302,15 +302,15 @@ Anim2D::Anim2D( Anim2DTemplate *animTemplate, Anim2DCollection *collectionSystem
 	DEBUG_ASSERTCRASH( animTemplate != NULL, ("Anim2D::Anim2D - NULL template") );
 
 	//Added By Sadullah Nader
-	//Initialization 
+	//Initialization
 
-	m_currentFrame = 0; 
-	
+	m_currentFrame = 0;
+
 	//
 
 	// set the template
 	m_template = animTemplate;
-	
+
 	// initialize members
 	m_status = ANIM_2D_STATUS_NONE;
 	m_alpha = 1.0f;
@@ -324,21 +324,21 @@ Anim2D::Anim2D( Anim2DTemplate *animTemplate, Anim2DCollection *collectionSystem
 	m_minFrame = 0;
 	m_maxFrame = m_template->getNumFrames() - 1;
 	m_framesBetweenUpdates = m_template->getNumFramesBetweenUpdates();
-	
+
 	//added by Sadullah Nader
 	// initializing pointers to NULL, and clearing Frame counters before
 	// we register ourselves to the System
 	m_collectionSystemNext = NULL;
 	m_collectionSystemPrev = NULL;
-	
+
 	m_lastUpdateFrame = 0;
-	
+
 	// if a system is present, register ourselves with that system
 	m_collectionSystem = collectionSystem;
 	if( m_collectionSystem )
 		m_collectionSystem->registerAnimation( this );
-	
-	
+
+
 }  // end Anim2D
 
 // ------------------------------------------------------------------------------------------------
@@ -362,13 +362,13 @@ void Anim2D::setCurrentFrame( UnsignedShort frame )
 	DEBUG_ASSERTCRASH( m_template != NULL, ("Anim2D::reset - No template for animation") );
 
 	// sanity
-	DEBUG_ASSERTCRASH( TheGameLogic != NULL,	
+	DEBUG_ASSERTCRASH( TheGameLogic != NULL,
 										 ("Anim2D::setCurrentFrame - TheGameLogic must exist to use animation instances (%s)",
 										  m_template->getName().str()) );
 
 	// sanity
 	DEBUG_ASSERTCRASH( frame >= 0 && frame < m_template->getNumFrames(),
-										 ("Anim2D::setCurrentFrame - Illegal frame number '%d' in animation", 
+										 ("Anim2D::setCurrentFrame - Illegal frame number '%d' in animation",
 										 frame, m_template->getName().str()) );
 
 	// set the frame
@@ -437,7 +437,7 @@ void Anim2D::tryNextFrame( void )
 {
 
 	// sanity
-	DEBUG_ASSERTCRASH( TheGameLogic != NULL,	
+	DEBUG_ASSERTCRASH( TheGameLogic != NULL,
 										 ("Anim2D::tryNextFrame - TheGameLogic must exist to use animation instances (%s)",
 										  m_template->getName().str()) );
 
@@ -493,9 +493,9 @@ void Anim2D::tryNextFrame( void )
 				else
 					setCurrentFrame( m_maxFrame );
 				break;
-			
+
 			}  // end loop backwards
-				
+
 			// -------------------------------------------------------------------------------------------
 			case ANIM_2D_PING_PONG:
 			case ANIM_2D_PING_PONG_BACKWARDS:
@@ -558,7 +558,7 @@ void Anim2D::tryNextFrame( void )
 				break;
 
 			}  // end default
-							
+
 		}  // end switch
 
 	}  // end if
@@ -596,7 +596,7 @@ UnsignedInt Anim2D::getCurrentFrameWidth( void ) const
 
 	if( currentFrameImage )
 		return currentFrameImage->getImageWidth();
-	
+
 	return 0;
 
 }  // end getCurrentFrameWidth
@@ -610,7 +610,7 @@ UnsignedInt Anim2D::getCurrentFrameHeight( void ) const
 
 	if( currentFrameImage )
 		return currentFrameImage->getImageHeight();
-	
+
 	return 0;
 
 }  // end getCurrentFrameHeight
@@ -653,7 +653,7 @@ void Anim2D::draw( Int x, Int y, Int width, Int height )
 
 	// get the current image
 	const Image *image = m_template->getFrame( m_currentFrame );
-	
+
 	// sanity
 	DEBUG_ASSERTCRASH( image != NULL, ("Anim2D::draw - Image not found for frame '%d' on animation '%s'",
 										 m_currentFrame, m_template->getName().str()) );
@@ -680,7 +680,7 @@ void Anim2D::draw( Int x, Int y, Int width, Int height )
 // ------------------------------------------------------------------------------------------------
 void Anim2D::xfer( Xfer *xfer )
 {
-	
+
 	// version
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
@@ -771,7 +771,7 @@ void Anim2DCollection::update( void )
 	{
 
 		// try to update the frame
-		if( BitIsSet( anim->getStatus(), ANIM_2D_STATUS_FROZEN ) == FALSE )	
+		if( BitIsSet( anim->getStatus(), ANIM_2D_STATUS_FROZEN ) == FALSE )
 			anim->tryNextFrame();
 
 	}  // end for, anim
@@ -785,8 +785,8 @@ Anim2DTemplate *Anim2DCollection::findTemplate( const AsciiString& name )
 {
 
 	// search the list
-	for( Anim2DTemplate *animTemplate = m_templateList; 
-			 animTemplate; 
+	for( Anim2DTemplate *animTemplate = m_templateList;
+			 animTemplate;
 			 animTemplate = animTemplate->friend_getNextTemplate() )
 	{
 

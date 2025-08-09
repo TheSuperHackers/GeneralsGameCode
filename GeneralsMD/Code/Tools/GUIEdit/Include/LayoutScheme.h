@@ -24,12 +24,12 @@
 
 // FILE: LayoutScheme.h ///////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information					         
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:    GUIEdit
@@ -62,14 +62,14 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 // LayoutScheme ---------------------------------------------------------------
-/** The layout scheme provides a place for default look of newly 
+/** The layout scheme provides a place for default look of newly
 	* created controls and windows */
 //-----------------------------------------------------------------------------
 class LayoutScheme
 {
 
 public:
-	
+
 	LayoutScheme();
 	~LayoutScheme();
 

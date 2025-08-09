@@ -26,7 +26,7 @@
 // "Drawables" - graphical GameClient entities bound to GameLogic objects
 // Author: Michael S. Booth, March 2001
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-  
+
 #include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
 
 #include "Common/AudioEventInfo.h"
@@ -80,7 +80,7 @@
 #define VERY_TRANSPARENT_HEATVISION (0.001f)
 #define HEATVISION_FADE_SCALAR (0.8f)
 
-static const char *TheDrawableIconNames[] = 
+static const char *TheDrawableIconNames[] =
 {
 	"DefaultHeal",
 	"StructureHeal",
@@ -247,7 +247,7 @@ const Int MAX_ENABLED_MODULES								= 16;
 	s_emptyAmmo	= TheMappedImageCollection->findImageByName("SCPAmmoEmpty");
 	s_fullContainer	= TheMappedImageCollection->findImageByName("SCPPipFull");
 	s_emptyContainer	= TheMappedImageCollection->findImageByName("SCPPipEmpty");
-	
+
 	s_animationTemplates = NEW Anim2DTemplate* [ MAX_ICONS ];
 
 	s_animationTemplates[ICON_DEFAULT_HEAL]			= TheAnim2DCollection->findTemplate(TheDrawableIconNames[ICON_DEFAULT_HEAL]);
@@ -309,13 +309,13 @@ void Drawable::saturateRGB(RGBColor& color, Real factor)
  * graphical side of a logical object, whereas GameLogic objects encapsulate
  * behaviors and physics.  */
 //-------------------------------------------------------------------------------------------------
-Drawable::Drawable( const ThingTemplate *thingTemplate, DrawableStatus statusBits ) 
+Drawable::Drawable( const ThingTemplate *thingTemplate, DrawableStatus statusBits )
 				: Thing( thingTemplate )
 {
 
 	// assign status bits before anything else can be done
 	m_status = statusBits;
-	
+
 	// Added By Sadullah Nader
 	// Initialization missing and needed
 	m_nextDrawable = NULL;
@@ -339,7 +339,7 @@ Drawable::Drawable( const ThingTemplate *thingTemplate, DrawableStatus statusBit
 	m_expirationDate = 0;  // 0 == never expires
 
 	m_lastConstructDisplayed = -1.0f;
-	
+
 	//Added By Sadullah Nader
 	//Fix for the building percent
 	m_constructDisplayString = TheDisplayStringManager->newDisplayString();
@@ -424,7 +424,7 @@ Drawable::Drawable( const ThingTemplate *thingTemplate, DrawableStatus statusBit
 	for (modIdx = 0; modIdx < drawMI.getCount(); ++modIdx)
 	{
 		const ModuleData* newModData = drawMI.getNthData(modIdx);
-		if (TheGlobalData->m_useDrawModuleLOD && 
+		if (TheGlobalData->m_useDrawModuleLOD &&
 				newModData->getMinimumRequiredGameLOD() > TheGameLODManager->getStaticLODLevel())
 			continue;
 		*m++ = TheModuleFactory->newModule(this, drawMI.getNthName(modIdx), newModData, MODULETYPE_DRAW);
@@ -442,7 +442,7 @@ Drawable::Drawable( const ThingTemplate *thingTemplate, DrawableStatus statusBit
 			const ModuleData* newModData = cuMI.getNthData(modIdx);
 
 	/// @todo srj -- this is evil, we shouldn't look at the module name directly!
-			if (thingTemplate->isKindOf(KINDOF_SHRUBBERY) && 
+			if (thingTemplate->isKindOf(KINDOF_SHRUBBERY) &&
 					!TheGlobalData->m_useTreeSway &&
 					cuMI.getNthName(modIdx).compareNoCase("SwayClientUpdate") == 0)
 				continue;
@@ -458,7 +458,7 @@ Drawable::Drawable( const ThingTemplate *thingTemplate, DrawableStatus statusBit
 		for (Module** m = m_modules[i]; m && *m; ++m)
 			(*m)->onObjectCreated();
 	}
-	
+
 	m_groupNumber = NULL;
 	m_captionDisplayString = NULL;
 	m_drawableInfo.m_drawable = this;
@@ -468,7 +468,7 @@ Drawable::Drawable( const ThingTemplate *thingTemplate, DrawableStatus statusBit
 	m_selectionFlashEnvelope = NULL;	// lazily allocate!
 	m_colorTintEnvelope = NULL;				// lazily allocate!
 
-	initStaticImages(); 
+	initStaticImages();
 
 	startAmbientSound();
 
@@ -498,7 +498,7 @@ Drawable::~Drawable()
 			deleteInstance(*m);
 			*m = NULL;	// in case other modules call findModule from their dtor!
 		}
-		delete [] m_modules[i]; 
+		delete [] m_modules[i];
 		m_modules[i] = NULL;
 	}
 
@@ -579,13 +579,13 @@ Bool Drawable::getShouldAnimate( Bool considerPower ) const
 
 		if (obj->isDisabled())
 		{
-			if( obj->isDisabledByType( DISABLED_HACKED ) 
-				|| obj->isDisabledByType( DISABLED_PARALYZED ) 
-				|| obj->isDisabledByType( DISABLED_EMP ) 
+			if( obj->isDisabledByType( DISABLED_HACKED )
+				|| obj->isDisabledByType( DISABLED_PARALYZED )
+				|| obj->isDisabledByType( DISABLED_EMP )
 				// srj sez: unmanned things also should not animate. (eg, gattling tanks,
 				// which have a slight barrel animation even when at rest). if this causes
 				// a problem, we will need to fix gattling tanks in another way.
-				|| obj->isDisabledByType( DISABLED_UNMANNED ) 
+				|| obj->isDisabledByType( DISABLED_UNMANNED )
 				)
 				return FALSE;
 
@@ -676,7 +676,7 @@ void Drawable::showSubObject( const AsciiString& name, Bool show )
 // srj sez: not sure if this is a good idea, for net sync reasons...
 //-------------------------------------------------------------------------------------------------
 /**
-	This call asks, "In the current animation (if any) how far along are you, from 0.0f to 1.0f". 
+	This call asks, "In the current animation (if any) how far along are you, from 0.0f to 1.0f".
 */
 Real Drawable::getAnimationScrubScalar( void ) const // lorenzen
 {
@@ -688,7 +688,7 @@ Real Drawable::getAnimationScrubScalar( void ) const // lorenzen
 			return di->getAnimationScrubScalar();
 		}
 	}
-	
+
 	return 0.0f;
 
 }
@@ -706,7 +706,7 @@ Int Drawable::getPristineBonePositions(const char* boneNamePrefix, Int startInde
 		const ObjectDrawInterface* di = (*dm)->getObjectDrawInterface();
 		if (di)
 		{
-			Int subcount = 
+			Int subcount =
 				di->getPristineBonePositionsForConditionState(m_conditionState, boneNamePrefix, startIndex, positions, transforms, maxBones);
 
 			if (subcount > 0)
@@ -735,7 +735,7 @@ Int Drawable::getCurrentClientBonePositions(const char* boneNamePrefix, Int star
 		const ObjectDrawInterface* di = (*dm)->getObjectDrawInterface();
 		if (di)
 		{
-			Int subcount = 
+			Int subcount =
 				di->getCurrentBonePositions(boneNamePrefix, startIndex, positions, transforms, maxBones);
 
 			if (subcount > 0)
@@ -876,23 +876,23 @@ void Drawable::setFullyObscuredByShroud(Bool fullyObscured)
 /** Set drawable's "selected" status, if not already set.  Also update running
  * total count of selected drawables. */
 //-------------------------------------------------------------------------------------------------
-void Drawable::friend_setSelected( void ) 
-{ 
+void Drawable::friend_setSelected( void )
+{
 	if(isSelected() == false)
 	{
 		m_selected = TRUE;
 		onSelected();
 	}
 
-}			
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Clear drawable's "selected" status, if not already clear.  Also update running
  * total count of selected drawables. */
 //-------------------------------------------------------------------------------------------------
-void Drawable::friend_clearSelected( void ) 
+void Drawable::friend_clearSelected( void )
 {
-	if(isSelected()) 
+	if(isSelected())
 	{
 		m_selected = FALSE;
 		onUnselected();
@@ -920,7 +920,7 @@ void Drawable::colorFlash( const RGBColor* color, UnsignedInt decayFrames, Unsig
 
 	// make sure the tint color is unlocked so we "fade back down" to normal
 	clearDrawableStatus( DRAWABLE_STATUS_TINT_COLOR_LOCKED );
-} 
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Tint a drawable a specified color */
@@ -958,7 +958,7 @@ void Drawable::onSelected()
 {
 
 	flashAsSelected();//much simpler
-	
+
 	Object* obj = getObject();
 	if ( obj )
 	{
@@ -1012,7 +1012,7 @@ const Vector3 * Drawable::getSelectionColor( void )	const
 
 }
 
-		
+
 //-------------------------------------------------------------------------------------------------
 /** fades the object out gradually...how gradually is determined by number of frames */
 //-------------------------------------------------------------------------------------------------
@@ -1038,16 +1038,16 @@ void Drawable::fadeIn( UnsignedInt frames )		///< decloak object
 
 //-------------------------------------------------------------------------------------------------
 Real Drawable::getScale (void) const
-{ 
-	return m_instanceScale; 
-//	return getTemplate()->getAssetScale(); 
+{
+	return m_instanceScale;
+//	return getTemplate()->getAssetScale();
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 void Drawable::reactToBodyDamageStateChange(BodyDamageType newState)
 {
-	static const ModelConditionFlagType TheDamageMap[BODYDAMAGETYPE_COUNT] = 
+	static const ModelConditionFlagType TheDamageMap[BODYDAMAGETYPE_COUNT] =
 	{
 		MODELCONDITION_INVALID,
 		MODELCONDITION_DAMAGED,
@@ -1060,7 +1060,7 @@ void Drawable::reactToBodyDamageStateChange(BodyDamageType newState)
 		newDamage.set(TheDamageMap[newState]);
 
 	clearAndSetModelConditionFlags(
-		MAKE_MODELCONDITION_MASK3(MODELCONDITION_DAMAGED, MODELCONDITION_REALLY_DAMAGED, MODELCONDITION_RUBBLE), 
+		MAKE_MODELCONDITION_MASK3(MODELCONDITION_DAMAGED, MODELCONDITION_REALLY_DAMAGED, MODELCONDITION_RUBBLE),
 		newDamage);
 
 	startAmbientSound(newState, TheGlobalData->m_timeOfDay);
@@ -1079,7 +1079,7 @@ void Drawable::setEffectiveOpacity( Real pulseFactor, Real explicitOpacity /* = 
 	Real pulseMargin = (1.0f - m_stealthOpacity);
 	Real pulseAmount = pulseMargin * pf;
 
-	m_effectiveStealthOpacity = m_stealthOpacity + pulseAmount; 
+	m_effectiveStealthOpacity = m_stealthOpacity + pulseAmount;
 }		///< get alpha/opacity value used to override defaults when drawing.
 
 //-------------------------------------------------------------------------------------------------
@@ -1109,7 +1109,7 @@ void Drawable::updateDrawable( void )
 
 			setDrawableOpacity(numer/(Real)m_timeToFade);
 			++m_timeElapsedFade;
-			
+
 			if (m_timeElapsedFade > m_timeToFade)
 				m_fadeMode = FADING_NONE;
 		}
@@ -1172,7 +1172,7 @@ void Drawable::updateDrawable( void )
 
 	//Lets figure out whether we should be changing colors right about now
 	// we'll use an ifelseif ladder since we are scanning bits
-	if( m_prevTintStatus != m_tintStatus )// edge test 
+	if( m_prevTintStatus != m_tintStatus )// edge test
 	{
 		if ( testTintStatus( TINT_STATUS_DISABLED ) )
 		{
@@ -1192,8 +1192,8 @@ void Drawable::updateDrawable( void )
 //				m_colorTintEnvelope = newInstance(TintEnvelope);
 //			m_colorTintEnvelope->play( &RED_IRRADIATED_COLOR, 30, 30, SUSTAIN_INDEFINITELY);
 //		}
-		else 
-		{ 
+		else
+		{
 			// NO TINTING SHOULD BE PRESENT
 			if (m_colorTintEnvelope == NULL)
 				m_colorTintEnvelope = newInstance(TintEnvelope);
@@ -1217,12 +1217,12 @@ void Drawable::updateDrawable( void )
 		m_selectionFlashEnvelope->update(); // selection flashing
 
 	//If we have an ambient sound, and we aren't currently playing it, attempt to play it now
-	if( m_ambientSound && m_ambientSoundEnabled && !m_ambientSound->m_event.getEventName().isEmpty() && !m_ambientSound->m_event.isCurrentlyPlaying() ) 
+	if( m_ambientSound && m_ambientSoundEnabled && !m_ambientSound->m_event.getEventName().isEmpty() && !m_ambientSound->m_event.isCurrentlyPlaying() )
 	{
 		startAmbientSound();
 	}
-}	
- 
+}
+
 //-------------------------------------------------------------------------------------------------
 void Drawable::flashAsSelected( const RGBColor *color ) ///< drawable takes care of the details if you spec no color
 {
@@ -1238,7 +1238,7 @@ void Drawable::flashAsSelected( const RGBColor *color ) ///< drawable takes care
 		Object *obj = getObject();
 		if (obj)
 		{
-			RGBColor tempColor; 
+			RGBColor tempColor;
 			if (TheGlobalData->m_selectionFlashHouseColor)
 				tempColor.setFromInt(obj->getIndicatorColor());
 			else
@@ -1283,10 +1283,10 @@ Bool Drawable::calcPhysicsXform(PhysicsXformInfo& info)
 	const Object* obj = getObject();
 	const AIUpdateInterface *ai = obj ? obj->getAIUpdateInterface() : NULL;
 	Bool hasPhysicsXform = false;
-	if (ai) 
+	if (ai)
 	{
-		const Locomotor *locomotor = ai->getCurLocomotor(); 
-		if (locomotor) 
+		const Locomotor *locomotor = ai->getCurLocomotor();
+		if (locomotor)
 		{
 			switch (locomotor->getAppearance())
 			{
@@ -1303,7 +1303,7 @@ Bool Drawable::calcPhysicsXform(PhysicsXformInfo& info)
 					calcPhysicsXformHoverOrWings(locomotor, info);
 					hasPhysicsXform = true;
 					break;
-				case LOCO_THRUST:	
+				case LOCO_THRUST:
 					calcPhysicsXformThrust(locomotor, info);
 					hasPhysicsXform = true;
 					break;
@@ -1419,12 +1419,12 @@ void Drawable::calcPhysicsXformHoverOrWings( const Locomotor *locomotor, Physics
 	const Real ROLL_STIFFNESS =  locomotor->getRollStiffness();
 	const Real PITCH_DAMPING = locomotor->getPitchDamping();
 	const Real ROLL_DAMPING = locomotor->getRollDamping();
-	const Real Z_VEL_PITCH_COEFF = locomotor->getPitchByZVelCoef();	
-	const Real FORWARD_VEL_COEFF = locomotor->getForwardVelCoef();	
-	const Real LATERAL_VEL_COEFF = locomotor->getLateralVelCoef();	
-	const Real FORWARD_ACCEL_COEFF = locomotor->getForwardAccelCoef();	
-	const Real LATERAL_ACCEL_COEFF = locomotor->getLateralAccelCoef();	
-	const Real UNIFORM_AXIAL_DAMPING = locomotor->getUniformAxialDamping();	
+	const Real Z_VEL_PITCH_COEFF = locomotor->getPitchByZVelCoef();
+	const Real FORWARD_VEL_COEFF = locomotor->getForwardVelCoef();
+	const Real LATERAL_VEL_COEFF = locomotor->getLateralVelCoef();
+	const Real FORWARD_ACCEL_COEFF = locomotor->getForwardAccelCoef();
+	const Real LATERAL_ACCEL_COEFF = locomotor->getLateralAccelCoef();
+	const Real UNIFORM_AXIAL_DAMPING = locomotor->getUniformAxialDamping();
 
 	// get object from logic
 	Object *obj = getObject();
@@ -1464,7 +1464,7 @@ void Drawable::calcPhysicsXformHoverOrWings( const Locomotor *locomotor, Physics
 	info.m_totalPitch = m_locoInfo->m_pitch + m_locoInfo->m_accelerationPitch;
 	info.m_totalRoll = m_locoInfo->m_roll + m_locoInfo->m_accelerationRoll;
 
-	if (physics->isMotive()) 
+	if (physics->isMotive())
   {
 		if (Z_VEL_PITCH_COEFF != 0.0f)
 		{
@@ -1523,9 +1523,9 @@ void Drawable::calcPhysicsXformTreads( const Locomotor *locomotor, PhysicsXformI
 	const Real ROLL_STIFFNESS =  locomotor->getRollStiffness();
 	const Real PITCH_DAMPING = locomotor->getPitchDamping();
 	const Real ROLL_DAMPING = locomotor->getRollDamping();
-	const Real FORWARD_ACCEL_COEFF = locomotor->getForwardAccelCoef();	
-	const Real LATERAL_ACCEL_COEFF = locomotor->getLateralAccelCoef();	
-	const Real UNIFORM_AXIAL_DAMPING = locomotor->getUniformAxialDamping();	
+	const Real FORWARD_ACCEL_COEFF = locomotor->getForwardAccelCoef();
+	const Real LATERAL_ACCEL_COEFF = locomotor->getLateralAccelCoef();
+	const Real UNIFORM_AXIAL_DAMPING = locomotor->getUniformAxialDamping();
 
 	// get object from logic
 	Object *obj = getObject();
@@ -1593,7 +1593,7 @@ void Drawable::calcPhysicsXformTreads( const Locomotor *locomotor, PhysicsXformI
 			Real rough = (vel->x*vel->x + vel->y*vel->y) * OVERLAP_ROUGH_VIBRATION_FACTOR;
 			if (rough > MAX_ROUGH_VIBRATION)
 				rough = MAX_ROUGH_VIBRATION;
-			
+
 			Real height = overlapped->getGeometryInfo().getMaxHeightAbovePosition();
 
 			// do not "go up" flattened crushed things
@@ -1685,7 +1685,7 @@ void Drawable::calcPhysicsXformTreads( const Locomotor *locomotor, PhysicsXformI
 	info.m_totalPitch = m_locoInfo->m_pitch + m_locoInfo->m_accelerationPitch;
 	info.m_totalRoll = m_locoInfo->m_roll + m_locoInfo->m_accelerationRoll;
 
-	if (physics->isMotive()) 
+	if (physics->isMotive())
 	{
 		// cause the chassis to pitch & roll in reaction to acceleration/deceleration
 		Real forwardAccel = dir->x * accel->x + dir->y * accel->y;
@@ -1715,7 +1715,7 @@ void Drawable::calcPhysicsXformTreads( const Locomotor *locomotor, PhysicsXformI
 				Real lateral = perp.x * to.x + perp.y * to.y;
 
 				Real recoil = PI/16.0f * GameClientRandomValueReal( 0.5f, 1.0f );
-			
+
 				m_locoInfo->m_accelerationPitchRate -= recoil * forward;
 				m_locoInfo->m_accelerationRollRate -= recoil * lateral;
 			}
@@ -1745,7 +1745,7 @@ void Drawable::calcPhysicsXformTreads( const Locomotor *locomotor, PhysicsXformI
 		// m_locoInfo->m_overlapZ += 0.4f;
 		m_locoInfo->m_overlapZVel = 0.0f;
 	}
-	
+
 	Real ztmp = m_locoInfo->m_overlapZ/2.0f;
 
 	// do fake Z physics
@@ -1758,7 +1758,7 @@ void Drawable::calcPhysicsXformTreads( const Locomotor *locomotor, PhysicsXformI
 	if (m_locoInfo->m_overlapZ <= 0.0f)
 	{
 		m_locoInfo->m_overlapZ = 0.0f;
-		m_locoInfo->m_overlapZVel = 0.0f; 
+		m_locoInfo->m_overlapZVel = 0.0f;
 	}
 	info.m_totalZ = ztmp;
 }
@@ -1776,9 +1776,9 @@ void Drawable::calcPhysicsXformWheels( const Locomotor *locomotor, PhysicsXformI
 	const Real ROLL_STIFFNESS =  locomotor->getRollStiffness();
 	const Real PITCH_DAMPING = locomotor->getPitchDamping();
 	const Real ROLL_DAMPING = locomotor->getRollDamping();
-	const Real FORWARD_ACCEL_COEFF = locomotor->getForwardAccelCoef();	
-	const Real LATERAL_ACCEL_COEFF = locomotor->getLateralAccelCoef();	
-	const Real UNIFORM_AXIAL_DAMPING = locomotor->getUniformAxialDamping();	
+	const Real FORWARD_ACCEL_COEFF = locomotor->getForwardAccelCoef();
+	const Real LATERAL_ACCEL_COEFF = locomotor->getLateralAccelCoef();
+	const Real UNIFORM_AXIAL_DAMPING = locomotor->getUniformAxialDamping();
 
 	const Real MAX_SUSPENSION_EXTENSION = locomotor->getMaxWheelExtension(); //-2.3f;
 //	const Real MAX_SUSPENSION_COMPRESSION = locomotor->getMaxWheelCompression(); //1.4f;
@@ -1823,19 +1823,19 @@ void Drawable::calcPhysicsXformWheels( const Locomotor *locomotor, PhysicsXformI
 
 	Bool airborne = obj->isSignificantlyAboveTerrain();
 
-	if (airborne) 
+	if (airborne)
 	{
-		if (DO_WHEELS) 
-		{	
+		if (DO_WHEELS)
+		{
 			// Wheels extend when airborne.
 			m_locoInfo->m_wheelInfo.m_framesAirborne = 0;
 			m_locoInfo->m_wheelInfo.m_framesAirborneCounter++;
-			if (pos->z - hheight > -MAX_SUSPENSION_EXTENSION) 
+			if (pos->z - hheight > -MAX_SUSPENSION_EXTENSION)
 			{
 				m_locoInfo->m_wheelInfo.m_rearLeftHeightOffset += (MAX_SUSPENSION_EXTENSION - m_locoInfo->m_wheelInfo.m_rearLeftHeightOffset)/2.0f;
 				m_locoInfo->m_wheelInfo.m_rearRightHeightOffset += (MAX_SUSPENSION_EXTENSION - m_locoInfo->m_wheelInfo.m_rearRightHeightOffset)/2.0f;
-			} 
-			else 
+			}
+			else
 			{
 				m_locoInfo->m_wheelInfo.m_rearLeftHeightOffset += (0 - m_locoInfo->m_wheelInfo.m_rearLeftHeightOffset)/2.0f;
 				m_locoInfo->m_wheelInfo.m_rearRightHeightOffset += (0 - m_locoInfo->m_wheelInfo.m_rearRightHeightOffset)/2.0f;
@@ -1844,7 +1844,7 @@ void Drawable::calcPhysicsXformWheels( const Locomotor *locomotor, PhysicsXformI
 		// Calculate suspension info.
 		Real length = obj->getGeometryInfo().getMajorRadius();
 		Real width = obj->getGeometryInfo().getMinorRadius();
-		Real pitchHeight = length*Sin(m_locoInfo->m_pitch + m_locoInfo->m_accelerationPitch - groundPitch);	
+		Real pitchHeight = length*Sin(m_locoInfo->m_pitch + m_locoInfo->m_accelerationPitch - groundPitch);
 		Real rollHeight = width*Sin(m_locoInfo->m_roll + m_locoInfo->m_accelerationRoll - groundRoll);
 		info.m_totalZ = fabs(pitchHeight)/4 + fabs(rollHeight)/4;
 		return; // maintain the same orientation while we fly through the air.
@@ -1852,15 +1852,15 @@ void Drawable::calcPhysicsXformWheels( const Locomotor *locomotor, PhysicsXformI
 
 	// Bouncy.
 	Real curSpeed = physics->getVelocityMagnitude();
-#if 1 
+#if 1
 	Real maxSpeed = ai->getCurLocomotorSpeed();
-	if (!airborne && curSpeed > maxSpeed/10) 
+	if (!airborne && curSpeed > maxSpeed/10)
 	{
 		Real factor = curSpeed/maxSpeed;
-		if (fabs(m_locoInfo->m_pitchRate)<factor*BOUNCE_ANGLE_KICK/4 && fabs(m_locoInfo->m_rollRate)<factor*BOUNCE_ANGLE_KICK/8) 
+		if (fabs(m_locoInfo->m_pitchRate)<factor*BOUNCE_ANGLE_KICK/4 && fabs(m_locoInfo->m_rollRate)<factor*BOUNCE_ANGLE_KICK/8)
 		{
-			// do the bouncy. 
-			switch (GameClientRandomValue(0,3)) 
+			// do the bouncy.
+			switch (GameClientRandomValue(0,3))
 			{
 			case 0:
 				m_locoInfo->m_pitchRate -= BOUNCE_ANGLE_KICK*factor;
@@ -1911,7 +1911,7 @@ void Drawable::calcPhysicsXformWheels( const Locomotor *locomotor, PhysicsXformI
 	info.m_totalPitch = m_locoInfo->m_pitch + m_locoInfo->m_accelerationPitch;
 	info.m_totalRoll = m_locoInfo->m_roll + m_locoInfo->m_accelerationRoll;
 
-	if (physics->isMotive()) 
+	if (physics->isMotive())
 	{
 		// cause the chassis to pitch & roll in reaction to acceleration/deceleration
 		Real forwardAccel = dir->x * accel->x + dir->y * accel->y;
@@ -1940,8 +1940,8 @@ void Drawable::calcPhysicsXformWheels( const Locomotor *locomotor, PhysicsXformI
 	Real width = obj->getGeometryInfo().getMinorRadius();
 	Real pitchHeight = length*Sin(info.m_totalPitch-groundPitch);
 	Real rollHeight = width*Sin(info.m_totalRoll-groundRoll);
-	if (DO_WHEELS) 
-	{	
+	if (DO_WHEELS)
+	{
 		// calculate each wheel position
 		m_locoInfo->m_wheelInfo.m_framesAirborne = m_locoInfo->m_wheelInfo.m_framesAirborneCounter;
 		m_locoInfo->m_wheelInfo.m_framesAirborneCounter = 0;
@@ -1961,11 +1961,11 @@ void Drawable::calcPhysicsXformWheels( const Locomotor *locomotor, PhysicsXformI
 
 		//
 		///@todo Steven/John ... please review this and make sure it makes sense (CBD)
-		// we're going to add the angle to the current wheel rotation ... but we're going to 
+		// we're going to add the angle to the current wheel rotation ... but we're going to
 		// divide that number to add small angles.  This allows for "smoother" wheel turning
 		// transitions ... and when the AI has things move in a straight line, since it's
 		// constantly telling the object to go left, go straight, go right, go straight,
-		// etc, this smaller angle we'll be adding covers the constant wheel shifting 
+		// etc, this smaller angle we'll be adding covers the constant wheel shifting
 		// left and right when moving in a relatively straight line
 		//
 		#define WHEEL_SMOOTHNESS 10.0f  // higher numbers add smaller angles, make it more "smooth"
@@ -2043,7 +2043,7 @@ void Drawable::calcPhysicsXformWheels( const Locomotor *locomotor, PhysicsXformI
 		}
 		if (m_locoInfo->m_wheelInfo.m_rearRightHeightOffset>MAX_SUSPENSION_COMPRESSION) {
 			m_locoInfo->m_wheelInfo.m_rearRightHeightOffset=MAX_SUSPENSION_COMPRESSION;
-		}	
+		}
 		*/
 	}
 	// If we are > 22 degrees, need to raise height;
@@ -2153,7 +2153,7 @@ void Drawable::setStealthLook(StealthLookType look)
 
 				break;
 			}
-			
+
 			case STEALTHLOOK_DISGUISED_ENEMY:
 				m_hiddenByStealth = false;
 				m_heatVisionOpacity = 0.0f;
@@ -2256,8 +2256,8 @@ static Bool computeHealthRegion( const Drawable *draw, IRegion2D& region )
 	Real zoom = TheTacticalView->getZoom();
 	//Real widthScale = 1.3f / zoom;
 	Real widthScale = 1.0f / zoom;
-	//Real heightScale = 0.8f / zoom; 
-	Real heightScale = 1.0f; 
+	//Real heightScale = 0.8f / zoom;
+	Real heightScale = 1.0f;
 
 	healthBoxWidth *= widthScale;
 	healthBoxHeight *= heightScale;
@@ -2281,21 +2281,21 @@ static Bool computeHealthRegion( const Drawable *draw, IRegion2D& region )
 
 Bool Drawable::drawsAnyUIText( void )
 {
-	if (!isSelected()) 
+	if (!isSelected())
 		return FALSE;
 
 	const Object *obj = getObject();
-	if ( !obj || !obj->isLocallyControlled() )  
+	if ( !obj || !obj->isLocallyControlled() )
 		return FALSE;
 
 	Player *owner = obj->getControllingPlayer();
 	Int groupNum = owner->getSquadNumberForObject(obj);
 
-	if (groupNum > NO_HOTKEY_SQUAD && groupNum < NUM_HOTKEY_SQUADS ) 
+	if (groupNum > NO_HOTKEY_SQUAD && groupNum < NUM_HOTKEY_SQUADS )
 		return TRUE;
 	else
 		m_groupNumber = NULL;
-		
+
 	if ( obj->getFormationID() != NO_FORMATION_ID )
 		return TRUE;
 
@@ -2318,14 +2318,14 @@ void Drawable::drawIconUI( void )
 			healthBarRegion = &healthBarRegionStorage; //both data and a PointerAsFlag for logic in the methods below
 
 		Object *obj = getObject();
-		
+
 		// we only draw icons drawables with objects, so one bail here -------------------------
 		if ( ! obj )
 			return;
 
 		//Icons that can be drawn on dead things
-		drawHealthBar( healthBarRegion );                                        
-		drawEmoticon( healthBarRegion );                                         
+		drawHealthBar( healthBarRegion );
+		drawEmoticon( healthBarRegion );
 
 		drawCaption( healthBarRegion );
 		drawConstructPercent( healthBarRegion );
@@ -2335,25 +2335,25 @@ void Drawable::drawIconUI( void )
 			return;
 		drawHealing( healthBarRegion );//call so dead things can kill their healing icons
 		drawBombed( healthBarRegion );
-	
-	
+
+
 		//Disabled for multiplay!
 		//drawBattlePlans( healthBarRegion );
-	
+
 		if ( drawsAnyUIText() )
 			TheGameClient->addTextBearingDrawable( this );
 
-		drawEnthusiastic( healthBarRegion );                                       
+		drawEnthusiastic( healthBarRegion );
 #ifdef ALLOW_DEMORALIZE
 		drawDemoralized( healthBarRegion );
 #endif
 		drawDisabled( healthBarRegion );
 
-		drawAmmo( healthBarRegion );                
-		drawContained( healthBarRegion ); 
+		drawAmmo( healthBarRegion );
+		drawContained( healthBarRegion );
 
 		//Moved this to last so that it shows up over contained and ammo icons.
-		drawVeterancy( healthBarRegion ); 
+		drawVeterancy( healthBarRegion );
 	}
 }
 
@@ -2410,7 +2410,7 @@ void Drawable::drawEmoticon( const IRegion2D *healthBarRegion )
 			Int size = REAL_TO_INT( barWidth * 0.3f );
 			frameHeight = REAL_TO_INT((INT_TO_REAL(size) / INT_TO_REAL(frameWidth)) * frameHeight);
 			frameWidth = size;
-#endif			
+#endif
 			// given our scaled width and height we need to find the top left point to draw the image at
 			ICoord2D screen;
 			screen.x = (Int)(healthBarRegion->lo.x + (barWidth * 0.5f) - (frameWidth * 0.5f));
@@ -2429,10 +2429,10 @@ void Drawable::drawEmoticon( const IRegion2D *healthBarRegion )
 // ------------------------------------------------------------------------------------------------
 void Drawable::drawAmmo( const IRegion2D *healthBarRegion )
 {
-	const Object *obj = getObject();			
+	const Object *obj = getObject();
 
 	if (!(
-				TheGlobalData->m_showObjectHealth && 
+				TheGlobalData->m_showObjectHealth &&
 				(isSelected() || (TheInGameUI && (TheInGameUI->getMousedOverDrawableID() == getID()))) &&
 				obj->getControllingPlayer() == ThePlayerList->getLocalPlayer()
 			))
@@ -2447,7 +2447,7 @@ void Drawable::drawAmmo( const IRegion2D *healthBarRegion )
 		return;
 
 
-	
+
 #ifdef SCALE_ICONS_WITH_ZOOM_ML
 	Real scale = TheGlobalData->m_ammoPipScaleFactor / CLAMP_ICON_ZOOM_FACTOR( TheTacticalView->getZoom() );
 #else
@@ -2483,14 +2483,14 @@ void Drawable::drawAmmo( const IRegion2D *healthBarRegion )
 // ------------------------------------------------------------------------------------------------
 void Drawable::drawContained( const IRegion2D *healthBarRegion )
 {
-	const Object *obj = getObject();			
+	const Object *obj = getObject();
 
 	ContainModuleInterface* container = obj->getContain();
 	if (!container)
 		return;
 
 	if (!(
-				TheGlobalData->m_showObjectHealth && 
+				TheGlobalData->m_showObjectHealth &&
 				(isSelected() || (TheInGameUI && (TheInGameUI->getMousedOverDrawableID() == getID()))) &&
 				obj->getControllingPlayer() == ThePlayerList->getLocalPlayer()
 			))
@@ -2535,7 +2535,7 @@ void Drawable::drawContained( const IRegion2D *healthBarRegion )
 		return;
 
 	Real bounding = obj->getGeometryInfo().getBoundingSphereRadius() * scale;
-	
+
 	//Int posx = screenCenter.x + REAL_TO_INT(TheGlobalData->m_containerPipScreenOffset.x*bounding) - totalWidth;
 	//**CHANGING CODE: Left justify with health bar min
 	Int posx = healthBarRegion->lo.x;
@@ -2546,7 +2546,7 @@ void Drawable::drawContained( const IRegion2D *healthBarRegion )
 		const Color INFANTRY_COLOR = GameMakeColor(0, 255, 0, 255);
 		const Color NON_INFANTRY_COLOR = GameMakeColor(0, 0, 255, 255);
 		if (i < numFull)
-			TheDisplay->drawImage(s_fullContainer, posx, posy, posx + boxWidth, posy + boxHeight, 
+			TheDisplay->drawImage(s_fullContainer, posx, posy, posx + boxWidth, posy + boxHeight,
 				(i < numInfantry) ? INFANTRY_COLOR : NON_INFANTRY_COLOR);
 		else
 			TheDisplay->drawImage(s_emptyContainer, posx, posy + 1, posx + boxWidth, posy + 1 + boxHeight);
@@ -2576,14 +2576,14 @@ void Drawable::drawBattlePlans( const IRegion2D *healthBarRegion )
 			//Int barHeight = healthBarRegion.hi.y - healthBarRegion.lo.y;
 			Int frameWidth = getIconInfo()->m_icon[ ICON_BATTLEPLAN_BOMBARD ]->getCurrentFrameWidth();
 			Int frameHeight = getIconInfo()->m_icon[ ICON_BATTLEPLAN_BOMBARD ]->getCurrentFrameHeight();
-			
+
 #ifdef SCALE_ICONS_WITH_ZOOM_ML
 			// adjust the width to be a % of the health bar region size
 			Int barWidth = healthBarRegion->hi.x - healthBarRegion->lo.x;
 			Int size = REAL_TO_INT( barWidth * 0.3f );
 			frameHeight = REAL_TO_INT((INT_TO_REAL(size) / INT_TO_REAL(frameWidth)) * frameHeight);
 			frameWidth = size;
-#endif			
+#endif
 			// given our scaled width and height we need to find the top left point to draw the image at
 			ICoord2D screen;
 			screen.x = healthBarRegion->lo.x;
@@ -2604,21 +2604,21 @@ void Drawable::drawBattlePlans( const IRegion2D *healthBarRegion )
 			// draw the icon
 			Int frameWidth = getIconInfo()->m_icon[ ICON_BATTLEPLAN_HOLDTHELINE ]->getCurrentFrameWidth();
 			Int frameHeight = getIconInfo()->m_icon[ ICON_BATTLEPLAN_HOLDTHELINE ]->getCurrentFrameHeight();
-			
+
 #ifdef SCALE_ICONS_WITH_ZOOM_ML
 			// adjust the width to be a % of the health bar region size
 			Int barWidth = healthBarRegion->hi.x - healthBarRegion->lo.x;
 			Int size = REAL_TO_INT( barWidth * 0.3f );
 			frameHeight = REAL_TO_INT((INT_TO_REAL(size) / INT_TO_REAL(frameWidth)) * frameHeight);
 			frameWidth = size;
-#endif			
+#endif
 			// given our scaled width and height we need to find the top left point to draw the image at
 			ICoord2D screen;
 			screen.x = healthBarRegion->lo.x;
 			screen.y = healthBarRegion->lo.y + frameHeight;
 			getIconInfo()->m_icon[ ICON_BATTLEPLAN_HOLDTHELINE ]->draw( screen.x + frameWidth, screen.y, frameWidth, frameHeight );
 		}
-		else 
+		else
 		{
 			killIcon(ICON_BATTLEPLAN_HOLDTHELINE);
 		}
@@ -2647,11 +2647,11 @@ void Drawable::drawBattlePlans( const IRegion2D *healthBarRegion )
 			screen.y = healthBarRegion->lo.y + frameHeight;
 			getIconInfo()->m_icon[ ICON_BATTLEPLAN_SEARCHANDDESTROY ]->draw( screen.x + (frameWidth * 2), screen.y, frameWidth, frameHeight );
 		}
-		else 
+		else
 		{
 			killIcon(ICON_BATTLEPLAN_SEARCHANDDESTROY);
 		}
-		
+
 	}
 }
 
@@ -2663,7 +2663,7 @@ void Drawable::drawUIText()
 	// This gets called by GameClient now
 	// GameClient caches a list of us drawables during Drawablepostdraw()
 	// then our group numbers get spit out last, so they draw in front
-	
+
 	const IRegion2D* healthBarRegion = NULL;
 	IRegion2D healthBarRegionStorage;
 	if (computeHealthRegion(this, healthBarRegionStorage))
@@ -2679,7 +2679,7 @@ void Drawable::drawUIText()
 
 	Color color = TheDrawGroupInfo->m_usePlayerColor ? owner->getPlayerColor() : TheDrawGroupInfo->m_colorForText;
 
-	if (groupNum > NO_HOTKEY_SQUAD && groupNum < NUM_HOTKEY_SQUADS ) 
+	if (groupNum > NO_HOTKEY_SQUAD && groupNum < NUM_HOTKEY_SQUADS )
 	{
 		Int xPos = healthBarRegion->lo.x;
 		Int yPos = healthBarRegion->lo.y;
@@ -2698,10 +2698,10 @@ void Drawable::drawUIText()
 
 		m_groupNumber = TheDisplayStringManager->getGroupNumeralString(groupNum);
 
-		
-		m_groupNumber->draw(xPos, yPos, color, 
-												TheDrawGroupInfo->m_colorForTextDropShadow, 
-												TheDrawGroupInfo->m_dropShadowOffsetX, 
+
+		m_groupNumber->draw(xPos, yPos, color,
+												TheDrawGroupInfo->m_colorForTextDropShadow,
+												TheDrawGroupInfo->m_dropShadowOffsetX,
 												TheDrawGroupInfo->m_dropShadowOffsetY);
 	}
 
@@ -2720,15 +2720,15 @@ void Drawable::drawUIText()
 			return;
 
 		Real scale = 1.3f/CLAMP_ICON_ZOOM_FACTOR( TheTacticalView->getZoom() );
-		screenCenter.x += (healthBoxWidth * scale * 0.5f) + 10 ; 
+		screenCenter.x += (healthBoxWidth * scale * 0.5f) + 10 ;
 
 
 		DisplayString *formationMarker = TheDisplayStringManager->getFormationLetterString();
 		//static DisplayString *formationMarker = TheDisplayStringManager->getGroupNumeralString( 5 );
 		if ( formationMarker )
 			formationMarker->draw(screenCenter.x, screenCenter.y, color,
-													TheDrawGroupInfo->m_colorForTextDropShadow, 
-													TheDrawGroupInfo->m_dropShadowOffsetX, 
+													TheDrawGroupInfo->m_colorForTextDropShadow,
+													TheDrawGroupInfo->m_dropShadowOffsetX,
 													TheDrawGroupInfo->m_dropShadowOffsetY);
 
 	}
@@ -2741,7 +2741,7 @@ void Drawable::drawUIText()
 void Drawable::drawHealing(const IRegion2D* healthBarRegion)
 {
 
-	const Object *obj = getObject();			
+	const Object *obj = getObject();
 
 	// we do show show icons for things that explicitly forbid it
 	if( obj->isKindOf( KINDOF_NO_HEAL_ICON ) || obj->getStatusBits().test( OBJECT_STATUS_SOLD ) )
@@ -2754,8 +2754,8 @@ void Drawable::drawHealing(const IRegion2D* healthBarRegion)
 	if( body->getHealth() != body->getMaxHealth() )
 	{
 //		const DamageInfo* lastDamage = body->getLastDamageInfo();
-//		if( lastDamage != NULL && lastDamage->in.m_damageType == DAMAGE_HEALING 
-//			&&(TheGameLogic->getFrame() - body->getLastHealingTimestamp()) <= HEALING_ICON_DISPLAY_TIME 
+//		if( lastDamage != NULL && lastDamage->in.m_damageType == DAMAGE_HEALING
+//			&&(TheGameLogic->getFrame() - body->getLastHealingTimestamp()) <= HEALING_ICON_DISPLAY_TIME
 //			)
 		if ( TheGameLogic->getFrame() > HEALING_ICON_DISPLAY_TIME && // because so many things init health early in game
 			(TheGameLogic->getFrame() - body->getLastHealingTimestamp() <= HEALING_ICON_DISPLAY_TIME) )
@@ -2797,7 +2797,7 @@ void Drawable::drawHealing(const IRegion2D* healthBarRegion)
 			// draw the animation if present
 			if( getIconInfo()->m_icon[ typeIndex ] != NULL)
 			{
-				
+
 				//
 				// we are going to draw the healing icon relative to the size of the health bar region
 				// since that region takes into account hit point size and zoom factor of the camera too
@@ -2818,8 +2818,8 @@ void Drawable::drawHealing(const IRegion2D* healthBarRegion)
 				screen.x = REAL_TO_INT( healthBarRegion->lo.x + (barWidth * 0.75f) - (frameWidth * 0.5f) );
 				screen.y = REAL_TO_INT( healthBarRegion->lo.y - frameHeight );
 				getIconInfo()->m_icon[ typeIndex ]->draw( screen.x, screen.y, frameWidth, frameHeight );
-								
-			}	
+
+			}
 		}
 	}
 	else
@@ -2835,13 +2835,13 @@ void Drawable::drawHealing(const IRegion2D* healthBarRegion)
 void Drawable::drawEnthusiastic(const IRegion2D* healthBarRegion)
 {
 
-	const Object *obj = getObject();			
+	const Object *obj = getObject();
 	//
 	// if we are to show effect make sure we have the animation for it allocated, otherwise
 	// free any animation we may have allocated back to the animation memory pool
 	//
 	// only display if have enthusiasm
-	
+
 	if( obj->testWeaponBonusCondition( WEAPONBONUSCONDITION_ENTHUSIASTIC ) == TRUE &&
 			healthBarRegion != NULL )
 	{
@@ -2860,7 +2860,7 @@ void Drawable::drawEnthusiastic(const IRegion2D* healthBarRegion)
 		// draw the animation if present
 		if( getIconInfo()->m_icon[ iconIndex ] != NULL)
 		{
-			
+
 			//
 			// we are going to draw the healing icon relative to the size of the health bar region
 			// since that region takes into account hit point size and zoom factor of the camera too
@@ -2890,8 +2890,8 @@ void Drawable::drawEnthusiastic(const IRegion2D* healthBarRegion)
 			screen.x = REAL_TO_INT( healthBarRegion->lo.x + (barWidth * 0.25f) - (frameWidth * 0.5f) );
 			screen.y = healthBarRegion->hi.y;
 			getIconInfo()->m_icon[ iconIndex ]->draw( screen.x, screen.y, frameWidth, frameHeight );
-							
-		}	
+
+		}
 	}
 	else
 	{
@@ -2907,7 +2907,7 @@ void Drawable::drawEnthusiastic(const IRegion2D* healthBarRegion)
 void Drawable::drawDemoralized(const IRegion2D* healthBarRegion)
 {
 
-	const Object *obj = getObject();			
+	const Object *obj = getObject();
 
 
 	//
@@ -2925,7 +2925,7 @@ void Drawable::drawDemoralized(const IRegion2D* healthBarRegion)
 			// create icon if necessary
 			if( getIconInfo()->m_icon[ ICON_DEMORALIZED ] == NULL )
 				getIconInfo()->m_icon[ ICON_DEMORALIZED ] = newInstance(Anim2D)( s_animationTemplates[ ICON_DEMORALIZED ], TheAnim2DCollection );
-			
+
 			if (getIconInfo()->m_icon[ ICON_DEMORALIZED ])
 			{
 
@@ -2959,7 +2959,7 @@ void Drawable::drawDemoralized(const IRegion2D* healthBarRegion)
 void Drawable::drawBombed(const IRegion2D* healthBarRegion)
 {
 
-	const Object *obj = getObject();			
+	const Object *obj = getObject();
 
 
 	UnsignedInt now = TheGameLogic->getFrame();
@@ -2994,7 +2994,7 @@ void Drawable::drawBombed(const IRegion2D* healthBarRegion)
 				screen.x = REAL_TO_INT( healthBarRegion->lo.x + (barWidth * 0.5f) - (frameWidth * 0.5f) );
 				screen.y = REAL_TO_INT( healthBarRegion->lo.y + barHeight * 0.5f );
 
-				getIconInfo()->m_icon[ ICON_CARBOMB ]->draw( screen.x, screen.y, frameWidth, frameHeight );	
+				getIconInfo()->m_icon[ ICON_CARBOMB ]->draw( screen.x, screen.y, frameWidth, frameHeight );
 				getIconInfo()->m_keepTillFrame[ ICON_CARBOMB ] = FOREVER;
 			}
 		}
@@ -3024,16 +3024,16 @@ void Drawable::drawBombed(const IRegion2D* healthBarRegion)
 					getIconInfo()->m_icon[ ICON_BOMB_REMOTE ] = newInstance(Anim2D)( s_animationTemplates[ ICON_BOMB_REMOTE ], TheAnim2DCollection );
 					getIconInfo()->m_icon[ ICON_BOMB_TIMED ] = newInstance(Anim2D)( s_animationTemplates[ ICON_BOMB_TIMED ], TheAnim2DCollection );
 
-					//Because this is a counter icon that ranges from 0-60 seconds, we need to calculate which frame to 
+					//Because this is a counter icon that ranges from 0-60 seconds, we need to calculate which frame to
 					//start the animation from. Because timers are second based -- 1000 ms equal 1 frame. So we simply
 					//calculate the time via detonation frame.
 					//
 					// srj sez: this may sound familiar somehow, but let me reiterate, just in case you missed it:
 					//
-					// hardcoding is bad. 
+					// hardcoding is bad.
 					//
-					// the anim got changed and now is only 20 seconds max, so the previous code was wrong. 
-					// 
+					// the anim got changed and now is only 20 seconds max, so the previous code was wrong.
+					//
 					// hey, I've got an idea! why don't we ASK the anim how long it is?
 					//
 					UnsignedInt dieFrame = update->getDetonationFrame();
@@ -3043,7 +3043,7 @@ void Drawable::drawBombed(const IRegion2D* healthBarRegion)
 					// this anim goes from "N" seconds down to zero, so the max seconds we can use is N-1.
 					if (seconds > numFrames - 1)
 						seconds = numFrames - 1;
-					
+
 					getIconInfo()->m_icon[ ICON_BOMB_TIMED ]->setMinFrame(numFrames - seconds - 1);
 					getIconInfo()->m_icon[ ICON_BOMB_TIMED ]->reset();
 				}
@@ -3065,15 +3065,15 @@ void Drawable::drawBombed(const IRegion2D* healthBarRegion)
 						Int size = REAL_TO_INT( barWidth * 0.65f );
 						frameHeight = REAL_TO_INT((INT_TO_REAL(size) / INT_TO_REAL(frameWidth)) * frameHeight);
 						frameWidth = size;
-						
+
 						// given our scaled width and height we need to find the top left point to draw the image at
 						ICoord2D screen;
 						screen.x = REAL_TO_INT( healthBarRegion->lo.x + (barWidth * 0.5f) - (frameWidth * 0.5f) );
 						screen.y = REAL_TO_INT( healthBarRegion->lo.y + barHeight * 0.5f );
 
-						getIconInfo()->m_icon[ ICON_BOMB_REMOTE ]->draw( screen.x, screen.y, frameWidth, frameHeight );	
+						getIconInfo()->m_icon[ ICON_BOMB_REMOTE ]->draw( screen.x, screen.y, frameWidth, frameHeight );
 						getIconInfo()->m_keepTillFrame[ ICON_BOMB_REMOTE ] = now + 1;
-						getIconInfo()->m_icon[ ICON_BOMB_TIMED ]->draw( screen.x, screen.y, frameWidth, frameHeight );	
+						getIconInfo()->m_icon[ ICON_BOMB_TIMED ]->draw( screen.x, screen.y, frameWidth, frameHeight );
 						getIconInfo()->m_keepTillFrame[ ICON_BOMB_TIMED ] = now + 1;
 					}
 				}
@@ -3111,7 +3111,7 @@ void Drawable::drawBombed(const IRegion2D* healthBarRegion)
 						screen.x = REAL_TO_INT( healthBarRegion->lo.x + (barWidth * 0.5f) - (frameWidth * 0.5f) );
 						screen.y = REAL_TO_INT( healthBarRegion->lo.y + barHeight * 0.5f );
 
-						getIconInfo()->m_icon[ ICON_BOMB_REMOTE ]->draw( screen.x, screen.y, frameWidth, frameHeight );	
+						getIconInfo()->m_icon[ ICON_BOMB_REMOTE ]->draw( screen.x, screen.y, frameWidth, frameHeight );
 						getIconInfo()->m_keepTillFrame[ ICON_BOMB_REMOTE ] = now + 1;
 					}
 				}
@@ -3138,16 +3138,16 @@ void Drawable::drawBombed(const IRegion2D* healthBarRegion)
 void Drawable::drawDisabled(const IRegion2D* healthBarRegion)
 {
 
-	const Object *obj = getObject();			
+	const Object *obj = getObject();
 
 
 	//
 	// Disabled Emoticon /Lightning
 	//                   7/
-	if( obj->isDisabledByType( DISABLED_HACKED ) 
-		|| obj->isDisabledByType( DISABLED_PARALYZED ) 
-		|| obj->isDisabledByType( DISABLED_EMP ) 
-		|| obj->isDisabledByType( DISABLED_UNDERPOWERED ) 
+	if( obj->isDisabledByType( DISABLED_HACKED )
+		|| obj->isDisabledByType( DISABLED_PARALYZED )
+		|| obj->isDisabledByType( DISABLED_EMP )
+		|| obj->isDisabledByType( DISABLED_UNDERPOWERED )
 		)
 	{
 		// create icon if necessary
@@ -3204,7 +3204,7 @@ void Drawable::drawConstructPercent( const IRegion2D *healthBarRegion )
 		// no object, or we are now complete get rid of the string if we have one
 		if( m_constructDisplayString )
 		{
-		
+
 			TheDisplayStringManager->freeDisplayString( m_constructDisplayString );
 			m_constructDisplayString = NULL;
 		}
@@ -3226,13 +3226,13 @@ void Drawable::drawConstructPercent( const IRegion2D *healthBarRegion )
 	{
 		UnicodeString buffer;
 
-		
+
 		buffer.format( TheGameText->fetch("CONTROLBAR:UnderConstructionDesc"), obj->getConstructionPercent());
 		m_constructDisplayString->setText( buffer );
 
 		// record this percent as our last displayed so we don't un-necessarily rebuild the string
 		m_lastConstructDisplayed = obj->getConstructionPercent();
-				
+
 	}  // end if
 
 	// get center position in drawable
@@ -3351,7 +3351,7 @@ void Drawable::drawHealthBar(const IRegion2D* healthBarRegion)
 	// only draw health for selected drawbles and drawables that have been moused over
 	// by the cursor
 	//
-	if( TheGlobalData->m_showObjectHealth && 
+	if( TheGlobalData->m_showObjectHealth &&
 			(isSelected() || (TheInGameUI && (TheInGameUI->getMousedOverDrawableID() == getID()))) )
 	{
 		Object *obj = getObject();
@@ -3433,8 +3433,8 @@ void Drawable::drawHealthBar(const IRegion2D* healthBarRegion)
 
 			color =        GameMakeColor( 255.0 * inColor.red, 255.0 * inColor.green, 255.0 * inColor.blue, 255);
 			outlineColor = GameMakeColor( 255.0 * outColor.red, 255.0 * outColor.green, 255.0 * outColor.blue, 255);
-		
-		
+
+
 		}
 
 
@@ -3442,7 +3442,7 @@ void Drawable::drawHealthBar(const IRegion2D* healthBarRegion)
 
 ///		Real scale = 1.3f / TheTacticalView->getZoom();
 		Real healthBoxWidth = healthBarRegion->hi.x - healthBarRegion->lo.x;
-			
+
 		Real healthBoxHeight = max(3, healthBarRegion->hi.y - healthBarRegion->lo.y);
 		Real healthBoxOutlineSize = 1.0f;
 
@@ -3471,9 +3471,9 @@ void Drawable::clearAndSetModelConditionState( ModelConditionFlagType clr, Model
 }
 
 //-------------------------------------------------------------------------------------------------
-DrawModule** Drawable::getDrawModules() 
-{ 
-	DrawModule** dm = (DrawModule**)getModuleList(MODULETYPE_DRAW); 
+DrawModule** Drawable::getDrawModules()
+{
+	DrawModule** dm = (DrawModule**)getModuleList(MODULETYPE_DRAW);
 #ifdef DIRTY_CONDITION_FLAGS
 	if (m_isModelDirty)
 	{
@@ -3500,9 +3500,9 @@ DrawModule** Drawable::getDrawModules()
 }
 
 //-------------------------------------------------------------------------------------------------
-DrawModule const** Drawable::getDrawModules() const 
-{ 
-	DrawModule const** dm = (DrawModule const**)getModuleList(MODULETYPE_DRAW); 
+DrawModule const** Drawable::getDrawModules() const
+{
+	DrawModule const** dm = (DrawModule const**)getModuleList(MODULETYPE_DRAW);
 #ifdef DIRTY_CONDITION_FLAGS
 	if (m_isModelDirty)
 	{
@@ -3536,7 +3536,7 @@ void Drawable::clearAndSetModelConditionFlags(const ModelConditionFlags& clr, co
 	ModelConditionFlags oldFlags = m_conditionState;
 
 	m_conditionState.clearAndSet(clr, setf);
-	
+
 	if (m_conditionState == oldFlags)
 		return;
 
@@ -3564,7 +3564,7 @@ void Drawable::replaceModelConditionFlags( const ModelConditionFlags &flags, Boo
 	//
 	if( forceReplace == FALSE && m_conditionState == flags )
 		return;
-		
+
 	m_conditionState = flags;
 #ifdef DIRTY_CONDITION_FLAGS
 	// when forcing a replace we won't use dirty flags, we will immediately do an update now
@@ -3578,7 +3578,7 @@ void Drawable::replaceModelConditionFlags( const ModelConditionFlags &flags, Boo
 		}
 		m_isModelDirty = false;
 	}
-	else 
+	else
 		m_isModelDirty = true;
 #else
 	for (DrawModule** dm = getDrawModules(); *dm; ++dm)
@@ -3602,9 +3602,9 @@ void Drawable::setIndicatorColor(Color color)
 }
 
 // ------------------------------------------------------------------------------------------------
-const GeometryInfo& Drawable::getDrawableGeometryInfo() const 
-{ 
-	return getObject() ? getObject()->getGeometryInfo() : getTemplate()->getTemplateGeometryInfo(); 
+const GeometryInfo& Drawable::getDrawableGeometryInfo() const
+{
+	return getObject() ? getObject()->getGeometryInfo() : getTemplate()->getTemplateGeometryInfo();
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -3649,8 +3649,8 @@ DrawableID Drawable::getID( void ) const
 
 //-------------------------------------------------------------------------------------------------
 void Drawable::friend_bindToObject( Object *obj ) ///< bind this drawable to an object ID
-{ 
-	m_object = obj; 
+{
+	m_object = obj;
 	if (getObject())
 	{
 		if (TheGlobalData->m_timeOfDay == TIME_OF_DAY_NIGHT)
@@ -3663,7 +3663,7 @@ void Drawable::friend_bindToObject( Object *obj ) ///< bind this drawable to an 
 	{
 		(*dm)->onDrawableBoundToObject();
 	}
-}					
+}
 //-------------------------------------------------------------------------------------------------
 	// when our Object changes teams, it calls us to let us know, so
 	// we can update our model, etc., if necessary. NOTE, we don't guarantee
@@ -3682,7 +3682,7 @@ void Drawable::changedTeam()
 }
 
 //-------------------------------------------------------------------------------------------------
-void Drawable::setPosition(const Coord3D *pos) 
+void Drawable::setPosition(const Coord3D *pos)
 {
 	// extend
 	Thing::setPosition(pos);
@@ -3696,7 +3696,7 @@ void Drawable::reactToTransformChange(const Matrix3D* oldMtx, const Coord3D* old
 	{
 		(*dm)->reactToTransformChange(oldMtx, oldPos, oldAngle);
 	}
-} 
+}
 
 //-------------------------------------------------------------------------------------------------
 void Drawable::reactToGeometryChange()
@@ -3705,11 +3705,11 @@ void Drawable::reactToGeometryChange()
 	{
 		(*dm)->reactToGeometryChange();
 	}
-} 
+}
 
 //-------------------------------------------------------------------------------------------------
 Bool Drawable::handleWeaponFireFX(WeaponSlotType wslot, Int specificBarrelToUse, const FXList* fxl, Real weaponSpeed, Real recoilAmount, Real recoilAngle, const Coord3D* victimPos, Real damageRadius)
-{	  
+{
 	if (recoilAmount != 0.0f)
 	{
 		// adjust recoil from absolute to relative.
@@ -3731,7 +3731,7 @@ Bool Drawable::handleWeaponFireFX(WeaponSlotType wslot, Int specificBarrelToUse,
 			return true;
 	}
 	return false;
-} 
+}
 
 //-------------------------------------------------------------------------------------------------
 Int Drawable::getBarrelCount(WeaponSlotType wslot) const
@@ -3744,16 +3744,16 @@ Int Drawable::getBarrelCount(WeaponSlotType wslot) const
 			return count;
 	}
 	return 0;
-} 
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Set the Drawable's instance transform */
 //-------------------------------------------------------------------------------------------------
-void Drawable::setInstanceMatrix( const Matrix3D *instance ) 
-{ 
+void Drawable::setInstanceMatrix( const Matrix3D *instance )
+{
 	if (instance)
 	{
-		m_instance = *instance; 
+		m_instance = *instance;
 		m_instanceIsIdentity = false;
 	}
 	else
@@ -3765,7 +3765,7 @@ void Drawable::setInstanceMatrix( const Matrix3D *instance )
 
 
 //-------------------------------------------------------------------------------------------------
-/** 
+/**
  * Return the Drawable's world transform.
  * If this Drawable is attached to an Object, return the Object's transform instead.
  */
@@ -3781,7 +3781,7 @@ const Matrix3D *Drawable::getTransformMatrix( void ) const
 }
 
 //-------------------------------------------------------------------------------------------------
-/** 
+/**
  * Set and clear the drawable's caption text
  */
 //-------------------------------------------------------------------------------------------------
@@ -3881,7 +3881,7 @@ void Drawable::startAmbientSound(BodyDamageType dt, TimeOfDay tod)
 			trySound = TRUE;
 		}
 	}
-	
+
 	if( trySound && m_ambientSound )
 	{
 		const AudioEventInfo *info = m_ambientSound->m_event.getAudioEventInfo();
@@ -4001,7 +4001,7 @@ void Drawable::updateHiddenStatus()
 		if (di)
 			di->setHidden(hidden != 0);
 	}
-	
+
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -4252,7 +4252,7 @@ void Drawable::xferDrawableModules( Xfer *xfer )
 /** Xfer method
 	* Version Info;
 	* 1: Initial version
-	* 2: Moved condition state xfer before module xfer so we can restore anim frame 
+	* 2: Moved condition state xfer before module xfer so we can restore anim frame
 	*    during the module xfer (CBD)
 	* 4: Added m_ambientSoundEnabled flag
 	* 5: save full mtx, not pos+orient.
@@ -4379,7 +4379,7 @@ void Drawable::xfer( Xfer *xfer )
 
 			if( objectID != m_object->getID() )
 			{
-			
+
 				DEBUG_CRASH(( "Drawable::xfer - Drawable '%s' is attached to wrong object '%s'",
 											getTemplate()->getName().str(), m_object->getTemplate()->getName().str() ));
 				throw SC_INVALID_DATA;
@@ -4411,7 +4411,7 @@ void Drawable::xfer( Xfer *xfer )
 
 
 	// particle
-	// we don't need to worry about this, the particle itself will set it upon loading 
+	// we don't need to worry about this, the particle itself will set it upon loading
 
 	// selected
 	// we won't worry about selection, we'll let TheInGameUI take care of it all
@@ -4529,7 +4529,7 @@ void Drawable::xfer( Xfer *xfer )
 	{
 
 		// sanity, we don't write old versions we can only read them
-		DEBUG_ASSERTCRASH( xfer->getXferMode() == XFER_LOAD, 
+		DEBUG_ASSERTCRASH( xfer->getXferMode() == XFER_LOAD,
 											 ("Drawable::xfer - Writing an old format!!!") );
 
 		// condition state, note that when we're loading we need to force a replace of these flags
@@ -4630,7 +4630,7 @@ void Drawable::xfer( Xfer *xfer )
 	if( xfer->getXferMode() == XFER_LOAD )
 	{
 		// On load, we want to set it to none, because stealthlook updates
-		// when it changes.  So in the next stealth update, it will be set to 
+		// when it changes.  So in the next stealth update, it will be set to
 		// it's correct value, and the drawable updated (hide shadows and such).  jba.
 		m_stealthLook = STEALTHLOOK_NONE;
 		// Also, need to update the hidden status for all sub-modules.
@@ -4669,7 +4669,7 @@ void Drawable::loadPostProcess( void )
 	{
 		setTransformMatrix(m_object->getTransformMatrix());
 	}
-	
+
 	if( m_ambientSoundEnabled )
 	{
 		startAmbientSound();
@@ -4728,7 +4728,7 @@ TintEnvelope::TintEnvelope(void)
 const Real FADE_RATE_EPSILON = (0.001f);
 
 //-------------------------------------------------------------------------------------------------
-void TintEnvelope::play(const RGBColor *peak, UnsignedInt atackFrames, UnsignedInt decayFrames, UnsignedInt sustainAtPeak )    
+void TintEnvelope::play(const RGBColor *peak, UnsignedInt atackFrames, UnsignedInt decayFrames, UnsignedInt sustainAtPeak )
 {
 	setPeakColor( peak );
 
@@ -4748,7 +4748,7 @@ void TintEnvelope::play(const RGBColor *peak, UnsignedInt atackFrames, UnsignedI
 }
 
 //-------------------------------------------------------------------------------------------------
-void TintEnvelope::setAttackFrames(UnsignedInt frames) 
+void TintEnvelope::setAttackFrames(UnsignedInt frames)
 {
 	Real recipFrames = 1.0f / (Real)MAX(1,frames);
 	m_attackRate.Set( m_currentColor );
@@ -4789,11 +4789,11 @@ void TintEnvelope::update(void)
 			}
 			break;
 		}
-		case ( ENVELOPE_STATE_ATTACK ) : 
+		case ( ENVELOPE_STATE_ATTACK ) :
 		{
 			Vector3 delta;
 			Vector3::Subtract(m_currentColor, m_peakColor, &delta);
-			
+
 			if (m_attackRate.Length() > delta.Length() || delta.Length() <= FADE_RATE_EPSILON) //we are at the peak
 			{
 				if ( m_sustainCounter )
@@ -4811,7 +4811,7 @@ void TintEnvelope::update(void)
 				Vector3::Add( m_attackRate, m_currentColor, &m_currentColor );//Add the attackRate to the current color;
 				m_affect = TRUE;
 			}
-			
+
 			break;
 		}
 		case ( ENVELOPE_STATE_SUSTAIN ) :
@@ -4820,7 +4820,7 @@ void TintEnvelope::update(void)
 				--m_sustainCounter;
 			else
 				release();
-				
+
 			break;
 		}
 		default:
@@ -4829,7 +4829,7 @@ void TintEnvelope::update(void)
 			break;
 		}
 	}
-	// here we transition the color from current to peak to release, according to 
+	// here we transition the color from current to peak to release, according to
 
 }
 
@@ -4849,7 +4849,7 @@ void TintEnvelope::crc( Xfer *xfer )
 void TintEnvelope::xfer( Xfer *xfer )
 {
 
-	// version 
+	// version
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
 	xfer->xferVersion( &version, currentVersion );

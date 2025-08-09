@@ -50,7 +50,7 @@
 class EmitterInstanceListClass : public ParticleEmitterDefClass
 {
 	public:
-		
+
 		///////////////////////////////////////////////////////
 		// Public constructors/destructors
 		///////////////////////////////////////////////////////
@@ -62,14 +62,14 @@ class EmitterInstanceListClass : public ParticleEmitterDefClass
 
 		///////////////////////////////////////////////////////
 		// Public methods
-		///////////////////////////////////////////////////////		
+		///////////////////////////////////////////////////////
 		virtual void			Add_Emitter (ParticleEmitterClass *emitter);
 		virtual void			Free_List (void);
-		
+
 		///////////////////////////////////////////////////////
 		// Derived overrides
 		///////////////////////////////////////////////////////
-		
+
 		//
 		//	Note:  The following are settings that can be changed on
 		//		the fly.  All other settings are simply cached in the
@@ -81,7 +81,7 @@ class EmitterInstanceListClass : public ParticleEmitterDefClass
 		virtual void			Set_Burst_Size (unsigned int count);
 		virtual void			Set_Outward_Vel (float value);
 		virtual void			Set_Vel_Inherit (float value);
-		
+
 		//
 		//	Randomizer accessors
 		//
@@ -96,14 +96,14 @@ class EmitterInstanceListClass : public ParticleEmitterDefClass
 		virtual void			Set_Rotation_Keyframes (ParticlePropertyStruct<float> &keyframes, float orient_rnd);
 		virtual void			Set_Frame_Keyframes (ParticlePropertyStruct<float> &keyframes);
 		virtual void			Set_Blur_Time_Keyframes (ParticlePropertyStruct<float> &keyframes);
-	
+
 		virtual void			Get_Color_Keyframes (ParticlePropertyStruct<Vector3> &keyframes) const;
 		virtual void			Get_Opacity_Keyframes (ParticlePropertyStruct<float> &keyframes) const;
 		virtual void			Get_Size_Keyframes (ParticlePropertyStruct<float> &keyframes) const;
 
-			
+
 	private:
-		
+
 		///////////////////////////////////////////////////////
 		// Private member data
 		///////////////////////////////////////////////////////

@@ -72,20 +72,20 @@ void OpenMap::OnUserMaps()
 	populateMapListbox( FALSE );
 }
 
-void OpenMap::OnBrowse() 
+void OpenMap::OnBrowse()
 {
 	m_pInfo->browse = true;
 	OnOK();
 }
 
-void OpenMap::OnOK() 
+void OpenMap::OnOK()
 {
 	CListBox *pList = (CListBox *)this->GetDlgItem(IDC_OPEN_LIST);
 	if (pList == NULL) {
 		OnCancel();
 		return;
 	}
-	
+
 	Int sel = pList->GetCurSel();
 	if (sel == LB_ERR) {
 		m_pInfo->browse = true;
@@ -136,7 +136,7 @@ void OpenMap::populateMapListbox( Bool systemMaps )
 
 	Bool found = false;
 
-	hFindFile = FindFirstFile(findBuf, &findData); 
+	hFindFile = FindFirstFile(findBuf, &findData);
 	if (hFindFile != INVALID_HANDLE_VALUE) {
 		do {
 			if (strcmp(findData.cFileName, ".") == 0 || strcmp(findData.cFileName, "..") == 0)
@@ -172,7 +172,7 @@ void OpenMap::populateMapListbox( Bool systemMaps )
 	}
 }
 
-BOOL OpenMap::OnInitDialog() 
+BOOL OpenMap::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 
@@ -194,7 +194,7 @@ BOOL OpenMap::OnInitDialog()
 	              // EXCEPTION: OCX Property Pages should return FALSE
 }
 
-void OpenMap::OnDblclkOpenList() 
+void OpenMap::OnDblclkOpenList()
 {
 	OnOK();
 }

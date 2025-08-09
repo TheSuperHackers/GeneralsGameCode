@@ -27,7 +27,7 @@ const unsigned int OLESTRING_DEFAULT_SIZE = 256;
 
 class OLEString
 {
-	
+
 	OLECHAR								*ole;
 	char									*sb;
 	unsigned int					len;

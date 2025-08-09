@@ -26,8 +26,8 @@
  *                                                                                             *
  *                  $Org Author:: Jani_p                                                      $*
  *                                                                                             *
- *                       Author : Kenny Mitchell                                               * 
- *                                                                                             * 
+ *                       Author : Kenny Mitchell                                               *
+ *                                                                                             *
  *                     $Modtime:: 08/05/02 1:27p                                              $*
  *                                                                                             *
  *                    $Revision:: 46                                                          $*
@@ -72,12 +72,12 @@ class TextureBaseClass : public RefCountClass
 {
 	friend class TextureLoader;
 	friend class LoaderThreadClass;
-	friend class DX8TextureTrackerClass;  //(gth) so it can call Poke_Texture, 
+	friend class DX8TextureTrackerClass;  //(gth) so it can call Poke_Texture,
 	friend class DX8ZTextureTrackerClass;
 
 public:
 
-	enum PoolType 
+	enum PoolType
 	{
 		POOL_DEFAULT=0,
 		POOL_MANAGED,
@@ -94,8 +94,8 @@ public:
 	// base constructor for derived classes
 	TextureBaseClass
 	(
-		unsigned width, 
-		unsigned height, 
+		unsigned width,
+		unsigned height,
 		MipCountType mip_level_count=MIP_LEVELS_ALL,
 		PoolType pool=POOL_MANAGED,
 		bool rendertarget=false,
@@ -127,7 +127,7 @@ public:
 	}
 	int Get_Height() const
 	{
-		return Height; 
+		return Height;
 	}
 
 	// Time, after which the texture is invalidated if not used. Set to zero to indicate infinite.
@@ -228,7 +228,7 @@ protected:
 	// If this is non-zero, the texture will have a hue shift done at the next init (this
 	// value should only be changed by Set_HSV_Shift() function, which also invalidates the
 	// texture).
-	Vector3 HSVShift;	
+	Vector3 HSVShift;
 
 	int Width;
 	int Height;
@@ -277,8 +277,8 @@ public:
 	// Create texture with desired height, width and format.
 	TextureClass
 	(
-		unsigned width, 
-		unsigned height, 
+		unsigned width,
+		unsigned height,
 		WW3DFormat format,
 		MipCountType mip_level_count=MIP_LEVELS_ALL,
 		PoolType pool=POOL_MANAGED,
@@ -302,9 +302,9 @@ public:
 	// Create texture from a surface.
 	TextureClass
 	(
-		SurfaceClass *surface, 
+		SurfaceClass *surface,
 		MipCountType mip_level_count=MIP_LEVELS_ALL
-	);		
+	);
 
 	TextureClass(IDirect3DBaseTexture8* d3d_texture);
 
@@ -332,7 +332,7 @@ public:
 	SurfaceClass *Get_Surface_Level(unsigned int level = 0);
 	IDirect3DSurface8 *Get_D3D_Surface_Level(unsigned int level = 0);
 	void Get_Level_Description( SurfaceClass::SurfaceDescription & desc, unsigned int level = 0 );
-	
+
 	TextureFilterClass& Get_Filter() { return Filter; }
 
 	WW3DFormat Get_Texture_Format() const { return TextureFormat; }
@@ -389,8 +389,8 @@ public:
 	// Create texture with desired height, width and format.
 	CubeTextureClass
 	(
-		unsigned width, 
-		unsigned height, 
+		unsigned width,
+		unsigned height,
 		WW3DFormat format,
 		MipCountType mip_level_count=MIP_LEVELS_ALL,
 		PoolType pool=POOL_MANAGED,
@@ -414,9 +414,9 @@ public:
 	// Create texture from a surface.
 	CubeTextureClass
 	(
-		SurfaceClass *surface, 
+		SurfaceClass *surface,
 		MipCountType mip_level_count=MIP_LEVELS_ALL
-	);		
+	);
 
 	CubeTextureClass(IDirect3DBaseTexture8* d3d_texture);
 
@@ -434,8 +434,8 @@ public:
 	// Create texture with desired height, width and format.
 	VolumeTextureClass
 	(
-		unsigned width, 
-		unsigned height, 
+		unsigned width,
+		unsigned height,
 		unsigned depth,
 		WW3DFormat format,
 		MipCountType mip_level_count=MIP_LEVELS_ALL,
@@ -460,9 +460,9 @@ public:
 	// Create texture from a surface.
 	VolumeTextureClass
 	(
-		SurfaceClass *surface, 
+		SurfaceClass *surface,
 		MipCountType mip_level_count=MIP_LEVELS_ALL
-	);		
+	);
 
 	VolumeTextureClass(IDirect3DBaseTexture8* d3d_texture);
 

@@ -23,12 +23,12 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 //----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information					                  
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //----------------------------------------------------------------------------
 //
 // Project:    RTS 3
@@ -63,12 +63,12 @@ class SoundManager : public SubsystemInterface
 
 		virtual void loseFocus( void );								///< Called when application loses focus
 		virtual void regainFocus( void );							///< Called when application regains focus
-		
+
 		virtual void setListenerPosition( const Coord3D *position );	///< Set the listener position for map3DSound() calculations
 		virtual void setViewRadius( Real viewRadius );///< Sets the radius of the view from the center of the screen in world coordinate units
 		virtual void setCameraAudibleDistance( Real audibleDistance );
 		virtual Real getCameraAudibleDistance( void );
-		
+
 		virtual void addAudioEvent(AudioEventRTS *&eventToAdd);	// pre-copied
 
 		virtual void notifyOf2DSampleStart( void );
@@ -89,7 +89,7 @@ class SoundManager : public SubsystemInterface
 	protected:
 		virtual Bool violatesVoice( AudioEventRTS *event );
 		virtual Bool isInterrupting( AudioEventRTS *event );
-		
+
 
 	protected:
 		UnsignedInt m_num2DSamples;

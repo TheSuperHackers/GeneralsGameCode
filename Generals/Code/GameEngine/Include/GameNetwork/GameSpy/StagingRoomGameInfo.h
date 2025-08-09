@@ -135,7 +135,7 @@ public:
 	inline Int getPingAsInt( void ) const { return m_pingInt; }
 
 	virtual Bool amIHost( void ) const;															///< Convenience function - is the local player the game host?
-	
+
 	GameSpyGameSlot *getGameSpySlot( Int index );
 
 	AsciiString generateGameSpyGameResultsPacket( void );

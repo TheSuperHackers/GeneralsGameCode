@@ -40,7 +40,7 @@
 class NeutronBlastBehaviorModuleData : public UpdateModuleData
 {
 public:
-	Real m_blastRadius; 
+	Real m_blastRadius;
 	Bool m_isAffectAirborne;
 	Bool m_affectAllies;
 
@@ -51,11 +51,11 @@ public:
 		m_affectAllies = TRUE;
 	}
 
-	static void buildFieldParse( MultiIniFieldParse& p ) 
+	static void buildFieldParse( MultiIniFieldParse& p )
 	{
 		UpdateModuleData::buildFieldParse( p );
-    
-		static const FieldParse dataFieldParse[] = 
+
+		static const FieldParse dataFieldParse[] =
 		{
 			{ "BlastRadius",		INI::parseReal, NULL, offsetof( NeutronBlastBehaviorModuleData, m_blastRadius ) },
 			{ "AffectAirborne", INI::parseBool, NULL, offsetof( NeutronBlastBehaviorModuleData, m_isAffectAirborne ) },
@@ -71,7 +71,7 @@ public:
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 class NeutronBlastBehavior : public UpdateModule,
-														 public DieModuleInterface 
+														 public DieModuleInterface
 {
 
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( NeutronBlastBehavior, "NeutronBlastBehavior" )
@@ -85,7 +85,7 @@ public:
 	static Int getInterfaceMask() { return UpdateModule::getInterfaceMask() | MODULEINTERFACE_DIE; }
 	virtual DieModuleInterface* getDie() { return this; }
 
-	
+
 	virtual UpdateSleepTime update();
 	virtual void onDie( const DamageInfo *damageInfo );
 

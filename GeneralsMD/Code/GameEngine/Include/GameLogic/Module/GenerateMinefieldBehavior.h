@@ -68,7 +68,7 @@ private:
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-class GenerateMinefieldBehavior : public UpdateModule, 
+class GenerateMinefieldBehavior : public UpdateModule,
 																	public DieModuleInterface,
 																	public UpgradeMux
 {

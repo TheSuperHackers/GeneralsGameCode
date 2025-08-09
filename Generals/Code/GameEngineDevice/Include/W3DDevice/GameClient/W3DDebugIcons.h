@@ -40,7 +40,7 @@ struct DebugIcon;
 //
 //
 class W3DDebugIcons : public RenderObjClass
-{	
+{
 
 public:
 
@@ -50,7 +50,7 @@ public:
 	~W3DDebugIcons(void);
 
 	/////////////////////////////////////////////////////////////////////////////
-	// Render Object Interface 
+	// Render Object Interface
 	/////////////////////////////////////////////////////////////////////////////
 	virtual RenderObjClass *	Clone(void) const;
 	virtual int						Class_ID(void) const;
@@ -64,7 +64,7 @@ public:
 protected:
 	VertexMaterialClass	  	*m_vertexMaterialClass;
 
-protected: 
+protected:
 	static DebugIcon				*m_debugIcons;
 	static Int							m_numDebugIcons;
 

@@ -54,14 +54,14 @@ class VertexMaterialClass;
 /**
 ** BoxRenderObjClass: base class for AABox and OBBox collision boxes
 **
-** NOTE: these render objects were designed from the start to be used for 
+** NOTE: these render objects were designed from the start to be used for
 ** collision boxes.  They are designed to normally never render unless you
 ** set the display mask and then, all boxes of that type will render.
 ** The display mask is 'AND'ed with the collision bits in the base render
 ** object class to determine if the box should be rendered.  WW3D provides
 ** an interface for setting this mask in your app.
 **
-** NOTE2: AABoxRenderObjClass is an axis-aligned box which will be positioned 
+** NOTE2: AABoxRenderObjClass is an axis-aligned box which will be positioned
 ** at a world-space offset (its local center) from the origin of the transform.
 ** This is done because AABoxes are used for rotationally invariant collision
 ** detection so we don't want the boxes to move around as the object rotates.
@@ -70,10 +70,10 @@ class VertexMaterialClass;
 **
 ** NOTE3: OBBoxRenderObjClass is an oriented box which is aligned with its transform
 ** but can have a center point that is offest from the transform's origin.
-** 
+**
 */
 class BoxRenderObjClass : public RenderObjClass
-{	
+{
 
 public:
 
@@ -90,7 +90,7 @@ public:
 
 	static void							Init(void);
 	static void							Shutdown(void);
-	
+
 	static void							Set_Box_Display_Mask(int mask);
 	static int							Get_Box_Display_Mask(void);
 
@@ -101,7 +101,7 @@ public:
 	const Vector3 &					Get_Local_Extent(void) { return ObjSpaceExtent; }
 
 protected:
-	
+
 	virtual void						update_cached_box(void) = 0;
 	void									render_box(RenderInfoClass & rinfo,const Vector3 & center,const Vector3 & extent);
 	void									vis_render_box(SpecialRenderInfoClass & rinfo,const Vector3 & center,const Vector3 & extent);
@@ -146,13 +146,13 @@ public:
 	AABoxRenderObjClass & operator = (const AABoxRenderObjClass &);
 
 	/////////////////////////////////////////////////////////////////////////////
-	// Render Object Interface 
+	// Render Object Interface
 	/////////////////////////////////////////////////////////////////////////////
 	virtual RenderObjClass *	Clone(void) const;
 	virtual int						Class_ID(void) const;
 	virtual void					Render(RenderInfoClass & rinfo);
 	virtual void					Special_Render(SpecialRenderInfoClass & rinfo);
-	virtual void 					Set_Transform(const Matrix3D &m); 
+	virtual void 					Set_Transform(const Matrix3D &m);
 	virtual void 					Set_Position(const Vector3 &v);
 	virtual bool					Cast_Ray(RayCollisionTestClass & raytest);
 	virtual bool					Cast_AABox(AABoxCollisionTestClass & boxtest);
@@ -163,23 +163,23 @@ public:
    virtual void					Get_Obj_Space_Bounding_Box(AABoxClass & box) const;
 
 	/////////////////////////////////////////////////////////////////////////////
-	// AABoxRenderObjClass Interface 
+	// AABoxRenderObjClass Interface
 	/////////////////////////////////////////////////////////////////////////////
 	const AABoxClass &			Get_Box(void);
 
 protected:
-	
+
 	virtual void					update_cached_box(void);
 
 	AABoxClass						CachedBox;
 
 };
 
-inline const AABoxClass & AABoxRenderObjClass::Get_Box(void) 
-{ 
+inline const AABoxClass & AABoxRenderObjClass::Get_Box(void)
+{
 	Validate_Transform();
 	update_cached_box();
-	return CachedBox; 
+	return CachedBox;
 }
 
 /*
@@ -197,13 +197,13 @@ public:
 	OBBoxRenderObjClass & operator = (const OBBoxRenderObjClass &);
 
 	/////////////////////////////////////////////////////////////////////////////
-	// Render Object Interface 
+	// Render Object Interface
 	/////////////////////////////////////////////////////////////////////////////
 	virtual RenderObjClass *	Clone(void) const;
 	virtual int						Class_ID(void) const;
 	virtual void					Render(RenderInfoClass & rinfo);
 	virtual void					Special_Render(SpecialRenderInfoClass & rinfo);
-	virtual void 					Set_Transform(const Matrix3D &m); 
+	virtual void 					Set_Transform(const Matrix3D &m);
 	virtual void 					Set_Position(const Vector3 &v);
 	virtual bool					Cast_Ray(RayCollisionTestClass & raytest);
 	virtual bool					Cast_AABox(AABoxCollisionTestClass & boxtest);
@@ -214,14 +214,14 @@ public:
    virtual void					Get_Obj_Space_Bounding_Box(AABoxClass & box) const;
 
 	/////////////////////////////////////////////////////////////////////////////
-	// OBBoxRenderObjClass Interface 
+	// OBBoxRenderObjClass Interface
 	/////////////////////////////////////////////////////////////////////////////
 	OBBoxClass &					Get_Box(void);
 
 protected:
-	
+
 	virtual void					update_cached_box(void);
-	
+
 	OBBoxClass						CachedBox;
 
 };

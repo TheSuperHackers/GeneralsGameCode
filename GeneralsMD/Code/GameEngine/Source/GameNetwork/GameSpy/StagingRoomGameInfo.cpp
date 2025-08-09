@@ -785,7 +785,7 @@ AsciiString GameSpyStagingRoom::generateLadderGameResultsPacket( void )
 void GameSpyStagingRoom::launchGame( void )
 {
 	setGameInProgress(TRUE);
-	
+
 	for (Int i=0; i<MAX_SLOTS; ++i)
 	{
 		const GameSpyGameSlot *slot = getGameSpySlot(i);
@@ -809,7 +809,7 @@ void GameSpyStagingRoom::launchGame( void )
 	// Time to initialize TheNetwork for this game.
 	TheNetwork = NetworkInterface::createNetwork();
 	TheNetwork->init();
-	
+
 	TheNetwork->setLocalAddress(getLocalIP(), (TheNAT)?TheNAT->getSlotPort(getLocalSlotNum()):8888);
 	if (TheNAT)
 		TheNetwork->attachTransport(TheNAT->getTransport());

@@ -16,20 +16,20 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/*************************************************************************** 
- *																									* 
- *						 Project	Name : G														* 
- *																									* 
- *							 File	Name : SLNODE.H									 		* 
- *																									* 
- *							Programmer : Philip W. Gorrow									* 
- *																									* 
- *							Start	Date : 03/11/97											* 
- *																									* 
- *						  Last Update : March 11, 1997 [PWG]							* 
- *																									* 
- *-------------------------------------------------------------------------* 
- *	Functions:																					* 
+/***************************************************************************
+ *																									*
+ *						 Project	Name : G														*
+ *																									*
+ *							 File	Name : SLNODE.H									 		*
+ *																									*
+ *							Programmer : Philip W. Gorrow									*
+ *																									*
+ *							Start	Date : 03/11/97											*
+ *																									*
+ *						  Last Update : March 11, 1997 [PWG]							*
+ *																									*
+ *-------------------------------------------------------------------------*
+ *	Functions:																					*
  *	- - -	- - -	- - -	- - -	- - -	- - -	- - -	- - -	- - -	- - -	- - -	- - -	*/
 #if _MSC_VER >= 1000
 #pragma once
@@ -54,7 +54,7 @@ template	<class T> class SList;
 //
 //	The node	class	is	responsible	for maintaining the links between
 //	data in a linked list.	It	works	with the	Single List	Class	to
-//	manage a	singularly linked	list of objects.	
+//	manage a	singularly linked	list of objects.
 //
 
 class	GenericSLNode : public AutoPoolClass<GenericSLNode, 256>

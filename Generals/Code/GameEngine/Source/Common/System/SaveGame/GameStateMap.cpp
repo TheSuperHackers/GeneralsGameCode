@@ -71,7 +71,7 @@ GameStateMap::~GameStateMap( void )
 // ------------------------------------------------------------------------------------------------
 static void embedPristineMap( AsciiString map, Xfer *xfer )
 {
- 
+
 	// open the map file
 	File *file = TheFileSystem->openFile( map.str(), File::READ | File::BINARY );
 	if( file == NULL )
@@ -81,10 +81,10 @@ static void embedPristineMap( AsciiString map, Xfer *xfer )
 		throw SC_INVALID_DATA;
 
 	}  // end if
- 
+
 	// how big is the map file
 	Int fileSize = file->seek( 0, File::END );
- 
+
 	// rewind to beginning of file
 	file->seek( 0, File::START );
 
@@ -97,7 +97,7 @@ static void embedPristineMap( AsciiString map, Xfer *xfer )
 		throw SC_INVALID_DATA;
 
 	}  // end if
- 
+
 	// copy the file to the buffer
 	if( file->read( buffer, fileSize ) != fileSize )
 	{
@@ -106,10 +106,10 @@ static void embedPristineMap( AsciiString map, Xfer *xfer )
 		throw SC_INVALID_DATA;
 
 	}  // end if
- 
+
 	// close the BIG file
 	file->close();
- 
+
 	// write the contents to the save file
 	DEBUG_ASSERTCRASH( xfer->getXferMode() == XFER_SAVE, ("embedPristineMap - Unsupposed xfer mode") );
 	xfer->beginBlock();
@@ -118,7 +118,7 @@ static void embedPristineMap( AsciiString map, Xfer *xfer )
 
 	// delete the buffer
 	delete [] buffer;
- 
+
 }  // end embedPristineMap
 
 // ------------------------------------------------------------------------------------------------
@@ -302,7 +302,7 @@ void GameStateMap::xfer( Xfer *xfer )
 			xfer->xferAsciiString( &tmp );
 		}
 
-		if (currentVersion >= 2) 
+		if (currentVersion >= 2)
 		{
 			// save the game mode.
 			Int gameMode = TheGameLogic->getGameMode();
@@ -333,7 +333,7 @@ void GameStateMap::xfer( Xfer *xfer )
 		xfer->xferAsciiString( &saveGameInfo->pristineMapName );
 		saveGameInfo->pristineMapName = TheGameState->portableMapPathToRealMapPath(saveGameInfo->pristineMapName);
 
-		if (currentVersion >= 2) 
+		if (currentVersion >= 2)
 		{
 			// get the game mode.
 			Int gameMode;
@@ -408,7 +408,7 @@ void GameStateMap::xfer( Xfer *xfer )
 	if (TheGameLogic->getGameMode()==GAME_SKIRMISH) {
 		if (TheSkirmishGameInfo==NULL) {
 			TheSkirmishGameInfo = NEW SkirmishGameInfo;
-			TheSkirmishGameInfo->init();  
+			TheSkirmishGameInfo->init();
 			TheSkirmishGameInfo->clearSlotList();
 			TheSkirmishGameInfo->reset();
 		}

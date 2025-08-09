@@ -52,7 +52,7 @@ void ObjectHelper::sleepUntil(UnsignedInt when)
 	// note the setWakeFrame(NEVER) actually awakens immediately, since NEVER==0.
 	// when we get NEVER in this case, we really want to sleep forever.
 	// so just special case it.
-	UpdateSleepTime wakeDelay = (when == NEVER || when == FOREVER) ? 
+	UpdateSleepTime wakeDelay = (when == NEVER || when == FOREVER) ?
 																UPDATE_SLEEP_FOREVER :
 																UPDATE_SLEEP(when - TheGameLogic->getFrame());
 	setWakeFrame(getObject(), wakeDelay);

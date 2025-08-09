@@ -72,7 +72,7 @@ EmitterSizePropPageClass::~EmitterSizePropPageClass (void)
 	// Free the original setting arrays
 	SAFE_DELETE_ARRAY (m_OrigSizes.KeyTimes);
 	SAFE_DELETE_ARRAY (m_OrigSizes.Values);
-	
+
 	// Free the current setting arrays
 	SAFE_DELETE_ARRAY (m_CurrentSizes.KeyTimes);
 	SAFE_DELETE_ARRAY (m_CurrentSizes.Values);
@@ -110,7 +110,7 @@ void
 EmitterSizePropPageClass::Initialize (void)
 {
 	SAFE_DELETE_ARRAY (m_OrigSizes.KeyTimes);
-	SAFE_DELETE_ARRAY (m_OrigSizes.Values);	
+	SAFE_DELETE_ARRAY (m_OrigSizes.Values);
 	SAFE_DELETE_ARRAY (m_CurrentSizes.KeyTimes);
 	SAFE_DELETE_ARRAY (m_CurrentSizes.Values);
 
@@ -140,11 +140,11 @@ EmitterSizePropPageClass::Initialize (void)
 //
 /////////////////////////////////////////////////////////////
 BOOL
-EmitterSizePropPageClass::OnInitDialog (void) 
+EmitterSizePropPageClass::OnInitDialog (void)
 {
 	// Allow the base class to process this message
 	CPropertyPage::OnInitDialog ();
-	
+
 	m_SizeBar = ColorBarClass::Get_Color_Bar (::GetDlgItem (m_hWnd, IDC_SIZE_BAR));
 	m_SizeBar->Set_Range (0, 1);
 
@@ -218,7 +218,7 @@ EmitterSizePropPageClass::OnNotify
 	//
 	NMHDR *pheader = (NMHDR *)lParam;
 	if ((pheader != NULL) && (pheader->code == UDN_DELTAPOS)) {
-		LPNMUPDOWN pupdown = (LPNMUPDOWN)lParam;		
+		LPNMUPDOWN pupdown = (LPNMUPDOWN)lParam;
 		::Update_Spinner_Buddy (pheader->hwndFrom, pupdown->iDelta);
 	}
 
@@ -229,8 +229,8 @@ EmitterSizePropPageClass::OnNotify
 	{
 		case IDC_SIZE_BAR:
 		{
-			if (color_bar_hdr->hdr.code == CBRN_DBLCLK_POINT) {			
-				
+			if (color_bar_hdr->hdr.code == CBRN_DBLCLK_POINT) {
+
 				//
 				//	Allow the user to edit the keyframe
 				//
@@ -241,7 +241,7 @@ EmitterSizePropPageClass::OnNotify
 
 					m_SizeBar->Set_Redraw (false);
 					m_SizeBar->Set_Graph_Percent (color_bar_hdr->key_index, size / m_MaxSize);
-					
+
 					//
 					//	Determine if the user changed the 'max' size
 					//
@@ -271,20 +271,20 @@ EmitterSizePropPageClass::OnNotify
 
 					//
 					// Update the emitter
-					//					
+					//
 					Update_Sizes ();
 					m_pEmitterList->Set_Size_Keyframes (m_CurrentSizes);
 					SetModified ();
 				}
 			} else if ((color_bar_hdr->hdr.code == CBRN_MOVING_POINT) ||
-						  (color_bar_hdr->hdr.code == CBRN_DELETED_POINT)) {			
-				
+						  (color_bar_hdr->hdr.code == CBRN_DELETED_POINT)) {
+
 				//
 				// Update the emitter
 				//
 				Update_Sizes ();
 				m_pEmitterList->Set_Size_Keyframes (m_CurrentSizes);
-				SetModified ();					
+				SetModified ();
 			}
 		}
 		break;
@@ -298,7 +298,7 @@ EmitterSizePropPageClass::OnNotify
 		}
 		break;
 	}
-			
+
 	return CPropertyPage::OnNotify (wParam, lParam, pResult);
 }
 
@@ -338,9 +338,9 @@ EmitterSizePropPageClass::Update_Sizes (void)
 
 		//
 		//	Get all the size key frames and add them to our structure
-		//	
+		//
 		for (int index = 1; index < count; index ++) {
-			m_SizeBar->Get_Point (index, &position, &red, &green, &blue);			
+			m_SizeBar->Get_Point (index, &position, &red, &green, &blue);
 			m_CurrentSizes.KeyTimes[index - 1] = position * m_Lifetime;
 			m_CurrentSizes.Values[index - 1] = m_SizeBar->Get_Graph_Percent (index) * m_MaxSize;
 		}

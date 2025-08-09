@@ -29,10 +29,10 @@
 class WorldHeightMapEdit;
 /*************************************************************************/
 /**                             BrushTool
-	 Does the Height Brush tool operation. 
+	 Does the Height Brush tool operation.
 ***************************************************************************/
 ///  Height brush tool.
-class BrushTool : public Tool 
+class BrushTool : public Tool
 {
 protected:
 	WorldHeightMapEdit *m_htMapEditCopy; ///< ref counted.

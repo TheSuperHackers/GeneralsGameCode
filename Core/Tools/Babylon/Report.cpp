@@ -37,7 +37,7 @@ static char THIS_FILE[] = __FILE__;
 CReport::CReport(CWnd* pParent /*=NULL*/)
 	: CDialog(CReport::IDD, pParent)
 {
-	
+
 	options.translations = TRUE;
 	options.dialog = TRUE;
 	options.limit = 0;
@@ -69,7 +69,7 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // CReport message handlers
 
-BOOL CReport::OnInitDialog() 
+BOOL CReport::OnInitDialog()
 {
 	int index;
 	LANGINFO	*info;
@@ -83,7 +83,7 @@ BOOL CReport::OnInitDialog()
 	items = (CStatic *) GetDlgItem ( IDC_ITEMS );
 
 	CDialog::OnInitDialog();
-	
+
 	// TODO: Add extra initialization here
 
 	trans_status->SetCheck ( options.translations );
@@ -106,22 +106,22 @@ BOOL CReport::OnInitDialog()
 			list->SetSel ( index );
 		}
 
-		index++; 
+		index++;
 	}
 	num_langs = index;
 
-	
+
 	return TRUE;  // return TRUE unless you set the focus to a control
 	              // EXCEPTION: OCX Property Pages should return FALSE
 }
 
-void CReport::OnSelectall() 
+void CReport::OnSelectall()
 {
 	// TODO: Add your control notification handler code here
 	 list->SelItemRange ( TRUE, 0, num_langs-1 );
 }
 
-void CReport::OnInvert() 
+void CReport::OnInvert()
 {
 	// TODO: Add your control notification handler code here
 	int index = 0;
@@ -138,7 +138,7 @@ void CReport::OnInvert()
 
 
 
-void CReport::OnShowDetails() 
+void CReport::OnShowDetails()
 {
 	// TODO: Add your control notification handler code here
 	if ( show_details->GetCheck () == 0 )
@@ -152,10 +152,10 @@ void CReport::OnShowDetails()
 		ifless->EnableWindow ( TRUE );
 		limit->EnableWindow ( TRUE );
 		items->EnableWindow ( TRUE );
-	}	
+	}
 }
 
-void CReport::OnOK() 
+void CReport::OnOK()
 {
 	int count;
 	int i;
@@ -171,7 +171,7 @@ void CReport::OnOK()
 
 // get the filename
 	CFileDialog fd ( FALSE , NULL, "*.txt",  OFN_OVERWRITEPROMPT | OFN_NOCHANGEDIR );
-		
+
 	if ( fd.DoModal () != IDOK )
 	{
 		return;
@@ -206,13 +206,13 @@ void CReport::OnOK()
 		options.limit = INT_MAX;
 	}
 
-	
+
 	CDialog::OnOK();
 }
 
-void CReport::OnCancel() 
+void CReport::OnCancel()
 {
 	// TODO: Add extra cleanup here
-	
+
 	CDialog::OnCancel();
 }

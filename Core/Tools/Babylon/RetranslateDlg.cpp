@@ -64,7 +64,7 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // RetranslateDlg message handlers
 
-BOOL RetranslateDlg::OnInitDialog() 
+BOOL RetranslateDlg::OnInitDialog()
 {
 	// TODO: Add extra initialization here
 	CStatic *text;
@@ -83,41 +83,41 @@ BOOL RetranslateDlg::OnInitDialog()
 	              // EXCEPTION: OCX Property Pages should return FALSE
 }
 
-void RetranslateDlg::OnCancelMode() 
+void RetranslateDlg::OnCancelMode()
 {
 	CDialog::OnCancelMode();
-	
+
 	// TODO: Add your message handler code here
-	
+
 }
 
-void RetranslateDlg::OnRetranslate() 
+void RetranslateDlg::OnRetranslate()
 {
 	// TODO: Add your control notification handler code here
 
-		
+
 	oldtext->SetRetranslate ( TRUE );
 	CDialog::OnOK ();
 }
 
-void RetranslateDlg::OnSkip() 
+void RetranslateDlg::OnSkip()
 {
 	// TODO: Add your control notification handler code here
-	
+
 		 EndDialog ( IDSKIP );
 }
 
-void RetranslateDlg::OnNoRetranslate() 
+void RetranslateDlg::OnNoRetranslate()
 {
 	// TODO: Add your control notification handler code here
-	
+
 	oldtext->SetRetranslate ( FALSE );
 	CDialog::OnOK ();
 }
 
-void RetranslateDlg::OnSkipAll() 
+void RetranslateDlg::OnSkipAll()
 {
 	// TODO: Add your control notification handler code here
-	
+
 	CDialog::OnCancel ();
 }

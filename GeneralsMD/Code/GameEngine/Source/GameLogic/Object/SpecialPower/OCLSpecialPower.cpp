@@ -45,7 +45,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-enum 
+enum
 {
 	CREATE_ABOVE_LOCATION_HEIGHT = 300,
 	MAX_ADJUST_RADIUS = 500
@@ -83,7 +83,7 @@ static void parseOCLUpgradePair( INI* ini, void * /*instance*/, void *store, con
 
 	std::vector<OCLSpecialPowerModuleData::Upgrades>* s = (std::vector<OCLSpecialPowerModuleData::Upgrades>*)store;
 	s->push_back(up);
-} 
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -91,7 +91,7 @@ static void parseOCLUpgradePair( INI* ini, void * /*instance*/, void *store, con
 {
 	SpecialPowerModuleData::buildFieldParse( p );
 
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
 		{ "UpgradeOCL", parseOCLUpgradePair, NULL, offsetof( OCLSpecialPowerModuleData, m_upgradeOCL ) },
 		{ "OCL", INI::parseObjectCreationList, NULL, offsetof( OCLSpecialPowerModuleData, m_defaultOCL ) },
@@ -114,7 +114,7 @@ OCLSpecialPower::OCLSpecialPower( Thing *thing, const ModuleData *moduleData )
 							 : SpecialPowerModule( thing, moduleData )
 {
 
-} 
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -124,7 +124,7 @@ const ObjectCreationList* OCLSpecialPower::findOCL() const
 	const Player* controller = getObject()->getControllingPlayer();
 	if (controller != NULL)
 	{
-		for (std::vector<OCLSpecialPowerModuleData::Upgrades>::const_iterator it = d->m_upgradeOCL.begin(); 
+		for (std::vector<OCLSpecialPowerModuleData::Upgrades>::const_iterator it = d->m_upgradeOCL.begin();
 					it != d->m_upgradeOCL.end();
 					++it)
 		{
@@ -168,7 +168,7 @@ void OCLSpecialPower::doSpecialPowerAtLocation( const Coord3D *loc, Real angle, 
     { // if findPosition() fails, then don't monkey with target Coord!
     	targetCoord = *loc;
     }
-    
+
 
 	}
 
@@ -216,7 +216,7 @@ void OCLSpecialPower::doSpecialPowerAtLocation( const Coord3D *loc, Real angle, 
 			ObjectCreationList::create( ocl, getObject(), &creationCoord, &targetCoord, angle );
 			break;
 	}
-}  
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -229,7 +229,7 @@ void OCLSpecialPower::doSpecialPowerAtObject( Object *obj, UnsignedInt commandOp
 	if( !obj )
 		return;
 	doSpecialPowerAtLocation( obj->getPosition(), INVALID_ANGLE, commandOptions );
-}  
+}
 
 // ------------------------------------------------------------------------------------------------
 void OCLSpecialPower::doSpecialPower( UnsignedInt commandOptions )
@@ -239,7 +239,7 @@ void OCLSpecialPower::doSpecialPower( UnsignedInt commandOptions )
 
 	Coord3D creationCoord;
 	creationCoord.set( getObject()->getPosition() );
-	
+
 	// call the base class action cause we are *EXTENDING* functionality
 	SpecialPowerModule::doSpecialPowerAtLocation( &creationCoord, INVALID_ANGLE, commandOptions );
 

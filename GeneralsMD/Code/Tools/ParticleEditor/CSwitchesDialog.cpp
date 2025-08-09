@@ -32,7 +32,7 @@ void CSwitchesDialog::InitPanel( void )
 
 }
 
-// if true, updates the UI from the Particle System. 
+// if true, updates the UI from the Particle System.
 // if false, updates the Particle System from the UI
 void CSwitchesDialog::performUpdate( IN Bool toUI )
 {
@@ -123,7 +123,7 @@ void CSwitchesDialog::OnParticleSystemEdit()
 	if (!pParent) {
 		return;
 	}
-	
+
 	pParent->signalParticleSystemEdit();
 }
 

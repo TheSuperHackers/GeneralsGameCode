@@ -26,8 +26,8 @@
  *                                                                                             *
  *              Original Author:: Hector Yee                                                   *
  *                                                                                             *
- *                       Author : Kenny Mitchell                                               * 
- *                                                                                             * 
+ *                       Author : Kenny Mitchell                                               *
+ *                                                                                             *
  *                     $Modtime:: 06/27/02 1:27p                                              $*
  *                                                                                             *
  *                    $Revision:: 4                                                           $*
@@ -127,9 +127,9 @@ void DX8TextureManagerClass::Remove(TextureBaseClass *tex)
 
 	while (!it.Is_Done())
 	{
-		TextureTrackerClass *track=it.Peek_Obj();		
+		TextureTrackerClass *track=it.Peek_Obj();
 		if (track->Get_Texture()==tex)
-		{			
+		{
 			it.Remove_Current_Object();
 			delete track;
 			break;
@@ -161,7 +161,7 @@ void DX8TextureManagerClass::Release_Textures()
 
 	while (!it.Is_Done())
 	{
-		TextureTrackerClass *track=it.Peek_Obj();		
+		TextureTrackerClass *track=it.Peek_Obj();
 		track->Release();
 		it.Next();
 	}

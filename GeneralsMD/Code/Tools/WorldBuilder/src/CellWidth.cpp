@@ -50,7 +50,7 @@ void CellWidth::DoDataExchange(CDataExchange* pDX)
 // CellWidth message handlers
 
 /// Get the cell width value from the ui on ok.
-void CellWidth::OnOK() 
+void CellWidth::OnOK()
 {
 	CWnd *combo = GetDlgItem(IDC_CELL_WIDTH);
 	CString val;
@@ -63,15 +63,15 @@ void CellWidth::OnOK()
 
 
 /// Set the initial value of cell width into the combobox.
-BOOL CellWidth::OnInitDialog() 
+BOOL CellWidth::OnInitDialog()
 {
 	CDialog::OnInitDialog();
-	
+
 	CWnd *combo = GetDlgItem(IDC_CELL_WIDTH);
 	CString val;
 	val.Format("%d", mCellWidth);
 	if (combo) combo->SetWindowText(val);
-	
+
 	return TRUE;  // return TRUE unless you set the focus to a control
 	              // EXCEPTION: OCX Property Pages should return FALSE
 }

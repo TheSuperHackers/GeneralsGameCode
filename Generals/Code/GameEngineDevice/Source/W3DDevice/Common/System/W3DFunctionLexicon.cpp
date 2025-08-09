@@ -36,11 +36,11 @@
 #include "W3DDevice/GameClient/W3DGadget.h"
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-// PRIVATE DATA 
+// PRIVATE DATA
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // Game Window draw methods -----------------------------------------------------------------------
-static FunctionLexicon::TableEntry gameWinDrawTable [] = 
+static FunctionLexicon::TableEntry gameWinDrawTable [] =
 {
 
 	{ NAMEKEY_INVALID, "GameWinDefaultDraw",						GameWinDefaultDraw },
@@ -100,7 +100,7 @@ static FunctionLexicon::TableEntry gameWinDrawTable [] =
 };
 
 // Game Window init methods -----------------------------------------------------------------------
-static FunctionLexicon::TableEntry layoutInitTable [] = 
+static FunctionLexicon::TableEntry layoutInitTable [] =
 {
 
 	{ NAMEKEY_INVALID, "W3DMainMenuInit",								W3DMainMenuInit },
@@ -110,7 +110,7 @@ static FunctionLexicon::TableEntry layoutInitTable [] =
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-// PUBLIC FUNCTIONS 
+// PUBLIC FUNCTIONS
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 //-------------------------------------------------------------------------------------------------

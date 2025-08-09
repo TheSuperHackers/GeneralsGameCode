@@ -26,8 +26,8 @@
  *                                                                                             *
  *              Original Author:: Jani Penttinen                                               *
  *                                                                                             *
- *                       $Author:: Kenny Mitchell                                               * 
- *                                                                                             * 
+ *                       $Author:: Kenny Mitchell                                               *
+ *                                                                                             *
  *                     $Modtime:: 06/26/02 4:04p                                             $*
  *                                                                                             *
  *                    $Revision:: 32                                                          $*
@@ -508,7 +508,7 @@ void DazzleTypeClass::Calculate_Intensities(
 	float distance) const
 {
 	float dot = -Vector3::Dot_Product(dir_to_dazzle,camera_dir);
-	dazzle_intensity = dot;	
+	dazzle_intensity = dot;
 
 	if (ic.use_camera_translation && distance>(fadeout_end_sqr)) {
 		dazzle_intensity=0.0f;
@@ -532,10 +532,10 @@ void DazzleTypeClass::Calculate_Intensities(
 	}
 	else {
 		dazzle_intensity=0.0f;
-	}	
+	}
 
-	if (ic.halo_intensity_pow > WWMATH_EPSILON) {		
-		if (dot > 0.0f) {			
+	if (ic.halo_intensity_pow > WWMATH_EPSILON) {
+		if (dot > 0.0f) {
 			float scale = powf(dot, ic.halo_intensity_pow);
 			halo_intensity *= scale;
 		} else {
@@ -1151,7 +1151,7 @@ void DazzleRenderObjClass::Render_Dazzle(CameraClass* camera)
 
 			unsigned color=DX8Wrapper::Convert_Color(col,1.0f);
 
-			Vector3 offset;			
+			Vector3 offset;
 
 			offset = (halo_dxt - halo_dyt) * halo_size;
 			dl = current_vloc + offset;
@@ -1161,7 +1161,7 @@ void DazzleRenderObjClass::Render_Dazzle(CameraClass* camera)
 			vertex->diffuse=color;
 			vertex++;
 
-			offset = (halo_dxt + halo_dyt) * halo_size;  
+			offset = (halo_dxt + halo_dyt) * halo_size;
 			dl =current_vloc + offset;
 			reinterpret_cast<Vector3&>(vertex->x)=dl;
 			vertex->u1=1.0f;

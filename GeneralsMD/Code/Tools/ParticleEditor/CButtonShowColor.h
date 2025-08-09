@@ -33,8 +33,8 @@ class CButtonShowColor : public CButton
 		void setColor(Int color) { m_color.setFromInt(color); }
 		void setColor(const RGBColor& color) { m_color = color; }
 		~CButtonShowColor();
-		
-		
+
+
 		static COLORREF RGBtoBGR(Int color);
 		static Int BGRtoRGB(COLORREF color);
 

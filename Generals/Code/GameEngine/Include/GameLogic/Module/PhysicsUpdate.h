@@ -70,10 +70,10 @@ public:
 };
 
 //-------------------------------------------------------------------------------------------------
-/** 
+/**
  * Simple rigid body physics update module
  */
-class PhysicsBehavior : public UpdateModule, 
+class PhysicsBehavior : public UpdateModule,
 												public CollideModuleInterface
 {
 
@@ -147,7 +147,7 @@ public:
 
 	PhysicsTurningType getTurning(void) const { return m_turning; }		///< 0 = not turning, -1 = turn negative, 1 = turn positive.
 	void setTurning(PhysicsTurningType turning) { m_turning = turning; }
-	
+
 	/** This is a force scrub for velocity when ai objects are colliding. */
 	void scrubVelocity2D( Real desiredVelocity );
 
@@ -184,7 +184,7 @@ public:
 
 	void setBounceSound(const AudioEventRTS* bounceSound);
 	const AudioEventRTS* getBounceSound() { return m_bounceSound ? &m_bounceSound->m_event : TheAudio->getValidSilentAudioEvent(); }
-	
+
 	/**
 		Reset all values (vel, accel, etc) to starting values.
 		You should ALMOST NEVER use this; it's intended for cases where you need
@@ -203,7 +203,7 @@ public:
 protected:
 
 	/*
-		Physics runs in its own phase, after AI, but before all others. 
+		Physics runs in its own phase, after AI, but before all others.
 		It's actually quite important that AI (the thing that drives Locomotors) and Physics
 		run in the same order, relative to each other, for a given object; otherwise,
 		interesting oscillations can occur in some situations, with friction being applied
@@ -230,7 +230,7 @@ private:
 
 	enum PhysicsFlagsType
 	{
-		// Note - written out in save/load xfer; don't change these numbers.  
+		// Note - written out in save/load xfer; don't change these numbers.
 		STICK_TO_GROUND									= 0x0001,
 		ALLOW_BOUNCE										= 0x0002,
 		APPLY_FRICTION2D_WHEN_AIRBORNE	= 0x0004,
@@ -245,9 +245,9 @@ private:
 	};
 
 	/*
-		Note: these are private because you should never manipulate these directly, 
+		Note: these are private because you should never manipulate these directly,
 		even if you are a subclass... if you want to change the acceleration, you
-		MUST call applyForce(). 
+		MUST call applyForce().
 	*/
 	Real												m_yawRate;								///< rate of rotation around up vector
 	Real												m_rollRate;								///< rate of rotation around forward vector

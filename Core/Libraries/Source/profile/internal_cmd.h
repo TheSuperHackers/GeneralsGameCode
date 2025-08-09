@@ -48,7 +48,7 @@ class ProfileCmdInterface: public DebugCmdInterface
 
 public:
   ProfileCmdInterface(void): numResFunc(0), resFunc(0) {}
-  
+
   static void AddResultFunction(ProfileResultInterface* (*func)(int, const char * const *),
                                 const char *name, const char *arg);
   void RunResultFunctions(void);

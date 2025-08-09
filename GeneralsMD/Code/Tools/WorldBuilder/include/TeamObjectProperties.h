@@ -41,7 +41,7 @@ class TeamObjectProperties : public CPropertyPage
 {
 // Construction
 public:
-	TeamObjectProperties(Dict* dictToEdit = NULL);  
+	TeamObjectProperties(Dict* dictToEdit = NULL);
 	~TeamObjectProperties();
 
 // Dialog Data
@@ -62,7 +62,7 @@ public:
 protected:
 	Dict* m_dictToEdit;
 
-#if 0 // Keys not implemented yet.  jba. [3/26/2003]//	
+#if 0 // Keys not implemented yet.  jba. [3/26/2003]//
 	void updateTheUI(void);
 
 	// Generated message map functions

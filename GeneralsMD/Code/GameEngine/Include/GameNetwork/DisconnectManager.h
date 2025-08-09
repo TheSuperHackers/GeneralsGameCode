@@ -45,7 +45,7 @@ struct DisconnectVoteStruct {
 	UnsignedInt frame;
 };
 
-class DisconnectManager 
+class DisconnectManager
 {
 public:
 	DisconnectManager();

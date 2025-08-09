@@ -38,7 +38,7 @@
 
 //=============================================================================
 /** W3D implementation of the game display which is responsible for creating
-  * all interaction with the screen and updating the display 
+  * all interaction with the screen and updating the display
 	*/
 class W3DParticleSystemManager : public ParticleSystemManager
 {

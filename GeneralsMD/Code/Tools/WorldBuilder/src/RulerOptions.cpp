@@ -32,7 +32,7 @@ RulerOptions*	RulerOptions::m_staticThis = NULL;
 /////////////////////////////////////////////////////////////////////////////
 RulerOptions::RulerOptions(CWnd* pParent /*=NULL*/)
 {
-	//{{AFX_DATA_INIT(RulerOptions) 
+	//{{AFX_DATA_INIT(RulerOptions)
 		// NOTE: the ClassWizard will add member initialization here
 	//}}AFX_DATA_INIT
 }
@@ -48,8 +48,8 @@ void RulerOptions::DoDataExchange(CDataExchange* pDX)
 
 
 /** Update the value in the edit control. */
-void RulerOptions::setWidth(Real width) 
-{ 
+void RulerOptions::setWidth(Real width)
+{
 	CString buf;
 	// Multiply by 2 because we are changing from radius to diameter.
 	buf.Format("%f", width * 2.0f);
@@ -63,10 +63,10 @@ void RulerOptions::setWidth(Real width)
 
 
 /// Dialog UI initialization.
-BOOL RulerOptions::OnInitDialog() 
+BOOL RulerOptions::OnInitDialog()
 {
 	CDialog::OnInitDialog();
-	
+
 	m_staticThis = this;
 	m_updating = false;
 	if (RulerTool::getType() != RULER_CIRCLE) {
@@ -83,7 +83,7 @@ BOOL RulerOptions::OnInitDialog()
 	              // EXCEPTION: OCX Property Pages should return FALSE
 }
 
-void RulerOptions::OnChangeWidthEdit() 
+void RulerOptions::OnChangeWidthEdit()
 {
 	if (m_updating) return;
 	CWnd *pEdit = GetDlgItem(IDC_RULER_WIDTH);
@@ -101,7 +101,7 @@ void RulerOptions::OnChangeWidthEdit()
 	}
 }
 
-void RulerOptions::OnChangeCheckRuler() 
+void RulerOptions::OnChangeCheckRuler()
 {
 	if (m_updating) return;
 	CWnd *pCheck = GetDlgItem(IDC_CHECK_RULER);

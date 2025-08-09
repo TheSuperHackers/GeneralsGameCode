@@ -17,22 +17,22 @@
 */
 
 /* $Header: /Commando/Code/Tools/max2w3d/nodefilt.h 6     1/14/98 10:23a Greg_h $ */
-/*********************************************************************************************** 
- ***                            Confidential - Westwood Studios                              *** 
- *********************************************************************************************** 
- *                                                                                             * 
- *                 Project Name : Commando / G                                                 * 
- *                                                                                             * 
- *                    File Name : NODEFILT.H                                                   * 
- *                                                                                             * 
- *                   Programmer : Greg Hjelstrom                                               * 
- *                                                                                             * 
- *                   Start Date : 06/09/97                                                     * 
- *                                                                                             * 
- *                  Last Update : June 9, 1997 [GH]                                            * 
- *                                                                                             * 
- *---------------------------------------------------------------------------------------------* 
- * Functions:                                                                                  * 
+/***********************************************************************************************
+ ***                            Confidential - Westwood Studios                              ***
+ ***********************************************************************************************
+ *                                                                                             *
+ *                 Project Name : Commando / G                                                 *
+ *                                                                                             *
+ *                    File Name : NODEFILT.H                                                   *
+ *                                                                                             *
+ *                   Programmer : Greg Hjelstrom                                               *
+ *                                                                                             *
+ *                   Start Date : 06/09/97                                                     *
+ *                                                                                             *
+ *                  Last Update : June 9, 1997 [GH]                                            *
+ *                                                                                             *
+ *---------------------------------------------------------------------------------------------*
+ * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 
@@ -53,7 +53,7 @@
 *	INodeFilterClass and implementing the Accept_Node method.
 *
 ***************************************************************/
-class INodeFilterClass 
+class INodeFilterClass
 {
 public:
 	virtual BOOL Accept_Node(INode * node, TimeValue time) = 0;
@@ -78,7 +78,7 @@ public:
 *
 *	HelperINodeFilter
 *
-*	Accepts INodes which are Helper objects 
+*	Accepts INodes which are Helper objects
 *
 ***************************************************************/
 class HelperINodeFilter : public INodeFilterClass
@@ -92,7 +92,7 @@ public:
 *
 *	MeshINodeFilter
 *
-*	Only accepts INodes which are Triangle meshes 
+*	Only accepts INodes which are Triangle meshes
 *
 ***************************************************************/
 class MeshINodeFilter : public INodeFilterClass

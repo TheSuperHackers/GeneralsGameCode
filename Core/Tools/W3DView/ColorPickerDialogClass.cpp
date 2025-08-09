@@ -45,7 +45,7 @@ const DWORD	UPDATE_HUE_PICKER		= 0x00000004;
 /*class MyManageStateClass
 {
 	public:
-		MyManageStateClass (void)	
+		MyManageStateClass (void)
 		{
 			m_hResHandle = ::AfxGetResourceHandle ();
 			::AfxSetResourceHandle (_hinstance);
@@ -245,7 +245,7 @@ END_MESSAGE_MAP()
 //
 /////////////////////////////////////////////////////////////////////////////
 BOOL
-ColorPickerDialogClass::OnInitDialog (void) 
+ColorPickerDialogClass::OnInitDialog (void)
 {
 	CDialog::OnInitDialog ();
 
@@ -267,9 +267,9 @@ ColorPickerDialogClass::OnInitDialog (void)
 	m_RedColorBar			= ColorBarClass::Get_Color_Bar (::GetDlgItem (m_hWnd, IDC_RED_BAR));
 	m_GreenColorBar		= ColorBarClass::Get_Color_Bar (::GetDlgItem (m_hWnd, IDC_GREEN_BAR));
 	m_BlueColorBar			= ColorBarClass::Get_Color_Bar (::GetDlgItem (m_hWnd, IDC_BLUE_BAR));
-	m_WhitenessColorBar	= ColorBarClass::Get_Color_Bar (::GetDlgItem (m_hWnd, IDC_WHITENESS_BAR));	
-	m_HuePicker				= ColorPickerClass::Get_Color_Picker (::GetDlgItem (m_hWnd, IDC_HUE_PICKER));	
-	
+	m_WhitenessColorBar	= ColorBarClass::Get_Color_Bar (::GetDlgItem (m_hWnd, IDC_WHITENESS_BAR));
+	m_HuePicker				= ColorPickerClass::Get_Color_Picker (::GetDlgItem (m_hWnd, IDC_HUE_PICKER));
+
 	// Setup the original color bar
 	m_OrigColorBar->Modify_Point (0, 0, m_OrigRed, m_OrigGreen, m_OrigBlue);
 	m_HuePicker->Select_Color ((int)m_OrigRed, (int)m_OrigGreen, (int)m_OrigBlue);
@@ -281,7 +281,7 @@ ColorPickerDialogClass::OnInitDialog (void)
 	m_WhitenessColorBar->Set_Range (0, 255);
 
 	m_WhitenessColorBar->Insert_Point (1, 255, 255, 255, 255);
-	
+
 	//
 	//	Setup the red/green/blue color bars
 	//
@@ -375,7 +375,7 @@ ColorPickerDialogClass::Update_Whiteness_Bar (void)
 	//
 	//	Given the current color, determine the 'whiteness' and update
 	//
-	float whiteness = min (m_CurrentRed, m_CurrentGreen);	
+	float whiteness = min (m_CurrentRed, m_CurrentGreen);
 	whiteness = min (whiteness, m_CurrentBlue);
 	float percent = whiteness / 255;
 	m_WhitenessColorBar->Set_Selection_Pos (whiteness);
@@ -386,7 +386,7 @@ ColorPickerDialogClass::Update_Whiteness_Bar (void)
 	/*if (percent == 1) {
 		m_WhitenessColorBar->Modify_Point (0, 0, 0, 0, 0);
 	} else {
-		
+
 		//
 		//	Extrapolate the starting color
 		//
@@ -472,7 +472,7 @@ ColorPickerDialogClass::OnNotify
 				green = green + ((255 - green) * whiteness);
 				blue = blue + ((255 - blue) * whiteness);
 				Update_Color (red, green, blue, UPDATE_COLOR_BARS | UPDATE_WHITENESS);
-			}			
+			}
 		}
 		break;
 
@@ -489,7 +489,7 @@ ColorPickerDialogClass::OnNotify
 		}
 		break;
 	}
-	
+
 	return CDialog::OnNotify (wParam, lParam, pResult);
 }
 
@@ -528,7 +528,7 @@ ColorPickerDialogClass::Update_Color
 	if (int_red != m_RedSpin.GetPos ()) {
 		m_RedSpin.SetPos (int_red);
 	}
-	
+
 	//	Hack to get the edit controls to update in a timely fashion
 	::UpdateWindow (::GetDlgItem (m_hWnd, IDC_RED_EDIT));
 	::UpdateWindow (::GetDlgItem (m_hWnd, IDC_GREEN_EDIT));
@@ -541,7 +541,7 @@ ColorPickerDialogClass::Update_Color
 		Update_Red_Bar ();
 		Update_Green_Bar ();
 		Update_Blue_Bar ();
-	}	
+	}
 
 	//
 	//	Update the hue picker
@@ -557,7 +557,7 @@ ColorPickerDialogClass::Update_Color
 		Update_Whiteness_Bar ();
 	}
 
-	Update_Current_Color_Bar ();	
+	Update_Current_Color_Bar ();
 
 	// If a callback is registered, call it.
 	if (m_UpdateCallback)
@@ -596,7 +596,7 @@ ColorPickerDialogClass::OnReset (void)
 	return ;
 }
 
-LRESULT ColorPickerDialogClass::WindowProc(UINT message, WPARAM wParam, LPARAM lParam) 
+LRESULT ColorPickerDialogClass::WindowProc(UINT message, WPARAM wParam, LPARAM lParam)
 {
 	return CDialog::WindowProc(message, wParam, lParam);
 }
@@ -629,7 +629,7 @@ ColorPickerDialogClass::OnCommand
 		}
 		break;
 	}
-	
+
 	return CDialog::OnCommand(wParam, lParam);
 }
 
@@ -641,7 +641,7 @@ ColorPickerDialogClass::OnCommand
 /////////////////////////////////////////////////////////////////////////////
 void
 ColorPickerDialogClass::PostNcDestroy (void)
-{	
+{
 	CDialog::PostNcDestroy();
 
 	if (m_bDeleteOnClose) {

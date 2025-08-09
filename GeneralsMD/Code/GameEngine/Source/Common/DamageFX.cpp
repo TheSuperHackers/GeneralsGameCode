@@ -82,14 +82,14 @@ void DamageFX::clear()
 }
 
 //-------------------------------------------------------------------------------------------------
-UnsignedInt DamageFX::getDamageFXThrottleTime(DamageType t, const Object* source) const 
-{ 
-	return m_dfx[t][source ? source->getVeterancyLevel() : LEVEL_REGULAR].m_damageFXThrottleTime; 
+UnsignedInt DamageFX::getDamageFXThrottleTime(DamageType t, const Object* source) const
+{
+	return m_dfx[t][source ? source->getVeterancyLevel() : LEVEL_REGULAR].m_damageFXThrottleTime;
 }
 
 //-------------------------------------------------------------------------------------------------
 void DamageFX::doDamageFX(DamageType t, Real damageAmount, const Object* source, const Object* victim) const
-{ 
+{
 	ConstFXListPtr fx = getDamageFXList(t, damageAmount, source);
 	// since the victim is receiving the damage, it's the "primary" object.
 	// the source is the "secondary" object -- unused by most fx, but could be
@@ -99,7 +99,7 @@ void DamageFX::doDamageFX(DamageType t, Real damageAmount, const Object* source,
 
 //-------------------------------------------------------------------------------------------------
 ConstFXListPtr DamageFX::getDamageFXList(DamageType t, Real damageAmount, const Object* source) const
-{ 
+{
 	/*
 		if damage is zero, never do damage fx. this is by design, since "zero" damage can happen
 		with some special weapons, like the battleship, which is a "faux" weapon that never does damage.
@@ -109,9 +109,9 @@ ConstFXListPtr DamageFX::getDamageFXList(DamageType t, Real damageAmount, const 
 		return NULL;
 
 	const DFX& dfx = m_dfx[t][source ? source->getVeterancyLevel() : LEVEL_REGULAR];
-	ConstFXListPtr fx = 
-		damageAmount >= dfx.m_amountForMajorFX ? 
-		dfx.m_majorDamageFXList : 
+	ConstFXListPtr fx =
+		damageAmount >= dfx.m_amountForMajorFX ?
+		dfx.m_majorDamageFXList :
 		dfx.m_minorDamageFXList;
 
 	return fx;
@@ -120,7 +120,7 @@ ConstFXListPtr DamageFX::getDamageFXList(DamageType t, Real damageAmount, const 
 //-------------------------------------------------------------------------------------------------
 const FieldParse* DamageFX::getFieldParse() const
 {
-	static const FieldParse myFieldParse[] = 
+	static const FieldParse myFieldParse[] =
 	{
 		{ "AmountForMajorFX",						parseAmount,			NULL, 0 },
 		{ "MajorFX",										parseMajorFXList,	NULL, 0 },
@@ -137,11 +137,11 @@ const FieldParse* DamageFX::getFieldParse() const
 
 //-------------------------------------------------------------------------------------------Static
 static void parseCommonStuff(
-	INI* ini, 
-	ConstCharPtrArray names, 
-	VeterancyLevel& vetFirst, 
-	VeterancyLevel& vetLast, 
-	DamageType& damageFirst, 
+	INI* ini,
+	ConstCharPtrArray names,
+	VeterancyLevel& vetFirst,
+	VeterancyLevel& vetLast,
+	DamageType& damageFirst,
 	DamageType& damageLast
 )
 {
@@ -276,7 +276,7 @@ const DamageFX *DamageFXStore::findDamageFX(AsciiString name) const
 {
 	NameKeyType namekey = TheNameKeyGenerator->nameToKey(name);
   DamageFXMap::const_iterator it = m_dfxmap.find(namekey);
-  if (it == m_dfxmap.end()) 
+  if (it == m_dfxmap.end())
 	{
 		return NULL;
 	}
@@ -294,7 +294,7 @@ void DamageFXStore::init()
 //-------------------------------------------------------------------------------------------------
 void DamageFXStore::reset()
 {
-} 
+}
 
 //-------------------------------------------------------------------------------------------------
 void DamageFXStore::update()

@@ -45,17 +45,17 @@
 //#include <sr.hpp>
 
 
-/*********************************************************************************************** 
- * DamageClass::DamageClass -- constructor                                                     * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   10/28/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * DamageClass::DamageClass -- constructor                                                     *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   10/28/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
 DamageClass::DamageClass(void):
 	DamageIndex(0),
@@ -68,17 +68,17 @@ DamageClass::DamageClass(void):
 }
 
 
-/*********************************************************************************************** 
- * DamageClass::~DamageClass -- destructor                                                     * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   10/28/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * DamageClass::~DamageClass -- destructor                                                     *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   10/28/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
 DamageClass::~DamageClass(void)
 {
@@ -93,17 +93,17 @@ DamageClass::~DamageClass(void)
 	}
 }
 
-/*********************************************************************************************** 
- * DamageClass::Load -- load damage data from a W3D file                                       * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   10/28/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * DamageClass::Load -- load damage data from a W3D file                                       *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   10/28/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
 WW3DErrorType DamageClass::Load(ChunkLoadClass & cload,MeshModelClass * basemesh)
 {
@@ -131,17 +131,17 @@ WW3DErrorType DamageClass::Load(ChunkLoadClass & cload,MeshModelClass * basemesh
 	if (NumVerts > 0) {
 		Verts = W3DNEWARRAY DamageVertexStruct[NumVerts];
 	}
-	
+
 	NumColors = header.NumDamageColors;
 	if (NumColors > 0) {
 		Colors = W3DNEWARRAY DamageColorStruct[NumColors];
 	}
 
 	// TODO: allocate materials
-	
+
 	/*
 	** Now read in the rest of the chunks
-	*/		
+	*/
 	while (1) {
 
 		/*
@@ -174,8 +174,8 @@ WW3DErrorType DamageClass::Load(ChunkLoadClass & cload,MeshModelClass * basemesh
 			default:
 					break;
 
-		}	
-		
+		}
+
 		cload.Close_Chunk();
 
 		if (error != WW3D_ERROR_OK) {
@@ -187,17 +187,17 @@ WW3DErrorType DamageClass::Load(ChunkLoadClass & cload,MeshModelClass * basemesh
 	return WW3D_ERROR_OK;
 }
 
-/*********************************************************************************************** 
- * DamageClass::read_vertices -- read damage vertices from a W3D file                          * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   11/04/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * DamageClass::read_vertices -- read damage vertices from a W3D file                          *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   11/04/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
 WW3DErrorType DamageClass::read_vertices(ChunkLoadClass & cload,MeshModelClass * basemesh)
 {
@@ -209,31 +209,31 @@ WW3DErrorType DamageClass::read_vertices(ChunkLoadClass & cload,MeshModelClass *
 		if (cload.Read(&dv,sizeof(W3dMeshDamageVertexStruct)) != sizeof(W3dMeshDamageVertexStruct)) {
 			return WW3D_ERROR_LOAD_FAILED;
 		}
-		
+
 		srVector3 * vert_array = basemesh->getVertexLoc();
 
 		srVector3 sr_v;
 		sr_v = vert_array[dv.VertexIndex];
 
-		Verts[i].VertexIdx = dv.VertexIndex;		
-		Verts[i].Vertex0.Set(sr_v[0],sr_v[1],sr_v[2]);		
+		Verts[i].VertexIdx = dv.VertexIndex;
+		Verts[i].Vertex0.Set(sr_v[0],sr_v[1],sr_v[2]);
 		Verts[i].Vertex1.Set(dv.NewVertex.X,dv.NewVertex.Y,dv.NewVertex.Z);
 	}
 #endif
-	return WW3D_ERROR_OK;	
+	return WW3D_ERROR_OK;
 }
 
-/*********************************************************************************************** 
- * DamageClass::read_colors -- read damage colors from a w3d file                              * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   11/04/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * DamageClass::read_colors -- read damage colors from a w3d file                              *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   11/04/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
 WW3DErrorType DamageClass::read_colors(ChunkLoadClass & cload,MeshModelClass * basemesh)
 {
@@ -245,19 +245,19 @@ WW3DErrorType DamageClass::read_colors(ChunkLoadClass & cload,MeshModelClass * b
 		if (cload.Read(&dc,sizeof(W3dMeshDamageColorStruct)) != sizeof(W3dMeshDamageColorStruct)) {
 			return WW3D_ERROR_LOAD_FAILED;
 		}
-		
 
-		Colors[i].VertexIdx = dc.VertexIndex;		
+
+		Colors[i].VertexIdx = dc.VertexIndex;
 
 		// TODO: check for existing vertex colors, store original here
-		Colors[i].Color0.R = 255;		
-		Colors[i].Color0.G = 255;		
-		Colors[i].Color0.B = 255;		
+		Colors[i].Color0.R = 255;
+		Colors[i].Color0.G = 255;
+		Colors[i].Color0.B = 255;
 
 		Colors[i].Color1.R = dc.NewColor.R;
 		Colors[i].Color1.G = dc.NewColor.G;
 		Colors[i].Color1.B = dc.NewColor.B;
-	}	
+	}
 #endif
 	return WW3D_ERROR_OK;
 }

@@ -34,7 +34,6 @@
 #include "mutex.h"
 #include "thread.h"
 
-#include "Common/StackDump.h"
 #include "Common/SubsystemInterface.h"
 
 //-------------------------------------------------------------------------
@@ -210,7 +209,6 @@ Bool GameResultsQueue::areGameResultsBeingSent( void )
 void GameResultsThreadClass::Thread_Function()
 {
 	try {
-	_set_se_translator( DumpExceptionInfo ); // Hook that allows stack trace.
 	GameResultsRequest req;
 
 	WSADATA wsaData;
@@ -242,7 +240,7 @@ void GameResultsThreadClass::Thread_Function()
 				if (hostStruct == NULL)
 				{
 					DEBUG_LOG(("sending game results to %s - host lookup failed", hostnameBuffer));
-					
+
 					// Even though this failed to resolve IP, still need to send a
 					//   callback.
 					IP = 0xFFFFFFFF;   // flag for IP resolve failed

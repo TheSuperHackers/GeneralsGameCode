@@ -65,12 +65,12 @@ SlavedUpdate::SlavedUpdate( Thing *thing, const ModuleData* moduleData ) : Updat
 	m_framesToWait = 0;
 	m_repairState = REPAIRSTATE_NONE;
 	m_repairing = false;
-} 
+}
 
 //-------------------------------------------------------------------------------------------------
 SlavedUpdate::~SlavedUpdate( void )
 {
-} 
+}
 
 //-------------------------------------------------------------------------------------------------
 void SlavedUpdate::onObjectCreated()
@@ -147,7 +147,7 @@ UpdateSleepTime SlavedUpdate::update( void )
 	if( !master || master->isEffectivelyDead() || master->isDisabledByType( DISABLED_UNMANNED ) )
 	{
 		stopSlavedEffects();
-		
+
 		//Killing is lame.
 		//me->kill();
 
@@ -159,7 +159,7 @@ UpdateSleepTime SlavedUpdate::update( void )
 
 		return UPDATE_SLEEP_NONE;
 	}
-	else 
+	else
 	{
 		Team *masterTeam = master->getTeam();
 		Team *myTeam     = me->getTeam();
@@ -168,25 +168,25 @@ UpdateSleepTime SlavedUpdate::update( void )
 			me->defect( masterTeam, 0 );
 		}
 
-    
+
 
 
 	}
-	
+
 	if (data->m_stayOnSameLayerAsMaster)
 		me->setLayer(master->getLayer());
-	
+
 	//Clear the drone spotting bonus to the master. Up to the drone
 	//to satisfy the conditions to set it again for the next update.
 	master->clearWeaponBonusCondition( WEAPONBONUSCONDITION_DRONE_SPOTTING );
-	
+
 	//Get my master's AI. If he is attacking something, grant him a range bonus,
 	//and I'll fly over the target.
 	Object *target = NULL;
 	AIUpdateInterface *masterAI = master->getAIUpdateInterface();
 	if( masterAI )
 	{
-		target = masterAI->getCurrentVictim(); 
+		target = masterAI->getCurrentVictim();
 	}
 
 	//Calculate the health percentage of the master -- there are two places we care.
@@ -203,7 +203,7 @@ UpdateSleepTime SlavedUpdate::update( void )
 			healthPercentage = (Int)(health / maxHealth * 100.0f);
 		}
 	}
-		
+
 	//Determine whether or not we need to go back to the master to repair him
 	if( healthPercentage <= data->m_repairWhenHealthBelowPercentage )
 	{
@@ -217,7 +217,7 @@ UpdateSleepTime SlavedUpdate::update( void )
 		//2ND PRIORITY: Go to the master's current victim (as close as wander distance allows)
 		if( target )
 		{
-			//At this point, we officially are in an attack mode! Now, simply 
+			//At this point, we officially are in an attack mode! Now, simply
 			endRepair();
 			doAttackLogic( target );
 			return UPDATE_SLEEP_NONE;
@@ -289,7 +289,7 @@ void SlavedUpdate::doAttackLogic( const Object *target )
 	Object *master = TheGameLogic->findObjectByID( m_slaver );
 	Coord3D attackPosition;
 
-	//First, determine the attack position. If the target is too far away, then we'll 
+	//First, determine the attack position. If the target is too far away, then we'll
 	//calculate the closest allowable position.
 	const Coord3D *targetPos = target->getPosition();
 	Real dist = ThePartitionManager->getDistanceSquared( me, targetPos, FROM_BOUNDINGSPHERE_2D );
@@ -337,7 +337,7 @@ void SlavedUpdate::doAttackLogic( const Object *target )
 
 	if( dist < sqr( data->m_distToTargetToGrantRangeBonus ) )
 	{
-		//Finally, seeing we are close enough to the target, grant our 
+		//Finally, seeing we are close enough to the target, grant our
 		//master extended weapon range!
 		master->setWeaponBonusCondition( WEAPONBONUSCONDITION_DRONE_SPOTTING );
 	}
@@ -353,7 +353,7 @@ void SlavedUpdate::doScoutLogic( const Coord3D *mastersDestination )
 	Object *master = TheGameLogic->findObjectByID( m_slaver );
 	Coord3D scoutPosition;
 
-	//First, determine the scout position. If our master's destination is too far away, then we'll 
+	//First, determine the scout position. If our master's destination is too far away, then we'll
 	//calculate the closest allowable position.
 	Real dist = ThePartitionManager->getDistanceSquared( me, mastersDestination, FROM_BOUNDINGSPHERE_2D );
 	if( dist > sqr( data->m_scoutRange ) )
@@ -504,7 +504,7 @@ void SlavedUpdate::doRepairLogic()
 		{
 			//Calculate the repair rate per frame.
 			Real repairAmount = data->m_repairRatePerSecond / LOGICFRAMES_PER_SECOND;
-			
+
 			DamageInfo healingInfo;
 			healingInfo.in.m_amount = repairAmount;
 			healingInfo.in.m_damageType = DAMAGE_HEALING;
@@ -565,7 +565,7 @@ void SlavedUpdate::setRepairState( RepairStates repairState )
 	const SlavedUpdateModuleData* data = getSlavedUpdateModuleData();
 
 	if( repairState == m_repairState )
-	{	
+	{
 		return;
 	}
 
@@ -641,7 +641,7 @@ void SlavedUpdate::setRepairState( RepairStates repairState )
 							Real time = (Real)(m_framesToWait * LOGICFRAMES_PER_SECOND);
 							weldingSys->setLifetimeRange( time, time );
 
-							AudioEventRTS soundToPlay = TheAudio->getMiscAudio()->m_repairSparks;	
+							AudioEventRTS soundToPlay = TheAudio->getMiscAudio()->m_repairSparks;
 							soundToPlay.setPosition( &pos );
 							TheAudio->addAudioEvent( &soundToPlay );
 						}
@@ -715,7 +715,7 @@ void SlavedUpdate::startSlavedEffects( const Object *slaver )
 	m_guardPointOffset.zero();
 	m_guardPointOffset.x += data->m_guardMaxRange * Cos( randomDirection );
 	m_guardPointOffset.y += data->m_guardMaxRange * Sin( randomDirection );
-	
+
 	// mark selves as not selectable
 	getObject()->setStatus( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_UNSELECTABLE ) );
 
@@ -726,7 +726,7 @@ void SlavedUpdate::startSlavedEffects( const Object *slaver )
     if ( myStealth )
     {
       myStealth->receiveGrant( true );
-      // note to anyone... once stealth is granted to this drone(or such) 
+      // note to anyone... once stealth is granted to this drone(or such)
       // let its own stealthupdate govern the allowedtostealth cases
     }
   }

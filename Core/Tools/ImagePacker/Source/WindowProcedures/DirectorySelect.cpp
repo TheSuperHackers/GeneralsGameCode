@@ -18,12 +18,12 @@
 
 // FILE: DirectorySelect.cpp //////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:    ImagePacker
@@ -85,7 +85,7 @@ static void selectDrive( HWND dialog )
 
 	// select the string in the combo
 	Int index;
-	index = SendDlgItemMessage( dialog, COMBO_DRIVE, 
+	index = SendDlgItemMessage( dialog, COMBO_DRIVE,
 															CB_FINDSTRINGEXACT, -1, (LPARAM)string );
 	if( index != CB_ERR )
 		SendDlgItemMessage( dialog, COMBO_DRIVE, CB_SETCURSEL, index, 0 );
@@ -115,13 +115,13 @@ BOOL CALLBACK DirectorySelectProc( HWND hWndDialog, UINT message,
 			GetCurrentDirectory( _MAX_PATH, startDir );
 
 			// set the extents for the horizontal scroll bar in the listbox
-			SendDlgItemMessage( hWndDialog, LIST_DIR, 
+			SendDlgItemMessage( hWndDialog, LIST_DIR,
 													LB_SETHORIZONTALEXTENT, 1280, 0 );
 
 			// load the listbox with directory items
 			SendDlgItemMessage( hWndDialog, LIST_DIR,
-													LB_DIR, 
-													DDL_DIRECTORY | DDL_EXCLUSIVE, 
+													LB_DIR,
+													DDL_DIRECTORY | DDL_EXCLUSIVE,
 													(LPARAM)"*.*" );
 
 			// set the current directory in the top label
@@ -172,7 +172,7 @@ BOOL CALLBACK DirectorySelectProc( HWND hWndDialog, UINT message,
 						{
 
 							// get the text
-							SendDlgItemMessage( hWndDialog, LIST_DIR, LB_GETTEXT, 
+							SendDlgItemMessage( hWndDialog, LIST_DIR, LB_GETTEXT,
 																	i, (LPARAM)text );
 
 							// remove the brackets on the text
@@ -206,8 +206,8 @@ BOOL CALLBACK DirectorySelectProc( HWND hWndDialog, UINT message,
 							}  // end if
 
 							// add path to the listbox
-							SendDlgItemMessage( TheImagePacker->getWindowHandle(), 
-																	LIST_FOLDERS, 
+							SendDlgItemMessage( TheImagePacker->getWindowHandle(),
+																	LIST_FOLDERS,
 																	LB_INSERTSTRING, -1, (LPARAM)toAdd );
 
 						}  // end if
@@ -239,10 +239,10 @@ BOOL CALLBACK DirectorySelectProc( HWND hWndDialog, UINT message,
 						Int selected;
 
 						// get selected index
-						selected = SendDlgItemMessage( hWndDialog, COMBO_DRIVE, 
+						selected = SendDlgItemMessage( hWndDialog, COMBO_DRIVE,
 																					 CB_GETCURSEL, 0, 0 );
 						if( selected != CB_ERR )
-						{	
+						{
 							char string[ 32 ];
 
 							SendDlgItemMessage( hWndDialog, COMBO_DRIVE,
@@ -270,8 +270,8 @@ BOOL CALLBACK DirectorySelectProc( HWND hWndDialog, UINT message,
 							SendDlgItemMessage( hWndDialog, LIST_DIR,
 																	LB_RESETCONTENT, 0, 0 );
 							SendDlgItemMessage( hWndDialog, LIST_DIR,
-																	LB_DIR, 
-																	DDL_DIRECTORY | DDL_EXCLUSIVE, 
+																	LB_DIR,
+																	DDL_DIRECTORY | DDL_EXCLUSIVE,
 																	(LPARAM)"*.*" );
 
 
@@ -293,9 +293,9 @@ BOOL CALLBACK DirectorySelectProc( HWND hWndDialog, UINT message,
 						Bool enable;
 
 						// get selected count
-						selCount = SendDlgItemMessage( hWndDialog, LIST_DIR, 
+						selCount = SendDlgItemMessage( hWndDialog, LIST_DIR,
 																					 LB_GETSELCOUNT, 0, 0 );
-	
+
 						// if we have selected items, enable the add button
 						if( selCount > 0 )
 						{
@@ -308,12 +308,12 @@ BOOL CALLBACK DirectorySelectProc( HWND hWndDialog, UINT message,
 							enable = TRUE;
 							Int index = 0;
 							if( selCount == 1 &&
-									SendDlgItemMessage( hWndDialog, LIST_DIR, 
+									SendDlgItemMessage( hWndDialog, LIST_DIR,
 																			LB_GETSEL, index, 0 ) > 0 )
 							{
 								char text[ _MAX_PATH ];
 
-								SendDlgItemMessage( hWndDialog, LIST_DIR, LB_GETTEXT, 
+								SendDlgItemMessage( hWndDialog, LIST_DIR, LB_GETTEXT,
 																		index, (LPARAM)text );
 								if( strcmp( text, "[..]" ) == 0 )
 									enable = FALSE;
@@ -332,13 +332,13 @@ BOOL CALLBACK DirectorySelectProc( HWND hWndDialog, UINT message,
 					{
 						Int selected;
 						char text[ _MAX_PATH ];
-										
+
 						// get currently selected item
-						selected = SendDlgItemMessage( hWndDialog, LIST_DIR, 
+						selected = SendDlgItemMessage( hWndDialog, LIST_DIR,
 																					 LB_GETCURSEL, 0, 0 );
 
 						// get text of selected item
-						SendDlgItemMessage( hWndDialog, LIST_DIR, LB_GETTEXT, 
+						SendDlgItemMessage( hWndDialog, LIST_DIR, LB_GETTEXT,
 																selected, (LPARAM)text );
 
 						// strip the backets off the directory listing
@@ -361,10 +361,10 @@ BOOL CALLBACK DirectorySelectProc( HWND hWndDialog, UINT message,
 						SendDlgItemMessage( hWndDialog, LIST_DIR,
 																LB_RESETCONTENT, 0, 0 );
 						SendDlgItemMessage( hWndDialog, LIST_DIR,
-																LB_DIR, 
-																DDL_DIRECTORY | DDL_EXCLUSIVE, 
+																LB_DIR,
+																DDL_DIRECTORY | DDL_EXCLUSIVE,
 																(LPARAM)"*.*" );
-												
+
 					}  // end if
 
 					break;

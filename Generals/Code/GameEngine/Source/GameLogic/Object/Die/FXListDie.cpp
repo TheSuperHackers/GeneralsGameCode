@@ -65,7 +65,7 @@ void FXListDie::onDie( const DamageInfo *damageInfo )
 	const FXListDieModuleData* d = getFXListDieModuleData();
 	if (d->m_defaultDeathFX)
 	{
-		
+
 		if (d->m_orientToObject)
 		{
 			Object *damageDealer = TheGameLogic->findObjectByID( damageInfo->in.m_sourceID );

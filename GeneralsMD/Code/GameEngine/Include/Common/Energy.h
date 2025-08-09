@@ -24,12 +24,12 @@
 
 // FILE: Energy.h ////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information					         
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:    RTS3
@@ -65,7 +65,7 @@ class Energy : public Snapshot
 {
 
 public:
-	
+
 	Energy();
 
 	// reset energy information to base values.
@@ -84,7 +84,7 @@ public:
 	Int getConsumption() const { return m_energyConsumption; }
 
 	Bool hasSufficientPower(void) const;
-	
+
 	// If adding is false, we're supposed to be removing this.
 	void adjustPower(Int powerDelta, Bool adding);
 

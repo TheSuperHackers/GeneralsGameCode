@@ -58,7 +58,7 @@ class HealContain : public OpenContain
 
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( HealContain, "HealContain" )
 	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( HealContain, HealContainModuleData )
-	
+
 public:
 
 	HealContain( Thing *thing, const ModuleData* moduleData );

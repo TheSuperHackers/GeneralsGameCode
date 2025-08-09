@@ -43,7 +43,7 @@ IMPLEMENT_DYNCREATE(EmitterRotationPropPageClass, CPropertyPage)
 //  EmitterRotationPropPageClass - constructor
 //
 /////////////////////////////////////////////////////////////
-EmitterRotationPropPageClass::EmitterRotationPropPageClass() : 
+EmitterRotationPropPageClass::EmitterRotationPropPageClass() :
 	CPropertyPage(EmitterRotationPropPageClass::IDD),
 	m_pEmitterList(NULL),
 	m_bValid(true),
@@ -55,7 +55,7 @@ EmitterRotationPropPageClass::EmitterRotationPropPageClass() :
 
 {
 	::memset (&m_Rotations, 0, sizeof (m_Rotations));
-	
+
 	//{{AFX_DATA_INIT(EmitterRotationPropPageClass)
 		// NOTE: the ClassWizard will add member initialization here
 	//}}AFX_DATA_INIT
@@ -108,7 +108,7 @@ END_MESSAGE_MAP()
 void EmitterRotationPropPageClass::Initialize (void)
 {
 	SAFE_DELETE_ARRAY (m_Rotations.KeyTimes);
-	SAFE_DELETE_ARRAY (m_Rotations.Values);	
+	SAFE_DELETE_ARRAY (m_Rotations.Values);
 
 	if (m_pEmitterList != NULL) {
 		m_Lifetime = m_pEmitterList->Get_Lifetime ();
@@ -137,11 +137,11 @@ void EmitterRotationPropPageClass::Initialize (void)
 //  OnInitDialog
 //
 /////////////////////////////////////////////////////////////
-BOOL 
-EmitterRotationPropPageClass::OnInitDialog() 
+BOOL
+EmitterRotationPropPageClass::OnInitDialog()
 {
 	CPropertyPage::OnInitDialog();
-	
+
 	//
 	// Create the keyframe control
 	//
@@ -172,7 +172,7 @@ EmitterRotationPropPageClass::OnInitDialog()
 										0);
 		m_RotationBar->Set_Graph_Percent (index + 1, Normalize_Rotation(m_Rotations.Values[index]));
 	}
-	
+
 	return TRUE;
 }
 
@@ -182,7 +182,7 @@ EmitterRotationPropPageClass::OnInitDialog()
 //  OnNotify
 //
 /////////////////////////////////////////////////////////////
-BOOL EmitterRotationPropPageClass::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult) 
+BOOL EmitterRotationPropPageClass::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult)
 {
 	CBR_NMHDR *color_bar_hdr = (CBR_NMHDR *)lParam;
 
@@ -191,7 +191,7 @@ BOOL EmitterRotationPropPageClass::OnNotify(WPARAM wParam, LPARAM lParam, LRESUL
 	//
 	NMHDR *pheader = (NMHDR *)lParam;
 	if ((pheader != NULL) && (pheader->code == UDN_DELTAPOS)) {
-		LPNMUPDOWN pupdown = (LPNMUPDOWN)lParam;		
+		LPNMUPDOWN pupdown = (LPNMUPDOWN)lParam;
 		::Update_Spinner_Buddy (pheader->hwndFrom, pupdown->iDelta);
 	}
 
@@ -202,8 +202,8 @@ BOOL EmitterRotationPropPageClass::OnNotify(WPARAM wParam, LPARAM lParam, LRESUL
 	{
 		case IDC_ROTATION_BAR:
 		{
-			if (color_bar_hdr->hdr.code == CBRN_DBLCLK_POINT) {			
-				
+			if (color_bar_hdr->hdr.code == CBRN_DBLCLK_POINT) {
+
 				//
 				//	Allow the user to edit the keyframe
 				//
@@ -216,7 +216,7 @@ BOOL EmitterRotationPropPageClass::OnNotify(WPARAM wParam, LPARAM lParam, LRESUL
 
 					m_RotationBar->Set_Redraw (false);
 					m_RotationBar->Set_Graph_Percent (color_bar_hdr->key_index, norm_val);
-					
+
 					//
 					//	Determine if the user changed the 'max' or 'min' rotation
 					//
@@ -238,10 +238,10 @@ BOOL EmitterRotationPropPageClass::OnNotify(WPARAM wParam, LPARAM lParam, LRESUL
 					//	Renormalize the RotationBar key frame points if necessary
 					//
 					if ((new_max != m_MaxRotation) || (new_min != m_MinRotation)) {
-						
+
 						int count = m_RotationBar->Get_Point_Count ();
 						for (int index = 0; index < count; index ++) {
-							
+
 							float rotation = Denormalize_Rotation(m_RotationBar->Get_Graph_Percent (index));
 							float new_norm = Normalize_Rotation(rotation,new_min,new_max);
 
@@ -256,20 +256,20 @@ BOOL EmitterRotationPropPageClass::OnNotify(WPARAM wParam, LPARAM lParam, LRESUL
 
 					//
 					// Update the emitter
-					//					
+					//
 					Update_Rotations ();
 					m_pEmitterList->Set_Rotation_Keyframes (m_Rotations, m_InitialOrientationRandom);
 					SetModified ();
 				}
 			} else if ((color_bar_hdr->hdr.code == CBRN_MOVING_POINT) ||
-						  (color_bar_hdr->hdr.code == CBRN_DELETED_POINT)) {			
-				
+						  (color_bar_hdr->hdr.code == CBRN_DELETED_POINT)) {
+
 				//
 				// Update the emitter
 				//
 				Update_Rotations ();
 				m_pEmitterList->Set_Rotation_Keyframes (m_Rotations, m_InitialOrientationRandom);
-				SetModified ();					
+				SetModified ();
 			}
 		}
 		break;
@@ -293,7 +293,7 @@ BOOL EmitterRotationPropPageClass::OnNotify(WPARAM wParam, LPARAM lParam, LRESUL
 		break;
 
 	}
-			
+
 	return CPropertyPage::OnNotify (wParam, lParam, pResult);
 }
 
@@ -332,9 +332,9 @@ EmitterRotationPropPageClass::Update_Rotations (void)
 
 		//
 		//	Get all the rotation key frames and add them to our structure
-		//	
+		//
 		for (int index = 1; index < count; index ++) {
-			m_RotationBar->Get_Point (index, &position, &red, &green, &blue);			
+			m_RotationBar->Get_Point (index, &position, &red, &green, &blue);
 			m_Rotations.KeyTimes[index - 1] = position * m_Lifetime;
 			m_Rotations.Values[index - 1] = Denormalize_Rotation(m_RotationBar->Get_Graph_Percent (index) );
 		}
@@ -348,8 +348,8 @@ EmitterRotationPropPageClass::Update_Rotations (void)
 //  OnCommand
 //
 /////////////////////////////////////////////////////////////
-BOOL 
-EmitterRotationPropPageClass::OnCommand(WPARAM wParam, LPARAM lParam) 
+BOOL
+EmitterRotationPropPageClass::OnCommand(WPARAM wParam, LPARAM lParam)
 {
 	switch (LOWORD (wParam))
 	{
@@ -386,7 +386,7 @@ EmitterRotationPropPageClass::OnCommand(WPARAM wParam, LPARAM lParam)
 		break;
 
 	}
-	
+
 	return CPropertyPage::OnCommand(wParam, lParam);
 }
 

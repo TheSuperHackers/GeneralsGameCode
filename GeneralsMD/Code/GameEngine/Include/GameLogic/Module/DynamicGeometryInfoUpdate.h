@@ -61,7 +61,7 @@ public:
 	DynamicGeometryInfoUpdateModuleData();
 	static void buildFieldParse(MultiIniFieldParse& p);
 
-private: 
+private:
 
 };
 

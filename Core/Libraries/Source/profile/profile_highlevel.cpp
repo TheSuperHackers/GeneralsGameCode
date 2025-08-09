@@ -172,9 +172,9 @@ void ProfileId::Maximum(double max)
     return;
 
   m_valueMode=ModeMaximum;
-  if (max>m_curVal) 
+  if (max>m_curVal)
     m_curVal=max;
-  if (max>m_totalVal) 
+  if (max>m_totalVal)
     m_totalVal=max;
   if (frameRecordMask)
   {
@@ -183,7 +183,7 @@ void ProfileId::Maximum(double max)
     {
       if (mask&1)
       {
-        if (max>m_frameVal[i]) 
+        if (max>m_frameVal[i])
           m_frameVal[i]=max;
       }
       if (!(mask>>=1))
@@ -196,7 +196,7 @@ const char *ProfileId::AsString(double v) const
 {
   char help1[10],help[40];
   wsprintf(help1,"%%%i.lf",m_precision);
-  
+
   double mul=1.0;
   int k;
   for (k=m_exp10;k<0;k++) mul*=10.0;
@@ -235,13 +235,13 @@ void ProfileId::FrameEnd(int which, int mixIndex)
 {
   DFAIL_IF(which<0||which>=MAX_FRAME_RECORDS)
     return;
-  DFAIL_IF(!(frameRecordMask&(1<<which))) 
+  DFAIL_IF(!(frameRecordMask&(1<<which)))
     return;
   DFAIL_IF(mixIndex>=curFrame)
     return;
 
   ProfileFastCS::Lock lock(cs);
-  
+
   frameRecordMask^=1<<which;
   if (mixIndex<0)
   {
@@ -274,7 +274,7 @@ void ProfileId::FrameEnd(int which, int mixIndex)
             val=p->m_frameVal[which];
           break;
         default:
-          DFAIL(); 
+          DFAIL();
       }
     }
   }

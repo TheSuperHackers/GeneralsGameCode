@@ -59,7 +59,7 @@
 #define WWMATH_OOSQRT3		0.577350269f
 
 
-/* 
+/*
 **	Macros to convert between degrees and radians
 */
 #ifndef RAD_TO_DEG
@@ -81,8 +81,8 @@
 
 
 /*
-** Some simple math functions which work on the built-in types.  
-** Include the various other header files in the WWMATH library 
+** Some simple math functions which work on the built-in types.
+** Include the various other header files in the WWMATH library
 ** in order to get matrices, quaternions, etc.
 */
 class WWMath
@@ -119,15 +119,15 @@ static bool			Is_Valid_Double(double x);
 
 };
 
-inline float WWMath::Sign(float val) 
-{ 
-	if (val > 0.0f) { 
-		return +1.0f; 
-	} 
-	if (val < 0.0f) { 
-		return -1.0f; 
-	} 
-	return 0.0f; 
+inline float WWMath::Sign(float val)
+{
+	if (val > 0.0f) {
+		return +1.0f;
+	}
+	if (val < 0.0f) {
+		return -1.0f;
+	}
+	return 0.0f;
 }
 
 inline bool WWMath::Fast_Is_Float_Positive(const float & val)
@@ -135,26 +135,26 @@ inline bool WWMath::Fast_Is_Float_Positive(const float & val)
 	return !((*(int *)(&val)) & 0x80000000);
 }
 
-inline float WWMath::Random_Float(float min,float max) 
-{ 
-	return Random_Float() * (max-min) + min; 
+inline float WWMath::Random_Float(float min,float max)
+{
+	return Random_Float() * (max-min) + min;
 }
 
-inline float WWMath::Clamp(float val, float min /*= 0.0f*/, float max /*= 1.0f*/) 
+inline float WWMath::Clamp(float val, float min /*= 0.0f*/, float max /*= 1.0f*/)
 {
 	if(val < min) return min;
 	if(val > max) return max;
 	return val;
 }
 
-inline double WWMath::Clamp(double val, double min /*= 0.0f*/, double max /*= 1.0f*/) 
+inline double WWMath::Clamp(double val, double min /*= 0.0f*/, double max /*= 1.0f*/)
 {
 	if(val < min) return min;
 	if(val > max) return max;
 	return val;
 }
 
-inline float WWMath::Wrap(float val, float min /*= 0.0f*/, float max /*= 1.0f*/) 
+inline float WWMath::Wrap(float val, float min /*= 0.0f*/, float max /*= 1.0f*/)
 {
 	// Implemented as an if rather than a while, to long loops
 	if ( val >= max )	val -= (max-min);
@@ -169,7 +169,7 @@ inline float WWMath::Wrap(float val, float min /*= 0.0f*/, float max /*= 1.0f*/)
 	return val;
 }
 
-inline double WWMath::Wrap(double val, double min /*= 0.0f*/, double max /*= 1.0f*/) 
+inline double WWMath::Wrap(double val, double min /*= 0.0f*/, double max /*= 1.0f*/)
 {
 	// Implemented as an if rather than a while, to long loops
 	if ( val >= max )	val -= (max-min);
@@ -206,26 +206,26 @@ inline double	WWMath::Lerp(double a, double b, float lerp )
 }
 
 
-inline long WWMath::Float_To_Long	(float f)	
+inline long WWMath::Float_To_Long	(float f)
 {
 #if defined(_MSC_VER) && defined(_M_IX86)
 	long retval;
 	__asm fld	dword ptr [f]
 	__asm fistp dword ptr [retval]
 	return retval;
-#else 
+#else
 	return (long) f;
 #endif
 }
 
-inline long WWMath::Float_To_Long	(double f)	
+inline long WWMath::Float_To_Long	(double f)
 {
 #if defined(_MSC_VER) && defined(_M_IX86)
 	long retval;
 	__asm fld	qword ptr [f]
 	__asm fistp dword ptr [retval]
 	return retval;
-#else 
+#else
 	return (long) f;
 #endif
 }
@@ -235,7 +235,7 @@ inline bool WWMath::Is_Valid_Float(float x)
 	unsigned long * plong = (unsigned long *)(&x);
 	unsigned long exponent = ((*plong) & 0x7F800000) >> (32-9);
 
-	// if exponent is 0xFF, this is a NAN 
+	// if exponent is 0xFF, this is a NAN
 	if (exponent == 0xFF) {
 		return false;
 	}
@@ -247,7 +247,7 @@ inline bool WWMath::Is_Valid_Double(double x)
 	unsigned long * plong = (unsigned long *)(&x) + 1;
 	unsigned long exponent = ((*plong) & 0x7FF00000) >> (32-12);
 
-	// if exponent is 0x7FF, this is a NAN 
+	// if exponent is 0x7FF, this is a NAN
 	if (exponent == 0x7FF) {
 		return false;
 	}

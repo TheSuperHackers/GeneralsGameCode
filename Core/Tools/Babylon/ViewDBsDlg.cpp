@@ -185,7 +185,7 @@ HTREEITEM VIEWDBSII::create_changes_view ( void )
 	return root;
 }
 
-BOOL VIEWDBSII::OnInitDialog() 
+BOOL VIEWDBSII::OnInitDialog()
 {
 	HTREEITEM root;
 	CDialog::OnInitDialog();
@@ -203,15 +203,15 @@ BOOL VIEWDBSII::OnInitDialog()
 
 
 	MainDLG->Ready();
-	
+
 	return TRUE;  // return TRUE unless you set the focus to a control
 	              // EXCEPTION: OCX Property Pages should return FALSE
 }
 
-void VIEWDBSII::OnClose() 
+void VIEWDBSII::OnClose()
 {
 	// TODO: Add your message handler code here and/or call default
-	
+
 	CTreeCtrl *tc = ( CTreeCtrl *) GetDlgItem ( IDC_TREEVIEW );
 	HTREEITEM root = tc->GetRootItem ();
 	tc->Expand ( root, TVE_COLLAPSE );

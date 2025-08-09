@@ -16,22 +16,22 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/*********************************************************************************************** 
- ***                            Confidential - Westwood Studios                              *** 
- *********************************************************************************************** 
- *                                                                                             * 
- *                 Project Name : Commando / G 3D engine                                       * 
- *                                                                                             * 
- *                    File Name : MeshDeformUndo.h                                             * 
- *                                                                                             * 
- *                   Programmer : Patrick Smith                                                * 
- *                                                                                             * 
- *                   Start Date : 06/08/99                                                     * 
- *                                                                                             * 
- *                  Last Update : 
- *                                                                                             * 
- *---------------------------------------------------------------------------------------------* 
- * Functions:                                                                                  * 
+/***********************************************************************************************
+ ***                            Confidential - Westwood Studios                              ***
+ ***********************************************************************************************
+ *                                                                                             *
+ *                 Project Name : Commando / G 3D engine                                       *
+ *                                                                                             *
+ *                    File Name : MeshDeformUndo.h                                             *
+ *                                                                                             *
+ *                   Programmer : Patrick Smith                                                *
+ *                                                                                             *
+ *                   Start Date : 06/08/99                                                     *
+ *                                                                                             *
+ *                  Last Update :
+ *                                                                                             *
+ *---------------------------------------------------------------------------------------------*
+ * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #ifndef __MESH_DEFORM_UNDO_H
@@ -61,7 +61,7 @@ class VertexRestoreClass : public RestoreObj
 		//////////////////////////////////////////////////////////////////
 		VertexRestoreClass (Mesh *mesh, MeshDeformClass *modifier, MeshDeformModData *mod_data);
 		virtual ~VertexRestoreClass (void)	{ Free_Vertex_Array (); };
-		
+
 		//////////////////////////////////////////////////////////////////
 		//	RestoreObj overrides
 		//////////////////////////////////////////////////////////////////
@@ -106,7 +106,7 @@ class VertexPositionRestoreClass : public VertexRestoreClass
 		//////////////////////////////////////////////////////////////////
 		VertexPositionRestoreClass (Mesh *mesh, MeshDeformClass *modifier, MeshDeformModData *mod_data);
 		virtual ~VertexPositionRestoreClass (void)	{ };
-		
+
 		//////////////////////////////////////////////////////////////////
 		//	RestoreObj overrides
 		//////////////////////////////////////////////////////////////////
@@ -136,7 +136,7 @@ class VertexColorRestoreClass : public VertexRestoreClass
 		//////////////////////////////////////////////////////////////////
 		VertexColorRestoreClass (Mesh *mesh, MeshDeformClass *modifier, MeshDeformModData *mod_data);
 		virtual ~VertexColorRestoreClass (void)	{ };
-		
+
 		//////////////////////////////////////////////////////////////////
 		//	RestoreObj overrides
 		//////////////////////////////////////////////////////////////////

@@ -40,7 +40,7 @@ class File;
 /**
   *	An archive file is itself a collection of sub files. Each file inside the archive file
 	* has a unique name by which it can be accessed. The ArchiveFile object class is the
-	* runtime interface to the mix file and the sub files. Each file inside the mix 
+	* runtime interface to the mix file and the sub files. Each file inside the mix
 	* file can be accessed by the openFile().
 	*
 	* ArchiveFile interfaces can be created by the TheArchiveFileSystem object.

@@ -39,7 +39,7 @@
 #include "Common/UserPreferences.h"
 
 //-----------------------------------------------------------------------------
-// GameSpyMiscPreferences base class 
+// GameSpyMiscPreferences base class
 //-----------------------------------------------------------------------------
 class GameSpyMiscPreferences : public UserPreferences
 {

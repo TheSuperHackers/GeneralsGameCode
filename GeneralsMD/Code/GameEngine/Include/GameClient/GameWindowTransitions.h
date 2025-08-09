@@ -24,12 +24,12 @@
 
 // FILE: GameWindowTransitions.h /////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Electronic Arts Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2002 - All Rights Reserved                  
-//                                                                          
+//
+//                       Electronic Arts Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2002 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 //	created:	Dec 2002
@@ -37,8 +37,8 @@
 //	Filename: 	GameWindowTransitions.h
 //
 //	author:		Chris Huybregts
-//	
-//	purpose:	
+//
+//	purpose:
 //
 //-----------------------------------------------------------------------------
 ///////////////////////////////////////////////////////////////////////////////
@@ -87,7 +87,7 @@ REVERSE_SOUND_TRANSITION,
 MAX_TRANSITION_WINDOW_STYLES				///< Keep this last
 };
 
-static const LookupListRec TransitionStyleNames[] = 
+static const LookupListRec TransitionStyleNames[] =
 {
 	{ "FLASH",					TRANSITION_FLASH },
 	{ "BUTTONFLASH",		BUTTON_TRANSITION_FLASH },
@@ -104,8 +104,8 @@ static const LookupListRec TransitionStyleNames[] =
 	{ "CONTROLBARARROW",			CONTROL_BAR_ARROW_TRANSITION },
 	{ "SCORESCALEUP",			SCORE_SCALE_UP_TRANSITION },
 	{ "REVERSESOUND",			REVERSE_SOUND_TRANSITION },
-	
-	
+
+
 
 	{ NULL, 0	}// keep this last!
 };
@@ -122,14 +122,14 @@ public:
 	virtual void update( Int frame ) = 0;
 	virtual void reverse( void ) = 0;
 	virtual void draw( void ) = 0;
-	
+
 	virtual void skip( void ) = 0;
-	
+
 	void unlinkGameWindow(GameWindow* win) { if ( m_win == win ) m_win = NULL; }
 	Bool isFinished( void ) { return m_isFinished;	}
 	Int getFrameLength( void ){ return m_frameLength;	}
 protected:
-	
+
 	Int m_frameLength;	// how many frames does this thing take.
 	Bool m_isFinished;  // when we finish we set this
 	Bool m_isForward;
@@ -148,9 +148,9 @@ public:
 	virtual void update( Int frame );
 	virtual void reverse( void );
 	virtual void draw( void );
-	
+
 	virtual void skip( void );
-	
+
 protected:
 	enum{
 	TEXTONFRAMETRANSITION_START = 0,
@@ -170,9 +170,9 @@ public:
 	virtual void update( Int frame );
 	virtual void reverse( void );
 	virtual void draw( void );
-	
+
 	virtual void skip( void );
-	
+
 protected:
 	enum{
 	REVERSESOUNDTRANSITION_START = 0,
@@ -193,9 +193,9 @@ public:
 	virtual void update( Int frame );
 	virtual void reverse( void );
 	virtual void draw( void );
-	
+
 	virtual void skip( void );
-	
+
 protected:
 	enum{
 	FULLFADETRANSITION_START = 0,
@@ -205,7 +205,7 @@ protected:
 	ICoord2D m_size;
 	Real m_percent;
 	Int m_drawState;
-	
+
 };
 //-----------------------------------------------------------------------------
 class ControlBarArrowTransition : public Transition
@@ -218,9 +218,9 @@ public:
 	virtual void update( Int frame );
 	virtual void reverse( void );
 	virtual void draw( void );
-	
+
 	virtual void skip( void );
-	
+
 protected:
 	enum{
 	CONTROLBARARROWTRANSITION_START = 0,
@@ -234,7 +234,7 @@ protected:
 	Real m_fadePercent;
 	Int m_drawState;
 	const Image* m_arrowImage;
-	
+
 };
 //-----------------------------------------------------------------------------
 class ScreenFadeTransition : public Transition
@@ -247,9 +247,9 @@ public:
 	virtual void update( Int frame );
 	virtual void reverse( void );
 	virtual void draw( void );
-	
+
 	virtual void skip( void );
-	
+
 protected:
 	enum{
 	SCREENFADETRANSITION_START = 0,
@@ -259,7 +259,7 @@ protected:
 	ICoord2D m_size;
 	Real m_percent;
 	Int m_drawState;
-	
+
 };
 //-----------------------------------------------------------------------------
 class CountUpTransition : public Transition
@@ -272,9 +272,9 @@ public:
 	virtual void update( Int frame );
 	virtual void reverse( void );
 	virtual void draw( void );
-	
+
 	virtual void skip( void );
-	
+
 protected:
 	enum{
 	COUNTUPTRANSITION_START = 0,
@@ -306,9 +306,9 @@ public:
 	virtual void update( Int frame );
 	virtual void reverse( void );
 	virtual void draw( void );
-	
+
 	virtual void skip( void );
-	
+
 protected:
 	enum{
 	TEXTTYPETRANSITION_START = 0,
@@ -333,9 +333,9 @@ public:
 	virtual void update( Int frame );
 	virtual void reverse( void );
 	virtual void draw( void );
-	
+
 	virtual void skip( void );
-	
+
 protected:
 	enum{
 	MAINMENUSCALEUPTRANSITION_START = 0,
@@ -363,9 +363,9 @@ public:
 	virtual void update( Int frame );
 	virtual void reverse( void );
 	virtual void draw( void );
-	
+
 	virtual void skip( void );
-	
+
 protected:
 	enum{
 	MAINMENUMEDIUMSCALEUPTRANSITION_START = 0,
@@ -391,9 +391,9 @@ public:
 	virtual void update( Int frame );
 	virtual void reverse( void );
 	virtual void draw( void );
-	
+
 	virtual void skip( void );
-	
+
 protected:
 	enum{
 	MAINMENUSMALLSCALEDOWNTRANSITION_START = 0,
@@ -402,7 +402,7 @@ protected:
 	MAINMENUSMALLSCALEDOWNTRANSITION_3 = 3,
 	MAINMENUSMALLSCALEDOWNTRANSITION_4 = 4,
 	MAINMENUSMALLSCALEDOWNTRANSITION_5 = 5,
-	MAINMENUSMALLSCALEDOWNTRANSITION_END 
+	MAINMENUSMALLSCALEDOWNTRANSITION_END
 	};
 	ICoord2D m_pos;
 	ICoord2D m_size;
@@ -424,9 +424,9 @@ public:
 	virtual void update( Int frame );
 	virtual void reverse( void );
 	virtual void draw( void );
-	
+
 	virtual void skip( void );
-	
+
 protected:
 	enum{
 	SCALEUPTRANSITION_START = 0,
@@ -449,7 +449,7 @@ protected:
 //	SCALEUPTRANSITION_17 = 17,
 //	SCALEUPTRANSITION_18 = 18,
 //	SCALEUPTRANSITION_19 = 19,
-	SCALEUPTRANSITION_END 
+	SCALEUPTRANSITION_END
 	};
 	ICoord2D m_pos;
 	ICoord2D m_size;
@@ -469,9 +469,9 @@ public:
 	virtual void update( Int frame );
 	virtual void reverse( void );
 	virtual void draw( void );
-	
+
 	virtual void skip( void );
-	
+
 protected:
 	enum{
 	SCORESCALEUPTRANSITION_START = 0,
@@ -481,7 +481,7 @@ protected:
 	SCORESCALEUPTRANSITION_4 = 4,
 	SCORESCALEUPTRANSITION_5 = 5,
 
-	SCORESCALEUPTRANSITION_END 
+	SCORESCALEUPTRANSITION_END
 	};
 	ICoord2D m_pos;
 	ICoord2D m_size;
@@ -503,9 +503,9 @@ public:
 	virtual void update( Int frame );
 	virtual void reverse( void );
 	virtual void draw( void );
-	
+
 	virtual void skip( void );
-	
+
 protected:
 	enum{
 	FADETRANSITION_START = 0,
@@ -518,7 +518,7 @@ protected:
 	FADETRANSITION_FADE_IN_7 = 7,
 	FADETRANSITION_FADE_IN_8 = 8,
 	FADETRANSITION_FADE_IN_9 = 9,
-	FADETRANSITION_END 
+	FADETRANSITION_END
 	};
 	ICoord2D m_pos;
 	ICoord2D m_size;
@@ -538,9 +538,9 @@ public:
 	virtual void update( Int frame );
 	virtual void reverse( void );
 	virtual void draw( void );
-	
+
 	virtual void skip( void );
-	
+
 protected:
 	enum{
 	FLASHTRANSITION_START = 0,
@@ -551,7 +551,7 @@ protected:
 	FLASHTRANSITION_FADE_TO_BACKGROUND_2 = 5,
 	FLASHTRANSITION_FADE_TO_BACKGROUND_3 = 6,
 	FLASHTRANSITION_FADE_TO_BACKGROUND_4 = 7,
-	FLASHTRANSITION_END 
+	FLASHTRANSITION_END
 	};
 	ICoord2D m_pos;
 	ICoord2D m_size;
@@ -569,9 +569,9 @@ public:
 	virtual void update( Int frame );
 	virtual void reverse( void );
 	virtual void draw( void );
-	
+
 	virtual void skip( void );
-	
+
 protected:
 	enum{
 	BUTTONFLASHTRANSITION_START = 0,
@@ -638,7 +638,7 @@ public:
 	Bool isFinished( void );
 	void reverse( void );
 	void draw( void );
-	
+
 	void skip ( void );
 	AsciiString getName( void ) { return m_name; }
 	void setName( AsciiString name){ m_name = name;	}

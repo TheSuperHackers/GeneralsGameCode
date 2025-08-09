@@ -64,20 +64,20 @@
 
 /**
 ** GridSnapModifierClass
-** This modifier will snap all vertices in the geometry being modified to a grid.  Its motivation is to 
+** This modifier will snap all vertices in the geometry being modified to a grid.  Its motivation is to
 ** try to help solve the problem of cracks between adjacent meshes in Renegade levels.  This will work
 ** a lot better if the objects have reset-transforms prior to being processed by this modifier.
 */
-class GridSnapModifierClass : public SimpleMod2 
-{	
+class GridSnapModifierClass : public SimpleMod2
+{
 public:
 
 	GridSnapModifierClass();
 
 	// From Animatable
 	void DeleteThis()																			{ delete this; }
-	void GetClassName(TSTR& s)																{ s = Get_String(IDS_GRIDSNAPMODIFIER); }  
-	virtual Class_ID ClassID()																{ return GRIDSNAPMOD_CLASSID; }		
+	void GetClassName(TSTR& s)																{ s = Get_String(IDS_GRIDSNAPMODIFIER); }
+	virtual Class_ID ClassID()																{ return GRIDSNAPMOD_CLASSID; }
 	void BeginEditParams( IObjParam  *ip, ULONG flags,Animatable *prev);
 	void EndEditParams( IObjParam *ip,ULONG flags,Animatable *next);
 	RefTargetHandle Clone(RemapDir& remap = NoRemap());
@@ -85,12 +85,12 @@ public:
 	IOResult Load(ILoad *iload);
 
 	// Direct paramblock access
-	int	NumParamBlocks()																	{ return 1; }	
+	int	NumParamBlocks()																	{ return 1; }
 	IParamBlock2* GetParamBlock(int i)													{ return pblock2; }
 	IParamBlock2* GetParamBlockByID(BlockID id)										{ return (pblock2->ID() == id) ? pblock2 : NULL; }
 
 	// From simple mod
-	Deformer& GetDeformer(TimeValue t,ModContext &mc,Matrix3& mat,Matrix3& invmat);		
+	Deformer& GetDeformer(TimeValue t,ModContext &mc,Matrix3& mat,Matrix3& invmat);
 	Interval GetValidity(TimeValue t);
 
 	//RefTargetHandle GetReference(int i)
@@ -108,10 +108,10 @@ class GridSnapDeformerClass : public Deformer
 {
 public:
 	GridSnapDeformerClass(void) : GridDimension(0.001f) {}
-		
+
 	void		Set_Grid_Dimension(float grid_dim)		{ GridDimension = grid_dim; }
 	float		Get_Grid_Dimension(void)					{ return GridDimension; }
-	
+
 	void		Set_Matrices(const Matrix3 & tm,const Matrix3 & invtm)	{ Transform = tm; InvTransform = invtm; }
 
 	virtual Point3 Map(int i,Point3 p)
@@ -132,12 +132,12 @@ private:
 };
 
 
-/** 
+/**
 ** GridSnapModifier Class Descriptor
 ** This object "links" the plugin into Max's plugin system.  It links the Class-ID to a virtual construction
 ** method.  The function Get_Grid_Snap_Modifier_Desc is the only hook to external code.
 */
-class GridSnapModifierClassDesc:public ClassDesc2 
+class GridSnapModifierClassDesc:public ClassDesc2
 {
 public:
 	int 				IsPublic()											{ return 1; }
@@ -152,33 +152,33 @@ public:
 
 static GridSnapModifierClassDesc _GridSnapModifierDesc;
 
-ClassDesc* Get_Grid_Snap_Modifier_Desc(void) 
-{	
-	return &_GridSnapModifierDesc; 
+ClassDesc* Get_Grid_Snap_Modifier_Desc(void)
+{
+	return &_GridSnapModifierDesc;
 }
 
 
 /*
 ** ParamBlock2 Setup
 */
-enum 
+enum
 {
 	GSM_PARAMS = 0,
 };
 
-enum 
+enum
 {
-	GSM_PARAM_GRIDDIMENSION = 0,	
+	GSM_PARAM_GRIDDIMENSION = 0,
 };
 
 static ParamBlockDesc2 _GridSnapParamBlockDesc
 (
 	// parameter block settings
 	GSM_PARAMS,_T("GridSnap Parameters"), 0, &_GridSnapModifierDesc, P_AUTO_CONSTRUCT + P_AUTO_UI, SIMPMOD_PBLOCKREF,
-	
+
 	// dialog box
 	IDD_GRIDSNAP_PARAMS, IDS_GRIDSNAP_TITLE, 0, 0, NULL,
-	
+
 	// parameters
 	GSM_PARAM_GRIDDIMENSION, _T("Grid Dimension"), TYPE_FLOAT, P_RESET_DEFAULT, IDS_GRID_DIMENSION,
 		p_default,		0.001f,
@@ -221,7 +221,7 @@ void GridSnapModifierClass::EndEditParams( IObjParam *ip,ULONG flags,Animatable 
 
 RefTargetHandle GridSnapModifierClass::Clone(RemapDir& remap)
 {
-	GridSnapModifierClass * newmod = new GridSnapModifierClass();	
+	GridSnapModifierClass * newmod = new GridSnapModifierClass();
 	newmod->ReplaceReference(SIMPMOD_PBLOCKREF,pblock2->Clone(remap));
 	newmod->SimpleModClone(this);
 	return(newmod);
@@ -246,7 +246,7 @@ Deformer& GridSnapModifierClass::GetDeformer(TimeValue t,ModContext &mc,Matrix3&
 
 Interval GridSnapModifierClass::GetValidity(TimeValue t)
 {
-	float f;	
+	float f;
 	Interval valid = FOREVER;
 	pblock2->GetValue(GSM_PARAM_GRIDDIMENSION, t, f, valid);
 	return valid;
@@ -276,7 +276,7 @@ Animatable * SimpleMod2::SubAnim(int i)
 	switch (i) {
 		case 0: return posControl;
 		case 1: return tmControl;
-		case 2: return pblock2;		
+		case 2: return pblock2;
 		default: return NULL;
 	}
 }

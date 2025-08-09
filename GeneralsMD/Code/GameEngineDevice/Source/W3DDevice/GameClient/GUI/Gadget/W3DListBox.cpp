@@ -25,12 +25,12 @@
 
 // FILE: W3DListBox.cpp ///////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:   RTS3
@@ -71,8 +71,8 @@
 // drawHiliteBar ==============================================================
 /** Draw image for the hilite bar */
 //=============================================================================
-static void drawHiliteBar( const Image *left, const Image *right, 
-													 const Image *center, const Image *smallCenter, 
+static void drawHiliteBar( const Image *left, const Image *right,
+													 const Image *center, const Image *smallCenter,
 													 Int startX, Int startY,
 													 Int endX, Int endY )
 {
@@ -127,7 +127,7 @@ static void drawHiliteBar( const Image *left, const Image *right,
 	{
 
 		end.x = start.x + center->getImageWidth();
-		TheWindowManager->winDrawImage( center, 
+		TheWindowManager->winDrawImage( center,
 																		start.x, start.y,
 																		end.x, end.y );
 		start.x += center->getImageWidth();
@@ -216,7 +216,7 @@ static void drawListBoxText( GameWindow *window, WinInstanceData *instData,
 	{
 
 		if( i > 0 )
-			if( list->listData[(i - 1)].listHeight > 
+			if( list->listData[(i - 1)].listHeight >
 					(list->displayPos + list->displayHeight) )
 				break;
 
@@ -257,7 +257,7 @@ static void drawListBoxText( GameWindow *window, WinInstanceData *instData,
 		// this item is selected, draw the selection color or image
 		if( selected )
 		{
-			
+
 			if( useImages )
 			{
 				const Image *left, *right, *center, *smallCenter;
@@ -278,7 +278,7 @@ static void drawListBoxText( GameWindow *window, WinInstanceData *instData,
 					right				= GadgetListBoxGetHiliteSelectedItemImageRight( window );
 					center			= GadgetListBoxGetHiliteSelectedItemImageCenter( window );
 					smallCenter = GadgetListBoxGetHiliteSelectedItemImageSmallCenter( window );
-				
+
 				}  // end else if
 				else
 				{
@@ -348,7 +348,7 @@ static void drawListBoxText( GameWindow *window, WinInstanceData *instData,
 					start.y = clipRegion.lo.y;
 
 				if( selectBorder != WIN_COLOR_UNDEFINED )
-					TheWindowManager->winOpenRect( selectBorder,	
+					TheWindowManager->winOpenRect( selectBorder,
 																				 WIN_DRAW_LINE_WIDTH,
 																				 start.x, start.y,
 																				 end.x, end.y );
@@ -379,9 +379,9 @@ static void drawListBoxText( GameWindow *window, WinInstanceData *instData,
 
 		}  // end if
 
-		
 
-		
+
+
 		Color dropColor = TheWindowManager->winMakeColor( 0, 0, 0, 255 );
 		DisplayString *string;
 
@@ -406,7 +406,7 @@ static void drawListBoxText( GameWindow *window, WinInstanceData *instData,
 					columnRegion.lo.y = clipRegion.lo.y;
 				if( columnRegion.hi.y > clipRegion.hi.y )
 					columnRegion.hi.y = clipRegion.hi.y;
-				
+
 				// Display the Text Case;
 				if(cells[j].cellType == LISTBOX_TEXT)
 				{
@@ -425,11 +425,11 @@ static void drawListBoxText( GameWindow *window, WinInstanceData *instData,
 													drawY,
 													textColor,
 													dropColor );
-									
+
 					}
 					else
 					{
-					
+
 						// make sure the font of the text is the same as the windows
 						if( string->getFont() != window->winGetFont() )
 							string->setFont( window->winGetFont() );
@@ -468,8 +468,8 @@ static void drawListBoxText( GameWindow *window, WinInstanceData *instData,
 					offsetY++;
 					if(offsetX <x+1)
 						offsetX = x+1;
-					TheDisplay->setClipRegion( &columnRegion );					
-					TheWindowManager->winDrawImage( (const Image *)cells[j].data, 
+					TheDisplay->setClipRegion( &columnRegion );
+					TheWindowManager->winDrawImage( (const Image *)cells[j].data,
 																offsetX, offsetY,
 																offsetX + width, offsetY + height,cells[j].color );
 
@@ -477,7 +477,7 @@ static void drawListBoxText( GameWindow *window, WinInstanceData *instData,
 				columnX = columnX + list->columnWidth[j];
 			}// for
 		}//if
-		
+
 
 		drawY += listLineHeight;
 		TheDisplay->enableClipping(FALSE);
@@ -540,13 +540,13 @@ void W3DGadgetListBoxDraw( GameWindow *window, WinInstanceData *instData )
 	// Draw the title
 	if( title && title->getTextLength() )
 	{
-	
+
 		// set the font of this text to that of the window if not already
 		if( title->getFont() != window->winGetFont() )
 			title->setFont( window->winGetFont() );
-			
+
 		// draw the text
-		title->draw( x + 1, y, titleColor, titleBorder );		
+		title->draw( x + 1, y, titleColor, titleBorder );
 
 		y += fontHeight + 1;
 		height -= fontHeight + 1;
@@ -561,7 +561,7 @@ void W3DGadgetListBoxDraw( GameWindow *window, WinInstanceData *instData )
 	// draw background
 	if( background != WIN_COLOR_UNDEFINED )
 		TheWindowManager->winFillRect( background, WIN_DRAW_LINE_WIDTH,
-																	 x + 1, y + 1, 
+																	 x + 1, y + 1,
 																	 x + width - 1, y + height - 1 );
 
 	// If ScrollBar was requested ... adjust width.
@@ -577,7 +577,7 @@ void W3DGadgetListBoxDraw( GameWindow *window, WinInstanceData *instData )
 	// draw the text
 	drawListBoxText( window, instData, x, y + 4 , width, height-4, TRUE );
 
-	
+
 
 }  // end W3DGadgetListBoxDraw
 
@@ -640,8 +640,8 @@ void W3DGadgetListBoxImageDraw( GameWindow *window, WinInstanceData *instData )
 		start.y = y + instData->m_imageOffset.y;
 		end.x = start.x + width;
 		end.y = start.y + height;
-		TheWindowManager->winDrawImage( image, 
-																		start.x, start.y, 
+		TheWindowManager->winDrawImage( image,
+																		start.x, start.y,
 																		end.x, end.y );
 
 	}  // end if
@@ -665,7 +665,7 @@ void W3DGadgetListBoxImageDraw( GameWindow *window, WinInstanceData *instData )
 	// draw the listbox text
 	drawListBoxText( window, instData, x, y+4, width, height-4, TRUE );
 
-	
+
 
 }  // end W3DGadgetListBoxImageDraw
 

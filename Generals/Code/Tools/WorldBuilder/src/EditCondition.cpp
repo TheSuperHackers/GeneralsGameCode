@@ -58,13 +58,13 @@ END_MESSAGE_MAP()
 // EditCondition message handlers
 
 
-BOOL EditCondition::OnInitDialog() 
+BOOL EditCondition::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 
 
 //	CDC *pDc =GetDC();
-	
+
 	CWnd *pWnd = GetDlgItem(IDC_RICH_EDIT_HERE);
 	CRect rect;
 	pWnd->GetWindowRect(&rect);
@@ -85,7 +85,7 @@ BOOL EditCondition::OnInitDialog()
 			pCmbo->SetCurSel(ndx);
 		}
 	}
-	m_condition->setWarnings(false); 
+	m_condition->setWarnings(false);
 	m_myEditCtrl.SetWindowText(m_condition->getUiText().str());
 	m_myEditCtrl.SetSel(-1, -1);
 	formatConditionText(-1);
@@ -156,11 +156,11 @@ void EditCondition::formatConditionText(Int parameterNdx) {
 	} else {
 		if (cstr.LoadString(IDS_SCRIPT_WARNINGS)) {
 			GetDlgItem(IDC_WARNINGS_CAPTION)->SetWindowText(cstr);
-		} 
+		}
 		GetDlgItem(IDC_WARNINGS_CAPTION)->EnableWindow(true);
 		GetDlgItem(IDC_WARNINGS)->SetWindowText(warningText.str());
 	}
-		
+
 	m_modifiedTextColor = false;
 	m_myEditCtrl.SetSel(startSel, endSel);
 	m_updating = false;
@@ -168,8 +168,8 @@ void EditCondition::formatConditionText(Int parameterNdx) {
 
 
 
-BOOL EditCondition::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult) 
-{																											
+BOOL EditCondition::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult)
+{
 	if (LOWORD(wParam) == IDC_RICH_EDIT_HERE+1) {
 		NMHDR *pHdr = (NMHDR *)lParam;
 		if (pHdr->hwndFrom == m_myEditCtrl.m_hWnd && pHdr->code == EN_LINK) {
@@ -235,11 +235,11 @@ BOOL EditCondition::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult)
 	return CDialog::OnNotify(wParam, lParam, pResult);
 }
 
-void EditCondition::OnSelchangeConditionType() 
+void EditCondition::OnSelchangeConditionType()
 {
 	CComboBox *pCmbo = (CComboBox *)GetDlgItem(IDC_CONDITION_TYPE);
 	Int index = 0;
-	CString str; 
+	CString str;
 	pCmbo->GetWindowText(str);
 	Int i;
 	for (i=0; i<ScriptAction::NUM_ITEMS; i++) {
@@ -256,7 +256,7 @@ void EditCondition::OnSelchangeConditionType()
 
 /** Not actually a timer - just used to send a delayed message to self because rich
 edit control is stupid.  jba. */
-void EditCondition::OnTimer(UINT nIDEvent) 
+void EditCondition::OnTimer(UINT nIDEvent)
 {
 	formatConditionText(m_curEditParameter);
 }

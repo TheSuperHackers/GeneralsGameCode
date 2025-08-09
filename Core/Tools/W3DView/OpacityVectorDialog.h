@@ -87,14 +87,14 @@ private:
 	void						Update_Object (const AlphaVectorStruct &value);
 	void						Update_Object (void);
 	AlphaVectorStruct		Update_Value (void);
-	
+
 private:
 
 	////////////////////////////////////////////////////////////////
 	//	Private member data
 	////////////////////////////////////////////////////////////////
 	ColorBarClass *		m_OpacityBar;
-	RenderObjClass *		m_RenderObj;	
+	RenderObjClass *		m_RenderObj;
 	AlphaVectorStruct		m_Value;
 	int						m_KeyIndex;
 };

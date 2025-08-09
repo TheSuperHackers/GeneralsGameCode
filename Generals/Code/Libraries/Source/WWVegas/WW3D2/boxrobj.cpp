@@ -110,10 +110,10 @@
 #define NUM_BOX_FACES	12
 
 // Face Connectivity
-static TriIndex					_BoxFaces[NUM_BOX_FACES] = 
+static TriIndex					_BoxFaces[NUM_BOX_FACES] =
 {
 	TriIndex( 0,1,2 ),		// +z faces
-	TriIndex( 0,2,3 ),		
+	TriIndex( 0,2,3 ),
 	TriIndex( 4,7,6 ),		// -z faces
 	TriIndex( 4,6,5 ),
 	TriIndex( 0,3,7 ),		// +x faces
@@ -127,7 +127,7 @@ static TriIndex					_BoxFaces[NUM_BOX_FACES] =
 };
 
 // Vertex Positions as a function of the box extents
-static Vector3						_BoxVerts[NUM_BOX_VERTS] = 
+static Vector3						_BoxVerts[NUM_BOX_VERTS] =
 {
 	Vector3(  1.0f, 1.0f, 1.0f ),		// +z ring of 4 verts
 	Vector3( -1.0f, 1.0f, 1.0f ),
@@ -385,7 +385,7 @@ void BoxRenderObjClass::Shutdown(void)
 {
 	WWASSERT(IsInitted == true);
 	REF_PTR_RELEASE(_BoxMaterial);
-	
+
 	IsInitted = false;
 }
 
@@ -456,10 +456,10 @@ void BoxRenderObjClass::render_box(RenderInfoClass & rinfo,const Vector3 & cente
 		}
 
 		/*
-		** Dump the box vertices into the sorting dynamic vertex buffer. 
+		** Dump the box vertices into the sorting dynamic vertex buffer.
 		*/
 		DWORD color = DX8Wrapper::Convert_Color(Color,Opacity);
-		
+
 		int buffer_type = BUFFER_TYPE_DYNAMIC_SORTING;
 
 		DynamicVBAccessClass vbaccess(buffer_type,dynamic_fvf_type,NUM_BOX_VERTS);
@@ -474,7 +474,7 @@ void BoxRenderObjClass::render_box(RenderInfoClass & rinfo,const Vector3 & cente
 				vb->x=verts[i][0];
 				vb->y=verts[i][1];
 				vb->z=verts[i][2];
-				
+
 				// Normals
 				vb->nx=_BoxVertexNormals[i][0];
 				vb->ny=_BoxVertexNormals[i][1];
@@ -507,12 +507,12 @@ void BoxRenderObjClass::render_box(RenderInfoClass & rinfo,const Vector3 & cente
 		DX8Wrapper::Set_Material(_BoxMaterial);
 		DX8Wrapper::Set_Shader(_BoxShader);
 		DX8Wrapper::Set_Texture(0,NULL);
-		
+
 		DX8Wrapper::Set_Index_Buffer(ibaccess,0);
 		DX8Wrapper::Set_Vertex_Buffer(vbaccess);
 
 		SphereClass sphere;
-		Get_Obj_Space_Bounding_Sphere(sphere); 
+		Get_Obj_Space_Bounding_Sphere(sphere);
 
 		DX8Wrapper::Draw_Triangles(buffer_type,0,NUM_BOX_FACES,0,NUM_BOX_VERTS);
 	}
@@ -536,7 +536,7 @@ void BoxRenderObjClass::render_box(RenderInfoClass & rinfo,const Vector3 & cente
 void BoxRenderObjClass::vis_render_box(SpecialRenderInfoClass & rinfo,const Vector3 & center,const Vector3 & extent)
 {
 	if (!IsInitted) return;
-	
+
 	static Vector3 verts[NUM_BOX_VERTS];
 
 	// compute the vertex positions
@@ -874,7 +874,7 @@ bool AABoxRenderObjClass::Cast_OBBox(OBBoxCollisionTestClass & boxtest)
 bool AABoxRenderObjClass::Intersect_AABox(AABoxIntersectionTestClass & boxtest)
 {
 	if ((Get_Collision_Type() & boxtest.CollisionType) == 0) return false;
-	return CollisionMath::Intersection_Test(CachedBox,boxtest.Box);	
+	return CollisionMath::Intersection_Test(CachedBox,boxtest.Box);
 }
 
 
@@ -1250,7 +1250,7 @@ bool OBBoxRenderObjClass::Cast_OBBox(OBBoxCollisionTestClass & boxtest)
 bool OBBoxRenderObjClass::Intersect_AABox(AABoxIntersectionTestClass & boxtest)
 {
 	if ((Get_Collision_Type() & boxtest.CollisionType) == 0) return false;
-	return CollisionMath::Intersection_Test(CachedBox,boxtest.Box);	
+	return CollisionMath::Intersection_Test(CachedBox,boxtest.Box);
 }
 
 
@@ -1359,7 +1359,7 @@ int BoxPrototypeClass::Get_Class_ID(void) const
 		return RenderObjClass::CLASSID_AABOX;
 	}
 }
-	
+
 RenderObjClass * BoxPrototypeClass::Create(void)
 {
 	if (Definition.Attributes & W3D_BOX_ATTRIBUTE_ORIENTED) {

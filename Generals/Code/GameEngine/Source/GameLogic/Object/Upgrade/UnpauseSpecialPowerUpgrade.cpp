@@ -24,7 +24,7 @@
 
 // FILE: UnpauseSpecialPowerUpgrade.cpp ///////////////////////////////////////////////////////////////////////////
 // Author: Graham Smallwood, August 2002
-// Desc:	 An upgrade that starts the timer on a Special Power module, so you can have them 
+// Desc:	 An upgrade that starts the timer on a Special Power module, so you can have them
 // dependent on upgrades on the logic side, like NEED_UPGRADE does on the client side by disabling
 // the button.
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -42,7 +42,7 @@
 UnpauseSpecialPowerUpgradeModuleData::UnpauseSpecialPowerUpgradeModuleData( void )
 {
 	m_specialPower = NULL;
-} 
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -50,10 +50,10 @@ UnpauseSpecialPowerUpgradeModuleData::UnpauseSpecialPowerUpgradeModuleData( void
 {
 	UpgradeModuleData::buildFieldParse( p );
 
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
 		{ "SpecialPowerTemplate", INI::parseSpecialPowerTemplate, NULL, offsetof( UnpauseSpecialPowerUpgradeModuleData, m_specialPower ) },
-		{ 0, 0, 0, 0 } 
+		{ 0, 0, 0, 0 }
 	};
 	p.add(dataFieldParse);
 
@@ -65,18 +65,18 @@ UnpauseSpecialPowerUpgradeModuleData::UnpauseSpecialPowerUpgradeModuleData( void
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-UnpauseSpecialPowerUpgrade::UnpauseSpecialPowerUpgrade( Thing *thing, const ModuleData* moduleData ) : 
+UnpauseSpecialPowerUpgrade::UnpauseSpecialPowerUpgrade( Thing *thing, const ModuleData* moduleData ) :
 							UpgradeModule( thing, moduleData )
 {
 
-}  
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 UnpauseSpecialPowerUpgrade::~UnpauseSpecialPowerUpgrade( void )
 {
 
-} 
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------

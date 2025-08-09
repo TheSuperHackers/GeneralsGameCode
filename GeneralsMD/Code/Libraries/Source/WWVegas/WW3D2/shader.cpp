@@ -274,7 +274,7 @@ void ShaderClass::Init_From_Material3(const W3dMaterial3Struct & mat3)
  * WARNINGS:                                                                                   *
  *                                                                                             *
  * HISTORY:																												  *
- *		05/02/00    IML : Created.																					  *	
+ *		05/02/00    IML : Created.																					  *
  *=============================================================================================*/
 
 void ShaderClass::Enable_Fog (const char *source)
@@ -287,12 +287,12 @@ void ShaderClass::Enable_Fog (const char *source)
 				Set_Fog_Func (ShaderClass::FOG_WHITE);
 			} else {
 				Report_Unable_To_Fog (source);
-			}	
+			}
 			break;
 
 		case ShaderClass::SRCBLEND_ONE:
 			switch (Get_Dst_Blend_Func()) {
-				
+
 				case ShaderClass::DSTBLEND_ZERO:							// Opaque.
 					Set_Fog_Func (ShaderClass::FOG_ENABLE);
 					break;
@@ -313,7 +313,7 @@ void ShaderClass::Enable_Fog (const char *source)
 				Set_Fog_Func (ShaderClass::FOG_ENABLE);
 			} else {
 				Report_Unable_To_Fog (source);
-			}	
+			}
 			break;
 
 		case ShaderClass::SRCBLEND_ONE_MINUS_SRC_ALPHA:
@@ -321,14 +321,14 @@ void ShaderClass::Enable_Fog (const char *source)
 				Set_Fog_Func (ShaderClass::FOG_ENABLE);
 			} else {
 				Report_Unable_To_Fog (source);
-			}	
+			}
 			break;
 	}
 }
 
 
 /***********************************************************************************************
- * ShaderClass::Report_Unable_To_Fog --																		  *	
+ * ShaderClass::Report_Unable_To_Fog --																		  *
  *                                                                                             *
  * INPUT:                                                                                      *
  *                                                                                             *
@@ -337,7 +337,7 @@ void ShaderClass::Enable_Fog (const char *source)
  * WARNINGS:                                                                                   *
  *                                                                                             *
  * HISTORY:																												  *
- *		10/04/00    IML : Created.																					  *	
+ *		10/04/00    IML : Created.																					  *
  *=============================================================================================*/
 void ShaderClass::Report_Unable_To_Fog (const char *source)
 {
@@ -375,7 +375,7 @@ public:
 	bool		useAlpha;
 };
 
-const Blend srcBlendLUT[ShaderClass::SRCBLEND_MAX] = 
+const Blend srcBlendLUT[ShaderClass::SRCBLEND_MAX] =
 {
 	Blend(D3DBLEND_ZERO, false),
 	Blend(D3DBLEND_ONE, false),
@@ -383,7 +383,7 @@ const Blend srcBlendLUT[ShaderClass::SRCBLEND_MAX] =
  	Blend(D3DBLEND_DESTCOLOR, true)
 };
 
-const Blend dstBlendLUT[ShaderClass::DSTBLEND_MAX] = 
+const Blend dstBlendLUT[ShaderClass::DSTBLEND_MAX] =
 {
 	Blend(D3DBLEND_ZERO, false),
 	Blend(D3DBLEND_ONE, false),
@@ -467,7 +467,7 @@ void ShaderClass::Apply()
 		if(Get_Alpha_Test() == ShaderClass::ALPHATEST_ENABLE)
 		{
 			unsigned char alphareference = 0x60;	// Alpha reference value that produces best results with mip-mapped textures.
-			
+
 			if(sf == D3DBLEND_INVSRCALPHA)
 			{
 				DX8Wrapper::Set_DX8_Render_State(D3DRS_ALPHAREF,0xff - alphareference);
@@ -496,14 +496,14 @@ void ShaderClass::Apply()
 
 			BOOL fm = FALSE;
 			D3DCOLOR fogColor = DX8Wrapper::Get_Fog_Color();
-			
+
 			switch(Get_Fog_Func())
 			{
 			case ShaderClass::FOG_ENABLE:
 				fm = TRUE;
 				break;
 			case ShaderClass::FOG_SCALE_FRAGMENT:
-				fogColor = 0;	
+				fogColor = 0;
 				fm = TRUE;
 				break;
 			case ShaderClass::FOG_WHITE:
@@ -525,19 +525,19 @@ void ShaderClass::Apply()
 		} else {
 			DX8Wrapper::Set_DX8_Render_State(D3DRS_FOGENABLE,FALSE);
 		}
-		
+
 		diff &= ~(ShaderClass::MASK_FOG);
 		if(!diff)
 			return;
 	}
 
 	// Defaults
-	
+
 	D3DTEXTUREOP	PricOp	= D3DTOP_SELECTARG1;
 	DWORD				PricArg1 = D3DTA_DIFFUSE;
 	DWORD				PricArg2 = D3DTA_DIFFUSE;
 
-	D3DTEXTUREOP	PriaOp	 = D3DTOP_SELECTARG1;	
+	D3DTEXTUREOP	PriaOp	 = D3DTOP_SELECTARG1;
 	DWORD			PriaArg1 = D3DTA_DIFFUSE;
 	DWORD			PriaArg2 = D3DTA_DIFFUSE;
 
@@ -552,7 +552,7 @@ void ShaderClass::Apply()
 	bool voodoo3=(DX8Wrapper::Get_Current_Caps()->Get_Vendor()==DX8Caps::VENDOR_3DFX) &&
 					 (DX8Wrapper::Get_Current_Caps()->Get_Device()==DX8Caps::DEVICE_3DFX_VOODOO_3);
 	int pri_mask=ShaderClass::MASK_PRIGRADIENT|ShaderClass::MASK_TEXTURING;
-	int sec_mask=ShaderClass::MASK_POSTDETAILALPHAFUNC|ShaderClass::MASK_POSTDETAILCOLORFUNC|ShaderClass::MASK_TEXTURING;	
+	int sec_mask=ShaderClass::MASK_POSTDETAILALPHAFUNC|ShaderClass::MASK_POSTDETAILCOLORFUNC|ShaderClass::MASK_TEXTURING;
 
 	// Voodoo3s need to keep track of any changes in any of the above
 	// because it shuffles the stages around
@@ -587,7 +587,7 @@ void ShaderClass::Apply()
 				break;
 			case ShaderClass::GRADIENT_ADD:
 				//Modulate Alpha
-				if(!(TextureOpCaps & D3DTEXOPCAPS_ADD))	
+				if(!(TextureOpCaps & D3DTEXOPCAPS_ADD))
 					PricOp = D3DTOP_MODULATE;
 				else
 					PricOp = D3DTOP_ADD;
@@ -640,7 +640,7 @@ void ShaderClass::Apply()
 
 			case ShaderClass::GRADIENT_MODULATE2X:
 				//Modulate Alpha
-				if(!(TextureOpCaps & D3DTOP_MODULATE2X))	
+				if(!(TextureOpCaps & D3DTOP_MODULATE2X))
 					PricOp = D3DTOP_MODULATE;
 				else
 					PricOp = D3DTOP_MODULATE2X;
@@ -684,7 +684,7 @@ void ShaderClass::Apply()
 				break;
 			}
 		}
-	}	
+	}
 
 	if(diff & sec_mask)
 	{
@@ -807,7 +807,7 @@ void ShaderClass::Apply()
 					SeccArg2 = D3DTA_CURRENT;
 				} else {
 					SNAPSHOT_SAY(("Warning: Using unsupported texture op: ADDSIGNED"));
-				}					
+				}
 				break;
 
 			case ShaderClass::DETAILCOLOR_ADDSIGNED2X:
@@ -825,7 +825,7 @@ void ShaderClass::Apply()
 					SeccArg2 = D3DTA_CURRENT;
 				} else {
 					SNAPSHOT_SAY(("Warning: Using unsupported texture op: ADDSIGNED2X"));
-				}					
+				}
 				break;
 
 			case ShaderClass::DETAILCOLOR_SCALE2X:
@@ -840,7 +840,7 @@ void ShaderClass::Apply()
 				}
 				else {
 					SNAPSHOT_SAY(("Warning: Using unsupported texture op: MODULATE2X"));
-				}				
+				}
 				break;
 
 			case ShaderClass::DETAILCOLOR_MODALPHAADDCOLOR:
@@ -910,32 +910,32 @@ void ShaderClass::Apply()
 				SeccArg2 = D3DTA_CURRENT;
 			}
 		}	// texturing enabled
-	}	// if diff sec_mask	
-	
+	}	// if diff sec_mask
+
 	bool kill_stage_2=false;
 
 	// Apply the stage settings
 	if (diff & pri_mask) {
 		// for voodoo3 supported blend modes, the stage 0 color and alpha are both diffuse
 		// or both not, so we can check for color diffuse only
-		if ( voodoo3 && (PricArg2==D3DTA_DIFFUSE) && 
+		if ( voodoo3 && (PricArg2==D3DTA_DIFFUSE) &&
 			  ( (SecaOp!=D3DTOP_DISABLE) || (SeccOp!=D3DTOP_DISABLE) )
 			) {
 			// Special Voodoo3 code
 			// If stage 0 has a diffuse input
-			// and stage 1 has an input put the diffuse in stage 2			
-			
+			// and stage 1 has an input put the diffuse in stage 2
+
 			DWORD tex_arg=D3DTA_CURRENT;
 			if(Get_Texturing() == ShaderClass::TEXTURING_ENABLE) {
 				tex_arg=D3DTA_TEXTURE;
 			}
-			
+
 			// this is for the bad case of using
 			// stage 0 for diffuse only
 			if ((PricOp==D3DTOP_SELECTARG1)&&(PricArg1==D3DTA_DIFFUSE)) {
 				WWDEBUG_SAY(("Wasted Stage 0 in shader-vertex diffuse only"));
 				// set stage 0 to disable
-				DX8Wrapper::Set_DX8_Texture_Stage_State(0,D3DTSS_COLOROP,D3DTOP_DISABLE);				
+				DX8Wrapper::Set_DX8_Texture_Stage_State(0,D3DTSS_COLOROP,D3DTOP_DISABLE);
 				DX8Wrapper::Set_DX8_Texture_Stage_State(0,D3DTSS_ALPHAOP,D3DTOP_DISABLE);
 				// set stage 1 to accept diffuse
 				if (SeccArg2==D3DTA_CURRENT) SeccArg2=D3DTA_DIFFUSE;
@@ -946,7 +946,7 @@ void ShaderClass::Apply()
 				// set stage 0 to pass through what it needs
 				DX8Wrapper::Set_DX8_Texture_Stage_State(0,D3DTSS_COLOROP,D3DTOP_SELECTARG1);
 				DX8Wrapper::Set_DX8_Texture_Stage_State(0,D3DTSS_COLORARG1,tex_arg);
-				DX8Wrapper::Set_DX8_Texture_Stage_State(0,D3DTSS_ALPHAOP,D3DTOP_SELECTARG1);			
+				DX8Wrapper::Set_DX8_Texture_Stage_State(0,D3DTSS_ALPHAOP,D3DTOP_SELECTARG1);
 				DX8Wrapper::Set_DX8_Texture_Stage_State(0,D3DTSS_ALPHAARG1,tex_arg);
 
 				// set stage 2 to do the diffuse op
@@ -961,9 +961,9 @@ void ShaderClass::Apply()
 				DX8CALL(SetTexture(2,0));
 				kill_stage_2=false;
 				ShaderDirty=true;
-			}			
+			}
 		} else {
-			
+
 #pragma message("(gth) Generals added a feature here WW3D::Is_Coloring_Enabled() which needs to be merged properly")
 #if 0
 			if (WW3D::Is_Coloring_Enabled())
@@ -981,12 +981,12 @@ void ShaderClass::Apply()
 			kill_stage_2=true;
 		}
 		diff &= ~(ShaderClass::MASK_PRIGRADIENT);
-	}	
+	}
 
 	if (diff & sec_mask) {
 		DX8Wrapper::Set_DX8_Texture_Stage_State(1,D3DTSS_COLOROP,SeccOp);
 		DX8Wrapper::Set_DX8_Texture_Stage_State(1,D3DTSS_COLORARG1,SeccArg1);
-		DX8Wrapper::Set_DX8_Texture_Stage_State(1,D3DTSS_COLORARG2,SeccArg2);	
+		DX8Wrapper::Set_DX8_Texture_Stage_State(1,D3DTSS_COLORARG2,SeccArg2);
 		DX8Wrapper::Set_DX8_Texture_Stage_State(1,D3DTSS_ALPHAOP,SecaOp);
 		DX8Wrapper::Set_DX8_Texture_Stage_State(1,D3DTSS_ALPHAARG1,SecaArg1);
 		DX8Wrapper::Set_DX8_Texture_Stage_State(1,D3DTSS_ALPHAARG2,SecaArg2);
@@ -994,7 +994,7 @@ void ShaderClass::Apply()
 		diff &= ~(ShaderClass::MASK_POSTDETAILALPHAFUNC);
 		diff &= ~(ShaderClass::MASK_TEXTURING);
 	}
-	
+
 	// Make sure to disable stage 2 for voodoos since we don't have state tracking for
 	// stage 2
 	// bypass the wrapper since it only supports 2 texture stages
@@ -1037,7 +1037,7 @@ void ShaderClass::Apply()
 	}
 
 	// Enable/disable alpha test
-	DX8Wrapper::Set_DX8_Render_State(D3DRS_ALPHATESTENABLE,BOOL(Get_Alpha_Test()));	
+	DX8Wrapper::Set_DX8_Render_State(D3DRS_ALPHATESTENABLE,BOOL(Get_Alpha_Test()));
 
 	// Enable/disable stencil test
 	// Not supported yet

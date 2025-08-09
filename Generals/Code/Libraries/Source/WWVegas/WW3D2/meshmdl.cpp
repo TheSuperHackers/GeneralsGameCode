@@ -49,8 +49,8 @@
 
 /*
 ** Temporary Buffers
-** These buffers are used by the skin code for temporary storage of the deformed vertices and 
-** vertex normals.  
+** These buffers are used by the skin code for temporary storage of the deformed vertices and
+** vertex normals.
 */
 static DynamicVectorClass<Vector3>	_TempVertexBuffer;
 static DynamicVectorClass<Vector3>	_TempNormalBuffer;
@@ -76,9 +76,9 @@ MeshModelClass::MeshModelClass(void) :
 
 	DefMatDesc = W3DNEW MeshMatDescClass;
 	CurMatDesc = DefMatDesc;
-	
+
 	MatInfo = NEW_REF( MaterialInfoClass, () );
-	
+
 	return ;
 }
 
@@ -228,7 +228,7 @@ void MeshModelClass::Replace_VertexMaterial(VertexMaterialClass* vmat,VertexMate
 {
 	WWASSERT(vmat);
 	WWASSERT(new_vmat);
-	
+
 	for (int pass=0;pass<Get_Pass_Count();++pass) {
 		if (Has_Material_Array(pass)) {
 			for (int i=0;i<Get_Vertex_Count();++i) {
@@ -248,7 +248,7 @@ void MeshModelClass::Replace_VertexMaterial(VertexMaterialClass* vmat,VertexMate
 		if (fvf_category) {
 			fvf_category->Change_Polygon_Renderer_Material(PolygonRendererList,vmat,new_vmat,pass);
 		}
-	}	
+	}
 }
 
 DX8FVFCategoryContainer* MeshModelClass::Peek_FVF_Category_Container()
@@ -309,7 +309,7 @@ void MeshModelClass::get_deformed_vertices(Vector3 *dst_vert, Vector3 *dst_norm,
 		const Matrix3D & tm = htree->Get_Transform(bonelink[vi]);
 
 		// Make a copy so we can set the translation to zero
-		Matrix3D mytm=tm;		
+		Matrix3D mytm=tm;
 
 		int idx=bonelink[vi];
 		int cnt;
@@ -348,7 +348,7 @@ void MeshModelClass::compose_deformed_vertex_buffer(
 		const Matrix3D & tm = htree->Get_Transform(bonelink[vi]);
 
 		// Make a copy so we can set the translation to zero
-		Matrix3D mytm=tm;		
+		Matrix3D mytm=tm;
 
 		int idx=bonelink[vi];
 		int cnt;
@@ -389,7 +389,7 @@ void MeshModelClass::get_deformed_screenspace_vertices(Vector4 *dst_vert,const R
 
 	Vector3 * src_vert = Vertex->Get_Array();
 	int vertex_count=Get_Vertex_Count();
-	
+
 	if (Get_Flag(SKIN) && VertexBoneLink && htree) {
 		uint16 * bonelink = VertexBoneLink->Get_Array();
 		for (int vi = 0; vi < vertex_count;) {
@@ -426,13 +426,13 @@ void MeshModelClass::Make_Geometry_Unique()
 	ShareBufferClass<Vector3> * unique_verts = NEW_REF(ShareBufferClass<Vector3>,(*Vertex));
 	REF_PTR_SET(Vertex,unique_verts);
 	REF_PTR_RELEASE(unique_verts);
-	
+
 	ShareBufferClass<Vector3> * norms = NEW_REF(ShareBufferClass<Vector3>,(*VertexNorm));
 	REF_PTR_SET(VertexNorm,norms);
 	REF_PTR_RELEASE(norms);
 
 #if (!OPTIMIZE_PLANEEQ_RAM)
-	ShareBufferClass<Vector4> * peq = NEW_REF(ShareBufferClass<Vector4>,(*PlaneEq, "MeshModelClass::PlaneEq"));	
+	ShareBufferClass<Vector4> * peq = NEW_REF(ShareBufferClass<Vector4>,(*PlaneEq, "MeshModelClass::PlaneEq"));
 	REF_PTR_SET(PlaneEq,peq);
 	REF_PTR_RELEASE(peq);
 #endif
@@ -453,10 +453,10 @@ void MeshModelClass::Enable_Alternate_Material_Description(bool onoff)
 	if ((onoff == true) && (AlternateMatDesc != NULL)) {
 		if (CurMatDesc != AlternateMatDesc) {
 			CurMatDesc = AlternateMatDesc;
-			
+
 			if (Get_Flag(SORT) && WW3D::Is_Munge_Sort_On_Load_Enabled())
 				compute_static_sort_levels();
-			
+
 			// TODO: Invalidate just this meshes DX8 data!!!
 			TheDX8MeshRenderer.Invalidate();
 		}
@@ -524,7 +524,7 @@ struct TriangleSide
 	}
 	TriangleSide() {}
 
-	bool operator== (const TriangleSide& s) 
+	bool operator== (const TriangleSide& s)
 	{
 		unsigned i=*(unsigned*)&loc1[0]^*(unsigned*)&s.loc1[0];
 		i|=*(unsigned*)&loc1[1]^*(unsigned*)&s.loc1[1];

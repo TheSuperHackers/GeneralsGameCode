@@ -22,7 +22,7 @@
 //
 #include "StdAfx.h"
 #include "Babylon.h"
-#include "resource.h"				 
+#include "resource.h"
 #include <stdio.h>
 #include "XLStuff.h"
 #include <assert.h>
@@ -70,7 +70,7 @@ static VARIANT GetCell ( int row, int column )
 		goto error;
 	}
 
- 
+
 	range->AttachDispatch ( dispatch );
 	result = range->GetValue ();
 	range->ReleaseDispatch ( );
@@ -111,7 +111,7 @@ int PutCell ( int row, int column, const OLECHAR *string, int val )
 	}
 
 	range->AttachDispatch ( dispatch );
- 
+
 	if ( string )
 	{
 		V_VT ( &newValue ) = VT_BSTR;
@@ -421,7 +421,7 @@ int OpenExcel ( void )
 	if ( !wbs )
 	{
 		return FALSE;
-	}							
+	}
 
 	if ( ! (ws = new _Worksheet ()))
 	{
@@ -509,8 +509,8 @@ void CloseExcel ( void )
 int OpenWorkBook ( const char *filename )
 {
 	LPDISPATCH dispatch;
- 
-	dispatch = wbs->Open ((LPCTSTR) filename, dummy0, yes, dummy, nullstring, nullstring, yes, dummy, dummy, no, no, dummy, no ); 
+
+	dispatch = wbs->Open ((LPCTSTR) filename, dummy0, yes, dummy, nullstring, nullstring, yes, dummy, dummy, no, no, dummy, no );
 
 	if ( dispatch )
 	{
@@ -546,9 +546,9 @@ int NewWorkBook ( const char *path )
 		{
 			*p = 0;
 		}
-		
+
 		strcpy ( p, ".xlt" );
-		
+
 		if ( (handle = FindFirstFile ( tfile, &finfo)) != INVALID_HANDLE_VALUE )
 		{
 			if ( !(finfo.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) )
@@ -557,7 +557,7 @@ int NewWorkBook ( const char *path )
 				V_VT ( &temp ) = VT_BSTR;
 				V_BSTR ( &temp ) = SysAllocString ( buffer );
 			}
-		
+
 			FindClose ( handle );
 		}
 	}
@@ -573,7 +573,7 @@ int NewWorkBook ( const char *path )
 
 	if ( !workbook )
 	{
-		return FALSE;					
+		return FALSE;
 	}
 	SelectActiveSheet ( );
 	return TRUE;
@@ -603,7 +603,7 @@ int SaveWorkBook ( const char *filename, int protect )
 		ws->Protect ( password, yes, yes, yes, no );
 		VariantClear ( &password );
 	}
-	workbook->SaveAs ( name, fileformat, nullstring, nullstring, no, no, 
+	workbook->SaveAs ( name, fileformat, nullstring, nullstring, no, no,
 					xlNoChange, rc, no, empty, empty );
 
 	VariantClear ( &name );
@@ -635,7 +635,7 @@ void SelectActiveSheet ( void )
 
 	ws->ReleaseDispatch ( );
 	ws->AttachDispatch ( dispatch );
-} 
+}
 
 int GetInt ( int row, int cell )
 {

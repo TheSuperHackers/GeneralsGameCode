@@ -148,7 +148,7 @@ EmitterPropertySheetClass::WindowProc
 					}
 				}
 				case ID_APPLY_NOW:
-				{					
+				{
 					// Did the user click the button?
 					if (HIWORD (wParam) == BN_CLICKED) {
 						LRESULT lresult = CPropertySheet::WindowProc (message, wParam, lParam);
@@ -160,15 +160,15 @@ EmitterPropertySheetClass::WindowProc
 							 m_ColorPage.Is_Data_Valid () &&
 							 m_UserPage.Is_Data_Valid () &&
 							 m_SizePage.Is_Data_Valid () &&
-							 m_LinePage.Is_Data_Valid () && 
+							 m_LinePage.Is_Data_Valid () &&
 							 m_RotationPage.Is_Data_Valid () &&
 							 m_FramePage.Is_Data_Valid () &&
-							 m_LineGroupPage.Is_Data_Valid () ) 
+							 m_LineGroupPage.Is_Data_Valid () )
 						{
 							// Update the current emitter to match the data
 							Update_Emitter ();
 						}
-												
+
 						return lresult;
 					}
 				}
@@ -193,13 +193,13 @@ EmitterPropertySheetClass::Add_Emitter_To_Viewer (void)
 {
 	CW3DViewDoc *pdoc = ::GetCurrentDocument ();
 	if ((pdoc != NULL) && (m_pEmitterList != NULL)) {
-		
+
 		//
 		// Create a new prototype for this emitter and add it to the asset manager
 		//
 		ParticleEmitterDefClass *pdefinition		= new ParticleEmitterDefClass (*m_pEmitterList);
 		ParticleEmitterPrototypeClass *pprototype	= new ParticleEmitterPrototypeClass (pdefinition);
-		
+
 		//
 		// Update the asset manager with the new prototype
 		//
@@ -207,7 +207,7 @@ EmitterPropertySheetClass::Add_Emitter_To_Viewer (void)
 			WW3DAssetManager::Get_Instance()->Remove_Prototype (m_LastSavedName);
 		}
 		WW3DAssetManager::Get_Instance()->Add_Prototype (pprototype);
-		
+
 		//
 		// Add this emitter to the data tree
 		//
@@ -229,7 +229,7 @@ EmitterPropertySheetClass::Add_Emitter_To_Viewer (void)
 		// Regenerate the emitter pointer list
 		//
 		m_pEmitterList->Free_List ();
-		pdoc->Build_Emitter_List (m_pEmitterList, m_pEmitterList->Get_Name ());		
+		pdoc->Build_Emitter_List (m_pEmitterList, m_pEmitterList->Get_Name ());
 	}
 
 	return ;
@@ -262,7 +262,7 @@ EmitterPropertySheetClass::Update_Emitter (void)
 	/*ParticleEmitterClass *pemitter = Create_Emitter ();
 	Add_Emitter_To_Viewer (pemitter);
 
-	//	
+	//
 	// Use this emitter as the edited emitter from here on out
 	//
 	MEMBER_RELEASE (m_pEmitter);
@@ -287,7 +287,7 @@ void
 EmitterPropertySheetClass::Initialize (void)
 {
 	if (m_pEmitterList == NULL) {
-		Create_New_Emitter ();		
+		Create_New_Emitter ();
 	} else {
 		m_LastSavedName = m_pEmitterList->Get_Name ();
 	}
@@ -321,7 +321,7 @@ EmitterPropertySheetClass::Initialize (void)
 	AddPage (&m_PhysicsPage);
 	AddPage (&m_ColorPage);
 	AddPage (&m_SizePage);
-	AddPage (&m_UserPage);	
+	AddPage (&m_UserPage);
 	AddPage (&m_LinePage);
 	AddPage (&m_RotationPage);
 	AddPage (&m_FramePage);
@@ -346,7 +346,7 @@ EmitterPropertySheetClass::Create_Emitter (void)
 	float rate				= m_ParticlePage.Get_Rate ();
 	int burst				= m_ParticlePage.Get_Burst_Size ();
 	float max_particles	= m_ParticlePage.Get_Max_Particles ();
-	
+
 	//
 	//	Read the physics settings
 	//
@@ -372,7 +372,7 @@ EmitterPropertySheetClass::Create_Emitter (void)
 	m_ColorPage.Get_Color_Keyframes (colors);
 	m_ColorPage.Get_Opacity_Keyframes (opacity);
 	m_SizePage.Get_Size_Keyframes (size);
-	
+
 	//
 	//	Read the randomizers
 	//
@@ -406,7 +406,7 @@ EmitterPropertySheetClass::Create_Emitter (void)
 																					shader,
 																					max_particles);
 
-	
+
 	//
 	//	Pass the name onto the emitter
 	//

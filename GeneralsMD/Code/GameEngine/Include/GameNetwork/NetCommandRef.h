@@ -40,11 +40,11 @@
 #else
 #define NEW_NETCOMMANDREF(msg) newInstance(NetCommandRef)(msg)
 #endif
- 
+
 
 class NetCommandRef : public MemoryPoolObject
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(NetCommandRef, "NetCommandRef")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(NetCommandRef, "NetCommandRef")
 public:
 #ifdef DEBUG_NETCOMMANDREF
 	NetCommandRef(NetCommandMsg *msg, char *filename, int line);
@@ -80,7 +80,7 @@ protected:
 /**
  * Return the command message.
  */
-inline NetCommandMsg * NetCommandRef::getCommand() 
+inline NetCommandMsg * NetCommandRef::getCommand()
 {
 	return m_msg;
 }
@@ -88,7 +88,7 @@ inline NetCommandMsg * NetCommandRef::getCommand()
 /**
  * Return the next command ref in the list.
  */
-inline NetCommandRef * NetCommandRef::getNext() 
+inline NetCommandRef * NetCommandRef::getNext()
 {
 	return m_next;
 }
@@ -96,7 +96,7 @@ inline NetCommandRef * NetCommandRef::getNext()
 /**
  * Return the previous command ref in the list.
  */
-inline NetCommandRef * NetCommandRef::getPrev() 
+inline NetCommandRef * NetCommandRef::getPrev()
 {
 	return m_prev;
 }
@@ -104,7 +104,7 @@ inline NetCommandRef * NetCommandRef::getPrev()
 /**
  * Set the next command ref in the list.
  */
-inline void NetCommandRef::setNext(NetCommandRef *next) 
+inline void NetCommandRef::setNext(NetCommandRef *next)
 {
 	m_next = next;
 }
@@ -112,7 +112,7 @@ inline void NetCommandRef::setNext(NetCommandRef *next)
 /**
  * Set the previous command ref in the list.
  */
-inline void NetCommandRef::setPrev(NetCommandRef *prev) 
+inline void NetCommandRef::setPrev(NetCommandRef *prev)
 {
 	m_prev = prev;
 }
@@ -128,7 +128,7 @@ inline time_t NetCommandRef::getTimeLastSent() const
 /**
  * Set the time for the last time this command was sent from this reference.
  */
-inline void NetCommandRef::setTimeLastSent(time_t timeLastSent) 
+inline void NetCommandRef::setTimeLastSent(time_t timeLastSent)
 {
 	m_timeLastSent = timeLastSent;
 }
@@ -136,7 +136,7 @@ inline void NetCommandRef::setTimeLastSent(time_t timeLastSent)
 /**
  * Set the send relay for this reference of the command.
  */
-inline void NetCommandRef::setRelay(UnsignedByte relay) 
+inline void NetCommandRef::setRelay(UnsignedByte relay)
 {
 	m_relay = relay;
 }

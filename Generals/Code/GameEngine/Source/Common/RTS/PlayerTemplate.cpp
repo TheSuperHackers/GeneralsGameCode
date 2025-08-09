@@ -24,12 +24,12 @@
 
 // FILE: PlayerTemplate.cpp /////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:   RTS3
@@ -65,7 +65,7 @@
 //-------------------------------------------------------------------------------------------------
 /*static*/ const FieldParse* PlayerTemplate::getFieldParse()
 {
-	static const FieldParse TheFieldParseTable[] = 
+	static const FieldParse TheFieldParseTable[] =
 	{
 		{ "Side",											INI::parseAsciiString,													NULL, offsetof( PlayerTemplate, m_side ) },
 		{ "PlayableSide",							INI::parseBool,																	NULL, offsetof( PlayerTemplate, m_playableSide ) },
@@ -179,7 +179,7 @@ AsciiString PlayerTemplate::getStartingUnit( Int i ) const
 // PUBLIC FUNCTIONS ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-PlayerTemplate::PlayerTemplate() : 
+PlayerTemplate::PlayerTemplate() :
 	m_nameKey(NAMEKEY_INVALID),
 	m_observer(false),
 	m_playableSide(false),
@@ -239,13 +239,13 @@ const Image *PlayerTemplate::getEnabledImage( void ) const
 /*extern*/ PlayerTemplateStore *ThePlayerTemplateStore = NULL;
 
 //-----------------------------------------------------------------------------
-PlayerTemplateStore::PlayerTemplateStore() 
+PlayerTemplateStore::PlayerTemplateStore()
 {
 	// nothing
 }
 
 //-----------------------------------------------------------------------------
-PlayerTemplateStore::~PlayerTemplateStore() 
+PlayerTemplateStore::~PlayerTemplateStore()
 {
 	// nothing
 }
@@ -323,36 +323,36 @@ const PlayerTemplate* PlayerTemplateStore::getNthPlayerTemplate(Int i) const
 }
 
 //-------------------------------------------------------------------------------------------------
-// @todo: PERF_EVALUATE Get a perf timer on this. 
-// If this function is called frequently, there are some relatively trivial changes we could make to 
+// @todo: PERF_EVALUATE Get a perf timer on this.
+// If this function is called frequently, there are some relatively trivial changes we could make to
 // have it run a lot faster.
 void PlayerTemplateStore::getAllSideStrings(AsciiStringList *outStringList)
 {
-	if (!outStringList) 
+	if (!outStringList)
 		return;
 
 	// should outStringList be cleared first? If so, that would go here
 	AsciiStringList tmpList;
 
 	Int numTemplates = getPlayerTemplateCount();
-	for ( Int i = 0; i < numTemplates; ++i ) 
+	for ( Int i = 0; i < numTemplates; ++i )
 	{
 		const PlayerTemplate *pt = getNthPlayerTemplate(i);
 		// Sanity
-		if (!pt)			
-			continue; 
+		if (!pt)
+			continue;
 
 		if (std::find(tmpList.begin(), tmpList.end(), pt->getSide()) == tmpList.end())
 			tmpList.push_back(pt->getSide());
 	}
 	// tmpList is now filled with all unique sides found in the player templates.
 
-	// splice is a constant-time function which takes all elements from tmpList and 
+	// splice is a constant-time function which takes all elements from tmpList and
 	// inserts them before outStringList->end(), and also removes them from tmpList
 	outStringList->splice(outStringList->end(), tmpList);
-	
+
 	// all done
-}	
+}
 
 //-------------------------------------------------------------------------------------------------
 /*static*/ void PlayerTemplateStore::parsePlayerTemplateDefinition( INI* ini )

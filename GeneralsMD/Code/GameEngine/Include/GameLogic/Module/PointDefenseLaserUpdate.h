@@ -56,7 +56,7 @@ public:
 	PointDefenseLaserUpdateModuleData();
 	static void buildFieldParse(MultiIniFieldParse& p);
 
-private: 
+private:
 
 };
 

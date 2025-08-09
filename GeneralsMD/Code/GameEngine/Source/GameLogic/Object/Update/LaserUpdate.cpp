@@ -38,7 +38,7 @@
 #include "GameClient/Drawable.h"
 #include "GameClient/GameClient.h"
 #include "GameClient/ParticleSys.h"
-#include "GameLogic/Object.h" 
+#include "GameLogic/Object.h"
 #include "GameLogic/GameLogic.h" // For frame number
 #include "GameLogic/Module/LaserUpdate.h"
 #include "WWMath/vector3.h"
@@ -56,7 +56,7 @@ LaserUpdateModuleData::LaserUpdateModuleData()
 {
 	ModuleData::buildFieldParse(p);
 
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
 		{ "MuzzleParticleSystem",		INI::parseAsciiString,	NULL, offsetof( LaserUpdateModuleData, m_particleSystemName ) },
 		{ "TargetParticleSystem",		INI::parseAsciiString,  NULL, offsetof( LaserUpdateModuleData, m_targetParticleSystemName ) },
@@ -95,7 +95,7 @@ LaserUpdate::LaserUpdate( Thing *thing, const ModuleData* moduleData ) : ClientU
 	m_parentID = INVALID_DRAWABLE_ID;
 	m_targetID = INVALID_DRAWABLE_ID;
 	m_parentBoneName.clear();
-} 
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -120,11 +120,11 @@ void LaserUpdate::updateStartPos()
 	const Drawable *parentDrawable = TheGameClient->findDrawableByID(m_parentID);
 	if( parentDrawable == NULL )
 		return;// Can't update if no one to ask
-		
+
 	if( m_parentBoneName.isNotEmpty() )
 	{
 		Matrix3D startPosMatrix;
-		
+
 		if( !parentDrawable->getCurrentWorldspaceClientBonePositions( m_parentBoneName.str(), startPosMatrix ) )
 		{
 			// failed to find the required bone, so just die
@@ -132,15 +132,15 @@ void LaserUpdate::updateStartPos()
 			//Kris: Doing this CRASHES THE GAME LATER!!!! Instead, let's set the position to the drawable, then
 			//      create a nasty assert.
 			//TheGameClient->destroyDrawable( getDrawable() );
-			
+
 			m_startPos.set( parentDrawable->getPosition() );
-			DEBUG_CRASH( ("LaserUpdate::updateStartPos() -- Drawable %s is expecting to find a bone %s but can't. Defaulting to position of drawable.", 
+			DEBUG_CRASH( ("LaserUpdate::updateStartPos() -- Drawable %s is expecting to find a bone %s but can't. Defaulting to position of drawable.",
 				parentDrawable->getTemplate()->getName().str(), m_parentBoneName.str() ) );
 
 			return;
 		}
 
-		
+
 
 		m_startPos.x = startPosMatrix.Get_X_Translation();
 		m_startPos.y = startPosMatrix.Get_Y_Translation();
@@ -166,8 +166,8 @@ void LaserUpdate::updateEndPos()
 		return;// Can't update if not told to update
 
 	const Drawable *targetDrawable = TheGameClient->findDrawableByID(m_targetID);
-	Bool targetDead = (targetDrawable && targetDrawable->getObject()) 
-										? targetDrawable->getObject()->isEffectivelyDead() 
+	Bool targetDead = (targetDrawable && targetDrawable->getObject())
+										? targetDrawable->getObject()->isEffectivelyDead()
 										: FALSE;
 	if( targetDrawable == NULL || targetDead )
 	{
@@ -335,7 +335,7 @@ void LaserUpdate::initLaser( const Object *parent, const Object *target, const C
 	}
 	else if( endPos )
 	{
-		// just use what they gave, no override here 
+		// just use what they gave, no override here
 		m_endPos = *endPos;
 	}
 	else
@@ -395,7 +395,7 @@ void LaserUpdate::initLaser( const Object *parent, const Object *target, const C
 			system->setPosition( &m_startPos );
 		}
 	}
-	
+
 	//PLEASE NOTE You cannot check an ID for NULL.  This should be a check against INVALID_PARTICLE_SYSTEM_ID.  Can't change it on the last day without a bug though.
 	if( m_targetParticleSystemID )
 	{
@@ -442,7 +442,7 @@ Real LaserUpdate::getTemplateLaserRadius() const
 		{
 			//***NOTE***
 			//While it appears the logic is accessing client data, it is actually accessing template module
-			//data from the client. This value is INI constant thus can't change. It's grouped with other 
+			//data from the client. This value is INI constant thus can't change. It's grouped with other
 			//laser defining attributes and having it there makes it easier for artists.
 			return ldi->getLaserTemplateWidth();
 		}

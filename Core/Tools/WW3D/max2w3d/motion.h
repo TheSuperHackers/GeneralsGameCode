@@ -17,22 +17,22 @@
 */
 
 /* $Header: /Commando/Code/Tools/max2w3d/motion.h 13    10/30/00 6:56p Greg_h $ */
-/*********************************************************************************************** 
- ***                            Confidential - Westwood Studios                              *** 
- *********************************************************************************************** 
- *                                                                                             * 
- *                 Project Name : Commando Tools - W3D export                                  * 
- *                                                                                             * 
- *                     $Archive:: /Commando/Code/Tools/max2w3d/motion.h                       $* 
- *                                                                                             * 
- *                      $Author:: Greg_h                                                      $* 
- *                                                                                             * 
- *                     $Modtime:: 10/30/00 5:25p                                              $* 
- *                                                                                             * 
- *                    $Revision:: 13                                                          $* 
- *                                                                                             * 
- *---------------------------------------------------------------------------------------------* 
- * Functions:                                                                                  * 
+/***********************************************************************************************
+ ***                            Confidential - Westwood Studios                              ***
+ ***********************************************************************************************
+ *                                                                                             *
+ *                 Project Name : Commando Tools - W3D export                                  *
+ *                                                                                             *
+ *                     $Archive:: /Commando/Code/Tools/max2w3d/motion.h                       $*
+ *                                                                                             *
+ *                      $Author:: Greg_h                                                      $*
+ *                                                                                             *
+ *                     $Modtime:: 10/30/00 5:25p                                              $*
+ *                                                                                             *
+ *                    $Revision:: 13                                                          $*
+ *                                                                                             *
+ *---------------------------------------------------------------------------------------------*
+ * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 
@@ -73,7 +73,7 @@ class MotionClass
 {
 public:
 
-	MotionClass	(	
+	MotionClass	(
 						IScene * scene,
 						INode * rootnode,
 						HierarchySaveClass * basepose,
@@ -86,7 +86,7 @@ public:
 																	// base object space (for damage animations)
 					);
 
-	MotionClass	(	
+	MotionClass	(
 						IScene * scene,
 						INodeListClass * rootlist,
 						HierarchySaveClass * basepose,
@@ -121,23 +121,23 @@ private:
 	int							CompressAnimationFlavor;
 	float							CompressAnimationTranslationError;
 	float							CompressAnimationRotationError;
-	
+
 	Progress_Meter_Class *	Meter;
 	char							Name[W3D_NAME_LEN];
 	Matrix3						Offset;
 
 	// 2D array of matrices, one per node per frame
 	Matrix3 * *					MotionMatrix;
-	
+
 	// 2D array of euler angles, one per node per frame
 	Point3 * *					EulerDelta;
-	
+
 	// Visibility bits, one bit per node per frame
 	BooleanVectorClass *		VisData;
 
 	// Movement bits, one bit per node per frame, to designate a movement as interpolated, or not
 	BooleanVectorClass *		BinMoveData;
-	
+
 	// flag for each node in the base pose, indicating
 	// whether the node actually appeard in the max scene
 	// being exported.

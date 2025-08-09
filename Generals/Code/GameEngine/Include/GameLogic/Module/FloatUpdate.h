@@ -70,7 +70,7 @@ public:
 
 protected:
 
-	
+
 	Bool m_enabled;			///< enabled
 
 };

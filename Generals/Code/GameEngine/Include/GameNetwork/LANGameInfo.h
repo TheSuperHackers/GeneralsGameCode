@@ -87,33 +87,33 @@ public:
 	const LANGameSlot* getConstLANSlot( Int slotNum ) const;							///< Get the slot
 	virtual Int getLocalSlotNum( void ) const;												///< Get the local slot number, or -1 if we're not present
 	Int getSlotNum( UnicodeString userName );						///< Get the slot number corresponding to a specific user, or -1 if he's not present
-	
+
 	inline UnsignedInt getLastHeard( void ) { return m_lastHeard; }
 	inline void setLastHeard( UnsignedInt lastHeard ) { m_lastHeard = lastHeard; }
 	inline LANGameInfo *getNext( void ) { return m_next; }
 	inline void setNext( LANGameInfo *next ) { m_next = next; }
-	
+
 	// Game options
 	void setMap( AsciiString mapName );									///< Set the map to play on
 	void setSeed( Int seed );														///< Set the random seed for the game
-	
+
 	inline void setName( UnicodeString name ) { m_gameName = name; }		///< Set the Name of the Game
 	inline UnicodeString getName( void ) { return m_gameName; }					///< Get the Name of the Game
 
-	// Convinience functions that interface with the LANPlayer held in the slot list	
+	// Convinience functions that interface with the LANPlayer held in the slot list
 	virtual void resetAccepted(void);														///< Reset the accepted flag on all players
 	Bool amIHost( void );																///< Convenience function - is the local player the game host?
 
 	/// Get the IP of selected player or return 0
-	inline UnsignedInt getIP( int who ) 
+	inline UnsignedInt getIP( int who )
 	{
 		return m_LANSlot[who].getIP();
 	}
-	
+
 	/// Set the IP of the Selected Player
 	inline void setIP( int who, UnsignedInt IP )
 	{
-		m_LANSlot[who].setIP(IP); 
+		m_LANSlot[who].setIP(IP);
 	}
 
 	/// set whether or not this is a direct connect game or not.
@@ -127,19 +127,19 @@ public:
 	{
 		return m_isDirectConnect;
 	}
-	
+
 	/// Set the Player Name
 	inline void setPlayerName( int who, UnicodeString name )
 	{
-		m_LANSlot[who].setName(name); 
+		m_LANSlot[who].setName(name);
 	}
 
 	/// Return the Player name or TheEmptyString
 	inline UnicodeString getPlayerName(int who)
 	{
-		return m_LANSlot[who].getName(); 
-	} 
-	
+		return m_LANSlot[who].getName();
+	}
+
 	/// Return the time the player was heard from last, or 0
 	inline UnsignedInt getPlayerLastHeard( int who )
 	{
@@ -149,7 +149,7 @@ public:
 	}
 
 	/// Set the last time we heard from the player
-	inline void setPlayerLastHeard( int who, UnsignedInt lastHeard ) 	
+	inline void setPlayerLastHeard( int who, UnsignedInt lastHeard )
 	{
 		DEBUG_LOG(("LANGameInfo::setPlayerLastHeard - changing player %d last heard from %d to %d", who, getPlayerLastHeard(who), lastHeard));
 		if (m_LANSlot[who].isHuman())
@@ -158,13 +158,13 @@ public:
 
 	/// Return the hosts IP or 0
 	UnsignedInt getHostIP(void)
-	{ 
+	{
 		if (m_LANSlot[0].isHuman())
 			return m_LANSlot[0].getIP();
 		return 0;
 	}
 
-	
+
 private:
 	LANGameInfo *m_next;																///< Pointer for linked list
 	UnsignedInt m_lastHeard;														///< The last time we heard from this game (for timeout purposes)

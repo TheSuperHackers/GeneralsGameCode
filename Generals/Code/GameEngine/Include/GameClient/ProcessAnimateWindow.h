@@ -24,12 +24,12 @@
 
 // FILE: ProcessAnimateWindow.h /////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Electronic Arts Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2002 - All Rights Reserved                  
-//                                                                          
+//
+//                       Electronic Arts Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2002 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 //	created:	Mar 2002
@@ -37,11 +37,11 @@
 //	Filename: 	ProcessAnimateWindow.h
 //
 //	author:		Chris Huybregts
-//	
-//	purpose:	If a new animation is wanted to be added for the windows, All you 
+//
+//	purpose:	If a new animation is wanted to be added for the windows, All you
 //						have to do is create a new class derived from ProcessAnimateWindow.
 //						Then setup each of the virtual classes to process an AnimateWindow
-//						class.  The Update adn reverse functions get called every frame 
+//						class.  The Update adn reverse functions get called every frame
 //						by the shell and will continue to process the AdminWin until the
 //						isFinished flag on the adminWin is set to true.
 //

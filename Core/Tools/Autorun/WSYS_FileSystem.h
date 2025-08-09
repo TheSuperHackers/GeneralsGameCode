@@ -17,12 +17,12 @@
 */
 
 //----------------------------------------------------------------------------=
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information					                  
-//                Copyright(C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright(C) 2001 - All Rights Reserved
+//
 //----------------------------------------------------------------------------
 //
 // Project:    WSYS Library
@@ -31,7 +31,7 @@
 //
 // File name:  wsys/FileSystem.h
 //
-// Created:    
+// Created:
 //
 //----------------------------------------------------------------------------
 
@@ -43,7 +43,7 @@
 
 
 //----------------------------------------------------------------------------
-//           Includes                                                      
+//           Includes
 //----------------------------------------------------------------------------
 
 #ifndef __WSYS_FILE_H
@@ -65,8 +65,8 @@
 //===============================
 /**
   * FileSystem is an interface class for creating specific FileSystem objects.
-  * 
-	* A FileSystem object's implemenation decides what derivative of File object needs to be 
+  *
+	* A FileSystem object's implemenation decides what derivative of File object needs to be
 	* created when FileSystem::Open() gets called.
 	*/
 //===============================
@@ -88,7 +88,7 @@ extern FileSystem*	TheFileSystem;
 
 
 //----------------------------------------------------------------------------
-//           Inlining                                                       
+//           Inlining
 //----------------------------------------------------------------------------
 
 

@@ -27,7 +27,7 @@
  *                    Org Author:: Kenny Mitchell
  *                                                                                             *
  *                       $Author:: Kenny_m
- *																																	
+ *
  *								$Modtime:: 07/01/02 9:58p                                               $*
  *                                                                                             *
  *                    $Revision:: 1                                                          $*
@@ -39,7 +39,7 @@
 #ifndef SHDLIB_H
 #define SHDLIB_H
 
-// TheSuperHackers @compile Removes the unused WWShade code. (#596)
+// TheSuperHackers @build Removes the unused WWShade code. (#596)
 // If there is a desire to revive this, then the WWShade library needs to be re-added.
 
 #ifdef USE_WWSHADE
@@ -60,12 +60,12 @@ extern void SHD_Register_Loader();
 
 #else // USE_WWSHADE
 
-#define SHD_INIT					
-#define SHD_SHUTDOWN				
-#define SHD_INIT_SHADERS		
-#define SHD_SHUTDOWN_SHADERS	
-#define SHD_FLUSH					
-#define SHD_REG_LOADER			
+#define SHD_INIT
+#define SHD_SHUTDOWN
+#define SHD_INIT_SHADERS
+#define SHD_SHUTDOWN_SHADERS
+#define SHD_FLUSH
+#define SHD_REG_LOADER
 
 #endif // USE_WWSHADE
 

@@ -25,7 +25,7 @@
 // FILE: BuildAssistant.h /////////////////////////////////////////////////////////////////////////
 // Author: Colin Day, February 2002
 // Desc:   Singleton class to encapsulate some of the more common functions or rules
-//				 that apply to building structures and units 
+//				 that apply to building structures and units
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
@@ -104,7 +104,7 @@ class BuildAssistant : public SubsystemInterface
 {
 
 public:
-	
+
 	struct TileBuildInfo
 	{
 		Int tilesUsed;
@@ -115,10 +115,10 @@ public:
 	{
 		TERRAIN_RESTRICTIONS		= 0x00000001,	///< Check for basic terrain restrictions
 		CLEAR_PATH							= 0x00000002,	///< Must be able to path find to location
-		NO_OBJECT_OVERLAP				= 0X00000004,	///< Can't overlap enemy objects, or locally controled objects that can't move out of the way			
+		NO_OBJECT_OVERLAP				= 0X00000004,	///< Can't overlap enemy objects, or locally controled objects that can't move out of the way
 		USE_QUICK_PATHFIND			= 0x00000008, ///< Use the quick pathfind method for CLEAR_PATH
 		SHROUD_REVEALED					= 0x00000010,	///< Check to make sure the shroud is revealed
-		NO_ENEMY_OBJECT_OVERLAP	= 0x00000020,	///< Can't overlap enemy objects only.			
+		NO_ENEMY_OBJECT_OVERLAP	= 0x00000020,	///< Can't overlap enemy objects only.
 		IGNORE_STEALTHED				= 0x00000040, ///< Units that we can't see are legal to "build" on. (when moving mouse around)
 		FAIL_STEALTHED_WITHOUT_FEEDBACK = 0x00000080 ///< USE WITH IGNORE_STEALTHED except it will fail without BIB feedback (when clicking to place).
 	};
@@ -141,17 +141,17 @@ public:
 												 void *funcUserData );
 
 	/// create object from a build and put it in the world now
-	virtual Object *buildObjectNow( Object *constructorObject, const ThingTemplate *what, 
+	virtual Object *buildObjectNow( Object *constructorObject, const ThingTemplate *what,
 																	const Coord3D *pos, Real angle, Player *owningPlayer );
 
 	/// using the "line placement" for objects (like walls etc) create that line of objects line
-	virtual void buildObjectLineNow( Object *constructorObject, const ThingTemplate *what, 
+	virtual void buildObjectLineNow( Object *constructorObject, const ThingTemplate *what,
 																	 const Coord3D *start, const Coord3D *end, Real angle,
 																	 Player *owningPlayer );
 
 	/// query if we can build at this location
 	virtual LegalBuildCode isLocationLegalToBuild( const Coord3D *worldPos,
-																								 const ThingTemplate *build, 
+																								 const ThingTemplate *build,
 																								 Real angle,  // angle to construct 'build' at
 																								 UnsignedInt options,		// use LocationLegalToBuildOptions
 																								 Object *builderObject,
@@ -159,10 +159,10 @@ public:
 
 	/// query if we can build at this location
 	virtual LegalBuildCode isLocationClearOfObjects( const Coord3D *worldPos,
-																								 const ThingTemplate *build, 
+																								 const ThingTemplate *build,
 																								 Real angle,  // angle to construct 'build' a
 																								 Object *builderObject,
-																								 UnsignedInt options, 
+																								 UnsignedInt options,
 																								 Player *thePlayer);
 
 	/// Adds bib highlighting for this location.
@@ -197,14 +197,14 @@ protected:
 
 	/// some objects will be "cleared" automatically when constructing
 	Bool isRemovableForConstruction( Object *obj );
-	
+
 	/// clear the area of removable objects for construction
-	void clearRemovableForConstruction( const ThingTemplate *whatToBuild, 
+	void clearRemovableForConstruction( const ThingTemplate *whatToBuild,
 																			const Coord3D *pos, Real angle );
 
 	/// will move objects that can move out of the way.
 	/// will return false if there are objects that cannot be moved out of the way.
-	Bool moveObjectsForConstruction( const ThingTemplate *whatToBuild, 
+	Bool moveObjectsForConstruction( const ThingTemplate *whatToBuild,
 																	 const Coord3D *pos, Real angle, Player *playerToBuild );
 
 	Coord3D *m_buildPositions;			///< array used to create a line of build locations (think walls)

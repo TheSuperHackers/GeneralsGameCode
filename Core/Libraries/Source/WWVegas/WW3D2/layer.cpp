@@ -40,8 +40,8 @@
  *   LayerClass::Set_Camera -- Set the camera being used by this layer                         *
  *   LayerClass::Get_Camera -- get the camera being used by this layer                         *
  *   LayerClass::LayerClass -- default constructor                                             *
- *   LC::Peek_Camera -- Get copy of camera.                                                    * 
- *   LC::Set -- Kinda like an assignment operator.                                             * 
+ *   LC::Peek_Camera -- Get copy of camera.                                                    *
+ *   LC::Set -- Kinda like an assignment operator.                                             *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 
@@ -69,7 +69,7 @@ LayerClass::LayerClass(void) :
 	ClearZ(true),
 	ClearColor(0,0,0)
 {
-}	
+}
 
 LayerClass::LayerClass(const LayerClass &src) :
 	Scene(src.Get_Scene()),
@@ -78,7 +78,7 @@ LayerClass::LayerClass(const LayerClass &src) :
 	ClearZ(src.ClearZ),
 	ClearColor(src.ClearColor)
 {
-}	
+}
 
 /***********************************************************************************************
  * LayerClass::LayerClass -- constructor                                                       *
@@ -102,17 +102,17 @@ LayerClass::LayerClass
 		bool clear,
 		bool clearz,
 		const Vector3 & color
-) 
-{ 
+)
+{
 	if (scene) scene->Add_Ref();
 	Scene = scene;
 
 	if (cam) cam->Add_Ref();
 	Camera = cam;
 
-	Clear = clear; 
+	Clear = clear;
 	ClearZ = clearz;
-	ClearColor = color; 
+	ClearColor = color;
 }
 
 
@@ -128,7 +128,7 @@ LayerClass::LayerClass
  * HISTORY:                                                                                    *
  *   3/27/98    GTH : Created.                                                                 *
  *=============================================================================================*/
-LayerClass::~LayerClass(void) 
+LayerClass::~LayerClass(void)
 {
 	if (Scene) {
 		Scene->Release_Ref();
@@ -153,7 +153,7 @@ LayerClass::~LayerClass(void)
  * HISTORY:                                                                                    *
  *   3/27/98    GTH : Created.                                                                 *
  *=============================================================================================*/
-void LayerClass::Set_Scene(SceneClass * scene) 
+void LayerClass::Set_Scene(SceneClass * scene)
 {
 	if (Scene) {
 		Scene->Release_Ref();
@@ -216,7 +216,7 @@ SceneClass * LayerClass::Peek_Scene(void) const
  * HISTORY:                                                                                    *
  *   3/27/98    GTH : Created.                                                                 *
  *=============================================================================================*/
-void LayerClass::Set_Camera(CameraClass * cam) 
+void LayerClass::Set_Camera(CameraClass * cam)
 {
 	if (Camera) {
 		Camera->Release_Ref();
@@ -249,17 +249,17 @@ CameraClass * LayerClass::Get_Camera(void) const
 }
 
 
-/*********************************************************************************************** 
- * LC::Peek_Camera -- Get copy of camera.                                                      * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   08/14/2001 SKB : Created.                                                                 * 
+/***********************************************************************************************
+ * LC::Peek_Camera -- Get copy of camera.                                                      *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   08/14/2001 SKB : Created.                                                                 *
  *=============================================================================================*/
 CameraClass * LayerClass::Peek_Camera(void) const
 {
@@ -267,17 +267,17 @@ CameraClass * LayerClass::Peek_Camera(void) const
 }
 
 
-/*********************************************************************************************** 
- * LC::Set -- Kinda like an assignment operator.                                               * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   08/14/2001 SKB : Created.                                                                 * 
+/***********************************************************************************************
+ * LC::Set -- Kinda like an assignment operator.                                               *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   08/14/2001 SKB : Created.                                                                 *
  *=============================================================================================*/
 void LayerClass::Set(const LayerClass & layer)
 {

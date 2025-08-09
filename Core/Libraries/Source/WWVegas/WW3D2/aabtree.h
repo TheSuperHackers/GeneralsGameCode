@@ -116,12 +116,12 @@ public:
 	void						Set_Mesh(MeshGeometryClass * mesh);
 
 private:
-	
+
 	AABTreeClass &			operator = (const AABTreeClass & that);
 
 	void						Read_Poly_Indices(ChunkLoadClass & cload);
 	void						Read_Nodes(ChunkLoadClass & cload);
-	
+
 	void						Build_Tree_Recursive(AABTreeBuilderClass::CullNodeStruct * node,int &curpolyindex);
 	void						Reset(void);
 	void						Update_Bounding_Boxes(void);
@@ -139,13 +139,13 @@ private:
 	{
 		Vector3				Min;
 		Vector3				Max;
-		
+
 		uint32				FrontOrPoly0;
 		uint32				BackOrPolyCount;
 
 		// accessors
-		inline bool			Is_Leaf(void);				
-		
+		inline bool			Is_Leaf(void);
+
 		inline int			Get_Back_Child(void);		// returns index of back child (only call for non-LEAFs!!!)
 		inline int			Get_Front_Child(void);		// returns index of front child (only call for non-LEAFs!!!)
 		inline int			Get_Poly0(void);				// returns index of first polygon (only call on LEAFs)
@@ -164,7 +164,7 @@ private:
 	*/
 	struct OBBoxAPTContextStruct
 	{
-		OBBoxAPTContextStruct(const OBBoxClass & box,SimpleDynVecClass<uint32> & apt) : 
+		OBBoxAPTContextStruct(const OBBoxClass & box,SimpleDynVecClass<uint32> & apt) :
 			Box(box), APT(apt)
 		{ }
 
@@ -221,8 +221,8 @@ private:
 
 };
 
-inline int AABTreeClass::Compute_Ram_Size(void) 
-{ 
+inline int AABTreeClass::Compute_Ram_Size(void)
+{
 	return	NodeCount * sizeof(CullNodeStruct) +
 				PolyCount * sizeof(int) +
 				sizeof(AABTreeClass);
@@ -254,7 +254,7 @@ inline int AABTreeClass::Cast_Semi_Infinite_Axis_Aligned_Ray(const Vector3 & sta
 	// The functions called after this point will 'or' bits into this variable, so it needs to
 	// be initialized here to TRI_RAYCAST_FLAG_NONE.
 	flags = TRI_RAYCAST_FLAG_NONE;
-	
+
 	return Cast_Semi_Infinite_Axis_Aligned_Ray_Recursive(&(Nodes[0]), start_point,
 		axis_r[axis_dir], axis_1[axis_dir], axis_2[axis_dir], direction[axis_dir], flags);
 }

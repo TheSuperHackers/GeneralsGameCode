@@ -24,12 +24,12 @@
 
 // FILE: GameWindow.h /////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information					         
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:    RTS3
@@ -83,20 +83,20 @@ enum WindowMsgHandledType CPP_11(: Int) { MSG_IGNORED, MSG_HANDLED };
 
 // callback types -------------------------------------------------------------
 typedef void (*GameWinMsgBoxFunc)( void ); //used for the Message box callbacks.
-typedef void (*GameWinDrawFunc)( GameWindow *, 
+typedef void (*GameWinDrawFunc)( GameWindow *,
 																 WinInstanceData * );
-typedef void (*GameWinTooltipFunc)( GameWindow *, 
-																		WinInstanceData *, 
+typedef void (*GameWinTooltipFunc)( GameWindow *,
+																		WinInstanceData *,
 																		UnsignedInt );
-typedef WindowMsgHandledType (*GameWinInputFunc)( GameWindow *, 
-																	UnsignedInt, 
-																	WindowMsgData, 
+typedef WindowMsgHandledType (*GameWinInputFunc)( GameWindow *,
+																	UnsignedInt,
+																	WindowMsgData,
 																	WindowMsgData );
-typedef WindowMsgHandledType (*GameWinSystemFunc)( GameWindow *, 
-																	 UnsignedInt, 
-																	 WindowMsgData, 
+typedef WindowMsgHandledType (*GameWinSystemFunc)( GameWindow *,
+																	 UnsignedInt,
+																	 WindowMsgData,
 																	 WindowMsgData );
-	 
+
 enum
 {
 
@@ -197,7 +197,7 @@ enum
 	MSG_BOX_YES							= 0x01, //Display the yes button
 	MSG_BOX_NO							= 0x02, //Display the No button
 	MSG_BOX_OK							= 0x08, //Display the Ok button
-	MSG_BOX_CANCEL					= 0x04, //Display the Cancel button	
+	MSG_BOX_CANCEL					= 0x04, //Display the Cancel button
 };
 
 
@@ -263,11 +263,11 @@ public:
 	UnsignedInt winGetStyle( void );  ///< get style bits
 	Int winNextTab( void );  ///< advance focus to next window
 	Int winPrevTab( void );  ///< change focus to previous window
-	Int winSetPosition( Int x, Int y );  ///< set window position                                 
+	Int winSetPosition( Int x, Int y );  ///< set window position
 	Int winGetPosition( Int *x, Int *y );  ///< get window position
 	Int winGetScreenPosition( Int *x, Int *y );  ///< get screen coordinates
 	Int winGetRegion( IRegion2D *region );  ///< get window region
-	Int winSetCursorPosition( Int x, Int y );  ///< set window cursor position                                 
+	Int winSetCursorPosition( Int x, Int y );  ///< set window cursor position
 	Int winGetCursorPosition( Int *x, Int *y );  ///< get window cursor position
 
 	// --------------------------------------------------------------------------
@@ -343,7 +343,7 @@ public:
 
 	// these are for interacting with a group of windows as a shell "screen"
 	void winSetNextInLayout( GameWindow *next );  ///< set next in layout
-	void winSetPrevInLayout( GameWindow *prev );  ///< set prev in layout 
+	void winSetPrevInLayout( GameWindow *prev );  ///< set prev in layout
 	void winSetLayout( WindowLayout *layout );  ///< set layout
 	WindowLayout *winGetLayout( void );  ///< get layout layout
 	GameWindow *winGetNextInLayout( void );  ///< get next window in layout
@@ -360,7 +360,7 @@ public:
 
 	// pick correlation ---------------------------------------------------------
 	Bool winPointInWindow( Int x, Int y );  /**is point inside this window?
-																					also return TRUE if point is in 
+																					also return TRUE if point is in
 																					a child */
 	/** given a piont, return the child window which contains the mouse pointer,
 	if the point is not in a chilc, the function returns the 'window' paramater
@@ -458,7 +458,7 @@ public:
 EMPTY_DTOR(ModalWindow)
 
 // Errors returned by window functions
-enum 
+enum
 {
 
 	WIN_ERR_OK								=  0,	// No Error
@@ -484,21 +484,21 @@ enum
 // INLINING ///////////////////////////////////////////////////////////////////
 
 // EXTERNALS //////////////////////////////////////////////////////////////////
-extern void GameWinDefaultDraw( GameWindow *window, 
+extern void GameWinDefaultDraw( GameWindow *window,
 																WinInstanceData *instData );
-extern WindowMsgHandledType GameWinDefaultSystem( GameWindow *window, 
-																	UnsignedInt msg, 
-																  WindowMsgData mData1, 
+extern WindowMsgHandledType GameWinDefaultSystem( GameWindow *window,
+																	UnsignedInt msg,
+																  WindowMsgData mData1,
 																	WindowMsgData mData2 );
-extern WindowMsgHandledType GameWinDefaultInput( GameWindow *window, 
+extern WindowMsgHandledType GameWinDefaultInput( GameWindow *window,
 																 UnsignedInt msg,
-																 WindowMsgData mData1, 
+																 WindowMsgData mData1,
 																 WindowMsgData mData2 );
-extern WindowMsgHandledType GameWinBlockInput( GameWindow *window, 
+extern WindowMsgHandledType GameWinBlockInput( GameWindow *window,
 																 UnsignedInt msg,
-																 WindowMsgData mData1, 
+																 WindowMsgData mData1,
 																 WindowMsgData mData2 );
-extern void GameWinDefaultTooltip( GameWindow *window, 
+extern void GameWinDefaultTooltip( GameWindow *window,
 																	 WinInstanceData *instData,
 																	 UnsignedInt mouse );
 

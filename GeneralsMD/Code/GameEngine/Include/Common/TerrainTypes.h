@@ -69,11 +69,11 @@ typedef enum
 	TERRAIN_CLIFF,
 	TERRAIN_WOOD,
 	TERRAIN_BLEND_EDGES,
-	
+
 	// New terrain types (for Samm Ivri)
 	TERRAIN_LIVE_DESERT,
 	TERRAIN_DRY_DESERT,
-	TERRAIN_ACCENT_SAND, 
+	TERRAIN_ACCENT_SAND,
 	TERRAIN_TROPICAL_BEACH,
 	TERRAIN_BEACH_PARK,
 	TERRAIN_RUGGED_MOUNTAIN,
@@ -82,7 +82,7 @@ typedef enum
 	TERRAIN_RESIDENTIAL,
 	TERRAIN_RUGGED_SNOW,
 	TERRAIN_FLAT_SNOW,
-	TERRAIN_FIELD, 
+	TERRAIN_FIELD,
 	TERRAIN_ASPHALT,
 	TERRAIN_CONCRETE,
 	TERRAIN_CHINA,
@@ -94,7 +94,7 @@ typedef enum
 
 } TerrainClass;
 #ifdef DEFINE_TERRAIN_TYPE_NAMES
-static const char *terrainTypeNames[] = 
+static const char *terrainTypeNames[] =
 {
 	"NONE",
 	"DESERT_1",
@@ -120,12 +120,12 @@ static const char *terrainTypeNames[] =
 	"SAND",
 	"CLIFF",
 	"WOOD",
-	"BLEND_EDGE", 
+	"BLEND_EDGE",
 
 		// New terrain types (for Samm Ivri)
 	"DESERT_LIVE",
 	"DESERT_DRY",
-	"SAND_ACCENT", 
+	"SAND_ACCENT",
 	"BEACH_TROPICAL",
 	"BEACH_PARK",
 	"MOUNTAIN_RUGGED",
@@ -134,7 +134,7 @@ static const char *terrainTypeNames[] =
 	"RESIDENTIAL",
 	"SNOW_RUGGED",
 	"SNOW_FLAT",
-	"FIELD", 
+	"FIELD",
 	"ASPHALT",
 	"CONCRETE",
 	"CHINA",
@@ -227,7 +227,7 @@ public:
 	void update() { }
 
 	TerrainType *findTerrain( AsciiString name );		///< find terrain by name
-	TerrainType *newTerrain( AsciiString name );			///< allocate a new terrain 
+	TerrainType *newTerrain( AsciiString name );			///< allocate a new terrain
 
 	/// get first terrain in list
 	TerrainType *firstTerrain( void ) { return m_terrainList; }

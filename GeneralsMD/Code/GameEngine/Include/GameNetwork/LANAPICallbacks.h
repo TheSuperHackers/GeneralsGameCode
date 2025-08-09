@@ -84,6 +84,6 @@ enum PostToLanGameType CPP_11(: Int){ SEND_GAME_OPTS = 0,
 //the utility function mentioned above
 void PostToLanGameOptions(PostToLanGameType post);
 
-												
+
 
 #endif //_LANAPI_CALLBACKS_H_

@@ -156,7 +156,7 @@ ScreenCursorClass::Set_Texture (TextureClass *texture)
 	MEMBER_ADD (m_pTexture, texture);
 
 	// Find the dimensions of the texture:
-	if (m_pTexture != NULL) {		
+	if (m_pTexture != NULL) {
 		m_Width	= m_pTexture->Get_Width();
 		m_Height	= m_pTexture->Get_Height();
 	}
@@ -177,10 +177,10 @@ ScreenCursorClass::On_Frame_Update (void)
 	//	Get the current cursor position in screen coords
 	//
 	POINT point = { 0 };
-	::GetCursorPos (&point);	
+	::GetCursorPos (&point);
 
 	if (m_hWnd != NULL) {
-		
+
 		//
 		//	Normalize the screen position
 		//
@@ -224,8 +224,8 @@ ScreenCursorClass::On_Frame_Update (void)
 	float y_max		= 1 - ((y_pos + normal_height) * 2);
 	x_pos				= (x_pos * 2) - 1;
 	y_pos				= 1 - (y_pos * 2);
-	z_pos				= 0;	
-	
+	z_pos				= 0;
+
 	//
 	//	Build the verticies from the position and extents
 	//
@@ -272,12 +272,12 @@ ScreenCursorClass::Render (RenderInfoClass &rinfo)
 			vb->x=m_Verticies[i].X;
 			vb->y=m_Verticies[i].Y;
 			vb->z=m_Verticies[i].Z;
-			
+
 			// Normals
 			vb->nx=m_Normals[i].X;
 			vb->ny=m_Normals[i].Y;
 			vb->nz=m_Normals[i].Z;
-			
+
 			// UV coordinates
 			vb->u1=m_UVs[i].X;
 			vb->v1=m_UVs[i].Y;
@@ -306,18 +306,18 @@ ScreenCursorClass::Render (RenderInfoClass &rinfo)
 	DX8Wrapper::Set_Material(m_pVertMaterial);
 	DX8Wrapper::Set_Shader(ShaderClass::_PresetATestBlend2DShader);
 	DX8Wrapper::Set_Texture(0,m_pTexture);
-	
+
 	DX8Wrapper::Set_Vertex_Buffer(vbaccess);
 	DX8Wrapper::Set_Index_Buffer(ibaccess,0);
-	
+
 	SphereClass sphere;
-	Get_Obj_Space_Bounding_Sphere(sphere); 
+	Get_Obj_Space_Bounding_Sphere(sphere);
 
 	SortingRendererClass::Insert_Triangles(
 		sphere,
 		0,
 		FACE_COUNT*3,
-		0, 
+		0,
 		VERTEX_COUNT*2);
 
 	return ;
@@ -329,10 +329,10 @@ ScreenCursorClass::Render (RenderInfoClass &rinfo)
 //	Get_Obj_Space_Bounding_Sphere
 //
 //////////////////////////////////////////////////////////////
-void 
+void
 ScreenCursorClass::Get_Obj_Space_Bounding_Sphere(SphereClass & sphere) const
 {
-	sphere.Center = Get_Transform().Get_Translation();	
+	sphere.Center = Get_Transform().Get_Translation();
 	sphere.Radius = max (m_Width, m_Height);
 }
 
@@ -342,7 +342,7 @@ ScreenCursorClass::Get_Obj_Space_Bounding_Sphere(SphereClass & sphere) const
 //	Get_Obj_Space_Bounding_Box
 //
 //////////////////////////////////////////////////////////////
-void 
+void
 ScreenCursorClass::Get_Obj_Space_Bounding_Box(AABoxClass & box) const
 {
 	Matrix3D transform = Get_Transform ();

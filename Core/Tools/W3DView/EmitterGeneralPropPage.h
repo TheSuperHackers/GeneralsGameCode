@@ -90,7 +90,7 @@ protected:
 		//
 		EmitterInstanceListClass *	Get_Emitter (void) const { return m_pEmitterList; }
 		void								Set_Emitter (EmitterInstanceListClass *pemitter_list) { m_pEmitterList = pemitter_list; Initialize (); }
-		
+
 		EmitterPropertySheetClass *Get_Parent (void) const { return m_Parent; }
 		void								Set_Parent (EmitterPropertySheetClass * parent) { m_Parent = parent; }
 
@@ -107,7 +107,7 @@ protected:
 		/////////////////////////////////////////////////////////
 		//
 		//	Protected methods
-		//		
+		//
 		void								Initialize (void);
 		void								Add_Shader_To_Combo (ShaderClass &shader, LPCTSTR name);
 
@@ -116,7 +116,7 @@ protected:
 		/////////////////////////////////////////////////////////
 		//
 		//	Private member data
-		//		
+		//
 		EmitterInstanceListClass *	m_pEmitterList;
 		EmitterPropertySheetClass *m_Parent;
 

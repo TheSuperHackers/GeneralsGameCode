@@ -83,7 +83,7 @@ public:
 	//
 	//	Inline accessors
 	//
-	
+
 	SphereRenderObjClass *		Get_Sphere (void) const							{ return m_RenderObj; }
 	void								Set_Sphere (SphereRenderObjClass *sphere)	{ m_RenderObj = sphere; Initialize (); }
 	bool								Is_Data_Valid (void) const						{ return m_bValid; }

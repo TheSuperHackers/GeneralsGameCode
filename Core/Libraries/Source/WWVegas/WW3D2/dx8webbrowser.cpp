@@ -27,7 +27,7 @@
 // Date of Creation	: 6/4/2002
 //
 //******************************************************************************************
-// $Header: $ 
+// $Header: $
 //******************************************************************************************
 
 #include "dx8webbrowser.h"
@@ -139,11 +139,11 @@ void DX8WebBrowser::Shutdown()
 // ******************************************************************************************
 // * Description: 	Updates the browser image surfaces by copying the bits from the browser
 // *						DCs to the D3D Image surfaces.
-// * 
-// * Return Type: 	
-// * 
+// *
+// * Return Type:
+// *
 // * Argument:    	void
-// * 
+// *
 // ******************************************************************************************
 void	DX8WebBrowser::Update(void)
 {
@@ -155,11 +155,11 @@ void	DX8WebBrowser::Update(void)
 // * Function Name: DX8WebBrowser::Render
 // ******************************************************************************************
 // * Description: 	Draws all browsers to the back buffer.
-// * 
-// * Return Type: 	
-// * 
+// *
+// * Return Type:
+// *
 // * Argument:    	int backbufferindex
-// * 
+// *
 // ******************************************************************************************
 void	DX8WebBrowser::Render(int backbufferindex)
 {
@@ -170,9 +170,9 @@ void	DX8WebBrowser::Render(int backbufferindex)
 // * Function Name: DX8WebBrowser::CreateBrowser
 // ******************************************************************************************
 // * Description: 	Creates a browser window.
-// * 
-// * Return Type: 	
-// * 
+// *
+// * Return Type:
+// *
 // * Argument:    	const char* browsername -	This is a "name" used to identify the
 // *															browser instance.  Multiple browsers can
 // *															be created, and are referenced using this name.
@@ -185,7 +185,7 @@ void	DX8WebBrowser::Render(int backbufferindex)
 // *												at the specified rate (number of milliseconds) regardless
 // *												of paint messages.  When this is zero (the default) the browser
 // *												image is only updated whenever a paint message is received.
-// * 
+// *
 // ******************************************************************************************
 void	DX8WebBrowser::CreateBrowser(const char* browsername, const char* url, int x, int y, int w, int h, int updateticks, LONG options, LPDISPATCH gamedispatch)
 {
@@ -204,11 +204,11 @@ void	DX8WebBrowser::CreateBrowser(const char* browsername, const char* url, int 
 // ******************************************************************************************
 // * Description: 	Destroys the specified browser.  This closes the window and releases
 // *						the browser instance.
-// * 
-// * Return Type: 	
-// * 
+// *
+// * Return Type:
+// *
 // * Argument:    	const char* browsername - The name of the browser to destroy.
-// * 
+// *
 // ******************************************************************************************
 void	DX8WebBrowser::DestroyBrowser(const char* browsername)
 {
@@ -223,11 +223,11 @@ void	DX8WebBrowser::DestroyBrowser(const char* browsername)
 // ******************************************************************************************
 // * Description: 	This function checks to see if a browser of the specified name exists and
 // *						is currently open.
-// * 
-// * Return Type: 	
-// * 
+// *
+// * Return Type:
+// *
 // * Argument:    	const char* browsername - The name of the browser to test.
-// * 
+// *
 // ******************************************************************************************
 bool	DX8WebBrowser::Is_Browser_Open(const char* browsername)
 {
@@ -244,12 +244,12 @@ bool	DX8WebBrowser::Is_Browser_Open(const char* browsername)
 // * Function Name: DX8WebBrowser::Navigate
 // ******************************************************************************************
 // * Description: 	This function causes the browser to navigate to the specified page.
-// * 
-// * Return Type: 	
-// * 
+// *
+// * Return Type:
+// *
 // * Argument:    	const char* browsername - The name of the browser to test.
 // *						const char* url - The url to navigate to.
-// * 
+// *
 // ******************************************************************************************
 void	DX8WebBrowser::Navigate(const char* browsername, const char* url)
 {

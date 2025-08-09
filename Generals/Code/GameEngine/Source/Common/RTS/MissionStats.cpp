@@ -24,12 +24,12 @@
 
 // FILE: MissionStats.cpp /////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:   RTS3
@@ -49,13 +49,13 @@
 #include "Common/Xfer.h"
 
 //-----------------------------------------------------------------------------
-MissionStats::MissionStats() 
+MissionStats::MissionStats()
 {
 	init();
 }
 
 //-----------------------------------------------------------------------------
-void MissionStats::init() 
+void MissionStats::init()
 {
 	Int i;
 

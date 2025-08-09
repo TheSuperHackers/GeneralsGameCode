@@ -116,7 +116,7 @@ public:
 	void	Enable_Alpha(bool b);
 	void	Enable_Grayscale(bool b);///<added for generals to draw disabled button states - MW
 	void  Enable_Texturing(bool b);
-	
+
 	ShaderClass *			Get_Shader( void ) { return &Shader; }
 	static ShaderClass	Get_Default_Shader( void );
 
@@ -149,10 +149,10 @@ public:
 	// Z-value support (this is usefull for playing tricks with the z-buffer)
 	void	Set_Z_Value (float z_value)	{ ZValue = z_value; }
 
-	// Move all verts 
+	// Move all verts
 	void	Move( const Vector2 & a );
 
-	// Force all alphas 
+	// Force all alphas
 	void	Force_Alpha( float alpha );
 	void	Force_Color( int color );
 
@@ -213,7 +213,7 @@ public:
 
 	void	Set_Location( const Vector2 & loc )				{ Location = loc; Cursor = loc; }
 	void	Set_Wrapping_Width (float width)					{ WrapWidth = width; }
-	
+
 	// Clipping support
 	void	Set_Clipping_Rect( const RectClass &rect )	{ ClipRect = rect; IsClippedEnabled = true; }
 	bool	Is_Clipping_Enabled( void ) const				{ return IsClippedEnabled; }

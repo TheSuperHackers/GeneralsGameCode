@@ -48,7 +48,7 @@ UpdateSleepTime ObjectSMCHelper::update()
 	getObject()->clearSpecialModelConditionStates();
 
 	// then go back to sleep until we are forcibly awakened.
-	return UPDATE_SLEEP_FOREVER; 
+	return UPDATE_SLEEP_FOREVER;
 }
 
 // ------------------------------------------------------------------------------------------------

@@ -16,7 +16,7 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-// FILE: VelocityTypePanels.h 
+// FILE: VelocityTypePanels.h
 /*---------------------------------------------------------------------------*/
 /* EA Pacific                                                                */
 /* Confidential Information	                                                 */
@@ -55,9 +55,9 @@ class VelocityPanelOrtho : public ISwapablePanel
 
 		void InitPanel( void );
 
-		// if true, updates the UI from the Particle System. 
+		// if true, updates the UI from the Particle System.
 		// if false, updates the Particle System from the UI
-		void performUpdate( IN Bool toUI );	
+		void performUpdate( IN Bool toUI );
 	protected:
 		afx_msg void OnParticleSystemEdit();
 		DECLARE_MESSAGE_MAP()
@@ -73,9 +73,9 @@ class VelocityPanelSphere : public ISwapablePanel
 
 		void InitPanel( void );
 
-		// if true, updates the UI from the Particle System. 
+		// if true, updates the UI from the Particle System.
 		// if false, updates the Particle System from the UI
-		void performUpdate( IN Bool toUI );	
+		void performUpdate( IN Bool toUI );
 	protected:
 		afx_msg void OnParticleSystemEdit();
 		DECLARE_MESSAGE_MAP()
@@ -91,9 +91,9 @@ class VelocityPanelHemisphere : public ISwapablePanel
 
 		void InitPanel( void );
 
-		// if true, updates the UI from the Particle System. 
+		// if true, updates the UI from the Particle System.
 		// if false, updates the Particle System from the UI
-		void performUpdate( IN Bool toUI );	
+		void performUpdate( IN Bool toUI );
 	protected:
 		afx_msg void OnParticleSystemEdit();
 		DECLARE_MESSAGE_MAP()
@@ -109,9 +109,9 @@ class VelocityPanelCylinder : public ISwapablePanel
 
 		void InitPanel( void );
 
-		// if true, updates the UI from the Particle System. 
+		// if true, updates the UI from the Particle System.
 		// if false, updates the Particle System from the UI
-		void performUpdate( IN Bool toUI );	
+		void performUpdate( IN Bool toUI );
 	protected:
 		afx_msg void OnParticleSystemEdit();
 		DECLARE_MESSAGE_MAP()
@@ -127,9 +127,9 @@ class VelocityPanelOutward : public ISwapablePanel
 
 		void InitPanel( void );
 
-		// if true, updates the UI from the Particle System. 
+		// if true, updates the UI from the Particle System.
 		// if false, updates the Particle System from the UI
-		void performUpdate( IN Bool toUI );	
+		void performUpdate( IN Bool toUI );
 	protected:
 		afx_msg void OnParticleSystemEdit();
 		DECLARE_MESSAGE_MAP()

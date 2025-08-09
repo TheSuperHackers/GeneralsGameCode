@@ -48,7 +48,7 @@ public:
 	void freeBytes(void* pMem);
 
 	/**
-		return the actual number of bytes that would be allocated 
+		return the actual number of bytes that would be allocated
 		if you tried to allocate the given size.
 	*/
 	Int getActualAllocationSize(Int numBytes);
@@ -78,7 +78,7 @@ public:
 #define MEMORY_POOL_GLUE_WITHOUT_GCMP(ARGCLASS) \
 protected: \
 	virtual ~ARGCLASS(); \
-public: /* include this line at the end to reset visibility to 'public' */ 
+public: /* include this line at the end to reset visibility to 'public' */
 
 
 #define MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(ARGCLASS, ARGPOOLNAME) \
@@ -89,7 +89,7 @@ public: /* include this line at the end to reset visibility to 'public' */
 #define MEMORY_POOL_GLUE_ABC(ARGCLASS) \
 protected: \
 	virtual ~ARGCLASS(); \
-public: /* include this line at the end to reset visibility to 'public' */ 
+public: /* include this line at the end to reset visibility to 'public' */
 
 
 /**
@@ -108,7 +108,7 @@ protected:
 
 public:
 
-	static void deleteInstanceInternal(MemoryPoolObject* mpo) 
+	static void deleteInstanceInternal(MemoryPoolObject* mpo)
 	{
 		delete mpo;
 	}
@@ -121,9 +121,9 @@ inline void deleteInstance(MemoryPoolObject* mpo)
 
 
 /**
-	Initialize the memory manager. Construct a new MemoryPoolFactory and 
+	Initialize the memory manager. Construct a new MemoryPoolFactory and
 	DynamicMemoryAllocator and store 'em in the singletons of the relevant
-	names. 
+	names.
 */
 extern void initMemoryManager();
 
@@ -134,7 +134,7 @@ extern void initMemoryManager();
 extern Bool isMemoryManagerOfficiallyInited();
 
 /**
-	Shut down the memory manager. Throw away TheMemoryPoolFactory and 
+	Shut down the memory manager. Throw away TheMemoryPoolFactory and
 	TheDynamicMemoryAllocator.
 */
 extern void shutdownMemoryManager();

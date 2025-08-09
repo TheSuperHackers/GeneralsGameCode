@@ -24,12 +24,12 @@
 
 // FILE: W3DCheckBox.cpp //////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:   RTS3
@@ -166,7 +166,7 @@ void W3DGadgetCheckBoxDraw( GameWindow *window, WinInstanceData *instData )
 	else if( BitIsSet( instData->getState(), WIN_STATE_HILITED ) )
 	{
 
-		// hilited background 
+		// hilited background
 		backColor			= GadgetCheckBoxGetHiliteColor( window );
 		backBorder		= GadgetCheckBoxGetHiliteBorderColor( window );
 
@@ -186,7 +186,7 @@ void W3DGadgetCheckBoxDraw( GameWindow *window, WinInstanceData *instData )
 	else
 	{
 
-		// enabled background 
+		// enabled background
 		backColor			= GadgetCheckBoxGetEnabledColor( window );
 		backBorder		= GadgetCheckBoxGetEnabledBorderColor( window );
 
@@ -209,7 +209,7 @@ void W3DGadgetCheckBoxDraw( GameWindow *window, WinInstanceData *instData )
 	start.y = origin.y;
 	end.x = start.x + size.x;
 	end.y = start.y + size.y;
-	TheWindowManager->winOpenRect( backBorder, WIN_DRAW_LINE_WIDTH, 
+	TheWindowManager->winOpenRect( backBorder, WIN_DRAW_LINE_WIDTH,
 																 start.x, start.y, end.x, end.y );
 
 	// draw the background
@@ -217,7 +217,7 @@ void W3DGadgetCheckBoxDraw( GameWindow *window, WinInstanceData *instData )
 	start.y++;
 	end.x--;
 	end.y--;
-	TheWindowManager->winFillRect( backColor, WIN_DRAW_LINE_WIDTH, 
+	TheWindowManager->winFillRect( backColor, WIN_DRAW_LINE_WIDTH,
 																 start.x, start.y, end.x, end.y );
 
 	// draw box border
@@ -225,16 +225,16 @@ void W3DGadgetCheckBoxDraw( GameWindow *window, WinInstanceData *instData )
 	start.y = origin.y + (size.y / 3);
 	end.x = start.x + (size.y / 3);
 	end.y = start.y + (size.y / 3);
-	TheWindowManager->winOpenRect( boxBorder, WIN_DRAW_LINE_WIDTH, 
+	TheWindowManager->winOpenRect( boxBorder, WIN_DRAW_LINE_WIDTH,
 																 start.x, start.y, end.x, end.y );
 
 	// draw "x" for button
 	if( boxColor != WIN_COLOR_UNDEFINED )
 	{
 
-		TheWindowManager->winDrawLine( boxColor, WIN_DRAW_LINE_WIDTH, 
+		TheWindowManager->winDrawLine( boxColor, WIN_DRAW_LINE_WIDTH,
 																	 start.x, start.y, end.x, end.y );
-		TheWindowManager->winDrawLine( boxColor, WIN_DRAW_LINE_WIDTH, 
+		TheWindowManager->winDrawLine( boxColor, WIN_DRAW_LINE_WIDTH,
 																	 start.x, end.y, end.x, start.y );
 
 	}  // end if
@@ -287,7 +287,7 @@ void W3DGadgetCheckBoxImageDraw( GameWindow *window, WinInstanceData *instData )
 	else if( BitIsSet( instData->getState(), WIN_STATE_HILITED ) )
 	{
 
-		// hilited background 
+		// hilited background
 //		backgroundImage	= GadgetCheckBoxGetHiliteImage( window );
 
 		// check box
@@ -300,7 +300,7 @@ void W3DGadgetCheckBoxImageDraw( GameWindow *window, WinInstanceData *instData )
 	else
 	{
 
-		// enabled background 
+		// enabled background
 //		backgroundImage	= GadgetCheckBoxGetEnabledImage( window );
 
 		// check box
@@ -313,7 +313,7 @@ void W3DGadgetCheckBoxImageDraw( GameWindow *window, WinInstanceData *instData )
 
 	// draw background image
 //	if( backgroundImage )
-//		TheWindowManager->winDrawImage( backgroundImage, start.x, start.y, 
+//		TheWindowManager->winDrawImage( backgroundImage, start.x, start.y,
 //																		end.x, end.y );
 
 	// draw the box image
@@ -324,11 +324,11 @@ void W3DGadgetCheckBoxImageDraw( GameWindow *window, WinInstanceData *instData )
 		start.y = origin.y +  3;
 		end.x = start.x + (size.y - 6);
 		end.y = start.y + (size.y - 6);
-		TheWindowManager->winDrawImage( boxImage, start.x, start.y, 
+		TheWindowManager->winDrawImage( boxImage, start.x, start.y,
 																	  end.x, end.y );
 
 	}  // end if
-		
+
 	// draw the text
 	if( instData->getTextLength() )
 		drawCheckBoxText( window, instData );

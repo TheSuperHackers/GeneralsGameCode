@@ -39,7 +39,7 @@
 class InternetHackContainModuleData : public TransportContainModuleData
 {
 public:
-	
+
 
 	InternetHackContainModuleData();
 
@@ -64,7 +64,7 @@ public:
 
 protected:
 
-	
+
 private:
 
 };

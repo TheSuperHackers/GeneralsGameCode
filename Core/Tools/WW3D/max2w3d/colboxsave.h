@@ -51,7 +51,7 @@
 /*******************************************************************************************
 **
 ** CollisionBoxSaveClass - Create an AABox or an OBBox from a Max mesh (typically the
-**	artist should use a 'box' to generate this. In any case, we're just using the bounding 
+**	artist should use a 'box' to generate this. In any case, we're just using the bounding
 ** box).
 **
 *******************************************************************************************/
@@ -64,7 +64,7 @@ public:
 		EX_CANCEL = 1
 	};
 
-	CollisionBoxSaveClass(	char *						mesh_name,	
+	CollisionBoxSaveClass(	char *						mesh_name,
 									char *						container_name,
 									INode *						inode,
 									Matrix3 &					exportspace,
@@ -74,9 +74,9 @@ public:
 	int Write_To_File(ChunkSaveClass & csave);
 
 private:
-	
+
 	W3dBoxStruct						BoxData;				// contains same information as the W3dOBBoxStruct
-	
+
 };
 
 

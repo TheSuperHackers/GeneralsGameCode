@@ -41,11 +41,11 @@
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void ReplaceObjectUpgradeModuleData::buildFieldParse(MultiIniFieldParse& p) 
+void ReplaceObjectUpgradeModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
   UpgradeModuleData::buildFieldParse(p);
 
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
 		{ "ReplaceObject",	INI::parseAsciiString,	NULL, offsetof( ReplaceObjectUpgradeModuleData, m_replaceObjectName ) },
 		{ 0, 0, 0, 0 }
@@ -71,7 +71,7 @@ void ReplaceObjectUpgrade::upgradeImplementation( )
 {
 	const ReplaceObjectUpgradeModuleData *data = getReplaceObjectUpgradeModuleData();
 
-	Object *me = getObject();	
+	Object *me = getObject();
 
 	Matrix3D myMatrix = *me->getTransformMatrix();
 	Team *myTeam = me->getTeam();// Team implies player.  It is a subset.

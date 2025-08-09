@@ -39,7 +39,7 @@
 class Object;
 
 //-------------------------------------------------------------------------------------------------
-class UndeadBodyModuleData : public ActiveBodyModuleData 
+class UndeadBodyModuleData : public ActiveBodyModuleData
 {
 public:
 	Real m_secondLifeMaxHealth;
@@ -66,12 +66,12 @@ public:
 
 protected:
 
-	Bool m_isSecondLife;	/** This is false until I detect death the first time, then I 
+	Bool m_isSecondLife;	/** This is false until I detect death the first time, then I
 														change my Max, Initial, and Current health and stop intercepting anything.
 												*/
 	void startSecondLife(DamageInfo *damageInfo);
 
 };
 
-#endif 
+#endif
 

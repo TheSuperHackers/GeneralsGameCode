@@ -25,7 +25,7 @@
 // FILE: W3DGameEngine.cpp ////////////////////////////////////////////////////////////////////////
 // Author: Colin Day, April 2001
 // Description:
-//   Implementation of the Win32 game engine, this is the highest level of 
+//   Implementation of the Win32 game engine, this is the highest level of
 //   the game application, it creates all the devices we will use for the game
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -79,7 +79,7 @@ void Win32GameEngine::reset( void )
 }  // end reset
 
 //-------------------------------------------------------------------------------------------------
-/** Update the game engine by updating the GameClient and 
+/** Update the game engine by updating the GameClient and
 	* GameLogic singletons. */
 //-------------------------------------------------------------------------------------------------
 void Win32GameEngine::update( void )
@@ -105,7 +105,7 @@ void Win32GameEngine::update( void )
 			}
 
 			// If we are running a multiplayer game, keep running the logic.
-			// There is code in the client to skip client redraw if we are 
+			// There is code in the client to skip client redraw if we are
 			// iconic.  jba.
 			if (TheGameEngine->getQuitting() || TheGameLogic->isInInternetGame() || TheGameLogic->isInLanGame()) {
 				break; // keep running.
@@ -156,7 +156,7 @@ void Win32GameEngine::serviceWindowsOS( void )
 		TranslateMessage( &msg );
 		DispatchMessage( &msg );
 		TheMessageTime = 0;
-			
+
 	}  // end while
 
 }  // end ServiceWindowsOS

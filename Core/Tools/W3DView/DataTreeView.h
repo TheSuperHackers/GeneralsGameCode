@@ -83,7 +83,7 @@ protected:
 		/////////////////////////////////////////////////////////////////////
 		//	Public methods
 		/////////////////////////////////////////////////////////////////////
-		
+
 		//
 		//	Asset insertion methods
 		//
@@ -117,7 +117,7 @@ protected:
 		// Information methods
 		//
 		RenderObjClass *	Get_Current_Render_Obj (void) const;
-		AssetInfoClass *	Get_Current_Asset_Info (void) const;		
+		AssetInfoClass *	Get_Current_Asset_Info (void) const;
 		LPCTSTR				GetCurrentSelectionName (void);
 		ASSET_TYPE			GetCurrentSelectionType (void);
 		HTREEITEM			FindChildItem (HTREEITEM hParentItem, LPCTSTR pszChildItemName);
@@ -125,25 +125,25 @@ protected:
 		HTREEITEM			FindFirstChildItemBasedOnHierarchyName (HTREEITEM hParentItem, LPCTSTR pszHierarchyName);
 		HTREEITEM			FindSiblingItemBasedOnHierarchyName (HTREEITEM hCurrentItem, LPCTSTR pszHierarchyName);
 		void					Build_Render_Object_List (DynamicVectorClass <CString> &asset_list, HTREEITEM hparent = TVI_ROOT);
-		
+
 		//
 		//	Initialization methods
 		//
 		void					CreateRootNodes (void);
 
 	protected:
-		
+
 		///////////////////////////////////////////////////////////////////////
 		//	Protected methods
 		///////////////////////////////////////////////////////////////////////
 		ASSET_TYPE			Determine_Tree_Location (RenderObjClass &render_obj, HTREEITEM &hroot, int &icon_index);
 		void					Determine_Tree_Location (ASSET_TYPE type, HTREEITEM &hroot, int &icon_index);
 		RenderObjClass *	Create_Render_Obj_To_Display (HTREEITEM htree_item);
-		void					Add_Emitters_To_Menu (HMENU hmenu, RenderObjClass &render_obj);		
+		void					Add_Emitters_To_Menu (HMENU hmenu, RenderObjClass &render_obj);
 		void					Free_Child_Models (HTREEITEM parent_item);
 
 	private:
-		
+
 		///////////////////////////////////////////////////////
 		//
 		//	Private member data

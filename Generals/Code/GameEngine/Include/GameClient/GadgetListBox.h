@@ -24,12 +24,12 @@
 
 // FILE: GadgetListBox.h //////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information					         
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:    RTS3
@@ -111,17 +111,17 @@ extern void GadgetListBoxSetAudioFeedback( GameWindow *listbox, Bool enable );
 // and those slider buttons and thumb
 //
 extern void GadgetListBoxSetColors( GameWindow *listbox,
-																	  Color enabledColor, 
+																	  Color enabledColor,
 																	  Color enabledBorderColor,
-																	  Color enabledSelectedItemColor, 
+																	  Color enabledSelectedItemColor,
 																	  Color enabledSelectedItemBorderColor,
-																	  Color disabledColor, 
+																	  Color disabledColor,
 																	  Color disabledBorderColor,
-																	  Color disabledSelectedItemColor, 
+																	  Color disabledSelectedItemColor,
 																	  Color disabledSelectedItemBorderColor,
-																	  Color hiliteColor, 
+																	  Color hiliteColor,
 																	  Color hiliteBorderColor,
-																	  Color hiliteSelectedItemColor, 
+																	  Color hiliteSelectedItemColor,
 																	  Color hiliteSelectedItemBorderColor );
 
 inline void GadgetListBoxSetEnabledImage( GameWindow *g, const Image *image )													{ g->winSetEnabledImage( 0, image ); }

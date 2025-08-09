@@ -19,7 +19,7 @@
 /****************************************************************************\
 *        C O N F I D E N T I A L --- W E S T W O O D   S T U D I O S         *
 ******************************************************************************
-Project Name: 
+Project Name:
 File Name   : linkedlist.h
 Author      : Neal Kettler
 Start Date  : June 19, 1997
@@ -34,7 +34,7 @@ If you want to store pointers then the template should be of a pointer type.
 \****************************************************************************/
 
 #ifndef LINKEDLIST_HEADER
-#define LINKEDLIST_HEADER    
+#define LINKEDLIST_HEADER
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -50,7 +50,7 @@ class LNode
   T               Node;
   LNode<T>       *Next;
   LNode<T>       *Prev;
-};        
+};
 
 template <class T>
 class LinkedList
@@ -60,7 +60,7 @@ class LinkedList
                    LinkedList(LinkedList<T> &other);
                   ~LinkedList();
 
-  // Remove all entries from the lsit 
+  // Remove all entries from the lsit
   void             clear(void);
 
   // Add a node after the zero based 'pos'
@@ -72,13 +72,13 @@ class LinkedList
   bit8             remove(OUT T &node,sint32 pos);
   bit8             remove(sint32 pos);
   bit8             removeHead(OUT T &node);
-  bit8             removeTail(OUT T &node); 
+  bit8             removeTail(OUT T &node);
 
 
   // Get a node without removing from the list
   bit8             get(OUT T &node,sint32 pos);
   bit8             getHead(OUT T &node);
-  bit8             getTail(OUT T &node);        
+  bit8             getTail(OUT T &node);
 
   // Get a pointer to the internally managed data (careful!)
   bit8             getPointer(OUT T **node, sint32 pos);
@@ -102,7 +102,7 @@ class LinkedList
 };
 
 
-//Create the empty list 
+//Create the empty list
 template <class T>
 LinkedList<T>::LinkedList()
 {
@@ -138,7 +138,7 @@ LinkedList<T> &LinkedList<T>::operator=(LinkedList<T> &other)
   {
     other.get(node,i);
     addTail(node);
-  } 
+  }
   return(*this);
 }
 
@@ -158,7 +158,7 @@ void LinkedList<T>::clear()
   Entries=0;
   CurIndex=-1;
   Head=Tail=Current=NULL;
-}            
+}
 
 // When adding into a position, the new node goes at the zero based slot
 // specified by pos. All other nodes get moved one slot down.
@@ -186,7 +186,7 @@ bit8 LinkedList<T>::add(IN T &node,sint32 pos, OUT T **newnodeptr)
     if (pos==0) {
       item->Next=Head;
       if (Head)
-        Head->Prev=item; 
+        Head->Prev=item;
       Head=item;
     }
     if (pos==Entries) {
@@ -213,7 +213,7 @@ bit8 LinkedList<T>::add(IN T &node,sint32 pos, OUT T **newnodeptr)
     Entries++;
     return(TRUE);
   }
-  // Check the other possible speedup (adding after CurIndex) 
+  // Check the other possible speedup (adding after CurIndex)
   if (pos==CurIndex+1) {
     item->Next=Current->Next;
     item->Prev=Current;
@@ -223,18 +223,18 @@ bit8 LinkedList<T>::add(IN T &node,sint32 pos, OUT T **newnodeptr)
     CurIndex++;
     Entries++;
     return(TRUE);
-  }    
+  }
 
   // If control reaches here we have to scan the whole thing
   temp=Head->Next;  // Can start at node '1' because head was special cased
   for (int i=1; i<pos; i++) {
-    temp=temp->Next; 
+    temp=temp->Next;
     assert(temp!=NULL);
   }
   item->Next=temp;
   item->Prev=temp->Prev;
   temp->Prev=item;
-  item->Prev->Next=item; 
+  item->Prev->Next=item;
   Current=item;
   CurIndex=pos;
   Entries++;
@@ -245,7 +245,7 @@ bit8 LinkedList<T>::add(IN T &node,sint32 pos, OUT T **newnodeptr)
 
 // Add to the first node, all others get shifted down one slot
 template <class T>
-bit8 LinkedList<T>::addHead(IN T &node, OUT T **newnodeptr)  
+bit8 LinkedList<T>::addHead(IN T &node, OUT T **newnodeptr)
 {
   return(add(node,0,newnodeptr));
 }
@@ -256,13 +256,13 @@ template <class T>
 bit8 LinkedList<T>::addTail(IN T &node, OUT T **newnodeptr)
 {
   return(add(node,length(),newnodeptr));
-}  
+}
 
 
 // Remove at the zero based index specified by 'pos'.  When removing from
 // a slot, all others get shifted up by one.
 template <class T>
-bit8 LinkedList<T>::remove(OUT T &node, sint32 pos) 
+bit8 LinkedList<T>::remove(OUT T &node, sint32 pos)
 {
   ////////LNode<T> *temp;
   LNode<T> *item;
@@ -273,7 +273,7 @@ bit8 LinkedList<T>::remove(OUT T &node, sint32 pos)
   if (pos<0)
     pos=0;
   if (pos>=Entries)
-    pos=Entries-1;    
+    pos=Entries-1;
 
   if ((pos==0)||(pos==Entries-1)) {  // Both can be true for a 1 item list
     if (pos==0) {
@@ -304,7 +304,7 @@ bit8 LinkedList<T>::remove(OUT T &node, sint32 pos)
       assert(Tail==NULL);
     }
     return(TRUE);
-  }     
+  }
   // If control is here, we know the target node is not an endpoint
 
   // Check for possible speedup, so we don't have to scan the list
@@ -349,7 +349,7 @@ bit8 LinkedList<T>::remove(OUT T &node, sint32 pos)
   delete(item);
   Entries--;
 
-  return(TRUE);  
+  return(TRUE);
 }
 
 
@@ -367,7 +367,7 @@ bit8 LinkedList<T>::remove(sint32 pos)
 
 // Remove the first node of the list
 template <class T>
-bit8 LinkedList<T>::removeHead(OUT T &node)     
+bit8 LinkedList<T>::removeHead(OUT T &node)
 {
   return(remove(node,0));
 }
@@ -378,7 +378,7 @@ template <class T>
 bit8 LinkedList<T>::removeTail(OUT T &node)
 {
   return(remove(node,Entries-1));
-}   
+}
 
 
 
@@ -448,7 +448,7 @@ bit8 LinkedList<T>::getPointer(OUT T **node,sint32 pos)
   CurIndex=pos;
   Current=item;
 
-  return(TRUE);  
+  return(TRUE);
 }
 
 
@@ -465,7 +465,7 @@ template <class T>
 bit8 LinkedList<T>::getTail(OUT T &node)
 {
   return(get(node,Entries-1));
-}      
+}
 
 
 template <class T>
@@ -475,21 +475,21 @@ void LinkedList<T>::print(IN FILE *out)
 
   fprintf(out,"--------------------\n");
   fprintf(out,"Entries = %d\n",length());
-  fprintf(out,"H = %8p   C = %8p (%d)   T = %8p\n",Head,Current,CurIndex,Tail); 
+  fprintf(out,"H = %8p   C = %8p (%d)   T = %8p\n",Head,Current,CurIndex,Tail);
 
   temp=Head;
   while (temp) {
     fprintf(out,"  %8p<-((%8p))->%8p  \n",temp->Prev,temp,temp->Next);
     temp=temp->Next;
-  }   
+  }
 
   fprintf(out,"--------------------\n");
-}            
+}
 
 // Return the current length of the list
 template <class T>
 sint32 LinkedList<T>::length(void) {
   return(Entries);
-}    
+}
 
 #endif

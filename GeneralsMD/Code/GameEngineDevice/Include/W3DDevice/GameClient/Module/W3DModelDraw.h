@@ -34,11 +34,11 @@
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/ModelState.h"
-#include "Common/DrawModule.h" 
+#include "Common/DrawModule.h"
 #ifdef BRUTAL_TIMING_HACK // hack for collecting model timing info.  jba.
 class RenderObjClass {
 public:
-	enum AnimMode 
+	enum AnimMode
 	{
 		ANIM_MODE_MANUAL		= 0,
 		ANIM_MODE_LOOP,
@@ -110,7 +110,7 @@ public:
 	W3DAnimationInfo &operator=(const W3DAnimationInfo& r);
 
 	~W3DAnimationInfo();
-	
+
 	HAnimClass* getAnimHandle() const;
 	const AsciiString& getName() const { return m_name; }
 	Bool isIdleAnim() const { return m_isIdleAnim; }
@@ -121,7 +121,7 @@ public:
 typedef std::vector<W3DAnimationInfo>	W3DAnimationVector;
 
 //-------------------------------------------------------------------------------------------------
-struct ParticleSysBoneInfo 
+struct ParticleSysBoneInfo
 {
 	AsciiString boneName;
 	const ParticleSystemTemplate* particleSystemTemplate;
@@ -197,7 +197,7 @@ struct ModelConditionInfo
 		}
 
 		void setMuzzleFlashHidden(RenderObjClass *fullObject, Bool hide) const;
-	}; 
+	};
 	typedef std::vector<WeaponBarrelInfo>	WeaponBarrelInfoVec;
 
 #if defined(RTS_DEBUG) || defined(DEBUG_CRASHING)
@@ -216,7 +216,7 @@ struct ModelConditionInfo
 	NameKeyType												m_transitionKey;
 	NameKeyType												m_allowToFinishKey;
 	Int																m_flags;
-	Int																m_iniReadFlags;	// not read from ini, but used for helping with default states														
+	Int																m_iniReadFlags;	// not read from ini, but used for helping with default states
 	RenderObjClass::AnimMode					m_mode;
 	ParticleSysBoneInfoVector					m_particleSysBones;			///< Bone names and attached particle systems.
 	TransitionSig											m_transitionSig;
@@ -239,7 +239,7 @@ struct ModelConditionInfo
 	};
 
 	inline ModelConditionInfo()
-	{ 
+	{
 		clear();
 	}
 
@@ -283,7 +283,7 @@ class W3DModelDrawModuleData : public ModuleData
 public:
 
 	mutable ModelConditionVector			m_conditionStates;
-	mutable SparseMatchFinder< ModelConditionInfo, ModelConditionFlags >	
+	mutable SparseMatchFinder< ModelConditionInfo, ModelConditionFlags >
 																		m_conditionStateMap;
 	mutable TransitionMap							m_transitionMap;
 	std::vector<AsciiString>					m_extraPublicBones;
@@ -357,9 +357,9 @@ public:
 	virtual void releaseShadows(void);	///< frees all shadow resources used by this module - used by Options screen.
 	virtual void allocateShadows(void); ///< create shadow resources if not already present. Used by Options screen.
 
-#if defined(RTS_DEBUG)	
+#if defined(RTS_DEBUG)
 	virtual void getRenderCost(RenderCost & rc) const;  ///< estimates the render cost of this draw module
-	void getRenderCostRecursive(RenderCost & rc,RenderObjClass * robj) const; 
+	void getRenderCostRecursive(RenderCost & rc,RenderObjClass * robj) const;
 #endif
 
 	virtual void setFullyObscuredByShroud(Bool fullyObscured);
@@ -389,7 +389,7 @@ public:
 	virtual void setSelectable(Bool selectable); // Change the selectability of the model.
 
 	/**
-		This call says, "I want the current animation (if any) to take n frames to complete a single cycle". 
+		This call says, "I want the current animation (if any) to take n frames to complete a single cycle".
 		If it's a looping anim, each loop will take n frames. someday, we may want to add the option to insert
 		"pad" frames at the start and/or end, but for now, we always just "stretch" the animation to fit.
 		Note that you must call this AFTER setting the condition codes.
@@ -398,7 +398,7 @@ public:
 
 	/**
 		similar to the above, but assumes that the current state is a "ONCE",
-		and is smart about transition states... if there is a transition state 
+		and is smart about transition states... if there is a transition state
 		"inbetween", it is included in the completion time.
 	*/
 	virtual void setAnimationCompletionTime(UnsignedInt numFrames);
@@ -422,7 +422,7 @@ public:
 	virtual ObjectDrawInterface* getObjectDrawInterface() { return this; }
 	virtual const ObjectDrawInterface* getObjectDrawInterface() const { return this; }
 
-	///@todo: I had to make this public because W3DDevice needs access for casting shadows -MW 
+	///@todo: I had to make this public because W3DDevice needs access for casting shadows -MW
 	inline RenderObjClass *getRenderObject() { return m_renderObject; }
 	virtual Bool updateBonesForClientParticleSystems( void );///< this will reposition particle systems on the fly ML
 
@@ -475,7 +475,7 @@ private:
 			m_shift = 0.0f;
 			m_recoilRate = 0.0f;
 		}
-	}; 
+	};
 
 
 	struct ParticleSysTrackerType
@@ -489,10 +489,10 @@ private:
 	typedef std::vector<ParticleSysTrackerType>	ParticleSystemIDVec;
 	//typedef std::vector<ParticleSystemID>	ParticleSystemIDVec;
 
-	
+
 	const ModelConditionInfo*			m_curState;
 	const ModelConditionInfo*			m_nextState;
-	UnsignedInt										m_nextStateAnimLoopDuration;			
+	UnsignedInt										m_nextStateAnimLoopDuration;
 	Int														m_hexColor;
 	Int														m_whichAnimInCurState;						///< the index of the currently playing anim in cur state (if any)
 	WeaponRecoilInfoVec						m_weaponRecoilInfoVec[WEAPONSLOT_COUNT];

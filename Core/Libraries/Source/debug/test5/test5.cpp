@@ -39,5 +39,5 @@ void main(void)
   Debug::Command("add l + *");
 
   for (int k=0;k<16;k++)
-    DLOG("Testing: " << Debug::Format("0x%04x (%c)",k,'A'+k) << "\n");  
+    DLOG("Testing: " << Debug::Format("0x%04x (%c)",k,'A'+k) << "\n");
 }

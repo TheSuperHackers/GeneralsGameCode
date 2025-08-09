@@ -51,7 +51,7 @@
 #include "GameClient/InGameUI.h"// selection logic
 #include "GameClient/Drawable.h"
 #include "Common/ThingFactory.h"
-#include "Common/ThingTemplate.h" 
+#include "Common/ThingTemplate.h"
 
 
 
@@ -73,7 +73,7 @@ MobMemberSlavedUpdate::MobMemberSlavedUpdate( Thing *thing, const ModuleData* mo
 	m_personalColor.red = GameLogicRandomValueReal( 0.2f, 0.4f );
 	m_personalColor.green = GameLogicRandomValueReal( 0.2f, 0.4f );
 	m_personalColor.blue = GameLogicRandomValueReal( 0.2f, 0.4f );
-	
+
 //	Drawable *myDraw = getObject()->getDrawable();
 //	if ( myDraw )
 //		myDraw->colorTint( &m_personalColor );
@@ -87,12 +87,12 @@ MobMemberSlavedUpdate::MobMemberSlavedUpdate( Thing *thing, const ModuleData* mo
 	// MDC: moving to GameLogicRandomValue.  This does not need to be synced, but having it so makes searches *so* much nicer.
 	//getObject()->getDrawable()->setInstanceScale(GameLogicRandomValueReal( 5.0f, 1.5f ));
 
-} 
+}
 
 //-------------------------------------------------------------------------------------------------
 MobMemberSlavedUpdate::~MobMemberSlavedUpdate( void )
 {
-} 
+}
 
 //-------------------------------------------------------------------------------------------------
 void MobMemberSlavedUpdate::onObjectCreated()
@@ -123,7 +123,7 @@ void MobMemberSlavedUpdate::onSlaverDamage( const DamageInfo *info )
 	if( ai )
 		ai->aiGoProne( info, CMD_FROM_AI );
 }
- 
+
 
 //-------------------------------------------------------------------------------------------------
 UpdateSleepTime MobMemberSlavedUpdate::update( void )
@@ -133,7 +133,7 @@ UpdateSleepTime MobMemberSlavedUpdate::update( void )
 	const MobMemberSlavedUpdateModuleData* data = getMobMemberSlavedUpdateModuleData();
 	Object *me = getObject();
 	if( !me )
-	{ 
+	{
 		return UPDATE_SLEEP_NONE;
 	}
 
@@ -141,7 +141,7 @@ UpdateSleepTime MobMemberSlavedUpdate::update( void )
 	if( master == NULL )
 	{
 		stopSlavedEffects();
-		
+
 		//TheGameLogic->destroyObject( me );
 		me->kill();
 		return UPDATE_SLEEP_NONE;	// you cannot return SLEEP_FOREVER unless you make yourself sleepy...
@@ -181,10 +181,10 @@ UpdateSleepTime MobMemberSlavedUpdate::update( void )
 
 	if ( ++m_framesToWait < 16)
 		return UPDATE_SLEEP_NONE;
-	
+
 	m_framesToWait = 0;
 
-	
+
 	Locomotor *locomotor = myAI->getCurLocomotor();
 	if( !locomotor )
 	{
@@ -225,7 +225,7 @@ UpdateSleepTime MobMemberSlavedUpdate::update( void )
 			{
 				myAI->aiMoveToPosition( master->getPosition(), CMD_FROM_AI ); // NASTY BEEHIVE EFFECT
 			}
-			else 
+			else
 			{
 				Coord3D goalDelta = *myAI->getGoalPosition();
 				goalDelta.sub( &nuPos );
@@ -235,7 +235,7 @@ UpdateSleepTime MobMemberSlavedUpdate::update( void )
 					myAI->aiMoveToPosition( &nuPos, CMD_FROM_AI ); // Whither thou goest... THis causes the mob to reconverge
 				}
 			}
-				
+
 																															// on the fly, instead of doubling back to reconverge
 		}
 		else // master is still, so let's re group in a hurry
@@ -281,19 +281,19 @@ UpdateSleepTime MobMemberSlavedUpdate::update( void )
 		m_catchUpCrisisTimer = 0; // I'm not too far from the nexus this frame
 
 		Int seed = GameLogicRandomValue( 0, 10 );
-		if ( seed == 1 ) 
+		if ( seed == 1 )
 			myAI->chooseLocomotorSet(LOCOMOTORSET_WANDER);
-		else if ( seed == 2 ) 
-			myAI->chooseLocomotorSet(LOCOMOTORSET_PANIC); 
-		else if ( seed == 3 ) 
-			myAI->chooseLocomotorSet(LOCOMOTORSET_NORMAL); 
+		else if ( seed == 2 )
+			myAI->chooseLocomotorSet(LOCOMOTORSET_PANIC);
+		else if ( seed == 3 )
+			myAI->chooseLocomotorSet(LOCOMOTORSET_NORMAL);
 	//	else if ( seed >= 5 ) // go towards mommy's goal
 	//	{
 	//		Coord3D destination = *me->getPosition();
 	//		TheAI->pathfinder()->adjustToPossibleDestination(me, myAI->getLocomotorSet(), &destination);
 	//		myAI->aiMoveToPosition( &destination, CMD_FROM_AI ); // reconverge
 	//	}
-		
+
 	}
 	else // give me something to do while I'm standing here...
 	{
@@ -385,7 +385,7 @@ void MobMemberSlavedUpdate::startSlavedEffects( const Object *slaver )
 		return;
 
 	m_slaver = slaver->getID();
-	
+
 	// mark selves as not selectable
 	//getObject()->setStatus( OBJECT_STATUS_UNSELECTABLE );
 
@@ -448,7 +448,7 @@ void MobMemberSlavedUpdate::xfer( Xfer *xfer )
 
 	// is self tasking
 	xfer->xferBool( &m_isSelfTasking );
-	
+
 	// catch up crisis timer
   xfer->xferUnsignedInt( &m_catchUpCrisisTimer );
 

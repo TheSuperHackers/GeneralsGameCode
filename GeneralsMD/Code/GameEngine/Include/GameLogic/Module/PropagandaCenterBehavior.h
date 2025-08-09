@@ -80,7 +80,7 @@ protected:
 	ObjectID m_brainwashingSubjectID;								///< who we're currently brainwashing
 	UnsignedInt m_brainwashingSubjectStartFrame;		///< frame we started brainwashing
 	BrainwashedIDList m_brainwashedList;						///< list of objects we've brainwashed
-		
+
 };
 
 #endif

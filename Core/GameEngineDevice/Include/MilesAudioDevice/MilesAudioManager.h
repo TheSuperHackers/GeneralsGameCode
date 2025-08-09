@@ -67,13 +67,13 @@ struct PlayingAudio
 	Bool m_requestStop;
 	Bool m_cleanupAudioEventRTS;
 	Int m_framesFaded;
-	
-	PlayingAudio() : 
-		m_type(PAT_INVALID), 
-		m_audioEventRTS(NULL), 
-		m_requestStop(false), 
+
+	PlayingAudio() :
+		m_type(PAT_INVALID),
+		m_audioEventRTS(NULL),
+		m_requestStop(false),
 		m_cleanupAudioEventRTS(true),
-		m_sample(NULL), 
+		m_sample(NULL),
 		m_framesFaded(0)
 	{ }
 };
@@ -93,7 +93,7 @@ struct OpenAudioFile
 	UnsignedInt m_fileSize;
 
 	Bool m_compressed;	// if the file was compressed, then we need to free it with a miles function.
-	
+
 	// Note: OpenAudioFile does not own this m_eventInfo, and should not delete it.
 	const AudioEventInfo *m_eventInfo;	// Not mutable, unlike the one on AudioEventRTS.
 };
@@ -105,7 +105,7 @@ class AudioFileCache
 {
 	public:
 		AudioFileCache();
-		
+
 		// Protected by mutex
 		virtual ~AudioFileCache();
 		void *openFile( AudioEventRTS *eventToOpenFrom );
@@ -124,7 +124,7 @@ class AudioFileCache
 
 		// This function will return TRUE if it was able to free enough space, and FALSE otherwise.
 		Bool freeEnoughSpaceForSample(const OpenAudioFile& sampleThatNeedsSpace);
-		
+
 		OpenFilesHash m_openFiles;
 		UnsignedInt m_currentlyUsedSize;
 		UnsignedInt m_maxSize;
@@ -168,7 +168,7 @@ class MilesAudioManager : public AudioManager
 
 		virtual void killAudioEventImmediately( AudioHandle audioEvent );
 
-		///< Return whether the current audio is playing or not. 
+		///< Return whether the current audio is playing or not.
 		///< NOTE NOTE NOTE !!DO NOT USE THIS IN FOR GAMELOGIC PURPOSES!! NOTE NOTE NOTE
 		virtual Bool isCurrentlyPlaying( AudioHandle handle );
 
@@ -216,7 +216,7 @@ class MilesAudioManager : public AudioManager
 
 		virtual void setHardwareAccelerated(Bool accel);
 		virtual void setSpeakerSurround(Bool surround);
-		
+
 		virtual void setPreferredProvider(AsciiString provider) { m_pref3DProvider = provider; }
 		virtual void setPreferredSpeaker(AsciiString speakerType) { m_prefSpeaker = speakerType; }
 
@@ -224,11 +224,11 @@ class MilesAudioManager : public AudioManager
 
 		virtual void closeAnySamplesUsingFile( const void *fileToClose );
 
-    
-    virtual Bool has3DSensitiveStreamsPlaying( void ) const; 
+
+    virtual Bool has3DSensitiveStreamsPlaying( void ) const;
 
 
-	protected:	
+	protected:
 		// 3-D functions
 		virtual void setDeviceListenerPosition( void );
 		const Coord3D *getCurrentPositionFromEvent( AudioEventRTS *event );
@@ -261,7 +261,7 @@ class MilesAudioManager : public AudioManager
 		PlayingAudio *allocatePlayingAudio( void );
 		void releaseMilesHandles( PlayingAudio *release );
 		void releasePlayingAudio( PlayingAudio *release );
-		
+
 		void stopAllAudioImmediately( void );
 		void freeAllMilesHandles( void );
 
@@ -269,9 +269,9 @@ class MilesAudioManager : public AudioManager
 		H3DSAMPLE getFirst3DSample( AudioEventRTS *event );
 
 		void adjustPlayingVolume( PlayingAudio *audio );
-		
+
 		void stopAllSpeech( void );
-		
+
 	protected:
 		void initFilters( HSAMPLE sample, const AudioEventRTS *eventInfo );
 		void initFilters3D( H3DSAMPLE sample, const AudioEventRTS *eventInfo, const Coord3D *pos );
@@ -293,13 +293,13 @@ class MilesAudioManager : public AudioManager
 		// This is a list of all handles that are forcibly played. They always play as UI sounds.
 		std::list<HAUDIO> m_audioForcePlayed;
 
-		// Available handles for play. Note that there aren't handles open in advance for 
+		// Available handles for play. Note that there aren't handles open in advance for
 		// streaming things, only 2-D and 3-D sounds.
 		std::list<HSAMPLE> m_availableSamples;
 		std::list<H3DSAMPLE> m_available3DSamples;
 
-		// Currently Playing stuff. Useful if we have to preempt it. 
-		// This should rarely if ever happen, as we mirror this in Sounds, and attempt to 
+		// Currently Playing stuff. Useful if we have to preempt it.
+		// This should rarely if ever happen, as we mirror this in Sounds, and attempt to
 		// keep preemption from taking place here.
 		std::list<PlayingAudio *> m_playingSounds;
 		std::list<PlayingAudio *> m_playing3DSounds;
@@ -320,7 +320,7 @@ class MilesAudioManager : public AudioManager
 		UnsignedInt m_num2DSamples;
 		UnsignedInt m_num3DSamples;
 		UnsignedInt m_numStreams;
-		
+
 #if defined(RTS_DEBUG)
 		typedef std::set<AsciiString> SetAsciiString;
 		typedef SetAsciiString::iterator SetAsciiStringIt;

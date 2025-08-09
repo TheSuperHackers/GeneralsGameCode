@@ -91,10 +91,10 @@ class SurfaceClass : public W3DMPO, public RefCountClass
 		// zaps the surface memory to zero
 		void Clear();
 
-		// copies the contents of one surface to another		
+		// copies the contents of one surface to another
 		void Copy(
 			unsigned int dstx, unsigned int dsty,
-			unsigned int srcx, unsigned int srcy, 
+			unsigned int srcx, unsigned int srcy,
 			unsigned int width, unsigned int height,
 			const SurfaceClass *other);
 
@@ -114,7 +114,7 @@ class SurfaceClass : public W3DMPO, public RefCountClass
 		void FindBB(Vector2i *min,Vector2i*max);
 
 		// tests a column to see if the alpha is nonzero, used in font3d
-		bool Is_Transparent_Column(unsigned int column);		
+		bool Is_Transparent_Column(unsigned int column);
 
 		// makes a copy of the surface into a byte array
 		unsigned char *CreateCopy(int *width,int *height,int*size,bool flip=false);
@@ -146,7 +146,7 @@ class SurfaceClass : public W3DMPO, public RefCountClass
 		IDirect3DSurface8 *D3DSurface;
 
 		WW3DFormat SurfaceFormat;
-	friend class TextureClass;	
+	friend class TextureClass;
 };
 
 #endif

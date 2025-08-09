@@ -89,7 +89,7 @@ void TunnelContain::removeFromContain( Object *obj, Bool exposeStealthUnits )
 	{
 		getObject()->getContain()->onRemoving( obj );
 	}
-			
+
 	// trigger an onRemovedFrom event for 'remove'
 	obj->onRemovedFrom( getObject() );
 
@@ -129,7 +129,7 @@ void TunnelContain::harmAndForceExitAllContained( DamageInfo *info )
 	//No longer advances the iterator and saves it. The iterator is fetched from the beginning after
 	//each loop. This is to prevent a crash where dropping a bunker buster on a tunnel network containing
 	//multiple units (if they have the suicide bomb upgrade - demo general). In this case, multiple bunker
-	//busters would hit the tunnel network in close succession. Missile #1 would iterate the list, killing 
+	//busters would hit the tunnel network in close succession. Missile #1 would iterate the list, killing
 	//infantry #1. Infantry #1 would explode and destroy Missile #2. Missile #2 would start iterating the
 	//same list, killing the remaining units. When Missile #1 picked up and continued processing the list
 	//it would crash because it's iterator was deleted from under it.
@@ -223,17 +223,17 @@ void TunnelContain::onContaining( Object *obj, Bool wasSelected )
 	obj->setDisabled( DISABLED_HELD );
 
 	obj->getControllingPlayer()->getAcademyStats()->recordUnitEnteredTunnelNetwork();
-  
 
 
-  
+
+
   obj->handlePartitionCellMaintenance();
 
 
 }
 
 //-------------------------------------------------------------------------------------------------
-void TunnelContain::onRemoving( Object *obj ) 
+void TunnelContain::onRemoving( Object *obj )
 {
 	OpenContain::onRemoving(obj);
 
@@ -264,7 +264,7 @@ void TunnelContain::onSelling()
 	TunnelTracker *tunnelTracker = owningPlayer->getTunnelSystem();
 	if( tunnelTracker == NULL )
 		return;
-	
+
 	// We are the last tunnel, so kick everyone out.  This makes tunnels act like Palace and Bunker
 	// rather than killing the occupants as if the last tunnel died.
 	if( tunnelTracker->friend_getTunnelCount() == 1 )
@@ -301,8 +301,8 @@ UnsignedInt TunnelContain::getContainCount() const
 	return 0;
 }
 
-Int TunnelContain::getContainMax( void ) const 
-{ 
+Int TunnelContain::getContainMax( void ) const
+{
 	Player *owningPlayer = getObject()->getControllingPlayer();
 	if( owningPlayer && owningPlayer->getTunnelSystem() )
 	{
@@ -337,7 +337,7 @@ void TunnelContain::scatterToNearbyPosition(Object* obj)
 	// for now we will just set the position of the object that is being removed from us
 	// at a random angle away from our center out some distance
 	//
-	
+
 	//
 	// pick an angle that is in the view of the current camera position so that
 	// the thing will come out "toward" the player and they can see it
@@ -400,7 +400,7 @@ void TunnelContain::onDie( const DamageInfo * damageInfo )
 
 	tunnelTracker->onTunnelDestroyed( getObject() );
 	m_isCurrentlyRegistered = FALSE;
-}  
+}
 
 //-------------------------------------------------------------------------------------------------
 void TunnelContain::onDelete( void )
@@ -468,7 +468,7 @@ void TunnelContain::onBuildComplete( void )
 	tunnelTracker->onTunnelCreated( getObject() );
 	m_isCurrentlyRegistered = TRUE;
 	*/
-} 
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -522,7 +522,7 @@ UpdateSleepTime TunnelContain::update( void )
 	// extending functionality to heal the units within the tunnel system
 	OpenContain::update();
 	const TunnelContainModuleData *modData = getTunnelContainModuleData();
-	
+
 	Object *obj = getObject();
 	Player *controllingPlayer = NULL;
 	if (obj)

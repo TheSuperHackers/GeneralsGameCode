@@ -16,22 +16,22 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/*********************************************************************************************** 
- ***                            Confidential - Westwood Studios                              *** 
- *********************************************************************************************** 
- *                                                                                             * 
- *                 Project Name : Commando / G 3D engine                                       * 
- *                                                                                             * 
- *                    File Name : MeshDeformSet.cpp                                            * 
- *                                                                                             * 
- *                   Programmer : Patrick Smith                                                * 
- *                                                                                             * 
- *                   Start Date : 04/26/99                                                     * 
- *                                                                                             * 
- *                  Last Update : 
- *                                                                                             * 
- *---------------------------------------------------------------------------------------------* 
- * Functions:                                                                                  * 
+/***********************************************************************************************
+ ***                            Confidential - Westwood Studios                              ***
+ ***********************************************************************************************
+ *                                                                                             *
+ *                 Project Name : Commando / G 3D engine                                       *
+ *                                                                                             *
+ *                    File Name : MeshDeformSet.cpp                                            *
+ *                                                                                             *
+ *                   Programmer : Patrick Smith                                                *
+ *                                                                                             *
+ *                   Start Date : 04/26/99                                                     *
+ *                                                                                             *
+ *                  Last Update :
+ *                                                                                             *
+ *---------------------------------------------------------------------------------------------*
+ * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "MeshDeformSet.h"
@@ -155,10 +155,10 @@ MeshDeformSetClass::Update_Set_Members (void)
 	//	Examine each keyframe
 	//
 	m_SetMembers.ClearAll ();
-	for (int index = 0; index < m_KeyFrames.Count (); index ++) {		
+	for (int index = 0; index < m_KeyFrames.Count (); index ++) {
 		BitArray &affected_verts	= m_KeyFrames[index]->affected_verts;
 		BitArray &affected_colors	= m_KeyFrames[index]->affected_colors;
-		
+
 		//
 		//	Mark the verts that are affected by this keyframe
 		//
@@ -191,7 +191,7 @@ MeshDeformSetClass::Collapse_Keyframe_Data (int keyframe)
 	//
 	for (int index = 0; index < verticies.Count (); index ++) {
 		VERT_INFO &info = verticies[index];
-		
+
 		//
 		//	If this vertex is unchanged, then remove it
 		// from the list.
@@ -204,14 +204,14 @@ MeshDeformSetClass::Collapse_Keyframe_Data (int keyframe)
 			m_SetMembers.Set (info.index, 1);
 		}
 	}
-	
+
 
 	//
 	//	Collapse the vertex color data
 	//
 	for (index = 0; index < colors.Count (); index ++) {
 		VERT_INFO &info = colors[index];
-		
+
 		//
 		//	If this vertex is unchanged, then remove it
 		// from the list.
@@ -304,7 +304,7 @@ MeshDeformSetClass::Update_Current_Data (void)
 	//	Record the vertex position data
 	//
 	for (int index = 0; index < m_VertexCount; index ++) {
-		
+
 		// Is this vertex's position different than the undeformed mesh?
 		Point3 orig		= m_pVertexArray[index];
 		Point3 current	= m_pMesh->verts[index];
@@ -314,7 +314,7 @@ MeshDeformSetClass::Update_Current_Data (void)
 		if (	(orig.x != current.x) ||
 				(orig.y != current.y) ||
 				(orig.z != current.z)) {
-			
+
 			//
 			//	Record this vertex's position in our lists
 			//
@@ -325,7 +325,7 @@ MeshDeformSetClass::Update_Current_Data (void)
 
 	// Only do this if the mesh is using vertex coloring
 	if (m_pMesh->numCVerts >= m_pMesh->numVerts) {
-		
+
 		//
 		//	Record the vertex color data
 		//
@@ -372,7 +372,7 @@ MeshDeformSetClass::Update_Current_Data (void)
 ///////////////////////////////////////////////////////////////////////////
 void
 MeshDeformSetClass::Update_Key_Frame (int key_frame)
-{	
+{
 	DEFORM_LIST &verticies		= m_KeyFrames[key_frame]->verticies;
 	DEFORM_LIST &colors			= m_KeyFrames[key_frame]->colors;
 	BitArray &affected_verts	= m_KeyFrames[key_frame]->affected_verts;
@@ -420,7 +420,7 @@ MeshDeformSetClass::Update_Key_Frame (int key_frame)
 			}
 		}
 	}
-	
+
 	return ;
 }
 
@@ -432,7 +432,7 @@ MeshDeformSetClass::Update_Key_Frame (int key_frame)
 ///////////////////////////////////////////////////////////////////////////
 void
 MeshDeformSetClass::Init_Key_Frames (void)
-{	
+{
 	//
 	// For now, add all the key frames upfront
 	//
@@ -452,7 +452,7 @@ MeshDeformSetClass::Init_Key_Frames (void)
 ///////////////////////////////////////////////////////////////////////////
 void
 MeshDeformSetClass::Free_Key_Frames (void)
-{	
+{
 	//
 	// Loop through and free all the key frames
 	//
@@ -503,16 +503,16 @@ void
 MeshDeformSetClass::Resize_Vertex_Array (int count, int color_count)
 {
 	if (count != m_VertexCount) {
-		
+
 		// Allocate a new array of verticies
 		Point3 *vertex_array = new Point3[count];
-		Point3 *opstart_array = new Point3[count];		
-		
+		Point3 *opstart_array = new Point3[count];
+
 		// Delete the old vertex array and remember the new one
 		SAFE_DELETE (m_pVertexArray);
-		SAFE_DELETE (m_pVertexOPStartArray);		
+		SAFE_DELETE (m_pVertexOPStartArray);
 		m_pVertexArray = vertex_array;
-		m_pVertexOPStartArray = opstart_array;		
+		m_pVertexOPStartArray = opstart_array;
 		m_VertexCount = count;
 
 		//
@@ -521,7 +521,7 @@ MeshDeformSetClass::Resize_Vertex_Array (int count, int color_count)
 		for (int index = 0; index < m_KeyFrames.Count (); index ++) {
 			m_KeyFrames[index]->affected_verts.SetSize (count);
 			m_KeyFrames[index]->affected_colors.SetSize (count);
-			m_KeyFrames[index]->affected_verts.ClearAll ();			
+			m_KeyFrames[index]->affected_verts.ClearAll ();
 			m_KeyFrames[index]->affected_colors.ClearAll ();
 
 		}
@@ -530,8 +530,8 @@ MeshDeformSetClass::Resize_Vertex_Array (int count, int color_count)
 		m_SetMembers.ClearAll ();
 	}
 
-	if (color_count != m_VertexColorCount) {		
-		
+	if (color_count != m_VertexColorCount) {
+
 		// Recreate the color deltas
 		Point3 *color_array = new VertColor[color_count];
 		for (int index = 0; index < color_count; index ++) {
@@ -589,7 +589,7 @@ MeshDeformSetClass::Determine_Interpolation_Indicies
 	//
 	for (int index = 0; index <= key_frame; index ++) {
 		if (position && m_KeyFrames[index]->verticies.Count () > 0) {
-			from = index;			
+			from = index;
 		} else if (!position && m_KeyFrames[index]->colors.Count () > 0) {
 			from = index;
 		}
@@ -671,7 +671,7 @@ MeshDeformSetClass::Apply_Position_Changes
 			state = ((value - ((float)from)) / (float)(to - from));
 		}
 	}
-	
+
 	if (from != -1) {
 
 		//
@@ -683,7 +683,7 @@ MeshDeformSetClass::Apply_Position_Changes
 			VERT_INFO &info = vert_from[index];
 			if (info.index == vert) {
 				Point3 new_pos = info.value;
-				
+
 				// Transform the new position if necessary
 				if (transform != NULL) {
 					new_pos = new_pos * (*transform);
@@ -691,7 +691,7 @@ MeshDeformSetClass::Apply_Position_Changes
 
 				position = new_pos;
 			}
-		}				
+		}
 	}
 
 	if (to != -1) {
@@ -706,7 +706,7 @@ MeshDeformSetClass::Apply_Position_Changes
 			if (info.index == vert) {
 
 				Point3 new_pos = info.value;
-				
+
 				// Transform the new position if necessary
 				if (transform != NULL) {
 					new_pos = new_pos * (*transform);
@@ -715,7 +715,7 @@ MeshDeformSetClass::Apply_Position_Changes
 				position += state * (new_pos - position);
 				//m_pMesh->verts[vert] = position;
 			}
-		}					
+		}
 	}
 
 	return ;
@@ -769,7 +769,7 @@ MeshDeformSetClass::Apply_Color_Changes
 			state = ((value - ((float)from)) / (float)(to - from));
 		}
 	}
-	
+
 	if (from != -1) {
 
 		//
@@ -784,7 +784,7 @@ MeshDeformSetClass::Apply_Color_Changes
 				mesh.vertCol[info.color_index] = info.value;
 				m_pMesh->vertCol[info.color_index] = info.value;
 			}
-		}				
+		}
 	}
 
 	if (to != -1) {
@@ -851,7 +851,7 @@ MeshDeformSetClass::Apply_Color_Changes
 			state = ((value - ((float)from)) / (float)(to - from));
 		}
 	}
-	
+
 	if (from != -1) {
 
 		//
@@ -865,7 +865,7 @@ MeshDeformSetClass::Apply_Color_Changes
 				color = info.value;
 				break;
 			}
-		}				
+		}
 	}
 
 	if (to != -1) {
@@ -916,14 +916,14 @@ MeshDeformSetClass::Update_Mesh (TriObject &tri_obj)
 
 			// Is this vertex affected by any keyframe in the set?
 			if (m_SetMembers[vert]) {
-				
+
 				// Interpolate any changes to this vert
 				Apply_Position_Changes (vert, m_CurrentKeyFrame, tri_obj.mesh.verts[vert]);
 				m_pMesh->verts[vert] = tri_obj.mesh.verts[vert];
 				Apply_Color_Changes (vert, m_CurrentKeyFrame, tri_obj.mesh);
 			}
 		}
-		
+
 		//
 		//	Copy the vertex colors from the triangle object
 		//
@@ -949,22 +949,22 @@ MeshDeformSetClass::Update_Mesh (TriObject &tri_obj)
 			Determine_Interpolation_Indicies (key_frame, true, from, to, state);
 			DEFORM_LIST &vert_to = m_KeyFrames[to]->verticies;
 
-			if (from <= m_CurrentKeyFrame) {				
-								
+			if (from <= m_CurrentKeyFrame) {
+
 				if (from >= 0) {
-					DEFORM_LIST &vert_from = m_KeyFrames[from]->verticies;	
+					DEFORM_LIST &vert_from = m_KeyFrames[from]->verticies;
 					for (int index = 0; index < vert_from.Count (); index ++) {
 						VERT_INFO &info = vert_from[index];
 						tri_obj.mesh.verts[info.index] = info.value;
 					}
 				} else {
-					
+
 					for (int index = 0; index < vert_to.Count (); index ++) {
 						VERT_INFO &info = vert_to[index];
 						tri_obj.mesh.verts[info.index] = m_pVertexArray[info.index];
 					}
 				}
-				
+
 				for (int index = 0; index < vert_to.Count (); index ++) {
 					VERT_INFO &info = vert_to[index];
 					tri_obj.mesh.verts[info.index] += state * (info.value - tri_obj.mesh.verts[info.index]);
@@ -975,11 +975,11 @@ MeshDeformSetClass::Update_Mesh (TriObject &tri_obj)
 			//
 			//	Update the vertex colors
 			//
-			Determine_Interpolation_Indicies (key_frame, false, from, to, state);	
+			Determine_Interpolation_Indicies (key_frame, false, from, to, state);
 			DEFORM_LIST &color_to = m_KeyFrames[to]->colors;
 
 			if (from <= m_CurrentKeyFrame) {
-				
+
 				if (from >= 0) {
 					DEFORM_LIST &color_from = m_KeyFrames[from]->colors;
 					for (int index = 0; index < color_from.Count (); index ++) {
@@ -991,9 +991,9 @@ MeshDeformSetClass::Update_Mesh (TriObject &tri_obj)
 					for (index = 0; index < color_to.Count (); index ++) {
 						VERT_INFO &info = color_to[index];
 						tri_obj.mesh.vertCol[info.index] = m_pMesh->vertCol[info.index];
-					}					
+					}
 				}
-				
+
 				for (index = 0; index < color_to.Count (); index ++) {
 					VERT_INFO &info = color_to[index];
 					tri_obj.mesh.vertCol[info.index] = m_pMesh->vertCol[info.index] + state * (info.value - m_pMesh->vertCol[info.index]);
@@ -1014,7 +1014,7 @@ MeshDeformSetClass::Update_Mesh (TriObject &tri_obj)
 			tri_obj.mesh.verts[vert] += (1.0F * m_pVertexDeltaArray[vert]);
 			m_pMesh->verts[vert] = tri_obj.mesh.verts[vert];
 		}
-		
+
 
 		//
 		// Transform the vertex colors based on the current deform state
@@ -1022,7 +1022,7 @@ MeshDeformSetClass::Update_Mesh (TriObject &tri_obj)
 		for (vert = 0; vert < m_VertexColorCount; vert ++) {
 			tri_obj.mesh.vertCol[vert] += (1.0F * m_pVertexColors[vert]);
 		}*/
-		
+
 		//
 		// Pass the new selection onto the mesh
 		//
@@ -1057,7 +1057,7 @@ MeshDeformSetClass::Update_Members (DEFORM_CHANNELS flags)
 	//
 	for (int vert = 0; vert < m_pMesh->numVerts; vert ++) {
 		if (m_pMesh->vertSel[vert]) {
-			
+
 			//
 			//	Should we add this vertex to the array of deformed verts
 			// the current keyframe?
@@ -1069,8 +1069,8 @@ MeshDeformSetClass::Update_Members (DEFORM_CHANNELS flags)
 			//
 			//	Should we add this vertex to the array of deformed vertex colors
 			// the current keyframe?
-			//			
-			if (flags & VERT_COLORS) {				
+			//
+			if (flags & VERT_COLORS) {
 
 				m_KeyFrames[m_CurrentKeyFrame]->affected_colors.Set (vert, 1);
 
@@ -1103,9 +1103,9 @@ MeshDeformSetClass::Update_Members (DEFORM_CHANNELS flags)
 			//	verticies affected by this set.
 			//
 			m_SetMembers.Set (vert, 1);
-		}		
-	}			
-	
+		}
+	}
+
 	//r (int index = m_CurrentKeyFrame; index < MAX_DEFORM_KEY_FRAMES; index ++) {
 		Update_Key_Frame (m_CurrentKeyFrame);
 	//
@@ -1127,8 +1127,8 @@ MeshDeformSetClass::Select_Members (void)
 	//
 	for (int vert = 0; vert < m_pMesh->numVerts; vert ++) {
 		m_pMesh->vertSel.Set (vert, m_SetMembers[vert]);
-	}			
-	
+	}
+
 	return ;
 }
 
@@ -1148,7 +1148,7 @@ MeshDeformSetClass::Restore_Members (void)
 	for (int vert = 0; vert < m_pMesh->numVerts; vert ++) {
 
 		if (m_SetMembers[vert]) {
-			
+
 			//
 			//	Restore the vertex positions
 			//
@@ -1241,13 +1241,13 @@ MeshDeformSetClass::Save
 	//
 	int key_frames = m_KeyFrames.Count ();
 	float state_inc = 1.0F / ((float)key_frames);
-	float old_state = m_State;	
+	float old_state = m_State;
 
 	//
 	//	Loop through all the keyframes
 	//
 	for (int key_frame = 0; key_frame < key_frames; key_frame ++) {
-				
+
 		//
 		//	Loop through all the verticies and see if this keyframe
 		//	modifies any of them
@@ -1270,7 +1270,7 @@ MeshDeformSetClass::Save
 			//	Save the absolute state of all the verts and colors
 			//	at this keyframe.
 			//
-			
+
 			for (int w3d_vert_index = 0; w3d_vert_index < builder.Get_Vertex_Count (); w3d_vert_index ++) {
 
 				const MeshBuilderClass::VertClass &w3d_vert = builder.Get_Vertex(w3d_vert_index);
@@ -1297,12 +1297,12 @@ MeshDeformSetClass::Save
 					//
 					//	Save this vertex's deformations
 					//
-					save_set.Add_Vert (w3d_vert_index, position, color);						
+					save_set.Add_Vert (w3d_vert_index, position, color);
 				}
-			}			
+			}
 
 			save_set.End_Keyframe ();
-		}		
+		}
 	}
 
 	m_State = old_state;
@@ -1397,7 +1397,7 @@ MeshDeformSetClass::Save (ISave *save_obj)
 			//save_obj->BeginChunk (DEFORM_CHUNK_COLOR_DATA);
 			result = save_obj->Write (&data, sizeof (data), &bytes);
 			//save_obj->EndChunk ();
-		}		
+		}
 
 		//
 		//	Write the list of affected vertex positions to a chunk
@@ -1419,7 +1419,7 @@ MeshDeformSetClass::Save (ISave *save_obj)
 	}
 
 	save_obj->EndChunk ();
-	
+
 	// Return IO_OK on success IO_ERROR on failure
 	return result;
 }
@@ -1445,21 +1445,21 @@ MeshDeformSetClass::Load (ILoad *load_obj)
 	IOResult result = load_obj->OpenChunk ();
 	if (	(result == IO_OK) &&
 			(load_obj->CurChunkID () == DEFORM_CHUNK_SET_INFO)) {
-				
+
 		//
 		//	Read information about this set from the chunk
 		//
 		DeformChunkSetInfo set_info = { 0 };
 		result = load_obj->Read (&set_info, sizeof (set_info), &bytes);
 		m_bAutoApply = !(set_info.flags & DEFORM_SET_MANUAL_DEFORM);
-		
+
 		//
 		//	Resize the internal data to fit the saved state
 		//
 		if (result == IO_OK) {
 			Resize_Vertex_Array (set_info.NumVerticies, set_info.NumVertexColors);
 		}
-		
+
 		//
 		//	Read keyframe information from the chunk
 		//
@@ -1468,7 +1468,7 @@ MeshDeformSetClass::Load (ILoad *load_obj)
 				index ++)
 		{
 			KEY_FRAME &key_frame = *(m_KeyFrames[index]);
-			
+
 			DeformChunkKeyframeInfo keyframe_info = { 0 };
 			result = load_obj->Read (&keyframe_info, sizeof (keyframe_info), &bytes);
 
@@ -1478,7 +1478,7 @@ MeshDeformSetClass::Load (ILoad *load_obj)
 			for (	unsigned int pos_index = 0;
 					(pos_index < keyframe_info.VertexCount) && (result == IO_OK);
 					pos_index ++)
-			{				
+			{
 				//
 				//	Read vertex position info from the chunk
 				//
@@ -1497,7 +1497,7 @@ MeshDeformSetClass::Load (ILoad *load_obj)
 			for (	unsigned int color_index = 0;
 					(color_index < keyframe_info.ColorCount) && (result == IO_OK);
 					color_index ++)
-			{				
+			{
 				//
 				//	Read vertex color info from the chunk
 				//

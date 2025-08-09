@@ -64,7 +64,7 @@ public:
 		EX_CANCEL = 1
 	};
 
-	DazzleSaveClass(		char *						mesh_name,	
+	DazzleSaveClass(		char *						mesh_name,
 								char *						container_name,
 								INode *						inode,
 								Matrix3 &					exportspace,
@@ -74,10 +74,10 @@ public:
 	int Write_To_File(ChunkSaveClass & csave);
 
 private:
-	
+
 	char						W3DName[128];
-	char						DazzleType[128];	
-	
+	char						DazzleType[128];
+
 };
 
 

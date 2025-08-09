@@ -17,22 +17,22 @@
 */
 
 /* $Header: /Commando/Code/ww3d2/w3dexclusionlist.h 1     12/12/02 3:36p Greg_h $ */
-/*********************************************************************************************** 
- ***                            Confidential - Westwood Studios                              *** 
- *********************************************************************************************** 
- *                                                                                             * 
- *                 Project Name : Commando / G 3D Library                                      * 
- *                                                                                             * 
- *                     $Archive:: /Commando/Code/ww3d2/w3dexclusionlist.h                     $* 
- *                                                                                             * 
- *                       Author:: Greg_h                                                       * 
- *                                                                                             * 
- *                     $Modtime:: 12/12/02 10:04a                                             $* 
- *                                                                                             * 
- *                    $Revision:: 1                                                           $* 
- *                                                                                             * 
- *---------------------------------------------------------------------------------------------* 
- * Functions:                                                                                  * 
+/***********************************************************************************************
+ ***                            Confidential - Westwood Studios                              ***
+ ***********************************************************************************************
+ *                                                                                             *
+ *                 Project Name : Commando / G 3D Library                                      *
+ *                                                                                             *
+ *                     $Archive:: /Commando/Code/ww3d2/w3dexclusionlist.h                     $*
+ *                                                                                             *
+ *                       Author:: Greg_h                                                       *
+ *                                                                                             *
+ *                     $Modtime:: 12/12/02 10:04a                                             $*
+ *                                                                                             *
+ *                    $Revision:: 1                                                           $*
+ *                                                                                             *
+ *---------------------------------------------------------------------------------------------*
+ * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #if defined(_MSC_VER)
@@ -55,7 +55,7 @@ class HAnimClass;
 /**
 ** W3DExclusionListClass
 ** This class ecapsulates an "exclusion list" which the asset manager and related classes use
-** to filter what resources get released.  This is useful between level loads for example.  
+** to filter what resources get released.  This is useful between level loads for example.
 ** The Is_Excluded function uses w3d naming convention assumptions to determine whether the given
 ** asset name is in the list or is a child of something in the list.
 */
@@ -65,11 +65,11 @@ class W3DExclusionListClass
 public:
 	W3DExclusionListClass(const DynamicVectorClass<StringClass> & names);
 	~W3DExclusionListClass(void);
-	
+
 	bool	Is_Excluded(PrototypeClass * proto) const;
 	bool	Is_Excluded(HTreeClass * htree) const;
 	bool	Is_Excluded(HAnimClass * hanim) const;
-	
+
 	bool	Is_Excluded(const char * root_name) const;
 
 protected:

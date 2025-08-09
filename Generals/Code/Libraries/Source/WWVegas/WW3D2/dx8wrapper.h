@@ -444,7 +444,7 @@ public:
 	** Render target interface
 	*/
 	static TextureClass *	Create_Render_Target (int width, int height, bool alpha=false);
-	
+
 	static void					Set_Render_Target (TextureBaseClass * texture);
 	static void					Set_Render_Target (IDirect3DSurface8 *render_target);
 	static void					Set_Render_Target (IDirect3DSwapChain8 *swap_chain);
@@ -586,7 +586,7 @@ protected:
 	static int								TextureBitDepth;
 	static bool								IsWindowed;
 	static D3DFORMAT					DisplayFormat;
-	
+
 	static D3DMATRIX						old_world;
 	static D3DMATRIX						old_view;
 	static D3DMATRIX						old_prj;
@@ -701,7 +701,7 @@ WWINLINE void DX8Wrapper::_Set_DX8_Transform(D3DTRANSFORMSTATETYPE transform,con
 {
 	WWASSERT(transform<=D3DTS_WORLD);
 #if 0 // (gth) this optimization is breaking generals because they set the transform behind our backs.
-	if (m!=DX8Transforms[transform]) 
+	if (m!=DX8Transforms[transform])
 #endif
 	{
 		DX8Transforms[transform]=m;
@@ -717,7 +717,7 @@ WWINLINE void DX8Wrapper::_Set_DX8_Transform(D3DTRANSFORMSTATETYPE transform,con
 	WWASSERT(transform<=D3DTS_WORLD);
 	Matrix4x4 mtx(m);
 #if 0 // (gth) this optimization is breaking generals because they set the transform behind our backs.
-	if (mtx!=DX8Transforms[transform]) 
+	if (mtx!=DX8Transforms[transform])
 #endif
 	{
 		DX8Transforms[transform]=mtx;
@@ -1272,7 +1272,7 @@ WWINLINE void DX8Wrapper::Set_Render_State(const RenderStateStruct& state)
 }
 
 WWINLINE void DX8Wrapper::Release_Render_State()
-{	
+{
 	if (render_state.index_buffer) {
 		render_state.index_buffer->Release_Engine_Ref();
 	}

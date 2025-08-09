@@ -106,7 +106,7 @@ RingGeneralPropPageClass::Initialize (void)
 		if (texture != NULL) {
 			m_TextureFilename = texture->Get_Texture_Name ();
 		}
-		
+
 		//
 		//	Get the other misc data we care about
 		//
@@ -157,7 +157,7 @@ RingGeneralPropPageClass::Add_Shader_To_Combo
 //
 /////////////////////////////////////////////////////////////
 BOOL
-RingGeneralPropPageClass::OnInitDialog (void) 
+RingGeneralPropPageClass::OnInitDialog (void)
 {
 	// Allow the base class to process this message
 	CPropertyPage::OnInitDialog ();
@@ -168,13 +168,13 @@ RingGeneralPropPageClass::OnInitDialog (void)
 	Add_Shader_To_Combo (ShaderClass::_PresetAdditiveShader, "Additive");
 	Add_Shader_To_Combo (ShaderClass::_PresetAlphaShader, "Alpha");
 	Add_Shader_To_Combo (ShaderClass::_PresetOpaqueShader, "Opaque");
-	Add_Shader_To_Combo (ShaderClass::_PresetMultiplicativeShader, "Multiplicative");	
-	
+	Add_Shader_To_Combo (ShaderClass::_PresetMultiplicativeShader, "Multiplicative");
+
 	CheckDlgButton (IDC_CAMERA_ALIGNED_CHECK, (m_RenderObj->Get_Flags () & RingRenderObjClass::USE_CAMERA_ALIGN) != 0);
 	CheckDlgButton (IDC_LOOPING_CHECK, (m_RenderObj->Get_Flags () & RingRenderObjClass::USE_ANIMATION_LOOP) != 0);
 
 	//
-	// Fill the edit controls with the default values	
+	// Fill the edit controls with the default values
 	//
 	SetDlgItemText (IDC_NAME_EDIT, m_Name);
 	SetDlgItemText (IDC_FILENAME_EDIT, m_TextureFilename);
@@ -227,7 +227,7 @@ RingGeneralPropPageClass::OnApply (void)
 		//
 		//	Create a texture and pass it onto the object
 		//
-		TextureClass *texture = NULL;		
+		TextureClass *texture = NULL;
 		if (m_TextureFilename.GetLength () > 0) {
 			texture = WW3DAssetManager::Get_Instance ()->Get_Texture (::Get_Filename_From_Path (m_TextureFilename));
 		}
@@ -243,12 +243,12 @@ RingGeneralPropPageClass::OnApply (void)
 		m_RenderObj->Set_Flag (RingRenderObjClass::USE_CAMERA_ALIGN, IsDlgButtonChecked (IDC_CAMERA_ALIGNED_CHECK) != 0);
 		m_RenderObj->Set_Flag (RingRenderObjClass::USE_ANIMATION_LOOP, IsDlgButtonChecked (IDC_LOOPING_CHECK) != 0);
 		m_RenderObj->Set_Texture_Tiling (m_TextureTileSpin.GetPos ());
-		
+
 		// Allow the base class to process this message
 		retval = CPropertyPage::OnApply ();
 		m_bValid = true;
 	}
-	
+
 	// Return the TRUE/FALSE result code
 	return retval;
 }
@@ -260,7 +260,7 @@ RingGeneralPropPageClass::OnApply (void)
 //
 /////////////////////////////////////////////////////////////
 void
-RingGeneralPropPageClass::OnBrowseButton (void) 
+RingGeneralPropPageClass::OnBrowseButton (void)
 {
 	CFileDialog dialog (	TRUE,
 								".tga",
@@ -275,7 +275,7 @@ RingGeneralPropPageClass::OnBrowseButton (void)
 		SetModified ();
 	}
 
-	return ;	
+	return ;
 }
 
 
@@ -323,7 +323,7 @@ RingGeneralPropPageClass::OnNotify
 	//
 	NMHDR *header = (NMHDR *)lParam;
 	if ((header != NULL) && (header->code == UDN_DELTAPOS)) {
-		LPNMUPDOWN updown = (LPNMUPDOWN)lParam;		
+		LPNMUPDOWN updown = (LPNMUPDOWN)lParam;
 		::Update_Spinner_Buddy (header->hwndFrom, updown->iDelta);
 	}
 
@@ -338,7 +338,7 @@ RingGeneralPropPageClass::OnNotify
 //
 /////////////////////////////////////////////////////////////
 void
-RingGeneralPropPageClass::OnChangeLifetimeEdit (void) 
+RingGeneralPropPageClass::OnChangeLifetimeEdit (void)
 {
 	SetModified ();
 	return ;
@@ -371,7 +371,7 @@ RingGeneralPropPageClass::OnCommand
 )
 {
 	switch (LOWORD (wParam))
-	{		
+	{
 		case IDC_FILENAME_EDIT:
 		case IDC_NAME_EDIT:
 		case IDC_LIFETIME_EDIT:

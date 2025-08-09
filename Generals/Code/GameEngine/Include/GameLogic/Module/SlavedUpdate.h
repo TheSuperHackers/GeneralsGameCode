@@ -56,7 +56,7 @@ public:
 	Int m_scoutRange;				//If master is moving somewhere, I'll scout ahead -- how far am I allowed to go?
 	Int m_scoutWanderRange;	//If I'm at the scout point, how far can I wander from it.
 	Int m_distToTargetToGrantRangeBonus;	//How close I have to be to the master's target in order to grant master a range bonus.
-	
+
 	//Example: Below are used by battle drones
 	Int m_repairRange;
 	Real m_repairMinAltitude;
@@ -67,7 +67,7 @@ public:
 	Int m_minReadyFrames;
 	Int m_maxReadyFrames;
 	Int m_minWeldFrames;
-	Int m_maxWeldFrames; 
+	Int m_maxWeldFrames;
 	AsciiString m_weldingSysName;
 	AsciiString m_weldingFXBone;
 
@@ -93,10 +93,10 @@ public:
 		m_stayOnSameLayerAsMaster = false;
 	}
 
-	static void buildFieldParse(MultiIniFieldParse& p) 
+	static void buildFieldParse(MultiIniFieldParse& p)
 	{
     UpdateModuleData::buildFieldParse(p);
-		static const FieldParse dataFieldParse[] = 
+		static const FieldParse dataFieldParse[] =
 		{
 			{ "GuardMaxRange",			INI::parseInt,	NULL, offsetof( SlavedUpdateModuleData, m_guardMaxRange ) },
 			{ "GuardWanderRange",		INI::parseInt,	NULL, offsetof( SlavedUpdateModuleData, m_guardWanderRange ) },

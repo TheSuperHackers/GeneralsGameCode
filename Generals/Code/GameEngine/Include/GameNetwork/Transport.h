@@ -42,7 +42,7 @@
 // it to be a MemoryPoolObject (srj)
 class Transport //: public MemoryPoolObject
 {
-	//MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(Transport, "Transport")		
+	//MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(Transport, "Transport")
 public:
 
 	Transport();

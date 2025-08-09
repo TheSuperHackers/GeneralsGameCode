@@ -45,10 +45,10 @@ SupplyWarehouseCripplingBehaviorModuleData::SupplyWarehouseCripplingBehaviorModu
 }
 
 //-------------------------------------------------------------------------------------------------
-/*static*/ void SupplyWarehouseCripplingBehaviorModuleData::buildFieldParse(MultiIniFieldParse& p) 
+/*static*/ void SupplyWarehouseCripplingBehaviorModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
 
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
 		{ "SelfHealSupression",	INI::parseDurationUnsignedInt,	NULL, offsetof(SupplyWarehouseCripplingBehaviorModuleData, m_selfHealSupression) },
 		{ "SelfHealDelay",			INI::parseDurationUnsignedInt,	NULL, offsetof(SupplyWarehouseCripplingBehaviorModuleData, m_selfHealDelay) },

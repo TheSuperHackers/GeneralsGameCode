@@ -52,12 +52,12 @@ typedef signed long long _int64;
 
 // enable profiling by default in debug mode.
 #ifdef WWDEBUG
-#define ENABLE_WWPROFILE	
+#define ENABLE_WWPROFILE
 #endif
 
 extern unsigned WWProfile_Get_System_Time();	// timeGetTime() wrapper
 class FileClass;
-			
+
 /*
 ** A node in the WWProfile Hierarchy Tree
 */
@@ -162,7 +162,7 @@ public:
 	const char *	Get_Current_Parent_Name( void )			{ return CurrentParent->Get_Name(); }
 	int				Get_Current_Parent_Total_Calls( void )	{ return CurrentParent->Get_Total_Calls(); }
 	float				Get_Current_Parent_Total_Time( void )	{ return CurrentParent->Get_Total_Time(); }
-	
+
 protected:
 	WWProfileHierachyNodeClass *	CurrentParent;
 	WWProfileHierachyNodeClass *	CurrentChild;
@@ -247,18 +247,18 @@ class	WWProfileSampleClass {
 	bool Enabled;
 public:
 	WWProfileSampleClass( const char * name, bool is_root )		 : IsRoot(is_root), Enabled(WWProfileManager::Is_Profile_Enabled())
-	{ 
+	{
 		if (Enabled) {
-			if (IsRoot) WWProfileManager::Start_Root_Profile( name ); 
-			else WWProfileManager::Start_Profile( name ); 
+			if (IsRoot) WWProfileManager::Start_Root_Profile( name );
+			else WWProfileManager::Start_Profile( name );
 		}
 	}
-	
-	~WWProfileSampleClass( void )					
-	{ 
+
+	~WWProfileSampleClass( void )
+	{
 		if (Enabled) {
-			if (IsRoot) WWProfileManager::Stop_Root_Profile(); 
-			else WWProfileManager::Stop_Profile(); 
+			if (IsRoot) WWProfileManager::Stop_Root_Profile();
+			else WWProfileManager::Stop_Profile();
 		}
 	}
 };
@@ -293,7 +293,7 @@ private:
 
 
 /*
-** WWMeasureItClass is like WWTimeItClass, but it pokes the result into the given float, 
+** WWMeasureItClass is like WWTimeItClass, but it pokes the result into the given float,
 ** and can be used in the release build.
 */
 class	WWMeasureItClass {
@@ -311,7 +311,7 @@ private:
 // Use the first macro to log time and memory usage within the stack segment.
 // Use the second macro to log intermediate values. The intermediate values are
 // calculated from the previous intermediate log, so you can log how much each
-// item takes by placing the macro after each of the 
+// item takes by placing the macro after each of the
 //
 // ----------------------------------------------------------------------------
 

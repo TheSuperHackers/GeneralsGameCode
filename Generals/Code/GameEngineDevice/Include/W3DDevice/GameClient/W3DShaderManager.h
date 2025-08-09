@@ -88,7 +88,7 @@ public:
 	/// Loads a .vso file and creates a vertex shader for it
 	static HRESULT LoadAndCreateD3DShader(const char* strFilePath, const DWORD* pDeclaration, DWORD Usage, Bool ShaderType, DWORD* pHandle);
 
-	static Bool testMinimumRequirements(ChipsetType *videoChipType, CpuType *cpuType, Int *cpuFreq, Int *numRAM, Real *intBenchIndex, Real *floatBenchIndex, Real *memBenchIndex);
+	static Bool testMinimumRequirements(ChipsetType *videoChipType, CpuType *cpuType, Int *cpuFreq, MemValueType *numRAM, Real *intBenchIndex, Real *floatBenchIndex, Real *memBenchIndex);
 	static StaticGameLODLevel getGPUPerformanceIndex(void);
 	static Real GetCPUBenchTime(void);
 
@@ -154,7 +154,7 @@ public:
 	static void setZoomToPos(const Coord3D *pos) {m_zoomToPos = *pos; m_zoomToValid = true;}
 
 protected:
-	enum {MAX_COUNT = 60, 
+	enum {MAX_COUNT = 60,
 				MAX_LIMIT = 30,
 				COUNT_STEP = 5,
 				DEFAULT_PAN_FACTOR = 30};

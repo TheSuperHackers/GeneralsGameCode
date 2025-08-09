@@ -62,7 +62,7 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
     public:
-        
+
         // Return the selected device index
         int GetDeviceIndex () const
             { return m_iDeviceIndex; }

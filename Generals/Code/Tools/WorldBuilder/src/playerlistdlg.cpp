@@ -71,7 +71,7 @@ static void updateAllTeams(SidesList& sides, AsciiString oldpname, AsciiString n
 		if (teamInfo) {
 			Bool exists;
 			Dict *dict = teamInfo->getDict();
-			
+
 			AsciiString teamOwner = dict->getAsciiString(TheKey_teamOwner, &exists);
 
 			if (exists && teamOwner.compare(oldpname) == 0) {
@@ -118,7 +118,7 @@ static AsciiString UIToInternal(SidesList& sides, const AsciiString& n)
 static Bool containsToken(const AsciiString& cur_allies, const AsciiString& tokenIn)
 {
 	AsciiString name, token;
-	
+
 	name = cur_allies;
 	while (name.nextToken(&token))
 	{
@@ -131,7 +131,7 @@ static Bool containsToken(const AsciiString& cur_allies, const AsciiString& toke
 static AsciiString removeDupsFromEnemies(const AsciiString& cur_allies, const AsciiString& cur_enemies)
 {
 	AsciiString new_enemies, tmp, token;
-	
+
 	tmp = cur_enemies;
 	while (tmp.nextToken(&token))
 	{
@@ -173,7 +173,7 @@ static void buildAlliesList(CListBox *alliesList, SidesList& sides,	const AsciiS
 	{
 		name = sides.getSideInfo(i)->getDict()->getAsciiString(TheKey_playerName);
 		if (name == omitPlayer || name.isEmpty())
-			continue;	
+			continue;
 		name = playerNameForUI(sides, i);
 		alliesList->AddString(name.str());
 	}
@@ -219,7 +219,7 @@ static const char* calcRelationStr(SidesList& sides, int t1, int t2)
 	SidesInfo* ti1;
 	SidesInfo* ti2;
 	AsciiString t2name;
-	
+
 
 	//	we use the relationship between our player's default teams.
 	ti1 = sides.getSideInfo(t1);
@@ -280,7 +280,7 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // PlayerListDlg message handlers
 
-void PlayerListDlg::OnNewplayer() 
+void PlayerListDlg::OnNewplayer()
 {
 	if (m_sides.getNumSides() >= MAX_PLAYER_COUNT - 1) ///Added -1 so we can always have an observer even for Single player games.
 		return;
@@ -311,7 +311,7 @@ void PlayerListDlg::OnNewplayer()
 #ifdef NOT_IN_USE
 	// auto-open the advanced prop editor
 	MapObjectProps editor(&newPlayerDict, "Create New Player", this);
-	if (editor.DoModal() == IDOK) 
+	if (editor.DoModal() == IDOK)
 #endif
 	{
 		if (newPlayerDict.getAsciiString(TheKey_playerName).isEmpty())
@@ -329,10 +329,10 @@ void PlayerListDlg::OnNewplayer()
 			m_curPlayerIdx = m_sides.getNumSides()-1;
 			updateTheUI();
 		}
-	}	
+	}
 }
 
-void PlayerListDlg::OnEditplayer() 
+void PlayerListDlg::OnEditplayer()
 {
 	// TODO: the dialog referenced here has no ok or cancel buttons, so locks the editor
 	// re-enable this routine once it is not a guaranteed hang
@@ -347,7 +347,7 @@ void PlayerListDlg::OnEditplayer()
 
 	Dict playerDictCopy = *playerDict;
 	MapObjectProps editor(&playerDictCopy, "Edit Player", this);
-	if (editor.DoModal() == IDOK) 
+	if (editor.DoModal() == IDOK)
 	{
 		ensureValidPlayerName(&playerDictCopy);
 
@@ -379,14 +379,14 @@ void PlayerListDlg::OnEditplayer()
 	}
 }
 
-void PlayerListDlg::OnRemoveplayer() 
+void PlayerListDlg::OnRemoveplayer()
 {
 	Dict *playerDict = m_sides.getSideInfo(m_curPlayerIdx)->getDict();
 	AsciiString pname = playerDict->getAsciiString(TheKey_playerName);
 	Bool isneutral = pname.isEmpty();
 	if (isneutral)
 		return;
-	
+
 	Int i;
 	Int count = 0;
 	for (i = 0; i < m_sides.getNumTeams(); i++)
@@ -396,7 +396,7 @@ void PlayerListDlg::OnRemoveplayer()
 		{
 			count += MapObject::countMapObjectsWithOwner(tdict->getAsciiString(TheKey_teamName));
 		}
-	} 
+	}
 
 	if (count > 0)
 	{
@@ -419,7 +419,7 @@ try_again:
 			m_sides.removeTeam(i);
 			goto try_again;
 		}
-	} 
+	}
 
 	Bool modified = m_sides.validateSides();
 	(void)modified;
@@ -427,14 +427,14 @@ try_again:
 	updateTheUI();
 }
 
-void PlayerListDlg::OnSelchangePlayers() 
+void PlayerListDlg::OnSelchangePlayers()
 {
 	CListBox *list = (CListBox*)GetDlgItem(IDC_PLAYERS);
 	m_curPlayerIdx = list->GetCurSel();
 	updateTheUI();
 }
 
-void PlayerListDlg::updateTheUI(void) 
+void PlayerListDlg::updateTheUI(void)
 {
 	char buffer[1024];
 
@@ -449,7 +449,7 @@ void PlayerListDlg::updateTheUI(void)
 	DEBUG_ASSERTLOG(!modified,("had to clean up sides in PlayerListDlg::updateTheUI! (caller should do this)"));
 
 	if (m_curPlayerIdx < 0) m_curPlayerIdx = 0;
-	if (m_curPlayerIdx >= m_sides.getNumSides()) 
+	if (m_curPlayerIdx >= m_sides.getNumSides())
 		m_curPlayerIdx = m_sides.getNumSides()-1;
 
 	// update player list
@@ -475,7 +475,7 @@ void PlayerListDlg::updateTheUI(void)
 	AsciiString cur_pname = pdict->getAsciiString(TheKey_playerName);
 	UnicodeString cur_pdname = pdict->getUnicodeString(TheKey_playerDisplayName);
 	Bool isNeutral = cur_pname.isEmpty();
-	
+
 	// update player name
 	{
 		CWnd *playername = GetDlgItem(IDC_PLAYERNAME);
@@ -596,10 +596,10 @@ void PlayerListDlg::updateTheUI(void)
 }
 
 
-BOOL PlayerListDlg::OnInitDialog() 
+BOOL PlayerListDlg::OnInitDialog()
 {
 	CDialog::OnInitDialog();
-	
+
 	m_updating = 0;
 	m_sides = *TheSidesList;
 	m_curPlayerIdx = thePrevCurPlyr;
@@ -616,12 +616,12 @@ BOOL PlayerListDlg::OnInitDialog()
 
 	updateTheUI();
 	PopulateColorComboBox();
-	
+
 	return TRUE;  // return TRUE unless you set the focus to a control
 	              // EXCEPTION: OCX Property Pages should return FALSE
 }
 
-void PlayerListDlg::OnDblclkPlayers() 
+void PlayerListDlg::OnDblclkPlayers()
 {
 	OnEditplayer();
 }
@@ -688,7 +688,7 @@ void PlayerListDlg::OnSelectPlayerColor()
 	CComboBox *pCombo = (CComboBox *)GetDlgItem(IDC_PlayerColorCombo);
 	Dict *playerDict = m_sides.getSideInfo(m_curPlayerIdx)->getDict();
 	if (pCombo && playerDict) {
-		CString str; 
+		CString str;
 		pCombo->GetWindowText(str);
 		Int index = -1;
 		Int numColors = TheMultiplayerSettings->getNumColors();
@@ -715,7 +715,7 @@ void PlayerListDlg::OnSelectPlayerColor()
 	updateTheUI();
 }
 
-void PlayerListDlg::OnSelchangeAllieslist() 
+void PlayerListDlg::OnSelchangeAllieslist()
 {
 	Dict *playerDict = m_sides.getSideInfo(m_curPlayerIdx)->getDict();
 	AsciiString pname = playerDict->getAsciiString(TheKey_playerName);
@@ -737,12 +737,12 @@ void PlayerListDlg::OnSelchangeAllieslist()
 	updateTheUI();
 }
 
-void PlayerListDlg::OnSelchangeEnemieslist() 
+void PlayerListDlg::OnSelchangeEnemieslist()
 {
 	OnSelchangeAllieslist();
 }
 
-void PlayerListDlg::OnOK() 
+void PlayerListDlg::OnOK()
 {
 	Bool modified = m_sides.validateSides();
 	(void)modified;
@@ -754,24 +754,24 @@ void PlayerListDlg::OnOK()
 	REF_PTR_RELEASE(pUndo); // belongs to pDoc now.
 
 	thePrevCurPlyr = m_curPlayerIdx;
-	
+
 	CDialog::OnOK();
 }
 
-void PlayerListDlg::OnCancel() 
+void PlayerListDlg::OnCancel()
 {
 	CDialog::OnCancel();
 }
 
-void PlayerListDlg::OnPlayeriscomputer() 
+void PlayerListDlg::OnPlayeriscomputer()
 {
 	CButton *b = (CButton*)GetDlgItem(IDC_PLAYERISCOMPUTER);
 	m_sides.getSideInfo(m_curPlayerIdx)->getDict()->setBool(TheKey_playerIsHuman, b->GetCheck() == 0);
-	
-	updateTheUI();	
+
+	updateTheUI();
 }
 
-void PlayerListDlg::OnEditchangePlayerfaction() 
+void PlayerListDlg::OnEditchangePlayerfaction()
 {
 	CComboBox *faction = (CComboBox*)GetDlgItem(IDC_PLAYERFACTION);
 
@@ -793,7 +793,7 @@ void PlayerListDlg::OnEditchangePlayerfaction()
 	}
 }
 
-void PlayerListDlg::OnChangePlayername() 
+void PlayerListDlg::OnChangePlayername()
 {
 	CWnd *playername = GetDlgItem(IDC_PLAYERNAME);
 	char buf[1024];
@@ -814,7 +814,7 @@ void PlayerListDlg::OnChangePlayername()
 	{
 		pdict->setAsciiString(TheKey_playerName, pnamenew);
 		ensureValidPlayerName(pdict);
-		
+
 		updateAllTeams(m_sides, pnameold, pnamenew);
 		fixDefaultTeamName(m_sides, pnameold, pnamenew);
 	}
@@ -822,14 +822,14 @@ void PlayerListDlg::OnChangePlayername()
 	updateTheUI();
 }
 
-void PlayerListDlg::OnChangePlayerdisplayname() 
+void PlayerListDlg::OnChangePlayerdisplayname()
 {
 	CWnd *playername = GetDlgItem(IDC_PLAYERDISPLAYNAME);
 	char buf[1024];
 	playername->GetWindowText(buf, sizeof(buf)-2);
 
 	Dict *pdict = m_sides.getSideInfo(m_curPlayerIdx)->getDict();
-	
+
 	AsciiString tmp(buf);
 	UnicodeString pnamenew;
 	pnamenew.translate(tmp);
@@ -843,7 +843,7 @@ void PlayerListDlg::OnChangePlayerdisplayname()
 	updateTheUI();
 }
 
-void PlayerListDlg::OnAddskirmishplayers() 
+void PlayerListDlg::OnAddskirmishplayers()
 {
 	// PlyrCivilian
 

@@ -17,25 +17,25 @@
 */
 
 /* $Header: /Commando/Code/Tools/max2w3d/util.cpp 28    10/27/00 4:12p Greg_h $ */
-/*********************************************************************************************** 
- ***                            Confidential - Westwood Studios                              *** 
- *********************************************************************************************** 
- *                                                                                             * 
- *                 Project Name : Commando Tools - W3D export                                  * 
- *                                                                                             * 
- *                     $Archive:: /Commando/Code/Tools/max2w3d/util.cpp                       $* 
- *                                                                                             * 
- *                      $Author:: Greg_h                                                      $* 
- *                                                                                             * 
- *                     $Modtime:: 10/27/00 1:13p                                              $* 
- *                                                                                             * 
- *                    $Revision:: 28                                                          $* 
- *                                                                                             * 
- *---------------------------------------------------------------------------------------------* 
- * Functions:                                                                                  * 
- *   Cleanup_Orthogonal_Matrix -- removes very small numbers from the matrix                   * 
- *   Set_W3D_Name -- set a W3D name                                                            * 
- *   Split_Node_Name -- break a node name into the base and extension                          * 
+/***********************************************************************************************
+ ***                            Confidential - Westwood Studios                              ***
+ ***********************************************************************************************
+ *                                                                                             *
+ *                 Project Name : Commando Tools - W3D export                                  *
+ *                                                                                             *
+ *                     $Archive:: /Commando/Code/Tools/max2w3d/util.cpp                       $*
+ *                                                                                             *
+ *                      $Author:: Greg_h                                                      $*
+ *                                                                                             *
+ *                     $Modtime:: 10/27/00 1:13p                                              $*
+ *                                                                                             *
+ *                    $Revision:: 28                                                          $*
+ *                                                                                             *
+ *---------------------------------------------------------------------------------------------*
+ * Functions:                                                                                  *
+ *   Cleanup_Orthogonal_Matrix -- removes very small numbers from the matrix                   *
+ *   Set_W3D_Name -- set a W3D name                                                            *
+ *   Split_Node_Name -- break a node name into the base and extension                          *
  *   Is_Max_Tri_Mesh -- Is this node a triangle mesh?                                          *
  *    -- checks if the node is the origin of a model                                           *
  *    -- Checks if the node is the origin for the base obect (non-LOD'd).                      *
@@ -64,17 +64,17 @@ static int get_geometry_type(INode * node)
 }
 
 
-/*********************************************************************************************** 
- * Cleanup_Orthogonal_Matrix -- removes very small numbers from the matrix                     * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   10/26/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * Cleanup_Orthogonal_Matrix -- removes very small numbers from the matrix                     *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   10/26/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
 Matrix3	Cleanup_Orthogonal_Matrix(Matrix3 & mat)
 {
@@ -82,7 +82,7 @@ Matrix3	Cleanup_Orthogonal_Matrix(Matrix3 & mat)
 
 	for (int j=0; j<3; j++) {
 		Point3 row = newmat.GetRow(j);
-	
+
 		if (fabs(row.x) < EPSILON) row.x = 0.0f;
 		if (fabs(row.y) < EPSILON) row.y = 0.0f;
 		if (fabs(row.z) < EPSILON) row.z = 0.0f;
@@ -95,17 +95,17 @@ Matrix3	Cleanup_Orthogonal_Matrix(Matrix3 & mat)
 	return newmat;
 }
 
-/*********************************************************************************************** 
- * Set_W3D_Name -- set a W3D name                                                              * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   10/26/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * Set_W3D_Name -- set a W3D name                                                              *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   10/26/1997 GH  : Created.                                                                 *
  *   9/13/1999  AJA : Strip off the trailing ".digits" since this is a convention we've set in *
  *                    MAX to help artists manage LODs.                                         *
  *=============================================================================================*/
@@ -127,17 +127,17 @@ void Set_W3D_Name(char * set_name,const char * src)
 	strupr(set_name);
 }
 
-/*********************************************************************************************** 
- * Split_Node_Name -- break a node name into the base and extension                            * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   10/26/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * Split_Node_Name -- break a node name into the base and extension                            *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   10/26/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
 void Split_Node_Name(const char * name,char * set_base,char * set_exten,int * set_exten_index)
 {
@@ -154,7 +154,7 @@ void Split_Node_Name(const char * name,char * set_base,char * set_exten,int * se
 	if (set_base != NULL) set_base[0] = 0;
 	if (set_exten != NULL) set_exten[0] = 0;
 	if (set_exten_index != NULL) *set_exten_index = 0;
-		
+
 	// Get the base name
 	strncpy(buf,name,MAX_NODE_NAME_LEN);
 	ptr = buf;
@@ -166,7 +166,7 @@ void Split_Node_Name(const char * name,char * set_base,char * set_exten,int * se
 
 		// copy what we have so far into set_base
 		*ptr = 0;
-		if (set_base != NULL) strncpy(set_base,buf,MAX_NODE_NAME_LEN);	
+		if (set_base != NULL) strncpy(set_base,buf,MAX_NODE_NAME_LEN);
 
 		// copy the rest back into the extension
 		ptr++;
@@ -438,12 +438,12 @@ bool Is_Full_Path(char * path)
  * HISTORY:                                                                                    *
  *   2/2/98     GTH : Created.                                                                 *
  *=============================================================================================*/
-bool Is_Max_Tri_Mesh(INode * node) 
+bool Is_Max_Tri_Mesh(INode * node)
 {
 	Object *obj = node->EvalWorldState(0).obj;
-	
+
 	if (obj && obj->CanConvertToType(Class_ID(TRIOBJ_CLASS_ID, 0))) {
-		return true;	
+		return true;
 	}
 	return false;
 }

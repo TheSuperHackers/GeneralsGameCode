@@ -116,17 +116,17 @@ const Matrix3 Matrix3::RotateZ270
 
 
 
-/*********************************************************************************************** 
- * Matrix3::Matrix3 -- Convert a Matrix3D (fake 4x4) to a Matrix3                              * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   06/02/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * Matrix3::Matrix3 -- Convert a Matrix3D (fake 4x4) to a Matrix3                              *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   06/02/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
 Matrix3::Matrix3(const Matrix3D & m)
 {
@@ -177,7 +177,7 @@ Matrix3 & Matrix3::operator = (const Matrix3D & m)
 	Row[0].Set(m[0][0],m[0][1],m[0][2]);
 	Row[1].Set(m[1][0],m[1][1],m[1][2]);
 	Row[2].Set(m[2][0],m[2][1],m[2][2]);
-	return *this; 
+	return *this;
 }
 
 Matrix3 & Matrix3::operator = (const Matrix4 & m)
@@ -185,13 +185,13 @@ Matrix3 & Matrix3::operator = (const Matrix4 & m)
 	Row[0].Set(m[0][0],m[0][1],m[0][2]);
 	Row[1].Set(m[1][0],m[1][1],m[1][2]);
 	Row[2].Set(m[2][0],m[2][1],m[2][2]);
-	return *this; 
+	return *this;
 }
 
 void Matrix3::Multiply(const Matrix3D & a, const Matrix3 & b,Matrix3 * res)
 {
 	#define ROWCOL(i,j) a[i][0]*b[0][j] + a[i][1]*b[1][j] + a[i][2]*b[2][j]
-    
+
 	(*res)[0][0] = ROWCOL(0,0);
 	(*res)[0][1] = ROWCOL(0,1);
 	(*res)[0][2] = ROWCOL(0,2);
@@ -210,7 +210,7 @@ void Matrix3::Multiply(const Matrix3D & a, const Matrix3 & b,Matrix3 * res)
 void Matrix3::Multiply(const Matrix3 & a, const Matrix3D & b,Matrix3 * res)
 {
 	#define ROWCOL(i,j) a[i][0]*b[0][j] + a[i][1]*b[1][j] + a[i][2]*b[2][j]
-    
+
 	(*res)[0][0] = ROWCOL(0,0);
 	(*res)[0][1] = ROWCOL(0,1);
 	(*res)[0][2] = ROWCOL(0,2);
@@ -229,26 +229,26 @@ void Matrix3::Multiply(const Matrix3 & a, const Matrix3D & b,Matrix3 * res)
 Matrix3 operator * (const Matrix3D & a, const Matrix3 & b)
 {
 	#define ROWCOL(i,j) a[i][0]*b[0][j] + a[i][1]*b[1][j] + a[i][2]*b[2][j]
-    
+
 	return Matrix3(
 			Vector3(ROWCOL(0,0), ROWCOL(0,1), ROWCOL(0,2) ),
 			Vector3(ROWCOL(1,0), ROWCOL(1,1), ROWCOL(1,2) ),
 			Vector3(ROWCOL(2,0), ROWCOL(2,1), ROWCOL(2,2) )
 	);
-	
+
 	#undef ROWCOL
 }
 
 Matrix3 operator * (const Matrix3 & a, const Matrix3D & b)
 {
 	#define ROWCOL(i,j) a[i][0]*b[0][j] + a[i][1]*b[1][j] + a[i][2]*b[2][j]
-    
+
 	return Matrix3(
 			Vector3(ROWCOL(0,0), ROWCOL(0,1), ROWCOL(0,2) ),
 			Vector3(ROWCOL(1,0), ROWCOL(1,1), ROWCOL(1,2) ),
 			Vector3(ROWCOL(2,0), ROWCOL(2,1), ROWCOL(2,2) )
 	);
-	
+
 	#undef ROWCOL
 }
 
@@ -290,14 +290,14 @@ void Matrix3::Multiply(const Matrix3 & A,const Matrix3 & B,Matrix3 * set_res)
 	Matrix3 * Aptr;
 	float tmp1,tmp2,tmp3;
 
-	// Check for aliased parameters, copy the 'A' matrix into a temporary if the 
-	// result is going into 'A'. (in this case, this function is no better than 
+	// Check for aliased parameters, copy the 'A' matrix into a temporary if the
+	// result is going into 'A'. (in this case, this function is no better than
 	// the overloaded C++ operator...)
 	if (set_res == &A) {
 		tmp = A;
 		Aptr = &tmp;
 	} else {
-		Aptr = (Matrix3 *)&A;	
+		Aptr = (Matrix3 *)&A;
 	}
 
 	tmp1 = B[0][0];
@@ -330,7 +330,7 @@ int Matrix3::Is_Orthogonal(void) const
 	Vector3 x(Row[0].X,Row[0].Y,Row[0].Z);
 	Vector3 y(Row[1].X,Row[1].Y,Row[1].Z);
 	Vector3 z(Row[2].X,Row[2].Y,Row[2].Z);
-	
+
 	if (Vector3::Dot_Product(x,y) > WWMATH_EPSILON) return 0;
 	if (Vector3::Dot_Product(y,z) > WWMATH_EPSILON) return 0;
 	if (Vector3::Dot_Product(z,x) > WWMATH_EPSILON) return 0;
@@ -382,7 +382,7 @@ void Matrix3::Re_Orthogonalize(void)
 	Row[1][0] = y.X;
 	Row[1][1] = y.Y;
 	Row[1][2] = y.Z;
-	
+
 	Row[2][0] = z.X;
 	Row[2][1] = z.Y;
 	Row[2][2] = z.Z;

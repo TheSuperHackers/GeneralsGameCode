@@ -24,12 +24,12 @@
 
 // FILE: Credits.cpp /////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Electronic Arts Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2002 - All Rights Reserved                  
-//                                                                          
+//
+//                       Electronic Arts Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2002 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 //	created:	Dec 2002
@@ -37,7 +37,7 @@
 //	Filename: 	Credits.cpp
 //
 //	author:		Chris Huybregts
-//	
+//
 //	purpose:	This is where all the credit texts is going to be held.
 //
 //-----------------------------------------------------------------------------
@@ -63,7 +63,7 @@
 //-----------------------------------------------------------------------------
 CreditsManager *TheCredits = NULL;
 
-const FieldParse CreditsManager::m_creditsFieldParseTable[] = 
+const FieldParse CreditsManager::m_creditsFieldParseTable[] =
 {
 
 	{ "ScrollRate",					INI::parseInt,											NULL, offsetof( CreditsManager, m_scrollRate )	},
@@ -112,7 +112,7 @@ CreditsLine::~CreditsLine()
 		TheDisplayStringManager->freeDisplayString(m_displayString);
 	if(m_secondDisplayString)
 		TheDisplayStringManager->freeDisplayString(m_secondDisplayString);
-	
+
 	m_displayString = NULL;
 	m_secondDisplayString = NULL;
 }
@@ -125,7 +125,7 @@ CreditsManager::CreditsManager(void)
 	m_scrollDown = TRUE;	// if TRUE text will come from the top to the bottom if False, it will go from the bottom up
 	m_framesSinceStarted = 0;
 	m_titleColor = m_positionColor = m_normalColor = GameMakeColor(255,255,255,255);
-	
+
 	m_currentStyle = CREDIT_STYLE_NORMAL;
 	m_isFinished = FALSE;
 	m_normalFontHeight = 10;
@@ -161,7 +161,7 @@ void CreditsManager::load(void )
 		m_scrollRatePerFrames = 1;
 	if(m_scrollRate <=0)
 		m_scrollRate = 1;
-	
+
 	GameFont *font = TheFontLibrary->getFont(TheGlobalLanguageData->m_creditsNormalFont.name,
 														TheGlobalLanguageData->adjustFontSize(TheGlobalLanguageData->m_creditsNormalFont.size),
 														TheGlobalLanguageData->m_creditsNormalFont.bold);
@@ -183,10 +183,10 @@ void CreditsManager::update( void )
 	if(m_isFinished)
 		return;
 	m_framesSinceStarted++;
-	
+
 	if(m_framesSinceStarted%m_scrollRatePerFrames != 0)
 		return;
-	
+
 
 	Int y = 0;
 	Int yTest = 0;
@@ -214,27 +214,27 @@ void CreditsManager::update( void )
 		else
 			drawIt++;
 	}
-	
+
 	y= y + ((lastHeight + CREDIT_SPACE_OFFSET) * offsetStartMultiplyer);
-	
+
 	// is it time to add a new string?
 	if(!((m_scrollDown && (yTest >= start)) || (!m_scrollDown && (yTest  <= start))))
 		return;
-	
+
 	if(m_displayedCreditLineList.size() == 0 && m_creditLineListIt == m_creditLineList.end())
 		m_isFinished = TRUE;
-	
+
 	if(m_creditLineListIt == m_creditLineList.end())
 		return;
 
 	CreditsLine *cLine = *m_creditLineListIt;
 	ICoord2D pos;
-	switch (cLine->m_style) 
+	switch (cLine->m_style)
 	{
 	case CREDIT_STYLE_TITLE:
 		{
 			cLine->m_color = m_titleColor;
-			
+
 			if(TheGlobalLanguageData&& !cLine->m_text.isEmpty())
 			{
 				DisplayString *ds = TheDisplayStringManager->newDisplayString();
@@ -255,7 +255,7 @@ void CreditsManager::update( void )
 	case CREDIT_STYLE_POSITION:
 		{
 			cLine->m_color = m_positionColor;
-			
+
 			if(TheGlobalLanguageData && !cLine->m_text.isEmpty())
 			{
 				DisplayString *ds = TheDisplayStringManager->newDisplayString();
@@ -276,7 +276,7 @@ void CreditsManager::update( void )
 	case CREDIT_STYLE_NORMAL:
 	 {
 			cLine->m_color = m_normalColor;
-			
+
 			if(TheGlobalLanguageData && !cLine->m_text.isEmpty())
 			{
 				DisplayString *ds = TheDisplayStringManager->newDisplayString();
@@ -297,7 +297,7 @@ void CreditsManager::update( void )
 	case CREDIT_STYLE_COLUMN:
 		{
 			cLine->m_color = m_normalColor;
-			
+
 			if(TheGlobalLanguageData && !cLine->m_text.isEmpty())
 			{
 				DisplayString *ds = TheDisplayStringManager->newDisplayString();
@@ -327,7 +327,7 @@ void CreditsManager::update( void )
 				cLine->m_pos.x = TheDisplay->getWidth()/2 - pos.x/2 ;
 				cLine->m_pos.y = start + (cLine->m_height * offsetStartMultiplyer);
 				cLine->m_secondDisplayString = ds;
-				
+
 			}
 		}
 		break;
@@ -343,7 +343,7 @@ void CreditsManager::update( void )
 
 	if(m_creditLineListIt != m_creditLineList.end())
 		m_creditLineListIt++;
-	
+
 }
 
 void CreditsManager::draw( void )
@@ -367,7 +367,7 @@ void CreditsManager::draw( void )
 		else
 			perc = 1.0f;
 		UnsignedByte r,g,b,a;
-		GameGetColorComponents(cLine->m_color, &r, &g, &b, &a);		
+		GameGetColorComponents(cLine->m_color, &r, &g, &b, &a);
 		Int color = GameMakeColor( r,g,b, a * perc);
 		Int bColor= GameMakeColor( 0,0,0, a * perc);
 
@@ -418,7 +418,7 @@ void CreditsManager::parseBlank( INI* ini, void *instance, void *store, const vo
 
 void CreditsManager::parseText( INI* ini, void *instance, void *store, const void *userData )
 {
-	
+
 	AsciiString asciiString = ini->getNextQuotedAsciiString();
 	CreditsManager *cManager = (CreditsManager *)instance;
 	cManager->addText(asciiString);
@@ -427,7 +427,7 @@ void CreditsManager::addText( AsciiString text )
 {
 	CreditsLine *cLine = new CreditsLine;
 
-	switch (m_currentStyle) 
+	switch (m_currentStyle)
 	{
 		case CREDIT_STYLE_TITLE:
 		case CREDIT_STYLE_POSITION:
@@ -442,7 +442,7 @@ void CreditsManager::addText( AsciiString text )
 			{
 				CreditsLineList::reverse_iterator rIt = m_creditLineList.rbegin();
 				CreditsLine *rcLine = *rIt;
-				if(rIt == m_creditLineList.rend() || rcLine->m_style != CREDIT_STYLE_COLUMN 
+				if(rIt == m_creditLineList.rend() || rcLine->m_style != CREDIT_STYLE_COLUMN
 				   || (rcLine->m_style == CREDIT_STYLE_COLUMN && rcLine->m_done == TRUE))
 				{
 					cLine->m_text = getUnicodeString(text);

@@ -24,12 +24,12 @@
 
 // FILE: Win32Mouse.h /////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information					         
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:    RTS3
@@ -106,8 +106,8 @@ protected:
 															 incremented to the next index */
 	MouseCursor m_currentWin32Cursor;	///< keep track of last cursor image sent to D3D.
 	Int m_directionFrame;	///< current frame of directional cursor (frome 0 points up).
-	Bool m_lostFocus;		///< flag if window has lost focues and mouse should stop being updated.	
-};  // end Win32Mouse 
+	Bool m_lostFocus;		///< flag if window has lost focues and mouse should stop being updated.
+};  // end Win32Mouse
 
 // INLINING ///////////////////////////////////////////////////////////////////
 

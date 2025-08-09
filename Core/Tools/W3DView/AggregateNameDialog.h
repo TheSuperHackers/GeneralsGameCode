@@ -60,7 +60,7 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 	public:
-		
+
 		////////////////////////////////////////////////////////////////
 		//
 		//	Public methods
@@ -69,11 +69,11 @@ protected:
 		void							Set_Name (const CString &name)	{ m_Name = name; }
 
 	private:
-		
+
 		////////////////////////////////////////////////////////////////
 		//
 		//	Private member data
-		//		
+		//
 		CString						m_Name;
 };
 

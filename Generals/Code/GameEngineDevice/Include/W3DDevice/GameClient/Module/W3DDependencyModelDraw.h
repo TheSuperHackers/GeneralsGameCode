@@ -57,7 +57,7 @@ class W3DDependencyModelDraw : public W3DModelDraw
 
  	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( W3DDependencyModelDraw, "W3DDependencyModelDraw" )
 	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( W3DDependencyModelDraw, W3DDependencyModelDrawModuleData )
-		
+
 public:
 
 	W3DDependencyModelDraw( Thing *thing, const ModuleData* moduleData );

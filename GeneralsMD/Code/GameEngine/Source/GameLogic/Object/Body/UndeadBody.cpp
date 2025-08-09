@@ -38,10 +38,10 @@
 // PUBLIC FUNCTIONS ///////////////////////////////////////////////////////////////////////////////
 
 //-------------------------------------------------------------------------------------------------
-void UndeadBodyModuleData::buildFieldParse(MultiIniFieldParse& p) 
+void UndeadBodyModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
   ActiveBodyModuleData::buildFieldParse(p);
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
 		{ "SecondLifeMaxHealth",			INI::parseReal,	NULL,		offsetof( UndeadBodyModuleData, m_secondLifeMaxHealth ) },
 		{ 0, 0, 0, 0 }
@@ -58,7 +58,7 @@ UndeadBodyModuleData::UndeadBodyModuleData()
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-UndeadBody::UndeadBody( Thing *thing, const ModuleData* moduleData ) 
+UndeadBody::UndeadBody( Thing *thing, const ModuleData* moduleData )
 						 : ActiveBody( thing, moduleData )
 {
 	m_isSecondLife = FALSE;
@@ -79,7 +79,7 @@ void UndeadBody::attemptDamage( DamageInfo *damageInfo )
 	// remaining, then go ahead and take it.
 	Bool shouldStartSecondLife = FALSE;
 
-	if( damageInfo->in.m_damageType != DAMAGE_UNRESISTABLE  
+	if( damageInfo->in.m_damageType != DAMAGE_UNRESISTABLE
 			&& !m_isSecondLife
 			&& damageInfo->in.m_amount >= getHealth()
 			&& IsHealthDamagingDamage(damageInfo->in.m_damageType)

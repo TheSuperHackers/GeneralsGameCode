@@ -73,7 +73,7 @@ public:
 	UnsignedInt getRemainingFrames() const; ///< For feedback display
 
 protected:
-	
+
 	UnsignedInt m_nextCreationFrame;
 	UnsignedInt m_timerStartedFrame;
 

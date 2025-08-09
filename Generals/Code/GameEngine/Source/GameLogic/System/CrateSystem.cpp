@@ -93,7 +93,7 @@ void CrateSystem::parseCrateTemplateDefinition(INI* ini)
 
 	// read the crateTemplate name
 	const char* c = ini->getNextToken();
-	name.set(c);	
+	name.set(c);
 
 	CrateTemplate *crateTemplate = TheCrateSystem->friend_findCrateTemplate(name);
 	if (crateTemplate == NULL) {
@@ -157,7 +157,7 @@ const CrateTemplate *CrateSystem::findCrateTemplate(AsciiString name) const
 			CrateTemplateOverride overridable(m_crateTemplateVector[i]);
 			return overridable;
 		}
-		
+
 
 	return NULL;
 }
@@ -180,7 +180,7 @@ CrateTemplate *CrateSystem::friend_findCrateTemplate(AsciiString name)
 //--------------------------------------------------------------------------------
 //--------------------------------------------------------------------------------
 //--------------------------------------------------------------------------------
-const FieldParse CrateTemplate::TheCrateTemplateFieldParseTable[] = 
+const FieldParse CrateTemplate::TheCrateTemplateFieldParseTable[] =
 {
 	{ "CreationChance",		INI::parseReal,													NULL,									offsetof( CrateTemplate, m_creationChance ) },
 	{ "VeterancyLevel",		INI::parseIndexList,										TheVeterancyNames,		offsetof( CrateTemplate, m_veterancyLevel ) },

@@ -102,7 +102,7 @@ public:
 	inline Bool showRandomStartPos( void ) { return m_showRandomStartPos; }
 	inline Bool showRandomColor( void ) { return m_showRandomColor; }
 
-	inline Int getNumColors( void ) 
+	inline Int getNumColors( void )
 	{
 		if (m_numColors == 0) {
 			m_numColors = m_colorList.size();
@@ -112,16 +112,16 @@ public:
 	MultiplayerColorDefinition * getColor(Int which);
 
 
-  const Money & getDefaultStartingMoney() const 
-  { 
+  const Money & getDefaultStartingMoney() const
+  {
     DEBUG_ASSERTCRASH( m_gotDefaultStartingMoney, ("You must specify a default starting money amount in multiplayer.ini") );
-    return m_defaultStartingMoney; 
+    return m_defaultStartingMoney;
   }
 
   const MultiplayerStartingMoneyList & getStartingMoneyList() const { return m_startingMoneyList; }
 
   void addStartingMoneyChoice( const Money & money, Bool isDefault );
-    
+
 private:
 	Int m_initialCreditsMin;
 	Int m_initialCreditsMax;

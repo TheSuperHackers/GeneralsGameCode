@@ -49,24 +49,24 @@ class Matrix3D;
 /**
 	An FXNugget encapsulates a particular type of audio/video effect. FXNuggets are virtually
 	never used on their own, but rather, as a component of an FXList (see below).
-	
+
 	Important notes:
 
 	-- FXNugget is an ABC; all the implementations are (currently) located in FXList.cpp,
 	thought they will probably be spread out more as we add more implementations.
 
-	-- As part of an FXList, an FXNugget is shared between multiple units. The implication is that 
-	an FXNugget should not require private data storage to do what it needs to do, aside from stuff 
-	initialized at FXNugget instantiation time (eg, parameters from an INI file). To help 
+	-- As part of an FXList, an FXNugget is shared between multiple units. The implication is that
+	an FXNugget should not require private data storage to do what it needs to do, aside from stuff
+	initialized at FXNugget instantiation time (eg, parameters from an INI file). To help
 	enforce this, all it's methods are declared 'const'. If you can't implement what you
 	need within this framework, please *don't* simply de-const things, because it could lead to very
 	strange side-effects. Instead, the system will have to be enhanced to allow for multiple instances
 	of each FXNugget.
 
-	-- an individual FXNugget is generally not directly accessible to anyone outside of the	
+	-- an individual FXNugget is generally not directly accessible to anyone outside of the
 	FXList system; in fact, it could probably be a private class, but isn't, mainly for coding convenience.
 
-	-- Unlike most other game systems, FXNuggets can't be overridden by subsequent INI file 
+	-- Unlike most other game systems, FXNuggets can't be overridden by subsequent INI file
 	loads. This isn't really a problem, because all you really need to do to "override" one is to
 	specify a different one.
 */
@@ -92,7 +92,7 @@ public:
 
 private:
 
-};  
+};
 EMPTY_DTOR(FXNugget)
 
 //-------------------------------------------------------------------------------------------------
@@ -100,23 +100,23 @@ EMPTY_DTOR(FXNugget)
 	An FXList is a way of encapsulating a particular set of audio/video effect(s).
 	Lots of other game systems (eg, DamageFX) use FXLists to abstract AV effects into data files
 	(rather than hardcoding them, which would be suboptimal).
-	
+
 	Important notes:
 
 	-- an FXList is specified solely by name, and the only parameters it receives when performing
 	its AV effects are a primary (and optional secondary) object position.
-	
+
 	-- There is no inheritance or overriding of FXLists; if you need an FXList that is nearly-but-not-quite
 	identical to an existing one, you must simply make an entirely new FXList. Realistically, this shouldn't
 	be a problem, since they are pretty simple to specify, and don't consume a lot of memory.
 
-	-- an FXList is shared between multiple units. To help 
+	-- an FXList is shared between multiple units. To help
 	enforce this, all it's methods are declared 'const'. If you can't implement the stuff you
 	need within this framework, please *don't* simply de-const things, because it could lead to very
 	strange side-effects. Instead, the system will have to be enhanced to allow for multiple instances
 	of each FXNugget.
 
-	-- Unlike most other game systems, FXList can't be overridden by subsequent INI file 
+	-- Unlike most other game systems, FXList can't be overridden by subsequent INI file
 	loads. This isn't really a problem, because all you really need to do to "override" one is to
 	specify a different one.
 */
@@ -183,11 +183,11 @@ private:
 
 	FXNuggetList m_nuggets;
 
-};  
+};
 
 //-------------------------------------------------------------------------------------------------
 /**
-	The "store" used to hold all the FXLists in existence. 
+	The "store" used to hold all the FXLists in existence.
 */
 class FXListStore : public SubsystemInterface
 {
@@ -206,12 +206,12 @@ public:
 		return NULL if no such FXList exists.
 	*/
 	const FXList *findFXList( const char* name ) const;
-	
+
 	static void parseFXListDefinition(INI* ini);
 
 private:
 
-	// use the hashing function for Ints. 
+	// use the hashing function for Ints.
 	typedef std::hash_map< NameKeyType, FXList, rts::hash<NameKeyType>, rts::equal_to<NameKeyType> > FXListMap;
 
 	FXListMap m_fxmap;

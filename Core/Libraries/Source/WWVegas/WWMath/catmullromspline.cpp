@@ -46,26 +46,26 @@
 #include "catmullromspline.h"
 #include "persistfactory.h"
 #include "wwmathids.h"
-#include "wwhack.h" 
+#include "wwhack.h"
 
 /*
 ** Force-Link this module because the linker can't detect that we actually need it...
 */
 DECLARE_FORCE_LINK(catmullromspline);
- 
+
 /*
 ** Save-Load stuff
 */
 SimplePersistFactoryClass<CatmullRomSpline3DClass,WWMATH_CHUNKID_CATMULLROMSPLINE3D>	_CatmullRomSpline3DFactory;
 SimplePersistFactoryClass<CatmullRomSpline1DClass,WWMATH_CHUNKID_CATMULLROMSPLINE1D>	_CatmullRomSpline1DFactory;
 
-enum 
+enum
 {
 	// ID's used by CatmullRomSpline3D
-	CATMULLROM3D_CHUNK_HERMITE3D					= 0x00020727,	
+	CATMULLROM3D_CHUNK_HERMITE3D					= 0x00020727,
 
 	// ID's used by CatmullRomSpline1D
-	CATMULLROM1D_CHUNK_HERMITE1D					= 0x00020729,	
+	CATMULLROM1D_CHUNK_HERMITE1D					= 0x00020729,
 };
 
 
@@ -103,22 +103,22 @@ void CatmullRomSpline3DClass::Update_Tangents(void)
 	if (IsLooping) {
 
 		// This really only works if the start and end points have the same position...
-		Tangents[0].OutTangent.X = 0.5f*(Keys[1].Point.X - Keys[end-1].Point.X); 			
-		Tangents[0].OutTangent.Y = 0.5f*(Keys[1].Point.Y - Keys[end-1].Point.Y); 			
-		Tangents[0].OutTangent.Z = 0.5f*(Keys[1].Point.Z - Keys[end-1].Point.Z); 			
+		Tangents[0].OutTangent.X = 0.5f*(Keys[1].Point.X - Keys[end-1].Point.X);
+		Tangents[0].OutTangent.Y = 0.5f*(Keys[1].Point.Y - Keys[end-1].Point.Y);
+		Tangents[0].OutTangent.Z = 0.5f*(Keys[1].Point.Z - Keys[end-1].Point.Z);
 		Tangents[end].InTangent = Tangents[0].OutTangent;
-	
-	} else {
-		
-		// TODO: second derivative = 0... what is formula?  I'm making this up...
-		Tangents[0].OutTangent.X = 0.25f*(Keys[1].Point.X - Keys[0].Point.X); 			
-		Tangents[0].OutTangent.Y = 0.25f*(Keys[1].Point.Y - Keys[0].Point.Y); 			
-		Tangents[0].OutTangent.Z = 0.25f*(Keys[1].Point.Z - Keys[0].Point.Z); 			
 
-		Tangents[end].InTangent.X = 0.25f*(Keys[end].Point.X - Keys[end-1].Point.X); 			
-		Tangents[end].InTangent.Y = 0.25f*(Keys[end].Point.Y - Keys[end-1].Point.Y); 			
-		Tangents[end].InTangent.Z = 0.25f*(Keys[end].Point.Z - Keys[end-1].Point.Z); 			
-	
+	} else {
+
+		// TODO: second derivative = 0... what is formula?  I'm making this up...
+		Tangents[0].OutTangent.X = 0.25f*(Keys[1].Point.X - Keys[0].Point.X);
+		Tangents[0].OutTangent.Y = 0.25f*(Keys[1].Point.Y - Keys[0].Point.Y);
+		Tangents[0].OutTangent.Z = 0.25f*(Keys[1].Point.Z - Keys[0].Point.Z);
+
+		Tangents[end].InTangent.X = 0.25f*(Keys[end].Point.X - Keys[end-1].Point.X);
+		Tangents[end].InTangent.Y = 0.25f*(Keys[end].Point.Y - Keys[end-1].Point.Y);
+		Tangents[end].InTangent.Z = 0.25f*(Keys[end].Point.Z - Keys[end-1].Point.Z);
+
 	}
 
 	float total_time = (Keys[1].Time - Keys[0].Time) + (Keys[end].Time - Keys[end-1].Time);
@@ -197,8 +197,8 @@ bool CatmullRomSpline3DClass::Save(ChunkSaveClass &csave)
 bool CatmullRomSpline3DClass::Load(ChunkLoadClass &cload)
 {
 	while (cload.Open_Chunk()) {
-		
-		switch(cload.Cur_Chunk_ID()) 
+
+		switch(cload.Cur_Chunk_ID())
 		{
 			case CATMULLROM3D_CHUNK_HERMITE3D:
 				HermiteSpline3DClass::Load(cload);
@@ -252,14 +252,14 @@ void CatmullRomSpline1DClass::Update_Tangents(void)
 		// This really only works if the start and end points have the same position...
 		Tangents[0].OutTangent = 0.5f*(Keys[1].Point - Keys[end-1].Point);
 		Tangents[end].InTangent = Tangents[0].OutTangent;
-	
+
 	} else {
-		
+
 		// TODO: second derivative = 0... what is formula?  I'm making this up...
 		Tangents[0].OutTangent = 0.25f*(Keys[1].Point - Keys[0].Point);
 
 		Tangents[end].InTangent = 0.25f*(Keys[end].Point - Keys[end-1].Point);
-	
+
 	}
 
 	float total_time = (Keys[1].Time - Keys[0].Time) + (Keys[end].Time - Keys[end-1].Time);
@@ -336,8 +336,8 @@ bool CatmullRomSpline1DClass::Save(ChunkSaveClass &csave)
 bool CatmullRomSpline1DClass::Load(ChunkLoadClass &cload)
 {
 	while (cload.Open_Chunk()) {
-		
-		switch(cload.Cur_Chunk_ID()) 
+
+		switch(cload.Cur_Chunk_ID())
 		{
 			case CATMULLROM1D_CHUNK_HERMITE1D:
 				HermiteSpline1DClass::Load(cload);

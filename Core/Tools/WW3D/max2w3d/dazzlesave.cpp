@@ -52,7 +52,7 @@ DazzleSaveClass::DazzleSaveClass
 	Matrix3 & exportspace,
 	TimeValue curtime,
 	Progress_Meter_Class & meter
-) 
+)
 {
 	assert(mesh_name != NULL);
 	assert(container_name != NULL);
@@ -88,7 +88,7 @@ int DazzleSaveClass::Write_To_File(ChunkSaveClass & csave)
 	csave.Begin_Chunk(W3D_CHUNK_DAZZLE_TYPENAME);
 	csave.Write(DazzleType,strlen(DazzleType) + 1);
 	csave.End_Chunk();
-	
+
 	csave.End_Chunk();
 	return 0;
 }

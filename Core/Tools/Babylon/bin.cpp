@@ -105,7 +105,7 @@ void				Bin::Add					( void *data, OLECHAR *text1, OLECHAR *text2 )
 
 BinItem*		Bin::GetBinItem		( OLECHAR *text1, OLECHAR *text2)
 {
-	
+
 	sh_size1 = sh_size2 = 0;
 	sh_text1 = text1;
 	sh_text2 = text2;
@@ -152,7 +152,7 @@ BinItem*		Bin::GetBinItem	( void *item )
 	BinItem *bitem = NULL;
 	int i;
 
-	
+
 	for ( i=0; i< num_buckets; i++)
 	{
 
@@ -164,7 +164,7 @@ BinItem*		Bin::GetBinItem	( void *item )
 	}
 
 	return bitem;
-								
+
 }
 
 void				Bin::Remove			( void *item )
@@ -323,7 +323,7 @@ void				BinID::Add					( void *data, int id )
 BinIDItem*		BinID::GetBinIDItem		( int id )
 {
 	BinIDItem *item;
-	
+
 
 	item = (BinIDItem *) bucket[id%num_buckets].Next();
 
@@ -345,7 +345,7 @@ BinIDItem*		BinID::GetBinIDItem	( void *item )
 	BinIDItem *bitem = NULL;
 	int i;
 
-	
+
 	for ( i=0; i< num_buckets; i++)
 	{
 
@@ -357,7 +357,7 @@ BinIDItem*		BinID::GetBinIDItem	( void *item )
 	}
 
 	return bitem;
-								
+
 }
 
 void				BinID::Remove			( void *item )

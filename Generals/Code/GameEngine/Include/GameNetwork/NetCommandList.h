@@ -46,7 +46,7 @@
 
 class NetCommandList : public MemoryPoolObject
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(NetCommandList, "NetCommandList")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(NetCommandList, "NetCommandList")
 public:
 	NetCommandList();
 	//virtual ~NetCommandList();

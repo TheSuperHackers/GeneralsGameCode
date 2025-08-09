@@ -53,11 +53,11 @@ public:
 		m_upgradeBoost.clear();
 	}
 
-	static void buildFieldParse(MultiIniFieldParse& p) 
+	static void buildFieldParse(MultiIniFieldParse& p)
 	{
     CrateCollideModuleData::buildFieldParse(p);
 
-		static const FieldParse dataFieldParse[] = 
+		static const FieldParse dataFieldParse[] =
 		{
 			{ "MoneyProvided",	INI::parseUnsignedInt,	NULL, offsetof( MoneyCrateCollideModuleData, m_moneyProvided ) },
 			{ "UpgradedBoost",	parseUpgradePair,		NULL, offsetof( MoneyCrateCollideModuleData, m_upgradeBoost ) },

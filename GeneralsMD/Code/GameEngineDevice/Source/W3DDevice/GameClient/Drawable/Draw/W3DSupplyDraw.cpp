@@ -32,7 +32,7 @@
 #include "W3DDevice/GameClient/Module/W3DSupplyDraw.h"
 
 //-------------------------------------------------------------------------------------------------
-W3DSupplyDrawModuleData::W3DSupplyDrawModuleData() 
+W3DSupplyDrawModuleData::W3DSupplyDrawModuleData()
 {
 }
 
@@ -42,11 +42,11 @@ W3DSupplyDrawModuleData::~W3DSupplyDrawModuleData()
 }
 
 //-------------------------------------------------------------------------------------------------
-void W3DSupplyDrawModuleData::buildFieldParse(MultiIniFieldParse& p) 
+void W3DSupplyDrawModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
   W3DModelDrawModuleData::buildFieldParse(p);
 
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
 		{ "SupplyBonePrefix", INI::parseAsciiString, NULL, offsetof(W3DSupplyDrawModuleData, m_supplyBonePrefix) },
 
@@ -58,7 +58,7 @@ void W3DSupplyDrawModuleData::buildFieldParse(MultiIniFieldParse& p)
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 W3DSupplyDraw::W3DSupplyDraw( Thing *thing, const ModuleData* moduleData ) : W3DModelDraw( thing, moduleData )
-{	 
+{
 	m_totalBones = -1;
 	m_lastNumberShown = 0;
 }

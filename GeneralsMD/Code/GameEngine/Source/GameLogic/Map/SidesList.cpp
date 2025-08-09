@@ -24,12 +24,12 @@
 
 // FILE: SidesList.cpp /////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:   RTS3
@@ -76,7 +76,7 @@ SidesInfo::SidesInfo(const SidesInfo& thatref) :
 }
 
 /**
- SidesInfo - Destructor - 
+ SidesInfo - Destructor -
 */
 SidesInfo::~SidesInfo(void)
 {
@@ -88,7 +88,7 @@ void SidesInfo::init(const Dict* d)
 	deleteInstance(m_pBuildList);
 	m_pBuildList = NULL;
 	m_dict.clear();
-	if (m_scripts) 
+	if (m_scripts)
 		deleteInstance(m_scripts);
 	m_scripts = NULL;
 	if (d)
@@ -106,7 +106,7 @@ SidesInfo& SidesInfo::operator=(const SidesInfo& that)
 		BuildListInfo* thisBLTail = NULL;
 		for (BuildListInfo* thatBL = that.m_pBuildList; thatBL; thatBL = thatBL->getNext())
 		{
-			BuildListInfo* thisBL = newInstance( BuildListInfo );	
+			BuildListInfo* thisBL = newInstance( BuildListInfo );
 			*thisBL = *thatBL;
 			thisBL->setNextBuildList(NULL);
 
@@ -114,7 +114,7 @@ SidesInfo& SidesInfo::operator=(const SidesInfo& that)
 				thisBLTail->setNextBuildList(thisBL);
 			else
 				this->m_pBuildList = thisBL;
-				
+
 			thisBLTail = thisBL;
 		}
 
@@ -128,7 +128,7 @@ SidesInfo& SidesInfo::operator=(const SidesInfo& that)
 
 /**
 * SidesInfo::addToBuildList - Adds a build list entry as the nth entry.
-*		
+*
 */
 void SidesInfo::addToBuildList(BuildListInfo *pBuildList, Int position)
 {
@@ -158,7 +158,7 @@ void SidesInfo::addToBuildList(BuildListInfo *pBuildList, Int position)
 
 /**
 * SidesInfo::reorderInBuildList - Reorders a build list entry as the nth entry.
-*		
+*
 */
 void SidesInfo::reorderInBuildList(BuildListInfo *pBuildList, Int newPosition)
 {
@@ -169,7 +169,7 @@ void SidesInfo::reorderInBuildList(BuildListInfo *pBuildList, Int newPosition)
 /**
 * SidesInfo::removeFromBuildList - Removes a build list entry.
 * Returns the position in the list that the item occupied.
-*		
+*
 */
 Int SidesInfo::removeFromBuildList(BuildListInfo *pBuildList)
 {
@@ -208,14 +208,14 @@ SidesList::SidesList(void) : m_numSides(0), m_numSkirmishSides(0)
 }
 
 /**
- SidesList - Destructor - 
+ SidesList - Destructor -
 */
 SidesList::~SidesList(void)
 {
 }
 
 /**
- SidesList - reset - 
+ SidesList - reset -
 */
 void SidesList::reset(void)
 {
@@ -223,7 +223,7 @@ void SidesList::reset(void)
 }
 
 /**
- SidesList - clear - 
+ SidesList - clear -
 */
 void SidesList::clear(void)
 {
@@ -237,28 +237,28 @@ void SidesList::clear(void)
 * SidesList::ParseSidesDataChunk - read a Sides chunk.
 * Format is the newer CHUNKY format.
 *	See SidesList::WriteSidesDataChunk for the writer.
-*	Input: DataChunkInput 
-*		
+*	Input: DataChunkInput
+*
 */
 Bool SidesList::ParseSidesDataChunk(DataChunkInput &file, DataChunkInfo *info, void *userData)
 {
 	DEBUG_ASSERTCRASH(TheSidesList, ("TheSidesList is null"));
 
-	if (TheSidesList==NULL) 
+	if (TheSidesList==NULL)
 		return false;
 
 	TheSidesList->clear();
 	Int count = file.readInt();
 	Int i, j;
 	TheSidesList->emptySides();
-	for (i=0; i<count; i++) 
+	for (i=0; i<count; i++)
 	{
 		if (i >= MAX_PLAYER_COUNT) break;
 		Dict d =  file.readDict();
 		TheSidesList->addSide(&d);
 		BuildListInfo* pBuildList;
 		Int count = file.readInt();
-		for (j=0; j<count; j++) 
+		for (j=0; j<count; j++)
 		{
 			pBuildList = newInstance( BuildListInfo );
 			pBuildList->setBuildingName(file.readAsciiString());
@@ -282,18 +282,18 @@ Bool SidesList::ParseSidesDataChunk(DataChunkInput &file, DataChunkInfo *info, v
 			}
 			TheSidesList->getSideInfo(i)->addToBuildList(pBuildList, j);
 		}
-	}	
+	}
 	if (info->version >= K_SIDES_DATA_VERSION_2)
 	{
 		count = file.readInt();
 		TheSidesList->emptyTeams();
-		for (i=0; i<count; i++) 
+		for (i=0; i<count; i++)
 		{
 			Dict d =  file.readDict();
 			TheSidesList->addTeam(&d);
 		}
 	}
-	
+
 	file.registerParser( AsciiString("PlayerScriptsList"), info->label, ScriptList::ParseScriptsDataChunk );
 	if (!file.parse(NULL)) {
 		throw(ERROR_CORRUPT_FILE_FORMAT);
@@ -323,21 +323,21 @@ Bool SidesList::ParseSidesDataChunk(DataChunkInput &file, DataChunkInfo *info, v
 * SidesList::WriteSidesDataChunk - Writes a Sides chunk.
 * Format is the newer CHUNKY format.
 *	See SidesList::ParseSidesDataChunk for the reader.
-*	Input: DataChunkInput 
-*		
+*	Input: DataChunkInput
+*
 */
 void SidesList::WriteSidesDataChunk(DataChunkOutput &chunkWriter)
 {
 	DEBUG_ASSERTCRASH(TheSidesList, ("TheSidesList is null"));
-	if (TheSidesList==NULL) 
+	if (TheSidesList==NULL)
 		return;
 	/**********HEIGHT MAP DATA ***********************/
-	chunkWriter.openDataChunk("SidesList", K_SIDES_DATA_VERSION_3);	
-	
+	chunkWriter.openDataChunk("SidesList", K_SIDES_DATA_VERSION_3);
+
 		chunkWriter.writeInt(TheSidesList->getNumSides());
 		Int i;
 		for (i=0; i<TheSidesList->getNumSides(); i++) {
-			chunkWriter.writeDict(*TheSidesList->getSideInfo(i)->getDict());	
+			chunkWriter.writeDict(*TheSidesList->getSideInfo(i)->getDict());
 			BuildListInfo* pBuildList = TheSidesList->getSideInfo(i)->getBuildList();
 			Int count = 0;
 			while (pBuildList) {
@@ -365,12 +365,12 @@ void SidesList::WriteSidesDataChunk(DataChunkOutput &chunkWriter)
 
 				pBuildList = pBuildList->getNext();
 			}
-		}	
-		
+		}
+
 		// BEGIN stuff new to K_SIDES_DATA_VERSION_2
 		chunkWriter.writeInt(TheSidesList->getNumTeams());
 		for (i=0; i<TheSidesList->getNumTeams(); i++) {
-			chunkWriter.writeDict(*TheSidesList->getTeamInfo(i)->getDict());	
+			chunkWriter.writeDict(*TheSidesList->getTeamInfo(i)->getDict());
 		}
 		// END stuff new to K_SIDES_DATA_VERSION_2
 
@@ -384,7 +384,7 @@ void SidesList::WriteSidesDataChunk(DataChunkOutput &chunkWriter)
 	Bool modified = TheSidesList->validateSides();
 	DEBUG_ASSERTLOG(!modified, ("*** had to clean up sideslist on read"));
 	modified = false;	// silence compiler warnings in release build
-	
+
 }
 
 TeamsInfo *SidesList::findTeamInfo(AsciiString name, Int* index /*= NULL*/)
@@ -394,7 +394,7 @@ TeamsInfo *SidesList::findTeamInfo(AsciiString name, Int* index /*= NULL*/)
 
 SidesInfo *SidesList::findSideInfo(AsciiString name, Int* index /*= NULL*/)
 {
-	for (int i = 0; i < m_numSides; i++) 
+	for (int i = 0; i < m_numSides; i++)
 	{
 		if (m_sides[i].getDict()->getAsciiString(TheKey_playerName) == name)
 		{
@@ -408,7 +408,7 @@ SidesInfo *SidesList::findSideInfo(AsciiString name, Int* index /*= NULL*/)
 
 SidesInfo *SidesList::findSkirmishSideInfo(AsciiString name, Int* index /*= NULL*/)
 {
-	for (int i = 0; i < m_numSkirmishSides; i++) 
+	for (int i = 0; i < m_numSkirmishSides; i++)
 	{
 		if (m_skirmishSides[i].getDict()->getAsciiString(TheKey_playerName) == name)
 		{
@@ -425,8 +425,8 @@ static AsciiString static_readPlayerNames[MAX_PLAYER_COUNT];
 /**
 * ParsePlayersDataChunk - read players names data chunk.
 * Format is the newer CHUNKY format.
-*	Input: DataChunkInput 
-*		
+*	Input: DataChunkInput
+*
 */
 #define K_PLAYERS_NAMES_FOR_SCRIPTS_VERSION_1 1
 #define K_PLAYERS_NAMES_FOR_SCRIPTS_VERSION_2 2
@@ -453,8 +453,8 @@ static Bool ParsePlayersDataChunk(DataChunkInput &file, DataChunkInfo *info, voi
 /**
 * ParseTeamsDataChunk - read teams data chunk.
 * Format is the newer CHUNKY format.
-*	Input: DataChunkInput 
-*		
+*	Input: DataChunkInput
+*
 */
 static Bool ParseTeamsDataChunk(DataChunkInput &file, DataChunkInfo *info, void *userData)
 {
@@ -491,7 +491,7 @@ void SidesList::prepareForMP_or_Skirmish(void)
 	}
 	m_numSkirmishSides = 0;
 
-	for (i = 0; i < m_numSides; i++) 
+	for (i = 0; i < m_numSides; i++)
 	{
 		m_skirmishSides[m_numSkirmishSides] = m_sides[i];
 		m_numSkirmishSides++;
@@ -510,7 +510,7 @@ void SidesList::prepareForMP_or_Skirmish(void)
 			continue;
 		}
 		if (m_skirmishSides[i].getScriptList()==NULL) continue;
-		if (m_skirmishSides[i].getScriptList()->getScript() != NULL || 
+		if (m_skirmishSides[i].getScriptList()->getScript() != NULL ||
 			m_skirmishSides[i].getScriptList()->getScriptGroup()!=NULL) {
 			gotScripts = true;
 		}
@@ -520,7 +520,7 @@ void SidesList::prepareForMP_or_Skirmish(void)
 		DEBUG_LOG(("Skirmish map using standard scripts"));
 		m_skirmishTeamrec.clear();
 		CachedFileInputStream theInputStream;
-		if (theInputStream.open(path)) { 
+		if (theInputStream.open(path)) {
 				ChunkInputStream *pStrm = &theInputStream;
 				DataChunkInput file( pStrm );
 				file.registerParser( AsciiString("PlayerScriptsList"), AsciiString::TheEmptyString, ScriptList::ParseScriptsDataChunk );
@@ -548,7 +548,7 @@ void SidesList::prepareForMP_or_Skirmish(void)
 					ScriptList *pSL = getSkirmishSideInfo(curSide)->getScriptList();
 					getSkirmishSideInfo(curSide)->setScriptList(scripts[i]);
 					scripts[i] = NULL;
-					if (pSL) 
+					if (pSL)
 						deleteInstance(pSL);
 					scripts[i] = NULL;
 				}
@@ -581,20 +581,20 @@ Bool SidesList::isPlayerDefaultTeam(TeamsInfo *t)
 	return false;
 }
 
-void SidesList::emptySides() 
-{ 
+void SidesList::emptySides()
+{
 	Int i;
 
-	m_numSides = 0; 
-	m_numSkirmishSides = 0; 
+	m_numSides = 0;
+	m_numSkirmishSides = 0;
 	for (i = 0; i < MAX_PLAYER_COUNT; i++) {
-		m_sides[i].clear(); 
+		m_sides[i].clear();
 		m_skirmishSides[i].clear();
 	}
 }
 
-void SidesList::emptyTeams() 
-{ 
+void SidesList::emptyTeams()
+{
 	m_teamrec.clear();
 	m_skirmishTeamrec.clear();
 }
@@ -642,7 +642,7 @@ Bool SidesList::validateAllyEnemyList(const AsciiString& tname, AsciiString& all
 	Bool modified = false;
 
 	AsciiString str, newstr, token;
-	
+
 	str = allies;
 	newstr.clear();
 	while (str.nextToken(&token))
@@ -702,7 +702,7 @@ void SidesList::addPlayerByTemplate(AsciiString playerTemplateName)
 	Dict d;
 
 	d.clear();
-	d.setAsciiString(TheKey_playerName, playerName);	
+	d.setAsciiString(TheKey_playerName, playerName);
 	d.setBool(TheKey_playerIsHuman, isHuman);
 	d.setUnicodeString(TheKey_playerDisplayName, playerDisplayName);
 	d.setAsciiString(TheKey_playerFaction, playerTemplateName);
@@ -745,7 +745,7 @@ Bool SidesList::validateSides()
 	}
 
 	// now ensure that every player has a proper "default team"
-	for (i = 0; i < getNumSides(); i++) 
+	for (i = 0; i < getNumSides(); i++)
 	{
 		Dict *pdict = getSideInfo(i)->getDict();
 		AsciiString pname = pdict->getAsciiString(TheKey_playerName);
@@ -847,7 +847,7 @@ void SidesList::crc( Xfer *xfer )
 }  // end crc
 
 // ------------------------------------------------------------------------------------------------
-/** Xfer method 
+/** Xfer method
 	* Version Info:
 	* 1: Initial version */
 // ------------------------------------------------------------------------------------------------
@@ -937,7 +937,7 @@ m_buildingName(AsciiString::TheEmptyString)
 	m_selected = FALSE;
 
 	Int i;
-	for (i=0; i<MAX_RESOURCE_GATHERERS; i++) 
+	for (i=0; i<MAX_RESOURCE_GATHERERS; i++)
 	{
 		m_resourceGatherers[i] = INVALID_ID;
 	}
@@ -954,9 +954,9 @@ BuildListInfo::~BuildListInfo(void)
 		BuildListInfo *next;
 		while (cur) {
 			next = cur->getNext();
-			cur->setNextBuildList(NULL); // prevents recursion. 
+			cur->setNextBuildList(NULL); // prevents recursion.
 			deleteInstance(cur);
-			cur = next; 
+			cur = next;
 		}
 	}
 }
@@ -966,7 +966,7 @@ void BuildListInfo::parseStructure(INI *ini, void *instance, void* /*store*/, co
 	const char* c = ini->getNextToken();
 	AsciiString tTemplateName(c);
 
-	static const FieldParse myFieldParse[] = 
+	static const FieldParse myFieldParse[] =
 		{
 			{ "Name",				INI::parseAsciiString,		NULL, offsetof( BuildListInfo, m_buildingName	 ) },
 			{ "Location",		INI::parseCoord2D,				NULL, offsetof( BuildListInfo, m_location ) },
@@ -1065,18 +1065,18 @@ void BuildListInfo::loadPostProcess( void )
 }  // end loadPostProcess
 
 /* ********* TeamsInfoRec class ****************************/
-TeamsInfoRec::TeamsInfoRec() : 
+TeamsInfoRec::TeamsInfoRec() :
 	m_numTeams(0), m_numTeamsAllocated(0), m_teams(NULL)
 {
 }
 
-TeamsInfoRec::TeamsInfoRec(const TeamsInfoRec& thatref) : 
+TeamsInfoRec::TeamsInfoRec(const TeamsInfoRec& thatref) :
 	m_numTeams(0), m_numTeamsAllocated(0), m_teams(NULL)
 {
 	*this = thatref;
 }
 
-TeamsInfoRec::~TeamsInfoRec() 
+TeamsInfoRec::~TeamsInfoRec()
 {
 	clear();
 }
@@ -1088,7 +1088,7 @@ TeamsInfoRec& TeamsInfoRec::operator=(const TeamsInfoRec& thatref)
 	if (this != that)
 	{
 		this->clear();
-		for (int i = 0; i < that->m_numTeams; i++) 
+		for (int i = 0; i < that->m_numTeams; i++)
 		{
 			this->addTeam(that->m_teams[i].getDict());
 		}
@@ -1096,14 +1096,14 @@ TeamsInfoRec& TeamsInfoRec::operator=(const TeamsInfoRec& thatref)
 	return *this;
 }
 
-void TeamsInfoRec::clear() 
-{ 
+void TeamsInfoRec::clear()
+{
 	Int i;
 
-	for (i = 0; i < m_numTeams; ++i) 
-		m_teams[i].clear(); 
+	for (i = 0; i < m_numTeams; ++i)
+		m_teams[i].clear();
 
-	m_numTeams = 0; 
+	m_numTeams = 0;
 	m_numTeamsAllocated = 0;
 	delete [] m_teams;
 	m_teams = NULL;
@@ -1111,7 +1111,7 @@ void TeamsInfoRec::clear()
 
 TeamsInfo *TeamsInfoRec::findTeamInfo(AsciiString name, Int* index /*= NULL*/)
 {
-	for (int i = 0; i < m_numTeams; ++i) 
+	for (int i = 0; i < m_numTeams; ++i)
 	{
 		if (m_teams[i].getDict()->getAsciiString(TheKey_teamName) == name)
 		{

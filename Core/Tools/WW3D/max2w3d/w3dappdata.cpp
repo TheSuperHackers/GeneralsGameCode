@@ -34,17 +34,17 @@
  *                                                                                             *
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
- *   Is_Bone -- check if a node is a "bone"                                                    * 
+ *   Is_Bone -- check if a node is a "bone"                                                    *
  *   Is_Geometry -- Check if an INode is marked for "geometry" export                          *
- *   Is_Normal_Mesh -- check if a node is a mesh                                               * 
+ *   Is_Normal_Mesh -- check if a node is a mesh                                               *
  *   Is_Camera_Aligned_Mesh -- check if a node is to be a camera aligned mesh                  *
  *   Is_Camera_Oriented_Mesh -- check if a node is to be a camera oriented mesh                *
- *   Is_Collision_AABox -- check if a node is a collision box mesh                             * 
- *   Is_Collision_OBBox -- check if a node is a collision box mesh                             * 
- *   Is_Skin -- check if a node is a skin                                                      * 
- *   Is_Shadow -- check if a node marked to cast shadows                                       * 
- *   Is_Damage -- check if a node is a damage version of a mesh                                * 
- *   Is_Damage_For_Mesh -- check if a node is a damage version of a particular mesh            * 
+ *   Is_Collision_AABox -- check if a node is a collision box mesh                             *
+ *   Is_Collision_OBBox -- check if a node is a collision box mesh                             *
+ *   Is_Skin -- check if a node is a skin                                                      *
+ *   Is_Shadow -- check if a node marked to cast shadows                                       *
+ *   Is_Damage -- check if a node is a damage version of a mesh                                *
+ *   Is_Damage_For_Mesh -- check if a node is a damage version of a particular mesh            *
  *   Is_Physical_Collision -- Is node categorized as "physical collision geometry"             *
  *   Is_Projectile_Collision -- Is node categorized as "projectile collision geometry"?        *
  *   Is_Vis_Collision -- Is node categorized as "vis collision geometry"?                      *
@@ -84,9 +84,9 @@ W3DAppData2Struct::W3DAppData2Struct(void) :
 	GeometryType(0),
 	GeometryFlags(0),
 	CollisionFlags(0)
-{ 
+{
 	memset(UnUsed,0,sizeof(UnUsed));
-	Init_With_Other_Defaults(); 
+	Init_With_Other_Defaults();
 }
 
 W3DAppData2Struct::W3DAppData2Struct(W3DAppData0Struct & olddata)	:
@@ -94,16 +94,16 @@ W3DAppData2Struct::W3DAppData2Struct(W3DAppData0Struct & olddata)	:
 	GeometryType(0),
 	GeometryFlags(0),
 	CollisionFlags(0)
-{ 
+{
 	memset(UnUsed,0,sizeof(UnUsed));
-	Init_From_AppData0(olddata); 
-} 
+	Init_From_AppData0(olddata);
+}
 
 void W3DAppData2Struct::Init_With_Mesh_Defaults(void)
-{ 
-	ExportFlags = (EXPORT_TRANSFORM|EXPORT_GEOMETRY); 
-	GeometryType = GEO_TYPE_NORMAL_MESH; 
-	GeometryFlags = 0; 
+{
+	ExportFlags = (EXPORT_TRANSFORM|EXPORT_GEOMETRY);
+	GeometryType = GEO_TYPE_NORMAL_MESH;
+	GeometryFlags = 0;
 	CollisionFlags = 0;
 	memset(UnUsed,0,sizeof(UnUsed));
 
@@ -111,23 +111,23 @@ void W3DAppData2Struct::Init_With_Mesh_Defaults(void)
 }
 
 void	W3DAppData2Struct::Init_With_Other_Defaults(void)
-{ 
-	ExportFlags = 0; 
-	GeometryType = 0; 
-	GeometryFlags = 0; 
-	CollisionFlags = 0; 
+{
+	ExportFlags = 0;
+	GeometryType = 0;
+	GeometryFlags = 0;
+	CollisionFlags = 0;
 	memset(UnUsed,0,sizeof(UnUsed));
-	
+
 	Set_Version(W3DAPPDATA2_CURRENT_VERSION);
 }
 
 void	W3DAppData2Struct::Init_From_AppData0(W3DAppData0Struct & olddata)
 {
 	Init_With_Other_Defaults();
-	
+
 	Enable_Export_Transform(olddata.Is_Bone());
 	Enable_Export_Geometry(olddata.Is_Geometry());
-	
+
 	if (olddata.Is_Camera_Aligned_Mesh()) {
 		Set_Geometry_Type(GEO_TYPE_CAMERA_ALIGNED);
 	}
@@ -147,14 +147,14 @@ void	W3DAppData2Struct::Init_From_AppData0(W3DAppData0Struct & olddata)
 		Set_Geometry_Type(GEO_TYPE_NULL);
 	}
 
-	Enable_Hidden(olddata.Is_Hidden());						
+	Enable_Hidden(olddata.Is_Hidden());
 	Enable_Two_Sided(olddata.Is_Two_Sided());
-	Enable_Shadow(olddata.Is_Shadow());				
-	Enable_Vertex_Alpha(olddata.Is_Vertex_Alpha());			
-	Enable_ZNormals(olddata.Is_ZNormals());				
-	Enable_Physical_Collision(olddata.Is_Physical_Collision());		
-	Enable_Projectile_Collision(olddata.Is_Projectile_Collision());	
-	Enable_Vis_Collision(olddata.Is_Vis_Collision());				
+	Enable_Shadow(olddata.Is_Shadow());
+	Enable_Vertex_Alpha(olddata.Is_Vertex_Alpha());
+	Enable_ZNormals(olddata.Is_ZNormals());
+	Enable_Physical_Collision(olddata.Is_Physical_Collision());
+	Enable_Projectile_Collision(olddata.Is_Projectile_Collision());
+	Enable_Vis_Collision(olddata.Is_Vis_Collision());
 	Enable_Camera_Collision(olddata.Is_Physical_Collision());		// make camera setting match physical
 
 	Set_Version(W3DAPPDATA2_CURRENT_VERSION);
@@ -191,7 +191,7 @@ bool	W3DAppData2Struct::operator == (const W3DAppData2Struct & that)
 		if (GeometryFlags != that.GeometryFlags) return false;
 		if (CollisionFlags != that.CollisionFlags) return false;
 	}
-	
+
 	return true;
 }
 
@@ -215,13 +215,13 @@ W3DAppData2Struct * W3DAppData2Struct::Get_App_Data
 	*/
 	W3DAppData2Struct * wdata = NULL;
 	AppDataChunk * appdata = node->GetAppDataChunk(W3DUtilityClassID,UTILITY_CLASS_ID,W3D_APPDATA_2);
-	
+
 	/*
 	** If there wasn't one, look for an AppData0 chunk and convert that.
 	** If there was one, get the data from it
 	*/
 	if (appdata) {
-		
+
 		wdata = (W3DAppData2Struct *)(appdata->data);
 		wdata->Update_Version();
 
@@ -238,11 +238,11 @@ W3DAppData2Struct * W3DAppData2Struct::Get_App_Data
 		*/
 		AppDataChunk * oldappdata = node->GetAppDataChunk(W3DUtilityClassID,UTILITY_CLASS_ID,W3D_APPDATA_0);
 		if (oldappdata) {
-			
+
 			/*
 			** initializing from the old app data 0 chunk;
 			*/
-			wdata->Init_From_AppData0(*(W3DAppData0Struct*)(oldappdata->data));			
+			wdata->Init_From_AppData0(*(W3DAppData0Struct*)(oldappdata->data));
 
 			/*
 			** Destroy the old obsolete App Data 0 chunk
@@ -250,10 +250,10 @@ W3DAppData2Struct * W3DAppData2Struct::Get_App_Data
 			node->RemoveAppDataChunk(W3DUtilityClassID, UTILITY_CLASS_ID, W3D_APPDATA_0);
 
 		} else {
-		
+
 			/*
 			** If this object looks like it is going to be a mesh, then default
-			** it to have the mesh export flags (export its transform and the 
+			** it to have the mesh export flags (export its transform and the
 			** triangle mesh).  Otherwise use the default of completely ignoring it!
 			*/
 			if (Is_Max_Tri_Mesh(node)) {
@@ -261,12 +261,12 @@ W3DAppData2Struct * W3DAppData2Struct::Get_App_Data
 			} else {
 				wdata->Init_With_Other_Defaults();
 			}
-	
+
 		}
 		node->AddAppDataChunk(W3DUtilityClassID,UTILITY_CLASS_ID,2,sizeof(W3DAppData2Struct),wdata);
 		appdata = node->GetAppDataChunk(W3DUtilityClassID,UTILITY_CLASS_ID,2);
 		assert(appdata);
-		
+
 	}
 
 	return wdata;
@@ -278,14 +278,14 @@ W3DAppData2Struct * W3DAppData2Struct::Get_App_Data
 ** W3DDazzleAppDataStruct Implementation
 **
 ***********************************************************************************************/
-W3DDazzleAppDataStruct::W3DDazzleAppDataStruct(void) 
+W3DDazzleAppDataStruct::W3DDazzleAppDataStruct(void)
 {
 	UnUsed[0] = 0;
 	UnUsed[1] = 0;
 	UnUsed[2] = 0;
 	UnUsed[3] = 0;
-	memset(DazzleType,0,sizeof(DazzleType)); 
-	strcpy(DazzleType,"DEFAULT"); 
+	memset(DazzleType,0,sizeof(DazzleType));
+	strcpy(DazzleType,"DEFAULT");
 }
 
 
@@ -296,22 +296,22 @@ W3DDazzleAppDataStruct * W3DDazzleAppDataStruct::Get_App_Data(INode * node,bool 
 	*/
 	W3DDazzleAppDataStruct * dazzledata = NULL;
 	AppDataChunk * appdata = node->GetAppDataChunk(W3DUtilityClassID,UTILITY_CLASS_ID,W3D_DAZZLE_APPDATA);
-	
+
 	if (appdata) {
-		
+
 		/*
 		** Found it, get the pointer to the dazzle data
 		*/
 		dazzledata = (W3DDazzleAppDataStruct *)(appdata->data);
-	
+
 	} else if (create_if_missing) {
-		
+
 		/*
 		** Create a new W3DDazzleAppDataStruct for this node
 		*/
 		dazzledata = new W3DDazzleAppDataStruct;
 		node->AddAppDataChunk(W3DUtilityClassID,UTILITY_CLASS_ID,W3D_DAZZLE_APPDATA,sizeof(W3DDazzleAppDataStruct),dazzledata);
-		
+
 		appdata = node->GetAppDataChunk(W3DUtilityClassID,UTILITY_CLASS_ID,W3D_DAZZLE_APPDATA);
 		assert(appdata);
 	}
@@ -334,17 +334,17 @@ static int get_geometry_type(INode * node)
 	return W3DAppData2Struct::Get_App_Data(node)->Get_Geometry_Type();
 }
 
-/*********************************************************************************************** 
- * Is_Bone -- check if a node is a "bone"                                                      * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   10/26/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * Is_Bone -- check if a node is a "bone"                                                      *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   10/26/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
 bool Is_Bone(INode * node)
 {
@@ -374,17 +374,17 @@ bool Is_Geometry(INode * node)
 	return (W3DAppData2Struct::Get_App_Data(node)->Is_Geometry());
 }
 
-/*********************************************************************************************** 
- * Is_Mesh -- check if a node is a mesh                                                        * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   10/26/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * Is_Mesh -- check if a node is a mesh                                                        *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   10/26/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
 bool Is_Normal_Mesh(INode * node)
 {
@@ -431,17 +431,17 @@ bool Is_Camera_Oriented_Mesh(INode * node)
 	return (get_geometry_type(node) == W3DAppData2Struct::GEO_TYPE_CAMERA_ORIENTED);
 }
 
-/*********************************************************************************************** 
- * Is_Collision_AABox -- check if a node is a collision box                                    * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   10/26/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * Is_Collision_AABox -- check if a node is a collision box                                    *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   10/26/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
 bool Is_Collision_AABox(INode * node)
 {
@@ -450,17 +450,17 @@ bool Is_Collision_AABox(INode * node)
 }
 
 
-/*********************************************************************************************** 
- * Is_Collision_OBBox -- check if a node is a collision box                                    * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   11/17/1998 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * Is_Collision_OBBox -- check if a node is a collision box                                    *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   11/17/1998 GH  : Created.                                                                 *
  *=============================================================================================*/
 bool Is_Collision_OBBox(INode * node)
 {
@@ -468,17 +468,17 @@ bool Is_Collision_OBBox(INode * node)
 	return (get_geometry_type(node) == W3DAppData2Struct::GEO_TYPE_OBBOX);
 }
 
-/*********************************************************************************************** 
- * Is_Skin -- check if a node is a skin                                                        * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   10/26/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * Is_Skin -- check if a node is a skin                                                        *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   10/26/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
 bool Is_Skin(INode * node)
 {
@@ -488,7 +488,7 @@ bool Is_Skin(INode * node)
 	for (int i = 0; i < node->NumRefs(); i++) {
 
 		ReferenceTarget *refTarg = node->GetReference(i);
-     
+
 		if (refTarg != NULL && refTarg->ClassID() == Class_ID(WSM_DERIVOB_CLASS_ID,0)) {
 
 			IDerivedObject * wsm_der_obj = (IDerivedObject *)refTarg;
@@ -506,17 +506,17 @@ bool Is_Skin(INode * node)
 	return false;
 }
 
-/*********************************************************************************************** 
- * Is_Shadow -- check if a node marked to cast shadows                                         * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   10/26/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * Is_Shadow -- check if a node marked to cast shadows                                         *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   10/26/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
 bool Is_Shadow(INode * node)
 {
@@ -525,17 +525,17 @@ bool Is_Shadow(INode * node)
 	return (wdata->Is_Shadow_Enabled());
 }
 
-/*********************************************************************************************** 
- * Is_Null_Object -- check if a node is a null object                                          * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   10/26/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * Is_Null_Object -- check if a node is a null object                                          *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   10/26/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
 bool Is_Null_Object(INode * node)
 {

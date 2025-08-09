@@ -39,7 +39,7 @@
 #include "Common/UserPreferences.h"
 
 //-----------------------------------------------------------------------------
-// LadderPreferences base class 
+// LadderPreferences base class
 //-----------------------------------------------------------------------------
 
 class LadderPref
@@ -59,7 +59,7 @@ public:
 typedef std::map<time_t, LadderPref> LadderPrefMap;
 
 //-----------------------------------------------------------------------------
-// LadderPreferences base class 
+// LadderPreferences base class
 //-----------------------------------------------------------------------------
 class LadderPreferences : public UserPreferences
 {

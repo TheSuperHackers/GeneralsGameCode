@@ -33,10 +33,10 @@ DBGHELP(SymSetOptions,
 
 DBGHELP(StackWalk,
         BOOL,
-        (DWORD MachineType, HANDLE hProcess, HANDLE hThread, LPSTACKFRAME StackFrame, 
-        LPVOID ContextRecord, PREAD_PROCESS_MEMORY_ROUTINE ReadMemoryRoutine, 
-        PFUNCTION_TABLE_ACCESS_ROUTINE FunctionTableAccessRoutine, 
-        PGET_MODULE_BASE_ROUTINE GetModuleBaseRoutine, 
+        (DWORD MachineType, HANDLE hProcess, HANDLE hThread, LPSTACKFRAME StackFrame,
+        LPVOID ContextRecord, PREAD_PROCESS_MEMORY_ROUTINE ReadMemoryRoutine,
+        PFUNCTION_TABLE_ACCESS_ROUTINE FunctionTableAccessRoutine,
+        PGET_MODULE_BASE_ROUTINE GetModuleBaseRoutine,
         PTRANSLATE_ADDRESS_ROUTINE TranslateAddress))
 
 DBGHELP(SymFunctionTableAccess,
@@ -49,15 +49,15 @@ DBGHELP(SymGetModuleBase,
 
 DBGHELP(SymGetSymFromAddr,
         BOOL,
-        (HANDLE hProcess, DWORD Address, LPDWORD Displacement, 
+        (HANDLE hProcess, DWORD Address, LPDWORD Displacement,
         PIMAGEHLP_SYMBOL Symbol))
 
 DBGHELP(SymGetLineFromAddr,
         BOOL,
-        (HANDLE hProcess, DWORD dwAddr, PDWORD pdwDisplacement, 
+        (HANDLE hProcess, DWORD dwAddr, PDWORD pdwDisplacement,
         PIMAGEHLP_LINE Line))
 
 // keep this always as last entry
 DBGHELP(SymCleanup,
         BOOL,
-        (HANDLE hProcess)) 
+        (HANDLE hProcess))

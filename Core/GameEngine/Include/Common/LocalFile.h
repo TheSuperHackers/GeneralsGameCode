@@ -23,12 +23,12 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 //----------------------------------------------------------------------------=
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information					                  
-//                Copyright(C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright(C) 2001 - All Rights Reserved
+//
 //----------------------------------------------------------------------------
 //
 // Project:    WSYS Library
@@ -49,13 +49,13 @@
 
 
 //----------------------------------------------------------------------------
-//           Includes                                                      
+//           Includes
 //----------------------------------------------------------------------------
 
 #include "Common/file.h"
 
 #if USE_BUFFERED_IO
-#include <stdio.h>
+#include "Utility/stdio_adapter.h"
 #endif
 
 //----------------------------------------------------------------------------
@@ -77,7 +77,7 @@
 
 class LocalFile : public File
 {
-	MEMORY_POOL_GLUE_ABC(LocalFile)		
+	MEMORY_POOL_GLUE_ABC(LocalFile)
 	private:
 
 #if USE_BUFFERED_IO
@@ -89,24 +89,31 @@ class LocalFile : public File
 #else
 		int m_handle;											///< Local C file handle
 #endif
-		
+
 	public:
-		
-		LocalFile();										
+
+		LocalFile();
 		//virtual				~LocalFile();
 
 
 		virtual Bool	open( const Char *filename, Int access = NONE, size_t bufferSize = BUFFERSIZE ); ///< Open a file for access
 		virtual void	close( void );																			///< Close the file
 		virtual Int		read( void *buffer, Int bytes );										///< Read the specified number of bytes in to buffer: See File::read
+		virtual Int		readChar();																///< Read a character from the file
+		virtual Int		readWideChar();															///< Read a wide character from the file
 		virtual Int		write( const void *buffer, Int bytes );							///< Write the specified number of bytes from the buffer: See File::write
+		virtual Int		writeFormat( const Char* format, ... );							///< Write an unterminated formatted string to the file
+		virtual Int		writeFormat( const WideChar* format, ... );						///< Write an unterminated formatted string to the file
+		virtual Int		writeChar( const Char* character );								///< Write a character to the file
+		virtual Int		writeChar( const WideChar* character );							///< Write a wide character to the file
 		virtual Int		seek( Int new_pos, seekMode mode = CURRENT );				///< Set file position: See File::seek
+		virtual Bool	flush();													///< flush data to disk
 		virtual void	nextLine(Char *buf = NULL, Int bufSize = 0);				///< moves file position to after the next new-line
 		virtual Bool	scanInt(Int &newInt);																///< return what gets read in as an integer at the current file position.
 		virtual Bool	scanReal(Real &newReal);														///< return what gets read in as a float at the current file position.
 		virtual	Bool	scanString(AsciiString &newString);									///< return what gets read in as a string at the current file position.
 		/**
-			Allocate a buffer large enough to hold entire file, read 
+			Allocate a buffer large enough to hold entire file, read
 			the entire file into the buffer, then close the file.
 			the buffer is owned by the caller, who is responsible
 			for freeing is (via delete[]). This is a Good Thing to
@@ -125,7 +132,7 @@ class LocalFile : public File
 
 
 //----------------------------------------------------------------------------
-//           Inlining                                                       
+//           Inlining
 //----------------------------------------------------------------------------
 
 

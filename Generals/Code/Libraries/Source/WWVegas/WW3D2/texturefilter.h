@@ -26,8 +26,8 @@
  *                                                                                             *
  *                  $Org Author:: Kenny Mitchell                                              $*
  *                                                                                             *
- *                       Author : Kenny Mitchell                                               * 
- *                                                                                             * 
+ *                       Author : Kenny Mitchell                                               *
+ *                                                                                             *
  *                     $Modtime:: 08/05/02 1:27p                                              $*
  *                                                                                             *
  *                    $Revision:: 1                                                          $*
@@ -44,7 +44,7 @@
 //#include "dx8wrapper.h"
 #endif
 
-enum MipCountType 
+enum MipCountType
 {
 	MIP_LEVELS_ALL=0,		// generate all mipmap levels down to 1x1 size
 	MIP_LEVELS_1,			// no mipmapping at all (just one mip level)
@@ -74,7 +74,7 @@ class TextureFilterClass
 {
 public:
 
-	enum FilterType 
+	enum FilterType
 	{
 		FILTER_TYPE_NONE,
 		FILTER_TYPE_FAST,

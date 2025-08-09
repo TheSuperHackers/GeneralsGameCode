@@ -23,11 +23,11 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-//	
-// FILE: SabotagePowerPlantCrateCollide.h 
+//
+// FILE: SabotagePowerPlantCrateCollide.h
 // Author: Kris Morness, June 2003
 // Desc:   A crate (actually a saboteur - mobile crate) that makes the target powerplant lose power
-//	
+//
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
@@ -53,11 +53,11 @@ public:
 		m_powerSabotageFrames = 0;
 	}
 
-	static void buildFieldParse(MultiIniFieldParse& p) 
+	static void buildFieldParse(MultiIniFieldParse& p)
 	{
     CrateCollideModuleData::buildFieldParse(p);
 
-		static const FieldParse dataFieldParse[] = 
+		static const FieldParse dataFieldParse[] =
 		{
 			{ "SabotagePowerDuration", INI::parseDurationUnsignedInt, NULL, offsetof( SabotagePowerPlantCrateCollideModuleData, m_powerSabotageFrames ) },
 			{ 0, 0, 0, 0 }

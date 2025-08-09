@@ -24,12 +24,12 @@
 
 // FILE: Properties.h /////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information					         
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:    GUIEdit
@@ -80,7 +80,7 @@ typedef enum
 {
 
 	IDENTIFIER_INVALID = 0,  // keep this 0 and keep it first
-	
+
 	FIRST_VALID_IDENTIFIER = 1,
 
 	BUTTON_ENABLED = FIRST_VALID_IDENTIFIER,
@@ -316,32 +316,32 @@ typedef enum
 	TEXT_ENTRY_HILITE_SMALL_CENTER,
 
 	TC_TAB_0_ENABLED,
-	TC_TAB_0_DISABLED,			
-	TC_TAB_0_HILITE,				
-	TC_TAB_1_ENABLED,				
-	TC_TAB_1_DISABLED,			
-	TC_TAB_1_HILITE,				
-	TC_TAB_2_ENABLED,				
-	TC_TAB_2_DISABLED,			
-	TC_TAB_2_HILITE,				
-	TC_TAB_3_ENABLED,				
-	TC_TAB_3_DISABLED,			
-	TC_TAB_3_HILITE,				
+	TC_TAB_0_DISABLED,
+	TC_TAB_0_HILITE,
+	TC_TAB_1_ENABLED,
+	TC_TAB_1_DISABLED,
+	TC_TAB_1_HILITE,
+	TC_TAB_2_ENABLED,
+	TC_TAB_2_DISABLED,
+	TC_TAB_2_HILITE,
+	TC_TAB_3_ENABLED,
+	TC_TAB_3_DISABLED,
+	TC_TAB_3_HILITE,
 	TC_TAB_4_ENABLED,
-	TC_TAB_4_DISABLED,			
-	TC_TAB_4_HILITE,				
-	TC_TAB_5_ENABLED,				
-	TC_TAB_5_DISABLED,			
-	TC_TAB_5_HILITE,				
-	TC_TAB_6_ENABLED,				
-	TC_TAB_6_DISABLED,			
-	TC_TAB_6_HILITE,				
-	TC_TAB_7_ENABLED,				
-	TC_TAB_7_DISABLED,			
-	TC_TAB_7_HILITE,				
-	TAB_CONTROL_ENABLED,		
-	TAB_CONTROL_DISABLED,		
-	TAB_CONTROL_HILITE,			
+	TC_TAB_4_DISABLED,
+	TC_TAB_4_HILITE,
+	TC_TAB_5_ENABLED,
+	TC_TAB_5_DISABLED,
+	TC_TAB_5_HILITE,
+	TC_TAB_6_ENABLED,
+	TC_TAB_6_DISABLED,
+	TC_TAB_6_HILITE,
+	TC_TAB_7_ENABLED,
+	TC_TAB_7_DISABLED,
+	TC_TAB_7_HILITE,
+	TAB_CONTROL_ENABLED,
+	TAB_CONTROL_DISABLED,
+	TAB_CONTROL_HILITE,
 
 	GENERIC_ENABLED,
 	GENERIC_DISABLED,
@@ -352,9 +352,9 @@ typedef enum
 } StateIdentifier;
 
 // ImageAndColorInfo ----------------------------------------------------------
-/** This is a place for us to store image and color information for	
+/** This is a place for us to store image and color information for
 	* all the various states for each of the controls, it makes it easier
-	* for us cause we can just put and get queries in this table and 
+	* for us cause we can just put and get queries in this table and
 	* work with only one set of dialog controls on all the property
 	* dialog windows */
 //-----------------------------------------------------------------------------

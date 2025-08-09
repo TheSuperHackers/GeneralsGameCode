@@ -56,7 +56,7 @@ protected:
 //-------------------------------------------------------------------------------------------------
 class ApproachState :  public State
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(ApproachState, "ApproachState")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(ApproachState, "ApproachState")
 	//Approaching the drop zone
 public:
 	ApproachState( StateMachine *machine ) :State( machine, "ApproachState" ) {}
@@ -73,13 +73,13 @@ EMPTY_DTOR(ApproachState)
 //-------------------------------------------------------------------------------------------------
 class DeliveringState :  public State
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(DeliveringState, "DeliveringState")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(DeliveringState, "DeliveringState")
 	// Kickin' stuff out the door
 public:
-	DeliveringState( StateMachine *machine ) :State( machine, "DeliveringState" ) 
-	{ 
-		m_dropDelayLeft = 0; 
-		m_didOpen = false; 
+	DeliveringState( StateMachine *machine ) :State( machine, "DeliveringState" )
+	{
+		m_dropDelayLeft = 0;
+		m_didOpen = false;
 	}
 	virtual StateReturnType update();
 	virtual StateReturnType onEnter();
@@ -99,7 +99,7 @@ EMPTY_DTOR(DeliveringState)
 //-------------------------------------------------------------------------------------------------
 class ConsiderNewApproachState :  public State
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(ConsiderNewApproachState, "ConsiderNewApproachState")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(ConsiderNewApproachState, "ConsiderNewApproachState")
 	//Should I try again?  Has own data to keep track.
 public:
 	ConsiderNewApproachState( StateMachine *machine ) : State( machine, "ConsiderNewApproachState" ), m_numberEntriesToState(0) { }
@@ -120,7 +120,7 @@ EMPTY_DTOR(ConsiderNewApproachState)
 //-------------------------------------------------------------------------------------------------
 class RecoverFromOffMapState :  public State
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(RecoverFromOffMapState, "RecoverFromOffMapState")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(RecoverFromOffMapState, "RecoverFromOffMapState")
 public:
 	RecoverFromOffMapState( StateMachine *machine ) : State( machine, "RecoverFromOffMapState" ), m_reEntryFrame(0) { }
 	virtual StateReturnType update();
@@ -139,7 +139,7 @@ EMPTY_DTOR(RecoverFromOffMapState)
 //-------------------------------------------------------------------------------------------------
 class HeadOffMapState :  public State
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(HeadOffMapState, "HeadOffMapState")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(HeadOffMapState, "HeadOffMapState")
 	//I'm outta here
 public:
 	HeadOffMapState( StateMachine *machine ) :State( machine, "HeadOffMapState" ) {}
@@ -156,7 +156,7 @@ EMPTY_DTOR(HeadOffMapState)
 //-------------------------------------------------------------------------------------------------
 class CleanUpState :  public State
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(CleanUpState, "CleanUpState")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(CleanUpState, "CleanUpState")
 	//Made it off map, delete ourselves
 public:
 	CleanUpState( StateMachine *machine ) :State( machine, "CleanUpState" ) {}
@@ -212,13 +212,13 @@ public:
 		// End Add
 	}
 
-	static void buildFieldParse(MultiIniFieldParse& p) 
+	static void buildFieldParse(MultiIniFieldParse& p)
 	{
     AIUpdateModuleData::buildFieldParse(p);
 
-		static const FieldParse dataFieldParse[] = 
+		static const FieldParse dataFieldParse[] =
 		{
-			//These values represent script only reinforcements using deliverPayloadViaModuleData()! 
+			//These values represent script only reinforcements using deliverPayloadViaModuleData()!
 			//***********************************************************************************
 			//DO NOT ADD DATA HERE UNLESS YOU ARE SUPPORTING SCRIPTED TEAM REINFORCEMENT DELIVERY
 			//THESE DATA VALUES ARE SPECIFIED ONLY BY FACTIONUNIT.INI
@@ -297,12 +297,12 @@ public:
 		m_selfDestructObject = FALSE;
 		m_deliveryDecalRadius = 0;
 		// Added By Sadullah Nader
-		// Initialization missing and needed  
-		
+		// Initialization missing and needed
+
 		m_visibleDropBoneName.clear();
 		m_visiblePayloadTemplateName.clear();
 		m_visibleSubObjectName.clear();
-		
+
 		// End Add
 	}
 

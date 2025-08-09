@@ -32,8 +32,8 @@ static char buffer[100*1024];
 
 static List	DataBases;
 
-static LANGINFO langinfo[] = 
-	{  
+static LANGINFO langinfo[] =
+	{
 		{	LANGID_US, "US", "us", "e"},
 		{ LANGID_UK, "UK", "uk", "e" },
 		{ LANGID_GERMAN, "German", "ge", "g" },
@@ -49,7 +49,7 @@ static LANGINFO langinfo[] =
 
 LANGINFO *GetLangInfo ( int index )
 {
-	
+
 	if ( (index >= 0) && (index < (sizeof ( langinfo ) / sizeof (LANGINFO )) -1) )
 	{
 		return &langinfo[index];
@@ -329,7 +329,7 @@ BabylonText*			TransDB::FindSubText		( OLECHAR *pattern, int item )
 
 		while ( text )
 		{
-			
+
 			if ( !wcsnicmp ( text->Get (), pattern, 15 ))
 			{
 				if ( !item )
@@ -410,7 +410,7 @@ int					TransDB::Clear				( void )
 	if ( next_string_id != -1 )
 	{
 			next_string_id = START_STRING_ID;
-	}	
+	}
 
 	if ( count )
 	{
@@ -479,7 +479,7 @@ void					TransDB::AddToTree		( CTreeCtrl *tc, HTREEITEM parent, int changes, voi
 	ListSearch	sh;
 	BabylonLabel		*label;
 	BabylonText			*txt;
-	
+
 	sprintf ( buffer, "%s%c  (%d/%d)",name, ChangedSymbol(), NumLabelsChanged(), NumLabels() );
 	item = tc->InsertItem ( buffer, parent );
 	ilabels = tc->InsertItem ( "Labels", item );
@@ -504,21 +504,21 @@ void					TransDB::AddToTree		( CTreeCtrl *tc, HTREEITEM parent, int changes, voi
 	if ( num_obsolete )
 	{
 		iobsolete = tc->InsertItem ( "Obsolete Strings", item );
-		
+
 		txt = FirstObsolete ( sh );
-		
+
 		while ( txt )
 		{
 			if ( !changes || txt->IsChanged ())
 			{
 				txt->AddToTree ( tc, iobsolete );
 			}
-		
+
 			if ( cb )
 			{
 				cb ( );
 			}
-		
+
 			txt = NextObsolete ( sh );
 		}
 	}
@@ -716,7 +716,7 @@ void					BabylonLabel::SetDB				( TransDB *new_db )
 	while ( ntext )
 	{
 		ntext->SetDB ( new_db );
-		
+
 		ntext = NextText ( sh );
 	}
 
@@ -732,7 +732,7 @@ void					BabylonLabel::ClearChanges				( void )
 	while ( ntext )
 	{
 		ntext->ClearChanges();
-		
+
 		ntext = NextText ( sh );
 	}
 
@@ -750,7 +750,7 @@ void					BabylonLabel::ClearProcessed				( void )
 	while ( ntext )
 	{
 		ntext->ClearProcessed();
-		
+
 		ntext = NextText ( sh );
 	}
 
@@ -768,7 +768,7 @@ void					BabylonLabel::ClearMatched				( void )
 	while ( ntext )
 	{
 		ntext->ClearMatched();
-		
+
 		ntext = NextText ( sh );
 	}
 
@@ -789,7 +789,7 @@ int					BabylonLabel::AllMatched				( void )
 		{
 			return FALSE;
 		}
-		
+
 		ntext = NextText ( sh );
 	}
 
@@ -821,7 +821,7 @@ void					BabylonLabel::AddToTree		( CTreeCtrl *tc, HTREEITEM parent, int changes
 	BabylonText			*txt;
 
 	sprintf ( buffer, "%s%c", NameSB(), ChangedSymbol() );
-																							 
+
 	litem = tc->InsertItem ( buffer, parent );
 
 	txt = FirstText ( sh );
@@ -847,13 +847,13 @@ void					BabylonLabel::AddToTree		( CTreeCtrl *tc, HTREEITEM parent, int changes
 		sprintf ( buffer, "CONTEXT : %s", ContextSB() );
 		tc->InsertItem ( buffer, litem );
 	}
-		
+
 	if ( strcmp ( SpeakerSB(), "" ) )
 	{
 		sprintf ( buffer, "SPEAKER : %s", SpeakerSB() );
 		tc->InsertItem ( buffer, litem );
 	}
-		
+
 	if ( strcmp ( ListenerSB(), "" ) )
 	{
 		sprintf ( buffer, "LISTENER: %s", ListenerSB() );
@@ -919,7 +919,7 @@ void					BabylonText::SetDB				( TransDB *new_db )
 	while ( trans )
 	{
 		trans->SetDB ( new_db );
-		
+
 		trans = NextTranslation ( sh );
 	}
 
@@ -971,7 +971,7 @@ int						BabylonText::DialogIsValid ( const char *path, LangID langid, int check
 	{
 		WIN32_FIND_DATA info;
 		HANDLE	handle;
-		
+
 		winfo->SetValid ( FALSE );
 		winfo->SetMissing ( TRUE );
 
@@ -1045,7 +1045,7 @@ int						BabylonText::ValidateDialog ( const char *path, LangID langid )
 
 int						BabylonText::DialogIsPresent ( const char *path, LangID langid )
 {
-			
+
 	WIN32_FIND_DATA info;
 	HANDLE	handle;
 	int present = FALSE;
@@ -1178,7 +1178,7 @@ void					BabylonText::ClearChanges				( void )
 	while ( trans )
 	{
 		trans->ClearChanges();
-		
+
 		trans = NextTranslation ( sh );
 	}
 
@@ -1196,7 +1196,7 @@ void					BabylonText::ClearProcessed				( void )
 	while ( trans )
 	{
 		trans->ClearProcessed();
-		
+
 		trans = NextTranslation ( sh );
 	}
 
@@ -1214,7 +1214,7 @@ void					BabylonText::ClearMatched				( void )
 	while ( trans )
 	{
 		trans->ClearMatched();
-		
+
 		trans = NextTranslation ( sh );
 	}
 
@@ -1269,32 +1269,32 @@ void					BabylonText::Set ( char *string )
 }
 
 void					BabylonText::InvalidateAllWaves			( void  )
-{ 
+{
 	Translation *trans;
 	ListSearch sh;
 
 	WaveInfo.SetValid ( FALSE );
 
 	trans = FirstTranslation ( sh );
-	
+
 	while ( trans )
 	{
 		trans->WaveInfo.SetValid ( FALSE );
-	
+
 		trans = NextTranslation ( sh );
 	}
 
 }
 
 void					BabylonText::InvalidateWave			( void )
-{ 
+{
 
 	WaveInfo.SetValid ( FALSE );
 
 }
 
 void					BabylonText::InvalidateWave			( LangID langid  )
-{ 
+{
 
 	WaveInfo.SetValid ( FALSE );
 
@@ -1305,7 +1305,7 @@ void					BabylonText::InvalidateWave			( LangID langid  )
 	else
 	{
 		Translation *trans = GetTranslation ( langid );
-		
+
 		if ( trans )
 		{
 			trans->WaveInfo.SetValid ( FALSE );
@@ -1367,7 +1367,7 @@ Translation::Translation ( void )
 	comment = new OLEString (  );
 	revision = 0;
 	sent = FALSE;
-	
+
 }
 
 Translation::~Translation ( )
@@ -1471,7 +1471,7 @@ int TransDB::Warnings ( CBabylonDlg *dlg )
 			{
 				if ( dlg )
 				{
-					sprintf ( buffer, "Warning:: text at line %5d is NULL", 
+					sprintf ( buffer, "Warning:: text at line %5d is NULL",
 								text->LineNumber());
 					dlg->Log ( buffer );
 				}
@@ -1508,7 +1508,7 @@ int TransDB::Warnings ( CBabylonDlg *dlg )
 
 		while ( (dup = (DupNode*)dups.LastNode ()))
 		{
-			sprintf ( buffer, "Warning:: text at line %5d is a duplicate of text on line %5d", 
+			sprintf ( buffer, "Warning:: text at line %5d is a duplicate of text on line %5d",
 									dup->Duplicate()->LineNumber(), dup->Original()->LineNumber());
 			dlg->Log ( buffer );
 
@@ -1557,11 +1557,11 @@ int TransDB::Errors ( CBabylonDlg *dlg )
 			errors++;
 			if ( dlg )
 			{
-				sprintf ( buffer, "Error  : Label \"%s\" at line %d is has more than 1 string defined", 
+				sprintf ( buffer, "Error  : Label \"%s\" at line %d is has more than 1 string defined",
 							label->NameSB(), label->LineNumber());
 				dlg->Log ( buffer );
 			}
-	
+
 		}
 
 		if ( ( existing_label = FindLabel ( label->Name () )))
@@ -1569,7 +1569,7 @@ int TransDB::Errors ( CBabylonDlg *dlg )
 			errors++;
 			if ( dlg )
 			{
-				sprintf ( buffer, "Error  : Label \"%s\" at line %d is already defined on line %d", 
+				sprintf ( buffer, "Error  : Label \"%s\" at line %d is already defined on line %d",
 							label->NameSB(), label->LineNumber(), existing_label->LineNumber());
 				dlg->Log ( buffer );
 			}
@@ -1643,7 +1643,7 @@ CWaveInfo::CWaveInfo ( void )
 	missing = TRUE;
 }
 
-void TransDB::VerifyDialog( LangID langid, void (*cb) (void) ) 
+void TransDB::VerifyDialog( LangID langid, void (*cb) (void) )
 {
 	BabylonLabel *label;
 	ListSearch sh_label;
@@ -1681,7 +1681,7 @@ void TransDB::VerifyDialog( LangID langid, void (*cb) (void) )
 
 }
 
-void TransDB::InvalidateDialog( LangID langid ) 
+void TransDB::InvalidateDialog( LangID langid )
 {
 	BabylonLabel *label;
 	ListSearch sh_label;
@@ -1710,7 +1710,7 @@ void TransDB::InvalidateDialog( LangID langid )
 
 }
 
-int TransDB::ReportDialog( DLGREPORT *report, LangID langid, void (*print) ( const char *), PMASK pmask ) 
+int TransDB::ReportDialog( DLGREPORT *report, LangID langid, void (*print) ( const char *), PMASK pmask )
 {
 	BabylonLabel *label;
 	ListSearch sh_label;
@@ -1748,7 +1748,7 @@ int TransDB::ReportDialog( DLGREPORT *report, LangID langid, void (*print) ( con
 						if ( print && pmask & PMASK_UNRESOLVED )
 						{
 							sprintf ( buffer, "%d: audio file \"%s%s.wav\" not verified", text->ID(), text->WaveSB (), linfo->character);
-							
+
 							print ( buffer );
 						}
 						info->unresolved++;
@@ -1763,12 +1763,12 @@ int TransDB::ReportDialog( DLGREPORT *report, LangID langid, void (*print) ( con
 					if ( print && pmask & PMASK_MISSING )
 					{
 						sprintf ( buffer, "%d: audio file \"%s%s.wav\" missing", text->ID(), text->WaveSB (), linfo->character);
-						
+
 						print ( buffer );
 					}
 					info->missing++;
 				}
-				
+
 				info->numdialog++;
 			}
 
@@ -1781,7 +1781,7 @@ int TransDB::ReportDialog( DLGREPORT *report, LangID langid, void (*print) ( con
 	return info->missing + info->unresolved + info->errors ;
 }
 
-int TransDB::ReportTranslations( TRNREPORT *report, LangID langid, void (*print) ( const char *buffer), PMASK pmask ) 
+int TransDB::ReportTranslations( TRNREPORT *report, LangID langid, void (*print) ( const char *buffer), PMASK pmask )
 {
 	BabylonLabel *label;
 	ListSearch sh_label;
@@ -1825,18 +1825,18 @@ int TransDB::ReportTranslations( TRNREPORT *report, LangID langid, void (*print)
 							if ( print && pmask & PMASK_TOOLONG )
 							{
 								sprintf ( buffer, "%d: translation is too long by %d characters", text->ID (), trans->Len() - maxlen);
-							
+
 								print ( buffer );
 							}
 							too_big = TRUE;
 						}
-				
+
 						if ( text->Revision () > trans->Revision ())
 						{
 							if ( print && pmask & PMASK_RETRANSLATE )
 							{
 								sprintf ( buffer, "%d: needs re-translation", text->ID () );
-							
+
 								print ( buffer );
 							}
 							info->retranslate++;
@@ -1849,7 +1849,7 @@ int TransDB::ReportTranslations( TRNREPORT *report, LangID langid, void (*print)
 								if ( print && pmask & PMASK_BADFORMAT )
 								{
 									sprintf ( buffer, "%d: translation has differring formating to original", text->ID () );
-						
+
 									print ( buffer );
 								}
 								info->bad_format++;
@@ -1861,7 +1861,7 @@ int TransDB::ReportTranslations( TRNREPORT *report, LangID langid, void (*print)
 						if ( print && pmask & PMASK_MISSING )
 						{
 							sprintf ( buffer, "%d: not translated", text->ID ());
-						
+
 							print ( buffer );
 						}
 						info->missing++;
@@ -1877,14 +1877,14 @@ int TransDB::ReportTranslations( TRNREPORT *report, LangID langid, void (*print)
 							if ( print && pmask & PMASK_TOOLONG )
 							{
 								sprintf ( buffer, "%d: is too long by %d characters", text->ID (), text->Len() - maxlen);
-							
+
 								print ( buffer );
 							}
 							too_big = TRUE;
 						}
 					}
 				}
-				
+
 			}
 
 			if ( too_big )

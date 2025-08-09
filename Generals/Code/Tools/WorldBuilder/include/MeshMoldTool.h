@@ -29,10 +29,10 @@
 class WorldHeightMapEdit;
 /*************************************************************************/
 /**                             MeshMoldTool
-	 Does the Mesh Mold tool operation. 
+	 Does the Mesh Mold tool operation.
 ***************************************************************************/
 ///  Height brush tool.
-class MeshMoldTool : public Tool 
+class MeshMoldTool : public Tool
 {
 protected:
 

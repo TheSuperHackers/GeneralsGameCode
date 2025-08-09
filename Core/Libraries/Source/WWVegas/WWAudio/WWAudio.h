@@ -569,7 +569,7 @@ private:
 	DynamicVectorClass<AudibleSoundClass *>	m_Playlist;
 	DynamicVectorClass<AudibleSoundClass *>	m_CompletedSounds;
 
-	// Buffer caching		
+	// Buffer caching
 	DynamicVectorClass<CACHE_ENTRY_STRUCT>		m_CachedBuffers[MAX_CACHE_HASH];
 	int													m_MaxCacheSize;
 	int													m_CurrentCacheSize;

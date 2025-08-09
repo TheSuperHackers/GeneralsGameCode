@@ -43,14 +43,14 @@
 UnitCrateCollide::UnitCrateCollide( Thing *thing, const ModuleData* moduleData ) : CrateCollide( thing, moduleData )
 {
 
-} 
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 UnitCrateCollide::~UnitCrateCollide( void )
 {
 
-}  
+}
 
 //-------------------------------------------------------------------------------------------------
 Bool UnitCrateCollide::executeCrateBehavior( Object *other )
@@ -80,7 +80,7 @@ Bool UnitCrateCollide::executeCrateBehavior( Object *other )
 
 			newObj->setOrientation( other->getOrientation() );
 			newObj->setPosition( &creationPoint );
-		} 
+		}
 	}
 
 	//Play a crate pickup sound.

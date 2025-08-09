@@ -54,7 +54,7 @@ struct CountermeasuresPlayerScanHelper
 {
 	KindOfMaskType m_kindOfToTest;
 	Object *m_theHealer;
-	ObjectPointerList *m_objectList;	
+	ObjectPointerList *m_objectList;
 };
 
 static void checkForCountermeasures( Object *testObj, void *userData )
@@ -91,7 +91,7 @@ CountermeasuresBehavior::CountermeasuresBehavior( Thing *thing, const ModuleData
 	m_divertedMissiles = 0;
 	m_incomingMissiles = 0;
 	m_nextVolleyFrame = 0;
-	
+
 	setWakeFrame( getObject(), UPDATE_SLEEP_NONE );
 }
 
@@ -114,7 +114,7 @@ void CountermeasuresBehavior::reportMissileForCountermeasures( Object *missile )
 
   if( m_availableCountermeasures + m_activeCountermeasures > 0 )
 	{
-		//We have countermeasures we can use. Determine now whether or not the incoming missile will 
+		//We have countermeasures we can use. Determine now whether or not the incoming missile will
 		//be diverted.
 		const CountermeasuresBehaviorModuleData *data = getCountermeasuresBehaviorModuleData();
 
@@ -128,16 +128,16 @@ void CountermeasuresBehavior::reportMissileForCountermeasures( Object *missile )
 				{
 					//Make sure the missile diverts after a delay. The delay needs to be larger than
 					//the countermeasure reaction time or else the missile won't have a countermeasure to divert to!
-					DEBUG_ASSERTCRASH( data->m_countermeasureReactionFrames < data->m_missileDecoyFrames, 
+					DEBUG_ASSERTCRASH( data->m_countermeasureReactionFrames < data->m_missileDecoyFrames,
 						("MissileDecoyDelay needs to be less than CountermeasureReactionTime in order to function properly.") );
 					pui->setFramesTillCountermeasureDiversionOccurs( data->m_missileDecoyFrames );
 					m_divertedMissiles++;
 
 					if( m_activeCountermeasures == 0 && m_reactionFrame == 0 )
 					{
-						//We need to launch our first volley of countermeasures, but we can't do it now. If we 
+						//We need to launch our first volley of countermeasures, but we can't do it now. If we
 						//do, it'll look too artificial. Instead, we need to set up a timer to fake a reaction
-						//delay. 
+						//delay.
 						m_reactionFrame = TheGameLogic->getFrame() + data->m_countermeasureReactionFrames;
 					}
 					break;
@@ -158,7 +158,7 @@ ObjectID CountermeasuresBehavior::calculateCountermeasureToDivertTo( const Objec
 
 	Real closestFlareDist = 1e15f;
 	Object *closestFlare = NULL;
-	
+
 	const int volleySize = data->m_volleySize;
 	int volleyFlaresCounted = 0;
 
@@ -198,7 +198,7 @@ ObjectID CountermeasuresBehavior::calculateCountermeasureToDivertTo( const Objec
 Bool CountermeasuresBehavior::isActive() const
 {
 	return isUpgradeActive();
-}	
+}
 
 //-------------------------------------------------------------------------------------------------
 /** The update callback. */
@@ -232,7 +232,7 @@ UpdateSleepTime CountermeasuresBehavior::update( void )
 			++it;
 		}
 	}
-	
+
 	if( obj->isAirborneTarget() )
 	{
 
@@ -290,7 +290,7 @@ void CountermeasuresBehavior::reloadCountermeasures()
 	m_availableCountermeasures = data->m_numberOfVolleys * data->m_volleySize;
 	m_reloadFrame = 0;
 }
- 
+
 //-------------------------------------------------------------------------------------------------
 void CountermeasuresBehavior::launchVolley()
 {
@@ -300,7 +300,7 @@ void CountermeasuresBehavior::launchVolley()
 	Real volleySize = (Real)data->m_volleySize;
 	for( UnsignedInt i = 0; i < data->m_volleySize; i++ )
 	{
-		//Each flare in a volley will calculate a different vector to fly out. We have a +/- angle to 
+		//Each flare in a volley will calculate a different vector to fly out. We have a +/- angle to
 		//spread out equally. With only one flare, it'll come straight out the back. Two flares will
 		//launch at the extreme positive and negative angle. Three flares will launch at extreme angles
 		//plus straight back. Four or more will divy it up equally.

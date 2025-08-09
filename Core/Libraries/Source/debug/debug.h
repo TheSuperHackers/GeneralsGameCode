@@ -32,7 +32,7 @@
 #ifndef DEBUG_H // Include guard
 #define DEBUG_H
 
-/** 
+/**
   \page lib_var Library variants
 
   Generally speaking there are three different library variants:
@@ -83,7 +83,7 @@
   - Release: XXX.lib
 */
 
-// Define which libraries to use. 
+// Define which libraries to use.
 #if defined(RTS_DEBUG) || defined(RTS_PROFILE)
 #  define HAS_ASSERTS
 #  define HAS_LOGS

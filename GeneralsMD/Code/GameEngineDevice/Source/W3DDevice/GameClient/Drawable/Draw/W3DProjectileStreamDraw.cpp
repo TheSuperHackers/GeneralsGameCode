@@ -38,7 +38,7 @@
 #include "WWMath/vector3.h"
 
 //-------------------------------------------------------------------------------------------------
-W3DProjectileStreamDrawModuleData::W3DProjectileStreamDrawModuleData() 
+W3DProjectileStreamDrawModuleData::W3DProjectileStreamDrawModuleData()
 {
 	m_textureName = "";
 	m_width = 0.0f;
@@ -53,11 +53,11 @@ W3DProjectileStreamDrawModuleData::~W3DProjectileStreamDrawModuleData()
 }
 
 //-------------------------------------------------------------------------------------------------
-void W3DProjectileStreamDrawModuleData::buildFieldParse(MultiIniFieldParse& p) 
+void W3DProjectileStreamDrawModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
   ModuleData::buildFieldParse(p);
 
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
 		{ "Texture",			INI::parseAsciiString,	NULL, offsetof(W3DProjectileStreamDrawModuleData, m_textureName) },
 		{ "Width",				INI::parseReal,					NULL, offsetof(W3DProjectileStreamDrawModuleData, m_width) },

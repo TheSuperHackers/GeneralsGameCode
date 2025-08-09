@@ -67,7 +67,7 @@ public:
 	//}}AFX_VIRTUAL
 
 // Implementation
-protected:	
+protected:
 #ifdef RTS_DEBUG
 	virtual void AssertValid() const;
 	virtual void Dump(CDumpContext& dc) const;
@@ -94,7 +94,7 @@ public:
 	SoundRenderObjClass *	Get_Sound (void) const						{ if (SoundRObj != NULL) SoundRObj->Add_Ref (); return SoundRObj; }
 
 protected:
-	
+
 	///////////////////////////////////////////////////////
 	//	Protected methods
 	///////////////////////////////////////////////////////

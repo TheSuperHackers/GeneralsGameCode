@@ -90,7 +90,7 @@ protected:
 	void drawContours(CDC *pDc, CRgn *pRgn, Int minX, Int maxX, Int minY, Int maxY);
 
 	/// Compound boolean expression.
-	static inline Bool isBetween(Int cur, Int first, Int second) { 
+	static inline Bool isBetween(Int cur, Int first, Int second) {
 		Bool is = false;
 		if (cur>=first && cur<=second) is = true;
 		if (cur<=first && cur>=second) is = true;
@@ -101,7 +101,7 @@ protected:
 	void interpolate(CPoint *pt, Int ht, CPoint pt1, Int ht1, CPoint pt2, Int ht2);
 
 	/// Draw the object's icon in the dc at a given point.
-	void drawObjectInView(CDC *pDc, MapObject *pMapObj); 
+	void drawObjectInView(CDC *pDc, MapObject *pMapObj);
 
 public:
 	/// Get the current draw size in pixels in the 2d window of one height map cell.

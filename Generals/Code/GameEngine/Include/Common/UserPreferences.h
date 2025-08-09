@@ -45,7 +45,7 @@
 typedef std::map<AsciiString, AsciiString> PreferenceMap;
 
 //-----------------------------------------------------------------------------
-// UserPreferences base class 
+// UserPreferences base class
 //-----------------------------------------------------------------------------
 class UserPreferences : public PreferenceMap
 {
@@ -56,7 +56,7 @@ public:
 	// Loads or creates a file with the given name in the user data directory.
 	virtual Bool load(AsciiString fname);
 	virtual Bool write(void);
-	
+
 	Bool getBool(AsciiString key, Bool defaultValue) const;
 	Real getReal(AsciiString key, Real defaultValue) const;
 	Int getInt(AsciiString key, Int defaultValue) const;
@@ -72,7 +72,7 @@ protected:
 };
 
 //-----------------------------------------------------------------------------
-// OptionsPreferences options menu class 
+// OptionsPreferences options menu class
 //-----------------------------------------------------------------------------
 class OptionPreferences : public UserPreferences
 {
@@ -131,7 +131,7 @@ public:
 };
 
 //-----------------------------------------------------------------------------
-// LANPreferences class 
+// LANPreferences class
 //-----------------------------------------------------------------------------
 class LANPreferences : public UserPreferences
 {

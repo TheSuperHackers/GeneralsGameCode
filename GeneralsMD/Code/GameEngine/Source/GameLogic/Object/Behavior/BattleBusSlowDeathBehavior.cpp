@@ -78,7 +78,7 @@ BattleBusSlowDeathBehaviorModuleData::BattleBusSlowDeathBehaviorModuleData( void
 {
   SlowDeathBehaviorModuleData::buildFieldParse( p );
 
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
 
 		{ "FXStartUndeath",	INI::parseFXList,	NULL, offsetof( BattleBusSlowDeathBehaviorModuleData, m_fxStartUndeath ) },
@@ -121,7 +121,7 @@ BattleBusSlowDeathBehavior::~BattleBusSlowDeathBehavior( void )
 {
 
 }  // end ~BattleBusSlowDeathBehavior
- 
+
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 void BattleBusSlowDeathBehavior::onDie( const DamageInfo *damageInfo )
@@ -159,7 +159,7 @@ void BattleBusSlowDeathBehavior::beginSlowDeath( const DamageInfo *damageInfo )
 			// Then stop physically
 			me->getPhysics()->clearAcceleration();
 			me->getPhysics()->scrubVelocity2D(0);
-			
+
 			// Then get chucked in the air
 			Coord3D throwForce;
 			throwForce.x = 0;
@@ -172,7 +172,7 @@ void BattleBusSlowDeathBehavior::beginSlowDeath( const DamageInfo *damageInfo )
 		// And finally hit those inside for some damage
 		if( me->getContain() )
 			me->getContain()->processDamageToContained(data->m_percentDamageToPassengers);
-		
+
 		setWakeFrame(getObject(), UPDATE_SLEEP_NONE);
 	}
 	else
@@ -278,7 +278,7 @@ UpdateSleepTime BattleBusSlowDeathBehavior::update( void )
 void BattleBusSlowDeathBehavior::crc( Xfer *xfer )
 {
 
-	// extend base class 
+	// extend base class
 	SlowDeathBehavior::crc( xfer );
 
 }  // end crc

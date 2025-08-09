@@ -49,7 +49,7 @@ void LockWeaponCreateModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
   CreateModuleData::buildFieldParse(p);
 
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
 		{ "SlotToLock",	INI::parseLookupList,	TheWeaponSlotTypeNamesLookupList, offsetof( LockWeaponCreateModuleData, m_slotToLock ) },
 		{ 0, 0, 0, 0 }

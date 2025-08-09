@@ -59,9 +59,9 @@ PropagandaCenterBehaviorModuleData::PropagandaCenterBehaviorModuleData( void )
 {
   PrisonBehaviorModuleData::buildFieldParse( p );
 
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
-		
+
 		{	"BrainwashDuration", INI::parseDurationUnsignedInt, NULL, offsetof( PropagandaCenterBehaviorModuleData, m_brainwashDuration ) },
 		{ 0, 0, 0, 0 }
 
@@ -105,8 +105,8 @@ void PropagandaCenterBehavior::onDelete( void )
 	// go through our list of brainwashed objects, and if they are still under our
 	// control, return them to their original owners
 	//
-	for( BrainwashedIDListContIterator it = m_brainwashedList.begin(); 
-			 it != m_brainwashedList.end(); 
+	for( BrainwashedIDListContIterator it = m_brainwashedList.begin();
+			 it != m_brainwashedList.end();
 			 ++it )
 	{
 		Object *obj;
@@ -120,9 +120,9 @@ void PropagandaCenterBehavior::onDelete( void )
 			obj->restoreOriginalTeam();
 
 		}  // end if
-		
+
 	}  // end for
-	
+
 	// clear the list
 	m_brainwashedList.clear();
 
@@ -179,10 +179,10 @@ UpdateSleepTime PropagandaCenterBehavior::update( void )
 					exitObjectViaDoor( brainwashingSubject, exitDoor );
 
 				}  // end if
-						
+
 			}  // end if
 
-		}  // end if, 
+		}  // end if,
 
 	}  // end if
 
@@ -203,7 +203,7 @@ UpdateSleepTime PropagandaCenterBehavior::update( void )
 				m_brainwashingSubjectStartFrame = TheGameLogic->getFrame();
 
 			}  // end if
- 
+
 		}  // end if
 
 	}  // end if

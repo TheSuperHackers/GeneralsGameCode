@@ -126,7 +126,7 @@ ResolutionDialogClass::OnInitDialog (void)
 		int width	= res_list[index].Width;
 		int height	= res_list[index].Height;
 		int bpp		= res_list[index].BitDepth;
-		
+
 		//
 		//	Format description strings for this resolution
 		//
@@ -157,7 +157,7 @@ ResolutionDialogClass::OnInitDialog (void)
 			}
 		}
 	}
-	
+
 	//
 	//	Select the first entry by default (if necessary)
 	//
@@ -199,14 +199,14 @@ ResolutionDialogClass::OnOK (void)
 			g_iWidth				= res_list[index].Width;
 			g_iHeight			= res_list[index].Height;
 			g_iBitsPerPixel	= res_list[index].BitDepth;
-			
+
 			//
 			// Cache this information in the registry
 			//
 			theApp.WriteProfileInt ("Config", "DeviceWidth", g_iWidth);
 			theApp.WriteProfileInt ("Config", "DeviceHeight", g_iHeight);
 			theApp.WriteProfileInt ("Config", "DeviceBitsPerPix", g_iBitsPerPixel);
-					
+
 			//
 			//	Reset the display
 			//

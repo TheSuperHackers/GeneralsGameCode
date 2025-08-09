@@ -43,7 +43,7 @@ inline bool Verify_Normal(Vector3 &Normal, Vector3 &loc1, Vector3 &loc2, Vector3
 	double e1 = d1 - d2;
 	double e2 = d2 - d3;
 	double e3 = d3 - d1;
-	
+
 	if((fabs(e1) > 0.001) || (fabs(e2) > 0.001) || (fabs(e3) > 0.001)) {
 		Debug.Print("----------\n");
 		Debug.Print("dots", Vector3(d1,d2,d3));
@@ -74,7 +74,7 @@ inline void Verify_Normal2(Vector3 &Normal, Vector3 &loc1, Vector3 &loc2, Vector
 //// end of debug code to toss
 
 /*
-**	Determine the ray that corresponds to the specified screen coordinates with respect 
+**	Determine the ray that corresponds to the specified screen coordinates with respect
 ** to the camera location, direction and projection information.
 */
 
@@ -93,7 +93,7 @@ inline void IntersectionClass::Get_Screen_Ray(float screen_x, float screen_y, co
 	Vector3 camera_location  = camera->Get_Position();
 
 	// the projected ray has the same origin as the camera
-	*RayLocation = camera_location; 
+	*RayLocation = camera_location;
 
 // these 6 lines worked for SR 1.1
 // build the projected screen vector
@@ -146,28 +146,28 @@ inline void IntersectionClass::Get_Screen_Ray(float screen_x, float screen_y, co
 **	If it is inside, it will adjust the Z value of the point to be on the triangle plane.
 */
 inline bool IntersectionClass::_Point_In_Polygon_Z(
-	Vector3 &Point, 
+	Vector3 &Point,
 	Vector3 &Corner1,
 	Vector3 &Corner2,
 	Vector3 &Corner3
-) 
+)
 {
 // these defines could be variables if support for other axis were neccessary
 #define AXIS_1 0
 #define AXIS_2 1
 #define AXIS_3 2
 
-	double u0 = Point[AXIS_1] - Corner1[AXIS_1]; 
+	double u0 = Point[AXIS_1] - Corner1[AXIS_1];
 	double v0 = Point[AXIS_2] - Corner1[AXIS_2];
 
 	// determine the 2d vectors on the dominant plane from the first vertex to the other two
-	double u1 = Corner2[AXIS_1] - Corner1[AXIS_1]; 
+	double u1 = Corner2[AXIS_1] - Corner1[AXIS_1];
 	double v1 = Corner2[AXIS_2] - Corner1[AXIS_2];
-	double u2 = Corner3[AXIS_1] - Corner1[AXIS_1]; 
+	double u2 = Corner3[AXIS_1] - Corner1[AXIS_1];
 	double v2 = Corner3[AXIS_2] - Corner1[AXIS_2];
 
 	double alpha, beta;
-	bool intersect = false; 
+	bool intersect = false;
 
 	// calculate alpha and beta as normalized (0..1) percentages across the 2d projected triangle
 	// and do bounds checking (sum <= 1)  to determine whether or not the triangle intersection occurs.
@@ -180,7 +180,7 @@ inline bool IntersectionClass::_Point_In_Polygon_Z(
 			// if alpha is valid & the sum of alpha & beta is <= 1 then it's within the triangle
 			// note:       0.00001 added after testing an intersection of a square in the middle indicated
 			// an error of 0.0000001350, apparently due to roundoff.
-			intersect = ((alpha >= 0.0) && ((alpha + beta) <= 1.0)); 
+			intersect = ((alpha >= 0.0) && ((alpha + beta) <= 1.0));
 	  }
 	} else {
 	  beta = (v0 * u1 - u0 * v1) / (v2 * u1 - u2 * v1);
@@ -206,9 +206,9 @@ inline bool IntersectionClass::_Point_In_Polygon_Z(
 **
 */
 inline bool IntersectionClass::_Point_In_Polygon_Z(
-	Vector3 &Point, 
+	Vector3 &Point,
 	Vector3 Corners[3]
-) 
+)
 {
 	return _Point_In_Polygon_Z(Point, Corners[0], Corners[1], Corners[2]);
 }
@@ -218,27 +218,27 @@ inline bool IntersectionClass::_Point_In_Polygon_Z(
 **	the dominant projection axes, such as in the case of 2d intersecion with heightfields.
 */
 inline bool IntersectionClass::_Point_In_Polygon(
-	Vector3 &Point, 
-	Vector3 &loc1, 
-	Vector3 &loc2, 
-	Vector3 &loc3, 
-	int axis_1, 
+	Vector3 &Point,
+	Vector3 &loc1,
+	Vector3 &loc2,
+	Vector3 &loc3,
+	int axis_1,
 	int axis_2,
 	float &Alpha,
-	float &Beta) 
+	float &Beta)
 {
 
-	double u0 = Point[axis_1] - loc1[axis_1]; 
+	double u0 = Point[axis_1] - loc1[axis_1];
 	double v0 = Point[axis_2] - loc1[axis_2];
 
 	// determine the 2d vectors on the dominant plane from the first vertex to the other two
-	double u1 = loc2[axis_1] - loc1[axis_1]; 
+	double u1 = loc2[axis_1] - loc1[axis_1];
 	double v1 = loc2[axis_2] - loc1[axis_2];
-	double u2 = loc3[axis_1] - loc1[axis_1]; 
+	double u2 = loc3[axis_1] - loc1[axis_1];
 	double v2 = loc3[axis_2] - loc1[axis_2];
 
 	double alpha, beta;
-	bool intersect = false; 
+	bool intersect = false;
 
 	// calculate alpha and beta as normalized (0..1) percentages across the 2d projected triangle
 	// and do bounds checking (sum <= 1)  to determine whether or not the triangle intersection occurs.
@@ -258,7 +258,7 @@ inline bool IntersectionClass::_Point_In_Polygon(
 			// if alpha is valid & the sum of alpha & beta is <= 1 then it's within the triangle
 			// note:       0.00001 added after testing an intersection of a square in the middle indicated
 			// an error of 0.0000001350, apparently due to roundoff.
-			intersect = ((alpha >= 0.0) && ((alpha + beta) <= 1.0)); 
+			intersect = ((alpha >= 0.0) && ((alpha + beta) <= 1.0));
 	  }
 	} else {
 	  Beta = beta = (v0 * u1 - u0 * v1) / (v2 * u1 - u2 * v1);
@@ -271,10 +271,10 @@ inline bool IntersectionClass::_Point_In_Polygon(
 #ifdef DEBUG_NORMALS
 	if(debugmode) {
 		Debug.Print("Intersect", intersect);
-		Debug.Print("Normal ", Normal);		
-		Debug.Print("Point 1", loc1);		
-		Debug.Print("Point 2", loc2);		
-		Debug.Print("Point 3", loc3);		
+		Debug.Print("Normal ", Normal);
+		Debug.Print("Point 1", loc1);
+		Debug.Print("Point 2", loc2);
+		Debug.Print("Point 3", loc3);
 		Debug.Print("Inter  ", FinalResult->Intersection);
 		Debug.Print("a/b", (float) alpha, (float) beta);
 		Debug.Print("sum", (float) alpha + (float) beta);
@@ -297,18 +297,18 @@ inline bool IntersectionClass::_Point_In_Polygon(
 }
 
 /*
-**	This version calls the base form using member data from the FinalResult struct for 
+**	This version calls the base form using member data from the FinalResult struct for
 **	some of it's arguments.
 */
 inline bool IntersectionClass::_Point_In_Polygon(
-	IntersectionResultClass *FinalResult, 
-	Vector3 &loc1, 
-	Vector3 &loc2, 
-	Vector3 &loc3, 
-	int axis_1, 
-	int axis_2) 
+	IntersectionResultClass *FinalResult,
+	Vector3 &loc1,
+	Vector3 &loc2,
+	Vector3 &loc3,
+	int axis_1,
+	int axis_2)
 {
-	return (FinalResult->Intersects = _Point_In_Polygon(	FinalResult->Intersection, loc1, loc2, loc3, 
+	return (FinalResult->Intersects = _Point_In_Polygon(	FinalResult->Intersection, loc1, loc2, loc3,
 								axis_1, axis_2, FinalResult->Alpha, FinalResult->Beta));
 }
 
@@ -329,7 +329,7 @@ inline bool IntersectionClass::_Point_In_Polygon(IntersectionResultClass *FinalR
 /*
 **	Determine the Z distance to the specified polygon.
 */
-inline float IntersectionClass::Plane_Z_Distance(Vector3 &PlaneNormal, Vector3 &PlanePoint) 
+inline float IntersectionClass::Plane_Z_Distance(Vector3 &PlaneNormal, Vector3 &PlanePoint)
 {
 	// do a parallel check
 	float divisor = (PlaneNormal[0] *(*RayDirection)[0] + PlaneNormal[1] *(*RayDirection)[1] + PlaneNormal[2] * (*RayDirection)[2]);
@@ -348,11 +348,11 @@ inline float IntersectionClass::Plane_Z_Distance(Vector3 &PlaneNormal, Vector3 &
 **	are defined, using the specified vertex & surface normal to determine the correct value
 */
 inline float IntersectionClass::_Get_Z_Elevation(
-	Vector3 &Point, 
-	Vector3 &PlanePoint, 
+	Vector3 &Point,
+	Vector3 &PlanePoint,
 	Vector3 &PlaneNormal)
 {
-	
+
 	// do a parallel check
 	if(PlaneNormal[2] == 0) return false;
 
@@ -390,11 +390,11 @@ void IntersectionClass::Calculate_Intersection(IntersectionResultClass *Result)
 }
 
 /*
-**	Plane intersection test that assumes a normalized RayDirection. Only determines if 
+**	Plane intersection test that assumes a normalized RayDirection. Only determines if
 **	plane is parallel and if not, the range to it (which may be negative or beyond MaxRange).
 **	It doesn't determine point of intersection either.
 */
-inline bool IntersectionClass::Intersect_Plane_Quick(IntersectionResultClass *Result, Vector3 &PlaneNormal, Vector3 &PlanePoint) 
+inline bool IntersectionClass::Intersect_Plane_Quick(IntersectionResultClass *Result, Vector3 &PlaneNormal, Vector3 &PlanePoint)
 {
 	// do a parallel check
 	float divisor = (PlaneNormal[0] *(*RayDirection)[0] + PlaneNormal[1] *(*RayDirection)[1] + PlaneNormal[2] * (*RayDirection)[2]);
@@ -408,13 +408,13 @@ inline bool IntersectionClass::Intersect_Plane_Quick(IntersectionResultClass *Re
 }
 
 /*
-**	Determine if the specified ray will intersect the plane; returns false for planes 
+**	Determine if the specified ray will intersect the plane; returns false for planes
 **	parallel and behind ray origin.
-**	Sets Range to the distance from the ray location to the intersection. 
+**	Sets Range to the distance from the ray location to the intersection.
 **	Note: Range is undefined if an intersection didn't occur.
 */
 inline bool IntersectionClass::Intersect_Plane(IntersectionResultClass *Result, Vector3 &PlaneNormal, Vector3 &PlanePoint) {
-								 
+
 	// normalize the ray direction
 	RayDirection->Normalize();
 
@@ -422,7 +422,7 @@ inline bool IntersectionClass::Intersect_Plane(IntersectionResultClass *Result, 
 	if(!Intersect_Plane_Quick(Result, PlaneNormal, PlanePoint)) return false;
 
 	// check to make sure it's not behind the ray's origin
-	if(Result->Range <= 0) return false; 
+	if(Result->Range <= 0) return false;
 
 	// check to make sure it's not beyond max distance
 	if(Result->Range > MaxDistance) return false;
@@ -450,7 +450,7 @@ inline int IntersectionClass::_Largest_Normal_Index(Vector3 &v)
 		}
 		return 2; // x > y && !(x > z) --> z is the max
 	}
-	if(y > z) 
+	if(y > z)
 		return 1; //  x <= y && y > z --> y is the max
 	return 2; // y > x &&  y > z --> z is the max
 }
@@ -461,19 +461,19 @@ inline int IntersectionClass::_Largest_Normal_Index(Vector3 &v)
 */
 inline void IntersectionClass::_Find_Polygon_Dominant_Plane(Vector3 &Normal, int &Axis_1, int &Axis_2)
 {
-	switch (_Largest_Normal_Index(Normal)) 
+	switch (_Largest_Normal_Index(Normal))
 	{
-	case 0: 
+	case 0:
 		// Dominant is the X axis
 		Axis_1 = 2;
 		Axis_2 = 1;
 		break;
-	case 1: 
+	case 1:
 		// Dominant is the Y axis
 		Axis_1 = 2;
 		Axis_2 = 0;
 		break;
-	case 2: 
+	case 2:
 		// Dominant is the Z axis
 		Axis_1 = 0;
 		Axis_2 = 1;
@@ -483,21 +483,21 @@ inline void IntersectionClass::_Find_Polygon_Dominant_Plane(Vector3 &Normal, int
 
 /*
 **	Returns true if ray intersects polygon.
-**	Changes passed Intersection argument to location of intersection if it occurs, 
+**	Changes passed Intersection argument to location of intersection if it occurs,
 **	and sets Range to the distance from the ray location to the intersection.
-**	If Interpolated_Normal is specified it will interpolate the surface normal based 
+**	If Interpolated_Normal is specified it will interpolate the surface normal based
 **	on the vertex normals.
 */
 inline bool IntersectionClass::Intersect_Polygon(IntersectionResultClass *Result, Vector3 &PolygonNormal, Vector3 &v1, Vector3 &v2, Vector3 &v3)
 {
 	// first check to see if it hits the plane; determine plane normal and find point on plane (from a vertex)
-	
+
 #ifdef DEBUG_NORMALS
 	Verify_Normal2(PolygonNormal, v1,v2,v3);
 #endif
 
 	if(Intersect_Plane(Result, PolygonNormal, v1)) {
-		// then check to see if it it actually intersects the polygon. 
+		// then check to see if it it actually intersects the polygon.
 		return _Point_In_Polygon(Result, PolygonNormal, v1, v2, v3);
 	}
 	// doesn't even hit the plane, return false.
@@ -525,19 +525,19 @@ inline bool IntersectionClass::Intersect_Polygon(IntersectionResultClass *Result
 
 // called after Interpolate_Intersection_Normal.
 // transform the intersection and the normal from model coords into world coords
-inline void IntersectionClass::Transform_Model_To_World_Coords(IntersectionResultClass *FinalResult) 
+inline void IntersectionClass::Transform_Model_To_World_Coords(IntersectionResultClass *FinalResult)
 {
 #ifdef ALLOW_TEMPORARIES
 	FinalResult->Intersection = FinalResult->ModelMatrix * FinalResult->Intersection + FinalResult->ModelLocation;
-	if(IntersectionNormal != 0) 
+	if(IntersectionNormal != 0)
 	{
 		Vector3 normal(*IntersectionNormal);
-		*IntersectionNormal = FinalResult->ModelMatrix * normal; 
+		*IntersectionNormal = FinalResult->ModelMatrix * normal;
 	}
 #else
 	FinalResult->ModelMatrix.mulVector3(FinalResult->Intersection);
 	FinalResult->Intersection += FinalResult->ModelLocation;
-	if(IntersectionNormal != 0) 
+	if(IntersectionNormal != 0)
 	{
 		FinalResult->ModelMatrix.mulVector3(*IntersectionNormal);
 	}
@@ -547,7 +547,7 @@ inline void IntersectionClass::Transform_Model_To_World_Coords(IntersectionResul
 
 
 bool IntersectionClass::Intersect_Screen_Object(	IntersectionResultClass *Final_Result,
-											Vector4 &Area, 
+											Vector4 &Area,
 											RenderObjClass *obj)
 {
 	if(Final_Result->Intersects =  ((ScreenX >= Area[0]) && (ScreenX <= Area[2]) && (ScreenY >= Area[1]) && (ScreenY <= Area[3]))) {
@@ -561,20 +561,20 @@ bool IntersectionClass::Intersect_Screen_Object(	IntersectionResultClass *Final_
 
 
 /*
-**	Determines the point of intersection, if any between the line segments AB and CD. 
+**	Determines the point of intersection, if any between the line segments AB and CD.
 **	If an intersection occurs, then the UV values are interpolated along AB.
 **	Disregards the Z value and considers only the X/Y data except for determining
 **	the Z value of the intersection.
 **	This function could be easily modified to support other axes.
 * /
-void IntersectionClass::_Intersect_Lines_Z(	
-	Vector3 &A, 
+void IntersectionClass::_Intersect_Lines_Z(
+	Vector3 &A,
 	Vector3 &B,
 	Vector2 &UVStart,
 	Vector2 &UVEnd,
-	Vector3 &C, 
+	Vector3 &C,
 	Vector3 &D,
-	Vector3 ClippedPoints[6], 
+	Vector3 ClippedPoints[6],
 	Vector2 ClippedUV[6],
 	int &DestIndex)
 {
@@ -656,7 +656,7 @@ void IntersectionClass::_Intersect_Lines_Z(
 			// degenerate triangle test
 			if(len == 0)
 				return;
-			
+
 			len = 1.0 / len;
 			cpos = (C[AXIS_2] - A[AXIS_2]) * len;
 			dpos = (D[AXIS_2] - A[AXIS_2]) * len;
@@ -665,7 +665,7 @@ void IntersectionClass::_Intersect_Lines_Z(
 		// check to see if there's any overlap
 		// one of the two pos values must be 0>pos>1 or there is no intersection.
 		// this test will ensure that cpos & dpos will not both be outside the same end of the segment.
-		if(((cpos < 0) && (dpos < 0)) || ((cpos > 1) && (dpos > 1))) 
+		if(((cpos < 0) && (dpos < 0)) || ((cpos > 1) && (dpos > 1)))
 			return;
 
 		if(cpos < 0) {
@@ -703,7 +703,7 @@ void IntersectionClass::_Intersect_Lines_Z(
 		}
 		return;
 
-	} 
+	}
 
 	// determine the percentage into the line segments that the intersection occurs.
 	// an intersection of segments will produce r & s values between 0 & 1.
@@ -717,11 +717,11 @@ void IntersectionClass::_Intersect_Lines_Z(
 	if((0.0 <= r) && (r <= 1.0) && (0.0 <= s) && (s <= 1.0)) {
 
 		// they intersect.
-		// determine intersection point 
+		// determine intersection point
 		Vector3 v = D - C;
 //		float len = v.Length();
 		ClippedPoints[DestIndex] = C + v * s;
-		
+
 		// interpolate UV values
 		Vector2 uv = UVEnd - UVStart;
 //		len = uv.Length();
@@ -763,7 +763,7 @@ void IntersectionClass::_Intersect_Lines_Z(
     if ( r1 != 0 && r2 != 0 && (((r1 < 0) && (r2 < 0)) || ((r1 > 0) && (r2 > 0))))
         return; // ( DONT_INTERSECT );
 
-    // Line segments intersect: compute intersection point. 
+    // Line segments intersect: compute intersection point.
     float denom = a1 * b2 - a2 * b1;
     if ( denom == 0 )
         return; // ( COLLINEAR );
@@ -773,7 +773,7 @@ void IntersectionClass::_Intersect_Lines_Z(
     // The denom/2 is to get rounding instead of truncating.  It
     // is added or subtracted to the numerator, depending upon the
     // sign of the numerator.
- 
+
     float num = b1 * c2 - b2 * c1;
     float x = ( num < 0 ? num - offset : num + offset ) / denom;
 
@@ -812,7 +812,7 @@ inline float IntersectionClass::Intersect_Lines
 	float dpy = p1.Y - p0.Y;
 
 	float den = de.Y * dpx - de.X * dpy;
-	
+
 	if (fabs(den) > WWMATH_EPSILON) {
 
 		float num = p0.Y*de.X - p0.X*de.Y + e0.X*de.Y - e0.Y*de.X;
@@ -829,7 +829,7 @@ inline float IntersectionClass::Intersect_Lines
 #define EMIT(p,uv) OutPoints[outnum] = p; OutUVs[outnum] = uv; outnum++;
 
 
-inline int IntersectionClass::Clip_Triangle_To_LineXY(	
+inline int IntersectionClass::Clip_Triangle_To_LineXY(
 	int incount,
 	Vector3 * InPoints,
 	Vector2 * InUVs,
@@ -841,14 +841,14 @@ inline int IntersectionClass::Clip_Triangle_To_LineXY(
 {
 	Vector3 e0 = edge_point0;
 	Vector3 de = edge_point1 - edge_point0;
-	
+
 	// number of verts output.
 	int outnum = 0;
 
 	// start and end verts of the current edge
 	int p0,p1;
 	p0 = incount-1;
-	
+
 	// intersection temporaries.
 	float intersection;
 	Vector3 intersection_point;
@@ -862,7 +862,7 @@ inline int IntersectionClass::Clip_Triangle_To_LineXY(
 
 				// both inside, emit p1
 				EMIT(InPoints[p1],InUVs[p1]);
-				
+
 			} else {
 
 				// edge going out->in, emit intersection and endpoint
@@ -875,7 +875,7 @@ inline int IntersectionClass::Clip_Triangle_To_LineXY(
 		} else {
 
 			if (In_Front_Of_Line(InPoints[p0], e0, de)) {
-				
+
 				// edge going in->out, emit intersection
 				intersection = Intersect_Lines(InPoints[p0],InPoints[p1], e0, de);
 				intersection_point = (1.0f - intersection) * InPoints[p0] + intersection * InPoints[p1];
@@ -893,37 +893,37 @@ inline int IntersectionClass::Clip_Triangle_To_LineXY(
 	return outnum;
 }
 
-inline int IntersectionClass::_Intersect_Triangles_Z(	
-	Vector3 ClipPoints[3], 
-	Vector3 TrianglePoints[3], 
+inline int IntersectionClass::_Intersect_Triangles_Z(
+	Vector3 ClipPoints[3],
+	Vector3 TrianglePoints[3],
 	Vector2 UV[3],
-	Vector3 ClippedPoints[6], 
+	Vector3 ClippedPoints[6],
 	Vector2 ClippedUV[6]
 )
 {
 	int count;
 	Vector3 tmp_points[6];
 	Vector2 tmp_uv[6];
-	
+
 	count = Clip_Triangle_To_LineXY(3,TrianglePoints,UV,ClippedPoints,ClippedUV,ClipPoints[0],ClipPoints[1]);
 	count = Clip_Triangle_To_LineXY(count,ClippedPoints,ClippedUV,tmp_points,tmp_uv,ClipPoints[1],ClipPoints[2]);
 	count = Clip_Triangle_To_LineXY(count,tmp_points,tmp_uv,ClippedPoints,ClippedUV,ClipPoints[2],ClipPoints[0]);
-	
+
 	return count;
 }
 
 /*
 **	This function will fill the passed array with the set of points & uv values that represent
-**	the boolean operation of the anding of the ClipPoints with the TrianglePoints. The UV values	
+**	the boolean operation of the anding of the ClipPoints with the TrianglePoints. The UV values
 **	provided for the TrianglePoints triangle are used to generate accurate UV values for any
 **	new points created by this operation.
 **	This function returns the number of vertices it required to define the intersection.
 * /
-int IntersectionClass::_Intersect_Triangles_Z(	
-	Vector3 ClipPoints[3], 
-	Vector3 TrianglePoints[3], 
+int IntersectionClass::_Intersect_Triangles_Z(
+	Vector3 ClipPoints[3],
+	Vector3 TrianglePoints[3],
 	Vector2 UV[3],
-	Vector3 ClippedPoints[6], 
+	Vector3 ClippedPoints[6],
 	Vector2 ClippedUV[6]
 )
 {
@@ -958,21 +958,21 @@ int IntersectionClass::_Intersect_Triangles_Z(
 		ClippedPoints[points] = ClipPoints[0];
 		Vector2 uv1 = UV[1] - UV[0];
 		Vector2 uv2 = UV[2] - UV[0];
-		ClippedUV[points++] = UV[0] + alpha * uv1 + beta * uv2; 
+		ClippedUV[points++] = UV[0] + alpha * uv1 + beta * uv2;
 	}
 
 	if(_Point_In_Polygon(ClipPoints[1], TrianglePoints[0], TrianglePoints[1], TrianglePoints[2], 0, 1, alpha, beta)) {
 		ClippedPoints[points] = ClipPoints[1];
 		Vector2 uv1 = UV[1] - UV[0];
 		Vector2 uv2 = UV[2] - UV[0];
-		ClippedUV[points++] = UV[0] + alpha * uv1 + beta * uv2; 
+		ClippedUV[points++] = UV[0] + alpha * uv1 + beta * uv2;
 	}
 
 	if(_Point_In_Polygon(ClipPoints[2], TrianglePoints[0], TrianglePoints[1], TrianglePoints[2], 0, 1, alpha, beta)) {
 		ClippedPoints[points] = ClipPoints[2];
 		Vector2 uv1 = UV[1] - UV[0];
 		Vector2 uv2 = UV[2] - UV[0];
-		ClippedUV[points++] = UV[0] + alpha * uv1 + beta * uv2; 
+		ClippedUV[points++] = UV[0] + alpha * uv1 + beta * uv2;
 	}
 
 	// if all 3 clip points are inside the decal triangle then return
@@ -981,7 +981,7 @@ int IntersectionClass::_Intersect_Triangles_Z(
 
 	//	The clip triangle does not fully contain the uv triangle, and the uv triangle
 	//	does not fully contain the clip triangle.
-	//	Intersect any edge which has at least one outside point with all of the clip edges. 
+	//	Intersect any edge which has at least one outside point with all of the clip edges.
 	//	First, determine which edges to test. Those points that are already clipped (by being inside)
 	//	are immediately copied to the clipped point & uv arrays.
 
@@ -990,9 +990,9 @@ int IntersectionClass::_Intersect_Triangles_Z(
 	bool test_02 = false;
 	bool test_12 = false;
 
-	if( inside[0] )	{	ClippedPoints[points] = TrianglePoints[0]; ClippedUV[points++] = UV[0];	} 
-	else {	test_01 = test_02 = true; } 
-	
+	if( inside[0] )	{	ClippedPoints[points] = TrianglePoints[0]; ClippedUV[points++] = UV[0];	}
+	else {	test_01 = test_02 = true; }
+
 	if( inside[1] )	{	ClippedPoints[points] = TrianglePoints[1]; ClippedUV[points++] = UV[1];	}
 	else {	test_01 = test_12 = true; }
 
@@ -1007,19 +1007,19 @@ int IntersectionClass::_Intersect_Triangles_Z(
 		_Intersect_Lines_Z(	TrianglePoints[0], TrianglePoints[1],
 							UV[0], UV[1],
 							ClipPoints[0], ClipPoints[1],
-							ClippedPoints, 
+							ClippedPoints,
 							ClippedUV,
 							points);
 		_Intersect_Lines_Z(	TrianglePoints[0], TrianglePoints[1],
 							UV[0], UV[1],
 							ClipPoints[0], ClipPoints[2],
-							ClippedPoints, 
+							ClippedPoints,
 							ClippedUV,
 							points);
 		_Intersect_Lines_Z(	TrianglePoints[0], TrianglePoints[1],
 							UV[0], UV[1],
 							ClipPoints[1], ClipPoints[2],
-							ClippedPoints, 
+							ClippedPoints,
 							ClippedUV,
 							points);
 	}
@@ -1027,19 +1027,19 @@ int IntersectionClass::_Intersect_Triangles_Z(
 		_Intersect_Lines_Z(	TrianglePoints[0], TrianglePoints[2],
 							UV[0], UV[2],
 							ClipPoints[0], ClipPoints[1],
-							ClippedPoints, 
+							ClippedPoints,
 							ClippedUV,
 							points);
 		_Intersect_Lines_Z(	TrianglePoints[0], TrianglePoints[2],
 							UV[0], UV[2],
 							ClipPoints[0], ClipPoints[2],
-							ClippedPoints, 
+							ClippedPoints,
 							ClippedUV,
 							points);
 		_Intersect_Lines_Z(	TrianglePoints[0], TrianglePoints[2],
 							UV[0], UV[2],
 							ClipPoints[1], ClipPoints[2],
-							ClippedPoints, 
+							ClippedPoints,
 							ClippedUV,
 							points);
 	}
@@ -1047,19 +1047,19 @@ int IntersectionClass::_Intersect_Triangles_Z(
 		_Intersect_Lines_Z(	TrianglePoints[1], TrianglePoints[2],
 							UV[1], UV[2],
 							ClipPoints[0], ClipPoints[1],
-							ClippedPoints, 
+							ClippedPoints,
 							ClippedUV,
 							points);
 		_Intersect_Lines_Z(	TrianglePoints[1], TrianglePoints[2],
 							UV[1], UV[2],
 							ClipPoints[0], ClipPoints[2],
-							ClippedPoints, 
+							ClippedPoints,
 							ClippedUV,
 							points);
 		_Intersect_Lines_Z(	TrianglePoints[1], TrianglePoints[2],
 							UV[1], UV[2],
 							ClipPoints[1], ClipPoints[2],
-							ClippedPoints, 
+							ClippedPoints,
 							ClippedUV,
 							points);
 	}
@@ -1081,7 +1081,7 @@ int IntersectionClass::_Intersect_Triangles_Z(
 		return 3;
 	}
 * /
-	// points will be 0, 3, 4, 5 or 6 
+	// points will be 0, 3, 4, 5 or 6
 	if(!((points == 0) || (points == 3) || (points == 4) || (points == 5) || (points == 6))) {
 		Debug.Print("points", points);
 		return 0; //_Intersect_Triangles_Z(	ClipPoints, TrianglePoints, UV, ClippedPoints, ClippedUV);
@@ -1093,4 +1093,4 @@ int IntersectionClass::_Intersect_Triangles_Z(
 */
 
 
-#endif 
+#endif

@@ -67,7 +67,7 @@ public:
 class CatmullRomSpline1DClass : public HermiteSpline1DClass
 {
 public:
-	void					Update_Tangents(void); 
+	void					Update_Tangents(void);
 
 	// save-load support
 	virtual const PersistFactoryClass &	Get_Factory(void) const;

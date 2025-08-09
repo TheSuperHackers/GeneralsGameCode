@@ -47,7 +47,7 @@ static char THIS_FILE[] = __FILE__;
 //
 //		It is very important that this macro appear in each
 //		function, prior to any calls into MFC.  This means that
-//		it must appear as the first statement within the 
+//		it must appear as the first statement within the
 //		function, even before any object variable declarations
 //		as their constructors may generate calls into the MFC
 //		DLL.
@@ -105,14 +105,14 @@ void __declspec(dllexport) CreateParticleSystemDialog(void)
 		DebugWindowDialog* tmpWnd;
 		tmpWnd = new DebugWindowDialog;
 		tmpWnd->Create(DebugWindowDialog::IDD, NULL);
-		
+
 		tmpWnd->SetWindowPos(NULL, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
 		tmpWnd->InitPanel();
 		tmpWnd->ShowWindow(SW_SHOW);
 		if (tmpWnd->GetMainWndHWND()) {
 			SetFocus(tmpWnd->GetMainWndHWND());
 		}
-		
+
 		theApp.SetDialogWindow(tmpWnd);
 	} catch (...) { }
 }
@@ -121,8 +121,8 @@ void __declspec(dllexport) DestroyParticleSystemDialog(void)
 {
 	try {
 		AFX_MANAGE_STATE(AfxGetStaticModuleState( ));
-		DebugWindowDialog* tmpWnd = theApp.GetDialogWindow(); 
-		
+		DebugWindowDialog* tmpWnd = theApp.GetDialogWindow();
+
 		if (tmpWnd) {
 			tmpWnd->DestroyWindow();
 			delete tmpWnd;
@@ -135,8 +135,8 @@ void __declspec(dllexport) RemoveAllParticleSystems(void)
 {
 	try {
 		AFX_MANAGE_STATE(AfxGetStaticModuleState( ));
-		DebugWindowDialog* tmpWnd = theApp.GetDialogWindow(); 
-		
+		DebugWindowDialog* tmpWnd = theApp.GetDialogWindow();
+
 		if (tmpWnd) {
 			tmpWnd->clearAllParticleSystems();
 		}
@@ -147,8 +147,8 @@ void __declspec(dllexport) AppendParticleSystem(const char* particleSystemName)
 {
 	try{
 		AFX_MANAGE_STATE(AfxGetStaticModuleState( ));
-		DebugWindowDialog* tmpWnd = theApp.GetDialogWindow(); 
-		
+		DebugWindowDialog* tmpWnd = theApp.GetDialogWindow();
+
 		if (tmpWnd) {
 			tmpWnd->addParticleSystem(particleSystemName);
 		}
@@ -159,11 +159,11 @@ void __declspec(dllexport) RemoveAllThingTemplates( void )
 {
 	try {
 		AFX_MANAGE_STATE(AfxGetStaticModuleState( ));
-		DebugWindowDialog* tmpWnd = theApp.GetDialogWindow(); 
-		
+		DebugWindowDialog* tmpWnd = theApp.GetDialogWindow();
+
 		if (tmpWnd) {
 			tmpWnd->clearAllThingTemplates();
-		} 
+		}
 	} catch (...) { }
 }
 
@@ -172,8 +172,8 @@ void __declspec(dllexport) AppendThingTemplate( const char* thingTemplateName )
 {
 	try {
 		AFX_MANAGE_STATE(AfxGetStaticModuleState( ));
-		DebugWindowDialog* tmpWnd = theApp.GetDialogWindow(); 
-		
+		DebugWindowDialog* tmpWnd = theApp.GetDialogWindow();
+
 		if (tmpWnd) {
 			tmpWnd->addThingTemplate(thingTemplateName);
 		}
@@ -185,8 +185,8 @@ Bool __declspec(dllexport) HasUpdatedSelectedParticleSystem( void )
 {
 	try {
 		AFX_MANAGE_STATE(AfxGetStaticModuleState( ));
-		DebugWindowDialog* tmpWnd = theApp.GetDialogWindow(); 
-		
+		DebugWindowDialog* tmpWnd = theApp.GetDialogWindow();
+
 		if (tmpWnd) {
 			return tmpWnd->hasSelectionChanged();
 		}
@@ -199,8 +199,8 @@ void __declspec(dllexport) GetSelectedParticleSystemName( char *bufferToCopyInto
 {
 	try {
 		AFX_MANAGE_STATE(AfxGetStaticModuleState( ));
-		DebugWindowDialog* tmpWnd = theApp.GetDialogWindow(); 
-		
+		DebugWindowDialog* tmpWnd = theApp.GetDialogWindow();
+
 		if (tmpWnd) {
 			tmpWnd->getSelectedSystemName(bufferToCopyInto);
 		}
@@ -211,8 +211,8 @@ void __declspec(dllexport) UpdateCurrentParticleCap( int currentParticleCap )
 {
 	try {
 		AFX_MANAGE_STATE(AfxGetStaticModuleState( ));
-		DebugWindowDialog* tmpWnd = theApp.GetDialogWindow(); 
-		
+		DebugWindowDialog* tmpWnd = theApp.GetDialogWindow();
+
 		if (tmpWnd) {
 			tmpWnd->updateCurrentParticleCap(currentParticleCap);
 		}
@@ -223,8 +223,8 @@ void __declspec(dllexport) UpdateCurrentNumParticles( int currentParticleCount )
 {
 	try {
 		AFX_MANAGE_STATE(AfxGetStaticModuleState( ));
-		DebugWindowDialog* tmpWnd = theApp.GetDialogWindow(); 
-		
+		DebugWindowDialog* tmpWnd = theApp.GetDialogWindow();
+
 		if (tmpWnd) {
 			tmpWnd->updateCurrentNumParticles(currentParticleCount);
 		}
@@ -235,8 +235,8 @@ int __declspec(dllexport) GetNewParticleCap( void )
 {
 	try {
 		AFX_MANAGE_STATE(AfxGetStaticModuleState( ));
-		DebugWindowDialog* tmpWnd = theApp.GetDialogWindow(); 
-		
+		DebugWindowDialog* tmpWnd = theApp.GetDialogWindow();
+
 		if (tmpWnd) {
 			return tmpWnd->getNewParticleCap();
 		}
@@ -249,8 +249,8 @@ void __declspec(dllexport) GetSelectedParticleAsciiStringParm( int parmNum, char
 {
 	try {
 		AFX_MANAGE_STATE(AfxGetStaticModuleState( ));
-		DebugWindowDialog* tmpWnd = theApp.GetDialogWindow(); 
-		
+		DebugWindowDialog* tmpWnd = theApp.GetDialogWindow();
+
 		if (tmpWnd) {
 			tmpWnd->getSelectedParticleAsciiStringParm(parmNum, bufferToCopyInto);
 			if (whichTemplate) {
@@ -264,8 +264,8 @@ void __declspec(dllexport) UpdateParticleAsciiStringParm( int parmNum, const cha
 {
 	try {
 		AFX_MANAGE_STATE(AfxGetStaticModuleState( ));
-		DebugWindowDialog* tmpWnd = theApp.GetDialogWindow(); 
-		
+		DebugWindowDialog* tmpWnd = theApp.GetDialogWindow();
+
 		if (tmpWnd) {
 			tmpWnd->updateParticleAsciiStringParm(parmNum, bufferToCopyFrom);
 			if (whichTemplate) {
@@ -279,8 +279,8 @@ void __declspec(dllexport) UpdateCurrentParticleSystem( ParticleSystemTemplate *
 {
 	try {
 		AFX_MANAGE_STATE(AfxGetStaticModuleState( ));
-		DebugWindowDialog* tmpWnd = theApp.GetDialogWindow(); 
-		
+		DebugWindowDialog* tmpWnd = theApp.GetDialogWindow();
+
 		if (tmpWnd) {
 			tmpWnd->updateCurrentParticleSystem(particleTemplate);
 		}
@@ -291,8 +291,8 @@ void __declspec(dllexport) UpdateSystemUseParameters( ParticleSystemTemplate *pa
 {
 	try {
 		AFX_MANAGE_STATE(AfxGetStaticModuleState( ));
-		DebugWindowDialog* tmpWnd = theApp.GetDialogWindow(); 
-		
+		DebugWindowDialog* tmpWnd = theApp.GetDialogWindow();
+
 		if (tmpWnd) {
 			tmpWnd->updateSystemUseParameters(particleTemplate);
 		}
@@ -303,8 +303,8 @@ Bool __declspec(dllexport) ShouldWriteINI( void )
 {
 	try {
 		AFX_MANAGE_STATE(AfxGetStaticModuleState( ));
-		DebugWindowDialog* tmpWnd = theApp.GetDialogWindow(); 
-		
+		DebugWindowDialog* tmpWnd = theApp.GetDialogWindow();
+
 		if (tmpWnd) {
 			return tmpWnd->shouldWriteINI();
 		}
@@ -317,8 +317,8 @@ Bool __declspec(dllexport) HasRequestedReload( void )
 {
 	try {
 		AFX_MANAGE_STATE(AfxGetStaticModuleState( ));
-		DebugWindowDialog* tmpWnd = theApp.GetDialogWindow(); 
-		
+		DebugWindowDialog* tmpWnd = theApp.GetDialogWindow();
+
 		if (tmpWnd) {
 			return tmpWnd->hasRequestedReload();
 		}
@@ -331,8 +331,8 @@ Bool __declspec(dllexport) ShouldBusyWait( void )
 {
 	try {
 		AFX_MANAGE_STATE(AfxGetStaticModuleState( ));
-		DebugWindowDialog* tmpWnd = theApp.GetDialogWindow(); 
-		
+		DebugWindowDialog* tmpWnd = theApp.GetDialogWindow();
+
 		if (tmpWnd) {
 			return tmpWnd->shouldBusyWait();
 		}
@@ -345,8 +345,8 @@ Bool __declspec(dllexport) ShouldUpdateParticleCap( void )
 {
 	try {
 		AFX_MANAGE_STATE(AfxGetStaticModuleState( ));
-		DebugWindowDialog* tmpWnd = theApp.GetDialogWindow(); 
-		
+		DebugWindowDialog* tmpWnd = theApp.GetDialogWindow();
+
 		if (tmpWnd) {
 			return tmpWnd->shouldUpdateParticleCap();
 		}
@@ -359,8 +359,8 @@ Bool __declspec(dllexport) ShouldReloadTextures( void )
 {
 	try {
 		AFX_MANAGE_STATE(AfxGetStaticModuleState( ));
-		DebugWindowDialog* tmpWnd = theApp.GetDialogWindow(); 
-		
+		DebugWindowDialog* tmpWnd = theApp.GetDialogWindow();
+
 		if (tmpWnd) {
 			return tmpWnd->shouldReloadTextures();
 		}
@@ -373,8 +373,8 @@ Bool __declspec(dllexport) HasRequestedKillAllSystems( void )
 {
 	try {
 		AFX_MANAGE_STATE(AfxGetStaticModuleState( ));
-		DebugWindowDialog* tmpWnd = theApp.GetDialogWindow(); 
-		
+		DebugWindowDialog* tmpWnd = theApp.GetDialogWindow();
+
 		if (tmpWnd) {
 			return tmpWnd->shouldKillAllParticleSystems();
 		}
@@ -385,7 +385,7 @@ Bool __declspec(dllexport) HasRequestedKillAllSystems( void )
 
 int __declspec(dllexport) NextParticleEditorBehavior( void )
 {
-	try { 
+	try {
 		if (HasUpdatedSelectedParticleSystem()) {
 			return PEB_UpdateCurrentSystem;
 		}
@@ -401,7 +401,7 @@ int __declspec(dllexport) NextParticleEditorBehavior( void )
 		if (ShouldBusyWait()) {
 			return PEB_BusyWait;
 		}
-		
+
 		if (ShouldUpdateParticleCap()) {
 			return PEB_SetParticleCap;
 		}

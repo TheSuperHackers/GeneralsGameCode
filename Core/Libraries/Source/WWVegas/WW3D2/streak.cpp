@@ -160,9 +160,9 @@ void StreakLineClass::Set_Colors( unsigned int num_points, Vector4 *colors )
 
 }
 
-void StreakLineClass::Set_LocsWidthsColors( unsigned int num_points, 
-																					 Vector3 *locs, 
-																					 float *widths, 
+void StreakLineClass::Set_LocsWidthsColors( unsigned int num_points,
+																					 Vector3 *locs,
+																					 float *widths,
 																					 Vector4 *colors,
 																					 unsigned int *personalities)
 {
@@ -288,7 +288,7 @@ unsigned int StreakLineClass::Get_Subdivision_Levels(void)
 
 SegLineRendererClass::TextureMapMode StreakLineClass::Get_Texture_Mapping_Mode(void)
 {
-	return LineRenderer.Get_Texture_Mapping_Mode(); 
+	return LineRenderer.Get_Texture_Mapping_Mode();
 }
 
 float StreakLineClass::Get_Texture_Tile_Factor(void)
@@ -421,7 +421,7 @@ void StreakLineClass::Set_End_Caps(int onoff)
 
 RenderObjClass * StreakLineClass::Clone(void) const
 {
-	return NEW_REF( StreakLineClass, (*this)); 
+	return NEW_REF( StreakLineClass, (*this));
 }
 
 int StreakLineClass::Get_Num_Polys(void) const
@@ -441,14 +441,14 @@ void StreakLineClass::Render(RenderInfoClass & rinfo)
 
 	unsigned int sort_level = SORT_LEVEL_NONE;
 
-	if (!WW3D::Is_Sorting_Enabled())	
-		sort_level=Get_Shader().Guess_Sort_Level();	
+	if (!WW3D::Is_Sorting_Enabled())
+		sort_level=Get_Shader().Guess_Sort_Level();
 
-	if (WW3D::Are_Static_Sort_Lists_Enabled() && sort_level!=SORT_LEVEL_NONE) {		
-		
+	if (WW3D::Are_Static_Sort_Lists_Enabled() && sort_level!=SORT_LEVEL_NONE) {
+
 		WW3D::Add_To_Static_Sort_List(this, sort_level);
 
-	} 
+	}
 	else
 	{
 		if ( !PointColors.Count() || !PointWidths.Count() )
@@ -476,9 +476,9 @@ void StreakLineClass::Get_Obj_Space_Bounding_Sphere(SphereClass & sphere) const
 void StreakLineClass::Get_Obj_Space_Bounding_Box(AABoxClass & box) const
 {
 	unsigned int num_points = PointLocations.Count();
-	
+
 	// Line must have at least two points to be valid
-	
+
 	if (num_points >= 2) {
 
 		// Find object-space axis-aligned bounding box
@@ -564,9 +564,9 @@ void StreakLineClass::Prepare_LOD(CameraClass &camera)
 void StreakLineClass::Increment_LOD(void)
 {
 	unsigned int lvl = LineRenderer.Get_Current_Subdivision_Level();
-	
+
 	lvl = MIN(lvl+1,MaxSubdivisionLevels);
-	
+
 	LineRenderer.Set_Current_Subdivision_Level(lvl);
 }
 
@@ -631,7 +631,7 @@ void StreakLineClass::Set_Texture_Reduction_Factor(float trf)
 	if (LineRenderer.Peek_Texture()) LineRenderer.Peek_Texture()->Set_Reduction_Factor(trf);
 }*/
 
- 
+
 
 void StreakLineClass::Render_Seg_Line(RenderInfoClass & rinfo)
 {
@@ -639,8 +639,8 @@ void StreakLineClass::Render_Seg_Line(RenderInfoClass & rinfo)
 	if (PointLocations.Count() < 2) return;
 
 	SphereClass bounding_sphere;
-	Get_Obj_Space_Bounding_Sphere(bounding_sphere);			
- 
+	Get_Obj_Space_Bounding_Sphere(bounding_sphere);
+
 //	LineRenderer.Set_Width(rand()%3);
 
 	LineRenderer.Render(
@@ -668,7 +668,7 @@ void StreakLineClass::Render_Streak_Line(RenderInfoClass & rinfo)
 	if(PointLocations.Count() != PointWidths.Count()) return;
 
 	SphereClass bounding_sphere;
-	Get_Obj_Space_Bounding_Sphere(bounding_sphere);			
+	Get_Obj_Space_Bounding_Sphere(bounding_sphere);
 
 
 //	StreakRenderer.Render(
@@ -701,7 +701,7 @@ bool StreakLineClass::Cast_Ray(RayCollisionTestClass & raytest)
 	//	Check each line segment against the ray
 	//
 	float fraction = 1.0F;
-	for (uint32 index = 1; index < (unsigned int)PointLocations.Count(); index ++) 
+	for (uint32 index = 1; index < (unsigned int)PointLocations.Count(); index ++)
 	{
 #ifdef ALLOW_TEMPORARIES
 		Vector3 curr_start	= Transform * PointLocations[index-1];
@@ -712,11 +712,11 @@ bool StreakLineClass::Cast_Ray(RayCollisionTestClass & raytest)
 		Transform.mulVector3Array(&PointLocations[index-1], curr, 2);
 		LineSegClass line_seg(curr[0], curr[1]);
 #endif
-		
+
 		Vector3 p0;
 		Vector3 p1;
 		if (raytest.Ray.Find_Intersection (line_seg, &p0, &fraction, &p1, NULL)) {
-			
+
 			//
 			//	Determine if the ray was close enough to this line to be
 			// considered intersecting
@@ -727,7 +727,7 @@ bool StreakLineClass::Cast_Ray(RayCollisionTestClass & raytest)
 				retval = true;
 				break;
 			}
-		}			
+		}
 	}
 
 	//

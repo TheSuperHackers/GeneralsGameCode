@@ -51,7 +51,7 @@ class TextureClass;
 
 /*
 ** SegmentedLineClass -- a render object for rendering thick segmented lines.
-*/ 
+*/
 class SegmentedLineClass : public RenderObjClass
 {
 	public:
@@ -122,7 +122,7 @@ class SegmentedLineClass : public RenderObjClass
 		/////////////////////////////////////////////////////////////////////////////
 		// Render Object Interface - Cloning and Identification
 		/////////////////////////////////////////////////////////////////////////////
-		virtual RenderObjClass *	Clone(void) const;		
+		virtual RenderObjClass *	Clone(void) const;
 		virtual int						Class_ID(void)	const { return CLASSID_SEGLINE; }
 		virtual int						Get_Num_Polys(void) const;
 

@@ -66,7 +66,7 @@ void WOLStatusMenuInit( WindowLayout *layout, void *userData )
 
 	progressTextWindow = TheWindowManager->winGetWindowFromId( NULL,
 		TheNameKeyGenerator->nameToKey( AsciiString( "WOLStatusMenu.wnd:ListboxStatus" ) ) );
-	
+
 	// Show Menu
 	layout->hide( FALSE );
 
@@ -111,7 +111,7 @@ void WOLStatusMenuUpdate( WindowLayout * layout, void *userData)
 WindowMsgHandledType WOLStatusMenuInput( GameWindow *window, UnsignedInt msg,
 																			 WindowMsgData mData1, WindowMsgData mData2 )
 {
-	switch( msg ) 
+	switch( msg )
 	{
 
 		// --------------------------------------------------------------------------------------------
@@ -126,14 +126,14 @@ WindowMsgHandledType WOLStatusMenuInput( GameWindow *window, UnsignedInt msg,
 				// ----------------------------------------------------------------------------------------
 				case KEY_ESC:
 				{
-					
+
 					//
 					// send a simulated selected event to the parent window of the
 					// back/exit button
 					//
 					if( BitIsSet( state, KEY_STATE_UP ) )
 					{
-						TheWindowManager->winSendSystemMsg( window, GBM_SELECTED, 
+						TheWindowManager->winSendSystemMsg( window, GBM_SELECTED,
 																							(WindowMsgData)buttonDisconnect, buttonDisconnectID );
 
 					}  // end if
@@ -155,18 +155,18 @@ WindowMsgHandledType WOLStatusMenuInput( GameWindow *window, UnsignedInt msg,
 //-------------------------------------------------------------------------------------------------
 /** WOL Status Menu window system callback */
 //-------------------------------------------------------------------------------------------------
-WindowMsgHandledType WOLStatusMenuSystem( GameWindow *window, UnsignedInt msg, 
+WindowMsgHandledType WOLStatusMenuSystem( GameWindow *window, UnsignedInt msg,
 														 WindowMsgData mData1, WindowMsgData mData2 )
 {
 	UnicodeString txtInput;
 
 	switch( msg )
 	{
-		
-		
+
+
 		case GWM_CREATE:
 			{
-				
+
 				break;
 			} // case GWM_DESTROY:
 
@@ -176,7 +176,7 @@ WindowMsgHandledType WOLStatusMenuSystem( GameWindow *window, UnsignedInt msg,
 			} // case GWM_DESTROY:
 
 		case GWM_INPUT_FOCUS:
-			{	
+			{
 				// if we're givin the opportunity to take the keyboard focus we must say we want it
 				if( mData1 == TRUE )
 					*(Bool *)mData2 = TRUE;
@@ -202,7 +202,7 @@ WindowMsgHandledType WOLStatusMenuSystem( GameWindow *window, UnsignedInt msg,
 				*/
 				break;
 			}// case GBM_SELECTED:
-	
+
 		case GEM_EDIT_DONE:
 			{
 				break;

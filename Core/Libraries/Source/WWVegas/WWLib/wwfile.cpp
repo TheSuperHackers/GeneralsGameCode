@@ -66,13 +66,13 @@ int FileClass::Printf_Indented(unsigned depth, char *str, ...)
 	va_list args;
 	va_start(args, str);
 
-	if(depth > PRINTF_BUFFER_SIZE) 
+	if(depth > PRINTF_BUFFER_SIZE)
 		depth = PRINTF_BUFFER_SIZE;
 
 	memset(text, '\t', depth);
 
 	int length;
-	if(depth < PRINTF_BUFFER_SIZE) 
+	if(depth < PRINTF_BUFFER_SIZE)
 		length = vsnprintf(text + depth, PRINTF_BUFFER_SIZE - depth, str, args);
 	else
 		length = PRINTF_BUFFER_SIZE;

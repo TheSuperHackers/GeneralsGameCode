@@ -45,7 +45,7 @@ class CritSec
  public:
                 CritSec();
                ~CritSec();
-    
+
   sint32		lock(int *refcount=NULL) RO;
   sint32		unlock(void) RO;
 

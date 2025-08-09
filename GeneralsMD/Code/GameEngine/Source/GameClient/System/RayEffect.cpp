@@ -114,15 +114,15 @@ void RayEffectSystem::reset( void )
 //-------------------------------------------------------------------------------------------------
 /** add a ray effect entry for this drawable */
 //-------------------------------------------------------------------------------------------------
-void RayEffectSystem::addRayEffect( const Drawable *draw, 
-																	  const Coord3D *startLoc, 
+void RayEffectSystem::addRayEffect( const Drawable *draw,
+																	  const Coord3D *startLoc,
 																	  const Coord3D *endLoc )
 {
 	Int i;
 	RayEffectData *effectData = NULL;
 
 	// sanity
-	if( draw == NULL || startLoc == NULL || endLoc == NULL )	
+	if( draw == NULL || startLoc == NULL || endLoc == NULL )
 		return;
 
 	/** @todo this should be more intelligent and should not be limited
@@ -133,11 +133,11 @@ void RayEffectSystem::addRayEffect( const Drawable *draw,
 	for( i = 0; i < MAX_RAY_EFFECTS; i++ )
 	{
 
-		if( m_effectData[ i ].draw == NULL )	
+		if( m_effectData[ i ].draw == NULL )
 		{
 
 			effectData = &m_effectData[ i ];
-			break;  // exit for 
+			break;  // exit for
 
 		}  // end if
 
@@ -181,7 +181,7 @@ void RayEffectSystem::deleteRayEffect( const Drawable *draw )
 /** given a drawable, if it is in the ray effect system list retrieve
 	*	the ray effect data for its entry */
 //-------------------------------------------------------------------------------------------------
-void RayEffectSystem::getRayEffectData( const Drawable *draw, 
+void RayEffectSystem::getRayEffectData( const Drawable *draw,
 																			  RayEffectData *effectData )
 {
 	RayEffectData *entry = NULL;

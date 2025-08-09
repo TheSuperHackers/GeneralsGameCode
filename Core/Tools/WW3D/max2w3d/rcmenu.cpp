@@ -17,26 +17,26 @@
 */
 
 /* $Header: /Commando/Code/Tools/max2w3d/rcmenu.cpp 6     4/19/00 12:24p Greg_h $ */
-/*********************************************************************************************** 
- ***                            Confidential - Westwood Studios                              *** 
- *********************************************************************************************** 
- *                                                                                             * 
- *                 Project Name : Commando Tools - W3D export                                  * 
- *                                                                                             * 
- *                     $Archive:: /Commando/Code/Tools/max2w3d/rcmenu.cpp                     $* 
- *                                                                                             * 
- *                      $Author:: Greg_h                                                      $* 
- *                                                                                             * 
- *                     $Modtime:: 4/18/00 8:26p                                               $* 
- *                                                                                             * 
- *                    $Revision:: 6                                                           $* 
- *                                                                                             * 
- *---------------------------------------------------------------------------------------------* 
- * Functions:                                                                                  * 
- *   RCMenuClass::Init -- initialize the "right-click" menu                                    * 
- *   RCMenuClass::Selected -- menu selection callback                                          * 
- *   RCMenuClass::Toggle_Hierarchy -- toggle the "export hierarchy" option                     * 
- *   RCMenuClass::Toggle_Geometry -- toggle the "export geometry" option                       * 
+/***********************************************************************************************
+ ***                            Confidential - Westwood Studios                              ***
+ ***********************************************************************************************
+ *                                                                                             *
+ *                 Project Name : Commando Tools - W3D export                                  *
+ *                                                                                             *
+ *                     $Archive:: /Commando/Code/Tools/max2w3d/rcmenu.cpp                     $*
+ *                                                                                             *
+ *                      $Author:: Greg_h                                                      $*
+ *                                                                                             *
+ *                     $Modtime:: 4/18/00 8:26p                                               $*
+ *                                                                                             *
+ *                    $Revision:: 6                                                           $*
+ *                                                                                             *
+ *---------------------------------------------------------------------------------------------*
+ * Functions:                                                                                  *
+ *   RCMenuClass::Init -- initialize the "right-click" menu                                    *
+ *   RCMenuClass::Selected -- menu selection callback                                          *
+ *   RCMenuClass::Toggle_Hierarchy -- toggle the "export hierarchy" option                     *
+ *   RCMenuClass::Toggle_Geometry -- toggle the "export geometry" option                       *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 
@@ -47,17 +47,17 @@
 
 RCMenuClass TheRCMenu;
 
-/*********************************************************************************************** 
- * RCMenuClass::Init -- initialize the "right-click" menu                                      * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   10/26/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * RCMenuClass::Init -- initialize the "right-click" menu                                      *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   10/26/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
 void RCMenuClass::Init(RightClickMenuManager* manager, HWND hWnd, IPoint2 m)
 {
@@ -66,7 +66,7 @@ void RCMenuClass::Init(RightClickMenuManager* manager, HWND hWnd, IPoint2 m)
 	SelNode = InterfacePtr->PickNode(hWnd,m);
 
 	if (SelNode) {
-		
+
 		UINT menuflags;
 		W3DAppData2Struct * wdata = W3DAppData2Struct::Get_App_Data(SelNode);
 
@@ -92,17 +92,17 @@ void RCMenuClass::Init(RightClickMenuManager* manager, HWND hWnd, IPoint2 m)
 		** Add the hierarchy menu option
 		*/
 		if (wdata->Is_Bone()) {
-			menuflags = MF_STRING | MF_CHECKED;	
+			menuflags = MF_STRING | MF_CHECKED;
 		} else {
 			menuflags = MF_STRING;
 		}
 		manager->AddMenu(this, menuflags, MENU_TOGGLE_HIERARCHY, "W3D: Export Hierarchy");
-		
+
 		/*
 		** Add the geometry menu option
 		*/
 		if (wdata->Is_Geometry()) {
-			menuflags = MF_STRING | MF_CHECKED;	
+			menuflags = MF_STRING | MF_CHECKED;
 		} else {
 			menuflags = MF_STRING;
 		}
@@ -111,20 +111,20 @@ void RCMenuClass::Init(RightClickMenuManager* manager, HWND hWnd, IPoint2 m)
 	}
 }
 
-/*********************************************************************************************** 
- * RCMenuClass::Selected -- menu selection callback                                            * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   10/26/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * RCMenuClass::Selected -- menu selection callback                                            *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   10/26/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
 void RCMenuClass::Selected(UINT id)
-{	
+{
 	switch (id) {
 
 		case MENU_TOGGLE_HIERARCHY:
@@ -137,21 +137,21 @@ void RCMenuClass::Selected(UINT id)
 	}
 }
 
-/*********************************************************************************************** 
- * RCMenuClass::Toggle_Hierarchy -- toggle the "export hierarchy" option                       * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   10/26/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * RCMenuClass::Toggle_Hierarchy -- toggle the "export hierarchy" option                       *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   10/26/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
 void RCMenuClass::Toggle_Hierarchy(INode * node)
 {
-	
+
 	W3DAppData2Struct * wdata = W3DAppData2Struct::Get_App_Data(SelNode);
 	assert(wdata);
 
@@ -162,17 +162,17 @@ void RCMenuClass::Toggle_Hierarchy(INode * node)
 	}
 }
 
-/*********************************************************************************************** 
- * RCMenuClass::Toggle_Geometry -- toggle the "export geometry" option                         * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   10/26/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * RCMenuClass::Toggle_Geometry -- toggle the "export geometry" option                         *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   10/26/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
 void RCMenuClass::Toggle_Geometry(INode * node)
 {

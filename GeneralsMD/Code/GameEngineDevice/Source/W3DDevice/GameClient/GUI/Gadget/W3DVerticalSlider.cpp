@@ -24,21 +24,21 @@
 
 // FILE: .cpp /////////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
-// Project:   
+// Project:
 //
 // File name: .cpp
 //
-// Created:   
+// Created:
 //
-// Desc:      
+// Desc:
 //
 //-----------------------------------------------------------------------------
 ///////////////////////////////////////////////////////////////////////////////
@@ -72,7 +72,7 @@
 // W3DGadgetVerticalSliderDraw ================================================
 /** Draw colored vertical slider using standard graphics */
 //=============================================================================
-void W3DGadgetVerticalSliderDraw( GameWindow *window, 
+void W3DGadgetVerticalSliderDraw( GameWindow *window,
 																	WinInstanceData *instData )
 {
 	Color backBorder, backColor;
@@ -129,14 +129,14 @@ void W3DGadgetVerticalSliderDraw( GameWindow *window,
 
 	}  // end if
 
-	
+
 
 }  // end W3DGadgetVerticalSliderDraw
 
 // W3DGadgetVerticalSliderImageDraw ===========================================
 /** Draw vertical slider with user supplied images */
 //=============================================================================
-void W3DGadgetVerticalSliderImageDraw( GameWindow *window, 
+void W3DGadgetVerticalSliderImageDraw( GameWindow *window,
 																			 WinInstanceData *instData )
 {
 	const Image *topImage, *bottomImage, *centerImage, *smallCenterImage;
@@ -182,7 +182,7 @@ void W3DGadgetVerticalSliderImageDraw( GameWindow *window,
 	}  // end else, enabled
 
 	// sanity, we need to have these images to make it look right
-	if( topImage == NULL || bottomImage == NULL || 
+	if( topImage == NULL || bottomImage == NULL ||
 			centerImage == NULL || smallCenterImage == NULL )
 		return;
 
@@ -274,7 +274,7 @@ void W3DGadgetVerticalSliderImageDraw( GameWindow *window,
 		end.y = start.y + bottomSize.y;
 		TheWindowManager->winDrawImage(bottomImage, start.x, start.y, end.x, end.y);
 	}
-	
+
 
 }  // end W3DGadgetVerticalSliderImageDraw
 

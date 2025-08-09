@@ -102,23 +102,23 @@ void CWdumpDoc::Dump(CDumpContext& dc) const
 /////////////////////////////////////////////////////////////////////////////
 // CWdumpDoc commands
 
-void CWdumpDoc::OnFileOpen() 
+void CWdumpDoc::OnFileOpen()
 {
 	static char szFilter[] = "W3D Files (*.w3d)|*.w3d|WLT Files (*.wlt)|*.wlt|WHT Files (*.wht)|*.wht|WHA Files (*.wha)|*.wha|WTM Files (*.wtm)|*.wtm|All Files (*.*)|*.*||";
-	
-	CFileDialog f(	true, 
-						NULL, 
-						NULL, 
-						OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, 
+
+	CFileDialog f(	true,
+						NULL,
+						NULL,
+						OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT,
 						szFilter);
-	
+
 	if(f.DoModal() != IDOK) return;
 
 	// Add this filename to recent file list (MRU).
 	// NOTE: This call is not made by the framework.
 
 	//Moumine 1/2/2002    1:10:02 PM -- Project W3DShellExt needs to leave this out
-#if ! defined _W3DSHELLEXT 
+#if ! defined _W3DSHELLEXT
 	theApp.AddToRecentFileList (f.m_ofn.lpstrFile);
 #endif
 	m_ChunkItem = 0;

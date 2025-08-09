@@ -74,7 +74,7 @@ public:
 
 	inline void setServer(SBServer server) { m_server = server; }
 	inline SBServer getServer( void ) { return m_server; }
-	
+
 	AsciiString generateGameResultsPacket( void );
 
 	virtual void init(void);

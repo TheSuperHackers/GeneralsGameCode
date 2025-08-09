@@ -54,7 +54,7 @@ public:
 	ResolutionDescClass(int w,int h,int bits) : Width(w), Height(h), BitDepth(bits) { }
 	bool operator == (const ResolutionDescClass & src) { return ((Width==src.Width) && (Height==src.Height) && (BitDepth==src.BitDepth)); }
 	bool operator != (const ResolutionDescClass & src) { return ((Width!=src.Width) || (Height!=src.Height) || (BitDepth!=src.BitDepth)); }
-	
+
 	int			Width;
 	int			Height;
 	int			BitDepth;
@@ -67,7 +67,7 @@ class RenderDeviceDescClass
 
 public:
 
-	RenderDeviceDescClass(void) : DeviceName(NULL), DeviceVendor(NULL), DevicePlatform(NULL), 
+	RenderDeviceDescClass(void) : DeviceName(NULL), DeviceVendor(NULL), DevicePlatform(NULL),
 											DriverName(NULL), DriverVendor(NULL), DriverVersion(NULL),
 											HardwareName(NULL), HardwareVendor(NULL), HardwareChipset(NULL)
 	{
@@ -77,7 +77,7 @@ public:
 	{
 	}
 
-	RenderDeviceDescClass & operator = (const RenderDeviceDescClass & src) 
+	RenderDeviceDescClass & operator = (const RenderDeviceDescClass & src)
 	{
 		set_device_name(src.Get_Device_Name());
 		set_device_vendor(src.Get_Device_Vendor());
@@ -92,7 +92,7 @@ public:
 		AdapterIdentifier=src.AdapterIdentifier;
 		ResArray = src.ResArray;
 		return *this;
-	}	
+	}
 
 	bool operator == (const RenderDeviceDescClass & /*src*/) { return false; }
 	bool operator != (const RenderDeviceDescClass & /*src*/) { return true; }
@@ -142,7 +142,7 @@ private:
 
 	D3DCAPS8				Caps;
 	D3DADAPTER_IDENTIFIER8 AdapterIdentifier;
-	
+
 	DynamicVectorClass<ResolutionDescClass>	ResArray;
 
 	friend class WW3D;
@@ -150,8 +150,8 @@ private:
 };
 
 
-inline void RenderDeviceDescClass::add_resolution(int w,int h,int bits)		
-{ 
+inline void RenderDeviceDescClass::add_resolution(int w,int h,int bits)
+{
 	bool found = false;
 	for (int i=0; i<ResArray.Count(); i++) {
 		if (	(ResArray[i].Width == w) &&
@@ -161,12 +161,12 @@ inline void RenderDeviceDescClass::add_resolution(int w,int h,int bits)
 			found = true;
 		}
 	}
-	
+
 	if (!found) {
-		ResArray.Add(ResolutionDescClass(w,h,bits)); 
+		ResArray.Add(ResolutionDescClass(w,h,bits));
 	}
 }
 
 
-#endif 
+#endif
 

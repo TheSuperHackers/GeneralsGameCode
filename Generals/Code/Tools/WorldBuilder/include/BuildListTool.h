@@ -33,9 +33,9 @@ class BuildListInfo;
 
 /*************************************************************************/
 /**                             BuildListTool
-	 Does the add item to build list tool operation. 
+	 Does the add item to build list tool operation.
 ***************************************************************************/
-class BuildListTool : public Tool 
+class BuildListTool : public Tool
 {
 protected:
 	CPoint m_downPt2d;

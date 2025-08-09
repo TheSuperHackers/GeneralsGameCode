@@ -158,10 +158,10 @@ BOOL CBabylonApp::InitInstance()
 	return FALSE;
 }
 
-//DEL void CBabylonApp::OnDropFiles(HDROP hDropInfo) 
+//DEL void CBabylonApp::OnDropFiles(HDROP hDropInfo)
 //DEL {
 //DEL 	// TODO: Add your message handler code here and/or call default
-//DEL 	
+//DEL
 //DEL 	CWinApp::OnDropFiles(hDropInfo);
 //DEL }
 
@@ -172,11 +172,11 @@ static const char *szSearchTitle;
 static int AlreadyRunning( void )
 {
 	BOOL found = FALSE;
-	
+
 	szSearchTitle = AppName;
-	
+
 	EnumWindows((WNDENUMPROC) EnumAllWindowsProcExact, (LPARAM) &found);
-	
+
 	return found;
 }
 
@@ -185,11 +185,11 @@ static int AlreadyRunning( void )
 int ExcelRunning( void )
 {
 	BOOL found = FALSE;
-	
+
 	szSearchTitle = "Microsoft Excel";
-	
+
 	EnumWindows((WNDENUMPROC) EnumAllWindowsProc, (LPARAM) &found);
-	
+
 	return found;
 }
 
@@ -200,7 +200,7 @@ BOOL CALLBACK EnumAllWindowsProc(HWND hWnd, LPARAM lParam)
 	char szText[256];
 
 	GetWindowText(hWnd, szText, sizeof(szText));
-	
+
 	if ( strstr(szText, szSearchTitle))
 	{
 		* (BOOL *) lParam = TRUE;
@@ -219,7 +219,7 @@ BOOL CALLBACK EnumAllWindowsProcExact(HWND hWnd, LPARAM lParam)
 	char szText[256];
 
 	GetWindowText(hWnd, szText, sizeof(szText));
-	
+
 	if ( !strncmp (szText, szSearchTitle, strlen ( szSearchTitle)))
 	{
 		* (BOOL *) lParam = TRUE;

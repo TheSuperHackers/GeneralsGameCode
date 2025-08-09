@@ -46,7 +46,7 @@ class FXList;
 class FXListDieModuleData : public DieModuleData
 {
 public:
-	const FXList *m_defaultDeathFX;								///< default fx to make 
+	const FXList *m_defaultDeathFX;								///< default fx to make
 	Bool m_orientToObject;
 
 	FXListDieModuleData()
@@ -55,11 +55,11 @@ public:
 		m_orientToObject = true;
 	}
 
-	static void buildFieldParse(MultiIniFieldParse& p) 
+	static void buildFieldParse(MultiIniFieldParse& p)
 	{
     DieModuleData::buildFieldParse(p);
 
-		static const FieldParse dataFieldParse[] = 
+		static const FieldParse dataFieldParse[] =
 		{
 			{ "DeathFX",							INI::parseFXList,		NULL, offsetof( FXListDieModuleData, m_defaultDeathFX ) },
 			{ "OrientToObject",				INI::parseBool,		NULL, offsetof( FXListDieModuleData, m_orientToObject ) },
@@ -81,7 +81,7 @@ public:
 	FXListDie( Thing *thing, const ModuleData* moduleData );
 	// virtual destructor prototype provided by memory pool declaration
 
-	virtual void onDie( const DamageInfo *damageInfo ); 
+	virtual void onDie( const DamageInfo *damageInfo );
 
 };
 

@@ -23,7 +23,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 // This file contains all the header files that shouldn't change frequently.
-// Be careful what you stick in here, because putting files that change often in here will 
+// Be careful what you stick in here, because putting files that change often in here will
 // tend to cheese people's goats.
 
 #ifndef __PRERTS_H__
@@ -36,10 +36,10 @@
 class STLSpecialAlloc;
 
 
-// We actually don't use Windows for much other than timeGetTime, but it was included in 40 
+// We actually don't use Windows for much other than timeGetTime, but it was included in 40
 // different .cpp files, so I bit the bullet and included it here.
 // PLEASE DO NOT ABUSE WINDOWS OR IT WILL BE REMOVED ENTIRELY. :-)
-//--------------------------------------------------------------------------------- System Includes 
+//--------------------------------------------------------------------------------- System Includes
 #define WIN32_LEAN_AND_MEAN
 #include <atlbase.h>
 #include <windows.h>

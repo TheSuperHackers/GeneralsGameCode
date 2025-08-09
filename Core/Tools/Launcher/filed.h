@@ -25,7 +25,7 @@ class FileD : public OutputDevice
 {
  public:
    FileD(char *filename, bool outputDebug) : m_outputDebug(outputDebug)
-   { 
+   {
      out=fopen(filename,"w");
      if (out==NULL)
        out=fopen("FileDev.out","w");

@@ -17,22 +17,22 @@
 */
 
 /* $Header: /Commando/Code/Tools/max2w3d/w3ddesc.h 3     3/04/99 1:57p Naty_h $ */
-/*********************************************************************************************** 
- ***                            Confidential - Westwood Studios                              *** 
- *********************************************************************************************** 
- *                                                                                             * 
- *                 Project Name : Commando Tools - W3D export                                  * 
- *                                                                                             * 
- *                     $Archive:: /Commando/Code/Tools/max2w3d/w3ddesc.h                      $* 
- *                                                                                             * 
- *                      $Author:: Naty_h                                                      $* 
- *                                                                                             * 
- *                     $Modtime:: 3/03/99 11:28a                                              $* 
- *                                                                                             * 
- *                    $Revision:: 3                                                           $* 
- *                                                                                             * 
- *---------------------------------------------------------------------------------------------* 
- * Functions:                                                                                  * 
+/***********************************************************************************************
+ ***                            Confidential - Westwood Studios                              ***
+ ***********************************************************************************************
+ *                                                                                             *
+ *                 Project Name : Commando Tools - W3D export                                  *
+ *                                                                                             *
+ *                     $Archive:: /Commando/Code/Tools/max2w3d/w3ddesc.h                      $*
+ *                                                                                             *
+ *                      $Author:: Naty_h                                                      $*
+ *                                                                                             *
+ *                     $Modtime:: 3/03/99 11:28a                                              $*
+ *                                                                                             *
+ *                    $Revision:: 3                                                           $*
+ *                                                                                             *
+ *---------------------------------------------------------------------------------------------*
+ * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #ifndef W3DDESC_H
@@ -43,8 +43,8 @@
 
 /*****************************************************************************
 *
-*  Class descriptors provide the system with information about the plug-in 
-*  classes in the DLL.  
+*  Class descriptors provide the system with information about the plug-in
+*  classes in the DLL.
 *
 *****************************************************************************/
 #define W3D_EXPORTER_CLASS_ID Class_ID(0x54d412df, 0x41466ae8)
@@ -55,7 +55,7 @@ public:
 	void *			Create(BOOL);
 	int				IsPublic();
 	const TCHAR *	ClassName();
-	SClass_ID		SuperClassID(); 
+	SClass_ID		SuperClassID();
 	Class_ID			ClassID();
 	const TCHAR *	Category();
 };

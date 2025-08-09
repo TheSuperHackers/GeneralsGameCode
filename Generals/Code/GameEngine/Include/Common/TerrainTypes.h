@@ -74,7 +74,7 @@ typedef enum
 
 } TerrainClass;
 #ifdef DEFINE_TERRAIN_TYPE_NAMES
-static const char *terrainTypeNames[] = 
+static const char *terrainTypeNames[] =
 {
 	"NONE",
 	"DESERT_1",
@@ -100,7 +100,7 @@ static const char *terrainTypeNames[] =
 	"SAND",
 	"CLIFF",
 	"WOOD",
-	"BLEND_EDGE", 
+	"BLEND_EDGE",
 
 	NULL
 };
@@ -188,7 +188,7 @@ public:
 	void update() { }
 
 	TerrainType *findTerrain( AsciiString name );		///< find terrain by name
-	TerrainType *newTerrain( AsciiString name );			///< allocate a new terrain 
+	TerrainType *newTerrain( AsciiString name );			///< allocate a new terrain
 
 	/// get first terrain in list
 	TerrainType *firstTerrain( void ) { return m_terrainList; }

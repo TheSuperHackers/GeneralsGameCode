@@ -17,31 +17,31 @@
 */
 
 /* $Header: /Commando/Code/wwmath/vector2.h 24    7/06/01 9:43a Byon_g $ */
-/*********************************************************************************************** 
- ***                  Confidential - Westwood Studios                                        *** 
- *********************************************************************************************** 
- *                                                                                             * 
- *                 Project Name : Westwood 3D                                                  * 
- *                                                                                             * 
- *                    File Name : VECTOR2.H                                                    * 
- *                                                                                             * 
- *                   Programmer : Greg Hjelstrom                                               * 
- *                                                                                             * 
- *                   Start Date : 02/24/97                                                     *  
- *                                                                                             * 
- *                  Last Update : February 24, 1997 [GH]                                       * 
- *                                                                                             * 
- *---------------------------------------------------------------------------------------------* 
- * Functions:                                                                                  * 
- *   Scalar Division Operator -- Divide a vector by a scalar                                   * 
- *   Scalar Multiply Operator -- Multiply a vector by a scalar                                 * 
- *   Vector Addition Operator -- Add two vectors                                               * 
- *   Vector Subtraction Operator -- Subract two vectors                                        * 
- *   Vector Inner Product Operator -- Compute the inner or dot product                         * 
- *   Vector Equality Operator -- Detemine if two vectors are identical                         * 
- *   Equal_Within_Epsilon -- Determine if two vectors are identical within                     * 
- *   Vector Inequality Operator -- Detemine if two vectors are identical                       * 
- *   Swap -- swap two Vector2's                                                                * 
+/***********************************************************************************************
+ ***                  Confidential - Westwood Studios                                        ***
+ ***********************************************************************************************
+ *                                                                                             *
+ *                 Project Name : Westwood 3D                                                  *
+ *                                                                                             *
+ *                    File Name : VECTOR2.H                                                    *
+ *                                                                                             *
+ *                   Programmer : Greg Hjelstrom                                               *
+ *                                                                                             *
+ *                   Start Date : 02/24/97                                                     *
+ *                                                                                             *
+ *                  Last Update : February 24, 1997 [GH]                                       *
+ *                                                                                             *
+ *---------------------------------------------------------------------------------------------*
+ * Functions:                                                                                  *
+ *   Scalar Division Operator -- Divide a vector by a scalar                                   *
+ *   Scalar Multiply Operator -- Multiply a vector by a scalar                                 *
+ *   Vector Addition Operator -- Add two vectors                                               *
+ *   Vector Subtraction Operator -- Subract two vectors                                        *
+ *   Vector Inner Product Operator -- Compute the inner or dot product                         *
+ *   Vector Equality Operator -- Detemine if two vectors are identical                         *
+ *   Equal_Within_Epsilon -- Determine if two vectors are identical within                     *
+ *   Vector Inequality Operator -- Detemine if two vectors are identical                       *
+ *   Swap -- swap two Vector2's                                                                *
  *   Vector2::Is_Valid -- Verifies that all components are valid floats                        *
  *	  Vector2::Update_Min -- sets each component of the vector to the min of this and a.        *
  *	  Vector2::Update_Max -- sets each component of the vector to the max of this and a.        *
@@ -85,16 +85,16 @@ public:
 	WWINLINE Vector2(const Vector2 & v) { X = v.X; Y = v.Y; }
 	WWINLINE Vector2(float x, float y) { X = x; Y = y; }
 	WWINLINE Vector2(const float vector[2]) { X = vector[0]; Y = vector[1]; }
-	
-	
+
+
 	// Assignment
-	WWINLINE Vector2 & operator = (const Vector2 & v) { X = v[0]; Y = v[1]; return *this; }	
+	WWINLINE Vector2 & operator = (const Vector2 & v) { X = v[0]; Y = v[1]; return *this; }
 	WWINLINE void	Set(float x, float y) { X = x; Y = y; }
 	WWINLINE void	Set(const Vector2 & v) { X = v.X; Y = v.Y; }
 
 	// Array access
-	WWINLINE float &	operator [](int i) { return (&X)[i]; }     
-	WWINLINE const float &  operator [](int i) const { return (&X)[i]; }  
+	WWINLINE float &	operator [](int i) { return (&X)[i]; }
+	WWINLINE const float &  operator [](int i) const { return (&X)[i]; }
 
 	// normalize, compute length
 	WWINLINE void	Normalize(void);
@@ -102,11 +102,11 @@ public:
 	WWINLINE float Length2(void) const;
 
 	// unary operators
-	WWINLINE Vector2 operator-() const { return Vector2(-X,-Y); } 
-	WWINLINE Vector2 operator+() const { return *this; } 
+	WWINLINE Vector2 operator-() const { return Vector2(-X,-Y); }
+	WWINLINE Vector2 operator+() const { return *this; }
 
-	WWINLINE Vector2 & operator += (const Vector2 & v) { X += v.X; Y += v.Y; return *this; }	
-	WWINLINE Vector2 & operator -= (const Vector2 & v) { X -= v.X; Y -= v.Y; return *this; }		
+	WWINLINE Vector2 & operator += (const Vector2 & v) { X += v.X; Y += v.Y; return *this; }
+	WWINLINE Vector2 & operator -= (const Vector2 & v) { X -= v.X; Y -= v.Y; return *this; }
 	WWINLINE Vector2 & operator *= (float k) { X = (float)(X*k); Y=(float)(Y*k); return *this; }
 	WWINLINE Vector2 & operator /= (float k) { k=1.0f/k; X*=k; Y*=k; return *this; }
 
@@ -125,7 +125,7 @@ public:
 
 	// dot product between a and perpendicular vector to b
 	static float Perp_Dot_Product(const Vector2 &a,const Vector2 &b);
-	
+
 	// Equality operators
 	friend bool operator == (const Vector2 &a,const Vector2 &b);
 	friend bool operator != (const Vector2 &a,const Vector2 &b);
@@ -154,17 +154,17 @@ public:
 };
 
 
-/************************************************************************** 
- * Scalar Multiply Operator -- Multiply a vector by a scalar              * 
- *                                                                        * 
- * INPUT:                                                                 * 
- *                                                                        * 
- * OUTPUT:                                                                * 
- *                                                                        * 
- * WARNINGS:                                                              * 
- *                                                                        * 
- * HISTORY:                                                               * 
- *   02/24/1997 GH  : Created.                                            * 
+/**************************************************************************
+ * Scalar Multiply Operator -- Multiply a vector by a scalar              *
+ *                                                                        *
+ * INPUT:                                                                 *
+ *                                                                        *
+ * OUTPUT:                                                                *
+ *                                                                        *
+ * WARNINGS:                                                              *
+ *                                                                        *
+ * HISTORY:                                                               *
+ *   02/24/1997 GH  : Created.                                            *
  *========================================================================*/
 WWINLINE Vector2 operator * (const Vector2 &a,float k)
 {
@@ -180,16 +180,16 @@ WWINLINE Vector2 operator * (float k, const Vector2 &a)
 	return Vector2(a0k,a1k);
 }
 
-/************************************************************************** 
- * Scalar Division Operator -- Divide a vector by a scalar                * 
- *                                                                        * 
- * INPUT:                                                                 * 
- *                                                                        * 
- * OUTPUT:                                                                * 
- *                                                                        * 
- * WARNINGS:                                                              * 
- *                                                                        * 
- * HISTORY:                                                               * 
+/**************************************************************************
+ * Scalar Division Operator -- Divide a vector by a scalar                *
+ *                                                                        *
+ * INPUT:                                                                 *
+ *                                                                        *
+ * OUTPUT:                                                                *
+ *                                                                        *
+ * WARNINGS:                                                              *
+ *                                                                        *
+ * HISTORY:                                                               *
  *========================================================================*/
 WWINLINE Vector2 operator / (const Vector2 &a,float k)
 {
@@ -199,17 +199,17 @@ WWINLINE Vector2 operator / (const Vector2 &a,float k)
 	return Vector2(a0ook,a1ook);
 }
 
-/************************************************************************** 
- * Vector Addition Operator -- Add two vectors                            * 
- *                                                                        * 
- * INPUT:                                                                 * 
- *                                                                        * 
- * OUTPUT:                                                                * 
- *                                                                        * 
- * WARNINGS:                                                              * 
- *                                                                        * 
- * HISTORY:                                                               * 
- *   02/24/1997 GH  : Created.                                            * 
+/**************************************************************************
+ * Vector Addition Operator -- Add two vectors                            *
+ *                                                                        *
+ * INPUT:                                                                 *
+ *                                                                        *
+ * OUTPUT:                                                                *
+ *                                                                        *
+ * WARNINGS:                                                              *
+ *                                                                        *
+ * HISTORY:                                                               *
+ *   02/24/1997 GH  : Created.                                            *
  *========================================================================*/
 WWINLINE Vector2 operator + (const Vector2 &a,const Vector2 &b)
 {
@@ -219,17 +219,17 @@ WWINLINE Vector2 operator + (const Vector2 &a,const Vector2 &b)
 						);
 }
 
-/************************************************************************** 
- * Vector Subtraction Operator -- Subract two vectors                     * 
- *                                                                        * 
- * INPUT:                                                                 * 
- *                                                                        * 
- * OUTPUT:                                                                * 
- *                                                                        * 
- * WARNINGS:                                                              * 
- *                                                                        * 
- * HISTORY:                                                               * 
- *   02/24/1997 GH  : Created.                                            * 
+/**************************************************************************
+ * Vector Subtraction Operator -- Subract two vectors                     *
+ *                                                                        *
+ * INPUT:                                                                 *
+ *                                                                        *
+ * OUTPUT:                                                                *
+ *                                                                        *
+ * WARNINGS:                                                              *
+ *                                                                        *
+ * HISTORY:                                                               *
+ *   02/24/1997 GH  : Created.                                            *
  *========================================================================*/
 WWINLINE Vector2 operator - (const Vector2 &a,const Vector2 &b)
 {
@@ -239,16 +239,16 @@ WWINLINE Vector2 operator - (const Vector2 &a,const Vector2 &b)
 						);
 }
 
-/************************************************************************** 
- * Vector Inner Product -- Compute the inner or dot product of two vector * 
- *                                                                        * 
- * INPUT:                                                                 * 
- *                                                                        * 
- * OUTPUT:                                                                * 
- *                                                                        * 
- * WARNINGS:                                                              * 
- *                                                                        * 
- * HISTORY:                                                               * 
+/**************************************************************************
+ * Vector Inner Product -- Compute the inner or dot product of two vector *
+ *                                                                        *
+ * INPUT:                                                                 *
+ *                                                                        *
+ * OUTPUT:                                                                *
+ *                                                                        *
+ * WARNINGS:                                                              *
+ *                                                                        *
+ * HISTORY:                                                               *
  *========================================================================*/
 WWINLINE float operator * (const Vector2 &a,const Vector2 &b)
 {
@@ -265,16 +265,16 @@ WWINLINE float Vector2::Perp_Dot_Product(const Vector2 &a,const Vector2 &b)
 	return a.X * -b.Y + a.Y * b.X;
 }
 
-/************************************************************************** 
- * Vector Equality Operator -- Detemine if two vectors are identical      * 
- *                                                                        * 
- * INPUT:                                                                 * 
- *                                                                        * 
- * OUTPUT:                                                                * 
- *                                                                        * 
- * WARNINGS:                                                              * 
- *                                                                        * 
- * HISTORY:                                                               * 
+/**************************************************************************
+ * Vector Equality Operator -- Detemine if two vectors are identical      *
+ *                                                                        *
+ * INPUT:                                                                 *
+ *                                                                        *
+ * OUTPUT:                                                                *
+ *                                                                        *
+ * WARNINGS:                                                              *
+ *                                                                        *
+ * HISTORY:                                                               *
  *========================================================================*/
 WWINLINE bool operator == (const Vector2 &a,const Vector2 &b)
 {
@@ -283,16 +283,16 @@ WWINLINE bool operator == (const Vector2 &a,const Vector2 &b)
 	return ( a0b0 & a1b1);
 }
 
-/************************************************************************** 
- * Vector Inequality Operator -- Detemine if two vectors are identical    * 
- *                                                                        * 
- * INPUT:                                                                 * 
- *                                                                        * 
- * OUTPUT:                                                                * 
- *                                                                        * 
- * WARNINGS:                                                              * 
- *                                                                        * 
- * HISTORY:                                                               * 
+/**************************************************************************
+ * Vector Inequality Operator -- Detemine if two vectors are identical    *
+ *                                                                        *
+ * INPUT:                                                                 *
+ *                                                                        *
+ * OUTPUT:                                                                *
+ *                                                                        *
+ * WARNINGS:                                                              *
+ *                                                                        *
+ * HISTORY:                                                               *
  *========================================================================*/
 WWINLINE bool operator != (const Vector2 &a,const Vector2 &b)
 {
@@ -301,32 +301,32 @@ WWINLINE bool operator != (const Vector2 &a,const Vector2 &b)
 	return ( a0b0 | a1b1);
 }
 
-/************************************************************************** 
- * Equal_Within_Epsilon -- Determine if two vectors are identical within e* 
- *                                                                        * 
- * INPUT:                                                                 * 
- *                                                                        * 
- * OUTPUT:                                                                * 
- *                                                                        * 
- * WARNINGS:                                                              * 
- *                                                                        * 
- * HISTORY:                                                               * 
+/**************************************************************************
+ * Equal_Within_Epsilon -- Determine if two vectors are identical within e*
+ *                                                                        *
+ * INPUT:                                                                 *
+ *                                                                        *
+ * OUTPUT:                                                                *
+ *                                                                        *
+ * WARNINGS:                                                              *
+ *                                                                        *
+ * HISTORY:                                                               *
  *========================================================================*/
 WWINLINE bool Equal_Within_Epsilon(const Vector2 &a,const Vector2 &b,float epsilon)
 {
    return( (WWMath::Fabs(a.X - b.X) < epsilon) && (WWMath::Fabs(a.Y - b.Y) < epsilon) );
 }
 
-/************************************************************************** 
- * Vector2::Normalize -- Normalizes the vector.                           * 
- *                                                                        * 
- * INPUT:                                                                 * 
- *                                                                        * 
- * OUTPUT:                                                                * 
- *                                                                        * 
- * WARNINGS:                                                              * 
- *                                                                        * 
- * HISTORY:                                                               * 
+/**************************************************************************
+ * Vector2::Normalize -- Normalizes the vector.                           *
+ *                                                                        *
+ * INPUT:                                                                 *
+ *                                                                        *
+ * OUTPUT:                                                                *
+ *                                                                        *
+ * WARNINGS:                                                              *
+ *                                                                        *
+ * HISTORY:                                                               *
  *========================================================================*/
 WWINLINE void Vector2::Normalize()
 {
@@ -348,67 +348,67 @@ WWINLINE Vector2 Normalize(const Vector2 & vec)
 	return Vector2(0.0f,0.0f);
 }
 
-/************************************************************************** 
- * Vector2::Length -- Returns the length of the vector                    * 
- *                                                                        * 
- * INPUT:                                                                 * 
- *                                                                        * 
- * OUTPUT:                                                                * 
- *                                                                        * 
- * WARNINGS:                                                              * 
- *                                                                        * 
- * HISTORY:                                                               * 
+/**************************************************************************
+ * Vector2::Length -- Returns the length of the vector                    *
+ *                                                                        *
+ * INPUT:                                                                 *
+ *                                                                        *
+ * OUTPUT:                                                                *
+ *                                                                        *
+ * WARNINGS:                                                              *
+ *                                                                        *
+ * HISTORY:                                                               *
  *========================================================================*/
 WWINLINE float Vector2::Length() const
 {
 	return (float)WWMath::Sqrt(Length2());
 }
 
-/************************************************************************** 
- * Vector2::Length -- Returns the square of the length of the vector      * 
- *                                                                        * 
- * INPUT:                                                                 * 
- *                                                                        * 
- * OUTPUT:                                                                * 
- *                                                                        * 
- * WARNINGS:                                                              * 
- *                                                                        * 
- * HISTORY:                                                               * 
+/**************************************************************************
+ * Vector2::Length -- Returns the square of the length of the vector      *
+ *                                                                        *
+ * INPUT:                                                                 *
+ *                                                                        *
+ * OUTPUT:                                                                *
+ *                                                                        *
+ * WARNINGS:                                                              *
+ *                                                                        *
+ * HISTORY:                                                               *
  *========================================================================*/
 WWINLINE float Vector2::Length2() const
 {
 	return (X*X + Y*Y);
 }
 
-/************************************************************************** 
- * Vector2::Rotate -- Rotate vector                                       * 
- *                                                                        * 
+/**************************************************************************
+ * Vector2::Rotate -- Rotate vector                                       *
+ *                                                                        *
  * INPUT:                                                                 *
- * float theta - angle to rotate                                          * 
- *                                                                        * 
- * OUTPUT:                                                                * 
- *                                                                        * 
- * WARNINGS:                                                              * 
- *                                                                        * 
- * HISTORY:                                                               * 
+ * float theta - angle to rotate                                          *
+ *                                                                        *
+ * OUTPUT:                                                                *
+ *                                                                        *
+ * WARNINGS:                                                              *
+ *                                                                        *
+ * HISTORY:                                                               *
  *========================================================================*/
 WWINLINE void Vector2::Rotate(float theta)
 {
 	Rotate(WWMath::Sin(theta), WWMath::Cos(theta));
 }
 
-/************************************************************************** 
- * Vector2::Rotate -- Rotate vector                                       * 
- *                                                                        * 
- * INPUT:                                                                 * 
- * s - sine of the angle                                                  * 
- * c - cosine of the angle                                                * 
- *                                                                        * 
- * OUTPUT:                                                                * 
- *                                                                        * 
- * WARNINGS:                                                              * 
- *                                                                        * 
- * HISTORY:                                                               * 
+/**************************************************************************
+ * Vector2::Rotate -- Rotate vector                                       *
+ *                                                                        *
+ * INPUT:                                                                 *
+ * s - sine of the angle                                                  *
+ * c - cosine of the angle                                                *
+ *                                                                        *
+ * OUTPUT:                                                                *
+ *                                                                        *
+ * WARNINGS:                                                              *
+ *                                                                        *
+ * HISTORY:                                                               *
  *========================================================================*/
 WWINLINE void Vector2::Rotate(float s, float c)
 {
@@ -418,44 +418,44 @@ WWINLINE void Vector2::Rotate(float s, float c)
 	Y = new_y;
 }
 
-/************************************************************************** 
- * Vector2::Rotate -- Rotate towards given vector (stop on reaching it)   * 
- *                                                                        * 
+/**************************************************************************
+ * Vector2::Rotate -- Rotate towards given vector (stop on reaching it)   *
+ *                                                                        *
  * INPUT:                                                                 *
- * float theta - angle to rotate                                          * 
- *                                                                        * 
- * OUTPUT:                                                                * 
- * bool - true if we have reached the desired vector                      * 
- *                                                                        * 
- * WARNINGS:                                                              * 
- * This function assumes both vectors are normalized!                     * 
- *                                                                        * 
- * HISTORY:                                                               * 
+ * float theta - angle to rotate                                          *
+ *                                                                        *
+ * OUTPUT:                                                                *
+ * bool - true if we have reached the desired vector                      *
+ *                                                                        *
+ * WARNINGS:                                                              *
+ * This function assumes both vectors are normalized!                     *
+ *                                                                        *
+ * HISTORY:                                                               *
  *========================================================================*/
 WWINLINE bool Vector2::Rotate_Towards_Vector(Vector2 &target, float max_theta, bool & positive_turn)
 {
 	return Rotate_Towards_Vector(target, WWMath::Sin(max_theta), WWMath::Cos(max_theta), positive_turn);
 }
 
-/************************************************************************** 
- * Vector2::Rotate -- Rotate towards given vector (stop on reaching it)   * 
- *                                                                        * 
+/**************************************************************************
+ * Vector2::Rotate -- Rotate towards given vector (stop on reaching it)   *
+ *                                                                        *
  * INPUT:                                                                 *
- * s - sine of the angle                                                  * 
- * c - cosine of the angle                                                * 
- *                                                                        * 
- * OUTPUT:                                                                * 
- * bool - true if we have reached the desired vector                      * 
- *                                                                        * 
- * WARNINGS:                                                              * 
- * This function assumes both vectors are normalized!                     * 
- *                                                                        * 
- * HISTORY:                                                               * 
+ * s - sine of the angle                                                  *
+ * c - cosine of the angle                                                *
+ *                                                                        *
+ * OUTPUT:                                                                *
+ * bool - true if we have reached the desired vector                      *
+ *                                                                        *
+ * WARNINGS:                                                              *
+ * This function assumes both vectors are normalized!                     *
+ *                                                                        *
+ * HISTORY:                                                               *
  *========================================================================*/
 WWINLINE bool Vector2::Rotate_Towards_Vector(Vector2 &target, float max_s, float max_c, bool & positive_turn)
 {
 	bool return_value = false;
-	
+
 	positive_turn = Vector2::Perp_Dot_Product(target, *this) > 0.0f;
 
 	if (Vector2::Dot_Product(*this, target) >= max_c) {
@@ -473,17 +473,17 @@ WWINLINE bool Vector2::Rotate_Towards_Vector(Vector2 &target, float max_s, float
 	return return_value;
 }
 
-/*********************************************************************************************** 
- * Swap -- swap two Vector2's                                                                  * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   08/11/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * Swap -- swap two Vector2's                                                                  *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   08/11/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
 WWINLINE void Swap(Vector2 & a,Vector2 & b)
 {
@@ -524,7 +524,7 @@ WWINLINE bool Vector2::Is_Valid(void) const
  *   06/12/00   IML : Created.                                                                 *
  *=============================================================================================*/
 WWINLINE void Vector2::Update_Min (const Vector2 & a)
-{	
+{
 	if (a.X < X) X = a.X;
 	if (a.Y < Y) Y = a.Y;
 }
@@ -543,7 +543,7 @@ WWINLINE void Vector2::Update_Min (const Vector2 & a)
  *   06/12/00   IML : Created.                                                                 *
  *=============================================================================================*/
 WWINLINE void Vector2::Update_Max (const Vector2 & a)
-{	
+{
 	if (a.X > X) X = a.X;
 	if (a.Y > Y) Y = a.Y;
 }
@@ -608,7 +608,7 @@ WWINLINE float Quick_Distance(float x1, float y1, float x2, float y2)
 	if (x_diff > y_diff)
 	{
 		return ((y_diff / 2) + x_diff);
-	} 
+	}
 	else
 	{
 		return ((x_diff / 2) + y_diff);
@@ -617,7 +617,7 @@ WWINLINE float Quick_Distance(float x1, float y1, float x2, float y2)
 
 WWINLINE float Vector2::Quick_Distance(const Vector2 &a, const Vector2 &b)
 {
-	return ::Quick_Distance(a.X, a.Y, b.X, b.Y);	
+	return ::Quick_Distance(a.X, a.Y, b.X, b.Y);
 }
 
 
@@ -642,7 +642,7 @@ WWINLINE float Distance(float x1, float y1, float x2, float y2)
 {
 	float x_diff = x1 - x2;
 	float y_diff = y1 - y2;
-	
+
 	return (WWMath::Sqrt((x_diff * x_diff) + (y_diff * y_diff)));
 }
 

@@ -59,12 +59,12 @@ HeightDieUpdateModuleData::HeightDieUpdateModuleData( void )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void HeightDieUpdateModuleData::buildFieldParse(MultiIniFieldParse& p) 
+void HeightDieUpdateModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
 
   UpdateModuleData::buildFieldParse( p );
 
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
 		{ "TargetHeight", INI::parseReal, NULL, offsetof( HeightDieUpdateModuleData, m_targetHeightAboveTerrain ) },
 		{ "TargetHeightIncludesStructures", INI::parseBool, NULL, offsetof( HeightDieUpdateModuleData, m_targetHeightIncludesStructures ) },
@@ -150,7 +150,7 @@ UpdateSleepTime HeightDieUpdate::update( void )
 
 		// get the terrain height
 		Real terrainHeightAtPos = TheTerrainLogic->getGroundHeight( pos->x, pos->y );
-		
+
 		// if including structures, check for bridges
 		if (modData->m_targetHeightIncludesStructures)
 		{
@@ -182,8 +182,8 @@ UpdateSleepTime HeightDieUpdate::update( void )
 			PartitionFilter *filters[] = { &filter1, NULL };
 			Real range = getObject()->getGeometryInfo().getBoundingCircleRadius();
 			ObjectIterator *iter = ThePartitionManager->iterateObjectsInRange( getObject(),
-																																				 range, 
-																																				 FROM_BOUNDINGSPHERE_3D, 
+																																				 range,
+																																				 FROM_BOUNDINGSPHERE_3D,
 																																				 filters );
 			MemoryPoolObjectHolder hold( iter );
 			Object *obj;
@@ -204,7 +204,7 @@ UpdateSleepTime HeightDieUpdate::update( void )
 					tallestHeight = thisHeight;
 
 			}  // end for obj
-			
+
 			//
 			// our target height is either the height above the terrain as specified by the INI
 			// entry for the object that has this update ... or it is the building height of the
@@ -220,7 +220,7 @@ UpdateSleepTime HeightDieUpdate::update( void )
 		{
 
 			// if we're supposed to snap us to the ground on death do so
-			// AND: even if we're not snapping to ground, be sure we don't go BELOW ground 
+			// AND: even if we're not snapping to ground, be sure we don't go BELOW ground
 			if( modData->m_snapToGroundOnDeath || pos->z < terrainHeightAtPos )
 			{
 				Coord3D ground;
@@ -278,7 +278,7 @@ void HeightDieUpdate::crc( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
 	* Version Info:
-	* 1: Initial version 
+	* 1: Initial version
 	* 2: m_earliestDeathFrame
 */
 // ------------------------------------------------------------------------------------------------

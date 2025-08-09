@@ -99,21 +99,21 @@ will you be ready to leave grasshopper.
 {\
   if (MsgManager::infoStream()) \
     (*(MsgManager::infoStream())) << X;\
-}    
+}
 
 // Just get a stream to the warning device, no extra junk
 #define WRNSTREAM(X)\
 {\
   if (MsgManager::warnStream()) \
     (*(MsgManager::warnStream())) << X;\
-}    
+}
 
 // Just get a stream to the error device, no extra junk
 #define ERRSTREAM(X)\
 {\
   if (MsgManager::errorStream()) \
     (*(MsgManager::errorStream())) << X;\
-}    
+}
 
 #ifndef DEBUG
 
@@ -154,7 +154,7 @@ will you be ready to leave grasshopper.
 {\
   if (MsgManager::debugStream()) \
     (*(MsgManager::debugStream())) << X;\
-}    
+}
 
 // Verbosely execute a statement
 #define VERBOSE(X)\

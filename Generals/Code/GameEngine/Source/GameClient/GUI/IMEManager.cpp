@@ -23,12 +23,12 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 //----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //----------------------------------------------------------------------------
 //
 // Project:   Ganerals
@@ -42,7 +42,7 @@
 //----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
-//         Includes                                                      
+//         Includes
 //----------------------------------------------------------------------------
 
 #include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
@@ -63,25 +63,25 @@
 
 
 //----------------------------------------------------------------------------
-//         Externals                                                     
+//         Externals
 //----------------------------------------------------------------------------
 
 extern HWND ApplicationHWnd;  ///< our application window handle
 extern Int	IMECandidateWindowLineSpacing;
 
 //----------------------------------------------------------------------------
-//         Defines                                                         
+//         Defines
 //----------------------------------------------------------------------------
 
 
 //#define DEBUG_IME
 
 //----------------------------------------------------------------------------
-//         Private Types                                                     
+//         Private Types
 //----------------------------------------------------------------------------
 
 //===============================
-// IMEManager 
+// IMEManager
 //===============================
 
 class IMEManager : public IMEManagerInterface
@@ -91,11 +91,11 @@ class IMEManager : public IMEManagerInterface
 
 		IMEManager();
 		~IMEManager();
-		
+
 		virtual void					init( void );
 		virtual void					reset( void );
 		virtual void					update( void );
-													
+
 		virtual void					attach( GameWindow *window );		///< attach IME to specified window
 		virtual void					detatch( void );								///< detatch IME from current window
 		virtual void					enable( void );									///< Enable IME
@@ -105,11 +105,11 @@ class IMEManager : public IMEManagerInterface
 		virtual GameWindow*		getWindow( void );							///< Returns the window we are currently attached to
 		virtual Bool					isComposing( void );						///< Manager is currently composing new input string
 		virtual void					getCompositionString( UnicodeString &string ); ///< Return the current composition string
-		virtual Int						getCompositionCursorPosition( void );			///< Returns the composition cursor position 
+		virtual Int						getCompositionCursorPosition( void );			///< Returns the composition cursor position
 		virtual Int						getIndexBase( void );						///< Get index base for candidate list
 
 		virtual Int						getCandidateCount();						///< Returns the total number of candidates
-		virtual UnicodeString*getCandidate( Int index );			///< Returns the candidate string 
+		virtual UnicodeString*getCandidate( Int index );			///< Returns the candidate string
 		virtual Int						getSelectedCandidateIndex();		///< Returns the indexed of the currently selected candidate
 		virtual Int						getCandidatePageSize();					///< Returns the page size for the candidates list
 		virtual Int						getCandidatePageStart();				///< Returns the index of the first visibel candidate
@@ -117,7 +117,7 @@ class IMEManager : public IMEManagerInterface
 
 
 		/// Checks for and services IME messages. Returns TRUE if message serviced
-		virtual Bool serviceIMEMessage(	void *windowsHandle, 
+		virtual Bool serviceIMEMessage(	void *windowsHandle,
 												UnsignedInt message,
 												Int wParam,
 												Int lParam );
@@ -179,7 +179,7 @@ class IMEManager : public IMEManagerInterface
 
 
 
-	#ifdef DEBUG_IME													
+	#ifdef DEBUG_IME
 		static MessageInfo		m_mainMessageInfo[];
 		static MessageInfo		m_notifyInfo[];
 		static MessageInfo		m_requestInfo[];
@@ -199,7 +199,7 @@ class IMEManager : public IMEManagerInterface
 
 
 //----------------------------------------------------------------------------
-//         Private Data                                                     
+//         Private Data
 //----------------------------------------------------------------------------
 #ifdef DEBUG_IME
 
@@ -313,20 +313,20 @@ IMEManager::MessageInfo IMEManager::m_setSmodeInfo[] =
 #endif
 
 //----------------------------------------------------------------------------
-//         Public Data                                                      
+//         Public Data
 //----------------------------------------------------------------------------
 
 IMEManagerInterface *TheIMEManager = NULL;
 
 
 //----------------------------------------------------------------------------
-//         Private Prototypes                                               
+//         Private Prototypes
 //----------------------------------------------------------------------------
 
 
 
 //----------------------------------------------------------------------------
-//         Private Functions                                               
+//         Private Functions
 //----------------------------------------------------------------------------
 
 #ifdef DEBUG_IME
@@ -396,7 +396,7 @@ void		IMEManager::printMessageInfo( Int message, Int wParam, Int lParam )
 		{
 			Char *notifyName = getMessageName( m_notifyInfo, wParam );
 			if ( notifyName == NULL ) notifyName = "unknown";
-			DEBUG_LOG(( "IMM: %s(0x%04x) - %s(0x%04x) - 0x%08x",  messageText, message, notifyName, wParam, lParam )); 
+			DEBUG_LOG(( "IMM: %s(0x%04x) - %s(0x%04x) - 0x%08x",  messageText, message, notifyName, wParam, lParam ));
 			break;
 		}
 		case WM_IME_CONTROL:
@@ -404,7 +404,7 @@ void		IMEManager::printMessageInfo( Int message, Int wParam, Int lParam )
 			Char *controlName = getMessageName( m_controlInfo, wParam );
 			if ( controlName == NULL ) controlName = "unknown";
 
-			DEBUG_LOG(( "IMM: %s(0x%04x) - %s(0x%04x) - 0x%08x",  messageText, message, controlName, wParam, lParam )); 
+			DEBUG_LOG(( "IMM: %s(0x%04x) - %s(0x%04x) - 0x%08x",  messageText, message, controlName, wParam, lParam ));
 			break;
 		}
 		#ifdef WM_IME_REQUEST
@@ -413,7 +413,7 @@ void		IMEManager::printMessageInfo( Int message, Int wParam, Int lParam )
 			Char *requestName = getMessageName( m_requestInfo, wParam );
 			if ( requestName == NULL ) requestName = "unknown";
 
-			DEBUG_LOG(( "IMM: %s(0x%04x) - %s(0x%04x) - 0x%08x",  messageText, message, requestName, wParam, lParam )); 
+			DEBUG_LOG(( "IMM: %s(0x%04x) - %s(0x%04x) - 0x%08x",  messageText, message, requestName, wParam, lParam ));
 			break;
 		}
 		#endif
@@ -423,13 +423,13 @@ void		IMEManager::printMessageInfo( Int message, Int wParam, Int lParam )
 
 			buildFlagsString( m_setContextInfo, lParam, flags );
 
-			DEBUG_LOG(( "IMM: %s(0x%04x) - 0x%08x - %s(0x%04x)",  messageText, message, wParam, flags.str(), lParam )); 
+			DEBUG_LOG(( "IMM: %s(0x%04x) - 0x%08x - %s(0x%04x)",  messageText, message, wParam, flags.str(), lParam ));
 			break;
 		}
 		default:
 			if ( messageText )
 			{
-				DEBUG_LOG(( "IMM: %s(0x%04x) - 0x%08x - 0x%08x",  messageText, message, wParam, lParam )); 
+				DEBUG_LOG(( "IMM: %s(0x%04x) - 0x%08x - 0x%08x",  messageText, message, wParam, lParam ));
 			}
 			break;
 	}
@@ -476,7 +476,7 @@ void IMEManager::printSentenceStatus( void )
 
 
 //----------------------------------------------------------------------------
-//         Public Functions                                                
+//         Public Functions
 //----------------------------------------------------------------------------
 
 //============================================================================
@@ -561,7 +561,7 @@ IMEManager::~IMEManager()
 void IMEManager::init( void )
 {
 	//HWND ImeWindow = ImmGetDefaultIMEWnd(ApplicationHWnd);
-  // if(ImeWindow) 
+  // if(ImeWindow)
 	// {
   //    DestroyWindow(ImeWindow);
 	//	}
@@ -571,7 +571,7 @@ void IMEManager::init( void )
 	m_disabled = 0;
 	m_candidateWindow = TheWindowManager->winCreateFromScript( AsciiString("IMECandidateWindow.wnd"));
 	m_candidateWindow->winSetStatus(WIN_STATUS_ABOVE);
-	
+
 	if ( m_candidateWindow )
 	{
 		m_candidateWindow->winHide( TRUE );
@@ -631,7 +631,7 @@ void IMEManager::update( void )
 {
 
 }
-		
+
 //============================================================================
 // IMEManager::attach
 //============================================================================
@@ -683,7 +683,7 @@ Bool IMEManager::serviceIMEMessage(	void *windowsHandle, UnsignedInt message,	In
 				#ifdef DEBUG_IME
 				DEBUG_LOG(("IMM: WM_IME_CHAR - '%hc'0x%04x", wchar, wchar ));
 				#endif
-																	 
+
 				if ( m_window && (wchar > 32 || wchar == VK_RETURN ))
 				{
 					TheWindowManager->winSendInputMsg( m_window, GWM_IME_CHAR, (wParam & 0xffff), lParam );
@@ -716,7 +716,7 @@ Bool IMEManager::serviceIMEMessage(	void *windowsHandle, UnsignedInt message,	In
 					DEBUG_LOG(("IMM: WM_IME_SELECT"));
 				return FALSE;
       case WM_IME_STARTCOMPOSITION:
-        //The WM_IME_STARTCOMPOSITION message is sent immediately before an 
+        //The WM_IME_STARTCOMPOSITION message is sent immediately before an
         //IME generates a composition string as a result of a user's keystroke.
         //
 				m_composing = TRUE;
@@ -740,10 +740,10 @@ Bool IMEManager::serviceIMEMessage(	void *windowsHandle, UnsignedInt message,	In
 				// the strings real time inside WM_IME_COMPOSITION
 				// instead of waiting for user to enter separator. -MW
 
-        //IMEs send this message to the application when the IMEs' composition 
-        //windows have closed. Applications that display their own composition 
-        //characters should process this message. Other applications should 
-        //send the message to the application IME window or to DefWindowProc, 
+        //IMEs send this message to the application when the IMEs' composition
+        //windows have closed. Applications that display their own composition
+        //characters should process this message. Other applications should
+        //send the message to the application IME window or to DefWindowProc,
         //which will pass the message to  the default IME window.
         //
 
@@ -765,17 +765,17 @@ Bool IMEManager::serviceIMEMessage(	void *windowsHandle, UnsignedInt message,	In
 			// --------------------------------------------------------------------
 			case WM_IME_COMPOSITION:
 			{
-				//IMEs send this message to the application when they change composition 
-				//status in response to a keystroke. Applications that display their own 
-				//composition characters should process this message by calling 
-				//ImmGetCompositionString. Other applications should send the message to 
-				//the application IME window or to DefWindowProc, which will pass the 
+				//IMEs send this message to the application when they change composition
+				//status in response to a keystroke. Applications that display their own
+				//composition characters should process this message by calling
+				//ImmGetCompositionString. Other applications should send the message to
+				//the application IME window or to DefWindowProc, which will pass the
 				//message to the default IME window.
 				//
-				//The WM_IME_COMPOSITION message is sent to an application when the IME 
-				//changes composition status as a result of a keystroke. An application 
-				//should process this message if it displays composition characters itself. 
-				//Otherwise, it should send the message to the IME window. This message 
+				//The WM_IME_COMPOSITION message is sent to an application when the IME
+				//changes composition status as a result of a keystroke. An application
+				//should process this message if it displays composition characters itself.
+				//Otherwise, it should send the message to the IME window. This message
 				//has no return value. wParam = DBCS character. lParam = change indicator.
 				//
 
@@ -856,8 +856,8 @@ Bool IMEManager::serviceIMEMessage(	void *windowsHandle, UnsignedInt message,	In
 			// --------------------------------------------------------------------
 			case WM_IME_SETCONTEXT:
 			{
-				//The system sends this message to an application when one of the 
-				//application's windows is activated. Applications should respond by 
+				//The system sends this message to an application when one of the
+				//application's windows is activated. Applications should respond by
 				//calling ImmGetContext.
 				//
 				updateProperties();
@@ -870,19 +870,19 @@ Bool IMEManager::serviceIMEMessage(	void *windowsHandle, UnsignedInt message,	In
 			// --------------------------------------------------------------------
 			case WM_IME_NOTIFY:
 			{
-				//IMEs generate this message to notify the application or the IME window 
-				//that the IME status has changed. The wParam value is a submessage that 
-				//specifies the nature of the change. 
+				//IMEs generate this message to notify the application or the IME window
+				//that the IME status has changed. The wParam value is a submessage that
+				//specifies the nature of the change.
 				//
 				switch(wParam)
 				{
 					case IMN_OPENCANDIDATE:
 					{
-						//This message is sent to the application when an IME is about to 
-						//open the candidate window. An application should process this 
-						//message if it displays candidates. The application can retrieve 
-						//a list of candidates to display by using theImmGetCandidateList 
-						//function. The application receives this notification message through 
+						//This message is sent to the application when an IME is about to
+						//open the candidate window. An application should process this
+						//message if it displays candidates. The application can retrieve
+						//a list of candidates to display by using theImmGetCandidateList
+						//function. The application receives this notification message through
 						//the WM_IME_NOTIFY message.
 						//
 
@@ -893,9 +893,9 @@ Bool IMEManager::serviceIMEMessage(	void *windowsHandle, UnsignedInt message,	In
 					}
 					case IMN_CLOSECANDIDATE:
 					{
-						//This message is sent to the application when an IME is about to 
-						//close the candidate window. An application should process this 
-						//message if it displays candidates. The application receives this 
+						//This message is sent to the application when an IME is about to
+						//close the candidate window. An application should process this
+						//message if it displays candidates. The application receives this
 						//notification message through the WM_IME_NOTIFY message.
 						//
 						closeCandidateList( lParam );
@@ -905,17 +905,17 @@ Bool IMEManager::serviceIMEMessage(	void *windowsHandle, UnsignedInt message,	In
 
 					case IMN_CHANGECANDIDATE:
 					{
-						//This message is sent to the application when an IME is about to 
-						//change the content of the candidate window. An application should 
-						//process this notification message if it displays candidates itself. 
-						//The application receives this notification message through the 
+						//This message is sent to the application when an IME is about to
+						//change the content of the candidate window. An application should
+						//process this notification message if it displays candidates itself.
+						//The application receives this notification message through the
 						//WM_IME_NOTIFY message.
 						//
 						updateCandidateList( lParam );
 						m_result =  1;
 				 	  return TRUE;
 					}
-					case IMN_GUIDELINE:              //This message is sent when an IME is about to show an error message or other data. 
+					case IMN_GUIDELINE:              //This message is sent when an IME is about to show an error message or other data.
 					{
 						// display error message
 						m_result = 1;
@@ -949,7 +949,7 @@ Bool IMEManager::serviceIMEMessage(	void *windowsHandle, UnsignedInt message,	In
 						DEBUG_LOG(("Close Status Window"));
 						return FALSE;
 					case IMN_SETOPENSTATUS:          //This message is sent when the open status of the input context is updated.
-					case IMN_SETCOMPOSITIONFONT:     //This message is sent when the font of the input context is updated. 
+					case IMN_SETCOMPOSITIONFONT:     //This message is sent when the font of the input context is updated.
 					case IMN_SETCOMPOSITIONWINDOW:   //This message is sent when the style or position of the composition window is updated.
 					case IMN_PRIVATE:                //This message is for your own use, it seems.
 */				default:
@@ -962,9 +962,9 @@ Bool IMEManager::serviceIMEMessage(	void *windowsHandle, UnsignedInt message,	In
 			// --------------------------------------------------------------------
       case WM_IME_COMPOSITIONFULL:
 			{
-				//IMEs send this message to the application when they are unable to 
-        //extend the composition window to accommodate any more characters. 
-        //Applications should tell IMEs how to display the composition window 
+				//IMEs send this message to the application when they are unable to
+        //extend the composition window to accommodate any more characters.
+        //Applications should tell IMEs how to display the composition window
         //using the IMC_SETCOMPOSITIONWINDOW message.
         //
         //I'm not sure what to do here.
@@ -1115,17 +1115,17 @@ void IMEManager::updateCompositionString( void )
 		}
 		else
 		{
-			
+
 			// read MBCS instead
 			result = ImmGetCompositionStringA( m_context, GCS_COMPSTR, tempBuf, MAX_COMPSTRINGLEN*2);
-			
+
 			if ( result > 0 )
 			{
 				tempBuf[ result ] = '\0';
-			
+
 				int convRes = MultiByteToWideChar( CP_ACP, 0, tempBuf, -1, m_compositionString, MAX_COMPSTRINGLEN );
 				GameArrayEnd(m_compositionString);
-			
+
 				if ( convRes < 0)
 				{
 					convRes = 0;
@@ -1135,12 +1135,12 @@ void IMEManager::updateCompositionString( void )
 					m_compositionCursorPos = (ImmGetCompositionString( m_context, GCS_CURSORPOS, NULL, 0) & 0xffff );
 					convRes = GameStrlen ( m_compositionString );
 				}
-			
+
 				// m_compositionCursorPos is in DBCS characters, need to convert it to Wide characters
-			
+
 				//msg_assert ( (int)strlen(tempBuf) >= convRes ,("bad DBCS string: DBCS = %d chars, Wide = %d chars", strlen(tempBuf), convRes));
 				m_compositionCursorPos = _mbsnccnt ( (unsigned char *) tempBuf, m_compositionCursorPos );
-			
+
 				m_compositionString[convRes] = 0;
 				m_compositionStringLength = convRes;
 				if ( m_compositionCursorPos > convRes )
@@ -1161,7 +1161,7 @@ void IMEManager::updateCompositionString( void )
 }
 
 //============================================================================
-// IMEManager::getResultsString 
+// IMEManager::getResultsString
 //============================================================================
 
 void IMEManager::getResultsString ( void )
@@ -1181,16 +1181,16 @@ void IMEManager::getResultsString ( void )
 		else
 		{
 			char tempBuf[ (MAX_COMPSTRINGLEN+1)*2];
-			
+
 			// read MBCS instead
 			result = ImmGetCompositionStringA( m_context, GCS_RESULTSTR, tempBuf, MAX_COMPSTRINGLEN*2);
-			
+
 			if ( result > 0 )
 			{
 				tempBuf[ result ] = '\0';
-			
+
 				int convRes = MultiByteToWideChar( CP_ACP, 0, tempBuf, strlen(tempBuf), m_resultsString, MAX_COMPSTRINGLEN );
-			
+
 				if ( convRes < 0)
 				{
 					convRes = 0;
@@ -1206,7 +1206,7 @@ void IMEManager::getResultsString ( void )
 }
 
 //============================================================================
-// IMEManager::convertToUnicode 
+// IMEManager::convertToUnicode
 //============================================================================
 
 void IMEManager::convertToUnicode ( Char *mbcs, UnicodeString &unicode )
@@ -1225,7 +1225,7 @@ void IMEManager::convertToUnicode ( Char *mbcs, UnicodeString &unicode )
 	if ( buffer )
 	{
 		size = MultiByteToWideChar( CP_ACP, 0, mbcs, strlen(mbcs), buffer, size );
-		
+
 		if ( size <= 0 )
 		{
 			unicode.clear();
@@ -1256,7 +1256,7 @@ void IMEManager::openCandidateList( Int candidateFlags )
 
 	m_candidateWindow->winHide( FALSE );
 	m_candidateWindow->winBringToTop();
-	TheWindowManager->winSetModal( m_candidateWindow ); 
+	TheWindowManager->winSetModal( m_candidateWindow );
 
 	Int wx, wy, wwidth, wheight, wcursorx, wcursory;
 	Int cx, cy, cwidth, cheight;
@@ -1318,7 +1318,7 @@ void IMEManager::closeCandidateList( Int candidateFlags  )
 	if ( m_candidateWindow != NULL )
 	{
 		m_candidateWindow->winHide( TRUE );
-		TheWindowManager->winUnsetModal( m_candidateWindow ); 
+		TheWindowManager->winUnsetModal( m_candidateWindow );
 	}
 
 	if ( m_candidateString )
@@ -1349,8 +1349,8 @@ void IMEManager::updateCandidateList( Int candidateFlags  )
 	m_pageStart = 0;
 	m_selectedIndex = 0;
 
-	if (	m_candidateWindow == NULL || 
-				m_context == NULL || 
+	if (	m_candidateWindow == NULL ||
+				m_context == NULL ||
 				candidateFlags == 0)
 	{
 		return;
@@ -1374,17 +1374,17 @@ void IMEManager::updateCandidateList( Int candidateFlags  )
 					return;
 				}
 			}
-			
+
 			// create a temporary buffer for reading the candidate list
 			Char *buffer = NEW Char[size];
-			
+
 			if ( buffer == NULL )
 			{
 				return;
 			}
-			
+
 			memset( buffer, 0, size );
-			
+
 			CANDIDATELIST *clist = (CANDIDATELIST*) buffer;
 
 			Bool ok = TRUE ;
@@ -1407,9 +1407,9 @@ void IMEManager::updateCandidateList( Int candidateFlags  )
 
 			if ( ok && clist->dwStyle != IME_CAND_UNKNOWN && clist->dwStyle != IME_CAND_CODE  )
 			{
-		    //Apparently there is an "IME98 bug" (IME bug under Windows 98?) that 
-		    //causes you to have to execute the following code. 
-		    if(( clist->dwPageStart >  clist->dwSelection) || 
+		    //Apparently there is an "IME98 bug" (IME bug under Windows 98?) that
+		    //causes you to have to execute the following code.
+		    if(( clist->dwPageStart >  clist->dwSelection) ||
 		       (clist->dwSelection >= clist->dwPageStart + clist->dwPageSize))
 		    {
 		       clist->dwPageStart = (clist->dwSelection / clist->dwPageSize) * clist->dwPageSize;
@@ -1503,7 +1503,7 @@ void IMEManager::resizeCandidateWindow( Int pageSize )
 	}
 
 	Int newh = pageSize * (font->height + IMECandidateWindowLineSpacing);
-	Int w, h; 
+	Int w, h;
 	m_candidateTextArea->winGetSize( &w, &h );
 
 	Int dif = newh - h;
@@ -1522,7 +1522,7 @@ void IMEManager::resizeCandidateWindow( Int pageSize )
 		m_candidateDownArrow->winSetPosition( x, y );
 	}
 
-}	
+}
 
 //============================================================================
 // IMEManager::getCandidateCount

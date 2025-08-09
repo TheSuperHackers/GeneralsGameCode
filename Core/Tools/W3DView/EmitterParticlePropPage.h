@@ -96,11 +96,11 @@ protected:
 		Vector3Randomizer *			Get_Creation_Volume (void) const	{ return m_Randomizer->Clone (); }
 
 	protected:
-		
+
 		/////////////////////////////////////////////////////////
 		//
 		//	Protected methods
-		//		
+		//
 		void								Initialize (void);
 
 	private:
@@ -108,7 +108,7 @@ protected:
 		/////////////////////////////////////////////////////////
 		//
 		//	Private member data
-		//		
+		//
 		EmitterInstanceListClass *	m_pEmitterList;
 		bool								m_bValid;
 		float								m_Rate;

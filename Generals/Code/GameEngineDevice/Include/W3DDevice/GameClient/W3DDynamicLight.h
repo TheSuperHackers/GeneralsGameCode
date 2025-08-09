@@ -45,7 +45,7 @@ protected:
 	/// Values used by HeightMapRenderObjClass to update the height map.
 	Bool		m_priorEnable;
 	Bool		m_processMe;
-	
+
 
 	Int			m_prevMinX, m_prevMinY, m_prevMaxX, m_prevMaxY;
 	Int			m_minX, m_minY, m_maxX, m_maxY;
@@ -68,7 +68,7 @@ public:
 	~W3DDynamicLight(void);
 
 public:
-	virtual void					On_Frame_Update(void); 
+	virtual void					On_Frame_Update(void);
 
 	void setEnabled(Bool enabled) { m_enabled = enabled; m_decayRange = false; m_decayFrameCount = 0; m_decayColor = false; m_increaseFrameCount = 0;};
 	Bool isEnabled(void) {return m_enabled;};

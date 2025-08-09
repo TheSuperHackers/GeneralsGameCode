@@ -16,21 +16,21 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/*********************************************************************************************** 
- ***              C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S               *** 
- *********************************************************************************************** 
- *                                                                                             * 
- *                 Project Name : Command & Conquer                                            * 
- *                                                                                             * 
- *                     $Archive:: /Commando/Code/wwlib/ffactory.cpp                           $* 
- *                                                                                             * 
+/***********************************************************************************************
+ ***              C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S               ***
+ ***********************************************************************************************
+ *                                                                                             *
+ *                 Project Name : Command & Conquer                                            *
+ *                                                                                             *
+ *                     $Archive:: /Commando/Code/wwlib/ffactory.cpp                           $*
+ *                                                                                             *
  *                      $Author:: Jani_p                                                      $*
- *                                                                                             * 
+ *                                                                                             *
  *                     $Modtime:: 8/24/01 11:50a                                              $*
- *                                                                                             * 
+ *                                                                                             *
  *                    $Revision:: 17                                                          $*
  *                                                                                             *
- *---------------------------------------------------------------------------------------------* 
+ *---------------------------------------------------------------------------------------------*
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include	"ffactory.h"
@@ -106,7 +106,7 @@ void SimpleFileFactoryClass::Get_Sub_Directory( StringClass& new_dir ) const
 
 	// We cannot return a const char * here because the StringClass
 	// may reallocate its buffer during a call to Set_Sub_Directory.
-	// I opted to return a StringClass instead of a reference to 
+	// I opted to return a StringClass instead of a reference to
 	// StringClass because it seems like that would behave more
 	// reasonably. (no sudden changes from or to empty string in
 	// the middle of a calling function.) (DRM, 04/19/01)
@@ -218,7 +218,7 @@ Is_Full_Path (const char *path)
 	bool retval = false;
 
 	if (path != NULL && path[0] != 0) {
-		
+
 		// Check for drive designation
 		retval = bool(path[1] == ':');
 
@@ -299,7 +299,7 @@ FileClass * SimpleFileFactoryClass::Get_File( char const *filename )
 
 		// END SERIALIZATION
 	}
-	
+
 	file->Set_Name( new_name );	// Call Set_Name to force an allocated name
 	return file;
 }

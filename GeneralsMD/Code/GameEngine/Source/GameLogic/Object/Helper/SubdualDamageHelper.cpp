@@ -37,8 +37,8 @@
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-SubdualDamageHelper::SubdualDamageHelper( Thing *thing, const ModuleData *modData ) : ObjectHelper( thing, modData ) 
-{ 
+SubdualDamageHelper::SubdualDamageHelper( Thing *thing, const ModuleData *modData ) : ObjectHelper( thing, modData )
+{
 	m_healingStepCountdown = 0;
 
 	setWakeFrame(getObject(), UPDATE_SLEEP_FOREVER);
@@ -69,7 +69,7 @@ UpdateSleepTime SubdualDamageHelper::update()
 	body->attemptDamage(&removeSubdueDamage);
 
 	if( body->hasAnySubdualDamage() )
-		return UPDATE_SLEEP_NONE; 
+		return UPDATE_SLEEP_NONE;
 	else
 		return UPDATE_SLEEP_FOREVER;
 }

@@ -17,22 +17,22 @@
 */
 
 /* $Header: /Commando/Code/Tools/max2w3d/w3dutil.h 29    10/26/00 5:59p Greg_h $ */
-/*********************************************************************************************** 
- ***                            Confidential - Westwood Studios                              *** 
- *********************************************************************************************** 
- *                                                                                             * 
- *                 Project Name : Commando Tools - W3D export                                  * 
- *                                                                                             * 
- *                     $Archive:: /Commando/Code/Tools/max2w3d/w3dutil.h                      $* 
- *                                                                                             * 
- *                      $Author:: Greg_h                                                      $* 
- *                                                                                             * 
- *                     $Modtime:: 10/26/00 4:40p                                              $* 
- *                                                                                             * 
- *                    $Revision:: 29                                                          $* 
- *                                                                                             * 
- *---------------------------------------------------------------------------------------------* 
- * Functions:                                                                                  * 
+/***********************************************************************************************
+ ***                            Confidential - Westwood Studios                              ***
+ ***********************************************************************************************
+ *                                                                                             *
+ *                 Project Name : Commando Tools - W3D export                                  *
+ *                                                                                             *
+ *                     $Archive:: /Commando/Code/Tools/max2w3d/w3dutil.h                      $*
+ *                                                                                             *
+ *                      $Author:: Greg_h                                                      $*
+ *                                                                                             *
+ *                     $Modtime:: 10/26/00 4:40p                                              $*
+ *                                                                                             *
+ *                    $Revision:: 29                                                          $*
+ *                                                                                             *
+ *---------------------------------------------------------------------------------------------*
+ * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 
@@ -66,7 +66,7 @@ struct W3dExportOptionsStruct
 	bool		ExportHierarchy;
 	bool		LoadHierarchy;
 	bool		ExportAnimation;
-	bool		ExportGeometry;	
+	bool		ExportGeometry;
 
 	// Hierarchy Export options:
 	bool		TranslationOnly;
@@ -76,7 +76,7 @@ struct W3dExportOptionsStruct
 	// Animation Export options:
 	int		StartFrame;
 	int		EndFrame;
-	
+
 	// Geometry Export options;
 	bool		UseVoxelizer;
 

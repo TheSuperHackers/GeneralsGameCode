@@ -24,12 +24,12 @@
 
 // FILE: W3DProgressBar.cpp ///////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:   RTS3
@@ -161,12 +161,12 @@ void W3DGadgetProgressBarDraw( GameWindow *window, WinInstanceData *instData )
 			end.y = start.y + size.y - 2;
 //			TheWindowManager->winOpenRect( barColor, WIN_DRAW_LINE_WIDTH,
 //																		 start.x, start.y, end.x, end.y );
-			
+
 			if(end.x- start.x > 1  )
 			{
 				TheWindowManager->winFillRect( barColor,WIN_DRAW_LINE_WIDTH,
 																		 start.x, start.y, end.x, end.y );
-			
+
 				TheWindowManager->winDrawLine(GameMakeColor(255,255,255,255),WIN_DRAW_LINE_WIDTH, start.x, start.y, end.x, start.y);
 				TheWindowManager->winDrawLine(GameMakeColor(200,200,200,255),WIN_DRAW_LINE_WIDTH, start.x, start.y, start.x, end.y);
 			}
@@ -175,7 +175,7 @@ void W3DGadgetProgressBarDraw( GameWindow *window, WinInstanceData *instData )
 
 	}  // end if
 
-  
+
 
 }  // end W3DGadgetProgressBarDraw
 
@@ -214,7 +214,7 @@ void W3DGadgetProgressBarImageDrawA( GameWindow *window, WinInstanceData *instDa
 	Int x = origin.x;
 	for( i = 0; i < pieces; i ++)
 	{
-				
+
 				TheWindowManager->winDrawImage( barCenter,
 																				x, origin.y,
 																				x + width, origin.y + size.y );
@@ -227,7 +227,7 @@ void W3DGadgetProgressBarImageDrawA( GameWindow *window, WinInstanceData *instDa
 void W3DGadgetProgressBarImageDraw( GameWindow *window, WinInstanceData *instData )
 {
 	ICoord2D origin, size, start, end;
-	const Image *backLeft, *backRight, *backCenter, 
+	const Image *backLeft, *backRight, *backCenter,
 				 *barRight, *barCenter;//*backSmallCenter,*barLeft,, *barSmallCenter;
 	Int progress = (Int)window->winGetUserData();
 	Int xOffset, yOffset;
@@ -320,7 +320,7 @@ void W3DGadgetProgressBarImageDraw( GameWindow *window, WinInstanceData *instDat
 	{
 
 		end.x = start.x + backCenter->getImageWidth();
-		TheWindowManager->winDrawImage( backCenter, 
+		TheWindowManager->winDrawImage( backCenter,
 																		start.x, start.y,
 																		end.x, end.y );
 		start.x += backCenter->getImageWidth();
@@ -336,7 +336,7 @@ void W3DGadgetProgressBarImageDraw( GameWindow *window, WinInstanceData *instDat
 //	pieces = centerWidth / backCenter->getImageWidth() + 1;
 //	end.y = start.y + size.y;
 //	IRegion2D clipRegion;
-//	
+//
 //	TheDisplay->setClipRegion()
 //	for( i = 0; i < pieces; i++ )
 //	{
@@ -378,12 +378,12 @@ void W3DGadgetProgressBarImageDraw( GameWindow *window, WinInstanceData *instDat
 	end.y = start.y + size.y;
 	TheWindowManager->winDrawImage(backRight, start.x, start.y, end.x, end.y);
 
-	
+
 	ICoord2D barWindowSize;  // end point of bar from window origin
 
 	barWindowSize.x = ((size.x - 20) * progress) / 100;
 	barWindowSize.y = size.y;
-		
+
 	pieces = barWindowSize.x / barCenter->getImageWidth();
  	// draw the pieces
 	start.x = origin.x +10;
@@ -393,7 +393,7 @@ void W3DGadgetProgressBarImageDraw( GameWindow *window, WinInstanceData *instDat
 	{
 
 		end.x = start.x + barCenter->getImageWidth();
-		TheWindowManager->winDrawImage( barCenter, 
+		TheWindowManager->winDrawImage( barCenter,
 																		start.x, start.y,
 																		end.x, end.y );
 		start.x += barCenter->getImageWidth();
@@ -407,7 +407,7 @@ void W3DGadgetProgressBarImageDraw( GameWindow *window, WinInstanceData *instDat
 	{
 
 		end.x = start.x + barRight->getImageWidth();
-		TheWindowManager->winDrawImage( barRight, 
+		TheWindowManager->winDrawImage( barRight,
 																		start.x, start.y,
 																		end.x, end.y );
 		start.x += barRight->getImageWidth();

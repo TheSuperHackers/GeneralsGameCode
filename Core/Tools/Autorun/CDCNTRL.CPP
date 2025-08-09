@@ -364,7 +364,7 @@ bool CDControlClass::Prevent_Removal_Of_Volume( HANDLE volume, bool prevent )
 
 	unsigned long bytes_returned;
 	PREVENT_MEDIA_REMOVAL pmrbuffer;
-		
+
 	pmrbuffer.PreventMediaRemoval = prevent;
 
 	bool result = ((DeviceIoControl( volume, IOCTL_STORAGE_MEDIA_REMOVAL, &pmrbuffer, sizeof(PREVENT_MEDIA_REMOVAL), NULL, 0, &bytes_returned, NULL)) ? true : false);
@@ -1081,28 +1081,28 @@ bool WINAPI CDControlClass::Unlock_Logical_Volume (HANDLE vwin32, char drive)
 
 void Last_Error_Text ( LPCTSTR szPrefix, HRESULT hr )
 {
-	LPVOID		szMessage; 
+	LPVOID		szMessage;
 	char		szDisplay[1000];
-	
-	if ( hr == S_OK ) { 
-		_stprintf( szDisplay, TEXT("%s"), szPrefix ); 
+
+	if ( hr == S_OK ) {
+		_stprintf( szDisplay, TEXT("%s"), szPrefix );
 //		MessageBox( NULL, szDisplay, TEXT("Msg"),0 );
 		return;
-	} 
+	}
 
 	if ( HRESULT_FACILITY( hr ) == FACILITY_WIN32 ) {
 		hr = HRESULT_CODE( hr );
 	}
-	FormatMessage( 
-			FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM, 
+	FormatMessage(
+			FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM,
 			NULL,
-			hr, 
+			hr,
 			MAKELANGID( LANG_NEUTRAL, SUBLANG_DEFAULT ),
 			(LPTSTR)&szMessage,
 			0,
 			NULL );
 
-	_stprintf( szDisplay, TEXT( "%s: %s(%lx)" ), szPrefix, szMessage, hr ); 
+	_stprintf( szDisplay, TEXT( "%s: %s(%lx)" ), szPrefix, szMessage, hr );
 
 	Msg( __LINE__, TEXT(__FILE__), TEXT("GetLastError: %s"), szDisplay );
 //	MessageBox( NULL, szDisplay, TEXT( "GetLastError" ), MB_OK );

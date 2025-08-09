@@ -54,10 +54,10 @@ public:
 		m_useSpawnRallyPoint = false;
 	}
 
-	static void buildFieldParse(MultiIniFieldParse& p) 
+	static void buildFieldParse(MultiIniFieldParse& p)
 	{
     UpdateModuleData::buildFieldParse(p);
-		static const FieldParse dataFieldParse[] = 
+		static const FieldParse dataFieldParse[] =
 		{
 			{ "UnitCreatePoint",		INI::parseCoord3D,		NULL, offsetof( DefaultProductionExitUpdateModuleData, m_unitCreatePoint ) },
 			{ "NaturalRallyPoint",  INI::parseCoord3D,		NULL, offsetof( DefaultProductionExitUpdateModuleData, m_naturalRallyPoint ) },

@@ -116,7 +116,7 @@ void WOLCustomScoreScreenUpdate( WindowLayout * layout, void *userData)
 WindowMsgHandledType WOLCustomScoreScreenInput( GameWindow *window, UnsignedInt msg,
 																			 WindowMsgData mData1, WindowMsgData mData2 )
 {
-	switch( msg ) 
+	switch( msg )
 	{
 
 		// --------------------------------------------------------------------------------------------
@@ -131,14 +131,14 @@ WindowMsgHandledType WOLCustomScoreScreenInput( GameWindow *window, UnsignedInt 
 				// ----------------------------------------------------------------------------------------
 				case KEY_ESC:
 				{
-					
+
 					//
 					// send a simulated selected event to the parent window of the
 					// back/exit button
 					//
 					if( BitIsSet( state, KEY_STATE_UP ) )
 					{
-						TheWindowManager->winSendSystemMsg( window, GBM_SELECTED, 
+						TheWindowManager->winSendSystemMsg( window, GBM_SELECTED,
 																							(WindowMsgData)buttonDisconnect, buttonDisconnectID );
 
 					}  // end if
@@ -160,7 +160,7 @@ WindowMsgHandledType WOLCustomScoreScreenInput( GameWindow *window, UnsignedInt 
 //-------------------------------------------------------------------------------------------------
 /** WOL Status Menu window system callback */
 //-------------------------------------------------------------------------------------------------
-WindowMsgHandledType WOLCustomScoreScreenSystem( GameWindow *window, UnsignedInt msg, 
+WindowMsgHandledType WOLCustomScoreScreenSystem( GameWindow *window, UnsignedInt msg,
 														 WindowMsgData mData1, WindowMsgData mData2 )
 {
 	UnicodeString txtInput;
@@ -170,7 +170,7 @@ WindowMsgHandledType WOLCustomScoreScreenSystem( GameWindow *window, UnsignedInt
 
 		case GWM_CREATE:
 			{
-				
+
 				break;
 			} // case GWM_DESTROY:
 
@@ -180,7 +180,7 @@ WindowMsgHandledType WOLCustomScoreScreenSystem( GameWindow *window, UnsignedInt
 			} // case GWM_DESTROY:
 
 		case GWM_INPUT_FOCUS:
-			{	
+			{
 				// if we're given the opportunity to take the keyboard focus we must say we want it
 				if( mData1 == TRUE )
 					*(Bool *)mData2 = TRUE;
@@ -218,7 +218,7 @@ WindowMsgHandledType WOLCustomScoreScreenSystem( GameWindow *window, UnsignedInt
 				*/
 				break;
 			}// case GBM_SELECTED:
-	
+
 		case GEM_EDIT_DONE:
 			{
 				break;

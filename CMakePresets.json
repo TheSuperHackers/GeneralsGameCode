@@ -45,6 +45,15 @@
             }
         },
         {
+            "name": "vc6-releaselog",
+            "displayName": "Windows 32bit VC6 Release Logging",
+            "inherits": "vc6",
+            "cacheVariables": {
+                "RTS_DEBUG_LOGGING": "ON",
+                "RTS_DEBUG_CRASHING": "ON"
+            }
+        },
+        {
             "name": "default",
             "displayName": "Default Config (don't use directly!)",
             "generator": "Ninja Multi-Config",
@@ -164,6 +173,12 @@
             "description": "Build Windows 32bit VC6 Debug"
         },
         {
+            "name": "vc6-releaselog",
+            "configurePreset": "vc6-releaselog",
+            "displayName": "Build Windows 32bit VC6 Release Logging",
+            "description": "Build Windows 32bit VC6 Release Logging"
+        },
+        {
             "name": "win32",
             "configurePreset": "win32",
             "displayName": "Build Windows 32bit Release",
@@ -250,6 +265,19 @@
                 {
                     "type": "build",
                     "name": "vc6-profile"
+                }
+            ]
+        },
+        {
+            "name": "vc6-releaselog",
+            "steps": [
+                {
+                    "type": "configure",
+                    "name": "vc6-releaselog"
+                },
+                {
+                    "type": "build",
+                    "name": "vc6-releaselog"
                 }
             ]
         },

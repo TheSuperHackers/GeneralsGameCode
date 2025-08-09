@@ -62,32 +62,32 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // ParticleBlurTimeKeyDialogClass message handlers
 
-BOOL ParticleBlurTimeKeyDialogClass::OnInitDialog() 
+BOOL ParticleBlurTimeKeyDialogClass::OnInitDialog()
 {
 	CDialog::OnInitDialog();
-	
+
 	Initialize_Spinner (m_BlurTimeSpin, m_BlurTime, -1024, 1024);
-	
+
 	return TRUE;  // return TRUE unless you set the focus to a control
 	              // EXCEPTION: OCX Property Pages should return FALSE
 }
 
-BOOL ParticleBlurTimeKeyDialogClass::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult) 
+BOOL ParticleBlurTimeKeyDialogClass::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult)
 {
 	//
 	//	Update the spinner control if necessary
 	//
 	NMHDR *pheader = (NMHDR *)lParam;
 	if ((pheader != NULL) && (pheader->code == UDN_DELTAPOS)) {
-		LPNMUPDOWN pupdown = (LPNMUPDOWN)lParam;		
+		LPNMUPDOWN pupdown = (LPNMUPDOWN)lParam;
 		::Update_Spinner_Buddy (pheader->hwndFrom, pupdown->iDelta);
 	}
-	
+
 	return CDialog::OnNotify(wParam, lParam, pResult);
 }
 
-void ParticleBlurTimeKeyDialogClass::OnOk2() 
+void ParticleBlurTimeKeyDialogClass::OnOk2()
 {
 	m_BlurTime = GetDlgItemFloat(m_hWnd,IDC_BLUR_TIME_EDIT);
-	CDialog::OnOK();	
+	CDialog::OnOK();
 }

@@ -167,7 +167,7 @@ void FontLibrary::init( void )
 void FontLibrary::reset( void )
 {
 
-	// delete all font data 
+	// delete all font data
 	deleteAllFonts();
 
 }  // end reset
@@ -186,7 +186,7 @@ GameFont *FontLibrary::getFont( AsciiString name, Int pointSize, Bool bold )
 
 		if( font->pointSize == pointSize &&
 				font->bold == bold &&
-				font->nameString == name 
+				font->nameString == name
 			)
 			return font;  // found
 

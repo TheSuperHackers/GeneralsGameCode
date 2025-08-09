@@ -24,12 +24,12 @@
 
 // FILE: ArmorUpgrade.cpp /////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Electronic Arts Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2002 - All Rights Reserved                  
-//                                                                          
+//
+//                       Electronic Arts Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2002 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 //	created:	May 2002
@@ -37,8 +37,8 @@
 //	Filename: 	ArmorUpgrade.cpp
 //
 //	author:		Chris Brue
-//	
-//	purpose:	
+//
+//	purpose:
 //
 //-----------------------------------------------------------------------------
 ///////////////////////////////////////////////////////////////////////////////
@@ -86,7 +86,7 @@ ArmorUpgrade::~ArmorUpgrade( void )
 //-------------------------------------------------------------------------------------------------
 void ArmorUpgrade::upgradeImplementation( )
 {
-	// Very simple; just need to flag the Object as having the player upgrade, and the WeaponSet chooser 
+	// Very simple; just need to flag the Object as having the player upgrade, and the WeaponSet chooser
 	// will do the work of picking the right one from ini.  This comment is as long as the code.
 	// STILL IN PROGRESS
 	Object *obj = getObject();
