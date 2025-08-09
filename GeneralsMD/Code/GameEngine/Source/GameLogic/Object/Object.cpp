@@ -5435,7 +5435,8 @@ void Object::doCommandButton( const CommandButton *commandButton, CommandSourceT
 					{
 						setWeaponLock( commandButton->getWeaponSlot(), LOCKED_TEMPORARILY );
 						//LOCATION BASED FIRE WEAPON
-						ai->aiAttackPosition( NULL, commandButton->getMaxShotsToFire(), cmdSource );
+						// TheSuperHackers @bugfix Caball009 09/08/2025 Position should be irrelevant, but aiAttackPosition requires a valid position pointer to avoid a crash.
+						ai->aiAttackPosition( getPosition(), commandButton->getMaxShotsToFire(), cmdSource );
 					}
 					else
 					{
