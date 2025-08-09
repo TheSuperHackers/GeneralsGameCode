@@ -48,6 +48,7 @@
 #include "Common/version.h"
 
 CONSTEXPR const char s_genrep[] = "GENREP";
+CONSTEXPR const UnsignedInt replayBufferSize = 8192;	// TheSuperHackers @info buffersize is in bytes
 
 Int REPLAY_CRC_INTERVAL = 100;
 
@@ -847,7 +848,12 @@ Bool RecorderClass::readReplayHeader(ReplayHeader& header)
 	AsciiString filepath = getReplayDir();
 	filepath.concat(header.filename.str());
 
-	m_file = TheFileSystem->openFile(filepath.str(), File::READ | File::BINARY );
+	if (header.forPlayback) {
+		m_file = TheFileSystem->openFile(filepath.str(), File::READ | File::BINARY, replayBufferSize);
+	}
+	else {
+		m_file = TheFileSystem->openFile(filepath.str(), File::READ | File::BINARY);
+	}
 
 	if (m_file == NULL)
 	{
