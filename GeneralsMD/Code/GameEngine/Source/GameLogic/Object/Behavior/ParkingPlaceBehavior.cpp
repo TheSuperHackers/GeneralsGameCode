@@ -159,6 +159,7 @@ void ParkingPlaceBehavior::purgeDead()
 				{
 					it->m_objectInSpace = INVALID_ID;
 					it->m_reservedForExit = false;
+					it->m_deferredRunwayReservationForTakeoff = false;
 					if (pu)
 						pu->setHoldDoorOpen(it->m_door, false);
 				}
@@ -469,17 +470,42 @@ void ParkingPlaceBehavior::transferRunwayReservationToNextInLineForTakeoff(Objec
 }
 
 //-------------------------------------------------------------------------------------------------
+Bool ParkingPlaceBehavior::deferUnsequencedRunwayReservationForTakeoff(UnsignedInt spaceIndex, Bool forLanding)
+{
+	if (m_spaces.size() > m_runways.size() && spaceIndex >= m_runways.size())
+	{
+		Bool& deferred = m_spaces[spaceIndex].m_deferredRunwayReservationForTakeoff;
+		if (forLanding)
+		{
+			deferred = false;
+		}
+		else if (!deferred)
+		{
+			deferred = true;
+			return true;
+		}
+	}
+
+	return false;
+}
+
+//-------------------------------------------------------------------------------------------------
 Bool ParkingPlaceBehavior::reserveRunway(ObjectID id, Bool forLanding)
 {
 	buildInfo();
 	purgeDead();
 
 	Int runway = -1;
-	for (std::vector<ParkingPlaceInfo>::iterator it = m_spaces.begin(); it != m_spaces.end(); ++it)
+	for (UnsignedInt i = 0; i < m_spaces.size(); ++i)
 	{
-		if (it->m_objectInSpace == id)
+		if (m_spaces[i].m_objectInSpace == id)
 		{
-			runway = it->m_runway;
+#if !RETAIL_COMPATIBLE_CRC
+			if (deferUnsequencedRunwayReservationForTakeoff(i, forLanding))
+				return false;
+#endif
+
+			runway = m_spaces[i].m_runway;
 			break;
 		}
 	}
