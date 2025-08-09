@@ -3436,6 +3436,14 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 					Drawable *draw = TheTacticalView->pickDrawable(&msg->getArgument(0)->pixelRegion.lo,
 																													TheInGameUI->isInForceAttackMode(),
 																													(PickType) pickType);
+					
+					// TheSuperHackers @bugfix Stubbjax 07/08/2025 Prevent dead units blocking positional context commands
+					Object* obj = draw ? draw->getObject() : NULL;
+					if (!obj || (obj->isEffectivelyDead() && !obj->isKindOf(KINDOF_ALWAYS_SELECTABLE)))
+					{
+						draw = NULL;
+					}
+
 					if (TheInGameUI->isInForceAttackMode()) {
 						evaluateForceAttack( draw, &pos, DO_COMMAND );
 					} else {
@@ -3489,6 +3497,13 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 				Drawable *draw = TheTacticalView->pickDrawable(&msg->getArgument(0)->pixelRegion.lo,
 																												TheInGameUI->isInForceAttackMode(),
 																												(PickType) pickType);
+				
+				// TheSuperHackers @bugfix Stubbjax 07/08/2025 Prevent dead units blocking positional context commands
+				Object* obj = draw ? draw->getObject() : NULL;
+				if (!obj || (obj->isEffectivelyDead() && !obj->isKindOf(KINDOF_ALWAYS_SELECTABLE)))
+				{
+					draw = NULL;
+				}
 
 				if (TheInGameUI->isInForceAttackMode()) {
 					evaluateForceAttack( draw, &pos, DO_COMMAND );
