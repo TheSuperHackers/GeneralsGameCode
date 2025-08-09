@@ -109,7 +109,8 @@ void FireWeaponPower::doSpecialPower( UnsignedInt commandOptions )
 	AIUpdateInterface *ai = self->getAI();
 	if( ai )
 	{
-		ai->aiAttackPosition( NULL, data->m_maxShotsToFire, CMD_FROM_AI );
+		// TheSuperHackers @bugfix Caball009 09/08/2025 Position should be irrelevant, but aiAttackPosition requires a valid position pointer to avoid a crash.
+		ai->aiAttackPosition( self->getPosition(), data->m_maxShotsToFire, CMD_FROM_AI );
 
 		//Order any turrets to attack as well.
 		for( Int i = 0; i < MAX_TURRETS; i++ )
