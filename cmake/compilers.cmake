@@ -4,6 +4,7 @@ message(STATUS "CMAKE_CXX_COMPILER: ${CMAKE_CXX_COMPILER}")
 message(STATUS "CMAKE_CXX_COMPILER_ID: ${CMAKE_CXX_COMPILER_ID}")
 message(STATUS "CMAKE_CXX_COMPILER_VERSION: ${CMAKE_CXX_COMPILER_VERSION}")
 message(STATUS "CMAKE_INSTALL_PREFIX: ${CMAKE_INSTALL_PREFIX}")
+
 if (DEFINED MSVC_VERSION)
     message(STATUS "MSVC_VERSION: ${MSVC_VERSION}")
 endif()
@@ -15,42 +16,53 @@ else()
     set(IS_VS6_BUILD FALSE)
 endif()
 
-# Make release builds have debug information too.
 if(MSVC)
-    # Create PDB for Release as long as debug info was generated during compile.
-    string(APPEND CMAKE_EXE_LINKER_FLAGS_RELEASE " /DEBUG /OPT:REF /OPT:ICF")
-    string(APPEND CMAKE_SHARED_LINKER_FLAGS_RELEASE " /DEBUG /OPT:REF /OPT:ICF")
-    
     # /INCREMENTAL:NO prevents PDB size bloat in Debug configuration(s).
     add_link_options("/INCREMENTAL:NO")
-else()
-    # We go a bit wild here and assume any other compiler we are going to use supports -g for debug info.
-    string(APPEND CMAKE_CXX_FLAGS_RELEASE " -g")
-    string(APPEND CMAKE_C_FLAGS_RELEASE " -g")
-endif()
+    # Generate debug information for all builds
+    add_link_options("/debug")
 
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_EXTENSIONS OFF)  # Ensures only ISO features are used
+    set(CMAKE_CONFIGURATION_TYPES "Release;Debug")
+    set(CMAKE_MSVC_DEBUG_INFORMATION_FORMAT "ProgramDatabase")
+    set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")
 
-if (NOT IS_VS6_BUILD)
-    if (MSVC)
-        # Multithreaded build.
-        add_compile_options(/MP)
-        # Enforce strict __cplusplus version
+    set(CMAKE_CXX_FLAGS  "/DWIN32 /D_WINDOWS /EHac")
+    set(CMAKE_C_FLAGS  "/DWIN32 /D_WINDOWS")
+
+    if(IS_VS6_BUILD)
+        set(CMAKE_MSVC_DEBUG_INFORMATION_FORMAT "$<$<CONFIG:Release>:>$<$<CONFIG:Debug>:ProgramDatabase>")
+        
+        # So only one link ever runs (since vc6 can't handle multithreaded linking)
+        set_property(GLOBAL PROPERTY JOB_POOLS link=1)
+        set(CMAKE_JOB_POOL_LINK link)
+
+        # Tell the linker to place the debug information in a single .PDB file
+        add_link_options("/pdbtype:con")
+        # Tell the linker to use both coff and cv debug info
+        add_link_options("/debugtype:both")
+        # Prevent heap from running out of memory 
+        add_compile_options("/Zm800")
+        # Make precompiled headers debug information accessible
+        add_compile_options("/Yd")
+        # Include line numbers in debug information
+        add_compile_options("$<$<CONFIG:Release>:/Zd>")
+    else()
+        # Multithreaded build with Visual Studio Generator (ninja is multithreaded by default)
+        if(CMAKE_GENERATOR MATCHES "Visual Studio")
+            add_compile_options("/MP")
+        endif()
+        # Set __cplusplus macro to correct value
         add_compile_options(/Zc:__cplusplus)
     endif()
 else()
-    if(RTS_BUILD_OPTION_VC6_FULL_DEBUG)
-        set_property(GLOBAL PROPERTY JOB_POOLS compile=1 link=1)
-    else()
-        # Define two pools: 'compile' with plenty of slots, 'link' with just one
-        set_property(GLOBAL PROPERTY JOB_POOLS compile=0 link=1)
-    endif()
+        # We go a bit wild here and assume any other compiler we are going to use supports -g for debug info.
+        add_compile_options("-g")
+endif()
 
-    # Tell CMake that all compile steps go into 'compile'
-    set(CMAKE_JOB_POOL_COMPILE compile)
-    # and all link steps go into 'link' (so only one link ever runs since vc6 can't handle multithreaded linking)
-    set(CMAKE_JOB_POOL_LINK link)
+if(NOT IS_VS6_BUILD)
+    set(CMAKE_CXX_STANDARD 20)
+    set(CMAKE_CXX_STANDARD_REQUIRED ON)
+    set(CMAKE_CXX_EXTENSIONS OFF)  # Ensures only ISO features are used
 endif()
 
 if(RTS_BUILD_OPTION_ASAN)

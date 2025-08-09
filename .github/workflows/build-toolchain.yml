@@ -11,10 +11,14 @@ on:
         required: true
         type: string
         description: "Game to build (Generals, GeneralsMD)"
-      preset:
+      configurePreset:
         required: true
         type: string
-        description: "CMake preset"
+        description: "CMake configure preset"
+      buildPreset:
+        required: true
+        type: string
+        description: "CMake build preset"
       tools:
         required: false
         default: true
@@ -25,10 +29,9 @@ on:
         default: false
         type: boolean
         description: "Build extras"
-
 jobs:
   build:
-    name: ${{ inputs.preset }}${{ inputs.tools && '+t' || '' }}${{ inputs.extras && '+e' || '' }}
+    name: ${{ inputs.game }} ${{ inputs.configurePreset }} ${{ inputs.buildPreset }}${{ inputs.tools && '+t' || '' }}${{ inputs.extras && '+e' || '' }}
     runs-on: windows-2022
     timeout-minutes: 20
     steps:
@@ -36,7 +39,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Cache VC6 Installation
-        if: startsWith(inputs.preset, 'vc6')
+        if: startsWith(inputs.buildPreset, 'vc6')
         id: cache-vc6
         uses: actions/cache@v4
         with:
@@ -47,11 +50,11 @@ jobs:
         id: cache-cmake-deps
         uses: actions/cache@v4
         with:
-          path: build\${{ inputs.preset }}\_deps
-          key: cmake-deps-${{ inputs.preset }}-${{ hashFiles('CMakePresets.json','cmake/**/*.cmake','**/CMakeLists.txt') }}
+          path: build\${{ inputs.buildPreset }}\_deps
+          key: cmake-deps-${{ inputs.buildPreset }}-${{ hashFiles('CMakePresets.json','cmake/**/*.cmake','**/CMakeLists.txt') }}
 
       - name: Download VC6 Portable from Cloudflare R2
-        if: ${{ startsWith(inputs.preset, 'vc6') && steps.cache-vc6.outputs.cache-hit != 'true' }}
+        if: ${{ startsWith(inputs.buildPreset, 'vc6') && steps.cache-vc6.outputs.cache-hit != 'true' }}
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
@@ -76,26 +79,14 @@ jobs:
           Remove-Item VS6_VisualStudio6.7z -Verbose
 
       - name: Set Up VC6 Environment
-        if: startsWith(inputs.preset, 'vc6')
+        if: startsWith(inputs.buildPreset, 'vc6')
         shell: pwsh
         run: |
-          # Define the base directories as local variables first
-          $VSCommonDir = "C:\VC6\VC6SP6\Common"
-          $MSDevDir = "C:\VC6\VC6SP6\Common\msdev98"
-          $MSVCDir = "C:\VC6\VC6SP6\VC98"
-          $VcOsDir = "WINNT"
-
-          # Set the variables in GitHub environment
-          "VSCommonDir=$VSCommonDir" >> $env:GITHUB_ENV
-          "MSDevDir=$MSDevDir" >> $env:GITHUB_ENV
-          "MSVCDir=$MSVCDir" >> $env:GITHUB_ENV
-          "VcOsDir=$VcOsDir" >> $env:GITHUB_ENV
-          "PATH=$MSDevDir\BIN;$MSVCDir\BIN;$VSCommonDir\TOOLS\$VcOsDir;$VSCommonDir\TOOLS;$env:PATH" >> $env:GITHUB_ENV
-          "INCLUDE=$MSVCDir\ATL\INCLUDE;$MSVCDir\INCLUDE;$MSVCDir\MFC\INCLUDE;$env:INCLUDE" >> $env:GITHUB_ENV
-          "LIB=$MSVCDir\LIB;$MSVCDir\MFC\LIB;$env:LIB" >> $env:GITHUB_ENV
+          $VS6_DIR = "C:\VC6\VC6SP6"
+          "VS6_DIR=$VS6_DIR" >> $env:GITHUB_ENV
 
       - name: Set Up VC2022 Environment
-        if: startsWith(inputs.preset, 'win32')
+        if: ${{ !startsWith(inputs.buildPreset, 'vc6') }}
         uses: ilammy/msvc-dev-cmd@v1
         with:
           arch: x86
@@ -103,12 +94,12 @@ jobs:
       - name: Setup vcpkg
         uses: lukka/run-vcpkg@v11
 
-      - name: Configure ${{ inputs.game }} with CMake Using ${{ inputs.preset }}${{ inputs.tools && '+t' || '' }}${{ inputs.extras && '+e' || '' }} Preset
+      - name: Configure ${{ inputs.game }} with CMake Using ${{ inputs.configurePreset }}${{ inputs.tools && '+t' || '' }}${{ inputs.extras && '+e' || '' }} Preset
         shell: pwsh
         run: |
           $buildFlags = @(
-          "-DRTS_BUILD_ZEROHOUR=${{ inputs.game == 'GeneralsMD' && 'ON' || 'OFF' }}",
-          "-DRTS_BUILD_GENERALS=${{ inputs.game == 'Generals' && 'ON' || 'OFF' }}"
+            "-DRTS_BUILD_ZEROHOUR=${{ inputs.game == 'GeneralsMD' && 'ON' || 'OFF' }}",
+            "-DRTS_BUILD_GENERALS=${{ inputs.game == 'Generals' && 'ON' || 'OFF' }}"
           )
 
           $gamePrefix = "${{ inputs.game == 'Generals' && 'GENERALS' || 'ZEROHOUR' }}"
@@ -118,33 +109,26 @@ jobs:
           $buildFlags += "-DRTS_BUILD_${gamePrefix}_EXTRAS=${{ inputs.extras && 'ON' || 'OFF' }}"
 
           Write-Host "Build flags: $($buildFlags -join ' | ')"
+          cmake --preset ${{ inputs.configurePreset }} $($buildFlags -join ' ')
 
-          cmake --preset ${{ inputs.preset }} $buildFlags
-
-      - name: Build ${{ inputs.game }} with CMake Using ${{ inputs.preset }}${{ inputs.tools && '+t' || '' }}${{ inputs.extras && '+e' || '' }} Preset
+      - name: Build ${{ inputs.game }} with CMake Using ${{ inputs.buildPreset }}${{ inputs.tools && '+t' || '' }}${{ inputs.extras && '+e' || '' }} Preset
         shell: pwsh
         run: |
-          cmake --build --preset ${{ inputs.preset }}
+          cmake --build --preset ${{ inputs.buildPreset }}
 
-      - name: Collect ${{ inputs.game }} ${{ inputs.preset }}${{ inputs.tools && '+t' || '' }}${{ inputs.extras && '+e' || '' }} Artifact
+      - name: Collect ${{ inputs.game }} ${{ inputs.buildPreset }}${{ inputs.tools && '+t' || '' }}${{ inputs.extras && '+e' || '' }} Artifact
         shell: pwsh
         run: |
-          $buildDir = "build\${{ inputs.preset }}"
+          $buildDir = "build\${{ inputs.configurePreset }}"
           $artifactsDir = New-Item -ItemType Directory -Force -Path "$buildDir\${{ inputs.game }}\artifacts" -Verbose
-
-            if ("${{ inputs.preset }}" -like "win32*") {
-            # For win32 preset, look in config-specific subdirectories
-            $configToUse = if ("${{ inputs.preset }}" -match "debug") { "Debug" } else { "Release" }
-            $files = Get-ChildItem -Path "$buildDir\Core\$configToUse","$buildDir\${{ inputs.game }}\$configToUse" -File | Where-Object { $_.Extension -in @(".exe", ".dll", ".pdb") } -Verbose
-            } else {
-            $files = Get-ChildItem -Path "$buildDir\Core","$buildDir\${{ inputs.game }}" -File | Where-Object { $_.Extension -in @(".exe", ".dll", ".pdb") } -Verbose
-          }
+          $configToUse = if ("${{ inputs.buildPreset }}" -match "relwithdebinfo") { "RelWithDebInfo" } elseif ("${{ inputs.buildPreset }}" -match "debug") { "Debug" } else { "Release" }
+          $files = Get-ChildItem -Path "$buildDir\Core\$configToUse","$buildDir\${{ inputs.game }}\$configToUse" -File | Where-Object { $_.Extension -in @(".exe", ".dll", ".pdb") } -Verbose
           $files | Move-Item -Destination $artifactsDir -Verbose -Force
 
-      - name: Upload ${{ inputs.game }} ${{ inputs.preset }}${{ inputs.tools && '+t' || '' }}${{ inputs.extras && '+e' || '' }} Artifact
+      - name: Upload ${{ inputs.game }} ${{ inputs.configurePreset }} ${{ inputs.buildPreset }}${{ inputs.tools && '+t' || '' }}${{ inputs.extras && '+e' || '' }} Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ inputs.game }}-${{ inputs.preset }}${{ inputs.tools && '+t' || '' }}${{ inputs.extras && '+e' || '' }}
-          path: build\${{ inputs.preset }}\${{ inputs.game }}\artifacts
+          name: ${{ inputs.game }}-${{ inputs.configurePreset }}-${{ inputs.buildPreset }}${{ inputs.tools && '+t' || '' }}${{ inputs.extras && '+e' || '' }}
+          path: build\${{ inputs.configurePreset }}\${{ inputs.game }}\artifacts
           retention-days: 30
           if-no-files-found: error
