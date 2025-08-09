@@ -1046,7 +1046,7 @@ void TextureLoadTaskClass::Begin_Texture_Load()
 			DDSFileClass dds_file(Texture->Get_Full_Path(),Get_Reduction());
 			if (dds_file.Is_Available()) {
 				// Destination size will be the next power of two square from the larger width and height...
-				unsigned width, height, depth;
+				unsigned width=0, height=0, depth=0; // Depth is not used.
 				width=dds_file.Get_Width(0);
 				height=dds_file.Get_Height(0);
 				TextureLoader::Validate_Texture_Size(width,height,depth);
@@ -1120,7 +1120,7 @@ void TextureLoadTaskClass::Begin_Texture_Load()
 			}
 
 			// Destination size will be the next power of two square from the larger width and height...
-			unsigned width=targa.Header.Width, height=targa.Header.Height, depth;
+			unsigned width=targa.Header.Width, height=targa.Header.Height, depth=0; // Depth is not used.
 			int ReductionFactor=Get_Reduction();
 			int MipLevels=0;
 
