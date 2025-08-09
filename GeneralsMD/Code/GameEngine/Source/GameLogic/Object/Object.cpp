@@ -5534,6 +5534,11 @@ void Object::doCommandButtonAtObject( const CommandButton *commandButton, Object
 		switch( commandButton->getCommandType() )
 		{
 			case GUI_COMMAND_COMBATDROP:
+#if RETAIL_COMPATIBLE_CRC
+				if (!obj)
+					return;
+#endif
+
 				if( ai )
 				{
 					ai->aiCombatDrop( obj, *(obj->getPosition()), cmdSource );
@@ -5541,6 +5546,11 @@ void Object::doCommandButtonAtObject( const CommandButton *commandButton, Object
 				return;
 			case GUI_COMMAND_SPECIAL_POWER:
 			{
+#if RETAIL_COMPATIBLE_CRC
+				if (!obj)
+					return;
+#endif
+				
 				if( commandButton->getSpecialPowerTemplate() )
 				{
 					CommandOption commandOptions = (CommandOption)(commandButton->getOptions() | COMMAND_FIRED_BY_SCRIPT);
