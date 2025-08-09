@@ -635,6 +635,7 @@ void LANAPI::RequestGameJoin( LANGameInfo *game, UnsignedInt ip /* = 0 */ )
 	GetStringFromRegistry("\\ergc", "", s);
 	strncpy(msg.GameToJoin.serial, s.str(), g_maxSerialLength);
 	msg.GameToJoin.serial[g_maxSerialLength-1] = '\0';
+	msg.GameToJoin.patchVersion = 1337;
 
 	sendMessage(&msg, ip);
 

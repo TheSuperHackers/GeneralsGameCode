@@ -177,7 +177,7 @@ void RefreshGameInfoWindow(GameInfo *gameInfo, UnicodeString gameName)
 		}
 		else if(slot->isHuman())
 		{
-			addedRow = GadgetListBoxAddEntryText(listBoxPlayers, slot->getName(),playerColor,-1,1);
+			addedRow = GadgetListBoxAddEntryText(listBoxPlayers, slot->getName(), (slot->getPatchVersion() >= 1337) ? 0xFFFFFF00 : playerColor, -1, 1);
 		}
 		Int playerTemplate = slot->getPlayerTemplate();
 		if(playerTemplate == PLAYERTEMPLATE_OBSERVER)

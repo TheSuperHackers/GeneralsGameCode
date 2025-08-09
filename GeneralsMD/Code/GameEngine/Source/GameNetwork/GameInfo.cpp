@@ -73,6 +73,7 @@ void GameSlot::reset()
 	m_origPlayerTemplate = -1;
 	m_origStartPos = -1;
 	m_origColor = -1;
+	m_patchVersion = 0;
 }
 
 void GameSlot::saveOffOriginalInfo( void )
@@ -921,8 +922,21 @@ AsciiString GameInfoToAsciiString( const GameInfo *game )
 		DEBUG_LOG(("Map name is %s", mapName.str()));
 	}
 
+	UnsignedByte patchedClients = 0;
+	{
+		for (Int i = 0; i < MAX_SLOTS; ++i)
+		{
+			const GameSlot* slot = game->getConstSlot(i);
+			if (slot && slot->isHuman() && (i == game->getLocalSlotNum() || slot->getPatchVersion() >= 1337))
+				patchedClients |= (1 << i);
+		}
+	}
+
+	AsciiString statsString;
+	statsString.format("%d P%cP", game->getUseStats() & 1, patchedClients);
+
 	AsciiString optionsString;
-	optionsString.format("US=%d;M=%2.2x%s;MC=%X;MS=%d;SD=%d;C=%d;SR=%u;SC=%u;O=%c;", game->getUseStats(), game->getMapContentsMask(), newMapName.str(),
+	optionsString.format("US=%s;M=%2.2x%s;MC=%X;MS=%d;SD=%d;C=%d;SR=%u;SC=%u;O=%c;", statsString.str(), game->getMapContentsMask(), newMapName.str(),
 		game->getMapCRC(), game->getMapSize(), game->getSeed(), game->getCRCInterval(), game->getSuperweaponRestriction(),
 		game->getStartingCash().countMoney(), game->oldFactionsOnly() ? 'Y' : 'N' );
 
@@ -1017,6 +1031,7 @@ Bool ParseAsciiStringToGameInfo(GameInfo *game, AsciiString options)
 	Int useStats = TRUE;
   Money startingCash = TheGlobalData->m_defaultStartingCash;
   UnsignedShort restriction = 0; // Always the default
+	UnsignedByte patchedClients = 0;
 
 	Bool sawMap, sawMapCRC, sawMapSize, sawSeed, sawSlotlist, sawUseStats, sawSuperweaponRestriction, sawStartingCash, sawOldFactions;
 	sawMap = sawMapCRC = sawMapSize = sawSeed = sawSlotlist = sawUseStats = sawSuperweaponRestriction = sawStartingCash = sawOldFactions = FALSE;
@@ -1050,6 +1065,9 @@ Bool ParseAsciiStringToGameInfo(GameInfo *game, AsciiString options)
 		{
 			useStats = atoi(val.str());
 			sawUseStats = true;
+
+			if (val.getLength() >= 5 && val.getCharAt(2) == 'P' && val.getCharAt(4) == 'P')
+				patchedClients = val.getCharAt(3);
 		}
 		else
 		if (key.compare("M") == 0)
@@ -1479,7 +1497,12 @@ Bool ParseAsciiStringToGameInfo(GameInfo *game, AsciiString options)
 		//DEBUG_LOG(("ParseAsciiStringToGameInfo - game options all good, setting info"));
 
 		for(Int i = 0; i<MAX_SLOTS; i++)
+		{
+			if (patchedClients & (1 << i))
+				newSlot[i].setPatchVersion(1337);
+
 			game->setSlot(i,newSlot[i]);
+		}
 
 		game->setMap(mapName);
 		game->setMapCRC(mapCRC);
