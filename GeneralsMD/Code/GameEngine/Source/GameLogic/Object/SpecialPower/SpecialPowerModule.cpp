@@ -178,6 +178,17 @@ void SpecialPowerModule::setReadyFrame( UnsignedInt frame )
 //-------------------------------------------------------------------------------------------------
 void SpecialPowerModule::resolveSpecialPower( void )
 {
+#if !RETAIL_COMPATIBLE_CRC
+	// TheSuperHackers @info some building based special powers are immediately available
+	// This means we need to set their available frame to the current frame to make them usable
+	// The check for a public timer excludes super weapons from the selection criteria
+	if (getSpecialPowerModuleData()->m_specialPowerTemplate->hasPublicTimer() == FALSE &&
+		getObject()->isKindOf(KINDOF_STRUCTURE)	)
+	{
+		m_availableOnFrame = TheGameLogic->getFrame();
+	}
+#endif
+
 	/*
 
 	// if we're pre-built, and not from a command center, and a building register us with the UI
