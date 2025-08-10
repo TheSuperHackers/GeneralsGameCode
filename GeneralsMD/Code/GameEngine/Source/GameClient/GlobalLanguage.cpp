@@ -191,10 +191,11 @@ void GlobalLanguage::parseFontFileName( INI *ini, void * instance, void *store, 
 
 Int GlobalLanguage::adjustFontSize(Int theFontSize)
 {
-	Real adjustFactor = TheGlobalData->m_xResolution / (Real)DEFAULT_DISPLAY_WIDTH;
-	adjustFactor = 1.0f + (adjustFactor-1.0f) * m_resolutionFontSizeAdjustment;
+	// TheSuperHackers @bugfix Mauller 25/08/2025 Scale fonts based on the smallest screen dimension so they are independent of aspect ratio
+	// We also rescale the font size adjustment to make the ingame fonts closer to what players have been used to with the original scaling
+	Real adjustFactor = min(TheGlobalData->m_xResolution / (Real)DEFAULT_DISPLAY_WIDTH, TheGlobalData->m_yResolution/ (Real)DEFAULT_DISPLAY_HEIGHT );
+	adjustFactor = 1.0f + (adjustFactor-1.0f) * ( 0.25f + m_resolutionFontSizeAdjustment );
 	if (adjustFactor<1.0f) adjustFactor = 1.0f;
-	if (adjustFactor>2.0f) adjustFactor = 2.0f;
 	Int pointSize = REAL_TO_INT_FLOOR(theFontSize*adjustFactor);
 	return pointSize;
 }
