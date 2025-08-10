@@ -45,7 +45,7 @@ set(GAMEENGINE_SRC
     Include/Common/GameDefines.h
 #    Include/Common/GameEngine.h
 #    Include/Common/GameLOD.h
-#    Include/Common/GameMemory.h
+    Include/Common/GameMemory.h
     Include/Common/GameMusic.h
     Include/Common/GameSounds.h
 #    Include/Common/GameSpyMiscPreferences.h
@@ -1139,18 +1139,18 @@ set(GAMEENGINE_SRC
 if(RTS_GAMEMEMORY_ENABLE)
     # Uses the original Game Memory implementation.
     list(APPEND GAMEENGINE_SRC
-#        Source/Common/System/GameMemory.cpp
-#        Source/Common/System/GameMemoryInit.cpp
-#        Source/Common/System/GameMemoryInitDMA_Generals.inl
-#        Source/Common/System/GameMemoryInitDMA_GeneralsMD.inl
-#        Source/Common/System/GameMemoryInitPools_Generals.inl
-#        Source/Common/System/GameMemoryInitPools_GeneralsMD.inl
+        Source/Common/System/GameMemory.cpp
+        Source/Common/System/GameMemoryInit.cpp
+        Source/Common/System/GameMemoryInitDMA_Generals.inl
+        Source/Common/System/GameMemoryInitDMA_GeneralsMD.inl
+        Source/Common/System/GameMemoryInitPools_Generals.inl
+        Source/Common/System/GameMemoryInitPools_GeneralsMD.inl
     )
 else()
     # Uses the null implementation when disabled.
     list(APPEND GAMEENGINE_SRC
-#        Source/Common/System/GameMemoryNull.cpp
-#        Include/Common/GameMemoryNull.h
+        Source/Common/System/GameMemoryNull.cpp
+        Include/Common/GameMemoryNull.h
     )
 endif()
 
