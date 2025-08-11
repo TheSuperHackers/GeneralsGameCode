@@ -1,375 +1,107 @@
 {
-    "version": 6,
-    "cmakeMinimumRequired": {
-        "major": 3,
-        "minor": 25,
-        "patch": 0
-    },
+    "version": 5,
     "configurePresets": [
         {
-            "name": "vc6",
-            "displayName": "Windows 32bit VC6 Release",
-            "generator": "Ninja",
-            "hidden": false,
+            "name": "default",
+            "generator": "Ninja Multi-Config",
             "binaryDir": "${sourceDir}/build/${presetName}",
+            "toolchainFile": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
             "cacheVariables": {
                 "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
-                "CMAKE_MSVC_RUNTIME_LIBRARY": "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL",
-                "CMAKE_MSVC_DEBUG_INFORMATION_FORMAT": "",
-                "CMAKE_BUILD_TYPE": "Release",
+                "VCPKG_TARGET_TRIPLET": "x86-windows",
                 "RTS_FLAGS": "/W3"
+            },
+            "architecture": {
+                "value": "Win32",
+                "strategy": "external"
             },
             "vendor": {
                 "jetbrains.com/clion": {
-                    "toolchain": "Visual Studio 6"
+                    "toolchain": "Visual Studio"
                 }
             }
         },
         {
-            "name": "vc6-profile",
-            "displayName": "Windows 32bit VC6 Profile",
-            "hidden": false,
-            "inherits": "vc6",
-            "cacheVariables": {
-                "RTS_BUILD_OPTION_PROFILE": "ON"
+            "name": "vc6",
+            "inherits": "default",
+            "environment": {
+                "PATH": "$env{VS6_DIR}\\VC98\\BIN;$env{VS6_DIR}\\Common\\Tools;$env{VS6_DIR}\\Common\\Tools\\WinNT;$env{VS6_DIR}\\Common\\MSDev98\\Bin;$penv{PATH}",
+                "INCLUDE": "$env{VS6_DIR}\\VC98\\INCLUDE;$env{VS6_DIR}\\VC98\\MFC\\INCLUDE;$env{VS6_DIR}\\VC98\\ATL\\INCLUDE;$penv{INCLUDE}",
+                "LIB":  "$env{VS6_DIR}\\VC98\\LIB;$env{VS6_DIR}\\VC98\\MFC\\LIB;$penv{LIB}"
             }
         },
         {
-            "name": "vc6-debug",
-            "displayName": "Windows 32bit VC6 Debug",
-            "hidden": false,
-            "inherits": "vc6",
+            "name": "dev",
+            "inherits": "default",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE": "Debug",
                 "RTS_BUILD_OPTION_DEBUG": "ON"
             }
         },
         {
-            "name": "vc6-releaselog",
-            "displayName": "Windows 32bit VC6 Release Logging",
+            "name": "vc6-dev",
+            "inherits": "vc6",
+            "cacheVariables": {
+                "RTS_BUILD_OPTION_DEBUG": "ON"
+            }
+        },
+        {
+            "name": "vc6-log",
             "inherits": "vc6",
             "cacheVariables": {
                 "RTS_DEBUG_LOGGING": "ON",
                 "RTS_DEBUG_CRASHING": "ON"
             }
-        },
-        {
-            "name": "default",
-            "displayName": "Default Config (don't use directly!)",
-            "generator": "Ninja Multi-Config",
-            "hidden": true,
-            "binaryDir": "${sourceDir}/build/${presetName}",
-            "cacheVariables": {
-                "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
-                "CMAKE_MSVC_DEBUG_INFORMATION_FORMAT": "$<$<CONFIG:Release,Debug,RelWithDebInfo>:Embedded>",
-                "CMAKE_MSVC_RUNTIME_LIBRARY": "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL"
-            }
-        },
-        {
-            "name": "default-vcpkg",
-            "displayName": "Default Config for vcpkg (don't use directly!)",
-            "generator": "Ninja Multi-Config",
-            "hidden": true,
-            "binaryDir": "${sourceDir}/build/${presetName}",
-            "cacheVariables": {
-                "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
-                "CMAKE_MSVC_DEBUG_INFORMATION_FORMAT": "$<$<CONFIG:Release,Debug,RelWithDebInfo>:Embedded>",
-                "CMAKE_MSVC_RUNTIME_LIBRARY": "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL",
-                "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
-            }
-        },
-        {
-            "name": "win32",
-            "inherits": "default",
-            "hidden": false,
-            "displayName": "Windows 32bit Release",
-            "architecture": {
-                "value": "Win32",
-                "strategy": "external"
-            },
-            "cacheVariables": {
-                "RTS_FLAGS": "/W3"
-            },
-            "vendor": {
-                "jetbrains.com/clion": {
-                    "toolchain": "Visual Studio"
-                }
-            }
-        },
-        {
-            "name": "win32-profile",
-            "inherits": "win32",
-            "displayName": "Windows 32bit Profile",
-            "cacheVariables": {
-                "RTS_BUILD_OPTION_PROFILE": "ON"
-            }
-        },
-        {
-            "name": "win32-debug",
-            "inherits": "win32",
-            "displayName": "Windows 32bit Debug",
-            "cacheVariables": {
-                "RTS_BUILD_OPTION_DEBUG": "ON"
-            }
-        },
-        {
-            "name": "win32-vcpkg",
-            "inherits": "default-vcpkg",
-            "hidden": false,
-            "displayName": "Windows 32bit VCPKG Release",
-            "architecture": {
-                "value": "Win32",
-                "strategy": "external"
-            },
-            "cacheVariables": {
-                "RTS_FLAGS": "/W3"
-            },
-            "vendor": {
-                "jetbrains.com/clion": {
-                    "toolchain": "Visual Studio"
-                }
-            }
-        },
-        {
-            "name": "win32-vcpkg-profile",
-            "inherits": "win32-vcpkg",
-            "displayName": "Windows 32bit VCPKG Profile",
-            "cacheVariables": {
-                "RTS_BUILD_OPTION_PROFILE": "ON"
-            }
-        },
-        {
-            "name": "win32-vcpkg-debug",
-            "inherits": "win32-vcpkg",
-            "displayName": "Windows 32bit VCPKG Debug",
-            "cacheVariables": {
-                "RTS_BUILD_OPTION_DEBUG": "ON"
-            }
-        },
-        {
-            "name": "unix",
-            "inherits": "default-vcpkg",
-            "hidden": false,
-            "displayName": "Unix 32bit VCPKG Release"
         }
     ],
     "buildPresets": [
         {
-            "name": "vc6",
+            "name": "release",
+            "configurePreset": "default",
+            "configuration": "Release"
+        },
+        {
+            "name": "debug",
+            "configurePreset": "default",
+            "configuration": "Debug"
+        },
+        {
+            "name": "dev-release",
+            "configurePreset": "dev",
+            "configuration": "Release"
+        },
+        {
+            "name": "dev-debug",
+            "configurePreset": "dev",
+            "configuration": "Debug"
+        },
+        {
+            "name": "vc6-release",
             "configurePreset": "vc6",
-            "displayName": "Build Windows 32bit VC6 Release",
-            "description": "Build Windows 32bit VC6 Release"
-        },
-        {
-            "name": "vc6-profile",
-            "configurePreset": "vc6-profile",
-            "displayName": "Build Windows 32bit VC6 Profile",
-            "description": "Build Windows 32bit VC6 Profile"
+            "configuration": "Release"
         },
         {
             "name": "vc6-debug",
-            "configurePreset": "vc6-debug",
-            "displayName": "Build Windows 32bit VC6 Debug",
-            "description": "Build Windows 32bit VC6 Debug"
+            "configurePreset": "vc6",
+            "configuration": "Debug",
+            "jobs": 1
         },
         {
-            "name": "vc6-releaselog",
-            "configurePreset": "vc6-releaselog",
-            "displayName": "Build Windows 32bit VC6 Release Logging",
-            "description": "Build Windows 32bit VC6 Release Logging"
-        },
-        {
-            "name": "win32",
-            "configurePreset": "win32",
-            "displayName": "Build Windows 32bit Release",
-            "description": "Build Windows 32bit Release",
+            "name": "vc6-dev-release",
+            "configurePreset": "vc6-dev",
             "configuration": "Release"
         },
         {
-            "name": "win32-profile",
-            "configurePreset": "win32-profile",
-            "displayName": "Build Windows 32bit Profile",
-            "description": "Build Windows 32bit Profile",
-            "configuration": "Release"
+            "name": "vc6-dev-debug",
+            "configurePreset": "vc6-dev",
+            "configuration": "Debug",
+            "jobs": 1
         },
         {
-            "name": "win32-debug",
-            "configurePreset": "win32-debug",
-            "displayName": "Build Windows 32bit Debug",
-            "description": "Build Windows 32bit Debug",
-            "configuration": "Debug"
-        },
-        {
-            "name": "win32-vcpkg",
-            "configurePreset": "win32-vcpkg",
-            "displayName": "Build Windows 32bit VCPKG Release",
-            "description": "Build Windows 32bit VCPKG Release",
-            "configuration": "Release"
-        },
-        {
-            "name": "win32-vcpkg-profile",
-            "configurePreset": "win32-vcpkg-profile",
-            "displayName": "Build Windows 32bit VCPKG Profile",
-            "description": "Build Windows 32bit VCPKG Profile",
-            "configuration": "Release"
-        },
-        {
-            "name": "win32-vcpkg-debug",
-            "configurePreset": "win32-vcpkg-debug",
-            "displayName": "Build Windows 32bit VCPKG Debug",
-            "description": "Build Windows 32bit VCPKG Debug",
-            "configuration": "Debug"
-        },
-        {
-            "name": "unix",
-            "configurePreset": "unix",
-            "displayName": "Build Unix 32bit VCPKG Release",
-            "description": "Build Unix 32bit VCPKG Release",
-            "configuration": "Release"
-        }
-    ],
-    "workflowPresets": [
-        {
-            "name": "vc6",
-            "steps": [
-                {
-                    "type": "configure",
-                    "name": "vc6"
-                },
-                {
-                    "type": "build",
-                    "name": "vc6"
-                }
-            ]
-        },
-        {
-            "name": "vc6-debug",
-            "steps": [
-                {
-                    "type": "configure",
-                    "name": "vc6-debug"
-                },
-                {
-                    "type": "build",
-                    "name": "vc6-debug"
-                }
-            ]
-        },
-        {
-            "name": "vc6-profile",
-            "steps": [
-                {
-                    "type": "configure",
-                    "name": "vc6-profile"
-                },
-                {
-                    "type": "build",
-                    "name": "vc6-profile"
-                }
-            ]
-        },
-        {
-            "name": "vc6-releaselog",
-            "steps": [
-                {
-                    "type": "configure",
-                    "name": "vc6-releaselog"
-                },
-                {
-                    "type": "build",
-                    "name": "vc6-releaselog"
-                }
-            ]
-        },
-        {
-            "name": "win32",
-            "steps": [
-                {
-                    "type": "configure",
-                    "name": "win32"
-                },
-                {
-                    "type": "build",
-                    "name": "win32"
-                }
-            ]
-        },
-        {
-            "name": "win32-profile",
-            "steps": [
-                {
-                    "type": "configure",
-                    "name": "win32-profile"
-                },
-                {
-                    "type": "build",
-                    "name": "win32-profile"
-                }
-            ]
-        },
-        {
-            "name": "win32-debug",
-            "steps": [
-                {
-                    "type": "configure",
-                    "name": "win32-debug"
-                },
-                {
-                    "type": "build",
-                    "name": "win32-debug"
-                }
-            ]
-        },
-        {
-            "name": "win32-vcpkg",
-            "steps": [
-                {
-                    "type": "configure",
-                    "name": "win32-vcpkg"
-                },
-                {
-                    "type": "build",
-                    "name": "win32-vcpkg"
-                }
-            ]
-        },
-        {
-            "name": "win32-vcpkg-profile",
-            "steps": [
-                {
-                    "type": "configure",
-                    "name": "win32-vcpkg-profile"
-                },
-                {
-                    "type": "build",
-                    "name": "win32-vcpkg-profile"
-                }
-            ]
-        },
-        {
-            "name": "win32-vcpkg-debug",
-            "steps": [
-                {
-                    "type": "configure",
-                    "name": "win32-vcpkg-debug"
-                },
-                {
-                    "type": "build",
-                    "name": "win32-vcpkg-debug"
-                }
-            ]
-        },
-        {
-            "name": "unix",
-            "steps": [
-                {
-                    "type": "configure",
-                    "name": "unix"
-                },
-                {
-                    "type": "build",
-                    "name": "unix"
-                }
+            "name": "vc6-log-release",
+            "configurePreset": "vc6-log",
+            "configuration": "Release",
+            "targets": [
+                "z_generals"
             ]
         }
     ]

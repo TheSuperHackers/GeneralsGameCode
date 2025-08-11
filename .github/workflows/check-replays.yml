@@ -15,14 +15,24 @@ on:
         required: true
         type: string
         description: "Path to folder with replays and maps"
-      preset:
+      configurePreset:
         required: true
         type: string
-        description: "CMake preset"
+      buildPreset:
+        required: true
+        type: string
+      tools:
+        required: false
+        type: boolean
+        default: false
+      extras:
+        required: false
+        type: boolean
+        default: false
 
 jobs:
   build:
-    name: ${{ inputs.preset }}
+    name: ${{ inputs.configurePreset }} | ${{ inputs.buildPreset }}
     runs-on: windows-latest
     timeout-minutes: 15
     env:
@@ -38,7 +48,7 @@ jobs:
       - name: Download Game Artifact
         uses: actions/download-artifact@v4
         with:
-          name: ${{ inputs.game }}-${{ inputs.preset }}
+          name: ${{ inputs.game }}-${{ inputs.configurePreset }}-${{ inputs.buildPreset }}${{ inputs.tools && '+t' || '' }}${{ inputs.extras && '+e' || '' }}
           path: build
 
       - name: Cache Game Data
@@ -236,7 +246,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: Replay-Debug-Log-${{ inputs.preset }}
+          name: Replay-Debug-Log-${{ inputs.buildPreset }}
           path: build/DebugLogFile*.txt
           retention-days: 30
           if-no-files-found: ignore
