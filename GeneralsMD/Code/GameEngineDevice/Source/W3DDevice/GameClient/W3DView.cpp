@@ -38,6 +38,7 @@
 
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
 #include "Common/BuildAssistant.h"
+#include "Common/GameEngine.h"
 #include "Common/GlobalData.h"
 #include "Common/Module.h"
 #include "Common/RandomValue.h"
@@ -100,7 +101,7 @@
 
 
 // 30 fps
-Int TheW3DFrameLengthInMsec = 1000/LOGICFRAMES_PER_SECOND; // default is 33msec/frame == 30fps. but we may change it depending on sys config.
+Real TheW3DFrameLengthInMsec = MSEC_PER_LOGICFRAME_REAL; // default is 33msec/frame == 30fps. but we may change it depending on sys config.
 static const Int MAX_REQUEST_CACHE_SIZE = 40;	// Any size larger than 10, or examine code below for changes. jkmcd.
 static const Real DRAWABLE_OVERSCAN = 75.0f;  ///< 3D world coords of how much to overscan in the 3D screen region
 
@@ -1053,7 +1054,9 @@ Bool W3DView::updateCameraMovements()
 		didUpdate = true;
 	} else if (m_doingMoveCameraOnWaypointPath) {
 		m_previousLookAtPosition = *getPosition();
-		moveAlongWaypointPath(TheW3DFrameLengthInMsec);
+		// TheSuperHackers @tweak The scripted camera movement is now decoupled from the render update.
+		const Real logicTimeScaleOverFpsRatio = TheGameEngine->getActualLogicTimeScaleOverFpsRatio();
+		moveAlongWaypointPath(TheW3DFrameLengthInMsec * logicTimeScaleOverFpsRatio);
 		didUpdate = true;
 	}
 	if (m_doingScriptedCameraLock)
@@ -3092,7 +3095,7 @@ void W3DView::pitchCameraOneFrame(void)
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void W3DView::moveAlongWaypointPath(Int milliseconds)
+void W3DView::moveAlongWaypointPath(Real milliseconds)
 {
 	m_mcwpInfo.elapsedTimeMilliseconds += milliseconds;
 	if (TheGlobalData->m_disableCameraMovement) {

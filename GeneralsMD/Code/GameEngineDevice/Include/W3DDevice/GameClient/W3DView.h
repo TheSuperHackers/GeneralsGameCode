@@ -61,8 +61,8 @@ typedef struct
 	Real		cameraAngle[MAX_WAYPOINTS+2];	// Camera Angle;
 	Int			timeMultiplier[MAX_WAYPOINTS+2];	// Time speedup factor.
 	Real		groundHeight[MAX_WAYPOINTS+1];	// Ground height.
-	Int			totalTimeMilliseconds;					// Num of ms to do this movement.
-	Int			elapsedTimeMilliseconds;				// Time since start.
+	Real		totalTimeMilliseconds;					// Num of ms to do this movement.
+	Real		elapsedTimeMilliseconds;				// Time since start.
 	Real		totalDistance;								// Total length of paths.
 	Real		curSegDistance;								// How far we are along the current seg.
 	Int			shutter;
@@ -284,7 +284,7 @@ private:
 	void setCameraTransform( void );								///< set the transform matrix of m_3DCamera, based on m_pos & m_angle
 	void buildCameraTransform( Matrix3D *transform ) ;			///< calculate (but do not set) the transform matrix of m_3DCamera, based on m_pos & m_angle
 	void calcCameraConstraints() ;			///< recalc m_cameraConstraint
-	void moveAlongWaypointPath(Int milliseconds); ///< Move camera along path.
+	void moveAlongWaypointPath(Real milliseconds); ///< Move camera along path.
 	void getPickRay(const ICoord2D *screen, Vector3 *rayStart, Vector3 *rayEnd);	///<returns a line segment (ray) originating at the given screen position
 	void setupWaypointPath(Bool orient);					///< Calculates distances & angles for moving along a waypoint path.
 	void rotateCameraOneFrame(void);							///< Do one frame of a rotate camera movement.
@@ -301,6 +301,6 @@ private:
 };  // end class W3DView
 
 // EXTERNALS //////////////////////////////////////////////////////////////////////////////////////
-extern Int TheW3DFrameLengthInMsec;	// default is 33msec/frame == 30fps. but we may change it depending on sys config.
+extern Real TheW3DFrameLengthInMsec;
 
 #endif  // end __W3DVIEW_H_
