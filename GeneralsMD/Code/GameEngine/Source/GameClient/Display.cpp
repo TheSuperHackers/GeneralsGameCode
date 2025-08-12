@@ -131,6 +131,14 @@ void Display::updateViews( void )
 
 }
 
+void Display::stepViews( void )
+{
+
+	for( View *v = m_viewList; v; v = v->getNextView() )
+		v->stepView();
+
+}
+
 /// Redraw the entire display
 void Display::draw( void )
 {

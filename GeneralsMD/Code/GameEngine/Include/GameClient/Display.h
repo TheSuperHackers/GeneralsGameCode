@@ -109,6 +109,7 @@ public:
 
 	virtual void drawViews( void );																///< Render all views of the world
 	virtual void updateViews ( void );															///< Updates state of world views
+	virtual void stepViews(); ///< Update views for every fixed time step
 
 	virtual VideoBuffer*	createVideoBuffer( void ) = 0;							///< Create a video buffer that can be used for this display
 

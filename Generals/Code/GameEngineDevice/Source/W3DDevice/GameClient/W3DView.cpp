@@ -936,6 +936,24 @@ void W3DView::updateView(void)
 	UPDATE();
 }
 
+// TheSuperHackers @tweak xezon 12/08/2025 The drawable update is no longer tied to the
+// render update, but it advanced separately for every fixed time step. This ensures that
+// things like vehicle wheels no longer spin too fast on high frame rates or keep spinning
+// on game pause.
+void W3DView::stepView()
+{
+	if (TheScriptEngine->isTimeFast()) {
+		return; // don't draw - makes it faster :) jba.
+	}
+
+	Region3D axisAlignedRegion;
+	getAxisAlignedViewRegion(axisAlignedRegion);
+
+	// render all of the visible Drawables
+	/// @todo this needs to use a real region partition or something
+	TheGameClient->iterateDrawablesInRegion( &axisAlignedRegion, drawDrawable, this );
+}
+
 //DECLARE_PERF_TIMER(W3DView_updateView)
 void W3DView::update(void)
 {
@@ -1222,14 +1240,6 @@ void W3DView::update(void)
 	}
 	if (recalcCamera)
 		setCameraTransform();
-
-	Region3D axisAlignedRegion;
-	getAxisAlignedViewRegion(axisAlignedRegion);
-
-	// render all of the visible Drawables
-	/// @todo this needs to use a real region partition or something
-	if (WW3D::Get_Frame_Time())	//make sure some time actually elapsed
-		TheGameClient->iterateDrawablesInRegion( &axisAlignedRegion, drawDrawable, this );
 }
 
 //-------------------------------------------------------------------------------------------------
