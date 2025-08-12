@@ -241,21 +241,19 @@ static void updateWindowTitle()
 }
 
 //-------------------------------------------------------------------------------------------------
-Int GameEngine::getFramesPerSecondLimit( void )
-{
-	return m_maxFPS;
-}
-
-//-------------------------------------------------------------------------------------------------
 GameEngine::GameEngine( void )
 {
 	// Set the time slice size to 1 ms.
 	timeBeginPeriod(1);
 
 	// initialize to non garbage values
-	m_maxFPS = 0;
+	m_maxFPS = BaseFps;
+	m_logicTimeScaleFPS = LOGICFRAMES_PER_SECOND;
+	m_updateTime = 0.0f;
+	m_logicTimeAccumulator = 0.0f;
 	m_quitting = FALSE;
 	m_isActive = FALSE;
+	m_enableLogicTimeScale = FALSE;
 
 	_Module.Init(NULL, ApplicationHInstance, NULL);
 }
@@ -309,10 +307,91 @@ GameEngine::~GameEngine()
 	timeEndPeriod(1);
 }
 
+//-------------------------------------------------------------------------------------------------
 void GameEngine::setFramesPerSecondLimit( Int fps )
 {
 	DEBUG_LOG(("GameEngine::setFramesPerSecondLimit() - setting max fps to %d (TheGlobalData->m_useFpsLimit == %d)", fps, TheGlobalData->m_useFpsLimit));
 	m_maxFPS = fps;
+}
+
+//-------------------------------------------------------------------------------------------------
+Int GameEngine::getFramesPerSecondLimit( void )
+{
+	return m_maxFPS;
+}
+
+//-------------------------------------------------------------------------------------------------
+Real GameEngine::getUpdateTime()
+{
+	return m_updateTime;
+}
+
+//-------------------------------------------------------------------------------------------------
+Real GameEngine::getUpdateFps()
+{
+	return 1.0f / m_updateTime;
+}
+
+//-------------------------------------------------------------------------------------------------
+void GameEngine::setLogicTimeScaleFps( Int fps )
+{
+	m_logicTimeScaleFPS = fps;
+}
+
+//-------------------------------------------------------------------------------------------------
+Int GameEngine::getLogicTimeScaleFps()
+{
+	return m_logicTimeScaleFPS;
+}
+
+//-------------------------------------------------------------------------------------------------
+void GameEngine::enableLogicTimeScale( Bool enable )
+{
+	m_enableLogicTimeScale = enable;
+}
+
+//-------------------------------------------------------------------------------------------------
+Bool GameEngine::isLogicTimeScaleEnabled()
+{
+	return m_enableLogicTimeScale;
+}
+
+//-------------------------------------------------------------------------------------------------
+Int GameEngine::getActualLogicTimeScaleFps( void )
+{
+	if (TheNetwork != NULL)
+	{
+		return TheNetwork->getFrameRate();
+	}
+	else
+	{
+		const Bool enabled = isLogicTimeScaleEnabled();
+		const Int logicTimeScaleFps = getLogicTimeScaleFps();
+		const Int maxFps = getFramesPerSecondLimit();
+
+		if (!enabled || logicTimeScaleFps >= maxFps)
+		{
+			return getFramesPerSecondLimit();
+		}
+		else
+		{
+			return logicTimeScaleFps;
+		}
+	}
+}
+
+//-------------------------------------------------------------------------------------------------
+Real GameEngine::getActualLogicTimeScaleRatio()
+{
+	return (Real)getActualLogicTimeScaleFps() / LOGICFRAMES_PER_SECONDS_REAL;
+}
+
+//-------------------------------------------------------------------------------------------------
+Real GameEngine::getActualLogicTimeScaleOverFpsRatio()
+{
+	// TheSuperHackers @info Clamps ratio to min 1, because the logic
+	// frame rate is (typically) capped by the render frame rate.
+	return min(1.0f, (Real)getActualLogicTimeScaleFps() / getUpdateFps());
 }
 
 /** -----------------------------------------------------------------------------------------------
@@ -359,7 +438,6 @@ void GameEngine::init()
   char Buf[256];//////////////////////////////////////////////////////////////////////
 	#endif//////////////////////////////////////////////////////////////////////////////
 
-		m_maxFPS = DEFAULT_MAX_FPS;
 
 		TheSubsystemList = MSGNEW("GameEngineSubsystem") SubsystemInterfaceList;
 
@@ -825,9 +903,46 @@ void GameEngine::update( void )
 
 		TheGameLogic->preUpdate();
 
-		if ((TheNetwork == NULL && !TheGameLogic->isGamePaused()) || (TheNetwork && TheNetwork->isFrameDataReady()))
+		if (TheNetwork != NULL)
 		{
-			TheGameLogic->UPDATE();
+			if (TheNetwork->isFrameDataReady())
+			{
+				TheGameLogic->UPDATE();
+			}
+		}
+		else
+		{
+			if (!TheGameLogic->isGamePaused())
+			{
+				const Bool enabled = isLogicTimeScaleEnabled();
+				const Int logicTimeScaleFps = getLogicTimeScaleFps();
+				const Int maxRenderFps = getFramesPerSecondLimit();
+
+#if defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
+				Bool useFastMode = TheGlobalData->m_TiVOFastMode;
+#else	//always allow this cheat key if we're in a replay game.
+				Bool useFastMode = TheGlobalData->m_TiVOFastMode && TheGameLogic->isInReplayGame();
+#endif
+
+				if (useFastMode || !enabled || logicTimeScaleFps >= maxRenderFps)
+				{
+					// Logic time scale is uncapped or larger equal Render FPS. Update straight away.
+					TheGameLogic->UPDATE();
+				}
+				else
+				{
+					// TheSuperHackers @tweak xezon 06/08/2025
+					// The logic time step is now decoupled from the render update.
+					const Real targetFrameTime = 1.0f / logicTimeScaleFps;
+					m_logicTimeAccumulator += min(m_updateTime, targetFrameTime);
+
+					if (m_logicTimeAccumulator >= targetFrameTime)
+					{
+						m_logicTimeAccumulator -= targetFrameTime;
+						TheGameLogic->UPDATE();
+					}
+				}
+			}
 		}
 
 	}	// end perfGather
@@ -914,29 +1029,28 @@ void GameEngine::execute( void )
 			}	// perf
 
 			{
-
-				if (TheTacticalView->getTimeMultiplier()<=1 && !TheScriptEngine->isTimeFast())
 				{
+					Bool allowFpsLimit = TheTacticalView->getTimeMultiplier()<=1 && !TheScriptEngine->isTimeFast();
 
 		// I'm disabling this in debug because many people need alt-tab capability.  If you happen to be
 		// doing performance tuning, please just change this on your local system. -MDC
 		#if defined(RTS_DEBUG)
-					::Sleep(1); // give everyone else a tiny time slice.
+					if (allowFpsLimit)
+						::Sleep(1); // give everyone else a tiny time slice.
 		#endif
 
 
 		#if defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
-					if ( ! TheGlobalData->m_TiVOFastMode )
+					allowFpsLimit &= !(!TheGameLogic->isGamePaused() && TheGlobalData->m_TiVOFastMode);
 		#else	//always allow this cheat key if we're in a replay game.
-					if ( ! (TheGlobalData->m_TiVOFastMode && TheGameLogic->isInReplayGame()))
+					allowFpsLimit &= !(!TheGameLogic->isGamePaused() && TheGlobalData->m_TiVOFastMode && TheGameLogic->isInReplayGame());
 		#endif
 					{
 						// TheSuperHackers @bugfix xezon 05/08/2025 Re-implements the frame rate limiter
 						// with higher resolution counters to cap the frame rate more accurately to the desired limit.
-						if (TheGlobalData->m_useFpsLimit)
-						{
-							frameRateLimit->wait(m_maxFPS);
-						}
+						allowFpsLimit &= TheGlobalData->m_useFpsLimit;
+						const UnsignedInt maxFps = allowFpsLimit ? getFramesPerSecondLimit() : RenderFpsPreset::UncappedFpsValue;
+						m_updateTime = frameRateLimit->wait(maxFps);
 					}
 
 				}

@@ -29,3 +29,42 @@ private:
 	LARGE_INTEGER m_freq;
 	LARGE_INTEGER m_start;
 };
+
+
+enum FpsValueChange
+{
+	FpsValueChange_Increase,
+	FpsValueChange_Decrease,
+};
+
+
+class RenderFpsPreset
+{
+public:
+	enum CPP_11(: UnsignedInt)
+	{
+		UncappedFpsValue = 1000000,
+	};
+
+	static UnsignedInt getNextFpsValue(UnsignedInt value);
+	static UnsignedInt getPrevFpsValue(UnsignedInt value);
+	static UnsignedInt changeFpsValue(UnsignedInt value, FpsValueChange change);
+
+private:
+	static const UnsignedInt s_fpsValues[];
+};
+
+
+class LogicTimeScaleFpsPreset
+{
+public:
+	enum CPP_11(: UnsignedInt)
+	{
+		StepFpsValue = 5,
+	};
+
+	static UnsignedInt getNextFpsValue(UnsignedInt value);
+	static UnsignedInt getPrevFpsValue(UnsignedInt value);
+	static UnsignedInt changeFpsValue(UnsignedInt value, FpsValueChange change);
+};
+
