@@ -1726,6 +1726,8 @@ void W3DDisplay::step()
 	}
 
 	WW3D::Sync( syncTime );
+
+	stepViews();
 }
 
 //DECLARE_PERF_TIMER(BigAssRenderLoop)

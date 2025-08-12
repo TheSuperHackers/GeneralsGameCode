@@ -140,6 +140,7 @@ public:
 	virtual void reset( void );
 	virtual void drawView( void );  ///< draw this view
 	virtual void updateView(void);	///<called once per frame to determine the final camera and object transforms
+	virtual void stepView(); ///< Update view for every fixed time step
 
 	virtual void draw( );  ///< draw this view
 	virtual void update( );	///<called once per frame to determine the final camera and object transforms

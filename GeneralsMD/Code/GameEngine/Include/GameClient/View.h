@@ -211,6 +211,7 @@ public:
 
 	virtual void drawView( void ) = 0;															///< Render the world visible in this view.
 	virtual void updateView(void) = 0;					///<called once per frame to determine the final camera and object transforms
+	virtual void stepView() = 0; ///< Update view for every fixed time step
 
 
 

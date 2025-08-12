@@ -183,6 +183,7 @@ public:
 
 	virtual void drawView( void ) {};															///< Render the world visible in this view.
 	virtual void updateView( void ) {};															///< Render the world visible in this view.
+	virtual void stepView() {}; ///< Update view for every fixed time step
 
 	virtual void setZoomLimited( Bool limit ) {}			///< limit the zoom height
 	virtual Bool isZoomLimited( void ) { return TRUE; }							///< get status of zoom limit
