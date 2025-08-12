@@ -735,6 +735,11 @@ void GameClient::update( void )
 	}
 }  // end update
 
+void GameClient::step()
+{
+	TheDisplay->step();
+}
+
 void GameClient::updateHeadless()
 {
 	// TheSuperHackers @info helmutbuhler 03/05/2025

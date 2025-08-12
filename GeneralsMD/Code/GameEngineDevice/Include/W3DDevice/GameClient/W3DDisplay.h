@@ -81,6 +81,7 @@ public:
 	virtual Bool	isClippingEnabled( void ) 	{ return m_isClippedEnabled; }
 	virtual void	enableClipping( Bool onoff )		{ m_isClippedEnabled = onoff; }
 
+	virtual void step(); ///< Do one fixed time step
 	virtual void draw( void );  ///< redraw the entire display
 
 	/// @todo Replace these light management routines with a LightManager singleton
@@ -162,6 +163,7 @@ protected:
 	void calculateTerrainLOD(void);						///< Calculate terrain LOD.
 	void renderLetterBox(UnsignedInt time);							///< draw letter box border
 	void updateAverageFPS(void);	///< figure out the average fps over the last 30 frames.
+	static Bool isTimeFrozen();
 
 	Byte m_initialized;												///< TRUE when system is initialized
 	LightClass *m_myLight[LightEnvironmentClass::MAX_LIGHTS];										///< light hack for now

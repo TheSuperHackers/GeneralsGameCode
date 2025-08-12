@@ -85,7 +85,6 @@
 #include "GameLogic/SidesList.h"
 
 #include "GameClient/ClientInstance.h"
-#include "GameClient/Display.h"
 #include "GameClient/FXList.h"
 #include "GameClient/GameClient.h"
 #include "GameClient/Keyboard.h"
@@ -732,6 +731,7 @@ void GameEngine::update( void )
 		{
 			if (TheNetwork->isFrameDataReady())
 			{
+				TheGameClient->step();
 				TheGameLogic->UPDATE();
 			}
 		}
@@ -752,6 +752,7 @@ void GameEngine::update( void )
 				if (useFastMode || !enabled || logicTimeScaleFps >= maxRenderFps)
 				{
 					// Logic time scale is uncapped or larger equal Render FPS. Update straight away.
+					TheGameClient->step();
 					TheGameLogic->UPDATE();
 				}
 				else
@@ -764,6 +765,7 @@ void GameEngine::update( void )
 					if (m_logicTimeAccumulator >= targetFrameTime)
 					{
 						m_logicTimeAccumulator -= targetFrameTime;
+						TheGameClient->step();
 						TheGameLogic->UPDATE();
 					}
 				}
