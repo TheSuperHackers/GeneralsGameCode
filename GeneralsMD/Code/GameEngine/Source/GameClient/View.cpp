@@ -125,14 +125,9 @@ View *View::prependViewToList( View *list )
 	return this;
 }
 
-void View::zoomIn( void )
+void View::zoom( Real height )
 {
-	setHeightAboveGround(getHeightAboveGround() - 10.0f);
-}
-
-void View::zoomOut( void )
-{
-	setHeightAboveGround(getHeightAboveGround() + 10.0f);
+	setHeightAboveGround(getHeightAboveGround() + height);
 }
 
 /**

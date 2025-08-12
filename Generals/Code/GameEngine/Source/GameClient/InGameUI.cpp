@@ -45,7 +45,6 @@
 #include "Common/ThingTemplate.h"
 #include "Common/BuildAssistant.h"
 #include "Common/Recorder.h"
-#include "Common/BuildAssistant.h"
 #include "Common/SpecialPower.h"
 
 #include "GameClient/Anim2D.h"
@@ -66,7 +65,6 @@
 #include "GameClient/GadgetStaticText.h"
 #include "GameClient/View.h"
 #include "GameClient/TerrainVisual.h"
-#include "GameClient/ControlBar.h"
 #include "GameClient/Display.h"
 #include "GameClient/WindowLayout.h"
 #include "GameClient/LookAtXlat.h"
@@ -1830,26 +1828,30 @@ void InGameUI::update( void )
 		layout->runUpdate();
 	}
 
-	//Handle keyboard camera rotations
-	if( m_cameraRotatingLeft && !m_cameraRotatingRight )
+	if (m_cameraRotatingLeft || m_cameraRotatingRight || m_cameraZoomingIn || m_cameraZoomingOut)
 	{
-		//Keyboard rotate left
-		TheTacticalView->setAngle( TheTacticalView->getAngle() - TheGlobalData->m_keyboardCameraRotateSpeed );
-	}
-	if( m_cameraRotatingRight && !m_cameraRotatingLeft )
-	{
-		//Keyboard rotate right
-		TheTacticalView->setAngle( TheTacticalView->getAngle() + TheGlobalData->m_keyboardCameraRotateSpeed );
-	}
-	if( m_cameraZoomingIn && !m_cameraZoomingOut )
-	{
-		//Keyboard zoom in
-		TheTacticalView->zoomIn();
-	}
-	if( m_cameraZoomingOut && !m_cameraZoomingIn )
-	{
-		//Keyboard zoom out
-		TheTacticalView->zoomOut();
+		// TheSuperHackers @tweak The camera rotation and zoom are now decoupled from the render update.
+		const Real fpsRatio = (Real)BaseFps / TheGameEngine->getUpdateFps();
+		const Real rotateAngle = TheGlobalData->m_keyboardCameraRotateSpeed * fpsRatio;
+		const Real zoomHeight = (Real)View::ZoomHeightPerSecond * fpsRatio;
+
+		if( m_cameraRotatingLeft && !m_cameraRotatingRight )
+		{
+			TheTacticalView->setAngle( TheTacticalView->getAngle() - rotateAngle );
+		}
+		else if( m_cameraRotatingRight && !m_cameraRotatingLeft )
+		{
+			TheTacticalView->setAngle( TheTacticalView->getAngle() + rotateAngle );
+		}
+
+		if( m_cameraZoomingIn && !m_cameraZoomingOut )
+		{
+			TheTacticalView->zoom( -zoomHeight );
+		}
+		else if( m_cameraZoomingOut && !m_cameraZoomingIn )
+		{
+			TheTacticalView->zoom( +zoomHeight );
+		}
 	}
 
 

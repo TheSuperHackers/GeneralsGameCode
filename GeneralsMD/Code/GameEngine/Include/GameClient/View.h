@@ -73,6 +73,11 @@ class View : public Snapshot
 
 public:
 
+	enum
+	{
+		ZoomHeightPerSecond = 10,
+	};
+
 	/// Add an impulse force to shake the camera
 	enum CameraShakeType
 	{
@@ -184,8 +189,7 @@ public:
 	virtual void setZoom(Real z) { }
 	virtual Real getHeightAboveGround() { return m_heightAboveGround; }
 	virtual void setHeightAboveGround(Real z) { m_heightAboveGround = z; }
-	virtual void zoomIn( void );																				///< Zoom in, closer to the ground, limit to min
-	virtual void zoomOut( void );																				///< Zoom out, farther away from the ground, limit to max
+	virtual void zoom( Real height ); ///< Zoom in/out, closer to the ground, limit to min, or farther away from the ground, limit to max
 	virtual void setZoomToDefault( void ) { }														///< Set zoom to default value
 	virtual Real getMaxZoom( void ) { return m_maxZoom; }								///< return max zoom value
 	virtual void setOkToAdjustHeight( Bool val ) { m_okToAdjustHeight = val; }	///< Set this to adjust camera height
