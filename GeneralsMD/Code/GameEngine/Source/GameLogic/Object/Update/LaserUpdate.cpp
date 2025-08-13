@@ -43,6 +43,7 @@
 #include "GameLogic/GameLogic.h" // For frame number
 #include "GameLogic/Module/LaserUpdate.h"
 #include "GameLogic/Module/LifetimeUpdate.h"  // for beam lifetime
+#include "GameLogic/PartitionManager.h"
 #include "WWMath/vector3.h"
 
 #ifdef RTS_INTERNAL
@@ -146,6 +147,16 @@ void LaserUpdate::updateStartPos()
 	if( parentDrawable == NULL )
 		return;// Can't update if no one to ask
 		
+	// Avoid teleporting units having their laser dragged with them
+	if (parentDrawable->isKindOf(KINDOF_TELEPORTER) && !(oldStartPos.x == 0 && oldStartPos.y == 0 && oldStartPos.z == 0)) {
+		Coord3D diff;
+		diff.set(parentDrawable->getPosition());
+		diff.sub(&oldStartPos);
+		Real MAX_TELEPORT_DISTSQR = 400.0; // 20.0 distance
+		if (diff.lengthSqr() > MAX_TELEPORT_DISTSQR)
+			return;
+	}
+
 	if( m_parentBoneName.isNotEmpty() )
 	{
 		Matrix3D startPosMatrix;

@@ -1104,6 +1104,19 @@ AIGuardMachine* AIStateMachine::getGuardMachine(void)
 	return NULL;
 }
 
+//----------------------------------------------------------------------------------------------------------
+AIGuardRetaliateMachine* AIStateMachine::getGuardRetaliateMachine(void)
+{
+	if (getCurrentStateID() == AI_GUARD_RETALIATE) {
+		AIGuardRetaliateState* guardState = (AIGuardRetaliateState*)(StateMachine::internalGetState(getCurrentStateID()));
+		if (guardState != NULL) {
+			return guardState->getGuardRetaliateMachine();
+		}
+	}
+
+	return NULL;
+}
+
 // State transition conditions ----------------------------------------------------------------------------
 /**
  * Return true if the machine's owner's current weapon's range 

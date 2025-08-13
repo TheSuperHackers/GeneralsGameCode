@@ -42,6 +42,7 @@ class TeleporterAIUpdateModuleData : public AIUpdateModuleData
 public:
 	Real m_minDistance;
 	Real m_disabledDuration;
+	Real m_minDisabledDuration;
 
 	const FXList* m_sourceFX;
 	const FXList* m_targetFX;

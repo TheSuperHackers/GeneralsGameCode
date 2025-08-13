@@ -1439,17 +1439,28 @@ void ActiveBody::applyChronoParticleSystems(void)
 	ParticleSystem* particleSystem = TheParticleSystemManager->createParticleSystem(chronoEffects);
 	if (particleSystem)
 	{
-		// set the position of the particle system in local object space
-		// particleSystem->setPosition(obj->getPosition());
-
 		// attach particle system to object
 		particleSystem->attachToObject(obj);
 
-		// Scale particle count based on size
+		
 		Real x = obj->getGeometryInfo().getMajorRadius();
-		Real y = obj->getGeometryInfo().getMinorRadius();
+		Real y;
+		if (obj->getGeometryInfo().getGeomType() == GEOMETRY_BOX)
+			y = obj->getGeometryInfo().getMinorRadius();
+		else
+			y = obj->getGeometryInfo().getMajorRadius();
 		Real z = obj->getGeometryInfo().getMaxHeightAbovePosition() * 0.5;
 		particleSystem->setEmissionBoxHalfSize(x, y, z);
+		
+		// set the position of the particle system in local object space.
+		// Apparently even Zero coordinates are needed here.
+		Coord3D pos = { 0, 0, 0}; // *obj->getPosition();
+		pos.z += z;
+		particleSystem->setPosition(&pos);
+
+		//DEBUG_LOG((">>> applyChronoParticleSystems: pos = {%f, %f, %f}", pos.x, pos.y, pos.z));
+
+		// Scale particle count based on size ?
 		//Real size = x * y;
 		//particleSystem->setBurstCountMultiplier(MAX(1.0, sqrt(size * 0.02f))); // these are somewhat tweaked right now
 		//particleSystem->setBurstDelayMultiplier(MIN(5.0, sqrt(500.0f / size)));

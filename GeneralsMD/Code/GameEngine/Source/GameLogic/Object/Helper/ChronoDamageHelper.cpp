@@ -57,9 +57,9 @@ UpdateSleepTime ChronoDamageHelper::update()
 {
 	BodyModuleInterface *body = getObject()->getBodyModule();
 
-	DEBUG_LOG(("ChronoDamageHelper::update() - m_healingStepCountdown = %d, healRate = %d, healAmount = %f\n",
-		m_healingStepCountdown,
-		body->getChronoDamageHealRate(), body->getChronoDamageHealAmount()));
+	//DEBUG_LOG(("ChronoDamageHelper::update() - m_healingStepCountdown = %d, healRate = %d, healAmount = %f\n",
+	//	m_healingStepCountdown,
+	//	body->getChronoDamageHealRate(), body->getChronoDamageHealAmount()));
 
 	m_healingStepCountdown--;
 	if( m_healingStepCountdown > 0 )

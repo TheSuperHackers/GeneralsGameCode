@@ -45,18 +45,28 @@ class ChronoDeathBehaviorModuleData : public UpdateModuleData
 public:
 	DieMuxData m_dieMuxData;
 
-	const ObjectCreationList* m_ocl;
-	const FXList* m_startFX;
-	const FXList* m_endFX;
+	const ObjectCreationList* m_ocl;   ///< object created at start
+	const FXList* m_startFX;  ///< FX created at start
+	const FXList* m_endFX;  ///< FX created at end
 
-	Real m_startScale;
-	Real m_endScale;
-	Real m_startAlpha;
-	Real m_endAlpha;
+	// Note AW: These FX are created at start and end if the object matches the kindof.
+	// This is designed to work in default object.ini
+	const FXList* m_startFXInfantry;
+	const FXList* m_startFXVehicle;
+	const FXList* m_startFXStructure;
 
-	Real m_oclScaleFactor;
+	const FXList* m_endFXInfantry;  
+	const FXList* m_endFXVehicle;
+	const FXList* m_endFXStructure;
 
-	UnsignedInt	m_destructionDelay;
+	Real m_startScale;  ///< scale to start with
+	Real m_endScale;   ///< scale at the end
+	Real m_startAlpha;  ///< alpha to start with
+	Real m_endAlpha;   ///< alpha at the end
+
+	Real m_oclScaleFactor;   ///< base scale of OCL object's model when scaling with object's radius
+
+	UnsignedInt	m_destructionDelay;  ///< total time
 
 	ChronoDeathBehaviorModuleData();
 	static void buildFieldParse(MultiIniFieldParse& p);

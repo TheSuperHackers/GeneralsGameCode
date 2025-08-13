@@ -690,6 +690,8 @@ protected:
 	Coord3D						m_pos;													///< this is the position to emit at.
 	Coord3D						m_lastPos;											///< this is the previous position we emitted at.
 
+	Coord3D						m_posOffset;                                        ///< local (to parent transform) offset for created particles
+
 	ParticleSystem *	m_slaveSystem;									///< if non-NULL, another system this one has control of
 	ParticleSystemID	m_slaveSystemID;								///< id of slave system (if present)
 

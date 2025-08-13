@@ -276,7 +276,7 @@ class MilesAudioManager : public AudioManager
 		void initFilters( HSAMPLE sample, const AudioEventRTS *eventInfo );
 		void initFilters3D( H3DSAMPLE sample, const AudioEventRTS *eventInfo, const Coord3D *pos );
 
-		// void handleLoopStopEarly(PlayingAudio* audio);
+		void handleLoopStopEarly(PlayingAudio* audio);
 
 	protected:
 		ProviderInfo m_provider3D[MAXPROVIDERS];

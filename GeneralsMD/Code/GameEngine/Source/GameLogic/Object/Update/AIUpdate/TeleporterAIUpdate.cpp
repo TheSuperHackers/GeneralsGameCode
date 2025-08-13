@@ -39,6 +39,7 @@
 #include "GameClient/FXList.h"
 #include "GameLogic/AI.h"
 #include "GameLogic/AIGuard.h"
+#include "GameLogic/AIGuardRetaliate.h"
 #include "GameLogic/AIPathfind.h"
 #include "GameLogic/Module/AIUpdate.h"
 #include "GameLogic/Damage.h"
@@ -68,6 +69,7 @@ TeleporterAIUpdateModuleData::TeleporterAIUpdateModuleData( void )
 	static const FieldParse dataFieldParse[] =
 	{
 		{ "MinDistanceForTeleport", INI::parseReal, NULL, offsetof(TeleporterAIUpdateModuleData, m_minDistance) },
+		{ "MinDisabledDuration", INI::parseDurationReal, NULL, offsetof(TeleporterAIUpdateModuleData, m_minDisabledDuration) },
 		{ "DisabledDurationPerDistance", INI::parseDurationReal, NULL, offsetof(TeleporterAIUpdateModuleData, m_disabledDuration) },
 		{ "TeleportStartFX", INI::parseFXList, NULL, offsetof(TeleporterAIUpdateModuleData, m_sourceFX) },
 		{ "TeleportTargetFX", INI::parseFXList, NULL, offsetof(TeleporterAIUpdateModuleData, m_targetFX) },
@@ -79,6 +81,11 @@ TeleporterAIUpdateModuleData::TeleporterAIUpdateModuleData( void )
 		{ 0, 0, 0, 0 }
 	};
 	p.add(dataFieldParse);
+}
+
+static void createDebugFX(const Coord3D* pos, const char* name) {
+	const FXList* debug_fx1 = TheFXListStore->findFXList(name);
+	FXList::doFXPos(debug_fx1, pos);
 }
 
 
@@ -123,7 +130,7 @@ UpdateSleepTime TeleporterAIUpdate::update(void)
 				// - set opacity
 				if (d->m_opacityStart < 1.0f || d->m_opacityEnd < 1.0f) {
 					Real opacity = (1.0 - progress) * d->m_opacityStart + progress * d->m_opacityEnd;
-					// DEBUG_LOG((">>> TPAI Update: opacity = %f\n", curOpacity));
+					//DEBUG_LOG((">>> TPAI Update: progress = %f, opacity = %f.", progress, opacity));
 					draw->setDrawableOpacity(opacity);
 					//draw->setEffectiveOpacity(opacity);
 					//draw->setSecondMaterialPassOpacity(opacity);
@@ -174,11 +181,13 @@ void TeleporterAIUpdate::applyRecoverEffects(Real dist)
 		}
 
 		// - set opacity
-		if (d->m_opacityStart < 1.0 || d->m_opacityEnd < 1.0) {
+		if (d->m_opacityStart < 1.0) {
 			//draw->setEffectiveOpacity(1.0);
 			//draw->setSecondMaterialPassOpacity(1.0);
-			draw->setDrawableOpacity(1.0);
+			draw->setDrawableOpacity(d->m_opacityStart);
+			DEBUG_LOG((">>> TPAI applyRecoverEffects - set opacity %f", d->m_opacityStart));
 		}
+
 	}
 
 }
@@ -193,13 +202,21 @@ void TeleporterAIUpdate::removeRecoverEffects()
 
 	TheAudio->removeAudioEvent(m_recoverSoundLoop.getPlayingHandle());
 
-	Drawable* drw = obj->getDrawable();
-	if (drw)
+	Drawable* draw = obj->getDrawable();
+	if (draw)
 	{
 		// - clear color tint
 		if (d->m_tintStatus > TINT_STATUS_INVALID && d->m_tintStatus < TINT_STATUS_COUNT)
 		{
-			drw->clearTintStatus(d->m_tintStatus);
+			draw->clearTintStatus(d->m_tintStatus);
+		}
+
+		// - set opacity
+		if (d->m_opacityStart < 1.0 || d->m_opacityEnd < 1.0) {
+			//draw->setEffectiveOpacity(1.0);
+			//draw->setSecondMaterialPassOpacity(1.0);
+			draw->setDrawableOpacity(1.0);
+			DEBUG_LOG((">>> TPAI removeRecoverEffects - restore Opacity!\n"));
 		}
 	}
 
@@ -225,7 +242,7 @@ UpdateSleepTime TeleporterAIUpdate::doTeleport(Coord3D targetPos, Real angle, Re
 	TheAI->pathfinder()->updateGoal(obj, &targetPos, TheTerrainLogic->getLayerForDestination(&targetPos));
 	setLocomotorGoalOrientation(angle);
 
-	UnsignedInt disabledFrames = REAL_TO_UNSIGNEDINT(dist * d->m_disabledDuration);
+	UnsignedInt disabledFrames = REAL_TO_UNSIGNEDINT((dist * d->m_disabledDuration) + d->m_minDisabledDuration);
 
 	m_disabledStart = TheGameLogic->getFrame();
 	m_disabledUntil = m_disabledStart + disabledFrames;
@@ -386,6 +403,8 @@ UpdateSleepTime TeleporterAIUpdate::doLocomotor(void)
 	Coord3D dir;
 	Real distSq;
 
+	//TODO: RETALIATE!
+
 	// TODO: Check states
 	// - (generic) Moving
 	// - Attacking
@@ -397,6 +416,8 @@ UpdateSleepTime TeleporterAIUpdate::doLocomotor(void)
 	//Path* path = getPath();
 
 	// Get TargetPos
+
+	bool useWeaponRange = false;  // We need this for retaliate state, where isAttacking is false
 
 	if (goalObj != NULL) {
 		targetPos = *goalObj->getPosition();
@@ -435,11 +456,16 @@ UpdateSleepTime TeleporterAIUpdate::doLocomotor(void)
 			targetPos = *getGuardLocation();
 			//TheAI->pathfinder()->adjustDestination(obj, getLocomotorSet(), &targetPos);
 			distSq = ThePartitionManager->getDistanceSquared(obj, &targetPos, FROM_CENTER_2D, &dir);
-			//DEBUG_LOG((">>> TPAI - doLoc: goalPos GUARD (0) = %f, %f, %f\n", targetPos.x, targetPos.y, targetPos.z));
+			// DEBUG_LOG((">>> TPAI - doLoc: distSq = %f - goalPos GUARD (0) = %f, %f, %f", distSq, targetPos.x, targetPos.y, targetPos.z));
 			if (getStateMachine()->isInGuardIdleState()) {
 				requiredRange = 25.0f; // Allow extra range to give some room for large groups guarding
 			}
+			//createDebugFX(&targetPos, "FX_DEBUG_MARKER_RED");
+			//createDebugFX(obj->getPosition(), "FX_DEBUG_MARKER_GREEN");
 		}
+		//DEBUG_LOG((">>> TPAI - doLoc: AI_GUARD - distSq = %f, targetPos = {%f, %f, %f}, isAttacking = %d, GuardIdle = %d",
+		//	distSq, targetPos.x, targetPos.y, targetPos.z, isAttacking(), getStateMachine()->isInGuardIdleState()));
+		//createDebugFX(&targetPos, "FX_DEBUG_MARKER_GREEN");
 	}
 	else {
 		DEBUG_LOG((">>> TPAI - doLoc: GOAL POS AND OBJ ARE NULL??\n"));
@@ -472,6 +498,28 @@ UpdateSleepTime TeleporterAIUpdate::doLocomotor(void)
 	//			// otherwise teleport
 	//		}
 	//	}
+	}else if (getStateMachine()->getCurrentStateID() == AI_GUARD_RETALIATE) {
+		/*DEBUG_LOG((">>> TPAI - doLoc: AI_GUARD_RETALIATE - distSq = %f, targetPos = {%f, %f, %f}, isAttacking = %d, GuardIdle = %d",
+			distSq, targetPos.x, targetPos.y, targetPos.z, isAttacking(), getStateMachine()->isInGuardIdleState()));*/
+		
+		AIGuardRetaliateMachine* guardRetaliateMachine = getStateMachine()->getGuardRetaliateMachine();
+		if (guardRetaliateMachine != NULL) {
+			ObjectID nemID = guardRetaliateMachine->getNemesisID();
+			if (nemID != INVALID_ID) {
+				Object* nemesis = TheGameLogic->findObjectByID(nemID);
+				if (nemesis != NULL) {
+					goalObj = nemesis;
+					goalPos = goalObj->getPosition();
+					targetPos = *goalPos;
+
+					// DEBUG_LOG((">>> TPAI - doLoc: goalPos GUARD_RETALIATE NEMESIS (0) = %f, %f, %f\n", targetPos.x, targetPos.y, targetPos.z));
+					
+					useWeaponRange = true;
+
+					distSq = ThePartitionManager->getDistanceSquared(obj, goalObj, FROM_BOUNDINGSPHERE_2D, &dir);
+				}
+			}
+		}
 	}
 
 	DEBUG_LOG((">>> TPAI - doLoc: LocomotorGoalType = %d, AI STATE = %s (%d)\n", getLocomotorGoalType(), getStateMachine()->getCurrentStateName(), getStateMachine()->getCurrentStateID()));
@@ -491,7 +539,7 @@ UpdateSleepTime TeleporterAIUpdate::doLocomotor(void)
 	}
 
 	//When we attack, we attempt to teleport into range
-	if (isAttacking()) {
+	if (isAttacking() || useWeaponRange) {
 		// requiredRange = obj->getLargestWeaponRange();
 		Weapon* weap = obj->getCurrentWeapon();
 		if (!weap)
@@ -560,6 +608,14 @@ UpdateSleepTime TeleporterAIUpdate::doLocomotor(void)
 		distSq = ThePartitionManager->getDistanceSquared(obj, &targetPos, FROM_CENTER_2D, &dir);
 		targetAngle = atan2(dir.y, dir.x);
 		dist = sqrt(distSq);
+
+		// We are within min range (Not sure why, but we need to check this again here)
+		if (dist <= d->m_minDistance || dist <= requiredRange) {
+			return AIUpdateInterface::doLocomotor();
+		}
+
+		//DEBUG_LOG((">>> TPAI - doLoc: after AI_GUARD - distSq = %f, targetPos = {%f, %f, %f}, isAttacking = %d, GuardIdle = %d",
+		//	distSq, targetPos.x, targetPos.y, targetPos.z, isAttacking(), getStateMachine()->isInGuardIdleState()));
 	}
 
 	// DEBUG_LOG((">>> TPAI - doLoc: teleport with dist = %f\n", dist));

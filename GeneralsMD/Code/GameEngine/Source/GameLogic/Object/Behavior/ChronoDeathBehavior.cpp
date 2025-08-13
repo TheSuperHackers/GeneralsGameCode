@@ -30,7 +30,7 @@
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
-#define DEFINE_SLOWDEATHPHASE_NAMES
+// #define DEFINE_SLOWDEATHPHASE_NAMES
 
 #include "Common/Thing.h"
 #include "Common/ThingTemplate.h"
@@ -71,6 +71,12 @@ ChronoDeathBehaviorModuleData::ChronoDeathBehaviorModuleData()
 	{
 		{ "StartFX",			INI::parseFXList,			    NULL, offsetof(ChronoDeathBehaviorModuleData, m_startFX) },
 		{ "EndFX",				INI::parseFXList,			    NULL, offsetof(ChronoDeathBehaviorModuleData, m_endFX) },
+		{ "StartFXInfantry",			INI::parseFXList,		NULL, offsetof(ChronoDeathBehaviorModuleData, m_startFXInfantry) },
+		{ "StartFXVehicle",			INI::parseFXList,			NULL, offsetof(ChronoDeathBehaviorModuleData, m_startFXVehicle) },
+		{ "StartFXStructure",			INI::parseFXList,	    NULL, offsetof(ChronoDeathBehaviorModuleData, m_startFXStructure) },
+		{ "EndFXInfantry",				INI::parseFXList,		NULL, offsetof(ChronoDeathBehaviorModuleData, m_endFXInfantry) },
+		{ "EndFXVehicle",				INI::parseFXList,		NULL, offsetof(ChronoDeathBehaviorModuleData, m_endFXVehicle) },
+		{ "EndFXStructure",				INI::parseFXList,		NULL, offsetof(ChronoDeathBehaviorModuleData, m_endFXStructure) },
 		{ "OCL",				INI::parseObjectCreationList,	NULL, offsetof(ChronoDeathBehaviorModuleData, m_ocl) },
 		{ "OCLDynamicGeometryScaleFactor",  INI::parseReal,	    NULL, offsetof(ChronoDeathBehaviorModuleData, m_oclScaleFactor) },
 		{ "StartScale",			INI::parseReal,			        NULL, offsetof(ChronoDeathBehaviorModuleData, m_startScale) },
@@ -126,10 +132,24 @@ UpdateSleepTime ChronoDeathBehavior::update()
 
 	if (now >= m_destructionFrame)
 	{
+		Real objRadius = obj->getGeometryInfo().getBoundingCircleRadius();
 		if (d->m_endFX)
 		{
-			FXList::doFXObj(d->m_startFX, obj);
+			FXList::doFXPos(d->m_endFX, obj->getPosition(), NULL, 0, NULL, objRadius);
 		}
+		if (d->m_endFXInfantry && obj->isKindOf(KINDOF_INFANTRY))
+		{
+			FXList::doFXPos(d->m_endFXInfantry, obj->getPosition(), NULL, 0, NULL, objRadius);
+		}
+		if (d->m_endFXVehicle && obj->isKindOf(KINDOF_VEHICLE))
+		{
+			FXList::doFXPos(d->m_endFXVehicle, obj->getPosition(), NULL, 0, NULL, objRadius);
+		}
+		if (d->m_endFXStructure && obj->isKindOf(KINDOF_STRUCTURE))
+		{
+			FXList::doFXPos(d->m_endFXStructure, obj->getPosition(), NULL, 0, NULL, objRadius);
+		}
+
 		TheGameLogic->destroyObject(obj);
 		return UPDATE_SLEEP_FOREVER;
 	}
@@ -156,9 +176,22 @@ void ChronoDeathBehavior::beginChronoDeath(const DamageInfo* damageInfo)
 		draw->setTerrainDecalFadeTarget(0.0f, -0.2f);
 	}
 
+	Real objRadius = obj->getGeometryInfo().getBoundingCircleRadius();
 	if (d->m_startFX)
 	{	
-		FXList::doFXObj(d->m_startFX, obj);
+		FXList::doFXPos(d->m_startFX, obj->getPosition(), NULL, 0, NULL, objRadius);
+	}
+	if (d->m_startFXInfantry && obj->isKindOf(KINDOF_INFANTRY))
+	{
+		FXList::doFXPos(d->m_startFXInfantry, obj->getPosition(), NULL, 0, NULL, objRadius);
+	}
+	if (d->m_startFXVehicle && obj->isKindOf(KINDOF_VEHICLE))
+	{
+		FXList::doFXPos(d->m_startFXVehicle, obj->getPosition(), NULL, 0, NULL, objRadius);
+	}
+	if (d->m_startFXStructure && obj->isKindOf(KINDOF_STRUCTURE))
+	{
+		FXList::doFXPos(d->m_startFXStructure, obj->getPosition(), NULL, 0, NULL, objRadius);
 	}
 
 	if (d->m_ocl)
