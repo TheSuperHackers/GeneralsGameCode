@@ -81,7 +81,7 @@ public:
 	//
 	//	Inline accessors
 	//
-	
+
 	RingRenderObjClass *		Get_Ring (void) const							{ return m_RenderObj; }
 	void							Set_Ring (RingRenderObjClass *ring)	{ m_RenderObj = ring; Initialize (); }
 	bool							Is_Data_Valid (void) const						{ return m_bValid; }
@@ -104,7 +104,7 @@ private:
 	bool							m_bValid;
 	ColorBarClass *			m_ColorBar;
 	ColorBarClass *			m_OpacityBar;
-	
+
 	RingColorChannelClass	m_ColorChannel;
 	RingColorChannelClass	m_OrigColorChannel;
 	RingAlphaChannelClass	m_AlphaChannel;

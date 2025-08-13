@@ -42,7 +42,7 @@
 #define __DEFINITION_H
 
 #include "always.h"
-// SKB Remove because of G conflicts with CLASSID_?? 
+// SKB Remove because of G conflicts with CLASSID_??
 #include "definitionclassids.h"
 #include "definitionmgr.h"
 #include "editable.h"
@@ -76,7 +76,7 @@ public:
 	/////////////////////////////////////////////////////////////////////
 	//	Public methods
 	/////////////////////////////////////////////////////////////////////
-	
+
 	// Type identification
 	virtual uint32						Get_Class_ID (void) const = 0;
 	virtual uint32						Get_ID (void) const;
@@ -85,7 +85,7 @@ public:
 
 	// Display name methods
 	virtual const char *				Get_Name (void) const;
-	virtual void						Set_Name (const char *new_name);	
+	virtual void						Set_Name (const char *new_name);
 
 	// Validation methods
 	virtual bool						Is_Valid_Config (StringClass &message);
@@ -103,7 +103,7 @@ public:
 	void									Enable_Save (bool onoff)		{ m_SaveEnabled = onoff; }
 
 protected:
-	
+
 	/////////////////////////////////////////////////////////////////////
 	//	Protected member data
 	/////////////////////////////////////////////////////////////////////

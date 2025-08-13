@@ -32,7 +32,7 @@
  *                                                                                             *
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
- *   FileListTextureClass::Load_Frame_Surface -- Load source texture                           * 
+ *   FileListTextureClass::Load_Frame_Surface -- Load source texture                           *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "texture.h"
@@ -98,7 +98,7 @@ TextureClass::TextureClass(unsigned width, unsigned height, WW3DFormat format, M
 	Width(width),
 	Height(height)
 {
-	switch (format) 
+	switch (format)
 	{
 	case WW3D_FORMAT_DXT1:
 	case WW3D_FORMAT_DXT2:
@@ -109,7 +109,7 @@ TextureClass::TextureClass(unsigned width, unsigned height, WW3DFormat format, M
 		break;
 	default : break;
 	}
-		
+
 	D3DPOOL d3dpool=(D3DPOOL)0;
 	switch(pool)
 	{
@@ -124,9 +124,9 @@ TextureClass::TextureClass(unsigned width, unsigned height, WW3DFormat format, M
 		Dirty=true;
 		DX8TextureTrackerClass *track=W3DNEW DX8TextureTrackerClass
 		(
-			width, 
-			height, 
-			format, 
+			width,
+			height,
+			format,
 			mip_level_count,
 			this,
 			rendertarget
@@ -161,7 +161,7 @@ TextureClass::TextureClass
 	Width(0),
 	Height(0)
 {
-	switch (TextureFormat) 
+	switch (TextureFormat)
 	{
 	case WW3D_FORMAT_DXT1:
 	case WW3D_FORMAT_DXT2:
@@ -176,13 +176,13 @@ TextureClass::TextureClass
 		// If requesting bumpmap format that isn't available we'll just return the surface in whatever color
 		// format the texture file is in. (This is illegal case, the format support should always be queried
 		// before creating a bump texture!)
-		if (!DX8Wrapper::Get_Current_Caps()->Support_Texture_Format(TextureFormat)) 
+		if (!DX8Wrapper::Get_Current_Caps()->Support_Texture_Format(TextureFormat))
 		{
 			TextureFormat=WW3D_FORMAT_UNKNOWN;
 		}
 		// If bump format is valid, make sure compression is not allowed so that we don't even attempt to load
 		// from a compressed file (quality isn't good enough for bump map). Also disable mipmapping.
-		else 
+		else
 		{
 			IsCompressionAllowed=false;
 			MipLevelCount=MIP_LEVELS_1;
@@ -194,9 +194,9 @@ TextureClass::TextureClass
 
 	WWASSERT_PRINT(name && name[0], "TextureClass CTor: NULL or empty texture name");
 	int len=strlen(name);
-	for (int i=0;i<len;++i) 
+	for (int i=0;i<len;++i)
 	{
-		if (name[i]=='+') 
+		if (name[i]=='+')
 		{
 			IsLightmap=true;
 
@@ -211,7 +211,7 @@ TextureClass::TextureClass
 	Set_Texture_Name(name);
 	Set_Full_Path(full_path);
 	WWASSERT(name[0]!='\0');
-	if (!WW3D::Is_Texturing_Enabled()) 
+	if (!WW3D::Is_Texturing_Enabled())
 	{
 		Initialized=true;
 		D3DTexture=0;
@@ -253,7 +253,7 @@ TextureClass::TextureClass(SurfaceClass *surface, MipCountType mip_level_count)
 	surface->Get_Description(sd);
 	Width=sd.Width;
 	Height=sd.Height;
-	switch (sd.Format) 
+	switch (sd.Format)
 	{
 	case WW3D_FORMAT_DXT1:
 	case WW3D_FORMAT_DXT2:
@@ -264,7 +264,7 @@ TextureClass::TextureClass(SurfaceClass *surface, MipCountType mip_level_count)
 		break;
 	default: break;
 	}
-	
+
 	D3DTexture = DX8Wrapper::_Create_DX8_Texture(surface->Peek_D3D_Surface(), mip_level_count);
 	LastAccessed=WW3D::Get_Sync_Time();
 }
@@ -297,7 +297,7 @@ TextureClass::TextureClass(IDirect3DTexture8* d3d_texture)
 	Width=d3d_desc.Width;
 	Height=d3d_desc.Height;
 	TextureFormat=D3DFormat_To_WW3DFormat(d3d_desc.Format);
-	switch (TextureFormat) 
+	switch (TextureFormat)
 	{
 	case WW3D_FORMAT_DXT1:
 	case WW3D_FORMAT_DXT2:
@@ -372,24 +372,24 @@ void TextureClass::Invalidate()
 
 //**********************************************************************************************
 //! Returns a pointer to the d3d texture
-/*! 
+/*!
 */
-IDirect3DBaseTexture8 * TextureClass::Peek_D3D_Base_Texture() const 
-{ 	
-	LastAccessed=WW3D::Get_Sync_Time(); 
-	return D3DTexture; 
+IDirect3DBaseTexture8 * TextureClass::Peek_D3D_Base_Texture() const
+{
+	LastAccessed=WW3D::Get_Sync_Time();
+	return D3DTexture;
 }
 
 //**********************************************************************************************
 //! Set the d3d texture pointer.  Handles ref counts properly.
-/*! 
+/*!
 */
-void TextureClass::Set_D3D_Base_Texture(IDirect3DBaseTexture8* tex) 
-{ 
+void TextureClass::Set_D3D_Base_Texture(IDirect3DBaseTexture8* tex)
+{
 	// (gth) Generals does stuff directly with the D3DTexture pointer so lets
 	// reset the access timer whenever someon messes with this pointer.
 	LastAccessed=WW3D::Get_Sync_Time();
-	
+
 	if (D3DTexture != NULL) {
 		D3DTexture->Release();
 	}
@@ -415,7 +415,7 @@ bool TextureClass::Is_Missing_Texture()
 {
 	bool flag = false;
 	IDirect3DTexture8 *missing_texture = MissingTexture::_Get_Missing_Texture();
-	
+
 	if(D3DTexture == missing_texture)
 		flag = true;
 
@@ -455,7 +455,7 @@ void TextureClass::Get_Level_Description(SurfaceClass::SurfaceDescription &surfa
 	D3DSURFACE_DESC d3d_surf_desc;
 	DX8_ErrorCode(Peek_D3D_Texture()->GetLevelDesc(level, &d3d_surf_desc));
 	surface_desc.Format = D3DFormat_To_WW3DFormat(d3d_surf_desc.Format);
-	surface_desc.Height = d3d_surf_desc.Height; 
+	surface_desc.Height = d3d_surf_desc.Height;
 	surface_desc.Width = d3d_surf_desc.Width;
 }
 
@@ -509,7 +509,7 @@ unsigned TextureClass::Get_Reduction() const
 
 void TextureClass::Apply(unsigned int stage)
 {
-	if (!Initialized) 
+	if (!Initialized)
 	{
 		Init();
 	}
@@ -518,11 +518,11 @@ void TextureClass::Apply(unsigned int stage)
 	DX8_RECORD_TEXTURE(this);
 
 	// Set texture itself
-	if (WW3D::Is_Texturing_Enabled()) 
+	if (WW3D::Is_Texturing_Enabled())
 	{
 		DX8Wrapper::Set_DX8_Texture(stage, D3DTexture);
 	}
-	else 
+	else
 	{
 		DX8Wrapper::Set_DX8_Texture(stage, NULL);
 	}
@@ -736,7 +736,7 @@ TextureClass* Load_Texture(ChunkLoadClass & cload)
 	TextureClass *newtex = NULL;
 
 	char name[256];
-	if (cload.Open_Chunk () && (cload.Cur_Chunk_ID () == W3D_CHUNK_TEXTURE)) 
+	if (cload.Open_Chunk () && (cload.Cur_Chunk_ID () == W3D_CHUNK_TEXTURE))
 	{
 
 		W3dTextureInfoStruct texinfo;
@@ -763,18 +763,18 @@ TextureClass* Load_Texture(ChunkLoadClass & cload)
 		/*
 		** Get the texture from the asset manager
 		*/
-		if (hastexinfo) 
+		if (hastexinfo)
 		{
 
 			MipCountType mipcount;
 
 			bool no_lod = ((texinfo.Attributes & W3DTEXTURE_NO_LOD) == W3DTEXTURE_NO_LOD);
 
-			if (no_lod) 
+			if (no_lod)
 			{
 				mipcount = MIP_LEVELS_1;
-			} 
-			else 
+			}
+			else
 			{
 				switch (texinfo.Attributes & W3DTEXTURE_MIP_LEVELS_MASK) {
 
@@ -802,7 +802,7 @@ TextureClass* Load_Texture(ChunkLoadClass & cload)
 			}
 			newtex = WW3DAssetManager::Get_Instance()->Get_Texture (name, mipcount);
 
-			if (no_lod) 
+			if (no_lod)
 			{
 				newtex->Get_Filter().Set_Mip_Mapping(TextureFilterClass::FILTER_TYPE_NONE);
 			}
@@ -811,7 +811,7 @@ TextureClass* Load_Texture(ChunkLoadClass & cload)
 			bool v_clamp = ((texinfo.Attributes & W3DTEXTURE_CLAMP_V) != 0);
 			newtex->Get_Filter().Set_V_Addr_Mode(v_clamp ? TextureFilterClass::TEXTURE_ADDRESS_CLAMP : TextureFilterClass::TEXTURE_ADDRESS_REPEAT);
 
-			switch (texinfo.Attributes & W3DTEXTURE_TYPE_MASK) 
+			switch (texinfo.Attributes & W3DTEXTURE_TYPE_MASK)
 			{
 
 				case W3DTEXTURE_TYPE_COLORMAP:
@@ -840,7 +840,7 @@ TextureClass* Load_Texture(ChunkLoadClass & cload)
 		WWASSERT(newtex);
 	}
 
-	// Return a pointer to the new texture	
+	// Return a pointer to the new texture
 	return newtex;
 }
 

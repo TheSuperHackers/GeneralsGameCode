@@ -56,7 +56,7 @@
 ** UniqueArrayClass
 ** This template class can be used to generate an array of unique objects
 ** amongst a huge list of objects which may or may not be unique.  However,
-** in order to use the UniqueArrayClass, you will need to implement a 
+** in order to use the UniqueArrayClass, you will need to implement a
 ** HashCalculatorClass for the type you are using.
 **
 ** Note that the UniqueArrayClass does *copies* of the objects you are
@@ -90,7 +90,7 @@ private:
 		bool operator == (const HashItem & that) { return ((Item == that.Item) && (NextHashIndex == that.NextHashIndex)); }
 		bool operator != (const HashItem & that) { return !(*this == that); }
 	};
-		
+
 	// Dynamic Vector of the unique items:
 	DynamicVectorClass<HashItem>		UniqueItems;
 
@@ -126,7 +126,7 @@ UniqueArrayClass<T>::UniqueArrayClass(int initial_size,int growth_rate,HashCalcu
 {
 	// set the growth rate.
 	UniqueItems.Set_Growth_Step(growth_rate);
-		
+
 	// sizing and allocating the actual hash table
 	int bits = HashCalculator->Num_Hash_Bits();
 	assert(bits > 0);
@@ -177,8 +177,8 @@ UniqueArrayClass<T>::~UniqueArrayClass(void)
  * HISTORY:                                                                                    *
  *   5/29/98    GTH : Created.                                                                 *
  *=============================================================================================*/
-template <class T> 
-inline int UniqueArrayClass<T>::Add(const T & new_item) 
+template <class T>
+inline int UniqueArrayClass<T>::Add(const T & new_item)
 {
 	/*
 	** Use the hash table to quickly (hopefully :-) detect
@@ -187,14 +187,14 @@ inline int UniqueArrayClass<T>::Add(const T & new_item)
 	int num_hash_vals;
 	HashCalculator->Compute_Hash(new_item);
 	num_hash_vals = HashCalculator->Num_Hash_Values();
-	
+
 	unsigned int lasthash = 0xFFFFFFFF;
 	unsigned int hash;
-	
+
 	for (int hidx = 0; hidx < num_hash_vals; hidx++) {
 		hash = HashCalculator->Get_Hash_Value(hidx);
 		if (hash != lasthash) {
-			
+
 			int test_item_index = HashTable[hash];
 
 			while (test_item_index != 0xFFFFFFFF) {
@@ -217,7 +217,7 @@ inline int UniqueArrayClass<T>::Add(const T & new_item)
 	entry.Item = new_item;
 	entry.NextHashIndex = HashTable[hash_index];
 	HashTable[hash_index] = index;
-	
+
 	UniqueItems.Add(entry);
 
 	return index;

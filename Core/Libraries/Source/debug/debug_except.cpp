@@ -118,13 +118,13 @@ void DebugExceptionhandler::LogRegisters(Debug &dbg, struct _EXCEPTION_POINTERS 
 
   dbg << Debug::FillChar('0')
       << Debug::Hex()
-      <<  "EAX:" << Debug::Width(8) << ctx.Eax 
+      <<  "EAX:" << Debug::Width(8) << ctx.Eax
       << " EBX:" << Debug::Width(8) << ctx.Ebx
       << " ECX:" << Debug::Width(8) << ctx.Ecx << "\n"
-      <<  "EDX:" << Debug::Width(8) << ctx.Edx 
+      <<  "EDX:" << Debug::Width(8) << ctx.Edx
       << " ESI:" << Debug::Width(8) << ctx.Esi
       << " EDI:" << Debug::Width(8) << ctx.Edi << "\n"
-      <<  "EIP:" << Debug::Width(8) << ctx.Eip 
+      <<  "EIP:" << Debug::Width(8) << ctx.Eip
       << " ESP:" << Debug::Width(8) << ctx.Esp
       << " EBP:" << Debug::Width(8) << ctx.Ebp << "\n"
       <<  "Flags:" << Debug::Bin() << Debug::Width(32) << ctx.EFlags << Debug::Hex() << "\n"
@@ -151,7 +151,7 @@ void DebugExceptionhandler::LogFPURegisters(Debug &dbg, struct _EXCEPTION_POINTE
       << "CW:" << Debug::Width(16) << (flt.ControlWord&0xffff) << "\n"
       << "SW:" << Debug::Width(16) << (flt.StatusWord&0xffff) << "\n"
       << "TW:" << Debug::Width(16) << (flt.TagWord&0xffff) << "\n"
-      << Debug::Hex() 
+      << Debug::Hex()
       << "ErrOfs:      " << Debug::Width(8) << flt.ErrorOffset
       << " ErrSel:  "    << Debug::Width(8) << flt.ErrorSelector << "\n"
       << "DataOfs:     " << Debug::Width(8) << flt.DataOffset
@@ -245,7 +245,7 @@ static BOOL CALLBACK ExceptionDlgProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARA
   DebugStackwalk::Signature::GetSymbol(ctx.Eip,regInfo,sizeof(regInfo));
   SendDlgItemMessage(hWnd,102,WM_SETTEXT,0,(LPARAM)regInfo);
 
-  // stack 
+  // stack
   // (this code is a little messy because we're dealing with a raw list control)
   HWND list;
   list=GetDlgItem(hWnd,104);
@@ -309,7 +309,7 @@ static BOOL CALLBACK ExceptionDlgProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARA
     for (unsigned k=0;k<sig.Size();k++)
     {
       DebugStackwalk::Signature::GetSymbol(sig.GetAddress(k),regInfo,sizeof(regInfo));
-      
+
       LVITEM item;
       item.iItem=k;
       item.iSubItem=0;
@@ -332,7 +332,7 @@ static BOOL CALLBACK ExceptionDlgProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARA
       item.iSubItem++;
       item.pszText=strtok(NULL,":");
       ListView_SetItem(list,&item);
-      
+
       item.iSubItem++;
       item.pszText=strtok(NULL,"");
       ListView_SetItem(list,&item);
@@ -346,7 +346,7 @@ static BOOL CALLBACK ExceptionDlgProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARA
 
 LONG __stdcall DebugExceptionhandler::ExceptionFilter(struct _EXCEPTION_POINTERS* pExPtrs)
 {
-  // we should not be calling ourselves! 
+  // we should not be calling ourselves!
   static bool inExceptionFilter;
   if (inExceptionFilter)
   {
@@ -378,7 +378,7 @@ LONG __stdcall DebugExceptionhandler::ExceptionFilter(struct _EXCEPTION_POINTERS
 
   // build info must be saved off for dialog...
   unsigned curOfs=dbg.ioBuffer[DebugIOInterface::Exception].used;
-  dbg.WriteBuildInfo(); 
+  dbg.WriteBuildInfo();
   unsigned len=dbg.ioBuffer[DebugIOInterface::Exception].used-curOfs;
   if (len>=sizeof(verInfo))
     len=sizeof(verInfo)-1;

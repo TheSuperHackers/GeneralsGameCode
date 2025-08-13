@@ -55,7 +55,7 @@ void ControlBar::updateConstructionTextDisplay( Object *obj )
 	DEBUG_ASSERTCRASH( descWindow, ("Under construction window not found") );
 
 	// format the message
-	text.format( TheGameText->fetch( "CONTROLBAR:UnderConstructionDesc" ), 
+	text.format( TheGameText->fetch( "CONTROLBAR:UnderConstructionDesc" ),
 							 obj->getConstructionPercent() );
 	GadgetStaticTextSetText( descWindow, text );
 
@@ -86,7 +86,7 @@ void ControlBar::populateUnderConstruction( Object *objectUnderConstruction )
 
 	setControlCommand( win, commandButton );
 	win->winSetStatus( WIN_STATUS_USE_OVERLAY_STATES );
-	
+
 	// set the text description of what is building
 	updateConstructionTextDisplay( objectUnderConstruction );
 

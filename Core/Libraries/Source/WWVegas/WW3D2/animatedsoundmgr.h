@@ -84,7 +84,7 @@ public:
 
 	// Bridges E&B code with WW3D.
 	static void		Set_Sound_Library(SoundLibraryBridgeClass* library);
-	
+
 private:
 
 	///////////////////////////////////////////////////////////////////
@@ -104,7 +104,7 @@ private:
 	struct AnimSoundList
 	{
 		AnimSoundList() : List(), BoneName("root") {}
-		~AnimSoundList() 
+		~AnimSoundList()
 		{
 			for (int i = 0; i < List.Count(); i++) {
 				delete List[i];
@@ -117,7 +117,7 @@ private:
 	};
 
 	typedef AnimSoundList								ANIM_SOUND_LIST;
-	
+
 	///////////////////////////////////////////////////////////////////
 	//	Private member data
 	///////////////////////////////////////////////////////////////////

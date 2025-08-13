@@ -82,7 +82,7 @@ void RenderObjectRecyclerClass::Reset(void)
 RenderObjClass * RenderObjectRecyclerClass::Get_Render_Object(const char * name,const Matrix3D & tm)
 {
 	RefRenderObjListIterator it(&InactiveModels);
-	
+
 	RenderObjClass * found = NULL;
 	while (!it.Is_Done()) {
 		if (stricmp(it.Peek_Obj()->Get_Name(),name) == 0) {
@@ -100,14 +100,14 @@ RenderObjClass * RenderObjectRecyclerClass::Get_Render_Object(const char * name,
 		return found;
 
 	} else {
-		
+
 		RenderObjClass * new_model = WW3DAssetManager::Get_Instance()->Create_Render_Obj(name);
 		if (new_model != NULL) {
 			new_model->Set_Transform(tm);
 			return new_model;
-		} 
-	}	
-	
+		}
+	}
+
 	return NULL;
 }
 
@@ -170,7 +170,7 @@ void RenderObjectRecyclerClass::Reset_Model(RenderObjClass * model)
 		Reset_Model(robj);
 		robj->Release_Ref();
 	}
-	
+
 	/*
 	** particle emitters must be reset (this should release their buffers)
 	*/
@@ -178,7 +178,7 @@ void RenderObjectRecyclerClass::Reset_Model(RenderObjClass * model)
 		ParticleEmitterClass * emitter = (ParticleEmitterClass *)model;
 		emitter->Reset();
 	}
-	
+
 	/*
 	** animated models must have their animation reset (if present)
 	*/

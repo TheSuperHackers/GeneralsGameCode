@@ -83,7 +83,7 @@ public:
 	inline void Add_Sphere(const SphereClass & s);
 	inline void Transform(const Matrix3D & tm);
 	inline float Volume(void) const;
-	
+
 	inline SphereClass & operator += (const SphereClass & s);
 	inline SphereClass & operator *= (const Matrix3D & m);
 
@@ -150,7 +150,7 @@ inline SphereClass::SphereClass(const Vector3 *Position,const int VertCount)
 			zmax.X = Position[i].X; zmax.Y = Position[i].Y; zmax.Z = Position[i].Z;
 		}
 	}
-	
+
 	// xspan = distance between the 2 points xmin and xmax squared.
 	// same goes for yspan and zspan.
 	dx = xmax.X - xmin.X;
@@ -186,7 +186,7 @@ inline SphereClass::SphereClass(const Vector3 *Position,const int VertCount)
 		dia2 = zmax;
 	}
 
-	
+
 	// Compute initial center and radius and radius squared
 	Vector3 center;
 	center.X = (dia1.X + dia2.X) / 2.0f;
@@ -200,7 +200,7 @@ inline SphereClass::SphereClass(const Vector3 *Position,const int VertCount)
 	double radsqr = dx*dx + dy*dy + dz*dz;
 	double radius = sqrt(radsqr);
 
-	
+
 	// SECOND PASS:
 	// Increment current sphere if any points fall outside of it.
 	for (i=0; i<VertCount; i++) {
@@ -208,15 +208,15 @@ inline SphereClass::SphereClass(const Vector3 *Position,const int VertCount)
 		dx = Position[i].X - center.X;
 		dy = Position[i].Y - center.Y;
 		dz = Position[i].Z - center.Z;
-		
+
 		double testrad2 = dx*dx + dy*dy + dz*dz;
 
 		if (testrad2 > radsqr) {
-			
+
 			// this point was outside the old sphere, compute a new
 			// center point and radius which contains this point
 			double testrad = sqrt(testrad2);
-			
+
 			// adjust center and radius
 			radius = (radius + testrad) / 2.0;
 			radsqr = radius * radius;
@@ -431,7 +431,7 @@ inline SphereClass & SphereClass::operator *= (const Matrix3D & m)
  * HISTORY:                                                                                    *
  *   8/12/98    GTH : Created.                                                                 *
  *=============================================================================================*/
-inline bool Spheres_Intersect(const SphereClass & s0,const SphereClass & s1) 
+inline bool Spheres_Intersect(const SphereClass & s0,const SphereClass & s1)
 {
 	Vector3 delta = s0.Center - s1.Center;
 	float dist2 = Vector3::Dot_Product(delta, delta);

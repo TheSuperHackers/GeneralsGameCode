@@ -55,7 +55,7 @@ protected:
 	virtual void AssertValid() const;
 	virtual void Dump(CDumpContext& dc) const;
 #endif
-	
+
 	// Generated message map functions
 protected:
 
@@ -64,7 +64,7 @@ protected:
 		FIND_STRING,
 		SEARCH_WRAPPED
 	};
-	
+
 	void		  InsertItem(ChunkItem *item, HTREEITEM Parent = TVI_ROOT);
 	ChunkItem *FindChunkItem (ChunkItem *selectedchunkitem, ChunkItem *chunkitem, SearchStateEnum &searchstate);
 	void		  SelectTreeItem (HTREEITEM treeitem, ChunkItem *chunkitem);

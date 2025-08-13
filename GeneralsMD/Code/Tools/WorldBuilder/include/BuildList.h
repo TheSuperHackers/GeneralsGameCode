@@ -105,7 +105,7 @@ public:
 	virtual void PopSliderChanged(const long sliderID, long theVal);
 	virtual void PopSliderFinished(const long sliderID, long theVal);
 
-}; 
+};
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.

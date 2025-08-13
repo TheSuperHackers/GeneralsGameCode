@@ -24,8 +24,8 @@
 
 // FILE: KindOf.h //////////////////////////////////////////////////////////////////////////
 // Author: Steven Johnson, Dec 2001
-// Desc:	 
-///////////////////////////////////////////////////////////////////////////////////////////////////	
+// Desc:
+///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
 
@@ -79,7 +79,7 @@ enum KindOfType CPP_11(: Int)
 	KINDOF_NO_COLLIDE,							///< Never collide with or be collided with
 	KINDOF_REPAIR_PAD,							///< is a repair pad object that can repair other machines
 	KINDOF_HEAL_PAD,								///< is a heal pad object that can heal flesh and bone units
-	KINDOF_STEALTH_GARRISON,				/** enemy teams can't tell that unit is in building.. and if they 
+	KINDOF_STEALTH_GARRISON,				/** enemy teams can't tell that unit is in building.. and if they
 																		garrison that building, they stealth unit will eject. */
 	KINDOF_CASH_GENERATOR,					///< used to check if the unit generates cash... checked by cash hackers and whatever else comes up
 	KINDOF_AIRFIELD,								///< unit has a runway that planes can takeoff/land on
@@ -151,13 +151,13 @@ typedef BitFlags<KINDOF_COUNT>	KindOfMaskType;
 
 #define MAKE_KINDOF_MASK(k) KindOfMaskType(KindOfMaskType::kInit, (k))
 
-inline Bool TEST_KINDOFMASK(const KindOfMaskType& m, KindOfType t) 
-{ 
-	return m.test(t); 
+inline Bool TEST_KINDOFMASK(const KindOfMaskType& m, KindOfType t)
+{
+	return m.test(t);
 }
 
-inline Bool TEST_KINDOFMASK_ANY(const KindOfMaskType& m, const KindOfMaskType& mask) 
-{ 
+inline Bool TEST_KINDOFMASK_ANY(const KindOfMaskType& m, const KindOfMaskType& mask)
+{
 	return m.anyIntersectionWith(mask);
 }
 
@@ -166,14 +166,14 @@ inline Bool TEST_KINDOFMASK_MULTI(const KindOfMaskType& m, const KindOfMaskType&
 	return m.testSetAndClear(mustBeSet, mustBeClear);
 }
 
-inline Bool KINDOFMASK_ANY_SET(const KindOfMaskType& m) 
-{ 
-	return m.any(); 
+inline Bool KINDOFMASK_ANY_SET(const KindOfMaskType& m)
+{
+	return m.any();
 }
 
-inline void CLEAR_KINDOFMASK(KindOfMaskType& m) 
-{ 
-	m.clear(); 
+inline void CLEAR_KINDOFMASK(KindOfMaskType& m)
+{
+	m.clear();
 }
 
 inline void SET_ALL_KINDOFMASK_BITS(KindOfMaskType& m)

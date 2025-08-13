@@ -58,10 +58,10 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // SelectMacrotexture message handlers
 
-BOOL SelectMacrotexture::OnInitDialog() 
+BOOL SelectMacrotexture::OnInitDialog()
 {
 	CDialog::OnInitDialog();
-	
+
 	CWnd *pWnd = GetDlgItem(IDC_TEXTURE_TREEVIEW);
 	CRect rect;
 	pWnd->GetWindowRect(&rect);
@@ -104,7 +104,7 @@ BOOL SelectMacrotexture::OnInitDialog()
 					ins.item.mask = TVIF_PARAM|TVIF_TEXT;
 					ins.item.lParam = -1;
 					ins.item.pszText = fileBuf;
-					ins.item.cchTextMax = strlen(fileBuf);				
+					ins.item.cchTextMax = strlen(fileBuf);
 					child = m_textureTreeView.InsertItem(&ins);
 				++it;
 			} while (it != filenameList.end());
@@ -122,12 +122,12 @@ BOOL SelectMacrotexture::OnInitDialog()
  		}
 	}
 
-	
+
 	return TRUE;  // return TRUE unless you set the focus to a control
 	              // EXCEPTION: OCX Property Pages should return FALSE
 }
 
-BOOL SelectMacrotexture::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult) 
+BOOL SelectMacrotexture::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult)
 {
 	NMTREEVIEW *pHdr = (NMTREEVIEW *)lParam;
 	if (pHdr->hdr.hwndFrom == m_textureTreeView.m_hWnd) {
@@ -139,7 +139,7 @@ BOOL SelectMacrotexture::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult
 			item.mask = TVIF_HANDLE|TVIF_PARAM|TVIF_TEXT|TVIF_STATE;
 			item.hItem = hItem;
 			item.pszText = buffer;
-			item.cchTextMax = sizeof(buffer)-2;				
+			item.cchTextMax = sizeof(buffer)-2;
 			m_textureTreeView.GetItem(&item);
 			if (0==strcmp(buffer, DEFAULT)) {
 				TheTerrainRenderObject->updateMacroTexture(AsciiString(""));

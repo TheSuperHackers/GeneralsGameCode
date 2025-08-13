@@ -26,8 +26,8 @@
  *                                                                                             *
  *                   Org Author:: Greg Hjelstrom                                               *
  *                                                                                             *
- *                       Author : Kenny Mitchell                                               * 
- *                                                                                             * 
+ *                       Author : Kenny Mitchell                                               *
+ *                                                                                             *
  *                     $Modtime:: 06/27/02 1:27p                                              $*
  *                                                                                             *
  *                    $Revision:: 16                                                          $*
@@ -119,31 +119,31 @@ protected:
 
 };
 
-	
+
 /**
 ** SpecialRenderInfoClass
 ** This structure also contains a "grab-bag" of junk for use by the Special_Render
-** function.  The first use that I have for Special_Render is to implement the 
+** function.  The first use that I have for Special_Render is to implement the
 ** visibility detection algorithm where each object is rendered in such a way
 ** that I can get the 'id' of the object which generated each pixel on the screen.
 ** Another use I have planned for Special_Render is a shadow rendering mode that
-** just draws an object in solid black from the point of view of a light source. 
+** just draws an object in solid black from the point of view of a light source.
 ** This would just need another enum for the RenderType...
-** 
+**
 ** The reason for a Special_Render function is that I didn't want to pollute
 ** the main rendering pipeline with checks for these alternate rendering operations.
-*/	
+*/
 class SpecialRenderInfoClass : public RenderInfoClass
-{	
+{
 
-public:	
+public:
 	SpecialRenderInfoClass(CameraClass & cam,int render_type);
 	~SpecialRenderInfoClass(void);
 
 	// The following fields are only used by the Special_Render function.
 	// this is basically just a place to stick whatever information you need.
-	enum 
-	{ 
+	enum
+	{
 		RENDER_VIS,
 		RENDER_SHADOW
 	};

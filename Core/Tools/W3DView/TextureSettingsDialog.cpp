@@ -53,7 +53,7 @@ typedef enum
 {
 	TYPE_LOOP			= 0,
 	TYPE_ONCE,
-	TYPE_PING_PONG,	
+	TYPE_PING_PONG,
 	TYPE_MANUAL,
 	TYPE_COUNT
 } ANIM_TYPES;
@@ -137,7 +137,7 @@ TextureSettingsDialogClass::OnInitDialog (void)
 	CDialog::OnInitDialog ();
 	ASSERT (m_pTexture != NULL);
 	ASSERT (m_pTexture->getClassID () == ID_INDIRECT_TEXTURE_CLASS);
-	
+
 	// Determine what the starting texture was so we can restore on cancel (if necessary)
 	m_pStartingTexture = m_pTexture->Get_Texture ();
 	//m_pStartingTexture->addReference ();
@@ -221,19 +221,19 @@ TextureSettingsDialogClass::Fill_Controls (TextureClass *ptexture)
 				FileListTextureClass *pfile_list = static_cast<FileListTextureClass *>(psource);
 				SetDlgItemText (IDC_FILENAME_EDIT, pfile_list->Get_Filename (0));
 			}
-			
+
 			break;
 
 		default:
 			ASSERT (0);
 			break;
 	}
-	
+
 	// Set the checkboxes
 	ASSERT (psource != NULL);
 	if (psource != NULL) {
 		SendDlgItemMessage (IDC_MIPMAP_OFF_CHECK, BM_SETCHECK, (WPARAM)(psource->getMipmap () == srTextureIFace::MIPMAP_NONE));
-		SendDlgItemMessage (IDC_ALPHA_CHECK, BM_SETCHECK, (WPARAM)(psource->isHintEnabled(srTextureIFace::HINT_ALPHA_BITMASK)));	
+		SendDlgItemMessage (IDC_ALPHA_CHECK, BM_SETCHECK, (WPARAM)(psource->isHintEnabled(srTextureIFace::HINT_ALPHA_BITMASK)));
 		SendDlgItemMessage (IDC_CLAMPU_CHECK, BM_SETCHECK, (WPARAM)(psource->Get_U_Addr_Mode() == TextureClass::TEXTURE_ADDRESS_CLAMP));
 		SendDlgItemMessage (IDC_CLAMPV_CHECK, BM_SETCHECK, (WPARAM)(psource->Get_V_Addr_Mode() == TextureClass::TEXTURE_ADDRESS_CLAMP));
 	}
@@ -266,7 +266,7 @@ TextureSettingsDialogClass::Fill_Animation_Controls (TextureClass *ptexture)
 			banimated = true;
 		}
 		break;
-		
+
 		case ID_TIME_ANIM_TEXTURE_INSTANCE_CLASS:
 		{
 			// What mode is this animated texture using
@@ -291,23 +291,23 @@ TextureSettingsDialogClass::Fill_Animation_Controls (TextureClass *ptexture)
 			frames_per_sec = anim_texture->Get_Frame_Rate ();
 			banimated = true;
 		}
-		break;		
+		break;
 	}
 
 	// Check or uncheck the animation box depending on if it was an animated texture
 	SendDlgItemMessage (IDC_ANIMATION_CHECK, BM_SETCHECK, (WPARAM)banimated);
-	
-	// Was this an animated texture?	
+
+	// Was this an animated texture?
 	if (banimated == true) {
-		
+
 		// Pass the frame count onto the control
 		frame_count = (frame_count > 0) ? frame_count : 1;
-		SetDlgItemInt (IDC_FRAME_COUNT_EDIT, frame_count);		
+		SetDlgItemInt (IDC_FRAME_COUNT_EDIT, frame_count);
 		m_FrameCountSpin.SetPos (frame_count);
-		
+
 		// Pass the frame rate onto the control
 		frames_per_sec = (frames_per_sec > 0) ? frames_per_sec : 1;
-		SetDlgItemInt (IDC_FPS_EDIT, (int)frames_per_sec);		
+		SetDlgItemInt (IDC_FPS_EDIT, (int)frames_per_sec);
 		m_FrameRateSpin.SetPos (frames_per_sec);
 
 		// Select the type in the combobox
@@ -326,7 +326,7 @@ TextureSettingsDialogClass::Fill_Animation_Controls (TextureClass *ptexture)
 //
 void
 TextureSettingsDialogClass::OnOK (void)
-{	
+{
 	// Force the new settings to take effect
 	OnApply ();
 
@@ -341,7 +341,7 @@ TextureSettingsDialogClass::OnOK (void)
 // OnCancel
 //
 void
-TextureSettingsDialogClass::OnCancel (void) 
+TextureSettingsDialogClass::OnCancel (void)
 {
 	// Reuse the starting texture
 	m_pTexture->Set_Texture (m_pStartingTexture);
@@ -386,7 +386,7 @@ TextureSettingsDialogClass::WindowProc
 	if (message == WM_PAINT) {
 		Paint_Thumbnail ();
 	} else if (message == WM_COMMAND) {
-		
+
 		// What control sent us this notification?
 		switch (LOWORD (wParam))
 		{
@@ -417,7 +417,7 @@ TextureSettingsDialogClass::WindowProc
 				break;
 		}
 	}
-	
+
 	// Allow the base class to process this message
 	return CDialog::WindowProc (message, wParam, lParam);
 }
@@ -446,7 +446,7 @@ TextureSettingsDialogClass::OnDestroy (void)
 // OnBrowseButton
 //
 void
-TextureSettingsDialogClass::OnBrowseButton (void) 
+TextureSettingsDialogClass::OnBrowseButton (void)
 {
 	// Get the current filename to display
 	CString filename;
@@ -471,7 +471,7 @@ TextureSettingsDialogClass::OnBrowseButton (void)
 		::EnableWindow (::GetDlgItem (m_hWnd, IDC_APPLY), TRUE);
 	}
 
-	return ;	
+	return ;
 }
 
 
@@ -480,11 +480,11 @@ TextureSettingsDialogClass::OnBrowseButton (void)
 // Paint_Thumbnail
 //
 void
-TextureSettingsDialogClass::Paint_Thumbnail (void) 
+TextureSettingsDialogClass::Paint_Thumbnail (void)
 {
 	// Paint the thumbnail
 	if (m_hThumbnail != NULL) {
-		
+
 		// Get the misc crap windows requries before we can
 		// paint to the screen
 		HWND hchild_wnd = ::GetDlgItem (m_hWnd, IDC_TEXTURE_THUMBNAIL);
@@ -560,11 +560,11 @@ TextureSettingsDialogClass::OnApply (void)
 
 	// Does the user want this to be an animated texture?
 	if (SendDlgItemMessage (IDC_ANIMATION_CHECK, BM_GETCHECK) == 1) {
-		
+
 		// What type of animated texture is this?
 		switch ((ANIM_TYPES)m_TypeCombo.GetCurSel ())
 		{
-			case TYPE_LOOP:					
+			case TYPE_LOOP:
 				pnew_texture = new TimeAnimTextureInstanceClass (*(WW3DAssetManager::Get_Instance ()),
 																				 texture_name,
 																				 frame_count,
@@ -610,8 +610,8 @@ TextureSettingsDialogClass::OnApply (void)
 	}
 
 	ASSERT (pnew_texture != NULL);
-	if (pnew_texture != NULL) {			
-		
+	if (pnew_texture != NULL) {
+
 		// Turn mipmapping off if necessary
 		if (SendDlgItemMessage (IDC_MIPMAP_OFF_CHECK, BM_GETCHECK) == 1) {
 			::MipMapping_Off (pnew_texture);
@@ -621,12 +621,12 @@ TextureSettingsDialogClass::OnApply (void)
 		if (SendDlgItemMessage (IDC_ALPHA_CHECK, BM_GETCHECK) == 1) {
 			::Set_Alpha_Bitmap (pnew_texture);
 		}
-		
+
 		// Clamp the UVs if necessary
 		::Set_Clamping (pnew_texture,
 							 (SendDlgItemMessage (IDC_CLAMPU_CHECK, BM_GETCHECK) == 1),
 							 (SendDlgItemMessage (IDC_CLAMPV_CHECK, BM_GETCHECK) == 1));
-		
+
 
 		// Pass the new texture on, and free the old texture
 		m_pTexture->Set_Texture (pnew_texture);

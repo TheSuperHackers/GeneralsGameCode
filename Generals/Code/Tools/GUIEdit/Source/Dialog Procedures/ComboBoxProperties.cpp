@@ -24,12 +24,12 @@
 
 // FILE: ComboBoxProperties.cpp ////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:    GUIEdit
@@ -88,7 +88,7 @@ static LRESULT CALLBACK comboBoxPropertiesCallback( HWND hWndDialog,
 	// are designed to have controls doing the same functionality
 	// and names
 	//
-	if( HandleCommonDialogMessages( hWndDialog, message, 
+	if( HandleCommonDialogMessages( hWndDialog, message,
 																	wParam, lParam, &returnCode ) == TRUE )
 		return returnCode;
 
@@ -101,7 +101,7 @@ static LRESULT CALLBACK comboBoxPropertiesCallback( HWND hWndDialog,
 //			Int notifyCode = HIWORD( wParam );  // notification code
 			Int controlID = LOWORD( wParam );  // control ID
 //			HWND hWndControl = (HWND)lParam;  // control window handle
- 
+
       switch( controlID )
       {
 
@@ -153,7 +153,7 @@ static LRESULT CALLBACK comboBoxPropertiesCallback( HWND hWndDialog,
 					StoreColor( COMBOBOX_LISTBOX_DOWN_BUTTON_HILITE, info->color, info->borderColor );
 					StoreColor( COMBOBOX_LISTBOX_SLIDER_HILITE_TOP, info->color, info->borderColor );
 					StoreColor( COMBOBOX_LISTBOX_SLIDER_THUMB_HILITE, info->color, info->borderColor );
-					
+
 					info = GetStateInfo( COMBOBOX_HILITE_SELECTED_ITEM_LEFT );
 					StoreColor( COMBOBOX_DROP_DOWN_BUTTON_HILITE_PUSHED, info->color, info->borderColor );
 					StoreColor( COMBOBOX_EDIT_BOX_HILITE_LEFT, info->color, info->borderColor );
@@ -536,11 +536,11 @@ static LRESULT CALLBACK comboBoxPropertiesCallback( HWND hWndDialog,
 						} // end if (listBox)
 						// save specific list data
 						ComboBoxData *comboData = (ComboBoxData *)window->winGetUserData();
-						
+
 						GadgetComboBoxSetIsEditable(window, IsDlgButtonChecked( hWndDialog, CHECK_IS_EDITABLE ));
 						GadgetComboBoxSetAsciiOnly(window, IsDlgButtonChecked( hWndDialog, CHECK_ASCII_TEXT ));
 						GadgetComboBoxSetLettersAndNumbersOnly(window, IsDlgButtonChecked( hWndDialog, CHECK_LETTERS_AND_NUMBERS ));
-	
+
 						// change in the size of the comboBox
 						Int newMaxChars = GetDlgItemInt( hWndDialog, EDIT_MAX_CHARS, NULL, FALSE );
 						if( newMaxChars != comboData->maxChars)
@@ -717,7 +717,7 @@ HWND InitComboBoxPropertiesDialog( GameWindow *window )
 		StoreImageAndColor( COMBOBOX_LISTBOX_HILITE_SELECTED_ITEM_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED );
 		image = GadgetListBoxGetHiliteSelectedItemImageSmallCenter( listBox );
 		StoreImageAndColor( COMBOBOX_LISTBOX_HILITE_SELECTED_ITEM_SMALL_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED );
-		
+
 
 
 		// --------------------------------------------------------------------------
@@ -883,7 +883,7 @@ HWND InitComboBoxPropertiesDialog( GameWindow *window )
 			StoreImageAndColor( COMBOBOX_LISTBOX_SLIDER_THUMB_HILITE_PUSHED, image, color, borderColor );
 
 		}  // end if
-	
+
 		GameWindow *dropDownButton = GadgetComboBoxGetDropDownButton( window );
 		if ( dropDownButton )
 		{

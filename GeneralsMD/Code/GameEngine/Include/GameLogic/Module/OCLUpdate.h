@@ -56,7 +56,7 @@ public:
 	UnsignedInt									m_maxDelay;
 	Bool												m_isCreateAtEdge;				///< Otherwise, it is created on top of myself
 	Bool												m_isFactionTriggered;		///< Faction has to be present before update will happen
-	
+
 	OCLUpdateModuleData();
 
 	static void buildFieldParse(MultiIniFieldParse& p);
@@ -86,7 +86,7 @@ public:
 	virtual DisabledMaskType getDisabledTypesToProcess() const { return DISABLEDMASK_ALL; }
 
 protected:
-	
+
 	UnsignedInt			m_nextCreationFrame;
 	UnsignedInt			m_timerStartedFrame;
 	Bool						m_isFactionNeutral;

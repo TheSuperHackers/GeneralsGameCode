@@ -23,12 +23,12 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 //----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //----------------------------------------------------------------------------
 //
 // Project:   RTS3
@@ -39,7 +39,7 @@
 //
 //----------------------------------------------------------------------------
 //----------------------------------------------------------------------------
-//         Includes                                                      
+//         Includes
 //----------------------------------------------------------------------------
 
 #include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
@@ -141,12 +141,12 @@ AudioManager *TheAudio = NULL;
 
 
 // AudioManager Device Independent functions //////////////////////////////////////////////////////
-AudioManager::AudioManager() : 
-	m_soundOn(TRUE), 
-	m_sound3DOn(TRUE), 
-	m_musicOn(TRUE), 
-	m_speechOn(TRUE), 
-	m_music(NULL), 
+AudioManager::AudioManager() :
+	m_soundOn(TRUE),
+	m_sound3DOn(TRUE),
+	m_musicOn(TRUE),
+	m_speechOn(TRUE),
+	m_music(NULL),
 	m_sound(NULL),
 	m_surroundSpeakers(FALSE),
 	m_hardwareAccel(FALSE),
@@ -158,12 +158,12 @@ AudioManager::AudioManager() :
 	m_listenerPosition.zero();
 	m_musicTracks.clear();
 	m_musicVolume = 0.0f;
-	m_sound3DVolume = 0.0f;	
+	m_sound3DVolume = 0.0f;
 	m_soundVolume   = 0.0f;
 	m_speechVolume  = 0.0f;
 	m_systemMusicVolume   = 0.0f;
 	m_systemSound3DVolume = 0.0f;
-	m_systemSoundVolume   = 0.0f; 
+	m_systemSoundVolume   = 0.0f;
 	m_systemSpeechVolume  = 0.0f;
 	m_volumeHasChanged			= FALSE;
 	//
@@ -192,20 +192,20 @@ AudioManager::~AudioManager()
 
 	delete m_silentAudioEvent;
 	m_silentAudioEvent = NULL;
-	
+
 	delete m_music;
 	m_music = NULL;
-	
+
 	delete m_sound;
 	m_sound = NULL;
-	
+
 	delete m_miscAudio;
 	m_miscAudio = NULL;
 
 	delete m_audioSettings;
 	m_audioSettings = NULL;
 
-	if (m_savedValues) 
+	if (m_savedValues)
 		delete [] m_savedValues;
 }
 
@@ -229,18 +229,18 @@ void AudioManager::init()
 
 	// do the miscellaneous sound files last so that we find the audioeventrts associated with the events.
 	ini.load( AsciiString( "Data\\INI\\MiscAudio.ini" ), INI_LOAD_OVERWRITE, NULL);
-	
+
 	// determine if one of the music tracks exists. Since their now BIGd, one implies all.
-	// If they don't exist, then attempt to load them from the CD. 
-	if (!TheGlobalData->m_headless && !isMusicAlreadyLoaded()) 
+	// If they don't exist, then attempt to load them from the CD.
+	if (!TheGlobalData->m_headless && !isMusicAlreadyLoaded())
 	{
 		m_musicPlayingFromCD = TRUE;
-		while (TRUE) 
+		while (TRUE)
 		{
 			// @todo Unload any files from CD first. - jkmcd
 
 			TheFileSystem->loadMusicFilesFromCD();
-			if (isMusicAlreadyLoaded()) 
+			if (isMusicAlreadyLoaded())
 			{
 				break;
 			}
@@ -249,7 +249,7 @@ void AudioManager::init()
 			else
 			{
 				// Display the warning.
-				
+
 				if (OSDisplayWarningBox("GUI:InsertCDPrompt", "GUI:InsertCDMessage", OSDBT_OK | OSDBT_CANCEL, OSDOF_SYSTEMMODAL | OSDOF_EXCLAMATIONICON) == OSDBT_CANCEL) {
 					//TheGameEngine->setQuitting(TRUE);  // Can't do this to WorldBuilder
 					break;
@@ -258,7 +258,7 @@ void AudioManager::init()
 //#endif
 		}
 	}
-	
+
 	m_music = NEW MusicManager;
 	m_sound = NEW SoundManager;
 
@@ -272,7 +272,7 @@ void AudioManager::init()
 	m_scriptSoundVolume = 1.0f;
 	m_scriptSound3DVolume = 1.0f;
 	m_scriptSpeechVolume = 1.0f;
-	
+
 	m_musicVolume = m_systemMusicVolume;
 	m_soundVolume = m_systemSoundVolume;
 	m_sound3DVolume = m_systemSound3DVolume;
@@ -291,13 +291,13 @@ void AudioManager::reset()
 	// clear out any adjusted volumes we might have set.
 	m_adjustedVolumes.clear();
 
-	// adjust the scripted volumes, and reset the 
+	// adjust the scripted volumes, and reset the
 	m_scriptMusicVolume = 1.0f;
 	m_scriptSoundVolume = 1.0f;
 	m_scriptSound3DVolume = 1.0f;
 	m_scriptSpeechVolume = 1.0f;
 
-	// restore the final values to the 
+	// restore the final values to the
 	m_musicVolume = m_systemMusicVolume;
 	m_soundVolume = m_systemSoundVolume;
 	m_sound3DVolume = m_systemSound3DVolume;
@@ -382,7 +382,7 @@ void AudioManager::update()
 		}
 		else if( dist < maxDist )
 		{
-			//Determine what the boost amount will be. 
+			//Determine what the boost amount will be.
 			Real scalar = (dist - minDist) / (maxDist - minDist);
 			m_zoomVolume = 1.0f - scalar * maxBoostScalar;
 		}
@@ -428,15 +428,15 @@ AudioHandle AudioManager::addAudioEvent(const AudioEventRTS *eventToAdd)
 	switch (eventToAdd->getAudioEventInfo()->m_soundType)
 	{
 		case AT_Music:
-			if (!isOn(AudioAffect_Music)) 
+			if (!isOn(AudioAffect_Music))
 				return AHSV_NoSound;
 			break;
 		case AT_SoundEffect:
-			if (!isOn(AudioAffect_Sound) || !isOn(AudioAffect_Sound3D)) 
+			if (!isOn(AudioAffect_Sound) || !isOn(AudioAffect_Sound3D))
 				return AHSV_NoSound;
 			break;
 		case AT_Streaming:
-			if (!isOn(AudioAffect_Speech)) 
+			if (!isOn(AudioAffect_Speech))
 				return AHSV_NoSound;
 			break;
 	}
@@ -460,7 +460,7 @@ AudioHandle AudioManager::addAudioEvent(const AudioEventRTS *eventToAdd)
 			break;
 		}
 	}
-	
+
 	if (!audioEvent->getUninterruptable()) {
 		if (!shouldPlayLocally(audioEvent)) {
 			releaseAudioEventRTS(audioEvent);
@@ -478,11 +478,11 @@ AudioHandle AudioManager::addAudioEvent(const AudioEventRTS *eventToAdd)
 	}
 
 	AudioType type = eventToAdd->getAudioEventInfo()->m_soundType;
-	if (type == AT_Music) 
+	if (type == AT_Music)
 	{
 		m_music->addAudioEvent(audioEvent);
-	} 
-	else 
+	}
+	else
 	{
 		//Possible to nuke audioEvent inside.
 		m_sound->addAudioEvent(audioEvent);
@@ -510,7 +510,7 @@ Bool AudioManager::isValidAudioEvent(const AudioEventRTS *eventToCheck) const
 //-------------------------------------------------------------------------------------------------
 Bool AudioManager::isValidAudioEvent( AudioEventRTS *eventToCheck ) const
 {
-	if( eventToCheck->getEventName().isEmpty() ) 
+	if( eventToCheck->getEventName().isEmpty() )
 	{
 		return false;
 	}
@@ -559,7 +559,7 @@ AsciiString AudioManager::prevTrackName(const AsciiString& currentTrack )
 			break;
 		}
 	}
-	
+
 	if (rit != m_musicTracks.rend()) {
 		++rit;
 	}
@@ -668,7 +668,7 @@ AsciiString AudioManager::translateUnsignedIntToSpeakerType( UnsignedInt speaker
 	if (speakerType >= TheSpeakerTypesCount) {
 		return TheSpeakerTypes[0];
 	}
-	
+
 	return TheSpeakerTypes[speakerType];
 }
 
@@ -770,12 +770,12 @@ Real AudioManager::getVolume( AudioAffect whichToGet )
 void AudioManager::set3DVolumeAdjustment( Real volumeAdjustment )
 {
 	m_sound3DVolume = volumeAdjustment * m_scriptSound3DVolume * m_systemSound3DVolume;
-	
+
 	// clamp
-	if (m_sound3DVolume < 0.0f) 
+	if (m_sound3DVolume < 0.0f)
 		m_sound3DVolume = 0.0f;
 
-	if (m_sound3DVolume > 1.0f) 
+	if (m_sound3DVolume > 1.0f)
 		m_sound3DVolume = 1.0f;
 
   if ( ! has3DSensitiveStreamsPlaying() )
@@ -833,7 +833,7 @@ void AudioManager::removeAllAudioRequests( void )
 //-------------------------------------------------------------------------------------------------
 void AudioManager::processRequestList( void )
 {
-	
+
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -855,7 +855,7 @@ void AudioManager::addAudioEventInfo( AudioEventInfo * newEvent )
 {
   // Warning: Don't try to copy the structure. It may be a derived class
   AudioEventInfo *eventInfo = findAudioEventInfo( newEvent->m_audioName );
-  if (eventInfo) 
+  if (eventInfo)
   {
     DEBUG_CRASH(("Requested add of '%s' multiple times. Is this intentional? - jkmcd", newEvent->m_audioName.str()));
     *eventInfo = *newEvent;
@@ -951,8 +951,8 @@ Real AudioManager::getAudioLengthMS( const AudioEventRTS *event )
 
 	tmpEvent.generateFilename();
 	tmpEvent.generatePlayInfo();
-	return getFileLengthMS(tmpEvent.getAttackFilename()) + 
-				 getFileLengthMS(tmpEvent.getFilename()) + 
+	return getFileLengthMS(tmpEvent.getAttackFilename()) +
+				 getFileLengthMS(tmpEvent.getFilename()) +
 				 getFileLengthMS(tmpEvent.getDecayFilename());
 }
 
@@ -1017,9 +1017,9 @@ Bool AudioManager::isCurrentSpeakerTypeSurroundSound()
 Bool AudioManager::shouldPlayLocally(const AudioEventRTS *audioEvent)
 {
 	Player *localPlayer = ThePlayerList->getLocalPlayer();
-	if( !localPlayer->isPlayerActive() ) 
+	if( !localPlayer->isPlayerActive() )
 	{
-		//We are dead, thus are observing. Get the player we are observing. It's 
+		//We are dead, thus are observing. Get the player we are observing. It's
 		//possible that we're not looking at any player, therefore it can be NULL.
 		localPlayer = TheControlBar->getObserverLookAtPlayer();
 	}
@@ -1058,7 +1058,7 @@ Bool AudioManager::shouldPlayLocally(const AudioEventRTS *audioEvent)
 	}
 
 	const Team *localTeam = localPlayer->getDefaultTeam();
-	if (localTeam == NULL) { 
+	if (localTeam == NULL) {
 		return FALSE;
 	}
 
@@ -1066,8 +1066,8 @@ Bool AudioManager::shouldPlayLocally(const AudioEventRTS *audioEvent)
 		return owningPlayer == localPlayer;
 	}
 
-	if (BitIsSet(ei->m_type, ST_ALLIES)) { 
-		// We have to also check that the owning player isn't the local player, because PLAYER 
+	if (BitIsSet(ei->m_type, ST_ALLIES)) {
+		// We have to also check that the owning player isn't the local player, because PLAYER
 		// wasn't specified, or we wouldn't have gotten here.
 		return (owningPlayer != localPlayer) && owningPlayer->getRelationship(localTeam) == ALLIES;
 	}
@@ -1075,7 +1075,7 @@ Bool AudioManager::shouldPlayLocally(const AudioEventRTS *audioEvent)
 	if (BitIsSet(ei->m_type, ST_ENEMIES)) {
 		return owningPlayer->getRelationship(localTeam) == ENEMIES;
 	}
-	
+
 	return FALSE;
 }
 

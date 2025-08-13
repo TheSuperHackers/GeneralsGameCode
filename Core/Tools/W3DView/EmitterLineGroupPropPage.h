@@ -98,7 +98,7 @@ private:
 	/////////////////////////////////////////////////////////
 	//
 	//	Private member data
-	//		
+	//
 	EmitterInstanceListClass *			m_pEmitterList;
 	bool										m_bValid;
 

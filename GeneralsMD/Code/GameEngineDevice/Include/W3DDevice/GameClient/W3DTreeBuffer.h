@@ -24,12 +24,12 @@
 
 // FILE: W3DTreeBuffer.h //////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information					         
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:    RTS3
@@ -48,7 +48,7 @@
 #define __W3DTREE_BUFFER_H_
 
 //-----------------------------------------------------------------------------
-//           Includes                                                      
+//           Includes
 //-----------------------------------------------------------------------------
 #include "always.h"
 #include "rendobj.h"
@@ -67,7 +67,7 @@
 //           Forward References
 //-----------------------------------------------------------------------------
 class MeshClass;
-class W3DTreeBuffer; 
+class W3DTreeBuffer;
 class TileData;
 class W3DTreeDrawModuleData;
 struct BreezeInfo;
@@ -92,7 +92,7 @@ typedef struct {
 	Real		scale;						///< Scale at location.
 	Real		sin;							///< Sine of the rotation angle at location.
 	Real		cos;							///< Cosine of the rotation angle at location.
-	Int			treeType;					///< Type of tree.  
+	Int			treeType;					///< Type of tree.
 	Bool		visible;					///< Visible flag, updated each frame.
 	SphereClass bounds;				///< Bounding sphere for culling to set the visible flag.
 	Real		sortKey;					///< Sort key, essentially the distance along the look at vector.
@@ -145,8 +145,8 @@ typedef struct {
 // W3DTreeBuffer: Draw buffer for the trees.
 //
 //
-class W3DTreeBuffer : public Snapshot 
-{	
+class W3DTreeBuffer : public Snapshot
+{
 //friend class BaseHeightMapRenderObjClass;
 
 //-----------------------------------------------------------------------------
@@ -169,9 +169,9 @@ public:
 };
 
 public:
- 
+
 	W3DTreeBuffer(void);
-	~W3DTreeBuffer(void); 
+	~W3DTreeBuffer(void);
 	/// Add a tree at location.  Name is the w3d model name.
 	void addTree(DrawableID id, Coord3D location, Real scale, Real angle,
 								Real randomScaleAmount, const W3DTreeDrawModuleData *data);
@@ -179,21 +179,21 @@ public:
 	void unitMoved(Object *unit);
 	/// Add a type of tree.  Name is the w3d model name.
 	Int addTreeType(const W3DTreeDrawModuleData *data);
-	/// Updates a tree's location.  
+	/// Updates a tree's location.
 	Bool updateTreePosition(DrawableID id, Coord3D location, Real angle);
-	void pushAsideTree( DrawableID id, const Coord3D *pusherPos, 
+	void pushAsideTree( DrawableID id, const Coord3D *pusherPos,
 		const Coord3D *pusherDirection, ObjectID pusherID );
 	/// Remove a tree.
 	void removeTree(DrawableID id);
 	/// Remove trees that would be under a building.
 	void removeTreesForConstruction(
-		const Coord3D* pos, 
+		const Coord3D* pos,
 		const GeometryInfo& geom,
 		Real angle
 	);
 
 	void setTextureLOD(Int lod);	///<used to adjust maximum mip level sent to hardware.
-	/// Empties the tree buffer. 
+	/// Empties the tree buffer.
 	void clearAllTrees(void);
 	/// Empties the tree buffer.
 	void setBounds(const Region2D &bounds) {m_bounds = bounds;}
@@ -211,8 +211,8 @@ public:
 	void freeTreeBuffers(void);									 ///< Frees the index and vertex buffers.
 
 private:
-	enum { MAX_TREE_VERTEX=30000, 
-					MAX_TREE_INDEX=60000, 
+	enum { MAX_TREE_VERTEX=30000,
+					MAX_TREE_INDEX=60000,
 					MAX_TREES=4000};
 	enum {MAX_TYPES = 64,
 				MAX_TILES = 512,
@@ -228,7 +228,7 @@ private:
 
 	Short		m_areaPartition[PARTITION_WIDTH_HEIGHT*PARTITION_WIDTH_HEIGHT];
 	Region2D m_bounds;
-	
+
 	TextureClass *m_treeTexture;	///<Trees texture
 	Int			m_textureWidth;				///<Width in pixels m_treeTexture;
 	Int			m_textureHeight;				///<Width in pixels m_treeTexture;
@@ -257,7 +257,7 @@ private:
 	Int			m_lastLogicFrame;
 
 	W3DProjectedShadow *m_shadow;
-	
+
 protected:
 	// snapshot methods
 	virtual void crc( Xfer *xfer );
@@ -270,12 +270,12 @@ protected:
 	void loadTreesInVertexAndIndexBuffers(RefRenderObjListIterator *pDynamicLightsIterator); ///< Fills the index and vertex buffers for drawing.
 	void updateVertexBuffer(void); ///< Fills the index and vertex buffers for drawing.
 	void cull(const CameraClass * camera);						 ///< Culls the trees.
-	UnsignedInt  doLighting(const Vector3 *normal,  
-		const GlobalData::TerrainLighting	*objectLighting, 
+	UnsignedInt  doLighting(const Vector3 *normal,
+		const GlobalData::TerrainLighting	*objectLighting,
 		const Vector3 *emissive, UnsignedInt vertexDiffuse, Real scale) const;
 #if 0 // sort is no longer used and messes up the order. jba [6/6/2003]
 	void sort( Int iterations );								 ///< Performs partial bubble sort.
-#endif 
+#endif
 	void updateTexture(void);
 
 	Int  getPartitionBucket(const Coord3D &pos) const;

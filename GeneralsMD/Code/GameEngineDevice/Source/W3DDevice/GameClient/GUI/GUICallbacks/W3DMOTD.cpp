@@ -24,12 +24,12 @@
 
 // FILE: W3DMOTD.cpp //////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:    RTS3
@@ -83,13 +83,13 @@ static NameKeyType closeButtonID = NAMEKEY_INVALID;
 WindowMsgHandledType MOTDSystem( GameWindow *window, UnsignedInt msg,
 								 WindowMsgData mData1, WindowMsgData mData2 )
 {
-	switch( msg ) 
+	switch( msg )
 	{
 
 		// ------------------------------------------------------------------------
 		case GWM_CREATE:
 		{
-			
+
 			// load id's needed
 			closeButtonID = TheNameKeyGenerator->nameToKey( "MOTD.wnd:CloseMOTD" );
 
@@ -111,7 +111,7 @@ WindowMsgHandledType MOTDSystem( GameWindow *window, UnsignedInt msg,
 			GameWindow *control = (GameWindow *)mData1;
 			Int controlID = control->winGetWindowId();
 
-			if( controlID == closeButtonID )					
+			if( controlID == closeButtonID )
 				window->winHide( !window->winIsHidden() );
 
 			break;
@@ -123,7 +123,7 @@ WindowMsgHandledType MOTDSystem( GameWindow *window, UnsignedInt msg,
 	}  // end switch
 
 	return MSG_HANDLED;
-	
+
 }  // end MOTDSystem
 
 

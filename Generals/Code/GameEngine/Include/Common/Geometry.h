@@ -42,7 +42,7 @@ class INI;
 /** Geometry type descriptions, keep this in the same order as GeometryNames[] below
 	*
 	* NOTE: Do *NOT* change the order of these defines unless you update the
-	* partition manager ... in particular theCollideTestProcs depend on the 
+	* partition manager ... in particular theCollideTestProcs depend on the
 	* order of this geometry and the fact that the values start at 1
 	*/
 //-------------------------------------------------------------------------------------------------
@@ -57,11 +57,11 @@ enum GeometryType CPP_11(: Int)
 };
 
 #ifdef DEFINE_GEOMETRY_NAMES
-static const char *GeometryNames[] = 
+static const char *GeometryNames[] =
 {
-	"SPHERE",		
-	"CYLINDER",	
-	"BOX",			
+	"SPHERE",
+	"CYLINDER",
+	"BOX",
 	NULL
 };
 #endif  // end DEFINE_GEOMETRY_NAMES
@@ -90,21 +90,21 @@ private:
 	Real m_height;
 	Real m_majorRadius;
 	Real m_minorRadius;
-	
+
 	Real m_boundingCircleRadius;	///< not in INI file -- size of bounding circle (2d)
 	Real m_boundingSphereRadius;	///< not in INI -- size of bounding sphere (3d)
 
 	void calcBoundingStuff();
 
 protected:
-	
+
 	// snapshot methods
 	virtual void crc( Xfer *xfer );
 	virtual void xfer( Xfer *xfer );
 	virtual void loadPostProcess( void );
 
 public:
-	
+
 	static void parseGeometryType( INI* ini, void * /*instance*/, void *store, const void* /*userData*/ );
 	static void parseGeometryIsSmall( INI* ini, void * /*instance*/, void *store, const void* /*userData*/ );
 	static void parseGeometryHeight( INI* ini, void * /*instance*/, void *store, const void* /*userData*/ );
@@ -142,8 +142,8 @@ public:
 	inline Bool getIsSmall() const { return m_isSmall; }
 	inline Real getMajorRadius() const { return m_majorRadius; }	// x-axis
 	inline Real getMinorRadius() const { return m_minorRadius; }	// y-axis
-	
-	// this has been removed and should never need to be called... 
+
+	// this has been removed and should never need to be called...
 	// you should generally call getMaxHeightAbovePosition() instead. (srj)
 	//inline Real getGeomHeight() const { return m_height; }				// z-axis
 
@@ -195,5 +195,5 @@ public:
 
 };
 
-#endif 
+#endif
 

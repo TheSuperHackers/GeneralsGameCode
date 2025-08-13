@@ -30,9 +30,9 @@
 
 #define		ARBITRARY_BUFF_SIZE		128
 
-DebugWindowDialog::DebugWindowDialog(UINT nIDTemplate, CWnd* pParentWnd) : CDialog(nIDTemplate, pParentWnd), 
-m_colorAlphaDialog(CColorAlphaDialog::IDD, this), 
-m_switchesDialog(CSwitchesDialog::IDD, this), 
+DebugWindowDialog::DebugWindowDialog(UINT nIDTemplate, CWnd* pParentWnd) : CDialog(nIDTemplate, pParentWnd),
+m_colorAlphaDialog(CColorAlphaDialog::IDD, this),
+m_switchesDialog(CSwitchesDialog::IDD, this),
 m_moreParmsDialog(MoreParmsDialog::IDD, this)
 {
 	mMainWndHWND = ::FindWindow(NULL, "Command & Conquer: Generals");
@@ -40,8 +40,8 @@ m_moreParmsDialog(MoreParmsDialog::IDD, this)
 	m_activeVelocityPage = 0;
 	m_activeParticlePage = 0;
 	m_particleSystem = NULL;
-	
-	
+
+
 	m_changeHasOcurred = false;
 	m_shouldWriteINI = false;
 	m_showColorDlg = false;
@@ -52,13 +52,13 @@ m_moreParmsDialog(MoreParmsDialog::IDD, this)
 	m_shouldUpdateParticleCap = false;
 	m_shouldReloadTextures = false;
 	m_shouldKillAllParticleSystems = false;
-	
+
 	m_emissionTypePanels[0] = new EmissionPanelPoint;
 	m_emissionTypePanels[1] = new EmissionPanelLine;
 	m_emissionTypePanels[2] = new EmissionPanelBox;
 	m_emissionTypePanels[3] = new EmissionPanelSphere;
 	m_emissionTypePanels[4] = new EmissionPanelCylinder;
-	
+
 	m_velocityTypePanels[0] = new VelocityPanelOrtho;
 	m_velocityTypePanels[1] = new VelocityPanelSphere;
 	m_velocityTypePanels[2] = new VelocityPanelHemisphere;
@@ -240,7 +240,7 @@ void DebugWindowDialog::clearAllParticleSystems(void)
 	if (!combo) {
 		return;
 	}
-	
+
 	m_listOfParticleSystems.clear();
 	combo->ResetContent();
 }
@@ -259,7 +259,7 @@ void DebugWindowDialog::appendParticleSystemToList( const std::string &rString )
 	if (!combo) {
 		return;
 	}
-	
+
 	m_listOfParticleSystems.push_front(rString);
 	combo->AddString(rString.c_str());
 }
@@ -302,7 +302,7 @@ Bool DebugWindowDialog::hasSelectionChanged(void)
 		m_changeHasOcurred = false;
 		return true;
 	}
-	
+
 	return false;
 }
 
@@ -366,7 +366,7 @@ void DebugWindowDialog::updateColorValueToSystem(IN Int systemNum, IN const RGBC
 	if (systemNum >= MAX_KEYFRAMES || systemNum < 0 || !m_particleSystem) {
 		return;
 	}
-	
+
 	m_particleSystem->m_colorKey[systemNum] = colorFrame;
 }
 
@@ -520,7 +520,7 @@ void DebugWindowDialog::getVelSphereFromSystem( IN Int velNum, OUT Real &radius)
 		case 0: radius = m_particleSystem->m_emissionVelocity.spherical.speed.m_low; return;
 		case 1: radius = m_particleSystem->m_emissionVelocity.spherical.speed.m_high; return;
 		default: return;
-	};	
+	};
 }
 
 void DebugWindowDialog::updateVelSphereToSystem( IN Int velNum, IN const Real &radius)
@@ -534,7 +534,7 @@ void DebugWindowDialog::updateVelSphereToSystem( IN Int velNum, IN const Real &r
 		case 0: m_particleSystem->m_emissionVelocity.spherical.speed.m_low = radius; return;
 		case 1: m_particleSystem->m_emissionVelocity.spherical.speed.m_high = radius; return;
 		default: return;
-	};	
+	};
 }
 
 void DebugWindowDialog::getVelHemisphereFromSystem( IN Int velNum, OUT Real &radius) const
@@ -548,7 +548,7 @@ void DebugWindowDialog::getVelHemisphereFromSystem( IN Int velNum, OUT Real &rad
 		case 0: radius = m_particleSystem->m_emissionVelocity.hemispherical.speed.m_low; return;
 		case 1: radius = m_particleSystem->m_emissionVelocity.hemispherical.speed.m_high; return;
 		default: return;
-	};	
+	};
 }
 
 void DebugWindowDialog::updateVelHemisphereToSystem( IN Int velNum, IN const Real &radius)
@@ -562,7 +562,7 @@ void DebugWindowDialog::updateVelHemisphereToSystem( IN Int velNum, IN const Rea
 		case 0: m_particleSystem->m_emissionVelocity.hemispherical.speed.m_low = radius; return;
 		case 1: m_particleSystem->m_emissionVelocity.hemispherical.speed.m_high = radius; return;
 		default: return;
-	};	
+	};
 }
 
 void DebugWindowDialog::getVelOrthoFromSystem( IN Int coordNum, OUT Real& ortho) const
@@ -705,7 +705,7 @@ void DebugWindowDialog::updateDrawableNameToSystem( IN const char* buffer )
 }
 
 void DebugWindowDialog::updateCurrentParticleSystem(ParticleSystemTemplate *particleTemplate )
-{	
+{
 	m_particleSystem = particleTemplate;
 	performUpdate(true);
 }
@@ -727,7 +727,7 @@ void DebugWindowDialog::getInitialDelayFromSystem( IN Int parmNum, OUT Real& ini
 		case 0: initialDelay = m_particleSystem->m_initialDelay.m_low; return;
 		case 1: initialDelay = m_particleSystem->m_initialDelay.m_high; return;
 		default: return;
-	};	
+	};
 }
 
 void DebugWindowDialog::updateInitialDelayToSystem( IN Int parmNum, IN const Real& initialDelay )
@@ -741,7 +741,7 @@ void DebugWindowDialog::updateInitialDelayToSystem( IN Int parmNum, IN const Rea
 		case 0: m_particleSystem->m_initialDelay.m_low = initialDelay; return;
 		case 1: m_particleSystem->m_initialDelay.m_high = initialDelay; return;
 		default: return;
-	};	
+	};
 }
 
 void DebugWindowDialog::getBurstDelayFromSystem( IN Int parmNum, OUT Real& burstDelay ) const
@@ -755,7 +755,7 @@ void DebugWindowDialog::getBurstDelayFromSystem( IN Int parmNum, OUT Real& burst
 		case 0: burstDelay = m_particleSystem->m_burstDelay.m_low; return;
 		case 1: burstDelay = m_particleSystem->m_burstDelay.m_high; return;
 		default: return;
-	};	
+	};
 }
 
 void DebugWindowDialog::updateBurstDelayToSystem( IN Int parmNum, IN const Real& burstDelay )
@@ -1314,7 +1314,7 @@ void DebugWindowDialog::performUpdate( IN Bool toUI )
 					m_particleSystem->m_particleType = (ParticleSystemInfo::ParticleType) (selndx + 1);
 				}
 			}
-			
+
 			// do the swap
 			if (selndx != m_activeParticlePage && selndx >= 0) {
 				m_particleTypePanels[m_activeParticlePage]->ShowWindow(SW_HIDE);
@@ -1362,7 +1362,7 @@ void DebugWindowDialog::performUpdate( IN Bool toUI )
 				pWnd->SetWindowText(buff);
 			} else {
 				pWnd->GetWindowText(buff, ARBITRARY_BUFF_SIZE - 1);
-				m_particleSystem->m_angleZ.m_low = atof(buff);	
+				m_particleSystem->m_angleZ.m_low = atof(buff);
 			}
 		}
 
@@ -1389,7 +1389,7 @@ void DebugWindowDialog::performUpdate( IN Bool toUI )
 				pWnd->SetWindowText(buff);
 			} else {
 				pWnd->GetWindowText(buff, ARBITRARY_BUFF_SIZE - 1);
-				m_particleSystem->m_angleZ.m_high = atof(buff);	
+				m_particleSystem->m_angleZ.m_high = atof(buff);
 			}
 		}
 
@@ -1416,7 +1416,7 @@ void DebugWindowDialog::performUpdate( IN Bool toUI )
 				pWnd->SetWindowText(buff);
 			} else {
 				pWnd->GetWindowText(buff, ARBITRARY_BUFF_SIZE - 1);
-				m_particleSystem->m_angularRateZ.m_low = atof(buff);	
+				m_particleSystem->m_angularRateZ.m_low = atof(buff);
 			}
 		}
 
@@ -1443,7 +1443,7 @@ void DebugWindowDialog::performUpdate( IN Bool toUI )
 				pWnd->SetWindowText(buff);
 			} else {
 				pWnd->GetWindowText(buff, ARBITRARY_BUFF_SIZE - 1);
-				m_particleSystem->m_angularRateZ.m_high = atof(buff);	
+				m_particleSystem->m_angularRateZ.m_high = atof(buff);
 			}
 		}
 	}
@@ -1457,10 +1457,10 @@ void DebugWindowDialog::performUpdate( IN Bool toUI )
 				pWnd->SetWindowText(buff);
 			} else {
 				pWnd->GetWindowText(buff, ARBITRARY_BUFF_SIZE - 1);
-				m_particleSystem->m_angularDamping.m_low = atof(buff);	
+				m_particleSystem->m_angularDamping.m_low = atof(buff);
 			}
 		}
-	
+
 		pWnd = GetDlgItem(IDC_PSEd_AngleDampingMax);
 		if (pWnd) {
 			if (toUI) {
@@ -1468,10 +1468,10 @@ void DebugWindowDialog::performUpdate( IN Bool toUI )
 				pWnd->SetWindowText(buff);
 			} else {
 				pWnd->GetWindowText(buff, ARBITRARY_BUFF_SIZE - 1);
-				m_particleSystem->m_angularDamping.m_high = atof(buff);	
+				m_particleSystem->m_angularDamping.m_high = atof(buff);
 			}
 		}
-		
+
 		pWnd = GetDlgItem(IDC_PSEd_VelocityDampingMin);
 		if (pWnd) {
 			if (toUI) {
@@ -1479,10 +1479,10 @@ void DebugWindowDialog::performUpdate( IN Bool toUI )
 				pWnd->SetWindowText(buff);
 			} else {
 				pWnd->GetWindowText(buff, ARBITRARY_BUFF_SIZE - 1);
-				m_particleSystem->m_velDamping.m_low = atof(buff);	
+				m_particleSystem->m_velDamping.m_low = atof(buff);
 			}
 		}
-	
+
 		pWnd = GetDlgItem(IDC_PSEd_VelocityDampingMax);
 		if (pWnd) {
 			if (toUI) {
@@ -1490,7 +1490,7 @@ void DebugWindowDialog::performUpdate( IN Bool toUI )
 				pWnd->SetWindowText(buff);
 			} else {
 				pWnd->GetWindowText(buff, ARBITRARY_BUFF_SIZE - 1);
-				m_particleSystem->m_velDamping.m_high = atof(buff);	
+				m_particleSystem->m_velDamping.m_high = atof(buff);
 			}
 		}
 	}
@@ -1504,7 +1504,7 @@ void DebugWindowDialog::performUpdate( IN Bool toUI )
 				pWnd->SetWindowText(buff);
 			} else {
 				pWnd->GetWindowText(buff, ARBITRARY_BUFF_SIZE - 1);
-				m_particleSystem->m_gravity = atof(buff);	
+				m_particleSystem->m_gravity = atof(buff);
 			}
 		}
 	}
@@ -1587,7 +1587,7 @@ void DebugWindowDialog::OnEditMoreParms()
 	} else {
 		m_moreParmsDialog.ShowWindow(SW_HIDE);
 		pButton->SetCheck(FALSE);
-	}	
+	}
 }
 
 Bool DebugWindowDialog::shouldWriteINI( void )
@@ -1595,7 +1595,7 @@ Bool DebugWindowDialog::shouldWriteINI( void )
 	if (m_shouldWriteINI) {
 		m_shouldWriteINI = false;
 		return true;
-	} 
+	}
 
 	return false;
 }
@@ -1687,7 +1687,7 @@ void DebugWindowDialog::updateCurrentParticleCap( IN int particleCap )
 	if (!pWnd) {
 		return;
 	}
-	
+
 	sprintf(buff, "%d", particleCap);
 	pWnd->SetWindowText(buff);
 }
@@ -1713,7 +1713,7 @@ int DebugWindowDialog::getNewParticleCap( void )
 	}
 
 	pWnd->GetWindowText(buff, ARBITRARY_BUFF_SIZE - 1);
-	
+
 	return atoi(buff);
 }
 
@@ -1730,7 +1730,7 @@ BEGIN_MESSAGE_MAP(DebugWindowDialog, CDialog)
 	ON_BN_CLICKED(IDC_PSEd_EditSwitchesButton, OnEditSwitches)
 	ON_BN_CLICKED(IDC_PSEd_KillAll, OnKillAllParticleSystems)
 
-	ON_CBN_SELCHANGE(IDC_PSEd_Priority, OnParticleSystemEdit)	
+	ON_CBN_SELCHANGE(IDC_PSEd_Priority, OnParticleSystemEdit)
 	ON_CBN_SELCHANGE(IDC_PSEd_EmissionType, OnParticleSystemEdit)
 	ON_CBN_SELCHANGE(IDC_PSEd_VelocityType, OnParticleSystemEdit)
 	ON_CBN_SELCHANGE(IDC_PSEd_ParticleType, OnParticleSystemEdit)

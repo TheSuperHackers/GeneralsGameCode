@@ -103,7 +103,7 @@ public:
 	static void updateSelection(void);
 	static Bool selectionIsRoadsOnly(void);
 	void applyToSelection(void);
-}; 
+};
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.

@@ -108,17 +108,17 @@ class W3DProjectedShadow	: public Shadow
 		void updateTexture(Vector3 &lightPos);	///<updates the shadow texture image using render object and given light position.
 		void updateProjectionParameters(const Matrix3D &cameraXform);	///<recompute projection matrix - needed when light or object moves.
 		TexProjectClass *getShadowProjector(void)	{return m_shadowProjector;}
-		#if defined(RTS_DEBUG)	
+		#if defined(RTS_DEBUG)
 		virtual void getRenderCost(RenderCost & rc) const;
 		#endif
 		W3DShadowTexture *getTexture(Int lightIndex) {return m_shadowTexture[lightIndex];}
-		
+
 
 	protected:
 		W3DShadowTexture *m_shadowTexture[MAX_SHADOW_LIGHTS];		///<cached shadow data
 		TexProjectClass	 *m_shadowProjector;										///<object used to generate texture and projection matrix.
 		RenderObjClass	*m_robj;						///<render object used to cast the shadow.
-		Vector3		m_lastObjPosition;	///<position of  object at time of projection matrix update.		
+		Vector3		m_lastObjPosition;	///<position of  object at time of projection matrix update.
 		W3DProjectedShadow *m_next;	/// for the shadow manager list
 		Bool	m_allowWorldAlign;	/// wrap shadow around world geometry - else align perpendicular to local z-axis.
 		Real	m_decalOffsetU;		/// texture coordinate offset so not centered at object origin.

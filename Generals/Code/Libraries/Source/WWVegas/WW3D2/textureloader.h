@@ -41,7 +41,7 @@ public:
 	static void Deinit();
 
 	// Modify given texture size to nearest valid size on current hardware.
-	static void Validate_Texture_Size(unsigned& width, unsigned& height);
+	static void Validate_Texture_Size(unsigned& width, unsigned& height, unsigned& depth);
 
 	// Adds a loading task to the system. The task if processed in a separate
 	// thread as soon as possible. The task will appear in finished tasks list

@@ -24,7 +24,7 @@
 
 // FILE: RankInfo.cpp /////////////////////////////////////////////////////////
 // Created:   Steven Johnson, Sep 2002
-// Desc:      
+// Desc:
 //-----------------------------------------------------------------------------
 
 #include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
@@ -92,14 +92,14 @@ void RankInfoStore::reset()
 
 //-----------------------------------------------------------------------------
 Int RankInfoStore::getRankLevelCount() const
-{ 
-	return m_rankInfos.size(); 
+{
+	return m_rankInfos.size();
 }
 
 //-----------------------------------------------------------------------------
 // note that level is 1...n, NOT 0...n-1
-const RankInfo* RankInfoStore::getRankInfo(Int level) const 
-{ 
+const RankInfo* RankInfoStore::getRankInfo(Int level) const
+{
 	if (level >= 1 && level <= getRankLevelCount())
 	{
 		const RankInfo* ri = m_rankInfos[level-1];
@@ -118,7 +118,7 @@ void RankInfoStore::friend_parseRankDefinition( INI* ini )
 	{
 		Int rank = INI::scanInt(ini->getNextToken());
 
-		static const FieldParse myFieldParse[] = 
+		static const FieldParse myFieldParse[] =
 		{
 			{ "RankName", INI::parseAndTranslateLabel, NULL, offsetof( RankInfo, m_rankName ) },
 			{ "SkillPointsNeeded", INI::parseInt, NULL, offsetof( RankInfo, m_skillPointsNeeded ) },
@@ -127,7 +127,7 @@ void RankInfoStore::friend_parseRankDefinition( INI* ini )
 			{ 0, 0, 0, 0 }
 		};
 
-		if (ini->getLoadType() == INI_LOAD_CREATE_OVERRIDES) 
+		if (ini->getLoadType() == INI_LOAD_CREATE_OVERRIDES)
 		{
 			// we aren't allowed to add ranks in overrides, only to override existing ones.
 			if (rank < 1 || rank > TheRankInfoStore->m_rankInfos.size())
@@ -135,7 +135,7 @@ void RankInfoStore::friend_parseRankDefinition( INI* ini )
 				DEBUG_CRASH(("Rank not found in map.ini"));
 				throw INI_INVALID_DATA;
 			}
-			
+
 			RankInfo* info = TheRankInfoStore->m_rankInfos[rank-1];
 			if (!info)
 			{
@@ -144,7 +144,7 @@ void RankInfoStore::friend_parseRankDefinition( INI* ini )
 			}
 
 			RankInfo* newInfo = newInstance(RankInfo);
-			
+
 			// copy data from final override to 'newInfo' as a set of initial default values
 			info = (RankInfo*)(info->friend_getFinalOverride());
 
@@ -155,7 +155,7 @@ void RankInfoStore::friend_parseRankDefinition( INI* ini )
 			ini->initFromINI(newInfo, myFieldParse);
 			//TheRankInfoStore->m_rankInfos.push_back(newInfo);	// NO, BAD, WRONG -- don't add in this case.
 
-		} 
+		}
 		else
 		{
 			if (rank != TheRankInfoStore->m_rankInfos.size() + 1)

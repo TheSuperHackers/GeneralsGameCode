@@ -62,7 +62,7 @@ CheckpointUpdate::~CheckpointUpdate( void )
 }
 
 //-------------------------------------------------------------------------------------------------
-/** 
+/**
  * Look around us for enemies.
  */
 void CheckpointUpdate::checkForAlliesAndEnemies( void )
@@ -107,10 +107,10 @@ void CheckpointUpdate::checkForAlliesAndEnemies( void )
 UpdateSleepTime CheckpointUpdate::update()
 {
 /// @todo srj use SLEEPY_UPDATE here
-	
+
 	Bool wasAnAlly  = m_allyNear;
 	Bool wasAnEnemy = m_enemyNear;
-	
+
 	checkForAlliesAndEnemies();
 
 	Bool change = ( (wasAnAlly != m_allyNear) || (wasAnEnemy != m_enemyNear) );
@@ -151,7 +151,7 @@ UpdateSleepTime CheckpointUpdate::update()
 
 		// THis method is more accidental than above, but it works for an unimportant thing like checkpoint
 		Real radius = geom.getMinorRadius();
-		
+
 		if ( open )
 		{
 			if ( radius > 0 ) geom.setMinorRadius( radius - 0.333f );
@@ -160,7 +160,7 @@ UpdateSleepTime CheckpointUpdate::update()
 		{
 			if ( radius < m_maxMinorRadius ) geom.setMinorRadius( radius + 0.333f );
 		}
-		
+
 
 		obj->setGeometryInfo( geom );
 

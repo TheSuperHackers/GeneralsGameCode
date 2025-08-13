@@ -44,7 +44,7 @@ class CallbackHook
 
 		virtual ~CallbackHook()
 			{}
-		
+
 		virtual bool DoCallback(void) const
 			{return false;}
 

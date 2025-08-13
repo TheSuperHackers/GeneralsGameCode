@@ -47,11 +47,11 @@ QueueProductionExitUpdate::QueueProductionExitUpdate( Thing *thing, const Module
 	m_currentDelay = 0;
 
 	//Added By Sadullah Nader
-	//Initializations inserted 
+	//Initializations inserted
 	m_creationClearDistance = 0;
 	m_rallyPoint.zero();
 	//
-	
+
 	// no rally point has been set
 	m_rallyPointExists = false;
 	m_currentBurstCount = 0;
@@ -109,8 +109,8 @@ void QueueProductionExitUpdate::exitObjectViaDoor( Object *newObj, ExitDoorType 
 		newObj->setOrientation( exitAngle );
 
 		//
-		// Objects that are created in the air from producers that are in the air get 
-		// a kick that will make their starting speed equal mine.  
+		// Objects that are created in the air from producers that are in the air get
+		// a kick that will make their starting speed equal mine.
 		//
 		PhysicsBehavior *newObjectPhysics = newObj->getPhysics();
 		PhysicsBehavior *myPhysics = creationObject->getPhysics();
@@ -144,7 +144,7 @@ void QueueProductionExitUpdate::exitObjectViaDoor( Object *newObj, ExitDoorType 
 		if (m_rallyPointExists)
 		{
 			tmp = m_rallyPoint;
-			if (ai && ai->isDoingGroundMovement()) 
+			if (ai && ai->isDoingGroundMovement())
 			{
 				if (TheAI->pathfinder()->adjustDestination(newObj, ai->getLocomotorSet(), &tmp))
 					exitPath.push_back(tmp);
@@ -184,7 +184,7 @@ Bool QueueProductionExitUpdate::getExitPosition( Coord3D& exitPosition ) const
 	exitPosition.x = loc.X;
 	exitPosition.y = loc.Y;
 	exitPosition.z = loc.Z;
-	
+
 	return TRUE;
 
 }

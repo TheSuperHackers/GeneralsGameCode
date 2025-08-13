@@ -84,7 +84,7 @@ public:
 	virtual Bool areAllQueuesEmpty(void) = 0;
 
 	virtual void quitGame() = 0;																			///< Quit the game right now.
-	
+
 	virtual void selfDestructPlayer(Int index) = 0;
 
 	virtual void voteForPlayerDisconnect(Int slot) = 0;								///< register a vote towards this player's disconnect.

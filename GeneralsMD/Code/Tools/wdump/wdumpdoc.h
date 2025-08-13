@@ -31,11 +31,11 @@
 
 class CWdumpDoc : public CDocument
 {
-//Moumine 1/2/2002    11:12:25 AM ---Need this as public in project W3dShellExt  
+//Moumine 1/2/2002    11:12:25 AM ---Need this as public in project W3dShellExt
 #if ! defined _W3DSHELLEXT
-protected: // create from serialization only 
+protected: // create from serialization only
 #else
-public: 
+public:
 #endif
 	CWdumpDoc();
 protected:

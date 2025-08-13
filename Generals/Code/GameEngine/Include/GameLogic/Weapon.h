@@ -64,7 +64,7 @@ enum WeaponReloadType CPP_11(: Int)
 };
 
 #ifdef DEFINE_WEAPONRELOAD_NAMES
-static const char *TheWeaponReloadNames[] = 
+static const char *TheWeaponReloadNames[] =
 {
 	"YES",
 	"NO",
@@ -84,7 +84,7 @@ enum WeaponPrefireType CPP_11(: Int)
 };
 
 #ifdef DEFINE_WEAPONPREFIRE_NAMES
-static const char *TheWeaponPrefireNames[] = 
+static const char *TheWeaponPrefireNames[] =
 {
 	"PER_SHOT",
 	"PER_ATTACK",
@@ -119,7 +119,7 @@ enum WeaponAffectsMaskType CPP_11(: Int)
 };
 
 #ifdef DEFINE_WEAPONAFFECTSMASK_NAMES
-static const char *TheWeaponAffectsMaskNames[] = 
+static const char *TheWeaponAffectsMaskNames[] =
 {
 	"SELF",
 	"ALLIES",
@@ -137,19 +137,19 @@ enum WeaponCollideMaskType CPP_11(: Int)
 {
 	// all of these apply to *nontargeted* things that might just happen to get in the way...
 	// the target can always be collided with, regardless of flags
-	WEAPON_COLLIDE_ALLIES									= 0x0001,	
-	WEAPON_COLLIDE_ENEMIES								= 0x0002,	
+	WEAPON_COLLIDE_ALLIES									= 0x0001,
+	WEAPON_COLLIDE_ENEMIES								= 0x0002,
 	WEAPON_COLLIDE_STRUCTURES							= 0x0004,	// this is "all structures EXCEPT for structures belonging to the projectile's controller".
 	WEAPON_COLLIDE_SHRUBBERY							= 0x0008,
 	WEAPON_COLLIDE_PROJECTILE							= 0x0010,
 	WEAPON_COLLIDE_WALLS									= 0x0020,
-	WEAPON_COLLIDE_SMALL_MISSILES					= 0x0040, //All missiles are also projectiles! 
+	WEAPON_COLLIDE_SMALL_MISSILES					= 0x0040, //All missiles are also projectiles!
 	WEAPON_COLLIDE_BALLISTIC_MISSILES			= 0x0080, //All missiles are also projectiles!
 	WEAPON_COLLIDE_CONTROLLED_STRUCTURES	= 0x0100	//this is "ONLY structures belonging to the projectile's controller".
 };
 
 #ifdef DEFINE_WEAPONCOLLIDEMASK_NAMES
-static const char *TheWeaponCollideMaskNames[] = 
+static const char *TheWeaponCollideMaskNames[] =
 {
 	"ALLIES",
 	"ENEMIES",
@@ -204,7 +204,7 @@ enum WeaponBonusConditionType CPP_11(: Int)
 	WEAPONBONUSCONDITION_COUNT
 };
 #ifdef DEFINE_WEAPONBONUSCONDITION_NAMES
-static const char *TheWeaponBonusNames[] = 
+static const char *TheWeaponBonusNames[] =
 {
 	// This is a RHS enum (weapon.ini will have WeaponBonus = IT) so it is all caps
 	"GARRISONED",
@@ -280,7 +280,7 @@ private:
 };
 
 #ifdef DEFINE_WEAPONBONUSFIELD_NAMES
-static const char *TheWeaponBonusFieldNames[] = 
+static const char *TheWeaponBonusFieldNames[] =
 {
 	"DAMAGE",
 	"RADIUS",
@@ -344,9 +344,9 @@ public:
 	/// field table for loading the values from an INI
 	inline const FieldParse *getFieldParse() const { return TheWeaponTemplateFieldParseTable; }
 
-	/** 
+	/**
 		fire the weapon. return the logic-frame in which the damage will be dealt.
-		
+
 		If the damage will be determined at an indeterminate later date (eg, via Projectile),
 		or will never be dealt (eg, target was out of range), return zero.
 
@@ -354,11 +354,11 @@ public:
 	*/
 	UnsignedInt fireWeaponTemplate
 	(
-		const Object *sourceObj, 
-		WeaponSlotType wslot, 
-		Int specificBarrelToUse, 
-		const Object *victimObj, 
-		const Coord3D* victimPos, 
+		const Object *sourceObj,
+		WeaponSlotType wslot,
+		Int specificBarrelToUse,
+		const Object *victimObj,
+		const Coord3D* victimPos,
 		const WeaponBonus& bonus,
 		Bool isProjectileDetonation,
 		Bool ignoreRanges,
@@ -373,9 +373,9 @@ public:
 		take weapon range into account -- it ASSUMES that the victim is within range!
 	*/
 	Real estimateWeaponTemplateDamage(
-		const Object *sourceObj, 
-		const Object *victimObj, 
-		const Coord3D* victimPos, 
+		const Object *sourceObj,
+		const Object *victimObj,
+		const Coord3D* victimPos,
 		const WeaponBonus& bonus
 	) const;
 
@@ -441,12 +441,12 @@ public:
 	inline Bool isPlayFXWhenStealthed() const { return m_playFXWhenStealthed; }
 
 	Bool shouldProjectileCollideWith(
-		const Object* projectileLauncher, 
-		const Object* projectile, 
+		const Object* projectileLauncher,
+		const Object* projectile,
 		const Object* thingWeCollidedWith,
 		ObjectID intendedVictimID	// could be INVALID_ID for a position-shot
 	) const;
-	
+
 	void postProcessLoad();
 
 protected:
@@ -456,7 +456,7 @@ protected:
 	void trimOldHistoricDamage() const;
 
 private:
-	
+
 	// NOTE: m_nextTemplate will be cleaned up if it is NON-NULL.
 	WeaponTemplate *m_nextTemplate;
 
@@ -473,7 +473,7 @@ private:
 	Real m_primaryDamage;										///< primary damage amount
 	Real m_primaryDamageRadius;							///< primary damage radius range
 	Real m_secondaryDamage;									///< secondary damage amount
-	Real m_secondaryDamageRadius;						///< secondary damage radius range	
+	Real m_secondaryDamageRadius;						///< secondary damage radius range
 	Real m_attackRange;											///< max distance the weapon can deal damage
 	Real m_minimumAttackRange;							///< Min distance the weapon should be fired from
 	Real m_requestAssistRange;							///< My object will look this far around to get people to join in the attack.
@@ -530,7 +530,7 @@ private:
 	Real m_infantryInaccuracyDist;					///< When this weapon is used against infantry, it can randomly miss by as much as this distance.
 	UnsignedInt m_suspendFXDelay;						///< The fx can be suspended for any delay, in frames, then they will execute as normal
 	mutable HistoricWeaponDamageList m_historicDamage;
-};  
+};
 
 // ---------------------------------------------------------
 class Weapon : public MemoryPoolObject,
@@ -635,15 +635,15 @@ public:
 
 	// we must pass the source object for these (and for ANY FUTURE ADDITIONS)
 	// so that we can take the source's weapon bonuses, if any, into account.
-	// Also note: you should RARELY need to call getAttackRange. If what you want is to 
+	// Also note: you should RARELY need to call getAttackRange. If what you want is to
 	// determine if you are within attack range, please call isWithinAttackRange instead.
 	Real getAttackRange(const Object *source) const;
 
 	// Returns the max distance between the centerpoints of source & victim	for victim to be in range.
 	Real getAttackDistance(const Object *source, const Object *victim, const Coord3D* victimPos) const;
 
-	void newProjectileFired( const Object *sourceObj, const Object *projectile );///<I just made this projectile and may need to keep track of it 
-	
+	void newProjectileFired( const Object *sourceObj, const Object *projectile );///<I just made this projectile and may need to keep track of it
+
 	Bool isLaser() const { return m_template->getLaserName().isNotEmpty(); }
 	void createLaser( const Object *sourceObj, const Object *victimObj, const Coord3D *victimPos );
 
@@ -685,7 +685,7 @@ public:
 	Bool isPitchLimited() const { return m_pitchLimited; }
 	Bool isWithinTargetPitch(const Object *source, const Object *victim) const;
 
-	//Leech range functionality simply means this weapon has unlimited range temporarily. How it works is if the 
+	//Leech range functionality simply means this weapon has unlimited range temporarily. How it works is if the
 	//weapon template has the LeechRangeWeapon set, it means that once the unit has closed to standard weapon range
 	//it fires the weapon, and will be able to hit the target even if it moves out of range! The unit will simply
 	//stand there. This functionality is used by hack attacks.
@@ -702,17 +702,17 @@ public:
 	Bool isClearGoalFiringLineOfSightTerrain(const Object* source, const Coord3D& goalPos, const Coord3D& victimPos) const;
 
 	static void calcProjectileLaunchPosition(
-		const Object* launcher, 
-		WeaponSlotType wslot, 
+		const Object* launcher,
+		WeaponSlotType wslot,
 		Int specificBarrelToUse,
 		Matrix3D& worldTransform,
 		Coord3D& worldPos
 	);
 
 	static void positionProjectileForLaunch(
-		Object* projectile, 
-		const Object *launcher, 
-		WeaponSlotType wslot, 
+		Object* projectile,
+		const Object *launcher,
+		WeaponSlotType wslot,
 		Int specificBarrelToUse
 	);
 
@@ -730,11 +730,11 @@ protected:
 
 	// return true if we auto-reloaded our clip after firing.
 	Bool privateFireWeapon(
-		const Object *sourceObj, 
-		Object *victimObj, 
-		const Coord3D* victimPos, 
-		Bool isProjectileDetonation, 
-		Bool ignoreRanges, 
+		const Object *sourceObj,
+		Object *victimObj,
+		const Coord3D* victimPos,
+		Bool isProjectileDetonation,
+		Bool ignoreRanges,
 		WeaponBonusConditionFlags extraBonusFlags,
 		ObjectID* projectileID
 	);
@@ -753,7 +753,7 @@ protected:
 private:
 	const WeaponTemplate*			m_template;									///< the kind of weapon this is
 	WeaponSlotType						m_wslot;										///< are we primary, secondary, etc. weapon? (used for projectile placement on reload)
-	mutable WeaponStatus			m_status;										///< weapon status 
+	mutable WeaponStatus			m_status;										///< weapon status
 	UnsignedInt								m_ammoInClip;								///< how many shots left in current clip
 	UnsignedInt								m_whenWeCanFireAgain;				///< the first frame the weapon can fire again
 	UnsignedInt								m_whenPreAttackFinished;		///< the frame the pre attack will complete.
@@ -807,14 +807,14 @@ public:
 
 	void createAndFireTempWeapon(const WeaponTemplate* w, const Object *source, const Coord3D* pos);
 	void createAndFireTempWeapon(const WeaponTemplate* w, const Object *source, Object *target);
-	
+
 	void handleProjectileDetonation(const WeaponTemplate* w, const Object *source, const Coord3D* pos, WeaponBonusConditionFlags extraBonusFlags);
-	
+
 	static void parseWeaponTemplateDefinition(INI* ini);
 
 protected:
 
-	WeaponTemplate *findWeaponTemplatePrivate( NameKeyType key ) const;	
+	WeaponTemplate *findWeaponTemplatePrivate( NameKeyType key ) const;
 
 	WeaponTemplate *newWeaponTemplate( AsciiString name );
 	WeaponTemplate *newOverride( WeaponTemplate *weaponTemplate );

@@ -63,9 +63,9 @@ class ChunkLoadClass;
 //
 // The WWSaveLoad library is a framework for saving and loading.  The main
 // goals that we attempted to achieve in designing this system are:
-// 
+//
 // - Save things in a form that could adapt as our code evolves.  We want
-//   to be able to load files which were created with a previous version of the 
+//   to be able to load files which were created with a previous version of the
 //   application into the current version.
 // - Use the same framework throughout all of our libraries with as small an
 //   impact on them as possible
@@ -81,10 +81,10 @@ class ChunkLoadClass;
 //   active at any given time.  PersistClass is an abstract interface which will allow
 //   objects to be used with the save-load system.  It was also important to keep the
 //   overhead caused by inheriting this class to an absolute minimum.
-// 
-// - PersistFactories: We need an automatic "virtual-constructor" or "abstract-factory" 
-//   system for all objects that get saved.  This is the PersistFactoryClass and the 
-//   automated SimplePersistFactory template.  All objects that "persist" are derived from 
+//
+// - PersistFactories: We need an automatic "virtual-constructor" or "abstract-factory"
+//   system for all objects that get saved.  This is the PersistFactoryClass and the
+//   automated SimplePersistFactory template.  All objects that "persist" are derived from
 //   PersistClass and all concrete derived PersistClasses have an associated static
 //   instance of a PersistFactory which handles their saving and construction upon encountering
 //   them while loading.  In certain cases these PersistFactories can also serve as
@@ -93,18 +93,18 @@ class ChunkLoadClass;
 //   is used in WW3D sometimes; we just save a render object name and then ask the WW3D asset
 //   manager to recreate that model for us.
 //
-// - SaveLoadSubSystems: The overall file structure will be governed by many sub-systems 
-//   (derived from SaveLoadSubSystemClass).  The application in-effect creates file formats 
+// - SaveLoadSubSystems: The overall file structure will be governed by many sub-systems
+//   (derived from SaveLoadSubSystemClass).  The application in-effect creates file formats
 //   by simply having the sub-systems that it wants write into a file.  In this way you can
 //   achieve things like saving only static data into one file and dynamic into another, etc.
 //   All persistant objects that get saved will be told to save by some sub-system.  For
-//   example: in Commando, I have a PhysicsDynamicDataSubSystem which saves all of the 
+//   example: in Commando, I have a PhysicsDynamicDataSubSystem which saves all of the
 //   dynamic physics objects.  In saving those objects I use the built-in PersistFactories
 //   and am therefore completely safe from new object types being added to the system, it will just
 //   automatically work
 //
 // - Pointer re-mapping: A pointer remaping system is built into the save-load system.  There
-//   are several things that happen in this system.  Each object, as it is saved and loaded, 
+//   are several things that happen in this system.  Each object, as it is saved and loaded,
 //   registers with the system its old address and its new address.  (the old address is saved
 //   and the new address is available once the object is created).   This is automated by the
 //   SimplePersistFactory for all but classes that use multiple inheritance.  During the load
@@ -116,7 +116,7 @@ class ChunkLoadClass;
 //
 // - Chunks: The file format will be chunk based since that gives us the flexibility to
 //   add new data and remove obsolete data without necessarily losing the ability
-//   to read old files.  We will use a "high-granularity" of chunks.  In many cases, each 
+//   to read old files.  We will use a "high-granularity" of chunks.  In many cases, each
 //   member variable will be in its own chunk for maximum flexibility.  To help soften
 //   the memory usage for this approach, we developed the concept of "micro-chunks".
 //   Micro-chunks are just like chunks in that they have an id and a size but
@@ -124,12 +124,12 @@ class ChunkLoadClass;
 //
 // - ChunkID's: The chunk ID's used by Subsystems and PersistFactories must be unique
 //   but all others can be considered local to the object that is saving itself.  Unique
-//   ids for the subsystems and factories are achieved by saveloadids.h defining ranges 
-//   of ids for various libraries and then those libraries maintaining a single header 
-//   file internally which gives unique id's within that range to all of their sub-systems 
-//   and persist factories.  Never re-use an id or you will break compatibility with older 
+//   ids for the subsystems and factories are achieved by saveloadids.h defining ranges
+//   of ids for various libraries and then those libraries maintaining a single header
+//   file internally which gives unique id's within that range to all of their sub-systems
+//   and persist factories.  Never re-use an id or you will break compatibility with older
 //   versions of your files...
-// 
+//
 //////////////////////////////////////////////////////////////////////////////////
 
 
@@ -147,7 +147,7 @@ public:
 	** To load a file just open it and pass it to the load method.
 	*/
 	static bool		Save (ChunkSaveClass &csave, SaveLoadSubSystemClass & subsystem);
-	static bool		Load (ChunkLoadClass &cload,bool auto_post_load = true);	
+	static bool		Load (ChunkLoadClass &cload,bool auto_post_load = true);
 	static bool		Post_Load_Processing (void(*network_callback)(void));
 	/*
 	** Look up the persist factory for a given chunk id
@@ -161,7 +161,7 @@ public:
 	static void		Register_Post_Load_Callback(PostLoadableClass * obj);
 
 	/*
-	** Pointer Remapping interface.  NOTE: use the macros defined below to 
+	** Pointer Remapping interface.  NOTE: use the macros defined below to
 	** get debug info with your pointers when doing a debug build.
 	*/
 	static void		Register_Pointer (void *old_pointer, void *new_pointer);
@@ -207,7 +207,7 @@ protected:
 
 
 /*
-** Use the following macros to automatically enable pointer-remap DEBUG code.  Remember that 
+** Use the following macros to automatically enable pointer-remap DEBUG code.  Remember that
 ** in all cases you submit a pointer to the pointer you want re-mapped.
 */
 #ifdef WWDEBUG

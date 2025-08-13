@@ -24,21 +24,21 @@
 
 // FILE: .cpp /////////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
-// Project:   
+// Project:
 //
 // File name: .cpp
 //
-// Created:   
+// Created:
 //
-// Desc:      
+// Desc:
 //
 //-----------------------------------------------------------------------------
 ///////////////////////////////////////////////////////////////////////////////
@@ -134,7 +134,7 @@ void W3DGadgetHorizontalSliderDraw( GameWindow *window, WinInstanceData *instDat
 // W3DGadgetHorizontalSliderImageDraw =========================================
 /** Draw horizontal slider with user supplied images */
 //=============================================================================
-void W3DGadgetHorizontalSliderImageDraw( GameWindow *window, 
+void W3DGadgetHorizontalSliderImageDraw( GameWindow *window,
 																				 WinInstanceData *instData )
 {
 	const Image *fillSquare, *blankSquare, *highlightSquare;
@@ -149,7 +149,7 @@ void W3DGadgetHorizontalSliderImageDraw( GameWindow *window,
 	fillSquare = GadgetSliderGetDisabledImageLeft( window );
 
 	SliderData *s = (SliderData *)window->winGetUserData();
-	
+
 	Real xMulti = INT_TO_REAL(TheDisplay->getWidth()) / 800;
 
 	// figure out how many boxes we draw for this slider
@@ -187,7 +187,7 @@ void W3DGadgetHorizontalSliderImageDraw( GameWindow *window,
 		{
 			backgroundStart.x = origin.x + highlightOffset.x + i*(boxWidth+boxPadding);
 			backgroundEnd.x = backgroundStart.x + boxWidth + boxPadding;
-			TheWindowManager->winDrawImage( highlightSquare, 
+			TheWindowManager->winDrawImage( highlightSquare,
 																		backgroundStart.x, backgroundStart.y,
 																		backgroundEnd.x, backgroundEnd.y );
 		}
@@ -199,7 +199,7 @@ void W3DGadgetHorizontalSliderImageDraw( GameWindow *window,
 	{
 		start.x = origin.x + i*(boxWidth+boxPadding);
 		end.x = start.x + boxWidth;
-		TheWindowManager->winDrawImage( fillSquare, 
+		TheWindowManager->winDrawImage( fillSquare,
 																	start.x, start.y,
 																	end.x, end.y );
 	}
@@ -207,7 +207,7 @@ void W3DGadgetHorizontalSliderImageDraw( GameWindow *window,
 	{
 		start.x = origin.x + i*(boxWidth+boxPadding);
 		end.x = start.x + boxWidth;
-		TheWindowManager->winDrawImage( blankSquare, 
+		TheWindowManager->winDrawImage( blankSquare,
 																	start.x, start.y,
 																	end.x, end.y );
 	}
@@ -216,7 +216,7 @@ void W3DGadgetHorizontalSliderImageDraw( GameWindow *window,
 // W3DGadgetHorizontalSliderImageDraw =========================================
 /** Draw horizontal slider with user supplied images */
 //=============================================================================
-void W3DGadgetHorizontalSliderImageDrawB( GameWindow *window, 
+void W3DGadgetHorizontalSliderImageDrawB( GameWindow *window,
 																				 WinInstanceData *instData )
 {
 	const Image *fillSquare, *blankSquare, *highlightSquare;//, *progressArrow;
@@ -228,7 +228,7 @@ void W3DGadgetHorizontalSliderImageDrawB( GameWindow *window,
 	window->winGetSize( &size.x, &size.y );
 
 	SliderData *s = (SliderData *)window->winGetUserData();
-	
+
 	Real xMulti = INT_TO_REAL(TheDisplay->getWidth()) / 800;
 	Real yMulti = INT_TO_REAL(TheDisplay->getHeight())/ 600;
 	// get image offset
@@ -260,12 +260,12 @@ void W3DGadgetHorizontalSliderImageDrawB( GameWindow *window,
 
 		while(backgroundStart.x < origin.x + size.x)
 		{
-			TheWindowManager->winDrawImage( highlightSquare, 
+			TheWindowManager->winDrawImage( highlightSquare,
 																		backgroundStart.x, backgroundStart.y,
 																		backgroundEnd.x, backgroundEnd.y );
 			backgroundStart.x = backgroundEnd.x;
 			backgroundEnd.x = backgroundStart.x + highlightSquare->getImageWidth() * xMulti;
-		}		
+		}
 		tmp.format(L"\n  bsX = %d, beX = %d (%d < %d+%d or %d?)", backgroundStart.x, backgroundEnd.x,
 			backgroundStart.x, origin.x, size.x, origin.x + size.x);
 		tooltip.concat(tmp);
@@ -282,7 +282,7 @@ void W3DGadgetHorizontalSliderImageDrawB( GameWindow *window,
 
 	while(start.x <= origin.x + (s->numTicks * (s->position - s->minVal)) && end.x < origin.x + size.x && s->position != s->minVal)
 	{
-		TheWindowManager->winDrawImage( fillSquare, 
+		TheWindowManager->winDrawImage( fillSquare,
 																		start.x, start.y,
 																		end.x, end.y );
 		start.x = end.x + 2;
@@ -295,7 +295,7 @@ void W3DGadgetHorizontalSliderImageDrawB( GameWindow *window,
 
 	while(end.x < origin.x + size.x )
 	{
-		TheWindowManager->winDrawImage( blankSquare, 
+		TheWindowManager->winDrawImage( blankSquare,
 																		start.x, start.y,
 																		end.x, end.y );
 		start.x = end.x + 2;
@@ -314,7 +314,7 @@ void W3DGadgetHorizontalSliderImageDrawB( GameWindow *window,
 //		start.y = origin.y + fillSquare->getImageHeight()/3*2;
 //		end.y = start.y + progressArrow->getImageHeight();
 //		end.x	= start.x + progressArrow->getImageWidth();
-//		TheWindowManager->winDrawImage( progressArrow, 
+//		TheWindowManager->winDrawImage( progressArrow,
 //																			start.x, start.y,
 //																			end.x, end.y );
 //	}
@@ -324,7 +324,7 @@ void W3DGadgetHorizontalSliderImageDrawB( GameWindow *window,
 // W3DGadgetHorizontalSliderImageDraw =========================================
 /** Draw horizontal slider with user supplied images */
 //=============================================================================
-void W3DGadgetHorizontalSliderImageDrawA( GameWindow *window, 
+void W3DGadgetHorizontalSliderImageDrawA( GameWindow *window,
 																				 WinInstanceData *instData )
 {
 	const Image *leftImageLeft, *rightImageLeft, *centerImageLeft, *smallCenterImageLeft;
@@ -371,9 +371,9 @@ void W3DGadgetHorizontalSliderImageDrawA( GameWindow *window,
 	}  // end else, enabled
 
 	// sanity, we need to have these images to make it look right
-	if( leftImageLeft == NULL || rightImageLeft == NULL || 
+	if( leftImageLeft == NULL || rightImageLeft == NULL ||
 			centerImageLeft == NULL || smallCenterImageLeft == NULL ||
-			leftImageRight == NULL || rightImageRight == NULL || 
+			leftImageRight == NULL || rightImageRight == NULL ||
 			centerImageRight == NULL || smallCenterImageRight == NULL )
 		return;
 
@@ -406,7 +406,7 @@ void W3DGadgetHorizontalSliderImageDrawA( GameWindow *window,
 	start.x = leftEnd.x;
 	start.y = origin.y + size.y - leftSize.y + yOffset;
 	end.y =origin.y + size.y + yOffset;
-	
+
 	clipLeft.lo.x = origin.x;
 	clipLeft.lo.y = rightStart.y;
 	clipLeft.hi.y = leftEnd.y;
@@ -422,17 +422,17 @@ void W3DGadgetHorizontalSliderImageDrawA( GameWindow *window,
 
 		end.x = start.x + centerImageLeft->getImageWidth();
 		TheDisplay->setClipRegion(&clipLeft);
-		TheWindowManager->winDrawImage( centerImageLeft, 
+		TheWindowManager->winDrawImage( centerImageLeft,
 																		start.x, start.y,
 																		end.x, end.y );
 		TheDisplay->setClipRegion(&clipRight);
-		TheWindowManager->winDrawImage( centerImageRight, 
+		TheWindowManager->winDrawImage( centerImageRight,
 																		start.x, start.y,
 																		end.x, end.y );
 		start.x += centerImageLeft->getImageWidth();
 
 	}  // end for i
-	
+
 	//
 	// how many small repeating pieces will fit in the gap from where the
 	// center repeating bar stopped and the right image, draw them
@@ -456,7 +456,7 @@ void W3DGadgetHorizontalSliderImageDrawA( GameWindow *window,
 		start.x += smallCenterImageLeft->getImageWidth();
 
 	}  // end for i
-	
+
 	// draw left end
 	start.x = origin.x + xOffset;
 	start.y = rightStart.y;

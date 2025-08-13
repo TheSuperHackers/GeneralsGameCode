@@ -50,10 +50,10 @@ class SpawnPointProductionExitUpdateModuleData : public UpdateModuleData
 public:
 	AsciiString m_spawnPointBoneNameData;
 
-	static void buildFieldParse(MultiIniFieldParse& p) 
+	static void buildFieldParse(MultiIniFieldParse& p)
 	{
     UpdateModuleData::buildFieldParse(p);
-		static const FieldParse dataFieldParse[] = 
+		static const FieldParse dataFieldParse[] =
 		{
 			{ "SpawnPointBoneName",		INI::parseAsciiString,		NULL, offsetof( SpawnPointProductionExitUpdateModuleData, m_spawnPointBoneNameData ) },
 			{ 0, 0, 0, 0 }

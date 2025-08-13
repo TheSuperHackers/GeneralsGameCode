@@ -30,7 +30,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // RulerOptions dialog
 
-class RulerOptions : public COptionsPanel	
+class RulerOptions : public COptionsPanel
 {
 
 // Construction

@@ -23,17 +23,17 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 //----------------------------------------------------------------------------=
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information					                  
-//                Copyright(C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright(C) 2001 - All Rights Reserved
+//
 //----------------------------------------------------------------------------
 //
 // Project:    WSYS Library
 //
-// Module:     
+// Module:
 //
 // File name:  wsys/List.h
 //
@@ -48,7 +48,7 @@
 #define	__WSYS_LIST_H
 
 //----------------------------------------------------------------------------
-//           Includes                                                      
+//           Includes
 //----------------------------------------------------------------------------
 
 #ifndef _BASE_TYPE_H_
@@ -83,7 +83,7 @@ class	LListNode
 		Int						m_pri;					///< Node's priority, used for sorting
 		void					*m_item;				///< Item we are referencing if any
 		Bool					m_autoDelete;		///< destroy() should call delete
-		
+
 	public:
 
 									LListNode();											///< Constructor
@@ -100,7 +100,7 @@ class	LListNode
 		void					setPriority( Int new_pri );				///< Sets node's priority
 		void*					item( void );											///< Returns the item this links to, if any
 		void					setItem( void *item );						///< Make node point to an item
-		void					destroy( void );									///< Delete node 
+		void					destroy( void );									///< Delete node
 		void					autoDelete( void );
 }	;
 
@@ -118,11 +118,11 @@ class	LList
 	public:
 
 		/// Enumeration of list sorting methods
-		enum SortMode	
-			{ 
+		enum SortMode
+			{
 				ASCENDING,  ///< Lower priority numbers to front of list
 				DESCENDING  ///< Higher priority numbers to front of list
-			};			
+			};
 
 	protected:
 
@@ -158,11 +158,11 @@ class	LList
 }	;
 
 //----------------------------------------------------------------------------
-//           Inlining                                                       
+//           Inlining
 //----------------------------------------------------------------------------
 
 inline		Bool					LListNode::inList( void ) { return m_prev != this; };
-inline		Bool					LListNode::isHead( void ) { return ( m_item == (void*)&this->m_item ); }; 
+inline		Bool					LListNode::isHead( void ) { return ( m_item == (void*)&this->m_item ); };
 inline		Int						LListNode::priority( void ) { return m_pri; };
 inline		void					LListNode::setPriority( Int new_pri ) { m_pri = new_pri; };
 inline		void					LListNode::autoDelete( void ) { m_autoDelete = TRUE; };
@@ -170,12 +170,12 @@ inline		void*					LListNode::item( void ) { return m_item; };
 inline		void					LListNode::setItem( void *item ) { m_item = item; };
 
 
-inline		void					LList::addToHead( LListNode *new_node ) { m_head.append( new_node); };	
-inline		void					LList::addToTail( LListNode *new_node ) { m_head.insert( new_node); };	
-inline		LListNode*		LList::firstNode( void ) { return m_head.next();} ;												
-inline		LListNode*		LList::lastNode( void ) { return m_head.prev();} ;												
-inline		void					LList::setSortMode( SortMode new_mode ) { m_sortMode = new_mode; };						
-inline		Bool					LList::isEmpty( void ) { return !m_head.inList(); };											
+inline		void					LList::addToHead( LListNode *new_node ) { m_head.append( new_node); };
+inline		void					LList::addToTail( LListNode *new_node ) { m_head.insert( new_node); };
+inline		LListNode*		LList::firstNode( void ) { return m_head.next();} ;
+inline		LListNode*		LList::lastNode( void ) { return m_head.prev();} ;
+inline		void					LList::setSortMode( SortMode new_mode ) { m_sortMode = new_mode; };
+inline		Bool					LList::isEmpty( void ) { return !m_head.inList(); };
 inline		void					LList::destroy( void ) { clear();};
 
 #endif	//	__GDF_LIST_H_

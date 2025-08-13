@@ -34,16 +34,16 @@
 #include "Common/Overridable.h"
 
 /*
-	An OVERRIDE is a replacement for a pointer of its contained type, ie, rather than containing 
+	An OVERRIDE is a replacement for a pointer of its contained type, ie, rather than containing
 	a LocomotorTemplate*, you would contain an OVERRIDE<LocomotorTemplate>.
 
-	OVERRIDE pretends in all ways (dereference via *, -> and casting to type*) to be a type*, so 
+	OVERRIDE pretends in all ways (dereference via *, -> and casting to type*) to be a type*, so
 	there should be very little code that needs to be rewritten to work with these.
 
 	In order to make something overridable, these are the steps:
 		1) Make the desired class derive from Overridable.
 		2) Make the container class contain an instance of OVERRIDE<Type>
-		3) Make the newOverride function (wherever an override is new'd) request the overridables lastOverride, 
+		3) Make the newOverride function (wherever an override is new'd) request the overridables lastOverride,
 			to ensure that no leaks are created.
 
 		See LocomotorTemplate for an example.

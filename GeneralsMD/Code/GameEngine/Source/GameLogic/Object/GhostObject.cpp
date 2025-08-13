@@ -26,7 +26,7 @@
 // Simple base object
 // Author: Michael S. Booth, October 2000
 ///////////////////////////////////////////////////////////////////////////////////////////////////
- 
+
 #include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
 
 #include "Common/Xfer.h"
@@ -50,7 +50,7 @@ m_parentGeometryMajorRadius(0.0f),
 m_parentGeometryminorRadius(0.0f),
 m_parentObject(NULL),
 m_partitionData(NULL)
-{ 
+{
 	m_parentPosition.zero();
 	// End Initializations
 }  // end Object

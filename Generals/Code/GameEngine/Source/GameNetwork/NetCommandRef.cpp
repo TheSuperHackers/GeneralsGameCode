@@ -55,9 +55,9 @@ NetCommandRef::NetCommandRef(NetCommandMsg *msg)
 /**
  * Destructor. Detach from the network command.
  */
-NetCommandRef::~NetCommandRef() 
+NetCommandRef::~NetCommandRef()
 {
-	if (m_msg != NULL) 
+	if (m_msg != NULL)
 	{
 		m_msg->detach();
 	}

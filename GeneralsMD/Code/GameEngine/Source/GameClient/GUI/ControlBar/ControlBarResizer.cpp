@@ -24,12 +24,12 @@
 
 // FILE: ControlBarResizer.cpp /////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Electronic Arts Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2002 - All Rights Reserved                  
-//                                                                          
+//
+//                       Electronic Arts Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2002 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 //	created:	Sep 2002
@@ -37,7 +37,7 @@
 //	Filename: 	ControlBarResizer.cpp
 //
 //	author:		Chris Huybregts
-//	
+//
 //	purpose:	We want a "squished" control bar, this is the methods that will do it
 //
 //-----------------------------------------------------------------------------
@@ -59,7 +59,7 @@
 // DEFINES ////////////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
 
-const FieldParse ControlBarResizer::m_controlBarResizerParseTable[] = 
+const FieldParse ControlBarResizer::m_controlBarResizerParseTable[] =
 {
 	{ "AltPosition",		INI::parseICoord2D,						NULL, offsetof( ResizerWindow, m_altPos ) },
 	{ "AltSize",				INI::parseICoord2D,						NULL, offsetof( ResizerWindow, m_altSize ) },
@@ -98,7 +98,7 @@ ControlBarResizer::~ControlBarResizer( void )
 	}
 	m_resizerWindowsList.clear();
 }
-	
+
 void ControlBarResizer::init( void )
 {
 	INI ini;
@@ -107,7 +107,7 @@ void ControlBarResizer::init( void )
 
 }
 
-	
+
 ResizerWindow *ControlBarResizer::findResizerWindow( AsciiString name )
 {
 	ResizerWindowList::iterator it = m_resizerWindowsList.begin();
@@ -126,7 +126,7 @@ ResizerWindow *ControlBarResizer::findResizerWindow( AsciiString name )
 		{
 			return rWin;
 		}
-		it ++;	
+		it ++;
 	}
 	return NULL;
 }
@@ -150,7 +150,7 @@ ResizerWindow *ControlBarResizer::newResizerWindow( AsciiString name )
 	win->winGetSize(&newRwin->m_defaultSize.x,&newRwin->m_defaultSize.y);
 	m_resizerWindowsList.push_back(newRwin);
 	return newRwin;
-}	
+}
 void ControlBarResizer::sizeWindowsDefault( void )
 {
 	ResizerWindowList::iterator it = m_resizerWindowsList.begin();
@@ -173,7 +173,7 @@ void ControlBarResizer::sizeWindowsDefault( void )
 		win->winSetPosition(rWin->m_defaultPos.x, rWin->m_defaultPos.y);
 		win->winSetSize(rWin->m_defaultSize.x, rWin->m_defaultSize.y);
 		DEBUG_LOG(("sizeWindowsDefault:%s pos X:%d pos Y: %d size X:%d sizeY: %d",rWin->m_name.str(),rWin->m_defaultPos.x, rWin->m_defaultPos.y,rWin->m_defaultSize.x, rWin->m_defaultSize.y ));
-		it ++;	
+		it ++;
 	}
 }
 void ControlBarResizer::sizeWindowsAlt( void )
@@ -197,12 +197,12 @@ void ControlBarResizer::sizeWindowsAlt( void )
 			it++;
 			continue;
 		}
-		
+
 		win->winSetPosition(rWin->m_altPos.x * x, rWin->m_altPos.y * y);
 		if(rWin->m_altSize.x >0 || rWin->m_altSize.y > 0)
 			win->winSetSize(rWin->m_altSize.x *x, rWin->m_altSize.y *y);
 		DEBUG_LOG(("sizeWindowsAlt:%s pos X:%d pos Y: %d size X:%d sizeY: %d",rWin->m_name.str(), rWin->m_altPos.x*x, rWin->m_altPos.y*y,rWin->m_altSize.x*x, rWin->m_altSize.y *y));
-		it ++;	
+		it ++;
 	}
 }
 
@@ -214,7 +214,7 @@ void INI::parseControlBarResizerDefinition( INI* ini )
 //
 //	// read the name
 //	const char* c = ini->getNextToken();
-//	name.set( c );	
+//	name.set( c );
 //
 ////	ControlBarResizer *resizer = TheControlBar->getControlBarResizer();
 //	if( !resizer )

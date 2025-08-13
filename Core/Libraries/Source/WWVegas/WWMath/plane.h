@@ -17,22 +17,22 @@
 */
 
 /* $Header: /Commando/Code/wwmath/plane.h 16    5/05/01 5:48p Jani_p $ */
-/*********************************************************************************************** 
- ***                            Confidential - Westwood Studios                              *** 
- *********************************************************************************************** 
- *                                                                                             * 
- *                 Project Name : Voxel Technology                                             * 
- *                                                                                             * 
- *                    File Name : PLANE.H                                                      * 
- *                                                                                             * 
- *                   Programmer : Greg Hjelstrom                                               * 
- *                                                                                             * 
- *                   Start Date : 03/17/97                                                     * 
- *                                                                                             * 
- *                  Last Update : March 17, 1997 [GH]                                          * 
- *                                                                                             * 
- *---------------------------------------------------------------------------------------------* 
- * Functions:                                                                                  * 
+/***********************************************************************************************
+ ***                            Confidential - Westwood Studios                              ***
+ ***********************************************************************************************
+ *                                                                                             *
+ *                 Project Name : Voxel Technology                                             *
+ *                                                                                             *
+ *                    File Name : PLANE.H                                                      *
+ *                                                                                             *
+ *                   Programmer : Greg Hjelstrom                                               *
+ *                                                                                             *
+ *                   Start Date : 03/17/97                                                     *
+ *                                                                                             *
+ *                  Last Update : March 17, 1997 [GH]                                          *
+ *                                                                                             *
+ *---------------------------------------------------------------------------------------------*
+ * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #if defined(_MSC_VER)
@@ -51,10 +51,10 @@
 **
 ** 3D-planes.  This class uses the Normal+Distance description of a plane.
 ** The relationship for all points (p) on the plane is given by:
-** 
+**
 **   N.X * p.X + N.Y * p.Y + N.Z * p.Z = D
 **
-** BEWARE, if you are used to the Ax + By + Cz + D = 0 description, the 
+** BEWARE, if you are used to the Ax + By + Cz + D = 0 description, the
 ** sign of the D value is inverted.
 */
 
@@ -94,12 +94,12 @@ public:
 	static void Intersect_Planes(const PlaneClass & a, const PlaneClass & b, Vector3 *line_dir, Vector3 *line_point);
 };
 
-inline PlaneClass::PlaneClass(float nx,float ny,float nz,float dist) 
+inline PlaneClass::PlaneClass(float nx,float ny,float nz,float dist)
 {
 	Set(nx,ny,nz,dist);
 }
-	
-inline PlaneClass::PlaneClass(const Vector3 & normal,float dist) 
+
+inline PlaneClass::PlaneClass(const Vector3 & normal,float dist)
 {
 	Set(normal,dist);
 }
@@ -109,7 +109,7 @@ inline PlaneClass::PlaneClass(const Vector3 & normal,const Vector3 & point)
 	Set(normal,point);
 }
 
-inline PlaneClass::PlaneClass(const Vector3 & point1, const Vector3 & point2, const Vector3 & point3) 
+inline PlaneClass::PlaneClass(const Vector3 & point1, const Vector3 & point2, const Vector3 & point3)
 {
 	Set(point1,point2,point3);
 }
@@ -122,7 +122,7 @@ inline void PlaneClass::Set(float a,float b,float c,float d)
 	D = d;
 }
 
-inline void PlaneClass::Set(const Vector3 & normal,float dist) 
+inline void PlaneClass::Set(const Vector3 & normal,float dist)
 {
 	N = normal;
 	D = dist;
@@ -135,7 +135,7 @@ inline void PlaneClass::Set(const Vector3 & normal,const Vector3 & point)
 }
 
 
-inline void PlaneClass::Set(const Vector3 & point1, const Vector3 & point2, const Vector3 & point3) 
+inline void PlaneClass::Set(const Vector3 & point1, const Vector3 & point2, const Vector3 & point3)
 {
 #ifdef ALLOW_TEMPORARIES
 	N = Vector3::Cross_Product((point2 - point1), (point3 - point1));

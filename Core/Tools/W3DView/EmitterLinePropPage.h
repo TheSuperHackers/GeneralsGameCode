@@ -99,11 +99,11 @@ protected:
 		float								Get_V_Per_Sed(void) const { return m_VPerSec; }
 
 	protected:
-			
+
 		/////////////////////////////////////////////////////////
 		//
 		//	Protected methods
-		//		
+		//
 		void								Initialize (void);
 
 	private:
@@ -111,7 +111,7 @@ protected:
 		/////////////////////////////////////////////////////////
 		//
 		//	Private member data
-		//		
+		//
 		EmitterInstanceListClass *	m_pEmitterList;
 		bool								m_bValid;
 

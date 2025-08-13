@@ -42,34 +42,34 @@
 #define MAX_BUFFER			(100*1024)
 
 static OLECHAR	buffer[MAX_BUFFER];
-typedef struct 
+typedef struct
 {
 	int num_labels;
 	int next_id;
 
 } DBINFO;
 
-typedef struct 
+typedef struct
 {
 	int max_len;
 
 } LBINFO;
 
-typedef struct 
+typedef struct
 {
 	int id;
 	int revision;
 
 } TXINFO;
 
-typedef struct 
+typedef struct
 {
 	LangID lang;
 	int revision;
 
 } TRINFO;
 
-typedef struct 
+typedef struct
 {
 	int valid;
 	DWORD lo;
@@ -121,17 +121,17 @@ static int writeTransForm ( IFF_FILE *iff, Translation *trans )
 			{
 				goto error;
 			}
-	
+
 			trinfo.lang = trans->GetLangID ();
 			trinfo.revision = trans->Revision ();
-	
+
 			if ( !IFF_NewChunk ( iff, CHUNK_INFO ))
 			{
 				goto error;
 			}
-			
+
 			IFF_Write ( iff, &trinfo, sizeof ( trinfo ));
-			
+
 			IFF_CloseChunk ( iff );
 
 			writeString ( iff, trans->Get (), CHUNK_TEXT );
@@ -141,14 +141,14 @@ static int writeTransForm ( IFF_FILE *iff, Translation *trans )
 			{
 				wvinfo.lo = trans->WaveInfo.Lo ();
 				wvinfo.hi = trans->WaveInfo.Hi ();
-				
+
 				if ( !IFF_NewChunk ( iff, CHUNK_WAVE_INFO ))
 				{
 					goto error;
 				}
-				
+
 				IFF_Write ( iff, &wvinfo, sizeof ( wvinfo ));
-				
+
 				IFF_CloseChunk ( iff );
 			}
 
@@ -170,17 +170,17 @@ static int writeTextForm ( IFF_FILE *iff, BabylonText *text )
 			{
 				goto error;
 			}
-	
+
 			txinfo.id = text->ID ();
 			txinfo.revision = text->Revision ();
-	
+
 			if ( !IFF_NewChunk ( iff, CHUNK_INFO ))
 			{
 				goto error;
 			}
-			
+
 			IFF_Write ( iff, &txinfo, sizeof ( txinfo ));
-			
+
 			IFF_CloseChunk ( iff );
 			writeString ( iff, text->Get (), CHUNK_TEXT );
 			writeString ( iff, text->Wave (), CHUNK_WAVE );
@@ -189,14 +189,14 @@ static int writeTextForm ( IFF_FILE *iff, BabylonText *text )
 			{
 				wvinfo.lo = text->WaveInfo.Lo ();
 				wvinfo.hi = text->WaveInfo.Hi ();
-				
+
 				if ( !IFF_NewChunk ( iff, CHUNK_WAVE_INFO ))
 				{
 					goto error;
 				}
-				
+
 				IFF_Write ( iff, &wvinfo, sizeof ( wvinfo ));
-				
+
 				IFF_CloseChunk ( iff );
 			}
 
@@ -221,7 +221,7 @@ int WriteMainDB(TransDB *db, const char *filename, CBabylonDlg *dlg )
 	int ok = FALSE;
 
 	if ( dlg )
-	{								 
+	{
 		dlg->InitProgress ( db->NumLabels ());
 	}
 
@@ -235,7 +235,7 @@ int WriteMainDB(TransDB *db, const char *filename, CBabylonDlg *dlg )
 	{
 		goto error;
 	}
-	
+
 	dbinfo.next_id = db->ID ();
 	dbinfo.num_labels = db->NumLabels ();
 
@@ -256,11 +256,11 @@ int WriteMainDB(TransDB *db, const char *filename, CBabylonDlg *dlg )
 		if ( !writeTextForm ( iff, text ) )
 		{
 				goto error;
-		}	
+		}
 		text = db->NextObsolete ( sh_text );
 	}
 
-	
+
 
 	label = db->FirstLabel ( sh_label );
 
@@ -279,9 +279,9 @@ int WriteMainDB(TransDB *db, const char *filename, CBabylonDlg *dlg )
 		{
 			goto error;
 		}
-		
+
 		IFF_Write ( iff, &lbinfo, sizeof ( lbinfo ));
-		
+
 		IFF_CloseChunk ( iff );
 
 		writeString ( iff, label->Name (), CHUNK_NAME );
@@ -301,7 +301,7 @@ int WriteMainDB(TransDB *db, const char *filename, CBabylonDlg *dlg )
 			{
 				goto error;
 			}
-			
+
 			trans = text->FirstTranslation ( sh_trans );
 
 			while ( trans )
@@ -327,7 +327,7 @@ int WriteMainDB(TransDB *db, const char *filename, CBabylonDlg *dlg )
 
 	ok = TRUE;
 	db->ClearChanges ();
-		
+
 error:
 	if ( iff )
 	{
@@ -580,7 +580,7 @@ int LoadMainDB(TransDB *db, const char *filename, void (*cb) (void) )
 	}
 
 	ok = TRUE;
-		
+
 error:
 
 	if ( label )

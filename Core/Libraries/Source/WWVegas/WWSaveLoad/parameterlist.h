@@ -60,7 +60,7 @@ class ParameterListClass : public DynamicVectorClass<ParameterClass *>
 	using DynamicVectorClass<ParameterClass *>::Vector;
 
 public:
-	
+
 	/////////////////////////////////////////////////////////////////////
 	// Public constructurs/destructors
 	/////////////////////////////////////////////////////////////////////
@@ -108,7 +108,7 @@ ParameterListClass::Add (void *data, const char *param_name, ParameterClass::Typ
 	//	Create a new parameter object
 	//
 	ParameterClass *new_param = ParameterClass::Construct (type, data, param_name);
-	
+
 	//
 	//	Add the new paramter object to our list
 	//
@@ -142,9 +142,9 @@ ParameterListClass::Add (ParameterClass *new_param)
 inline void
 ParameterListClass::Free_Parameters (void)
 {
-	for (int index = 0; index < Count (); index ++) {		
+	for (int index = 0; index < Count (); index ++) {
 		ParameterClass *param = Vector[index];
-		
+
 		//
 		//	Free the parameter object
 		//

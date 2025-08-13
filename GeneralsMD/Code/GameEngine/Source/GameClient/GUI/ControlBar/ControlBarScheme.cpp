@@ -24,12 +24,12 @@
 
 // FILE: ControlBarScheme.cpp /////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Electronic Arts Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2002 - All Rights Reserved                  
-//                                                                          
+//
+//                       Electronic Arts Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2002 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 //	created:	Apr 2002
@@ -37,7 +37,7 @@
 //	Filename: 	ControlBarScheme.cpp
 //
 //	author:		Chris Huybregts
-//	
+//
 //	purpose:	Contains all the Command bar goodness in terms of how it looks
 //						For instrucitons on how to use, please see it's .h file
 //
@@ -70,7 +70,7 @@ enum{
 	COMMAND_BAR_SIZE_OFFSET = 0
 };
 
-const FieldParse ControlBarSchemeManager::m_controlBarSchemeFieldParseTable[] = 
+const FieldParse ControlBarSchemeManager::m_controlBarSchemeFieldParseTable[] =
 {
 
 	{ "ImagePart",						ControlBarSchemeManager::parseImagePart,			NULL, NULL },
@@ -161,7 +161,7 @@ const FieldParse ControlBarSchemeManager::m_controlBarSchemeFieldParseTable[] =
 };
 
 // used to parse the anim types that each animation part of a scheme can have
-static const LookupListRec AnimTypeNames[] = 
+static const LookupListRec AnimTypeNames[] =
 {
 	{ "SLIDE_RIGHT", ControlBarSchemeAnimation::CB_ANIM_SLIDE_RIGHT },
 	{ NULL, 0	}
@@ -190,7 +190,7 @@ ControlBarSchemeAnimation::ControlBarSchemeAnimation( void )
 {
 	// Added by Sadullah Nader
 	// Initializations missing and needed
-	
+
 	m_animDuration = 0;
 	m_finalPos.x = m_finalPos.y = 0;
 
@@ -220,10 +220,10 @@ void ControlBarScheme::reset(void)
 			if( im )
 				delete im;
 			im = NULL;
-			it ++;	
+			it ++;
 		}
 		m_layer[i].clear();
-	
+
 	}
 
 
@@ -238,7 +238,7 @@ void ControlBarScheme::reset(void)
 			delete(anim);
 		}
 		anim = NULL;
-		it ++;	
+		it ++;
 	}
 	m_animations.clear();
 
@@ -280,7 +280,7 @@ void ControlBarScheme::reset(void)
 	m_commandMarkerImage = NULL;
 	m_expBarForeground = NULL;
 	m_powerPurchaseImage = NULL;
-		
+
 }
 
 ControlBarScheme::~ControlBarScheme(void)
@@ -309,12 +309,12 @@ ControlBarScheme::ControlBarScheme(void)
 	m_optionsButtonHightlited = NULL;
 	m_optionsButtonPushed = NULL;
 	m_optionsButtonDisabled = NULL;
-	
+
 	// Added By Sadullah Nader
-	// Initializations needed 
-	
+	// Initializations needed
+
 	m_commandBarBorderColor = 0;
-	
+
 	//
 	m_idleWorkerButtonEnable = NULL;
 	m_idleWorkerButtonHightlited = NULL;
@@ -354,13 +354,13 @@ ControlBarScheme::ControlBarScheme(void)
 	m_uAttackButtonEnable = NULL;
 	m_uAttackButtonHightlited = NULL;
 	m_uAttackButtonPushed = NULL;
-	
+
 	m_genArrow = NULL;
 
 	m_minMaxButtonEnable = NULL;
 	m_minMaxButtonHightlited = NULL;
 	m_minMaxButtonPushed = NULL;
-	
+
 	m_minMaxUL.x = 0;
 	m_minMaxLR.x = 0;
 
@@ -408,10 +408,10 @@ ControlBarScheme::ControlBarScheme(void)
 
 	m_powerBarUL.y = 0;
 	m_powerBarLR.y = 0;
-	
+
 	m_moneyUL.x = 0;
 	m_moneyUL.y = 0;
-	
+
 	m_moneyLR.x = 0;
 	m_moneyLR.y = 0;
 }
@@ -438,7 +438,7 @@ void ControlBarScheme::init(void)
 	resMultiplier.y = TheDisplay->getHeight()/INT_TO_REAL(m_ScreenCreationRes.y);
 
 	win= TheWindowManager->winGetWindowFromId( NULL, TheNameKeyGenerator->nameToKey( "ControlBar.wnd:PopupCommunicator" ) );
-	if(win)	
+	if(win)
 	{
 //		DEBUG_ASSERTCRASH(m_buddyButtonEnable,     ("No enable button image for communicator in scheme %s!", m_name.str()));
 //		DEBUG_ASSERTCRASH(m_buddyButtonHightlited, ("No hilite button image for communicator in scheme %s!", m_name.str()));
@@ -447,7 +447,7 @@ void ControlBarScheme::init(void)
 		GadgetButtonSetHiliteImage(win, m_buddyButtonHightlited);
 		GadgetButtonSetHiliteSelectedImage(win, m_buddyButtonPushed);
 		GadgetButtonSetDisabledImage(win, m_buddyButtonDisabled);
-		
+
 		Int x, y;
 		GameWindow* parent =win->winGetParent();
 		if(parent)
@@ -466,13 +466,13 @@ void ControlBarScheme::init(void)
 		win->winSetSize((m_chatLR.x - m_chatUL.x)*resMultiplier.x + COMMAND_BAR_SIZE_OFFSET,(m_chatLR.y - m_chatUL.y)*resMultiplier.y+ COMMAND_BAR_SIZE_OFFSET);
 	}
 	win= TheWindowManager->winGetWindowFromId( NULL, TheNameKeyGenerator->nameToKey( "ControlBar.wnd:ButtonIdleWorker" ) );
-	if(win)	
+	if(win)
 	{
 		GadgetButtonSetEnabledImage(win, m_idleWorkerButtonEnable);
 		GadgetButtonSetHiliteImage(win, m_idleWorkerButtonHightlited);
 		GadgetButtonSetHiliteSelectedImage(win, m_idleWorkerButtonPushed);
 		GadgetButtonSetDisabledImage(win, m_idleWorkerButtonDisabled);
-		
+
 		Int x, y;
 		GameWindow* parent =win->winGetParent();
 		if(parent)
@@ -488,17 +488,17 @@ void ControlBarScheme::init(void)
 			y = m_workerUL.y * resMultiplier.y;
 		}
 		win->winSetPosition(x,y );
-		
+
 		win->winSetSize((m_workerLR.x - m_workerUL.x)*resMultiplier.x+ COMMAND_BAR_SIZE_OFFSET,(m_workerLR.y - m_workerUL.y)*resMultiplier.y+ COMMAND_BAR_SIZE_OFFSET);
 
 	}
 	win= TheWindowManager->winGetWindowFromId( NULL, TheNameKeyGenerator->nameToKey( "ControlBar.wnd:ExpBarForeground" ) );
-	if(win)	
+	if(win)
 	{
 		win->winSetEnabledImage(0, m_expBarForeground);
 	}
 	win= TheWindowManager->winGetWindowFromId( NULL, TheNameKeyGenerator->nameToKey( "ControlBar.wnd:ButtonOptions" ) );
-	if(win)	
+	if(win)
 	{
 		GadgetButtonSetEnabledImage(win, m_optionsButtonEnable);
 		GadgetButtonSetHiliteImage(win, m_optionsButtonHightlited);
@@ -522,7 +522,7 @@ void ControlBarScheme::init(void)
 		win->winSetSize((m_optionsLR.x - m_optionsUL.x)*resMultiplier.x+ COMMAND_BAR_SIZE_OFFSET,(m_optionsLR.y - m_optionsUL.y)*resMultiplier.y+ COMMAND_BAR_SIZE_OFFSET);
 	}
 	win= TheWindowManager->winGetWindowFromId( NULL, TheNameKeyGenerator->nameToKey( "ControlBar.wnd:ButtonPlaceBeacon" ) );
-	if(win)	
+	if(win)
 	{
 		GadgetButtonSetEnabledImage(win, m_beaconButtonEnable);
 		GadgetButtonSetHiliteImage(win, m_beaconButtonHightlited);
@@ -546,9 +546,9 @@ void ControlBarScheme::init(void)
 		win->winSetPosition(x,y );
 		win->winSetSize((m_beaconLR.x - m_beaconUL.x)*resMultiplier.x+ COMMAND_BAR_SIZE_OFFSET,(m_beaconLR.y - m_beaconUL.y)*resMultiplier.y+ COMMAND_BAR_SIZE_OFFSET);
 	}
-	
+
 	win= TheWindowManager->winGetWindowFromId( NULL, TheNameKeyGenerator->nameToKey( "ControlBar.wnd:MoneyDisplay" ) );
-	if(win)	
+	if(win)
 	{
 
 		Int x, y;
@@ -570,7 +570,7 @@ void ControlBarScheme::init(void)
 	}
 
 	win= TheWindowManager->winGetWindowFromId( NULL, TheNameKeyGenerator->nameToKey( "ControlBar.wnd:PowerWindow" ) );
-	if(win)	
+	if(win)
 	{
 
 		Int x, y;
@@ -590,10 +590,10 @@ void ControlBarScheme::init(void)
 		win->winSetPosition(x,y );
 		win->winSetSize((m_powerBarLR.x - m_powerBarUL.x)*resMultiplier.x+ COMMAND_BAR_SIZE_OFFSET,(m_powerBarLR.y - m_powerBarUL.y)*resMultiplier.y+ COMMAND_BAR_SIZE_OFFSET);
 		DEBUG_LOG(("Power Bar UL X:%d Y:%d LR X:%d Y:%d size X:%d Y:%d",m_powerBarUL.x, m_powerBarUL.y,m_powerBarLR.x, m_powerBarLR.y, (m_powerBarLR.x - m_powerBarUL.x)*resMultiplier.x+ COMMAND_BAR_SIZE_OFFSET,(m_powerBarLR.y - m_powerBarUL.y)*resMultiplier.y+ COMMAND_BAR_SIZE_OFFSET  ));
-	}	
+	}
 
 	win= TheWindowManager->winGetWindowFromId( NULL, TheNameKeyGenerator->nameToKey( "ControlBar.wnd:ButtonGeneral" ) );
-	if(win)	
+	if(win)
 	{
 
 		GadgetButtonSetEnabledImage(win, m_generalButtonEnable);
@@ -618,15 +618,15 @@ void ControlBarScheme::init(void)
 		win->winSetPosition(x,y );
 		win->winSetSize((m_generalLR.x - m_generalUL.x)*resMultiplier.x+ COMMAND_BAR_SIZE_OFFSET,(m_generalLR.y - m_generalUL.y)*resMultiplier.y+ COMMAND_BAR_SIZE_OFFSET);
 	}
-	
+
 	win= TheWindowManager->winGetWindowFromId( NULL, TheNameKeyGenerator->nameToKey( "ControlBar.wnd:ButtonLarge" ) );
-	if(win)	
+	if(win)
 	{
 		// The images are set above
 //		GadgetButtonSetEnabledImage(win, m_minMaxButtonEnable);
 //		GadgetButtonSetHiliteImage(win, m_minMaxButtonHightlited);
 //		GadgetButtonSetHiliteSelectedImage(win, m_minMaxButtonPushed);
-	
+
 				Int x, y;
 		GameWindow* parent =win->winGetParent();
 		if(parent)
@@ -644,13 +644,13 @@ void ControlBarScheme::init(void)
 		win->winSetPosition(x,y );
 		win->winSetSize((m_minMaxLR.x - m_minMaxUL.x)*resMultiplier.x + COMMAND_BAR_SIZE_OFFSET,(m_minMaxLR.y - m_minMaxUL.y)*resMultiplier.y + COMMAND_BAR_SIZE_OFFSET);
 	}
-	
+
 	win= TheWindowManager->winGetWindowFromId( NULL, TheNameKeyGenerator->nameToKey( "ControlBar.wnd:WinUAttack" ) );
-	if(win)	
+	if(win)
 	{
 		win->winSetEnabledImage(0,m_uAttackButtonEnable);
 		win->winSetDisabledImage(0,m_uAttackButtonHightlited);
-		
+
 		Int x, y;
 		GameWindow* parent =win->winGetParent();
 		if(parent)
@@ -740,7 +740,7 @@ void ControlBarScheme::updateAnim (ControlBarSchemeAnimation * anim)
 void ControlBarScheme::update( void )
 {
 	ControlBarSchemeAnimationList::iterator it = m_animations.begin();
-	
+
 	while (it != m_animations.end())
 	{
 		ControlBarSchemeAnimation *anim = *it;
@@ -750,9 +750,9 @@ void ControlBarScheme::update( void )
 			return;
 		}
 		updateAnim( anim );
-		it ++;	
+		it ++;
 	}
-	
+
 }
 
 //
@@ -764,7 +764,7 @@ void ControlBarScheme::drawForeground( Coord2D multi, ICoord2D offset )
 	{
 		ControlBarSchemeImageList::iterator it = m_layer[i].begin();
 		while (it != m_layer[i].end())
-		{	
+		{
 			ControlBarSchemeImage *schemeImage = *it;
 			if( !schemeImage )
 			{
@@ -772,21 +772,21 @@ void ControlBarScheme::drawForeground( Coord2D multi, ICoord2D offset )
 				it++;
 				continue;
 			}
-			
+
 			// if we dont' have an image, don't try to draw it
 			if(!schemeImage->m_image)
 			{
 				it++;
 				continue;
 			}
-			
+
 			// draw the image
 			TheDisplay->drawImage(schemeImage->m_image, schemeImage->m_position.x * multi.x + offset.x,
-														schemeImage->m_position.y * multi.y + offset.y, 
+														schemeImage->m_position.y * multi.y + offset.y,
 														(schemeImage->m_position.x + schemeImage->m_size.x) * multi.x + offset.x,
 														(schemeImage->m_position.y + schemeImage->m_size.y) * multi.y + offset.y);
-			
-			it ++;	
+
+			it ++;
 		}
 	}
 }
@@ -796,12 +796,12 @@ void ControlBarScheme::drawForeground( Coord2D multi, ICoord2D offset )
 //-----------------------------------------------------------------------------
 void ControlBarScheme::drawBackground( Coord2D multi, ICoord2D offset )
 {
-	
+
 	for(Int i = MAX_CONTROL_BAR_SCHEME_IMAGE_LAYERS - 1; i >= CONTROL_BAR_SCHEME_FOREGROUND_IMAGE_LAYERS; i--)
 	{
 		ControlBarSchemeImageList::iterator it = m_layer[i].begin();
 		while (it != m_layer[i].end())
-		{	
+		{
 			ControlBarSchemeImage *schemeImage = *it;
 			if( !schemeImage )
 			{
@@ -809,21 +809,21 @@ void ControlBarScheme::drawBackground( Coord2D multi, ICoord2D offset )
 				it++;
 				continue;
 			}
-			
+
 			// if we don't have an image, don't try to draw it
 			if(!schemeImage->m_image)
 			{
 				it++;
 				continue;
 			}
-			
+
 			// draw it
 			TheDisplay->drawImage(schemeImage->m_image, schemeImage->m_position.x * multi.x + offset.x,
-														schemeImage->m_position.y * multi.y + offset.y, 
+														schemeImage->m_position.y * multi.y + offset.y,
 														(schemeImage->m_position.x + schemeImage->m_size.x) * multi.x + offset.x,
 														(schemeImage->m_position.y + schemeImage->m_size.y) * multi.y + offset.y);
-			
-			it ++;	
+
+			it ++;
 		}
 	}
 }
@@ -853,7 +853,7 @@ ControlBarSchemeManager::~ControlBarSchemeManager( void )
 		if( CBScheme )
 			delete CBScheme;
 		CBScheme = NULL;
-		it ++;	
+		it ++;
 	}
 	m_schemeList.clear();
 	m_currentScheme = NULL;
@@ -865,7 +865,7 @@ ControlBarSchemeManager::~ControlBarSchemeManager( void )
 //-----------------------------------------------------------------------------
 void ControlBarSchemeManager::parseImagePart(INI *ini, void *instance, void* /*store*/, const void* /*userData*/)
 {
-	static const FieldParse myFieldParse[] = 
+	static const FieldParse myFieldParse[] =
 		{
 			{ "Position",				INI::parseICoord2D,				NULL, offsetof( ControlBarSchemeImage, m_position ) },
 			{ "Size",						INI::parseICoord2D,				NULL, offsetof( ControlBarSchemeImage, m_size ) },
@@ -885,7 +885,7 @@ void ControlBarSchemeManager::parseImagePart(INI *ini, void *instance, void* /*s
 //-----------------------------------------------------------------------------
 void ControlBarSchemeManager::parseAnimatingPartImage(INI *ini, void *instance, void* /*store*/, const void* /*userData*/)
 {
-	static const FieldParse myFieldParse[] = 
+	static const FieldParse myFieldParse[] =
 		{
 			{ "Position",				INI::parseICoord2D,				NULL, offsetof( ControlBarSchemeImage, m_position ) },
 			{ "Size",						INI::parseICoord2D,				NULL, offsetof( ControlBarSchemeImage, m_size ) },
@@ -905,7 +905,7 @@ void ControlBarSchemeManager::parseAnimatingPartImage(INI *ini, void *instance, 
 //-----------------------------------------------------------------------------
 void ControlBarSchemeManager::parseAnimatingPart(INI *ini, void *instance, void* /*store*/, const void* /*userData*/)
 {
-	static const FieldParse myFieldParse[] = 
+	static const FieldParse myFieldParse[] =
 		{
 			{ "Name",						INI::parseAsciiString,		NULL, offsetof( ControlBarSchemeAnimation, m_name ) },
       { "Animation",			INI::parseLookupList,			AnimTypeNames, offsetof( ControlBarSchemeAnimation, m_animType ) },
@@ -914,7 +914,7 @@ void ControlBarSchemeManager::parseAnimatingPart(INI *ini, void *instance, void*
 			{ "ImagePart",			ControlBarSchemeManager::parseAnimatingPartImage,	NULL, NULL },
 			{ NULL,							NULL,											NULL, 0 }  // keep this last
 		};
-	
+
 	ControlBarSchemeAnimation *schemeAnim = NEW ControlBarSchemeAnimation;
 	ini->initFromINI(schemeAnim, myFieldParse);
 	((ControlBarScheme*)instance)->addAnimation(schemeAnim);
@@ -934,7 +934,7 @@ ControlBarScheme *ControlBarSchemeManager::newControlBarScheme( AsciiString name
 		cbScheme->reset();
 		cbScheme->m_name.set( name );
 		cbScheme->m_name.toLower();
-		return cbScheme;		
+		return cbScheme;
 	}
 
 	cbScheme = NEW ControlBarScheme;
@@ -949,7 +949,7 @@ ControlBarScheme *ControlBarSchemeManager::newControlBarScheme( AsciiString name
 	cbScheme->m_name.toLower();
 
 	m_schemeList.push_back(cbScheme);
-		
+
 	return cbScheme;
 }
 
@@ -959,7 +959,7 @@ ControlBarScheme *ControlBarSchemeManager::newControlBarScheme( AsciiString name
 ControlBarScheme *ControlBarSchemeManager::findControlBarScheme( AsciiString name )
 {
 	name.toLower();
-	
+
 	ControlBarSchemeList::iterator it = m_schemeList.begin();
 
 	// iterate through the list and return the scheme that we're looking for
@@ -973,7 +973,7 @@ ControlBarScheme *ControlBarSchemeManager::findControlBarScheme( AsciiString nam
 		}
 		if(CBScheme->m_name.compareNoCase( name ) == 0)
 			return CBScheme;
-		it ++;	
+		it ++;
 	}
 	return NULL;
 }
@@ -1076,20 +1076,20 @@ void ControlBarSchemeManager::setControlBarScheme(AsciiString schemeName)
 //-----------------------------------------------------------------------------
 void ControlBarSchemeManager::update( void )
 {
-	if(m_currentScheme)	
+	if(m_currentScheme)
 		m_currentScheme->update();
 }
 
 //-----------------------------------------------------------------------------
 void ControlBarSchemeManager::drawForeground( ICoord2D offset )
 {
-	if(m_currentScheme)	
+	if(m_currentScheme)
 		m_currentScheme->drawForeground( m_multiplyer, offset);
 }
 //-----------------------------------------------------------------------------
 void ControlBarSchemeManager::drawBackground( ICoord2D offset )
 {
-	if(m_currentScheme)	
+	if(m_currentScheme)
 		m_currentScheme->drawBackground( m_multiplyer, offset );
 }
 
@@ -1116,7 +1116,7 @@ void ControlBarSchemeManager::setControlBarSchemeByPlayerTemplate( const PlayerT
 	ControlBarScheme *tempScheme = NULL;
 
 	ControlBarSchemeList::iterator it = m_schemeList.begin();
-	
+
 	// iterate through the list and return the scheme that we're looking for
 	while (it != m_schemeList.end())
 	{
@@ -1130,13 +1130,13 @@ void ControlBarSchemeManager::setControlBarSchemeByPlayerTemplate( const PlayerT
 		// find the scheme that best matches our resolution
 		if(CBScheme->m_side.compareNoCase( side ) == 0)
 		{
-		
+
 			if((!tempScheme || tempScheme->m_ScreenCreationRes.x < CBScheme->m_ScreenCreationRes.x) )//&& TheDisplay->getWidth() >= CBScheme->m_ScreenCreationRes.x )
 				tempScheme = CBScheme;
 		}
-		it ++;	
+		it ++;
 	}
-	
+
 	if(tempScheme)
 	{
 		// setup the multiplyer value
@@ -1184,7 +1184,7 @@ void ControlBarSchemeManager::setControlBarSchemeByPlayer(Player *p)
 	ControlBarScheme *tempScheme = NULL;
 
 	ControlBarSchemeList::iterator it = m_schemeList.begin();
-	
+
 	// iterate through the list and return the scheme that we're looking for
 	while (it != m_schemeList.end())
 	{
@@ -1198,13 +1198,13 @@ void ControlBarSchemeManager::setControlBarSchemeByPlayer(Player *p)
 		// find the scheme that best matches our resolution
 		if(CBScheme->m_side.compareNoCase( side ) == 0)
 		{
-		
+
 			if((!tempScheme || tempScheme->m_ScreenCreationRes.x < CBScheme->m_ScreenCreationRes.x) )//&& TheDisplay->getWidth() >= CBScheme->m_ScreenCreationRes.x )
 				tempScheme = CBScheme;
 		}
-		it ++;	
+		it ++;
 	}
-	
+
 	if(tempScheme)
 	{
 		// setup the multiplyer value
@@ -1221,7 +1221,7 @@ void ControlBarSchemeManager::setControlBarSchemeByPlayer(Player *p)
 	}
 	if(m_currentScheme)
 		m_currentScheme->init();
-}	
+}
 
 
 //-----------------------------------------------------------------------------
@@ -1249,9 +1249,9 @@ static void animSlideRight( ControlBarSchemeAnimation *anim )
 		startPos.y = anim->m_animImage->m_position.y;
 		anim->setStartPos(startPos);
 	}
-	
+
 	// now lets animate this bad boy!
-	
+
 	// now increment the frame
 	currentFrame++;
 	anim->setCurrentFrame(currentFrame);

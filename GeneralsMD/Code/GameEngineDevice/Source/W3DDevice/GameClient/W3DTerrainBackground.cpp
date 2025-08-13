@@ -24,12 +24,12 @@
 
 // FILE: W3DTerrainBackground.cpp ////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       EA Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2003 - All Rights Reserved                  
-//                                                                          
+//
+//                       EA Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2003 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:   RTS3
@@ -43,7 +43,7 @@
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-//         Includes                                                      
+//         Includes
 //-----------------------------------------------------------------------------
 #include "W3DDevice/GameClient/W3DTerrainBackground.h"
 
@@ -61,7 +61,7 @@
 
 
 //-----------------------------------------------------------------------------
-//         Private Data                                                     
+//         Private Data
 //-----------------------------------------------------------------------------
 // A W3D shader that does alpha, texturing, tests zbuffer, doesn't update zbuffer.
 #define SC_DETAIL ( SHADE_CNST(ShaderClass::PASS_LEQUAL, ShaderClass::DEPTH_WRITE_ENABLE, ShaderClass::COLOR_WRITE_ENABLE, ShaderClass::SRCBLEND_ONE, \
@@ -74,7 +74,7 @@ static ShaderClass detailShader(SC_DETAIL);
 const Int PIXELS_PER_GRID = 8; // default tex resolution allocated for each tile. jba. [3/24/2003]
 
 //-----------------------------------------------------------------------------
-//         Private Functions                                               
+//         Private Functions
 //-----------------------------------------------------------------------------
 
 
@@ -108,7 +108,7 @@ The coordinates in partialRange are map cell coordinates, relative to the entire
 The vertex coordinates and texture coordinates, as well as static lighting are updated.
 */
 void W3DTerrainBackground::doPartialUpdate(const IRegion2D &partialRange, WorldHeightMap *htMap, Bool doTextures )
-{	
+{
 	if (m_map==NULL) return;
 	if (htMap) {
 		REF_PTR_SET(m_map, htMap);
@@ -169,7 +169,7 @@ void W3DTerrainBackground::doPartialUpdate(const IRegion2D &partialRange, WorldH
 			curVb->diffuse = (0<<24)|TheTerrainRenderObject->getStaticDiffuse(i,j);
 			Vector3 pos;
 			pos.Z = ((float)m_map->getHeight(i,j)*MAP_HEIGHT_SCALE);
-			pos.X = (i)*MAP_XY_FACTOR - m_map->getBorderSizeInline()*MAP_XY_FACTOR; 
+			pos.X = (i)*MAP_XY_FACTOR - m_map->getBorderSizeInline()*MAP_XY_FACTOR;
 			pos.Y = (j)*MAP_XY_FACTOR - m_map->getBorderSizeInline()*MAP_XY_FACTOR;
 			curVb->u1 = (float)(i-minX)/(float)(m_width);
 			curVb->v1 = 1.0f - (float)(j-minY)/(float)(m_width);
@@ -188,7 +188,7 @@ void W3DTerrainBackground::doPartialUpdate(const IRegion2D &partialRange, WorldH
 		REF_PTR_RELEASE(m_terrainTexture2X);
 		REF_PTR_RELEASE(m_terrainTexture4X);
 		m_terrainTexture = m_map->getFlatTexture(m_xOrigin, m_yOrigin, m_width, PIXELS_PER_GRID);
-		//	DEBUG ONLY. jba. m_terrainTexture =  (TerrainTextureClass *)NEW_REF(TextureClass, ("TBBib.tga"));  
+		//	DEBUG ONLY. jba. m_terrainTexture =  (TerrainTextureClass *)NEW_REF(TextureClass, ("TBBib.tga"));
 		m_terrainTexture->Get_Filter().Set_U_Addr_Mode(TextureFilterClass::TEXTURE_ADDRESS_CLAMP);
 		m_terrainTexture->Get_Filter().Set_V_Addr_Mode(TextureFilterClass::TEXTURE_ADDRESS_CLAMP);
 	}
@@ -276,10 +276,10 @@ Bool W3DTerrainBackground::advanceRight(ICoord2D &right, Int xOffset, Int yOffse
 //=============================================================================
 /** Fills in vertex & index buffers.
 */
-void W3DTerrainBackground::fillVBRecursive(UnsignedShort *ib, Int xOffset, Int yOffset, 
+void W3DTerrainBackground::fillVBRecursive(UnsignedShort *ib, Int xOffset, Int yOffset,
 																					 Int width, UnsignedShort *ndx, Int &curIndex)
 {
-	
+
 	Int bottomLeftNdx	= ndx[xOffset+yOffset*(m_width+1)];
 	Int topRightNdx	= ndx[xOffset+width + (yOffset+width)*(m_width+1)];
 
@@ -405,7 +405,7 @@ void W3DTerrainBackground::fillVBRecursive(UnsignedShort *ib, Int xOffset, Int y
 	fillVBRecursive(ib, xOffset, yOffset+halfWidth, halfWidth, ndx, curIndex);
 	fillVBRecursive(ib, xOffset+halfWidth, yOffset, halfWidth, ndx, curIndex);
 	fillVBRecursive(ib, xOffset+halfWidth, yOffset+halfWidth, halfWidth, ndx, curIndex);
-	
+
 }
 
 //=============================================================================
@@ -415,7 +415,7 @@ void W3DTerrainBackground::fillVBRecursive(UnsignedShort *ib, Int xOffset, Int y
 */
 void W3DTerrainBackground::setFlipRecursive(Int xOffset, Int yOffset, Int width)
 {
-	
+
 	Int limitX = m_map->getXExtent()-1;
 	Int limitY = m_map->getYExtent()-1;
 	Int i, j;
@@ -454,7 +454,7 @@ void W3DTerrainBackground::setFlipRecursive(Int xOffset, Int yOffset, Int width)
 	setFlipRecursive(xOffset, yOffset+halfWidth, halfWidth);
 	setFlipRecursive(xOffset+halfWidth, yOffset, halfWidth);
 	setFlipRecursive(xOffset+halfWidth, yOffset+halfWidth, halfWidth);
-	
+
 }
 
 //=============================================================================
@@ -465,7 +465,7 @@ The coordinates in partialRange are map cell coordinates, relative to the entire
 The vertex coordinates and texture coordinates, as well as static lighting are updated.
 */
 void W3DTerrainBackground::doTesselatedUpdate(const IRegion2D &partialRange, WorldHeightMap *htMap, Bool doTextures )
-{	
+{
 	if (m_map==NULL) return;
 	if (htMap) {
 		REF_PTR_SET(m_map, htMap);
@@ -525,7 +525,7 @@ void W3DTerrainBackground::doTesselatedUpdate(const IRegion2D &partialRange, Wor
 				Int k = i<limitX?i:limitX;
 				Int l = j<limitY?j:limitY;
 				pos.Z = ((float)m_map->getHeight(k,l)*MAP_HEIGHT_SCALE);
-				pos.X = (i)*MAP_XY_FACTOR - m_map->getBorderSizeInline()*MAP_XY_FACTOR; 
+				pos.X = (i)*MAP_XY_FACTOR - m_map->getBorderSizeInline()*MAP_XY_FACTOR;
 				pos.Y = (j)*MAP_XY_FACTOR - m_map->getBorderSizeInline()*MAP_XY_FACTOR;
 				curVb->u1 = (float)(i-minX)/(float)(m_width);
 				curVb->v1 = 1.0f - (float)(j-minY)/(float)(m_width);
@@ -569,7 +569,7 @@ void W3DTerrainBackground::doTesselatedUpdate(const IRegion2D &partialRange, Wor
 			Int k = i<limitX?i:limitX;
 			Int l = j<limitY?j:limitY;
 			pos.Z = ((float)m_map->getHeight(k,l)*MAP_HEIGHT_SCALE);
-			pos.X = (i)*MAP_XY_FACTOR - m_map->getBorderSizeInline()*MAP_XY_FACTOR; 
+			pos.X = (i)*MAP_XY_FACTOR - m_map->getBorderSizeInline()*MAP_XY_FACTOR;
 			pos.Y = (j)*MAP_XY_FACTOR - m_map->getBorderSizeInline()*MAP_XY_FACTOR;
 			bounds.Add_Point(pos);
 		}
@@ -581,7 +581,7 @@ void W3DTerrainBackground::doTesselatedUpdate(const IRegion2D &partialRange, Wor
 		REF_PTR_RELEASE(m_terrainTexture2X);
 		REF_PTR_RELEASE(m_terrainTexture4X);
 		m_terrainTexture = m_map->getFlatTexture(m_xOrigin, m_yOrigin, m_width, PIXELS_PER_GRID);
-		//	DEBUG ONLY. jba. m_terrainTexture =  (TerrainTextureClass *)NEW_REF(TextureClass, ("TBBib.tga"));  
+		//	DEBUG ONLY. jba. m_terrainTexture =  (TerrainTextureClass *)NEW_REF(TextureClass, ("TBBib.tga"));
 		m_terrainTexture->Get_Filter().Set_U_Addr_Mode(TextureFilterClass::TEXTURE_ADDRESS_CLAMP);
 		m_terrainTexture->Get_Filter().Set_V_Addr_Mode(TextureFilterClass::TEXTURE_ADDRESS_CLAMP);
 	}
@@ -589,7 +589,7 @@ void W3DTerrainBackground::doTesselatedUpdate(const IRegion2D &partialRange, Wor
 }
 
 //-----------------------------------------------------------------------------
-//         Public Functions                                                
+//         Public Functions
 //-----------------------------------------------------------------------------
 
 //=============================================================================
@@ -707,7 +707,7 @@ void W3DTerrainBackground::updateCenter(CameraClass *camera)
 	} else {
 		REF_PTR_RELEASE(m_terrainTexture4X);
 		REF_PTR_RELEASE(m_terrainTexture2X);
-		Int LOD = 0; 
+		Int LOD = 0;
 		if (minDistSqr>mipLODDistanceSqr) {
 			LOD = 1;
 		}
@@ -735,14 +735,14 @@ void W3DTerrainBackground::updateTexture(void)
 			m_terrainTexture4X = m_map->getFlatTexture(m_xOrigin, m_yOrigin, m_width, 4*PIXELS_PER_GRID);
 			m_terrainTexture4X->Get_Filter().Set_U_Addr_Mode(TextureFilterClass::TEXTURE_ADDRESS_CLAMP);
 			m_terrainTexture4X->Get_Filter().Set_V_Addr_Mode(TextureFilterClass::TEXTURE_ADDRESS_CLAMP);
-		}	
+		}
 	} else if (m_texMultiplier == TEX2X) {
 		REF_PTR_RELEASE(m_terrainTexture4X);
 		if (m_terrainTexture2X == NULL) {
 			m_terrainTexture2X = m_map->getFlatTexture(m_xOrigin, m_yOrigin, m_width, 2*PIXELS_PER_GRID);
 			m_terrainTexture2X->Get_Filter().Set_U_Addr_Mode(TextureFilterClass::TEXTURE_ADDRESS_CLAMP);
 			m_terrainTexture2X->Get_Filter().Set_V_Addr_Mode(TextureFilterClass::TEXTURE_ADDRESS_CLAMP);
-		}	
+		}
 	} else {
 		REF_PTR_RELEASE(m_terrainTexture4X);
 		REF_PTR_RELEASE(m_terrainTexture2X);

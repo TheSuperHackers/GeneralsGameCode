@@ -50,23 +50,23 @@ class GameMtlFormClass;
 ** editing the VertexMaterial parameters, the Shader parameters and the
 ** Texture parameters.
 */
-class GameMtlPassDlg: public ParamDlg 
+class GameMtlPassDlg: public ParamDlg
 {
 public:
-	
-	GameMtlPassDlg(HWND hwMtlEdit, IMtlParams *imp, GameMtl *m,int pass); 
+
+	GameMtlPassDlg(HWND hwMtlEdit, IMtlParams *imp, GameMtl *m,int pass);
 	~GameMtlPassDlg();
 
 	BOOL					DialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 
-	void					Invalidate();		
+	void					Invalidate();
 	void					UpdateMtlDisplay()						{ IParams->MtlChanged(); }
 
 	void					ReloadDialog();
 	Class_ID				ClassID();
 	void					SetThing(ReferenceTarget* target);
 	ReferenceTarget *	GetThing()									{ return (ReferenceTarget *)TheMtl; }
-	void					DeleteThis()								{ delete this;  }	
+	void					DeleteThis()								{ delete this;  }
 	void					SetTime(TimeValue t);
 	void					ActivateDlg(BOOL onOff);
 

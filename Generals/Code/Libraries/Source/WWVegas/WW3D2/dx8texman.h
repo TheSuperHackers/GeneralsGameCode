@@ -58,8 +58,8 @@ class TextureTrackerClass : public MultiListObjectClass
 public:
 	TextureTrackerClass
 	(
-		unsigned int w, 
-		unsigned int h, 
+		unsigned int w,
+		unsigned int h,
 		MipCountType count,
 		TextureBaseClass *tex
 	)
@@ -93,13 +93,13 @@ class DX8TextureTrackerClass : public TextureTrackerClass
 public:
 	DX8TextureTrackerClass
 	(
-		unsigned int w, 
-		unsigned int h, 
+		unsigned int w,
+		unsigned int h,
 		WW3DFormat format,
 		MipCountType count,
 		TextureBaseClass *tex,
 		bool rt
-	) 
+	)
 	: TextureTrackerClass(w,h,count,tex), Format(format), RenderTarget(rt)
 	{
 	}

@@ -24,12 +24,12 @@
 
 // FILE: AutoDepositUpdate.cpp /////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Electronic Arts Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2002 - All Rights Reserved                  
-//                                                                          
+//
+//                       Electronic Arts Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2002 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 //	created:	Aug 2002
@@ -37,7 +37,7 @@
 //	Filename: 	AutoDepositUpdate.cpp
 //
 //	author:		Chris Huybregts
-//	
+//
 //	purpose:	The meat of the auto deposit update module
 //
 //-----------------------------------------------------------------------------
@@ -96,7 +96,7 @@ void parseUpgradePair( INI *ini, void *instance, void *store, const void *userDa
 	// Insert the info into the upgrade list
 	std::list<upgradePair> * theList = (std::list<upgradePair>*)store;
 	theList->push_back(info);
-	
+
 }  // end parseFactionObjectCreationList
 
 //-----------------------------------------------------------------------------
@@ -150,20 +150,20 @@ UpdateSleepTime AutoDepositUpdate::update( void )
 	if( TheGameLogic->getFrame() >= m_depositOnFrame)
 	{
 		if (!m_initialized) {
-			// Note - we have to set these in update, because during load the team is set, 
+			// Note - we have to set these in update, because during load the team is set,
 			// and we don't want to award initial bonus on load.  jba :)
 			m_awardInitialCaptureBonus = TRUE;
 			m_initialized = TRUE;
 		}
 		m_depositOnFrame = TheGameLogic->getFrame() + modData->m_depositFrame;
-		
+
 		if(getObject()->isNeutralControlled() || modData->m_depositAmount <= 0 )
 			return UPDATE_SLEEP_NONE;
 
 		// makes sure that buildings under construction do not get a bonus CCB
 		if( getObject()->getConstructionPercent() != CONSTRUCTION_COMPLETE )
 			return UPDATE_SLEEP_NONE;
-		
+
 		int moneyAmount = modData->m_depositAmount + getUpgradedSupplyBoost();
 
 		if( modData->m_isActualMoney )
@@ -171,7 +171,7 @@ UpdateSleepTime AutoDepositUpdate::update( void )
 			getObject()->getControllingPlayer()->getMoney()->deposit( moneyAmount );
 			getObject()->getControllingPlayer()->getScoreKeeper()->addMoneyEarned( modData->m_depositAmount);
 		}
-		
+
 		Bool displayMoney = moneyAmount > 0 ? TRUE : FALSE;
 		if( getObject()->testStatus(OBJECT_STATUS_STEALTHED) )
 		{
@@ -182,7 +182,7 @@ UpdateSleepTime AutoDepositUpdate::update( void )
 			}
 
 		}
-		
+
 		if( displayMoney )
 		{
 
@@ -196,7 +196,7 @@ UpdateSleepTime AutoDepositUpdate::update( void )
 			  Coord3D pos;
 			  pos.set( getObject()->getPosition() );
 			  pos.z += 10.0f; //add a little z to make it show up above the unit.
-		  
+
         if ( owner->isKindOf( KINDOF_STRUCTURE ) )
         {
           Real width = owner->getGeometryInfo().getMajorRadius() * 0.3f;
@@ -204,12 +204,12 @@ UpdateSleepTime AutoDepositUpdate::update( void )
           pos.x += GameClientRandomValue(-width,width);
           pos.y += GameClientRandomValue(-depth,depth);
         }
-      
-      
+
+
         Color color = getObject()->getControllingPlayer()->getPlayerColor() | GameMakeColor( 0, 0, 0, 230 );
 			  TheInGameUI->addFloatingText( moneyString, &pos, color );
       }
-		}		
+		}
 	}
 
 	return UPDATE_SLEEP_NONE;

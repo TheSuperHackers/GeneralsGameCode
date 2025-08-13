@@ -23,12 +23,12 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 //----------------------------------------------------------------------------=
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information					                  
-//                Copyright(C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright(C) 2001 - All Rights Reserved
+//
 //----------------------------------------------------------------------------
 //
 // Project:    WSYS Library
@@ -49,7 +49,7 @@
 
 
 //----------------------------------------------------------------------------
-//           Includes                                                      
+//           Includes
 //----------------------------------------------------------------------------
 
 #include "Common/file.h"
@@ -74,15 +74,15 @@
 
 class RAMFile : public File
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(RAMFile, "RAMFile")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(RAMFile, "RAMFile")
 	protected:
 
 		Char				*m_data;											///< File data in memory
 		Int					m_pos;												///< current read position
 		Int					m_size;												///< size of file in memory
-		
+
 	public:
-		
+
 		RAMFile();
 		//virtual				~RAMFile();
 
@@ -90,8 +90,15 @@ class RAMFile : public File
 		virtual Bool	open( const Char *filename, Int access = NONE, size_t bufferSize = 0 ); ///< Open a file for access
 		virtual void	close( void );																			///< Close the file
 		virtual Int		read( void *buffer, Int bytes );										///< Read the specified number of bytes in to buffer: See File::read
+		virtual Int		readChar();																///< Read a character from the file
+		virtual Int		readWideChar();															///< Read a wide character from the file
 		virtual Int		write( const void *buffer, Int bytes );							///< Write the specified number of bytes from the buffer: See File::write
+		virtual Int		writeFormat( const Char* format, ... );							///< Write the formatted string to the file
+		virtual Int		writeFormat( const WideChar* format, ... );						///< Write the formatted string to the file
+		virtual Int		writeChar( const Char* character );								///< Write a character to the file
+		virtual Int		writeChar( const WideChar* character );							///< Write a wide character to the file
 		virtual Int		seek( Int new_pos, seekMode mode = CURRENT );				///< Set file position: See File::seek
+		virtual Bool	flush();													///< flush data to disk
 		virtual void	nextLine(Char *buf = NULL, Int bufSize = 0);				///< moves current position to after the next new-line
 
 		virtual Bool	scanInt(Int &newInt);																///< return what gets read as an integer from the current memory position.
@@ -103,7 +110,7 @@ class RAMFile : public File
 		virtual Bool	copyDataToFile(File *localFile);										///< write the contents of the RAM file to the given local file.  This could be REALLY slow.
 
 		/**
-			Allocate a buffer large enough to hold entire file, read 
+			Allocate a buffer large enough to hold entire file, read
 			the entire file into the buffer, then close the file.
 			the buffer is owned by the caller, who is responsible
 			for freeing is (via delete[]). This is a Good Thing to
@@ -121,7 +128,7 @@ class RAMFile : public File
 
 
 //----------------------------------------------------------------------------
-//           Inlining                                                       
+//           Inlining
 //----------------------------------------------------------------------------
 
 

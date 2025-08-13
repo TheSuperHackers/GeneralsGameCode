@@ -80,7 +80,7 @@ protected:
 	Int									 m_originalHeight;
 protected:
 	void updateTheUI(void);
-	void changeWaypointLabel(Int editControlID, NameKeyType key); 
+	void changeWaypointLabel(Int editControlID, NameKeyType key);
 
 public:
 	static void update(void);

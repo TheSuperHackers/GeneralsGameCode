@@ -66,7 +66,7 @@ static HTREEITEM findOrAdd(CTreeCtrl *tree, HTREEITEM parent, const char *pLabel
 		ins.item.mask = TVIF_HANDLE|TVIF_TEXT;
 		ins.item.hItem = child;
 		ins.item.pszText = buffer;
-		ins.item.cchTextMax = sizeof(buffer)-2;				
+		ins.item.cchTextMax = sizeof(buffer)-2;
 		tree->GetItem(&ins.item);
 		if (strcmp(buffer, pLabel) == 0) {
 			return(child);
@@ -81,7 +81,7 @@ static HTREEITEM findOrAdd(CTreeCtrl *tree, HTREEITEM parent, const char *pLabel
 	ins.item.mask = TVIF_PARAM|TVIF_TEXT;
 	ins.item.lParam = -1;
 	ins.item.pszText = (char*)pLabel;
-	ins.item.cchTextMax = strlen(pLabel);				
+	ins.item.cchTextMax = strlen(pLabel);
 	child = tree->InsertItem(&ins);
 	return(child);
 }
@@ -90,14 +90,14 @@ static HTREEITEM findOrAdd(CTreeCtrl *tree, HTREEITEM parent, const char *pLabel
 // EditAction message handlers
 
 
-BOOL EditAction::OnInitDialog() 
+BOOL EditAction::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 
 
 //	CDC *pDc =GetDC();
 	CRect rect;
-	
+
 	CTreeCtrl *pTree = (CTreeCtrl *)GetDlgItem(IDC_ACTION_TREE);
 	pTree->GetWindowRect(&rect);
 
@@ -116,7 +116,7 @@ BOOL EditAction::OnInitDialog()
 	m_myEditCtrl.ShowWindow(SW_SHOW);
 	m_myEditCtrl.SetEventMask(m_myEditCtrl.GetEventMask() | ENM_LINK | ENM_SELCHANGE | ENM_KEYEVENTS);
 
-	Int i;	
+	Int i;
 	HTREEITEM selItem = NULL;
 	for (i=0; i<ScriptAction::NUM_ITEMS; i++) {
 		const ActionTemplate *pTemplate = TheScriptEngine->getActionTemplate(i);
@@ -126,11 +126,11 @@ BOOL EditAction::OnInitDialog()
 		Int count = 0;
 		HTREEITEM parent = TVI_ROOT;
 		do {
-			count = 0; 
+			count = 0;
 			const char *nameStart = name;
 			while (*name && *name != '/') {
 				count++;
-				name++;								 
+				name++;
 			}
 			if (*name=='/') {
 				count++;
@@ -153,7 +153,7 @@ BOOL EditAction::OnInitDialog()
 		ins.item.mask = TVIF_PARAM|TVIF_TEXT;
 		ins.item.lParam = i;
 		ins.item.pszText = (char*)name;
-		ins.item.cchTextMax = 0;				
+		ins.item.cchTextMax = 0;
 		HTREEITEM item = m_actionTreeView.InsertItem(&ins);
 		if (i == m_action->getActionType()) {
 			selItem = item;
@@ -164,11 +164,11 @@ BOOL EditAction::OnInitDialog()
 		if (pTemplate->getName2().isEmpty()) continue;
 		parent = TVI_ROOT;
 		do {
-			count = 0; 
+			count = 0;
 			const char *nameStart = name;
 			while (*name && *name != '/') {
 				count++;
-				name++;								 
+				name++;
 			}
 			if (*name=='/') {
 				count++;
@@ -190,12 +190,12 @@ BOOL EditAction::OnInitDialog()
 		ins.item.mask = TVIF_PARAM|TVIF_TEXT;
 		ins.item.lParam = i;
 		ins.item.pszText = (char*)name;
-		ins.item.cchTextMax = 0;				
+		ins.item.cchTextMax = 0;
 		m_actionTreeView.InsertItem(&ins);
 	}
 	m_actionTreeView.Select(selItem, TVGN_FIRSTVISIBLE);
 	m_actionTreeView.SelectItem(selItem);
-	m_action->setWarnings(false); 
+	m_action->setWarnings(false);
 	m_myEditCtrl.SetWindowText(m_action->getUiText().str());
 	m_myEditCtrl.SetSel(-1, -1);
 	formatScriptActionText(0);
@@ -285,7 +285,7 @@ void EditAction::formatScriptActionText(Int parameterNdx) {
 		GetDlgItem(IDC_WARNINGS_CAPTION)->EnableWindow(true);
 		GetDlgItem(IDC_WARNINGS)->SetWindowText(warningText.str());
 	}
-		
+
 	m_modifiedTextColor = false;
 	m_myEditCtrl.SetSel(startSel, endSel);
 	m_curLinkChrg.cpMax = endSel;
@@ -295,13 +295,13 @@ void EditAction::formatScriptActionText(Int parameterNdx) {
 
 
 
-BOOL EditAction::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult) 
-{																											
-	NMTREEVIEW *pHdr = (NMTREEVIEW *)lParam; 	 
+BOOL EditAction::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult)
+{
+	NMTREEVIEW *pHdr = (NMTREEVIEW *)lParam;
 
 	// Handle events from the tree control.
 	if (pHdr->hdr.idFrom == IDC_ACTION_TREE) {
-		if (pHdr->hdr.code == TVN_SELCHANGED) {							
+		if (pHdr->hdr.code == TVN_SELCHANGED) {
 			char buffer[_MAX_PATH];
 			HTREEITEM hItem = m_actionTreeView.GetSelectedItem();
 			TVITEM item;
@@ -309,7 +309,7 @@ BOOL EditAction::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult)
 			item.mask = TVIF_HANDLE|TVIF_PARAM|TVIF_TEXT|TVIF_STATE;
 			item.hItem = hItem;
 			item.pszText = buffer;
-			item.cchTextMax = sizeof(buffer)-2;				
+			item.cchTextMax = sizeof(buffer)-2;
 			m_actionTreeView.GetItem(&item);
 			if (item.lParam >= 0) {
 				enum ScriptAction::ScriptActionType actionType = (enum ScriptAction::ScriptActionType)item.lParam;
@@ -318,10 +318,10 @@ BOOL EditAction::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult)
 					m_myEditCtrl.SetWindowText(m_action->getUiText().str());
 					formatScriptActionText(0);
 				}
-			}	
+			}
 		} else if (pHdr->hdr.code == TVN_KEYDOWN) {
 			NMTVKEYDOWN	*pKey = (NMTVKEYDOWN*)lParam;
-			Int key = pKey->wVKey;	
+			Int key = pKey->wVKey;
 			if (key==VK_SHIFT || key==VK_SPACE) {
 				HTREEITEM hItem = m_actionTreeView.GetSelectedItem();
 				if (!m_actionTreeView.ItemHasChildren(hItem)) {
@@ -333,7 +333,7 @@ BOOL EditAction::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult)
 			return 0;
 		}
 		return TRUE;
-	}  
+	}
 
 	// Handle events from the rich edit control containg the action pieces.
 	if (LOWORD(wParam) == IDC_RICH_EDIT_HERE+1) {
@@ -355,7 +355,7 @@ BOOL EditAction::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult)
 					}
 					if (i<m_action->getNumParameters()) {
 						numChars = m_action->getParameter(i)->getUiText().getLength();
-						match = (curChar+numChars/2 > chrg.cpMin && curChar+numChars/2 < chrg.cpMax); 
+						match = (curChar+numChars/2 > chrg.cpMin && curChar+numChars/2 < chrg.cpMax);
 						if (match) {
 							m_curEditParameter = i;
 							break;
@@ -363,10 +363,10 @@ BOOL EditAction::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult)
 						curChar += numChars;
 					}
 				}
-				if (pLink->msg == WM_LBUTTONDOWN) 
+				if (pLink->msg == WM_LBUTTONDOWN)
 				{
 					// Determine which parameter.
-					if (match) 
+					if (match)
 					{
 						if( m_action->getParameter( m_curEditParameter )->getParameterType() == Parameter::COMMANDBUTTON_ABILITY )
 						{
@@ -448,7 +448,7 @@ BOOL EditAction::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult)
 
 /** Not actually a timer - just used to send a delayed message to self because rich
 edit control is stupid.  jba. */
-void EditAction::OnTimer(UINT nIDEvent) 
+void EditAction::OnTimer(UINT nIDEvent)
 {
 	m_myEditCtrl.SetWindowText(m_action->getUiText().str());
 	formatScriptActionText(m_curEditParameter);

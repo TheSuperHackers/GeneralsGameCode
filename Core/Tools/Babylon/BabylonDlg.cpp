@@ -83,7 +83,7 @@ static void cb_progress ( void )
 
 }
 
-typedef struct 
+typedef struct
 {
 	char comment[MAX_INFO_LEN+1];
 	char context[MAX_INFO_LEN+1];
@@ -129,7 +129,7 @@ static void removeLeadingAndTrailing ( char *buffer )
 	while ( (ch = *first) && iswspace ( ch ))
 	{
 			first++;
-	}	
+	}
 
 	while ( *ptr++ = *first++ );
 
@@ -146,7 +146,7 @@ static void removeLeadingAndTrailing ( char *buffer )
 
 /////////////////////////////////////////////////////////////////////////////
 // CAboutDlg dialog used for App About
-								
+
 class CAboutDlg : public CDialog
 {
 public:
@@ -281,7 +281,7 @@ BOOL CBabylonDlg::OnInitDialog()
 	//  when the application's main window is not a dialog
 	SetIcon(m_hIcon, TRUE);			// Set big icon
 	SetIcon(m_hIcon, FALSE);		// Set small icon
-	
+
 	// TODO: Add extra initialization here
 		progress = (CProgressCtrl *) GetDlgItem ( IDC_PROGRESS1 );
 		percent = (CStatic *) GetDlgItem ( IDC_PERCENT );
@@ -309,7 +309,7 @@ BOOL CBabylonDlg::OnInitDialog()
 		combo->InsertString ( index, info->name );
 		combo->SetItemDataPtr ( index, info );
 		index++;
-		lang_index++; 
+		lang_index++;
 	}
 	max_index = index;
 	combo->SetCurSel ( 0 );
@@ -333,7 +333,7 @@ BOOL CBabylonDlg::OnInitDialog()
 	Ready();;
 
 	PostMessage ( WM_COMMAND, MAKEWPARAM ( IDC_RELOAD, BN_CLICKED ));
-	
+
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
 
@@ -354,7 +354,7 @@ void CBabylonDlg::OnSysCommand(UINT nID, LPARAM lParam)
 //  to draw the icon.  For MFC applications using the document/view model,
 //  this is automatically done for you by the framework.
 
-void CBabylonDlg::OnPaint() 
+void CBabylonDlg::OnPaint()
 {
 	if (IsIconic())
 	{
@@ -392,7 +392,7 @@ HCURSOR CBabylonDlg::OnQueryDragIcon()
 //  then the UI is hidden but the dialog remains around if it
 //  is dismissed.
 
-void CBabylonDlg::OnClose() 
+void CBabylonDlg::OnClose()
 {
 	if (CanExit())
 	{
@@ -410,13 +410,13 @@ void CBabylonDlg::OnClose()
 
 }
 
-//DEL void CBabylonDlg::OnOK() 
+//DEL void CBabylonDlg::OnOK()
 //DEL {
 //DEL 	if (CanExit())
 //DEL 		CDialog::OnOK();
 //DEL }
 
-//DEL void CBabylonDlg::OnCancel() 
+//DEL void CBabylonDlg::OnCancel()
 //DEL {
 //DEL 	if (CanExit())
 //DEL 		CDialog::OnCancel();
@@ -436,10 +436,10 @@ BOOL CBabylonDlg::CanExit()
 	return TRUE;
 }
 
-//DEL void CBabylonDlg::OnBrowse() 
+//DEL void CBabylonDlg::OnBrowse()
 //DEL {
 //DEL   static char szFilter[] = "XL Files (*.XLS)\0*.xls\0\0\0";
-//DEL 
+//DEL
 //DEL 	// TODO: Add your control notification handler code here
 //DEL 	CFileDialog *dlg = new CFileDialog ( TRUE, "xls", "*.xls", OFN_FILEMUSTEXIST, szFilter, this );
 //DEL 	if ( dlg )
@@ -457,23 +457,23 @@ BOOL CBabylonDlg::CanExit()
 //DEL 	}
 //DEL }
 
-//DEL void CBabylonDlg::OnChangeXlFilename() 
+//DEL void CBabylonDlg::OnChangeXlFilename()
 //DEL {
 //DEL 	// TODO: If this is a RICHEDIT control, the control will not
 //DEL 	// send this notification unless you override the CDialog::OnInitDialog()
 //DEL 	// function and call CRichEditCtrl().SetEventMask()
 //DEL 	// with the ENM_CHANGE flag ORed into the mask.
-//DEL 	
+//DEL
 //DEL 	// TODO: Add your control notification handler code here
-//DEL 	
+//DEL
 //DEL }
 
-void CBabylonDlg::OnExport() 
+void CBabylonDlg::OnExport()
 {
 	if ( CanOperate ())
 	{
 		CExportDlg dlg;
-		
+
 		if ( dlg.DoModal () == IDOK )
 		{
 			ExportTranslations ( MainDB, dlg.Filename (), dlg.Language(), dlg.Options(), this );
@@ -481,10 +481,10 @@ void CBabylonDlg::OnExport()
 	}
 }
 
-BOOL CAboutDlg::OnInitDialog() 
+BOOL CAboutDlg::OnInitDialog()
 {
 	CDialog::OnInitDialog();
-	
+
 	// TODO: Add extra initialization here
 
 	char string[200];
@@ -492,16 +492,16 @@ BOOL CAboutDlg::OnInitDialog()
 	sprintf ( string, "Built: %s, %s", __DATE__, __TIME__ );
 	SetDlgItemText ( IDC_BUILD, string );
 
-	
+
 	return TRUE;  // return TRUE unless you set the focus to a control
 	              // EXCEPTION: OCX Property Pages should return FALSE
 }
 
-void CBabylonDlg::OnDropFiles(HDROP hDropInfo) 
+void CBabylonDlg::OnDropFiles(HDROP hDropInfo)
 {
 	// TODO: Add your message handler code here and/or call default
 //	char buffer[1024];
-//	
+//
 //	if ( DragQueryFile(hDropInfo, 0, buffer, sizeof ( buffer )-1))
 //	{
 //
@@ -522,22 +522,22 @@ void CBabylonDlg::OnDropFiles(HDROP hDropInfo)
 //DEL {
 //DEL 	char *p;
 //DEL 	CWnd *wnd = GetDlgItem ( IDC_EXPORT );
-//DEL 
+//DEL
 //DEL 	if ( buffer && (p = strchr ( buffer, '.' )) && !stricmp ( p, ".xls"))
 //DEL 	{
 //DEL 		SetDlgItemText ( IDC_XLFILE, buffer );
 //DEL 		SetDlgItemText ( IDC_STATUS, "File selected: Click 'convert' to start process");
-//DEL 		wnd->EnableWindow  ( TRUE ); 
+//DEL 		wnd->EnableWindow  ( TRUE );
 //DEL 		return TRUE;
 //DEL 	}
 //DEL 	if ( buffer )
 //DEL 	{
 //DEL 			AfxMessageBox ("Must be an Excel file");
 //DEL 	}
-//DEL 	wnd->EnableWindow  ( FALSE ); 
+//DEL 	wnd->EnableWindow  ( FALSE );
 //DEL 	SetDlgItemText ( IDC_STATUS, "Select excel file...");
 //DEL 	SetDlgItemText ( IDC_XLFILE, "Browse or drop excel file to be convertered" );
-//DEL 
+//DEL
 //DEL 	return FALSE;
 //DEL }
 
@@ -545,21 +545,21 @@ void CBabylonDlg::OnDropFiles(HDROP hDropInfo)
 //DEL {
 //DEL 	char *p;
 //DEL 	char filename[400];
-//DEL 
+//DEL
 //DEL 	if ( buffer && (p = strchr ( buffer, '.' )) && !stricmp ( p, ".str"))
 //DEL 	{
 //DEL 		ParseDB	db;
 //DEL 		SetDlgItemText ( IDC_XLFILE, buffer );
-//DEL 		EnableWindow  ( FALSE ); 
+//DEL 		EnableWindow  ( FALSE );
 //DEL 		SetDlgItemText ( IDC_STATUS, "Parsing .str file");
-//DEL 
+//DEL
 //DEL 		if ( db.ParseStrFile ( buffer, this ) )
 //DEL 		{
 //DEL 			SetDlgItemText ( IDC_STATUS, "Creating .xls file");
 //DEL 			strcpy ( filename, buffer );
 //DEL 			p = strchr ( filename, '.' );
 //DEL 			strcpy ( p, ".xls" );
-//DEL 
+//DEL
 //DEL 			if ( db.CreateXLFile ( filename, this ) )
 //DEL 			{
 //DEL 				SetDlgItemText ( IDC_STATUS, "Created .xls file");
@@ -568,15 +568,15 @@ void CBabylonDlg::OnDropFiles(HDROP hDropInfo)
 //DEL 			{
 //DEL 				SetDlgItemText ( IDC_STATUS, "Falied to create .xls file");
 //DEL 			}
-//DEL 
+//DEL
 //DEL 		}
 //DEL 		else
 //DEL 		{
 //DEL 		SetDlgItemText ( IDC_STATUS, "Failed to parse .str file");
-//DEL 
+//DEL
 //DEL 		}
-//DEL 
-//DEL 		EnableWindow  ( TRUE ); 
+//DEL
+//DEL 		EnableWindow  ( TRUE );
 //DEL 		return TRUE;
 //DEL 	}
 //DEL 	return FALSE;
@@ -689,7 +689,7 @@ int CBabylonDlg::SaveLog()
  	CRichEditCtrl *rec = (CRichEditCtrl *) GetDlgItem ( IDC_LOG );
 	int ok = FALSE;
 
- 
+
 	if ( ! (log = fopen ("babylon.log", "a+t" )))
 	{
 		goto error;
@@ -725,12 +725,12 @@ error:
 	{
 		fclose ( log );
 	}
-	
+
 
 	return ok;
 }
 
-void CBabylonDlg::OnViewdbs() 
+void CBabylonDlg::OnViewdbs()
 {
 	// TODO: Add your control notification handler code here
 	VIEWDBSII dlg;
@@ -739,7 +739,7 @@ void CBabylonDlg::OnViewdbs()
 
 	dlg.DoModal ();
 
-	
+
 }
 
 static int readToEndOfQuote( FILE *file, char *in, char *out, char *wavefile, int maxBufLen, int in_comment  )
@@ -1077,7 +1077,7 @@ int CBabylonDlg::LoadStrFile ( TransDB *db, const char *filename, void (*cb) ( v
 			if ( !fgets ( buffer, sizeof(buffer)-1, file ))
 			{
 				AfxMessageBox ( "Unexpected end of file" );
-				goto exit;				
+				goto exit;
 			}
 
 			line_number++;
@@ -1087,7 +1087,7 @@ int CBabylonDlg::LoadStrFile ( TransDB *db, const char *filename, void (*cb) ( v
 			{
 				break;
 			}
-	
+
 			if ( !buffer[0] || (buffer[0] == '/' && buffer[1] == '/') )
 			{
 				line_number += parseComment ( file, buffer, &local_info );
@@ -1179,7 +1179,7 @@ retry:
 			if ( result == IDNO )
 			{
 				goto retry;
-			}		
+			}
 		}
 	}
 
@@ -1223,7 +1223,7 @@ int		CBabylonDlg::CanOperate ( void )
 	return TRUE;
 }
 
-void CBabylonDlg::OnReload() 
+void CBabylonDlg::OnReload()
 {
 	int num_errors;
 	int num_warnings;
@@ -1313,7 +1313,7 @@ void CBabylonDlg::OnReload()
 	{
 		sprintf ( buffer, "Validating \"%s\"...", BabylonstrFilename );
 		Status ( buffer, FALSE );
-		
+
 		if ( (num_errors = BabylonstrDB->Errors ( )))
 		{
 			sprintf ( buffer, "Generals.str has %d error(s):\n\nClick \"Errors\" for a detailed list.\n\nAll errors must be fixed before \"Update\" will be enabled.", num_errors );
@@ -1323,7 +1323,7 @@ void CBabylonDlg::OnReload()
 			win = GetDlgItem ( IDC_ERRORS );
 			win->EnableWindow ( TRUE );
 		}
-		
+
 		if ( (num_warnings = BabylonstrDB->Warnings()))
 		{
 			win = GetDlgItem ( IDC_WARNINGS );
@@ -1411,7 +1411,7 @@ void CBabylonDlg::OnReload()
 			{
 				do_update = FALSE;
 				AfxMessageBox ( buffer );
-				
+
 			}
 			else
 			{
@@ -1474,12 +1474,12 @@ void CBabylonDlg::ProgressComplete()
 	percent->SetWindowText ( "100% ");
 }
 
-void CBabylonDlg::OnUpdate() 
+void CBabylonDlg::OnUpdate()
 {
 	// TODO: Add your control notification handler code here
 
 	UpdateDB ( BabylonstrDB, MainDB );
-	
+
 }
 
 #define MACRO_UPDATE(field,count)	{ if ( wcsicmp ( source->##field () , destination->##field ())) \
@@ -1492,8 +1492,8 @@ void CBabylonDlg::OnUpdate()
 																info.changes++;																							\
 																(count)++;																									\
 															}																															\
-														 }																															
-																																															
+														 }
+
 
 int CBabylonDlg::UpdateLabel( BabylonLabel *source, BabylonLabel *destination, UPDATEINFO &info, int update, int skip )
 {
@@ -1544,9 +1544,9 @@ int CBabylonDlg::UpdateLabel( BabylonLabel *source, BabylonLabel *destination, U
 	// ask the user to resolve remaing unmatched strings
 
 	{
-		
+
 		stext = source->FirstText ( sh );
-		
+
 		while ( stext )
 		{
 			if ( destination->AllMatched ())
@@ -1683,7 +1683,7 @@ int CBabylonDlg::UpdateLabel( BabylonLabel *source, BabylonLabel *destination, U
 			if ( update )
 			{
 				dtext = stext->Clone ();
-				destination->AddText ( dtext ); 
+				destination->AddText ( dtext );
 			}
 			info.new_strings++;
 			label_modified = TRUE;
@@ -1752,7 +1752,7 @@ int CBabylonDlg::UpdateDB(TransDB *source, TransDB *destination, int update )
 	{
 		Status ("Checking for changes...", FALSE );
 	}
-	
+
 	source->ClearProcessed ();
 	destination->ClearProcessed ();
 
@@ -1839,7 +1839,7 @@ int CBabylonDlg::UpdateDB(TransDB *source, TransDB *destination, int update )
 			while ( dtext )
 			{
 				BabylonText *next = dlabel->NextText ( sh_text );
-			
+
 				if ( update )
 				{
 					dtext->Remove ();
@@ -1848,7 +1848,7 @@ int CBabylonDlg::UpdateDB(TransDB *source, TransDB *destination, int update )
 
 				info.deleted_strings++;
 				info.changes ++;
-			
+
 				dtext = next;
 			}
 
@@ -1873,91 +1873,91 @@ int CBabylonDlg::UpdateDB(TransDB *source, TransDB *destination, int update )
 			Log ( buffer );
 			changes = TRUE;
 		}
-		
+
 		if ( info.deleted_labels )
 		{
 			sprintf ( buffer, "Deleted %d label%c", info.deleted_labels, info.deleted_labels==1?' ':'s' );
 			Log ( buffer );
 			changes = TRUE;
 		}
-		
+
 		if ( info.modified_labels )
 		{
 			sprintf ( buffer, "Modified %d label%c", info.modified_labels, info.modified_labels==1?' ':'s' );
 			Log ( buffer );
 			changes = TRUE;
 		}
-		
+
 		if ( info.new_strings )
 		{
 			sprintf ( buffer, "Added %d new string%c", info.new_strings, info.new_strings==1?' ':'s' );
 			Log ( buffer );
 			changes = TRUE;
 		}
-		
+
 		if ( info.deleted_strings )
 		{
 			sprintf ( buffer, "Deleted %d string%c", info.deleted_strings, info.deleted_strings==1?' ':'s' );
 			Log ( buffer );
 			changes = TRUE;
 		}
-		
+
 		if ( info.modified_strings )
 		{
 			sprintf ( buffer, "Modified %d string%c", info.modified_strings, info.modified_strings==1?' ':'s' );
 			Log ( buffer );
 			changes = TRUE;
 		}
-		
+
 		if ( info.skipped_labels )
 		{
 			sprintf ( buffer, "Skipped %d label%c", info.skipped_labels, info.skipped_labels==1?' ':'s' );
 			Log ( buffer );
 			changes = TRUE;
 		}
-		
+
 		if ( info.updated_comments )
 		{
 			sprintf ( buffer, "Updated %d comment%c", info.updated_comments, info.updated_comments==1?' ':'s' );
 			Log ( buffer );
 			changes = TRUE;
 		}
-		
+
 		if ( info.updated_contexts )
 		{
 			sprintf ( buffer, "Updated %d context%c", info.updated_contexts, info.updated_contexts==1?' ':'s' );
 			Log ( buffer );
 			changes = TRUE;
 		}
-		
+
 		if ( info.updated_speakers )
 		{
 			sprintf ( buffer, "Updated %d speaker%c", info.updated_speakers, info.updated_speakers==1?' ':'s' );
 			Log ( buffer );
 			changes = TRUE;
 		}
-		
+
 		if ( info.updated_listeners )
 		{
 			sprintf ( buffer, "Updated %d listener%c", info.updated_listeners, info.updated_listeners==1?' ':'s' );
 			Log ( buffer );
 			changes = TRUE;
 		}
-		
+
 		if ( info.updated_maxlen )
 		{
 			sprintf ( buffer, "Updated %d max length%c", info.updated_maxlen, info.updated_maxlen==1?' ':'s' );
 			Log ( buffer );
 			changes = TRUE;
 		}
-		
+
 		if ( info.updated_waves )
 		{
 			sprintf ( buffer, "Updated %d speech file%c", info.updated_waves, info.updated_waves==1?' ':'s' );
 			Log ( buffer );
 			changes = TRUE;
 		}
-		
+
 		if ( !changes  )
 		{
 			if ( !slabel && !info.skipped_labels)
@@ -1969,7 +1969,7 @@ int CBabylonDlg::UpdateDB(TransDB *source, TransDB *destination, int update )
 				Log ( "No changes made" );
 			}
 		}
-		
+
 		if ( result == IDCANCEL )
 		{
 			Log ("Update aborted by user!" );
@@ -1990,11 +1990,11 @@ int CBabylonDlg::UpdateDB(TransDB *source, TransDB *destination, int update )
 	return info.changes;
 }
 
-void CBabylonDlg::OnSave() 
+void CBabylonDlg::OnSave()
 {
 
 	if ( CanOperate ())
-	{	
+	{
 		SaveMainDB ( );
 	}
 }
@@ -2053,18 +2053,18 @@ int CBabylonDlg::SaveMainDB( )
 }
 
 
-void CBabylonDlg::OnWarnings() 
+void CBabylonDlg::OnWarnings()
 {
 	// TODO: Add your control notification handler code here
 	if ( BabylonstrDB )
 	{
 		BabylonstrDB->Warnings ( this );
 	}
-	
+
 }
 
 
-void CBabylonDlg::OnErrors() 
+void CBabylonDlg::OnErrors()
 {
 	// TODO: Add your control notification handler code here
 	if ( BabylonstrDB )
@@ -2113,7 +2113,7 @@ int CBabylonDlg::RetranslateText ( BabylonText *newtext, BabylonText *oldtext )
 	return result;
 
 }
-void CBabylonDlg::OnChanges() 
+void CBabylonDlg::OnChanges()
 {
 	// TODO: Add your control notification handler code here
 
@@ -2123,16 +2123,16 @@ void CBabylonDlg::OnChanges()
 
 	dlg.DoModal ();
 
-	
-	
+
+
 }
 
-void CBabylonDlg::OnImport() 
+void CBabylonDlg::OnImport()
 {
 	if ( CanOperate ())
 	{
 		CFileDialog fd ( TRUE , NULL, "*.xls",  OFN_FILEMUSTEXIST | OFN_NOCHANGEDIR );
-		
+
 		if ( fd.DoModal () == IDOK )
 		{
 			if (ImportTranslations ( MainDB, (LPCSTR ) fd.GetPathName (), this ) == -1 )
@@ -2143,12 +2143,12 @@ void CBabylonDlg::OnImport()
 	}
 }
 
-void CBabylonDlg::OnGenerate() 
+void CBabylonDlg::OnGenerate()
 {
 	if ( CanOperate ())
 	{
 		CGenerateDlg dlg;
-		
+
 		if ( dlg.DoModal () == IDOK )
 		{
 			GenerateGameFiles ( MainDB, dlg.FilePrefix(), dlg.Options(), dlg.Langauges(), this );
@@ -2179,21 +2179,21 @@ int CBabylonDlg::ValidateStrFile( const char *filename)
 	sprintf ( buffer, "strcheck %s %s", filename, results );
 
 	if (!CreateProcess(
-			NULL,					
-			buffer,				
-			NULL,					
-			NULL,					
-			FALSE,					
-			0,						
-			NULL,					
-			NULL,					
-			&StartupInfo,			
-			&ProcessInfo))			
+			NULL,
+			buffer,
+			NULL,
+			NULL,
+			FALSE,
+			0,
+			NULL,
+			NULL,
+			&StartupInfo,
+			&ProcessInfo))
 	{
 		goto error;
 	}
 
-	
+
 	WaitForSingleObject(ProcessInfo.hProcess, INFINITE);
 
 	//this->SetForegroundWindow ();
@@ -2262,7 +2262,7 @@ error:
 	goto done;
 }
 
-void CBabylonDlg::OnVerifyDialog() 
+void CBabylonDlg::OnVerifyDialog()
 {
 	if ( MainDB && CanOperate () )
 	{
@@ -2271,7 +2271,7 @@ void CBabylonDlg::OnVerifyDialog()
 
 }
 
-void CBabylonDlg::VerifyDialog( TransDB *db, LangID langid ) 
+void CBabylonDlg::VerifyDialog( TransDB *db, LangID langid )
 {
 	BabylonLabel *label;
 	ListSearch sh_label;
@@ -2302,9 +2302,9 @@ void CBabylonDlg::VerifyDialog( TransDB *db, LangID langid )
 		{
 			BabylonText *text;
 			ListSearch sh_text;
-		
+
 			text = label->FirstText ( sh_text );
-		
+
 			while ( text )
 			{
 				if ( text->IsDialog ())
@@ -2315,9 +2315,9 @@ void CBabylonDlg::VerifyDialog( TransDB *db, LangID langid )
 						{
 						 	VerifyDlg dlg(text, langid, DialogPath);
 						 	int result;
-								
+
 						 	result = dlg.DoModal ();
-								
+
 							if ( result == IDCANCEL )
 							{
 								goto done;
@@ -2326,16 +2326,16 @@ void CBabylonDlg::VerifyDialog( TransDB *db, LangID langid )
 							{
 								text->ValidateDialog ( DialogPath, langid );
 							}
-		
+
 							count++;
 							SetProgress ( count );
 						}
 					}
 				}
-		
+
 				text = label->NextText ( sh_text );
 			}
-		
+
 			label = db->NextLabel ( sh_label );
 		}
 	}
@@ -2365,36 +2365,36 @@ done:
 			{
 				Log ( "FAILED", SAME_LINE );
 			}
-	
+
 			if ( info->errors )
 			{
 				sprintf ( buffer, "Errors           : %d", info->errors );
 				Log ( buffer );
 			}
-			
+
 			if ( info->missing )
 			{
 				sprintf ( buffer, "Missing dialog   : %d", info->missing );
 				Log ( buffer );
 			}
-			
+
 			if ( info->unresolved )
 			{
 				sprintf ( buffer, "Unverified dialog: %d", info->unresolved );
 				Log ( buffer );
 			}
-			
+
 			if ( info->resolved )
 			{
 				sprintf ( buffer, "Verified dialog  : %d", info->resolved );
 				Log ( buffer );
 			}
-	
+
 		}
 		else
 		{
 			Log ( "OK", SAME_LINE );
-	
+
 			if ( info->resolved )
 			{
 				sprintf ( buffer, "Verified dialog  : %d", info->resolved );
@@ -2413,7 +2413,7 @@ done:
 
 }
 
-void CBabylonDlg::VerifyTranslations( TransDB *db, LangID langid ) 
+void CBabylonDlg::VerifyTranslations( TransDB *db, LangID langid )
 {
 	int count = 0;
 	TRNREPORT _info;
@@ -2438,19 +2438,19 @@ void CBabylonDlg::VerifyTranslations( TransDB *db, LangID langid )
 	{
 		if ( info->too_big || info->missing || info->retranslate || info->bad_format )
 		{
-	
+
 			if ( info->missing )
 			{
 				sprintf ( buffer, "Missing translations: %d", info->missing );
 				Log ( buffer );
 			}
-			
+
 			if ( info->too_big )
 			{
 				sprintf ( buffer, "Oversized strings   : %d", info->too_big );
 				Log ( buffer );
 			}
-			
+
 			if ( info->retranslate )
 			{
 				sprintf ( buffer, "Retranslations       : %d", info->retranslate);
@@ -2471,12 +2471,12 @@ void CBabylonDlg::VerifyTranslations( TransDB *db, LangID langid )
 			{
 				sprintf  ( buffer, "Recommemd exporting translations for update and re-import" );
 			}
-			Log ( buffer );		
+			Log ( buffer );
 		}
 		else
 		{
 			Log ( "OK", SAME_LINE );
-	
+
 		}
 	}
 	else
@@ -2487,18 +2487,18 @@ void CBabylonDlg::VerifyTranslations( TransDB *db, LangID langid )
 	Ready();
 }
 
-void CBabylonDlg::OnTranslations() 
+void CBabylonDlg::OnTranslations()
 {
 	if ( MainDB && CanOperate () )
 	{
-		
+
 		VerifyTranslations ( MainDB, CurrentLanguage );
 	}
 
-	
+
 }
 
-void CBabylonDlg::OnSelchangeCombolang() 
+void CBabylonDlg::OnSelchangeCombolang()
 {
 	LANGINFO *info = NULL;
 	int index;
@@ -2509,7 +2509,7 @@ void CBabylonDlg::OnSelchangeCombolang()
 	{
 		info = (LANGINFO *) combo->GetItemDataPtr ( index );
 	}
-	
+
 	if ( info )
 	{
 		CurrentLanguage = info->langid;
@@ -2518,33 +2518,33 @@ void CBabylonDlg::OnSelchangeCombolang()
 	{
 		CurrentLanguage = LANGID_UNKNOWN;
 	}
-	
+
 }
 
-void CBabylonDlg::OnReports() 
+void CBabylonDlg::OnReports()
 {
 	// TODO: Add your control notification handler code here
 	if ( CanOperate ())
 	{
 		CReport dlg;
-		
+
 		if ( dlg.DoModal () == IDOK )
 		{
 			GenerateReport ( MainDB, dlg.Filename(), dlg.Options(), dlg.Langauges(), this );
 		}
 	}
-	
+
 }
 
-void CBabylonDlg::OnDblclkCombolang() 
+void CBabylonDlg::OnDblclkCombolang()
 {
 	// TODO: Add your control notification handler code here
 }
 
-void CBabylonDlg::OnReset() 
+void CBabylonDlg::OnReset()
 {
 	// TODO: Add your control notification handler code here
-	
+
 	if ( CurrentLanguage != LANGID_UNKNOWN )
 	{
 		sprintf ( buffer, "Are you sure you want to invalidate all %s dialog?", GetLangName ( CurrentLanguage ));
@@ -2555,24 +2555,24 @@ void CBabylonDlg::OnReset()
 	}
 }
 
-void CBabylonDlg::OnSent() 
+void CBabylonDlg::OnSent()
 {
 	// TODO: Add your control notification handler code here
 	if ( CanOperate ())
 	{
 		CFileDialog fd ( TRUE , NULL, "*.xls",  OFN_FILEMUSTEXIST | OFN_NOCHANGEDIR );
-		
+
 		if ( fd.DoModal () == IDOK )
 		{
 			UpdateSentTranslations ( MainDB, (LPCSTR ) fd.GetPathName (), this );
 		}
-	}	
+	}
 }
 
-void CAboutDlg::OnButton1() 
+void CAboutDlg::OnButton1()
 {
 	// TODO: Add your control notification handler code here
-	
+
 	CreateTranslationTable ( );
 }
 

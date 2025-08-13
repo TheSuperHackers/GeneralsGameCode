@@ -24,12 +24,12 @@
 
 // FILE: ProcessAnimateWindow.cpp /////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Electronic Arts Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2002 - All Rights Reserved                  
-//                                                                          
+//
+//                       Electronic Arts Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2002 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 //	created:	Mar 2002
@@ -37,7 +37,7 @@
 //	Filename: 	ProcessAnimateWindow.cpp
 //
 //	author:		Chris Huybregts
-//	
+//
 //	purpose:	Holds all the process modules for the Animate Window Class
 //
 //-----------------------------------------------------------------------------
@@ -81,7 +81,7 @@ ProcessAnimateWindowSlideFromRight::ProcessAnimateWindowSlideFromRight( void )
 																			// positions they start to slow down
 	m_slowDownRatio = 0.67f;  // how fast the windows slow down (smaller slows quicker)
 	m_speedUpRatio = 2.0f - m_slowDownRatio;  // how fast the windows speed up
-	
+
 }
 
 //-----------------------------------------------------------------------------
@@ -100,7 +100,7 @@ void ProcessAnimateWindowSlideFromRight::initReverseAnimateWindow( wnd::AnimateW
 	Coord2D vel = animWin->getVel();
 	vel.x *= -1;
 	vel.y *= -1;
-	animWin->setVel( vel );	
+	animWin->setVel( vel );
 	animWin->setFinished( FALSE );
 
 }
@@ -113,7 +113,7 @@ void ProcessAnimateWindowSlideFromRight::initAnimateWindow( wnd::AnimateWindow *
 	ICoord2D curPos = {0,0};
 	ICoord2D endPos = {0,0};
 	Coord2D	vel = {0.0f,0.0f};
-	
+
 	if(!animWin)
 	{
 		DEBUG_ASSERTCRASH( animWin, ("animWin was passed into initAnimateWindow as a NULL Pointer... bad bad bad!"));
@@ -153,7 +153,7 @@ void ProcessAnimateWindowSlideFromRight::initAnimateWindow( wnd::AnimateWindow *
 //-----------------------------------------------------------------------------
 Bool ProcessAnimateWindowSlideFromRight::updateAnimateWindow( wnd::AnimateWindow *animWin )
 {
-	
+
 	if(!animWin)
 	{
 		DEBUG_ASSERTCRASH( animWin, ("animWin was passed into updateAnimateWindow as a NULL Pointer... bad bad bad!"));
@@ -201,7 +201,7 @@ Bool ProcessAnimateWindowSlideFromRight::updateAnimateWindow( wnd::AnimateWindow
 
 Bool ProcessAnimateWindowSlideFromRight::reverseAnimateWindow( wnd::AnimateWindow *animWin )
 {
-	
+
 	if(!animWin)
 	{
 		DEBUG_ASSERTCRASH( animWin, ("animWin was passed into updateAnimateWindow as a NULL Pointer... bad bad bad!"));
@@ -267,7 +267,7 @@ ProcessAnimateWindowSlideFromLeft::ProcessAnimateWindowSlideFromLeft( void )
 																			// positions they start to slow down
 	m_slowDownRatio = 0.67f;  // how fast the windows slow down (smaller slows quicker)
 	m_speedUpRatio = 2.0f - m_slowDownRatio;  // how fast the windows speed up
-	
+
 }
 
 ProcessAnimateWindowSlideFromLeft::~ProcessAnimateWindowSlideFromLeft( void ) { }
@@ -284,7 +284,7 @@ void ProcessAnimateWindowSlideFromLeft::initReverseAnimateWindow( wnd::AnimateWi
 	Coord2D vel = animWin->getVel();
 	vel.x *= -1;
 	vel.y *= -1;
-	animWin->setVel( vel );	
+	animWin->setVel( vel );
 
 }
 
@@ -295,13 +295,13 @@ void ProcessAnimateWindowSlideFromLeft::initAnimateWindow( wnd::AnimateWindow *a
 	ICoord2D curPos = {0,0};
 	ICoord2D endPos = {0,0};
 	Coord2D	vel = {0.0f,0.0f};
-	
+
 	if(!animWin)
 	{
 		DEBUG_ASSERTCRASH( animWin, ("animWin was passed into initAnimateWindow as a NULL Pointer... bad bad bad!"));
 		return;
 	}
-	
+
 	// it's set that the window is passed in as it's current position being it's rest position
 	// so save off the rest position
 	GameWindow *win = animWin->getGameWindow();
@@ -330,7 +330,7 @@ void ProcessAnimateWindowSlideFromLeft::initAnimateWindow( wnd::AnimateWindow *a
 
 Bool ProcessAnimateWindowSlideFromLeft::updateAnimateWindow( wnd::AnimateWindow *animWin )
 {
-	
+
 	if(!animWin)
 	{
 		DEBUG_ASSERTCRASH( animWin, ("animWin was passed into updateAnimateWindow as a NULL Pointer... bad bad bad!"));
@@ -340,7 +340,7 @@ Bool ProcessAnimateWindowSlideFromLeft::updateAnimateWindow( wnd::AnimateWindow 
 	// if the window has finished animating into position, return
 	if(animWin->isFinished())
 		return TRUE;
-	
+
 	// if the window hasn't started animating...return that we're not finished
 	if(timeGetTime() < animWin->getStartTime())
 		return FALSE;
@@ -379,7 +379,7 @@ Bool ProcessAnimateWindowSlideFromLeft::updateAnimateWindow( wnd::AnimateWindow 
 
 Bool ProcessAnimateWindowSlideFromLeft::reverseAnimateWindow( wnd::AnimateWindow *animWin )
 {
-	
+
 	if(!animWin)
 	{
 		DEBUG_ASSERTCRASH( animWin, ("animWin was passed into updateAnimateWindow as a NULL Pointer... bad bad bad!"));
@@ -445,7 +445,7 @@ ProcessAnimateWindowSlideFromTop::ProcessAnimateWindowSlideFromTop( void )
 																			// positions they start to slow down
 	m_slowDownRatio = 0.67f;  // how fast the windows slow down (smaller slows quicker)
 	m_speedUpRatio = 2.0f - m_slowDownRatio;  // how fast the windows speed up
-	
+
 }
 
 ProcessAnimateWindowSlideFromTop::~ProcessAnimateWindowSlideFromTop( void ) { }
@@ -462,7 +462,7 @@ void ProcessAnimateWindowSlideFromTop::initReverseAnimateWindow( wnd::AnimateWin
 	Coord2D vel = animWin->getVel();
 	vel.x *= -1;
 	vel.y *= -1;
-	animWin->setVel( vel );	
+	animWin->setVel( vel );
 
 }
 
@@ -473,13 +473,13 @@ void ProcessAnimateWindowSlideFromTop::initAnimateWindow( wnd::AnimateWindow *an
 	ICoord2D curPos = {0,0};
 	ICoord2D endPos = {0,0};
 	Coord2D	vel = {0.0f,0.0f};
-	
+
 	if(!animWin)
 	{
 		DEBUG_ASSERTCRASH( animWin, ("animWin was passed into initAnimateWindow as a NULL Pointer... bad bad bad!"));
 		return;
 	}
-	
+
 	// it's set that the window is passed in as it's current position being it's rest position
 	// so save off the rest position
 	GameWindow *win = animWin->getGameWindow();
@@ -508,7 +508,7 @@ void ProcessAnimateWindowSlideFromTop::initAnimateWindow( wnd::AnimateWindow *an
 
 Bool ProcessAnimateWindowSlideFromTop::updateAnimateWindow( wnd::AnimateWindow *animWin )
 {
-	
+
 	if(!animWin)
 	{
 		DEBUG_ASSERTCRASH( animWin, ("animWin was passed into updateAnimateWindow as a NULL Pointer... bad bad bad!"));
@@ -518,7 +518,7 @@ Bool ProcessAnimateWindowSlideFromTop::updateAnimateWindow( wnd::AnimateWindow *
 	// if the window has finished animating into position, return
 	if(animWin->isFinished())
 		return TRUE;
-	
+
 	// if the window hasn't started animating...return that we're not finished
 	if(timeGetTime() < animWin->getStartTime())
 		return FALSE;
@@ -558,7 +558,7 @@ Bool ProcessAnimateWindowSlideFromTop::updateAnimateWindow( wnd::AnimateWindow *
 
 Bool ProcessAnimateWindowSlideFromTop::reverseAnimateWindow( wnd::AnimateWindow *animWin )
 {
-	
+
 	if(!animWin)
 	{
 		DEBUG_ASSERTCRASH( animWin, ("animWin was passed into updateAnimateWindow as a NULL Pointer... bad bad bad!"));
@@ -624,7 +624,7 @@ ProcessAnimateWindowSlideFromBottom::ProcessAnimateWindowSlideFromBottom( void )
 																			// positions they start to slow down
 	m_slowDownRatio = 0.67f;  // how fast the windows slow down (smaller slows quicker)
 	m_speedUpRatio = 2.0f - m_slowDownRatio;  // how fast the windows speed up
-	
+
 }
 
 ProcessAnimateWindowSlideFromBottom::~ProcessAnimateWindowSlideFromBottom( void ) { }
@@ -641,7 +641,7 @@ void ProcessAnimateWindowSlideFromBottom::initReverseAnimateWindow( wnd::Animate
 	Coord2D vel = animWin->getVel();
 	vel.x *= -1;
 	vel.y *= -1;
-	animWin->setVel( vel );	
+	animWin->setVel( vel );
 
 }
 
@@ -653,13 +653,13 @@ void ProcessAnimateWindowSlideFromBottom::initAnimateWindow( wnd::AnimateWindow 
 	ICoord2D curPos = {0,0};
 	ICoord2D endPos = {0,0};
 	Coord2D	vel = {0.0f,0.0f};
-	
+
 	if(!animWin)
 	{
 		DEBUG_ASSERTCRASH( animWin, ("animWin was passed into initAnimateWindow as a NULL Pointer... bad bad bad!"));
 		return;
 	}
-	
+
 	// it's set that the window is passed in as it's current position being it's rest position
 	// so save off the rest position
 	GameWindow *win = animWin->getGameWindow();
@@ -688,7 +688,7 @@ void ProcessAnimateWindowSlideFromBottom::initAnimateWindow( wnd::AnimateWindow 
 
 Bool ProcessAnimateWindowSlideFromBottom::updateAnimateWindow( wnd::AnimateWindow *animWin )
 {
-	
+
 	if(!animWin)
 	{
 		DEBUG_ASSERTCRASH( animWin, ("animWin was passed into updateAnimateWindow as a NULL Pointer... bad bad bad!"));
@@ -738,7 +738,7 @@ Bool ProcessAnimateWindowSlideFromBottom::updateAnimateWindow( wnd::AnimateWindo
 
 Bool ProcessAnimateWindowSlideFromBottom::reverseAnimateWindow( wnd::AnimateWindow *animWin )
 {
-	
+
 	if(!animWin)
 	{
 		DEBUG_ASSERTCRASH( animWin, ("animWin was passed into updateAnimateWindow as a NULL Pointer... bad bad bad!"));
@@ -811,13 +811,13 @@ void ProcessAnimateWindowSlideFromBottomTimed::initReverseAnimateWindow( wnd::An
 	ICoord2D curPos = {0,0};
 	ICoord2D endPos = {0,0};
 	Coord2D	vel = {0.0f,0.0f};
-	
+
 	if(!animWin)
 	{
 		DEBUG_ASSERTCRASH( animWin, ("animWin was passed into initAnimateWindow as a NULL Pointer... bad bad bad!"));
 		return;
 	}
-	
+
 	// it's set that the window is passed in as it's current position being it's rest position
 	// so save off the rest position
 	GameWindow *win = animWin->getGameWindow();
@@ -852,13 +852,13 @@ void ProcessAnimateWindowSlideFromBottomTimed::initAnimateWindow( wnd::AnimateWi
 	ICoord2D curPos = {0,0};
 	ICoord2D endPos = {0,0};
 	Coord2D	vel = {0.0f,0.0f};
-	
+
 	if(!animWin)
 	{
 		DEBUG_ASSERTCRASH( animWin, ("animWin was passed into initAnimateWindow as a NULL Pointer... bad bad bad!"));
 		return;
 	}
-	
+
 	// it's set that the window is passed in as it's current position being it's rest position
 	// so save off the rest position
 	GameWindow *win = animWin->getGameWindow();
@@ -888,7 +888,7 @@ void ProcessAnimateWindowSlideFromBottomTimed::initAnimateWindow( wnd::AnimateWi
 
 Bool ProcessAnimateWindowSlideFromBottomTimed::updateAnimateWindow( wnd::AnimateWindow *animWin )
 {
-	
+
 	if(!animWin)
 	{
 		DEBUG_ASSERTCRASH( animWin, ("animWin was passed into updateAnimateWindow as a NULL Pointer... bad bad bad!"));
@@ -955,7 +955,7 @@ Bool ProcessAnimateWindowSlideFromBottomTimed::reverseAnimateWindow( wnd::Animat
 ProcessAnimateWindowSpiral::ProcessAnimateWindowSpiral( void )
 {
 	m_maxR = TheDisplay->getWidth() / 2;
-	m_deltaTheta = .33f;	
+	m_deltaTheta = .33f;
 }
 
 //-----------------------------------------------------------------------------
@@ -974,7 +974,7 @@ void ProcessAnimateWindowSpiral::initReverseAnimateWindow( wnd::AnimateWindow *a
 	Coord2D vel = animWin->getVel();
 	vel.x = 0;
 	vel.y = 0;
-	animWin->setVel( vel );	
+	animWin->setVel( vel );
 
 }
 
@@ -987,13 +987,13 @@ void ProcessAnimateWindowSpiral::initAnimateWindow( wnd::AnimateWindow *animWin 
 	ICoord2D endPos = {0,0};
 	ICoord2D size = {0,0};
 	Coord2D	vel = {0.0f,0.0f};
-	
+
 	if(!animWin)
 	{
 		DEBUG_ASSERTCRASH( animWin, ("animWin was passed into initAnimateWindow as a NULL Pointer... bad bad bad!"));
 		return;
 	}
-	
+
 	// it's set that the window is passed in as it's current position being it's rest position
 	// so save off the rest position
 	GameWindow *win = animWin->getGameWindow();
@@ -1022,7 +1022,7 @@ void ProcessAnimateWindowSpiral::initAnimateWindow( wnd::AnimateWindow *animWin 
 //-----------------------------------------------------------------------------
 Bool ProcessAnimateWindowSpiral::updateAnimateWindow( wnd::AnimateWindow *animWin )
 {
-	
+
 	if(!animWin)
 	{
 		DEBUG_ASSERTCRASH( animWin, ("animWin was passed into updateAnimateWindow as a NULL Pointer... bad bad bad!"));
@@ -1049,13 +1049,13 @@ Bool ProcessAnimateWindowSpiral::updateAnimateWindow( wnd::AnimateWindow *animWi
 	ICoord2D curPos = animWin->getCurPos();
 	ICoord2D endPos = animWin->getEndPos();
 	Coord2D vel = animWin->getVel();
-	
-	curPos.x = (vel.y * cos(vel.x)) + endPos.x; 
+
+	curPos.x = (vel.y * cos(vel.x)) + endPos.x;
 	curPos.y = (vel.y * sin(vel.x)) + endPos.y;
 
 	vel.x = vel.x + m_deltaTheta;
 	vel.y -=5;
-	
+
 	ICoord2D size;
 	win->winGetSize(&size.x, &size.y);
 	Int m_max = min(size.x/2, size.y/2);
@@ -1076,7 +1076,7 @@ Bool ProcessAnimateWindowSpiral::updateAnimateWindow( wnd::AnimateWindow *animWi
 //-----------------------------------------------------------------------------
 Bool ProcessAnimateWindowSpiral::reverseAnimateWindow( wnd::AnimateWindow *animWin )
 {
-	
+
 	if(!animWin)
 	{
 		DEBUG_ASSERTCRASH( animWin, ("animWin was passed into updateAnimateWindow as a NULL Pointer... bad bad bad!"));
@@ -1101,13 +1101,13 @@ Bool ProcessAnimateWindowSpiral::reverseAnimateWindow( wnd::AnimateWindow *animW
 	ICoord2D curPos = animWin->getCurPos();
 	ICoord2D endPos = animWin->getEndPos();
 	Coord2D vel = animWin->getVel();
-	
-	curPos.x = (vel.y * cos(vel.x)) + endPos.x; 
+
+	curPos.x = (vel.y * cos(vel.x)) + endPos.x;
 	curPos.y = (vel.y * sin(vel.x)) + endPos.y;
 
 	vel.x = vel.x - m_deltaTheta;
 	vel.y +=5;
-	
+
 	ICoord2D size;
 	win->winGetSize(&size.x, &size.y);
 //	Int m_max = min(size.x/2, size.y/2);
@@ -1138,7 +1138,7 @@ ProcessAnimateWindowSlideFromTopFast::ProcessAnimateWindowSlideFromTopFast( void
 																			// positions they start to slow down
 	m_slowDownRatio = 0.67f;  // how fast the windows slow down (smaller slows quicker)
 	m_speedUpRatio = 4.0f - m_slowDownRatio;  // how fast the windows speed up
-	
+
 }
 
 ProcessAnimateWindowSlideFromTopFast::~ProcessAnimateWindowSlideFromTopFast( void ) { }
@@ -1155,7 +1155,7 @@ void ProcessAnimateWindowSlideFromTopFast::initReverseAnimateWindow( wnd::Animat
 	Coord2D vel = animWin->getVel();
 	vel.x *= -1;
 	vel.y *= -1;
-	animWin->setVel( vel );	
+	animWin->setVel( vel );
 
 }
 
@@ -1167,13 +1167,13 @@ void ProcessAnimateWindowSlideFromTopFast::initAnimateWindow( wnd::AnimateWindow
 	ICoord2D endPos = {0,0};
 	Coord2D	vel = {0.0f,0.0f};
 	ICoord2D size = {0,0};
-	
+
 	if(!animWin)
 	{
 		DEBUG_ASSERTCRASH( animWin, ("animWin was passed into initAnimateWindow as a NULL Pointer... bad bad bad!"));
 		return;
 	}
-	
+
 	// it's set that the window is passed in as it's current position being it's rest position
 	// so save off the rest position
 	GameWindow *win = animWin->getGameWindow();
@@ -1185,7 +1185,7 @@ void ProcessAnimateWindowSlideFromTopFast::initAnimateWindow( wnd::AnimateWindow
 	win->winGetPosition(&restPos.x, &restPos.y);
 	endPos.x = restPos.x;
 	endPos.y = restPos.y;
-	
+
 	win->winGetSize(&size.x, &size.y);
 
 	//set the initial positions for the window. In this case, off the Top of the screen
@@ -1204,7 +1204,7 @@ void ProcessAnimateWindowSlideFromTopFast::initAnimateWindow( wnd::AnimateWindow
 
 Bool ProcessAnimateWindowSlideFromTopFast::updateAnimateWindow( wnd::AnimateWindow *animWin )
 {
-	
+
 	if(!animWin)
 	{
 		DEBUG_ASSERTCRASH( animWin, ("animWin was passed into updateAnimateWindow as a NULL Pointer... bad bad bad!"));
@@ -1214,7 +1214,7 @@ Bool ProcessAnimateWindowSlideFromTopFast::updateAnimateWindow( wnd::AnimateWind
 	// if the window has finished animating into position, return
 	if(animWin->isFinished())
 		return TRUE;
-	
+
 	// if the window hasn't started animating...return that we're not finished
 	if(timeGetTime() < animWin->getStartTime())
 		return FALSE;
@@ -1254,7 +1254,7 @@ Bool ProcessAnimateWindowSlideFromTopFast::updateAnimateWindow( wnd::AnimateWind
 
 Bool ProcessAnimateWindowSlideFromTopFast::reverseAnimateWindow( wnd::AnimateWindow *animWin )
 {
-	
+
 	if(!animWin)
 	{
 		DEBUG_ASSERTCRASH( animWin, ("animWin was passed into updateAnimateWindow as a NULL Pointer... bad bad bad!"));
@@ -1321,7 +1321,7 @@ ProcessAnimateWindowSlideFromRightFast::ProcessAnimateWindowSlideFromRightFast( 
 																			// positions they start to slow down
 	m_slowDownRatio = 0.77f;  // how fast the windows slow down (smaller slows quicker)
 	m_speedUpRatio = 3.0f - m_slowDownRatio;  // how fast the windows speed up
-	
+
 }
 
 //-----------------------------------------------------------------------------
@@ -1340,7 +1340,7 @@ void ProcessAnimateWindowSlideFromRightFast::initReverseAnimateWindow( wnd::Anim
 	Coord2D vel = animWin->getVel();
 	vel.x *= -1;
 	vel.y *= -1;
-	animWin->setVel( vel );	
+	animWin->setVel( vel );
 	animWin->setFinished( FALSE );
 	GameWindow * win = animWin->getGameWindow();
 	ICoord2D pos, tempPos;
@@ -1371,7 +1371,7 @@ void ProcessAnimateWindowSlideFromRightFast::initAnimateWindow( wnd::AnimateWind
 	ICoord2D curPos = {0,0};
 	ICoord2D endPos = {0,0};
 	Coord2D	vel = {0.0f,0.0f};
-	
+
 	if(!animWin)
 	{
 		DEBUG_ASSERTCRASH( animWin, ("animWin was passed into initAnimateWindow as a NULL Pointer... bad bad bad!"));
@@ -1412,7 +1412,7 @@ void ProcessAnimateWindowSlideFromRightFast::initAnimateWindow( wnd::AnimateWind
 //-----------------------------------------------------------------------------
 Bool ProcessAnimateWindowSlideFromRightFast::updateAnimateWindow( wnd::AnimateWindow *animWin )
 {
-	
+
 	if(!animWin)
 	{
 		DEBUG_ASSERTCRASH( animWin, ("animWin was passed into updateAnimateWindow as a NULL Pointer... bad bad bad!"));
@@ -1460,7 +1460,7 @@ Bool ProcessAnimateWindowSlideFromRightFast::updateAnimateWindow( wnd::AnimateWi
 
 Bool ProcessAnimateWindowSlideFromRightFast::reverseAnimateWindow( wnd::AnimateWindow *animWin )
 {
-	
+
 	if(!animWin)
 	{
 		DEBUG_ASSERTCRASH( animWin, ("animWin was passed into updateAnimateWindow as a NULL Pointer... bad bad bad!"));

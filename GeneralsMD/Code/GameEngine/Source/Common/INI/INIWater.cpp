@@ -24,7 +24,7 @@
 
 // FILE: INIWater.cpp /////////////////////////////////////////////////////////////////////////////
 // Author: Colin Day, December 2001
-// Desc:   Water settings 
+// Desc:   Water settings
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
@@ -107,7 +107,7 @@ void INI::parseWaterTransparencyDefinition( INI *ini )
 	waterTrans = (WaterTransparencySetting*) (waterTrans->friend_getFinalOverride());
 	// parse the data
 	ini->initFromINI( waterTrans, TheWaterTransparency->getFieldParse() );
-	
+
 	// If we overrode any skybox textures, then call the W3D Water stuff.
 	if (ini->getLoadType() == INI_LOAD_CREATE_OVERRIDES) {
 		// Check to see if we overrode any skybox textures.
@@ -120,7 +120,7 @@ void INI::parseWaterTransparencyDefinition( INI *ini )
 		const WaterTransparencySetting* wtOriginal = TheWaterTransparency.getNonOverloadedPointer();
 		OVERRIDE<WaterTransparencySetting> wtOverride = TheWaterTransparency;
 
-		if (wtOriginal == wtOverride) 
+		if (wtOriginal == wtOverride)
 			return;
 
 		const AsciiString *oldTextures[5],*newTextures[5];

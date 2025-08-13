@@ -43,7 +43,7 @@
 
 
 //-------------------------------------------------------------------------------------------------
-W3DDependencyModelDrawModuleData::W3DDependencyModelDrawModuleData() 
+W3DDependencyModelDrawModuleData::W3DDependencyModelDrawModuleData()
 {
 }
 
@@ -53,11 +53,11 @@ W3DDependencyModelDrawModuleData::~W3DDependencyModelDrawModuleData()
 }
 
 //-------------------------------------------------------------------------------------------------
-void W3DDependencyModelDrawModuleData::buildFieldParse(MultiIniFieldParse& p) 
+void W3DDependencyModelDrawModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
   W3DModelDrawModuleData::buildFieldParse(p);
 
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
 		{ "AttachToBoneInContainer", INI::parseAsciiString, NULL, offsetof(W3DDependencyModelDrawModuleData, m_attachToDrawableBoneInContainer) },
 
@@ -69,7 +69,7 @@ void W3DDependencyModelDrawModuleData::buildFieldParse(MultiIniFieldParse& p)
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 W3DDependencyModelDraw::W3DDependencyModelDraw( Thing *thing, const ModuleData* moduleData ) : W3DModelDraw( thing, moduleData )
-{	 
+{
 	m_dependencyCleared = FALSE;
 }
 
@@ -88,21 +88,21 @@ void W3DDependencyModelDraw::doDrawModule(const Matrix3D* transformMtx)
 		W3DModelDraw::doDrawModule( transformMtx );
 		m_dependencyCleared = FALSE;
 
-    
+
     // A handy place to synchronize my drawable with container's
     Drawable *myDrawable = getDrawable();
     if ( ! myDrawable )
       return;
-      
+
     const Object *me = myDrawable->getObject();
     if ( ! me )
       return;
 
 	  Drawable *theirDrawable = NULL;
-    
+
 	  if( me->getContainedBy() && !me->getContainedBy()->getContain()->isEnclosingContainerFor(me) )
 		  theirDrawable = me->getContainedBy()->getDrawable();
-		
+
     if( ! theirDrawable )
 		  return;
 
@@ -125,9 +125,9 @@ void W3DDependencyModelDraw::adjustTransformMtx(Matrix3D& mtx) const
 	// We have an additional adjustment to make, we want to use a bone in our container if there is one
 	const Object *me = getDrawable()->getObject();
 	const W3DDependencyModelDrawModuleData *md = getW3DDependencyModelDrawModuleData();
-	
-	if( md->m_attachToDrawableBoneInContainer.isNotEmpty() 
-		&& me 
+
+	if( md->m_attachToDrawableBoneInContainer.isNotEmpty()
+		&& me
 		&& me->getContainedBy()
 		&& !me->getContainedBy()->getContain()->isEnclosingContainerFor(me)
 		)

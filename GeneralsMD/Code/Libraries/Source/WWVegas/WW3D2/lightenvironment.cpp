@@ -70,8 +70,8 @@ void LightEnvironmentClass::InputLightStruct::Init
 	const Vector3 & object_center
 )
 {
-	m_point = false; 
-	switch(light.Get_Type()) 
+	m_point = false;
+	switch(light.Get_Type())
 	{
 	case LightClass::POINT:
 	case LightClass::SPOT:
@@ -106,7 +106,7 @@ void LightEnvironmentClass::InputLightStruct::Init_From_Point_Or_Spot_Light
 	light.Get_Far_Attenuation_Range(atten_start,atten_end);
 
 	if (light.Get_Flag(LightClass::FAR_ATTENUATION)) {
-		
+
 		if (WWMath::Fabs(atten_end - atten_start) < WWMATH_EPSILON) {
 
 			/*
@@ -114,10 +114,10 @@ void LightEnvironmentClass::InputLightStruct::Init_From_Point_Or_Spot_Light
 			*/
 			if (dist > atten_start) {
 				atten = 0.0f;
-			} 
-		
+			}
+
 		} else {
-			
+
 			/*
 			** Compute the attenuation
 			*/
@@ -128,7 +128,7 @@ void LightEnvironmentClass::InputLightStruct::Init_From_Point_Or_Spot_Light
 
 
 	if (light.Get_Type() == LightClass::SPOT) {
-		
+
 		Vector3 spot_dir;
 		light.Get_Spot_Direction(spot_dir);
 		Matrix3D::Rotate_Vector(light.Get_Transform(),spot_dir,&spot_dir);
@@ -146,9 +146,9 @@ void LightEnvironmentClass::InputLightStruct::Init_From_Point_Or_Spot_Light
 	light.Get_Ambient(&Ambient);
 	light.Get_Diffuse(&Diffuse);
 	Ambient *= light.Get_Intensity();  //(gth) CNC3 obey the intensity parameter
-	Diffuse *= light.Get_Intensity();  
+	Diffuse *= light.Get_Intensity();
 
-	m_point = (light.Get_Type() == LightClass::POINT); 
+	m_point = (light.Get_Type() == LightClass::POINT);
 	m_center = light.Get_Position();
 	m_innerRadius = atten_start;
 	m_outerRadius = atten_end;
@@ -160,7 +160,7 @@ void LightEnvironmentClass::InputLightStruct::Init_From_Point_Or_Spot_Light
 		DiffuseRejected = false;
 		Ambient *= atten;
 		Diffuse *= atten;
-		
+
 	} else {
 
 		DiffuseRejected = true;
@@ -190,7 +190,7 @@ float LightEnvironmentClass::InputLightStruct::Contribution(void)
 {
 	return Diffuse.Length2();
 }
-	
+
 
 /************************************************************************************************
 **
@@ -206,12 +206,12 @@ void LightEnvironmentClass::OutputLightStruct::Init
 {
 	Diffuse = input.Diffuse;
 	Matrix3D::Inverse_Rotate_Vector(camera_tm,input.Direction,&Direction);
-	
+
 	// Guard against a direction that is invalid
 	if(Direction.Length2() == 0.0f) {
 		Direction.X = 1.0f;
 	}
-}	
+}
 
 
 
@@ -276,7 +276,7 @@ void LightEnvironmentClass::Add_Light(const LightClass & light)
 		// Insert the light into the sorted list of InputLights if it's contribution is greater than the any of the current number of lights
 		for (int light_index=0; light_index < LightCount; light_index++) {
 			if (new_light.Contribution() > InputLights[light_index].Contribution()) {
-				
+
 				// Move back the lights in the InputLights Array to make space for the new light.
 				// The last light might be discarded if it moves off the array as it is the weakest light in the list.
 				for (int i = LightCount; i > light_index; --i) {
@@ -338,7 +338,7 @@ float LightEnvironmentClass::Get_Lighting_LOD_Cutoff(void)
 /************************************************************************************************
 **
 ** LightEnvironmentClass::Add_Fill_Light Implementation
-** The fill light is inserted in the InputLights list as ont of the lights, and if the 
+** The fill light is inserted in the InputLights list as ont of the lights, and if the
 ** list is already full, it preempts the last and weakest light in that list.
 **
 ************************************************************************************************/
@@ -379,30 +379,30 @@ void LightEnvironmentClass::Add_Fill_Light(void)
 **
 ************************************************************************************************/
 void LightEnvironmentClass::Calculate_Fill_Light(void)
-{	
+{
 	// Early exit if we have no lights at all or if the fill light intensity is zero
 	if (LightCount == 0 || FillIntensity == 0.0f) return;
 
 	// Initialize the averaged light to the primary light source (light with the most contribution)
 	float primary_contribution = InputLights[0].Contribution();
-	InputLightStruct average_light = InputLights[0]; 
+	InputLightStruct average_light = InputLights[0];
 
 	// Loop through the remaining lights on the list (up to 2) and add their contributions to the averaged light
-	int num_lights = min(LightCount, MAX_LIGHTS - 1); 
+	int num_lights = min(LightCount, MAX_LIGHTS - 1);
 	for (int i = 1; i < num_lights; ++i) {
-		
+
 		// The ratio is the percentage of the remaining light's contribution compared to the primary light source
 		float ratio = InputLights[i].Contribution() / primary_contribution;
-		
+
 		average_light.Direction += (InputLights[i].Direction * ratio);
 		average_light.Ambient	+= (InputLights[i].Ambient * ratio);
 		average_light.Diffuse	+= (InputLights[i].Diffuse * ratio);
 	}
-	
+
 	// Normalize the averaged light direction
 	average_light.Direction.Normalize();
-	
-	// Now we have the averaged light, we should derive the fill light 
+
+	// Now we have the averaged light, we should derive the fill light
 	// Convert from RGB to HSV to get the reserve hue and with the value modified by the fill intensity
 	Vector3 temp;
 	RGB_To_HSV(temp, average_light.Diffuse);
@@ -411,13 +411,13 @@ void LightEnvironmentClass::Calculate_Fill_Light(void)
 		temp.X -= 360.0f;
 	}
 	temp.Z *= FillIntensity;	// fraction of the intensity
-	HSV_To_RGB(FillLight.Diffuse, temp);	
+	HSV_To_RGB(FillLight.Diffuse, temp);
 
 	// Zero out the fill ambient
 	FillLight.Ambient.Set(0.0f, 0.0f, 0.0f);
 
 	// now we set the fill light direction to be opposite the average light
-	FillLight.Direction = average_light.Direction * (-1.0f);		
+	FillLight.Direction = average_light.Direction * (-1.0f);
 	FillLight.DiffuseRejected = false;
 
 	// Add the fill light into the InputLights list

@@ -23,12 +23,12 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 //----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information					                  
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //----------------------------------------------------------------------------
 //
 // Project:    Generals
@@ -48,7 +48,7 @@
 
 
 //----------------------------------------------------------------------------
-//           Includes                                                      
+//           Includes
 //----------------------------------------------------------------------------
 
 #include "Common/CDManager.h"
@@ -65,7 +65,7 @@
 //----------------------------------------------------------------------------
 
 //===============================
-// Win32CDDrive 
+// Win32CDDrive
 //===============================
 
 class Win32CDDrive : public CDDrive
@@ -75,7 +75,7 @@ class Win32CDDrive : public CDDrive
 	Win32CDDrive();
 	virtual ~Win32CDDrive();
 
-	virtual void refreshInfo( void );					///< Update drive with least 
+	virtual void refreshInfo( void );					///< Update drive with least
 
 };
 
@@ -102,7 +102,7 @@ class Win32CDManager : public CDManager
 };
 
 //----------------------------------------------------------------------------
-//           Inlining                                                       
+//           Inlining
 //----------------------------------------------------------------------------
 
 

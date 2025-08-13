@@ -51,7 +51,7 @@
 class MeshModelClass;
 class ChunkLoadClass;
 
-struct RGBStruct 
+struct RGBStruct
 {
 	uint8	R,G,B;
 };
@@ -96,7 +96,7 @@ protected:
 	int							NumColors;
 
 	DamageVertexStruct *		Verts;
-	DamageColorStruct *		Colors;	
+	DamageColorStruct *		Colors;
 
 	friend class MeshClass;
 };

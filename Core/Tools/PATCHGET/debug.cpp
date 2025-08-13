@@ -106,7 +106,7 @@ void DebugCrash(const char *format, ...)
 
 	int result = doCrashBox(theBuffer, true);
 
-	if (result == IDIGNORE && TheCurrentIgnoreCrashPtr != NULL) 
+	if (result == IDIGNORE && TheCurrentIgnoreCrashPtr != NULL)
 	{
 		int yn;
 		yn = ::MessageBox(NULL, "Ignore this crash from now on?", "", MB_YESNO|MB_APPLMODAL);

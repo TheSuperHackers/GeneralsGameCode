@@ -106,7 +106,7 @@ public:
 		// Create texture from a height map.
 		LightMapTerrainTextureClass( AsciiString name, MipCountType mipLevelCount = MIP_LEVELS_ALL );
 
-		// just use default destructor. 
+		// just use default destructor.
 };
 
 class ScorchTextureClass : public TextureClass

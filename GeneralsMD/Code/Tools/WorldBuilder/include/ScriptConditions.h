@@ -66,7 +66,7 @@ protected:
 	Int					m_index; // Index of whatever is currently selected.
 
 protected:
-	void enableUI(void); 
+	void enableUI(void);
 	void loadList(void);
 	Int doMoveUp( OrCondition **outWhichNow );
 	Int doMoveDown( OrCondition **outWhichNow );

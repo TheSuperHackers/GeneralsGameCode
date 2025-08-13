@@ -53,11 +53,11 @@ DynamicShroudClearingRangeUpdateModuleData::DynamicShroudClearingRangeUpdateModu
 }
 
 //-------------------------------------------------------------------------------------------------
-/*static*/ void DynamicShroudClearingRangeUpdateModuleData::buildFieldParse(MultiIniFieldParse& p) 
+/*static*/ void DynamicShroudClearingRangeUpdateModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
   UpdateModuleData::buildFieldParse(p);
 
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
 		{ "ChangeInterval",			INI::parseDurationUnsignedInt,	NULL, offsetof( DynamicShroudClearingRangeUpdateModuleData, m_changeInterval ) },
 		{ "GrowInterval",			INI::parseDurationUnsignedInt,	NULL, offsetof( DynamicShroudClearingRangeUpdateModuleData, m_growInterval ) },
@@ -73,13 +73,13 @@ DynamicShroudClearingRangeUpdateModuleData::DynamicShroudClearingRangeUpdateModu
 }
 
 //-------------------------------------------------------------------------------------------------
-//                                                                                                 
-//  doneForeverFrame                                                                               
-//  o                |                                     shrinkdelay                    |        
-//  |<-----------------------------------stateCountDown---------------------------------->|        
-//  |  shrinktime    |                                     |   growtime  |   growdelay    |        
-//  |                shrinkStartDeadline                   sustain       growStartDeadline|        
-//                                                                                                 
+//
+//  doneForeverFrame
+//  o                |                                     shrinkdelay                    |
+//  |<-----------------------------------stateCountDown---------------------------------->|
+//  |  shrinktime    |                                     |   growtime  |   growdelay    |
+//  |                shrinkStartDeadline                   sustain       growStartDeadline|
+//
 //-------------------------------------------------------------------------------------------------
 DynamicShroudClearingRangeUpdate::DynamicShroudClearingRangeUpdate( Thing *thing, const ModuleData* moduleData ) : UpdateModule( thing, moduleData )
 {
@@ -101,8 +101,8 @@ DynamicShroudClearingRangeUpdate::DynamicShroudClearingRangeUpdate( Thing *thing
 
 	m_doneForeverFrame = TheGameLogic->getFrame() + m_stateCountDown;// a failsafe to force a shutdown on schedule
 
-//	m_shrinkStartDeadline;	
-//	m_doneForeverFrame; //	
+//	m_shrinkStartDeadline;
+//	m_doneForeverFrame; //
 
 	m_decalsCreated = FALSE;
 	m_nativeClearingRange = 200;// a sensible default
@@ -374,7 +374,7 @@ void DynamicShroudClearingRangeUpdate::xfer( Xfer *xfer )
 	xfer->xferBool( &m_decalsCreated );
 
 	xfer->xferReal( &m_visionChangePerInterval );
-	
+
 	xfer->xferReal( &m_nativeClearingRange );
 	xfer->xferReal( &m_currentClearingRange );
 

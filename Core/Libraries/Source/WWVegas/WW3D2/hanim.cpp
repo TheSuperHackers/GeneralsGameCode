@@ -17,22 +17,22 @@
 */
 
 /* $Header: /Commando/Code/ww3d2/hanim.cpp 3     12/13/01 7:01p Patrick $ */
-/*********************************************************************************************** 
- ***                            Confidential - Westwood Studios                              *** 
- *********************************************************************************************** 
- *                                                                                             * 
- *                 Project Name : Commando / G 3D Library                                      * 
- *                                                                                             * 
- *                     $Archive:: /Commando/Code/ww3d2/hanim.cpp                              $* 
- *                                                                                             * 
- *                       Author:: Greg_h                                                       * 
- *                                                                                             * 
- *                     $Modtime:: 12/13/01 6:54p                                              $* 
- *                                                                                             * 
- *                    $Revision:: 3                                                           $* 
- *                                                                                             * 
- *---------------------------------------------------------------------------------------------* 
- * Functions:                                                                                  * 
+/***********************************************************************************************
+ ***                            Confidential - Westwood Studios                              ***
+ ***********************************************************************************************
+ *                                                                                             *
+ *                 Project Name : Commando / G 3D Library                                      *
+ *                                                                                             *
+ *                     $Archive:: /Commando/Code/ww3d2/hanim.cpp                              $*
+ *                                                                                             *
+ *                       Author:: Greg_h                                                       *
+ *                                                                                             *
+ *                     $Modtime:: 12/13/01 6:54p                                              $*
+ *                                                                                             *
+ *                    $Revision:: 3                                                           $*
+ *                                                                                             *
+ *---------------------------------------------------------------------------------------------*
+ * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 
@@ -61,12 +61,12 @@ NamedPivotMapClass::~NamedPivotMapClass(void)
 }
 
 NamedPivotMapClass::WeightInfoStruct & NamedPivotMapClass::WeightInfoStruct::operator = (WeightInfoStruct const &that)
-{	
+{
 	if(Name) delete [] Name;
 	assert(that.Name != 0);
-	Name = nstrdup(that.Name); 
-	Weight = that.Weight; 
-	return *this; 
+	Name = nstrdup(that.Name);
+	Weight = that.Weight;
+	return *this;
 }
 
 // add a name & weight to the arrays
@@ -75,7 +75,7 @@ void NamedPivotMapClass::Add(const char *Name, float Weight)
 	WeightInfoStruct info;
 	info.Name = (char *) Name;
 	info.Weight = Weight;
-	WeightInfo.Add(info);	
+	WeightInfo.Add(info);
 	info.Name = 0;
 }
 
@@ -100,7 +100,7 @@ void NamedPivotMapClass::Update_Pivot_Map(const HTreeClass *Tree)
 		int actualPivot = Tree->Get_Bone_Index(WeightInfo[count].Name);
 		if(actualPivot != -1) {
 			(*this)[actualPivot] = WeightInfo[count].Weight;
-		} 
+		}
 	}
 }
 
@@ -109,8 +109,8 @@ void NamedPivotMapClass::Update_Pivot_Map(const HTreeClass *Tree)
 */
 DEFINE_AUTO_POOL(HAnimComboDataClass,256);
 
-HAnimComboDataClass::HAnimComboDataClass(bool shared) 
-: Shared(shared), HAnim(0), PivotMap(0), Frame(0), PrevFrame(0), Weight(1) 
+HAnimComboDataClass::HAnimComboDataClass(bool shared)
+: Shared(shared), HAnim(0), PivotMap(0), Frame(0), PrevFrame(0), Weight(1)
 {}
 
 
@@ -143,13 +143,13 @@ void HAnimComboDataClass::Copy(const HAnimComboDataClass *src)
 
 HAnimComboDataClass::~HAnimComboDataClass(void)
 {
-	if(HAnim) 
+	if(HAnim)
 		HAnim->Release_Ref();
 	if(PivotMap)
 		PivotMap->Release_Ref();
 }
 
-void HAnimComboDataClass::Clear(void) 
+void HAnimComboDataClass::Clear(void)
 {
 	if ( HAnim != NULL ) {
 		HAnim->Release_Ref();
@@ -196,7 +196,7 @@ void HAnimComboDataClass::Set_Pivot_Map(PivotMapClass *map)
 **	This function will replace the current pivot map (if any) with another pivot map that is
 ** set to 1 for only those pivot indices that actually have data.
 */
-void HAnimComboDataClass::Build_Active_Pivot_Map(void) 
+void HAnimComboDataClass::Build_Active_Pivot_Map(void)
 {
 	if ( PivotMap != NULL ) {
 		PivotMap->Release_Ref();
@@ -222,7 +222,7 @@ void HAnimComboDataClass::Build_Active_Pivot_Map(void)
 	}
 }
 
-/*	
+/*
 **	HAnimComboClass
 **
 **
@@ -263,7 +263,7 @@ void	HAnimComboClass::Reset( void )
 	while ( numAnimations-- ) {
 		HAnimComboDataClass *data = HAnimComboData[numAnimations];
 		if(data && (! data->Is_Shared())) {
-			delete data; 
+			delete data;
 		}
 	}
 	HAnimComboData.Reset_Active();
@@ -276,7 +276,7 @@ bool	HAnimComboClass::Normalize_Weights(void)
 	// adjust the pivot maps). Otherwise we do nothing and return false.
 	int anim_count = Get_Num_Anims();
 	if (!anim_count) return true;	// Trivially succeeded
-	
+
 	// Loop over all anims. Check if all or none have pivot maps, and also calculate the minimum
 	// number of pivots.
 	int anim_idx = 0;

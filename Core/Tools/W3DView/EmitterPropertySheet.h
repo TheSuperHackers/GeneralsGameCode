@@ -88,7 +88,7 @@ protected:
 		void							Notify_Render_Mode_Changed(int new_mode);
 
 	protected:
-		
+
 		//////////////////////////////////////////////////////////////////////
 		//
 		//	Protected methods

@@ -93,7 +93,7 @@ typedef MultiListIterator<PolyRemover>		PolyRemoverListIterator;
 ** for this frame.  Since MeshClass instances can share meshmodels
 ** (and therefore their dx8 polygon renderers) this record contains
 ** a pointer to the polygon renderer and the MeshClass instance that
-** it is being rendered for. 
+** it is being rendered for.
 */
 class PolyRenderTaskClass : public AutoPoolClass<PolyRenderTaskClass, 256>
 {
@@ -133,7 +133,7 @@ DEFINE_AUTO_POOL(PolyRenderTaskClass, 256);
 ** MatPassTaskClass
 ** This is the record of a material pass that needs to be rendered on
 ** a particular mesh.  These are linked into the FVF container which
-** contains the mesh model.  They are also pooled to remove memory 
+** contains the mesh model.  They are also pooled to remove memory
 ** allocation overhead.
 */
 class MatPassTaskClass : public AutoPoolClass<MatPassTaskClass, 256>
@@ -155,10 +155,10 @@ public:
 		MaterialPass->Release_Ref();
 		Mesh->Release_Ref();
 	}
-	
+
 	MaterialPassClass *	Peek_Material_Pass(void)							{ return MaterialPass; }
 	MeshClass *				Peek_Mesh(void)										{ return Mesh; }
-	
+
 	MatPassTaskClass *	Get_Next_Visible(void)								{ return NextVisible; }
 	void						Set_Next_Visible(MatPassTaskClass * mpr)		{ NextVisible = mpr; }
 
@@ -186,7 +186,7 @@ inline static bool Equal_Material(const VertexMaterialClass* mat1,const VertexMa
 DX8TextureCategoryClass::DX8TextureCategoryClass(
 	DX8FVFCategoryContainer* container_,
 	TextureClass** texs,
-	ShaderClass shd, 
+	ShaderClass shd,
 	VertexMaterialClass* mat,
 	int pass_)
 	:
@@ -297,7 +297,7 @@ void DX8FVFCategoryContainer::Render_Procedural_Material_Passes(void)
 	while (mpr != NULL) {
 
    		MeshClass * mesh = mpr->Peek_Mesh();
-  	
+
    		if (mesh->Get_Base_Vertex_Offset() == VERTEX_BUFFER_OVERFLOW)	//check if this mesh is valid
    		{	//skip this mesh so it gets rendered later after vertices are filled in.
  	        last_mpr = mpr;
@@ -352,7 +352,7 @@ void DX8TextureCategoryClass::Log(bool only_visible)
 
 	DX8PolygonRendererListIterator it(&PolygonRendererList);
 	while (!it.Is_Done()) {
-	
+
 		DX8PolygonRendererClass* p_renderer = it.Peek_Obj();
 
 		PolyRenderTaskClass * prtc=render_task_head;
@@ -446,7 +446,7 @@ DX8TextureCategoryClass* DX8FVFCategoryContainer::Find_Matching_Texture_Category
 
 DX8TextureCategoryClass* DX8FVFCategoryContainer::Find_Matching_Texture_Category(
 		VertexMaterialClass* vmat,
-		unsigned pass,		
+		unsigned pass,
 		DX8TextureCategoryClass* ref_category)
 {
 	// Find texture category which matches ref_category's properties but has 'vmat' on given pass
@@ -458,8 +458,8 @@ DX8TextureCategoryClass* DX8FVFCategoryContainer::Find_Matching_Texture_Category
 			dest_tex_category=dest_it.Peek_Obj();
 			bool all_textures_same = true;
 			for (unsigned int s = 0; s < MeshMatDescClass::MAX_TEX_STAGES; s++)
-				all_textures_same = all_textures_same && (dest_tex_category->Peek_Texture(s) == ref_category->Peek_Texture(s));			
-			if (all_textures_same &&				
+				all_textures_same = all_textures_same && (dest_tex_category->Peek_Texture(s) == ref_category->Peek_Texture(s));
+			if (all_textures_same &&
 				dest_tex_category->Get_Shader()==ref_category->Get_Shader()) {
 				return dest_tex_category;
 			}
@@ -488,7 +488,7 @@ void DX8FVFCategoryContainer::Change_Polygon_Renderer_Texture(
 	// and move them to destination category.
 	TextureCategoryListIterator src_it(&texture_category_list[pass]);
 	while (!src_it.Is_Done()) {
-		DX8TextureCategoryClass* src_tex_category=src_it.Peek_Obj();		
+		DX8TextureCategoryClass* src_tex_category=src_it.Peek_Obj();
 		if (src_tex_category->Peek_Texture(stage)==texture) {
 			foundtexture=true;
 			DX8PolygonRendererListIterator poly_it(&polygon_renderer_list);
@@ -497,7 +497,7 @@ void DX8FVFCategoryContainer::Change_Polygon_Renderer_Texture(
 				DX8PolygonRendererClass* polygon_renderer=poly_it.Peek_Obj();
 				DX8TextureCategoryClass *prc=polygon_renderer->Get_Texture_Category();
 
-				if (prc==src_tex_category) {					
+				if (prc==src_tex_category) {
 					DX8TextureCategoryClass* dest_tex_category=Find_Matching_Texture_Category(new_texture,pass,stage,src_tex_category);
 
 					if (!dest_tex_category) {
@@ -513,98 +513,7 @@ void DX8FVFCategoryContainer::Change_Polygon_Renderer_Texture(
 							src_tex_category->Get_Shader(),
 							const_cast<VertexMaterialClass*>(src_tex_category->Peek_Material()),
 							pass);
-		
-						/*
-						** Add the texture category object into the list, immediately after any existing
-						** texture category object which uses the same texture.  This will result in
-						** the list always having matching texture categories next to each other.
-						*/
-						bool found_similar_category = false;
-						TextureCategoryListIterator tex_it(&texture_category_list[pass]);
-						while (!tex_it.Is_Done()) {
-							// Categorize according to first stage's texture for now
-							if (tex_it.Peek_Obj()->Peek_Texture(0) == tmp_textures[0]) {
-								texture_category_list[pass].Add_After(new_tex_category,tex_it.Peek_Obj());
-								found_similar_category = true;
-								break;
-							}
-							tex_it.Next();
-						}
 
-						if (!found_similar_category) {
-							texture_category_list[pass].Add_Tail(new_tex_category);
-						}
-						dest_tex_category=new_tex_category;
-					}
-					PolyRemover *rem=W3DNEW PolyRemover;
-					rem->src=src_tex_category;
-					rem->dest=dest_tex_category;
-					rem->pr=polygon_renderer;
-					prl.Add(rem);					
-				}
-				poly_it.Next();
-			} // while			
-		} //if src_texture==texture
-		else
-			// quit loop if we've got a texture change
-			if (foundtexture) break;
-		src_it.Next();
-	} // while
-
-	PolyRemoverListIterator prli(&prl);
-
-	while (!prli.Is_Done())
-	{
-		PolyRemover *rem=prli.Peek_Obj();
-		rem->src->Remove_Polygon_Renderer(rem->pr);
-		rem->dest->Add_Polygon_Renderer(rem->pr);		
-		prli.Remove_Current_Object();
-		delete rem;
-	}
-}
-
-void DX8FVFCategoryContainer::Change_Polygon_Renderer_Material(
-		DX8PolygonRendererList& polygon_renderer_list,
-		VertexMaterialClass* vmat,
-		VertexMaterialClass* new_vmat,
-		unsigned pass)
-{
-	WWASSERT(pass<passes);
-
-	PolyRemoverList prl;
-
-	bool foundtexture=false;
-
-	if (vmat==new_vmat) return;
-
-	// Find source texture category, then find all polygon renderers who belong to that category
-	// and move them to destination category.
-	TextureCategoryListIterator src_it(&texture_category_list[pass]);
-	while (!src_it.Is_Done()) {
-		DX8TextureCategoryClass* src_tex_category=src_it.Peek_Obj();
-		if (src_tex_category->Peek_Material()==vmat) {			
-			DX8PolygonRendererListIterator poly_it(&polygon_renderer_list);
-			while (!poly_it.Is_Done()) {
-				// If source texture category contains polygon renderer, move to destination category
-				DX8PolygonRendererClass* polygon_renderer=poly_it.Peek_Obj();
-				DX8TextureCategoryClass *prc=polygon_renderer->Get_Texture_Category();
-				if (prc==src_tex_category) {
-					foundtexture=true;
-					DX8TextureCategoryClass* dest_tex_category=Find_Matching_Texture_Category(new_vmat,pass,src_tex_category);
-
-					if (!dest_tex_category) {
-						TextureClass * tmp_textures[MeshMatDescClass::MAX_TEX_STAGES];
-						for (int s=0;s<MeshMatDescClass::MAX_TEX_STAGES;++s) {
-							tmp_textures[s]=src_tex_category->Peek_Texture(s);
-						}						
-
-						DX8TextureCategoryClass * new_tex_category=W3DNEW DX8TextureCategoryClass(
-							this,
-							tmp_textures,
-							src_tex_category->Get_Shader(),
-							const_cast<VertexMaterialClass*>(new_vmat),
-							pass);
-		
 						/*
 						** Add the texture category object into the list, immediately after any existing
 						** texture category object which uses the same texture.  This will result in
@@ -634,8 +543,99 @@ void DX8FVFCategoryContainer::Change_Polygon_Renderer_Material(
 					prl.Add(rem);
 				}
 				poly_it.Next();
-			} // while			
-		} // if 
+			} // while
+		} //if src_texture==texture
+		else
+			// quit loop if we've got a texture change
+			if (foundtexture) break;
+		src_it.Next();
+	} // while
+
+	PolyRemoverListIterator prli(&prl);
+
+	while (!prli.Is_Done())
+	{
+		PolyRemover *rem=prli.Peek_Obj();
+		rem->src->Remove_Polygon_Renderer(rem->pr);
+		rem->dest->Add_Polygon_Renderer(rem->pr);
+		prli.Remove_Current_Object();
+		delete rem;
+	}
+}
+
+void DX8FVFCategoryContainer::Change_Polygon_Renderer_Material(
+		DX8PolygonRendererList& polygon_renderer_list,
+		VertexMaterialClass* vmat,
+		VertexMaterialClass* new_vmat,
+		unsigned pass)
+{
+	WWASSERT(pass<passes);
+
+	PolyRemoverList prl;
+
+	bool foundtexture=false;
+
+	if (vmat==new_vmat) return;
+
+	// Find source texture category, then find all polygon renderers who belong to that category
+	// and move them to destination category.
+	TextureCategoryListIterator src_it(&texture_category_list[pass]);
+	while (!src_it.Is_Done()) {
+		DX8TextureCategoryClass* src_tex_category=src_it.Peek_Obj();
+		if (src_tex_category->Peek_Material()==vmat) {
+			DX8PolygonRendererListIterator poly_it(&polygon_renderer_list);
+			while (!poly_it.Is_Done()) {
+				// If source texture category contains polygon renderer, move to destination category
+				DX8PolygonRendererClass* polygon_renderer=poly_it.Peek_Obj();
+				DX8TextureCategoryClass *prc=polygon_renderer->Get_Texture_Category();
+				if (prc==src_tex_category) {
+					foundtexture=true;
+					DX8TextureCategoryClass* dest_tex_category=Find_Matching_Texture_Category(new_vmat,pass,src_tex_category);
+
+					if (!dest_tex_category) {
+						TextureClass * tmp_textures[MeshMatDescClass::MAX_TEX_STAGES];
+						for (int s=0;s<MeshMatDescClass::MAX_TEX_STAGES;++s) {
+							tmp_textures[s]=src_tex_category->Peek_Texture(s);
+						}
+
+						DX8TextureCategoryClass * new_tex_category=W3DNEW DX8TextureCategoryClass(
+							this,
+							tmp_textures,
+							src_tex_category->Get_Shader(),
+							const_cast<VertexMaterialClass*>(new_vmat),
+							pass);
+
+						/*
+						** Add the texture category object into the list, immediately after any existing
+						** texture category object which uses the same texture.  This will result in
+						** the list always having matching texture categories next to each other.
+						*/
+						bool found_similar_category = false;
+						TextureCategoryListIterator tex_it(&texture_category_list[pass]);
+						while (!tex_it.Is_Done()) {
+							// Categorize according to first stage's texture for now
+							if (tex_it.Peek_Obj()->Peek_Texture(0) == tmp_textures[0]) {
+								texture_category_list[pass].Add_After(new_tex_category,tex_it.Peek_Obj());
+								found_similar_category = true;
+								break;
+							}
+							tex_it.Next();
+						}
+
+						if (!found_similar_category) {
+							texture_category_list[pass].Add_Tail(new_tex_category);
+						}
+						dest_tex_category=new_tex_category;
+					}
+					PolyRemover *rem=W3DNEW PolyRemover;
+					rem->src=src_tex_category;
+					rem->dest=dest_tex_category;
+					rem->pr=polygon_renderer;
+					prl.Add(rem);
+				}
+				poly_it.Next();
+			} // while
+		} // if
 		else
 			if (foundtexture) break;
 		src_it.Next();
@@ -647,7 +647,7 @@ void DX8FVFCategoryContainer::Change_Polygon_Renderer_Material(
 	{
 		PolyRemover *rem=prli.Peek_Obj();
 		rem->src->Remove_Polygon_Renderer(rem->pr);
-		rem->dest->Add_Polygon_Renderer(rem->pr);		
+		rem->dest->Add_Polygon_Renderer(rem->pr);
 		prli.Remove_Current_Object();
 		delete rem;
 	}
@@ -671,7 +671,7 @@ unsigned DX8FVFCategoryContainer::Define_FVF(MeshModelClass* mmc,bool enable_lig
 	if (mmc->Get_Color_Array(1,false)) {
 		fvf|=D3DFVF_SPECULAR;
 	}
-	
+
 	switch (tex_coord_count) {
 	default:
 	case 0:
@@ -783,7 +783,7 @@ bool DX8RigidFVFCategoryContainer::Check_If_Mesh_Fits(MeshModelClass* mmc)
 	unsigned required_polygons=mmc->Get_Polygon_Count();
 	if (mmc->Get_Gap_Filler()) {
 		required_polygons+=mmc->Get_Gap_Filler()->Get_Polygon_Count();
-	} 
+	}
 	unsigned required_indices=required_polygons*3*mmc->Get_Pass_Count();
 	unsigned available_indices=index_buffer->Get_Index_Count()-used_indices;
 	if (
@@ -911,7 +911,7 @@ public:
 	{
 		if (mmc->Has_Shader_Array(pass)) {
 			ShaderClass shader;
-			
+
 			if (idx>=unsigned(mmc->Get_Polygon_Count())) {
 				WWASSERT(mmc->Get_Gap_Filler());
 				shader=mmc->Get_Gap_Filler()->Get_Shader_Array(pass)[idx-mmc->Get_Polygon_Count()];
@@ -985,7 +985,7 @@ void DX8RigidFVFCategoryContainer::Add_Mesh(MeshModelClass* mmc_)
 	for (i=0; i<split_table.Get_Vertex_Count(); i++)
 	{
 		*(Vector3*)(vb+fi.Get_Location_Offset())=locs[i];
-		
+
 		if ((FVF&D3DFVF_NORMAL)==D3DFVF_NORMAL && norms) {
 			*(Vector3*)(vb+fi.Get_Normal_Offset())=norms[i];
 		}
@@ -997,7 +997,7 @@ void DX8RigidFVFCategoryContainer::Add_Mesh(MeshModelClass* mmc_)
 				*(unsigned int*)(vb+fi.Get_Diffuse_Offset()) = 0xFFFFFFFF;
 			}
 		}
-		
+
 		if ((FVF&D3DFVF_SPECULAR)==D3DFVF_SPECULAR) {
 			if (specular) {
 				*(unsigned int*)(vb+fi.Get_Specular_Offset())=specular[i];
@@ -1008,7 +1008,7 @@ void DX8RigidFVFCategoryContainer::Add_Mesh(MeshModelClass* mmc_)
 
 		vb+=fi.Get_FVF_Size();
 	}
-	
+
 
 	/*
 	** Append the UV coordinates to the vertex buffer
@@ -1038,7 +1038,7 @@ void DX8RigidFVFCategoryContainer::Add_Mesh(MeshModelClass* mmc_)
 	if ((FVF&D3DFVF_TEX8) == D3DFVF_TEX8) {
 		uvcount = 8;
 	}
-	
+
 	for (int j=0; j<uvcount; j++) {
 		unsigned char *vb=(unsigned char*) l.Get_Vertex_Array();
 		const Vector2*uvs=split_table.Get_UV_Array(j);
@@ -1047,7 +1047,7 @@ void DX8RigidFVFCategoryContainer::Add_Mesh(MeshModelClass* mmc_)
 			{
 				*(Vector2*)(vb+fi.Get_Tex_Offset(j))=uvs[i];
 				vb+=fi.Get_FVF_Size();
-			}		
+			}
 		}
 	}
 
@@ -1086,10 +1086,10 @@ void DX8FVFCategoryContainer::Insert_To_Texture_Category(
 	}
 
 	if (!fit_in_existing_category) {
-		
+
 		DX8TextureCategoryClass * new_tex_category=W3DNEW DX8TextureCategoryClass(this,texs,shader,mat,pass);
 		used_indices+=new_tex_category->Add_Mesh(split_table,vertex_offset,used_indices,index_buffer,pass);
-		
+
 		/*
 		** Add the texture category object into the list, immediately after any existing
 		** texture category object which uses the same texture.  This will result in
@@ -1149,14 +1149,14 @@ struct Textures_Material_And_Shader_Booking_Struct
 void DX8FVFCategoryContainer::Generate_Texture_Categories(Vertex_Split_Table& split_table,unsigned vertex_offset)
 {
 	int polygon_count=split_table.Get_Polygon_Count();
-	int index_count=polygon_count*3*split_table.Get_Pass_Count(); 
+	int index_count=polygon_count*3*split_table.Get_Pass_Count();
 
 	/*
 	** If we don't have an index buffer yet, allocate one.  Make it hold at least 12000 entries,
-	** more if the mesh requires it.  
+	** more if the mesh requires it.
 	*/
 	if (!index_buffer) {
-		int ib_size=12000;  
+		int ib_size=12000;
 		if (ib_size<index_count) ib_size=index_count;
 		if (sorting) {
 			index_buffer=NEW_REF(SortingIndexBufferClass,(ib_size));
@@ -1291,7 +1291,7 @@ void DX8SkinFVFCategoryContainer::Render(void)
 
 				DX8_RECORD_SKIN_RENDER(mesh->Get_Num_Polys(),mesh_vertex_count);
 
-				if (_TempVertexBuffer.Length() < mesh_vertex_count) _TempVertexBuffer.Resize(mesh_vertex_count); 
+				if (_TempVertexBuffer.Length() < mesh_vertex_count) _TempVertexBuffer.Resize(mesh_vertex_count);
 				if (_TempNormalBuffer.Length() < mesh_vertex_count) _TempNormalBuffer.Resize(mesh_vertex_count);
 
 				Vector3* loc=&(_TempVertexBuffer[0]);
@@ -1344,7 +1344,7 @@ void DX8SkinFVFCategoryContainer::Render(void)
 				mesh->Set_Base_Vertex_Offset(vertex_offset);
 				vertex_offset+=mesh_vertex_count;
 				renderedVertexCount += mesh_vertex_count;
-				
+
 				mesh = mesh->Peek_Next_Visible_Skin();
 			}	//while
 		}//lock
@@ -1393,7 +1393,7 @@ bool DX8SkinFVFCategoryContainer::Check_If_Mesh_Fits(MeshModelClass* mmc)
 	return false;
 }
 
-void DX8SkinFVFCategoryContainer::clearVisibleSkinList() 
+void DX8SkinFVFCategoryContainer::clearVisibleSkinList()
 {
 	while (VisibleSkinHead != NULL)
 	{
@@ -1406,7 +1406,7 @@ void DX8SkinFVFCategoryContainer::clearVisibleSkinList()
 	VisibleVertexCount = 0;
 }
 
-void DX8SkinFVFCategoryContainer::Add_Visible_Skin(MeshClass * mesh) 
+void DX8SkinFVFCategoryContainer::Add_Visible_Skin(MeshClass * mesh)
 {
 	if (mesh->Peek_Next_Visible_Skin() != NULL || mesh == VisibleSkinTail)
 	{
@@ -1426,7 +1426,7 @@ void DX8SkinFVFCategoryContainer::Add_Visible_Skin(MeshClass * mesh)
 void DX8SkinFVFCategoryContainer::Reset()
 {
 	clearVisibleSkinList();
-	
+
 	for (unsigned pass=0;pass<passes;++pass) {
 		while (DX8TextureCategoryClass* texture_category=texture_category_list[pass].Peek_Head()) {
 			delete texture_category;
@@ -1550,7 +1550,7 @@ unsigned DX8TextureCategoryClass::Add_Mesh(
 						vmax=MAX(vmax,idx);
 						*dst_indices++=idx;
 					}
-					
+
 					/*
 					** Remember the min and max vertex indices that these polygons used (for optimization)
 					*/
@@ -1613,7 +1613,7 @@ unsigned DX8TextureCategoryClass::Add_Mesh(
 			}
 
 			WWASSERT((vmax-vmin)<split_table.Get_Mesh_Model_Class()->Get_Vertex_Count());
-			
+
 			/*
 			** Remember the min and max vertex indices that these polygons used (for optimization)
 			*/
@@ -1683,7 +1683,7 @@ void DX8TextureCategoryClass::Render(void)
 		*/
 		DX8PolygonRendererClass * renderer = prt->Peek_Polygon_Renderer();
 		MeshClass * mesh = prt->Peek_Mesh();
-		
+
 		if (mesh->Get_Base_Vertex_Offset() == VERTEX_BUFFER_OVERFLOW)	//check if this mesh is valid
 		{	//skip this mesh so it gets rendered later after vertices are filled in.
 			last_prt = prt;
@@ -1694,7 +1694,7 @@ void DX8TextureCategoryClass::Render(void)
 
 		SNAPSHOT_SAY(("mesh = %s",mesh->Get_Name()));
 
-		#ifdef WWDEBUG	
+		#ifdef WWDEBUG
 		// Debug rendering: if it exists, expose prelighting on this mesh by disabling all base textures.
 		if (WW3D::Expose_Prelit()) {
 			switch (mesh->Peek_Model()->Get_Flag (MeshGeometryClass::PRELIT_MASK)) {
@@ -1702,7 +1702,7 @@ void DX8TextureCategoryClass::Render(void)
 				unsigned i;
 
 				case MeshGeometryClass::PRELIT_VERTEX:
-					
+
 					// Disable texturing on all stages and passes.
 					for (i = 0; i < MAX_TEXTURE_STAGES; i++) {
 						DX8Wrapper::Set_Texture (i, NULL);
@@ -1710,7 +1710,7 @@ void DX8TextureCategoryClass::Render(void)
 					break;
 
 				case MeshGeometryClass::PRELIT_LIGHTMAP_MULTI_PASS:
-					
+
 					// Disable texturing on all but the last pass.
 					if (pass == mesh->Peek_Model()->Get_Pass_Count() - 1) {
 						for (i = 0; i < MAX_TEXTURE_STAGES; i++) {
@@ -1724,7 +1724,7 @@ void DX8TextureCategoryClass::Render(void)
 					break;
 
 				case MeshGeometryClass::PRELIT_LIGHTMAP_MULTI_TEXTURE:
-					
+
 					// Disable texturing on all but the zeroth stage of each pass.
 					DX8Wrapper::Set_Texture (0, Peek_Texture (0));
 					for (i = 1; i < MAX_TEXTURE_STAGES; i++) {
@@ -1766,7 +1766,7 @@ void DX8TextureCategoryClass::Render(void)
 
 			Vector3 mesh_position;
 			Vector3 camera_z_vector;
-			
+
 			TheDX8MeshRenderer.Peek_Camera()->Get_Transform().Get_Z_Vector(&camera_z_vector);
 			mesh->Get_Transform().Get_Translation(&mesh_position);
 
@@ -1775,7 +1775,7 @@ void DX8TextureCategoryClass::Render(void)
 
 		} else if (mesh->Peek_Model()->Get_Flag(MeshModelClass::ORIENTED)) {
 			SNAPSHOT_SAY(("Camera mode ORIENTED"));
-		
+
 			Vector3 mesh_position;
 			Vector3 camera_position;
 
@@ -1784,10 +1784,10 @@ void DX8TextureCategoryClass::Render(void)
 
 			tmp_world.Obj_Look_At(mesh_position,camera_position,0.0f);
 			world_transform = &tmp_world;
-		
+
 		} else if (mesh->Peek_Model()->Get_Flag(MeshModelClass::SKIN)) {
 			SNAPSHOT_SAY(("Set world identity (for skin)"));
-			
+
 			tmp_world.Make_Identity();
 			world_transform = &tmp_world;
 			identity=true;
@@ -1803,7 +1803,7 @@ void DX8TextureCategoryClass::Render(void)
 			DX8Wrapper::Set_Transform(D3DTS_WORLD,*world_transform);
 		}
 
-		
+
 //--------------------------------------------------------------------
 		if (mesh->Get_ObjectScale() != 1.0f)
 			DX8Wrapper::Set_DX8_Render_State(D3DRS_NORMALIZENORMALS, TRUE);
@@ -2015,7 +2015,7 @@ void DX8MeshRendererClass::Register_Mesh_Type(MeshModelClass* mmc)
 		DX8FVFCategoryContainer * new_container=W3DNEW DX8SkinFVFCategoryContainer(sorting);
 		texture_category_container_list_skin->Add_Tail(new_container);
 		new_container->Add_Mesh(mmc);
-	
+
 	} else {
 
 		/*
@@ -2097,7 +2097,7 @@ void DX8MeshRendererClass::Flush(void)
 {
 	WWPROFILE("DX8MeshRenderer::Flush");
 	if (!camera) return;
-	Log_Statistics_String(true);	
+	Log_Statistics_String(true);
 
 	for (int i=0;i<texture_category_container_lists_rigid.Count();++i) {
 		Render_FVF_Category_Container_List(*texture_category_container_lists_rigid[i]);
@@ -2122,7 +2122,7 @@ void DX8MeshRendererClass::Add_To_Render_List(DecalMeshClass * decalmesh)
 void DX8MeshRendererClass::Render_Decal_Meshes(void)
 {
 	DX8Wrapper::Set_DX8_Render_State(D3DRS_ZBIAS,8);
-	
+
 	DecalMeshClass * decal_mesh = visible_decal_meshes;
 	while (decal_mesh != NULL) {
 		decal_mesh->Render();

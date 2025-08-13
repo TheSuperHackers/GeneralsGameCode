@@ -56,7 +56,7 @@ extern ClassDesc* Get_Alpha_Desc();
 
 #define ALPHA_VERTEX_CHANNEL 10
 
-class AlphaModifierClass : public Modifier 
+class AlphaModifierClass : public Modifier
 {
 	public:
 
@@ -71,13 +71,13 @@ class AlphaModifierClass : public Modifier
 
 
 		// Plugin identification
-		void GetClassName(TSTR& s) { s= TSTR(Get_String(IDS_ALPHA_MODIFIER_CLASS));}  
-		virtual Class_ID ClassID() { return ALPHA_MODIFIER_CLASSID;}		
+		void GetClassName(TSTR& s) { s= TSTR(Get_String(IDS_ALPHA_MODIFIER_CLASS));}
+		virtual Class_ID ClassID() { return ALPHA_MODIFIER_CLASSID;}
 		TCHAR *GetObjectName() { return Get_String(IDS_ALPHA_MODIFIER_CLASS);}
 
 
 		// Defines the behavior for this modifier
-		// This is currently setup to be basic geometry 
+		// This is currently setup to be basic geometry
 		// modification of deformable objects
 		ChannelMask ChannelsUsed()  {return PART_GEOM|PART_TOPO|PART_SELECT|PART_SUBSEL_TYPE;}
 		ChannelMask ChannelsChanged() {return PART_GEOM|PART_TOPO|PART_SELECT|PART_SUBSEL_TYPE;}
@@ -88,7 +88,7 @@ class AlphaModifierClass : public Modifier
 		// Calculate the local validity from the parameters
 		Interval LocalValidity(TimeValue t);
 		Interval GetValidity(TimeValue t);
-							
+
 
 		// Object modification and notification of change
 		void ModifyObject(TimeValue t, ModContext &mc, ObjectState *os, INode *node);
@@ -101,14 +101,14 @@ class AlphaModifierClass : public Modifier
 		void SetReference(int i, RefTargetHandle rtarg);
 		RefTargetHandle Clone(RemapDir& remap = NoRemap());
 		RefResult NotifyRefChanged( Interval changeInt,RefTargetHandle hTarget, PartID& partID, RefMessage message);
-		
+
 		// SubAnim support
 		int NumSubs() { return 0;}
 		Animatable* SubAnim(int i);
 		TSTR SubAnimName(int i);
 
 		// Direct paramblock access
-		int	NumParamBlocks() {return 1;}	
+		int	NumParamBlocks() {return 1;}
 		IParamBlock2* GetParamBlock(int i) { return pblock;}
 		IParamBlock2* GetParamBlockByID(BlockID id) {return (pblock->ID() == id) ? pblock : NULL;}
 		int GetParamBlockIndex(int id) {return id;}
@@ -133,7 +133,7 @@ class AlphaModifierClass : public Modifier
  |	Dialog Processor
 \*===========================================================================*/
 
-class AlphaModDlgProc : public ParamMap2UserDlgProc 
+class AlphaModDlgProc : public ParamMap2UserDlgProc
 {
 	public:
 		AlphaModifierClass *AlphaModifier;

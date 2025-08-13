@@ -24,7 +24,7 @@
 
 // FILE: W3DPoliceCarDraw.cpp /////////////////////////////////////////////////////////////////////
 // Author: Colin Day, May 2001
-// Desc:   W3DPoliceCarDraw 
+// Desc:   W3DPoliceCarDraw
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
@@ -52,11 +52,11 @@ W3DDynamicLight *W3DPoliceCarDraw::createDynamicLight( void )
 	light = W3DDisplay::m_3DScene->getADynamicLight();
 	if( light )
 	{
-		
+
 		light->setEnabled( TRUE );
 		light->Set_Ambient( Vector3( 0.0f, 0.0f, 0.0f ) );
-		// Use all ambient, and no diffuse.  This produces a circle of light on 
-		// even and uneven ground.  Diffuse lighting shows up ground unevenness, which looks 
+		// Use all ambient, and no diffuse.  This produces a circle of light on
+		// even and uneven ground.  Diffuse lighting shows up ground unevenness, which looks
 		// funny on a searchlight.  So  no diffuse.  jba.
 		light->Set_Diffuse( Vector3( 0.0f, 0.0f, 0.0f ) );
 		light->Set_Position( Vector3( 0.0f, 0.0f, 0.0f ) );
@@ -77,7 +77,7 @@ W3DPoliceCarDraw::W3DPoliceCarDraw( Thing *thing, const ModuleData* moduleData )
 	m_light = NULL;
 	m_curFrame = GameClientRandomValueReal(0, 10 );
 
-} 
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -109,8 +109,8 @@ void W3DPoliceCarDraw::doDrawModule(const Matrix3D* transformMtx)
 		return;
 
 	HAnimClass *anim = policeCarRenderObj->Peek_Animation();
-	if (anim) 
-	{		
+	if (anim)
+	{
 		Real frames = anim->Get_Num_Frames();
 		m_curFrame += animAmt;
 		if (m_curFrame > frames-1) {
@@ -122,9 +122,9 @@ void W3DPoliceCarDraw::doDrawModule(const Matrix3D* transformMtx)
 	Real green = 0;
 	Real blue = 0;
 	if (m_curFrame < 3) {
-		red = 1; green = 0.5; 
+		red = 1; green = 0.5;
 	} else if (m_curFrame < 6) {
-		red = 1; 
+		red = 1;
 	} else if (m_curFrame < 7) {
 		red = 1; green = 0.5;
 	} else if (m_curFrame < 9) {
@@ -153,7 +153,7 @@ void W3DPoliceCarDraw::doDrawModule(const Matrix3D* transformMtx)
 		m_light->Set_Position( Vector3( pos.x,pos.y,pos.z+floatAmt ) );
 	}
 	W3DTruckDraw::doDrawModule(transformMtx);
-} 
+}
 
 
 // ------------------------------------------------------------------------------------------------

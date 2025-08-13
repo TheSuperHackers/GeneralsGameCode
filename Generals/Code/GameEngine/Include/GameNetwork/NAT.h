@@ -122,7 +122,7 @@ protected:
 	UnsignedShort m_previousSourcePort;
 
 	Bool m_beenProbed; ///< have I been notified that I've been probed this round?
-	
+
 	UnsignedInt m_manglerAddress;
 
 	time_t m_timeTillNextSend; ///< The number of milliseconds till we send to the other guy's port again.

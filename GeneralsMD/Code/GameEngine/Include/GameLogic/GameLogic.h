@@ -91,7 +91,7 @@ enum
 
 
 /// Function pointers for use by GameLogic callback functions.
-typedef void (*GameLogicFuncPtr)( Object *obj, void *userData ); 
+typedef void (*GameLogicFuncPtr)( Object *obj, void *userData );
 //typedef std::hash_map<ObjectID, Object *, rts::hash<ObjectID>, rts::equal_to<ObjectID> > ObjectPtrHash;
 //typedef ObjectPtrHash::const_iterator ObjectPtrIter;
 
@@ -99,7 +99,7 @@ typedef std::vector<Object*> ObjectPtrVector;
 
 // ------------------------------------------------------------------------------------------------
 /**
- * The implementation of GameLogic 
+ * The implementation of GameLogic
  */
 class GameLogic : public SubsystemInterface, public Snapshot
 {
@@ -121,9 +121,9 @@ public:
 #endif
 	void processCommandList( CommandList *list );		///< process the command list
 
-	void prepareNewGame( Int gameMode, GameDifficulty diff, Int rankPoints );						///< prepare for new game 
+	void prepareNewGame( Int gameMode, GameDifficulty diff, Int rankPoints );						///< prepare for new game
 
-	void logicMessageDispatcher( GameMessage *msg, 
+	void logicMessageDispatcher( GameMessage *msg,
 																			 void *userData );	///< Logic command list processing
 
 	void registerObject( Object *obj );							///< Given an object, register it with the GameLogic and give it a unique ID
@@ -165,13 +165,13 @@ public:
 
 	void updateLoadProgress( Int progress );
 	void deleteLoadScreen( void );
-	
+
 	//Kris: Cut setGameLoading() and replaced with setLoadingMap() and setLoadingSave() -- reason: nomenclature
 	//void setGameLoading( Bool loading ) { m_loadingScene = loading; }
 	void setLoadingMap( Bool loading ) { m_loadingMap = loading; }
 	void setLoadingSave( Bool loading ) { m_loadingSave = loading; }
 	void setClearingGameData( Bool clearing ) { m_clearingGameData = clearing; }
-	
+
 	void setGameMode( Int mode );
 	Int getGameMode( void );
 	Bool isInGame( void );
@@ -231,12 +231,12 @@ public:
 	UnsignedInt getObjectCount( void );
 
 	Int getRankLevelLimit() const { return m_rankLevelLimit; }
-	void setRankLevelLimit(Int limit) 
-	{ 
+	void setRankLevelLimit(Int limit)
+	{
 		if (limit < 1) limit = 1;
-		m_rankLevelLimit = limit; 
+		m_rankLevelLimit = limit;
 	}
-	
+
 	// We need to allow access to this, because on a restartGame, we need to restart with the settings we started with
 	Int getRankPointsToAddAtGameStart() const { return m_rankPointsToAddAtGameStart; }
 
@@ -249,7 +249,7 @@ public:
 	void incrementOverallFailedPathfinds() { m_overallFailedPathfinds++; }
 	UnsignedInt getOverallFailedPathfinds() const { return m_overallFailedPathfinds; }
 #endif
-	
+
 	// NOTE: selectObject and deselectObject should be called *only* by logical things, NEVER by the
 	// client. These will cause the client to select or deselect the object, if affectClient is true.
 	// If createToSelection is TRUE, this object causes a new group to be selected.
@@ -300,7 +300,7 @@ private:
 
 	Real m_width, m_height;																	///< Dimensions of the world
 	UnsignedInt m_frame;																		///< Simulation frame number
-	
+
 	// CRC cache system -----------------------------------------------------------------------------
 	UnsignedInt	m_CRC;																			///< Cache of previous CRC value
 	std::map<Int, UnsignedInt> m_cachedCRCs;								///< CRCs we've seen this frame
@@ -337,7 +337,7 @@ private:
 	// (for an excellent discussion of priority queues, please see:
 	// http://dogma.net/markn/articles/pq_stl/priority.htm)
 	std::vector<UpdateModulePtr> m_sleepyUpdates;
-	
+
 #ifdef ALLOW_NONSLEEPY_UPDATES
 	// this is a plain old list, not a pq.
 	std::list<UpdateModulePtr> m_normalUpdates;
@@ -400,7 +400,7 @@ private:
 	ObjectTOCEntry *findTOCEntryById( UnsignedShort id );		///< find ObjectTOC by id
 	void xferObjectTOC( Xfer *xfer );												///< save/load object TOC for current state of map
 	void prepareLogicForObjectLoad( void );									///< prepare engine for object data from game file
-		
+
 };
 
 // INLINE /////////////////////////////////////////////////////////////////////////////////////////
@@ -429,7 +429,7 @@ inline Object* GameLogic::findObjectByID( ObjectID id )
 //	ObjectPtrHash::iterator it = m_objHash.find(id);
 //	if (it == m_objHash.end())
 //		return NULL;
-//	
+//
 //	return (*it).second;
 	if( (size_t)id < m_objVector.size() )
 		return m_objVector[(size_t)id];

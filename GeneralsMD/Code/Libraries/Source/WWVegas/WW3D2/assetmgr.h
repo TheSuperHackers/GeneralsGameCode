@@ -17,22 +17,22 @@
 */
 
 /* $Header: /Commando/Code/ww3d2/assetmgr.h 19    12/17/01 7:55p Jani_p $ */
-/*********************************************************************************************** 
- ***                            Confidential - Westwood Studios                              *** 
- *********************************************************************************************** 
- *                                                                                             * 
- *                 Project Name : Commando                                                     * 
- *                                                                                             * 
- *                     $Archive:: /Commando/Code/ww3d2/assetmgr.h                             $* 
- *                                                                                             * 
- *                       Author:: Greg_h                                                       * 
- *                                                                                             * 
- *                     $Modtime:: 12/15/01 4:14p                                              $* 
- *                                                                                             * 
- *                    $Revision:: 19                                                          $* 
- *                                                                                             * 
- *---------------------------------------------------------------------------------------------* 
- * Functions:                                                                                  * 
+/***********************************************************************************************
+ ***                            Confidential - Westwood Studios                              ***
+ ***********************************************************************************************
+ *                                                                                             *
+ *                 Project Name : Commando                                                     *
+ *                                                                                             *
+ *                     $Archive:: /Commando/Code/ww3d2/assetmgr.h                             $*
+ *                                                                                             *
+ *                       Author:: Greg_h                                                       *
+ *                                                                                             *
+ *                     $Modtime:: 12/15/01 4:14p                                              $*
+ *                                                                                             *
+ *                    $Revision:: 19                                                          $*
+ *                                                                                             *
+ *---------------------------------------------------------------------------------------------*
+ * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 
@@ -116,7 +116,7 @@ public:
 	WW3DAssetManager
 
 	This object is the manager of all of the 3D data.  Load your meshes, animations,
-	etc etc using the Load_3D_Assets function.  
+	etc etc using the Load_3D_Assets function.
 
 	WARNING: hierarchy trees should be loaded before the meshes and animations
 	which attach to them.
@@ -129,10 +129,10 @@ public:
 	purposes
 
 	- WW3D creates "clones" from the blueprints it has of render objects whereas
-	Our commando data asset manager will provide the data (file images) for the 
+	Our commando data asset manager will provide the data (file images) for the
 	blueprints.  Maybe the CommandoDataManager could deal in MemoryFileClasses.
 	Or void * and then the ww3d manager could convert to MemoryFiles...
-	
+
 	- Future caching: In the case that we want to implement a caching system,
 	assets must be "released" when not in use.
 
@@ -154,7 +154,7 @@ public:
 	the 3d asset manager may find that it needs another asset (such as a hierarchy tree).
 	It will then recurse, and ask for that asset.
 
-	- Copy Mode will go away.  It will be internally set based on whether the mesh 
+	- Copy Mode will go away.  It will be internally set based on whether the mesh
 	contains vertex animation.  All other render objects will simply "Clone".
 
 	- Commando will derive a Cmdo3DAssetManager which knows about the special chunks
@@ -163,14 +163,14 @@ public:
 	-------------------------------------------------------------------------------------
 	July 28, 1998
 
-	- Exposed the prototype system and added prototype loaders (PrototypeClass and 
+	- Exposed the prototype system and added prototype loaders (PrototypeClass and
 	PrototypeLoaderClass in proto.h).  This now allows the user to install his own
-	loaders for new render object types. 
+	loaders for new render object types.
 
 	- Simplified the interface by removing the special purpose creation functions,
-	leaving only the Create_Render_Obj function.  
-	
-	- In certain cases some users need to know what kind of render object was created 
+	leaving only the Create_Render_Obj function.
+
+	- In certain cases some users need to know what kind of render object was created
 	so we added a Class_ID mechanism to RenderObjClass.
 
 	- Class_ID for render objects is not enough.  Need the asset iterator to be able
@@ -230,7 +230,7 @@ public:
 	/*
 	** create me an instance of one of the prototype render objects
 	*/
-	virtual RenderObjClass *		Create_Render_Obj(const char * name);	
+	virtual RenderObjClass *		Create_Render_Obj(const char * name);
 
 	/*
 	** query if there is a render object with the specified name
@@ -264,7 +264,7 @@ public:
 
 	virtual TextureClass *			Get_Texture
 	(
-		const char * filename, 
+		const char * filename,
 		MipCountType mip_level_count=MIP_LEVELS_ALL,
 		WW3DFormat texture_format=WW3D_FORMAT_UNKNOWN,
 		bool allow_compression=true,
@@ -303,7 +303,7 @@ public:
 	virtual void						Register_Prototype_Loader(PrototypeLoaderClass * loader);
 
 	/*
-	**	The Add_Prototype is public so that we can add prototypes for procedurally 
+	**	The Add_Prototype is public so that we can add prototypes for procedurally
 	** generated objects to the asset manager.
 	*/
 	void									Add_Prototype(PrototypeClass * newproto);
@@ -348,7 +348,7 @@ protected:
 	/*
 	** Compile time control over the dynamic arrays:
 	*/
-	enum 
+	enum
 	{
 		PROTOLOADERS_VECTOR_SIZE =	32,
 		PROTOLOADERS_GROWTH_RATE =	16,
@@ -363,7 +363,7 @@ protected:
 	** them into prototypes.
 	*/
 	DynamicVectorClass < PrototypeLoaderClass * >			PrototypeLoaders;
-	
+
 	/*
 	** Prototypes
 	** These objects are abstract factories for named render objects.  Prototypes is
@@ -375,10 +375,10 @@ protected:
 	** Prototype Hash Table
 	** This structure is simply used to speed up the name lookup for prototypes
 	*/
-	enum 
-	{ 
-		PROTOTYPE_HASH_TABLE_SIZE =	4096, 
-		PROTOTYPE_HASH_BITS =			12, 
+	enum
+	{
+		PROTOTYPE_HASH_TABLE_SIZE =	4096,
+		PROTOTYPE_HASH_BITS =			12,
 		PROTOTYPE_HASH_MASK =			0x00000FFF
 	};
 

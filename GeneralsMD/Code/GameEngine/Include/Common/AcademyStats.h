@@ -24,12 +24,12 @@
 
 // FILE: AcademyStats.h ////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Electronic Arts Los Angeles                          
-//                                                                          
-//                       Confidential Information					         
-//                Copyright (C) 2003 - All Rights Reserved                  
-//                                                                          
+//
+//                       Electronic Arts Los Angeles
+//
+//                       Confidential Information
+//                Copyright (C) 2003 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:    RTS3
@@ -38,7 +38,7 @@
 //
 // Created:    Kris Morness, July 2003
 //
-// Desc:			 Keeps track of various statistics in order to provide advice to 
+// Desc:			 Keeps track of various statistics in order to provide advice to
 //             the player about how to improve playing.
 //
 //-----------------------------------------------------------------------------
@@ -241,7 +241,7 @@ private:
 	//25) Did the player use the new alternate interface in the options?
 	//Uses TheGlobalData->m_useAlternateMouse
 
-	//26) Player did not use the new "double click location attack move/guard" 
+	//26) Player did not use the new "double click location attack move/guard"
 	UnsignedInt m_doubleClickAttackMoveOrdersGiven;
 
   //27) Built barracks within 5 minutes?

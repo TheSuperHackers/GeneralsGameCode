@@ -280,7 +280,7 @@ void CWorldBuilderDoc::Serialize(CArchive& ar)
 	ar.Flush();
 	m_waypointTableNeedsUpdate = true;
 	if (ar.IsStoring() && m_heightMap)
-	{	
+	{
 		try {
 			Int i;
 			MapPreview mPreview;
@@ -288,7 +288,7 @@ void CWorldBuilderDoc::Serialize(CArchive& ar)
 
 			CompressedCachedMFCFileOutputStream theStream(ar.GetFile());
 			DataChunkOutput *chunkWriter = new DataChunkOutput(&theStream);
-			
+
 
 			m_heightMap->saveToFile(*chunkWriter);
  			/***************WAYPOINTS DATA ***************/
@@ -314,7 +314,7 @@ void CWorldBuilderDoc::Serialize(CArchive& ar)
 		WorldHeightMapEdit *pOldHeightMap = m_heightMap;
 		CString pth = ar.GetFile()->GetFilePath();
 		CachedFileInputStream theInputStream;
-		if (theInputStream.open(AsciiString((const char *)pth))) 
+		if (theInputStream.open(AsciiString((const char *)pth)))
 		try {
 
 			WbApp()->selectPointerTool();
@@ -352,13 +352,13 @@ void CWorldBuilderDoc::Serialize(CArchive& ar)
 			m_heightMap->optimizeTiles(); // force to optimize tileset
 			SetHeightMap(m_heightMap, true);
 			Coord3D center;
-			center.x = MAP_XY_FACTOR*m_heightMap->getXExtent()/2; 
+			center.x = MAP_XY_FACTOR*m_heightMap->getXExtent()/2;
 			center.y = MAP_XY_FACTOR*m_heightMap->getYExtent()/2;
 			center.x -= m_heightMap->getBorderSize();
 			center.y -= m_heightMap->getBorderSize();
 			/* update objects. */
 			AsciiString startingCamName = TheNameKeyGenerator->keyToName(TheKey_InitialCameraPosition);
-			
+
 			TheLayersList->resetLayers();
 			AsciiString layerName;
 			Bool exists;
@@ -370,7 +370,7 @@ void CWorldBuilderDoc::Serialize(CArchive& ar)
 			TheLayersList->disableUpdates();
 			MapObject *pMapObj = MapObject::getFirstMapObject();
 			while (pMapObj) {
-								
+
 				// Then, add it to the Layers List
 				layerName = pMapObj->getProperties()->getAsciiString(TheKey_objectLayer, &exists);
 				if (exists) {
@@ -462,7 +462,7 @@ void CWorldBuilderDoc::validate(void)
 
 	// verify/fix the build lists
 	for (int side=0; side<TheSidesList->getNumSides(); side++) {
-		SidesInfo *pSide = TheSidesList->getSideInfo(side); 
+		SidesInfo *pSide = TheSidesList->getSideInfo(side);
 
 		AsciiString tmplname = pSide->getDict()->getAsciiString(TheKey_playerFaction);
 		const PlayerTemplate* pt = ThePlayerTemplateStore->findPlayerTemplate(NAMEKEY(tmplname));
@@ -533,7 +533,7 @@ void CWorldBuilderDoc::validate(void)
 		// at this point, only objects with models and teams should be left to process
 
 		// start by verifying the ThingTemplate for the object.
-		// swapDict contains a 'history' of missing model swaps done this load, so all objects with a 
+		// swapDict contains a 'history' of missing model swaps done this load, so all objects with a
 		// particular name are replaced with the exact same model.
 		AsciiString name = pMapObj->getName();
 		if (pMapObj->getThingTemplate() == NULL)
@@ -566,7 +566,7 @@ void CWorldBuilderDoc::validate(void)
 				}
 			}
 			swapName = swapDict.getAsciiString(NAMEKEY(name), &exists);
-			if (exists) 
+			if (exists)
 			{
 				const ThingTemplate *tt = TheThingFactory->findTemplate(swapName);
 				if (tt) {
@@ -764,8 +764,8 @@ BOOL CWorldBuilderDoc::DoSave(LPCTSTR lpszPathName, BOOL bReplace)
 * CWorldBuilderDoc::ParseWaypointDataChunk - read a waypoint chunk.
 * Format is the newer CHUNKY format.
 *	See WHeightMapEdit.cpp for the writer.
-*	Input: DataChunkInput 
-*		
+*	Input: DataChunkInput
+*
 */
 Bool CWorldBuilderDoc::ParseWaypointDataChunk(DataChunkInput &file, DataChunkInfo *info, void *userData)
 {
@@ -777,8 +777,8 @@ Bool CWorldBuilderDoc::ParseWaypointDataChunk(DataChunkInput &file, DataChunkInf
 * CWorldBuilderDoc::ParseWaypointData - read waypoint data chunk.
 * Format is the newer CHUNKY format.
 *	See WorldBuilderDoc.cpp for the writer.
-*	Input: DataChunkInput 
-*		
+*	Input: DataChunkInput
+*
 */
 Bool CWorldBuilderDoc::ParseWaypointData(DataChunkInput &file, DataChunkInfo *info, void *userData)
 {
@@ -908,7 +908,7 @@ void CWorldBuilderDoc::AddAndDoUndoable(Undoable *pUndo)
 	}
 }
 
-void CWorldBuilderDoc::OnEditRedo() 
+void CWorldBuilderDoc::OnEditRedo()
 {
 	Undoable *pUndo = m_undoList;
 	m_needAutosave = true;
@@ -928,12 +928,12 @@ void CWorldBuilderDoc::OnEditRedo()
 	}
 }
 
-void CWorldBuilderDoc::OnUpdateEditRedo(CCmdUI* pCmdUI) 
+void CWorldBuilderDoc::OnUpdateEditRedo(CCmdUI* pCmdUI)
 {
 	pCmdUI->Enable(m_undoList!=NULL && m_curRedo>0);
 }
 
-void CWorldBuilderDoc::OnEditUndo() 
+void CWorldBuilderDoc::OnEditUndo()
 {
 	Undoable *pUndo = m_undoList;
 	m_needAutosave = true;
@@ -959,7 +959,7 @@ void CWorldBuilderDoc::OnTogglePitchAndRotation( void )
 	}
 }
 
-void CWorldBuilderDoc::OnUpdateEditUndo(CCmdUI* pCmdUI) 
+void CWorldBuilderDoc::OnUpdateEditUndo(CCmdUI* pCmdUI)
 {
 	Bool canUndo=false;
 	if (m_undoList!=NULL) {
@@ -979,7 +979,7 @@ void CWorldBuilderDoc::OnUpdateEditUndo(CCmdUI* pCmdUI)
 }
 
 
-void CWorldBuilderDoc::OnTsInfo() 
+void CWorldBuilderDoc::OnTsInfo()
 {
 	if (m_heightMap) {
 		m_heightMap->showTileStatusInfo();
@@ -987,7 +987,7 @@ void CWorldBuilderDoc::OnTsInfo()
 }
 
 
-void CWorldBuilderDoc::OnTsCanonical() 
+void CWorldBuilderDoc::OnTsCanonical()
 {
 	if (m_heightMap) {
 
@@ -998,19 +998,19 @@ void CWorldBuilderDoc::OnTsCanonical()
 			updateHeightMap(htMapEditCopy, false, partialRange);
 			WBDocUndoable *pUndo = new WBDocUndoable(this, htMapEditCopy);
 			this->AddAndDoUndoable(pUndo);
-			REF_PTR_RELEASE(pUndo); // belongs to this now.	
+			REF_PTR_RELEASE(pUndo); // belongs to this now.
 		} else {
 			::Beep(1000,500);
 		}
 		REF_PTR_RELEASE(htMapEditCopy);
-	}	
+	}
 }
 
-void CWorldBuilderDoc::OnUpdateTsCanonical(CCmdUI* pCmdUI) 
+void CWorldBuilderDoc::OnUpdateTsCanonical(CCmdUI* pCmdUI)
 {
 }
 
-void CWorldBuilderDoc::OnFileResize() 
+void CWorldBuilderDoc::OnFileResize()
 {
 	TNewHeightInfo hi;
 	hi.initialHeight = 8;
@@ -1030,7 +1030,7 @@ void CWorldBuilderDoc::OnFileResize()
 	WorldHeightMapEdit *htMapEditCopy = GetHeightMap()->duplicate();
 	if (htMapEditCopy == NULL) return;
 	Coord3D objOffset;
-	if (htMapEditCopy->resize(hi.xExtent, hi.yExtent, hi.initialHeight, hi.borderWidth, 
+	if (htMapEditCopy->resize(hi.xExtent, hi.yExtent, hi.initialHeight, hi.borderWidth,
 		hi.anchorTop, hi.anchorBottom, hi.anchorLeft, hi.anchorRight, &objOffset)) {  // does all the work.
 		WBDocUndoable *pUndo = new WBDocUndoable(this, htMapEditCopy, &objOffset);
 		this->AddAndDoUndoable(pUndo);
@@ -1054,7 +1054,7 @@ void CWorldBuilderDoc::OnFileResize()
 }
 
 
-void CWorldBuilderDoc::OnTsRemap() 
+void CWorldBuilderDoc::OnTsRemap()
 {
 	if (m_heightMap) {
 		WorldHeightMapEdit *htMapEditCopy = GetHeightMap()->duplicate();
@@ -1069,7 +1069,7 @@ void CWorldBuilderDoc::OnTsRemap()
 			::Beep(1000,500);
 		}
 		REF_PTR_RELEASE(htMapEditCopy);
-	}	
+	}
 }
 
 /* static */ CWorldBuilderDoc *CWorldBuilderDoc::GetActiveDoc()
@@ -1090,7 +1090,7 @@ void CWorldBuilderDoc::OnTsRemap()
 		}
 	}
 
-#else 
+#else
 // only works for SDI, not MDI
 	return (CWorldBuilderDoc*)CMainFrame::GetMainFrame()->GetActiveDocument();
 #endif
@@ -1232,7 +1232,7 @@ BOOL CWorldBuilderDoc::OnNewDocument()
 	// note - mHeight map has ref count of 1.
 
 	// Create a default water area.
-	PolygonTrigger *pTrig = newInstance(PolygonTrigger)(4); 
+	PolygonTrigger *pTrig = newInstance(PolygonTrigger)(4);
 	ICoord3D loc;
 	pTrig->setWaterArea(true);
 	loc.x = -hi.borderWidth*MAP_XY_FACTOR;
@@ -1331,7 +1331,7 @@ void CWorldBuilderDoc::updateHeightMap(WorldHeightMap *htMap, Bool partial, cons
 	}
 }
 
-BOOL CWorldBuilderDoc::OnOpenDocument(LPCTSTR lpszPathName) 
+BOOL CWorldBuilderDoc::OnOpenDocument(LPCTSTR lpszPathName)
 {
 #ifdef ONLY_ONE_AT_A_TIME
 	if (gAlreadyOpen) {
@@ -1339,8 +1339,8 @@ BOOL CWorldBuilderDoc::OnOpenDocument(LPCTSTR lpszPathName)
 		return FALSE;
 	}
 #endif
-	
-	// Open document dialog may change working directory, 
+
+	// Open document dialog may change working directory,
 	// let the app know what it was for future opens, and change it back.
 	char buf[_MAX_PATH];
 	::GetCurrentDirectory(_MAX_PATH, buf);
@@ -1371,23 +1371,23 @@ BOOL CWorldBuilderDoc::OnOpenDocument(LPCTSTR lpszPathName)
 
 	if (!CDocument::OnOpenDocument(lpszPathName))
 		return FALSE;
-	
+
 	Create3DView();
-	
+
 	return TRUE;
 }
 
 //=============================================================================
 // CWorldBuilderView::getCellIndexFromPoint
 //=============================================================================
-/** Given a cursor location, return the x and y index into the height map. 
+/** Given a cursor location, return the x and y index into the height map.
 If the location is outside the height map, returns false. */
 //=============================================================================
 Bool CWorldBuilderDoc::getCellIndexFromCoord(Coord3D cpt, CPoint *ndxP)
 {
 	// Set up default return value.
 	ndxP->x = -1;
-	ndxP->y = -1;	 
+	ndxP->y = -1;
 	Bool inMap = true;
 
 	WorldHeightMapEdit *pMap = GetHeightMap();
@@ -1409,7 +1409,7 @@ Bool CWorldBuilderDoc::getCellIndexFromCoord(Coord3D cpt, CPoint *ndxP)
 	Int yIndex = floor(cpt.y/MAP_XY_FACTOR);
 
 	yIndex += pMap->getBorderSize();
-	
+
 
 	// If negative, outside of map so return default.
 	if (yIndex<0) {
@@ -1448,7 +1448,7 @@ void CWorldBuilderDoc::getCoordFromCellIndex(CPoint ndx, Coord3D* pt)
 // CWorldBuilderView::getAllIndexesInRect
 //=============================================================================
 //=============================================================================
-Bool CWorldBuilderDoc::getAllIndexesInRect(const Coord3D* bl, const Coord3D* br, 
+Bool CWorldBuilderDoc::getAllIndexesInRect(const Coord3D* bl, const Coord3D* br,
 																					 const Coord3D* tl, const Coord3D* tr,
 																					 Int widthOutside, VecHeightMapIndexes* allIndices)
 {
@@ -1459,9 +1459,9 @@ Bool CWorldBuilderDoc::getAllIndexesInRect(const Coord3D* bl, const Coord3D* br,
 	}
 
 	Coord3D center = { (bl->x + tr->x) / 2, (bl->y + tr->y) / 2, (bl->z + tr->z) / 2 };
-	
+
 	allIndices->clear();
-	
+
 	CPoint ndx;
 
 	FindIndexNearest(this, &center, &ndx, PREFER_CENTER);
@@ -1472,13 +1472,13 @@ Bool CWorldBuilderDoc::getAllIndexesInRect(const Coord3D* bl, const Coord3D* br,
 
 	FindIndexNearest(this, &center, &ndx, PREFER_TOP);
 	AddUniqueAndNeighbors(this, bl, br, tl, tr, ndx, allIndices);
-	
+
 	FindIndexNearest(this, &center, &ndx, PREFER_RIGHT);
 	AddUniqueAndNeighbors(this, bl, br, tl, tr, ndx, allIndices);
-	
+
 	FindIndexNearest(this, &center, &ndx, PREFER_BOTTOM);
 	AddUniqueAndNeighbors(this, bl, br, tl, tr, ndx, allIndices);
-	
+
 	return (allIndices->size() > 0);
 }
 
@@ -1486,7 +1486,7 @@ Bool CWorldBuilderDoc::getAllIndexesInRect(const Coord3D* bl, const Coord3D* br,
 //=============================================================================
 // CWorldBuilderView::getCellPositionFromPoint
 //=============================================================================
-/** Given a pixel position, returns the x/y location in the height map.  This 
+/** Given a pixel position, returns the x/y location in the height map.  This
 will return real values, so a position can be 1.7, 2.4 or such.  If the position
 is not over the height map, return -1, -1. */
 //=============================================================================
@@ -1520,7 +1520,7 @@ void CWorldBuilderDoc::getObjArrowPoint(MapObject *pObj, Coord3D *location)
  	float angle = pObj->getAngle();
 	// The arrow starts in the +x direction.
 	Vector3 arrow(1.2f*MAP_XY_FACTOR, 0, 0);
-	// Rotate 
+	// Rotate
 	arrow.Rotate_Z(angle);
 	// Rotated.
 	location->x = arrow.X;
@@ -1531,18 +1531,18 @@ void CWorldBuilderDoc::getObjArrowPoint(MapObject *pObj, Coord3D *location)
 	//location->z += loc.z;
 }
 
-void CWorldBuilderDoc::OnEditLinkCenters() 
+void CWorldBuilderDoc::OnEditLinkCenters()
 {
 	m_linkCenters = !m_linkCenters;
 }
 
-void CWorldBuilderDoc::OnUpdateEditLinkCenters(CCmdUI* pCmdUI) 
+void CWorldBuilderDoc::OnUpdateEditLinkCenters(CCmdUI* pCmdUI)
 {
 	pCmdUI->SetCheck(m_linkCenters?1:0);
 }
 
-BOOL CWorldBuilderDoc::CanCloseFrame(CFrameWnd* pFrame) 
-{	
+BOOL CWorldBuilderDoc::CanCloseFrame(CFrameWnd* pFrame)
+{
 	CView *pView = this->Get2DView();
 	if (pView && pView->GetParentFrame() == pFrame) {
 		return true; // can always close the 2d window.
@@ -1550,7 +1550,7 @@ BOOL CWorldBuilderDoc::CanCloseFrame(CFrameWnd* pFrame)
 	return SaveModified();
 }
 
-void CWorldBuilderDoc::OnViewTimeOfDay() 
+void CWorldBuilderDoc::OnViewTimeOfDay()
 {
 	WbView3d * pView = Get3DView();
 	if (pView) {
@@ -1558,7 +1558,7 @@ void CWorldBuilderDoc::OnViewTimeOfDay()
 	}
 }
 
-void CWorldBuilderDoc::OnWindow2dwindow() 
+void CWorldBuilderDoc::OnWindow2dwindow()
 {
 /*
 	CView *pView = this->Get2DView();
@@ -1575,7 +1575,7 @@ void CWorldBuilderDoc::OnWindow2dwindow()
 */
 }
 
-void CWorldBuilderDoc::OnUpdateWindow2dwindow(CCmdUI* pCmdUI) 
+void CWorldBuilderDoc::OnUpdateWindow2dwindow(CCmdUI* pCmdUI)
 {
 /*
 	CView *pView = this->Get2DView();
@@ -1586,14 +1586,14 @@ void CWorldBuilderDoc::OnUpdateWindow2dwindow(CCmdUI* pCmdUI)
 //=============================================================================
 // CWorldBuilderDoc::compressWaypointIds
 //=============================================================================
-/** Renumbers the waypoints and the links that reference them, removing any 
+/** Renumbers the waypoints and the links that reference them, removing any
 unused ids. */
 //=============================================================================
 void CWorldBuilderDoc::compressWaypointIds(void)
 {
 	updateWaypointTable();
 	m_curWaypointID = 0;
-	MapObject *pMapObj = NULL; 
+	MapObject *pMapObj = NULL;
 	for (pMapObj = MapObject::getFirstMapObject(); pMapObj; pMapObj = pMapObj->getNext()) {
 		if (pMapObj->isWaypoint()) {
 			Int nwpid = getNextWaypointID();
@@ -1640,10 +1640,10 @@ void CWorldBuilderDoc::compressWaypointIds(void)
 // CWorldBuilderDoc::updateWaypointTable
 //=============================================================================
 /** If any waypoints have changed (m_waypointTableNeedsUpdate) updates the waypoint
-table.  The waypoint table is used to locate waypoints by id, without searching 
+table.  The waypoint table is used to locate waypoints by id, without searching
 the objects list. (See getWaypointByID()) */
 //=============================================================================
-void CWorldBuilderDoc::updateWaypointTable(void) 
+void CWorldBuilderDoc::updateWaypointTable(void)
 {
 	if (m_waypointTableNeedsUpdate) {
 		m_waypointTableNeedsUpdate=false;
@@ -1652,7 +1652,7 @@ void CWorldBuilderDoc::updateWaypointTable(void)
 			m_waypointTable[i] = NULL;
 		}
 
-		MapObject *pMapObj = NULL; 
+		MapObject *pMapObj = NULL;
 		for (pMapObj = MapObject::getFirstMapObject(); pMapObj; pMapObj = pMapObj->getNext()) {
 			if (pMapObj->isWaypoint()) {
 				Int id = pMapObj->getWaypointID();
@@ -1676,7 +1676,7 @@ void CWorldBuilderDoc::updateWaypointTable(void)
 //=============================================================================
 /** Adds a waypoint link between two waypoints, referenced by waypoint id. */
 //=============================================================================
-void CWorldBuilderDoc::addWaypointLink(Int waypointID1, Int waypointID2) 
+void CWorldBuilderDoc::addWaypointLink(Int waypointID1, Int waypointID2)
 {
 	Int i;
 	for (i=0; i<m_numWaypointLinks; i++) {
@@ -1698,7 +1698,7 @@ void CWorldBuilderDoc::addWaypointLink(Int waypointID1, Int waypointID2)
 //=============================================================================
 /** Removes a waypoint link between two waypoints, referenced by waypoint id. */
 //=============================================================================
-void CWorldBuilderDoc::removeWaypointLink(Int waypointID1, Int waypointID2) 
+void CWorldBuilderDoc::removeWaypointLink(Int waypointID1, Int waypointID2)
 {
 	Int i;
 	for (i=0; i<m_numWaypointLinks; i++) {
@@ -1728,7 +1728,7 @@ MapObject *CWorldBuilderDoc::getWaypointByID(Int waypointID)
 			return pObj;
 		}
 		DEBUG_ASSERTCRASH(pObj==NULL, ("Waypoint links to an obj that isn't a waypoint."));
-	} 
+	}
 	return NULL;
 }
 
@@ -1826,12 +1826,12 @@ void CWorldBuilderDoc::updateLWL(MapObject *pWay, MapObject *pSrcWay)
 				if (pObj == pCurWay) {
 					process = true;
 					pNewWay = m_waypointTable[waypointID2];
-				} 
+				}
 				pObj = m_waypointTable[waypointID2];
 				if (pObj == pCurWay) {
 					process = true;
 					pNewWay = m_waypointTable[waypointID1];
-				} 
+				}
 			}
 			if (process) {
 				m_waypointLinks[i].processedFlag = true;
@@ -1848,7 +1848,7 @@ void CWorldBuilderDoc::updateLWL(MapObject *pWay, MapObject *pSrcWay)
 //=============================================================================
 // CWorldBuilderDoc::getWaypointLink
 //=============================================================================
-/** Returns the two waypoint ID's that are linked.  Note that due to edits, one 
+/** Returns the two waypoint ID's that are linked.  Note that due to edits, one
 or both waypoints may have been deleted. */
 //=============================================================================
 void CWorldBuilderDoc::getWaypointLink(Int ndx, Int *waypointID1, Int *waypointID2)
@@ -1864,10 +1864,10 @@ void CWorldBuilderDoc::getWaypointLink(Int ndx, Int *waypointID1, Int *waypointI
 //=============================================================================
 // CWorldBuilderDoc::waypointLinkExists
 //=============================================================================
-/** Returns true if the two waypoint ID's are linked.  Note that due to edits, one 
+/** Returns true if the two waypoint ID's are linked.  Note that due to edits, one
 or both waypoints may have been deleted. */
 //=============================================================================
-Bool CWorldBuilderDoc::waypointLinkExists(Int waypointID1, Int waypointID2) 
+Bool CWorldBuilderDoc::waypointLinkExists(Int waypointID1, Int waypointID2)
 {
 	Int i;
 	for (i=0; i<m_numWaypointLinks; i++) {
@@ -1880,7 +1880,7 @@ Bool CWorldBuilderDoc::waypointLinkExists(Int waypointID1, Int waypointID2)
 }
 
 
-void CWorldBuilderDoc::OnViewReloadtextures() 
+void CWorldBuilderDoc::OnViewReloadtextures()
 {
 	WW3D::_Invalidate_Textures();
 	WorldHeightMapEdit *pMap = GetHeightMap();
@@ -1889,7 +1889,7 @@ void CWorldBuilderDoc::OnViewReloadtextures()
 	updateHeightMap(pMap, false, range);
 }
 
-void CWorldBuilderDoc::OnEditScripts() 
+void CWorldBuilderDoc::OnEditScripts()
 {
 	ScriptDialog script;
 	script.DoModal();
@@ -1905,11 +1905,11 @@ void CWorldBuilderDoc::OnViewHome()
 	MapObject *pMapObj = MapObject::getFirstMapObject();
 
 	// set pos to be the coordinates of the center of the map
-	pos.x = MAP_XY_FACTOR*m_heightMap->getXExtent()/2; 
+	pos.x = MAP_XY_FACTOR*m_heightMap->getXExtent()/2;
 	pos.y = MAP_XY_FACTOR*m_heightMap->getYExtent()/2;
 	pos.x -= MAP_XY_FACTOR*m_heightMap->getBorderSize();
 	pos.y -= MAP_XY_FACTOR*m_heightMap->getBorderSize();
-	
+
 	// if waypoint "InitialCameraPosition" exists, replace pos with the appropriate coordinates
 	while (pMapObj) {
 		if (pMapObj->isWaypoint()) {
@@ -1930,19 +1930,19 @@ void CWorldBuilderDoc::OnViewHome()
 	}
 }
 
-void CWorldBuilderDoc::OnTexturesizingTile4x4() 
+void CWorldBuilderDoc::OnTexturesizingTile4x4()
 {
 #ifdef EVAL_TILING_MODES
 	WorldHeightMapEdit *pMap = GetHeightMap();
 	pMap->m_tileMode = WorldHeightMap::TILE_4x4;
 	IRegion2D range = {0,0,0,0};
 	updateHeightMap(pMap, false, range);
-#else 
+#else
 	::AfxMessageBox("Feature not currently enabled.", MB_OK);
 #endif
 }
 
-void CWorldBuilderDoc::OnUpdateTexturesizingTile4x4(CCmdUI* pCmdUI) 
+void CWorldBuilderDoc::OnUpdateTexturesizingTile4x4(CCmdUI* pCmdUI)
 {
 #ifdef EVAL_TILING_MODES
 	WorldHeightMapEdit *pMap = GetHeightMap();
@@ -1950,19 +1950,19 @@ void CWorldBuilderDoc::OnUpdateTexturesizingTile4x4(CCmdUI* pCmdUI)
 #endif
 }
 
-void CWorldBuilderDoc::OnTexturesizingTile6x6() 
+void CWorldBuilderDoc::OnTexturesizingTile6x6()
 {
 #ifdef EVAL_TILING_MODES
 	WorldHeightMapEdit *pMap = GetHeightMap();
 	pMap->m_tileMode = WorldHeightMap::TILE_6x6;
 	IRegion2D range = {0,0,0,0};
 	updateHeightMap(pMap, false, range);
-#else 
+#else
 	::AfxMessageBox("Feature not currently enabled.", MB_OK);
 #endif
 }
 
-void CWorldBuilderDoc::OnUpdateTexturesizingTile6x6(CCmdUI* pCmdUI) 
+void CWorldBuilderDoc::OnUpdateTexturesizingTile6x6(CCmdUI* pCmdUI)
 {
 #ifdef EVAL_TILING_MODES
 	WorldHeightMapEdit *pMap = GetHeightMap();
@@ -1970,19 +1970,19 @@ void CWorldBuilderDoc::OnUpdateTexturesizingTile6x6(CCmdUI* pCmdUI)
 #endif
 }
 
-void CWorldBuilderDoc::OnTexturesizingTile8x8() 
+void CWorldBuilderDoc::OnTexturesizingTile8x8()
 {
 #ifdef EVAL_TILING_MODES
 	WorldHeightMapEdit *pMap = GetHeightMap();
 	pMap->m_tileMode = WorldHeightMap::TILE_8x8;
 	IRegion2D range = {0,0,0,0};
 	updateHeightMap(pMap, false, range);
-#else 
+#else
 	::AfxMessageBox("Feature not currently enabled.", MB_OK);
 #endif
 }
 
-void CWorldBuilderDoc::OnUpdateTexturesizingTile8x8(CCmdUI* pCmdUI) 
+void CWorldBuilderDoc::OnUpdateTexturesizingTile8x8(CCmdUI* pCmdUI)
 {
 #ifdef EVAL_TILING_MODES
 	WorldHeightMapEdit *pMap = GetHeightMap();
@@ -1993,28 +1993,28 @@ void CWorldBuilderDoc::OnUpdateTexturesizingTile8x8(CCmdUI* pCmdUI)
 static AsciiString formatScriptLabel(Script *pScr) {
 	AsciiString fmt;
 	if (pScr->isSubroutine()) {
-		fmt.concat("[S "); 
+		fmt.concat("[S ");
 	} else {
-		fmt.concat("[ns "); 
+		fmt.concat("[ns ");
 	}
 	if (pScr->isActive()) {
-		fmt.concat("A "); 
+		fmt.concat("A ");
 	} else {
-		fmt.concat("na "); 
+		fmt.concat("na ");
 	}
 	if (pScr->isOneShot()) {
-		fmt.concat("D] ["); 
+		fmt.concat("D] [");
 	} else {
-		fmt.concat("nd] ["); 
+		fmt.concat("nd] [");
 	}
 	if (pScr->isEasy()) {
-		fmt.concat("E "); 
-	} 
+		fmt.concat("E ");
+	}
 	if (pScr->isNormal()) {
-		fmt.concat("N "); 
-	} 
+		fmt.concat("N ");
+	}
 	if (pScr->isHard()) {
-		fmt.concat("H]"); 
+		fmt.concat("H]");
 	} else {
 		fmt.concat("]");
 	}
@@ -2035,8 +2035,8 @@ static void writeScript(FILE *theLogFile, const char * str)
 
 #define DUMP_RAW_DICTS
 #ifdef DUMP_RAW_DICTS
-static void writeRawDict( FILE *theLogFile, const char* nm, const Dict* d ) 
-{ 
+static void writeRawDict( FILE *theLogFile, const char* nm, const Dict* d )
+{
 	if (!d)
 	{
 		fprintf(theLogFile, "Dict %s is null!\n", nm);
@@ -2094,9 +2094,9 @@ static void fprintUnit(FILE *theLogFile, Dict *teamDict, NameKeyType keyMinUnit,
 
 }
 
-void CWorldBuilderDoc::OnDumpDocToText(void) 
+void CWorldBuilderDoc::OnDumpDocToText(void)
 {
-	MapObject *pMapObj = NULL; 
+	MapObject *pMapObj = NULL;
 	const char* vetStrings[] = {"Green", "Regular", "Veteran", "Elite"};
 	const char* aggroStrings[] = {"Passive", "Normal", "Guard", "Hunt", "Agressive", "Sleep"};
 	AsciiString noOwner = "No Owner";
@@ -2106,9 +2106,9 @@ void CWorldBuilderDoc::OnDumpDocToText(void)
 		char dirbuf[ _MAX_PATH ];
 		::GetModuleFileName( NULL, dirbuf, sizeof( dirbuf ) );
 		char *pEnd = dirbuf + strlen( dirbuf );
-		while( pEnd != dirbuf ) 
+		while( pEnd != dirbuf )
 		{
-			if( *pEnd == '\\' ) 
+			if( *pEnd == '\\' )
 			{
 				*(pEnd + 1) = 0;
 				break;
@@ -2127,15 +2127,15 @@ void CWorldBuilderDoc::OnDumpDocToText(void)
 			throw;
 
 		open = true;
-		
+
 		fprintf(theLogFile,"\n\n\nDump of Doc Contents\n");
 
 #ifdef DUMP_RAW_DICTS
-	
+
 		writeRawDict(theLogFile, "WorldDict", MapObject::getWorldDict());
 
 		fprintf(theLogFile,"Raw Map Object\n");
-		for (pMapObj = MapObject::getFirstMapObject(); pMapObj; pMapObj = pMapObj->getNext()) 
+		for (pMapObj = MapObject::getFirstMapObject(); pMapObj; pMapObj = pMapObj->getNext())
 		{
 			Dict *d = pMapObj->getProperties();
 			TeamsInfo *teamInfo = TheSidesList->findTeamInfo(d->getAsciiString(TheKey_originalOwner));
@@ -2238,7 +2238,7 @@ void CWorldBuilderDoc::OnDumpDocToText(void)
 			}
 		}
 		fprintf(theLogFile,"End of Units\n");
-		
+
 		fprintf(theLogFile,"\nObject Types summary\n");
 		{
 			Int totalObjectCount = 0;
@@ -2261,21 +2261,21 @@ void CWorldBuilderDoc::OnDumpDocToText(void)
 
 			while (mapOfTemplates.size() > 0) {
 				std::map<AsciiString, Int>::iterator storedIt = mapOfTemplates.begin();
-				
+
 				for (it = mapOfTemplates.begin(); it != mapOfTemplates.end(); ++it) {
 					if (storedIt->second < it->second) {
 						storedIt = it;
 					}
 				}
 
-				fprintf(theLogFile, "Map Object: %s, Instances: %d\n", storedIt->first.str(), storedIt->second); 
-				
-				// Now, erase it. 
+				fprintf(theLogFile, "Map Object: %s, Instances: %d\n", storedIt->first.str(), storedIt->second);
+
+				// Now, erase it.
 				mapOfTemplates.erase(storedIt);
 			}
 		}
 		fprintf(theLogFile,"\nEnd of Object Types summary\n");
-		
+
 		// dump the waypoints
 		fprintf(theLogFile,"\nWaypoints\n");
 		for (pMapObj = MapObject::getFirstMapObject(); pMapObj; pMapObj = pMapObj->getNext()) {
@@ -2363,7 +2363,7 @@ writeRawDict( theLogFile, "TeamInfo",ti->getDict() );
 #endif
 				if (ti->getDict()->getAsciiString(TheKey_teamOwner) == name)
 				{
-					Bool exists;														
+					Bool exists;
 					AsciiString teamName = ti->getDict()->getAsciiString(TheKey_teamName);
 					AsciiString waypoint = ti->getDict()->getAsciiString(TheKey_teamHome, &exists);
 					CString pri;
@@ -2397,7 +2397,7 @@ writeRawDict( theLogFile, "TeamInfo",ti->getDict() );
 					if (script.isEmpty()) script="<none>";
 					fprintf(theLogFile, " OnAllClear='%s'\n", script.str());
 				}
-			}								
+			}
 		}
 		fprintf(theLogFile,"End of Teams\n");
 
@@ -2515,14 +2515,14 @@ void FindIndexNearest(CWorldBuilderDoc* pDoc, const Coord3D* point, CPoint* outN
 			break;
 		}
 	};
-	
+
 	pDoc->getCellIndexFromCoord(testPoint, outNdx);
 }
 
 Bool IndexInRect(CWorldBuilderDoc* pDoc, const Coord3D* bl, const Coord3D* tl, const Coord3D* br, const Coord3D* tr, CPoint* index)
 {
 	Coord3D testPoint;
-	pDoc->getCoordFromCellIndex(*index, &testPoint);	
+	pDoc->getCoordFromCellIndex(*index, &testPoint);
 	return PointInsideRect3D(bl, tl, br, tr, &testPoint);
 }
 
@@ -2547,7 +2547,7 @@ Bool AddUniqueAndNeighbors(CWorldBuilderDoc* pDoc, const Coord3D* bl, const Coor
 	// first left
 	ndx.x += 1;
 	AddUniqueAndNeighbors(pDoc, bl, tl, br, tr, ndx, allIndices);
-	
+
 	// then right
 	ndx.x -= 2;
 	AddUniqueAndNeighbors(pDoc,bl, tl, br, tr, ndx, allIndices);
@@ -2560,12 +2560,12 @@ Bool AddUniqueAndNeighbors(CWorldBuilderDoc* pDoc, const Coord3D* bl, const Coor
 	// then bottom
 	ndx.y -= 2;
 	AddUniqueAndNeighbors(pDoc, bl, tl, br, tr, ndx, allIndices);
-	
+
 	return true;
 }
 
 
-void CWorldBuilderDoc::OnRemoveclifftexmapping() 
+void CWorldBuilderDoc::OnRemoveclifftexmapping()
 {
 	if (::AfxMessageBox(IDS_CONFIRM_REMOVE_CLIFF_MAPPING, MB_YESNO) == IDYES) {
 		if (m_heightMap) {
@@ -2577,10 +2577,10 @@ void CWorldBuilderDoc::OnRemoveclifftexmapping()
 				updateHeightMap(htMapEditCopy, false, partialRange);
 				WBDocUndoable *pUndo = new WBDocUndoable(this, htMapEditCopy);
 				this->AddAndDoUndoable(pUndo);
-				REF_PTR_RELEASE(pUndo); // belongs to this now.	
-			} 
+				REF_PTR_RELEASE(pUndo); // belongs to this now.
+			}
 			REF_PTR_RELEASE(htMapEditCopy);
-		}	
+		}
 	}
 }
 

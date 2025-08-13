@@ -48,7 +48,7 @@ typedef std::list< crateCreationEntry >											crateCreationEntryList;
 typedef std::list< crateCreationEntry >::iterator						crateCreationEntryIterator;
 typedef std::list< crateCreationEntry >::const_iterator			crateCreationEntryConstIterator;
 
-/** 
+/**
 		A CrateTemplate is a ini defined set of conditions plus a ThingTemplate that is the Object
 		containing the correct CrateCollide module.
 */
@@ -84,7 +84,7 @@ private:
 typedef OVERRIDE<CrateTemplate> CrateTemplateOverride;
 
 
-/** 
+/**
 		System responsible for Crates as code objects - ini, new/delete etc
 */
 class CrateSystem : public SubsystemInterface
@@ -103,7 +103,7 @@ public:
 	CrateTemplate *newCrateTemplate( AsciiString name );
 	CrateTemplate *newCrateTemplateOverride( CrateTemplate *crateToOverride );
 
-	
+
 
 	static void parseCrateTemplateDefinition(INI* ini);
 

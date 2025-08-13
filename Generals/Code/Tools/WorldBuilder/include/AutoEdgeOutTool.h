@@ -29,10 +29,10 @@
 class WorldHeightMapEdit;
 /*************************************************************************/
 /**                             AutoEdgeOutTool
-	 Does the BlendEdgesOut tool operation. 
+	 Does the BlendEdgesOut tool operation.
 ***************************************************************************/
 ///  Blend edges out tool.
-class AutoEdgeOutTool : public Tool 
+class AutoEdgeOutTool : public Tool
 {
 public:
 	AutoEdgeOutTool(void);

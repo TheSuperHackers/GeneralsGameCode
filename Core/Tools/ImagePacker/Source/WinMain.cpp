@@ -18,12 +18,12 @@
 
 // FILE: WinMain.cpp //////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:    ImagePacker
@@ -84,8 +84,7 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
                       LPSTR lpCmdLine, Int nCmdShow )
 {
 
-	// start the log
-	DEBUG_INIT(DEBUG_FLAGS_DEFAULT);
+	// initialize the memory manager early
 	initMemoryManager();
 
 	// save application instance
@@ -105,18 +104,16 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 		return 0;
 
 	}  // end if
-		
+
 	// load the dialog box
-	DialogBox( hInstance, (LPCTSTR)IMAGE_PACKER_DIALOG, 
+	DialogBox( hInstance, (LPCTSTR)IMAGE_PACKER_DIALOG,
 						 NULL, (DLGPROC)ImagePackerProc );
 
 	// delete the image packer
 	delete TheImagePacker;
 	TheImagePacker = NULL;
 
-	// close the log
 	shutdownMemoryManager();
-	DEBUG_SHUTDOWN();
 
 	// all done
 	return 0;

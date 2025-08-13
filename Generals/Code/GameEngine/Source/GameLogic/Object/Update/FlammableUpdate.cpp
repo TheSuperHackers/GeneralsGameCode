@@ -56,11 +56,11 @@ FlammableUpdateModuleData::FlammableUpdateModuleData()
 }
 
 //-------------------------------------------------------------------------------------------------
-/*static*/ void FlammableUpdateModuleData::buildFieldParse(MultiIniFieldParse& p) 
+/*static*/ void FlammableUpdateModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
   UpdateModuleData::buildFieldParse(p);
 
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
 		{ "BurnedDelay",						INI::parseDurationUnsignedInt,	NULL, offsetof( FlammableUpdateModuleData, m_burnedDelay ) },
 		{ "AflameDuration",					INI::parseDurationUnsignedInt,	NULL, offsetof( FlammableUpdateModuleData, m_aflameDuration ) },
@@ -110,7 +110,7 @@ void FlammableUpdate::onDamage( DamageInfo *damageInfo )
 			m_flameDamageLimit = getFlammableUpdateModuleData()->m_flameDamageLimitData;
 		}
 		m_lastFlameDamageDealt = now;
-		
+
 		Object *me = getObject();
 		if( !me->getStatusBits().test( OBJECT_STATUS_AFLAME ) && !me->getStatusBits().test( OBJECT_STATUS_BURNED ) )
 		{
@@ -180,7 +180,7 @@ UpdateSleepTime FlammableUpdate::calcSleepTime()
 		if (m_burnedEndFrame != 0 && m_burnedEndFrame < soonest && m_burnedEndFrame > now) soonest = m_burnedEndFrame;
 		if (m_damageEndFrame != 0 && m_damageEndFrame < soonest && m_damageEndFrame > now) soonest = m_damageEndFrame;
 		DEBUG_ASSERTCRASH(soonest - now > 0, ("hmm"));
-		// UPDATE_SLEEP requires a count-of-frames, not an absolute-frame, so subtract 'now' 
+		// UPDATE_SLEEP requires a count-of-frames, not an absolute-frame, so subtract 'now'
 		return UPDATE_SLEEP(soonest - now);
 	}
 	else

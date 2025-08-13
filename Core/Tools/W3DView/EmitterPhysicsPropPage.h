@@ -103,16 +103,16 @@ protected:
 		/////////////////////////////////////////////////////////
 		//
 		//	Protected methods
-		//		
+		//
 		void								Initialize (void);
 		void								On_Setting_Changed (UINT ctrl_id);
-	
+
 	private:
 
 		/////////////////////////////////////////////////////////
 		//
 		//	Private member data
-		//		
+		//
 		EmitterInstanceListClass *	m_pEmitterList;
 		bool								m_bValid;
 

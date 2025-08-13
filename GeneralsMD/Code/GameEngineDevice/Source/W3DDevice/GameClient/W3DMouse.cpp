@@ -72,7 +72,7 @@ void MouseThreadClass::Thread_Function()
 
 	//poll mouse and update position
 
-	while (running) 
+	while (running)
 	{
 		isThread=TRUE;
 		if (TheMouse)
@@ -179,7 +179,7 @@ Bool W3DMouse::loadD3DCursorTextures(MouseCursor cursor)
 
 	if (!animFrames)
 		return FALSE;	//no animation frames defined.
-	
+
 	const char *baseName=m_cursorInfo[cursor].textureName.str();
 	char FrameName[64];
 
@@ -226,7 +226,7 @@ void W3DMouse::initD3DAssets(void)
 	if (m_currentRedrawMode == RM_DX8 && cursorTextures[1] == NULL && am)
 	{
 		for (Int i=0; i<NUM_MOUSE_CURSORS; i++)
-		{	
+		{
 			for (Int j=0; j < MAX_2D_CURSOR_ANIM_FRAMES; j++)
 			{
 				cursorTextures[i][j]=NULL;//am->Get_Texture(m_cursorInfo[i].textureName.str());
@@ -303,7 +303,7 @@ void W3DMouse::initW3DAssets(void)
 	m_camera->Set_Position( Vector3( 0, 1, 1 ) );
 	Vector2 min = Vector2( -1, -1 );
 	Vector2 max = Vector2( +1, +1 );
-	m_camera->Set_View_Plane( min, max );		
+	m_camera->Set_View_Plane( min, max );
 	m_camera->Set_Clip_Planes( 0.995f, 20.0f );
 	if (m_orthoCamera)
 		m_camera->Set_Projection_Type( CameraClass::ORTHO );
@@ -342,7 +342,7 @@ void W3DMouse::init( void )
 	if (m_currentRedrawMode == RM_DX8)
 		thread.Execute();
 	thread.Set_Priority(0);
-	
+
 }  // end int
 
 //-------------------------------------------------------------------------------------------------
@@ -377,7 +377,7 @@ void W3DMouse::setCursor( MouseCursor cursor )
 		return;
 	}
 
-	// extend 
+	// extend
 	Mouse::setCursor( cursor );
 
 	// if we're already on this cursor ignore the rest of code to stop cursor flickering.
@@ -401,7 +401,7 @@ void W3DMouse::setCursor( MouseCursor cursor )
 					//Since this type of cursor is updated from a non-D3D thread, we need
 					//to preallocate all surfaces in main thread.
 					loadD3DCursorTextures(cursor);
-				}	
+				}
 			}
 			if (m_currentD3DSurface[0])
 				doImageChange=TRUE;
@@ -514,7 +514,7 @@ void W3DMouse::draw(void)
 		}
 	}
 	else if (m_currentRedrawMode == RM_POLYGON)
-	{	
+	{
 		const Image *image=cursorImages[m_currentPolygonCursor];
 		if (image)
 		{

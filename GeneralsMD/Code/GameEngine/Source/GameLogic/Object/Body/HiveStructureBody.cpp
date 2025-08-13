@@ -55,7 +55,7 @@ HiveStructureBodyModuleData::HiveStructureBodyModuleData()
 
 
 //-------------------------------------------------------------------------------------------------
-HiveStructureBody::HiveStructureBody( Thing *thing, const ModuleData* moduleData ) 
+HiveStructureBody::HiveStructureBody( Thing *thing, const ModuleData* moduleData )
 							: StructureBody( thing, moduleData )
 {
 }
@@ -70,10 +70,10 @@ void HiveStructureBody::attemptDamage( DamageInfo *damageInfo )
 {
 	const HiveStructureBodyModuleData *data = getHiveStructureBodyModuleData();
 	Object *hive = getObject();
-	
+
 	if( getDamageTypeFlag( data->m_damageTypesToPropagateToSlaves, damageInfo->in.m_damageType ) )
 	{
-		
+
     //We have the right type of damage types incoming to propagate to slaves. Do we have slaves?
 		SpawnBehaviorInterface *spawnInterface = hive->getSpawnBehaviorInterface();
 		if( spawnInterface )
@@ -131,7 +131,7 @@ void HiveStructureBody::attemptDamage( DamageInfo *damageInfo )
 
 	}
 
-	//Nothing to propagate (either different damage type or no slaves), 
+	//Nothing to propagate (either different damage type or no slaves),
 	//so damage me instead!
 	StructureBody::attemptDamage( damageInfo );
 }

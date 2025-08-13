@@ -58,7 +58,7 @@ public:
 // ------------------------------------------------------------------------------------------------
 enum POWTruckTask CPP_11(: Int)	// Stored in save file, do not renumber.  jba.
 {
-	POW_TRUCK_TASK_WAITING						= 0, ///< Waiting for something to do 
+	POW_TRUCK_TASK_WAITING						= 0, ///< Waiting for something to do
 	POW_TRUCK_TASK_FIND_TARGET				= 1, ///< We need to search out a target to collect
 	POW_TRUCK_TASK_COLLECTING_TARGET	= 2, ///< collecting a targeted POW
 	POW_TRUCK_TASK_RETURNING_PRISONERS= 3	///< return all POWs to base
@@ -80,7 +80,7 @@ public:
 
 //-------------------------------------------------------------------------------------------------
 /** The Dozer AI Update interface.  Dozers are workers that are capable of building all the
-	* structures available to a player, as well as repairing building, and fortifying 
+	* structures available to a player, as well as repairing building, and fortifying
 	* civilian structures */
 //-------------------------------------------------------------------------------------------------
 class POWTruckAIUpdate : public AIUpdateInterface,
@@ -135,7 +135,7 @@ protected:
 	// AIUpdateInterface implementations
 	virtual void privatePickUpPrisoner( Object *prisoner, CommandSourceType cmdSource );
 	virtual void privateReturnPrisoners( Object *prison, CommandSourceType cmdSource );
-	
+
 	POWTruckAIMode m_aiMode;						///< Type of AI, automatic or explicitly controlled be player
 	POWTruckTask m_currentTask;					///< our current task
 	ObjectID m_targetID;								///< Object ID of the target we're going to collect

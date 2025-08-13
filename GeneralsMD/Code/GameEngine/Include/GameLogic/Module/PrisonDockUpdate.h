@@ -55,7 +55,7 @@ public:
 	virtual Bool action( Object *docker, Object *drone = NULL );	///< for me this means do some Prison
 
 protected:
-	
+
 };
 
 #endif

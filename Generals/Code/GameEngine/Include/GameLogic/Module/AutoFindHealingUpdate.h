@@ -54,7 +54,7 @@ public:
 	AutoFindHealingUpdateModuleData();
 	static void buildFieldParse(MultiIniFieldParse& p);
 
-private: 
+private:
 
 };
 

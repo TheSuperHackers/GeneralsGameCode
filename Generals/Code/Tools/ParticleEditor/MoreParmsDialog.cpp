@@ -16,7 +16,7 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-// FILE: MoreParmsDialog.cpp 
+// FILE: MoreParmsDialog.cpp
 /*---------------------------------------------------------------------------*/
 /* EA Pacific                                                                */
 /* Confidential Information	                                                 */
@@ -251,7 +251,7 @@ void MoreParmsDialog::performUpdate( IN Bool toUI )
 				}
 			}
 		}
-	
+
 		{	// start size rate
 			Real startSizeRate;
 
@@ -281,7 +281,7 @@ void MoreParmsDialog::performUpdate( IN Bool toUI )
 				}
 			}
 		}
-	
+
 		{	// size rate
 			Real sizeRate;
 
@@ -514,7 +514,7 @@ void MoreParmsDialog::performUpdate( IN Bool toUI )
 				}
 			}
 		}
-	
+
 		{	// ping pong wind start angle
 			Real angle;
 
@@ -635,7 +635,7 @@ void MoreParmsDialog::OnParticleSystemEdit()
 	if (!pParent) {
 		return;
 	}
-	
+
 	pParent->signalParticleSystemEdit();
 }
 

@@ -60,7 +60,7 @@ The `TheSuperHackers` word and `@keyword` are mandatory. `author` and date can b
 |------------------|-------------------------------------------------------------|
 | @bugfix          | Fixes a bug                                                 |
 | @fix             | Fixes something, but is not a user facing bug               |
-| @compile         | Addresses a compile warning or error                        |
+| @build           | Addresses a compile warning or error                        |
 | @feature         | Adds something new                                          |
 | @performance     | Improves performance                                        |
 | @refactor        | Moves or rewrites code, but does not change the behaviour   |
@@ -83,26 +83,36 @@ Optionally, the pull request number can be appended to the comment. This can onl
 
 ### Pull request documentation
 
-The title of a new Pull Request, and/or commit(s) within, begin with a **[GEN]** and/or **[ZH]** tag, depending on the game(s) it targets. If a change does not target a game, then a tag is not necessary. Furthermore, the title consists of a concise and descriptive sentence about the change and/or commit, beginning with an uppercase letter and ending without a dot. The title ideally begins with a word that describes the action that the change takes, for example `Fix *this*`, `Change *that*`, `Add *those*`, `Refactor *thing*`.
+The title of a new Pull Request, and/or commit(s) within, begins with a [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/) tag. The tag is followed by a concise and descriptive sentence about the change and/or commit, beginning with an upper case letter and ending without a dot. The sentence ideally begins with a word that describes the action that the change takes, for example `fix *this*`, `change *that*`, `add *those*`, `refactor *thing*`.
+
+Allowed (extended) commit title types are:
+```
+bugfix:
+build:
+chore:
+ci:
+docs:
+fix:
+feat:
+perf:
+refactor:
+style:
+test:
+tweak:
+unify:
+```
+
+For the optional scope behind the type pick a suitable word that describes the overall area that the change touches.
 
 Good:
 ```
-[GEN][ZH] Fix uninitialized memory access in Get_OS_Info
+bugfix(system): fix uninitialized memory access in Get_OS_Info
 ```
 
 Bad:
 ```
 Minimal changes for successful build.
 ```
-
-Currently established commit title tags are
-
-* [GEN]
-* [ZH]
-* [CORE]
-* [CMAKE]
-* [GITHUB]
-* [LINUX]
 
 If the Pull Request is meant to be merged with rebase, then a note for **Merge with Rebase** should be added to the top of the text body, to help identify the correct merge action when it is ready for merge. All commits of the Pull Request need to be properly named and need the number of the Pull Request added as a suffix in parentheses. Example: **(#333)**. All commits need to be able to compile on their own without dependencies in newer commits of the same Pull Request. Prefer to create changes for **Squash and Merge**, as this will simplify things.
 

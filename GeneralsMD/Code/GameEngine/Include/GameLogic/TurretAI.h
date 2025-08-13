@@ -37,7 +37,7 @@
 const Real DEFAULT_TURN_RATE = 0.01f;
 const Real DEFAULT_PITCH_RATE = 0.01f;
 
-/** 
+/**
  * The TurretAI state IDs.
  * Each of these constants will be associated with an instance of a State class
  * in a given StateMachine.
@@ -60,7 +60,7 @@ class TurretAI;
 
 //-----------------------------------------------------------------------------------------------------------
 /**
- * The AI state machine.  This is used by AIUpdate to implement all of the 
+ * The AI state machine.  This is used by AIUpdate to implement all of the
  * commands in the AICommandInterface.
  */
 class TurretStateMachine : public StateMachine
@@ -68,12 +68,12 @@ class TurretStateMachine : public StateMachine
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( TurretStateMachine, "TurretStateMachine" );
 
 public:
-	/** 
+	/**
 	 * The implementation of this constructor defines the states
 	 * used by this machine.
 	 */
 	TurretStateMachine( TurretAI* tai, Object* owner, AsciiString name );
-	
+
 	TurretAI* getTurretAI() const { return m_turretAI; }
 
 	virtual void clear();
@@ -93,7 +93,7 @@ protected:
 //-----------------------------------------------------------------------------------------------------------
 class TurretState : public State
 {
-	MEMORY_POOL_GLUE_ABC(TurretState)		
+	MEMORY_POOL_GLUE_ABC(TurretState)
 protected:
 	TurretState( TurretStateMachine* machine, AsciiString name ) : State( machine, name) { }
 	TurretAI* getTurretAI() { return ((TurretStateMachine*)getMachine())->getTurretAI(); }
@@ -102,8 +102,8 @@ EMPTY_DTOR(TurretState)
 
 //-----------------------------------------------------------------------------------------------------------
 class TurretAIIdleState : public TurretState
-{	
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(TurretAIIdleState, "TurretAIIdleState")		
+{
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(TurretAIIdleState, "TurretAIIdleState")
 public:
 	TurretAIIdleState( TurretStateMachine* machine ) : TurretState( machine, "TurretAIIdleState"), m_nextIdleScan(0) { }
 	virtual StateReturnType onEnter();
@@ -123,7 +123,7 @@ EMPTY_DTOR(TurretAIIdleState)
 //-----------------------------------------------------------------------------------------------------------
 class TurretAIIdleScanState : public TurretState
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(TurretAIIdleScanState, "TurretAIIdleScanState")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(TurretAIIdleScanState, "TurretAIIdleScanState")
 public:
 	TurretAIIdleScanState( TurretStateMachine* machine ) : TurretState( machine, "TurretAIIdleScanState"), m_desiredAngle(0) { }
 	virtual StateReturnType onEnter();
@@ -146,15 +146,15 @@ EMPTY_DTOR(TurretAIIdleScanState)
  */
 class TurretAIAimTurretState : public TurretState
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(TurretAIAimTurretState, "TurretAIAimTurretState")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(TurretAIAimTurretState, "TurretAIAimTurretState")
 private:
 #ifdef INTER_TURRET_DELAY
 	UnsignedInt m_extraDelay;
 #endif
 public:
 	TurretAIAimTurretState( TurretStateMachine* machine ) : TurretState( machine, "TurretAIAimTurretState" )
-	{ 
-	
+	{
+
 	}
 	virtual StateReturnType onEnter();
 	virtual void onExit( StateExitType status );
@@ -173,7 +173,7 @@ EMPTY_DTOR(TurretAIAimTurretState)
  */
 class TurretAIRecenterTurretState : public TurretState
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(TurretAIRecenterTurretState, "TurretAIRecenterTurretState")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(TurretAIRecenterTurretState, "TurretAIRecenterTurretState")
 public:
 	TurretAIRecenterTurretState( TurretStateMachine* machine ) : TurretState( machine, "TurretAIRecenterTurretState" ) { }
 	virtual StateReturnType onEnter();
@@ -193,11 +193,11 @@ EMPTY_DTOR(TurretAIRecenterTurretState)
  */
 class TurretAIHoldTurretState : public TurretState
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(TurretAIHoldTurretState, "TurretAIHoldTurretState")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(TurretAIHoldTurretState, "TurretAIHoldTurretState")
 private:
 	UnsignedInt m_timestamp;										///< frame this state was last entered
 public:
-	TurretAIHoldTurretState( TurretStateMachine* machine ) : TurretState( machine , "AIHoldTurretState") 
+	TurretAIHoldTurretState( TurretStateMachine* machine ) : TurretState( machine , "AIHoldTurretState")
 	{
 		m_timestamp = 0;
 	}
@@ -215,7 +215,7 @@ EMPTY_DTOR(TurretAIHoldTurretState)
 //-------------------------------------------------------------------------------------------------
 class TurretAIData : public MemoryPoolObject
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(TurretAIData, "TurretAIData")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(TurretAIData, "TurretAIData")
 public:
 	Real						m_turnRate;
 	Real						m_pitchRate;
@@ -256,7 +256,7 @@ enum TurretTargetType CPP_11(: Int)
 };
 
 //-----------------------------------------------------------------------------------------------------
-/** 
+/**
  * Turret behavior implementation.
  */
 class TurretAI : public MemoryPoolObject, public Snapshot, public NotifyWeaponFiredInterface
@@ -289,7 +289,7 @@ public:
 
 	Bool isOwnersCurWeaponOnTurret() const;
 	Bool isWeaponSlotOnTurret(WeaponSlotType wslot) const;
-	Bool isAttackingObject() const { return m_target == TARGET_OBJECT; } 
+	Bool isAttackingObject() const { return m_target == TARGET_OBJECT; }
 	Bool isForceAttacking() const { return m_isForceAttacking; }
 
 	// this will cause the turret to continuously track the given victim.

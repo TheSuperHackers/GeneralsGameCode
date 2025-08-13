@@ -49,14 +49,14 @@
 SalvageCrateCollide::SalvageCrateCollide( Thing *thing, const ModuleData* moduleData ) : CrateCollide( thing, moduleData )
 {
 
-} 
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 SalvageCrateCollide::~SalvageCrateCollide( void )
 {
 
-}  
+}
 
 //-------------------------------------------------------------------------------------------------
 Bool SalvageCrateCollide::isValidToExecute( const Object *other ) const
@@ -79,7 +79,7 @@ Bool SalvageCrateCollide::executeCrateBehavior( Object *other )
 		doArmorSet(other);
 
 		//Play the salvage installation crate pickup sound.
-		AudioEventRTS soundToPlay = TheAudio->getMiscAudio()->m_crateSalvage;	
+		AudioEventRTS soundToPlay = TheAudio->getMiscAudio()->m_crateSalvage;
 		soundToPlay.setObjectID( other->getID() );
 		TheAudio->addAudioEvent( &soundToPlay );
 	}
@@ -88,10 +88,10 @@ Bool SalvageCrateCollide::executeCrateBehavior( Object *other )
 		doWeaponSet( other );
 
 		//Play the salvage installation crate pickup sound.
-		AudioEventRTS soundToPlay = TheAudio->getMiscAudio()->m_crateSalvage;	
+		AudioEventRTS soundToPlay = TheAudio->getMiscAudio()->m_crateSalvage;
 		soundToPlay.setObjectID( other->getID() );
 		TheAudio->addAudioEvent( &soundToPlay );
-		
+
 		//Play the unit voice acknowledgement for upgrading weapons.
 		//Already handled by the "move order"
 		//const AudioEventRTS *soundToPlayPtr = other->getTemplate()->getPerUnitSound( "VoiceSalvage" );
@@ -102,20 +102,20 @@ Bool SalvageCrateCollide::executeCrateBehavior( Object *other )
 	else if( eligibleForLevel( other ) && testLevelChance() )
 	{
 		doLevelGain( other );
-		
+
 		//Sound will play in
-		//soundToPlay = TheAudio->getMiscAudio()->m_unitPromoted;	
+		//soundToPlay = TheAudio->getMiscAudio()->m_unitPromoted;
 	}
 	else // just assume the testMoneyChance
 	{
 		doMoney( other );
-		AudioEventRTS soundToPlay = TheAudio->getMiscAudio()->m_crateMoney;	
+		AudioEventRTS soundToPlay = TheAudio->getMiscAudio()->m_crateMoney;
 		soundToPlay.setObjectID( other->getID() );
 		TheAudio->addAudioEvent(&soundToPlay);
 	}
 
 	other->getControllingPlayer()->getAcademyStats()->recordSalvageCollected();
-	
+
 	return TRUE;
 }
 
@@ -158,7 +158,7 @@ Bool SalvageCrateCollide::eligibleForLevel( Object *other )
 	// Sorry, you are max level
 	if( other->getExperienceTracker()->getVeterancyLevel() == LEVEL_HEROIC )
 		return FALSE;
-	
+
 	// Sorry, you can't gain levels
 	if( !other->getExperienceTracker()->isTrainable() )
 		return FALSE;
@@ -247,7 +247,7 @@ void SalvageCrateCollide::doMoney( Object *other )
 	{
 		other->getControllingPlayer()->getMoney()->deposit( money );
 		other->getControllingPlayer()->getScoreKeeper()->addMoneyEarned( money );
-		
+
 		//Display cash income floating over the crate.  Position is me, everything else is them.
 		UnicodeString moneyString;
 		moneyString.format( TheGameText->fetch( "GUI:AddCash" ), money );

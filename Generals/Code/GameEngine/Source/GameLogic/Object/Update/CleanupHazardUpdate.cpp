@@ -61,7 +61,7 @@ CleanupHazardUpdateModuleData::CleanupHazardUpdateModuleData()
 {
 	ModuleData::buildFieldParse(p);
 
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
 		{ "WeaponSlot",						INI::parseLookupList,						TheWeaponSlotTypeNamesLookupList, offsetof( CleanupHazardUpdateModuleData, m_weaponSlot ) },
 		{ "ScanRate",							INI::parseDurationUnsignedInt,	NULL, offsetof( CleanupHazardUpdateModuleData, m_scanFrames ) },
@@ -82,7 +82,7 @@ CleanupHazardUpdate::CleanupHazardUpdate( Thing *thing, const ModuleData* module
 	m_moveRange									= 0.0f;
 	m_pos.zero();
 
-} 
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -97,13 +97,13 @@ void CleanupHazardUpdate::onObjectCreated()
 {
 	const CleanupHazardUpdateModuleData *data = getCleanupHazardUpdateModuleData();
 	Object *self = getObject();
-	
+
 	//Make sure we have a weapon template
 	self->setWeaponSetFlag( WEAPONSET_VETERAN );
 	Weapon *weapon = self->getWeaponInWeaponSlot( data->m_weaponSlot );
 	if( !weapon )
 	{
-		DEBUG_CRASH( ("CleanupHazardUpdate for %s doesn't have a valid weapon template", 
+		DEBUG_CRASH( ("CleanupHazardUpdate for %s doesn't have a valid weapon template",
 			getObject()->getTemplate()->getName().str() ) );
 		return;
 	}
@@ -124,7 +124,7 @@ void CleanupHazardUpdate::onObjectCreated()
 /** The update callback. */
 //-------------------------------------------------------------------------------------------------
 UpdateSleepTime CleanupHazardUpdate::update()
-{	
+{
 /// @todo srj use SLEEPY_UPDATE here
 	const CleanupHazardUpdateModuleData *data = getCleanupHazardUpdateModuleData();
 	Object *obj = getObject();
@@ -167,7 +167,7 @@ UpdateSleepTime CleanupHazardUpdate::update()
 	}
 	else if( m_moveRange )
 	{
-		//There's nothing nearby, so if we are cleaning up an area versus hazards 
+		//There's nothing nearby, so if we are cleaning up an area versus hazards
 		//immediately in range, set the AI to idle so it can advance to the next script!
 		AIUpdateInterface *ai = obj->getAI();
 		if( ai && (ai->isIdle() || ai->isBusy()) )
@@ -214,7 +214,7 @@ void CleanupHazardUpdate::fireWhenReady()
 		{
 			if( m_inRange )
 			{
-				//We were in range last frame, but the target has moved out of firing range, so 
+				//We were in range last frame, but the target has moved out of firing range, so
 				//re-evaluate by forcing a new scan.
 				m_nextScanFrames = GameLogicRandomValue( 0, 3 );
 				m_bestTargetID = INVALID_ID;
@@ -232,7 +232,7 @@ void CleanupHazardUpdate::fireWhenReady()
 			}
 		}
 	}
-	
+
 	if( m_nextShotAvailableInFrames > 0 )
 	{
 		//We can't fire this frame.
@@ -280,7 +280,7 @@ Object* CleanupHazardUpdate::scanClosestTarget()
 		bestTargetInRange = ThePartitionManager->getClosestObject( me->getPosition(), data->m_scanRange, FROM_CENTER_2D, filters );
 	}
 
-	if( bestTargetInRange ) 
+	if( bestTargetInRange )
 	{
 		m_bestTargetID = bestTargetInRange->getID();
 	}
@@ -305,7 +305,7 @@ void CleanupHazardUpdate::setCleanupAreaParameters( const Coord3D *pos, Real ran
 		//CMD_FROM_AI important because it'll abort when other types are used -- like if a player
 		//or script orders the unit to do something else, we need a way to cancel this passive
 		//situation.
-		ai->aiMoveToPosition( pos, CMD_FROM_AI ); 
+		ai->aiMoveToPosition( pos, CMD_FROM_AI );
 	}
 }
 

@@ -67,15 +67,15 @@ struct HmdlNodeDefStruct
 **	HModelDefClass
 **
 **	"Hierarchy Model Definition Class"
-**	This class serves as a blueprint for creating HierarchyModelClasses.  
-**	The asset manager stores these objects internally and uses them to 
+**	This class serves as a blueprint for creating HierarchyModelClasses.
+**	The asset manager stores these objects internally and uses them to
 **	create instances of HierarchyModels for the user.
 */
 class HModelDefClass
 {
 
 public:
-	
+
 	enum {
 		OK,
 		LOAD_ERROR
@@ -109,4 +109,4 @@ private:
 	friend class HLodClass;
 };
 
-#endif 
+#endif

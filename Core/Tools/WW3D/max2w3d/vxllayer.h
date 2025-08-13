@@ -17,22 +17,22 @@
 */
 
 /* $Header: /Commando/Code/Tools/max2w3d/vxllayer.h 3     10/28/97 6:08p Greg_h $ */
-/*********************************************************************************************** 
- ***                            Confidential - Westwood Studios                              *** 
- *********************************************************************************************** 
- *                                                                                             * 
- *                 Project Name : Commando Tools - W3D export                                  * 
- *                                                                                             * 
- *                     $Archive:: /Commando/Code/Tools/max2w3d/vxllayer.h                     $* 
- *                                                                                             * 
- *                      $Author:: Greg_h                                                      $* 
- *                                                                                             * 
- *                     $Modtime:: 10/26/97 1:35p                                              $* 
- *                                                                                             * 
- *                    $Revision:: 3                                                           $* 
- *                                                                                             * 
- *---------------------------------------------------------------------------------------------* 
- * Functions:                                                                                  * 
+/***********************************************************************************************
+ ***                            Confidential - Westwood Studios                              ***
+ ***********************************************************************************************
+ *                                                                                             *
+ *                 Project Name : Commando Tools - W3D export                                  *
+ *                                                                                             *
+ *                     $Archive:: /Commando/Code/Tools/max2w3d/vxllayer.h                     $*
+ *                                                                                             *
+ *                      $Author:: Greg_h                                                      $*
+ *                                                                                             *
+ *                     $Modtime:: 10/26/97 1:35p                                              $*
+ *                                                                                             *
+ *                    $Revision:: 3                                                           $*
+ *                                                                                             *
+ *---------------------------------------------------------------------------------------------*
+ * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 
@@ -62,7 +62,7 @@ class VoxelLayerClass
 public:
 
 	VoxelLayerClass();
-	
+
 	VoxelLayerClass
 	(
 		INodeListClass		& objectlist,
@@ -97,7 +97,7 @@ public:
 			return FALSE;
 		}
 
-		if (Solid[x][y] == VOXEL_SOLID) { 
+		if (Solid[x][y] == VOXEL_SOLID) {
 			return TRUE;
 		} else {
 			return FALSE;
@@ -117,7 +117,7 @@ protected:
 		}
 	}
 
-	void Add_Solid(int x,int y) 
+	void Add_Solid(int x,int y)
 	{
 		// check if the point is outside the bitmap:
 		if (x >= 0 && x < bitmap_width && y >= 0 && y < bitmap_height) {

@@ -16,22 +16,22 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/*********************************************************************************************** 
- ***                            Confidential - Westwood Studios                              *** 
- *********************************************************************************************** 
- *                                                                                             * 
- *                 Project Name : Commando / G 3D engine                                       * 
- *                                                                                             * 
- *                    File Name : MeshDeformSet.h                                              * 
- *                                                                                             * 
- *                   Programmer : Patrick Smith                                                * 
- *                                                                                             * 
- *                   Start Date : 04/26/99                                                     * 
- *                                                                                             * 
- *                  Last Update : 
- *                                                                                             * 
- *---------------------------------------------------------------------------------------------* 
- * Functions:                                                                                  * 
+/***********************************************************************************************
+ ***                            Confidential - Westwood Studios                              ***
+ ***********************************************************************************************
+ *                                                                                             *
+ *                 Project Name : Commando / G 3D engine                                       *
+ *                                                                                             *
+ *                    File Name : MeshDeformSet.h                                              *
+ *                                                                                             *
+ *                   Programmer : Patrick Smith                                                *
+ *                                                                                             *
+ *                   Start Date : 04/26/99                                                     *
+ *                                                                                             *
+ *                  Last Update :
+ *                                                                                             *
+ *---------------------------------------------------------------------------------------------*
+ * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 
@@ -80,11 +80,11 @@ class MeshDeformSetClass
 
 		//////////////////////////////////////////////////////////////////////
 		//	Public methods
-		//////////////////////////////////////////////////////////////////////			
+		//////////////////////////////////////////////////////////////////////
 		//virtual LocalModData *	Clone (void)	{ return new MeshDeformSetClass; }
 		void					Update_Mesh (TriObject &tri_obj);
 		void					Set_State (float state);
-		
+
 		//	Inline accessors
 		Mesh *				Peek_Mesh (void) const						{ return m_pMesh; }
 		const Point3 *		Peek_Orig_Vertex_Array (void) const		{ return m_pVertexArray; }
@@ -100,7 +100,7 @@ class MeshDeformSetClass
 		void					Collapse_Keyframe_Data (int keyframe);
 		void					Reset_Key_Frame_Verts (int keyframe);
 		void					Reset_Key_Frame_Colors (int keyframe);
-		
+
 		// Data managment
 		void					Set_Vertex_Position (int index, const Point3 &value);
 		void					Set_Vertex_Color (int index, int color_index, const VertColor &value);
@@ -134,12 +134,12 @@ class MeshDeformSetClass
 		//////////////////////////////////////////////////////////////////////
 		void					Resize_Vertex_Array (int count, int color_count);
 		void					Copy_Vertex_Array (Mesh &mesh);
-		
+
 		// Keyframe methods
 		void					Init_Key_Frames (void);
 		void					Free_Key_Frames (void);
 		void					Determine_Interpolation_Indicies (int key_frame, bool position, int &from, int &to, float &state);
-		
+
 		// Deformation application methods
 		void					Apply_Position_Changes (UINT vert, int frame_to_check, Point3 &position, Matrix3 *transform = NULL);
 		void					Apply_Color_Changes (UINT vert, int frame_to_check, Mesh &mesh);
@@ -162,7 +162,7 @@ class MeshDeformSetClass
 
 		//////////////////////////////////////////////////////////////////////
 		//	Private member data
-		//////////////////////////////////////////////////////////////////////			
+		//////////////////////////////////////////////////////////////////////
 		Mesh *				m_pMesh;
 		Point3 *				m_pVertexArray;
 		Point3 *				m_pVertexOPStartArray;

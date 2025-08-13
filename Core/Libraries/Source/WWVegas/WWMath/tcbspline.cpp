@@ -52,11 +52,11 @@ DECLARE_FORCE_LINK(tcbspline);
 */
 SimplePersistFactoryClass<TCBSpline3DClass,WWMATH_CHUNKID_TCBSPLINE3D>	_TCBSpline3DFactory;
 
-enum 
+enum
 {
 	// ID's used by TCBSpline3D
-	TCB3D_CHUNK_HERMITE3D					= 0x02071009,	
-	TCB3D_CHUNK_PARAMS,			
+	TCB3D_CHUNK_HERMITE3D					= 0x02071009,
+	TCB3D_CHUNK_PARAMS,
 };
 
 
@@ -115,7 +115,7 @@ void TCBSpline3DClass::Update_Tangents(void)
 		}
 	}
 
-	// First and Last Key: 
+	// First and Last Key:
 	// Only need to compute the OutTangent for key[0] and the InTangent for key[end]
 	int end = Keys.Count() - 1;
 	Tangents[0].InTangent.Set(0,0,0);
@@ -137,9 +137,9 @@ void TCBSpline3DClass::Update_Tangents(void)
 
 		Vector3::Add(k0*dp_in, k1*dp_out, &Tangents[end].InTangent);
 		Vector3::Add(k2*dp_out, k3*dp_in, &Tangents[0].OutTangent);
-		
+
 	} else {
-		
+
 		float k2 = 0.25f * ((1-Params[0].Tension) * (1+Params[0].Continuity) * (1-Params[0].Bias));
 		float k3 = 0.25f * ((1-Params[0].Tension) * (1-Params[0].Continuity) * (1+Params[0].Bias));
 
@@ -200,7 +200,7 @@ bool TCBSpline3DClass::Save(ChunkSaveClass &csave)
 	csave.Begin_Chunk(TCB3D_CHUNK_HERMITE3D);
 	HermiteSpline3DClass::Save(csave);
 	csave.End_Chunk();
-	
+
 	csave.Begin_Chunk(TCB3D_CHUNK_PARAMS);
 	for (int i=0; i<Params.Count(); i++) {
 		csave.Write(&(Params[i].Tension),sizeof(Params[i].Tension));
@@ -221,8 +221,8 @@ bool TCBSpline3DClass::Load(ChunkLoadClass &cload)
 
 	// read in the chunks
 	while (cload.Open_Chunk()) {
-		
-		switch(cload.Cur_Chunk_ID()) 
+
+		switch(cload.Cur_Chunk_ID())
 		{
 			case TCB3D_CHUNK_HERMITE3D:
 				HermiteSpline3DClass::Load(cload);

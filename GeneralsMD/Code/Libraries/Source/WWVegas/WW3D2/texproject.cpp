@@ -26,15 +26,15 @@
  *                                                                                             *
  *              Original Author:: Greg Hjelstrom                                               *
  *                                                                                             *
- *                      $Author:: Kenny Mitchell                                               * 
- *                                                                                             * 
+ *                      $Author:: Kenny Mitchell                                               *
+ *                                                                                             *
  *								$Modtime:: 08/05/02 10:03a                                             $*
  *                                                                                             *
  *                    $Revision:: 22                                                          $*
  *                                                                                             *
  * 06/26/02 KM Matrix name change to avoid MAX conflicts                                       *
  * 06/27/02 KM Render to shadow buffer texture support														*
- * 08/05/02 KM Texture class redesign 
+ * 08/05/02 KM Texture class redesign
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
  *   TexProjectClass::TexProjectClass -- Constructor                                           *
@@ -97,12 +97,12 @@ const float INTENSITY_RATE_OF_CHANGE			= 1.0f;			// change in intensity per seco
 
 
 /*
-** 
+**
 ** Shadow mapping:  from pre-projected view coordinates back to world space
 ** then to shadow space
 **
 ** (1) Vshadow = PShadow * Mwrld-shadow * Vwrld
-** 
+**
 ** (2) Vview = Mwrld-camera * Vwrld
 **
 ** Using (2) to solve for Vwrld in terms of Vview
@@ -114,10 +114,10 @@ const float INTENSITY_RATE_OF_CHANGE			= 1.0f;			// change in intensity per seco
 ** (4) Vshadow = Pshadow * Mwrld-shadow * Mwrld-camera * Vview
 **
 ** ---------------------------------------------------------------------------------
-** 
-** Shadow mapping: from pre-projected view space to world space, to shadow space, 
+**
+** Shadow mapping: from pre-projected view space to world space, to shadow space,
 ** then projecting.
-** 
+**
 ** (1) Vshadow = Mwrld-shadow * Vwrld
 **
 ** (2) Vview = Mwrld-camera * Vwrld
@@ -140,9 +140,9 @@ const float INTENSITY_RATE_OF_CHANGE			= 1.0f;			// change in intensity per seco
 **
 ** Shadow mapping:  from pre-projected view coordinates back to obj space
 ** then to shadow space
-** 
+**
 ** (1) Vshadow = PShadow * Mwrld-shadow * Mobj-wrld * Vobj
-** 
+**
 ** (2) Vview = Mwrld-camera * Mobj-wrld * Vobj
 **             -1             -1
 ** (3) Mobj-wrld * Mwrld-camera * Vview = Vobj
@@ -156,7 +156,7 @@ const float INTENSITY_RATE_OF_CHANGE			= 1.0f;			// change in intensity per seco
 ** - Use Texture Projectors to implement spot lights and stained glass windows
 ** - Attenuate texture projections with distance from the projector
 ** - Should be able to handle lots of pre-calculated static texture projectors.  They
-**   should cull well and we can pre-generate the textures. 
+**   should cull well and we can pre-generate the textures.
 **
 ** Ideas maybe used in conjunction with texture projections:
 ** - Light volumes: the problem is when the volume is cliped it looks funny, we can
@@ -164,7 +164,7 @@ const float INTENSITY_RATE_OF_CHANGE			= 1.0f;			// change in intensity per seco
 ** - Use the backface-fill to make the camera slicing through the commando look like
 **   its *really* slicing through the commando :-)
 ** - The back-face-fill trick might be able to use el-cheapo screen mapping!
-**  
+**
 */
 
 
@@ -200,13 +200,13 @@ TexProjectClass::TexProjectClass(void) :
 	ZFar(1000.0f)
 {
 	// create a material pass class
-	MaterialPass = NEW_REF(MaterialPassClass,()); 
+	MaterialPass = NEW_REF(MaterialPassClass,());
 	MaterialPass->Set_Cull_Volume(&WorldBoundingVolume);
 
 	// create a vertex material
 	VertexMaterialClass * vmtl = NEW_REF(VertexMaterialClass,());
 	WWASSERT(vmtl != NULL);
-	
+
 	// Plug our parent's mapper into our vertex material
 	// the mapper for stage1 will be allocated as needed
 	vmtl->Set_Mapper(Mapper);
@@ -302,13 +302,13 @@ int TexProjectClass::Get_Texture_Size(void)
  * HISTORY:                                                                                    *
  *   1/4/00     gth : Created.                                                                 *
  *=============================================================================================*/
-void TexProjectClass::Set_Flag(uint32 flag,bool onoff)	
-{ 
-	if (onoff) { 
-		Flags |= flag; 
-	} else { 
-		Flags &= ~flag; 
-	} 
+void TexProjectClass::Set_Flag(uint32 flag,bool onoff)
+{
+	if (onoff) {
+		Flags |= flag;
+	} else {
+		Flags &= ~flag;
+	}
 }
 
 
@@ -327,8 +327,8 @@ void TexProjectClass::Set_Flag(uint32 flag,bool onoff)
  *   1/4/00     gth : Created.                                                                 *
  *=============================================================================================*/
 bool TexProjectClass::Get_Flag(uint32 flag) const
-{ 
-	return (Flags & flag) == flag; 
+{
+	return (Flags & flag) == flag;
 }
 
 
@@ -354,7 +354,7 @@ void TexProjectClass::Set_Intensity(float intensity,bool immediate)
 {
 	WWASSERT(intensity <= 1.0f);
 	WWASSERT(intensity >= 0.0f);
-	
+
 	DesiredIntensity = intensity;
 	if (immediate) {
 		Intensity = DesiredIntensity;
@@ -539,38 +539,38 @@ bool TexProjectClass::Is_Depth_Gradient_Enabled(bool onoff)
  *   1/4/00     gth : Created.                                                                 *
  *=============================================================================================*/
 void TexProjectClass::Init_Multiplicative(void)
-{	
+{
 	Set_Flag(ADDITIVE,false);
 
 	/*
 	** Set up the shader
 	*/
-	static ShaderClass mult_shader(		SHADE_CNST(	ShaderClass::PASS_LEQUAL,						//depth_compare, 
-																	ShaderClass::DEPTH_WRITE_DISABLE,			//depth_mask, 
-																	ShaderClass::COLOR_WRITE_ENABLE,				//color_mask, 
+	static ShaderClass mult_shader(		SHADE_CNST(	ShaderClass::PASS_LEQUAL,						//depth_compare,
+																	ShaderClass::DEPTH_WRITE_DISABLE,			//depth_mask,
+																	ShaderClass::COLOR_WRITE_ENABLE,				//color_mask,
 																	ShaderClass::SRCBLEND_ZERO,					//src_blend,
-																	ShaderClass::DSTBLEND_SRC_COLOR,				//dst_blend, 
-																	ShaderClass::FOG_DISABLE,						//fog, 
-																	ShaderClass::GRADIENT_ADD,						//pri_grad, 
-																	ShaderClass::SECONDARY_GRADIENT_DISABLE,	//sec_grad, 
-																	ShaderClass::TEXTURING_ENABLE,				//texture, 
+																	ShaderClass::DSTBLEND_SRC_COLOR,				//dst_blend,
+																	ShaderClass::FOG_DISABLE,						//fog,
+																	ShaderClass::GRADIENT_ADD,						//pri_grad,
+																	ShaderClass::SECONDARY_GRADIENT_DISABLE,	//sec_grad,
+																	ShaderClass::TEXTURING_ENABLE,				//texture,
 
-																	ShaderClass::ALPHATEST_DISABLE,				//alpha_test, 
+																	ShaderClass::ALPHATEST_DISABLE,				//alpha_test,
 																	ShaderClass::CULL_MODE_ENABLE,				//cull mode
-																	0,														//post_det_color, 
-																	0) );													//post_det_alpha		
+																	0,														//post_det_color,
+																	0) );													//post_det_alpha
 
 	if (WW3DAssetManager::Get_Instance()->Get_Activate_Fog_On_Load()) {
 		mult_shader.Enable_Fog ("TexProjectClass");
 	}
 
 	if (Get_Flag(USE_DEPTH_GRADIENT)) {
-		
+
 		/*
 		** enable multi-texturing
 		*/
 		mult_shader.Set_Post_Detail_Color_Func(ShaderClass::DETAILCOLOR_ADD);
-		
+
 		/*
 		** plug the gradient texture into the second stage
 		*/
@@ -585,7 +585,7 @@ void TexProjectClass::Init_Multiplicative(void)
 		}
 
 	} else {
-		
+
 		/*
 		** disable multi-texturing
 		*/
@@ -650,19 +650,19 @@ void TexProjectClass::Init_Additive(void)
 	/*
 	** Set up the shader
 	*/
-	static ShaderClass add_shader(		SHADE_CNST(	ShaderClass::PASS_LEQUAL,						//depth_compare, 
-																	ShaderClass::DEPTH_WRITE_DISABLE,			//depth_mask, 
-																	ShaderClass::COLOR_WRITE_ENABLE,				//color_mask, 
+	static ShaderClass add_shader(		SHADE_CNST(	ShaderClass::PASS_LEQUAL,						//depth_compare,
+																	ShaderClass::DEPTH_WRITE_DISABLE,			//depth_mask,
+																	ShaderClass::COLOR_WRITE_ENABLE,				//color_mask,
 																	ShaderClass::SRCBLEND_ONE,						//src_blend,
-																	ShaderClass::DSTBLEND_ONE,						//dst_blend, 
+																	ShaderClass::DSTBLEND_ONE,						//dst_blend,
 																	ShaderClass::FOG_DISABLE,						//fog,
-																	ShaderClass::GRADIENT_MODULATE,				//pri_grad, 
-																	ShaderClass::SECONDARY_GRADIENT_DISABLE,	//sec_grad, 
-																	ShaderClass::TEXTURING_ENABLE,				//texture, 
-																	ShaderClass::ALPHATEST_DISABLE,				//alpha_test, 
-																	ShaderClass::CULL_MODE_ENABLE,				//cullmode, 
-																	ShaderClass::DETAILCOLOR_DISABLE,			//post_det_color, 
-																	ShaderClass::DETAILALPHA_DISABLE) );		//post_det_alpha		
+																	ShaderClass::GRADIENT_MODULATE,				//pri_grad,
+																	ShaderClass::SECONDARY_GRADIENT_DISABLE,	//sec_grad,
+																	ShaderClass::TEXTURING_ENABLE,				//texture,
+																	ShaderClass::ALPHATEST_DISABLE,				//alpha_test,
+																	ShaderClass::CULL_MODE_ENABLE,				//cullmode,
+																	ShaderClass::DETAILCOLOR_DISABLE,			//post_det_color,
+																	ShaderClass::DETAILALPHA_DISABLE) );		//post_det_alpha
 
 	if (WW3DAssetManager::Get_Instance()->Get_Activate_Fog_On_Load()) {
 		add_shader.Enable_Fog ("TexProjectClass");
@@ -691,7 +691,7 @@ void TexProjectClass::Init_Additive(void)
 	add_shader.Set_Dst_Blend_Func(ShaderClass::DSTBLEND_SRC_COLOR);
 	add_shader.Set_Src_Blend_Func(ShaderClass::SRCBLEND_ZERO);
 #endif
-	
+
 	MaterialPass->Set_Shader(add_shader);
 
 	/*
@@ -731,10 +731,10 @@ void TexProjectClass::Init_Additive(void)
  *=============================================================================================*/
 void TexProjectClass::Set_Texture(TextureClass * texture)
 {
-	if (texture != NULL) 
+	if (texture != NULL)
 	{
 		texture->Get_Filter().Set_U_Addr_Mode(TextureFilterClass::TEXTURE_ADDRESS_CLAMP);
-		texture->Get_Filter().Set_V_Addr_Mode(TextureFilterClass::TEXTURE_ADDRESS_CLAMP);	
+		texture->Get_Filter().Set_V_Addr_Mode(TextureFilterClass::TEXTURE_ADDRESS_CLAMP);
 		MaterialPass->Set_Texture(texture);
 	}
 }
@@ -789,7 +789,7 @@ TextureClass * TexProjectClass::Peek_Texture(void) const
  * HISTORY:                                                                                    *
  *   1/11/00    gth : Created.                                                                 *
  *=============================================================================================*/
-MaterialPassClass * TexProjectClass::Peek_Material_Pass(void) 
+MaterialPassClass * TexProjectClass::Peek_Material_Pass(void)
 {
 	return MaterialPass;
 }
@@ -879,7 +879,7 @@ bool TexProjectClass::Compute_Perspective_Projection
 	AABoxClass box;
 	model->Get_Obj_Space_Bounding_Box(box);
 	const Matrix3D & tm = model->Get_Transform();
-	
+
 	return Compute_Perspective_Projection(box,tm,lightpos,znear,zfar);
 }
 
@@ -943,7 +943,7 @@ bool TexProjectClass::Compute_Perspective_Projection
 	if ((box.Center.Z > 0.0f) || (box.Extent.Z > WWMath::Fabs(box.Center.Z))) {
 		return false;
 	}
-	
+
 	/*
 	** Compute the frustum parameters. Remember that our z coordinates are negative but the
 	** projection code needs positive z distances.
@@ -964,7 +964,7 @@ bool TexProjectClass::Compute_Perspective_Projection
 	float vfov = 2.0f * WWMath::Atan(tan_vfov2);
 
 	/*
-	** Plug in the results.  
+	** Plug in the results.
 	*/
 	Set_Perspective_Projection(hfov,vfov,znear,zfar);
 	Set_Transform(texture_tm);
@@ -1118,7 +1118,7 @@ bool TexProjectClass::Compute_Texture
 	SpecialRenderInfoClass * context
 )
 {
-	if ((model == NULL) || (context == NULL)) 
+	if ((model == NULL) || (context == NULL))
 	{
 		return false;
 	}
@@ -1130,7 +1130,7 @@ bool TexProjectClass::Compute_Texture
 
 	Peek_Render_Target(&rtarget,&ztarget);
 
-	if (rtarget != NULL) 
+	if (rtarget != NULL)
 	{
 		// set projector for render context KJM
 		context->Texture_Projector=this;
@@ -1144,7 +1144,7 @@ bool TexProjectClass::Compute_Texture
 		** Set up the camera
 		*/
 		Configure_Camera(context->Camera);
-		
+
 		/*
 		** Render the object
 		*/
@@ -1238,13 +1238,13 @@ void TexProjectClass::Set_Render_Target
  *=============================================================================================*/
 TextureClass* TexProjectClass::Peek_Render_Target
 (
-	TextureClass** rtarget, 
+	TextureClass** rtarget,
 	ZTextureClass** ztarget
 )
 {
 	// some uses of this function just want to know if a render target exists
 	if (rtarget==NULL) return RenderTarget;
-	
+
 	*rtarget=RenderTarget;
 
 	// don't set if pointer isn't supplied
@@ -1304,7 +1304,7 @@ void TexProjectClass::Configure_Camera(CameraClass & camera)
 void TexProjectClass::Pre_Render_Update(const Matrix3D & camera)
 {
 	/*
-	** Mview-texture = PShadow * Mwrld-texture * Mcamera-vrld	
+	** Mview-texture = PShadow * Mwrld-texture * Mcamera-vrld
 	*/
 	Matrix3D		world_to_texture;
 	Matrix3D		tmp;
@@ -1320,7 +1320,7 @@ void TexProjectClass::Pre_Render_Update(const Matrix3D & camera)
 	float frame_time = (float)WW3D::Get_Frame_Time() / 1000.0f;
 	float intensity_delta = DesiredIntensity - Intensity;
 	float max_intensity_delta = INTENSITY_RATE_OF_CHANGE * frame_time;
-	
+
 	if (intensity_delta > max_intensity_delta) {
 		Intensity += max_intensity_delta;
 	} else if (intensity_delta < -max_intensity_delta) {
@@ -1356,7 +1356,7 @@ void TexProjectClass::Pre_Render_Update(const Matrix3D & camera)
 		Set_Texture_Size(MaterialPass->Peek_Texture()->Get_Width());
 		WWASSERT(Get_Texture_Size() != 0);
 	}
-	
+
 	Mapper->Set_Texture_Transform(view_to_texture,Get_Texture_Size());
 	if (Mapper1) {
 		Mapper1->Set_Texture_Transform(view_to_texture,Get_Texture_Size());

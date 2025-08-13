@@ -31,7 +31,7 @@ class WorldHeightMapEdit;
                             FloodFillTool
 ***************************************************************************/
 ///  Fill area with texture tool.
-class FloodFillTool : public Tool 
+class FloodFillTool : public Tool
 {
 public:
 	FloodFillTool(void);

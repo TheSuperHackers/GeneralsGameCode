@@ -21,7 +21,7 @@
 *******************************************************************************
  File:       patch.cpp
  Programmer: Neal Kettler
- 
+
  StartDate:  Feb  6, 1998
  LastUpdate: Feb 10, 1998
 -------------------------------------------------------------------------------
@@ -44,7 +44,7 @@ BOOL CALLBACK Update_Info_Proc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPara
 
   static int unselectText=0;
 
-  switch(iMsg) 
+  switch(iMsg)
   {
     case WM_INITDIALOG:
     {
@@ -73,7 +73,7 @@ BOOL CALLBACK Update_Info_Proc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPara
         }
         // ...and add back the gunk that windows likes
         strcat(line,"\r\r\n");
-        
+
 	     SendDlgItemMessage(hwnd, IDC_TEXT, EM_SETSEL, (WPARAM)lastsel, (LPARAM)lastsel );
 	     SendDlgItemMessage(hwnd, IDC_TEXT, EM_REPLACESEL, 0, (LPARAM)(line) );
 	     SendDlgItemMessage(hwnd, IDC_TEXT, EM_GETSEL, (WPARAM)NULL, (LPARAM)&lastsel );
@@ -253,7 +253,7 @@ void Apply_Patch(char *patchfile,ConfigFile &config,int skuIndex)
     if (cptr)
       version=atol(cptr);
     DBGMSG("VERSION TO = "<<version);
-    
+
 
     char      string[256];
     Wstring   key;
@@ -291,7 +291,7 @@ void Apply_Patch(char *patchfile,ConfigFile &config,int skuIndex)
 
 			// same dir as game
 			strcpy(notepad.directory, ".");
-			
+
 			// the program that grabs game patches
 			strcpy(notepad.command, "notepad");
 			strcpy(notepad.args, " launcher.txt");
@@ -351,34 +351,34 @@ void Apply_Patch(char *patchfile,ConfigFile &config,int skuIndex)
 
 void Shutdown_Computer_Now(void)
 {
-  HANDLE hToken; 
-  TOKEN_PRIVILEGES tkp; 
- 
-  // Get a token for this process. 
-  if (!OpenProcessToken(GetCurrentProcess(), 
-        TOKEN_ADJUST_PRIVILEGES | TOKEN_QUERY, &hToken)) 
+  HANDLE hToken;
+  TOKEN_PRIVILEGES tkp;
+
+  // Get a token for this process.
+  if (!OpenProcessToken(GetCurrentProcess(),
+        TOKEN_ADJUST_PRIVILEGES | TOKEN_QUERY, &hToken))
   {
-    //error("OpenProcessToken"); 
+    //error("OpenProcessToken");
   }
- 
-  // Get the LUID for the shutdown privilege. 
-  LookupPrivilegeValue(NULL, SE_SHUTDOWN_NAME, 
-        &tkp.Privileges[0].Luid); 
- 
-  tkp.PrivilegeCount = 1;  // one privilege to set    
-  tkp.Privileges[0].Attributes = SE_PRIVILEGE_ENABLED; 
- 
-  // Get the shutdown privilege for this process. 
-  AdjustTokenPrivileges(hToken, FALSE, &tkp, 0, 
-        (PTOKEN_PRIVILEGES)NULL, 0); 
- 
-  // Cannot test the return value of AdjustTokenPrivileges. 
-  if (GetLastError() != ERROR_SUCCESS) 
+
+  // Get the LUID for the shutdown privilege.
+  LookupPrivilegeValue(NULL, SE_SHUTDOWN_NAME,
+        &tkp.Privileges[0].Luid);
+
+  tkp.PrivilegeCount = 1;  // one privilege to set
+  tkp.Privileges[0].Attributes = SE_PRIVILEGE_ENABLED;
+
+  // Get the shutdown privilege for this process.
+  AdjustTokenPrivileges(hToken, FALSE, &tkp, 0,
+        (PTOKEN_PRIVILEGES)NULL, 0);
+
+  // Cannot test the return value of AdjustTokenPrivileges.
+  if (GetLastError() != ERROR_SUCCESS)
   {
-    //error("AdjustTokenPrivileges"); 
+    //error("AdjustTokenPrivileges");
   }
- 
-  // Shut down the system and force all applications to close. 
+
+  // Shut down the system and force all applications to close.
   if (!ExitWindowsEx(EWX_REBOOT, 0))
   {
     // Should never happen

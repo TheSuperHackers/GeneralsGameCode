@@ -103,7 +103,7 @@ ScaleDialogClass::OnOK (void)
 	int pos = m_ScaleSpin.GetPos();
 	if (pos & 0xffff0000) {
 		// Error condition. Most likely the value is out of range.
-		MessageBox("Invalid scale value. Please enter a number between 1 and 10,000", 
+		MessageBox("Invalid scale value. Please enter a number between 1 and 10,000",
 			"Invalid Scale", MB_OK | MB_ICONINFORMATION);
 		return;
 	}
@@ -128,18 +128,18 @@ ScaleDialogClass::OnOK (void)
 /////////////////////////////////////////////////////////////////////////////
 BOOL
 ScaleDialogClass::OnNotify
-(	
+(
 	WPARAM wParam,
 	LPARAM lParam,
 	LRESULT *pResult
-) 
+)
 {
 	//
 	//	Update the spinner control if necessary
 	//
 	NMHDR *header = (NMHDR *)lParam;
 	if ((header != NULL) && (header->code == UDN_DELTAPOS)) {
-		//LPNMUPDOWN updown = (LPNMUPDOWN)lParam;		
+		//LPNMUPDOWN updown = (LPNMUPDOWN)lParam;
 		//::Update_Spinner_Buddy (header->hwndFrom, updown->iDelta);
 	}
 

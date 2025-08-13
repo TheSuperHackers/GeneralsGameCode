@@ -38,7 +38,7 @@
 #define TGATODXT_H
 
 #pragma message ("(gth) disabling TGAtoDXTClass temporarily so I can test the WW libs merge...")
-#if 0 
+#if 0
 
 // Includes.
 #include "always.h"
@@ -67,7 +67,7 @@ class TGAToDXTClass
 	protected:
 		void Write (const char *outputfilename);
 
-		FILETIME		  *WriteTimePtr;	// Time stamp of write time of DXT file.	
+		FILETIME		  *WriteTimePtr;	// Time stamp of write time of DXT file.
 		unsigned char *Buffer;			// Staging buffer.
 		unsigned			BufferSize;		// Size of buffer in bytes.
 		unsigned			BufferCount;	// No. of bytes written to buffer.

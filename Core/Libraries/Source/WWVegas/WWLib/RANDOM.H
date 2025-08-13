@@ -16,23 +16,23 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/*********************************************************************************************** 
- ***              C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S               *** 
- *********************************************************************************************** 
- *                                                                                             * 
- *                 Project Name : Command & Conquer                                            * 
- *                                                                                             * 
- *                     $Archive:: /VSS_Sync/wwlib/random.h                                    $* 
- *                                                                                             * 
+/***********************************************************************************************
+ ***              C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S               ***
+ ***********************************************************************************************
+ *                                                                                             *
+ *                 Project Name : Command & Conquer                                            *
+ *                                                                                             *
+ *                     $Archive:: /VSS_Sync/wwlib/random.h                                    $*
+ *                                                                                             *
  *                      $Author:: Vss_sync                                                    $*
- *                                                                                             * 
+ *                                                                                             *
  *                     $Modtime:: 8/29/01 10:24p                                              $*
- *                                                                                             * 
+ *                                                                                             *
  *                    $Revision:: 3                                                           $*
  *                                                                                             *
- *---------------------------------------------------------------------------------------------* 
- * Functions:                                                                                  * 
- *   Pick_Random_Number -- Picks a random number between two values (inclusive).               * 
+ *---------------------------------------------------------------------------------------------*
+ * Functions:                                                                                  *
+ *   Pick_Random_Number -- Picks a random number between two values (inclusive).               *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 #if _MSC_VER >= 1000
 #pragma once
@@ -184,34 +184,34 @@ class Random4Class {
 		enum {
 			SIGNIFICANT_BITS=32				// Random number bit significance.
 		};
-		
+
 	protected:
 		unsigned int mt[624]; // state vector
 		int mti;			 // index
 };
 
 
-/*********************************************************************************************** 
- * Pick_Random_Number -- Picks a random number between two values (inclusive).                 * 
- *                                                                                             * 
- *    This is a utility template that works with one of the random number classes. Given a     * 
- *    random number generator, this routine will return with a value that lies between the     * 
- *    minimum and maximum values specified (subject to the bit precision limitations of the    * 
- *    random number generator itself).                                                         * 
- *                                                                                             * 
- * INPUT:   generator   -- Reference to the random number generator to use for the pick        * 
- *                         process.                                                            * 
- *                                                                                             * 
- *          minval      -- The minimum legal return value (inclusive).                         * 
- *                                                                                             * 
- *          maxval      -- The maximum legal return value (inclusive).                         * 
- *                                                                                             * 
- * OUTPUT:  Returns with a random number between the minval and maxval (inclusive).            * 
- *                                                                                             * 
- * WARNINGS:   none                                                                            * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   05/23/1997 JLB : Created.                                                                 * 
+/***********************************************************************************************
+ * Pick_Random_Number -- Picks a random number between two values (inclusive).                 *
+ *                                                                                             *
+ *    This is a utility template that works with one of the random number classes. Given a     *
+ *    random number generator, this routine will return with a value that lies between the     *
+ *    minimum and maximum values specified (subject to the bit precision limitations of the    *
+ *    random number generator itself).                                                         *
+ *                                                                                             *
+ * INPUT:   generator   -- Reference to the random number generator to use for the pick        *
+ *                         process.                                                            *
+ *                                                                                             *
+ *          minval      -- The minimum legal return value (inclusive).                         *
+ *                                                                                             *
+ *          maxval      -- The maximum legal return value (inclusive).                         *
+ *                                                                                             *
+ * OUTPUT:  Returns with a random number between the minval and maxval (inclusive).            *
+ *                                                                                             *
+ * WARNINGS:   none                                                                            *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   05/23/1997 JLB : Created.                                                                 *
  *=============================================================================================*/
 template<class T>
 int Pick_Random_Number(T & generator, int minval, int maxval)
@@ -251,7 +251,7 @@ int Pick_Random_Number(T & generator, int minval, int maxval)
 	int mask = ~( (~0L) << (highbit+1));
 
 	/*
-	**	Keep picking random numbers until it fits within the magnitude desired. With a 
+	**	Keep picking random numbers until it fits within the magnitude desired. With a
 	**	good random number generator, it will have to perform this loop an average
 	**	of one and a half times.
 	*/

@@ -51,7 +51,7 @@ int MonoD::print(const char *str, int len)
     return(len);
   #else
     for (int i=0; i<len; i++)
-      fprintf(stderr,"%c",str[i]); 
+      fprintf(stderr,"%c",str[i]);
     return(len);
   #endif
 }

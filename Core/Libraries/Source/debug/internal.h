@@ -32,7 +32,7 @@
 #ifndef INTERNAL_H // Include guard
 #define INTERNAL_H
 
-// make sure we're not omitting the frame pointer 
+// make sure we're not omitting the frame pointer
 #pragma optimize("y",off)
 
 // We're doing our own little internal asserts for full debug
@@ -66,7 +66,7 @@ void *DebugAllocMemory(unsigned numBytes);
 /** \internal
 
   Allocates/reallocates the given memory block to the new
-  given size. 
+  given size.
   This function performs a controlled crash on failure.
 
   \param oldPtr pointer to old memory block, may be NULL

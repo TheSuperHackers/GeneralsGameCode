@@ -22,7 +22,7 @@
 //																																						//
 ////////////////////////////////////////////////////////////////////////////////
 
-// FILE: Statistics.h 
+// FILE: Statistics.h
 /*---------------------------------------------------------------------------*/
 /* EA Pacific                                                                */
 /* Confidential Information	                                                 */
@@ -50,7 +50,7 @@
 
 
 // valueToRun is the value (between 0 and maxValueForVal) to test.
-// mu is designates the steepness of the curve. 
+// mu is designates the steepness of the curve.
 // The return value is a value in [-1, 1]
 extern Real MuLaw(Real valueToRun, Real maxValueForVal, Real mu);
 

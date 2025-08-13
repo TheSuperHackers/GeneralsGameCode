@@ -75,7 +75,7 @@ void BridgeScaffoldBehavior::setPositions( const Coord3D *createPos,
 // ------------------------------------------------------------------------------------------------
 /** Set us moving to the right target position for the requested motion type */
 // ------------------------------------------------------------------------------------------------
-void BridgeScaffoldBehavior::setMotion( ScaffoldTargetMotion targetMotion ) 
+void BridgeScaffoldBehavior::setMotion( ScaffoldTargetMotion targetMotion )
 {
 
 	// save the target motion type
@@ -86,9 +86,9 @@ void BridgeScaffoldBehavior::setMotion( ScaffoldTargetMotion targetMotion )
 	{
 
 		// --------------------------------------------------------------------------------------------
-		case STM_RISE: 
+		case STM_RISE:
 		case STM_TEAR_DOWN_ACROSS:
-			m_targetPos = m_riseToPos; 
+			m_targetPos = m_riseToPos;
 			break;
 
 		// --------------------------------------------------------------------------------------------
@@ -245,7 +245,7 @@ UpdateSleepTime BridgeScaffoldBehavior::update( void )
 		newPos = m_targetPos;
 
 		//
-		// we have reached our target position, switch motion to the next position in 
+		// we have reached our target position, switch motion to the next position in
 		// the chain (which may be stay still and don't move anymore)
 		//
 		switch( m_targetMotion )

@@ -31,9 +31,9 @@ class MapObject;
 class Vector3;
 /*************************************************************************/
 /**                             FenceTool
-	 Does the fence tool operation. 
+	 Does the fence tool operation.
 ***************************************************************************/
-class FenceTool : public Tool 
+class FenceTool : public Tool
 {
 protected:
 	CPoint		m_downPt2d;
@@ -48,7 +48,7 @@ public:
 	~FenceTool(void);
 
 protected:
-	void updateMapObjectList(Coord3D downPt, Coord3D curPt, WbView* pView, CWorldBuilderDoc *pDoc, Bool checkPlayers); 
+	void updateMapObjectList(Coord3D downPt, Coord3D curPt, WbView* pView, CWorldBuilderDoc *pDoc, Bool checkPlayers);
 
 public:
 	virtual void mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc);

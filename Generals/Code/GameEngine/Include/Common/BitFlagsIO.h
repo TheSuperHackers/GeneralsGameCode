@@ -24,7 +24,7 @@
 
 // FILE: BitFlagsIO.h /////////////////////////////////////////////////////////////////////////////
 // Author: Steven Johnson, March 2002
-// Desc:   
+// Desc:
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
@@ -44,7 +44,7 @@ void BitFlags<NUMBITS>::buildDescription( AsciiString* str ) const
 {
 	if ( str == NULL )
 		return;//sanity
- 
+
 	for( Int i = 0; i < size(); ++i )
 	{
 		const char* bitName = getBitNameIfSet(i);
@@ -54,8 +54,8 @@ void BitFlags<NUMBITS>::buildDescription( AsciiString* str ) const
 			str->concat( bitName );
 			str->concat( ",\n");
 		}
-	}  
-} 
+	}
+}
 */
 
 //-------------------------------------------------------------------------------------------------

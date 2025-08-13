@@ -47,7 +47,7 @@ DEFINE_AUTO_POOL(MultiListNodeClass, 256);
 
 /***********************************************************************************************
 
-  MultiListObjectClass Implementation.  
+  MultiListObjectClass Implementation.
 
 ***********************************************************************************************/
 
@@ -61,12 +61,12 @@ MultiListObjectClass::~MultiListObjectClass(void)
 
 /***********************************************************************************************
 
-  GenericMultiListClass Implementation. 
+  GenericMultiListClass Implementation.
   This class has all of the real implementation.  Templates are provided in the header file
   which create typed lists by simply type-casting the void pointers that GenericMultiList uses.
 
 ***********************************************************************************************/
-  
+
 GenericMultiListClass::~GenericMultiListClass(void)
 {
 	assert(Is_Empty());
@@ -167,7 +167,7 @@ bool GenericMultiListClass::Internal_Add_After(MultiListObjectClass * obj,const 
 	while ((existing_node->List != this) && (existing_node)) {
 		existing_node = existing_node->NextList;
 	}
-	
+
 	if (existing_node == NULL) {
 		return false;	// he's not in this list!
 	}
@@ -175,7 +175,7 @@ bool GenericMultiListClass::Internal_Add_After(MultiListObjectClass * obj,const 
 	// allocate a node
 	MultiListNodeClass * node = new MultiListNodeClass;
 	node->Object = obj;
-	
+
 	// link the node into the list of list nodes for the object
 	node->NextList = obj->Get_List_Node();
 	obj->Set_List_Node(node);
@@ -205,14 +205,14 @@ bool GenericMultiListClass::Internal_Remove(MultiListObjectClass *obj)
 		return false;
 	}
 
-	// now we've found the node which corresponds to this list, 
+	// now we've found the node which corresponds to this list,
 	// unlink from the list of objects
 	lnode->Prev->Next = lnode->Next;
 	lnode->Next->Prev = lnode->Prev;
 
 	// unlink from the list of list nodes
 	if (prevlnode) {
-		prevlnode->NextList = lnode->NextList;	
+		prevlnode->NextList = lnode->NextList;
 	} else {
 		assert(obj->Get_List_Node() == lnode);	// must be first list obj is in...
 		obj->Set_List_Node(lnode->NextList);
@@ -235,7 +235,7 @@ MultiListObjectClass * GenericMultiListClass::Internal_Remove_List_Head(void)
 
 	// remove the object from our list
 	Internal_Remove(obj);
-	
+
 	// here you go.
 	return obj;
 }

@@ -39,9 +39,9 @@ class GlobalLightOptions : public CDialog	, public PopupSliderOwner
 public:
 	enum {K_TERRAIN=1, K_OBJECTS=2, K_BOTH=3};
 	enum {K_SUN=0, K_ACCENT1=1, K_ACCENT2=2};
-	int kUIRedIDs[3];// = {IDC_RD_EDIT, IDC_RD_EDIT1, IDC_RD_EDIT2}; 
-	int kUIGreenIDs[3];// = {IDC_GD_EDIT, IDC_GD_EDIT1, IDC_GD_EDIT2}; 
-	int kUIBlueIDs[3];// = {IDC_BD_EDIT, IDC_BD_EDIT1, IDC_BD_EDIT2}; 
+	int kUIRedIDs[3];// = {IDC_RD_EDIT, IDC_RD_EDIT1, IDC_RD_EDIT2};
+	int kUIGreenIDs[3];// = {IDC_GD_EDIT, IDC_GD_EDIT1, IDC_GD_EDIT2};
+	int kUIBlueIDs[3];// = {IDC_BD_EDIT, IDC_BD_EDIT1, IDC_BD_EDIT2};
 	CButtonShowColor m_colorButton;
 
 	GlobalLightOptions(CWnd* pParent = NULL);   // standard constructor
@@ -76,7 +76,7 @@ protected:
 	afx_msg void OnRadioTerrain();
 	afx_msg void OnColorPress();
 	afx_msg void OnResetLights();
-	afx_msg void OnClose(); 
+	afx_msg void OnClose();
 	virtual void OnOK(){return;};  //!< Modeless dialogs don't OK, so eat this for modeless.
 	virtual void OnCancel(){return;}; //!< Modeless dialogs don't close on ESC, so eat this for modeless.
 	//}}AFX_MSG

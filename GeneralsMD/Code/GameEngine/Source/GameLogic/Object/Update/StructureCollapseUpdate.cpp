@@ -24,7 +24,7 @@
 
 // FILE: StructureCollapseUpdate.cpp ///////////////////////////////////////////////////////////////////////
 // Author:
-// Desc:  
+// Desc:
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
@@ -50,7 +50,7 @@ const Int MAX_IDX = 32;
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-static const char *TheStructureCollapsePhaseNames[] = 
+static const char *TheStructureCollapsePhaseNames[] =
 {
 	"INITIAL",
 	"DELAY",
@@ -106,11 +106,11 @@ static void parseOCL( INI* ini, void *instance, void * /*store*/, const void* /*
 }
 
 //-------------------------------------------------------------------------------------------------
-/*static*/ void StructureCollapseUpdateModuleData::buildFieldParse(MultiIniFieldParse& p) 
+/*static*/ void StructureCollapseUpdateModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
   UpdateModuleData::buildFieldParse(p);
 
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
 		{ "MinCollapseDelay",						INI::parseDurationUnsignedInt,		NULL, offsetof( StructureCollapseUpdateModuleData, m_minCollapseDelay ) },
 		{ "MaxCollapseDelay",						INI::parseDurationUnsignedInt,		NULL, offsetof( StructureCollapseUpdateModuleData, m_maxCollapseDelay ) },
@@ -180,7 +180,7 @@ UpdateSleepTime StructureCollapseUpdate::update( void )
 
 	// We are in the dramatic pause between when the building has lost all its hit points and
 	// when it starts toppling over.
-	if (m_collapseState == COLLAPSESTATE_WAITINGFORCOLLAPSESTART) 
+	if (m_collapseState == COLLAPSESTATE_WAITINGFORCOLLAPSESTART)
 	{
 		UnsignedInt now = TheGameLogic->getFrame();
 		Object *building = getObject();
@@ -196,7 +196,7 @@ UpdateSleepTime StructureCollapseUpdate::update( void )
 
 		building->getDrawable()->setInstanceMatrix(&newInstMatrix);
 
-		if (now >= m_collapseFrame) 
+		if (now >= m_collapseFrame)
 		{
 			m_collapseState = COLLAPSESTATE_COLLAPSING;
 			doPhaseStuff(SCPHASE_BURST, currentPosition);
@@ -206,7 +206,7 @@ UpdateSleepTime StructureCollapseUpdate::update( void )
 	}
 
 	// The building is in the process of falling over.
-	if (m_collapseState == COLLAPSESTATE_COLLAPSING) 
+	if (m_collapseState == COLLAPSESTATE_COLLAPSING)
 	{
 		Object *building = getObject();
 		UnsignedInt now = TheGameLogic->getFrame();
@@ -223,13 +223,13 @@ UpdateSleepTime StructureCollapseUpdate::update( void )
 
 		building->getDrawable()->setInstanceMatrix(&newInstMatrix);
 
-		if (now >= m_burstFrame) 
+		if (now >= m_burstFrame)
 		{
-			if (GameLogicRandomValue(1, d->m_bigBurstFrequency) == 1) 
+			if (GameLogicRandomValue(1, d->m_bigBurstFrequency) == 1)
 			{
 				doPhaseStuff(SCPHASE_BURST, currentPosition);
-			} 
-			else 
+			}
+			else
 			{
 				doPhaseStuff(SCPHASE_DELAY, currentPosition);
 			}
@@ -237,7 +237,7 @@ UpdateSleepTime StructureCollapseUpdate::update( void )
 			m_burstFrame += GameLogicRandomValue(d->m_minBurstDelay, d->m_maxBurstDelay);
 		}
 
-//		if ((m_currentHeight + building->getGeometryInfo().getMaxHeightAbovePosition()) <= 0) 
+//		if ((m_currentHeight + building->getGeometryInfo().getMaxHeightAbovePosition()) <= 0)
 		if ((m_currentHeight + building->getTemplate()->getTemplateGeometryInfo().getMaxHeightAbovePosition()) <= 0)
 		{
 			m_collapseState = COLLAPSESTATE_DONE;
@@ -250,7 +250,7 @@ UpdateSleepTime StructureCollapseUpdate::update( void )
 			drawable->setModelConditionState(MODELCONDITION_POST_COLLAPSE);
 			building->setOrientation(building->getOrientation());
 
-			
+
 			// Need to update body particle systems, now
 			BodyModuleInterface *body = building->getBodyModule();
 			body->updateBodyParticleSystems();
@@ -293,7 +293,7 @@ static void buildNonDupRandomIndexList(Int range, Int count, Int idxList[])
 		do
 		{
 			idx = GameLogicRandomValue(0, range-1);
-		} 
+		}
 		while (inList(idx, i, idxList));
 		idxList[i] = idx;
 	}
@@ -342,11 +342,11 @@ void StructureCollapseUpdate::doPhaseStuff(StructureCollapsePhaseType scphase, c
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void StructureCollapseUpdate::doCollapseDoneStuff() 
+void StructureCollapseUpdate::doCollapseDoneStuff()
 {
 	static NameKeyType key_BoneFXUpdate = NAMEKEY("BoneFXUpdate");
 	BoneFXUpdate *bfxu = (BoneFXUpdate *)getObject()->findUpdateModule(key_BoneFXUpdate);
-	if (bfxu != NULL) 
+	if (bfxu != NULL)
 	{
 		bfxu->stopAllBoneFX();
 	}

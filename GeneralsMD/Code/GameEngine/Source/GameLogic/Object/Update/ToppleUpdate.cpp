@@ -50,7 +50,7 @@
 
 //-------------------------------------------------------------------------------------------------
 // this is our "bounce" limit -- slightly less that 90 degrees, to account for slop.
-static const Real ANGULAR_LIMIT = PI/2 - PI/64;		
+static const Real ANGULAR_LIMIT = PI/2 - PI/64;
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -74,11 +74,11 @@ ToppleUpdateModuleData::ToppleUpdateModuleData()
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void ToppleUpdateModuleData::buildFieldParse(MultiIniFieldParse& p) 
+void ToppleUpdateModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
   UpdateModuleData::buildFieldParse(p);
 
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
 		{ "ToppleFX",	INI::parseFXList, NULL, offsetof( ToppleUpdateModuleData, m_toppleFX ) },
 		{ "BounceFX",	INI::parseFXList, NULL, offsetof( ToppleUpdateModuleData, m_bounceFX ) },
@@ -112,7 +112,7 @@ ToppleUpdate::ToppleUpdate( Thing *thing, const ModuleData* moduleData ) : Updat
 	//
 	m_angularVelocity = 0;
 	m_angularAccumulation = 0;
-	m_angularAcceleration = 0;	
+	m_angularAcceleration = 0;
 	m_toppleDirection.x = 0;
 	m_toppleDirection.y = 0;
 	m_toppleDirection.z = 0;
@@ -252,7 +252,7 @@ Bool ToppleUpdate::isAbleToBeToppled() const
 static void deathByToppling(Object* obj)
 {
 	// use a special "topppling" damage type here so that
-	// toppled stuff can have different damage/die modules 
+	// toppled stuff can have different damage/die modules
 	// for toppled-death vs other-death
 	DamageInfo damageInfo;
 	damageInfo.in.m_damageType = DAMAGE_UNRESISTABLE;
@@ -300,7 +300,7 @@ UpdateSleepTime ToppleUpdate::update()
 		// Hit so either bounce or stop if too little remaining velocity.
 		m_angularVelocity *= -d->m_bounceVelocityPercent;
 
-		if( BitIsSet( m_options, TOPPLE_OPTIONS_NO_BOUNCE ) == TRUE || 
+		if( BitIsSet( m_options, TOPPLE_OPTIONS_NO_BOUNCE ) == TRUE ||
 				fabs(m_angularVelocity) < VELOCITY_BOUNCE_LIMIT )
 		{
 			// too slow, just stop
@@ -381,7 +381,7 @@ void ToppleUpdate::onCollide( Object *other, const Coord3D *loc, const Coord3D *
 		toppleVector.x -= other->getPosition()->x;
 		toppleVector.y -= other->getPosition()->y;
 		toppleVector.z = 0;
-		
+
 		Coord3D vel;
 		PhysicsBehavior* phys = other->getPhysics();
 		if (phys)

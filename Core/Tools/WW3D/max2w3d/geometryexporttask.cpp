@@ -62,14 +62,14 @@
 #include "colboxsave.h"
 #include "dazzlesave.h"
 #include <bitarray.h>
- 
+
 
 const int		OPTIMIZATION_FACECOUNT_LIMIT	= 256;			// TODO: what should this number be...
 const float		OPTIMIZATION_COMBINING_DISTANCE = 20.0f;		// TODO: need a smarter method for combining...
 
 
 /**
-** MeshGeometryExportTaskClass 
+** MeshGeometryExportTaskClass
 ** Export task for INodes which are to generate W3D meshes
 */
 class MeshGeometryExportTaskClass : public GeometryExportTaskClass
@@ -98,7 +98,7 @@ public:
 		*/
 		Update_Cached_Data();
 	}
-	
+
 	MeshGeometryExportTaskClass(const MeshGeometryExportTaskClass & that) :
 		GeometryExportTaskClass(that),
 		MeshData(that.MeshData),
@@ -149,13 +149,13 @@ public:
 	** to exporting.
 	*/
 	bool	Is_Name_Dirty(void)				{ return NameDirty; }
-	void	Set_Name_Dirty(bool onoff)		{ NameDirty = onoff; } 
+	void	Set_Name_Dirty(bool onoff)		{ NameDirty = onoff; }
 
 	/*
 	** Vertex Normal smoothing support!
 	*/
 	virtual Point3		Get_Shared_Vertex_Normal(const Point3 & pos,int smgroup);
-	
+
 	/*
 	** Optimization functions
 	*/
@@ -178,7 +178,7 @@ protected:
 
 	// Cached Data about the Node/Mesh.  Updated by calling Update_Cached_Data whenever the mesh changes.
 	Mtl *					SingleMtl;			// Pointer to the single material (if the mesh uses only one, even in a multi-mtl)
-	Point3				BoxCenter;			// Center of the bounding box (in object space)			
+	Point3				BoxCenter;			// Center of the bounding box (in object space)
 	Point3				BoxExtent;			// Extent of the bounding box (in object space)
 	Box3					WorldBounds;		// World-space bounding box
 };
@@ -272,7 +272,7 @@ protected:
 /**
 ** NullGeometryExportTaskClass
 ** Export task for INodes which are to generate W3D NULL objects.  Note that this
-** does not do anything in the Export_Geometry call, these only create entries in 
+** does not do anything in the Export_Geometry call, these only create entries in
 ** any Hierarhcical model or collection object being exported.
 */
 class NullGeometryExportTaskClass : public GeometryExportTaskClass
@@ -290,7 +290,7 @@ public:
 	{
 		context.ProgressMeter->Add_Increment();
 	};
-	
+
 protected:
 
 	virtual int	Get_Geometry_Type(void) { return NULLOBJ; }
@@ -303,7 +303,7 @@ protected:
 ** Export task for INodes which are to generate W3D Aggregates.  These are nodes
 ** that refer to some external W3D object.  This export task doesn't export any
 ** geometry (similer to the Null export task) and it clears its container name
-** because the object to be attached is not a sub-object of the model we are 
+** because the object to be attached is not a sub-object of the model we are
 ** currently exporting.
 */
 class AggregateGeometryExportTaskClass : public GeometryExportTaskClass
@@ -320,9 +320,9 @@ public:
 		context.ProgressMeter->Add_Increment();
 	};
 
-	virtual bool Is_Aggregate(void)						
-	{ 
-		return true; 
+	virtual bool Is_Aggregate(void)
+	{
+		return true;
 	}
 
 protected:
@@ -400,7 +400,7 @@ GeometryExportTaskClass::GeometryExportTaskClass(INode * node,GeometryExportCont
 	ExportSpace(1),
 	CurTime(context.CurTime),
 	Node(node)
-{	
+{
 	/*
 	** Set up the names
 	*/
@@ -502,14 +502,14 @@ void GeometryExportTaskClass::Get_Full_Name(char * buffer,int size)
  * HISTORY:                                                                                    *
  *   10/20/2000 gth : Created.                                                                 *
  *=============================================================================================*/
-GeometryExportTaskClass * 
+GeometryExportTaskClass *
 GeometryExportTaskClass::Create_Task(INode * node,GeometryExportContextClass & context)
 {
 	if (!::Is_Geometry(node)) {
 		return NULL;
 	}
-	
-	// NOTE: we *have* to check Is_Proxy first because it is tied to a naming convention 
+
+	// NOTE: we *have* to check Is_Proxy first because it is tied to a naming convention
 	// rather than an explicit UI setting like the rest of the types.
 	if (::Is_Proxy(*node)) {
 		return new ProxyExportTaskClass(node,context);
@@ -526,13 +526,13 @@ GeometryExportTaskClass::Create_Task(INode * node,GeometryExportContextClass & c
 	if (::Is_Null_Object(node)) {
 		return new NullGeometryExportTaskClass(node,context);
 	}
-	
+
 	if (::Is_Dazzle(node)) {
 		return new DazzleGeometryExportTaskClass(node,context);
 	}
 
 	if (::Is_Aggregate(node)) {
-		return new AggregateGeometryExportTaskClass(node,context);		
+		return new AggregateGeometryExportTaskClass(node,context);
 	}
 
 	return NULL;
@@ -570,23 +570,23 @@ void GeometryExportTaskClass::Optimize_Geometry
 	*/
 	DynamicVectorClass<MeshGeometryExportTaskClass *> meshes;
 	while (i<tasks.Count()) {
-		if (	(tasks[i]->Get_Geometry_Type() == GeometryExportTaskClass::MESH) && 
-				(!Is_Skin(tasks[i]->Get_Object_Node())) ) 
+		if (	(tasks[i]->Get_Geometry_Type() == GeometryExportTaskClass::MESH) &&
+				(!Is_Skin(tasks[i]->Get_Object_Node())) )
 		{
 			/*
 			** Add to the mesh array, remove from the tasks array
-			*/			
+			*/
 			meshes.Add((MeshGeometryExportTaskClass *)(tasks[i]));
 			tasks.Delete(i);
 		} else {
 
 			/*
 			** Leave in the task array and move to the next one.
-			*/			
+			*/
 			i++;
-		} 
+		}
 	}
-	
+
 	/*
 	** Pass 2: Split all meshes which use more than one material
 	*/
@@ -619,15 +619,15 @@ void GeometryExportTaskClass::Optimize_Geometry
 	while (i < simple_meshes.Count()) {
 
 		if (simple_meshes[i]->Can_Combine()) {
-		
+
 			j=i+1;
 			while (j < simple_meshes.Count()) {
 				if (simple_meshes[i]->Can_Combine_With(simple_meshes[j])) {
-				
+
 					/*
 					** Add mesh 'j' into mesh 'i', delete its task.
 					*/
-					simple_meshes[i]->Combine_Mesh(simple_meshes[j]);				
+					simple_meshes[i]->Combine_Mesh(simple_meshes[j]);
 					delete simple_meshes[j];
 					simple_meshes.Delete(j);
 
@@ -648,7 +648,7 @@ void GeometryExportTaskClass::Optimize_Geometry
 			}
 		}
 		i++;
-	}	
+	}
 
 
 
@@ -689,10 +689,10 @@ void GeometryExportTaskClass::Optimize_Geometry
  *   10/23/2000 gth : Created.                                                                 *
  *=============================================================================================*/
 void GeometryExportTaskClass::Generate_Name(char * root,int index,GeometryExportContextClass & context)
-{	
+{
 	/*
 	** Check if the original had a Renegade "building prefix" in its name.  Building meshes
-	** are named with a 2-3 letter user specified prefix followed by either '^' or '#'.  We 
+	** are named with a 2-3 letter user specified prefix followed by either '^' or '#'.  We
 	** have to maintain this prefix on the optimized meshes...
 	*/
 	char prefix[5];
@@ -756,12 +756,12 @@ void	MeshGeometryExportTaskClass::Update_Cached_Data(void)
 		SingleMtl = nodemtl;
 
 	} else {
-		
+
 		int mat_index;
 		int face_index;
 		int sub_mtl_count = nodemtl->NumSubMtls();
 		bool * sub_mtl_flags = new bool[sub_mtl_count];
-		
+
 		/*
 		** Initialize each sub-material flag to false (indicates that the material is un-used)
 		*/
@@ -799,7 +799,7 @@ void	MeshGeometryExportTaskClass::Update_Cached_Data(void)
 	*/
 	Point3 boxmin(0,0,0);
 	Point3 boxmax(0,0,0);
-	
+
 	if (MeshData.numVerts > 0) {
 		boxmin = MeshData.verts[1];
 		boxmax = MeshData.verts[0];
@@ -807,7 +807,7 @@ void	MeshGeometryExportTaskClass::Update_Cached_Data(void)
 			boxmin.x = MIN(MeshData.verts[i].x,boxmin.x);
 			boxmin.y = MIN(MeshData.verts[i].y,boxmin.y);
 			boxmin.z = MIN(MeshData.verts[i].z,boxmin.z);
-			
+
 			boxmax.x = MAX(MeshData.verts[i].x,boxmax.x);
 			boxmax.y = MAX(MeshData.verts[i].y,boxmax.y);
 			boxmax.z = MAX(MeshData.verts[i].z,boxmax.z);
@@ -884,7 +884,7 @@ void MeshGeometryExportTaskClass::Split(DynamicVectorClass<MeshGeometryExportTas
 	int face_index;
 	int sub_mtl_count = nodemtl->NumSubMtls();
 	bool * sub_mtl_flags = new bool[sub_mtl_count];
-	
+
 	/*
 	** Initialize each sub-material flag to false (indicates that the material is un-used)
 	*/
@@ -911,7 +911,7 @@ void MeshGeometryExportTaskClass::Split(DynamicVectorClass<MeshGeometryExportTas
 			new_task->Reduce_To_Single_Material(mat_index);
 			new_task->Set_Name_Dirty(true);
 			simple_meshes.Add(new_task);
-		
+
 		}
 	}
 }
@@ -942,7 +942,7 @@ void MeshGeometryExportTaskClass::Reduce_To_Single_Material(int mat_id)
 
 	faces_to_delete.ClearAll();
 	verts_to_delete.ClearAll();
-	
+
 	for (int i=0; i<MeshData.getNumFaces(); i++) {
 		if ((MeshData.faces[i].getMatID() % sub_mtl_count) != mat_id) {
 			faces_to_delete.Set(i,true);
@@ -953,7 +953,7 @@ void MeshGeometryExportTaskClass::Reduce_To_Single_Material(int mat_id)
 	MeshData.DeleteVertSet(verts_to_delete);
 
 	Update_Cached_Data();
-}	
+}
 
 
 /***********************************************************************************************
@@ -1070,7 +1070,7 @@ void MeshGeometryExportTaskClass::Combine_Mesh(MeshGeometryExportTaskClass * oth
 	/*
 	** Compute the transform from other_mesh's coordinate system to ours so that
 	** its polygons can be combined with ours (by calling CombineMeshes)
-	*/ 
+	*/
 	Matrix3 our_tm = Node->GetObjectTM(CurTime);
 	Matrix3 his_tm = other_mesh->Node->GetObjectTM(CurTime);
 	Matrix3 tm = Inverse(our_tm) * his_tm;
@@ -1094,7 +1094,7 @@ void MeshGeometryExportTaskClass::Combine_Mesh(MeshGeometryExportTaskClass * oth
 	** Set all material ID's
 	*/
 	for (int i=0; i<MeshData.numFaces; i++) {
-		MeshData.faces[i].setMatID(matid); 		
+		MeshData.faces[i].setMatID(matid);
 	}
 }
 
@@ -1109,21 +1109,21 @@ Point3 MeshGeometryExportTaskClass::Get_Shared_Vertex_Normal(const Point3 & worl
 	*/
 	if (WorldBounds.Contains(world_pos) != 0) {
 
-		/* 
+		/*
 		** Transform the query point into object space
 		*/
 		Matrix3 tm = Node->GetObjectTM(CurTime);
 		Point3 obj_pos = world_pos * Inverse(tm);
-	
+
 		/*
 		**	Loop through all the faces in this mesh and find out which ones
 		** share the same smoothing group as the vertex we are looking for.
 		*/
-		for (int face_index = 0; face_index < MeshData.numFaces; face_index ++) {					
+		for (int face_index = 0; face_index < MeshData.numFaces; face_index ++) {
 			Face &maxface = MeshData.faces[face_index];
 			int face_smgroup = maxface.getSmGroup();
 			if ((face_smgroup & smgroup) || (face_smgroup == smgroup)) {
-				
+
 				/*
 				**	Find out if any of the verticies of this face share the
 				** same space as the vertex we are looking for.
@@ -1162,7 +1162,7 @@ Point3 MeshGeometryExportTaskClass::Get_Shared_Vertex_Normal(const Point3 & worl
 			}
 		}
 
-		/* 
+		/*
 		** Transform the "normal" to world space.  Note that this vector isn't
 		** normalized because we are basically summing the contributions of each
 		** face in each mesh which shares this normal.  The final normal

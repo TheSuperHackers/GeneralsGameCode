@@ -52,7 +52,7 @@ void main(void)
   {
     func3();
   }
-  catch (...) 
+  catch (...)
   {
     printf("This catch clause should not be executed.\n");
   }

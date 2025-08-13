@@ -220,7 +220,7 @@ Bool GameSpyLoginPreferences::write( void )
 			fprintf(fp, "pass_%s = %s\n", passIt->first.str(), quoPass.str());
 			++passIt;
 		}
-		
+
 		PassMap::iterator dateIt = m_emailDateMap.begin();
 		while (dateIt != m_emailDateMap.end())
 		{
@@ -453,7 +453,7 @@ void WOLLoginMenuInit( WindowLayout *layout, void *userData )
 	{
 		loginPref = NEW GameSpyLoginPreferences;
 	}
-	
+
 	// if the ESRB warning is blank (other country) hide the box
 	GameWindow *esrbTitle = TheWindowManager->winGetWindowFromId( NULL, NAMEKEY("GameSpyLoginProfile.wnd:StaticTextESRBTop") );
 	GameWindow *esrbParent = TheWindowManager->winGetWindowFromId( NULL, NAMEKEY("GameSpyLoginProfile.wnd:ParentESRB") );
@@ -504,9 +504,9 @@ void WOLLoginMenuInit( WindowLayout *layout, void *userData )
 	textEntryYear =					TheWindowManager->winGetWindowFromId( NULL,  textEntryYearID);
 
 	GadgetTextEntrySetText(textEntryMonth, UnicodeString::TheEmptyString);
-	
+
 	GadgetTextEntrySetText(textEntryDay, UnicodeString::TheEmptyString);
-	
+
 	GadgetTextEntrySetText(textEntryYear, UnicodeString::TheEmptyString);
 
 
@@ -591,12 +591,12 @@ void WOLLoginMenuInit( WindowLayout *layout, void *userData )
 		DEBUG_ASSERTCRASH(textEntryLoginName,		("textEntryLoginName missing!"));
 		TheWindowManager->winSetFocus( textEntryLoginName );
 		//TheShell->registerWithAnimateManager(parentWOLLogin, WIN_ANIMATION_SLIDE_TOP, TRUE);
-		
+
 //		TheShell->registerWithAnimateManager(buttonTOS, WIN_ANIMATION_SLIDE_LEFT, TRUE);
 //		TheShell->registerWithAnimateManager(buttonCreateAccount, WIN_ANIMATION_SLIDE_LEFT, TRUE);
 //		TheShell->registerWithAnimateManager(buttonUseAccount, WIN_ANIMATION_SLIDE_LEFT, TRUE);
 //		TheShell->registerWithAnimateManager(buttonBack, WIN_ANIMATION_SLIDE_RIGHT, TRUE);
-		
+
 	}
 #endif // ALLOW_NON_PROFILED_LOGIN
 
@@ -646,7 +646,7 @@ void WOLLoginMenuInit( WindowLayout *layout, void *userData )
 			UnicodeString pass;
 			pass.translate(loginPref->getPasswordForEmail(lastEmail));
 			GadgetTextEntrySetText(textEntryPassword, pass);
-			
+
 			AsciiString month,day,year;
 			loginPref->getDateForEmail(lastEmail, month, day, year);
 			pass.translate(month);
@@ -715,13 +715,13 @@ void WOLLoginMenuInit( WindowLayout *layout, void *userData )
 	layout->hide( FALSE );
 
 	// Set Keyboard to Main Parent
-	
+
 	RaiseGSMessageBox();
 
 	OptionPreferences optionPref;
 	if (!optionPref.getBool("SawTOS", TRUE))
 	{
-		TheWindowManager->winSendSystemMsg( parentWOLLogin, GBM_SELECTED, 
+		TheWindowManager->winSendSystemMsg( parentWOLLogin, GBM_SELECTED,
 																			(WindowMsgData)buttonTOS, buttonTOSID );
 	}
 	TheTransitionHandler->setGroup("GameSpyLoginProfileFade");
@@ -785,7 +785,7 @@ static void checkLogin( void )
 		SignalUIInteraction(SHELL_SCRIPT_HOOK_GENERALS_ONLINE_LOGIN);
 		nextScreen = "Menus/WOLWelcomeMenu.wnd";
 		TheShell->pop();
-		
+
 		// read in some cached data
 		GameSpyMiscPreferences mPref;
 		PSPlayerStats localPSStats = GameSpyPSMessageQueueInterface::parsePlayerKVPairs(mPref.getCachedStats().str());
@@ -807,7 +807,7 @@ static void checkLogin( void )
 void WOLLoginMenuUpdate( WindowLayout * layout, void *userData)
 {
 
-	// We'll only be successful if we've requested to 
+	// We'll only be successful if we've requested to
 	if(isShuttingDown && TheShell->isAnimFinished() && TheTransitionHandler->isFinished())
 		shutdownComplete(layout);
 
@@ -907,7 +907,7 @@ void WOLLoginMenuUpdate( WindowLayout * layout, void *userData)
 WindowMsgHandledType WOLLoginMenuInput( GameWindow *window, UnsignedInt msg,
 																			 WindowMsgData mData1, WindowMsgData mData2 )
 {
-	switch( msg ) 
+	switch( msg )
 	{
 
 		// --------------------------------------------------------------------------------------------
@@ -924,14 +924,14 @@ WindowMsgHandledType WOLLoginMenuInput( GameWindow *window, UnsignedInt msg,
 				// ----------------------------------------------------------------------------------------
 				case KEY_ESC:
 				{
-					
+
 					//
 					// send a simulated selected event to the parent window of the
 					// back/exit button
 					//
 					if( BitIsSet( state, KEY_STATE_UP ) )
 					{
-						TheWindowManager->winSendSystemMsg( window, GBM_SELECTED, 
+						TheWindowManager->winSendSystemMsg( window, GBM_SELECTED,
 																							(WindowMsgData)buttonBack, buttonBackID );
 
 					}  // end if
@@ -1022,15 +1022,15 @@ static Bool isAgeOkay(AsciiString &month, AsciiString &day, AsciiString year)
 //-------------------------------------------------------------------------------------------------
 /** WOL Login Menu window system callback */
 //-------------------------------------------------------------------------------------------------
-WindowMsgHandledType WOLLoginMenuSystem( GameWindow *window, UnsignedInt msg, 
+WindowMsgHandledType WOLLoginMenuSystem( GameWindow *window, UnsignedInt msg,
 														 WindowMsgData mData1, WindowMsgData mData2 )
 {
 	UnicodeString txtInput;
 
 	switch( msg )
 	{
-		
-		
+
+
 		case GWM_CREATE:
 			{
 				break;
@@ -1042,7 +1042,7 @@ WindowMsgHandledType WOLLoginMenuSystem( GameWindow *window, UnsignedInt msg,
 			} // case GWM_DESTROY:
 
 		case GWM_INPUT_FOCUS:
-			{	
+			{
 				// if we're givin the opportunity to take the keyboard focus we must say we want it
 				if( mData1 == TRUE )
 					*(Bool *)mData2 = TRUE;
@@ -1125,7 +1125,7 @@ WindowMsgHandledType WOLLoginMenuSystem( GameWindow *window, UnsignedInt msg,
 					}
 					else
 					{
-						GadgetCheckBoxSetChecked(checkBoxRememberPassword, false);						
+						GadgetCheckBoxSetChecked(checkBoxRememberPassword, false);
 						GadgetTextEntrySetText(textEntryMonth, UnicodeString::TheEmptyString);
 						GadgetTextEntrySetText(textEntryDay, UnicodeString::TheEmptyString);
 						GadgetTextEntrySetText(textEntryYear, UnicodeString::TheEmptyString);
@@ -1188,7 +1188,7 @@ WindowMsgHandledType WOLLoginMenuSystem( GameWindow *window, UnsignedInt msg,
 					}
 					else
 					{
-						GadgetCheckBoxSetChecked(checkBoxRememberPassword, false);						
+						GadgetCheckBoxSetChecked(checkBoxRememberPassword, false);
 						GadgetTextEntrySetText(textEntryMonth, UnicodeString::TheEmptyString);
 						GadgetTextEntrySetText(textEntryDay, UnicodeString::TheEmptyString);
 						GadgetTextEntrySetText(textEntryYear, UnicodeString::TheEmptyString);
@@ -1243,13 +1243,13 @@ WindowMsgHandledType WOLLoginMenuSystem( GameWindow *window, UnsignedInt msg,
 						month.translate( GadgetTextEntryGetText(textEntryMonth) );
 						day.translate( GadgetTextEntryGetText(textEntryDay) );
 						year.translate( GadgetTextEntryGetText(textEntryYear) );
-						
+
 						if(!isAgeOkay(month, day, year))
 						{
 							GSMessageBoxOk(TheGameText->fetch("GUI:AgeFailedTitle"), TheGameText->fetch("GUI:AgeFailed"));
 							break;
 						}
-						
+
 						AsciiString login, password, email;
 						email.translate( GadgetComboBoxGetText(comboBoxEmail) );
 						login.translate( GadgetComboBoxGetText(comboBoxLoginName) );
@@ -1264,7 +1264,7 @@ WindowMsgHandledType WOLLoginMenuSystem( GameWindow *window, UnsignedInt msg,
 							strcpy(req.arg.login.email, email.str());
 							strcpy(req.arg.login.password, password.str());
 							req.arg.login.hasFirewall = TRUE;
-							
+
 							TheGameSpyInfo->setLocalBaseName( login );
 							//TheGameSpyInfo->setLocalProfileID( resp.player.profileID );
 							TheGameSpyInfo->setLocalEmail( email );
@@ -1273,7 +1273,7 @@ WindowMsgHandledType WOLLoginMenuSystem( GameWindow *window, UnsignedInt msg,
 
 							TheGameSpyBuddyMessageQueue->addRequest( req );
 							if(checkBoxRememberPassword && GadgetCheckBoxIsChecked(checkBoxRememberPassword))
-							{	
+							{
 								(*loginPref)["lastName"] = login;
 								(*loginPref)["lastEmail"] = email;
 								(*loginPref)["useProfiles"] = "yes";
@@ -1333,7 +1333,7 @@ WindowMsgHandledType WOLLoginMenuSystem( GameWindow *window, UnsignedInt msg,
 						month.translate( GadgetTextEntryGetText(textEntryMonth) );
 						day.translate( GadgetTextEntryGetText(textEntryDay) );
 						year.translate( GadgetTextEntryGetText(textEntryYear) );
-						
+
 						if(!isAgeOkay(month, day, year))
 						{
 							GSMessageBoxOk(TheGameText->fetch("GUI:AgeFailedTitle"), TheGameText->fetch("GUI:AgeFailed"));
@@ -1353,7 +1353,7 @@ WindowMsgHandledType WOLLoginMenuSystem( GameWindow *window, UnsignedInt msg,
 							strcpy(req.arg.login.email, email.str());
 							strcpy(req.arg.login.password, password.str());
 							req.arg.login.hasFirewall = true;
-							
+
 							TheGameSpyInfo->setLocalBaseName( login );
 							//TheGameSpyInfo->setLocalProfileID( resp.player.profileID );
 							TheGameSpyInfo->setLocalEmail( email );
@@ -1362,7 +1362,7 @@ WindowMsgHandledType WOLLoginMenuSystem( GameWindow *window, UnsignedInt msg,
 
 							TheGameSpyBuddyMessageQueue->addRequest( req );
 							if(checkBoxRememberPassword && GadgetCheckBoxIsChecked(checkBoxRememberPassword))
-							{	
+							{
 								(*loginPref)["lastName"] = login;
 								(*loginPref)["lastEmail"] = email;
 								(*loginPref)["useProfiles"] = "yes";
@@ -1478,7 +1478,7 @@ WindowMsgHandledType WOLLoginMenuSystem( GameWindow *window, UnsignedInt msg,
 					}
 					EnableLoginControls( FALSE );
 					buttonBack->winEnable(FALSE);
-					
+
 				}
 				else if ( controlID == buttonTOSOKID )
 				{
@@ -1501,7 +1501,7 @@ WindowMsgHandledType WOLLoginMenuSystem( GameWindow *window, UnsignedInt msg,
 				}
 				break;
 			}// case GBM_SELECTED:
-	
+
 		case GEM_EDIT_DONE:
 			{
 				break;

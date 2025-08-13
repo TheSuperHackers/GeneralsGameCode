@@ -35,8 +35,8 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 /*
-**	The NormalCone is a class used to represent a cone of unit length. It can be used to 
-** loosely represent a collection of other normals allowing backface culling to be 
+**	The NormalCone is a class used to represent a cone of unit length. It can be used to
+** loosely represent a collection of other normals allowing backface culling to be
 ** performed at a heirarchial level rather than at a triangle level.
 **
 **	The term 'NormalCone' is a bit of a misnomer; it is really a circular portion of a sphere.
@@ -78,7 +78,7 @@ class NormalCone : public Vector3
 		}
 
 		// find the two vectors on the edge of the cone residing on the same plane as the input vector.
-		// Note: these two Get_Coplanar functions return floats in an attempt to reduce float/int CPU state changes... 
+		// Note: these two Get_Coplanar functions return floats in an attempt to reduce float/int CPU state changes...
 		inline float Get_Coplanar_Normals(const Vector3 & Input, Vector3 & Output1, Vector3 & Output2) const;
 
 		// find the two vectors on the edge of the cone residing on the same plane as the input vector and their dot products with the input.
@@ -94,8 +94,8 @@ class NormalCone : public Vector3
 		// this function returns the dot product between the input vector and the nearest coplanar normal
 		// contained by the cone.
 		// If the input vector is also contained by the cone, the result is always 1.0f.
-		// Note that in the case of a complete sphere, the nearest coplanar normal will be pointing in 
-		// the opposite direction of the input vector. 
+		// Note that in the case of a complete sphere, the nearest coplanar normal will be pointing in
+		// the opposite direction of the input vector.
 		inline float Smallest_Dot_Product(const Vector3 & Input);
 
 		// this value is the dot product of the edge of the cone and the center of the cone.
@@ -115,9 +115,9 @@ inline float NormalCone::Get_Coplanar_Normals(const Vector3 & Input, Vector3 & O
 	Vector3::Cross_Product(Input, *this, & cross);
 
 	float length = cross.Length2();
-	if(length < WWMATH_EPSILON) 
+	if(length < WWMATH_EPSILON)
 		return 0.0f;
-	
+
 	length = sqrt(length);
 	cross /= length;
 
@@ -137,7 +137,7 @@ inline float NormalCone::Get_Coplanar_Normals_And_Dots(const Vector3 & Input, Ve
 {
 	float length = Get_Coplanar_Normals(Input, Output1, Output2);
 
-	if(length < WWMATH_EPSILON) 
+	if(length < WWMATH_EPSILON)
 		return 0.0f;
 
 	// get the dot products of the new normal with the two coplanar normals and the current average
@@ -151,7 +151,7 @@ inline float NormalCone::Get_Coplanar_Normals_And_Dots(const Vector3 & Input, Ve
 inline void NormalCone::Merge(const Vector3 & Input)
 {
 	// early exit if this normal cone has already turned into a complete sphere.
-	if(Complete_Sphere()) 
+	if(Complete_Sphere())
 		return;
 
 	// get the dot of the new vector with the current center vector
@@ -179,11 +179,11 @@ inline void NormalCone::Merge(const Vector3 & Input)
 
 	// the smaller of the dot values we have is going to indicate which of the two coplanar normals to use
 	// for averaging into the new center normal.
-	if(dot1 < dot2) 
+	if(dot1 < dot2)
 		Set(Input + normal1, dot1);
 	else
 		Set(Input + normal2, dot2);
-	
+
 	// if the angle is < 0, reverse the direction of the averaged normal since we have constructed
 	// something more like a sphere with a cone shape taken out of it (a negative cone).
 	if(Angle < WWMATH_EPSILON)
@@ -197,7 +197,7 @@ inline void NormalCone::Merge(const Vector3 & Input)
 inline void NormalCone::Merge(const NormalCone & Input)
 {
 	Vector3 n1, n2;
-	
+
 	if(Input.Get_Coplanar_Normals(*this, n1,n2) >= WWMATH_EPSILON)
 	{
 		Merge(n1);
@@ -208,8 +208,8 @@ inline void NormalCone::Merge(const NormalCone & Input)
 // this function returns the dot product between the input vector and the nearest coplanar normal
 // contained by the cone.
 // If the input vector is also contained by the cone, the result is always 1.0f.
-// Note that in the case of a complete sphere, the nearest coplanar normal will be pointing in 
-// the opposite direction of the input vector. 
+// Note that in the case of a complete sphere, the nearest coplanar normal will be pointing in
+// the opposite direction of the input vector.
 inline float NormalCone::Smallest_Dot_Product(const Vector3 & Input)
 {
 	if(Complete_Sphere())

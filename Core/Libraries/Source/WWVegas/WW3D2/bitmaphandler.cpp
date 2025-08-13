@@ -26,7 +26,7 @@ void Bitmap_Assert(bool condition)
 }
 
 void BitmapHandlerClass::Create_Mipmap_B8G8R8A8(
-	unsigned char* dest_surface, 
+	unsigned char* dest_surface,
 	unsigned dest_surface_pitch,
 	unsigned char* src_surface,
 	unsigned src_surface_pitch,
@@ -145,7 +145,7 @@ void BitmapHandlerClass::Copy_Image_Generate_Mipmap(
 // ----------------------------------------------------------------------------
 
 void BitmapHandlerClass::Copy_Image(
-	unsigned char* dest_surface, 
+	unsigned char* dest_surface,
 	unsigned dest_surface_width,
 	unsigned dest_surface_height,
 	unsigned dest_surface_pitch,
@@ -329,7 +329,7 @@ void BitmapHandlerClass::Copy_Image(
 			}
 		}
 		else {
-			
+
 			// For now do only point-sampling
 			for (unsigned y=0;y<dest_surface_height;++y) {
 				unsigned* dest_ptr=(unsigned*)dest_surface;
@@ -423,7 +423,7 @@ void BitmapHandlerClass::Copy_Image(
 		}
 	}
 	else {
-		
+
 		// For now do only point-sampling
 		for (unsigned y=0;y<dest_surface_height;++y) {
 			unsigned char* dest_ptr=dest_surface+y*dest_surface_pitch;

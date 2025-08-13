@@ -21,7 +21,7 @@
 //
 // Basic types and constants
 // Author: Michael S. Booth, January 1995, September 2000
-// TheSuperHackers @compile feliwir 11/04/2025 Move common BaseType.h code to BaseTypeCore.h
+// TheSuperHackers @build feliwir 11/04/2025 Move common BaseType.h code to BaseTypeCore.h
 //
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -34,14 +34,14 @@
 
 #include <math.h>
 #include <string.h>
-// TheSuperHackers @compile feliwir 07/04/2025 Adds utility macros for cross-platform compatibility
+// TheSuperHackers @build feliwir 07/04/2025 Adds utility macros for cross-platform compatibility
 #include <Utility/compat.h>
 #include <Utility/CppMacros.h>
 #include <Utility/stdint_adapter.h>
 
 /*
 **	Turn off some unneeded warnings.
-**	Within the windows headers themselves, Microsoft has disabled the warnings 4290, 4514, 
+**	Within the windows headers themselves, Microsoft has disabled the warnings 4290, 4514,
 **	4069, 4200, 4237, 4103, 4001, 4035, 4164. Makes you wonder, eh?
 */
 
@@ -63,7 +63,7 @@
 #pragma warning(disable : 4711)
 
 #if 0
-// 'assignment within condition expression'. actually a pretty useful warning, 
+// 'assignment within condition expression'. actually a pretty useful warning,
 // but way too much existing code violates it.
 //#pragma warning(disable : 4706)
 #else
@@ -125,15 +125,15 @@
 //--------------------------------------------------------------------
 // Fundamental type definitions
 //--------------------------------------------------------------------
-typedef float						Real;					// 4 bytes 
-typedef int32_t						Int;					// 4 bytes 
-typedef uint32_t	                UnsignedInt;	  	    // 4 bytes 
-typedef uint16_t	                UnsignedShort;		    // 2 bytes 
-typedef int16_t						Short;					// 2 bytes 
+typedef float						Real;					// 4 bytes
+typedef int32_t						Int;					// 4 bytes
+typedef uint32_t	                UnsignedInt;	  	    // 4 bytes
+typedef uint16_t	                UnsignedShort;		    // 2 bytes
+typedef int16_t						Short;					// 2 bytes
 typedef unsigned char	            UnsignedByte;			// 1 byte		USED TO BE "Byte"
 typedef char						Byte;					// 1 byte		USED TO BE "SignedByte"
 typedef char						Char;					// 1 byte of text
-typedef bool						Bool;					// 
+typedef bool						Bool;					//
 // note, the types below should use "long long", but MSVC doesn't support it yet
 typedef int64_t						Int64;						// 8 bytes
 typedef uint64_t					UnsignedInt64;	  	        // 8 bytes

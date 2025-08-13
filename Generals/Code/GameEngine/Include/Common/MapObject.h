@@ -36,7 +36,7 @@
 #include "Common/GameMemory.h"
 #include "GameClient/TerrainRoads.h"
 
-/** MapObject class 
+/** MapObject class
 Not ref counted.  Do not store pointers to this class.  */
 class WorldHeightMap;
 class RenderObjClass;
@@ -57,14 +57,14 @@ enum {
 	FLAG_BRIDGE_POINT1			= 0x00000010,			 ///< If set, is the first point in a bridge.
 	FLAG_BRIDGE_POINT2			= 0x00000020,			 ///< If set, is the second point in a bridge.
 	FLAG_BRIDGE_FLAGS				= (FLAG_BRIDGE_POINT1|FLAG_BRIDGE_POINT2),	 ///< If nonzero, object is a bridge piece.
-	FLAG_ROAD_CORNER_TIGHT	= 0x00000040,     
-	FLAG_ROAD_JOIN					= 0x00000080,			 ///< If set, this road end does a generic alpha join.			
+	FLAG_ROAD_CORNER_TIGHT	= 0x00000040,
+	FLAG_ROAD_JOIN					= 0x00000080,			 ///< If set, this road end does a generic alpha join.
 	FLAG_DONT_RENDER				= 0x00000100			 ///< If set, do not render this object. Only WB pays attention to this. (Right now, anyways)
 };
 
 class MapObject : public MemoryPoolObject
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(MapObject, "MapObject")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(MapObject, "MapObject")
 
 // friend doesn't play well with MPO -- srj
 //	friend class WorldHeightMap;
@@ -73,7 +73,7 @@ class MapObject : public MemoryPoolObject
 //	friend class DeleteInfo;
 
 	enum
-	{	
+	{
 		MO_SELECTED = 0x01,
 		MO_LIGHT = 0x02,
 		MO_WAYPOINT = 0x04,
@@ -86,9 +86,9 @@ class MapObject : public MemoryPoolObject
 	const ThingTemplate*	m_thingTemplate; ///< thing template for map object
 	Real									m_angle;						///< positive x is 0 degrees, angle is counterclockwise in degrees.
 	MapObject*						m_nextMapObject;		///< linked list.
-	Int										m_flags;						///< Bit flags.  
+	Int										m_flags;						///< Bit flags.
 	Dict									m_properties;				///< general property sheet.
-	// This data is runtime data that is used by the worldbuider editor, but 
+	// This data is runtime data that is used by the worldbuider editor, but
 	// not saved in the map file.
 	Int										m_color;		 ///< Display color.
 	RenderObjClass*				m_renderObj; ///< object that renders in the 3d scene.
@@ -151,20 +151,20 @@ public:
 	AsciiString getWaypointName();
 	void setWaypointID(Int i);
 	void setWaypointName(AsciiString n);
-	
+
 	// calling validate will call verifyValidTeam and verifyValidUniqueID.
 	void validate(void);
 
-	// verifyValidTeam will either place the map object on an approrpriate team, or leave the 
+	// verifyValidTeam will either place the map object on an approrpriate team, or leave the
 	// current team (if it is valid)
 	void verifyValidTeam(void);
 
 	// verifyValidUniqueID will ensure that this unit isn't sharing a number with another unit.
 	void verifyValidUniqueID(void);
 
-	// The fast version doesn't attempt to verify uniqueness. It goes 
+	// The fast version doesn't attempt to verify uniqueness. It goes
 	static void fastAssignAllUniqueIDs(void);
-	
+
 
 	static MapObject *getFirstMapObject(void) { return TheMapObjectListPtr; }
 	static Dict* getWorldDict() { return &TheWorldDict; }

@@ -97,7 +97,7 @@ void RiderChangeContainModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
   TransportContainModuleData::buildFieldParse(p);
 
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
 		{ "Rider1",					parseRiderInfo,					NULL, offsetof( RiderChangeContainModuleData, m_riders[0] ) },
 		{ "Rider2",					parseRiderInfo,					NULL, offsetof( RiderChangeContainModuleData, m_riders[1] ) },
@@ -120,8 +120,8 @@ void RiderChangeContainModuleData::buildFieldParse(MultiIniFieldParse& p)
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-Int RiderChangeContain::getContainMax( void ) const 
-{ 
+Int RiderChangeContain::getContainMax( void ) const
+{
 	if (getRiderChangeContainModuleData())
 		return getRiderChangeContainModuleData()->m_slotCapacity;
 
@@ -131,7 +131,7 @@ Int RiderChangeContain::getContainMax( void ) const
 // PUBLIC /////////////////////////////////////////////////////////////////////////////////////////
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-RiderChangeContain::RiderChangeContain( Thing *thing, const ModuleData *moduleData ) : 
+RiderChangeContain::RiderChangeContain( Thing *thing, const ModuleData *moduleData ) :
 								 TransportContain( thing, moduleData )
 {
 	m_extraSlotsInUse = 0;
@@ -149,8 +149,8 @@ RiderChangeContain::~RiderChangeContain( void )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-/** 
-	can this container contain this kind of object? 
+/**
+	can this container contain this kind of object?
 	and, if checkCapacity is TRUE, does this container have enough space left to hold the given unit?
 */
 Bool RiderChangeContain::isValidContainerFor(const Object* rider, Bool checkCapacity) const
@@ -193,7 +193,7 @@ void RiderChangeContain::onContaining( Object *rider, Bool wasSelected )
 	}
 
 	//If the rider is currently selected, transfer selection to the container and preserve other units
-	//that may be already selected. Note that containing the rider will automatically cause it to be 
+	//that may be already selected. Note that containing the rider will automatically cause it to be
 	//deselected, so all we have to do is select the container (if not already selected)!
 	Drawable *containDraw = getObject()->getDrawable();
 	if( containDraw && wasSelected && !containDraw->isSelected() )
@@ -252,7 +252,7 @@ void RiderChangeContain::onContaining( Object *rider, Bool wasSelected )
 			break;
 		}
 	}
-	
+
 	//Extend base class
 	TransportContain::onContaining( rider, wasSelected );
 
@@ -292,7 +292,7 @@ void RiderChangeContain::onRemoving( Object *rider )
 
 			//Also clear the object status
 			bike->clearStatus( MAKE_OBJECT_STATUS_MASK( data->m_riders[ i ].m_objectStatusType ) );
-			
+
 			if( rider->getControllingPlayer() != NULL )
 			{
 				//Wow, completely unforseeable game teardown order crash.  SetVeterancyLevel results in a call to player

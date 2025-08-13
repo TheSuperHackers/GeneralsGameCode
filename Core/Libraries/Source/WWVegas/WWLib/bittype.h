@@ -17,22 +17,22 @@
 */
 
 /* $Header: /G/wwlib/bittype.h 4     4/02/99 1:37p Eric_c $ */
-/*************************************************************************** 
- ***                  Confidential - Westwood Studios                    *** 
- *************************************************************************** 
- *                                                                         * 
- *                 Project Name : Voxel Technology                         * 
- *                                                                         * 
- *                    File Name : BITTYPE.H                                * 
- *                                                                         * 
- *                   Programmer : Greg Hjelstrom                           * 
- *                                                                         * 
- *                   Start Date : 02/24/97                                 * 
- *                                                                         * 
- *                  Last Update : February 24, 1997 [GH]                   * 
- *                                                                         * 
- *-------------------------------------------------------------------------* 
- * Functions:                                                              * 
+/***************************************************************************
+ ***                  Confidential - Westwood Studios                    ***
+ ***************************************************************************
+ *                                                                         *
+ *                 Project Name : Voxel Technology                         *
+ *                                                                         *
+ *                    File Name : BITTYPE.H                                *
+ *                                                                         *
+ *                   Programmer : Greg Hjelstrom                           *
+ *                                                                         *
+ *                   Start Date : 02/24/97                                 *
+ *                                                                         *
+ *                  Last Update : February 24, 1997 [GH]                   *
+ *                                                                         *
+ *-------------------------------------------------------------------------*
+ * Functions:                                                              *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 #if _MSC_VER >= 1000
 #pragma once

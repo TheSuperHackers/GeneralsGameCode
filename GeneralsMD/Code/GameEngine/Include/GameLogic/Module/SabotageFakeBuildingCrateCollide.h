@@ -23,11 +23,11 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-//	
-// FILE: SabotageFakeBuildingCrateCollide.h 
+//
+// FILE: SabotageFakeBuildingCrateCollide.h
 // Author: Kris Morness, July 2003
 // Desc:   A crate (actually a saboteur - mobile crate) that destroys a fake building.
-//	
+//
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
@@ -51,11 +51,11 @@ public:
 	{
 	}
 
-	static void buildFieldParse(MultiIniFieldParse& p) 
+	static void buildFieldParse(MultiIniFieldParse& p)
 	{
     CrateCollideModuleData::buildFieldParse(p);
 
-		static const FieldParse dataFieldParse[] = 
+		static const FieldParse dataFieldParse[] =
 		{
 			{ 0, 0, 0, 0 }
 		};

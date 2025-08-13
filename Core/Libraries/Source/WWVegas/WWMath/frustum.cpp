@@ -60,7 +60,7 @@
  *   2/17/2000  gth : Created.                                                                 *
  *=============================================================================================*/
 void FrustumClass::Init
-( 
+(
 	const Matrix3D &		camera,
 	const Vector2 &		vpmin,
 	const Vector2 &		vpmax,
@@ -69,7 +69,7 @@ void FrustumClass::Init
 )
 {
 	int i;
-	
+
 	// Store the camera transform
 	CameraTransform = camera;
 
@@ -113,7 +113,7 @@ void FrustumClass::Init
 		Corners[2].Set(vpmax.X, vpmin.Y, 1.0);
 		Corners[6] = Corners[2];
 		Corners[2] *= znear;
-		Corners[6] *= zfar; 
+		Corners[6] *= zfar;
 	}
 	else
 	{	//normal camera
@@ -132,7 +132,7 @@ void FrustumClass::Init
 		Corners[3].Set(vpmax.X, vpmin.Y, 1.0);
 		Corners[7] = Corners[3];
 		Corners[3] *= znear;
-		Corners[7] *= zfar; 
+		Corners[7] *= zfar;
 	}
 
 

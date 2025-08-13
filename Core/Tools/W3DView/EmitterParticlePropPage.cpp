@@ -110,7 +110,7 @@ EmitterParticlePropPageClass::Initialize (void)
 		//
 		// Read the settings from the emitter
 		//
-		m_Rate			= m_pEmitterList->Get_Emission_Rate ();		
+		m_Rate			= m_pEmitterList->Get_Emission_Rate ();
 		m_BurstSize		= m_pEmitterList->Get_Burst_Size ();
 		m_MaxParticles	= m_pEmitterList->Get_Max_Emissions ();
 		m_Randomizer	= m_pEmitterList->Get_Creation_Volume ();
@@ -125,7 +125,7 @@ EmitterParticlePropPageClass::Initialize (void)
 //  OnInitDialog
 //
 BOOL
-EmitterParticlePropPageClass::OnInitDialog (void) 
+EmitterParticlePropPageClass::OnInitDialog (void)
 {
 	// Allow the base class to process this message
 	CPropertyPage::OnInitDialog ();
@@ -136,7 +136,7 @@ EmitterParticlePropPageClass::OnInitDialog (void)
 	m_BurstSizeSpin.SetRange (0, 10000);
 	m_BurstSizeSpin.SetPos (m_BurstSize);
 	::Initialize_Spinner (m_EmitionRateSpin, m_Rate, -10000, 10000);
-	
+
 	//
 	//	Setup the max particles spin
 	//
@@ -161,7 +161,7 @@ EmitterParticlePropPageClass::OnApply (void)
 	//
 	m_Rate			= ::GetDlgItemFloat (m_hWnd, IDC_EMISSION_RATE_EDIT);
 	m_BurstSize		= GetDlgItemInt (IDC_BURST_SIZE_EDIT);
-	
+
 	//
 	//	Determine if we need to cap the particles or not
 	//
@@ -169,7 +169,7 @@ EmitterParticlePropPageClass::OnApply (void)
 	if (SendDlgItemMessage (IDC_MAX_PARTICLES_CHECK, BM_GETCHECK)) {
 		m_MaxParticles	= GetDlgItemInt (IDC_MAX_PARTICLES_EDIT);
 	}
-	
+
 	//
 	//	Apply the changes to the emitter
 	//
@@ -198,7 +198,7 @@ EmitterParticlePropPageClass::WindowProc
 	/*switch (message)
 	{
 	}*/
-	
+
 	// Allow the base class to process this message
 	return CPropertyPage::WindowProc(message, wParam, lParam);
 }
@@ -221,7 +221,7 @@ EmitterParticlePropPageClass::OnNotify
 	//
 	NMHDR *pheader = (NMHDR *)lParam;
 	if ((pheader != NULL) && (pheader->code == UDN_DELTAPOS)) {
-		LPNMUPDOWN pupdown = (LPNMUPDOWN)lParam;		
+		LPNMUPDOWN pupdown = (LPNMUPDOWN)lParam;
 		::Update_Spinner_Buddy (pheader->hwndFrom, pupdown->iDelta);
 		SetModified ();
 	}
@@ -237,11 +237,11 @@ EmitterParticlePropPageClass::OnNotify
 //
 /////////////////////////////////////////////////////////////
 void
-EmitterParticlePropPageClass::OnSpecifyCreationVolume (void) 
+EmitterParticlePropPageClass::OnSpecifyCreationVolume (void)
 {
 	VolumeRandomDialogClass dialog (m_Randomizer, this);
 	if (dialog.DoModal () == IDOK) {
-		
+
 		//
 		//	Get the new randomizer from the dialog
 		//
@@ -276,7 +276,7 @@ EmitterParticlePropPageClass::OnCommand
 			}
 			break;
 	}
-	
+
 	return CPropertyPage::OnCommand(wParam, lParam);
 }
 
@@ -294,5 +294,5 @@ EmitterParticlePropPageClass::OnMaxParticlesCheck (void)
 	::EnableWindow (::GetDlgItem (m_hWnd, IDC_MAX_PARTICLES_SPIN), enable);
 
 	SetModified ();
-	return ;	
+	return ;
 }

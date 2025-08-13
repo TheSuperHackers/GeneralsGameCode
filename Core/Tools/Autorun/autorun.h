@@ -65,7 +65,7 @@ typedef enum {
 	LANG_SCA,	//8
 	LANG_KOR,	//9
 	LANG_CHI,	//10
-	LANG_NUM,	
+	LANG_NUM,
 } LanguageType;
 
 #define	IS_LANGUAGE_DBCS(l)	(((l)==LANG_CHI)||((l)==LANG_JAP)||((l)==LANG_KOR))		// [OYO]
@@ -95,7 +95,7 @@ typedef enum {
 #elif RTS_ZEROHOUR
 # define SHELL_UNINSTALL_KEY			"Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\InstallShield_{F3E9C243-122E-4D6B-ACC1-E1FEC02F6CA1}"
 #endif
-#define SHELL_APP_PATHS_KEY			"Software\\Microsoft\\Windows\\CurrentVersion\\App Paths" 
+#define SHELL_APP_PATHS_KEY			"Software\\Microsoft\\Windows\\CurrentVersion\\App Paths"
 #define PROGRAMS_SUBKEY				"Programs"
 #define COMMON_PROGRAMS_SUBKEY		"Common Programs"
 #define SOFTWARE_SUBKEY				"Software"
@@ -126,12 +126,12 @@ typedef enum {
 #define VERSION_SUBKEY				"Version"
 #define LANGUAGE_SUBKEY				"Language"
 #define MAPPACKVERSION_SUBKEY		"MapPackVersion"
-											
+
 #define DDRAW  							"DDRAW.DLL"
 #define DSOUND 							"DSOUND.DLL"
 #define DDHELP 							"DDHELP.EXE"
 
-#define NORMAL							"Normal" 
+#define NORMAL							"Normal"
 #define FOCUSED							"Focused"
 #define PRESSED							"Pressed"
 /*
@@ -220,7 +220,7 @@ class Window
 class MainWindow : public Window
 {
 	protected:
-		
+
 		static char szClassName[ 100 ];
 
 	public:
@@ -232,7 +232,7 @@ class MainWindow : public Window
 			{
 				if ( string != NULL && string[0] != '\0' ) {
 					strcpy( szClassName, string );
-				}		
+				}
 			};
 
 		BOOL			Is_Product_Registered	( void );

@@ -83,7 +83,7 @@ void XferLoad::open( AsciiString identifier )
 	m_fileFP = fopen( identifier.str(), "rb" );
 	if( m_fileFP == NULL )
 	{
-		
+
 		DEBUG_CRASH(( "File '%s' not found", identifier.str() ));
 		throw XFER_FILE_NOT_FOUND;
 
@@ -129,7 +129,7 @@ Int XferLoad::beginBlock( void )
 	XferBlockSize blockSize;
 	if( fread( &blockSize, sizeof( XferBlockSize ), 1, m_fileFP ) != 1 )
 	{
-		
+
 		DEBUG_CRASH(( "Xfer - Error reading block size for '%s'", m_identifier.str() ));
 		return 0;
 
@@ -196,7 +196,7 @@ void XferLoad::xferSnapshot( Snapshot *snapshot )
 // ------------------------------------------------------------------------------------------------
 void XferLoad::xferAsciiString( AsciiString *asciiStringData )
 {
-	
+
 	// read bytes of string length to follow
 	UnsignedByte len;
 	xferUnsignedByte( &len );
@@ -219,7 +219,7 @@ void XferLoad::xferAsciiString( AsciiString *asciiStringData )
 // ------------------------------------------------------------------------------------------------
 void XferLoad::xferUnicodeString( UnicodeString *unicodeStringData )
 {
-	
+
 	// read bytes of string length to follow
 	UnsignedByte len;
 	xferUnsignedByte( &len );
@@ -255,6 +255,6 @@ void XferLoad::xferImplementation( void *data, Int dataSize )
 		throw XFER_READ_ERROR;
 
 	}  // end if
-	
+
 }  // end xferImplementation
 

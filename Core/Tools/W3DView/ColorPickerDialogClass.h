@@ -89,7 +89,7 @@ protected:
 		void					Create_Form (CWnd *parent);
 		void					Set_Update_Callback (WWCTRL_COLORCALLBACK callme, void *arg)
 									{ m_UpdateCallback = callme; m_CallArg = arg; }
-		
+
 	protected:
 
 		/////////////////////////////////////////////////////////////
@@ -103,7 +103,7 @@ protected:
 		void					Update_Color (float red, float green, float blue, DWORD flags = 0xFFFFFFFF);
 
 	private:
-		
+
 		/////////////////////////////////////////////////////////////
 		//	Private member data
 		/////////////////////////////////////////////////////////////

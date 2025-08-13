@@ -62,7 +62,7 @@ public:
 	Bool getDoTriggers(void) {return m_triggers;}
 	Bool getDoAllScripts(void) {return m_allScripts;}
 	Bool getDoSides(void) {return m_sides;}
-	
+
 protected:
 
 	// Generated message map functions

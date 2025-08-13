@@ -32,7 +32,7 @@
 #include "always.h"
 #include "rendobj.h"
 #include "w3d_file.h"
-#include "dx8vertexbuffer.h"			 
+#include "dx8vertexbuffer.h"
 #include "dx8indexbuffer.h"
 #include "shader.h"
 #include "vertmaterial.h"
@@ -63,7 +63,7 @@ render clouds and sky bodies.
 */
 class WaterRenderObjClass : public Snapshot,
 														public RenderObjClass
-{	
+{
 
 public:
 
@@ -80,7 +80,7 @@ public:
 	~WaterRenderObjClass(void);
 
 	/////////////////////////////////////////////////////////////////////////////
-	// Render Object Interface (W3D methods) 
+	// Render Object Interface (W3D methods)
 	/////////////////////////////////////////////////////////////////////////////
 	virtual RenderObjClass *	Clone(void) const;
 	virtual int						Class_ID(void) const;
@@ -108,7 +108,7 @@ public:
 	void updateMapOverrides(void);	///< used to update any map specific map overrides for water appearance.
 	void setTimeOfDay(TimeOfDay tod); ///<change sky/water for time of day
 	void toggleCloudLayer(Bool state)	{	m_useCloudLayer=state;}	///<enables/disables the cloud layer
-	void updateRenderTargetTextures(CameraClass *cam);	///< renders into any required textures.	
+	void updateRenderTargetTextures(CameraClass *cam);	///< renders into any required textures.
 	void ReleaseResources(void);	///< Release all dx8 resources so the device can be reset.
 	void ReAcquireResources(void);  ///< Reacquire all resources after device reset.
 	Real getWaterHeight(Real x, Real y);	///<return water height at given point - for use by WB.
@@ -121,7 +121,7 @@ public:
 	void getGridTransform(Matrix3D *transform);	///< get grid transform matrix
 	void setGridResolution(Real gridCellsX, Real gridCellsY, Real cellSize);	///<grid resolution and spacing
 	void getGridResolution(Real *gridCellsX, Real *gridCellsY, Real *cellSize);  ///<get grid resolution params
-	inline void setGridVertexHeight(Int x, Int y, Real value); 
+	inline void setGridVertexHeight(Int x, Int y, Real value);
 	inline void getGridVertexHeight(Int x, Int y, Real *value)
 	{	if (m_meshData)	*value=m_meshData[(y+1)*(m_gridCellsX+1+2)+x+1].height+ Get_Position().Z;}
 	inline Bool worldToGridSpace(Real worldX, Real worldY, Real &gridX, Real &gridY);	///<convert from world coordinates to grid's local coordinate system.
@@ -157,7 +157,7 @@ protected:
 		float x,y,z;
 		unsigned int c;
 		float tu, tv;
-	}; 
+	};
 
 	LPDIRECT3DDEVICE8 m_pDev;						///<pointer to D3D Device
 	LPDIRECT3DVERTEXBUFFER8 m_vertexBufferD3D;		///<D3D vertex buffer
@@ -188,7 +188,7 @@ protected:
 		UnsignedByte preferredHeight;		///< the hight we prefer to be
 	};
 	WaterMeshData *m_meshData;  ///< heightmap data for 3D Mesh based water.
-	UnsignedInt m_meshDataSize;	///< size of m_meshData 
+	UnsignedInt m_meshDataSize;	///< size of m_meshData
 	Bool m_meshInMotion;				///< TRUE once we've messed with velocities and are in motion
 	Bool m_doWaterGrid;	///< allows/prevents water grid rendering.
 
@@ -229,13 +229,13 @@ protected:
 		TextureClass	*waterTexture;
 		Int				waterRepeatCount;
 		Real			skyTexelsPerUnit;	//texel density of sky plane (higher value repeats texture more).
-		DWORD			vertex00Diffuse;		
-		DWORD			vertex10Diffuse;		
-		DWORD			vertex11Diffuse;		
+		DWORD			vertex00Diffuse;
+		DWORD			vertex10Diffuse;
+		DWORD			vertex11Diffuse;
 		DWORD			vertex01Diffuse;
 		DWORD			waterDiffuse;
 		DWORD			transparentWaterDiffuse;
-		Real			uScrollPerMs;		
+		Real			uScrollPerMs;
 		Real			vScrollPerMs;
 	};
 
@@ -278,7 +278,7 @@ inline Bool WaterRenderObjClass::worldToGridSpace(Real worldX, Real worldY, Real
 	dy=worldY - m_gridOrigin.Y;
 	gridX = ooGridCellSize * (dx * m_gridDirectionX.X + dy * m_gridDirectionX.Y);
 	gridY = ooGridCellSize * (dx * m_gridDirectionY.X + dy * m_gridDirectionY.Y);
-	
+
 	if (gridX < 0)
 		return FALSE;
 	if (gridX > m_gridCellsX-1 )

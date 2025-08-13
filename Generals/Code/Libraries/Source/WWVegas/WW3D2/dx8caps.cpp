@@ -26,8 +26,8 @@
  *                                                                                             *
  *              Original Author:: Hector Yee                                                   *
  *                                                                                             *
- *                       Author : Kenny Mitchell                                               * 
- *                                                                                             * 
+ *                       Author : Kenny Mitchell                                               *
+ *                                                                                             *
  *                     $Modtime:: 06/27/02 1:27p                                              $*
  *                                                                                             *
  *                    $Revision:: 31                                                          $*
@@ -259,11 +259,11 @@ DX8Caps::DeviceTypeATI DX8Caps::Get_ATI_Device(unsigned device_id)
 	case 0x4C45:
 	case 0x4C46: return DEVICE_ATI_RAGE_128_MOBILITY_M3;
 
-	case 0x5041: 
-	case 0x5042: 
-	case 0x5043: 
-	case 0x5044: 
-	case 0x5045: 
+	case 0x5041:
+	case 0x5042:
+	case 0x5043:
+	case 0x5044:
+	case 0x5045:
 	case 0x5046: return DEVICE_ATI_RAGE_128_PRO_GL;
 
 	case 0x5047:
@@ -299,10 +299,10 @@ DX8Caps::DeviceTypeATI DX8Caps::Get_ATI_Device(unsigned device_id)
 
 	case 0x5157: return DEVICE_ATI_R7500;
 
-	case 0x5245: 
-	case 0x5246: 
-	case 0x534B: 
-	case 0x534C: 
+	case 0x5245:
+	case 0x5246:
+	case 0x534B:
+	case 0x534C:
 	case 0x534D: return DEVICE_ATI_RAGE_128_GL;
 
 	case 0x524B:
@@ -438,7 +438,7 @@ DX8Caps::DeviceTypeMatrox DX8Caps::Get_Matrox_Device(unsigned device_id)
 	default: return DEVICE_MATROX_UNKNOWN;
 	}
 }
- 
+
 DX8Caps::DeviceTypePowerVR DX8Caps::Get_PowerVR_Device(unsigned device_id)
 {
 	switch (device_id) {
@@ -469,8 +469,8 @@ DX8Caps::DeviceTypeIntel DX8Caps::Get_Intel_Device(unsigned device_id)
 
 DX8Caps::DX8Caps(
 	IDirect3D8* direct3d,
-	IDirect3DDevice8* D3DDevice, 
-	WW3DFormat display_format, 
+	IDirect3DDevice8* D3DDevice,
+	WW3DFormat display_format,
 	const D3DADAPTER_IDENTIFIER8& adapter_id)
 	:
 	Direct3D(direct3d),
@@ -503,9 +503,9 @@ void DX8Caps::Init_Caps(IDirect3DDevice8* D3DDevice)
 		SupportTnL=true;
 
 		D3DDevice->SetRenderState(D3DRS_SOFTWAREVERTEXPROCESSING,FALSE);
-		DX8CALL(GetDeviceCaps(&hwVPCaps));	
+		DX8CALL(GetDeviceCaps(&hwVPCaps));
 	} else {
-		SupportTnL=false;			
+		SupportTnL=false;
 	}
 }
 
@@ -526,7 +526,7 @@ void DX8Caps::Compute_Caps(WW3DFormat display_format, const D3DADAPTER_IDENTIFIE
 		SupportNPatches=false;
 	}
 
-	if ((caps.TextureOpCaps&D3DTEXOPCAPS_DOTPRODUCT3)==D3DTEXOPCAPS_DOTPRODUCT3) 
+	if ((caps.TextureOpCaps&D3DTEXOPCAPS_DOTPRODUCT3)==D3DTEXOPCAPS_DOTPRODUCT3)
 	{
 		SupportDot3=true;
 	} else {
@@ -633,9 +633,9 @@ void DX8Caps::Check_Render_To_Texture_Support(WW3DFormat display_format,const D3
 */
 void DX8Caps::Check_Depth_Stencil_Support(WW3DFormat display_format, const D3DCAPS8& caps)
 {
-	if (display_format==WW3D_FORMAT_UNKNOWN) 
+	if (display_format==WW3D_FORMAT_UNKNOWN)
 	{
-		for (unsigned i=0;i<WW3D_ZFORMAT_COUNT;++i) 
+		for (unsigned i=0;i<WW3D_ZFORMAT_COUNT;++i)
 		{
 			SupportDepthStencilFormat[i]=false;
 		}
@@ -643,14 +643,14 @@ void DX8Caps::Check_Depth_Stencil_Support(WW3DFormat display_format, const D3DCA
 	}
 
 	D3DFORMAT d3d_display_format=WW3DFormat_To_D3DFormat(display_format);
-	
-	for (unsigned i=0;i<WW3D_ZFORMAT_COUNT;++i) 
+
+	for (unsigned i=0;i<WW3D_ZFORMAT_COUNT;++i)
 	{
-		if (i==WW3D_ZFORMAT_UNKNOWN) 
+		if (i==WW3D_ZFORMAT_UNKNOWN)
 		{
 			SupportDepthStencilFormat[i]=false;
 		}
-		else 
+		else
 		{
 			WW3DZFormat format=(WW3DZFormat)i;
 			SupportDepthStencilFormat[i]=SUCCEEDED

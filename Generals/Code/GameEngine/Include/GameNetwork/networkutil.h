@@ -37,7 +37,7 @@ Bool DoesCommandRequireACommandID(NetCommandType type);
 Bool CommandRequiresAck(NetCommandMsg *msg);
 Bool CommandRequiresDirectSend(NetCommandMsg *msg);
 Bool IsCommandSynchronized(NetCommandType type);
-AsciiString GetAsciiNetCommandType(NetCommandType type);
+const char* GetNetCommandTypeAsString(NetCommandType type);
 
 #ifdef DEBUG_LOGGING
 extern "C" {

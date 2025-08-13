@@ -24,7 +24,7 @@
 
 // FILE: BehaviorModule.h /////////////////////////////////////////////////////////////////////////////////
 // Author: Steven Johnson
-// Desc:	 
+// Desc:
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
@@ -90,7 +90,7 @@ public:
 	{
 	}
 
-	static void buildFieldParse(MultiIniFieldParse& p) 
+	static void buildFieldParse(MultiIniFieldParse& p)
 	{
     ModuleData::buildFieldParse(p);
 	}
@@ -208,22 +208,22 @@ class ParkingPlaceBehaviorInterface
 public:
 	struct PPInfo
 	{
-		Coord3D		parkingSpace; 
+		Coord3D		parkingSpace;
 		Real			parkingOrientation;
-		Coord3D		runwayPrep; 
-		Coord3D		runwayStart; 
-		Coord3D		runwayEnd; 
+		Coord3D		runwayPrep;
+		Coord3D		runwayStart;
+		Coord3D		runwayEnd;
 		Coord3D		runwayApproach;
 		Coord3D		hangarInternal;
 		Real			hangarInternalOrient;
 	};
-	virtual Bool shouldReserveDoorWhenQueued(const ThingTemplate* thing) const = 0; 
-	virtual Bool hasAvailableSpaceFor(const ThingTemplate* thing) const = 0; 
-	virtual Bool hasReservedSpace(ObjectID id) const = 0; 
+	virtual Bool shouldReserveDoorWhenQueued(const ThingTemplate* thing) const = 0;
+	virtual Bool hasAvailableSpaceFor(const ThingTemplate* thing) const = 0;
+	virtual Bool hasReservedSpace(ObjectID id) const = 0;
 	virtual Bool reserveSpace(ObjectID id, Real parkingOffset, PPInfo* info) = 0;
-	virtual void releaseSpace(ObjectID id) = 0; 
+	virtual void releaseSpace(ObjectID id) = 0;
 	virtual Bool reserveRunway(ObjectID id, Bool forLanding) = 0;
-	virtual void releaseRunway(ObjectID id) = 0; 
+	virtual void releaseRunway(ObjectID id) = 0;
 	virtual Int getRunwayCount() const = 0;
 	virtual ObjectID getRunwayReservation(Int r) = 0;
 	virtual void transferRunwayReservationToNextInLineForTakeoff(ObjectID id) = 0;

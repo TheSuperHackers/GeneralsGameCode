@@ -26,8 +26,8 @@
  *                                                                                             *
  *                     Org Author:: Hector Yee                                                  *
  *                                                                                             *
- *                       Author : Kenny Mitchell                                               * 
- *                                                                                             * 
+ *                       Author : Kenny Mitchell                                               *
+ *                                                                                             *
  *                     $Modtime:: 06/26/02 4:04p                                             $*
  *                                                                                             *
  *                    $Revision:: 13                                                          $*

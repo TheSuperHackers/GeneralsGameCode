@@ -39,7 +39,7 @@
 #include "Common/UserPreferences.h"
 
 //-----------------------------------------------------------------------------
-// SkirmishPreferences class 
+// SkirmishPreferences class
 //-----------------------------------------------------------------------------
 class SkirmishPreferences : public UserPreferences
 {

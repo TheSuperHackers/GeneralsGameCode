@@ -24,7 +24,7 @@
 
 // JetAIUpdate.h //////////
 // Author: Steven Johnson, June 2002
- 
+
 #pragma once
 
 #ifndef _JET_AI_UPDATE_H_
@@ -61,9 +61,9 @@ public:
 	UnsignedInt							m_lockonTime;											///< time it takes for someone to lock-on to us.
 	AsciiString							m_lockonCursor;										///< template used for lockon.
 	Real										m_lockonInitialDist;							///< how far away the lockon cursor starts.
-	Real										m_lockonFreq;											
+	Real										m_lockonFreq;
 	Real										m_lockonAngleSpin;								///< how many times to spin around it
-	Real										m_lockonBlinky;								
+	Real										m_lockonBlinky;
 	UnsignedInt							m_returnToBaseIdleTime;						///< if we're idle for this long, return to base
 
 	JetAIUpdateModuleData();
@@ -141,7 +141,7 @@ protected:
 
 	void pruneDeadTargeters();
 	void positionLockon();
-	
+
 	virtual Bool getTreatAsAircraftForLocoDistToGoal() const;
 	Bool isParkedAt(const Object* obj) const;
 

@@ -83,9 +83,9 @@ class DX8TextureCategoryClass : public MultiListObjectClass
 	int												pass;
 	TextureClass *									textures[MAX_TEXTURE_STAGES];
 	ShaderClass										shader;
-	VertexMaterialClass *						material;					
+	VertexMaterialClass *						material;
 	DX8PolygonRendererList						PolygonRendererList;
-	DX8FVFCategoryContainer*					container;	
+	DX8FVFCategoryContainer*					container;
 
 	PolyRenderTaskClass *						render_task_head;			// polygon renderers queued for rendering
 	static bool											m_gForceMultiply;  // Forces opaque materials to use the multiply blend - pseudo transparent effect.  jba.
@@ -102,7 +102,7 @@ public:
 	void									Clear_Render_List();
 
 	TextureClass *						Peek_Texture(int stage)	{ return textures[stage]; }
-	const VertexMaterialClass *	Peek_Material() { return material; }	
+	const VertexMaterialClass *	Peek_Material() { return material; }
 	ShaderClass							Get_Shader() { return shader; }
 
 	DX8PolygonRendererList&			Get_Polygon_Renderer_List() { return PolygonRendererList; }
@@ -117,7 +117,7 @@ public:
 
 	void Remove_Polygon_Renderer(DX8PolygonRendererClass* p_renderer);
 	void Add_Polygon_Renderer(DX8PolygonRendererClass* p_renderer,DX8PolygonRendererClass* add_after_this=NULL);
-	
+
 
 	DX8FVFCategoryContainer * Get_Container(void) { return container; }
 
@@ -142,7 +142,7 @@ protected:
 
 	TextureCategoryList									texture_category_list[MAX_PASSES];
 	TextureCategoryList									visible_texture_category_list[MAX_PASSES];
-	
+
 	MatPassTaskClass *									visible_matpass_head;
 	MatPassTaskClass *									visible_matpass_tail;
 
@@ -153,7 +153,7 @@ protected:
 	unsigned													uv_coordinate_channels;
 	bool														sorting;
 	bool														AnythingToRender;
-	
+
 	void Generate_Texture_Categories(Vertex_Split_Table& split_table,unsigned vertex_offset);
 	void Insert_To_Texture_Category(
 		Vertex_Split_Table& split_table,
@@ -173,11 +173,11 @@ protected:
 
 	DX8TextureCategoryClass* Find_Matching_Texture_Category(
 		VertexMaterialClass* vmat,
-		unsigned pass,		
+		unsigned pass,
 		DX8TextureCategoryClass* ref_category);
 
 public:
-	
+
 	DX8FVFCategoryContainer(unsigned FVF,bool sorting);
 	virtual ~DX8FVFCategoryContainer();
 
@@ -205,8 +205,8 @@ public:
 	virtual bool Check_If_Mesh_Fits(MeshModelClass* mmc)=0;
 
 	inline unsigned Get_FVF() const { return FVF; }
-	
-	inline void Add_Visible_Texture_Category(DX8TextureCategoryClass * tex_category,int pass) 
+
+	inline void Add_Visible_Texture_Category(DX8TextureCategoryClass * tex_category,int pass)
 	{
 		WWASSERT(pass<MAX_PASSES);
 		WWASSERT(tex_category != NULL);
@@ -216,8 +216,8 @@ public:
 	}
 
 	void Add_Visible_Material_Pass(MaterialPassClass * pass,MeshClass * mesh);
-	
-	
+
+
 };
 
 bool DX8FVFCategoryContainer::Anything_To_Render()
@@ -292,7 +292,7 @@ private:
 /**
 ** DX8MeshRendererClass
 ** This object is controller for the entire DX8 mesh rendering system.  It organizes mesh
-** fragments into groups based on FVF, texture, and material.  During rendering, a list of 
+** fragments into groups based on FVF, texture, and material.  During rendering, a list of
 ** the visible mesh fragments is composed and rendered.  There is a global instance of this
 ** class called TheDX8MeshRenderer that should be used for all mesh rendering.
 */

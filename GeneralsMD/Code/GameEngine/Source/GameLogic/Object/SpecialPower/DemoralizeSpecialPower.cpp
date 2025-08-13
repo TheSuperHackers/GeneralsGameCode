@@ -61,8 +61,8 @@ DemoralizeSpecialPowerModuleData::DemoralizeSpecialPowerModuleData( void )
 void DemoralizeSpecialPowerModuleData::buildFieldParse( MultiIniFieldParse &p )
 {
 	SpecialPowerModuleData::buildFieldParse( p );
-	
-	static const FieldParse dataFieldParse[] = 
+
+	static const FieldParse dataFieldParse[] =
 	{
 		{ "BaseRange",									INI::parseReal,			NULL,			offsetof( DemoralizeSpecialPowerModuleData, m_baseRange ) },
 		{ "BonusRangePerCaptured",			INI::parseReal,			NULL,			offsetof( DemoralizeSpecialPowerModuleData, m_bonusRangePerCaptured ) },
@@ -74,7 +74,7 @@ void DemoralizeSpecialPowerModuleData::buildFieldParse( MultiIniFieldParse &p )
 		{ 0, 0, 0, 0 }
 	};
 	p.add( dataFieldParse );
-	
+
 }  // end buildFieldParse
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -132,7 +132,7 @@ void DemoralizeSpecialPower::doSpecialPowerAtLocation( const Coord3D *loc, Real 
 		// cap at the max
 		if( duration > modData->m_maxDurationInFrames )
 			duration = modData->m_maxDurationInFrames;
-					
+
 		// increase the range for every prisoner we got
 		range += contain->getContainCount() * modData->m_bonusRangePerCaptured;
 
@@ -169,12 +169,12 @@ void DemoralizeSpecialPower::doSpecialPowerAtLocation( const Coord3D *loc, Real 
 	// play an effect at the destination location
 	if( modData->m_fxList )
 	{
-	
+
 		// execute FX
 		FXList::doFXPos( modData->m_fxList, loc );
 
 	}  // end if
-		
+
 }    // end doSpecialPowerAtLocation
 
 // ------------------------------------------------------------------------------------------------

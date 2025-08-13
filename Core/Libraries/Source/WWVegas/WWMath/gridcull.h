@@ -74,7 +74,7 @@ class ChunkSaveClass;
 ** compared to the above mentioned systems are that it must uniformly divide space.  The
 ** AABTree conforms to the geometry placed in it and can therefore cull things more
 ** efficiently.  In actual use, this system is like an AAB-tree which is uniformly subdivided,
-** its just that we can jump straight to the leaves of the tree for insertion...  
+** its just that we can jump straight to the leaves of the tree for insertion...
 **
 ** The bounding volume for each grid cell is considered to be the volume of the cell, expanded
 ** by the maximum object size.  Inserting an object into the grid is a matter of determining
@@ -89,12 +89,12 @@ public:
 
 	GridCullSystemClass(void);
 	~GridCullSystemClass(void);
-	
+
 	virtual void		Collect_Objects(const Vector3 & point);
 	virtual void		Collect_Objects(const AABoxClass & box);
 	virtual void		Collect_Objects(const OBBoxClass & box);
 	virtual void		Collect_Objects(const FrustumClass & frustum);
-	
+
 	virtual void		Re_Partition(const Vector3 & min,const Vector3 & max,float objdim);
 	virtual void		Update_Culling(CullableClass * obj);
 
@@ -129,7 +129,7 @@ protected:
 	void					Add_Object_Internal(CullableClass * obj);
 	void					Remove_Object_Internal(CullableClass * obj);
 
-	enum 
+	enum
 	{
 		TERMINATION_CELL_COUNT	= 16384,			// algorithm terminates if we ever have more than this many cells.
 		UNGRIDDED_ADDRESS			= 0xFFFFFFFF	// address given to objs that didn't fit in grid
@@ -147,7 +147,7 @@ protected:
 	int					CellCount[3];
 
 	//	3D array of pointers to objects in each cell
-	CullableClass **	Cells;	
+	CullableClass **	Cells;
 
 	// list of objs that were outside or too big for the grid.
 	CullableClass *	NoGridList;
@@ -155,7 +155,7 @@ protected:
 	// number of objects in the system
 	int					ObjCount;
 
-	// statistics 
+	// statistics
 	StatsStruct				Stats;
 
 	// Structure used to define a volume in the grid.  The volume spans from the cell indexed
@@ -193,7 +193,7 @@ protected:
 	void					init_volume(const AABoxClass & box,VolumeStruct * set_volume);
 	void					init_volume(const OBBoxClass & box,VolumeStruct * set_volume);
 	void					init_volume(const FrustumClass & frustum,VolumeStruct * set_volume);
-	
+
 	void					collect_objects_in_leaf(const Vector3 & point,CullableClass * head);
 	void					collect_objects_in_leaf(const AABoxClass & aabox,CullableClass * head);
 	void					collect_objects_in_leaf(const OBBoxClass & obbox,CullableClass * head);
@@ -212,9 +212,9 @@ protected:
 
 #else
 
-#define GRIDCULL_NODE_ACCEPTED						
-#define GRIDCULL_NODE_TRIVIALLY_ACCEPTED		
-#define GRIDCULL_NODE_REJECTED						
+#define GRIDCULL_NODE_ACCEPTED
+#define GRIDCULL_NODE_TRIVIALLY_ACCEPTED
+#define GRIDCULL_NODE_REJECTED
 
 #endif
 
@@ -249,7 +249,7 @@ class GridLinkClass : public CullLinkClass, public AutoPoolClass<GridLinkClass,2
 public:
 	GridLinkClass(GridCullSystemClass * system);
 	virtual ~GridLinkClass(void);
-	
+
 	int									GridAddress;		// address in the grid.
 	CullableClass *					Prev;					// prev object in this cell
 	CullableClass *					Next;					// next object in this cell
@@ -329,8 +329,8 @@ WWINLINE bool GridCullSystemClass::map_point_to_cell(const Vector3 & pt,int & se
 	set_j = floor(dp.Y * OOCellDim.Y);
 	set_k = floor(dp.Z * OOCellDim.Z);
 
-	if (	(set_i >= 0) && (set_j >= 0) && (set_k >= 0) && 
-			(set_i < CellCount[0]) && (set_j < CellCount[1]) && (set_k < CellCount[2])	) 
+	if (	(set_i >= 0) && (set_j >= 0) && (set_k >= 0) &&
+			(set_i < CellCount[0]) && (set_j < CellCount[1]) && (set_k < CellCount[2])	)
 	{
 		return true;
 	}
@@ -354,7 +354,7 @@ WWINLINE bool GridCullSystemClass::map_point_to_address(const Vector3 & pt,int &
 {
 	int i,j,k;
 	bool res = map_point_to_cell(pt,i,j,k);
-	
+
 	if (res) {
 		set_address = map_indices_to_address(i,j,k);
 		return true;
@@ -430,7 +430,7 @@ WWINLINE void	GridCullSystemClass::compute_box(int i,int j,int k,AABoxClass * se
 	max.Z = min.Z + CellDim.Z + 2.0f*MaxObjExtent;
 
 	set_box->Init((min+max)*0.5f, (min-max)*0.5f);
-}	
+}
 
 
 /***********************************************************************************************
@@ -647,9 +647,9 @@ WWINLINE GridCullSystemClass::VolumeStruct::VolumeStruct(int i0,int j0,int k0,in
  * HISTORY:                                                                                    *
  *   3/30/2000  gth : Created.                                                                 *
  *=============================================================================================*/
-WWINLINE bool GridCullSystemClass::VolumeStruct::Is_Leaf(void) const 
-{ 
-	return ((Max[0]-Min[0] == 1) && (Max[1]-Min[1] == 1) && (Max[2]-Min[2] == 1)); 
+WWINLINE bool GridCullSystemClass::VolumeStruct::Is_Leaf(void) const
+{
+	return ((Max[0]-Min[0] == 1) && (Max[1]-Min[1] == 1) && (Max[2]-Min[2] == 1));
 }
 
 
@@ -684,7 +684,7 @@ WWINLINE bool GridCullSystemClass::VolumeStruct::Is_Empty(void) const
  *   3/30/2000  gth : Created.                                                                 *
  *=============================================================================================*/
 WWINLINE void GridCullSystemClass::VolumeStruct::Split(VolumeStruct & v0,VolumeStruct & v1) const
-{	
+{
 	// find the longest dimension
 	int split_axis = 0;
 	int delta[3];

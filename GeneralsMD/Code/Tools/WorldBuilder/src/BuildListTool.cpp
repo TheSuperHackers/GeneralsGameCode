@@ -20,7 +20,7 @@
 // Texture tiling tool for worldbuilder.
 // Author: John Ahlquist, April 2001
 
-#include "StdAfx.h" 
+#include "StdAfx.h"
 #include "resource.h"
 
 #include "BuildListTool.h"
@@ -44,7 +44,7 @@ PickUnitDialog* BuildListTool::m_static_pickBuildingDlg = NULL;
 
 /// Constructor
 BuildListTool::BuildListTool(void) :
-	Tool(ID_BUILD_LIST_TOOL, IDC_BUILD_LIST_TOOL), 
+	Tool(ID_BUILD_LIST_TOOL, IDC_BUILD_LIST_TOOL),
 	m_rotateCursor(NULL),
 	m_pointerCursor(NULL),
 	m_moveCursor(NULL),
@@ -52,9 +52,9 @@ BuildListTool::BuildListTool(void) :
 {
 	m_curObject = NULL;
 }
-	
+
 /// Destructor
-BuildListTool::~BuildListTool(void) 
+BuildListTool::~BuildListTool(void)
 {
 }
 
@@ -88,7 +88,7 @@ Bool BuildListTool::isDoingAdd(void)
 }
 
 /// Shows the object options panel.
-void BuildListTool::addBuilding() 
+void BuildListTool::addBuilding()
 {
 	//PickUnitDialog dlg;
 	//dlg.SetAllowableType(ES_STRUCTURE);
@@ -100,7 +100,7 @@ void BuildListTool::addBuilding()
 }
 
 /// Shows the object options panel.
-void BuildListTool::activate() 
+void BuildListTool::activate()
 {
 	Bool wasActive = m_isActive;
 	m_isActive = true;
@@ -120,7 +120,7 @@ void BuildListTool::activate()
 }
 
 /// Clears the isActive flag.
-void BuildListTool::deactivate() 
+void BuildListTool::deactivate()
 {
 	m_isActive = false;
 	WbView3d *p3View = CWorldBuilderDoc::GetActive3DView();
@@ -133,7 +133,7 @@ void BuildListTool::deactivate()
 }
 
 /** Set the cursor. */
-void BuildListTool::setCursor(void) 
+void BuildListTool::setCursor(void)
 {
 	if (isDoingAdd()) {
 		Tool::setCursor();	// Default cursor is the adding cursor
@@ -156,7 +156,7 @@ void BuildListTool::setCursor(void)
 }
 
 /** Execute the tool on mouse down - Place an object. */
-void BuildListTool::mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc) 
+void BuildListTool::mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc)
 {
 	if (m != TRACK_L) return;
 	m_moving = false;
@@ -165,7 +165,7 @@ void BuildListTool::mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWo
 	pView->viewToDocCoords(viewPt, &cpt);
 	m_downPt2d = viewPt;
 	m_downPt3d = cpt;
-	if (isDoingAdd()) return; 
+	if (isDoingAdd()) return;
 	BuildListInfo *pInfo = pView->pickedBuildObjectInView(viewPt);
 	if (pInfo) {
 		m_curObject = pInfo;
@@ -197,11 +197,11 @@ void BuildListTool::mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CW
 		Coord3D loc = cpt;
 		MapObject *pCur = ObjectOptions::getObjectNamed(m_pickBuildingDlg.getPickedUnit());
 		loc.z = 0;
-		if (pCur) { 
+		if (pCur) {
 			// Display the transparent version of this object.
 			p3View->setObjTracking(pCur, loc, 0, true);
 		} else {
-			// Don't display anything. 
+			// Don't display anything.
 			p3View->setObjTracking(NULL, loc, 0, false);
 		}
 		return;
@@ -246,13 +246,13 @@ void BuildListTool::mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CW
 	}
 	p3View->invalBuildListItemInView(m_curObject);
 	m_prevPt3d = cpt;
-	
+
 }
 
 
 
 /** Execute the tool on mouse up - Place an object. */
-void BuildListTool::mouseUp(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc) 
+void BuildListTool::mouseUp(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc)
 {
 	if (m != TRACK_L) return;
 	if (!isDoingAdd()) {

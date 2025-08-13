@@ -84,9 +84,9 @@ public:
 	// Intersect Functions.
 	// These functions simply return a bool indicating whether the two operands intersect.
 	////////////////////////////////////////////////////////////////////////////////////////
-	static bool		Intersection_Test(const AABoxClass & box,const TriClass & tri);	
+	static bool		Intersection_Test(const AABoxClass & box,const TriClass & tri);
 	static bool		Intersection_Test(const AABoxClass & box,const AABoxClass & box2);
-	static bool		Intersection_Test(const AABoxClass & box,const OBBoxClass & box2);	
+	static bool		Intersection_Test(const AABoxClass & box,const OBBoxClass & box2);
 	static bool		Intersection_Test(const OBBoxClass & box,const TriClass & tri);
 	static bool		Intersection_Test(const OBBoxClass & box,const AABoxClass & box2);
 	static bool		Intersection_Test(const OBBoxClass & box,const OBBoxClass & box2);
@@ -96,7 +96,7 @@ public:
 	////////////////////////////////////////////////////////////////////////////////////////
 	// Overlap Functions.
 	// Classify the second operand with respect to the first operand.
-	// For example Overlap_Test(plane,point) tests whether 'point' is in front of or 
+	// For example Overlap_Test(plane,point) tests whether 'point' is in front of or
 	// behind 'plane'.
 	// OverlapType: This enumeration is the result of an overlap test.
 	// It indicates whether the the object is in the positive (front/outside) space
@@ -162,10 +162,10 @@ public:
 	static OverlapType	Overlap_Test(const FrustumClass & frustum,const AABoxClass & box);
 	static OverlapType	Overlap_Test(const FrustumClass & frustum,const OBBoxClass & box);
 
-	// Frustum functions for hierachical culling systems.  
-	// At your root node, just pass in planes_passed = 0, then the variable will be modified to 
-	// indicate which planes that volume was inside.  You can then pass that value in for the 
-	// test of all child nodes and optimize away some of the tests.  See AABTreeCullSystemClass 
+	// Frustum functions for hierachical culling systems.
+	// At your root node, just pass in planes_passed = 0, then the variable will be modified to
+	// indicate which planes that volume was inside.  You can then pass that value in for the
+	// test of all child nodes and optimize away some of the tests.  See AABTreeCullSystemClass
 	// for an example usage.
 	static OverlapType	Overlap_Test(const FrustumClass & frustum,const AABoxClass & box,int & planes_passed);
 	static OverlapType	Overlap_Test(const FrustumClass & frustum,const OBBoxClass & box,int & planes_passed);
@@ -201,11 +201,11 @@ public:
 	static bool		Collide(const OBBoxClass & box,const Vector3 & move,const OBBoxClass & box2,const Vector3 & move2,CastResultStruct * result);
 
 	////////////////////////////////////////////////////////////////////////////////////////
-	// Stats 
+	// Stats
 	// Note that these functions will only work if you have stat tracking enabled
 	////////////////////////////////////////////////////////////////////////////////////////
 	struct ColmathStatsStruct
-	{	
+	{
 		ColmathStatsStruct(void);
 		void Reset(void);
 
@@ -227,7 +227,7 @@ public:
 		int CollisionOBBoxOBBoxCount;
 		int CollisionOBBoxOBBoxHitCount;
 	};
-	
+
 	static void									Reset_Stats(void)				{ Stats.Reset(); }
 	static const ColmathStatsStruct &	Get_Current_Stats(void)		{ return Stats; }
 
@@ -295,18 +295,18 @@ inline CollisionMath::OverlapType CollisionMath::eval_overlap_collision(const Ca
 #define TRACK_COLLISION_OBBOX_OBBOX			Stats.CollisionOBBoxOBBoxCount++; Stats.TotalCollisionCount++;
 #define TRACK_COLLISION_OBBOX_OBBOX_HIT	Stats.CollisionOBBoxOBBoxHitCount++; Stats.TotalCollisionHitCount++;
 #else
-#define TRACK_COLLISION_RAY_TRI				
-#define TRACK_COLLISION_RAY_TRI_HIT			
-#define TRACK_COLLISION_AABOX_TRI			
-#define TRACK_COLLISION_AABOX_TRI_HIT		
-#define TRACK_COLLISION_AABOX_AABOX			
-#define TRACK_COLLISION_AABOX_AABOX_HIT	
-#define TRACK_COLLISION_OBBOX_TRI			
-#define TRACK_COLLISION_OBBOX_TRI_HIT		
-#define TRACK_COLLISION_OBBOX_AABOX			
-#define TRACK_COLLISION_OBBOX_AABOX_HIT	
-#define TRACK_COLLISION_OBBOX_OBBOX			
-#define TRACK_COLLISION_OBBOX_OBBOX_HIT	
+#define TRACK_COLLISION_RAY_TRI
+#define TRACK_COLLISION_RAY_TRI_HIT
+#define TRACK_COLLISION_AABOX_TRI
+#define TRACK_COLLISION_AABOX_TRI_HIT
+#define TRACK_COLLISION_AABOX_AABOX
+#define TRACK_COLLISION_AABOX_AABOX_HIT
+#define TRACK_COLLISION_OBBOX_TRI
+#define TRACK_COLLISION_OBBOX_TRI_HIT
+#define TRACK_COLLISION_OBBOX_AABOX
+#define TRACK_COLLISION_OBBOX_AABOX_HIT
+#define TRACK_COLLISION_OBBOX_OBBOX
+#define TRACK_COLLISION_OBBOX_OBBOX_HIT
 #endif
 
 #endif // COLMATH_H

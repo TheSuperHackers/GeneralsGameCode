@@ -49,7 +49,7 @@ enum
 };
 
 //-------------------------------------------------------------------------------------------------
-class DockUpdateModuleData : public UpdateModuleData 
+class DockUpdateModuleData : public UpdateModuleData
 {
 public:
 	Int m_numberApproachPositionsData; // A positive number is an absolute, DYNAMIC_APPROACH_VECTOR_FLAG means dynamic vector
@@ -86,8 +86,8 @@ public:
 	*/
 	virtual Bool advanceApproachPosition( Object* docker, Coord3D *position, Int *index );
 
-	/** Return true when it is OK for docker to begin entering the dock 
-			The Dock will lift the restriction on one particular docker on its own, 
+	/** Return true when it is OK for docker to begin entering the dock
+			The Dock will lift the restriction on one particular docker on its own,
 			so you must continually ask.
 	*/
 	virtual Bool isClearToEnter( Object const* docker ) const;
@@ -99,23 +99,23 @@ public:
 
 	/** Give me the point that is the start of your docking path
 			Returning NULL means there is none free
-			All functions take docker as arg so we could have multiple docks on a building.  
+			All functions take docker as arg so we could have multiple docks on a building.
 			Docker is not assumed, it is recorded and checked.
 	*/
-	virtual void getEnterPosition( Object* docker, Coord3D *position );			
+	virtual void getEnterPosition( Object* docker, Coord3D *position );
 
-	/** Give me the middle point of the dock process where the action() happens */	
-	virtual void getDockPosition( Object* docker, Coord3D *position );					
+	/** Give me the middle point of the dock process where the action() happens */
+	virtual void getDockPosition( Object* docker, Coord3D *position );
 
 	/** Give me the point to drive to when I am done */
-	virtual void getExitPosition( Object* docker, Coord3D *position );					
+	virtual void getExitPosition( Object* docker, Coord3D *position );
 
-	virtual void onApproachReached( Object* docker );		///< I have reached the Approach Point.  
-	virtual void onEnterReached( Object* docker );			///< I have reached the Enter Point.  
+	virtual void onApproachReached( Object* docker );		///< I have reached the Approach Point.
+	virtual void onEnterReached( Object* docker );			///< I have reached the Enter Point.
 	virtual void onDockReached( Object* docker );				///< I have reached the Dock point
 	virtual void onExitReached( Object* docker );				///< I have reached the exit.  You are no longer busy
 
-	//The fact that action() is not here is intentional.  This object cannot exist.  You must 
+	//The fact that action() is not here is intentional.  This object cannot exist.  You must
 	//derive off it and implement action().
 
 	virtual void cancelDock( Object* docker );	///< Clear me from any reserved points, and if I was the reason you were Busy, you aren't anymore.
@@ -126,7 +126,7 @@ public:
 	virtual Bool isAllowPassthroughType();	///< Not all docks allow you to path through them in your AIDock machine
 
 	virtual Bool isRallyPointAfterDockType(){return FALSE;} ///< A minority of docks want to give you a final command to their rally point
-	
+
 	virtual void setDockCrippled( Bool setting ); ///< Game Logic can set me as inoperative.  I get to decide what that means.
 
 	virtual UpdateSleepTime update();	///< In charge of lifting dock restriction for one registered as Approached if all is ready
@@ -145,7 +145,7 @@ protected:
 
 	VecCoord3D m_approachPositions;
 	ObjectIDVector m_approachPositionOwners;	///< Who is in or at least reserved each spot
-	BoolVector m_approachPositionReached;			///< Which positions have actually been reached 
+	BoolVector m_approachPositionReached;			///< Which positions have actually been reached
 
 	ObjectID m_activeDocker;	///< we could expand this to multiple dock paths since we always get docker in our methods
 	Bool m_dockerInside; ///< This is true while our active docker is between Enter and Exit. This is shorter than activeDocker's lifetime as it doesn't include approach to enter
@@ -153,7 +153,7 @@ protected:
 
 	Bool m_dockOpen;  ///< Is the dock open for dockers
 
-	void loadDockPositions();  ///< load all the dock positions 
+	void loadDockPositions();  ///< load all the dock positions
 	Coord3D computeApproachPosition( Int positionIndex, Object *forWhom ); ///< Do a smart lookup of this bone position
 };
 

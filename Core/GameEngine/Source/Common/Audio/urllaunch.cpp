@@ -297,7 +297,7 @@ HRESULT LaunchURL( LPCWSTR pszURL )
 
     //
     // Because of the extremely long length of the URLs, neither
-    // WinExec, nor ShellExecute, were working correctly.  For this reason 
+    // WinExec, nor ShellExecute, were working correctly.  For this reason
     // we use CreateProcess.  The CreateProcess documentation in MSDN says
     // that the most robust way to call CreateProcess is to pass the full
     // command line, where the first element is the application name, in the
@@ -310,9 +310,9 @@ HRESULT LaunchURL( LPCWSTR pszURL )
     STARTUPINFO StartUp;
     ZeroMemory( (LPVOID)&StartUp, sizeof( STARTUPINFO ) );
 
-    StartUp.cb = sizeof(STARTUPINFO); 
+    StartUp.cb = sizeof(STARTUPINFO);
 
-    if( !CreateProcess( szExe, szLaunchCommand, NULL, NULL, 
+    if( !CreateProcess( szExe, szLaunchCommand, NULL, NULL,
                         FALSE, 0, NULL, NULL, &StartUp, &ProcInfo) )
     {
         hr = HRESULT_FROM_WIN32( GetLastError() );
@@ -320,7 +320,7 @@ HRESULT LaunchURL( LPCWSTR pszURL )
     else
     {
         //
-        // CreateProcess succeeded and we do not need the handles to the thread 
+        // CreateProcess succeeded and we do not need the handles to the thread
         // or the process, so close them now.
         //
         if( NULL != ProcInfo.hThread )

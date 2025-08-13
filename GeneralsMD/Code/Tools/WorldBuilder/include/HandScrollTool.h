@@ -30,7 +30,7 @@
                             HandScrollTool
 ***************************************************************************/
 ///  Scroll tool.
-class HandScrollTool : public Tool 
+class HandScrollTool : public Tool
 {
 public:
 	HandScrollTool(void);

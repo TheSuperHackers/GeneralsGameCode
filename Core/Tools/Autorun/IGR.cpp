@@ -66,7 +66,7 @@ bool IGROptionsClass::Init( void )
 		// If successful, get the options
 		IGROptionsType ReadOptions = 0;
 
-		returnValue = RegQueryValueEx(handle, WOLAPI_REG_KEY_OPTIONS, NULL, 
+		returnValue = RegQueryValueEx(handle, WOLAPI_REG_KEY_OPTIONS, NULL,
 			 (unsigned long *) &type, (unsigned char *) &ReadOptions, (unsigned long *)&size);
 
 		if (returnValue == ERROR_SUCCESS) {
@@ -75,7 +75,7 @@ bool IGROptionsClass::Init( void )
 			if (type == REG_DWORD) {
 				options = ReadOptions;
 				valid = true;
-			}	
+			}
 		}
 
 		// Clean up
@@ -153,7 +153,7 @@ bool IGROptionsClass::Set_Options( IGROptionsType options )
 	HKEY	handle;
 	int		disp;
 	char	key[ 128 ];
- 
+
 	// We don't care if it's valid, we'll MAKE it valid.
 	strcpy( key, WOLAPI_REG_KEY_BOTTOM );
 
@@ -161,12 +161,12 @@ bool IGROptionsClass::Set_Options( IGROptionsType options )
 	if( RegOpenKeyEx( HKEY_LOCAL_MACHINE, key, 0, KEY_ALL_ACCESS, &handle ) != ERROR_SUCCESS ) {
 
 		// If not, make the WOLAPI key
-		if( RegCreateKeyEx( HKEY_LOCAL_MACHINE, key, 0, NULL, REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, 
+		if( RegCreateKeyEx( HKEY_LOCAL_MACHINE, key, 0, NULL, REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS,
 			NULL, &handle, (unsigned long *)&disp ) != ERROR_SUCCESS )
 			return false;
 	}
 
-	if( RegSetValueEx( handle, WOLAPI_REG_KEY_OPTIONS, 0, REG_DWORD, (unsigned char *)&options, sizeof(int)) 
+	if( RegSetValueEx( handle, WOLAPI_REG_KEY_OPTIONS, 0, REG_DWORD, (unsigned char *)&options, sizeof(int))
 		== ERROR_SUCCESS ) {
 		ReturnValue = true;
 	}
@@ -176,6 +176,6 @@ bool IGROptionsClass::Set_Options( IGROptionsType options )
 	Init();
 
 	assert( valid == TRUE );
- 
+
 	return ReturnValue;
 }

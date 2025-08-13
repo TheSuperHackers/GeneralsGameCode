@@ -24,7 +24,7 @@
 
 // DeployStyleAIUpdate.h ////////////
 // Author: Kris Morness, August 2002
-// Desc:   State machine that allows deploying/undeploying to control the AI. 
+// Desc:   State machine that allows deploying/undeploying to control the AI.
 //         When deployed, you can't move, when undeployed, you can't attack.
 
 #pragma once
@@ -50,8 +50,8 @@ class DeployStyleAIUpdateModuleData : public AIUpdateModuleData
 {
 public:
 	UnsignedInt			m_unpackTime;
-	UnsignedInt			m_packTime;		
-	Bool						m_resetTurretBeforePacking;	
+	UnsignedInt			m_packTime;
+	Bool						m_resetTurretBeforePacking;
 	Bool						m_turretsFunctionOnlyWhenDeployed;
 	Bool						m_turretsMustCenterBeforePacking;
 
@@ -62,7 +62,7 @@ public:
 		m_resetTurretBeforePacking = false;
 		m_turretsFunctionOnlyWhenDeployed = false;
 		// Added By Sadullah Nader
-		// Initialization necessary 
+		// Initialization necessary
 		m_turretsMustCenterBeforePacking = FALSE;
 		// End Add
 	}
@@ -71,7 +71,7 @@ public:
 	{
 		AIUpdateModuleData::buildFieldParse(p);
 
-		static const FieldParse dataFieldParse[] = 
+		static const FieldParse dataFieldParse[] =
 		{
 			{ "UnpackTime",					INI::parseDurationUnsignedInt,	NULL, offsetof( DeployStyleAIUpdateModuleData, m_unpackTime ) },
 			{ "PackTime",						INI::parseDurationUnsignedInt,	NULL, offsetof( DeployStyleAIUpdateModuleData, m_packTime ) },

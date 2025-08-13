@@ -58,7 +58,7 @@ class W3DOverlordTruckDraw : public W3DTruckDraw
 
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( W3DOverlordTruckDraw, "W3DOverlordTruckDraw" )
 	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( W3DOverlordTruckDraw, W3DOverlordTruckDrawModuleData )
-		
+
 public:
 
 	W3DOverlordTruckDraw( Thing *thing, const ModuleData* moduleData );

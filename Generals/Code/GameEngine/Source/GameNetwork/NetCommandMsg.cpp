@@ -33,7 +33,7 @@
 /**
  * Base constructor
  */
-NetCommandMsg::NetCommandMsg() 
+NetCommandMsg::NetCommandMsg()
 {
 	//Added By Sadullah Nader
 	//Initializations inserted
@@ -131,10 +131,10 @@ NetGameCommandMsg::~NetGameCommandMsg() {
 /**
  * Add an argument to this command.
  */
-void NetGameCommandMsg::addArgument(const GameMessageArgumentDataType type, GameMessageArgumentType arg) 
+void NetGameCommandMsg::addArgument(const GameMessageArgumentDataType type, GameMessageArgumentType arg)
 {
 	if (m_argTail == NULL) {
-		m_argList = newInstance(GameMessageArgument);	
+		m_argList = newInstance(GameMessageArgument);
 		m_argTail = m_argList;
 		m_argList->m_data = arg;
 		m_argList->m_type = type;
@@ -169,7 +169,7 @@ static Int indexFromMask(UnsignedInt mask)
 /**
  * Construct a new GameMessage object from the data in this object.
  */
-GameMessage *NetGameCommandMsg::constructGameMessage() 
+GameMessage *NetGameCommandMsg::constructGameMessage()
 {
 	GameMessage *retval = newInstance(GameMessage)(m_type);
 
@@ -800,7 +800,7 @@ NetProgressCommandMsg::NetProgressCommandMsg( void ) : NetCommandMsg()
 }
 
 NetProgressCommandMsg::~NetProgressCommandMsg( void ) {}
-		
+
 UnsignedByte NetProgressCommandMsg::getPercentage()
 {
 	return m_percent;
@@ -836,7 +836,7 @@ UnsignedByte * NetWrapperCommandMsg::getData() {
 	return m_data;
 }
 
-void NetWrapperCommandMsg::setData(UnsignedByte *data, UnsignedInt dataLength) 
+void NetWrapperCommandMsg::setData(UnsignedByte *data, UnsignedInt dataLength)
 {
 	if (m_data != NULL) {
 		delete m_data;
@@ -909,12 +909,12 @@ NetFileCommandMsg::~NetFileCommandMsg() {
 	}
 }
 
-AsciiString NetFileCommandMsg::getRealFilename() 
+AsciiString NetFileCommandMsg::getRealFilename()
 {
 	return TheGameState->portableMapPathToRealMapPath(m_portableFilename);
 }
 
-void NetFileCommandMsg::setRealFilename(AsciiString filename) 
+void NetFileCommandMsg::setRealFilename(AsciiString filename)
 {
 	m_portableFilename = TheGameState->realMapPathToPortableMapPath(filename);
 }
@@ -927,7 +927,7 @@ UnsignedByte * NetFileCommandMsg::getFileData() {
 	return m_data;
 }
 
-void NetFileCommandMsg::setFileData(UnsignedByte *data, UnsignedInt dataLength) 
+void NetFileCommandMsg::setFileData(UnsignedByte *data, UnsignedInt dataLength)
 {
 	m_dataLength = dataLength;
 	m_data = NEW UnsignedByte[dataLength];	// pool[]ify
@@ -947,12 +947,12 @@ NetFileAnnounceCommandMsg::NetFileAnnounceCommandMsg() : NetCommandMsg() {
 NetFileAnnounceCommandMsg::~NetFileAnnounceCommandMsg() {
 }
 
-AsciiString NetFileAnnounceCommandMsg::getRealFilename() 
+AsciiString NetFileAnnounceCommandMsg::getRealFilename()
 {
 	return TheGameState->portableMapPathToRealMapPath(m_portableFilename);
 }
 
-void NetFileAnnounceCommandMsg::setRealFilename(AsciiString filename) 
+void NetFileAnnounceCommandMsg::setRealFilename(AsciiString filename)
 {
 	m_portableFilename = TheGameState->realMapPathToPortableMapPath(filename);
 }

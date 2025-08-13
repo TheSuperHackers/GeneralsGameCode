@@ -57,7 +57,7 @@ typedef enum
 	TypeCompressedAnimation,
 	TypePrimitives,
 	TypeSound
-    
+
 } ASSET_TYPE;
 
 

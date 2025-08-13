@@ -61,7 +61,7 @@ void ChallengeGenerals::init( void )
 
 void ChallengeGenerals::parseGeneralPersona(INI *ini, void *instance, void *store, const void *userData)
 {
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
 		{ "StartsEnabled",			INI::parseBool, NULL, offsetof( GeneralPersona, m_bStartsEnabled ) },
 		{ "BioNameString",			INI::parseAsciiString, NULL, offsetof( GeneralPersona, m_strBioName ) },
@@ -89,14 +89,14 @@ void ChallengeGenerals::parseGeneralPersona(INI *ini, void *instance, void *stor
 		{ "LossSound",					INI::parseAsciiString, NULL, offsetof( GeneralPersona, m_strLossSound ) },
 		{ "PreviewSound",					INI::parseAsciiString, NULL, offsetof( GeneralPersona, m_strPreviewSound ) },
 		{ "NameSound",					INI::parseAsciiString, NULL, offsetof( GeneralPersona, m_strNameSound ) },
-		
+
 		{ 0, 0, 0, 0 }
 	};
 	ini->initFromINI(store, dataFieldParse);
 }
 
 
-const FieldParse ChallengeGenerals::s_fieldParseTable[] = 
+const FieldParse ChallengeGenerals::s_fieldParseTable[] =
 {
 	{ "GeneralPersona0", ChallengeGenerals::parseGeneralPersona, NULL, offsetof( ChallengeGenerals, m_position[0] ) },
 	{ "GeneralPersona1", ChallengeGenerals::parseGeneralPersona, NULL, offsetof( ChallengeGenerals, m_position[1] ) },
@@ -125,7 +125,7 @@ void INI::parseChallengeModeDefinition( INI* ini )
 	}
 }
 
-const GeneralPersona* ChallengeGenerals::getPlayerGeneralByCampaignName( AsciiString name ) const 
+const GeneralPersona* ChallengeGenerals::getPlayerGeneralByCampaignName( AsciiString name ) const
 {
 	for (Int i = 0; i < NUM_GENERALS; i++)
 	{

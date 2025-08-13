@@ -192,7 +192,7 @@ int main(int argc, char **argv)
 		// Write the output file
 		fwrite(outData, 1, outSize, fpOut);
 	}
-	else 
+	else
 	{
 		DEBUG_LOG(("Compressing data using %s", CompressionManager::getCompressionNameByType(compressType)));
 		// Allocate the output buffer

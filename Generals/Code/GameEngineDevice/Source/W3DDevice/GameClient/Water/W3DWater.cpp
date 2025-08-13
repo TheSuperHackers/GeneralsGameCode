@@ -29,7 +29,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #define SCROLL_UV
-										 
+
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "stdio.h"
 #include "W3DDevice/GameClient/W3DWater.h"
@@ -97,7 +97,7 @@
 #define REFLECTION_FACTOR 0.1f
 
 #define PATCH_WIDTH (PATCH_SIZE-1)	//internal defines
-#define PATCH_UV_SCALE	((Real)PATCH_UV_TILES/(Real)PATCH_WIDTH)	
+#define PATCH_UV_SCALE	((Real)PATCH_UV_TILES/(Real)PATCH_WIDTH)
 
 //3D Grid Mesh Water defines.
 #define WATER_MESH_OPACITY		0.5f
@@ -186,10 +186,10 @@ void doSkyBoxSet(Bool startDraw)
 
 #define NOISE_REPEAT_FACTOR ((float)(1.0f/(16.0f)))
 
-					
+
 static Bool wireframeForDebug = 0;
 
-void WaterRenderObjClass::setupJbaWaterShader(void) 
+void WaterRenderObjClass::setupJbaWaterShader(void)
 {
 	if (!TheWaterTransparency->m_additiveBlend)
 		DX8Wrapper::Set_Shader(ShaderClass::_PresetAlphaShader);
@@ -204,30 +204,30 @@ void WaterRenderObjClass::setupJbaWaterShader(void)
 	m_riverTexture->Get_Filter().Set_Mip_Mapping(TextureFilterClass::FILTER_TYPE_BEST);
 
 
-//	Setting *setting=&m_settings[m_tod];	
+//	Setting *setting=&m_settings[m_tod];
 
 
 	DX8Wrapper::Apply_Render_State_Changes();	//force update of view and projection matrices
 	DX8Wrapper::Set_DX8_Texture_Stage_State( 0, D3DTSS_ALPHAOP,   D3DTOP_ADD );
-	DX8Wrapper::_Get_D3D_Device8()->SetTexture(3,m_riverAlphaEdge->Peek_D3D_Texture());	
+	DX8Wrapper::_Get_D3D_Device8()->SetTexture(3,m_riverAlphaEdge->Peek_D3D_Texture());
 	DX8Wrapper::Set_DX8_Texture_Stage_State(3,  D3DTSS_ADDRESSU, D3DTADDRESS_WRAP);
 	DX8Wrapper::Set_DX8_Texture_Stage_State(3,  D3DTSS_ADDRESSV, D3DTADDRESS_WRAP);
 	DX8Wrapper::Set_DX8_Texture_Stage_State(0,  D3DTSS_TEXCOORDINDEX, 0);
 	DX8Wrapper::Set_DX8_Texture_Stage_State(1,  D3DTSS_TEXCOORDINDEX, 0);
 	DX8Wrapper::Set_DX8_Texture_Stage_State(3,  D3DTSS_TEXCOORDINDEX, 1);
-	
+
 	Bool doSparkles = true;
 
 	if (m_riverWaterPixelShader && doSparkles) {
-		DX8Wrapper::_Get_D3D_Device8()->SetTexture(1,m_waterSparklesTexture->Peek_D3D_Texture());	
-		DX8Wrapper::_Get_D3D_Device8()->SetTexture(2,m_waterNoiseTexture->Peek_D3D_Texture());	
+		DX8Wrapper::_Get_D3D_Device8()->SetTexture(1,m_waterSparklesTexture->Peek_D3D_Texture());
+		DX8Wrapper::_Get_D3D_Device8()->SetTexture(2,m_waterNoiseTexture->Peek_D3D_Texture());
 
 		DX8Wrapper::Set_DX8_Texture_Stage_State(1,  D3DTSS_ADDRESSU, D3DTADDRESS_WRAP);
 		DX8Wrapper::Set_DX8_Texture_Stage_State(1,  D3DTSS_ADDRESSV, D3DTADDRESS_WRAP);
- 
+
 		DX8Wrapper::Set_DX8_Texture_Stage_State(2,  D3DTSS_TEXCOORDINDEX, D3DTSS_TCI_CAMERASPACEPOSITION);
 		// Two output coordinates are used.
-		DX8Wrapper::Set_DX8_Texture_Stage_State(2,  D3DTSS_TEXTURETRANSFORMFLAGS, D3DTTFF_COUNT2);	
+		DX8Wrapper::Set_DX8_Texture_Stage_State(2,  D3DTSS_TEXTURETRANSFORMFLAGS, D3DTTFF_COUNT2);
 		DX8Wrapper::Set_DX8_Texture_Stage_State(2,  D3DTSS_ADDRESSU, D3DTADDRESS_WRAP);
 		DX8Wrapper::Set_DX8_Texture_Stage_State(2,  D3DTSS_ADDRESSV, D3DTADDRESS_WRAP);
 		D3DXMATRIX inv;
@@ -243,7 +243,7 @@ void WaterRenderObjClass::setupJbaWaterShader(void)
 		D3DXMatrixTranslation(&scale, m_riverVOrigin, m_riverVOrigin,0);
 		destMatrix = destMatrix*scale;
 		DX8Wrapper::_Set_DX8_Transform(D3DTS_TEXTURE2, *(Matrix4x4*)&destMatrix);
-		
+
 	}
 	m_pDev->SetTextureStageState( 0, D3DTSS_MINFILTER, D3DTEXF_LINEAR );
 	m_pDev->SetTextureStageState( 0, D3DTSS_MAGFILTER, D3DTEXF_LINEAR );
@@ -348,7 +348,7 @@ WaterRenderObjClass::WaterRenderObjClass(void)
 	m_gridCellsY=WATER_MESH_Y_VERTICES;
 	m_gridWidth = m_gridCellsX * m_gridCellSize;
 	m_gridHeight = m_gridCellsY * m_gridCellSize;
-	
+
 	Int i=NUM_BUMP_FRAMES;
 	while (i--)
 		m_pBumpTexture[i]=NULL;
@@ -430,10 +430,10 @@ HRESULT WaterRenderObjClass::initBumpMap(LPDIRECT3DTEXTURE8 *pTex, TextureClass 
 
 	if (Get_Bytes_Per_Pixel(d3dsd.Format) != 4)
 	{
-		// LORENZEN WAS BUGGED BY THIS, 
+		// LORENZEN WAS BUGGED BY THIS,
 		//		DEBUG_CRASH(("WaterRenderObjClass::Invalid BumpMap format - Was it compressed?") );
 		return S_OK;
-	} 
+	}
 
 	if (pBumpSource->Peek_D3D_Texture())
 	{
@@ -644,7 +644,7 @@ HRESULT WaterRenderObjClass::generateVertexBuffer( Int sizeX, Int sizeY, Int ver
 			m_numVertices*vertexSize,
 			usage,
 			fvf,
-			pool, 
+			pool,
 			&m_vertexBufferD3D
 		)))
 			return hr;
@@ -659,7 +659,7 @@ HRESULT WaterRenderObjClass::generateVertexBuffer( Int sizeX, Int sizeY, Int ver
 	if (FAILED(hr=m_vertexBufferD3D->Lock
 	(
 		0,
-		m_numVertices*sizeof(SEA_PATCH_VERTEX), 
+		m_numVertices*sizeof(SEA_PATCH_VERTEX),
 		(BYTE**)&pVertices,
 		0//D3DLOCK_DISCARD
 	)))
@@ -706,19 +706,19 @@ HRESULT WaterRenderObjClass::generateIndexBuffer(Int sizeX, Int sizeY)
 
 	if (FAILED(hr=m_pDev->CreateIndexBuffer
 	(
-		(m_numIndices+2)*sizeof(WORD), 
-		D3DUSAGE_WRITEONLY, 
-		D3DFMT_INDEX16, 
-		D3DPOOL_MANAGED, 
+		(m_numIndices+2)*sizeof(WORD),
+		D3DUSAGE_WRITEONLY,
+		D3DFMT_INDEX16,
+		D3DPOOL_MANAGED,
 		&m_indexBufferD3D
 	)))
 		return hr;
 
 	if (FAILED(hr=m_indexBufferD3D->Lock
 	(
-		0, 
-		m_numIndices*sizeof(WORD), 
-		(BYTE**)&pIndices, 
+		0,
+		m_numIndices*sizeof(WORD),
+		(BYTE**)&pIndices,
 		0
 	)))
 		return hr;
@@ -808,7 +808,7 @@ void WaterRenderObjClass::ReleaseResources(void)
 
 	if (m_dwWaveVertexShader)
 		m_pDev->DeleteVertexShader(m_dwWaveVertexShader);
-	
+
 	if (m_waterPixelShader)
 		m_pDev->DeletePixelShader(m_waterPixelShader);
 
@@ -878,7 +878,7 @@ void WaterRenderObjClass::ReAcquireResources(void)
 			(D3DVSD_STREAM(0)),
 			(D3DVSD_REG(0, D3DVSDT_FLOAT3)), // Position
 			(D3DVSD_REG(1, D3DVSDT_D3DCOLOR)), // Diffuse
-			(D3DVSD_REG(2, D3DVSDT_FLOAT2)), // Bump map texture	
+			(D3DVSD_REG(2, D3DVSDT_FLOAT2)), // Bump map texture
 			(D3DVSD_END())
 		};
 
@@ -900,7 +900,7 @@ void WaterRenderObjClass::ReAcquireResources(void)
 	if (W3DShaderManager::getChipset() >= DC_GENERIC_PIXEL_SHADER_1_1)
 	{
 		ID3DXBuffer *compiledShader;
-		const char *shader = 
+		const char *shader =
 			"ps.1.1\n \
 			tex t0 \n\
 			tex t1	\n\
@@ -916,7 +916,7 @@ void WaterRenderObjClass::ReAcquireResources(void)
 			hr = 	DX8Wrapper::_Get_D3D_Device8()->CreatePixelShader((DWORD*)compiledShader->GetBufferPointer(), &m_riverWaterPixelShader);
 			compiledShader->Release();
 		}
-		shader = 
+		shader =
 			"ps.1.1\n \
 			tex t0 \n\
 			tex t1	\n\
@@ -929,7 +929,7 @@ void WaterRenderObjClass::ReAcquireResources(void)
 			hr = 	DX8Wrapper::_Get_D3D_Device8()->CreatePixelShader((DWORD*)compiledShader->GetBufferPointer(), &m_waterPixelShader);
 			compiledShader->Release();
 		}
-		shader = 
+		shader =
 			"ps.1.1\n \
 			tex t0 ;get water texture\n\
 			tex t1 ;get white highlights on black background\n\
@@ -986,7 +986,7 @@ Int WaterRenderObjClass::init(Real waterLevel, Real dx, Real dy, SceneClass *par
 	m_planeNormal=Vector3(0,0,1);		//water plane normal
 	m_planeDistance=m_level;	//water plane distance(always at zero for now)
 
-	m_meshLight=NEW_REF(LightClass,(LightClass::DIRECTIONAL));	
+	m_meshLight=NEW_REF(LightClass,(LightClass::DIRECTIONAL));
 	m_meshLight->Set_Ambient(Vector3(0.1f,0.1f,0.1f));
 	m_meshLight->Set_Diffuse(Vector3(1.0f,1.0f,1.0f));
 	m_meshLight->Set_Specular(Vector3(1.0f,1.0f,1.0f));
@@ -1051,7 +1051,7 @@ Int WaterRenderObjClass::init(Real waterLevel, Real dx, Real dy, SceneClass *par
 
 	//Setup material for regular water
 	m_vertexMaterialClass=VertexMaterialClass::Get_Preset(VertexMaterialClass::PRELIT_DIFFUSE);
-	
+
 
 
 	m_shaderClass = zFillAlphaShader;//ShaderClass::_PresetAlphaShader;ShaderClass::_PresetOpaqueShader;//detailOpaqueShader;
@@ -1075,7 +1075,7 @@ Int WaterRenderObjClass::init(Real waterLevel, Real dx, Real dy, SceneClass *par
 		for (Int i=0; i<material->Texture_Count(); i++)
 		{
 			if (material->Peek_Texture(i))
-			{		
+			{
 				material->Peek_Texture(i)->Get_Filter().Set_U_Addr_Mode(TextureFilterClass::TEXTURE_ADDRESS_CLAMP);
 				material->Peek_Texture(i)->Get_Filter().Set_V_Addr_Mode(TextureFilterClass::TEXTURE_ADDRESS_CLAMP);
 			}
@@ -1084,7 +1084,7 @@ Int WaterRenderObjClass::init(Real waterLevel, Real dx, Real dy, SceneClass *par
 		REF_PTR_RELEASE(material);
 	}
 
-	m_riverTexture=WW3DAssetManager::Get_Instance()->Get_Texture(TheWaterTransparency->m_standingWaterTexture.str()); 
+	m_riverTexture=WW3DAssetManager::Get_Instance()->Get_Texture(TheWaterTransparency->m_standingWaterTexture.str());
 
 	//For some reason setting a NULL texture does not result in 0xffffffff for pixel shaders so using explicit "white" texture.
 	m_whiteTexture=MSGNEW("TextureClass") TextureClass(1,1,WW3D_FORMAT_A4R4G4B4,MIP_LEVELS_1);
@@ -1127,7 +1127,7 @@ void WaterRenderObjClass::reset( void )
 
 		// go through each mesh point and adjust the height according to the velocity
 		for( j = 0, pData = m_meshData; j < (my + 2); j++ )
-		{	
+		{
 
 			for( i = 0; i < (mx + 2); i++ )
 			{
@@ -1152,7 +1152,7 @@ void WaterRenderObjClass::reset( void )
 
 	if (m_waterTrackSystem)
 		m_waterTrackSystem->reset();
-} 
+}
 
 void WaterRenderObjClass::enableWaterGrid(Bool state)
 {
@@ -1190,7 +1190,7 @@ void WaterRenderObjClass::update( void )
 {
 	static UnsignedInt lastLogicFrame = 0;
 	UnsignedInt currLogicFrame = 0;
-	
+
 	if( TheGameLogic )
 		currLogicFrame = TheGameLogic->getFrame();
 
@@ -1229,7 +1229,7 @@ void WaterRenderObjClass::update( void )
 
 			// go through each mesh point and adjust the height according to the velocity
 			for( j = 0, pData = m_meshData; j < (my + 2); j++ )
-			{	
+			{
 
 				for( i = 0; i < (mx + 2); i++ )
 				{
@@ -1244,10 +1244,10 @@ void WaterRenderObjClass::update( void )
 						// if the height here is below our preferred height, we want to add upward force to counteract it
 						if( pData->height < pData->preferredHeight )
 							pData->velocity -= TheGlobalData->m_gravity * 3.0f;
-						else				
+						else
 							pData->velocity += TheGlobalData->m_gravity * 3.0f;
 
-						// adjust the height at this grid location according to the current velocity		
+						// adjust the height at this grid location according to the current velocity
 						pData->height = pData->height + pData->velocity;
 
 						//
@@ -1307,7 +1307,7 @@ void WaterRenderObjClass::replaceSkyboxTexture(const AsciiString& oldTexName, co
 		for (Int i=0; i<material->Texture_Count(); i++)
 		{
 			if (material->Peek_Texture(i))
-			{		
+			{
 				material->Peek_Texture(i)->Get_Filter().Set_U_Addr_Mode(TextureFilterClass::TEXTURE_ADDRESS_CLAMP);
 				material->Peek_Texture(i)->Get_Filter().Set_V_Addr_Mode(TextureFilterClass::TEXTURE_ADDRESS_CLAMP);
 			}
@@ -1336,7 +1336,7 @@ void WaterRenderObjClass::loadSetting( Setting *setting, TimeOfDay timeOfDay )
 
 	// sanity
 	DEBUG_ASSERTCRASH( setting, ("WaterRenderObjClass::loadSetting, NULL setting") );
-	
+
 	// textures
 	setting->skyTexture = WW3DAssetManager::Get_Instance()->Get_Texture( WaterSettings[ timeOfDay ].m_skyTextureFile.str() );
 	setting->waterTexture = WW3DAssetManager::Get_Instance()->Get_Texture( WaterSettings[ timeOfDay ].m_waterTextureFile.str() );
@@ -1514,8 +1514,8 @@ void WaterRenderObjClass::Render(RenderInfoClass & rinfo)
 	// of rendering it.
 	unsigned int sort_level = (unsigned int)Get_Sort_Level();
 
-	if (WW3D::Are_Static_Sort_Lists_Enabled() && sort_level != SORT_LEVEL_NONE) 
-	{	
+	if (WW3D::Are_Static_Sort_Lists_Enabled() && sort_level != SORT_LEVEL_NONE)
+	{
 		WW3D::Add_To_Static_Sort_List(this, sort_level);
 		return;
 	}
@@ -1606,7 +1606,7 @@ void WaterRenderObjClass::Render(RenderInfoClass & rinfo)
 				// Use CameraSpace vertices as input to matrix and use texture wrap mode from stage 1
 				DX8Wrapper::Set_DX8_Texture_Stage_State(1, D3DTSS_TEXCOORDINDEX, D3DTSS_TCI_CAMERASPACEPOSITION|1);
 				// Two output coordinates are used.
-				DX8Wrapper::Set_DX8_Texture_Stage_State(1, D3DTSS_TEXTURETRANSFORMFLAGS, D3DTTFF_COUNT2);	
+				DX8Wrapper::Set_DX8_Texture_Stage_State(1, D3DTSS_TEXTURETRANSFORMFLAGS, D3DTTFF_COUNT2);
 
 				// Set texture generation matrix for stage 1
 				DX8Wrapper::_Set_DX8_Transform(D3DTS_TEXTURE1, *((Matrix4*)&inv));
@@ -1652,7 +1652,7 @@ void WaterRenderObjClass::Render(RenderInfoClass & rinfo)
 					rinfo.Camera.Apply();	//force an update of all the camera dependent parameters like frustum clip planes
 
 					if(m_useCloudLayer)
-					{	
+					{
 						if (TheGlobalData && TheGlobalData->m_drawEntireTerrain)
 							m_skyBox->Render(rinfo);
 						else
@@ -1744,7 +1744,7 @@ Bool WaterRenderObjClass::getClippedWaterPlane(CameraClass *cam, AABoxClass *box
 
 	//make sure the polygon is visible
 	if (final_vcount >= 3)
-	{	
+	{
 		//find axis aligned bounding box around visible polygon
 		if (box)
   			box->Init(&(ClippedPoly0.Verts[0]),final_vcount);
@@ -1978,7 +1978,7 @@ void WaterRenderObjClass::renderWater(void)
 				if (pTrig->isRiver()) {
 					drawRiverWater(pTrig);
 					continue;
-				} 
+				}
 				Int k;
 				for (k=1; k<pTrig->getNumPoints()-1; k=k+2) {
 					ICoord3D pt3 = *pTrig->getPoint(0);
@@ -2067,21 +2067,21 @@ void WaterRenderObjClass::renderSky(void)
 			verts[0].u1=m_uOffset;
 			verts[0].v1=fv;
 			verts[0].diffuse=setting->vertex01Diffuse;
-	
+
 			verts[1].x=SKYPLANE_SIZE;
 			verts[1].y=SKYPLANE_SIZE;
 			verts[1].z=SKYPLANE_HEIGHT;
 			verts[1].u1=fu;
 			verts[1].v1=fv;
 			verts[1].diffuse=setting->vertex11Diffuse;
-	
+
 			verts[2].x=SKYPLANE_SIZE;
 			verts[2].y=-SKYPLANE_SIZE;
 			verts[2].z=SKYPLANE_HEIGHT;
 			verts[2].u1=fu;
 			verts[2].v1=m_vOffset;
 			verts[2].diffuse=setting->vertex10Diffuse;
-	
+
 			verts[3].x=-SKYPLANE_SIZE;
 			verts[3].y=-SKYPLANE_SIZE;
 			verts[3].z=SKYPLANE_HEIGHT;
@@ -2108,7 +2108,7 @@ void WaterRenderObjClass::renderSky(void)
 //-------------------------------------------------------------------------------------------------
 ///	@todo: Add code to render properly sorted sun sky body.
 void WaterRenderObjClass::renderSkyBody(Matrix3D *mat)
-{	
+{
 	Vector3 cPos;
 
 	Vector3 pView,pRight,pUp,pPos(SKYBODY_X,SKYBODY_Y,SKYBODY_HEIGHT);
@@ -2125,7 +2125,7 @@ void WaterRenderObjClass::renderSkyBody(Matrix3D *mat)
 	rotAxis.Normalize();
 #else
 	Vector3 rotAxis;
-	Vector3::Normalized_Cross_Product(WorldUp, pView, &rotAxis);	
+	Vector3::Normalized_Cross_Product(WorldUp, pView, &rotAxis);
 #endif
 
 	Real angle=Vector3::Dot_Product(WorldUp,pView);
@@ -2171,21 +2171,21 @@ void WaterRenderObjClass::renderSkyBody(Matrix3D *mat)
 			verts[0].u2=0;
 			verts[0].v2=1;
 			verts[0].diffuse=0xffffffff;
-	
+
 			verts[1].x=SKYBODY_SIZE;
 			verts[1].y=SKYBODY_SIZE;
 			verts[1].z=0;
 			verts[1].u2=1;
 			verts[1].v2=1;
 			verts[1].diffuse=0xffffffff;
-	
+
 			verts[2].x=SKYBODY_SIZE;
 			verts[2].y=-SKYBODY_SIZE;
 			verts[2].z=0;
 			verts[2].u2=1;
 			verts[2].v2=0;
 			verts[2].diffuse=0xffffffff;
-	
+
 			verts[3].x=-SKYBODY_SIZE;
 			verts[3].y=-SKYBODY_SIZE;
 			verts[3].z=0;
@@ -2226,7 +2226,7 @@ void WaterRenderObjClass::renderWaterMesh(void)
 	Int	mx=m_gridCellsX+1;
 	Int my=m_gridCellsY+1;
 	Int i,j;
-	
+
 	Real cellSizeX=m_gridCellSize;
 	Real cellSizeY=m_gridCellSize;
 //	Real	uScale2=5.0f*setting->waterRepeatCount/(128.0f)*cellSizeX/10.0f;
@@ -2252,7 +2252,7 @@ void WaterRenderObjClass::renderWaterMesh(void)
 
 	//update the mesh heights for this frame (update buffer is 2 samples wider/taller due to border)
 	for (j=0,pData=m_meshData; j<(my+2); j++)
-	{	
+	{
 		for (i=0; i<(mx+2); i++)
 		{
 			//*pData = WATER_AMP * sin(WATER_FREQ*(0.7f*i + 0.7f*j) - PhasePerFrame);
@@ -2289,13 +2289,13 @@ void WaterRenderObjClass::renderWaterMesh(void)
 	//I pulled some of these constants out of the loops for speed:
 	Real uvCosScale=0.02*cos(3*m_riverVOrigin);
 	Real sinOffset=25*m_riverVOrigin;
-	Real originScale=m_riverVOrigin/vScale; 
+	Real originScale=m_riverVOrigin/vScale;
 	Real bumpSizeDiv=cellSizeY/BUMP_SIZE;
 	Real bumpSizeDiv2=0.3f*cellSizeY/BUMP_SIZE;
 
 	//Data has a 1 vertex padding all around it so we don't need to special-case edges.  Improves performance
 	for (j=0,pData=m_meshData+mx+2+1; j<my; j++,pData+=2)	//skip 2 horizontal border samples after each row
-	{	
+	{
 		Real y=(float)j*cellSizeY;
 		Real v1Offset=m_riverVOrigin+(float)j*vScale + uvCosScale*WWMath::Fast_Sin(sinOffset+y*PI/(8*MAP_XY_FACTOR));
 		Real v2Offset=((float)j+originScale)*bumpSizeDiv + (float)j*bumpSizeDiv2;
@@ -2334,7 +2334,7 @@ void WaterRenderObjClass::renderWaterMesh(void)
 			vb->u1=(float)i*uScale;
 			vb->v1=(float)j*vScale;
 #endif
-			vb->u2=(float)(i)*cellSizeX/BUMP_SIZE; 
+			vb->u2=(float)(i)*cellSizeX/BUMP_SIZE;
 			vb->v2=v2Offset;
 			//old slow code
 			//vb->v2=(float)(j+m_riverVOrigin/vScale )*cellSizeY/BUMP_SIZE+ 0.3f*(float)j*cellSizeY/BUMP_SIZE;
@@ -2360,7 +2360,7 @@ void WaterRenderObjClass::renderWaterMesh(void)
 	DX8Wrapper::Set_Shader(m_shaderClass);
 #if 1
 	setupFlatWaterShader();
-#else 
+#else
 	//DX8Wrapper::Set_Shader(ShaderClass::_PresetOpaqueShader);
 	DX8Wrapper::Set_Texture(0,setting->waterTexture);
 	DX8Wrapper::Set_Texture(1,setting->waterTexture);
@@ -2372,7 +2372,7 @@ void WaterRenderObjClass::renderWaterMesh(void)
 /*
 	DX8Wrapper::Set_DX8_Render_State(D3DRS_AMBIENT,0);	//turn off scene ambient
 	DX8Wrapper::Set_DX8_Render_State(D3DRS_SPECULARENABLE,TRUE);
-	DX8Wrapper::Set_DX8_Render_State(D3DRS_LOCALVIEWER,TRUE); 
+	DX8Wrapper::Set_DX8_Render_State(D3DRS_LOCALVIEWER,TRUE);
 */
 
 	DX8Wrapper::Apply_Render_State_Changes();	//force update of view and projection matrices
@@ -2407,7 +2407,7 @@ void WaterRenderObjClass::renderWaterMesh(void)
 	}
 	else
 		m_pDev->DrawIndexedPrimitive(D3DPT_TRIANGLESTRIP,0,mx*my,0,m_numIndices-2);
-	
+
 	Debug_Statistics::Record_DX8_Polys_And_Vertices(m_numIndices-2,mx*my,ShaderClass::_PresetOpaqueShader);
 
 //	m_pDev->SetRenderState(D3DRS_FILLMODE,D3DFILL_SOLID);
@@ -2422,7 +2422,7 @@ void WaterRenderObjClass::renderWaterMesh(void)
 	m_shaderClass.Set_Cull_Mode(oldCullMode);	//water should be visible from both sides
 
 	// restore shader to old mask
-	m_shaderClass.Set_Depth_Mask(oldDepthMask);	 
+	m_shaderClass.Set_Depth_Mask(oldDepthMask);
 
 	//W3DShaderManager::resetShader(W3DShaderManager::ST_SHROUD_TEXTURE);
 
@@ -2444,7 +2444,7 @@ void WaterRenderObjClass::setGridHeightClamps(Real minz, Real maxz)
 	m_maxGridHeight = maxz;
 }
 
-void WaterRenderObjClass::addVelocity( Real worldX, Real worldY, 
+void WaterRenderObjClass::addVelocity( Real worldX, Real worldY,
 																			 Real zVelocity, Real preferredHeight )
 {
 
@@ -2458,8 +2458,8 @@ void WaterRenderObjClass::addVelocity( Real worldX, Real worldY,
 
 		//check if center falls within grid bounds
 		if (worldToGridSpace(worldX, worldY, gx, gy))
-		{	
-		
+		{
+
 			//find extents of influence
 			minX = floorf(gx - m_gridChangeMaxRange);
 			if (minX < 0 )
@@ -2478,7 +2478,7 @@ void WaterRenderObjClass::addVelocity( Real worldX, Real worldY,
 			for (y=minY; y<=maxY; y++)
 			{
 				for (x=minX; x<=maxX; x++)
-				{	
+				{
 
 					// get the mesh point that we're concerned with
 					meshPoint = &m_meshData[ (y + 1) * (m_gridCellsX + 1 + 2) + x + 1 ];
@@ -2490,7 +2490,7 @@ void WaterRenderObjClass::addVelocity( Real worldX, Real worldY,
 					// set the velocity of this point based on the distance from the center of the
 					// "core" point for this call
 					//
-					meshPoint->velocity = meshPoint->velocity + zVelocity;				
+					meshPoint->velocity = meshPoint->velocity + zVelocity;
 
 					// this point is now "in motion"
 					BitSet( meshPoint->status, WaterRenderObjClass::IN_MOTION );
@@ -2518,7 +2518,7 @@ void WaterRenderObjClass::changeGridHeight(Real wx, Real wy, Real delta)
 	Real distance;
 	Real minX,maxX,minY,maxY;
 	Int x,y;
-	
+
 	//check if center falls within grid bounds
 	if (worldToGridSpace(wx, wy, gx, gy))
 	{	//find extents of influence
@@ -2608,7 +2608,7 @@ void WaterRenderObjClass::setGridResolution(Real gridCellsX, Real gridCellsY, Re
 		m_gridCellsY=gridCellsY;
 
 		if (m_meshData)
-		{	
+		{
 
 			delete [] m_meshData;//free previously allocated grid and allocate new size
 			m_meshData = NULL;	 // must set to NULL so that we properly re-allocate
@@ -2652,14 +2652,14 @@ Real WaterRenderObjClass::getWaterHeight(Real x, Real y)
 	iLoc.y = REAL_TO_INT_FLOOR( y + 0.5f );
 	iLoc.z = 0;
 
-	for( PolygonTrigger *pTrig = PolygonTrigger::getFirstPolygonTrigger(); pTrig; pTrig = pTrig->getNext() ) 
+	for( PolygonTrigger *pTrig = PolygonTrigger::getFirstPolygonTrigger(); pTrig; pTrig = pTrig->getNext() )
 	{
 
-		if( !pTrig->isWaterArea() ) 
+		if( !pTrig->isWaterArea() )
 			continue;
 
 		// See if point is in a water area
-		if( pTrig->pointInTrigger( iLoc ) ) 
+		if( pTrig->pointInTrigger( iLoc ) )
 		{
 
 			if( pTrig->getPoint( 0 )->z >= waterZ )
@@ -2786,7 +2786,7 @@ void WaterRenderObjClass::drawRiverWater(PolygonTrigger *pTrig)
 	bumpFactor = endLen/BUMP_SIZE;
 
 	Real lengthOfRiver = (totalLen/2)-endLen;
-	Real repeatCount = lengthOfRiver / (endLen); 
+	Real repeatCount = lengthOfRiver / (endLen);
 
 	Real vScale=(Real)repeatCount/(Real)rectangleCount;
 
@@ -2821,7 +2821,7 @@ void WaterRenderObjClass::drawRiverWater(PolygonTrigger *pTrig)
 
 			vb->z=innerPt.z;
 			vb->diffuse= diffuse;
-	
+
 			Real wobbleConst=-m_riverVOrigin+vScale*(Real)i + WWMath::Fast_Sin(2*PI*(vScale*(Real)i) - constA)/22.0f;
  			//old slower version
 			//vb->v1=-m_riverVOrigin+vScale*(Real)i + wobble(vScale*i, m_riverVOrigin, doWobble);
@@ -2912,7 +2912,7 @@ void WaterRenderObjClass::drawRiverWater(PolygonTrigger *pTrig)
 
 }
 
-void WaterRenderObjClass::setupFlatWaterShader(void) 
+void WaterRenderObjClass::setupFlatWaterShader(void)
 {
 	//Setup shroud to render in same pass as water
 	if (m_trapezoidWaterPixelShader)
@@ -2932,7 +2932,7 @@ void WaterRenderObjClass::setupFlatWaterShader(void)
 		else
 		{	//Assume no shroud, so stage 3 will be "NULL" texture but using actual white because
 			//pixel shader on GF4 generates random colors with SetTexture(3,NULL).
-			DX8Wrapper::_Get_D3D_Device8()->SetTexture(3,m_whiteTexture->Peek_D3D_Texture());	
+			DX8Wrapper::_Get_D3D_Device8()->SetTexture(3,m_whiteTexture->Peek_D3D_Texture());
 		}
 	}
 
@@ -2954,19 +2954,19 @@ void WaterRenderObjClass::setupFlatWaterShader(void)
 	DX8Wrapper::Set_DX8_Texture_Stage_State( 0, D3DTSS_ALPHAOP,   D3DTOP_ADD );
 	DX8Wrapper::Set_DX8_Texture_Stage_State(0,  D3DTSS_TEXCOORDINDEX, 0);
 	DX8Wrapper::Set_DX8_Texture_Stage_State(1,  D3DTSS_TEXCOORDINDEX, 0);
-	
+
 	Bool doSparkles = true;
 
 	if (m_trapezoidWaterPixelShader && doSparkles) {
-		DX8Wrapper::_Get_D3D_Device8()->SetTexture(1,m_waterSparklesTexture->Peek_D3D_Texture());	
-		DX8Wrapper::_Get_D3D_Device8()->SetTexture(2,m_waterNoiseTexture->Peek_D3D_Texture());	
+		DX8Wrapper::_Get_D3D_Device8()->SetTexture(1,m_waterSparklesTexture->Peek_D3D_Texture());
+		DX8Wrapper::_Get_D3D_Device8()->SetTexture(2,m_waterNoiseTexture->Peek_D3D_Texture());
 
 		DX8Wrapper::Set_DX8_Texture_Stage_State(1,  D3DTSS_ADDRESSU, D3DTADDRESS_WRAP);
 		DX8Wrapper::Set_DX8_Texture_Stage_State(1,  D3DTSS_ADDRESSV, D3DTADDRESS_WRAP);
- 
+
 		DX8Wrapper::Set_DX8_Texture_Stage_State(2,  D3DTSS_TEXCOORDINDEX, D3DTSS_TCI_CAMERASPACEPOSITION);
 		// Two output coordinates are used.
-		DX8Wrapper::Set_DX8_Texture_Stage_State(2,  D3DTSS_TEXTURETRANSFORMFLAGS, D3DTTFF_COUNT2);	
+		DX8Wrapper::Set_DX8_Texture_Stage_State(2,  D3DTSS_TEXTURETRANSFORMFLAGS, D3DTTFF_COUNT2);
 		DX8Wrapper::Set_DX8_Texture_Stage_State(2,  D3DTSS_ADDRESSU, D3DTADDRESS_WRAP);
 		DX8Wrapper::Set_DX8_Texture_Stage_State(2,  D3DTSS_ADDRESSV, D3DTADDRESS_WRAP);
 		D3DXMATRIX inv;
@@ -3013,7 +3013,7 @@ void WaterRenderObjClass::drawTrapezoidWater(Vector3 points[4])
 	Int uCount = (uVec1.Length()+uVec2.Length()) / (8*MAP_XY_FACTOR);
 	if (uCount<1) uCount = 1;
 	Int vCount = (vVec1.Length()+vVec2.Length()) / (8*MAP_XY_FACTOR);
-	if (vCount<1) vCount = 1;	
+	if (vCount<1) vCount = 1;
 
 	if (uCount>50) uCount = 50;
 	if (vCount>50) vCount = 50;
@@ -3317,7 +3317,7 @@ void WaterRenderObjClass::drawTrapezoidWater(Vector3 points[4])
 //-------------------------------------------------------------------------------------------------
 #if 0
 void WaterRenderObjClass::renderSkyBody(Matrix3D *mat)
-{	
+{
 	Vector3 vRight,vUp,V0,V1,V2,V3;
 
 	mat->Get_X_Vector(&vRight);
@@ -3355,21 +3355,21 @@ void WaterRenderObjClass::renderSkyBody(Matrix3D *mat)
 			verts[0].u2=0;
 			verts[0].v2=1;
 			verts[0].diffuse=0xffffffff;
-	
+
 			verts[1].x=SKYBODY_SIZE*V1.X;
 			verts[1].y=SKYBODY_SIZE*V1.Y;
 			verts[1].z=SKYBODY_SIZE*V1.Z;
 			verts[1].u2=1;
 			verts[1].v2=1;
 			verts[1].diffuse=0xffffffff;
-	
+
 			verts[2].x=SKYBODY_SIZE*V2.X;
 			verts[2].y=SKYBODY_SIZE*V2.Y;
 			verts[2].z=SKYBODY_SIZE*V2.Z;
 			verts[2].u2=1;
 			verts[2].v2=0;
 			verts[2].diffuse=0xffffffff;
-	
+
 			verts[3].x=SKYBODY_SIZE*V3.X;
 			verts[3].y=SKYBODY_SIZE*V3.Y;
 			verts[3].z=SKYBODY_SIZE*V3.Z;
@@ -3422,13 +3422,13 @@ void WaterRenderObjClass::xfer( Xfer *xfer )
 		throw SC_INVALID_DATA;
 
 	}  // end if
-	
+
 	// grid cells Y
 	Int cellsY = m_gridCellsY;
 	xfer->xferInt( &cellsY );
 	if( cellsY != m_gridCellsY )
 	{
-	
+
 		DEBUG_CRASH(( "WaterRenderObjClass::xfer - cells Y mismatch" ));
 		throw SC_INVALID_DATA;
 

@@ -129,7 +129,7 @@ public:
 	// virtual destructor prototype provided by memory pool declaration
 
 	// module methods
-	static Int getInterfaceMask( void ) { return (MODULEINTERFACE_DAMAGE) | 
+	static Int getInterfaceMask( void ) { return (MODULEINTERFACE_DAMAGE) |
 																							 (MODULEINTERFACE_DIE) |
 																							 (MODULEINTERFACE_UPDATE); }
 	virtual BridgeBehaviorInterface* getBridgeBehaviorInterface( void ) { return this; }
@@ -139,8 +139,8 @@ public:
 	virtual DamageModuleInterface* getDamage( void ) { return this; }
 	virtual void onDamage( DamageInfo *damageInfo );
 	virtual void onHealing( DamageInfo *damageInfo );
-	virtual void onBodyDamageStateChange( const DamageInfo* damageInfo, 
-																				BodyDamageType oldState, 
+	virtual void onBodyDamageStateChange( const DamageInfo* damageInfo,
+																				BodyDamageType oldState,
 																				BodyDamageType newState );
 
 	// Die methods
@@ -164,17 +164,17 @@ protected:
 
 	void resolveFX( void );
 	void handleObjectsOnBridgeOnDie( void );
-	void doAreaEffects( TerrainRoadType *bridgeTemplate, Bridge *bridge, 
+	void doAreaEffects( TerrainRoadType *bridgeTemplate, Bridge *bridge,
 											const ObjectCreationList *ocl, const FXList *fx );
-	void setScaffoldData( Object *obj, 
-												Real *angle, 
-												Real *sunkenHeight, 
-												const Coord3D *riseToPos, 
-												const Coord3D *buildPos, 
+	void setScaffoldData( Object *obj,
+												Real *angle,
+												Real *sunkenHeight,
+												const Coord3D *riseToPos,
+												const Coord3D *buildPos,
 												const Coord3D *bridgeCenter );
 
-	void getRandomSurfacePosition( TerrainRoadType *bridgeTemplate, 
-																 const BridgeInfo *bridgeInfo, 
+	void getRandomSurfacePosition( TerrainRoadType *bridgeTemplate,
+																 const BridgeInfo *bridgeInfo,
 																 Coord3D *pos );
 
 	ObjectID m_towerID[ BRIDGE_MAX_TOWERS ];		///< the towers that are a part of us

@@ -24,7 +24,7 @@
 
 // FILE: BodyModule.h /////////////////////////////////////////////////////////////////////////////////
 // Author: Colin Day, September 2001
-// Desc:	 
+// Desc:
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
@@ -44,7 +44,7 @@
 class WeaponTemplate;
 
 //-------------------------------------------------------------------------------------------------
-/** Damage states for structures 
+/** Damage states for structures
 	*
 	* NOTE: the macros below for IS_CONDITION_WORSE and IS_CONDITION_BETTER depend on this
 	* enumeration being in sequential order
@@ -80,7 +80,7 @@ enum MaxHealthChangeType CPP_11(: Int)
 };
 
 #ifdef DEFINE_MAXHEALTHCHANGETYPE_NAMES
-static const char* TheMaxHealthChangeTypeNames[] = 
+static const char* TheMaxHealthChangeTypeNames[] =
 {
 	"SAME_CURRENTHEALTH",
 	"PRESERVE_RATIO",
@@ -90,7 +90,7 @@ static const char* TheMaxHealthChangeTypeNames[] =
 
 
 //
-// is condition A worse than condition B  ... NOTE: this assumes the conditions 
+// is condition A worse than condition B  ... NOTE: this assumes the conditions
 // in BodyDamageType are in sequential order
 //
 // is a worse than b
@@ -108,7 +108,7 @@ public:
 	{
 	}
 
-	static void buildFieldParse(MultiIniFieldParse& p) 
+	static void buildFieldParse(MultiIniFieldParse& p)
 	{
     BehaviorModuleData::buildFieldParse(p);
 	}
@@ -148,7 +148,7 @@ public:
 
 	virtual BodyDamageType getDamageState() const = 0;
 	virtual void setDamageState( BodyDamageType newState ) = 0;	///< control damage state directly.  Will adjust hitpoints.
-	virtual void setAflame( Bool setting ) = 0;///< This is a major change like a damage state.  
+	virtual void setAflame( Bool setting ) = 0;///< This is a major change like a damage state.
 
 	virtual void onVeterancyLevelChanged( VeterancyLevel oldLevel, VeterancyLevel newLevel ) = 0;	///< I just achieved this level right this moment
 
@@ -168,12 +168,12 @@ public:
 
 	virtual void setFrontCrushed(Bool v) = 0;
 	virtual void setBackCrushed(Bool v) = 0;
-	
+
 	virtual void applyDamageScalar( Real scalar ) = 0;
 	virtual Real getDamageScalar() const = 0;
 
 	/**
-		Change the module's health by the given delta. Note that 
+		Change the module's health by the given delta. Note that
 		the module's DamageFX and Armor are NOT taken into
 		account, so you should think about what you're bypassing when you
 		call this directly (especially when when decreasing health, since
@@ -235,7 +235,7 @@ public:
 
 	virtual BodyDamageType getDamageState() const = 0;
 	virtual void setDamageState( BodyDamageType newState ) = 0;	///< control damage state directly.  Will adjust hitpoints.
-	virtual void setAflame( Bool setting ) = 0;///< This is a major change like a damage state.  
+	virtual void setAflame( Bool setting ) = 0;///< This is a major change like a damage state.
 
 	virtual void onVeterancyLevelChanged( VeterancyLevel oldLevel, VeterancyLevel newLevel ) = 0;	///< I just achieved this level right this moment
 
@@ -265,7 +265,7 @@ public:
 	virtual Real getDamageScalar() const { return m_damageScalar; }
 
 	/**
-		Change the module's health by the given delta. Note that 
+		Change the module's health by the given delta. Note that
 		the module's DamageFX and Armor are NOT taken into
 		account, so you should think about what you're bypassing when you
 		call this directly (especially when when decreasing health, since

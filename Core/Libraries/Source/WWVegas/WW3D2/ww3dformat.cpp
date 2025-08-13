@@ -26,8 +26,8 @@
  *                                                                                             *
  *              Original Author:: Hector Yee                                                   *
  *                                                                                             *
- *                       Author : Kenny Mitchell                                               * 
- *                                                                                             * 
+ *                       Author : Kenny Mitchell                                               *
+ *                                                                                             *
  *                     $Modtime:: 06/27/02 1:27p                                              $*
  *                                                                                             *
  *                    $Revision:: 14                                                          $*
@@ -104,17 +104,17 @@ void Get_WW3D_Format_Name(WW3DFormat format, StringClass& name)
 */
 void Get_WW3D_ZFormat_Name(WW3DZFormat format, StringClass& name)
 {
-	switch (format) 
+	switch (format)
 	{
 	default:
 	case WW3D_FORMAT_UNKNOWN		: name="Unknown"; break;
-	case WW3D_ZFORMAT_D16_LOCKABLE: name="D16Lockable"; break; // 16-bit z-buffer bit depth. This is an application-lockable surface format. 
-	case WW3D_ZFORMAT_D32			: name="D32"; break; // 32-bit z-buffer bit depth. 
-	case WW3D_ZFORMAT_D15S1			: name="D15S1"; break; // 16-bit z-buffer bit depth where 15 bits are reserved for the depth channel and 1 bit is reserved for the stencil channel. 
-	case WW3D_ZFORMAT_D24S8			: name="D24S8"; break; // 32-bit z-buffer bit depth using 24 bits for the depth channel and 8 bits for the stencil channel. 
-	case WW3D_ZFORMAT_D16			: name="D16"; break; // 16-bit z-buffer bit depth. 
-	case WW3D_ZFORMAT_D24X8			: name="D24X8"; break; // 32-bit z-buffer bit depth using 24 bits for the depth channel. 
-	case WW3D_ZFORMAT_D24X4S4		: name="D24X4S4"; break; // 32-bit z-buffer bit depth using 24 bits for the depth channel and 4 bits for the stencil channel. 
+	case WW3D_ZFORMAT_D16_LOCKABLE: name="D16Lockable"; break; // 16-bit z-buffer bit depth. This is an application-lockable surface format.
+	case WW3D_ZFORMAT_D32			: name="D32"; break; // 32-bit z-buffer bit depth.
+	case WW3D_ZFORMAT_D15S1			: name="D15S1"; break; // 16-bit z-buffer bit depth where 15 bits are reserved for the depth channel and 1 bit is reserved for the stencil channel.
+	case WW3D_ZFORMAT_D24S8			: name="D24S8"; break; // 32-bit z-buffer bit depth using 24 bits for the depth channel and 8 bits for the stencil channel.
+	case WW3D_ZFORMAT_D16			: name="D16"; break; // 16-bit z-buffer bit depth.
+	case WW3D_ZFORMAT_D24X8			: name="D24X8"; break; // 32-bit z-buffer bit depth using 24 bits for the depth channel.
+	case WW3D_ZFORMAT_D24X4S4		: name="D24X4S4"; break; // 32-bit z-buffer bit depth using 24 bits for the depth channel and 4 bits for the stencil channel.
 #ifdef _XBOX
 	case WW3D_ZFORMAT_LIN_D24S8	: name="D24S8LIN"; break;
 	case WW3D_ZFORMAT_LIN_F24S8	: name="F24S8LIN"; break;
@@ -140,7 +140,7 @@ void Vector4_to_Color(unsigned int *outc,const Vector4 &inc,const WW3DFormat for
 
 	switch (format)
 	{
-	case WW3D_FORMAT_R8G8B8:		
+	case WW3D_FORMAT_R8G8B8:
 	case WW3D_FORMAT_A8R8G8B8:
 	case WW3D_FORMAT_X8R8G8B8:
 		*outc=color;
@@ -184,12 +184,12 @@ void Vector4_to_Color(unsigned int *outc,const Vector4 &inc,const WW3DFormat for
 		*outc=lum;
 		break;
 	case WW3D_FORMAT_A8L8:
-		a=argb[0];		
+		a=argb[0];
 		lum=RGB_to_CIEY(inc);
 		*outc=(a<<8) | lum;
 		break;
 	case WW3D_FORMAT_A4L4:
-		a=argb[0] >> 4;		
+		a=argb[0] >> 4;
 		lum=RGB_to_CIEY(inc);
 		lum=lum>>4;
 		*outc=(a<<4) | lum;
@@ -235,7 +235,7 @@ void Color_to_Vector4(Vector4* outc,const unsigned int inc,const WW3DFormat form
 		g=argb[2]<<4;
 		b=argb[3]<<4;
 		break;
-	case WW3D_FORMAT_R3G3B2:		
+	case WW3D_FORMAT_R3G3B2:
 		r=argb[1]<<5;
 		g=argb[2]<<5;
 		b=argb[3]<<6;
@@ -313,7 +313,7 @@ WW3DFormat Get_Valid_Texture_Format(WW3DFormat format, bool is_compression_allow
 	int w,h,bits;
 	bool windowed;
 
-	if (!DX8Wrapper::Get_Current_Caps()->Support_DXTC() || 
+	if (!DX8Wrapper::Get_Current_Caps()->Support_DXTC() ||
 		!is_compression_allowed) {
 		switch (format) {
 		case WW3D_FORMAT_DXT1: format=WW3D_FORMAT_R8G8B8; break;
@@ -328,7 +328,7 @@ WW3DFormat Get_Valid_Texture_Format(WW3DFormat format, bool is_compression_allow
 		switch (format) {
 		case WW3D_FORMAT_DXT1:
 			// NVidia hack - switch to DXT2 is there is no DXT1 support (which is disabled on NVidia cards)
-			if (!DX8Wrapper::Get_Current_Caps()->Support_Texture_Format(WW3D_FORMAT_DXT1) && 
+			if (!DX8Wrapper::Get_Current_Caps()->Support_Texture_Format(WW3D_FORMAT_DXT1) &&
 				DX8Wrapper::Get_Current_Caps()->Support_Texture_Format(WW3D_FORMAT_DXT2)) {
 				format=WW3D_FORMAT_DXT2;
 			}

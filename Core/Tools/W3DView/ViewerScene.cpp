@@ -48,7 +48,7 @@
 /*
 ** ViewerSceneIterator
 ** This iterator is used by the ViewerSceneClass to allow
-** the user to iterate through its render objects. 
+** the user to iterate through its render objects.
 */
 class ViewerSceneIterator : public SceneIterator
 {
@@ -62,7 +62,7 @@ protected:
 
 	ViewerSceneIterator(RefRenderObjListClass * renderlist);
 
-	RefRenderObjListIterator	RobjIterator;	
+	RefRenderObjListIterator	RobjIterator;
 
 	friend class ViewerSceneClass;
 };
@@ -127,7 +127,7 @@ ViewerSceneClass::Visibility_Check (CameraClass *camera)
 		}
 
 		int lod_level = robj->Get_LOD_Level ();
-					
+
 		// Prepare visible objects for LOD:
 		if (robj->Is_Really_Visible()) {
 			robj->Prepare_LOD(*camera);
@@ -156,7 +156,7 @@ ViewerSceneClass::Add_To_Lineup (RenderObjClass *obj)
 	if (!Can_Line_Up(obj))
 		return;
 
-	
+
 	// We will add this object to the scene next to any
 	// existing objects. It will be placed at (0, Y, 0)
 	// where Y is a value to be calculated such that the
@@ -333,7 +333,7 @@ void	ViewerSceneClass::Customized_Render(RenderInfoClass & rinfo)
       // set the visibility bit in all render objects in all layers.
 	   Visibility_Check(&rinfo.Camera);
    }
-   Visibility_Checked = false;	
+   Visibility_Checked = false;
 
 	// Install the vertex processors.  Derived scenes may want to use some
 	// form of spatial subdivision to only insert the needed vps...
@@ -353,7 +353,7 @@ void	ViewerSceneClass::Customized_Render(RenderInfoClass & rinfo)
 
 	for (it.First(&LightList); !it.Is_Done(); it.Next()) {
 		lenv.Add_Light(*(LightClass*)it.Peek_Obj());
-	}	
+	}
 	lenv.Pre_Render_Update(rinfo.Camera.Get_Transform());
 
 	rinfo.light_environment=&lenv;

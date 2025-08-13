@@ -24,12 +24,12 @@
 
 // FILE: W3DMouse.h /////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information					         
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:    RTS3
@@ -98,14 +98,14 @@ private:
 	MouseCursor m_currentW3DCursor;
 	void initW3DAssets(void);		///< load models for mouse cursors, etc.
 	void freeW3DAssets(void);		///< unload models used by mouse cursors.
-	
+
 	MouseCursor m_currentPolygonCursor;
 	void initPolygonAssets(void);		///< load images for cursor polygon.
 	void freePolygonAssets(void);		///< free images for cursor polygon.
 
 	void setCursorDirection(MouseCursor cursor);	///figure out direction for oriented 2D cursors.
 
-};  // end Win32Mouse 
+};  // end Win32Mouse
 
 // INLINING ///////////////////////////////////////////////////////////////////
 

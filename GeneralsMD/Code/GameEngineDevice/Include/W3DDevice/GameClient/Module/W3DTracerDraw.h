@@ -23,8 +23,8 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 // FILE: W3DTracerDraw.h //////////////////////////////////////////////////////////////////////////
-// Author: 
-// Desc:   
+// Author:
+// Desc:
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
@@ -52,7 +52,7 @@ public:
 
 	virtual void doDrawModule(const Matrix3D* transformMtx);
 	virtual void setShadowsEnabled(Bool enable) { }
-	virtual void releaseShadows(void) {};	///< we don't care about preserving temporary shadows.	
+	virtual void releaseShadows(void) {};	///< we don't care about preserving temporary shadows.
 	virtual void allocateShadows(void) {};	///< we don't care about preserving temporary shadows.
 	virtual void setFullyObscuredByShroud(Bool fullyObscured) { }
 	virtual void reactToTransformChange(const Matrix3D* oldMtx, const Coord3D* oldPos, Real oldAngle);

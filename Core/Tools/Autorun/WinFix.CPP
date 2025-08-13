@@ -100,14 +100,14 @@ WindowsVersionInfo::WindowsVersionInfo(void) :
 	//--------------------------------------------------------------------------
 	// Get the version info from the OS.
 	//
-	//	typedef struct _OSVERSIONINFO{ 
-	//		DWORD	dwOSVersionInfoSize; 
-	//		DWORD	dwMajorVersion; 
-	//		DWORD	dwMinorVersion; 
-	//		DWORD	dwBuildNumber; 
-	//		DWORD	dwPlatformId; 
-	//		TCHAR	szCSDVersion[ 128 ]; 
-	// } OSVERSIONINFO; 
+	//	typedef struct _OSVERSIONINFO{
+	//		DWORD	dwOSVersionInfoSize;
+	//		DWORD	dwMajorVersion;
+	//		DWORD	dwMinorVersion;
+	//		DWORD	dwBuildNumber;
+	//		DWORD	dwPlatformId;
+	//		TCHAR	szCSDVersion[ 128 ];
+	// } OSVERSIONINFO;
 	//
 	//	typedef struct _OSVERSIONINFOEX {
 	//		DWORD	dwOSVersionInfoSize;
@@ -123,7 +123,7 @@ WindowsVersionInfo::WindowsVersionInfo(void) :
 	//		BYTE	wReserved;
 	//	} OSVERSIONINFOEX, *POSVERSIONINFOEX, *LPOSVERSIONINFOEX;
 	//--------------------------------------------------------------------------
-	ZeroMemory( &version_info, sizeof( version_info ));	
+	ZeroMemory( &version_info, sizeof( version_info ));
 	version_info.dwOSVersionInfoSize = sizeof( version_info );
 
 	int result = GetVersionEx( &version_info );
@@ -166,7 +166,7 @@ WindowsVersionInfo::WindowsVersionInfo(void) :
 	if ( version_info.dwPlatformId == VER_PLATFORM_WIN32_NT ) {
 
 		IsWinNT = true;
-		
+
 		if (( MajorVersionNumber >= 5 ) && ( MinorVersionNumber >= 1 )) {
 			IsWinXP = true;
 //			if ( version_info.wSuiteMask == VER_SUITE_PERSONAL ) {

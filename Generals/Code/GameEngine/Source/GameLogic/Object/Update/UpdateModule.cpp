@@ -37,9 +37,9 @@
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 UpdateSleepTime UpdateModule::frameToSleepTime(
-	UnsignedInt frame1, 
-	UnsignedInt frame2, 
-	UnsignedInt frame3, 
+	UnsignedInt frame1,
+	UnsignedInt frame2,
+	UnsignedInt frame3,
 	UnsignedInt frame4
 )
 {
@@ -97,7 +97,7 @@ void UpdateModule::crc( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
 	* Version Info;
-	* 1: Initial version 
+	* 1: Initial version
 	*/
 // ------------------------------------------------------------------------------------------------
 void UpdateModule::xfer( Xfer *xfer )
@@ -118,11 +118,11 @@ void UpdateModule::xfer( Xfer *xfer )
 		save a game that has an object that uses module "FOO"
 		now change the code for module "FOO" from being nonsleepy to being sleepy
 		now reload that saved game
-		as soon as "FOO" attempts to wake itself up, you're dead. 
-		
+		as soon as "FOO" attempts to wake itself up, you're dead.
+
 		this fix simply looks to see if the module in question is now sleepy in code,
 		but was saved in sleepy form, and if so, quietly nudges a reasonable
-		value into m_nextCallFrameAndPhase. 
+		value into m_nextCallFrameAndPhase.
 	*/
 	#define FIX_OLD_SAVES
 #endif
@@ -137,7 +137,7 @@ void UpdateModule::xfer( Xfer *xfer )
 
 	// next call frame and phase
 	xfer->xferUnsignedInt( &m_nextCallFrameAndPhase );
-	
+
 	if (xfer->getXferMode() == XFER_LOAD)
 	{
 		/*
@@ -147,7 +147,7 @@ void UpdateModule::xfer( Xfer *xfer )
 				PHASE_INITIAL				= 0,
 				PHASE_NORMAL				= 1,
 				PHASE_FINAL					= 2
-			
+
 			post-Jan 2, 2003:
 				PHASE_INITIAL				= 0,
 				PHASE_PHYSICS				= 1,
@@ -160,7 +160,7 @@ void UpdateModule::xfer( Xfer *xfer )
 
 #ifdef FIX_OLD_SAVES
 	if (xfer->getXferMode() == XFER_LOAD
-			&& thisModuleIsNowSleepy 
+			&& thisModuleIsNowSleepy
 			&& m_nextCallFrameAndPhase == 0)
 	{
 	#ifdef ALLOW_NONSLEEPY_UPDATES

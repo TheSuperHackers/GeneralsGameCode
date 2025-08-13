@@ -16,22 +16,22 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/*************************************************************************** 
- ***    C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S     *** 
- *************************************************************************** 
- *                                                                         * 
- *                 Project Name : G                                        * 
- *                                                                         * 
- *                     $Archive:: /Commando/Code/ww3d2/pointgr.h          $* 
- *                                                                         * 
- *                      $Author:: Naty_h                                  $* 
- *                                                                         * 
- *                     $Modtime:: 8/02/01 8:34p                           $* 
- *                                                                         * 
- *                    $Revision:: 10                                      $* 
- *                                                                         * 
- *-------------------------------------------------------------------------* 
- * Functions:                                                              * 
+/***************************************************************************
+ ***    C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S     ***
+ ***************************************************************************
+ *                                                                         *
+ *                 Project Name : G                                        *
+ *                                                                         *
+ *                     $Archive:: /Commando/Code/ww3d2/pointgr.h          $*
+ *                                                                         *
+ *                      $Author:: Naty_h                                  $*
+ *                                                                         *
+ *                     $Modtime:: 8/02/01 8:34p                           $*
+ *                                                                         *
+ *                    $Revision:: 10                                      $*
+ *                                                                         *
+ *-------------------------------------------------------------------------*
+ * Functions:                                                              *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #if defined(_MSC_VER)
@@ -53,7 +53,7 @@ class RenderInfoClass;
 class TextureClass;
 
 /*
-** PointGroupClass -- a custom object for rendering 
+** PointGroupClass -- a custom object for rendering
 ** groups of points (such as particle systems).
 ** It is possible to change mode/number of points/shader/etc. but these
 ** changes tend to be expensive if done often. Expected usage is to set the
@@ -62,7 +62,7 @@ class TextureClass;
 ** NOTE: Currently it is implemented using general triangles (1 or 2 per
 ** point), so it is probably suboptimal for software rasterization devices
 ** (which would probably perform better with some kind of blit/sprite code).
-*/ 
+*/
 class PointGroupClass
 {
 public:
@@ -83,7 +83,7 @@ public:
 
 	// PointGroupClass interface:
 	void						Set_Arrays(ShareBufferClass<Vector3> *locs,
-									ShareBufferClass<Vector4> *diffuse = NULL,																		
+									ShareBufferClass<Vector4> *diffuse = NULL,
 									ShareBufferClass<unsigned int> *apt = NULL,
 									ShareBufferClass<float> *sizes = NULL,
 									ShareBufferClass<unsigned char> *orientations = NULL,
@@ -128,18 +128,18 @@ public:
 protected:
 	// Update arrays.
 	void						Update_Arrays(Vector3 *point_loc,
-									Vector4 *point_diffuse,									
+									Vector4 *point_diffuse,
 									float *point_size,
 									unsigned char *point_orientation,
-									unsigned char *point_frame, 
+									unsigned char *point_frame,
 									int active_points,
-									int total_points, 
-									int &vnum, 
+									int total_points,
+									int &vnum,
 									int &pnum);
 
 	// These shared buffers are used for communication to the point group - to
 	// pass point locations, colors and enables. The location and color arrays
-	// are 'compressed' using the active point table (if present) and then 
+	// are 'compressed' using the active point table (if present) and then
 	// are processed into other arrays which are passed to the GERD.
 	// SR rather than WWMath types are used so Vector Processors can be used.
 	// The arrays override the default value if present.
@@ -175,7 +175,7 @@ protected:
 	unsigned int			Flags;						// operation control flags
 	float						DefaultPointSize;			// point size (size array overrides if present)
 	Vector3					DefaultPointColor;		// point color (color array overrides if present)
-	float						DefaultPointAlpha;		// point alpha (alpha array overrides if present)	
+	float						DefaultPointAlpha;		// point alpha (alpha array overrides if present)
 	unsigned char			DefaultPointOrientation;// point orientation (orientation array overrides if present)
 	unsigned char			DefaultPointFrame;		// point texture frame (frame array overrides if present)
 

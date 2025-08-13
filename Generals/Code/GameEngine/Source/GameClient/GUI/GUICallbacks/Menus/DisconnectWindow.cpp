@@ -116,7 +116,7 @@ void ShowDisconnectWindow( void )
 
 		// init it
 		InitDisconnectWindow();
-	
+
 		// show it
 		disconnectMenuLayout->hide( FALSE );
 
@@ -173,7 +173,7 @@ void HideDisconnectWindow( void )
 
 		// init it
 		InitDisconnectWindow();
-	
+
 		// show it
 		disconnectMenuLayout->hide( TRUE );
 
@@ -201,10 +201,10 @@ WindowMsgHandledType DisconnectControlInput( GameWindow *window, UnsignedInt msg
 //-------------------------------------------------------------------------------------------------
 /** System callback for the control bar parent */
 //-------------------------------------------------------------------------------------------------
-WindowMsgHandledType DisconnectControlSystem( GameWindow *window, UnsignedInt msg, 
+WindowMsgHandledType DisconnectControlSystem( GameWindow *window, UnsignedInt msg,
 																			 WindowMsgData mData1, WindowMsgData mData2 )
 {
-	switch( msg ) 
+	switch( msg )
 	{
 
 		//---------------------------------------------------------------------------------------------

@@ -118,7 +118,7 @@ void SinglePlayerMenuShutdown( WindowLayout *layout, void *userData )
 void SinglePlayerMenuUpdate( WindowLayout *layout, void *userData )
 {
 
-	// We'll only be successful if we've requested to 
+	// We'll only be successful if we've requested to
 	if(isShuttingDown && TheShell->isAnimFinished())
 		shutdownComplete(layout);
 
@@ -131,7 +131,7 @@ WindowMsgHandledType SinglePlayerMenuInput( GameWindow *window, UnsignedInt msg,
 																						WindowMsgData mData1, WindowMsgData mData2 )
 {
 
-	switch( msg ) 
+	switch( msg )
 	{
 
 		// --------------------------------------------------------------------------------------------
@@ -148,7 +148,7 @@ WindowMsgHandledType SinglePlayerMenuInput( GameWindow *window, UnsignedInt msg,
 				// ----------------------------------------------------------------------------------------
 				case KEY_ESC:
 				{
-					
+
 					//
 					// send a simulated selected event to the parent window of the
 					// back/exit button
@@ -159,7 +159,7 @@ WindowMsgHandledType SinglePlayerMenuInput( GameWindow *window, UnsignedInt msg,
 						NameKeyType buttonID = TheNameKeyGenerator->nameToKey( buttonName );
 						GameWindow *button = TheWindowManager->winGetWindowFromId( window, buttonID );
 
-						TheWindowManager->winSendSystemMsg( window, GBM_SELECTED, 
+						TheWindowManager->winSendSystemMsg( window, GBM_SELECTED,
 																								(WindowMsgData)button, buttonID );
 
 					}  // end if
@@ -182,14 +182,14 @@ WindowMsgHandledType SinglePlayerMenuInput( GameWindow *window, UnsignedInt msg,
 //-------------------------------------------------------------------------------------------------
 /** single player menu window system callback */
 //-------------------------------------------------------------------------------------------------
-WindowMsgHandledType SinglePlayerMenuSystem( GameWindow *window, UnsignedInt msg, 
+WindowMsgHandledType SinglePlayerMenuSystem( GameWindow *window, UnsignedInt msg,
 														 WindowMsgData mData1, WindowMsgData mData2 )
 {
 	static NameKeyType buttonNew = NAMEKEY_INVALID;
 	static NameKeyType buttonLoad = NAMEKEY_INVALID;
 	static NameKeyType buttonBack = NAMEKEY_INVALID;
 
-	switch( msg ) 
+	switch( msg )
 	{
 
 		// --------------------------------------------------------------------------------------------
@@ -251,13 +251,13 @@ WindowMsgHandledType SinglePlayerMenuSystem( GameWindow *window, UnsignedInt msg
 				// thou art directed to return to thy known solar system immediately!
 				TheShell->pop();
 				buttonPushed = true;
-				
+
 			}  // end else if
 
 			break;
 
 		}  // end selected
-		
+
 		default:
 			return MSG_IGNORED;
 	}  // end switch

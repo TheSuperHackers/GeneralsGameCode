@@ -32,11 +32,11 @@
 #define SHELLHOOKS_H
 
 //
-// This enumeration holds all the shell script hooks that we currently have, If you are going to 
-// add more, it's important to keep the enum lined up with the names in TheShellHookNames located 
+// This enumeration holds all the shell script hooks that we currently have, If you are going to
+// add more, it's important to keep the enum lined up with the names in TheShellHookNames located
 // in Scripts.cpp.
 //
-enum 
+enum
 {
 	SHELL_SCRIPT_HOOK_MAIN_MENU_CAMPAIGN_SELECTED = 0,
 	SHELL_SCRIPT_HOOK_MAIN_MENU_CAMPAIGN_HIGHLIGHTED,

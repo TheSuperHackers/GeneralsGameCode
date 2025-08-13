@@ -24,12 +24,12 @@
 
 // FILE: W3DTerrainTracks.cpp ////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:   RTS3
@@ -157,7 +157,7 @@ Int TerrainTracksRenderObjClass::freeTerrainTracksResources(void)
 /** Setup size settings and allocate W3D texture */
 //=============================================================================
 void TerrainTracksRenderObjClass::init( Real width, Real length, const Char *texturename)
-{	
+{
 	freeTerrainTracksResources();	//free old data and ib/vb
 
 	m_boundingSphere.Init(Vector3(0,0,0),400*MAP_XY_FACTOR);
@@ -202,7 +202,7 @@ void TerrainTracksRenderObjClass::addCapEdgeToTrack(Real x, Real y)
 	PathfindLayerEnum objectLayer;
 	Real eHeight;
 
-	if (m_ownerDrawable && (objectLayer=m_ownerDrawable->getObject()->getLayer()) != LAYER_GROUND) 
+	if (m_ownerDrawable && (objectLayer=m_ownerDrawable->getObject()->getLayer()) != LAYER_GROUND)
 		eHeight=BRIDGE_OFFSET_FACTOR+TheTerrainLogic->getLayerHeight(x,y,objectLayer,&vZTmp);
 	else
 		eHeight=TheTerrainLogic->getGroundHeight(x,y,&vZTmp);
@@ -259,12 +259,12 @@ void TerrainTracksRenderObjClass::addCapEdgeToTrack(Real x, Real y)
 	topEdge.endPointPos[0].Z += 0.2f * MAP_XY_FACTOR;	//raise above terrain slightly
 
 	if (m_totalEdgesAdded&1)	//every other edge has different set of UV's
-	{	
+	{
 		topEdge.endPointUV[0].X=0.0f;
 		topEdge.endPointUV[0].Y=0.0f;
 	}
 	else
-	{	
+	{
 		topEdge.endPointUV[0].X=0.0f;
 		topEdge.endPointUV[0].Y=1.0f;
 	}
@@ -274,18 +274,18 @@ void TerrainTracksRenderObjClass::addCapEdgeToTrack(Real x, Real y)
 	topEdge.endPointPos[1].Z += 0.2f * MAP_XY_FACTOR;	//raise above terrain slightly
 
 	if (m_totalEdgesAdded&1)	//every other edge has different set of UV's
-	{	
+	{
 		topEdge.endPointUV[1].X=1.0f;
 		topEdge.endPointUV[1].Y=0.0f;
 	}
 	else
-	{	
+	{
 		topEdge.endPointUV[1].X=1.0f;
 		topEdge.endPointUV[1].Y=1.0f;
 	}
 
 	topEdge.timeAdded=WW3D::Get_Sync_Time();
-	topEdge.alpha=0.0f;	//fully transparent at cap.	
+	topEdge.alpha=0.0f;	//fully transparent at cap.
 	m_lastAnchor=vPos;
 	m_activeEdgeCount++;
 	m_totalEdgesAdded++;
@@ -309,7 +309,7 @@ void TerrainTracksRenderObjClass::addEdgeToTrack(Real x, Real y)
 	if (!m_haveAnchor)
 	{	//no anchor yet, make this point an anchor.
 		PathfindLayerEnum objectLayer;
-		if (m_ownerDrawable && (objectLayer=m_ownerDrawable->getObject()->getLayer()) != LAYER_GROUND) 
+		if (m_ownerDrawable && (objectLayer=m_ownerDrawable->getObject()->getLayer()) != LAYER_GROUND)
 			m_lastAnchor=Vector3(x,y,TheTerrainLogic->getLayerHeight(x,y,objectLayer)+BRIDGE_OFFSET_FACTOR);
 		else
 			m_lastAnchor=Vector3(x,y,TheTerrainLogic->getGroundHeight(x,y));
@@ -327,7 +327,7 @@ void TerrainTracksRenderObjClass::addEdgeToTrack(Real x, Real y)
 	Real eHeight;
 	PathfindLayerEnum objectLayer;
 
-	if (m_ownerDrawable && (objectLayer=m_ownerDrawable->getObject()->getLayer()) != LAYER_GROUND) 
+	if (m_ownerDrawable && (objectLayer=m_ownerDrawable->getObject()->getLayer()) != LAYER_GROUND)
 		eHeight=BRIDGE_OFFSET_FACTOR+TheTerrainLogic->getLayerHeight(x,y,objectLayer,&vZTmp);
 	else
 		eHeight=TheTerrainLogic->getGroundHeight(x,y,&vZTmp);
@@ -376,12 +376,12 @@ void TerrainTracksRenderObjClass::addEdgeToTrack(Real x, Real y)
 	topEdge.endPointPos[0].Z += 0.2f * MAP_XY_FACTOR;	//raise above terrain slightly
 
 	if (m_totalEdgesAdded&1)	//every other edge has different set of UV's
-	{	
+	{
 		topEdge.endPointUV[0].X=0.0f;
 		topEdge.endPointUV[0].Y=0.0f;
 	}
 	else
-	{	
+	{
 		topEdge.endPointUV[0].X=0.0f;
 		topEdge.endPointUV[0].Y=1.0f;
 	}
@@ -391,18 +391,18 @@ void TerrainTracksRenderObjClass::addEdgeToTrack(Real x, Real y)
 	topEdge.endPointPos[1].Z += 0.2f * MAP_XY_FACTOR;	//raise above terrain slightly
 
 	if (m_totalEdgesAdded&1)	//every other edge has different set of UV's
-	{	
+	{
 		topEdge.endPointUV[1].X=1.0f;
 		topEdge.endPointUV[1].Y=0.0f;
 	}
 	else
-	{	
+	{
 		topEdge.endPointUV[1].X=1.0f;
 		topEdge.endPointUV[1].Y=1.0f;
 	}
 
 	topEdge.timeAdded=WW3D::Get_Sync_Time();
-	topEdge.alpha=1.0f;	//fully opaque at start.	
+	topEdge.alpha=1.0f;	//fully opaque at start.
 	if (m_airborne || m_activeEdgeCount <= 1) {
 		topEdge.alpha=0.0f;	//smooth out track restarts by setting transparent
 	}
@@ -522,7 +522,7 @@ void TerrainTracksRenderObjClassSystem::releaseTrack( TerrainTracksRenderObjClas
 {
 	if (mod==NULL)
 		return;
-	
+
 	DEBUG_ASSERTCRASH(mod->m_bound == false, ("mod is bound."));
 
 	// remove module from used list
@@ -844,7 +844,7 @@ Try improving the fit to vertical surfaces like cliffs.
 
 					endPoint=&mod->m_edges[index].endPointPos[0];	//left endpoint
 					endPointUV=&mod->m_edges[index].endPointUV[0];
-		
+
 					distanceFade=1.0f;
 
 					if ((mod->m_activeEdgeCount -1 -i) >= m_maxTankTrackOpaqueEdges)// && i < (MAX_PER_TRACK_EDGE_COUNT-FORCE_FADE_AT_EDGE))
@@ -858,7 +858,7 @@ Try improving the fit to vertical surfaces like cliffs.
 					verts->x=endPoint->X;
 					verts->y=endPoint->Y;
 					verts->z=endPoint->Z;
-					
+
 					verts->u1=endPointUV->X;
 					verts->v1=endPointUV->Y;
 

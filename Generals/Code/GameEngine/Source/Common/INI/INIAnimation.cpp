@@ -43,7 +43,7 @@ void INI::parseAnim2DDefinition( INI* ini )
 
 	// read the name
 	const char* c = ini->getNextToken();
-	name.set( c );	
+	name.set( c );
 
 	//
 	// find existing item if present, note that we do not support overrides

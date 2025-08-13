@@ -24,12 +24,12 @@
 
 // FILE: W3DBibBuffer.cpp ////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:   RTS3
@@ -43,7 +43,7 @@
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-//         Includes                                                      
+//         Includes
 //-----------------------------------------------------------------------------
 #include "W3DDevice/GameClient/W3DBibBuffer.h"
 
@@ -63,7 +63,7 @@
 #include "WW3D2/meshmdl.h"
 
 //-----------------------------------------------------------------------------
-//         Private Data                                                     
+//         Private Data
 //-----------------------------------------------------------------------------
 // A W3D shader that does alpha, texturing, tests zbuffer, doesn't update zbuffer.
 #define SC_ALPHA_DETAIL ( SHADE_CNST(ShaderClass::PASS_ALWAYS, ShaderClass::DEPTH_WRITE_DISABLE, ShaderClass::COLOR_WRITE_ENABLE, ShaderClass::SRCBLEND_SRC_ALPHA, \
@@ -75,7 +75,7 @@ static ShaderClass detailAlphaShader(SC_ALPHA_DETAIL);
 
 
 //-----------------------------------------------------------------------------
-//         Private Functions                                               
+//         Private Functions
 //-----------------------------------------------------------------------------
 
 
@@ -99,7 +99,7 @@ void W3DBibBuffer::loadBibsInVertexAndIndexBuffers(void)
 	m_curNumNormalBibVertex = 0;
 
 	if (m_numBibs==0) {
-		return;	
+		return;
 	}
 
 	VertexFormatXYZDUV1 *vb;
@@ -133,9 +133,9 @@ void W3DBibBuffer::loadBibsInVertexAndIndexBuffers(void)
 
 	Int diffuse = (REAL_TO_INT(shadeB) | (REAL_TO_INT(shadeG) << 8) | (REAL_TO_INT(shadeR) << 16) | (255 << 24));
 	Int doHighlight;
-	for (doHighlight=0; doHighlight<=1; doHighlight++) 
+	for (doHighlight=0; doHighlight<=1; doHighlight++)
 	{
-		if (doHighlight==1) 
+		if (doHighlight==1)
 		{
 			m_curNumNormalBibIndices = m_curNumBibIndices;
 			m_curNumNormalBibVertex = m_curNumBibVertices;
@@ -156,8 +156,8 @@ void W3DBibBuffer::loadBibsInVertexAndIndexBuffers(void)
 
 			for (i=0; i<numVertex; i++) {
 
-				// Update the uv values.  The W3D models each have their own texture, and 
-				// we use one texture with all images in one, so we have to change the uvs to 
+				// Update the uv values.  The W3D models each have their own texture, and
+				// we use one texture with all images in one, so we have to change the uvs to
 				// match.
 				Real U, V;
 				Vector3 vLoc=m_bibs[curBib].m_corners[i];
@@ -180,7 +180,7 @@ void W3DBibBuffer::loadBibsInVertexAndIndexBuffers(void)
 				curVb->v1 = V;
 				curVb->x = vLoc.X;
 				curVb->y = vLoc.Y;
-				curVb->z = vLoc.Z;	 
+				curVb->z = vLoc.Z;
 				curVb->diffuse = diffuse;
 				curVb++;
 				m_curNumBibVertices++;
@@ -193,12 +193,12 @@ void W3DBibBuffer::loadBibsInVertexAndIndexBuffers(void)
 			*curIb++ = startVertex + 2;
 			*curIb++ = startVertex + 3;
 			m_curNumBibIndices+=6;
-		}		
+		}
 	}
 }
 
 //-----------------------------------------------------------------------------
-//         Public Functions                                                
+//         Public Functions
 //-----------------------------------------------------------------------------
 
 //=============================================================================
@@ -320,7 +320,7 @@ void W3DBibBuffer::addBib(Vector3 corners[4], ObjectID id, Bool highlight)
 	}
 	if (bibIndex==m_numBibs) {
 		if (m_numBibs >= MAX_BIBS) {
-			return;  
+			return;
 		}
 		m_numBibs++;
 	}
@@ -358,7 +358,7 @@ void W3DBibBuffer::addBibDrawable(Vector3 corners[4], DrawableID id, Bool highli
 	}
 	if (bibIndex==m_numBibs) {
 		if (m_numBibs >= MAX_BIBS) {
-			return;  
+			return;
 		}
 		m_numBibs++;
 	}
@@ -434,7 +434,7 @@ void W3DBibBuffer::renderBibs()
 	}
 	if (m_curNumBibIndices>m_curNumNormalBibIndices) {
 		DX8Wrapper::Set_Texture(0,m_highlightBibTexture);
-		DX8Wrapper::Draw_Triangles(	m_curNumNormalBibIndices, (m_curNumBibIndices-m_curNumNormalBibIndices)/3, 
+		DX8Wrapper::Draw_Triangles(	m_curNumNormalBibIndices, (m_curNumBibIndices-m_curNumNormalBibIndices)/3,
 						m_curNumNormalBibVertex,	m_curNumBibVertices-m_curNumNormalBibVertex);
 	}
 }

@@ -24,12 +24,12 @@
 
 // FILE: W3DTreeBuffer.h //////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information					         
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:    RTS3
@@ -48,7 +48,7 @@
 #define __W3DTREE_BUFFER_H_
 
 //-----------------------------------------------------------------------------
-//           Includes                                                      
+//           Includes
 //-----------------------------------------------------------------------------
 #include "always.h"
 #include "rendobj.h"
@@ -64,14 +64,14 @@
 //-----------------------------------------------------------------------------
 //           Forward References
 //-----------------------------------------------------------------------------
-class MeshClass; 
+class MeshClass;
 
 //-----------------------------------------------------------------------------
 //           Type Defines
 //-----------------------------------------------------------------------------
 
 typedef enum {
-	ALPINE_TREE = 0, 
+	ALPINE_TREE = 0,
 	DECIDUOUS_TREE = 1,
 	SHRUB = 2,
 	FENCE = 3
@@ -96,8 +96,8 @@ typedef struct {
 // W3DTreeBuffer: Draw buffer for the trees.
 //
 //
-class W3DTreeBuffer 
-{	
+class W3DTreeBuffer
+{
 friend class HeightMapRenderObjClass;
 public:
 
@@ -115,8 +115,8 @@ public:
 	void setIsTerrain(void) {m_isTerrainPass = true;}; ///< Terrain calls this to tell trees to draw.
 	Bool needToDraw(void) {return m_isTerrainPass;};
 protected:
-	enum { MAX_TREE_VERTEX=4000, 
-					MAX_TREE_INDEX=2*4000, 
+	enum { MAX_TREE_VERTEX=4000,
+					MAX_TREE_INDEX=2*4000,
 					MAX_TREES=2000};
 	enum {MAX_TYPES = 4,
 				SORT_ITERATIONS_PER_FRAME=10};
@@ -125,7 +125,7 @@ protected:
 	TextureClass *m_treeTexture;	///<Trees texture
 	Int			m_curNumTreeVertices; ///<Number of vertices used in m_vertexTree.
 	Int			m_curNumTreeIndices;	///<Number of indices used in b_indexTree;
-	Int			m_curTreeIndexOffset;	///<First index to draw at.  We draw the trees backwards by filling up the index buffer backwards, 
+	Int			m_curTreeIndexOffset;	///<First index to draw at.  We draw the trees backwards by filling up the index buffer backwards,
 																// so any trees that don't fit are far away from the camera.
 	TTree	m_trees[MAX_TREES];			///< The tree buffer.  All trees are stored here.
 	Int			m_numTrees;						///< Number of trees in m_trees.

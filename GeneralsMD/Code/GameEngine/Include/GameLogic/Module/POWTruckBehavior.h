@@ -45,7 +45,7 @@ class POWTruckBehaviorModuleData : public OpenContainModuleData
 public:
 
 	POWTruckBehaviorModuleData( void );
-	
+
 	static void buildFieldParse( MultiIniFieldParse &p );
 
 };
@@ -65,7 +65,7 @@ public:
 
 	// collide methods
 	virtual void onCollide( Object *other, const Coord3D *loc, const Coord3D *normal );
-	
+
 protected:
 
 };

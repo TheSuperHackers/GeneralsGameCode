@@ -190,10 +190,10 @@ void InitBuddyControls(Int type)
 	default:
 		DEBUG_ASSERTCRASH(FALSE, ("Well, you really shouldn't have gotten here, if you really care about GUI Bugs, search for this string, you you don't care, call chris (who probably doesn't care either"));
 	}
-	
+
 }
 
-WindowMsgHandledType BuddyControlSystem( GameWindow *window, UnsignedInt msg, 
+WindowMsgHandledType BuddyControlSystem( GameWindow *window, UnsignedInt msg,
 														 WindowMsgData mData1, WindowMsgData mData2)
 {
 	if(!TheGameSpyInfo || TheGameSpyInfo->getLocalProfileID() == 0 || !buddyControls.isInit)
@@ -208,7 +208,7 @@ WindowMsgHandledType BuddyControlSystem( GameWindow *window, UnsignedInt msg,
 				GameWindow *control = (GameWindow *)mData1;
 				Int controlID = control->winGetWindowId();
 
-				if( controlID == buddyControls.listboxBuddiesID ) 
+				if( controlID == buddyControls.listboxBuddiesID )
 				{
 					RightClickStruct *rc = (RightClickStruct *)mData2;
 					WindowLayout *rcLayout;
@@ -230,8 +230,8 @@ WindowMsgHandledType BuddyControlSystem( GameWindow *window, UnsignedInt msg,
 					rcMenu->winGetLayout()->runInit();
 					rcMenu->winBringToTop();
 					rcMenu->winHide(FALSE);
-					
-					
+
+
 					ICoord2D rcSize, rcPos;
 					rcMenu->winGetSize(&rcSize.x, &rcSize.y);
 					rcPos.x = rc->mouseX;
@@ -242,7 +242,7 @@ WindowMsgHandledType BuddyControlSystem( GameWindow *window, UnsignedInt msg,
 						rcPos.y = TheDisplay->getHeight() - rcSize.y;
 					rcMenu->winSetPosition(rcPos.x, rcPos.y);
 
-					
+
 					GameSpyRCMenuData *rcData = NEW GameSpyRCMenuData;
 					rcData->m_id = profileID;
 					rcData->m_nick.translate(nick);
@@ -541,7 +541,7 @@ void HandleBuddyResponses( void )
 
 					// put message on screen
 					insertChat(message);
-					
+
 					// play audio notification
 					AudioEventRTS buddyMsgAudio("GUIMessageReceived");
 					if( TheAudio )
@@ -758,7 +758,7 @@ void WOLBuddyOverlayInit( WindowLayout *layout, void *userData )
 
 	isOverlayActive = true;
 	updateBuddyInfo();
-	
+
 } // WOLBuddyOverlayInit
 
 //-------------------------------------------------------------------------------------------------
@@ -796,7 +796,7 @@ void WOLBuddyOverlayUpdate( WindowLayout * layout, void *userData)
 WindowMsgHandledType WOLBuddyOverlayInput( GameWindow *window, UnsignedInt msg,
 																			 WindowMsgData mData1, WindowMsgData mData2 )
 {
-	switch( msg ) 
+	switch( msg )
 	{
 
 		// --------------------------------------------------------------------------------------------
@@ -811,14 +811,14 @@ WindowMsgHandledType WOLBuddyOverlayInput( GameWindow *window, UnsignedInt msg,
 				// ----------------------------------------------------------------------------------------
 				case KEY_ESC:
 				{
-					
+
 					//
 					// send a simulated selected event to the parent window of the
 					// back/exit button
 					//
 					if( BitIsSet( state, KEY_STATE_UP ) )
 					{
-						TheWindowManager->winSendSystemMsg( window, GBM_SELECTED, 
+						TheWindowManager->winSendSystemMsg( window, GBM_SELECTED,
 																							(WindowMsgData)buttonHide, buttonHideID );
 
 					}  // end if
@@ -840,7 +840,7 @@ WindowMsgHandledType WOLBuddyOverlayInput( GameWindow *window, UnsignedInt msg,
 //-------------------------------------------------------------------------------------------------
 /** WOL Buddy Overlay window system callback */
 //-------------------------------------------------------------------------------------------------
-WindowMsgHandledType WOLBuddyOverlaySystem( GameWindow *window, UnsignedInt msg, 
+WindowMsgHandledType WOLBuddyOverlaySystem( GameWindow *window, UnsignedInt msg,
 														 WindowMsgData mData1, WindowMsgData mData2 )
 {
 	UnicodeString txtInput;
@@ -850,11 +850,11 @@ WindowMsgHandledType WOLBuddyOverlaySystem( GameWindow *window, UnsignedInt msg,
 	}
 	switch( msg )
 	{
-		
-		
+
+
 		case GWM_CREATE:
 			{
-				
+
 				break;
 			} // case GWM_DESTROY:
 
@@ -864,7 +864,7 @@ WindowMsgHandledType WOLBuddyOverlaySystem( GameWindow *window, UnsignedInt msg,
 			} // case GWM_DESTROY:
 
 		case GWM_INPUT_FOCUS:
-			{	
+			{
 				// if we're givin the opportunity to take the keyboard focus we must say we want it
 				if( mData1 == TRUE )
 					*(Bool *)mData2 = TRUE;
@@ -876,7 +876,7 @@ WindowMsgHandledType WOLBuddyOverlaySystem( GameWindow *window, UnsignedInt msg,
 				GameWindow *control = (GameWindow *)mData1;
 				Int controlID = control->winGetWindowId();
 
-				if( controlID == listboxIgnoreID ) 
+				if( controlID == listboxIgnoreID )
 				{
 					RightClickStruct *rc = (RightClickStruct *)mData2;
 					WindowLayout *rcLayout;
@@ -919,8 +919,8 @@ WindowMsgHandledType WOLBuddyOverlaySystem( GameWindow *window, UnsignedInt msg,
 					rcMenu->winGetLayout()->runInit();
 					rcMenu->winBringToTop();
 					rcMenu->winHide(FALSE);
-					
-					
+
+
 
 					rcMenu->winSetPosition(rc->mouseX, rc->mouseY);
 					GameSpyRCMenuData *rcData = NEW GameSpyRCMenuData;
@@ -989,10 +989,10 @@ WindowMsgHandledType WOLBuddyOverlaySystem( GameWindow *window, UnsignedInt msg,
 				/*
 				GameWindow *control = (GameWindow *)mData1;
 				Int controlID = control->winGetWindowId();
-				if( controlID == listboxBuddyID ) 
+				if( controlID == listboxBuddyID )
 				{
 					int rowSelected = mData2;
-				
+
 					if (rowSelected >= 0)
 					{
 						UnicodeString buddyName;
@@ -1087,7 +1087,7 @@ WindowMsgHandledType WOLBuddyOverlaySystem( GameWindow *window, UnsignedInt msg,
 				*/
 				break;
 			}
-		
+
 		default:
 			return MSG_IGNORED;
 
@@ -1096,7 +1096,7 @@ WindowMsgHandledType WOLBuddyOverlaySystem( GameWindow *window, UnsignedInt msg,
 	return MSG_HANDLED;
 }// WOLBuddyOverlaySystem
 
-WindowMsgHandledType PopupBuddyNotificationSystem( GameWindow *window, UnsignedInt msg, 
+WindowMsgHandledType PopupBuddyNotificationSystem( GameWindow *window, UnsignedInt msg,
 														 WindowMsgData mData1, WindowMsgData mData2 )
 {
 	switch( msg )
@@ -1169,7 +1169,7 @@ static void closeRightClickMenu(GameWindow *win)
 		WindowLayout *winLay = win->winGetLayout();
 		if(!winLay)
 			return;
-		winLay->destroyWindows();					
+		winLay->destroyWindows();
 		deleteInstance(winLay);
 		winLay = NULL;
 
@@ -1214,7 +1214,7 @@ void RequestBuddyAdd(Int profileID, AsciiString nick)
 
 	// put message on screen
 	insertChat(message);
-	
+
 	// play audio notification
 	AudioEventRTS buddyMsgAudio("GUIMessageReceived");
 	if( TheAudio )
@@ -1232,10 +1232,10 @@ WindowMsgHandledType WOLBuddyOverlayRCMenuSystem( GameWindow *window, UnsignedIn
 
 	switch( msg )
 	{
-		
+
 		case GWM_CREATE:
 			{
-				
+
 				break;
 			} // case GWM_DESTROY:
 
@@ -1251,7 +1251,7 @@ WindowMsgHandledType WOLBuddyOverlayRCMenuSystem( GameWindow *window, UnsignedIn
 				//rcMenu = NULL;
 				break;
 			}
-		
+
 
 		case GBM_SELECTED:
 			{
@@ -1298,7 +1298,7 @@ WindowMsgHandledType WOLBuddyOverlayRCMenuSystem( GameWindow *window, UnsignedIn
 						// request to add him to our list automatically CLH 2-18-03
 						if(!TheGameSpyInfo->isBuddy(profileID))
 						{
-							RequestBuddyAdd(profileID, nick);		
+							RequestBuddyAdd(profileID, nick);
 						}
 						updateBuddyInfo();
 					}
@@ -1319,7 +1319,7 @@ WindowMsgHandledType WOLBuddyOverlayRCMenuSystem( GameWindow *window, UnsignedIn
 						req.arg.profile.id = profileID;
 						TheGameSpyBuddyMessageQueue->addRequest(req);
 					}
-					else 
+					else
 					{
 						// delete the request
 						BuddyRequest req;
@@ -1354,7 +1354,7 @@ WindowMsgHandledType WOLBuddyOverlayRCMenuSystem( GameWindow *window, UnsignedIn
 						}
 					}
 					else
-					{	
+					{
 						if(TheGameSpyInfo->isIgnored(nick))
 						{
 							TheGameSpyInfo->removeFromIgnoreList(nick);
@@ -1385,8 +1385,8 @@ WindowMsgHandledType WOLBuddyOverlayRCMenuSystem( GameWindow *window, UnsignedIn
 			}
 		default:
 			return MSG_IGNORED;
-	
-	}//Switch		
+
+	}//Switch
 	return MSG_HANDLED;
 }
 
@@ -1407,7 +1407,7 @@ void setUnignoreText( WindowLayout *layout, AsciiString nick, GPProfile id)
 void refreshIgnoreList( void )
 {
 
-	
+
 	SavedIgnoreMap tempMap;
 	tempMap = TheGameSpyInfo->returnSavedIgnoreList();
 	SavedIgnoreMap::iterator it = tempMap.begin();

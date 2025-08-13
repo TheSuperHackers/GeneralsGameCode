@@ -44,7 +44,7 @@
 class Profile
 {
   friend class ProfileCmdInterface;
-  
+
   // nobody can construct this class
   Profile();
 
@@ -64,7 +64,7 @@ public:
     \param range name of range to record, ==NULL for "frame"
   */
   static void AppendRange(const char *range=0);
-  
+
   /**
     \brief Stops range recording.
 
@@ -120,7 +120,7 @@ public:
     \return number of CPU clock cycles per second
   */
   static _int64 GetClockCyclesPerSecond(void);
-  
+
   /**
     \brief Add the given result function interface.
 
@@ -141,7 +141,7 @@ private:
     \return true if string matches pattern, false if not
   */
   static bool SimpleMatch(const char *str, const char *pattern);
-  
+
   /// known frame names
   struct FrameName
   {
@@ -183,7 +183,7 @@ private:
   /** \internal
 
     First pattern list list entry. A singly linked list is
-    okay for this because checking patterns is a costly 
+    okay for this because checking patterns is a costly
     operation anyway and is therefore cached.
   */
   static PatternListEntry *firstPatternEntry;

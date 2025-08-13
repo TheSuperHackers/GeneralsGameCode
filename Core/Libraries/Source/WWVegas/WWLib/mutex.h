@@ -148,7 +148,7 @@ public:
 		{
 			unlock();
 		}
-    
+
 	private:
 
     void lock() {
@@ -164,7 +164,7 @@ public:
       // Had to remove the emits back to normal
       // ASM statements because sometimes the jump
       // would be 1 byte off....
-      
+
 		  __asm mov ebx, [nFlag]
 		  __asm ts_lock
 		  __asm bts dword ptr [ebx], 0

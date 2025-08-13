@@ -69,7 +69,7 @@ enum ObjectStatusTypes CPP_11(: Int)
 	OBJECT_STATUS_MASKED,								///< Masked objects are not selectable and targetable by players or AI
 	OBJECT_STATUS_IS_ATTACKING,					///< Object is in the general Attack state (incl. aim, approach, etc.). Note that IS_FIRING_WEAPON and IS_AIMING_WEAPON is a subset of this!
 	OBJECT_STATUS_IS_USING_ABILITY,			///< Object is in the process of preparing or firing a special ability.
-	OBJECT_STATUS_IS_AIMING_WEAPON,			///< Object is aiming a weapon, now. Not true for special attacks. 
+	OBJECT_STATUS_IS_AIMING_WEAPON,			///< Object is aiming a weapon, now. Not true for special attacks.
 	OBJECT_STATUS_NO_ATTACK_FROM_AI,		///< attacking this object may not be done from commandSource == CMD_FROM_AI
 	OBJECT_STATUS_IGNORING_STEALTH,			///< temporarily ignoring all stealth bits. (used only for some special-case mine clearing stuff.)
 	OBJECT_STATUS_IS_CARBOMB,						///< Object is now a carbomb.
@@ -103,13 +103,13 @@ typedef BitFlags<OBJECT_STATUS_COUNT>	ObjectStatusMaskType;
 #define MAKE_OBJECT_STATUS_MASK4(k,a,b,c) ObjectStatusMaskType(ObjectStatusMaskType::kInit, (k), (a), (b), (c))
 #define MAKE_OBJECT_STATUS_MASK5(k,a,b,c,d) ObjectStatusMaskType(ObjectStatusMaskType::kInit, (k), (a), (b), (c), (d))
 
-inline Bool TEST_OBJECT_STATUS_MASK( const ObjectStatusMaskType& m, ObjectStatusTypes t ) 
-{ 
-	return m.test( t ); 
+inline Bool TEST_OBJECT_STATUS_MASK( const ObjectStatusMaskType& m, ObjectStatusTypes t )
+{
+	return m.test( t );
 }
 
-inline Bool TEST_OBJECT_STATUS_MASK_ANY( const ObjectStatusMaskType& m, const ObjectStatusMaskType& mask ) 
-{ 
+inline Bool TEST_OBJECT_STATUS_MASK_ANY( const ObjectStatusMaskType& m, const ObjectStatusMaskType& mask )
+{
 	return m.anyIntersectionWith( mask );
 }
 
@@ -118,14 +118,14 @@ inline Bool TEST_OBJECT_STATUS_MASK_MULTI( const ObjectStatusMaskType& m, const 
 	return m.testSetAndClear( mustBeSet, mustBeClear );
 }
 
-inline Bool OBJECT_STATUS_MASK_ANY_SET( const ObjectStatusMaskType& m) 
-{ 
-	return m.any(); 
+inline Bool OBJECT_STATUS_MASK_ANY_SET( const ObjectStatusMaskType& m)
+{
+	return m.any();
 }
 
-inline void CLEAR_OBJECT_STATUS_MASK( ObjectStatusMaskType& m ) 
-{ 
-	m.clear(); 
+inline void CLEAR_OBJECT_STATUS_MASK( ObjectStatusMaskType& m )
+{
+	m.clear();
 }
 
 inline void SET_ALL_OBJECT_STATUS_MASK_BITS( ObjectStatusMaskType& m )

@@ -101,7 +101,7 @@ BOOL CALLBACK DialogProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         item.iSubItem++;
         item.pszText="reallyreallyverylongfilename.cpp";
         ListView_SetItem(list,&item);
-        
+
         item.iSubItem++;
         item.pszText="5748+0xad38";
         ListView_SetItem(list,&item);
@@ -128,7 +128,7 @@ BOOL CALLBACK DialogProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
           item.iSubItem++;
           item.pszText="regularfilename.cpp";
           ListView_SetItem(list,&item);
-        
+
           item.iSubItem++;
           item.pszText="5748+0x38";
           ListView_SetItem(list,&item);

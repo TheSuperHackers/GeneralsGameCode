@@ -24,7 +24,7 @@
 
 // FILE: DelayedUpgrade.cpp /////////////////////////////////////////////////////////////////////////////
 // Author: Graham Smallwood, April 2002
-// Desc:	 An Upgrade that broadcasts to all DelayedUpgradeUpdates that maybe they should start 
+// Desc:	 An Upgrade that broadcasts to all DelayedUpgradeUpdates that maybe they should start
 //					counting down to execution
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 

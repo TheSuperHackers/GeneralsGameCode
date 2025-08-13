@@ -54,12 +54,12 @@ class ThumbnailClass
 
 	ThumbnailClass(
 		ThumbnailManagerClass* manager,
-		const char* name, 
-		unsigned char* bitmap, 
-		unsigned w, 
-		unsigned h, 
-		unsigned original_w, 
-		unsigned original_h, 
+		const char* name,
+		unsigned char* bitmap,
+		unsigned w,
+		unsigned h,
+		unsigned original_w,
+		unsigned original_h,
 		unsigned original_mip_level_count,
 		WW3DFormat original_format,
 		bool allocated,

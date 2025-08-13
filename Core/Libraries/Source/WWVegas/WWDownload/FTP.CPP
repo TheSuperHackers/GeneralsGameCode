@@ -116,7 +116,7 @@ bool Prepare_Directories(const char *rootdir, const char *filename);
 // This is here as a hack...
 // Some firewalls break the TCP stack so non-blocking sockets don't work right...
 //
-static bool Use_Non_Blocking_Mode(void) 
+static bool Use_Non_Blocking_Mode(void)
 {
 	HKEY regKey;
 	LONG regRetval;
@@ -155,7 +155,7 @@ static bool Use_Non_Blocking_Mode(void)
 *	Cftp::Cftp()
 *
 * $_Description :
-*	Constructor for the ftp class - initialises more or less all data 
+*	Constructor for the ftp class - initialises more or less all data
 *	members to zero.
 *
 * $_Parameters  :
@@ -305,7 +305,7 @@ int Cftp::AsyncGetHostByName(char * szName, struct sockaddr_in &address )
 *	to send it's "ready" reply.
 *
 * $_Parameters  :
-*	-> const char * szServerName 
+*	-> const char * szServerName
 *	Optionally, the name of the server to connect to.  This must be specified
 *	in the first call to the function.
 *
@@ -443,7 +443,7 @@ HRESULT  Cftp::ConnectToServer(LPCSTR szServerName)
 	if( m_iStatus == FTPSTAT_WAITINGSERVEROK )
 	{
 		iReply=0;
-		if (RecvReply( buffer, 256, &iReply ) != FTP_SUCCEEDED) 
+		if (RecvReply( buffer, 256, &iReply ) != FTP_SUCCEEDED)
 			return(FTP_TRYING);
 
 		if (iReply != FTPREPLY_SERVEROK)
@@ -506,7 +506,7 @@ HRESULT  Cftp::LoginToServer( LPCSTR szUserName, LPCSTR szPassword )
 
 	if( m_iStatus == FTPSTAT_SENDINGUSER )
 	{
-		if(RecvReply( command, 256, &iReply ) != FTP_SUCCEEDED ) 
+		if(RecvReply( command, 256, &iReply ) != FTP_SUCCEEDED )
 			return( FTP_TRYING );
 
 		if (iReply != FTPREPLY_PASSWORD)
@@ -649,7 +649,7 @@ HRESULT  Cftp::LogoffFromServer( void )
 *	FTP_SUCCEEDED on success.  Otherwise FTP_TRYING, or FTP_FAILED on error.
 *
 * $_Warnings    :
-*	This function will continue to return FTP_TRYING if the file does not exist on 
+*	This function will continue to return FTP_TRYING if the file does not exist on
 *	the server.
 *
 ***************************************************************************/
@@ -675,7 +675,7 @@ HRESULT  Cftp::FindFile( LPCSTR szRemoteFileName, int * piSize )
 	}
 
 	//strcpy(m_szRemoteFilePath, "/");  // start at home
-	_splitpath( szRemoteFileName, NULL, m_szRemoteFilePath+strlen(m_szRemoteFilePath), 
+	_splitpath( szRemoteFileName, NULL, m_szRemoteFilePath+strlen(m_szRemoteFilePath),
 		m_szRemoteFileName, ext );
 
 	strcat( m_szRemoteFileName, ext );
@@ -837,7 +837,7 @@ HRESULT  Cftp::FindFile( LPCSTR szRemoteFileName, int * piSize )
 		}
 		return( FTP_SUCCEEDED );
 	}
-	
+
     ////////DBGMSG("Default fail case: "<<listline);
 	return( FTP_FAILED );
 }
@@ -860,7 +860,7 @@ HRESULT  Cftp::FindFile( LPCSTR szRemoteFileName, int * piSize )
 *
 *	int iSize
 *	The size of the command in bytes.
-*	
+*
 * $_ReturnValue :
 *	FTP_SUCCEEDED on success, or FTP_FAILED on error.
 *
@@ -869,7 +869,7 @@ HRESULT  Cftp::FindFile( LPCSTR szRemoteFileName, int * piSize )
 HRESULT  Cftp::SendCommand( LPCSTR pCommand, int iSize )
 {
 	int i;
-	
+
 	i = send( m_iCommandSocket, pCommand, iSize, 0 );
 
 	if( i > 0 )
@@ -899,7 +899,7 @@ HRESULT  Cftp::SendCommand( LPCSTR pCommand, int iSize )
 *
 * $_Parameters  :
 *	-> LPCSTR pReplyBuffer
-*	A buffer for the reply - must be specified and be at least 4 bytes in 
+*	A buffer for the reply - must be specified and be at least 4 bytes in
 *	length.
 *
 *	-> iSize
@@ -988,7 +988,7 @@ HRESULT  Cftp::RecvReply( LPCSTR pReplyBuffer, int iSize, int * piRetCode )
 * $_Parameters  :
 *	-> int sockfd
 *	An optional socket descriptor - if this is given and the socket is connected
-*   then the answer will guaranteed to be on the same interface as the connected 
+*   then the answer will guaranteed to be on the same interface as the connected
 *	socket.
 *
 * $_ReturnValue :
@@ -1038,7 +1038,7 @@ unsigned long MyIPAddress( int sockfd )
 		ip = 0;
 
 		i = 0;
-		
+
 		while( ( pAddr = pHE->h_addr_list[ i++ ] ) != NULL )
 		{
 
@@ -1072,7 +1072,7 @@ unsigned long MyIPAddress( int sockfd )
 *	int Cftp::SendNewPort( void )
 *
 * $_Description :
-*	Sends a PORT command to the server specifying a new ephemeral port to 
+*	Sends a PORT command to the server specifying a new ephemeral port to
 *	use for a data connection.  Opens the port in the process.
 *
 * $_Parameters  :
@@ -1163,11 +1163,11 @@ int Cftp::SendNewPort( void )
 			return( FTP_FAILED );
 		}
 
-		sprintf( command, "PORT %d,%d,%d,%d,%d,%d\r\n", 
+		sprintf( command, "PORT %d,%d,%d,%d,%d,%d\r\n",
 				 i & 0xFF,
-				 ( i >> 8 ) & 0xFF, 
-				 ( i >> 16 ) & 0xFF, 
-				 ( i >> 24 ) & 0xFF, 
+				 ( i >> 8 ) & 0xFF,
+				 ( i >> 16 ) & 0xFF,
+				 ( i >> 24 ) & 0xFF,
 				 m_DataSockAddr.sin_port & 0xFF,
 				 m_DataSockAddr.sin_port >> 8 );
 
@@ -1227,7 +1227,7 @@ int Cftp::OpenDataConnection()
 		return( FTP_FAILED );
 	}
 
-	if( ( iNewSocket = accept( m_iDataSocket, NULL, 0 ) ) < 0 ) 
+	if( ( iNewSocket = accept( m_iDataSocket, NULL, 0 ) ) < 0 )
 	{
 		if( WSAGetLastError() != (WSAEWOULDBLOCK ) )
 		{
@@ -1357,13 +1357,13 @@ int  Cftp::RecvData( char * pData, int iSize )
 *
 * $_Description :
 *	Retrieves the next block of data from the remote file and writes it into
-*	the local file.  Deals with opening the local file and restarting a 
+*	the local file.  Deals with opening the local file and restarting a
 *	failed transfer if FileRecoveryPosition() returns non-zero.  To prevent
-*	a restart after FileRecoveryPosition() returns non-zero, call 
+*	a restart after FileRecoveryPosition() returns non-zero, call
 *	Cftp::RestartFrom() with 0 as the offset parameter.
-*	
+*
 *	The file is initally written to a temporary file and then copied to the local
-*	file name when the transfer is complete.  If the transfer is halted, the 
+*	file name when the transfer is complete.  If the transfer is halted, the
 *	temporary file will be used as the starting point for subsequent retries.
 *
 * $_Parameters  :
@@ -1375,7 +1375,7 @@ int  Cftp::RecvData( char * pData, int iSize )
 *	transferred so far.
 *
 * $_ReturnValue :
-*	FTP_TRYING while the transfer is in progress, FTP_SUCCEEDED on completion, 
+*	FTP_TRYING while the transfer is in progress, FTP_SUCCEEDED on completion,
 *	FTP_FAILED on error.
 *
 ***************************************************************************/
@@ -1441,7 +1441,7 @@ HRESULT  Cftp::GetNextFileBlock( LPCSTR szLocalFileName, int * piTotalRead )
 
 		if( SendCommand( command, strlen( command ) ) < 0 )
 		{
-			return( FTP_TRYING ); 
+			return( FTP_TRYING );
 		}
 
 		m_iStatus = FTPSTAT_SENDINGTYPE;
@@ -1474,7 +1474,7 @@ HRESULT  Cftp::GetNextFileBlock( LPCSTR szLocalFileName, int * piTotalRead )
 
 			if( SendCommand( command, strlen( command ) ) < 0 )
 			{
-				return( FTP_TRYING ); 
+				return( FTP_TRYING );
 			}
 
 			m_iStatus = FTPSTAT_SENDINGREST;
@@ -1511,7 +1511,7 @@ HRESULT  Cftp::GetNextFileBlock( LPCSTR szLocalFileName, int * piTotalRead )
 
 		if( SendCommand( command, strlen( command ) ) < 0 )
 		{
-			return( FTP_TRYING ); 
+			return( FTP_TRYING );
 		}
 
 		m_iStatus = FTPSTAT_SENDINGRETR;
@@ -1557,7 +1557,7 @@ HRESULT  Cftp::GetNextFileBlock( LPCSTR szLocalFileName, int * piTotalRead )
 				totread += read;
 			}
 		}
-		while( ( read > 0 ) && ( totread < (max_data_len * 20) ) );  // Don't read too much - 
+		while( ( read > 0 ) && ( totread < (max_data_len * 20) ) );  // Don't read too much -
 															// must not block for too long
 
 
@@ -1580,7 +1580,7 @@ HRESULT  Cftp::GetNextFileBlock( LPCSTR szLocalFileName, int * piTotalRead )
 
 		if( read == 0 )
 		{
-			// Data connection reset 
+			// Data connection reset
 			if( m_iFilePos != m_iFileSize ) {
 				// Haven't got all the data
 				return( FTP_FAILED );
@@ -1593,7 +1593,7 @@ HRESULT  Cftp::GetNextFileBlock( LPCSTR szLocalFileName, int * piTotalRead )
 		}
 	}
 
-	// if we have gotten to here, we have all the data and the connection is 
+	// if we have gotten to here, we have all the data and the connection is
 	// closed.  The case where the connection was closed but we didn't get
 	// everything is handled above.
 	if( m_iStatus == FTPSTAT_FILEDATACLOSED )	{
@@ -1629,7 +1629,7 @@ HRESULT  Cftp::GetNextFileBlock( LPCSTR szLocalFileName, int * piTotalRead )
 			}
 		}
 
-		// Send a bogus command.  If the firewall has closed our ftp command channel connection this 
+		// Send a bogus command.  If the firewall has closed our ftp command channel connection this
 		// will allow us to detect it.  (Obviously the data channel is closed or we wouldn't be here)
 		// There are cases (firewall) where the connection will go away without having a close command
 		// but writing to it will allow us to detect this case.
@@ -1729,11 +1729,11 @@ HRESULT  Cftp::FileRecoveryPosition( LPCSTR szLocalFileName, LPCSTR szRegistryRo
 		strcat( regkey, "Download" );
 	}
 
-	if( RegOpenKeyEx( HKEY_LOCAL_MACHINE, (LPCTSTR)regkey, 
+	if( RegOpenKeyEx( HKEY_LOCAL_MACHINE, (LPCTSTR)regkey,
 		0, KEY_ALL_ACCESS, &hkey ) != ERROR_SUCCESS )
 	{
 		// Key doesn't exist, create it
-		if( RegCreateKey( HKEY_LOCAL_MACHINE, (LPCTSTR)regkey, 
+		if( RegCreateKey( HKEY_LOCAL_MACHINE, (LPCTSTR)regkey,
 			&hkey ) != ERROR_SUCCESS )
 		{
 			// Error, bail out

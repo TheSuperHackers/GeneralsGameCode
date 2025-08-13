@@ -48,7 +48,7 @@
 class FormClass : public ParamDlg
 {
 	public:
-		FormClass (void) 
+		FormClass (void)
 			: m_hWnd (NULL) {}
 		~FormClass (void) {}
 
@@ -59,7 +59,7 @@ class FormClass : public ParamDlg
 		virtual void			Invalidate(void) { InvalidateRect(m_hWnd,NULL,0); }
 
 	protected:
-		
+
 		BOOL						ExecuteDlgInit(LPVOID lpResource);
 		BOOL						ExecuteDlgInit(LPCTSTR lpszResourceName);
 

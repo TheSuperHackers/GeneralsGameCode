@@ -45,7 +45,7 @@ public:
 //-------------------------------------------------------------------------------------------------
 class HackInternetState :  public State
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(HackInternetState, "HackInternetState")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(HackInternetState, "HackInternetState")
 public:
 	HackInternetState( StateMachine *machine ) :State( machine, "HackInternetState" )
 	{
@@ -72,7 +72,7 @@ EMPTY_DTOR(HackInternetState)
 //-------------------------------------------------------------------------------------------------
 class PackingState :  public State
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(PackingState, "PackingState")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(PackingState, "PackingState")
 public:
 	PackingState( StateMachine *machine ) : State( machine, "PackingState" )
 	{
@@ -98,7 +98,7 @@ EMPTY_DTOR(PackingState)
 //-------------------------------------------------------------------------------------------------
 class UnpackingState :  public State
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(UnpackingState, "UnpackingState")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(UnpackingState, "UnpackingState")
 public:
 	UnpackingState( StateMachine *machine ) :State( machine, "UnpackingState" )
 	{
@@ -132,7 +132,7 @@ class HackInternetAIUpdateModuleData : public AIUpdateModuleData
 {
 public:
 	UnsignedInt		m_unpackTime;
-	UnsignedInt		m_packTime;				
+	UnsignedInt		m_packTime;
 	UnsignedInt		m_cashUpdateDelay;
 	UnsignedInt		m_cashUpdateDelayFast;
 	UnsignedInt		m_regularCashAmount;
@@ -156,11 +156,11 @@ public:
 		m_packUnpackVariationFactor = 0.0f;
 	}
 
-	static void buildFieldParse(MultiIniFieldParse& p) 
+	static void buildFieldParse(MultiIniFieldParse& p)
 	{
     AIUpdateModuleData::buildFieldParse(p);
 
-		static const FieldParse dataFieldParse[] = 
+		static const FieldParse dataFieldParse[] =
 		{
 			{ "UnpackTime",					INI::parseDurationUnsignedInt,	NULL, offsetof( HackInternetAIUpdateModuleData, m_unpackTime ) },
 			{ "PackTime",						INI::parseDurationUnsignedInt,	NULL, offsetof( HackInternetAIUpdateModuleData, m_packTime ) },
@@ -224,9 +224,9 @@ public:
 protected:
 
 	virtual AIStateMachine* makeStateMachine();
-	
+
 	AICommandParmsStorage		m_pendingCommand;
-	Bool m_hasPendingCommand;	
+	Bool m_hasPendingCommand;
 };
 
 #endif

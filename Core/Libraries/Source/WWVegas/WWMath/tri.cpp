@@ -40,11 +40,11 @@
 #include "vector2.h"
 
 
-struct FDPRec 
-{ 
-	int axis1; 
-	int axis2; 
-	int axis3; 
+struct FDPRec
+{
+	int axis1;
+	int axis2;
+	int axis3;
 };
 
 static inline void find_dominant_plane_fast(const TriClass & tri, FDPRec& info)
@@ -66,13 +66,13 @@ static inline void find_dominant_plane_fast(const TriClass & tri, FDPRec& info)
 	float val = x;
 	int ni = 0;
 
-	if (y > val) 
+	if (y > val)
 	{
 		ni = 1;
 		val = y;
 	}
 
-	if (z > val) 
+	if (z > val)
 	{
 		ni = 2;
 	}
@@ -103,21 +103,21 @@ static inline void find_dominant_plane(const TriClass & tri, int * axis1,int * a
 	/*
 	** return the indices of the two axes perpendicular
 	*/
-	switch (ni) 
+	switch (ni)
 	{
-	case 0: 
+	case 0:
 		// Dominant is the X axis
 		*axis1 = 1;
 		*axis2 = 2;
 		*axis3 = 0;
 		break;
-	case 1: 
+	case 1:
 		// Dominant is the Y axis
 		*axis1 = 0;
 		*axis2 = 2;
 		*axis3 = 1;
 		break;
-	case 2: 
+	case 2:
 		// Dominant is the Z axis
 		*axis1 = 0;
 		*axis2 = 1;
@@ -163,19 +163,19 @@ void TriClass::Find_Dominant_Plane(int * axis1,int * axis2) const
 	/*
 	** return the indices of the two axes perpendicular
 	*/
-	switch (ni) 
+	switch (ni)
 	{
-	case 0: 
+	case 0:
 		// Dominant is the X axis
 		*axis1 = 1;
 		*axis2 = 2;
 		break;
-	case 1: 
+	case 1:
 		// Dominant is the Y axis
 		*axis1 = 0;
 		*axis2 = 2;
 		break;
-	case 2: 
+	case 2:
 		// Dominant is the Z axis
 		*axis1 = 0;
 		*axis2 = 1;
@@ -219,13 +219,13 @@ bool TriClass::Contains_Point(const Vector3 & ipoint) const
 	/*
 	** determine the 2d vectors on the dominant plane from the first vertex to the other two
 	*/
-	float u1 = (*V[1])[axis1] - (*V[0])[axis1]; 
+	float u1 = (*V[1])[axis1] - (*V[0])[axis1];
 	float v1 = (*V[1])[axis2] - (*V[0])[axis2];
-	float	u2 = (*V[2])[axis1] - (*V[0])[axis1]; 
+	float	u2 = (*V[2])[axis1] - (*V[0])[axis1];
 	float	v2 = (*V[2])[axis2] - (*V[0])[axis2];
 
 	float alpha, beta;
-	bool intersect = false; 
+	bool intersect = false;
 
 	// calculate alpha and beta as normalized (0..1) percentages across the 2d projected triangle
 	// and do bounds checking (sum <= 1)  to determine whether or not the triangle intersection occurs.
@@ -265,7 +265,7 @@ bool TriClass::Contains_Point(const Vector3 & ipoint) const
 		points[vi] = *(V[vi]);
 		points[vi][axis3] = 0.0f;
 	}
-	
+
 	bool side[3];
 	Vector3 edge;
 	Vector3 cross;
@@ -274,7 +274,7 @@ bool TriClass::Contains_Point(const Vector3 & ipoint) const
 	for (vi=0; vi<3; vi++) {
 		edge = points[(vi+1)%3] - points[vi];
 		dp = test_point - points[vi];
-	
+
 		Vector3::Cross_Product(dp,edge,&cross);
 		side[vi] = (cross[axis3] > 0.0f);
 	}
@@ -344,10 +344,10 @@ bool TriClass::Contains_Point(const Vector3 & ipoint) const
 	Vector2 dp;
 
 	for (vi=0; vi<3; vi++) {
-		
+
 		int va=vi;
 		int vb=(vi+1)%3;
-		
+
 		edge.Set((*V[vb])[axis1] - (*V[va])[axis1] , (*V[vb])[axis2] - (*V[va])[axis2]);
 		dp.Set(ipoint[axis1] - (*V[va])[axis1] , ipoint[axis2] - (*V[va])[axis2]);
 		float cross = edge.X * dp.Y - edge.Y * dp.X;

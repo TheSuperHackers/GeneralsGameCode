@@ -25,7 +25,7 @@
 // FILE: W3DView.h ////////////////////////////////////////////////////////////////////////////////
 //
 // W3D implementation of the game view window.  View windows are literally
-// a window into the game world that have width, height, and camera 
+// a window into the game world that have width, height, and camera
 // controls for what to look at
 //
 // Author: Colin Day, April 2001
@@ -53,7 +53,7 @@ enum {MAX_WAYPOINTS=25};
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-typedef struct 
+typedef struct
 {
 	Int			numWaypoints;
 	Coord3D	waypoints[MAX_WAYPOINTS+2];		// We pad first & last for interpolation.
@@ -74,7 +74,7 @@ typedef struct
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-typedef struct 
+typedef struct
 {
 	Int			numFrames;						///< Number of frames to rotate.
 	Int			curFrame;							///< Current frame.
@@ -99,7 +99,7 @@ typedef struct
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-typedef struct 
+typedef struct
 {
 	Int			numFrames;						///< Number of frames to pitch.
 	Int			curFrame;							///< Current frame.
@@ -113,7 +113,7 @@ typedef struct
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-typedef struct 
+typedef struct
 {
 	Int			numFrames;						///< Number of frames to zoom.
 	Int			curFrame;							///< Current frame.
@@ -153,7 +153,7 @@ public:
 
 	virtual void setWidth( Int width );
 	virtual void setHeight( Int height );
-	virtual void setOrigin( Int x, Int y);			///< Sets location of top-left view corner on display 
+	virtual void setOrigin( Int x, Int y);			///< Sets location of top-left view corner on display
 
 	virtual void scrollBy( Coord2D *delta );  ///< Shift the view by the given delta
 
@@ -161,7 +161,7 @@ public:
 
 	virtual void setAngle( Real angle );										///< Rotate the view around the up axis by the given angle
 	virtual void setPitch( Real angle );											///< Rotate the view around the horizontal axis to the given angle
-	virtual void setAngleAndPitchToDefault( void );							///< Set the view angle back to default 
+	virtual void setAngleAndPitchToDefault( void );							///< Set the view angle back to default
 
 	virtual void lookAt( const Coord3D *o );											///< Center the view on the given coordinate
 	virtual void initHeightForMap( void );												///<  Init the camera height for the map at the current position.
@@ -208,7 +208,7 @@ public:
 	virtual void screenToWorldAtZ( const ICoord2D *s, Coord3D *w, Real z );  ///< transform screen point to world point at the specified world Z value
 
 	CameraClass *get3DCamera() const { return m_3DCamera; }
-	
+
 	virtual const Coord3D& get3DCameraPosition() const;
 
 	virtual void setCameraLock(ObjectID id);
@@ -216,7 +216,7 @@ public:
 
 	/// Add an impulse force to shake the camera
 	virtual void shake( const Coord3D *epicenter, CameraShakeType shakeType );
-	
+
 	virtual Real getFXPitch( void ) const { return m_FXPitch; }					///< returns the FX pitch angle
 
 	virtual Bool setViewFilterMode(FilterModes filterMode);			///< Turns on viewport special effect (black & white mode)
@@ -227,7 +227,7 @@ public:
 	virtual void setFadeParameters(Int fadeFrames, Int direction);
 	virtual void set3DWireFrameMode(Bool enable);	///<enables custom wireframe rendering of 3D viewport
 
-	Bool updateCameraMovements(void); 
+	Bool updateCameraMovements(void);
 	virtual void forceCameraConstraintRecalc(void) { calcCameraConstraints(); }
 
 	virtual void setGuardBandBias( const Coord2D *gb ) { m_guardBandBias.x = gb->x; m_guardBandBias.y = gb->y; }
@@ -256,7 +256,7 @@ private:
 	Bool m_doingPitchCamera;
 	TZoomCameraInfo m_zcInfo;
 	Bool m_doingZoomCamera;
-	
+
 	Bool m_doingScriptedCameraLock;									///< True if we are following a unit via script
 
 	Real		m_FXPitch;															///< Camera effects pitch.  0 = flat, infinite = look down, 1 = normal.
@@ -277,7 +277,7 @@ private:
 	Real m_scrollAmountCutoff;											///< scroll speed at which we do not adjust height
 
 	Real m_groundLevel;															///< height of ground.
-	
+
 	Region2D m_cameraConstraint;										///< m_pos should be constrained to be within this area
 	Bool m_cameraConstraintValid;										///< if f, recalc cam constraints
 

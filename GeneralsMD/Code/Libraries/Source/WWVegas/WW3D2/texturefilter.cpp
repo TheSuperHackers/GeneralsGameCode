@@ -26,8 +26,8 @@
  *                                                                                             *
  *                  $Org Author:: Kenny Mitchell                                              $*
  *                                                                                             *
- *                       Author : Kenny Mitchell                                               * 
- *                                                                                             * 
+ *                       Author : Kenny Mitchell                                               *
+ *                                                                                             *
  *                     $Modtime:: 08/05/02 1:27p                                              $*
  *                                                                                             *
  *                    $Revision:: 1                                                          $*
@@ -73,7 +73,7 @@ void TextureFilterClass::Apply(unsigned int stage)
 	DX8Wrapper::Set_DX8_Texture_Stage_State(stage,D3DTSS_MAGFILTER,_MagTextureFilters[stage][TextureMagFilter]);
 	DX8Wrapper::Set_DX8_Texture_Stage_State(stage,D3DTSS_MIPFILTER,_MipMapFilters[stage][MipMapFilter]);
 
-	switch (Get_U_Addr_Mode()) 
+	switch (Get_U_Addr_Mode())
 	{
 	case TEXTURE_ADDRESS_REPEAT:
 		DX8Wrapper::Set_DX8_Texture_Stage_State(stage, D3DTSS_ADDRESSU, D3DTADDRESS_WRAP);
@@ -84,7 +84,7 @@ void TextureFilterClass::Apply(unsigned int stage)
 		break;
 	}
 
-	switch (Get_V_Addr_Mode()) 
+	switch (Get_V_Addr_Mode())
 	{
 	case TEXTURE_ADDRESS_REPEAT:
 		DX8Wrapper::Set_DX8_Texture_Stage_State(stage, D3DTSS_ADDRESSV, D3DTADDRESS_WRAP);
@@ -108,11 +108,11 @@ void TextureFilterClass::_Init_Filters(TextureFilterMode filter_type)
    	_MinTextureFilters[0][FILTER_TYPE_NONE]=D3DTEXF_POINT;
    	_MagTextureFilters[0][FILTER_TYPE_NONE]=D3DTEXF_POINT;
    	_MipMapFilters[0][FILTER_TYPE_NONE]=D3DTEXF_NONE;
-   
+
    	_MinTextureFilters[0][FILTER_TYPE_FAST]=D3DTEXF_LINEAR;
    	_MagTextureFilters[0][FILTER_TYPE_FAST]=D3DTEXF_LINEAR;
    	_MipMapFilters[0][FILTER_TYPE_FAST]=D3DTEXF_POINT;
-   
+
    	_MagTextureFilters[0][FILTER_TYPE_BEST]=D3DTEXF_POINT;
    	_MinTextureFilters[0][FILTER_TYPE_BEST]=D3DTEXF_POINT;
    	_MipMapFilters[0][FILTER_TYPE_BEST]=D3DTEXF_POINT;
@@ -205,7 +205,7 @@ void TextureFilterClass::_Init_Filters(TextureFilterMode filter_type)
 */
 void TextureFilterClass::Set_Mip_Mapping(FilterType mipmap)
 {
-//	if (mipmap != FILTER_TYPE_NONE && Get_Mip_Level_Count() <= 1 && Is_Initialized()) 
+//	if (mipmap != FILTER_TYPE_NONE && Get_Mip_Level_Count() <= 1 && Is_Initialized())
 //	{
 //		WWASSERT_PRINT(0, "Trying to enable MipMapping on texture w/o Mip levels!");
 //		return;
@@ -219,7 +219,7 @@ void TextureFilterClass::Set_Mip_Mapping(FilterType mipmap)
 */
 void TextureFilterClass::_Set_Default_Min_Filter(FilterType filter)
 {
-	for (int i=0;i<MAX_TEXTURE_STAGES;++i) 
+	for (int i=0;i<MAX_TEXTURE_STAGES;++i)
 	{
 		_MinTextureFilters[i][FILTER_TYPE_DEFAULT]=_MinTextureFilters[i][filter];
 	}
@@ -232,7 +232,7 @@ void TextureFilterClass::_Set_Default_Min_Filter(FilterType filter)
 */
 void TextureFilterClass::_Set_Default_Mag_Filter(FilterType filter)
 {
-	for (int i=0;i<MAX_TEXTURE_STAGES;++i) 
+	for (int i=0;i<MAX_TEXTURE_STAGES;++i)
 	{
 		_MagTextureFilters[i][FILTER_TYPE_DEFAULT]=_MagTextureFilters[i][filter];
 	}
@@ -244,7 +244,7 @@ void TextureFilterClass::_Set_Default_Mag_Filter(FilterType filter)
 */
 void TextureFilterClass::_Set_Default_Mip_Filter(FilterType filter)
 {
-	for (int i=0;i<MAX_TEXTURE_STAGES;++i) 
+	for (int i=0;i<MAX_TEXTURE_STAGES;++i)
 	{
 		_MipMapFilters[i][FILTER_TYPE_DEFAULT]=_MipMapFilters[i][filter];
 	}

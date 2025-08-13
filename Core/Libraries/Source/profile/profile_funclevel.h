@@ -77,7 +77,7 @@ public:
     void *m_ptr;
   };
 
-  /// \brief A function level profile ID. 
+  /// \brief A function level profile ID.
   class Id
   {
     friend IdList;
@@ -85,7 +85,7 @@ public:
 
   public:
     Id(void): m_funcPtr(0) {}
-    
+
     /// special 'frame' numbers
     enum
     {
@@ -119,7 +119,7 @@ public:
 
       \return line number, 0 if unknown
     */
-    unsigned GetLine(void) const; 
+    unsigned GetLine(void) const;
 
     /**
       \brief Determine call counts.
@@ -206,16 +206,16 @@ public:
 
 private:
 
-  /** \internal 
-    
+  /** \internal
+
     Undocumented default constructor. Initializes function level profiler.
-    We can make this private as well so nobody accidently tries to create 
-    another instance. 
+    We can make this private as well so nobody accidently tries to create
+    another instance.
   */
   ProfileFuncLevel(void);
 
-  /** 
-    \brief The only function level profiler instance. 
+  /**
+    \brief The only function level profiler instance.
   */
   static ProfileFuncLevel Instance;
 };

@@ -17,22 +17,22 @@
 */
 
 /* $Header: /Commando/Code/Tools/max2w3d/vxldbg.cpp 3     10/28/97 6:08p Greg_h $ */
-/*********************************************************************************************** 
- ***                            Confidential - Westwood Studios                              *** 
- *********************************************************************************************** 
- *                                                                                             * 
- *                 Project Name : Commando / G 3D Engine                                       * 
- *                                                                                             * 
- *                     $Archive:: /Commando/Code/Tools/max2w3d/vxldbg.cpp                     $* 
- *                                                                                             * 
- *                      $Author:: Greg_h                                                      $* 
- *                                                                                             * 
- *                     $Modtime:: 10/14/97 3:07p                                              $* 
- *                                                                                             * 
- *                    $Revision:: 3                                                           $* 
- *                                                                                             * 
- *---------------------------------------------------------------------------------------------* 
- * Functions:                                                                                  * 
+/***********************************************************************************************
+ ***                            Confidential - Westwood Studios                              ***
+ ***********************************************************************************************
+ *                                                                                             *
+ *                 Project Name : Commando / G 3D Engine                                       *
+ *                                                                                             *
+ *                     $Archive:: /Commando/Code/Tools/max2w3d/vxldbg.cpp                     $*
+ *                                                                                             *
+ *                      $Author:: Greg_h                                                      $*
+ *                                                                                             *
+ *                     $Modtime:: 10/14/97 3:07p                                              $*
+ *                                                                                             *
+ *                    $Revision:: 3                                                           $*
+ *                                                                                             *
+ *---------------------------------------------------------------------------------------------*
+ * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 
@@ -64,7 +64,7 @@ VoxelDebugWindowClass::~VoxelDebugWindowClass(void)
 	ReleaseISpinner(LayerSpin);
 }
 
-void VoxelDebugWindowClass::Display_Window(void) 
+void VoxelDebugWindowClass::Display_Window(void)
 {
 	DialogBoxParam
 						(
@@ -82,7 +82,7 @@ bool VoxelDebugWindowClass::Dialog_Proc
 	HWND hWnd,
 	UINT message,
 	WPARAM wParam,
-	LPARAM 
+	LPARAM
 )
 {
 	RECT crect;
@@ -160,7 +160,7 @@ bool VoxelDebugWindowClass::Dialog_Proc
 					break;
 			}
 
-			
+
 		/*******************************************************************
 		* WM_PAINT
 		*
@@ -172,9 +172,9 @@ bool VoxelDebugWindowClass::Dialog_Proc
 
 			GetClientRect(ViewportHWND,&crect);
 			ValidateRect(ViewportHWND,&crect);
-			
+
 			break;
-			
+
 	}
 	return 0;
 }
@@ -183,7 +183,7 @@ bool VoxelDebugWindowClass::Dialog_Proc
 void VoxelDebugWindowClass::update_display(void)
 {
 	int i,j;
-	
+
 	/*
 	** Bail out if everything isn't right
 	*/
@@ -192,7 +192,7 @@ void VoxelDebugWindowClass::update_display(void)
 	}
 
 	/*
-	** Update the contents of the DIB based on 
+	** Update the contents of the DIB based on
 	** the contents of the current voxel layer.
 	*/
 
@@ -223,7 +223,7 @@ void VoxelDebugWindowClass::update_display(void)
 	int y1 = 2 * Bitmap->Get_Height(); //cy + Bitmap->Get_Height();
 
 //	BitBlt(hdcwindow,0,0,Bitmap->Get_Width(),Bitmap->Get_Height(),hdcdib,0,0,SRCCOPY);
-	StretchBlt(		hdcwindow, x0, y0, x1, y1, 
+	StretchBlt(		hdcwindow, x0, y0, x1, y1,
 						hdcdib, 0, 0, Bitmap->Get_Width(), Bitmap->Get_Height(), SRCCOPY);
 
 	SelectObject(hdcdib, holdbitmap);

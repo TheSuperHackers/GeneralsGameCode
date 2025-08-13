@@ -40,7 +40,7 @@ class CSimplePlayer : public IWMReaderCallback
 public:
     CSimplePlayer( HRESULT* phr );
     ~CSimplePlayer();
-    
+
     virtual HRESULT Play( LPCWSTR pszUrl, DWORD dwSecDuration, HANDLE hCompletionEvent, HRESULT *phrCompletion );
 
 //
@@ -58,15 +58,15 @@ public:
 // IWMReaderCallback Implemenation
 //
 public:
-    virtual HRESULT STDMETHODCALLTYPE OnSample( 
+    virtual HRESULT STDMETHODCALLTYPE OnSample(
         /* [in] */ DWORD dwOutputNum,
         /* [in] */ QWORD cnsSampleTime,
         /* [in] */ QWORD cnsSampleDuration,
         /* [in] */ DWORD dwFlags,
         /* [in] */ INSSBuffer __RPC_FAR *pSample,
         /* [in] */ void __RPC_FAR *pvContext);
-    
-    virtual HRESULT STDMETHODCALLTYPE OnStatus( 
+
+    virtual HRESULT STDMETHODCALLTYPE OnStatus(
         /* [in] */ WMT_STATUS Status,
         /* [in] */ HRESULT hr,
         /* [in] */ WMT_ATTR_DATATYPE dwType,
@@ -83,12 +83,12 @@ protected:
     void OnWaveOutMsg( UINT uMsg, DWORD dwParam1, DWORD dwParam2 );
 
     static void CALLBACK WaveProc(
-                          HWAVEOUT hwo,      
-                          UINT uMsg,         
-                          DWORD dwInstance,  
-                          DWORD dwParam1,    
+                          HWAVEOUT hwo,
+                          UINT uMsg,
+                          DWORD dwInstance,
+                          DWORD dwParam1,
                           DWORD dwParam2 );
- 
+
     HRESULT AddWaveHeader( LPWAVEHDR pwh );
     void    RemoveWaveHeaders( void );
 

@@ -17,29 +17,29 @@
 */
 
 /* $Header: /Commando/Code/wwmath/matrix4.h 20    10/04/01 10:33a Greg_h $ */
-/*********************************************************************************************** 
- ***                            Confidential - Westwood Studios                              *** 
- *********************************************************************************************** 
- *                                                                                             * 
- *                 Project Name : WW3D                                                         * 
- *                                                                                             * 
- *                    File Name : MATRIX4.H                                                    * 
- *                                                                                             * 
- *               Org Programmer : Greg Hjelstrom                                               * 
- *                                                                                             * 
- *                       Author : Kenny Mitchell                                               * 
- *                                                                                             * 
- *                   Start Date : 06/02/97                                                     * 
- *                                                                                             * 
- *                  Last Update : June 6, 2002 [KM]                                            * 
- *                                                                                             * 
+/***********************************************************************************************
+ ***                            Confidential - Westwood Studios                              ***
+ ***********************************************************************************************
+ *                                                                                             *
+ *                 Project Name : WW3D                                                         *
+ *                                                                                             *
+ *                    File Name : MATRIX4.H                                                    *
+ *                                                                                             *
+ *               Org Programmer : Greg Hjelstrom                                               *
+ *                                                                                             *
+ *                       Author : Kenny Mitchell                                               *
+ *                                                                                             *
+ *                   Start Date : 06/02/97                                                     *
+ *                                                                                             *
+ *                  Last Update : June 6, 2002 [KM]                                            *
+ *                                                                                             *
  * 06/26/02 KM Matrix name change to avoid MAX conflicts                                       *
- *---------------------------------------------------------------------------------------------* 
- * Functions:                                                                                  * 
- *   Matrix4x4::Matrix4x4 -- Constructor, optionally initialize to Identitiy matrix                * 
- *   Matrix4x4::Matrix4x4 -- Copy Constructor                                                      * 
- *   Matrix4x4::Matrix4x4 -- Convert a Matrix3D (fake 4x4) to a Matrix4x4                            * 
- *   Matrix4x4::Matrix4x4 -- Constructor                                                           * 
+ *---------------------------------------------------------------------------------------------*
+ * Functions:                                                                                  *
+ *   Matrix4x4::Matrix4x4 -- Constructor, optionally initialize to Identitiy matrix                *
+ *   Matrix4x4::Matrix4x4 -- Copy Constructor                                                      *
+ *   Matrix4x4::Matrix4x4 -- Convert a Matrix3D (fake 4x4) to a Matrix4x4                            *
+ *   Matrix4x4::Matrix4x4 -- Constructor                                                           *
  *   Matrix4x4::Make_Identity -- Initializes the matrix to Identity                              *
  *   Matrix4x4::Init -- Initializes from the contents of the give Matrix3D                       *
  *   Matrix4x4::Init -- Initializes the rows from the given Vector4s                             *
@@ -47,13 +47,13 @@
  *   Matrix4x4::Init_Ortho -- Initialize to an orthographic projection matrix                    *
  *   Matrix4x4::Init_Perspective -- Initialize to a perspective projection matrix                *
  *   Matrix4x4::Init_Perspective -- Initialize to a perspective projection matrix                *
- *   Matrix4x4::Transpose -- Returns transpose of the matrix                                     * 
- *   Matrix4x4::Inverse -- returns the inverse of the matrix                                     * 
- *   Matrix4x4::operator = -- assignment operator                                                * 
- *   Matrix4x4::operator += -- "plus equals" operator                                            * 
- *   Matrix4x4::operator -= -- "minus equals" operator                                            * 
- *   Matrix4x4::operator *= -- "times equals" operator                                           * 
- *   Matrix4x4::operator /= -- "divide equals" operator                                          * 
+ *   Matrix4x4::Transpose -- Returns transpose of the matrix                                     *
+ *   Matrix4x4::Inverse -- returns the inverse of the matrix                                     *
+ *   Matrix4x4::operator = -- assignment operator                                                *
+ *   Matrix4x4::operator += -- "plus equals" operator                                            *
+ *   Matrix4x4::operator -= -- "minus equals" operator                                            *
+ *   Matrix4x4::operator *= -- "times equals" operator                                           *
+ *   Matrix4x4::operator /= -- "divide equals" operator                                          *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 
@@ -87,17 +87,17 @@ public:
 	WWINLINE explicit Matrix4x4(const Vector4 & v0, const Vector4 & v1, const Vector4 & v2, const Vector4 & v3);
 	WWINLINE explicit Matrix4x4(	float m11,float m12,float m13,float m14,
 										float m21,float m22,float m23,float m24,
-										float m31,float m32,float m33,float m34,  
-										float m41,float m42,float m43,float m44 ); 
-	
+										float m31,float m32,float m33,float m34,
+										float m41,float m42,float m43,float m44 );
+
 	WWINLINE void		Make_Identity(void);
 	WWINLINE void		Init(const Matrix3D & m);
 	WWINLINE void		Init(const Matrix3x3 & m);
 	WWINLINE void		Init(const Vector4 & v0, const Vector4 & v1, const Vector4 & v2, const Vector4 & v3);
 	WWINLINE void		Init(	float m11,float m12,float m13,float m14,
 									float m21,float m22,float m23,float m24,
-									float m31,float m32,float m33,float m34,  
-									float m41,float m42,float m43,float m44 ); 
+									float m31,float m32,float m33,float m34,
+									float m41,float m42,float m43,float m44 );
 
 	/*
 	** Projection matrices.  The znear and zfar parameters are positive values indicating the
@@ -132,7 +132,7 @@ public:
 	** Negation
 	*/
 	WWINLINE friend Matrix4x4 operator - (const Matrix4x4& a);
-	
+
 	/*
 	** Scalar multiplication and division
 	*/
@@ -142,7 +142,7 @@ public:
 
 	/*
 	** matrix addition
-	*/ 
+	*/
 	WWINLINE friend Matrix4x4 operator + (const Matrix4x4& a, const Matrix4x4& b);
 	WWINLINE friend Matrix4x4 Add(const Matrix4x4& a);
 
@@ -195,17 +195,17 @@ protected:
 };
 
 
-/*********************************************************************************************** 
- * Matrix4x4::Matrix4x4 -- Constructor, optionally initialize to Identitiy matrix                  * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   06/02/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * Matrix4x4::Matrix4x4 -- Constructor, optionally initialize to Identitiy matrix                  *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   06/02/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
 WWINLINE Matrix4x4::Matrix4x4(bool identity)
 {
@@ -214,68 +214,68 @@ WWINLINE Matrix4x4::Matrix4x4(bool identity)
 	}
 }
 
-/*********************************************************************************************** 
- * Matrix4x4::Matrix4x4 -- Copy Constructor                                                        * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   06/02/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * Matrix4x4::Matrix4x4 -- Copy Constructor                                                        *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   06/02/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
 WWINLINE Matrix4x4::Matrix4x4(const Matrix4x4 & m)
 {
-	Row[0] = m.Row[0]; Row[1] = m.Row[1]; Row[2] = m.Row[2]; Row[3] = m.Row[3]; 
+	Row[0] = m.Row[0]; Row[1] = m.Row[1]; Row[2] = m.Row[2]; Row[3] = m.Row[3];
 }
 
-/*********************************************************************************************** 
- * Matrix4x4::Matrix4x4 -- Convert a Matrix3D (fake 4x4) to a Matrix4x4                              * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   06/02/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * Matrix4x4::Matrix4x4 -- Convert a Matrix3D (fake 4x4) to a Matrix4x4                              *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   06/02/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
 WWINLINE Matrix4x4::Matrix4x4(const Matrix3D & m)
 {
 	Init(m);
 }
 
-/*********************************************************************************************** 
- * Matrix4x4::Matrix4x4 -- Constructor                                                             * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   06/02/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * Matrix4x4::Matrix4x4 -- Constructor                                                             *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   06/02/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
 WWINLINE Matrix4x4::Matrix4x4(const Vector4 & r0, const Vector4 & r1, const Vector4 & r2, const Vector4 & r3)
-{ 
+{
 	Init(r0,r1,r2,r3);
 }
 
-/*********************************************************************************************** 
- * Matrix4x4::Matrix4x4 -- Constructor                                                             * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   11/06/2001 NH  : Created.                                                                 * 
+/***********************************************************************************************
+ * Matrix4x4::Matrix4x4 -- Constructor                                                             *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   11/06/2001 NH  : Created.                                                                 *
  *=============================================================================================*/
 WWINLINE Matrix4x4::Matrix4x4(float m11,float m12,float m13,float m14, float m21,float m22,float m23,float m24,
 	float m31,float m32,float m33,float m34, float m41,float m42,float m43,float m44 )
@@ -318,7 +318,7 @@ WWINLINE void Matrix4x4::Make_Identity(void)
  *=============================================================================================*/
 WWINLINE void Matrix4x4::Init(const Matrix3D & m)
 {
-	Row[0] = m[0]; Row[1] = m[1]; Row[2] = m[2]; Row[3] = Vector4(0.0,0.0,0.0,1.0); 
+	Row[0] = m[0]; Row[1] = m[1]; Row[2] = m[2]; Row[3] = Vector4(0.0,0.0,0.0,1.0);
 }
 
 
@@ -336,7 +336,7 @@ WWINLINE void Matrix4x4::Init(const Matrix3D & m)
  *=============================================================================================*/
 WWINLINE void Matrix4x4::Init(const Vector4 & r0, const Vector4 & r1, const Vector4 & r2, const Vector4 & r3)
 {
-	Row[0] = r0; Row[1] = r1; Row[2] = r2; Row[3] = r3; 
+	Row[0] = r0; Row[1] = r1; Row[2] = r2; Row[3] = r3;
 }
 
 
@@ -504,17 +504,17 @@ WWINLINE void Matrix4x4::Init_Perspective
 	Row[3][3] = 0.0f;
 }
 
-/*********************************************************************************************** 
- * Matrix4x4::Transpose -- Returns transpose of the matrix                                       * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   06/02/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * Matrix4x4::Transpose -- Returns transpose of the matrix                                       *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   06/02/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
 WWINLINE Matrix4x4 Matrix4x4::Transpose() const
 {
@@ -526,17 +526,17 @@ WWINLINE Matrix4x4 Matrix4x4::Transpose() const
 	);
 }
 
-/*********************************************************************************************** 
- * Matrix4x4::Inverse -- returns the inverse of the matrix                                       * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   06/02/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * Matrix4x4::Inverse -- returns the inverse of the matrix                                       *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   06/02/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
 WWINLINE Matrix4x4 Matrix4x4::Inverse() const    // Gauss-Jordan elimination with partial pivoting
 {
@@ -579,121 +579,121 @@ WWINLINE Matrix4x4 Matrix4x4::Inverse() const    // Gauss-Jordan elimination wit
 	return b;
 }
 
-/*********************************************************************************************** 
- * Matrix4x4::operator = -- assignment operator                                                  * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   06/02/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * Matrix4x4::operator = -- assignment operator                                                  *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   06/02/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
 WWINLINE Matrix4x4 & Matrix4x4::operator = (const Matrix4x4 & m)
 {
 	Row[0] = m.Row[0]; Row[1] = m.Row[1]; Row[2] = m.Row[2]; Row[3] = m.Row[3];
-	return *this; 
+	return *this;
 }
 
-/*********************************************************************************************** 
- * Matrix4x4::operator += -- "plus equals" operator                                              * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   06/02/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * Matrix4x4::operator += -- "plus equals" operator                                              *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   06/02/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
 WWINLINE Matrix4x4& Matrix4x4::operator += (const Matrix4x4 & m)
 {
 	Row[0] += m.Row[0]; Row[1] += m.Row[1]; Row[2] += m.Row[2]; Row[3] += m.Row[3];
-	return *this; 
+	return *this;
 }
 
-/*********************************************************************************************** 
- * Matrix4x4::operator-= -- "minus equals" operator                                              * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   06/02/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * Matrix4x4::operator-= -- "minus equals" operator                                              *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   06/02/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
 WWINLINE Matrix4x4& Matrix4x4::operator -= (const Matrix4x4 & m)
 {
 	Row[0] -= m.Row[0]; Row[1] -= m.Row[1]; Row[2] -= m.Row[2]; Row[3] -= m.Row[3];
-	return *this; 
+	return *this;
 }
 
-/*********************************************************************************************** 
- * Matrix4x4::operator *= -- "times equals" operator                                             * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   06/02/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * Matrix4x4::operator *= -- "times equals" operator                                             *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   06/02/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
 WWINLINE Matrix4x4& Matrix4x4::operator *= (float d)
 {
 	Row[0] *= d; Row[1] *= d; Row[2] *= d; Row[3] *= d;
-	return *this; 
+	return *this;
 }
 
-/*********************************************************************************************** 
- * Matrix4x4::operator /= -- "divide equals" operator                                            * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   06/02/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * Matrix4x4::operator /= -- "divide equals" operator                                            *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   06/02/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
 WWINLINE Matrix4x4& Matrix4x4::operator /= (float d)
 {
 	float ood = d;
 	Row[0] *= ood; Row[1] *= ood; Row[2] *= ood; Row[3] *= ood;
-	return *this; 
+	return *this;
 }
 
 WWINLINE Matrix4x4 operator - (const Matrix4x4 & a)
-{ 
-	return Matrix4x4(-a.Row[0], -a.Row[1], -a.Row[2], -a.Row[3]); 
+{
+	return Matrix4x4(-a.Row[0], -a.Row[1], -a.Row[2], -a.Row[3]);
 }
 
 WWINLINE Matrix4x4 operator * (const Matrix4x4 & a, float d)
-{ 
-	return Matrix4x4(a.Row[0] * d, a.Row[1] * d, a.Row[2] * d, a.Row[3] * d); 
+{
+	return Matrix4x4(a.Row[0] * d, a.Row[1] * d, a.Row[2] * d, a.Row[3] * d);
 }
 
 WWINLINE Matrix4x4 operator * (float d, const Matrix4x4 & a)
-{ 
-	return a*d; 
+{
+	return a*d;
 }
 
 WWINLINE Matrix4x4 operator / (const Matrix4x4 & a, float d)
-{ 
+{
 	float ood = 1.0f / d;
-	return Matrix4x4(a.Row[0] * ood, a.Row[1] * ood, a.Row[2] * ood, a.Row[3] * ood); 
+	return Matrix4x4(a.Row[0] * ood, a.Row[1] * ood, a.Row[2] * ood, a.Row[3] * ood);
 }
 
 /*
 ** matrix addition
-*/ 
+*/
 WWINLINE Matrix4x4 operator + (const Matrix4x4 & a, const Matrix4x4 & b)
 {
 	return Matrix4x4(
@@ -729,14 +729,14 @@ WWINLINE Matrix4x4 Subtract(const Matrix4x4 & a, const Matrix4x4 & b)
 WWINLINE Matrix4x4 operator * (const Matrix4x4 & a, const Matrix4x4 & b)
 {
 	#define ROWCOL(i, j) a[i][0]*b[0][j] + a[i][1]*b[1][j] + a[i][2]*b[2][j] + a[i][3]*b[3][j]
-    
+
 	return Matrix4x4(
 		Vector4(ROWCOL(0,0), ROWCOL(0,1), ROWCOL(0,2), ROWCOL(0,3)),
 		Vector4(ROWCOL(1,0), ROWCOL(1,1), ROWCOL(1,2), ROWCOL(1,3)),
 		Vector4(ROWCOL(2,0), ROWCOL(2,1), ROWCOL(2,2), ROWCOL(2,3)),
 		Vector4(ROWCOL(3,0), ROWCOL(3,1), ROWCOL(3,2), ROWCOL(3,3))
 	);
-	
+
 	#undef ROWCOL
 }
 

@@ -25,7 +25,7 @@
 // FILE: DisabledTypes.h //////////////////////////////////////////////////////////////////////////
 // Author: Kris Morness, September 2002
 // Desc:  Defines all the types of disabled statii any given object can have.
-///////////////////////////////////////////////////////////////////////////////////////////////////	
+///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
 
@@ -66,13 +66,13 @@ typedef BitFlags<DISABLED_COUNT>	DisabledMaskType;
 #define MAKE_DISABLED_MASK4(k,a,b,c) DisabledMaskType(DisabledMaskType::kInit, (k), (a), (b), (c))
 #define MAKE_DISABLED_MASK5(k,a,b,c,d) DisabledMaskType(DisabledMaskType::kInit, (k), (a), (b), (c), (d))
 
-inline Bool TEST_DISABLEDMASK(const DisabledMaskType& m, DisabledType t) 
-{ 
-	return m.test(t); 
+inline Bool TEST_DISABLEDMASK(const DisabledMaskType& m, DisabledType t)
+{
+	return m.test(t);
 }
 
-inline Bool TEST_DISABLEDMASK_ANY(const DisabledMaskType& m, const DisabledMaskType& mask) 
-{ 
+inline Bool TEST_DISABLEDMASK_ANY(const DisabledMaskType& m, const DisabledMaskType& mask)
+{
 	return m.anyIntersectionWith(mask);
 }
 
@@ -81,14 +81,14 @@ inline Bool TEST_DISABLEDMASK_MULTI(const DisabledMaskType& m, const DisabledMas
 	return m.testSetAndClear(mustBeSet, mustBeClear);
 }
 
-inline Bool DISABLEDMASK_ANY_SET(const DisabledMaskType& m) 
-{ 
-	return m.any(); 
+inline Bool DISABLEDMASK_ANY_SET(const DisabledMaskType& m)
+{
+	return m.any();
 }
 
-inline void CLEAR_DISABLEDMASK(DisabledMaskType& m) 
-{ 
-	m.clear(); 
+inline void CLEAR_DISABLEDMASK(DisabledMaskType& m)
+{
+	m.clear();
 }
 
 inline void SET_ALL_DISABLEDMASK_BITS(DisabledMaskType& m)

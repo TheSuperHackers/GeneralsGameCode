@@ -16,25 +16,25 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/*********************************************************************************************** 
- ***                            Confidential - Westwood Studios                              *** 
- *********************************************************************************************** 
- *                                                                                             * 
- *                 Project Name : Commando / G 3D Library                                      * 
- *                                                                                             * 
- *                     $Archive:: /Commando/Code/ww3d2/font3d.cpp                             $* 
- *                                                                                             * 
- *                  $Org Author:: Jani_p                                  $* 
- *                                                                         * 
- *                      $Author:: Kenny_m                                  $* 
- *                                                                         * 
- *                     $Modtime:: 08/05/02 10:44a                          $* 
- *                                                                                             * 
- *                    $Revision:: 17                                                          $* 
- *                                                                                             * 
+/***********************************************************************************************
+ ***                            Confidential - Westwood Studios                              ***
+ ***********************************************************************************************
+ *                                                                                             *
+ *                 Project Name : Commando / G 3D Library                                      *
+ *                                                                                             *
+ *                     $Archive:: /Commando/Code/ww3d2/font3d.cpp                             $*
+ *                                                                                             *
+ *                  $Org Author:: Jani_p                                  $*
+ *                                                                         *
+ *                      $Author:: Kenny_m                                  $*
+ *                                                                         *
+ *                     $Modtime:: 08/05/02 10:44a                          $*
+ *                                                                                             *
+ *                    $Revision:: 17                                                          $*
+ *                                                                                             *
  * 08/05/02 KM Texture class redesign
- *---------------------------------------------------------------------------------------------* 
- * Functions:                                                                                  * 
+ *---------------------------------------------------------------------------------------------*
+ * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "font3d.h"
@@ -48,12 +48,12 @@
 
 static	SurfaceClass	*_surface;
 
-/*********************************************************************************************** 
- *                                                                                             * 
- * Font3DDataClass::Font3DDataClass -- constructor																	  * 
- *                                                                                             * 
+/***********************************************************************************************
+ *                                                                                             *
+ * Font3DDataClass::Font3DDataClass -- constructor																	  *
+ *                                                                                             *
  * Constructs and load a Targa font image to create a texture matetial								  *
- *                                                                                             * 
+ *                                                                                             *
  ***********************************************************************************************/
 Font3DDataClass::Font3DDataClass( const char *filename )
 {
@@ -64,10 +64,10 @@ Font3DDataClass::Font3DDataClass( const char *filename )
 }
 
 
-/*********************************************************************************************** 
- *                                                                                             * 
- * Font3DDataClass::~Font3DDataClass -- destructor																	  * 
- *                                                                                             * 
+/***********************************************************************************************
+ *                                                                                             *
+ * Font3DDataClass::~Font3DDataClass -- destructor																	  *
+ *                                                                                             *
  ***********************************************************************************************/
 Font3DDataClass::~Font3DDataClass(void)
 {
@@ -80,14 +80,14 @@ Font3DDataClass::~Font3DDataClass(void)
 }
 
 
-/*********************************************************************************************** 
- *                                                                                             * 
+/***********************************************************************************************
+ *                                                                                             *
  * FontClass::Minimize_Font_Image																				  *
- *                                                                                             * 
+ *                                                                                             *
  * Rebuilds the give image to better pack characters and to insure a square power of two size  *
  * Must be called AFTER Make_Proportional() so each chars minimal bounding box is known        *
  * Will only create a new texture of size 128x128 or 256x256, dependent on original width      *
- *                                                                                             * 
+ *                                                                                             *
  ***********************************************************************************************/
 SurfaceClass *Font3DDataClass::Minimize_Font_Image( SurfaceClass *surface )
 {
@@ -98,7 +98,7 @@ SurfaceClass *Font3DDataClass::Minimize_Font_Image( SurfaceClass *surface )
 	float current_width = sd.Width;
 	float current_height = sd.Height;
 
-	// determine new width make the size of the new image either 128x128 or 256x256, 
+	// determine new width make the size of the new image either 128x128 or 256x256,
 	// dependent on the width of the original image
    int new_width;
 	if (current_width < 256) {
@@ -113,7 +113,7 @@ SurfaceClass *Font3DDataClass::Minimize_Font_Image( SurfaceClass *surface )
 	SurfaceClass	*new_surface = NEW_REF(SurfaceClass,(new_width, new_height,WW3D_FORMAT_A4R4G4B4));
 	//SurfaceClass	*new_surface0 = NEW_REF(SurfaceClass,(new_width, new_height,sd.Format));
 
-	// fill with transparent black	
+	// fill with transparent black
 	new_surface->Clear();
 
 	// indices for the location of each added char
@@ -148,7 +148,7 @@ SurfaceClass *Font3DDataClass::Minimize_Font_Image( SurfaceClass *surface )
 
 			// blit from original image to new image
 
-			new_surface->Copy(new_x, new_y,src_x,src_y,width,height,surface);											
+			new_surface->Copy(new_x, new_y,src_x,src_y,width,height,surface);
 
 		}
 
@@ -176,17 +176,17 @@ SurfaceClass *Font3DDataClass::Minimize_Font_Image( SurfaceClass *surface )
 	return _surface;
 }
 
-/*********************************************************************************************** 
- *                                                                                             * 
- * FontClass::Make_Proportional																					  * 
- *                                                                                             * 
+/***********************************************************************************************
+ *                                                                                             *
+ * FontClass::Make_Proportional																					  *
+ *                                                                                             *
  * Modifys U and Width tables to convert a monospace font into a proportional font.  Hieght	  *
  * remains the same.  Performed by getting the current mono-space bounding box and bringing	  *
  * in the left and right edges to the first non-transparent ( != 0 ) pixel.  Then the U and	  *
  * width tables are updated with the new values.  The image itself is not modified unless...	  *
  * 																														  *
- * we complete by calling Minimize_Font_Image to shink the image & insure a power of 2 square  * 
- *                                                                                             * 
+ * we complete by calling Minimize_Font_Image to shink the image & insure a power of 2 square  *
+ *                                                                                             *
  ***********************************************************************************************/
 SurfaceClass *Font3DDataClass::Make_Proportional( SurfaceClass	*surface )
 {
@@ -210,14 +210,14 @@ SurfaceClass *Font3DDataClass::Make_Proportional( SurfaceClass	*surface )
 		Vector2i maxb(x1,y1);
 
 		surface->FindBB(&minb,&maxb);
-	
+
 		// set the new edges
 		x0 = minb.I;
 		x1 = maxb.I+1;
 
 		// if we didn't find ANY non-transparent pixels, the char has no width.
 		if (x1 < x0) {
-			x1 = x0; 
+			x1 = x0;
 		}
 
 		// turn off all character after del
@@ -237,14 +237,14 @@ SurfaceClass *Font3DDataClass::Make_Proportional( SurfaceClass	*surface )
 	return NULL;
 }
 
-/*********************************************************************************************** 
- *                                                                                             * 
+/***********************************************************************************************
+ *                                                                                             *
  * Font3DDataClass::Load_Font_Image( SR_SCENE *scene, char *filename )								  *
- *                                                                                             * 
+ *                                                                                             *
  * Loads a targa font image file, arranged as 16x16 characters, and builds u v tables to 		  *
  * find each character.  Converts the mono-space font into a proportional font, then uploads	  *
  * the image to the scene as a textur material.                                                *
- *                                                                                             * 
+ *                                                                                             *
  ***********************************************************************************************/
 bool	Font3DDataClass::Load_Font_Image( const char *filename )
 {
@@ -264,9 +264,9 @@ bool	Font3DDataClass::Load_Font_Image( const char *filename )
 
 		int	column = 0;
 		int	width = sd.Width;
-		
 
-		// for each char, find the uv start location and set the 
+
+		// for each char, find the uv start location and set the
 		// mono-spaced width and height in normalized screen units
 		for (int char_index = 0; char_index < 256; char_index++) {
 
@@ -286,7 +286,7 @@ bool	Font3DDataClass::Load_Font_Image( const char *filename )
 				// find the first transparent column...
 				while (( column < width ) && ( !surface->Is_Transparent_Column(column) )) column++;
 				int end = column;
-				
+
 				if ( end <= start ) {
 					WWDEBUG_SAY(( "Error Char %d start %d end %d width %d", char_index, start, end, width ));
 				}
@@ -316,7 +316,7 @@ bool	Font3DDataClass::Load_Font_Image( const char *filename )
 		float	mono_pixel_width = (font_width / 16);
 		float	mono_pixel_height = (font_height / 16);
 
-		// for each char, find the uv start location and set the 
+		// for each char, find the uv start location and set the
 		// mono-spaced width and height in normalized screen units
 		for (int char_index = 0; char_index < 256; char_index++) {
 			UOffsetTable[ char_index ] = (float)((char_index % 16) * mono_pixel_width) / font_width;
@@ -345,12 +345,12 @@ bool	Font3DDataClass::Load_Font_Image( const char *filename )
 }
 
 
-/*********************************************************************************************** 
- *                                                                                             * 
- * Font3DInstanceClass::Font3DInstanceClass -- constructor											     * 
- *                                                                                             * 
+/***********************************************************************************************
+ *                                                                                             *
+ * Font3DInstanceClass::Font3DInstanceClass -- constructor											     *
+ *                                                                                             *
  * Constructs and load a Targa font image to create a texture matetial								  *
- *                                                                                             * 
+ *                                                                                             *
  ***********************************************************************************************/
 Font3DInstanceClass::Font3DInstanceClass( const char *filename )
 {
@@ -362,10 +362,10 @@ Font3DInstanceClass::Font3DInstanceClass( const char *filename )
 	Build_Cached_Tables();
 }
 
-/*********************************************************************************************** 
- *                                                                                             * 
- * Font3DInstanceClass::~Font3DInstanceClass -- destructor																	  * 
- *                                                                                             * 
+/***********************************************************************************************
+ *                                                                                             *
+ * Font3DInstanceClass::~Font3DInstanceClass -- destructor																	  *
+ *                                                                                             *
  ***********************************************************************************************/
 Font3DInstanceClass::~Font3DInstanceClass(void)
 {
@@ -376,9 +376,9 @@ Font3DInstanceClass::~Font3DInstanceClass(void)
 **
 */
 void	Font3DInstanceClass::Set_Mono_Spaced( void )
-{ 
+{
 	MonoSpacing = FontData->Char_Width('W') + 1;
-	Build_Cached_Tables(); 
+	Build_Cached_Tables();
 }
 
 void	Font3DInstanceClass::Build_Cached_Tables()
@@ -400,12 +400,12 @@ void	Font3DInstanceClass::Build_Cached_Tables()
 	ScaledHeight = floorf(Scale * (float)FontData->Char_Height('A'));
 }
 
-/*********************************************************************************************** 
- *                                                                                             * 
+/***********************************************************************************************
+ *                                                                                             *
  * Font3DInstanceClass::String_Screen_Width( char *test_str )									        *
- *                                                                                             * 
+ *                                                                                             *
  * Finds the normalized screenspace width of a character string - useful for checking before   *
- * printing to avoid overflowing the screen.																	  *                                                                                             * 
+ * printing to avoid overflowing the screen.																	  *                                                                                             *
  ***********************************************************************************************/
 float	Font3DInstanceClass::String_Width( const WCHAR *test_str )
 {

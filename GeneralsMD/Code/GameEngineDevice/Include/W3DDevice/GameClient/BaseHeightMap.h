@@ -66,7 +66,7 @@ typedef struct {
 } TBounds;
 
 
-class LightMapTerrainTextureClass; 
+class LightMapTerrainTextureClass;
 class CloudMapTerrainTextureClass;
 class W3DDynamicLight;
 
@@ -92,7 +92,7 @@ virtually everything to do with the terrain, including: drawing, lighting,
 scorchmarks and intersection tests.
 */
 class BaseHeightMapRenderObjClass : public RenderObjClass, public DX8_CleanupHook, public Snapshot
-{	
+{
 
 public:
 
@@ -115,7 +115,7 @@ public:
 	virtual void					Get_Obj_Space_Bounding_Box(AABoxClass & aabox) const;
 
 
-	virtual void					On_Frame_Update(void); 
+	virtual void					On_Frame_Update(void);
 	virtual void					Notify_Added(SceneClass * scene);
 
   // Other VIRTUAL methods. [3/20/2003]
@@ -130,7 +130,7 @@ public:
 	virtual void oversizeTerrain(Int tilesToOversize);
 	virtual void reset(void);
 
-  void redirectToHeightmap( WorldHeightMap *pMap ) 
+  void redirectToHeightmap( WorldHeightMap *pMap )
   {
     REF_PTR_RELEASE( m_map );
 	  REF_PTR_SET(m_map, pMap);	//update our heightmap pointer in case it changed since last call.
@@ -142,14 +142,14 @@ public:
 		Int xextent = m_map->getXExtent() - 1;
 		Int yextent = m_map->getYExtent() - 1;
 
-		if (x < 0) 
-			x = 0; 
-		else if (x > xextent) 
+		if (x < 0)
+			x = 0;
+		else if (x > xextent)
 			x = xextent;
 
-		if (y < 0) 
-			y = 0; 
-		else if (y > yextent) 
+		if (y < 0)
+			y = 0;
+		else if (y > yextent)
 			y = yextent;
 
 		return m_map->getDataPtr()[x + y*m_map->getXExtent()];
@@ -176,21 +176,21 @@ public:
 	void unitMoved( Object *unit );
 	void notifyShroudChanged(void);
 	void removeTreesAndPropsForConstruction(
-		const Coord3D* pos, 
+		const Coord3D* pos,
 		const GeometryInfo& geom,
 		Real angle
 	);
 
-	/// Add a bib at location.  
+	/// Add a bib at location.
 	void addTerrainBib(Vector3 corners[4], ObjectID id, Bool highlight);
 	void addTerrainBibDrawable(Vector3 corners[4], DrawableID id, Bool highlight);
-	/// Remove a bib.  
+	/// Remove a bib.
 	void removeTerrainBib(ObjectID id);
 	void removeTerrainBibDrawable(DrawableID id);
 
-	/// Removes all bibs.  
+	/// Removes all bibs.
 	void removeAllTerrainBibs(void);
-	/// Remove all highlighting.  
+	/// Remove all highlighting.
 	void removeTerrainBibHighlighting(void);
 
 	W3DShroud *getShroud()	{return m_shroud;}
@@ -220,12 +220,12 @@ public:
 	void setShowImpassableAreas(Bool show) {m_showImpassableAreas = show;}
 
 	Bool showAsVisibleCliff(Int xIndex, Int yIndex) const;
-	
+
 	Bool evaluateAsVisibleCliff(Int xIndex, Int yIndex, Real valuesGreaterThanRad);
 
 	Real getViewImpassableAreaSlope(void) const { return m_curImpassableSlope; }
 	void setViewImpassableAreaSlope(Real viewSlope) { m_curImpassableSlope = viewSlope; }
-	
+
 	Bool doesNeedFullUpdate(void) {return m_needFullUpdate;}
 
 
@@ -238,12 +238,12 @@ protected:
 	virtual void loadPostProcess( void );
 
 protected:
-	Int	m_x;	///< dimensions of heightmap 
+	Int	m_x;	///< dimensions of heightmap
 	Int	m_y;	///< dimensions of heightmap
 
 #ifdef DO_SCORCH
-	enum { MAX_SCORCH_VERTEX=8194, 
-					MAX_SCORCH_INDEX=6*8194, 
+	enum { MAX_SCORCH_VERTEX=8194,
+					MAX_SCORCH_INDEX=6*8194,
 					MAX_SCORCH_MARKS=500,
 					SCORCH_MARKS_IN_TEXTURE=9,
 					SCORCH_PER_ROW = 3};
@@ -256,7 +256,7 @@ protected:
 	Int			m_numScorches;
 
 	Int			m_scorchesInBuffer;		///< how many are in the buffers.  If less than numScorches, we need to update
-	
+
 	// NOTE: This argument (contrary to most of the rest of the engine), is in degrees, not radians.
 	Real		m_curImpassableSlope;
 

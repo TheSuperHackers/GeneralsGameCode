@@ -68,7 +68,7 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // TeamBehavior message handlers
 
-void TeamBehavior::updateScript(NameKeyType keyScript, int idcScript) 
+void TeamBehavior::updateScript(NameKeyType keyScript, int idcScript)
 {
 	CComboBox *pCombo = (CComboBox*)GetDlgItem(idcScript);
 	CString txt;
@@ -81,7 +81,7 @@ void TeamBehavior::updateScript(NameKeyType keyScript, int idcScript)
 	m_teamDict->setAsciiString(keyScript, comboText);
 }
 
-void TeamBehavior::setupScript(NameKeyType keyScript, int idcScript) 
+void TeamBehavior::setupScript(NameKeyType keyScript, int idcScript)
 {
 	CComboBox *pCombo = (CComboBox*)GetDlgItem(idcScript);
 	// Load the subroutine scripts into the combo box.
@@ -104,10 +104,10 @@ void TeamBehavior::setupScript(NameKeyType keyScript, int idcScript)
 }
 
 
-BOOL TeamBehavior::OnInitDialog() 
+BOOL TeamBehavior::OnInitDialog()
 {
 	CPropertyPage::OnInitDialog();
-	
+
 	setupScript(TheKey_teamOnCreateScript, IDC_ON_CREATE_SCRIPT);
 	setupScript(TheKey_teamOnIdleScript, IDC_ON_IDLE_SCRIPT);
 	setupScript(TheKey_teamEnemySightedScript, IDC_ON_ENEMY_SIGHTED);
@@ -160,26 +160,26 @@ BOOL TeamBehavior::OnInitDialog()
 								// EXCEPTION: OCX Property Pages should return FALSE
 }
 
-void TeamBehavior::OnTransportsReturn() 
+void TeamBehavior::OnTransportsReturn()
 {
 	CButton *pCheck = (CButton *) GetDlgItem(IDC_TRANSPORTS_RETURN);
 	Bool checked = 	pCheck->GetCheck()==1;
 	m_teamDict->setBool(TheKey_teamTransportsReturn, checked);
 }
 
-void TeamBehavior::OnAvoidThreats() 
+void TeamBehavior::OnAvoidThreats()
 {
 	CButton *pCheck = (CButton *) GetDlgItem(IDC_AVOID_THREATS);
 	Bool checked = 	pCheck->GetCheck()==1;
 	m_teamDict->setBool(TheKey_teamAvoidThreats, checked);
 }
 
-void TeamBehavior::OnSelchangeOnEnemySighted() 
+void TeamBehavior::OnSelchangeOnEnemySighted()
 {
 	updateScript(TheKey_teamEnemySightedScript, IDC_ON_ENEMY_SIGHTED);
 }
 
-void TeamBehavior::OnSelchangeOnDestroyed() 
+void TeamBehavior::OnSelchangeOnDestroyed()
 {
 	updateScript(TheKey_teamOnDestroyedScript, IDC_ON_DESTROYED);
 }
@@ -189,12 +189,12 @@ void TeamBehavior::OnSelchangeOnUnitDestroyed()
 	updateScript(TheKey_teamOnUnitDestroyedScript, IDC_ON_UNIT_DESTROYED_SCRIPT);
 }
 
-void TeamBehavior::OnSelchangeOnCreateScript() 
+void TeamBehavior::OnSelchangeOnCreateScript()
 {
 	updateScript(TheKey_teamOnCreateScript, IDC_ON_CREATE_SCRIPT);
 }
 
-void TeamBehavior::OnPerimeterDefense() 
+void TeamBehavior::OnPerimeterDefense()
 {
 	CButton *pCheck = (CButton *) GetDlgItem(IDC_PERIMETER_DEFENSE);
 	if( pCheck )
@@ -212,7 +212,7 @@ void TeamBehavior::OnPerimeterDefense()
 	}
 }
 
-void TeamBehavior::OnBaseDefense() 
+void TeamBehavior::OnBaseDefense()
 {
 	CButton *pCheck = (CButton *) GetDlgItem(IDC_BASE_DEFENSE);
 	if( pCheck )
@@ -230,7 +230,7 @@ void TeamBehavior::OnBaseDefense()
 	}
 }
 
-void TeamBehavior::OnChangePercentDestroyed() 
+void TeamBehavior::OnChangePercentDestroyed()
 {
 	CWnd *pWnd = GetDlgItem(IDC_PERCENT_DESTROYED);
 	if (pWnd) {
@@ -242,26 +242,26 @@ void TeamBehavior::OnChangePercentDestroyed()
 	}
 }
 
-void TeamBehavior::OnSelchangeEnemyInteractions() 
+void TeamBehavior::OnSelchangeEnemyInteractions()
 {
 	CComboBox *pCombo = (CComboBox*)GetDlgItem(IDC_ENEMY_INTERACTIONS);
 	Int mode = pCombo->GetCurSel();
-	if (mode >= 0) { 
+	if (mode >= 0) {
 		m_teamDict->setInt(TheKey_teamAggressiveness, mode + ATTITUDE_SLEEP);
 	}
 }
 
-void TeamBehavior::OnSelchangeOnAllClear() 
+void TeamBehavior::OnSelchangeOnAllClear()
 {
 	updateScript(TheKey_teamAllClearScript, IDC_ON_ALL_CLEAR);
 }
 
-void TeamBehavior::OnSelchangeOnIdleScript() 
+void TeamBehavior::OnSelchangeOnIdleScript()
 {
 	updateScript(TheKey_teamOnIdleScript, IDC_ON_IDLE_SCRIPT);
 }
 
-void TeamBehavior::OnAttackCommonTarget() 
+void TeamBehavior::OnAttackCommonTarget()
 {
 	CButton *pCheck = (CButton *) GetDlgItem(IDC_ATTACK_COMMON_TARGET);
 	Bool checked = 	pCheck->GetCheck()==1;

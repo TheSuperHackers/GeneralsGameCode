@@ -43,14 +43,14 @@
 VeterancyCrateCollide::VeterancyCrateCollide( Thing *thing, const ModuleData* moduleData ) : CrateCollide( thing, moduleData )
 {
 
-} 
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 VeterancyCrateCollide::~VeterancyCrateCollide( void )
 {
 
-}  
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -103,12 +103,12 @@ Bool VeterancyCrateCollide::isValidToExecute( const Object *other ) const
 	{
 		if( other->getControllingPlayer() != getObject()->getControllingPlayer() )
 		{
-			//This is a pilot and we are checking to make sure the pilot is entering a vehicle on 
+			//This is a pilot and we are checking to make sure the pilot is entering a vehicle on
 			//the same team. If it's not, then don't allow it.. this is particularly the case for
 			//pilots attempting to enter civilian vehicles.
 			return false;
 		}
-		
+
 		if( other->isUsingAirborneLocomotor() )
 		{
 			// Can't upgrade a helicopter or plane, but we will think we can for a moment while it
@@ -125,7 +125,7 @@ Bool VeterancyCrateCollide::isValidToExecute( const Object *other ) const
 Bool VeterancyCrateCollide::executeCrateBehavior( Object *other )
 {
  	//Make sure the pilot is actually *TRYING* to enter the object
- 	//unlike other crates 
+ 	//unlike other crates
  	AIUpdateInterface *ai = (AIUpdateInterface*)getObject()->getAIUpdateInterface();
 	const VeterancyCrateCollideModuleData *md = getVeterancyCrateCollideModuleData();
 
@@ -158,7 +158,7 @@ Bool VeterancyCrateCollide::executeCrateBehavior( Object *other )
 			potentialObject->getExperienceTracker()->gainExpForLevel( levelsToGain, ( ! md->m_isPilot) );
 		}
 	}
-	
+
 	//In order to make things easier for the designers, we are going to transfer the terrorist name
 	//to the car... so the designer can control the car with their scripts.
 	if( md->m_isPilot )

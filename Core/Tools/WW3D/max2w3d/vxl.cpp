@@ -17,22 +17,22 @@
 */
 
 /* $Header: /Commando/Code/Tools/max2w3d/vxl.cpp 4     10/28/97 6:08p Greg_h $ */
-/*********************************************************************************************** 
- ***                            Confidential - Westwood Studios                              *** 
- *********************************************************************************************** 
- *                                                                                             * 
- *                 Project Name : Commando / G Math Library                                    * 
- *                                                                                             * 
- *                     $Archive:: /Commando/Code/Tools/max2w3d/vxl.cpp                        $* 
- *                                                                                             * 
- *                      $Author:: Greg_h                                                      $* 
- *                                                                                             * 
- *                     $Modtime:: 10/14/97 3:07p                                              $* 
- *                                                                                             * 
- *                    $Revision:: 4                                                           $* 
- *                                                                                             * 
- *---------------------------------------------------------------------------------------------* 
- * Functions:                                                                                  * 
+/***********************************************************************************************
+ ***                            Confidential - Westwood Studios                              ***
+ ***********************************************************************************************
+ *                                                                                             *
+ *                 Project Name : Commando / G Math Library                                    *
+ *                                                                                             *
+ *                     $Archive:: /Commando/Code/Tools/max2w3d/vxl.cpp                        $*
+ *                                                                                             *
+ *                      $Author:: Greg_h                                                      $*
+ *                                                                                             *
+ *                     $Modtime:: 10/14/97 3:07p                                              $*
+ *                                                                                             *
+ *                    $Revision:: 4                                                           $*
+ *                                                                                             *
+ *---------------------------------------------------------------------------------------------*
+ * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "vxl.h"
@@ -42,7 +42,7 @@
 /*
 
 	This module will voxelize one or more meshes.  It is only used to compute
-	some things like Moment of Inertia and Center of Mass for the object. 
+	some things like Moment of Inertia and Center of Mass for the object.
 	Much of the code which was doing the shading and lighting computations
 	has been stripped out.
 
@@ -86,14 +86,14 @@ VoxelClass::VoxelClass
 	XDim = resolution + 1;
 	YDim = resolution + 1;
 	ZDim = resolution + 1;
-	
+
 	// assert that none of the dimensions
 	// were too big.  (if this happened, VoxelData is going
 	// to be a *HUMONGOUS* amount of memory...)
 	assert(XDim < 256);
 	assert(YDim < 256);
 	assert(ZDim < 256);
-	
+
 	// Allocate visibility flags array
 	VisData = new uint8[XDim * YDim * ZDim];
 	if (VisData == NULL) {
@@ -115,7 +115,7 @@ VoxelClass::VoxelClass
 	/*
 	** The voxelizer uses three values: offset, size,
 	** and scale:
-	**	
+	**
 	** offset - the position of the "most negative" corner
 	**	size - dimensions of the box
 	** scale - scale factor to apply to vertices after they've
@@ -136,7 +136,7 @@ VoxelClass::VoxelClass
 	BlockYDim = Size.y / Resolution;
 	BlockZDim = Size.z / Resolution;
 
-	
+
 	/*
 	** Voxelize the meshes!
 	*/
@@ -192,7 +192,7 @@ void VoxelClass::Quantize_Meshes
 	meter.Finish_In_Steps(2);
 	Progress_Meter_Class slabmeter(meter,meter.Increment);
 	slabmeter.Finish_In_Steps(ZDim);
-	
+
 	/*
 	** Generate the Voxel Layer for each slice of the model
 	*/
@@ -215,7 +215,7 @@ void VoxelClass::Quantize_Meshes
 			sliceh,
 			XDim,
 			YDim
-		);	 
+		);
 
 		Set_Layer(*vlayer,slicecount);
 
@@ -269,7 +269,7 @@ void VoxelClass::Set_Layer
 				raw_set_vis(i,j,z,VIS_UNKNOWN);
 			} else {
 				raw_set_vis(i,j,z,VIS_SOLID);
-			}				
+			}
 		}
 	}
 }
@@ -306,7 +306,7 @@ void VoxelClass::Compute_Bounding_Box
 	BoxCorner[0].x = offset.x + size.x;
 	BoxCorner[0].y = offset.y + size.y;
 	BoxCorner[0].z = offset.z;
-	
+
 	// +x -y -z
 	BoxCorner[1].x = offset.x + size.x;
 	BoxCorner[1].y = offset.y;
@@ -316,17 +316,17 @@ void VoxelClass::Compute_Bounding_Box
 	BoxCorner[2].x = offset.x;
 	BoxCorner[2].y = offset.y;
 	BoxCorner[2].z = offset.z;
-	
+
 	// -x +y -z
 	BoxCorner[3].x = offset.x;
 	BoxCorner[3].y = offset.y + size.y;
 	BoxCorner[3].z = offset.z;
-	
+
 	// +x +y +z
 	BoxCorner[4].x = offset.x + size.x;
 	BoxCorner[4].y = offset.y + size.y;
 	BoxCorner[4].z = offset.z + size.z;
-	
+
 	// +x -y +z
 	BoxCorner[5].x = offset.x + size.x;
 	BoxCorner[5].y = offset.y;
@@ -336,12 +336,12 @@ void VoxelClass::Compute_Bounding_Box
 	BoxCorner[6].x = offset.x;
 	BoxCorner[6].y = offset.y;
 	BoxCorner[6].z = offset.z + size.z;
-	
+
 	// -x +y +z
 	BoxCorner[7].x = offset.x;
 	BoxCorner[7].y = offset.y + size.y;
 	BoxCorner[7].z = offset.z + size.z;
-	
+
 	// Now, scale all of them into the voxel co-ordinate system
 	for (i=0; i<8; i++) {
 		BoxCorner[i].x *= Scale.x;
@@ -355,11 +355,11 @@ void VoxelClass::Compute_Bounding_Box
 * VoxelClass::Compute_Visibility
 *
 * Detects the outer shell of the voxel object.
-* "Tunnels" are drilled into the voxel space from all directions, all 
-* voxels that are encountered before hitting the outer shell are marked 
+* "Tunnels" are drilled into the voxel space from all directions, all
+* voxels that are encountered before hitting the outer shell are marked
 * as VIS_VISIBLE.  After doing all of the tunnels, all voxels which are
 * not now marked as VIS_VISIBLE are marked as VIS_SOLID.  This way we
-* can absorb all internal geometry into one big blob.  Next we will 
+* can absorb all internal geometry into one big blob.  Next we will
 * suck out the internals of that blob :-)
 *
 * INPUTS:
@@ -377,11 +377,11 @@ void VoxelClass::Compute_Visiblity
 	int x,y,z;
 
 	meter.Finish_In_Steps(ZDim + XDim + ZDim);
-	
+
 	/////////////////////////////////////////////////////////////
 	// First, I'm going to loop through the layers (X-Y planes)
-	// For each layer, I'll tunnel in the x and y direction 
-	// from each point along its edge.  This is identical to 
+	// For each layer, I'll tunnel in the x and y direction
+	// from each point along its edge.  This is identical to
 	// the way James does his 2d visibility
 	/////////////////////////////////////////////////////////////
 	for (z = 0; z < (int)ZDim; z++) {
@@ -418,7 +418,7 @@ void VoxelClass::Compute_Visiblity
 		if (meter.Cancelled()) throw ErrorClass("Export Cancelled");
 	} // done with the X-Y layers
 
-	
+
 	/////////////////////////////////////////////////////////////
 	// Now I'm going to tunnel up and down through the object.
 	// To do this, I will loop across the width of the object
@@ -529,7 +529,7 @@ void VoxelClass::raw_set_vis(
 
 
 void compute_dimensions
-(  
+(
 	INodeListClass &	meshlist,
 	const Matrix3 &	parenttm,
 	TimeValue			curtime,
@@ -547,7 +547,7 @@ void compute_dimensions
 
 	for ( unsigned i = 0; i < meshlist.Num_Nodes() ; ++ i )
 	{
-		
+
 		//	Get the relavent data from the INode
 		INode *        n   = meshlist[i];
 		Object *       obj = n->EvalWorldState(curtime).obj;
@@ -555,11 +555,11 @@ void compute_dimensions
 		Mesh *         mesh = &(tri->mesh);
 		Matrix3        tm   = n->GetObjTMAfterWSM(curtime);
 
-		
+
 		// Compute a matrix which takes vertices of this mesh into the
 		// specified parent space.
-		Matrix3			delta = tm * Inverse(parenttm);				
-		
+		Matrix3			delta = tm * Inverse(parenttm);
+
 		unsigned verts = mesh->getNumVerts();
 		unsigned faces = mesh->getNumFaces();
 
@@ -610,16 +610,16 @@ void compute_dimensions
 
 uint8	VoxelClass::Is_Solid(int i,int j,int k)
 {
-	return (raw_read_vis(i,j,k) == VIS_SOLID); 
+	return (raw_read_vis(i,j,k) == VIS_SOLID);
 }
 
 void VoxelClass::Compute_Physical_Properties(double Volume[1],double CM[3],double I[9])
 {
 	int i,j,k;
-	
+
 	// volume of a single voxel block:
 	double bvol = BlockXDim * BlockYDim * BlockZDim;
-	
+
 	// volume of object
 	double volume = 0.0;
 	Point3 cm(0.0,0.0,0.0);
@@ -635,7 +635,7 @@ void VoxelClass::Compute_Physical_Properties(double Volume[1],double CM[3],doubl
 
 					// Add this block's volume to the total
 					volume += bvol;
-	
+
 					// Add this block's position to the CM computation
 					cm += Voxel_Position(i,j,k);
 					numblocks++;
@@ -679,7 +679,7 @@ void VoxelClass::Compute_Physical_Properties(double Volume[1],double CM[3],doubl
 		for (j=0; j < YDim; j++) {
 			for (i=0; i < XDim; i++) {
 				if (Is_Solid(i,j,k)) {
-	
+
 					// position of block, relative to the CM
 					Point3 pos = Voxel_Position(i,j,k) - cm;
 
@@ -692,7 +692,7 @@ void VoxelClass::Compute_Physical_Properties(double Volume[1],double CM[3],doubl
 					double xy = pos.x * pos.y;
 					double xz = pos.x * pos.z;
 					double yz = pos.y * pos.z;
-					
+
 					// add to the running total!
 					I[0] += y2z2 * bvol;
 					I[1] += -xy * bvol;

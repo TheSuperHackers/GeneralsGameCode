@@ -22,7 +22,7 @@
 //																																						//
 ////////////////////////////////////////////////////////////////////////////////
 
-// FILE: AudioEventRTS.cpp 
+// FILE: AudioEventRTS.cpp
 /*---------------------------------------------------------------------------*/
 /* EA Pacific                                                                */
 /* Confidential Information	                                                 */
@@ -60,8 +60,8 @@
 
 //-------------------------------------------------------------------------------------------------
 AudioEventRTS::AudioEventRTS()
-									: m_eventName(AsciiString::TheEmptyString), 
-										m_priority(AP_NORMAL), 
+									: m_eventName(AsciiString::TheEmptyString),
+										m_priority(AP_NORMAL),
 										m_volume(-1.0),
 										m_timeOfDay(TIME_OF_DAY_AFTERNOON),
 										m_ownerType(OT_INVALID),
@@ -87,8 +87,8 @@ AudioEventRTS::AudioEventRTS()
 
 //-------------------------------------------------------------------------------------------------
 AudioEventRTS::AudioEventRTS( const AsciiString& eventName )
-									: m_eventName(eventName), 
-										m_priority(AP_NORMAL), 
+									: m_eventName(eventName),
+										m_priority(AP_NORMAL),
 										m_volume(-1.0),
 										m_timeOfDay(TIME_OF_DAY_AFTERNOON),
 										m_ownerType(OT_INVALID),
@@ -114,8 +114,8 @@ AudioEventRTS::AudioEventRTS( const AsciiString& eventName )
 
 //-------------------------------------------------------------------------------------------------
 AudioEventRTS::AudioEventRTS( const AsciiString& eventName, ObjectID ownerID )
-									: m_eventName(eventName), 
-										m_priority(AP_NORMAL), 
+									: m_eventName(eventName),
+										m_priority(AP_NORMAL),
 										m_volume(-1.0),
 										m_timeOfDay(TIME_OF_DAY_AFTERNOON),
 										m_objectID(ownerID),
@@ -134,15 +134,15 @@ AudioEventRTS::AudioEventRTS( const AsciiString& eventName, ObjectID ownerID )
 										m_playerIndex(-1),
 										m_delay(0.0f),
 										m_uninterruptable(FALSE)
-{						
+{
 	m_attackName.clear();
 	m_decayName.clear();
 
-	if(	m_objectID ) 
+	if(	m_objectID )
 	{
 		m_ownerType = OT_Object;
-	} 
-	else 
+	}
+	else
 	{
 		m_objectID = INVALID_ID;
 	}
@@ -150,8 +150,8 @@ AudioEventRTS::AudioEventRTS( const AsciiString& eventName, ObjectID ownerID )
 
 //-------------------------------------------------------------------------------------------------
 AudioEventRTS::AudioEventRTS( const AsciiString& eventName, DrawableID drawableID )
-									: m_eventName(eventName), 
-										m_priority(AP_NORMAL), 
+									: m_eventName(eventName),
+										m_priority(AP_NORMAL),
 										m_volume(-1.0),
 										m_timeOfDay(TIME_OF_DAY_AFTERNOON),
 										m_drawableID(drawableID),
@@ -177,8 +177,8 @@ AudioEventRTS::AudioEventRTS( const AsciiString& eventName, DrawableID drawableI
 	if( m_drawableID )
 	{
 		m_ownerType = OT_Drawable;
-	} 
-	else 
+	}
+	else
 	{
 		m_drawableID = INVALID_DRAWABLE_ID;
 	}
@@ -186,8 +186,8 @@ AudioEventRTS::AudioEventRTS( const AsciiString& eventName, DrawableID drawableI
 
 //-------------------------------------------------------------------------------------------------
 AudioEventRTS::AudioEventRTS( const AsciiString& eventName, const Coord3D *positionOfAudio )
-									: m_eventName(eventName), 
-										m_priority(AP_NORMAL), 
+									: m_eventName(eventName),
+										m_priority(AP_NORMAL),
 										m_volume(-1.0),
 										m_timeOfDay(TIME_OF_DAY_AFTERNOON),
 										m_ownerType(OT_Positional),
@@ -237,15 +237,15 @@ AudioEventRTS::AudioEventRTS( const AudioEventRTS& right )
 	m_portionToPlayNext		= right.m_portionToPlayNext;
 	m_uninterruptable			= right.m_uninterruptable;
 
-	if( m_ownerType == OT_Positional || m_ownerType == OT_Dead ) 
+	if( m_ownerType == OT_Positional || m_ownerType == OT_Dead )
 	{
 		m_positionOfAudio.set( &right.m_positionOfAudio );
-	} 
-	else if( m_ownerType == OT_Drawable ) 
+	}
+	else if( m_ownerType == OT_Drawable )
 	{
 		m_drawableID = right.m_drawableID;
-	} 
-	else if( m_ownerType == OT_Object ) 
+	}
+	else if( m_ownerType == OT_Object )
 	{
 		m_objectID = right.m_objectID;
 	}
@@ -278,18 +278,18 @@ AudioEventRTS& AudioEventRTS::operator=( const AudioEventRTS& right )
 	m_portionToPlayNext		= right.m_portionToPlayNext;
 	m_uninterruptable			= right.m_uninterruptable;
 
-	if( m_ownerType == OT_Positional || m_ownerType == OT_Dead ) 
+	if( m_ownerType == OT_Positional || m_ownerType == OT_Dead )
 	{
 		m_positionOfAudio.set( &right.m_positionOfAudio );
-	} 
-	else if( m_ownerType == OT_Drawable ) 
+	}
+	else if( m_ownerType == OT_Drawable )
 	{
 		m_drawableID = right.m_drawableID;
-	} 
-	else if( m_ownerType == OT_Object ) 
+	}
+	else if( m_ownerType == OT_Object )
 	{
 		m_objectID = right.m_objectID;
-	} 
+	}
 	return *this;
 
 }
@@ -319,9 +319,9 @@ void AudioEventRTS::generateFilename( void )
 	if (!m_eventInfo) {
 		return;
 	}
-	
+
 	m_filenameToLoad = generateFilenamePrefix(m_eventInfo->m_soundType, false);
-	
+
 	Int which = 0;
 
 	if (m_eventInfo->m_soundType == AT_Music || m_eventInfo->m_soundType == AT_Streaming) {
@@ -335,14 +335,14 @@ void AudioEventRTS::generateFilename( void )
 		}
 
 
-		
-		if (BitIsSet(m_eventInfo->m_control, AC_RANDOM)) 
-		{ 
-			if (m_isLogicalAudio) 
+
+		if (BitIsSet(m_eventInfo->m_control, AC_RANDOM))
+		{
+			if (m_isLogicalAudio)
 			{
 				which = GameLogicRandomValue(0, m_eventInfo->m_sounds.size() - 1);
-			} 
-			else 
+			}
+			else
 			{
 				which = GameAudioRandomValue(0, m_eventInfo->m_sounds.size() - 1);
 			}
@@ -355,15 +355,15 @@ void AudioEventRTS::generateFilename( void )
 		}
 		else
 			which = (++m_playingAudioIndex) % m_eventInfo->m_sounds.size();
- 
+
 
 	}
-	
+
 	m_filenameToLoad.concat(m_eventInfo->m_sounds[which]);
 	m_filenameToLoad.concat(generateFilenameExtension(m_eventInfo->m_soundType));
 	adjustForLocalization(m_filenameToLoad);
 
-	// Note: Also generate Delay when generating a filename, cause 
+	// Note: Also generate Delay when generating a filename, cause
 	// we want delay to apply between every loop of a sound.
 	m_delay = GameAudioRandomValueReal(m_eventInfo->m_delayMin, m_eventInfo->m_delayMax);
 }
@@ -380,7 +380,7 @@ void AudioEventRTS::generatePlayInfo( void )
 	m_pitchShift = GameAudioRandomValueReal(m_eventInfo->m_pitchShiftMin, m_eventInfo->m_pitchShiftMax);
 	m_volumeShift = GameAudioRandomValueReal(1.0f + m_eventInfo->m_volumeShift, 1.0f);	// volume shifts are between 0 and 1
 	m_loopCount = m_eventInfo->m_loopCount;
-	
+
 	m_portionToPlayNext = PP_Attack;
 	Int attackSize = m_eventInfo->m_attackSounds.size();
 	if (attackSize > 0) {
@@ -392,7 +392,7 @@ void AudioEventRTS::generatePlayInfo( void )
 		} else {
 			attackToPlay = GameAudioRandomValue(0, attackSize - 1);
 		}
-		
+
 		m_attackName.concat(m_eventInfo->m_attackSounds[attackToPlay]);
 		m_attackName.concat(generateFilenameExtension(m_eventInfo->m_soundType));
 		adjustForLocalization(m_attackName);
@@ -410,7 +410,7 @@ void AudioEventRTS::generatePlayInfo( void )
 		} else {
 			decayToPlay = GameAudioRandomValue(0, decaySize - 1);
 		}
-		
+
 		m_decayName.concat(m_eventInfo->m_decaySounds[decayToPlay]);
 		m_decayName.concat(generateFilenameExtension(m_eventInfo->m_soundType));
 		adjustForLocalization(m_decayName);
@@ -464,13 +464,13 @@ PortionToPlay AudioEventRTS::getNextPlayPortion( void ) const
 //-------------------------------------------------------------------------------------------------
 void AudioEventRTS::advanceNextPlayPortion( void )
 {
-	switch (m_portionToPlayNext) 
+	switch (m_portionToPlayNext)
 	{
 		case PP_Attack:
 			m_portionToPlayNext = PP_Sound;
 			break;
 		case PP_Sound:
-			if (m_eventInfo && BitIsSet(m_eventInfo->m_control, AC_ALL)) 
+			if (m_eventInfo && BitIsSet(m_eventInfo->m_control, AC_ALL))
 			{
 				if (m_allCount == m_eventInfo->m_sounds.size()) {
 					m_portionToPlayNext = PP_Decay;
@@ -563,7 +563,7 @@ void AudioEventRTS::setPosition( const Coord3D *pos )
 //-------------------------------------------------------------------------------------------------
 const Coord3D* AudioEventRTS::getPosition( void )
 {
-	if( m_ownerType != OT_INVALID ) 
+	if( m_ownerType != OT_INVALID )
 	{
 		return &m_positionOfAudio;
 	}
@@ -665,9 +665,9 @@ Bool AudioEventRTS::getIsLogicalAudio( void ) const
 //-------------------------------------------------------------------------------------------------
 Bool AudioEventRTS::isPositionalAudio( void ) const
 {
-	if( m_eventInfo ) 
+	if( m_eventInfo )
 	{
-		if( !BitIsSet( m_eventInfo->m_type, ST_WORLD ) ) 
+		if( !BitIsSet( m_eventInfo->m_type, ST_WORLD ) )
 		{
 			return FALSE;
 		}
@@ -711,7 +711,7 @@ Real AudioEventRTS::getVolume( void ) const
 		}
 		return 0.5;
 	}
-	
+
 	return m_volume;
 }
 
@@ -724,11 +724,11 @@ void AudioEventRTS::setVolume( Real vol )
 //-------------------------------------------------------------------------------------------------
 const Coord3D *AudioEventRTS::getCurrentPosition( void )
 {
-	if (m_ownerType == OT_Positional) 
+	if (m_ownerType == OT_Positional)
 	{
 		return &m_positionOfAudio;
-	} 
-	else if (m_ownerType == OT_Object) 
+	}
+	else if (m_ownerType == OT_Object)
 	{
 		Object *obj = TheGameLogic->findObjectByID(m_objectID);
 		if (obj)
@@ -740,8 +740,8 @@ const Coord3D *AudioEventRTS::getCurrentPosition( void )
 			m_ownerType = OT_Dead;
 		}
 		return &m_positionOfAudio;
-	} 
-	else if (m_ownerType == OT_Drawable) 
+	}
+	else if (m_ownerType == OT_Drawable)
 	{
 		Drawable *draw = TheGameClient->findDrawableByID(m_drawableID);
 		if( draw )

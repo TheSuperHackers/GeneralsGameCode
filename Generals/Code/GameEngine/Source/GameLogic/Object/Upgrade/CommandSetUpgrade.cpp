@@ -35,11 +35,11 @@
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void CommandSetUpgradeModuleData::buildFieldParse(MultiIniFieldParse& p) 
+void CommandSetUpgradeModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
   UpgradeModuleData::buildFieldParse(p);
 
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
 		{ "CommandSet",	INI::parseAsciiString,	NULL, offsetof( CommandSetUpgradeModuleData, m_newCommandSet ) },
 		{ 0, 0, 0, 0 }
@@ -63,7 +63,7 @@ CommandSetUpgrade::~CommandSetUpgrade( void )
 //-------------------------------------------------------------------------------------------------
 void CommandSetUpgrade::upgradeImplementation( )
 {
-	Object *obj = getObject();	
+	Object *obj = getObject();
 	obj->setCommandSetStringOverride( getCommandSetUpgradeModuleData()->m_newCommandSet );
 
 	TheControlBar->markUIDirty();// Refresh the UI in case we are selected

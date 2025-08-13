@@ -17,12 +17,12 @@
 */
 
 //----------------------------------------------------------------------------=
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information					                  
-//                Copyright(C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright(C) 2001 - All Rights Reserved
+//
 //----------------------------------------------------------------------------
 //
 // Project:    WSYS Library
@@ -43,7 +43,7 @@
 
 
 //----------------------------------------------------------------------------
-//           Includes                                                      
+//           Includes
 //----------------------------------------------------------------------------
 
 #include "WSYS_file.h"
@@ -71,10 +71,10 @@ class StdFile : public File
 	protected:
 
 		int m_handle;											///< Std C file handle
-		
+
 	public:
-		
-		StdFile();										
+
+		StdFile();
 		virtual				~StdFile();
 
 
@@ -90,7 +90,7 @@ class StdFile : public File
 
 
 //----------------------------------------------------------------------------
-//           Inlining                                                       
+//           Inlining
 //----------------------------------------------------------------------------
 
 

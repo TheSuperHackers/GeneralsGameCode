@@ -24,12 +24,12 @@
 
 // FILE: ControlBarResizer.h /////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Electronic Arts Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2002 - All Rights Reserved                  
-//                                                                          
+//
+//                       Electronic Arts Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2002 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 //	created:	Sep 2002
@@ -37,8 +37,8 @@
 //	Filename: 	ControlBarResizer.h
 //
 //	author:		Chris Huybregts
-//	
-//	purpose:	
+//
+//	purpose:
 //
 //-----------------------------------------------------------------------------
 ///////////////////////////////////////////////////////////////////////////////
@@ -79,7 +79,7 @@ class ControlBarResizer
 public:
 	ControlBarResizer( void );
 	~ControlBarResizer( void );
-	
+
 	void init( void );
 
 	// parse Functions for the INI file
@@ -88,7 +88,7 @@ public:
 
 	ResizerWindow *findResizerWindow( AsciiString name ); ///< attempt to find the control bar scheme by it's name
 	ResizerWindow *newResizerWindow( AsciiString name );	///< create a new control bar scheme and return it.
-	
+
 	void sizeWindowsDefault( void );
 	void sizeWindowsAlt( void );
 

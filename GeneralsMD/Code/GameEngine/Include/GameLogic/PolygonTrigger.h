@@ -25,8 +25,8 @@
 
 // PolygonTrigger.h
 // Class to encapsulate polygon triggers for maps.
-// Note - Polygons are used for two reasons - one is area triggers for 
-// scripts, so units can be tested for entering or exiting areas, and 
+// Note - Polygons are used for two reasons - one is area triggers for
+// scripts, so units can be tested for entering or exiting areas, and
 // second to specify areas that are filled with water in the map.
 // See the m_isWaterArea to differentiate.
 // Author: John Ahlquist, November 2001
@@ -57,7 +57,7 @@ public:
 
 	WaterHandle( void ) { m_polygon = NULL; }
 
-	///@todo we need to formalize the water systems 
+	///@todo we need to formalize the water systems
 	PolygonTrigger *m_polygon;	///< valid when water is a polygon area, NULL if water is a grid
 
 };
@@ -67,7 +67,7 @@ public:
 class PolygonTrigger : public MemoryPoolObject,
 											 public Snapshot
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(PolygonTrigger, "PolygonTrigger")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(PolygonTrigger, "PolygonTrigger")
 
 protected:
 	PolygonTrigger*		m_nextPolygonTrigger;		///< linked list.
@@ -77,7 +77,7 @@ protected:
 	ICoord3D*					m_points;	///< Points that are the polygon.
 	Int								m_numPoints; ///< Num points in m_points.
 	Int								m_sizePoints; ///< Space allocated for m_points.
-	mutable IRegion2D	m_bounds;  ///< 2D bounding box for quick checks.	
+	mutable IRegion2D	m_bounds;  ///< 2D bounding box for quick checks.
 	mutable Real			m_radius;
 	Int								m_riverStart;	///< Identifies the start point of the river.
 	mutable Bool			m_boundsNeedsUpdate;
@@ -123,7 +123,7 @@ public:
 	void setTriggerName(AsciiString name) {m_triggerName = name;};
 
 	void setLayerName(AsciiString name) {m_layerName = name;};
-	AsciiString getLayerName(void)  const {return m_layerName;} 
+	AsciiString getLayerName(void)  const {return m_layerName;}
 
 	void setShouldRender(Bool toggle) {m_shouldRender = toggle;}
 	Bool getShouldRender() {return m_shouldRender;}
@@ -142,14 +142,14 @@ public:
 	const PolygonTrigger *getNext(void) const {return m_nextPolygonTrigger;}
 	AsciiString getTriggerName(void)  const {return m_triggerName;} ///< Gets the trigger name.
 	Bool pointInTrigger(ICoord3D &point) const;
-	Bool doExportWithScripts(void) const {return m_exportWithScripts;} 
-	void setDoExportWithScripts(Bool val) {m_exportWithScripts = val;} 
-	Bool isWaterArea(void) const {return m_isWaterArea;} 
-	void setWaterArea(Bool val) {m_isWaterArea = val;} 
-	Bool isRiver(void) const {return m_isRiver;} 
-	void setRiver(Bool val) {m_isRiver = val;} 
-	Int getRiverStart(void) const {return m_riverStart;} 
-	void setRiverStart(Int val) {m_riverStart = val;} 
+	Bool doExportWithScripts(void) const {return m_exportWithScripts;}
+	void setDoExportWithScripts(Bool val) {m_exportWithScripts = val;}
+	Bool isWaterArea(void) const {return m_isWaterArea;}
+	void setWaterArea(Bool val) {m_isWaterArea = val;}
+	Bool isRiver(void) const {return m_isRiver;}
+	void setRiver(Bool val) {m_isRiver = val;}
+	Int getRiverStart(void) const {return m_riverStart;}
+	void setRiverStart(Int val) {m_riverStart = val;}
 	const WaterHandle* getWaterHandle(void) const;
 	Bool isValid(void) const;
 };

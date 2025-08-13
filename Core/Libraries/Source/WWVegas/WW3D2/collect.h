@@ -66,8 +66,8 @@ public:
 	CollectionClass(const CollectionClass & src);
 	CollectionClass & operator = (const CollectionClass &);
 	virtual ~CollectionClass(void);
-	virtual RenderObjClass *	Clone(void) const;		
-	
+	virtual RenderObjClass *	Clone(void) const;
+
 	virtual int						Class_ID(void)	const;
 	virtual int						Get_Num_Polys(void) const;
 
@@ -88,7 +88,7 @@ public:
 	/////////////////////////////////////////////////////////////////////////////
 	virtual void 					Set_Transform(const Matrix3D &m);
 	virtual void 					Set_Position(const Vector3 &v);
-	virtual int						Get_Num_Sub_Objects(void) const;	
+	virtual int						Get_Num_Sub_Objects(void) const;
 	virtual RenderObjClass *	Get_Sub_Object(int index) const;
 	virtual int						Add_Sub_Object(RenderObjClass * subobj);
 	virtual int						Remove_Sub_Object(RenderObjClass * robj);
@@ -122,7 +122,7 @@ protected:
 
 	void								Free(void);
 	void								Update_Sub_Object_Transforms(void);
-	
+
 	DynamicVectorClass <ProxyClass>			ProxyList;
 	DynamicVectorClass <RenderObjClass *>	SubObjects;
 	SnapPointsClass *								SnapPoints;

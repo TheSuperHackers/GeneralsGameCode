@@ -31,33 +31,33 @@
 
 #define		ARBITRARY_BUFF_SIZE		128
 
-static const UINT colorControls[][2] = 
+static const UINT colorControls[][2] =
 {
-	{IDC_PSEd_Color1,	IDC_PSEd_CF1_Frame}, 
-	{IDC_PSEd_Color2,	IDC_PSEd_CF2_Frame}, 
-	{IDC_PSEd_Color3,	IDC_PSEd_CF3_Frame}, 
-	{IDC_PSEd_Color4,	IDC_PSEd_CF4_Frame}, 
-	{IDC_PSEd_Color5,	IDC_PSEd_CF5_Frame}, 
-	{IDC_PSEd_Color6,	IDC_PSEd_CF6_Frame}, 
-	{IDC_PSEd_Color7,	IDC_PSEd_CF7_Frame}, 
+	{IDC_PSEd_Color1,	IDC_PSEd_CF1_Frame},
+	{IDC_PSEd_Color2,	IDC_PSEd_CF2_Frame},
+	{IDC_PSEd_Color3,	IDC_PSEd_CF3_Frame},
+	{IDC_PSEd_Color4,	IDC_PSEd_CF4_Frame},
+	{IDC_PSEd_Color5,	IDC_PSEd_CF5_Frame},
+	{IDC_PSEd_Color6,	IDC_PSEd_CF6_Frame},
+	{IDC_PSEd_Color7,	IDC_PSEd_CF7_Frame},
 	{IDC_PSEd_Color8,	IDC_PSEd_CF8_Frame}
 };
 
-static const UINT alphaControls[][3] = 
+static const UINT alphaControls[][3] =
 {
-	{IDC_PSEd_AF1_Min, IDC_PSEd_AF1_Max, IDC_PSEd_AF1_Frame}, 
-	{IDC_PSEd_AF2_Min, IDC_PSEd_AF2_Max, IDC_PSEd_AF2_Frame}, 
-	{IDC_PSEd_AF3_Min, IDC_PSEd_AF3_Max, IDC_PSEd_AF3_Frame}, 
-	{IDC_PSEd_AF4_Min, IDC_PSEd_AF4_Max, IDC_PSEd_AF4_Frame}, 
-	{IDC_PSEd_AF5_Min, IDC_PSEd_AF5_Max, IDC_PSEd_AF5_Frame}, 
-	{IDC_PSEd_AF6_Min, IDC_PSEd_AF6_Max, IDC_PSEd_AF6_Frame}, 
-	{IDC_PSEd_AF7_Min, IDC_PSEd_AF7_Max, IDC_PSEd_AF7_Frame}, 
+	{IDC_PSEd_AF1_Min, IDC_PSEd_AF1_Max, IDC_PSEd_AF1_Frame},
+	{IDC_PSEd_AF2_Min, IDC_PSEd_AF2_Max, IDC_PSEd_AF2_Frame},
+	{IDC_PSEd_AF3_Min, IDC_PSEd_AF3_Max, IDC_PSEd_AF3_Frame},
+	{IDC_PSEd_AF4_Min, IDC_PSEd_AF4_Max, IDC_PSEd_AF4_Frame},
+	{IDC_PSEd_AF5_Min, IDC_PSEd_AF5_Max, IDC_PSEd_AF5_Frame},
+	{IDC_PSEd_AF6_Min, IDC_PSEd_AF6_Max, IDC_PSEd_AF6_Frame},
+	{IDC_PSEd_AF7_Min, IDC_PSEd_AF7_Max, IDC_PSEd_AF7_Frame},
 	{IDC_PSEd_AF8_Min, IDC_PSEd_AF8_Max, IDC_PSEd_AF8_Frame}
 };
 
 
 
-CColorAlphaDialog::CColorAlphaDialog(UINT nIDTemplate, CWnd* pParentWnd) : 
+CColorAlphaDialog::CColorAlphaDialog(UINT nIDTemplate, CWnd* pParentWnd) :
 										CDialog(nIDTemplate, pParentWnd)
 {}
 
@@ -136,7 +136,7 @@ void CColorAlphaDialog::performUpdate(IN Bool toUI)
 	{ // update the values
 		for (int i = 0; i < MAX_KEYFRAMES; ++i) {
 			ParticleSystemInfo::RandomKeyframe keyFrame;
-			
+
 			pParent->getAlphaRangeFromSystem(i, keyFrame);
 
 			{	// Minimum first
@@ -194,7 +194,7 @@ void CColorAlphaDialog::OnParticleSystemEdit()
 	if (!pParent) {
 		return;
 	}
-	
+
 	pParent->signalParticleSystemEdit();
 }
 
@@ -207,7 +207,7 @@ BOOL CColorAlphaDialog::OnInitDialog()
 		if (!item) {
 			continue;
 		}
-		
+
 		item->GetWindowRect(&rect);
 		ScreenToClient(&rect);
 		DWORD style = item->GetStyle();
@@ -215,7 +215,7 @@ BOOL CColorAlphaDialog::OnInitDialog()
 
 		item->DestroyWindow();
 	}
-	
+
 	return CDialog::OnInitDialog();
 }
 
@@ -236,7 +236,7 @@ void CColorAlphaDialog::onColorPress(Int colorPressed)
 	dlg.m_cc.Flags |= (CC_FULLOPEN | CC_ANYCOLOR);
 	dlg.m_cc.lpCustColors = m_customColors;
 	if (dlg.DoModal() == IDOK) {
-		
+
 		m_colorButton[colorPressed - 1].setColor(CButtonShowColor::BGRtoRGB(dlg.GetColor()));
 		static char buff[ARBITRARY_BUFF_SIZE];
 
@@ -272,7 +272,7 @@ void CColorAlphaDialog::onColorPress(Int colorPressed)
 		AfxGetApp()->WriteProfileString("Custom Colors", "Color15", buff);
 		ltoa(m_customColors[15], buff, 10);
 		AfxGetApp()->WriteProfileString("Custom Colors", "Color16", buff);
-		
+
 
 
 		OnParticleSystemEdit();

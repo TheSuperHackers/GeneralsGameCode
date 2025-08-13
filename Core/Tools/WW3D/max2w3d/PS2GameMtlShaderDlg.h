@@ -41,7 +41,7 @@
 #include <max.h>
 #include "GameMtlForm.h"
 
-// This class was taken from GTH's GameMtlShaderDlg. 
+// This class was taken from GTH's GameMtlShaderDlg.
 
 class GameMtl;
 struct PS2ShaderBlendSettingPreset;

@@ -23,11 +23,11 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-//	
-// FILE: SabotageMilitaryFactoryCrateCollide.h 
+//
+// FILE: SabotageMilitaryFactoryCrateCollide.h
 // Author: Kris Morness, June 2003
-// Desc:   A crate (actually a saboteur - mobile crate) that temporarily disables the target factory 
-//	
+// Desc:   A crate (actually a saboteur - mobile crate) that temporarily disables the target factory
+//
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
@@ -53,11 +53,11 @@ public:
 		m_sabotageFrames = 0;
 	}
 
-	static void buildFieldParse(MultiIniFieldParse& p) 
+	static void buildFieldParse(MultiIniFieldParse& p)
 	{
     CrateCollideModuleData::buildFieldParse(p);
 
-		static const FieldParse dataFieldParse[] = 
+		static const FieldParse dataFieldParse[] =
 		{
 			{ "SabotageDuration", INI::parseDurationUnsignedInt, NULL, offsetof( SabotageMilitaryFactoryCrateCollideModuleData, m_sabotageFrames ) },
 			{ 0, 0, 0, 0 }

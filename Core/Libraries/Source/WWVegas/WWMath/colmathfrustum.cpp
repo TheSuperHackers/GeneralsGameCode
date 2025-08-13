@@ -57,7 +57,7 @@ CollisionMath::OverlapType
 CollisionMath::Overlap_Test(const FrustumClass & frustum,const Vector3 & point)
 {
 	int mask = 0;
-	
+
 	for (int i = 0; i < 6; i++) {
 		int result = CollisionMath::Overlap_Test(frustum.Planes[i],point);
 		if (result == OUTSIDE) {
@@ -76,7 +76,7 @@ CollisionMath::OverlapType
 CollisionMath::Overlap_Test(const FrustumClass & frustum,const TriClass & tri)
 {
 	int mask = 0;
-	
+
 	// TODO: doesn't catch all cases...
 	for (int i = 0; i < 6; i++) {
 		int result = CollisionMath::Overlap_Test(frustum.Planes[i],tri);
@@ -96,7 +96,7 @@ CollisionMath::OverlapType
 CollisionMath::Overlap_Test(const FrustumClass & frustum,const SphereClass & sphere)
 {
 	int mask = 0;
-	
+
 	// TODO: doesn't catch all cases...
 	for (int i = 0; i < 6; i++) {
 		int result = CollisionMath::Overlap_Test(frustum.Planes[i],sphere);
@@ -116,7 +116,7 @@ CollisionMath::OverlapType
 CollisionMath::Overlap_Test(const FrustumClass & frustum,const AABoxClass & box)
 {
 	int mask = 0;
-	
+
 	// TODO: doesn't catch all cases...
 	for (int i = 0; i < 6; i++) {
 		int result = CollisionMath::Overlap_Test(frustum.Planes[i],box);
@@ -137,7 +137,7 @@ CollisionMath::OverlapType
 CollisionMath::Overlap_Test(const FrustumClass & frustum,const OBBoxClass & box)
 {
 	int mask = 0;
-	
+
 	// TODO: doesn't catch all cases...
 	for (int i = 0; i < 6; i++) {
 		int result = CollisionMath::Overlap_Test(frustum.Planes[i],box);
@@ -154,19 +154,19 @@ CollisionMath::Overlap_Test(const FrustumClass & frustum,const OBBoxClass & box)
 }
 
 
-CollisionMath::OverlapType	
+CollisionMath::OverlapType
 CollisionMath::Overlap_Test(const FrustumClass & frustum,const OBBoxClass & box,int & planes_passed)
 {
 	int mask = 0;
-	
+
 	// TODO: doesn't catch all cases...
 	for (int i = 0; i < 6; i++) {
 
 		int plane_bit = (1<<i);
 
-		// only check this plane if we have to	
+		// only check this plane if we have to
 		if ((planes_passed & plane_bit) == 0) {
-			
+
 			int result = CollisionMath::Overlap_Test(frustum.Planes[i],box);
 			if (result == OUTSIDE) {
 				return OUTSIDE;
@@ -176,7 +176,7 @@ CollisionMath::Overlap_Test(const FrustumClass & frustum,const OBBoxClass & box,
 			mask |= result;
 
 		} else {
-		
+
 			mask |= INSIDE;
 
 		}

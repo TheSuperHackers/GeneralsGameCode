@@ -52,15 +52,15 @@ DECLARE_FORCE_LINK(hermitespline);
 SimplePersistFactoryClass<HermiteSpline3DClass,WWMATH_CHUNKID_HERMITESPLINE3D>	_HermiteSpline3DFactory;
 SimplePersistFactoryClass<HermiteSpline1DClass,WWMATH_CHUNKID_HERMITESPLINE1D>	_HermiteSpline1DFactory;
 
-enum 
+enum
 {
 	// ID's used by HermiteSpline3D
-	HERMITE3D_CHUNK_CURVE3D					= 0x00020727,	
-	HERMITE3D_CHUNK_TANGENTS,			
+	HERMITE3D_CHUNK_CURVE3D					= 0x00020727,
+	HERMITE3D_CHUNK_TANGENTS,
 
 	// ID's used by HermiteSpline1D
-	HERMITE1D_CHUNK_CURVE1D					= 0x00020729,	
-	HERMITE1D_CHUNK_TANGENTS,			
+	HERMITE1D_CHUNK_CURVE1D					= 0x00020729,
+	HERMITE1D_CHUNK_TANGENTS,
 };
 
 
@@ -90,7 +90,7 @@ void HermiteSpline3DClass::Set_Looping(bool onoff)
 void HermiteSpline3DClass::Evaluate(float time,Vector3 * set_val)
 {
 	// if we're outside the range, return the start or end...
-	if (time < Keys[0].Time) { 
+	if (time < Keys[0].Time) {
 		*set_val = Keys[0].Point;
 		return;
 	}
@@ -104,7 +104,7 @@ void HermiteSpline3DClass::Evaluate(float time,Vector3 * set_val)
 	if (TangentsDirty) {
 		Update_Tangents();
 	}
-	
+
 	// ok find the segment
 	int i0,i1;
 	float t;
@@ -119,13 +119,13 @@ void HermiteSpline3DClass::Evaluate(float time,Vector3 * set_val)
 	float h2 = t3 - 2*t2 + t;
 	float h3 = t3 - t2;
 
-	set_val->X =	h0*Keys[i0].Point.X + h1*Keys[i1].Point.X + 
+	set_val->X =	h0*Keys[i0].Point.X + h1*Keys[i1].Point.X +
 						h2*Tangents[i0].OutTangent.X + h3*Tangents[i1].InTangent.X;
 
-	set_val->Y =	h0*Keys[i0].Point.Y + h1*Keys[i1].Point.Y + 
+	set_val->Y =	h0*Keys[i0].Point.Y + h1*Keys[i1].Point.Y +
 						h2*Tangents[i0].OutTangent.Y + h3*Tangents[i1].InTangent.Y;
 
-	set_val->Z =	h0*Keys[i0].Point.Z + h1*Keys[i1].Point.Z + 
+	set_val->Z =	h0*Keys[i0].Point.Z + h1*Keys[i1].Point.Z +
 						h2*Tangents[i0].OutTangent.Z + h3*Tangents[i1].InTangent.Z;
 }
 
@@ -141,7 +141,7 @@ void HermiteSpline3DClass::Evaluate_Derivative(float time,Vector3 * set_val)
 	if (TangentsDirty) {
 		Update_Tangents();
 	}
-	
+
 	// ok find the segment
 	int i0,i1;
 	float t;
@@ -155,13 +155,13 @@ void HermiteSpline3DClass::Evaluate_Derivative(float time,Vector3 * set_val)
 	float dh2 = 3*t2 - 4*t + 1;
 	float dh3 = 3*t2 - 2*t;
 
-	set_val->X =	dh0*Keys[i0].Point.X + dh1*Keys[i1].Point.X + 
+	set_val->X =	dh0*Keys[i0].Point.X + dh1*Keys[i1].Point.X +
 						dh2*Tangents[i0].OutTangent.X + dh3*Tangents[i1].InTangent.X;
 
-	set_val->Y =	dh0*Keys[i0].Point.Y + dh1*Keys[i1].Point.Y + 
+	set_val->Y =	dh0*Keys[i0].Point.Y + dh1*Keys[i1].Point.Y +
 						dh2*Tangents[i0].OutTangent.Y + dh3*Tangents[i1].InTangent.Y;
 
-	set_val->Z =	dh0*Keys[i0].Point.Z + dh1*Keys[i1].Point.Z + 
+	set_val->Z =	dh0*Keys[i0].Point.Z + dh1*Keys[i1].Point.Z +
 						dh2*Tangents[i0].OutTangent.Z + dh3*Tangents[i1].InTangent.Z;
 }
 
@@ -222,7 +222,7 @@ bool HermiteSpline3DClass::Save(ChunkSaveClass &csave)
 	csave.Begin_Chunk(HERMITE3D_CHUNK_CURVE3D);
 	Curve3DClass::Save(csave);
 	csave.End_Chunk();
-	
+
 	csave.Begin_Chunk(HERMITE3D_CHUNK_TANGENTS);
 	for (int i=0; i<Tangents.Count(); i++) {
 		csave.Write(&(Tangents[i].InTangent),sizeof(Tangents[i].InTangent));
@@ -242,8 +242,8 @@ bool HermiteSpline3DClass::Load(ChunkLoadClass &cload)
 
 	// read in the chunks
 	while (cload.Open_Chunk()) {
-		
-		switch(cload.Cur_Chunk_ID()) 
+
+		switch(cload.Cur_Chunk_ID())
 		{
 			case HERMITE3D_CHUNK_CURVE3D:
 				Curve3DClass::Load(cload);
@@ -293,7 +293,7 @@ void HermiteSpline1DClass::Evaluate(float time,float * set_val)
 	if (!IsLooping)
 	{
 		// if we're outside the range, return the start or end...
-		if (time < Keys[0].Time) { 
+		if (time < Keys[0].Time) {
 			*set_val = Keys[0].Point;
 			return;
 		}
@@ -308,7 +308,7 @@ void HermiteSpline1DClass::Evaluate(float time,float * set_val)
 	if (TangentsDirty) {
 		Update_Tangents();
 	}
-	
+
 	// ok find the segment
 	int i0,i1;
 	float t;
@@ -388,7 +388,7 @@ bool HermiteSpline1DClass::Save(ChunkSaveClass &csave)
 	csave.Begin_Chunk(HERMITE1D_CHUNK_CURVE1D);
 	Curve1DClass::Save(csave);
 	csave.End_Chunk();
-	
+
 	csave.Begin_Chunk(HERMITE1D_CHUNK_TANGENTS);
 	for (int i=0; i<Tangents.Count(); i++) {
 		csave.Write(&(Tangents[i].InTangent),sizeof(Tangents[i].InTangent));
@@ -408,8 +408,8 @@ bool HermiteSpline1DClass::Load(ChunkLoadClass &cload)
 
 	// read in the chunks
 	while (cload.Open_Chunk()) {
-		
-		switch(cload.Cur_Chunk_ID()) 
+
+		switch(cload.Cur_Chunk_ID())
 		{
 			case HERMITE1D_CHUNK_CURVE1D:
 				Curve1DClass::Load(cload);

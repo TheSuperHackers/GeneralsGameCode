@@ -51,7 +51,7 @@ DockUpdateModuleData::DockUpdateModuleData( void )
 
 	UpdateModuleData::buildFieldParse( p );
 
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
 		{ "NumberApproachPositions"	,INI::parseInt,		NULL, offsetof( DockUpdateModuleData, m_numberApproachPositionsData ) },
 		{ "AllowsPassthrough"				,INI::parseBool,	NULL, offsetof( DockUpdateModuleData, m_isAllowPassthrough ) },
@@ -228,7 +228,7 @@ Bool DockUpdate::isClearToAdvance( Object const* docker, Int dockerIndex ) const
 	Bool correctRequest = dockerID == m_approachPositionOwners[dockerIndex];
 	Bool approachReached = m_approachPositionReached[dockerIndex];
 	Bool nextSpotFree = (dockerIndex > 0)  &&  (m_approachPositionOwners[dockerIndex - 1] == INVALID_ID);
-	
+
 	return correctRequest && approachReached && nextSpotFree;
 }
 
@@ -356,9 +356,9 @@ void DockUpdate::onDockReached( Object* docker )
 void DockUpdate::onExitReached( Object* docker )
 {
 	Object *me = getObject();
-	me->clearAndSetModelConditionFlags( MAKE_MODELCONDITION_MASK2(MODELCONDITION_DOCKING_ACTIVE, MODELCONDITION_DOCKING), 
+	me->clearAndSetModelConditionFlags( MAKE_MODELCONDITION_MASK2(MODELCONDITION_DOCKING_ACTIVE, MODELCONDITION_DOCKING),
 																			MAKE_MODELCONDITION_MASK(MODELCONDITION_DOCKING_ENDING) );
-	docker->clearAndSetModelConditionFlags( MAKE_MODELCONDITION_MASK2(MODELCONDITION_DOCKING_ACTIVE, MODELCONDITION_DOCKING), 
+	docker->clearAndSetModelConditionFlags( MAKE_MODELCONDITION_MASK2(MODELCONDITION_DOCKING_ACTIVE, MODELCONDITION_DOCKING),
 																					MAKE_MODELCONDITION_MASK(MODELCONDITION_DOCKING_ENDING) );
 	m_dockerInside = FALSE;
 
@@ -394,7 +394,7 @@ void DockUpdate::cancelDock( Object* docker )
 		Object *dockingObject = TheGameLogic->findObjectByID(m_activeDocker);
 		m_activeDocker = INVALID_ID;
 		m_dockerInside = FALSE;
-		// clear any model conditions related to docking that may be set on us and them.  
+		// clear any model conditions related to docking that may be set on us and them.
 		// (Normal clear is part of each stage, but we won't get there.)
 		ModelConditionFlags clear;
 		clear.set( MODELCONDITION_DOCKING_ENDING );
@@ -430,7 +430,7 @@ UpdateSleepTime DockUpdate::update()
 	else if ( getObject()->isKindOf( KINDOF_SUPPLY_SOURCE ) )
 	{
 		Object *docker = TheGameLogic->findObjectByID( m_activeDocker );
-		if ( docker && docker->isKindOf( KINDOF_DOZER ) && docker->isKindOf( KINDOF_HARVESTER ))// a worker 
+		if ( docker && docker->isKindOf( KINDOF_DOZER ) && docker->isKindOf( KINDOF_HARVESTER ))// a worker
 		{
 			ModelConditionFlags test;
 			test.set( MODELCONDITION_DOCKING_BEGINNING );
@@ -452,10 +452,10 @@ Coord3D DockUpdate::computeApproachPosition( Int positionIndex, Object *forWhom 
 
 	Coord3D bestPosition;// This answer is the best, as it includes findPositionAround
 	Coord3D workingPosition;// But if findPositionAround fails, we need to say something.
-	
+
 	FindPositionOptions fpOptions;
 	// Start with the pristine bone, then convert it to the world, then find a clean spot around it.
-	
+
 	Object *us = getObject();
 	us->convertBonePosToWorldPos( &m_approachPositions[positionIndex], NULL, &workingPosition, NULL );
 

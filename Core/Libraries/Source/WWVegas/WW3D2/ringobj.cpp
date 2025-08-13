@@ -128,7 +128,7 @@ private:
 	float	Radius;
 	int	Slices;
 	int	face_ct;			//# of faces
-	
+
 	int		TileCount;
 	Vector2	InnerScale;
 	Vector2	OuterScale;
@@ -229,13 +229,13 @@ RingRenderObjClass::RingRenderObjClass(const W3dRingStruct & def)
 {
 	Generate_Shared_Mesh_Arrays ();
 	Init_Material ();
-	
+
 	//
 	//	Initialize from the defintion
 	//
 	Set_Name(def.Name);
 	Set_Local_Center_Extent (	Vector3 (def.Center.X, def.Center.Y, def.Center.Z),
-										Vector3 (def.Extent.X, def.Extent.Y, def.Extent.Z));	
+										Vector3 (def.Extent.X, def.Extent.Y, def.Extent.Z));
 	if (def.TextureName[0] != 0) {
 		RingTexture = WW3DAssetManager::Get_Instance ()->Get_Texture (def.TextureName);
 	}
@@ -344,7 +344,7 @@ RingRenderObjClass & RingRenderObjClass::operator = (const RingRenderObjClass & 
 		InnerExtent			= that.InnerExtent;
 		OuterExtent			= that.OuterExtent;
 		TextureTileCount	= that.TextureTileCount;
-		
+
 		Set_Texture (that.RingTexture);
 	}
 
@@ -535,7 +535,7 @@ void RingRenderObjClass::render_ring(RenderInfoClass & rinfo,const Vector3 & cen
 	}
 	DX8Wrapper::Set_Shader(RingShader);
 	DX8Wrapper::Set_Texture(0,RingTexture);
-	DX8Wrapper::Set_Material(RingMaterial);	
+	DX8Wrapper::Set_Material(RingMaterial);
 
 	// Enable sorting if the primitive is translucent, alpha testing is not enabled, and sorting is enabled globally.
 	const bool sort = (RingShader.Get_Dst_Blend_Func() != ShaderClass::DSTBLEND_ZERO) && (RingShader.Get_Alpha_Test() == ShaderClass::ALPHATEST_DISABLE) && (WW3D::Is_Sorting_Enabled());
@@ -554,26 +554,26 @@ void RingRenderObjClass::render_ring(RenderInfoClass & rinfo,const Vector3 & cen
 			color = DX8Wrapper::Convert_Color(Alpha * Color,1.0f);
 		} else {
 			color = DX8Wrapper::Convert_Color(Color,Alpha);
-		}	
+		}
 
 		for (int i=0; i<ring.Vertex_ct; i++)
-		{			
+		{
 			vb->x = ring.vtx[i].X;
 			vb->y = ring.vtx[i].Y;
 			vb->z = ring.vtx[i].Z;
-			
+
 			vb->nx = ring.vtx_normal[i].X;		// may not need this!
 			vb->ny = ring.vtx_normal[i].Y;
 			vb->nz = ring.vtx_normal[i].Z;
 
 			vb->diffuse = color;
-			
+
 			if (RingTexture) {
 				vb->u1 = ring.vtx_uv[i].X;
 				vb->v1 = ring.vtx_uv[i].Y;
 			}
 			vb++;
-		}		
+		}
 	}
 
 	DynamicIBAccessClass ib(buffer_type, ring.face_ct * 3);
@@ -586,11 +586,11 @@ void RingRenderObjClass::render_ring(RenderInfoClass & rinfo,const Vector3 & cen
 			mem[3*i+1]=ring.tri_poly[i].J;
 			mem[3*i+2]=ring.tri_poly[i].K;
 		}
-	}	
+	}
 
 	DX8Wrapper::Set_Vertex_Buffer(vb);
 	DX8Wrapper::Set_Index_Buffer(ib,0);
-	
+
 	if (sort) {
 		SortingRendererClass::Insert_Triangles(Get_Bounding_Sphere(), 0, ring.face_ct, 0, ring.Vertex_ct);
 	} else {
@@ -676,7 +676,7 @@ void RingRenderObjClass::Render(RenderInfoClass & rinfo)
 	if (Is_Not_Hidden_At_All() == false) {
 		return;
 	}
-	
+
 	unsigned int sort_level = SORT_LEVEL_NONE;
 
 	if (!WW3D::Is_Sorting_Enabled()) {
@@ -688,10 +688,10 @@ void RingRenderObjClass::Render(RenderInfoClass & rinfo)
 		WW3D::Add_To_Static_Sort_List(this, sort_level);
 
 	} else {
-	
+
 		// Process texture reductions:
 //		if (RingTexture) RingTexture->Process_Reduction();
-		
+
 		Matrix3D temp = Transform;
 
 		// Do Time Based Animation
@@ -718,15 +718,15 @@ void RingRenderObjClass::Render(RenderInfoClass & rinfo)
 		if (Flags & USE_CAMERA_ALIGN) {
 			Vector3 obj_position;
 			Vector3 camera_z_vector;
-			
+
 			rinfo.Camera.Get_Transform().Get_Z_Vector(&camera_z_vector);
 			Transform.Get_Translation(&obj_position);
 
 			Matrix3D temp;
 			temp.Look_At(obj_position, obj_position + camera_z_vector, 0.0f);
-			DX8Wrapper::Set_Transform(D3DTS_WORLD, temp);	
+			DX8Wrapper::Set_Transform(D3DTS_WORLD, temp);
 		} else {
-			DX8Wrapper::Set_Transform(D3DTS_WORLD, Transform);	
+			DX8Wrapper::Set_Transform(D3DTS_WORLD, Transform);
 		}
 
 		//
@@ -752,7 +752,7 @@ void RingRenderObjClass::Render(RenderInfoClass & rinfo)
 Vector3 RingRenderObjClass::Get_Default_Color(void) const
 {
 	Vector3 value;
-	
+
 	if (ColorChannel.Get_Key_Count () > 0) {
 		value = ColorChannel.Get_Key (0).Get_Value ();
 	} else {
@@ -778,7 +778,7 @@ Vector3 RingRenderObjClass::Get_Default_Color(void) const
 float RingRenderObjClass::Get_Default_Alpha(void) const
 {
 	float  value;
-	
+
 	if (AlphaChannel.Get_Key_Count () > 0) {
 		value = AlphaChannel.Get_Key (0).Get_Value ();
 	} else {
@@ -804,7 +804,7 @@ float RingRenderObjClass::Get_Default_Alpha(void) const
 Vector2 RingRenderObjClass::Get_Default_Inner_Scale(void) const
 {
 	Vector2 value;
-	
+
 	if (InnerScaleChannel.Get_Key_Count () > 0) {
 		value = InnerScaleChannel.Get_Key (0).Get_Value ();
 	} else {
@@ -830,7 +830,7 @@ Vector2 RingRenderObjClass::Get_Default_Inner_Scale(void) const
 Vector2 RingRenderObjClass::Get_Default_Outer_Scale(void) const
 {
 	Vector2 value;
-	
+
 	if (OuterScaleChannel.Get_Key_Count () > 0) {
 		value = OuterScaleChannel.Get_Key (0).Get_Value ();
 	} else {
@@ -857,7 +857,7 @@ void RingRenderObjClass::Special_Render(SpecialRenderInfoClass & rinfo)
 {
 	Matrix3D temp(1);
 	temp.Translate(Transform.Get_Translation());
-	
+
 	if (rinfo.RenderType == SpecialRenderInfoClass::RENDER_VIS) {
 		WWASSERT(rinfo.VisRasterizer != NULL);
 		rinfo.VisRasterizer->Set_Model_Transform(temp);
@@ -1145,7 +1145,7 @@ void RingRenderObjClass::animate()
 				AlphaChannel.Get_Key_Count () > 0 ||
 				InnerScaleChannel.Get_Key_Count () > 0 ||
 				OuterScaleChannel.Get_Key_Count () > 0)
-		{		
+		{
 			//
 			// Convert from milliseconds to seconds and normalize the time
 			//
@@ -1165,11 +1165,11 @@ void RingRenderObjClass::animate()
 			if (ColorChannel.Get_Key_Count () > 0) {
 				Color	= ColorChannel.Evaluate (anim_time);
 			}
-			
+
 			if (AlphaChannel.Get_Key_Count () > 0) {
 				Alpha	= AlphaChannel.Evaluate (anim_time);
 			}
-			
+
 			if (InnerScaleChannel.Get_Key_Count () > 0) {
 				InnerScale	= InnerScaleChannel.Evaluate (anim_time);
 			}
@@ -1209,9 +1209,9 @@ RingPrototypeClass::RingPrototypeClass (void)
 
 RingPrototypeClass::RingPrototypeClass(RingRenderObjClass *ring)
 {
-	::memset (&Definition, 0, sizeof (Definition));	
+	::memset (&Definition, 0, sizeof (Definition));
 	::strcpy (Definition.Name, ring->Get_Name ());
-	
+
 	Definition.AnimDuration			= ring->AnimDuration;
 	Definition.Attributes			= ring->Get_Flags ();
 	Definition.DefaultAlpha			= ring->Get_Default_Alpha ();
@@ -1221,13 +1221,13 @@ RingPrototypeClass::RingPrototypeClass(RingRenderObjClass *ring)
 
 	Definition.InnerExtent			= ring->Get_Inner_Extent ();
 	Definition.OuterExtent			= ring->Get_Outer_Extent ();
-	
+
 	Vector3 def_color = ring->Get_Default_Color ();
 	W3dUtilityClass::Convert_Vector (def_color, &Definition.DefaultColor);
-	
+
 	W3dUtilityClass::Convert_Vector (ring->Get_Box ().Center, &Definition.Center);
-	W3dUtilityClass::Convert_Vector (ring->Get_Box ().Extent, &Definition.Extent);	
-	W3dUtilityClass::Convert_Shader (ring->RingShader, &Definition.Shader);	
+	W3dUtilityClass::Convert_Vector (ring->Get_Box ().Extent, &Definition.Extent);
+	W3dUtilityClass::Convert_Shader (ring->RingShader, &Definition.Shader);
 
 	//
 	//	Determine the texture name for this ring
@@ -1287,7 +1287,7 @@ bool RingPrototypeClass::Load (ChunkLoadClass &cload)
 
 	while (cload.Open_Chunk ()) {
 		switch (cload.Cur_Chunk_ID ()) {
-			
+
 			case CHUNKID_RING_DEF:
 				cload.Read (&Definition, sizeof (Definition));
 				break;
@@ -1350,14 +1350,14 @@ bool RingPrototypeClass::Save (ChunkSaveClass &csave)
 	csave.End_Chunk ();
 	return true;
 }
-	
+
 RenderObjClass * RingPrototypeClass::Create(void)
 {
 	//
 	//	Create the new render object
 	//
 	RingRenderObjClass *ring = W3DNEW RingRenderObjClass (Definition);
-	
+
 	//
 	//	Configure the ring
 	//
@@ -1375,7 +1375,7 @@ RenderObjClass * RingPrototypeClass::Create(void)
 	ring->Set_Inner_Extent (Definition.InnerExtent);
 	ring->Set_Outer_Extent (Definition.OuterExtent);
 	ring->Set_Texture_Tiling (Definition.TextureTileCount);
-	
+
 	//
 	//	Initialize the render object with the keyframe arrays
 	//
@@ -1468,7 +1468,7 @@ void RingMeshClass::Set_Tiling (int count)
 		//
 		//	Reassign the UVs
 		//
-		for (int index = 0; index < Vertex_ct; index += 2) {			
+		for (int index = 0; index < Vertex_ct; index += 2) {
 			vtx_uv[index].Set (u_value, 0.0F);
 			vtx_uv[index + 1].Set (u_value, 1.0F);
 			u_value += u_inc;
@@ -1502,7 +1502,7 @@ void RingMeshClass::Scale (const Vector2 &inner_scale, const Vector2 &outer_scal
 	//	Only scale the outer ring if necessary
 	//
 	if (do_outer) {
-		
+
 		for (int index = 1; index < Vertex_ct; index += 2) {
 			vtx[index].X = orig_vtx[index].X * outer_scale.X;
 			vtx[index].Y = orig_vtx[index].Y * outer_scale.Y;
@@ -1554,10 +1554,10 @@ void RingMeshClass::Generate(float radius, int slices)
 	int	index			= 0;
 
 	for (index = 0; index < Vertex_ct; index += 2) {
-		
+
 		float x_pos = -WWMath::Sin (angle);
 		float y_pos = WWMath::Cos (angle);
-		
+
 		//
 		//	Place the inner index
 		//
@@ -1577,7 +1577,7 @@ void RingMeshClass::Generate(float radius, int slices)
 		//
 		vtx_normal[index].Set (0, 0, 1);
 		vtx_normal[index + 1].Set (0, 0, 1);
-		
+
 		//
 		//	Assign the UVs
 		//
@@ -1595,7 +1595,7 @@ void RingMeshClass::Generate(float radius, int slices)
 		tri_poly[index].I = index;
 		tri_poly[index].J = index+1;
 		tri_poly[index].K = index+2;
-	}	
+	}
 
 	return ;
 }

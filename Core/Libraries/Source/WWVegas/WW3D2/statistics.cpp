@@ -175,7 +175,7 @@ static bool Find_Record_Texture(TextureClass* t)
 					texture_statistics[a].change_count++;
 				}
 			}
-		
+
 			return true;
 		}
 	}

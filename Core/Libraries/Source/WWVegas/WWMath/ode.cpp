@@ -17,26 +17,26 @@
 */
 
 /* $Header: /Commando/Code/wwmath/ODE.CPP 8     7/02/99 10:32a Greg_h $ */
-/*********************************************************************************************** 
- ***                            Confidential - Westwood Studios                              *** 
- *********************************************************************************************** 
- *                                                                                             * 
- *                 Project Name : Commando                                                     * 
- *                                                                                             * 
- *                     $Archive:: /Commando/Code/wwmath/ODE.CPP                               $* 
- *                                                                                             * 
- *                       Author:: Greg_h                                                       * 
- *                                                                                             * 
- *                     $Modtime:: 6/25/99 6:23p                                               $* 
- *                                                                                             * 
- *                    $Revision:: 8                                                           $* 
- *                                                                                             * 
- *---------------------------------------------------------------------------------------------* 
- * Functions:                                                                                  * 
- *   Euler_Integrate -- uses Eulers method to integrate a system of ODE's                      * 
- *   Midpoint_Integrate -- midpoint method (Runge-Kutta 2) for integration                     * 
- *   Runge_Kutta_Integrate -- Runge Kutta 4 method                                             * 
- *   Runge_Kutta5_Integrate -- 5th order Runge-Kutta                                           * 
+/***********************************************************************************************
+ ***                            Confidential - Westwood Studios                              ***
+ ***********************************************************************************************
+ *                                                                                             *
+ *                 Project Name : Commando                                                     *
+ *                                                                                             *
+ *                     $Archive:: /Commando/Code/wwmath/ODE.CPP                               $*
+ *                                                                                             *
+ *                       Author:: Greg_h                                                       *
+ *                                                                                             *
+ *                     $Modtime:: 6/25/99 6:23p                                               $*
+ *                                                                                             *
+ *                    $Revision:: 8                                                           $*
+ *                                                                                             *
+ *---------------------------------------------------------------------------------------------*
+ * Functions:                                                                                  *
+ *   Euler_Integrate -- uses Eulers method to integrate a system of ODE's                      *
+ *   Midpoint_Integrate -- midpoint method (Runge-Kutta 2) for integration                     *
+ *   Runge_Kutta_Integrate -- Runge Kutta 4 method                                             *
+ *   Runge_Kutta5_Integrate -- 5th order Runge-Kutta                                           *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "ode.h"
@@ -53,20 +53,20 @@ static StateVectorClass		_WorkVector5;
 static StateVectorClass		_WorkVector6;
 static StateVectorClass		_WorkVector7;
 
-/*********************************************************************************************** 
- * Euler_Solve -- uses Eulers method to integrate a system of ODE's                            * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- * odesys - pointer to the ODE system to integrate                                             * 
- * dt - size of the timestep                                                                   * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- * state vector in odesys will be updated for the next timestep                                * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   08/11/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * Euler_Solve -- uses Eulers method to integrate a system of ODE's                            *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ * odesys - pointer to the ODE system to integrate                                             *
+ * dt - size of the timestep                                                                   *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ * state vector in odesys will be updated for the next timestep                                *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   08/11/1997 GH  : Created.                                                                 *
  *   6/25/99    GTH : Updated to the new integrator system                                     *
  *=============================================================================================*/
 void IntegrationSystem::Euler_Integrate(ODESystemClass * sys, float dt)
@@ -100,20 +100,20 @@ void IntegrationSystem::Euler_Integrate(ODESystemClass * sys, float dt)
 	sys->Set_State(Y1);
 }
 
-/*********************************************************************************************** 
- * Midpoint_Integrate -- midpoint method (Runge-Kutta 2)                                       * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- * sys - pointer to the ODE system to integrate                                                * 
- * dt - size of the timestep                                                                   * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- * state vector in odesys will be updated for the next timestep                                * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   08/11/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * Midpoint_Integrate -- midpoint method (Runge-Kutta 2)                                       *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ * sys - pointer to the ODE system to integrate                                                *
+ * dt - size of the timestep                                                                   *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ * state vector in odesys will be updated for the next timestep                                *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   08/11/1997 GH  : Created.                                                                 *
  *   6/25/99    GTH : Updated to the new integrator system                                     *
  *=============================================================================================*/
 void IntegrationSystem::Midpoint_Integrate(ODESystemClass * sys,float dt)
@@ -137,20 +137,20 @@ void IntegrationSystem::Midpoint_Integrate(ODESystemClass * sys,float dt)
 
 	/*
 	** MidPoint method, first evaluate the derivitives of the
-	** state vector just like the Euler method.  
+	** state vector just like the Euler method.
 	*/
 	sys->Compute_Derivatives(0.0f,NULL,&dydt);
 
 	/*
-	** Compute the midpoint between the Euler solution and 
+	** Compute the midpoint between the Euler solution and
 	** the input values.
 	*/
 	for (i=0; i<Y0.Count(); i++) {
 		ymid[i] = Y0[i] + dt * dydt[i] / 2.0f;
 	}
-	
+
 	/*
-	** Re-compute derivatives at this point.  
+	** Re-compute derivatives at this point.
 	*/
 	sys->Compute_Derivatives(dt/2.0f,&ymid,&dydt);
 
@@ -165,20 +165,20 @@ void IntegrationSystem::Midpoint_Integrate(ODESystemClass * sys,float dt)
 }
 
 
-/*********************************************************************************************** 
- * Runge_Kutta_Integrate -- Runge Kutta 4 method                                               * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- * odesys - pointer to the ODE system to integrate                                             * 
- * dt - size of the timestep                                                                   * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- * state vector in odesys will be updated for the next timestep                                * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   08/11/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * Runge_Kutta_Integrate -- Runge Kutta 4 method                                               *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ * odesys - pointer to the ODE system to integrate                                             *
+ * dt - size of the timestep                                                                   *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ * state vector in odesys will be updated for the next timestep                                *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   08/11/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
 void IntegrationSystem::Runge_Kutta_Integrate(ODESystemClass * sys,float dt)
 {
@@ -212,7 +212,7 @@ void IntegrationSystem::Runge_Kutta_Integrate(ODESystemClass * sys,float dt)
 	for (i=0; i<Y0.Count(); i++) {
 		yt[i] = Y0[i] + dt2 * dydt[i];
 	}
-	
+
 	/*
 	** Second Step
 	*/
@@ -220,7 +220,7 @@ void IntegrationSystem::Runge_Kutta_Integrate(ODESystemClass * sys,float dt)
 	for (i=0; i<Y0.Count(); i++) {
 		yt[i] = Y0[i] + dt2 * dyt[i];
 	}
-	
+
 	/*
 	** Third Step
 	*/
@@ -241,20 +241,20 @@ void IntegrationSystem::Runge_Kutta_Integrate(ODESystemClass * sys,float dt)
 	sys->Set_State(Y1);
 }
 
-/*********************************************************************************************** 
- * Runge_Kutta5_Integrate -- 5th order Runge-Kutta                                             * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- * odesys - pointer to the ODE system to integrate                                             * 
- * dt - size of the timestep                                                                   * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- * state vector in odesys will be updated for the next timestep                                * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   08/11/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * Runge_Kutta5_Integrate -- 5th order Runge-Kutta                                             *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ * odesys - pointer to the ODE system to integrate                                             *
+ * dt - size of the timestep                                                                   *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ * state vector in odesys will be updated for the next timestep                                *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   08/11/1997 GH  : Created.                                                                 *
  *   6/25/99    GTH : Converted to the new Integrator system                                   *
  *=============================================================================================*/
 void IntegrationSystem::Runge_Kutta5_Integrate(ODESystemClass * odesys,float dt)
@@ -331,13 +331,13 @@ void IntegrationSystem::Runge_Kutta5_Integrate(ODESystemClass * odesys,float dt)
 	for (i=0; i<veclen; i++) {
 		ytmp[i] = Y0[i] + dt*(b31*dydt[i] + b32*ak2[i]);
 	}
-	
+
 	// Third step
 	odesys->Compute_Derivatives(a3*dt, &ytmp, &ak3);
 	for (i=0; i<veclen; i++) {
 		ytmp[i] = Y0[i] + dt*(b41*dydt[i] + b42*ak2[i] + b43*ak3[i]);
 	}
-	
+
 	// Fourth step
 	odesys->Compute_Derivatives(a4*dt, &ytmp, &ak4);
 	for (i=0; i<veclen; i++) {
@@ -356,7 +356,7 @@ void IntegrationSystem::Runge_Kutta5_Integrate(ODESystemClass * odesys,float dt)
 		Y1[i] = Y0[i] + dt*(c1*dydt[i] + c3*ak3[i] + c4*ak4[i] + c6*ak6[i]);
 	}
 
-	// Error approximation!  
+	// Error approximation!
 	// (maybe I should use this someday? nah not going to use this integrator anyway...)
 	for (i=0; i<veclen; i++) {
 		yerr[i] = dt*(dc1*dydt[i] + dc3*ak3[i] + dc4*ak4[i] + dc5*ak5[i] + dc6*ak6[i]);

@@ -74,10 +74,10 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // CAnimReportPage message handlers
 
-BOOL CAnimReportPage::OnInitDialog() 
+BOOL CAnimReportPage::OnInitDialog()
 {
 	CPropertyPage::OnInitDialog();
-	
+
 	return TRUE;  // return TRUE unless you set the focus to a control
 	              // EXCEPTION: OCX Property Pages should return FALSE
 }
@@ -201,7 +201,7 @@ void CAnimReportPage::MakeChannelStr (int bone_idx, HAnimClass *hanim, char *cha
 		strcat(channels, "V");
 }
 
-BOOL CAnimReportPage::OnSetActive() 
+BOOL CAnimReportPage::OnSetActive()
 {
 	// Delete all info in the report view.
 	m_AnimReport.DeleteAllItems();
@@ -211,6 +211,6 @@ BOOL CAnimReportPage::OnSetActive()
 	// a change in selection on the mixing page will have an
 	// effect on this page.
 	FillListControl();
-	
+
 	return CPropertyPage::OnSetActive();
 }

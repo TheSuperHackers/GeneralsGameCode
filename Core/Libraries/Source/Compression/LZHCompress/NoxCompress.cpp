@@ -45,7 +45,7 @@ Bool DecompressFile		(char *infile, char *outfile)
 	size_t srcSz, dstSz;
 
 	// Parameter checking
-	 
+
 	if (( infile == NULL ) || ( outfile == NULL ))
 		return FALSE;
 
@@ -60,7 +60,7 @@ Bool DecompressFile		(char *infile, char *outfile)
 
 		compressedSize -= sizeof(UnsignedInt);
 
-		// Get uncompressed size. Don't worry about endian, 
+		// Get uncompressed size. Don't worry about endian,
 		// this is always INTEL baby!
 		NoxRead(&rawSize, 1, sizeof(UnsignedInt), inFilePtr);
 
@@ -79,13 +79,13 @@ Bool DecompressFile		(char *infile, char *outfile)
 		// Decompress
 		srcSz = compressedSize;
 		dstSz = rawSize;
-		
+
 		// Just Do it!
 		decompress = LZHLCreateDecompressor();
 
 		for (;;)
 		{
-			ok = LZHLDecompress( decompress, outBlock + rawSize - dstSz, &dstSz, 
+			ok = LZHLDecompress( decompress, outBlock + rawSize - dstSz, &dstSz,
 																			 inBlock + compressedSize - srcSz, &srcSz);
 
 			if ( !ok )
@@ -130,7 +130,7 @@ Bool CompressFile			(char *infile, char *outfile)
 	UnsignedInt blocklen;
 
 	// Parameter checking
-	 
+
 	if (( infile == NULL ) || ( outfile == NULL ))
 		return FALSE;
 
@@ -189,7 +189,7 @@ Bool CompressFile			(char *infile, char *outfile)
 Bool CompressPacket		(char *inPacket, char *outPacket)
 {
 	// Parameter checking
-	 
+
 	if (( inPacket == NULL ) || ( outPacket == NULL ))
 		return FALSE;
 
@@ -200,7 +200,7 @@ Bool CompressPacket		(char *inPacket, char *outPacket)
 Bool DecompressPacket	(char *inPacket, char *outPacket)
 {
 	// Parameter checking
-	 
+
 	if (( inPacket == NULL ) || ( outPacket == NULL ))
 		return FALSE;
 	return TRUE;
@@ -222,7 +222,7 @@ Bool DecompressMemory		(void *inBufferVoid, Int inSize, void *outBufferVoid, Int
 	size_t srcSz, dstSz;
 
 	// Parameter checking
-	 
+
 	if (( inBuffer == NULL ) || ( outBuffer == NULL ) || ( inSize < 4 ) || ( outSize == 0 ))
 		return FALSE;
 
@@ -235,13 +235,13 @@ Bool DecompressMemory		(void *inBufferVoid, Int inSize, void *outBufferVoid, Int
 	// Decompress
 	srcSz = compressedSize;
 	dstSz = rawSize;
-	
+
 	// Just Do it!
 	decompress = LZHLCreateDecompressor();
 
 	for (;;)
 	{
-		ok = LZHLDecompress( decompress, outBuffer + rawSize - dstSz, &dstSz, 
+		ok = LZHLDecompress( decompress, outBuffer + rawSize - dstSz, &dstSz,
 																		 inBuffer + compressedSize - srcSz, &srcSz);
 
 		if ( !ok )
@@ -269,7 +269,7 @@ Bool CompressMemory			(void *inBufferVoid, Int inSize, void *outBufferVoid, Int&
 	UnsignedInt blocklen;
 
 	// Parameter checking
-	 
+
 	if (( inBuffer == NULL ) || ( outBuffer == NULL ) || ( inSize < 4 ) || ( outSize == 0 ))
 		return FALSE;
 

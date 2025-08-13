@@ -16,24 +16,24 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/***************************************************************************************************************** 
- ***                      C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S                         *** 
- ***************************************************************************************************************** 
- *                                                                                                               * 
- *                         Project Name : G                                                                      * 
- *                                                                                                               * 
- *                             $Archive::                                                                       $* 
- *                                                                                                               * 
+/*****************************************************************************************************************
+ ***                      C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S                         ***
+ *****************************************************************************************************************
+ *                                                                                                               *
+ *                         Project Name : G                                                                      *
+ *                                                                                                               *
+ *                             $Archive::                                                                       $*
+ *                                                                                                               *
  *                              Creator::Scott K. Bowen - 7/15/2002                                                  *
- *                                                                                                               * 
- *                              $Author::                                                                       $* 
- *                                                                                                               * 
- *                             $Modtime::                                                                       $* 
- *                                                                                                               * 
- *                            $Revision::                                                                       $* 
- *                                                                                                               * 
- *---------------------------------------------------------------------------------------------------------------* 
- * Functions:                                                                                                    * 
+ *                                                                                                               *
+ *                              $Author::                                                                       $*
+ *                                                                                                               *
+ *                             $Modtime::                                                                       $*
+ *                                                                                                               *
+ *                            $Revision::                                                                       $*
+ *                                                                                                               *
+ *---------------------------------------------------------------------------------------------------------------*
+ * Functions:                                                                                                    *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 #if defined(_MSC_VER)
 #pragma once
@@ -86,7 +86,7 @@ class DefaultStaticSortListClass : public StaticSortListClass
 		// are set to 1..MAX_SORT_LEVEL and then never changed.
 		unsigned int				MinSort;
 		unsigned int				MaxSort;
- 
+
 		// An array of lists - each object in a given list has same SortLevel.
 		RefRenderObjListClass 	SortLists[MAX_SORT_LEVEL + 1];
 

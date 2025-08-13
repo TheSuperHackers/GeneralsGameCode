@@ -17,22 +17,22 @@
 */
 
 /* $Header: /Commando/Code/Tools/max2w3d/namedsel.h 4     10/28/97 6:08p Greg_h $ */
-/*********************************************************************************************** 
- ***                            Confidential - Westwood Studios                              *** 
- *********************************************************************************************** 
- *                                                                                             * 
- *                 Project Name : Commando Tools - WWSkin                                      * 
- *                                                                                             * 
- *                     $Archive:: /Commando/Code/Tools/max2w3d/namedsel.h                     $* 
- *                                                                                             * 
- *                      $Author:: Greg_h                                                      $* 
- *                                                                                             * 
- *                     $Modtime:: 10/21/97 2:05p                                              $* 
- *                                                                                             * 
- *                    $Revision:: 4                                                           $* 
- *                                                                                             * 
- *---------------------------------------------------------------------------------------------* 
- * Functions:                                                                                  * 
+/***********************************************************************************************
+ ***                            Confidential - Westwood Studios                              ***
+ ***********************************************************************************************
+ *                                                                                             *
+ *                 Project Name : Commando Tools - WWSkin                                      *
+ *                                                                                             *
+ *                     $Archive:: /Commando/Code/Tools/max2w3d/namedsel.h                     $*
+ *                                                                                             *
+ *                      $Author:: Greg_h                                                      $*
+ *                                                                                             *
+ *                     $Modtime:: 10/21/97 2:05p                                              $*
+ *                                                                                             *
+ *                    $Revision:: 4                                                           $*
+ *                                                                                             *
+ *---------------------------------------------------------------------------------------------*
+ * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #ifndef NAMEDSEL_H
@@ -48,27 +48,27 @@
 ** It is basically a dynamically sized array
 ** of bitarrays.
 */
-class NamedSelSetList 
+class NamedSelSetList
 {
 public:
 	Tab<BitArray*>			Sets;
 	Tab<TSTR*>				Names;
-	
+
 	~NamedSelSetList();
 
 	BitArray & operator[](int i) { return *Sets[i]; }
 	int Count() { return Sets.Count(); }
-	
+
 	int  Find_Set(TSTR & setname);
 	void Delete_Set(int i);
 	void Delete_Set(TSTR & setname);
 	void Reset(void);
 	void Append_Set(BitArray & nset,TSTR & setname);
-	
+
 	IOResult Load(ILoad * iload);
 	IOResult Save(ISave * isave);
 	IOResult Load_Set(ILoad * iload);
-	
+
 	void Set_Size(int size);
 	NamedSelSetList & operator=(NamedSelSetList & from);
 

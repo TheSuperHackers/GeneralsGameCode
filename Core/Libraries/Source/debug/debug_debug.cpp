@@ -38,7 +38,7 @@ extern "C" bool __DebugIncludeInLink1;
 bool __DebugIncludeInLink1;
 
 // This part is a little tricky (and not portable to other compilers).
-// MSVC initializes all static C++ variables by calling a list of 
+// MSVC initializes all static C++ variables by calling a list of
 // function pointers contained in data segments called .CRT$XCA to
 // .CRT$XCZ. We jam in our own two functions at the very beginning
 // and end of this list (B and Y respectively since the A and Z segments
@@ -101,7 +101,7 @@ void Debug::PreStaticInit(void)
   Instance.timeStamp=false;
   Instance.m_radix=10;
   Instance.m_fillChar=' ';
-  
+
   /// install exception handler
   SetUnhandledExceptionFilter(DebugExceptionhandler::ExceptionFilter);
 }
@@ -270,7 +270,7 @@ bool Debug::SkipNext(void)
   // do not implement this function inline, we do need
   // a valid frame pointer here!
   unsigned help;
-  _asm 
+  _asm
   {
     mov eax,[ebp+4]   // return address
     mov help,eax
@@ -315,7 +315,7 @@ Debug& Debug::AssertBegin(const char *file, int line, const char *expr)
     const char *p=strstr(file,"\\code\\");
     p=p?p+6:file;
 
-    Instance << "\n" << RepeatChar('=',80) << "\nAssertion failed in " << p << ", line " << line 
+    Instance << "\n" << RepeatChar('=',80) << "\nAssertion failed in " << p << ", line " << line
              << ",\nexpression " << expr;
   }
 
@@ -347,7 +347,7 @@ bool Debug::AssertDone(void)
     char *help=(char *)DebugAllocMemory(ioBuffer[curType].used+strlen(addInfo)+1);
     strcpy(help,ioBuffer[curType].buffer+82);
     strcat(help,addInfo);
-    
+
     // First hit? Then do a stack trace
     if (curFrameEntry->hits==1)
     {
@@ -392,7 +392,7 @@ bool Debug::AssertDone(void)
           ((void)0);
       }
     }
-    else 
+    else
     {
       // we're running fullscreen
 
@@ -444,7 +444,7 @@ Debug& Debug::CheckBegin(const char *file, int line, const char *expr)
     const char *p=strstr(file,"\\code\\");
     p=p?p+6:file;
 
-    Instance << "\n" << RepeatChar('=',80) << "\nCheck failed in " << p << ", line " << line 
+    Instance << "\n" << RepeatChar('=',80) << "\nCheck failed in " << p << ", line " << line
              << ",\nexpression " << expr;
   }
 
@@ -532,7 +532,7 @@ Debug& Debug::LogBegin(const char *fileOrGroup)
   }
   else if (Instance.curType!=DebugIOInterface::StringType::MAX)
     Instance.FlushOutput();
-  
+
   return Instance;
 }
 
@@ -571,7 +571,7 @@ Debug& Debug::CrashBegin(const char *file, int line)
       const char *p=strstr(file,"\\code\\");
       p=p?p+6:file;
 
-      Instance << "Crash in " << p << ", line " << line 
+      Instance << "Crash in " << p << ", line " << line
                << ", reason:\n";
     }
   }
@@ -611,7 +611,7 @@ bool Debug::CrashDone(bool die)
     char *help=(char *)DebugAllocMemory(ioBuffer[curType].used+strlen(addInfo)+1);
     strcpy(help,ioBuffer[curType].buffer+82);
     strcat(help,addInfo);
-    
+
     // First hit? Then do a stack trace
     if (curFrameEntry->hits==1)
     {
@@ -1014,7 +1014,7 @@ bool Debug::AddIOFactory(const char *io_id, const char *descr, DebugIOInterface*
   // bail out if invalid parameters passed in
   if (!io_id||!func)
     return true;
-  
+
   // allocate & init new list entry
   IOFactoryListEntry *entry=(IOFactoryListEntry *)
                       DebugAllocMemory(sizeof(IOFactoryListEntry));
@@ -1048,7 +1048,7 @@ bool Debug::AddCommands(const char *cmdgroup, DebugCmdInterface *cmdif)
       return true;
     listptr=&((*listptr)->next);
   }
-  
+
   // allocate & init new list entry
   CmdInterfaceListEntry *entry=(CmdInterfaceListEntry *)
                       DebugAllocMemory(sizeof(CmdInterfaceListEntry));
@@ -1116,8 +1116,8 @@ void Debug::Update(void)
       cur->inputUsed+=numChars;
       cur->input[cur->inputUsed]=0;
       hadInput=true;
-    } 
-    
+    }
+
     if (!hadInput)
       // skip then
       continue;
@@ -1163,7 +1163,7 @@ Debug::FrameHashEntry* Debug::AddFrameEntry(unsigned addr, unsigned type,
   if (type&FrameTypeLog)
   {
     // must add to list of known logs,
-    // store translated name 
+    // store translated name
     e->fileOrGroup=AddLogGroup(fileOrGroup,NULL);
   }
   else
@@ -1187,7 +1187,7 @@ void Debug::UpdateFrameStatus(FrameHashEntry &entry)
     wsprintf(help,"%s(%i)",entry.fileOrGroup,entry.line);
   else
     strcpy(help,entry.fileOrGroup);
-  
+
   // update frame status
   bool active=entry.frameType!=FrameTypeLog;
   for (PatternListEntry *cur=firstPatternEntry;cur;cur=cur->next)
@@ -1408,7 +1408,7 @@ bool Debug::SimpleMatch(const char *str, const char *pattern)
           return true;
       return *str==*pattern;
     }
-    else 
+    else
     {
       if (*str++!=*pattern++)
         return false;
@@ -1538,7 +1538,7 @@ void Debug::ExecCommand(const char *cmdstart, const char *cmdend)
 
     if (mode!=DebugCmdInterface::CommandMode::Structured)
       AddOutput("> ",2);
-  
+
     // repeat current command first
     AddOutput(cmdstart,cmdend-cmdstart);
     AddOutput("\n",1);

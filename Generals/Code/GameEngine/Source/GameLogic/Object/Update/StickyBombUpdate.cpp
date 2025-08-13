@@ -104,7 +104,7 @@ void StickyBombUpdate::init( const Object *target, const Object *bomber)
 	{
 		//we are a timer bomb
 		m_dieFrame = update->getDieFrame();
-	
+
 		//Calculate the number of seconds (rounded down)
 		UnsignedInt pings = (m_dieFrame - now) / LOGICFRAMES_PER_SECOND;
 		//Now determine the next frame we will make a "ping" sound.

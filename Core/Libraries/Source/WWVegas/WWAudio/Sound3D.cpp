@@ -66,7 +66,7 @@ enum
 	VARID_CURR_VEL,
 	VARID_XXX1,
 	VARID_XXX2,
-	VARID_MAX_VOL_RADIUS,	
+	VARID_MAX_VOL_RADIUS,
 	VARID_IS_STATIC,
 };
 
@@ -78,7 +78,7 @@ enum
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////
 Sound3DClass::Sound3DClass (void)
-	: m_bAutoCalcVel (true),	  
+	: m_bAutoCalcVel (true),
 	  m_CurrentVelocity (0, 0, 0),
 	  m_MaxVolRadius (0),
 	  m_LastUpdate (0),
@@ -95,7 +95,7 @@ Sound3DClass::Sound3DClass (void)
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////
 Sound3DClass::Sound3DClass (const Sound3DClass &src)
-	: m_bAutoCalcVel (true),	  
+	: m_bAutoCalcVel (true),
 	  m_CurrentVelocity (0, 0, 0),
 	  m_MaxVolRadius (0),
 	  m_LastUpdate (0),
@@ -114,7 +114,7 @@ Sound3DClass::Sound3DClass (const Sound3DClass &src)
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////
 Sound3DClass::~Sound3DClass (void)
-{	
+{
  	Free_Miles_Handle ();
 	return ;
 }
@@ -152,7 +152,7 @@ Sound3DClass::Play (bool alloc_handle)
 	if (m_State != STATE_PLAYING) {
 		m_LastUpdate = ::GetTickCount ();
 	}
-	
+
 	// Allow the base class to process this call
 	return AudibleSoundClass::Play (m_IsCulled == false);
 }
@@ -172,7 +172,7 @@ Sound3DClass::On_Frame_Update (unsigned int milliseconds)
 		m_Scene->Update_Sound (m_PhysWrapper);
 		m_bDirty = false;
 	}
-	
+
 	//
 	// Update the sound's position if its linked to a render object
 	//
@@ -198,7 +198,7 @@ Sound3DClass::On_Frame_Update (unsigned int milliseconds)
 		//
 		if (last_pos != curr_pos) {
 			Vector3 curr_vel;
-			
+
 			//
 			//	Extrapolate our current velocity given the last time slice and the distance
 			// we moved.
@@ -302,7 +302,7 @@ Sound3DClass::Update_Miles_Transform (void)
 		Matrix3D listener_space_tm;
 		listener_space_tm.mul(world_to_listener_tm, m_Transform);
 #endif
-		
+
 		//
 		// Pass the sound's position onto miles
 		//
@@ -314,7 +314,7 @@ Sound3DClass::Update_Miles_Transform (void)
 		//
 		Vector3 facing	= listener_space_tm.Get_X_Vector ();
 		Vector3 up		= listener_space_tm.Get_Z_Vector ();
-		
+
 		::AIL_set_3D_orientation (m_SoundHandle->Get_H3DSAMPLE (),
 										  -facing.Y,
 										  facing.Z,
@@ -344,7 +344,7 @@ Sound3DClass::Set_Position (const Vector3 &position)
 		//
 		// SKB: 4/13/01 - Confirmed to be OK by Pat Smith.
 		//  Took Set_Transform() outside of condition because even if sound is
-		//  not playing I need to be able to change it's position.  
+		//  not playing I need to be able to change it's position.
 		//  I had a problem that sounds would never be added to the scene because
 		//  their positions stayed at 0,0,0 even after this Set_Postion() call.
 		m_PrevTransform = m_Transform;
@@ -355,16 +355,16 @@ Sound3DClass::Set_Position (const Vector3 &position)
 			m_PrevTransform = m_Transform;
 			m_IsTransformInitted = true;
 		}
-	
+
 		if (m_SoundHandle != NULL) {
-			
+
 			//
 			//	Transform the sound's position into 'listener-space'
 			//
 			Vector3 sound_pos	= position;
 			Vector3 listener_space_pos;
 			Matrix3D::Inverse_Transform_Vector (m_ListenerTransform, sound_pos, &listener_space_pos);
-			
+
 			//
 			//	Update the object's position inside of Miles
 			//
@@ -372,7 +372,7 @@ Sound3DClass::Set_Position (const Vector3 &position)
 					listener_space_pos.Z, listener_space_pos.X);
 		}
 	}
-	
+
 	return ;
 }
 
@@ -393,8 +393,8 @@ Sound3DClass::Set_Velocity (const Vector3 &velocity)
 	//
 	// Pass the sound's velocity onto miles
 	//
-	if (m_SoundHandle != NULL) {		
-		
+	if (m_SoundHandle != NULL) {
+
 		//WWDEBUG_SAY (("Current Velocity: %.2f %.2f %.2f", m_CurrentVelocity.X, m_CurrentVelocity.Y, m_CurrentVelocity.Z));
 		::AIL_set_3D_velocity_vector (m_SoundHandle->Get_H3DSAMPLE (),
 												-m_CurrentVelocity.Y,
@@ -460,7 +460,7 @@ Sound3DClass::Set_Max_Vol_Radius (float radius)
 void
 Sound3DClass::Initialize_Miles_Handle (void)
 {
-	MMSLockClass lock;	
+	MMSLockClass lock;
 
 	// If this sound is already playing, then update its
 	// playing position to make sure we really should
@@ -497,7 +497,7 @@ Sound3DClass::Initialize_Miles_Handle (void)
 													m_DropOffRadius,
 													(m_MaxVolRadius > 1.0F) ? m_MaxVolRadius : 1.0F);
 
-		
+
 		//
 		//	Assign the 3D effects level accordingly (for reverb, etc)
 		//
@@ -534,7 +534,7 @@ Sound3DClass::Initialize_Miles_Handle (void)
 		// Associate this object instance with the handle
 		m_SoundHandle->Set_Sample_User_Data (INFO_OBJECT_PTR, (S32)this);
 	}
-		
+
 	return ;
 }
 
@@ -570,8 +570,8 @@ Sound3DClass::Add_To_Scene (bool start_playing)
 {
 	SoundSceneClass *scene = WWAudioClass::Get_Instance ()->Get_Sound_Scene ();
 	if ((scene != NULL) && (m_Scene == NULL)) {
-		
-		// Determine what culling system this sound belongs to		
+
+		// Determine what culling system this sound belongs to
 		if (m_IsStatic) {
 			scene->Add_Static_Sound (this, start_playing);
 		} else {
@@ -593,7 +593,7 @@ void
 Sound3DClass::Remove_From_Scene (void)
 {
 	if (m_Scene != NULL) {
-		
+
 		// Determine what culling system this sound belongs to
 		if (m_IsStatic) {
 			m_Scene->Remove_Static_Sound (this);
@@ -647,13 +647,13 @@ Sound3DClass::Save (ChunkSaveClass &csave)
 	csave.End_Chunk ();
 
 	csave.Begin_Chunk (CHUNKID_VARIABLES);
-		
+
 		WRITE_MICRO_CHUNK (csave, VARID_AUTO_CALC_VEL, m_bAutoCalcVel);
 		WRITE_MICRO_CHUNK (csave, VARID_CURR_VEL, m_CurrentVelocity);
 
 		WRITE_MICRO_CHUNK (csave, VARID_MAX_VOL_RADIUS, m_MaxVolRadius);
 		WRITE_MICRO_CHUNK (csave, VARID_IS_STATIC, m_IsStatic);
-		
+
 	csave.End_Chunk ();
 
 	return true;
@@ -668,7 +668,7 @@ Sound3DClass::Save (ChunkSaveClass &csave)
 bool
 Sound3DClass::Load (ChunkLoadClass &cload)
 {
-	while (cload.Open_Chunk ()) {		
+	while (cload.Open_Chunk ()) {
 		switch (cload.Cur_Chunk_ID ()) {
 
 			case CHUNKID_BASE_CLASS:
@@ -686,7 +686,7 @@ Sound3DClass::Load (ChunkLoadClass &cload)
 						READ_MICRO_CHUNK (cload, VARID_AUTO_CALC_VEL, m_bAutoCalcVel);
 						READ_MICRO_CHUNK (cload, VARID_CURR_VEL, m_CurrentVelocity);
 						READ_MICRO_CHUNK (cload, VARID_MAX_VOL_RADIUS, m_MaxVolRadius);
-						READ_MICRO_CHUNK (cload, VARID_IS_STATIC, m_IsStatic);							
+						READ_MICRO_CHUNK (cload, VARID_IS_STATIC, m_IsStatic);
 					}
 
 					cload.Close_Micro_Chunk ();
@@ -719,7 +719,7 @@ Sound3DClass::Set_Miles_Handle (MILES_HANDLE handle)
 	//	Is our data valid?
 	//
 	if (handle != INVALID_MILES_HANDLE && m_Buffer != NULL) {
-		
+
 		//
 		//	Configure the sound handle
 		//

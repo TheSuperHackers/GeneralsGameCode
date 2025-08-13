@@ -39,7 +39,7 @@
 TerrainTypeCollection *TheTerrainTypes = NULL;
 
 // PRIVATE DATA ///////////////////////////////////////////////////////////////////////////////////
-const FieldParse TerrainType::m_terrainTypeFieldParseTable[] = 
+const FieldParse TerrainType::m_terrainTypeFieldParseTable[] =
 {
 
 	{ "Texture",		INI::parseAsciiString,			NULL,		offsetof( TerrainType, m_texture ) },
@@ -148,7 +148,7 @@ TerrainType *TerrainTypeCollection::newTerrain( AsciiString name )
 		terrain->friend_setTexture( defaultTerrain->getTexture() );
 		terrain->friend_setClass( defaultTerrain->getClass() );
 		terrain->friend_setBlendEdge( defaultTerrain->isBlendEdge() );
-			
+
 	}  // end if
 */
 
@@ -158,7 +158,7 @@ TerrainType *TerrainTypeCollection::newTerrain( AsciiString name )
 	// tie to list
 	terrain->friend_setNext( m_terrainList );
 	m_terrainList = terrain;
-			
+
 	// return the new terrain
 	return terrain;
 

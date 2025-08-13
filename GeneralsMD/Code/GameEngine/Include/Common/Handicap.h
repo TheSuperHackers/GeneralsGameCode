@@ -24,12 +24,12 @@
 
 // FILE: Handicap.h ////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information					         
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:    RTS3
@@ -56,7 +56,7 @@ class ThingTemplate;
 
 // ----------------------------------------------------------------------------------------------
 /**
-	Handicap encapsulates the sets of modifiers to abilities used to balance 
+	Handicap encapsulates the sets of modifiers to abilities used to balance
 	the game and give different abilities to different Players.
 	Conceptually, it's a large set of coefficients (typically, but not necessarily,
 	in the range of 0.0...1.0).
@@ -85,7 +85,7 @@ public:
 	/// reset all handicaps to a default value.
 	void init();
 
-	/** 
+	/**
 		initialize from the fields in the Dict. Note that this does NOT call init()
 		internally, so only those fields that are present in the dict will be set.
 		if you want to ensure all fields are something reasonable, you should call init()
@@ -96,7 +96,7 @@ public:
 	/**
 		return the multiplier for the given Handicap type on the given Object.
 		The Object's type (unit, building, etc.) will generally be examined
-		to determine what value to return. 
+		to determine what value to return.
 	*/
 	Real getHandicap(HandicapType t, const ThingTemplate *tmpl) const;
 

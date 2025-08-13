@@ -55,7 +55,7 @@ protected:
 	Dict		*m_teamDict;
 	SidesList	*m_sides;
 protected:
-	void loadUnitsInfo(int idcMinUnit, NameKeyType keyMinUnit, 
+	void loadUnitsInfo(int idcMinUnit, NameKeyType keyMinUnit,
 								int idcMaxUnit, NameKeyType keyMaxUnit,
 								int idcUnitType, NameKeyType keyUnitType);
 	void OnUnitTypeButton(Int idcUnitType);

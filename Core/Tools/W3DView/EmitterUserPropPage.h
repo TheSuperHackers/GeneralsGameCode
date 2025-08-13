@@ -81,7 +81,7 @@ protected:
 		EmitterInstanceListClass *	Get_Emitter (void) const { return m_pEmitterList; }
 		void								Set_Emitter (EmitterInstanceListClass *pemitter_list) { m_pEmitterList = pemitter_list; Initialize (); }
 		bool								Is_Data_Valid (void) const { return m_bValid; }
-		
+
 		int								Get_Type (void) const			{ return m_iType; }
 		const CString &				Get_String (void) const			{ return m_UserString; }
 		void								Set_Type (int type)				{ m_iType = type; }
@@ -93,7 +93,7 @@ protected:
 		/////////////////////////////////////////////////////////
 		//
 		//	Protected methods
-		//		
+		//
 		void								Initialize (void);
 
 	private:
@@ -101,7 +101,7 @@ protected:
 		/////////////////////////////////////////////////////////
 		//
 		//	Private member data
-		//		
+		//
 		EmitterInstanceListClass *	m_pEmitterList;
 		bool								m_bValid;
 

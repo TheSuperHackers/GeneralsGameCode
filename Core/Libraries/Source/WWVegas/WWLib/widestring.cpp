@@ -105,13 +105,13 @@ WideStringClass::Get_String (int length, bool is_temp)
 			//
 			for (int index = 0; index < MAX_TEMP_STRING; index ++) {
 				if (m_FreeTempPtr[index] != NULL) {
-					
+
 					//
 					//	Grab this unused buffer for our string
 					//
 					string					= m_FreeTempPtr[index];
 					m_ResTempPtr[index]	= m_FreeTempPtr[index];
-					m_FreeTempPtr[index]	= NULL;					
+					m_FreeTempPtr[index]	= NULL;
 					Set_Buffer_And_Allocated_Length (string, MAX_TEMP_LEN);
 
 					//
@@ -170,16 +170,16 @@ WideStringClass::Uninitialised_Grow (int new_len)
 {
 	int allocated_len = Get_Allocated_Length ();
 	if (new_len > allocated_len) {
-		
+
 		//
 		//	Switch to a newly allocated buffer
 		//
 		WCHAR *new_buffer = Allocate_Buffer (new_len);
-		Set_Buffer_And_Allocated_Length (new_buffer, new_len);	
+		Set_Buffer_And_Allocated_Length (new_buffer, new_len);
 	}
 
 	//
-	// Whenever this function is called, clear the cached length 
+	// Whenever this function is called, clear the cached length
 	//
 	Store_Length (0);
 	return ;
@@ -207,7 +207,7 @@ WideStringClass::Free_String (void)
 				// at the same time we are.
 				//
 				FastCriticalSectionClass::LockClass lock(m_TempMutex);
-				
+
 				//
 				//	Release our hold on this temporary buffer
 				//
@@ -259,10 +259,10 @@ WideStringClass::Format_Args (const WCHAR *format, va_list arg_list )
 	//	Format the string
 	//
 	int retval = vswprintf (temp_buffer, 512, format, arg_list);
-	
+
 	//
 	//	Copy the string into our buffer
-	//	
+	//
 	(*this) = temp_buffer;
 
 	return retval;
@@ -293,10 +293,10 @@ WideStringClass::Format (const WCHAR *format, ...)
 	//	Format the string
 	//
 	int retval = vswprintf (temp_buffer, 512, format, arg_list);
-	
+
 	//
 	//	Copy the string into our buffer
-	//	
+	//
 	(*this) = temp_buffer;
 
 	va_end (arg_list);
@@ -321,7 +321,7 @@ WideStringClass::Release_Resources (void)
 bool WideStringClass::Convert_From (const char *text)
 {
 	if (text != NULL) {
-		
+
 		int length;
 
 		length = MultiByteToWideChar (CP_ACP, 0, text, -1, NULL, 0);

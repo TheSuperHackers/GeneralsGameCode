@@ -110,7 +110,7 @@ void LANAPI::init( void )
 	m_isInLANMenu = TRUE;
 	m_currentGame = NULL;
 	m_directConnectRemoteIP = 0;
-	
+
 	m_lastGameopt = "";
 
 	unsigned long bufSize = UNLEN + 1;
@@ -169,7 +169,7 @@ void LANAPI::reset( void )
 	m_inLobby = true;
 	m_isInLANMenu = TRUE;
 	m_currentGame = NULL;
-	
+
 }
 
 void LANAPI::sendMessage(LANMessage *msg, UnsignedInt ip /* = 0 */)
@@ -216,7 +216,7 @@ AsciiString GetMessageTypeString(UnsignedInt type)
 		case LANMessage::MSG_REQUEST_JOIN:
 			returnString.format("Request Join (%d)",type);
 			break;
-		case LANMessage::MSG_JOIN_ACCEPT:				
+		case LANMessage::MSG_JOIN_ACCEPT:
 			returnString.format("Join Accept (%d)",type);
 			break;
 		case LANMessage::MSG_JOIN_DENY:
@@ -316,11 +316,11 @@ void LANAPI::update( void )
 		return;
 	static const UnsignedInt LANAPIUpdateDelay = 200;
 	UnsignedInt now = timeGetTime();
-	
+
 	if( now > m_lastUpdate + LANAPIUpdateDelay)
 	{
 		m_lastUpdate = now;
-	} 
+	}
 	else
 	{
 		return;
@@ -440,7 +440,7 @@ void LANAPI::update( void )
 		else if (m_currentGame && !m_currentGame->isGameInProgress())
 		{
 			if (AmIHost())
-			{				
+			{
 				RequestGameOptions( GenerateGameOptionsString(), true );
 				RequestGameAnnounce( );
 			}
@@ -882,9 +882,9 @@ void LANAPI::RequestGameCreate( UnicodeString gameName, Bool isDirectConnect )
 	// Create the local game object
 	m_inLobby = false;
 	LANGameInfo *myGame = NEW LANGameInfo;
-	
+
 	myGame->setSeed(GetTickCount());
-	
+
 //	myGame->setInProgress(false);
 	myGame->enterGame();
 	UnicodeString s;
@@ -910,13 +910,13 @@ void LANAPI::RequestGameCreate( UnicodeString gameName, Bool isDirectConnect )
 
 	myGame->setSlot(0,newSlot);
 	myGame->setNext(NULL);
-	LANPreferences pref;	
+	LANPreferences pref;
 
 	AsciiString mapName = pref.getPreferredMap();
 
 	myGame->setMap(mapName);
 	myGame->setIsDirectConnect(isDirectConnect);
-	
+
 	myGame->setLastHeard(timeGetTime());
 	m_currentGame = myGame;
 

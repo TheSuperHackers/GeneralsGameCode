@@ -24,7 +24,7 @@
 
 // FILE: Special Ability.h ///////////////////////////////////////////////////////////////
 // Author: Kris Morness, July 2002
-// Desc:   This is the class that handles processing of any special attack from a unit. There are 
+// Desc:   This is the class that handles processing of any special attack from a unit. There are
 //         many different styles and rules for various attacks.
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 

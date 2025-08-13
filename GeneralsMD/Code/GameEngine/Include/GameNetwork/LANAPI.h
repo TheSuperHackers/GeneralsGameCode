@@ -54,7 +54,7 @@ static const Int g_maxSerialLength = 23; // including the trailing '\0'
 struct LANMessage;
 
 /**
- * The LANAPI class is used to instantiate a singleton which 
+ * The LANAPI class is used to instantiate a singleton which
  * implements the interface to all LAN broadcast communications.
  */
 class LANAPIInterface : public SubsystemInterface
@@ -146,7 +146,7 @@ public:
 
 
 /**
- * The LANAPI class is used to instantiate a singleton which 
+ * The LANAPI class is used to instantiate a singleton which
  * implements the interface to all LAN broadcast communications.
  */
 class LANAPI : public LANAPIInterface

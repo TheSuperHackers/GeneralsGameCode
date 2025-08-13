@@ -24,12 +24,12 @@
 
 // FILE: Money.cpp /////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:   RTS3
@@ -87,7 +87,7 @@ void Money::deposit(UnsignedInt amountToDeposit, Bool playSound)
 	{
 		triggerAudioEvent(TheAudio->getMiscAudio()->m_moneyDepositSound);
 	}
-	
+
 	m_money += amountToDeposit;
 
 	if( amountToDeposit > 0 )
@@ -106,7 +106,7 @@ void Money::triggerAudioEvent(const AudioEventRTS& audioEvent)
 	volume *= audioEvent.getVolume();
 	if (volume <= 0.0f)
 		return;
-	
+
 	//@todo: Do we do this frequently enough that it is a performance hit?
 	AudioEventRTS event = audioEvent;
 	event.setPlayerIndex(m_playerIndex);

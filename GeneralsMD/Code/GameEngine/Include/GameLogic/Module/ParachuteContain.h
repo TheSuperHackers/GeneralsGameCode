@@ -87,7 +87,7 @@ protected:
 	virtual void positionContainedObjectsRelativeToContainer();
 
 private:
-	
+
 	void positionRider(Object* obj);
 	void updateBonePositions();
 	void updateOffsetsFromBones();

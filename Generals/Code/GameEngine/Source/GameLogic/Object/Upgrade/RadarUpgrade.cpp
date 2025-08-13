@@ -40,11 +40,11 @@
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void RadarUpgradeModuleData::buildFieldParse(MultiIniFieldParse& p) 
+void RadarUpgradeModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
   UpgradeModuleData::buildFieldParse(p);
 
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
 		{ "DisableProof",	INI::parseBool,	NULL, offsetof( RadarUpgradeModuleData, m_isDisableProof ) },
 		{ 0, 0, 0, 0 }
@@ -54,7 +54,7 @@ void RadarUpgradeModuleData::buildFieldParse(MultiIniFieldParse& p)
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-RadarUpgrade::RadarUpgrade( Thing *thing, const ModuleData* moduleData ) : 
+RadarUpgrade::RadarUpgrade( Thing *thing, const ModuleData* moduleData ) :
 							UpgradeModule( thing, moduleData )
 {
 

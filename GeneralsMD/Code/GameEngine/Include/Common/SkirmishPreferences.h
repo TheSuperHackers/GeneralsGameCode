@@ -39,7 +39,7 @@
 #include "Common/UserPreferences.h"
 
 //-----------------------------------------------------------------------------
-// SkirmishPreferences class 
+// SkirmishPreferences class
 //-----------------------------------------------------------------------------
 class SkirmishPreferences : public UserPreferences
 {
@@ -57,10 +57,10 @@ public:
 	Int getPreferredColor(void);				// convenience function
 	AsciiString getPreferredMap(void);	// convenience function
 	Bool usesSystemMapDir(void);		// convenience function
-  
+
   Bool getSuperweaponRestricted(void) const;
   void setSuperweaponRestricted( Bool superweaponRestricted);
-  
+
   Money getStartingCash(void) const;
   void setStartingCash( const Money &startingCash );
 };

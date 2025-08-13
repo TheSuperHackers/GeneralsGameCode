@@ -175,7 +175,7 @@ HRESULT CDownload::PumpMessages()
 
 	if( m_Status == DOWNLOADSTATUS_GO )
 	{
-		// Check to see whether the file already exists locally 
+		// Check to see whether the file already exists locally
 
 /***********
 		if (m_TryResume == false)
@@ -195,7 +195,7 @@ HRESULT CDownload::PumpMessages()
 		// Tell the client that we're starting to connect.
 
 		Listener->OnStatusUpdate( DOWNLOADSTATUS_CONNECTING );
-		
+
 		m_Status = DOWNLOADSTATUS_CONNECTING;
 	}
 
@@ -204,7 +204,7 @@ HRESULT CDownload::PumpMessages()
 	{
 		// Connect to the server
       //////////DBGMSG("Connect to Server");
-				
+
 		iResult = m_Ftp->ConnectToServer( m_Server );
       ////////////DBGMSG("out of FTP connect");
 
@@ -255,7 +255,7 @@ HRESULT CDownload::PumpMessages()
 
 	if(( m_Status == DOWNLOADSTATUS_FINDINGFILE ) && (strlen(m_File)))
 	{
-		
+
 		// Find the file on the server
       ///////////DBGMSG("Find File");
 
@@ -277,8 +277,8 @@ HRESULT CDownload::PumpMessages()
 			//
 			// We identify patches because they are written into the patches folder.
 			struct _stat statdata;
-			if (	(_stat(m_LocalFile, &statdata) == 0) && 
-					(statdata.st_size == m_FileSize) && 
+			if (	(_stat(m_LocalFile, &statdata) == 0) &&
+					(statdata.st_size == m_FileSize) &&
 					(_strnicmp(m_LocalFile, "patches\\", strlen("patches\\"))==0)) {
 				// OK, no need to download this again....
 
@@ -289,7 +289,7 @@ HRESULT CDownload::PumpMessages()
 				m_BytesRead			= 0;
 				m_File[ 0 ]			= '\0';
 				m_LocalFile[ 0 ]	= '\0';
-			
+
 				Listener->OnEnd();
 
 				reenter = 0;
@@ -419,7 +419,7 @@ HRESULT CDownload::PumpMessages()
 		m_BytesRead			= 0;
 		m_File[ 0 ]			= '\0';
 		m_LocalFile[ 0 ]	= '\0';
-	
+
 		Listener->OnEnd();
 	}
 

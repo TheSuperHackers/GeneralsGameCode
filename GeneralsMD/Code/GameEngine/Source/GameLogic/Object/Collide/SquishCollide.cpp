@@ -64,7 +64,7 @@ void SquishCollide::onCollide( Object *other, const Coord3D *loc, const Coord3D 
 	// Note that other == null means "collide with ground"
 	if (other == NULL)
 		return;
-	
+
 	Object *self = getObject();
 	AIUpdateInterface *ai = self->getAI();
 	if( ai && ai->getGoalObject() == other )
@@ -99,7 +99,7 @@ void SquishCollide::onCollide( Object *other, const Coord3D *loc, const Coord3D 
  		GeometryInfo myGeom = self->getGeometryInfo();
 		myGeom.setMajorRadius(1.0f);
 		myGeom.setMinorRadius(1.0f);
-		if (!ThePartitionManager->geomCollidesWithGeom(other->getPosition(), other->getGeometryInfo(), other->getOrientation(), 
+		if (!ThePartitionManager->geomCollidesWithGeom(other->getPosition(), other->getGeometryInfo(), other->getOrientation(),
 			self->getPosition(), myGeom, self->getOrientation())) {
 			return;
 		}

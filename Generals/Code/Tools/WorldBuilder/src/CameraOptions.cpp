@@ -61,7 +61,7 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // CameraOptions message handlers
 
-void CameraOptions::OnCameraReset() 
+void CameraOptions::OnCameraReset()
 {
 	WbView3d * p3View = CWorldBuilderDoc::GetActive3DView();
 	if (p3View)
@@ -71,17 +71,17 @@ void CameraOptions::OnCameraReset()
 	}
 }
 
-void CameraOptions::OnMove(int x, int y) 
+void CameraOptions::OnMove(int x, int y)
 {
 	CDialog::OnMove(x, y);
-	
+
 	if (this->IsWindowVisible() && !this->IsIconic()) {
 		CRect frameRect;
 		GetWindowRect(&frameRect);
 		::AfxGetApp()->WriteProfileInt(CAMERA_OPTIONS_PANEL_SECTION, "Top", frameRect.top);
 		::AfxGetApp()->WriteProfileInt(CAMERA_OPTIONS_PANEL_SECTION, "Left", frameRect.left);
 	}
-	
+
 }
 
 void CameraOptions::putInt(Int ctrlID, Int val)
@@ -114,7 +114,7 @@ void CameraOptions::putAsciiString(Int ctrlID, AsciiString val)
 	}
 }
 
-BOOL CameraOptions::getReal(Int ctrlID, Real *rVal) 
+BOOL CameraOptions::getReal(Int ctrlID, Real *rVal)
 {
 	CWnd *pEdit = GetDlgItem(ctrlID);
 	char buffer[_MAX_PATH];
@@ -227,17 +227,17 @@ void CameraOptions::PopSliderFinished(const long sliderID, long theVal)
 }
 
 
-BOOL CameraOptions::OnInitDialog() 
+BOOL CameraOptions::OnInitDialog()
 {
 	CDialog::OnInitDialog();
-	
+
 	m_pitchPopup.SetupPopSliderButton(this, IDC_PITCH_POPUP, this);
-	
+
 	return TRUE;  // return TRUE unless you set the focus to a control
 	              // EXCEPTION: OCX Property Pages should return FALSE
 }
 
-void CameraOptions::OnChangePitchEdit() 
+void CameraOptions::OnChangePitchEdit()
 {
 	if (m_updating)
 		return;
@@ -251,7 +251,7 @@ void CameraOptions::OnChangePitchEdit()
 	}
 }
 
-void CameraOptions::OnShowWindow(BOOL bShow, UINT nStatus) 
+void CameraOptions::OnShowWindow(BOOL bShow, UINT nStatus)
 {
 	CDialog::OnShowWindow(bShow, nStatus);
 

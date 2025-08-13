@@ -70,22 +70,22 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // CMatchDlg message handlers
 
-void CMatchDlg::OnCancel() 
+void CMatchDlg::OnCancel()
 {
 	// TODO: Add extra cleanup here
-	
-	MatchingBabylonText = NULL;	
+
+	MatchingBabylonText = NULL;
 	CDialog::OnCancel();
 }
 
-void CMatchDlg::OnNomatch() 
+void CMatchDlg::OnNomatch()
 {
 	// TODO: Add your control notification handler code here
-	MatchingBabylonText = NULL;	
+	MatchingBabylonText = NULL;
 	CDialog::OnOK ();
 }
 
-void CMatchDlg::OnMatch() 
+void CMatchDlg::OnMatch()
 {
 	// TODO: Add your control notification handler code here
 	if ( (MatchingBabylonText = current_match ) )
@@ -97,7 +97,7 @@ void CMatchDlg::OnMatch()
 	CDialog::OnOK ();
 }
 
-BOOL CMatchDlg::OnInitDialog() 
+BOOL CMatchDlg::OnInitDialog()
 {
 	BabylonText *text;
 	ListSearch sh;
@@ -107,7 +107,7 @@ BOOL CMatchDlg::OnInitDialog()
 	static char buffer[4*1024];
 
 
-	sprintf ( buffer, "Resolve umatched text from \"%s\" on line %d", MatchLabel->NameSB(), 
+	sprintf ( buffer, "Resolve umatched text from \"%s\" on line %d", MatchLabel->NameSB(),
 							MatchOriginalText->LineNumber() );
 	SetWindowText ( buffer );
 	CDialog::OnInitDialog();
@@ -141,23 +141,23 @@ BOOL CMatchDlg::OnInitDialog()
 			{
 				result = 0;
 			}
-			index++; 
+			index++;
 		}
-		
+
 		text = MatchLabel->NextText ( sh );
 	}
 
 	combo->SetCurSel ( 0 );
 	OnSelchangeMatchcombo();
-	MatchingBabylonText = NULL;	
+	MatchingBabylonText = NULL;
 	// TODO: Add extra initialization here
-	
+
 	return TRUE;  // return TRUE unless you set the focus to a control
 	              // EXCEPTION: OCX Property Pages should return FALSE
 }
 
 
-void CMatchDlg::OnSelchangeMatchcombo() 
+void CMatchDlg::OnSelchangeMatchcombo()
 {
 	// TODO: Add your control notification handler code here
 	int index;
@@ -177,7 +177,7 @@ void CMatchDlg::OnSelchangeMatchcombo()
 	}
 }
 
-void CMatchDlg::OnSkip() 
+void CMatchDlg::OnSkip()
 {
 	// TODO: Add your control notification handler code here
 		 EndDialog ( IDSKIP );

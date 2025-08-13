@@ -94,7 +94,7 @@ protected:
 		/////////////////////////////////////////////////////////
 		//
 		//	Protected methods
-		//		
+		//
 		void				Initialize (void);
 		void				Update_Sizes (void);
 
@@ -103,7 +103,7 @@ protected:
 		/////////////////////////////////////////////////////////
 		//
 		//	Private member data
-		//		
+		//
 		EmitterInstanceListClass *	m_pEmitterList;
 		bool								m_bValid;
 		ColorBarClass *				m_SizeBar;

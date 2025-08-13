@@ -24,12 +24,12 @@
 
 // FILE: ControlBarPrintPositions.cpp /////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Electronic Arts Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2002 - All Rights Reserved                  
-//                                                                          
+//
+//                       Electronic Arts Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2002 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 //	created:	Sep 2002
@@ -37,7 +37,7 @@
 //	Filename: 	ControlBarPrintPositions.cpp
 //
 //	author:		Chris Huybregts
-//	
+//
 //	purpose:	Convience function for degayifying the whole squished control bar
 //						process
 //

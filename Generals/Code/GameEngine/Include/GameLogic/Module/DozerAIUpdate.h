@@ -119,8 +119,8 @@ public:
 	virtual Real getBoredRange( void ) const = 0;							///< when we're bored, we look this far away to do things
 
 	// methods to override for the dozer behaviors
-	virtual Object *construct( const ThingTemplate *what, 
-														 const Coord3D *pos, Real angle, 
+	virtual Object *construct( const ThingTemplate *what,
+														 const Coord3D *pos, Real angle,
 														 Player *owningPlayer,
 														 Bool isRebuild ) = 0;
 
@@ -188,7 +188,7 @@ public:
 
 //-------------------------------------------------------------------------------------------------
 /** The Dozer AI Update interface.  Dozers are workers that are capable of building all the
-	* structures available to a player, as well as repairing building, and fortifying 
+	* structures available to a player, as well as repairing building, and fortifying
 	* civilian structures */
 //-------------------------------------------------------------------------------------------------
 class DozerAIUpdate : public AIUpdateInterface, public DozerAIInterface
@@ -221,8 +221,8 @@ public:
 	virtual Real getBoredRange( void ) const;							///< when we're bored, we look this far away to do things
 
 	// methods to override for the dozer behaviors
-	virtual Object* construct( const ThingTemplate *what, 
-														 const Coord3D *pos, Real angle, 
+	virtual Object* construct( const ThingTemplate *what,
+														 const Coord3D *pos, Real angle,
 														 Player *owningPlayer,
 														 Bool isRebuild );								///< construct an object
 
@@ -274,11 +274,11 @@ protected:
 
 	virtual void privateRepair( Object *obj, CommandSourceType cmdSource );	///< repair the target
 	virtual void privateResumeConstruction( Object *obj, CommandSourceType cmdSource );  ///< resume construction on obj
-	
+
 	struct DozerTaskInfo
 	{
 		ObjectID m_targetObjectID;				///< target object ID of task
-		UnsignedInt m_taskOrderFrame;			///< logic frame we decided we wanted to do this task	
+		UnsignedInt m_taskOrderFrame;			///< logic frame we decided we wanted to do this task
 	} m_task[ DOZER_NUM_TASKS ];				///< tasks we want to do indexed by DozerTask
 
 	DozerPrimaryStateMachine *m_dozerMachine;  ///< the custom state machine for Dozer behavior

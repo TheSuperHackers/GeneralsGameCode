@@ -189,7 +189,7 @@ unsigned int SegmentedLineClass::Get_Subdivision_Levels(void)
 
 SegLineRendererClass::TextureMapMode SegmentedLineClass::Get_Texture_Mapping_Mode(void)
 {
-	return LineRenderer.Get_Texture_Mapping_Mode(); 
+	return LineRenderer.Get_Texture_Mapping_Mode();
 }
 
 float SegmentedLineClass::Get_Texture_Tile_Factor(void)
@@ -317,7 +317,7 @@ void SegmentedLineClass::Set_End_Caps(int onoff)
 
 RenderObjClass * SegmentedLineClass::Clone(void) const
 {
-	return NEW_REF( SegmentedLineClass, (*this)); 
+	return NEW_REF( SegmentedLineClass, (*this));
 }
 
 int SegmentedLineClass::Get_Num_Polys(void) const
@@ -337,14 +337,14 @@ void SegmentedLineClass::Render(RenderInfoClass & rinfo)
 
 	unsigned int sort_level = SORT_LEVEL_NONE;
 
-	if (!WW3D::Is_Sorting_Enabled())	
-		sort_level=Get_Shader().Guess_Sort_Level();	
+	if (!WW3D::Is_Sorting_Enabled())
+		sort_level=Get_Shader().Guess_Sort_Level();
 
-	if (WW3D::Are_Static_Sort_Lists_Enabled() && sort_level!=SORT_LEVEL_NONE) {		
-		
+	if (WW3D::Are_Static_Sort_Lists_Enabled() && sort_level!=SORT_LEVEL_NONE) {
+
 		WW3D::Add_To_Static_Sort_List(this, sort_level);
 
-	} else 
+	} else
 		Render_Seg_Line(rinfo);
 }
 
@@ -362,9 +362,9 @@ void SegmentedLineClass::Get_Obj_Space_Bounding_Sphere(SphereClass & sphere) con
 void SegmentedLineClass::Get_Obj_Space_Bounding_Box(AABoxClass & box) const
 {
 	unsigned int num_points = PointLocations.Count();
-	
+
 	// Line must have at least two points to be valid
-	
+
 	if (num_points >= 2) {
 
 		// Find object-space axis-aligned bounding box
@@ -450,9 +450,9 @@ void SegmentedLineClass::Prepare_LOD(CameraClass &camera)
 void SegmentedLineClass::Increment_LOD(void)
 {
 	unsigned int lvl = LineRenderer.Get_Current_Subdivision_Level();
-	
+
 	lvl = MIN(lvl+1,MaxSubdivisionLevels);
-	
+
 	LineRenderer.Set_Current_Subdivision_Level(lvl);
 }
 
@@ -525,7 +525,7 @@ void SegmentedLineClass::Render_Seg_Line(RenderInfoClass & rinfo)
 	if (PointLocations.Count() < 2) return;
 
 	SphereClass bounding_sphere;
-	Get_Obj_Space_Bounding_Sphere(bounding_sphere);			
+	Get_Obj_Space_Bounding_Sphere(bounding_sphere);
 
 	LineRenderer.Render(
 		rinfo,
@@ -547,7 +547,7 @@ bool SegmentedLineClass::Cast_Ray(RayCollisionTestClass & raytest)
 	//	Check each line segment against the ray
 	//
 	float fraction = 1.0F;
-	for (uint32 index = 1; index < (unsigned int)PointLocations.Count(); index ++) 
+	for (uint32 index = 1; index < (unsigned int)PointLocations.Count(); index ++)
 	{
 #ifdef ALLOW_TEMPORARIES
 		Vector3 curr_start	= Transform * PointLocations[index-1];
@@ -558,11 +558,11 @@ bool SegmentedLineClass::Cast_Ray(RayCollisionTestClass & raytest)
 		Transform.mulVector3Array(&PointLocations[index-1], curr, 2);
 		LineSegClass line_seg(curr[0], curr[1]);
 #endif
-		
+
 		Vector3 p0;
 		Vector3 p1;
 		if (raytest.Ray.Find_Intersection (line_seg, &p0, &fraction, &p1, NULL)) {
-			
+
 			//
 			//	Determine if the ray was close enough to this line to be
 			// considered intersecting
@@ -573,7 +573,7 @@ bool SegmentedLineClass::Cast_Ray(RayCollisionTestClass & raytest)
 				retval = true;
 				break;
 			}
-		}			
+		}
 	}
 
 	//

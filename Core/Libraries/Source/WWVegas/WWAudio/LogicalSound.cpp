@@ -105,12 +105,12 @@ LogicalSoundClass::Add_To_Scene (bool /*start_playing*/)
 {
 	SoundSceneClass *scene = WWAudioClass::Get_Instance ()->Get_Sound_Scene ();
 	if ((scene != NULL) && (m_Scene == NULL)) {
-		
+
 		//
 		//	Add this sound to the culling system
 		//
 		m_Scene = scene;
-		scene->Add_Logical_Sound (this, m_IsSingleShot);		
+		scene->Add_Logical_Sound (this, m_IsSingleShot);
 	}
 
 	return ;
@@ -170,7 +170,7 @@ LogicalSoundClass::On_Frame_Update (unsigned int milliseconds)
 	//
 	// Update the sound's position if its linked to a render object
 	//
-	Apply_Auto_Position ();	
+	Apply_Auto_Position ();
 	return SoundSceneObjClass::On_Frame_Update (milliseconds);;
 }
 
@@ -199,7 +199,7 @@ LogicalSoundClass::Save (ChunkSaveClass &csave)
 		SoundSceneObjClass::Save (csave);
 	csave.End_Chunk ();
 
-	csave.Begin_Chunk (CHUNKID_VARIABLES);		
+	csave.Begin_Chunk (CHUNKID_VARIABLES);
 
 		WRITE_MICRO_CHUNK (csave, VARID_DROP_OFF_RADIUS, m_DropOffRadius);
 		WRITE_MICRO_CHUNK (csave, VARID_IS_SINGLE_SHOT, m_IsSingleShot);
@@ -222,7 +222,7 @@ LogicalSoundClass::Save (ChunkSaveClass &csave)
 bool
 LogicalSoundClass::Load (ChunkLoadClass &cload)
 {
-	while (cload.Open_Chunk ()) {		
+	while (cload.Open_Chunk ()) {
 		switch (cload.Cur_Chunk_ID ()) {
 
 			case CHUNKID_BASE_CLASS:

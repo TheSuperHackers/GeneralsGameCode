@@ -24,7 +24,7 @@
 
 // FILE: W3DGameClient.h ///////////////////////////////////////////////////
 //
-// W3D implementation of the game interface.  The GameClient is 
+// W3D implementation of the game interface.  The GameClient is
 // responsible for maintaining our drawbles, handling our GUI, and creating
 // the display ... basically the Client if this were a Client/Server game.
 //
@@ -83,7 +83,7 @@ public:
 	virtual void init( void );		///< initialize resources
 	virtual void update( void );  ///< per frame update
 	virtual void reset( void );   ///< reset system
-		
+
 	virtual void addScorch(const Coord3D *pos, Real radius, Scorches type);
 	virtual void createRayEffectByTemplate( const Coord3D *start, const Coord3D *end, const ThingTemplate* tmpl );  ///< create effect needing start and end location
 	//virtual Bool getBonePos(Drawable *draw, AsciiString boneName, Coord3D* pos, Matrix3D* transform) const;
@@ -104,7 +104,7 @@ protected:
 	virtual Display *createGameDisplay( void ) { return NEW W3DDisplay; }
 
 	/// factory for creating TheInGameUI
-	virtual InGameUI *createInGameUI( void ) { return NEW W3DInGameUI; }	
+	virtual InGameUI *createInGameUI( void ) { return NEW W3DInGameUI; }
 
 	/// factory for creating the window manager
 	virtual GameWindowManager *createWindowManager( void ) { return NEW W3DGameWindowManager; }

@@ -92,21 +92,21 @@ BOOL
 CDeviceSelectionDialog::OnInitDialog (void)
 {
 	CDialog::OnInitDialog();
-	
+
 	//
 	// Loop through all the devices and add them to the combobox
 	//
-	int device_count = WW3D::Get_Render_Device_Count ();	
+	int device_count = WW3D::Get_Render_Device_Count ();
 	int selected_index = 0;
 	for (int index = 0; index < device_count; index ++) {
-		
+
 		//
 		// Add this device to the combobox
 		//
 		const char *name = WW3D::Get_Render_Device_Name(index);
 		int combo_index = m_deviceListComboBox.InsertString (index, name);
 		if (m_DriverName.CompareNoCase (name) == 0) {
-			selected_index = combo_index;			
+			selected_index = combo_index;
 		}
 
 		// Associate the index of this device with the item we just inserted
@@ -131,7 +131,7 @@ CDeviceSelectionDialog::OnInitDialog (void)
 //  OnSelchangeRenderDeviceCombo
 //
 void
-CDeviceSelectionDialog::OnSelchangeRenderDeviceCombo (void) 
+CDeviceSelectionDialog::OnSelchangeRenderDeviceCombo (void)
 {
 	int index = m_deviceListComboBox.GetCurSel ();
 	if (index != CB_ERR) {
@@ -156,7 +156,7 @@ CDeviceSelectionDialog::UpdateDeviceDescription (void)
 
 	//
 	// Reload the static text controls on the dialog
-	//	
+	//
 	SetDlgItemText (IDC_DRIVER_NAME, m_DriverName);
 	SetDlgItemText (IDC_DEVICE_NAME_STATIC, device_desc.Get_Device_Name());
 	SetDlgItemText (IDC_DEVICE_VENDOR_STATIC, device_desc.Get_Device_Vendor());
@@ -176,9 +176,9 @@ CDeviceSelectionDialog::UpdateDeviceDescription (void)
 //  OnOK
 //
 void
-CDeviceSelectionDialog::OnOK (void) 
+CDeviceSelectionDialog::OnOK (void)
 {
-	// Ask the combobox for its current selection 
+	// Ask the combobox for its current selection
 	m_iDeviceIndex = m_deviceListComboBox.GetItemData (m_deviceListComboBox.GetCurSel ());
 	m_iBitsPerPixel = (SendDlgItemMessage (IDC_COLORDEPTH_16, BM_GETCHECK) == TRUE) ? 16 : 24;
 
@@ -216,9 +216,9 @@ CDeviceSelectionDialog::DoModal (void)
 		//
 		// Loop through all the devices and see if we can find the right one
 		//
-		int device_count = WW3D::Get_Render_Device_Count ();	
+		int device_count = WW3D::Get_Render_Device_Count ();
 		for (int index = 0; (index < device_count) && !bFoundDevice; index ++) {
-			
+
 			//
 			// Is this the device we are looking for?
 			//
@@ -238,10 +238,10 @@ CDeviceSelectionDialog::DoModal (void)
 	}
 
 	// Show the dialog and allow the user to select the device
-	if (bFoundDevice == FALSE) {        
+	if (bFoundDevice == FALSE) {
 		iReturn = CDialog::DoModal ();
 	}
-	
+
 	// Return the integer return code
 	return iReturn;
 }

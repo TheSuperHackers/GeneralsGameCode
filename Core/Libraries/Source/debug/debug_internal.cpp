@@ -36,7 +36,7 @@ void DebugInternalAssert(const char *file, int line, const char *expr)
   wsprintf(buf,"File %s, line %i:\n%s",file,line,expr);
   MessageBox(NULL,buf,"Internal assert failed",
                         MB_OK|MB_ICONSTOP|MB_TASKMODAL|MB_SETFOREGROUND);
-  
+
   // stop right now!
   TerminateProcess(GetCurrentProcess(),666);
 }

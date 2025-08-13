@@ -17,22 +17,22 @@
 */
 
 /* $Header: /Commando/Code/Tools/max2w3d/MeshDeformSave.cpp 6     11/12/99 11:12a Greg_h $ */
-/*********************************************************************************************** 
- ***                            Confidential - Westwood Studios                              *** 
- *********************************************************************************************** 
- *                                                                                             * 
- *                 Project Name : Commando / G 3D engine                                       * 
- *                                                                                             * 
+/***********************************************************************************************
+ ***                            Confidential - Westwood Studios                              ***
+ ***********************************************************************************************
+ *                                                                                             *
+ *                 Project Name : Commando / G 3D engine                                       *
+ *                                                                                             *
  *                    File Name : MeshDeformSafe.CPP
- *                                                                                             * 
- *                   Programmer : Patrick Smith                                                * 
- *                                                                                             * 
- *                   Start Date : 05/28/99                                                     * 
- *                                                                                             * 
- *                  Last Update : 
- *                                                                                             * 
- *---------------------------------------------------------------------------------------------* 
- * Functions:                                                                                  * 
+ *                                                                                             *
+ *                   Programmer : Patrick Smith                                                *
+ *                                                                                             *
+ *                   Start Date : 05/28/99                                                     *
+ *                                                                                             *
+ *                  Last Update :
+ *                                                                                             *
+ *---------------------------------------------------------------------------------------------*
+ * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "MeshDeform.h"
@@ -53,7 +53,7 @@
 void
 MeshDeformSaveClass::Initialize
 (
-	MeshBuilderClass &builder, 
+	MeshBuilderClass &builder,
 	Object *				object,
 	Mesh &				mesh,
 	Matrix3 *			transform
@@ -69,7 +69,7 @@ MeshDeformSaveClass::Initialize
 	int test2 = GEN_DERIVOB_CLASS_ID;
 	if ((object != NULL) &&
 		 (object->SuperClassID () == GEN_DERIVOB_CLASS_ID)) {
-		
+
 		//
 		//	Loop through all the modifiers and see if we can find the
 		// Westwood Damage Mesh modifier.
@@ -78,19 +78,19 @@ MeshDeformSaveClass::Initialize
 		int modifier_count = derived_object->NumModifiers ();
 		bool found = false;
 		for (int index = 0; (index < modifier_count) && !found; index ++) {
-			
+
 			//
 			//	If this is the right modifier, then initialize using the
 			//	data it contains.
 			//
 			Modifier *modifier = derived_object->GetModifier (index);
 			if ((modifier != NULL) && (modifier->ClassID () == _MeshDeformClassID)) {
-				
+
 				//
 				//	Attempt to get at the modifier data for this context
 				//
 				ModContext *mod_context = derived_object->GetModContext (index);
-				if ((mod_context != NULL) && (mod_context->localData != NULL)) {					
+				if ((mod_context != NULL) && (mod_context->localData != NULL)) {
 					MeshDeformModData *mod_data = static_cast<MeshDeformModData *> (mod_context->localData);
 					Initialize (builder, mesh, *mod_data, transform);
 				}
@@ -123,7 +123,7 @@ MeshDeformSaveClass::Initialize
 	//	Loop through all the sets in the modifier
 	//
 	for (int index = 0; index < mod_data.Get_Set_Count (); index ++) {
-		
+
 		//
 		//	If this set isn't empty then add its data to our list
 		//
@@ -172,7 +172,7 @@ bool
 MeshDeformSaveClass::Export (ChunkSaveClass &chunk_save)
 {
 	bool retval = true;
-	
+
 	if (m_DeformSets.Count() > 0) {
 
 		retval = chunk_save.Begin_Chunk (W3D_CHUNK_DEFORM);
@@ -192,9 +192,9 @@ MeshDeformSaveClass::Export (ChunkSaveClass &chunk_save)
 				//
 				retval &= Export_Sets (chunk_save);
 			}
-			
+
 			retval &= chunk_save.End_Chunk ();
-		}				
+		}
 	}
 
 	// Return the true/false result code
@@ -211,14 +211,14 @@ bool
 MeshDeformSaveClass::Export_Sets (ChunkSaveClass &chunk_save)
 {
 	bool retval = true;
-		
+
 	//
 	//	Loop through all the sets and write them to the file
-	//	
+	//
 	for (int set_index = 0; (set_index < m_DeformSets.Count ()) && retval; set_index ++) {
 		retval &= chunk_save.Begin_Chunk (W3D_CHUNK_DEFORM_SET);
 		if (retval) {
-			
+
 			//
 			//	Write a chunk of information out for this set
 			//
@@ -228,7 +228,7 @@ MeshDeformSaveClass::Export_Sets (ChunkSaveClass &chunk_save)
 			set_info.flags = set_save->Get_Flags ();
 			retval &= (chunk_save.Write (&set_info, sizeof (set_info)) == sizeof (set_info));
 			if (retval) {
-				
+
 				//
 				//	Export all the keyframes for this chunk
 				//
@@ -257,12 +257,12 @@ MeshDeformSaveClass::Export_Keyframes
 )
 {
 	bool retval = true;
-		
+
 	//
 	//	Loop through all the keyframes in the set
 	//
 	int count = set_save.Get_Keyframe_Count ();
-	for (int keyframe_index = 0; (keyframe_index < count) && retval; keyframe_index ++) {					
+	for (int keyframe_index = 0; (keyframe_index < count) && retval; keyframe_index ++) {
 
 		//
 		//	Write a chunk of information out for this keyframe
@@ -272,17 +272,17 @@ MeshDeformSaveClass::Export_Keyframes
 			W3dDeformKeyframeInfo keyframe_info = { 0 };
 			keyframe_info.DeformPercent	= set_save.Get_Deform_State (keyframe_index);
 			keyframe_info.DataCount			= set_save.Get_Deform_Data_Count (keyframe_index);
-			
+
 			retval &= (chunk_save.Write (&keyframe_info, sizeof (keyframe_info)) == sizeof (keyframe_info));
 			if (retval) {
-				
+
 				//
 				//	Loop through all the verticies in this keyframe
 				//
 				int data_count = set_save.Get_Deform_Data_Count (keyframe_index);
 				for (int index = 0; (index < data_count) && retval; index ++) {
 					MeshDeformSaveSetClass::DEFORM_DATA &data = set_save.Get_Deform_Data (keyframe_index, index);
-					
+
 					//
 					//	Write a chunk of information out for this vertex
 					//
@@ -296,7 +296,7 @@ MeshDeformSaveClass::Export_Keyframes
 						data_struct.Color.R		= data.color.x * 255;
 						data_struct.Color.G		= data.color.y * 255;
 						data_struct.Color.B		= data.color.z * 255;
-						
+
 						// If we are using vertex alpha instead of vertex color, then convert
 						// the v-color into an alpha setting
 						data_struct.Color.A		= 255;
@@ -304,14 +304,14 @@ MeshDeformSaveClass::Export_Keyframes
 							data_struct.Color.A	= (data_struct.Color.R + data_struct.Color.G + data_struct.Color.B) / 3.0F;
 						}
 
-						retval &= (chunk_save.Write (&data_struct, sizeof (data_struct)) == sizeof (data_struct));						
+						retval &= (chunk_save.Write (&data_struct, sizeof (data_struct)) == sizeof (data_struct));
 						retval &= chunk_save.End_Chunk ();
 					}
 				}
 			}
 
 			retval &= chunk_save.End_Chunk ();
-		}		
+		}
 	}
 
 	// Return the true/false result code
@@ -349,7 +349,7 @@ MeshDeformSaveClass::Re_Index (MeshBuilderClass &builder)
 				//bool found = false;
 				for (int vert_index = 0; vert_index < builder.Get_Vertex_Count (); vert_index++) {
 					MeshBuilderClass::VertClass &vert = builder.Get_Vertex (vert_index);
-					
+
 					//
 					//	Reindex this vertex if its the one we are looking for.
 					//
@@ -383,20 +383,20 @@ MeshDeformSaveClass::Does_Deformer_Modify_DCG (void)
 
 	//
 	//	Loop through all the sets
-	//	
+	//
 	for (int set_index = 0; (set_index < m_DeformSets.Count ()) && !retval; set_index ++) {
 		MeshDeformSaveSetClass *set_save = m_DeformSets[set_index];
 		if (set_save) {
 
 			//
 			//	Loop through all the keyframes in this set
-			//	
+			//
 			int count = set_save->Get_Keyframe_Count ();
-			for (int keyframe_index = 0; (keyframe_index < count) && !retval; keyframe_index ++) {					
+			for (int keyframe_index = 0; (keyframe_index < count) && !retval; keyframe_index ++) {
 
 				//
 				//	Loop through all the entries in this keyframe
-				//	
+				//
 				int data_count = set_save->Get_Deform_Data_Count (keyframe_index);
 				for (int index = 0; (index < data_count) && !retval; index ++) {
 					MeshDeformSaveSetClass::DEFORM_DATA &data = set_save->Get_Deform_Data (keyframe_index, index);
@@ -411,7 +411,7 @@ MeshDeformSaveClass::Does_Deformer_Modify_DCG (void)
 						retval = true;
 					}
 				}
-			}	
+			}
 		}
 	}
 

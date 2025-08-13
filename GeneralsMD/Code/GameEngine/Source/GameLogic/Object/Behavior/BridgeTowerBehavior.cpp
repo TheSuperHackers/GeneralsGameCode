@@ -124,7 +124,7 @@ void BridgeTowerBehavior::onDamage( DamageInfo *damageInfo )
 		// or other towers
 		//
 		Object *source = TheGameLogic->findObjectByID( damageInfo->in.m_sourceID );
-		if( source == NULL || 
+		if( source == NULL ||
 			  (source->isKindOf( KINDOF_BRIDGE ) == FALSE &&
 				 source->isKindOf( KINDOF_BRIDGE_TOWER ) == FALSE) )
 		{
@@ -205,7 +205,7 @@ void BridgeTowerBehavior::onHealing( DamageInfo *damageInfo )
 		// or other towers
 		//
 		Object *source = TheGameLogic->findObjectByID( damageInfo->in.m_sourceID );
-		if( source == NULL || 
+		if( source == NULL ||
 			  (source->isKindOf( KINDOF_BRIDGE ) == FALSE &&
 				 source->isKindOf( KINDOF_BRIDGE_TOWER ) == FALSE) )
 		{
@@ -239,8 +239,8 @@ void BridgeTowerBehavior::onHealing( DamageInfo *damageInfo )
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void BridgeTowerBehavior::onBodyDamageStateChange( const DamageInfo* damageInfo, 
-																									 BodyDamageType oldState, 
+void BridgeTowerBehavior::onBodyDamageStateChange( const DamageInfo* damageInfo,
+																									 BodyDamageType oldState,
 																									 BodyDamageType newState )
 {
 

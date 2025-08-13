@@ -56,7 +56,7 @@ public:
 
 	FloaterDialogClass(void);
 	~FloaterDialogClass();
-	
+
 	bool	Is_Created(void);
 	void	Create(Interface * ip, int child_dialog_id, DLGPROC child_dlg_proc);
 	bool	Dialog_Proc(HWND hWnd,UINT message,WPARAM wParam,LPARAM);

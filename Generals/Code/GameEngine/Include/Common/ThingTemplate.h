@@ -25,7 +25,7 @@
 // FILE: ThingTemplate.h //////////////////////////////////////////////////////////////////////////
 // Author: Colin Day, April 2001
 // Desc:	 Thing templates are a 'roadmap' to creating things
-///////////////////////////////////////////////////////////////////////////////////////////////////	
+///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
 
@@ -34,7 +34,7 @@
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Lib/BaseType.h"
- 
+
 #include "Common/AudioEventRTS.h"
 #include "Common/FileSystem.h"
 #include "Common/GameCommon.h"
@@ -131,7 +131,7 @@ enum ThingTemplateAudioType CPP_11(: Int)
 	TTAUDIO_soundPromotedElite,				///< Sound when unit gets promoted to Elite level
 	TTAUDIO_soundPromotedHero,				///< Sound when unit gets promoted to Hero level
 	TTAUDIO_voiceGarrison,						///< Unit is ordered to enter a garrisonable building
-	TTAUDIO_soundFalling,							///< This sound is actually called on a unit when it is exiting another. 
+	TTAUDIO_soundFalling,							///< This sound is actually called on a unit when it is exiting another.
 																		///< However, there is a soundExit which refers to the container, and this is only used for bombs falling from planes.
 #ifdef ALLOW_SURRENDER
 	TTAUDIO_voiceSurrender,						///< Unit surrenders
@@ -208,7 +208,7 @@ enum BuildCompletionType CPP_11(: Int)
 	BC_NUM_TYPES								// leave this last
 };
 #ifdef DEFINE_BUILD_COMPLETION_NAMES
-static const char *BuildCompletionNames[] = 
+static const char *BuildCompletionNames[] =
 {
 	"INVALID",
 	"APPEARS_AT_RALLY_POINT",
@@ -230,7 +230,7 @@ enum BuildableStatus CPP_11(: Int)
 };
 
 #ifdef DEFINE_BUILDABLE_STATUS_NAMES
-static const char *BuildableStatusNames[] = 
+static const char *BuildableStatusNames[] =
 {
 	"Yes",
 	"Ignore_Prerequisites",
@@ -261,14 +261,14 @@ private:
 		Bool copiedFromDefault;
 		Bool inheritable;
 
-		Nugget(const AsciiString& n, const AsciiString& moduleTag, const ModuleData* d, Int i, Bool inh) 
-		: first(n), 
-			m_moduleTag(moduleTag), 
-			second(d), 
-			interfaceMask(i), 
-			copiedFromDefault(false), 
+		Nugget(const AsciiString& n, const AsciiString& moduleTag, const ModuleData* d, Int i, Bool inh)
+		: first(n),
+			m_moduleTag(moduleTag),
+			second(d),
+			interfaceMask(i),
+			copiedFromDefault(false),
 			inheritable(inh)
-		{ 
+		{
 		}
 
 	};
@@ -281,11 +281,11 @@ public:
 	void addModuleInfo(ThingTemplate *thingTemplate, const AsciiString& name, const AsciiString& moduleTag, const ModuleData* data, Int interfaceMask, Bool inheritable);
 	const ModuleInfo::Nugget *getNuggetWithTag( const AsciiString& tag ) const;
 
-	Int getCount() const 
-	{ 
-		return m_info.size(); 
+	Int getCount() const
+	{
+		return m_info.size();
 	}
-	
+
 #if defined(RTS_DEBUG)
 	Bool containsPartialName(const char* n) const
 	{
@@ -326,9 +326,9 @@ public:
 	// for use only by ThingTemplate::friend_getAIModuleInfo
 	ModuleData* friend_getNthData(Int i);
 
-	void clear() 
-	{ 
-		m_info.clear(); 
+	void clear()
+	{
+		m_info.clear();
 	}
 
 	void setCopiedFromDefault(Bool v)
@@ -348,14 +348,14 @@ public:
 class ThingTemplate : public Overridable
 {
 
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(ThingTemplate, "ThingTemplatePool" )		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(ThingTemplate, "ThingTemplatePool" )
 
 private:
 
 #if defined(_MSC_VER) && _MSC_VER < 1300
-	ThingTemplate(const ThingTemplate& that) : m_geometryInfo(that.m_geometryInfo) 
-	{ 
-		DEBUG_CRASH(("This should never be called")); 
+	ThingTemplate(const ThingTemplate& that) : m_geometryInfo(that.m_geometryInfo)
+	{
+		DEBUG_CRASH(("This should never be called"));
 	}
 #else
 	ThingTemplate(const ThingTemplate& that) = delete;
@@ -365,7 +365,7 @@ public:
 
 
 	ThingTemplate();
-	
+
 	// copy the guts of that into this, but preserve this' name, id, and list-links.
 	void copyFrom(const ThingTemplate* that);
 
@@ -377,10 +377,10 @@ public:
 	inline AsciiString getLTAName() const { return m_LTAName; }
 #endif
 
-	/** 
+	/**
 		return a unique identifier suitable for identifying this ThingTemplate on machines playing
 		across the net. this should be considered a Magic Cookie and used only for net traffic or
-		similar sorts of things. To convert an id back to a ThingTemplate, use ThingFactory::findByID(). 
+		similar sorts of things. To convert an id back to a ThingTemplate, use ThingFactory::findByID().
 		Note that 0 is always an invalid id.  NOTE that we are not referencing m_override here
 		because even though we actually have multiple templates here representing overrides,
 		we still only conceptually have one template and want to always use one single
@@ -393,21 +393,21 @@ public:
 	// note that m_override is not used here, see getTemplateID(), for it is the same reasons
 	const AsciiString& getName() const { return m_nameString; }  ///< return the name of this template
 
-	/// get the display color (used for the editor)	
+	/// get the display color (used for the editor)
 	Color getDisplayColor() const { return m_displayColor; }
 
-	/// get the editor sorting 
+	/// get the editor sorting
 	EditorSortingType getEditorSorting() const { return (EditorSortingType)m_editorSorting; }
 
 	/// return true iff the template has the specified kindOf flag set.
-	inline Bool isKindOf(KindOfType t) const 
-	{ 
-		return TEST_KINDOFMASK(m_kindof, t); 
+	inline Bool isKindOf(KindOfType t) const
+	{
+		return TEST_KINDOFMASK(m_kindof, t);
 	}
 
 	/// convenience for doing multiple kindof testing at once.
-	inline Bool isKindOfMulti(const KindOfMaskType& mustBeSet, const KindOfMaskType& mustBeClear) const 
-	{ 		
+	inline Bool isKindOfMulti(const KindOfMaskType& mustBeSet, const KindOfMaskType& mustBeClear) const
+	{
 		return TEST_KINDOFMASK_MULTI(m_kindof, mustBeSet, mustBeClear);
 	}
 
@@ -415,7 +415,7 @@ public:
 	{
 		return TEST_KINDOFMASK_ANY(m_kindof, anyKindOf);
 	}
-	
+
 	/// set the display name
 	const UnicodeString& getDisplayName() const { return m_displayName; }  ///< return display name
 
@@ -433,7 +433,7 @@ public:
 	// Only Object can ask this.  Everyone else should ask the Object.  In fact, you really should ask the Object everything.
 	Real friend_getVisionRange() const { return m_visionRange; }  ///< get vision range
 	Real friend_getShroudClearingRange() const { return m_shroudClearingRange; }  ///< get vision range for Shroud ONLY (Design requested split)
-	
+
 	// This function is only for use by the AIUpdateModuleData::parseLocomotorSet function.
 	AIUpdateModuleData *friend_getAIModuleInfo(void);
 
@@ -445,7 +445,7 @@ public:
 
 	const AsciiString& getShadowTextureName( void ) const { return m_shadowTextureName; }
 	UnsignedInt getOcclusionDelay(void) const { return m_occlusionDelay;}
-	
+
 	const ModuleInfo& getBehaviorModuleInfo() const { return m_behaviorModuleInfo; }
 	const ModuleInfo& getDrawModuleInfo() const { return m_drawModuleInfo; }
 	const ModuleInfo& getClientUpdateModuleInfo() const { return m_clientUpdateModuleInfo; }
@@ -515,7 +515,7 @@ public:
 	void validate();
 
 // The version that does not take an Object argument is labeled friend for use by WorldBuilder.  All game requests
-// for CommandSet must use Object::getCommandSetString, as we have two different sources for dynamic answers. 
+// for CommandSet must use Object::getCommandSetString, as we have two different sources for dynamic answers.
 	const AsciiString& friend_getCommandSetString() const { return m_commandSetString; }
 
 	const std::vector<AsciiString>& getBuildVariations() const { return m_buildVariations; }
@@ -543,22 +543,22 @@ public:
 	Int getEnergyProduction() const { return m_energyProduction; }
 	Int getEnergyBonus() const { return m_energyBonus; }
 
-	// these are NOT publicly available; you should call calcCostToBuild() or calcTimeToBuild() 
+	// these are NOT publicly available; you should call calcCostToBuild() or calcTimeToBuild()
 	// instead, because they will take player handicaps into account.
 	// Int getBuildCost() const { return m_buildCost; }
-	
+
 	Int getRefundValue() const { return m_refundValue; }
 
 	BuildCompletionType getBuildCompletion() const { return (BuildCompletionType)m_buildCompletion; }
 
 	BuildableStatus getBuildable() const;
-	
+
 	Int getPrereqCount() const { return m_prereqInfo.size(); }
 	const ProductionPrerequisite *getNthPrereq(Int i) const { return &m_prereqInfo[i]; }
 
-	/** 
-		return the BuildFacilityTemplate, if any. 
-		
+	/**
+		return the BuildFacilityTemplate, if any.
+
 		if this template needs no build facility, null is returned.
 
 		if the template needs a build facility but the given player doesn't have any in existence,
@@ -608,13 +608,13 @@ public:
 
 	UnsignedByte getCrushableLevel() const { return m_crushableLevel; }
 	UnsignedByte getCrusherLevel() const { return m_crusherLevel; }
-	
+
 	AsciiString getUpgradeCameoName( Int n)const{ return m_upgradeCameoUpgradeNames[n];	}
 
 protected:
 
 	//
-	// these are NOT publicly available; you should call calcCostToBuild() or calcTimeToBuild() 
+	// these are NOT publicly available; you should call calcCostToBuild() or calcTimeToBuild()
 	// instead, because they will take player handicaps into account.
 	//
 	Int getBuildCost() const { return m_buildCost; }
@@ -638,8 +638,8 @@ protected:
 
 	static void parseAddModule(INI *ini, void *instance, void *store, const void *userData);
 	static void parseRemoveModule(INI *ini, void *instance, void *store, const void *userData);
-	static void parseReplaceModule(INI *ini, void *instance, void *store, const void *userData);	
-	static void parseInheritableModule(INI *ini, void *instance, void *store, const void *userData);	
+	static void parseReplaceModule(INI *ini, void *instance, void *store, const void *userData);
+	static void parseInheritableModule(INI *ini, void *instance, void *store, const void *userData);
 
 	Bool removeModuleInfo(const AsciiString& moduleToRemove, AsciiString& clearedModuleNameOut);
 
@@ -677,7 +677,7 @@ private:
 	Int											m_skillPointValues[LEVEL_COUNT];
 	Int											m_experienceValues[LEVEL_COUNT];		///< How much I am worth at each experience level
 	Int											m_experienceRequired[LEVEL_COUNT];	///< How many experience points I need for each level
-	
+
 	//Code renderer handles these states now.
 	//AsciiString							m_inventoryImage[ INV_IMAGE_NUM_IMAGES ];  ///< portrait inventory pictures
 
@@ -701,7 +701,7 @@ private:
 	ThingTemplate*				m_nextThingTemplate;
 	const ThingTemplate*	m_reskinnedFrom;									///< non NULL if we were generated via a reskin
 	const Image *					m_selectedPortraitImage;		/// portrait image when selected (to display in GUI)
-	const Image	*					m_buttonImage;			
+	const Image	*					m_buttonImage;
 
 	// ---- Real-sized things
 	Real					m_fenceWidth;								///< Fence width for fence type objects.
@@ -713,7 +713,7 @@ private:
 	Real					m_factoryExtraBibWidth;					///< when placing buildings this will be the width of the reserved exit area on the right side.
 	Real					m_buildTime;									///< Seconds to build
 	Real					m_assetScale;
-	Real					m_instanceScaleFuzziness; ///< scale randomization tolerance to init for each Drawable instance, 
+	Real					m_instanceScaleFuzziness; ///< scale randomization tolerance to init for each Drawable instance,
 	Real					m_shadowSizeX;				///< world-space extent of decal shadow texture
 	Real					m_shadowSizeY;				///< world-space extent of decal shadow texture
 	Real					m_shadowOffsetX;			///< world-space offset of decal shadow texture
@@ -757,11 +757,11 @@ private:
 };
 
 //-----------------------------------------------------------------------------
-//           Inlining                                                       
+//           Inlining
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-//           Externals                                                     
+//           Externals
 //-----------------------------------------------------------------------------
 
 #endif // __THINGTEMPLATE_H_

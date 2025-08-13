@@ -23,13 +23,13 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-//	
-// FILE: SabotageMilitaryFactoryCrateCollide.cpp 
+//
+// FILE: SabotageMilitaryFactoryCrateCollide.cpp
 // Author: Kris Morness, June 2003
 // Desc:   A crate (actually a saboteur - mobile crate) that steals cash from the target supply center.
-//	
+//
 ///////////////////////////////////////////////////////////////////////////////////////////////////
- 
+
 
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
@@ -66,13 +66,13 @@
 //-------------------------------------------------------------------------------------------------
 SabotageMilitaryFactoryCrateCollide::SabotageMilitaryFactoryCrateCollide( Thing *thing, const ModuleData* moduleData ) : CrateCollide( thing, moduleData )
 {
-} 
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 SabotageMilitaryFactoryCrateCollide::~SabotageMilitaryFactoryCrateCollide( void )
 {
-}  
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -138,7 +138,7 @@ Bool SabotageMilitaryFactoryCrateCollide::executeCrateBehavior( Object *other )
 
 	UnsignedInt frame = TheGameLogic->getFrame() + getSabotageMilitaryFactoryCrateCollideModuleData()->m_sabotageFrames;
 	other->setDisabledUntil( DISABLED_HACKED, frame );
-		
+
 	return TRUE;
 }
 

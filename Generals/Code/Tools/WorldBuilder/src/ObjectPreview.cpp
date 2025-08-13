@@ -90,7 +90,7 @@ static UnsignedByte * saveSurface(IDirect3DSurface8 *surface)
 	HRESULT hr=m_pDev->CreateImageSurface(  desc.Width,desc.Height,desc.Format, &tempSurface);
 
 	hr=m_pDev->CopyRects(surface,NULL,0,tempSurface,NULL);
- 
+
 	D3DLOCKED_RECT lrect;
 
 	DX8_ErrorCode(tempSurface->LockRect(&lrect,NULL,D3DLOCK_READONLY));
@@ -229,7 +229,7 @@ static UnsignedByte * generatePreview( const ThingTemplate *tt )
 
 			Vector2 minVec = Vector2( -1, -1 );
 			Vector2 maxVec = Vector2( +1, +1 );
-			camera->Set_View_Plane( minVec, maxVec );		
+			camera->Set_View_Plane( minVec, maxVec );
 			camera->Set_Clip_Planes( 0.995f, 600.0f );
 			if (orthoCamera)
 				camera->Set_Projection_Type( CameraClass::ORTHO );
@@ -267,10 +267,10 @@ static UnsignedByte * generatePreview( const ThingTemplate *tt )
 /////////////////////////////////////////////////////////////////////////////
 // ObjectPreview message handlers
 
-void ObjectPreview::OnPaint() 
+void ObjectPreview::OnPaint()
 {
 	CPaintDC dc(this); // device context for painting
-	
+
 	CRect clientRect;
 	GetClientRect(&clientRect);
 
@@ -293,7 +293,7 @@ void ObjectPreview::OnPaint()
 void ObjectPreview::DrawMyTexture(CDC *pDc, int top, int left, Int width, Int height, UnsignedByte *rgbData)
 {
 	// Just blast about some dib bits.
-	
+
 	LPBITMAPINFO pBI;
 //	long bytes = sizeof(BITMAPINFO);
  	pBI = new BITMAPINFO;
@@ -310,9 +310,9 @@ void ObjectPreview::DrawMyTexture(CDC *pDc, int top, int left, Int width, Int he
 	pBI->bmiHeader.biClrImportant = 0;
 
 	//::Sleep(10);
-	//int val=::StretchDIBits(pDc->m_hDC, left, top, width, height, 0, 0, PREVIEW_WIDTH, PREVIEW_HEIGHT, rgbData, pBI, 
+	//int val=::StretchDIBits(pDc->m_hDC, left, top, width, height, 0, 0, PREVIEW_WIDTH, PREVIEW_HEIGHT, rgbData, pBI,
 	//	DIB_RGB_COLORS, SRCCOPY);
-	/*int val=*/::StretchDIBits(pDc->m_hDC, left, top, width, height, PREVIEW_WIDTH/4, PREVIEW_HEIGHT/4, PREVIEW_WIDTH/2, PREVIEW_HEIGHT/2, rgbData, pBI, 
+	/*int val=*/::StretchDIBits(pDc->m_hDC, left, top, width, height, PREVIEW_WIDTH/4, PREVIEW_HEIGHT/4, PREVIEW_WIDTH/2, PREVIEW_HEIGHT/2, rgbData, pBI,
 		DIB_RGB_COLORS, SRCCOPY);
 	delete(pBI);
 }

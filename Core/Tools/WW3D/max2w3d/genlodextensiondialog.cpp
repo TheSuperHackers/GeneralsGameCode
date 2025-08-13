@@ -153,7 +153,7 @@ bool GenLodExtensionDialogClass::Dialog_Proc(HWND hWnd,UINT message,WPARAM wPara
 				IDC_LOD_INDEX_EDIT,
 				MIN_LOD_INDEX,MAX_LOD_INDEX,INITIAL_LOD_INDEX
 			);
-			
+
 			return 1;
 
 		case WM_COMMAND:

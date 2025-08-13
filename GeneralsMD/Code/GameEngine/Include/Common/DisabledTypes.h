@@ -25,7 +25,7 @@
 // FILE: DisabledTypes.h //////////////////////////////////////////////////////////////////////////
 // Author: Kris Morness, September 2002
 // Desc:  Defines all the types of disabled statii any given object can have.
-///////////////////////////////////////////////////////////////////////////////////////////////////	
+///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
 
@@ -53,14 +53,14 @@ enum DisabledType CPP_11(: Int)
 	DISABLED_FREEFALL,    //This unit has been disabled via being in free fall
 
   DISABLED_AWESTRUCK,
-  DISABLED_BRAINWASHED, 
+  DISABLED_BRAINWASHED,
 	DISABLED_SUBDUED,			///< Temporarily shut down by Subdual damage
 	//These ones are specificially for scripts to enable/reenable!
 	DISABLED_SCRIPT_DISABLED,
 	DISABLED_SCRIPT_UNDERPOWERED,
 
 	DISABLED_COUNT,
-	
+
 	DISABLED_ANY = 65535		///< Do not use this value for setting disabled types (read-only)
 };
 
@@ -72,13 +72,13 @@ typedef BitFlags<DISABLED_COUNT>	DisabledMaskType;
 #define MAKE_DISABLED_MASK4(k,a,b,c) DisabledMaskType(DisabledMaskType::kInit, (k), (a), (b), (c))
 #define MAKE_DISABLED_MASK5(k,a,b,c,d) DisabledMaskType(DisabledMaskType::kInit, (k), (a), (b), (c), (d))
 
-inline Bool TEST_DISABLEDMASK(const DisabledMaskType& m, DisabledType t) 
-{ 
-	return m.test(t); 
+inline Bool TEST_DISABLEDMASK(const DisabledMaskType& m, DisabledType t)
+{
+	return m.test(t);
 }
 
-inline Bool TEST_DISABLEDMASK_ANY(const DisabledMaskType& m, const DisabledMaskType& mask) 
-{ 
+inline Bool TEST_DISABLEDMASK_ANY(const DisabledMaskType& m, const DisabledMaskType& mask)
+{
 	return m.anyIntersectionWith(mask);
 }
 
@@ -87,14 +87,14 @@ inline Bool TEST_DISABLEDMASK_MULTI(const DisabledMaskType& m, const DisabledMas
 	return m.testSetAndClear(mustBeSet, mustBeClear);
 }
 
-inline Bool DISABLEDMASK_ANY_SET(const DisabledMaskType& m) 
-{ 
-	return m.any(); 
+inline Bool DISABLEDMASK_ANY_SET(const DisabledMaskType& m)
+{
+	return m.any();
 }
 
-inline void CLEAR_DISABLEDMASK(DisabledMaskType& m) 
-{ 
-	m.clear(); 
+inline void CLEAR_DISABLEDMASK(DisabledMaskType& m)
+{
+	m.clear();
 }
 
 inline void SET_ALL_DISABLEDMASK_BITS(DisabledMaskType& m)

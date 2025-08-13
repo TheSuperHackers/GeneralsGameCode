@@ -76,7 +76,7 @@ class TextureListNodeClass
 			TYPE_MESH		= 0,
 			TYPE_TEXTURE,
 			TYPE_COUNT
-		} NODE_TYPE;	
+		} NODE_TYPE;
 
 		////////////////////////////////////////////////////////////
 		//

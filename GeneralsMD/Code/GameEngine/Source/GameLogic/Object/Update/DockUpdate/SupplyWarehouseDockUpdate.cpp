@@ -53,7 +53,7 @@ SupplyWarehouseDockUpdateModuleData::SupplyWarehouseDockUpdateModuleData( void )
 
 	DockUpdateModuleData::buildFieldParse( p );
 
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
 		{ "StartingBoxes",	INI::parseInt,	NULL, offsetof( SupplyWarehouseDockUpdateModuleData, m_startingBoxesData ) },
 		{ "DeleteWhenEmpty",	INI::parseBool,	NULL, offsetof( SupplyWarehouseDockUpdateModuleData, m_deleteWhenEmpty ) },
@@ -104,7 +104,7 @@ Bool SupplyWarehouseDockUpdate::action( Object* docker, Object *drone )
 		docker->setPosition(&newPos);
 		return FALSE;  //not close enough.
 	}
-	
+
 	--m_boxesStored;// so the docker sees that I am shy by one box (or empty) from within his gainOneBox()
 
 	SupplyTruckAIInterface *ai = docker->getAIUpdateInterface()->getSupplyTruckAIInterface();
@@ -126,7 +126,7 @@ Bool SupplyWarehouseDockUpdate::action( Object* docker, Object *drone )
 
 		return TRUE;
 	}
-	else 
+	else
 		++m_boxesStored; //take it back, since there was noone to gain the box
   									 //this is important so that I have one less boxes as perceived by the docker when he gains one
 

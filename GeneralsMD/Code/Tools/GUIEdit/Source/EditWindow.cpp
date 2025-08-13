@@ -24,12 +24,12 @@
 
 // FILE: EditWindow.cpp ///////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:    RTS3
@@ -87,10 +87,10 @@ EditWindow *TheEditWindow = NULL;  ///< edit window singleton
 // editProc ===================================================================
 /** Window procedure for the edit window */
 //=============================================================================
-LRESULT CALLBACK EditWindow::editProc( HWND hWnd, UINT message, 
+LRESULT CALLBACK EditWindow::editProc( HWND hWnd, UINT message,
 																			 WPARAM wParam, LPARAM lParam )
 {
-	
+
 	switch( message )
 	{
 
@@ -101,7 +101,7 @@ LRESULT CALLBACK EditWindow::editProc( HWND hWnd, UINT message,
 
 			if( TheEditWindow )
 			{
-			
+
 				if( timerID == TIMER_EDIT_WINDOW_PULSE )
 					TheEditWindow->updatePulse();
 
@@ -168,11 +168,11 @@ LRESULT CALLBACK EditWindow::editProc( HWND hWnd, UINT message,
 					// create new window at that location
 					switch( controlID )
 					{
-						
+
 						// ----------------------------------------------------------------
 						case POPUP_MENU_NEW_WINDOW:
-							TheEditor->newWindow( GWS_USER_WINDOW, 
-																		window, pos.x, pos.y, 
+							TheEditor->newWindow( GWS_USER_WINDOW,
+																		window, pos.x, pos.y,
 																		15 * TheEditor->getGridResolution(),
 																		15 * TheEditor->getGridResolution() );
 							break;
@@ -180,15 +180,15 @@ LRESULT CALLBACK EditWindow::editProc( HWND hWnd, UINT message,
 						// ----------------------------------------------------------------
 						case POPUP_MENU_NEW_PUSH_BUTTON:
 							TheEditor->newWindow( GWS_PUSH_BUTTON,
-																		window, pos.x, pos.y, 
-																		15 * TheEditor->getGridResolution(), 
+																		window, pos.x, pos.y,
+																		15 * TheEditor->getGridResolution(),
 																		3 * TheEditor->getGridResolution() );
 							break;
 
 						// ----------------------------------------------------------------
 						case POPUP_MENU_NEW_CHECK_BOX:
 							TheEditor->newWindow( GWS_CHECK_BOX,
-																		window, pos.x, pos.y, 
+																		window, pos.x, pos.y,
 																		15 * TheEditor->getGridResolution(),
 																		3 * TheEditor->getGridResolution() );
 							break;
@@ -196,72 +196,72 @@ LRESULT CALLBACK EditWindow::editProc( HWND hWnd, UINT message,
 						// ----------------------------------------------------------------
 						case POPUP_MENU_NEW_RADIO_BUTTON:
 							TheEditor->newWindow( GWS_RADIO_BUTTON,
-																		window, pos.x, pos.y, 
-																		15 * TheEditor->getGridResolution(), 
+																		window, pos.x, pos.y,
+																		15 * TheEditor->getGridResolution(),
 																		3 * TheEditor->getGridResolution() );
 							break;
 
 						// ----------------------------------------------------------------
 						case POPUP_MENU_NEW_TAB_CONTROL:
 							TheEditor->newWindow( GWS_TAB_CONTROL,
-																		window, pos.x, pos.y, 
-																		45 * TheEditor->getGridResolution(), 
+																		window, pos.x, pos.y,
+																		45 * TheEditor->getGridResolution(),
 																		30 * TheEditor->getGridResolution() );
 							break;
 
 						// ----------------------------------------------------------------
 						case POPUP_MENU_NEW_LISTBOX:
 							TheEditor->newWindow( GWS_SCROLL_LISTBOX,
-																		window, pos.x, pos.y, 
-																		20 * TheEditor->getGridResolution(), 
+																		window, pos.x, pos.y,
+																		20 * TheEditor->getGridResolution(),
 																		20 * TheEditor->getGridResolution() );
 							break;
-						
+
 						// ----------------------------------------------------------------
 						case POPUP_MENU_NEW_COMBO_BOX:
 							TheEditor->newWindow( GWS_COMBO_BOX,
-																		window, pos.x, pos.y, 
-																		15 * TheEditor->getGridResolution(), 
+																		window, pos.x, pos.y,
+																		15 * TheEditor->getGridResolution(),
 																		3 * TheEditor->getGridResolution() );
 							break;
 
 						// ----------------------------------------------------------------
 						case POPUP_MENU_NEW_HORIZONTAL_SLIDER:
 							TheEditor->newWindow( GWS_HORZ_SLIDER,
-																		window, pos.x, pos.y, 
-																		20 * TheEditor->getGridResolution(), 
+																		window, pos.x, pos.y,
+																		20 * TheEditor->getGridResolution(),
 																		GADGET_SIZE );
 							break;
 
 						// ----------------------------------------------------------------
 						case POPUP_MENU_NEW_VERTICAL_SLIDER:
 							TheEditor->newWindow( GWS_VERT_SLIDER,
-																		window, pos.x, pos.y, 
-																		GADGET_SIZE, 
+																		window, pos.x, pos.y,
+																		GADGET_SIZE,
 																		20 * TheEditor->getGridResolution() );
 							break;
 
 						// ----------------------------------------------------------------
 						case POPUP_MENU_NEW_PROGRESS_BAR:
 							TheEditor->newWindow( GWS_PROGRESS_BAR,
-																		window, pos.x, pos.y, 
-																		40 * TheEditor->getGridResolution(), 
+																		window, pos.x, pos.y,
+																		40 * TheEditor->getGridResolution(),
 																		GADGET_SIZE );
 							break;
 
 						// ----------------------------------------------------------------
 						case POPUP_MENU_NEW_TEXT_ENTRY:
 							TheEditor->newWindow( GWS_ENTRY_FIELD,
-																		window, pos.x, pos.y, 
-																		20 * TheEditor->getGridResolution(), 
+																		window, pos.x, pos.y,
+																		20 * TheEditor->getGridResolution(),
 																		25 );
 							break;
 
 						// ----------------------------------------------------------------
 						case POPUP_MENU_NEW_STATIC_TEXT:
 							TheEditor->newWindow( GWS_STATIC_TEXT,
-																		window, pos.x, pos.y, 
-																		15 * TheEditor->getGridResolution(), 
+																		window, pos.x, pos.y,
+																		15 * TheEditor->getGridResolution(),
 																		15 * TheEditor->getGridResolution() );
 							break;
 
@@ -296,7 +296,7 @@ LRESULT CALLBACK EditWindow::editProc( HWND hWnd, UINT message,
 		// ------------------------------------------------------------------------
 		default:
 		{
-			
+
 			break;
 
 		}  // end default
@@ -316,7 +316,7 @@ void EditWindow::registerEditWindowClass( void )
 	ATOM atom;
 	HINSTANCE hInst = TheEditor->getInstance();
 
-	wcex.cbSize = sizeof( WNDCLASSEX ); 
+	wcex.cbSize = sizeof( WNDCLASSEX );
 
 	wcex.style					= CS_HREDRAW | CS_VREDRAW;
 	wcex.lpfnWndProc		= (WNDPROC)editProc;
@@ -331,7 +331,7 @@ void EditWindow::registerEditWindowClass( void )
 	wcex.hIconSm				= LoadIcon(wcex.hInstance, (LPCTSTR)IDI_SMALL);
 
 	atom = RegisterClassEx( &wcex );
-	
+
 	// if successfully registered we don't ever need to do this again
 	if( atom != 0 )
 		m_classRegistered = TRUE;
@@ -579,7 +579,7 @@ void EditWindow::mouseEvent( UnsignedInt windowsMessage,
 		if( mousePrint.y > m_size.y )
 			mousePrint.y = m_size.y;
 
-		sprintf( buffer, "Mouse Location (X = %d, Y = %d)", 
+		sprintf( buffer, "Mouse Location (X = %d, Y = %d)",
 						 mousePrint.x, mousePrint.y );
 		TheEditor->statusMessage( STATUS_MOUSE_COORDS, buffer );
 
@@ -590,14 +590,14 @@ void EditWindow::mouseEvent( UnsignedInt windowsMessage,
 	}  // end if
 
 	//
-	// if we're in test mode just pump all input through to the 
+	// if we're in test mode just pump all input through to the
 	// window system so we can see how everything acts
 	//
 	if( TheEditor->getMode() == MODE_TEST_RUN )
 	{
 		if( TheWin32Mouse )
 			TheWin32Mouse->addWin32Event( windowsMessage, wParam, lParam, NO_TIME_FROM_WINDOWS);
-		
+
 		return;
 
 	}  // end if
@@ -619,7 +619,7 @@ void EditWindow::mouseEvent( UnsignedInt windowsMessage,
 			//
 			// this is really stupid, but the tree controls just don't
 			// give enough hooks into all the events we need ... it's possible
-			// to be in drag and drop mode due to menus opening up and the 
+			// to be in drag and drop mode due to menus opening up and the
 			// user clicking on blank area etc.  So if the mouse is in the
 			// the edit window just make sure all our drag and drop stuff is
 			// clear in the hierarchy
@@ -682,7 +682,7 @@ void EditWindow::mouseEvent( UnsignedInt windowsMessage,
 
 			//
 			// if we are in one of the resize modes then this click will
-			// resize the window selected 
+			// resize the window selected
 			//
 			if( TheEditor->getMode() == MODE_RESIZE_TOP_LEFT ||
 					TheEditor->getMode() == MODE_RESIZE_BOTTOM_RIGHT ||
@@ -775,7 +775,7 @@ void EditWindow::mouseEvent( UnsignedInt windowsMessage,
 
 			break;
 
-		}  // end left button down 
+		}  // end left button down
 
 		// ------------------------------------------------------------------------
 		case WM_LBUTTONUP:
@@ -832,7 +832,7 @@ void EditWindow::mouseEvent( UnsignedInt windowsMessage,
 					// resize the window
 					window->winSetSize( resultSize.x, resultSize.y );
 				}
-							
+
 				// go back to normal
 				m_resizingWindow = FALSE;
 				TheEditor->setMode( MODE_EDIT );
@@ -871,7 +871,7 @@ void EditWindow::mouseEvent( UnsignedInt windowsMessage,
 
 			// get the window at the click pos
 			window = TheEditor->getWindowAtPos( clickPos.x, clickPos.y );
-					
+
 			//
 			// if there is a window here and it is not part of the selection
 			// list, everything else is unselected
@@ -893,7 +893,7 @@ void EditWindow::mouseEvent( UnsignedInt windowsMessage,
 				TheEditor->clearSelections();
 
 			}  // end else
-												
+
 			// open right click menu
 			TheEditWindow->openPopupMenu( clickPos.x, clickPos.y );
 
@@ -948,9 +948,9 @@ Bool EditWindow::inCornerTolerance( ICoord2D *dest, ICoord2D *source,
 			dest->y >= region.lo.y &&
 			dest->y <= region.hi.y )
 		return TRUE;
-		
+
 	return FALSE;
-		
+
 }  // end inCornerTolerance
 
 // EditWindow::inLineTolerance ================================================
@@ -964,7 +964,7 @@ Bool EditWindow::inLineTolerance( ICoord2D *dest,
 	IRegion2D region;
 
 	// sanity
-	if( dest == NULL || lineStart == NULL || lineEnd == NULL )	
+	if( dest == NULL || lineStart == NULL || lineEnd == NULL )
 		return FALSE;
 
 	// setup region
@@ -979,7 +979,7 @@ Bool EditWindow::inLineTolerance( ICoord2D *dest,
 			dest->y >= region.lo.y &&
 			dest->y <= region.hi.y )
 		return TRUE;
-		
+
 	return FALSE;
 
 }  // end inLineTolerance
@@ -995,7 +995,7 @@ void EditWindow::handleResizeAvailable( Int mouseX, Int mouseY )
 	GameWindow *window;
 	ICoord2D origin, size, mouse, point;
 	const Int tol = 5;
-		
+
 	// if there is zero or more than 1 window selected we can't resize
 	if( TheEditor->selectionCount() != 1 )
 		return;
@@ -1008,7 +1008,7 @@ void EditWindow::handleResizeAvailable( Int mouseX, Int mouseY )
 	window = TheEditor->getFirstSelected();
 	window->winGetScreenPosition( &origin.x, &origin.y );
 	window->winGetSize( &size.x, &size.y );
-		
+
 	// check for around top left corner
 	point = origin;
 	if( inCornerTolerance( &mouse, &point, tol ) == TRUE )
@@ -1035,7 +1035,7 @@ void EditWindow::handleResizeAvailable( Int mouseX, Int mouseY )
 	point.y = origin.y;
 	if( inCornerTolerance( &mouse, &point, tol ) == TRUE )
 	{
-		
+
 		TheEditor->setMode( MODE_RESIZE_TOP_RIGHT );
 		return;
 
@@ -1244,7 +1244,7 @@ void EditWindow::drawUIFeedback( void )
 		GameWindow *window;
 		Real windowSelectWidth = 2.0f;
 		Color windowSelectColor;
-		
+
 		windowSelectColor = GameMakeColor( 0, color, 0, 255 );
 
 		// get window properties
@@ -1253,8 +1253,8 @@ void EditWindow::drawUIFeedback( void )
 		window->winGetSize( &size.x, &size.y );
 
 		// draw a box on the window
-		drawOpenRect( origin.x, origin.y, size.x, size.y, 
-									windowSelectWidth, windowSelectColor );		
+		drawOpenRect( origin.x, origin.y, size.x, size.y,
+									windowSelectWidth, windowSelectColor );
 
 		// go to next selection
 		select = select->next;
@@ -1290,7 +1290,7 @@ void EditWindow::drawUIFeedback( void )
  			ICoord2D change;
  			change.x = (m_dragMoveDest.x - m_dragMoveOrigin.x);
  			change.y = (m_dragMoveDest.y - m_dragMoveOrigin.y);
- 
+
  		// [SKB: Jun 02 2003 @ 2:7pm] :
  		// Don't move the object unless we have moved the mouse,
  		// this is to avoid the irritating movement of a window when just
@@ -1306,7 +1306,7 @@ void EditWindow::drawUIFeedback( void )
 
 
 				// keep location legal
- 				TheEditor->computeSafeLocation( window, moveLoc.x, moveLoc.y, 
+ 				TheEditor->computeSafeLocation( window, moveLoc.x, moveLoc.y,
 																				&safeLoc.x, &safeLoc.y );
 
 				// adjust location by parent location if present
@@ -1322,7 +1322,7 @@ void EditWindow::drawUIFeedback( void )
 				}  // end if
 
 				// draw outline of window at what would be the drag move destination
-				drawOpenRect( safeLoc.x, safeLoc.y, size.x, size.y, 
+				drawOpenRect( safeLoc.x, safeLoc.y, size.x, size.y,
 											outlineWidth, outlineColor );
 			}
 
@@ -1396,7 +1396,7 @@ void EditWindow::drawUIFeedback( void )
 	if( dragTarget )
 	{
 		ICoord2D origin, size;
-		
+
 		// get size and position
 		dragTarget->winGetScreenPosition( &origin.x, &origin.y );
 		dragTarget->winGetSize( &size.x, &size.y );
@@ -1417,7 +1417,7 @@ void EditWindow::drawGrid( void )
 	Int res = TheEditor->getGridResolution();
 	Int x, y;
 	RGBColorInt *gridColor = TheEditor->getGridColor();
-	Color color = GameMakeColor( gridColor->red, gridColor->green,	
+	Color color = GameMakeColor( gridColor->red, gridColor->green,
 															 gridColor->blue, gridColor->alpha );
 
 	// set us to invert where we draw
@@ -1431,7 +1431,7 @@ void EditWindow::drawGrid( void )
 //		MoveToEx( hdc, 0, y, NULL );
 //		LineTo( hdc, m_size.x, y );
 
-	} 
+	}
 
 	for( x = 0; x < m_size.x; x += res )
 	{
@@ -1440,7 +1440,7 @@ void EditWindow::drawGrid( void )
 //		MoveToEx( hdc, x, 0, NULL );
 //		LineTo( hdc, x, m_size.y );
 
-	} 
+	}
 
 /*
 	for( y = 0; y < m_size.y; y += res )
@@ -1478,8 +1478,8 @@ void EditWindow::draw( void )
 	syncTime += 50;
 
 	// start render block
-	WW3D::Begin_Render( true, true, Vector3( m_backgroundColor.red, 
-																					 m_backgroundColor.green, 
+	WW3D::Begin_Render( true, true, Vector3( m_backgroundColor.red,
+																					 m_backgroundColor.green,
 																					 m_backgroundColor.blue ) );
 
 	// draw the windows
@@ -1552,7 +1552,7 @@ void EditWindow::openPopupMenu( Int x, Int y )
 		EnableMenuItem( subMenu, POPUP_MENU_BRING_TO_TOP, MF_ENABLED );
 
 	}  // end else
-	
+
 	//
 	// open up right mouse track menu, note that we have to translate the
 	// x,y of this mouse click which is local to this window into
@@ -1572,32 +1572,32 @@ void EditWindow::openPopupMenu( Int x, Int y )
 // EditWindow::drawLine =======================================================
 /** draw a line on the display in pixel coordinates with the specified color */
 //=============================================================================
-void EditWindow::drawLine( Int startX, Int startY, 
-													 Int endX, Int endY, 
+void EditWindow::drawLine( Int startX, Int startY,
+													 Int endX, Int endY,
 													 Real lineWidth, UnsignedInt lineColor )
 {
 
 	m_2DRender->Reset();
 	m_2DRender->Enable_Texturing( FALSE );
-	m_2DRender->Add_Line( Vector2( startX, startY ), Vector2( endX, endY ), 
+	m_2DRender->Add_Line( Vector2( startX, startY ), Vector2( endX, endY ),
 												lineWidth, lineColor );
 	m_2DRender->Render();
-	
+
 }  // end drawLIne
 
 // EditWindow::drawOpenRect ===================================================
-/** draw a rect border on the display in pixel coordinates with the 
+/** draw a rect border on the display in pixel coordinates with the
 	* specified color */
 //=============================================================================
-void EditWindow::drawOpenRect( Int startX, Int startY, 
+void EditWindow::drawOpenRect( Int startX, Int startY,
 															 Int width, Int height,
 															 Real lineWidth, UnsignedInt lineColor )
 {
 
-	m_2DRender->Reset();		
+	m_2DRender->Reset();
 	m_2DRender->Enable_Texturing( FALSE );
-	m_2DRender->Add_Outline( RectClass( startX, startY, 
-																			startX + width, startY + height ), 
+	m_2DRender->Add_Outline( RectClass( startX, startY,
+																			startX + width, startY + height ),
 													 lineWidth, lineColor );
 
 	// render it now!
@@ -1606,18 +1606,18 @@ void EditWindow::drawOpenRect( Int startX, Int startY,
 }  // end drawOpenRect
 
 // EditWindow::drawFillRect ===================================================
-/** draw a filled rect on the display in pixel coords with the 
+/** draw a filled rect on the display in pixel coords with the
 	* specified color */
 //=============================================================================
-void EditWindow::drawFillRect( Int startX, Int startY, 
+void EditWindow::drawFillRect( Int startX, Int startY,
 															 Int width, Int height,
 															 UnsignedInt color )
 {
 
-	m_2DRender->Reset();		
+	m_2DRender->Reset();
 	m_2DRender->Enable_Texturing( FALSE );
-	m_2DRender->Add_Rect( RectClass( startX, startY, 
-																	 startX + width, startY + height ), 
+	m_2DRender->Add_Rect( RectClass( startX, startY,
+																	 startX + width, startY + height ),
 												0, 0, color );
 
 	// render it now!
@@ -1628,8 +1628,8 @@ void EditWindow::drawFillRect( Int startX, Int startY,
 // EditWindow::drawImage ======================================================
 /** draw an image fit within the screen coordinates */
 //=============================================================================
-void EditWindow::drawImage( const Image *image, 
-														Int startX, Int startY, 
+void EditWindow::drawImage( const Image *image,
+														Int startX, Int startY,
 														Int endX, Int endY,
 														Color color )
 {
@@ -1696,7 +1696,7 @@ void EditWindow::drawImage( const Image *image,
 	if( BitIsSet( image->getStatus(), IMAGE_STATUS_ROTATED_90_CLOCKWISE ) )
 	{
 
-		m_2DRender->Add_Tri( Vector2( screen_rect.Left, screen_rect.Top ), 
+		m_2DRender->Add_Tri( Vector2( screen_rect.Left, screen_rect.Top ),
 												 Vector2( screen_rect.Left, screen_rect.Bottom ),
 												 Vector2( screen_rect.Right, screen_rect.Top ),
 												 Vector2( uv_rect.Right, uv_rect.Top),
@@ -1730,7 +1730,7 @@ void EditWindow::drawImage( const Image *image,
 //=============================================================================
 RGBColorReal EditWindow::getBackgroundColor( void )
 {
-	
+
 	return m_backgroundColor;
 
 }  // end getBackgroundColor

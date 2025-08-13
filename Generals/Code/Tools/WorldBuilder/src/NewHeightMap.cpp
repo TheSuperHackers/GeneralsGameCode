@@ -55,10 +55,10 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // CNewHeightMap message handlers
 
-BOOL CNewHeightMap::OnInitDialog() 
+BOOL CNewHeightMap::OnInitDialog()
 {
 	CDialog::OnInitDialog();
-	
+
 	CWnd *edit = GetDlgItem(IDC_INITIAL_HEIGHT);
 	CString val;
 	val.Format("%d", mHeightInfo.initialHeight);
@@ -124,33 +124,33 @@ Bool CNewHeightMap::doAnchorButton(Int buttonID)
 	heightInfo.anchorLeft = false;
 	heightInfo.anchorRight = false;
 	switch(buttonID) {
-		case IDC_CENTER: 
+		case IDC_CENTER:
 		break;
-		case IDC_TOP_LEFT: 
+		case IDC_TOP_LEFT:
 			heightInfo.anchorTop = true;
 			heightInfo.anchorLeft = true;
 		break;
-		case IDC_TOP: 
+		case IDC_TOP:
 			heightInfo.anchorTop = true;
 		break;
-		case IDC_TOP_RIGHT: 
+		case IDC_TOP_RIGHT:
 			heightInfo.anchorTop = true;
 			heightInfo.anchorRight = true;
 		break;
-		case IDC_CENTER_LEFT: 
+		case IDC_CENTER_LEFT:
 			heightInfo.anchorLeft = true;
 		break;
-		case IDC_CENTER_RIGHT: 
+		case IDC_CENTER_RIGHT:
 			heightInfo.anchorRight = true;
 		break;
-		case IDC_BOTTOM: 
+		case IDC_BOTTOM:
 			heightInfo.anchorBottom = true;
 		break;
-		case IDC_BOTTOM_LEFT: 
+		case IDC_BOTTOM_LEFT:
 			heightInfo.anchorBottom = true;
 			heightInfo.anchorLeft = true;
 		break;
-		case IDC_BOTTOM_RIGHT: 
+		case IDC_BOTTOM_RIGHT:
 			heightInfo.anchorBottom = true;
 			heightInfo.anchorRight = true;
 		break;
@@ -186,7 +186,7 @@ Bool CNewHeightMap::doAnchorButton(Int buttonID)
 }
 
 
-void CNewHeightMap::OnOK() 
+void CNewHeightMap::OnOK()
 {
 	CWnd *edit = GetDlgItem(IDC_INITIAL_HEIGHT);
 	CString val;
@@ -213,15 +213,15 @@ void CNewHeightMap::OnOK()
 }
 
 
-BOOL CNewHeightMap::OnCommand(WPARAM wParam, LPARAM lParam) 
+BOOL CNewHeightMap::OnCommand(WPARAM wParam, LPARAM lParam)
 {
 	Int cmd = HIWORD(wParam);
 	if (cmd == BN_CLICKED) {
-		Int idButton = (int) LOWORD(wParam);    // identifier of button 
+		Int idButton = (int) LOWORD(wParam);    // identifier of button
 		if (doAnchorButton(idButton)) {
 			return true;
 		}
 	}
- 	
+
 	return CDialog::OnCommand(wParam, lParam);
 }

@@ -24,12 +24,12 @@
 
 // FILE: Mouse.h //////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information					         
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:    RTS3
@@ -152,7 +152,7 @@ public:  // enumerations and types
 	// ----------------------------------------------------------------------------------------------
 	enum MouseCursor
 	{
-		
+
 		// ***** dont forget to update CursorININames[] *****
 		// ***** dont forget to update CursorININames[] *****
 		// ***** dont forget to update CursorININames[] *****
@@ -247,10 +247,10 @@ public:
 	virtual void update( void );  ///< update the state of the mouse position and buttons
 	virtual void initCursorResources(void)=0;	///< needed so Win32 cursors can load resources before D3D device created.
 
-	virtual void createStreamMessages( void );  /**< given state of device, create 
-																									 messages and put them on the 
+	virtual void createStreamMessages( void );  /**< given state of device, create
+																									 messages and put them on the
 																									 stream for the raw state. */
-	
+
 	virtual void draw( void );													///< draw the mouse
 	virtual void setPosition( Int x, Int y );						///< set the mouse position
 	virtual void setCursor( MouseCursor cursor ) = 0;		///< set mouse cursor
@@ -272,7 +272,7 @@ public:
 	virtual RedrawMode getRedrawMode(void) { return m_currentRedrawMode; } //get cursor drawing method
 	virtual void setVisibility(Bool visible) { m_visible = visible; } // set visibility for load screens, etc
 	inline Bool getVisibility(void) { return m_visible; } // get visibility state
-	
+
 	void drawTooltip( void );					///< draw the tooltip text
 	void drawCursorText( void );			///< draw the mouse cursor text
 	Int getCursorIndex( const AsciiString& name );
@@ -305,7 +305,7 @@ public:
 	UnsignedInt m_dragTolerance;
 	UnsignedInt m_dragTolerance3D;
 	UnsignedInt m_dragToleranceMS;
-	
+
 
 protected:
 
@@ -352,7 +352,7 @@ protected:
 																	relative coordinate changes */
 
 	Bool m_visible;	// visibility status
-	
+
 	MouseCursor m_currentCursor;		///< current mouse cursor
 
 	DisplayString *m_cursorTextDisplayString;		///< text to display on the cursor (if specified)

@@ -90,15 +90,15 @@ void FXNugget::doFXObj(const Object* primary, const Object* secondary) const
 //-------------------------------------------------------------------------------------------------
 class SoundFXNugget : public FXNugget
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(SoundFXNugget, "SoundFXNugget")		
-	
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(SoundFXNugget, "SoundFXNugget")
+
 public:
 
 	virtual void doFXPos(const Coord3D *primary, const Matrix3D* /*primaryMtx*/, const Real /*primarySpeed*/, const Coord3D * /*secondary*/, const Real /*overrideRadius*/ ) const
 	{
 		AudioEventRTS sound(m_soundName);
-		
-		if (primary) 
+
+		if (primary)
 		{
 			sound.setPosition(primary);
 		}
@@ -121,20 +121,20 @@ public:
 
 	static void parse(INI *ini, void *instance, void* /*store*/, const void* /*userData*/)
 	{
-		static const FieldParse myFieldParse[] = 
+		static const FieldParse myFieldParse[] =
 		{
 			{ "Name",									INI::parseAsciiString,	NULL, offsetof( SoundFXNugget, m_soundName ) },
 			{ 0, 0, 0, 0 }
 		};
 
-		SoundFXNugget* nugget = newInstance(SoundFXNugget);	
+		SoundFXNugget* nugget = newInstance(SoundFXNugget);
 		ini->initFromINI(nugget, myFieldParse);
 		((FXList*)instance)->addFXNugget(nugget);
 	}
 
 private:
 	AsciiString		m_soundName;
-};  
+};
 EMPTY_DTOR(SoundFXNugget)
 
 //-------------------------------------------------------------------------------------------------
@@ -149,7 +149,7 @@ static Real calcDist(const Coord3D& src, const Coord3D& dst)
 //-------------------------------------------------------------------------------------------------
 class TracerFXNugget : public FXNugget
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(TracerFXNugget, "TracerFXNugget")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(TracerFXNugget, "TracerFXNugget")
 public:
 
 	TracerFXNugget()
@@ -174,11 +174,11 @@ public:
 			Drawable *tracer = TheThingFactory->newDrawable(TheThingFactory->findTemplate(m_tracerName));
 			if(!tracer)
 				return;
-			
+
 			//Kris -- Redid this section Sept 18, 2002
 			//Calculate tracer orientations to face from primary to secondary position. This
 			//should be the direction that the projectile is being fired towards. It doesn't make
-			//sense that the old stuff made use of the muzzle fx bone orientation (because it's a 
+			//sense that the old stuff made use of the muzzle fx bone orientation (because it's a
 			//subobject). It had other problems because of elevation variations the tracers would
 			//stay on the ground.
 			//tracer->setTransformMatrix(primaryMtx);
@@ -219,7 +219,7 @@ public:
 
 	static void parse(INI *ini, void *instance, void* /*store*/, const void* /*userData*/)
 	{
-		static const FieldParse myFieldParse[] = 
+		static const FieldParse myFieldParse[] =
 		{
 			{ "TracerName",			INI::parseAsciiString,			NULL, offsetof( TracerFXNugget, m_tracerName ) },
 			{ "BoneName",				INI::parseAsciiString,			NULL, offsetof( TracerFXNugget, m_boneName ) },
@@ -232,7 +232,7 @@ public:
 			{ 0, 0, 0, 0 }
 		};
 
-		TracerFXNugget* nugget = newInstance( TracerFXNugget );	
+		TracerFXNugget* nugget = newInstance( TracerFXNugget );
 		ini->initFromINI(nugget, myFieldParse);
 		((FXList*)instance)->addFXNugget(nugget);
 	}
@@ -246,13 +246,13 @@ private:
 	Real						m_width;
 	RGBColor				m_color;
 	Real						m_probability;
-};  
+};
 EMPTY_DTOR(TracerFXNugget)
 
 //-------------------------------------------------------------------------------------------------
 class RayEffectFXNugget : public FXNugget
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(RayEffectFXNugget, "RayEffectFXNugget")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(RayEffectFXNugget, "RayEffectFXNugget")
 public:
 
 	RayEffectFXNugget()
@@ -288,7 +288,7 @@ public:
 
 	static void parse(INI *ini, void *instance, void* /*store*/, const void* /*userData*/)
 	{
-		static const FieldParse myFieldParse[] = 
+		static const FieldParse myFieldParse[] =
 		{
 			{ "Name",									INI::parseAsciiString,			NULL, offsetof( RayEffectFXNugget, m_templateName ) },
 			{ "PrimaryOffset",				INI::parseCoord3D,					NULL, offsetof( RayEffectFXNugget, m_primaryOffset ) },
@@ -296,7 +296,7 @@ public:
 			{ 0, 0, 0, 0 }
 		};
 
-		RayEffectFXNugget* nugget = newInstance( RayEffectFXNugget ); 
+		RayEffectFXNugget* nugget = newInstance( RayEffectFXNugget );
 		ini->initFromINI(nugget, myFieldParse);
 		((FXList*)instance)->addFXNugget(nugget);
 	}
@@ -305,13 +305,13 @@ private:
 	AsciiString			m_templateName;
 	Coord3D					m_primaryOffset;
 	Coord3D					m_secondaryOffset;
-};  
+};
 EMPTY_DTOR(RayEffectFXNugget)
 
 //-------------------------------------------------------------------------------------------------
 class LightPulseFXNugget : public FXNugget
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(LightPulseFXNugget, "LightPulseFXNugget")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(LightPulseFXNugget, "LightPulseFXNugget")
 public:
 
 	LightPulseFXNugget() : m_radius(0), m_increaseFrames(0), m_decreaseFrames(0), m_boundingCirclePct(0)
@@ -350,7 +350,7 @@ public:
 
 	static void parse(INI *ini, void *instance, void* /*store*/, const void* /*userData*/)
 	{
-		static const FieldParse myFieldParse[] = 
+		static const FieldParse myFieldParse[] =
 		{
 			{ "Color",						INI::parseRGBColor,								NULL, offsetof( LightPulseFXNugget, m_color ) },
 			{ "Radius",						INI::parseReal,										NULL, offsetof( LightPulseFXNugget, m_radius ) },
@@ -360,7 +360,7 @@ public:
 			{ 0, 0, 0, 0 }
 		};
 
-		LightPulseFXNugget* nugget = newInstance( LightPulseFXNugget );	
+		LightPulseFXNugget* nugget = newInstance( LightPulseFXNugget );
 		ini->initFromINI(nugget, myFieldParse);
 		((FXList*)instance)->addFXNugget(nugget);
 	}
@@ -371,13 +371,13 @@ private:
 	Real					m_boundingCirclePct;
 	UnsignedInt		m_increaseFrames;
 	UnsignedInt		m_decreaseFrames;
-};  
+};
 EMPTY_DTOR(LightPulseFXNugget)
 
 //-------------------------------------------------------------------------------------------------
 class ViewShakeFXNugget : public FXNugget
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(ViewShakeFXNugget, "ViewShakeFXNugget")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(ViewShakeFXNugget, "ViewShakeFXNugget")
 public:
 
 	ViewShakeFXNugget() : m_shake(View::SHAKE_NORMAL)
@@ -399,13 +399,13 @@ public:
 
 	static void parse(INI *ini, void *instance, void* /*store*/, const void* /*userData*/)
 	{
-		static const FieldParse myFieldParse[] = 
+		static const FieldParse myFieldParse[] =
 		{
 			{ "Type",				parseShakeType,								NULL, offsetof( ViewShakeFXNugget, m_shake ) },
 			{ 0, 0, 0, 0 }
 		};
 
-		ViewShakeFXNugget* nugget = newInstance( ViewShakeFXNugget );	
+		ViewShakeFXNugget* nugget = newInstance( ViewShakeFXNugget );
 		ini->initFromINI(nugget, myFieldParse);
 		((FXList*)instance)->addFXNugget(nugget);
 	}
@@ -413,7 +413,7 @@ public:
 protected:
 	static void parseShakeType( INI* ini, void *instance, void *store, const void* /*userData*/ )
 	{
-		static const LookupListRec shakeTypeNames[] = 
+		static const LookupListRec shakeTypeNames[] =
 		{
 			{ "SUBTLE", View::SHAKE_SUBTLE },
 			{ "NORMAL", View::SHAKE_NORMAL },
@@ -429,13 +429,13 @@ protected:
 private:
 	View::CameraShakeType m_shake;
 
-};  
+};
 EMPTY_DTOR(ViewShakeFXNugget)
 
 //-------------------------------------------------------------------------------------------------
 class TerrainScorchFXNugget : public FXNugget
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(TerrainScorchFXNugget, "TerrainScorchFXNugget")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(TerrainScorchFXNugget, "TerrainScorchFXNugget")
 public:
 
 	TerrainScorchFXNugget() : m_scorch(-1), m_radius(0)
@@ -461,14 +461,14 @@ public:
 
 	static void parse(INI *ini, void *instance, void* /*store*/, const void* /*userData*/)
 	{
-		static const FieldParse myFieldParse[] = 
+		static const FieldParse myFieldParse[] =
 		{
 			{ "Type",				parseScorchType,			NULL, offsetof( TerrainScorchFXNugget, m_scorch ) },
 			{ "Radius",			INI::parseReal,				NULL, offsetof( TerrainScorchFXNugget, m_radius ) },
 			{ 0, 0, 0, 0 }
 		};
 
-		TerrainScorchFXNugget* nugget = newInstance( TerrainScorchFXNugget );	
+		TerrainScorchFXNugget* nugget = newInstance( TerrainScorchFXNugget );
 		ini->initFromINI(nugget, myFieldParse);
 		((FXList*)instance)->addFXNugget(nugget);
 	}
@@ -477,7 +477,7 @@ protected:
 
 	static void parseScorchType( INI* ini, void *instance, void *store, const void* /*userData*/ )
 	{
-		static const LookupListRec scorchTypeNames[] = 
+		static const LookupListRec scorchTypeNames[] =
 		{
 			{ "SCORCH_1",				SCORCH_1 },
 			{ "SCORCH_2",				SCORCH_2 },
@@ -493,13 +493,13 @@ protected:
 private:
 	Int		m_scorch;
 	Real	m_radius;
-};  
+};
 EMPTY_DTOR(TerrainScorchFXNugget)
 
 //-------------------------------------------------------------------------------------------------
 class ParticleSystemFXNugget : public FXNugget
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(ParticleSystemFXNugget, "ParticleSystemFXNugget")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(ParticleSystemFXNugget, "ParticleSystemFXNugget")
 public:
 
 	ParticleSystemFXNugget()
@@ -560,7 +560,7 @@ public:
 
 	static void parse(INI *ini, void *instance, void* /*store*/, const void* /*userData*/)
 	{
-		static const FieldParse myFieldParse[] = 
+		static const FieldParse myFieldParse[] =
 		{
 			{ "Name",									INI::parseAsciiString,			NULL, offsetof( ParticleSystemFXNugget, m_name ) },
 			{ "Count",								INI::parseInt,							NULL, offsetof( ParticleSystemFXNugget, m_count ) },
@@ -579,7 +579,7 @@ public:
 			{ 0, 0, 0, 0 }
 		};
 
-		ParticleSystemFXNugget* nugget = newInstance( ParticleSystemFXNugget );	
+		ParticleSystemFXNugget* nugget = newInstance( ParticleSystemFXNugget );
 		ini->initFromINI(nugget, myFieldParse);
 		((FXList*)instance)->addFXNugget(nugget);
 	}
@@ -613,7 +613,7 @@ protected:
 					{
 						//old way:
 						//newPos.z = TheTerrainLogic->getGrsoundHeight( newPos.x, newPos.y ) + 1;// The plus one prevents scissoring with terrain
-						
+
 						//new way: now we allow bridges in the GroundHeight.
 						PathfindLayerEnum layer = TheTerrainLogic->getLayerForDestination(&newPos);
 						newPos.z = TheTerrainLogic->getLayerHeight( newPos.x, newPos.y, layer );
@@ -673,13 +673,13 @@ private:
 	Bool						m_createAtGroundHeight;
 	Bool						m_useCallersRadius;
 	Bool						m_ricochet;
-};  
+};
 EMPTY_DTOR(ParticleSystemFXNugget)
 
 //-------------------------------------------------------------------------------------------------
 class FXListAtBonePosFXNugget : public FXNugget
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(FXListAtBonePosFXNugget, "FXListAtBonePosFXNugget")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(FXListAtBonePosFXNugget, "FXListAtBonePosFXNugget")
 public:
 
 	FXListAtBonePosFXNugget()
@@ -712,7 +712,7 @@ public:
 
 	static void parse(INI *ini, void *instance, void* /*store*/, const void* /*userData*/)
 	{
-		static const FieldParse myFieldParse[] = 
+		static const FieldParse myFieldParse[] =
 		{
 			{ "FX",								  	INI::parseFXList,			    NULL, offsetof( FXListAtBonePosFXNugget, m_fx ) },
 			{ "BoneName",							INI::parseAsciiString,		NULL, offsetof( FXListAtBonePosFXNugget, m_boneName ) },
@@ -720,7 +720,7 @@ public:
 			{ 0, 0, 0, 0 }
 		};
 
-		FXListAtBonePosFXNugget* nugget = newInstance( FXListAtBonePosFXNugget );	
+		FXListAtBonePosFXNugget* nugget = newInstance( FXListAtBonePosFXNugget );
 		ini->initFromINI(nugget, myFieldParse);
 		((FXList*)instance)->addFXNugget(nugget);
 	}
@@ -754,7 +754,7 @@ private:
 	const FXList*		m_fx;
   AsciiString     m_boneName;
   Bool            m_orientToBone;
-};  
+};
 EMPTY_DTOR(FXListAtBonePosFXNugget)
 
 //-------------------------------------------------------------------------------------------------
@@ -764,14 +764,14 @@ EMPTY_DTOR(FXListAtBonePosFXNugget)
 
 static const FieldParse TheFXListFieldParse[] =
 {
-	{ "Sound",											SoundFXNugget::parse, 0, 0},		
-	{ "RayEffect",									RayEffectFXNugget::parse, 0, 0},		
-	{ "Tracer",											TracerFXNugget::parse, 0, 0},		
-	{ "LightPulse",									LightPulseFXNugget::parse, 0, 0},		
-	{ "ViewShake",									ViewShakeFXNugget::parse, 0, 0},		
-	{ "TerrainScorch",							TerrainScorchFXNugget::parse, 0, 0},		
-	{ "ParticleSystem",							ParticleSystemFXNugget::parse, 0, 0},		
-	{ "FXListAtBonePos",						FXListAtBonePosFXNugget::parse, 0, 0},		
+	{ "Sound",											SoundFXNugget::parse, 0, 0},
+	{ "RayEffect",									RayEffectFXNugget::parse, 0, 0},
+	{ "Tracer",											TracerFXNugget::parse, 0, 0},
+	{ "LightPulse",									LightPulseFXNugget::parse, 0, 0},
+	{ "ViewShake",									ViewShakeFXNugget::parse, 0, 0},
+	{ "TerrainScorch",							TerrainScorchFXNugget::parse, 0, 0},
+	{ "ParticleSystem",							ParticleSystemFXNugget::parse, 0, 0},
+	{ "FXListAtBonePos",						FXListAtBonePosFXNugget::parse, 0, 0},
 	{ NULL, NULL, 0, 0 }  // keep this last
 };
 
@@ -847,7 +847,7 @@ const FXList *FXListStore::findFXList(const char* name) const
 		return NULL;
 
   FXListMap::const_iterator it = m_fxmap.find(NAMEKEY(name));
-  if (it != m_fxmap.end()) 
+  if (it != m_fxmap.end())
 	{
 		return &(*it).second;
 	}

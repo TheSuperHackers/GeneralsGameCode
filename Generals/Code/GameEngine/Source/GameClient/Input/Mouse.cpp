@@ -62,7 +62,7 @@ const char *Mouse::RedrawModeName[RM_MAX] = {
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // PRIVATE DATA ///////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-static const FieldParse TheMouseCursorFieldParseTable[] = 
+static const FieldParse TheMouseCursorFieldParseTable[] =
 {
 	{ "CursorText",						INI::parseAsciiString,	NULL, offsetof( CursorInfo, cursorText ) },
 	{ "CursorTextColor",			INI::parseRGBAColorInt,	NULL, offsetof( CursorInfo, cursorTextColor ) },
@@ -79,7 +79,7 @@ static const FieldParse TheMouseCursorFieldParseTable[] =
 	{ "Directions",							INI::parseInt,	NULL,	offsetof( CursorInfo, numDirections ) },
 };
 
-static const FieldParse TheMouseFieldParseTable[] = 
+static const FieldParse TheMouseFieldParseTable[] =
 {
 	{ "TooltipFontName",						INI::parseAsciiString,NULL,			offsetof( Mouse, m_tooltipFontName ) },
 	{ "TooltipFontSize",						INI::parseInt,				NULL,			offsetof( Mouse, m_tooltipFontSize ) },
@@ -205,8 +205,8 @@ void Mouse::processMouseEvent( Int index )
 		checkForDrag();
 
 	// add Mouse Position Changes to Master Position
-	moveMouse( m_mouseEvents[ index ].pos.x, 
-						 m_mouseEvents[ index ].pos.y, 
+	moveMouse( m_mouseEvents[ index ].pos.x,
+						 m_mouseEvents[ index ].pos.y,
 						 movementType );
 
 	// Cumulate Wheel Adjustments
@@ -241,7 +241,7 @@ void Mouse::processMouseEvent( Int index )
 			}
 		}
 	}
-	else if( m_currMouse.leftState != MBS_Up && 
+	else if( m_currMouse.leftState != MBS_Up &&
 					(	(m_prevMouse.leftEvent == GWM_LEFT_DOWN) ||
 						(m_prevMouse.leftEvent == GWM_LEFT_DRAG) ) )
 	{
@@ -277,7 +277,7 @@ void Mouse::processMouseEvent( Int index )
 			}
 		}
 	}
-	else if( m_currMouse.rightState != MBS_Up && 
+	else if( m_currMouse.rightState != MBS_Up &&
 					(	(m_prevMouse.rightEvent == GWM_RIGHT_DOWN) ||
 						(m_prevMouse.rightEvent == GWM_RIGHT_DRAG) ) )
 	{
@@ -311,7 +311,7 @@ void Mouse::processMouseEvent( Int index )
 			}
 		}
 	}
-	else if( m_currMouse.middleState != MBS_Up && 
+	else if( m_currMouse.middleState != MBS_Up &&
 					(	(m_prevMouse.middleEvent == GWM_MIDDLE_DOWN) ||
 						(m_prevMouse.middleEvent == GWM_MIDDLE_DRAG) ) )
 	{
@@ -329,7 +329,7 @@ void Mouse::processMouseEvent( Int index )
 //    Int delay = m_tooltipDelayTime;
 //    if(m_tooltipDelay >= 0 )
 //       delay = m_tooltipDelay;
-//    
+//
 //		if( now - m_stillTime >= delay )
 //		{
 //			if (!m_displayTooltip)
@@ -361,21 +361,21 @@ void Mouse::processMouseEvent( Int index )
 void Mouse::checkForDrag( void )
 {
 
-	if( m_currMouse.leftState && 
+	if( m_currMouse.leftState &&
 			(	(m_prevMouse.leftEvent == GWM_LEFT_DOWN) ||
 				(m_prevMouse.leftEvent == GWM_LEFT_DRAG) ) )
 	{
 		m_currMouse.leftEvent = GWM_LEFT_DRAG;
 	}
 
-	if( m_currMouse.rightState && 
+	if( m_currMouse.rightState &&
 			(	(m_prevMouse.rightEvent == GWM_RIGHT_DOWN) ||
 				(m_prevMouse.rightEvent == GWM_RIGHT_DRAG) ) )
 	{
 		m_currMouse.rightEvent = GWM_RIGHT_DRAG;
 	}
 
-	if( m_currMouse.middleState && 
+	if( m_currMouse.middleState &&
 			(	(m_prevMouse.middleEvent == GWM_MIDDLE_DOWN) ||
 				(m_prevMouse.middleEvent == GWM_MIDDLE_DRAG) ) )
 	{
@@ -418,12 +418,12 @@ CursorInfo::CursorInfo( void )
 {
 	// Added Sadullah Nader
 	// Initializations missing and needed
-	
+
 	cursorName.clear();
 	cursorText.clear();
 	cursorTextColor.red = cursorTextColor.green = cursorTextColor.blue = 0;
 	cursorTextDropColor.red = cursorTextDropColor.blue = cursorTextDropColor.green = 0;
-	 
+
 	//
 	textureName.clear();
 	imageName.clear();
@@ -447,14 +447,14 @@ Mouse::Mouse( void )
 	m_numButtons = 0;
 	m_numAxes = 0;
 	m_forceFeedback = FALSE;
-	
+
 	//Added By Sadullah Nader
 	//Initializations missing and needed
 	m_dragTolerance = 0;
 	m_dragTolerance3D = 0;
 	m_dragToleranceMS = 0;
 	//
-	
+
 	//m_tooltipString.clear();	// redundant
 	m_displayTooltip = FALSE;
 	m_tooltipDisplayString = NULL;
@@ -517,7 +517,7 @@ Mouse::Mouse( void )
 	m_cursorTextDropColor.green = 255;
 	m_cursorTextDropColor.blue  = 255;
 	m_cursorTextDropColor.alpha = 255;
-	
+
 	m_highlightPos = 0;
 	m_highlightUpdateStart = 0;
 	m_stillTime = 0;
@@ -681,7 +681,7 @@ void Mouse::createStreamMessages( void )
 		//No delay while scriptdebugging!
 		delay = 0;
 	}
-  
+
 	if( now - m_stillTime >= delay )
 	{
 		if (!m_displayTooltip)
@@ -698,7 +698,7 @@ void Mouse::createStreamMessages( void )
 		//DEBUG_LOG(("%d %d %d %d", TheGameClient->getFrame(), delay, now, m_stillTime));
 		m_displayTooltip = FALSE;
 	}
-	
+
 	for (Int i = 0; i < m_eventsThisFrame; ++i)
 	{
 		processMouseEvent(i);
@@ -819,7 +819,7 @@ void Mouse::createStreamMessages( void )
 			msg->appendIntegerArgument( m_currMouse.wheelPos / 120 );  // wheel delta
 			msg->appendIntegerArgument( TheKeyboard->getModifierFlags() );
 		}  // end if
-	
+
 	}	// end for
 }  // end createStreamMessages
 
@@ -904,8 +904,8 @@ void Mouse::setCursorTooltip( UnicodeString tooltip, Int delay, const RGBColor *
 /** Set the text for the mouse cursor ... note that this is *NOT* the tooltip text we
 	* can set to be at the mouse position */
 // ------------------------------------------------------------------------------------------------
-void Mouse::setMouseText( UnicodeString text, 
-													const RGBAColorInt *color, 
+void Mouse::setMouseText( UnicodeString text,
+													const RGBAColorInt *color,
 													const RGBAColorInt *dropColor )
 {
 
@@ -936,7 +936,7 @@ void Mouse::setPosition( Int x, Int y )
 }  // end setPosition
 
 //-------------------------------------------------------------------------------------------------
-/** This default implemtation of SetMouseLimits will just set the limiting	
+/** This default implemtation of SetMouseLimits will just set the limiting
 	* rectangle to be the width and height of the game display with the
 	* origin in the upper left at (0,0).  However, if the game is running
 	* in a windowed mode then these limits should reflect the SCREEN
@@ -955,7 +955,7 @@ void Mouse::setMouseLimits( void )
 
 		m_maxX = TheDisplay->getWidth();
 		m_maxY = TheDisplay->getHeight();
-	
+
 	}  // end if
 
 }  // end setMouseLimits
@@ -1053,13 +1053,13 @@ void Mouse::drawCursorText( void )
 
 	// get the colors to draw the text in an acceptable format
 	Color color, dropColor;
-	color = GameMakeColor( m_cursorTextColor.red, 
-												 m_cursorTextColor.green, 
-												 m_cursorTextColor.blue, 
+	color = GameMakeColor( m_cursorTextColor.red,
+												 m_cursorTextColor.green,
+												 m_cursorTextColor.blue,
 												 m_cursorTextColor.alpha );
-	dropColor = GameMakeColor( m_cursorTextDropColor.red, 
-														 m_cursorTextDropColor.green, 
-														 m_cursorTextDropColor.blue, 
+	dropColor = GameMakeColor( m_cursorTextDropColor.red,
+														 m_cursorTextDropColor.green,
+														 m_cursorTextDropColor.blue,
 														 m_cursorTextDropColor.alpha );
 
 	// get the size of the text to draw
@@ -1081,7 +1081,7 @@ Int Mouse::getCursorIndex(const AsciiString& name)
 	if (name.isEmpty())
 		return INVALID_MOUSE_CURSOR;
 
-	/** @todo This is silly to have to define these names from INI in the code ... 
+	/** @todo This is silly to have to define these names from INI in the code ...
 		* that should be changed (CBD) */
 	static const char *CursorININames[NUM_MOUSE_CURSORS] =
 	{
@@ -1156,7 +1156,7 @@ Int Mouse::getCursorIndex(const AsciiString& name)
 // ------------------------------------------------------------------------------------------------
 void Mouse::setCursor( MouseCursor cursor )
 {
-	
+
 	// if cursor has not changed do nothing
 	if( m_currentCursor == cursor )
 		return;
@@ -1191,7 +1191,7 @@ void INI::parseMouseCursorDefinition( INI* ini )
 
 	// read the name
 	c = ini->getNextToken();
-	name.set( c );	
+	name.set( c );
 
 	if( TheMouse )
 	{

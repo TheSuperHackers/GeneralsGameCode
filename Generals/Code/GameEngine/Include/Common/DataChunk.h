@@ -47,7 +47,7 @@ class DataChunkTableOfContents;
 //----------------------------------------------------------------------
 class Mapping : public MemoryPoolObject
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(Mapping, "Mapping")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(Mapping, "Mapping")
 public:
 	Mapping*			next;
 	AsciiString		name;
@@ -60,7 +60,7 @@ EMPTY_DTOR(Mapping)
 //----------------------------------------------------------------------
 class OutputChunk : public MemoryPoolObject
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(OutputChunk, "OutputChunk")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(OutputChunk, "OutputChunk")
 public:
 	OutputChunk*	next;
 	UnsignedInt		id;															// chunk symbol type from table of contents
@@ -73,7 +73,7 @@ EMPTY_DTOR(OutputChunk)
 //----------------------------------------------------------------------
 class InputChunk : public MemoryPoolObject
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(InputChunk, "InputChunk")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(InputChunk, "InputChunk")
 public:
 	InputChunk*						next;
 	UnsignedInt						id;															// chunk symbol type from table of contents
@@ -117,7 +117,7 @@ public:
 class DataChunkOutput
 {
 protected:
-	OutputStream*							m_pOut;										// The actual output stream.	
+	OutputStream*							m_pOut;										// The actual output stream.
 	FILE *										m_tmp_file;												// tmp output file stream
 	DataChunkTableOfContents	m_contents;			// table of contents of data chunk types
 	OutputChunk*							m_chunkStack;													// current stack of open data chunks
@@ -157,7 +157,7 @@ typedef Bool (*DataChunkParserPtr)( DataChunkInput &file, DataChunkInfo *info, v
 //----------------------------------------------------------------------
 class UserParser : public MemoryPoolObject
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(UserParser, "UserParser")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(UserParser, "UserParser")
 public:
 	UserParser *next;
 
@@ -187,7 +187,7 @@ protected:
 
 public:
 	void *m_currentObject;														// user parse routines can use this to allow one chunk
-																									// to create an object, and a subsequent chunk to 
+																									// to create an object, and a subsequent chunk to
 																									// parse values into that object.  However, the second
 																									// chunk parser could also create and parse an object
 																									// of its own if this pointer is NULL.

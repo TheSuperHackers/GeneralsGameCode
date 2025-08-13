@@ -52,7 +52,7 @@
   #else  // UNIX
     static void *threadFuncLauncher(void *temp);
   #endif
- 
+
   // Fake entry point for classes
   #ifdef _WIN32
     static unsigned __stdcall threadClassLauncher(void *temp);

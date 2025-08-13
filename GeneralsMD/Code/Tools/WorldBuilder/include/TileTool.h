@@ -30,7 +30,7 @@ class WorldHeightMapEdit;
 /*************************************************************************
 **                             TileTool
 ***************************************************************************/
-class TileTool : public Tool 
+class TileTool : public Tool
 {
 protected:
 	WorldHeightMapEdit *m_htMapEditCopy; //< ref counted.
@@ -53,7 +53,7 @@ public:
 /*************************************************************************
 **                             BigTileTool
 ***************************************************************************/
-class BigTileTool : public TileTool 
+class BigTileTool : public TileTool
 {
 
 protected:

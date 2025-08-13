@@ -24,7 +24,7 @@
 
 // FILE: UpdateModule.h /////////////////////////////////////////////////////////////////////////////////
 // Author: Colin Day, September 2001
-// Desc:	 
+// Desc:
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
@@ -67,8 +67,8 @@ class Waypoint;
 enum CommandOption CPP_11(: Int);
 
 //-------------------------------------------------------------------------------------------------
-enum UpdateSleepTime CPP_11(: Int) 
-{ 
+enum UpdateSleepTime CPP_11(: Int)
+{
 	UPDATE_SLEEP_INVALID	= 0,
 	UPDATE_SLEEP_NONE			= 1,
 	// (we use 0x3fffffff so that we can add offsets and not overflow...
@@ -93,7 +93,7 @@ enum SleepyUpdatePhase CPP_11(: Int)
 	PHASE_NORMAL				= 2,
 	PHASE_FINAL					= 3
 };
-	
+
 //-------------------------------------------------------------------------------------------------
 class UpdateModuleInterface
 {
@@ -104,8 +104,8 @@ public:
 	virtual DisabledMaskType getDisabledTypesToProcess() const = 0;
 
 #ifdef DIRECT_UPDATEMODULE_ACCESS
-	// these aren't in the interface; they are in the implementation, 
-	// because making them virtual is simply too much overhead. 
+	// these aren't in the interface; they are in the implementation,
+	// because making them virtual is simply too much overhead.
 	// no, really; I have the profiling data to prove it. (srj)
 #else
 	// these are for use ONLY by GameLogic scheduler. do not call otherwise,
@@ -125,7 +125,7 @@ class UpdateModuleData : public BehaviorModuleData
 {
 public:
 
-	static void buildFieldParse(MultiIniFieldParse& p) 
+	static void buildFieldParse(MultiIniFieldParse& p)
 	{
 		BehaviorModuleData::buildFieldParse(p);
 	}
@@ -143,7 +143,7 @@ private:
 
 	// this is an absolute frame, not a frame count.
 	// actually, it's not a real frame at all, it has phase info in the lower bits...
-	UnsignedInt m_nextCallFrameAndPhase;	
+	UnsignedInt m_nextCallFrameAndPhase;
 	Int m_indexInLogic;
 
 protected:
@@ -177,67 +177,67 @@ public:
 	// UpdateModuleInterface
 	virtual UpdateSleepTime update() = 0;
 
-	DisabledMaskType getDisabledTypesToProcess() const 
-	{ 
-		return DISABLEDMASK_NONE; 
+	DisabledMaskType getDisabledTypesToProcess() const
+	{
+		return DISABLEDMASK_NONE;
 	}
 
 #ifdef DIRECT_UPDATEMODULE_ACCESS
 	#define UPDATEMODULE_FRIEND_DECLARATOR __forceinline
 #else
-	#define UPDATEMODULE_FRIEND_DECLARATOR virtual 
+	#define UPDATEMODULE_FRIEND_DECLARATOR virtual
 #endif
 
 	// for use ONLY by GameLogic scheduler. do not call otherwise.
-	UPDATEMODULE_FRIEND_DECLARATOR UnsignedInt friend_getPriority() const 
-	{ 
-		return m_nextCallFrameAndPhase; 
+	UPDATEMODULE_FRIEND_DECLARATOR UnsignedInt friend_getPriority() const
+	{
+		return m_nextCallFrameAndPhase;
 	}
 
-	UPDATEMODULE_FRIEND_DECLARATOR UnsignedInt friend_getNextCallFrame() const 
-	{ 
-		return m_nextCallFrameAndPhase >> 2; 
+	UPDATEMODULE_FRIEND_DECLARATOR UnsignedInt friend_getNextCallFrame() const
+	{
+		return m_nextCallFrameAndPhase >> 2;
 	}
 
-	UPDATEMODULE_FRIEND_DECLARATOR SleepyUpdatePhase friend_getNextCallPhase() const 
-	{ 
-		return (SleepyUpdatePhase)(m_nextCallFrameAndPhase & 3); 
+	UPDATEMODULE_FRIEND_DECLARATOR SleepyUpdatePhase friend_getNextCallPhase() const
+	{
+		return (SleepyUpdatePhase)(m_nextCallFrameAndPhase & 3);
 	}
 
-	UPDATEMODULE_FRIEND_DECLARATOR void friend_setNextCallFrame(UnsignedInt frame) 
-	{ 
+	UPDATEMODULE_FRIEND_DECLARATOR void friend_setNextCallFrame(UnsignedInt frame)
+	{
 		// anything greater than "forever" is still "forever"
 		// (this makes setWakeFrame() comparisons simpler and more efficient)
 		if (frame > UPDATE_SLEEP_FOREVER)
 			frame = UPDATE_SLEEP_FOREVER;
-		m_nextCallFrameAndPhase = (frame << 2) | getUpdatePhase(); 
+		m_nextCallFrameAndPhase = (frame << 2) | getUpdatePhase();
 	}
 
-	UPDATEMODULE_FRIEND_DECLARATOR Int friend_getIndexInLogic() const 
-	{ 
-		return m_indexInLogic; 
+	UPDATEMODULE_FRIEND_DECLARATOR Int friend_getIndexInLogic() const
+	{
+		return m_indexInLogic;
 	}
 
 	UPDATEMODULE_FRIEND_DECLARATOR void friend_setIndexInLogic(Int i)
-	{ 
-		m_indexInLogic = i; 
+	{
+		m_indexInLogic = i;
 	}
 
-	UPDATEMODULE_FRIEND_DECLARATOR const Object* friend_getObject() const 
-	{ 
-		return getObject(); 
+	UPDATEMODULE_FRIEND_DECLARATOR const Object* friend_getObject() const
+	{
+		return getObject();
 	}
 
 };
-inline UpdateModule::UpdateModule( Thing *thing, const ModuleData* moduleData ) : 
+inline UpdateModule::UpdateModule( Thing *thing, const ModuleData* moduleData ) :
 	BehaviorModule( thing, moduleData ),
 	m_indexInLogic(-1),
-	m_nextCallFrameAndPhase(0) 
-{ 
+	m_nextCallFrameAndPhase(0)
+{
 	// nothing
 }
-inline UpdateModule::~UpdateModule() 
-{ 
+inline UpdateModule::~UpdateModule()
+{
 	DEBUG_ASSERTCRASH(m_indexInLogic == -1, ("destroying an updatemodule still in the logic list"));
 }
 
@@ -289,8 +289,8 @@ public:
 	*/
 	virtual Bool advanceApproachPosition( Object* docker, Coord3D *position, Int *index ) = 0;
 
-	/** Return true when it is OK for docker to begin entering the dock 
-			The Dock will lift the restriction on one particular docker on its own, 
+	/** Return true when it is OK for docker to begin entering the dock
+			The Dock will lift the restriction on one particular docker on its own,
 			so you must continually ask.
 	*/
 	virtual Bool isClearToEnter( Object const* docker ) const = 0;
@@ -302,19 +302,19 @@ public:
 
 	/** Give me the point that is the start of your docking path
 			Returning NULL means there is none free
-			All functions take docker as arg so we could have multiple docks on a building.  
+			All functions take docker as arg so we could have multiple docks on a building.
 			Docker is not assumed, it is recorded and checked.
 	*/
-	virtual void getEnterPosition( Object* docker, Coord3D *position ) = 0;			
+	virtual void getEnterPosition( Object* docker, Coord3D *position ) = 0;
 
-	/** Give me the middle point of the dock process where the action() happens */	
-	virtual void getDockPosition( Object* docker, Coord3D *position ) = 0;					
+	/** Give me the middle point of the dock process where the action() happens */
+	virtual void getDockPosition( Object* docker, Coord3D *position ) = 0;
 
 	/** Give me the point to drive to when I am done */
-	virtual void getExitPosition( Object* docker, Coord3D *position ) = 0;					
+	virtual void getExitPosition( Object* docker, Coord3D *position ) = 0;
 
-	virtual void onApproachReached( Object* docker ) = 0;		///< I have reached the Enter Point.  
-	virtual void onEnterReached( Object* docker ) = 0;			///< I have reached the Enter Point.  
+	virtual void onApproachReached( Object* docker ) = 0;		///< I have reached the Enter Point.
+	virtual void onEnterReached( Object* docker ) = 0;			///< I have reached the Enter Point.
 	virtual void onDockReached( Object* docker ) = 0;				///< I have reached the Dock point
 	virtual void onExitReached( Object* docker ) = 0;				///< I have reached the exit.  You are no longer busy
 
@@ -324,11 +324,11 @@ public:
 
 	virtual Bool isDockOpen( void ) = 0;						///< Is the dock open to accepting dockers
 	virtual void setDockOpen( Bool open ) = 0;			///< Open/Close the dock
-	
+
 	virtual void setDockCrippled( Bool setting ) = 0; ///< Game Logic can set me as inoperative.  I get to decide what that means.
 
 	virtual Bool isAllowPassthroughType() = 0;	///< Not all docks allow you to path through them in your AIDock machine
-	
+
 	virtual Bool isRallyPointAfterDockType() = 0; ///< A minority of docks want to give you a final command to their rally point
 };
 
@@ -349,14 +349,14 @@ enum ExitDoorType CPP_11(: Int)
 //-------------------------------------------------------------------------------------------------
 ///< Different types of modules have an interest in exiting units out of themselves for whatever reason.
 class ExitInterface
-{ 
+{
 public:
 	virtual Bool isExitBusy() const = 0;	///< Contain style exiters are getting the ability to space out exits, so ask this before reserveDoor as a kind of no-commitment check.
 	virtual ExitDoorType reserveDoorForExit( const ThingTemplate* objType, Object *specificObject ) = 0;		///< All types can answer if they are free to exit or not, and you can ask about a specific guy or just exit anything in general
 	virtual void exitObjectViaDoor( Object *newObj, ExitDoorType exitDoor ) = 0;							///< Here is the object for you to exit to the world in your own special way
 	virtual void exitObjectByBudding( Object *newObj, Object *budHost ) = 0;	///< puts new spawn on top of an existing one
 	virtual void unreserveDoorForExit( ExitDoorType exitDoor ) = 0;	///< if you get permission to exit, but then don't/can't call exitObjectViaDoor, you should call this to "give up" your permission
-	
+
 	virtual void exitObjectInAHurry( Object *newObj) {}; ///< Special call for objects exiting a tunnel network, does NOT change the ai state. jba.
 
 	virtual void setRallyPoint( const Coord3D *pos ) = 0;				///< define a "rally point" for units to move towards

@@ -79,8 +79,8 @@ public:
 		m_fx = NULL;
 	}
 
-	inline const ArmorTemplate* getArmorTemplate() const { return m_template; } 
-	inline const DamageFX* getDamageFX() const { return m_fx; } 
+	inline const ArmorTemplate* getArmorTemplate() const { return m_template; }
+	inline const DamageFX* getDamageFX() const { return m_fx; }
 
 	inline Int getConditionsYesCount() const { return 1; }
 	inline const ArmorSetFlags& getNthConditionsYes(Int i) const { return m_types; }

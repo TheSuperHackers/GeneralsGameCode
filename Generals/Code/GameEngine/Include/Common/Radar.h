@@ -51,8 +51,8 @@ class TerrainLogic;
 // the radar is and also reflects directly the size of the image we build ... which with
 // WW3D must be a square power of two as well
 //
-enum 
-{ 
+enum
+{
 	RADAR_CELL_WIDTH  = 128,	// radar created at this horz resolution
 	RADAR_CELL_HEIGHT = 128   // radar created at this vert resolution
 };
@@ -73,11 +73,11 @@ enum RadarEventType CPP_11(: Int)
 	RADAR_EVENT_BATTLE_PLAN,
 	RADAR_EVENT_STEALTH_DISCOVERED,		// we discovered a stealth unit
 	RADAR_EVENT_STEALTH_NEUTRALIZED,	// our stealth unit has been revealed
-	RADAR_EVENT_FAKE,					//Internally creates a radar event, but doesn't notify the player (unit lost 
+	RADAR_EVENT_FAKE,					//Internally creates a radar event, but doesn't notify the player (unit lost
 														//for example, so we can use the spacebar to jump to the event).
- 
+
  	RADAR_EVENT_NUM_EVENTS  // keep this last
- 	
+
 };
 
 enum RadarObjectType CPP_11(: Int)
@@ -99,7 +99,7 @@ class RadarObject : public MemoryPoolObject,
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( RadarObject, "RadarObject" )
 
 public:
-	
+
 	RadarObject( void );
 	// destructor prototype defined by memory pool glue
 
@@ -145,7 +145,7 @@ enum RadarPriorityType CPP_11(: Int)
 	RADAR_PRIORITY_NUM_PRIORITIES		// keep this last
 };
 #ifdef DEFINE_RADAR_PRIORITY_NAMES
-static const char *RadarPriorityNames[] = 
+static const char *RadarPriorityNames[] =
 {
 	"INVALID",											// a priority that has not been set (in general it won't show up on the radar)
 	"NOT_ON_RADAR",									// object specifically forbidden from being on the radar
@@ -165,7 +165,7 @@ class Radar : public Snapshot,
 {
 
 public:
-	
+
 	Radar( void );
 	virtual ~Radar( void );
 
@@ -182,7 +182,7 @@ public:
 	Bool localPixelToRadar( const ICoord2D *pixel, ICoord2D *radar );	///< translate pixel (with UL of radar being (0,0)) to logical radar coords
 	Bool screenPixelToWorld( const ICoord2D *pixel, Coord3D *world ); ///< translate pixel (with UL of the screen being (0,0)) to world position in the world
 	Object *objectUnderRadarPixel( const ICoord2D *pixel );				///< return the object (if any) represented by the pixel coords passed in
-	void findDrawPositions( Int startX, Int startY, Int width, Int height, 
+	void findDrawPositions( Int startX, Int startY, Int width, Int height,
 													ICoord2D *ul, ICoord2D *lr );					///< make translation for screen area of radar square to scaled aspect ratio preserving points inside the radar area
 
 	// priority inquiry
@@ -266,8 +266,8 @@ protected:
 	// the whole map can be accounted for within our RADAR_CELL_WIDTH and
 	// RADAR_CELL_HEIGHT resolutions
 	//
-	Real m_xSample;												
-	Real m_ySample;												  
+	Real m_xSample;
+	Real m_ySample;
 
 	enum { MAX_RADAR_EVENTS = 64 };
 	struct RadarEvent

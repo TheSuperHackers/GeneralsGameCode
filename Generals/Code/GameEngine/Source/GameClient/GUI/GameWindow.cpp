@@ -24,12 +24,12 @@
 
 // FILE: GameWindow.cpp ///////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:   RTS3
@@ -127,7 +127,7 @@ GameWindow::~GameWindow( void )
 	if(	m_inputData )
 		delete m_inputData;
 	m_inputData = NULL;
-	
+
 	if( m_editData )
 		delete m_editData;
 	m_editData = NULL;
@@ -184,7 +184,7 @@ void GameWindow::normalizeWindowRegion( void )
 {
 	Int temp;
 
-	if( m_region.lo.x > m_region.hi.x) 
+	if( m_region.lo.x > m_region.hi.x)
 	{
 
 		temp = m_region.lo.x;
@@ -193,7 +193,7 @@ void GameWindow::normalizeWindowRegion( void )
 
 	}  // end if
 
-	if( m_region.lo.y > m_region.hi.y ) 
+	if( m_region.lo.y > m_region.hi.y )
 	{
 
 		temp = m_region.lo.y;
@@ -235,7 +235,7 @@ GameWindow *GameWindow::findLastLeaf( void )
 		leaf = leaf->m_parent;
 
 	// Find the last leaf
-	while( leaf->m_child ) 
+	while( leaf->m_child )
 	{
 
 		leaf = leaf->m_child;
@@ -256,13 +256,13 @@ GameWindow *GameWindow::findPrevLeaf( void )
 {
 	GameWindow *leaf = this;
 
-	if( leaf->m_prev ) 
+	if( leaf->m_prev )
 	{
 
 		leaf = leaf->m_prev;
 
-		while( leaf->m_child && 
-					 BitIsSet( leaf->m_status, WIN_STATUS_TAB_STOP ) == FALSE ) 
+		while( leaf->m_child &&
+					 BitIsSet( leaf->m_status, WIN_STATUS_TAB_STOP ) == FALSE )
 		{
 
 			leaf = leaf->m_child;
@@ -275,21 +275,21 @@ GameWindow *GameWindow::findPrevLeaf( void )
 		return leaf;
 
 	}   // end if
-	else 
+	else
 	{
 
-		while( leaf->m_parent ) 
+		while( leaf->m_parent )
 		{
 
 			leaf = leaf->m_parent;
 
-			if( leaf->m_parent && leaf->m_prev ) 
+			if( leaf->m_parent && leaf->m_prev )
 			{
 
 				leaf = leaf->m_prev;
 
-				while( leaf->m_child && 
-							 BitIsSet( leaf->m_status, WIN_STATUS_TAB_STOP ) == FALSE ) 
+				while( leaf->m_child &&
+							 BitIsSet( leaf->m_status, WIN_STATUS_TAB_STOP ) == FALSE )
 				{
 
 					leaf = leaf->m_child;
@@ -323,31 +323,31 @@ GameWindow *GameWindow::findNextLeaf( void )
 {
 	GameWindow *leaf = this;
 
-	if( leaf->m_next ) 
+	if( leaf->m_next )
 	{
 
 		if( leaf->m_next->m_status & WIN_STATUS_TAB_STOP )
 			return leaf->m_next;
 
 		for( leaf = leaf->m_next; leaf; leaf = leaf->m_child )
-			if( leaf->m_child == NULL || BitIsSet( leaf->m_status, 
+			if( leaf->m_child == NULL || BitIsSet( leaf->m_status,
 																						WIN_STATUS_TAB_STOP ) )
 				return leaf;
 
 	}  // end if
-	else 
+	else
 	{
 
-		while( leaf->m_parent ) 
+		while( leaf->m_parent )
 		{
 
 			leaf = leaf->m_parent;
 
-			if( leaf->m_parent && leaf->m_next ) 
+			if( leaf->m_parent && leaf->m_next )
 			{
 
 				for( leaf = leaf->m_next; leaf; leaf = leaf->m_child )
-					if( leaf->m_child == NULL || 
+					if( leaf->m_child == NULL ||
 							BitIsSet( leaf->m_status, WIN_STATUS_TAB_STOP ) )
 						return leaf;
 
@@ -378,16 +378,16 @@ Int GameWindow::winNextTab( void )
 	// Un-hilite the current window
 	m_instData.m_state &= ~WIN_STATE_HILITED;
 
-	do 
+	do
 	{
 
-		if( m_parent == NULL && firstTry ) 
+		if( m_parent == NULL && firstTry )
 		{
 
 			newTab = findLastLeaf( newTab );
 			firstTry = FALSE;
 
-		} 
+		}
 		else
 			newTab = findPrevLeaf( newTab );
 	} while( ( isEnabled( newTab ) == FALSE ) ||
@@ -413,10 +413,10 @@ Int GameWindow::winPrevTab( void )
 	// Un-hilite the current window
 	m_instData.m_state &= ~WIN_STATE_HILITED;
 
-	do 
+	do
 	{
 
-		if( m_parent == NULL && firstTry ) 
+		if( m_parent == NULL && firstTry )
 		{
 
 			newTab = findFirstLeaf( newTab );
@@ -459,8 +459,8 @@ Int GameWindow::winBringToTop( void )
 	{
 
 		// sanity, make sure this window is in the window list
-		for( current = TheWindowManager->winGetWindowList(); 
-				 current != this; 
+		for( current = TheWindowManager->winGetWindowList();
+				 current != this;
 				 current = current->m_next)
 			if (current == NULL)
 				return WIN_ERR_INVALID_PARAMETER;
@@ -537,7 +537,7 @@ Int GameWindow::winSetPosition( Int x, Int y )
 //=============================================================================
 Int GameWindow::winGetPosition( Int *x, Int *y )
 {
-	
+
 	// sanity
 	if( x == NULL || y == NULL )
 		return WIN_ERR_INVALID_PARAMETER;
@@ -570,12 +570,12 @@ Int GameWindow::winGetCursorPosition( Int *x, Int *y )
 	{
 		*x = m_cursorX;
 	}
-	
+
 	if ( y )
 	{
 		*y = m_cursorY;
 	}
-	
+
 	return WIN_ERR_OK;
 
 }  // end WinGetPosition
@@ -590,7 +590,7 @@ Int GameWindow::winGetScreenPosition( Int *x, Int *y )
 	*x = m_region.lo.x;
 	*y = m_region.lo.y;
 
-	while( parent ) 
+	while( parent )
 	{
 
 		*x += parent->m_region.lo.x;
@@ -646,9 +646,9 @@ Int GameWindow::winSetSize( Int width, Int height )
 	m_region.hi.x = m_region.lo.x + width;
 	m_region.hi.y = m_region.lo.y + height;
 
-	TheWindowManager->winSendSystemMsg( this, 
+	TheWindowManager->winSendSystemMsg( this,
 																			GGM_RESIZED,
-																			(WindowMsgData)width, 
+																			(WindowMsgData)width,
 																			(WindowMsgData)height );
 
 	return WIN_ERR_OK;
@@ -685,7 +685,7 @@ Int GameWindow::winEnable( Bool enable )
 	else
 		BitClear( m_status, WIN_STATUS_ENABLED );
 
-	if( m_child ) 
+	if( m_child )
 	{
 
 		for( child = m_child; child; child = child->m_next)
@@ -853,7 +853,7 @@ Int GameWindow::winSetText( UnicodeString newText )
 }  // end WinSetText
 
 // GameWindow::winGetText =====================================================
-/** Get text from a window ... this works for static text windows and 
+/** Get text from a window ... this works for static text windows and
 	* edit boxes */
 //=============================================================================
 UnicodeString GameWindow::winGetText( void )
@@ -923,10 +923,10 @@ void GameWindow::winSetEnabledTextColors( Color color, Color borderColor )
 {
 	m_instData.m_enabledText.color = color;
 	m_instData.m_enabledText.borderColor = borderColor;
-	
+
 	if( BitIsSet( m_instData.getStyle(), GWS_COMBO_BOX ) )
 		GadgetComboBoxSetEnabledTextColors(this,  color, borderColor );
-	
+
 
 }  // end winSetEnabledTextColors
 
@@ -1389,7 +1389,7 @@ Int GameWindow::winSetTooltipFunc( GameWinTooltipFunc tooltip )
 {
 
 	m_tooltip = tooltip;
-	
+
 	return WIN_ERR_OK;
 
 }  // end WinSetTooltipFunc
@@ -1434,13 +1434,13 @@ GameWindow *GameWindow::winPointInChild( Int x, Int y, Bool ignoreEnableCheck, B
 	GameWindow *child;
 	ICoord2D origin;
 
-	for( child = m_child; child; child = child->m_next ) 
+	for( child = m_child; child; child = child->m_next )
 	{
 
 		origin = child->m_region.lo;
 		parent = child->winGetParent();
 
-		while( parent ) 
+		while( parent )
 		{
 
 			origin.x += parent->m_region.lo.x;
@@ -1488,13 +1488,13 @@ GameWindow *GameWindow::winPointInAnyChild( Int x, Int y, Bool ignoreHidden, Boo
 	GameWindow *child;
 	ICoord2D origin;
 
-	for( child = m_child; child; child = child->m_next ) 
+	for( child = m_child; child; child = child->m_next )
 	{
 
 		origin = child->m_region.lo;
 		parent = child->m_parent;
 
-		while( parent ) 
+		while( parent )
 		{
 
 			origin.x += parent->m_region.lo.x;
@@ -1545,20 +1545,20 @@ WindowMsgHandledType GameWinBlockInput( GameWindow *window, UnsignedInt msg,
 {
 	if (msg == GWM_CHAR || msg == GWM_MOUSE_POS)
 		return MSG_IGNORED;
-	
+
 	//Added By Sadullah Nader
 	//Fix for drag selecting in the control bar
 	if (msg == GWM_LEFT_UP )//|| msg == GWM_LEFT_DRAG)
 	{
-		//stop drag selecting 
-		
+		//stop drag selecting
+
 		TheSelectionTranslator->setLeftMouseButton(FALSE);
 		TheSelectionTranslator->setDragSelecting(FALSE);
-		
+
 		TheTacticalView->setMouseLock( FALSE );
 		TheInGameUI->setSelecting( FALSE );
 		TheInGameUI->endAreaSelectHint(NULL);
-		
+
 	}
 
 	return MSG_HANDLED;
@@ -1568,7 +1568,7 @@ WindowMsgHandledType GameWinBlockInput( GameWindow *window, UnsignedInt msg,
 // GameWinDefaultSystem =======================================================
 /** The default system callback.  Currently does nothing. */
 //=============================================================================
-WindowMsgHandledType GameWinDefaultSystem( GameWindow *window, UnsignedInt msg, 
+WindowMsgHandledType GameWinDefaultSystem( GameWindow *window, UnsignedInt msg,
 													 WindowMsgData mData1, WindowMsgData mData2 )
 {
 
@@ -1579,7 +1579,7 @@ WindowMsgHandledType GameWinDefaultSystem( GameWindow *window, UnsignedInt msg,
 // GameWinDefaultTooltip ======================================================
 /** Default tooltip callback */
 //=============================================================================
-void GameWinDefaultTooltip( GameWindow *window, 
+void GameWinDefaultTooltip( GameWindow *window,
 														WinInstanceData *instData,
 														UnsignedInt mouse )
 {

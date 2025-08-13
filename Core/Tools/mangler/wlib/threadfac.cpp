@@ -55,13 +55,13 @@ struct ThreadInformation
 bit8 ThreadFactory::startThread(Runnable &runable, void *data, bit8 destroy)
 {
 #ifdef _REENTRANT
- 
+
   {
 	  Runnable::CritSec_.lock();
 	  Runnable::ThreadCount_++;
 	  Runnable::CritSec_.unlock();
   }
- 
+
 
   ThreadInformation *tInfo=new ThreadInformation;
   tInfo->startPoint=(void *)&runable;

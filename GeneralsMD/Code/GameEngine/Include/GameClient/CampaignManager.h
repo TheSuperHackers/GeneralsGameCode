@@ -24,12 +24,12 @@
 
 // FILE: CampaignManager.h /////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Electronic Arts Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2002 - All Rights Reserved                  
-//                                                                          
+//
+//                       Electronic Arts Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2002 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 //	created:	Jul 2002
@@ -37,8 +37,8 @@
 //	Filename: 	CampaignManager.h
 //
 //	author:		Chris Huybregts
-//	
-//	purpose:	
+//
+//	purpose:
 //
 //-----------------------------------------------------------------------------
 ///////////////////////////////////////////////////////////////////////////////
@@ -77,7 +77,7 @@ public:
 
 public:
 	AsciiString m_name;
-	AsciiString m_mapName;	
+	AsciiString m_mapName;
 	AsciiString m_nextMission;
 	AsciiString m_movieLabel;
 	AsciiString m_missionObjectivesLabel[MAX_OBJECTIVE_LINES];
@@ -94,7 +94,7 @@ class Campaign : public MemoryPoolObject
 public:
 	Campaign( void );
 	//~Campaign( void );
-	
+
 	Mission *newMission( AsciiString name );
 	Mission *getNextMission( Mission *current);
 	Mission *getMission( AsciiString missionName);
@@ -138,13 +138,13 @@ public:
 	const FieldParse *getFieldParse( void ) const { return m_campaignFieldParseTable; }								///< returns the parsing fields
 	static const FieldParse m_campaignFieldParseTable[];																				///< the parse table
 	static void parseMissionPart( INI* ini, void *instance, void *store, const void *userData );					///< Parse the Mission Part
-	
+
 	Campaign *newCampaign(AsciiString name);
 	Bool isVictorious( void ) { return m_victorious; }
 	void SetVictorious( Bool victory ) { m_victorious = victory;	}
 
 	void setRankPoints( Int rankPoints ) { m_currentRankPoints = rankPoints; }
-	Int getRankPoints() const { 
+	Int getRankPoints() const {
 		// All campaign missions, regular and generals' challenge now start each map at rank 0.
 		// This is because they weren't designed with rank persistence in mind, and were primarily
 		// tested in a debug context, with no notion of previous rank.

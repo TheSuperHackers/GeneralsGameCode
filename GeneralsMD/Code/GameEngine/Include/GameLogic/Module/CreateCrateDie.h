@@ -58,11 +58,11 @@ public:
 		m_crateNameList.clear();
 	}
 
-	static void buildFieldParse(MultiIniFieldParse& p) 
+	static void buildFieldParse(MultiIniFieldParse& p)
 	{
     DieModuleData::buildFieldParse(p);
 
-		static const FieldParse dataFieldParse[] = 
+		static const FieldParse dataFieldParse[] =
 		{
 			{ "CrateData",	CreateCrateDieModuleData::parseCrateData,		NULL, NULL },
 			{ 0, 0, 0, 0 }
@@ -86,7 +86,7 @@ public:
 	CreateCrateDie( Thing *thing, const ModuleData* moduleData );
 	// virtual destructor prototype provided by memory pool declaration
 
-	virtual void onDie( const DamageInfo *damageInfo ); 
+	virtual void onDie( const DamageInfo *damageInfo );
 
 private:
 	Bool testCreationChance( CrateTemplate const *currentCrateData );
@@ -97,4 +97,4 @@ private:
 	Object *createCrate( CrateTemplate const *currentCrateData );
 };
 
-#endif 
+#endif

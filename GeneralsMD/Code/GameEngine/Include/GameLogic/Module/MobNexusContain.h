@@ -62,7 +62,7 @@ public:
 };
 
 //-------------------------------------------------------------------------------------------------
-class MobNexusContain : public OpenContain, 
+class MobNexusContain : public OpenContain,
 												public TransportPassengerInterface // lorenzen add a MobMemberInterface
 {
 
@@ -99,7 +99,7 @@ public:
 protected:
 
 private:
-	
+
 	Int m_extraSlotsInUse;
 
 };

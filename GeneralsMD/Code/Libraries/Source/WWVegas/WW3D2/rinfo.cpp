@@ -26,8 +26,8 @@
  *                                                                                             *
  *                   Org Author:: Greg Hjelstrom                                               *
  *                                                                                             *
- *                       Author : Kenny Mitchell                                               * 
- *                                                                                             * 
+ *                       Author : Kenny Mitchell                                               *
+ *                                                                                             *
  *                     $Modtime:: 06/27/02 1:27p                                              $*
  *                                                                                             *
  *                    $Revision:: 15                                                          $*
@@ -49,7 +49,7 @@
 **
 ***********************************************************************************************/
 RenderInfoClass::RenderInfoClass(CameraClass & cam) :
-	Camera(cam), 
+	Camera(cam),
 	fog_start(0.0f),
 	fog_end(0.0f),
 	fog_scale(0.0f),
@@ -61,7 +61,7 @@ RenderInfoClass::RenderInfoClass(CameraClass & cam) :
 	alphaOverride(1.0f),
 	materialPassAlphaOverride(1.0f),
 	materialPassEmissiveOverride(1.0f)
-{ 
+{
 	// Need to have one entry in the override flags stack, initialize it to default values.
 	OverrideFlag[OverrideFlagLevel]=RINFO_OVERRIDE_DEFAULT;
 }

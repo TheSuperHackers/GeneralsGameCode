@@ -16,22 +16,22 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/*********************************************************************************************** 
- ***              C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S               *** 
- *********************************************************************************************** 
- *                                                                                             * 
- *                 Project Name : Command & Conquer                                            * 
- *                                                                                             * 
- *                     $Archive:: /Commando/Code/wwlib/win.h                                  $* 
- *                                                                                             * 
+/***********************************************************************************************
+ ***              C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S               ***
+ ***********************************************************************************************
+ *                                                                                             *
+ *                 Project Name : Command & Conquer                                            *
+ *                                                                                             *
+ *                     $Archive:: /Commando/Code/wwlib/win.h                                  $*
+ *                                                                                             *
  *                      $Author:: Denzil_l                                                    $*
- *                                                                                             * 
+ *                                                                                             *
  *                     $Modtime:: 6/26/01 1:59p                                               $*
- *                                                                                             * 
+ *                                                                                             *
  *                    $Revision:: 10                                                          $*
  *                                                                                             *
- *---------------------------------------------------------------------------------------------* 
- * Functions:                                                                                  * 
+ *---------------------------------------------------------------------------------------------*
+ * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 #if _MSC_VER >= 1000
 #pragma once
@@ -45,7 +45,7 @@
 **	to occur around this process, they are performed here. Typically, certain warnings will need
 **	to be disabled since the Windows headers are repleat with illegal and dangerous constructs.
 **
-**	Within the windows headers themselves, Microsoft has disabled the warnings 4290, 4514, 
+**	Within the windows headers themselves, Microsoft has disabled the warnings 4290, 4514,
 **	4069, 4200, 4237, 4103, 4001, 4035, 4164. Makes you wonder, eh?
 */
 

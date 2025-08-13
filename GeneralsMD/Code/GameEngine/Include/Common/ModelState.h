@@ -42,45 +42,45 @@
 	THE PROBLEM
 	-----------
 
-	-- there are lots of different states. (consider that structures can be: day/night, snow/nosnow, 
+	-- there are lots of different states. (consider that structures can be: day/night, snow/nosnow,
 	powered/not, garrisoned/empty, damaged/not... you do the math.)
 
-	-- some states are mutually exclusive (idle vs. moving), others are not (snow/nosnow, day/night). 
-	generally, humanoid units have mostly the former, while structure units have mostly the latter. 
+	-- some states are mutually exclusive (idle vs. moving), others are not (snow/nosnow, day/night).
+	generally, humanoid units have mostly the former, while structure units have mostly the latter.
 	The current ModelState system really only supports the mutually-exclusive states well.
 
-	-- we'd rather not have to specify every state in the INI files, BUT we do want to be able 
+	-- we'd rather not have to specify every state in the INI files, BUT we do want to be able
 	to intelligently choose the best model for a given state, whether or not a "real" state exists for it.
 
-	-- it would be desirable to have a unified way of representing "ModelState" so that we don't 
+	-- it would be desirable to have a unified way of representing "ModelState" so that we don't
 	have multiple similar-yet-different systems.
 
 	YUCK, WHAT NOW
 	--------------
 
-	Let's represent the Model State with two dictinct pieces: 
-	
-	-- an "ActionState" piece, representing the mutually-exclusive states, which are almost 
+	Let's represent the Model State with two dictinct pieces:
+
+	-- an "ActionState" piece, representing the mutually-exclusive states, which are almost
 		always an action of some sort
-		
-	-- and a "ConditionState" piece, which is a set of bitflags to indicate the static "condition" 
+
+	-- and a "ConditionState" piece, which is a set of bitflags to indicate the static "condition"
 		of the model.
 
 	Note that these are usually set independently in code, but they are lumped together in order to
 	determine the actual model to be used.
 
-	(Let's require all objects would be required to have an "Idle" ActionState, which is the 
-	normal, just-sitting there condition.) 
+	(Let's require all objects would be required to have an "Idle" ActionState, which is the
+	normal, just-sitting there condition.)
 
-	From a code point of view, this becomes an issue of requesting a certain state, and 
+	From a code point of view, this becomes an issue of requesting a certain state, and
 	finding the best-fit match for it. So, what are the rules for finding a good match?
 
-	-- Action states must match exactly. If the desired action state is not found, then the 
+	-- Action states must match exactly. If the desired action state is not found, then the
 	IDLE state is substituted (but this should generally be considered an error condition).
 
-	-- Condition states choose the match with the closest match among the "Condition" bits in the 
+	-- Condition states choose the match with the closest match among the "Condition" bits in the
 	INI file, based on satisfying the most of the "required" conditions and the fewest of the
-	"forbidden" conditions. 
+	"forbidden" conditions.
 
 */
 
@@ -118,7 +118,7 @@ enum ModelConditionFlagType CPP_11(: Int)
 	MODELCONDITION_WEAPONSET_CRATEUPGRADE_ONE,
 	MODELCONDITION_WEAPONSET_CRATEUPGRADE_TWO,
 	MODELCONDITION_WEAPONSET_PLAYER_UPGRADE,
-	MODELCONDITION_DOOR_1_OPENING, 
+	MODELCONDITION_DOOR_1_OPENING,
 	MODELCONDITION_DOOR_1_CLOSING,
 	MODELCONDITION_DOOR_1_WAITING_OPEN,
 	MODELCONDITION_DOOR_1_WAITING_TO_CLOSE,
@@ -189,7 +189,7 @@ enum ModelConditionFlagType CPP_11(: Int)
 
 	//Special model conditions work as following:
 	//Something turns it on... but a timer in the object will turn them off after a given
-	//amount of time. If you add any more special animations, then you'll need to add the 
+	//amount of time. If you add any more special animations, then you'll need to add the
 	//code to turn off the state.
 	MODELCONDITION_SPECIAL_CHEERING,	//When units do a victory cheer (or player initiated cheer).
 

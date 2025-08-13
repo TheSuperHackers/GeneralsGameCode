@@ -200,12 +200,12 @@ void CrushDie::onDie( const DamageInfo * damageInfo )
 				newCrushed.set(MODELCONDITION_BACKCRUSHED, crushType == TOTAL_CRUSH || crushType == BACK_END_CRUSH);
 
 				me->getDrawable()->clearAndSetModelConditionFlags(
-					MAKE_MODELCONDITION_MASK2(MODELCONDITION_BACKCRUSHED, MODELCONDITION_FRONTCRUSHED), 
+					MAKE_MODELCONDITION_MASK2(MODELCONDITION_BACKCRUSHED, MODELCONDITION_FRONTCRUSHED),
 					newCrushed);
 			}
 		}
 	}
-}  
+}
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */

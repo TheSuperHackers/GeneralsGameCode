@@ -82,13 +82,13 @@ public:
 
 	// From SaveLoadSubSystemClass
 	virtual uint32					Chunk_ID (void) const;
-	
+
 	// Type identification
 	static DefinitionClass *	Find_Definition (uint32 id, bool twiddle = true);
 	static DefinitionClass *	Find_Named_Definition (const char *name, bool twiddle = true);
 	static DefinitionClass *	Find_Typed_Definition (const char *name, uint32 class_id, bool twiddle = true);
-   static void                List_Available_Definitions (void); 
-   static void                List_Available_Definitions (int superclass_id); 	
+   static void                List_Available_Definitions (void);
+   static void                List_Available_Definitions (int superclass_id);
 	static uint32					Get_New_ID (uint32 class_id);
 
 	// Definition registration
@@ -122,12 +122,12 @@ protected:
 	virtual bool					Save (ChunkSaveClass &csave);
 	virtual bool					Load (ChunkLoadClass &cload);
 	virtual const char*			Name (void) const						{ return "DefinitionMgrClass"; }
-	
+
 	// Persistence methods
 	bool								Save_Objects (ChunkSaveClass &csave);
 	bool								Load_Objects (ChunkLoadClass &cload);
 	bool								Save_Variables (ChunkSaveClass &csave);
-	bool								Load_Variables (ChunkLoadClass &cload);	
+	bool								Load_Variables (ChunkLoadClass &cload);
 
 private:
 	static HashTemplateClass<StringClass, DynamicVectorClass<DefinitionClass*>*>* DefinitionHash;
@@ -140,14 +140,14 @@ private:
 
 	/////////////////////////////////////////////////////////////////////
 	//	Static member data
-	/////////////////////////////////////////////////////////////////////	
+	/////////////////////////////////////////////////////////////////////
 	static DefinitionClass **	_SortedDefinitionArray;
 	static int						_MaxDefinitionCount;
 	static int						_DefinitionCount;
 
 	/////////////////////////////////////////////////////////////////////
 	//	Friend classes
-	/////////////////////////////////////////////////////////////////////	
+	/////////////////////////////////////////////////////////////////////
 	friend class DefinitionClass;
 };
 

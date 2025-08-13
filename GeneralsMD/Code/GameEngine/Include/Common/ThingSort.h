@@ -56,7 +56,7 @@ enum EditorSortingType CPP_11(: Int)
 
 };
 #ifdef DEFINE_EDITOR_SORTING_NAMES
-static const char *EditorSortingNames[] = 
+static const char *EditorSortingNames[] =
 {
 	"NONE",
 	"STRUCTURE",

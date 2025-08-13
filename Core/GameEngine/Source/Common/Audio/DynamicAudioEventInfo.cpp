@@ -47,21 +47,21 @@ DynamicAudioEventInfo::~DynamicAudioEventInfo()
 }
 
 /** Override; dynamic audio events are used only for level-specific stuff at the moment */
-Bool DynamicAudioEventInfo::isLevelSpecific() const 
+Bool DynamicAudioEventInfo::isLevelSpecific() const
 {
-  return true; 
-}
- 
-/** Override; cheap dynamic casting */
-DynamicAudioEventInfo * DynamicAudioEventInfo::getDynamicAudioEventInfo() 
-{
-  return this; 
+  return true;
 }
 
 /** Override; cheap dynamic casting */
-const DynamicAudioEventInfo * DynamicAudioEventInfo::getDynamicAudioEventInfo() const 
-{ 
-  return this; 
+DynamicAudioEventInfo * DynamicAudioEventInfo::getDynamicAudioEventInfo()
+{
+  return this;
+}
+
+/** Override; cheap dynamic casting */
+const DynamicAudioEventInfo * DynamicAudioEventInfo::getDynamicAudioEventInfo() const
+{
+  return this;
 }
 
 
@@ -80,7 +80,7 @@ void DynamicAudioEventInfo::overrideAudioName( const AsciiString & newName )
 void DynamicAudioEventInfo::overrideLoopFlag( Bool newLoopFlag )
 {
   m_overriddenFields.set( OVERRIDE_LOOP_FLAG );
-  
+
   if ( newLoopFlag)
     BitSet( m_control, AC_LOOP );
   else
@@ -99,7 +99,7 @@ void DynamicAudioEventInfo::overrideLoopCount( Int newLoopCount )
 void DynamicAudioEventInfo::overrideVolume( Real newVolume )
 {
   m_overriddenFields.set( OVERRIDE_VOLUME );
-  
+
   m_volume = newVolume;
 }
 
@@ -107,7 +107,7 @@ void DynamicAudioEventInfo::overrideVolume( Real newVolume )
 void DynamicAudioEventInfo::overrideMinVolume( Real newMinVolume )
 {
   m_overriddenFields.set( OVERRIDE_MIN_VOLUME );
-  
+
   m_minVolume = newMinVolume;
 }
 
@@ -115,7 +115,7 @@ void DynamicAudioEventInfo::overrideMinVolume( Real newMinVolume )
 void DynamicAudioEventInfo::overrideMinRange( Real newMinRange )
 {
   m_overriddenFields.set( OVERRIDE_MIN_RANGE );
-  
+
   m_minDistance = newMinRange;
 }
 
@@ -123,7 +123,7 @@ void DynamicAudioEventInfo::overrideMinRange( Real newMinRange )
 void DynamicAudioEventInfo::overrideMaxRange( Real newMaxRange )
 {
   m_overriddenFields.set( OVERRIDE_MAX_RANGE );
-  
+
   m_maxDistance = newMaxRange;
 }
 
@@ -131,7 +131,7 @@ void DynamicAudioEventInfo::overrideMaxRange( Real newMaxRange )
 void DynamicAudioEventInfo::overridePriority( AudioPriority newPriority )
 {
   m_overriddenFields.set( OVERRIDE_PRIORITY );
-  
+
   m_priority = newPriority;
 }
 
@@ -203,27 +203,27 @@ void DynamicAudioEventInfo::xferNoName( Xfer * xfer )
   {
     xfer->xferInt( &m_loopCount );
   }
-  
+
   if ( wasVolumeOverriden() )
   {
     xfer->xferReal( &m_volume );
   }
-  
+
   if ( wasMinVolumeOverriden() )
   {
     xfer->xferReal( &m_minVolume );
   }
-  
+
   if ( wasMinRangeOverriden() )
   {
     xfer->xferReal( &m_minDistance );
   }
-  
+
   if ( wasMaxRangeOverriden() )
   {
     xfer->xferReal( &m_maxDistance );
   }
-  
+
   if ( wasPriorityOverriden() )
   {
     UnsignedByte priority = (UnsignedByte)m_priority;

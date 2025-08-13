@@ -54,11 +54,11 @@ public:
 	Bool						m_defaultsToProximityMode;
 	Bool						m_friendlyDetonation;
 	Bool						m_detonateWhenKilled;
-	
+
 	DemoTrapUpdateModuleData();
 	static void buildFieldParse(MultiIniFieldParse& p);
 
-private: 
+private:
 
 };
 

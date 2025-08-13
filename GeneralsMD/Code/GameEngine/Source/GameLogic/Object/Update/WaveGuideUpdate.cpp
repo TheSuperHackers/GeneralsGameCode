@@ -83,10 +83,10 @@ WaveGuideUpdateModuleData::WaveGuideUpdateModuleData( void )
 
   UpdateModuleData::buildFieldParse( p );
 
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
 
-		{ "WaveDelay", INI::parseDurationReal, NULL, offsetof( WaveGuideUpdateModuleData, m_waveDelay ) },	
+		{ "WaveDelay", INI::parseDurationReal, NULL, offsetof( WaveGuideUpdateModuleData, m_waveDelay ) },
 		{ "YSize", INI::parseReal, NULL, offsetof( WaveGuideUpdateModuleData, m_ySize ) },
 		{ "LinearWaveSpacing", INI::parseReal, NULL, offsetof( WaveGuideUpdateModuleData, m_linearWaveSpacing ) },
 		{ "WaveBendMagnitude", INI::parseReal, NULL, offsetof( WaveGuideUpdateModuleData, m_waveBendMagnitude ) },
@@ -174,7 +174,7 @@ Bool WaveGuideUpdate::startMoving( void )
 		Waypoint *verify = waypoint;
 		while( verify )
 		{
-		
+
 			// can't have more than one link
 			if( verify->getNumLinks() > 1 )
 			{
@@ -201,7 +201,7 @@ Bool WaveGuideUpdate::startMoving( void )
 			return FALSE;
 
 		}  // end if
-				
+
 		// get vector from next waypoint to first waypoint
 		Coord2D v;
 		v.x = next->getLocation()->x - waypoint->getLocation()->x;
@@ -375,7 +375,7 @@ void WaveGuideUpdate::transformWaveShape( void )
 void WaveGuideUpdate::doShapeEffects( void )
 {
 	const WaveGuideUpdateModuleData *modData = getWaveGuideUpdateModuleData();
-	
+
 	//
 	// the particle systems that make up the wave shape need to maintain a position that is
 	// just above the ground
@@ -435,7 +435,7 @@ void WaveGuideUpdate::doWaterMotion( void )
 		// push up the water here
 		TheTerrainVisual->addWaterVelocity( m_transformedShapePoints[ i ].x,
 																				m_transformedShapePoints[ i ].y,
-																				modData->m_waterVelocity, 
+																				modData->m_waterVelocity,
 																				modData->m_preferredHeight );
 
 
@@ -508,7 +508,7 @@ void WaveGuideUpdate::doShoreEffects( void )
 			if( underWater == TRUE && i != 0 )
 			{
 				Coord3D *prevPoint = &effectPoints[ i - 1 ];  // the prev point is actuall on the water so we'll use it
-						
+
 				particleSystem = TheParticleSystemManager->createParticleSystem( right );
 				if( particleSystem )
 					particleSystem->setPosition( prevPoint );
@@ -561,8 +561,8 @@ void WaveGuideUpdate::doDamage( void )
 
 		// scan objects around us and do damage to objects we have "passed over" and are behind us
 		ObjectIterator *iter = ThePartitionManager->iterateObjectsInRange( &m_transformedShapePoints[ i ],
-																																			 modData->m_damageRadius, 
-																																			 FROM_CENTER_2D, 
+																																			 modData->m_damageRadius,
+																																			 FROM_CENTER_2D,
 																																			 NULL );
 		MemoryPoolObjectHolder hold( iter );
 		Object *obj;
@@ -573,7 +573,7 @@ void WaveGuideUpdate::doDamage( void )
 		{
 
 			// ignore all waveguide types
-			if( obj->isKindOf( KINDOF_WAVEGUIDE ) )	
+			if( obj->isKindOf( KINDOF_WAVEGUIDE ) )
 				continue;
 
 			//
@@ -589,7 +589,7 @@ void WaveGuideUpdate::doDamage( void )
 			//
 			// only damage objects that are below the preferred height of the wave doing the damage,
 			// bridges are an exception as their object is raised above the ground, but we'll
-			// say the water is destroying the foundation of it 
+			// say the water is destroying the foundation of it
 			//
 			if( objPos->z > modData->m_preferredHeight && obj->isKindOf( KINDOF_BRIDGE ) == FALSE )
 				continue;
@@ -599,7 +599,7 @@ void WaveGuideUpdate::doDamage( void )
 			v.y = objPos->y - m_transformedShapePoints[ i ].y;
 			v.z = 0.0f;		// forget Z, this is really a top down 2D calculation
 			v.normalize();
-			
+
 			//
 			// get the cosine of the angle between the our forward direction and the vector to the obj
 			// otherwise known as a dot product
@@ -648,7 +648,7 @@ void WaveGuideUpdate::doDamage( void )
 					toppleVector.x = obj->getPosition()->x - m_transformedShapePoints[ i ].x;
 					toppleVector.y = obj->getPosition()->y - m_transformedShapePoints[ i ].y;
 					toppleVector.z = 0;
-					obj->topple( &toppleVector, modData->m_toppleForce, TOPPLE_OPTIONS_NO_BOUNCE | 
+					obj->topple( &toppleVector, modData->m_toppleForce, TOPPLE_OPTIONS_NO_BOUNCE |
 																															TOPPLE_OPTIONS_NO_FX );
 
 					// do a lot of water damage
@@ -660,8 +660,8 @@ void WaveGuideUpdate::doDamage( void )
 					obj->attemptDamage( &damageInfo );
 
 					//
-					// set flooded condition for model and turn off shadows cause we're inside water, 
-					// note that we want to do this after we damage the object so that we switch 
+					// set flooded condition for model and turn off shadows cause we're inside water,
+					// note that we want to do this after we damage the object so that we switch
 					// off the shadows on the new model data loaded after damage is dealt
 					//
 					Drawable *draw = obj->getDrawable();
@@ -812,7 +812,7 @@ UpdateSleepTime WaveGuideUpdate::update( void )
 		m_splashSoundFrame = TheGameLogic->getFrame();
 
 		// pick a random number and play according to frequency
-		if( GameLogicRandomValue( 1, 100 ) > modData->m_randomSplashSoundFrequency )  
+		if( GameLogicRandomValue( 1, 100 ) > modData->m_randomSplashSoundFrequency )
 		{
 			AudioEventRTS randomSplash(modData->m_randomSplashSound);
 			randomSplash.setObjectID(waveGuide->getID());
@@ -901,17 +901,17 @@ void WaveGuideUpdate::xfer( Xfer *xfer )
 	// need disable
 	xfer->xferBool( &m_needDisable );
 
-	// initialized 
+	// initialized
 	xfer->xferBool( &m_initialized );
 
 	// shape points
 	xfer->xferUser( m_shapePoints, sizeof( Coord3D ) * MAX_WAVEGUIDE_SHAPE_POINTS );
-		
+
 	// transformed shape points
 	xfer->xferUser( &m_transformedShapePoints, sizeof( Coord3D ) * MAX_WAVEGUIDE_SHAPE_POINTS );
 
 	// particle shape effects
-	xfer->xferUser( m_shapeEffects, sizeof( ParticleSystemID ) * MAX_WAVEGUIDE_SHAPE_POINTS * MAX_SHAPE_EFFECTS );	
+	xfer->xferUser( m_shapeEffects, sizeof( ParticleSystemID ) * MAX_WAVEGUIDE_SHAPE_POINTS * MAX_SHAPE_EFFECTS );
 
 	// shape point count
 	xfer->xferInt( &m_shapePointCount );

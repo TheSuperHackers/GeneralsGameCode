@@ -24,12 +24,12 @@
 
 // FILE: GameWindowTransitionsStyles.cpp /////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Electronic Arts Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2002 - All Rights Reserved                  
-//                                                                          
+//
+//                       Electronic Arts Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2002 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 //	created:	Dec 2002
@@ -37,7 +37,7 @@
 //	Filename: 	GameWindowTransitionsStyles.cpp
 //
 //	author:		Chris Huybregts
-//	
+//
 //	purpose:	The Actual Styles that can fire off.
 //
 //-----------------------------------------------------------------------------
@@ -71,7 +71,7 @@ void drawTypeText( GameWindow *window, DisplayString *str);
 //-----------------------------------------------------------------------------
 Transition::Transition ( void )
 {
-	
+
 }
 
 Transition::~Transition( void )
@@ -119,7 +119,7 @@ void FlashTransition::update( Int frame )
 	switch (frame) {
 	case FLASHTRANSITION_START:
 		{
-			
+
 			if(m_isForward || !m_win)
 				break;
 			m_win->winHide(TRUE);
@@ -135,7 +135,7 @@ void FlashTransition::update( Int frame )
 			{
 				TheAudio->addAudioEvent( &buttonClick );
 			}  // end if
-		
+
 		}
 		FALLTHROUGH;
 
@@ -168,8 +168,8 @@ void FlashTransition::update( Int frame )
 		}
 		break;
 	}
-	
-	
+
+
 }
 
 void FlashTransition::reverse( void )
@@ -181,7 +181,7 @@ void FlashTransition::reverse( void )
 
 void FlashTransition::draw( void )
 {
-	switch (m_drawState) 
+	switch (m_drawState)
 	{
 		case FLASHTRANSITION_FADE_IN_1:
 		{
@@ -227,12 +227,12 @@ void FlashTransition::draw( void )
 		break;
 	}
 }
-	
+
 void FlashTransition::skip( void )
 {
 	update(FLASHTRANSITION_END);
 }
-	
+
 //-----------------------------------------------------------------------------
 
 
@@ -275,7 +275,7 @@ void ButtonFlashTransition::update( Int frame )
 	switch (frame) {
 	case BUTTONFLASHTRANSITION_START:
 		{
-			
+
 			if(m_isForward || !m_win)
 				break;
 			m_win->winHide(TRUE);
@@ -290,7 +290,7 @@ void ButtonFlashTransition::update( Int frame )
 				if(m_isForward)
 				{
 					AudioEventRTS buttonClick("GUIButtonsFadeIn");
-	
+
 					if( TheAudio )
 					{
 						TheAudio->addAudioEvent( &buttonClick );
@@ -321,7 +321,7 @@ void ButtonFlashTransition::update( Int frame )
 				if(m_isForward)
 					m_drawState = frame;
 				else
-					m_drawState = BUTTONFLASHTRANSITION_FADE_TO_BACKGROUND_2;		
+					m_drawState = BUTTONFLASHTRANSITION_FADE_TO_BACKGROUND_2;
 		}
 		break;
 	case BUTTONFLASHTRANSITION_FADE_TO_BACKGROUND_1:
@@ -375,19 +375,19 @@ void ButtonFlashTransition::update( Int frame )
 			if(m_isForward)
 			{
 //				AudioEventRTS buttonClick("GUIBlip");
-//	
+//
 //				if( TheAudio )
 //				{
 //					TheAudio->addAudioEvent( &buttonClick );
 //				}  // end if
 
-				m_win->winHide(FALSE);			
+				m_win->winHide(FALSE);
 				m_drawState = frame;
 			}
 			else
 			{
-				
-				m_win->winHide(TRUE);	
+
+				m_win->winHide(TRUE);
 				m_drawState = BUTTONFLASHTRANSITION_FADE_TO_GRADE_OUT_4;
 			}
 
@@ -399,12 +399,12 @@ void ButtonFlashTransition::update( Int frame )
 				break;
 			if(m_isForward)
 			{
-				m_win->winHide(FALSE);			
+				m_win->winHide(FALSE);
 				m_drawState = frame;
 			}
 			else
 			{
-				m_win->winHide(TRUE);	
+				m_win->winHide(TRUE);
 				m_drawState = BUTTONFLASHTRANSITION_FADE_TO_GRADE_OUT_3;
 			}
 		}
@@ -415,12 +415,12 @@ void ButtonFlashTransition::update( Int frame )
 				break;
 			if(m_isForward)
 			{
-				m_win->winHide(FALSE);			
+				m_win->winHide(FALSE);
 				m_drawState = frame;
 			}
 			else
 			{
-				m_win->winHide(TRUE);	
+				m_win->winHide(TRUE);
 				m_drawState = BUTTONFLASHTRANSITION_FADE_TO_GRADE_OUT_2;
 			}
 		}
@@ -431,12 +431,12 @@ void ButtonFlashTransition::update( Int frame )
 				break;
 			if(m_isForward)
 			{
-				m_win->winHide(FALSE);			
+				m_win->winHide(FALSE);
 				m_drawState = frame;
 			}
 			else
 			{
-				m_win->winHide(TRUE);	
+				m_win->winHide(TRUE);
 				m_drawState = BUTTONFLASHTRANSITION_FADE_TO_GRADE_OUT_1;
 			}
 		}
@@ -447,12 +447,12 @@ void ButtonFlashTransition::update( Int frame )
 				break;
 			if(m_isForward)
 			{
-				m_win->winHide(FALSE);			
+				m_win->winHide(FALSE);
 				m_drawState = frame;
 			}
 			else
 			{
-				m_win->winHide(FALSE);			
+				m_win->winHide(FALSE);
 				m_drawState = BUTTONFLASHTRANSITION_FADE_TO_GRADE_IN_2;
 			}
 		}
@@ -464,15 +464,15 @@ void ButtonFlashTransition::update( Int frame )
 				break;
 			if(m_isForward)
 			{
-				m_win->winHide(FALSE);			
+				m_win->winHide(FALSE);
 				m_drawState = frame;
 			}
 			else
 			{
-				m_win->winHide(FALSE);	
+				m_win->winHide(FALSE);
 				m_drawState = BUTTONFLASHTRANSITION_FADE_TO_GRADE_IN_1;
 			}
-			
+
 		}
 		break;
 	case BUTTONFLASHTRANSITION_END:
@@ -486,7 +486,7 @@ void ButtonFlashTransition::update( Int frame )
 	}
 	if(frame > BUTTONFLASHTRANSITION_FADE_TO_BACKGROUND_4 && frame < BUTTONFLASHTRANSITION_FADE_TO_GRADE_IN_1)
 		m_drawState = BUTTONFLASHTRANSITION_SHOW_BACKGROUND;
-	
+
 }
 
 void ButtonFlashTransition::reverse( void )
@@ -498,7 +498,7 @@ void ButtonFlashTransition::reverse( void )
 
 void ButtonFlashTransition::draw( void )
 {
-	switch (m_drawState) 
+	switch (m_drawState)
 	{
 		case BUTTONFLASHTRANSITION_FADE_IN_1:
 		{
@@ -601,7 +601,7 @@ void ButtonFlashTransition::draw( void )
 
 	}
 }
-	
+
 void ButtonFlashTransition::skip( void )
 {
 	update(BUTTONFLASHTRANSITION_END);
@@ -648,7 +648,7 @@ void FadeTransition::update( Int frame )
 	switch (frame) {
 	case FADETRANSITION_START:
 		{
-			
+
 			if(m_isForward || !m_win)
 				break;
 			m_win->winHide(TRUE);
@@ -675,7 +675,7 @@ void FadeTransition::update( Int frame )
 			m_win->winHide(FALSE);
 			m_isFinished = TRUE;
 		}
-	}	
+	}
 }
 
 void FadeTransition::reverse( void )
@@ -692,7 +692,7 @@ void FadeTransition::draw( void )
 	if(m_drawState <= FADETRANSITION_START || m_drawState >= FADETRANSITION_END)
 		return;
 	const Image *image = m_win->winGetEnabledImage(0);
-	switch (m_drawState) 
+	switch (m_drawState)
 	{
 		case FADETRANSITION_FADE_IN_1:
 		{
@@ -740,7 +740,7 @@ void FadeTransition::draw( void )
 		}
 	}
 }
-	
+
 void FadeTransition::skip( void )
 {
 	update(FADETRANSITION_END);
@@ -772,7 +772,7 @@ void ScaleUpTransition::init( GameWindow *win )
 	update(SCALEUPTRANSITION_START);
 	m_isFinished = FALSE;
 	m_isForward = TRUE;
-	
+
 	m_centerPos.x = m_pos.x + m_size.x / 2;
 	m_centerPos.y = m_pos.y + m_size.y / 2;
 	m_incrementSize.x = m_size.x / SCALEUPTRANSITION_END;
@@ -839,7 +839,7 @@ void ScaleUpTransition::update( Int frame )
 			m_win->winHide(FALSE);
 			m_isFinished = TRUE;
 		}
-	}	
+	}
 }
 
 void ScaleUpTransition::reverse( void )
@@ -862,7 +862,7 @@ void ScaleUpTransition::draw( void )
 	Int y1 = y + m_incrementSize.y * m_drawState;
 	TheDisplay->drawImage(image, x,y, x1, y1);
 }
-	
+
 void ScaleUpTransition::skip( void )
 {
 	update(SCALEUPTRANSITION_END);
@@ -895,7 +895,7 @@ void ScoreScaleUpTransition::init( GameWindow *win )
 	update(SCORESCALEUPTRANSITION_START);
 	m_isFinished = FALSE;
 	m_isForward = TRUE;
-	
+
 	m_centerPos.x = m_pos.x + m_size.x / 2;
 	m_centerPos.y = m_pos.y + m_size.y / 2;
 	m_incrementSize.x = m_size.x / SCORESCALEUPTRANSITION_END;
@@ -962,7 +962,7 @@ void ScoreScaleUpTransition::update( Int frame )
 			m_win->winHide(FALSE);
 			m_isFinished = TRUE;
 		}
-	}	
+	}
 }
 
 void ScoreScaleUpTransition::reverse( void )
@@ -985,7 +985,7 @@ void ScoreScaleUpTransition::draw( void )
 	Int y1 = y + m_incrementSize.y * m_drawState;
 	TheDisplay->drawImage(image, x,y, x1, y1);
 }
-	
+
 void ScoreScaleUpTransition::skip( void )
 {
 	update(SCORESCALEUPTRANSITION_END);
@@ -1031,7 +1031,7 @@ void MainMenuScaleUpTransition::init( GameWindow *win )
 	m_incrementSize.y = (m_growSize.y - m_size.y) / MAINMENUSCALEUPTRANSITION_END;
 	const Image *image = m_win->winGetDisabledImage(0);
 	m_growWin->winSetEnabledImage(0, image);
-	
+
 }
 
 void MainMenuScaleUpTransition::update( Int frame )
@@ -1045,7 +1045,7 @@ void MainMenuScaleUpTransition::update( Int frame )
 	switch (frame) {
 	case MAINMENUSCALEUPTRANSITION_START:
 		{
-			
+
 			if(m_isForward || !m_win || !m_growWin)
 				break;
 //			m_win->winHide(TRUE);
@@ -1061,7 +1061,7 @@ void MainMenuScaleUpTransition::update( Int frame )
 			m_growWin->winHide(FALSE);
 			m_isFinished = TRUE;
 		}
-	}	
+	}
 	if(frame == 1)
 	{
 		AudioEventRTS buttonClick("GUILogoSelect");
@@ -1069,7 +1069,7 @@ void MainMenuScaleUpTransition::update( Int frame )
 		if( TheAudio )
 		{
 			TheAudio->addAudioEvent( &buttonClick );
-		}  // end if			
+		}  // end if
 	}
 	if(frame > MAINMENUSCALEUPTRANSITION_START && frame < MAINMENUSCALEUPTRANSITION_END)
 	{
@@ -1102,7 +1102,7 @@ void MainMenuScaleUpTransition::draw( void )
 	Int y1 = y + m_size.y + ((m_incrementSize.y * m_drawState));
 	TheDisplay->drawImage(image, x,y, x1, y1);
 }
-	
+
 void MainMenuScaleUpTransition::skip( void )
 {
 	update(MAINMENUSCALEUPTRANSITION_END);
@@ -1145,12 +1145,12 @@ void MainMenuMediumScaleUpTransition::init( GameWindow *win )
 	update(MAINMENUMEDIUMSCALEUPTRANSITION_START);
 	m_isFinished = FALSE;
 	m_isForward = TRUE;
-	
+
 	m_incrementSize.x = (m_growSize.x - m_size.x) / MAINMENUMEDIUMSCALEUPTRANSITION_END;
 	m_incrementSize.y = (m_growSize.y - m_size.y) / MAINMENUMEDIUMSCALEUPTRANSITION_END;
 //	const Image *image = m_win->winGetEnabledImage(0);
 	//m_growWin->winSetEnabledImage(0, image);
-	
+
 }
 
 void MainMenuMediumScaleUpTransition::update( Int frame )
@@ -1164,7 +1164,7 @@ void MainMenuMediumScaleUpTransition::update( Int frame )
 	switch (frame) {
 	case MAINMENUMEDIUMSCALEUPTRANSITION_START:
 		{
-			
+
 			if(m_isForward || !m_win || !m_growWin)
 				break;
 			m_win->winHide(FALSE);
@@ -1180,7 +1180,7 @@ void MainMenuMediumScaleUpTransition::update( Int frame )
 			m_growWin->winHide(FALSE);
 			m_isFinished = TRUE;
 		}
-	}	
+	}
 	if(frame > MAINMENUMEDIUMSCALEUPTRANSITION_START && frame < MAINMENUMEDIUMSCALEUPTRANSITION_END)
 	{
 		if(frame == 1 && m_isForward)
@@ -1190,7 +1190,7 @@ void MainMenuMediumScaleUpTransition::update( Int frame )
 			if( TheAudio )
 			{
 				TheAudio->addAudioEvent( &buttonClick );
-			}  // end if			
+			}  // end if
 		}
 		if(m_win)
 			m_win->winHide(TRUE);
@@ -1222,7 +1222,7 @@ void MainMenuMediumScaleUpTransition::draw( void )
 	Int y1 = m_pos.y + m_size.y + ((m_incrementSize.y * m_drawState) / 2);
 	TheDisplay->drawImage(image, x,y, x1, y1);
 }
-	
+
 void MainMenuMediumScaleUpTransition::skip( void )
 {
 	update(MAINMENUMEDIUMSCALEUPTRANSITION_END);
@@ -1264,12 +1264,12 @@ void MainMenuSmallScaleDownTransition::init( GameWindow *win )
 	update(MAINMENUSMALLSCALEDOWNTRANSITION_START);
 	m_isFinished = FALSE;
 	m_isForward = TRUE;
-	
+
 	m_incrementSize.x = (m_growSize.x - m_size.x) / MAINMENUSMALLSCALEDOWNTRANSITION_END;
 	m_incrementSize.y = (m_growSize.y - m_size.y) / MAINMENUSMALLSCALEDOWNTRANSITION_END;
 	const Image *image = m_win->winGetEnabledImage(0);
 	m_growWin->winSetEnabledImage(0, image);
-	
+
 }
 
 void MainMenuSmallScaleDownTransition::update( Int frame )
@@ -1283,7 +1283,7 @@ void MainMenuSmallScaleDownTransition::update( Int frame )
 	switch (frame) {
 	case MAINMENUSMALLSCALEDOWNTRANSITION_START:
 		{
-			
+
 			if(m_isForward || !m_win || !m_growWin)
 				break;
 			m_win->winHide(FALSE);
@@ -1310,7 +1310,7 @@ void MainMenuSmallScaleDownTransition::update( Int frame )
 			m_growWin->winHide(FALSE);
 			m_isFinished = TRUE;
 		}
-	}	
+	}
 }
 
 void MainMenuSmallScaleDownTransition::reverse( void )
@@ -1333,7 +1333,7 @@ void MainMenuSmallScaleDownTransition::draw( void )
 	Int y1 = m_pos.y + m_size.y + ((m_incrementSize.y * m_drawState) / 2);
 	TheDisplay->drawImage(image, x,y, x1, y1);
 }
-	
+
 void MainMenuSmallScaleDownTransition::skip( void )
 {
 	update(MAINMENUSMALLSCALEDOWNTRANSITION_END);
@@ -1372,7 +1372,7 @@ void TextTypeTransition::init( GameWindow *win )
 	m_isFinished = FALSE;
 	m_isForward = TRUE;
 	m_dStr = TheDisplayStringManager->newDisplayString();
-	m_fullText = GadgetStaticTextGetText(m_win);		
+	m_fullText = GadgetStaticTextGetText(m_win);
 	Int length = m_fullText.getLength();
 	m_frameLength = MIN(length, TEXTTYPETRANSITION_END);
 }
@@ -1388,7 +1388,7 @@ void TextTypeTransition::update( Int frame )
 	switch (frame) {
 	case TEXTTYPETRANSITION_START:
 		{
-			
+
 			if(m_isForward || !m_win )
 				break;
 			m_win->winHide(TRUE);
@@ -1402,7 +1402,7 @@ void TextTypeTransition::update( Int frame )
 			m_win->winHide(FALSE);
 			m_isFinished = TRUE;
 		}
-	}	
+	}
 	if(frame >= m_frameLength)
 	{
 		m_win->winHide(FALSE);
@@ -1445,7 +1445,7 @@ void TextTypeTransition::draw( void )
 		drawTypeText(m_win, m_dStr);
 	}
 }
-	
+
 void TextTypeTransition::skip( void )
 {
 	update(TEXTTYPETRANSITION_END);
@@ -1484,12 +1484,12 @@ void CountUpTransition::init( GameWindow *win )
 			return;
 		}
 	}
-	m_fullText = GadgetStaticTextGetText(m_win);		
+	m_fullText = GadgetStaticTextGetText(m_win);
 	m_isForward = FALSE;
 	update(COUNTUPTRANSITION_START);
 	m_isFinished = FALSE;
 	m_isForward = TRUE;
-	
+
 	AsciiString tempStr;
 	tempStr.translate(m_fullText);
 	m_intValue = atoi(tempStr.str());
@@ -1509,7 +1509,7 @@ void CountUpTransition::init( GameWindow *win )
 		m_countState = COUNT_1000S;
 		m_frameLength = MIN(m_intValue/1000, COUNTUPTRANSITION_END);
 	}
-	
+
 	m_currentValue = 0;
 	UnicodeString currVal;
 	currVal.format(L"%d",m_currentValue);
@@ -1527,7 +1527,7 @@ void CountUpTransition::update( Int frame )
 	switch (frame) {
 	case COUNTUPTRANSITION_START:
 		{
-			
+
 			if(m_isForward || !m_win )
 				break;
 			m_currentValue = 0;
@@ -1546,7 +1546,7 @@ void CountUpTransition::update( Int frame )
 			m_win->winHide(FALSE);
 			m_isFinished = TRUE;
 		}
-	}	
+	}
 	if(frame >= m_frameLength)
 	{
 		m_win->winHide(FALSE);
@@ -1594,7 +1594,7 @@ void CountUpTransition::reverse( void )
 void CountUpTransition::draw( void )
 {
 }
-	
+
 void CountUpTransition::skip( void )
 {
 	if (!m_isFinished)
@@ -1609,13 +1609,13 @@ ScreenFadeTransition::ScreenFadeTransition ( void )
 	m_win = NULL;
 	m_drawState = -1;
 	m_isForward = TRUE;
-	
+
 }
 
 ScreenFadeTransition::~ScreenFadeTransition( void )
 {
 	m_win = NULL;
-	
+
 }
 
 void ScreenFadeTransition::init( GameWindow *win )
@@ -1651,8 +1651,8 @@ void ScreenFadeTransition::update( Int frame )
 		{
 			m_isFinished = TRUE;
 		}
-	}	
-	m_drawState = frame;	
+	}
+	m_drawState = frame;
 }
 
 void ScreenFadeTransition::reverse( void )
@@ -1669,7 +1669,7 @@ void ScreenFadeTransition::draw( void )
 	TheDisplay->drawFillRect(m_pos.x, m_pos.y, m_size.x, m_size.y , GameMakeColor(0,0,0,alpha));
 
 }
-	
+
 void ScreenFadeTransition::skip( void )
 {
 	update(SCREENFADETRANSITION_END);
@@ -1685,7 +1685,7 @@ ControlBarArrowTransition::ControlBarArrowTransition ( void )
 	m_drawState = -1;
 	m_isForward = TRUE;
 	m_arrowImage = NULL;
-	
+
 }
 
 ControlBarArrowTransition::~ControlBarArrowTransition( void )
@@ -1703,7 +1703,7 @@ void ControlBarArrowTransition::init( GameWindow *win )
 
 	m_percent = 1.0f / CONTROLBARARROWTRANSITION_BEGIN_FADE;
 	m_fadePercent = 1.0f/ (CONTROLBARARROWTRANSITION_END - CONTROLBARARROWTRANSITION_BEGIN_FADE);
-	
+
 	m_arrowImage = TheControlBar->getArrowImage();
 	GameWindow *twin = TheWindowManager->winGetWindowFromId(NULL, TheNameKeyGenerator->nameToKey("ControlBar.wnd:ButtonGeneral"));
 	if(!twin || !m_arrowImage)
@@ -1714,7 +1714,7 @@ void ControlBarArrowTransition::init( GameWindow *win )
 	ICoord2D screenPos, screenSize;
 	twin->winGetScreenPosition(&screenPos.x, &screenPos.y);
 	twin->winGetSize(&screenSize.x, &screenSize.y);
-	
+
 	m_incrementPos.x = 0;
 	m_incrementPos.y = screenPos.y * m_percent;
 
@@ -1744,8 +1744,8 @@ void ControlBarArrowTransition::update( Int frame )
 		{
 			m_isFinished = TRUE;
 		}
-	}	
-	m_drawState = frame;	
+	}
+	m_drawState = frame;
 }
 
 void ControlBarArrowTransition::reverse( void )
@@ -1773,9 +1773,9 @@ void ControlBarArrowTransition::draw( void )
 
 		TheDisplay->drawImage(m_arrowImage, m_pos.x, yPos, m_pos.x + m_size.x, yPos + m_size.y , GameMakeColor(255,255,255,alpha));
 	}
-	
+
 }
-	
+
 void ControlBarArrowTransition::skip( void )
 {
 	update(CONTROLBARARROWTRANSITION_END);
@@ -1793,13 +1793,13 @@ FullFadeTransition::FullFadeTransition ( void )
 	m_win = NULL;
 	m_drawState = -1;
 	m_isForward = TRUE;
-	
+
 }
 
 FullFadeTransition::~FullFadeTransition( void )
 {
 	m_win = NULL;
-	
+
 }
 
 void FullFadeTransition::init( GameWindow *win )
@@ -1832,7 +1832,7 @@ void FullFadeTransition::update( Int frame )
 	switch (frame) {
 	case FULLFADETRANSITION_START:
 		{
-						
+
 			if(m_isForward || !m_win )
 				break;
 
@@ -1849,15 +1849,15 @@ void FullFadeTransition::update( Int frame )
 			m_isFinished = TRUE;
 
 		}
-	}	
+	}
 	if(frame == FULLFADETRANSITION_END/2)
 	{
 		if(m_isForward)
-			m_win->winHide(FALSE);	
+			m_win->winHide(FALSE);
 		else
-			m_win->winHide(TRUE);	
+			m_win->winHide(TRUE);
 	}
-	m_drawState = frame;	
+	m_drawState = frame;
 }
 
 void FullFadeTransition::reverse( void )
@@ -1878,7 +1878,7 @@ void FullFadeTransition::draw( void )
 	TheDisplay->drawFillRect(m_pos.x, m_pos.y, m_size.x, m_size.y , GameMakeColor(0,0,0,alpha));
 	TheDisplay->drawOpenRect(m_pos.x, m_pos.y, m_size.x, m_size.y , 1.0f, GameMakeColor(60,60,180,alpha));
 }
-	
+
 void FullFadeTransition::skip( void )
 {
 	update(FULLFADETRANSITION_END);
@@ -1892,13 +1892,13 @@ TextOnFrameTransition::TextOnFrameTransition ( void )
 	m_frameLength = TEXTONFRAMETRANSITION_END;
 	m_win = NULL;
 	m_isForward = TRUE;
-	
+
 }
 
 TextOnFrameTransition::~TextOnFrameTransition( void )
 {
 	m_win = NULL;
-	
+
 }
 
 void TextOnFrameTransition::init( GameWindow *win )
@@ -1933,7 +1933,7 @@ void TextOnFrameTransition::update( Int frame )
 	switch (frame) {
 	case TEXTONFRAMETRANSITION_START:
 		{
-						
+
 			if(m_isForward || !m_win )
 				break;
 
@@ -1950,7 +1950,7 @@ void TextOnFrameTransition::update( Int frame )
 			m_isFinished = TRUE;
 
 		}
-	}	
+	}
 }
 
 void TextOnFrameTransition::reverse( void )
@@ -1967,7 +1967,7 @@ void TextOnFrameTransition::reverse( void )
 void TextOnFrameTransition::draw( void )
 {
 }
-	
+
 void TextOnFrameTransition::skip( void )
 {
 	if (!m_isFinished)
@@ -1982,13 +1982,13 @@ ReverseSoundTransition::ReverseSoundTransition ( void )
 	m_frameLength = REVERSESOUNDTRANSITION_END;
 	m_win = NULL;
 	m_isForward = TRUE;
-	
+
 }
 
 ReverseSoundTransition::~ReverseSoundTransition( void )
 {
 	m_win = NULL;
-	
+
 }
 
 void ReverseSoundTransition::init( GameWindow *win )
@@ -2007,7 +2007,7 @@ void ReverseSoundTransition::update( Int frame )
 	switch (frame) {
 	case REVERSESOUNDTRANSITION_START:
 		{
-						
+
 			if(m_isForward  )
 				break;
 
@@ -2015,7 +2015,7 @@ void ReverseSoundTransition::update( Int frame )
 
 		}
 		break;
-		
+
 	case REVERSESOUNDTRANSITION_FIRESOUND:
 		{
 			AudioEventRTS buttonClick("GUITransitionFade");
@@ -2023,7 +2023,7 @@ void ReverseSoundTransition::update( Int frame )
 			if( TheAudio )
 			{
 				TheAudio->addAudioEvent( &buttonClick );
-			}  // end if		
+			}  // end if
 		}
 		break;
 
@@ -2034,7 +2034,7 @@ void ReverseSoundTransition::update( Int frame )
 			m_isFinished = TRUE;
 
 		}
-	}	
+	}
 }
 
 void ReverseSoundTransition::reverse( void )
@@ -2046,7 +2046,7 @@ void ReverseSoundTransition::reverse( void )
 void ReverseSoundTransition::draw( void )
 {
 }
-	
+
 void ReverseSoundTransition::skip( void )
 {
 	if (!m_isFinished)
@@ -2080,7 +2080,7 @@ void PushButtonImageDrawThree(GameWindow *window, Int alpha )
 	centerImage				= GadgetButtonGetMiddleEnabledImage( window );
 
 	// sanity, we need to have these images to make it look right
-	if( leftImage == NULL || rightImage == NULL || 
+	if( leftImage == NULL || rightImage == NULL ||
 			centerImage == NULL )
 		return;
 
@@ -2103,7 +2103,7 @@ void PushButtonImageDrawThree(GameWindow *window, Int alpha )
 
 	// get width we have to draw our repeating center in
 	centerWidth = rightStart.x - leftEnd.x;
-	
+
 	if( centerWidth <= 0)
 	{
 		// draw left end
@@ -2122,7 +2122,7 @@ void PushButtonImageDrawThree(GameWindow *window, Int alpha )
 	}
 	else
 	{
-		
+
 		// how many whole repeating pieces will fit in that width
 		pieces = centerWidth / centerImage->getImageWidth();
 
@@ -2134,8 +2134,8 @@ void PushButtonImageDrawThree(GameWindow *window, Int alpha )
 		{
 
 			end.x = start.x + centerImage->getImageWidth();
-			
-			TheDisplay->drawImage( centerImage, 
+
+			TheDisplay->drawImage( centerImage,
 																			start.x, start.y,
 																			end.x, end.y,color );
 			start.x += centerImage->getImageWidth();
@@ -2171,7 +2171,7 @@ void PushButtonImageDrawThree(GameWindow *window, Int alpha )
 		end.y = start.y + size.y;
 		TheDisplay->drawImage(rightImage, start.x, start.y, end.x, end.y,color);
 	}
-	
+
 }
 
 static void drawTypeText( GameWindow *window, DisplayString *str)
@@ -2187,16 +2187,16 @@ static void drawTypeText( GameWindow *window, DisplayString *str)
 	if( text == NULL || text->getTextLength() == 0 )
 		return;
 	GameFont *font = text->getFont();
-	
+
 	str->setFont(font);
 
 	// get window position and size
 	window->winGetScreenPosition( &origin.x, &origin.y );
 	window->winGetSize( &size.x, &size.y );
-	
+
 	// Set the text Wrap width
 	wordWrap = size.x - 10;
-	text->setWordWrap(wordWrap);	
+	text->setWordWrap(wordWrap);
 	str->setWordWrap(wordWrap);
 	if( BitIsSet(window->winGetStatus(), WIN_STATUS_WRAP_CENTERED)		)
 	{
@@ -2213,13 +2213,13 @@ static void drawTypeText( GameWindow *window, DisplayString *str)
 
 	// how much space will this text take up
 	text->getSize( &textWidth, &textHeight );
-		
+
 	//Init the clip region
 	clipRegion.lo.x = origin.x ;
 	clipRegion.lo.y = origin.y ;
 	clipRegion.hi.x = origin.x + size.x ;
 	clipRegion.hi.y = origin.y + size.y;
-	
+
 	if( tData->centered )
 	{
 

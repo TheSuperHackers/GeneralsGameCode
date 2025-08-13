@@ -131,11 +131,11 @@ template <class T>
 struct AUDIO_CALLBACK_STRUCT
 {
 	T					callback_ptr;
-	uint32			user_data;		
+	uint32			user_data;
 
 	AUDIO_CALLBACK_STRUCT (void)
 		:	callback_ptr (NULL), user_data (0)	{}
-	
+
 	AUDIO_CALLBACK_STRUCT (T _ptr, uint32 _data)
 		:	callback_ptr (_ptr), user_data (_data) {}
 

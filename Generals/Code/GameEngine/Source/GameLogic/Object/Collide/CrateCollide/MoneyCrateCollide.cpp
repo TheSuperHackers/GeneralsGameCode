@@ -41,14 +41,14 @@
 MoneyCrateCollide::MoneyCrateCollide( Thing *thing, const ModuleData* moduleData ) : CrateCollide( thing, moduleData )
 {
 
-} 
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 MoneyCrateCollide::~MoneyCrateCollide( void )
 {
 
-}  
+}
 
 //-------------------------------------------------------------------------------------------------
 Bool MoneyCrateCollide::executeCrateBehavior( Object *other )
@@ -62,7 +62,7 @@ Bool MoneyCrateCollide::executeCrateBehavior( Object *other )
 	AudioEventRTS soundToPlay = TheAudio->getMiscAudio()->m_crateMoney;
 	soundToPlay.setObjectID( other->getID() );
 	TheAudio->addAudioEvent(&soundToPlay);
-	
+
 	return TRUE;
 }
 

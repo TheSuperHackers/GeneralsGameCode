@@ -45,7 +45,7 @@ typedef struct {
 	UnsignedByte leftDiagonal;
 	UnsignedByte inverted;
 	UnsignedByte longDiagonal;
-	Int customBlendEdgeClass; // Class of texture for a blend edge.  -1 means use alpha. 
+	Int customBlendEdgeClass; // Class of texture for a blend edge.  -1 means use alpha.
 } TBlendTileInfo;
 
 #define INVERTED_MASK	0x1		//AND this with TBlendTileInfo.inverted to get actual inverted state
@@ -62,12 +62,12 @@ typedef struct {
 #define TILE_PIXEL_EXTENT_MIP6 1
 #define TEXTURE_WIDTH 2048 // was 1024 jba
 
-/** This class holds the bitmap data from the .tga texture files.  It is used to 
-create the D3D texture in the game and 3d windows, and to create DIB data for the 
+/** This class holds the bitmap data from the .tga texture files.  It is used to
+create the D3D texture in the game and 3d windows, and to create DIB data for the
 2d window. */
 class TileData : public RefCountClass
 {
-protected: 
+protected:
 
 	// data is bgrabgrabgra to be compatible with windows blt. jba.
 	// Also, first byte is lower left pixel, not upper left pixel.
@@ -98,7 +98,7 @@ public:
 public:
 	UnsignedByte *getDataPtr(void) {return(m_tileData);};
 	static Int dataLen(void) {return(DATA_LEN_BYTES);};
-	
+
 	void updateMips(void);
 
 	Bool hasRGBDataForWidth(Int width);

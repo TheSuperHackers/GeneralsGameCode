@@ -1,0 +1,242 @@
+name: check-replays
+
+permissions:
+  contents: read
+  pull-requests: write
+
+on:
+  workflow_call:
+    inputs:
+      game:
+        required: true
+        type: string
+        description: "Game to check (only GeneralsMD for now)"
+      userdata:
+        required: true
+        type: string
+        description: "Path to folder with replays and maps"
+      preset:
+        required: true
+        type: string
+        description: "CMake preset"
+
+jobs:
+  build:
+    name: ${{ inputs.preset }}
+    runs-on: windows-latest
+    timeout-minutes: 15
+    env:
+      GAME_PATH: C:\GameData
+      GENERALS_PATH: C:\GameData\Generals
+      GENERALSMD_PATH: C:\GameData\GeneralsMD
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      - name: Download Game Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ inputs.game }}-${{ inputs.preset }}
+          path: build
+
+      - name: Cache Game Data
+        id: cache-gamedata
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.GAME_PATH }}
+          key: gamedata-permanent-cache-v4
+
+      - name: Download Game Data from Cloudflare R2
+        if: ${{ steps.cache-gamedata.outputs.cache-hit != 'true' }}
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          AWS_ENDPOINT_URL: ${{ secrets.R2_ENDPOINT_URL }}
+          EXPECTED_HASH_GENERALS: "37A351AA430199D1F05DEB9E404857DCE7B461A6AC272C5D4A0B5652CDB06372"
+          EXPECTED_HASH_GENERALSMD: "6837FE1E3009A4C239406C39B1598216C0943EE8ED46BB10626767029AC05E21"
+        shell: pwsh
+        run: |
+          # Download trimmed gamedata of both Generals 1.08 and Generals Zero Hour 1.04.
+          # This data cannot be used for playing because it's
+          # missing textures, audio and gui files. But it's enough for replay checking.
+          # It's also encrypted because it's not allowed to distribute these files.
+
+          if (-not $env:AWS_ACCESS_KEY_ID -or -not $env:AWS_SECRET_ACCESS_KEY -or -not $env:AWS_ENDPOINT_URL) {
+              $ok1 = [bool]$env:AWS_ACCESS_KEY_ID
+              $ok2 = [bool]$env:AWS_SECRET_ACCESS_KEY
+              $ok3 = [bool]$env:AWS_ENDPOINT_URL
+              Write-Host "One or more required secrets are not set or are empty. R2_ACCESS_KEY_ID: $ok1, R2_SECRET_ACCESS_KEY: $ok2, R2_ENDPOINT_URL: $ok3"
+              exit 1
+          }
+
+          # Download Generals Game Files
+          # The archive contains these files:
+          # BINKW32.DLL
+          # English.big
+          # INI.big
+          # Maps.big
+          # mss32.dll
+          # W3D.big
+          # Data\Scripts\MultiplayerScripts.scb
+          # Data\Scripts\SkirmishScripts.scb
+
+          Write-Host "Downloading Game Data for Generals" -ForegroundColor Cyan
+          aws s3 cp s3://github-ci/generals108_gamedata_trimmed.7z generals108_gamedata_trimmed.7z --endpoint-url $env:AWS_ENDPOINT_URL
+
+          Write-Host "Verifying File Integrity" -ForegroundColor Cyan
+          $fileHash = (Get-FileHash -Path generals108_gamedata_trimmed.7z -Algorithm SHA256).Hash
+          Write-Host "Downloaded file SHA256: $fileHash"
+          Write-Host "Expected file SHA256: $env:EXPECTED_HASH_GENERALS"
+          if ($fileHash -ne $env:EXPECTED_HASH_GENERALS) {
+              Write-Error "Hash verification failed! File may be corrupted or tampered with."
+              exit 1
+          }
+
+          Write-Host "Extracting Archive" -ForegroundColor Cyan
+          $extractPath = $env:GENERALS_PATH
+          & 7z x generals108_gamedata_trimmed.7z -o"$extractPath"
+          Remove-Item generals108_gamedata_trimmed.7z -Verbose
+
+          # Download GeneralsMD (ZH) Game Files
+          # The archive contains these files:
+          # BINKW32.DLL
+          # INIZH.big
+          # MapsZH.big
+          # mss32.dll
+          # W3DZH.big
+          # Data\Scripts\MultiplayerScripts.scb
+          # Data\Scripts\Scripts.ini
+          # Data\Scripts\SkirmishScripts.scb
+
+          Write-Host "Downloading Game Data for GeneralsMD" -ForegroundColor Cyan
+          aws s3 cp s3://github-ci/zerohour104_gamedata_trimmed.7z zerohour104_gamedata_trimmed.7z --endpoint-url $env:AWS_ENDPOINT_URL
+
+          Write-Host "Verifying File Integrity" -ForegroundColor Cyan
+          $fileHash = (Get-FileHash -Path zerohour104_gamedata_trimmed.7z -Algorithm SHA256).Hash
+          Write-Host "Downloaded file SHA256: $fileHash"
+          Write-Host "Expected file SHA256: $env:EXPECTED_HASH_GENERALSMD"
+          if ($fileHash -ne $env:EXPECTED_HASH_GENERALSMD) {
+              Write-Error "Hash verification failed! File may be corrupted or tampered with."
+              exit 1
+          }
+
+          Write-Host "Extracting Archive" -ForegroundColor Cyan
+          $extractPath = $env:GENERALSMD_PATH
+          & 7z x zerohour104_gamedata_trimmed.7z -o"$extractPath"
+          Remove-Item zerohour104_gamedata_trimmed.7z -Verbose
+
+      - name: Set Up Game Data
+        shell: pwsh
+        run: |
+          $source = "$env:GAME_PATH\${{ inputs.game }}"
+          $destination = "build"
+          Copy-Item -Path $source\* -Destination $destination -Recurse -Force
+
+      - name: Set Generals InstallPath in Registry
+        shell: pwsh
+        run: |
+          # Zero Hour loads some Generals files and needs this registry key to find the
+          # Generals data files.
+
+          $regPath = "HKCU:\SOFTWARE\Electronic Arts\EA Games\Generals"
+          $installPath = "$env:GENERALS_PATH\"
+
+          # Ensure the key exists
+          if (-not (Test-Path $regPath)) {
+            New-Item -Path $regPath -Force | Out-Null
+          }
+
+          # Set the InstallPath value
+          Set-ItemProperty -Path $regPath -Name InstallPath -Value $installPath -Type String
+          Write-Host "Registry key set: $regPath -> InstallPath = $installPath"
+
+      - name: Move Replays and Maps to User Dir
+        shell: pwsh
+        run: |
+          # These files are expected in the user dir, so we move them here.
+
+          $source = "${{ inputs.userdata }}\Replays"
+          $destination = "$env:USERPROFILE\Documents\Command and Conquer Generals Zero Hour Data\Replays"
+          Write-Host "Move replays to $destination"
+          New-Item -ItemType Directory -Path $destination -Force | Out-Null
+          Move-Item -Path "$source\*" -Destination $destination -Force
+
+          $source = "${{ inputs.userdata }}\Maps"
+          $destination = "$env:USERPROFILE\Documents\Command and Conquer Generals Zero Hour Data\Maps"
+          Write-Host "Move maps to $destination"
+          New-Item -ItemType Directory -Path $destination -Force | Out-Null
+          Move-Item -Path "$source\*" -Destination $destination -Force
+
+      - name: Run Replay Compatibility Tests
+        shell: pwsh
+        run: |
+          $exePath = "build/generalszh.exe"
+          $arguments = "-jobs 4 -headless -replay *.rep"
+          $timeoutSeconds = 10*60
+          $stdoutPath = "stdout.log"
+          $stderrPath = "stderr.log"
+
+          if (-not (Test-Path $exePath)) {
+              Write-Host "ERROR: Executable not found at $exePath"
+              exit 1
+          }
+
+          # Note that the game is a gui application. That means we need to redirect console output to a file
+          # in order to retrieve it.
+          # Clean previous logs
+          Remove-Item $stdoutPath, $stderrPath -ErrorAction SilentlyContinue
+
+          # Start the process
+          Write-Host "Run $exePath $arguments"
+          $process = Start-Process -FilePath $exePath `
+              -ArgumentList $arguments `
+              -RedirectStandardOutput $stdoutPath `
+              -RedirectStandardError $stderrPath `
+              -PassThru
+
+          # Wait with timeout
+          $exited = $process.WaitForExit($timeoutSeconds * 1000)
+
+          if (-not $exited) {
+              Write-Host "ERROR: Process still running after $timeoutSeconds seconds. Killing process..."
+              Stop-Process -Id $process.Id -Force
+          }
+
+          # Read output
+          Write-Host "=== STDOUT ==="
+          Get-Content $stdoutPath
+
+          if ((Test-Path $stderrPath) -and (Get-Item $stderrPath).Length -gt 0) {
+              Write-Host "`n=== STDERR ==="
+              Get-Content $stderrPath
+          }
+
+          if (-not $exited) {
+              exit 1
+          }
+
+          # Check exit code
+          $exitCode = $process.ExitCode
+          
+          # The above doesn't work on all Windows versions. If not, try this: (see https://stackoverflow.com/a/16018287)
+          #$process.HasExited | Out-Null # Needs to be called for the command below to work correctly
+          #$exitCode = $process.GetType().GetField('exitCode', 'NonPublic, Instance').GetValue($process)
+          #Write-Host "exit code $exitCode"
+
+          if ($exitCode -ne 0) {
+              Write-Host "ERROR: Process failed with exit code $exitCode"
+              exit $exitCode
+          }
+
+          Write-Host "Success!"
+
+      - name: Upload Debug Log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Replay-Debug-Log-${{ inputs.preset }}
+          path: build/DebugLogFile*.txt
+          retention-days: 30
+          if-no-files-found: ignore

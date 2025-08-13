@@ -33,7 +33,7 @@
 
 LanguageFilter *TheLanguageFilter = NULL;
 
-LanguageFilter::LanguageFilter() 
+LanguageFilter::LanguageFilter()
 {
 	//Modified by Saad
 	//Unnecessary
@@ -81,7 +81,7 @@ void LanguageFilter::update() {
 
 wchar_t ignoredChars[] = L"-_*'\"";
 
-void LanguageFilter::filterLine(UnicodeString &line) 
+void LanguageFilter::filterLine(UnicodeString &line)
 {
 	WideChar *buf = NEW WideChar[line.getLength()+1];
 	wcscpy(buf, line.str());
@@ -187,7 +187,7 @@ Bool LanguageFilter::readWord(File *file1, WideChar *buf) {
 	return retval;
 }
 
-LanguageFilter * createLanguageFilter() 
+LanguageFilter * createLanguageFilter()
 {
 	return NEW LanguageFilter;
 }

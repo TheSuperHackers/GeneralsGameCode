@@ -65,7 +65,7 @@ void	W3dUtilityClass::Convert_Quaternion(const W3dQuaternionStruct & q,Quaternio
 }
 
 void W3dUtilityClass::Convert_Quaternion(const Quaternion & q,W3dQuaternionStruct * set)
-{	
+{
 	set->Q[0] = q.X;
 	set->Q[1] = q.Y;
 	set->Q[2] = q.Z;

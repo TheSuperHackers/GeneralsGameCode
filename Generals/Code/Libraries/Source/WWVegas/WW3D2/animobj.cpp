@@ -100,7 +100,7 @@ Animatable3DObjClass::Animatable3DObjClass(const char * htree_name) :
 	ModeInterp.Frame1=0.0f;
 	ModeInterp.Percentage=0.0f;
 	ModeCombo.AnimCombo=NULL;
-  
+
 	/*
 	** Store a pointer to the htree
 	*/
@@ -196,7 +196,7 @@ Animatable3DObjClass::~Animatable3DObjClass(void)
  *   3/2/99     GTH : Created.                                                                 *
  *=============================================================================================*/
 Animatable3DObjClass & Animatable3DObjClass::operator = (const Animatable3DObjClass & that)
-{ 
+{
 	if (&that != this) {
 		Release();
 		if (HTree) {
@@ -224,7 +224,7 @@ Animatable3DObjClass & Animatable3DObjClass::operator = (const Animatable3DObjCl
 
 		HTree = W3DNEW HTreeClass(*that.HTree);
 	}
-	return *this; 
+	return *this;
 }
 
 /***********************************************************************************************
@@ -239,7 +239,7 @@ Animatable3DObjClass & Animatable3DObjClass::operator = (const Animatable3DObjCl
  * HISTORY:                                                                                    *
  *   12/8/98    GTH : Created.                                                                 *
  *=============================================================================================*/
-void Animatable3DObjClass::Release( void ) 
+void Animatable3DObjClass::Release( void )
 {
 	switch (CurMotionMode) {
 
@@ -345,9 +345,9 @@ void Animatable3DObjClass::Special_Render(SpecialRenderInfoClass & rinfo)
  *   3/2/99     GTH : Created.                                                                 *
  *=============================================================================================*/
 void Animatable3DObjClass::Set_Transform(const Matrix3D &m)
-{ 
-	CompositeRenderObjClass::Set_Transform(m); 
-	Set_Hierarchy_Valid(false); 
+{
+	CompositeRenderObjClass::Set_Transform(m);
+	Set_Hierarchy_Valid(false);
 }
 
 
@@ -364,9 +364,9 @@ void Animatable3DObjClass::Set_Transform(const Matrix3D &m)
  *   3/2/99     GTH : Created.                                                                 *
  *=============================================================================================*/
 void Animatable3DObjClass::Set_Position(const Vector3 &v)
-{ 
-	CompositeRenderObjClass::Set_Position(v); 
-	Set_Hierarchy_Valid(false); 
+{
+	CompositeRenderObjClass::Set_Position(v);
+	Set_Hierarchy_Valid(false);
 }
 
 
@@ -490,7 +490,7 @@ void Animatable3DObjClass::Set_Animation(HAnimClass * motion, float frame, int m
 			ModeAnim.animDirection = 1.0f;	//assume playing forwards
 		else
 			ModeAnim.animDirection = -1.0f;	//reverse animation playback
- 
+
 		const char* sound_name = AnimatedSoundMgrClass::Get_Embedded_Sound_Name(motion);
 		if (sound_name) {
 			int bone_index = Get_Bone_Index(sound_name);
@@ -502,7 +502,7 @@ void Animatable3DObjClass::Set_Animation(HAnimClass * motion, float frame, int m
 	}
 
 	Set_Hierarchy_Valid(false);
-}	
+}
 
 
 /***********************************************************************************************
@@ -518,7 +518,7 @@ void Animatable3DObjClass::Set_Animation(HAnimClass * motion, float frame, int m
  *   12/8/98    GTH : Created.                                                                 *
  *=============================================================================================*/
 void Animatable3DObjClass::Set_Animation
-( 
+(
 	HAnimClass * motion0,
 	float frame0,
 	HAnimClass * motion1,
@@ -571,7 +571,7 @@ void Animatable3DObjClass::Set_Animation
  *   12/8/98    GTH : Created.                                                                 *
  *=============================================================================================*/
 void Animatable3DObjClass::Set_Animation
-( 
+(
 	HAnimComboClass * anim_combo
 )
 {
@@ -583,7 +583,7 @@ void Animatable3DObjClass::Set_Animation
 
 	if (anim_combo) {
 		int count = anim_combo->Get_Num_Anims();
-		for (int index = 0; index < count; index ++) {				
+		for (int index = 0; index < count; index ++) {
 			HAnimClass *motion = anim_combo->Peek_Motion(index);
 
 			const char* sound_name = AnimatedSoundMgrClass::Get_Embedded_Sound_Name(motion);
@@ -593,7 +593,7 @@ void Animatable3DObjClass::Set_Animation
 			}
 		}
 	}
-}						 
+}
 
 
 /***********************************************************************************************
@@ -635,7 +635,7 @@ const Matrix3D &	Animatable3DObjClass::Get_Bone_Transform(const char * bonename)
 	if (HTree) {
 		WWASSERT(HTree);
 		WWASSERT(bonename);
-		
+
 		int idx = HTree->Get_Bone_Index(bonename);
 		return Get_Bone_Transform(idx);
 	} else {
@@ -689,9 +689,9 @@ const Matrix3D &	Animatable3DObjClass::Get_Bone_Transform(int boneindex)
  *   3/2/99     GTH : Created.                                                                 *
  *=============================================================================================*/
 void Animatable3DObjClass::Capture_Bone(int boneindex)
-{ 
+{
 	if (HTree) {
-		HTree->Capture_Bone(boneindex); 
+		HTree->Capture_Bone(boneindex);
 	}
 }
 
@@ -709,9 +709,9 @@ void Animatable3DObjClass::Capture_Bone(int boneindex)
  *   3/2/99     GTH : Created.                                                                 *
  *=============================================================================================*/
 void Animatable3DObjClass::Release_Bone(int boneindex)
-{ 
+{
 	if (HTree) {
-		HTree->Release_Bone(boneindex); 
+		HTree->Release_Bone(boneindex);
 	}
 }
 
@@ -728,10 +728,10 @@ void Animatable3DObjClass::Release_Bone(int boneindex)
  * HISTORY:                                                                                    *
  *   3/2/99     GTH : Created.                                                                 *
  *=============================================================================================*/
-bool Animatable3DObjClass::Is_Bone_Captured(int boneindex) const					
-{ 
+bool Animatable3DObjClass::Is_Bone_Captured(int boneindex) const
+{
 	if (HTree) {
-		return HTree->Is_Bone_Captured(boneindex); 
+		return HTree->Is_Bone_Captured(boneindex);
 	} else {
 		return false;
 	}
@@ -751,8 +751,8 @@ bool Animatable3DObjClass::Is_Bone_Captured(int boneindex) const
  *   3/2/99     GTH : Created.                                                                 *
  *=============================================================================================*/
 void Animatable3DObjClass::Control_Bone(int bindex,const Matrix3D & objtm,bool world_space_translation)
-{ 
-#ifdef WWDEBUG	
+{
+#ifdef WWDEBUG
 	for (int j=0; j<3; j++) {
 		for (int i=0; i<4; i++) {
 			WWASSERT(WWMath::Is_Valid_Float(objtm[j][i]));
@@ -761,7 +761,7 @@ void Animatable3DObjClass::Control_Bone(int bindex,const Matrix3D & objtm,bool w
 #endif
 
 	if (HTree) {
-		HTree->Control_Bone(bindex,objtm,world_space_translation); 
+		HTree->Control_Bone(bindex,objtm,world_space_translation);
 		Set_Hierarchy_Valid(false);
 	}
 }
@@ -781,7 +781,7 @@ void Animatable3DObjClass::Control_Bone(int bindex,const Matrix3D & objtm,bool w
 void Animatable3DObjClass::Update_Sub_Object_Transforms(void)
 {
 	/*
-	** The RenderObj impementation will cause our 'container' 
+	** The RenderObj impementation will cause our 'container'
 	** to update if we are not valid yet
 	*/
 	CompositeRenderObjClass::Update_Sub_Object_Transforms();
@@ -796,12 +796,12 @@ void Animatable3DObjClass::Update_Sub_Object_Transforms(void)
 			break;
 
 		case SINGLE_ANIM:
-			
+
 			if ( ModeAnim.AnimMode != ANIM_MODE_MANUAL ) {
 				Single_Anim_Progress();
 			}
 			Anim_Update(Transform,ModeAnim.Motion,ModeAnim.Frame);
-			
+
 			/*
 			**	Play any sounds that are triggered by this frame of animation
 			*/
@@ -835,7 +835,7 @@ void Animatable3DObjClass::Update_Sub_Object_Transforms(void)
 			**	Play any sounds that are triggered by this frame of animation
 			*/
 			int count = ModeCombo.AnimCombo->Get_Num_Anims();
-			for (int index = 0; index < count; index ++) {				
+			for (int index = 0; index < count; index ++) {
 				HAnimClass *motion = ModeCombo.AnimCombo->Peek_Motion(index);
 
 				if ( motion != NULL && motion->Has_Embedded_Sounds() ) {
@@ -843,7 +843,7 @@ void Animatable3DObjClass::Update_Sub_Object_Transforms(void)
 																				ModeCombo.AnimCombo->Get_Frame(index), HTree->Get_Transform(motion->Get_Embedded_Sound_Bone_Index()));
 					ModeCombo.AnimCombo->Set_Prev_Frame(index, prev_frame);
 				}
-				
+
 			}
 			break;
 		}
@@ -876,14 +876,14 @@ bool Animatable3DObjClass::Simple_Evaluate_Bone(int boneindex, Matrix3D *tm) con
 	//	Only do this for simple animations
 	//
 	if (CurMotionMode == SINGLE_ANIM) {
-		
+
 		//
 		//	Determine which frame we should be on, then use this
 		// information to determine the bone's transform.
 		//
 		float curr_frame = Compute_Current_Frame ();
 		retval = Simple_Evaluate_Bone (boneindex, curr_frame, tm);
-	
+
 	} else {
 
 		*tm = Transform;
@@ -917,7 +917,7 @@ bool Animatable3DObjClass::Simple_Evaluate_Bone(int boneindex, float frame, Matr
 	if (HTree != NULL) {
 		if (CurMotionMode == SINGLE_ANIM) {
 			retval = HTree->Simple_Evaluate_Pivot (ModeAnim.Motion, boneindex, frame, Get_Transform (), tm);
-		} 
+		}
 	} else {
 		*tm = Transform;
 	}
@@ -1019,10 +1019,10 @@ float Animatable3DObjClass::Compute_Current_Frame(float *newDirection) const
 		}
 		break;
 	}
-  
+
 	if (newDirection)
 		*newDirection = direction;
-	return frame;	  
+	return frame;
 }
 
 /***********************************************************************************************
@@ -1043,15 +1043,15 @@ void Animatable3DObjClass::Single_Anim_Progress (void)
 	//	Update the current frame (only works in "SINGLE_ANIM" mode!)
 	//
 	if (CurMotionMode == SINGLE_ANIM) {
-		
-		// 
+
+		//
 		// Update the frame number and sync time
 		//
 		float oldprev = ModeAnim.PrevFrame;
 		ModeAnim.PrevFrame		= ModeAnim.Frame;
 		ModeAnim.Frame				= Compute_Current_Frame(&ModeAnim.animDirection);
 		ModeAnim.LastSyncTime	= WW3D::Get_Sync_Time();
-	
+
 		if (ModeAnim.Frame == ModeAnim.PrevFrame) {
 			// This function was somehow called twice per frame.
 			// Since ModeAnim.Frame hasn't changed, reset the ModeAnim.PrevFrame.
@@ -1081,7 +1081,7 @@ void Animatable3DObjClass::Single_Anim_Progress (void)
 bool	Animatable3DObjClass::Is_Animation_Complete( void ) const
 {
 	if (CurMotionMode == SINGLE_ANIM) {
-	
+
 		if ( ModeAnim.AnimMode == ANIM_MODE_ONCE ) {
 			return ( ModeAnim.Frame == ModeAnim.Motion->Get_Num_Frames() - 1 );
 		}
@@ -1120,12 +1120,12 @@ void Animatable3DObjClass::Set_Animation_Frame_Rate_Multiplier(float multiplier)
 
 // (gth) TESTING DYNAMICALLY SWAPPING SKELETONS!
 
-void Animatable3DObjClass::Set_HTree(HTreeClass * new_htree) 
-{ 
+void Animatable3DObjClass::Set_HTree(HTreeClass * new_htree)
+{
 	WWMEMLOG(MEM_ANIMATION);
 	// try to ensure that the htree we're using has the same structure...
-	WWASSERT(new_htree->Num_Pivots() == HTree->Num_Pivots()); 
-	
+	WWASSERT(new_htree->Num_Pivots() == HTree->Num_Pivots());
+
 	// just assign it...
 	if (HTree != NULL) {
 		delete HTree;

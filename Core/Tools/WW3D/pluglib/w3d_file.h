@@ -17,22 +17,22 @@
 */
 
 /* $Header: /Commando/Code/ww3d/w3d_file.h 56    8/12/98 11:16a Greg_h $ */
-/*********************************************************************************************** 
- ***                            Confidential - Westwood Studios                              *** 
- *********************************************************************************************** 
- *                                                                                             * 
- *                 Project Name : Commando / G 3D Library                                      * 
- *                                                                                             * 
- *                     $Archive:: /Commando/Code/ww3d/w3d_file.h                              $* 
- *                                                                                             * 
- *                      $Author:: Greg_h                                                      $* 
- *                                                                                             * 
- *                     $Modtime:: 8/11/98 4:15p                                               $* 
- *                                                                                             * 
- *                    $Revision:: 56                                                          $* 
- *                                                                                             * 
- *---------------------------------------------------------------------------------------------* 
- * Functions:                                                                                  * 
+/***********************************************************************************************
+ ***                            Confidential - Westwood Studios                              ***
+ ***********************************************************************************************
+ *                                                                                             *
+ *                 Project Name : Commando / G 3D Library                                      *
+ *                                                                                             *
+ *                     $Archive:: /Commando/Code/ww3d/w3d_file.h                              $*
+ *                                                                                             *
+ *                      $Author:: Greg_h                                                      $*
+ *                                                                                             *
+ *                     $Modtime:: 8/11/98 4:15p                                               $*
+ *                                                                                             *
+ *                    $Revision:: 56                                                          $*
+ *                                                                                             *
+ *---------------------------------------------------------------------------------------------*
+ * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 
@@ -66,50 +66,50 @@ Version 1.0:
 		W3D_CHUNK_TEXCOORDS,				// array of texture coordinates
 		W3D_CHUNK_MATERIALS,				// array of materials
 		W3D_CHUNK_TRIANGLES,				// array of triangles
-		W3D_CHUNK_SURRENDER_TRIANGLES,// array of surrender format tris	
+		W3D_CHUNK_SURRENDER_TRIANGLES,// array of surrender format tris
 		W3D_CHUNK_MESH_USER_TEXT,		// Name of owning hierarchy, text from the MAX comment field
-		
+
 	HIERARCHY TREES - contained the following chunks:
 		W3D_CHUNK_HIERARCHY_HEADER,
 		W3D_CHUNK_PIVOTS,
-		W3D_CHUNK_PIVOT_FIXUPS,		
+		W3D_CHUNK_PIVOT_FIXUPS,
 
-	HIERARCHY ANIMATIONS - contained the following chunks:  
+	HIERARCHY ANIMATIONS - contained the following chunks:
 		W3D_CHUNK_ANIMATION_HEADER,
 		W3D_CHUNK_ANIMATION_CHANNEL,
 
 	MESH CONNECTIONS - (blueprint for a hierarchical model) contained these chunks:
 
-	 
+
 Version 2.0:
 
-	MESHES: 
+	MESHES:
 
 	- Mesh header now contains the hierarchy model name.  The mesh name will be built
 	as <HModelName>.<MeshName> instead of the old convention: <HTreeName>.<Meshname>
 
-	- The material chunk is replaced with a new material structure which contains 
+	- The material chunk is replaced with a new material structure which contains
 	some information for animating materials.
-	
-	- Vertex Influences link vertices of a mesh to bones in a hierarchy, this is 
-	the information needed for skinning.  
-	
+
+	- Vertex Influences link vertices of a mesh to bones in a hierarchy, this is
+	the information needed for skinning.
+
 	- Damage chunks added.  A damage chunk contains	a new set of materials, a set
 	of vertex offsets, and a set of vertex colors.
-	
+
 	Added the following chunks:
 
-		W3D_CHUNK_VERTEX_COLORS,		
-		W3D_CHUNK_VERTEX_INFLUENCES,	
-		W3D_CHUNK_DAMAGE,					
+		W3D_CHUNK_VERTEX_COLORS,
+		W3D_CHUNK_VERTEX_INFLUENCES,
+		W3D_CHUNK_DAMAGE,
 		W3D_CHUNK_DAMAGE_HEADER,
 			W3D_CHUNK_DAMAGE_MATERIALS,
 			W3D_CHUNK_DAMAGE_VERTICES,
 			W3D_CHUNK_DAMAGE_COLORS,
-		W3D_CHUNK_MATERIALS2,		
+		W3D_CHUNK_MATERIALS2,
 
 	MESH CONNECTIONS: Hierarchy models can now contain skins and collision meshes
-	in addition to the normal meshes.  
+	in addition to the normal meshes.
 
 		W3D_CHUNK_COLLISION_CONNECTION,		// collision meshes connected to the hierarchy
 		W3D_CHUNK_SKIN_CONNECTION,				// skins connected to the hierarchy
@@ -129,14 +129,14 @@ Dec 12, 1997
 Feb 6, 1998
 
 	Added W3D_CHUNK_SECTMESH and its sub-chunks.  This will be the file
-	format for the terrain geometry exported from POV's Atlas tool.  
+	format for the terrain geometry exported from POV's Atlas tool.
 
 March 29, 1998 : Version 3.0
 
 	- New material chunk which supports the new features of the 3D engine
 	- Modified HTrees to always have a root transform to remove all of the
 	  special case -1 bone indexes.
-	- Added new mesh types, A mesh can now be categorized as: normal, 
+	- Added new mesh types, A mesh can now be categorized as: normal,
 	  aligned, skin, collision, or shadow.
 
 June 22, 1998
@@ -145,9 +145,9 @@ June 22, 1998
 
 	Adding a new type of object: The 'Tilemap'.  This simple-sounding object
 	is a binary partition tree of tiles where tiles are rectangular regions of
-	space.  In each leaf to the tree, a mesh is referenced.  The tile map is 
+	space.  In each leaf to the tree, a mesh is referenced.  The tile map is
 	made of several chunks:
-	
+
 	- W3D_CHUNK_TILEMAP
 		- W3D_CHUNK_TILEMAP_HEADER
 		- W3D_CHUNK_TILES
@@ -199,20 +199,20 @@ enum {
 		W3D_CHUNK_MATERIALS,				// array of materials
 		O_W3D_CHUNK_TRIANGLES,			// array of triangles (obsolete)
 		O_W3D_CHUNK_QUADRANGLES,		// array of quads (obsolete)
-		W3D_CHUNK_SURRENDER_TRIANGLES,// array of surrender format tris	
+		W3D_CHUNK_SURRENDER_TRIANGLES,// array of surrender format tris
 		O_W3D_CHUNK_POV_TRIANGLES,		// POV format triangles (obsolete)
 		O_W3D_CHUNK_POV_QUADRANGLES,	// POV format quads (obsolete)
 		W3D_CHUNK_MESH_USER_TEXT,		// Name of owning hierarchy, text from the MAX comment field
 		W3D_CHUNK_VERTEX_COLORS,		// Pre-set vertex coloring
 		W3D_CHUNK_VERTEX_INFLUENCES,	// Mesh Deformation vertex connections
-		W3D_CHUNK_DAMAGE,					// Mesh damage, new set of materials, vertex positions, vertex colors	
+		W3D_CHUNK_DAMAGE,					// Mesh damage, new set of materials, vertex positions, vertex colors
 			W3D_CHUNK_DAMAGE_HEADER,		// Header for the damage data, tells what is coming
 			W3D_CHUNK_DAMAGE_VERTICES,		// Array of modified vertices (W3dMeshDamageVertexStruct's)
 			W3D_CHUNK_DAMAGE_COLORS,		// Array of modified vert colors (W3dMeshDamageColorStruct's)
 			O_W3D_CHUNK_DAMAGE_MATERIALS,	// (OBSOLETE) Damage materials simply wrapped with MATERIALS3 or higher
-			
+
 		W3D_CHUNK_MATERIALS2,			// array of version 2 materials (with animation frame counts)
-		
+
 		W3D_CHUNK_MATERIALS3,			// array of version 3 materials (all new surrender features supported)
 			W3D_CHUNK_MATERIAL3,					// Each version 3 material wrapped with this chunk ID
 				W3D_CHUNK_MATERIAL3_NAME,				// Name of the material (array of chars, null terminated)
@@ -270,16 +270,16 @@ struct W3dChunkHeader
 /********************************************************************************
 
 	WTM ( Westwood Triangle Mesh )
-		
+
 	Each mesh will be contained within a WTM_CHUNK_MESH within
 	this chunk will be the following chunks:
 
-	The header will be the first chunk and it tells general 
+	The header will be the first chunk and it tells general
 	information about the mesh such as how many triangles there
 	are, how many vertices, the bounding box, center
-	of mass, inertia matrix, etc.  
+	of mass, inertia matrix, etc.
 
-	The vertex array is an array of Vectors giving the object 
+	The vertex array is an array of Vectors giving the object
 	space location of each vertex
 
 	The normal array is an array of all of the unique vertex
@@ -292,7 +292,7 @@ struct W3dChunkHeader
 	version of surrender can only handle one vertex normal per vertex.
 	In this case, the application should skip the normal array chunk
 	and read the surrender normal chunk into its SR_VERTs
-	
+
 	The texture coord array is all of the unique texture coordinates
 	for the mesh.  This allows triangles to share vertices but not
 	necessarily share texture coordinates.
@@ -301,12 +301,12 @@ struct W3dChunkHeader
 	all of the unique materials used by the mesh.  All triangles will
 	have a material index into this list.
 
-	The triangle array is all of the triangles which make up the 
+	The triangle array is all of the triangles which make up the
 	mesh.  Each triangle has 3 indices to its vertices, vertex normals,
 	and texture coordinates.  Each also has a material id and the
 	coefficients for its plane equation.
 
-	The Surrender Triangle array is all of the triangles in a slightly 
+	The Surrender Triangle array is all of the triangles in a slightly
 	different format.  Surrender triangles contain their u-v coordinates
 	so there is no indirection and no possibility for sharing.  To
 	make the importer faster, the triangles will also be stored in this
@@ -382,7 +382,7 @@ struct W3dMaterial2Struct
 	uint8	 		Red;									// Rgb colors
 	uint8	 		Green;
 	uint8	 		Blue;
-	uint8			Alpha;								
+	uint8			Alpha;
 
 	uint16		PrimaryNumFrames;					// number of animated frames (if 1, not animated)
 	uint16		SecondaryNumFrames;				// number of animated frames (if 1, not animated)
@@ -423,7 +423,7 @@ struct W3dMaterial2Struct
 #define		W3DMAPPING_ENVIRONMENT									1
 
 /////////////////////////////////////////////////////////////////////////////////////////////
-// Version 3.0 Material, A W3D_CHUNK_MATERIALS3 chunk will wrap a bunch of 
+// Version 3.0 Material, A W3D_CHUNK_MATERIALS3 chunk will wrap a bunch of
 // W3D_CHUNK_MATERIAL3 chunks.  Inside each chunk will be a name chunk, an 'info' chunk which
 // contains the following struct, and one or more map chunks. a mesh with 2 materials might
 // look like:
@@ -435,19 +435,19 @@ struct W3dMaterial2Struct
 //			W3D_CHUNK_MATERIAL3_DC_MAP		<-- a map, W3dMap3Struct
 //				W3D_CHUNK_STRING				<-- filename of the map
 //				W3D_CHUNK_MAP_INFO			<-- map parameters
-//			W3D_CHUNK_MATERIAL3_SC_MAP        
+//			W3D_CHUNK_MATERIAL3_SC_MAP
 //				W3D_CHUNK_STRING				<-- filename of the map
 //				W3D_CHUNK_MAP_INFO
 //		W3D_CHUNK_MATERIAL3
 //			W3D_CHUNK_MATERIAL3_NAME
 //			W3D_CHUNK_MATERIAL3_INFO
 //			W3D_CHUNK_MATERIAL3_SI_MAP
-//		
+//
 /////////////////////////////////////////////////////////////////////////////////////////////
 struct W3dMaterial3Struct
 {
 	uint32					Attributes;					// flags,hints,etc.
-	
+
 	W3dRGBStruct			DiffuseColor;				// diffuse color
 	W3dRGBStruct			SpecularColor;				// specular color
 
@@ -506,7 +506,7 @@ struct W3dTriStruct
 /////////////////////////////////////////////////////////////////////////////////////////////
 #define W3D_MESH_FLAG_NONE									0x00000000			// plain ole normal mesh
 #define W3D_MESH_FLAG_COLLISION_BOX						0x00000001			// mesh is a collision box (should be 8 verts, should be hidden, etc)
-#define W3D_MESH_FLAG_SKIN									0x00000002			// skin mesh 
+#define W3D_MESH_FLAG_SKIN									0x00000002			// skin mesh
 #define W3D_MESH_FLAG_SHADOW								0x00000004			// intended to be projected as a shadow
 #define W3D_MESH_FLAG_ALIGNED								0x00000008			// always aligns with camera
 
@@ -526,7 +526,7 @@ struct W3dMeshHeaderStruct
 	uint32					Version;							// Currently version 0x100
 	char						MeshName[W3D_NAME_LEN];		// name of the mesh (Null terminated)
 	uint32					Attributes;
-	
+
 	//
 	// Counts, these can be regarded as an inventory of what is to come in the file.
 	//
@@ -536,7 +536,7 @@ struct W3dMeshHeaderStruct
 
 	uint32					NumPovTris;			// (NOT USED)
 	uint32					NumPovQuads;		// (NOT USED)
-	
+
 	uint32					NumVertices;		// number of unique vertices
 	uint32					NumNormals;			// number of unique normals (OBSOLETE!)
 	uint32					NumSrNormals;		// number of surrender normals (MUST EQUAL NumVertices or 0)
@@ -563,13 +563,13 @@ struct W3dMeshHeaderStruct
 	W3dVectorStruct		SphCenter;			// Center of bounding sphere
 	float32					SphRadius;			// Bounding sphere radius
 
-	// 
+	//
 	// Default transformation
 	//
 	W3dVectorStruct		Translation;
 	float32					Rotation[9];
 
-	// 
+	//
 	// Physics Properties
 	//
 	W3dVectorStruct		MassCenter;			// Center of mass in object space
@@ -587,7 +587,7 @@ struct W3dMeshHeaderStruct
 
 /////////////////////////////////////////////////////////////////////////////////////////////
 // Version 3 Mesh Header, trimmed out some of the junk that was in the
-// previous versions.  
+// previous versions.
 /////////////////////////////////////////////////////////////////////////////////////////////
 #define W3D_VERTEX_CHANNEL_LOCATION		0x00000001	// object-space location of the vertex
 #define W3D_VERTEX_CHANNEL_NORMAL		0x00000002	// object-space normal for the vertex
@@ -599,10 +599,10 @@ struct W3dMeshHeaderStruct
 
 struct W3dMeshHeader3Struct
 {
-	uint32					Version;							
+	uint32					Version;
 	uint32					Attributes;
-	
-	char						MeshName[W3D_NAME_LEN];		
+
+	char						MeshName[W3D_NAME_LEN];
 	char						HierarchyModelName[W3D_NAME_LEN];
 
 	//
@@ -616,7 +616,7 @@ struct W3dMeshHeader3Struct
 
 	uint32					VertexChannels;	// bits for presence of types of per-vertex info
 	uint32					FaceChannels;		// bits for presence of types of per-face info
-	
+
 	//
 	// Bounding volumes
 	//
@@ -630,7 +630,7 @@ struct W3dMeshHeader3Struct
 //
 // Vertex Influences.  For "skins" each vertex can be associated with a
 // different bone.
-// 
+//
 struct W3dVertInfStruct
 {
 	uint16					BoneIdx;
@@ -648,7 +648,7 @@ struct W3dMeshDamageStruct
 	uint32					NumDamageVerts;		// number of vertices to replace
 	uint32					NumDamageColors;		// number of vertex colors to replace
 	uint32					DamageIndex;			// what index is this damage chunk assigned to
-	uint32					FutureUse[4];	
+	uint32					FutureUse[4];
 };
 
 struct W3dMeshDamageVertexStruct
@@ -669,12 +669,12 @@ struct W3dMeshDamageColorStruct
 	WHT ( Westwood Hierarchy Tree )
 
 	A hierarchy tree defines a set of coordinate systems which are connected
-	hierarchically.  The header defines the name, number of pivots, etc.  
+	hierarchically.  The header defines the name, number of pivots, etc.
 	The pivots chunk will contain a W3dPivotStructs for each node in the
-	tree.  
-	
+	tree.
+
 	The W3dPivotFixupStruct contains a transform for each MAX coordinate
-	system and our version of that same coordinate system (bone).  It is 
+	system and our version of that same coordinate system (bone).  It is
 	needed when the user exports the base pose using "Translation Only".
 	These are the matrices which go from the MAX rotated coordinate systems
 	to a system which is unrotated in the base pose.  These transformations
@@ -685,7 +685,7 @@ struct W3dMeshDamageColorStruct
 
 	What are the "fixup" matrices?  These are the transforms which
 	were applied to the base pose when the user wanted to force the
-	base pose to use only matrices with certain properties.  For 
+	base pose to use only matrices with certain properties.  For
 	example, if we wanted the base pose to use translations only,
 	the fixup transform for each node is a transform which when
 	multiplied by the real node's world transform, yeilds a pure
@@ -701,8 +701,8 @@ struct W3dHierarchyStruct
 {
 	uint32					Version;
 	char						Name[W3D_NAME_LEN];	// Name of the hierarchy
-	uint32					NumPivots;				
-	W3dVectorStruct		Center;					
+	uint32					NumPivots;
+	W3dVectorStruct		Center;
 };
 
 struct W3dPivotStruct
@@ -724,9 +724,9 @@ struct W3dPivotFixupStruct
 
 	WHA (Westwood Hierarchy Animation)
 
-	A Hierarchy Animation is a set of data defining deltas from the base 
+	A Hierarchy Animation is a set of data defining deltas from the base
 	position of a hierarchy tree.  Translation and Rotation channels can be
-	attached to any node of the hierarchy tree which the animation is 
+	attached to any node of the hierarchy tree which the animation is
 	associated with.
 
 ********************************************************************************/
@@ -734,13 +734,13 @@ struct W3dPivotFixupStruct
 struct W3dAnimHeaderStruct
 {
 	uint32					Version;
-	char						Name[W3D_NAME_LEN];				
+	char						Name[W3D_NAME_LEN];
 	char						HierarchyName[W3D_NAME_LEN];
 	uint32					NumFrames;
 	uint32					FrameRate;
 };
 
-enum 
+enum
 {
 	ANIM_CHANNEL_X = 0,
 	ANIM_CHANNEL_Y,
@@ -753,8 +753,8 @@ enum
 
 struct W3dAnimChannelStruct
 {
-	uint16					FirstFrame;			
-	uint16					LastFrame;			
+	uint16					FirstFrame;
+	uint16					LastFrame;
 	uint16					VectorLen;			// length of each vector in this channel
 	uint16					Flags;				// channel type.
 	uint16					Pivot;				// pivot affected by this channel
@@ -762,7 +762,7 @@ struct W3dAnimChannelStruct
 	float32					Data[1];				// will be (LastFrame - FirstFrame + 1) * VectorLen long
 };
 
-enum 
+enum
 {
 	BIT_CHANNEL_VIS = 0,							// turn meshes on and off depending on anim frame.
 };
@@ -770,7 +770,7 @@ enum
 struct W3dBitChannelStruct
 {
 	uint16					FirstFrame;			// all frames outside "First" and "Last" are assumed = DefaultVal
-	uint16					LastFrame;			
+	uint16					LastFrame;
 	uint16					Flags;				// channel type.
 	uint16					Pivot;				// pivot affected by this channel
 	uint8						DefaultVal;			// default state when outside valid range.
@@ -781,7 +781,7 @@ struct W3dBitChannelStruct
 
 	(HModel - Hiearchy Model)
 
-	A Hierarchy Model is a set of render objects which should be attached to 
+	A Hierarchy Model is a set of render objects which should be attached to
 	bones in a hierarchy tree.  There can be multiple objects per node
 	in the tree.  Or there may be no objects attached to a particular bone.
 
@@ -792,7 +792,7 @@ struct W3dHModelHeaderStruct
 	uint32					Version;
 	char						Name[W3D_NAME_LEN];				// Name of this connection set (NULL terminated)
 	char						HierarchyName[W3D_NAME_LEN];	// Name of hierarchy associated with these connections (NULL terminated)
-	uint16					NumConnections;				
+	uint16					NumConnections;
 };
 
 struct W3dHModelAuxDataStruct
@@ -806,7 +806,7 @@ struct W3dHModelAuxDataStruct
 
 	float32					LODMin;
 	float32					LODMax;
-	uint32					FutureUse[32];	
+	uint32					FutureUse[32];
 };
 
 struct W3dHModelNodeStruct
@@ -830,10 +830,10 @@ struct W3dLODModelHeaderStruct
 {
 	uint32					Version;
 	char						Name[W3D_NAME_LEN];				// Name of this LOD Model
-	uint16					NumLODs;				
+	uint16					NumLODs;
 };
 
-struct W3dLODStruct 
+struct W3dLODStruct
 {
 	char						RenderObjName[2*W3D_NAME_LEN];
 	float32					LODMin;								// "artist" inspired switching distances

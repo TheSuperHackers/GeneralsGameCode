@@ -108,12 +108,12 @@ LogicalListenerClass::Add_To_Scene (bool /*start_playing*/)
 {
 	SoundSceneClass *scene = WWAudioClass::Get_Instance ()->Get_Sound_Scene ();
 	if ((scene != NULL) && (m_Scene == NULL)) {
-		
+
 		//
 		//	Add this listener to the culling system
 		//
 		m_Scene = scene;
-		scene->Add_Logical_Listener (this);		
+		scene->Add_Logical_Listener (this);
 	}
 
 	return ;
@@ -166,7 +166,7 @@ LogicalListenerClass::Save (ChunkSaveClass &csave)
 		SoundSceneObjClass::Save (csave);
 	csave.End_Chunk ();
 
-	csave.Begin_Chunk (CHUNKID_VARIABLES);		
+	csave.Begin_Chunk (CHUNKID_VARIABLES);
 
 		WRITE_MICRO_CHUNK (csave, VARID_SCALE, m_Scale);
 		WRITE_MICRO_CHUNK (csave, VARID_TYPE_MASK, m_TypeMask);
@@ -185,7 +185,7 @@ LogicalListenerClass::Save (ChunkSaveClass &csave)
 bool
 LogicalListenerClass::Load (ChunkLoadClass &cload)
 {
-	while (cload.Open_Chunk ()) {		
+	while (cload.Open_Chunk ()) {
 		switch (cload.Cur_Chunk_ID ()) {
 
 			case CHUNKID_BASE_CLASS:

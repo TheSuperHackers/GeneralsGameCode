@@ -25,7 +25,7 @@
 // FILE: OpenContain.h ////////////////////////////////////////////////////////////////////////////
 // Author: Colin Day, November 2001
 // Desc:   The OpenContainer ContainModule allows objects to be contained inside of other
-//				 objects.  There is a set of functionality that will be common to 
+//				 objects.  There is a set of functionality that will be common to
 //				 all container modules that provides the actual containment
 //				 implementations, those implementations are found here
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -78,17 +78,17 @@ public:
 //-------------------------------------------------------------------------------------------------
 /** An open container can actually contain other objects */
 //-------------------------------------------------------------------------------------------------
-class OpenContain : public UpdateModule, 
-										public ContainModuleInterface, 
-										public CollideModuleInterface, 
-										public DieModuleInterface, 
+class OpenContain : public UpdateModule,
+										public ContainModuleInterface,
+										public CollideModuleInterface,
+										public DieModuleInterface,
 										public DamageModuleInterface,
 										public ExitInterface
 {
 
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( OpenContain, "OpenContain" )
 	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( OpenContain, OpenContainModuleData )
-	
+
 public:
 
 	OpenContain( Thing *thing, const ModuleData* moduleData );
@@ -121,8 +121,8 @@ public:
 	// DamageModuleInterface
 	virtual void onDamage( DamageInfo *damageInfo ){};	///< damage callback
 	virtual void onHealing( DamageInfo *damageInfo ){};	///< healing callback
-	virtual void onBodyDamageStateChange( const DamageInfo* damageInfo, 
-																				BodyDamageType oldState, 
+	virtual void onBodyDamageStateChange( const DamageInfo* damageInfo,
+																				BodyDamageType oldState,
 																				BodyDamageType newState){};  ///< state change callback
 
 
@@ -132,14 +132,14 @@ public:
 	virtual Bool calcBestGarrisonPosition( Coord3D *sourcePos, const Coord3D *targetPos ) { return FALSE; }
 	virtual Bool attemptBestFirePointPosition( Object *source, Weapon *weapon, Object *victim ) { return FALSE; }
 	virtual Bool attemptBestFirePointPosition( Object *source, Weapon *weapon, const Coord3D *targetPos ) { return FALSE; }
-	
+
 	///< if my object gets selected, then my visible passengers should, too
 	///< this gets called from
-	virtual void clientVisibleContainedFlashAsSelected() {}; 
+	virtual void clientVisibleContainedFlashAsSelected() {};
 
 	virtual const Player* getApparentControllingPlayer(const Player* observingPlayer) const { return NULL; }
 	virtual void recalcApparentControllingPlayer() { }
-		
+
 	virtual void onContaining( Object *obj );		///< object now contains 'obj'
 	virtual void onRemoving( Object *obj );			///< object no longer contains 'obj'
 	virtual void onSelling();///< Container is being sold.  Open responds by kicking people out
@@ -163,7 +163,7 @@ public:
 	// contain list access
 	virtual void iterateContained( ContainIterateFunc func, void *userData, Bool reverse );
 	virtual UnsignedInt getContainCount() const { return m_containListSize; }
-	virtual const ContainedItemsList* getContainedItemsList() const { return &m_containList; }	
+	virtual const ContainedItemsList* getContainedItemsList() const { return &m_containList; }
 	virtual const Object *friend_getRider() const{return NULL;} ///< Damn.  The draw order dependency bug for riders means that our draw module needs to cheat to get around it.
 	virtual Real getContainedItemsMass() const;
 	virtual UnsignedInt getStealthUnitsContained() const { return m_stealthUnitsContained; }
@@ -178,7 +178,7 @@ public:
 	virtual void exitObjectViaDoor( Object *newObj, ExitDoorType exitDoor );
 	virtual void exitObjectInAHurry( Object *newObj );
 
-	
+
 	virtual void unreserveDoorForExit( ExitDoorType exitDoor ) { /*nothing*/ }
 	virtual void exitObjectByBudding( Object *newObj, Object *budHost ) { return; };
 
@@ -220,9 +220,9 @@ protected:
 	void scatterToNearbyPosition(Object* obj);
 	void removeFromContainViaIterator( ContainedItemsList::iterator it, Bool exposeStealthUnits = FALSE );  ///< remove item from contain list
 	void removeFromPassengerViaIterator( ContainedItemsList::iterator it );///< remove item from passenger list
-	
-	virtual void doLoadSound();	
-	virtual void doUnloadSound();	
+
+	virtual void doLoadSound();
+	virtual void doUnloadSound();
 	virtual void positionContainedObjectsRelativeToContainer(){}
 
 	virtual void addOrRemoveObjFromWorld(Object* obj, Bool add);
@@ -250,7 +250,7 @@ private:
 
 /// @todo srj -- move this to a lazily-allocated subobject
 	enum { MAX_FIRE_POINTS = 32 };
-	ModelConditionFlags	m_conditionState;				///< The Drawables current behavior state	
+	ModelConditionFlags	m_conditionState;				///< The Drawables current behavior state
 	Matrix3D						m_firePoints[ MAX_FIRE_POINTS ];
 	Int									m_firePointStart;												///< start firepoint index to use when building becomes occupied
 	Int									m_firePointNext;												///< next index to place objects at

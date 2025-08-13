@@ -57,7 +57,7 @@ HealContainModuleData::HealContainModuleData( void )
 
   OpenContainModuleData::buildFieldParse( p );
 
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
 		{ "TimeForFullHeal", INI::parseDurationUnsignedInt, NULL, offsetof( HealContainModuleData, m_framesForFullHeal ) },
 		{ 0, 0, 0, 0 }
@@ -150,10 +150,10 @@ Bool HealContain::doHeal( Object *obj, UnsignedInt framesForFullHeal )
 	// if we've been in here long enough ... set our health to max
 	if( TheGameLogic->getFrame() - obj->getContainedByFrame() >= framesForFullHeal )
 	{
-	
+
 		// set the amount to max just to be sure we're at the top
 		healInfo.in.m_amount = body->getMaxHealth();
-		
+
 		// set max health
 		body->attemptHealing( &healInfo );
 
@@ -178,7 +178,7 @@ Bool HealContain::doHeal( Object *obj, UnsignedInt framesForFullHeal )
 
 	// return if we're done healing
 	return doneHealing;
-				
+
 }  // end doHeal
 
 // ------------------------------------------------------------------------------------------------

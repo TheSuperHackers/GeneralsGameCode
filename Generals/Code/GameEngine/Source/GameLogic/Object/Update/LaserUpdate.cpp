@@ -52,7 +52,7 @@ LaserUpdateModuleData::LaserUpdateModuleData()
 {
 	ModuleData::buildFieldParse(p);
 
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
 		{ "MuzzleParticleSystem",		INI::parseAsciiString,	NULL, offsetof( LaserUpdateModuleData, m_particleSystemName ) },
 		{ "TargetParticleSystem",		INI::parseAsciiString,  NULL, offsetof( LaserUpdateModuleData, m_targetParticleSystemName ) },
@@ -89,7 +89,7 @@ LaserUpdate::LaserUpdate( Thing *thing, const ModuleData* moduleData ) : ClientU
 	//
 	m_particleSystemID = INVALID_PARTICLE_SYSTEM_ID;
 	m_targetParticleSystemID = INVALID_PARTICLE_SYSTEM_ID;
-} 
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -217,7 +217,7 @@ void LaserUpdate::initLaser( const Object *parent, const Coord3D *startPos, cons
 				// failed to find the required bone, so just die
 				TheGameClient->destroyDrawable( getDrawable() );
 				return;
-			}				
+			}
 		}
 		else
 		{
@@ -226,7 +226,7 @@ void LaserUpdate::initLaser( const Object *parent, const Coord3D *startPos, cons
 				// failed to find the required bone, so just die
 				TheGameClient->destroyDrawable( getDrawable() );
 				return;
-			}				
+			}
 		}
 	}
 	else if( startPos )
@@ -244,7 +244,7 @@ void LaserUpdate::initLaser( const Object *parent, const Coord3D *startPos, cons
 	//Compute endPos
 	if( endPos != NULL )
 	{
-		// just use what they gave, no override here 
+		// just use what they gave, no override here
 		m_endPos = *endPos;
 	}
 	else
@@ -331,7 +331,7 @@ Real LaserUpdate::getTemplateLaserRadius() const
 		{
 			//***NOTE***
 			//While it appears the logic is accessing client data, it is actually accessing template module
-			//data from the client. This value is INI constant thus can't change. It's grouped with other 
+			//data from the client. This value is INI constant thus can't change. It's grouped with other
 			//laser defining attributes and having it there makes it easier for artists.
 			return ldi->getLaserTemplateWidth();
 		}

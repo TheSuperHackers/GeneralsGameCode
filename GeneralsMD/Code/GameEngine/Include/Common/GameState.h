@@ -47,7 +47,7 @@ class WindowLayout;
 typedef void (*IterateSaveFileCallback)( AsciiString filename, void *userData );
 
 // ------------------------------------------------------------------------------------------------
-/** The save/load window is used for a variety of formats, using this type during the 
+/** The save/load window is used for a variety of formats, using this type during the
 	* save/load menu initialization you can make that menu allow loading only, or allow
 	* both saving and loading from the same menu */
 // ------------------------------------------------------------------------------------------------
@@ -163,16 +163,16 @@ public:
 	virtual void update( void ) { }
 
 	// save game methods
-	SaveCode saveGame( AsciiString filename, 
-										 UnicodeString desc, 
-										 SaveFileType saveType, 
+	SaveCode saveGame( AsciiString filename,
+										 UnicodeString desc,
+										 SaveFileType saveType,
 										 SnapshotType which = SNAPSHOT_SAVELOAD  );  ///< save a game
 	SaveCode missionSave( void );																	 ///< do a in between mission save
 	SaveCode loadGame( AvailableGameInfo gameInfo );							 ///< load a save file
 	SaveGameInfo *getSaveGameInfo( void ) { return &m_gameInfo; }
 
 	// snapshot interaction
-	void addPostProcessSnapshot( Snapshot *snapshot );					///< add snapshot to post process laod	
+	void addPostProcessSnapshot( Snapshot *snapshot );					///< add snapshot to post process laod
 
 	// manipulating files
 	Bool doesSaveGameExist( AsciiString filename );							///< does the save file exist
@@ -217,14 +217,14 @@ private:
 	{
 		Snapshot *snapshot;								///< the snapshot object that handles this block
 		AsciiString blockName;						///< the block name
-	};	
+	};
 	typedef std::list< SnapshotBlock > SnapshotBlockList;
 	typedef SnapshotBlockList::iterator SnapshotBlockListIterator;
 	void addSnapshotBlock( AsciiString blockName, Snapshot *snapshot, SnapshotType which );
 	SnapshotBlock *findBlockInfoByToken( AsciiString token, SnapshotType which );
 
 	SnapshotBlockList m_snapshotBlockList[SNAPSHOT_MAX];	///< list of snapshot blocks of save file data
-	SaveGameInfo m_gameInfo;						///< save game info struct					
+	SaveGameInfo m_gameInfo;						///< save game info struct
 
 	typedef std::list< Snapshot * > SnapshotList;
 	typedef SnapshotList::iterator SnapshotListIterator;
@@ -237,11 +237,11 @@ private:
 };
 
 // EXTERNALS //////////////////////////////////////////////////////////////////////////////////////
-extern GameState *TheGameState;	
+extern GameState *TheGameState;
 
 
-UnicodeString getUnicodeTimeBuffer(SYSTEMTIME timeVal); 
-UnicodeString getUnicodeDateBuffer(SYSTEMTIME timeVal); 
+UnicodeString getUnicodeTimeBuffer(SYSTEMTIME timeVal);
+UnicodeString getUnicodeDateBuffer(SYSTEMTIME timeVal);
 
 
 #endif  // end __GAME_STATE_H_

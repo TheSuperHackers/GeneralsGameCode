@@ -54,7 +54,7 @@ enum DamageType CPP_11(: Int);
 #include "GameLogic/WeaponSetFlags.h"
 
 #ifdef DEFINE_WEAPONSLOTTYPE_NAMES
-static const char *TheWeaponSlotTypeNames[] = 
+static const char *TheWeaponSlotTypeNames[] =
 {
 	"PRIMARY",
 	"SECONDARY",
@@ -63,30 +63,30 @@ static const char *TheWeaponSlotTypeNames[] =
 	NULL
 };
 
-static const LookupListRec TheWeaponSlotTypeNamesLookupList[] = 
+static const LookupListRec TheWeaponSlotTypeNamesLookupList[] =
 {
 	{ "PRIMARY",		PRIMARY_WEAPON },
 	{ "SECONDARY",	SECONDARY_WEAPON },
 	{ "TERTIARY",		TERTIARY_WEAPON },
-	
+
 	{ NULL, 0	}// keep this last!
 };
 
-#endif  
+#endif
 
 //-------------------------------------------------------------------------------------------------
 #ifdef DEFINE_WEAPONCONDITIONMAP
 
 //Kris: I did not write this code, but I am adding comments to clarify it.
 //When I ran into this, I discovered that it was grossly out of date. It wasn't
-//clearly identified as a "lookup table", but hopefully now it makes sense. I've 
+//clearly identified as a "lookup table", but hopefully now it makes sense. I've
 //updated it as of May 2003 when I added RIDER1-8 conditions.
 
 //Purpose: Whenever you change a weaponset, the model condition state associated with it
 //will be properly set exclusively.
 static const ModelConditionFlagType TheWeaponSetTypeToModelConditionTypeMap[WEAPONSET_COUNT] =
 {
-	/*WEAPONSET_VETERAN*/								MODELCONDITION_WEAPONSET_VETERAN,		
+	/*WEAPONSET_VETERAN*/								MODELCONDITION_WEAPONSET_VETERAN,
 	/*WEAPONSET_ELITE*/									MODELCONDITION_WEAPONSET_ELITE,
 	/*WEAPONSET_HERO*/									MODELCONDITION_WEAPONSET_HERO,
 	/*WEAPONSET_PLAYER_UPGRADE*/				MODELCONDITION_WEAPONSET_PLAYER_UPGRADE,
@@ -152,9 +152,9 @@ public:
 	Bool isWeaponLockSharedAcrossSets() const {return m_isWeaponLockSharedAcrossSets; }
 
 	Bool hasAnyWeapons() const;
-	inline const WeaponTemplate* getNth(WeaponSlotType n) const { return m_template[n]; } 
-	inline UnsignedInt getNthCommandSourceMask(WeaponSlotType n) const { return m_autoChooseMask[n]; } 
-	inline const KindOfMaskType& getNthPreferredAgainstMask(WeaponSlotType n) const { return m_preferredAgainst[n]; } 
+	inline const WeaponTemplate* getNth(WeaponSlotType n) const { return m_template[n]; }
+	inline UnsignedInt getNthCommandSourceMask(WeaponSlotType n) const { return m_autoChooseMask[n]; }
+	inline const KindOfMaskType& getNthPreferredAgainstMask(WeaponSlotType n) const { return m_preferredAgainst[n]; }
 
 	inline Int getConditionsYesCount() const { return 1; }
 	inline const WeaponSetFlags& getNthConditionsYes(Int i) const { return m_types; }
@@ -233,7 +233,7 @@ public:
 	const Weapon* findAmmoPipShowingWeapon() const;
 	void weaponSetOnWeaponBonusChange(const Object *source);
 	UnsignedInt getMostPercentReadyToFireAnyWeapon() const;
-	inline UnsignedInt getNthCommandSourceMask( WeaponSlotType n ) const { return m_curWeaponTemplateSet ? m_curWeaponTemplateSet->getNthCommandSourceMask( n ) : NULL; } 
+	inline UnsignedInt getNthCommandSourceMask( WeaponSlotType n ) const { return m_curWeaponTemplateSet ? m_curWeaponTemplateSet->getNthCommandSourceMask( n ) : NULL; }
 
 	Bool setWeaponLock( WeaponSlotType weaponSlot, WeaponLockType lockType );
 	void releaseWeaponLock(WeaponLockType lockType);
@@ -245,7 +245,7 @@ public:
 
 	/**
 		Determines if the unit has any weapon that could conceivably
-		harm the victim. this does not take range, ammo, etc. into 
+		harm the victim. this does not take range, ammo, etc. into
 		account, but immutable weapon properties, such as "can you
 		target airborne victims".
 	*/

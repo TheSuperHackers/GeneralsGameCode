@@ -47,8 +47,8 @@ const char *	LOCALE_getstr( const void *localefile, int stringid );
 /* initialization/restore */
 int				LOCALE_init( void );										/* call before calling any other LOCALE functions */
 void			LOCALE_restore( void );										/* free all memory/resources allocated by LOCALE */
-																			
-/* attributes */															
+
+/* attributes */
 void			LOCALE_setbank( int bankindex );							/* bankindex >= 0 && bankindex < LOCALE_BANK_COUNT */
 int				LOCALE_getbank( void );										/* returns current bank id */
 int				LOCALE_getbanklanguageid( void );							/* returns language id of the current bank */

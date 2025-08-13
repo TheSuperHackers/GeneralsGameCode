@@ -16,22 +16,22 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/*********************************************************************************************** 
- ***              C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S               *** 
- *********************************************************************************************** 
- *                                                                                             * 
- *                 Project Name : Command & Conquer                                            * 
- *                                                                                             * 
- *                     $Archive:: /G/wwlib/Point.h                                            $* 
- *                                                                                             * 
+/***********************************************************************************************
+ ***              C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S               ***
+ ***********************************************************************************************
+ *                                                                                             *
+ *                 Project Name : Command & Conquer                                            *
+ *                                                                                             *
+ *                     $Archive:: /G/wwlib/Point.h                                            $*
+ *                                                                                             *
  *                      $Author:: Eric_c                                                      $*
- *                                                                                             * 
+ *                                                                                             *
  *                     $Modtime:: 4/07/99 5:24p                                               $*
- *                                                                                             * 
+ *                                                                                             *
  *                    $Revision:: 5                                                           $*
  *                                                                                             *
- *---------------------------------------------------------------------------------------------* 
- * Functions:                                                                                  * 
+ *---------------------------------------------------------------------------------------------*
+ * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 #if _MSC_VER >= 1000
 #pragma once
@@ -45,7 +45,7 @@ template<class T> class TRect;
 /*
 **	This class describes a point in 2 dimensional space using arbitrary
 **	components. The interpretation of which is outside the scope
-**	of this class. This class is the successor to the old style COORDINATE 
+**	of this class. This class is the successor to the old style COORDINATE
 **	and CELL types but also serves anywhere an X and Y value are treated
 **	as a logical object (e.g., pixel location).
 */
@@ -102,7 +102,7 @@ class TPoint2D {
 };
 
 template<class T>
-TPoint2D<T> const operator * (T lvalue, TPoint2D<T> const & rvalue) 
+TPoint2D<T> const operator * (T lvalue, TPoint2D<T> const & rvalue)
 {
 	return(rvalue * lvalue);
 }
@@ -137,7 +137,7 @@ class TPoint3D : public TPoint2D<T> {
 		TPoint3D(void) {}		// Default constructor does nothing by design.
 		TPoint3D(T x, T y, T z) : TPoint2D<T>(x, y), Z(z) {}
 		TPoint3D(BASECLASS const & rvalue) : TPoint2D<T>(rvalue), Z(0) {}
-		
+
 		// Equality comparison operators.
 		bool operator == (TPoint3D<T> const & rvalue) const {return(X==rvalue.X && Y==rvalue.Y && Z==rvalue.Z);}
 		bool operator != (TPoint3D<T> const & rvalue) const {return(X!=rvalue.X || Y!=rvalue.Y || Z!=rvalue.Z);}
@@ -190,7 +190,7 @@ class TPoint3D : public TPoint2D<T> {
 };
 
 template<class T>
-TPoint3D<T> const operator * (T lvalue, TPoint3D<T> const & rvalue) 
+TPoint3D<T> const operator * (T lvalue, TPoint3D<T> const & rvalue)
 {
 	return(rvalue * lvalue);
 }

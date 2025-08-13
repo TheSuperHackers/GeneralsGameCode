@@ -39,7 +39,7 @@
 #include "Common/WellKnownKeys.h"
 #include "Common/TerrainTypes.h"
 #include "Common/Xfer.h"
-#include "Common/UnitTimings.h" //Contains the DO_UNIT_TIMINGS define jba.		 
+#include "Common/UnitTimings.h" //Contains the DO_UNIT_TIMINGS define jba.
 
 #include "GameClient/Drawable.h"
 #include "GameClient/ClientRandomValue.h"
@@ -93,7 +93,7 @@ class TestSeismicFilter : public SeismicSimulationFilterBase
       Int border = heightMap->getBorderSize();
       Int centerX = node->m_center.x + border ;
       Int centerY = node->m_center.y + border ;
-  
+
       UnsignedInt workspaceWidth = radius*2;
       Real *workspace = NEW Real[ sqr(workspaceWidth) ];
       Real *workspaceEnd = workspace + sqr(workspaceWidth);
@@ -108,15 +108,15 @@ class TestSeismicFilter : public SeismicSimulationFilterBase
         {
 
           Real distance = sqrt( sqr(x) + sqr(y) );//Pythagoras
-      
+
           if ( distance < radius )
           {
             Real distScalar = cos( ( distance / radius * (PI/2) ) );
-            Real height = (offsScalar * distScalar); 
+            Real height = (offsScalar * distScalar);
 
             workspace[ (radius + x) +  workspaceWidth * (radius + y) ] = height + heightMap->getBilinearSampleSeismicZVelocity( centerX + x,  centerY + y ) ;//kaleidoscope
-            
-            if ( x != 0 ) // non-zero test prevents cross-shaped double stamp 
+
+            if ( x != 0 ) // non-zero test prevents cross-shaped double stamp
             {
       			  workspace[ (radius - x) + workspaceWidth * (radius + y) ] = height + heightMap->getBilinearSampleSeismicZVelocity( centerX - x,  centerY + y ) ;
               if ( y != 0 )
@@ -163,9 +163,9 @@ W3DTerrainVisual::W3DTerrainVisual()
 	m_terrainRenderObject = NULL;
 	m_waterRenderObject = NULL;
 	TheWaterRenderObj = NULL;
-	
+
   m_logicHeightMap   = NULL;
-  
+
 #ifdef DO_SEISMIC_SIMULATIONS
   m_clientHeightMap = NULL;
 #endif
@@ -198,7 +198,7 @@ W3DTerrainVisual::~W3DTerrainVisual()
 	}
 
 	if (TheW3DShadowManager)
-	{	
+	{
 		delete TheW3DShadowManager;
 		TheW3DShadowManager=NULL;
 	}
@@ -241,7 +241,7 @@ void W3DTerrainVisual::init( void )
 		// initialize object shadow drawing system
 		TheW3DShadowManager = NEW W3DShadowManager;
  		TheW3DShadowManager->init();
-	
+
 		// create a water plane render object
 		TheWaterRenderObj=m_waterRenderObject = NEW_REF( WaterRenderObjClass, () );
 		m_waterRenderObject->init(TheGlobalData->m_waterPositionZ, TheGlobalData->m_waterExtentX, TheGlobalData->m_waterExtentY, W3DDisplay::m_3DScene, (WaterRenderObjClass::WaterType)TheGlobalData->m_waterType);	//create a water plane that's 128x128 units
@@ -253,7 +253,7 @@ void W3DTerrainVisual::init( void )
 
 #ifdef DO_UNIT_TIMINGS
 #pragma MESSAGE("********************* WARNING- Doing UNIT TIMINGS. ")
-#else 
+#else
 		if (TheGlobalData->m_waterType == WaterRenderObjClass::WATER_TYPE_1_FB_REFLECTION)
 		{	// add water render object to the pre-pass scene (to be rendered before main scene)
  			//W3DDisplay::m_prePass3DScene->Add_Render_Object( m_waterRenderObject);
@@ -271,23 +271,23 @@ void W3DTerrainVisual::init( void )
 
 	// set the vertex animated water properties
 	Int waterSettingIndex = 0;  // use index 0 settings by default
-	TheTerrainVisual->setWaterGridHeightClamps( NULL, 
-																							TheGlobalData->m_vertexWaterHeightClampLow[ waterSettingIndex ], 
+	TheTerrainVisual->setWaterGridHeightClamps( NULL,
+																							TheGlobalData->m_vertexWaterHeightClampLow[ waterSettingIndex ],
 																							TheGlobalData->m_vertexWaterHeightClampHi[ waterSettingIndex ] );
-	TheTerrainVisual->setWaterTransform( NULL, 
-																			 TheGlobalData->m_vertexWaterAngle[ waterSettingIndex ], 
-																			 TheGlobalData->m_vertexWaterXPosition[ waterSettingIndex ], 
-																			 TheGlobalData->m_vertexWaterYPosition[ waterSettingIndex ], 
+	TheTerrainVisual->setWaterTransform( NULL,
+																			 TheGlobalData->m_vertexWaterAngle[ waterSettingIndex ],
+																			 TheGlobalData->m_vertexWaterXPosition[ waterSettingIndex ],
+																			 TheGlobalData->m_vertexWaterYPosition[ waterSettingIndex ],
 																			 TheGlobalData->m_vertexWaterZPosition[ waterSettingIndex ] );
-	TheTerrainVisual->setWaterGridResolution( NULL, 
-																						TheGlobalData->m_vertexWaterXGridCells[ waterSettingIndex ], 
-																						TheGlobalData->m_vertexWaterYGridCells[ waterSettingIndex ], 
+	TheTerrainVisual->setWaterGridResolution( NULL,
+																						TheGlobalData->m_vertexWaterXGridCells[ waterSettingIndex ],
+																						TheGlobalData->m_vertexWaterYGridCells[ waterSettingIndex ],
 																						TheGlobalData->m_vertexWaterGridSize[ waterSettingIndex ] );
-	TheTerrainVisual->setWaterAttenuationFactors( NULL, 
-																								TheGlobalData->m_vertexWaterAttenuationA[ waterSettingIndex ], 
-																								TheGlobalData->m_vertexWaterAttenuationB[ waterSettingIndex ], 
-																								TheGlobalData->m_vertexWaterAttenuationC[ waterSettingIndex ], 
-																								TheGlobalData->m_vertexWaterAttenuationRange[ waterSettingIndex ] );	
+	TheTerrainVisual->setWaterAttenuationFactors( NULL,
+																								TheGlobalData->m_vertexWaterAttenuationA[ waterSettingIndex ],
+																								TheGlobalData->m_vertexWaterAttenuationB[ waterSettingIndex ],
+																								TheGlobalData->m_vertexWaterAttenuationC[ waterSettingIndex ],
+																								TheGlobalData->m_vertexWaterAttenuationRange[ waterSettingIndex ] );
 	m_isWaterGridRenderingEnabled = FALSE;
 
 #ifdef DO_SEISMIC_SIMULATIONS
@@ -335,7 +335,7 @@ void W3DTerrainVisual::reset( void )
 #ifdef DO_SEISMIC_SIMULATIONS
   m_seismicSimulationList.clear();
 #endif
-  
+
 }  // end reset
 
 //-------------------------------------------------------------------------------------------------
@@ -382,8 +382,8 @@ void W3DTerrainVisual::handleSeismicSimulations( void )
   if ( ! m_seismicSimulationList.empty() )
   {
     SeismicSimulationListIt it = m_seismicSimulationList.begin();
-    
-    
+
+
     m_clientHeightMap->clearSeismicUpdateFlags();
 
 
@@ -395,8 +395,8 @@ void W3DTerrainVisual::handleSeismicSimulations( void )
       {
         SeismicSimulationFilterBase::SeismicSimStatusCode code = ssn->handleFilterCallback( m_clientHeightMap );
         DEBUG_ASSERTCRASH( code != SeismicSimulationFilterBase::SEISMIC_STATUS_INVALID, ("Trouble in the Seismic simulator.") );
-      
-        switch ( code ) 
+
+        switch ( code )
         {
           case SeismicSimulationFilterBase::SEISMIC_STATUS_ACTIVE:
           {
@@ -422,7 +422,7 @@ void W3DTerrainVisual::handleSeismicSimulations( void )
 
               Real oldSpeed = m_clientHeightMap->getSeismicZVelocity( x, y );
               Real newSpeed = ssn->applyGravity( oldSpeed );// - 0.5f;
-              
+
               m_clientHeightMap->setSeismicZVelocity( x, y, newSpeed );
 
               Int heightToUse = m_clientHeightMap->getHeight( x, y ) + newSpeed ;
@@ -436,15 +436,15 @@ void W3DTerrainVisual::handleSeismicSimulations( void )
               else
               {
                 ++fallCount;
-                
+
                 if ( heightToUse > 255 )
                   heightToUse = 255;
 
               }
-    			    m_clientHeightMap->setRawHeight( x, y, heightToUse ); 
+    			    m_clientHeightMap->setRawHeight( x, y, heightToUse );
               m_clientHeightMap->setSeismicUpdateFlag( x, y, TRUE );
             }
-            
+
           }
         }
 
@@ -471,10 +471,10 @@ void W3DTerrainVisual::handleSeismicSimulations( void )
 void W3DTerrainVisual::updateSeismicSimulations( void )
 {
 
-	if (m_logicHeightMap==NULL) 
+	if (m_logicHeightMap==NULL)
 		return;
 
-	if (m_clientHeightMap==NULL) 
+	if (m_clientHeightMap==NULL)
 		return;
 
   if (m_terrainRenderObject==NULL)
@@ -494,11 +494,11 @@ void W3DTerrainVisual::updateSeismicSimulations( void )
         Int border = m_clientHeightMap->getBorderSizeInline();
 
 		    TheTerrainRenderObject->updateBlock(
-          hur->m_region.lo.x + border, 
-          hur->m_region.lo.y + border, 
-          hur->m_region.hi.x + border, 
-          hur->m_region.hi.y + border, 
-          m_clientHeightMap, 
+          hur->m_region.lo.x + border,
+          hur->m_region.lo.y + border,
+          hur->m_region.hi.x + border,
+          hur->m_region.hi.y + border,
+          m_clientHeightMap,
           0);
       }
 
@@ -515,7 +515,7 @@ void W3DTerrainVisual::updateSeismicSimulations( void )
 		    it = m_seismicSimulationList.erase( it );
       }
       else
-        ++it; 
+        ++it;
 
 	  }
 
@@ -538,11 +538,11 @@ void W3DTerrainVisual::updateSeismicSimulations( void )
 //-------------------------------------------------------------------------------------------------
 Bool W3DTerrainVisual::load( AsciiString filename )
 {
-	
-#if 0	
+
+#if 0
 	// (gth) Testing exclusion list asset releasing
 	DynamicVectorClass<StringClass> exclusion_list(8000);
-	
+
 	WW3DAssetManager::Get_Instance()->Create_Asset_List(exclusion_list);
 
 	exclusion_list.Add(StringClass("avcomanche"));
@@ -606,11 +606,11 @@ Bool W3DTerrainVisual::load( AsciiString filename )
 
 	// Add any lights loaded by map.
 	MapObject *pMapObj = MapObject::getFirstMapObject();
-	while (pMapObj) 
+	while (pMapObj)
 	{
 		Dict *d = pMapObj->getProperties();
-		if (pMapObj->isLight()) 
-		{ 
+		if (pMapObj->isLight())
+		{
 			Coord3D loc = *pMapObj->getLocation();
 			if (loc.z < 0) {
 				Vector3 vec;
@@ -641,12 +641,12 @@ Bool W3DTerrainVisual::load( AsciiString filename )
 	// apply the heightmap to the terrain render object
 
 #ifdef DO_SEISMIC_SIMULATIONS
-	m_terrainRenderObject->initHeightData( m_clientHeightMap->getDrawWidth(), 
+	m_terrainRenderObject->initHeightData( m_clientHeightMap->getDrawWidth(),
 																				 m_clientHeightMap->getDrawHeight(),
 																				 m_clientHeightMap,
 																				 it);
 #else
-	m_terrainRenderObject->initHeightData( m_logicHeightMap->getDrawWidth(), 
+	m_terrainRenderObject->initHeightData( m_logicHeightMap->getDrawWidth(),
 																				 m_logicHeightMap->getDrawHeight(),
 																				 m_logicHeightMap,
 																				 it);
@@ -673,7 +673,7 @@ Bool W3DTerrainVisual::load( AsciiString filename )
 
 #ifdef DO_UNIT_TIMINGS
 #pragma MESSAGE("********************* WARNING- Doing UNIT TIMINGS. ")
-#else 
+#else
 	if (m_waterRenderObject)
 	{
 		W3DDisplay::m_3DScene->Add_Render_Object( m_waterRenderObject);
@@ -683,7 +683,7 @@ Bool W3DTerrainVisual::load( AsciiString filename )
 #endif
 
 	pMapObj = MapObject::getFirstMapObject();
-	while (pMapObj) 
+	while (pMapObj)
 	{
 		Dict *d = pMapObj->getProperties();
 		if (pMapObj->isScorch()) {
@@ -724,8 +724,8 @@ void W3DTerrainVisual::enableWaterGrid( Bool enable )
 /** intersect the ray with the terrain, if a hit occurs TRUE is returned
 	* and the result point on the terrain is returned in "result" */
 //-------------------------------------------------------------------------------------------------
-Bool W3DTerrainVisual::intersectTerrain( Coord3D *rayStart, 
-																				 Coord3D *rayEnd, 
+Bool W3DTerrainVisual::intersectTerrain( Coord3D *rayStart,
+																				 Coord3D *rayEnd,
 																				 Coord3D *result )
 {
 	Bool hit = FALSE;
@@ -748,10 +748,10 @@ Bool W3DTerrainVisual::intersectTerrain( Coord3D *rayStart,
 
 			result->x = point.X;
 			result->y = point.Y;
-			result->z = point.Z;	
+			result->z = point.Z;
 
 		}  // end if
-		
+
 	}  // end if
 
 	// return hit result
@@ -805,7 +805,7 @@ TerrainType *W3DTerrainVisual::getTerrainTile( Real x, Real y )
 // ------------------------------------------------------------------------------------------------
 /** set min/max height values allowed in water grid pointed to by waterTable */
 // ------------------------------------------------------------------------------------------------
-void W3DTerrainVisual::setWaterGridHeightClamps( const WaterHandle *waterTable, 
+void W3DTerrainVisual::setWaterGridHeightClamps( const WaterHandle *waterTable,
 																								 Real minZ, Real maxZ )
 {
 
@@ -817,7 +817,7 @@ void W3DTerrainVisual::setWaterGridHeightClamps( const WaterHandle *waterTable,
 // ------------------------------------------------------------------------------------------------
 /** adjust fallof parameters for grid change method */
 // ------------------------------------------------------------------------------------------------
-void W3DTerrainVisual::setWaterAttenuationFactors( const WaterHandle *waterTable, 
+void W3DTerrainVisual::setWaterAttenuationFactors( const WaterHandle *waterTable,
 																									 Real a, Real b, Real c, Real range )
 {
 
@@ -829,7 +829,7 @@ void W3DTerrainVisual::setWaterAttenuationFactors( const WaterHandle *waterTable
 // ------------------------------------------------------------------------------------------------
 /** set the water table position and orientation in world space */
 // ------------------------------------------------------------------------------------------------
-void W3DTerrainVisual::setWaterTransform( const WaterHandle *waterTable, 
+void W3DTerrainVisual::setWaterTransform( const WaterHandle *waterTable,
 																					Real angle, Real x, Real y, Real z )
 {
 
@@ -846,7 +846,7 @@ void W3DTerrainVisual::setWaterTransform( const Matrix3D *transform )
 
 	if( m_waterRenderObject )
 		m_waterRenderObject->setGridTransform( transform );
-			
+
 }  // end setWaterTransform
 
 // ------------------------------------------------------------------------------------------------
@@ -875,7 +875,7 @@ void W3DTerrainVisual::setWaterGridResolution( const WaterHandle *waterTable,
 // ------------------------------------------------------------------------------------------------
 /** get water grid resolution spacing */
 // ------------------------------------------------------------------------------------------------
-void W3DTerrainVisual::getWaterGridResolution( const WaterHandle *waterTable,	
+void W3DTerrainVisual::getWaterGridResolution( const WaterHandle *waterTable,
 																							 Real *gridCellsX, Real *gridCellsY, Real *cellSize )
 {
 
@@ -897,7 +897,7 @@ void W3DTerrainVisual::changeWaterHeight( Real x, Real y, Real delta )
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void W3DTerrainVisual::addWaterVelocity( Real worldX, Real worldY, 
+void W3DTerrainVisual::addWaterVelocity( Real worldX, Real worldY,
 																				 Real velocity, Real preferredHeight )
 {
 
@@ -925,23 +925,23 @@ Bool W3DTerrainVisual::getWaterGridHeight( Real worldX, Real worldY, Real *heigh
 // ------------------------------------------------------------------------------------------------
 void W3DTerrainVisual::setRawMapHeight(const ICoord2D *gridPos, Int height)
 {
-  // This method writes to the m_logicHeightMap member, 
+  // This method writes to the m_logicHeightMap member,
   // since m_logicHeightMap is the true, golden standard to which m_clientHeightMap
   // interpolates during or after its Seismic simulation displaces it..
   // THIS IS TRUE ONLY WHEN DO_SEISMIC_SIMULATIONS is defined M Lorenzen, 8/23/03
 
-	if (m_logicHeightMap) 
+	if (m_logicHeightMap)
   {
 		Int x = gridPos->x+m_logicHeightMap->getBorderSizeInline();
 		Int y = gridPos->y+m_logicHeightMap->getBorderSizeInline();
  		//if (m_logicHeightMap->getHeight(x,y) != height) //ML changed to prevent scissoring with roads
- 		if (m_logicHeightMap->getHeight(x,y) > height) 
+ 		if (m_logicHeightMap->getHeight(x,y) > height)
 		{
 			m_logicHeightMap->setRawHeight(x, y, height);
 			m_terrainRenderObject->staticLightingChanged(); // OOH! this could benefit from the new Seismic update code
 
 
-#ifdef DO_SEISMIC_SIMULATIONS 
+#ifdef DO_SEISMIC_SIMULATIONS
       if ( m_clientHeightMap )
       {
         if ( height < m_clientHeightMap->getHeight( x,y ) )
@@ -957,7 +957,7 @@ void W3DTerrainVisual::setRawMapHeight(const ICoord2D *gridPos, Int height)
 // ------------------------------------------------------------------------------------------------
 Int W3DTerrainVisual::getRawMapHeight(const ICoord2D *gridPos)
 {
-	if (m_logicHeightMap) 
+	if (m_logicHeightMap)
   {
 		Int x = gridPos->x+m_logicHeightMap->getBorderSizeInline();
 		Int y = gridPos->y+m_logicHeightMap->getBorderSizeInline();
@@ -972,7 +972,7 @@ Int W3DTerrainVisual::getRawMapHeight(const ICoord2D *gridPos)
 // ------------------------------------------------------------------------------------------------
 void W3DTerrainVisual::addFactionBibDrawable(Drawable *factionBuilding, Bool highlight, Real extra)
 {
-#ifdef DO_SEISMIC_SIMULATIONS 
+#ifdef DO_SEISMIC_SIMULATIONS
 	if (m_clientHeightMap)
 #else
 	if (m_logicHeightMap)
@@ -1015,9 +1015,9 @@ void W3DTerrainVisual::addFactionBibDrawable(Drawable *factionBuilding, Bool hig
 void W3DTerrainVisual::addFactionBib(Object *factionBuilding, Bool highlight, Real extra)
 {
 #ifdef DO_SEISMIC_SIMULATIONS
-	if (m_clientHeightMap) 
+	if (m_clientHeightMap)
 #else
-	if (m_logicHeightMap) 
+	if (m_logicHeightMap)
 #endif
   {
 		const Matrix3D * mtx = factionBuilding->getTransformMatrix();
@@ -1087,10 +1087,10 @@ void W3DTerrainVisual::removeBibHighlighting(void)
 		m_terrainRenderObject->removeTerrainBibHighlighting();
 	}
 }
- 
+
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void W3DTerrainVisual::removeTreesAndPropsForConstruction(const Coord3D* pos, 
+void W3DTerrainVisual::removeTreesAndPropsForConstruction(const Coord3D* pos,
 																				const GeometryInfo& geom,
 																				Real angle)
 {
@@ -1098,7 +1098,7 @@ void W3DTerrainVisual::removeTreesAndPropsForConstruction(const Coord3D* pos,
 		m_terrainRenderObject->removeTreesAndPropsForConstruction(pos, geom, angle);
 	}
 }
- 
+
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 void W3DTerrainVisual::addProp(const ThingTemplate *tTemplate, const Coord3D *pos, Real angle)
@@ -1129,7 +1129,7 @@ void W3DTerrainVisual::addProp(const ThingTemplate *tTemplate, const Coord3D *po
 		m_terrainRenderObject->addProp(1, *pos, angle, scale, modelName);
 	}
 }
- 
+
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 void W3DTerrainVisual::setTerrainTracksDetail(void)
@@ -1142,7 +1142,7 @@ void W3DTerrainVisual::setTerrainTracksDetail(void)
 // ------------------------------------------------------------------------------------------------
 void W3DTerrainVisual::setShoreLineDetail(void)
 {
-	if (m_terrainRenderObject) 
+	if (m_terrainRenderObject)
 		m_terrainRenderObject->setShoreLineDetail();
 }
 
@@ -1183,7 +1183,7 @@ void W3DTerrainVisual::crc( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Xfer
 	* Version Info:
-	* 1: Initial version 
+	* 1: Initial version
 	* 2: Add height map heights.
 	* 3: Add client side trees & props. jba.
 */
@@ -1256,9 +1256,9 @@ void W3DTerrainVisual::xfer( Xfer *xfer )
 				len = xferLen;
 			}
 		}
-		xfer->xferUser(data, len);	
-		if (xfer->getXferMode() == XFER_LOAD)	
-    {	
+		xfer->xferUser(data, len);
+		if (xfer->getXferMode() == XFER_LOAD)
+    {
 			// Update the display height map.
 			m_terrainRenderObject->staticLightingChanged();
 		}

@@ -62,7 +62,7 @@ VictoryConditionsInterface *TheVictoryConditions = NULL;
 //-------------------------------------------------------------------------------------------------
 inline static Bool areAllies(const Player *p1, const Player *p2)
 {
-	if (p1 != p2 && 
+	if (p1 != p2 &&
 		p1->getRelationship(p2->getDefaultTeam()) == ALLIES &&
 		p2->getRelationship(p1->getDefaultTeam()) == ALLIES)
 		return true;
@@ -75,7 +75,7 @@ class VictoryConditions : public VictoryConditionsInterface
 {
 public:
 	VictoryConditions();
-	
+
 	void init( void );
 	void reset( void );
 	void update( void );
@@ -113,7 +113,7 @@ VictoryConditions::VictoryConditions()
 {
 	reset();
 }
-	
+
 //-------------------------------------------------------------------------------------------------
 void VictoryConditions::init( void )
 {
@@ -189,7 +189,7 @@ void VictoryConditions::update( void )
 			{
 				ThePartitionManager->revealMapForPlayerPermanently( p->getPlayerIndex() );
 				TheGameClient->updateFakeDrawables();
-				
+
 				TheInGameUI->message("GUI:PlayerHasBeenDefeated", p->getPlayerDisplayName().str() );
 				// People are boneheads. Also play a sound
 				static AudioEventRTS leftGameSound("GUIMessageReceived");

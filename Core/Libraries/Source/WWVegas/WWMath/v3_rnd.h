@@ -58,7 +58,7 @@ class Vector3Randomizer {
 
 	public:
 
-		enum 
+		enum
 		{
 			CLASSID_UNKNOWN		= 0xFFFFFFFF,
 			CLASSID_SOLIDBOX		= 0,

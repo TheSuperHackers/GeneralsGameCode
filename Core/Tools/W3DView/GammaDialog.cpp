@@ -62,15 +62,15 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // GammaDialogClass message handlers
 
-BOOL GammaDialogClass::OnInitDialog() 
+BOOL GammaDialogClass::OnInitDialog()
 {
 	CDialog::OnInitDialog();
-	
-	// TODO: Add extra initialization here	
+
+	// TODO: Add extra initialization here
 	m_gamma=AfxGetApp()->GetProfileInt("Config","Gamma",10);
 	if (m_gamma<10) m_gamma=10;
 	if (m_gamma>30) m_gamma=30;
-	m_gammaslider.SetRange(10,30);	
+	m_gammaslider.SetRange(10,30);
 	m_gammaslider.SetPos(m_gamma);
 	CString string;
 	string.Format("%3.2f",m_gamma/10.0f);
@@ -82,31 +82,31 @@ BOOL GammaDialogClass::OnInitDialog()
 	string+="D. Set the Gamma using the Slider below so the gray box on the left matches it's checkered surroundings\n";
 	string+="E. Press OK to save settings";
 	SetDlgItemText(IDC_INSTRUCTIONS,string);
-	
+
 	return TRUE;  // return TRUE unless you set the focus to a control
 	              // EXCEPTION: OCX Property Pages should return FALSE
 }
 
-void GammaDialogClass::OnOK() 
+void GammaDialogClass::OnOK()
 {
 	// TODO: Add extra validation here
 	m_gamma=m_gammaslider.GetPos();
 	if (m_gamma<10) m_gamma=10;
-	if (m_gamma>30) m_gamma=30;	
+	if (m_gamma>30) m_gamma=30;
 	::AfxGetApp()->WriteProfileInt("Config","Gamma",m_gamma);
 	DX8Wrapper::Set_Gamma(m_gamma/10.0f,0.0f,1.0f);
-	
+
 	CDialog::OnOK();
 }
 
-void GammaDialogClass::OnReleasedcaptureGammaSlider(NMHDR* pNMHDR, LRESULT* pResult) 
+void GammaDialogClass::OnReleasedcaptureGammaSlider(NMHDR* pNMHDR, LRESULT* pResult)
 {
-	// TODO: Add your control notification handler code here	
+	// TODO: Add your control notification handler code here
 	m_gamma=m_gammaslider.GetPos();
 	DX8Wrapper::Set_Gamma(m_gamma/10.0f,0.0f,1.0f);
 	CString string;
 	string.Format("%3.2f",m_gamma/10.0f);
 	SetDlgItemText(IDC_GAMMA_DISPLAY,string);
-	
+
 	*pResult = 0;
 }

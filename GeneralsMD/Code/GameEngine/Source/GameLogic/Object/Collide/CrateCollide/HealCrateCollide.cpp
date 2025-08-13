@@ -41,14 +41,14 @@
 HealCrateCollide::HealCrateCollide( Thing *thing, const ModuleData* moduleData ) : CrateCollide( thing, moduleData )
 {
 
-} 
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 HealCrateCollide::~HealCrateCollide( void )
 {
 
-}  
+}
 
 //-------------------------------------------------------------------------------------------------
 Bool HealCrateCollide::executeCrateBehavior( Object *other )
@@ -60,7 +60,7 @@ Bool HealCrateCollide::executeCrateBehavior( Object *other )
 	AudioEventRTS soundToPlay = TheAudio->getMiscAudio()->m_crateHeal;
 	soundToPlay.setPosition( other->getPosition() );
 	TheAudio->addAudioEvent(&soundToPlay);
-	
+
 	return TRUE;
 }
 

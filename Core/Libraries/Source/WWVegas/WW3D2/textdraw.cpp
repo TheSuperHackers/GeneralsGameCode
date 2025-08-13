@@ -16,43 +16,43 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/*************************************************************************** 
- ***    C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S     *** 
- *************************************************************************** 
- *                                                                         * 
- *                 Project Name : Commando                                 * 
- *                                                                         * 
- *                     $Archive:: /Commando/Code/ww3d2/textdraw.cpp       $* 
- *                                                                         * 
- *                      $Author:: Jani_p                                  $* 
- *                                                                         * 
- *                     $Modtime:: 3/22/01 8:03p                           $* 
- *                                                                         * 
- *                    $Revision:: 7                                       $* 
- *                                                                         * 
- *-------------------------------------------------------------------------* 
- * Functions:                                                              * 
+/***************************************************************************
+ ***    C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S     ***
+ ***************************************************************************
+ *                                                                         *
+ *                 Project Name : Commando                                 *
+ *                                                                         *
+ *                     $Archive:: /Commando/Code/ww3d2/textdraw.cpp       $*
+ *                                                                         *
+ *                      $Author:: Jani_p                                  $*
+ *                                                                         *
+ *                     $Modtime:: 3/22/01 8:03p                           $*
+ *                                                                         *
+ *                    $Revision:: 7                                       $*
+ *                                                                         *
+ *-------------------------------------------------------------------------*
+ * Functions:                                                              *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "textdraw.h"
 #include "font3d.h"
 #include "simplevec.h"
 
-/*********************************************************************************************** 
- *                                                                                             * 
+/***********************************************************************************************
+ *                                                                                             *
  * TextDrawClass::TextDrawClass( int ) -- Constructor										              *
- *                                                                                             * 
+ *                                                                                             *
  * Creates a TextDrawClass object by creating and initializing a Dynamic Mesh, inserting it	  *
  * into the given scene, and allocating space for the given number of maximum chars.			  *
- *                                                                                             * 
+ *                                                                                             *
  ***********************************************************************************************/
-TextDrawClass::TextDrawClass( int max_chars ) : 
+TextDrawClass::TextDrawClass( int max_chars ) :
 	DynamicMeshClass( max_chars * 2, max_chars * 4 ),
 	TextColor( 1.0f, 1.0f, 1.0f )
 {
 	// Build the default Vertex Material
 	DefaultVertexMaterial = NEW_REF( VertexMaterialClass, () );
-	DefaultVertexMaterial->Set_Diffuse( 0, 0, 0 );	
+	DefaultVertexMaterial->Set_Diffuse( 0, 0, 0 );
 	DefaultVertexMaterial->Set_Opacity(1);
 	DefaultVertexMaterial->Set_Emissive( 1, 1, 1 );
 	Set_Vertex_Material( DefaultVertexMaterial );
@@ -71,25 +71,25 @@ TextDrawClass::TextDrawClass( int max_chars ) :
 //	Set_Coordinate_Ranges( Vector2( -320,240 ), Vector2( 320,-240 ), Vector2( -320,240 ), Vector2( 320,-240 ) );
 }
 
-/*********************************************************************************************** 
- *                                                                                             * 
+/***********************************************************************************************
+ *                                                                                             *
  * TextDrawClass::~TextDrawClass( void ) -- Destructor													  *
- *                                                                                             * 
+ *                                                                                             *
  ***********************************************************************************************/
 TextDrawClass::~TextDrawClass( void )
 {
 	DefaultVertexMaterial->Release_Ref();
 }
 
-/*********************************************************************************************** 
- *                                                                                             * 
+/***********************************************************************************************
+ *                                                                                             *
  * TextDrawClass::Reset( void ) -- Flush the mesh
- *                                                                                             * 
+ *                                                                                             *
  ***********************************************************************************************/
 void TextDrawClass::Reset( void )
 {
-	Reset_Flags();	
-	Reset_Mesh_Counters();	
+	Reset_Flags();
+	Reset_Mesh_Counters();
 
 	// Reinstall the default vertex material and shader
 	Enable_Sort();
@@ -100,8 +100,8 @@ void TextDrawClass::Reset( void )
 /*
 **
 */
-void	TextDrawClass::Set_Coordinate_Ranges(	
-			const Vector2 & src_ul, const Vector2 & src_lr, 
+void	TextDrawClass::Set_Coordinate_Ranges(
+			const Vector2 & src_ul, const Vector2 & src_lr,
 			const Vector2 & dest_ul, const Vector2 & dest_lr )
 {
 	TranslateScale.X = (dest_lr.X - dest_ul.X) / (src_lr.X - src_ul.X);
@@ -184,22 +184,22 @@ void TextDrawClass::Line_Ends( const Vector2 & a, const Vector2 & b, float width
 }
 
 
-/*********************************************************************************************** 
- *                                                                                             * 
+/***********************************************************************************************
+ *                                                                                             *
  * float	TextDrawClass::Get_Width( Font3DInstanceClass *, char * )									  *
- *                                                                                             * 
+ *                                                                                             *
  * WARNING:  Should not be used to draw characters which need to wrap or have embedded line    *
  *           feeds.                                                                            *
- *                                                                                             * 
+ *                                                                                             *
  * Returns the scaled string width in normalized screen unit                                   *
- *                                                                                             * 
+ *                                                                                             *
  ***********************************************************************************************/
 float	TextDrawClass::Get_Width( Font3DInstanceClass *font, const char *message )
 {
 	float total_width = 0.0f;
 
 	/*
-	** for each character, get_width it 
+	** for each character, get_width it
 	*/
 	while (*message != 0) {
 		total_width += font->Char_Spacing( *message++ );
@@ -221,15 +221,15 @@ float	TextDrawClass::Get_Height( Font3DInstanceClass *font, const char *message 
 }
 
 
-/*********************************************************************************************** 
- *                                                                                             * 
+/***********************************************************************************************
+ *                                                                                             *
  * float	TextDrawClass::Print( Font3DInstanceClass *, char, float, float, float )							  *
- *                                                                                             * 
+ *                                                                                             *
  * Draws (actually creates two trianlges to display) a character on the screen at the given    *
  * normalized screen unit coordinates at the current font scale.                               *
- *                                                                                             * 
+ *                                                                                             *
  * Returns the scaled character width in normalized screen unit                                *
- *                                                                                             * 
+ *                                                                                             *
  ***********************************************************************************************/
 float	TextDrawClass::Print( Font3DInstanceClass *font, char ch, float screen_x, float screen_y )
 {
@@ -288,19 +288,19 @@ float	TextDrawClass::Print( Font3DInstanceClass *font, char ch, float screen_x, 
 }
 
 
-/*********************************************************************************************** 
- *                                                                                             * 
+/***********************************************************************************************
+ *                                                                                             *
  * float	TextDrawClass::Print( Font3DInstanceClass *, char *, float, float, float )						  *
- *                                                                                             * 
+ *                                                                                             *
  * Draws the given string at the given pixel coordinates.  Uses the given font and its current *
  * scale.  Passes each character to the above routine and moves the x-coordinate forward after *
- * each char.                                                                                  *          * 
- *                                                                                             * 
+ * each char.                                                                                  *          *
+ *                                                                                             *
  * WARNING:  Should not be used to draw characters which need to wrap or have embedded line    *
- *           feeds.                                                                            *                * 
- *                                                                                             * 
+ *           feeds.                                                                            *                *
+ *                                                                                             *
  * Returns the string pixel width																				  *
- *                                                                                             * 
+ *                                                                                             *
  ***********************************************************************************************/
 float	TextDrawClass::Print( Font3DInstanceClass *font, const char *message, float screen_x, float screen_y )
 {
@@ -325,12 +325,12 @@ float	TextDrawClass::Print( Font3DInstanceClass *font, const char *message, floa
 }
 
 
-/*********************************************************************************************** 
- *                                                                                             * 
+/***********************************************************************************************
+ *                                                                                             *
  * void	TextDrawClass::Show_Font( Font3DInstanceClass *, float, float, float )								  *
- *                                                                                             * 
+ *                                                                                             *
  * Dumps the font texture to the screen as two triangles. For debugging only.						  *
- *                                                                                             * 
+ *                                                                                             *
  ***********************************************************************************************/
 void	TextDrawClass::Show_Font( Font3DInstanceClass *font, float screen_x, float screen_y )
 {

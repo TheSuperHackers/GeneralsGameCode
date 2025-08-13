@@ -24,12 +24,12 @@
 
 // FILE: RadioButton.cpp //////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:   RTS3
@@ -86,7 +86,7 @@ WindowMsgHandledType GadgetTabControlInput( GameWindow *tabControl, UnsignedInt 
 	Int tabsBottom = tabData->tabsBottomLimit;
 	Int tabsTop = tabData->tabsTopLimit;
 
-	switch( msg ) 
+	switch( msg )
 	{
 		case GWM_LEFT_DOWN:
 		{
@@ -132,7 +132,7 @@ WindowMsgHandledType GadgetTabControlInput( GameWindow *tabControl, UnsignedInt 
 WindowMsgHandledType GadgetTabControlSystem( GameWindow *tabControl, UnsignedInt msg,
 															WindowMsgData mData1, WindowMsgData mData2 )
 {
-	switch( msg ) 
+	switch( msg )
 	{
 		// ------------------------------------------------------------------------
 		case GWM_CREATE:
@@ -146,7 +146,7 @@ WindowMsgHandledType GadgetTabControlSystem( GameWindow *tabControl, UnsignedInt
 			tabControl->winSetUserData( NULL );
 
 			break;
-		
+
 		}  // end destroy
 
 		case GGM_RESIZED:

@@ -34,7 +34,7 @@
 #include "Common/GameMemory.h"
 #include "GameLogic/AIPlayer.h"
 
-class BuildListInfo;	
+class BuildListInfo;
 class SpecialPowerTemplate;
 
 
@@ -43,14 +43,14 @@ class SpecialPowerTemplate;
  */
 class AISkirmishPlayer : public AIPlayer
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( AISkirmishPlayer, "AISkirmishPlayer"  )		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( AISkirmishPlayer, "AISkirmishPlayer"  )
 
 public:	 // AISkirmish specific methods.
 
 	AISkirmishPlayer( Player *p );							///< constructor
 	virtual void computeSuperweaponTarget(const SpecialPowerTemplate *power, Coord3D *pos, Int playerNdx, Real weaponRadius); ///< Calculates best pos for weapon given radius.
 
-public:	// AIPlayer interface methods.  
+public:	// AIPlayer interface methods.
 
 	virtual void update();											///< simulates the behavior of a player
 

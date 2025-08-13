@@ -16,22 +16,22 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/*********************************************************************************************** 
- ***              C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S               *** 
- *********************************************************************************************** 
- *                                                                                             * 
- *                 Project Name : Command & Conquer                                            * 
- *                                                                                             * 
- *                     $Archive:: /Commando/Code/Tools/max2w3d/simpdib.cpp                    $* 
- *                                                                                             * 
+/***********************************************************************************************
+ ***              C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S               ***
+ ***********************************************************************************************
+ *                                                                                             *
+ *                 Project Name : Command & Conquer                                            *
+ *                                                                                             *
+ *                     $Archive:: /Commando/Code/Tools/max2w3d/simpdib.cpp                    $*
+ *                                                                                             *
  *                      $Author:: Greg_h                                                      $*
- *                                                                                             * 
+ *                                                                                             *
  *                     $Modtime:: 10/14/97 3:07p                                              $*
- *                                                                                             * 
+ *                                                                                             *
  *                    $Revision:: 3                                                           $*
  *                                                                                             *
- *---------------------------------------------------------------------------------------------* 
- * Functions:                                                                                  * 
+ *---------------------------------------------------------------------------------------------*
+ * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "simpdib.h"
@@ -75,7 +75,7 @@ SimpleDIBClass::SimpleDIBClass(HWND hwnd,int width,int height,PaletteClass & pal
 		Info->bmiColors[i].rgbRed =		(unsigned char)pal[i].Get_Red();
 		Info->bmiColors[i].rgbReserved =	0;
 	}
-	
+
 	// Create the DIB.
 	HDC hdc = GetDC(hwnd);
 	Handle = CreateDIBSection(hdc, Info, DIB_RGB_COLORS,(void**)&Pixels, NULL, 0);
@@ -96,13 +96,13 @@ SimpleDIBClass::SimpleDIBClass(HWND hwnd,int width,int height,PaletteClass & pal
 
 		// bottom-up DIB
         PixelBase = (Pixels + (Height - 1) * Width);
-        Pitch = -Pitch; 
+        Pitch = -Pitch;
 
     } else {
 
 		// top-down DIB
         PixelBase = Pixels;
-        Pitch = Pitch;    
+        Pitch = Pitch;
     }
 }
 

@@ -41,14 +41,14 @@
 ShroudCrateCollide::ShroudCrateCollide( Thing *thing, const ModuleData* moduleData ) : CrateCollide( thing, moduleData )
 {
 
-} 
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 ShroudCrateCollide::~ShroudCrateCollide( void )
 {
 
-}  
+}
 
 //-------------------------------------------------------------------------------------------------
 Bool ShroudCrateCollide::executeCrateBehavior( Object *other )

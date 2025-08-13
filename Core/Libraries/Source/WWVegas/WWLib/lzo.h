@@ -16,22 +16,22 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/*********************************************************************************************** 
- ***              C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S               *** 
- *********************************************************************************************** 
- *                                                                                             * 
- *                 Project Name : Command & Conquer                                            * 
- *                                                                                             * 
- *                     $Archive:: /Commando/Code/wwlib/lzo.h                                  $* 
- *                                                                                             * 
+/***********************************************************************************************
+ ***              C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S               ***
+ ***********************************************************************************************
+ *                                                                                             *
+ *                 Project Name : Command & Conquer                                            *
+ *                                                                                             *
+ *                     $Archive:: /Commando/Code/wwlib/lzo.h                                  $*
+ *                                                                                             *
  *                      $Author:: Greg_h                                                      $*
- *                                                                                             * 
+ *                                                                                             *
  *                     $Modtime:: 7/19/99 3:35p                                               $*
- *                                                                                             * 
+ *                                                                                             *
  *                    $Revision:: 3                                                           $*
  *                                                                                             *
- *---------------------------------------------------------------------------------------------* 
- * Functions:                                                                                  * 
+ *---------------------------------------------------------------------------------------------*
+ * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #ifndef _LZO_H
@@ -46,11 +46,11 @@
 // of UNcompressed chunk. NOTE: LZO needs an additional 16 bytes per uncompressed K.
 // Note: SKB took this from lzo.h in lol3 code.
 //
-// (gth) The buffer that you compress to should be the size define by 
+// (gth) The buffer that you compress to should be the size define by
 // LZO_BUFFER_SIZE(uncompressed_size).  Also, the work buffer should be of
 // size: LZO1X_MEM_COMPRESS which is defined in lzo1x.h.
 
-#define LZO_BUFFER_SIZE(s) ((s) + ((((s) / 0x400) + 1) * 16))	
+#define LZO_BUFFER_SIZE(s) ((s) + ((((s) / 0x400) + 1) * 16))
 
 
 int lzo1x_1_compress ( 	const lzo_byte *in,
@@ -70,7 +70,7 @@ int lzo1x_decompress	(  const lzo_byte *in,
 
 //
 // LZOCompressor
-// Simply wraps the 'C' style lzo compression and decompression functions and 
+// Simply wraps the 'C' style lzo compression and decompression functions and
 // hides the work buffer.  So you dont have to worry about the work buffer but
 // you do have to manage the compression buffer being large enough to hold the
 // worst case compression: LZO_BUFFER_SIZE(uncompressed_size).

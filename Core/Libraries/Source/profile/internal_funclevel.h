@@ -35,7 +35,7 @@
 class ProfileFuncLevelTracer
 {
   friend class ProfileCmdInterface;
-  
+
   // can't copy this
   ProfileFuncLevelTracer(const ProfileFuncLevelTracer&);
   ProfileFuncLevelTracer& operator=(const ProfileFuncLevelTracer&);
@@ -150,7 +150,7 @@ public:
   {
     /// address of this function
     unsigned addr;
-    
+
     /// global profile
     Profile glob;
 
@@ -243,7 +243,7 @@ public:
   {
     return next;
   }
-  
+
   Function *FindFunction(unsigned addr)
   {
     return func.Find(addr);
@@ -258,7 +258,7 @@ private:
   /// single stack entry
   struct StackEntry
   {
-    /// function 
+    /// function
     Function *func;
 
     /// ESP value

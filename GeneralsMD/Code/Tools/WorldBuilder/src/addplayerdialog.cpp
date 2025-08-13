@@ -62,11 +62,11 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // AddPlayerDialog message handlers
 
-void AddPlayerDialog::OnOK() 
-{	
+void AddPlayerDialog::OnOK()
+{
 	CComboBox *faction = (CComboBox*)GetDlgItem(IDC_COMBO1);
 
-	if (faction) 
+	if (faction)
 	{
 		// get the text out of the combo. If it is user-typed, sel will be -1, otherwise it will be >=0
 		CString theText;
@@ -91,23 +91,23 @@ void AddPlayerDialog::OnOK()
 			CWorldBuilderDoc* pDoc = CWorldBuilderDoc::GetActiveDoc();
 			SidesListUndoable *pUndo = new SidesListUndoable(newSides, pDoc);
 			pDoc->AddAndDoUndoable(pUndo);
-			REF_PTR_RELEASE(pUndo); // belongs to pDoc now.	
+			REF_PTR_RELEASE(pUndo); // belongs to pDoc now.
 		}
 	}
 
 	CDialog::OnOK();
 }
 
-void AddPlayerDialog::OnCancel() 
+void AddPlayerDialog::OnCancel()
 {
 	m_addedSide.clear();
 	CDialog::OnCancel();
 }
 
-BOOL AddPlayerDialog::OnInitDialog() 
+BOOL AddPlayerDialog::OnInitDialog()
 {
 	CDialog::OnInitDialog();
-	
+
 	CComboBox *factions = (CComboBox*)GetDlgItem(IDC_COMBO1);
 	factions->ResetContent();
 	if (ThePlayerTemplateStore)
@@ -122,12 +122,12 @@ BOOL AddPlayerDialog::OnInitDialog()
 		}
 	}
 	factions->SetCurSel(0);
-	
-	return TRUE; 
+
+	return TRUE;
 }
 
-void AddPlayerDialog::OnEditchangeCombo1() 
+void AddPlayerDialog::OnEditchangeCombo1()
 {
 	// TODO: Add your control notification handler code here
-	
+
 }

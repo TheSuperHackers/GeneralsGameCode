@@ -69,12 +69,12 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // ScriptProperties message handlers
 
-BOOL ScriptProperties::OnSetActive() 
+BOOL ScriptProperties::OnSetActive()
 {
 	if ( CPropertyPage::OnSetActive()) {
 		CWnd *pWnd = GetDlgItem(IDC_SCRIPT_COMMENT);
 		pWnd->SetWindowText(m_script->getComment().str());
-		
+
 		pWnd = GetDlgItem(IDC_SCRIPT_NAME);
 		pWnd->SetWindowText(m_script->getName().str());
 		enableControls();
@@ -83,7 +83,7 @@ BOOL ScriptProperties::OnSetActive()
 	return false;
 }
 
-void ScriptProperties::enableControls() 
+void ScriptProperties::enableControls()
 {
 	Bool isSubroutine = m_script->isSubroutine();
 	CButton *pButton = (CButton*)GetDlgItem(IDC_SCRIPT_SUBROUTINE);
@@ -116,7 +116,7 @@ void ScriptProperties::enableControls()
 	m_updating = false;
 }
 
-void ScriptProperties::OnChangeScriptComment() 
+void ScriptProperties::OnChangeScriptComment()
 {
 	CWnd *pWnd = GetDlgItem(IDC_SCRIPT_COMMENT);
 	CString comment;
@@ -124,7 +124,7 @@ void ScriptProperties::OnChangeScriptComment()
 	m_script->setComment(AsciiString((LPCTSTR)comment));
 }
 
-void ScriptProperties::OnChangeScriptName() 
+void ScriptProperties::OnChangeScriptName()
 {
 	CWnd *pWnd = GetDlgItem(IDC_SCRIPT_NAME);
 	CString name;
@@ -133,37 +133,37 @@ void ScriptProperties::OnChangeScriptName()
 	GetParent()->SetWindowText(name);
 }
 
-void ScriptProperties::OnScriptActive() 
+void ScriptProperties::OnScriptActive()
 {
 	CButton *pButton = (CButton*)GetDlgItem(IDC_SCRIPT_ACTIVE);
 	m_script->setActive(pButton->GetCheck()==1);
 }
 
-void ScriptProperties::OnOneShot() 
+void ScriptProperties::OnOneShot()
 {
 	CButton *pButton = (CButton*)GetDlgItem(IDC_ONE_SHOT);
 	m_script->setOneShot(pButton->GetCheck()==1);
 }
 
-void ScriptProperties::OnEasy() 
+void ScriptProperties::OnEasy()
 {
 	CButton *pButton = (CButton*)GetDlgItem(IDC_EASY);
 	m_script->setEasy(pButton->GetCheck()==1);
 }
 
-void ScriptProperties::OnHard() 
+void ScriptProperties::OnHard()
 {
 	CButton *pButton = (CButton*)GetDlgItem(IDC_HARD);
 	m_script->setHard(pButton->GetCheck()==1);
 }
 
-void ScriptProperties::OnNormal() 
+void ScriptProperties::OnNormal()
 {
 	CButton *pButton = (CButton*)GetDlgItem(IDC_NORMAL);
 	m_script->setNormal(pButton->GetCheck()==1);
 }
 
-void ScriptProperties::OnScriptSubroutine() 
+void ScriptProperties::OnScriptSubroutine()
 {
 	CButton *pButton = (CButton*)GetDlgItem(IDC_SCRIPT_SUBROUTINE);
 	Bool isSubroutine = pButton->GetCheck()==1;
@@ -173,7 +173,7 @@ void ScriptProperties::OnScriptSubroutine()
 
 }
 
-void ScriptProperties::OnEveryFrame() 
+void ScriptProperties::OnEveryFrame()
 {
 	m_updating = true;
 	CButton *pButton = (CButton*)GetDlgItem(IDC_EVERY_SECOND);
@@ -185,7 +185,7 @@ void ScriptProperties::OnEveryFrame()
 	m_updating = false;
 }
 
-void ScriptProperties::OnEverySecond() 
+void ScriptProperties::OnEverySecond()
 {
 	m_updating = true;
 	CButton *pButton = (CButton*)GetDlgItem(IDC_EVERY_SECOND);
@@ -197,7 +197,7 @@ void ScriptProperties::OnEverySecond()
 	m_updating = false;
 }
 
-void ScriptProperties::OnChangeSecondsEdit() 
+void ScriptProperties::OnChangeSecondsEdit()
 {
 	if (m_updating) return;
 	CButton *pButton = (CButton*)GetDlgItem(IDC_EVERY_SECOND);

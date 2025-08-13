@@ -42,7 +42,7 @@ IMPLEMENT_DYNCREATE(EmitterFramePropPageClass, CPropertyPage)
 //  EmitterFramePropPageClass - constructor
 //
 /////////////////////////////////////////////////////////////
-EmitterFramePropPageClass::EmitterFramePropPageClass() : 
+EmitterFramePropPageClass::EmitterFramePropPageClass() :
 	CPropertyPage(EmitterFramePropPageClass::IDD),
 	m_pEmitterList(NULL),
 	m_bValid(true),
@@ -101,7 +101,7 @@ void
 EmitterFramePropPageClass::Initialize (void)
 {
 	SAFE_DELETE_ARRAY (m_Frames.KeyTimes);
-	SAFE_DELETE_ARRAY (m_Frames.Values);	
+	SAFE_DELETE_ARRAY (m_Frames.Values);
 
 	if (m_pEmitterList != NULL) {
 		m_Lifetime = m_pEmitterList->Get_Lifetime ();
@@ -133,12 +133,12 @@ EmitterFramePropPageClass::Initialize (void)
 //  OnInitDialog
 //
 /////////////////////////////////////////////////////////////
-BOOL 
-EmitterFramePropPageClass::OnInitDialog() 
+BOOL
+EmitterFramePropPageClass::OnInitDialog()
 {
 	CPropertyPage::OnInitDialog();
 
-	// 
+	//
 	// Set the frame layout combo box
 	//
 	int mode = m_pEmitterList->Get_Frame_Mode();
@@ -148,8 +148,8 @@ EmitterFramePropPageClass::OnInitDialog()
 		case W3D_EMITTER_FRAME_MODE_4x4: m_FrameLayoutCombo.SetCurSel(2); break;
 		case W3D_EMITTER_FRAME_MODE_8x8: m_FrameLayoutCombo.SetCurSel(3); break;
 		case W3D_EMITTER_FRAME_MODE_16x16: m_FrameLayoutCombo.SetCurSel(4); break;
-		default: 
-			m_FrameLayoutCombo.SetCurSel(4); 
+		default:
+			m_FrameLayoutCombo.SetCurSel(4);
 			break;
 	}
 
@@ -157,7 +157,7 @@ EmitterFramePropPageClass::OnInitDialog()
 	// Create the keyframe control
 	//
 	m_FrameBar = ColorBarClass::Get_Color_Bar (::GetDlgItem (m_hWnd, IDC_FRAME_BAR));
-	
+
 	//
 	// Setup the spinners
 	//
@@ -193,7 +193,7 @@ EmitterFramePropPageClass::OnInitDialog()
 //  OnApply
 //
 /////////////////////////////////////////////////////////////
-BOOL EmitterFramePropPageClass::OnApply() 
+BOOL EmitterFramePropPageClass::OnApply()
 {
 	return CPropertyPage::OnApply();
 }
@@ -205,7 +205,7 @@ BOOL EmitterFramePropPageClass::OnApply()
 //  OnNotify
 //
 /////////////////////////////////////////////////////////////
-BOOL EmitterFramePropPageClass::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult) 
+BOOL EmitterFramePropPageClass::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult)
 {
 	CBR_NMHDR *color_bar_hdr = (CBR_NMHDR *)lParam;
 
@@ -214,7 +214,7 @@ BOOL EmitterFramePropPageClass::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* 
 	//
 	NMHDR *pheader = (NMHDR *)lParam;
 	if ((pheader != NULL) && (pheader->code == UDN_DELTAPOS)) {
-		LPNMUPDOWN pupdown = (LPNMUPDOWN)lParam;		
+		LPNMUPDOWN pupdown = (LPNMUPDOWN)lParam;
 		::Update_Spinner_Buddy (pheader->hwndFrom, pupdown->iDelta);
 	}
 
@@ -225,8 +225,8 @@ BOOL EmitterFramePropPageClass::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* 
 	{
 		case IDC_FRAME_BAR:
 		{
-			if (color_bar_hdr->hdr.code == CBRN_DBLCLK_POINT) {			
-				
+			if (color_bar_hdr->hdr.code == CBRN_DBLCLK_POINT) {
+
 				//
 				//	Allow the user to edit the keyframe
 				//
@@ -239,7 +239,7 @@ BOOL EmitterFramePropPageClass::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* 
 
 					m_FrameBar->Set_Redraw (false);
 					m_FrameBar->Set_Graph_Percent (color_bar_hdr->key_index, norm_val);
-					
+
 					//
 					//	Determine if the user changed the 'max' or 'min' frame
 					//
@@ -261,10 +261,10 @@ BOOL EmitterFramePropPageClass::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* 
 					//	Renormalize the FrameBar key frame points if necessary
 					//
 					if ((new_max != m_MaxFrame) || (new_min != m_MinFrame)) {
-						
+
 						int count = m_FrameBar->Get_Point_Count ();
 						for (int index = 0; index < count; index ++) {
-							
+
 							float frame = Denormalize_Frame(m_FrameBar->Get_Graph_Percent (index));
 							float new_norm = Normalize_Frame(frame,new_min,new_max);
 
@@ -279,20 +279,20 @@ BOOL EmitterFramePropPageClass::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* 
 
 					//
 					// Update the emitter
-					//					
+					//
 					Update_Frames ();
 					m_pEmitterList->Set_Frame_Keyframes (m_Frames);
 					SetModified ();
 				}
 			} else if ((color_bar_hdr->hdr.code == CBRN_MOVING_POINT) ||
-						  (color_bar_hdr->hdr.code == CBRN_DELETED_POINT)) {			
-				
+						  (color_bar_hdr->hdr.code == CBRN_DELETED_POINT)) {
+
 				//
 				// Update the emitter
 				//
 				Update_Frames ();
 				m_pEmitterList->Set_Frame_Keyframes (m_Frames);
-				SetModified ();					
+				SetModified ();
 			}
 		}
 		break;
@@ -344,9 +344,9 @@ EmitterFramePropPageClass::Update_Frames (void)
 
 		//
 		//	Get all the key frames and add them to our structure
-		//	
+		//
 		for (int index = 1; index < count; index ++) {
-			m_FrameBar->Get_Point (index, &position, &red, &green, &blue);			
+			m_FrameBar->Get_Point (index, &position, &red, &green, &blue);
 			m_Frames.KeyTimes[index - 1] = position * m_Lifetime;
 			m_Frames.Values[index - 1] = Denormalize_Frame(m_FrameBar->Get_Graph_Percent (index) );
 		}
@@ -360,8 +360,8 @@ EmitterFramePropPageClass::Update_Frames (void)
 //  OnCommand
 //
 /////////////////////////////////////////////////////////////
-BOOL 
-EmitterFramePropPageClass::OnCommand(WPARAM wParam, LPARAM lParam) 
+BOOL
+EmitterFramePropPageClass::OnCommand(WPARAM wParam, LPARAM lParam)
 {
 	switch (LOWORD (wParam))
 	{
@@ -369,7 +369,7 @@ EmitterFramePropPageClass::OnCommand(WPARAM wParam, LPARAM lParam)
 		{
 			// Update the emitter
 			if ((HIWORD (wParam) == EN_KILLFOCUS) &&
-				SendDlgItemMessage (LOWORD (wParam), EM_GETMODIFY)) 
+				SendDlgItemMessage (LOWORD (wParam), EM_GETMODIFY))
 			{
 				SendDlgItemMessage (LOWORD (wParam), EM_SETMODIFY, (WPARAM)0);
 				m_Frames.Rand = ::GetDlgItemFloat (m_hWnd, IDC_FRAME_RANDOM_EDIT);
@@ -387,7 +387,7 @@ EmitterFramePropPageClass::OnCommand(WPARAM wParam, LPARAM lParam)
 			}
 		break;
 	}
-	
+
 	return CPropertyPage::OnCommand(wParam, lParam);
 }
 

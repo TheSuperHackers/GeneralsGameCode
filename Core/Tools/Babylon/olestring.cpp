@@ -90,7 +90,7 @@ void OLEString::Set ( OLECHAR *new_ole )
 		delete [] sb;
 		ole = NULL;
 		sb = NULL;
-		
+
 		len = wcslen ( new_ole );
 		{
 			ole = new OLECHAR[len+1];
@@ -111,9 +111,9 @@ void OLEString::Set ( const char *new_sb )
 		delete [] sb;
 		ole = NULL;
 		sb = NULL;
-		
+
 		len = strlen ( new_sb );
-		
+
 		{
 			ole = new OLECHAR[len+1];
 			swprintf ( ole, L"%S", new_sb );
@@ -236,7 +236,7 @@ template <typename text> void StripSpaces ( text *string )
 					str--;
 				}
 
-				skipall = TRUE;		// skip all spaces 
+				skipall = TRUE;		// skip all spaces
 				last = *str++ = ch;
 				continue;
 		}
@@ -287,7 +287,7 @@ template <typename text> void StripSpacesFromMetaString ( text *string )
 						str--;
 					}
 
-					skipall = TRUE;		// skip all spaces 
+					skipall = TRUE;		// skip all spaces
 					*str++ = '\\';
 					ptr++;
 					last = *str++ = esc;
@@ -403,11 +403,11 @@ template <typename text> int SameFormat ( text *string1, text *string2 )
 			{
 				return FALSE;
 			}
-		
+
 			string1++;
 			string2++;
 		}
-		
+
 	}
 	return TRUE;
 }

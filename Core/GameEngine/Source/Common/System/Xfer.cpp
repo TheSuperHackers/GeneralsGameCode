@@ -70,7 +70,7 @@ void Xfer::open( AsciiString identifier )
 void Xfer::xferByte( Byte *byteData )
 {
 
-	xferImplementation( byteData, sizeof( Byte ) ); 
+	xferImplementation( byteData, sizeof( Byte ) );
 
 }  // end xferByte
 
@@ -98,7 +98,7 @@ void Xfer::xferVersion( XferVersion *versionData, XferVersion currentVersion )
 void Xfer::xferUnsignedByte( UnsignedByte *unsignedByteData )
 {
 
-	xferImplementation( unsignedByteData, sizeof( UnsignedByte ) ); 
+	xferImplementation( unsignedByteData, sizeof( UnsignedByte ) );
 
 }  // end xferUnsignedByte
 
@@ -107,17 +107,17 @@ void Xfer::xferUnsignedByte( UnsignedByte *unsignedByteData )
 void Xfer::xferBool( Bool *boolData )
 {
 
-	xferImplementation( boolData, sizeof( Bool ) ); 
+	xferImplementation( boolData, sizeof( Bool ) );
 
 }  // end xferBool
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void Xfer::xferInt( Int *intData ) 
+void Xfer::xferInt( Int *intData )
 {
 
 	xferImplementation( intData, sizeof( Int ) );
-	
+
 }  // end xferInt
 
 // ------------------------------------------------------------------------------------------------
@@ -131,11 +131,11 @@ void Xfer::xferInt64( Int64 *int64Data )
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void Xfer::xferUnsignedInt( UnsignedInt *unsignedIntData ) 
+void Xfer::xferUnsignedInt( UnsignedInt *unsignedIntData )
 {
 
 	xferImplementation( unsignedIntData, sizeof( UnsignedInt ) );
-	
+
 }  // end xferUnsignedInt
 
 // ------------------------------------------------------------------------------------------------
@@ -143,7 +143,7 @@ void Xfer::xferUnsignedInt( UnsignedInt *unsignedIntData )
 void Xfer::xferShort( Short *shortData )
 {
 
-	xferImplementation( shortData, sizeof( Short ) ); 
+	xferImplementation( shortData, sizeof( Short ) );
 
 }  // end xferShort
 
@@ -152,7 +152,7 @@ void Xfer::xferShort( Short *shortData )
 void Xfer::xferUnsignedShort( UnsignedShort *unsignedShortData )
 {
 
-	xferImplementation( unsignedShortData, sizeof( UnsignedShort ) ); 
+	xferImplementation( unsignedShortData, sizeof( UnsignedShort ) );
 
 }  // end xferUnsignedShort
 
@@ -161,8 +161,8 @@ void Xfer::xferUnsignedShort( UnsignedShort *unsignedShortData )
 void Xfer::xferReal( Real *realData )
 {
 
-	xferImplementation( realData, sizeof( Real ) ); 
-	
+	xferImplementation( realData, sizeof( Real ) );
+
 }  // end xferReal
 
 // ------------------------------------------------------------------------------------------------
@@ -374,7 +374,7 @@ void Xfer::xferSTLObjectIDVector( std::vector<ObjectID> *objectIDVectorData )
 	// xfer the count of the vector
 	UnsignedShort listCount = objectIDVectorData->size();
 	xferUnsignedShort( &listCount );
-	
+
 	// xfer vector data
 	ObjectID objectID;
 	if( getXferMode() == XFER_SAVE || getXferMode() == XFER_CRC )
@@ -441,7 +441,7 @@ void Xfer::xferSTLObjectIDList( std::list< ObjectID > *objectIDListData )
 	// xfer the count of the list
 	UnsignedShort listCount = objectIDListData->size();
 	xferUnsignedShort( &listCount );
-	
+
 	// xfer list data
 	ObjectID objectID;
 	if( getXferMode() == XFER_SAVE || getXferMode() == XFER_CRC )
@@ -507,7 +507,7 @@ void Xfer::xferSTLIntList( std::list< Int > *intListData )
 	// xfer the count of the list
 	UnsignedShort listCount = intListData->size();
 	xferUnsignedShort( &listCount );
-	
+
 	// xfer list data
 	Int intData;
 	if( getXferMode() == XFER_SAVE || getXferMode() == XFER_CRC )
@@ -588,7 +588,7 @@ void Xfer::xferScienceType( ScienceType *science )
 			throw XFER_UNKNOWN_STRING;
 
 		}  // end if
-			
+
 	}  // end else if, load
 	else if( getXferMode() == XFER_CRC )
 	{
@@ -647,9 +647,9 @@ void Xfer::xferScienceVec( ScienceVec *scienceVec )
 		{
 			ScienceType science;
 			xferScienceType(&science);
-			scienceVec->push_back( science );				
+			scienceVec->push_back( science );
 		}
-			
+
 	}
 	else if( getXferMode() == XFER_CRC )
 	{
@@ -670,7 +670,7 @@ void Xfer::xferScienceVec( ScienceVec *scienceVec )
 }  // end xferScienceVec
 
 // ------------------------------------------------------------------------------------------------
-/** kind of type, for load/save it is xfered as a string so we can reorder the 
+/** kind of type, for load/save it is xfered as a string so we can reorder the
 	* kindofs if we like
 	* Version Info:
 	* 1: Initial version */
@@ -694,7 +694,7 @@ void Xfer::xferKindOf( KindOfType *kindOfData )
 	}  // end if, save
 	else if( getXferMode() == XFER_LOAD )
 	{
-		
+
 		// read ascii string from file
 		AsciiString kindOfName;
 		xferAsciiString( &kindOfName );
@@ -703,7 +703,7 @@ void Xfer::xferKindOf( KindOfType *kindOfData )
 		Int bit = KindOfMaskType::getSingleBitFromName(kindOfName.str());
 		if (bit != -1)
 			*kindOfData = (KindOfType)bit;
-				
+
 	}  // end else if, load
 	else if( getXferMode() == XFER_CRC )
 	{
@@ -732,12 +732,12 @@ void Xfer::xferUpgradeMask( UpgradeMaskType *upgradeMaskData )
 	XferVersion version = currentVersion;
 	xferVersion( &version, currentVersion );
 
-	//Kris: The Upgrade system has been converted from Int64 to BitFlags. However because the 
+	//Kris: The Upgrade system has been converted from Int64 to BitFlags. However because the
 	//names of upgrades are saved to preserve order reassignments (inserting a new upgrade in
 	//the INI file will skew the bit values), we must continue saving the names of the upgrades
 	//in order to recalculate the actual bit value of said upgrade.
 	//---------------------------------------------------------------------------------------------
-	//NOTE: The xfer code didn't have to change with the bitset upgrades, because either way, we're 
+	//NOTE: The xfer code didn't have to change with the bitset upgrades, because either way, we're
 	//converting data <-> Ascii, so the minor syntax works with the before and after code!
 
 	// check which type of xfer we're doing
@@ -820,7 +820,7 @@ void Xfer::xferUpgradeMask( UpgradeMaskType *upgradeMaskData )
 		throw XFER_MODE_UNKNOWN;
 
 	}  // end else
-	
+
 }  // end xferUpgradeMask
 
 // ------------------------------------------------------------------------------------------------

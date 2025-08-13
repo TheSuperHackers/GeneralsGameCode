@@ -44,20 +44,20 @@ class INI;
 /** Damage types, keep this in sync with TheDamageNames[] */
 //-------------------------------------------------------------------------------------------------
 enum DamageType CPP_11(: Int)
-{	
-	DAMAGE_EXPLOSION							= 0,			
-	DAMAGE_CRUSH									= 1,					
+{
+	DAMAGE_EXPLOSION							= 0,
+	DAMAGE_CRUSH									= 1,
 	DAMAGE_ARMOR_PIERCING					= 2,
-	DAMAGE_SMALL_ARMS							= 3,		
-	DAMAGE_GATTLING								= 4,				
-	DAMAGE_RADIATION							= 5,			
-	DAMAGE_FLAME									= 6,					
-	DAMAGE_LASER									= 7,					
-	DAMAGE_SNIPER									= 8,				
-	DAMAGE_POISON									= 9,			
-	DAMAGE_HEALING								= 10,	
+	DAMAGE_SMALL_ARMS							= 3,
+	DAMAGE_GATTLING								= 4,
+	DAMAGE_RADIATION							= 5,
+	DAMAGE_FLAME									= 6,
+	DAMAGE_LASER									= 7,
+	DAMAGE_SNIPER									= 8,
+	DAMAGE_POISON									= 9,
+	DAMAGE_HEALING								= 10,
 	DAMAGE_UNRESISTABLE						= 11,		// this is for scripting to cause 'armorproof' damage
-	DAMAGE_WATER									= 12,	
+	DAMAGE_WATER									= 12,
 	DAMAGE_DEPLOY									= 13,					// for transports to deploy units and order them to all attack.
 // this stays, even if ALLOW_SURRENDER is not defed, since flashbangs still use 'em
 	DAMAGE_SURRENDER							= 14,				// if something "dies" to surrender damage, they surrender.... duh!
@@ -70,18 +70,18 @@ enum DamageType CPP_11(: Int)
 	DAMAGE_HAZARD_CLEANUP					= 21,	// special damage type for cleaning up hazards like radiation or bio-poison.
 	DAMAGE_PARTICLE_BEAM					= 22,	// Incinerates virtually everything (insanely powerful orbital beam)
 	DAMAGE_TOPPLING								= 23,	// damage from getting toppled.
-	DAMAGE_INFANTRY_MISSILE				= 24,	
-	DAMAGE_AURORA_BOMB						= 25,	
-	DAMAGE_LAND_MINE							= 26,	
-	DAMAGE_JET_MISSILES						= 27,	
-	DAMAGE_STEALTHJET_MISSILES		= 28,	
-	DAMAGE_MOLOTOV_COCKTAIL				= 29,	
-	DAMAGE_COMANCHE_VULCAN				= 30,	
+	DAMAGE_INFANTRY_MISSILE				= 24,
+	DAMAGE_AURORA_BOMB						= 25,
+	DAMAGE_LAND_MINE							= 26,
+	DAMAGE_JET_MISSILES						= 27,
+	DAMAGE_STEALTHJET_MISSILES		= 28,
+	DAMAGE_MOLOTOV_COCKTAIL				= 29,
+	DAMAGE_COMANCHE_VULCAN				= 30,
 	DAMAGE_FLESHY_SNIPER					= 31,		// like DAMAGE_SNIPER, but (generally) does no damage to vehicles.
 
 	// Please note: There is a string array below this enum, and when you change them,
 	// you need to search on the array names to find all the stuff that generates names
-	// based on these strings.  (eg DamageFX does a strcat to make its array of names so 
+	// based on these strings.  (eg DamageFX does a strcat to make its array of names so
 	// change DamageFX.ini and its Default)
 
 
@@ -100,40 +100,40 @@ enum DamageType CPP_11(: Int)
 };
 
 #ifdef DEFINE_DAMAGE_NAMES
-static const char *TheDamageNames[] = 
+static const char *TheDamageNames[] =
 {
-	"EXPLOSION",			
-	"CRUSH",					
+	"EXPLOSION",
+	"CRUSH",
 	"ARMOR_PIERCING",
-	"SMALL_ARMS",		
-	"GATTLING",			
-	"RADIATION",			
-	"FLAME",					
-	"LASER",					
-	"SNIPER",				
-	"POISON",			
-	"HEALING",	
-	"UNRESISTABLE",	
+	"SMALL_ARMS",
+	"GATTLING",
+	"RADIATION",
+	"FLAME",
+	"LASER",
+	"SNIPER",
+	"POISON",
+	"HEALING",
+	"UNRESISTABLE",
 	"WATER",
-	"DEPLOY",	
-	"SURRENDER",	
-	"HACK",	
-	"KILL_PILOT",	
-	"PENALTY",	
-	"FALLING",	
-	"MELEE",	
-	"DISARM",	
-	"HAZARD_CLEANUP",	
+	"DEPLOY",
+	"SURRENDER",
+	"HACK",
+	"KILL_PILOT",
+	"PENALTY",
+	"FALLING",
+	"MELEE",
+	"DISARM",
+	"HAZARD_CLEANUP",
 	"PARTICLE_BEAM",
 	"TOPPLING",
-	"INFANTRY_MISSILE",	
-	"AURORA_BOMB",	
-	"LAND_MINE",	
-	"JET_MISSILES",	
-	"STEALTHJET_MISSILES",	
-	"MOLOTOV_COCKTAIL",	
-	"COMANCHE_VULCAN",	
-	"FLESHY_SNIPER",	
+	"INFANTRY_MISSILE",
+	"AURORA_BOMB",
+	"LAND_MINE",
+	"JET_MISSILES",
+	"STEALTHJET_MISSILES",
+	"MOLOTOV_COCKTAIL",
+	"COMANCHE_VULCAN",
+	"FLESHY_SNIPER",
 
 	NULL
 };
@@ -167,12 +167,12 @@ inline DamageTypeFlags clearDamageTypeFlag(DamageTypeFlags flags, DamageType dt)
 /** Death types, keep this in sync with TheDeathNames[] */
 //-------------------------------------------------------------------------------------------------
 enum DeathType CPP_11(: Int)
-{	
+{
 	// note that these DELIBERATELY have (slightly) different names from the damage names,
 	// since there isn't necessarily a one-to-one correspondence. e.g., DEATH_BURNED
 	// can come from DAMAGE_FLAME but also from DAMAGE_PARTICLE_BEAM.
 	DEATH_NORMAL		= 0,
-	DEATH_NONE			= 1,					///< this is a "special case" that can't normally cause death			
+	DEATH_NONE			= 1,					///< this is a "special case" that can't normally cause death
   DEATH_CRUSHED		= 2,
   DEATH_BURNED		= 3,
   DEATH_EXPLODED	= 4,
@@ -184,28 +184,28 @@ enum DeathType CPP_11(: Int)
 	DEATH_DETONATED	= 10,		/**< this is the "death" that occurs when a missile/warhead/etc detonates normally,
 														as opposed to being shot down, etc */
 	DEATH_SPLATTED	= 11,		/**< the death that results from DAMAGE_FALLING */
-	DEATH_POISONED_BETA	= 12,	
+	DEATH_POISONED_BETA	= 12,
 
 	// these are the "extra" types for yet-to-be-defined stuff. Don't bother renaming or adding
 	// or removing these; they are reserved for modders :-)
-	DEATH_EXTRA_2		= 13,	
-	DEATH_EXTRA_3		= 14,	
-	DEATH_EXTRA_4		= 15,	
-	DEATH_EXTRA_5		= 16,	
-	DEATH_EXTRA_6		= 17,	
-	DEATH_EXTRA_7		= 18,	
-	DEATH_EXTRA_8		= 19,	
-	
+	DEATH_EXTRA_2		= 13,
+	DEATH_EXTRA_3		= 14,
+	DEATH_EXTRA_4		= 15,
+	DEATH_EXTRA_5		= 16,
+	DEATH_EXTRA_6		= 17,
+	DEATH_EXTRA_7		= 18,
+	DEATH_EXTRA_8		= 19,
+
 	DEATH_NUM_TYPES			// keep this last
 };
 
 #ifdef DEFINE_DEATH_NAMES
-static const char *TheDeathNames[] = 
+static const char *TheDeathNames[] =
 {
-	"NORMAL",			
-	"NONE",			
-	"CRUSHED",					
-	"BURNED",		
+	"NORMAL",
+	"NONE",
+	"CRUSHED",
+	"BURNED",
 	"EXPLODED",
 	"POISONED",
 	"TOPPLED",
@@ -214,15 +214,15 @@ static const char *TheDeathNames[] =
 	"LASERED",
 	"DETONATED",
 	"SPLATTED",
-	"POISONED_BETA",	
+	"POISONED_BETA",
 
-	"EXTRA_2",	
-	"EXTRA_3",	
-	"EXTRA_4",	
-	"EXTRA_5",	
-	"EXTRA_6",	
-	"EXTRA_7",	
-	"EXTRA_8",	
+	"EXTRA_2",
+	"EXTRA_3",
+	"EXTRA_4",
+	"EXTRA_5",
+	"EXTRA_6",
+	"EXTRA_7",
+	"EXTRA_8",
 
 	NULL
 };
@@ -260,13 +260,13 @@ class DamageInfoInput : public Snapshot
 
 public:
 
-	DamageInfoInput( void ) 
-	{ 
-		m_sourceID = INVALID_ID; 
+	DamageInfoInput( void )
+	{
+		m_sourceID = INVALID_ID;
 		m_sourcePlayerMask = 0;
-		m_damageType = DAMAGE_EXPLOSION; 
-		m_deathType = DEATH_NORMAL; 
-		m_amount = 0; 
+		m_damageType = DAMAGE_EXPLOSION;
+		m_deathType = DEATH_NORMAL;
+		m_amount = 0;
 	}
 
 	ObjectID		   m_sourceID;							///< source of the damage
@@ -281,7 +281,7 @@ protected:
 	virtual void crc( Xfer *xfer ) { }
 	virtual void xfer( Xfer *xfer );
 	virtual void loadPostProcess( void ) { }
-	
+
 };
 
 const Real HUGE_DAMAGE_AMOUNT = 999999.0f;
@@ -294,15 +294,15 @@ class DamageInfoOutput : public Snapshot
 
 public:
 
-	DamageInfoOutput( void ) 
-	{ 
-		m_actualDamageDealt = 0; 
-		m_actualDamageClipped = 0; 
+	DamageInfoOutput( void )
+	{
+		m_actualDamageDealt = 0;
+		m_actualDamageClipped = 0;
 		m_noEffect = false;
 	}
 
-	/** 
-		m_actualDamageDealt is the damage we tried to apply to object (after multipliers and such). 
+	/**
+		m_actualDamageDealt is the damage we tried to apply to object (after multipliers and such).
 		m_actualDamageClipped is the value of m_actualDamageDealt, but clipped to the max health remaining of the obj.
 		example:
 			a mammoth tank fires a round at a small tank, attempting 100 damage.
@@ -310,7 +310,7 @@ public:
 			furthermore, the small tank has only 30 health remaining.
 			so: m_actualDamageDealt = 50, m_actualDamageClipped = 30.
 
-		this distinction is useful, since visual fx really wants to do the fx for "50 damage", 
+		this distinction is useful, since visual fx really wants to do the fx for "50 damage",
 		even though it was more than necessary to kill this object; game logic, on the other hand,
 		may want to know the "clipped" damage for ai purposes.
 	*/

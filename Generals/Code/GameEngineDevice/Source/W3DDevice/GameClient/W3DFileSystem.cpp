@@ -24,8 +24,8 @@
 
 // FILE: W3DFileSystem.cpp ////////////////////////////////////////////////////////////////////////
 //
-// W3D implementation of a file factory.  This replaces the W3D file factory, 
-// and uses GDI assets, so that 
+// W3D implementation of a file factory.  This replaces the W3D file factory,
+// and uses GDI assets, so that
 // W3D files and targa files are loaded using the GDI file interface.
 // Note - this only servers up read only files.
 //
@@ -76,7 +76,7 @@ GameFileClass::GameFileClass( char const *filename )
 	m_filePath[ 0 ] = 0;
 	m_filename[0] = 0;
 
-	if( filename ) 
+	if( filename )
 		Set_Name( filename );
 
 }
@@ -125,7 +125,7 @@ inline static Bool isImageFileType( GameFileType fileType )
 char const * GameFileClass::Set_Name( char const *filename )
 {
 
-	if( Is_Open() ) 
+	if( Is_Open() )
 		Close();
 
 	// save the filename
@@ -221,7 +221,7 @@ char const * GameFileClass::Set_Name( char const *filename )
 
 		if( fileType == FILE_TYPE_W3D )
 		{
-			
+
 			strcpy( m_filePath, TEST_W3D_DIR_PATH );
 			strcat( m_filePath, filename );
 
@@ -305,7 +305,7 @@ char const * GameFileClass::Set_Name( char const *filename )
 //-------------------------------------------------------------------------------------------------
 /** If we found a gdi asset, the file is available. */
 //-------------------------------------------------------------------------------------------------
-bool GameFileClass::Is_Available( int forced ) 
+bool GameFileClass::Is_Available( int forced )
 {
 
 	// not maintaining any GDF compatibility, all files should be where the m_filePath says
@@ -324,7 +324,7 @@ bool GameFileClass::Is_Open(void) const
 //-------------------------------------------------------------------------------------------------
 /** Open the named file. */
 //-------------------------------------------------------------------------------------------------
-int  GameFileClass::Open(char const *filename, int rights) 
+int  GameFileClass::Open(char const *filename, int rights)
 {
 	Set_Name(filename);
 	if (Is_Available(false)) {
@@ -336,9 +336,9 @@ int  GameFileClass::Open(char const *filename, int rights)
 //-------------------------------------------------------------------------------------------------
 /** Open the file using the current file name. */
 //-------------------------------------------------------------------------------------------------
-int  GameFileClass::Open(int rights) 
+int  GameFileClass::Open(int rights)
 {
-	if( rights != READ ) 
+	if( rights != READ )
 	{
 		return(false);
 	}
@@ -353,7 +353,7 @@ int  GameFileClass::Open(int rights)
 //-------------------------------------------------------------------------------------------------
 /** Read. */
 //-------------------------------------------------------------------------------------------------
-int GameFileClass::Read(void *buffer, int len) 
+int GameFileClass::Read(void *buffer, int len)
 {
 	if (m_theFile) {
 		return m_theFile->read(buffer, len);
@@ -364,7 +364,7 @@ int GameFileClass::Read(void *buffer, int len)
 //-------------------------------------------------------------------------------------------------
 /** Seek. */
 //-------------------------------------------------------------------------------------------------
-int GameFileClass::Seek(int pos, int dir) 
+int GameFileClass::Seek(int pos, int dir)
 {
 	File::seekMode mode = File::CURRENT;
 	switch (dir) {
@@ -382,7 +382,7 @@ int GameFileClass::Seek(int pos, int dir)
 //-------------------------------------------------------------------------------------------------
 /** Size. */
 //-------------------------------------------------------------------------------------------------
-int GameFileClass::Size(void) 
+int GameFileClass::Size(void)
 {
 	if (m_theFile) {
 		return m_theFile->size();
@@ -393,7 +393,7 @@ int GameFileClass::Size(void)
 //-------------------------------------------------------------------------------------------------
 /** Write. */
 //-------------------------------------------------------------------------------------------------
-int GameFileClass::Write(void const *buffer, Int len) 
+int GameFileClass::Write(void const *buffer, Int len)
 {
 #ifdef RTS_DEBUG
 #endif
@@ -403,7 +403,7 @@ int GameFileClass::Write(void const *buffer, Int len)
 //-------------------------------------------------------------------------------------------------
 /** Close. */
 //-------------------------------------------------------------------------------------------------
-void GameFileClass::Close(void) 
+void GameFileClass::Close(void)
 {
 	if (m_theFile) {
 		m_theFile->close();
@@ -418,7 +418,7 @@ void GameFileClass::Close(void)
 extern W3DFileSystem *TheW3DFileSystem = NULL;
 
 //-------------------------------------------------------------------------------------------------
-/** Constructor.  Creating an instance of this class overrices the default 
+/** Constructor.  Creating an instance of this class overrices the default
 W3D file factory.  */
 //-------------------------------------------------------------------------------------------------
 W3DFileSystem::W3DFileSystem(void)

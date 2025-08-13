@@ -22,14 +22,14 @@
 //																																						//
 ////////////////////////////////////////////////////////////////////////////////
 
-// FILE: MemoryInit.cpp 
+// FILE: MemoryInit.cpp
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:   RTS3
@@ -45,7 +45,7 @@
 
 // SYSTEM INCLUDES
 
-// USER INCLUDES 
+// USER INCLUDES
 #include "Lib/BaseType.h"
 #include "Common/GameMemory.h"
 
@@ -53,7 +53,7 @@
 //-----------------------------------------------------------------------------
 void userMemoryManagerGetDmaParms(Int *numSubPools, const PoolInitRec **pParms)
 {
-	static const PoolInitRec defaultDMA[7] = 
+	static const PoolInitRec defaultDMA[7] =
 	{
 		// name, allocsize, initialcount, overflowcount
 		{ "dmaPool_16", 16,			65536,	1024 },
@@ -80,7 +80,7 @@ struct PoolSizeRec
 //-----------------------------------------------------------------------------
 // And please be careful of duplicates.  They are not rejected.
 // not const -- we might override from INI
-static PoolSizeRec sizes[] = 
+static PoolSizeRec sizes[] =
 {
 	{ "PartitionContactListNode", 2048, 512 },
 	{ "BattleshipUpdate", 32, 32 },
@@ -112,24 +112,24 @@ static PoolSizeRec sizes[] =
 	{ "WebBrowserURL", 16, 16 },
 	{ "Drawable", 4096, 32 },
 	{ "Image", 2048, 32 },
-	{ "ParticlePool", 4096, 256 },  
-	{ "ParticleSystemTemplatePool", 768, 32 },  
-	{ "ParticleSystemPool", 1024, 32 },  
+	{ "ParticlePool", 4096, 256 },
+	{ "ParticleSystemTemplatePool", 768, 32 },
+	{ "ParticleSystemPool", 1024, 32 },
 	{ "TerrainRoadType", 64, 64, },
 	{ "WindowLayoutPool", 32, 32 },
 	{ "AnimatedParticleSysBoneClientUpdate", 16, 16 },
 	{ "SwayClientUpdate", 4096, 32 },
 	{ "BeaconClientUpdate", 64, 32 },
-	{ "AIGroupPool", 64, 32 },  
+	{ "AIGroupPool", 64, 32 },
 	{ "AIDockMachinePool", 256, 32 },
 	{ "AIGuardMachinePool", 32, 32 },
 	{ "AITNGuardMachinePool", 32, 32 },
-	{ "PathNodePool", 8192, 1024 },  
-	{ "PathPool", 256, 16 },       
-	{ "WorkOrder", 32, 32 },  
+	{ "PathNodePool", 8192, 1024 },
+	{ "PathPool", 256, 16 },
+	{ "WorkOrder", 32, 32 },
 	{ "TeamInQueue", 32, 32 },
-	{ "AIPlayer", 8, 8 },  
-	{ "AISkirmishPlayer", 8, 8 },  
+	{ "AIPlayer", 8, 8 },
+	{ "AISkirmishPlayer", 8, 8 },
 	{ "AIStateMachine",  600, 32 },
 	{ "JetAIStateMachine",  64, 32 },
 	{ "HeliAIStateMachine",  64, 32 },
@@ -137,12 +137,12 @@ static PoolSizeRec sizes[] =
 	{ "AIAttackThenIdleStateMachine", 512, 32 },
 	{ "AttackStateMachine",  512, 32 },
 	{ "CrateTemplate", 32, 32 },
-	{ "ExperienceTrackerPool", 4096, 256 }, 
-	{ "FiringTrackerPool", 4096, 256 }, 
-	{ "ObjectRepulsorHelper", 1024, 256 }, 
-	{ "ObjectSMCHelperPool", 4096, 256 }, 
-	{ "ObjectWeaponStatusHelperPool", 4096, 256 }, 
-	{ "ObjectDefectionHelperPool", 4096, 256 }, 
+	{ "ExperienceTrackerPool", 4096, 256 },
+	{ "FiringTrackerPool", 4096, 256 },
+	{ "ObjectRepulsorHelper", 1024, 256 },
+	{ "ObjectSMCHelperPool", 4096, 256 },
+	{ "ObjectWeaponStatusHelperPool", 4096, 256 },
+	{ "ObjectDefectionHelperPool", 4096, 256 },
 	{ "Locomotor", 2048, 32 },
 	{ "LocomotorTemplate", 128, 32	},
 	{ "ObjectPool", 4096, 32 },
@@ -579,7 +579,7 @@ static PoolSizeRec sizes[] =
 	{ "W3DPrototypeClass", 2048, 32 },
 	{ "EnumeratedIP", 32, 32 },
 	{ "WaterTransparencySetting", 4, 4 },
-	
+
 
 	// W3D pools!
 	{ "BoxPrototypeClass", 512, 32 },
@@ -657,7 +657,7 @@ static PoolSizeRec sizes[] =
 	{ "SortingIndexBufferClass", 32, 32 },
 	{ "DX8VertexBufferClass", 128, 32 },
 	{ "SortingVertexBufferClass", 32, 32 },
-	{ "DynD3DMATERIAL8", 8192, 32 }, 
+	{ "DynD3DMATERIAL8", 8192, 32 },
 	{ "DynamicMatrix3D", 512, 32 },
 	{ "MeshGeometryClass", 32, 32 },
 	{ "DynamicMeshModel", 32, 32 },
@@ -704,15 +704,15 @@ void userMemoryManagerInitPools()
 	// (with bigfile support, etc), because that relies on memory pools, which
 	// aren't yet initialized properly! so rely ONLY on straight stdio stuff here.
 	// (not even AsciiString. thanks.)
-	
+
 	// since we're called prior to main, the cur dir might not be what
 	// we expect. so do it the hard way.
 	char buf[_MAX_PATH];
 	::GetModuleFileName(NULL, buf, sizeof(buf));
 	char* pEnd = buf + strlen(buf);
-	while (pEnd != buf) 
+	while (pEnd != buf)
 	{
-		if (*pEnd == '\\') 
+		if (*pEnd == '\\')
 		{
 			*pEnd = 0;
 			break;
