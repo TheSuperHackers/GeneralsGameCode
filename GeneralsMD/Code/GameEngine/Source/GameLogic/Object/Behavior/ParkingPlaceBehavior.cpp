@@ -431,6 +431,7 @@ void ParkingPlaceBehavior::releaseSpace(ObjectID id)
 		{
 			it->m_objectInSpace = INVALID_ID;
 			it->m_reservedForExit = false;
+			it->m_deferredRunwayReservationForTakeoff = false;
 			if (pu)
 				pu->setHoldDoorOpen(it->m_door, false);
 		}
