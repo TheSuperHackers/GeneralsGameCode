@@ -93,7 +93,7 @@ void ExperienceTracker::setMinVeterancyLevel( VeterancyLevel newLevel )
 		m_currentLevel = newLevel;
 		m_currentExperience = m_parent->getTemplate()->getExperienceRequired(m_currentLevel); //Minimum for this level
 		if (m_parent)
-			m_parent->onVeterancyLevelChanged( oldLevel, newLevel );
+			m_parent->onVeterancyLevelChanged( oldLevel, newLevel, false );
 	}
 }
 
