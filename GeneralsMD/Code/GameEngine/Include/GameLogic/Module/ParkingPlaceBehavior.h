@@ -159,16 +159,16 @@ private:
 
 	struct ParkingPlaceInfo
 	{
-		Coord3D         m_hangarStart;
-		Real            m_hangarStartOrient;
-		Coord3D         m_location;
-		Coord3D         m_prep;
-		Real            m_orientation;
-		Int             m_runway;
-		ExitDoorType    m_door;
-		ObjectID        m_objectInSpace;
-		Bool            m_reservedForExit;
-		Bool            m_postponedRunwayReservationForTakeoff;
+		Coord3D      m_hangarStart;
+		Real         m_hangarStartOrient;
+		Coord3D      m_location;
+		Coord3D      m_prep;
+		Real         m_orientation;
+		Int          m_runway;
+		ExitDoorType m_door;
+		ObjectID     m_objectInSpace;
+		Bool         m_reservedForExit;
+		Bool         m_postponedRunwayReservationForTakeoff;
 
 		ParkingPlaceInfo()
 		{
