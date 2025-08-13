@@ -473,6 +473,9 @@ void ParkingPlaceBehavior::transferRunwayReservationToNextInLineForTakeoff(Objec
 //-------------------------------------------------------------------------------------------------
 Bool ParkingPlaceBehavior::postponeRunwayReservation(UnsignedInt spaceIndex, Bool forLanding)
 {
+	// TheSuperHackers @tweak Block the first attempt to reserve a runway for 'upper' space indices to ensure deterministic takeoff ordering.
+	// This allows 'lower' space indices to reserve a runway first.
+
 	if (m_spaces.size() > m_runways.size() && spaceIndex >= m_runways.size())
 	{
 		Bool& postponed = m_spaces[spaceIndex].m_postponedRunwayReservationForTakeoff;
