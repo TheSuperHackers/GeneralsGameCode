@@ -159,7 +159,7 @@ void ParkingPlaceBehavior::purgeDead()
 				{
 					it->m_objectInSpace = INVALID_ID;
 					it->m_reservedForExit = false;
-					it->m_deferredRunwayReservationForTakeoff = false;
+					it->m_postponedRunwayReservationForTakeoff = false;
 					if (pu)
 						pu->setHoldDoorOpen(it->m_door, false);
 				}
@@ -431,7 +431,7 @@ void ParkingPlaceBehavior::releaseSpace(ObjectID id)
 		{
 			it->m_objectInSpace = INVALID_ID;
 			it->m_reservedForExit = false;
-			it->m_deferredRunwayReservationForTakeoff = false;
+			it->m_postponedRunwayReservationForTakeoff = false;
 			if (pu)
 				pu->setHoldDoorOpen(it->m_door, false);
 		}
@@ -471,18 +471,18 @@ void ParkingPlaceBehavior::transferRunwayReservationToNextInLineForTakeoff(Objec
 }
 
 //-------------------------------------------------------------------------------------------------
-Bool ParkingPlaceBehavior::deferUnsequencedRunwayReservationForTakeoff(UnsignedInt spaceIndex, Bool forLanding)
+Bool ParkingPlaceBehavior::postponeRunwayReservation(UnsignedInt spaceIndex, Bool forLanding)
 {
 	if (m_spaces.size() > m_runways.size() && spaceIndex >= m_runways.size())
 	{
-		Bool& deferred = m_spaces[spaceIndex].m_deferredRunwayReservationForTakeoff;
+		Bool& postponed = m_spaces[spaceIndex].m_postponedRunwayReservationForTakeoff;
 		if (forLanding)
 		{
-			deferred = false;
+			postponed = false;
 		}
-		else if (!deferred)
+		else if (!postponed)
 		{
-			deferred = true;
+			postponed = true;
 			return true;
 		}
 	}

@@ -140,7 +140,7 @@ public:
 	virtual Bool reserveSpace(ObjectID id, Real parkingOffset, PPInfo* info);
 	virtual void releaseSpace(ObjectID id);
 	virtual Bool reserveRunway(ObjectID id, Bool forLanding);
-	Bool deferUnsequencedRunwayReservationForTakeoff(UnsignedInt spaceIndex, Bool forLanding);
+	Bool postponeRunwayReservation(UnsignedInt spaceIndex, Bool forLanding);
 	virtual void releaseRunway(ObjectID id);
 	virtual void calcPPInfo( ObjectID id, PPInfo *info );
 	virtual Int getRunwayCount() const { return m_runways.size(); }
@@ -168,7 +168,7 @@ private:
 		ExitDoorType    m_door;
 		ObjectID        m_objectInSpace;
 		Bool            m_reservedForExit;
-		Bool            m_deferredRunwayReservationForTakeoff;
+		Bool            m_postponedRunwayReservationForTakeoff;
 
 		ParkingPlaceInfo()
 		{
@@ -181,7 +181,7 @@ private:
 			m_door = DOOR_NONE_AVAILABLE;
 			m_objectInSpace = INVALID_ID;
 			m_reservedForExit = false;
-			m_deferredRunwayReservationForTakeoff = false;
+			m_postponedRunwayReservationForTakeoff = false;
 		}
 	};
 
