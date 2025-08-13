@@ -962,6 +962,7 @@ GameMessageDisposition SelectionTranslator::translateGameMessage(const GameMessa
 					if (TheInGameUI->getPendingPlaceSourceObjectID() != INVALID_ID)
 					{
 						TheInGameUI->placeBuildAvailable(NULL, NULL);
+						TheInGameUI->setPreventLeftClickDeselectionInAlternateMouseModeForOneClick(FALSE);
 						disp = DESTROY_MESSAGE;
 						TheInGameUI->setScrolling(FALSE);
 					}
