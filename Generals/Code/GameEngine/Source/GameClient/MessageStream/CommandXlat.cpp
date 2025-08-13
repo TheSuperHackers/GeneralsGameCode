@@ -3556,6 +3556,10 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 
  		//-----------------------------------------------------------------------------
  		case GameMessage::MSG_MOUSE_RIGHT_DOUBLE_CLICK:
+		{
+			m_mouseRightDown = m_mouseRightUp; // Allow isClick to succeed on fall through
+			FALLTHROUGH; //intentional fall through
+		}
  		case GameMessage::MSG_MOUSE_RIGHT_CLICK:
  		{
  			// right click is only actioned here if we're in alternate mouse mode

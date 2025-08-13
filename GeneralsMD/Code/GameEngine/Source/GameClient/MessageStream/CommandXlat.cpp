@@ -3922,6 +3922,8 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 
 				break;
 			}
+
+			m_mouseRightDown = m_mouseRightUp; // Allow isClick to succeed on fall through
 			FALLTHROUGH; //intentional fall through
 		}
 		case GameMessage::MSG_MOUSE_RIGHT_CLICK:
