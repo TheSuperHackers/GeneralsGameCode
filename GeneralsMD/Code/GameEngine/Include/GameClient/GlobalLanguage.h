@@ -101,9 +101,11 @@ public:
 	FontDesc  m_creditsNormalFont;
 
 	Real			m_resolutionFontSizeAdjustment;
+	Real			m_userResolutionFontSizeAdjustment;
 
 	//UnicodeString	m_unicodeFontNameUStr;
 
+	float getResolutionFontSizeAdjustment() const;
 	Int adjustFontSize(Int theFontSize);	// Adjusts font size for resolution. jba.
 
 	typedef std::list<AsciiString> StringList;					// Used for our font file names that we want to load

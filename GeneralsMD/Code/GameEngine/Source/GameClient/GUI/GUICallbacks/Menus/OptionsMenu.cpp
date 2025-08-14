@@ -62,6 +62,7 @@
 #include "GameClient/IMEManager.h"
 #include "GameClient/ShellHooks.h"
 #include "GameClient/GUICallbacks.h"
+#include "GameClient/GlobalLanguage.h"
 #include "GameNetwork/FirewallHelper.h"
 #include "GameNetwork/IPEnumeration.h"
 #include "GameNetwork/GameSpyOverlay.h"
@@ -828,6 +829,20 @@ Int OptionPreferences::getGameTimeFontSize(void)
 	return fontSize;
 }
 
+Real OptionPreferences::getResolutionFontAdjustment(void)
+{
+	OptionPreferences::const_iterator it = find("ResolutionFontAdjustment");
+	if (it == end())
+		return -1.0f;
+
+	Real fontScale = (Real)atof(it->second.str()) / 100.0f;
+	if (fontScale < 0.0f)
+	{
+		fontScale = -1.0f;
+	}
+	return fontScale;
+}
+
 static OptionPreferences *pref = NULL;
 
 static void setDefaults( void )
@@ -1352,6 +1367,17 @@ static void saveOptions( void )
 		prefString.format("%d", val);
 		(*pref)["GameTimeFontSize"] = prefString;
 		TheInGameUI->refreshGameTimeResources();
+	}
+
+	//-------------------------------------------------------------------------------------------------
+	// Set User Font Scaling Percentage
+	val = pref->getResolutionFontAdjustment() * 100.0f; // TheSuperHackers @todo replace with options input when applicable
+	if (val >= 0 || val == -100)
+	{
+		AsciiString prefString;
+		prefString.format("%d", REAL_TO_INT( val ) );
+		(*pref)["ResolutionFontAdjustment"] = prefString;
+		TheGlobalLanguageData->m_userResolutionFontSizeAdjustment = (Real)val / 100.0f;
 	}
 
 	//-------------------------------------------------------------------------------------------------

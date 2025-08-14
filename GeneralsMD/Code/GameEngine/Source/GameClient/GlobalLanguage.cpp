@@ -54,8 +54,10 @@
 
 #include "Common/INI.h"
 #include "Common/Registry.h"
-#include "GameClient/GlobalLanguage.h"
 #include "Common/FileSystem.h"
+#include "Common/UserPreferences.h"
+
+#include "GameClient/GlobalLanguage.h"
 
 //-----------------------------------------------------------------------------
 // DEFINES ////////////////////////////////////////////////////////////////////
@@ -119,6 +121,8 @@ GlobalLanguage::GlobalLanguage()
 	m_resolutionFontSizeAdjustment = 0.7f;
 	m_militaryCaptionDelayMS = 750;
 	//End Add
+
+	m_userResolutionFontSizeAdjustment = -1.0f;
 }
 
 GlobalLanguage::~GlobalLanguage()
@@ -169,6 +173,9 @@ void GlobalLanguage::init( void )
 		++it;
 	}
 
+	// override values with user preferences
+	OptionPreferences optionPref;
+	m_userResolutionFontSizeAdjustment = optionPref.getResolutionFontAdjustment();
 
 }
 void GlobalLanguage::reset( void ) {}
@@ -189,10 +196,18 @@ void GlobalLanguage::parseFontFileName( INI *ini, void * instance, void *store, 
 	monkey->m_localFonts.push_front(asciiString);
 }
 
+float GlobalLanguage::getResolutionFontSizeAdjustment( void ) const
+{
+	if (m_userResolutionFontSizeAdjustment >= 0.0f)
+		return m_userResolutionFontSizeAdjustment;
+	else
+		return m_resolutionFontSizeAdjustment;
+}
+
 Int GlobalLanguage::adjustFontSize(Int theFontSize)
 {
 	Real adjustFactor = TheGlobalData->m_xResolution / (Real)DEFAULT_DISPLAY_WIDTH;
-	adjustFactor = 1.0f + (adjustFactor-1.0f) * m_resolutionFontSizeAdjustment;
+	adjustFactor = 1.0f + (adjustFactor-1.0f) * getResolutionFontSizeAdjustment();
 	if (adjustFactor<1.0f) adjustFactor = 1.0f;
 	if (adjustFactor>2.0f) adjustFactor = 2.0f;
 	Int pointSize = REAL_TO_INT_FLOOR(theFontSize*adjustFactor);
