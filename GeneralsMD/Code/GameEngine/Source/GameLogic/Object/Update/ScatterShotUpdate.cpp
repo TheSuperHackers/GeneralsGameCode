@@ -471,7 +471,7 @@ static Int getVictimAntiMask(const Object* victim)
 		}
 		else if (!victim->isKindOf(KINDOF_UNATTACKABLE))
 		{
-			DEBUG_CRASH(("Object %s is being targetted as airborne, but is not infantry, nor vehicle. Is this legit? -- tell Kris", victim->getTemplate()->getName().str()));
+			DEBUG_CRASH(("Object %s is being targetted as airborne, but is not infantry, nor vehicle. Is this legit? -- tell Kris", victim->getName().str()));
 		}
 		return 0;
 	}
