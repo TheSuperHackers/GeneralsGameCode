@@ -2775,8 +2775,13 @@ void Object::onVeterancyLevelChanged( VeterancyLevel oldLevel, VeterancyLevel ne
 	if (body)
 		body->onVeterancyLevelChanged(oldLevel, newLevel, provideFeedback);
 
-
-	Bool hideAnimationForStealth = ( ! isLocallyControlled() && testStatus(OBJECT_STATUS_STEALTHED));
+	Bool hideAnimationForStealth = FALSE;
+	if( !isLocallyControlled() &&
+			testStatus( OBJECT_STATUS_STEALTHED ) &&
+			!testStatus( OBJECT_STATUS_DETECTED ) )
+	{
+		hideAnimationForStealth = TRUE;
+	}
 
 	Bool doAnimation = ( ! hideAnimationForStealth
 											&& (newLevel > oldLevel)
