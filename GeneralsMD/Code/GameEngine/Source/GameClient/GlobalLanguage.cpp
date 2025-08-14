@@ -193,7 +193,7 @@ Int GlobalLanguage::adjustFontSize(Int theFontSize)
 {
 	// TheSuperHackers @bugfix Mauller 10/08/2025 Scale fonts based on the smallest screen dimension so they are independent of aspect ratio
 	Real adjustFactor = min(TheGlobalData->m_xResolution/800.0f, TheGlobalData->m_yResolution/600.0f);
-	adjustFactor = 1.0f + (adjustFactor-1.0f) * m_resolutionFontSizeAdjustment;
+	adjustFactor = 1.0f + (adjustFactor-1.0f) * m_resolutionFontSizeAdjustment * TheGlobalData->m_userFontSizeAdjustment;
 	if (adjustFactor<1.0f) adjustFactor = 1.0f;
 	if (adjustFactor>2.0f) adjustFactor = 2.0f;
 	Int pointSize = REAL_TO_INT_FLOOR(theFontSize*adjustFactor);
