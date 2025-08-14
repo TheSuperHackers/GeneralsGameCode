@@ -3091,17 +3091,22 @@ void Object::onVeterancyLevelChanged( VeterancyLevel oldLevel, VeterancyLevel ne
 		body->onVeterancyLevelChanged( oldLevel, newLevel, provideFeedback );
 
 	Bool hideAnimationForStealth = FALSE;
-	if( !isLocallyControlled() &&
-			testStatus( OBJECT_STATUS_STEALTHED ) &&
-			!testStatus( OBJECT_STATUS_DETECTED ) &&
-			!testStatus( OBJECT_STATUS_DISGUISED ) )
-	{
-		hideAnimationForStealth = TRUE;
-	}
+	Bool doAnimation = FALSE;
 
-	Bool doAnimation = ( ! hideAnimationForStealth
-											&& (newLevel > oldLevel)
-											&& ( ! isKindOf(KINDOF_IGNORED_IN_GUI))); //First, we plan to do the animation if the level went up
+	if (provideFeedback)
+	{
+		if( !isLocallyControlled() &&
+				testStatus( OBJECT_STATUS_STEALTHED ) &&
+				!testStatus( OBJECT_STATUS_DETECTED ) &&
+				!testStatus( OBJECT_STATUS_DISGUISED ) )
+		{
+			hideAnimationForStealth = TRUE;
+		}
+
+		doAnimation = ( ! hideAnimationForStealth
+									&& (newLevel > oldLevel)
+									&& ( ! isKindOf(KINDOF_IGNORED_IN_GUI))); //First, we plan to do the animation if the level went up
+	}
 
 	switch (newLevel)
 	{
