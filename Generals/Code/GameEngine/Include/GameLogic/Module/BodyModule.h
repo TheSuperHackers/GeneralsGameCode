@@ -150,7 +150,7 @@ public:
 	virtual void setDamageState( BodyDamageType newState ) = 0;	///< control damage state directly.  Will adjust hitpoints.
 	virtual void setAflame( Bool setting ) = 0;///< This is a major change like a damage state.
 
-	virtual void onVeterancyLevelChanged( VeterancyLevel oldLevel, VeterancyLevel newLevel ) = 0;	///< I just achieved this level right this moment
+	virtual void onVeterancyLevelChanged( VeterancyLevel oldLevel, VeterancyLevel newLevel, Bool provideFeedback ) = 0;	///< I just achieved this level right this moment
 
 	virtual void setArmorSetFlag(ArmorSetType ast) = 0;
 	virtual void clearArmorSetFlag(ArmorSetType ast) = 0;
@@ -237,7 +237,7 @@ public:
 	virtual void setDamageState( BodyDamageType newState ) = 0;	///< control damage state directly.  Will adjust hitpoints.
 	virtual void setAflame( Bool setting ) = 0;///< This is a major change like a damage state.
 
-	virtual void onVeterancyLevelChanged( VeterancyLevel oldLevel, VeterancyLevel newLevel ) = 0;	///< I just achieved this level right this moment
+	virtual void onVeterancyLevelChanged( VeterancyLevel oldLevel, VeterancyLevel newLevel, Bool provideFeedback = FALSE ) = 0;	///< I just achieved this level right this moment
 
 	virtual void setArmorSetFlag(ArmorSetType ast) = 0;
 	virtual void clearArmorSetFlag(ArmorSetType ast) = 0;

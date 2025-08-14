@@ -51,12 +51,12 @@ public:
 	Bool isTrainable() const;																						///< Can I gain experience?
 	Bool isAcceptingExperiencePoints() const;														///< Either I am trainable, or I have a Sink set up
 
-	void setVeterancyLevel( VeterancyLevel newLevel );						///< Set Level to this
+	void setVeterancyLevel( VeterancyLevel newLevel, Bool provideFeedback = TRUE );						///< Set Level to this
 	void setMinVeterancyLevel( VeterancyLevel newLevel );					///< Set Level to AT LEAST this... if we are already >= this level, do nothing.
 	void addExperiencePoints( Int experienceGain, Bool canScaleForBonus = TRUE );	///< Gain this many exp.
 	Bool gainExpForLevel(Int levelsToGain, Bool canScaleForBonus = TRUE );			  ///< Gain enough exp to gain a level. return false if can't gain a level.
 	Bool canGainExpForLevel(Int levelsToGain) const;															///< return same value as gainExpForLevel, but don't change anything
-	void setExperienceAndLevel(Int experienceIn);
+	void setExperienceAndLevel(Int experienceIn, Bool provideFeedback = TRUE );
 	void setExperienceSink( ObjectID sink );											///< My experience actually goes to this person (loose couple)
 
 	Real getExperienceScalar() const { return m_experienceScalar; }

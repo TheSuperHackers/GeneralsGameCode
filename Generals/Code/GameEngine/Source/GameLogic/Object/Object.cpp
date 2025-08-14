@@ -2763,7 +2763,7 @@ Bool Object::hasSpecialPower( SpecialPowerType type ) const
 }
 
 //-------------------------------------------------------------------------------------------------
-void Object::onVeterancyLevelChanged( VeterancyLevel oldLevel, VeterancyLevel newLevel )
+void Object::onVeterancyLevelChanged( VeterancyLevel oldLevel, VeterancyLevel newLevel, Bool provideFeedback )
 {
 	updateUpgradeModules();
 
@@ -2773,7 +2773,7 @@ void Object::onVeterancyLevelChanged( VeterancyLevel oldLevel, VeterancyLevel ne
 
 	BodyModuleInterface* body = getBodyModule();
 	if (body)
-		body->onVeterancyLevelChanged(oldLevel, newLevel);
+		body->onVeterancyLevelChanged(oldLevel, newLevel, provideFeedback);
 
 
 	Bool hideAnimationForStealth = ( ! isLocallyControlled() && testStatus(OBJECT_STATUS_STEALTHED));
@@ -2819,7 +2819,7 @@ void Object::onVeterancyLevelChanged( VeterancyLevel oldLevel, VeterancyLevel ne
 			break;
 	}
 
-	if( doAnimation && TheGameLogic->getDrawIconUI() )
+	if( doAnimation && TheGameLogic->getDrawIconUI() && provideFeedback )
 	{
 		if( TheAnim2DCollection && TheGlobalData->m_levelGainAnimationName.isEmpty() == FALSE )
 		{
