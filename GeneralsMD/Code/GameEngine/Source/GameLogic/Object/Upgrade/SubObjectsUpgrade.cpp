@@ -24,12 +24,12 @@
 
 // FILE: SubObjectsUpgrade.cpp /////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Electronic Arts Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2002 - All Rights Reserved                  
-//                                                                          
+//
+//                       Electronic Arts Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2002 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 //	Created:	September 2002
@@ -37,7 +37,7 @@
 //	Filename: SubObjectsUpgrade.cpp
 //
 //	Author:		Kris Morness
-//	
+//
 //	Purpose:	Shows or hides a list of subobjects based on upgrade statii. It
 //            will override any animation subobjects states.
 //
@@ -55,11 +55,11 @@
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void SubObjectsUpgradeModuleData::buildFieldParse(MultiIniFieldParse& p) 
+void SubObjectsUpgradeModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
   UpgradeModuleData::buildFieldParse(p);
 
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
 		{ "ShowSubObjects", INI::parseAsciiStringVectorAppend, NULL, offsetof( SubObjectsUpgradeModuleData, m_showSubObjectNames ) },
 		{ "HideSubObjects", INI::parseAsciiStringVectorAppend, NULL, offsetof( SubObjectsUpgradeModuleData, m_hideSubObjectNames ) },
@@ -87,7 +87,7 @@ void SubObjectsUpgrade::upgradeImplementation( )
 	const SubObjectsUpgradeModuleData *data = getSubObjectsUpgradeModuleData();
 	UpgradeMaskType activation, conflicting;
 	getUpgradeActivationMasks( activation, conflicting );
-	
+
 	//First make sure we have the right combination of upgrades
 
 	if( getObject()->getObjectCompletedUpgradeMask().testForAny( conflicting ) )
@@ -141,7 +141,7 @@ void SubObjectsUpgrade::crc( Xfer *xfer )
 //------------------------------------------------------------------------------------------------
 // Xfer method
 // Version Info:
-// 1: Initial version 
+// 1: Initial version
 //------------------------------------------------------------------------------------------------
 void SubObjectsUpgrade::xfer( Xfer *xfer )
 {

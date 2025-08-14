@@ -21,13 +21,13 @@ set(GAMEENGINE_SRC
     Include/Common/CDManager.h
     Include/Common/ClientUpdateModule.h
     Include/Common/CommandLine.h
-    Include/Common/crc.h
-    Include/Common/CRCDebug.h
+#    Include/Common/crc.h
+#    Include/Common/CRCDebug.h
     Include/Common/CriticalSection.h
     Include/Common/CustomMatchPreferences.h
     Include/Common/DamageFX.h
     Include/Common/DataChunk.h
-    Include/Common/Debug.h
+#    Include/Common/Debug.h
     Include/Common/Dict.h
     Include/Common/Directory.h
     Include/Common/DisabledTypes.h
@@ -45,7 +45,7 @@ set(GAMEENGINE_SRC
 #    Include/Common/GameDefines.h
     Include/Common/GameEngine.h
     Include/Common/GameLOD.h
-    Include/Common/GameMemory.h
+#    Include/Common/GameMemory.h
 #    Include/Common/GameMusic.h
 #    Include/Common/GameSounds.h
     Include/Common/GameSpyMiscPreferences.h
@@ -92,7 +92,7 @@ set(GAMEENGINE_SRC
     Include/Common/QuotedPrintable.h
     Include/Common/Radar.h
 #    Include/Common/RAMFile.h
-    Include/Common/RandomValue.h
+#    Include/Common/RandomValue.h
     Include/Common/Recorder.h
 #    Include/Common/ReplaySimulation.h
     Include/Common/Registry.h
@@ -142,7 +142,7 @@ set(GAMEENGINE_SRC
     Include/GameClient/CDCheck.h
     Include/GameClient/ChallengeGenerals.h
     Include/GameClient/ClientInstance.h
-    Include/GameClient/ClientRandomValue.h
+#    Include/GameClient/ClientRandomValue.h
     Include/GameClient/Color.h
     Include/GameClient/CommandXlat.h
     Include/GameClient/ControlBar.h
@@ -225,11 +225,11 @@ set(GAMEENGINE_SRC
     Include/GameClient/TerrainRoads.h
     Include/GameClient/TerrainVisual.h
     Include/GameClient/TintStatus.h
-    Include/GameClient/VideoPlayer.h
+#    Include/GameClient/VideoPlayer.h
     Include/GameClient/View.h
     Include/GameClient/Water.h
     Include/GameClient/WindowLayout.h
-    Include/GameClient/WindowVideoManager.h
+#    Include/GameClient/WindowVideoManager.h
     Include/GameClient/WindowXlat.h
     Include/GameClient/WinInstanceData.h
     Include/GameLogic/AI.h
@@ -253,7 +253,7 @@ set(GAMEENGINE_SRC
     Include/GameLogic/GhostObject.h
     Include/GameLogic/Locomotor.h
     Include/GameLogic/LocomotorSet.h
-    Include/GameLogic/LogicRandomValue.h
+#    Include/GameLogic/LogicRandomValue.h
     Include/GameLogic/Module/ActiveBody.h
     Include/GameLogic/Module/ActiveShroudUpgrade.h
     Include/GameLogic/Module/AIUpdate.h
@@ -578,8 +578,8 @@ set(GAMEENGINE_SRC
     Source/Common/Bezier/BezierSegment.cpp
     Source/Common/BitFlags.cpp
     Source/Common/CommandLine.cpp
-    Source/Common/crc.cpp
-    Source/Common/CRCDebug.cpp
+#    Source/Common/crc.cpp
+#    Source/Common/CRCDebug.cpp
     Source/Common/DamageFX.cpp
     Source/Common/Dict.cpp
     Source/Common/DiscreteCircle.cpp
@@ -611,7 +611,7 @@ set(GAMEENGINE_SRC
     Source/Common/INI/INITerrainBridge.cpp
     Source/Common/INI/INITerrainRoad.cpp
     Source/Common/INI/INIUpgrade.cpp
-    Source/Common/INI/INIVideo.cpp
+#    Source/Common/INI/INIVideo.cpp
     Source/Common/INI/INIWater.cpp
     Source/Common/INI/INIWeapon.cpp
     Source/Common/INI/INIWebpageURL.cpp
@@ -622,7 +622,7 @@ set(GAMEENGINE_SRC
     Source/Common/NameKeyGenerator.cpp
     Source/Common/PartitionSolver.cpp
     Source/Common/PerfTimer.cpp
-    Source/Common/RandomValue.cpp
+#    Source/Common/RandomValue.cpp
     Source/Common/Recorder.cpp
 #    Source/Common/ReplaySimulation.cpp
     Source/Common/RTS/AcademyStats.cpp
@@ -651,7 +651,7 @@ set(GAMEENGINE_SRC
     Source/Common/System/CDManager.cpp
     Source/Common/System/CriticalSection.cpp
     Source/Common/System/DataChunk.cpp
-    Source/Common/System/Debug.cpp
+#    Source/Common/System/Debug.cpp
     Source/Common/System/Directory.cpp
     Source/Common/System/DisabledTypes.cpp
     Source/Common/System/encrypt.cpp
@@ -806,7 +806,7 @@ set(GAMEENGINE_SRC
     Source/GameClient/GUI/Shell/Shell.cpp
     Source/GameClient/GUI/Shell/ShellMenuScheme.cpp
     Source/GameClient/GUI/WindowLayout.cpp
-    Source/GameClient/GUI/WindowVideoManager.cpp
+#    Source/GameClient/GUI/WindowVideoManager.cpp
     Source/GameClient/GUI/WinInstanceData.cpp
     Source/GameClient/InGameUI.cpp
     Source/GameClient/Input/Keyboard.cpp
@@ -838,8 +838,8 @@ set(GAMEENGINE_SRC
     Source/GameClient/System/Smudge.cpp
     Source/GameClient/Terrain/TerrainRoads.cpp
     Source/GameClient/Terrain/TerrainVisual.cpp
-    Source/GameClient/VideoPlayer.cpp
-    Source/GameClient/VideoStream.cpp
+#    Source/GameClient/VideoPlayer.cpp
+#    Source/GameClient/VideoStream.cpp
     Source/GameClient/View.cpp
     Source/GameClient/Water.cpp
     Source/GameLogic/AI/AI.cpp
@@ -1167,14 +1167,16 @@ set(GAMEENGINE_SRC
 if(RTS_GAMEMEMORY_ENABLE)
     # Uses the original Game Memory implementation.
     list(APPEND GAMEENGINE_SRC
-        Source/Common/System/GameMemory.cpp
-        Source/Common/System/MemoryInit.cpp
+#        Source/Common/System/GameMemory.cpp
+#        Source/Common/System/GameMemoryInitDMA_GeneralsMD.inl
+#        Source/Common/System/GameMemoryInitPools_GeneralsMD.inl
+#        Source/Common/System/MemoryInit.cpp
     )
 else()
     # Uses the null implementation when disabled.
     list(APPEND GAMEENGINE_SRC
-        Source/Common/System/GameMemoryNull.cpp
-        Include/Common/GameMemoryNull.h
+#        Source/Common/System/GameMemoryNull.cpp
+#        Include/Common/GameMemoryNull.h
     )
 endif()
 

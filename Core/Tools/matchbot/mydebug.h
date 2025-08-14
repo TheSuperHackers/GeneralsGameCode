@@ -18,10 +18,10 @@
 
 /*****************************************************************************\
 wdebug                        Neal Kettler
- 
+
 MT-LEVEL
     MT-Safe
- 
+
 The debugging module is pretty good for debugging and it has some message
 printing stuff as well.  The basic idea is that you write a class that
 inherits from OutputDevice (several are provided) and assign that output
@@ -31,23 +31,23 @@ or they can all have the same one.  Debugging messages only get compiled
 in if your module defines 'DEBUG'. If you don't define debug, then not even
 the text of the debugging message gets into the binary.   All the other
 output streams get printed regardless of whether DEBUG is defined.
- 
+
 Sample usage:
 FileD debug_device("gameres.debug");     // create a file device
 MsgManager::setDebugStream(&debug_device);
 DBGMSG("This debug message #" << 1 << " you use C++ streams");
- 
+
 Note that since these are defines you really don't need to put a semicolon
 at the end, and it can be bad in situations like this:
- 
+
 if (x)
   DBGMSG("Stuff is broken");
 else
   DBGMSG("Stuff is NOT broken");
- 
+
 This won't compile, read the code until you figure it out.  Only then
 will you be ready to leave grasshopper.
- 
+
 \*****************************************************************************/
 
 #ifndef MYDEBUG_HEADER

@@ -17,46 +17,46 @@
 */
 
 /* $Header: /Commando/Code/Tools/max2w3d/hiersave.cpp 56    10/30/00 6:58p Greg_h $ */
-/*********************************************************************************************** 
- ***                            Confidential - Westwood Studios                              *** 
- *********************************************************************************************** 
- *                                                                                             * 
- *                 Project Name : Commando / G 3D Engine                                       * 
- *                                                                                             * 
- *                     $Archive:: /Commando/Code/Tools/max2w3d/hiersave.cpp                   $* 
- *                                                                                             * 
- *                      $Author:: Greg_h                                                      $* 
- *                                                                                             * 
- *                     $Modtime:: 10/30/00 6:14p                                              $* 
- *                                                                                             * 
- *                    $Revision:: 56                                                          $* 
- *                                                                                             * 
- *---------------------------------------------------------------------------------------------* 
- * Functions:                                                                                  * 
- *   HierarchySaveClass::HierarchySaveClass -- constructor                                     * 
- *   HierarchySaveClass::HierarchySaveClass -- constructor                                     * 
- *   HierarchySaveClass::HierarchySaveClass -- constructor                                     * 
- *   HierarchySaveClass::~HierarchySaveClass -- destructor                                     * 
- *   HierarchySaveClass::Free -- releases all allocated memory                                 * 
- *   HierarchySaveClass::Get_Node_Transform -- returns the transformation matrix of specified n* 
- *   HierarchySaveClass::get_relative_transform -- retruns tm between this node and its parent * 
- *   HierarchySaveClass::Get_Name -- returns the name of this hierarchy                        * 
+/***********************************************************************************************
+ ***                            Confidential - Westwood Studios                              ***
+ ***********************************************************************************************
+ *                                                                                             *
+ *                 Project Name : Commando / G 3D Engine                                       *
+ *                                                                                             *
+ *                     $Archive:: /Commando/Code/Tools/max2w3d/hiersave.cpp                   $*
+ *                                                                                             *
+ *                      $Author:: Greg_h                                                      $*
+ *                                                                                             *
+ *                     $Modtime:: 10/30/00 6:14p                                              $*
+ *                                                                                             *
+ *                    $Revision:: 56                                                          $*
+ *                                                                                             *
+ *---------------------------------------------------------------------------------------------*
+ * Functions:                                                                                  *
+ *   HierarchySaveClass::HierarchySaveClass -- constructor                                     *
+ *   HierarchySaveClass::HierarchySaveClass -- constructor                                     *
+ *   HierarchySaveClass::HierarchySaveClass -- constructor                                     *
+ *   HierarchySaveClass::~HierarchySaveClass -- destructor                                     *
+ *   HierarchySaveClass::Free -- releases all allocated memory                                 *
+ *   HierarchySaveClass::Get_Node_Transform -- returns the transformation matrix of specified n*
+ *   HierarchySaveClass::get_relative_transform -- retruns tm between this node and its parent *
+ *   HierarchySaveClass::Get_Name -- returns the name of this hierarchy                        *
  *   HierarchySaveClass::Get_Node -- Get the Max INode                                         *
- *   HierarchySaveClass::Get_Node_Name -- returns name of this hierarchy node                  * 
- *   HierarchySaveClass::Find_Named_Node -- returns index of a named node                      * 
+ *   HierarchySaveClass::Get_Node_Name -- returns name of this hierarchy node                  *
+ *   HierarchySaveClass::Find_Named_Node -- returns index of a named node                      *
  *   HierarchySaveClass::Get_Export_Coordinate_System - find the bone and coordinate system    *
- *   HierarchySaveClass::Save -- write the hierarchy into a W3D file                           * 
- *   HierarchySaveClass::Load -- read the hierarchy from a W3D file                            * 
- *   HierarchySaveClass::add_tree -- adds a node and all of its children                       * 
- *   HierarchySaveClass::add_node -- adds a single node to the tree                            * 
- *   HierarchySaveClass::Get_Fixup_Transform -- gets the "fixup" transform for a node          * 
- *   HierarchySaveClass::fixup_matrix -- conditions a matrix                                   * 
- *   HierarchySaveClass::save_header -- writes the header into a W3D file                      * 
- *   HierarchySaveClass::save_pivots -- writes the pivots into a W3D file                      * 
- *   HierarchySaveClass::save_fixups -- writes the fixup transforms into a W3D file            * 
- *   HierarchySaveClass::load_header -- reads the header from a W3D file                       * 
- *   HierarchySaveClass::load_pivots -- reads the pivots from a W3D file                       * 
- *   HierarchySaveClass::load_fixups -- reads the fixup transforms from a W3D file             * 
+ *   HierarchySaveClass::Save -- write the hierarchy into a W3D file                           *
+ *   HierarchySaveClass::Load -- read the hierarchy from a W3D file                            *
+ *   HierarchySaveClass::add_tree -- adds a node and all of its children                       *
+ *   HierarchySaveClass::add_node -- adds a single node to the tree                            *
+ *   HierarchySaveClass::Get_Fixup_Transform -- gets the "fixup" transform for a node          *
+ *   HierarchySaveClass::fixup_matrix -- conditions a matrix                                   *
+ *   HierarchySaveClass::save_header -- writes the header into a W3D file                      *
+ *   HierarchySaveClass::save_pivots -- writes the pivots into a W3D file                      *
+ *   HierarchySaveClass::save_fixups -- writes the fixup transforms into a W3D file            *
+ *   HierarchySaveClass::load_header -- reads the header from a W3D file                       *
+ *   HierarchySaveClass::load_pivots -- reads the pivots from a W3D file                       *
+ *   HierarchySaveClass::load_fixups -- reads the fixup transforms from a W3D file             *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "hiersave.h"
@@ -72,23 +72,23 @@
 bool HierarchySaveClass::TerrainModeEnabled = false;
 
 
-/*********************************************************************************************** 
- * HierarchySaveClass::HierarchySaveClass -- constructor                                       * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- * root - root INode to construct the HTree from                                               * 
- * time - current time in Max, transforms at this time will be used                            * 
- * treemeter - progress meter                                                                  * 
- * hname - name for the hierarchy tree                                                         * 
- * fixup_type - can be used to force all transforms to be translation only                     * 
- * fixuptree - htree loaded from a previous export                                             * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   10/26/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * HierarchySaveClass::HierarchySaveClass -- constructor                                       *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ * root - root INode to construct the HTree from                                               *
+ * time - current time in Max, transforms at this time will be used                            *
+ * treemeter - progress meter                                                                  *
+ * hname - name for the hierarchy tree                                                         *
+ * fixup_type - can be used to force all transforms to be translation only                     *
+ * fixuptree - htree loaded from a previous export                                             *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   10/26/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
 HierarchySaveClass::HierarchySaveClass
 (
@@ -98,7 +98,7 @@ HierarchySaveClass::HierarchySaveClass
 	char * hname,
 	int fixuptype,
 	HierarchySaveClass * fixuptree
-) : 
+) :
 	Node(DEFAULT_NODE_ARRAY_SIZE),
 	CurNode(0),
 	FixupType(fixuptype),
@@ -108,11 +108,11 @@ HierarchySaveClass::HierarchySaveClass
 	CurTime = time;
 
 	/*
-	** This code-path is activated when the user has created a custom origin.  In this case, we 
+	** This code-path is activated when the user has created a custom origin.  In this case, we
 	** need to compute the transform which will make all bones relative to this origin.
 	*/
 	OriginOffsetTransform = Inverse(root->GetNodeTM(CurTime));
-	
+
 	/*
 	** Build our tree from the given tree of nodes
 	*/
@@ -128,25 +128,25 @@ HierarchySaveClass::HierarchySaveClass
 	HierarchyHeader.Center.Z = 0.0f;
 }
 
-/*********************************************************************************************** 
- * HierarchySaveClass::HierarchySaveClass -- constructor                                       * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * rootlist - list of root nodes to add to the htree                                           * 
- * time - current time in Max, transforms at this time will be used                            * 
- * treemeter - progress meter                                                                  * 
- * hname - name for the hierarchy tree                                                         * 
- * fixup_type - can be used to force all transforms to be translation only                     * 
- * fixuptree - htree loaded from a previous export                                             * 
- * origin_offset - origin offset transform                                                     * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   10/26/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * HierarchySaveClass::HierarchySaveClass -- constructor                                       *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * rootlist - list of root nodes to add to the htree                                           *
+ * time - current time in Max, transforms at this time will be used                            *
+ * treemeter - progress meter                                                                  *
+ * hname - name for the hierarchy tree                                                         *
+ * fixup_type - can be used to force all transforms to be translation only                     *
+ * fixuptree - htree loaded from a previous export                                             *
+ * origin_offset - origin offset transform                                                     *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   10/26/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
 HierarchySaveClass::HierarchySaveClass
 (
@@ -157,7 +157,7 @@ HierarchySaveClass::HierarchySaveClass
 	int fixuptype,
 	HierarchySaveClass * fixuptree,
 	const Matrix3 & origin_offset
-) : 
+) :
 	Node(DEFAULT_NODE_ARRAY_SIZE),
 	CurNode(0),
 	FixupType(fixuptype),
@@ -186,17 +186,17 @@ HierarchySaveClass::HierarchySaveClass
 
 }
 
-/*********************************************************************************************** 
- * HierarchySaveClass::HierarchySaveClass -- constructor                                       * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   10/26/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * HierarchySaveClass::HierarchySaveClass -- constructor                                       *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   10/26/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
 HierarchySaveClass::HierarchySaveClass():
 	Node(NULL),
@@ -205,34 +205,34 @@ HierarchySaveClass::HierarchySaveClass():
 {
 }
 
-/*********************************************************************************************** 
- * HierarchySaveClass::~HierarchySaveClass -- destructor                                       * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   10/26/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * HierarchySaveClass::~HierarchySaveClass -- destructor                                       *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   10/26/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
 HierarchySaveClass::~HierarchySaveClass(void)
 {
 	Free();
 }
 
-/*********************************************************************************************** 
- * HierarchySaveClass::Free -- releases all allocated memory                                   * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   10/26/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * HierarchySaveClass::Free -- releases all allocated memory                                   *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   10/26/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
 void HierarchySaveClass::Free(void)
 {
@@ -240,17 +240,17 @@ void HierarchySaveClass::Free(void)
 }
 
 
-/*********************************************************************************************** 
- * HierarchySaveClass::Get_Node_Transform -- returns the transformation matrix of specified no * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   10/26/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * HierarchySaveClass::Get_Node_Transform -- returns the transformation matrix of specified no *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   10/26/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
 Matrix3 HierarchySaveClass::Get_Node_Transform(int nodeidx) const
 {
@@ -267,17 +267,17 @@ Matrix3 HierarchySaveClass::Get_Node_Transform(int nodeidx) const
 }
 
 
-/*********************************************************************************************** 
- * HierarchySaveClass::get_relative_transform -- retruns tm between this node and its parent   * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   10/26/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * HierarchySaveClass::get_relative_transform -- retruns tm between this node and its parent   *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   10/26/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
 Matrix3 HierarchySaveClass::get_relative_transform(int nodeidx) const
 {
@@ -309,17 +309,17 @@ Matrix3 HierarchySaveClass::get_relative_transform(int nodeidx) const
 }
 
 
-/*********************************************************************************************** 
- * HierarchySaveClass::Get_Name -- returns the name of this hierarchy                          * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   10/26/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * HierarchySaveClass::Get_Name -- returns the name of this hierarchy                          *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   10/26/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
 const char * HierarchySaveClass::Get_Name(void) const
 {
@@ -344,20 +344,20 @@ INode * HierarchySaveClass::Get_Node(int node) const
 	assert(node >= 0);
 	assert(node < CurNode);
 
-	return Node[node].MaxNode;	
+	return Node[node].MaxNode;
 }
 
-/*********************************************************************************************** 
- * HierarchySaveClass::Get_Node_Name -- returns name of this hierarchy node                    * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   10/26/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * HierarchySaveClass::Get_Node_Name -- returns name of this hierarchy node                    *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   10/26/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
 const char * HierarchySaveClass::Get_Node_Name(int node) const
 {
@@ -368,17 +368,17 @@ const char * HierarchySaveClass::Get_Node_Name(int node) const
 }
 
 
-/*********************************************************************************************** 
- * HierarchySaveClass::Find_Named_Node -- returns index of a named node                        * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   10/26/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * HierarchySaveClass::Find_Named_Node -- returns index of a named node                        *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   10/26/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
 int HierarchySaveClass::Find_Named_Node(const char * name) const
 {
@@ -467,7 +467,7 @@ void HierarchySaveClass::Get_Export_Coordinate_System
 #endif
 		}
 	}
-	
+
 	if (set_bone_index != NULL) {
 		*set_bone_index = boneidx;
 	}
@@ -479,17 +479,17 @@ void HierarchySaveClass::Get_Export_Coordinate_System
 	}
 }
 
-/*********************************************************************************************** 
- * HierarchySaveClass::Save -- write the hierarchy into a W3D file                             * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   10/26/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * HierarchySaveClass::Save -- write the hierarchy into a W3D file                             *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   10/26/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
 bool HierarchySaveClass::Save(ChunkSaveClass & csave)
 {
@@ -519,22 +519,22 @@ bool HierarchySaveClass::Save(ChunkSaveClass & csave)
 	if (!csave.End_Chunk()) {
 		return false;
 	}
-	
+
 	return true;
 }
 
 
-/*********************************************************************************************** 
- * HierarchySaveClass::Load -- read the hierarchy from a W3D file                              * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   10/26/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * HierarchySaveClass::Load -- read the hierarchy from a W3D file                              *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   10/26/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
 bool HierarchySaveClass::Load(ChunkLoadClass & cload)
 {
@@ -547,7 +547,7 @@ bool HierarchySaveClass::Load(ChunkLoadClass & cload)
 				if (!load_header(cload)) error = true;
 				break;
 			case W3D_CHUNK_PIVOTS:
-				if (!load_pivots(cload)) error = true;				
+				if (!load_pivots(cload)) error = true;
 				break;
 			case W3D_CHUNK_PIVOT_FIXUPS:
 				if (!load_fixups(cload)) error = true;
@@ -567,17 +567,17 @@ bool HierarchySaveClass::Load(ChunkLoadClass & cload)
 }
 
 
-/*********************************************************************************************** 
- * HierarchySaveClass::add_tree -- adds a node and all of its children                         * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   10/26/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * HierarchySaveClass::add_tree -- adds a node and all of its children                         *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   10/26/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
 void HierarchySaveClass::add_tree(INode * node,int pidx)
 {
@@ -586,7 +586,7 @@ void HierarchySaveClass::add_tree(INode * node,int pidx)
 	if (node->IsHidden ()) {
 
 		// if the node is hidden, do not add it but add its children to the current parent.
-		nextparent = pidx;			
+		nextparent = pidx;
 
 	} else if (TerrainModeEnabled && (Is_Normal_Mesh(node) || Is_Null_Object(node))) {
 
@@ -594,15 +594,15 @@ void HierarchySaveClass::add_tree(INode * node,int pidx)
 		nextparent = pidx;
 
 	} else if (!Is_Bone(node)) {
-	
+
 		// This node isn't a bone, don't add it
 		nextparent = pidx;
-	
+
 	} else {
 
-		// Add new pivot!	it will be parent of all below it.	
+		// Add new pivot!	it will be parent of all below it.
 		nextparent = add_node(node,pidx);
-	
+
 	}
 
 	// Add all of this nodes children
@@ -612,17 +612,17 @@ void HierarchySaveClass::add_tree(INode * node,int pidx)
 }
 
 
-/*********************************************************************************************** 
- * HierarchySaveClass::add_node -- adds a single node to the tree                              * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   10/26/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * HierarchySaveClass::add_node -- adds a single node to the tree                              *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   10/26/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
 int HierarchySaveClass::add_node(INode * node,int pidx)
 {
@@ -643,7 +643,7 @@ int HierarchySaveClass::add_node(INode * node,int pidx)
 		Set_W3D_Name(Node[CurNode].Pivot.Name,node->GetName());
 	} else {
 		Set_W3D_Name(Node[CurNode].Pivot.Name,"RootTransform");
-	}		
+	}
 
 	/*
 	** Now, check if there is a bone with this W3D name already
@@ -675,8 +675,8 @@ int HierarchySaveClass::add_node(INode * node,int pidx)
 	** If this tree is being "fixed up" the first thing we do
 	** is to transform Max's nodeTM by the fixup transform.
 	** This is done when a base pose was created using our own
-	** types of transforms and we want to apply the same 
-	** changes to this tree.  
+	** types of transforms and we want to apply the same
+	** changes to this tree.
 	**
 	** Note that if FixupType is not "NONE", FixupTree must be NULL,
 	*/
@@ -716,7 +716,7 @@ int HierarchySaveClass::add_node(INode * node,int pidx)
 	** Break the matrix down into a rotation and translation.
 	*/
 	DecomposeMatrix(ournodeTM,trans,rot,scale);
-	
+
 	/*
 	** Save the "fixup" matrix
 	*/
@@ -753,17 +753,17 @@ int HierarchySaveClass::add_node(INode * node,int pidx)
 	return CurNode++;
 }
 
-/*********************************************************************************************** 
- * HierarchySaveClass::Get_Fixup_Transform -- gets the "fixup" transform for a node            * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   10/26/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * HierarchySaveClass::Get_Fixup_Transform -- gets the "fixup" transform for a node            *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   10/26/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
 Matrix3 HierarchySaveClass::Get_Fixup_Transform(int node) const
 {
@@ -771,25 +771,25 @@ Matrix3 HierarchySaveClass::Get_Fixup_Transform(int node) const
 	assert(node < CurNode);
 
 	Matrix3 m;
-	
+
 	for (int j=0;j<4;j++) {
 		m.SetRow(j,Point3(Node[node].Fixup.TM[j][0],Node[node].Fixup.TM[j][1],Node[node].Fixup.TM[j][2]));
 	}
-		
+
 	return m;
 }
 
-/*********************************************************************************************** 
- * HierarchySaveClass::fixup_matrix -- conditions a matrix                                     * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   10/26/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * HierarchySaveClass::fixup_matrix -- conditions a matrix                                     *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   10/26/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
 Matrix3 HierarchySaveClass::fixup_matrix(const Matrix3 & csrc) const
 {
@@ -821,17 +821,17 @@ Matrix3 HierarchySaveClass::fixup_matrix(const Matrix3 & csrc) const
 }
 
 
-/*********************************************************************************************** 
- * HierarchySaveClass::save_header -- writes the header into a W3D file                        * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   10/26/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * HierarchySaveClass::save_header -- writes the header into a W3D file                        *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   10/26/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
 bool HierarchySaveClass::save_header(ChunkSaveClass & csave)
 {
@@ -851,17 +851,17 @@ bool HierarchySaveClass::save_header(ChunkSaveClass & csave)
 }
 
 
-/*********************************************************************************************** 
- * HierarchySaveClass::save_pivots -- writes the pivots into a W3D file                        * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   10/26/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * HierarchySaveClass::save_pivots -- writes the pivots into a W3D file                        *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   10/26/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
 bool HierarchySaveClass::save_pivots(ChunkSaveClass & csave)
 {
@@ -882,17 +882,17 @@ bool HierarchySaveClass::save_pivots(ChunkSaveClass & csave)
 	return true;
 }
 
-/*********************************************************************************************** 
- * HierarchySaveClass::save_fixups -- writes the fixup transforms into a W3D file              * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   10/26/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * HierarchySaveClass::save_fixups -- writes the fixup transforms into a W3D file              *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   10/26/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
 bool HierarchySaveClass::save_fixups(ChunkSaveClass & csave)
 {
@@ -914,17 +914,17 @@ bool HierarchySaveClass::save_fixups(ChunkSaveClass & csave)
 }
 
 
-/*********************************************************************************************** 
- * HierarchySaveClass::load_header -- reads the header from a W3D file                         * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   10/26/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * HierarchySaveClass::load_header -- reads the header from a W3D file                         *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   10/26/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
 bool HierarchySaveClass::load_header(ChunkLoadClass & cload)
 {
@@ -956,22 +956,22 @@ bool HierarchySaveClass::load_header(ChunkLoadClass & cload)
 			Node[i].Fixup.TM[j][2] = row.z;
 		}
 	}
-	
+
 	return true;
 }
 
 
-/*********************************************************************************************** 
- * HierarchySaveClass::load_pivots -- reads the pivots from a W3D file                         * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   10/26/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * HierarchySaveClass::load_pivots -- reads the pivots from a W3D file                         *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   10/26/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
 bool HierarchySaveClass::load_pivots(ChunkLoadClass & cload)
 {
@@ -979,29 +979,29 @@ bool HierarchySaveClass::load_pivots(ChunkLoadClass & cload)
 		Node[i].MaxNode = NULL;
 		if (cload.Read(&Node[i].Pivot,sizeof(W3dPivotStruct)) != sizeof(W3dPivotStruct)) {
 			return false;
-		}		
+		}
 	}
 	return true;
 }
 
-/*********************************************************************************************** 
- * HierarchySaveClass::load_fixups -- reads the fixup transforms from a W3D file               * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   10/26/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * HierarchySaveClass::load_fixups -- reads the fixup transforms from a W3D file               *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   10/26/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
 bool HierarchySaveClass::load_fixups(ChunkLoadClass & cload)
 {
 	for (uint32 i=0; i<HierarchyHeader.NumPivots; i++) {
 		if (cload.Read(&Node[i].Fixup,sizeof(W3dPivotFixupStruct)) != sizeof(W3dPivotFixupStruct)) {
 			return false;
-		}		
+		}
 	}
 	return true;
 }

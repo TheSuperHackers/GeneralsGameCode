@@ -40,7 +40,7 @@ class ChunkTableClass {
 public:
 	ChunkTableClass();
 	~ChunkTableClass();
-	ChunkType *Lookup(int ID); 
+	ChunkType *Lookup(int ID);
 	void NewType(int ID, const char *name, void (*callback)(ChunkItem *item, CListCtrl *list) = 0, bool wrapper = false);
 protected:
 	CMapPtrToPtr Types;
@@ -64,7 +64,7 @@ protected:
 	static void AddItem(CListCtrl *List, int &Counter, const char *Name, Vector3i *Value);
 	static void AddItem(CListCtrl *List, int &Counter, const char *name, W3dShaderStruct * shader);
 	static void AddItem(CListCtrl *List, int &Counter, const char *name, W3dPS2ShaderStruct * shader);
-		
+
 	static void AddItemVersion(CListCtrl *List,int &Counter,uint32 version);
 
 
@@ -85,12 +85,12 @@ protected:
 	static void List_W3D_CHUNK_MESH_USER_TEXT(ChunkItem *Item, CListCtrl *List);
 	static void List_W3D_CHUNK_VERTEX_COLORS(ChunkItem *Item, CListCtrl *List);
 	static void List_W3D_CHUNK_VERTEX_INFLUENCES(ChunkItem *Item, CListCtrl *List);
-	
+
 	static void List_W3D_CHUNK_DAMAGE(ChunkItem *Item, CListCtrl *List);
 	static void List_W3D_CHUNK_DAMAGE_HEADER(ChunkItem *Item, CListCtrl *List);
 	static void List_W3D_CHUNK_DAMAGE_VERTICES(ChunkItem *Item, CListCtrl *List);
 	static void List_W3D_CHUNK_DAMAGE_COLORS(ChunkItem *Item, CListCtrl *List);
-	
+
 	static void List_O_W3D_CHUNK_MATERIALS2(ChunkItem *Item, CListCtrl *List);
 
 	static void List_W3D_CHUNK_MATERIALS3(ChunkItem *Item, CListCtrl *List);
@@ -132,7 +132,7 @@ protected:
 	static void List_W3D_CHUNK_TEXTURE(ChunkItem * Item,CListCtrl *List);
 	static void List_W3D_CHUNK_TEXTURE_NAME(ChunkItem * Item,CListCtrl *List);
 	static void List_W3D_CHUNK_TEXTURE_INFO(ChunkItem * Item,CListCtrl *List);
-	
+
 	static void List_W3D_CHUNK_MATERIAL_PASS(ChunkItem * Item,CListCtrl *List);
 	static void List_W3D_CHUNK_VERTEX_MATERIAL_IDS(ChunkItem * Item,CListCtrl *List);
 	static void List_W3D_CHUNK_SHADER_IDS(ChunkItem * Item,CListCtrl *List);
@@ -140,7 +140,7 @@ protected:
 	static void List_W3D_CHUNK_DIG(ChunkItem * Item,CListCtrl *List);
 	static void List_W3D_CHUNK_SCG(ChunkItem * Item,CListCtrl *List);
 	static void List_W3D_CHUNK_FXSHADER_IDS(ChunkItem* Item, CListCtrl* List);
-	
+
 	static void List_W3D_CHUNK_TEXTURE_STAGE(ChunkItem * Item,CListCtrl *List);
 	static void List_W3D_CHUNK_TEXTURE_IDS(ChunkItem * Item,CListCtrl *List);
 	static void List_W3D_CHUNK_STAGE_TEXCOORDS(ChunkItem * Item,CListCtrl *List);
@@ -172,7 +172,7 @@ protected:
 	static void List_W3D_CHUNK_LODMODEL(ChunkItem *Item, CListCtrl *List);
 	static void List_W3D_CHUNK_LODMODEL_HEADER(ChunkItem *Item, CListCtrl *List);
 	static void List_W3D_CHUNK_LOD(ChunkItem * Item,CListCtrl * List);
-	
+
 	static void List_W3D_CHUNK_COLLECTION(ChunkItem * Item,CListCtrl * List);
 	static void List_W3D_CHUNK_COLLECTION_HEADER(ChunkItem * Item,CListCtrl * List);
 	static void List_W3D_CHUNK_COLLECTION_OBJ_NAME(ChunkItem * Item,CListCtrl * List);
@@ -244,7 +244,7 @@ protected:
 };
 
 
-class ChunkData  
+class ChunkData
 {
 public:
 	void Release_Data();

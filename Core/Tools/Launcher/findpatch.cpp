@@ -54,7 +54,7 @@ int Find_Patch(OUT char *filename,int maxlen, ConfigFile &config)
     ok=Get_App_Dir(gamePath,MAX_PATH,config,skuIndex);
     if (ok==FALSE)
       break;
-    
+
     i=0;
     while(extensions[i++])
     {
@@ -108,7 +108,7 @@ bit8 Get_App_Dir(OUT char *filename,int maxlen, ConfigFile &config,int index)
   if (config.getString(string,key)==FALSE)
     return(FALSE);
 
- 
+
   DBGMSG("KEY = "<<key.get());
   // Get the InstallPath from the specified registry key
   temp=0;
@@ -210,4 +210,4 @@ void Delete_Patches(ConfigFile &config)
     FindClose(hFile);
   }  // while there's apps in config
   return;
-} 
+}

@@ -36,7 +36,7 @@ TeamObjectProperties::TeamObjectProperties(Dict* dictToEdit)
 {
 	//{{AFX_DATA_INIT(TeamObjectProperties)
 		// NOTE: the ClassWizard will add member initialization here
-	//}}AFX_DATA_INIT	
+	//}}AFX_DATA_INIT
 }
 
 TeamObjectProperties::~TeamObjectProperties()
@@ -79,7 +79,7 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // TeamObjectProperties message handlers
 
-BOOL TeamObjectProperties::OnInitDialog() 
+BOOL TeamObjectProperties::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 	updateTheUI();
@@ -93,7 +93,7 @@ void TeamObjectProperties::OnOK()
 	_PropertiesToDict();
 }
 
-void TeamObjectProperties::updateTheUI(void) 
+void TeamObjectProperties::updateTheUI(void)
 {
 	_DictToHealth();
 	_DictToHPs();
@@ -189,7 +189,7 @@ void TeamObjectProperties::_DictToEnabled(void)
 	CButton* pItem = (CButton*) GetDlgItem(IDC_MAPOBJECT_Enabled);
 	if (pItem) {
 		pItem->SetCheck(enabled);
-	}	
+	}
 }
 
 void TeamObjectProperties::_DictToDestructible(void)
@@ -203,7 +203,7 @@ void TeamObjectProperties::_DictToDestructible(void)
 	CButton* pItem = (CButton*) GetDlgItem(IDC_MAPOBJECT_Indestructible);
 	if (pItem) {
 		pItem->SetCheck(destructible);
-	}	
+	}
 }
 
 void TeamObjectProperties::_DictToUnsellable(void)
@@ -217,7 +217,7 @@ void TeamObjectProperties::_DictToUnsellable(void)
 	CButton* pItem = (CButton*) GetDlgItem(IDC_MAPOBJECT_Unsellable);
 	if (pItem) {
 		pItem->SetCheck(unsellable);
-	}	
+	}
 }
 
 void TeamObjectProperties::_DictToPowered(void)
@@ -231,8 +231,8 @@ void TeamObjectProperties::_DictToPowered(void)
 	CButton* pItem = (CButton*) GetDlgItem(IDC_MAPOBJECT_Powered);
 	if (pItem) {
 		pItem->SetCheck(powered);
-	}	
-	
+	}
+
 }
 
 void TeamObjectProperties::_DictToAggressiveness(void)
@@ -272,7 +272,7 @@ void TeamObjectProperties::_DictToVisibilityRange(void)
 		static char buff[12];
 		sprintf(buff, "%d", distance);
 		if (distance == 0) {
-			pItem->SetWindowText(""); 
+			pItem->SetWindowText("");
 		} else {
 			pItem->SetWindowText(buff);
 		}
@@ -334,7 +334,7 @@ void TeamObjectProperties::_DictToShroudClearingDistance(void)
 		static char buff[12];
 		sprintf(buff, "%d", distance);
 		if (distance == 0) {
-			pItem->SetWindowText(""); 
+			pItem->SetWindowText("");
 		} else {
 			pItem->SetWindowText(buff);
 		}
@@ -348,11 +348,11 @@ void TeamObjectProperties::_DictToRecruitableAI(void)
  	if (m_dictToEdit) {
 		recruitableAI  = m_dictToEdit->getBool(TheKey_teamObjectRecruitableAI, &exists);
  	}
-	
+
  	CButton* pItem = (CButton*) GetDlgItem(IDC_MAPOBJECT_RecruitableAI);
  	if (pItem) {
 		pItem->SetCheck(recruitableAI);
-	}	
+	}
 }
 
 void TeamObjectProperties::_DictToSelectable(void)
@@ -366,7 +366,7 @@ void TeamObjectProperties::_DictToSelectable(void)
 	CButton* pItem = (CButton*) GetDlgItem(IDC_MAPOBJECT_Selectable);
 	if (pItem) {
 		pItem->SetCheck(selectable);
-	}	
+	}
 }
 
 void TeamObjectProperties::_DictToStoppingDistance(void)
@@ -382,11 +382,11 @@ void TeamObjectProperties::_DictToStoppingDistance(void)
 		static char buff[12];
 		sprintf(buff, "%g", stoppingDistance);
 		if (stoppingDistance == 0) {
-			pItem->SetWindowText(""); 
+			pItem->SetWindowText("");
 		} else {
 			pItem->SetWindowText(buff);
 		}
-	}	
+	}
 }
 
 void TeamObjectProperties::_HealthToDict(void)
@@ -459,7 +459,7 @@ void TeamObjectProperties::_AggressivenessToDict(void)
 	static char buf[1024];
 	owner->GetWindowText(buf, sizeof(buf)-2);
 	int value = 0;
-	
+
 	if (strcmp(buf, "Sleep") == 0) {
 		value = -2;
 	} else if (strcmp(buf, "Passive") == 0) {
@@ -496,7 +496,7 @@ void TeamObjectProperties::_VeterancyToDict(void)
 	CComboBox *owner = (CComboBox*)GetDlgItem(IDC_MAPOBJECT_Veterancy);
 	static char buf[1024];
 	int curSel = owner->GetCurSel();
-	int value = 0;	
+	int value = 0;
 	if (curSel >= 0) {
 		value=curSel;
 	}
@@ -542,7 +542,7 @@ void TeamObjectProperties::_RecruitableAIToDict(void)
 {
 	CButton *owner = (CButton*) GetDlgItem(IDC_MAPOBJECT_RecruitableAI);
 	Bool isChecked = (owner->GetCheck() != 0);
-	
+
 	m_dictToEdit->setBool(TheKey_teamObjectRecruitableAI, isChecked);
 }
 
@@ -554,7 +554,7 @@ void TeamObjectProperties::_SelectableToDict(void)
 	m_dictToEdit->setBool(TheKey_teamObjectSelectable, isChecked);
 }
 
-void TeamObjectProperties::_HPsToDict() 
+void TeamObjectProperties::_HPsToDict()
 {
 	Int value;
 	static char buf[1024];
@@ -678,7 +678,7 @@ void TeamObjectProperties::_PropertiesToDict()
 
 #endif
 
-BOOL TeamObjectProperties::OnCommand(WPARAM wParam, LPARAM lParam) 
+BOOL TeamObjectProperties::OnCommand(WPARAM wParam, LPARAM lParam)
 {
 	return CPropertyPage::OnCommand(wParam, lParam);
 }

@@ -18,12 +18,12 @@
 
 // FILE: MapPreview.cpp /////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Electronic Arts Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2002 - All Rights Reserved                  
-//                                                                          
+//
+//                       Electronic Arts Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2002 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 //	created:	Oct 2002
@@ -31,9 +31,9 @@
 //	Filename: 	MapPreview.cpp
 //
 //	author:		Chris Huybregts
-//	
-//	purpose:	Contains the code used to generate and save the map preview to 
-//						the map file.  (Original code was taken from the Radar code in 
+//
+//	purpose:	Contains the code used to generate and save the map preview to
+//						the map file.  (Original code was taken from the Radar code in
 //						game engine).
 //
 //-----------------------------------------------------------------------------
@@ -47,7 +47,7 @@
 // USER INCLUDES //////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
 
-#include "StdAfx.h" 
+#include "StdAfx.h"
 #include "resource.h"
 #include "WHeightMapEdit.h"
 #include "WorldBuilderDoc.h"
@@ -96,15 +96,15 @@ void MapPreview::save( CString mapName )
 */
 }
 
-void MapPreview::interpolateColorForHeight( RGBColor *color,	
-																					Real height, 
+void MapPreview::interpolateColorForHeight( RGBColor *color,
+																					Real height,
 																					Real hiZ,
 																					Real midZ,
 																					Real loZ )
 {
 	const Real howBright = 0.30f;  // bigger is brighter (0.0 to 1.0)
 	const Real howDark   = 0.60f;  // bigger is darker (0.0 to 1.0)
-	
+
 	// sanity on map height (flat maps bomb)
 	if (hiZ == midZ)
 		hiZ = midZ+0.1f;
@@ -188,7 +188,7 @@ Bool MapPreview::mapPreviewToWorld(const ICoord2D *radar, Coord3D *world)
 	CWorldBuilderDoc* pDoc = CWorldBuilderDoc::GetActiveDoc();
 	WorldHeightMapEdit *pMap = pDoc->GetHeightMap();
 	Real xSample, ySample;
-	
+
 	xSample = INT_TO_REAL(pMap->getXExtent() - (2 * pMap->getBorderSize())) / MAP_PREVIEW_WIDTH;
 	ySample = INT_TO_REAL(pMap->getYExtent() - (2 * pMap->getBorderSize())) / MAP_PREVIEW_HEIGHT;
 	// translate to world
@@ -198,7 +198,7 @@ Bool MapPreview::mapPreviewToWorld(const ICoord2D *radar, Coord3D *world)
 	// find the terrain height here
 //	world->z = pMap->gethigh
 //	TheTerrainLogic->getGroundHeight( world->x, world->y );
-		
+
 	return TRUE;
 
 }
@@ -237,7 +237,7 @@ void MapPreview::buildMapPreviewTexture( CString tgaName )
 	for(i = 0; i < MAP_PREVIEW_HEIGHT; ++i)
 	{
 		for(j = 0; j < MAP_PREVIEW_WIDTH; ++j)
-		{	
+		{
 			radarPoint.x = j;
 			radarPoint.y = i;
 			mapPreviewToWorld( &radarPoint, &worldPoint );
@@ -251,7 +251,7 @@ void MapPreview::buildMapPreviewTexture( CString tgaName )
 		}
 	}
 	getTerrainAverageZ = getTerrainAverageZ /terrainCount;
-	
+
 
 
 //	Color paddingColor = GameMakeColor( 100, 100, 100, 255 );
@@ -265,14 +265,14 @@ void MapPreview::buildMapPreviewTexture( CString tgaName )
 			radarPoint.x = x;
 			radarPoint.y = y;
 			mapPreviewToWorld( &radarPoint, &worldPoint );
-			
+
 
 			// get height of the terrain at this sample point
 			z = pMap->getHeight(worldPoint.x, worldPoint.y);
-			
+
 			// create a color based on the Z height of the map
 			//Real waterZ;
-			
+
 			if( localIsUnderwater( MAP_XY_FACTOR *(worldPoint.x - pMap->getBorderSize()), MAP_XY_FACTOR * ( worldPoint.y - pMap->getBorderSize())) )
 			{
 				const Int waterSamplesAway = 1;		// how many "tiles" from the center tile we will sample away
@@ -297,16 +297,16 @@ void MapPreview::buildMapPreviewTexture( CString tgaName )
 								radarPoint.x = i;
 								radarPoint.y = j;
 								mapPreviewToWorld( &radarPoint, &worldPoint );
-								
+
 								// get Z at this sample height
 								Real underwaterZ = pMap->getHeight(worldPoint.x, worldPoint.y);
-								
+
 								// get color for this Z and add to our sample color
 								if( localIsUnderwater( MAP_XY_FACTOR *(worldPoint.x - pMap->getBorderSize()), MAP_XY_FACTOR * ( worldPoint.y - pMap->getBorderSize())))
 								{
 
 									// this is our "color" for water
-									color = waterColor;									
+									color = waterColor;
 
 									// interpolate the water color for height in the water table
 									interpolateColorForHeight( &color, underwaterZ, pMap->getMaxHeightValue(),getTerrainAverageZ,  pMap->getMinHeightValue() );
@@ -368,7 +368,7 @@ void MapPreview::buildMapPreviewTexture( CString tgaName )
 								pMap->getTerrainColorAt( MAP_XY_FACTOR *(worldPoint.x - pMap->getBorderSize()) ,MAP_XY_FACTOR * ( worldPoint.y - pMap->getBorderSize()), &color );
 
 								// interpolate the color for height
-								interpolateColorForHeight( &color, z, 
+								interpolateColorForHeight( &color, z,
 																						maxHeight, getTerrainAverageZ, minHeight);
 																					 //pMap->getMaxHeightValue(),getTerrainAverageZ,  pMap->getMinHeightValue() );
 
@@ -406,8 +406,8 @@ void MapPreview::buildMapPreviewTexture( CString tgaName )
 			// the sampling and interpolation algorithm for generating pretty looking terrain
 			// and water for the radar is just, well, expensive.
 			//
-			m_pixelBuffer[y][x]= 255 | (REAL_TO_INT(color.red *255) << 8) | (REAL_TO_INT(color.green *255) << 16) | REAL_TO_INT(color.blue * 255)<< 24; 
-			
+			m_pixelBuffer[y][x]= 255 | (REAL_TO_INT(color.red *255) << 8) | (REAL_TO_INT(color.green *255) << 16) | REAL_TO_INT(color.blue * 255)<< 24;
+
 		}  // end for x
 
 	}  // end for y

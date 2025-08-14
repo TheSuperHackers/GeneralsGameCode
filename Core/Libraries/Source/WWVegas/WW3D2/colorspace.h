@@ -88,12 +88,12 @@ inline void HSV_To_RGB(Vector3 &rgb, const Vector3 &hsv)
 {
 	float h=hsv.X;
 	float s=hsv.Y;
-	float v=hsv.Z;	
+	float v=hsv.Z;
 
 	if (hsv.Y==0.0f)	{
 		rgb.Set(v,v,v);
 	} else	{
-		float f,p,q,t;		
+		float f,p,q,t;
 
 		int i;
 
@@ -145,7 +145,7 @@ inline void Recolor(Vector3 &rgb, const Vector3 &hsv_shift)
 	if (hsv.X>360.0f) hsv.X-=360.0f;
 	// clamp saturation and value
 	hsv.Y=WWMath::Clamp(hsv.Y,0.0f,1.0f);
-	hsv.Z=WWMath::Clamp(hsv.Z,0.0f,1.0f);	
+	hsv.Z=WWMath::Clamp(hsv.Z,0.0f,1.0f);
 	HSV_To_RGB(rgb,hsv);
 }
 

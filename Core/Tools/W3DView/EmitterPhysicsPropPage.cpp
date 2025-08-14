@@ -113,7 +113,7 @@ EmitterPhysicsPropPageClass::Initialize (void)
 {
 	SAFE_DELETE (m_Randomizer);
 	if (m_pEmitterList != NULL) {
-	
+
 		//
 		// Get the emitter's settings
 		//
@@ -134,7 +134,7 @@ EmitterPhysicsPropPageClass::Initialize (void)
 //
 /////////////////////////////////////////////////////////////
 BOOL
-EmitterPhysicsPropPageClass::OnInitDialog (void) 
+EmitterPhysicsPropPageClass::OnInitDialog (void)
 {
 	// Allow the base class to process this message
 	CPropertyPage::OnInitDialog ();
@@ -153,7 +153,7 @@ EmitterPhysicsPropPageClass::OnInitDialog (void)
 	//
 	::Initialize_Spinner (m_AccelXSpin, m_Acceleration.X, -10000, 10000);
 	::Initialize_Spinner (m_AccelYSpin, m_Acceleration.Y, -10000, 10000);
-	::Initialize_Spinner (m_AccelZSpin, m_Acceleration.Z, -10000, 10000);		
+	::Initialize_Spinner (m_AccelZSpin, m_Acceleration.Z, -10000, 10000);
 	return TRUE;
 }
 
@@ -205,7 +205,7 @@ EmitterPhysicsPropPageClass::OnNotify
 	//
 	NMHDR *pheader = (NMHDR *)lParam;
 	if ((pheader != NULL) && (pheader->code == UDN_DELTAPOS)) {
-		LPNMUPDOWN pupdown = (LPNMUPDOWN)lParam;		
+		LPNMUPDOWN pupdown = (LPNMUPDOWN)lParam;
 		::Update_Spinner_Buddy (pheader->hwndFrom, pupdown->iDelta);
 		On_Setting_Changed (wParam);
 	}
@@ -225,7 +225,7 @@ EmitterPhysicsPropPageClass::OnSpecifyVelocityRandom (void)
 {
 	VolumeRandomDialogClass dialog (m_Randomizer, this);
 	if (dialog.DoModal () == IDOK) {
-		
+
 		//
 		//	Get the new randomizer from the dialog
 		//

@@ -43,8 +43,8 @@ extern Bool ClipLine2D( ICoord2D *p1, ICoord2D *p2, ICoord2D *c1, ICoord2D *c2,
 ///< IntersectLine2D will take two segments delimited by ab and cd and will return whether
 ///< they intersect within the length of ab. They will also return the intersection point out
 ///< intersection if it is non-NULL.
-extern Bool IntersectLine2D( const Coord2D *a, const Coord2D *b, 
-															const Coord2D *c, const Coord2D *d, 
+extern Bool IntersectLine2D( const Coord2D *a, const Coord2D *b,
+															const Coord2D *c, const Coord2D *d,
 															Coord2D *intersection = NULL);
 
 ///< PointInsideRect2D will return true iff inputPoint lies iside of the rectangle specified
@@ -81,7 +81,7 @@ extern Bool PointInsideArea2D( const Coord3D *ptToTest,
 															 Int numPointsInArea);
 
 ///< This function will find the shortest distance between the given segment (ab) and the pt.
-///< It will also give the intersection points on the segment (ab) if desired. 
+///< It will also give the intersection points on the segment (ab) if desired.
 ///< outU will return the U value determined. This is a shortcut for panning
 extern void ShortestDistancePointToSegment2D( const Coord2D *a, const Coord2D *b, const Coord2D *pt,
 																							Real *outDistance, Coord2D *outPosition, Real *outU );

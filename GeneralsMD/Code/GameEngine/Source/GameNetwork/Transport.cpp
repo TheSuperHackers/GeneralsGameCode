@@ -107,10 +107,10 @@ Bool Transport::init( UnsignedInt ip, UnsignedShort port )
 	if (m_udpsock)
 		delete m_udpsock;
 	m_udpsock = NEW UDP();
-	
+
 	if (!m_udpsock)
 		return false;
-	
+
 	int retval = -1;
 	time_t now = timeGetTime();
 	while ((retval != 0) && ((timeGetTime() - now) < 1000)) {
@@ -270,7 +270,7 @@ Bool Transport::doSend() {
 	return retval;
 }
 
-Bool Transport::doRecv() 
+Bool Transport::doRecv()
 {
 	if (!m_udpsock)
 	{

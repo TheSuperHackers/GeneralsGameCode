@@ -56,7 +56,7 @@ class ChunkLoadClass;
 
 /**
 ** LookupTableClass
-** This class contains the tabulated values for a function. 
+** This class contains the tabulated values for a function.
 */
 class LookupTableClass : public RefCountClass, public MultiListObjectClass
 {
@@ -72,7 +72,7 @@ public:
 protected:
 
 	StringClass						Name;				// name of this table, if it came from a file, this is also the filename
-	float								MinInputValue; 
+	float								MinInputValue;
 	float								MaxInputValue;
 	float								OOMaxMinusMin;
 	SimpleVecClass<float>		OutputSamples;
@@ -87,10 +87,10 @@ inline float LookupTableClass::Get_Value(float input)
 	if (input >= MaxInputValue) {
 		return OutputSamples[OutputSamples.Length()-1];
 	}
-	
+
 	float normalized_input = (float)(OutputSamples.Length()-1) * (input - MinInputValue) * OOMaxMinusMin;
 	float input0 = WWMath::Floor(normalized_input);
-	
+
 	int index0 = WWMath::Float_To_Long(input0);
 	int index1 = index0+1;
 	float lerp = normalized_input - input0;
@@ -106,7 +106,7 @@ inline float LookupTableClass::Get_Value_Quick(float input)
 	if (input >= MaxInputValue) {
 		return OutputSamples[OutputSamples.Length()-1];
 	}
-	
+
 	int index = (OutputSamples.Length()-1) * WWMath::Float_To_Long((input - MinInputValue) * OOMaxMinusMin);
 	return OutputSamples[index];
 }
@@ -115,7 +115,7 @@ inline float LookupTableClass::Get_Value_Quick(float input)
 /**
 ** LookupTableMgrClass
 ** This class tracks all of the LookupTableClass's that have been loaded or installed.
-** LookupTables can be created using the "SimpleGraph" tool.  It basically allows you 
+** LookupTables can be created using the "SimpleGraph" tool.  It basically allows you
 ** to edit a curve which will be used to generate the table.  These curves are stored
 ** in .TBL files.
 **
@@ -123,7 +123,7 @@ inline float LookupTableClass::Get_Value_Quick(float input)
 ** by filename and it will load the table for you (unless it is already loaded).
 **
 ** NOTE: I add a table called "DefaultTable" so that you can revert to that if
-** your table isn't found.  
+** your table isn't found.
 */
 class LookupTableMgrClass
 {
@@ -138,12 +138,12 @@ public:
 	static bool					Add_Table(LookupTableClass * table);
 	static bool					Remove_Table(LookupTableClass * table);
 	static LookupTableClass *	Get_Table(const char * name,bool try_to_load = true);
-	
+
 	static void					Save_Table_Desc(		ChunkSaveClass &	csave,
 																Curve1DClass *		curve,
 																const Vector2 &	min,
 																const Vector2 &	max			);
-	
+
 	static void					Load_Table_Desc(		ChunkLoadClass &	cload,
 																Curve1DClass **	curve_ptr,
 																Vector2 *			set_min = NULL,

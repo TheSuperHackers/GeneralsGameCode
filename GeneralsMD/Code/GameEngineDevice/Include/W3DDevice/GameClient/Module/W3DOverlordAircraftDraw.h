@@ -24,7 +24,7 @@
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-//  FILE: W3DOverlordAircraftDraw.h 
+//  FILE: W3DOverlordAircraftDraw.h
 //  Author: Mark Lorenzen, April 2003
 //  Desc: Units that recieve portable structure upgrades (like the Overlord Tank) have a super specific special need.
 //  He needs his rider to draw explicitly after him,
@@ -58,7 +58,7 @@ class W3DOverlordAircraftDraw : public W3DModelDraw
 
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( W3DOverlordAircraftDraw, "W3DOverlordAircraftDraw" )
 	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( W3DOverlordAircraftDraw, W3DOverlordAircraftDrawModuleData )
-		
+
 public:
 
 	W3DOverlordAircraftDraw( Thing *thing, const ModuleData* moduleData );

@@ -26,8 +26,8 @@
  *                                                                                             *
  *              Original Author:: Hector Yee                                                   *
  *                                                                                             *
- *                       Author : Kenny Mitchell                                               * 
- *                                                                                             * 
+ *                       Author : Kenny Mitchell                                               *
+ *                                                                                             *
  *                     $Modtime:: 06/27/02 1:27p                                              $*
  *                                                                                             *
  *                    $Revision:: 31                                                          $*
@@ -255,11 +255,11 @@ DX8Caps::DeviceTypeATI DX8Caps::Get_ATI_Device(unsigned device_id)
 	case 0x4C45:
 	case 0x4C46: return DEVICE_ATI_RAGE_128_MOBILITY_M3;
 
-	case 0x5041: 
-	case 0x5042: 
-	case 0x5043: 
-	case 0x5044: 
-	case 0x5045: 
+	case 0x5041:
+	case 0x5042:
+	case 0x5043:
+	case 0x5044:
+	case 0x5045:
 	case 0x5046: return DEVICE_ATI_RAGE_128_PRO_GL;
 
 	case 0x5047:
@@ -295,10 +295,10 @@ DX8Caps::DeviceTypeATI DX8Caps::Get_ATI_Device(unsigned device_id)
 
 	case 0x5157: return DEVICE_ATI_R7500;
 
-	case 0x5245: 
-	case 0x5246: 
-	case 0x534B: 
-	case 0x534C: 
+	case 0x5245:
+	case 0x5246:
+	case 0x534B:
+	case 0x534C:
 	case 0x534D: return DEVICE_ATI_RAGE_128_GL;
 
 	case 0x524B:
@@ -434,7 +434,7 @@ DX8Caps::DeviceTypeMatrox DX8Caps::Get_Matrox_Device(unsigned device_id)
 	default: return DEVICE_MATROX_UNKNOWN;
 	}
 }
- 
+
 DX8Caps::DeviceTypePowerVR DX8Caps::Get_PowerVR_Device(unsigned device_id)
 {
 	switch (device_id) {
@@ -465,8 +465,8 @@ DX8Caps::DeviceTypeIntel DX8Caps::Get_Intel_Device(unsigned device_id)
 
 DX8Caps::DX8Caps(
 	IDirect3D8* direct3d,
-	IDirect3DDevice8* D3DDevice, 
-	WW3DFormat display_format, 
+	IDirect3DDevice8* D3DDevice,
+	WW3DFormat display_format,
 	const D3DADAPTER_IDENTIFIER8& adapter_id)
 	:
 	Direct3D(direct3d),
@@ -479,8 +479,8 @@ DX8Caps::DX8Caps(
 
 DX8Caps::DX8Caps(
 	IDirect3D8* direct3d,
-	const D3DCAPS8& caps, 
-	WW3DFormat display_format, 
+	const D3DCAPS8& caps,
+	WW3DFormat display_format,
 	const D3DADAPTER_IDENTIFIER8& adapter_id)
 	:
 	Direct3D(direct3d),
@@ -491,7 +491,7 @@ DX8Caps::DX8Caps(
 	if ((Caps.DevCaps&D3DDEVCAPS_HWTRANSFORMANDLIGHT)==D3DDEVCAPS_HWTRANSFORMANDLIGHT) {
 		SupportTnL=true;
 	} else {
-		SupportTnL=false;			
+		SupportTnL=false;
 	}
 
 	Compute_Caps(display_format,adapter_id);
@@ -519,9 +519,9 @@ void DX8Caps::Init_Caps(IDirect3DDevice8* D3DDevice)
 		SupportTnL=true;
 
 		D3DDevice->SetRenderState(D3DRS_SOFTWAREVERTEXPROCESSING,FALSE);
-		DX8CALL(GetDeviceCaps(&Caps));	
+		DX8CALL(GetDeviceCaps(&Caps));
 	} else {
-		SupportTnL=false;			
+		SupportTnL=false;
 	}
 }
 
@@ -765,9 +765,9 @@ void DX8Caps::Check_Render_To_Texture_Support(WW3DFormat display_format,const D3
 */
 void DX8Caps::Check_Depth_Stencil_Support(WW3DFormat display_format, const D3DCAPS8& caps)
 {
-	if (display_format==WW3D_FORMAT_UNKNOWN) 
+	if (display_format==WW3D_FORMAT_UNKNOWN)
 	{
-		for (unsigned i=0;i<WW3D_ZFORMAT_COUNT;++i) 
+		for (unsigned i=0;i<WW3D_ZFORMAT_COUNT;++i)
 		{
 			SupportDepthStencilFormat[i]=false;
 		}
@@ -775,14 +775,14 @@ void DX8Caps::Check_Depth_Stencil_Support(WW3DFormat display_format, const D3DCA
 	}
 
 	D3DFORMAT d3d_display_format=WW3DFormat_To_D3DFormat(display_format);
-	
-	for (unsigned i=0;i<WW3D_ZFORMAT_COUNT;++i) 
+
+	for (unsigned i=0;i<WW3D_ZFORMAT_COUNT;++i)
 	{
-		if (i==WW3D_ZFORMAT_UNKNOWN) 
+		if (i==WW3D_ZFORMAT_UNKNOWN)
 		{
 			SupportDepthStencilFormat[i]=false;
 		}
-		else 
+		else
 		{
 			WW3DZFormat format=(WW3DZFormat)i;
 			SupportDepthStencilFormat[i]=SUCCEEDED
@@ -798,7 +798,7 @@ void DX8Caps::Check_Depth_Stencil_Support(WW3DFormat display_format, const D3DCA
 				)
 			);
 
-			if (SupportDepthStencilFormat[i]) 
+			if (SupportDepthStencilFormat[i])
 			{
 				StringClass name(0,true);
 				Get_WW3D_ZFormat_Name(format,name);
@@ -1005,7 +1005,7 @@ bool DX8Caps::Is_Valid_Display_Format(int width, int height, WW3DFormat format)
 
 void DX8Caps::Vendor_Specific_Hacks(const D3DADAPTER_IDENTIFIER8& adapter_id)
 {
-	if (VendorId==VENDOR_NVIDIA) 
+	if (VendorId==VENDOR_NVIDIA)
   {
 		if (SupportNPatches) {
 			DXLOG(("NVidia Driver reported N-Patch support, disabling.\r\n"));
@@ -1027,7 +1027,7 @@ void DX8Caps::Vendor_Specific_Hacks(const D3DADAPTER_IDENTIFIER8& adapter_id)
     if (DeviceId == DEVICE_NVIDIA_GEFORCE2_MX ||
         DeviceId == DEVICE_NVIDIA_GEFORCE2_MX_400 )
     {
-		  DXLOG(("Maximum screen resolution limited to 1024 x 768 on NVidia GeForce2 mx/mx400 cards\r\n"));			
+		  DXLOG(("Maximum screen resolution limited to 1024 x 768 on NVidia GeForce2 mx/mx400 cards\r\n"));
 		  MaxDisplayWidth=1024;
 		  MaxDisplayHeight=768;
     }
@@ -1049,7 +1049,7 @@ void DX8Caps::Vendor_Specific_Hacks(const D3DADAPTER_IDENTIFIER8& adapter_id)
 		// Rage Pro doesn't handle multitexturing well enough...
 		// It also doesn't really handle render-to-texture...
 		if (DeviceId==DEVICE_ATI_RAGE_PRO || DeviceId==DEVICE_ATI_RAGE_PRO_MOBILITY) {
-			DXLOG(("Disabling multitexturing on ATI Rage Pro\r\n"));			
+			DXLOG(("Disabling multitexturing on ATI Rage Pro\r\n"));
 			MaxTexturesPerPass=1;
 			CanDoMultiPass=false;
 
@@ -1083,7 +1083,7 @@ void DX8Caps::Vendor_Specific_Hacks(const D3DADAPTER_IDENTIFIER8& adapter_id)
 			DeviceId==DEVICE_ATI_RAGE_128_PRO_VR ||
 			DeviceId==DEVICE_ATI_RAGE_128_GL ||
 			DeviceId==DEVICE_ATI_RAGE_128_VR) {
-			DXLOG(("Maximum screen resolution limited to 1280 x 1024 on ATI Rage 128 cards\r\n"));			
+			DXLOG(("Maximum screen resolution limited to 1280 x 1024 on ATI Rage 128 cards\r\n"));
 			MaxDisplayWidth=1280;
 			MaxDisplayHeight=1024;
 			DXLOG(("ModAlphaAddClr disabled ATI Rage 128 cards (cannot put texture in 2nd arg)\r\n"));
@@ -1117,10 +1117,10 @@ void DX8Caps::Vendor_Specific_Hacks(const D3DADAPTER_IDENTIFIER8& adapter_id)
 		if (DeviceId==DEVICE_3DFX_VOODOO_3 ||
 			DeviceId==DEVICE_3DFX_BANSHEE ||
 			DeviceId==DEVICE_3DFX_VOODOO_2) {
-			DXLOG(("Disabling multitexturing on Voodoo2/Voodoo3/Banshee\r\n"));			
+			DXLOG(("Disabling multitexturing on Voodoo2/Voodoo3/Banshee\r\n"));
 			MaxTexturesPerPass=1;	// Especially important on Banshee (multitexturing crashes)!!!
 
-			DXLOG(("Maximum screen resolution limited to 1280 x 1024 on Voodoo2/Voodoo3/Banshee\r\n"));			
+			DXLOG(("Maximum screen resolution limited to 1280 x 1024 on Voodoo2/Voodoo3/Banshee\r\n"));
 			MaxDisplayWidth=1280;
 			MaxDisplayHeight=1024;
 		}
@@ -1134,7 +1134,7 @@ void DX8Caps::Vendor_Specific_Hacks(const D3DADAPTER_IDENTIFIER8& adapter_id)
 	}
 
 	if (VendorId==VENDOR_POWERVR) {
-		DXLOG(("Maximum screen resolution limited to 1280 x 1024 on PowerVR Kyro cards\r\n"));			
+		DXLOG(("Maximum screen resolution limited to 1280 x 1024 on PowerVR Kyro cards\r\n"));
 		MaxDisplayWidth=1280;
 		MaxDisplayHeight=1024;
 
@@ -1144,13 +1144,13 @@ void DX8Caps::Vendor_Specific_Hacks(const D3DADAPTER_IDENTIFIER8& adapter_id)
 
 	if (VendorId==VENDOR_S3) {
 		if (DeviceId==DEVICE_S3_SAVAGE_4) {
-			DXLOG(("Maximum screen resolution limited to 1024 x 768 on S3 Savage 4 cards\r\n"));			
+			DXLOG(("Maximum screen resolution limited to 1024 x 768 on S3 Savage 4 cards\r\n"));
 			MaxDisplayWidth=800;//1024;
 			MaxDisplayHeight=600;//768;
 		}
 
 		if (DeviceId==DEVICE_S3_SAVAGE_200) {
-			DXLOG(("Disabling multitexturing on S3 Savage 2000\r\n"));			
+			DXLOG(("Disabling multitexturing on S3 Savage 2000\r\n"));
 			MaxTexturesPerPass=1;
 			CanDoMultiPass=false;
 		}

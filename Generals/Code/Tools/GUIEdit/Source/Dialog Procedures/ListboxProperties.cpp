@@ -24,12 +24,12 @@
 
 // FILE: ListboxProperties.cpp ////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:    GUIEdit
@@ -265,7 +265,7 @@ static LRESULT CALLBACK listboxPropertiesCallback( HWND hWndDialog,
 	// are designed to have controls doing the same functionality
 	// and names
 	//
-	if( HandleCommonDialogMessages( hWndDialog, message, 
+	if( HandleCommonDialogMessages( hWndDialog, message,
 																	wParam, lParam, &returnCode ) == TRUE )
 		return returnCode;
 
@@ -278,7 +278,7 @@ static LRESULT CALLBACK listboxPropertiesCallback( HWND hWndDialog,
 //			Int notifyCode = HIWORD( wParam );  // notification code
 			Int controlID = LOWORD( wParam );  // control ID
 //			HWND hWndControl = (HWND)lParam;  // control window handle
- 
+
       switch( controlID )
       {
 
@@ -318,7 +318,7 @@ static LRESULT CALLBACK listboxPropertiesCallback( HWND hWndDialog,
 					StoreColor( LISTBOX_DOWN_BUTTON_HILITE, info->color, info->borderColor );
 					StoreColor( LISTBOX_SLIDER_HILITE_TOP, info->color, info->borderColor );
 					StoreColor( LISTBOX_SLIDER_THUMB_HILITE, info->color, info->borderColor );
-					
+
 					info = GetStateInfo( LISTBOX_HILITE_SELECTED_ITEM_LEFT );
 					StoreColor( LISTBOX_UP_BUTTON_HILITE_PUSHED, info->color, info->borderColor );
 					StoreColor( LISTBOX_DOWN_BUTTON_HILITE_PUSHED, info->color, info->borderColor );
@@ -597,7 +597,7 @@ static LRESULT CALLBACK listboxPropertiesCallback( HWND hWndDialog,
 
 						// Multi-column
 						Int newColumns = GetDlgItemInt( hWndDialog, EDIT_NUM_COLUMNS,NULL,FALSE);
-						
+
 						if(newColumns > 1)
 						{
 							Char percentages[200];
@@ -607,13 +607,13 @@ static LRESULT CALLBACK listboxPropertiesCallback( HWND hWndDialog,
 								MessageBox(NULL,"You have specified a column amount greater then 1, please enter the same about of percentages","whoops",MB_OK | MB_ICONSTOP | MB_APPLMODAL);
 								break;
 							}
-														
+
 							Int *newPercentages = new Int[newColumns];
 							Int i = 0;
 							Int total = 0;
 							Char *token = strtok( percentages, "," );
 							while( token != NULL )
-							{			
+							{
 								newPercentages[i] = atoi(token);
 								total += newPercentages[i];
 								token = strtok( NULL, "," );
@@ -642,7 +642,7 @@ static LRESULT CALLBACK listboxPropertiesCallback( HWND hWndDialog,
 									delete[] newPercentages;
 									return 0;
 								}
-							}						
+							}
 							listData->columnWidthPercentage = newPercentages;
 						}
 						listData->columns = newColumns;

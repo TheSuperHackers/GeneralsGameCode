@@ -34,8 +34,8 @@
  * Functions:                                                                                  *
  *   LineSegClass::Set -- Initialize this 'lineseg' by transforming another 'lineseg'          *
  *   LineSegClass::Set_Random -- create a random linesegment within the given space            *
- *   LineSegClass::Find_Point_Closest_To -- Finds point on line closest to point supplied.     * 
- *   LineSegClass::Find_Intersection -- Finds the closest points on the two lines				  * 
+ *   LineSegClass::Find_Point_Closest_To -- Finds point on line closest to point supplied.     *
+ *   LineSegClass::Find_Intersection -- Finds the closest points on the two lines				  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "lineseg.h"
@@ -62,7 +62,7 @@ void LineSegClass::Set(const LineSegClass & that,const Matrix3D & tm)
 	*/
 	Matrix3D::Transform_Vector(tm,that.P0,&P0);
 	Matrix3D::Transform_Vector(tm,that.P1,&P1);
-	
+
 	/*
 	** Just calculate DP
 	*/
@@ -110,57 +110,57 @@ void LineSegClass::Set_Random(const Vector3 & min,const Vector3 & max)
 	P1.Z = min.Z + frac * (max.Z - min.Z);
 
 	DP = P1 - P0;
-	Dir = DP; 
-	Dir.Normalize(); 
-	Length = DP.Length(); 
+	Dir = DP;
+	Dir.Normalize();
+	Length = DP.Length();
 }
 
 
 
 
-/*********************************************************************************************** 
- * LineSegClass::Find_Point_Closest_To -- Finds point on line closest to point supplied.       * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   07/26/1999 SKB : Created.                                                                 * 
+/***********************************************************************************************
+ * LineSegClass::Find_Point_Closest_To -- Finds point on line closest to point supplied.       *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   07/26/1999 SKB : Created.                                                                 *
  *=============================================================================================*/
 Vector3 LineSegClass::Find_Point_Closest_To(const Vector3 &pos) const
 {
 	// Get a vector from one line endpoint to point in question.
 	Vector3 v_0_pos = (pos - P0);
 	float dotprod = Vector3::Dot_Product(Dir, v_0_pos);
-					
+
 	// Check to see if point is past either of the endpoints.
 	// (Unable to draw a perpendicular line from the point to the line segment.)
 	if (dotprod <= 0.0) {
 		return(P0);
 	} else if (dotprod >= Length) {
 		return(P1);
-	}				
+	}
 
 	// Find point on line seg that is closest to pos passed in.
 	Vector3 point = P0 + (dotprod * Dir);
 	return(point);
-}	
+}
 
 
-/*********************************************************************************************** 
- * LineSegClass::Find_Intersection -- Finds the closest points on the two lines..				  * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   03/03/2000 PDS : Created.                                                                 * 
+/***********************************************************************************************
+ * LineSegClass::Find_Intersection -- Finds the closest points on the two lines..				  *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   03/03/2000 PDS : Created.                                                                 *
  *=============================================================================================*/
 bool
 LineSegClass::Find_Intersection
@@ -197,11 +197,11 @@ LineSegClass::Find_Intersection
 	float top2		= Vector3::Dot_Product(cross4, cross3);
 	float bottom2	= Vector3::Dot_Product(cross3, cross3);
 #endif
-	
+
 	//
 	//	If either of the divisors are 0, then the lines are parallel
 	//
-	if (bottom1 != 0 && bottom2 != 0) {		
+	if (bottom1 != 0 && bottom2 != 0) {
 		float length1 = top1 / bottom1;
 		float length2 = top2 / bottom2;
 
@@ -222,7 +222,7 @@ LineSegClass::Find_Intersection
 		if (fraction2 != NULL) {
 			(*fraction2) = length2 / Length;
 		}
-		
+
 		retval = true;
 	}
 

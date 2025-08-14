@@ -24,12 +24,12 @@
 
 // FILE: Money.h ////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information					         
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:    RTS3
@@ -73,9 +73,9 @@ public:
 		m_money = 0;
 	}
 
-	inline UnsignedInt countMoney() const 
-	{ 
-		return m_money; 
+	inline UnsignedInt countMoney() const
+	{
+		return m_money;
 	}
 
 	/// returns the actual amount withdrawn, which may be less than you want. (sorry, can't go into debt...)
@@ -83,7 +83,7 @@ public:
 	void deposit(UnsignedInt amountToDeposit, Bool playSound = TRUE);
 
 	void setPlayerIndex(Int ndx) { m_playerIndex = ndx; }
-	
+
   static void parseMoneyAmount( INI *ini, void *instance, void *store, const void* userData );
 
   // Does the amount of this == the amount of that (compare everything except m_playerIndex)

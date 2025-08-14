@@ -38,7 +38,7 @@ typedef enum
 	TR_UNSENT
 } TrFilter;
 
-typedef struct 
+typedef struct
 {
 	TrFilter filter;
 	int include_comments;
@@ -58,14 +58,14 @@ typedef enum
 	GN_USEORIGINAL,
 } GnUntranslated;
 
-typedef struct 
+typedef struct
 {
 	GnFormat	format;								// what file format to generate
 	GnUntranslated untranslated;		// what to do with untranslated text
 
 } GNOPTIONS;
 
-typedef struct 
+typedef struct
 {
 	int translations;
 	int dialog;
@@ -86,7 +86,7 @@ typedef struct
 	int version;
 	int num_labels;
 	int num_strings;
-	int skip;	
+	int skip;
 
 } CSF_HEADER_V1;
 
@@ -96,7 +96,7 @@ typedef struct
 	int version;
 	int num_labels;
 	int num_strings;
-	int skip;	
+	int skip;
 	int langid;
 
 } CSF_HEADER;

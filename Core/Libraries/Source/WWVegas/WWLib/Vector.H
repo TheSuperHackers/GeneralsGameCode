@@ -93,9 +93,9 @@ class VectorClass
 		VectorClass(VectorClass<T> const &);		// Copy constructor.
 		virtual ~VectorClass(void);
 
-		WWINLINE T & operator[](int index) {  assert(unsigned(index) < unsigned(VectorMax));return(Vector[index]); } 
+		WWINLINE T & operator[](int index) {  assert(unsigned(index) < unsigned(VectorMax));return(Vector[index]); }
 		WWINLINE T const & operator[](int index) const { assert(unsigned(index) < unsigned(VectorMax));return(Vector[index]);  }
-	
+
 		VectorClass<T> & operator = (VectorClass<T> const &); // Assignment operator.
 
 		virtual bool operator == (VectorClass<T> const &) const;	// Equality operator.
@@ -896,7 +896,7 @@ bool DynamicVectorClass<T>::Delete_Index(int index)
 
 
 template<class T>
-void DynamicVectorClass<T>::Delete_All(void) 
+void DynamicVectorClass<T>::Delete_All(void)
 {
 	int len = VectorMax;
 	Clear();		// Forces destructor call on each object.

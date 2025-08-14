@@ -24,12 +24,12 @@
 
 // FILE: Heightmap.cpp ////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:   RTS3
@@ -43,7 +43,7 @@
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-//         Includes                                                      
+//         Includes
 //-----------------------------------------------------------------------------
 #include "W3DDevice/GameClient/FlatHeightMap.h"
 
@@ -90,13 +90,13 @@
 #include "W3DDevice/GameClient/W3DCustomScene.h"
 
 #include "Common/PerfTimer.h"
-#include "Common/UnitTimings.h" //Contains the DO_UNIT_TIMINGS define jba.		 
+#include "Common/UnitTimings.h" //Contains the DO_UNIT_TIMINGS define jba.
 
 
 FlatHeightMapRenderObjClass *TheFlatHeightMap = NULL;
 
 //-----------------------------------------------------------------------------
-//         Private Data                                                     
+//         Private Data
 //-----------------------------------------------------------------------------
 #define SC_DETAIL_BLEND ( SHADE_CNST(ShaderClass::PASS_LEQUAL, ShaderClass::DEPTH_WRITE_ENABLE, ShaderClass::COLOR_WRITE_ENABLE, ShaderClass::SRCBLEND_ONE, \
 	ShaderClass::DSTBLEND_ZERO, ShaderClass::FOG_DISABLE, ShaderClass::GRADIENT_MODULATE, ShaderClass::SECONDARY_GRADIENT_DISABLE, ShaderClass::TEXTURING_ENABLE, \
@@ -115,7 +115,7 @@ const Int CELLS_PER_TILE = 16; // In order to be efficient in texture, needs to 
 
 
 //-----------------------------------------------------------------------------
-//         Private Functions                                               
+//         Private Functions
 //-----------------------------------------------------------------------------
 
 //=============================================================================
@@ -134,7 +134,7 @@ Int FlatHeightMapRenderObjClass::freeMapResources(void)
 
 
 //-----------------------------------------------------------------------------
-//         Public Functions                                                
+//         Public Functions
 //-----------------------------------------------------------------------------
 
 //=============================================================================
@@ -167,10 +167,10 @@ m_updateState(STATE_IDLE)
 //=============================================================================
 // FlatHeightMapRenderObjClass::adjustTerrainLOD
 //=============================================================================
-/** Adjust the terrain Level Of Detail.  If adj > 0 , increases LOD 1 step, if 
+/** Adjust the terrain Level Of Detail.  If adj > 0 , increases LOD 1 step, if
 adj < 0 decreases it one step, if adj==0, then just sets up for the current LOD */
 //=============================================================================
-void FlatHeightMapRenderObjClass::adjustTerrainLOD(Int adj) 
+void FlatHeightMapRenderObjClass::adjustTerrainLOD(Int adj)
 {
 	BaseHeightMapRenderObjClass::adjustTerrainLOD(adj);
 }
@@ -240,7 +240,7 @@ void FlatHeightMapRenderObjClass::reset(void)
 //=============================================================================
 /** Sets the terrain oversize amount. */
 //=============================================================================
-void FlatHeightMapRenderObjClass::oversizeTerrain(Int tilesToOversize) 
+void FlatHeightMapRenderObjClass::oversizeTerrain(Int tilesToOversize)
 {
 	// Not needed with flat version. [3/20/2003]
 }
@@ -255,7 +255,7 @@ The coordinates in partialRange are map cell coordinates, relative to the entire
 The vertex coordinates and texture coordinates, as well as static lighting are updated.
 */
 void FlatHeightMapRenderObjClass::doPartialUpdate(const IRegion2D &partialRange, WorldHeightMap *htMap, RefRenderObjListIterator *pLightsIterator)
-{	
+{
 	if (htMap) {
 		REF_PTR_SET(m_map, htMap);
 	}
@@ -274,7 +274,7 @@ void FlatHeightMapRenderObjClass::doPartialUpdate(const IRegion2D &partialRange,
 /** Releases tiles.*/
 //=============================================================================
 void FlatHeightMapRenderObjClass::releaseTiles(void)
-{	
+{
 	if (m_tiles) {
 		delete [] m_tiles;
 		m_tiles = NULL;
@@ -289,11 +289,11 @@ void FlatHeightMapRenderObjClass::releaseTiles(void)
 // FlatHeightMapRenderObjClass::initHeightData
 //=============================================================================
 /** Allocate a heightmap of x by y vertices and fill with initial height values.
-Also allocates all rendering resources such as vertex buffers, index buffers, 
+Also allocates all rendering resources such as vertex buffers, index buffers,
 shaders, and materials.*/
 //=============================================================================
 Int FlatHeightMapRenderObjClass::initHeightData(Int x, Int y, WorldHeightMap *pMap, RefRenderObjListIterator *pLightsIterator, Bool updateExtraPassTiles)
-{	
+{
 
 	BaseHeightMapRenderObjClass::initHeightData(x, y, pMap, pLightsIterator);
 
@@ -348,7 +348,7 @@ Int FlatHeightMapRenderObjClass::initHeightData(Int x, Int y, WorldHeightMap *pM
 /** Updates the diffuse color values in the vertices as affected by the dynamic lights.*/
 //=============================================================================
 void FlatHeightMapRenderObjClass::On_Frame_Update(void)
-{	
+{
 #ifdef DO_UNIT_TIMINGS
 #pragma MESSAGE("*** WARNING *** DOING DO_UNIT_TIMINGS!!!!")
 	return;
@@ -366,7 +366,7 @@ void FlatHeightMapRenderObjClass::On_Frame_Update(void)
 					W3DTerrainBackground *tile = m_tiles+j*m_tilesWidth+i;
 					tile->updateTexture();
 				}
-			}	
+			}
 			m_updateState = STATE_IDLE;
 		}
 	}
@@ -402,9 +402,9 @@ void FlatHeightMapRenderObjClass::staticLightingChanged( void )
 //=============================================================================
 // FlatHeightMapRenderObjClass::updateCenter
 //=============================================================================
-/** Updates the positioning of the drawn portion of the height map in the 
+/** Updates the positioning of the drawn portion of the height map in the
 heightmap.  As the view slides around, this determines what is the actually
-rendered portion of the terrain.  Only a 96x96 section is rendered at any time, 
+rendered portion of the terrain.  Only a 96x96 section is rendered at any time,
 even though maps can be up to 1024x1024.  This function determines which subset
 is rendered. */
 //=============================================================================
@@ -457,7 +457,7 @@ void FlatHeightMapRenderObjClass::updateCenter(CameraClass *camera , RefRenderOb
 void FlatHeightMapRenderObjClass::Render(RenderInfoClass & rinfo)
 {
 	//USE_PERF_TIMER(Terrain_Render)
-	
+
 	Int devicePasses;
 	W3DShaderManager::ShaderTypes st;
 	Bool doCloud = TheGlobalData->m_useCloudMap;
@@ -491,7 +491,7 @@ void FlatHeightMapRenderObjClass::Render(RenderInfoClass & rinfo)
 	//	tm.Scale(ObjSpaceExtent);
 	DX8Wrapper::Set_Transform(D3DTS_WORLD,tm);
 
-	
+
 	DX8Wrapper::Set_Material(m_vertexMaterialClass);
 	DX8Wrapper::Set_Shader(m_shaderClass);
 
@@ -500,7 +500,7 @@ void FlatHeightMapRenderObjClass::Render(RenderInfoClass & rinfo)
 	}
 
  	st=W3DShaderManager::ST_FLAT_TERRAIN_BASE; //set default shader
- 	
+
  	//set correct shader based on current settings
  	if (TheGlobalData->m_useLightMap && doCloud)
  	{	st=W3DShaderManager::ST_FLAT_TERRAIN_BASE_NOISE12;
@@ -516,8 +516,8 @@ void FlatHeightMapRenderObjClass::Render(RenderInfoClass & rinfo)
  		st=W3DShaderManager::ST_FLAT_TERRAIN_BASE_NOISE1;
  	}
 
- 	
-	
+
+
 	//Find number of passes required to render current shader
  	devicePasses=W3DShaderManager::getShaderPasses(st);
 
@@ -529,7 +529,7 @@ void FlatHeightMapRenderObjClass::Render(RenderInfoClass & rinfo)
 	if (m_shroud && rinfo.Additional_Pass_Count() && !m_disableTextures)
 	{
 		W3DShaderManager::setTexture(0,TheTerrainRenderObject->getShroud()->getShroudTexture());
-	}	
+	}
 
  	W3DShaderManager::setTexture(1,NULL);	// Set by the tile later. [3/31/2003]
  	W3DShaderManager::setTexture(2,m_stageTwoTexture);	//cloud
@@ -543,7 +543,7 @@ void FlatHeightMapRenderObjClass::Render(RenderInfoClass & rinfo)
 	Int yCoordMax = 0;
 	Int yCoordMin = m_map->getXExtent();
 	Int xCoordMax = 0;
-	Int xCoordMin = m_map->getYExtent();	
+	Int xCoordMin = m_map->getYExtent();
  	for (pass=0; pass<devicePasses; pass++) {
 		Bool disableTex = m_disableTextures;
 		if (m_disableTextures ) {

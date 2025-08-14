@@ -17,22 +17,22 @@
 */
 
 /* $Header: /Commando/Code/Tools/max2w3d/meshsave.h 44    10/30/00 1:12p Greg_h $ */
-/*********************************************************************************************** 
- ***                            Confidential - Westwood Studios                              *** 
- *********************************************************************************************** 
- *                                                                                             * 
- *                 Project Name : Commando / G                                                 * 
- *                                                                                             * 
- *                    File Name : MESHSAVE.H                                                   * 
- *                                                                                             * 
- *                   Programmer : Greg Hjelstrom                                               * 
- *                                                                                             * 
- *                   Start Date : 06/10/97                                                     * 
- *                                                                                             * 
- *                  Last Update : June 10, 1997 [GH]                                           * 
- *                                                                                             * 
- *---------------------------------------------------------------------------------------------* 
- * Functions:                                                                                  * 
+/***********************************************************************************************
+ ***                            Confidential - Westwood Studios                              ***
+ ***********************************************************************************************
+ *                                                                                             *
+ *                 Project Name : Commando / G                                                 *
+ *                                                                                             *
+ *                    File Name : MESHSAVE.H                                                   *
+ *                                                                                             *
+ *                   Programmer : Greg Hjelstrom                                               *
+ *                                                                                             *
+ *                   Start Date : 06/10/97                                                     *
+ *                                                                                             *
+ *                  Last Update : June 10, 1997 [GH]                                           *
+ *                                                                                             *
+ *---------------------------------------------------------------------------------------------*
+ * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #if defined(_MSC_VER)
@@ -109,7 +109,7 @@ public:
 	};
 
 	MeshSaveClass(
-			char *						mesh_name,	
+			char *						mesh_name,
 			char *						container_name,
 			INode *						inode,
 			const Mesh *				input_mesh,
@@ -130,7 +130,7 @@ public:
 	int Write_To_File(ChunkSaveClass & csave,bool export_aabtrees = false);
 
 private:
-	
+
 	INode *								MaxINode;
 	W3DAppData2Struct &				ExportOptions;
 
@@ -153,7 +153,7 @@ private:
 	int									PS2Material;
 
 private:
-	
+
 	// Use a MeshBuilderClass to process the mesh
 	void Build_Mesh(Mesh & mesh, Mtl *node_mtl, unsigned int *materialColors, int &numMaterialColors, int &numHouseColors);
 
@@ -171,7 +171,7 @@ private:
 
 	// creating damage stages
 	void add_damage_stage(MeshSaveClass * damage_mesh);
-	
+
 	// methods used in building the wtm file
 	int write_header(ChunkSaveClass & csave);
 	int write_user_text(ChunkSaveClass & csave);
@@ -179,10 +179,10 @@ private:
 	int write_verts(ChunkSaveClass & csave);
 	int write_vert_normals(ChunkSaveClass & csave);
 	int write_vert_influences(ChunkSaveClass & csave);
-	int write_vert_shade_indices(ChunkSaveClass & csave);	
-	
+	int write_vert_shade_indices(ChunkSaveClass & csave);
+
 	int write_triangles(ChunkSaveClass & csave);
-	
+
 	int write_material_info(ChunkSaveClass & csave);
 	int write_shaders(ChunkSaveClass & csave);
 	int write_vertex_materials(ChunkSaveClass & csave);
@@ -192,7 +192,7 @@ private:
 	int write_vertex_material_ids(ChunkSaveClass & csave,int pass);
 	int write_shader_ids(ChunkSaveClass & csave,int pass);
 	int write_dcg(ChunkSaveClass & csave,int pass);
-	
+
 	int write_texture_stage(ChunkSaveClass & csave,int pass,int stage);
 	int write_texture_ids(ChunkSaveClass & csave,int pass,int stage);
 	int write_texture_coords(ChunkSaveClass & csave,int pass,int stage);

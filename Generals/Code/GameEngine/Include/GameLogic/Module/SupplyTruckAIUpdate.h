@@ -60,7 +60,7 @@ protected:
 //-------------------------------------------------------------------------------------------------
 class SupplyTruckWantsToPickUpOrDeliverBoxesState :  public State
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(SupplyTruckWantsToPickUpOrDeliverBoxesState, "SupplyTruckWantsToPickUpOrDeliverBoxesState")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(SupplyTruckWantsToPickUpOrDeliverBoxesState, "SupplyTruckWantsToPickUpOrDeliverBoxesState")
 protected:
 	// snapshot interface STUBBED.
 	virtual void crc( Xfer *xfer ){};
@@ -78,7 +78,7 @@ EMPTY_DTOR(SupplyTruckWantsToPickUpOrDeliverBoxesState)
 //-------------------------------------------------------------------------------------------------
 class RegroupingState :  public State
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(RegroupingState, "RegroupingState")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(RegroupingState, "RegroupingState")
 protected:
 	// snapshot interface STUBBED.
 	virtual void crc( Xfer *xfer ){};
@@ -95,7 +95,7 @@ EMPTY_DTOR(RegroupingState)
 //-------------------------------------------------------------------------------------------------
 class DockingState :  public State
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(DockingState, "DockingState")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(DockingState, "DockingState")
 protected:
 	// snapshot interface STUBBED.
 	virtual void crc( Xfer *xfer ){};
@@ -137,11 +137,11 @@ public:
 		m_warehouseScanDistance = 100;
 	}
 
-	static void buildFieldParse(MultiIniFieldParse& p) 
+	static void buildFieldParse(MultiIniFieldParse& p)
 	{
     AIUpdateModuleData::buildFieldParse(p);
 
-		static const FieldParse dataFieldParse[] = 
+		static const FieldParse dataFieldParse[] =
 		{
 			{ "MaxBoxes",					INI::parseInt,		NULL, offsetof( SupplyTruckAIUpdateModuleData, m_maxBoxesData ) },
 			{ "SupplyCenterActionDelay", INI::parseDurationUnsignedInt, NULL, offsetof( SupplyTruckAIUpdateModuleData, m_centerDelay ) },
@@ -210,7 +210,7 @@ public:
 	virtual void setForceWantingState(Bool v) { m_forcePending = v; } // When a Supply Center creates us (or maybe other sources later), we need to hop into autopilot mode.
 	virtual Bool isForcedIntoWantingState() const { return m_forcePending; }
 
-	virtual void setForceBusyState(Bool v) { m_forcedBusyPending = v; } 
+	virtual void setForceBusyState(Bool v) { m_forcedBusyPending = v; }
 	virtual Bool isForcedIntoBusyState() const { return m_forcedBusyPending; }
 
 	virtual ObjectID getPreferredDockID() const { return m_preferredDock; }
@@ -222,13 +222,13 @@ protected:
 
 	virtual AIStateMachine* makeStateMachine();
 	virtual void privateDock( Object *obj, CommandSourceType cmdSource );
-	virtual void privateIdle(CommandSourceType cmdSource);						///< Enter idle state.	
+	virtual void privateIdle(CommandSourceType cmdSource);						///< Enter idle state.
 
 private:
 	SupplyTruckStateMachine*	m_supplyTruckStateMachine;
 	ObjectID									m_preferredDock;			///< Instead of searching, try this one first
 	Int												m_numberBoxes;
-	Bool											m_forcePending;				// To prevent a function from doing a setState, 
+	Bool											m_forcePending;				// To prevent a function from doing a setState,
 																									// forceWanting will latch into here until serviced.
 	Bool											m_forcedBusyPending;	// A supply truck can't tell the difference between Idle since
 																									// I'm between docking states, or a Stop command without help.

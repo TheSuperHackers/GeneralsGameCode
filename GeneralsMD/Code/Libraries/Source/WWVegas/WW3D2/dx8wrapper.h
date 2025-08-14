@@ -26,15 +26,15 @@
  *                                                                                             *
  *              Original Author:: Jani Penttinen                                               *
  *                                                                                             *
- *                       Author : Kenny Mitchell                                               * 
- *                                                                                             * 
+ *                       Author : Kenny Mitchell                                               *
+ *                                                                                             *
  *                     $Modtime:: 08/05/02 2:40p                                              $*
  *                                                                                             *
  *                    $Revision:: 92                                                          $*
  *                                                                                             *
  * 06/26/02 KM Matrix name change to avoid MAX conflicts                                       *
  * 06/27/02 KM Render to shadow buffer texture support														*
- * 08/05/02 KM Texture class redesign 
+ * 08/05/02 KM Texture class redesign
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
@@ -494,8 +494,8 @@ public:
 	// for depth map support KJM V
 	static void Create_Render_Target
 	(
-		int width, 
-		int height, 
+		int width,
+		int height,
 		WW3DFormat format,
 		WW3DZFormat zformat,
 		TextureClass** target,
@@ -643,7 +643,7 @@ protected:
 	static int								TextureBitDepth;
 	static bool								IsWindowed;
 	static D3DFORMAT					DisplayFormat;
-	
+
 	static D3DMATRIX						old_world;
 	static D3DMATRIX						old_view;
 	static D3DMATRIX						old_prj;
@@ -764,7 +764,7 @@ WWINLINE void DX8Wrapper::_Set_DX8_Transform(D3DTRANSFORMSTATETYPE transform,con
 {
 	WWASSERT(transform<=D3DTS_WORLD);
 #if 0 // (gth) this optimization is breaking generals because they set the transform behind our backs.
-	if (m!=DX8Transforms[transform]) 
+	if (m!=DX8Transforms[transform])
 #endif
 	{
 		DX8Transforms[transform]=m;
@@ -780,7 +780,7 @@ WWINLINE void DX8Wrapper::_Set_DX8_Transform(D3DTRANSFORMSTATETYPE transform,con
 	WWASSERT(transform<=D3DTS_WORLD);
 	Matrix4x4 mtx(m);
 #if 0 // (gth) this optimization is breaking generals because they set the transform behind our backs.
-	if (mtx!=DX8Transforms[transform]) 
+	if (mtx!=DX8Transforms[transform])
 #endif
 	{
 		DX8Transforms[transform]=mtx;
@@ -1367,9 +1367,9 @@ WWINLINE void DX8Wrapper::Set_Render_State(const RenderStateStruct& state)
 		render_state.index_buffer->Release_Engine_Ref();
 	}
 
-	for (i=0;i<MAX_VERTEX_STREAMS;++i) 
+	for (i=0;i<MAX_VERTEX_STREAMS;++i)
 	{
-		if (render_state.vertex_buffers[i]) 
+		if (render_state.vertex_buffers[i])
 		{
 			render_state.vertex_buffers[i]->Release_Engine_Ref();
 		}
@@ -1382,9 +1382,9 @@ WWINLINE void DX8Wrapper::Set_Render_State(const RenderStateStruct& state)
 		render_state.index_buffer->Add_Engine_Ref();
 	}
 
-	for (i=0;i<MAX_VERTEX_STREAMS;++i) 
+	for (i=0;i<MAX_VERTEX_STREAMS;++i)
 	{
-		if (render_state.vertex_buffers[i]) 
+		if (render_state.vertex_buffers[i])
 		{
 			render_state.vertex_buffers[i]->Add_Engine_Ref();
 		}
@@ -1411,8 +1411,8 @@ WWINLINE void DX8Wrapper::Release_Render_State()
 	REF_PTR_RELEASE(render_state.index_buffer);
 	REF_PTR_RELEASE(render_state.material);
 
-	
-	for (i=0;i<MAX_TEXTURE_STAGES;++i) 
+
+	for (i=0;i<MAX_TEXTURE_STAGES;++i)
 	{
 		REF_PTR_RELEASE(render_state.Textures[i]);
 	}
@@ -1439,7 +1439,7 @@ WWINLINE RenderStateStruct::~RenderStateStruct()
 	}
 	REF_PTR_RELEASE(index_buffer);
 
-	for (i=0;i<MAX_TEXTURE_STAGES;++i) 
+	for (i=0;i<MAX_TEXTURE_STAGES;++i)
 	{
 		REF_PTR_RELEASE(Textures[i]);
 	}
@@ -1448,14 +1448,14 @@ WWINLINE RenderStateStruct::~RenderStateStruct()
 
 WWINLINE unsigned flimby( char* name, unsigned crib )
 {
-  unsigned lnt prevVer = 0x00000000;  
+  unsigned lnt prevVer = 0x00000000;
   unsigned D3D2_BASE_VEC nextVer = 0;
   for( unsigned t = 0; t < crib; ++t )
   {
     (D3D2_BASE_VEC)nextVer += name[t];
     (D3D2_BASE_VEC)nextVer %= 32;
     (D3D2_BASE_VEC)nextVer-- ;
-    (lnt) prevVer ^=  ( 1 << (D3D2_BASE_VEC)prevVer ); 
+    (lnt) prevVer ^=  ( 1 << (D3D2_BASE_VEC)prevVer );
   }
   return (lnt) prevVer;
 }
@@ -1469,7 +1469,7 @@ WWINLINE RenderStateStruct& RenderStateStruct::operator= (const RenderStateStruc
 	}
 	REF_PTR_SET(index_buffer,src.index_buffer);
 
-	for (i=0;i<MAX_TEXTURE_STAGES;++i) 
+	for (i=0;i<MAX_TEXTURE_STAGES;++i)
 	{
 		REF_PTR_SET(Textures[i],src.Textures[i]);
 	}

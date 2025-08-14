@@ -141,7 +141,7 @@ SoundEditDialogClass::OnInitDialog (void)
 	//
 	if (SoundRObj == NULL) {
 		SoundRObj = new SoundRenderObjClass;
-	}		
+	}
 
 	//
 	//	Choose default settings
@@ -155,7 +155,7 @@ SoundEditDialogClass::OnInitDialog (void)
 	bool is_3d					= true;
 	bool is_music				= false;
 	float loop_count			= 1;
-	float volume				= 1.0F;	
+	float volume				= 1.0F;
 
 	//
 	// Get the real settings from the sound object (if we have one)
@@ -165,12 +165,12 @@ SoundEditDialogClass::OnInitDialog (void)
 
 		Sound3DClass *sound_3d = sound->As_Sound3DClass ();
 		filename				= sound->Get_Filename ();
-		drop_off_radius	= sound->Get_DropOff_Radius ();		
+		drop_off_radius	= sound->Get_DropOff_Radius ();
 		priority				= sound->Peek_Priority ();
 		is_3d					= (sound_3d != NULL);
 		is_music				= (sound->Get_Type () == AudibleSoundClass::TYPE_MUSIC);
 		loop_count			= sound->Get_Loop_Count ();
-		volume				= sound->Get_Volume ();		
+		volume				= sound->Get_Volume ();
 
 		if (sound_3d != NULL) {
 			max_vol_radius	= sound_3d->Get_Max_Vol_Radius ();
@@ -207,7 +207,7 @@ SoundEditDialogClass::OnInitDialog (void)
 	//
 	::SetDlgItemFloat (m_hWnd, IDC_DROP_OFF_EDIT, drop_off_radius);
 	::SetDlgItemFloat (m_hWnd, IDC_MAX_VOL_EDIT, max_vol_radius);
-	::SetDlgItemFloat (m_hWnd, IDC_TRIGGER_RADIUS_EDIT, drop_off_radius);	
+	::SetDlgItemFloat (m_hWnd, IDC_TRIGGER_RADIUS_EDIT, drop_off_radius);
 
 	//
 	//	Make sure the appropriate controls are enabled/disabled
@@ -243,7 +243,7 @@ SoundEditDialogClass::OnOK (void)
 	AudibleSoundDefinitionClass definition;
 	definition.Initialize_From_Sound (sound);
 	REF_PTR_RELEASE (sound);
-	
+
 	//
 	//	Pass the sound definition onto the render object
 	//
@@ -257,7 +257,7 @@ SoundEditDialogClass::OnOK (void)
 	} else {
 		SoundRObj->Set_Flags (0);
 	}
-	
+
 	//
 	//	Name the render object
 	//
@@ -268,13 +268,13 @@ SoundEditDialogClass::OnOK (void)
 	//
 	CW3DViewDoc *doc = ::GetCurrentDocument ();
 	if (doc != NULL) {
-		
+
 		//
 		// Create a new prototype for this emitter and add it to the asset manager
 		//
 		SoundRenderObjDefClass *definition			= new SoundRenderObjDefClass (*SoundRObj);
 		SoundRenderObjPrototypeClass *prototype	= new SoundRenderObjPrototypeClass (definition);
-		
+
 		//
 		// Update the asset manager with the new prototype
 		//
@@ -282,7 +282,7 @@ SoundEditDialogClass::OnOK (void)
 			WW3DAssetManager::Get_Instance()->Remove_Prototype (OldName);
 		}
 		WW3DAssetManager::Get_Instance()->Add_Prototype (prototype);
-		
+
 		//
 		// Add the new object to the data tree
 		//
@@ -295,7 +295,7 @@ SoundEditDialogClass::OnOK (void)
 		doc->Reload_Displayed_Object ();
 		OldName = name;
 	}
-		
+
 	CDialog::OnOK ();
 	return ;
 }
@@ -343,8 +343,8 @@ SoundEditDialogClass::Create_Sound_Object (void)
 		//
 		int loop_count = SendDlgItemMessage (IDC_INFINITE_LOOPS_CHECK, BM_GETCHECK) ? 0 : 1;
 		sound->Set_Loop_Count (loop_count);
-		
-		bool is_music = bool (SendDlgItemMessage (IDC_MUSIC_RADIO, BM_GETCHECK) == 1);			
+
+		bool is_music = bool (SendDlgItemMessage (IDC_MUSIC_RADIO, BM_GETCHECK) == 1);
 		sound->Set_Type (is_music ? AudibleSoundClass::TYPE_MUSIC : AudibleSoundClass::TYPE_SOUND_EFFECT);
 
 		//
@@ -369,7 +369,7 @@ SoundEditDialogClass::Create_Sound_Object (void)
 			((Sound3DClass *)sound)->Set_Max_Vol_Radius (max_vol);
 		}
 	}
-	
+
 	return sound;
 }
 
@@ -413,7 +413,7 @@ SoundEditDialogClass::OnBrowse (void)
 		//
 		SetDlgItemText (IDC_FILENAME_EDIT, ::Get_Filename_From_Path (dialog.GetPathName ()));
 	}
-	
+
 	return ;
 }
 
@@ -453,7 +453,7 @@ void
 SoundEditDialogClass::Update_Enable_State (void)
 {
 	bool enable_3d = (SendDlgItemMessage (IDC_3D_RADIO, BM_GETCHECK) == 1);
-		
+
 	::EnableWindow (::GetDlgItem (m_hWnd, IDC_MAX_VOL_EDIT), enable_3d);
 	::EnableWindow (::GetDlgItem (m_hWnd, IDC_DROP_OFF_EDIT), enable_3d);
 	::EnableWindow (::GetDlgItem (m_hWnd, IDC_TRIGGER_RADIUS_EDIT), !enable_3d);

@@ -30,10 +30,10 @@ class WorldHeightMapEdit;
 class MapObject;
 /*************************************************************************/
 /**                             WaypointTool
-	 Does the add/select waypoint operation. 
+	 Does the add/select waypoint operation.
 ***************************************************************************/
 ///  Select tile tool.
-class WaypointTool : public Tool 
+class WaypointTool : public Tool
 {
 public:
 	WaypointTool(void);
@@ -44,7 +44,7 @@ protected:
 	Coord3D m_mouseDownPt;
 	static Bool m_isActive;
 
-protected: 
+protected:
 	MapObject *pickWaypoint(Coord3D loc);
 
 public:

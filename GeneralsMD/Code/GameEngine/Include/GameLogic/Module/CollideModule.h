@@ -24,7 +24,7 @@
 
 // FILE: CollideModule.h /////////////////////////////////////////////////////////////////////////////////
 // Author: Colin Day, September 2001
-// Desc:	 
+// Desc:
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
@@ -38,10 +38,10 @@
 //-------------------------------------------------------------------------------------------------
 /** OBJECT COLLIDE MODULE
 	- Called when two objects collide (or when object collides with ground)
-	- Note in the 'collide' method that 'other' can be NULL, this indicates a 
+	- Note in the 'collide' method that 'other' can be NULL, this indicates a
 		collision with the ground
-	- Also note the 'collide' method is the response for the object that THIS module 
-		belongs to, we do not need to worry about the collision moudle of 'other', 
+	- Also note the 'collide' method is the response for the object that THIS module
+		belongs to, we do not need to worry about the collision moudle of 'other',
 		it will have its own collide action called separately */
 //-------------------------------------------------------------------------------------------------
 class CollideModuleInterface
@@ -62,7 +62,7 @@ class CollideModuleData : public BehaviorModuleData
 {
 public:
 
-	static void buildFieldParse(MultiIniFieldParse& p) 
+	static void buildFieldParse(MultiIniFieldParse& p)
 	{
 		BehaviorModuleData::buildFieldParse(p);
 	}
@@ -70,7 +70,7 @@ public:
 
 
 //-------------------------------------------------------------------------------------------------
-class CollideModule : public BehaviorModule, 
+class CollideModule : public BehaviorModule,
 											public CollideModuleInterface
 {
 

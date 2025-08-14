@@ -44,7 +44,7 @@ class AudioEventRTS;
 enum ParticleSystemID CPP_11(: Int);
 
 //#define MAX_OUTER_NODES 16
-//#define TRACKERS 
+//#define TRACKERS
 
 //#define PUCK
 
@@ -75,7 +75,7 @@ public:
 	SpectreGunshipUpdateModuleData();
 	static void buildFieldParse(MultiIniFieldParse& p);
 
-private: 
+private:
 
 };
 
@@ -136,7 +136,7 @@ protected:
 
   void friend_enableAfterburners(Bool v);
 
-  
+
 
 
   Coord3D				m_initialTargetPosition;
@@ -166,7 +166,7 @@ protected:
   RadiusDecal			m_howitzerTrackerDecal;
 #endif
 
-  AudioEventRTS m_afterburnerSound; 
+  AudioEventRTS m_afterburnerSound;
   AudioEventRTS m_howitzerFireSound;
 
 };

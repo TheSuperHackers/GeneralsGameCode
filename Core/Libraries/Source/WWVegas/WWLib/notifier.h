@@ -178,7 +178,7 @@ template<typename Event> class Notifier
 	virtual void AddObserver(Observer<Event>& observer) \
 		{Notifier<Event>::AddObserver(observer);} \
 	virtual void RemoveObserver(Observer<Event>& observer) \
-		{Notifier<Event>::RemoveObserver(observer);} 
+		{Notifier<Event>::RemoveObserver(observer);}
 
 
 /*-----------------------------------------------------------------------------
@@ -187,7 +187,7 @@ template<typename Event> class Notifier
  *---------------------------------------------------------------------------*/
 
 /* TypedEvent<T. V>
- * 
+ *
  * The first type (T) must be a class or other unique type. This need not
  * be a "real" class. It could be a forward declared class, which is enough
  * to make the template class unique.

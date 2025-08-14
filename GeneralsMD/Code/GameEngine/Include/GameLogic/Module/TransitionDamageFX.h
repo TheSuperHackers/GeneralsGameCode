@@ -34,7 +34,7 @@
 
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
 #include "GameClient/ParticleSys.h"
-#include "GameLogic/Module/DamageModule.h" 
+#include "GameLogic/Module/DamageModule.h"
 #include "GameLogic/Module/BodyModule.h"
 
 // FORWARD REFERENCES /////////////////////////////////////////////////////////////////////////////
@@ -49,7 +49,7 @@ class ParticleSystemTemplate;
 enum { DAMAGE_MODULE_MAX_FX = 12 };
 
 typedef Char FXDamageLocType;
-enum 
+enum
 {
 	FX_DAMAGE_LOC_TYPE_BONE  = 0,
 	FX_DAMAGE_LOC_TYPE_COORD = 1
@@ -98,11 +98,11 @@ public:
 
 	TransitionDamageFXModuleData( void );
 
-	static void buildFieldParse(MultiIniFieldParse& p) 
+	static void buildFieldParse(MultiIniFieldParse& p)
 	{
     DamageModuleData::buildFieldParse(p);
 
-		static const FieldParse dataFieldParse[] = 
+		static const FieldParse dataFieldParse[] =
 		{
 
 			{ "DamageFXTypes",				INI::parseDamageTypeFlags, NULL, offsetof( TransitionDamageFXModuleData, m_damageFXTypes ) },
@@ -253,8 +253,8 @@ public:
 
 	virtual void onDamage( DamageInfo *damageInfo ) { }
 	virtual void onHealing( DamageInfo *damageInfo ) { }
-	virtual void onBodyDamageStateChange( const DamageInfo* damageInfo, 
-																				BodyDamageType oldState, 
+	virtual void onBodyDamageStateChange( const DamageInfo* damageInfo,
+																				BodyDamageType oldState,
 																				BodyDamageType newState );
 
 protected:

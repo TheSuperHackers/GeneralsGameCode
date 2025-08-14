@@ -75,7 +75,7 @@ struct CastResultStruct;
 /*
 ** AABoxClass
 **
-** Axis-Aligned Boxes.  I've coded these similar to the OrientedBoxClass only 
+** Axis-Aligned Boxes.  I've coded these similar to the OrientedBoxClass only
 ** without a rotation matrix.  A similar algorithm is used to test the box
 ** for intersection.
 */
@@ -86,7 +86,7 @@ public:
 
 	WWINLINE AABoxClass(void) { }
 
-	WWINLINE AABoxClass(const Vector3 & center,const Vector3 & extent) : 
+	WWINLINE AABoxClass(const Vector3 & center,const Vector3 & extent) :
 		Center(center),
 		Extent(extent)
 	{ }
@@ -142,7 +142,7 @@ public:
 		MaxCorner(max_corner)
 	{
 	}
-	
+
 	WWINLINE MinMaxAABoxClass(Vector3 * points,int num) { Init(points,num); }
 
 	WWINLINE MinMaxAABoxClass(const AABoxClass & that) { Init(that); }
@@ -150,7 +150,7 @@ public:
 	WWINLINE void		Init(Vector3 * points,int num);
 	WWINLINE void		Init(const AABoxClass & box);
 	void		Init_Empty(void);
-	
+
 	void		Add_Point(const Vector3 & point);
 	void		Add_Box(const MinMaxAABoxClass & box);
 	void		Add_Box(const AABoxClass & box);
@@ -260,7 +260,7 @@ WWINLINE void AABoxClass::Init(Vector3 * points,int num)
 {
 	Vector3 Min = points[0];
 	Vector3 Max = points[0];
-	
+
 	for (int i=1; i<num; i++) {
 		if (Min.X > points[i].X) Min.X = points[i].X;
 		if (Min.Y > points[i].Y) Min.Y = points[i].Y;
@@ -270,7 +270,7 @@ WWINLINE void AABoxClass::Init(Vector3 * points,int num)
 		if (Max.Y < points[i].Y) Max.Y = points[i].Y;
 		if (Max.Z < points[i].Z) Max.Z = points[i].Z;
 	}
-	
+
 	Center = (Max + Min) * 0.5f;
 	Extent = (Max - Min) * 0.5f;
 }
@@ -311,7 +311,7 @@ WWINLINE void AABoxClass::Init(const LineSegClass & line)
 {
 	Vector3 min_corner = line.Get_P0();
 	Vector3 max_corner = line.Get_P0();
-	
+
 	if (min_corner.X > line.Get_P1().X) min_corner.X = line.Get_P1().X;
 	if (min_corner.Y > line.Get_P1().Y) min_corner.Y = line.Get_P1().Y;
 	if (min_corner.Z > line.Get_P1().Z) min_corner.Z = line.Get_P1().Z;

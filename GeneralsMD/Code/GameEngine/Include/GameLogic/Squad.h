@@ -22,7 +22,7 @@
 //																																						//
 ////////////////////////////////////////////////////////////////////////////////
 
-// FILE: Sqaud.h 
+// FILE: Sqaud.h
 /*---------------------------------------------------------------------------*/
 /* EA Pacific                                                                */
 /* Confidential Information	                                                 */
@@ -62,7 +62,7 @@ typedef VecObjectPtr::iterator VecObjectPtrIt;
 
 class Squad : public MemoryPoolObject, public Snapshot
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(Squad, "Squad")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(Squad, "Squad")
 
 protected:
 	// snapshot methods

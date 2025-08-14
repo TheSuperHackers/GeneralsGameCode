@@ -99,7 +99,7 @@ void __cdecl DebugPrint(const char* string, ...)
 			file = CreateFile(_filename, GENERIC_WRITE, 0, NULL, OPEN_ALWAYS,
 				FILE_ATTRIBUTE_NORMAL, NULL);
 			}
-		
+
 		// Send string to debugger
 		OutputDebugString(_buffer);
 
@@ -135,7 +135,7 @@ void __cdecl DebugPrint(const char* string, ...)
 
 			DWORD written;
 			WriteFile(file, &_buffer[0], strlen(_buffer), &written, NULL);
-			
+
 			CloseHandle(file);
 			}
 		}

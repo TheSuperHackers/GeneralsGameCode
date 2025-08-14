@@ -21,7 +21,7 @@
 #include <string.h>
 #include <assert.h>
 #include "gimex.h"      /* for file and memory IO only */
-#include "locale.h" 
+#include "locale.h"
 #include "Wnd_File.h"
 
 /*************************************************************************/
@@ -121,7 +121,7 @@ int LOCALE_isinitialized( void )
 ;
 ; DESCRIPTION
 ;
-; Initilizes everything needed to use the locale API.  Can only be called 
+; Initilizes everything needed to use the locale API.  Can only be called
 ; once until LOCALE_restore is called.
 ;
 ; Returns non-zero if everything went ok.
@@ -531,10 +531,10 @@ static int readstrings( GSTREAM* g, int LanguageID )
 //	VERIFY(gread(g, &LanguageChunkSize, 4) == 4);
     if( !gseek( g, LanguageChunkPos + 4 )) {
 		return ok;
-	}   
+	}
 	if( gread( g, &LanguageChunkSize, 4 ) != 4 ) {
 		return ok;
-	}   
+	}
 
 	Msg( __LINE__, __FILE__, "readstrings::LanguageChunkOffsetPos = %d.", LanguageChunkOffsetPos );
 	Msg( __LINE__, __FILE__, "readstrings::LanguageChunkPos = %d.", LanguageChunkPos );
@@ -550,11 +550,11 @@ static int readstrings( GSTREAM* g, int LanguageID )
 //		VERIFY(gread(g, lx->pBank[lx->BankIndex], LanguageChunkSize) == LanguageChunkSize);
 		if( !gseek( g, LanguageChunkPos )) {
 			return ok;
-		}   
+		}
 		if( gread( g, lx->pBank[lx->BankIndex], LanguageChunkSize ) != LanguageChunkSize ) {
 			return ok;
-		}   
-        
+		}
+
 		ASSERT(lx->pBank[lx->BankIndex]->ChunkID == LOCALEFILE_LANGUAGECHUNKID);
         ok = 1;
     }
@@ -592,7 +592,7 @@ int LOCALE_loadtable(const char* PathName, int LanguageID)
 ;
 ; ABSTRACT
 ;
-; LOCALE_purgetable - OBSOLETE 
+; LOCALE_purgetable - OBSOLETE
 ;
 ; Make all references to LOCALE_freetable
 ;
@@ -679,7 +679,7 @@ void LOCALE_freetable(void)
 ; valid integer in the range 0..65535.  If no index was created
 ; with the .loc file StringID will be a zero based array index.
 ;
-; String is returned by const for a reason.  Bad things will happen 
+; String is returned by const for a reason.  Bad things will happen
 ; if you modify it.  You have been warned.
 ;
 ; SEE ALSO
@@ -792,9 +792,9 @@ const char* LOCALE_getstring( int StringID )
 ;
 ; DESCRIPTION
 ;
-; Returns the string identified by stringid from the specified 
-; .loc file.  Use the string ID specified in the header file created 
-; by Locomoto.  Note that the string pointer is a const pointer.  Do 
+; Returns the string identified by stringid from the specified
+; .loc file.  Use the string ID specified in the header file created
+; by Locomoto.  Note that the string pointer is a const pointer.  Do
 ; not modify the string or the Locale library may return invalid results.
 ;
 ; If your strings are Unicode strings, cast the result to a const USTR *.
@@ -803,7 +803,7 @@ const char* LOCALE_getstring( int StringID )
 ; valid integer in the range 0..65535.  If no index was created
 ; with the .loc file stringid will be a zero based array index.
 ;
-; String is returned by const for a reason.  Bad things will happen 
+; String is returned by const for a reason.  Bad things will happen
 ; if you modify it.  You have been warned.
 ;
 ; SEE ALSO
@@ -843,10 +843,10 @@ const char* LOCALE_getstr( const void* pLocFile, int StringID )
 
     /* get pointer to string bank */
     {
-        int offset = *((int*)(pLocFile) + 4 + LOCALElanguageid); 
+        int offset = *((int*)(pLocFile) + 4 + LOCALElanguageid);
         pBank = (BANK*)((unsigned char*)(pLocFile) + offset);
     }
-    
+
     if ((StringID >= 0) && (StringID < (int)(pBank->StringCount))) {
 
         unsigned int offset;

@@ -18,12 +18,12 @@
 
 // FILE: ImagePacker.h ////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information					         
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:    ImagePacker
@@ -67,7 +67,7 @@ class ImagePacker
 {
 
 public:
-	
+
 	enum
 	{
 		GAP_METHOD_EXTEND_RGB	= 0x00000001,  ///< extend RGB (no alpha) of image on all sides
@@ -75,7 +75,7 @@ public:
 	};
 
 public:
-	
+
 	ImagePacker( void );
 	virtual ~ImagePacker( void );
 
@@ -149,7 +149,7 @@ protected:
 	HWND m_hWnd;  ///< window handle for app
 	ICoord2D m_targetSize;  ///< the target size
 	Bool m_useSubFolders;  ///< use subfolders option
-	char m_outputFile[ MAX_OUTPUT_FILE_LEN ];  ///< output filename 
+	char m_outputFile[ MAX_OUTPUT_FILE_LEN ];  ///< output filename
 	char m_outputDirectory[ _MAX_PATH ];  ///< destination for texture files
 
 	ImageDirectory *m_dirList;  ///< the directory list
@@ -169,7 +169,7 @@ protected:
 	Int m_targetPreviewPage;  ///< preview page we're looking at
 	HWND m_hWndPreview;  ///< the preview window
 	Bool m_showTextureInPreview;  ///< show actual texture in preview window
-	
+
 	Targa *m_targa;  ///< targa for loading file headers
 	Bool m_compressTextures;  ///< compress the final textures
 

@@ -24,12 +24,12 @@
 
 // FILE: WeaponBonusUpdate.h /////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Electronic Arts Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2002-2003 - All Rights Reserved                  
-//                                                                          
+//
+//                       Electronic Arts Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2002-2003 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 //	created:	July 2003
@@ -37,8 +37,8 @@
 //	Filename: 	WeaponBonusUpdate.cpp
 //
 //	author:		Graham Smallwood
-//	
-//	purpose:	Like healing in that it can affect just me or people around, 
+//
+//	purpose:	Like healing in that it can affect just me or people around,
 //						except this gives a Weapon Bonus instead of health
 //
 //-----------------------------------------------------------------------------

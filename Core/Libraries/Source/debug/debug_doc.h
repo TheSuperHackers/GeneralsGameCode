@@ -33,7 +33,7 @@
 #define DEBUG_DOC_H
 
 // This generates a small main page for Doxygen if a module only
-// documentation is built. 
+// documentation is built.
 #ifndef DOXYGEN_GLOBAL_DOC
 /**
   \mainpage %Debug module
@@ -51,11 +51,11 @@
 
 /**
   \page module_debug Debug module overview
-  
+
   \section overview Overview
 
   The Debug module contains all functions necessary to perform debugging related tasks,
-  e.g. checking assertions or logging. 
+  e.g. checking assertions or logging.
 
   \section logging Logging
 
@@ -71,7 +71,7 @@
   \section cmd Commands
 
   The debug module is controlled via extendable commands. Commands are
-  typically put into logical groups. A command can then be executed 
+  typically put into logical groups. A command can then be executed
   in a number of ways:
   - group.command \<param\> (explicitly specifies which group to use)
   - command \<param\> (assumes that the command resides in the same group
@@ -161,13 +161,13 @@ Help info debug group:
     <td valign=top>[ \<I/O Class\> \<cmd\> { \<param\> }] </td>
     <td>
       Issues a I/O class command. I/O class commands are used
-      for determining where all log output should be sent. 
+      for determining where all log output should be sent.
       Please check the list of \ref debug_ioclasses for a list
       of existing I/O classes.
 
       Each existing I/O class must accept at least the
       following two commands: 'add' and 'remove'. Parameters
-      for these commands and additional commands are defined 
+      for these commands and additional commands are defined
       on this page: \ref debug_ioclasses
 
       If the command is entered without any parameters a list
@@ -237,7 +237,7 @@ Timestamping: on
     <td valign=top>clear</td>
     <td valign=top>(l|a|c)</td>
     <td>
-      Clears the given inclusion/exclusion list 
+      Clears the given inclusion/exclusion list
       (l=logs, a=asserts/crashes, c=checks).
     </td>
 
@@ -247,13 +247,13 @@ Timestamping: on
     <td valign=top>add</td>
     <td valign=top>(l|a|c) (+|-) \<pattern\></td>
     <td>
-      Adds a pattern to the given list (l=logs, 
+      Adds a pattern to the given list (l=logs,
       a=asserts/crashes, c=checks). By default all
       asserts, crashes, and checks are active, all logs
-      inactive. Each item is then checked 
+      inactive. Each item is then checked
       against all pattern in the respective
       list. If a match is found the active/inactive
-      state is modified accordingly (+ for active, - 
+      state is modified accordingly (+ for active, -
       for inactive). The final state is always
       the last match.
 
@@ -299,7 +299,7 @@ Timestamping: on
   This is used e.g. for displaying custom messages in a failed DASSERT_MSG statement
   or for logging data.
 
-  There are a number of reasons why this module implements this in a stream-like 
+  There are a number of reasons why this module implements this in a stream-like
   fashion instead of the 'usual' printf method:
   - type safety: using a streams-like approach makes logging statements
     type safe. No more crashes in an ASSERT or log statement because the
@@ -312,7 +312,7 @@ Timestamping: on
   \code
 int n=1;
 float f=4;
-DLOG( "This is a static string and some other stuff: " 
+DLOG( "This is a static string and some other stuff: "
       << n << " " << f << "\n" );
   \endcode
 
@@ -377,7 +377,7 @@ void test(const Point2D &val)
       that name are overwritten.
 
       Instead of a real file name a 'magic' file name
-      can be used by starting the file name with a '*' 
+      can be used by starting the file name with a '*'
       followed by any number of special characters:
       - 'e': inserts EXE name
       - 'm': inserts machine name
@@ -424,7 +424,7 @@ void test(const Point2D &val)
       splits can be defined. They are written out
       to the first matching split file.
 
-      'types' defines one or more 
+      'types' defines one or more
       string types which should be split off:
       - a: asserts/crashes
       - c: checks
@@ -432,7 +432,7 @@ void test(const Point2D &val)
       - h: crash
       - x: exceptions
       - r: replies from commands
-      - o: other messages 
+      - o: other messages
 
       Next a filter is specified that determines
       which items are to be filtered (only for string
@@ -445,7 +445,7 @@ void test(const Point2D &val)
       then both will write to the same destination file.
 
       Note: If splits are used and the filename given
-      for 'add' is static then the split name is automatically 
+      for 'add' is static then the split name is automatically
       appended to the log file name (before the extension).
 
       If a size is specified then all data is internally written
@@ -583,7 +583,7 @@ void test(const Point2D &val)
 
   \section debug_structcmd_overview Overview
 
-  All commands are capable of returning replies in two differnt forms: A regular 
+  All commands are capable of returning replies in two differnt forms: A regular
   reply or a structured reply.
   A structured reply is basically like the regular reply but with three differences:
   - Structured reply string type \ref DebugIOInterface::StructuredCmdReply

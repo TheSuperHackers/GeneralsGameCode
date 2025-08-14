@@ -42,15 +42,15 @@ public:
 		return (_FindString);
 	}
 
-	static void Compare (const char *string)	
+	static void Compare (const char *string)
 	{
 		_Found |= (strstr (string, _FindString) != NULL);
 	}
-	
+
 	static bool Found()
 	{
 		return (_Found);
-	}	
+	}
 
 	static void Found (bool found)
 	{

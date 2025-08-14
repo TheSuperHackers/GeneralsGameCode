@@ -76,7 +76,7 @@ void NeutronMissileUpdateModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
   UpdateModuleData::buildFieldParse(p);
 
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
 		{ "DistanceToTravelBeforeTurning",	INI::parseReal,		NULL, offsetof( NeutronMissileUpdateModuleData, m_initialDist ) },
 		{ "MaxTurnRate",			INI::parseAngularVelocityReal,		NULL, offsetof( NeutronMissileUpdateModuleData, m_maxTurnRate ) },
@@ -126,7 +126,7 @@ NeutronMissileUpdate::NeutronMissileUpdate( Thing *thing, const ModuleData* modu
 
 	m_exhaustSysTmpl = NULL;
 
-} 
+}
 
 //-------------------------------------------------------------------------------------------------
 NeutronMissileUpdate::~NeutronMissileUpdate( void )
@@ -230,7 +230,7 @@ void NeutronMissileUpdate::doLaunch( void )
 
 		//
 		// the missile on the raising up launch platform is actually 45 degrees from the missile
-		// that is flying around the world ... we want to rotate it "on end and in place" so 
+		// that is flying around the world ... we want to rotate it "on end and in place" so
 		// that we don't see any decals on the side of the missile 'pop' to the new angle
 		/// @todo, this should not be a hard coded value ... I love demos!!!
 		//
@@ -263,7 +263,7 @@ void NeutronMissileUpdate::doLaunch( void )
 	getObject()->setPosition( &pos );
 
 	FXList::doFXObj(getNeutronMissileUpdateModuleData()->m_ignitionFX, getObject());
-	
+
 	if (m_exhaustSysTmpl != NULL)
 		TheParticleSystemManager->createAttachedParticleSystemID(m_exhaustSysTmpl, getObject());
 
@@ -338,7 +338,7 @@ void NeutronMissileUpdate::doAttack( void )
 
 	if (getNeutronMissileUpdateModuleData()->m_targetFromDirectlyAbove && m_reachedIntermediatePos)
 		speed *= STRAIGHT_DOWN_SLOW_FACTOR;
-	
+
 	// if we're still in the no-turning-time, OR if we're out of fuel
 	if (m_noTurnDistLeft > 0.0f)
 	{
@@ -365,7 +365,7 @@ void NeutronMissileUpdate::doAttack( void )
 	Vector3 trueDir = mx.Get_X_Vector();
 	trueDir.Normalize();
 
-	// 
+	//
 	// Move forward along forward direction
 	//
 	Real damping = getNeutronMissileUpdateModuleData()->m_forwardDamping;
@@ -484,7 +484,7 @@ UpdateSleepTime NeutronMissileUpdate::update( void )
 			Real vel = m_vel.length();
 			m_vel.x = 0;
 			m_vel.y = 0;
-			m_vel.z = -vel * STRAIGHT_DOWN_SLOW_FACTOR;	
+			m_vel.z = -vel * STRAIGHT_DOWN_SLOW_FACTOR;
 
 		}
 	}

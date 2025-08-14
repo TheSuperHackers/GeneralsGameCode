@@ -26,8 +26,8 @@
  *                                                                                             *
  *              Original Author:: Hector Yee                                                   *
  *                                                                                             *
- *                      $Author:: Kenny Mitchell                                               * 
- *                                                                                             * 
+ *                      $Author:: Kenny Mitchell                                               *
+ *                                                                                             *
  *                     $Modtime:: 06/26/02 4:04p                                             $*
  *                                                                                             *
  *                    $Revision:: 2                                                            $*
@@ -70,7 +70,7 @@ LineGroupClass::LineGroupClass(void) :
 	Shader(ShaderClass::_PresetAdditiveSpriteShader),
 	DefaultLineSize(0.0f),
 	DefaultLineColor(1.0f, 1.0f, 1.0f),
-	DefaultLineAlpha(1.0f),		
+	DefaultLineAlpha(1.0f),
 	DefaultLineUCoord(0.0f),
 	DefaultTailDiffuse(0.0f, 0.0f, 0.0f, 0.0f),
 	LineMode(TETRAHEDRON)
@@ -92,11 +92,11 @@ LineGroupClass::~LineGroupClass(void)
 void LineGroupClass::Set_Arrays(
 	ShareBufferClass<Vector3> *startlocs,
 	ShareBufferClass<Vector3> *endlocs,
-	ShareBufferClass<Vector4> *diffuse,		
+	ShareBufferClass<Vector4> *diffuse,
 	ShareBufferClass<Vector4> *taildiffuse,
 	ShareBufferClass<unsigned int> *alt,
-	ShareBufferClass<float> *sizes,	
-	ShareBufferClass<float> *ucoords, 
+	ShareBufferClass<float> *sizes,
+	ShareBufferClass<float> *ucoords,
 	int active_line_count
 	)
 {
@@ -108,7 +108,7 @@ void LineGroupClass::Set_Arrays(
 	WWASSERT(startlocs->Get_Count() == endlocs->Get_Count());
 	WWASSERT(!diffuse || startlocs->Get_Count() == diffuse->Get_Count());
 	WWASSERT(!alt || startlocs->Get_Count() == alt->Get_Count());
-	WWASSERT(!sizes || startlocs->Get_Count() == sizes->Get_Count());	
+	WWASSERT(!sizes || startlocs->Get_Count() == sizes->Get_Count());
 	WWASSERT(!ucoords || startlocs->Get_Count() == ucoords->Get_Count());
 	WWASSERT(!taildiffuse || startlocs->Get_Count() == taildiffuse->Get_Count());
 
@@ -117,7 +117,7 @@ void LineGroupClass::Set_Arrays(
 	REF_PTR_SET(LineDiffuse,diffuse);
 	REF_PTR_SET(TailDiffuse,taildiffuse);
 	REF_PTR_SET(ALT,alt);
-	REF_PTR_SET(LineSize,sizes);	
+	REF_PTR_SET(LineSize,sizes);
 	REF_PTR_SET(LineUCoord,ucoords);
 
 	if (ALT) {
@@ -180,8 +180,8 @@ float LineGroupClass::Get_Line_UCoord(void)
 
 void LineGroupClass::Set_Flag(FlagsType flag, bool on)
 {
-	if (on) Flags |= 1 << flag; 
-	else 
+	if (on) Flags |= 1 << flag;
+	else
 		Flags &= ~(1 << flag);
 }
 
@@ -274,7 +274,7 @@ void	LineGroupClass::Render(RenderInfoClass &rinfo)
 	const static Vector3 offset_c = Vector3(WWMath::Cos(11 * WWMATH_PI / 6),	WWMath::Sin(11 * WWMATH_PI / 6), 0);
 
 	static Vector3 offset[3];
-	
+
 	offset[0].Set(offset_a);
 	offset[1].Set(offset_b);
 	offset[2].Set(offset_c);
@@ -284,7 +284,7 @@ void	LineGroupClass::Render(RenderInfoClass &rinfo)
 	DX8Wrapper::Get_Transform(D3DTS_VIEW, view);
 
 	Matrix4x4 identity(true);
-	DX8Wrapper::Set_Transform(D3DTS_WORLD, identity);	
+	DX8Wrapper::Set_Transform(D3DTS_WORLD, identity);
 
 	// if the points are in world space, transform the offsets
 	if (Get_Flag(TRANSFORM)) {
@@ -298,7 +298,7 @@ void	LineGroupClass::Render(RenderInfoClass &rinfo)
 	} else {
 		DX8Wrapper::Set_Transform(D3DTS_VIEW, identity);
 	}
-	
+
 	int num_tris=0;
 	int num_indices=0;
 	int num_vertices=0;
@@ -314,10 +314,10 @@ void	LineGroupClass::Render(RenderInfoClass &rinfo)
 			num_indices		=3 * num_tris;
 			num_vertices	=6 * LineCount;
 			break;
-	}	
+	}
 
 	// construct the tetrahedra in the index buffers
-	// assume first vertex is the apex, followed by offset[0-3]	
+	// assume first vertex is the apex, followed by offset[0-3]
 
 	DynamicIBAccessClass iba(sort?BUFFER_TYPE_DYNAMIC_SORTING:BUFFER_TYPE_DYNAMIC_DX8,num_indices);
 
@@ -332,7 +332,7 @@ void	LineGroupClass::Render(RenderInfoClass &rinfo)
 					// apex, offset[1], offset[0]
 					*ibptr++	= idx + 0;
 					*ibptr++	= idx + 2;
-					*ibptr++	= idx + 1;			
+					*ibptr++	= idx + 1;
 					// apex, offset[2], offset[1]
 					*ibptr++	= idx + 0;
 					*ibptr++	= idx + 3;
@@ -379,12 +379,12 @@ void	LineGroupClass::Render(RenderInfoClass &rinfo)
 					*ibptr++ = idx + 3;
 					*ibptr++ = idx + 5;
 					*ibptr++ = idx + 4;
-				}			
+				}
 				break;
 		}
 	}	// writing to ib
 
-	// make the vertex buffers	
+	// make the vertex buffers
 
 	DynamicVBAccessClass vba(sort ? BUFFER_TYPE_DYNAMIC_SORTING : BUFFER_TYPE_DYNAMIC_DX8,dynamic_fvf_type,num_vertices);
 
@@ -396,7 +396,7 @@ void	LineGroupClass::Render(RenderInfoClass &rinfo)
 		Vector3 loc, start, end;
 		int point, j;
 		float size = DefaultLineSize;
-		Vector4 diffuse(DefaultLineColor.X, DefaultLineColor.Y, DefaultLineColor.Z, DefaultLineAlpha);		
+		Vector4 diffuse(DefaultLineColor.X, DefaultLineColor.Y, DefaultLineColor.Z, DefaultLineAlpha);
 		float ucoord = DefaultLineUCoord;
 		Vector4 taildiffuse = DefaultTailDiffuse;
 
@@ -430,7 +430,7 @@ void	LineGroupClass::Render(RenderInfoClass &rinfo)
 						vb->diffuse	= DX8Wrapper::Convert_Color(diffuse);
 						vb->u1		= ucoord;
 						vb->v1		= 0.0f;
-						vb++;				
+						vb++;
 					}
 					break;
 			case PRISM:
@@ -443,12 +443,12 @@ void	LineGroupClass::Render(RenderInfoClass &rinfo)
 						vb->diffuse	= DX8Wrapper::Convert_Color(diffuse);
 						vb->u1		= ucoord;
 						vb->v1		= 0.0f;
-						vb++;				
+						vb++;
 					}
 					// Do not merge loops. The vb has to be written in a specific order
 					// (This is to optimize AGP memory write)
 
-					// end cap 
+					// end cap
 					for (j=0; j<3; j++) {
 						loc.Set(end + size * offset[j]);
 						vb->x			= loc.X;
@@ -457,7 +457,7 @@ void	LineGroupClass::Render(RenderInfoClass &rinfo)
 						vb->diffuse	= DX8Wrapper::Convert_Color(taildiffuse);
 						vb->u1		= ucoord;
 						vb->v1		= 1.0f;
-						vb++;				
+						vb++;
 					}
 					break;
 			}
@@ -467,13 +467,13 @@ void	LineGroupClass::Render(RenderInfoClass &rinfo)
 
 	DX8Wrapper::Set_Index_Buffer(iba, 0);
 	DX8Wrapper::Set_Vertex_Buffer(vba);
-	
+
 	if (sort) {
 		SortingRendererClass::Insert_Triangles(0, num_tris, 0, num_vertices);
 	} else {
 		DX8Wrapper::Draw_Triangles(0, num_tris, 0, num_vertices);
-	}		
-	
+	}
+
 	// restore the matrices
 	DX8Wrapper::Set_Transform(D3DTS_VIEW, view);
 }

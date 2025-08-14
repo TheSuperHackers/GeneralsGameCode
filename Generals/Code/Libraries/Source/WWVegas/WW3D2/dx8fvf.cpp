@@ -25,14 +25,14 @@ static unsigned Get_FVF_Vertex_Size(unsigned FVF)
 	return D3DXGetFVFVertexSize(FVF);
 }
 
-FVFInfoClass::FVFInfoClass(unsigned FVF_) 
+FVFInfoClass::FVFInfoClass(unsigned FVF_)
 	:
 	FVF(FVF_),
 	fvf_size(Get_FVF_Vertex_Size(FVF))
 {
 	location_offset=0;
 	blend_offset=location_offset;
-	
+
 	if ((FVF&D3DFVF_XYZ)==D3DFVF_XYZ) blend_offset+=3*sizeof(float);
 	normal_offset=blend_offset;
 
@@ -46,7 +46,7 @@ FVFInfoClass::FVFInfoClass(unsigned FVF_)
 	if ((FVF&D3DFVF_DIFFUSE)==D3DFVF_DIFFUSE) specular_offset+=sizeof(DWORD);
 	texcoord_offset[0]=specular_offset;
 
-	if ((FVF&D3DFVF_SPECULAR)==D3DFVF_SPECULAR) texcoord_offset[0]+=sizeof(DWORD);	
+	if ((FVF&D3DFVF_SPECULAR)==D3DFVF_SPECULAR) texcoord_offset[0]+=sizeof(DWORD);
 
 	for (unsigned int i=1; i<D3DDP_MAXTEXCOORD; i++)
 	{

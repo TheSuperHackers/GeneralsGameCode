@@ -17,22 +17,22 @@
 */
 
 /* $Header: /Commando/Code/Tools/max2w3d/MeshDeform.h 6     4/24/01 6:02p Greg_h $ */
-/*********************************************************************************************** 
- ***                            Confidential - Westwood Studios                              *** 
- *********************************************************************************************** 
- *                                                                                             * 
- *                 Project Name : Commando / G 3D engine                                       * 
- *                                                                                             * 
- *                    File Name : MeshDeform.H                                                 * 
- *                                                                                             * 
- *                   Programmer : Patrick Smith                                                * 
- *                                                                                             * 
- *                   Start Date : 04/19/99                                                     * 
- *                                                                                             * 
- *                  Last Update : 
- *                                                                                             * 
- *---------------------------------------------------------------------------------------------* 
- * Functions:                                                                                  * 
+/***********************************************************************************************
+ ***                            Confidential - Westwood Studios                              ***
+ ***********************************************************************************************
+ *                                                                                             *
+ *                 Project Name : Commando / G 3D engine                                       *
+ *                                                                                             *
+ *                    File Name : MeshDeform.H                                                 *
+ *                                                                                             *
+ *                   Programmer : Patrick Smith                                                *
+ *                                                                                             *
+ *                   Start Date : 04/19/99                                                     *
+ *                                                                                             *
+ *                  Last Update :
+ *                                                                                             *
+ *---------------------------------------------------------------------------------------------*
+ * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 
@@ -64,7 +64,7 @@ extern Class_ID _MeshDeformClassID;
 class MeshDeformClass : public OSModifier
 {
 	public:
-		
+
 		//////////////////////////////////////////////////////////////////////
 		//	Public constructors/destructors
 		//////////////////////////////////////////////////////////////////////
@@ -113,12 +113,12 @@ class MeshDeformClass : public OSModifier
 		void							DeleteThis (void) { delete this; }
 		void							GetClassName (TSTR& s) { s = TSTR(_T("WWDeform")); }
 		TCHAR *						GetObjectName (void) { return _T("WWDamage"); }
-		SClass_ID					SuperClassID (void) { return OSM_CLASS_ID; }		
+		SClass_ID					SuperClassID (void) { return OSM_CLASS_ID; }
 		Class_ID						ClassID (void) { return _MeshDeformClassID; }
 		//RefTargetHandle			Clone(RemapDir& remap = NoRemap());
 		void							BeginEditParams (IObjParam  *ip, ULONG flags,Animatable *prev);
 		void							EndEditParams (IObjParam *ip, ULONG flags,Animatable *next);
-		
+
 		//////////////////////////////////////////////////////////////////////
 		// From Modifier
 		//////////////////////////////////////////////////////////////////////
@@ -156,7 +156,7 @@ class MeshDeformClass : public OSModifier
 
 		void							TransformStart (TimeValue time_val);
 		void							TransformFinish (TimeValue time_val);
-		void							TransformCancel (TimeValue time_val);		
+		void							TransformCancel (TimeValue time_val);
 #if defined W3D_MAX4		//defined as in the project (.dsp)
 		ISubObjType *				GetSubObjType(int i) ;
 #endif
@@ -168,12 +168,12 @@ class MeshDeformClass : public OSModifier
 		//////////////////////////////////////////////////////////////////////
 		void							Update_Current_Set (void);
 		void							Update_Set_Count (void);
-		
+
 	private:
 
 		//////////////////////////////////////////////////////////////////////
 		//	Private member data
-		//////////////////////////////////////////////////////////////////////		
+		//////////////////////////////////////////////////////////////////////
 		IObjParam *					m_MaxInterface;
 		HWND							m_hRollupWnd;
 		MeshDeformPanelClass *	m_pPanel;

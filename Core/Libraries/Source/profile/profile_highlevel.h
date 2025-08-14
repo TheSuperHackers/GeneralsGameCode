@@ -48,14 +48,14 @@ class ProfileHighLevel
 
 public:
 
-  /// \brief A high level profile ID. 
+  /// \brief A high level profile ID.
   class Id
   {
     friend ProfileHighLevel;
 
   public:
     Id(void): m_idPtr(0) {}
-    
+
     /**
       \brief Increment the internal profile value.
 
@@ -213,7 +213,7 @@ public:
     \brief Searches for the given high level profile.
 
     \note Actually the ID returned belongs to the first profile
-    which has a name that is equal to or larger than the name 
+    which has a name that is equal to or larger than the name
     searched for.
 
     \param name profile name to search for
@@ -224,16 +224,16 @@ public:
 
 private:
 
-  /** \internal 
-    
+  /** \internal
+
     Undocumented default constructor. Initializes high level profiler.
-    We can make this private as well so nobody accidently tries to create 
-    another instance. 
+    We can make this private as well so nobody accidently tries to create
+    another instance.
   */
   ProfileHighLevel(void);
 
-  /** 
-    \brief The only high level profiler instance. 
+  /**
+    \brief The only high level profiler instance.
   */
   static ProfileHighLevel Instance;
 };

@@ -58,7 +58,7 @@ public:
 	void					ReloadDialog(void);
 
 private:
-	
+
 	void					Enable_Stage(int stage,BOOL onoff);
 	void					Update_Texture_Buttons(void);
 

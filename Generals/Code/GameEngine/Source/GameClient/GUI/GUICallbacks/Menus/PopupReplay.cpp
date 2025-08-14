@@ -24,12 +24,12 @@
 
 // FILE: PopupReplay.cpp /////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Electronic Arts Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2002 - All Rights Reserved                  
-//                                                                          
+//
+//                       Electronic Arts Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2002 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:   Generals
@@ -168,11 +168,11 @@ void PopupReplayShutdown( WindowLayout *layout, void *userData )
 void PopupReplayUpdate( WindowLayout *layout, void *userData )
 {
 
-	if (s_fileSavePopupStartTime != 0) 
+	if (s_fileSavePopupStartTime != 0)
 	{
 		// the replay save confirmation popup is up
 		// check to see if its time to take it down.
-		if ((timeGetTime() - s_fileSavePopupStartTime) >= s_fileSavePopupDuration) 
+		if ((timeGetTime() - s_fileSavePopupStartTime) >= s_fileSavePopupDuration)
 		{
 			ShowReplaySavedPopup(FALSE);
 
@@ -184,13 +184,13 @@ void PopupReplayUpdate( WindowLayout *layout, void *userData )
 			s_fileSavePopupStartTime = 0;
 		}
 	}
-}  // end SaveLoadMenuUpdate 
+}  // end SaveLoadMenuUpdate
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 WindowMsgHandledType PopupReplayInput( GameWindow *window, UnsignedInt msg, WindowMsgData mData1, WindowMsgData mData2 )
 {
-	switch( msg ) 
+	switch( msg )
 	{
 
 		// --------------------------------------------------------------------------------------------
@@ -205,7 +205,7 @@ WindowMsgHandledType PopupReplayInput( GameWindow *window, UnsignedInt msg, Wind
 				// ----------------------------------------------------------------------------------------
 				case KEY_ESC:
 				{
-					
+
 					//
 					// send a simulated selected event to the parent window of the
 					// back/exit button
@@ -213,7 +213,7 @@ WindowMsgHandledType PopupReplayInput( GameWindow *window, UnsignedInt msg, Wind
 					if( BitIsSet( state, KEY_STATE_UP ) )
 					{
 						GameWindow *button = TheWindowManager->winGetWindowFromId( parent, buttonBackKey );
-						TheWindowManager->winSendSystemMsg( window, GBM_SELECTED, 
+						TheWindowManager->winSendSystemMsg( window, GBM_SELECTED,
 																								(WindowMsgData)button, buttonBackKey );
 
 					}  // end if
@@ -259,7 +259,7 @@ static void saveReplay( UnicodeString filename )
 	messageBoxWin = NULL;
 	if (TheLocalFileSystem->doesFileExist(fullPath.str()))
 	{
-		messageBoxWin = MessageBoxOkCancel(TheGameText->fetch("GUI:OverwriteReplayTitle"), TheGameText->fetch("GUI:OverwriteReplay"), reallySaveReplay, NULL);		
+		messageBoxWin = MessageBoxOkCancel(TheGameText->fetch("GUI:OverwriteReplayTitle"), TheGameText->fetch("GUI:OverwriteReplay"), reallySaveReplay, NULL);
 	}
 	else
 	{
@@ -335,11 +335,11 @@ void reallySaveReplay(void)
 //-------------------------------------------------------------------------------------------------
 /** SaveLoad menu system callback */
 //-------------------------------------------------------------------------------------------------
-WindowMsgHandledType PopupReplaySystem( GameWindow *window, UnsignedInt msg, 
+WindowMsgHandledType PopupReplaySystem( GameWindow *window, UnsignedInt msg,
 																				 WindowMsgData mData1, WindowMsgData mData2 )
 {
 
-  switch( msg ) 
+  switch( msg )
 	{
 
 		// --------------------------------------------------------------------------------------------
@@ -413,7 +413,7 @@ WindowMsgHandledType PopupReplaySystem( GameWindow *window, UnsignedInt msg,
 				saveReplay(filename);
 
       }
-	
+
 			break;
 
 		}  // end selected
@@ -444,7 +444,7 @@ WindowMsgHandledType PopupReplaySystem( GameWindow *window, UnsignedInt msg,
 				ScoreScreenEnableControls(TRUE);
 
 			}  // end if
-	
+
 			break;
 
 		}  // end selected

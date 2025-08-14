@@ -44,7 +44,7 @@ void DebugLog( const char *fmt, ... );
 
 	/*
 		Yeah, it's a sleazy global, since we can't reasonably add
-		any args to DebugCrash due to the varargs nature of it. 
+		any args to DebugCrash due to the varargs nature of it.
 		We'll just let it slide in this case...
 	*/
 	extern char* TheCurrentIgnoreCrashPtr;

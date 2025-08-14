@@ -177,7 +177,7 @@ void CAdvancedAnimSheet::LoadAnims (void)
 
 				// Release our hold on this animation.
 				MEMBER_RELEASE(pHierarchyAnim);
-			}							
+			}
 		}
 
 		// Free the object

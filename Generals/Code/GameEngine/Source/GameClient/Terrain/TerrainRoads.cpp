@@ -42,7 +42,7 @@ UnsignedInt TerrainRoadCollection::m_idCounter = 0;
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-const FieldParse TerrainRoadType::m_terrainRoadFieldParseTable[] = 
+const FieldParse TerrainRoadType::m_terrainRoadFieldParseTable[] =
 {
 
 	{ "Texture",						INI::parseAsciiString,				NULL, offsetof( TerrainRoadType, m_texture ) },
@@ -55,7 +55,7 @@ const FieldParse TerrainRoadType::m_terrainRoadFieldParseTable[] =
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-const FieldParse TerrainRoadType::m_terrainBridgeFieldParseTable[] = 
+const FieldParse TerrainRoadType::m_terrainBridgeFieldParseTable[] =
 {
 
 	{ "BridgeScale",									INI::parseReal,								NULL, offsetof( TerrainRoadType, m_bridgeScale ) },
@@ -91,12 +91,12 @@ const FieldParse TerrainRoadType::m_terrainBridgeFieldParseTable[] =
 };
 
 // ------------------------------------------------------------------------------------------------
-/** In the form of 
+/** In the form of
 	* Label = Transition:<Damage|Repair> ToState:<BODYTYPE> EffectNum:<INT> OCL:<OCL NAME> */
 // ------------------------------------------------------------------------------------------------
-/*static*/ void TerrainRoadType::parseTransitionToOCL( INI *ini, 
-																											 void *instance, 
-																											 void *store, 
+/*static*/ void TerrainRoadType::parseTransitionToOCL( INI *ini,
+																											 void *instance,
+																											 void *store,
 																											 const void *userData )
 {
 	const char *token;
@@ -124,7 +124,7 @@ const FieldParse TerrainRoadType::m_terrainBridgeFieldParseTable[] =
 	// get effect num
 	token = ini->getNextSubToken( "EffectNum" );
 	Int effectNum = ini->scanInt( token );
-	
+
 	// make effectNum zero based
 	--effectNum;
 
@@ -143,16 +143,16 @@ const FieldParse TerrainRoadType::m_terrainBridgeFieldParseTable[] =
 		theInstance->friend_setDamageToOCLString( state, effectNum, AsciiString( token ) );
 	else
 		theInstance->friend_setRepairedToOCLString( state, effectNum, AsciiString( token ) );
-	
+
 }  // end parseTransitionToOCL
 
 // ------------------------------------------------------------------------------------------------
 /** In the form of
 	* Label = Transition:<Damage|Repair> ToState:<BODYTYPE> EffectNum:<INT> FX:<FXLIST NAME> */
 // ------------------------------------------------------------------------------------------------
-/*static*/ void TerrainRoadType::parseTransitionToFX( INI *ini, 
-																											void *instance, 
-																											void *store, 
+/*static*/ void TerrainRoadType::parseTransitionToFX( INI *ini,
+																											void *instance,
+																											void *store,
 																											const void *userData )
 {
 	const char *token;
@@ -180,7 +180,7 @@ const FieldParse TerrainRoadType::m_terrainBridgeFieldParseTable[] =
 	// get effect num
 	token = ini->getNextSubToken( "EffectNum" );
 	Int effectNum = ini->scanInt( token );
-	
+
 	// make effectNum zero based
 	--effectNum;
 
@@ -356,7 +356,7 @@ TerrainRoadType *TerrainRoadCollection::newRoad( AsciiString name )
 	TerrainRoadType *defaultRoad = findRoad( AsciiString( "DefaultRoad" ) );
 	if( defaultRoad )
 	{
-		
+
 		road->friend_setTexture( defaultRoad->getTexture() );
 		road->friend_setRoadWidth( defaultRoad->getRoadWidth() );
 		road->friend_setRoadWidthInTexture( defaultRoad->getRoadWidthInTexture() );
@@ -392,7 +392,7 @@ TerrainRoadType *TerrainRoadCollection::newBridge( AsciiString name )
 	TerrainRoadType *defaultBridge = findBridge( AsciiString( "DefaultBridge" ) );
 	if( defaultBridge )
 	{
-		
+
 		bridge->friend_setTexture( defaultBridge->getTexture() );
 		bridge->friend_setBridgeScale( defaultBridge->getBridgeScale() );
 		bridge->friend_setBridgeModelName( defaultBridge->getBridgeModel() );

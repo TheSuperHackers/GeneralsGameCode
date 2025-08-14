@@ -24,7 +24,7 @@
 
 // FILE: FireWeaponWhenDeadBehavior.cpp ///////////////////////////////////////////////////////////////////////
 // Author:
-// Desc:  
+// Desc:
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
@@ -58,7 +58,7 @@ const Real END_MIDPOINT_RATIO = 0.65f;
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-FireWeaponWhenDeadBehavior::FireWeaponWhenDeadBehavior( Thing *thing, const ModuleData* moduleData ) : 
+FireWeaponWhenDeadBehavior::FireWeaponWhenDeadBehavior( Thing *thing, const ModuleData* moduleData ) :
 	BehaviorModule( thing, moduleData )
 {
 	if (getFireWeaponWhenDeadBehaviorModuleData()->m_initiallyActive)
@@ -87,16 +87,16 @@ void FireWeaponWhenDeadBehavior::onDie( const DamageInfo *damageInfo )
 	// right type?
 	if (!d->m_dieMuxData.isDieApplicable(getObject(), damageInfo))
 		return;
-	
+
 	// This will never apply until built.  Otherwise canceling construction sets it off, and killing
 	// a one hitpoint one percent building will too.
 	if( obj->getStatusBits().test( OBJECT_STATUS_UNDER_CONSTRUCTION ) )
 		return;
 
-	
+
 	UpgradeMaskType activation, conflicting;
 	getUpgradeActivationMasks( activation, conflicting );
-	
+
 	if( obj->getObjectCompletedUpgradeMask().testForAny( conflicting ) )
 	{
 		return;
@@ -105,7 +105,7 @@ void FireWeaponWhenDeadBehavior::onDie( const DamageInfo *damageInfo )
 	{
 		return;
 	}
-	
+
 	if (d->m_deathWeapon)
 	{
 		// fire the default weapon

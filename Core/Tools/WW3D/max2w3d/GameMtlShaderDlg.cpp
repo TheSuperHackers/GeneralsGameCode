@@ -56,7 +56,7 @@
 
 #define NUM_SHADER_BLEND_PRESETS 8
 
-static char * _ShaderBlendSettingPresetNames[NUM_SHADER_BLEND_PRESETS + 1] = 
+static char * _ShaderBlendSettingPresetNames[NUM_SHADER_BLEND_PRESETS + 1] =
 {
 	"Opaque",
 	"Add",
@@ -101,8 +101,8 @@ static const ShaderBlendSettingPreset ShaderBlendSettingPresets[NUM_SHADER_BLEND
  *=============================================================================================*/
 GameMtlShaderDlg::GameMtlShaderDlg
 (
-	HWND				parent, 
-	IMtlParams *	imp, 
+	HWND				parent,
+	IMtlParams *	imp,
 	GameMtl *		mtl,
 	int				pass
 ) :
@@ -140,14 +140,14 @@ GameMtlShaderDlg::~GameMtlShaderDlg()
  * HISTORY:                                                                                    *
  *   11/23/98   GTH : Created.                                                                 *
  *=============================================================================================*/
-BOOL GameMtlShaderDlg::Dialog_Proc (HWND dlg_wnd, UINT message, WPARAM wparam, LPARAM lparam) 
-{ 
+BOOL GameMtlShaderDlg::Dialog_Proc (HWND dlg_wnd, UINT message, WPARAM wparam, LPARAM lparam)
+{
 	int cursel;
 	int i;
 	int id = LOWORD(wparam);
 	int code = HIWORD(wparam);
 
-	switch (message) 
+	switch (message)
 	{
 
 		case WM_INITDIALOG:
@@ -168,8 +168,8 @@ BOOL GameMtlShaderDlg::Dialog_Proc (HWND dlg_wnd, UINT message, WPARAM wparam, L
 		case WM_COMMAND:
 			{
 				if (code == CBN_SELCHANGE) {
-					
-					switch (id) 
+
+					switch (id)
 					{
 						case IDC_DEPTHCOMPARE_COMBO:
 							cursel = SendDlgItemMessage(dlg_wnd,IDC_DEPTHCOMPARE_COMBO,CB_GETCURSEL,0,0);
@@ -214,9 +214,9 @@ BOOL GameMtlShaderDlg::Dialog_Proc (HWND dlg_wnd, UINT message, WPARAM wparam, L
 					}
 
 				} else {
-				
+
 					switch(id) {
-						
+
 						case IDC_DEPTHMASK_CHECK:
 							if (SendDlgItemMessage(dlg_wnd,IDC_DEPTHMASK_CHECK,BM_GETCHECK,0,0)) {
 								TheMtl->Set_Depth_Mask(PassIndex,W3DSHADER_DEPTHMASK_WRITE_ENABLE);
@@ -270,7 +270,7 @@ void GameMtlShaderDlg::ReloadDialog(void)
 	SendDlgItemMessage(m_hWnd, IDC_DETAILCOLOR_COMBO, CB_SETCURSEL, TheMtl->Get_Detail_Color_Func(PassIndex), 0 );
 	SendDlgItemMessage(m_hWnd, IDC_DETAILALPHA_COMBO, CB_SETCURSEL, TheMtl->Get_Detail_Alpha_Func(PassIndex), 0 );
 	Set_Preset();
-	
+
 	SetCheckBox(m_hWnd,IDC_DEPTHMASK_CHECK, TheMtl->Get_Depth_Mask(PassIndex));
 	SetCheckBox(m_hWnd,IDC_ALPHATEST_CHECK, TheMtl->Get_Alpha_Test(PassIndex));
 }

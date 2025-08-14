@@ -19,7 +19,7 @@
 /****************************************************************************\
 *        C O N F I D E N T I A L --- W E S T W O O D   S T U D I O S         *
 ******************************************************************************
-Project Name: 
+Project Name:
 File Name   : arraylist.h
 Author      : Neal Kettler
 Start Date  : Jan 19, 1997
@@ -45,7 +45,7 @@ that don't belong to them, etc...
 \****************************************************************************/
 
 #ifndef ARRAYLIST_HEADER
-#define ARRAYLIST_HEADER    
+#define ARRAYLIST_HEADER
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -67,7 +67,7 @@ class ArrayList
                    ArrayList(ArrayList<T> &other);
                   ~ArrayList();
 
-  // Remove all entries from the lsit 
+  // Remove all entries from the lsit
   void             clear(void);
 
   // Add a node after the zero based 'pos'
@@ -83,7 +83,7 @@ class ArrayList
   bit8             remove(OUT T &node,sint32 pos);
   bit8             remove(sint32 pos);
   bit8             removeHead(OUT T &node);
-  bit8             removeTail(OUT T &node); 
+  bit8             removeTail(OUT T &node);
 
   // Replace one obj with another
   bit8             replace(IN T &node, sint32 pos);
@@ -92,7 +92,7 @@ class ArrayList
   // Get a node without removing from the list
   bit8             get(OUT T &node,sint32 pos) RO;
   bit8             getHead(OUT T &node) RO;
-  bit8             getTail(OUT T &node) RO;        
+  bit8             getTail(OUT T &node) RO;
 
   // Get a pointer to the interally managed copy (careful!)
   bit8             getPointer(OUT T **node,sint32 pos) RO;
@@ -126,7 +126,7 @@ class ArrayList
 };
 
 
-//Create the empty list 
+//Create the empty list
 template <class T>
 ArrayList<T>::ArrayList()
 {
@@ -168,7 +168,7 @@ ArrayList<T> &ArrayList<T>::operator=(IN ArrayList<T> &other)
   {
     other.get(node,i);
     addTail(node);
-  } 
+  }
   return(*this);
 }
 
@@ -183,7 +183,7 @@ void ArrayList<T>::clear()
                           //  at home kiddies!
   }
   Entries_=0;
-}            
+}
 
 // ************************* UNSAFE UNSAFE UNSAFE *************************
 // Note - Don't call this on any type with a constructor/destructor since this
@@ -228,7 +228,7 @@ template <class T>
 bit8 ArrayList<T>::add(IN T &node,sint32 pos)
 {
   if (pos > Entries_)      // You can only access one of the end of the vector
-    pos=Entries_; 
+    pos=Entries_;
   if (pos >= Slots_)        // If we're at the end, grow the list
     growVector();
   if (Entries_ >= Slots_)   // enuff space?
@@ -242,7 +242,7 @@ bit8 ArrayList<T>::add(IN T &node,sint32 pos)
   //fprintf(stderr,"Placement new to %p\n",(Vector_+pos));
 
   // This uses the placement new operator. placement new allows us to
-  //  specify the memory address for the new object.  In this case we 
+  //  specify the memory address for the new object.  In this case we
   //  want it at the 'pos' index into our array.
   new((void *)(Vector_+pos)) T((T &)node); // Trust me, this isn't a memory leak
   Entries_++;                         // one new entry
@@ -252,7 +252,7 @@ bit8 ArrayList<T>::add(IN T &node,sint32 pos)
 
 // Add to the first node, all others get shifted down one slot
 template <class T>
-bit8 ArrayList<T>::addHead(IN T &node)  
+bit8 ArrayList<T>::addHead(IN T &node)
 {
   return(add(node,0));
 }
@@ -263,7 +263,7 @@ template <class T>
 bit8 ArrayList<T>::addTail(IN T &node)
 {
   return(add(node,length()));
-}  
+}
 
 
 // addSortedX only works (properly) if evrerything else in the list is added
@@ -376,16 +376,16 @@ sint32 ArrayList<T>::_sortedLookup(IN T &target, int ascending)
 
 
 /*// addNumSortedX works in much the same way as addSortedX, except that I needed
-// it for a very specific thing.  I needed a list of strings numerically sorted, 
+// it for a very specific thing.  I needed a list of strings numerically sorted,
 // not alphabetically sorted.  Furthermore these strings were composed of numbers
-// delimited by underscores.  In the interest of keeping it generic, these 
+// delimited by underscores.  In the interest of keeping it generic, these
 // functions take as args a node, a delimiting character, and a count of the
 // number of fields to include in a sort.  If this is the list of strings:
 //
 //	55_100, 2_5, 23_32, 98_445, 2_48, 8_88, 2_3, 2_4
 //
 // An alphabetical sort is:
-//	
+//
 //	2_3, 2_4, 2_48, 2_5, 55_100, 8_88, 98_445
 //
 // But a numerical sort by calling addNumSortedAsc(<whatever>, "_", 2) will result in:
@@ -393,7 +393,7 @@ sint32 ArrayList<T>::_sortedLookup(IN T &target, int ascending)
 //	2_3, 2_4, 2_5, 2_48, 8_88, 55_100, 98_445
 //
 // Yes...now that you mention it I am on crack...
-//	
+//
 template <class T>
 bit8 ArrayList<T>::addNumSortedAsc(IN T &node, char delim, int fields)
 {
@@ -421,10 +421,10 @@ sint32 ArrayList<T>::_numSortedLookup(IN T &target, char delim, int fields, int 
 	T* 	midtarget;
 
 
-	// Trivial case 
+	// Trivial case
 	if( Entries_ == 0 )
 		return 0;
-	
+
 	low = 0;
 	high = Entries_;
 	while( 1 )
@@ -465,14 +465,14 @@ sint32 ArrayList<T>::_numSortedLookup(IN T &target, char delim, int fields, int 
 			{
 				if( target <= *lowtarget )
 					return low;
-				else 
+				else
 					return high;
 			}
 			else
 			{
 				if( target <= *lowtarget )
 					return high;
-				else 
+				else
 					return low;
 			}
 		}
@@ -508,7 +508,7 @@ bit8 ArrayList<T>::replace(IN T &node, sint32 pos)
     pos=0;
   if (pos >= Entries_)
     pos=Entries_-1;
-  
+
   (Vector_+pos)->~T();    // Call the destructor manually. Don't try this
                           //  at home kiddies!
 
@@ -523,7 +523,7 @@ bit8 ArrayList<T>::replace(IN T &node, sint32 pos)
 // Remove at the zero based index specified by 'pos'.  When removing from
 // a slot, all others get shifted up by one.
 template <class T>
-bit8 ArrayList<T>::remove(sint32 pos) 
+bit8 ArrayList<T>::remove(sint32 pos)
 {
   if (Entries_==0)
     return(FALSE);
@@ -531,7 +531,7 @@ bit8 ArrayList<T>::remove(sint32 pos)
     pos=0;
   if (pos >= Entries_)
     pos=Entries_-1;
-  
+
   (Vector_+pos)->~T();    // Call the destructor manually. Don't try this
                           //  at home kiddies!
 
@@ -562,7 +562,7 @@ bit8 ArrayList<T>::remove(OUT T &node, sint32 pos)
 
 // Remove the first node of the list
 template <class T>
-bit8 ArrayList<T>::removeHead(OUT T &node)     
+bit8 ArrayList<T>::removeHead(OUT T &node)
 {
   return(remove(node,0));
 }
@@ -573,35 +573,35 @@ template <class T>
 bit8 ArrayList<T>::removeTail(OUT T &node)
 {
   return(remove(node,Entries_-1));
-} 
+}
 
 // get a pointer to the internally managed object.  Try and avoid this, but
 //  sometimes efficiency requires it...
 // get a copy of an item
 template <class T>
-bit8 ArrayList<T>::getPointer(OUT T **node,sint32 pos) RO 
+bit8 ArrayList<T>::getPointer(OUT T **node,sint32 pos) RO
 {
   if ((pos < 0)||(pos >= Entries_))
     return(FALSE);
   *node=&(Vector_[pos]);
-  return(TRUE);  
+  return(TRUE);
 }
-  
+
 
 // get a copy of an item
 template <class T>
-bit8 ArrayList<T>::get(OUT T &node,sint32 pos) RO 
+bit8 ArrayList<T>::get(OUT T &node,sint32 pos) RO
 {
   if ((pos < 0)||(pos >= Entries_))
     return(FALSE);
   node=Vector_[pos];
-  return(TRUE);  
+  return(TRUE);
 }
 
 
 // get a copy of the first node of the list
 template <class T>
-bit8 ArrayList<T>::getHead(OUT T &node) RO 
+bit8 ArrayList<T>::getHead(OUT T &node) RO
 {
   return(get(node,0));
 }
@@ -609,10 +609,10 @@ bit8 ArrayList<T>::getHead(OUT T &node) RO
 
 // get a copy of the last node
 template <class T>
-bit8 ArrayList<T>::getTail(OUT T &node) RO 
+bit8 ArrayList<T>::getTail(OUT T &node) RO
 {
   return(get(node,Entries_-1));
-}      
+}
 
 // just for debugging
 template <class T>
@@ -624,16 +624,16 @@ void ArrayList<T>::print(FILE *out)
   fprintf(out,"Entries: %d  Slots:  %d  sizeof(T): %d\n",Entries_,Slots_,
     sizeof(T));
   fprintf(out,"--------------------\n");
-}            
+}
 
 // Return the current length of the list
 template <class T>
-sint32 ArrayList<T>::length(void) RO 
+sint32 ArrayList<T>::length(void) RO
 {
   return(Entries_);
-}    
+}
 
-// Grow the vector by a factor of 2X 
+// Grow the vector by a factor of 2X
 template <class T>
 bit8 ArrayList<T>::growVector(void)
 {
@@ -663,7 +663,7 @@ bit8 ArrayList<T>::growVector(void)
   Vector_=newVector;
   Slots_=newSlots;
 
-  return(TRUE); 
+  return(TRUE);
 }
 
 
@@ -685,23 +685,23 @@ bit8 ArrayList<T>::shrinkVector(void)
     return(FALSE);
 
   //fprintf(stderr,"Shrinking vector to: %d\n",newSlots);
- 
+
   // The goofy looking new below prevents operator new from getting called
   //  unnecessarily.  This is severall times faster than allocating all of
   //  the slots as objects and then calling the assignment operator on them
   //  when they actually get used.
   //
   T *newVector=(T *)(new uint8[newSlots * sizeof(T)]);
- 
+
   if (Vector_ != NULL)    // Vector_ better not be NULL!
     memcpy(newVector,Vector_,Entries_*sizeof(T));
 
   delete[]((uint8 *)Vector_);  // Get rid of the old vector without calling
                                //  destructors
- 
+
   Vector_=newVector;
   Slots_=newSlots;
- 
+
   return(TRUE);
 }
 

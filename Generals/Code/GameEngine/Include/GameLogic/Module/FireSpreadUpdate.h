@@ -72,7 +72,7 @@ public:
 	void startFireSpreading();
 
 protected:
-	
+
 	UnsignedInt calcNextSpreadDelay();
 
 };

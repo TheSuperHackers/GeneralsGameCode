@@ -24,9 +24,9 @@
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 //
-// FILE: HijackerUpdate.cpp 
+// FILE: HijackerUpdate.cpp
 // Author: Mark Lorenzen, July 2002
-// Desc:   Allows hijacker to kepp with his hijacked vehicle (though hidden) until it dies, then 
+// Desc:   Allows hijacker to kepp with his hijacked vehicle (though hidden) until it dies, then
 // to become a hijacker once more
 //
 /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -59,7 +59,7 @@ HijackerUpdate::HijackerUpdate( Thing *thing, const ModuleData *moduleData ) : U
 	m_ejectPos.zero();
 //	m_ejectPilotDMI = NULL;
 }
-  
+
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 HijackerUpdate::~HijackerUpdate( void )
@@ -90,7 +90,7 @@ UpdateSleepTime HijackerUpdate::update( void )
 			obj->setPosition( target->getPosition() );
 			m_wasTargetAirborne = target->isSignificantlyAboveTerrain();
 			m_ejectPos = *target->getPosition();
-			
+
 			// So, if while I am driving this American war vehicle, I gain skill points, I get to keep them when I wreck the vehicle
 			ExperienceTracker *targetExp = target->getExperienceTracker();
 			ExperienceTracker *jackerExp = obj->getExperienceTracker();
@@ -110,7 +110,7 @@ UpdateSleepTime HijackerUpdate::update( void )
 				//THIS BLOCK RESTORES HIJACKER TO PARTITION MANAGER AND UNHIDES HIM
 				ThePartitionManager->registerObject( obj );
 
-				if( obj->getDrawable() ) 
+				if( obj->getDrawable() )
 				{
 					// so it is time to unhide ourselves and be a pedestrian hijacker again
 					obj->getDrawable()->setDrawableHidden( false );
@@ -148,7 +148,7 @@ UpdateSleepTime HijackerUpdate::update( void )
 
 			}// end if (! hostVehicleHasEjection)
 
-			setTargetObject( NULL ); 
+			setTargetObject( NULL );
 			setIsInVehicle( FALSE );
 			setUpdate( FALSE );
 			m_wasTargetAirborne = false;

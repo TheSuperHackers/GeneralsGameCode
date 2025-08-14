@@ -42,7 +42,7 @@
 #include "vertmaterial.h"
 #include "shader.h"
 
-void PolygonInfoClass::Set_Texture(TextureClass *texture) 
+void PolygonInfoClass::Set_Texture(TextureClass *texture)
 {
 	if(texture)
 		texture->Add_Ref();
@@ -50,7 +50,7 @@ void PolygonInfoClass::Set_Texture(TextureClass *texture)
 		Texture->Release_Ref();
 	Texture = texture;
 }
-void PolygonInfoClass::Set_Vertex_Material(VertexMaterialClass *vertexMaterial) 
+void PolygonInfoClass::Set_Vertex_Material(VertexMaterialClass *vertexMaterial)
 {
 	if(vertexMaterial)
 		vertexMaterial->Add_Ref();
@@ -77,7 +77,7 @@ PolygonInfoClass::~PolygonInfoClass()
 	if(VertexMaterial)
 		VertexMaterial->Release_Ref();
 
-	// todo : update for refcounted shaders	
+	// todo : update for refcounted shaders
 	if(Shader)
 		delete Shader;
 }

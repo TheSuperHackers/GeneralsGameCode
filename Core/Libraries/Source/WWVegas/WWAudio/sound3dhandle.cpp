@@ -81,7 +81,7 @@ Sound3DHandleClass::Initialize (SoundBufferClass *buffer)
 		S32 test1 = 0;
 		S32 test2 = 0;
 		Get_Sample_MS_Position (&test1, &test2);
-		
+
 		//
 		//	Check for success
 		//
@@ -341,7 +341,7 @@ Sound3DHandleClass::Get_Sample_User_Data (S32 i)
 //////////////////////////////////////////////////////////////////////
 S32
 Sound3DHandleClass::Get_Sample_Playback_Rate (void)
-{	
+{
 	S32 retval = 0;
 
 	if (SampleHandle != (H3DSAMPLE)INVALID_MILES_HANDLE) {

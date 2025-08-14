@@ -48,7 +48,7 @@ HCURSOR cursorResources[Mouse::NUM_MOUSE_CURSORS][MAX_2D_CURSOR_DIRECTIONS];
 
 //-------------------------------------------------------------------------------------------------
 /** Get a mouse event from the buffer if available, we need to translate
-	* from the windows message meanings to our own internal mouse 
+	* from the windows message meanings to our own internal mouse
 	* structure */
 //-------------------------------------------------------------------------------------------------
 UnsignedByte Win32Mouse::getMouseEvent( MouseIO *result, Bool flush )
@@ -104,14 +104,14 @@ void Win32Mouse::translateEvent( UnsignedInt eventIndex, MouseIO *result )
 
 	// Time is the same for all events
 	result->time = m_eventBuffer[ eventIndex ].time;
-	
+
 	switch( msg )
 	{
 
 		// ------------------------------------------------------------------------
 		case WM_LBUTTONDOWN:
 		{
-			
+
 			result->leftState = MBS_Down;
 			result->leftFrame = frame;
 			result->pos.x = LOWORD( lParam );
@@ -235,7 +235,7 @@ void Win32Mouse::translateEvent( UnsignedInt eventIndex, MouseIO *result )
 			p.x = LOWORD( lParam );
 			p.y = HIWORD( lParam );
 			ScreenToClient( ApplicationHWnd, &p );
-	
+
 			// note the short cast here to keep signed information in tact
 			result->wheelPos = (Short)HIWORD( wParam );
 			result->pos.x = p.x;
@@ -325,7 +325,7 @@ void Win32Mouse::reset( void )
 void Win32Mouse::update( void )
 {
 
-	// extend 
+	// extend
 	Mouse::update();
 
 }  // end update
@@ -368,6 +368,20 @@ void Win32Mouse::setVisibility(Bool visible)
 	Win32Mouse::setCursor(getMouseCursor());
 }
 
+//-------------------------------------------------------------------------------------------------
+void Win32Mouse::loseFocus()
+{
+	Mouse::loseFocus();
+	m_lostFocus = true;
+}
+
+//-------------------------------------------------------------------------------------------------
+void Win32Mouse::regainFocus()
+{
+	Mouse::regainFocus();
+	m_lostFocus = false;
+}
+
 /**Preload all the cursors we may need during the game.  This must be done before the D3D device
 is created to avoid cursor corruption on buggy ATI Radeon cards. */
 void Win32Mouse::initCursorResources(void)
@@ -383,7 +397,7 @@ void Win32Mouse::initCursorResources(void)
 					sprintf(resourcePath,"data\\cursors\\%s%d.ANI",m_cursorInfo[cursor].textureName.str(),direction);
 				else
 					sprintf(resourcePath,"data\\cursors\\%s.ANI",m_cursorInfo[cursor].textureName.str());
-				
+
 				// check for a MOD cursor.
 				Bool loaded = FALSE;
 				if (TheGlobalData->m_modDir.isNotEmpty())
@@ -430,7 +444,7 @@ void Win32Mouse::setCursor( MouseCursor cursor )
 
 	// save current cursor
 	m_currentWin32Cursor=m_currentCursor = cursor;
-	
+
 }  // end setCursor
 
 //-------------------------------------------------------------------------------------------------
@@ -439,7 +453,26 @@ void Win32Mouse::setCursor( MouseCursor cursor )
 void Win32Mouse::capture( void )
 {
 
-//	SetCapture( ApplicationHWnd );
+	RECT rect;
+	::GetClientRect(ApplicationHWnd, &rect);
+
+	POINT leftTop;
+	leftTop.x = rect.left;
+	leftTop.y = rect.top;
+
+	POINT rightBottom;
+	rightBottom.x = rect.right;
+	rightBottom.y = rect.bottom;
+
+	::ClientToScreen(ApplicationHWnd, &leftTop);
+	::ClientToScreen(ApplicationHWnd, &rightBottom);
+
+	rect.left = leftTop.x;
+	rect.top = leftTop.y;
+	rect.right = rightBottom.x;
+	rect.bottom = rightBottom.y;
+
+	::ClipCursor(&rect);
 
 }  // end capture
 
@@ -449,14 +482,6 @@ void Win32Mouse::capture( void )
 void Win32Mouse::releaseCapture( void )
 {
 
-//	ReleaseCapture();
+	::ClipCursor(NULL);
 
 }  // end releaseCapture
-
-
-
-
-
-
-
-

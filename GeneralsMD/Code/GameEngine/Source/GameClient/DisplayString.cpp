@@ -24,12 +24,12 @@
 
 // FILE: DisplayString.cpp ////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:    RTS3
@@ -97,7 +97,7 @@ DisplayString::~DisplayString( void )
 //=============================================================================
 void DisplayString::setText( UnicodeString text )
 {
-	if (text == m_textString) 
+	if (text == m_textString)
 		return;
 
 	m_textString = text;

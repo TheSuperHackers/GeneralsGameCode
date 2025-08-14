@@ -45,7 +45,7 @@ Bool AreSlotListUpdatesEnabled( void );
 
 void UpdateSlotList( GameInfo *myGame, GameWindow *comboPlayer[],
 										GameWindow *comboColor[], GameWindow *comboPlayerTemplate[],
-										GameWindow *comboTeam[], GameWindow *buttonAccept[], 
+										GameWindow *comboTeam[], GameWindow *buttonAccept[],
 										GameWindow *buttonStart, GameWindow *buttonMapStartPosition[] );
 
 void EnableAcceptControls(Bool Enabled, GameInfo *myGame, GameWindow *comboPlayer[],

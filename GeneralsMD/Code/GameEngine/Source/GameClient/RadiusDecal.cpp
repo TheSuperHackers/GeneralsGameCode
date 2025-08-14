@@ -38,8 +38,8 @@
 
 
 // ------------------------------------------------------------------------------------------------
-RadiusDecalTemplate::RadiusDecalTemplate() : 
-	m_shadowType(SHADOW_ALPHA_DECAL), 
+RadiusDecalTemplate::RadiusDecalTemplate() :
+	m_shadowType(SHADOW_ALPHA_DECAL),
 	m_minOpacity(1.0f),
 	m_maxOpacity(1.0f),
 	m_opacityThrobTime(LOGICFRAMES_PER_SECOND),
@@ -53,7 +53,7 @@ RadiusDecalTemplate::RadiusDecalTemplate() :
 void RadiusDecalTemplate::createRadiusDecal(const Coord3D& pos, Real radius, const Player* owningPlayer, RadiusDecal& result) const
 {
 	result.clear();
-	
+
 	if (owningPlayer == NULL)
 	{
 		DEBUG_CRASH(("You MUST specify a non-NULL owningPlayer to createRadiusDecal. (srj)"));
@@ -82,7 +82,7 @@ void RadiusDecalTemplate::createRadiusDecal(const Coord3D& pos, Real radius, con
 		{
 			result.m_decal->setAngle(0.0f);
 			result.m_decal->setColor(m_color == 0 ? owningPlayer->getPlayerColor() : m_color);
-			result.m_decal->setPosition(pos.x, pos.y, pos.z);	
+			result.m_decal->setPosition(pos.x, pos.y, pos.z);
 			result.m_template = this;
 		}
 		else
@@ -100,8 +100,8 @@ void RadiusDecalTemplate::xferRadiusDecalTemplate( Xfer *xfer )
   XferVersion version = currentVersion;
   xfer->xferVersion( &version, currentVersion );
 
-	xfer->xferAsciiString(&m_name);	
-	xfer->xferUser(&m_shadowType, sizeof(m_shadowType));	
+	xfer->xferAsciiString(&m_name);
+	xfer->xferUser(&m_shadowType, sizeof(m_shadowType));
 	xfer->xferReal(&m_minOpacity);
   xfer->xferReal(&m_maxOpacity);
 	xfer->xferUnsignedInt(&m_opacityThrobTime);
@@ -112,7 +112,7 @@ void RadiusDecalTemplate::xferRadiusDecalTemplate( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /*static*/ void RadiusDecalTemplate::parseRadiusDecalTemplate(INI* ini, void *instance, void * store, const void* /*userData*/)
 {
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
 		{ "Texture",										INI::parseAsciiString,				NULL,							offsetof( RadiusDecalTemplate, m_name ) },
 		{ "Style",											INI::parseBitString32,				TheShadowNames,		offsetof( RadiusDecalTemplate, m_shadowType ) },
@@ -128,16 +128,16 @@ void RadiusDecalTemplate::xferRadiusDecalTemplate( Xfer *xfer )
 }
 
 // ------------------------------------------------------------------------------------------------
-RadiusDecal::RadiusDecal() : 
-	m_template(NULL), 
+RadiusDecal::RadiusDecal() :
+	m_template(NULL),
 	m_decal(NULL),
 	m_empty(true)
 {
 }
 
 // ------------------------------------------------------------------------------------------------
-RadiusDecal::RadiusDecal(const RadiusDecal& that) : 
-	m_template(NULL), 
+RadiusDecal::RadiusDecal(const RadiusDecal& that) :
+	m_template(NULL),
 	m_decal(NULL),
 	m_empty(true)
 {

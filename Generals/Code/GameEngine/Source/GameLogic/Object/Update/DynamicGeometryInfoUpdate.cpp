@@ -59,7 +59,7 @@ DynamicGeometryInfoUpdateModuleData::DynamicGeometryInfoUpdateModuleData()
 {
 	ModuleData::buildFieldParse(p);
 
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
 
 		{ "InitialDelay",					INI::parseDurationUnsignedInt,		NULL, offsetof(DynamicGeometryInfoUpdateModuleData, m_initialDelay) },
@@ -94,7 +94,7 @@ DynamicGeometryInfoUpdate::DynamicGeometryInfoUpdate( Thing *thing, const Module
 
 	m_reverseAtTransitionTime = modData->m_reverseAtTransitionTime;
 	m_switchedDirections = FALSE;
-	
+
 	// record in our instance what initial and final height are
 	m_initialHeight = modData->m_initialHeight;
 	m_initialMajorRadius = modData->m_initialMajorRadius;
@@ -103,7 +103,7 @@ DynamicGeometryInfoUpdate::DynamicGeometryInfoUpdate( Thing *thing, const Module
 	m_finalMajorRadius = modData->m_finalMajorRadius;
 	m_finalMinorRadius = modData->m_finalMinorRadius;
 
-} 
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------

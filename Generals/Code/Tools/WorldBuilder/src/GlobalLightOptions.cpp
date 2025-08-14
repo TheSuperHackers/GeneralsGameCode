@@ -34,7 +34,7 @@
 GlobalLightOptions::GlobalLightOptions(CWnd* pParent /*=NULL*/)
 	: CDialog(GlobalLightOptions::IDD, pParent)
 {
-	//{{AFX_DATA_INIT(GlobalLightOptions) 
+	//{{AFX_DATA_INIT(GlobalLightOptions)
 		// NOTE: the ClassWizard will add member initialization here
 	//}}AFX_DATA_INIT
 }
@@ -61,8 +61,8 @@ static void calcNewLight(Int lr, Int fb, Vector3 *newLight)
 	newLight->Rotate_Z(zAngle);
 }
 
-void GlobalLightOptions::updateEditFields(void) 
-{ 
+void GlobalLightOptions::updateEditFields(void)
+{
 	m_updating = true;
 	CString str;
 	CWnd *pEdit;
@@ -91,14 +91,14 @@ void GlobalLightOptions::updateEditFields(void)
 	m_updating = false;
 }
 
-void GlobalLightOptions::showLightFeedback(Int lightIndex) 
+void GlobalLightOptions::showLightFeedback(Int lightIndex)
 {
 	Vector3 light(0,0,0);
 	light.X = sin(PI/2.0f+m_angleElevation[lightIndex]/180.0f*PI)*cos(m_angleAzimuth[lightIndex]/180.0f*PI);// -WWMath::Sin(PI*(m_angleLR[lightIndex]-90)/180);
 	light.Y = sin(PI/2.0f+m_angleElevation[lightIndex]/180.0f*PI)*sin(m_angleAzimuth[lightIndex]/180.0f*PI);//-WWMath::Sin(PI*(m_angleFB[lightIndex]-90)/180);
 	light.Z = cos (PI/2.0f+m_angleElevation[lightIndex]/180.0f*PI);
 
-	WbView3d * pView = CWorldBuilderDoc::GetActive3DView();	
+	WbView3d * pView = CWorldBuilderDoc::GetActive3DView();
 	if (pView) {
 		Coord3D lightRay;
 		lightRay.x=light.X;lightRay.y=light.Y;lightRay.z=light.Z;
@@ -106,8 +106,8 @@ void GlobalLightOptions::showLightFeedback(Int lightIndex)
 	}
 }
 
-void GlobalLightOptions::applyAngle(Int lightIndex) 
-{ 
+void GlobalLightOptions::applyAngle(Int lightIndex)
+{
 	Vector3 light(0,0,0);
 	light.X = sin(PI/2.0f+m_angleElevation[lightIndex]/180.0f*PI)*cos(m_angleAzimuth[lightIndex]/180.0f*PI);// -WWMath::Sin(PI*(m_angleLR[lightIndex]-90)/180);
 	light.Y = sin(PI/2.0f+m_angleElevation[lightIndex]/180.0f*PI)*sin(m_angleAzimuth[lightIndex]/180.0f*PI);//-WWMath::Sin(PI*(m_angleFB[lightIndex]-90)/180);
@@ -129,7 +129,7 @@ void GlobalLightOptions::applyAngle(Int lightIndex)
 	tl.lightPos.y = light.Y;
 	tl.lightPos.z = light.Z;
 
-	WbView3d * pView = CWorldBuilderDoc::GetActive3DView();	
+	WbView3d * pView = CWorldBuilderDoc::GetActive3DView();
 	if (pView) {
 		pView->setLighting(&tl, m_lighting, lightIndex);
 		Coord3D lightRay;
@@ -214,7 +214,7 @@ static void SpitLights()
 			DEBUG_LOG(("TheGlobalData->m_terrainLighting[%d][%d].lightPos.x = %0.4ff;", theTime, light, tl.lightPos.x));
 			DEBUG_LOG(("TheGlobalData->m_terrainLighting[%d][%d].lightPos.y = %0.4ff;", theTime, light, tl.lightPos.y));
 			DEBUG_LOG(("TheGlobalData->m_terrainLighting[%d][%d].lightPos.z = %0.4ff;", theTime, light, tl.lightPos.z));
-				
+
 			tl = TheGlobalData->m_terrainObjectsLighting[theTime][light];
 
 			DEBUG_LOG(("TheGlobalData->m_terrainObjectsLighting[%d][%d].ambient.red = %0.4ff;", theTime, light, tl.ambient.red));
@@ -469,7 +469,7 @@ void GlobalLightOptions::OnResetLights()
 	TheWritableGlobalData->m_terrainObjectsLighting[4][2].lightPos.y = 0.00f;
 	TheWritableGlobalData->m_terrainObjectsLighting[4][2].lightPos.z = -1.00f;
 
-	WbView3d * pView = CWorldBuilderDoc::GetActive3DView();	
+	WbView3d * pView = CWorldBuilderDoc::GetActive3DView();
 	if (pView) {
 		pView->setLighting(&TheGlobalData->m_terrainLighting[TheGlobalData->m_timeOfDay][K_SUN], K_TERRAIN, K_SUN);
 		pView->setLighting(&TheGlobalData->m_terrainLighting[TheGlobalData->m_timeOfDay][K_ACCENT1], K_TERRAIN, K_ACCENT1);
@@ -488,9 +488,9 @@ void GlobalLightOptions::OnResetLights()
 // GlobalLightOptions message handlers
 
 /// Dialog UI initialization.
-/** Creates the slider controls, and sets the initial values for 
+/** Creates the slider controls, and sets the initial values for
 width and feather in the ui controls. */
-BOOL GlobalLightOptions::OnInitDialog() 
+BOOL GlobalLightOptions::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 	kUIRedIDs[0] = IDC_RD_EDIT;
@@ -539,7 +539,7 @@ BOOL GlobalLightOptions::OnInitDialog()
 
 
 /** Displays the current values in the fields. */
-void GlobalLightOptions::stuffValuesIntoFields(Int lightIndex) 
+void GlobalLightOptions::stuffValuesIntoFields(Int lightIndex)
 {
 	const GlobalData::TerrainLighting *tl;
 	if (m_lighting == K_OBJECTS || m_lighting == K_BOTH) {
@@ -620,7 +620,7 @@ void GlobalLightOptions::stuffValuesIntoFields(Int lightIndex)
 /** Gets the new edit control text, converts it to an int, then updates
 		the slider and brush tool. */
 
-BOOL GlobalLightOptions::GetInt(Int ctrlID, Int *rVal) 
+BOOL GlobalLightOptions::GetInt(Int ctrlID, Int *rVal)
 {
 	CWnd *pEdit = GetDlgItem(ctrlID);
 	char buffer[_MAX_PATH];
@@ -635,7 +635,7 @@ BOOL GlobalLightOptions::GetInt(Int ctrlID, Int *rVal)
 	return false;
 }
 
-void GlobalLightOptions::PutInt(Int ctrlID, Int val) 
+void GlobalLightOptions::PutInt(Int ctrlID, Int val)
 {
 	CString str;
 	CWnd *pEdit = GetDlgItem(ctrlID);
@@ -645,7 +645,7 @@ void GlobalLightOptions::PutInt(Int ctrlID, Int val)
 	}
 }
 
-void GlobalLightOptions::OnChangeFrontBackEdit() 
+void GlobalLightOptions::OnChangeFrontBackEdit()
 {
 	if (m_updating) return;
 	GetInt(IDC_FB_EDIT, &m_angleAzimuth[K_SUN]);
@@ -661,7 +661,7 @@ void GlobalLightOptions::OnChangeFrontBackEdit()
 /// Handles width edit ui messages.
 /** Gets the new edit control text, converts it to an int, then updates
 		the angles. */
-void GlobalLightOptions::OnChangeLeftRightEdit() 
+void GlobalLightOptions::OnChangeLeftRightEdit()
 {
 	if (m_updating) return;
 	GetInt(IDC_LR_EDIT, &m_angleElevation[K_SUN]);
@@ -713,13 +713,13 @@ void GlobalLightOptions::applyColor(Int lightIndex)
 		tl.diffuse.green = ComponentToPercent(clr);
 	if (GetInt(kUIBlueIDs[lightIndex], &clr))
 		tl.diffuse.blue = ComponentToPercent(clr);
-	WbView3d * pView = CWorldBuilderDoc::GetActive3DView();	
+	WbView3d * pView = CWorldBuilderDoc::GetActive3DView();
 	if (pView) {
 		pView->setLighting(&tl, m_lighting, lightIndex);
 	}
 }
 
-void GlobalLightOptions::OnChangeColorEdit() 
+void GlobalLightOptions::OnChangeColorEdit()
 {
 	if (m_updating) return;
 	applyColor(K_SUN);
@@ -883,7 +883,7 @@ END_MESSAGE_MAP()
 
 
 
-void GlobalLightOptions::OnRadioEverything() 
+void GlobalLightOptions::OnRadioEverything()
 {
 	m_lighting = K_BOTH;
 	stuffValuesIntoFields(K_SUN);
@@ -891,7 +891,7 @@ void GlobalLightOptions::OnRadioEverything()
 	stuffValuesIntoFields(K_ACCENT2);
 }
 
-void GlobalLightOptions::OnRadioObjects() 
+void GlobalLightOptions::OnRadioObjects()
 {
 	m_lighting = K_OBJECTS;
 	stuffValuesIntoFields(K_SUN);
@@ -899,7 +899,7 @@ void GlobalLightOptions::OnRadioObjects()
 	stuffValuesIntoFields(K_ACCENT2);
 }
 
-void GlobalLightOptions::OnRadioTerrain() 
+void GlobalLightOptions::OnRadioTerrain()
 {
 	m_lighting = K_TERRAIN;
 	stuffValuesIntoFields(K_SUN);
@@ -924,7 +924,7 @@ void GlobalLightOptions::OnClose()
 {
 	ShowWindow(SW_HIDE);
 
-	WbView3d * pView = CWorldBuilderDoc::GetActive3DView();	
+	WbView3d * pView = CWorldBuilderDoc::GetActive3DView();
 	if (pView) {
 		Coord3D lightRay;
 		lightRay.x=0.0f;lightRay.y=0.0f;lightRay.z=-1.0f;	//default light above terrain.
@@ -954,15 +954,15 @@ void GlobalLightOptions::OnShowWindow(BOOL bShow, UINT nStatus)
 #endif
 };
 
-void GlobalLightOptions::OnMove(int x, int y) 
+void GlobalLightOptions::OnMove(int x, int y)
 {
 	CDialog::OnMove(x, y);
-	
+
 	if (this->IsWindowVisible() && !this->IsIconic()) {
 		CRect frameRect;
 		GetWindowRect(&frameRect);
 		::AfxGetApp()->WriteProfileInt(GLOBALLIGHT_OPTIONS_PANEL_SECTION, "Top", frameRect.top);
 		::AfxGetApp()->WriteProfileInt(GLOBALLIGHT_OPTIONS_PANEL_SECTION, "Left", frameRect.left);
 	}
-	
+
 }

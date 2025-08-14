@@ -39,7 +39,7 @@
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-BoneFXDamage::BoneFXDamage( Thing *thing, const ModuleData* moduleData ) 
+BoneFXDamage::BoneFXDamage( Thing *thing, const ModuleData* moduleData )
 																		  : DamageModule( thing, moduleData )
 {
 }  // end BoneFXDamage
@@ -66,8 +66,8 @@ void BoneFXDamage::onObjectCreated()
 //-------------------------------------------------------------------------------------------------
 /** Switching damage states */
 //-------------------------------------------------------------------------------------------------
-void BoneFXDamage::onBodyDamageStateChange( const DamageInfo *damageInfo, 
-																						BodyDamageType oldState, 
+void BoneFXDamage::onBodyDamageStateChange( const DamageInfo *damageInfo,
+																						BodyDamageType oldState,
 																						BodyDamageType newState )
 {
 	static NameKeyType key_BoneFXUpdate = NAMEKEY("BoneFXUpdate");

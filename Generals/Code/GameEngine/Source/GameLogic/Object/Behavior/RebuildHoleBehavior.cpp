@@ -55,12 +55,12 @@ RebuildHoleBehaviorModuleData::RebuildHoleBehaviorModuleData( void )
 
 //-------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-/*static*/ void RebuildHoleBehaviorModuleData::buildFieldParse( MultiIniFieldParse &p ) 
+/*static*/ void RebuildHoleBehaviorModuleData::buildFieldParse( MultiIniFieldParse &p )
 {
 
   UpdateModuleData::buildFieldParse( p );
 
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
 	  { "WorkerObjectName", INI::parseAsciiString, NULL, offsetof( RebuildHoleBehaviorModuleData, m_workerTemplateName ) },
 		{ "WorkerRespawnDelay", INI::parseDurationReal,	NULL, offsetof( RebuildHoleBehaviorModuleData, m_workerRespawnDelay ) },
@@ -78,7 +78,7 @@ RebuildHoleBehaviorModuleData::RebuildHoleBehaviorModuleData( void )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-RebuildHoleBehavior::RebuildHoleBehavior( Thing *thing, const ModuleData* moduleData ) 
+RebuildHoleBehavior::RebuildHoleBehavior( Thing *thing, const ModuleData* moduleData )
 									 : UpdateModule( thing, moduleData )
 {
 
@@ -123,7 +123,7 @@ void RebuildHoleBehavior::newWorkerRespawnProcess( Object *existingWorker )
 		TheGameLogic->destroyObject( existingWorker );
 	}
 	m_workerID = INVALID_ID;
-	
+
 	// set the timer for the next worker respawn
 	m_workerWaitCounter = modData->m_workerRespawnDelay;
 
@@ -135,7 +135,7 @@ void RebuildHoleBehavior::newWorkerRespawnProcess( Object *existingWorker )
 	// "focus" of this small area again
 	//
 	getObject()->maskObject( FALSE );
-			
+
 }  // end newWorkerRespawnProcess
 
 // ------------------------------------------------------------------------------------------------
@@ -144,7 +144,7 @@ void RebuildHoleBehavior::startRebuildProcess( const ThingTemplate *rebuild, Obj
 {
 
 	// save what we're gonna do
-	m_rebuildTemplate = rebuild; 
+	m_rebuildTemplate = rebuild;
 
 	// store the object that spawned this hole (even though it's likely being destroyed)
 	m_spawnerObjectID = spawnerID;
@@ -252,14 +252,14 @@ UpdateSleepTime RebuildHoleBehavior::update( void )
 				{
 
 					if( reconstructing == NULL )
-						reconstructing = ai->construct( m_rebuildTemplate, 
-																						hole->getPosition(), 
-																						hole->getOrientation(), 
+						reconstructing = ai->construct( m_rebuildTemplate,
+																						hole->getPosition(),
+																						hole->getOrientation(),
 																						hole->getControllingPlayer(),
 																						TRUE );
 					else
 						ai->aiResumeConstruction( reconstructing, CMD_FROM_AI );
-					
+
 					for ( Object *obj = TheGameLogic->getFirstObject(); obj; obj = obj->getNextObject() )
 					{
 						// Just like the building transfers attackers to the hole when it creates us, we need to transfer
@@ -270,7 +270,7 @@ UpdateSleepTime RebuildHoleBehavior::update( void )
 
 						ai->transferAttack(hole->getID(), reconstructing->getID());
 					}
-											
+
 					// save the id of what we are reconstructing
 					m_reconstructingID = reconstructing->getID();
 
@@ -285,7 +285,7 @@ UpdateSleepTime RebuildHoleBehavior::update( void )
 					hole->maskObject( TRUE );
 
 					transferBombs( reconstructing );
-					
+
 				}  // end if
 
 			}  // end if, worker
@@ -301,7 +301,7 @@ UpdateSleepTime RebuildHoleBehavior::update( void )
 		DamageInfo healingInfo;
 
 		// do some healing
-		healingInfo.in.m_amount = (modData->m_holeHealthRegenPercentPerSecond / LOGICFRAMES_PER_SECOND) * 
+		healingInfo.in.m_amount = (modData->m_holeHealthRegenPercentPerSecond / LOGICFRAMES_PER_SECOND) *
 															body->getMaxHealth();
 		healingInfo.in.m_sourceID = hole->getID();
 		healingInfo.in.m_damageType = DAMAGE_HEALING;
@@ -322,7 +322,7 @@ UpdateSleepTime RebuildHoleBehavior::update( void )
 
 		// make the hole go away
 		TheGameLogic->destroyObject( hole );
-		
+
 	}  // end if
 
 	return UPDATE_SLEEP_NONE;
@@ -335,7 +335,7 @@ void RebuildHoleBehavior::onDie( const DamageInfo *damageInfo )
 {
 	if( m_workerID != INVALID_ID )
 	{
-		// Our rebuilding building and us the hole can be killed in the same frame, which means we may not have 
+		// Our rebuilding building and us the hole can be killed in the same frame, which means we may not have
 		// deleted our generated worker since we do that in our update.
 		Object *worker = TheGameLogic->findObjectByID(m_workerID);
 		if( worker )

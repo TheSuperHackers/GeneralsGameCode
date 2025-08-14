@@ -311,14 +311,14 @@ void Radar::update( void )
 	for( i = 0; i < MAX_RADAR_EVENTS; i++ )
 	{
 
-		if( m_event[ i ].active == TRUE && m_event[ i ].createFrame && 
+		if( m_event[ i ].active == TRUE && m_event[ i ].createFrame &&
 				thisFrame > m_event[ i ].dieFrame )
 			m_event[ i ].active = FALSE;
-				
+
 	}  // end for i
 
 	// see if we should refresh the terrain
-	if( m_queueTerrainRefreshFrame != 0 && 
+	if( m_queueTerrainRefreshFrame != 0 &&
 			TheGameLogic->getFrame() - m_queueTerrainRefreshFrame > RADAR_QUEUE_TERRAIN_REFRESH_DELAY )
 	{
 
@@ -357,7 +357,7 @@ void Radar::newMap( TerrainLogic *terrain )
 	m_terrainAverageZ = 0.0f;
 	m_waterAverageZ = 0.0f;
 	Coord3D worldPoint;
-  
+
   // since we're averaging let's skip every second sample...
   worldPoint.y=0;
 	for( y = 0; y < RADAR_CELL_HEIGHT; y+=2, worldPoint.y+=2.0*m_ySample )
@@ -365,7 +365,7 @@ void Radar::newMap( TerrainLogic *terrain )
     worldPoint.x=0;
     for( x = 0; x < RADAR_CELL_WIDTH; x+=2, worldPoint.x+=2.0*m_xSample )
 		{
-			// don't use this, we don't really need the 
+			// don't use this, we don't really need the
       // Z position by this function... radarToWorld( &radarPoint, &worldPoint );
 			// and this is done by isUnderwater anyway: z = terrain->getGroundHeight( worldPoint.x, worldPoint.y );
 			Real z,waterZ;
@@ -413,7 +413,7 @@ RadarObjectType Radar::addObject( Object *obj )
 
 	// sanity
 	DEBUG_ASSERTCRASH( obj->friend_getRadarData() == NULL,
-										 ("Radar: addObject - non NULL radar data for '%s'", 
+										 ("Radar: addObject - non NULL radar data for '%s'",
 										 obj->getTemplate()->getName().str()) );
 
 	// allocate a new object
@@ -449,7 +449,7 @@ RadarObjectType Radar::addObject( Object *obj )
 			}
 		}
 	}
-	
+
 	if( obj->getContain() )
 	{
 		// To handle Stealth garrison, ask containers what color they are drawing with to the local player.
@@ -464,7 +464,7 @@ RadarObjectType Radar::addObject( Object *obj )
 		newObj->setColor( obj->getIndicatorColor() );
 	}
 	else
-	{	
+	{
 		newObj->setColor( player->getPlayerColor() );
 	}
 
@@ -508,7 +508,7 @@ RadarObjectType Radar::addObject( Object *obj )
 
 			//
 			// if there is no previous object, or the previous priority is less than the
-			// our new priority, and the current object in the list has a priority 
+			// our new priority, and the current object in the list has a priority
 			// higher than our equal to our own we need to be inserted here
 			//
 			if( (prevObject == NULL || prevPriority < newPriority ) &&
@@ -565,11 +565,11 @@ RadarObjectType Radar::addObject( Object *obj )
 Bool Radar::deleteFromList( Object *obj, RadarObject **list )
 {
 	RadarObject *radarObject, *prevObject = NULL;
-					
+
 	// find the object in list
 	for( radarObject = *list; radarObject; radarObject = radarObject->friend_getNext() )
 	{
-		
+
 		if( radarObject->friend_getObject() == obj )
 		{
 
@@ -630,7 +630,7 @@ RadarObjectType Radar::removeObject( Object *obj )
 	* to a 3D spot in the world. Does not determine Z value!
 	* Return TRUE if the radar points translates to a valid world position
 	* Return FALSE if the radar point is not a valid world position */
-//-------------------------------------------------------------------------------------------------		
+//-------------------------------------------------------------------------------------------------
 Bool Radar::radarToWorld2D( const ICoord2D *radar, Coord3D *world )
 {
 	Int x, y;
@@ -664,7 +664,7 @@ Bool Radar::radarToWorld2D( const ICoord2D *radar, Coord3D *world )
 	* to a 3D spot in the world on the terrain
 	* Return TRUE if the radar points translates to a valid world position
 	* Return FALSE if the radar point is not a valid world position */
-//-------------------------------------------------------------------------------------------------		
+//-------------------------------------------------------------------------------------------------
 Bool Radar::radarToWorld( const ICoord2D *radar, Coord3D *world )
 {
   if (!radarToWorld2D(radar,world))
@@ -672,7 +672,7 @@ Bool Radar::radarToWorld( const ICoord2D *radar, Coord3D *world )
 
 	// find the terrain height here
 	world->z = TheTerrainLogic->getGroundHeight( world->x, world->y );
-	
+
 	return TRUE;  // valid translation
 
 }  // end radarToWorld
@@ -693,7 +693,7 @@ Bool Radar::worldToRadar( const Coord3D *world, ICoord2D *radar )
 //	if( world->x < m_mapExtent.lo.x || world->x > m_mapExtent.hi.x ||
 //			world->y < m_mapExtent.lo.y || world->y > m_mapExtent.hi.y )
 //		return FALSE;
-	// This is actually an insanity check.  Nobody uses the return value, so this just leaves garbage in the 
+	// This is actually an insanity check.  Nobody uses the return value, so this just leaves garbage in the
 	// return pointer.  The reason the question gets asked is there are 60 partition cells to 128 radar cells
 	// (for example), and the radar wants to draw a horizontal line.  This line ends up three pixels long
 	// at the right side, so the radar gives up and doesn't draw the middle one.
@@ -735,7 +735,7 @@ Bool Radar::localPixelToRadar( const ICoord2D *pixel, ICoord2D *radar )
 	m_radarWindow->winGetSize( &size.x, &size.y );
 
 	//
-	// act like we're going to draw and find the aspect ratio adjusted points of the 
+	// act like we're going to draw and find the aspect ratio adjusted points of the
 	// terrain radar positions
 	//
 	ICoord2D start = { 0, 0 };
@@ -759,7 +759,7 @@ Bool Radar::localPixelToRadar( const ICoord2D *pixel, ICoord2D *radar )
 
 		// conversion for scaled Y direction in map
 		radar->y = REAL_TO_INT( ((pixel->y - ul.y) / INT_TO_REAL( scaledHeight )) * size.y );
-		
+
 		//
 		// radar->y now refers to a point that was "as if" the map was square, translate to radar
 		// note that y is inverted to have the radar align with the world (+x = right, -y = down)
@@ -773,7 +773,7 @@ Bool Radar::localPixelToRadar( const ICoord2D *pixel, ICoord2D *radar )
 
 		// conversion for scaled Y direction in map
 		radar->x = REAL_TO_INT( ((pixel->x - ul.x) / INT_TO_REAL( scaledWidth )) * size.x );
-		
+
 		// radar->x now refers to a point that was "as if" the map was square, translate to radar
 		radar->x = radar->x * RADAR_CELL_WIDTH / size.x;
 
@@ -844,7 +844,7 @@ Object *Radar::objectUnderRadarPixel( const ICoord2D *pixel )
 	// scan the objects on the radar list and return any object that maps its world location
 	// to the radar location
 	//
-	
+
 	// search the local object list
 	obj = searchListForRadarLocationMatch( m_localObjectList, &radar );
 
@@ -875,7 +875,7 @@ Object *Radar::searchListForRadarLocationMatch( RadarObject *listHead, ICoord2D 
 
 		// get object
 		Object *obj = radarObject->friend_getObject();
-		
+
 		// sanity
 		if( obj == NULL )
 		{
@@ -890,7 +890,7 @@ Object *Radar::searchListForRadarLocationMatch( RadarObject *listHead, ICoord2D 
 
 		// see if this matches our match radar location
 		if( radar.x >= radarMatch->x - 1 &&
-				radar.x <= radarMatch->x + 1 && 
+				radar.x <= radarMatch->x + 1 &&
 				radar.y >= radarMatch->y - 1 &&
 				radar.y <= radarMatch->y + 1 )
 			return obj;
@@ -908,7 +908,7 @@ Object *Radar::searchListForRadarLocationMatch( RadarObject *listHead, ICoord2D 
 	* that represent the actual terrain image part of the radar that will preserve the
 	* aspect ratio of the map */
 // ------------------------------------------------------------------------------------------------
-void Radar::findDrawPositions( Int startX, Int startY, Int width, Int height, 
+void Radar::findDrawPositions( Int startX, Int startY, Int width, Int height,
 															 ICoord2D *ul, ICoord2D *lr )
 {
 
@@ -917,7 +917,7 @@ void Radar::findDrawPositions( Int startX, Int startY, Int width, Int height,
 	Coord2D radar;
 	ratioWidth = m_mapExtent.width()/(width * 1.0f);
 	ratioHeight = m_mapExtent.height()/(height* 1.0f);
-	
+
 	if( ratioWidth >= ratioHeight)
 	{
 		radar.x = m_mapExtent.width() / ratioWidth;
@@ -1007,7 +1007,7 @@ struct RadarColorLookup
 	RGBAColorInt color1;
 	RGBAColorInt color2;
 };
-static RadarColorLookup radarColorLookupTable[] = 
+static RadarColorLookup radarColorLookupTable[] =
 {
 	/*      Radar Event													Color 1									 Color 2       */
 	{ RADAR_EVENT_CONSTRUCTION,					{ 128, 128, 255, 255 },  {  128, 255, 255, 255 } },
@@ -1028,12 +1028,12 @@ static RadarColorLookup radarColorLookupTable[] =
 //-------------------------------------------------------------------------------------------------
 void Radar::createEvent( const Coord3D *world, RadarEventType type, Real secondsToLive )
 {
-		
+
 	// sanity
 	if( world == NULL )
 		return;
 
-	// lookup the colors we are to used based on the event 
+	// lookup the colors we are to used based on the event
 	RGBAColorInt color[ 2 ];
 	Int i = 0;
 	for( ; radarColorLookupTable[ i ].event != RADAR_EVENT_INVALID; ++i )
@@ -1070,7 +1070,7 @@ void Radar::createEvent( const Coord3D *world, RadarEventType type, Real seconds
 // ------------------------------------------------------------------------------------------------
 /** Create radar event using a specific colors from the player */
 // ------------------------------------------------------------------------------------------------
-void Radar::createPlayerEvent( Player *player, const Coord3D *world, 
+void Radar::createPlayerEvent( Player *player, const Coord3D *world,
 															 RadarEventType type, Real secondsToLive )
 {
 
@@ -1116,7 +1116,7 @@ void Radar::internalCreateEvent( const Coord3D *world, RadarEventType type, Real
 																 const RGBAColorInt *color1, const RGBAColorInt *color2 )
 {
 	static Real secondsBeforeDieToFade = 0.5f;  ///< this many seconds before we hit the die frame we start to fade away
-		
+
 	// sanity
 	if( world == NULL || color1 == NULL || color2 == NULL )
 		return;
@@ -1218,7 +1218,7 @@ void Radar::tryUnderAttackEvent( const Object *obj )
 			{
 				// display message
 				TheInGameUI->message( "RADAR:UnitUnderAttack" );
-				
+
 				// play audio event
 				unitAttackSound = TheAudio->getMiscAudio()->m_radarStructureUnderAttackSound;
 			}
@@ -1262,8 +1262,8 @@ void Radar::tryUnderAttackEvent( const Object *obj )
 
 // ------------------------------------------------------------------------------------------------
 /** Try to create a radar event for "infiltration".
-		This happens whenever a unit is hijacked, defected, converted to carbomb, hacked, or 
-		otherwise snuck into */ 
+		This happens whenever a unit is hijacked, defected, converted to carbomb, hacked, or
+		otherwise snuck into */
 // ------------------------------------------------------------------------------------------------
 void Radar::tryInfiltrationEvent( const Object *obj )
 {
@@ -1319,7 +1319,7 @@ Bool Radar::tryEvent( RadarEventType event, const Coord3D *pos )
 	//
 	for( Int i = 0; i < MAX_RADAR_EVENTS; ++i )
 	{
-	
+
 		// only pay attention to under attack events
 		if( m_event[ i ].type == event )
 		{
@@ -1374,7 +1374,7 @@ void Radar::queueTerrainRefresh( void )
 	// already one there, it's simply just forgotten and whatever changes we wanted to see
 	// with that refresh will have to wait until enough time has passed to show these
 	// changes as well.  why you ask ... well, because if we're calling this in close enough
-	// proximity for us to overwrite something, we're changing the terrain features 
+	// proximity for us to overwrite something, we're changing the terrain features
 	// quite often and can't afford the expense of rebuilding the radar visual
 	//
 	m_queueTerrainRefreshFrame = TheGameLogic->getFrame();
@@ -1454,7 +1454,7 @@ static void xferRadarObjectList( Xfer *xfer, RadarObject **head )
 		for( UnsignedShort i = 0; i < count; ++i )
 		{
 
-			// alloate a new radar object 
+			// alloate a new radar object
 			radarObject = newInstance(RadarObject);
 
 			// link to the end of the list
@@ -1475,7 +1475,7 @@ static void xferRadarObjectList( Xfer *xfer, RadarObject **head )
 
 			// load the data
 			xfer->xferSnapshot( radarObject );
-						
+
 		}  // end for i
 
 	}  // end else, load
@@ -1533,7 +1533,7 @@ void Radar::xfer( Xfer *xfer )
 		xfer->xferCoord3D( &m_event[ i ].worldLoc );
 		xfer->xferICoord2D( &m_event[ i ].radarLoc );
 		xfer->xferBool( &m_event[ i ].soundPlayed );
-		
+
 	}  // end for i
 
 	// next event index

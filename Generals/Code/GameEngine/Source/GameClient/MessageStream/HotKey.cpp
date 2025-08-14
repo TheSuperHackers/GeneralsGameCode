@@ -24,12 +24,12 @@
 
 // FILE: HotKey.cpp /////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Electronic Arts Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2002 - All Rights Reserved                  
-//                                                                          
+//
+//                       Electronic Arts Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2002 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 //	created:	Sep 2002
@@ -37,8 +37,8 @@
 //	Filename: 	HotKey.cpp
 //
 //	author:		Chris Huybregts
-//	
-//	purpose:	
+//
+//	purpose:
 //
 //-----------------------------------------------------------------------------
 ///////////////////////////////////////////////////////////////////////////////
@@ -74,7 +74,7 @@ GameMessageDisposition HotKeyTranslator::translateGameMessage(const GameMessage 
 
 	if ( t == GameMessage::MSG_RAW_KEY_UP)
 	{
-		
+
 		//char key = msg->getArgument(0)->integer;
 		Int keyState = msg->getArgument(1)->integer;
 
@@ -130,7 +130,7 @@ HotKeyManager::~HotKeyManager( void )
 {
 	m_hotKeyMap.clear();
 }
-	
+
 //-----------------------------------------------------------------------------
 void HotKeyManager::init( void )
 {
@@ -176,10 +176,10 @@ Bool HotKeyManager::executeHotKey( const AsciiString& keyIn )
 		if( BitIsSet( win->winGetStatus(), WIN_STATUS_ENABLED ) )
  		{
  			TheWindowManager->winSendSystemMsg( win->winGetParent(), GBM_SELECTED, (WindowMsgData)win, win->winGetWindowId() );
- 
+
  			// here we make the same click sound that the GUI uses when you click a button
  			AudioEventRTS buttonClick("GUIClick");
- 
+
  			if( TheAudio )
  			{
  				TheAudio->addAudioEvent( &buttonClick );
@@ -222,7 +222,7 @@ AsciiString HotKeyManager::searchHotKey( const UnicodeString& uStr )
 		}
 		marker++;
 	}
-	return AsciiString::TheEmptyString;	
+	return AsciiString::TheEmptyString;
 }
 
 //-----------------------------------------------------------------------------

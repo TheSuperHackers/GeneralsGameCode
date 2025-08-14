@@ -56,10 +56,10 @@ WindowMsgHandledType IMECandidateWindowInput( GameWindow *window, UnsignedInt ms
 //-------------------------------------------------------------------------------------------------
 /** System callback for the IME Candidate widnow */
 //-------------------------------------------------------------------------------------------------
-WindowMsgHandledType IMECandidateWindowSystem( GameWindow *window, UnsignedInt msg, 
+WindowMsgHandledType IMECandidateWindowSystem( GameWindow *window, UnsignedInt msg,
 																			 WindowMsgData mData1, WindowMsgData mData2 )
 {
-	switch( msg ) 
+	switch( msg )
 	{
 		case GWM_CREATE:
 			if ( Dstring == NULL )
@@ -94,9 +94,9 @@ void IMECandidateTextAreaDraw( GameWindow *window, WinInstanceData *instData )
 {
 	// set up for rendering
 	ICoord2D origin, size, start, end;
-	Color		textColor, 
-					textBorder, 
-					textSelectColor, 
+	Color		textColor,
+					textBorder,
+					textSelectColor,
 					textSelectBorder;
 	IRegion2D textRegion;
 	Color black = GameMakeColor( 0, 0, 0, 255);
@@ -143,7 +143,7 @@ void IMECandidateTextAreaDraw( GameWindow *window, WinInstanceData *instData )
 
 	{
 		Real borderWidth = 1.0f;
-	
+
 		start.x = origin.x;
 		start.y = origin.y;
 		end.x = start.x + size.x;
@@ -204,7 +204,7 @@ void IMECandidateTextAreaDraw( GameWindow *window, WinInstanceData *instData )
 	{
 		UnicodeString *candidate = ime->getCandidate( first + i );
 		Int tcolor, bcolor;
-		
+
 		if ( i == selected )
 		{
 			tcolor = textSelectColor;
@@ -215,8 +215,8 @@ void IMECandidateTextAreaDraw( GameWindow *window, WinInstanceData *instData )
 			tcolor = textColor;
 			bcolor = textBorder;
 		}
-		
-		// draw number tab first	
+
+		// draw number tab first
 		number.format( L"%d:", i + ime->getIndexBase());
 		Dstring->setText( number );
 		width = Dstring->getWidth();
@@ -225,7 +225,7 @@ void IMECandidateTextAreaDraw( GameWindow *window, WinInstanceData *instData )
 		// draw candidate
 		Dstring->setText( *candidate );
 		Dstring->draw( leftEdge, y, tcolor, black );
-	}	
+	}
 }
 
 // IMECandidateDraw ================================================================
@@ -235,7 +235,7 @@ void IMECandidateMainDraw( GameWindow *window, WinInstanceData *instData )
 {
 	// set up for rendering
 	ICoord2D origin, size, start, end;
-	Color		backColor, 
+	Color		backColor,
 					backBorder;
 	Real borderWidth = 1.0f;
 
@@ -269,7 +269,7 @@ void IMECandidateMainDraw( GameWindow *window, WinInstanceData *instData )
 	// draw the back border
 	if( backBorder != WIN_COLOR_UNDEFINED )
 	{
-	
+
 		start.x = origin.x;
 		start.y = origin.y;
 		end.x = start.x + size.x;

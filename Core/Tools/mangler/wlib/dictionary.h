@@ -37,7 +37,7 @@ your hashing function is good.
 
 
 #ifndef DICTIONARY_HEADER
-#define DICTIONARY_HEADER    
+#define DICTIONARY_HEADER
 
 
 #include <stdio.h>
@@ -57,7 +57,7 @@ class DNode
   K               key;
   V               value;
   DNode<K,V>     *hashNext;
-};        
+};
 
 template <class K,class V>
 class Dictionary
@@ -88,7 +88,7 @@ Dictionary(uint32 (*hashFn)(const K &key)) :
   table=(DNode<K,V> **)new DNode<K,V>* [size];
   assert(table!=NULL);
 
-  memset((void *)table,0,size*sizeof(void *));        
+  memset((void *)table,0,size*sizeof(void *));
   hashFunc=hashFn;
 }
 
@@ -105,7 +105,7 @@ Dictionary(uint32 (*hashFn)(const K &key)) :
   bit8             contains(IN K &key) RO;
   bit8             updateValue(IN K &key,IN V &value);
   bit8             remove(IN K &key,OUT V &value);
-  bit8             remove(IN K &key); 
+  bit8             remove(IN K &key);
   bit8             removeAny(OUT K &key,OUT V &value);
   bit8             iterate(INOUT int &index,INOUT int &offset, OUT V &value) RO;
   bit8             iterate(INOUT int &index,INOUT int &offset, OUT K &key, OUT V &value) RO;
@@ -131,7 +131,7 @@ Dictionary(uint32 (*hashFn)(const K &key)) :
   // See initilizer list of constructor for values
   const double     SHRINK_THRESHOLD; // When table is this % full shrink it
   const double     EXPAND_THRESHOLD; // When table is this % full grow it
-  const int        MIN_TABLE_SIZE;   // must be a power of 2               
+  const int        MIN_TABLE_SIZE;   // must be a power of 2
 };
 
 
@@ -166,20 +166,20 @@ void Dictionary<K,V>::clear()
 
   while ((getSize()>(uint32)MIN_TABLE_SIZE)&&(keepSize==FALSE))
     shrink();
-}            
+}
 
 template <class K,class V>
-uint32 Dictionary<K,V>::keyHash(IN K &key) RO 
+uint32 Dictionary<K,V>::keyHash(IN K &key) RO
 {
   uint32 retval=hashFunc(key);
   retval &= ((1<<tableBits)-1);
   assert(retval<getSize());
   return(retval);
-}   
+}
 
 
 template <class K,class V>
-void Dictionary<K,V>::print(FILE *out) RO 
+void Dictionary<K,V>::print(FILE *out) RO
 {
   DNode<K,V> *temp;
   uint32 i;
@@ -200,7 +200,7 @@ void Dictionary<K,V>::print(FILE *out) RO
     fprintf(out,"\n");
   }
   fprintf(out,"--------------------\n");
-}            
+}
 
 
 template <class K, class V>
@@ -217,7 +217,7 @@ Dictionary<K,V> &Dictionary<K,V>::operator=(Dictionary<K,V> &other)
 //   is returned.
 template <class K,class V>
 bit8 Dictionary<K,V>::iterate(INOUT int &index,INOUT int &offset,
-    OUT V &value) RO 
+    OUT V &value) RO
 {
   DNode<K,V> *temp;
 
@@ -255,7 +255,7 @@ bit8 Dictionary<K,V>::iterate(INOUT int &index,INOUT int &offset,
     offset++;
 
   return(TRUE);
-}            
+}
 
 
 
@@ -266,34 +266,34 @@ bit8 Dictionary<K,V>::iterate(INOUT int &index,INOUT int &offset,
 //   is returned.
 template <class K,class V>
 bit8 Dictionary<K,V>::iterate(INOUT int &index,INOUT int &offset,
-    OUT K &key, OUT V &value) RO 
+    OUT K &key, OUT V &value) RO
 {
   DNode<K,V> *temp;
- 
+
   // index out of range
   if ((index<0)||(index >= (int)getSize()))
     return(FALSE);
- 
+
   temp=table[index];
   while ((temp==NULL)&&((++index) < (int)getSize()))
   {
     temp=table[index];
     offset=0;
   }
- 
+
   if (temp==NULL)   // no more slots with data
     return(FALSE);
- 
+
   uint32 i=0;
   while ((temp!=NULL) && ((int)i < offset))
   {
     temp=temp->hashNext;
     i++;
   }
- 
+
   if (temp==NULL)  // should never happen
     return(FALSE);
- 
+
   value=temp->value;
   key=temp->key;
   if (temp->hashNext==NULL)
@@ -303,7 +303,7 @@ bit8 Dictionary<K,V>::iterate(INOUT int &index,INOUT int &offset,
   }
   else
     offset++;
- 
+
   return(TRUE);
 }
 
@@ -312,19 +312,19 @@ bit8 Dictionary<K,V>::iterate(INOUT int &index,INOUT int &offset,
 
 // Return the current size of the hash table
 template <class K,class V>
-uint32 Dictionary<K,V>::getSize(void) RO 
-{ return(size); }    
+uint32 Dictionary<K,V>::getSize(void) RO
+{ return(size); }
 
 
 // Return the current number of entries in the table
 template <class K,class V>
-uint32 Dictionary<K,V>::getEntries(void) RO 
+uint32 Dictionary<K,V>::getEntries(void) RO
 { return(entries); }
 
 
 // Does the Dictionary contain the key?
 template <class K,class V>
-bit8 Dictionary<K,V>::contains(IN K &key) RO 
+bit8 Dictionary<K,V>::contains(IN K &key) RO
 {
   int offset;
   DNode<K,V> *node;
@@ -339,10 +339,10 @@ bit8 Dictionary<K,V>::contains(IN K &key) RO
   while(node!=NULL)
   {
     if ((node->key)==key)
-    { return(TRUE); }          
+    { return(TRUE); }
     node=node->hashNext;
   }
-  return(FALSE); 
+  return(FALSE);
 }
 
 
@@ -358,7 +358,7 @@ bit8 Dictionary<K,V>::updateValue(IN K &key,IN V &value)
 
   add(key,value);
   return(TRUE);
-}           
+}
 
 
 // Add to the dictionary (if key exists, value is updated with the new V)
@@ -390,7 +390,7 @@ bit8 Dictionary<K,V>::add(IN K &key,IN V &value)
   remove(key);   // Hopefully this will be false...
 
   offset=keyHash(key);
-    
+
   node=table[offset];
 
   if (node==NULL)
@@ -400,7 +400,7 @@ bit8 Dictionary<K,V>::add(IN K &key,IN V &value)
     temp=table[offset];
     table[offset]=item;
     item->hashNext=temp;
-  } 
+  }
 
   entries++;
   percent=(float)entries;
@@ -428,7 +428,7 @@ bit8 Dictionary<K,V>::remove(IN K &key,OUT V &value)
   node=table[offset];
 
   last=node;
-  if (node==NULL) 
+  if (node==NULL)
     return(FALSE);
 
   //special case table points to thing to delete
@@ -469,7 +469,7 @@ bit8 Dictionary<K,V>::remove(IN K &key,OUT V &value)
         memcpy(&value,&(node->value),sizeof(V));
       #else
         value=node->value;
-      #endif 
+      #endif
       last->hashNext=node->hashNext;
       entries--;
       delete(node);
@@ -515,7 +515,7 @@ bit8 Dictionary<K,V>::removeAny(OUT K &key,OUT V &value)
     {
       offset=i;
       break;
-    } 
+    }
 
   if (offset==-1)    // Nothing there
     return(FALSE);
@@ -529,7 +529,7 @@ bit8 Dictionary<K,V>::removeAny(OUT K &key,OUT V &value)
     key=node->key;
   #endif
   #ifdef VALUE_MEM_OPS
-    memcpy(&value,&(node->value),sizeof(V));     
+    memcpy(&value,&(node->value),sizeof(V));
   #else
     value=node->value;
   #endif
@@ -545,7 +545,7 @@ bit8 Dictionary<K,V>::removeAny(OUT K &key,OUT V &value)
 
 
 template <class K,class V>
-bool Dictionary<K,V>::getValue(IN K &key,OUT V &value) RO 
+bool Dictionary<K,V>::getValue(IN K &key,OUT V &value) RO
 {
   V *valptr=NULL;
   bool retval=getPointer(key,&valptr);
@@ -563,7 +563,7 @@ bool Dictionary<K,V>::getValue(IN K &key,OUT V &value) RO
 // Try and avoid this since you're getting a pointer to the internally
 //  managed data!
 template <class K,class V>
-bool Dictionary<K,V>::getPointer(IN K &key,OUT V **valptr) RO 
+bool Dictionary<K,V>::getPointer(IN K &key,OUT V **valptr) RO
 {
   int offset;
   DNode<K,V> *node;
@@ -575,7 +575,7 @@ bool Dictionary<K,V>::getPointer(IN K &key,OUT V **valptr) RO
 
   node=table[offset];
 
-  if (node==NULL) 
+  if (node==NULL)
     return(FALSE);
 
   #ifdef KEY_MEM_OPS
@@ -598,7 +598,7 @@ bool Dictionary<K,V>::getPointer(IN K &key,OUT V **valptr) RO
 //only here to improve performance of the hash table by reducing
 //the length of the linked list at each table entry.
 
-// Shrink the hash table by a factor of 2 (and relocate entries)   
+// Shrink the hash table by a factor of 2 (and relocate entries)
 template <class K,class V>
 void Dictionary<K,V>::shrink(void)
 {
@@ -619,7 +619,7 @@ void Dictionary<K,V>::shrink(void)
 
   table=(DNode<K,V> **)new DNode<K,V>*[size];
   assert(table!=NULL);
-  memset((void *)table,0,size*sizeof(void *)); 
+  memset((void *)table,0,size*sizeof(void *));
 
   for (i=0; i<oldsize; i++)
   {
@@ -658,7 +658,7 @@ void Dictionary<K,V>::expand(void)
 
   table=(DNode<K,V> **)new DNode<K,V>* [size];
   assert(table!=NULL);
-  memset((void *)table,0,size*sizeof(void *));       
+  memset((void *)table,0,size*sizeof(void *));
 
   for (i=0; i<oldsize; i++)
   {

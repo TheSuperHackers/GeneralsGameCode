@@ -77,7 +77,7 @@ public:
 	HordeUpdateModuleData();
 	static void buildFieldParse(MultiIniFieldParse& p);
 
-private: 
+private:
 
 };
 
@@ -87,7 +87,7 @@ class HordeUpdateInterface
 public:
 	virtual Bool isInHorde() const = 0;
 	virtual Bool hasFlag() const = 0;
-	virtual Bool isTrueHordeMember() const = 0; 
+	virtual Bool isTrueHordeMember() const = 0;
 	virtual Bool isAllowedNationalism() const = 0;
 
 };
@@ -107,7 +107,7 @@ public:
 
 	virtual void onDrawableBoundToObject();
 	virtual Bool isInHorde() const { return m_inHorde; }
-	virtual Bool isTrueHordeMember() const { return m_trueHordeMember && m_inHorde; } 
+	virtual Bool isTrueHordeMember() const { return m_trueHordeMember && m_inHorde; }
 	virtual Bool isAllowedNationalism() const;
 	virtual Bool hasFlag() const { return m_hasFlag; }
 	virtual UpdateSleepTime update();	///< update this object's AI

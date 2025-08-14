@@ -27,8 +27,8 @@ class BorderTool : public Tool
 		Bool m_addingNewBorder;
 		Int m_modifyBorderNdx;
 		ModificationType m_modificationType;
-		
-	
+
+
 	public:
 		BorderTool();
 		~BorderTool();
@@ -36,8 +36,8 @@ class BorderTool : public Tool
 		Int getToolID(void) {return m_toolID;}
 		virtual void setCursor(void);
 
-		virtual void activate(); 
-		virtual void deactivate(); 
+		virtual void activate();
+		virtual void deactivate();
 
 		virtual Bool followsTerrain(void) { return false;	}
 

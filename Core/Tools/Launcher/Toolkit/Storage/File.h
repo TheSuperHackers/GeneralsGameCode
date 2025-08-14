@@ -91,7 +91,7 @@ class File : public Stream
 		//! Open the file for access.
 		virtual EFileError Open(ERights rights);
 
-		//! Open the file with the associated name for access 
+		//! Open the file with the associated name for access
 		virtual EFileError Open(const UString& name, ERights rights);
 
 		//! Close the file
@@ -127,10 +127,10 @@ class File : public Stream
 
 		//! Set file position marker
 		virtual void SetMarker(Int32 offset, EStreamFrom from);
-		
+
 		//! End of file test
 		virtual bool AtEnd(void);
-		
+
 		//! Read bytes from the file
 		virtual UInt32 GetBytes(void* ptr, UInt32 bytes);
 

@@ -567,7 +567,7 @@ File::EFileError File::Load(void*& outBuffer, UInt32& outSize)
 	if (IsOpen() == false)
 		{
 		result = Open(GetRights());
-		
+
 		if (result != FileError_None)
 			{
 			return result;
@@ -615,7 +615,7 @@ File::EFileError File::Load(void*& outBuffer, UInt32& outSize)
 					}
 
 				size -= bytesRead;
-				
+
 				if (bytesRead == 0)
 					{
 					break;
@@ -729,7 +729,7 @@ File::EFileError File::Save(const void* buffer, UInt32 size)
 bool File::OnFileError(EFileError error, bool)
 	{
 	#ifdef RTS_DEBUG
-	const char* _errorNames[] = 
+	const char* _errorNames[] =
 		{
 		"FileError_None",
 		"FileError_FNF",
@@ -748,7 +748,7 @@ bool File::OnFileError(EFileError error, bool)
 	return false;
 	}
 
-	
+
 /******************************************************************************
 *
 * NAME
@@ -860,7 +860,7 @@ UInt32 File::GetMarker(void)
 *
 * INPUTS
 *     Offset - Offset to adjust marker by
-*     From   - 
+*     From   -
 *
 * RESULT
 *     NONE
@@ -1084,7 +1084,7 @@ UInt32 File::PeekBytes(void* ptr, UInt32 bytes)
 
 	// Get bytes
 	UInt32 bytesPeeked = GetBytes(ptr, bytes);
-	
+
 	// Restore previous position
 	SetMarker(pos, Stream::FromStart);
 

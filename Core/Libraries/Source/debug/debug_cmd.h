@@ -34,7 +34,7 @@
 
 /**
   \interface DebugCmdInterface debug.h <rts/debug.h>
-  
+
   \brief Debug command group interface.
 
   A debug command group interface implementation defines a new
@@ -117,7 +117,7 @@ public:
                  (without quotes)
     \param type type name of class we're implementing
   */
-  #define DEBUG_CREATE_COMMAND_GROUP(groupname,type) 
+  #define DEBUG_CREATE_COMMAND_GROUP(groupname,type)
 
 #else
 

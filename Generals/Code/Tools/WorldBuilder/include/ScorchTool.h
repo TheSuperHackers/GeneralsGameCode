@@ -31,7 +31,7 @@ class MapObject;
 /**                             ScorchTool
 ***************************************************************************/
 ///  Scorch tool.
-class ScorchTool : public Tool 
+class ScorchTool : public Tool
 {
 public:
 	ScorchTool(void);
@@ -40,7 +40,7 @@ public:
 protected:
 	Coord3D m_mouseDownPt;
 
-protected: 
+protected:
 	MapObject *pickScorch(Coord3D loc);
 
 public:

@@ -80,7 +80,7 @@ typedef enum
 typedef enum
 {
 
-	STATUS_MODE = 0, 
+	STATUS_MODE = 0,
 	STATUS_PART2,			/// change to meaningful name when decided what goes here
 	STATUS_PART3,			/// change to meaningful name when decided what goes here
 	STATUS_PART4,			/// change to meaningful name when decided what goes here
@@ -164,7 +164,7 @@ public:
 
 	void setUnsaved( Bool unsaved );  ///< set unsaved flag to FALSE or TRUE
 	Bool newLayout( void );  ///< reset editor for new layout
-	
+
 	// grid settings
 	void setGridResolution( Int res );
 	Int getGridResolution( void );
@@ -205,7 +205,7 @@ public:
 	// resizing/moving help ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	void dragMoveSelectedWindows( ICoord2D *dragOrigin, ICoord2D *dragDest );  ///< move windows via drag move
 	/// given a position to move a window to, keep it onscreen and inside parent
-	void computeSafeLocation( GameWindow *window, Int x, Int y, 
+	void computeSafeLocation( GameWindow *window, Int x, Int y,
 														Int *safeX, Int *safeY );
 	/// given position and size to move a window to, keep it inside parent and on screen
 	void computeSafeSizeLocation( GameWindow *window,
@@ -216,7 +216,7 @@ public:
 	/// compute new size of window using drag-resize logic
 	void computeResizeLocation( EditMode resizeMode,
 														  GameWindow *window,
-														  ICoord2D *resizeOrigin, 
+														  ICoord2D *resizeOrigin,
 														  ICoord2D *resizeDest,
 														  ICoord2D *resultLoc,
 														  ICoord2D *resultSize );
@@ -241,8 +241,8 @@ public:
 																	 Int *x, Int *y, Int *width, Int *height );
 
 	GameWindow *newWindow( UnsignedInt windowStyle,
-												 GameWindow *parent, 
-												 Int x, Int y, 
+												 GameWindow *parent,
+												 Int x, Int y,
 												 Int width, Int height );
 	GameWindow *newUserWindow( GameWindow *parent,
 														 Int x, Int y,
@@ -254,31 +254,31 @@ public:
 													 Int x, Int y,
 													 Int width, Int height );
 	GameWindow *newRadioButton( GameWindow *parent,
-														  Int x, Int y, 
+														  Int x, Int y,
 															Int width, Int height );
 	GameWindow *newTabControl( GameWindow *parent,
-														  Int x, Int y, 
+														  Int x, Int y,
 															Int width, Int height );
 	GameWindow *newHorizontalSlider( GameWindow *parent,
-																	 Int x, Int y, 
+																	 Int x, Int y,
 																	 Int width, Int height );
 	GameWindow *newVerticalSlider( GameWindow *parent,
-																 Int x, Int y, 
+																 Int x, Int y,
 																 Int width, Int height );
 	GameWindow *newProgressBar( GameWindow *parent,
-														  Int x, Int y, 
+														  Int x, Int y,
 															Int width, Int height );
 	GameWindow *newListbox( GameWindow *parent,
-													Int x, Int y, 
+													Int x, Int y,
 													Int width, Int height );
 	GameWindow *newTextEntry( GameWindow *parent,
-													  Int x, Int y, 
+													  Int x, Int y,
 														Int width, Int height );
 	GameWindow *newStaticText( GameWindow *parent,
-														 Int x, Int y, 
+														 Int x, Int y,
 														 Int width, Int height );
 	GameWindow *newComboBox( GameWindow *parent,
-														 Int x, Int y, 
+														 Int x, Int y,
 														 Int width, Int height );
 
 	// menu options ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

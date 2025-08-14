@@ -340,9 +340,9 @@ SoundStreamHandleClass::Get_Sample_User_Data (S32 i)
 //////////////////////////////////////////////////////////////////////
 S32
 SoundStreamHandleClass::Get_Sample_Playback_Rate (void)
-{	
+{
 	S32 retval = 0;
-	
+
 	if (StreamHandle != (HSTREAM)INVALID_MILES_HANDLE) {
 		retval = ::AIL_stream_playback_rate (StreamHandle);
 	}

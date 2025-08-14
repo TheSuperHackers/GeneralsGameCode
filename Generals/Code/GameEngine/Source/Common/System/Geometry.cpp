@@ -24,7 +24,7 @@
 
 // FILE: Geometry.cpp /////////////////////////////////////////////////////////////////////////////
 // Author: Steven Johnson, Aug 2002
-// Desc:   
+// Desc:
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 #include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
 
@@ -146,7 +146,7 @@ static Real calcPointToLineDistSquared(const Coord3D& pt, const Coord3D& lineSta
 	}
 
   Real tmp = dot / lineLenSqr;
-	
+
 	closest.x = lineStart.x + tmp * line.x;
 	closest.y = lineStart.y + tmp * line.y;
 	closest.z = lineStart.z + tmp * line.z;
@@ -176,7 +176,7 @@ void GeometryInfo::calcPitches(const Coord3D& thisPos, const GeometryInfo& that,
 	Real dxy = sqrt(sqr(thatPos.x - thisCenter.x) + sqr(thatPos.y - thisCenter.y));
 
 	Real dz;
-	
+
 	/** @todo srj -- this could be better, by calcing it for all the corners, not just top-center
 		and bottom-center... oh well */
 	dz = (thatPos.z + that.getMaxHeightAbovePosition()) - thisCenter.z;
@@ -292,7 +292,7 @@ void GeometryInfo::get2DBounds(const Coord3D& geomCenter, Real angle, Region2D& 
 			bounds.lo.y = y;
 			bounds.hi.x = x;
 			bounds.hi.y = y;
-			
+
 			x = geomCenter.x + exc - eys;
 			y = geomCenter.y + eyc + exs;
 			if (bounds.lo.x > x) bounds.lo.x = x;

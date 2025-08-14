@@ -59,7 +59,7 @@ class W3DAssetManager: public WW3DAssetManager
 {
 public:
 	W3DAssetManager(void);
-	virtual ~W3DAssetManager(void);	
+	virtual ~W3DAssetManager(void);
 
 	virtual RenderObjClass * Create_Render_Obj(const char * name);
 	// unique to W3DAssetManager
@@ -68,7 +68,7 @@ public:
 
 	virtual TextureClass *	Get_Texture
 	(
-		const char * filename, 
+		const char * filename,
 		MipCountType mip_level_count=MIP_LEVELS_ALL,
 		WW3DFormat texture_format=WW3D_FORMAT_UNKNOWN,
 		bool allow_compression=true,
@@ -108,10 +108,10 @@ private:
 	int replaceMeshTexture(RenderObjClass *robj, TextureClass *oldTex, TextureClass *newTex);
 
 	//'E&B' customizations
-/*	virtual RenderObjClass * Create_Render_Obj(const char * name, float scale, const Vector3 &hsv_shift);	
+/*	virtual RenderObjClass * Create_Render_Obj(const char * name, float scale, const Vector3 &hsv_shift);
 	TextureClass * Get_Texture_With_HSV_Shift(const char * filename, const Vector3 &hsv_shift, TextureClass::MipCountType mip_level_count = TextureClass::MIP_LEVELS_ALL);
 	void Recolor_Vertex_Material(VertexMaterialClass *vmat, const Vector3 &hsv_shift);
-	void Recolor_Vertices(unsigned int *color, int count, const Vector3 &hsv_shift);	
+	void Recolor_Vertices(unsigned int *color, int count, const Vector3 &hsv_shift);
 	void Recolor_Mesh(RenderObjClass *robj, const Vector3 &hsv_shift);
 	TextureClass * Recolor_Texture(TextureClass *texture, const Vector3 &hsv_shift);
 	TextureClass * Recolor_Texture_One_Time(TextureClass *texture, const Vector3 &hsv_shift);

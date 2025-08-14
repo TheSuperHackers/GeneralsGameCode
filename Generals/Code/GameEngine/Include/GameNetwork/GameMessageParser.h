@@ -31,7 +31,7 @@
 //----------------------------------------------------------------------------
 class GameMessageParserArgumentType : public MemoryPoolObject
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(GameMessageParserArgumentType, "GameMessageParserArgumentType")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(GameMessageParserArgumentType, "GameMessageParserArgumentType")
 public:
 	GameMessageParserArgumentType(GameMessageArgumentDataType type, Int argCount);
 	//virtual ~GameMessageParserArgumentType();
@@ -48,25 +48,25 @@ protected:
 };
 
 //----------------------------------------------------------------------------
-inline GameMessageParserArgumentType * GameMessageParserArgumentType::getNext() 
+inline GameMessageParserArgumentType * GameMessageParserArgumentType::getNext()
 {
 	return m_next;
 }
 
 //----------------------------------------------------------------------------
-inline void GameMessageParserArgumentType::setNext(GameMessageParserArgumentType *next) 
+inline void GameMessageParserArgumentType::setNext(GameMessageParserArgumentType *next)
 {
 	m_next = next;
 }
 
 //----------------------------------------------------------------------------
-inline GameMessageArgumentDataType GameMessageParserArgumentType::getType() 
+inline GameMessageArgumentDataType GameMessageParserArgumentType::getType()
 {
 	return m_type;
 }
 
 //----------------------------------------------------------------------------
-inline Int GameMessageParserArgumentType::getArgCount() 
+inline Int GameMessageParserArgumentType::getArgCount()
 {
 	return m_argCount;
 }
@@ -76,7 +76,7 @@ inline Int GameMessageParserArgumentType::getArgCount()
 //----------------------------------------------------------------------------
 class GameMessageParser : public MemoryPoolObject
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(GameMessageParser, "GameMessageParser")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(GameMessageParser, "GameMessageParser")
 public:
 	GameMessageParser();
 	GameMessageParser(GameMessage *msg);
@@ -92,13 +92,13 @@ protected:
 };
 
 //----------------------------------------------------------------------------
-inline GameMessageParserArgumentType * GameMessageParser::getFirstArgumentType() 
+inline GameMessageParserArgumentType * GameMessageParser::getFirstArgumentType()
 {
 	return m_first;
 }
 
 //----------------------------------------------------------------------------
-inline Int GameMessageParser::getNumTypes() 
+inline Int GameMessageParser::getNumTypes()
 {
 	return m_argTypeCount;
 }

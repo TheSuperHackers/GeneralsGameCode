@@ -77,7 +77,7 @@ extern "C" void __declspec(naked) _cdecl _penter(void)
   unsigned callerFunc,ESPonReturn,callerRet;
   ProfileFuncLevelTracer *p;
 
-  _asm 
+  _asm
   {
     push ebp
     push eax
@@ -179,9 +179,9 @@ void ProfileFuncLevelTracer::Enter(unsigned addr, unsigned esp, unsigned ret)
   if (usedStack>=maxDepth)
     maxDepth=usedStack;
 
-  DLOG_GROUP(profile_stack,Debug::RepeatChar(' ',usedStack-1) 
-                          << Debug::Hex() << this 
-                          << " Enter " << Debug::Width(8) << addr 
+  DLOG_GROUP(profile_stack,Debug::RepeatChar(' ',usedStack-1)
+                          << Debug::Hex() << this
+                          << " Enter " << Debug::Width(8) << addr
                           << " ESP "   << Debug::Width(8) << esp
                           << " return "   << Debug::Width(8) << ret
                           << " level " << Debug::Dec() << usedStack
@@ -260,9 +260,9 @@ unsigned ProfileFuncLevelTracer::Leave(unsigned esp)
     DCRASH("ESP " << Debug::Hex() << esp << " does not match " << stack[usedStack].esp << Debug::Dec());
   }
 
-  DLOG_GROUP(profile_stack,Debug::RepeatChar(' ',usedStack-1) 
-                          << Debug::Hex() << this 
-                          << " Leave " << Debug::Width(8) << "" 
+  DLOG_GROUP(profile_stack,Debug::RepeatChar(' ',usedStack-1)
+                          << Debug::Hex() << this
+                          << " Leave " << Debug::Width(8) << ""
                           << " ESP "   << Debug::Width(8) << stack[usedStack].esp
                           << " return "   << Debug::Width(8) << stack[usedStack].retVal
                           << " level " << Debug::Dec() << usedStack
@@ -312,13 +312,13 @@ void ProfileFuncLevelTracer::FrameEnd(int which, int mixIndex)
 {
   DFAIL_IF(which<0||which>=MAX_FRAME_RECORDS)
     return;
-  DFAIL_IF(!(frameRecordMask&(1<<which))) 
+  DFAIL_IF(!(frameRecordMask&(1<<which)))
     return;
   DFAIL_IF(mixIndex>=curFrame)
     return;
 
   ProfileFastCS::Lock lock(cs);
-  
+
   frameRecordMask^=1<<which;
   if (mixIndex<0)
     curFrame++;
@@ -425,7 +425,7 @@ void ProfileFuncLevelTracer::UnsignedMap::Copy(const UnsignedMap &src)
 {
   Clear();
   if (src.e)
-  { 
+  {
     alloc=used=src.used;
     e=(Entry *)ProfileAllocMemory(alloc*sizeof(Entry));
     memcpy(e,src.e,alloc*sizeof(Entry));
@@ -575,7 +575,7 @@ const char *ProfileFuncLevel::Id::GetSource(void) const
                                          NULL,0,NULL,
                                          helpFunc,sizeof(helpFunc),&ofsFunc,
                                          helpFile,sizeof(helpFile),&func->funcLine,NULL);
-    
+
     char help[300];
     wsprintf(help,ofsFunc?"%s+0x%x":"%s",helpFunc,ofsFunc);
     func->funcSource=(char *)ProfileAllocMemory(strlen(helpFile)+1);
@@ -692,7 +692,7 @@ bool ProfileFuncLevel::Thread::EnumProfile(unsigned index, Id &id) const
 {
   if (!m_threadID)
     return false;
-  
+
   ProfileFastCS::Lock lock(cs);
 
   ProfileFuncLevelTracer::Function *f=m_threadID->EnumFunction(index);

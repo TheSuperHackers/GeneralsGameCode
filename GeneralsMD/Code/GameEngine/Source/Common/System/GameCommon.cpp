@@ -30,7 +30,7 @@
 
 #include "Common/GameCommon.h"
 
-const char *TheVeterancyNames[] = 
+const char *TheVeterancyNames[] =
 {
 	"REGULAR",
 	"VETERAN",
@@ -55,10 +55,10 @@ Real normalizeAngle(Real angle)
 	if( _isnan(angle) )
 		return 0;// ARGH!!!! Don't assert and then not handle it!  Error bad!  Fix error!
 
-	while (angle > PI) 
+	while (angle > PI)
 		angle -= 2*PI;
 
-	while (angle <= -PI) 
+	while (angle <= -PI)
 		angle += 2*PI;
 
 	return angle;

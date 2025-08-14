@@ -23,12 +23,12 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 //----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information					                  
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //----------------------------------------------------------------------------
 //
 // Project:    RTS 3
@@ -44,7 +44,7 @@
 #ifndef __COMMON_GAMEAUDIO_H_
 #define __COMMON_GAMEAUDIO_H_
 
-// Includes                                                      
+// Includes
 #include "Lib/BaseType.h"
 #include "Common/STLTypedefs.h"
 #include "Common/SubsystemInterface.h"
@@ -89,45 +89,45 @@ enum
 	2) Its guts are copied from elsewhere (for instance, a ThingTemplate, or MiscAudio).
 	3) It is added to TheAudio via TheAudio->addAudioEvent(...)
 
-	The return value from addAudioEvent can be saved in case the sound needs to loop and/or be 
-	terminated at some point. 
-	
-	To reomve a playing sound, the call TheAudio->removeAudioEvent(...) is used. This will search 
-	the list of currently playing audio for the specified handle, and kill the attached sound. It 
+	The return value from addAudioEvent can be saved in case the sound needs to loop and/or be
+	terminated at some point.
+
+	To reomve a playing sound, the call TheAudio->removeAudioEvent(...) is used. This will search
+	the list of currently playing audio for the specified handle, and kill the attached sound. It
 	will play a decay sound, if one is specified.
 
-	The important functions of TheAudio, are therefore 
+	The important functions of TheAudio, are therefore
 		GameAudio::addAudioEvent()
 		GameAudio::removeAudioEvent()
 	All other functions exist to support these two basic requirements.
 
 	In addition to the fundamental requirements, the audio has a fairly complicated sound management
-	scheme. If all units were always allowed to sound off, the sound engine would be overwhelmed and 
-	would sound awful. Therefore, when an audio event is requested, it goes through a series of 
-	checks to determine if it is near enough to the camera, if it should be heard based on shroud, 
+	scheme. If all units were always allowed to sound off, the sound engine would be overwhelmed and
+	would sound awful. Therefore, when an audio event is requested, it goes through a series of
+	checks to determine if it is near enough to the camera, if it should be heard based on shroud,
 	local player affiliation, etc. (The entire list of checks is contained in shouldPlayLocally()).
-	
+
 	In addition, the world and unit audio are never allowed to exceed their footprint, as specified
 	in the audio settings INI file. In order to accomodate this, the audio uses an audio cache. The
 	audio cache will attempt to load a sample, assuming there is enough room. If there is not enough
-	room, then it goes through and finds any samples that are lower priority, and kills them until 
-	enough room is present for the sample. If it cannot free enough room, nothing happens to the 
+	room, then it goes through and finds any samples that are lower priority, and kills them until
+	enough room is present for the sample. If it cannot free enough room, nothing happens to the
 	cache.
 
-	Although the audio is multithreaded, most of the operations are performed such that the worst 
+	Although the audio is multithreaded, most of the operations are performed such that the worst
 	case scenario for thread miscommunication is that the main thread misses an event for one frame.
-	One specific case of this is the status of playing audio. Because audio is playing 
-	asynchronously, it can complete at any time. When most audio completes, it sets a flag on the 
+	One specific case of this is the status of playing audio. Because audio is playing
+	asynchronously, it can complete at any time. When most audio completes, it sets a flag on the
 	event noting that it has completed. During the next update (from the main thread), anything with
-	that flag set is moved to the stopped list, and then is cleaned up. (Basically, the audio uses 
-	a push model for its multithreadedness, which doesn't require thread safety such as mutexes or 
+	that flag set is moved to the stopped list, and then is cleaned up. (Basically, the audio uses
+	a push model for its multithreadedness, which doesn't require thread safety such as mutexes or
 	semaphores).
 
-	All in all, the best way to learn how the audio works is to track the lifetime of an event 
-	through the system. This will give a better understanding than all the documentation I could 
+	All in all, the best way to learn how the audio works is to track the lifetime of an event
+	through the system. This will give a better understanding than all the documentation I could
 	write.
 
-	-jkmcd 
+	-jkmcd
 	-December 2002
 */
 
@@ -168,7 +168,7 @@ class AudioManager : public SubsystemInterface
 		void addTrackName( const AsciiString& trackName );
 		AsciiString nextTrackName(const AsciiString& currentTrack );
 		AsciiString prevTrackName(const AsciiString& currentTrack );
-		
+
 		// changing music tracks
 		virtual void nextMusicTrack( void ) = 0;
 		virtual void prevMusicTrack( void ) = 0;
@@ -184,7 +184,7 @@ class AudioManager : public SubsystemInterface
 		// Really meant for internal purposes only, but cannot be protected.
 		virtual void getInfoForAudioEvent( const AudioEventRTS *eventToFindAndFill ) const;	// Note: m_eventInfo is Mutable, and so this function will overwrite it if found
 
-		///< Return whether the current audio is playing or not. 
+		///< Return whether the current audio is playing or not.
 		///< NOTE NOTE NOTE !!DO NOT USE THIS IN FOR GAMELOGIC PURPOSES!! NOTE NOTE NOTE
 		virtual Bool isCurrentlyPlaying( AudioHandle handle );
 
@@ -223,7 +223,7 @@ class AudioManager : public SubsystemInterface
 		virtual void adjustVolumeOfPlayingAudio(AsciiString eventName, Real newVolume) = 0;
 		virtual void removePlayingAudio( AsciiString eventName ) = 0;
 		virtual void removeAllDisabledAudio() = 0;
-		
+
 		// Is the audio device on? We can skip a lot of audio processing if not.
 		virtual Bool isOn( AudioAffect whichToGet ) const;
 		virtual void setOn( Bool turnOn, AudioAffect whichToAffect );
@@ -231,8 +231,8 @@ class AudioManager : public SubsystemInterface
 		// Set and get the device Volume
 		virtual void setVolume( Real volume, AudioAffect whichToAffect );
 		virtual Real getVolume( AudioAffect whichToGet );
-		
-		// To get a more 3-D feeling from the universe, we adjust the volume of the 3-D samples based 
+
+		// To get a more 3-D feeling from the universe, we adjust the volume of the 3-D samples based
 		// on zoom.
 		virtual void set3DVolumeAdjustment( Real volumeAdjustment );
 
@@ -253,7 +253,7 @@ class AudioManager : public SubsystemInterface
 		virtual void releaseAudioRequest( AudioRequest *requestToRelease );
 		virtual void appendAudioRequest( AudioRequest *m_request );
 		virtual void processRequestList( void );
-	
+
 		virtual AudioEventInfo *newAudioEventInfo( AsciiString newEventName );
     virtual void addAudioEventInfo( AudioEventInfo * newEventInfo );
 		virtual AudioEventInfo *findAudioEventInfo( AsciiString eventName ) const;
@@ -288,12 +288,12 @@ class AudioManager : public SubsystemInterface
 
 		// For the file cache to know when to remove files.
 		virtual void closeAnySamplesUsingFile( const void *fileToClose ) = 0;
-		
+
 		virtual Bool isMusicAlreadyLoaded(void) const;
 		virtual Bool isMusicPlayingFromCD(void) const { return m_musicPlayingFromCD; }
 
 		Bool getDisallowSpeech( void ) const { return m_disallowSpeech; }
-		void setDisallowSpeech( Bool disallowSpeech ) { m_disallowSpeech = disallowSpeech; }	
+		void setDisallowSpeech( Bool disallowSpeech ) { m_disallowSpeech = disallowSpeech; }
 
 		// For Worldbuilder, to build lists from which to select
 		virtual void findAllAudioEventsOfType( AudioType audioType, std::vector<AudioEventInfo*>& allEvents );
@@ -304,7 +304,7 @@ class AudioManager : public SubsystemInterface
 
 		// Is the currently selected provider actually HW accelerated?
 		virtual Bool isCurrentProviderHardwareAccelerated();
-	
+
 		// Is the currently selected speaker type Surround sound?
 		virtual Bool isCurrentSpeakerTypeSurroundSound();
 
@@ -315,13 +315,13 @@ class AudioManager : public SubsystemInterface
 		virtual void setDeviceListenerPosition( void ) = 0;
 
 		// For tracking purposes
-		virtual AudioHandle allocateNewHandle( void );	
+		virtual AudioHandle allocateNewHandle( void );
 
     // Remove all AudioEventInfo's with the m_isLevelSpecific flag
     virtual void removeLevelSpecificAudioEventInfos( void );
-    
+
     void removeAllAudioRequests( void );
-    
+
 	protected:
 		AudioSettings *m_audioSettings;
 		MiscAudio *m_miscAudio;
@@ -345,16 +345,16 @@ class AudioManager : public SubsystemInterface
 		Real m_scriptSoundVolume;
 		Real m_scriptSound3DVolume;
 		Real m_scriptSpeechVolume;
-		
+
 		Real m_systemMusicVolume;
 		Real m_systemSoundVolume;
 		Real m_systemSound3DVolume;
 		Real m_systemSpeechVolume;
 		Real m_zoomVolume;
 
-		
+
 		AudioEventRTS *m_silentAudioEvent;
-		
+
 		enum
 		{
 			VOLUME_TYPE_MUSIC,

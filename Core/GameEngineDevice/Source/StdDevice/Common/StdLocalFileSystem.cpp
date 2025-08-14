@@ -34,7 +34,7 @@
 
 #include <filesystem>
 
-StdLocalFileSystem::StdLocalFileSystem() : LocalFileSystem() 
+StdLocalFileSystem::StdLocalFileSystem() : LocalFileSystem()
 {
 }
 
@@ -102,7 +102,7 @@ static std::filesystem::path fixFilenameFromWindowsPath(const Char *filename, In
 			if (pathFixedPart.empty())
 			{
 				// Required to allow creation of new files
-				if (!(access & File::WRITE)) 
+				if (!(access & File::WRITE))
 				{
 					DEBUG_LOG(("StdLocalFileSystem::fixFilenameFromWindowsPath - Error finding file %s", filename.string().c_str()));
 					DEBUG_LOG(("StdLocalFileSystem::fixFilenameFromWindowsPath - Got so far %s", pathCurrent.string().c_str()));
@@ -154,7 +154,7 @@ File * StdLocalFileSystem::openFile(const Char *filename, Int access, size_t buf
 	}
 
 	StdLocalFile *file = newInstance( StdLocalFile );
-	
+
 	if (file->open(path.string().c_str(), access, bufferSize) == FALSE) {
 		deleteInstance(file);
 		file = NULL;
@@ -164,7 +164,7 @@ File * StdLocalFileSystem::openFile(const Char *filename, Int access, size_t buf
 
 // this will also need to play nice with the STREAMING type that I added, if we ever enable this
 
-// srj sez: this speeds up INI loading, but makes BIG files unusable. 
+// srj sez: this speeds up INI loading, but makes BIG files unusable.
 // don't enable it without further tweaking.
 //
 // unless you like running really slowly.
@@ -184,15 +184,15 @@ File * StdLocalFileSystem::openFile(const Char *filename, Int access, size_t buf
 	return file;
 }
 
-void StdLocalFileSystem::update() 
+void StdLocalFileSystem::update()
 {
 }
 
-void StdLocalFileSystem::init() 
+void StdLocalFileSystem::init()
 {
 }
 
-void StdLocalFileSystem::reset() 
+void StdLocalFileSystem::reset()
 {
 }
 
@@ -270,7 +270,7 @@ void StdLocalFileSystem::getFileListInDirectory(const AsciiString& currentDirect
 
 		while (!done) {
 			std::string filenameStr = iter->path().filename().string();
-			if(iter->is_directory() && 
+			if(iter->is_directory() &&
 				(strcmp(filenameStr.c_str(), ".") && strcmp(filenameStr.c_str(), ".."))) {
 				AsciiString tempsearchstr(filenameStr.c_str());
 
@@ -284,7 +284,7 @@ void StdLocalFileSystem::getFileListInDirectory(const AsciiString& currentDirect
 	}
 }
 
-Bool StdLocalFileSystem::getFileInfo(const AsciiString& filename, FileInfo *fileInfo) const 
+Bool StdLocalFileSystem::getFileInfo(const AsciiString& filename, FileInfo *fileInfo) const
 {
 	std::filesystem::path path = fixFilenameFromWindowsPath(filename.str(), 0);
 
@@ -315,7 +315,7 @@ Bool StdLocalFileSystem::getFileInfo(const AsciiString& filename, FileInfo *file
 	return TRUE;
 }
 
-Bool StdLocalFileSystem::createDirectory(AsciiString directory) 
+Bool StdLocalFileSystem::createDirectory(AsciiString directory)
 {
 	bool result = FALSE;
 

@@ -17,12 +17,12 @@
 */
 
 //----------------------------------------------------------------------------=
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information					                  
-//                Copyright(C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright(C) 2001 - All Rights Reserved
+//
 //----------------------------------------------------------------------------
 //
 // Project:    WSYS Library
@@ -43,7 +43,7 @@
 
 
 //----------------------------------------------------------------------------
-//           Includes                                                      
+//           Includes
 //----------------------------------------------------------------------------
 
 #include "Lib/BaseType.h"
@@ -76,10 +76,10 @@ class File
 	friend class FileSystem;
 
 	public:
-	
+
 		enum access
 		{
-			NONE			= 0x00000000,				
+			NONE			= 0x00000000,
 			READ			= 0x00000001,				///< Access file for reading
 			WRITE			= 0x00000002,				///< Access file for writing
 			APPEND		= 0x00000004,				///< Seek to end of file on open
@@ -104,23 +104,23 @@ class File
 		Bool		m_open;										///< Has the file been opened
 		Bool		m_deleteOnClose;					///< delete File object on close()
 		Int			m_access;									///< How the file was opened
-		
-		
+
+
 		File();											///< This class can only used as a base class
 		virtual				~File();
 
 	public:
-		
+
 
 
 		virtual Bool	open( const Char *filename, Int access = 0 );				///< Open a file for access
 		virtual void	close( void );																			///< Close the file !!! File object no longer valid after this call !!!
 
-		virtual Int		read( void *buffer, Int bytes ) = NULL ;						/**< Read the specified number of bytes from the file in to the 
+		virtual Int		read( void *buffer, Int bytes ) = NULL ;						/**< Read the specified number of bytes from the file in to the
 																																			  *  memory pointed at by buffer. Returns the number of bytes read.
 																																			  *  Returns -1 if an error occured.
 																																			  */
-		virtual Int		write( void *buffer, Int bytes ) = NULL ;						/**< Write the specified number of bytes from the    
+		virtual Int		write( void *buffer, Int bytes ) = NULL ;						/**< Write the specified number of bytes from the
 																																			  *	 memory pointed at by buffer to the file. Returns the number of bytes written.
 																																			  *	 Returns -1 if an error occured.
 																																			  */
@@ -151,7 +151,7 @@ class File
 
 
 //----------------------------------------------------------------------------
-//           Inlining                                                       
+//           Inlining
 //----------------------------------------------------------------------------
 
 inline Char* File::getName( void ) { return m_name;};

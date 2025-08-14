@@ -43,7 +43,7 @@ static RailedTransportDockUpdateInterface *getRailedTransportDockUpdateInterface
 	if( obj == NULL )
 		return NULL;
 
-	// find us our dock interface	
+	// find us our dock interface
 	RailedTransportDockUpdateInterface *rtdui = NULL;
 	for( BehaviorModule **u = obj->getBehaviorModules(); *u; ++u )
 		if( (rtdui = (*u)->getRailedTransportDockUpdateInterface()) != NULL )
@@ -72,7 +72,7 @@ RailedTransportContain::~RailedTransportContain( void )
 // ------------------------------------------------------------------------------------------------
 void RailedTransportContain::onRemoving( Object *obj )
 {
-	
+
 	// extend functionality
 	TransportContain::onRemoving( obj );
 

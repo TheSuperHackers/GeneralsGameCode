@@ -17,20 +17,20 @@
 */
 
 /* $Header: /Commando/Code/wwmath/vector3.h 40    5/11/01 7:11p Jani_p $ */
-/*********************************************************************************************** 
- ***                  Confidential - Westwood Studios                                        *** 
- *********************************************************************************************** 
- *                                                                                             * 
- *                 Project Name : Westwood 3D                                                  * 
- *                                                                                             * 
- *                    File Name : VECTOR3.H                                                    *  
- *                                                                                             * 
- *                   Programmer : Greg Hjelstrom                                               * 
- *                                                                                             *  
- *                   Start Date : 02/24/97                                                     * 
- *                                                                                             * 
- *                  Last Update : February 24, 1997 [GH]                                       * 
- *                                                                                             * 
+/***********************************************************************************************
+ ***                  Confidential - Westwood Studios                                        ***
+ ***********************************************************************************************
+ *                                                                                             *
+ *                 Project Name : Westwood 3D                                                  *
+ *                                                                                             *
+ *                    File Name : VECTOR3.H                                                    *
+ *                                                                                             *
+ *                   Programmer : Greg Hjelstrom                                               *
+ *                                                                                             *
+ *                   Start Date : 02/24/97                                                     *
+ *                                                                                             *
+ *                  Last Update : February 24, 1997 [GH]                                       *
+ *                                                                                             *
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
  *   Scalar Division Operator -- Divide a vector by a scalar                                   *
@@ -97,15 +97,15 @@ public:
 	WWINLINE Vector3(const Vector3 & v) { X = v.X; Y = v.Y; Z = v.Z; }
 	WWINLINE Vector3(float x, float y, float z) { X = x; Y = y; Z = z; }
 	WWINLINE Vector3(const float vector[3]) { X = vector[0]; Y = vector[1]; Z = vector[2]; }
-	
+
 	// Assignment
-	WWINLINE Vector3 & operator = (const Vector3 & v) { X = v.X; Y = v.Y; Z = v.Z; return *this; }	
+	WWINLINE Vector3 & operator = (const Vector3 & v) { X = v.X; Y = v.Y; Z = v.Z; return *this; }
 	WWINLINE void	Set(float x, float y, float z) { X = x; Y = y; Z = z; }
 	WWINLINE void	Set(const Vector3 & that) { X = that.X; Y = that.Y; Z = that.Z; }
 
 	// Array access
-	WWINLINE float &	operator [](int i) { return (&X)[i]; }     
-	WWINLINE const float &  operator [](int i) const { return (&X)[i]; }  
+	WWINLINE float &	operator [](int i) { return (&X)[i]; }
+	WWINLINE const float &  operator [](int i) const { return (&X)[i]; }
 
 	// normalize, compute length
 	void	Normalize(void);
@@ -123,11 +123,11 @@ public:
 	WWINLINE void	Rotate_Z(float s_angle,float c_angle);
 
 	// unary operators
-	WWINLINE Vector3 operator-() const { return(Vector3(-X,-Y,-Z)); } 
-	WWINLINE Vector3 operator+() const { return *this; } 
+	WWINLINE Vector3 operator-() const { return(Vector3(-X,-Y,-Z)); }
+	WWINLINE Vector3 operator+() const { return *this; }
 
-	WWINLINE Vector3 & operator += (const Vector3 & v) { X += v.X; Y += v.Y; Z += v.Z; return *this; }	
-	WWINLINE Vector3 & operator -= (const Vector3 & v) { X -= v.X; Y -= v.Y; Z -= v.Z; return *this; }		
+	WWINLINE Vector3 & operator += (const Vector3 & v) { X += v.X; Y += v.Y; Z += v.Z; return *this; }
+	WWINLINE Vector3 & operator -= (const Vector3 & v) { X -= v.X; Y -= v.Y; Z -= v.Z; return *this; }
 	WWINLINE Vector3 & operator *= (float k) { X = X*k; Y=Y*k; Z=Z*k; return *this; }
 	WWINLINE Vector3 & operator /= (float k) { float ook=1.0f/k; X=X*ook; Y=Y*ook; Z=Z*ook; return *this; }
 
@@ -148,7 +148,7 @@ public:
 	// dot product / inner product
 	WWINLINE friend float operator * (const Vector3 &a,const Vector3 &b);
 	static WWINLINE float Dot_Product(const Vector3 &a,const Vector3 &b);
-	
+
 	// cross product / outer product
 	static WWINLINE Vector3 Cross_Product(const Vector3 &a,const Vector3 &b);
 	static WWINLINE void Cross_Product(const Vector3 &a,const Vector3 &b,Vector3 * result);
@@ -159,7 +159,7 @@ public:
 	// add and subtract without return by value
 	static WWINLINE void Add(const Vector3 & a,const Vector3 & b,Vector3 * c);
 	static WWINLINE void Subtract(const Vector3 & a,const Vector3 & b,Vector3 * c);
-	
+
 	// Line intersection functions.
 	static WWINLINE float Find_X_At_Y(float y, const Vector3 &p1, const Vector3 &p2);
 	static WWINLINE float Find_X_At_Z(float z, const Vector3 &p1, const Vector3 &p2);
@@ -188,17 +188,17 @@ public:
 };
 
 
-/************************************************************************** 
- * Scalar Multiply Operator -- Multiply a vector by a scalar              * 
- *                                                                        * 
- * INPUT:                                                                 * 
- *                                                                        * 
- * OUTPUT:                                                                * 
- *                                                                        * 
- * WARNINGS:                                                              * 
- *                                                                        * 
- * HISTORY:                                                               * 
- *   02/24/1997 GH  : Created.                                            * 
+/**************************************************************************
+ * Scalar Multiply Operator -- Multiply a vector by a scalar              *
+ *                                                                        *
+ * INPUT:                                                                 *
+ *                                                                        *
+ * OUTPUT:                                                                *
+ *                                                                        *
+ * WARNINGS:                                                              *
+ *                                                                        *
+ * HISTORY:                                                               *
+ *   02/24/1997 GH  : Created.                                            *
  *========================================================================*/
 WWINLINE Vector3 operator * (const Vector3 &a,float k)
 {
@@ -210,16 +210,16 @@ WWINLINE Vector3 operator * (float k, const Vector3 &a)
 	return Vector3((a.X * k),(a.Y * k),(a.Z * k));
 }
 
-/************************************************************************** 
- * Scalar Division Operator -- Divide a vector by a scalar                * 
- *                                                                        * 
- * INPUT:                                                                 * 
- *                                                                        * 
- * OUTPUT:                                                                * 
- *                                                                        * 
- * WARNINGS:                                                              * 
- *                                                                        * 
- * HISTORY:                                                               * 
+/**************************************************************************
+ * Scalar Division Operator -- Divide a vector by a scalar                *
+ *                                                                        *
+ * INPUT:                                                                 *
+ *                                                                        *
+ * OUTPUT:                                                                *
+ *                                                                        *
+ * WARNINGS:                                                              *
+ *                                                                        *
+ * HISTORY:                                                               *
  *========================================================================*/
 WWINLINE Vector3 operator / (const Vector3 &a,float k)
 {
@@ -227,17 +227,17 @@ WWINLINE Vector3 operator / (const Vector3 &a,float k)
 	return Vector3((a.X * ook),(a.Y * ook),(a.Z * ook));
 }
 
-/************************************************************************** 
- * Vector Addition Operator -- Add two vectors                            * 
- *                                                                        * 
- * INPUT:                                                                 * 
- *                                                                        * 
- * OUTPUT:                                                                * 
- *                                                                        * 
- * WARNINGS:                                                              * 
- *                                                                        * 
- * HISTORY:                                                               * 
- *   02/24/1997 GH  : Created.                                            * 
+/**************************************************************************
+ * Vector Addition Operator -- Add two vectors                            *
+ *                                                                        *
+ * INPUT:                                                                 *
+ *                                                                        *
+ * OUTPUT:                                                                *
+ *                                                                        *
+ * WARNINGS:                                                              *
+ *                                                                        *
+ * HISTORY:                                                               *
+ *   02/24/1997 GH  : Created.                                            *
  *========================================================================*/
 WWINLINE Vector3 operator + (const Vector3 &a,const Vector3 &b)
 {
@@ -248,17 +248,17 @@ WWINLINE Vector3 operator + (const Vector3 &a,const Vector3 &b)
 						);
 }
 
-/************************************************************************** 
- * Vector Subtraction Operator -- Subract two vectors                     * 
- *                                                                        * 
- * INPUT:                                                                 * 
- *                                                                        * 
- * OUTPUT:                                                                * 
- *                                                                        * 
- * WARNINGS:                                                              * 
- *                                                                        * 
- * HISTORY:                                                               * 
- *   02/24/1997 GH  : Created.                                            * 
+/**************************************************************************
+ * Vector Subtraction Operator -- Subract two vectors                     *
+ *                                                                        *
+ * INPUT:                                                                 *
+ *                                                                        *
+ * OUTPUT:                                                                *
+ *                                                                        *
+ * WARNINGS:                                                              *
+ *                                                                        *
+ * HISTORY:                                                               *
+ *   02/24/1997 GH  : Created.                                            *
  *========================================================================*/
 WWINLINE Vector3 operator - (const Vector3 &a,const Vector3 &b)
 {
@@ -269,21 +269,21 @@ WWINLINE Vector3 operator - (const Vector3 &a,const Vector3 &b)
 						);
 }
 
-/************************************************************************** 
- * Vector Inner Product -- Compute the inner or dot product of two vector * 
- *                                                                        * 
- * INPUT:                                                                 * 
- *                                                                        * 
- * OUTPUT:                                                                * 
- *                                                                        * 
- * WARNINGS:                                                              * 
- *                                                                        * 
- * HISTORY:                                                               * 
+/**************************************************************************
+ * Vector Inner Product -- Compute the inner or dot product of two vector *
+ *                                                                        *
+ * INPUT:                                                                 *
+ *                                                                        *
+ * OUTPUT:                                                                *
+ *                                                                        *
+ * WARNINGS:                                                              *
+ *                                                                        *
+ * HISTORY:                                                               *
  *========================================================================*/
 WWINLINE float operator * (const Vector3 &a,const Vector3 &b)
 {
-	return	a.X*b.X + 
-				a.Y*b.Y + 
+	return	a.X*b.X +
+				a.Y*b.Y +
 				a.Z*b.Z;
 }
 
@@ -293,67 +293,67 @@ WWINLINE float Vector3::Dot_Product(const Vector3 &a,const Vector3 &b)
 }
 
 
-/************************************************************************** 
- * Vector Equality Operator -- Determine if two vectors are identical     * 
- *                                                                        * 
- * INPUT:                                                                 * 
- *                                                                        * 
- * OUTPUT:                                                                * 
- *                                                                        * 
- * WARNINGS:                                                              * 
- *                                                                        * 
- * HISTORY:                                                               * 
+/**************************************************************************
+ * Vector Equality Operator -- Determine if two vectors are identical     *
+ *                                                                        *
+ * INPUT:                                                                 *
+ *                                                                        *
+ * OUTPUT:                                                                *
+ *                                                                        *
+ * WARNINGS:                                                              *
+ *                                                                        *
+ * HISTORY:                                                               *
  *========================================================================*/
 WWINLINE bool operator == (const Vector3 &a,const Vector3 &b)
 {
 	return ( (a.X == b.X) && (a.Y == b.Y) && (a.Z == b.Z));
 }
 
-/************************************************************************** 
- * Vector Inequality Operator -- Determine if two vectors are identical   * 
- *                                                                        * 
- * INPUT:                                                                 * 
- *                                                                        * 
- * OUTPUT:                                                                * 
- *                                                                        * 
- * WARNINGS:                                                              * 
- *                                                                        * 
- * HISTORY:                                                               * 
+/**************************************************************************
+ * Vector Inequality Operator -- Determine if two vectors are identical   *
+ *                                                                        *
+ * INPUT:                                                                 *
+ *                                                                        *
+ * OUTPUT:                                                                *
+ *                                                                        *
+ * WARNINGS:                                                              *
+ *                                                                        *
+ * HISTORY:                                                               *
  *========================================================================*/
 WWINLINE bool operator != (const Vector3 &a,const Vector3 &b)
 {
 	return ( (a.X != b.X) || (a.Y != b.Y) || (a.Z != b.Z));
 }
 
-/************************************************************************** 
- * Equal_Within_Epsilon -- Determine if two vectors are identical within e* 
- *                                                                        * 
- * INPUT:                                                                 * 
- *                                                                        * 
- * OUTPUT:                                                                * 
- *                                                                        * 
- * WARNINGS:                                                              * 
- *                                                                        * 
- * HISTORY:                                                               * 
+/**************************************************************************
+ * Equal_Within_Epsilon -- Determine if two vectors are identical within e*
+ *                                                                        *
+ * INPUT:                                                                 *
+ *                                                                        *
+ * OUTPUT:                                                                *
+ *                                                                        *
+ * WARNINGS:                                                              *
+ *                                                                        *
+ * HISTORY:                                                               *
  *========================================================================*/
 WWINLINE bool Equal_Within_Epsilon(const Vector3 &a,const Vector3 &b,float epsilon)
 {
-   return(	(WWMath::Fabs(a.X - b.X) < epsilon) && 
-				(WWMath::Fabs(a.Y - b.Y) < epsilon) && 
+   return(	(WWMath::Fabs(a.X - b.X) < epsilon) &&
+				(WWMath::Fabs(a.Y - b.Y) < epsilon) &&
 				(WWMath::Fabs(a.Z - b.Z) < epsilon)	);
 }
 
 
-/************************************************************************** 
- * Cross_Product -- compute the cross product of two vectors              * 
- *                                                                        * 
- * INPUT:                                                                 * 
- *                                                                        * 
- * OUTPUT:                                                                * 
- *                                                                        * 
- * WARNINGS:                                                              * 
- *                                                                        * 
- * HISTORY:                                                               * 
+/**************************************************************************
+ * Cross_Product -- compute the cross product of two vectors              *
+ *                                                                        *
+ * INPUT:                                                                 *
+ *                                                                        *
+ * OUTPUT:                                                                *
+ *                                                                        *
+ * WARNINGS:                                                              *
+ *                                                                        *
+ * HISTORY:                                                               *
  *========================================================================*/
 WWINLINE Vector3 Vector3::Cross_Product(const Vector3 &a,const Vector3 &b)
 {
@@ -387,21 +387,21 @@ WWINLINE float Vector3::Cross_Product_Z(const Vector3 &a,const Vector3 &b)
    return a.X * b.Y - a.Y * b.X;
 }
 
-/************************************************************************** 
- * Vector3::Normalize -- Normalizes the vector.                           * 
- *                                                                        * 
- * INPUT:                                                                 * 
- *                                                                        * 
- * OUTPUT:                                                                * 
- *                                                                        * 
- * WARNINGS:                                                              * 
- *                                                                        * 
- * HISTORY:                                                               * 
+/**************************************************************************
+ * Vector3::Normalize -- Normalizes the vector.                           *
+ *                                                                        *
+ * INPUT:                                                                 *
+ *                                                                        *
+ * OUTPUT:                                                                *
+ *                                                                        *
+ * WARNINGS:                                                              *
+ *                                                                        *
+ * HISTORY:                                                               *
  *========================================================================*/
 WWINLINE void Vector3::Normalize()
 {
 	float len2 = Length2();
-	if (len2 != 0.0f) 
+	if (len2 != 0.0f)
 	{
 		float oolen = WWMath::Inv_Sqrt(len2);
 		X *= oolen;
@@ -414,7 +414,7 @@ WWINLINE void Vector3::Normalize()
 WWINLINE Vector3 Normalize(const Vector3 & vec)
 {
 	float len2 = vec.Length2();
-	if (len2 != 0.0f) 
+	if (len2 != 0.0f)
 	{
 		float oolen = WWMath::Inv_Sqrt(len2);
 		return vec * oolen;
@@ -423,32 +423,32 @@ WWINLINE Vector3 Normalize(const Vector3 & vec)
 }
 #endif
 
-/************************************************************************** 
- * Vector3::Length -- Returns the length of the vector                    * 
- *                                                                        * 
- * INPUT:                                                                 * 
- *                                                                        * 
- * OUTPUT:                                                                * 
- *                                                                        * 
- * WARNINGS:                                                              * 
- *                                                                        * 
- * HISTORY:                                                               * 
+/**************************************************************************
+ * Vector3::Length -- Returns the length of the vector                    *
+ *                                                                        *
+ * INPUT:                                                                 *
+ *                                                                        *
+ * OUTPUT:                                                                *
+ *                                                                        *
+ * WARNINGS:                                                              *
+ *                                                                        *
+ * HISTORY:                                                               *
  *========================================================================*/
 WWINLINE float Vector3::Length() const
 {
 	return WWMath::Sqrt(Length2());
 }
 
-/************************************************************************** 
- * Vector3::Length2 -- Returns the square of the length of the vector     * 
- *                                                                        * 
- * INPUT:                                                                 * 
- *                                                                        * 
- * OUTPUT:                                                                * 
- *                                                                        * 
- * WARNINGS:                                                              * 
- *                                                                        * 
- * HISTORY:                                                               * 
+/**************************************************************************
+ * Vector3::Length2 -- Returns the square of the length of the vector     *
+ *                                                                        *
+ * INPUT:                                                                 *
+ *                                                                        *
+ * OUTPUT:                                                                *
+ *                                                                        *
+ * WARNINGS:                                                              *
+ *                                                                        *
+ * HISTORY:                                                               *
  *========================================================================*/
 WWINLINE float Vector3::Length2() const
 {
@@ -485,17 +485,17 @@ WWINLINE float Vector3::Quick_Length(void) const
 }
 
 
-/*********************************************************************************************** 
- * Swap -- swap two Vector3's                                                                  * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   08/11/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * Swap -- swap two Vector3's                                                                  *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   08/11/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
 WWINLINE void Swap(Vector3 & a,Vector3 & b)
 {
@@ -504,17 +504,17 @@ WWINLINE void Swap(Vector3 & a,Vector3 & b)
 	b = tmp;
 }
 
-/*********************************************************************************************** 
- * Lerp -- linearly interpolate two Vector3's by an interpolation factor.                      * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS: No checking is done to ensure that alpha is between 0 and 1.                      * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   08/11/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * Lerp -- linearly interpolate two Vector3's by an interpolation factor.                      *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS: No checking is done to ensure that alpha is between 0 and 1.                      *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   08/11/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
 WWINLINE Vector3 Lerp(const Vector3 & a, const Vector3 & b, float alpha)
 {
@@ -609,7 +609,7 @@ WWINLINE void Vector3::Subtract(const Vector3 &a,const Vector3 &b,Vector3 * set_
  *   10/18/99   gth : Created.                                                                 *
  *=============================================================================================*/
 WWINLINE void Vector3::Update_Min(const Vector3 & a)
-{	
+{
 	if (a.X < X) X = a.X;
 	if (a.Y < Y) Y = a.Y;
 	if (a.Z < Z) Z = a.Z;
@@ -629,7 +629,7 @@ WWINLINE void Vector3::Update_Min(const Vector3 & a)
  *   10/18/99   gth : Created.                                                                 *
  *=============================================================================================*/
 WWINLINE void Vector3::Update_Max(const Vector3 & a)
-{	
+{
 	if (a.X > X) X = a.X;
 	if (a.Y > Y) Y = a.Y;
 	if (a.Z > Z) Z = a.Z;
@@ -648,7 +648,7 @@ WWINLINE void Vector3::Update_Max(const Vector3 & a)
  *   11/29/99   wst : Created.                                                                 *
  *=============================================================================================*/
 WWINLINE void Vector3::Cap_Absolute_To(const Vector3 & a)
-{	
+{
 	if (X > 0)
 	{
 		if (a.X < X) X = a.X;
@@ -835,27 +835,27 @@ WWINLINE bool Vector3::Is_Valid(void) const
 	return (WWMath::Is_Valid_Float(X) && WWMath::Is_Valid_Float(Y) && WWMath::Is_Valid_Float(Z));
 }
 
-WWINLINE float Vector3::Find_X_At_Y(float y, const Vector3 &p1, const Vector3 &p2) 
+WWINLINE float Vector3::Find_X_At_Y(float y, const Vector3 &p1, const Vector3 &p2)
 {
 	return(p1.X + ((y - p1.Y) * ((p2.X - p1.X) / (p2.Y - p1.Y))));
 }
-WWINLINE float Vector3::Find_X_At_Z(float z, const Vector3 &p1, const Vector3 &p2) 
+WWINLINE float Vector3::Find_X_At_Z(float z, const Vector3 &p1, const Vector3 &p2)
 {
 	return(p1.X + ((z - p1.Z) * ((p2.X - p1.X) / (p2.Z - p1.Z))));
 }
-WWINLINE float Vector3::Find_Y_At_X(float x, const Vector3 &p1, const Vector3 &p2)  
+WWINLINE float Vector3::Find_Y_At_X(float x, const Vector3 &p1, const Vector3 &p2)
 {
 	return(p1.Y + ((x - p1.X) * ((p2.Y - p1.Y) / (p2.X - p1.X))));
 }
-WWINLINE float Vector3::Find_Y_At_Z(float z, const Vector3 &p1, const Vector3 &p2)  
+WWINLINE float Vector3::Find_Y_At_Z(float z, const Vector3 &p1, const Vector3 &p2)
 {
 	return(p1.Y + ((z - p1.Z) * ((p2.Y - p1.Y) / (p2.Z - p1.Z))));
 }
-WWINLINE float Vector3::Find_Z_At_X(float x, const Vector3 &p1, const Vector3 &p2)  
+WWINLINE float Vector3::Find_Z_At_X(float x, const Vector3 &p1, const Vector3 &p2)
 {
 	return(p1.Z + ((x - p1.X) * ((p2.Z - p1.Z) / (p2.X - p1.X))));
 }
-WWINLINE float Vector3::Find_Z_At_Y(float y, const Vector3 &p1, const Vector3 &p2) 
+WWINLINE float Vector3::Find_Z_At_Y(float y, const Vector3 &p1, const Vector3 &p2)
 {
 	return(p1.Z + ((y - p1.Y) * ((p2.Z - p1.Z) / (p2.Y - p1.Y))));
 }
@@ -901,11 +901,11 @@ WWINLINE float Vector3::Quick_Distance(const Vector3 &p1, const Vector3 &p2)
  * HISTORY:                                                                                    *
  *   11/29/1999MLL: Created.                                                                   *
  *=============================================================================================*/
-WWINLINE unsigned long	Vector3::Convert_To_ABGR( void ) const 
+WWINLINE unsigned long	Vector3::Convert_To_ABGR( void ) const
 {
-	return (unsigned(255)<<24) | 
-			 (unsigned(Z*255.0f)<<16) | 
-			 (unsigned(Y*255.0f)<<8) | 
+	return (unsigned(255)<<24) |
+			 (unsigned(Z*255.0f)<<16) |
+			 (unsigned(Y*255.0f)<<8) |
 			 (unsigned(X*255.0f));
 }
 
@@ -918,11 +918,11 @@ WWINLINE unsigned long	Vector3::Convert_To_ABGR( void ) const
  * HISTORY:                                                                                    *
  *   11/29/1999MLL: Created.                                                                   *
  *=============================================================================================*/
-WWINLINE unsigned long	Vector3::Convert_To_ARGB( void ) const 
+WWINLINE unsigned long	Vector3::Convert_To_ARGB( void ) const
 {
-	return (unsigned(255)<<24) | 
-			 (unsigned(X*255.0f)<<16) | 
-			 (unsigned(Y*255.0f)<<8) | 
+	return (unsigned(255)<<24) |
+			 (unsigned(X*255.0f)<<16) |
+			 (unsigned(Y*255.0f)<<8) |
 			 (unsigned(Z*255.0f));
 }
 

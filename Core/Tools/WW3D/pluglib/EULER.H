@@ -17,22 +17,22 @@
 */
 
 /* $Header: /Commando/Code/Tools/max2w3d/EULER.H 3     10/28/97 6:08p Greg_h $ */
-/*********************************************************************************************** 
- ***                            Confidential - Westwood Studios                              *** 
- *********************************************************************************************** 
- *                                                                                             * 
- *                 Project Name : Commando / G 3D Engine                                       * 
- *                                                                                             * 
- *                     $Archive:: /Commando/Code/Tools/max2w3d/EULER.H                        $* 
- *                                                                                             * 
- *                      $Author:: Greg_h                                                      $* 
- *                                                                                             * 
- *                     $Modtime:: 10/14/97 3:08p                                              $* 
- *                                                                                             * 
- *                    $Revision:: 3                                                           $* 
- *                                                                                             * 
- *---------------------------------------------------------------------------------------------* 
- * Functions:                                                                                  * 
+/***********************************************************************************************
+ ***                            Confidential - Westwood Studios                              ***
+ ***********************************************************************************************
+ *                                                                                             *
+ *                 Project Name : Commando / G 3D Engine                                       *
+ *                                                                                             *
+ *                     $Archive:: /Commando/Code/Tools/max2w3d/EULER.H                        $*
+ *                                                                                             *
+ *                      $Author:: Greg_h                                                      $*
+ *                                                                                             *
+ *                     $Modtime:: 10/14/97 3:08p                                              $*
+ *                                                                                             *
+ *                    $Revision:: 3                                                           $*
+ *                                                                                             *
+ *---------------------------------------------------------------------------------------------*
+ * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 
@@ -44,13 +44,13 @@
 
 /*********************************************************************
 
-	Euler Order Types 
+	Euler Order Types
 
 	When creating an EulerAngles object, use one of the below
 	constants to describe the axis convention.
 
 	XYZ - order of the axes
-	s/r - whether the rotations are applied to the static or 
+	s/r - whether the rotations are applied to the static or
 	      rotating frame.
 
 *********************************************************************/
@@ -85,7 +85,7 @@ extern int	EulerOrderZYZr;
 
 
 /*********************************************************************
-	
+
 	EulerAnglesClass
 
 	The purpose for this class is mainly for conversion.  You can
@@ -94,7 +94,7 @@ extern int	EulerOrderZYZr;
 
 	This implementation is based on the code in Graphics Gems IV
 	by Ken Shoemake.  The original article is on page 222.
-	
+
 *********************************************************************/
 class EulerAnglesClass
 {

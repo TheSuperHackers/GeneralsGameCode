@@ -176,11 +176,11 @@ void GroveOptions::_setTreesToLists(void)
 {
 	CString str;
 	for (VecPairNameDisplayNameIt it = mVecDisplayNames.begin(); it != mVecDisplayNames.end(); it++) {
-		// TODO: If/when Models get Display strings, we need to replace the 
+		// TODO: If/when Models get Display strings, we need to replace the
 		// current (str = ...) line with the commented one JKMCD
 		str = it->first.str();
 		//str = GetDisplayNameFromPair(it).str();
-		
+
 		CComboBox* pComboBox = (CComboBox*) GetDlgItem(IDC_Grove_Type1);
 		if (pComboBox) {
 			pComboBox->AddString(str);
@@ -386,7 +386,7 @@ void GroveOptions::_updateTreeWeights(void)
 
 void GroveOptions::_updateTreeCount(void)
 {
-	static char buff[ARBITRARY_BUFF_SIZE];	
+	static char buff[ARBITRARY_BUFF_SIZE];
 	CWnd* pWnd = GetDlgItem(IDC_Grove_NumberTrees);
 	if (pWnd) {
 		pWnd->GetWindowText(buff, ARBITRARY_BUFF_SIZE - 1);
@@ -426,7 +426,7 @@ void GroveOptions::_updateGroveMakeup(void)
 			AfxGetApp()->WriteProfileInt("GroveOptions", "TreeType4", curSel);
 		} else if (type == 5) {
 			AfxGetApp()->WriteProfileInt("GroveOptions", "TreeType5", curSel);
-		}		
+		}
 	}
 }
 
@@ -442,7 +442,7 @@ void GroveOptions::_updatePlacementAllowed(void)
 
 	pButt = (CButton*) GetDlgItem(IDC_Grove_AllowWaterPlacement);
 	if (pButt) {
-		AfxGetApp()->WriteProfileInt("GroveOptions", "AllowWaterPlace", pButt->GetCheck()); 
+		AfxGetApp()->WriteProfileInt("GroveOptions", "AllowWaterPlace", pButt->GetCheck());
 	}
 
 

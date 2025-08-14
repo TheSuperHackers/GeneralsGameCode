@@ -26,8 +26,8 @@
  *                                                                                             *
  *              Original Author:: Greg Hjelstrom                                               *
  *                                                                                             *
- *                      $Author:: Kenny Mitchell                                               * 
- *                                                                                             * 
+ *                      $Author:: Kenny Mitchell                                               *
+ *                                                                                             *
  *                     $Modtime:: 06/26/02 4:04p                                             $*
  *                                                                                             *
  *                    $Revision:: 2                                                           $*
@@ -58,7 +58,7 @@ class MatrixMapperClass;
 class ProjectorClass
 {
 public:
-	
+
 	ProjectorClass(void);
 	virtual ~ProjectorClass(void);
 

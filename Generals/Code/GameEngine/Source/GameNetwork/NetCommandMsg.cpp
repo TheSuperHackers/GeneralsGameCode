@@ -33,7 +33,7 @@
 /**
  * Base constructor
  */
-NetCommandMsg::NetCommandMsg() 
+NetCommandMsg::NetCommandMsg()
 {
 	//Added By Sadullah Nader
 	//Initializations inserted
@@ -131,10 +131,10 @@ NetGameCommandMsg::~NetGameCommandMsg() {
 /**
  * Add an argument to this command.
  */
-void NetGameCommandMsg::addArgument(const GameMessageArgumentDataType type, GameMessageArgumentType arg) 
+void NetGameCommandMsg::addArgument(const GameMessageArgumentDataType type, GameMessageArgumentType arg)
 {
 	if (m_argTail == NULL) {
-		m_argList = newInstance(GameMessageArgument);	
+		m_argList = newInstance(GameMessageArgument);
 		m_argTail = m_argList;
 		m_argList->m_data = arg;
 		m_argList->m_type = type;
@@ -169,41 +169,55 @@ static Int indexFromMask(UnsignedInt mask)
 /**
  * Construct a new GameMessage object from the data in this object.
  */
-GameMessage *NetGameCommandMsg::constructGameMessage() 
+GameMessage *NetGameCommandMsg::constructGameMessage()
 {
 	GameMessage *retval = newInstance(GameMessage)(m_type);
 
 	AsciiString name;
 	name.format("player%d", getPlayerID());
 	retval->friend_setPlayerIndex( ThePlayerList->findPlayerWithNameKey(TheNameKeyGenerator->nameToKey(name))->getPlayerIndex());
-//	retval->friend_setPlayerIndex(indexFromMask(ThePlayerList->findPlayerWithNameKey(TheNameKeyGenerator->nameToKey(name))->getPlayerMask()));
 
 	GameMessageArgument *arg = m_argList;
 	while (arg != NULL) {
-//		retval->appendGenericArgument(arg->m_data);
-		if (arg->m_type == ARGUMENTDATATYPE_INTEGER) {
+
+		switch (arg->m_type) {
+
+		case ARGUMENTDATATYPE_INTEGER:
 			retval->appendIntegerArgument(arg->m_data.integer);
-		} else if (arg->m_type == ARGUMENTDATATYPE_REAL) {
+			break;
+		case ARGUMENTDATATYPE_REAL:
 			retval->appendRealArgument(arg->m_data.real);
-		} else if (arg->m_type == ARGUMENTDATATYPE_BOOLEAN) {
+			break;
+		case ARGUMENTDATATYPE_BOOLEAN:
 			retval->appendBooleanArgument(arg->m_data.boolean);
-		} else if (arg->m_type == ARGUMENTDATATYPE_OBJECTID) {
+			break;
+		case ARGUMENTDATATYPE_OBJECTID:
 			retval->appendObjectIDArgument(arg->m_data.objectID);
-		} else if (arg->m_type == ARGUMENTDATATYPE_DRAWABLEID) {
+			break;
+		case ARGUMENTDATATYPE_DRAWABLEID:
 			retval->appendDrawableIDArgument(arg->m_data.drawableID);
-		} else if (arg->m_type == ARGUMENTDATATYPE_TEAMID) {
+			break;
+		case ARGUMENTDATATYPE_TEAMID:
 			retval->appendTeamIDArgument(arg->m_data.teamID);
-		} else if (arg->m_type == ARGUMENTDATATYPE_LOCATION) {
+			break;
+		case ARGUMENTDATATYPE_LOCATION:
 			retval->appendLocationArgument(arg->m_data.location);
-		} else if (arg->m_type == ARGUMENTDATATYPE_PIXEL) {
+			break;
+		case ARGUMENTDATATYPE_PIXEL:
 			retval->appendPixelArgument(arg->m_data.pixel);
-		} else if (arg->m_type == ARGUMENTDATATYPE_PIXELREGION) {
+			break;
+		case ARGUMENTDATATYPE_PIXELREGION:
 			retval->appendPixelRegionArgument(arg->m_data.pixelRegion);
-		} else if (arg->m_type == ARGUMENTDATATYPE_TIMESTAMP) {
+			break;
+		case ARGUMENTDATATYPE_TIMESTAMP:
 			retval->appendTimestampArgument(arg->m_data.timestamp);
-		} else if (arg->m_type == ARGUMENTDATATYPE_WIDECHAR) {
+			break;
+		case ARGUMENTDATATYPE_WIDECHAR:
 			retval->appendWideCharArgument(arg->m_data.wChar);
+			break;
+
 		}
+
 		arg = arg->m_next;
 	}
 	return retval;
@@ -800,7 +814,7 @@ NetProgressCommandMsg::NetProgressCommandMsg( void ) : NetCommandMsg()
 }
 
 NetProgressCommandMsg::~NetProgressCommandMsg( void ) {}
-		
+
 UnsignedByte NetProgressCommandMsg::getPercentage()
 {
 	return m_percent;
@@ -836,7 +850,7 @@ UnsignedByte * NetWrapperCommandMsg::getData() {
 	return m_data;
 }
 
-void NetWrapperCommandMsg::setData(UnsignedByte *data, UnsignedInt dataLength) 
+void NetWrapperCommandMsg::setData(UnsignedByte *data, UnsignedInt dataLength)
 {
 	if (m_data != NULL) {
 		delete m_data;
@@ -909,12 +923,12 @@ NetFileCommandMsg::~NetFileCommandMsg() {
 	}
 }
 
-AsciiString NetFileCommandMsg::getRealFilename() 
+AsciiString NetFileCommandMsg::getRealFilename()
 {
 	return TheGameState->portableMapPathToRealMapPath(m_portableFilename);
 }
 
-void NetFileCommandMsg::setRealFilename(AsciiString filename) 
+void NetFileCommandMsg::setRealFilename(AsciiString filename)
 {
 	m_portableFilename = TheGameState->realMapPathToPortableMapPath(filename);
 }
@@ -927,7 +941,7 @@ UnsignedByte * NetFileCommandMsg::getFileData() {
 	return m_data;
 }
 
-void NetFileCommandMsg::setFileData(UnsignedByte *data, UnsignedInt dataLength) 
+void NetFileCommandMsg::setFileData(UnsignedByte *data, UnsignedInt dataLength)
 {
 	m_dataLength = dataLength;
 	m_data = NEW UnsignedByte[dataLength];	// pool[]ify
@@ -947,12 +961,12 @@ NetFileAnnounceCommandMsg::NetFileAnnounceCommandMsg() : NetCommandMsg() {
 NetFileAnnounceCommandMsg::~NetFileAnnounceCommandMsg() {
 }
 
-AsciiString NetFileAnnounceCommandMsg::getRealFilename() 
+AsciiString NetFileAnnounceCommandMsg::getRealFilename()
 {
 	return TheGameState->portableMapPathToRealMapPath(m_portableFilename);
 }
 
-void NetFileAnnounceCommandMsg::setRealFilename(AsciiString filename) 
+void NetFileAnnounceCommandMsg::setRealFilename(AsciiString filename)
 {
 	m_portableFilename = TheGameState->realMapPathToPortableMapPath(filename);
 }

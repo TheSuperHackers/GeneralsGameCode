@@ -147,7 +147,7 @@ WinMain
 ////////////////////////////////////////////////////////////
 void
 Do_Version_Check (void)
-{	
+{
 	char curr_filename[MAX_PATH];
 	::GetModuleFileName (NULL, curr_filename, MAX_PATH);
 
@@ -197,7 +197,7 @@ BOOL CW3DViewApp::InitInstance (void)
 		// You should modify this string to be something appropriate
 		// such as the name of your company or organization.
 		SetRegistryKey(_T("Westwood Studios"));
-		
+
 		//
 		// Load standard INI file options (including MRU)
 		//
@@ -377,7 +377,7 @@ void Debug_Refs(void)
 // CW3DViewApp
 //
 int
-CW3DViewApp::ExitInstance() 
+CW3DViewApp::ExitInstance()
 {
 	//
 	// Free any resources the WW3D engine allocated
@@ -474,7 +474,7 @@ CAboutDlg::OnInitDialog (void)
 		}
 		SAFE_DELETE_ARRAY(pblock);
 	}
-	
+
 	// Put the version string into the dialog
 	CString version_string;
 	version_string.Format (IDS_VERSION, (version_major >> 16), (version_major & 0xFFFF));

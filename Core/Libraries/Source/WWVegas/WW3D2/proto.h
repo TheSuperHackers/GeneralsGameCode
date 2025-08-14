@@ -78,17 +78,17 @@ class ChunkLoadClass;
 ** Some simple render objects will be created through cloning.  In
 ** that case, their associated prototype simply stores an object and
 ** clones it whenever the Create method is called.  More complex
-** composite render objects will be created from a "blueprint" object.  
-** Basically this class simply associates a name with a render object 
+** composite render objects will be created from a "blueprint" object.
+** Basically this class simply associates a name with a render object
 ** creation function.
 */
-class PrototypeClass 
+class PrototypeClass
 {
 
 public:
 
 	PrototypeClass(void) : NextHash(NULL) {}
-	
+
 	virtual const char *			Get_Name(void)	const = 0;
 	virtual int								Get_Class_ID(void) const = 0;
 	virtual RenderObjClass *	Create(void) = 0;
@@ -129,9 +129,9 @@ protected:
 ** PrototypeLoaderClass
 ** This is the interface for an object which recognizes a certain
 ** chunk type in a W3D file and can load it and create a PrototypeClass
-** for it.  
+** for it.
 */
-class PrototypeLoaderClass 
+class PrototypeLoaderClass
 {
 
 public:

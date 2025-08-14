@@ -67,7 +67,7 @@ W3DDebrisDraw::W3DDebrisDraw(Thing *thing, const ModuleData* moduleData) : DrawM
 W3DDebrisDraw::~W3DDebrisDraw(void)
 {
 	if (TheW3DShadowManager && m_shadow)
-	{	
+	{
 		TheW3DShadowManager->removeShadow(m_shadow);
 		m_shadow = NULL;
 	}
@@ -76,7 +76,7 @@ W3DDebrisDraw::~W3DDebrisDraw(void)
 		if (W3DDisplay::m_3DScene != NULL)
 			W3DDisplay::m_3DScene->Remove_Render_Object(m_renderObject);
   	REF_PTR_RELEASE(m_renderObject);
- 		m_renderObject = NULL; 	
+ 		m_renderObject = NULL;
 	}
 	for (int i = 0; i < STATECOUNT; ++i)
 	{
@@ -116,7 +116,7 @@ void W3DDebrisDraw::setModelName(AsciiString name, Color color, ShadowType t)
 				W3DDisplay::m_3DScene->Add_Render_Object(m_renderObject);
 
 			m_renderObject->Set_User_Data(getDrawable()->getDrawableInfo());
-			
+
 			Matrix3D transform;
 			///@todo: Change back to identity once we figure out why objects show up at 0,0,0
 			/// OBJECT_PILE
@@ -124,7 +124,7 @@ void W3DDebrisDraw::setModelName(AsciiString name, Color color, ShadowType t)
 			transform.Set(Vector3(0,0,0));
 			m_renderObject->Set_Transform(transform);
 		}
-		
+
 		if (t != SHADOW_NONE)
 		{
 			Shadow::ShadowTypeInfo shadowInfo;
@@ -136,7 +136,7 @@ void W3DDebrisDraw::setModelName(AsciiString name, Color color, ShadowType t)
 		else
 		{
 			if (TheW3DShadowManager && m_shadow)
-			{	
+			{
 				TheW3DShadowManager->removeShadow(m_shadow);
 				m_shadow = NULL;
 			}
@@ -201,8 +201,8 @@ static Bool isNearlyZero(const Coord3D* vel)
 }
 
 // ------------------------------------------------------------------------------------------------
-void W3DDebrisDraw::reactToTransformChange( const Matrix3D *oldMtx, 
-																						const Coord3D *oldPos, 
+void W3DDebrisDraw::reactToTransformChange( const Matrix3D *oldMtx,
+																						const Coord3D *oldPos,
 																						Real oldAngle )
 {
 
@@ -227,13 +227,13 @@ void W3DDebrisDraw::doDrawModule(const Matrix3D* transformMtx)
 		}
 		m_renderObject->Set_Transform(*transformMtx);
 
-		static const RenderObjClass::AnimMode TheAnimModes[STATECOUNT] = 
+		static const RenderObjClass::AnimMode TheAnimModes[STATECOUNT] =
 		{
 			RenderObjClass::ANIM_MODE_ONCE,
 			RenderObjClass::ANIM_MODE_LOOP,
 			RenderObjClass::ANIM_MODE_ONCE
 		};
-		
+
 		Int oldState = m_state;
 		Object* obj = getDrawable()->getObject();
 		const Int MIN_FINAL_FRAMES = 3;
@@ -290,7 +290,7 @@ void W3DDebrisDraw::xfer( Xfer *xfer )
 
 	// model name
 	xfer->xferAsciiString( &m_modelName );
-	
+
 	// model color
 	xfer->xferColor( &m_modelColor );
 

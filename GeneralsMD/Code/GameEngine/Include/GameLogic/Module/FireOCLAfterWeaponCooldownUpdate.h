@@ -101,7 +101,7 @@ protected:
 	void fireOCL();
 
 private:
-	
+
 	Bool				m_valid;
 	UnsignedInt m_consecutiveShots;
 	UnsignedInt m_startFrame;

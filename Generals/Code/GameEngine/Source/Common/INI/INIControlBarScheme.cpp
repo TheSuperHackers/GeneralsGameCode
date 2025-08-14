@@ -24,12 +24,12 @@
 
 // FILE: INIControlBarScheme.cpp /////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Electronic Arts Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2002 - All Rights Reserved                  
-//                                                                          
+//
+//                       Electronic Arts Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2002 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 //	created:	Apr 2002
@@ -37,7 +37,7 @@
 //	Filename: 	INIControlBarScheme.cpp
 //
 //	author:		Chris Huybregts
-//	
+//
 //	purpose:	Parse a control Bar Scheme
 //
 //-----------------------------------------------------------------------------
@@ -78,7 +78,7 @@ void INI::parseControlBarSchemeDefinition( INI *ini )
 
 	// read the name
 	const char* c = ini->getNextToken();
-	name.set( c );	
+	name.set( c );
 
 	// find existing item if present
 	CBSchemeManager = TheControlBar->getControlBarSchemeManager();
@@ -87,7 +87,7 @@ void INI::parseControlBarSchemeDefinition( INI *ini )
 		return;
 
 	// If we have a previously allocated control bar, this will return a cleared out pointer to it so we
-	// can overwrite it	
+	// can overwrite it
 	CBScheme = CBSchemeManager->newControlBarScheme( name );
 
 	// sanity

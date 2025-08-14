@@ -16,27 +16,27 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/*************************************************************************** 
- *                                                                         * 
- *                 Project Name : Westwood Auto Registration App           * 
- *                                                                         * 
- *                    File Name : PACKET.H                                 * 
- *                                                                         * 
- *                   Programmer : Philip W. Gorrow                         * 
- *                                                                         * 
- *                   Start Date : 04/19/96                                 * 
- *                                                                         * 
- *                  Last Update : April 19, 1996 [PWG]                     * 
- *                                                                         * 
+/***************************************************************************
+ *                                                                         *
+ *                 Project Name : Westwood Auto Registration App           *
+ *                                                                         *
+ *                    File Name : PACKET.H                                 *
+ *                                                                         *
+ *                   Programmer : Philip W. Gorrow                         *
+ *                                                                         *
+ *                   Start Date : 04/19/96                                 *
+ *                                                                         *
+ *                  Last Update : April 19, 1996 [PWG]                     *
+ *                                                                         *
  * This header defines the functions for the PacketClass.  The packet      *
- * class is used to create a linked list of field entries which can be     * 
+ * class is used to create a linked list of field entries which can be     *
  * converted to a linear packet in a COMMS API compatible format.          *
  *                                                                         *
  * Packets can be created empty and then have fields added to them or can  *
  * be created from an existing linear packet.                              *
  *                                                                         *
- *-------------------------------------------------------------------------* 
- * Functions:                                                              * 
+ *-------------------------------------------------------------------------*
+ * Functions:                                                              *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "field.h"
@@ -76,7 +76,7 @@ class PacketClass
     void Add_Field(char *field, void *data, int length) {Add_Field(new FieldClass(field, data, length));};
 
     //
-    // These functions search for a field of a given name in the list and 
+    // These functions search for a field of a given name in the list and
     // return the data via a reference value.
     //
     FieldClass *Find_Field(char *id);
@@ -91,14 +91,14 @@ class PacketClass
     bit8 Get_Field(char *id, unsigned &data);
     bit8 Get_Field(char *id, char *data);
     bit8 Get_Field(char *id, void *data, int &length);
-    unsigned short Get_Field_Size(char* id); 
+    unsigned short Get_Field_Size(char* id);
 
     // gks 9/25/2000
     FieldClass *Get_Field_At(int position);
     int Get_Num_Fields();
 
     char *Create_Comms_Packet(int &size);
-        
+
   private:
     unsigned short   Size;
     short            ID;

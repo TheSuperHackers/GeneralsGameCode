@@ -94,7 +94,7 @@ END_MESSAGE_MAP()
 // BuildList message handlers
 
 /// Setup the controls in the dialog.
-BOOL BuildList::OnInitDialog() 
+BOOL BuildList::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 
@@ -113,7 +113,7 @@ BOOL BuildList::OnInitDialog()
 }
 
 /// Load the sides in the sides list.
-void BuildList::loadSides(void) 
+void BuildList::loadSides(void)
 {
 	CComboBox *pCombo = (CComboBox*)GetDlgItem(IDC_SIDES_COMBO);
 	if (!pCombo) {
@@ -137,7 +137,7 @@ void BuildList::loadSides(void)
 }
 
 /// Updates the current side, loading it's build list.
-void BuildList::updateCurSide(void) 
+void BuildList::updateCurSide(void)
 {
 	if (TheSidesList->getNumSides() < 1)
 		return;
@@ -153,7 +153,7 @@ void BuildList::updateCurSide(void)
 	if (pCombo->GetCurSel() != m_curSide) {
 		pCombo->SetCurSel(m_curSide);
 	}
-	SidesInfo *pSide = TheSidesList->getSideInfo(m_curSide); 
+	SidesInfo *pSide = TheSidesList->getSideInfo(m_curSide);
 
 	CListBox *pList = (CListBox*)GetDlgItem(IDC_BUILD_LIST);
 	if (!pList) {
@@ -161,17 +161,17 @@ void BuildList::updateCurSide(void)
 		return;
 	}
 	pList->ResetContent();
-	
+
 	BuildListInfo *pBuild = pSide->getBuildList();
 	while (pBuild) {
-		const char *pName = pBuild->getTemplateName().str(); 
+		const char *pName = pBuild->getTemplateName().str();
 		pList->AddString(pName);
 		pBuild = pBuild->getNext();
 	}
 	OnSelchangeBuildList();
 }
 
-void BuildList::OnSelchangeSidesCombo() 
+void BuildList::OnSelchangeSidesCombo()
 {
 	if (TheSidesList->getNumSides() < 1)
 		return;
@@ -191,10 +191,10 @@ void BuildList::OnSelchangeSidesCombo()
 		}
 		OnSelchangeBuildList();
 	}
-	
+
 }
 
-void BuildList::OnMoveUp() 
+void BuildList::OnMoveUp()
 {
 	CListBox *pList = (CListBox*)GetDlgItem(IDC_BUILD_LIST);
 	if (!pList) {
@@ -216,7 +216,7 @@ void BuildList::OnMoveUp()
 		if (pBuildInfo == NULL) return;
 	}
 	Int newSel = m_curBuildList-1;
-	pSide->reorderInBuildList(pBuildInfo, newSel); 
+	pSide->reorderInBuildList(pBuildInfo, newSel);
 	CWorldBuilderDoc* pDoc = CWorldBuilderDoc::GetActiveDoc();
 	SidesListUndoable *pUndo = new SidesListUndoable(sides, pDoc);
 	pDoc->AddAndDoUndoable(pUndo);
@@ -227,7 +227,7 @@ void BuildList::OnMoveUp()
 	OnSelchangeBuildList();
 }
 
-void BuildList::OnMoveDown() 
+void BuildList::OnMoveDown()
 {
 	CListBox *pList = (CListBox*)GetDlgItem(IDC_BUILD_LIST);
 	if (!pList) {
@@ -248,12 +248,12 @@ void BuildList::OnMoveDown()
 		if (pBuildInfo == NULL) return;
 	}
 	if (pBuildInfo->getNext() == NULL) {
-		// there isn't one to move down after. 
+		// there isn't one to move down after.
 		return;
 	}
 	Int newSel = m_curBuildList+1;
 
-	pSide->reorderInBuildList(pBuildInfo, newSel); 
+	pSide->reorderInBuildList(pBuildInfo, newSel);
 	CWorldBuilderDoc* pDoc = CWorldBuilderDoc::GetActiveDoc();
 	SidesListUndoable *pUndo = new SidesListUndoable(sides, pDoc);
 	pDoc->AddAndDoUndoable(pUndo);
@@ -263,7 +263,7 @@ void BuildList::OnMoveDown()
 	OnSelchangeBuildList();
 }
 
-void BuildList::OnAddBuilding() 
+void BuildList::OnAddBuilding()
 {
 	BuildListTool::addBuilding();
 }
@@ -301,7 +301,7 @@ void BuildList::setSelectedBuildList(BuildListInfo *pInfo)
 	}
 	Int i;
  	for (i=0; i<TheSidesList->getNumSides(); i++) {
-		SidesInfo *pSide = TheSidesList->getSideInfo(i); 
+		SidesInfo *pSide = TheSidesList->getSideInfo(i);
 		Int listSel = 0;
 		for (BuildListInfo *pBuild = pSide->getBuildList(); pBuild; pBuild = pBuild->getNext()) {
 			if (pInfo == pBuild) {
@@ -323,7 +323,7 @@ void BuildList::setSelectedBuildList(BuildListInfo *pInfo)
 };
 
 
-void BuildList::OnSelchangeBuildList() 
+void BuildList::OnSelchangeBuildList()
 {
 	if (TheSidesList->getNumSides() < 1)
 		return;
@@ -335,7 +335,7 @@ void BuildList::OnSelchangeBuildList()
 	}
 	m_curBuildList = pList->GetCurSel();
 	Int numBL = pList->GetCount();
-	
+
 	SidesInfo *pSide = NULL;
 	if (TheSidesList) {
 		pSide = TheSidesList->getSideInfo(m_curSide);
@@ -363,7 +363,7 @@ void BuildList::OnSelchangeBuildList()
 
 	// add up energy consumed/produced by objects on the map
 	const ThingTemplate *thingTemplate;
-	for (MapObject *pMapObj = MapObject::getFirstMapObject(); pMapObj; pMapObj = pMapObj->getNext()) 
+	for (MapObject *pMapObj = MapObject::getFirstMapObject(); pMapObj; pMapObj = pMapObj->getNext())
 	{
 		// get thing template based from map object name
 		thingTemplate = pMapObj->getThingTemplate();
@@ -481,14 +481,14 @@ void BuildList::OnSelchangeBuildList()
 
 }
 
-void BuildList::OnAlreadyBuild() 
+void BuildList::OnAlreadyBuild()
 {
 	CListBox *pList = (CListBox*)GetDlgItem(IDC_BUILD_LIST);
 	if (!pList) {
 		DEBUG_LOG(("*** BuildList::updateCurSide Missing resource!!! IDC_BUILD_LIST"));
 		return;
 	}
-	SidesInfo *pSide = TheSidesList->getSideInfo(m_curSide); 
+	SidesInfo *pSide = TheSidesList->getSideInfo(m_curSide);
 	m_curBuildList = pList->GetCurSel();
 	if (m_curBuildList < 0) return;
 	Int count = m_curBuildList;
@@ -504,7 +504,7 @@ void BuildList::OnAlreadyBuild()
 	}
 }
 
-void BuildList::OnDeleteBuilding() 
+void BuildList::OnDeleteBuilding()
 {
 	CListBox *pList = (CListBox*)GetDlgItem(IDC_BUILD_LIST);
 	if (!pList) {
@@ -524,7 +524,7 @@ void BuildList::OnDeleteBuilding()
 		pBuildInfo = pBuildInfo->getNext();
 		if (pBuildInfo == NULL) return;
 	}
-	pSide->removeFromBuildList(pBuildInfo); 
+	pSide->removeFromBuildList(pBuildInfo);
 
 	CWorldBuilderDoc* pDoc = CWorldBuilderDoc::GetActiveDoc();
 	SidesListUndoable *pUndo = new SidesListUndoable(sides, pDoc);
@@ -536,7 +536,7 @@ void BuildList::OnDeleteBuilding()
 	pList->SetCurSel(-1);
 }
 
-void BuildList::OnSelendokRebuilds() 
+void BuildList::OnSelendokRebuilds()
 {
 	CComboBox *pCombo = (CComboBox *)GetDlgItem(IDC_REBUILDS);
 	if (pCombo==NULL) return;
@@ -547,8 +547,8 @@ void BuildList::OnSelendokRebuilds()
 		nr = BuildListInfo::UNLIMITED_REBUILDS;
 	} else if (sel<6) {
 		nr = sel;
-	} 
-	SidesInfo *pSide = TheSidesList->getSideInfo(m_curSide); 
+	}
+	SidesInfo *pSide = TheSidesList->getSideInfo(m_curSide);
 	if (m_curBuildList < 0) return;
 	Int count = m_curBuildList;
 	BuildListInfo *pBuildInfo = pSide->getBuildList();
@@ -560,7 +560,7 @@ void BuildList::OnSelendokRebuilds()
 	pBuildInfo->setNumRebuilds(nr);
 }
 
-void BuildList::OnEditchangeRebuilds() 
+void BuildList::OnEditchangeRebuilds()
 {
 	CComboBox *pCombo = (CComboBox *)GetDlgItem(IDC_REBUILDS);
 	if (pCombo==NULL) return;
@@ -572,7 +572,7 @@ void BuildList::OnEditchangeRebuilds()
 		Int nr;
 		if (1==sscanf(buffer, "%d", &nr)) {
 		}
-			SidesInfo *pSide = TheSidesList->getSideInfo(m_curSide); 
+			SidesInfo *pSide = TheSidesList->getSideInfo(m_curSide);
 			if (m_curBuildList < 0) return;
 			Int count = m_curBuildList;
 			BuildListInfo *pBuildInfo = pSide->getBuildList();
@@ -585,9 +585,9 @@ void BuildList::OnEditchangeRebuilds()
 	}
 }
 
-void BuildList::OnDblclkBuildList() 
+void BuildList::OnDblclkBuildList()
 {
-	SidesInfo *pSide = TheSidesList->getSideInfo(m_curSide); 
+	SidesInfo *pSide = TheSidesList->getSideInfo(m_curSide);
 	CListBox *pList = (CListBox*)GetDlgItem(IDC_BUILD_LIST);
 	m_curBuildList = pList->GetCurSel();
 	if (m_curBuildList < 0) return;
@@ -677,7 +677,7 @@ void BuildList::PopSliderFinished(const long sliderID, long theVal)
 
 }
 
-void BuildList::OnChangeZOffset() 
+void BuildList::OnChangeZOffset()
 {
 	Real value = 0.0f;
 	CWnd* edit = GetDlgItem(IDC_MAPOBJECT_ZOffset);
@@ -688,7 +688,7 @@ void BuildList::OnChangeZOffset()
 	}
 	m_height = value;
 
-	SidesInfo *pSide = TheSidesList->getSideInfo(m_curSide); 
+	SidesInfo *pSide = TheSidesList->getSideInfo(m_curSide);
 	CListBox *pList = (CListBox*)GetDlgItem(IDC_BUILD_LIST);
 	m_curBuildList = pList->GetCurSel();
 	if (m_curBuildList < 0) return;
@@ -706,7 +706,7 @@ void BuildList::OnChangeZOffset()
 	p3View->invalBuildListItemInView(pBuildInfo);
 }
 
-void BuildList::OnChangeAngle() 
+void BuildList::OnChangeAngle()
 {
 	Real angle = 0.0f;
 	CWnd* edit = GetDlgItem(IDC_MAPOBJECT_Angle);
@@ -716,7 +716,7 @@ void BuildList::OnChangeAngle()
 		angle = atof(cstr);
 	}
 	m_angle = angle;
-	SidesInfo *pSide = TheSidesList->getSideInfo(m_curSide); 
+	SidesInfo *pSide = TheSidesList->getSideInfo(m_curSide);
 	CListBox *pList = (CListBox*)GetDlgItem(IDC_BUILD_LIST);
 	m_curBuildList = pList->GetCurSel();
 	if (m_curBuildList < 0) return;
@@ -732,7 +732,7 @@ void BuildList::OnChangeAngle()
 	p3View->invalBuildListItemInView(pBuildInfo);
 }
 
-void BuildList::OnExport() 
+void BuildList::OnExport()
 {
 	static FILE *theLogFile = NULL;
 	Bool open = false;
@@ -740,9 +740,9 @@ void BuildList::OnExport()
 		char dirbuf[ _MAX_PATH ];
 		::GetModuleFileName( NULL, dirbuf, sizeof( dirbuf ) );
 		char *pEnd = dirbuf + strlen( dirbuf );
-		while( pEnd != dirbuf ) 
+		while( pEnd != dirbuf )
 		{
-			if( *pEnd == '\\' ) 
+			if( *pEnd == '\\' )
 			{
 				*(pEnd + 1) = 0;
 				break;
@@ -753,7 +753,7 @@ void BuildList::OnExport()
 		char curbuf[ _MAX_PATH ];
 
 		strcpy(curbuf, dirbuf);
-		SidesInfo *pSide = TheSidesList->getSideInfo(m_curSide); 
+		SidesInfo *pSide = TheSidesList->getSideInfo(m_curSide);
 		Dict *d = TheSidesList->getSideInfo(m_curSide)->getDict();
 		AsciiString name = d->getAsciiString(TheKey_playerName);
 		strcat(curbuf, name.str());
@@ -767,12 +767,12 @@ void BuildList::OnExport()
 		AsciiString tmplname = d->getAsciiString(TheKey_playerFaction);
 		const PlayerTemplate* pt = ThePlayerTemplateStore->findPlayerTemplate(NAMEKEY(tmplname));
 		DEBUG_ASSERTCRASH(pt != NULL, ("PlayerTemplate %s not found -- this is an obsolete map (please open and resave in WB)",tmplname.str()));
-		
+
 		fprintf(theLogFile, ";Skirmish AI Build List\n");
 		fprintf(theLogFile, "SkirmishBuildList %s\n", pt->getSide().str());
 
 		open = true;
-		
+
 		BuildListInfo *pBuildInfo = pSide->getBuildList();
 		while (pBuildInfo) {
 			fprintf(theLogFile, "  Structure %s\n", pBuildInfo->getTemplateName().str());
@@ -795,5 +795,5 @@ void BuildList::OnExport()
 			fclose(theLogFile);
 		}
 	}
-	
+
 }

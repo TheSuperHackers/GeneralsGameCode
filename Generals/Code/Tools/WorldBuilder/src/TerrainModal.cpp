@@ -80,7 +80,7 @@ void TerrainModal::updateLabel(void)
 }
 
 /// Setup the controls in the dialog.
-BOOL TerrainModal::OnInitDialog() 
+BOOL TerrainModal::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 
@@ -123,7 +123,7 @@ HTREEITEM TerrainModal::findOrAdd(HTREEITEM parent, const char *pLabel)
 		ins.item.mask = TVIF_HANDLE|TVIF_TEXT;
 		ins.item.hItem = child;
 		ins.item.pszText = buffer;
-		ins.item.cchTextMax = sizeof(buffer)-2;				
+		ins.item.cchTextMax = sizeof(buffer)-2;
 		m_terrainTreeView.GetItem(&ins.item);
 		if (strcmp(buffer, pLabel) == 0) {
 			return(child);
@@ -138,7 +138,7 @@ HTREEITEM TerrainModal::findOrAdd(HTREEITEM parent, const char *pLabel)
 	ins.item.mask = TVIF_PARAM|TVIF_TEXT;
 	ins.item.lParam = -1;
 	ins.item.pszText = const_cast<LPSTR>(pLabel);
-	ins.item.cchTextMax = strlen(pLabel);				
+	ins.item.cchTextMax = strlen(pLabel);
 	child = m_terrainTreeView.InsertItem(&ins);
 	return(child);
 }
@@ -175,7 +175,7 @@ void TerrainModal::addTerrain(char *pPath, Int terrainNdx, HTREEITEM parent)
 		strcpy( buffer, terrain->getName().str() );
 
 		doAdd = TRUE;
-						
+
 	}  // end if
 	else
 	{
@@ -194,7 +194,7 @@ void TerrainModal::addTerrain(char *pPath, Int terrainNdx, HTREEITEM parent)
 					parent = findOrAdd(parent, buffer);
 				}
 				pPath+= i+1;
-				i = 0;			
+				i = 0;
 			}
 			buffer[i] = pPath[i];
 			buffer[i+1] = 0;  // terminate at next char
@@ -214,7 +214,7 @@ void TerrainModal::addTerrain(char *pPath, Int terrainNdx, HTREEITEM parent)
 		ins.item.mask = TVIF_PARAM|TVIF_TEXT;
 		ins.item.lParam = terrainNdx;
 		ins.item.pszText = buffer;
-		ins.item.cchTextMax = strlen(buffer)+2;				
+		ins.item.cchTextMax = strlen(buffer)+2;
 		m_terrainTreeView.InsertItem(&ins);
 	}
 
@@ -251,7 +251,7 @@ Bool TerrainModal::setTerrainTreeViewSelection(HTREEITEM parent, Int selection)
 		item.mask = TVIF_HANDLE|TVIF_PARAM;
 		item.hItem = child;
 		item.pszText = buffer;
-		item.cchTextMax = sizeof(buffer)-2;				
+		item.cchTextMax = sizeof(buffer)-2;
 		m_terrainTreeView.GetItem(&item);
 		if (item.lParam == selection) {
 			m_terrainTreeView.SelectItem(child);
@@ -267,7 +267,7 @@ Bool TerrainModal::setTerrainTreeViewSelection(HTREEITEM parent, Int selection)
 
 
 
-BOOL TerrainModal::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult) 
+BOOL TerrainModal::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult)
 {
 	NMTREEVIEW *pHdr = (NMTREEVIEW *)lParam;
 	if (pHdr->hdr.hwndFrom == m_terrainTreeView.m_hWnd) {
@@ -286,7 +286,7 @@ BOOL TerrainModal::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult)
 			}
 		}
 	}
-	
+
 	return CDialog::OnNotify(wParam, lParam, pResult);
 }
 

@@ -32,7 +32,7 @@ class WorldHeightMapEdit;
 class ModifyObjectUndoable;
 /*************************************************************************/
 /**                             PointerTool
-	 Does the select/move tool operation. 
+	 Does the select/move tool operation.
 ***************************************************************************/
 ///  Blend edges out tool.
 class PointerTool : public PolygonTool
@@ -48,7 +48,7 @@ protected:
 	Bool m_dragSelect; ///< True if we are drag selecting.
 
 	Bool m_doPolyTool; ///< True if we are using the polygon tool to modify a polygon triggter.
-	
+
 	ModifyObjectUndoable *m_modifyUndoable;	 ///< The modify undoable that is in progress while we track the mouse.
 
 	Bool m_mouseUpRotate;///< True if we are over the "rotate" hotspot.

@@ -44,7 +44,7 @@ class GameWindow;
 class WinInstanceData;
 
 //-----------------------------------------------------------------------------
-// CustomMatchPreferences base class 
+// CustomMatchPreferences base class
 //-----------------------------------------------------------------------------
 class SkirmishBattleHonors : public UserPreferences
 {

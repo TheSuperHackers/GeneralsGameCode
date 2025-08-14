@@ -69,7 +69,7 @@ class Image : public MemoryPoolObject
 MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( Image, "Image" );
 
 public:
-	
+
 	Image( void );
 	// virtual desctructor defined by memory pool object
 
@@ -130,9 +130,9 @@ public:
 	virtual void update( void ) { };			///< update system
 
 	void load( Int textureSize );												 ///< load images
-		
+
 	const Image *findImageByName( const AsciiString& name );					 ///< find image based on name
-	
+
   /// adds the given image to the collection, transfers ownership to this object
   void addImage(Image *image);
 

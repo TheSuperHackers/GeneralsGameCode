@@ -78,12 +78,12 @@ END_MESSAGE_MAP()
 //
 /////////////////////////////////////////////////////////////////////////////
 BOOL
-TexturePathDialogClass::OnInitDialog (void) 
+TexturePathDialogClass::OnInitDialog (void)
 {
 	CDialog::OnInitDialog ();
-	
+
 	CW3DViewDoc *doc = ::GetCurrentDocument ();
-		
+
 	SetDlgItemText (IDC_PATH1, doc->Get_Texture_Path1 ());
 	SetDlgItemText (IDC_PATH2, doc->Get_Texture_Path2 ());
 	return TRUE;
@@ -101,7 +101,7 @@ TexturePathDialogClass::OnOK (void)
 	CString path1;
 	CString path2;
 	GetDlgItemText (IDC_PATH1, path1);
-	GetDlgItemText (IDC_PATH2, path2);	
+	GetDlgItemText (IDC_PATH2, path2);
 
 	CW3DViewDoc *doc = ::GetCurrentDocument ();
 	doc->Set_Texture_Path1 (path1);
@@ -111,7 +111,7 @@ TexturePathDialogClass::OnOK (void)
 	return ;
 }
 
- 
+
 /////////////////////////////////////////////////////////////////////////////
 //
 // OnBrowse1
@@ -138,7 +138,7 @@ TexturePathDialogClass::OnBrowse1 (void)
 //
 /////////////////////////////////////////////////////////////////////////////
 void
-TexturePathDialogClass::OnBrowse2 (void) 
+TexturePathDialogClass::OnBrowse2 (void)
 {
 	CString initial_path;
 	GetDlgItemText (IDC_PATH2, initial_path);

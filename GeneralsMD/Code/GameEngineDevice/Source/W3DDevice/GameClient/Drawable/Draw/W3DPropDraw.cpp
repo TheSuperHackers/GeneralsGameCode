@@ -40,7 +40,7 @@
 
 
 //-------------------------------------------------------------------------------------------------
-W3DPropDrawModuleData::W3DPropDrawModuleData() 
+W3DPropDrawModuleData::W3DPropDrawModuleData()
 {
 }
 
@@ -50,13 +50,13 @@ W3DPropDrawModuleData::~W3DPropDrawModuleData()
 }
 
 //-------------------------------------------------------------------------------------------------
-void W3DPropDrawModuleData::buildFieldParse(MultiIniFieldParse& p) 
+void W3DPropDrawModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
   ModuleData::buildFieldParse(p);
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
 		{ "ModelName", INI::parseAsciiString, NULL, offsetof(W3DPropDrawModuleData, m_modelName) },
-		
+
 		{ 0, 0, 0, 0 }
 	};
   p.add(dataFieldParse);
@@ -82,8 +82,8 @@ W3DPropDraw::~W3DPropDraw( void )
 }
 
 //-------------------------------------------------------------------------------------------------
-void W3DPropDraw::reactToTransformChange( const Matrix3D *oldMtx, 
-																							 const Coord3D *oldPos, 
+void W3DPropDraw::reactToTransformChange( const Matrix3D *oldMtx,
+																							 const Coord3D *oldPos,
 																							 Real oldAngle )
 {
 	Drawable *draw = getDrawable();
@@ -101,7 +101,7 @@ void W3DPropDraw::reactToTransformChange( const Matrix3D *oldMtx,
 	Real scale = draw->getScale();
 	TheTerrainRenderObject->addProp((Int)draw->getID(), *draw->getPosition(),
 		draw->getOrientation(), scale, moduleData->m_modelName);
-	
+
 }
 
 //-------------------------------------------------------------------------------------------------

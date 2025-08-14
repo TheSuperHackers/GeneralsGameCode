@@ -23,12 +23,12 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 //----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright(C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright(C) 2001 - All Rights Reserved
+//
 //----------------------------------------------------------------------------
 //
 // Project:   RTS3
@@ -40,7 +40,7 @@
 //----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
-//         Includes                                                      
+//         Includes
 //----------------------------------------------------------------------------
 #include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
 
@@ -78,7 +78,7 @@ void SoundManager::init( void )
 //-------------------------------------------------------------------------------------------------
 void SoundManager::postProcessLoad()
 {
-	// The AudioManager should actually be live now, so go ahead and get the info we need from it 
+	// The AudioManager should actually be live now, so go ahead and get the info we need from it
 	// here
 }
 
@@ -212,42 +212,42 @@ Bool SoundManager::canPlayNow( AudioEventRTS *event )
 	// potentially here: Are there any sounds that are playing that are now beyond their distance?
 	// if so, kill them and start our sound
 	// if not, we're done. Can't play dude.
-	
-	if( event->isPositionalAudio() && !BitIsSet( event->getAudioEventInfo()->m_type, ST_GLOBAL) && event->getAudioEventInfo()->m_priority != AP_CRITICAL ) 
+
+	if( event->isPositionalAudio() && !BitIsSet( event->getAudioEventInfo()->m_type, ST_GLOBAL) && event->getAudioEventInfo()->m_priority != AP_CRITICAL )
 	{
 		Coord3D distance = *TheAudio->getListenerPosition();
 		const Coord3D *pos = event->getCurrentPosition();
-		if (pos) 
+		if (pos)
 		{
 			distance.sub(pos);
-			if (distance.length() >= event->getAudioEventInfo()->m_maxDistance) 
+			if (distance.length() >= event->getAudioEventInfo()->m_maxDistance)
 			{
 #ifdef INTENSIVE_AUDIO_DEBUG
 				DEBUG_LOG(("- culled due to distance (%.2f).", distance.length()));
 #endif
 				return false;
 			}
-			
+
 			Int localPlayerNdx = ThePlayerList->getLocalPlayer()->getPlayerIndex();
-			if( (event->getAudioEventInfo()->m_type & ST_SHROUDED) && 
-					 ThePartitionManager->getShroudStatusForPlayer(localPlayerNdx, pos) != CELLSHROUD_CLEAR ) 
+			if( (event->getAudioEventInfo()->m_type & ST_SHROUDED) &&
+					 ThePartitionManager->getShroudStatusForPlayer(localPlayerNdx, pos) != CELLSHROUD_CLEAR )
 			{
 #ifdef INTENSIVE_AUDIO_DEBUG
 				DEBUG_LOG(("- culled due to shroud."));
 #endif
 				return false;
 			}
-		} 
+		}
 	}
 
-	if (violatesVoice(event)) 
+	if (violatesVoice(event))
 	{
 		retVal = isInterrupting(event);
-		if (retVal) 
+		if (retVal)
 		{
 			return true;
-		} 
-		else 
+		}
+		else
 		{
 #ifdef INTENSIVE_AUDIO_DEBUG
 		DEBUG_LOG(("- culled due to voice."));
@@ -255,7 +255,7 @@ Bool SoundManager::canPlayNow( AudioEventRTS *event )
 			return false;
 		}
 	}
-	
+
 	if( TheAudio->doesViolateLimit( event ) )
 	{
 #ifdef INTENSIVE_AUDIO_DEBUG
@@ -268,38 +268,38 @@ Bool SoundManager::canPlayNow( AudioEventRTS *event )
 		return true;
 	}
 
-	if (event->isPositionalAudio()) 
+	if (event->isPositionalAudio())
 	{
-		if (m_numPlaying3DSamples < m_num3DSamples) 
+		if (m_numPlaying3DSamples < m_num3DSamples)
 		{
 			return true;
 		}
 #ifdef INTENSIVE_AUDIO_DEBUG
 		DEBUG_LOG(("- %d samples playing, %d samples available", m_numPlaying3DSamples, m_num3DSamples));
 #endif
-	} 
-	else 
+	}
+	else
 	{
 		// its a UI sound (and thus, 2-D)
-		if (m_numPlaying2DSamples < m_num2DSamples) 
+		if (m_numPlaying2DSamples < m_num2DSamples)
 		{
 			return true;
 		}
 	}
 
-	if (TheAudio->isPlayingLowerPriority(event)) 
+	if (TheAudio->isPlayingLowerPriority(event))
 	{
 		return true;
 	}
 
-	if (isInterrupting(event)) 
+	if (isInterrupting(event))
 	{
 		retVal = TheAudio->isPlayingAlready(event);
-		if (retVal) 
+		if (retVal)
 		{
 			return true;
-		} 
-		else 
+		}
+		else
 		{
 #ifdef INTENSIVE_AUDIO_DEBUG
 			DEBUG_LOG(("- culled due to no channels available and non-interrupting." ));

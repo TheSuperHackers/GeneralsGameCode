@@ -17,22 +17,22 @@
 */
 
 /* $Header: /Commando/Code/Tools/max2w3d/w3ddlg.h 9     2/10/00 5:45p Jason_a $ */
-/*********************************************************************************************** 
- ***                            Confidential - Westwood Studios                              *** 
- *********************************************************************************************** 
- *                                                                                             * 
- *                 Project Name : Commando Tools - W3D export                                  * 
- *                                                                                             * 
- *                     $Archive:: /Commando/Code/Tools/max2w3d/w3ddlg.h                       $* 
- *                                                                                             * 
- *                      $Author:: Jason_a                                                     $* 
- *                                                                                             * 
- *                     $Modtime:: 2/09/00 9:50a                                               $* 
- *                                                                                             * 
- *                    $Revision:: 9                                                           $* 
- *                                                                                             * 
- *---------------------------------------------------------------------------------------------* 
- * Functions:                                                                                  * 
+/***********************************************************************************************
+ ***                            Confidential - Westwood Studios                              ***
+ ***********************************************************************************************
+ *                                                                                             *
+ *                 Project Name : Commando Tools - W3D export                                  *
+ *                                                                                             *
+ *                     $Archive:: /Commando/Code/Tools/max2w3d/w3ddlg.h                       $*
+ *                                                                                             *
+ *                      $Author:: Jason_a                                                     $*
+ *                                                                                             *
+ *                     $Modtime:: 2/09/00 9:50a                                               $*
+ *                                                                                             *
+ *                    $Revision:: 9                                                           $*
+ *                                                                                             *
+ *---------------------------------------------------------------------------------------------*
+ * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 
@@ -50,7 +50,7 @@ public:
 
 	W3dOptionsDialogClass(Interface * maxinterface,ExpInterface * exportinterface);
 	~W3dOptionsDialogClass();
-	
+
 	bool Get_Export_Options(W3dExportOptionsStruct * options);
 	bool Dialog_Proc(HWND hWnd,UINT message,WPARAM wParam,LPARAM);
 
@@ -69,12 +69,12 @@ private:
 	void Disable_WHA_Export();
 	void Enable_WTM_Export();
 	void Disable_WTM_Export();
-	
+
 	void Enable_ReduceAnimationOptions_Export();
 	void Disable_ReduceAnimationOptions_Export();
 	void Enable_CompressAnimationOptions_Export();
 	void Disable_CompressAnimationOptions_Export();
-	
+
 	void WHT_Export_Radio_Changed();
 	void WHA_Export_Radio_Changed();
 	void WTM_Export_Radio_Changed();
@@ -93,12 +93,12 @@ private:
 
 	ISpinnerControl *				RangeLowSpin;
 	ISpinnerControl *				RangeHighSpin;
-	
+
 	HWND								HwndReduce;
 	HWND								HwndFlavor;
 	HWND								HwndTError;
 	HWND								HwndRError;
-  
+
 	int								UnitsType;
 	float								UnitsScale;
 };

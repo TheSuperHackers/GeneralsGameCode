@@ -67,7 +67,7 @@ W3DRopeDraw::W3DRopeDraw( Thing *thing, const ModuleData* moduleData ) : DrawMod
 	m_segments.clear();
 	m_curWobblePhase = 0.0f;
 	m_curZOffset = 0.0f;
-} 
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -138,7 +138,7 @@ void W3DRopeDraw::tossSegments()
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 void W3DRopeDraw::initRopeParms(Real length, Real width, const RGBColor& color, Real wobbleLen, Real wobbleAmp, Real wobbleRate)
-{ 
+{
 	m_maxLen = max(1.0f, length);
 	m_curLen = 0.0f;
 	m_width = width;
@@ -155,16 +155,16 @@ void W3DRopeDraw::initRopeParms(Real length, Real width, const RGBColor& color, 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 void W3DRopeDraw::setRopeCurLen(Real length)
-{ 
-	m_curLen = length; 
+{
+	m_curLen = length;
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 void W3DRopeDraw::setRopeSpeed(Real curSpeed, Real maxSpeed, Real accel)
-{ 
-	m_curSpeed = curSpeed; 
-	m_maxSpeed = maxSpeed; 
+{
+	m_curSpeed = curSpeed;
+	m_maxSpeed = maxSpeed;
 	m_accel = accel;
 }
 

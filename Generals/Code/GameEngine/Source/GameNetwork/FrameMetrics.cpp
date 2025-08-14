@@ -30,7 +30,7 @@
 #include "GameClient/Display.h"
 #include "GameNetwork/networkutil.h"
 
-FrameMetrics::FrameMetrics() 
+FrameMetrics::FrameMetrics()
 {
 	//Added By Sadullah Nader
 	//Initializations missing and needed

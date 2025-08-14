@@ -92,7 +92,7 @@ PropagandaTowerBehaviorModuleData::PropagandaTowerBehaviorModuleData( void )
 {
   UpdateModuleData::buildFieldParse( p );
 
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
 		{ "Radius",									INI::parseReal,									NULL,	offsetof( PropagandaTowerBehaviorModuleData, m_scanRadius ) },
 		{ "DelayBetweenUpdates",		INI::parseDurationUnsignedInt,	NULL,	offsetof( PropagandaTowerBehaviorModuleData, m_scanDelayInFrames ) },
@@ -159,7 +159,7 @@ void PropagandaTowerBehavior::onObjectCreated( void )
 // ------------------------------------------------------------------------------------------------
 void PropagandaTowerBehavior::onCapture( Player *oldOwner, Player *newOwner )
 {
-	// We don't function for the neutral player.  
+	// We don't function for the neutral player.
 	if( newOwner == ThePlayerList->getNeutralPlayer() )
 	{
 		removeAllInfluence();
@@ -176,7 +176,7 @@ UpdateSleepTime PropagandaTowerBehavior::update( void )
 {
 /// @todo srj use SLEEPY_UPDATE here
 	const PropagandaTowerBehaviorModuleData *modData = getPropagandaTowerBehaviorModuleData();
-	
+
 	//Sep 27, 2002 (Kris): Added this code to prevent the tower from working while under construction.
 	Object *self = getObject();
 	if( self->getStatusBits().test( OBJECT_STATUS_UNDER_CONSTRUCTION ) )
@@ -190,7 +190,7 @@ UpdateSleepTime PropagandaTowerBehavior::update( void )
 
 	if( self->isEffectivelyDead() )
 		return UPDATE_SLEEP_FOREVER;
-	
+
 	if( self->isDisabled() )
 	{
 		// We need to let go of everyone if we are EMPd or underpowered or yadda, but not if we are only held
@@ -204,16 +204,16 @@ UpdateSleepTime PropagandaTowerBehavior::update( void )
 			return UPDATE_SLEEP_NONE;
 		}
 	}
-	
+
 	if( self->getContainedBy()  &&  self->getContainedBy()->getContainedBy() )
 	{
-		// If our container is contained, we turn the heck off.  Seems like a weird specific check, but all of 
+		// If our container is contained, we turn the heck off.  Seems like a weird specific check, but all of
 		// attacking is guarded by the same check in isPassengersAllowedToFire.  We similarly work in a container,
 		// but not in a double container.
 		removeAllInfluence();
 		return UPDATE_SLEEP_NONE;
 	}
-	
+
 	// if it's not time to scan, nothing to do
 	UnsignedInt currentFrame = TheGameLogic->getFrame();
 	if( currentFrame - m_lastScanFrame >= modData->m_scanDelayInFrames )
@@ -230,7 +230,7 @@ UpdateSleepTime PropagandaTowerBehavior::update( void )
 	ObjectTracker *curr = NULL, *prev = NULL, *next = NULL;
 	for( curr = m_insideList; curr; curr = next )
 	{
-		
+
 		// get the next link
 		next = curr->next;
 
@@ -259,7 +259,7 @@ UpdateSleepTime PropagandaTowerBehavior::update( void )
 			else
 				m_insideList = curr->next;
 			deleteInstance(curr);
-				
+
 		}  // end else
 
 	}  // end for, curr
@@ -323,10 +323,10 @@ void PropagandaTowerBehavior::effectLogic( Object *obj, Bool giving,
 
 	// Dustin wants the healing effect not to stack from multiple propaganda towers...
 	// To accomplish this, I'll give every object a single healing-sender (ID)
-	// Any given healing recipient (object) can only receive healing from one particular healing sender 
+	// Any given healing recipient (object) can only receive healing from one particular healing sender
 	// and cannot change healing senders until the previous one expires (its scandelay)
 
-//		obj->attemptHealing(amount, getObject()); // the regular way to give healing... 
+//		obj->attemptHealing(amount, getObject()); // the regular way to give healing...
 			obj->attemptHealingFromSoleBenefactor( amount, getObject(), modData->m_scanDelayInFrames );//the non-stacking way
 
 		}  // end if
@@ -354,7 +354,7 @@ void PropagandaTowerBehavior::removeAllInfluence( void )
 	Object *obj;
 	for( o = m_insideList; o; o = o->next )
 	{
-		
+
 		obj = TheGameLogic->findObjectByID( o->objectID );
 		if( obj )
 			effectLogic( obj, FALSE, getPropagandaTowerBehaviorModuleData() );
@@ -404,8 +404,8 @@ void PropagandaTowerBehavior::doScan( void )
 			// ------------------------------------------------------------------------------------------
 			case UPGRADE_TYPE_OBJECT:
 			{
-				
-				upgradePresent = us->hasUpgrade( m_upgradeRequired );				
+
+				upgradePresent = us->hasUpgrade( m_upgradeRequired );
 				break;
 
 			}  // end object upgrade
@@ -435,17 +435,17 @@ void PropagandaTowerBehavior::doScan( void )
 	PartitionFilterAlive filterAlive;
 	PartitionFilterSameMapStatus filterMapStatus(us);
 	PartitionFilterAcceptByKindOf filterOutBuildings(KINDOFMASK_NONE, MAKE_KINDOF_MASK(KINDOF_STRUCTURE));
-	PartitionFilter *filters[] = {	&relationship, 
-																	&filterAlive, 
-																	&filterMapStatus, 
-																	&filterOutBuildings, 
-																	NULL 
+	PartitionFilter *filters[] = {	&relationship,
+																	&filterAlive,
+																	&filterMapStatus,
+																	&filterOutBuildings,
+																	NULL
 																};
 
 	// scan objects in our region
 	ObjectIterator *iter = ThePartitionManager->iterateObjectsInRange( us->getPosition(),
 																																		 modData->m_scanRadius,
-																																		 FROM_CENTER_2D, 
+																																		 FROM_CENTER_2D,
 																																		 filters );
 	MemoryPoolObjectHolder hold( iter );
 	Object *obj;
@@ -473,7 +473,7 @@ void PropagandaTowerBehavior::doScan( void )
 	//
 	for( ObjectTracker *curr = m_insideList; curr; curr = curr->next )
 	{
-	
+
 		// find this entry in the new list
 		ObjectTracker *o = NULL;
 		for( o = newInsideList; o; o = o->next )
@@ -491,7 +491,7 @@ void PropagandaTowerBehavior::doScan( void )
 		}  // end if
 
 	}  // end for
-		
+
 	// delete the inside list we have recoreded
 	ObjectTracker *next;
 	while( m_insideList )

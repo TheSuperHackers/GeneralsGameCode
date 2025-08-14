@@ -52,7 +52,7 @@
 
   /**
     \brief Regular assert macro.
-    
+
     This macro will generate an error message on screen if the evaluated expression
     returns false. The user will then have the choice of aborting the program,
     continuing once or continuing with completely ignoring that specific assertion.
@@ -61,7 +61,7 @@
 
     \param expr expression, trigger assert window if false
   */
-  #define DASSERT(expr) 
+  #define DASSERT(expr)
 
   /**
     \brief Assert macro with custom message.
@@ -79,7 +79,7 @@
     \param msg custom message stream, see \ref debug_stream
 
   */
-  #define DASSERT_MSG(expr,msg) 
+  #define DASSERT_MSG(expr,msg)
 
   /**
     \brief Compile time assertion.
@@ -116,7 +116,7 @@ debug.cpp(15) : error C2027: use of undefined type 'StaticAssertionFailed< ?? >'
 
     \param expr expression which will always be checked
   */
-  #define DCHECK(expr) 
+  #define DCHECK(expr)
 
   /**
     \brief Function macro, \ref DCHECK with additional message on failure.
@@ -129,12 +129,12 @@ debug.cpp(15) : error C2027: use of undefined type 'StaticAssertionFailed< ?? >'
     \param expr expression which will always be checked
     \param msg custom message stream, see \ref debug_stream
   */
-  #define DCHECK_MSG(expr,msg) 
+  #define DCHECK_MSG(expr,msg)
 
   /**
     \brief Macro for precondition-checks.
 
-    Internally expands to 
+    Internally expands to
     \code
 if (!DCHECK(!(cond)))
     \endcode
@@ -150,7 +150,7 @@ DFAIL_IF(!ptrval) return;
   /**
     \brief Convenience macro, \ref DFAIL_IF with additional message on failure.
 
-    Internally expands to 
+    Internally expands to
     \code
 if (!DCHECK_MSG(!(cond),msg))
     \endcode
@@ -175,7 +175,7 @@ DFAIL_IF_MSG(!ptrval,"pointer must not be NULL") return;
 
     \param what message, see \ref debug_stream
   */
-  #define DLOG(what) 
+  #define DLOG(what)
 
   /**
     \brief Adds a description for the current file if used for logging.
@@ -189,17 +189,17 @@ DFAIL_IF_MSG(!ptrval,"pointer must not be NULL") return;
     \brief Writes a message to the log file using a custom log group.
 
     Works just like \ref DLOG but instead of using the current file as a logging group
-    the logging group is explicitly specified. 
+    the logging group is explicitly specified.
 
     \note Specifiy the group directly without quotes, e.g.
       \code
-        DLOG_GROUP(my_log_group,"hello world") 
+        DLOG_GROUP(my_log_group,"hello world")
       \endcode
 
     \param group logging group, without quotes
     \param what message, see \ref debug_stream
   */
-  #define DLOG_GROUP(group,what) 
+  #define DLOG_GROUP(group,what)
 
   /**
     \brief Adds a description for a custom log group
@@ -217,7 +217,7 @@ DFAIL_IF_MSG(!ptrval,"pointer must not be NULL") return;
 
     \param msg custom message stream, see \ref debug_stream
   */
-  #define DCRASH(msg) 
+  #define DCRASH(msg)
 
   /**
     \brief Unconditional program exit that is active in release builds as well.
@@ -227,7 +227,7 @@ DFAIL_IF_MSG(!ptrval,"pointer must not be NULL") return;
 
     \param msg custom message stream, see \ref debug_stream
   */
-  #define DCRASH_RELEASE(msg) 
+  #define DCRASH_RELEASE(msg)
 
   /**
     \brief Unconditional assert.
@@ -249,7 +249,7 @@ DFAIL_IF_MSG(!ptrval,"pointer must not be NULL") return;
     \endcode
     Gets removed in release builds.
   */
-  #define DFAIL() 
+  #define DFAIL()
 
   /**
     \brief Function macro, determines if logging is active for current file or not.
@@ -267,18 +267,18 @@ DFAIL_IF_MSG(!ptrval,"pointer must not be NULL") return;
 
     \return true if logging is active, false if not
   */
-  #define D_ISLOG() 
+  #define D_ISLOG()
 
   /**
     \brief Function macro, determines if logging is active for the specified log group or not.
 
     Works just like \ref D_ISLOG but instead of using the current file as a logging group
-    the logging group is explicitly specified. 
+    the logging group is explicitly specified.
 
     \param group logging group, without quotes
     \return true if logging is active, false if not
   */
-  #define D_ISLOG_GROUP(group) 
+  #define D_ISLOG_GROUP(group)
 
 ///@}
 
@@ -297,12 +297,12 @@ DFAIL_IF_MSG(!ptrval,"pointer must not be NULL") return;
   #define DCHECK(expr) \
     ( (expr) || \
       Debug::SkipNext() || \
-      Debug::CheckBegin(__FILE__,__LINE__,#expr).CheckDone() ) 
+      Debug::CheckBegin(__FILE__,__LINE__,#expr).CheckDone() )
 
   #define DCHECK_MSG(expr,msg) \
     ( (expr) || \
       Debug::SkipNext() || \
-      ( Debug::CheckBegin(__FILE__,__LINE__,#expr) << ": " << msg ).CheckDone() ) 
+      ( Debug::CheckBegin(__FILE__,__LINE__,#expr) << ": " << msg ).CheckDone() )
 
   #define DFAIL_IF(cond) \
     if (!DCHECK(!(cond)))
@@ -334,7 +334,7 @@ DFAIL_IF_MSG(!ptrval,"pointer must not be NULL") return;
     Debug::AssertBegin(__FILE__,__LINE__,NULL).AssertDone()
 
   #define D_ISLOG() \
-    Debug::IsLogEnabled(__FILE__) 
+    Debug::IsLogEnabled(__FILE__)
 
   #define D_ISLOG_GROUP(group) \
     Debug::IsLogEnabled(#group)
@@ -345,7 +345,7 @@ DFAIL_IF_MSG(!ptrval,"pointer must not be NULL") return;
   #define DASSERT_MSG(expr,msg)   ((void)0)
   #define DCHECK(expr)            (expr)
   #define DCHECK_MSG(expr,msg)    (expr)
-  #define DFAIL_IF(cond)          if (cond) 
+  #define DFAIL_IF(cond)          if (cond)
   #define DFAIL_IF_MSG(cond,msg)  if (cond)
   #define DLOG(what)              ((void)0)
   #define DLOG_DESCR(descr)
@@ -372,7 +372,7 @@ namespace _Debug
 };
 
 // These are stolen from the WW3D Debug file. REALLY useful. :-)
-#define STRING_IT(a) #a																				  
+#define STRING_IT(a) #a
 #define TOKEN_IT(a) STRING_IT(,##a)
 
 /**

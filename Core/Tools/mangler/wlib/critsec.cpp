@@ -49,7 +49,7 @@ CritSec::~CritSec()
 //
 // If refcount is not null you can get the current ref counter after the lock.
 //
-sint32 CritSec::lock(int *refcount) RO 
+sint32 CritSec::lock(int *refcount) RO
 {
  #ifdef _UNIX
     sint32	status;
@@ -93,11 +93,11 @@ sint32 CritSec::lock(int *refcount) RO
 }
 
 // The "unlock" function release the critical section.
-sint32 CritSec::unlock(void) RO 
+sint32 CritSec::unlock(void) RO
 {
  #ifdef _UNIX
     sint32	status = 0;
-    
+
     assert(RefCount_ >= 0);
     if (RefCount_ <= 0)
     {
@@ -116,7 +116,7 @@ sint32 CritSec::unlock(void) RO
     {
 	// Set thread id to zero -- we're going to release mutex
 	ThreadId_ = (pthread_t)0;
-	
+
 	// Unlock the mutex.
 	if ((status = pthread_mutex_unlock(&Mutex_)) != 0)
 	    ERRMSG("pthread_mutex_lock: " << strerror(errno));

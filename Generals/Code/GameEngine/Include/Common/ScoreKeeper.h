@@ -24,12 +24,12 @@
 
 // FILE: ScoreKeeper.h /////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Electronic Arts Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2002 - All Rights Reserved                  
-//                                                                          
+//
+//                       Electronic Arts Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2002 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 //	created:	Jun 2002
@@ -37,7 +37,7 @@
 //	Filename: 	ScoreKeeper.h
 //
 //	author:		Chris Huybregts
-//	
+//
 //	purpose:	Header file for the scorekeeper class
 //
 //-----------------------------------------------------------------------------
@@ -73,22 +73,22 @@ public:
 
 	void reset( Int playerIdx );			///< Zero out the variables
 	Int calculateScore( void );				///< Performs the equation to calculate the score
-	
+
 	void addMoneySpent( Int money );								///< Adds money to the amount spent
 	void addMoneyEarned( Int money );								///< Adds money to the earned amount
-	
+
 	void addObjectBuilt( const Object *o );
 	void addObjectDestroyed( const Object *o );
 	void addObjectLost( const Object *o );
 	void addObjectCaptured( const Object *o );
 
 	void removeObjectBuilt( const Object *o );
-	
+
 	Int getTotalMoneyEarned( void ) { return m_totalMoneyEarned; }
 	Int getTotalMoneySpent( void ) { return m_totalMoneySpent; }
 	Int getTotalUnitsDestroyed( void );
 	Int getTotalUnitsBuilt( void ) { return m_totalUnitsBuilt; }
-	Int getTotalUnitsLost( void ) { return m_totalUnitsLost; } 
+	Int getTotalUnitsLost( void ) { return m_totalUnitsLost; }
 	Int getTotalBuildingsDestroyed( void );
 	Int getTotalBuildingsBuilt( void ) { return m_totalBuildingsBuilt; }
 	Int getTotalBuildingsLost( void ) { return m_totalBuildingsLost; }
@@ -100,7 +100,7 @@ public:
 	Int getTotalUnitsBuilt( KindOfMaskType validMask, KindOfMaskType invalidMask );
 
 protected:
-	
+
 	// snapshot methods
 	virtual void crc( Xfer *xfer );
 	virtual void xfer( Xfer *xfer );
@@ -129,7 +129,7 @@ private:
 	ObjectCountMap m_objectsLost;				///< how many and what kinds of objects did we loose
 	ObjectCountMap m_objectsCaptured;
 	void xferObjectCountMap( Xfer *xfer, ObjectCountMap *map );
-		
+
 };
 
 //-----------------------------------------------------------------------------

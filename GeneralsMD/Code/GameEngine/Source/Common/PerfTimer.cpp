@@ -23,7 +23,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 // FILE: PerfTimer.cpp ///////////////////////////////////////////////////////////////////////////
-// Author: 
+// Author:
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
@@ -74,7 +74,7 @@ void InitPrecisionTimer()
     // wait for end of current tick
     unsigned timeEnd = timeGetTime() + 2;
     while( timeGetTime() < timeEnd ); //do nothing
- 
+
     // get cycles
     _int64 start, startQPC, endQPC;
     QueryPerformanceCounter( (LARGE_INTEGER *)&startQPC );
@@ -83,7 +83,7 @@ void InitPrecisionTimer()
     while( timeGetTime() < timeEnd ); //do nothing
     ProfileGetTime( n[ k ] );
     n[ k ] -= start;
- 
+
     // convert to 1 second
     if( QueryPerformanceCounter( (LARGE_INTEGER*)&endQPC ) )
     {
@@ -95,7 +95,7 @@ void InitPrecisionTimer()
       n[ k ] = ( n[ k ] * 1000 ) / 20;
     }
   }
- 
+
   // find two closest values
   _int64 d01 = n[ 1 ] - n[ 0 ];
 	_int64 d02 = n[ 2 ] - n[ 0 ];
@@ -105,7 +105,7 @@ void InitPrecisionTimer()
 	{
 		d01 = -d01;
 	}
-  if( d02 < 0 ) 
+  if( d02 < 0 )
 	{
 		d02 = -d02;
 	}
@@ -129,7 +129,7 @@ void InitPrecisionTimer()
 	s_ticksPerSec = s_ticksPerMSec * 1000.0f;
 	s_ticksPerUSec = s_ticksPerSec / 1000000.0f;
 
-	
+
 #else
 
 	//Kris: With total disrespect, this code costs 5 real seconds of init time
@@ -142,8 +142,8 @@ void InitPrecisionTimer()
 		Int64 totalTime = 0;
 		Int64	TotalTicks = 0;
 		static int TESTS = 5;
-		
-		for (int i = 0; i < TESTS; ++i) 
+
+		for (int i = 0; i < TESTS; ++i)
 		{
 			int        TimeStart;
 			int        TimeStop;
@@ -190,7 +190,7 @@ void InitPrecisionTimer()
 		TheTicksToGetTicks = (bogus[7] - start) / (ITERS*8);
 		DEBUG_LOG(("TheTicksToGetTicks is %d (%f usec)",(int)TheTicksToGetTicks,TheTicksToGetTicks/s_ticksPerUSec));
 	#endif
-		
+
 #endif
 
 }
@@ -224,9 +224,9 @@ public:
 
 	AsciiString& getStatsString(const AsciiString& id)
 	{
-		for (int i = 0; i < m_outputStats.size(); ++i) 
+		for (int i = 0; i < m_outputStats.size(); ++i)
 		{
-			if (m_outputStats[i].first == id) 
+			if (m_outputStats[i].first == id)
 				return m_outputStats[i].second;
 		}
 		std::pair<AsciiString, AsciiString> newPair;
@@ -237,9 +237,9 @@ public:
 
 	void clearStatsString(const AsciiString& id)
 	{
-		for (int i = 0; i < m_outputStats.size(); ++i) 
+		for (int i = 0; i < m_outputStats.size(); ++i)
 		{
-			if (m_outputStats[i].first == id) 
+			if (m_outputStats[i].first == id)
 			{
 				m_outputStats.erase(&m_outputStats[i]);
 				return;
@@ -303,17 +303,17 @@ void PerfGather::removeFromList()
 }
 
 //-------------------------------------------------------------------------------------------------
-PerfGather::PerfGather(const char *identifier) : 
-	m_identifier(identifier), 
-	m_startTime(0), 
-	m_runningTimeGross(0), 
-	m_runningTimeNet(0), 
+PerfGather::PerfGather(const char *identifier) :
+	m_identifier(identifier),
+	m_startTime(0),
+	m_runningTimeGross(0),
+	m_runningTimeNet(0),
 	m_callCount(0),
 	m_next(0),
 	m_prev(0)
 {
 	//Added By Sadullah Nader
-	//Initializations inserted 
+	//Initializations inserted
 	m_ignore = FALSE;
 	//
 	DEBUG_ASSERTCRASH(strchr(m_identifier, ',') == NULL, ("PerfGather names must not contain commas"));
@@ -363,7 +363,7 @@ void PerfGather::reset()
 		DEBUG_CRASH(("could not open/create perf file %s -- is it open in another app?",s_buf));
 		return;
 	}
-	
+
 	if (s_stopStartOverhead == -1)
 	{
 		const Int ITERS = 100000;
@@ -392,7 +392,7 @@ void PerfGather::reset()
 {
 	if (frame < s_lastDumpedFrame)
 	{
-		// must have reset or started a new game. 
+		// must have reset or started a new game.
 		termPerfDump();
 		initPerfDump(s_buf, s_perfDumpOptions);
 	}
@@ -435,7 +435,7 @@ void PerfGather::reset()
 			}
 			fprintf(s_perfStatsFile, "\n");
 		}
-		
+
 		// a strange value so we can find it in the dump, if necessary.
 		// there's nothing magic about this value, it's purely determined from sample dumps...
 //		const Real CLIP_BIG_SPIKES = 1e10f;
@@ -483,7 +483,7 @@ void PerfGather::reset()
 }
 
 //-------------------------------------------------------------------------------------------------
-// This function will queue up stuff to draw on the next frame. We also need to adjust the 
+// This function will queue up stuff to draw on the next frame. We also need to adjust the
 // perf timers to not include time spent paused by the script engine.
 /*static*/ void PerfGather::displayGraph(UnsignedInt frame)
 {
@@ -496,7 +496,7 @@ void PerfGather::reset()
 		// always skip the first second or so, since it loads everything and skews the results horribly
 	}
 	else
-	{	
+	{
 		const Real CLIP_BIG_SPIKES = 100000.0f;
 
 		if (s_perfDumpOptions & PERF_GROSSTIME)
@@ -519,7 +519,7 @@ void PerfGather::reset()
 				t /= s_ticksPerUSec;
 				if (t > CLIP_BIG_SPIKES)
 					t = CLIP_BIG_SPIKES;
-				
+
 				TheGraphDraw->addEntry(head->m_identifier, REAL_TO_INT(t));
 			}
 		}
@@ -529,7 +529,7 @@ void PerfGather::reset()
 			{
 				Real t = head->m_callCount;
 				TheGraphDraw->addEntry(head->m_identifier, REAL_TO_INT(t));
-				
+
 			}
 		}
 	}
@@ -553,9 +553,9 @@ void PerfGather::reset()
 
 //-------------------------------------------------------------------------------------------------
 PerfTimer::PerfTimer( const char *identifier, Bool crashWithInfo, Int startFrame, Int endFrame) :
-	m_identifier(identifier), 
-	m_crashWithInfo(crashWithInfo), 
-	m_startFrame(startFrame), 
+	m_identifier(identifier),
+	m_crashWithInfo(crashWithInfo),
+	m_startFrame(startFrame),
 	m_endFrame(endFrame),
 	m_callCount(0),
 	m_runningTime(0),
@@ -600,29 +600,29 @@ void PerfTimer::outputInfo( void )
 
 	if (m_crashWithInfo) {
 		DEBUG_CRASH(("%s\n"
-								 "Average Time (per call): %.4f ms\n" 
+								 "Average Time (per call): %.4f ms\n"
 								 "Average Time (per frame): %.4f ms\n"
 								 "Average calls per frame: %.2f\n"
 								 "Number of calls: %d\n"
 								 "Max possible FPS: %.4f",
-								 m_identifier, 
+								 m_identifier,
 								 avgTimePerCall,
 								 avgTimePerFrame,
 								 1.0f * m_callCount / (m_lastFrame - m_startFrame + 1),
-								 m_callCount,								 
+								 m_callCount,
 								 1000.0f / avgTimePerFrame));
 	} else {
 		DEBUG_LOG(("%s\n"
-								 "Average Time (per call): %.4f ms\n" 
+								 "Average Time (per call): %.4f ms\n"
 								 "Average Time (per frame): %.4f ms\n"
 								 "Average calls per frame: %.2f\n"
 								 "Number of calls: %d\n"
 								 "Max possible FPS: %.4f",
-								 m_identifier, 
+								 m_identifier,
 								 avgTimePerCall,
 								 avgTimePerFrame,
 								 1.0f * m_callCount / (m_lastFrame - m_startFrame + 1),
-								 m_callCount,								 
+								 m_callCount,
 								 1000.0f / avgTimePerFrame));
 	}
 }
@@ -639,9 +639,9 @@ void PerfTimer::showMetrics( void )
 	// we want to work on the thing in the array, so just store a reference.
 	AsciiString &outputStats = s_output.getStatsString(m_identifier);
 
-	outputStats.format("%s: %.2fms / call, %.2fms / frame \n", 
-											m_identifier, 
-											avgTimePerCall,											
+	outputStats.format("%s: %.2fms / call, %.2fms / frame \n",
+											m_identifier,
+											avgTimePerCall,
 											avgTimePerFrame);
 	m_callCount = 0;
 	m_runningTime = 0;

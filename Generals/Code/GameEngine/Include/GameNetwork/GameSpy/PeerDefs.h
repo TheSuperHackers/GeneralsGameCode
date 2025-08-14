@@ -251,13 +251,13 @@ public:
 	virtual Int getPingValue( const AsciiString& otherPing ) = 0;
 
 	static GameSpyInfoInterface* createNewGameSpyInfoInterface( void );
-	
+
 	virtual void addToSavedIgnoreList( Int profileID, AsciiString nick ) = 0;
 	virtual void removeFromSavedIgnoreList( Int profileID ) = 0;
-	virtual Bool isSavedIgnored( Int profileID ) = 0;		
+	virtual Bool isSavedIgnored( Int profileID ) = 0;
 	virtual SavedIgnoreMap returnSavedIgnoreList( void ) = 0;
 	virtual void loadSavedIgnoreList( void ) = 0;
-	
+
 	virtual IgnoreList returnIgnoreList( void ) = 0;
 	virtual void addToIgnoreList( AsciiString nick ) = 0;
 	virtual void removeFromIgnoreList( AsciiString nick ) = 0;

@@ -55,8 +55,8 @@ BunkerBusterBehaviorModuleData::BunkerBusterBehaviorModuleData( void )
 	m_upgradeRequired = NULL;
 	m_detonationFX = NULL;
   m_crashThroughBunkerFX = NULL;
-  m_crashThroughBunkerFXFrequency = 4; 
-  
+  m_crashThroughBunkerFXFrequency = 4;
+
   m_seismicEffectRadius = 140.0f;
   m_seismicEffectMagnitude = 6.0f;
 
@@ -71,7 +71,7 @@ BunkerBusterBehaviorModuleData::BunkerBusterBehaviorModuleData( void )
 {
   UpdateModuleData::buildFieldParse( p );
 
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
 		{ "UpgradeRequired",	              INI::parseAsciiString,	        NULL, offsetof( BunkerBusterBehaviorModuleData, m_upgradeRequired ) },
 		{ "DetonationFX",			              INI::parseFXList,				        NULL, offsetof( BunkerBusterBehaviorModuleData, m_detonationFX ) },
@@ -149,10 +149,10 @@ UpdateSleepTime BunkerBusterBehavior::update( void )
       if ( getObject()->testStatus( OBJECT_STATUS_MISSILE_KILLING_SELF ) && crashFX )
         FXList::doFXObj( crashFX, getObject() );// CrashFX done on the missile/bomb
     }
-  
+
   }
 
-  
+
 
 
 
@@ -186,7 +186,7 @@ void BunkerBusterBehavior::bustTheBunker( void )
     if ( ! weaponUpgraded )
       return;
   }
-  
+
 
 //  here is where we kill everyone inside any targeted garrisoned buildings
 //  AIUpdateInterface *ai = getObject()->getAI();
@@ -227,10 +227,10 @@ void BunkerBusterBehavior::bustTheBunker( void )
 #ifdef DO_SEISMIC_SIMULATIONS
   // Okay, the right proper way to do this is to add SeismicSim support to FXList...
   // But until that day, I'm just gonna do it here,  sorry, M Lorenzen 6/26/03
-  SeismicSimulationNode sim( 
-    objectForFX->getPosition(), 
-    modData->m_seismicEffectRadius, 
-    modData->m_seismicEffectMagnitude, 
+  SeismicSimulationNode sim(
+    objectForFX->getPosition(),
+    modData->m_seismicEffectRadius,
+    modData->m_seismicEffectMagnitude,
     &bunkerBusterHeavingEarthSeismicFilter );
 
   TheTerrainVisual->addSeismicSimulation( sim );

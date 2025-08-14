@@ -36,7 +36,7 @@
 // PRIVATE TYPES //////////////////////////////////////////////////////////////////////////////////
 class XferBlockData : public MemoryPoolObject
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(XferBlockData, "XferBlockData")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(XferBlockData, "XferBlockData")
 
 public:
 
@@ -123,7 +123,7 @@ void XferSave::open( AsciiString identifier )
 	m_fileFP = fopen( identifier.str(), "w+b" );
 	if( m_fileFP == NULL )
 	{
-		
+
 		DEBUG_CRASH(( "File '%s' not found", identifier.str() ));
 		throw XFER_FILE_NOT_FOUND;
 
@@ -158,7 +158,7 @@ void XferSave::close( void )
 //-------------------------------------------------------------------------------------------------
 /** Write a placeholder at the current location in the file and store this location
 	* internally.  The next endBlock that is called will back up to the most recently stored
-	* beginBlock and write the difference in file bytes from the endBlock call to the 
+	* beginBlock and write the difference in file bytes from the endBlock call to the
 	* location of this beginBlock.  The current file position will then return to the location
 	* at which endBlock was called */
 //-------------------------------------------------------------------------------------------------
@@ -176,7 +176,7 @@ Int XferSave::beginBlock( void )
 	XferBlockSize blockSize = 0;
 	if( fwrite( &blockSize, sizeof( XferBlockSize ), 1, m_fileFP ) != 1 )
 	{
-		
+
 		DEBUG_CRASH(( "XferSave::beginBlock - Error writing block size in '%s'",
 									m_identifier.str() ));
 		return XFER_WRITE_ERROR;
@@ -300,7 +300,7 @@ void XferSave::xferAsciiString( AsciiString *asciiStringData )
 		throw XFER_STRING_ERROR;
 
 	}  // end if
-	
+
 	// save length of string to follow
 	UnsignedByte len = asciiStringData->getLength();
 	xferUnsignedByte( &len );
@@ -316,7 +316,7 @@ void XferSave::xferAsciiString( AsciiString *asciiStringData )
 // ------------------------------------------------------------------------------------------------
 void XferSave::xferUnicodeString( UnicodeString *unicodeStringData )
 {
-	
+
 	// sanity
 	if( unicodeStringData->getLength() > 255 )
 	{
@@ -354,5 +354,5 @@ void XferSave::xferImplementation( void *data, Int dataSize )
 		throw XFER_WRITE_ERROR;
 
 	}  // end if
-	
+
 }  // end xferImplementation

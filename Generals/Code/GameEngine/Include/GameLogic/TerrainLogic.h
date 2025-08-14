@@ -63,12 +63,12 @@ enum WaypointID CPP_11(: Int)
 */
 class Waypoint : public MemoryPoolObject
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(Waypoint, "Waypoint")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(Waypoint, "Waypoint")
 
 // friends do not play well with MPO (srj)
 //friend class TerrainLogic;
 public:
-	Waypoint(WaypointID id, AsciiString name, const Coord3D *pLoc, AsciiString label1, 
+	Waypoint(WaypointID id, AsciiString name, const Coord3D *pLoc, AsciiString label1,
 						AsciiString label2, AsciiString label3, Bool biDirectional);
 	//~Waypoint();
 	enum {MAX_LINKS=8};
@@ -88,13 +88,13 @@ protected:
 public:
 	// should be protected, but friendly access needed (srj)
 	void setNext(Waypoint *pNext) {m_pNext = pNext; }
-	//void setLink(Int ndx, Waypoint *pLink) 
+	//void setLink(Int ndx, Waypoint *pLink)
 	//{
-	//	if (ndx>=0 && ndx <=MAX_LINKS) m_links[ndx] = pLink; 
+	//	if (ndx>=0 && ndx <=MAX_LINKS) m_links[ndx] = pLink;
 	//}
-	void addLink(Waypoint* pLink) 
+	void addLink(Waypoint* pLink)
 	{
-		if (m_numLinks < MAX_LINKS) 
+		if (m_numLinks < MAX_LINKS)
 		{
 			m_links[m_numLinks] = pLink;
 			++m_numLinks;
@@ -130,7 +130,7 @@ public:
 // Bridge
 /** Helper class for bridge info in terrain logic.
 */
-class BridgeInfo 
+class BridgeInfo
 {
 public:
 	BridgeInfo();
@@ -151,7 +151,7 @@ public:
 // Bridge
 /** Helper class for bridge info in terrain logic.
 */
-struct TBridgeAttackInfo 
+struct TBridgeAttackInfo
 {
 public:
 	Coord3D attackPoint1, attackPoint2; /// The points that can be attacked..
@@ -161,7 +161,7 @@ public:
 //-------------------------------------------------------------------------------------------------
 class Bridge : public MemoryPoolObject
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(Bridge, "Bridge")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(Bridge, "Bridge")
 // friends do not play well with MPO (srj)
 //friend class TerrainLogic;
 public:
@@ -181,9 +181,9 @@ protected:
 public:
 	// should be protected, but friendly access needed (srj)
 	void setNext(Bridge *pNext) {m_next = pNext; }
-	Object *createTower( Coord3D *worldPos, BridgeTowerType towerPos, 
+	Object *createTower( Coord3D *worldPos, BridgeTowerType towerPos,
 											 const ThingTemplate *towerTemplate, Object *bridge );
-	
+
 public:
 	/// return the bridge template name
 	AsciiString getBridgeTemplateName( void ) { return m_templateName; }
@@ -204,7 +204,7 @@ public:
 	Bool isCellOnEnd(const Region2D *cell);	 // Is pathfind cell on the sides of the bridge
 	Bool isCellOnSide(const Region2D *cell); // Is pathfind cell on the end of the bridge
 	Bool isCellEntryPoint(const Region2D *cell); // Is pathfind cell an entry point to the bridge
-	
+
 	inline void setBridgeObjectID( ObjectID id ) { m_bridgeInfo.bridgeObjectID = id; }
 	inline void setTowerObjectID( ObjectID id, BridgeTowerType which ) { m_bridgeInfo.towerObjectID[ which ] = id; }
 
@@ -248,8 +248,8 @@ public:
 	virtual const WaterHandle* getWaterHandle( Real x, Real y );					///< get water handle at this location
 	virtual const WaterHandle* getWaterHandleByName( AsciiString name );	///< get water handle by name
 	virtual Real getWaterHeight( const WaterHandle *water );							///< get height of water table
-	virtual void setWaterHeight( const WaterHandle *water, 
-															 Real height, 
+	virtual void setWaterHeight( const WaterHandle *water,
+															 Real height,
 															 Real damageAmount,
 															 Bool forcePathfindUpdate );	///< set height of water table
 	virtual void changeWaterHeightOverTime( const WaterHandle *water,

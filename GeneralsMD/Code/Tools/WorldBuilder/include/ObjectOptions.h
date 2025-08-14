@@ -83,7 +83,7 @@ protected:
 	ObjectPreview			m_objectPreview;
 
 protected:
-	void addObject( MapObject *mapObject, const char *pPath,  
+	void addObject( MapObject *mapObject, const char *pPath,
 									Int objectNdx, HTREEITEM parent );
 	HTREEITEM findOrAdd(HTREEITEM parent, const char *pLabel);
 	HTREEITEM findOrDont(const char *pLabel);
@@ -101,7 +101,7 @@ public:
 	static Real getCurObjectHeight(void);
 	static void update();
 	static AsciiString getCurGdfName(void);
-}; 
+};
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.

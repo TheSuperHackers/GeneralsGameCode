@@ -23,12 +23,12 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 //----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information					                  
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //----------------------------------------------------------------------------
 //
 // Project:    Generals
@@ -48,7 +48,7 @@
 
 
 //----------------------------------------------------------------------------
-//           Includes                                                      
+//           Includes
 //----------------------------------------------------------------------------
 
 #include "Lib/BaseType.h"
@@ -67,7 +67,7 @@
 
 
 //===============================
-// DebugDisplayInterface 
+// DebugDisplayInterface
 //===============================
 
 class DebugDisplayInterface
@@ -106,7 +106,7 @@ class DebugDisplayInterface
 
 
 //===============================
-// DebugDisplay 
+// DebugDisplay
 //===============================
 
 class DebugDisplay : public DebugDisplayInterface
@@ -148,7 +148,7 @@ extern void AudioDebugDisplay( DebugDisplayInterface *debugDisplay, void *userDa
 
 
 //----------------------------------------------------------------------------
-//           Inlining                                                       
+//           Inlining
 //----------------------------------------------------------------------------
 
 

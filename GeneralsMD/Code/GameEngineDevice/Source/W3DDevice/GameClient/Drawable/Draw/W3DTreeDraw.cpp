@@ -73,10 +73,10 @@ W3DTreeDrawModuleData::~W3DTreeDrawModuleData()
 }
 
 //-------------------------------------------------------------------------------------------------
-void W3DTreeDrawModuleData::buildFieldParse(MultiIniFieldParse& p) 
+void W3DTreeDrawModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
   ModuleData::buildFieldParse(p);
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
 		{ "ModelName", INI::parseAsciiString, NULL, offsetof(W3DTreeDrawModuleData, m_modelName) },
 		{ "TextureName", INI::parseAsciiString, NULL, offsetof(W3DTreeDrawModuleData, m_textureName) },
@@ -85,7 +85,7 @@ void W3DTreeDrawModuleData::buildFieldParse(MultiIniFieldParse& p)
 		{ "MoveOutwardDistanceFactor", INI::parseReal, NULL, offsetof(W3DTreeDrawModuleData, m_maxOutwardMovement) },
 		{ "DarkeningFactor", INI::parseReal, NULL, offsetof(W3DTreeDrawModuleData, m_darkening) },
 
-// Topple parameters [7/7/2003]		
+// Topple parameters [7/7/2003]
 		{ "ToppleFX",	INI::parseFXList, NULL, offsetof( W3DTreeDrawModuleData, m_toppleFX ) },
 		{ "BounceFX",	INI::parseFXList, NULL, offsetof( W3DTreeDrawModuleData, m_bounceFX ) },
 		{ "StumpName",	INI::parseAsciiString, NULL, offsetof( W3DTreeDrawModuleData, m_stumpName ) },
@@ -123,8 +123,8 @@ W3DTreeDraw::~W3DTreeDraw( void )
 }
 
 //-------------------------------------------------------------------------------------------------
-void W3DTreeDraw::reactToTransformChange( const Matrix3D *oldMtx, 
-																							 const Coord3D *oldPos, 
+void W3DTreeDraw::reactToTransformChange( const Matrix3D *oldMtx,
+																							 const Coord3D *oldPos,
 																							 Real oldAngle )
 {
 	Drawable *draw = getDrawable();
@@ -144,7 +144,7 @@ void W3DTreeDraw::reactToTransformChange( const Matrix3D *oldMtx,
 	scaleRandomness = 0.0f; // We use the scale fuzziness inside WB to generate random scales, so they don't change at load time. jba. [4/22/2003]
 	TheTerrainRenderObject->addTree(draw->getID(), *draw->getPosition(),
 		scale, draw->getOrientation(), scaleRandomness, moduleData);
-	
+
 }
 
 //-------------------------------------------------------------------------------------------------

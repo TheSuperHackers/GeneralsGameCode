@@ -42,7 +42,7 @@ class FXList;
 enum ScienceType CPP_11(: Int);
 
 //-------------------------------------------------------------------------------------------------
-class CrateCollideModuleData : public CollideModuleData 
+class CrateCollideModuleData : public CollideModuleData
 {
 public:
 	KindOfMaskType	m_kindof;				///< the kind(s) of units that can be collided with
@@ -54,7 +54,7 @@ public:
 	Bool m_isAllowPickAboveTerrain;				///< Can this crate only be picked when on the ground´?
 	ScienceType m_pickupScience;		///< Can only be picked up by a unit whose player has this science
 	FXList *m_executeFX;						///< FXList to play when activated
-	
+
 	AsciiString m_executionAnimationTemplate;				///< Anim2D to play at crate location
 	Real m_executeAnimationDisplayTimeInSeconds;		///< time to play animation for
 	Real m_executeAnimationZRisePerSecond;					///< rise animation up while playing
@@ -101,7 +101,7 @@ enum SabotageVictimType CPP_11(: Int)
 	virtual Bool isSabotageBuildingCrateCollide() const { return FALSE; }
 
   void doSabotageFeedbackFX( const Object *other, SabotageVictimType type = SAB_VICTIM_GENERIC );
-  
+
 protected:
 
 	/// This is the game logic execution function that all real CrateCollides will implement

@@ -51,7 +51,7 @@ void MapObjectProps::makeMain()
 		TheMapObjectProps = this;
 }
 
-MapObjectProps::MapObjectProps(Dict* dictToEdit, const char* title, CWnd* pParent /*=NULL*/) : 
+MapObjectProps::MapObjectProps(Dict* dictToEdit, const char* title, CWnd* pParent /*=NULL*/) :
 	COptionsPanel(MapObjectProps::IDD, pParent),
 	m_dictToEdit(dictToEdit),
 	m_title(title),
@@ -59,7 +59,7 @@ MapObjectProps::MapObjectProps(Dict* dictToEdit, const char* title, CWnd* pParen
 {
 	//{{AFX_DATA_INIT(MapObjectProps)
 		// NOTE: the ClassWizard will add member initialization here
-	//}}AFX_DATA_INIT	
+	//}}AFX_DATA_INIT
 }
 
 MapObjectProps::~MapObjectProps()
@@ -162,15 +162,15 @@ void MapObjectProps::enableButtons()
 	// do nothing
 }
 
-void MapObjectProps::OnSelchangeProperties() 
+void MapObjectProps::OnSelchangeProperties()
 {
-	
+
 }
 
-BOOL MapObjectProps::OnInitDialog() 
+BOOL MapObjectProps::OnInitDialog()
 {
 	CDialog::OnInitDialog();
-	
+
 	if (m_title)
 		SetWindowText(m_title);
 
@@ -186,15 +186,15 @@ BOOL MapObjectProps::OnInitDialog()
 	              // EXCEPTION: OCX Property Pages should return FALSE
 }
 
-/*static*/ void MapObjectProps::update(void) 
+/*static*/ void MapObjectProps::update(void)
 {
-	if (TheMapObjectProps) 
+	if (TheMapObjectProps)
 	{
 		TheMapObjectProps->updateTheUI();
 	}
 }
 
-void MapObjectProps::updateTheUI(void) 
+void MapObjectProps::updateTheUI(void)
 {
 	if (this != TheMapObjectProps) {
 		return;
@@ -205,7 +205,7 @@ void MapObjectProps::updateTheUI(void)
 			continue;
 		}
 
-		m_dictToEdit = pMapObj ? pMapObj->getProperties() : NULL; 
+		m_dictToEdit = pMapObj ? pMapObj->getProperties() : NULL;
 
 		_DictToTeam();
 		_DictToName();
@@ -229,7 +229,7 @@ void MapObjectProps::updateTheUI(void)
 		_DictToTargetable();
 		ShowZOffset(pMapObj);
 		ShowAngle(pMapObj);
-		
+
 		// simply break after the first one that's selected
 		break;
 	}
@@ -237,13 +237,13 @@ void MapObjectProps::updateTheUI(void)
 
 /*static*/ MapObject *MapObjectProps::getSingleSelectedMapObject(void)
 {
-	MapObject *pMapObj; 
-	MapObject *theMapObj = NULL; 
+	MapObject *pMapObj;
+	MapObject *theMapObj = NULL;
 //	Bool found = false;
 	Int selCount=0;
 	for (pMapObj = MapObject::getFirstMapObject(); pMapObj; pMapObj = pMapObj->getNext()) {
 		if (pMapObj->isSelected()) {
-			if (!pMapObj->isWaypoint() && !pMapObj->isLight()) 
+			if (!pMapObj->isWaypoint() && !pMapObj->isLight())
 			{
 				theMapObj = pMapObj;
 			}
@@ -256,7 +256,7 @@ void MapObjectProps::updateTheUI(void)
 	return(NULL);
 }
 
-void MapObjectProps::OnEditprop() 
+void MapObjectProps::OnEditprop()
 {
 	int sel = getSel();
 	if (sel == -1 || !m_dictToEdit)
@@ -267,8 +267,8 @@ void MapObjectProps::OnEditprop()
 	AsciiString vstr = getNthValueStr(m_dictToEdit, sel, &enquote);
 	Dict::DataType type = m_dictToEdit->getNthType(sel);
 
-	PropEdit propDlg(&kstr, &type, &vstr, true, this);	
-	if (propDlg.DoModal() == IDOK) 
+	PropEdit propDlg(&kstr, &type, &vstr, true, this);
+	if (propDlg.DoModal() == IDOK)
 	{
 		Dict newDict = DictItemUndoable::buildSingleItemDict(kstr, type, vstr);
 		if (this == TheMapObjectProps)
@@ -278,8 +278,8 @@ void MapObjectProps::OnEditprop()
 			DictItemUndoable *pUndo = new DictItemUndoable(&m_dictToEdit, newDict, newDict.getNthKey(0));
 			pDoc->AddAndDoUndoable(pUndo);
 			REF_PTR_RELEASE(pUndo); // belongs to pDoc now.
-		} 
-		else 
+		}
+		else
 		{
 			// we're running modal; just slam it in the dict
 			m_dictToEdit->copyPairFrom(newDict, newDict.getNthKey(0));
@@ -288,7 +288,7 @@ void MapObjectProps::OnEditprop()
 	}
 }
 
-void MapObjectProps::OnNewprop() 
+void MapObjectProps::OnNewprop()
 {
 	if (!m_dictToEdit)
 		return;
@@ -297,8 +297,8 @@ void MapObjectProps::OnNewprop()
 	static Dict::DataType lastNewType = Dict::DICT_BOOL;
 	AsciiString key, value;
 
-	PropEdit propDlg(&key, &lastNewType, &value, false, this);	
-	if (propDlg.DoModal() == IDOK) 
+	PropEdit propDlg(&key, &lastNewType, &value, false, this);
+	if (propDlg.DoModal() == IDOK)
 	{
 		Dict newDict = DictItemUndoable::buildSingleItemDict(key, lastNewType, value);
 		if (this == TheMapObjectProps)
@@ -309,7 +309,7 @@ void MapObjectProps::OnNewprop()
 			pDoc->AddAndDoUndoable(pUndo);
 			REF_PTR_RELEASE(pUndo); // belongs to pDoc now.
 		}
-		else 
+		else
 		{
 			// we're running modal; just slam it in the dict
 			m_dictToEdit->copyPairFrom(newDict, newDict.getNthKey(0));
@@ -318,12 +318,12 @@ void MapObjectProps::OnNewprop()
 	}
 }
 
-void MapObjectProps::OnRemoveprop() 
+void MapObjectProps::OnRemoveprop()
 {
 	int sel = getSel();
 	if (sel == -1)
 		return;
-	
+
 	NameKeyType k = m_dictToEdit->getNthKey(sel);
 	if (this == TheMapObjectProps)
 	{
@@ -342,7 +342,7 @@ void MapObjectProps::OnRemoveprop()
 	updateTheUI();
 }
 
-void MapObjectProps::OnDblclkProperties() 
+void MapObjectProps::OnDblclkProperties()
 {
 	OnEditprop();
 }
@@ -465,7 +465,7 @@ void MapObjectProps::_DictToEnabled(void)
 	CButton* pItem = (CButton*) GetDlgItem(IDC_MAPOBJECT_Enabled);
 	if (pItem) {
 		pItem->SetCheck(enabled);
-	}	
+	}
 }
 
 void MapObjectProps::_DictToScript(void)
@@ -473,14 +473,14 @@ void MapObjectProps::_DictToScript(void)
 	if (!m_dictToEdit) {
 		return;
 	}
-	
+
 	Bool exists;
 	CComboBox *pCombo = (CComboBox*)GetDlgItem(IDC_MAPOBJECT_Script);
 	// Load the subroutine scripts into the combo box.
 	EditParameter::loadScripts(pCombo, true);
 	/*Int stringNdx =*/ pCombo->AddString("<none>");
 	AsciiString script = m_dictToEdit->getAsciiString(TheKey_objectScriptAttachment, &exists);
-	
+
 	if (script.isEmpty()) {
 		pCombo->SelectString(-1, "<none>");
 	} else {
@@ -499,7 +499,7 @@ void MapObjectProps::_DictToDestructible(void)
 	CButton* pItem = (CButton*) GetDlgItem(IDC_MAPOBJECT_Indestructible);
 	if (pItem) {
 		pItem->SetCheck(destructible);
-	}	
+	}
 }
 
 void MapObjectProps::_DictToUnsellable(void)
@@ -513,23 +513,23 @@ void MapObjectProps::_DictToUnsellable(void)
 	CButton* pItem = (CButton*) GetDlgItem(IDC_MAPOBJECT_Unsellable);
 	if (pItem) {
 		pItem->SetCheck(unsellable);
-	}	
+	}
 }
 
 void MapObjectProps::_DictToTargetable()
 {
 	Bool targetable = false;
 	Bool exists;
-	if( m_dictToEdit ) 
+	if( m_dictToEdit )
 	{
 		targetable = m_dictToEdit->getBool( TheKey_objectTargetable, &exists );
 	}
 
 	CButton* pItem = (CButton*) GetDlgItem( IDC_MAPOBJECT_Targetable );
-	if( pItem ) 
+	if( pItem )
 	{
 		pItem->SetCheck( targetable );
-	}	
+	}
 }
 
 void MapObjectProps::_DictToPowered(void)
@@ -543,8 +543,8 @@ void MapObjectProps::_DictToPowered(void)
 	CButton* pItem = (CButton*) GetDlgItem(IDC_MAPOBJECT_Powered);
 	if (pItem) {
 		pItem->SetCheck(powered);
-	}	
-	
+	}
+
 }
 
 void MapObjectProps::_DictToAggressiveness(void)
@@ -584,7 +584,7 @@ void MapObjectProps::_DictToVisibilityRange(void)
 		static char buff[12];
 		sprintf(buff, "%d", distance);
 		if (distance == 0) {
-			pItem->SetWindowText(""); 
+			pItem->SetWindowText("");
 		} else {
 			pItem->SetWindowText(buff);
 		}
@@ -646,7 +646,7 @@ void MapObjectProps::_DictToShroudClearingDistance(void)
 		static char buff[12];
 		sprintf(buff, "%d", distance);
 		if (distance == 0) {
-			pItem->SetWindowText(""); 
+			pItem->SetWindowText("");
 		} else {
 			pItem->SetWindowText(buff);
 		}
@@ -660,11 +660,11 @@ void MapObjectProps::_DictToRecruitableAI(void)
  	if (m_dictToEdit) {
 		recruitableAI  = m_dictToEdit->getBool(TheKey_objectRecruitableAI, &exists);
  	}
-	
+
  	CButton* pItem = (CButton*) GetDlgItem(IDC_MAPOBJECT_RecruitableAI);
  	if (pItem) {
 		pItem->SetCheck(recruitableAI);
-	}	
+	}
 }
 
 void MapObjectProps::_DictToSelectable(void)
@@ -678,7 +678,7 @@ void MapObjectProps::_DictToSelectable(void)
 	CButton* pItem = (CButton*) GetDlgItem(IDC_MAPOBJECT_Selectable);
 	if (pItem) {
 		pItem->SetCheck(selectable);
-	}	
+	}
 }
 
 void MapObjectProps::_DictToStoppingDistance(void)
@@ -694,7 +694,7 @@ void MapObjectProps::_DictToStoppingDistance(void)
 		static char buff[12];
 		sprintf(buff, "%g", stoppingDistance);
 		pItem->SetWindowText(buff);
-	}	
+	}
 }
 
 void MapObjectProps::_DictToPrebuiltUpgrades(void)
@@ -770,7 +770,7 @@ void MapObjectProps::_DictToPrebuiltUpgrades(void)
 
 	// Finally, walk through the upgrades that he already has, and select the appropriate members
 	// from the list
-	
+
 	Bool exists;
 	int upgradeNum = 0;
 	AsciiString upgradeString;
@@ -874,7 +874,7 @@ void MapObjectProps::_HealthToDict(void)
 void MapObjectProps::_PrebuiltUpgradesToDict(void)
 {
 	getAllSelectedDicts();
-	
+
 	CListBox *pBox = (CListBox *) GetDlgItem(IDC_MAPOBJECT_BuildWithUpgrades);
 	if (!pBox) {
 		return;
@@ -890,7 +890,7 @@ void MapObjectProps::_PrebuiltUpgradesToDict(void)
 			return;
 		}
 	}
-	
+
 	Bool exists;
 	int upgradeNum = 0;
 	AsciiString upgradeString;
@@ -964,7 +964,7 @@ void MapObjectProps::_ScriptToDict(void)
 	DictItemUndoable *pUndo = new DictItemUndoable(getAllSelectedDictsData(), newDict, newDict.getNthKey(0), m_allSelectedDicts.size());
 	pDoc->AddAndDoUndoable(pUndo);
 	REF_PTR_RELEASE(pUndo); // belongs to pDoc now.
-	// Update is called by Do	
+	// Update is called by Do
 }
 
 void MapObjectProps::_IndestructibleToDict(void)
@@ -980,7 +980,7 @@ void MapObjectProps::_IndestructibleToDict(void)
 	DictItemUndoable *pUndo = new DictItemUndoable(getAllSelectedDictsData(), newDict, newDict.getNthKey(0), m_allSelectedDicts.size());
 	pDoc->AddAndDoUndoable(pUndo);
 	REF_PTR_RELEASE(pUndo); // belongs to pDoc now.
-	// Update is called by Do	
+	// Update is called by Do
 }
 
 void MapObjectProps::_UnsellableToDict(void)
@@ -997,7 +997,7 @@ void MapObjectProps::_UnsellableToDict(void)
 	pDoc->AddAndDoUndoable(pUndo);
 	REF_PTR_RELEASE(pUndo); // belongs to pDoc now.
 	// Update is called by Do
-	
+
 }
 
 void MapObjectProps::_TargetableToDict()
@@ -1042,7 +1042,7 @@ void MapObjectProps::_AggressivenessToDict(void)
 	static char buf[1024];
 	owner->GetWindowText(buf, sizeof(buf)-2);
 	int value = 0;
-	
+
 	if (strcmp(buf, "Sleep") == 0) {
 		value = -2;
 	} else if (strcmp(buf, "Passive") == 0) {
@@ -1061,7 +1061,7 @@ void MapObjectProps::_AggressivenessToDict(void)
 	DictItemUndoable *pUndo = new DictItemUndoable(getAllSelectedDictsData(), newDict, newDict.getNthKey(0), m_allSelectedDicts.size());
 	pDoc->AddAndDoUndoable(pUndo);
 	REF_PTR_RELEASE(pUndo); // belongs to pDoc now.
-	// Update is called by Do		
+	// Update is called by Do
 }
 
 void MapObjectProps::_VisibilityToDict(void)
@@ -1095,7 +1095,7 @@ void MapObjectProps::_VeterancyToDict(void)
 	CComboBox *owner = (CComboBox*)GetDlgItem(IDC_MAPOBJECT_Veterancy);
 	static char buf[1024];
 	int curSel = owner->GetCurSel();
-	int value = 0;	
+	int value = 0;
 	if (curSel >= 0) {
 		value=curSel;
 	}
@@ -1106,7 +1106,7 @@ void MapObjectProps::_VeterancyToDict(void)
 	DictItemUndoable *pUndo = new DictItemUndoable(getAllSelectedDictsData(), newDict, newDict.getNthKey(0), m_allSelectedDicts.size(), pDoc, true);
 	pDoc->AddAndDoUndoable(pUndo);
 	REF_PTR_RELEASE(pUndo); // belongs to pDoc now.
-	// Update is called by Do	
+	// Update is called by Do
 
 }
 
@@ -1124,7 +1124,7 @@ void MapObjectProps::_WeatherToDict(void)
 	DictItemUndoable *pUndo = new DictItemUndoable(getAllSelectedDictsData(), newDict, newDict.getNthKey(0), m_allSelectedDicts.size(), pDoc, true);
 	pDoc->AddAndDoUndoable(pUndo);
 	REF_PTR_RELEASE(pUndo); // belongs to pDoc now.
-	// Update is called by Do	
+	// Update is called by Do
 
 }
 
@@ -1142,14 +1142,14 @@ void MapObjectProps::_TimeToDict(void)
 	DictItemUndoable *pUndo = new DictItemUndoable(getAllSelectedDictsData(), newDict, newDict.getNthKey(0), m_allSelectedDicts.size(), pDoc, true);
 	pDoc->AddAndDoUndoable(pUndo);
 	REF_PTR_RELEASE(pUndo); // belongs to pDoc now.
-	// Update is called by Do	
+	// Update is called by Do
 
 }
 
 void MapObjectProps::_ShroudClearingDistanceToDict(void)
 {
 	getAllSelectedDicts();
-	
+
 	int value = -1;
 	CWnd* edit = GetDlgItem(IDC_MAPOBJECT_ShroudClearingDistance);
 	edit->EnableWindow(TRUE);
@@ -1173,10 +1173,10 @@ void MapObjectProps::_ShroudClearingDistanceToDict(void)
 void MapObjectProps::_RecruitableAIToDict(void)
 {
 	getAllSelectedDicts();
-	
+
 	CButton *owner = (CButton*) GetDlgItem(IDC_MAPOBJECT_RecruitableAI);
 	Bool isChecked = (owner->GetCheck() != 0);
-	
+
 	CWorldBuilderDoc* pDoc = CWorldBuilderDoc::GetActiveDoc();
 	Dict newDict;
 	newDict.setBool(TheKey_objectRecruitableAI, isChecked);
@@ -1202,10 +1202,10 @@ void MapObjectProps::_SelectableToDict(void)
 	// Update is called by Do
 }
 
-void MapObjectProps::_HPsToDict() 
+void MapObjectProps::_HPsToDict()
 {
 	getAllSelectedDicts();
-	
+
 	Int value;
 	static char buf[1024];
 

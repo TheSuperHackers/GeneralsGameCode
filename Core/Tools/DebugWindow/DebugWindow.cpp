@@ -47,7 +47,7 @@ static char THIS_FILE[] = __FILE__;
 //
 //		It is very important that this macro appear in each
 //		function, prior to any calls into MFC.  This means that
-//		it must appear as the first statement within the 
+//		it must appear as the first statement within the
 //		function, even before any object variable declarations
 //		as their constructors may generate calls into the MFC
 //		DLL.
@@ -108,21 +108,21 @@ void __declspec(dllexport) CreateDebugDialog(void)
 	if (tmpWnd->GetMainWndHWND()) {
 		SetFocus(tmpWnd->GetMainWndHWND());
 	}
-	
+
 	theApp.SetDialogWindow(tmpWnd);
 }
 
 void __declspec(dllexport) DestroyDebugDialog(void)
 {
 	AFX_MANAGE_STATE(AfxGetStaticModuleState( ));
-	DebugWindowDialog* tmpWnd = theApp.GetDialogWindow(); 
-	
+	DebugWindowDialog* tmpWnd = theApp.GetDialogWindow();
+
 	if (tmpWnd) {
 		tmpWnd->DestroyWindow();
 		delete tmpWnd;
 		theApp.SetDialogWindow(NULL);
 	}
-	
+
 }
 
 bool __declspec(dllexport) CanAppContinue(void)
@@ -134,7 +134,7 @@ bool __declspec(dllexport) CanAppContinue(void)
 	if (!pDbg) {
 		return true;
 	}
-	
+
 	return pDbg->CanProceed();
 }
 
@@ -147,7 +147,7 @@ void __declspec(dllexport) ForceAppContinue(void)
 	if (!pDbg) {
 		return;
 	}
-	
+
 	pDbg->ForceContinue();
 }
 
@@ -160,7 +160,7 @@ bool __declspec(dllexport) RunAppFast(void)
 	if (!pDbg) {
 		return true;
 	}
-	
+
 	return pDbg->RunAppFast();
 }
 

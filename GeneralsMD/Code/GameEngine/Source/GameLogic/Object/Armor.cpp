@@ -71,8 +71,8 @@ void ArmorTemplate::copyFrom(const ArmorTemplate* other) {
 }
 
 //-------------------------------------------------------------------------------------------------
-Real ArmorTemplate::adjustDamage(DamageType t, Real damage) const 
-{ 
+Real ArmorTemplate::adjustDamage(DamageType t, Real damage) const
+{
 	if (t == DAMAGE_UNRESISTABLE)
 		return damage;
 	if (t == DAMAGE_SUBDUAL_UNRESISTABLE)
@@ -84,7 +84,7 @@ Real ArmorTemplate::adjustDamage(DamageType t, Real damage) const
 
 	if (damage < 0.0f)
 		damage = 0.0f;
-	
+
 	return damage;
 }
 
@@ -129,7 +129,7 @@ const ArmorTemplate* ArmorStore::findArmorTemplate(AsciiString name) const
 {
 	NameKeyType namekey = TheNameKeyGenerator->nameToKey(name);
   ArmorTemplateMap::const_iterator it = m_armorTemplates.find(namekey);
-  if (it == m_armorTemplates.end()) 
+  if (it == m_armorTemplates.end())
 	{
 		return NULL;
 	}
@@ -142,7 +142,7 @@ const ArmorTemplate* ArmorStore::findArmorTemplate(AsciiString name) const
 //-------------------------------------------------------------------------------------------------
 /*static */ void ArmorStore::parseArmorDefinition(INI *ini)
 {
-	static const FieldParse myFieldParse[] = 
+	static const FieldParse myFieldParse[] =
 	{
 		{ "Armor", ArmorTemplate::parseArmorCoefficients, NULL, 0 }
 	};

@@ -48,7 +48,7 @@ W3DTerrainLogic::W3DTerrainLogic():
 m_mapMinZ(0),
 m_mapMaxZ(1)
 {
-	m_mapData = NULL; 
+	m_mapData = NULL;
 }  // end W3DTerrainLogic
 
 //-------------------------------------------------------------------------------------------------
@@ -192,7 +192,7 @@ Bool W3DTerrainLogic::loadMap( AsciiString filename , Bool query )
 //-------------------------------------------------------------------------------------------------
 /** Get the 3D extent of the terrain in world coordinates */
 //-------------------------------------------------------------------------------------------------
-void W3DTerrainLogic::getExtent( Region3D *extent ) const 
+void W3DTerrainLogic::getExtent( Region3D *extent ) const
 {
 	extent->lo.x = 0.0f;
 
@@ -244,7 +244,7 @@ void W3DTerrainLogic::getMaximumPathfindExtent( Region3D *extent ) const
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void W3DTerrainLogic::getExtentIncludingBorder( Region3D *extent ) const 
+void W3DTerrainLogic::getExtentIncludingBorder( Region3D *extent ) const
 {
 	extent->lo.x = 0.0f;
 	extent->lo.y = 0.0f;
@@ -259,10 +259,10 @@ void W3DTerrainLogic::getExtentIncludingBorder( Region3D *extent ) const
 //-------------------------------------------------------------------------------------------------
 Bool W3DTerrainLogic::isClearLineOfSight(const Coord3D& pos, const Coord3D& posOther) const
 {
-	if (TheTerrainRenderObject) 
+	if (TheTerrainRenderObject)
 	{
 		return TheTerrainRenderObject->isClearLineOfSight(pos, posOther);
-	}	
+	}
 	else
 	{
 		return false;
@@ -278,14 +278,14 @@ Real W3DTerrainLogic::getGroundHeight( Real x, Real y, Coord3D* normal ) const
 #ifdef USE_THE_TERRAIN_OBJECT
 	// TheSuperHackers @logic-client-separation helmutbuhler 11/04/2025
 	// W3DTerrainLogic shouldn't depend on TheTerrainRenderObject!
-	if (TheTerrainRenderObject) 
+	if (TheTerrainRenderObject)
 	{
 		return TheTerrainRenderObject->getHeightMapHeight(x,y,normal);
-	}	
-	else 
+	}
+	else
 	{
 		if (normal)
-		{	
+		{
 			//return a default normal pointing up
 			normal->x=0.0f;
 			normal->y=0.0f;
@@ -306,7 +306,7 @@ Real W3DTerrainLogic::getLayerHeight( Real x, Real y, PathfindLayerEnum layer, C
 	if (!TheTerrainRenderObject)
 	{
 		if (normal)
-		{	
+		{
 			//return a default normal pointing up
 			normal->x=0.0f;
 			normal->y=0.0f;
@@ -317,15 +317,15 @@ Real W3DTerrainLogic::getLayerHeight( Real x, Real y, PathfindLayerEnum layer, C
 
 	Real height = TheTerrainRenderObject->getHeightMapHeight(x,y,normal);
 
-	if (layer != LAYER_GROUND) 
+	if (layer != LAYER_GROUND)
 	{
 		Coord3D loc;
 		loc.x = x;
 		loc.y = y;
 		loc.z = height;
-		if (layer == LAYER_WALL) 
+		if (layer == LAYER_WALL)
 		{
-			if (!clip || TheAI->pathfinder()->isPointOnWall(&loc)) 
+			if (!clip || TheAI->pathfinder()->isPointOnWall(&loc))
 			{
 				return TheAI->pathfinder()->getWallHeight();
 			}
@@ -335,10 +335,10 @@ Real W3DTerrainLogic::getLayerHeight( Real x, Real y, PathfindLayerEnum layer, C
 			}
 		}
 		Bridge* pBridge;
-		if ((pBridge = findBridgeLayerAt(&loc, layer, clip)) != 0) 
+		if ((pBridge = findBridgeLayerAt(&loc, layer, clip)) != 0)
 		{
 			Real bridgeHeight = pBridge->getBridgeHeight(&loc, normal);
-			if (bridgeHeight > height) 
+			if (bridgeHeight > height)
 			{
 				return bridgeHeight;	// Don't return bridge height if it's in the ground.
 			}
@@ -384,10 +384,10 @@ void W3DTerrainLogic::xfer( Xfer *xfer )
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
 	xfer->xferVersion( &version, currentVersion );
-	
+
 	// extend base class
 	TerrainLogic::xfer( xfer );
-		
+
 }  // end xfer
 
 // ------------------------------------------------------------------------------------------------

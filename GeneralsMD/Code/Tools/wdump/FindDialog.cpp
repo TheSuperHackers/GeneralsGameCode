@@ -65,10 +65,10 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // FindDialog message handlers
 
-BOOL FindDialog::OnInitDialog() 
+BOOL FindDialog::OnInitDialog()
 {
 	CDialog::OnInitDialog();
-	
+
 	((CEdit*) GetDlgItem (IDC_FIND_STRING))->SetLimitText (MAX_FIND_STRING_LENGTH);
 	GetDlgItem (IDC_FIND_STRING)->SetWindowText (_FindString);
 
@@ -77,12 +77,12 @@ BOOL FindDialog::OnInitDialog()
 }
 
 
-void FindDialog::OnChangeFindString() 
+void FindDialog::OnChangeFindString()
 {
 	GetDlgItem (IDC_FIND_STRING)->GetWindowText (_FindString, MAX_FIND_STRING_LENGTH);
 }
 
-void FindDialog::OnUpdateFindString() 
+void FindDialog::OnUpdateFindString()
 {
-	GetDlgItem (IDOK)->EnableWindow (GetDlgItem (IDC_FIND_STRING)->GetWindowTextLength() > 0);	
+	GetDlgItem (IDOK)->EnableWindow (GetDlgItem (IDC_FIND_STRING)->GetWindowTextLength() > 0);
 }

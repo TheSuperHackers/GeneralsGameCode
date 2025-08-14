@@ -18,12 +18,12 @@
 
 // FILE: WindowProc.h /////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information					         
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:    ImagePacker
@@ -58,7 +58,7 @@ extern BOOL CALLBACK ImagePackerProc( HWND hWndDialog, UINT message,
 
 extern HWND MakePreviewDisplay( void );
 extern void UpdatePreviewWindow( void );
-extern LRESULT CALLBACK PreviewProc( HWND hWnd, UINT message, 
+extern LRESULT CALLBACK PreviewProc( HWND hWnd, UINT message,
 																		 WPARAM wParam, LPARAM lParam );
 
 extern BOOL CALLBACK ImageErrorProc( HWND hWndDialog, UINT message,

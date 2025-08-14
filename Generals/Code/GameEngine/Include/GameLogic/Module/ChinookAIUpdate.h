@@ -24,7 +24,7 @@
 
 // ChinookAIUpdate.h //////////
 // Author: Steven Johnson, June 2002
- 
+
 #pragma once
 
 #ifndef _ChinookAIUpdate_H_
@@ -65,7 +65,7 @@ public:
 };
 
 //-------------------------------------------------------------------------------------------------
-enum ChinookFlightStatus CPP_11(: Int) // Stored in save file, don't renumber.  jba. 
+enum ChinookFlightStatus CPP_11(: Int) // Stored in save file, don't renumber.  jba.
 {
 	CHINOOK_TAKING_OFF				= 0,
 	CHINOOK_FLYING						= 1,
@@ -89,7 +89,7 @@ public:
 	virtual UpdateSleepTime update();
  	virtual void aiDoCommand(const AICommandParms* parms);
 	virtual Bool chooseLocomotorSet(LocomotorSetType wst);
-	// this is present solely for some transports to override, so that they can land before 
+	// this is present solely for some transports to override, so that they can land before
 	// allowing people to exit...
 	virtual AIFreeToExitType getAiFreeToExit(const Object* exiter) const;
 	virtual Bool isAllowedToAdjustDestination() const;
@@ -99,7 +99,7 @@ public:
 	// prevent supply-ferry behavior in some cases (eg, when toting passengers)
 	virtual Bool isAvailableForSupplying() const;
 	virtual Bool isCurrentlyFerryingSupplies() const;
-	
+
 	virtual Bool isIdle() const;
 
 	const ChinookAIUpdateModuleData* friend_getData() const { return getChinookAIUpdateModuleData(); }

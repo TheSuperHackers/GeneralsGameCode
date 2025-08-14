@@ -37,7 +37,7 @@ static char THIS_FILE[] = __FILE__;
 
 IMPLEMENT_DYNCREATE(EmitterLinePropPageClass, CPropertyPage)
 
-EmitterLinePropPageClass::EmitterLinePropPageClass() : 
+EmitterLinePropPageClass::EmitterLinePropPageClass() :
 	CPropertyPage(EmitterLinePropPageClass::IDD),
 	m_pEmitterList(NULL),
 	m_bValid(true),
@@ -105,7 +105,7 @@ EmitterLinePropPageClass::Initialize (void)
 		m_NoiseAmplitude = m_pEmitterList->Get_Noise_Amplitude();
 		m_MergeAbortFactor = m_pEmitterList->Get_Merge_Abort_Factor();
 		m_TextureTileFactor = m_pEmitterList->Get_Texture_Tile_Factor();
-		
+
 		Vector2 uvrate = m_pEmitterList->Get_UV_Offset_Rate();
 		m_UPerSec = uvrate.X;
 		m_VPerSec = uvrate.Y;
@@ -114,10 +114,10 @@ EmitterLinePropPageClass::Initialize (void)
 	return ;
 }
 
-BOOL EmitterLinePropPageClass::OnInitDialog() 
+BOOL EmitterLinePropPageClass::OnInitDialog()
 {
 	CPropertyPage::OnInitDialog();
-	
+
 	// Set up the spinner ranges
 	m_SubdivisionLevelSpin.SetRange(0,8);
 	m_SubdivisionLevelSpin.SetPos(m_SubdivisionLevel);
@@ -138,11 +138,11 @@ BOOL EmitterLinePropPageClass::OnInitDialog()
 
 	bool enable = (m_pEmitterList->Get_Render_Mode() == W3D_EMITTER_RENDER_MODE_LINE);
 	::Enable_Dialog_Controls(m_hWnd,enable);
-	
+
 	return TRUE;
 }
 
-BOOL EmitterLinePropPageClass::OnApply() 
+BOOL EmitterLinePropPageClass::OnApply()
 {
 	//
 	//	Get the data from the controls
@@ -153,7 +153,7 @@ BOOL EmitterLinePropPageClass::OnApply()
 	m_TextureTileFactor = ::GetDlgItemFloat (m_hWnd, IDC_UVTILING_EDIT);
 	m_UPerSec = ::GetDlgItemFloat (m_hWnd, IDC_UPERSEC_EDIT);
 	m_VPerSec = ::GetDlgItemFloat (m_hWnd, IDC_VPERSEC_EDIT);
-	
+
 	m_MappingMode = SendDlgItemMessage (IDC_MAPMODE_COMBO, CB_GETCURSEL);
 	m_MergeIntersections = !!SendDlgItemMessage (IDC_MERGE_INTERSECTIONS_CHECK, BM_GETCHECK);
 	m_EndCaps = !!SendDlgItemMessage (IDC_END_CAPS_CHECK, BM_GETCHECK);
@@ -179,11 +179,11 @@ BOOL EmitterLinePropPageClass::OnApply()
 }
 
 
-BOOL EmitterLinePropPageClass::OnCommand(WPARAM wParam, LPARAM lParam) 
+BOOL EmitterLinePropPageClass::OnCommand(WPARAM wParam, LPARAM lParam)
 {
 	switch (LOWORD (wParam))
 	{
-		// Check if any of the edit boxes were modified, 
+		// Check if any of the edit boxes were modified,
 		case IDC_SUBDIVISION_LEVEL_EDIT:
 		case IDC_NOISE_AMPLITUDE_EDIT:
 		case IDC_MERGE_ABORT_FACTOR_EDIT:
@@ -208,20 +208,20 @@ BOOL EmitterLinePropPageClass::OnCommand(WPARAM wParam, LPARAM lParam)
 				SetModified ();
 			}
 			break;
-	
+
 	}
-	
+
 	return CPropertyPage::OnCommand(wParam, lParam);
 }
 
-BOOL EmitterLinePropPageClass::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult) 
+BOOL EmitterLinePropPageClass::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult)
 {
 	//
 	//	Update the spinner control if necessary
 	//
 	NMHDR *pheader = (NMHDR *)lParam;
 	if ((pheader != NULL) && (pheader->code == UDN_DELTAPOS)) {
-		LPNMUPDOWN pupdown = (LPNMUPDOWN)lParam;		
+		LPNMUPDOWN pupdown = (LPNMUPDOWN)lParam;
 		::Update_Spinner_Buddy (pheader->hwndFrom, pupdown->iDelta);
 		SetModified ();
 	}

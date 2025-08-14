@@ -16,22 +16,22 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/*********************************************************************************************** 
- ***                            Confidential - Westwood Studios                              *** 
- *********************************************************************************************** 
- *                                                                                             * 
- *                 Project Name : Commando / G 3D engine                                       * 
- *                                                                                             * 
- *                    File Name : MeshDeformData.h                                             * 
- *                                                                                             * 
- *                   Programmer : Patrick Smith                                                * 
- *                                                                                             * 
- *                   Start Date : 04/26/99                                                     * 
- *                                                                                             * 
- *                  Last Update : 
- *                                                                                             * 
- *---------------------------------------------------------------------------------------------* 
- * Functions:                                                                                  * 
+/***********************************************************************************************
+ ***                            Confidential - Westwood Studios                              ***
+ ***********************************************************************************************
+ *                                                                                             *
+ *                 Project Name : Commando / G 3D engine                                       *
+ *                                                                                             *
+ *                    File Name : MeshDeformData.h                                             *
+ *                                                                                             *
+ *                   Programmer : Patrick Smith                                                *
+ *                                                                                             *
+ *                   Start Date : 04/26/99                                                     *
+ *                                                                                             *
+ *                  Last Update :
+ *                                                                                             *
+ *---------------------------------------------------------------------------------------------*
+ * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #ifndef __MESH_DEFORM_DATA_H
@@ -69,10 +69,10 @@ class MeshDeformModData : public LocalModData
 
 		//////////////////////////////////////////////////////////////////////
 		//	Public methods
-		//////////////////////////////////////////////////////////////////////			
+		//////////////////////////////////////////////////////////////////////
 		virtual LocalModData *	Clone (void)	{ return new MeshDeformModData; }
 		void							Record_Mesh_State (TriObject &tri_obj, float state, bool update_all);
-		
+
 		//	Inline accessors
 		Mesh *					Peek_Mesh (void) const						{ return m_SetsList[m_CurrentSet]->Peek_Mesh (); }
 		const Point3 *			Peek_Orig_Vertex_Array (void) const		{ return m_SetsList[m_CurrentSet]->Peek_Orig_Vertex_Array (); }
@@ -106,7 +106,7 @@ class MeshDeformModData : public LocalModData
 
 		//////////////////////////////////////////////////////////////////////
 		//	Protected methods
-		//////////////////////////////////////////////////////////////////////			
+		//////////////////////////////////////////////////////////////////////
 		void						Resize_Vertex_Array (int count, int color_count);
 		void						Copy_Vertex_Array (Mesh &mesh);
 		void						Free_Sets_List (void);
@@ -116,7 +116,7 @@ class MeshDeformModData : public LocalModData
 
 		//////////////////////////////////////////////////////////////////////
 		//	Private member data
-		//////////////////////////////////////////////////////////////////////		
+		//////////////////////////////////////////////////////////////////////
 
 		// Set managment
 		int						m_CurrentSet;

@@ -662,7 +662,7 @@ Int UString::CompareNoCase(const Char* s) const
 		// Convert to lowercase for compare
 		WChar sc = (WChar)CharToLower<Char>(s[index]);
 		WChar wc = CharToLower<WChar>(ws[index]);
-		
+
 		// Difference between characters.
 		Int diff = (sc - wc);
 
@@ -853,7 +853,7 @@ Int UString::FindLast(WChar c) const
 *     SubString - Substring to search for.
 *
 * RESULT
-*     
+*
 *
 ******************************************************************************/
 

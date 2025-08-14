@@ -48,24 +48,24 @@
 // At one point in time I was using the 'O' prefix to mean obsolete.  Now we just move stuff
 // into this file...
 /////////////////////////////////////////////////////////////////////////////////////////////
-enum 
+enum
 {
 		W3D_CHUNK_MESH_HEADER					=0x00000001,	// header for a mesh
 		W3D_CHUNK_SURRENDER_NORMALS			=0x00000004,	// array of surrender normals (one per vertex as req. by surrender)
 		W3D_CHUNK_TEXCOORDS						=0x00000005,	// array of texture coordinates
 		O_W3D_CHUNK_MATERIALS					=0x00000006,	// array of materials
-		O_W3D_CHUNK_TRIANGLES					=0x00000007,	// array of triangles 
-		O_W3D_CHUNK_QUADRANGLES					=0x00000008,	// array of quads 
-		O_W3D_CHUNK_SURRENDER_TRIANGLES		=0x00000009,	// array of surrender format tris	
-		O_W3D_CHUNK_POV_TRIANGLES				=0x0000000A,	// POV format triangles 
-		O_W3D_CHUNK_POV_QUADRANGLES			=0x0000000B,	// POV format quads 
+		O_W3D_CHUNK_TRIANGLES					=0x00000007,	// array of triangles
+		O_W3D_CHUNK_QUADRANGLES					=0x00000008,	// array of quads
+		O_W3D_CHUNK_SURRENDER_TRIANGLES		=0x00000009,	// array of surrender format tris
+		O_W3D_CHUNK_POV_TRIANGLES				=0x0000000A,	// POV format triangles
+		O_W3D_CHUNK_POV_QUADRANGLES			=0x0000000B,	// POV format quads
 		W3D_CHUNK_VERTEX_COLORS					=0x0000000D,	// Pre-set vertex coloring
-		W3D_CHUNK_DAMAGE							=0x0000000F,	// Mesh damage, new set of materials, vertex positions, vertex colors	
+		W3D_CHUNK_DAMAGE							=0x0000000F,	// Mesh damage, new set of materials, vertex positions, vertex colors
 			W3D_CHUNK_DAMAGE_HEADER				=0x00000010,	// Header for the damage data, tells what is coming
 			W3D_CHUNK_DAMAGE_VERTICES			=0x00000011,	// Array of modified vertices (W3dMeshDamageVertexStruct's)
 			W3D_CHUNK_DAMAGE_COLORS				=0x00000012,	// Array of modified vert colors (W3dMeshDamageColorStruct's)
-			W3D_CHUNK_DAMAGE_MATERIALS			=0x00000013,	
-			
+			W3D_CHUNK_DAMAGE_MATERIALS			=0x00000013,
+
 		O_W3D_CHUNK_MATERIALS2					=0x00000014,	// array of version 2 materials (with animation frame counts)
 
 		W3D_CHUNK_MATERIALS3						=0x00000015,	// array of version 3 materials (all new surrender features supported)
@@ -108,7 +108,7 @@ struct W3dMaterial2Struct
 	uint8	 		Red;									// Rgb colors
 	uint8	 		Green;
 	uint8	 		Blue;
-	uint8			Alpha;								
+	uint8			Alpha;
 
 	uint16		PrimaryNumFrames;					// number of animated frames (if 1, not animated)
 	uint16		SecondaryNumFrames;				// number of animated frames (if 1, not animated)
@@ -149,7 +149,7 @@ struct W3dMaterial2Struct
 #define		W3DMAPPING_ENVIRONMENT									1
 
 /////////////////////////////////////////////////////////////////////////////////////////////
-// Version 3.0 Material, A W3D_CHUNK_MATERIALS3 chunk will wrap a bunch of 
+// Version 3.0 Material, A W3D_CHUNK_MATERIALS3 chunk will wrap a bunch of
 // W3D_CHUNK_MATERIAL3 chunks.  Inside each chunk will be a name chunk, an 'info' chunk which
 // contains the following struct, and one or more map chunks. a mesh with 2 materials might
 // look like:
@@ -161,19 +161,19 @@ struct W3dMaterial2Struct
 //			W3D_CHUNK_MATERIAL3_DC_MAP		<-- a map, W3dMap3Struct
 //				W3D_CHUNK_STRING				<-- filename of the map
 //				W3D_CHUNK_MAP_INFO			<-- map parameters
-//			W3D_CHUNK_MATERIAL3_SC_MAP        
+//			W3D_CHUNK_MATERIAL3_SC_MAP
 //				W3D_CHUNK_STRING				<-- filename of the map
 //				W3D_CHUNK_MAP_INFO
 //		W3D_CHUNK_MATERIAL3
 //			W3D_CHUNK_MATERIAL3_NAME
 //			W3D_CHUNK_MATERIAL3_INFO
 //			W3D_CHUNK_MATERIAL3_SI_MAP
-//		
+//
 /////////////////////////////////////////////////////////////////////////////////////////////
 struct W3dMaterial3Struct
 {
 	uint32					Attributes;					// flags,hints,etc.
-	
+
 	W3dRGBStruct			DiffuseColor;				// diffuse color
 	W3dRGBStruct			SpecularColor;				// specular color
 
@@ -221,7 +221,7 @@ struct W3dMeshHeaderStruct
 	uint32					Version;							// Currently version 0x100
 	char						MeshName[W3D_NAME_LEN];		// name of the mesh (Null terminated)
 	uint32					Attributes;
-	
+
 	//
 	// Counts, these can be regarded as an inventory of what is to come in the file.
 	//
@@ -231,7 +231,7 @@ struct W3dMeshHeaderStruct
 
 	uint32					NumPovTris;			// (NOT USED)
 	uint32					NumPovQuads;		// (NOT USED)
-	
+
 	uint32					NumVertices;		// number of unique vertices
 	uint32					NumNormals;			// number of unique normals (OBSOLETE!)
 	uint32					NumSrNormals;		// number of surrender normals (MUST EQUAL NumVertices or 0)
@@ -258,13 +258,13 @@ struct W3dMeshHeaderStruct
 	W3dVectorStruct		SphCenter;			// Center of bounding sphere
 	float32					SphRadius;			// Bounding sphere radius
 
-	// 
+	//
 	// Default transformation
 	//
 	W3dVectorStruct		Translation;
 	float32					Rotation[9];
 
-	// 
+	//
 	// Physics Properties
 	//
 	W3dVectorStruct		MassCenter;			// Center of mass in object space
@@ -291,7 +291,7 @@ struct W3dMeshDamageStruct
 	uint32					NumDamageVerts;		// number of vertices to replace
 	uint32					NumDamageColors;		// number of vertex colors to replace
 	uint32					DamageIndex;			// what index is this damage chunk assigned to
-	uint32					FutureUse[4];	
+	uint32					FutureUse[4];
 };
 
 struct W3dMeshDamageVertexStruct
@@ -326,7 +326,7 @@ struct W3dHModelAuxDataStruct
 
 	float32					LODMin;
 	float32					LODMax;
-	uint32					FutureUse[32];	
+	uint32					FutureUse[32];
 };
 
 

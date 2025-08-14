@@ -58,4 +58,4 @@ public:
 	static void Export_Points(INode * scene_root,TimeValue time,ChunkSaveClass & csave);
 };
 
-#endif 
+#endif

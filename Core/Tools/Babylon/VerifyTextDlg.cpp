@@ -64,28 +64,28 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // CVerifyTextDlg message handlers
 
-void CVerifyTextDlg::OnNomatch() 
+void CVerifyTextDlg::OnNomatch()
 {
 
 	EndDialog ( IDNO );
-	
+
 }
 
-void CVerifyTextDlg::OnMatch() 
+void CVerifyTextDlg::OnMatch()
 {
 
 	EndDialog ( IDYES );
-	
+
 }
 
-BOOL CVerifyTextDlg::OnInitDialog() 
+BOOL CVerifyTextDlg::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 
 	SetDlgItemText ( IDC_TRANS, m_trans );
 	SetDlgItemText ( IDC_ORIG, m_orig );
-		
-	
+
+
 	return TRUE;  // return TRUE unless you set the focus to a control
 	              // EXCEPTION: OCX Property Pages should return FALSE
 }

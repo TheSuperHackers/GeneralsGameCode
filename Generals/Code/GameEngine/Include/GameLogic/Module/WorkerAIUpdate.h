@@ -89,11 +89,11 @@ public:
 		m_warehouseScanDistance = 100;
 	}
 
-	static void buildFieldParse(MultiIniFieldParse& p) 
+	static void buildFieldParse(MultiIniFieldParse& p)
 	{
     AIUpdateModuleData::buildFieldParse(p);
 
-		static const FieldParse dataFieldParse[] = 
+		static const FieldParse dataFieldParse[] =
 		{
 			{ "MaxBoxes",					INI::parseInt,		NULL, offsetof( WorkerAIUpdateModuleData, m_maxBoxesData ) },
 			{ "RepairHealthPercentPerSecond",	INI::parsePercentToReal,	NULL, offsetof( WorkerAIUpdateModuleData, m_repairHealthPercentPerSecond ) },
@@ -140,8 +140,8 @@ public:
 	virtual Real getBoredTime( void ) const;							///< how long till we're bored
 	virtual Real getBoredRange( void ) const;							///< when we're bored, we look this far away to do things
 
-	virtual Object *construct( const ThingTemplate *what, 
-														 const Coord3D *pos, Real angle, 
+	virtual Object *construct( const ThingTemplate *what,
+														 const Coord3D *pos, Real angle,
 														 Player *owningPlayer,
 														 Bool isRebuild );			///< construct a building
 
@@ -185,7 +185,7 @@ public:
 	virtual Bool isCurrentlyFerryingSupplies() const;
 	virtual Real getWarehouseScanDistance() const; ///< How far can I look for a warehouse?
 
-	virtual void setForceBusyState(Bool v) { m_forcedBusyPending = v; } 
+	virtual void setForceBusyState(Bool v) { m_forcedBusyPending = v; }
 	virtual Bool isForcedIntoBusyState() const { return m_forcedBusyPending; }
 
 	virtual void setForceWantingState(Bool v){ m_forcePending = v; }
@@ -209,14 +209,14 @@ public:
 
 	virtual void startBuildingSound( const AudioEventRTS *sound, ObjectID constructionSiteID );
 	virtual void finishBuildingSound();
-	
+
 protected:
 
 // Dozer data
 	struct DozerTaskInfo
 	{
 		ObjectID m_targetObjectID;				///< target object ID of task
-		UnsignedInt m_taskOrderFrame;			///< logic frame we decided we wanted to do this task	
+		UnsignedInt m_taskOrderFrame;			///< logic frame we decided we wanted to do this task
 	} m_task[ DOZER_NUM_TASKS ];				///< tasks we want to do indexed by DozerTask
 
 
@@ -255,7 +255,7 @@ protected:
 	virtual void privateRepair( Object *obj, CommandSourceType cmdSource );	///< repair the target
 	virtual void privateResumeConstruction( Object *obj, CommandSourceType cmdSource );  ///< resume construction on obj
 	virtual void privateDock( Object *obj, CommandSourceType cmdSource );
-	virtual void privateIdle(CommandSourceType cmdSource);						///< Enter idle state.	
+	virtual void privateIdle(CommandSourceType cmdSource);						///< Enter idle state.
 
 private:
 

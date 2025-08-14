@@ -44,7 +44,7 @@
  *   SimpleDynVecClass<T>::Add -- Add an item to the end of the array                          *
  *   SimpleDynVecClass<T>::Delete -- Delete an item from the array                             *
  *   SimpleDynVecClass<T>::Delete_Range -- delete several items from the array                 *
- *   SimpleDynVecClass<T>::Delete_All -- delete all items from the array                       * 
+ *   SimpleDynVecClass<T>::Delete_All -- delete all items from the array                       *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #if defined(_MSC_VER)
@@ -64,10 +64,10 @@
 #pragma warning (disable:4702)	// disabling the "unreachable code" warning.
 #endif
 
-/** 
+/**
 ** SimpleVecClass
 ** This is a template similar to VectorClass (found in Vector.h) except that it is designed
-** specifically to work with data types that are "memcopy-able".  
+** specifically to work with data types that are "memcopy-able".
 ** DON'T USE THIS TEMPLATE IF YOUR CLASS REQUIRES A DESTRUCTOR!!!
 */
 template <class T> class SimpleVecClass
@@ -77,7 +77,7 @@ public:
 	SimpleVecClass(int size = 0);
 	virtual ~SimpleVecClass(void);
 
-	T & operator[](int index)					{ assert(index < VectorMax); return(Vector[index]); } 
+	T & operator[](int index)					{ assert(index < VectorMax); return(Vector[index]); }
 	T const & operator[](int index) const	{ assert(index < VectorMax); return(Vector[index]); }
 
 	int				Length(void) const		{ return VectorMax; }
@@ -86,7 +86,7 @@ public:
 	void				Zero_Memory(void)			{ if (Vector != NULL) { memset(Vector,0,VectorMax * sizeof(T)); } }
 
 protected:
-	
+
 	T *				Vector;
 	int				VectorMax;
 };
@@ -114,7 +114,7 @@ inline SimpleVecClass<T>::SimpleVecClass(int size) :
 		Resize(size);
 	}
 }
-	
+
 /***********************************************************************************************
  * SimpleVecClass<T>::~SimpleVecClass -- Destructor                                            *
  *                                                                                             *
@@ -155,7 +155,7 @@ inline bool SimpleVecClass<T>::Resize(int newsize)
 	if (newsize == VectorMax) {
 		return true;
 	}
-	
+
 	if (newsize > 0) {
 
 		/*
@@ -223,7 +223,7 @@ inline bool SimpleVecClass<T>::Uninitialised_Grow(int newsize)
 	if (newsize <= VectorMax) {
 		return true;
 	}
-	
+
 	if (newsize > 0) {
 
 		/*
@@ -266,7 +266,7 @@ public:
 
 	// Array-like access (does not grow)
 	int				Count(void) const						{ return(ActiveCount); }
-	T &				operator[](int index)				{ assert(index < ActiveCount); return(Vector[index]); } 
+	T &				operator[](int index)				{ assert(index < ActiveCount); return(Vector[index]); }
 	T const &		operator[](int index) const		{ assert(index < ActiveCount); return(Vector[index]); }
 
 	// Change maximum size of vector
@@ -376,7 +376,7 @@ template<class T>
 inline bool SimpleDynVecClass<T>::Add(T const & object,int new_size_hint)
 {
 	if (ActiveCount >= VectorMax) {
-		
+
 		/*
 		** We are out of space so tell the vector to grow
 		*/
@@ -412,7 +412,7 @@ inline T *  SimpleDynVecClass<T>::Add_Multiple( int number_to_add )
 	ActiveCount += number_to_add;
 
 	if (ActiveCount >= VectorMax) {
-		
+
 		/*
 		** We are out of space so tell the vector to grow
 		*/
@@ -530,7 +530,7 @@ inline bool SimpleDynVecClass<T>::Delete_Range(int start,int count,bool allow_sh
 	if (allow_shrink) {
 		Shrink();
 	}
-	
+
 	return true;
 }
 
@@ -584,7 +584,7 @@ inline bool SimpleDynVecClass<T>::Grow(int new_size_hint)
 	*/
 	int new_size = MAX(Length() + Length()/4,Length() + 4);
 	new_size = MAX(new_size,new_size_hint);
-	
+
 	return Resize(new_size);
 }
 

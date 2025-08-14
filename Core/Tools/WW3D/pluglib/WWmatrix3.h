@@ -17,40 +17,40 @@
 */
 
 /* $Header: /Commando/Code/Tools/max2w3d/WWmatrix3.h 33    2/03/00 4:55p Jason_a $ */
-/*********************************************************************************************** 
- ***                            Confidential - Westwood Studios                              *** 
- *********************************************************************************************** 
- *                                                                                             * 
- *                 Project Name : WW3D                                                         * 
- *                                                                                             * 
- *                    File Name : MATRIX3.H                                                    * 
- *                                                                                             * 
- *                   Programmer : Greg Hjelstrom                                               * 
- *                                                                                             * 
- *                   Start Date : 06/02/97                                                     * 
- *                                                                                             * 
- *                  Last Update : June 2, 1997 [GH]                                            * 
- *                                                                                             * 
- *---------------------------------------------------------------------------------------------* 
- * Functions:                                                                                  * 
- *   Matrix3::Matrix3 -- Constructor, optionally initialize to Identitiy matrix                * 
- *   Matrix3::Matrix3 -- Copy Constructor                                                      * 
- *   Matrix3::Matrix3 -- Convert a Matrix3D (fake 4x4) to a Matrix3                            * 
- *   Matrix3::Matrix3 -- Constructor                                                           * 
- *   Matrix3::Transpose -- Returns transpose of the matrix                                     * 
- *   Matrix3::Inverse -- returns the inverse of the matrix                                     * 
+/***********************************************************************************************
+ ***                            Confidential - Westwood Studios                              ***
+ ***********************************************************************************************
+ *                                                                                             *
+ *                 Project Name : WW3D                                                         *
+ *                                                                                             *
+ *                    File Name : MATRIX3.H                                                    *
+ *                                                                                             *
+ *                   Programmer : Greg Hjelstrom                                               *
+ *                                                                                             *
+ *                   Start Date : 06/02/97                                                     *
+ *                                                                                             *
+ *                  Last Update : June 2, 1997 [GH]                                            *
+ *                                                                                             *
+ *---------------------------------------------------------------------------------------------*
+ * Functions:                                                                                  *
+ *   Matrix3::Matrix3 -- Constructor, optionally initialize to Identitiy matrix                *
+ *   Matrix3::Matrix3 -- Copy Constructor                                                      *
+ *   Matrix3::Matrix3 -- Convert a Matrix3D (fake 4x4) to a Matrix3                            *
+ *   Matrix3::Matrix3 -- Constructor                                                           *
+ *   Matrix3::Transpose -- Returns transpose of the matrix                                     *
+ *   Matrix3::Inverse -- returns the inverse of the matrix                                     *
  *   Matrix3::Determinant -- returns the determinant of the matrix                             *
- *   Matrix3::operator = -- assignment operator                                                * 
- *   Matrix3::operator += -- "plus equals" operator                                            * 
- *   Matrix3::operator-= -- "minus equals" operator                                            * 
- *   Matrix3::operator *= -- "times equals" operator                                           * 
- *   Matrix3::operator /= -- "divide equals" operator                                          * 
- *   Create_X_Rotation_Matrix3 -- creates a matrix3 which is a rotation about X                * 
- *   Create_Y_Rotation_Matrix3 -- Creates a Matrix3 which is a rotation about Y                * 
- *   Create_Z_Rotation_Matrix3 -- Creates a matrix3 which is a rotation about Z                * 
- *   Matrix3::Rotate_X -- Post-mutiplies an x rotation onto the current matrix                 * 
- *   Matrix3::Rotate_Y -- Post-multiplies the matrix with a rotation about Y                   * 
- *   Matrix3::Rotate_Z -- Post-multiplies the matrix with a rotation about Z                   * 
+ *   Matrix3::operator = -- assignment operator                                                *
+ *   Matrix3::operator += -- "plus equals" operator                                            *
+ *   Matrix3::operator-= -- "minus equals" operator                                            *
+ *   Matrix3::operator *= -- "times equals" operator                                           *
+ *   Matrix3::operator /= -- "divide equals" operator                                          *
+ *   Create_X_Rotation_Matrix3 -- creates a matrix3 which is a rotation about X                *
+ *   Create_Y_Rotation_Matrix3 -- Creates a Matrix3 which is a rotation about Y                *
+ *   Create_Z_Rotation_Matrix3 -- Creates a matrix3 which is a rotation about Z                *
+ *   Matrix3::Rotate_X -- Post-mutiplies an x rotation onto the current matrix                 *
+ *   Matrix3::Rotate_Y -- Post-multiplies the matrix with a rotation about Y                   *
+ *   Matrix3::Rotate_Z -- Post-multiplies the matrix with a rotation about Z                   *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 
@@ -107,7 +107,7 @@ public:
 	void Set(const Vector3 & axis,float angle);
 	void Set(const Vector3 & axis,float s_angle,float c_angle);
 	void Set(const Quaternion & q);
-	
+
 	/*
 	** Access operators
 	*/
@@ -156,7 +156,7 @@ public:
 	float Get_X_Rotation(void) const;
 	float Get_Y_Rotation(void) const;
 	float Get_Z_Rotation(void) const;
-	
+
 	/*
 	** These functions return a vector representing the direction an
    ** axis is pointing.
@@ -167,12 +167,12 @@ public:
 	void Get_X_Vector(Vector3 * set_x) const;
 	void Get_Y_Vector(Vector3 * set_y) const;
 	void Get_Z_Vector(Vector3 * set_z) const;
-	
+
 	/*
 	** Negation
 	*/
 	friend Matrix3 operator - (const Matrix3& a);
-	
+
 	/*
 	** Scalar multiplication and division
 	*/
@@ -182,7 +182,7 @@ public:
 
 	/*
 	** matrix addition
-	*/ 
+	*/
 	friend Matrix3 operator + (const Matrix3& a, const Matrix3& b);
 	static void Add(const Matrix3 & a, const Matrix3 & b,Matrix3 * res);
 
@@ -224,7 +224,7 @@ public:
 	/*
 	** Check whether a matrix is orthogonal, make it orthogonal
 	*/
-	int	Is_Orthogonal(void) const; 
+	int	Is_Orthogonal(void) const;
 	void	Re_Orthogonalize(void);
 
 	/*
@@ -253,17 +253,17 @@ protected:
 };
 
 
-/*********************************************************************************************** 
- * Matrix3::Matrix3 -- Constructor, optionally initialize to Identitiy matrix                  * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   06/02/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * Matrix3::Matrix3 -- Constructor, optionally initialize to Identitiy matrix                  *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   06/02/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
 inline Matrix3::Matrix3(bool identity)
 {
@@ -274,47 +274,47 @@ inline Matrix3::Matrix3(bool identity)
 	}
 }
 
-/*********************************************************************************************** 
- * Matrix3::Matrix3 -- Copy Constructor                                                        * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   06/02/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * Matrix3::Matrix3 -- Copy Constructor                                                        *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   06/02/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
 inline Matrix3::Matrix3(const Matrix3 & m)
 {
 	Row[0] = m.Row[0]; Row[1] = m.Row[1]; Row[2] = m.Row[2];
 }
 
-/*********************************************************************************************** 
- * Matrix3::Matrix3 -- Constructor                                                             * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   06/02/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * Matrix3::Matrix3 -- Constructor                                                             *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   06/02/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
 inline Matrix3::Matrix3(const Vector3 & r0, const Vector3 & r1, const Vector3 & r2)
-{ 
-	Row[0] = r0; 
-	Row[1] = r1; 
-	Row[2] = r2; 
+{
+	Row[0] = r0;
+	Row[1] = r1;
+	Row[2] = r2;
 }
 
 inline void Matrix3::Set(const Vector3 & r0, const Vector3 & r1, const Vector3 & r2)
-{ 
-	Row[0] = r0; 
-	Row[1] = r1; 
-	Row[2] = r2; 
+{
+	Row[0] = r0;
+	Row[1] = r1;
+	Row[2] = r2;
 }
 
 inline void Matrix3::Make_Identity(void)
@@ -349,14 +349,14 @@ inline void Matrix3::Set
 	Row[2].Set(m31,m32,m33);
 }
 
-inline Matrix3::Matrix3(const Vector3 & axis,float angle) 
-{ 
-	Set(axis,angle); 
+inline Matrix3::Matrix3(const Vector3 & axis,float angle)
+{
+	Set(axis,angle);
 }
 
-inline Matrix3::Matrix3(const Vector3 & axis,float s_angle,float c_angle) 
-{ 
-	Set(axis,s_angle,c_angle); 
+inline Matrix3::Matrix3(const Vector3 & axis,float s_angle,float c_angle)
+{
+	Set(axis,s_angle,c_angle);
 }
 
 inline void Matrix3::Set(const Vector3 & axis,float angle)
@@ -392,17 +392,17 @@ inline Matrix3::Matrix3(const Quaternion & q)
 	this->Set(q);
 }
 
-/*********************************************************************************************** 
- * Matrix3::Transpose -- Returns transpose of the matrix                                       * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   06/02/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * Matrix3::Transpose -- Returns transpose of the matrix                                       *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   06/02/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
 inline Matrix3 Matrix3::Transpose() const
 {
@@ -413,17 +413,17 @@ inline Matrix3 Matrix3::Transpose() const
 	);
 }
 
-/*********************************************************************************************** 
- * Matrix3::Inverse -- returns the inverse of the matrix                                       * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   06/02/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * Matrix3::Inverse -- returns the inverse of the matrix                                       *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   06/02/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
 inline Matrix3 Matrix3::Inverse() const    // Gauss-Jordan elimination with partial pivoting
 {
@@ -477,114 +477,114 @@ inline Matrix3 Matrix3::Inverse() const    // Gauss-Jordan elimination with part
  * HISTORY:                                                                                    *
  *   1/7/20     DRM : Created.                                                                 *
  *=============================================================================================*/
-inline float Matrix3::Determinant(void) const 
+inline float Matrix3::Determinant(void) const
 {
 	return   Row[0][0] * (Row[1][1] * Row[2][2] - Row[1][2] * Row[2][1])
 		    - Row[0][1] * (Row[1][0] * Row[2][2] - Row[1][2] * Row[2][0])
 			 - Row[0][2] * (Row[1][0] * Row[2][1] - Row[1][1] * Row[2][0]);
 }
 
-/*********************************************************************************************** 
- * Matrix3::operator = -- assignment operator                                                  * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   06/02/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * Matrix3::operator = -- assignment operator                                                  *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   06/02/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
 inline Matrix3 & Matrix3::operator = (const Matrix3 & m)
 {
 	Row[0] = m.Row[0]; Row[1] = m.Row[1]; Row[2] = m.Row[2];
-	return *this; 
+	return *this;
 }
 
-/*********************************************************************************************** 
- * Matrix3::operator += -- "plus equals" operator                                              * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   06/02/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * Matrix3::operator += -- "plus equals" operator                                              *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   06/02/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
 inline Matrix3& Matrix3::operator += (const Matrix3 & m)
 {
-	Row[0] += m.Row[0]; Row[1] += m.Row[1]; Row[2] += m.Row[2]; 
-	return *this; 
+	Row[0] += m.Row[0]; Row[1] += m.Row[1]; Row[2] += m.Row[2];
+	return *this;
 }
 
-/*********************************************************************************************** 
- * Matrix3::operator-= -- "minus equals" operator                                              * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   06/02/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * Matrix3::operator-= -- "minus equals" operator                                              *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   06/02/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
 inline Matrix3& Matrix3::operator -= (const Matrix3 & m)
 {
-	Row[0] -= m.Row[0]; Row[1] -= m.Row[1]; Row[2] -= m.Row[2]; 
-	return *this; 
+	Row[0] -= m.Row[0]; Row[1] -= m.Row[1]; Row[2] -= m.Row[2];
+	return *this;
 }
 
-/*********************************************************************************************** 
- * Matrix3::operator *= -- "times equals" operator                                             * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   06/02/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * Matrix3::operator *= -- "times equals" operator                                             *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   06/02/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
 inline Matrix3& Matrix3::operator *= (float d)
 {
-	Row[0] *= d; Row[1] *= d; Row[2] *= d; 
-	return *this; 
+	Row[0] *= d; Row[1] *= d; Row[2] *= d;
+	return *this;
 }
 
-/*********************************************************************************************** 
- * Matrix3::operator /= -- "divide equals" operator                                            * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   06/02/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * Matrix3::operator /= -- "divide equals" operator                                            *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   06/02/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
 inline Matrix3& Matrix3::operator /= (float d)
 {
-	Row[0] /= d; Row[1] /= d; Row[2] /= d; 
-	return *this; 
+	Row[0] /= d; Row[1] /= d; Row[2] /= d;
+	return *this;
 }
 
-/*********************************************************************************************** 
- * Matrix3::Get_X_Rotation -- approximates the rotation about the X axis                       * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   08/11/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * Matrix3::Get_X_Rotation -- approximates the rotation about the X axis                       *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   08/11/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
 inline float Matrix3::Get_X_Rotation(void) const
 {
@@ -592,35 +592,35 @@ inline float Matrix3::Get_X_Rotation(void) const
 	return atan2(v[2], v[1]);
 }
 
-/*********************************************************************************************** 
- * Matrix3::Get_Y_Rotation -- approximates the rotation about the Y axis                       * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   08/11/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * Matrix3::Get_Y_Rotation -- approximates the rotation about the Y axis                       *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   08/11/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-inline float Matrix3::Get_Y_Rotation(void) const 
+inline float Matrix3::Get_Y_Rotation(void) const
 {
 	Vector3 v = (*this) * Vector3(0.0,0.0,1.0);
 	return atan2(v[0],v[2]);
 }
 
-/*********************************************************************************************** 
- * Matrix3::Get_Z_Rotation -- approximates the rotation about the Z axis                       * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   08/11/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * Matrix3::Get_Z_Rotation -- approximates the rotation about the Z axis                       *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   08/11/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
 inline float Matrix3::Get_Z_Rotation(void) const
 {
@@ -659,29 +659,29 @@ inline void Matrix3::Get_Z_Vector(Vector3 * set) const
 }
 
 inline Matrix3 operator - (const Matrix3 & a)
-{ 
-	return Matrix3(-a.Row[0], -a.Row[1], -a.Row[2]); 
+{
+	return Matrix3(-a.Row[0], -a.Row[1], -a.Row[2]);
 }
 
 inline Matrix3 operator * (const Matrix3 & a, float d)
-{ 
-	return Matrix3(a.Row[0] * d, a.Row[1] * d, a.Row[2] * d); 
+{
+	return Matrix3(a.Row[0] * d, a.Row[1] * d, a.Row[2] * d);
 }
 
 inline Matrix3 operator * (float d, const Matrix3 & a)
-{ 
-	return a*d; 
+{
+	return a*d;
 }
 
 inline Matrix3 operator / (const Matrix3 & a, float d)
-{ 
+{
 	float ood = 1.0f / d;
-	return Matrix3(a.Row[0] * ood, a.Row[1] * ood, a.Row[2] * ood); 
+	return Matrix3(a.Row[0] * ood, a.Row[1] * ood, a.Row[2] * ood);
 }
 
 /*
 ** matrix addition
-*/ 
+*/
 inline Matrix3 operator + (const Matrix3 & a, const Matrix3 & b)
 {
 	return Matrix3(
@@ -692,7 +692,7 @@ inline Matrix3 operator + (const Matrix3 & a, const Matrix3 & b)
 }
 
 inline void Matrix3::Add(const Matrix3 & a, const Matrix3 & b,Matrix3 * c)
-{ 
+{
 	assert(c);
 	Vector3::Add(a.Row[0],b.Row[0],&(c->Row[0]));
 	Vector3::Add(a.Row[1],b.Row[1],&(c->Row[1]));
@@ -725,13 +725,13 @@ inline void Matrix3::Subtract(const Matrix3 & a, const Matrix3 & b,Matrix3 * c)
 inline Matrix3 operator * (const Matrix3 & a, const Matrix3 & b)
 {
 	#define ROWCOL(i,j) a[i][0]*b[0][j] + a[i][1]*b[1][j] + a[i][2]*b[2][j]
-    
+
 	return Matrix3(
 			Vector3(ROWCOL(0,0), ROWCOL(0,1), ROWCOL(0,2) ),
 			Vector3(ROWCOL(1,0), ROWCOL(1,1), ROWCOL(1,2) ),
 			Vector3(ROWCOL(2,0), ROWCOL(2,1), ROWCOL(2,2) )
 	);
-	
+
 	#undef ROWCOL
 }
 
@@ -739,12 +739,12 @@ inline Matrix3 operator * (const Matrix3 & a, const Matrix3 & b)
 /*
 ** Multiply a Matrix3 by a Vector3. Yeilds a Vector3 result
 */
-inline Vector3 operator * (const Matrix3 & a, const Vector3 & v) 
+inline Vector3 operator * (const Matrix3 & a, const Vector3 & v)
 {
 	return Vector3(
 		a[0][0] * v[0] + a[0][1] * v[1] + a[0][2] * v[2],
 		a[1][0] * v[0] + a[1][1] * v[1] + a[1][2] * v[2],
-		a[2][0] * v[0] + a[2][1] * v[1] + a[2][2] * v[2] 
+		a[2][0] * v[0] + a[2][1] * v[1] + a[2][2] * v[2]
 	);
 }
 
@@ -761,17 +761,17 @@ inline int operator != (const Matrix3 & a, const Matrix3 & b)
 }
 
 
-/*********************************************************************************************** 
- * Matrix3::Rotate_X -- Post-mutiplies an x rotation onto the current matrix                   * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   08/26/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * Matrix3::Rotate_X -- Post-mutiplies an x rotation onto the current matrix                   *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   08/26/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
 inline void Matrix3::Rotate_X(float theta)
 {
@@ -795,17 +795,17 @@ inline void Matrix3::Rotate_X(float s,float c)
 	Row[2][2] = (float)(-s*tmp1 + c*tmp2);
 }
 
-/*********************************************************************************************** 
- * Matrix3::Rotate_Y -- Post-multiplies the matrix with a rotation about Y                     * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   08/26/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * Matrix3::Rotate_Y -- Post-multiplies the matrix with a rotation about Y                     *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   08/26/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
 inline void Matrix3::Rotate_Y(float theta)
 {
@@ -830,17 +830,17 @@ inline void Matrix3::Rotate_Y(float s,float c)
 }
 
 
-/*********************************************************************************************** 
- * Matrix3::Rotate_Z -- Post-multiplies the matrix with a rotation about Z                     * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   08/26/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * Matrix3::Rotate_Z -- Post-multiplies the matrix with a rotation about Z                     *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   08/26/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
 inline void Matrix3::Rotate_Z(float theta)
 {
@@ -865,17 +865,17 @@ inline void Matrix3::Rotate_Z(float s,float c)
 }
 
 
-/*********************************************************************************************** 
- * Create_X_Rotation_Matrix3 -- creates a matrix3 which is a rotation about X                  * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   08/26/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * Create_X_Rotation_Matrix3 -- creates a matrix3 which is a rotation about X                  *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   08/26/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
 inline Matrix3 Create_X_Rotation_Matrix3(float s,float c)
 {
@@ -901,17 +901,17 @@ inline Matrix3 Create_X_Rotation_Matrix3(float rad)
 	return Create_X_Rotation_Matrix3(sinf(rad),cosf(rad));
 }
 
-/*********************************************************************************************** 
- * Create_Y_Rotation_Matrix3 -- Creates a Matrix3 which is a rotation about Y                  * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   08/26/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * Create_Y_Rotation_Matrix3 -- Creates a Matrix3 which is a rotation about Y                  *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   08/26/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
 inline Matrix3 Create_Y_Rotation_Matrix3(float s,float c)
 {
@@ -937,17 +937,17 @@ inline Matrix3 Create_Y_Rotation_Matrix3(float rad)
 	return Create_Y_Rotation_Matrix3(sinf(rad),cosf(rad));
 }
 
-/*********************************************************************************************** 
- * Create_Z_Rotation_Matrix3 -- Creates a matrix3 which is a rotation about Z                  * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   08/26/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * Create_Z_Rotation_Matrix3 -- Creates a matrix3 which is a rotation about Z                  *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   08/26/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
 inline Matrix3 Create_Z_Rotation_Matrix3(float s,float c)
 {

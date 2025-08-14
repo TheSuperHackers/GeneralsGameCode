@@ -16,25 +16,25 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/*************************************************************************** 
- ***    C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S     *** 
- *************************************************************************** 
- *                                                                         * 
- *                 Project Name : Commando/G                               * 
- *                                                                         * 
- *                     $Archive:: /Commando/Code/ww3d2/bmp2d.cpp          $* 
- *                                                                         * 
- *                  $Org Author:: Jani_p                                  $* 
- *                                                                         * 
- *                      $Author:: Kenny_m                                  $* 
- *                                                                         * 
- *                     $Modtime:: 08/05/02 10:44a                          $* 
- *                                                                         * 
- *                    $Revision:: 12                                      $* 
- *                                                                         * 
+/***************************************************************************
+ ***    C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S     ***
+ ***************************************************************************
+ *                                                                         *
+ *                 Project Name : Commando/G                               *
+ *                                                                         *
+ *                     $Archive:: /Commando/Code/ww3d2/bmp2d.cpp          $*
+ *                                                                         *
+ *                  $Org Author:: Jani_p                                  $*
+ *                                                                         *
+ *                      $Author:: Kenny_m                                  $*
+ *                                                                         *
+ *                     $Modtime:: 08/05/02 10:44a                          $*
+ *                                                                         *
+ *                    $Revision:: 12                                      $*
+ *                                                                         *
  * 08/05/02 KM Texture class redesign
- *-------------------------------------------------------------------------* 
- * Functions:                                                              * 
+ *-------------------------------------------------------------------------*
+ * Functions:                                                              *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "bmp2d.h"
@@ -60,21 +60,21 @@ Bitmap2DObjClass::Bitmap2DObjClass
 )
 	:	DynamicScreenMeshClass(2, 4)
 {
-	
+
 	int resw, resh, resbits;
 	bool windowed;
-	
+
 	// find the resolution (for centering and pixel to pixel translation)
 	WW3D::Get_Device_Resolution(resw, resh, resbits, windowed);
 	// This should be the correct way to do things
 	// but other code expects an aspect ratio of 1.0
 	// Hector Yee 2/22/01
 	// Set_Aspect(resh/(float)resw);
-	
+
 
 	// load up the surfaces file name
 	TextureClass *tex = WW3DAssetManager::Get_Instance()->Get_Texture(filename, MIP_LEVELS_1);
-	if (!tex->Is_Initialized())	
+	if (!tex->Is_Initialized())
 		TextureLoader::Request_Foreground_Loading(tex);
 
 	SurfaceClass *surface = tex->Get_Surface_Level(0);
@@ -113,7 +113,7 @@ Bitmap2DObjClass::Bitmap2DObjClass
 	// based from those calculations.
 	int mw = (surf_w & (piece - 1)) ? (surf_w / piece)+1 : (surf_w /piece);
 	int mh = (surf_h & (piece - 1)) ? (surf_h / piece)+1 : (surf_h /piece);
-	
+
 	// for every square texture it takes four vertexes to express the two
 	// polygons.
 	Resize(mw * mh *2, mw * mh * 4);
@@ -166,12 +166,12 @@ Bitmap2DObjClass::Bitmap2DObjClass
 			int pot				= MAX(Find_POT(iw), Find_POT(ih));
 
 			// create the texture and turn MIP-mapping off.
-			SurfaceClass *piece_surface=NEW_REF(SurfaceClass,(pot,pot,sd.Format));			
+			SurfaceClass *piece_surface=NEW_REF(SurfaceClass,(pot,pot,sd.Format));
 			piece_surface->Copy(0,0,tlpx,tlpy,pot,pot,surface);
-			TextureClass *piece_texture =NEW_REF(TextureClass,(piece_surface,MIP_LEVELS_1));			
+			TextureClass *piece_texture =NEW_REF(TextureClass,(piece_surface,MIP_LEVELS_1));
 			piece_texture->Get_Filter().Set_U_Addr_Mode(TextureFilterClass::TEXTURE_ADDRESS_CLAMP);
 			piece_texture->Get_Filter().Set_V_Addr_Mode(TextureFilterClass::TEXTURE_ADDRESS_CLAMP);
-			REF_PTR_RELEASE(piece_surface);			
+			REF_PTR_RELEASE(piece_surface);
 
 			// calculate our actual texture coordinates based on the difference between
 			// the width and height of the texture and the width and height the font
@@ -186,7 +186,7 @@ Bitmap2DObjClass::Bitmap2DObjClass
 			// figure out the screen space x and y positions of the object in question.
 			float x	= screen_x + (((float)tlpx) / (float)resw);
 			float y	= screen_y + (((float)tlpy) / (float)resh);
-			
+
 			Set_Texture(piece_texture);
 			Begin_Tri_Strip();
 				Vertex( x, 			y, 		0, 	0, 	0);
@@ -196,11 +196,11 @@ Bitmap2DObjClass::Bitmap2DObjClass
 			End_Tri_Strip();
 
 			// release our reference to the texture
-			REF_PTR_RELEASE(piece_texture);			
+			REF_PTR_RELEASE(piece_texture);
 		}
 	}
 	REF_PTR_RELEASE(tex);
-	REF_PTR_RELEASE(surface);	
+	REF_PTR_RELEASE(surface);
 
 	Set_Dirty();
 }
@@ -231,9 +231,9 @@ Bitmap2DObjClass::Bitmap2DObjClass
 //	SurfaceClass::SurfaceDescription sd;
 //	texture->Get_Level_Description(sd);
 
-	if (!texture->Is_Initialized())	
+	if (!texture->Is_Initialized())
 		TextureLoader::Request_Foreground_Loading(texture);
-		
+
 	// convert image width and image height to normalized values
 	float vw = (float) texture->Get_Width() / (float)resw;
 	float vh = (float) texture->Get_Height() / (float)resh;

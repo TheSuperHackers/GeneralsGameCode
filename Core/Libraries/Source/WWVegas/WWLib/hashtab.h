@@ -51,7 +51,7 @@ public:
 	void				Remove(Object * item,Key * key);
 
 	int				Count(void) const								{ return Items.Count(); }
-	Object *			Find(const Key & key) const						
+	Object *			Find(const Key & key) const
 
 private:
 
@@ -66,7 +66,7 @@ private:
 		bool operator == (const HashItem & that) { return ((Item == that.Item) && (NextHashIndex == that.NextHashIndex)); }
 		bool operator != (const HashItem & that) { return !(*this == that); }
 	};
-		
+
 	// Dynamic Vector of the unique items:
 	DynamicVectorClass<HashItem>		Items;
 

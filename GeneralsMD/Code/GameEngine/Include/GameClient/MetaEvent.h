@@ -47,7 +47,7 @@ enum MappableKeyCategories CPP_11(: Int)
 	CATEGORY_NUM_CATEGORIES // keep this last
 };
 
-static const LookupListRec CategoryListName[] = 
+static const LookupListRec CategoryListName[] =
 {
 	{"CONTROL",						CATEGORY_CONTROL},
 	{"INFORMATION",				CATEGORY_INFORMATION},
@@ -156,9 +156,9 @@ enum MappableKeyType CPP_11(: Int)
 	MK_KPSLASH			= KEY_KPSLASH,
 	MK_NONE					= KEY_NONE
 
-};	
+};
 
-static const LookupListRec KeyNames[] = 
+static const LookupListRec KeyNames[] =
 {
 	{ "KEY_ESC", MK_ESC },
 	{ "KEY_BACKSPACE", MK_BACKSPACE },
@@ -257,7 +257,7 @@ enum MappableKeyTransition CPP_11(: Int)
 	DOUBLEDOWN	// if a key transition is repeated immediately, we generate this.
 };
 
-static const LookupListRec TransitionNames[] = 
+static const LookupListRec TransitionNames[] =
 {
 	{ "DOWN",				DOWN },
 	{ "UP",					UP },
@@ -279,7 +279,7 @@ enum MappableKeyModState CPP_11(: Int)
 	SHIFT_ALT_CTRL		= SHIFT|ALT|CTRL
 };
 
-static const LookupListRec ModifierNames[] = 
+static const LookupListRec ModifierNames[] =
 {
 	{ "NONE",							NONE },
 	{ "CTRL",							CTRL },
@@ -315,7 +315,7 @@ static const char* TheCommandUsableInNames[] =
 // -------------------------------------------------------------------------------
 class MetaMapRec : public MemoryPoolObject
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(MetaMapRec, "MetaMapRec")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(MetaMapRec, "MetaMapRec")
 public:
 	MetaMapRec*							m_next;
 	GameMessage::Type				m_meta;						///< the meta-event to emit
@@ -332,7 +332,7 @@ EMPTY_DTOR(MetaMapRec)
 
 
 //-----------------------------------------------------------------------------
-class MetaEventTranslator : public GameMessageTranslator                          
+class MetaEventTranslator : public GameMessageTranslator
 {
 private:
 
@@ -347,7 +347,7 @@ public:
 	MetaEventTranslator();
 	~MetaEventTranslator();
 	virtual GameMessageDisposition translateGameMessage(const GameMessage *msg);
-};	
+};
 
 //-----------------------------------------------------------------------------
 class MetaMap : public SubsystemInterface
@@ -362,7 +362,7 @@ protected:
 	MetaMapRec *getMetaMapRec(GameMessage::Type t);
 
 public:
-	
+
 	MetaMap();
 	~MetaMap();
 

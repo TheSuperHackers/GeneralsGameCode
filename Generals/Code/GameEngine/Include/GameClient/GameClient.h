@@ -56,7 +56,7 @@ class VideoPlayerInterface;
 struct RayEffectData;
 
 /// Function pointers for use by GameClient callback functions.
-typedef void (*GameClientFuncPtr)( Drawable *draw, void *userData ); 
+typedef void (*GameClientFuncPtr)( Drawable *draw, void *userData );
 typedef std::hash_map<DrawableID, Drawable *, rts::hash<DrawableID>, rts::equal_to<DrawableID> > DrawablePtrHash;
 typedef DrawablePtrHash::iterator DrawablePtrHashIt;
 
@@ -70,12 +70,12 @@ class GameClientMessageDispatcher : public GameMessageTranslator
 public:
 	virtual GameMessageDisposition translateGameMessage(const GameMessage *msg);
 	virtual ~GameClientMessageDispatcher() { }
-};	
+};
 
 
 //-----------------------------------------------------------------------------
 /**
- * The GameClient class is used to instantiate a singleton which 
+ * The GameClient class is used to instantiate a singleton which
  * implements the interface to all GameClient operations such as Drawable access and user-interface functions.
  */
 class GameClient : public SubsystemInterface,
@@ -107,12 +107,12 @@ public:
 
 	virtual Drawable *firstDrawable( void ) { return m_drawableList; }
 
-	virtual GameMessage::Type evaluateContextCommand( Drawable *draw, 
-																										const Coord3D *pos, 
+	virtual GameMessage::Type evaluateContextCommand( Drawable *draw,
+																										const Coord3D *pos,
 																										CommandTranslator::CommandEvaluateType cmdType );
 	void addTextBearingDrawable( Drawable *tbd );
 	void flushTextBearingDrawables( void);
-	
+
 	virtual void removeFromRayEffects( Drawable *draw );  ///< remove the drawable from the ray effect system if present
 	virtual void getRayEffectData( Drawable *draw, RayEffectData *effectData );  ///< get ray effect data for a drawable
 	virtual void createRayEffectByTemplate( const Coord3D *start, const Coord3D *end, const ThingTemplate* tmpl ) = 0;  ///< create effect needing start and end location
@@ -144,7 +144,7 @@ public:
   virtual void preloadAssets( TimeOfDay timeOfDay );									///< preload assets
 
 	virtual Drawable *getDrawableList( void ) { return m_drawableList; }
-	
+
 	void resetRenderedObjectCount() { m_renderedObjectCount = 0; }
 	UnsignedInt getRenderedObjectCount() const { return m_renderedObjectCount; }
 	void incrementRenderedObjectCount() { m_renderedObjectCount++; }
@@ -201,15 +201,15 @@ private:
 	DrawableTOCEntry *findTOCEntryByName( AsciiString name );	///< find DrawableTOC by name
 	DrawableTOCEntry *findTOCEntryById( UnsignedShort id );		///< find DrawableTOC by id
 	void xferDrawableTOC( Xfer *xfer );												///< save/load drawable TOC for current state of map
-	
+
 	typedef std::list< Drawable* > TextBearingDrawableList;
 	typedef TextBearingDrawableList::iterator TextBearingDrawableListIterator;
 	TextBearingDrawableList m_textBearingDrawableList;	///< the drawables that have registered here during drawablepostdraw
 };
 
 //Kris: Try not to use this if possible. In every case I found in the code base, the status was always Drawable::SELECTED.
-//      There is another iterator already in game that stores JUST selected drawables. Take a look at the efficient 
-//      example, InGameUI::getAllSelectedDrawables(). 
+//      There is another iterator already in game that stores JUST selected drawables. Take a look at the efficient
+//      example, InGameUI::getAllSelectedDrawables().
 #define BEGIN_ITERATE_DRAWABLES_WITH_STATUS(STATUS, DRAW) \
 	do \
 	{ \
@@ -218,7 +218,7 @@ private:
 		{ \
 			_xq_nextDrawable = DRAW->getNextDrawable(); \
 			if (DRAW->getStatusFlags() & (STATUS)) \
-			{ 
+			{
 
 #define END_ITERATE_DRAWABLES \
 			} \

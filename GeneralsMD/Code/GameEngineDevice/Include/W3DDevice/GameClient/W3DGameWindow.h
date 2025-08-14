@@ -24,12 +24,12 @@
 
 // FILE: W3DGameWindow.h //////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information					         
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:    RTS3
@@ -63,7 +63,7 @@
 // ----------------------------------------------------------------------------
 class W3DGameWindow : public GameWindow
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(W3DGameWindow, "W3DGameWindow")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(W3DGameWindow, "W3DGameWindow")
 
 public:
 
@@ -75,13 +75,13 @@ public:
 	void winDrawBorder( void );
 
 	Int winSetPosition( Int x, Int y );  ///< set window position
-	Int winSetText( UnicodeString newText );  ///< set text string	
+	Int winSetText( UnicodeString newText );  ///< set text string
 	void winSetFont( GameFont *font );  ///< set font for window
 
 	void getTextSize( Int *width, Int *height );  ///< get size of text
 	void setTextLoc( Int x, Int y );  ///< set text screen coord loc
 	void drawText( Color color );  ///< draw text in the text renderer
-		
+
 protected:
 
 	/// helper function to draw borders
@@ -98,7 +98,7 @@ protected:
 // INLINING ///////////////////////////////////////////////////////////////////
 
 // EXTERNALS //////////////////////////////////////////////////////////////////
-extern void W3DGameWinDefaultDraw( GameWindow *window, 
+extern void W3DGameWinDefaultDraw( GameWindow *window,
 																	 WinInstanceData *instData );
 
 #endif // __W3DGAMEWINDOW_H_

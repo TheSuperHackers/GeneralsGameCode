@@ -58,7 +58,7 @@ class		DistLODDefClass;
 ** based on the pre-set distances.  Note that the models are stored in order of
 ** descending resolution; i.e. the highest res model will be in index 0.
 ** Most functions in this class simply pass the call on to all of the LODs.
-** 
+**
 ** When the level of detail is changed, the LOD which was being used must be
 ** notified that it is being removed from the scene and the new LOD must be
 ** notified that it is being added.  This allows us to correctly handle lights
@@ -95,10 +95,10 @@ public:
 
 	/////////////////////////////////////////////////////////////////////////////
 	// Render Object Interface - Hierarchical Animation
-	// Here again, these functions are passed on to all LODs.  Each LOD is 
+	// Here again, these functions are passed on to all LODs.  Each LOD is
 	// assumed to use the same HTree (or have no HTree, this is so that LODs are
-	// animation-compatible) so the bone query functions simply pass to the top 
-	// LOD.  
+	// animation-compatible) so the bone query functions simply pass to the top
+	// LOD.
 	/////////////////////////////////////////////////////////////////////////////
 	virtual void					Set_Animation( void );
 	virtual void					Set_Animation( HAnimClass * motion, float frame, int anim_mode = ANIM_MODE_MANUAL);
@@ -126,7 +126,7 @@ public:
 	/////////////////////////////////////////////////////////////////////////////
 	// Render Object Interface - Attributes, Options, Properties, etc
 	/////////////////////////////////////////////////////////////////////////////
-	virtual int						Get_Num_Snap_Points(void);				
+	virtual int						Get_Num_Snap_Points(void);
 	virtual void					Get_Snap_Point(int index,Vector3 * set);
 	virtual void					Scale(float scale);
 	virtual void					Scale(float scalex, float scaley, float scalez);
@@ -180,7 +180,7 @@ public:
 struct DistLODNodeDefStruct
 {
 	DistLODNodeDefStruct(void) : Name(NULL),ResDownDist(0.0f),ResUpDist(0.0f) {}
-	
+
 	char *	Name;
 	float		ResDownDist;
 	float		ResUpDist;
@@ -220,12 +220,12 @@ private:
 /*
 ** Prototype for Dist-LOD objects
 */
-class DistLODPrototypeClass : public W3DMPO, public PrototypeClass 
+class DistLODPrototypeClass : public W3DMPO, public PrototypeClass
 {
 	W3DMPO_GLUE(DistLODPrototypeClass)
 public:
 	DistLODPrototypeClass( DistLODDefClass *def ) { Definition = def; }
-	
+
 	virtual const char *			Get_Name(void) const			{ return Definition->Get_Name(); }
 	virtual int								Get_Class_ID(void) const	{ return RenderObjClass::CLASSID_DISTLOD; }
 	virtual RenderObjClass *	Create(void);

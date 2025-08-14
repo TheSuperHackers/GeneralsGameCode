@@ -46,7 +46,7 @@ public:
 	void resetModes(); //Used when disabling input, so when we reenable it we aren't stuck in a mode.
 
 private:
-	enum 
+	enum
 	{
 		MAX_VIEW_LOCS = 8
 	};
@@ -59,7 +59,7 @@ private:
 	};
 	ICoord2D m_anchor;
 	ICoord2D m_originalAnchor;
-	ICoord2D m_currentPos;									
+	ICoord2D m_currentPos;
 	Bool m_isScrolling;				// set to true if we are in the act of RMB scrolling
 	Bool m_isRotating;					// set to true if we are in the act of MMB rotating
 	Bool m_isPitching;					// set to true if we are in the act of ALT pitch rotation
@@ -71,7 +71,7 @@ private:
 	void setScrolling( Int );
 	void stopScrolling( void );
 	UnsignedInt m_lastMouseMoveFrame;
-};	
+};
 
 extern LookAtTranslator *TheLookAtTranslator;
 

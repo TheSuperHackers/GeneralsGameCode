@@ -56,7 +56,7 @@ enum ProductionType CPP_11(: Int)
 };
 
 //-------------------------------------------------------------------------------------------------
-/** A ProductionEntry is a single entry representing something that we are supposed to 
+/** A ProductionEntry is a single entry representing something that we are supposed to
 	* produce */
 //-------------------------------------------------------------------------------------------------
 class ProductionEntry : public MemoryPoolObject
@@ -95,7 +95,7 @@ public:
 	void setExitDoor(ExitDoorType exitDoor) { m_exitDoor = exitDoor; }
 
 protected:
-	
+
 	ProductionType m_type;														///< production type
 	union
 	{
@@ -202,7 +202,7 @@ public:
 	virtual CanMakeType canQueueUpgrade( const UpgradeTemplate *upgrade ) const;
 
 	/** this method is used to request a unique ID to assign to the production of a single
-	unit.  It is unique to all units that can be created from this source object, but is 
+	unit.  It is unique to all units that can be created from this source object, but is
 	not unique amoung multiple source objects */
 	virtual ProductionID requestUniqueUnitID( void ) { ProductionID tmp = m_uniqueID; m_uniqueID = (ProductionID)(m_uniqueID+1); return tmp; }
 
@@ -213,7 +213,7 @@ public:
 
 	virtual Bool queueCreateUnit( const ThingTemplate *unitType, ProductionID productionID );					///< queue unit to be produced
 	virtual void cancelUnitCreate( ProductionID productionID );		      ///< cancel construction of unit with matching production ID
-	virtual void cancelAllUnitsOfType( const ThingTemplate *unitType);	///< cancel all production of type unitType 
+	virtual void cancelAllUnitsOfType( const ThingTemplate *unitType);	///< cancel all production of type unitType
 
 	virtual void cancelAndRefundAllProduction( void );									///< cancel and refund anything in the production queue
 

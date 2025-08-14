@@ -59,13 +59,13 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // EulaDialog message handlers
 
-BOOL EulaDialog::OnInitDialog() 
+BOOL EulaDialog::OnInitDialog()
 {
 	CDialog::OnInitDialog();
-	
+
 	CString theText;
 	theText.LoadString( IDS_EULA_AGREEMENT1 );
-	
+
 	CString concatText;
 	concatText.LoadString( IDS_EULA_AGREEMENT2 );
 	theText += concatText;
@@ -75,13 +75,13 @@ BOOL EulaDialog::OnInitDialog()
 	theText += concatText;
 	concatText.LoadString( IDS_EULA_AGREEMENT5 );
 	theText += concatText;
-	
+
 	CWnd *theEditDialog = GetDlgItem( IDC_EDIT1 );
 	if( theEditDialog )
 	{
 		theEditDialog->SetWindowText( theText );
 	}
-	
+
 	return TRUE;  // return TRUE unless you set the focus to a control
 	              // EXCEPTION: OCX Property Pages should return FALSE
 }

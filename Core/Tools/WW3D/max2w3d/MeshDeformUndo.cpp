@@ -16,22 +16,22 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/*********************************************************************************************** 
- ***                            Confidential - Westwood Studios                              *** 
- *********************************************************************************************** 
- *                                                                                             * 
- *                 Project Name : Commando / G 3D engine                                       * 
- *                                                                                             * 
- *                    File Name : MeshDeformUndo.h                                             * 
- *                                                                                             * 
- *                   Programmer : Patrick Smith                                                * 
- *                                                                                             * 
- *                   Start Date : 06/08/99                                                     * 
- *                                                                                             * 
- *                  Last Update : 
- *                                                                                             * 
- *---------------------------------------------------------------------------------------------* 
- * Functions:                                                                                  * 
+/***********************************************************************************************
+ ***                            Confidential - Westwood Studios                              ***
+ ***********************************************************************************************
+ *                                                                                             *
+ *                 Project Name : Commando / G 3D engine                                       *
+ *                                                                                             *
+ *                    File Name : MeshDeformUndo.h                                             *
+ *                                                                                             *
+ *                   Programmer : Patrick Smith                                                *
+ *                                                                                             *
+ *                   Start Date : 06/08/99                                                     *
+ *                                                                                             *
+ *                  Last Update :
+ *                                                                                             *
+ *---------------------------------------------------------------------------------------------*
+ * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "MeshDeformUndo.h"
@@ -103,8 +103,8 @@ VertexRestoreClass::Restore (int is_undo)
 		// the undo operation was recorded
 		//
 		m_pModData->Set_Current_Set (m_SetIndex);
-		m_pModData->Peek_Set (m_SetIndex).Set_Current_Key_Frame (m_KeyframeIndex);		
-		
+		m_pModData->Peek_Set (m_SetIndex).Set_Current_Key_Frame (m_KeyframeIndex);
+
 		//
 		//	Apply the original vertex positions to the mesh
 		//
@@ -115,7 +115,7 @@ VertexRestoreClass::Restore (int is_undo)
 		//
 		m_pModifier->NotifyDependents (FOREVER, PART_GEOM | PART_VERTCOLOR, REFMSG_CHANGE);
 		m_pModifier->Update_UI (m_pModData);
-	}		
+	}
 
 	return ;
 }

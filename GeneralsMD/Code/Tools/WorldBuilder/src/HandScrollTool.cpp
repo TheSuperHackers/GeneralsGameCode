@@ -20,7 +20,7 @@
 // Scrolling tool for worldbuilder.
 // Author: John Ahlquist, April 2001
 
-#include "StdAfx.h" 
+#include "StdAfx.h"
 #include "resource.h"
 
 #include "HandScrollTool.h"
@@ -39,22 +39,22 @@ static const Int MAX_SCROLL = 1000;
 
 /// Constructor
 HandScrollTool::HandScrollTool(void) :
-	Tool(ID_HAND_SCROLL_TOOL, IDC_HAND_SCROLL) 
+	Tool(ID_HAND_SCROLL_TOOL, IDC_HAND_SCROLL)
 {
 }
-	
+
 /// Shows the terrain materials options panel.
-void HandScrollTool::activate() 
+void HandScrollTool::activate()
 {
 	return; // Hand scroll tool intentionally doesn't change tool panel.
 }
 
 /// Destructor
-HandScrollTool::~HandScrollTool(void) 	  
+HandScrollTool::~HandScrollTool(void)
 {
 }
 
-void HandScrollTool::mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc) 
+void HandScrollTool::mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc)
 {
 	if (m != TRACK_L && m != TRACK_R && m != TRACK_M) return;
 
@@ -97,7 +97,7 @@ void HandScrollTool::mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, C
 		// Scroll dynamically.
 		Coord3D prev, cur;
 		if (pView->viewToDocCoords(m_prevPt2d, &prev, false) &&
-					pView->viewToDocCoords(viewPt, &cur, false)) 
+					pView->viewToDocCoords(viewPt, &cur, false))
 		{
 
 			Real dx = cur.x - prev.x;
@@ -117,7 +117,7 @@ void HandScrollTool::mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, C
 	}
 }
 
-void HandScrollTool::mouseUp(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc) 
+void HandScrollTool::mouseUp(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc)
 {
 	if (m == TRACK_M) {
 		// if haven't moved, reset view

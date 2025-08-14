@@ -41,8 +41,7 @@ jobs:
             generalsmd:
               - 'GeneralsMD/**'
             shared:
-              - '.github/workflows/build-toolchain.yml'
-              - '.github/workflows/ci.yml'
+              - '.github/workflows/**'
               - 'CMakeLists.txt'
               - 'CMakePresets.json'
               - 'cmake/**'
@@ -100,7 +99,9 @@ jobs:
       extras: ${{ matrix.extras }}
     secrets: inherit
 
-  build-generalsmd:
+  # Note build-generalsmd is split into two jobs for vc6 and win32 because replaycheck-generalsmd
+  # only requires the vc6 build and compiling vc6 is much faster than win32
+  build-generalsmd-vc6:
     name: Build GeneralsMD${{ matrix.preset && '' }}
     needs: detect-changes
     if: ${{ github.event_name == 'workflow_dispatch' || needs.detect-changes.outputs.generalsmd == 'true' || needs.detect-changes.outputs.shared == 'true' }}
@@ -116,6 +117,25 @@ jobs:
           - preset: "vc6-debug"
             tools: true
             extras: true
+          - preset: "vc6-releaselog"
+            tools: true
+            extras: true
+      fail-fast: false
+    uses: ./.github/workflows/build-toolchain.yml
+    with:
+      game: "GeneralsMD"
+      preset: ${{ matrix.preset }}
+      tools: ${{ matrix.tools }}
+      extras: ${{ matrix.extras }}
+    secrets: inherit
+
+  build-generalsmd-win32:
+    name: Build GeneralsMD${{ matrix.preset && '' }}
+    needs: detect-changes
+    if: ${{ github.event_name == 'workflow_dispatch' || needs.detect-changes.outputs.generalsmd == 'true' || needs.detect-changes.outputs.shared == 'true' }}
+    strategy:
+      matrix:
+        include:
           - preset: "win32"
             tools: true
             extras: true
@@ -142,4 +162,21 @@ jobs:
       preset: ${{ matrix.preset }}
       tools: ${{ matrix.tools }}
       extras: ${{ matrix.extras }}
+    secrets: inherit
+
+  replaycheck-generalsmd:
+    name: Replay Check GeneralsMD${{ matrix.preset && '' }}
+    needs: build-generalsmd-vc6
+    if: ${{ github.event_name == 'workflow_dispatch' || needs.detect-changes.outputs.generalsmd == 'true' || needs.detect-changes.outputs.shared == 'true' }}
+    strategy:
+      matrix:
+        include:
+          - preset: "vc6+t+e"
+          - preset: "vc6-releaselog+t+e" # optimized build with logging and crashing enabled should be compatible, so we test that here.
+      fail-fast: false
+    uses: ./.github/workflows/check-replays.yml
+    with:
+      game: "GeneralsMD"
+      userdata: "GeneralsReplays/GeneralsZH/1.04"
+      preset: ${{ matrix.preset }}
     secrets: inherit

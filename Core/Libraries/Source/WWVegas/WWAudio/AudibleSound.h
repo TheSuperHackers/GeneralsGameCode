@@ -216,7 +216,7 @@ class AudibleSoundClass : public SoundSceneObjClass
 		//////////////////////////////////////////////////////////////////////
 		virtual int					Get_Playback_Rate (void);
 		virtual void				Set_Playback_Rate (int rate_in_hz);
-		
+
 		virtual float				Get_Pitch_Factor (void)						{ return m_PitchFactor; }
 		virtual void				Set_Pitch_Factor (float factor);
 
@@ -416,13 +416,13 @@ public:
 	virtual const Vector3 &					Get_Sphere_Color (void) const		{ return m_AttenuationSphereColor; }
 	virtual float								Get_Volume (void) const				{ return m_Volume; }
 	virtual float								Get_Start_Offset (void) const		{ return m_StartOffset; }
-	virtual float								Get_Pitch_Factor (void) const		{ return m_PitchFactor; }	
+	virtual float								Get_Pitch_Factor (void) const		{ return m_PitchFactor; }
 
 	virtual void								Set_Volume (float volume)			{ m_Volume = volume; }
 	virtual void								Set_Max_Vol_Radius (float radius){ m_MaxVolRadius = radius; }
 	virtual void								Set_DropOff_Radius (float radius){ m_DropOffRadius = radius; }
 	virtual void								Set_Start_Offset (float offset)	{ m_StartOffset = offset; }
-	virtual void								Set_Pitch_Factor (float factor)	{ m_PitchFactor = factor; }	
+	virtual void								Set_Pitch_Factor (float factor)	{ m_PitchFactor = factor; }
 
 	// Logical sound creation
 	virtual LogicalSoundClass *			Create_Logical (void);

@@ -16,7 +16,7 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-// FILE: ParticleTypePanels.cpp 
+// FILE: ParticleTypePanels.cpp
 /*---------------------------------------------------------------------------*/
 /* EA Pacific                                                                */
 /* Confidential Information	                                                 */
@@ -51,12 +51,12 @@ ParticlePanelParticle::ParticlePanelParticle(UINT nIDTemplate, CWnd* pParentWnd)
 void ParticlePanelParticle::InitPanel( void )
 {
 	CFileFind finder;
-	
+
 	CComboBox *pWnd = (CComboBox*) GetDlgItem(IDC_PSEd_ParticleTypeParticle);
 	if (!pWnd) {
 		return;
 	}
-	
+
 	// first, clear out any items.
 	pWnd->ResetContent();
 
@@ -106,7 +106,7 @@ void ParticlePanelParticle::OnParticleSystemEdit()
 	if (!pParent) {
 		return;
 	}
-	
+
 	pParent->signalParticleSystemEdit();
 }
 
@@ -167,7 +167,7 @@ void ParticlePanelDrawable::OnParticleSystemEdit()
 	if (!pParent) {
 		return;
 	}
-	
+
 	pParent->signalParticleSystemEdit();
 }
 

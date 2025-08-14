@@ -24,12 +24,12 @@
 
 // FILE: HeaderTemplate.h /////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Electronic Arts Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2002 - All Rights Reserved                  
-//                                                                          
+//
+//                       Electronic Arts Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2002 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 //	created:	Aug 2002
@@ -37,8 +37,8 @@
 //	Filename: 	HeaderTemplate.h
 //
 //	author:		Chris Huybregts
-//	
-//	purpose:	
+//
+//	purpose:
 //
 //-----------------------------------------------------------------------------
 ///////////////////////////////////////////////////////////////////////////////
@@ -76,23 +76,23 @@ public:
 	AsciiString m_fontName;
 	Int m_point;
 	Bool m_bold;
-	
+
 };
 
 class HeaderTemplateManager
 {
 public:
 	HeaderTemplateManager( void );
-	~HeaderTemplateManager( void );	
+	~HeaderTemplateManager( void );
 
 	void init( void );
-	
+
 	const FieldParse *getFieldParse( void ) const { return m_headerFieldParseTable; }		///< Return the field parse info
 	static const FieldParse m_headerFieldParseTable[];
-	
+
 	HeaderTemplate *findHeaderTemplate( AsciiString name );
 	HeaderTemplate *newHeaderTemplate( AsciiString name );
-	
+
 	GameFont *getFontFromTemplate( AsciiString name );
 	HeaderTemplate *getFirstHeader( void );
 	HeaderTemplate *getNextHeader( HeaderTemplate *ht );

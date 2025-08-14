@@ -112,7 +112,7 @@ static NameKeyType buttonStartID = NAMEKEY_INVALID;
 static NameKeyType buttonSelectMapID = NAMEKEY_INVALID;
 static NameKeyType buttonResetID = NAMEKEY_INVALID;
 static NameKeyType windowMapID = NAMEKEY_INVALID;
-static NameKeyType sliderGameSpeedID = NAMEKEY_INVALID; 
+static NameKeyType sliderGameSpeedID = NAMEKEY_INVALID;
 static NameKeyType staticTextGameSpeedID = NAMEKEY_INVALID;
 static NameKeyType checkBoxLimitSuperweaponsID = NAMEKEY_INVALID;
 static NameKeyType comboBoxStartingCashID = NAMEKEY_INVALID;
@@ -224,7 +224,7 @@ UnicodeString SkirmishPreferences::getUserName(void)
 		ret.translate(IPs.getMachineName());
 		return ret;
 	}
-	
+
 	return ret;
 }
 
@@ -298,7 +298,7 @@ AsciiString SkirmishPreferences::getPreferredMap(void)
 		ret = getDefaultMap(TRUE);
 		return ret;
 	}
-	
+
 	return ret;
 }
 
@@ -311,7 +311,7 @@ Bool SkirmishPreferences::getSuperweaponRestricted(void) const
   {
     return false;
   }
-  
+
   return ( it->second.compareNoCase( "yes" ) == 0 );
 }
 
@@ -328,19 +328,19 @@ Money SkirmishPreferences::getStartingCash(void) const
   {
     return TheMultiplayerSettings->getDefaultStartingMoney();
   }
-  
+
   Money money;
   money.deposit( strtoul( it->second.str(), NULL, 10 ), FALSE  );
-  
+
   return money;
 }
 
 void SkirmishPreferences::setStartingCash( const Money & startingCash )
 {
   AsciiString option;
-  
+
   option.format( "%d", startingCash.countMoney() );
-  
+
   (*this)[startingCashKey] = option;
 }
 
@@ -426,7 +426,7 @@ void reallyDoStart( void )
 {
 	if (TheGameLogic->isInGame())
 		TheGameLogic->clearGameData(FALSE);
-	
+
 	//NameKeyType sliderGameSpeedID = TheNameKeyGenerator->nameToKey( AsciiString( "SkirmishGameOptionsMenu.wnd:SliderGameSpeed" ) );
 	GameWindow *sliderGameSpeed = TheWindowManager->winGetWindowFromId( parentSkirmishGameOptions, sliderGameSpeedID );
 	Int maxFPS = GadgetSliderGetPosition( sliderGameSpeed );
@@ -542,7 +542,7 @@ static void startPressed(void)
 	{
 		isReady = TRUE;
 	}
-	
+
 	if(isReady)
 	{
 		CheckForCDAtGameStart( reallyDoStart );
@@ -551,7 +551,7 @@ static void startPressed(void)
 }//void startPressed(void)
 
 /////////////////////////////////////////////////////
-// MapSelectorTooltip - shows tooltips for the tech buildings 
+// MapSelectorTooltip - shows tooltips for the tech buildings
 //											and supply depots
 // Added By : Sadullah Nader
 /////////////////////////////////////////////////////
@@ -572,13 +572,13 @@ void MapSelectorTooltip(GameWindow *window,
 
 	ICoord2DList::iterator it = TheSupplyAndTechImageLocations.m_techPosList.begin();
 	ICoord2DList::iterator it2 = TheSupplyAndTechImageLocations.m_supplyPosList.begin();
-	
+
 	if( image )
 	{
-		// Check to see if we mouse over a tech building 
+		// Check to see if we mouse over a tech building
 		while(it != TheSupplyAndTechImageLocations.m_techPosList.end())
 		{
-			if ((x > (pixelX + it->x) && x < (pixelX + it->x + SUPPLY_TECH_SIZE)) 
+			if ((x > (pixelX + it->x) && x < (pixelX + it->x + SUPPLY_TECH_SIZE))
 				  && ( y > (pixelY + it->y) && y < (pixelY + it->y + SUPPLY_TECH_SIZE)))
 			{
 				TheMouse->setCursorTooltip( TheGameText->fetch("TOOLTIP:TechBuilding"), -1, NULL); //, 1.5f
@@ -602,7 +602,7 @@ void MapSelectorTooltip(GameWindow *window,
 			it2++;
 		}
 	}
-	
+
 }
 
 
@@ -619,7 +619,7 @@ void positionStartSpotControls( GameWindow *win, GameWindow *mapWindow, Coord3D 
 	findDrawPositions(0,0, winMapSize.x, winMapSize.y,mmd->m_extent, &ul, &lr);
 	Int smallWidth = lr.x - ul.x;
 	Int smallHeight= lr.y - ul.y;
-	
+
 	// When we actually draw the map, save off it's screen position and use that instead of the map window's position/size
 	Real position;
 	position = (pos->x - mmd->m_extent.lo.x) / (mmd->m_extent.hi.x - mmd->m_extent.lo.x);
@@ -627,8 +627,8 @@ void positionStartSpotControls( GameWindow *win, GameWindow *mapWindow, Coord3D 
 
 	position = (pos->y - mmd->m_extent.lo.y) / (mmd->m_extent.hi.y - mmd->m_extent.lo.y);
 	gadgetPos.y = ((1- position) * smallHeight) - gadgetSize.y /2 + ul.y;// + winMapPos.y;
-	
-	
+
+
 
 	// loop through and make sure we're not on top of anyone else
 	for(Int i = 0; i < MAX_SLOTS; ++i)
@@ -681,12 +681,12 @@ void positionAdditionalImages( MapMetaData *mmd, GameWindow *mapWindow, Bool for
 	findDrawPositions(0,0, winMapSize.x, winMapSize.y,mmd->m_extent, &ul, &lr);
 	Int smallWidth = lr.x - ul.x;
 	Int smallHeight= lr.y - ul.y;
-	
+
 	Coord3DList::iterator it = mmd->m_supplyPositions.begin();
 		// loop through and make sure we're not on top of anyone else
 	while( it != mmd->m_supplyPositions.end())
 	{
-		
+
 		ICoord2D markerPos;
 
 		// When we actually draw the map, save off it's screen position and use that instead of the map window's position/size
@@ -755,7 +755,7 @@ void positionStartSpots( AsciiString mapName, GameWindow *buttonMapStartPosition
 	else
 	{
 		MapMetaData mmd = it->second;
-		
+
 		Image *image = getMapPreviewImage(mapName);
 		if (mapWindow != NULL) {
 			mapWindow->winSetUserData((void *)TheMapCache->findMap(mapName));
@@ -783,7 +783,7 @@ void positionStartSpots( AsciiString mapName, GameWindow *buttonMapStartPosition
 
 		positionAdditionalImages(&mmd, mapWindow, TRUE);
 
-		AsciiString waypointName;				
+		AsciiString waypointName;
 		Int i = 0;
 		for(; i < mmd.m_numPlayers && mmd.m_isMultiplayer; ++i )
 		{
@@ -802,7 +802,7 @@ void positionStartSpots( AsciiString mapName, GameWindow *buttonMapStartPosition
 			{
 				DEBUG_ASSERTCRASH(FALSE,("positionStartSpots:: someone messed with the map cash.  We couldn't find waypoint <%s> in map <%s>", waypointName.str(),lowerMap.str()));
 			}
-		}	
+		}
 		// hide the rest
 		for (; i < MAX_SLOTS; ++i)
 		{
@@ -830,7 +830,7 @@ void positionStartSpots( GameInfo *myGame, GameWindow *buttonMapStartPositions[]
 			}
 		}
 	}
-	positionStartSpots(localMapFname, buttonMapStartPositions, mapWindow);	
+	positionStartSpots(localMapFname, buttonMapStartPositions, mapWindow);
 }
 
 void updateMapStartSpots( GameInfo *myGame, GameWindow *buttonMapStartPositions[], Bool onLoadScreen )
@@ -915,7 +915,7 @@ static void handlePlayerSelection(int index)
     if(!slot)
       return;
     slot->setState(SlotState(playerType), title);
-    
+
 	}
   //skirmishUpdateSlotList();
 }
@@ -1037,7 +1037,7 @@ static void handleTeamSelection(int index)
 static void handleStartingCashSelection()
 {
   GameInfo *myGame = TheSkirmishGameInfo;
-  
+
   if (myGame)
   {
     Int selIndex;
@@ -1052,7 +1052,7 @@ static void handleStartingCashSelection()
 static void handleLimitSuperweaponsClick()
 {
   GameInfo *myGame = TheSkirmishGameInfo;
-  
+
   if (myGame)
   {
     // At the moment, 1 and 0 are the only choices supported in the GUI, though the system could
@@ -1110,7 +1110,7 @@ void InitSkirmishGameGadgets( void )
 	textEntryPlayerNameID = TheNameKeyGenerator->nameToKey( AsciiString( "SkirmishGameOptionsMenu.wnd:TextEntryPlayerName" ) );
   textEntryPlayerName = TheWindowManager->winGetWindowFromId( NULL, textEntryPlayerNameID );
 	DEBUG_ASSERTCRASH(textEntryPlayerName, ("Could not find the textEntryPlayerName" ));
-	
+
 	windowMap = TheWindowManager->winGetWindowFromId( parentSkirmishGameOptions,windowMapID  );
 	DEBUG_ASSERTCRASH(windowMap, ("Could not find the SkirmishGameOptionsMenu.wnd:MapWindow" ));
 
@@ -1127,7 +1127,7 @@ void InitSkirmishGameGadgets( void )
 		  comboBoxPlayer[i] = TheWindowManager->winGetWindowFromId( parentSkirmishGameOptions, comboBoxPlayerID[i] );
 		  GadgetComboBoxReset(comboBoxPlayer[i]);
 		  //GadgetComboBoxGetEditBox(comboBoxPlayer[i])->winSetTooltipFunc(playerTooltip);
-    }    
+    }
 		Color white = GameMakeColor( 255, 255, 255, 255 );
 
 		if( i == 0 )
@@ -1156,7 +1156,7 @@ void InitSkirmishGameGadgets( void )
 		comboBoxColorID[i] = TheNameKeyGenerator->nameToKey( tmpString );
 		comboBoxColor[i] = TheWindowManager->winGetWindowFromId( parentSkirmishGameOptions, comboBoxColorID[i] );
 		DEBUG_ASSERTCRASH(comboBoxColor[i], ("Could not find the comboBoxColor[%d]",i ));
-		
+
 		tmpString.format("SkirmishGameOptionsMenu.wnd:ComboBoxPlayerTemplate%d", i);
 		comboBoxPlayerTemplateID[i] = TheNameKeyGenerator->nameToKey( tmpString );
 		comboBoxPlayerTemplate[i] = TheWindowManager->winGetWindowFromId( parentSkirmishGameOptions, comboBoxPlayerTemplateID[i] );
@@ -1170,7 +1170,7 @@ void InitSkirmishGameGadgets( void )
 		comboBoxTeamID[i] = TheNameKeyGenerator->nameToKey( tmpString );
 		comboBoxTeam[i] = TheWindowManager->winGetWindowFromId( parentSkirmishGameOptions, comboBoxTeamID[i] );
 		DEBUG_ASSERTCRASH(comboBoxTeam[i], ("Could not find the comboBoxTeam[%d]",i ));
-		
+
 
 //		tmpString.format("SkirmishGameOptionsMenu.wnd:ButtonStartPosition%d", i);
 //		buttonStartPositionID[i] = TheNameKeyGenerator->nameToKey( tmpString );
@@ -1182,7 +1182,7 @@ void InitSkirmishGameGadgets( void )
 		buttonMapStartPosition[i] = TheWindowManager->winGetWindowFromId( parentSkirmishGameOptions, buttonMapStartPositionID[i] );
 		DEBUG_ASSERTCRASH(buttonMapStartPosition[i], ("Could not find the ButtonMapStartPosition[%d]",i ));
 	}
-   
+
 	for (i = 0; i < MAX_SLOTS; ++i)
 	{
 		PopulateColorComboBox(i, comboBoxColor, TheSkirmishGameInfo );
@@ -1193,7 +1193,7 @@ void InitSkirmishGameGadgets( void )
 //		if (buttonStartPosition[i])
 //			buttonStartPosition[i]->winHide(TRUE); // not using these right now
 	}
-	
+
 	populateSkirmishBattleHonors();
 }
 
@@ -1297,7 +1297,7 @@ void updateSkirmishGameOptions( void )
       break;
     }
   }
-  
+
   DEBUG_ASSERTCRASH( index < itemCount, ("Could not find new starting cash amount %d in list", TheSkirmishGameInfo->getStartingCash().countMoney() ) );
 }
 
@@ -1312,7 +1312,7 @@ void SkirmishGameOptionsMenuInit( WindowLayout *layout, void *userData )
 	stillNeedsToSetOptions = FALSE;
 
 	sliderGameSpeedID = TheNameKeyGenerator->nameToKey( AsciiString( "SkirmishGameOptionsMenu.wnd:SliderGameSpeed" ) );
-	
+
 	sandboxOk = FALSE;
   doUpdateSlotList = FALSE;
   if( !TheSkirmishGameInfo )
@@ -1328,7 +1328,7 @@ void SkirmishGameOptionsMenuInit( WindowLayout *layout, void *userData )
 	{
 		SignalUIInteraction(SHELL_SCRIPT_HOOK_SKIRMISH_OPENED);
 	}
-  TheSkirmishGameInfo->init();  
+  TheSkirmishGameInfo->init();
   TheSkirmishGameInfo->clearSlotList();
 	TheSkirmishGameInfo->reset();
   Int localIP = TheSkirmishGameInfo->getSlot(0)->getIP();
@@ -1370,7 +1370,7 @@ void SkirmishGameOptionsMenuInit( WindowLayout *layout, void *userData )
 
   TheSkirmishGameInfo->setStartingCash( prefs.getStartingCash() );
   TheSkirmishGameInfo->setSuperweaponRestriction( prefs.getSuperweaponRestricted() ? 1 : 0 );
- 
+
   TheSkirmishGameInfo->setMap(prefs.getPreferredMap());
 	const MapMetaData *md = TheMapCache->findMap(TheSkirmishGameInfo->getMap());
 	if (!md)
@@ -1417,7 +1417,7 @@ void SkirmishGameOptionsMenuInit( WindowLayout *layout, void *userData )
 
 	// Show the Menu
 	layout->hide( FALSE );
-	
+
 	// Set Keyboard to Main Parent
 	TheWindowManager->winSetFocus( parentSkirmishGameOptions );
 
@@ -1479,13 +1479,13 @@ void SkirmishGameOptionsMenuShutdown( WindowLayout *layout, void *userData )
 
 	TheShell->reverseAnimatewindow();
 
-	
+
 	// hide menu
 //	layout->hide( TRUE );
 
 	// our shutdown is complete
 	TheTransitionHandler->reverse("SkirmishGameOptionsMenuFade");
-	
+
 }  // void SkirmishGameOptionsMenuShutdown( WindowLayout *layout, void *userData )
 
 //-------------------------------------------------------------------------------------------------
@@ -1529,7 +1529,7 @@ void SkirmishGameOptionsMenuUpdate( WindowLayout * layout, void *userData)
 WindowMsgHandledType SkirmishGameOptionsMenuInput( GameWindow *window, UnsignedInt msg,
 																			 WindowMsgData mData1, WindowMsgData mData2 )
 {
-	switch( msg ) 
+	switch( msg )
 	{
 
 		// --------------------------------------------------------------------------------------------
@@ -1549,7 +1549,7 @@ WindowMsgHandledType SkirmishGameOptionsMenuInput( GameWindow *window, UnsignedI
 					//
 					if( BitIsSet( state, KEY_STATE_UP ) )
 					{
-						TheWindowManager->winSendSystemMsg( window, GBM_SELECTED, 
+						TheWindowManager->winSendSystemMsg( window, GBM_SELECTED,
 																							(WindowMsgData)buttonExit, buttonExitID );
 					}  // end if
 					// don't let key fall through anywhere else
@@ -1566,13 +1566,13 @@ WindowMsgHandledType SkirmishGameOptionsMenuInput( GameWindow *window, UnsignedI
 //-------------------------------------------------------------------------------------------------
 /** Skirmish Game Options menu window system callback */
 //-------------------------------------------------------------------------------------------------
-WindowMsgHandledType SkirmishGameOptionsMenuSystem( GameWindow *window, UnsignedInt msg, 
+WindowMsgHandledType SkirmishGameOptionsMenuSystem( GameWindow *window, UnsignedInt msg,
 														 WindowMsgData mData1, WindowMsgData mData2 )
 {
 	UnicodeString txtInput;
 	switch( msg )
 	{
-		//-------------------------------------------------------------------------------------------------	
+		//-------------------------------------------------------------------------------------------------
 		case GWM_CREATE:
 			{
 				break;
@@ -1587,7 +1587,7 @@ WindowMsgHandledType SkirmishGameOptionsMenuSystem( GameWindow *window, Unsigned
 			} // case GWM_DESTROY:
 		//-------------------------------------------------------------------------------------------------
 		case GWM_INPUT_FOCUS:
-			{	
+			{
 				// if we're givin the opportunity to take the keyboard focus we must say we want it
 				if( mData1 == TRUE )
 					*(Bool *)mData2 = TRUE;
@@ -1644,7 +1644,7 @@ WindowMsgHandledType SkirmishGameOptionsMenuSystem( GameWindow *window, Unsigned
 		//-------------------------------------------------------------------------------------------------
 		case GBM_SELECTED:
 			{
-				
+
 				GameWindow *control = (GameWindow *)mData1;
 				Int controlID = control->winGetWindowId();
 ///				static NameKeyType buttonResetFPSID = TheNameKeyGenerator->nameToKey( AsciiString( "SkirmishGameOptionsMenu.wnd:ButtonResetFPS" ) );
@@ -1776,7 +1776,7 @@ WindowMsgHandledType SkirmishGameOptionsMenuSystem( GameWindow *window, Unsigned
 						sandboxOk = FALSE;
 					}
 				}
-			}					
+			}
 			break;
 		}
 		//-------------------------------------------------------------------------------------------------
@@ -1842,7 +1842,7 @@ void populateSkirmishBattleHonors(void)
 
 	ResetBattleHonorInsertion();
 	GadgetListBoxAddEntryImage(list, NULL, 0, 0, 10, 10, TRUE, GameMakeColor(255,255,255,255));
-	
+
 	// FIRST ROW OF HONORS
 	row = 1; column = 0;
 
@@ -1851,7 +1851,7 @@ void populateSkirmishBattleHonors(void)
 	{
 		InsertBattleHonor(list, TheMappedImageCollection->findImageByName("ChinaCampaign_G"), TRUE,
 			BATTLE_HONOR_CAMPAIGN_CHINA, row, column);
-	} 
+	}
 	else if (stats.getCHINACampaignComplete(DIFFICULTY_NORMAL))
 	{
 		InsertBattleHonor(list, TheMappedImageCollection->findImageByName("ChinaCampaign_S"), TRUE,
@@ -1873,7 +1873,7 @@ void populateSkirmishBattleHonors(void)
 	{
 		InsertBattleHonor(list, TheMappedImageCollection->findImageByName("GLACampaign_G"), TRUE,
 			BATTLE_HONOR_CAMPAIGN_GLA, row, column);
-	} 
+	}
 	else if (stats.getGLACampaignComplete(DIFFICULTY_NORMAL))
 	{
 		InsertBattleHonor(list, TheMappedImageCollection->findImageByName("GLACampaign_S"), TRUE,
@@ -1895,7 +1895,7 @@ void populateSkirmishBattleHonors(void)
 	{
 		InsertBattleHonor(list, TheMappedImageCollection->findImageByName("USACampaign_G"), TRUE,
 			BATTLE_HONOR_CAMPAIGN_USA, row, column);
-	} 
+	}
 	else if (stats.getUSACampaignComplete(DIFFICULTY_NORMAL))
 	{
 		InsertBattleHonor(list, TheMappedImageCollection->findImageByName("USACampaign_S"), TRUE,
@@ -1932,7 +1932,7 @@ void populateSkirmishBattleHonors(void)
 	{
 		InsertBattleHonor(list, TheMappedImageCollection->findImageByName("Challenge_Gold"), TRUE,
 			BATTLE_HONOR_CHALLENGE_MODE, row, column);
-	} 
+	}
 	else if (completedOnNormal)
 	{
 		InsertBattleHonor(list, TheMappedImageCollection->findImageByName("Challenge_Silver"), TRUE,
@@ -2106,7 +2106,7 @@ void populateSkirmishBattleHonors(void)
 	{
 		if (!it->second.m_isOfficial || !it->second.m_isMultiplayer)
 			continue;
-	
+
 		Int totalOpponentSlots = it->second.m_numPlayers - 1;
 		Int numBrutalOpponentsBeaten = stats.getEnduranceMedal(it->first, SLOT_BRUTAL_AI);
 		if (numBrutalOpponentsBeaten < totalOpponentSlots)

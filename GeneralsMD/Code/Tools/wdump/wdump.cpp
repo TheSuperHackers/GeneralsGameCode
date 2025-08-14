@@ -63,7 +63,7 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // CWdumpApp construction
 
-CWdumpApp::CWdumpApp() 
+CWdumpApp::CWdumpApp()
 : DumpTextures(false), NoWindow(false), TextureDumpFile(0)
 {
 	// TODO: add construction code here,
@@ -146,13 +146,13 @@ BOOL CWdumpApp::InitInstance()
 	if(NoWindow) {
 		if(cmdInfo.m_nShellCommand == CWDumpCommandLineInfo::FileOpen) {
 			const char *c = strrchr(cmdInfo.m_strFileName, '\\');
-			if(c == 0) 
+			if(c == 0)
 				c = (LPCTSTR) cmdInfo.m_strFileName;
 			if(*c == '\\')
 				c++;
 
 			Filename = c;
-			
+
 
 
 /*			STARTUPINFO info;
@@ -171,11 +171,11 @@ BOOL CWdumpApp::InitInstance()
 						_dup2( CrtOutput, 1);
 					}
 				}
-					 
+
 //				stdin = (struct _iobuf * ) info.hStdInput;
 //				stdout = (struct _iobuf * ) info.hStdOutput;
 			}
-*/			
+*/
 
 			CWdumpDoc *doc = (CWdumpDoc *) pDocTemplate->OpenDocumentFile(cmdInfo.m_strFileName, FALSE);
 

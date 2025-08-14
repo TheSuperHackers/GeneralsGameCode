@@ -68,11 +68,11 @@ typedef unsigned short POLYGONINDEX;
 /*
 **
 */
-class IntersectionResultClass 
+class IntersectionResultClass
 {
 public:
 	RenderObjClass *	IntersectedRenderObject;
-	POLYGONINDEX		IntersectedPolygon;       
+	POLYGONINDEX		IntersectedPolygon;
 
 	Matrix3D				ModelMatrix;		// this is required for transforming mesh normals from model coords
 	Vector3				ModelLocation;		// ditto
@@ -85,7 +85,7 @@ public:
 
 	enum INTERSECTION_TYPE {
 		NONE = 0,
-		GENERIC, 
+		GENERIC,
 		POLYGON
 	} IntersectionType;
 };
@@ -98,15 +98,15 @@ class IntersectionClass
 public:
 	enum {
 		MAX_POLY_INTERSECTION_COUNT = 1000, // arbitrary size of stack array used for storing intersection results within Intersect_Mesh(). Non-recursive function.
-		MAX_HIERARCHY_NODE_COUNT = 256			
+		MAX_HIERARCHY_NODE_COUNT = 256
 	};
-	
-	// this structure is used to store all intersections on the stack for sorting before 
+
+	// this structure is used to store all intersections on the stack for sorting before
 	// copying the nearest intersection to IntersectionClassObject->Result.
 	// note: the convex intersection functions return with the first intersection results.
 
 	Vector3 *RayLocation; // note: these pointers must be Set() to valid pointers by external code
-	Vector3 *RayDirection; 
+	Vector3 *RayDirection;
 	Vector3 *IntersectionNormal; // if non-zero then Process_Intersection_Results() will place the (perhaps vertex interpolated) surface normal here.
 
 	// 2d screen coordinates for use by Intersect_Screen_Point...() routines.
@@ -117,20 +117,20 @@ public:
 	// the normal since they are intended to be used to find the nearest of several intersections
 	// and interpolating the normal for intersections that are tossed would be wasteful.
 	// If you need the normal interpolated in that case anyways then call Interpolate_Normal().
-	bool InterpolateNormal; 
+	bool InterpolateNormal;
 
-	// if true, then perform potentially much faster convex intersection test which will return 
+	// if true, then perform potentially much faster convex intersection test which will return
 	// the first valid intersection. Generally used for producing silhouettes.
 	// If true, all intersections will be convex tests. If false, test mode will be determined (generally)
 	// by the render object or whatever called the intersection functions and passes the Convex argument.
 	bool ConvexTest;
-						
+
 	// do not consider intersections beyond this range as an intersection.
 	// Note: Get_Screen_Ray sets this to scene->zstop.
-	float MaxDistance; 
+	float MaxDistance;
 
 	// final intersection results are contained here
-	IntersectionResultClass Result; 
+	IntersectionResultClass Result;
 
 	//
 	// Implementation
@@ -148,9 +148,9 @@ public:
 	}
 
 
-	
+
 	// this constructor uses static variables for the location/direction/normal variables
-	// so can be only used one thread at a time unless the Set() function is used to 
+	// so can be only used one thread at a time unless the Set() function is used to
 	// set them to private vector3's
 	inline IntersectionClass()
 	: ConvexTest(false)
@@ -161,11 +161,11 @@ public:
 		Result.CollisionType=COLL_TYPE_ALL;	//added for 'Generals'. MW
 	}
 
-	
+
 	// This will be the most commonly used constructor
 	inline IntersectionClass(Vector3 *location, Vector3 *direction, Vector3 *intersection_normal, bool interpolate_normal = false, float max_distance = WWMATH_FLOAT_MAX, bool convex_test = false)
 	{
-		Set(location, direction, intersection_normal, interpolate_normal, max_distance, convex_test);	
+		Set(location, direction, intersection_normal, interpolate_normal, max_distance, convex_test);
 	}
 
 
@@ -190,7 +190,7 @@ public:
 	// otherwise the results are copied into the request structure.
 	// This does not copy the matrix or location members; it is intended to be used during poly testing
 	// where these values are identical between results, or as a completion function for Copy_Results()
-	inline void Copy_Partial_Results(IntersectionResultClass *Destination, IntersectionResultClass *Source) 
+	inline void Copy_Partial_Results(IntersectionResultClass *Destination, IntersectionResultClass *Source)
 	{
 		Destination->IntersectedPolygon = Source->IntersectedPolygon;
 		Destination->Intersection = Source->Intersection;
@@ -225,11 +225,11 @@ public:
 	// this will only set the result's range if intersection occurs; it is intended to be used as a first pass intersection test
 	// before intersecting the mesh polygons itself.
 	// Note: Does NOT do Max_Distance testing
-	inline bool Intersect_Sphere_Quick(SphereClass &Sphere, IntersectionResultClass *FinalResult) 
+	inline bool Intersect_Sphere_Quick(SphereClass &Sphere, IntersectionResultClass *FinalResult)
 	{
 		// make a unit vector from the ray origin to the sphere center
 		Vector3 sphere_vector(Sphere.Center - *RayLocation);
-		
+
 		// get the dot product between the sphere_vector and the ray vector
 		FinalResult->Alpha = Vector3::Dot_Product(sphere_vector, *RayDirection);
 
@@ -243,9 +243,9 @@ public:
 
 
 	// this will find the intersection with the sphere and the intersection normal if needed.
-	inline bool Intersect_Sphere(SphereClass &Sphere, IntersectionResultClass *FinalResult) 
+	inline bool Intersect_Sphere(SphereClass &Sphere, IntersectionResultClass *FinalResult)
 	{
-		if(!Intersect_Sphere_Quick(Sphere, FinalResult)) 
+		if(!Intersect_Sphere_Quick(Sphere, FinalResult))
 			return false;
 
 		// determine range to intersection based on stored alpha/beta values
@@ -255,9 +255,9 @@ public:
 		if(FinalResult->Range > MaxDistance) return false;
 
 		FinalResult->Intersection = *RayLocation +  FinalResult->Range * (*RayDirection);
-		
+
 		if(IntersectionNormal != 0) {
-			(*IntersectionNormal) = FinalResult->Intersection - Sphere.Center;	
+			(*IntersectionNormal) = FinalResult->Intersection - Sphere.Center;
 		}
 		return true;
 	}
@@ -265,10 +265,10 @@ public:
 
 	// inline declarations
 	// Usage of these functions requires including intersec.inl
-	
+
 	// determine location & direction for projected screen coordinate ray
-	inline void Get_Screen_Ray(float ScreenX, float ScreenY, const LayerClass &Layer); 
-	
+	inline void Get_Screen_Ray(float ScreenX, float ScreenY, const LayerClass &Layer);
+
 	// uses the Result's range & the Ray_Direction to calculate the actual point of intersection.
 	inline void Calculate_Intersection(IntersectionResultClass *Result);
 
@@ -285,16 +285,16 @@ public:
 
 	/*
 	**	This function will fill the passed array with the set of points & uv values that represent
-	**	the boolean operation of the anding of the ClipPoints with the TrianglePoints. The UV values	
+	**	the boolean operation of the anding of the ClipPoints with the TrianglePoints. The UV values
 	**	provided for the TrianglePoints triangle are used to generate accurate UV values for any
 	**	new points created by this operation.
 	**	The clipped points have Z values that make them sit on the ClipPoints triangle plane.
 	*/
-	static inline int _Intersect_Triangles_Z(	
-		Vector3 ClipPoints[3], 
-		Vector3 TrianglePoints[3], 
+	static inline int _Intersect_Triangles_Z(
+		Vector3 ClipPoints[3],
+		Vector3 TrianglePoints[3],
 		Vector2 UV[3],
-		Vector3 ClippedPoints[6], 
+		Vector3 ClippedPoints[6],
 		Vector2 ClippedUV[6]
 	);
 
@@ -305,7 +305,7 @@ public:
 	static inline float _Get_Z_Elevation(Vector3 &Point, Vector3 &PlanePoint, Vector3 &PlaneNormal);
 
 
-	// test a 2d screen area with the intersection's screen coords, assigning a GENERIC intersection 
+	// test a 2d screen area with the intersection's screen coords, assigning a GENERIC intersection
 	// to the specified object.
 	inline bool Intersect_Screen_Object(IntersectionResultClass *Final_Result, Vector4 &Area, RenderObjClass *obj = 0);
 
@@ -337,7 +337,7 @@ public:
 	bool Intersect_Box(Vector3 &Box_Min, Vector3 &Box_Max, IntersectionResultClass *FinalResult);
 	bool Intersect_Hierarchy(RenderObjClass *Hierarchy, IntersectionResultClass *FinalResult, bool Test_Bounding_Sphere = true,  bool Convex = false);
 	bool Intersect_Hierarchy_Sphere(RenderObjClass *Hierarchy, IntersectionResultClass *FinalResult);
-	bool Intersect_Hierarchy_Sphere_Quick(RenderObjClass *Hierarchy, IntersectionResultClass *FinalResult); 
+	bool Intersect_Hierarchy_Sphere_Quick(RenderObjClass *Hierarchy, IntersectionResultClass *FinalResult);
 
 	/*
 	** Identifies exactly what sub object of a render object is under the screen space vector
@@ -378,7 +378,7 @@ protected:
 		const Vector3 & de			// direction of clipping edge
 	);
 
-	static inline int Clip_Triangle_To_LineXY(	
+	static inline int Clip_Triangle_To_LineXY(
 		int incount,
 		Vector3 * InPoints,
 		Vector2 * InUVs,
@@ -401,4 +401,4 @@ protected:
 };
 
 
-#endif 
+#endif

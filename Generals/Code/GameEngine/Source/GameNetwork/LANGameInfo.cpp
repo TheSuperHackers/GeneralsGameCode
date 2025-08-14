@@ -106,7 +106,7 @@ void LANGameInfo::setSlot( Int slotNum, LANGameSlot slotInfo )
 		return;
 
 	m_LANSlot[slotNum] = slotInfo;
-	
+
 	if (slotNum == 0)
 	{
 		m_LANSlot[slotNum].setAccept();
@@ -205,14 +205,14 @@ void LANDisplayGameList( GameWindow *gameListbox, LANGameInfo *gameList )
 	if (gameListbox)
 	{
 		GadgetListBoxGetSelected(gameListbox, &selectedIndex);
-		
+
 		if (selectedIndex != -1 )
 		{
 			selectedPtr = (LANGameInfo *)GadgetListBoxGetItemData(gameListbox, selectedIndex, 0);
 		}
 
 		GadgetListBoxReset(gameListbox);
-		
+
 		while (gameList)
 		{
 			UnicodeString txtGName;

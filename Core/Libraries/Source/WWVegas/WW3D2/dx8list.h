@@ -26,8 +26,8 @@
  *                                                                                             *
  *              Original Author:: Greg Hjelstrom                                               *
  *                                                                                             *
- *                       Author : Kenny Mitchell                                               * 
- *                                                                                             * 
+ *                       Author : Kenny Mitchell                                               *
+ *                                                                                             *
  *                     $Modtime:: 06/27/02 1:27p                                              $*
  *                                                                                             *
  *                    $Revision:: 5                                                           $*
@@ -63,7 +63,7 @@ typedef MultiListIterator<DX8FVFCategoryContainer>		FVFCategoryListIterator;
 
 class DX8PolygonRendererClass;
 typedef MultiListClass<DX8PolygonRendererClass>			DX8PolygonRendererList;
-typedef MultiListIterator<DX8PolygonRendererClass>		DX8PolygonRendererListIterator; 
+typedef MultiListIterator<DX8PolygonRendererClass>		DX8PolygonRendererListIterator;
 
 class TextureTrackerClass;
 typedef MultiListClass<TextureTrackerClass>				TextureTrackerList;

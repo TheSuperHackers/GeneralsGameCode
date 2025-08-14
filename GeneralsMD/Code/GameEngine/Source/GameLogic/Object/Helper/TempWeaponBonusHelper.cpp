@@ -40,8 +40,8 @@
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-TempWeaponBonusHelper::TempWeaponBonusHelper( Thing *thing, const ModuleData *modData ) : ObjectHelper( thing, modData ) 
-{ 
+TempWeaponBonusHelper::TempWeaponBonusHelper( Thing *thing, const ModuleData *modData ) : ObjectHelper( thing, modData )
+{
 	m_currentBonus = WEAPONBONUSCONDITION_INVALID;
 	m_currentTint = TINT_STATUS_INVALID;
 	m_frameToRemove = 0;

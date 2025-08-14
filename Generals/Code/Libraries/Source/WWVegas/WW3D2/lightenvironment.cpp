@@ -69,8 +69,8 @@ void LightEnvironmentClass::InputLightStruct::Init
 	const Vector3 & object_center
 )
 {
-	m_point = false; 
-	switch(light.Get_Type()) 
+	m_point = false;
+	switch(light.Get_Type())
 	{
 	case LightClass::POINT:
 	case LightClass::SPOT:
@@ -102,14 +102,14 @@ void LightEnvironmentClass::InputLightStruct::Init_From_Point_Or_Spot_Light
 	*/
 	double atten_start,atten_end;
 	light.Get_Far_Attenuation_Range(atten_start,atten_end);
-	
+
 	float atten = 1.0f - (dist - atten_start) / (atten_end - atten_start);
 	atten = WWMath::Clamp(atten,0.0f,1.0f);
 
 
 
 	if (light.Get_Type() == LightClass::SPOT) {
-		
+
 		Vector3 spot_dir;
 		light.Get_Spot_Direction(spot_dir);
 		Matrix3D::Rotate_Vector(light.Get_Transform(),spot_dir,&spot_dir);
@@ -127,7 +127,7 @@ void LightEnvironmentClass::InputLightStruct::Init_From_Point_Or_Spot_Light
 	light.Get_Ambient(&Ambient);
 	light.Get_Diffuse(&Diffuse);
 
-	m_point = (light.Get_Type() == LightClass::POINT); 
+	m_point = (light.Get_Type() == LightClass::POINT);
 	m_center = light.Get_Position();
 	m_innerRadius = atten_start;
 	m_outerRadius = atten_end;
@@ -139,7 +139,7 @@ void LightEnvironmentClass::InputLightStruct::Init_From_Point_Or_Spot_Light
 		DiffuseRejected = false;
 		Ambient *= atten;
 		Diffuse *= atten;
-		
+
 	} else {
 
 		DiffuseRejected = true;
@@ -169,7 +169,7 @@ float LightEnvironmentClass::InputLightStruct::Contribution(void)
 {
 	return Diffuse.Length2();
 }
-	
+
 
 /************************************************************************************************
 **
@@ -185,7 +185,7 @@ void LightEnvironmentClass::OutputLightStruct::Init
 {
 	Diffuse = input.Diffuse;
 	Matrix3D::Inverse_Rotate_Vector(camera_tm,input.Direction,&Direction);
-}	
+}
 
 
 

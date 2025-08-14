@@ -74,7 +74,7 @@ class GenericNode {
 			// note that this means that the special generic node at the head
 			// and tail of the list can not be unlinked.  This is done because
 			// the user should never unlink them -- it will destroy the list in
-			// an evil way.  
+			// an evil way.
 			if (Is_Valid()) {
 				PrevNode->NextNode = NextNode;
 				NextNode->PrevNode = PrevNode;
@@ -118,14 +118,14 @@ class GenericNode {
 /*
 **	This is a generic list handler. It manages N generic nodes. Use the interface class
 **	to the generic list for added convenience.
-*/											  
+*/
 class GenericList {
 	public:
 		GenericList(void) {
 			FirstNode.Link(&LastNode);
 		}
 
-	
+
 		virtual ~GenericList(void) {
 			while (FirstNode.Next()->Is_Valid()) {
 				FirstNode.Next()->Unlink();
@@ -133,7 +133,7 @@ class GenericList {
 		}
 
 		GenericNode * First(void) const {return(FirstNode.Next());}
-		GenericNode * First_Valid(void) const 
+		GenericNode * First_Valid(void) const
 		{
 			GenericNode *node = FirstNode.Next();
 			return (node->Next() ? node : (GenericNode *)0);
@@ -151,7 +151,7 @@ class GenericList {
 		void Add_Tail(GenericNode * node) {LastNode.Prev()->Link(node);}
 //		void Delete(void) {while (FirstNode.Next()->Is_Valid()) delete FirstNode.Next();}
 
-		int Get_Valid_Count(void) const 
+		int Get_Valid_Count(void) const
 		{
 			GenericNode * node = First_Valid();
 			int counter = 0;
@@ -271,7 +271,7 @@ private:
 	// you are trying to construct a SafeContextDataNode without providing
 	// context and data values. Perhaps you've included a SafeContextDataNode
 	// as a member variable, but forgotten to add it to the initializer list
-	// in your class constructor. 
+	// in your class constructor.
 	// DO NOT change the void constructor to public. That would defeat
 	// the purpose of the SafeContextDataNode. -DRM
 	SafeContextDataNode();

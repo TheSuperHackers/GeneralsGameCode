@@ -24,12 +24,12 @@
 
 // FILE: GlobalLanguage.cpp /////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Electronic Arts Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2002 - All Rights Reserved                  
-//                                                                          
+//
+//                       Electronic Arts Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2002 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 //	created:	Aug 2002
@@ -37,7 +37,7 @@
 //	Filename: 	GlobalLanguage.cpp
 //
 //	author:		Chris Huybregts
-//	
+//
 //	purpose:	Contains the member functions for the language munkee
 //
 //-----------------------------------------------------------------------------
@@ -62,7 +62,7 @@
 //-----------------------------------------------------------------------------
 GlobalLanguage *TheGlobalLanguageData = NULL;				///< The global language singalton
 
-static const FieldParse TheGlobalLanguageDataFieldParseTable[] = 
+static const FieldParse TheGlobalLanguageDataFieldParseTable[] =
 {
 	{ "UnicodeFontName",									INI::parseAsciiString,NULL,									offsetof( GlobalLanguage, m_unicodeFontName ) },
 	//{	"UnicodeFontFileName",							INI::parseAsciiString,NULL,									offsetof( GlobalLanguage, m_unicodeFontFileName ) },
@@ -70,9 +70,9 @@ static const FieldParse TheGlobalLanguageDataFieldParseTable[] =
 	{ "MilitaryCaptionSpeed",						INI::parseInt,					NULL,		offsetof( GlobalLanguage, m_militaryCaptionSpeed ) },
 	{ "UseHardWordWrap",						INI::parseBool,					NULL,		offsetof( GlobalLanguage, m_useHardWrap) },
 	{ "ResolutionFontAdjustment",						INI::parseReal,					NULL,		offsetof( GlobalLanguage, m_resolutionFontSizeAdjustment) },
-	
+
 	{ "CopyrightFont",					GlobalLanguage::parseFontDesc,	NULL,	offsetof( GlobalLanguage, m_copyrightFont ) },
-	{ "MessageFont",					GlobalLanguage::parseFontDesc,	NULL,	offsetof( GlobalLanguage, m_messageFont) },					
+	{ "MessageFont",					GlobalLanguage::parseFontDesc,	NULL,	offsetof( GlobalLanguage, m_messageFont) },
 	{ "MilitaryCaptionTitleFont",		GlobalLanguage::parseFontDesc,	NULL,	offsetof( GlobalLanguage, m_militaryCaptionTitleFont) },
 	{ "MilitaryCaptionDelayMS",					INI::parseInt,					NULL,		offsetof( GlobalLanguage, m_militaryCaptionDelayMS ) },
 	{ "MilitaryCaptionFont",			GlobalLanguage::parseFontDesc,	NULL,	offsetof( GlobalLanguage, m_militaryCaptionFont) },
@@ -133,7 +133,7 @@ GlobalLanguage::~GlobalLanguage()
 	}
 }
 
-void GlobalLanguage::init( void ) 
+void GlobalLanguage::init( void )
 {
 
 	INI ini;
@@ -169,7 +169,7 @@ void GlobalLanguage::init( void )
 		++it;
 	}
 
-	
+
 }
 void GlobalLanguage::reset( void ) {}
 
@@ -187,9 +187,9 @@ void GlobalLanguage::parseFontFileName( INI *ini, void * instance, void *store, 
 	GlobalLanguage *monkey = (GlobalLanguage *)instance;
 	AsciiString asciiString = ini->getNextAsciiString();
 	monkey->m_localFonts.push_front(asciiString);
-}	 
+}
 
-Int GlobalLanguage::adjustFontSize(Int theFontSize) 
+Int GlobalLanguage::adjustFontSize(Int theFontSize)
 {
 	Real adjustFactor = TheGlobalData->m_xResolution/800.0f;
 	adjustFactor = 1.0f + (adjustFactor-1.0f) * m_resolutionFontSizeAdjustment;

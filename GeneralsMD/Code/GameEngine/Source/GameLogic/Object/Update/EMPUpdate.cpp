@@ -80,7 +80,7 @@ static void saturateRGB(RGBColor& color, Real factor)
 EMPUpdate::EMPUpdate( Thing *thing, const ModuleData* moduleData ) : UpdateModule( thing, moduleData )
 {
 
-	//s_lastInstanceSpunPositive = !s_lastInstanceSpunPositive; //TOGGLES STATIC BOOL 
+	//s_lastInstanceSpunPositive = !s_lastInstanceSpunPositive; //TOGGLES STATIC BOOL
 
 	const EMPUpdateModuleData *data = getEMPUpdateModuleData();
 	if ( data )
@@ -90,8 +90,8 @@ EMPUpdate::EMPUpdate( Thing *thing, const ModuleData* moduleData ) : UpdateModul
 		UnsignedInt now = TheGameLogic->getFrame();
 
 		m_currentScale = data->m_startScale;
-		m_dieFrame = REAL_TO_UNSIGNEDINT( now + data->m_lifeFrames );			
-		m_tintEnvPlayFrame = REAL_TO_UNSIGNEDINT( now + data->m_startFadeFrame );	
+		m_dieFrame = REAL_TO_UNSIGNEDINT( now + data->m_lifeFrames );
+		m_tintEnvPlayFrame = REAL_TO_UNSIGNEDINT( now + data->m_startFadeFrame );
 		m_tintEnvFadeFrames = m_dieFrame - m_tintEnvPlayFrame;
 		//m_spinRate = GameLogicRandomValueReal(data->m_spinRateMax * 0.5f, data->m_spinRateMax);
 		m_targetScale = GameLogicRandomValueReal(data->m_targetScaleMin, data->m_targetScaleMax);
@@ -103,16 +103,16 @@ EMPUpdate::EMPUpdate( Thing *thing, const ModuleData* moduleData ) : UpdateModul
 		getObject()->setOrientation(GameLogicRandomValueReal(-PI,PI));
 
 		DEBUG_ASSERTCRASH( m_tintEnvPlayFrame < m_dieFrame, ("EMPUpdate::EMPUpdate - you cant play fade after death" ) );
-		
+
 		return;
 	}
 
 	//SANITY
 	DEBUG_ASSERTCRASH( data, ("EMPUpdate::EMPUpdate - getEMPUpdateModuleData is NULL" ) );
 	m_currentScale = 1.0f;
-	m_dieFrame = 0;			
+	m_dieFrame = 0;
 	m_tintEnvFadeFrames = 0;
-	m_tintEnvPlayFrame  = 0;	
+	m_tintEnvPlayFrame  = 0;
 	//m_spinRate = 0;
 	m_targetScale = 1;
 }
@@ -135,7 +135,7 @@ UpdateSleepTime EMPUpdate::update( void )
 	const EMPUpdateModuleData *data = getEMPUpdateModuleData();
 	Drawable *dr = obj->getDrawable();
 	UnsignedInt now = TheGameLogic->getFrame();
-	
+
 	m_currentScale += ( m_targetScale - m_currentScale ) * 0.05f;
 	dr->setInstanceScale( m_currentScale );
 
@@ -198,11 +198,11 @@ void EMPUpdate::doDisableAttack( void )
 
 	if (radius > 0.0f)
 	{
-		iter = ThePartitionManager->iterateObjectsInRange(pos, 
+		iter = ThePartitionManager->iterateObjectsInRange(pos,
 			radius, FROM_BOUNDINGSPHERE_3D);
 
 		curVictim = iter->firstWithNumeric(&curVictimDistSqr);
-	} 
+	}
 
 	MemoryPoolObjectHolder hold(iter);
 
@@ -239,7 +239,7 @@ void EMPUpdate::doDisableAttack( void )
 
 
 
-      
+
 
 
       if ( !curVictim->isKindOf( KINDOF_VEHICLE ) && !curVictim->isKindOf(KINDOF_STRUCTURE) && !curVictim->isKindOf(KINDOF_SPAWNS_ARE_THE_WEAPONS) )
@@ -273,7 +273,7 @@ void EMPUpdate::doDisableAttack( void )
 					continue;
 			}
 			// handle cases where we do not want allies to be hit by it's own EMP weapons
-			else if ( (data->m_rejectMask & WEAPON_AFFECTS_ALLIES) && curVictim->getRelationship( object ) == ALLIES) 
+			else if ( (data->m_rejectMask & WEAPON_AFFECTS_ALLIES) && curVictim->getRelationship( object ) == ALLIES)
 			{
 				continue;
 			}
@@ -301,12 +301,12 @@ void EMPUpdate::doDisableAttack( void )
 					Real victimVolume = victimFootprintArea * MIN(victimHeight, 10.0f);
 
 					UnsignedInt emitterCount = MAX(15, REAL_TO_INT_CEIL(data->m_sparksPerCubicFoot * victimVolume));
-			
+
 					for (UnsignedInt e = 0 ; e < emitterCount; ++e)
 					{
 
 						ParticleSystem *sys = TheParticleSystemManager->createParticleSystem(tmp);
-						
+
 						if (sys)
 						{
 							Coord3D offs = {0,0,0};
@@ -331,7 +331,7 @@ void EMPUpdate::doDisableAttack( void )
 							sys->setInitialDelay(GameLogicRandomValue(1,100));
 						}
 					}
-				} 
+				}
 			}
 
 		}
@@ -404,7 +404,7 @@ void EMPUpdate::loadPostProcess( void )
 //  ////////////////^^^
 //  /////////////^
 //  ///////////
- 
+
 
 
 
@@ -414,7 +414,7 @@ LeafletDropBehavior::LeafletDropBehavior( Thing *thing, const ModuleData* module
 {
 
   m_fxFired = FALSE;
-	//s_lastInstanceSpunPositive = !s_lastInstanceSpunPositive; //TOGGLES STATIC BOOL 
+	//s_lastInstanceSpunPositive = !s_lastInstanceSpunPositive; //TOGGLES STATIC BOOL
 
 	const LeafletDropBehaviorModuleData *data = getLeafletDropBehaviorModuleData();
 	if ( data )
@@ -423,13 +423,13 @@ LeafletDropBehavior::LeafletDropBehavior( Thing *thing, const ModuleData* module
 		DEBUG_ASSERTCRASH( TheGameLogic, ("LeafletDropBehavior::LeafletDropBehavior - TheGameLogic is NULL" ) );
 		UnsignedInt now = TheGameLogic->getFrame();
     m_startFrame = now + data->m_delayFrames;
-		
+
 		return;
 	}
 
 	//SANITY
 	DEBUG_ASSERTCRASH( data, ("LeafletDropBehavior::LeafletDropBehavior - getLeafletDropBehaviorModuleData is NULL" ) );
-	m_startFrame = TheGameLogic->getFrame() + 1;			
+	m_startFrame = TheGameLogic->getFrame() + 1;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -499,11 +499,11 @@ void LeafletDropBehavior::doDisableAttack( void )
 
 	if (radius > 0.0f)
 	{
-		iter = ThePartitionManager->iterateObjectsInRange(pos, 
+		iter = ThePartitionManager->iterateObjectsInRange(pos,
 			radius, FROM_BOUNDINGSPHERE_3D);
 
 		curVictim = iter->firstWithNumeric(&curVictimDistSqr);
-	} 
+	}
 
 	MemoryPoolObjectHolder hold(iter);
 
@@ -516,7 +516,7 @@ void LeafletDropBehavior::doDisableAttack( void )
 
       if ( curVictim->getRelationship( object ) != ENEMIES ) // only enemies
 				continue;
-    
+
 			//Disable the target for a specified amount of time.
 			curVictim->setDisabledUntil( DISABLED_EMP, TheGameLogic->getFrame() + data->m_disabledDuration );
 

@@ -57,7 +57,7 @@ AABoxCollisionTestClass::AABoxCollisionTestClass(const AABoxClass & aabox,const 
 
 	Vector3 endmin = Box.Center + move - Box.Extent;
 	Vector3 endmax = Box.Center + move + Box.Extent;
-	
+
 	if (endmax.X > SweepMax.X) SweepMax.X = endmax.X;
 	if (endmax.Y > SweepMax.Y) SweepMax.Y = endmax.Y;
 	if (endmax.Z > SweepMax.Z) SweepMax.Z = endmax.Z;
@@ -96,11 +96,11 @@ bool AABoxCollisionTestClass::Cull(const AABoxClass & box)
 }
 
 
-void AABoxCollisionTestClass::Rotate(ROTATION_TYPE rotation) 
+void AABoxCollisionTestClass::Rotate(ROTATION_TYPE rotation)
 {
 
 #ifndef NDEBUG
-	
+
 	int i;
 	Matrix3D tm(1);
 	switch(rotation) {
@@ -127,7 +127,7 @@ void AABoxCollisionTestClass::Rotate(ROTATION_TYPE rotation)
 	Vector3 pts[8];
 	Vector3 & min = SweepMin;
 	Vector3 & max = SweepMax;
-	
+
 	pts[0].Set(min.X,min.Y,min.Z);
 	pts[1].Set(min.X,max.Y,min.Z);
 	pts[2].Set(max.X,max.Y,min.Z);
@@ -150,7 +150,7 @@ void AABoxCollisionTestClass::Rotate(ROTATION_TYPE rotation)
 		if (realmin.X >= pts[i].X) realmin.X = pts[i].X;
 		if (realmin.Y >= pts[i].Y) realmin.Y = pts[i].Y;
 		if (realmin.Z >= pts[i].Z) realmin.Z = pts[i].Z;
-		
+
 		if (realmax.X <= pts[i].X) realmax.X = pts[i].X;
 		if (realmax.Y <= pts[i].Y) realmax.Y = pts[i].Y;
 		if (realmax.Z <= pts[i].Z) realmax.Z = pts[i].Z;
@@ -158,8 +158,8 @@ void AABoxCollisionTestClass::Rotate(ROTATION_TYPE rotation)
 
 
 #endif
-	
-	
+
+
 	// rotate the test by the desired rotation about the Z axis, special cased for
 	// 90 degree rotations about Z.  arbitrary rotations cause the axis aligned
 	// box to not be aligned any more :-)
@@ -172,10 +172,10 @@ void AABoxCollisionTestClass::Rotate(ROTATION_TYPE rotation)
 			// rotate the center point and the move vector
 			tmp = Box.Center.X;		Box.Center.X = -Box.Center.Y;		Box.Center.Y = tmp;
 			tmp = Move.X;				Move.X = -Move.Y;						Move.Y = tmp;
-		
+
 			// swap x and y for the extent
 			tmp = Box.Extent.X;		Box.Extent.X = Box.Extent.Y;		Box.Extent.Y = tmp;
-			
+
 			// update sweep bounding box
 			minx = SweepMin.X; miny = SweepMin.Y; maxx = SweepMax.X; maxy = SweepMax.Y;
 			SweepMin.X = -maxy;
@@ -200,13 +200,13 @@ void AABoxCollisionTestClass::Rotate(ROTATION_TYPE rotation)
 			break;
 
 		case ROTATE_Z270:
-			// rotate center and move. 
+			// rotate center and move.
 			tmp = Box.Center.X;		Box.Center.X = Box.Center.Y;		Box.Center.Y = -tmp;
 			tmp = Move.X;				Move.X = Move.Y;						Move.Y = -tmp;
 
 			// update extent (x and y axis swap)
 			tmp = Box.Extent.X;		Box.Extent.X = Box.Extent.Y;		Box.Extent.Y = tmp;
-			
+
 			// update min/max boxes
 			minx = SweepMin.X; miny = SweepMin.Y; maxx = SweepMax.X; maxy = SweepMax.Y;
 			SweepMin.X = miny;
@@ -242,7 +242,7 @@ void AABoxCollisionTestClass::Transform(const Matrix3D & tm)
 	Vector3 pts[8];
 	Vector3 & min = SweepMin;
 	Vector3 & max = SweepMax;
-	
+
 	pts[0].Set(min.X,min.Y,min.Z);
 	pts[1].Set(min.X,max.Y,min.Z);
 	pts[2].Set(max.X,max.Y,min.Z);
@@ -265,7 +265,7 @@ void AABoxCollisionTestClass::Transform(const Matrix3D & tm)
 		if (realmin.X >= pts[i].X) realmin.X = pts[i].X;
 		if (realmin.Y >= pts[i].Y) realmin.Y = pts[i].Y;
 		if (realmin.Z >= pts[i].Z) realmin.Z = pts[i].Z;
-		
+
 		if (realmax.X <= pts[i].X) realmax.X = pts[i].X;
 		if (realmax.Y <= pts[i].Y) realmax.Y = pts[i].Y;
 		if (realmax.Z <= pts[i].Z) realmax.Z = pts[i].Z;
@@ -306,7 +306,7 @@ OBBoxCollisionTestClass::OBBoxCollisionTestClass
 
 	Vector3 endmin = Box.Center + move - max_extent;
 	Vector3 endmax = Box.Center + move + max_extent;
-	
+
 	if (endmax.X > SweepMax.X) SweepMax.X = endmax.X;
 	if (endmax.Y > SweepMax.Y) SweepMax.Y = endmax.Y;
 	if (endmax.Z > SweepMax.Z) SweepMax.Z = endmax.Z;
@@ -372,4 +372,4 @@ bool OBBoxCollisionTestClass::Cull(const AABoxClass & box)
 	}
 	return false;
 }
-	
+

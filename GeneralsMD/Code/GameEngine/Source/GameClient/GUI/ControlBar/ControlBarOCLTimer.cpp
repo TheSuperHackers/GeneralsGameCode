@@ -66,7 +66,7 @@ void ControlBar::updateOCLTimerTextDisplay( UnsignedInt totalSeconds, Real perce
 		text.format( TheGameText->fetch( "CONTROLBAR:OCLTimerDesc" ), minutes, seconds );
 
 	GadgetStaticTextSetText( descWindow, text );
-	GadgetProgressBarSetProgress(barWindow, (percent * 100));  
+	GadgetProgressBarSetProgress(barWindow, (percent * 100));
 
 	// record this as the last time displayed
 	m_displayedOCLTimerSeconds = totalSeconds;
@@ -91,7 +91,7 @@ void ControlBar::populateOCLTimer( Object *creatorObject )
 	NameKeyType id;
 	id = TheNameKeyGenerator->nameToKey( "ControlBar.wnd:OCLTimerSellButton" );
 	GameWindow *win = TheWindowManager->winGetWindowFromId( parent, id );
-	
+
 	if( !creatorObject->isKindOf(KINDOF_TECH_BUILDING) )
 	{
 		// Surgical bug fix.  srj is right, this is stupid.
@@ -116,7 +116,7 @@ void ControlBar::populateOCLTimer( Object *creatorObject )
 		{
 			//
 			// if a rally point is set, show the rally point, if we don't have it set hide any rally
-			// point we might have visible 
+			// point we might have visible
 			//
 			showRallyPoint( exit->getRallyPoint() );
 
@@ -126,7 +126,7 @@ void ControlBar::populateOCLTimer( Object *creatorObject )
 	{
 		win->winHide(TRUE);
 	}
-	
+
 	// set the text percent and bar of our timer we are displaying
 	updateContextOCLTimer( );
 
@@ -148,7 +148,7 @@ void ControlBar::updateContextOCLTimer( void )
 	UnsignedInt seconds = frames / LOGICFRAMES_PER_SECOND;
 
 	Real percent = update->getCountdownPercent();
-	
+
 	// if the time has changed since what was last shown to the user update the text
 	if( m_displayedOCLTimerSeconds != seconds )
 		updateOCLTimerTextDisplay( seconds, percent );

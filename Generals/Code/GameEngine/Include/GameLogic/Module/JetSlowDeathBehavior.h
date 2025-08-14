@@ -63,7 +63,7 @@ public:
 
 	const FXList *m_fxHitGround;									///< FXList for hit ground
 	const ObjectCreationList *m_oclHitGround;			///< OCL for hit ground
-	
+
 	UnsignedInt m_delayFinalBlowUpFromHitGround;	///< delay (in frames) from hit ground, to final explosion
 	const FXList *m_fxFinalBlowUp;								///< FxList for final blow up
 	const ObjectCreationList *m_oclFinalBlowUp;		///< OCL for final blow up

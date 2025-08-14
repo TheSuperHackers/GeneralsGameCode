@@ -24,12 +24,12 @@
 
 // FILE: WeaponBonusUpdate.cpp /////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Electronic Arts Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2002-2003 - All Rights Reserved                  
-//                                                                          
+//
+//                       Electronic Arts Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2002-2003 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 //	created:	July 2003
@@ -37,8 +37,8 @@
 //	Filename: 	WeaponBonusUpdate.cpp
 //
 //	author:		Graham Smallwood
-//	
-//	purpose:	Like healing in that it can affect just me or people around, 
+//
+//	purpose:	Like healing in that it can affect just me or people around,
 //						except this gives a Weapon Bonus instead of health
 //
 //-----------------------------------------------------------------------------
@@ -78,12 +78,12 @@ WeaponBonusUpdateModuleData::WeaponBonusUpdateModuleData()
 }
 
 //-----------------------------------------------------------------------------
-void WeaponBonusUpdateModuleData::buildFieldParse(MultiIniFieldParse& p) 
+void WeaponBonusUpdateModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
   UpdateModuleData::buildFieldParse(p);
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
-		{ "RequiredAffectKindOf",		KindOfMaskType::parseFromINI,		NULL, offsetof( WeaponBonusUpdateModuleData, m_requiredAffectKindOf ) },		
+		{ "RequiredAffectKindOf",		KindOfMaskType::parseFromINI,		NULL, offsetof( WeaponBonusUpdateModuleData, m_requiredAffectKindOf ) },
 		{ "ForbiddenAffectKindOf",	KindOfMaskType::parseFromINI,		NULL, offsetof( WeaponBonusUpdateModuleData, m_forbiddenAffectKindOf ) },
 		{ "AffectsTargets", INI::parseBitString32,	TheWeaponAffectsMaskNames, offsetof(WeaponBonusUpdateModuleData, m_targetsMask) },
 		{ "AffectAirborne", INI::parseBool, NULL, offsetof(WeaponBonusUpdateModuleData, m_isAffectAirborne) },
@@ -155,9 +155,9 @@ UpdateSleepTime WeaponBonusUpdate::update( void )
 	PartitionFilter *filters[] = { &relationship, &filterAlive, &filterMapStatus, NULL };
 
 	// scan objects in our region
-	ObjectIterator *iter = ThePartitionManager->iterateObjectsInRange( me->getPosition(), 
-																																			data->m_bonusRange, 
-																																			FROM_CENTER_2D, 
+	ObjectIterator *iter = ThePartitionManager->iterateObjectsInRange( me->getPosition(),
+																																			data->m_bonusRange,
+																																			FROM_CENTER_2D,
 																																			filters );
 	MemoryPoolObjectHolder hold( iter );
 	tempWeaponBonusData weaponBonusData;

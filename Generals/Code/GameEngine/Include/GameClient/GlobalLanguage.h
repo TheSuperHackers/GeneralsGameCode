@@ -24,12 +24,12 @@
 
 // FILE: GlobalLanguage.h /////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Electronic Arts Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2002 - All Rights Reserved                  
-//                                                                          
+//
+//                       Electronic Arts Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2002 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 //	created:	Aug 2002
@@ -37,8 +37,8 @@
 //	Filename: 	GlobalLanguage.h
 //
 //	author:		Chris Huybregts
-//	
-//	purpose:	With workingwith different languages, we need some options that 
+//
+//	purpose:	With workingwith different languages, we need some options that
 //						change.  Essentially, this is the global data that's unique to languages
 //
 //-----------------------------------------------------------------------------
@@ -102,11 +102,11 @@ public:
 	Real			m_resolutionFontSizeAdjustment;
 
 	//UnicodeString	m_unicodeFontNameUStr;
-	
+
 	Int adjustFontSize(Int theFontSize);	// Adjusts font size for resolution. jba.
 
-	typedef std::list<AsciiString> StringList;					// Used for our font file names that we want to load		
-	typedef StringList::iterator StringListIt;				
+	typedef std::list<AsciiString> StringList;					// Used for our font file names that we want to load
+	typedef StringList::iterator StringListIt;
 
 	StringList m_localFonts;														// List of the font filenames that are in our local directory
 	static void parseFontFileName( INI *ini, void *instance, void *store, const void* userData );

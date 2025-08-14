@@ -20,7 +20,7 @@
 // Texture tiling tool for worldbuilder.
 // Author: John Ahlquist, April 2001
 
-#include "StdAfx.h" 
+#include "StdAfx.h"
 #include "resource.h"
 
 #include "FeatherTool.h"
@@ -46,19 +46,19 @@ FeatherTool::FeatherTool(void) :
 	m_htMapFeatherCopy = NULL;
 	m_htMapRateCopy = NULL;
 }
-	
+
 /// Destructor
-FeatherTool::~FeatherTool(void) 
+FeatherTool::~FeatherTool(void)
 {
 	REF_PTR_RELEASE(m_htMapEditCopy);
-	REF_PTR_RELEASE(m_htMapFeatherCopy); 
-	REF_PTR_RELEASE(m_htMapRateCopy); 
+	REF_PTR_RELEASE(m_htMapFeatherCopy);
+	REF_PTR_RELEASE(m_htMapRateCopy);
 }
 
 
 
 /// Shows the brush options panel.
-void FeatherTool::activate() 
+void FeatherTool::activate()
 {
 	CMainFrame::GetMainFrame()->showOptionsDialog(IDD_FEATHER_OPTIONS);
 	DrawObject::setDoBrushFeedback(true);
@@ -66,8 +66,8 @@ void FeatherTool::activate()
 }
 
 /// Set the brush feather and notify the height options panel of the change.
-void FeatherTool::setFeather(Int feather) 
-{ 
+void FeatherTool::setFeather(Int feather)
+{
 	if (m_feather != feather) {
 		m_feather = feather;
 		// notify feather palette options panel
@@ -77,8 +77,8 @@ void FeatherTool::setFeather(Int feather)
 };
 
 /// Set the brush feather and notify the height options panel of the change.
-void FeatherTool::setRate(Int rate) 
-{ 
+void FeatherTool::setRate(Int rate)
+{
 	if (m_rate != rate) {
 		m_rate = rate;
 		// notify feather palette options panel
@@ -87,8 +87,8 @@ void FeatherTool::setRate(Int rate)
 };
 
 /// Set the brush feather and notify the height options panel of the change.
-void FeatherTool::setRadius(Int radius) 
-{ 
+void FeatherTool::setRadius(Int radius)
+{
 	if (m_radius != radius) {
 		m_radius = radius;
 		// notify feather palette options panel
@@ -99,7 +99,7 @@ void FeatherTool::setRadius(Int radius)
 /// Start tool.
 /** Setup the tool to start brushing - make a copy of the height map
 to edit, another copy because we need it :), and call mouseMovedDown. */
-void FeatherTool::mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc) 
+void FeatherTool::mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc)
 {
 	if (m != TRACK_L) return;
 
@@ -121,9 +121,9 @@ void FeatherTool::mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorl
 }
 
 /// End tool.
-/** Finish the tool operation - create a command, pass it to the 
+/** Finish the tool operation - create a command, pass it to the
 doc to execute, and cleanup ref'd objects. */
-void FeatherTool::mouseUp(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc) 
+void FeatherTool::mouseUp(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc)
 {
 	if (m != TRACK_L) return;
 
@@ -165,7 +165,7 @@ void FeatherTool::mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWor
 		if (i<0 || i>=m_htMapEditCopy->getXExtent()) {
 			continue;
 		}
-		for (j=ndx.y-sub; j<ndx.y+add; j++) {					
+		for (j=ndx.y-sub; j<ndx.y+add; j++) {
 			if (j<0 || j>=m_htMapEditCopy->getYExtent()) {
 				continue;
 			}
@@ -222,10 +222,10 @@ void FeatherTool::mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWor
 				total = floor(origHeight*(1.0f-rateF) + total*rateF + 0.5f);
 				m_htMapEditCopy->setHeight(i, j, total);
 				pDoc->invalCell(i, j);
-			} 
+			}
 		}
 	}
-	
+
 	IRegion2D partialRange;
 	partialRange.lo.x = ndx.x - brushWidth;
 	partialRange.hi.x = ndx.x + brushWidth;

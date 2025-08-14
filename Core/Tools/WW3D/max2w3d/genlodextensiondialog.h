@@ -55,23 +55,23 @@ public:
 
 	GenLodExtensionDialogClass(Interface * maxinterface);
 	~GenLodExtensionDialogClass();
-	
+
 	struct OptionsStruct
 	{
 		OptionsStruct(void) : LodIndex(0)
-		{ 
+		{
 		}
-		
+
 		// name options
 		int		LodIndex;
 	};
 
 	bool Get_Options(OptionsStruct * options);
 	bool Dialog_Proc(HWND hWnd,UINT message,WPARAM wParam,LPARAM);
-		
+
 private:
 
-	enum 
+	enum
 	{
 		MIN_LOD_INDEX				= 0,
 		MAX_LOD_INDEX				= 99,

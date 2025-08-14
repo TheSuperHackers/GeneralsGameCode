@@ -192,7 +192,7 @@ void LANAPI::handleRequestGameInfo( LANMessage *msg, UnsignedInt senderIP )
 			LANMessage reply;
 			fillInLANMessage( &reply );
 			reply.LANMessageType = LANMessage::MSG_GAME_ANNOUNCE;
-			
+
 			AsciiString gameOpts = GameInfoToAsciiString(m_currentGame);
 			strncpy(reply.GameInfo.options,gameOpts.str(),m_lanMaxOptionsLength);
 			wcsncpy(reply.GameInfo.gameName, m_currentGame->getName().str(), g_lanGameNameLength);
@@ -250,7 +250,7 @@ void LANAPI::handleRequestJoin( LANMessage *msg, UnsignedInt senderIP )
 #if defined(RTS_DEBUG)
 			}
 #endif
-			
+
 // TheSuperHackers @tweak Disables the duplicate serial check
 #if 0
 			// check for a duplicate serial
@@ -319,7 +319,7 @@ void LANAPI::handleRequestJoin( LANMessage *msg, UnsignedInt senderIP )
 					++numPlayers;
 				}
 			}
-			
+
 			// now get the number of starting spots on the map.
 			Int numStartingSpots = MAX_SLOTS;
 			const MapMetaData *md = TheMapCache->findMap(m_currentGame->getMap());
@@ -387,7 +387,7 @@ void LANAPI::handleJoinAccept( LANMessage *msg, UnsignedInt senderIP )
 		if (m_pendingAction == ACT_JOIN) // Are we trying to join?
 		{
 			m_currentGame = LookupGame(UnicodeString(msg->GameJoined.gameName));
-		
+
 			if (!m_currentGame)
 			{
 				DEBUG_ASSERTCRASH(false, ("Could not find game to join!"));

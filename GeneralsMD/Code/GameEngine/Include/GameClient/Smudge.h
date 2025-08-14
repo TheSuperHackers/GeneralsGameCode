@@ -82,7 +82,7 @@ public:
 	SmudgeSet *addSmudgeSet(void);
 	void removeSmudgeSet(SmudgeSet &mySmudge);
 	inline Int getSmudgeCountLastFrame(void) {return m_smudgeCountLastFrame;} ///<return number of smudges submitted last frame.
-	inline void setSmudgeCountLastFrame(Int count) { m_smudgeCountLastFrame = count;} 
+	inline void setSmudgeCountLastFrame(Int count) { m_smudgeCountLastFrame = count;}
 	inline Bool getHardwareSupport(void) { return m_hardwareSupportStatus != SMUDGE_SUPPORT_NO;}
 
 protected:

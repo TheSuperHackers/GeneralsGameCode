@@ -24,7 +24,7 @@
 
 // FILE: ParkingPlaceBehavior.h /////////////////////////////////////////////////////////////////////////
 // Author: Steven Johnson, June 2002
-// Desc:   
+// Desc:
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
@@ -77,7 +77,7 @@ public:
 	{
 		UpdateModuleData::buildFieldParse(p);
 
-		static const FieldParse dataFieldParse[] = 
+		static const FieldParse dataFieldParse[] =
 		{
 			{ "NumRows",						     INI::parseInt,	 NULL, offsetof( ParkingPlaceBehaviorModuleData, m_numRows ) },
 			{ "NumCols",						     INI::parseInt,	 NULL, offsetof( ParkingPlaceBehaviorModuleData, m_numCols ) },
@@ -106,7 +106,7 @@ private:
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-class ParkingPlaceBehavior : public UpdateModule, 
+class ParkingPlaceBehavior : public UpdateModule,
 														 public DieModuleInterface,
 														 public ParkingPlaceBehaviorInterface,
 														 public ExitInterface
@@ -134,7 +134,7 @@ public:
 	virtual void unreserveDoorForExit( ExitDoorType exitDoor );
 	virtual void exitObjectByBudding( Object *newObj, Object *budHost ) { return; }
 
-	virtual Bool getExitPosition( Coord3D& rallyPoint ) const;		
+	virtual Bool getExitPosition( Coord3D& rallyPoint ) const;
 	virtual Bool getNaturalRallyPoint( Coord3D& rallyPoint, Bool offset = TRUE ) const;
 	virtual void setRallyPoint( const Coord3D *pos );			///< define a "rally point" for units to move towards
 	virtual const Coord3D *getRallyPoint( void ) const;			///< define a "rally point" for units to move towards
@@ -146,14 +146,14 @@ public:
 	virtual void onDie( const DamageInfo *damageInfo );
 
 	// ParkingPlaceBehaviorInterface
-	virtual Bool shouldReserveDoorWhenQueued(const ThingTemplate* thing) const; 
-	virtual Bool hasAvailableSpaceFor(const ThingTemplate* thing) const; 
+	virtual Bool shouldReserveDoorWhenQueued(const ThingTemplate* thing) const;
+	virtual Bool hasAvailableSpaceFor(const ThingTemplate* thing) const;
 	virtual Bool hasReservedSpace(ObjectID id) const;
 	virtual Int  getSpaceIndex( ObjectID id ) const;
 	virtual Bool reserveSpace(ObjectID id, Real parkingOffset, PPInfo* info);
-	virtual void releaseSpace(ObjectID id); 
+	virtual void releaseSpace(ObjectID id);
 	virtual Bool reserveRunway(ObjectID id, Bool forLanding);
-	virtual void releaseRunway(ObjectID id); 
+	virtual void releaseRunway(ObjectID id);
 	virtual void calcPPInfo( ObjectID id, PPInfo *info );
 	virtual Int getRunwayCount() const { return m_runways.size(); }
 	virtual ObjectID getRunwayReservation( Int r, RunwayReservationType type );
@@ -192,7 +192,7 @@ private:
 			m_door = DOOR_NONE_AVAILABLE;
 			m_objectInSpace = INVALID_ID;
 			m_reservedForExit = false;
-		} 
+		}
 	};
 
 	struct RunwayInfo

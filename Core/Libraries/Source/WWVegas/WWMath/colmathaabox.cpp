@@ -148,21 +148,21 @@ CollisionMath::OverlapType CollisionMath::Overlap_Test(const AABoxClass & box,co
 	int inside_point_count = 0;
 	if (CollisionMath::Overlap_Test(box,line.Get_P0()) == INSIDE) inside_point_count++;
 	if (CollisionMath::Overlap_Test(box,line.Get_P1()) == INSIDE) inside_point_count++;
-	
+
 	if (inside_point_count == 2) {
-	
+
 		return INSIDE;
-	
+
 	} else if (inside_point_count == 1) {
-	
+
 		return OVERLAPPED;
-	
+
 	} else {
 
 		// Here I'm using the separating axis theorem to test if the line-segment
 		// and the box can be separated by a plane.  Any two convex objects that are
-		// not intersecting can be separated by a plane defined by either a 
-		// face normal from one of the objects or the cross-product of an edge from 
+		// not intersecting can be separated by a plane defined by either a
+		// face normal from one of the objects or the cross-product of an edge from
 		// each object.  In the case of an axis-aligned box and a line-segment, we
 		// have to check the three coordinate axes and the cross product between
 		// each and the direction vector of the line segment.
@@ -218,7 +218,7 @@ CollisionMath::OverlapType CollisionMath::Overlap_Test(const AABoxClass & box,co
 		} else {
 			if (-p0_proj > box_proj + WWMath::Max(dp_proj,0.0f)) return OUTSIDE;
 		}
-	
+
 		// Project box and line onto (x cross line)
 		// I'm manually optimizing the cross-product and taking advantage of the fact
 		// that 'dp' will always project to zero for this axis.
@@ -252,25 +252,25 @@ CollisionMath::OverlapType CollisionMath::Overlap_Test(const AABoxClass & box,co
 	int inside_point_count = 0;
 	if (CollisionMath::Overlap_Test(box,line.Get_P0()) == INSIDE) inside_point_count++;
 	if (CollisionMath::Overlap_Test(box,line.Get_P1()) == INSIDE) inside_point_count++;
-	
+
 	if (inside_point_count == 2) {
-	
+
 		return INSIDE;
-	
+
 	} else if (inside_point_count == 1) {
-	
+
 		return OVERLAPPED;
-	
+
 	} else {
 
-		// Now we know that both points are outside of the box so we 
+		// Now we know that both points are outside of the box so we
 		// have to detect if the ray penetrates the box.
 		// I found this algorithm in one of the GEMS books...
 		Vector3 boxmin,boxmax;
 		Vector3::Subtract(box.Center,box.Extent,&boxmin);
 		Vector3::Add(box.Center,box.Extent,&boxmax);
 
-		float candidateplane[3];	// candidate intersection plane distance for each axis 
+		float candidateplane[3];	// candidate intersection plane distance for each axis
 		float maxt[3];					// t value along the ray for each axis
 		Vector3 coord;					// intersection point
 
@@ -312,7 +312,7 @@ CollisionMath::OverlapType CollisionMath::Overlap_Test(const AABoxClass & box,co
 		if (maxt[intersection_plane] < 0.0f) {
 			return OUTSIDE;
 		}
-		
+
 		// If the intersection is beyond the end of the ray, return
 		if (maxt[intersection_plane] > 1.0f) {
 			return OUTSIDE;
@@ -322,13 +322,13 @@ CollisionMath::OverlapType CollisionMath::Overlap_Test(const AABoxClass & box,co
 		// are not the intersection planes, the intersection point should
 		// be between the min and max of the box.
 		for (i=0; i<3; i++) {
-			
+
 			if (intersection_plane != i) {
-			
+
 				coord[i] = line.Get_P0()[i] + maxt[intersection_plane] * line.Get_DP()[i];
 				if ((coord[i] < boxmin[i]) || (coord[i] > boxmax[i])) {
 					return OUTSIDE;		// ray is outside the box
-				} 
+				}
 
 			} else {
 
@@ -442,7 +442,7 @@ struct AABCollisionStruct
 		StartBad(true),													// Startbad is true until one of the axes clears it
 		AxisId(-1),															// AxisId will be the axis that allowed the longest move
 		MaxFrac(0.0f),														// MaxFrac is the longest allowed move so far
-		Box0(box0),															
+		Box0(box0),
 		Box1(box1)
 	{
 		Vector3::Subtract(box1.Center,box0.Center,&C);			// vector from center of box0 to center of box1
@@ -456,7 +456,7 @@ struct AABCollisionStruct
 
 	Vector3					C;						// Vector from the center0 to center1
 	Vector3					M;						// Move vector relative to stationary box0
-	
+
 	const AABoxClass &	Box0;
 	const AABoxClass &	Box1;
 
@@ -501,15 +501,15 @@ static inline bool aab_separation_test
 	float tmp;
 	float rsum = ra+rb;
 
-	if ( u0 + WWMATH_EPSILON > rsum ) { 
-		context.StartBad = false; 
-		if ( u1 > rsum ) { 
-			context.MaxFrac = 1.0f; 
+	if ( u0 + WWMATH_EPSILON > rsum ) {
+		context.StartBad = false;
+		if ( u1 > rsum ) {
+			context.MaxFrac = 1.0f;
 			return true;
-		} else { 
+		} else {
 			tmp = (rsum-u0)/(u1-u0);
 			if ( tmp > context.MaxFrac ) {
-				context.MaxFrac = tmp; 
+				context.MaxFrac = tmp;
 				context.AxisId = axis;
 				context.Side = +1;
 			}
@@ -517,7 +517,7 @@ static inline bool aab_separation_test
 	} else if ( u0 - WWMATH_EPSILON < -rsum ) {
 		context.StartBad = false;
 		if ( u1 < -rsum ) {
-			context.MaxFrac = 1.0f; 
+			context.MaxFrac = 1.0f;
 			return true;
 		} else {
 			tmp = (-rsum-u0)/(u1-u0);
@@ -525,9 +525,9 @@ static inline bool aab_separation_test
 				context.MaxFrac = tmp;
 				context.AxisId = axis;
 				context.Side = -1;
-			} 
-		} 
-	} 
+			}
+		}
+	}
 	return false;
 }
 
@@ -566,7 +566,7 @@ bool CollisionMath::Collide(const AABoxClass & box,const Vector3 & move,const AA
 	if (aab_separation_test(context,1)) {
 		goto exit;
 	}
-	
+
 	if (aab_separation_test(context,2)) {
 		goto exit;
 	}

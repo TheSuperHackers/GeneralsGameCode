@@ -23,12 +23,12 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 //----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright(C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright(C) 2001 - All Rights Reserved
+//
 //----------------------------------------------------------------------------
 //
 // Project:   RTS
@@ -42,7 +42,7 @@
 //----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
-//         Includes                                                      
+//         Includes
 //----------------------------------------------------------------------------
 
 #include "PreRTS.h"
@@ -57,46 +57,46 @@
 #include "Common/FileSystem.h"
 #include "Common/StreamingArchiveFile.h"
 #include "Common/PerfTimer.h"
-									
-
-//----------------------------------------------------------------------------
-//         Externals                                                     
-//----------------------------------------------------------------------------
-
 
 
 //----------------------------------------------------------------------------
-//         Defines                                                         
+//         Externals
 //----------------------------------------------------------------------------
 
 
 
 //----------------------------------------------------------------------------
-//         Private Types                                                     
+//         Defines
 //----------------------------------------------------------------------------
 
 
 
 //----------------------------------------------------------------------------
-//         Private Data                                                     
+//         Private Types
 //----------------------------------------------------------------------------
 
 
 
 //----------------------------------------------------------------------------
-//         Public Data                                                      
+//         Private Data
 //----------------------------------------------------------------------------
 
 
 
 //----------------------------------------------------------------------------
-//         Private Prototypes                                               
+//         Public Data
 //----------------------------------------------------------------------------
 
 
 
 //----------------------------------------------------------------------------
-//         Private Functions                                               
+//         Private Prototypes
+//----------------------------------------------------------------------------
+
+
+
+//----------------------------------------------------------------------------
+//         Private Functions
 //----------------------------------------------------------------------------
 
 //=================================================================
@@ -104,9 +104,9 @@
 //=================================================================
 
 StreamingArchiveFile::StreamingArchiveFile()
-: m_file(NULL), 
-	m_startingPos(0), 
-	m_size(0), 
+: m_file(NULL),
+	m_startingPos(0),
+	m_size(0),
 	m_curPos(0)
 {
 
@@ -114,12 +114,12 @@ StreamingArchiveFile::StreamingArchiveFile()
 
 
 //----------------------------------------------------------------------------
-//         Public Functions                                                
+//         Public Functions
 //----------------------------------------------------------------------------
 
 
 //=================================================================
-// StreamingArchiveFile::~StreamingArchiveFile	
+// StreamingArchiveFile::~StreamingArchiveFile
 //=================================================================
 
 StreamingArchiveFile::~StreamingArchiveFile()
@@ -127,7 +127,7 @@ StreamingArchiveFile::~StreamingArchiveFile()
 }
 
 //=================================================================
-// StreamingArchiveFile::open	
+// StreamingArchiveFile::open
 //=================================================================
 /**
 	* This function opens a file using the file system. Access flags
@@ -145,7 +145,7 @@ Bool StreamingArchiveFile::open( const Char *filename, Int access, size_t buffer
 	if ( file == NULL )
 	{
 		return FALSE;
-	}	
+	}
 
 	return (open( file ) != NULL);
 }
@@ -162,7 +162,7 @@ Bool StreamingArchiveFile::open( File *file )
 //============================================================================
 // StreamingArchiveFile::openFromArchive
 //============================================================================
-Bool StreamingArchiveFile::openFromArchive(File *archiveFile, const AsciiString& filename, Int offset, Int size) 
+Bool StreamingArchiveFile::openFromArchive(File *archiveFile, const AsciiString& filename, Int offset, Int size)
 {
 	//USE_PERF_TIMER(StreamingArchiveFile)
 	if (archiveFile == NULL) {
@@ -181,7 +181,7 @@ Bool StreamingArchiveFile::openFromArchive(File *archiveFile, const AsciiString&
 	if (m_file->seek(offset, File::START) != offset) {
 		return FALSE;
 	}
-	
+
 	if (m_file->seek(size) != m_startingPos + size) {
 		return FALSE;
 	}
@@ -195,7 +195,7 @@ Bool StreamingArchiveFile::openFromArchive(File *archiveFile, const AsciiString&
 }
 
 //=================================================================
-// StreamingArchiveFile::close 	
+// StreamingArchiveFile::close
 //=================================================================
 /**
 	* Closes the current file if it is open.
@@ -209,7 +209,7 @@ void StreamingArchiveFile::close( void )
 }
 
 //=================================================================
-// StreamingArchiveFile::read 
+// StreamingArchiveFile::read
 //=================================================================
 // if buffer is null, just advance the current position by 'bytes'
 Int StreamingArchiveFile::read( void *buffer, Int bytes )
@@ -218,11 +218,11 @@ Int StreamingArchiveFile::read( void *buffer, Int bytes )
 		return 0;
 	}
 
-	// There shouldn't be a way that this can fail, because we've already verified that the file 
+	// There shouldn't be a way that this can fail, because we've already verified that the file
 	// contains at least this many bits.
 	m_file->seek(m_startingPos + m_curPos, File::START);
 
-	if (bytes + m_curPos > m_size) 
+	if (bytes + m_curPos > m_size)
 		bytes = m_size - m_curPos;
 
 	Int bytesRead = m_file->read(buffer, bytes);
@@ -233,7 +233,7 @@ Int StreamingArchiveFile::read( void *buffer, Int bytes )
 }
 
 //=================================================================
-// StreamingArchiveFile::write 
+// StreamingArchiveFile::write
 //=================================================================
 
 Int StreamingArchiveFile::write( const void *buffer, Int bytes )
@@ -243,7 +243,7 @@ Int StreamingArchiveFile::write( const void *buffer, Int bytes )
 }
 
 //=================================================================
-// StreamingArchiveFile::seek 
+// StreamingArchiveFile::seek
 //=================================================================
 
 Int StreamingArchiveFile::seek( Int pos, seekMode mode)

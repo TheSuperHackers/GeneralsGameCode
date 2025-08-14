@@ -34,8 +34,8 @@
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-ObjectWeaponStatusHelper::~ObjectWeaponStatusHelper( void ) 
-{ 
+ObjectWeaponStatusHelper::~ObjectWeaponStatusHelper( void )
+{
 
 }
 

@@ -56,7 +56,7 @@ class TextureClass;
 **										color and precise texture tiling...
 ** The reason this does not descend from segmentedlineclass, is to streamline
 ** the upcoming merge with the LasVegas code (to keep our changes out of their code)
-*/ 
+*/
 
 class StreakLineClass : public RenderObjClass
 {
@@ -128,7 +128,7 @@ class StreakLineClass : public RenderObjClass
 		/////////////////////////////////////////////////////////////////////////////
 		// Render Object Interface - Cloning and Identification
 		/////////////////////////////////////////////////////////////////////////////
-		virtual RenderObjClass *	Clone(void) const;		
+		virtual RenderObjClass *	Clone(void) const;
 		virtual int						Class_ID(void)	const { return CLASSID_SEGLINE; }
 		virtual int						Get_Num_Polys(void) const;
 
@@ -166,10 +166,10 @@ class StreakLineClass : public RenderObjClass
 		///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		virtual bool					Cast_Ray(RayCollisionTestClass & raytest);
 
-		void	Set_LocsWidthsColors( unsigned int num_points, 
-																Vector3 *locs, 
-																float *widths = NULL, 
-																Vector4 *colors = NULL, 
+		void	Set_LocsWidthsColors( unsigned int num_points,
+																Vector3 *locs,
+																float *widths = NULL,
+																Vector4 *colors = NULL,
 																unsigned int *personalities = NULL);
 
 
@@ -195,12 +195,12 @@ class StreakLineClass : public RenderObjClass
 		float								NormalizedScreenArea;
 
 	// Per-point location array
-	//ShareBufferClass<Vector3> *PointLocations;	
+	//ShareBufferClass<Vector3> *PointLocations;
 	SimpleDynVecClass<Vector3>	PointLocations;   // World/cameraspace point locs
 	SimpleDynVecClass<Vector4>	PointColors;   // RGBA
 	SimpleDynVecClass<float>		PointWidths;   // float line thickness
 
-	
+
 
 
 

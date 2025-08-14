@@ -92,7 +92,7 @@ public:
 
 private:
 
-	
+
 	float								Normalize_Frame(float frame);
 	float								Normalize_Frame(float frame,float min,float max);
 	float								Denormalize_Frame(float normalized_val);
@@ -100,7 +100,7 @@ private:
 	/////////////////////////////////////////////////////////
 	//
 	//	Private member data
-	//		
+	//
 	EmitterInstanceListClass *			m_pEmitterList;
 	bool										m_bValid;
 

@@ -69,7 +69,7 @@ RingPropertySheetClass::RingPropertySheetClass
 	CWnd *						pParentWnd,
 	UINT							iSelectPage
 )
-	:	m_RenderObj (NULL),		
+	:	m_RenderObj (NULL),
 		CPropertySheet(pszCaption, pParentWnd, iSelectPage)
 {
 	MEMBER_ADD (m_RenderObj, ring);
@@ -140,7 +140,7 @@ RingPropertySheetClass::WindowProc
 
 				case IDOK:
 				case ID_APPLY_NOW:
-				{					
+				{
 					// Did the user click the button?
 					if (HIWORD (wParam) == BN_CLICKED) {
 						LRESULT lresult = CPropertySheet::WindowProc (message, wParam, lParam);
@@ -149,11 +149,11 @@ RingPropertySheetClass::WindowProc
 						if (	m_GeneralPage.Is_Data_Valid () &&
 								m_ColorPage.Is_Data_Valid () &&
 								m_ScalePage.Is_Data_Valid ())
-						{							
+						{
 							// Update the current emitter to match the data
 							Update_Object ();
 						}
-												
+
 						return lresult;
 					}
 				}
@@ -179,12 +179,12 @@ RingPropertySheetClass::Add_Object_To_Viewer (void)
 {
 	CW3DViewDoc *doc = ::GetCurrentDocument ();
 	if ((doc != NULL) && (m_RenderObj != NULL)) {
-		
+
 		//
 		// Create a new prototype for this object
 		//
 		RingPrototypeClass *prototype	= new RingPrototypeClass (m_RenderObj);
-		
+
 		//
 		// Update the asset manager with the new prototype
 		//
@@ -192,7 +192,7 @@ RingPropertySheetClass::Add_Object_To_Viewer (void)
 			WW3DAssetManager::Get_Instance()->Remove_Prototype (m_LastSavedName);
 		}
 		WW3DAssetManager::Get_Instance()->Add_Prototype (prototype);
-		
+
 		//
 		// Add this object to the data tree
 		//
@@ -261,7 +261,7 @@ RingPropertySheetClass::Initialize (void)
 
 	//
 	//	Force the pages to be created up front
-	//	
+	//
 	m_GeneralPage.m_psp.dwFlags	|= PSP_PREMATURE;
 	m_ColorPage.m_psp.dwFlags		|= PSP_PREMATURE;
 	m_ScalePage.m_psp.dwFlags		|= PSP_PREMATURE;

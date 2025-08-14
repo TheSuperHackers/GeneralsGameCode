@@ -25,7 +25,7 @@
 // ObjectTypes.h //////////////////////////////////////////////////////////////////////////////////
 // Author: John McDonald, Jr.
 // September 2002
-// DO NOT DISTRIBUTE 
+// DO NOT DISTRIBUTE
 
 #pragma once
 
@@ -40,13 +40,13 @@ class Player;
 class ObjectTypes : public MemoryPoolObject,
 										public Snapshot
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(ObjectTypes, "ObjectTypes")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(ObjectTypes, "ObjectTypes")
 private:
 	typedef std::vector<AsciiString> AsciiStringVec;
 	typedef AsciiStringVec::iterator AsciiStringVecIt;
 
 private:
-	// Note, there is no direct access to m_objectTypes. Please endeavor to keep it this way, and 
+	// Note, there is no direct access to m_objectTypes. Please endeavor to keep it this way, and
 	// add any functions you might need to this class.
 	AsciiString m_listName;
 	AsciiStringVec m_objectTypes;
@@ -65,7 +65,7 @@ public:
 	// Maintenance
 	void addObjectType(const AsciiString &objectType);
 	void removeObjectType(const AsciiString &objectType);
-	
+
 	// Which list is this again?
 	const AsciiString& getListName() const;
 	void setListName(const AsciiString& listName);
@@ -76,7 +76,7 @@ public:
 
 	// Is the set empty?
 	size_t getListSize(void) const { return m_objectTypes.size(); }
-	
+
 	// I'd like to loop through, please.
 	AsciiString getNthInList( size_t index ) const { return (index < getListSize()) ? m_objectTypes[index] : AsciiString::TheEmptyString; }
 

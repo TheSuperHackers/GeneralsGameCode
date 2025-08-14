@@ -129,14 +129,14 @@ int APIENTRY WinMain(HINSTANCE hInstance,
 				while (!feof(filePtr))
 				{
 					fread(buffer, 256, 1, filePtr);
-					if ((stringPtr = strstr(buffer, VERSION_STRING)) != NULL) 
+					if ((stringPtr = strstr(buffer, VERSION_STRING)) != NULL)
 					{
 						char *ptr;
 
 						// Looking for '#define VERSION "x.y.z"'
 						ptr = strtok(stringPtr, " ");	// The VERSION
 						ptr = strtok(NULL, "\n");			// The remainder
-						
+
 						if (*ptr == '\"')
 						{
 							ptr++; // Inc past the first "

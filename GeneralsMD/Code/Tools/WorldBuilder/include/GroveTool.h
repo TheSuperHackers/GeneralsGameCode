@@ -31,10 +31,10 @@ class WorldHeightMapEdit;
 
 /*************************************************************************/
 /**                             GroveTool
-	 Does the add a grove of trees tool operation. 
+	 Does the add a grove of trees tool operation.
 ***************************************************************************/
 ///  Add a grove of trees tool.
-class GroveTool : public Tool 
+class GroveTool : public Tool
 {
 protected:
 	enum {HYSTERESIS = 3};

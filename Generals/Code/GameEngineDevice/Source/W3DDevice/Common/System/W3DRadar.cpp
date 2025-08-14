@@ -99,7 +99,7 @@ static WW3DFormat findFormat(const WW3DFormat formats[])
 //-------------------------------------------------------------------------------------------------
 void W3DRadar::initializeTextureFormats( void )
 {
-	const WW3DFormat terrainFormats[] = 
+	const WW3DFormat terrainFormats[] =
 	{
 		WW3D_FORMAT_R8G8B8,
 		WW3D_FORMAT_X8R8G8B8,
@@ -107,13 +107,13 @@ void W3DRadar::initializeTextureFormats( void )
 		WW3D_FORMAT_X1R5G5B5,
 		WW3D_FORMAT_UNKNOWN				// keep this one last
 	};
-	const WW3DFormat overlayFormats[] = 
+	const WW3DFormat overlayFormats[] =
 	{
 		WW3D_FORMAT_A8R8G8B8,
 		WW3D_FORMAT_A4R4G4B4,
 		WW3D_FORMAT_UNKNOWN				// keep this one last
 	};
-	const WW3DFormat shroudFormats[] = 
+	const WW3DFormat shroudFormats[] =
 	{
 		WW3D_FORMAT_A8R8G8B8,
 		WW3D_FORMAT_A4R4G4B4,
@@ -229,7 +229,7 @@ void W3DRadar::reconstructViewBox( void )
 //-------------------------------------------------------------------------------------------------
 /** Convert radar position to actual pixel coord */
 //-------------------------------------------------------------------------------------------------
-void W3DRadar::radarToPixel( const ICoord2D *radar, ICoord2D *pixel,	
+void W3DRadar::radarToPixel( const ICoord2D *radar, ICoord2D *pixel,
 														 Int radarUpperLeftX, Int radarUpperLeftY,
 														 Int radarWidth, Int radarHeight )
 {
@@ -255,19 +255,19 @@ void W3DRadar::drawHeroIcon( Int pixelX, Int pixelY, Int width, Int height, cons
 	if (image != NULL)
 	{
 		// convert world to radar coords
-		ICoord2D ulRadar; 
+		ICoord2D ulRadar;
 		ulRadar.x = pos->x / (m_mapExtent.width() / RADAR_CELL_WIDTH);
 		ulRadar.y = pos->y / (m_mapExtent.height() / RADAR_CELL_HEIGHT);
 
 		// convert radar to screen coords
 		ICoord2D offsetScreen;
 		radarToPixel( &ulRadar, &offsetScreen, pixelX, pixelY, width, height );
-		
+
 		// shift from an upper left to a center focus for the icon
 		int iconWidth = image->getImageWidth();
 		int iconHeight = image->getImageHeight();
 		offsetScreen.x -= (iconWidth / 2) - 1;
-		offsetScreen.y -= iconHeight / 2; 
+		offsetScreen.y -= iconHeight / 2;
 
 		// draw the icon
 		TheDisplay->drawImage( image, offsetScreen.x , offsetScreen.y, offsetScreen.x + iconWidth, offsetScreen.y + iconHeight );
@@ -432,8 +432,8 @@ void W3DRadar::drawSingleBeaconEvent( Int pixelX, Int pixelY, Int width, Int hei
 	a = event->color1.alpha;
 	if( currentFrame > event->fadeFrame )
 	{
-		
-		a = REAL_TO_UNSIGNEDBYTE( (Real)a * (1.0f - (Real)(currentFrame - event->fadeFrame) / 
+
+		a = REAL_TO_UNSIGNEDBYTE( (Real)a * (1.0f - (Real)(currentFrame - event->fadeFrame) /
 																								(Real)(event->dieFrame - event->fadeFrame) ) );
 
 	}  // end if
@@ -446,8 +446,8 @@ void W3DRadar::drawSingleBeaconEvent( Int pixelX, Int pixelY, Int width, Int hei
 	a = event->color2.alpha;
 	if( currentFrame > event->fadeFrame )
 	{
-		
-		a = REAL_TO_UNSIGNEDBYTE( (Real)a * (1.0f - (Real)(currentFrame - event->fadeFrame) / 
+
+		a = REAL_TO_UNSIGNEDBYTE( (Real)a * (1.0f - (Real)(currentFrame - event->fadeFrame) /
 																								(Real)(event->dieFrame - event->fadeFrame) ) );
 
 	}  // end if
@@ -531,8 +531,8 @@ void W3DRadar::drawSingleGenericEvent( Int pixelX, Int pixelY, Int width, Int he
 	a = event->color1.alpha;
 	if( currentFrame > event->fadeFrame )
 	{
-		
-		a = REAL_TO_UNSIGNEDBYTE( (Real)a * (1.0f - (Real)(currentFrame - event->fadeFrame) / 
+
+		a = REAL_TO_UNSIGNEDBYTE( (Real)a * (1.0f - (Real)(currentFrame - event->fadeFrame) /
 																								(Real)(event->dieFrame - event->fadeFrame) ) );
 
 	}  // end if
@@ -545,8 +545,8 @@ void W3DRadar::drawSingleGenericEvent( Int pixelX, Int pixelY, Int width, Int he
 	a = event->color2.alpha;
 	if( currentFrame > event->fadeFrame )
 	{
-		
-		a = REAL_TO_UNSIGNEDBYTE( (Real)a * (1.0f - (Real)(currentFrame - event->fadeFrame) / 
+
+		a = REAL_TO_UNSIGNEDBYTE( (Real)a * (1.0f - (Real)(currentFrame - event->fadeFrame) /
 																								(Real)(event->dieFrame - event->fadeFrame) ) );
 
 	}  // end if
@@ -684,11 +684,11 @@ void W3DRadar::renderObjectList( const RadarObject *listHead, TextureClass *text
     // get the color we're going to draw in
 		Color c = rObj->getColor();
 
-		
-		
+
+
 		// adjust the alpha for stealth units so they "fade/blink" on the radar for the controller
 		// if( obj->getRadarPriority() == RADAR_PRIORITY_LOCAL_UNIT_ONLY )
-		// ML-- What the heck is this? local-only and neutral-observier-viewed units are stealthy?? Since when?	
+		// ML-- What the heck is this? local-only and neutral-observier-viewed units are stealthy?? Since when?
 		// Now it twinkles for any stealthed object, whether locally controlled or neutral-observier-viewed
 		if( obj->testStatus( OBJECT_STATUS_STEALTHED ) )
 		{
@@ -705,7 +705,7 @@ void W3DRadar::renderObjectList( const RadarObject *listHead, TextureClass *text
 
 			const UnsignedInt framesForTransition = LOGICFRAMES_PER_SECOND;
 			const UnsignedByte minAlpha = 32;
-			
+
       if (skip)
         continue;
 
@@ -720,7 +720,7 @@ void W3DRadar::renderObjectList( const RadarObject *listHead, TextureClass *text
 
 
 
-		
+
 		// draw the blip, but make sure the points are legal
 		if( legalRadarPoint( radarPoint.x, radarPoint.y ) )
 			surface->DrawPixel( radarPoint.x, radarPoint.y, c );
@@ -745,18 +745,18 @@ void W3DRadar::renderObjectList( const RadarObject *listHead, TextureClass *text
 //-------------------------------------------------------------------------------------------------
 /** Shade the color passed in using the height parameter to lighten and darken it.  Colors
 	* will be interpolated using the value "height" across the range from loZ to hiZ.  The
-	* midZ is the "middle" point, height values above it will be lightened, while 
+	* midZ is the "middle" point, height values above it will be lightened, while
 	* lower ones are darkened. */
-//-------------------------------------------------------------------------------------------------	
-void W3DRadar::interpolateColorForHeight( RGBColor *color,	
-																					Real height, 
+//-------------------------------------------------------------------------------------------------
+void W3DRadar::interpolateColorForHeight( RGBColor *color,
+																					Real height,
 																					Real hiZ,
 																					Real midZ,
 																					Real loZ )
 {
 	const Real howBright = 0.95f;  // bigger is brighter (0.0 to 1.0)
 	const Real howDark   = 0.60f;  // bigger is darker (0.0 to 1.0)
-	
+
 	// sanity on map height (flat maps bomb)
 	if (hiZ == midZ)
 		hiZ = midZ+0.1f;
@@ -885,7 +885,7 @@ void W3DRadar::init( void )
 
 	// allocate our terrain texture
 	// poolify
-	m_terrainTexture = MSGNEW("TextureClass") TextureClass( m_textureWidth, m_textureHeight, 
+	m_terrainTexture = MSGNEW("TextureClass") TextureClass( m_textureWidth, m_textureHeight,
 																			 m_terrainTextureFormat, MIP_LEVELS_1 );
 	DEBUG_ASSERTCRASH( m_terrainTexture, ("W3DRadar: Unable to allocate terrain texture") );
 
@@ -991,7 +991,7 @@ void W3DRadar::reset( void )
 	// don't call Clear(); that wips to transparent. do this instead.
 	//gs Dude, it's called CLEARshroud.  It needs to clear the shroud.
 	clearShroud();
-	
+
 }  // end reset
 
 //-------------------------------------------------------------------------------------------------
@@ -1142,7 +1142,7 @@ void W3DRadar::buildTerrainTexture( TerrainLogic *terrain )
 								radarPoint.x = i;
 								radarPoint.y = j;
 								radarToWorld( &radarPoint, &worldPoint );
-								
+
 								// get Z at this sample height
 								Real underwaterZ = terrain->getGroundHeight( worldPoint.x, worldPoint.y );
 
@@ -1151,7 +1151,7 @@ void W3DRadar::buildTerrainTexture( TerrainLogic *terrain )
 								{
 
 									// this is our "color" for water
-									color = waterColor;									
+									color = waterColor;
 
 									// interpolate the water color for height in the water table
 									interpolateColorForHeight( &color, underwaterZ, waterZ,
@@ -1209,12 +1209,12 @@ void W3DRadar::buildTerrainTexture( TerrainLogic *terrain )
 								radarPoint.y = j;
 								radarToWorld( &radarPoint, &worldPoint );
 
-								// get the color we're going to use here																
+								// get the color we're going to use here
 								if( workingBridge )
 								{
 									AsciiString bridgeTName = bridge->getBridgeTemplateName();
 									TerrainRoadType *bridgeTemplate = TheTerrainRoads->findBridge( bridgeTName );
-									
+
 									// sanity
 									DEBUG_ASSERTCRASH( bridgeTemplate, ("W3DRadar::buildTerrainTexture - Can't find bridge template for '%s'", bridgeTName.str()) );
 
@@ -1227,7 +1227,7 @@ void W3DRadar::buildTerrainTexture( TerrainLogic *terrain )
 									// we won't use the height of the terrain at this sample point, we will
 									// instead use the height for the entire bridge
 									//
-									Real bridgeHeight = (bridge->peekBridgeInfo()->fromLeft.z + 
+									Real bridgeHeight = (bridge->peekBridgeInfo()->fromLeft.z +
 																			 bridge->peekBridgeInfo()->fromRight.z +
 																			 bridge->peekBridgeInfo()->toLeft.z +
 																			 bridge->peekBridgeInfo()->toRight.z) / 4.0f;
@@ -1245,7 +1245,7 @@ void W3DRadar::buildTerrainTexture( TerrainLogic *terrain )
 									TheTerrainVisual->getTerrainColorAt( worldPoint.x, worldPoint.y, &color );
 
 									// interpolate the color for height
-									interpolateColorForHeight( &color, z, getTerrainAverageZ(), 
+									interpolateColorForHeight( &color, z, getTerrainAverageZ(),
 																						 m_mapExtent.hi.z, m_mapExtent.lo.z );
 
 								}  // end else
@@ -1284,7 +1284,7 @@ void W3DRadar::buildTerrainTexture( TerrainLogic *terrain )
 			// the sampling and interpolation algorithm for generating pretty looking terrain
 			// and water for the radar is just, well, expensive.
 			//
-			surface->DrawPixel( x, y, GameMakeColor( color.red * 255, 
+			surface->DrawPixel( x, y, GameMakeColor( color.red * 255,
 																							 color.green * 255,
 																							 color.blue * 255,
 																							 255 ) );
@@ -1308,7 +1308,7 @@ void W3DRadar::clearShroud()
 #endif
 
 	SurfaceClass *surface = m_shroudTexture->Get_Surface_Level();
-	
+
 	// fill to clear, shroud will make black.  Don't want to make something black that logic can't clear
 	unsigned int color = GameMakeColor( 0, 0, 0, 0 );
 	for( Int y = 0; y < m_textureHeight; y++ )
@@ -1363,7 +1363,7 @@ void W3DRadar::setShroudLevel(Int shroudX, Int shroudY, CellShroudStatus setting
 
 	/// @todo srj -- this really needs to smooth the display!
 
-	//Logic is saying shroud.  We can add alpha levels here in client if needed.  
+	//Logic is saying shroud.  We can add alpha levels here in client if needed.
 	// W3DShroud is a 0-255 alpha byte.  Logic shroud is a double reference count.
 	Int alpha;
 	if( setting == CELLSHROUD_SHROUDED )
@@ -1385,7 +1385,7 @@ void W3DRadar::setShroudLevel(Int shroudX, Int shroudY, CellShroudStatus setting
 }
 
 //-------------------------------------------------------------------------------------------------
-/** Actually draw the radar at the screen coordinates provided 
+/** Actually draw the radar at the screen coordinates provided
 	* NOTE about how drawing works: The radar images are computed at samples across the
 	* map and are built into a "square" texture area.  At the time of drawing and computing
 	* radar<->world coords we consider the "ratio" of width to height of the map dimensions
@@ -1418,7 +1418,7 @@ void W3DRadar::draw( Int pixelX, Int pixelY, Int width, Int height )
 	Color lineColor = GameMakeColor( 50, 50, 50, 255 );
 	if( m_mapExtent.width()/width >= m_mapExtent.height()/height )
 	{
-		
+
 		// draw horizontal bars at top and bottom
 		TheDisplay->drawFillRect( pixelX, pixelY, width, ul.y - pixelY - 1, fillColor );
 		TheDisplay->drawFillRect( pixelX, lr.y + 1, width, pixelY + height - lr.y - 1, fillColor);
@@ -1452,7 +1452,7 @@ void W3DRadar::draw( Int pixelX, Int pixelY, Int width, Int height )
 		// rebuild the object overlay
 		renderObjectList( getObjectList(), m_overlayTexture );
 		renderObjectList( getLocalObjectList(), m_overlayTexture, TRUE );
-		
+
 	}  // end if
 
 	// draw the overlay image
@@ -1571,12 +1571,12 @@ void W3DRadar::refreshTerrain( TerrainLogic *terrain )
 
 
 		const UnsignedInt framesForTransition = LOGICFRAMES_PER_SECOND;
-		
 
-		
+
+
 		// adjust the alpha for stealth units so they "fade/blink" on the radar for the controller
 		// if( obj->getRadarPriority() == RADAR_PRIORITY_LOCAL_UNIT_ONLY )
-		// ML-- What the heck is this? local-only and neutral-observier-viewed units are stealthy?? Since when?	
+		// ML-- What the heck is this? local-only and neutral-observier-viewed units are stealthy?? Since when?
 		// Now it twinkles for any stealthed object, whether locally controlled or neutral-observier-viewed
     c = rObj->getColor();
 
@@ -1586,8 +1586,8 @@ void W3DRadar::refreshTerrain( TerrainLogic *terrain )
       minAlpha <<= 2; // decoy
 
  			if ( ( obj->isLocallyControlled() == (Bool)a ) // another decoy, comparing the return of this non-inline with a local
-        && !obj->testStatus( OBJECT_STATUS_DISGUISED ) 
-        && !obj->testStatus( OBJECT_STATUS_DETECTED ) 
+        && !obj->testStatus( OBJECT_STATUS_DISGUISED )
+        && !obj->testStatus( OBJECT_STATUS_DETECTED )
         && ++a != 0 // The trick is that this increment does not occur unless all three above conditions are true
         && minAlpha == 32  // tricksy hobbit decoy
         && c != 0 )        // ditto
@@ -1597,9 +1597,9 @@ void W3DRadar::refreshTerrain( TerrainLogic *terrain )
       }
 
       a |= k | b;
-			GameGetColorComponentsWithCheatSpy( c, &r, &g, &b, &a );//this function does not touch the low order bit in 'a' 
+			GameGetColorComponentsWithCheatSpy( c, &r, &g, &b, &a );//this function does not touch the low order bit in 'a'
 
-			
+
 			if( alphaScale > 0.0f )
 				a = REAL_TO_UNSIGNEDBYTE( ((alphaScale - 1.0f) * (255.0f - minAlpha)) + minAlpha );
 			else
@@ -1610,7 +1610,7 @@ void W3DRadar::refreshTerrain( TerrainLogic *terrain )
 
 
 
-		
+
 		// draw the blip, but make sure the points are legal
 		if( legalRadarPoint( radarPoint.x, radarPoint.y ) )
 			surface->DrawPixel( radarPoint.x, radarPoint.y, c );

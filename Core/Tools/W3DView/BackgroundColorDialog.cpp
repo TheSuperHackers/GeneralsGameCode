@@ -72,7 +72,7 @@ END_MESSAGE_MAP()
 //  OnInitDialog
 //
 BOOL
-CBackgroundColorDialog::OnInitDialog (void) 
+CBackgroundColorDialog::OnInitDialog (void)
 {
 	// Allow the base class to process this message
     CDialog::OnInitDialog ();
@@ -83,9 +83,9 @@ CBackgroundColorDialog::OnInitDialog (void)
 
     m_redSlider.SetRange (0, 100);
     m_greenSlider.SetRange (0, 100);
-    m_blueSlider.SetRange (0, 100);    
+    m_blueSlider.SetRange (0, 100);
 
-    // Get a pointer to the doc so we can get at the current 
+    // Get a pointer to the doc so we can get at the current
     // background color
     CW3DViewDoc *pCDoc = ::GetCurrentDocument ();
     if (pCDoc)
@@ -162,7 +162,7 @@ CBackgroundColorDialog::OnHScroll
         // Modify the ambient light for this scene
         pCDoc->SetBackgroundColor (colorSettings);
     }
-	
+
 	// Allow the base class to process this message
     CDialog::OnHScroll (nSBCode, nPos, pScrollBar);
     return ;
@@ -211,7 +211,7 @@ CBackgroundColorDialog::OnCancel (void)
     colorSettings.Y = float(m_initialGreen) / 100.00F;
     colorSettings.Z = float(m_initialBlue) / 100.00F;
 
-    // Get a pointer to the document so we can change the 
+    // Get a pointer to the document so we can change the
     // background color
     CW3DViewDoc *pCDoc = ::GetCurrentDocument ();
     if (pCDoc)
@@ -219,7 +219,7 @@ CBackgroundColorDialog::OnCancel (void)
         // Restore the current background color
         pCDoc->SetBackgroundColor (colorSettings);
     }
-	
+
 	// Allow the base class to process this message
     CDialog::OnCancel();
     return ;
@@ -235,7 +235,7 @@ CBackgroundColorDialog::WindowProc
     UINT message,
     WPARAM wParam,
     LPARAM lParam
-) 
+)
 {
     if (message == WM_PAINT)
     {
@@ -244,7 +244,7 @@ CBackgroundColorDialog::WindowProc
         ::Paint_Gradient (::GetDlgItem (m_hWnd, IDC_GREEN_GRADIENT), 0, 1, 0);
         ::Paint_Gradient (::GetDlgItem (m_hWnd, IDC_BLUE_GRADIENT), 0, 0, 1);
     }
-	
+
 	// Allow the base class to process this message
     return CDialog::WindowProc (message, wParam, lParam);
 }

@@ -18,12 +18,12 @@
 
 // FILE: WorldBuilderView.cpp ////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:   RTS3
@@ -38,7 +38,7 @@
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-//         Includes                                                      
+//         Includes
 //-----------------------------------------------------------------------------
 
 #include "StdAfx.h"
@@ -57,7 +57,7 @@
 #include "Common/Debug.h"
 
 //-----------------------------------------------------------------------------
-//         Private Data                                                     
+//         Private Data
 //-----------------------------------------------------------------------------
 #define ROUND(x) (Int)(floor((x)+0.5))
 
@@ -65,7 +65,7 @@
 // CWorldBuilderView
 
 //-----------------------------------------------------------------------------
-//         Private Functions                                               
+//         Private Functions
 //-----------------------------------------------------------------------------
 
 /////////////////////////////////////////////////////////////////////////////
@@ -90,7 +90,7 @@ CWorldBuilderView::CWorldBuilderView() :
 
 	show = ::AfxGetApp()->GetProfileInt(MAIN_FRAME_SECTION, "ShowTexture", 1);
 	m_showTexture = (show!=0);
-	
+
 
 }
 
@@ -103,11 +103,11 @@ BOOL CWorldBuilderView::PreCreateWindow(CREATESTRUCT& cs)
 	return WbView::PreCreateWindow(cs);
 }
 
-int CWorldBuilderView::OnCreate(LPCREATESTRUCT lpCreateStruct) 
+int CWorldBuilderView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
 	if (WbView::OnCreate(lpCreateStruct) == -1)
 		return -1;
-	
+
 	return 0;
 }
 
@@ -160,10 +160,10 @@ void CWorldBuilderView::setCellSize(Int cellSize)
 	}
 }
 
-void CWorldBuilderView::setCenterInView(Real x, Real y) 
+void CWorldBuilderView::setCenterInView(Real x, Real y)
 {
 	if (x != m_centerPt.X || y != m_centerPt.Y) {
-		m_centerPt.X=x; 
+		m_centerPt.X=x;
 		m_centerPt.Y=y;
 		adjustDocSize();
 		Invalidate();
@@ -177,7 +177,7 @@ void CWorldBuilderView::setShowContours(Bool show)
 	Invalidate();
 }
 //-----------------------------------------------------------------------------
-//         Public Functions                                                
+//         Public Functions
 //-----------------------------------------------------------------------------
 
 //=============================================================================
@@ -259,11 +259,11 @@ DWORD CWorldBuilderView::getColorForHeight(UnsignedByte ht)
 //=============================================================================
 /** This draws the window. */
 //=============================================================================
-void CWorldBuilderView::OnPaint() 
+void CWorldBuilderView::OnPaint()
 {
 	CWorldBuilderDoc* pDoc = WbDoc();
 	ASSERT_VALID(pDoc);
-	
+
 	// If we are editing with a tool, draw the map being edited, if one exists.
 	WorldHeightMapEdit *pMap = getTrackingHeightMap();
 
@@ -326,7 +326,7 @@ void CWorldBuilderView::OnPaint()
 		dc.FillSolidRect(&rect, RGB(255,255,255));
 	}
 	if (minJ == 0) {
-		rect = clientRect; // Do bottom. 
+		rect = clientRect; // Do bottom.
 		rect.top = (pMap->getYExtent())*m_cellSize;
 		dc.FillSolidRect(&rect, RGB(255,255,255));
 	}
@@ -398,7 +398,7 @@ void CWorldBuilderView::OnPaint()
 			rect.left = lpt.x - m_cellSize;
 			rect.right = lpt.x + m_cellSize;
 			// If visible in the update region, draw it.
-			if (updateRgn.RectInRegion(&rect)) 
+			if (updateRgn.RectInRegion(&rect))
 			{
 				drawObjectInView(&dc, pMapObj);
 			}
@@ -471,14 +471,14 @@ void CWorldBuilderView::drawObjectInView(CDC *pDc, MapObject *pMapObj)
 	savPen = pDc->SelectObject(&ovalPen);
 	savBrush = pDc->SelectObject(&brush);
 	// Draw the object's circle.
-	pDc->Ellipse(&circle);	 
+	pDc->Ellipse(&circle);
 
 	// Draw the arrow
 	Int delta = (m_cellSize+4)/4;
 	Int smallDelta = (delta+4)/4;
-	
+
  	float angle = pMapObj->getAngle();
-	
+
 	Vector3 head1(m_cellSize - delta, smallDelta, 0);
 	Vector3 head2(m_cellSize - delta, -smallDelta, 0);
 	head1.Rotate_Z(-angle);
@@ -544,7 +544,7 @@ void CWorldBuilderView::drawContours(CDC *pDc, CRgn *pRgn, Int minX, Int maxX, I
 {
 	CWorldBuilderDoc* pDoc = WbDoc();
 	ASSERT_VALID(pDoc);
-	
+
 	WorldHeightMapEdit *pMap = getTrackingHeightMap();
 	// We do cell and cell+1 in the loop, so trim back the max limits.
 	if (maxX == pMap->getXExtent()) maxX--;
@@ -552,7 +552,7 @@ void CWorldBuilderView::drawContours(CDC *pDc, CRgn *pRgn, Int minX, Int maxX, I
 
 	Int curHeight;
 	Bool didWater = false;  // We do the water level first, then step through the contours.
-	for (curHeight = ContourOptions::getContourOffset(); curHeight < 255; 
+	for (curHeight = ContourOptions::getContourOffset(); curHeight < 255;
 		curHeight+= ContourOptions::getContourStep()) {
 		Bool doingWater = false;
 		CPen pen;
@@ -724,13 +724,13 @@ void CWorldBuilderView::drawContours(CDC *pDc, CRgn *pRgn, Int minX, Int maxX, I
 			curHeight = ContourOptions::getContourOffset() - ContourOptions::getContourStep();
 		}
 	}
-}	
+}
 
 
 //=============================================================================
 // CWorldBuilderView::interpolate
 //=============================================================================
-/** Given 2 points, pt1 and pt2, with different height valus ht1 and ht2, 
+/** Given 2 points, pt1 and pt2, with different height valus ht1 and ht2,
 determines where the height ht occurs along the line. */
 //=============================================================================
 void CWorldBuilderView::interpolate(CPoint *pt, Int ht, CPoint pt1, Int ht1, CPoint pt2, Int ht2)
@@ -749,11 +749,11 @@ void CWorldBuilderView::interpolate(CPoint *pt, Int ht, CPoint pt1, Int ht1, CPo
 	pt->x = (pt1.x*d1 + pt2.x*d2)/delta;
 	pt->y = (pt1.y*d1 + pt2.y*d2)/delta;
 }
-	
+
 //=============================================================================
 // CWorldBuilderView::drawMyTexture
 //=============================================================================
-/** Draws the tile data rgbData at pRect.  The tile data is square 4 byte 
+/** Draws the tile data rgbData at pRect.  The tile data is square 4 byte
 data, width pixels wide and tall. */
 //=============================================================================
 void CWorldBuilderView::drawMyTexture(CDC *pDc, CRect *pRect, Int width, UnsignedByte *rgbData)
@@ -772,7 +772,7 @@ void CWorldBuilderView::drawMyTexture(CDC *pDc, CRect *pRect, Int width, Unsigne
 	bi.bmiHeader.biClrUsed = 0;
 	bi.bmiHeader.biClrImportant = 0;
 
-	/*int val=*/::StretchDIBits(pDc->m_hDC, pRect->left, pRect->top, pRect->Width(), pRect->Height(), 0, 0, width, width, rgbData, &bi, 
+	/*int val=*/::StretchDIBits(pDc->m_hDC, pRect->left, pRect->top, pRect->Width(), pRect->Height(), 0, 0, width, width, rgbData, &bi,
 		DIB_RGB_COLORS, SRCCOPY);
 }
 
@@ -782,7 +782,7 @@ void CWorldBuilderView::drawMyTexture(CDC *pDc, CRect *pRect, Int width, Unsigne
 //=============================================================================
 /** Invalidates the pixel area for the height map call at a particular location. */
 //=============================================================================
-void CWorldBuilderView::invalidateCellInView(int xIndex, int yIndex) 
+void CWorldBuilderView::invalidateCellInView(int xIndex, int yIndex)
 {
 	CWorldBuilderDoc* pDoc = WbDoc();
 	ASSERT_VALID(pDoc);
@@ -793,7 +793,7 @@ void CWorldBuilderView::invalidateCellInView(int xIndex, int yIndex)
 	// Flip the y.
 	cell.bottom = (pMap->getYExtent()-yIndex)*m_cellSize;
 	// Adjust for scrolling.
-	cell.bottom -= mYScrollOffset; 
+	cell.bottom -= mYScrollOffset;
 	cell.top = cell.bottom-m_cellSize;
 	// Convert to pixel coord.
 	cell.left = xIndex*m_cellSize;
@@ -852,7 +852,7 @@ void CWorldBuilderView::adjustDocSize()
 //=============================================================================
 /** Standard window handler method for when the window size changes. */
 //=============================================================================
-void CWorldBuilderView::OnSize(UINT nType, int cx, int cy) 
+void CWorldBuilderView::OnSize(UINT nType, int cx, int cy)
 {
 	// Do parent class processing.
 	WbView::OnSize(nType, cx, cy);
@@ -865,7 +865,7 @@ void CWorldBuilderView::OnSize(UINT nType, int cx, int cy)
 //=============================================================================
 /** Standard window handler method for when the vertical scroll bar is used. */
 //=============================================================================
-void CWorldBuilderView::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar) 
+void CWorldBuilderView::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 {
 	int scrollPixels=0;
 	// Based on the opcode, determine how may pixels to scroll.
@@ -886,7 +886,7 @@ void CWorldBuilderView::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBa
 //=============================================================================
 /** Standard window handler method for when the horizontal scroll bar is used. */
 //=============================================================================
-void CWorldBuilderView::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar) 
+void CWorldBuilderView::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 {
 	int scrollPixels=0;
 
@@ -907,7 +907,7 @@ void CWorldBuilderView::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBa
 //=============================================================================
 /** Scrolls the window. */
 //=============================================================================
-void CWorldBuilderView::scrollInView(Real xScroll, Real yScroll, Bool end) 
+void CWorldBuilderView::scrollInView(Real xScroll, Real yScroll, Bool end)
 {
 	// Calculate new scroll offset.
 	Int newOffset = mXScrollOffset + xScroll*m_cellSize;
@@ -950,7 +950,7 @@ void CWorldBuilderView::scrollInView(Real xScroll, Real yScroll, Bool end)
 
 
 /** Toggles the show grid flag and invals the window. */
-void CWorldBuilderView::OnShowGrid() 
+void CWorldBuilderView::OnShowGrid()
 {
 	mShowGrid = !mShowGrid;
 	::AfxGetApp()->WriteProfileInt(MAIN_FRAME_SECTION, "ShowGrid", mShowGrid?1:0);
@@ -958,17 +958,17 @@ void CWorldBuilderView::OnShowGrid()
 }
 
 /** Sets the check in the menu to match the show grid flag. */
-void CWorldBuilderView::OnUpdateShowGrid(CCmdUI* pCmdUI) 
+void CWorldBuilderView::OnUpdateShowGrid(CCmdUI* pCmdUI)
 {
 	pCmdUI->SetCheck(mShowGrid?1:0);
 	// Note - grid doesn't show if the cell size < 4, so disable.
 	pCmdUI->Enable(m_cellSize>=MIN_GRID_SIZE);
-	
+
 }
 
 #if DEAD
 /** Toggles the show contours flag and invals the window. */
-void CWorldBuilderView::OnViewShowcontours() 
+void CWorldBuilderView::OnViewShowcontours()
 {
 	m_showContours = !m_showContours;
 	::AfxGetApp()->WriteProfileInt(MAIN_FRAME_SECTION, "ShowContours", m_showContours?1:0);
@@ -976,17 +976,17 @@ void CWorldBuilderView::OnViewShowcontours()
 }
 
 /** Sets the check in the menu to match the show contours flag. */
-void CWorldBuilderView::OnUpdateViewShowcontours(CCmdUI* pCmdUI) 
+void CWorldBuilderView::OnUpdateViewShowcontours(CCmdUI* pCmdUI)
 {
 	pCmdUI->SetCheck(m_showContours?1:0);
 	// Note - contours don't show if the cell size < 4, so disable.
 	pCmdUI->Enable(m_cellSize>=MIN_GRID_SIZE);
 }
-#endif 
+#endif
 
 
 /** Toggles the show texture flag and invals the window. */
-void CWorldBuilderView::OnViewShowtexture() 
+void CWorldBuilderView::OnViewShowtexture()
 {
 	m_showTexture = !m_showTexture;
 	::AfxGetApp()->WriteProfileInt(MAIN_FRAME_SECTION, "ShowTexture", m_showTexture?1:0);
@@ -994,7 +994,7 @@ void CWorldBuilderView::OnViewShowtexture()
 }
 
 /** Sets the check in the menu to match the show texture flag. */
-void CWorldBuilderView::OnUpdateViewShowtexture(CCmdUI* pCmdUI) 
+void CWorldBuilderView::OnUpdateViewShowtexture(CCmdUI* pCmdUI)
 {
 	pCmdUI->SetCheck(m_showTexture?1:0);
 }

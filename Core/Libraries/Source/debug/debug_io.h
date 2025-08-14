@@ -34,7 +34,7 @@
 
 /**
   \interface DebugIOInterface debug.h <rts/debug.h>
-  
+
   \brief Debug I/O interface.
 
   A Debug I/O interface implementation must register itself
@@ -172,7 +172,7 @@ public:
     \param type type name of class we're implementing
     \note This macro changes the access method to private.
   */
-  #define DEBUG_DECLARE_IO_INTERFACE(type) 
+  #define DEBUG_DECLARE_IO_INTERFACE(type)
 
   /**
     \brief Helper macro for registering I/O class factory with
@@ -183,7 +183,7 @@ public:
     \param descr short I/O class description
     \param type type name of class we're implementing
   */
-  #define DEBUG_IMPLEMENT_IO_INTERFACE(io_id,descr,type) 
+  #define DEBUG_IMPLEMENT_IO_INTERFACE(io_id,descr,type)
 
 #else
 

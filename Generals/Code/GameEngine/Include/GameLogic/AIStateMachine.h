@@ -52,7 +52,7 @@ class Squad;
 //-----------------------------------------------------------------------------------------------------------
 
 
-/** 
+/**
  * The AI state IDs.
  * Each of these constants will be associated with an instance of a State class
  * in a given StateMachine.
@@ -111,12 +111,12 @@ enum AIStateType CPP_11(: Int)
 extern Bool outOfWeaponRangeObject( State *thisState, void* userData );
 extern Bool outOfWeaponRangePosition( State *thisState, void* userData );
 extern Bool wantToSquishTarget( State *thisState, void* userData );
-	
+
 //-----------------------------------------------------------------------------------------------------------
 /**
-  The AI state machine.  This is used by AIUpdate to implement all of the 
+  The AI state machine.  This is used by AIUpdate to implement all of the
   commands in the AICommandInterface.
- 
+
 	NOTE NOTE NOTE NOTE NOTE
 
 	Do NOT subclass this unless you want ALL of the states this machine possesses.
@@ -131,7 +131,7 @@ class AIStateMachine : public StateMachine
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( AIStateMachine, "AIStateMachine" );
 
 public:
-	/** 
+	/**
 	 * The implementation of this constructor defines the states
 	 * used by this machine.
 	 */
@@ -140,7 +140,7 @@ public:
 	virtual void clear();
 	virtual StateReturnType resetToDefaultState();
 	virtual StateReturnType setState( StateID newStateID );
-	
+
 	/// @todo Rethink state parameter passing. Continuing in this fashion will have a pile of params in the machine (MSB)
 	void setGoalPath( const std::vector<Coord3D>* path );
 	void addToGoalPath( const Coord3D *pathPoint );
@@ -157,7 +157,7 @@ public:
 	void setGoalAIGroup( const AIGroup *group );
 
 	Squad *getGoalSquad(void);
-	
+
 	StateReturnType setTemporaryState( StateID newStateID, Int frameLimitCoount );			///< change the temporary state of the machine, and number of frames limit.
 	StateID getTemporaryState(void) const {return m_temporaryState?m_temporaryState->getID():INVALID_STATE_ID;}
 
@@ -166,7 +166,7 @@ public:	// overrides.
 #ifdef STATE_MACHINE_DEBUG
 	virtual AsciiString getCurrentStateName() const ;
 #endif
-	
+
 protected:
 	// snapshot interface
 	virtual void crc( Xfer *xfer );
@@ -178,9 +178,9 @@ private:
 	const Waypoint *			m_goalWaypoint;
 	Squad *								m_goalSquad;
 
-	/** A temporary state to run for a while (usually AI_MOVE_OUT_OF_THE_WAY).  
+	/** A temporary state to run for a while (usually AI_MOVE_OUT_OF_THE_WAY).
 	Doesn't clear or reset the state machine, so it goes back to doing what it was doing.  jba. */
-	State									*m_temporaryState;			 
+	State									*m_temporaryState;
 	UnsignedInt						m_temporaryStateFramEnd; ///< Last frame to run m_temporaryState.
 };
 
@@ -212,7 +212,7 @@ protected:
 //-----------------------------------------------------------------------------------------------------------
 class AIIdleState : public State
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIIdleState, "AIIdleState")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIIdleState, "AIIdleState")
 private:
 
 	UnsignedShort m_initialSleepOffset;
@@ -248,10 +248,10 @@ EMPTY_DTOR(AIIdleState)
  */
 class AIInternalMoveToState : public State
 {
-	MEMORY_POOL_GLUE_ABC(AIInternalMoveToState)		
+	MEMORY_POOL_GLUE_ABC(AIInternalMoveToState)
 public:
-	AIInternalMoveToState( StateMachine *machine, AsciiString name ) : State( machine, name ) 
-	{ 
+	AIInternalMoveToState( StateMachine *machine, AsciiString name ) : State( machine, name )
+	{
 		m_goalPosition.zero();
 		m_pathGoalPosition.zero();
 		m_pathTimestamp = 0;
@@ -299,7 +299,7 @@ private:
 	AudioHandle		m_ambientPlayingHandle;							///< Audio handle for the looping sound that we may play.
 	UnsignedInt		m_pathTimestamp;										///< time of last pathfind
 	UnsignedInt		m_blockedRepathTimestamp;						///< time of last blocked pathfind
-	Bool					m_adjustDestinations;								///< Adjust destinations to avoid stacking units on top of each other.  Normally true, but 
+	Bool					m_adjustDestinations;								///< Adjust destinations to avoid stacking units on top of each other.  Normally true, but
 																										//   occasionally false for things like car bombs.
 protected:
 	Bool					m_waitingForPath;										///< If we are waiting for a path.
@@ -313,7 +313,7 @@ EMPTY_DTOR(AIInternalMoveToState)
  */
 class AIRappelState : public State
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIRappelState, "AIRappelState")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIRappelState, "AIRappelState")
 protected:
 	Real m_rappelRate;
 	Real m_destZ;
@@ -338,7 +338,7 @@ EMPTY_DTOR(AIRappelState)
  */
 class AIBusyState : public State
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIBusyState, "AIBusyState")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIBusyState, "AIBusyState")
 public:
 	AIBusyState( StateMachine *machine ) : State( machine, "AIBusyState" ) { }
 	virtual StateReturnType onEnter() { return STATE_CONTINUE; }
@@ -360,7 +360,7 @@ EMPTY_DTOR(AIBusyState)
  */
 class AIMoveToState : public AIInternalMoveToState
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIMoveToState, "AIMoveToState")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIMoveToState, "AIMoveToState")
 protected:
 	Bool m_isMoveTo;
 public:
@@ -377,7 +377,7 @@ EMPTY_DTOR(AIMoveToState)
  */
 class AIMoveOutOfTheWayState : public AIInternalMoveToState
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIMoveOutOfTheWayState, "AIMoveOutOfTheWayState")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIMoveOutOfTheWayState, "AIMoveOutOfTheWayState")
 public:
 	AIMoveOutOfTheWayState( StateMachine *machine ) : AIInternalMoveToState( machine, "AIMoveOutOfTheWayState" ) { }
 	virtual StateReturnType onEnter();
@@ -395,14 +395,14 @@ EMPTY_DTOR(AIMoveOutOfTheWayState)
  */
 class AIMoveAndTightenState : public AIInternalMoveToState
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIMoveAndTightenState, "AIMoveAndTightenState")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIMoveAndTightenState, "AIMoveAndTightenState")
 public:
-	AIMoveAndTightenState( StateMachine *machine ) : AIInternalMoveToState( machine, "AIMoveAndTightenState" ) 
+	AIMoveAndTightenState( StateMachine *machine ) : AIInternalMoveToState( machine, "AIMoveAndTightenState" )
 	{
 		m_checkForPath = false;
 		m_okToRepathTimes = 0;
 	}
-	AIMoveAndTightenState( StateMachine *machine, const char *name ) : AIInternalMoveToState( machine, name ) 
+	AIMoveAndTightenState( StateMachine *machine, const char *name ) : AIInternalMoveToState( machine, name )
 	{
 		m_checkForPath = false;
 		m_okToRepathTimes = 0;
@@ -411,7 +411,7 @@ public:
 	virtual StateReturnType update();
 protected:
 	virtual Bool computePath();												///< compute the path
-	Int m_okToRepathTimes; 
+	Int m_okToRepathTimes;
 	Bool m_checkForPath;
 protected:
 	// snapshot interface
@@ -427,7 +427,7 @@ EMPTY_DTOR(AIMoveAndTightenState)
  */
 class AIMoveAwayFromRepulsorsState : public AIMoveAndTightenState
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIMoveAwayFromRepulsorsState, "AIMoveAwayFromRepulsorsState")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIMoveAwayFromRepulsorsState, "AIMoveAwayFromRepulsorsState")
 public:
 	AIMoveAwayFromRepulsorsState( StateMachine *machine ) : AIMoveAndTightenState( machine, "AIMoveAwayFromRepulsors" ) { }
 	virtual StateReturnType onEnter();
@@ -445,16 +445,16 @@ EMPTY_DTOR(AIMoveAwayFromRepulsorsState)
  */
 class AIAttackApproachTargetState : public AIInternalMoveToState
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIAttackApproachTargetState, "AIAttackApproachTargetState")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIAttackApproachTargetState, "AIAttackApproachTargetState")
 public:
-	AIAttackApproachTargetState( StateMachine *machine, Bool follow, Bool attackingObject, Bool forceAttacking ) : 
-		AIInternalMoveToState( machine, "AIAttackApproachTargetState" ), 
+	AIAttackApproachTargetState( StateMachine *machine, Bool follow, Bool attackingObject, Bool forceAttacking ) :
+		AIInternalMoveToState( machine, "AIAttackApproachTargetState" ),
 		m_follow(follow),
 		m_isAttackingObject(attackingObject),
 		m_isInitialApproach(true),
 		m_isForceAttacking(forceAttacking)
-	{ 
-		// we're setting m_isInitialApproach to true in the constructor because we want the first pass 
+	{
+		// we're setting m_isInitialApproach to true in the constructor because we want the first pass
 		// through this state to allow a unit to attack incidental targets (if it is turreted)
 	}
 	virtual StateReturnType onEnter();
@@ -491,18 +491,18 @@ EMPTY_DTOR(AIAttackApproachTargetState)
  */
 class AIAttackPursueTargetState : public AIInternalMoveToState
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIAttackPursueTargetState, "AIAttackPursueTargetState")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIAttackPursueTargetState, "AIAttackPursueTargetState")
 public:
-	AIAttackPursueTargetState( StateMachine *machine, Bool follow, Bool attackingObject, Bool forceAttacking ) : 
-		AIInternalMoveToState( machine, "AIAttackPursueTargetState" ), 
+	AIAttackPursueTargetState( StateMachine *machine, Bool follow, Bool attackingObject, Bool forceAttacking ) :
+		AIInternalMoveToState( machine, "AIAttackPursueTargetState" ),
 		m_follow(follow),
 		m_isAttackingObject(attackingObject),
 		m_isInitialApproach(true),
 		m_isForceAttacking(forceAttacking),
 		m_approachTimestamp(0),
 		m_stopIfInRange(false)
-	{ 
-		// we're setting m_isInitialApproach to true in the constructor because we want the first pass 
+	{
+		// we're setting m_isInitialApproach to true in the constructor because we want the first pass
 		// through this state to allow a unit to attack incidental targets (if it is turreted)
 	}
 	virtual StateReturnType onEnter();
@@ -539,12 +539,12 @@ EMPTY_DTOR(AIAttackPursueTargetState)
  */
 class AIPickUpCrateState : public AIInternalMoveToState
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIPickUpCrateState, "AIPickUpCrateState")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIPickUpCrateState, "AIPickUpCrateState")
 public:
-	AIPickUpCrateState( StateMachine *machine ) : 
+	AIPickUpCrateState( StateMachine *machine ) :
 		AIInternalMoveToState( machine, "AIAttackPickUpCrateState" )
-	{ 
-		// we're setting m_isInitialApproach to true in the constructor because we want the first pass 
+	{
+		// we're setting m_isInitialApproach to true in the constructor because we want the first pass
 		// through this state to allow a unit to attack incidental targets (if it is turreted)
 	}
 	virtual StateReturnType onEnter();
@@ -569,7 +569,7 @@ EMPTY_DTOR(AIPickUpCrateState)
  */
  class AIAttackMoveToState : public AIMoveToState
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIAttackMoveToState, "AIAttackMoveToState")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIAttackMoveToState, "AIAttackMoveToState")
 public:
 	AIAttackMoveToState( StateMachine *machine );
 	//virtual ~AIAttackMoveToState();
@@ -601,16 +601,16 @@ protected:
  */
 class AIFollowWaypointPathState : public AIInternalMoveToState
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIFollowWaypointPathState, "AIFollowWaypointPathState")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIFollowWaypointPathState, "AIFollowWaypointPathState")
 public:
-	AIFollowWaypointPathState( StateMachine *machine, Bool asGroup ) : m_isFollowWaypointPathState(true), 
-		m_moveAsGroup(asGroup), AIInternalMoveToState( machine, "AIFollowWaypointPathState" ) 
+	AIFollowWaypointPathState( StateMachine *machine, Bool asGroup ) : m_isFollowWaypointPathState(true),
+		m_moveAsGroup(asGroup), AIInternalMoveToState( machine, "AIFollowWaypointPathState" )
 	{
 		m_angle = 0.0f;
 	}
-	AIFollowWaypointPathState( StateMachine *machine, Bool asGroup, Bool isFollow) : 
-		m_isFollowWaypointPathState(isFollow), m_moveAsGroup(asGroup), AIInternalMoveToState( machine, 
-																"AIFollowWaypointPathState" ) 
+	AIFollowWaypointPathState( StateMachine *machine, Bool asGroup, Bool isFollow) :
+		m_isFollowWaypointPathState(isFollow), m_moveAsGroup(asGroup), AIInternalMoveToState( machine,
+																"AIFollowWaypointPathState" )
 	{
 		m_angle = 0.0f;
 	}
@@ -633,7 +633,7 @@ protected:
 	Bool m_appendGoalPosition;
 
 	const Bool m_moveAsGroup;
-	// this is necessary because we derive from FollowWaypointPathState, but we do not want to incur the 
+	// this is necessary because we derive from FollowWaypointPathState, but we do not want to incur the
 	// expense of checking RTTI to determine whether we are actually a FollowWaypointPathState or not
 	const Bool m_isFollowWaypointPathState;	// derived classes should set this false.
 
@@ -651,9 +651,9 @@ EMPTY_DTOR(AIFollowWaypointPathState)
  */
 class AIFollowWaypointPathExactState : public AIInternalMoveToState
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIFollowWaypointPathExactState, "AIFollowWaypointPathExactState")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIFollowWaypointPathExactState, "AIFollowWaypointPathExactState")
 public:
-	AIFollowWaypointPathExactState( StateMachine *machine, Bool asGroup ) : m_moveAsGroup(asGroup), 
+	AIFollowWaypointPathExactState( StateMachine *machine, Bool asGroup ) : m_moveAsGroup(asGroup),
 		m_lastWaypoint(NULL),
 		AIInternalMoveToState( machine, "AIFollowWaypointPathExactState" ) { }
 	virtual StateReturnType onEnter();
@@ -678,7 +678,7 @@ EMPTY_DTOR(AIFollowWaypointPathExactState)
  */
 class AIAttackFollowWaypointPathState : public AIFollowWaypointPathState
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIAttackFollowWaypointPathState, "AIAttackFollowWaypointPathState")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIAttackFollowWaypointPathState, "AIAttackFollowWaypointPathState")
 public:
 	AIAttackFollowWaypointPathState( StateMachine *machine, Bool asGroup );
 	//virtual ~AIAttackFollowWaypointPathState();
@@ -705,13 +705,13 @@ protected:
  */
 class AIWanderState : public AIFollowWaypointPathState
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIWanderState, "AIWanderState")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIWanderState, "AIWanderState")
 public:
-	AIWanderState( StateMachine *machine ) : AIFollowWaypointPathState( machine, false ) 
-	{ 
+	AIWanderState( StateMachine *machine ) : AIFollowWaypointPathState( machine, false )
+	{
 #ifdef STATE_MACHINE_DEBUG
 		setName("AIWanderState");
-#endif 
+#endif
 		m_timer = 0;
 		m_waitFrames = 0;
 	}
@@ -737,9 +737,9 @@ EMPTY_DTOR(AIWanderState)
  */
 class AIWanderInPlaceState : public AIInternalMoveToState
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIWanderInPlaceState, "AIWanderInPlaceState")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIWanderInPlaceState, "AIWanderInPlaceState")
 public:
-	AIWanderInPlaceState( StateMachine *machine ) : AIInternalMoveToState( machine, "AIWanderInPlaceState" ) 
+	AIWanderInPlaceState( StateMachine *machine ) : AIInternalMoveToState( machine, "AIWanderInPlaceState" )
 	{
 		m_origin.zero();
 		m_waitFrames = 0;
@@ -757,7 +757,7 @@ protected:
 
 protected:
 	void computeWanderGoal();
-	Coord3D m_origin;									///< The point we're wandering around.	
+	Coord3D m_origin;									///< The point we're wandering around.
 	Int		m_waitFrames;
 	Int		m_timer;
 };
@@ -769,13 +769,13 @@ EMPTY_DTOR(AIWanderInPlaceState)
  */
 class AIPanicState : public AIFollowWaypointPathState
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIPanicState, "AIPanicState")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIPanicState, "AIPanicState")
 public:
 	AIPanicState( StateMachine *machine ) : AIFollowWaypointPathState( machine, false)
-	{ 
+	{
 #ifdef STATE_MACHINE_DEBUG
 		setName("AIPanicState");
-#endif	
+#endif
 	}
 	virtual StateReturnType onEnter();
 	virtual StateReturnType update();
@@ -799,10 +799,10 @@ EMPTY_DTOR(AIPanicState)
  */
 class AIFollowPathState : public AIInternalMoveToState
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIFollowPathState, "AIFollowPathState")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIFollowPathState, "AIFollowPathState")
 public:
-	AIFollowPathState( StateMachine *machine, AsciiString name = "AIFollowPathState" ) : 
-		m_adjustFinal(true), 
+	AIFollowPathState( StateMachine *machine, AsciiString name = "AIFollowPathState" ) :
+		m_adjustFinal(true),
 		m_adjustFinalOverride(false),
 		m_index(0),
 		m_retryCount(10),
@@ -824,7 +824,7 @@ protected:
 	virtual void loadPostProcess();
 
 private:
-	Int m_index;																		///< current path index	
+	Int m_index;																		///< current path index
 	Bool m_adjustFinal;
 	Bool m_adjustFinalOverride;
 	Int m_retryCount;
@@ -837,9 +837,9 @@ EMPTY_DTOR(AIFollowPathState)
  */
 class AIMoveAndEvacuateState : public AIInternalMoveToState
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIMoveAndEvacuateState, "AIMoveAndEvacuateState")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIMoveAndEvacuateState, "AIMoveAndEvacuateState")
 public:
-	AIMoveAndEvacuateState( StateMachine *machine ) : AIInternalMoveToState( machine, "AIMoveAndEvacuateState" ) 
+	AIMoveAndEvacuateState( StateMachine *machine ) : AIInternalMoveToState( machine, "AIMoveAndEvacuateState" )
 	{
 		m_origin.zero();
 	}
@@ -853,7 +853,7 @@ protected:
 	virtual void loadPostProcess();
 
 private:
-	Coord3D m_origin;													///< current position - set as goal on exit in case we follow with MoveToAndDelete.	
+	Coord3D m_origin;													///< current position - set as goal on exit in case we follow with MoveToAndDelete.
 };
 EMPTY_DTOR(AIMoveAndEvacuateState)
 
@@ -863,9 +863,9 @@ EMPTY_DTOR(AIMoveAndEvacuateState)
  */
 class AIMoveAndDeleteState : public AIInternalMoveToState
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIMoveAndDeleteState, "AIMoveAndDeleteState")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIMoveAndDeleteState, "AIMoveAndDeleteState")
 public:
-	AIMoveAndDeleteState( StateMachine *machine ) : AIInternalMoveToState( machine, "AIMoveAndDeleteState" ) 
+	AIMoveAndDeleteState( StateMachine *machine ) : AIInternalMoveToState( machine, "AIMoveAndDeleteState" )
 	{
 		m_appendGoalPosition = FALSE;
 	}
@@ -886,15 +886,15 @@ EMPTY_DTOR(AIMoveAndDeleteState)
 //-----------------------------------------------------------------------------------------------------------
 class AIAttackAimAtTargetState : public State
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIAttackAimAtTargetState, "AIAttackAimAtTargetState")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIAttackAimAtTargetState, "AIAttackAimAtTargetState")
 public:
-	AIAttackAimAtTargetState( StateMachine *machine, Bool attackingObject, Bool forceAttacking ) : 
+	AIAttackAimAtTargetState( StateMachine *machine, Bool attackingObject, Bool forceAttacking ) :
 		State( machine, "AIAttackAimAtTargetState" ),
 		m_isAttackingObject(attackingObject),
 		m_canTurnInPlace(false),
 		m_isForceAttacking(forceAttacking),
 		m_setLocomotor(false)
-	{ 
+	{
 	}
 	virtual StateReturnType onEnter();
 	virtual void onExit( StateExitType status );
@@ -915,7 +915,7 @@ EMPTY_DTOR(AIAttackAimAtTargetState)
 //-----------------------------------------------------------------------------------------------------------
 class AIWaitState : public State
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIWaitState, "AIWaitState")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIWaitState, "AIWaitState")
 public:
 	AIWaitState( StateMachine *machine ) : State( machine,"AIWaitState" ) { }
 	virtual StateReturnType update();
@@ -941,12 +941,12 @@ public:
 //-----------------------------------------------------------------------------------------------------------
 class AIAttackFireWeaponState : public State
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIAttackFireWeaponState, "AIAttackFireWeaponState")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIAttackFireWeaponState, "AIAttackFireWeaponState")
 public:
-	AIAttackFireWeaponState( StateMachine *machine, NotifyWeaponFiredInterface* att ) : 
-		State( machine, "AIAttackFireWeaponState" ), 
-		m_att(att) 
-	{ 
+	AIAttackFireWeaponState( StateMachine *machine, NotifyWeaponFiredInterface* att ) :
+		State( machine, "AIAttackFireWeaponState" ),
+		m_att(att)
+	{
 	}
 	virtual StateReturnType update();
 	virtual void onExit( StateExitType status );
@@ -971,7 +971,7 @@ public:
 //-----------------------------------------------------------------------------------------------------------
 class AIAttackState : public State, public NotifyWeaponFiredInterface
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIAttackState, "AIAttackState")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIAttackState, "AIAttackState")
 public:
 
 	AIAttackState( StateMachine *machine, Bool follow, Bool attackingObject, Bool forceAttacking, AttackExitConditionsInterface* attackParameters);
@@ -985,7 +985,7 @@ public:
 	virtual void notifyNewVictimChosen(Object* victim);
 	virtual const Coord3D* getOriginalVictimPos() const { return &m_originalVictimPos; }
 	virtual Bool isWeaponSlotOkToFire(WeaponSlotType wslot) const { return true; }
-	virtual Bool isAttackingObject() const { return m_isAttackingObject; } 
+	virtual Bool isAttackingObject() const { return m_isAttackingObject; }
 	virtual Bool isForceAttacking() const { return m_isForceAttacking; }
 #ifdef STATE_MACHINE_DEBUG
 	virtual AsciiString getName() const ;
@@ -1016,9 +1016,9 @@ private:
 //-----------------------------------------------------------------------------------------------------------
 class AIAttackSquadState : public State
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIAttackSquadState, "AIAttackSquadState")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIAttackSquadState, "AIAttackSquadState")
 public:
-	AIAttackSquadState( StateMachine *machine, AttackExitConditionsInterface *attackParameters = NULL) : 
+	AIAttackSquadState( StateMachine *machine, AttackExitConditionsInterface *attackParameters = NULL) :
 			State( machine , "AIAttackSquadState") {	}
 	//~AIAttackSquadState();
 
@@ -1044,7 +1044,7 @@ private:
 //-----------------------------------------------------------------------------------------------------------
 class AIDeadState : public State
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIDeadState, "AIDeadState")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIDeadState, "AIDeadState")
 public:
 	AIDeadState( StateMachine *machine ) : State( machine, "AIDeadState" ) { }
 	virtual StateReturnType onEnter();
@@ -1061,7 +1061,7 @@ EMPTY_DTOR(AIDeadState)
 //-----------------------------------------------------------------------------------------------------------
 class AIDockState : public State
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIDockState, "AIDockState")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIDockState, "AIDockState")
 public:
 	AIDockState( StateMachine *machine ) : State( machine, "AIDockState" ), m_dockMachine(NULL), m_usingPrecisionMovement(FALSE) { }
 	//~AIDockState();
@@ -1088,7 +1088,7 @@ private:
  */
 class AIEnterState : public AIInternalMoveToState
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIEnterState, "AIEnterState")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIEnterState, "AIEnterState")
 protected:
 	ObjectID m_entryToClear;
 protected:
@@ -1107,7 +1107,7 @@ EMPTY_DTOR(AIEnterState)
 //-----------------------------------------------------------------------------------------------------------
 class AIExitState : public State
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIExitState, "AIExitState")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIExitState, "AIExitState")
 protected:
 	ObjectID m_entryToClear;
 protected:
@@ -1129,9 +1129,9 @@ EMPTY_DTOR(AIExitState)
  */
 class AIGuardState : public State
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIGuardState, "AIGuardState")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIGuardState, "AIGuardState")
 public:
-	AIGuardState( StateMachine *machine ) : State( machine, "AIGuardState" ), m_guardMachine(NULL) 
+	AIGuardState( StateMachine *machine ) : State( machine, "AIGuardState" ), m_guardMachine(NULL)
 	{
 		m_guardMachine = NULL;
 	}
@@ -1158,9 +1158,9 @@ private:
  */
 class AITunnelNetworkGuardState : public State
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AITunnelNetworkGuardState, "AITunnelNetworkGuardState")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AITunnelNetworkGuardState, "AITunnelNetworkGuardState")
 public:
-	AITunnelNetworkGuardState( StateMachine *machine ) : State( machine, "AITunnelNetworkGuardState" ), m_guardMachine(NULL) 
+	AITunnelNetworkGuardState( StateMachine *machine ) : State( machine, "AITunnelNetworkGuardState" ), m_guardMachine(NULL)
 	{
 		m_guardMachine = NULL;
 	}
@@ -1187,10 +1187,10 @@ private:
  */
 class AIHuntState : public State
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIHuntState, "AIHuntState")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIHuntState, "AIHuntState")
 public:
-	AIHuntState( StateMachine *machine ) : State( machine, "AIHuntState" ), m_huntMachine(NULL) 
-	{ 
+	AIHuntState( StateMachine *machine ) : State( machine, "AIHuntState" ), m_huntMachine(NULL)
+	{
 		m_nextEnemyScanTime = 0;
 	}
 	//~AIHuntState();
@@ -1219,9 +1219,9 @@ private:
  */
 class AIAttackAreaState : public State
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIAttackAreaState, "AIAttackAreaState")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIAttackAreaState, "AIAttackAreaState")
 public:
-	AIAttackAreaState( StateMachine *machine ) : State( machine, "AIAttackAreaState" ), m_attackMachine(NULL), 
+	AIAttackAreaState( StateMachine *machine ) : State( machine, "AIAttackAreaState" ), m_attackMachine(NULL),
 		m_nextEnemyScanTime(0) { }
 	//~AIAttackAreaState();
 	virtual StateReturnType onEnter();
@@ -1248,7 +1248,7 @@ private:
 //-----------------------------------------------------------------------------------------------------------
 class AIFaceState : public State
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIFaceState, "AIFaceState")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIFaceState, "AIFaceState")
 public:
 	AIFaceState( StateMachine *machine, Bool obj ) : State( machine, "AIFaceState" ), m_canTurnInPlace(false), m_obj(obj) { }
 	virtual StateReturnType onEnter();

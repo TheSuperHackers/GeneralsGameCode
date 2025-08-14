@@ -57,7 +57,7 @@ SphereKeysClass::Resize (int max_keys)
 		//	Allocate the new array
 		//
 		W3dSphereKeyFrameStruct *key_array = new W3dSphereKeyFrameStruct[array_size];
-		
+
 		//
 		//	Copy the contents of the old array
 		//

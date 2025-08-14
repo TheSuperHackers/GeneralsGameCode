@@ -52,11 +52,11 @@ POWTruckBehaviorModuleData::POWTruckBehaviorModuleData( void )
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-/*static*/ void POWTruckBehaviorModuleData::buildFieldParse( MultiIniFieldParse &p ) 
+/*static*/ void POWTruckBehaviorModuleData::buildFieldParse( MultiIniFieldParse &p )
 {
   OpenContainModuleData::buildFieldParse( p );
 
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
 
 		{ 0, 0, 0, 0 }
@@ -73,7 +73,7 @@ POWTruckBehaviorModuleData::POWTruckBehaviorModuleData( void )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-POWTruckBehavior::POWTruckBehavior( Thing *thing, const ModuleData *moduleData ) 
+POWTruckBehavior::POWTruckBehavior( Thing *thing, const ModuleData *moduleData )
 								: OpenContain( thing, moduleData )
 {
 

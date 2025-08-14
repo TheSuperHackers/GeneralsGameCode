@@ -61,7 +61,7 @@ enum AudioPriority CPP_11(: Int);
 // You might want this to be memory pooled (I personally do), but it can't
 // because we allocate them on the stack frequently.
 class AudioEventRTS
-{	
+{
 public:
 	AudioEventRTS( );
 	AudioEventRTS( const AsciiString& eventName );
@@ -78,7 +78,7 @@ public:
 	const AsciiString& getEventName( void ) const { return m_eventName; }
 
 	// generateFilename is separate from generatePlayInfo because generatePlayInfo should only be called once
-	// per triggered event. generateFilename will be called once per loop, or once to get each filename if 'all' is 
+	// per triggered event. generateFilename will be called once per loop, or once to get each filename if 'all' is
 	// specified.
 	void generateFilename( void );
 	AsciiString getFilename( void );
@@ -97,13 +97,13 @@ public:
 	PortionToPlay getNextPlayPortion( void ) const;
 	void advanceNextPlayPortion( void );
 	void setNextPlayPortion( PortionToPlay ptp );
-	
+
 	void decreaseLoopCount( void );
 	Bool hasMoreLoops( void ) const;
-	
+
 	void setAudioEventInfo( const AudioEventInfo *eventInfo ) const;
 	const AudioEventInfo *getAudioEventInfo( void ) const;
-	
+
 	void setPlayingHandle( AudioHandle handle );	// for ID of this audio piece.
 	AudioHandle getPlayingHandle( void ); // for ID of this audio piece
 
@@ -115,7 +115,7 @@ public:
 
 	Bool isDead() const { return m_ownerType == OT_Dead; }
 	OwnerType getOwnerType() const { return m_ownerType; }
-	
+
 	void setDrawableID( DrawableID drawID );
 	DrawableID getDrawableID( void );
 
@@ -147,11 +147,11 @@ public:
 	void setPlayingAudioIndex( Int pai )  { m_playingAudioIndex = pai; };
 
 	Bool getUninterruptable( ) const { return m_uninterruptable; }
-	void setUninterruptable( Bool uninterruptable ) { m_uninterruptable = uninterruptable; } 
+	void setUninterruptable( Bool uninterruptable ) { m_uninterruptable = uninterruptable; }
 
 
-	// This will retrieve the appropriate position based on type.	
-	const Coord3D *getCurrentPosition( void );	
+	// This will retrieve the appropriate position based on type.
+	const Coord3D *getCurrentPosition( void );
 
 	// This will return the directory leading up to the appropriate type, including the trailing '\\'
 	// If localized is true, we'll append a language specifc directory to the end of the path.
@@ -164,7 +164,7 @@ protected:
 	AsciiString m_filenameToLoad;
 	mutable const AudioEventInfo *m_eventInfo;	// Mutable so that it can be modified even on const objects
 	AudioHandle m_playingHandle;
-	
+
 	AudioHandle m_killThisHandle;		///< Sometimes sounds will canabilize other sounds in order to take their handle away.
 																	///< This is one of those instances.
 
@@ -173,7 +173,7 @@ protected:
 	AsciiString m_decayName;				///< This is the filename that should be used during the decay.
 
 	AudioPriority m_priority;				///< This should be the priority as given by the event info, or the overrided priority.
-	Real m_volume;									///< This is the override for the volume. It will either be the normal 
+	Real m_volume;									///< This is the override for the volume. It will either be the normal
 	TimeOfDay m_timeOfDay;					///< This should be the current Time Of Day.
 
 	Coord3D m_positionOfAudio;			///< Position of the sound if no further positional updates are necessary
@@ -195,15 +195,15 @@ protected:
 	Int m_loopCount;								///< The current loop count value. Only valid if this is a looping type event or the override has been set.
 	Int m_playingAudioIndex;				///< The sound index we are currently playing. In the case of non-random, we increment this to move to the next sound
 	Int m_allCount;									///< If this sound is an ALL type, then this is how many sounds we have played so far.
-	
+
 	Int m_playerIndex;							///< The index of the player who owns this sound. Used for sounds that should have an owner, but don't have an object, etc.
 
 	PortionToPlay m_portionToPlayNext;	///< Which portion (attack, sound, decay) should be played next?
 };
 
 class DynamicAudioEventRTS : public MemoryPoolObject
-{	
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(DynamicAudioEventRTS, "DynamicAudioEventRTS" )		
+{
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(DynamicAudioEventRTS, "DynamicAudioEventRTS" )
 public:
 
 	DynamicAudioEventRTS() { }

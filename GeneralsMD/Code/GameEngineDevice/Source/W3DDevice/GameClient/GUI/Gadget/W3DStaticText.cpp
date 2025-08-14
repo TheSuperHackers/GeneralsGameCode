@@ -24,12 +24,12 @@
 
 // FILE: W3DStaticText.cpp ////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:   RTS3
@@ -85,16 +85,16 @@ static void drawStaticTextText( GameWindow *window, WinInstanceData *instData,
 	// sanity
 	if( text == NULL || text->getTextLength() == 0 )
 		return;
-	
+
 	// get window position and size
 	window->winGetScreenPosition( &origin.x, &origin.y );
 	window->winGetSize( &size.x, &size.y );
-	
+
 	// Set the text Wrap width
 	wordWrap = size.x - 10;
 	//if(wordWrap == 89)
 	//	wordWrap = 95;
-	text->setWordWrap(wordWrap);	
+	text->setWordWrap(wordWrap);
 	if( BitIsSet(window->winGetStatus(), WIN_STATUS_WRAP_CENTERED)		)
 		text->setWordWrapCentered(TRUE);
 	else
@@ -107,15 +107,15 @@ static void drawStaticTextText( GameWindow *window, WinInstanceData *instData,
 
 	// how much space will this text take up
 	text->getSize( &textWidth, &textHeight );
-		
+
 	//Init the clip region
 	clipRegion.lo.x = origin.x ;
 	clipRegion.lo.y = origin.y ;
 	clipRegion.hi.x = origin.x + size.x ;
 	clipRegion.hi.y = origin.y + size.y;
-	
+
 	// horizontal centering?
-	if( tData->centered ) 
+	if( tData->centered )
 	{
 		textPos.x = origin.x + (size.x / 2) - (textWidth / 2);
 	}
@@ -125,7 +125,7 @@ static void drawStaticTextText( GameWindow *window, WinInstanceData *instData,
 	}
 
 	// vertical centering?
-	if ( tData->centeredVertically ) 
+	if ( tData->centeredVertically )
 	{
 		textPos.y = origin.y + (size.y / 2) - (textHeight / 2);
 	}
@@ -185,7 +185,7 @@ void W3DGadgetStaticTextDraw( GameWindow *window, WinInstanceData *instData )
 		start.y = origin.y;
 		end.x = start.x + size.x;
 		end.y = start.y + size.y;
-		TheWindowManager->winOpenRect( backBorder, WIN_DRAW_LINE_WIDTH, 
+		TheWindowManager->winOpenRect( backBorder, WIN_DRAW_LINE_WIDTH,
 																	 start.x, start.y, end.x, end.y );
 
 	}  // end if
@@ -206,7 +206,7 @@ void W3DGadgetStaticTextDraw( GameWindow *window, WinInstanceData *instData )
   if( tData->text && (textColor != WIN_COLOR_UNDEFINED) )
 		drawStaticTextText( window, instData, textColor, textOutlineColor );
 
-  
+
 
 }  // end W3DGadgetStaticTextDraw
 
@@ -258,7 +258,7 @@ void W3DGadgetStaticTextImageDraw( GameWindow *window, WinInstanceData *instData
   if( tData->text && (textColor != WIN_COLOR_UNDEFINED) )
 		drawStaticTextText( window, instData, textColor, textOutlineColor );
 
-  
+
 
 }  // end W3DGadgetStaticTextImageDraw
 

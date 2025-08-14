@@ -67,7 +67,7 @@ MatrixMapperClass::MatrixMapperClass(int stage) :
 	ViewToTexture(true),
 	ViewToPixel(true),
 	GradientUCoord(0.5f)
-{	
+{
 	ViewSpaceProjectionNormal = Vector3(0.0f,0.0f,0.0f);
 }
 
@@ -103,7 +103,7 @@ void MatrixMapperClass::Set_Texture_Transform(const Matrix3D & view_to_texture,f
  *=============================================================================================*/
 void	MatrixMapperClass::Set_Texture_Transform(const Matrix4x4 & view_to_texture,float texsize)
 {
-	ViewToTexture=view_to_texture;	
+	ViewToTexture=view_to_texture;
 
 	Update_View_To_Pixel_Transform(texsize);
 }
@@ -123,9 +123,9 @@ void	MatrixMapperClass::Set_Texture_Transform(const Matrix4x4 & view_to_texture,
 void MatrixMapperClass::Update_View_To_Pixel_Transform(float tex_size)
 {
 	/*
-	** Create a ViewToPixel matrix which also does all of the offseting and flipping that has 
+	** Create a ViewToPixel matrix which also does all of the offseting and flipping that has
 	** to take place to get the actual texture coordinates.
-	** 
+	**
 	** Here is a description of the math:
 	** If you transform eye-space points with the ViewToTexture matrix, you then need to compute:
 	** s = ((x/w) + 1.0f) * 0.5f * ((texwid-2)/texwid)
@@ -140,7 +140,7 @@ void MatrixMapperClass::Update_View_To_Pixel_Transform(float tex_size)
 	** | 0 -K 0 K |
 	** | 0  0 1 0 |
 	** | 0  0 0 1 |
-	** 
+	**
 	** The code below manually "optimally" pre-multiplies this matrix with the ViewToTexture matrix
 	**
 	** In addition, the z-coordinate is modified so that it goes from 0 to 1 rather than -1 to +1.
@@ -207,14 +207,14 @@ void MatrixMapperClass::Apply(int uv_array_index)
 {
 	Matrix4x4 m;
 
-	switch (Type) 
+	switch (Type)
 	{
 	case ORTHO_PROJECTION:
 		/*
 		** Orthographic projection
 		*/
 		DX8Wrapper::Set_Transform((D3DTRANSFORMSTATETYPE)(D3DTS_TEXTURE0 + Stage),ViewToPixel);
-		DX8Wrapper::Set_DX8_Texture_Stage_State(uv_array_index,D3DTSS_TEXCOORDINDEX,D3DTSS_TCI_CAMERASPACEPOSITION);		
+		DX8Wrapper::Set_DX8_Texture_Stage_State(uv_array_index,D3DTSS_TEXCOORDINDEX,D3DTSS_TCI_CAMERASPACEPOSITION);
 		DX8Wrapper::Set_DX8_Texture_Stage_State(uv_array_index,D3DTSS_TEXTURETRANSFORMFLAGS,D3DTTFF_COUNT2);
 		break;
 	case PERSPECTIVE_PROJECTION:
@@ -225,13 +225,13 @@ void MatrixMapperClass::Apply(int uv_array_index)
 		m[1]=ViewToPixel[1];
 		m[2]=ViewToPixel[3];
 		DX8Wrapper::Set_Transform((D3DTRANSFORMSTATETYPE)(D3DTS_TEXTURE0 + Stage),m);
-		DX8Wrapper::Set_DX8_Texture_Stage_State(uv_array_index,D3DTSS_TEXCOORDINDEX,D3DTSS_TCI_CAMERASPACEPOSITION);		
+		DX8Wrapper::Set_DX8_Texture_Stage_State(uv_array_index,D3DTSS_TEXCOORDINDEX,D3DTSS_TCI_CAMERASPACEPOSITION);
 		DX8Wrapper::Set_DX8_Texture_Stage_State(uv_array_index,D3DTSS_TEXTURETRANSFORMFLAGS,D3DTTFF_PROJECTED|D3DTTFF_COUNT3);
 		break;
 	case DEPTH_GRADIENT:
 		/*
-		** Depth gradient, Set up second stage texture coordinates to 
-		** apply a depth gradient to the projection.  Note that the 
+		** Depth gradient, Set up second stage texture coordinates to
+		** apply a depth gradient to the projection.  Note that the
 		** depth values have been set up to vary from 0 to 1 in the
 		** Update_View_To_Pixel_Transform function.
 		*/
@@ -251,7 +251,7 @@ void MatrixMapperClass::Apply(int uv_array_index)
 		m[0].Set(0,0,0,GradientUCoord);
 		m[1].Set(ViewSpaceProjectionNormal.X,ViewSpaceProjectionNormal.Y,ViewSpaceProjectionNormal.Z, 0);
 		DX8Wrapper::Set_Transform((D3DTRANSFORMSTATETYPE)(D3DTS_TEXTURE0 + Stage),m);
-		DX8Wrapper::Set_DX8_Texture_Stage_State(uv_array_index,D3DTSS_TEXCOORDINDEX,D3DTSS_TCI_CAMERASPACENORMAL);		
+		DX8Wrapper::Set_DX8_Texture_Stage_State(uv_array_index,D3DTSS_TEXCOORDINDEX,D3DTSS_TCI_CAMERASPACENORMAL);
 		DX8Wrapper::Set_DX8_Texture_Stage_State(uv_array_index,D3DTSS_TEXTURETRANSFORMFLAGS,D3DTTFF_COUNT2);
 		break;
 	}

@@ -16,22 +16,22 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/*************************************************************************** 
- ***    C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S     *** 
- *************************************************************************** 
- *                                                                         * 
- *                 Project Name : G                                        * 
- *                                                                         * 
- *                     $Archive:: /VSS_Sync/ww3d2/part_buf.cpp            $* 
- *                                                                         * 
- *                      $Author:: Vss_sync                                $* 
- *                                                                         * 
- *                     $Modtime:: 8/30/01 1:38a                           $* 
- *                                                                         * 
- *                    $Revision:: 19                                      $* 
- *                                                                         * 
- *-------------------------------------------------------------------------* 
- * Functions:                                                              * 
+/***************************************************************************
+ ***    C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S     ***
+ ***************************************************************************
+ *                                                                         *
+ *                 Project Name : G                                        *
+ *                                                                         *
+ *                     $Archive:: /VSS_Sync/ww3d2/part_buf.cpp            $*
+ *                                                                         *
+ *                      $Author:: Vss_sync                                $*
+ *                                                                         *
+ *                     $Modtime:: 8/30/01 1:38a                           $*
+ *                                                                         *
+ *                    $Revision:: 19                                      $*
+ *                                                                         *
+ *-------------------------------------------------------------------------*
+ * Functions:                                                              *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 #include "part_buf.h"
 #include "part_emt.h"
@@ -79,21 +79,21 @@ const float oo_intmax = 1.0f / (float)INT_MAX;
 
 ParticleBufferClass::ParticleBufferClass
 (
-	ParticleEmitterClass *emitter, 
+	ParticleEmitterClass *emitter,
 	unsigned int buffer_size,
-	ParticlePropertyStruct<Vector3> &color, 
+	ParticlePropertyStruct<Vector3> &color,
 	ParticlePropertyStruct<float> &opacity,
-	ParticlePropertyStruct<float> &size, 
+	ParticlePropertyStruct<float> &size,
 	ParticlePropertyStruct<float> &rotation,
 	float orient_rnd,
 	ParticlePropertyStruct<float> &frame,
 	ParticlePropertyStruct<float> &blurtime,
-	Vector3 accel, 
-	float max_age, 
+	Vector3 accel,
+	float max_age,
 	TextureClass *tex,
-	ShaderClass shader, 
+	ShaderClass shader,
 	bool pingpong,
-	int render_mode, 
+	int render_mode,
 	int frame_mode,
 	const W3dEmitterLinePropertiesStruct * line_props
 ) :
@@ -210,7 +210,7 @@ ParticleBufferClass::ParticleBufferClass
 	// These inputs don't need to be range-checked (emitter did that).
 	Accel = accel;
 	HasAccel = (accel.X != 0.0f) || (accel.Y != 0.0f) || (accel.Z != 0.0f);
-   
+
 	// Set up worldspace point group:
 	PointGroup = W3DNEW PointGroupClass();
 	PointGroup->Set_Flag(PointGroupClass::TRANSFORM, true);
@@ -233,7 +233,7 @@ ParticleBufferClass::ParticleBufferClass
 		Position[1] = NEW_REF( ShareBufferClass<Vector3> , (MaxNum, "ParticleBufferClass::Position") );
 	}
 	APT = NEW_REF( ShareBufferClass<unsigned int> , (MaxNum, "ParticleBufferClass::APT") );
-	Velocity = W3DNEWARRAY Vector3[MaxNum]; 
+	Velocity = W3DNEWARRAY Vector3[MaxNum];
 	TimeStamp = W3DNEWARRAY unsigned int[MaxNum];
 
 	// So that the object is ready for use after construction, we will
@@ -562,7 +562,7 @@ ParticleBufferClass::ParticleBufferClass(const ParticleBufferClass & src) :
 		Position[1] = NEW_REF( ShareBufferClass<Vector3> , (MaxNum, "ParticleBufferClass::Position") );
 	}
 	APT = NEW_REF( ShareBufferClass<unsigned int> , (MaxNum, "ParticleBufferClass::APT") );
-	Velocity = W3DNEWARRAY Vector3[MaxNum]; 
+	Velocity = W3DNEWARRAY Vector3[MaxNum];
 	TimeStamp = W3DNEWARRAY unsigned int[MaxNum];
 
 	// So that the object is ready for use after construction, we will
@@ -627,7 +627,7 @@ ParticleBufferClass::~ParticleBufferClass(void)
 	if (RandomOrientationEntries)		delete [] RandomOrientationEntries;
 	if (RandomFrameEntries)				delete [] RandomFrameEntries;
 	if (RandomBlurTimeEntries)			delete [] RandomBlurTimeEntries;
-	
+
 	if (PointGroup) delete PointGroup;
 
 	REF_PTR_RELEASE(Position[0]);
@@ -684,15 +684,15 @@ int ParticleBufferClass::Get_Particle_Count(void) const
 
 void ParticleBufferClass::Render(RenderInfoClass & rinfo)
 {
-	WWPROFILE("ParticleBuffer::Render");	
+	WWPROFILE("ParticleBuffer::Render");
 
 	unsigned int sort_level = SORT_LEVEL_NONE;
 
 	if (!WW3D::Is_Sorting_Enabled())
 		sort_level=Get_Shader().Guess_Sort_Level();
 
-	if (WW3D::Are_Static_Sort_Lists_Enabled() && sort_level!=SORT_LEVEL_NONE) {		
-		
+	if (WW3D::Are_Static_Sort_Lists_Enabled() && sort_level!=SORT_LEVEL_NONE) {
+
 		WW3D::Add_To_Static_Sort_List(this, sort_level);
 
 	} else {
@@ -831,8 +831,8 @@ void ParticleBufferClass::Render_Particles(RenderInfoClass & rinfo)
 	}
 
 	PointGroup->Set_Arrays(Position[pingpong], Diffuse, apt, Size, Orientation, Frame, active_point_count);
-	Update_Bounding_Box();	
-	PointGroup->Render(rinfo);	
+	Update_Bounding_Box();
+	PointGroup->Render(rinfo);
 }
 
 
@@ -861,7 +861,7 @@ void ParticleBufferClass::Render_Line(RenderInfoClass & rinfo)
 	}
 
 	tmp_points.Delete_All(false);
-	
+
 	for (i = Start; i < sub1_end; i++) {
 		if (PermutationArray[i & 0xF] >= DecimationThreshold) {
 			tmp_points.Add(positions[i]);
@@ -877,7 +877,7 @@ void ParticleBufferClass::Render_Line(RenderInfoClass & rinfo)
 	if (tmp_points.Count() > 0) {
 		SphereClass bounding_sphere;
 		Get_Obj_Space_Bounding_Sphere(bounding_sphere);
-		
+
 		TextureClass * tex = PointGroup->Get_Texture();
 		//LineRenderer.Set_Texture(tex);
 		REF_PTR_RELEASE(tex);
@@ -931,7 +931,7 @@ void ParticleBufferClass::On_Frame_Update(void)
 	if (Emitter) {
 		Emitter->Emit();
 	}
-	
+
 	if (Is_Complete()) {
 		WWASSERT(Scene);
 		Scene->Register(this,SceneClass::RELEASE);
@@ -1114,7 +1114,7 @@ int ParticleBufferClass::Calculate_Cost_Value_Arrays(float screen_area, float *v
 	return minlod;
 }
 
-		
+
 void ParticleBufferClass::Reset_Colors(ParticlePropertyStruct<Vector3> &new_props)
 {
 
@@ -1197,7 +1197,7 @@ void ParticleBufferClass::Reset_Colors(ParticlePropertyStruct<Vector3> &new_prop
 				ColorKeyFrameDeltas = NULL;
 			}
 
-			NumColorKeyFrames = new_num_color_key_frames;	
+			NumColorKeyFrames = new_num_color_key_frames;
 			ColorKeyFrameTimes = W3DNEWARRAY unsigned int [NumColorKeyFrames];
 			ColorKeyFrameValues = W3DNEWARRAY Vector3 [NumColorKeyFrames];
 			ColorKeyFrameDeltas = W3DNEWARRAY Vector3 [NumColorKeyFrames];
@@ -1357,7 +1357,7 @@ void ParticleBufferClass::Reset_Opacity(ParticlePropertyStruct<float> &new_props
 				AlphaKeyFrameDeltas = NULL;
 			}
 
-			NumAlphaKeyFrames = new_num_alpha_key_frames;	
+			NumAlphaKeyFrames = new_num_alpha_key_frames;
 			AlphaKeyFrameTimes = W3DNEWARRAY unsigned int [NumAlphaKeyFrames];
 			AlphaKeyFrameValues = W3DNEWARRAY float [NumAlphaKeyFrames];
 			AlphaKeyFrameDeltas = W3DNEWARRAY float [NumAlphaKeyFrames];
@@ -1514,7 +1514,7 @@ void ParticleBufferClass::Reset_Size(ParticlePropertyStruct<float> &new_props)
 				SizeKeyFrameDeltas = NULL;
 			}
 
-			NumSizeKeyFrames = new_num_size_key_frames;	
+			NumSizeKeyFrames = new_num_size_key_frames;
 			SizeKeyFrameTimes = W3DNEWARRAY unsigned int [NumSizeKeyFrames];
 			SizeKeyFrameValues = W3DNEWARRAY float [NumSizeKeyFrames];
 			SizeKeyFrameDeltas = W3DNEWARRAY float [NumSizeKeyFrames];
@@ -1623,7 +1623,7 @@ void ParticleBufferClass::Reset_Rotations(ParticlePropertyStruct<float> &new_pro
 	bool rotation_rand_zero = fabs(new_props.Rand) < eps_rotation;
 	if (orientation_rand_zero && rotation_rand_zero && new_props.NumKeyFrames == 0 && fabs(new_props.Start) < eps_rotation) {
 
-		// Release Arrays, 
+		// Release Arrays,
 		REF_PTR_RELEASE(Orientation);
 		if (RotationKeyFrameTimes) {
 			delete [] RotationKeyFrameTimes;
@@ -1645,7 +1645,7 @@ void ParticleBufferClass::Reset_Rotations(ParticlePropertyStruct<float> &new_pro
 		NumRotationKeyFrames = 0;
 		NumRandomRotationEntriesMinus1 = 0;
 		NumRandomOrientationEntriesMinus1 = 0;
-	
+
 	} else {
 
 		// Create the array if not present
@@ -1830,7 +1830,7 @@ void ParticleBufferClass::Reset_Frames(ParticlePropertyStruct<float> &new_props)
 	bool frame_rand_zero	= (fabs(new_props.Rand) < eps_frame);
 	if (frame_rand_zero && new_props.NumKeyFrames == 0) {
 
-		// Release Arrays, Reuse KeyFrameValues if the right size, 
+		// Release Arrays, Reuse KeyFrameValues if the right size,
 		// otherwise release and reallocate.
 		REF_PTR_RELEASE(Frame);
 		if (FrameKeyFrameTimes) {
@@ -1853,7 +1853,7 @@ void ParticleBufferClass::Reset_Frames(ParticlePropertyStruct<float> &new_props)
 		NumFrameKeyFrames = 0;
 		NumRandomFrameEntriesMinus1 = 0;
 		FrameKeyFrameValues[0] = new_props.Start;
-	
+
 	} else {
 
 		// Create the array if not present
@@ -1893,7 +1893,7 @@ void ParticleBufferClass::Reset_Frames(ParticlePropertyStruct<float> &new_props)
 				FrameKeyFrameDeltas = NULL;
 			}
 
-			NumFrameKeyFrames = new_num_key_frames;	
+			NumFrameKeyFrames = new_num_key_frames;
 			FrameKeyFrameTimes = W3DNEWARRAY unsigned int [NumFrameKeyFrames];
 			FrameKeyFrameValues = W3DNEWARRAY float [NumFrameKeyFrames];
 			FrameKeyFrameDeltas = W3DNEWARRAY float [NumFrameKeyFrames];
@@ -1970,7 +1970,7 @@ void ParticleBufferClass::Reset_Frames(ParticlePropertyStruct<float> &new_props)
 void ParticleBufferClass::Reset_Blur_Times(ParticlePropertyStruct<float> &new_blur_times)
 {
 
-	unsigned int i;	// Used in loops	
+	unsigned int i;	// Used in loops
    float oo_intmax = 1.0f / (float)INT_MAX;
 	unsigned int ui_previous_key_time = 0;
 	unsigned int ui_current_key_time = 0;
@@ -1984,8 +1984,8 @@ void ParticleBufferClass::Reset_Blur_Times(ParticlePropertyStruct<float> &new_bl
 	bool blurtime_rand_zero	= (fabs(new_blur_times.Rand) < eps_blur);
 	if (blurtime_rand_zero && new_blur_times.NumKeyFrames == 0) {
 
-		// Release Arrays, Reuse KeyFrameValues if the right size, 
-		// otherwise release and reallocate.		
+		// Release Arrays, Reuse KeyFrameValues if the right size,
+		// otherwise release and reallocate.
 		if (BlurTimeKeyFrameTimes) {
 			delete [] BlurTimeKeyFrameTimes;
 			BlurTimeKeyFrameTimes = NULL;
@@ -2006,7 +2006,7 @@ void ParticleBufferClass::Reset_Blur_Times(ParticlePropertyStruct<float> &new_bl
 		NumBlurTimeKeyFrames = 0;
 		NumRandomBlurTimeEntriesMinus1 = 0;
 		BlurTimeKeyFrameValues[0] = new_blur_times.Start;
-	
+
 	} else {
 
 		// Check times of the keyframes (each keytime must be larger than the
@@ -2041,7 +2041,7 @@ void ParticleBufferClass::Reset_Blur_Times(ParticlePropertyStruct<float> &new_bl
 				BlurTimeKeyFrameDeltas = NULL;
 			}
 
-			NumBlurTimeKeyFrames = new_num_key_frames;	
+			NumBlurTimeKeyFrames = new_num_key_frames;
 			BlurTimeKeyFrameTimes = new unsigned int [NumBlurTimeKeyFrames];
 			BlurTimeKeyFrameValues = new float [NumBlurTimeKeyFrames];
 			BlurTimeKeyFrameDeltas = new float [NumBlurTimeKeyFrames];
@@ -2146,7 +2146,7 @@ void ParticleBufferClass::Set_Emitter(ParticleEmitterClass *emitter)
 	}
 }
 
-		
+
 NewParticleStruct * ParticleBufferClass::Add_Uninitialized_New_Particle(void)
 {
 	// Note that this function does not initialize the new particle - it
@@ -2255,7 +2255,7 @@ void ParticleBufferClass::Update_Visual_Particle_State(void)
 
 	if (PingPongPosition) {
 		int pingpong = WW3D::Get_Frame_Count() & 0x1;
-		position = Position[pingpong]->Get_Array();		
+		position = Position[pingpong]->Get_Array();
 	} else {
 		position = Position[0]->Get_Array();
 	}
@@ -2313,7 +2313,7 @@ void ParticleBufferClass::Update_Visual_Particle_State(void)
 				(RotationKeyFrameValues[rkey] + HalfRotationKeyFrameDeltas[rkey] * f_delta_t) * f_delta_t +
 				RandomRotationEntries[part & NumRandomRotationEntriesMinus1] * (float)part_age +
 				RandomOrientationEntries[part & NumRandomOrientationEntriesMinus1];
-			
+
 			orientation[part] = (uint)(((int)(tmp_orient * 256.0f)) & 0xFF);
 		}
 
@@ -2326,7 +2326,7 @@ void ParticleBufferClass::Update_Visual_Particle_State(void)
 			float tmp_frame = FrameKeyFrameValues[fkey] +
 				FrameKeyFrameDeltas[fkey] * (float)(part_age - FrameKeyFrameTimes[fkey]) +
 				RandomFrameEntries[part & NumRandomFrameEntriesMinus1];
-			
+
 			frame[part] = (uint)(((int)(tmp_frame)) & 0xFF);
 		}
 
@@ -2341,7 +2341,7 @@ void ParticleBufferClass::Update_Visual_Particle_State(void)
 					RandomBlurTimeEntries[part & NumRandomBlurTimeEntriesMinus1];
 			}
 			tailposition[part]=position[part]-Velocity[part]*blur_time*1000;
-		}		
+		}
 	}
 
 	for (part = sub2_start; part < End; part++) {
@@ -2354,7 +2354,7 @@ void ParticleBufferClass::Update_Visual_Particle_State(void)
 			// age >= keytime. This loop must terminate because the 0th keytime is 0.
 			for (; part_age < ColorKeyFrameTimes[ckey]; ckey--);
 
-			color[part] = 
+			color[part] =
 					ColorKeyFrameValues[ckey] +
 					ColorKeyFrameDeltas[ckey] * (float)(part_age - ColorKeyFrameTimes[ckey]) +
 					RandomColorEntries[part & NumRandomColorEntriesMinus1];
@@ -2397,7 +2397,7 @@ void ParticleBufferClass::Update_Visual_Particle_State(void)
 				(RotationKeyFrameValues[rkey] + HalfRotationKeyFrameDeltas[rkey] * f_delta_t) * f_delta_t +
 				RandomRotationEntries[part & NumRandomRotationEntriesMinus1] * (float)part_age +
 				RandomOrientationEntries[part & NumRandomOrientationEntriesMinus1];
-			
+
 			orientation[part] = (uint)(((int)(tmp_orient * 256.0f)) & 0xFF);
 		}
 
@@ -2410,7 +2410,7 @@ void ParticleBufferClass::Update_Visual_Particle_State(void)
 			float tmp_frame = FrameKeyFrameValues[fkey] +
 				FrameKeyFrameDeltas[fkey] * (float)(part_age - FrameKeyFrameTimes[fkey]) +
 				RandomFrameEntries[part & NumRandomFrameEntriesMinus1];
-			
+
 			frame[part] = (uint)(((int)(tmp_frame)) & 0xFF);
 		}
 
@@ -2481,7 +2481,7 @@ void ParticleBufferClass::Update_Bounding_Box(void)
 		min_coords.Y = min_coords.Y <= position[i].Y ? min_coords.Y : position[i].Y;
 		min_coords.Z = min_coords.Z <= position[i].Z ? min_coords.Z : position[i].Z;
 	}
-	
+
 	// Extend by maximum possible particle size:
 	Vector3 size(MaxSize, MaxSize, MaxSize);
 	max_coords += size;
@@ -2536,7 +2536,7 @@ void ParticleBufferClass::Get_New_Particles(void)
 		if (HasAccel) {
 			position[NewEnd] = new_particle.Position +
 									(new_particle.Velocity + 0.5f * Accel * fp_age) * fp_age;
-			
+
 			Velocity[NewEnd] = new_particle.Velocity + (Accel * fp_age);
 		} else {
 			position[NewEnd] =new_particle.Position +
@@ -2728,7 +2728,7 @@ void ParticleBufferClass::Get_Color_Key_Frames (ParticlePropertyStruct<Vector3> 
 		//
 		//	Add a keyframe at the very end of the timeline if necessary
 		//
-		if (create_last_keyframe) {			
+		if (create_last_keyframe) {
 			colors.KeyTimes[index - 1] = ((float)MaxAge / 1000);
 
 			//
@@ -2784,7 +2784,7 @@ void ParticleBufferClass::Get_Opacity_Key_Frames (ParticlePropertyStruct<float> 
 		//
 		//	Add a keyframe at the very end of the timeline if necessary
 		//
-		if (create_last_keyframe) {			
+		if (create_last_keyframe) {
 			opacities.KeyTimes[index - 1] = ((float)MaxAge / 1000);
 
 			//
@@ -2841,7 +2841,7 @@ void ParticleBufferClass::Get_Size_Key_Frames (ParticlePropertyStruct<float> &si
 		//
 		//	Add a keyframe at the very end of the timeline if necessary
 		//
-		if (create_last_keyframe) {			
+		if (create_last_keyframe) {
 			sizes.KeyTimes[index - 1] = ((float)MaxAge / 1000);
 
 			//
@@ -2903,7 +2903,7 @@ void ParticleBufferClass::Get_Rotation_Key_Frames (ParticlePropertyStruct<float>
 		//
 		//	Add a keyframe at the very end of the timeline if necessary
 		//
-		if (create_last_keyframe) {			
+		if (create_last_keyframe) {
 			rotations.KeyTimes[index - 1] = ((float)MaxAge / 1000);
 
 			//
@@ -2960,7 +2960,7 @@ void ParticleBufferClass::Get_Frame_Key_Frames (ParticlePropertyStruct<float> &f
 		//
 		//	Add a keyframe at the very end of the timeline if necessary
 		//
-		if (create_last_keyframe) {			
+		if (create_last_keyframe) {
 			frames.KeyTimes[index - 1] = ((float)MaxAge / 1000);
 
 			//
@@ -3016,7 +3016,7 @@ void ParticleBufferClass::Get_Blur_Time_Key_Frames (ParticlePropertyStruct<float
 		//
 		//	Add a keyframe at the very end of the timeline if necessary
 		//
-		if (create_last_keyframe) {			
+		if (create_last_keyframe) {
 			blurtimes.KeyTimes[index - 1] = ((float)MaxAge / 1000);
 
 			//
@@ -3054,7 +3054,7 @@ int ParticleBufferClass::Get_Line_Texture_Mapping_Mode(void) const
 {
 	if (LineRenderer != NULL) {
 		return LineRenderer->Get_Texture_Mapping_Mode();
-	} 
+	}
 	return SegLineRendererClass::UNIFORM_WIDTH_TEXTURE_MAP;
 }
 
@@ -3062,7 +3062,7 @@ int ParticleBufferClass::Is_Merge_Intersections(void) const
 {
 	if (LineRenderer != NULL) {
 		return LineRenderer->Is_Merge_Intersections();
-	} 
+	}
 	return false;
 }
 
@@ -3070,7 +3070,7 @@ int ParticleBufferClass::Is_Freeze_Random(void) const
 {
 	if (LineRenderer != NULL) {
 		return LineRenderer->Is_Freeze_Random();
-	} 
+	}
 	return false;
 }
 
@@ -3078,7 +3078,7 @@ int ParticleBufferClass::Is_Sorting_Disabled(void) const
 {
 	if (LineRenderer != NULL) {
 		return LineRenderer->Is_Sorting_Disabled();
-	} 
+	}
 	return false;
 }
 
@@ -3086,7 +3086,7 @@ int ParticleBufferClass::Are_End_Caps_Enabled(void)	const
 {
 	if (LineRenderer != NULL) {
 		return LineRenderer->Are_End_Caps_Enabled();
-	} 
+	}
 	return false;
 }
 
@@ -3094,7 +3094,7 @@ int ParticleBufferClass::Get_Subdivision_Level(void) const
 {
 	if (LineRenderer != NULL) {
 		return LineRenderer->Get_Current_Subdivision_Level();
-	} 
+	}
 	return 0;
 }
 
@@ -3102,7 +3102,7 @@ float ParticleBufferClass::Get_Noise_Amplitude(void) const
 {
 	if (LineRenderer != NULL) {
 		return LineRenderer->Get_Noise_Amplitude();
-	} 
+	}
 	return 0.0f;
 }
 
@@ -3110,7 +3110,7 @@ float ParticleBufferClass::Get_Merge_Abort_Factor(void) const
 {
 	if (LineRenderer != NULL) {
 		return LineRenderer->Get_Merge_Abort_Factor();
-	} 
+	}
 	return 0.0f;
 }
 
@@ -3118,7 +3118,7 @@ float ParticleBufferClass::Get_Texture_Tile_Factor(void) const
 {
 	if (LineRenderer != NULL) {
 		return LineRenderer->Get_Texture_Tile_Factor();
-	} 
+	}
 	return 1.0f;
 }
 
@@ -3126,7 +3126,7 @@ Vector2 ParticleBufferClass::Get_UV_Offset_Rate(void) const
 {
 	if (LineRenderer != NULL) {
 		return LineRenderer->Get_UV_Offset_Rate();
-	} 
+	}
 	return Vector2(0.0f,0.0f);
 }
 

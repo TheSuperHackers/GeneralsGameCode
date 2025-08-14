@@ -38,7 +38,7 @@ class ProfileResultFileCSV: public ProfileResultInterface
   ProfileResultFileCSV(void) {}
 
   void WriteThread(ProfileFuncLevel::Thread &thread);
-  
+
 public:
   static ProfileResultInterface *Create(int argn, const char * const *);
   virtual const char *GetName(void) const { return "file_csv"; }
@@ -49,10 +49,10 @@ public:
 /**
   \brief Write out DOT file for calling hierarchy.
 
-  The frame name and the file name must be specified when creating an 
+  The frame name and the file name must be specified when creating an
   instance of this result function. The result function will always pick
   the thread with the highest function count (which is usually the
-  main thread). 
+  main thread).
 
   \note A DOT file is used with the DOT tool from the GraphViz package
   for generating directed graphs, e.g. by issuing dot -Tgif -ograph.gif profile.dot
@@ -76,7 +76,7 @@ public:
     \return new instance
   */
   static ProfileResultInterface *Create(int argn, const char * const *);
-  
+
   virtual const char *GetName(void) const { return "file_dot"; }
   virtual void WriteResults(void);
   virtual void Delete(void);

@@ -38,8 +38,8 @@
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-StatusDamageHelper::StatusDamageHelper( Thing *thing, const ModuleData *modData ) : ObjectHelper( thing, modData ) 
-{ 
+StatusDamageHelper::StatusDamageHelper( Thing *thing, const ModuleData *modData ) : ObjectHelper( thing, modData )
+{
 	m_statusToHeal = OBJECT_STATUS_NONE;
 	m_frameToHeal = 0;
 
@@ -80,7 +80,7 @@ void StatusDamageHelper::clearStatusCondition()
 void StatusDamageHelper::doStatusDamage( ObjectStatusTypes status, Real duration )
 {
 	Int durationAsInt = REAL_TO_INT_FLOOR(duration);
-	
+
 	// Clear any different status we may have.  Re-getting the same status will just reset the timer
 	if( m_statusToHeal != status )
 		clearStatusCondition();

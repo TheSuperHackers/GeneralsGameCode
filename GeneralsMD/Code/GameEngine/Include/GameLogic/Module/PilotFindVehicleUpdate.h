@@ -53,7 +53,7 @@ public:
 	PilotFindVehicleUpdateModuleData();
 	static void buildFieldParse(MultiIniFieldParse& p);
 
-private: 
+private:
 
 };
 

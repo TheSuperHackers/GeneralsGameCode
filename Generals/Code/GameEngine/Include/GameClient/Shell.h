@@ -60,10 +60,10 @@
 //
 //		- Init() [OPTIONAL]
 //			This is called as a result of a push or pop operation (see above for more info)
-//			The window layout is loaded from disk and then this Init() 
-//			method is run.  All shell layout Init() methods should show 
+//			The window layout is loaded from disk and then this Init()
+//			method is run.  All shell layout Init() methods should show
 //			the layout windows.  At this point you could move windows
-//			to starting positions, set a state that the Update() method looks at to 
+//			to starting positions, set a state that the Update() method looks at to
 //			"animate" the windows to the desired positions.
 //
 //		- Update() [OPTIONAL]
@@ -77,7 +77,7 @@
 //		- Shutdown() [REQUIRED]
 //			This is called when a layout is popped off the stack, or when a new layout
 //			is pushed on top of this one (see above for more detail on what happens
-//			during the push/pop process).  You can switch into a "shutdown" state and 
+//			during the push/pop process).  You can switch into a "shutdown" state and
 //			animate the layout appropriately in the Update() method for the layout.
 //			When shutdown is actually complete you should hide the all windows in
 //			the layout and then you are REQUIRED to notify the shell by calling
@@ -120,9 +120,9 @@ public:
 	~Shell( void );
 
 	// Inhertited from subsystem ====================================================================
-	virtual void init( void );			
-	virtual void reset( void );			
-	virtual void update( void );		
+	virtual void init( void );
+	virtual void reset( void );
+	virtual void update( void );
 	//===============================================================================================
 
 	void recreateWindowLayouts( void );
@@ -138,7 +138,7 @@ public:
 	void showShell( Bool runInit = TRUE );									///< init the top of stack
 	void hideShell( void );																	///< shutdown the top of stack
 	WindowLayout *top( void );															///< return top layout
-	
+
 	void shutdownComplete( WindowLayout *layout, Bool impendingPush = FALSE );	///< layout has completed shutdown
 
 	WindowLayout *findScreenByFilename( AsciiString filename );		///< find screen

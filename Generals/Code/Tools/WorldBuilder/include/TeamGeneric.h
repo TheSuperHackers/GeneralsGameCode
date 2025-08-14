@@ -37,10 +37,10 @@ class TeamGeneric : public CPropertyPage
 	protected:
 		void _fillComboBoxesWithScripts();
 		void _dictToScripts();
-	
+
 	protected:
 		Dict *m_teamDict;
-		
+
 
 	protected: // Windows Functions
 		virtual BOOL OnInitDialog();

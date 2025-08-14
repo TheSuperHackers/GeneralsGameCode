@@ -222,11 +222,11 @@ void				List::Merge			( List *list )
 	{
 		return;
 	}
-	
+
 	node = Prev();
 	node->Link ( first );
 	last->Link ( this );
-	
+
 	list->Empty ();
 
 }

@@ -53,7 +53,7 @@ UpdateSleepTime ObjectDefectionHelper::update()
 	// if we are here, we should be an undetected defector, but
 	// just in case someone has changed us behind our backs...
 	if (!obj->getIsUndetectedDefector())
-		return UPDATE_SLEEP_FOREVER; 
+		return UPDATE_SLEEP_FOREVER;
 
 	UnsignedInt now = TheGameLogic->getFrame();
 	if (now >= m_defectionDetectionEnd)
@@ -67,12 +67,12 @@ UpdateSleepTime ObjectDefectionHelper::update()
 			if (draw)
 				draw->flashAsSelected( &white ); //Whew! that's easier, now, isn't it!
 
-		
+
 			AudioEventRTS defectorVulnerableSound = TheAudio->getMiscAudio()->m_defectorTimerDingSound;
 			defectorVulnerableSound.setObjectID( obj->getID() );
 			TheAudio->addAudioEvent(&defectorVulnerableSound);
 		}
-		return UPDATE_SLEEP_FOREVER;	// hey, we're done. 
+		return UPDATE_SLEEP_FOREVER;	// hey, we're done.
 	}
 
 	// dead or attacking... our cover is blown.
@@ -82,7 +82,7 @@ UpdateSleepTime ObjectDefectionHelper::update()
 		// checking the is_attacking statusbit above, only handles weapon related attacks...
 		// I also set m_undetectedDefector = FALSE in the groupDoSpecialPower[...]( ) functions;
 		obj->friend_setUndetectedDefector(FALSE);
-		return UPDATE_SLEEP_FOREVER;	// hey, we're done. 
+		return UPDATE_SLEEP_FOREVER;	// hey, we're done.
 	}
 
 	if (draw && m_doDefectorFX) // skip fx if merely 'invulnerable'
@@ -92,7 +92,7 @@ UpdateSleepTime ObjectDefectionHelper::update()
 		m_defectionDetectionFlashPhase += 0.5f * ( 1.0f - ((Real)timeLeft / DEFECTION_DETECTION_TIME_MAX ) );
 		Bool thisPhase = ( ((Int)m_defectionDetectionFlashPhase) & 1 );// are we in a flashy phase this frame?
 
-		if ( lastPhase && ( ! thisPhase ) ) 
+		if ( lastPhase && ( ! thisPhase ) )
 		{
 			draw->flashAsSelected(); //Whew! that's easier, now, isn't it!
 
@@ -103,7 +103,7 @@ UpdateSleepTime ObjectDefectionHelper::update()
 		}
 	}
 
-	return UPDATE_SLEEP_NONE; 
+	return UPDATE_SLEEP_NONE;
 }
 
 // ------------------------------------------------------------------------------------------------

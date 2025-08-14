@@ -24,12 +24,12 @@
 
 // FILE: MissionStats.h ////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information					         
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:    RTS3
@@ -53,7 +53,7 @@
 
 // ----------------------------------------------------------------------------------------------
 /**
-	Class that accumulates stats during a mission. Some of this will be for scoring purposes, 
+	Class that accumulates stats during a mission. Some of this will be for scoring purposes,
 	and some will probably be used by AI to determine future moves.
 
 	@todo: not sure what need to be here. Alas. For now, I have just put in the fields from RA2
@@ -64,7 +64,7 @@ class MissionStats : public Snapshot
 {
 
 public:
-	
+
 	MissionStats();
 
 	/// reset all stats to "nothing".

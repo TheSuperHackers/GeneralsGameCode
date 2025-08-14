@@ -27,7 +27,7 @@ public:
 	WorkerProcess();
 
 	bool startProcess(UnicodeString command);
-	
+
 	void update();
 
 	bool isRunning() const;

@@ -16,22 +16,22 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/*********************************************************************************************** 
- ***              C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S               *** 
- *********************************************************************************************** 
- *                                                                                             * 
- *                 Project Name : Command & Conquer                                            * 
- *                                                                                             * 
- *                     $Archive:: /Commando/Code/wwlib/trect.h                                $* 
- *                                                                                             * 
+/***********************************************************************************************
+ ***              C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S               ***
+ ***********************************************************************************************
+ *                                                                                             *
+ *                 Project Name : Command & Conquer                                            *
+ *                                                                                             *
+ *                     $Archive:: /Commando/Code/wwlib/trect.h                                $*
+ *                                                                                             *
  *                      $Author:: Byon_g                                                      $*
- *                                                                                             * 
+ *                                                                                             *
  *                     $Modtime:: 11/28/00 2:37p                                              $*
- *                                                                                             * 
+ *                                                                                             *
  *                    $Revision:: 2                                                           $*
  *                                                                                             *
- *---------------------------------------------------------------------------------------------* 
- * Functions:                                                                                  * 
+ *---------------------------------------------------------------------------------------------*
+ * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 #if _MSC_VER >= 1000
 #pragma once
@@ -65,7 +65,7 @@ class TRect
 
 		TRect<T> const Intersect(TRect<T> const & rectangle, T * x=NULL, T * y=NULL) const;
 		TRect<T> const Union(TRect<T> const & rect2) const;
-		
+
 		/*
 		**	Bias this rectangle within another.
 		*/
@@ -208,7 +208,7 @@ TRect<T> const TRect<T>::Union(TRect<T> const & rect2) const
 
 
 template<class T>
-TPoint2D<T> const TPoint2D<T>::Bias_To(TRect<T> const & rect) const 
+TPoint2D<T> const TPoint2D<T>::Bias_To(TRect<T> const & rect) const
 {
 	return(TPoint2D<T>(X + rect.X, Y + rect.Y));
 }

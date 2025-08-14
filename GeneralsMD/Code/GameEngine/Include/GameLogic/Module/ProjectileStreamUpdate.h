@@ -73,7 +73,7 @@ protected:
 	Int m_nextFreeIndex;
 	Int m_firstValidIndex;
 	ObjectID m_owningObject;
-	
+
 	ObjectID m_targetObject;///< Need to insert a hole if target changes, so track target ID and target position
 	Coord3D m_targetPosition;
 };

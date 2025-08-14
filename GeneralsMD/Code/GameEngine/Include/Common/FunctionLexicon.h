@@ -91,7 +91,7 @@ public:
 	// that functions in the tables are unique and that there is a 1 to 1
 	// mapping of a symbol to a function address.  However, when compiling
 	// in release, functions that have the same arguments and the same
-	// body (mainly empty stub functions) get optimized to the 
+	// body (mainly empty stub functions) get optimized to the
 	// SAME ADDRESS.  That destroyes our 1 to 1 mapping so it is something
 	// that we must avoid
 	//
@@ -117,7 +117,7 @@ protected:
 	/** given a key find the function, the index parameter can limit the search
 	to a single table or to ANY of the tables */
 	void *findFunction( NameKeyType key, TableIndex index );
-	
+
 #ifdef NOT_IN_USE
 	const char *funcToName( void *func, TableEntry *table );  ///< internal searching
 #endif
@@ -128,7 +128,7 @@ protected:
 };  // end class FunctionLexicon
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-// INLINING 
+// INLINING
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 inline FunctionLexicon::TableEntry *FunctionLexicon::getTable( TableIndex index )
 	{ return m_tables[ index ]; }
@@ -146,7 +146,7 @@ inline WindowLayoutShutdownFunc FunctionLexicon::winLayoutShutdownFunc( NameKeyT
 	{ return (WindowLayoutShutdownFunc)findFunction( key, index ); }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-// EXTERNALS 
+// EXTERNALS
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 extern FunctionLexicon *TheFunctionLexicon;  ///< function dictionary external
 

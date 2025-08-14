@@ -71,7 +71,7 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // CGenerateDlg message handlers
 
-BOOL CGenerateDlg::OnInitDialog() 
+BOOL CGenerateDlg::OnInitDialog()
 {
 	int index;
 	LANGINFO	*info;
@@ -85,7 +85,7 @@ BOOL CGenerateDlg::OnInitDialog()
 	filetext = ( CStatic *) GetDlgItem ( IDC_FILENAME );
 
 	CDialog::OnInitDialog();
-	
+
 	// TODO: Add extra initialization here
 
 	unicode->SetCheck ( 1 );
@@ -105,22 +105,22 @@ BOOL CGenerateDlg::OnInitDialog()
 			list->SetSel ( index );
 		}
 
-		index++; 
+		index++;
 	}
 	num_langs = index;
 
-	
+
 	return TRUE;  // return TRUE unless you set the focus to a control
 	              // EXCEPTION: OCX Property Pages should return FALSE
 }
 
-void CGenerateDlg::OnSelectall() 
+void CGenerateDlg::OnSelectall()
 {
 	// TODO: Add your control notification handler code here
 	 list->SelItemRange ( TRUE, 0, num_langs-1 );
 }
 
-void CGenerateDlg::OnInvert() 
+void CGenerateDlg::OnInvert()
 {
 	// TODO: Add your control notification handler code here
 	int index = 0;
@@ -135,7 +135,7 @@ void CGenerateDlg::OnInvert()
 
 }
 
-void CGenerateDlg::OnChangePrefix() 
+void CGenerateDlg::OnChangePrefix()
 {
 	char buffer[30];
 
@@ -151,43 +151,43 @@ void CGenerateDlg::OnChangePrefix()
 	}
 
 	filetext->SetWindowText ( buffer );
-	
+
 }
 
-void CGenerateDlg::OnBabylonstr() 
+void CGenerateDlg::OnBabylonstr()
 {
 	// TODO: Add your control notification handler code here
 	options.format = GN_BABYLONSTR;
 	OnChangePrefix ();
 	unicode->SetCheck ( 0 );
 
-	
+
 }
 
-void CGenerateDlg::OnUnicode() 
+void CGenerateDlg::OnUnicode()
 {
 	// TODO: Add your control notification handler code here
 	options.format = GN_UNICODE;
 	OnChangePrefix ();
 	strfile->SetCheck ( 0 );
-	
+
 }
 
-void CGenerateDlg::OnCancel() 
+void CGenerateDlg::OnCancel()
 {
 	// TODO: Add extra cleanup here
-	
+
 	CDialog::OnCancel();
 }
 
-void CGenerateDlg::OnOK() 
+void CGenerateDlg::OnOK()
 {
 	char buffer[30];
 	int count;
 	int i;
 	// TODO: Add extra validation here
 
-	edit->GetWindowText ( buffer, sizeof ( filename) -1 );	
+	edit->GetWindowText ( buffer, sizeof ( filename) -1 );
 	_getcwd ( filename, sizeof (filename ) -1 );
 	strcat ( filename, "\\" );
 	strcat ( filename, buffer );
@@ -213,18 +213,18 @@ void CGenerateDlg::OnOK()
 
 	langids[num_langs] = LANGID_UNKNOWN;
 
-	
+
 	CDialog::OnOK();
 }
 
-void CGenerateDlg::OnIds() 
+void CGenerateDlg::OnIds()
 {
 	options.untranslated = GN_USEIDS;
 	usetext->SetCheck ( 0 );
-	
+
 }
 
-void CGenerateDlg::OnOriginal() 
+void CGenerateDlg::OnOriginal()
 {
 	options.untranslated = GN_USEORIGINAL;
 	useids->SetCheck ( 0 );

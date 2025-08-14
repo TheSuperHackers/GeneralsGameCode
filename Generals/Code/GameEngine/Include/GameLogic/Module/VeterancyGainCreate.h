@@ -71,5 +71,5 @@ protected:
 
 };
 
-#endif 
+#endif
 

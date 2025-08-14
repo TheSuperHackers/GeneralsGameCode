@@ -65,7 +65,7 @@ void POWTruckAIUpdateModuleData::buildFieldParse( MultiIniFieldParse &p )
 {
   AIUpdateModuleData::buildFieldParse( p );
 
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
 		{ "BoredTime",					INI::parseDurationUnsignedInt,	NULL, offsetof( POWTruckAIUpdateModuleData, m_boredTimeInFrames ) },
 		{ "AtPrisonDistance",		INI::parseReal,		NULL,		offsetof( POWTruckAIUpdateModuleData, m_hangAroundPrisonDistance ) },
@@ -83,7 +83,7 @@ void POWTruckAIUpdateModuleData::buildFieldParse( MultiIniFieldParse &p )
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 POWTruckAIUpdate::POWTruckAIUpdate( Thing *thing, const ModuleData *moduleData )
-								: AIUpdateInterface( thing, moduleData )              
+								: AIUpdateInterface( thing, moduleData )
 {
 
 	m_aiMode = AUTOMATIC;
@@ -219,7 +219,7 @@ void POWTruckAIUpdate::setTask( POWTruckTask task, Object *taskObject )
 	POWTruckTask oldTask = m_currentTask;
 
 	// sanity, POW_TRUCK_TASK_COLLECTING_TARGET and POW_TRUCK_TASK_RETURNING_PRISONERS require taskObject parameters
-	if( (task == POW_TRUCK_TASK_COLLECTING_TARGET || task == POW_TRUCK_TASK_RETURNING_PRISONERS) && 
+	if( (task == POW_TRUCK_TASK_COLLECTING_TARGET || task == POW_TRUCK_TASK_RETURNING_PRISONERS) &&
 			taskObject == NULL )
 	{
 
@@ -275,8 +275,8 @@ void POWTruckAIUpdate::setTask( POWTruckTask task, Object *taskObject )
 }  // end task
 
 // ------------------------------------------------------------------------------------------------
-/** Set this unit into automatic or manual AI mode, when automatic the AI will look for 
-	* prisoners, collect them, and bring them back automatically.  When in manual, the 
+/** Set this unit into automatic or manual AI mode, when automatic the AI will look for
+	* prisoners, collect them, and bring them back automatically.  When in manual, the
 	* player must direct the actions of the unit explicitly */
 // ------------------------------------------------------------------------------------------------
 void POWTruckAIUpdate::setAIMode( POWTruckAIMode mode )
@@ -418,14 +418,14 @@ void POWTruckAIUpdate::updateFindTarget( void )
 	// if target exists, go get it
 	if( target )
 	{
-		
+
 		// send the pickup command
 		ai->aiPickUpPrisoner( target, CMD_FROM_AI );
 
 	}  // end if
 	else
 	{
-	
+
 		// no target exists, if we have prisoners return them
 		if( contain->getContainCount() != 0 )
 			doReturnPrisoners();
@@ -433,7 +433,7 @@ void POWTruckAIUpdate::updateFindTarget( void )
 			doReturnToPrison( NULL );
 
 	}  // end else
-			
+
 }  // end updateFindTarget
 
 // ------------------------------------------------------------------------------------------------
@@ -539,7 +539,7 @@ void POWTruckAIUpdate::updateReturnPrisoners( void )
 
 	// get the prison we're returning to
 	Object *prison = TheGameLogic->findObjectByID( m_prisonID );
-	
+
 	// prison has gone away, do this all over again
 	if( prison == NULL )
 	{
@@ -570,7 +570,7 @@ Bool POWTruckAIUpdate::validateTarget( const Object *target )
 // ------------------------------------------------------------------------------------------------
 void POWTruckAIUpdate::doReturnPrisoners( void )
 {
-	
+
 	// find the closest prison
 	Object *prison = findBestPrison();
 
@@ -679,13 +679,13 @@ Object *POWTruckAIUpdate::findBestTarget( void )
 			continue;
 
 		// is this target closer than the one we've found so far
-		Real distSq = ThePartitionManager->getDistanceSquared( us, other, FROM_CENTER_2D ); 
+		Real distSq = ThePartitionManager->getDistanceSquared( us, other, FROM_CENTER_2D );
 		if( closestTarget == NULL || distSq < closestTargetDistSq )
 		{
 
-			// we must be able to pathfind to this target 
+			// we must be able to pathfind to this target
 			if( TheAI->pathfinder()->quickDoesPathExist( ai->getLocomotorSet(),
-																							us->getPosition(), 
+																							us->getPosition(),
 																							other->getPosition() ) == TRUE )
 			{
 
@@ -752,7 +752,7 @@ static void putPrisonersInPrison( Object *obj, void *userData )
 
 	// add up bounty for this prisoner
 	Player *prisonerOwningPlayer = obj->getControllingPlayer();
-	prisonUnloadData->bounty += TheGlobalData->m_prisonBountyMultiplier * 
+	prisonUnloadData->bounty += TheGlobalData->m_prisonBountyMultiplier *
 															obj->getTemplate()->calcCostToBuild( prisonerOwningPlayer );
 
 }  // end putPrisonersInPrison
@@ -773,12 +773,12 @@ void POWTruckAIUpdate::unloadPrisonersToPrison( Object *prison )
 	// sanity
 	DEBUG_ASSERTCRASH( prison->getContain(), ("POWTruckAIUpdate::unloadPrisonersToPrison - '%s' has no contain",
 																		prison->getTemplate()->getName().str()) );
-	DEBUG_ASSERTCRASH( prison->getContain()->asOpenContain(), 
+	DEBUG_ASSERTCRASH( prison->getContain()->asOpenContain(),
 										 ("POWTruckAIUpdate::unloadPrisonersToPrison - '%s' has no OPEN contain",
 										 prison->getTemplate()->getName().str()) );
 	DEBUG_ASSERTCRASH( truckContain, ("POWTruckAIUpdate::unloadPrisonersToPrison - '%s' has no contain",
 																	 us->getTemplate()->getName().str()) );
-	DEBUG_ASSERTCRASH( truckContain->asOpenContain(), 
+	DEBUG_ASSERTCRASH( truckContain->asOpenContain(),
 										 ("POWTruckAIUpdate::unloadPrisonersToPrison - '%s' has no OPEN contain",
 										 us->getTemplate()->getName().str()) );
 
@@ -801,7 +801,7 @@ void POWTruckAIUpdate::unloadPrisonersToPrison( Object *prison )
 
 			if( money )
 			{
-				
+
 				// deposit the money
 				money->deposit( prisonUnloadData.bounty );
 				player->getScoreKeeper()->addMoneyEarned( prisonUnloadData.bounty );
@@ -892,7 +892,7 @@ void POWTruckAIUpdate::xfer( Xfer *xfer )
   XferVersion currentVersion = 1;
   XferVersion version = currentVersion;
   xfer->xferVersion( &version, currentVersion );
- 
+
  // extend base class
 	AIUpdateInterface::xfer(xfer);
 

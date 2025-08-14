@@ -56,10 +56,10 @@ class ChunkSaveClass;
 //
 //	SaveLoadSubSystemClass
 //
-// Each SaveLoadSubSystem will automatically be registered with the SaveLoadSystem 
-// at construction time.  The plan is to have a single static instance of each 
+// Each SaveLoadSubSystem will automatically be registered with the SaveLoadSystem
+// at construction time.  The plan is to have a single static instance of each
 // sub-system so that it automatically registers when the global constructors
-// are executed.  
+// are executed.
 //
 // When an application wants to create a file it does so by asking the
 // SaveLoadSystem to save the particular set of SaveLoadSubSystems that contain
@@ -69,7 +69,7 @@ class ChunkSaveClass;
 class SaveLoadSubSystemClass : public PostLoadableClass
 {
 public:
-	
+
 	SaveLoadSubSystemClass (void);
 	virtual ~SaveLoadSubSystemClass (void);
 

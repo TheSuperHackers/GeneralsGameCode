@@ -16,24 +16,24 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/************************************************************************************************ 
- ***              C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S				  *** 
- ************************************************************************************************ 
- *																								* 
- *                 Project Name: Setup														  	* 
- *																								* 
- *                      Archive: ttfont.h														* 
- *																								* 
+/************************************************************************************************
+ ***              C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S				  ***
+ ************************************************************************************************
+ *																								*
+ *                 Project Name: Setup														  	*
+ *																								*
+ *                      Archive: ttfont.h														*
+ *																								*
  *                       Author: Joe_b															*
- *																								* 
+ *																								*
  *                      Modtime: 6/23/97 3:14p													*
- *																								* 
+ *																								*
  *                      Updated: 08/01/2000 [MML]												*
  *																								*
  *                     Revision: 22																*
  *																								*
- *----------------------------------------------------------------------------------------------* 
- * Functions:																					* 
+ *----------------------------------------------------------------------------------------------*
+ * Functions:																					*
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 #pragma once
 
@@ -56,7 +56,7 @@ typedef enum TextPrintType {
 	TPF_TT_14POINT		= 0x000A,	  		// True Type Font - 14 point
 	TPF_TT_16POINT		= 0x000B,	  		// True Type Font - 16 point
 	TPF_TT_18POINT		= 0x000C,	  		// True Type Font - 18 point
-	TPF_TT_20POINT		= 0x000D,	  		// True Type Font - 20 point 
+	TPF_TT_20POINT		= 0x000D,	  		// True Type Font - 20 point
 	TPF_TT_22POINT		= 0x000E,			// True Type Font - 22 point
 	TPF_TT_24POINT		= 0x000F,			// True Type Font - 24 point
 
@@ -80,14 +80,14 @@ typedef enum TextFormatType {
 
 	TPF_TOP					= DT_TOP,						// Use with DT_SINGLELINE.	Top-justifies text.
 	TPF_VCENTER				= DT_VCENTER,					// Use with DT_SINGLELINE.	Centers text vertically.
-	TPF_BOTTOM				= DT_BOTTOM,					// Use with DT_SINGLELINE.	Justifies test to the bottom of the rectangle. 
+	TPF_BOTTOM				= DT_BOTTOM,					// Use with DT_SINGLELINE.	Justifies test to the bottom of the rectangle.
 	TPF_LEFT				= DT_LEFT,						// Aligns text to the left.
 	TPF_CENTER				= DT_CENTER,					// Centers text horizontally in the rectangle.
 	TPF_RIGHT				= DT_RIGHT,						// Right justify text.
 	TPF_WORDBREAK			= DT_WORDBREAK,					// Lines are automatically broken between words.
 	TPF_SINGLE_LINE			= DT_SINGLELINE,				// All text on one line only.
-	TPF_NO_PREFIX			= DT_NOPREFIX,					// Turns off processing of prefix characters. 
-	TPF_PATH_ELLIPSIS		= DT_PATH_ELLIPSIS,				// For displayed text, replaces characters in the middle of the string with ellipses so that the result fits in the specified rectangle. 
+	TPF_NO_PREFIX			= DT_NOPREFIX,					// Turns off processing of prefix characters.
+	TPF_PATH_ELLIPSIS		= DT_PATH_ELLIPSIS,				// For displayed text, replaces characters in the middle of the string with ellipses so that the result fits in the specified rectangle.
 
 } TextFormatType;
 
@@ -106,11 +106,11 @@ typedef enum TextFormatType {
 #define TPF_CHECKBOX				(TextFormatType)( DT_LEFT	| DT_WORDBREAK	)
 #define TPF_OUTER_SCROLL			(TextFormatType)( DT_LEFT	| DT_WORDBREAK	)
 #define TPF_INNER_SCROLL			(TextFormatType)( DT_LEFT	| DT_SINGLELINE	)
-								
+
 #define TPF_LEFT_TEXT				(TextFormatType)( DT_LEFT	| DT_WORDBREAK )
 #define TPF_CENTER_TEXT				(TextFormatType)( DT_CENTER | DT_WORDBREAK )
 #define TPF_RIGHT_TEXT				(TextFormatType)( DT_RIGHT	| DT_WORDBREAK )
-								
+
 #define TPF_LEFT_TOP_ALIGNMENT	  	(TextFormatType)( DT_LEFT	| DT_TOP		| DT_SINGLELINE )
 #define TPF_LEFT_BOTTOM_ALIGNMENT	(TextFormatType)( DT_LEFT	| DT_BOTTOM		| DT_SINGLELINE )
 #define TPF_LEFT_JUSTIFY			(TextFormatType)( DT_LEFT	| DT_VCENTER	| DT_SINGLELINE )
@@ -145,7 +145,7 @@ extern	HDC BackBufferDC;
 ** Global Colors for use throughout program.
 */
 extern	unsigned long TEXT_COLOR;
-extern	unsigned long SHADOW_COLOR;		
+extern	unsigned long SHADOW_COLOR;
 extern	unsigned long TEXT_NORMAL_COLOR;
 extern	unsigned long TEXT_FOCUSED_COLOR;
 extern	unsigned long TEXT_PRESSED_COLOR;
@@ -167,9 +167,9 @@ extern	unsigned long VIOLET_COLOR;
 /******************************************************************************
 **	This is a True Type Font class object to create and use True Type fonts.
 ******************************************************************************/
-// Font Weight -	Specifies the weight of the font in the range 0 through 1000. 
-//					For example, 400 is normal and 700 is bold. 
-//					If this value is zero, a default weight is used. 
+// Font Weight -	Specifies the weight of the font in the range 0 through 1000.
+//					For example, 400 is normal and 700 is bold.
+//					If this value is zero, a default weight is used.
 //
 //	The following values are defined for convenience:
 //		FW_DONTCARE		0			FW_SEMIBOLD		600
@@ -179,33 +179,33 @@ extern	unsigned long VIOLET_COLOR;
 //		FW_LIGHT		300 		FW_ULTRABOLD	800
 //		FW_NORMAL		400 		FW_HEAVY 		900
 //		FW_REGULAR		400 		FW_BLACK 		900
-//		FW_MEDIUM		500 
+//		FW_MEDIUM		500
 //-----------------------------------------------------------------------------
 
-class TTFontClass 
+class TTFontClass
 {
 	public:
 
-		TTFontClass ( 
+		TTFontClass (
 			HDC		hdc,
-			char *	filename, 
-			char *	facename, 
-			int		height, 
-			int		weight				= FW_NORMAL, 
-			BYTE	charset				= ANSI_CHARSET, 
-			int		width				= 0, 
-			int		escapement			= 0, 
-			int		orientation			= 0, 
-			BYTE	italic				= FALSE, 
-			BYTE	underline			= FALSE, 
-			BYTE	strikeout			= FALSE, 
-			BYTE	outputPrecision		= OUT_TT_ONLY_PRECIS, 
-			BYTE	clipPrecision		= CLIP_DEFAULT_PRECIS, 
-			BYTE	quality				= PROOF_QUALITY, 
+			char *	filename,
+			char *	facename,
+			int		height,
+			int		weight				= FW_NORMAL,
+			BYTE	charset				= ANSI_CHARSET,
+			int		width				= 0,
+			int		escapement			= 0,
+			int		orientation			= 0,
+			BYTE	italic				= FALSE,
+			BYTE	underline			= FALSE,
+			BYTE	strikeout			= FALSE,
+			BYTE	outputPrecision		= OUT_TT_ONLY_PRECIS,
+			BYTE	clipPrecision		= CLIP_DEFAULT_PRECIS,
+			BYTE	quality				= PROOF_QUALITY,
 			BYTE	pitchAndFamily		= FF_DONTCARE );
 
-		virtual ~TTFontClass(void)				
-			{ 
+		virtual ~TTFontClass(void)
+			{
 				if ( Font != NULL ) {
 					DeleteObject( Font );
 					Font = NULL;
@@ -226,22 +226,22 @@ class TTFontClass
 		virtual int		IsFontDBCS				( void ) const	{ return ((CharSet==SHIFTJIS_CHARSET)||(CharSet==HANGEUL_CHARSET)||(CharSet==CHINESEBIG5_CHARSET)); };	// [OYO]
 		virtual UINT	Get_Double_Byte_Char	( const char *string, int *num_bytes=NULL ) const;
 
-		virtual Point2D	Print( 
-							HDC hdc, 
-							char const * string, 
-							Rect const & cliprect, 
+		virtual Point2D	Print(
+							HDC hdc,
+							char const * string,
+							Rect const & cliprect,
 							COLORREF forecolor		= TEXT_COLOR,
 							COLORREF backcolor		= TEXT_NORMAL_SHADOW_COLOR,
-							TextFormatType flag		= TPF_LEFT_TEXT, 
+							TextFormatType flag		= TPF_LEFT_TEXT,
 							TextShadowType shadow	= TPF_NOSHADOW );
 
-		virtual Point2D	Print( 
-							HDC hdc, 
-							wchar_t const * string, 
-							Rect const & cliprect, 
+		virtual Point2D	Print(
+							HDC hdc,
+							wchar_t const * string,
+							Rect const & cliprect,
 							COLORREF forecolor		= TEXT_COLOR,
 							COLORREF backcolor		= TEXT_NORMAL_SHADOW_COLOR,
-							TextFormatType flag		= TPF_LEFT_TEXT, 
+							TextFormatType flag		= TPF_LEFT_TEXT,
 							TextShadowType shadow	= TPF_NOSHADOW );
 
 	private:
@@ -276,7 +276,7 @@ bool			Is_True_Type_Font	( TextPrintType flags );	// True Type???
 // This class is a wrapper around all the fonts that we want to be available.
 // The constructer will make them, and the destructor will remove them for us.
 //-------------------------------------------------------------------------
-class FontManagerClass 
+class FontManagerClass
 {
 	public:
 		FontManagerClass		( HDC hdc );

@@ -23,7 +23,7 @@ Project Name: Carpenter  (The RedAlert ladder creator)
 File Name   : string.cpp
 Author      : Neal Kettler
 Start Date  : June 1, 1997
-Last Update : June 17, 1997  
+Last Update : June 17, 1997
 
 A fairly typical string class.  This string class always copies any input
 string to it's own memory (for assignment or construction).
@@ -296,7 +296,7 @@ bit8 Wstring::removeChar(char c)
     char *newStr=new char[strlen(str)+1];
     strcpy(newStr,str);
     delete[](str);
-    str=newStr; 
+    str=newStr;
   }
   return(removed);
 }
@@ -319,7 +319,7 @@ void Wstring::setSize(sint32 size)
   clear();
   if (size<0)
     return;
-  str=new char[size]; 
+  str=new char[size];
   memset(str,0,size);
 }
 
@@ -359,7 +359,7 @@ uint32 Wstring::length(void) const
 bit8 Wstring::insert(const char *instring, uint32 pos)
 {
   if (str==NULL)
-    return(set(instring)); 
+    return(set(instring));
   if (pos>strlen(str))
     pos=strlen(str);
   char *newstr=new char[strlen(str)+strlen(instring)+1];
@@ -549,14 +549,14 @@ bit8 Wstring::truncate(uint32 len)
 bit8 Wstring::truncate(char c)
 {
   sint32  len;
- 
+
   if (str==NULL)
     return(FALSE);
 
   char   *cptr=strchr(str,c);
   if (cptr==NULL)
     return(FALSE);
-  len=(sint32)(cptr-str); 
+  len=(sint32)(cptr-str);
   truncate((uint32)len);
   return(TRUE);
 }
@@ -580,7 +580,7 @@ sint32 Wstring::getToken(int offset,const char *delim,Wstring &out)
     if(strchr(delim,str[i])!=NULL)
       break;
   }
-  stop=i-1; 
+  stop=i-1;
   out.set(str+start);
   out.truncate((uint32)stop-start+1);
   return(stop+1);
@@ -596,7 +596,7 @@ sint32 Wstring::getLine(int offset, Wstring &out)
   start=i=offset;
   if (start >= (int)length())
     return(-1);
- 
+
   for (; i<(int)length(); i++) {
     if(strchr("\r\n",str[i])!=NULL)
       break;

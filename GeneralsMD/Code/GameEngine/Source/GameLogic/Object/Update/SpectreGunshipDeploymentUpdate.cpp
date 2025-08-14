@@ -94,7 +94,7 @@ static Real zero = 0.0f;
 {
 	ModuleData::buildFieldParse(p);
 
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
 		{ "GunshipTemplateName",	    INI::parseAsciiString,				    NULL, offsetof( SpectreGunshipDeploymentUpdateModuleData, m_gunshipTemplateName ) },
 		{ "RequiredScience",					INI::parseScience,								NULL, offsetof( SpectreGunshipDeploymentUpdateModuleData, m_extraRequiredScience ) },
@@ -112,7 +112,7 @@ SpectreGunshipDeploymentUpdate::SpectreGunshipDeploymentUpdate( Thing *thing, co
 {
 	m_specialPowerModule = NULL;
   m_gunshipID  = INVALID_ID;
-} 
+}
 
 //-------------------------------------------------------------------------------------------------
 SpectreGunshipDeploymentUpdate::~SpectreGunshipDeploymentUpdate( void )
@@ -137,7 +137,7 @@ void SpectreGunshipDeploymentUpdate::onObjectCreated()
 }
 
 //-------------------------------------------------------------------------------------------------
-Bool SpectreGunshipDeploymentUpdate::initiateIntentToDoSpecialPower(const SpecialPowerTemplate *specialPowerTemplate, const Object *targetObj, const Coord3D *targetPos, const Waypoint *way, UnsignedInt commandOptions )
+Bool SpectreGunshipDeploymentUpdate::initiateIntentToDoSpecialPower(const SpecialPowerTemplate* specialPowerTemplate, const Object* targetObj, const Coord3D* targetPos, const Waypoint* way, UnsignedInt commandOptions)
 {
 	const SpectreGunshipDeploymentUpdateModuleData* data = getSpectreGunshipDeploymentUpdateModuleData();
 
@@ -201,9 +201,6 @@ Bool SpectreGunshipDeploymentUpdate::initiateIntentToDoSpecialPower(const Specia
 			break;
 		}
 
-
-
-
 		// HERE WE NEED TO CREATE THE POINT FURTHER OFF THE MAP SO WE CANT SEE THE LAME HOVER AND ACCELLERATE BEHAVIOR
 		Coord3D deltaToCreationPoint = m_initialTargetPosition;
 		deltaToCreationPoint.sub(&creationCoord);
@@ -261,7 +258,7 @@ Bool SpectreGunshipDeploymentUpdate::initiateIntentToDoSpecialPower(const Specia
 /** The update callback. */
 //-------------------------------------------------------------------------------------------------
 UpdateSleepTime SpectreGunshipDeploymentUpdate::update()
-{	
+{
 //	const SpectreGunshipDeploymentUpdateModuleData *data = getSpectreGunshipDeploymentUpdateModuleData();
 
 

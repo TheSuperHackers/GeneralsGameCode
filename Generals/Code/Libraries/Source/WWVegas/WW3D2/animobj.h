@@ -97,7 +97,7 @@ public:
 	virtual void					Set_Animation_Frame_Rate_Multiplier(float multiplier);	// 020607 srj -- added
 
 	virtual HAnimClass *	Peek_Animation_And_Info(float& frame, int& numFrames, int& mode, float& mult);	// 020710 srj -- added
-	
+
 	virtual HAnimClass *			Peek_Animation( void );
 	virtual bool					Is_Animation_Complete( void ) const;
 	virtual int						Get_Num_Bones(void);
@@ -110,7 +110,7 @@ public:
 	virtual bool					Is_Bone_Captured(int boneindex) const;
 	virtual void					Control_Bone(int bindex,const Matrix3D & objtm,bool world_space_translation = false);
 	virtual const HTreeClass *	Get_HTree(void) const { return HTree; }
-	
+
 	//
 	//	Simple bone evaluation methods for when the caller doesn't want
 	// to update the heirarchy, but needs to know the transform of
@@ -170,7 +170,7 @@ protected:
 
 	// Hierarchy Tree
 	HTreeClass *					HTree;
-	
+
 	// Animation state for the next frame.  When we add more flexible motion
 	// compositing, add a new state and its associated data to the union below
 	enum {
@@ -193,11 +193,11 @@ protected:
 			mutable int				LastSyncTime;
 			float							animDirection;
 			float							frameRateMultiplier;	// 020607 srj -- added
-		} ModeAnim;				  
+		} ModeAnim;
 
 		// CurMotionMode == DOUBLE_ANIM
 		struct {
-			
+
 			HAnimClass *			Motion0;
 			HAnimClass *			Motion1;
 			float		  				Frame0;
@@ -211,9 +211,9 @@ protected:
 		struct {
 			HAnimComboClass *		AnimCombo;
 		} ModeCombo;
-  
+
 	};
-	
+
 	friend class SkinClass;
 };
 

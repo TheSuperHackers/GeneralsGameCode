@@ -93,8 +93,8 @@ W3DDefaultDraw::W3DDefaultDraw(Thing *thing, const ModuleData* moduleData) : Dra
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void W3DDefaultDraw::reactToTransformChange( const Matrix3D *oldMtx, 
-																						 const Coord3D *oldPos, 
+void W3DDefaultDraw::reactToTransformChange( const Matrix3D *oldMtx,
+																						 const Coord3D *oldPos,
 																						 Real oldAngle )
 {
 
@@ -109,7 +109,7 @@ W3DDefaultDraw::~W3DDefaultDraw(void)
 {
 #ifdef LOAD_TEST_ASSETS
 	if (TheW3DShadowManager && m_shadow)
-	{	
+	{
 		TheW3DShadowManager->removeShadow(m_shadow);
 		m_shadow = NULL;
 	}

@@ -32,7 +32,7 @@
 #include "Common/BitFlagsIO.h"
 
 template<>
-const char* KindOfMaskType::s_bitNameList[] = 
+const char* KindOfMaskType::s_bitNameList[] =
 {
 	"OBSTACLE",
 	"SELECTABLE",

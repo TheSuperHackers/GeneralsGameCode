@@ -50,7 +50,7 @@ void GrantUpgradeCreateModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
   CreateModuleData::buildFieldParse(p);
 
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
 		{ "UpgradeToGrant",	INI::parseAsciiString,							NULL, offsetof( GrantUpgradeCreateModuleData, m_upgradeName ) },
 		{ "ExemptStatus",		ObjectStatusMaskType::parseFromINI, NULL, offsetof( GrantUpgradeCreateModuleData, m_exemptStatus ) },
@@ -87,7 +87,7 @@ void GrantUpgradeCreate::onCreate( void )
 	ObjectStatusMaskType currentStatus = getObject()->getStatusBits();
 	if( exemptStatus.test( OBJECT_STATUS_UNDER_CONSTRUCTION ) )
 	{
-		if(	!currentStatus.test( OBJECT_STATUS_UNDER_CONSTRUCTION ) ) 
+		if(	!currentStatus.test( OBJECT_STATUS_UNDER_CONSTRUCTION ) )
 		{
 			const UpgradeTemplate *upgradeTemplate = TheUpgradeCenter->findUpgrade( getGrantUpgradeCreateModuleData()->m_upgradeName );
 			if( !upgradeTemplate )
@@ -106,7 +106,7 @@ void GrantUpgradeCreate::onCreate( void )
 			{
 				getObject()->giveUpgrade( upgradeTemplate );
 			}
-			
+
 			player->getAcademyStats()->recordUpgrade( upgradeTemplate, TRUE );
 		}
 	}

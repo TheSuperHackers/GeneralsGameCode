@@ -16,22 +16,22 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/*********************************************************************************************** 
- ***              C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S               *** 
- *********************************************************************************************** 
- *                                                                                             * 
- *                 Project Name : Blowfish Component                                           * 
- *                                                                                             * 
- *                     $Archive:: /Sun/Blowfish/bfish.h                                       $* 
- *                                                                                             * 
+/***********************************************************************************************
+ ***              C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S               ***
+ ***********************************************************************************************
+ *                                                                                             *
+ *                 Project Name : Blowfish Component                                           *
+ *                                                                                             *
+ *                     $Archive:: /Sun/Blowfish/bfish.h                                       $*
+ *                                                                                             *
  *                      $Author:: Joe_b                                                       $*
- *                                                                                             * 
+ *                                                                                             *
  *                     $Modtime:: 12/02/97 9:35p                                              $*
- *                                                                                             * 
+ *                                                                                             *
  *                    $Revision:: 6                                                           $*
  *                                                                                             *
- *---------------------------------------------------------------------------------------------* 
- * Functions:                                                                                  * 
+ *---------------------------------------------------------------------------------------------*
+ * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #ifndef BFISH_H
@@ -47,9 +47,9 @@
 **	weaknesses, but is still relatively new. Blowfish is particularly strong
 **	against brute force attacks. It is also quite strong against linear and
 **	differential cryptanalysis. Unlike public key encription, it is very
-**	fast at encryption, as far as cryptography goes. Its weakness is that 
-**	it takes a relatively long time to set up with a new key (1/100th of 
-**	a second on a P6-200). The time to set up a key is equivalent to 
+**	fast at encryption, as far as cryptography goes. Its weakness is that
+**	it takes a relatively long time to set up with a new key (1/100th of
+**	a second on a P6-200). The time to set up a key is equivalent to
 **	encrypting 4240 bytes.
 */
 class BlowfishEngine {

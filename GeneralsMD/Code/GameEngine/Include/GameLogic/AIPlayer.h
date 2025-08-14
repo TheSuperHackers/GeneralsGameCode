@@ -41,7 +41,7 @@ class BuildListInfo;
 /**
  * When a team is selected for training, a list of these
  * "work orders" are created, one for each member of the team.
- * This pairs team members with production buildings to keep 
+ * This pairs team members with production buildings to keep
  * track of who is building what, and allows us to track if
  * a building was destroyed while in the process of training a unit.
  */
@@ -49,7 +49,7 @@ class WorkOrder : public MemoryPoolObject,
 									public Snapshot
 {
 
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( WorkOrder, "WorkOrder" )		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( WorkOrder, "WorkOrder" )
 
 public:
 
@@ -94,7 +94,7 @@ class TeamInQueue : public MemoryPoolObject,
 
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( TeamInQueue, "TeamInQueue"  )
 
-private:		
+private:
 
 	MAKE_DLINK(TeamInQueue, TeamBuildQueue)				///< the instances of our prototype
 	MAKE_DLINK(TeamInQueue, TeamReadyQueue)				///< the instances of our prototype
@@ -108,19 +108,19 @@ protected:
 
 public:
 
-	TeamInQueue() : 
-		m_workOrders(NULL), 
-		m_team(NULL), 
-		m_nextTeamInQueue(NULL), 
-		m_sentToStartLocation(false), 
-		m_reinforcement(false), 
+	TeamInQueue() :
+		m_workOrders(NULL),
+		m_team(NULL),
+		m_nextTeamInQueue(NULL),
+		m_sentToStartLocation(false),
+		m_reinforcement(false),
 		m_stopQueueing(false),
 		m_reinforcementID(INVALID_ID),
 		//Added By Sadullah Nader
 		//Initialization(s) inserted
 		m_frameStarted(0),
 		m_priorityBuild(FALSE)
-		//		
+		//
 	{
 	}
 
@@ -153,12 +153,12 @@ public:
 class AIPlayer : public MemoryPoolObject,
 								 public Snapshot
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( AIPlayer, "AIPlayer"  )		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( AIPlayer, "AIPlayer"  )
 
 public:
 
 	AIPlayer( Player *p );							///< constructor
-	
+
 	virtual Bool computeSuperweaponTarget(const SpecialPowerTemplate *power, Coord3D *pos, Int playerNdx, Real weaponRadius); ///< Calculates best pos for weapon given radius.
 
 public: // AIPlayer interface, may be overridden by AISkirmishPlayer.  jba.
@@ -237,7 +237,7 @@ protected:
 	virtual void processBaseBuilding( void );		///< do base-building behaviors
 	virtual void processTeamBuilding( void );		///< do team-building behaviors
  	static Int getPlayerSuperweaponValue( Coord3D *center, Int playerNdx, Real radius, Bool includeMilitaryUnits = TRUE );
-// End of aiplayer interface. 
+// End of aiplayer interface.
 
 protected:
 
@@ -259,7 +259,7 @@ protected:
 	Object *findSupplyCenter(Int minSupplies);
 	static void getPlayerStructureBounds(Region2D *bounds, Int playerNdx, Bool conservative = FALSE );
 
-protected:	 
+protected:
 
 	Player *m_player;									///< the Player we represent
 

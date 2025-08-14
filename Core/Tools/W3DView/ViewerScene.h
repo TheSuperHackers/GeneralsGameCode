@@ -67,7 +67,7 @@ class ViewerSceneClass : public SimpleSceneClass
 
 		virtual ~ViewerSceneClass (void)		{ }
 
-		
+
 		///////////////////////////////////////////////////////////////////
 		//
 		//	Public methods
@@ -77,7 +77,7 @@ class ViewerSceneClass : public SimpleSceneClass
 		//	Overrides from SimpleSceneClass
 		//
 		virtual void				Visibility_Check (CameraClass *pcamera);
-		virtual void				Add_Render_Object(RenderObjClass * obj);	
+		virtual void				Add_Render_Object(RenderObjClass * obj);
 		virtual void				Customized_Render(RenderInfoClass & rinfo);
 
 		//

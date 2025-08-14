@@ -83,7 +83,7 @@ protected:
 **   to surrender when asked in the Render method.
 ** - The ability to add and remove render objects from the scene
 ** - The ability to create an iterator for the user which uses the
-**   SceneIterator interface and allows the user to iterate through 
+**   SceneIterator interface and allows the user to iterate through
 **   all render objects or visible render objects in the scene.
 **
 ** The "registration" interface is used by certain render objects to enable
@@ -185,7 +185,7 @@ public:
 
 protected:
 	virtual void	Render(RenderInfoClass & rinfo);	//Made virtual so we can override -MW
-	
+
 	Vector3						AmbientLight;
 	PolyRenderType				PolyRenderMode;
 	ExtraPassPolyRenderType	ExtraPassPolyRenderMode;
@@ -251,14 +251,14 @@ public:
 																		const Vector3 & point);
 
 protected:
-	
+
    // Has a visibility check been performed since scene was last rendered?
    bool Visibility_Checked;
 
 	RefRenderObjListClass	RenderList;
 	RefRenderObjListClass	UpdateList;
 	RefRenderObjListClass	LightList;
-	RefRenderObjListClass	ReleaseList;	
+	RefRenderObjListClass	ReleaseList;
 
 	friend class SimpleSceneIterator;
 

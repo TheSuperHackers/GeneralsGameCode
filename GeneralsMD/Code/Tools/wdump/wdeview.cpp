@@ -78,7 +78,7 @@ void CWDumpEditView::Dump(CDumpContext& dc) const
 /////////////////////////////////////////////////////////////////////////////
 // CWDumpEditView message handlers
 
-void CWDumpEditView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint) 
+void CWDumpEditView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 {
 	// TODO: Add your specialized code here and/or call the base class
 	CEdit &edit = GetEditCtrl();
@@ -109,7 +109,7 @@ char * CWDumpEditView::Build_Hex_Text(unsigned char * Source, int Length)
 
 	int lines = Length / per_line;
 	int buf_size = Length * 5 + per_line * 5;
-	
+
 	char *buffer = new char[buf_size];
 	char *dest = buffer;
 
@@ -129,9 +129,9 @@ char * CWDumpEditView::Build_Hex_Text(unsigned char * Source, int Length)
 		counter = 0;
 		do {
 			char c = Source[counter];
-			if(c >= 32 && c <= 192) 
+			if(c >= 32 && c <= 192)
 				*dest++ = c;
-			else 
+			else
 				*dest++ = '.';
 		} while(++counter < per_line);
 

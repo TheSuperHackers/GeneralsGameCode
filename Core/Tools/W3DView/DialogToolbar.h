@@ -73,7 +73,7 @@ public:
 	//}}AFX_VIRTUAL
 
 // Implementation
-protected:	
+protected:
 #ifdef RTS_DEBUG
 	virtual void AssertValid() const;
 	virtual void Dump(CDumpContext& dc) const;
@@ -92,7 +92,7 @@ protected:
 
 
 	public:
-		
+
 		///////////////////////////////////////////////////////
 		//
 		//	Public methods

@@ -70,7 +70,7 @@ public:
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-class OverchargeBehavior : public UpdateModule, 
+class OverchargeBehavior : public UpdateModule,
 													 public DamageModuleInterface,
 													 public OverchargeBehaviorInterface
 {
@@ -96,8 +96,8 @@ public:
 	// DamageModuleInterface
 	virtual void onDamage( DamageInfo *damageInfo );
 	virtual void onHealing( DamageInfo *damageInfo ) { }
-	virtual void onBodyDamageStateChange( const DamageInfo *damageInfo, 
-																				BodyDamageType oldState, 
+	virtual void onBodyDamageStateChange( const DamageInfo *damageInfo,
+																				BodyDamageType oldState,
 																				BodyDamageType newState ) { }
 
 

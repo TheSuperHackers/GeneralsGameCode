@@ -24,12 +24,12 @@
 
 // FILE: HierarchyView.cpp ////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:    GUIEdit
@@ -94,7 +94,7 @@ LRESULT CALLBACK HierarchyView::dialogProc( HWND hWndDialog, UINT message,
  		{
 // 			Int x = LOWORD( lParam );
 // 			Int y = HIWORD( lParam );
- 
+
  			// record our position
  			RECT rect;
  			POINT p;
@@ -104,11 +104,11 @@ LRESULT CALLBACK HierarchyView::dialogProc( HWND hWndDialog, UINT message,
  			ScreenToClient( TheEditor->getWindowHandle(), &p );
  			dialogPos.x = p.x;
  			dialogPos.y = p.y;
- 
+
  			return 0;
- 
+
  		}  // end move
- 
+
 		// ------------------------------------------------------------------------
 		case WM_SIZE:
 		{
@@ -137,14 +137,14 @@ LRESULT CALLBACK HierarchyView::dialogProc( HWND hWndDialog, UINT message,
 					p.x = treeRect.left;
 					p.y = treeRect.top;
 					ScreenToClient( hWndDialog, &p );
-					MoveWindow( tree, border, p.y, 
-											width - (border * 2), (height - border) - p.y, 
+					MoveWindow( tree, border, p.y,
+											width - (border * 2), (height - border) - p.y,
 											TRUE );
 
 				}  // end if
 
 			}  // end if
-						
+
 			return 0;
 
 		}  // end size
@@ -183,7 +183,7 @@ LRESULT CALLBACK HierarchyView::dialogProc( HWND hWndDialog, UINT message,
 					TreeView_SelectItem( TheHierarchyView->getTreeHandle(), overItem );
 
 					//
-					// if this operation is legal set the cross cursor, otherwise 
+					// if this operation is legal set the cross cursor, otherwise
 					// use the "no" cursor
 					//
 					if( TheHierarchyView->validateDragDropOperation( dragWindow, target ) )
@@ -235,7 +235,7 @@ LRESULT CALLBACK HierarchyView::dialogProc( HWND hWndDialog, UINT message,
 					assert( overWindow );
 
 					// do the drag drop if allowed
-					if( TheHierarchyView->validateDragDropOperation( dragWindow, 
+					if( TheHierarchyView->validateDragDropOperation( dragWindow,
 																													 overWindow ) )
 					{
 
@@ -325,7 +325,7 @@ LRESULT CALLBACK HierarchyView::dialogProc( HWND hWndDialog, UINT message,
 			if( overItem )
 			{
 				GameWindow *overWindow;
-				
+
 				// get the game window from the tree item
 				overWindow = TheHierarchyView->getWindowFromItem( overItem );
 
@@ -351,7 +351,7 @@ LRESULT CALLBACK HierarchyView::dialogProc( HWND hWndDialog, UINT message,
 				screen.y = y;
 				ClientToScreen( hWndDialog, &screen );
 				TrackPopupMenuEx( subMenu, 0, screen.x, screen.y, hWndDialog, NULL );
-				
+
 			}  // end if
 
 			return 0;
@@ -371,11 +371,11 @@ LRESULT CALLBACK HierarchyView::dialogProc( HWND hWndDialog, UINT message,
 				// --------------------------------------------------------------------
 				case TREE_HIERARCHY:
 				{
-				
+
 					// switch on notify code for the tree
 					switch( notifyMessageHandler->code )
 					{
-						
+
 						// ----------------------------------------------------------------
 						case TVN_SELCHANGED:
 						{
@@ -395,7 +395,7 @@ LRESULT CALLBACK HierarchyView::dialogProc( HWND hWndDialog, UINT message,
 								TheEditor->clearSelections();
 								if( window )
 									TheEditor->selectWindow( window );
-			
+
 							}  // end if
 
 							break;
@@ -405,13 +405,13 @@ LRESULT CALLBACK HierarchyView::dialogProc( HWND hWndDialog, UINT message,
 						// ----------------------------------------------------------------
 						case NM_DBLCLK:
 						{
-							
+
 							// get the selected tree item
 							HTREEITEM selected = TreeView_GetSelection( TheHierarchyView->getTreeHandle() );
 							if( selected )
 							{
 								GameWindow *overWindow;
-								
+
 								// get the game window from the tree item
 								overWindow = TheHierarchyView->getWindowFromItem( selected );
 
@@ -434,7 +434,7 @@ LRESULT CALLBACK HierarchyView::dialogProc( HWND hWndDialog, UINT message,
 								menu = LoadMenu( TheEditor->getInstance(), (LPCTSTR)HIERARCHY_POPUP_MENU );
 								subMenu = GetSubMenu( menu, 0 );
 								GetCursorPos( &screen );
-								TrackPopupMenuEx( subMenu, 0, screen.x, screen.y, hWndDialog, NULL );								
+								TrackPopupMenuEx( subMenu, 0, screen.x, screen.y, hWndDialog, NULL );
 
 							}  // end if
 
@@ -450,7 +450,7 @@ LRESULT CALLBACK HierarchyView::dialogProc( HWND hWndDialog, UINT message,
 
 							// get the item being dragged
 							newItem = treeNotify->itemNew;
-							
+
 							// save the window being dragged
 							TheHierarchyView->setDragWindow( (GameWindow *)newItem.lParam );
 							TheHierarchyView->setDragTarget( NULL );
@@ -640,7 +640,7 @@ HTREEITEM HierarchyView::findItemEntry( HTREEITEM node, GameWindow *window )
 	}  // end if
 
 	// not there, check the siblings
-	return findItemEntry( TreeView_GetNextItem( m_tree, node, TVGN_NEXT ), 
+	return findItemEntry( TreeView_GetNextItem( m_tree, node, TVGN_NEXT ),
 												window );
 #endif
 
@@ -652,11 +652,11 @@ HTREEITEM HierarchyView::findItemEntry( HTREEITEM node, GameWindow *window )
 //=============================================================================
 HTREEITEM HierarchyView::findTreeEntry( GameWindow *window )
 {
-	
+
 	// no-op
 	if( window == NULL )
 		return NULL;
-		
+
 	// get root and search from there
 	return findItemEntry( TreeView_GetRoot( m_tree ), window );
 
@@ -732,7 +732,7 @@ void HierarchyView::addWindowToTree( GameWindow *window,
 
 	// add siblings if requested
 	if( addSiblings )
-		addWindowToTree( window->winGetNext(), treeParent, option, 
+		addWindowToTree( window->winGetNext(), treeParent, option,
 										 addChildren, addSiblings );
 
 }  // end addWindowToTree
@@ -779,9 +779,9 @@ void HierarchyView::init( void )
 	// create the modless dialog box
 	m_dialog = CreateDialog( TheEditor->getInstance(),
 													 (LPCSTR)HIERARCHY_DIALOG,
-													 TheEditor->getWindowHandle(), 
+													 TheEditor->getWindowHandle(),
 													 (DLGPROC)dialogProc );
-	
+
 	// display the dialog
 	ShowWindow( m_dialog, SW_SHOW );
 
@@ -875,7 +875,7 @@ char *HierarchyView::getWindowTreeName( GameWindow *window )
 		strcpy( buffer, "Text Entry" );
 	else if( BitIsSet( style, GWS_SCROLL_LISTBOX ) )
 		strcpy( buffer, "Listbox" );
-	else if( BitIsSet( style, GWS_PROGRESS_BAR ) )	
+	else if( BitIsSet( style, GWS_PROGRESS_BAR ) )
 		strcpy( buffer, "Progress Bar" );
 	else if( BitIsSet( style, GWS_USER_WINDOW ) )
 		strcpy( buffer, "User Window" );
@@ -905,7 +905,7 @@ char *HierarchyView::getWindowTreeName( GameWindow *window )
 //=============================================================================
 void HierarchyView::addWindow( GameWindow *window, HierarchyOption option )
 {
-	
+
 	// sanity
 	if( window == NULL || m_dialog == NULL )
 		return;
@@ -1074,7 +1074,7 @@ void HierarchyView::setDialogPos( ICoord2D *pos )
 	if( pos )
 		dialogPos = *pos;
 
-	MoveWindow( m_dialog, dialogPos.x, dialogPos.y, 
+	MoveWindow( m_dialog, dialogPos.x, dialogPos.y,
 							dialogSize.x, dialogSize.y, TRUE );
 
 }  // end setDialogPos
@@ -1089,7 +1089,7 @@ void HierarchyView::setDialogSize( ICoord2D *size )
 	if( size )
 		dialogSize = *size;
 
-	MoveWindow( m_dialog, dialogPos.x, dialogPos.y, 
+	MoveWindow( m_dialog, dialogPos.x, dialogPos.y,
 							dialogSize.x, dialogSize.y, TRUE );
 
 }  // end setDialogSize
@@ -1098,7 +1098,7 @@ void HierarchyView::setDialogSize( ICoord2D *size )
 /** Move the window hierarchy representation to be just ahead of the
 	* hierarchy entry of 'aheadOf' */
 //=============================================================================
-void HierarchyView::moveWindowAheadOf( GameWindow *window, 
+void HierarchyView::moveWindowAheadOf( GameWindow *window,
 																			 GameWindow *aheadOf )
 {
 
@@ -1172,7 +1172,7 @@ void HierarchyView::moveWindowAheadOf( GameWindow *window,
 	if( TheEditor->windowIsGadget( window ) == FALSE )
 	{
 		GameWindow *child = window->winGetChild();
-	
+
 		addWindowToTree( child, newItem, HIERARCHY_ADD_AT_BOTTOM, TRUE, TRUE );
 
 	}  // end if

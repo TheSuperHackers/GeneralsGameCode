@@ -49,26 +49,26 @@
 
 #include "colmath.h"
 #include "aabox.h"
-#include "tri.h" 
+#include "tri.h"
 #include "wwdebug.h"
 
 
 /*
-** Separating Axes have to be rejected if their length is smaller than some epsilon.  
-** Otherwise, erroneous results can be reported. 
+** Separating Axes have to be rejected if their length is smaller than some epsilon.
+** Otherwise, erroneous results can be reported.
 */
 #define AXISLEN_EPSILON2	WWMATH_EPSILON * WWMATH_EPSILON	// squared length of a separating axis must be larger than this
 
 
-/* 
-** Axes used in Box-Tri intersection tests 
+/*
+** Axes used in Box-Tri intersection tests
 ** The axes of the box are A0,A1,A2.  N is the normal of the triangle,
 ** E0,E1,E2 are direction vectors for the edges of the triangle.
 ** (the box axes are labeled A0,A1,A2 as a holdover from the obbox-obbox
 ** collision code which this was derived from where there are two boxes
 ** A and B)
 */
-enum 
+enum
 {
 	INTERSECTION = 0,
 	AXIS_N,					// normal of the triangle
@@ -89,23 +89,23 @@ enum
 
 
 /******************************************************************************************
-	
+
 	AABox->Triangle collision
 
    This code is basically a special-case optimization of the OBBox->Triangle collision
 	detection code.  There are many dot and cross products that can be simplified due
 	to the fact that we know the axes of the boxes are always the same and are aligned
-	with the world coordinate axes.  
+	with the world coordinate axes.
 
 	Each axis test will use the following logic:
 	Project D onto the axis being used, it is the separation distance.  If the
 	projection of the extent of the box + the projection of the extent of the
 	tri is greater than D*axis then the two intersect
 
-	March 13, 2000 - Modified these routines to all use a static instance of 
+	March 13, 2000 - Modified these routines to all use a static instance of
 	the BTCollisionStruct.  The compiler was generating lots of extra code for the
 	constructor of this object and testing determined that re-using the same static
-	struct was slightly faster anyway.  
+	struct was slightly faster anyway.
 	NOTE: this makes the code not Thread-Safe!!!!
 
 
@@ -114,7 +114,7 @@ enum
 /*
 ** BoxTriColStruct
 ** Scratchpad variables for the AABox-Triangle collision detection functions.  One instance
-** of this structure will be used for all of the local variables and its pointer will be 
+** of this structure will be used for all of the local variables and its pointer will be
 ** handed of to various inline functions for the axis tests.
 ** Note that much of the code needs the un-normalized triangle normal.  For this reason,
 ** I have to compute N rather than copying it from the triangle.  (commenting this to
@@ -131,19 +131,19 @@ struct BTCollisionStruct
 		AxisId = INTERSECTION;	// axis that allowed the longest move
 		Point = 0;					// index of triangle point that was closest to the box
 		Side = 0;					// side of the interval
-		Box = &box;															
+		Box = &box;
 		Tri = &tri;
 		BoxMove = &move;
 		TriMove = &trimove;
-	
+
 		Vector3::Subtract(*tri.V[0],box.Center,&D);				// vector from center of box to vertex 0
 		Vector3::Subtract(move,trimove,&Move);						// move vector relative to stationary triangle
 
-		Vector3::Subtract(*tri.V[1],*tri.V[0],&E[0]);			
-		Vector3::Subtract(*tri.V[2],*tri.V[0],&E[1]);			
+		Vector3::Subtract(*tri.V[1],*tri.V[0],&E[0]);
+		Vector3::Subtract(*tri.V[2],*tri.V[0],&E[1]);
 		Vector3::Subtract(E[1],E[0],&E[2]);
 
-		Vector3::Cross_Product(E[0],E[1],&N);	
+		Vector3::Cross_Product(E[0],E[1],&N);
 	}
 
 	bool						StartBad;			// Inital configuration is intersecting?
@@ -152,7 +152,7 @@ struct BTCollisionStruct
 	int						AxisId;				// Last separating axis
 	int						Side;					// which side of the interval
 	int						Point;				// Index of the "closest" triangle point (or one of them)
-	
+
 	int						TestAxisId;			// Axis 'id' we're working on
 	int						TestSide;			// Was the axis we're working on flipped
 	int						TestPoint;			// Index of the closest vertex
@@ -164,7 +164,7 @@ struct BTCollisionStruct
 	float						AN[3];				// Dot products of the Basis vectors and the normal
 	Vector3					AxE[3][3];			// Cross products of the Basis vectors and edges
 
-	Vector3					E[3];					// edge vectors for the triangle 
+	Vector3					E[3];					// edge vectors for the triangle
 	Vector3					N;						// normal (NOT normalized!!!)
 	Vector3					FinalD;				// Vector from center of box to v0 at end of move
 
@@ -174,7 +174,7 @@ struct BTCollisionStruct
 	const Vector3 *		TriMove;
 
 private:
-	
+
 	// not implemented
 	BTCollisionStruct(const BTCollisionStruct &);
 	BTCollisionStruct & operator = (const BTCollisionStruct &);
@@ -201,7 +201,7 @@ static BTCollisionStruct CollisionContext;
 static inline bool aabtri_separation_test
 (
 	float lp,float leb0,float leb1
-)	
+)
 {
 	/*
 	** - If (I'm no more than 'EPSILON' embedded in the wall)
@@ -212,7 +212,7 @@ static inline bool aabtri_separation_test
 	**       - accept entire move
 	**     - Else If (I can move more than I could have before; *negative always fails!)
 	**       - update fraction
-	**   - Else 
+	**   - Else
 	**     - Accept entire move since I'm not moving towards
 	*/
 	float eps = 0.0f;
@@ -223,26 +223,26 @@ static inline bool aabtri_separation_test
 	if (lp - leb0 > -eps) {
 		CollisionContext.StartBad = false;
 		if (leb1 - leb0 > 0.0f) {
-			float frac = (lp-leb0)/(leb1-leb0);	
+			float frac = (lp-leb0)/(leb1-leb0);
 			if (frac >= 1.0f) {
-				/* moving toward but not hitting triangle */ 
+				/* moving toward but not hitting triangle */
 				CollisionContext.AxisId = CollisionContext.TestAxisId;
-				CollisionContext.MaxFrac = 1.0f; 
-				return true;  
+				CollisionContext.MaxFrac = 1.0f;
+				return true;
 			} else {
 				/* moving toward, hitting triangle */
-				if (frac > CollisionContext.MaxFrac) { 
-					CollisionContext.MaxFrac = frac; 
-					CollisionContext.AxisId = CollisionContext.TestAxisId; 
+				if (frac > CollisionContext.MaxFrac) {
+					CollisionContext.MaxFrac = frac;
+					CollisionContext.AxisId = CollisionContext.TestAxisId;
 					CollisionContext.Side = CollisionContext.TestSide;
 					CollisionContext.Point = CollisionContext.TestPoint;
 				}
 			}
 		} else {
-			/* moving away or not moving */ 
+			/* moving away or not moving */
 			CollisionContext.AxisId = CollisionContext.TestAxisId;
-			CollisionContext.MaxFrac = 1.0f; 
-			return true;  
+			CollisionContext.MaxFrac = 1.0f;
+			return true;
 		}
 	}
 	return false;
@@ -278,7 +278,7 @@ static inline bool aabtri_check_axis(void)
 	axismove = Vector3::Dot_Product(CollisionContext.Move,CollisionContext.TestAxis);
 
 	// I want the axis centered at the box, pointing towards the triangle
-	if (dist < 0) {		
+	if (dist < 0) {
 		dist = -dist;
 		axismove = -axismove;
 		CollisionContext.TestAxis = -CollisionContext.TestAxis;
@@ -289,15 +289,15 @@ static inline bool aabtri_check_axis(void)
 
 	// compute coordinates of the leading edge of the box at t0 and t1
 	leb0 =	CollisionContext.Box->Extent.X * WWMath::Fabs(CollisionContext.TestAxis.X) +
-				CollisionContext.Box->Extent.Y * WWMath::Fabs(CollisionContext.TestAxis.Y) + 
+				CollisionContext.Box->Extent.Y * WWMath::Fabs(CollisionContext.TestAxis.Y) +
 				CollisionContext.Box->Extent.Z * WWMath::Fabs(CollisionContext.TestAxis.Z);
 	leb1 = leb0 + axismove;
-	
+
 	// compute coordinate of "leading edge of the triangle" relative to the box center.
 	lp = 0;
 	tmp = Vector3::Dot_Product(CollisionContext.E[0],CollisionContext.TestAxis); if (tmp < lp) lp = tmp;
 	tmp = Vector3::Dot_Product(CollisionContext.E[1],CollisionContext.TestAxis); if (tmp < lp) lp = tmp;
-	lp = dist + lp;	
+	lp = dist + lp;
 
 	return aabtri_separation_test(/*CollisionContext,*/lp,leb0,leb1);
 }
@@ -335,7 +335,7 @@ static inline bool aabtri_check_cross_axis
 	axismove = Vector3::Dot_Product(CollisionContext.Move,CollisionContext.TestAxis);
 
 	// I want the axis centered at the box, pointing towards the triangle
-	if (p0 < 0) {		
+	if (p0 < 0) {
 		p0 = -p0;
 		axismove = -axismove;
 		dp = -dp;
@@ -347,11 +347,11 @@ static inline bool aabtri_check_cross_axis
 
 	// compute coordinates of the leading edge of the box at t1
 	leb1 = leb0 + axismove;
-	
+
 	// compute coordinate of "leading edge of the triangle" relative to the box center.
 	lp = 0; CollisionContext.TestPoint = 0;
 	if (dp < 0) { lp = dp; CollisionContext.TestPoint = dpi; }
-	lp = p0 + lp;	
+	lp = p0 + lp;
 
 	return aabtri_separation_test(/*CollisionContext,*/lp,leb0,leb1);
 }
@@ -389,7 +389,7 @@ static inline bool aabtri_check_basis_axis
 	axismove = Vector3::Dot_Product(CollisionContext.Move,CollisionContext.TestAxis);
 
 	// we want the axis centered at the box, pointing towards the triangle
-	if (dist < 0) {		
+	if (dist < 0) {
 		dist = -dist;
 		axismove = -axismove;
 		dp1 = -dp1;
@@ -401,13 +401,13 @@ static inline bool aabtri_check_basis_axis
 	}
 
 	// this is the "optimization", leb0 = one of the extents
-	leb1 = leb0 + axismove;	
-	
+	leb1 = leb0 + axismove;
+
 	// compute coordinate of "leading edge of the polygon" relative to the box center.
 	lp = 0; CollisionContext.TestPoint = 0;
 	if (dp1 < lp) { lp = dp1; CollisionContext.TestPoint = 1; }
 	if (dp2 < lp) { lp = dp2; CollisionContext.TestPoint = 2; }
-	lp = dist + lp;	
+	lp = dist + lp;
 
 	return aabtri_separation_test(/*CollisionContext,*/lp,leb0,leb1);
 }
@@ -450,7 +450,7 @@ static inline bool aabtri_check_normal_axis(void)
 	}
 
 	leb0 =	CollisionContext.Box->Extent.X * WWMath::Fabs(CollisionContext.AN[0]) +
-				CollisionContext.Box->Extent.Y * WWMath::Fabs(CollisionContext.AN[1]) + 
+				CollisionContext.Box->Extent.Y * WWMath::Fabs(CollisionContext.AN[1]) +
 				CollisionContext.Box->Extent.Z * WWMath::Fabs(CollisionContext.AN[2]);
 	leb1 = leb0 + axismove;
 	CollisionContext.TestPoint = 0;
@@ -500,7 +500,7 @@ static inline void aabtri_compute_contact_normal
 )
 {
 #if 1
-	switch(CollisionContext.AxisId) 
+	switch(CollisionContext.AxisId)
 	{
 		case INTERSECTION:
 			set_norm = CollisionContext.N;
@@ -652,7 +652,7 @@ bool CollisionMath::Collide
 		dp = CollisionContext.AN[0];
 		leb0 = box.Extent[1]*WWMath::Fabs(CollisionContext.AE[2][0]) + box.Extent[2]*WWMath::Fabs(CollisionContext.AE[1][0]);
 		if (aabtri_check_cross_axis(dp,2,leb0)) goto exit;
-	} 
+	}
 
 	/*
 	** AXIS_A0xE1
@@ -749,7 +749,7 @@ bool CollisionMath::Collide
 		leb0 = box.Extent[0]*WWMath::Fabs(CollisionContext.AE[1][1]) + box.Extent[1]*WWMath::Fabs(CollisionContext.AE[0][1]);
 		if (aabtri_check_cross_axis(dp,1,leb0)) goto exit;
 	}
-	
+
 	/*
 	** AXIS_A2xE2
 	*/
@@ -772,7 +772,7 @@ bool CollisionMath::Collide
 
 		CollisionContext.TestAxis.Set(0,-CollisionContext.Move.Z,CollisionContext.Move.Y);						// A0 X Move
 		VERIFY_CROSS(Vector3(1,0,0),CollisionContext.Move,CollisionContext.TestAxis);
-		if (CollisionContext.TestAxis.Length2() > AXISLEN_EPSILON2) {					
+		if (CollisionContext.TestAxis.Length2() > AXISLEN_EPSILON2) {
 			if (aabtri_check_axis()) goto exit;
 		}
 		CollisionContext.TestAxis.Set(CollisionContext.Move.Z,0,-CollisionContext.Move.X);						// A1 X Move
@@ -798,7 +798,7 @@ exit:
 	}
 
 	/*
-	** If the triangle and box are intersecting before the move, return that 
+	** If the triangle and box are intersecting before the move, return that
 	** result.
 	*/
 	if (CollisionContext.StartBad) {
@@ -810,14 +810,14 @@ exit:
 	}
 
 	/*
-	** If the fraction allowed is basically equal to the fraction allowed by 
+	** If the fraction allowed is basically equal to the fraction allowed by
 	** another polygon, try to pick the polygon which is least "edge-on" to the
 	** move.
 	*/
 	if ((CollisionContext.MaxFrac <= result->Fraction) && (CollisionContext.MaxFrac < 1.0f)) {
 
 		/*
-		** Reflect the normal if it is pointing the same way as our move 
+		** Reflect the normal if it is pointing the same way as our move
 		** (probably hitting the back side of a polygon)
 		*/
 		Vector3 tmp_norm(0.0f,0.0f,0.0f);
@@ -830,19 +830,19 @@ exit:
 		** If this polygon cuts off more of the move -OR- this polygon cuts
 		** of the same amount but has a "better" normal, then use this normal
 		*/
-		if (	(WWMath::Fabs(CollisionContext.MaxFrac - result->Fraction) > WWMATH_EPSILON) ||  
+		if (	(WWMath::Fabs(CollisionContext.MaxFrac - result->Fraction) > WWMATH_EPSILON) ||
 				(Vector3::Dot_Product(tmp_norm,move) < Vector3::Dot_Product(result->Normal,move)))
 		{
 			result->Normal = tmp_norm;
 			WWASSERT(WWMath::Fabs(result->Normal.Length() - 1.0f) < WWMATH_EPSILON);
 		}
-				
+
 		result->Fraction = CollisionContext.MaxFrac;
 
 		TRACK_COLLISION_AABOX_TRI_HIT;
 		return true;
 	}
-	
+
 	return false;
 }
 
@@ -851,7 +851,7 @@ exit:
 /*
 ** AABTIntersectStruct
 ** Scratchpad variables for the AABox-Triangle intersection functions.  One instance
-** of this structure will be used for all of the local variables and its pointer will be 
+** of this structure will be used for all of the local variables and its pointer will be
 ** handed of to various inline functions for the axis tests.
 ** Note that much of the code needs the un-normalized triangle normal.  For this reason,
 ** I have to compute N rather than copying it from the triangle.  (commenting this to
@@ -860,21 +860,21 @@ exit:
 struct AABTIntersectStruct
 {
 	AABTIntersectStruct(void) :
-		Box(NULL),															
+		Box(NULL),
 		Tri(NULL)
 	{
 	}
-	
-	void Init(const AABoxClass &box,const TriClass &tri) 
+
+	void Init(const AABoxClass &box,const TriClass &tri)
 	{
-		Box = &box;															
+		Box = &box;
 		Tri = &tri;
 		Vector3::Subtract(*tri.V[0],box.Center,&D);				// vector from center of box to vertex 0
-		Vector3::Subtract(*tri.V[1],*tri.V[0],&E[0]);			
-		Vector3::Subtract(*tri.V[2],*tri.V[0],&E[1]);			
+		Vector3::Subtract(*tri.V[1],*tri.V[0],&E[0]);
+		Vector3::Subtract(*tri.V[2],*tri.V[0],&E[1]);
 		Vector3::Subtract(E[1],E[0],&E[2]);
 
-		Vector3::Cross_Product(E[0],E[1],&N);	
+		Vector3::Cross_Product(E[0],E[1],&N);
 	}
 
 
@@ -883,14 +883,14 @@ struct AABTIntersectStruct
 	float						AN[3];				// Dot products of the Basis vectors and the normal
 	Vector3					AxE[3][3];			// Cross produts of the Basis vectors and edges
 
-	Vector3					E[3];					// edge vectors for the triangle 
+	Vector3					E[3];					// edge vectors for the triangle
 	Vector3					N;						// normal (NOT normalized!!!)
 
 	const AABoxClass *	Box;
 	const TriClass *		Tri;
 
 private:
-	
+
 	// not implemented
 	AABTIntersectStruct(const AABTIntersectStruct &);
 	AABTIntersectStruct & operator = (const AABTIntersectStruct &);
@@ -926,7 +926,7 @@ static inline bool aabtri_intersect_cross_axis
 	p0 = Vector3::Dot_Product(IntersectContext.D,axis);
 
 	// I want the axis centered at the box, pointing towards the triangle
-	if (p0 < 0) {		
+	if (p0 < 0) {
 		p0 = -p0;
 		axis = -axis;
 		dp = -dp;
@@ -935,7 +935,7 @@ static inline bool aabtri_intersect_cross_axis
 	// compute coordinate of "leading edge of the triangle" relative to the box center.
 	lp = 0;
 	if (dp < 0) { lp = dp; }
-	lp = p0 + lp;	
+	lp = p0 + lp;
 
 	return (lp - leb0 > -WWMATH_EPSILON);
 }
@@ -969,18 +969,18 @@ static inline bool aabtri_intersect_basis_axis
 	dist = Vector3::Dot_Product(IntersectContext.D,axis);
 
 	// we want the axis centered at the box, pointing towards the triangle
-	if (dist < 0) {		
+	if (dist < 0) {
 		dist = -dist;
 		axis = -axis;
 		dp1 = -dp1;
 		dp2 = -dp2;
-	} 
+	}
 
 	// compute coordinate of "leading edge of the polygon" relative to the box center.
 	lp = 0;
 	if (dp1 < lp) { lp = dp1; }
 	if (dp2 < lp) { lp = dp2; }
-	lp = dist + lp;	
+	lp = dist + lp;
 
 	return (lp - leb0 > -WWMATH_EPSILON);
 }
@@ -1018,7 +1018,7 @@ static inline bool aabtri_intersect_normal_axis
 	}
 
 	leb0 =	IntersectContext.Box->Extent.X * WWMath::Fabs(IntersectContext.AN[0]) +
-				IntersectContext.Box->Extent.Y * WWMath::Fabs(IntersectContext.AN[1]) + 
+				IntersectContext.Box->Extent.Y * WWMath::Fabs(IntersectContext.AN[1]) +
 				IntersectContext.Box->Extent.Z * WWMath::Fabs(IntersectContext.AN[2]);
 	lp = dist;	// this is the "optimization", don't have to find lp
 
@@ -1168,7 +1168,7 @@ bool CollisionMath::Intersection_Test(const AABoxClass & box,const TriClass & tr
 		leb0 = box.Extent[0]*WWMath::Fabs(IntersectContext.AE[1][1]) + box.Extent[1]*WWMath::Fabs(IntersectContext.AE[0][1]);
 		if (aabtri_intersect_cross_axis(axis,dp,leb0)) return false;
 	}
-	
+
 	/*
 	** AXIS_A2xE2
 	*/

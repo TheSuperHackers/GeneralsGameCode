@@ -38,8 +38,8 @@ IMPLEMENT_DYNCREATE(CBabylonDlgAutoProxy, CCmdTarget)
 CBabylonDlgAutoProxy::CBabylonDlgAutoProxy()
 {
 	EnableAutomation();
-	
-	// To keep the application running as long as an automation 
+
+	// To keep the application running as long as an automation
 	//	object is active, the constructor calls AfxOleLockApp.
 	AfxOleLockApp();
 
@@ -87,7 +87,7 @@ BEGIN_DISPATCH_MAP(CBabylonDlgAutoProxy, CCmdTarget)
 END_DISPATCH_MAP()
 
 // Note: we add support for IID_IBabylon to support typesafe binding
-//  from VBA.  This IID must match the GUID that is attached to the 
+//  from VBA.  This IID must match the GUID that is attached to the
 //  dispinterface in the .ODL file.
 
 // {2BF31248-3BA1-11D3-B9DA-006097B90D93}

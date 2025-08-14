@@ -40,10 +40,12 @@
 #ifndef ALWAYS_H
 #define ALWAYS_H
 
+#include "WWCommon.h"
+
 #include <assert.h>
 #include <new>
 
-// TheSuperHackers @compile feliwir 17/04/2025 include utility macros for cross-platform compatibility
+// TheSuperHackers @build feliwir 17/04/2025 include utility macros for cross-platform compatibility
 #include <Utility/compat.h>
 #include <Utility/stdint_adapter.h>
 #include <Utility/CppMacros.h>
@@ -106,7 +108,7 @@
 
 #endif
 
-#if defined(RTS_DEBUG) 
+#if defined(RTS_DEBUG)
 	#define MSGW3DNEW(MSG)					new( MSG, 0 )
 	#define MSGW3DNEWARRAY(MSG)			new( MSG, 0 )
 	#define W3DNEW									new("W3D_" __FILE__, 0)

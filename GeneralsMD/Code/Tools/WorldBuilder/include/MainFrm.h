@@ -60,9 +60,9 @@ class ScriptDialog;
 
 class CMainFrame : public CFrameWnd
 {
-  DECLARE_DYNAMIC(CMainFrame) 
+  DECLARE_DYNAMIC(CMainFrame)
 
-public:	
+public:
 	CMainFrame();
 
 // Attributes
@@ -122,7 +122,7 @@ protected:  // control bar embedded members
 	LayersList*					m_layersList;
 	ScriptDialog*				m_scriptDialog;
 	RulerOptions				m_rulerOptions;
-	
+
 	CWnd							*m_curOptions;
 	Int								m_curOptionsX;
 	Int								m_curOptionsY;

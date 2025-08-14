@@ -66,14 +66,14 @@ bool IntersectionClass::Intersect_RenderObject(RenderObjClass *RObj, Intersectio
 
 	return RObj->Intersect(this, FinalResult);
 }
-	
+
 // iterate through the layers of a world, front to back, returning true if/when an intersection
 // with an object occurs.
 bool IntersectionClass::Intersect_Screen_Point_Layer_Range
 (
 	float screen_x,
-	float screen_y, 
-	const LayerClass &TopLayer, 
+	float screen_y,
+	const LayerClass &TopLayer,
 	const LayerClass &BackLayer
 )
 {
@@ -91,7 +91,7 @@ bool IntersectionClass::Intersect_Screen_Point_Layer_Range
 			return true;
 
 		// if this is the back layer then that is all we need to test
-		if(Layer == &BackLayer) 
+		if(Layer == &BackLayer)
 			return false;
 
 		Layer = Layer->Next();
@@ -156,8 +156,8 @@ bool IntersectionClass::Intersect_Layer(const LayerClass &Layer, bool Test_All)
 
 
 void IntersectionClass::Append_Object_Array(
-	int MaxCount, 
-	int &CurrentCount, 
+	int MaxCount,
+	int &CurrentCount,
 	RenderObjClass **ObjectArray,
 	RenderObjClass *Object)
 {
@@ -190,9 +190,9 @@ bool IntersectionClass::Intersect_Box(Vector3 &Box_Min, Vector3 &Box_Max, Inters
 	int counter;
 	float distance[PLANE_COUNT];
 	float candidate_plane[PLANE_COUNT];
-	
+
 	REGISTER Vector3 *intersection = &FinalResult->Intersection;
-	
+
 	// Find candidate planes and determine if the ray is outside the box
 	for (counter = 0; counter < PLANE_COUNT; counter++) {
 		if((*RayLocation)[counter] < Box_Min[counter]) {
@@ -209,13 +209,13 @@ bool IntersectionClass::Intersect_Box(Vector3 &Box_Min, Vector3 &Box_Max, Inters
 			}
 		}
 	}
-	
+
 	// check to see if the ray origin is inside bounding box
 	if(inside)	{
 		*intersection = *RayLocation;
 		return FinalResult->Intersects = true;
 	}
-	
+
 	// Calculate distances to candidate planes
 	for (counter = 0; counter < PLANE_COUNT; counter++) {
 		if ((quadrant[counter] != MIDDLE) && ((*RayDirection)[counter] != 0.0f))
@@ -229,10 +229,10 @@ bool IntersectionClass::Intersect_Box(Vector3 &Box_Min, Vector3 &Box_Max, Inters
 	for (counter = 1; counter < PLANE_COUNT; counter++) {
 		if (distance[nearest_plane] < distance[counter])
 			nearest_plane = counter;
-	}	
+	}
 
 	// Check to make sure the nearest plane is not behind the ray (inside box tested above)
-	if (distance[nearest_plane] < 0.0f) 
+	if (distance[nearest_plane] < 0.0f)
 		return FinalResult->Intersects = false;
 
 	for (counter = 0; counter < PLANE_COUNT; counter++) {
@@ -245,14 +245,14 @@ bool IntersectionClass::Intersect_Box(Vector3 &Box_Min, Vector3 &Box_Max, Inters
 		}
 	}
 	return FinalResult->Intersects = true; // ray hits box
-}	
+}
 
 
 // simply returns true if a ray hits the bounding sphere of any node in a hierarchy
 // note: Result will only contain range, not the intersection point/normal.
-bool IntersectionClass::Intersect_Hierarchy_Sphere_Quick(RenderObjClass *Hierarchy, IntersectionResultClass *FinalResult) 
+bool IntersectionClass::Intersect_Hierarchy_Sphere_Quick(RenderObjClass *Hierarchy, IntersectionResultClass *FinalResult)
 {
-	
+
 	int counter = Hierarchy->Get_Num_Sub_Objects();
 	while(counter--) {
 		RenderObjClass *obj = Hierarchy->Get_Sub_Object(counter);
@@ -266,7 +266,7 @@ bool IntersectionClass::Intersect_Hierarchy_Sphere_Quick(RenderObjClass *Hierarc
 // returns true if a ray hits the bounding sphere of any node in a hierarchy
 // note: Result will contain range and the intersection point/normal.
 bool IntersectionClass::Intersect_Hierarchy_Sphere(RenderObjClass *Hierarchy, IntersectionResultClass *FinalResult) {
-	
+
 	int counter = Hierarchy->Get_Num_Sub_Objects();
 	while(counter--) {
 		RenderObjClass *obj = Hierarchy->Get_Sub_Object(counter);
@@ -278,9 +278,9 @@ bool IntersectionClass::Intersect_Hierarchy_Sphere(RenderObjClass *Hierarchy, In
 }
 
 void IntersectionClass::Append_Hierarchy_Objects(
-	int MaxCount, 
-	int &CurrentCount, 
-	RenderObjClass **ObjectArray, 
+	int MaxCount,
+	int &CurrentCount,
+	RenderObjClass **ObjectArray,
 	RenderObjClass *Hierarchy,
 	bool Test_Bounding_Sphere,
 	bool Convex)
@@ -324,7 +324,7 @@ bool IntersectionClass::Intersect_Hierarchy(RenderObjClass *Hierarchy, Intersect
 	// make sure there's at least one sphere hit before continuing to more expensive tests below..
 	if(candidate_count == 0) {
 	//			OutputDebugString("/"); // no sphere intersections
-		return FinalResult->Intersects = false; 
+		return FinalResult->Intersects = false;
 	}
 
 	// note: Test_Bounding_Sphere argument is false because the Append_Hierarchy_Objects will have
@@ -358,8 +358,8 @@ RenderObjClass *IntersectionClass::Intersect_Sub_Object(float screenx, float scr
 bool IntersectionClass::Intersect_Object_Array(
 	int Object_Count,
 	RenderObjClass **ObjectArray,
-	IntersectionResultClass *FinalResult, 
-	bool Test_Bounding_Sphere, 
+	IntersectionResultClass *FinalResult,
+	bool Test_Bounding_Sphere,
 	bool Convex
 	)
 {
@@ -371,9 +371,9 @@ bool IntersectionClass::Intersect_Object_Array(
 bool IntersectionClass::Intersect_Object_Array(
 	int Object_Count,
 	RenderObjClass **ObjectArray,
-	IntersectionResultClass *FinalResult, 
+	IntersectionResultClass *FinalResult,
 	IntersectionResultClass *TemporaryResults,
-	bool Test_Bounding_Sphere, 
+	bool Test_Bounding_Sphere,
 	bool Convex
 	)
 {
@@ -395,7 +395,7 @@ bool IntersectionClass::Intersect_Object_Array(
 					nearest_index = counter;
 					counter = 0;
 				}
-			}		
+			}
 		} else {
 			while(counter--) {
 				hit = ObjectArray[counter]->Intersect(this, FinalResult);
@@ -403,7 +403,7 @@ bool IntersectionClass::Intersect_Object_Array(
 					nearest_index = counter;
 					counter = 0;
 				}
-			}		
+			}
 		}
 	} else {
 		if(Test_Bounding_Sphere) {
@@ -415,13 +415,13 @@ bool IntersectionClass::Intersect_Object_Array(
 		} else {
 			while(counter--) {
 				hit |= ObjectArray[counter]->Intersect(this, &TemporaryResults[counter]);
-			}		
+			}
 		}
 	}
 	// test to see if anything actually hit a mesh
 	if( ! hit ) {
-//		OutputDebugString("!"); // no mesh intersections 
-		return FinalResult->Intersects = false; 
+//		OutputDebugString("!"); // no mesh intersections
+		return FinalResult->Intersects = false;
 	}
 
 	if(! (Convex || ConvexTest)) {
@@ -436,7 +436,7 @@ bool IntersectionClass::Intersect_Object_Array(
 		}
 		Copy_Results(FinalResult, &TemporaryResults[nearest_index]);
 	}
-//	OutputDebugString("+");	
+//	OutputDebugString("+");
 //	Debug.Print("Mesh ", Object_Array[nearest_index]);
 //	Intersection_Node = candidate_indices[nearest_index];
 	return true;

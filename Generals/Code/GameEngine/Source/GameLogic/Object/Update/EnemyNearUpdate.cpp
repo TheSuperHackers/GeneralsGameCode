@@ -59,7 +59,7 @@ EnemyNearUpdate::~EnemyNearUpdate( void )
 
 
 //-------------------------------------------------------------------------------------------------
-/** 
+/**
  * Look around us for enemies.
  */
 void EnemyNearUpdate::checkForEnemies( void )

@@ -50,7 +50,7 @@ TileData::TileData()
 #define TILE_PIXEL_EXTENT_MIP5 2
 #define TILE_PIXEL_EXTENT_MIP6 1
 
-Bool TileData::hasRGBDataForWidth(Int width) 
+Bool TileData::hasRGBDataForWidth(Int width)
 {
 	if (width == TILE_PIXEL_EXTENT) return(true);
 	if (width == TILE_PIXEL_EXTENT_MIP1) return(true);
@@ -62,7 +62,7 @@ Bool TileData::hasRGBDataForWidth(Int width)
 	return(false);
 }
 
-UnsignedByte * TileData::getRGBDataForWidth(Int width) 
+UnsignedByte * TileData::getRGBDataForWidth(Int width)
 {
 	// default
 	if (width == TILE_PIXEL_EXTENT_MIP1) return(m_tileDataMip32);
@@ -74,18 +74,18 @@ UnsignedByte * TileData::getRGBDataForWidth(Int width)
 	return(m_tileData);
 }
 
-void TileData::updateMips(void) 
+void TileData::updateMips(void)
 {
-	doMip(m_tileData, TILE_PIXEL_EXTENT, m_tileDataMip32); 
-	doMip(m_tileDataMip32, TILE_PIXEL_EXTENT_MIP1, m_tileDataMip16); 
-	doMip(m_tileDataMip16, TILE_PIXEL_EXTENT_MIP2, m_tileDataMip8); 
-	doMip(m_tileDataMip8, TILE_PIXEL_EXTENT_MIP3, m_tileDataMip4); 
-	doMip(m_tileDataMip4, TILE_PIXEL_EXTENT_MIP4, m_tileDataMip2); 
-	doMip(m_tileDataMip2, TILE_PIXEL_EXTENT_MIP5, m_tileDataMip1); 
+	doMip(m_tileData, TILE_PIXEL_EXTENT, m_tileDataMip32);
+	doMip(m_tileDataMip32, TILE_PIXEL_EXTENT_MIP1, m_tileDataMip16);
+	doMip(m_tileDataMip16, TILE_PIXEL_EXTENT_MIP2, m_tileDataMip8);
+	doMip(m_tileDataMip8, TILE_PIXEL_EXTENT_MIP3, m_tileDataMip4);
+	doMip(m_tileDataMip4, TILE_PIXEL_EXTENT_MIP4, m_tileDataMip2);
+	doMip(m_tileDataMip2, TILE_PIXEL_EXTENT_MIP5, m_tileDataMip1);
 }
 
 
-void TileData::doMip(UnsignedByte *pHiRes, Int hiRow, UnsignedByte *pLoRes) 
+void TileData::doMip(UnsignedByte *pHiRes, Int hiRow, UnsignedByte *pLoRes)
 {
 	Int i, j;
 	for (i=0; i<hiRow; i+=2) {

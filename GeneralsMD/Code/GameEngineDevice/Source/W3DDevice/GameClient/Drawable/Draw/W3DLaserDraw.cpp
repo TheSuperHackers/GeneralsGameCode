@@ -24,7 +24,7 @@
 
 // FILE: W3DLaserDraw.cpp /////////////////////////////////////////////////////////////////////////
 // Author: Colin Day, May 2001
-// Desc:   W3DLaserDraw 
+// Desc:   W3DLaserDraw
 // Updated: Kris Morness July 2002 -- made it data driven and added new features to make it flexible.
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -85,11 +85,11 @@ W3DLaserDrawModuleData::~W3DLaserDrawModuleData()
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void W3DLaserDrawModuleData::buildFieldParse(MultiIniFieldParse& p) 
+void W3DLaserDrawModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
   ModuleData::buildFieldParse(p);
 
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
 		{ "NumBeams",							INI::parseUnsignedInt,					NULL, offsetof( W3DLaserDrawModuleData, m_numBeams ) },
 		{ "InnerBeamWidth",				INI::parseReal,									NULL, offsetof( W3DLaserDrawModuleData, m_innerBeamWidth ) },
@@ -117,8 +117,8 @@ void W3DLaserDrawModuleData::buildFieldParse(MultiIniFieldParse& p)
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-W3DLaserDraw::W3DLaserDraw(Thing* thing, const ModuleData* moduleData) :
-	DrawModule(thing, moduleData),
+W3DLaserDraw::W3DLaserDraw( Thing *thing, const ModuleData* moduleData ) :
+	DrawModule( thing, moduleData ),
 	m_line3D(NULL),
 	m_texture(NULL),
 	m_textureAspectRatio(1.0f),
@@ -193,7 +193,7 @@ W3DLaserDraw::W3DLaserDraw(Thing* thing, const ModuleData* moduleData) :
 	for( UnsignedInt segment = 0; segment < data->m_segments; segment++ )
 	{
 		//We don't care about segment positioning yet until we actually set the position
-		
+
 		// create all the lines we need at the right transparency level
 		for( i = data->m_numBeams - 1; i >= 0; i-- )
 		{
@@ -202,7 +202,7 @@ W3DLaserDraw::W3DLaserDraw(Thing* thing, const ModuleData* moduleData) :
 			Real red, green, blue, alpha, width;
 
 			if( data->m_numBeams == 1 )
-			{	
+			{
 				width = data->m_innerBeamWidth;
 				alpha = innerAlpha;
 				red = innerRed * innerAlpha;
@@ -215,7 +215,7 @@ W3DLaserDraw::W3DLaserDraw(Thing* thing, const ModuleData* moduleData) :
 				//0 means use min value, 1 means use max value
 				//0.2 means min value + 20% of the diff between min and max
 				Real scale = i / ( data->m_numBeams - 1.0f);
-				
+
 				width		= data->m_innerBeamWidth	+ scale * (data->m_outerBeamWidth - data->m_innerBeamWidth);
 				alpha		= innerAlpha							+ scale * (outerAlpha - innerAlpha);
 				red			= innerRed								+ scale * (outerRed - innerRed) * innerAlpha;
@@ -224,7 +224,7 @@ W3DLaserDraw::W3DLaserDraw(Thing* thing, const ModuleData* moduleData) :
 			}
 
 			m_line3D[ index ] = NEW SegmentedLineClass;
-			
+
 			SegmentedLineClass *line = m_line3D[ index ];
 			if( line )
 			{
@@ -393,7 +393,7 @@ void W3DLaserDraw::doDrawModule(const Matrix3D* transformMtx)
 				lineMiddle.add( &lineEnd );
 				lineMiddle.scale( 0.5 );
 
-				//The half length is used to scale with the distance from middle to 
+				//The half length is used to scale with the distance from middle to
 				//get our cos( 0 to 0.25 PI) cos value
 				Real halfLength = lineLength * 0.5f;
 
@@ -403,7 +403,7 @@ void W3DLaserDraw::doDrawModule(const Matrix3D* transformMtx)
 
 				//Offset the segment ever-so-slightly to minimize overlap -- only apply
 				//to segments that are not the start/end point
-				if( segment > 0 ) 
+				if( segment > 0 )
 				{
 					startSegmentRatio -= data->m_segmentOverlapRatio;
 				}
@@ -434,7 +434,7 @@ void W3DLaserDraw::doDrawModule(const Matrix3D* transformMtx)
 				vector.set( &lineMiddle );
 				vector.sub( &segmentStart );
 				Real dist = vector.length();
-				Real scaledRadians = dist / halfLength * PI * 0.5f; 
+				Real scaledRadians = dist / halfLength * PI * 0.5f;
 				Real height = cos( scaledRadians );
 				height *= data->m_arcHeight;
 				segmentStart.z += height;
@@ -443,17 +443,17 @@ void W3DLaserDraw::doDrawModule(const Matrix3D* transformMtx)
 				vector.set( &lineMiddle );
 				vector.sub( &segmentEnd );
 				dist = vector.length();
-				scaledRadians = dist / halfLength * PI * 0.5f; 
+				scaledRadians = dist / halfLength * PI * 0.5f;
 				height = cos( scaledRadians );
 				height *= data->m_arcHeight;
 				segmentEnd.z += height;
-				
+
 				//This makes the laser skim the ground rather than penetrate it!
-				laserPoints[ 0 ].Set( segmentStart.x, segmentStart.y, 
+				laserPoints[ 0 ].Set( segmentStart.x, segmentStart.y,
 					MAX( segmentStart.z, 2.0f + TheTerrainLogic->getGroundHeight(segmentStart.x, segmentStart.y) ) );
-				laserPoints[ 1 ].Set( segmentEnd.x, segmentEnd.y, 
+				laserPoints[ 1 ].Set( segmentEnd.x, segmentEnd.y,
 					MAX( segmentEnd.z, 2.0f + TheTerrainLogic->getGroundHeight(segmentEnd.x, segmentEnd.y) ) );
-				
+
 			}
 			else
 			{
@@ -474,7 +474,7 @@ void W3DLaserDraw::doDrawModule(const Matrix3D* transformMtx)
 				int index = segment * data->m_numBeams + i;
 
 				if( data->m_numBeams == 1 )
-				{	
+				{
 					width = data->m_innerBeamWidth * update->getWidthScale();
 					alpha = innerAlpha * update->getAlphaScale();
 
@@ -551,7 +551,7 @@ void W3DLaserDraw::doDrawModule(const Matrix3D* transformMtx)
 			}
 		}
 	}
-	
+
 	return;
 }
 

@@ -63,16 +63,16 @@ public:
 		EX_CANCEL = 1
 	};
 
-	NullSaveClass(				char *						mesh_name,	
+	NullSaveClass(				char *						mesh_name,
 									char *						container_name,
 									Progress_Meter_Class &	meter);
 
 	int Write_To_File(ChunkSaveClass & csave);
 
 private:
-	
-	W3dNullObjectStruct		NullData;				
-	
+
+	W3dNullObjectStruct		NullData;
+
 };
 
 

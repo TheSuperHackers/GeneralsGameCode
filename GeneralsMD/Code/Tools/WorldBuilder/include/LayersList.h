@@ -16,7 +16,7 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-// FILE: LayersList.h 
+// FILE: LayersList.h
 /*---------------------------------------------------------------------------*/
 /* EA Pacific                                                                */
 /* Confidential Information	                                                 */
@@ -70,14 +70,14 @@ class CLLTreeCtrl : public CTreeCtrl
 	public:
 		AsciiString getLastClickedLayer(void) {	return mLastClickedLayer; }
 		AsciiString getLastClickedObject(void) {	return mLastClickedObject; }
-	
+
 	protected:
 		AsciiString mLastClickedLayer;
 		AsciiString mLastClickedObject;
 		void buildMoveMenu(CMenu* pPopup, UINT firstID);
 		virtual void OnRButtonDown(UINT nFlags, CPoint point);
 		DECLARE_MESSAGE_MAP()
-		
+
 };
 
 
@@ -88,7 +88,7 @@ class LayersList : public CDialog
 
 	public:
 		enum { IDD = IDD_LAYERSLIST };
-		LayersList(UINT nIDTemplate = LayersList::IDD, CWnd *parentWnd = NULL); 
+		LayersList(UINT nIDTemplate = LayersList::IDD, CWnd *parentWnd = NULL);
 		virtual ~LayersList();
 
 		void resetLayers();
@@ -120,7 +120,7 @@ class LayersList : public CDialog
 		static Bool findAndSelectPolygonTrigger(AsciiString selectedItemAsciiString);
 		static void unselectAllMapObjects(void);
 		static void unselectAllPolygonTriggers(void);
-		
+
 	public:
 		// This is a string because making it an AsciiString makes us barf on construction. :-(
 		static std::string TheDefaultLayerName;
@@ -141,17 +141,17 @@ class LayersList : public CDialog
 
 		HTREEITEM findTreeLayerNamed(const AsciiString& nameToFind);
 		HTREEITEM findTreeObjectNamed(const AsciiString& objectToFind, HTREEITEM layerItem);
-			   
-		// This function takes an MapObject, and does one of the following: 
-		// 1) Return true if the MapObject can be found, and 
-		//    layerIt points to a valid layer iterator in which the MapObject was found 
-		//    MapObjectIt points to a valid MapObject iterator on the layerIts MapObjectsInLayer member 
+
+		// This function takes an MapObject, and does one of the following:
+		// 1) Return true if the MapObject can be found, and
+		//    layerIt points to a valid layer iterator in which the MapObject was found
+		//    MapObjectIt points to a valid MapObject iterator on the layerIts MapObjectsInLayer member
 		// 2) Returns false if the MapObject cannot be found.
 		Bool findMapObjectAndList(IN MapObject *MapObjectToFind, OUT ListLayerIt *layerIt = NULL, OUT ListMapObjectPtrIt *MapObjectIt = NULL);
 		Bool findPolygonTriggerAndList(IN PolygonTrigger *PolygonTriggerToFind, OUT ListLayerIt *layerIt = NULL, OUT ListPolygonTriggerPtrIt *PolygonTriggerIt = NULL);
-		
+
 		// This function takes a layer name, and does one of the following:
-		// 1) Return true if the layer can be found, and 
+		// 1) Return true if the layer can be found, and
 		//		layerIt points to a valid layer iterator named layerName
 		// 2) Returns false if the layer cannot be found.
 		Bool findLayerNamed(IN AsciiString layerName, OUT ListLayerIt *layerIt = NULL);
@@ -176,7 +176,7 @@ class LayersList : public CDialog
 		afx_msg void OnMergeViewSelection(UINT commandID);
 		afx_msg void OnSelectActiveLayer();
 
-				
+
 		afx_msg void OnSelectLayerObject();
 		afx_msg void OnNewLayer();
 		afx_msg void OnDeleteLayer();

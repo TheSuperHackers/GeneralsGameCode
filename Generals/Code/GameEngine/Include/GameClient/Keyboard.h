@@ -24,12 +24,12 @@
 
 // FILE: Keyboard.h ///////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information					         
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:    RTS3
@@ -95,26 +95,26 @@ public:
 	virtual ~Keyboard( void );
 
 	// you may extend the functionanilty of these for your device
-	virtual void init( void );							/**< initialize the keyboard, only extend this 
+	virtual void init( void );							/**< initialize the keyboard, only extend this
 																							 functionality, do not replace */
 	virtual void reset( void );							///< Reset keyboard system
-	virtual void update( void );						/**< gather current state of all keys, extend 
+	virtual void update( void );						/**< gather current state of all keys, extend
 																							 this functionality, do not replace */
 	virtual Bool getCapsState( void ) = 0;  ///< get state of caps lock key, return TRUE if down
 
-	virtual void createStreamMessages( void );  /**< given state of device, create 
-																							messages and put them on the 
+	virtual void createStreamMessages( void );  /**< given state of device, create
+																							messages and put them on the
 																							stream for the raw state. */
 	// simplified versions where the caller doesn't care which key type was pressed.
 	Bool isShift();
 	Bool isCtrl();
 	Bool isAlt();
 	Int getModifierFlags() { return m_modifiers; }
-	
+
 	// access methods for key data
 	void resetKeys( void );												///< reset the state of the keys
 	KeyboardIO *getFirstKey( void );							///< get first key ready for processing
-	void setKeyStatusData( UnsignedByte key, 
+	void setKeyStatusData( UnsignedByte key,
 												 KeyboardIO::StatusType data );   ///< set key status
 	WideChar translateKey( WideChar keyCode );		///< translte key code to printable UNICODE char
 	WideChar getPrintableKey( UnsignedByte key, Int state );
@@ -152,7 +152,7 @@ protected:
 	KeyboardIO m_keyStatus[ NUM_KEYS ];  ///< the key status flags
 
 	enum { KEY_NAMES_COUNT = 256 };
-	struct 
+	struct
 	{
 
 		WideChar stdKey;

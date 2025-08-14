@@ -23,7 +23,7 @@ Project Name: Carpenter  (The RedAlert ladder creator)
 File Name   : main.cpp
 Author      : Neal Kettler
 Start Date  : June 1, 1997
-Last Update : June 17, 1997  
+Last Update : June 17, 1997
 \****************************************************************************/
 
 #ifndef WSTRING_HEADER
@@ -35,7 +35,7 @@ Last Update : June 17, 1997
 
 class Wstring
 {
- public: 
+ public:
            Wstring();
            Wstring(const Wstring &other);
            Wstring(const char *string);

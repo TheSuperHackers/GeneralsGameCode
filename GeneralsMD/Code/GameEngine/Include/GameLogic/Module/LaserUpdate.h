@@ -49,7 +49,7 @@ public:
 	AsciiString m_particleSystemName;  ///< Used for the muzzle flare while laser active.
 
 	AsciiString m_targetParticleSystemName;  ///< Used for the target effect while laser active.
-	
+
 	Real m_punchThroughScalar;	///< If non-zero, length modifier when we used to have a target object and now don't
 
 	UnsignedInt m_fadeInDurationFrames;  ///< If non-zero, beam fades in over duration
@@ -63,7 +63,7 @@ public:
 	LaserUpdateModuleData();
 	static void buildFieldParse(MultiIniFieldParse& p);
 
-private: 
+private:
 
 };
 

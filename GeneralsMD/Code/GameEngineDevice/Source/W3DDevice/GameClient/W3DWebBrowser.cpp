@@ -39,7 +39,7 @@
 W3DWebBrowser::W3DWebBrowser() : WebBrowser() {
 }
 
-Bool W3DWebBrowser::createBrowserWindow(const char *tag, GameWindow *win) 
+Bool W3DWebBrowser::createBrowserWindow(const char *tag, GameWindow *win)
 {
 
 	WinInstanceData *winData = win->winGetInstanceData();
@@ -72,7 +72,7 @@ Bool W3DWebBrowser::createBrowserWindow(const char *tag, GameWindow *win)
 	return TRUE;
 }
 
-void W3DWebBrowser::closeBrowserWindow(GameWindow *win) 
+void W3DWebBrowser::closeBrowserWindow(GameWindow *win)
 {
 	DX8WebBrowser::DestroyBrowser(win->winGetInstanceData()->m_decoratedNameString.str());
 }

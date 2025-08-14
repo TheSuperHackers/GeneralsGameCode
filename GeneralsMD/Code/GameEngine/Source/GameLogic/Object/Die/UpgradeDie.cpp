@@ -79,7 +79,7 @@ void UpgradeDie::onDie( const DamageInfo *damageInfo )
 				DEBUG_ASSERTCRASH( 0, ("Object %s just died, but is trying to free upgrade %s in it's producer %s%s",
 					getObject()->getTemplate()->getName().str(),
 					getUpgradeDieModuleData()->m_upgradeName.str(),
-					producer->getTemplate()->getName().str(), 
+					producer->getTemplate()->getName().str(),
 					", which the producer doesn't have. This is used in cases where the producer builds an upgrade that can die... like ranger building scout drones.") );
 			}
 		}

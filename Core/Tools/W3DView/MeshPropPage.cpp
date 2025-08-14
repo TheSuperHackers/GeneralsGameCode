@@ -97,12 +97,12 @@ CMeshPropPage::OnInitDialog (void)
 {
 	// Allow the base class to process this message
     CPropertyPage::OnInitDialog();
-	
+
     if (m_stringMeshName.GetLength () > 0)
     {
         // Get a pointer to the mesh object from the asset manager
         MeshClass *pCMesh = (MeshClass *)WW3DAssetManager::Get_Instance()->Create_Render_Obj (m_stringMeshName);
-        
+
         ASSERT (pCMesh);
         if (pCMesh)
         {
@@ -154,7 +154,7 @@ CMeshPropPage::OnInitDialog (void)
             {
                 SendDlgItemMessage (IDC_COLLISION_TYPE_PHYSICAL, BM_SETCHECK, (WPARAM)TRUE);
             }
-            
+
             // Is this collision type projectile?
             if ((dwCollisionFlags & W3D_MESH_FLAG_COLLISION_TYPE_PROJECTILE) == W3D_MESH_FLAG_COLLISION_TYPE_PROJECTILE)
             {
@@ -174,15 +174,15 @@ CMeshPropPage::OnInitDialog (void)
     }
 
     GetParent ()->GetDlgItem (IDOK)->ShowWindow (SW_HIDE);
-    GetParent ()->GetDlgItem (IDCANCEL)->SetWindowText ("Close");	
+    GetParent ()->GetDlgItem (IDCANCEL)->SetWindowText ("Close");
 	return TRUE;
 }
 
 
-void CMeshPropPage::OnClose() 
+void CMeshPropPage::OnClose()
 {
 	// TODO: Add your message handler code here and/or call default
-	
+
 	CPropertyPage::OnClose();
     return ;
 }

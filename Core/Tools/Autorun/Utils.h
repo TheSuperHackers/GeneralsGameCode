@@ -17,7 +17,7 @@
 */
 
 /***************************************************************************
- *** C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S 		 *** 
+ *** C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S 		 ***
  ***************************************************************************
  *                                                                         *
  *     	          Project Name : Setup                   				   *
@@ -48,7 +48,7 @@ template<class T>
 void swap( T & left, T & right )
 {
 	T temp;
-   
+
 	temp  = left;
 	left  = right;
 	right = temp;

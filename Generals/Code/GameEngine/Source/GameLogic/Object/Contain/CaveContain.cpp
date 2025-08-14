@@ -25,7 +25,7 @@
 // FILE: CaveContain.cpp ////////////////////////////////////////////////////////////////////////////
 // Author: Graham Smallwood, July 2002
 // Desc:   A version of OpenContain that overrides where the passengers are stored: one of CaveSystem's
-//					entries. Changing entry is a script or ini command.  All queries about capacity and 
+//					entries. Changing entry is a script or ini command.  All queries about capacity and
 //					contents are also redirected.  They change sides like Garrison too.
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -94,14 +94,14 @@ void CaveContain::removeFromContain( Object *obj, Bool exposeStealthUnits )
 	}
 
 	// This must come before the onRemov*, because CaveContain's version has a edge-0 triggered event.
-	// If that were to go first, the number would still be 1 at that time.  Noone else cares about 
+	// If that were to go first, the number would still be 1 at that time.  Noone else cares about
 	// order.
 	myTracker->removeFromContain( obj, exposeStealthUnits );
 
 	// trigger an onRemoving event for 'm_object' no longer containing 'itemToRemove->m_object'
 	if (getObject()->getContain())
 		getObject()->getContain()->onRemoving( obj );
-		
+
 	// trigger an onRemovedFrom event for 'remove'
 	obj->onRemovedFrom( getObject() );
 
@@ -144,7 +144,7 @@ void CaveContain::onContaining( Object *obj )
 
 	//
 	// the team of the building is now the same as those that have garrisoned it, be sure
-	// to save our original team tho so that we can revert back to it when all the 
+	// to save our original team tho so that we can revert back to it when all the
 	// occupants are gone
 	//
 	recalcApparentControllingPlayer();
@@ -152,7 +152,7 @@ void CaveContain::onContaining( Object *obj )
 }
 
 //-------------------------------------------------------------------------------------------------
-void CaveContain::onRemoving( Object *obj ) 
+void CaveContain::onRemoving( Object *obj )
 {
 	OpenContain::onRemoving(obj);
 	// object is no longer held inside a garrisoned building
@@ -203,8 +203,8 @@ UnsignedInt CaveContain::getContainCount() const
 	return myTracker->getContainCount();
 }
 
-Int CaveContain::getContainMax( void ) const 
-{ 
+Int CaveContain::getContainMax( void ) const
+{
 	TunnelTracker *myTracker = TheCaveSystem->getTunnelTrackerForCaveIndex( m_caveIndex );
 	return myTracker->getContainMax();
 }
@@ -232,7 +232,7 @@ void CaveContain::onDie( const DamageInfo * damageInfo )
 	TheCaveSystem->unregisterCave( m_caveIndex );
 
 	myTracker->onTunnelDestroyed( getObject() );
-}  
+}
 
 
 //-------------------------------------------------------------------------------------------------
@@ -254,7 +254,7 @@ void CaveContain::onBuildComplete( void )
 	TunnelTracker *myTracker = TheCaveSystem->getTunnelTrackerForCaveIndex( m_caveIndex );
 
 	myTracker->onTunnelCreated( getObject() );
-} 
+}
 
 //-------------------------------------------------------------------------------------------------
 void CaveContain::tryToSetCaveIndex( Int newIndex )
@@ -341,18 +341,18 @@ void CaveContain::changeTeamOnAllConnectedCaves( Team *newTeam, Bool setOriginal
 		Object *currentCave = TheGameLogic->findObjectByID( *iter );
 		if( currentCave )
 		{
-			// This is a distributed Garrison in terms of capturing, so when one node 
+			// This is a distributed Garrison in terms of capturing, so when one node
 			// triggers the change, he needs to tell everyone, so anyone can do the un-change.
 			CaveInterface *caveModule = findCave(currentCave);
 			if( caveModule == NULL )
 				continue;
 			if( setOriginalTeams )
 				caveModule->setOriginalTeam( currentCave->getTeam() );
-			else 
+			else
 				caveModule->setOriginalTeam( NULL );
 
 			// Now do the actual switch for this one.
-			
+
 			currentCave->defect( newTeam, 0 );
 //			currentCave->setTeam( newTeam );
 		}
@@ -370,7 +370,7 @@ void CaveContain::setOriginalTeam( Team *oldTeam )
 // ------------------------------------------------------------------------------------------------
 void CaveContain::crc( Xfer *xfer )
 {
-	
+
 	// extend base class
 	OpenContain::crc( xfer );
 

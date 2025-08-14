@@ -37,7 +37,7 @@
 // checks to see if str matches searchString.  Search string is done in the
 // using * and ? as wildcards. * is used to denote any number of characters,
 // and ? is used to denote a single wildcard character.
-static Bool SearchStringMatches(AsciiString str, AsciiString searchString) 
+static Bool SearchStringMatches(AsciiString str, AsciiString searchString)
 {
 	if (str.getLength() == 0) {
 		if (searchString.getLength() == 0) {
@@ -81,7 +81,7 @@ static Bool SearchStringMatches(AsciiString str, AsciiString searchString)
 	return FALSE;
 }
 
-ArchiveFile::~ArchiveFile() 
+ArchiveFile::~ArchiveFile()
 {
 	if (m_file != NULL) {
 		m_file->close();
@@ -89,12 +89,12 @@ ArchiveFile::~ArchiveFile()
 	}
 }
 
-ArchiveFile::ArchiveFile() 
+ArchiveFile::ArchiveFile()
 {
 	m_rootDirectory.clear();
 }
 
-void ArchiveFile::addFile(const AsciiString& path, const ArchivedFileInfo *fileInfo) 
+void ArchiveFile::addFile(const AsciiString& path, const ArchivedFileInfo *fileInfo)
 {
 	AsciiString temp;
 	temp = path;
@@ -107,7 +107,7 @@ void ArchiveFile::addFile(const AsciiString& path, const ArchivedFileInfo *fileI
 	temp.nextToken(&token, "\\/");
 
 	while (token.getLength() > 0) {
-		if (dirInfo->m_directories.find(token) == dirInfo->m_directories.end()) 
+		if (dirInfo->m_directories.find(token) == dirInfo->m_directories.end())
 		{
 			dirInfo->m_directories[token].clear();
 			dirInfo->m_directories[token].m_directoryName = token;
@@ -132,7 +132,7 @@ void ArchiveFile::getFileListInDirectory(const AsciiString& currentDirectory, co
 	searchDir = originalDirectory;
 	searchDir.toLower();
 	AsciiString token;
-	
+
 	searchDir.nextToken(&token, "\\/");
 
 	while (token.getLength() > 0) {
@@ -187,7 +187,7 @@ void ArchiveFile::getFileListInDirectory(const DetailedArchivedDirectoryInfo *di
 	}
 }
 
-void ArchiveFile::attachFile(File *file) 
+void ArchiveFile::attachFile(File *file)
 {
 	if (m_file != NULL) {
 		m_file->close();
@@ -212,7 +212,7 @@ const ArchivedFileInfo * ArchiveFile::getArchivedFileInfo(const AsciiString& fil
 		DetailedArchivedDirectoryInfoMap::const_iterator it = dirInfo->m_directories.find(token);
 		if (it != dirInfo->m_directories.end())
 		{
-			dirInfo = &it->second; 
+			dirInfo = &it->second;
 		}
 		else
 		{

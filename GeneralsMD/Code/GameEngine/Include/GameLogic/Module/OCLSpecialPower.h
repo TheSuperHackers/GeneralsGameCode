@@ -71,7 +71,7 @@ public:
 	OCLCreateLocType					m_createLoc;
 	Bool											m_isOCLAdjustPositionToPassable; ///< Adjust target to nearest Passable cell
 
-	//We need to know what the final product is going to be for script placement calculations 
+	//We need to know what the final product is going to be for script placement calculations
 	//for construction sites like the sneak attack.
 	AsciiString				m_referenceThingName;
 

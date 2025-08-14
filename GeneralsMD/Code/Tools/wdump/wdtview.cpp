@@ -82,7 +82,7 @@ void CWDumpTreeView::Dump(CDumpContext& dc) const
 /////////////////////////////////////////////////////////////////////////////
 // CWDumpTreeView message handlers
 
-void CWDumpTreeView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint) 
+void CWDumpTreeView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 {
 	// add all the chunk items to the view
 	CTreeCtrl &tree = GetTreeCtrl();
@@ -93,7 +93,7 @@ void CWDumpTreeView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 
 	CWdumpDoc *doc= (CWdumpDoc *) GetDocument();
 	ChunkData *data = &doc->m_ChunkData;
-	
+
 	POSITION p = data->Chunks.GetHeadPosition();
 	while(p) {
 		ChunkItem *item = data->Chunks.GetNext(p);
@@ -102,7 +102,7 @@ void CWDumpTreeView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 }
 
 
-void CWDumpTreeView::OnSelchanged(NMHDR* pNMHDR, LRESULT* pResult) 
+void CWDumpTreeView::OnSelchanged(NMHDR* pNMHDR, LRESULT* pResult)
 {
 	NM_TREEVIEW* pNMTreeView = (NM_TREEVIEW*)pNMHDR;
 
@@ -118,7 +118,7 @@ void CWDumpTreeView::InsertItem(ChunkItem * item, HTREEITEM Parent)
 {
 	const char *name;
 
-	if(item->Type) 
+	if(item->Type)
 		name = item->Type->Name;
 	else {
 		static char _buf[256];
@@ -132,13 +132,13 @@ void CWDumpTreeView::InsertItem(ChunkItem * item, HTREEITEM Parent)
 
 	POSITION p = item->Chunks.GetHeadPosition();
 	while(p != 0) {
-		ChunkItem *subitem = item->Chunks.GetNext(p); 
+		ChunkItem *subitem = item->Chunks.GetNext(p);
 		InsertItem(subitem, tree_item);
 	}
 }
 
 
-void CWDumpTreeView::OnToolsFind() 
+void CWDumpTreeView::OnToolsFind()
 {
 	FindDialog finder;
 
@@ -152,15 +152,15 @@ void CWDumpTreeView::OnToolsFind()
 }
 
 
-void CWDumpTreeView::OnToolsFindNext() 
+void CWDumpTreeView::OnToolsFindNext()
 {
 	ChunkItem *matchedchunkitem;
-	
+
 	// If no string go request one.
 	if (strlen (FindDialog::String()) == 0) {
 
 		OnToolsFind();
-	
+
 	} else {
 
 		FindDialog::Found (false);
@@ -169,7 +169,7 @@ void CWDumpTreeView::OnToolsFindNext()
 		// item that corresponds to the matched chunk item.
 		{
 			CWaitCursor			waitcursor;
-			HTREEITEM			selectedtreeitem;						
+			HTREEITEM			selectedtreeitem;
 			ChunkItem		  *selectedchunkitem;
 			SearchStateEnum	searchstate;
 			CWdumpDoc		  *doc	= (CWdumpDoc *) GetDocument();
@@ -228,7 +228,7 @@ ChunkItem *CWDumpTreeView::FindChunkItem (ChunkItem *selectedchunkitem, ChunkIte
 	switch (searchstate) {
 
 		case FIND_SELECTED_ITEM:
-		
+
 			// Searching for the currently selected chunk item.
 			if (chunkitem == selectedchunkitem) {
 				searchstate = FIND_STRING;
@@ -237,7 +237,7 @@ ChunkItem *CWDumpTreeView::FindChunkItem (ChunkItem *selectedchunkitem, ChunkIte
 
 		case FIND_STRING:
 
-			// Searching for a string associated with the chunk item. 
+			// Searching for a string associated with the chunk item.
 			if (chunkitem == selectedchunkitem) {
 				searchstate = SEARCH_WRAPPED;
 				return (NULL);
@@ -280,7 +280,7 @@ void CWDumpTreeView::SelectTreeItem (HTREEITEM treeitem, ChunkItem *chunkitem)
 
 	// Select a tree item that matches the given chunk item. Recurse if necessary.
 	while (treeitem != NULL) {
-		
+
 		HTREEITEM subtreeitem;
 
 		if (tree.GetItemData (treeitem) == (DWORD) chunkitem) {

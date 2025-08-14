@@ -536,11 +536,11 @@ static Int insertGame( GameWindow *win, GameSpyStagingRoom *game, Bool showMap )
 		gameColor = GameSpyColor[GSCOLOR_GAME_CRCMISMATCH];
 	}
 	UnicodeString gameName = game->getGameName();
-	
+
 	if(TheGameSpyInfo->getDisallowAsianText())
 	{
 		const WideChar *buff = gameName.str();
-		Int length =  gameName.getLength();	
+		Int length =  gameName.getLength();
 		for(Int i = 0; i < length; ++i)
 		{
 			if(buff[i] >= 256)
@@ -550,7 +550,7 @@ static Int insertGame( GameWindow *win, GameSpyStagingRoom *game, Bool showMap )
 	else if(TheGameSpyInfo->getDisallowNonAsianText())
 	{
 		const WideChar *buff = gameName.str();
-		Int length =  gameName.getLength();	
+		Int length =  gameName.getLength();
 		Bool hasUnicode = FALSE;
 		for(Int i = 0; i < length; ++i)
 		{
@@ -649,9 +649,9 @@ static Int insertGame( GameWindow *win, GameSpyStagingRoom *game, Bool showMap )
       const Image *img = TheMappedImageCollection->findImageByName("GoodStatsIcon");
       GadgetListBoxAddEntryImage(win, img, index, COLUMN_USE_STATS, img->getImageHeight(), img->getImageWidth());
 	}
-    
+
   }
-  
+
 	s.format(L"%d", game->getPingAsInt());
 	GadgetListBoxAddEntryText(win, s, gameColor, index, COLUMN_PING);
 	Int ping = game->getPingAsInt();

@@ -165,7 +165,7 @@ void ExportAllDlg::OnInitDialog (void)
 	SetWindowText(edit, m_Directory);
 }
 
-void ExportAllDlg::OnBrowse() 
+void ExportAllDlg::OnBrowse()
 {
 	char			folder_name[MAX_PATH];
 	BROWSEINFO	bi;

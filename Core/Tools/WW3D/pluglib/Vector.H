@@ -16,22 +16,22 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/*********************************************************************************************** 
- ***              C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S               *** 
- *********************************************************************************************** 
- *                                                                                             * 
- *                 Project Name : Command & Conquer                                            * 
- *                                                                                             * 
- *                     $Archive:: /Commando/Code/Library/Vector.H                             $* 
- *                                                                                             * 
+/***********************************************************************************************
+ ***              C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S               ***
+ ***********************************************************************************************
+ *                                                                                             *
+ *                 Project Name : Command & Conquer                                            *
+ *                                                                                             *
+ *                     $Archive:: /Commando/Code/Library/Vector.H                             $*
+ *                                                                                             *
  *                      $Author:: Byon_g                                                      $*
- *                                                                                             * 
+ *                                                                                             *
  *                     $Modtime:: 3/12/98 2:09p                                               $*
- *                                                                                             * 
+ *                                                                                             *
  *                    $Revision:: 2                                                           $*
  *                                                                                             *
- *---------------------------------------------------------------------------------------------* 
- * Functions:                                                                                  * 
+ *---------------------------------------------------------------------------------------------*
+ * Functions:                                                                                  *
  *   VectorClass<T>::VectorClass -- Constructor for vector class.                              *
  *   VectorClass<T>::~VectorClass -- Default destructor for vector class.                      *
  *   VectorClass<T>::VectorClass -- Copy constructor for vector object.                        *
@@ -89,9 +89,9 @@ class VectorClass
 		T & operator[](int index) {assert(unsigned(index) < unsigned(VectorMax));return(Vector[index]);};
 		T const & operator[](int index) const {assert(unsigned(index) < unsigned(VectorMax));return(Vector[index]);};
 		VectorClass<T> & operator = (VectorClass<T> const &); // Assignment operator.
-		
+
 		virtual bool operator == (VectorClass<T> const &) const;	// Equality operator.
-		
+
 		virtual bool Resize(int newsize, T const * array=0);
 		virtual void Clear(void);
 		int Length(void) const {return VectorMax;};
@@ -519,7 +519,7 @@ protected:
 			ActiveCount = rvalue.ActiveCount;
 			GrowthStep = rvalue.GrowthStep;
 			return(*this);
-		} 
+		}
 
       // Uninitialized Add - does everything an Add does, except copying an
       // object into the 'new' spot in the array. It returns a pointer to

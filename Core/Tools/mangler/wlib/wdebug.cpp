@@ -37,7 +37,7 @@ static ostream           *warn_ostream=NULL;
 static Streamer           warn_streamer;
 
 static int                error_enabled=0;
-static ostream           *error_ostream=NULL;  
+static ostream           *error_ostream=NULL;
 static Streamer           error_streamer;
 
 
@@ -172,12 +172,12 @@ int MsgManager::setErrorStream(OutputDevice *device)
 ostream *MsgManager::debugStream(void)
 {
   return(debug_ostream);
-}   
+}
 
 ostream *MsgManager::infoStream(void)
 {
   return(info_ostream);
-}   
+}
 
 ostream *MsgManager::warnStream(void)
 {
@@ -187,4 +187,4 @@ ostream *MsgManager::warnStream(void)
 ostream *MsgManager::errorStream(void)
 {
   return(error_ostream);
-}   
+}

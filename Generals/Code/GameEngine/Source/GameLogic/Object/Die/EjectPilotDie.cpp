@@ -51,11 +51,11 @@ EjectPilotDieModuleData::EjectPilotDieModuleData() :
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void EjectPilotDieModuleData::buildFieldParse(MultiIniFieldParse& p) 
+void EjectPilotDieModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
   DieModuleData::buildFieldParse(p);
 
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
 		{ "AirCreationList",		INI::parseObjectCreationList,		NULL, offsetof( EjectPilotDieModuleData, m_oclInAir ) },
 		{ "GroundCreationList",		INI::parseObjectCreationList,		NULL, offsetof( EjectPilotDieModuleData, m_oclOnGround ) },
@@ -109,7 +109,7 @@ void EjectPilotDie::onDie( const DamageInfo * damageInfo )
 	const EjectPilotDieModuleData* d = getEjectPilotDieModuleData();
 	const ObjectCreationList* ocl = getObject()->isSignificantlyAboveTerrain() ? d->m_oclInAir : d->m_oclOnGround;
 	ejectPilot(ocl, getObject(), damageDealer);
-}  
+}
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */

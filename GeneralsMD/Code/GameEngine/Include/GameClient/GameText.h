@@ -24,12 +24,12 @@
 
 
 //----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information					                  
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //----------------------------------------------------------------------------
 //
 // Project:    RTS 3
@@ -47,7 +47,7 @@
 
 
 //----------------------------------------------------------------------------
-//           Includes                                                      
+//           Includes
 //----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
@@ -63,7 +63,7 @@ class UnicodeString;
 typedef std::vector<AsciiString> AsciiStringVec;
 
 //===============================
-// GameTextInterface 
+// GameTextInterface
 //===============================
 /** Game text interface object for localised text.
 	*/
@@ -107,7 +107,7 @@ extern GameTextInterface *TheGameText;
 extern GameTextInterface* CreateGameTextInterface( void );
 
 //----------------------------------------------------------------------------
-//           Inlining                                                       
+//           Inlining
 //----------------------------------------------------------------------------
 
 // TheSuperHackers @info This is meant to be used like:

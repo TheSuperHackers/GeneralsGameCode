@@ -88,7 +88,7 @@ void CFixTeamOwnerDialog::OnOK()
 	CListBox *pList = (CListBox*) GetDlgItem(IDC_VALIDTEAMLIST);
 	int curSel = pList->GetCurSel();
 
-	if (curSel < 0) { 
+	if (curSel < 0) {
 		return;
 	}
 

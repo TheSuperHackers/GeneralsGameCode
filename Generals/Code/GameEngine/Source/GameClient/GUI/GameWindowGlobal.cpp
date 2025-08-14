@@ -24,12 +24,12 @@
 
 // FILE: GameWindowGlobal.cpp /////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:   RTS3
@@ -71,10 +71,10 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 // GameWindowManager::winDrawImage ============================================
-/** draw image, coord are in screen and should be kepth within 
+/** draw image, coord are in screen and should be kepth within
 	* that box specified */
 //=============================================================================
-void GameWindowManager::winDrawImage( const Image *image, Int startX, Int startY, 
+void GameWindowManager::winDrawImage( const Image *image, Int startX, Int startY,
 																			Int endX, Int endY, Color color )
 {
 
@@ -85,13 +85,13 @@ void GameWindowManager::winDrawImage( const Image *image, Int startX, Int startY
 // GameWindowManager::winFillRect =============================================
 /** draw filled rect, coords are absolute screen coords */
 //=============================================================================
-void GameWindowManager::winFillRect( Color color, Real width, 
-																		 Int startX, Int startY, 
+void GameWindowManager::winFillRect( Color color, Real width,
+																		 Int startX, Int startY,
 																		 Int endX, Int endY )
 {
 
-	TheDisplay->drawFillRect( startX, startY, 
-														endX - startX, endY - startY, 
+	TheDisplay->drawFillRect( startX, startY,
+														endX - startX, endY - startY,
 														color );
 
 }  // end WinFillRect
@@ -99,8 +99,8 @@ void GameWindowManager::winFillRect( Color color, Real width,
 // GameWindowManager::winOpenRect =============================================
 /** draw rect outline, coords are absolute screen coords */
 //=============================================================================
-void GameWindowManager::winOpenRect( Color color, Real width, 
-																		 Int startX, Int startY, 
+void GameWindowManager::winOpenRect( Color color, Real width,
+																		 Int startX, Int startY,
 																		 Int endX, Int endY )
 {
 
@@ -113,8 +113,8 @@ void GameWindowManager::winOpenRect( Color color, Real width,
 // GameWindowManager::winDrawLine =============================================
 /** draw line, coords are absolute screen coords */
 //=============================================================================
-void GameWindowManager::winDrawLine( Color color, Real width, 
-																		 Int startX, Int startY, 
+void GameWindowManager::winDrawLine( Color color, Real width,
+																		 Int startX, Int startY,
 																		 Int endX, Int endY )
 {
 
@@ -124,11 +124,11 @@ void GameWindowManager::winDrawLine( Color color, Real width,
 
 // GameWindowManager::winFindImage ============================================
 /** Given an image name, return an image loc to that image information.
-	* You may reorganize the image loc structure however you like to suit 
+	* You may reorganize the image loc structure however you like to suit
 	* your individual project */
 //=============================================================================
-const Image *GameWindowManager::winFindImage( const char *name ) 
-{ 
+const Image *GameWindowManager::winFindImage( const char *name )
+{
 
 	assert( TheMappedImageCollection );
 	if( TheMappedImageCollection )
@@ -142,11 +142,11 @@ const Image *GameWindowManager::winFindImage( const char *name )
 /** Given RGBA, make a color, you can change color representation for your
 	* individual project needs */
 //=============================================================================
-Color GameWindowManager::winMakeColor( UnsignedByte red, 
-																			 UnsignedByte green, 
-																			 UnsignedByte blue, 
-																			 UnsignedByte alpha ) 
-{ 
+Color GameWindowManager::winMakeColor( UnsignedByte red,
+																			 UnsignedByte green,
+																			 UnsignedByte blue,
+																			 UnsignedByte alpha )
+{
 
 	return GameMakeColor( red, green, blue, alpha );
 
@@ -166,7 +166,7 @@ void GameWindowManager::winFormatText( GameFont *font, UnicodeString text, Color
 // GameWindowManager::winGetTextSize ==========================================
 /** get the extent size of text */
 //=============================================================================
-void GameWindowManager::winGetTextSize( GameFont *font, UnicodeString text, 
+void GameWindowManager::winGetTextSize( GameFont *font, UnicodeString text,
 																				Int *width, Int *height, Int maxWidth )
 {
 
@@ -185,7 +185,7 @@ void GameWindowManager::winGetTextSize( GameFont *font, UnicodeString text,
 //=============================================================================
 Int GameWindowManager::winFontHeight( GameFont *font )
 {
-	
+
 	return font->height;
 
 }  // end WinFontHeight
@@ -223,8 +223,8 @@ Int GameWindowManager::winIsAlNum( Int c )
 // GameWindowManager::winFindFont =============================================
 /** Get a font */
 //=============================================================================
-GameFont *GameWindowManager::winFindFont( AsciiString fontName, 
-																					Int pointSize, 
+GameFont *GameWindowManager::winFindFont( AsciiString fontName,
+																					Int pointSize,
 																					Bool bold )
 {
 

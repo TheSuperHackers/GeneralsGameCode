@@ -16,22 +16,22 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/*********************************************************************************************** 
- ***              C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S               *** 
- *********************************************************************************************** 
- *                                                                                             * 
- *                 Project Name : Command & Conquer                                            * 
- *                                                                                             * 
- *                     $Archive:: /Commando/Code/wwlib/trim.cpp                               $* 
- *                                                                                             * 
+/***********************************************************************************************
+ ***              C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S               ***
+ ***********************************************************************************************
+ *                                                                                             *
+ *                 Project Name : Command & Conquer                                            *
+ *                                                                                             *
+ *                     $Archive:: /Commando/Code/wwlib/trim.cpp                               $*
+ *                                                                                             *
  *                      $Author:: Denzil_l                                                    $*
- *                                                                                             * 
+ *                                                                                             *
  *                     $Modtime:: 11/08/01 11:35a                                             $*
- *                                                                                             * 
+ *                                                                                             *
  *                    $Revision:: 4                                                           $*
  *                                                                                             *
- *---------------------------------------------------------------------------------------------* 
- * Functions:                                                                                  * 
+ *---------------------------------------------------------------------------------------------*
+ * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include	"always.h"
@@ -42,20 +42,20 @@
 #include	<wctype.h>
 #endif // _UNIX
 
-/*********************************************************************************************** 
- * strtrim -- Trim leading and trailing white space off of string.                             * 
- *                                                                                             * 
- *    This routine will remove the leading and trailing whitespace from the string specifed.   * 
- *    The string is modified in place.                                                         * 
- *                                                                                             * 
- * INPUT:   buffer   -- Pointer to the string to be trimmed.                                   * 
- *                                                                                             * 
- * OUTPUT:  none                                                                               * 
- *                                                                                             * 
- * WARNINGS:   none                                                                            * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   02/06/1997 JLB : Created.                                                                 * 
+/***********************************************************************************************
+ * strtrim -- Trim leading and trailing white space off of string.                             *
+ *                                                                                             *
+ *    This routine will remove the leading and trailing whitespace from the string specifed.   *
+ *    The string is modified in place.                                                         *
+ *                                                                                             *
+ * INPUT:   buffer   -- Pointer to the string to be trimmed.                                   *
+ *                                                                                             *
+ * OUTPUT:  none                                                                               *
+ *                                                                                             *
+ * WARNINGS:   none                                                                            *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   02/06/1997 JLB : Created.                                                                 *
  *=============================================================================================*/
 char* strtrim(char* buffer)
 {
@@ -95,7 +95,7 @@ wchar_t* wcstrim(wchar_t* buffer)
 		while ((*source != 0) && ((unsigned int)*source <= 32)) {
 			++source;
 		}
-		
+
 		if (source != buffer) {
 			// TheSuperHackers @fix Mauller 04/04/2025 Replace wcscpy with safer memmove as memory regions can overlap when part of string is copied to itself
 			memmove(buffer, source, (wcslen(source) + 1) * sizeof(wchar_t));

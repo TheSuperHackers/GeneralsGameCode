@@ -75,7 +75,7 @@ public:
 	*/
 	void						Set_Resolution(int w,int h);
 	void						Get_Resolution(int * get_w,int * get_h);
-	
+
 	void						Set_Backface_ID(uint32 id)		{ BackfaceID = id; }
 	void						Set_Frontface_ID(uint32 id)	{ FrontfaceID = id; }
 	uint32					Get_Backface_ID(void)			{ return BackfaceID; }
@@ -150,7 +150,7 @@ inline bool IDBufferClass::Is_Backfacing(const Vector3 & p0,const Vector3 & p1,c
 ** it is a floating point z-buffer and an id buffer which is used by the visiblity precalculation system.
 ** The VisRasterizer will transform and clip triangles into homogeneous view space; then the clipped
 ** triangles will be passed on to the IDBufferClass which will scan convert them.
-*/ 
+*/
 class VisRasterizerClass
 {
 public:
@@ -193,18 +193,18 @@ public:
 	const uint32 *		Get_Pixel_Row(int y,int min_x,int max_x) { return IDBuffer.Get_Pixel_Row(y,min_x,max_x); }
 
 protected:
-	
+
 	void					Update_MV_Transform(void);
 	const Matrix3D &	Get_MV_Transform(void);
 	Vector3 *			Get_Temp_Vertex_Buffer(int count);
 	bool					Render_Triangles_Clip(const Vector3 * verts,int vcount,const TriIndex * tris, int tcount);
 	bool					Render_Triangles_No_Clip(const Vector3 * verts,int vcount,const TriIndex * tris, int tcount);
-	
+
 	Matrix3D				ModelTransform;			// AKA "World Transform"
 	CameraClass *		Camera;
 	Matrix3D				MVTransform;
 
-	IDBufferClass		IDBuffer;	
+	IDBufferClass		IDBuffer;
 
 	SimpleVecClass<Vector3>	TempVertexBuffer;
 };

@@ -110,7 +110,7 @@ void StickyBombUpdate::initStickyBomb( Object *target, const Object *bomber, con
 	{
 		//we are a timer bomb
 		m_dieFrame = update->getDieFrame();
-	
+
 		//Calculate the number of seconds (rounded down)
 		UnsignedInt pings = (m_dieFrame - now) / LOGICFRAMES_PER_SECOND;
 		//Now determine the next frame we will make a "ping" sound.
@@ -158,8 +158,8 @@ void StickyBombUpdate::initStickyBomb( Object *target, const Object *bomber, con
 		AudioEventRTS soundCreateBomb = *(getObject()->getTemplate()->getPerUnitSound("StickyBombCreated"));
 		soundCreateBomb.setPosition( getObject()->getPosition() );
 		TheAudio->addAudioEvent(&soundCreateBomb);
-		
-	}	
+
+	}
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -261,7 +261,7 @@ void StickyBombUpdate::detonate()
 			damageInfo.in.m_sourceID = getObject()->getID();
 			damageInfo.in.m_sourcePlayerMask = getObject()->getControllingPlayer()->getPlayerMask();
 			damageInfo.in.m_damageStatusType = data->m_geometryBasedDamageWeaponTemplate->getDamageStatusType();
-			
+
 			for (; curVictim != NULL; curVictim = iter ? iter->nextWithNumeric(&curVictimDistSqr) : NULL)
 			{
 				damageInfo.in.m_amount = (curVictimDistSqr <= primaryDamageRangeSqr) ? primaryDamage : secondaryDamage;
@@ -275,7 +275,7 @@ void StickyBombUpdate::detonate()
 			}
 		}
 	}
-	
+
 	if( getObject()->isKindOf(KINDOF_BOOBY_TRAP) && boobyTrappedObject )
 	{
 		// This kind of sticky bomb needs to set a status, so the poor victim can trigger us from assorted places

@@ -95,8 +95,8 @@ UnicodeString LANAPIInterface::getErrorStringFromReturnType( ReturnType ret )
 
 // On functions are (generally) the result of network traffic
 
-void LANAPI::OnAccept( UnsignedInt playerIP, Bool status ) 
-{ 
+void LANAPI::OnAccept( UnsignedInt playerIP, Bool status )
+{
 	if( AmIHost() )
 	{
 		Int i = 0;
@@ -111,26 +111,26 @@ void LANAPI::OnAccept( UnsignedInt playerIP, Bool status )
 				break;
 			}// if
 		}// for
-		if (i != MAX_SLOTS ) 
+		if (i != MAX_SLOTS )
 		{
 			RequestGameOptions( GenerateGameOptionsString(), false );
 			lanUpdateSlotList();
 		}
 	}//if
-	else 
+	else
 	{
 		//i'm not the host but if the accept came from the host...
 		if( m_currentGame->getIP(0) == playerIP )
 		{
 			UnicodeString text;
 			text = TheGameText->fetch("GUI:HostWantsToStart");
-			OnChat(UnicodeString(L"SYSTEM"), m_localIP, text, LANCHAT_SYSTEM);				
+			OnChat(UnicodeString(L"SYSTEM"), m_localIP, text, LANCHAT_SYSTEM);
 		}
 	}
-}// void LANAPI::OnAccept( UnicodeString player, Bool status ) 
+}// void LANAPI::OnAccept( UnicodeString player, Bool status )
 
-void LANAPI::OnHasMap( UnsignedInt playerIP, Bool status ) 
-{ 
+void LANAPI::OnHasMap( UnsignedInt playerIP, Bool status )
+{
 	if( AmIHost() )
 	{
 		Int i = 0;
@@ -142,7 +142,7 @@ void LANAPI::OnHasMap( UnsignedInt playerIP, Bool status )
 				break;
 			}// if
 		}// for
-		if (i != MAX_SLOTS ) 
+		if (i != MAX_SLOTS )
 		{
 			UnicodeString mapDisplayName;
 			const MapMetaData *mapData = TheMapCache->findMap( m_currentGame->getMap() );
@@ -170,7 +170,7 @@ void LANAPI::OnHasMap( UnsignedInt playerIP, Bool status )
 			lanUpdateSlotList();
 		}
 	}//if
-}// void LANAPI::OnHasMap( UnicodeString player, Bool status ) 
+}// void LANAPI::OnHasMap( UnicodeString player, Bool status )
 
 void LANAPI::OnGameStartTimer( Int seconds )
 {
@@ -267,8 +267,8 @@ void LANAPI::OnGameOptions( UnsignedInt playerIP, Int playerSlot, AsciiString op
 
 	if (m_currentGame->getIP(playerSlot) != playerIP)
 		return; // He's not in our game?!?
-	
-	
+
+
 	if (m_currentGame->isGameInProgress())
 		return; // we don't want to process any game options while in game.
 
@@ -288,7 +288,7 @@ void LANAPI::OnGameOptions( UnsignedInt playerIP, Int playerSlot, AsciiString op
 			{
 				booted = false;
 				break;
-			}				
+			}
 		}
 		if(booted)
 		{
@@ -391,7 +391,7 @@ void LANAPI::OnGameOptions( UnsignedInt playerIP, Int playerSlot, AsciiString op
 				}
 				else if (key == "StartPos" && slot->getPlayerTemplate() != PLAYERTEMPLATE_OBSERVER)
 				{
-						
+
 					if (val >= -1 && val < MAX_SLOTS && val != slot->getStartPos())
 					{
 						Bool startPosAvailable = TRUE;
@@ -572,7 +572,7 @@ void LANAPI::OnPlayerLeave( UnicodeString player )
 		{
 			// Force a new slotlist send
 			m_lastResendTime = 0;
-			
+
 			lanUpdateSlotList();
 			RequestGameOptions( GenerateGameOptionsString(), true );
 
@@ -582,12 +582,12 @@ void LANAPI::OnPlayerLeave( UnicodeString player )
 
 void LANAPI::OnGameList( LANGameInfo *gameList )
 {
-		
+
 	if (m_inLobby)
 	{
 		LANDisplayGameList(listboxGames, gameList);
 	}
-}//void LANAPI::OnGameList( LANGameInfo *gameList ) 
+}//void LANAPI::OnGameList( LANGameInfo *gameList )
 
 void LANAPI::OnGameCreate( ReturnType ret )
 {
@@ -624,12 +624,12 @@ void LANAPI::OnPlayerList( LANPlayer *playerList )
 {
 	if (m_inLobby)
 	{
-		
+
 		UnsignedInt selectedIP = 0;
 		Int selectedIndex = -1;
 		Int indexToSelect = -1;
 		GadgetListBoxGetSelected(listboxPlayers, &selectedIndex);
-		
+
 		if (selectedIndex != -1 )
 			selectedIP = (UnsignedInt) GadgetListBoxGetItemData(listboxPlayers, selectedIndex, 0);
 
@@ -658,7 +658,7 @@ void LANAPI::OnNameChange( UnsignedInt IP, UnicodeString newName )
 }
 
 void LANAPI::OnInActive(UnsignedInt IP) {
-	
+
 }
 
 void LANAPI::OnChat( UnicodeString player, UnsignedInt ip, UnicodeString message, ChatType format )
@@ -675,7 +675,7 @@ void LANAPI::OnChat( UnicodeString player, UnsignedInt ip, UnicodeString message
 	}
 	else if( m_currentGame && !m_currentGame->isGameInProgress())
 	{
-		chatWindow = listboxChatWindowLanGame;	
+		chatWindow = listboxChatWindowLanGame;
 	}
 	if (chatWindow == NULL)
 		return;
@@ -719,7 +719,7 @@ void LANAPI::OnChat( UnicodeString player, UnsignedInt ip, UnicodeString message
 					}
 				}
 			}
-			
+
 			unicodeChat = L"[";
 			unicodeChat.concat(player);
 			unicodeChat.concat(L"] ");

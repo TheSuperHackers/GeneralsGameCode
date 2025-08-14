@@ -18,12 +18,12 @@
 
 // FILE: Win32DIMouse.h ///////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information					         
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:    RTS3
@@ -79,14 +79,14 @@ public:
 
 	virtual void capture( void );  ///< capture the mouse
 	virtual void releaseCapture( void );  ///< release mouse capture
-		
+
 protected:
 
 	/// device implementation to get mouse event
 	virtual UnsignedByte getMouseEvent( MouseIO *result, Bool flush );
 
 	// new internal methods for our direct input implemetation
-	void openMouse( void );  ///< create the direct input mouse 
+	void openMouse( void );  ///< create the direct input mouse
 	void closeMouse( void );  ///< close and release mouse resources
 	/// map direct input mouse data to our own format
 	void mapDirectInputMouse( MouseIO *mouse, DIDEVICEOBJECTDATA *mdat );

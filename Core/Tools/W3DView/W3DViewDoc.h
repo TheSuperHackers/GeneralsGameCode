@@ -116,12 +116,12 @@ public:
 	//
 	CameraClass *			Get2DCamera (void) const				{ return m_pC2DCamera; }
 	CameraClass *			GetBackObjectCamera (void) const		{ return m_pCBackObjectCamera; }
-	SceneClass *			Get2DScene (void) const					{ return m_pC2DScene; }        
+	SceneClass *			Get2DScene (void) const					{ return m_pC2DScene; }
 	SceneClass *			GetCursorScene (void) const			{ return m_pCursorScene; }
 	ViewerSceneClass *	GetScene (void) const					{ return m_pCScene; }
 	SceneClass *			GetBackObjectScene (void) const		{ return m_pCBackObjectScene; }
 	LightClass *			GetSceneLight (void) const				{ return m_pCSceneLight; }
-	RenderObjClass *		GetDisplayedObject (void) const		{ return m_pCRenderObj; }	
+	RenderObjClass *		GetDisplayedObject (void) const		{ return m_pCRenderObj; }
 	HAnimClass *			GetCurrentAnimation (void) const		{ return m_pCAnimation; }
 	const HTreeClass *	Get_Current_HTree (void) const;
 
@@ -216,7 +216,7 @@ public:
 	//
 	void					Auto_Assign_Bones (void);
 	bool					Save_Selected_Aggregate (void);
-	bool					Save_Current_Aggregate (const CString &filename);		  
+	bool					Save_Current_Aggregate (const CString &filename);
 
 	//
 	//	Sound object methods
@@ -232,7 +232,7 @@ public:
 	void					Switch_LOD (int increment = 1, RenderObjClass *render_obj = NULL);
 
 	//
-	// Alternate Material interface.  
+	// Alternate Material interface.
 	//
 	void					Toggle_Alternate_Materials(RenderObjClass * obj = NULL);
 
@@ -284,11 +284,11 @@ public:
 	void					Set_Texture_Path1 (LPCTSTR path);
 	void					Set_Texture_Path2 (LPCTSTR path);
 
-	// 
+	//
 	// Dazzle rendering support
 	//
 	void					Render_Dazzles(CameraClass * camera);
-		
+
 private:
 
 	//////////////////////////////////////////////////////////////////
@@ -303,7 +303,7 @@ private:
 	RenderObjClass *		m_pCBackgroundObject;
 	HAnimClass *			m_pCAnimation;
 	HAnimComboClass *		m_pCAnimCombo;
-	LightClass *			m_pCSceneLight;	  
+	LightClass *			m_pCSceneLight;
 	Bitmap2DObjClass *	m_pCBackgroundBMP;
 	CameraClass *			m_pC2DCamera;
 	CameraClass *			m_pCBackObjectCamera;
@@ -311,7 +311,7 @@ private:
 	Vector3					m_backgroundColor;
 	CString					m_stringBackgroundBMP;
 	CString					m_stringBackgroundObject;
-	
+
 	bool						m_bCompress_channel_Q;
 	int						m_nChannelQnBytes;
 	float						m_CurrentFrame;

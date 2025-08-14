@@ -39,7 +39,7 @@ class ImpassableOptions : public CDialog
 		Bool m_showImpassableAreas;
 
 		Bool ValidateSlope();	// Returns TRUE if it was valid, FALSE if it had to adjust it.
-		
+
 	protected:
 		virtual BOOL OnInitDialog();
 		afx_msg void OnAngleChange();

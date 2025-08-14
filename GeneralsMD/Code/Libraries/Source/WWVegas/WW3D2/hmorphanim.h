@@ -56,13 +56,13 @@ class TextFileClass;
 
 	HMorphAnimClass
 
-	This is an animation format designed for facial animation.  It basically morphs the 
+	This is an animation format designed for facial animation.  It basically morphs the
 	htree between a set of poses.  These animations are created by exporting an
 	HRawAnimClass which contains the poses, using Magpie to create a text file
 	describing which pose to use on each frame, and finally using W3dView to combine
 	the data into an HMorphAnimClass.
 
-	There can be multiple channels for the morphing.  For example, some of the 
+	There can be multiple channels for the morphing.  For example, some of the
 	bones can be controlled by the "phoneme" poses (e.g. mouth) while other bones are
 	controlled by the "expression" poses (e.g. eyebrows)
 
@@ -72,13 +72,13 @@ class HMorphAnimClass : public HAnimClass
 {
 
 public:
-	
+
 	enum
 	{
 		OK,
 		LOAD_ERROR
 	};
-	
+
 	HMorphAnimClass(void);
 	~HMorphAnimClass(void);
 
@@ -114,7 +114,7 @@ public:
 
 protected:
 
-	void							Free(void);	
+	void							Free(void);
 	void							read_channel(ChunkLoadClass & cload,int channel);
 	void							write_channel(ChunkSaveClass & csave,int channel);
 	void							Resolve_Pivot_Channels(void);
@@ -122,7 +122,7 @@ protected:
 	char							Name[2*W3D_NAME_LEN];
 	char							AnimName[W3D_NAME_LEN];
 	char							HierarchyName[W3D_NAME_LEN];
-	
+
 	int							FrameCount;								// number of frames in the animation
 	float							FrameRate;								// framerate for playback
 	int							ChannelCount;							// number of independent morphing channels
@@ -131,16 +131,16 @@ protected:
 	HAnimClass **					PoseData;		// pointer to pose for each morph channel
 	TimeCodedMorphKeysClass *	MorphKeyData;	// morph keys for each channel
 	uint32 *							PivotChannel;	// controlling channel for each pivot/bone
-	
+
 };
 
 
 /*********************************************************************************************
-** 
+**
 ** TimeCodedMorphKeysClass
 ** This class basically stores a vector of morph keys.  An HMorphAnimClass contains
 ** one of these for each independent morphing channel.  For example, the facial animation
-** stuff generates HMorphAnims which contain 2 channels, one which specifies what the 
+** stuff generates HMorphAnims which contain 2 channels, one which specifies what the
 ** "phoneme" bones are doing and one which specifies what the "expression" bones are doing.
 **
 *********************************************************************************************/
@@ -152,7 +152,7 @@ public:
 	TimeCodedMorphKeysClass(void);
 	~TimeCodedMorphKeysClass(void);
 
-	bool					Load_W3D(ChunkLoadClass & cload);		
+	bool					Load_W3D(ChunkLoadClass & cload);
 	bool					Save_W3D(ChunkSaveClass & csave);
 	void					Get_Morph_Info(float morph_frame,int * pose_frame0,int * pose_frame1,float * fraction);
 
@@ -173,7 +173,7 @@ private:
 		uint32	MorphFrame;				// morph animation frame index
 		uint32	PoseFrame;				// which pose frame to use at this time
 	};
-	
+
 	SimpleDynVecClass<MorphKeyStruct>	Keys;	// morph key data
 	uint32				CachedIdx;					// last accessed index
 

@@ -60,19 +60,19 @@ CrateCollideModuleData::CrateCollideModuleData()
 
 	// Added By Sadullah Nader
 	// Initializations missing and needed
-	
+
 	m_executionAnimationTemplate = AsciiString::TheEmptyString;
-	
+
 	// End Add
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void CrateCollideModuleData::buildFieldParse(MultiIniFieldParse& p) 
+void CrateCollideModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
   ModuleData::buildFieldParse(p);
 
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
 		{ "RequiredKindOf", KindOfMaskType::parseFromINI, NULL, offsetof( CrateCollideModuleData, m_kindof ) },
 		{ "ForbiddenKindOf", KindOfMaskType::parseFromINI, NULL, offsetof( CrateCollideModuleData, m_kindofnot ) },
@@ -98,14 +98,14 @@ void CrateCollideModuleData::buildFieldParse(MultiIniFieldParse& p)
 CrateCollide::CrateCollide( Thing *thing, const ModuleData* moduleData ) : CollideModule( thing, moduleData )
 {
 
-} 
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 CrateCollide::~CrateCollide( void )
 {
 
-}  
+}
 
 //-------------------------------------------------------------------------------------------------
 /** The collide event.
@@ -121,7 +121,7 @@ void CrateCollide::onCollide( Object *other, const Coord3D *, const Coord3D * )
 		{
 			if( modData->m_executeFX != NULL )
 			{
-				// Note: We pass in other here, because the crate is owned by the neutral player, and 
+				// Note: We pass in other here, because the crate is owned by the neutral player, and
 				// we want to do things that only the other person can see.
 				FXList::doFXObj( modData->m_executeFX, other );
 			}
@@ -144,7 +144,7 @@ void CrateCollide::onCollide( Object *other, const Coord3D *, const Coord3D * )
 
 	}
 
-} 
+}
 
 //-------------------------------------------------------------------------------------------------
 Bool CrateCollide::isValidToExecute( const Object *other ) const

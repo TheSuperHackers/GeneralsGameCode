@@ -39,7 +39,7 @@
 #include "GameClient/InGameUI.h"
 
 #define OFFSET(x) (sizeof(Int) * (x))
-static const FieldParse GameSpyColorFieldParse[] = 
+static const FieldParse GameSpyColorFieldParse[] =
 {
 
 	{ "Default",						INI::parseColorInt,	NULL,	OFFSET(GSCOLOR_DEFAULT) },
@@ -204,7 +204,7 @@ void GameSpyInfo::addChat( PlayerInfo p, UnicodeString msg, Bool isPublic, Bool 
 	Int style;
 	if(isSavedIgnored(p.m_profileID) || isIgnored(p.m_name))
 		return;
-	
+
 	Bool isOwner = p.m_flags & PEER_FLAG_OP;
 	Bool isBuddy = getBuddyMap()->find(p.m_profileID) != getBuddyMap()->end();
 
@@ -215,7 +215,7 @@ void GameSpyInfo::addChat( PlayerInfo p, UnicodeString msg, Bool isPublic, Bool 
 		if(m_disallowAsainText)
 		{
 			const WideChar *buff = msg.str();
-			Int length =  msg.getLength();	
+			Int length =  msg.getLength();
 			for(Int i = 0; i < length; ++i)
 			{
 				if(buff[i] >= 256)
@@ -225,7 +225,7 @@ void GameSpyInfo::addChat( PlayerInfo p, UnicodeString msg, Bool isPublic, Bool 
 		else if(m_disallowNonAsianText)
 		{
 			const WideChar *buff = msg.str();
-			Int length =  msg.getLength();	
+			Int length =  msg.getLength();
 			Bool hasUnicode = FALSE;
 			for(Int i = 0; i < length; ++i)
 			{

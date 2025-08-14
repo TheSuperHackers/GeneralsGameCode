@@ -24,12 +24,12 @@
 
 // FILE: STLTypedefs.h ////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information					         
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:    RTS3
@@ -114,15 +114,15 @@ typedef std::map< NameKeyType, Real, std::less<NameKeyType> > ProductionChangeMa
 typedef std::map< NameKeyType, VeterancyLevel, std::less<NameKeyType> > ProductionVeterancyMap;
 
 // Some useful, common hash and equal_to functors for use with hash_map
-namespace rts 
+namespace rts
 {
-	
-	// Generic hash functor. This should almost always be overridden for 
+
+	// Generic hash functor. This should almost always be overridden for
 	// specific types.
 	template<typename T> struct hash
 	{
 		size_t operator()(const T& __t) const
-		{ 
+		{
 			std::hash<T> tmp;
 			return tmp(__t);
 		}
@@ -153,7 +153,7 @@ namespace rts
 	template<> struct hash<NameKeyType>
 	{
 		size_t operator()(NameKeyType nkt) const
-		{ 
+		{
 			std::hash<UnsignedInt> tmp;
 			return tmp((UnsignedInt)nkt);
 		}
@@ -162,7 +162,7 @@ namespace rts
 	template<> struct hash<DrawableID>
 	{
 		size_t operator()(DrawableID nkt) const
-		{ 
+		{
 			std::hash<UnsignedInt> tmp;
 			return tmp((UnsignedInt)nkt);
 		}
@@ -171,7 +171,7 @@ namespace rts
 	template<> struct hash<ObjectID>
 	{
 		size_t operator()(ObjectID nkt) const
-		{ 
+		{
 			std::hash<UnsignedInt> tmp;
 			return tmp((UnsignedInt)nkt);
 		}

@@ -240,7 +240,7 @@ void FiringTracker::speedUp()
 {
 	ModelConditionFlags clr, set;
 	Object *self = getObject();
-	
+
 	if( self->testWeaponBonusCondition( WEAPONBONUSCONDITION_CONTINUOUS_FIRE_FAST ) )
 	{
 		//self->clearWeaponBonusCondition( WEAPONBONUSCONDITION_CONTINUOUS_FIRE_MEAN );
@@ -265,7 +265,7 @@ void FiringTracker::speedUp()
 
 
 	}
-	else 
+	else
 	{
 
 		self->setWeaponBonusCondition( WEAPONBONUSCONDITION_CONTINUOUS_FIRE_MEAN );
@@ -287,13 +287,13 @@ void FiringTracker::coolDown()
 {
 	ModelConditionFlags clr, set;
 
-	if( getObject()->testWeaponBonusCondition( WEAPONBONUSCONDITION_CONTINUOUS_FIRE_FAST ) 
+	if( getObject()->testWeaponBonusCondition( WEAPONBONUSCONDITION_CONTINUOUS_FIRE_FAST )
 	 || getObject()->testWeaponBonusCondition( WEAPONBONUSCONDITION_CONTINUOUS_FIRE_MEAN ))
 	{
 
 		// Straight to zero from wherever it is
 		set.set(MODELCONDITION_CONTINUOUS_FIRE_SLOW);
-		
+
 		getObject()->clearWeaponBonusCondition( WEAPONBONUSCONDITION_CONTINUOUS_FIRE_FAST );
 		getObject()->clearWeaponBonusCondition( WEAPONBONUSCONDITION_CONTINUOUS_FIRE_MEAN );
 		clr.set(MODELCONDITION_CONTINUOUS_FIRE_FAST);

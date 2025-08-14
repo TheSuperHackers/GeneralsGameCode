@@ -35,7 +35,7 @@
 #include "Common/Xfer.h"
 
 //-------------------------------------------------------------------------------------------------
-W3DScienceModelDrawModuleData::W3DScienceModelDrawModuleData() 
+W3DScienceModelDrawModuleData::W3DScienceModelDrawModuleData()
 {
 	m_requiredScience = SCIENCE_INVALID;
 }
@@ -46,11 +46,11 @@ W3DScienceModelDrawModuleData::~W3DScienceModelDrawModuleData()
 }
 
 //-------------------------------------------------------------------------------------------------
-void W3DScienceModelDrawModuleData::buildFieldParse(MultiIniFieldParse& p) 
+void W3DScienceModelDrawModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
   W3DModelDrawModuleData::buildFieldParse(p);
 
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
 		{ "RequiredScience", INI::parseScience, NULL, offsetof(W3DScienceModelDrawModuleData, m_requiredScience) },
 
@@ -62,7 +62,7 @@ void W3DScienceModelDrawModuleData::buildFieldParse(MultiIniFieldParse& p)
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 W3DScienceModelDraw::W3DScienceModelDraw( Thing *thing, const ModuleData* moduleData ) : W3DModelDraw( thing, moduleData )
-{	 
+{
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -82,7 +82,7 @@ void W3DScienceModelDraw::doDrawModule(const Matrix3D* transformMtx)
 		return;
 	}
 
-	if( !ThePlayerList->getLocalPlayer()->hasScience(science) 
+	if( !ThePlayerList->getLocalPlayer()->hasScience(science)
 			&& ThePlayerList->getLocalPlayer()->isPlayerActive()
 		)
 	{

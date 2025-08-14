@@ -39,6 +39,7 @@
 #include "Common/STLTypedefs.h"
 
 class Money;
+enum CursorCaptureMode CPP_11(: Int);
 
 //-----------------------------------------------------------------------------
 // PUBLIC TYPES ///////////////////////////////////////////////////////////////
@@ -47,7 +48,7 @@ class Money;
 typedef std::map<AsciiString, AsciiString> PreferenceMap;
 
 //-----------------------------------------------------------------------------
-// UserPreferences base class 
+// UserPreferences base class
 //-----------------------------------------------------------------------------
 class UserPreferences : public PreferenceMap
 {
@@ -58,7 +59,7 @@ public:
 	// Loads or creates a file with the given name in the user data directory.
 	virtual Bool load(AsciiString fname);
 	virtual Bool write(void);
-	
+
 	Bool getBool(AsciiString key, Bool defaultValue) const;
 	Real getReal(AsciiString key, Real defaultValue) const;
 	Int getInt(AsciiString key, Int defaultValue) const;
@@ -74,7 +75,7 @@ protected:
 };
 
 //-----------------------------------------------------------------------------
-// OptionsPreferences options menu class 
+// OptionsPreferences options menu class
 //-----------------------------------------------------------------------------
 class OptionPreferences : public UserPreferences
 {
@@ -94,6 +95,7 @@ public:
 	Bool getRetaliationModeEnabled();					// convenience function
 	Bool getDoubleClickAttackMoveEnabled(void);	// convenience function
 	Real getScrollFactor(void);								// convenience function
+	CursorCaptureMode getCursorCaptureMode() const;
 	Bool getSendDelay(void);									// convenience function
 	Int getFirewallBehavior(void);						// convenience function
 	Short getFirewallPortAllocationDelta(void);	// convenience function
@@ -136,7 +138,7 @@ public:
 };
 
 //-----------------------------------------------------------------------------
-// LANPreferences class 
+// LANPreferences class
 //-----------------------------------------------------------------------------
 class LANPreferences : public UserPreferences
 {

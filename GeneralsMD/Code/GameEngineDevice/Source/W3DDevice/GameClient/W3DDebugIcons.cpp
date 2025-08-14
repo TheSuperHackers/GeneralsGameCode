@@ -24,12 +24,12 @@
 
 // FILE: W3DDebugIcons.cpp ////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:   RTS3
@@ -43,7 +43,7 @@
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-//         Includes                                                      
+//         Includes
 //-----------------------------------------------------------------------------
 
 #include "W3DDevice/GameClient/W3DDebugIcons.h"
@@ -104,7 +104,7 @@ W3DDebugIcons::~W3DDebugIcons(void)
 	m_numDebugIcons = 0;
 }
 
-W3DDebugIcons::W3DDebugIcons(void) 
+W3DDebugIcons::W3DDebugIcons(void)
 
 {
 	//go with a preset material for now.
@@ -116,7 +116,7 @@ W3DDebugIcons::W3DDebugIcons(void)
 bool W3DDebugIcons::Cast_Ray(RayCollisionTestClass & raytest)
 {
 
-	return false;	
+	return false;
 
 }
 
@@ -137,7 +137,7 @@ void W3DDebugIcons::Get_Obj_Space_Bounding_Sphere(SphereClass & sphere) const
 {
 	Vector3	ObjSpaceCenter(TheGlobalData->m_waterExtentX,TheGlobalData->m_waterExtentY,50*MAP_XY_FACTOR);
 	float length = ObjSpaceCenter.Length();
-	
+
 	sphere.Init(ObjSpaceCenter, length);
 }
 
@@ -159,14 +159,14 @@ RenderObjClass * W3DDebugIcons::Clone(void) const
 }
 
 
-void W3DDebugIcons::allocateIconsArray(void) 
+void W3DDebugIcons::allocateIconsArray(void)
 {
 	m_debugIcons = NEW DebugIcon[MAX_ICONS];
-	m_numDebugIcons = 0; 
+	m_numDebugIcons = 0;
 }
 
 
-void W3DDebugIcons::compressIconsArray(void) 
+void W3DDebugIcons::compressIconsArray(void)
 {
 	if (m_debugIcons && m_numDebugIcons > 0) {
 		Int newNum = 0;
@@ -228,7 +228,7 @@ void W3DDebugIcons::Render(RenderInfoClass & rinfo)
 	if (numRect > MAX_RECT) numRect = MAX_RECT;
 	offset+= 0.5f;
 	Int k;
-	for (k=0; k<m_numDebugIcons;) {	
+	for (k=0; k<m_numDebugIcons;) {
 		Int curIndex = 0;
 		Int	numVertex = 0;
 		DynamicVBAccessClass vb_access(BUFFER_TYPE_DYNAMIC_DX8,DX8_FVF_XYZNDUV2,numRect*4);
@@ -262,28 +262,28 @@ void W3DDebugIcons::Render(RenderInfoClass & rinfo)
 			Real halfWidth = m_debugIcons[k].width/2;
 			Int diffuse = clr.getAsInt() | ((int)theAlpha << 24);
 			Coord3D pt1 = m_debugIcons[k].position;
-			vb->x=	pt1.x-halfWidth;	 
+			vb->x=	pt1.x-halfWidth;
 			vb->y=	pt1.y-halfWidth;
 			vb->z=  pt1.z;
 			vb->diffuse=diffuse;	 // b g<<8 r<<16 a<<24.
 			vb->u1=0 ;
 			vb->v1=0 ;
 			vb++;
-			vb->x=	pt1.x+halfWidth;	 
+			vb->x=	pt1.x+halfWidth;
 			vb->y=	pt1.y-halfWidth;
 			vb->z=  pt1.z;
 			vb->diffuse=diffuse;	 // b g<<8 r<<16 a<<24.
 			vb->u1=0 ;
 			vb->v1=0 ;
 			vb++;
-			vb->x=	pt1.x+halfWidth;	 
+			vb->x=	pt1.x+halfWidth;
 			vb->y=	pt1.y+halfWidth;
 			vb->z=  pt1.z;
 			vb->diffuse=diffuse;	 // b g<<8 r<<16 a<<24.
 			vb->u1=0 ;
 			vb->v1=0 ;
 			vb++;
-			vb->x=	pt1.x-halfWidth;	 
+			vb->x=	pt1.x-halfWidth;
 			vb->y=	pt1.y+halfWidth;
 			vb->z=  pt1.z;
 			vb->diffuse=diffuse;	 // b g<<8 r<<16 a<<24.
@@ -299,7 +299,7 @@ void W3DDebugIcons::Render(RenderInfoClass & rinfo)
 			curIndex += 6;
 			numVertex += 4;
 		}
-		}	
+		}
 		if (numVertex == 0) break;
 		DX8Wrapper::Set_Shader(ShaderClass(SC_ALPHA));
 		DX8Wrapper::Set_Index_Buffer(ib_access,0);

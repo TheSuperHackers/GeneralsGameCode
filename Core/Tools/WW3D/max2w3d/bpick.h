@@ -17,22 +17,22 @@
 */
 
 /* $Header: /Commando/Code/Tools/max2w3d/bpick.h 6     10/28/97 6:08p Greg_h $ */
-/*********************************************************************************************** 
- ***                            Confidential - Westwood Studios                              *** 
- *********************************************************************************************** 
- *                                                                                             * 
- *                 Project Name : Commando Tools - WWSkin                                      * 
- *                                                                                             * 
- *                     $Archive:: /Commando/Code/Tools/max2w3d/bpick.h                        $* 
- *                                                                                             * 
- *                      $Author:: Greg_h                                                      $* 
- *                                                                                             * 
- *                     $Modtime:: 10/21/97 2:05p                                              $* 
- *                                                                                             * 
- *                    $Revision:: 6                                                           $* 
- *                                                                                             * 
- *---------------------------------------------------------------------------------------------* 
- * Functions:                                                                                  * 
+/***********************************************************************************************
+ ***                            Confidential - Westwood Studios                              ***
+ ***********************************************************************************************
+ *                                                                                             *
+ *                 Project Name : Commando Tools - WWSkin                                      *
+ *                                                                                             *
+ *                     $Archive:: /Commando/Code/Tools/max2w3d/bpick.h                        $*
+ *                                                                                             *
+ *                      $Author:: Greg_h                                                      $*
+ *                                                                                             *
+ *                     $Modtime:: 10/21/97 2:05p                                              $*
+ *                                                                                             *
+ *                    $Revision:: 6                                                           $*
+ *                                                                                             *
+ *---------------------------------------------------------------------------------------------*
+ * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 
@@ -46,7 +46,7 @@
 
 /*
 **	To use the Bone picking class, you should inherit from this class
-** and implement the User_Picked... functions.  
+** and implement the User_Picked... functions.
 */
 class BonePickerUserClass
 {
@@ -64,7 +64,7 @@ public:
 class BonePickerClass : public PickNodeCallback, public PickModeCallback, public HitByNameDlgCallback
 {
 public:
-	
+
 	BonePickerClass(void) : User(NULL), BoneList(NULL), SinglePick(FALSE) {}
 
 	/*
@@ -84,13 +84,13 @@ public:
 	*/
 	BOOL HitTest(IObjParam *ip,HWND hWnd,ViewExp *vpt,IPoint2 m,int flags);
 	BOOL Pick(IObjParam *ip,ViewExp *vpt);
-		
+
 	void EnterMode(IObjParam *ip) { }
 	void ExitMode(IObjParam *ip) { }
 
 	PickNodeCallback * GetFilter() {return this;}
 	BOOL RightClick(IObjParam *ip,ViewExp *vpt) { return TRUE; }
-	
+
 	/*
 	** From HitByNameDlgCallback
 	*/
@@ -107,7 +107,7 @@ protected:
 
 	/*
 	** The bone picker will pass the bones on to the "user" of
-	** the class.  
+	** the class.
 	*/
 	BonePickerUserClass * User;
 

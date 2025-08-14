@@ -81,7 +81,7 @@ const wchar_t *localeStringsMissing[ MISSING_STRING_HINTS_MAX ] =
 /****************************************************************************/
 
 //----------------------------------------------------------------------------
-// NOTE:	if USE_MULTI_FILE_FORMAT is "true", then a .lOC file must be in 
+// NOTE:	if USE_MULTI_FILE_FORMAT is "true", then a .lOC file must be in
 //			the same directory as this file.
 //----------------------------------------------------------------------------
 #define		USE_MULTI_FILE_FORMAT		FALSE
@@ -108,7 +108,7 @@ wchar_t *	Remove_Quotes_Around_String ( wchar_t *old_string );
 
 
 //=============================================================================
-// These are wrapper functions around the LOCALE_ functions.  I made these to 
+// These are wrapper functions around the LOCALE_ functions.  I made these to
 // make using the single vs. multi language files more transparent to the program.
 //=============================================================================
 
@@ -281,7 +281,7 @@ int Locale_Init	( int language, char *file )
 
 	#endif
 */
-	return result;	
+	return result;
 }
 
 /************************************************************************/
@@ -321,7 +321,7 @@ const char* Locale_GetString( int StringID, char *String )
 
 	#if( USE_MULTI_FILE_FORMAT )
 		wcscpy( wide_buffer, (wchar_t *)LOCALE_getstring( StringID ));
-	#else									  
+	#else
 		wcscpy( wide_buffer, (wchar_t *)LOCALE_getstr( LocaleFile, StringID ));
 	#endif
 
@@ -359,22 +359,22 @@ const wchar_t* Locale_GetString( int StringID, wchar_t *String )
 
 	#if( USE_MULTI_FILE_FORMAT )
 		wcscpy( wide_buffer, (wchar_t *)LOCALE_getstring( StringID ));
-	#else		
-		
+	#else
+
 		wchar_t *localeStr = NULL;
-		
+
 		if (TheGameText != NULL)
 			localeStr = (wchar_t *)TheGameText->fetch( s_stringLabels[StringID] );
-		
-		if (localeStr == NULL) 
+
+		if (localeStr == NULL)
 		{
 			return localeStringsMissing[ min( MISSING_STRING_HINTS_MAX - 1, StringID ) ];
-		} 
-		else 
+		}
+		else
 		{
 			wcscpy( wide_buffer, localeStr);
 		}
-	#endif 
+	#endif
 
 	Remove_Quotes_Around_String( wide_buffer );
 

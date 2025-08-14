@@ -16,22 +16,22 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/*********************************************************************************************** 
- ***              C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S               *** 
- *********************************************************************************************** 
- *                                                                                             * 
- *                 Project Name : Command & Conquer                                            * 
- *                                                                                             * 
- *                     $Archive:: /Commando/Code/wwlib/wwfile.h                               $* 
- *                                                                                             * 
+/***********************************************************************************************
+ ***              C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S               ***
+ ***********************************************************************************************
+ *                                                                                             *
+ *                 Project Name : Command & Conquer                                            *
+ *                                                                                             *
+ *                     $Archive:: /Commando/Code/wwlib/wwfile.h                               $*
+ *                                                                                             *
  *                      $Author:: Jani_p                                                      $*
- *                                                                                             * 
+ *                                                                                             *
  *                     $Modtime:: 5/04/01 7:43p                                               $*
- *                                                                                             * 
+ *                                                                                             *
  *                    $Revision:: 8                                                           $*
  *                                                                                             *
- *---------------------------------------------------------------------------------------------* 
- * Functions:                                                                                  * 
+ *---------------------------------------------------------------------------------------------*
+ * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 #if _MSC_VER >= 1000
 #pragma once
@@ -66,13 +66,13 @@ class FileClass
 {
 	public:
 
-		enum 
+		enum
 		{
 			READ = 1,
 			WRITE = 2,
 			PRINTF_BUFFER_SIZE = 1024
 		};
-		
+
 		virtual ~FileClass(void) {};
 		virtual char const * File_Name(void) const = 0;
 		virtual char const * Set_Name(char const *filename) = 0;
@@ -91,7 +91,7 @@ class FileClass
 		virtual unsigned long Get_Date_Time(void) {return(0);}
 		virtual bool Set_Date_Time(unsigned long ) {return(false);}
 		virtual void Error(int error, int canretry = false, char const * filename=NULL) = 0;
-		virtual void * Get_File_Handle(void) { return reinterpret_cast<void *>(-1); } 
+		virtual void * Get_File_Handle(void) { return reinterpret_cast<void *>(-1); }
 
 		operator char const * ()
 		{

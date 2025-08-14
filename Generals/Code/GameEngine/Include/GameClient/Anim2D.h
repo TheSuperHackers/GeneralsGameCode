@@ -42,7 +42,7 @@ class Image;
 // ------------------------------------------------------------------------------------------------
 enum Anim2DMode CPP_11(: Int)
 {
-	
+
 	ANIM_2D_INVALID = 0,
 	ANIM_2D_ONCE,
 	ANIM_2D_ONCE_BACKWARDS,
@@ -56,7 +56,7 @@ enum Anim2DMode CPP_11(: Int)
 
 };
 #ifdef DEFINE_ANIM_2D_MODE_NAMES
-static const char *Anim2DModeNames[] = 
+static const char *Anim2DModeNames[] =
 {
 	"NONE",
 	"ONCE",
@@ -74,7 +74,7 @@ static const char *Anim2DModeNames[] =
 // ------------------------------------------------------------------------------------------------
 class Anim2DTemplate : public MemoryPoolObject
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(Anim2DTemplate, "Anim2DTemplate")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(Anim2DTemplate, "Anim2DTemplate")
 public:
 
 	Anim2DTemplate( AsciiString name );
@@ -90,7 +90,7 @@ public:
 	// list access for use by the Anim2DCollection only
 	void friend_setNextTemplate( Anim2DTemplate *animTemplate ) { m_nextTemplate = animTemplate; }
 	Anim2DTemplate *friend_getNextTemplate( void ) const { return m_nextTemplate; };
-	
+
 	// INI methods
 	const FieldParse *getFieldParse( void ) const { return s_anim2DFieldParseTable; }
 	void storeImage( const Image *image );								///< store image in next available slot

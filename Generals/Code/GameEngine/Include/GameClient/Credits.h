@@ -24,12 +24,12 @@
 
 // FILE: Credits.h /////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Electronic Arts Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2002 - All Rights Reserved                  
-//                                                                          
+//
+//                       Electronic Arts Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2002 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 //	created:	Dec 2002
@@ -37,7 +37,7 @@
 //	Filename: 	Credits.h
 //
 //	author:		Chris Huybregts
-//	
+//
 //	purpose:	header file for the credits
 //
 //-----------------------------------------------------------------------------
@@ -67,7 +67,7 @@ class DisplayString;
 enum
 {
 CREDIT_STYLE_TITLE = 0,
-CREDIT_STYLE_POSITION, 
+CREDIT_STYLE_POSITION,
 CREDIT_STYLE_NORMAL,
 CREDIT_STYLE_COLUMN,
 CREDIT_STYLE_BLANK,			///< Keep this second to last
@@ -76,13 +76,13 @@ MAX_CREDIT_STYLES				///< Keep this last
 
 enum{ CREDIT_SPACE_OFFSET = 2 };
 
-static const LookupListRec CreditStyleNames[] = 
+static const LookupListRec CreditStyleNames[] =
 {
 	{ "TITLE",					CREDIT_STYLE_TITLE },
 	{ "MINORTITLE",				CREDIT_STYLE_POSITION },
 	{ "NORMAL",			CREDIT_STYLE_NORMAL },
 	{ "COLUMN",				CREDIT_STYLE_COLUMN },
-	
+
 	{ NULL, 0	}// keep this last!
 };
 
@@ -124,7 +124,7 @@ public:
 	static const FieldParse m_creditsFieldParseTable[];																				///< the parse table
 	static void parseBlank( INI* ini, void *instance, void *store, const void *userData );					///< Parse the image part of the INI file
 	static void parseText( INI* ini, void *instance, void *store, const void *userData );					///< Parse the image part of the INI file
-	
+
 	Bool isFinished( void ) { return m_isFinished;	}
 	void addBlank( void );
 	void addText( AsciiString text );
@@ -145,7 +145,7 @@ private:
 	Color			m_titleColor;
 	Color			m_positionColor;
 	Color			m_normalColor;
-	
+
 	Int m_currentStyle;
 
 	Bool m_isFinished;

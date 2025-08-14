@@ -24,7 +24,7 @@
 
 // FILE: DelayedUpgrade.h /////////////////////////////////////////////////////////////////////////////
 // Author: Graham Smallwood, April 2002
-// Desc:	 An Upgrade that broadcasts to all DelayedUpgradeUpdates that maybe they should start 
+// Desc:	 An Upgrade that broadcasts to all DelayedUpgradeUpdates that maybe they should start
 //					counting down to execution
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -47,11 +47,11 @@ public:
 		m_delayTime = 0;
 	}
 
-	static void buildFieldParse(MultiIniFieldParse& p) 
+	static void buildFieldParse(MultiIniFieldParse& p)
 	{
     UpgradeModuleData::buildFieldParse(p);
 
-		static const FieldParse dataFieldParse[] = 
+		static const FieldParse dataFieldParse[] =
 		{
 			{ "DelayTime",	INI::parseDurationUnsignedInt,	NULL, offsetof( DelayedUpgradeModuleData, m_delayTime ) },
 			{ 0, 0, 0, 0 }

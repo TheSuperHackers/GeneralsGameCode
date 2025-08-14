@@ -51,7 +51,7 @@ void VeterancyGainCreateModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
   CreateModuleData::buildFieldParse(p);
 
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
 		{ "StartingLevel",		INI::parseIndexList,	TheVeterancyNames,	offsetof( VeterancyGainCreateModuleData, m_startingLevel ) },
 		{ "ScienceRequired",	INI::parseScience,		NULL,								offsetof( VeterancyGainCreateModuleData, m_scienceRequired ) },
@@ -85,7 +85,7 @@ void VeterancyGainCreate::onCreate( void )
 
 	const VeterancyGainCreateModuleData *md = getVeterancyGainCreateModuleData();
 	Player *myPlayer = getObject()->getControllingPlayer();
-	if( myPlayer && (md->m_scienceRequired == SCIENCE_INVALID || 
+	if( myPlayer && (md->m_scienceRequired == SCIENCE_INVALID ||
 									 myPlayer->hasScience( md->m_scienceRequired )) )
 	{
 		ExperienceTracker* myExp = getObject()->getExperienceTracker();

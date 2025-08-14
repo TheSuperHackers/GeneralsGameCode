@@ -48,7 +48,7 @@ public:
 	virtual void init( void );
 	virtual void reset( void );
 	virtual void update( void );
-	
+
 protected:
 
 };

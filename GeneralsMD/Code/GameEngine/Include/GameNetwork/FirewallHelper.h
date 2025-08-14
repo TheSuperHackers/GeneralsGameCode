@@ -187,7 +187,7 @@ class FirewallHelperClass {
 		void readFirewallBehavior(void);
 		void reset(void);
 		Bool behaviorDetectionUpdate(void);
-		
+
 		FirewallBehaviorType getFirewallBehavior(void);
 		void writeFirewallBehavior(void);
 

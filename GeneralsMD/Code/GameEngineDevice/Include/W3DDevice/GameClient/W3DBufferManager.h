@@ -45,7 +45,7 @@
 
 #define MAX_IB_SIZES 128 //number of different sized IB slots allowed (goes all the way up to 65536)
 #define MAX_INDEX_BUFFERS_CREATED	32
-#define DEFAULT_INDEX_BUFFER_SIZE	32768	
+#define DEFAULT_INDEX_BUFFER_SIZE	32768
 
 class W3DBufferManager
 {

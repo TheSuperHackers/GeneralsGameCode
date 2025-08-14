@@ -48,7 +48,7 @@ SupplyWarehouseCreate::SupplyWarehouseCreate( Thing *thing, const ModuleData* mo
 SupplyWarehouseCreate::~SupplyWarehouseCreate( void )
 {
 
-} 
+}
 
 //-------------------------------------------------------------------------------------------------
 void SupplyWarehouseCreate::onCreate( void )

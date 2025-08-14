@@ -168,11 +168,11 @@ static LadderInfo *parseLadder(AsciiString raw)
 					DEBUG_LOG(("No factions specified.  Using all."));
 					lad->validFactions.clear();
 					Int numTemplates = ThePlayerTemplateStore->getPlayerTemplateCount();
-					for ( Int i = 0; i < numTemplates; ++i ) 
+					for ( Int i = 0; i < numTemplates; ++i )
 					{
 						const PlayerTemplate *pt = ThePlayerTemplateStore->getNthPlayerTemplate(i);
-						if (!pt)			
-							continue; 
+						if (!pt)
+							continue;
 
 						if (pt->isPlayableSide()  &&  pt->getSide().compare("Boss") != 0 )
 							lad->validFactions.push_back(pt->getSide());

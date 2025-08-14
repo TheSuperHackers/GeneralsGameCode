@@ -17,22 +17,22 @@
 */
 
 /* $Header: /Commando/Code/wwmath/euler.h 5     5/05/01 5:48p Jani_p $ */
-/*********************************************************************************************** 
- ***                            Confidential - Westwood Studios                              *** 
- *********************************************************************************************** 
- *                                                                                             * 
- *                 Project Name : Commando / G Math Library                                    * 
- *                                                                                             * 
- *                     $Archive:: /Commando/Code/wwmath/euler.h                               $* 
- *                                                                                             * 
- *                       Author:: Greg_h                                                       * 
- *                                                                                             * 
- *                     $Modtime:: 5/04/01 8:37p                                               $* 
- *                                                                                             * 
- *                    $Revision:: 5                                                           $* 
- *                                                                                             * 
- *---------------------------------------------------------------------------------------------* 
- * Functions:                                                                                  * 
+/***********************************************************************************************
+ ***                            Confidential - Westwood Studios                              ***
+ ***********************************************************************************************
+ *                                                                                             *
+ *                 Project Name : Commando / G Math Library                                    *
+ *                                                                                             *
+ *                     $Archive:: /Commando/Code/wwmath/euler.h                               $*
+ *                                                                                             *
+ *                       Author:: Greg_h                                                       *
+ *                                                                                             *
+ *                     $Modtime:: 5/04/01 8:37p                                               $*
+ *                                                                                             *
+ *                    $Revision:: 5                                                           $*
+ *                                                                                             *
+ *---------------------------------------------------------------------------------------------*
+ * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 
@@ -50,13 +50,13 @@
 
 /*********************************************************************
 
-	Euler Order Types 
+	Euler Order Types
 
 	When creating an EulerAngles object, use one of the below
 	constants to describe the axis convention.
 
 	XYZ - order of the axes
-	s/r - whether the rotations are applied to a static or 
+	s/r - whether the rotations are applied to a static or
 	      rotating frame.
 
 *********************************************************************/
@@ -92,7 +92,7 @@ extern int	EulerOrderZYZr;
 
 
 /*********************************************************************
-	
+
 	EulerAnglesClass
 
 	The purpose for this class is mainly for conversion.  You can
@@ -100,9 +100,9 @@ extern int	EulerOrderZYZr;
 	convert matrices into a set of euler angles.  You don't really
 	want to use this at run-time to convert matrices into angles.
 
-	The guts of this implementation is based on the article in Graphics 
+	The guts of this implementation is based on the article in Graphics
 	Gems IV by Ken Shoemake.  The original article is on page 222.
-	
+
 *********************************************************************/
 class EulerAnglesClass
 {

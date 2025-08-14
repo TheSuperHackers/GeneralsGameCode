@@ -54,7 +54,7 @@ class W3DVolumetricShadowManager
 {
 
 public:
-	
+
 	W3DVolumetricShadowManager( void );
 	~W3DVolumetricShadowManager( void );
 	Bool init( void );	///<initialize resources used by manager, must have valid D3D device.
@@ -94,7 +94,7 @@ class W3DVolumetricShadow	: public Shadow
 {
 	friend class W3DVolumetricShadowManager;
 
-	enum														
+	enum
 	{
 		SHADOW_DYNAMIC	=	0x1			//flag indicating a dynamic shadow caster (animated mesh).
 	};
@@ -108,7 +108,7 @@ class W3DVolumetricShadow	: public Shadow
 
 		virtual void release(void)	{TheW3DVolumetricShadowManager->removeShadow(this);}	///<release shadow from manager
 
-		#if defined(RTS_DEBUG)	
+		#if defined(RTS_DEBUG)
 		virtual void getRenderCost(RenderCost & rc) const;
 		#endif
 
@@ -156,7 +156,7 @@ class W3DVolumetricShadow	: public Shadow
 
 		// this is our current geometry we will derive the shadow from
 		W3DShadowGeometry *m_geometry;
-		
+
 		RenderObjClass	*m_robj;	///<render object belonging to model casting shadow
 
 		Real	m_shadowLengthScale;	///<scale factor used to reduce/clamp shadow length
@@ -183,7 +183,7 @@ class W3DVolumetricShadow	: public Shadow
 									 // as disjoint pairs.  The acutal size of this
 									 // piece of memory must accomodate #vertices*2
 		Short m_numSilhouetteIndices[MAX_SHADOW_CASTER_MESHES];  // total number of edge indices in the index
-									   // array, these are pairs and therefore 
+									   // array, these are pairs and therefore
 									   // always a multiple of two
 		Short m_maxSilhouetteEntries[MAX_SHADOW_CASTER_MESHES];  // how big the silhouette index can hold max
 

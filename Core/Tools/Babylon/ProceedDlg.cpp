@@ -65,41 +65,41 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // ProceedDlg message handlers
 
-void ProceedDlg::OnYes() 
+void ProceedDlg::OnYes()
 {
 	// TODO: Add your control notification handler code here
 	EndDialog ( IDYES );
-	
-}								 
 
-void ProceedDlg::OnAlways() 
+}
+
+void ProceedDlg::OnAlways()
 {
 	// TODO: Add your control notification handler code here
 	EndDialog ( IDALWAYS );
-	
+
 }
 
-void ProceedDlg::OnNo() 
+void ProceedDlg::OnNo()
 {
 	// TODO: Add your control notification handler code here
 	EndDialog ( IDNO );
-	
+
 }
 
-void ProceedDlg::OnClose() 
+void ProceedDlg::OnClose()
 {
 	// TODO: Add your message handler code here and/or call default
-	
+
 	EndDialog ( IDNO );
 	CDialog::OnClose();
 }
 
-BOOL ProceedDlg::OnInitDialog() 
+BOOL ProceedDlg::OnInitDialog()
 {
 	CDialog::OnInitDialog();
-	
-	SetDlgItemText ( IDC_MESSAGE, message );	
-	
+
+	SetDlgItemText ( IDC_MESSAGE, message );
+
 	return TRUE;  // return TRUE unless you set the focus to a control
 	              // EXCEPTION: OCX Property Pages should return FALSE
 }

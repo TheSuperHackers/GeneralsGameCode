@@ -58,20 +58,20 @@
 
 
 /*
-** Separating Axes have to be rejected if their length is smaller than some epsilon.  
-** Otherwise, erroneous results can be reported. 
+** Separating Axes have to be rejected if their length is smaller than some epsilon.
+** Otherwise, erroneous results can be reported.
 */
 #define AXISLEN_EPSILON2	WWMATH_EPSILON * WWMATH_EPSILON	// squared length of a separating axis must be larger than this
 
-/* 
-** Axes used in Box-Tri intersection tests 
+/*
+** Axes used in Box-Tri intersection tests
 ** The axes of the box are A0,A1,A2.  N is the normal of the triangle,
 ** E0,E1,E2 are direction vectors for the edges of the triangle.
 ** (the box axes are labeled A0,A1,A2 as a holdover from the obbox-obbox
 ** collision code which this was derived from where there are two boxes
 ** A and B)
 */
-enum 
+enum
 {
 	INTERSECTION = 0,
 	AXIS_N,					// normal of the triangle
@@ -92,11 +92,11 @@ enum
 
 
 /******************************************************************************************
-	
+
 	OBBox->Triangle collision
 
    As with most of the collision detection functions, this code is based on the theorem
-	that given any two non-intersecting convex polyhedra, a separating plane/axis 
+	that given any two non-intersecting convex polyhedra, a separating plane/axis
 	can be found that will be defined by one of the face normals of one of the polyhedra
 	or the cross product of an edge from each polyhedra.  The key optimization for
 	boxes is that many of these axes are the same.  The normal to a face is the same
@@ -105,10 +105,10 @@ enum
 	This test must be done using the tri normal, the three basis vectors
 	for the box, and three vectors defined by the cross products of the basis
 	and edge vectors.  When testing the basis vectors, there will be two extents for
-	the tri (the other two vectors projected onto the axis being tested). 
+	the tri (the other two vectors projected onto the axis being tested).
 	The appropriate extent must be used in the test (largest value which is pointing
-	towards the direction of the box). In addition, I've found that I must test axes 
-	defined by the cross products of	the move vector and the box axes.  These tests 
+	towards the direction of the box). In addition, I've found that I must test axes
+	defined by the cross products of	the move vector and the box axes.  These tests
 	catch "false collisions" where the box passes very close to the triangle but does
 	not actually hit it.
 
@@ -122,7 +122,7 @@ enum
 /**
 ** BoxTriColStruct
 ** Scratchpad variables for the OBBox-Triangle collision detection functions.  One instance
-** of this structure will be used for all of the local variables and its pointer will be 
+** of this structure will be used for all of the local variables and its pointer will be
 ** handed of to various inline functions for the axis tests.
 ** Note that much of the code needs the un-normalized triangle normal.  For this reason,
 ** I have to compute N rather than copying it from the triangle.  (commenting this to
@@ -131,13 +131,13 @@ enum
 ** Note that the MaxFrac variable starts negative so that we can accept slightly negative
 ** fractions (interpenetrations).  But we clamp the returned result to 0.0 so that we never
 ** allow an object to get more embedded, just to possibly break itself free if it is within
-** the epsilon.  This is important because sometimes objects seem to intersect simply due to 
+** the epsilon.  This is important because sometimes objects seem to intersect simply due to
 ** floating point roundoff error...
 */
 struct BTCollisionStruct
 {
 	BTCollisionStruct(const OBBoxClass &box,const Vector3 &move,const TriClass &tri,const Vector3 &trimove) :
-		Box(box),															
+		Box(box),
 		Tri(tri),
 		BoxMove(move),
 		TriMove(trimove)
@@ -145,7 +145,7 @@ struct BTCollisionStruct
 		Reset();
 	}
 
-	void Reset(void) 
+	void Reset(void)
 	{
 		StartBad = true;				// true until an axis clears it
 		MaxFrac = -1.0f;				// maximum move allowed so far (accept slightly negative but clamp to zero at end)
@@ -156,15 +156,15 @@ struct BTCollisionStruct
 		Vector3::Subtract(*Tri.V[0],Box.Center,&D);				// vector from center of box to vertex 0
 		Vector3::Subtract(BoxMove,TriMove,&Move);						// move vector relative to stationary triangle
 
-		Vector3::Subtract(*Tri.V[1],*Tri.V[0],&E[0]);			
-		Vector3::Subtract(*Tri.V[2],*Tri.V[0],&E[1]);			
+		Vector3::Subtract(*Tri.V[1],*Tri.V[0],&E[0]);
+		Vector3::Subtract(*Tri.V[2],*Tri.V[0],&E[1]);
 		Vector3::Subtract(E[1],E[0],&E[2]);
 
 		A[0].Set(Box.Basis[0][0],Box.Basis[1][0],Box.Basis[2][0]);
 		A[1].Set(Box.Basis[0][1],Box.Basis[1][1],Box.Basis[2][1]);
 		A[2].Set(Box.Basis[0][2],Box.Basis[1][2],Box.Basis[2][2]);
-	
-		Vector3::Cross_Product(E[0],E[1],&N);	
+
+		Vector3::Cross_Product(E[0],E[1],&N);
 	}
 
 	bool						StartBad;			// Inital configuration is intersecting?
@@ -172,7 +172,7 @@ struct BTCollisionStruct
 	int						AxisId;				// Last separating axis
 	int						Point;				// Index of the "closest" triangle point (or one of them)
 	int						Side;					// which side of the interval
-	
+
 	int						TestSide;			// Was the axis we're working on flipped
 	int						TestAxisId;			// Axis 'id' we're working on
 	int						TestPoint;			// Index of the closest vertex
@@ -185,7 +185,7 @@ struct BTCollisionStruct
 	Vector3					AxE[3][3];			// Cross produts of the Basis vectors and edges
 
 	Vector3					A[3];					// basis vectors for the box
-	Vector3					E[3];					// edge vectors for the triangle 
+	Vector3					E[3];					// edge vectors for the triangle
 	Vector3					N;						// normal (NOT normalized!!!)
 	Vector3					FinalD;				// Vector from center of box to v0 at end of move
 
@@ -195,7 +195,7 @@ struct BTCollisionStruct
 	const Vector3 &		TriMove;
 
 private:
-	
+
 	// not implemented
 	BTCollisionStruct(const BTCollisionStruct &);
 	BTCollisionStruct & operator = (const BTCollisionStruct &);
@@ -225,7 +225,7 @@ static inline bool obbtri_collision_separation_test
 (
 	BTCollisionStruct & context,
 	float lp,float leb0,float leb1
-)	
+)
 {
 	/*
 	** - compute 'EPSILON' normalized to the length of the axis
@@ -237,7 +237,7 @@ static inline bool obbtri_collision_separation_test
 	**       - accept entire move
 	**     - Else If (I can move more than I could have before; *negative always fails!)
 	**       - update fraction
-	**   - Else 
+	**   - Else
 	**     - Accept entire move since I'm not moving towards the polygon
 	*/
 	float eps = 0.0f;
@@ -248,29 +248,29 @@ static inline bool obbtri_collision_separation_test
 	if (lp - leb0 > -eps) {
 		context.StartBad = false;
 		if (leb1 - leb0 > 0.0f) {
-			float frac = (lp-leb0)/(leb1-leb0);	
+			float frac = (lp-leb0)/(leb1-leb0);
 			if (frac >= 1.0f) {
-				/* moving toward but not hitting triangle */ 
+				/* moving toward but not hitting triangle */
 				context.AxisId = context.TestAxisId;
-				context.MaxFrac = 1.0f; 
-				return true;  
+				context.MaxFrac = 1.0f;
+				return true;
 			} else {
 				/* moving toward, hitting triangle */
-				if (frac > context.MaxFrac) { 
-					context.MaxFrac = frac; 
-					context.AxisId = context.TestAxisId; 
+				if (frac > context.MaxFrac) {
+					context.MaxFrac = frac;
+					context.AxisId = context.TestAxisId;
 					context.Side = context.TestSide;
 					context.Point = context.TestPoint;
 				}
 			}
 		} else {
-			/* moving away or not moving */ 
+			/* moving away or not moving */
 			context.AxisId = context.TestAxisId;
-			context.MaxFrac = 1.0f; 
-			return true;  
+			context.MaxFrac = 1.0f;
+			return true;
 		}
 	}
-	return false;	
+	return false;
 }
 
 
@@ -303,7 +303,7 @@ static inline bool obbtri_check_collision_axis(BTCollisionStruct & context)
 	axismove = Vector3::Dot_Product(context.Move,context.TestAxis);
 
 	// I want the axis centered at the box, pointing towards the triangle
-	if (dist < 0) {		
+	if (dist < 0) {
 		dist = -dist;
 		axismove = -axismove;
 		context.TestAxis = -context.TestAxis;
@@ -314,15 +314,15 @@ static inline bool obbtri_check_collision_axis(BTCollisionStruct & context)
 
 	// compute coordinates of the leading edge of the box at t0 and t1
 	leb0 =	context.Box.Extent.X * WWMath::Fabs(Vector3::Dot_Product(context.TestAxis,context.A[0])) +
-				context.Box.Extent.Y * WWMath::Fabs(Vector3::Dot_Product(context.TestAxis,context.A[1])) + 
+				context.Box.Extent.Y * WWMath::Fabs(Vector3::Dot_Product(context.TestAxis,context.A[1])) +
 				context.Box.Extent.Z * WWMath::Fabs(Vector3::Dot_Product(context.TestAxis,context.A[2]));
 	leb1 = leb0 + axismove;
-	
+
 	// compute coordinate of "leading edge of the triangle" relative to the box center.
 	lp = 0;
 	tmp = Vector3::Dot_Product(context.E[0],context.TestAxis); if (tmp < lp) lp = tmp;
 	tmp = Vector3::Dot_Product(context.E[1],context.TestAxis); if (tmp < lp) lp = tmp;
-	lp = dist + lp;	
+	lp = dist + lp;
 
 	return obbtri_collision_separation_test(context,lp,leb0,leb1);
 }
@@ -362,7 +362,7 @@ static inline bool obbtri_check_collision_cross_axis
 	axismove = Vector3::Dot_Product(context.Move,context.TestAxis);
 
 	// I want the axis centered at the box, pointing towards the triangle
-	if (p0 < 0) {		
+	if (p0 < 0) {
 		p0 = -p0;
 		axismove = -axismove;
 		dp = -dp;
@@ -374,11 +374,11 @@ static inline bool obbtri_check_collision_cross_axis
 
 	// compute coordinates of the leading edge of the box at t1
 	leb1 = leb0 + axismove;
-	
+
 	// compute coordinate of "leading edge of the triangle" relative to the box center.
 	lp = 0; context.TestPoint = 0;
 	if (dp < 0) { lp = dp; context.TestPoint = dpi; }
-	lp = p0 + lp;	
+	lp = p0 + lp;
 
 	return obbtri_collision_separation_test(context,lp,leb0,leb1);
 }
@@ -418,7 +418,7 @@ static inline bool obbtri_check_collision_basis_axis
 	axismove = Vector3::Dot_Product(context.Move,context.TestAxis);
 
 	// we want the axis centered at the box, pointing towards the triangle
-	if (dist < 0) {		
+	if (dist < 0) {
 		dist = -dist;
 		axismove = -axismove;
 		dp1 = -dp1;
@@ -430,13 +430,13 @@ static inline bool obbtri_check_collision_basis_axis
 	}
 
 	// this is the "optimization", leb0 = one of the extents
-	leb1 = leb0 + axismove;	
-	
+	leb1 = leb0 + axismove;
+
 	// compute coordinate of "leading edge of the polygon" relative to the box center.
 	lp = 0; context.TestPoint = 0;
 	if (dp1 < lp) { lp = dp1; context.TestPoint = 1; }
 	if (dp2 < lp) { lp = dp2; context.TestPoint = 2; }
-	lp = dist + lp;	
+	lp = dist + lp;
 
 	return obbtri_collision_separation_test(context,lp,leb0,leb1);
 }
@@ -480,7 +480,7 @@ static inline bool obbtri_check_collision_normal_axis(BTCollisionStruct & contex
 	}
 
 	leb0 =	context.Box.Extent.X * WWMath::Fabs(context.AN[0]) +
-				context.Box.Extent.Y * WWMath::Fabs(context.AN[1]) + 
+				context.Box.Extent.Y * WWMath::Fabs(context.AN[1]) +
 				context.Box.Extent.Z * WWMath::Fabs(context.AN[2]);
 	leb1 = leb0 + axismove;
 	context.TestPoint = 0;
@@ -530,7 +530,7 @@ static inline void obbtri_compute_contact_normal
 	Vector3 *						set_normal
 )
 {
-	switch(context.AxisId) 
+	switch(context.AxisId)
 	{
 		case INTERSECTION:
 //			WWASSERT(0);
@@ -604,7 +604,7 @@ static inline void eval_A0_point(const BTCollisionStruct & context,float * x,int
 {
 	float yval,den;
 	Vector3 DxE;
-	
+
 	x[1] = -eval_side(context.AE[2][edge],context.Side) * context.Box.Extent[1];
 	x[2] = eval_side(context.AE[1][edge],context.Side) * context.Box.Extent[2];
 	if (context.Point == 0) { yval = 0.0f; } else { yval = 1.0f; }
@@ -651,7 +651,7 @@ static inline void eval_A1_point(const BTCollisionStruct & context,float * x,int
 	x[0] = eval_side(context.AE[2][edge],context.Side) * context.Box.Extent[0];
 	x[2] = -eval_side(context.AE[0][edge],context.Side) * context.Box.Extent[2];
 	if (context.Point == 0) { yval = 0.0f; } else { yval = 1.0f; }
-	
+
 	den = Vector3::Dot_Product(context.N,context.AxE[1][edge]);
 	if (WWMath::Fabs(den) > 0.0f) {
 
@@ -665,11 +665,11 @@ static inline void eval_A1_point(const BTCollisionStruct & context,float * x,int
 		x[1] -= Vector3::Dot_Product(context.N,context.AxE[0][edge]) * x[0];
 		x[1] -= Vector3::Dot_Product(context.N,context.AxE[2][edge]) * x[2];
 		x[1] /= den;
-	
+
 	} else {
 
 		x[1] = 0.0f;
-	
+
 	}
 }
 
@@ -693,7 +693,7 @@ static inline void eval_A2_point(const BTCollisionStruct & context,float * x,int
 	x[0] = -eval_side(context.AE[1][edge],context.Side) * context.Box.Extent[0];
 	x[1] = eval_side(context.AE[0][edge],context.Side) * context.Box.Extent[1];
 	if (context.Point == 0) { yval = 0.0f; } else { yval = 1.0f; }
-	
+
 	den = Vector3::Dot_Product(context.N,context.AxE[2][edge]);
 	if (WWMath::Fabs(den) > 0.0f) {
 
@@ -707,11 +707,11 @@ static inline void eval_A2_point(const BTCollisionStruct & context,float * x,int
 		x[2] -= Vector3::Dot_Product(context.N,context.AxE[0][edge]) * x[0];
 		x[2] -= Vector3::Dot_Product(context.N,context.AxE[1][edge]) * x[1];
 		x[2] /= den;
-	
+
 	} else {
 
 		x[2] = 0.0f;
-	
+
 	}
 }
 
@@ -743,9 +743,9 @@ static inline void obbtri_compute_contact_point
 		context.FinalD = newv0 - newc;
 	}
 
-	switch (context.AxisId) 
+	switch (context.AxisId)
 	{
-	
+
 	case INTERSECTION:
 		WWASSERT(0);
 		return;
@@ -756,11 +756,11 @@ static inline void obbtri_compute_contact_point
 			x[i] = eval_side(context.AN[i],context.Side) * context.Box.Extent[i];
       }
 		break;
-	
+
 	case AXIS_A0:		// part of the triangle is touching a face of the box
 	case AXIS_A1:
 	case AXIS_A2:
-		
+
 		if (context.Point == 0) {
 			result->ContactPoint = *context.Tri.V[0];
 		} else if (context.Point == 1) {
@@ -771,11 +771,11 @@ static inline void obbtri_compute_contact_point
 		Vector3::Add(result->ContactPoint,result->Fraction * context.TriMove,&(result->ContactPoint));
 		return;
 
-	case AXIS_A0E0:	// one of the x-aligned edges of the box is contacting edge0 
+	case AXIS_A0E0:	// one of the x-aligned edges of the box is contacting edge0
 		eval_A0_point(context,x,0);
 		break;
-	
-	case AXIS_A0E1:	// one of the x-aligned edges of the box is contacting edge1 
+
+	case AXIS_A0E1:	// one of the x-aligned edges of the box is contacting edge1
 		eval_A0_point(context,x,1);
 		break;
 
@@ -802,7 +802,7 @@ static inline void obbtri_compute_contact_point
 	case AXIS_A2E1:	// one of the z-aligned edges of the box is contacting edge1
 		eval_A2_point(context,x,1);
 		break;
-	
+
 	case AXIS_A2E2:	// one of the z-aligned edges of the box is contacting edge3
 		eval_A2_point(context,x,2);
 		break;
@@ -810,20 +810,20 @@ static inline void obbtri_compute_contact_point
 	}
 
 	/*
-	** In certain circumstances, the x's computed above are outside the size of 
+	** In certain circumstances, the x's computed above are outside the size of
 	** the box.  I have tracked at least one of these cases to a situation where the
 	** separating axis is the triangle normal but one of the AxE axes also lines up
 	** with the normal.  In this case, the Normal was 0,0,25 and the A0xE0 axis
 	** was 0,0,5.  When the fraction was calculated for both of these, they were
 	** the same up to the six decimal places that MSVC will show me in the debugger.
 	** However, the fraction computed for the 0,0,5 axis was larger by some very small
-	** amount.  This causes it to be used as the "separating axis".  Looks like floating 
-	** point roundoff error to me.  The problem is that since the axis was perpendicular 
-	** to the triangle, the "nearest-point" logic chose V0 which resulted in the 
-	** calculation for x[0] being way off.  The equations for finding the contact point 
-	** in the AxE axis case assume that the axis is not normal to the triangle since 
+	** amount.  This causes it to be used as the "separating axis".  Looks like floating
+	** point roundoff error to me.  The problem is that since the axis was perpendicular
+	** to the triangle, the "nearest-point" logic chose V0 which resulted in the
+	** calculation for x[0] being way off.  The equations for finding the contact point
+	** in the AxE axis case assume that the axis is not normal to the triangle since
 	** that should be handled in the simpler routine for the N separating axis...
-	** Since I am at a loss for how to deal with this problem, I'm going to clamp all 
+	** Since I am at a loss for how to deal with this problem, I'm going to clamp all
 	** of the x's to be within the box here...
 	*/
 	if (x[0] > context.Box.Extent.X) {
@@ -837,7 +837,7 @@ static inline void obbtri_compute_contact_point
 	} else if (x[1] < -context.Box.Extent.Y) {
 		x[1] = -context.Box.Extent.Y;
 	}
-	
+
 	if (x[2] > context.Box.Extent.Z) {
 		x[2] = context.Box.Extent.Z;
 	} else if (x[2] < -context.Box.Extent.Z) {
@@ -847,21 +847,21 @@ static inline void obbtri_compute_contact_point
 	/*
 	** Now, compute the point
 	*/
-	result->ContactPoint.X =	context.Box.Center.X + 
-										x[0]*context.A[0].X + 
-										x[1]*context.A[1].X + 
+	result->ContactPoint.X =	context.Box.Center.X +
+										x[0]*context.A[0].X +
+										x[1]*context.A[1].X +
 										x[2]*context.A[2].X;
 
-	result->ContactPoint.Y =	context.Box.Center.Y + 
-										x[0]*context.A[0].Y + 
-										x[1]*context.A[1].Y + 
+	result->ContactPoint.Y =	context.Box.Center.Y +
+										x[0]*context.A[0].Y +
+										x[1]*context.A[1].Y +
 										x[2]*context.A[2].Y;
 
-	result->ContactPoint.Z =	context.Box.Center.Z + 
-										x[0]*context.A[0].Z + 
-										x[1]*context.A[1].Z + 
+	result->ContactPoint.Z =	context.Box.Center.Z +
+										x[0]*context.A[0].Z +
+										x[1]*context.A[1].Z +
 										x[2]*context.A[2].Z;
-	
+
 	Vector3::Add(result->ContactPoint,result->Fraction * context.BoxMove,&(result->ContactPoint));
 }
 
@@ -1027,7 +1027,7 @@ bool CollisionMath::Collide
 		leb0 = box.Extent[0]*WWMath::Fabs(context.AE[1][1]) + box.Extent[1]*WWMath::Fabs(context.AE[0][1]);
 		if (obbtri_check_collision_cross_axis(context,dp,1,leb0)) goto exit;
 	}
-	
+
 	/*
 	** AXIS_A2xE2
 	*/
@@ -1073,7 +1073,7 @@ exit:
 #endif
 
 	/*
-	** If the triangle and box are intersecting before the move, return that 
+	** If the triangle and box are intersecting before the move, return that
 	** result.
 	*/
 	if (context.StartBad) {
@@ -1085,7 +1085,7 @@ exit:
 	}
 
 	/*
-	** If the fraction allowed is basically equal to the fraction allowed by 
+	** If the fraction allowed is basically equal to the fraction allowed by
 	** another polygon, try to pick the polygon which is least "edge-on" to the
 	** move.
 	*/
@@ -1103,22 +1103,22 @@ exit:
 		{
 			result->Normal = normal; //obbtri_compute_contact_normal(context,result);
 		}
-				
+
 		result->Fraction = context.MaxFrac;
 
 		if (result->ComputeContactPoint) {
-			obbtri_compute_contact_point(context,result);	
+			obbtri_compute_contact_point(context,result);
 		}
 		TRACK_COLLISION_OBBOX_TRI_HIT;
 		return true;
 	}
-	
+
 	return false;
 }
 
 
 /***********************************************************************************************
-	
+
 	OBBox-Triangle Intersection
 
 	The following code implements a simple boolean intersection check.  It uses the same
@@ -1130,7 +1130,7 @@ exit:
 /**
 ** BTIntersectStruct
 ** Scratchpad variables for the OBBox-Triangle intersection functions.  One instance
-** of this structure will be used for all of the local variables and its pointer will be 
+** of this structure will be used for all of the local variables and its pointer will be
 ** handed of to various inline functions for the axis tests.
 ** Note that much of the code needs the un-normalized triangle normal.  For this reason,
 ** I have to compute N rather than copying it from the triangle.  (commenting this to
@@ -1139,19 +1139,19 @@ exit:
 struct BTIntersectStruct
 {
 	BTIntersectStruct(const OBBoxClass &box,const TriClass &tri) :
-		Box(box),															
+		Box(box),
 		Tri(tri)
 	{
 		Vector3::Subtract(*tri.V[0],box.Center,&D);				// vector from center of box to vertex 0
-		Vector3::Subtract(*tri.V[1],*tri.V[0],&E[0]);			
-		Vector3::Subtract(*tri.V[2],*tri.V[0],&E[1]);			
+		Vector3::Subtract(*tri.V[1],*tri.V[0],&E[0]);
+		Vector3::Subtract(*tri.V[2],*tri.V[0],&E[1]);
 		Vector3::Subtract(E[1],E[0],&E[2]);
 
 		A[0].Set(box.Basis[0][0],box.Basis[1][0],box.Basis[2][0]);
 		A[1].Set(box.Basis[0][1],box.Basis[1][1],box.Basis[2][1]);
 		A[2].Set(box.Basis[0][2],box.Basis[1][2],box.Basis[2][2]);
-	
-		Vector3::Cross_Product(E[0],E[1],&N);	
+
+		Vector3::Cross_Product(E[0],E[1],&N);
 	}
 
 	Vector3					D;						// Vector from the center of the box to v0
@@ -1160,7 +1160,7 @@ struct BTIntersectStruct
 	Vector3					AxE[3][3];			// Cross produts of the Basis vectors and edges
 
 	Vector3					A[3];					// basis vectors for the box
-	Vector3					E[3];					// edge vectors for the triangle 
+	Vector3					E[3];					// edge vectors for the triangle
 	Vector3					N;						// normal (NOT normalized!!!)
 
 	Vector3					TestAxis;			// separating axis currently being tested
@@ -1169,7 +1169,7 @@ struct BTIntersectStruct
 	const TriClass &		Tri;
 
 private:
-	
+
 	// not implemented
 	BTIntersectStruct(const BTIntersectStruct &);
 	BTIntersectStruct & operator = (const BTIntersectStruct &);
@@ -1244,7 +1244,7 @@ static inline bool obbtri_check_intersection_cross_axis
 	p0 = Vector3::Dot_Product(context.D,context.TestAxis);
 
 	// I want the axis centered at the box, pointing towards the triangle
-	if (p0 < 0) {		
+	if (p0 < 0) {
 		context.TestAxis = -context.TestAxis;
 		p0 = -p0;
 		dp = -dp;
@@ -1253,7 +1253,7 @@ static inline bool obbtri_check_intersection_cross_axis
 	// compute coordinate of "leading edge of the triangle" relative to the box center.
 	lp = 0;
 	if (dp < 0) { lp = dp; }
-	lp = p0 + lp;	
+	lp = p0 + lp;
 
 	return obbtri_intersection_separation_test(context,lp,leb0);
 }
@@ -1288,18 +1288,18 @@ static inline bool obbtri_check_intersection_basis_axis
 	dist = Vector3::Dot_Product(context.D,context.TestAxis);
 
 	// we want the axis centered at the box, pointing towards the triangle
-	if (dist < 0) {		
+	if (dist < 0) {
 		context.TestAxis = -context.TestAxis;
 		dist = -dist;
 		dp1 = -dp1;
 		dp2 = -dp2;
-	} 
+	}
 
 	// compute coordinate of "leading edge of the polygon" relative to the box center.
 	lp = 0;
 	if (dp1 < lp) { lp = dp1; }
 	if (dp2 < lp) { lp = dp2; }
-	lp = dist + lp;	
+	lp = dist + lp;
 
 	return obbtri_intersection_separation_test(context,lp,leb0);
 }
@@ -1338,7 +1338,7 @@ static inline bool obbtri_check_intersection_normal_axis
 	}
 
 	leb0 =	context.Box.Extent.X * WWMath::Fabs(context.AN[0]) +
-				context.Box.Extent.Y * WWMath::Fabs(context.AN[1]) + 
+				context.Box.Extent.Y * WWMath::Fabs(context.AN[1]) +
 				context.Box.Extent.Z * WWMath::Fabs(context.AN[2]);
 	lp = dist;	// this is the "optimization", don't have to find lp
 
@@ -1491,7 +1491,7 @@ bool CollisionMath::Intersection_Test(const OBBoxClass & box,const TriClass & tr
 		leb0 = box.Extent[0]*WWMath::Fabs(context.AE[1][1]) + box.Extent[1]*WWMath::Fabs(context.AE[0][1]);
 		if (obbtri_check_intersection_cross_axis(context,dp,leb0)) return false;
 	}
-	
+
 	/*
 	** AXIS_A2xE2
 	*/

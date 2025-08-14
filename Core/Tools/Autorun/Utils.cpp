@@ -49,7 +49,7 @@
  *	Fatal						--	General purpose fatal error handler.	*
  *	Get_Version					--	Retrieves a version string from a file. *
  *	Get_String 					--	Returns a pointer to the undipped text. *
- *	Is_File_Available 		  	--	Use both FindFirst to check that CD is	* 
+ *	Is_File_Available 		  	--	Use both FindFirst to check that CD is	*
  *									    in drive & if File_Exists() to 		*
  *										determine if file is really there.	*
  *	Pad_With_Zeros            	--	Adds zeros to the beginning of string.	*
@@ -68,7 +68,7 @@
  *	Remove_Spaces				--	Remove spaces from string passed in.    *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-#include <io.h> 
+#include <io.h>
 #include "ARGS.H"
 #include "assert.h"
 #include "Locale_API.h"
@@ -114,11 +114,11 @@ void Fix_Single_Ampersands ( LPSTR pszString, bool upper_case )
 	while (*letter != '\0') {
 
 		if (*letter == '&') {
-      
+
 			pszTemp[i++] = '&';
 			pszTemp[i++] = '&';
 			letter++;
-         
+
 		} else {
 
 			if ( upper_case ) {
@@ -137,7 +137,7 @@ void Fix_Single_Ampersands ( wchar_t *pszString, bool upper_case )
 	wchar_t	pszOld[ MAX_PATH ];			// variable to hold the string passed
 	wchar_t *letter;
 	int		i = 0;
- 
+
 	wcscpy( pszOld, pszString );
 	letter = pszOld;
 	memset ( pszTemp, '\0', MAX_PATH );
@@ -148,11 +148,11 @@ void Fix_Single_Ampersands ( wchar_t *pszString, bool upper_case )
 	while (*letter != '\0') {
 
 		if (*letter == '&') {
-      
+
 			pszTemp[i++] = '&';
 			pszTemp[i++] = '&';
 			letter++;
-         
+
 		} else {
 
 			if ( upper_case ) {
@@ -220,9 +220,9 @@ void Fix_Double_Ampersands ( LPSTR pszString, bool upper_case )
 
 			pszTemp[i++] = '&';
 			letter = letter + 2;
-         
+
 		} else {
-      	
+
 			if ( upper_case ) {
 				pszTemp[i++] = (char) toupper( *( letter++ ));
 			} else {
@@ -377,17 +377,17 @@ wchar_t *Make_Current_Path_To ( const wchar_t *filename, wchar_t *path )
 }
 
 
-/****************************************************************************** 
- * Path_Add_Back_Slash -- Add a '\\' to the end of the path.				  
- *                                                                            
- * INPUT:		char * path -- Pointer to the string to be modified.           
- *                                                                            
- * OUTPUT:     char * path                                                    
- *                                                                            
- * WARNINGS:   none                                                           
- *                                                                            
- * HISTORY:                                                                   
- *   08/14/1998 MML : Created.                                                
+/******************************************************************************
+ * Path_Add_Back_Slash -- Add a '\\' to the end of the path.
+ *
+ * INPUT:		char * path -- Pointer to the string to be modified.
+ *
+ * OUTPUT:     char * path
+ *
+ * WARNINGS:   none
+ *
+ * HISTORY:
+ *   08/14/1998 MML : Created.
  *============================================================================*/
 
 char *Path_Add_Back_Slash ( char *path )
@@ -411,17 +411,17 @@ wchar_t *Path_Add_Back_Slash ( wchar_t *path )
 }
 
 
-/****************************************************************************** 
- * Path_Remove_Back_Slash -- Remove a '\\' from the end of the path.		 
- *                                                                            
- * INPUT:		char * path -- Pointer to the string to be modified.           
- *                                                                            
- * OUTPUT:     char * path                                                    
- *                                                                            
- * WARNINGS:   none                                                           
- *                                                                            
- * HISTORY:                                                                   
- *   08/14/1998 MML : Created.                                                
+/******************************************************************************
+ * Path_Remove_Back_Slash -- Remove a '\\' from the end of the path.
+ *
+ * INPUT:		char * path -- Pointer to the string to be modified.
+ *
+ * OUTPUT:     char * path
+ *
+ * WARNINGS:   none
+ *
+ * HISTORY:
+ *   08/14/1998 MML : Created.
  *============================================================================*/
 
 char *Path_Remove_Back_Slash ( char *path )
@@ -477,7 +477,7 @@ void PlugInProductName ( char *szString, char *szName )
 	temp 		= strstr( szTextBuf, "%s" );
 
 	//-------------------------------------------------------------
-	// Substitute each "%P" with "%s".  nStrReturn is the index 
+	// Substitute each "%P" with "%s".  nStrReturn is the index
 	// into the buffer where "%P" was found.
 	//-------------------------------------------------------------
 	while ( temp != NULL && nCount < 6) {
@@ -552,7 +552,7 @@ void PlugInProductName( char *szString, int nName )
 	temp 		= strstr( szTextBuf, "%s" );
 
 	//-------------------------------------------------------------
-	// Substitute each "%P" with "%s".  nStrReturn is the index 
+	// Substitute each "%P" with "%s".  nStrReturn is the index
 	// into the buffer where "%P" was found.
 	//-------------------------------------------------------------
 	while ( temp != NULL && nCount < 6) {
@@ -625,7 +625,7 @@ void PlugInProductName ( wchar_t *szString, const wchar_t *szName )
 	temp 		= wcsstr( szTextBuf, L"%s" );
 
 	//-------------------------------------------------------------
-	// Substitute each "%P" with "%s".  nStrReturn is the index 
+	// Substitute each "%P" with "%s".  nStrReturn is the index
 	// into the buffer where "%P" was found.
 	//-------------------------------------------------------------
 	while ( temp != NULL && nCount < 6) {

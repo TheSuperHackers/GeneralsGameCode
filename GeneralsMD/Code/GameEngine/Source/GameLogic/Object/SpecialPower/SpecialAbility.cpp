@@ -24,7 +24,7 @@
 
 // FILE: SpecialAbility.cpp /////////////////////////////////////////////////////////////
 // Author: Kris Morness, July 2002
-// Desc:   This is the class that handles processing of any special attack from a unit. There are 
+// Desc:   This is the class that handles processing of any special attack from a unit. There are
 //         many different styles and rules for various attacks.
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -68,7 +68,7 @@ void SpecialAbility::doSpecialPowerAtLocation( const Coord3D *loc, Real angle, U
 
 	// call the base class action cause we are *EXTENDING* functionality
 	SpecialPowerModule::doSpecialPowerAtLocation( loc, angle, commandOptions );
-}  
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -82,7 +82,7 @@ void SpecialAbility::doSpecialPowerAtObject( Object *obj, UnsignedInt commandOpt
 
 	// call the base class action cause we are *EXTENDING* functionality
 	SpecialPowerModule::doSpecialPowerAtObject( obj, commandOptions );
-}  
+}
 
 
 // ------------------------------------------------------------------------------------------------
@@ -94,7 +94,7 @@ void SpecialAbility::doSpecialPower( UnsignedInt commandOptions )
 
 	// call the base class action cause we are *EXTENDING* functionality
 	SpecialPowerModule::doSpecialPower( commandOptions );
-}  
+}
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */

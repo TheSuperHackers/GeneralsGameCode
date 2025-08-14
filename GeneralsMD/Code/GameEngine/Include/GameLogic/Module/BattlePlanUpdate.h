@@ -86,7 +86,7 @@ public:
 	BattlePlanUpdateModuleData();
 	static void buildFieldParse(MultiIniFieldParse& p);
 
-private: 
+private:
 
 };
 
@@ -108,7 +108,7 @@ enum BattlePlanStatus CPP_11(: Int)
 
 class BattlePlanBonuses : public MemoryPoolObject
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(BattlePlanBonuses, "BattlePlanBonuses")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(BattlePlanBonuses, "BattlePlanBonuses")
 public:
 	Real						m_armorScalar;
 	Int							m_bombardment;				//Represents having weapon bonuses for bombardment plan
@@ -162,13 +162,13 @@ protected:
 	void recenterTurret();
 	Bool isTurretInNaturalPosition();
 	void setBattlePlan( BattlePlanStatus plan );
-	void createVisionObject();	
+	void createVisionObject();
 
 	BattlePlanStatus m_currentPlan;	//The current battle plan displayed by the building (includes packing & unpacking)
 	BattlePlanStatus m_desiredPlan; //The user desired battle plan
 	BattlePlanStatus m_planAffectingArmy; //The current battle plan that is affecting troops!
 	TransitionStatus m_status;
-	
+
 	UnsignedInt m_nextReadyFrame;
 	SpecialPowerModuleInterface *m_specialPowerModule;
 	Bool				m_invalidSettings;

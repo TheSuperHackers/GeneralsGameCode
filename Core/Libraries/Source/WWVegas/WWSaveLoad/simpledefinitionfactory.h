@@ -25,7 +25,7 @@
 
 //////////////////////////////////////////////////////////////////////////////////
 //
-//	SimpleDefinitionFactoryClass 
+//	SimpleDefinitionFactoryClass
 //
 //	Template class to automate the creation of simple definition factories.
 //

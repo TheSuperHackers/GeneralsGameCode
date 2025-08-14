@@ -145,14 +145,14 @@
 HLodLoaderClass			_HLodLoader;
 
 
-/** 
+/**
 ** ProxyRecordClass
 ** This is a structure that contains the data describing a single "proxy" object.  These
 ** are used for application purposes and simply provide a way for the assets to associate
 ** a string with a bone index.
 */
 class ProxyRecordClass
-{	
+{
 public:
 	ProxyRecordClass(void) : BoneIndex(0)
 	{
@@ -224,9 +224,9 @@ PrototypeClass *HLodLoaderClass::Load_W3D( ChunkLoadClass &cload )
 		delete def;
 		return NULL;
 	} else {
-		// ok, accept this model! 
+		// ok, accept this model!
 		HLodPrototypeClass *proto = W3DNEW HLodPrototypeClass(def);
-		return proto;	
+		return proto;
 	}
 	return NULL;
 }
@@ -248,9 +248,9 @@ PrototypeClass *HLodLoaderClass::Load_W3D( ChunkLoadClass &cload )
  * HISTORY:                                                                                    *
  *   1/26/00    gth : Created.                                                                 *
  *=============================================================================================*/
-RenderObjClass * HLodPrototypeClass::Create(void)			
-{ 
-	HLodClass * hlod = NEW_REF( HLodClass , ( *Definition ) ); 
+RenderObjClass * HLodPrototypeClass::Create(void)
+{
+	HLodClass * hlod = NEW_REF( HLodClass , ( *Definition ) );
 	return hlod;
 }
 
@@ -270,7 +270,7 @@ RenderObjClass * HLodPrototypeClass::Create(void)
  *                                                                                             *
  * HISTORY:                                                                                    *
  *=============================================================================================*/
-HLodDefClass::HLodDefClass(void) : 
+HLodDefClass::HLodDefClass(void) :
 	Name(NULL),
 	HierarchyTreeName(NULL),
 	LodCount(0),
@@ -387,7 +387,7 @@ void HLodDefClass::Initialize(HLodClass &src_lod)
 	LodCount = src_lod.Get_LOD_Count ();
 	WWASSERT (LodCount > 0);
 	if (LodCount > 0) {
-		
+
 		// Allocate an array large enough to hold all the LODs and
 		// loop through each LOD.
 		Lod = W3DNEWARRAY SubObjectArrayClass[LodCount];
@@ -396,13 +396,13 @@ void HLodDefClass::Initialize(HLodClass &src_lod)
 			// Fill in the maximum screen size for this LOD
 			Lod[index].MaxScreenSize = src_lod.Get_Max_Screen_Size (index);
 			Lod[index].ModelCount = src_lod.Get_Lod_Model_Count (index);
-			
-			// Loop through all the models that compose this LOD and generate a 
+
+			// Loop through all the models that compose this LOD and generate a
 			// list of model's and the bones they live on
 			char **model_names = W3DNEWARRAY char *[Lod[index].ModelCount];
 			int *bone_indicies = W3DNEWARRAY int[Lod[index].ModelCount];
 			for (int model_index = 0; model_index < Lod[index].ModelCount; model_index ++) {
-				
+
 				// Record information about this model (if possible)
 				RenderObjClass *prender_obj = src_lod.Peek_Lod_Model (index, model_index);
 				if (prender_obj != NULL) {
@@ -419,7 +419,7 @@ void HLodDefClass::Initialize(HLodClass &src_lod)
 			Lod[index].BoneIndex = bone_indicies;
 		}
 	}
-	
+
 	return;
 }
 
@@ -443,11 +443,11 @@ WW3DErrorType HLodDefClass::Save(ChunkSaveClass & csave)
 
 	// Begin a chunk that identifies an aggregate
 	if (csave.Begin_Chunk (W3D_CHUNK_HLOD) == TRUE) {
-		
+
 		// Attempt to save the different sections of the aggregate definition
 		if ((Save_Header (csave) == WW3D_ERROR_OK) &&
 			 (Save_Lod_Array (csave) == WW3D_ERROR_OK)) {
-			
+
 			// Success!
 			ret_val = WW3D_ERROR_OK;
 		}
@@ -480,25 +480,25 @@ WW3DErrorType HLodDefClass::Save_Header(ChunkSaveClass &csave)
 
 	// Begin a chunk that identifies the aggregate
 	if (csave.Begin_Chunk (W3D_CHUNK_HLOD_HEADER) == TRUE) {
-		
+
 		// Fill the header structure
 		W3dHLodHeaderStruct header = { 0 };
 		header.Version = W3D_CURRENT_HLOD_VERSION;
 		header.LodCount = LodCount;
-		
+
 		// Copy the name to the header
 		::lstrcpyn (header.Name, Name, sizeof (header.Name));
 		header.Name[sizeof (header.Name) - 1] = 0;
 
 		// Copy the hierarchy tree name to the header
 		::lstrcpyn (header.HierarchyName, HierarchyTreeName, sizeof (header.HierarchyName));
-		header.HierarchyName[sizeof (header.HierarchyName) - 1] = 0;		
+		header.HierarchyName[sizeof (header.HierarchyName) - 1] = 0;
 
 		// Write the header out to the chunk
 		if (csave.Write (&header, sizeof (header)) == sizeof (header)) {
 
 			// Success!
-			ret_val = WW3D_ERROR_OK;			
+			ret_val = WW3D_ERROR_OK;
 		}
 
 		// End the header chunk
@@ -528,7 +528,7 @@ WW3DErrorType HLodDefClass::Save_Lod_Array(ChunkSaveClass &csave)
 	bool success = true;
 	for (int lod_index = 0;
 		  (lod_index < LodCount) && success;
-		  lod_index ++) {		
+		  lod_index ++) {
 		success = Lod[lod_index].Save_W3D (csave);
 	}
 
@@ -577,18 +577,18 @@ WW3DErrorType HLodDefClass::Save_Aggregate_Array(ChunkSaveClass & csave)
  *=============================================================================================*/
 WW3DErrorType HLodDefClass::Load_W3D(ChunkLoadClass & cload)
 {
-	/* 
+	/*
 	** First make sure we release any memory in use
 	*/
 	Free();
 
-	if (read_header(cload) == FALSE) {        
+	if (read_header(cload) == FALSE) {
 	  return WW3D_ERROR_LOAD_FAILED;
 	}
 
 	/*
 	**	Loop through all the LODs and read the info from its chunk
-	*/    
+	*/
 	for (int iLOD = 0; iLOD < LodCount; iLOD ++) {
 
 		/*
@@ -611,7 +611,7 @@ WW3DErrorType HLodDefClass::Load_W3D(ChunkLoadClass & cload)
 	** Parse the rest of the chunks
 	*/
 	while (cload.Open_Chunk()) {
-		switch(cload.Cur_Chunk_ID()) 
+		switch(cload.Cur_Chunk_ID())
 		{
 			case W3D_CHUNK_HLOD_AGGREGATE_ARRAY:
 				Aggregates.Load_W3D(cload);
@@ -622,7 +622,7 @@ WW3DErrorType HLodDefClass::Load_W3D(ChunkLoadClass & cload)
 		}
 		cload.Close_Chunk();
 	}
-	
+
 	return WW3D_ERROR_OK;
 }
 
@@ -694,7 +694,7 @@ bool HLodDefClass::read_proxy_array(ChunkLoadClass & cload)
 
 	W3dHLodArrayHeaderStruct header;
 	if (cload.Read(&header,sizeof(header)) != sizeof(header)) return false;
-	
+
 	if (!cload.Close_Chunk()) return false;
 
 	ProxyArray = NEW_REF(ProxyArrayClass,(header.ModelCount));
@@ -727,11 +727,11 @@ bool HLodDefClass::read_proxy_array(ChunkLoadClass & cload)
  *                                                                                             *
  * HISTORY:                                                                                    *
  *=============================================================================================*/
-HLodDefClass::SubObjectArrayClass::SubObjectArrayClass(void) : 
+HLodDefClass::SubObjectArrayClass::SubObjectArrayClass(void) :
 	MaxScreenSize(NO_MAX_SCREEN_SIZE),
 	ModelCount(0),
 	ModelName(NULL),
-	BoneIndex(NULL) 
+	BoneIndex(NULL)
 {
 }
 
@@ -769,7 +769,7 @@ HLodDefClass::SubObjectArrayClass::~SubObjectArrayClass(void)
 void HLodDefClass::SubObjectArrayClass::Reset(void)
 {
 	MaxScreenSize = NO_MAX_SCREEN_SIZE;
-	
+
 	if (ModelName != NULL) {
 		for (int imodel=0; imodel<ModelCount;imodel++) {
 			free(ModelName[imodel]);
@@ -805,10 +805,10 @@ bool HLodDefClass::SubObjectArrayClass::Load_W3D(ChunkLoadClass & cload)
 	*/
 	if (!cload.Open_Chunk()) return false;
 	if (cload.Cur_Chunk_ID() != W3D_CHUNK_HLOD_SUB_OBJECT_ARRAY_HEADER) return false;
-	
+
 	W3dHLodArrayHeaderStruct header;
 	if (cload.Read(&header,sizeof(header)) != sizeof(header)) return false;
-	
+
 	if (!cload.Close_Chunk()) return false;
 
 	ModelCount = header.ModelCount;
@@ -852,7 +852,7 @@ bool HLodDefClass::SubObjectArrayClass::Load_W3D(ChunkLoadClass & cload)
 bool HLodDefClass::SubObjectArrayClass::Save_W3D(ChunkSaveClass &csave)
 {
 	// Assume error
-	bool ret_val = false;	
+	bool ret_val = false;
 
 	// Begin a chunk that identifies the LOD array
 	if (csave.Begin_Chunk (W3D_CHUNK_HLOD_LOD_ARRAY) == TRUE) {
@@ -863,7 +863,7 @@ bool HLodDefClass::SubObjectArrayClass::Save_W3D(ChunkSaveClass &csave)
 			W3dHLodArrayHeaderStruct header = { 0 };
 			header.ModelCount = ModelCount;
 			header.MaxScreenSize = MaxScreenSize;
-			
+
 			// Write the LOD header structure out to the chunk
 			ret_val = (csave.Write (&header, sizeof (header)) == sizeof (header));
 
@@ -877,14 +877,14 @@ bool HLodDefClass::SubObjectArrayClass::Save_W3D(ChunkSaveClass &csave)
 			for (int index = 0;
 				  (index < ModelCount) && ret_val;
 				  index ++) {
-			
+
 				// Save this LOD sub-obj to the chunk
 				ret_val &= (csave.Begin_Chunk (W3D_CHUNK_HLOD_SUB_OBJECT) == TRUE);
 				if (ret_val) {
-					
+
 					W3dHLodSubObjectStruct info = { 0 };
 					info.BoneIndex = BoneIndex[index];
-					
+
 					// Copy this model name into the structure
 					::lstrcpyn (info.Name, ModelName[index], sizeof (info.Name));
 					info.Name[sizeof (info.Name) - 1] = 0;
@@ -894,7 +894,7 @@ bool HLodDefClass::SubObjectArrayClass::Save_W3D(ChunkSaveClass &csave)
 
 					// End the sub-obj chunk
 					csave.End_Chunk ();
-				}			
+				}
 			}
 		}
 
@@ -920,7 +920,7 @@ bool HLodDefClass::SubObjectArrayClass::Save_W3D(ChunkSaveClass &csave)
  *                                                                                             *
  * HISTORY:                                                                                    *
  *=============================================================================================*/
-HLodClass::HLodClass(void) : 
+HLodClass::HLodClass(void) :
 	Animatable3DObjClass(NULL),
 	LodCount(0),
 	CurLod(0),
@@ -948,7 +948,7 @@ HLodClass::HLodClass(void) :
  * HISTORY:                                                                                    *
  *   1/26/00    gth : Created.                                                                 *
  *=============================================================================================*/
-HLodClass::HLodClass(const HLodClass & src) : 
+HLodClass::HLodClass(const HLodClass & src) :
 	Animatable3DObjClass(src),
 	LodCount(0),
 	CurLod(0),
@@ -997,10 +997,10 @@ HLodClass::HLodClass(const char * name,RenderObjClass ** lods,int count) :
 	WWASSERT(name != NULL);
 	WWASSERT(lods != NULL);
 	WWASSERT((count > 0) && (count < 256));
-	
+
 	// Set the name
 	Set_Name(name);
-	
+
 	LodCount = count;
 	WWASSERT(LodCount >= 1);
 	Lod = W3DNEWARRAY ModelArrayClass[LodCount];
@@ -1027,22 +1027,22 @@ HLodClass::HLodClass(const char * name,RenderObjClass ** lods,int count) :
 		RenderObjClass * lod_obj = lods[lod_index];
 		WWASSERT(lod_obj);
 
-		if (	(lod_obj->Class_ID() == RenderObjClass::CLASSID_HMODEL) || 
+		if (	(lod_obj->Class_ID() == RenderObjClass::CLASSID_HMODEL) ||
 				(lod_obj->Class_ID() == RenderObjClass::CLASSID_HLOD) ||
 				(lod_obj->Get_Num_Sub_Objects() > 1) ) {
-			
+
 			// here we insert all sub-objects of this render object into the current LOD array
 			while (lod_obj->Get_Num_Sub_Objects() > 0) {
 
 				RenderObjClass * sub_obj = lod_obj->Get_Sub_Object(0);
 				int boneindex = lod_obj->Get_Sub_Object_Bone_Index(sub_obj);
-				lod_obj->Remove_Sub_Object(sub_obj);				
-				
+				lod_obj->Remove_Sub_Object(sub_obj);
+
 				Add_Lod_Model(lod_index,sub_obj,boneindex);
 
 				sub_obj->Release_Ref();
 			}
-		
+
 		} else {
 
 			// just insert the render object as the sole member of the current LOD array.  This
@@ -1113,7 +1113,7 @@ HLodClass::HLodClass(const HLodDefClass & def) :
 
 	// Add Models to the ModelArrays
 	for (int ilod=0; ilod < def.LodCount; ilod++) {
-		
+
 		Lod[ilod].MaxScreenSize = def.Lod[ilod].MaxScreenSize;
 
 		for (int imodel=0; imodel < def.Lod[ilod].ModelCount; imodel++) {
@@ -1128,7 +1128,7 @@ HLodClass::HLodClass(const HLodDefClass & def) :
 	}
 
 	Recalculate_Static_LOD_Factors();
-	
+
 	// Add aggregates to this model
 	for (int iagg=0; iagg<def.Aggregates.ModelCount; iagg++) {
 		RenderObjClass * robj = WW3DAssetManager::Get_Instance()->Create_Render_Obj(def.Aggregates.ModelName[iagg]);
@@ -1171,7 +1171,7 @@ HLodClass::HLodClass(const HLodDefClass & def) :
  * HISTORY:                                                                                    *
  *   1/26/00    gth : Created.                                                                 *
  *=============================================================================================*/
-HLodClass::HLodClass(const HModelDefClass & def) : 
+HLodClass::HLodClass(const HModelDefClass & def) :
 	Animatable3DObjClass(def.BasePoseName),
 	LodCount(0),
 	CurLod(0),
@@ -1186,7 +1186,7 @@ HLodClass::HLodClass(const HModelDefClass & def) :
 {
 	// Set the name
 	Set_Name(def.Get_Name());
-	
+
 	// This is a "simple" HLod, only one LOD
 	LodCount = 1;
 	Lod = W3DNEWARRAY ModelArrayClass[1];
@@ -1201,7 +1201,7 @@ HLodClass::HLodClass(const HModelDefClass & def) :
 	// no lod size clamping
 	Lod[0].MaxScreenSize = NO_MAX_SCREEN_SIZE;
 
-	// create the sub-objects 
+	// create the sub-objects
 	int imodel;
 	for (imodel=0; imodel < def.SubObjectCount; ++imodel) {
 		RenderObjClass * robj = WW3DAssetManager::Get_Instance()->Create_Render_Obj(def.SubObjects[imodel].RenderObjName);
@@ -1262,16 +1262,16 @@ HLodClass & HLodClass::operator = (const HLodClass & that)
 		// Value has LodCount + 1 entries so PostIncrementValue can always use
 		// Value[CurLod + 1] (the last entry wil be AT_MAX_LOD).
 		Value = W3DNEWARRAY float[LodCount + 1];
-		WWASSERT(Value);		
-		
+		WWASSERT(Value);
+
 		for (lod=0; lod<LodCount;lod++) {
 			Lod[lod].Resize(that.Lod[lod].Count());
 			Lod[lod].MaxScreenSize = that.Lod[lod].MaxScreenSize;
 
 			for (model = 0; model < that.Lod[lod].Count(); model++) {
-				
+
 				ModelNodeClass newnode;
-				newnode.Model = that.Lod[lod][model].Model->Clone();	
+				newnode.Model = that.Lod[lod][model].Model->Clone();
 				newnode.BoneIndex = that.Lod[lod][model].BoneIndex;
 				newnode.Model->Set_Container(this);
 				if (Is_In_Scene()) {
@@ -1286,7 +1286,7 @@ HLodClass & HLodClass::operator = (const HLodClass & that)
 		for (model = 0; model < that.AdditionalModels.Count(); model++) {
 
 			ModelNodeClass newnode;
-			newnode.Model = that.AdditionalModels[model].Model->Clone();	
+			newnode.Model = that.AdditionalModels[model].Model->Clone();
 			newnode.BoneIndex = that.AdditionalModels[model].BoneIndex;
 			newnode.Model->Set_Container(this);
 			if (Is_In_Scene()) {
@@ -1358,11 +1358,11 @@ void HLodClass::Free(void)
 
 			RenderObjClass * robj = Lod[lod][model].Model;
 			Lod[lod][model].Model = NULL;
-			
+
 			WWASSERT(robj);
 			robj->Set_Container(NULL);
 			robj->Release_Ref();
-		
+
 		}
 
 		Lod[lod].Delete_All();
@@ -1434,18 +1434,18 @@ void HLodClass::Get_Obj_Space_Bounding_Box(AABoxClass & box) const
 	//
 	int count = Lod[LodCount - 1].Count ();
 	if (BoundingBoxIndex >= 0 && BoundingBoxIndex < count) {
-		
+
 		RenderObjClass *mesh = Lod[LodCount - 1][BoundingBoxIndex].Model;
 		if (mesh != NULL && mesh->Class_ID () == RenderObjClass::CLASSID_OBBOX) {
-			
+
 			OBBoxRenderObjClass *obbox_mesh = (OBBoxRenderObjClass *)mesh;
-			
+
 			//
 			//	Determine what the box's transform 'should' be this frame.
 			// Note:  We do this because some animation types don't update
 			// unless they are visible.
 			//
-			Matrix3D box_tm; 
+			Matrix3D box_tm;
 			Simple_Evaluate_Bone (Lod[LodCount - 1][BoundingBoxIndex].BoneIndex, &box_tm);
 
 			//
@@ -1460,7 +1460,7 @@ void HLodClass::Get_Obj_Space_Bounding_Box(AABoxClass & box) const
 
 			box_to_hlod_tm.Transform_Center_Extent_AABox(	obbox_mesh->Get_Local_Center(),
 																			obbox_mesh->Get_Local_Extent(),
-																			&box.Center,&box.Extent);							
+																			&box.Center,&box.Extent);
 		}
 
 	} else {
@@ -1470,7 +1470,7 @@ void HLodClass::Get_Obj_Space_Bounding_Box(AABoxClass & box) const
 
 
 /***********************************************************************************************
- * HLodClass::Get_Obj_Space_Bounding_Sphere -- Use the bounding box mesh to calculate a sphere.* 
+ * HLodClass::Get_Obj_Space_Bounding_Sphere -- Use the bounding box mesh to calculate a sphere.*
  *                                                                                             *
  * INPUT:                                                                                      *
  *                                                                                             *
@@ -1491,7 +1491,7 @@ void HLodClass::Get_Obj_Space_Bounding_Sphere(SphereClass & sphere) const
 
 
 /***********************************************************************************************
- * HLodClass::Get_Obj_Space_Bounding_Sphere -- Use the bounding box mesh to calculate a sphere.* 
+ * HLodClass::Get_Obj_Space_Bounding_Sphere -- Use the bounding box mesh to calculate a sphere.*
  *                                                                                             *
  * INPUT:                                                                                      *
  *                                                                                             *
@@ -1510,7 +1510,7 @@ const SphereClass &HLodClass::Get_Bounding_Sphere(void) const
 		//
 		SphereClass sphere;
 		Get_Obj_Space_Bounding_Sphere (sphere);
-		
+
 		//
 		//	Transform the sphere into world coords and return the sphere
 		//
@@ -1519,7 +1519,7 @@ const SphereClass &HLodClass::Get_Bounding_Sphere(void) const
 #else
 		Get_Transform().mulVector3(sphere.Center, CachedBoundingSphere.Center);
 #endif
-		CachedBoundingSphere.Radius = sphere.Radius;	
+		CachedBoundingSphere.Radius = sphere.Radius;
 	} else {
 		Animatable3DObjClass::Get_Bounding_Sphere ();
 	}
@@ -1549,7 +1549,7 @@ const AABoxClass &HLodClass::Get_Bounding_Box(void) const
 		//
 		AABoxClass box;
 		Get_Obj_Space_Bounding_Box (box);
-		
+
 		//
 		//	Transform the bounding box to world coordinates
 		//
@@ -1597,7 +1597,7 @@ void HLodClass::Set_Max_Screen_Size(int lod_index, float size)
 		// Ensure lod is no less than minimum allowed
 		if (CurLod < minlod) Set_LOD_Level(minlod);
 	}
-	
+
 	return ;
 }
 
@@ -1626,7 +1626,7 @@ float HLodClass::Get_Max_Screen_Size(int lod_index) const
 		// Get the screen size for this LOD
 		size = Lod[lod_index].MaxScreenSize;
 	}
-	
+
 	// Return the LOD's screen size to the caller
 	return size;
 }
@@ -1699,7 +1699,7 @@ int HLodClass::Get_Lod_Model_Count(int lod_index) const
 		// Get the number of models in this Lod
 		count = Lod[lod_index].Count ();
 	}
-	
+
 	// Return the number of models that compose this Lod
 	return count;
 }
@@ -1731,7 +1731,7 @@ RenderObjClass *HLodClass::Peek_Lod_Model(int lod_index, int model_index) const
 		// Get a pointer to the requested model
 		pmodel = Lod[lod_index][model_index].Model;
 	}
-	
+
 	// Return a pointer to the requested model
 	return pmodel;
 }
@@ -1766,7 +1766,7 @@ RenderObjClass *HLodClass::Get_Lod_Model(int lod_index, int model_index) const
 			pmodel->Add_Ref ();
 		}
 	}
-	
+
 	// Return the number of models that compose this Lod
 	return pmodel;
 }
@@ -1798,7 +1798,7 @@ int HLodClass::Get_Lod_Model_Bone(int lod_index, int model_index) const
 		// Get the bone that this model resides on
 		bone_index = Lod[lod_index][model_index].BoneIndex;
 	}
-	
+
 	// Return the bone that this model resides on
 	return bone_index;
 }
@@ -1847,7 +1847,7 @@ RenderObjClass * HLodClass::Peek_Additional_Model (int model_index) const
 		// Get a pointer to the requested model
 		pmodel = AdditionalModels[model_index].Model;
 	}
-	
+
 	// Return a pointer to the requested model
 	return pmodel;
 }
@@ -1881,7 +1881,7 @@ RenderObjClass * HLodClass::Get_Additional_Model (int model_index) const
 			pmodel->Add_Ref ();
 		}
 	}
-	
+
 	// Return a pointer to the requested model
 	return pmodel;
 }
@@ -1912,7 +1912,7 @@ int HLodClass::Get_Additional_Model_Bone (int model_index) const
 		// Get the bone that this model resides on
 		bone_index = AdditionalModels[model_index].BoneIndex;
 	}
-	
+
 	// Return the bone that this model resides on
 	return bone_index;
 }
@@ -1938,7 +1938,7 @@ bool HLodClass::Is_NULL_Lod_Included(void) const
 	if ((LodCount > 0) && (Lod[0][0].Model != NULL)) {
 		included = (Lod[0][0].Model->Class_ID () == RenderObjClass::CLASSID_NULL);
 	}
-	
+
 	// Return the true/false result code
 	return included;
 }
@@ -1966,7 +1966,7 @@ void HLodClass::Include_NULL_Lod(bool include)
 
 			RenderObjClass * robj = Lod[index][model].Model;
 			Lod[index][model].Model = NULL;
-			
+
 			WWASSERT(robj);
 			robj->Set_Container (NULL);
 			robj->Release_Ref ();
@@ -1974,7 +1974,7 @@ void HLodClass::Include_NULL_Lod(bool include)
 
 		// Resize the lod array
 		LodCount -= 1;
-		Lod[index].Delete_All ();		
+		Lod[index].Delete_All ();
 		ModelArrayClass *temp_lods = W3DNEWARRAY ModelArrayClass[LodCount];
 		for (index = 0; index < LodCount; index ++) {
 			temp_lods[index] = Lod[index + 1];
@@ -1993,7 +1993,7 @@ void HLodClass::Include_NULL_Lod(bool include)
 		Value = temp_value;
 		Cost = temp_cost;
 		CurLod = (CurLod >= LodCount) ? (LodCount - 1) : CurLod;
-		
+
 	} else if (include && (Is_NULL_Lod_Included () == false)) {
 
 		// Tag the NULL render object onto the end
@@ -2076,19 +2076,19 @@ bool HLodClass::Get_Proxy (int index, ProxyClass &proxy) const
 	bool retval = false;
 
 	if (ProxyArray != NULL) {
-		
+
 		//
 		//	Lookup the proxy's transform
 		//
 		HTree->Base_Update(Get_Transform());
 		Matrix3D transform = HTree->Get_Transform((*ProxyArray)[index].Get_Bone_Index());
 		Set_Hierarchy_Valid(false);
-		
+
 		//
 		//	Pass the data onto the proxy object
 		//
 		proxy.Set_Transform(transform);
-		proxy.Set_Name((*ProxyArray)[index].Get_Name());		
+		proxy.Set_Name((*ProxyArray)[index].Get_Name());
 		retval = true;
 
 	} else {
@@ -2224,7 +2224,7 @@ void HLodClass::Special_Render(SpecialRenderInfoClass & rinfo)
  *=============================================================================================*/
 void HLodClass::Set_Transform(const Matrix3D &m)
 {
-	Animatable3DObjClass::Set_Transform(m); 
+	Animatable3DObjClass::Set_Transform(m);
 	Set_Sub_Object_Transforms_Dirty(true);
 }
 
@@ -2243,7 +2243,7 @@ void HLodClass::Set_Transform(const Matrix3D &m)
  *=============================================================================================*/
 void HLodClass::Set_Position(const Vector3 &v)
 {
-	Animatable3DObjClass::Set_Position(v); 
+	Animatable3DObjClass::Set_Position(v);
 	Set_Sub_Object_Transforms_Dirty(true);
 }
 
@@ -2392,7 +2392,7 @@ int HLodClass::Remove_Sub_Object(RenderObjClass * removeme)
 		return 0;
 	}
 
-	// find the sub-object 
+	// find the sub-object
 	bool found = false;
 	bool iscurrent = false;
 
@@ -2421,7 +2421,7 @@ int HLodClass::Remove_Sub_Object(RenderObjClass * removeme)
 			iscurrent = true;
 		}
 	}
-	
+
 	if (found) {
 
 		// clear the object's container pointer
@@ -2493,7 +2493,7 @@ RenderObjClass * HLodClass::Get_Sub_Object_On_Bone(int index,int boneindex) cons
 	int count = 0;
 	for (int lod = 0; lod < LodCount; lod++) {
 		for (int model = 0; model < Lod[lod].Count(); model++) {
-			if (Lod[lod][model].BoneIndex == boneindex) {				
+			if (Lod[lod][model].BoneIndex == boneindex) {
 				if (count == index) {
 					Lod[lod][model].Model->Add_Ref();
 					return Lod[lod][model].Model;
@@ -2503,7 +2503,7 @@ RenderObjClass * HLodClass::Get_Sub_Object_On_Bone(int index,int boneindex) cons
 		}
 	}
 	for (int model = 0; model < AdditionalModels.Count(); model++) {
-		if (AdditionalModels[model].BoneIndex == boneindex) {			
+		if (AdditionalModels[model].BoneIndex == boneindex) {
 			if (count == index) {
 				AdditionalModels[model].Model->Add_Ref();
 				return AdditionalModels[model].Model;
@@ -2568,7 +2568,7 @@ int HLodClass::Add_Sub_Object_To_Bone(RenderObjClass * subobj,int boneindex)
 	if ((boneindex < 0) || (boneindex >= HTree->Num_Pivots())) return 0;
 
 	subobj->Set_LOD_Bias(LODBias);
-	
+
 	ModelNodeClass newnode;
 	newnode.Model = subobj;
 	newnode.Model->Add_Ref();
@@ -2586,7 +2586,7 @@ int HLodClass::Add_Sub_Object_To_Bone(RenderObjClass * subobj,int boneindex)
 	if (Is_In_Scene()) {
 		subobj->Notify_Added(Scene);
 	}
-	
+
 	return result;
 }
 
@@ -2605,7 +2605,7 @@ int HLodClass::Add_Sub_Object_To_Bone(RenderObjClass * subobj,int boneindex)
  *=============================================================================================*/
 void HLodClass::Set_Animation(void)
 {
-	Animatable3DObjClass::Set_Animation(); 
+	Animatable3DObjClass::Set_Animation();
 	Set_Sub_Object_Transforms_Dirty(true);
 }
 
@@ -2761,7 +2761,7 @@ bool HLodClass::Cast_OBBox(OBBoxCollisionTestClass & boxtest)
 	if (Are_Sub_Object_Transforms_Dirty ()) {
 		Update_Sub_Object_Transforms ();
 	}
-	
+
 	bool res = false;
 	int i;
 
@@ -3277,7 +3277,7 @@ void HLodClass::Scale(float scale)
 			Lod[lod][model].Model->Scale(scale);
 		}
 	}
-	
+
 	for (model = 0; model < AdditionalModels.Count(); model++) {
 		AdditionalModels[model].Model->Scale(scale);
 	}
@@ -3363,14 +3363,14 @@ void HLodClass::Update_Sub_Object_Transforms(void)
 	** Put the computed transforms into our sub objects.
 	*/
 	int lod,model;
-	
+
 	for (lod = 0; lod < LodCount; lod++) {
 		for (model = 0; model < Lod[lod].Count(); model++) {
 
 			RenderObjClass * robj = Lod[lod][model].Model;
 			int bone = Lod[lod][model].BoneIndex;
 
-			robj->Set_Transform(HTree->Get_Transform(bone)); 
+			robj->Set_Transform(HTree->Get_Transform(bone));
 			robj->Set_Animation_Hidden(!HTree->Get_Visibility(bone));
 			robj->Update_Sub_Object_Transforms();
 		}
@@ -3381,7 +3381,7 @@ void HLodClass::Update_Sub_Object_Transforms(void)
 		RenderObjClass * robj = AdditionalModels[model].Model;
 		int bone = AdditionalModels[model].BoneIndex;
 
-		robj->Set_Transform(HTree->Get_Transform(bone)); 
+		robj->Set_Transform(HTree->Get_Transform(bone));
 		robj->Set_Animation_Hidden(!HTree->Get_Visibility(bone));
 		robj->Update_Sub_Object_Transforms();
 	}
@@ -3422,7 +3422,7 @@ void HLodClass::Update_Obj_Space_Bounding_Volumes(void)
 	int index = high_lod.Count ();
 	while (index -- && BoundingBoxIndex == -1) {
 		RenderObjClass *model = high_lod[index].Model;
-		
+
 		//
 		//	Is this an OBBox mesh?
 		//
@@ -3437,7 +3437,7 @@ void HLodClass::Update_Obj_Space_Bounding_Volumes(void)
 			//
 			//	Does the name match the designator we are looking for?
 			//
-			if (::stricmp (name, "BOUNDINGBOX") == 0) {				
+			if (::stricmp (name, "BOUNDINGBOX") == 0) {
 				BoundingBoxIndex = index;
 			}
 		}
@@ -3462,15 +3462,15 @@ void HLodClass::Update_Obj_Space_Bounding_Volumes(void)
 	MinMaxAABoxClass box;
 
 	HTree->Base_Update(Matrix3D(1));
-	
+
 	robj = Get_Sub_Object(0);
 	WWASSERT(robj);
-	
+
 	const Matrix3D & bonetm = HTree->Get_Transform(Get_Sub_Object_Bone_Index(robj));
 	robj->Get_Obj_Space_Bounding_Sphere(sphere);
 	sphere.Transform(bonetm);
 	robj->Get_Obj_Space_Bounding_Box(obj_aabox);
-	
+
 	box.Init(obj_aabox);
 	box.Transform(bonetm);
 
@@ -3479,15 +3479,15 @@ void HLodClass::Update_Obj_Space_Bounding_Volumes(void)
 	for (i=1; i<Get_Num_Sub_Objects(); i++) {
 		robj = Get_Sub_Object(i);
 		WWASSERT(robj);
-		
+
 		const Matrix3D & bonetm = HTree->Get_Transform(Get_Sub_Object_Bone_Index(robj));
-		
+
 		SphereClass tmpsphere;
 		robj->Get_Obj_Space_Bounding_Sphere(tmpsphere);
 		tmpsphere.Transform(bonetm);
 		sphere.Add_Sphere(tmpsphere);
 
-		AABoxClass tmpbox; 
+		AABoxClass tmpbox;
 		robj->Get_Obj_Space_Bounding_Box(tmpbox);
 		tmpbox.Transform(bonetm);
 		box.Add_Box(tmpbox);
@@ -3520,7 +3520,7 @@ void HLodClass::Update_Obj_Space_Bounding_Volumes(void)
  *   1/26/00    gth : Created.                                                                 *
  *=============================================================================================*/
 void HLodClass::Add_Lod_Model(int lod, RenderObjClass * robj, int boneindex)
-{		
+{
 	WWASSERT(robj != NULL);
 
 	// (gth) survive the case where the skeleton for this object no longer has
@@ -3530,7 +3530,7 @@ void HLodClass::Add_Lod_Model(int lod, RenderObjClass * robj, int boneindex)
 		WWDEBUG_SAY(("ERROR: Model %s tried to use bone %d in skeleton %s.  Please re-export!",Get_Name(),boneindex,HTree->Get_Name()));
 		boneindex = 0;
 	}
-	
+
 	ModelNodeClass newnode;
 	newnode.Model = robj;
 	newnode.Model->Add_Ref();
@@ -3637,13 +3637,13 @@ void HLodClass::Set_Hidden(int onoff)
 	//
 	int additional_count = AdditionalModels.Count();
 	for (int index = 0; index < additional_count; index ++) {
-		
+
 		//
 		//	Is this a particle emitter?
 		//
 		RenderObjClass *model = AdditionalModels[index].Model;
 		if (model->Class_ID () == RenderObjClass::CLASSID_PARTICLEEMITTER) {
-			
+
 			//
 			//	Pass the hidden bit onto the emitter
 			//

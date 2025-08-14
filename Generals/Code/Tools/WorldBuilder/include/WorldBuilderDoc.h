@@ -65,7 +65,7 @@ protected:
 	std::vector<ICoord2D> m_boundaries;
 
 protected:	// waypoint stuff.
-	MapObject		*m_waypointTable[MAX_WAYPOINTS];							
+	MapObject		*m_waypointTable[MAX_WAYPOINTS];
 	Bool				m_waypointTableNeedsUpdate;
 	struct {
 		Int waypoint1;
@@ -86,7 +86,7 @@ public:
 	Bool waypointLinkExists(Int waypointID1, Int waypointID2);
 	Bool isWaypointLinked(MapObject *pWay);
 	void updateLinkedWaypointLabels(MapObject *pWay);
-	
+
 	// Boundary stuff
 	Int getNumBoundaries(void) const ;
 	void getBoundary(Int ndx, ICoord2D* border) const;
@@ -134,10 +134,10 @@ public:
 
 	/// Gets a real xy location from a pixel point.
 	Bool getCellPositionFromCoord(Coord3D pt,  Coord3D *locP);
-	
+
 	/// Gets all of the indices within widthOutside of the rectangle and places them into
 	/// allIndices
-	Bool getAllIndexesInRect(const Coord3D* bl, const Coord3D* br, 
+	Bool getAllIndexesInRect(const Coord3D* bl, const Coord3D* br,
 													 const Coord3D* tl, const Coord3D* tr,
 													 Int widthOutside, VecHeightMapIndexes* allIndices);
 

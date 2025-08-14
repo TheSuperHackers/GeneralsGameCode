@@ -159,7 +159,7 @@ int DebugIOCon::Read(char *buf, int maxchar)
   if (GetTickCount()&512)
     ci[m_inputUsed].Attributes=BACKGROUND_BLUE|BACKGROUND_GREEN
                               |BACKGROUND_RED|BACKGROUND_INTENSITY|FOREGROUND_GREEN;
-  
+
   COORD srcSize,srcCoord;
   srcSize.X=sizeof(m_input); srcSize.Y=1;
   srcCoord.X=srcCoord.Y=0;

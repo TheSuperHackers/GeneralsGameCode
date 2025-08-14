@@ -22,7 +22,7 @@
 extern "C" {
 	// Called to create the dialog
 	void __declspec(dllexport) CreateDebugDialog(void);
-	
+
 	// Called to (not surprisingly) destroy the dialog (and free the resources)
 	void __declspec(dllexport) DestroyDebugDialog(void);
 
@@ -44,7 +44,7 @@ extern "C" {
 	// Call this to add a message, and simulate pressing Pause immediately after
 	void __declspec(dllexport) AppendMessageAndPause(const char* messageToPass);
 
-	// Call this to add or update a variable value 
+	// Call this to add or update a variable value
 	void __declspec(dllexport) AdjustVariable(const char* variable, const char* value);
 
 	// Call this to add or update a variable value, and simulate pressing Pause immediately after

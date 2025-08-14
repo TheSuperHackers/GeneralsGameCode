@@ -52,7 +52,7 @@ class FileMappingClass
 public:
 	StringClass			Filename;
 	HANDLE				FileMapping;
-	int					RefCount;	
+	int					RefCount;
 
 	bool operator== (const FileMappingClass &src)	{ return false; }
 	bool operator!= (const FileMappingClass &src)	{ return false; }

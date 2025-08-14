@@ -38,7 +38,7 @@ WaterSetting WaterSettings[ TIME_OF_DAY_COUNT ];
 OVERRIDE<WaterTransparencySetting> TheWaterTransparency = NULL;
 
 // PRIVATE DATA ///////////////////////////////////////////////////////////////////////////////////
-const FieldParse WaterSetting::m_waterSettingFieldParseTable[] = 
+const FieldParse WaterSetting::m_waterSettingFieldParseTable[] =
 {
 
 	{ "SkyTexture",									INI::parseAsciiString,			NULL, offsetof( WaterSetting, m_skyTextureFile ) },
@@ -59,7 +59,7 @@ const FieldParse WaterSetting::m_waterSettingFieldParseTable[] =
 };
 
 // PRIVATE DATA ///////////////////////////////////////////////////////////////////////////////////
-const FieldParse WaterTransparencySetting::m_waterTransparencySettingFieldParseTable[] = 
+const FieldParse WaterTransparencySetting::m_waterTransparencySettingFieldParseTable[] =
 {
 
 	{ "TransparentWaterDepth",			INI::parseReal,				NULL,			offsetof( WaterTransparencySetting, m_transparentWaterDepth ) },
@@ -90,23 +90,23 @@ WaterSetting::WaterSetting( void )
 	m_skyTexelsPerUnit = 0.0f;
 
 	m_vertex00Diffuse.red = 0;
-	m_vertex00Diffuse.green = 0; 
-	m_vertex00Diffuse.blue = 0; 
+	m_vertex00Diffuse.green = 0;
+	m_vertex00Diffuse.blue = 0;
 	m_vertex00Diffuse.alpha = 0;
 
-	m_vertex01Diffuse.red = 0; 
-	m_vertex01Diffuse.green = 0; 
-	m_vertex01Diffuse.blue = 0; 
+	m_vertex01Diffuse.red = 0;
+	m_vertex01Diffuse.green = 0;
+	m_vertex01Diffuse.blue = 0;
 	m_vertex01Diffuse.alpha = 0;
 
-	m_vertex10Diffuse.red = 0; 
-	m_vertex10Diffuse.green = 0; 
-	m_vertex10Diffuse.blue = 0; 
+	m_vertex10Diffuse.red = 0;
+	m_vertex10Diffuse.green = 0;
+	m_vertex10Diffuse.blue = 0;
 	m_vertex10Diffuse.alpha = 0;
 
-	m_vertex11Diffuse.red = 0; 
-	m_vertex11Diffuse.green = 0; 
-	m_vertex11Diffuse.blue = 0; 
+	m_vertex11Diffuse.red = 0;
+	m_vertex11Diffuse.green = 0;
+	m_vertex11Diffuse.blue = 0;
 	m_vertex11Diffuse.alpha = 0;
 
 	m_waterDiffuseColor.red = 0;

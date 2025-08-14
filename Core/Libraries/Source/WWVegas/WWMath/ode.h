@@ -17,22 +17,22 @@
 */
 
 /* $Header: /G/wwmath/ode.h 9     9/21/99 5:54p Neal_k $ */
-/*********************************************************************************************** 
- ***                            Confidential - Westwood Studios                              *** 
- *********************************************************************************************** 
- *                                                                                             * 
- *                 Project Name : Commando                                                     * 
- *                                                                                             * 
- *                     $Archive:: /G/wwmath/ode.h                                             $* 
- *                                                                                             * 
- *                       Author:: Greg_h                                                       * 
- *                                                                                             * 
- *                     $Modtime:: 9/21/99 5:54p                                               $* 
- *                                                                                             * 
- *                    $Revision:: 9                                                           $* 
- *                                                                                             * 
- *---------------------------------------------------------------------------------------------* 
- * Functions:                                                                                  * 
+/***********************************************************************************************
+ ***                            Confidential - Westwood Studios                              ***
+ ***********************************************************************************************
+ *                                                                                             *
+ *                 Project Name : Commando                                                     *
+ *                                                                                             *
+ *                     $Archive:: /G/wwmath/ode.h                                             $*
+ *                                                                                             *
+ *                       Author:: Greg_h                                                       *
+ *                                                                                             *
+ *                     $Modtime:: 9/21/99 5:54p                                               $*
+ *                                                                                             *
+ *                    $Revision:: 9                                                           $*
+ *                                                                                             *
+ *---------------------------------------------------------------------------------------------*
+ * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 
@@ -50,13 +50,13 @@
 
 /*
 ** StateVectorClass
-** The state vector for a system of ordinary differential equations will be 
+** The state vector for a system of ordinary differential equations will be
 ** stored in this form.  It is a dynamically resizeable array so that we don't
 ** have to hard-code a maximum size.  If needed, in the final product, we could
 ** do a slight optimization which makes this a normal fixed size array that
 ** we've determined is "big enough".
 */
-class StateVectorClass : public DynamicVectorClass<float> 
+class StateVectorClass : public DynamicVectorClass<float>
 {
 public:
 	void Reset(void) { ActiveCount = 0; }
@@ -77,8 +77,8 @@ public:
 	/*
 	** Get_Current_State
 	** This function should fill the given state vector with the
-	** current state of this object.  Each state variable should be 
-	** inserted into the vector using its 'Add' interface.  
+	** current state of this object.  Each state variable should be
+	** inserted into the vector using its 'Add' interface.
 	*/
 	virtual void	Get_State(StateVectorClass & set_state) = 0;
 
@@ -92,9 +92,9 @@ public:
 
 	/*
 	** Compute_Derivatives
-	** The various ODE solvers will use this interface to ask the ODESystemClass to 
+	** The various ODE solvers will use this interface to ask the ODESystemClass to
 	** compute the derivatives of their state.  In some cases, the integrator will
-	** pass in a new state vector (test_state) to be used when computing the derivatives.  
+	** pass in a new state vector (test_state) to be used when computing the derivatives.
 	** NULL will be passed if they want the derivatives for the initial state.
 	** This function works similarly to the Set_State function in that it passes you
 	** the index to start reading from and you pass it back the index to continue from.
@@ -116,7 +116,7 @@ public:
 ** This is the fourth order Runge-Kutta method...
 **
 ** Runge_Kutta5_Solve is an implementation of fifth order Runge-
-** Kutta.  It requires six evaluations of the derivatives.  
+** Kutta.  It requires six evaluations of the derivatives.
 */
 
 class IntegrationSystem

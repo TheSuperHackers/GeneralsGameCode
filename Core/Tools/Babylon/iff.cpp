@@ -20,7 +20,7 @@
 #include "StdAfx.h"
 #include "sys/stat.h"
 #include "iff.h"
-#include <fcntl.h>      
+#include <fcntl.h>
 #include <io.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -459,7 +459,7 @@ int		IFF_Write ( IFF_FILE *iff, void *buff, int size )
 	int	val =0;
 
 	val = _write ( iff->fp, buff, size);
-								
+
 	if (val==-1)
 	{
 		val = 0;

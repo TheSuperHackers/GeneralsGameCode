@@ -47,7 +47,7 @@ struct ErrorLookup
 	HRESULT error;
 	const char *string;
 };
-static ErrorLookup errorLookup[] = 
+static ErrorLookup errorLookup[] =
 {
 { (HRESULT)DIERR_ACQUIRED, "DIERR_ACQUIRED" },
 { (HRESULT)DIERR_ALREADYINITIALIZED, "DIERR_ALREADYINITIALIZED" },
@@ -73,7 +73,7 @@ static ErrorLookup errorLookup[] =
 { (HRESULT)DIERR_NOTFOUND, "DIERR_NOTFOUND" },
 { (HRESULT)DIERR_NOTINITIALIZED, "DIERR_NOTINITIALIZED" },
 { (HRESULT)DIERR_OBJECTNOTFOUND, "DIERR_OBJECTNOTFOUND" },
-{ (HRESULT)DIERR_OLDDIRECTINPUTVERSION, "DIERR_OLDDIRECTINPUTVERSION" }, 
+{ (HRESULT)DIERR_OLDDIRECTINPUTVERSION, "DIERR_OLDDIRECTINPUTVERSION" },
 { (HRESULT)DIERR_OTHERAPPHASPRIO, "DIERR_OTHERAPPHASPRIO" },
 { (HRESULT)DIERR_OUTOFMEMORY, "DIERR_OUTOFMEMORY" },
 { (HRESULT)DIERR_READONLY, "DIERR_READONLY" },
@@ -119,7 +119,7 @@ void DirectInputKeyboard::openKeyboard( void )
 	// create our interface to direct input
 	hr = DirectInput8Create( ApplicationHInstance,
 													 DIRECTINPUT_VERSION,
-													 IID_IDirectInput8, 
+													 IID_IDirectInput8,
 													 (void **)&m_pDirectInput,
 													 NULL );
 	if( FAILED( hr ) )
@@ -163,8 +163,8 @@ void DirectInputKeyboard::openKeyboard( void )
 	// NT support, but we should check with the latest versions of DirectX
 	// on 2000 etc
 	//
-	hr = m_pKeyboardDevice->SetCooperativeLevel( ApplicationHWnd, 
-																							 DISCL_FOREGROUND | 
+	hr = m_pKeyboardDevice->SetCooperativeLevel( ApplicationHWnd,
+																							 DISCL_FOREGROUND |
 																							 DISCL_NONEXCLUSIVE );
 	if( FAILED( hr ) )
 	{
@@ -200,7 +200,7 @@ void DirectInputKeyboard::openKeyboard( void )
 	{
 
 		DEBUG_LOG(( "ERROR - openKeyboard: Unable to acquire keyboard device" ));
-		// Note - This can happen in windowed mode, and we can re-acquire later.  So don't 
+		// Note - This can happen in windowed mode, and we can re-acquire later.  So don't
 		// close the keyboard. jba.
 		// closeKeyboard();
 		return;

@@ -111,10 +111,10 @@ EmitterGeneralPropPageClass::Initialize (void)
 		// Get the emitter's texture
 		//
 		m_TextureFilename = m_pEmitterList->Get_Texture_Filename ();
-		
+
 		m_Lifetime		= m_pEmitterList->Get_Lifetime ();
 		m_EmitterName	= m_pEmitterList->Get_Name ();
-		m_pEmitterList->Get_Shader (m_Shader);		
+		m_pEmitterList->Get_Shader (m_Shader);
 	}
 
 	return ;
@@ -156,7 +156,7 @@ EmitterGeneralPropPageClass::Add_Shader_To_Combo
 //  OnInitDialog
 //
 BOOL
-EmitterGeneralPropPageClass::OnInitDialog (void) 
+EmitterGeneralPropPageClass::OnInitDialog (void)
 {
 	// Allow the base class to process this message
 	CPropertyPage::OnInitDialog ();
@@ -173,7 +173,7 @@ EmitterGeneralPropPageClass::OnInitDialog (void)
 	Add_Shader_To_Combo (ShaderClass::_PresetOpaqueSpriteShader, "Opaque");
 
 	//
-	// Fill the edit controls with the default values	
+	// Fill the edit controls with the default values
 	//
 	SetDlgItemText (IDC_NAME_EDIT, m_EmitterName);
 	SetDlgItemText (IDC_FILENAME_EDIT, m_TextureFilename);
@@ -185,7 +185,7 @@ EmitterGeneralPropPageClass::OnInitDialog (void)
 	if (m_Lifetime > 100) {
 		m_Lifetime = 0;
 	}
-	::Initialize_Spinner (m_LifetimeSpin, m_Lifetime, 0, 1000);	
+	::Initialize_Spinner (m_LifetimeSpin, m_Lifetime, 0, 1000);
 
 	OnParticleLifetimeCheck ();
 
@@ -244,7 +244,7 @@ EmitterGeneralPropPageClass::OnApply (void)
 		retval = CPropertyPage::OnApply ();
 		m_bValid = true;
 	}
-	
+
 	// Return the TRUE/FALSE result code
 	return retval;
 }
@@ -255,7 +255,7 @@ EmitterGeneralPropPageClass::OnApply (void)
 //  OnBrowseButton
 //
 void
-EmitterGeneralPropPageClass::OnBrowseButton (void) 
+EmitterGeneralPropPageClass::OnBrowseButton (void)
 {
 	CFileDialog openFileDialog (TRUE,
 										 ".tga",
@@ -270,7 +270,7 @@ EmitterGeneralPropPageClass::OnBrowseButton (void)
 		SetModified ();
 	}
 
-	return ;	
+	return ;
 }
 
 
@@ -315,7 +315,7 @@ EmitterGeneralPropPageClass::OnNotify
 	//
 	NMHDR *pheader = (NMHDR *)lParam;
 	if ((pheader != NULL) && (pheader->code == UDN_DELTAPOS)) {
-		LPNMUPDOWN pupdown = (LPNMUPDOWN)lParam;		
+		LPNMUPDOWN pupdown = (LPNMUPDOWN)lParam;
 		::Update_Spinner_Buddy (pheader->hwndFrom, pupdown->iDelta);
 	}
 
@@ -329,7 +329,7 @@ EmitterGeneralPropPageClass::OnNotify
 //  OnChangeParticleLifetimeEdit
 //
 void
-EmitterGeneralPropPageClass::OnChangeParticleLifetimeEdit (void) 
+EmitterGeneralPropPageClass::OnChangeParticleLifetimeEdit (void)
 {
 	SetModified ();
 	return ;

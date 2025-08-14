@@ -59,8 +59,8 @@ public:
 	static AsciiString getInfoText(Parameter *pParm);
 	static void setCurSidesList(SidesList *sidesListP) {m_sidesListP = sidesListP;};
 	static Bool loadScripts(CComboBox *pCombo, Bool subr, AsciiString match = AsciiString::TheEmptyString);
-	static Bool loadWaypoints(CComboBox *pCombo, AsciiString match = AsciiString::TheEmptyString); 
-	static Bool loadTransports(CComboBox *pCombo, AsciiString match = AsciiString::TheEmptyString); 
+	static Bool loadWaypoints(CComboBox *pCombo, AsciiString match = AsciiString::TheEmptyString);
+	static Bool loadTransports(CComboBox *pCombo, AsciiString match = AsciiString::TheEmptyString);
 	static Bool loadObjectTypeList(CComboBox *pCombo, std::vector<AsciiString> *strings = NULL, AsciiString match = AsciiString::TheEmptyString);
 
 protected:
@@ -69,10 +69,10 @@ protected:
 	static Bool loadCommandButtons(CComboBox *pCombo, AsciiString match = AsciiString::TheEmptyString);
 	static Bool loadFontNames(CComboBox *pCombo, AsciiString match = AsciiString::TheEmptyString);
 	static void readFontFile( const char *filename );
-	static Bool loadTeams(CComboBox *pCombo, AsciiString match = AsciiString::TheEmptyString); 
-	static Bool loadTeamOrUnit(CComboBox *pCombo, AsciiString match = AsciiString::TheEmptyString); 
-	static Bool loadUnits(CComboBox *pCombo, AsciiString match = AsciiString::TheEmptyString); 
-	static Bool loadBridges(CComboBox *pCombo, AsciiString match = AsciiString::TheEmptyString); 
+	static Bool loadTeams(CComboBox *pCombo, AsciiString match = AsciiString::TheEmptyString);
+	static Bool loadTeamOrUnit(CComboBox *pCombo, AsciiString match = AsciiString::TheEmptyString);
+	static Bool loadUnits(CComboBox *pCombo, AsciiString match = AsciiString::TheEmptyString);
+	static Bool loadBridges(CComboBox *pCombo, AsciiString match = AsciiString::TheEmptyString);
 	static Bool loadObjectType(CComboBox *pCombo, AsciiString match = AsciiString::TheEmptyString);
 	static Bool loadAudioType(Parameter::ParameterType comboType, CComboBox *pCombo, AsciiString match = AsciiString::TheEmptyString);
 	static Bool loadMovies(CComboBox *pCombo, AsciiString match = AsciiString::TheEmptyString);
@@ -93,17 +93,17 @@ protected:
 	static Bool loadCreateObjectListsParameter(Script *pScr, CComboBox *pCombo, std::vector<AsciiString> *strings, AsciiString match);
 	static Bool loadRevealNames(CComboBox *pCombo, AsciiString match = AsciiString::TheEmptyString);
 	static Bool loadRevealNamesParameter(Script *pScr, CComboBox *pCombo, AsciiString match);
-	
+
 	static Bool loadEmoticons( CComboBox *pCombo, AsciiString match = AsciiString::TheEmptyString );
 	static AsciiString getCreatedUnitTemplateName(AsciiString unitName);
-	
+
 	static Bool loadCounters(CComboBox *pCombo, AsciiString match = AsciiString::TheEmptyString);
 	static void loadConditionParameter(Script *pScr, Parameter::ParameterType type, CComboBox *pCombo);
 	static Bool loadActionParameter(Script *pScr, Parameter::ParameterType type, CComboBox *pCombo, AsciiString match);
 	static Bool loadFlags(CComboBox *pCombo, AsciiString match = AsciiString::TheEmptyString);
-	
 
-protected:							
+
+protected:
 	Parameter		*m_parameter;
 	static AsciiString m_unitName; //This is the name of the unit that this script command is dedicated to (if applicable).
 	AsciiString m_string;

@@ -56,7 +56,7 @@ CreateObjectDieModuleData::CreateObjectDieModuleData()
 {
 	DieModuleData::buildFieldParse(p);
 
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
 		{ "CreationList",	INI::parseObjectCreationList,		NULL,											offsetof( CreateObjectDieModuleData, m_ocl ) },
 		{ "TransferPreviousHealth", INI::parseBool, NULL	,offsetof( CreateObjectDieModuleData, m_transferPreviousHealth ) },
@@ -115,7 +115,7 @@ void CreateObjectDie::onDie( const DamageInfo * damageInfo )
 				damInfo.in.m_amount = subdualDamageAmount;
 				damInfo.in.m_damageType = DAMAGE_SUBDUAL_UNRESISTABLE;
 				damInfo.in.m_sourceID = INVALID_ID;
-				newBody->attemptDamage( &damInfo );				
+				newBody->attemptDamage( &damInfo );
 			}
 
 			//Now transfer the previous health from the old object to the new.
@@ -140,7 +140,7 @@ void CreateObjectDie::onDie( const DamageInfo * damageInfo )
 		}
 	}
 
-	
+
 }  // end onDie
 
 // ------------------------------------------------------------------------------------------------

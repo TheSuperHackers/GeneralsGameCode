@@ -71,7 +71,7 @@ void BitChannelClass::Set_Bit(int frameidx,bool bit)
 	assert(frameidx >= 0);
 	assert(frameidx < MaxFrames);
 
-	Data[frameidx] = bit; 
+	Data[frameidx] = bit;
 
 	if (!is_default(bit)) {
 		IsEmpty = false;
@@ -98,54 +98,54 @@ bool BitChannelClass::Get_Bit(int frameidx)
 bool BitChannelClass::Save(ChunkSaveClass & csave, bool compress)
 {
 	if (IsEmpty) return true;
-	
+
   if (compress)  {
   	// Save the Channel Data Compressed
     // TIMECODED
 		if (!csave.Begin_Chunk(W3D_CHUNK_COMPRESSED_BIT_CHANNEL)) {
 			return false;
 		}
-				
+
     uint32	channelsize  = sizeof(W3dTimeCodedBitChannelStruct);
 		uint32  packetsize   = sizeof(uint32);
-    
+
     channelsize	+= packetsize * MaxFrames;
     channelsize -= sizeof(uint32);
-    
+
     W3dTimeCodedBitChannelStruct * chn = (W3dTimeCodedBitChannelStruct *)malloc(channelsize);
-    
+
     if (chn == NULL)  {
     	return false;
     }
-    
+
     chn->NumTimeCodes = MaxFrames;
     chn->Pivot        = ID;
     chn->Flags        = ChannelType;
     chn->DefaultVal   = DefaultVal;
-					 
+
     // copy data into the channel struct, in timecoded raw format
 
 		for (uint32 fcount=0; fcount < chn->NumTimeCodes; fcount++) {
-    	
+
 			if (Get_Bit(fcount)) {
       		chn->Data[fcount] = fcount | W3D_TIMECODED_BIT_MASK;
-			}	
+			}
 			else  {
       		chn->Data[fcount] = fcount;
 			}
-		}	
-    
+		}
+
     // Compress the new structure
-    
-    BitChannelClass::compress( chn );			
-    
+
+    BitChannelClass::compress( chn );
+
 	 float originalchannelsize = channelsize;
 
     // Update Channel Size
     channelsize  = sizeof(W3dTimeCodedBitChannelStruct);
     channelsize	+= packetsize * chn->NumTimeCodes;
     channelsize -= sizeof(uint32);
-    
+
 	 float percent = (((float) channelsize) / originalchannelsize) * 100.0f;
 
 	 ExportLog::printf("%.0f", percent);
@@ -156,7 +156,7 @@ bool BitChannelClass::Save(ChunkSaveClass & csave, bool compress)
 		if (csave.Write(chn,channelsize) != channelsize) {
 			return false;
 		}
-		
+
 		if (chn != NULL) {
 			free(chn);
 		}
@@ -164,8 +164,8 @@ bool BitChannelClass::Save(ChunkSaveClass & csave, bool compress)
 		if (!csave.End_Chunk()) {
 			return false;
 		}
-    
-  }							
+
+  }
   else  {
   	// Stock Raw Save
 		if (!csave.Begin_Chunk(W3D_CHUNK_BIT_CHANNEL)) {
@@ -182,11 +182,11 @@ bool BitChannelClass::Save(ChunkSaveClass & csave, bool compress)
 		channelsize += numbytes - 1; // one byte inside the W3dBitChannelStruct...
 
 		W3dBitChannelStruct * chn = (W3dBitChannelStruct *)malloc(channelsize);
-		
+
 		if (chn == NULL) {
 			return false;
 		}
-	  
+
 		chn->FirstFrame = Begin;
 		chn->LastFrame = End;
 		chn->Flags = ChannelType;
@@ -202,7 +202,7 @@ bool BitChannelClass::Save(ChunkSaveClass & csave, bool compress)
 		if (csave.Write(chn,channelsize) != channelsize) {
 			return false;
 		}
-		
+
 		if (chn != NULL) {
 			free(chn);
 		}
@@ -210,8 +210,8 @@ bool BitChannelClass::Save(ChunkSaveClass & csave, bool compress)
 		if (!csave.End_Chunk()) {
 			return false;
 		}
-    
-  }								
+
+  }
 
 	return true;
 }
@@ -234,86 +234,86 @@ void BitChannelClass::compute_range(void)
 		End--;
 	}
 }	 // compute_range
-									
-                  
+
+
 //
 // find a packet that isn't needed, and return the index
 // if all packets are necessary, then return back PACKETS_ALL_USEFUL
 // a useless packet is defined, as a packet that can be recreated
-//      
+//
 #define PACKETS_ALL_USEFUL (0xFFFFFFFF)
 //
 uint32 BitChannelClass::find_useless_packet(W3dTimeCodedBitChannelStruct * c)
-{												
-	
+{
+
   assert( c );	// make sure pointer exists
   assert( c->NumTimeCodes );	// make sure some packets exist
-                       
+
   	if (c->NumTimeCodes > 2)  {
-  						 
+
       for(uint32 try_idx = 0; try_idx < (c->NumTimeCodes - 1); try_idx++)  {
-      				
+
         if ((c->Data[try_idx]   & W3D_TIMECODED_BIT_MASK) ==
             (c->Data[try_idx+1] & W3D_TIMECODED_BIT_MASK))  {
             	return(try_idx + 1);
-            }      						 
-               
-      }	// for 
-    }    
-	
+            }
+
+      }	// for
+    }
+
 	return( PACKETS_ALL_USEFUL );
-	
-} // find_useless_packet	
-  				
+
+} // find_useless_packet
+
 
 //
 //  Remove a packet from a W3dTimeCodedBitChannelStruct
 //
 void BitChannelClass::remove_packet(W3dTimeCodedBitChannelStruct * c, uint32 packet_idx)
-{												
+{
 	assert( c );
   assert( c->NumTimeCodes > 1 );
-	
+
   uint32 packet_size = 1;
   uint32 packet_len  = packet_size * sizeof(uint32);
-  												 
+
   uint32 *src, *dst;
-  
+
   dst = (uint32 *) &c->Data[ packet_size * packet_idx ];
   src = (uint32 *) &c->Data[ packet_size * (packet_idx + 1) ];
-   									 
+
   uint32 copy_length = (c->NumTimeCodes - (packet_idx + 1)) * packet_len;
-  
+
   if (copy_length)  {
-  	
+
     memcpy(dst, src, copy_length);
-    
+
   }
-  
-  // Decrement Packet Count                  
-  c->NumTimeCodes--;			
-        
-} // remove_packet	 
-         
+
+  // Decrement Packet Count
+  c->NumTimeCodes--;
+
+} // remove_packet
+
 //
 //  Take a non-compressed TimeCoded Bit Channel
 //  and compress the packets
 //
 void BitChannelClass::compress(W3dTimeCodedBitChannelStruct * c)
-{			
+{
 	while(1) {
-		
+
 		uint32 idx = find_useless_packet( c );
-     
+
 		if (PACKETS_ALL_USEFUL == idx) break;
-    
+
 		remove_packet( c, idx );
-    	
-	}	
-  
+
+	}
+
 } // compress
-	
 
 
-                    
+
+
 // EOF - bchannel.cpp

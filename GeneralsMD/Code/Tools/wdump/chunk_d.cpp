@@ -197,14 +197,14 @@ void ChunkTableClass::AddItem(CListCtrl *List, int &Counter, const char *Name, W
 	}
 }
 
-void ChunkTableClass::AddItem(CListCtrl *List, int &Counter, const char *Name, W3dTexCoordStruct *Value) 
+void ChunkTableClass::AddItem(CListCtrl *List, int &Counter, const char *Name, W3dTexCoordStruct *Value)
 {
 	char buf[256];
 	sprintf(buf, "%f %f", Value->U, Value->V);
 	AddItem(List, Counter, Name, buf, "UV");
 }
 
-void ChunkTableClass::AddItem(CListCtrl *List, int &Counter, const char *name, W3dShaderStruct * shader) 
+void ChunkTableClass::AddItem(CListCtrl *List, int &Counter, const char *name, W3dShaderStruct * shader)
 {
 	static const char * _depth_compare[] = { "Pass Never","Pass Less","Pass Equal","Pass Less or Equal", "Pass Greater","Pass Not Equal","Pass Greater or Equal","Pass Always" };
 	static const char * _depth_mask[] = { "Write Disable", "Write Enable" };
@@ -243,13 +243,13 @@ void ChunkTableClass::AddItem(CListCtrl *List, int &Counter, const char *name, W
 	sprintf(label,"%s.DetailAlpha",name);
 	AddItem(List, Counter, label, _detailalpha[W3d_Shader_Get_Detail_Alpha_Func(shader)]);
 	sprintf(label,"%s.AlphaTest",name);
-	AddItem(List, Counter, label, _alphatest[W3d_Shader_Get_Alpha_Test(shader)]);	
+	AddItem(List, Counter, label, _alphatest[W3d_Shader_Get_Alpha_Test(shader)]);
 
 	counter++;
 	shader++;
 }
 
-void ChunkTableClass::AddItem(CListCtrl *List, int &Counter, const char *name, W3dPS2ShaderStruct * shader) 
+void ChunkTableClass::AddItem(CListCtrl *List, int &Counter, const char *name, W3dPS2ShaderStruct * shader)
 {
 	static const char * _depth_compare[] = { "Pass Never","Pass Less","Pass Always","Pass Less or Equal"};
 	static const char * _depth_mask[] = { "Write Disable", "Write Enable" };
@@ -397,7 +397,7 @@ void ChunkTableClass::List_W3D_CHUNK_SURRENDER_NORMALS(ChunkItem *Item, CListCtr
 	}
 }
 void ChunkTableClass::List_W3D_CHUNK_TEXCOORDS(ChunkItem *Item, CListCtrl *List) {
-	
+
 	W3dTexCoordStruct *data = (W3dTexCoordStruct *) Item->Data;
 	int Counter = 0;
 	void *max = (char *) Item->Data + Item->Length;
@@ -513,7 +513,7 @@ void ChunkTableClass::List_W3D_CHUNK_VERTEX_COLORS(ChunkItem *Item, CListCtrl *L
 	int sz = sizeof(W3dRGBStruct);
 
 	while(data < max) {
-	
+
 		sprintf(buf, "Vertex[%d].RGB", counter);
 		AddItem(List, Counter, buf, data);
 
@@ -531,7 +531,7 @@ void ChunkTableClass::List_W3D_CHUNK_VERTEX_INFLUENCES(ChunkItem *Item, CListCtr
 	int counter = 0;
 	char buf[256];
 	while(data < max) {
-	
+
 		sprintf(buf, "VertexInfluence[%d].BoneIdx", counter);
 		AddItem(List, Counter, buf, data->BoneIdx);
 		sprintf(buf, "VertexInfluence[%d].Pad", counter);
@@ -554,7 +554,7 @@ void ChunkTableClass::List_W3D_CHUNK_DAMAGE_HEADER(ChunkItem *Item, CListCtrl *L
 	int counter = 0;
 	char buf[256];
 	while(data < max) {
-	
+
 		sprintf(buf, "DamageStruct[%d].NumDamageMaterials", counter);
 		AddItem(List, Counter, buf, data->NumDamageMaterials);
 		sprintf(buf, "DamageStruct[%d].NumDamageVerts", counter);
@@ -578,7 +578,7 @@ void ChunkTableClass::List_W3D_CHUNK_DAMAGE_VERTICES(ChunkItem *Item, CListCtrl 
 	int counter = 0;
 	char buf[256];
 	while(data < max) {
-	
+
 		sprintf(buf, "DamageVertexStruct[%d].VertexIndex", counter);
 		AddItem(List, Counter, buf, data->VertexIndex);
 
@@ -599,7 +599,7 @@ void ChunkTableClass::List_W3D_CHUNK_DAMAGE_COLORS(ChunkItem *Item, CListCtrl *L
 	int counter = 0;
 	char buf[256];
 	while(data < max) {
-	
+
 		sprintf(buf, "DamageColorStruct[%d].VertexIndex", counter);
 		AddItem(List, Counter, buf, data->VertexIndex);
 
@@ -640,7 +640,7 @@ void ChunkTableClass::List_O_W3D_CHUNK_MATERIALS2(ChunkItem *Item, CListCtrl *Li
 
 		sprintf(buf, "Material[%d].Blue", counter);
 		AddItem(List, Counter, buf, data->Blue);
-	
+
 		sprintf(buf, "Material[%d].Alpha", counter);
 		AddItem(List, Counter, buf, data->Alpha);
 
@@ -768,7 +768,7 @@ void ChunkTableClass::List_W3D_CHUNK_MESH_HEADER3(ChunkItem *Item, CListCtrl *Li
 			AddItem(List, Counter,"Attributes", "W3D_MESH_FLAG_GEOMETRY_TYPE_OBBOX","flag");
 			break;
 	};
-	
+
 	if (data->Attributes & W3D_MESH_FLAG_COLLISION_TYPE_PHYSICAL)	AddItem(List, Counter,"Attributes", "W3D_MESH_FLAG_COLLISION_TYPE_PHYSICAL","flag");
 	if (data->Attributes & W3D_MESH_FLAG_COLLISION_TYPE_PROJECTILE)	AddItem(List, Counter,"Attributes", "W3D_MESH_FLAG_COLLISION_TYPE_PROJECTILE","flag");
 	if (data->Attributes & W3D_MESH_FLAG_COLLISION_TYPE_VIS)	AddItem(List, Counter,"Attributes", "W3D_MESH_FLAG_COLLISION_TYPE_VIS","flag");
@@ -790,7 +790,7 @@ void ChunkTableClass::List_W3D_CHUNK_MESH_HEADER3(ChunkItem *Item, CListCtrl *Li
 	AddItem(List, Counter,"NumVertices", data->NumVertices);
 	AddItem(List, Counter,"NumMaterials", data->NumMaterials);
 	AddItem(List, Counter,"NumDamageStages", data->NumDamageStages);
-	
+
 	if (data->SortLevel == SORT_LEVEL_NONE) {
 		AddItem(List, Counter, "SortLevel", "NONE");
 	} else {
@@ -803,7 +803,7 @@ void ChunkTableClass::List_W3D_CHUNK_MESH_HEADER3(ChunkItem *Item, CListCtrl *Li
 		} else {
 			sprintf (buf, "UNKNOWN");
 		}
-	} else {	  
+	} else {
 		sprintf (buf, "N/A");
 	}
 	AddItem (List, Counter, "PrelitVersion", buf);
@@ -828,7 +828,7 @@ void ChunkTableClass::List_W3D_CHUNK_TRIANGLES(ChunkItem *Item, CListCtrl *List)
 	int Counter = 0;
 	void *max = (char *) Item->Data + Item->Length;
 	assert(Item->Length % sizeof(W3dTriStruct) == 0);
-	
+
 	int counter = 0;
 	char buf[256];
 	while(data < max) {
@@ -876,7 +876,7 @@ void ChunkTableClass::List_W3D_CHUNK_VERTEX_SHADE_INDICES(ChunkItem * Item,CList
 	void *max = (char *) Item->Data + Item->Length;
 	assert(Item->Length % sizeof(uint32) == 0);
 	int counter = 0;
-	
+
 	char buf[256];
 	while(data < max) {
 		sprintf(buf, "Index[%d]", counter);
@@ -975,7 +975,7 @@ void ChunkTableClass::List_W3D_CHUNK_VERTEX_MATERIAL_INFO(ChunkItem * Item,CList
 			if ((data->Attributes & W3DVERTMAT_PSX_TRANS_MASK) == W3DVERTMAT_PSX_TRANS_MINUS_100)	AddItem(List, Counter, "Material.Attributes", "W3DVERTMAT_PSX_TRANS_MINUS_100", "flag");
 		}
 	}
- 
+
 	AddItem(List, Counter, "Material.Attributes", data->Attributes);
 	AddItem(List, Counter, "Material.Ambient", &(data->Ambient));
 	AddItem(List, Counter, "Material.Diffuse", &(data->Diffuse));
@@ -1004,7 +1004,7 @@ void ChunkTableClass::List_W3D_CHUNK_VERTEX_MAPPER_ARGS1(ChunkItem *Item, CListC
 void ChunkTableClass::List_W3D_CHUNK_SHADERS(ChunkItem * Item,CListCtrl *List)
 {
 	W3dShaderStruct *shader = (W3dShaderStruct *)Item->Data;
-	
+
 	void *max = (char *)Item->Data + Item->Length;
 	assert(Item->Length % sizeof(W3dShaderStruct) == 0);
 	int counter = 0;
@@ -1050,7 +1050,7 @@ void ChunkTableClass::List_W3D_CHUNK_VERTEX_BINORMALS(ChunkItem *Item, CListCtrl
 void ChunkTableClass::List_W3D_CHUNK_PS2_SHADERS(ChunkItem * Item,CListCtrl *List)
 {
 	W3dPS2ShaderStruct *shader = (W3dPS2ShaderStruct *)Item->Data;
-	
+
 	void *max = (char *)Item->Data + Item->Length;
 	assert(Item->Length % sizeof(W3dPS2ShaderStruct) == 0);
 	int counter = 0;
@@ -1152,7 +1152,7 @@ void ChunkTableClass::List_W3D_CHUNK_TEXTURE_INFO(ChunkItem * Item,CListCtrl *Li
 	int Counter = 0;
 
 	AddItem(List, Counter, "Texture.Attributes", data->Attributes);
-	
+
 	if (data->Attributes & W3DTEXTURE_PUBLISH)		AddItem(List, Counter,"Attributes", "W3DTEXTURE_PUBLISH","flag");
 	if (data->Attributes & W3DTEXTURE_NO_LOD)			AddItem(List, Counter,"Attributes", "W3DTEXTURE_NO_LOD","flag");
 	if (data->Attributes & W3DTEXTURE_CLAMP_U)		AddItem(List, Counter,"Attributes", "W3DTEXTURE_CLAMP_U","flag");
@@ -1178,7 +1178,7 @@ void ChunkTableClass::List_W3D_CHUNK_VERTEX_MATERIAL_IDS(ChunkItem * Item,CListC
 	char buf[256];
 
 	while(data < max) {
-	
+
 		sprintf(buf, "Vertex[%d] Vertex Material Index", counter);
 		AddItem(List, Counter, buf, *data);
 
@@ -1197,7 +1197,7 @@ void ChunkTableClass::List_W3D_CHUNK_SHADER_IDS(ChunkItem * Item,CListCtrl *List
 	char buf[256];
 
 	while(data < max) {
-	
+
 		sprintf(buf, "Face[%d] Shader Index", counter);
 		AddItem(List, Counter, buf, *data);
 
@@ -1216,7 +1216,7 @@ void ChunkTableClass::List_W3D_CHUNK_DCG(ChunkItem * Item,CListCtrl *List)
 	char buf[256];
 
 	while(data < max) {
-	
+
 		sprintf(buf, "Vertex[%d].DCG", counter);
 		AddItem(List, Counter, buf, data);
 
@@ -1235,7 +1235,7 @@ void ChunkTableClass::List_W3D_CHUNK_DIG(ChunkItem * Item,CListCtrl *List)
 	char buf[256];
 
 	while(data < max) {
-	
+
 		sprintf(buf, "Vertex[%d].DIG", counter);
 		AddItem(List, Counter, buf, data);
 
@@ -1254,7 +1254,7 @@ void ChunkTableClass::List_W3D_CHUNK_SCG(ChunkItem * Item,CListCtrl *List)
 	char buf[256];
 
 	while(data < max) {
-	
+
 		sprintf(buf, "Vertex[%d].SCG", counter);
 		AddItem(List, Counter, buf, data);
 
@@ -1281,14 +1281,14 @@ void ChunkTableClass::List_W3D_CHUNK_FXSHADER_IDS(ChunkItem* Item, CListCtrl* Li
 		data++;
 	}
 }
-		
+
 void ChunkTableClass::List_W3D_CHUNK_TEXTURE_STAGE(ChunkItem * Item,CListCtrl *List)
 {
 	List_Subitems(Item,List);
 }
 
 void ChunkTableClass::List_W3D_CHUNK_TEXTURE_IDS(ChunkItem * Item,CListCtrl *List)
-{	
+{
 	int Counter = 0;
 	int counter = 0;
 	uint32 *data = (uint32 *)Item->Data;
@@ -1297,7 +1297,7 @@ void ChunkTableClass::List_W3D_CHUNK_TEXTURE_IDS(ChunkItem * Item,CListCtrl *Lis
 	char buf[256];
 
 	while(data < max) {
-	
+
 		sprintf(buf, "Face[%d] Texture Index", counter);
 		AddItem(List, Counter, buf, *data);
 
@@ -1316,7 +1316,7 @@ void ChunkTableClass::List_W3D_CHUNK_STAGE_TEXCOORDS(ChunkItem * Item,CListCtrl 
 	char buf[256];
 
 	while(data < max) {
-	
+
 		sprintf(buf, "Vertex[%d].UV", counter);
 		AddItem(List, Counter, buf, data);
 
@@ -1335,7 +1335,7 @@ void ChunkTableClass::List_W3D_CHUNK_PER_FACE_TEXCOORD_IDS(ChunkItem * Item,CLis
 	char buf[256];
 
 	while(data < max) {
-	
+
 		sprintf(buf, "Face[%d] UV Indices", counter);
 		AddItem(List, Counter, buf, data);
 
@@ -1367,7 +1367,7 @@ void ChunkTableClass::List_W3D_CHUNK_AABTREE_POLYINDICES(ChunkItem * Item,CListC
 	char buf[256];
 
 	while(data < max) {
-	
+
 		sprintf(buf, "Polygon Index[%d]", counter);
 		AddItem(List, Counter, buf, *data);
 
@@ -1379,13 +1379,13 @@ void ChunkTableClass::List_W3D_CHUNK_AABTREE_POLYINDICES(ChunkItem * Item,CListC
 void ChunkTableClass::List_W3D_CHUNK_AABTREE_NODES(ChunkItem * Item,CListCtrl *List)
 {
 	W3dMeshAABTreeNode * data = (W3dMeshAABTreeNode *)Item->Data;
-	
+
 	int Counter = 0;
 	void *max = (char *)Item->Data + Item->Length;
 	assert(Item->Length % sizeof(W3dMeshAABTreeNode) == 0);
 	int counter = 0;
 	char buf[256];
-	
+
 	while(data < max) {
 
 		sprintf(buf, "Node[%d].Min", counter);
@@ -1457,7 +1457,7 @@ void ChunkTableClass::List_W3D_CHUNK_PIVOTS(ChunkItem *Item, CListCtrl *List) {
 
 void ChunkTableClass::List_W3D_CHUNK_PIVOT_FIXUPS(ChunkItem *Item, CListCtrl *List) {
 	W3dPivotFixupStruct *data = (W3dPivotFixupStruct *) Item->Data;
-	
+
 	int Counter = 0;
 	int pivot_counter = 0;
 
@@ -1478,7 +1478,7 @@ void ChunkTableClass::List_W3D_CHUNK_ANIMATION(ChunkItem *Item, CListCtrl *List)
 void ChunkTableClass::List_W3D_CHUNK_ANIMATION_HEADER(ChunkItem *Item, CListCtrl *List) {
 
 	W3dAnimHeaderStruct *data = (W3dAnimHeaderStruct *) Item->Data;
-	
+
 	int Counter = 0;
 	char buf[64];
 	sprintf(buf,"%d.%d",W3D_GET_MAJOR_VERSION(data->Version),W3D_GET_MINOR_VERSION(data->Version));
@@ -1489,7 +1489,7 @@ void ChunkTableClass::List_W3D_CHUNK_ANIMATION_HEADER(ChunkItem *Item, CListCtrl
 	AddItem(List, Counter, "FrameRate", data->FrameRate);
 }
 
-void ChunkTableClass::List_W3D_CHUNK_ANIMATION_CHANNEL(ChunkItem *Item, CListCtrl *List) 
+void ChunkTableClass::List_W3D_CHUNK_ANIMATION_CHANNEL(ChunkItem *Item, CListCtrl *List)
 {
 	static const char * _chntypes[] = {
 		"X Translation",
@@ -1525,9 +1525,9 @@ void ChunkTableClass::List_W3D_CHUNK_ANIMATION_CHANNEL(ChunkItem *Item, CListCtr
 	}
 }
 
-void ChunkTableClass::List_W3D_CHUNK_BIT_CHANNEL(ChunkItem *Item, CListCtrl *List) 
+void ChunkTableClass::List_W3D_CHUNK_BIT_CHANNEL(ChunkItem *Item, CListCtrl *List)
 {
-	static const char * _chntypes[] = 
+	static const char * _chntypes[] =
 	{
 		"Visibility",
 	};
@@ -1561,7 +1561,7 @@ void ChunkTableClass::List_W3D_CHUNK_HMODEL(ChunkItem *Item, CListCtrl *List) {
 }
 void ChunkTableClass::List_W3D_CHUNK_HMODEL_HEADER(ChunkItem *Item, CListCtrl *List) {
 	W3dHModelHeaderStruct *data = (W3dHModelHeaderStruct *) Item->Data;
-	
+
 	int Counter = 0;
 	char buf[64];
 	sprintf(buf,"%d.%d",W3D_GET_MAJOR_VERSION(data->Version),W3D_GET_MINOR_VERSION(data->Version));
@@ -1572,7 +1572,7 @@ void ChunkTableClass::List_W3D_CHUNK_HMODEL_HEADER(ChunkItem *Item, CListCtrl *L
 }
 void ChunkTableClass::List_W3D_CHUNK_NODE(ChunkItem *Item, CListCtrl *List) {
 	W3dHModelNodeStruct *data = (W3dHModelNodeStruct *) Item->Data;
-	
+
 	int Counter = 0;
 	AddItem(List, Counter, "RenderObjName", data->RenderObjName);
 	AddItem(List, Counter, "PivotIdx", data->PivotIdx);
@@ -1580,7 +1580,7 @@ void ChunkTableClass::List_W3D_CHUNK_NODE(ChunkItem *Item, CListCtrl *List) {
 
 void ChunkTableClass::List_W3D_CHUNK_COLLISION_NODE(ChunkItem *Item, CListCtrl *List) {
 	W3dHModelNodeStruct *data = (W3dHModelNodeStruct *) Item->Data;
-	
+
 	int Counter = 0;
 	AddItem(List, Counter, "CollisionMeshName", data->RenderObjName);
 	AddItem(List, Counter, "PivotIdx", data->PivotIdx);
@@ -1588,7 +1588,7 @@ void ChunkTableClass::List_W3D_CHUNK_COLLISION_NODE(ChunkItem *Item, CListCtrl *
 
 void ChunkTableClass::List_W3D_CHUNK_SKIN_NODE(ChunkItem *Item, CListCtrl *List) {
 	W3dHModelNodeStruct *data = (W3dHModelNodeStruct *) Item->Data;
-	
+
 	int Counter = 0;
 	AddItem(List, Counter, "SkinMeshName", data->RenderObjName);
 	AddItem(List, Counter, "PivotIdx", data->PivotIdx);
@@ -1597,7 +1597,7 @@ void ChunkTableClass::List_W3D_CHUNK_SKIN_NODE(ChunkItem *Item, CListCtrl *List)
 void ChunkTableClass::List_W3D_CHUNK_HMODEL_AUX_DATA(ChunkItem *Item, CListCtrl *List) {
 
 	W3dHModelAuxDataStruct *data = (W3dHModelAuxDataStruct *) Item->Data;
-	
+
 	int Counter = 0;
 	AddItem(List, Counter, "Attributes", data->Attributes);
 	AddItem(List, Counter, "MeshCount", data->MeshCount);
@@ -1611,7 +1611,7 @@ void ChunkTableClass::List_W3D_CHUNK_HMODEL_AUX_DATA(ChunkItem *Item, CListCtrl 
 
 void ChunkTableClass::List_W3D_CHUNK_SHADOW_NODE(ChunkItem *Item, CListCtrl *List) {
 	W3dHModelNodeStruct *data = (W3dHModelNodeStruct *) Item->Data;
-	
+
 	int Counter = 0;
 	AddItem(List, Counter, "ShadowMeshName", data->RenderObjName);
 	AddItem(List, Counter, "PivotIdx", data->PivotIdx);
@@ -1665,7 +1665,7 @@ void ChunkTableClass::List_W3D_CHUNK_COLLECTION_OBJ_NAME(ChunkItem * Item,CListC
 {
 	char * name = (char *)Item->Data;
 	int Counter = 0;
-	AddItem(List,Counter,"Render Object Name",name);	
+	AddItem(List,Counter,"Render Object Name",name);
 }
 
 void ChunkTableClass::List_W3D_CHUNK_PLACEHOLDER(ChunkItem * Item,CListCtrl * List)
@@ -1795,7 +1795,7 @@ void ChunkTableClass::List_W3D_CHUNK_EMITTER_INFO(ChunkItem * Item,CListCtrl * L
 	AddItem(List,counter,"Acceleration",&(data->Acceleration));
 	AddItem(List,counter,"StartColor",&(data->StartColor));
 	AddItem(List,counter,"EndColor",&(data->EndColor));
-}	
+}
 
 void ChunkTableClass::List_W3D_CHUNK_EMITTER_INFOV2(ChunkItem * Item,CListCtrl * List)
 {
@@ -1925,10 +1925,10 @@ void ChunkTableClass::List_W3D_CHUNK_AGGREGATE_INFO(ChunkItem * Item,CListCtrl *
 
 	char label[256];
 	W3dAggregateSubobjectStruct * defs = (W3dAggregateSubobjectStruct *)((char*)Item->Data + sizeof(W3dAggregateInfoStruct));
-	
+
 	for (unsigned int subobj=0; subobj<info->SubobjectCount; subobj++) {
 		counter = 0;
-		
+
 		sprintf(label,"SubObject[%d].SubobjectName",subobj);
 		AddItem(List,counter,label,defs[subobj].SubobjectName);
 		sprintf(label,"SubObject[%d].BoneName",subobj);
@@ -1958,7 +1958,7 @@ void ChunkTableClass::List_W3D_CHUNK_TEXTURE_REPLACER_INFO(ChunkItem * Item,CLis
 			sprintf(label,"Replacer[%d].BonePath[%d]",replaceidx,pathidx);
 			AddItem(List,counter,label,data->BonePath[pathidx]);
 		}
-		
+
 		AddItem(List,counter,"OldTextureName",data->OldTextureName);
 		AddItem(List,counter,"NewTextureName",data->NewTextureName);
 		AddItem(List,counter,"TextureParams.Attributes", data->TextureParams.Attributes);
@@ -1985,7 +1985,7 @@ void ChunkTableClass::List_W3D_CHUNK_HLOD_HEADER(ChunkItem * Item,CListCtrl * Li
 {
 	W3dHLodHeaderStruct * header = (W3dHLodHeaderStruct *)Item->Data;
 	int counter = 0;
-	
+
 	AddItem(List,counter,"Version",header->Version);
 	AddItem(List,counter,"LodCount", header->LodCount);
 	AddItem(List,counter,"Name",header->Name);
@@ -2042,7 +2042,7 @@ void ChunkTableClass::List_W3D_CHUNK_BOX(ChunkItem * Item,CListCtrl * List)
 	if (box->Attributes & W3D_BOX_ATTRIBTUE_COLLISION_TYPE_VEHICLE) {
 		AddItem(List,counter,"Attributes","W3D_BOX_ATTRIBTUE_COLLISION_TYPE_VEHICLE","flag");
 	}
-	
+
 	AddItem(List,counter,"Name",box->Name);
 	AddItem(List,counter,"Color",&(box->Color));
 	AddItem(List,counter,"Center",&(box->Center));
@@ -2130,7 +2130,7 @@ ChunkTableClass::ChunkTableClass() {
 	NewType( W3D_CHUNK_MESH_USER_TEXT, "W3D_CHUNK_MESH_USER_TEXT", List_W3D_CHUNK_MESH_USER_TEXT);
 	NewType( W3D_CHUNK_VERTEX_COLORS, "W3D_CHUNK_VERTEX_COLORS", List_W3D_CHUNK_VERTEX_COLORS);
 	NewType( W3D_CHUNK_VERTEX_INFLUENCES, "W3D_CHUNK_VERTEX_INFLUENCES", List_W3D_CHUNK_VERTEX_INFLUENCES);
-	
+
 	NewType( W3D_CHUNK_DAMAGE, "W3D_CHUNK_DAMAGE", List_W3D_CHUNK_DAMAGE, true);
 	NewType( W3D_CHUNK_DAMAGE_HEADER, "W3D_CHUNK_DAMAGE_HEADER", List_W3D_CHUNK_DAMAGE_HEADER);
 	NewType( W3D_CHUNK_DAMAGE_VERTICES, "W3D_CHUNK_DAMAGE_VERTICES", List_W3D_CHUNK_DAMAGE_VERTICES);
@@ -2175,7 +2175,7 @@ ChunkTableClass::ChunkTableClass() {
 	NewType( W3D_CHUNK_TEXTURE, "W3D_CHUNK_TEXTURE", List_W3D_CHUNK_TEXTURE,true);
 	NewType( W3D_CHUNK_TEXTURE_NAME, "W3D_CHUNK_TEXTURE_NAME", List_W3D_CHUNK_TEXTURE_NAME);
 	NewType( W3D_CHUNK_TEXTURE_INFO, "W3D_CHUNK_TEXTURE_INFO", List_W3D_CHUNK_TEXTURE_INFO);
-	
+
 	NewType( W3D_CHUNK_MATERIAL_PASS, "W3D_CHUNK_MATERIAL_PASS", List_W3D_CHUNK_MATERIAL_PASS,true);
 	NewType( W3D_CHUNK_VERTEX_MATERIAL_IDS, "W3D_CHUNK_VERTEX_MATERIAL_IDS", List_W3D_CHUNK_VERTEX_MATERIAL_IDS);
 	NewType( W3D_CHUNK_SHADER_IDS, "W3D_CHUNK_SHADER_IDS", List_W3D_CHUNK_SHADER_IDS);
@@ -2188,12 +2188,12 @@ ChunkTableClass::ChunkTableClass() {
 	NewType( W3D_CHUNK_TEXTURE_IDS, "W3D_CHUNK_TEXTURE_IDS", List_W3D_CHUNK_TEXTURE_IDS);
 	NewType( W3D_CHUNK_STAGE_TEXCOORDS, "W3D_CHUNK_STAGE_TEXCOORDS", List_W3D_CHUNK_STAGE_TEXCOORDS);
 	NewType( W3D_CHUNK_PER_FACE_TEXCOORD_IDS, "W3D_CHUNK_PER_FACE_TEXCOORD_IDS", List_W3D_CHUNK_PER_FACE_TEXCOORD_IDS);
-	
+
 	NewType( W3D_CHUNK_AABTREE, "W3D_CHUNK_AABTREE", List_W3D_CHUNK_AABTREE,true);
 	NewType( W3D_CHUNK_AABTREE_HEADER, "W3D_CHUNK_AABTREE_HEADER", List_W3D_CHUNK_AABTREE_HEADER);
 	NewType( W3D_CHUNK_AABTREE_POLYINDICES, "W3D_CHUNK_AABTREE_POLYINDICES", List_W3D_CHUNK_AABTREE_POLYINDICES);
 	NewType( W3D_CHUNK_AABTREE_NODES, "W3D_CHUNK_AABTREE_NODES", List_W3D_CHUNK_AABTREE_NODES);
-	
+
 	NewType( W3D_CHUNK_HIERARCHY, "W3D_CHUNK_HIERARCHY", List_W3D_CHUNK_HIERARCHY, true);
 	NewType( W3D_CHUNK_HIERARCHY_HEADER, "W3D_CHUNK_HIERARCHY_HEADER", List_W3D_CHUNK_HIERARCHY_HEADER);
 	NewType( W3D_CHUNK_PIVOTS, "W3D_CHUNK_PIVOTS", List_W3D_CHUNK_PIVOTS);
@@ -2248,7 +2248,7 @@ ChunkTableClass::ChunkTableClass() {
 	NewType( W3D_CHUNK_AGGREGATE_INFO, "W3D_CHUNK_AGGREGATE_INFO",List_W3D_CHUNK_AGGREGATE_INFO);
 	NewType( W3D_CHUNK_TEXTURE_REPLACER_INFO, "W3D_CHUNK_TEXTURE_REPLACER_INFO", List_W3D_CHUNK_TEXTURE_REPLACER_INFO);
 	NewType( W3D_CHUNK_AGGREGATE_CLASS_INFO, "W3D_CHUNK_AGGREGATE_CLASS_INFO", List_W3D_CHUNK_AGGREGATE_CLASS_INFO);
-	
+
 	NewType( W3D_CHUNK_HLOD, "W3D_CHUNK_HLOD", List_W3D_CHUNK_HLOD, true);
 	NewType( W3D_CHUNK_HLOD_HEADER, "W3D_CHUNK_HLOD_HEADER", List_W3D_CHUNK_HLOD_HEADER);
 	NewType( W3D_CHUNK_HLOD_LOD_ARRAY, "W3D_CHUNK_HLOD_LOD_ARRAY", List_W3D_CHUNK_HLOD_LOD_ARRAY, true);
@@ -2277,7 +2277,7 @@ ChunkTableClass::ChunkTableClass() {
 
 ChunkType *ChunkTableClass::Lookup(int ID) {
 	ChunkType *chunktype;
-	if(Types.Lookup((void *) ID, (void *&) chunktype)) 
+	if(Types.Lookup((void *) ID, (void *&) chunktype))
 		return chunktype;
 	return 0;
 }
@@ -2305,7 +2305,7 @@ ChunkItem::ChunkItem(ChunkLoadClass &cload) {
 }
 
 ChunkItem::~ChunkItem() {
-	if(Data != 0) 
+	if(Data != 0)
 		delete [] Data;
 	while(!Chunks.IsEmpty()) {
 		ChunkItem *item = Chunks.RemoveHead();
@@ -2378,9 +2378,9 @@ bool ChunkData::Load(const char *filename)
 void ChunkData::Add_Chunk(ChunkLoadClass & cload, ChunkItem *Parent)
 {
 	ChunkItem *item = new ChunkItem(cload);
-	if(Parent) 
+	if(Parent)
 		Parent->Chunks.AddTail(item);
-	else 
+	else
 		Chunks.AddTail(item);
 //Moumine 1/2/2002    1:21:26 PM
 #if ! defined _W3DSHELLEXT
@@ -2389,13 +2389,13 @@ void ChunkData::Add_Chunk(ChunkLoadClass & cload, ChunkItem *Parent)
 			static CMapStringToString existing;
 
 			char * data = (char *)item->Data;
-			
+
 			CString value;
 			if(existing.Lookup(data, value) == FALSE) {
 
 				existing.SetAt(data, data);
 
-				if(theApp.TextureDumpFile != 0) 
+				if(theApp.TextureDumpFile != 0)
 					fprintf(theApp.TextureDumpFile, "%s,%s\n", (LPCTSTR)theApp.Filename, data);
 				TRACE("%s,%s\n", static_cast<const char*>(theApp.Filename), data);
 			}
