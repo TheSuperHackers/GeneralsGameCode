@@ -349,6 +349,9 @@ Bool addDrawableToList( Drawable *draw, void *userData )
 	if (!pds->drawableListToFill)
 		return FALSE;
 
+	if (draw->getFullyObscuredByShroud())
+		return FALSE;
+
 	if (draw->isDrawableEffectivelyHidden())
 		return FALSE;
 
@@ -370,23 +373,6 @@ Bool addDrawableToList( Drawable *draw, void *userData )
     else
       return FALSE;
   }
-
-	//Kris: Aug 9, 2003!!! Wow, this bug has been around a LONG time!!
-	//Basically, it was possible to drag select a single enemy/neutral unit even if you couldn't see it
-	//including stealthed units.
-	const Object *obj = draw->getObject();
-	if( obj )
-	{
-		const Player *player = ThePlayerList->getLocalPlayer();
-		Relationship rel = player->getRelationship( obj->getTeam() );
-		if( rel == NEUTRAL || rel == ENEMIES )
-		{
-			if( obj->getShroudedStatus( player->getPlayerIndex() ) >= OBJECTSHROUD_FOGGED )
-			{
-				return FALSE;
-			}
-		}
-	}
 
 	pds->drawableListToFill->push_back(draw);
 	return TRUE;
