@@ -159,6 +159,7 @@ void ParkingPlaceBehavior::purgeDead()
 				{
 					it->m_objectInSpace = INVALID_ID;
 					it->m_reservedForExit = false;
+					it->m_postponedRunwayReservationForTakeoff = false;
 					if (pu)
 						pu->setHoldDoorOpen(it->m_door, false);
 				}
@@ -379,6 +380,7 @@ void ParkingPlaceBehavior::releaseSpace(ObjectID id)
 		{
 			it->m_objectInSpace = INVALID_ID;
 			it->m_reservedForExit = false;
+			it->m_postponedRunwayReservationForTakeoff = false;
 			if (pu)
 				pu->setHoldDoorOpen(it->m_door, false);
 		}
@@ -410,17 +412,45 @@ void ParkingPlaceBehavior::transferRunwayReservationToNextInLineForTakeoff(Objec
 }
 
 //-------------------------------------------------------------------------------------------------
+Bool ParkingPlaceBehavior::postponeRunwayReservation(UnsignedInt spaceIndex, Bool forLanding)
+{
+	// TheSuperHackers @tweak Block the first attempt to reserve a runway for 'upper' space indices.
+	// This allows 'lower' space indices to reserve a runway first to ensure deterministic takeoff ordering.
+
+	if (m_spaces.size() > m_runways.size() && spaceIndex >= m_runways.size())
+	{
+		Bool& postponed = m_spaces[spaceIndex].m_postponedRunwayReservationForTakeoff;
+		if (forLanding)
+		{
+			postponed = false;
+		}
+		else if (!postponed)
+		{
+			postponed = true;
+			return true;
+		}
+	}
+
+	return false;
+}
+
+//-------------------------------------------------------------------------------------------------
 Bool ParkingPlaceBehavior::reserveRunway(ObjectID id, Bool forLanding)
 {
 	buildInfo();
 	purgeDead();
 
 	Int runway = -1;
-	for (std::vector<ParkingPlaceInfo>::iterator it = m_spaces.begin(); it != m_spaces.end(); ++it)
+	for (UnsignedInt i = 0; i < m_spaces.size(); ++i)
 	{
-		if (it->m_objectInSpace == id)
+		if (m_spaces[i].m_objectInSpace == id)
 		{
-			runway = it->m_runway;
+#if !RETAIL_COMPATIBLE_CRC
+			if (postponeRunwayReservation(i, forLanding))
+				return false;
+#endif
+
+			runway = m_spaces[i].m_runway;
 			break;
 		}
 	}
