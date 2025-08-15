@@ -25,6 +25,22 @@ on:
         default: false
         type: boolean
         description: "Build extras"
+      release-name:
+        required: false
+        type: string
+        description: "Release name for the build, used in versioning"
+      build_user:
+        required: false
+        type: string
+        description: "Override VERSION_BUILDUSER"
+      build_loc:
+        required: false
+        type: string
+        description: "Override VERSION_BUILDLOC"
+      build_num:
+        required: false
+        type: string
+        description: "Override VERSION_BUILDNUM"
 
 jobs:
   build:
@@ -41,10 +57,10 @@ jobs:
         uses: actions/cache@v4
         with:
           path: C:\VC6
-          key: vc6-permanent-cache-v2
+          key: vc6-permanent-cache-v3
 
       - name: Cache CMake Dependencies
-        id: cache-cmake-deps
+        id: cache-cmake-deps-v2
         uses: actions/cache@v4
         with:
           path: build\${{ inputs.preset }}\_deps
@@ -109,6 +125,22 @@ jobs:
           "-DRTS_BUILD_ZEROHOUR=${{ inputs.game == 'GeneralsMD' && 'ON' || 'OFF' }}",
           "-DRTS_BUILD_GENERALS=${{ inputs.game == 'Generals' && 'ON' || 'OFF' }}"
           )
+
+          if ("${{ inputs.release-name }}") {
+              $buildFlags += "-DRELEASE_NAME:STRING=${{ inputs.release-name }}"
+          }
+
+          if ("${{ inputs.build_user }}") {
+              $buildFlags += "-DVERSION_BUILDUSER:STRING=${{ inputs.build_user }}"
+          }
+
+          if ("${{ inputs.build_loc }}") {
+              $buildFlags += "-DVERSION_BUILDLOC:STRING=${{ inputs.build_loc }}"
+          }
+
+          if ("${{ inputs.build_num }}") {
+              $buildFlags += "-DVERSION_BUILDNUM:INT=${{ inputs.build_num }}"
+          }
 
           $gamePrefix = "${{ inputs.game == 'Generals' && 'GENERALS' || 'ZEROHOUR' }}"
           $buildFlags += "-DRTS_BUILD_CORE_TOOLS=${{ inputs.tools && 'ON' || 'OFF' }}"

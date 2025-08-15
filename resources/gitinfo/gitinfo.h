@@ -30,6 +30,7 @@ extern const char GitShortSHA1[];
 extern const char GitCommitDate[];
 extern const char GitCommitAuthorName[];
 extern const char GitTag[];
+extern const char ReleaseName[];
 extern time_t GitCommitTimeStamp;
 extern bool GitUncommittedChanges;
 extern bool GitHaveInfo;
