@@ -96,11 +96,7 @@ SpecialPowerModule::SpecialPowerModule( Thing *thing, const ModuleData *moduleDa
 									: BehaviorModule( thing, moduleData )
 {
 
-#if RETAIL_COMPATIBLE_CRC
 	m_availableOnFrame = 0;
-#else
-	m_availableOnFrame = 0xFFFFFFFF;
-#endif
 	m_pausedCount = 0;
 	m_pausedOnFrame = 0;
 	m_pausedPercent = 0.0f;
@@ -110,16 +106,37 @@ SpecialPowerModule::SpecialPowerModule( Thing *thing, const ModuleData *moduleDa
 	// if we're pre-built, start counting down
 	if( !getObject()->getStatusBits().test( OBJECT_STATUS_UNDER_CONSTRUCTION ) )
 	{
-		//A sharedNSync special only startPowerRecharges when first scienced or when executed,
-		//Since a new modue with same SPTemplates may construct at any time.
-		if ( getSpecialPowerTemplate()->isSharedNSync() == FALSE )
-			startPowerRecharge();
+		init();
 	}
+	else
+	{
+#if RETAIL_COMPATIBLE_CRC
+		initCountdown();
+#else
+		// The Special Power will not be available until construction is done.
+		m_availableOnFrame = UINT_MAX;
+#endif
+	}
+
+}  // end SpecialPowerModule
+
+void SpecialPowerModule::init()
+{
+	//A sharedNSync special only startPowerRecharges when first scienced or when executed,
+	//Since a new module with same SPTemplates may construct at any time.
+	if ( getSpecialPowerTemplate()->isSharedNSync() == FALSE )
+		startPowerRecharge();
+
+	initCountdown();
+}
+
+void SpecialPowerModule::initCountdown()
+{
 	// WE USED TO DO THE POLL-EVERYBODY-AND-VOTE-ON-WHO-TO-SYNC-TO THING HERE,
 	// BUT NO MORE, NOW IT IS HANDLED IN PLAYER
 
 	// Some Special powers need to be activated by an Upgrade, so prevent the timer from going until then
-	const SpecialPowerModuleData *md = (const SpecialPowerModuleData *)moduleData;
+	const SpecialPowerModuleData *md = getSpecialPowerModuleData();
 	if( md->m_startsPaused )
 		pauseCountdown( TRUE );
 
@@ -140,9 +157,7 @@ SpecialPowerModule::SpecialPowerModule( Thing *thing, const ModuleData *moduleDa
 																 getObject()->getID(),
 																 getSpecialPowerModuleData()->m_specialPowerTemplate );
 	}
-
-
-}  // end SpecialPowerModule
+}
 
 //-------------------------------------------------------------------------------------------------
 const AudioEventRTS& SpecialPowerModule::getInitiateSound() const
@@ -380,6 +395,17 @@ Bool SpecialPowerModule::isScriptOnly() const
 	return modData->m_scriptedSpecialPowerOnly;
 }
 
+//-------------------------------------------------------------------------------------------------
+void SpecialPowerModule::onConstructionCompleted()
+{
+#if !RETAIL_COMPATIBLE_CRC
+	DEBUG_ASSERTCRASH(m_availableOnFrame == UINT_MAX,
+		("Unexpected state. Function must be called only after OBJECT_STATUS_UNDER_CONSTRUCTION was completed"));
+
+	m_availableOnFrame = 0;
+	init();
+#endif
+}
 
 //-------------------------------------------------------------------------------------------------
 /** A special power has been used ... start the recharge process by computing the frame
