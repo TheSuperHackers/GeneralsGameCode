@@ -127,8 +127,8 @@ void AIPlayer::onStructureProduced( Object *factory, Object *bldg )
 
 		info->setUnderConstruction(false);
 		bldg->updateObjValuesFromMapProperties(&d);
-		// clear the under construction status
-		bldg->clearStatus( MAKE_OBJECT_STATUS_MASK2( OBJECT_STATUS_UNDER_CONSTRUCTION, OBJECT_STATUS_RECONSTRUCTING ) );
+
+		bldg->onConstructionCompleted();
 
 		// UnderConstruction just cleared, so update our upgrades
 		bldg->updateUpgradeModules();
@@ -470,8 +470,7 @@ Object *AIPlayer::buildStructureNow(const ThingTemplate *bldgPlan, BuildListInfo
 		info->setObjectID( bldg->getID() );
 		info->setObjectTimestamp( TheGameLogic->getFrame()+1 );	// has to be non-zero, so just add 1.
 
-		// clear the under construction status
-		bldg->clearStatus( MAKE_OBJECT_STATUS_MASK2( OBJECT_STATUS_UNDER_CONSTRUCTION, OBJECT_STATUS_RECONSTRUCTING ) );
+		bldg->onConstructionCompleted();
 
 		// UnderConstruction just cleared, so update our upgrades
 		bldg->updateUpgradeModules();
