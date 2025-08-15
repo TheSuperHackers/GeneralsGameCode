@@ -291,6 +291,7 @@ public:
 
 	void setCursorCaptureMode(CursorCaptureMode mode); ///< set the rules for the mouse capture
 	void refreshCursorCapture(); ///< refresh the mouse capture
+	Bool isCursorCaptured(); ///< true if the mouse is captured in the game window
 
 	// access methods for the mouse data
 	const MouseIO *getMouseStatus( void ) { return &m_currMouse; }							///< get current mouse status
@@ -349,12 +350,13 @@ public:
 protected:
 
 	void initCapture();
-	Bool canCapture() const;
-	void unblockCapture(CursorCaptureBlockReason reason);
-	void blockCapture(CursorCaptureBlockReason reason);
+	Bool canCapture() const; ///< true if the mouse can be captured
+	void unblockCapture(CursorCaptureBlockReason reason); // unset a reason to block mouse capture
+	void blockCapture(CursorCaptureBlockReason reason); // set a reason to block mouse capture
+	void onCursorCaptured(Bool captured); ///< called when the mouse was successfully captured or released
 
-	virtual void capture( void ) = 0; ///< capture the mouse
-	virtual void releaseCapture( void ) = 0; ///< release mouse capture
+	virtual void capture( void ) = 0; ///< capture the mouse in the game window
+	virtual void releaseCapture( void ) = 0; ///< release the mouse capture
 
 	/// you must implement getting a buffered mouse event from you device here
 	virtual UnsignedByte getMouseEvent( MouseIO *result, Bool flush ) = 0;
@@ -399,6 +401,7 @@ protected:
 																	relative coordinate changes */
 
 	Bool m_visible;	// visibility status
+	Bool m_isCursorCaptured;
 
 	MouseCursor m_currentCursor;		///< current mouse cursor
 
