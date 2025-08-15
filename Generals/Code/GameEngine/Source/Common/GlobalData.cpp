@@ -613,6 +613,7 @@ GlobalData::GlobalData()
 	m_framesPerSecondLimit = 0;
 	m_chipSetType = 0;
 	m_headless = FALSE;
+	m_changeCurrentWorkingDirectoryToExecutablePath = TRUE;
 	m_windowed = 0;
 	m_xResolution = 800;
 	m_yResolution = 600;
