@@ -472,7 +472,10 @@ void Win32Mouse::capture( void )
 	rect.right = rightBottom.x;
 	rect.bottom = rightBottom.y;
 
-	::ClipCursor(&rect);
+	if (::ClipCursor(&rect))
+	{
+		onCursorCaptured(true);
+	}
 
 }  // end capture
 
@@ -482,6 +485,9 @@ void Win32Mouse::capture( void )
 void Win32Mouse::releaseCapture( void )
 {
 
-	::ClipCursor(NULL);
+	if (::ClipCursor(NULL))
+	{
+		onCursorCaptured(false);
+	}
 
 }  // end releaseCapture

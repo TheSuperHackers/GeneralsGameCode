@@ -307,18 +307,21 @@ GameMessageDisposition LookAtTranslator::translateGameMessage(const GameMessage 
 			}
 
 			// TheSuperHackers @tweak Ayumi/xezon 26/07/2025 Enables edge scrolling in windowed mode.
-			if (m_isScrolling)
+			if (TheMouse->isCursorCaptured())
 			{
-				if ( m_scrollType == SCROLL_SCREENEDGE && (m_currentPos.x >= edgeScrollSize && m_currentPos.y >= edgeScrollSize && m_currentPos.y < height-edgeScrollSize && m_currentPos.x < width-edgeScrollSize) )
+				if (m_isScrolling)
 				{
-					stopScrolling();
+					if ( m_scrollType == SCROLL_SCREENEDGE && (m_currentPos.x >= edgeScrollSize && m_currentPos.y >= edgeScrollSize && m_currentPos.y < height-edgeScrollSize && m_currentPos.x < width-edgeScrollSize) )
+					{
+						stopScrolling();
+					}
 				}
-			}
-			else
-			{
-				if ( m_currentPos.x < edgeScrollSize || m_currentPos.y < edgeScrollSize || m_currentPos.y >= height-edgeScrollSize || m_currentPos.x >= width-edgeScrollSize )
+				else
 				{
-					setScrolling(SCROLL_SCREENEDGE);
+					if ( m_currentPos.x < edgeScrollSize || m_currentPos.y < edgeScrollSize || m_currentPos.y >= height-edgeScrollSize || m_currentPos.x >= width-edgeScrollSize )
+					{
+						setScrolling(SCROLL_SCREENEDGE);
+					}
 				}
 			}
 
