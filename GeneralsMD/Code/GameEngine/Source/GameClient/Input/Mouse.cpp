@@ -500,6 +500,7 @@ Mouse::Mouse( void )
 	else
 		m_currentRedrawMode = RM_W3D;//RM_WINDOWS;
 	m_visible = FALSE;
+	m_isCursorCaptured = FALSE;
 	m_tooltipFontName = "Times New Roman";
 	m_tooltipFontSize = 12;
 	m_tooltipFontIsBold = FALSE;
@@ -1040,6 +1041,12 @@ void Mouse::refreshCursorCapture()
 }
 
 // ------------------------------------------------------------------------------------------------
+Bool Mouse::isCursorCaptured()
+{
+	return m_isCursorCaptured;
+}
+
+// ------------------------------------------------------------------------------------------------
 void Mouse::loseFocus()
 {
 	// Free the cursor when losing window focus.
@@ -1116,6 +1123,12 @@ void Mouse::blockCapture(CursorCaptureBlockReason reason)
 
 	DEBUG_LOG(("Mouse::blockCapture(%s): m_captureBlockReason=%u canCapture=%d",
 		CursorCaptureBlockReasonNames[reason], m_captureBlockReasonBits, (Int)canCapture()));
+}
+
+// ------------------------------------------------------------------------------------------------
+void Mouse::onCursorCaptured( Bool captured )
+{
+	m_isCursorCaptured = captured;
 }
 
 //-------------------------------------------------------------------------------------------------
