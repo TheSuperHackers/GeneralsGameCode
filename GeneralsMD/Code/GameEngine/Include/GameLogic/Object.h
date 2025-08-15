@@ -213,6 +213,8 @@ public:
 	Bool isAirborneTarget() const { return m_status.test( OBJECT_STATUS_AIRBORNE_TARGET ); }	///< Our locomotor will control marking us as a valid target for anti air weapons or not
 	Bool isUsingAirborneLocomotor( void ) const;										///< returns true if the current locomotor is an airborne one
 
+	void onConstructionCompleted();
+
 	/// central place for us to put any additional capture logic
 	void onCapture( Player *oldOwner, Player *newOwner );
 
