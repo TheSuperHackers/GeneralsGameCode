@@ -409,6 +409,9 @@ public:
 	Int m_systemTimeFontSize;
 	Int m_gameTimeFontSize;
 
+	// TheSuperHackers @feature user adjustable font size percentage
+	Real m_userFontSizeAdjustment;
+
 	Real m_shakeSubtleIntensity;			///< Intensity for shaking a camera with SHAKE_SUBTLE
 	Real m_shakeNormalIntensity;			///< Intensity for shaking a camera with SHAKE_NORMAL
 	Real m_shakeStrongIntensity;			///< Intensity for shaking a camera with SHAKE_STRONG

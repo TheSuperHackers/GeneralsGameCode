@@ -828,6 +828,20 @@ Int OptionPreferences::getGameTimeFontSize(void)
 	return fontSize;
 }
 
+Real OptionPreferences::getUserFontScale(void)
+{
+	OptionPreferences::const_iterator it = find("UserFontScale");
+	if (it == end())
+		return 1.0f;
+
+	Real fontScale = (Real)atof(it->second.str()) / 100.0f;
+	if (fontScale < 0.5f)
+	{
+		fontScale = 0.5f;
+	}
+	return fontScale;
+}
+
 static OptionPreferences *pref = NULL;
 
 static void setDefaults( void )
@@ -1352,6 +1366,16 @@ static void saveOptions( void )
 		prefString.format("%d", val);
 		(*pref)["GameTimeFontSize"] = prefString;
 		TheInGameUI->refreshGameTimeResources();
+	}
+
+	//-------------------------------------------------------------------------------------------------
+	// Set User Font Scaling Percentage
+	val = pref->getUserFontScale() * 100.0f; // TheSuperHackers @todo replace with options input when applicable
+	if (val >= 50)
+	{
+		AsciiString prefString;
+		prefString.format("%d", REAL_TO_INT( val ) );
+		(*pref)["UserFontScale"] = prefString;
 	}
 
 	//-------------------------------------------------------------------------------------------------
