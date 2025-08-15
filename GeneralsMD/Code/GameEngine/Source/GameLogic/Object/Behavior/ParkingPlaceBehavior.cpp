@@ -505,7 +505,7 @@ Bool ParkingPlaceBehavior::reserveRunway(ObjectID id, Bool forLanding)
 		if (m_spaces[i].m_objectInSpace == id)
 		{
 #if !RETAIL_COMPATIBLE_CRC
-			if (deferUnsequencedRunwayReservationForTakeoff(i, forLanding))
+			if (postponeRunwayReservation(i, forLanding))
 				return false;
 #endif
 
