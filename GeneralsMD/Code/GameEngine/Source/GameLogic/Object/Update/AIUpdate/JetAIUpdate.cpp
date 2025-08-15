@@ -1350,8 +1350,15 @@ public:
 		// always call this.
 		StateReturnType superStatus = AIFaceState::update();
 
+		// TheSuperHackers @tweak Don't wait for the next aircraft in line to finish taxiing, but follow scheduled takeoff to avoid delays.
+		// Otherwise aircraft may miss their original takeoff frame and take off in an unsynchronized fashion.
+#if RETAIL_COMPATIBLE_CRC
 		if (findWaiter())
 			return STATE_CONTINUE;
+#else
+		if (!m_resetTimer && findWaiter())
+			return STATE_CONTINUE;
+#endif
 
 		UnsignedInt now = TheGameLogic->getFrame();
 		if (!m_resetTimer)
