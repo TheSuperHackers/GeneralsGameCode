@@ -109,6 +109,7 @@ public:
 
 	virtual void drawViews( void );																///< Render all views of the world
 	virtual void updateViews ( void );															///< Updates state of world views
+	virtual void stepViews(); ///< Update views for every fixed time step
 
 	virtual VideoBuffer*	createVideoBuffer( void ) = 0;							///< Create a video buffer that can be used for this display
 
@@ -118,6 +119,7 @@ public:
 	virtual	Bool isClippingEnabled( void ) = 0;
 	virtual	void enableClipping( Bool onoff ) = 0;
 
+	virtual void step() {}; ///< Do one fixed time step
 	virtual void draw( void );																		///< Redraw the entire display
 	virtual void setTimeOfDay( TimeOfDay tod ) = 0;								///< Set the time of day for this display
 	virtual void createLightPulse( const Coord3D *pos, const RGBColor *color, Real innerRadius,Real attenuationWidth,

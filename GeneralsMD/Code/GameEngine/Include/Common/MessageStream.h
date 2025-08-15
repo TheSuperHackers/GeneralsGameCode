@@ -241,6 +241,10 @@ public:
 		MSG_META_HELP,															///< bring up help screen
 #endif
 
+		MSG_META_INCREASE_MAX_RENDER_FPS,						///< TheSuperHackers @feature Increase the max render fps
+		MSG_META_DECREASE_MAX_RENDER_FPS,						///< TheSuperHackers @feature Decrease the max render fps
+		MSG_META_INCREASE_LOGIC_TIME_SCALE,					///< TheSuperHackers @feature Increase the logic time scale
+		MSG_META_DECREASE_LOGIC_TIME_SCALE,					///< TheSuperHackers @feature Decrease the logic time scale
 		MSG_META_TOGGLE_LOWER_DETAILS,							///< toggles graphics options to crappy mode instantly
 		MSG_META_TOGGLE_CONTROL_BAR,								///< show/hide controlbar
 
