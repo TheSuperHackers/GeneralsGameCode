@@ -94,7 +94,7 @@ Bool SabotageFakeBuildingCrateCollide::isValidToExecute( const Object *other ) c
 
 	if (other->getStatusBits().testForAny(MAKE_OBJECT_STATUS_MASK2(OBJECT_STATUS_UNDER_CONSTRUCTION, OBJECT_STATUS_SOLD)))
 	{
-		// Can't enter something being sold or under construction
+		// TheSuperHackers @bugfix Stubbjax 03/08/2025 Can't enter something being sold or under construction.
 		return FALSE;
 	}
 
