@@ -385,12 +385,6 @@ Bool addDrawableToList( Drawable *draw, void *userData )
 			{
 				return FALSE;
 			}
-
-			//If stealthed, no way!
-			if( obj->testStatus( OBJECT_STATUS_STEALTHED ) && !obj->testStatus( OBJECT_STATUS_DETECTED ) )
-			{
-				return FALSE;
-			}
 		}
 	}
 
