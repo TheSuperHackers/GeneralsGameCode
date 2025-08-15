@@ -92,15 +92,9 @@ Bool SabotagePowerPlantCrateCollide::isValidToExecute( const Object *other ) con
 		return FALSE;
 	}
 
-	if (other->getStatusBits().test(OBJECT_STATUS_UNDER_CONSTRUCTION))
+	if (other->getStatusBits().testForAny(MAKE_OBJECT_STATUS_MASK2(OBJECT_STATUS_UNDER_CONSTRUCTION, OBJECT_STATUS_SOLD)))
 	{
-		// nothing can be done with things that are under construction
-		return FALSE;
-	}
-
-	if (other->testStatus(OBJECT_STATUS_SOLD))
-	{
-		// Can't enter something being sold
+		// Can't enter something being sold or under construction
 		return FALSE;
 	}
 
