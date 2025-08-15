@@ -532,24 +532,28 @@ void PopulateInGameDiplomacyPopup( void )
 			if (staticTextStatus[rowNum])
 			{
 				staticTextStatus[rowNum]->winHide(FALSE);
+
+				Color frontColor = 0;
+				UnicodeString text;
+
 				if (isInGame)
 				{
 					if (isAlive)
 					{
-						staticTextStatus[rowNum]->winSetEnabledTextColors( aliveColor, backColor );
-						GadgetStaticTextSetText(staticTextStatus[rowNum], TheGameText->fetch("GUI:PlayerAlive"));
+						frontColor = aliveColor;
+						text = TheGameText->fetch("GUI:PlayerAlive");
 					}
 					else
 					{
 						if (isObserver)
 						{
-							staticTextStatus[rowNum]->winSetEnabledTextColors( observerInGameColor, backColor );
-							GadgetStaticTextSetText(staticTextStatus[rowNum], TheGameText->fetch("GUI:PlayerObserver"));
+							frontColor = observerInGameColor;
+							text = TheGameText->fetch("GUI:PlayerObserver");
 						}
 						else
 						{
-							staticTextStatus[rowNum]->winSetEnabledTextColors( deadColor, backColor );
-							GadgetStaticTextSetText(staticTextStatus[rowNum], TheGameText->fetch("GUI:PlayerDead"));
+							frontColor = deadColor;
+							text = TheGameText->fetch("GUI:PlayerDead");
 						}
 					}
 				}
@@ -558,15 +562,21 @@ void PopulateInGameDiplomacyPopup( void )
 					// not in game
 					if (isObserver)
 					{
-						staticTextStatus[rowNum]->winSetEnabledTextColors( observerGoneColor, backColor );
-						GadgetStaticTextSetText(staticTextStatus[rowNum], TheGameText->fetch("GUI:PlayerObserverGone"));
+						frontColor = observerGoneColor;
+						text = TheGameText->fetch("GUI:PlayerObserverGone");
 					}
 					else
 					{
-						staticTextStatus[rowNum]->winSetEnabledTextColors( goneColor, backColor );
-						GadgetStaticTextSetText(staticTextStatus[rowNum], TheGameText->fetch("GUI:PlayerGone"));
+						frontColor = goneColor;
+						text = TheGameText->fetch("GUI:PlayerGone");
 					}
 				}
+
+				if (slot->isHuman() && (TheGameInfo->getLocalSlotNum() == slotNum || slot->getPatchVersion() > 0))
+					text.concat(L"[SH]");
+
+				staticTextStatus[rowNum]->winSetEnabledTextColors(frontColor, backColor);
+				GadgetStaticTextSetText(staticTextStatus[rowNum], text);
 			}
 
 			slotNumInRow[rowNum++] = slotNum;

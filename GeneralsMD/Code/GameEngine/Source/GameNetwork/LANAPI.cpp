@@ -29,6 +29,7 @@
 #include "Common/crc.h"
 #include "Common/GameState.h"
 #include "Common/Registry.h"
+#include "Common/version.h"
 #include "GameNetwork/LANAPI.h"
 #include "GameNetwork/networkutil.h"
 #include "Common/GlobalData.h"
@@ -417,6 +418,9 @@ void LANAPI::update( void )
 			case LANMessage::MSG_INACTIVE:		// someone is telling us that we're inactive.
 				handleInActive( msg, senderIP );
 				break;
+			case LANMessage::MSG_PATCH_VERSION:		// someone is sharing their patch version with us
+				handlePatchVersion( msg, senderIP );
+				break;
 
 			default:
 				DEBUG_LOG(("Unknown LAN message type %d", msg->LANMessageType));
@@ -459,6 +463,14 @@ void LANAPI::update( void )
 			// game is in progress - RequestGameAnnounce will check if we should send it
 			RequestGameAnnounce();
 		}
+	}
+
+	if (m_inLobby || (m_currentGame && !m_currentGame->isGameInProgress())) {
+		LANMessage msg;
+		fillInLANMessage(&msg);
+		msg.LANMessageType = LANMessage::MSG_PATCH_VERSION;
+		msg.PatchInfo.patchVersion = TheVersion->getVersionNumber();
+		sendMessage(&msg);
 	}
 
 	Bool playerListChanged = false;

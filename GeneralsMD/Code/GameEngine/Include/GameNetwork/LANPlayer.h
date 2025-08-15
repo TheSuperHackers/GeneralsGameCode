@@ -39,7 +39,7 @@
 class LANPlayer
 {
 public:
-	LANPlayer() { m_name = m_login = m_host = L""; m_lastHeard = 0; m_next = NULL; m_IP = 0; }
+	LANPlayer() { m_name = m_login = m_host = L""; m_lastHeard = 0; m_next = NULL; m_IP = 0; m_patchVersion = 0; }
 
 	// Access functions
 	inline UnicodeString getName( void ) { return m_name; }
@@ -56,14 +56,17 @@ public:
 	inline void setNext( LANPlayer *next ) { m_next = next; }
 	inline UnsignedInt getIP( void ) { return m_IP; }
 	inline void setIP( UnsignedInt IP ) { m_IP = IP; }
+	inline void setPatchVersion(UnsignedInt patchVersion) { m_patchVersion = patchVersion; }
+	inline UnsignedInt getPatchVersion() const { return m_patchVersion; }
 
 protected:
-	UnicodeString m_name;			///< Player name
-	UnicodeString m_login;		///< login name
-	UnicodeString m_host;			///< machine name
-	UnsignedInt m_lastHeard;	///< The last time we heard from this player (for timeout purposes)
-	LANPlayer *m_next;				///< Linked list pointer
-	UnsignedInt m_IP;					///< Player's IP
+	UnicodeString m_name;       ///< Player name
+	UnicodeString m_login;      ///< login name
+	UnicodeString m_host;       ///< machine name
+	UnsignedInt m_lastHeard;    ///< The last time we heard from this player (for timeout purposes)
+	LANPlayer *m_next;          ///< Linked list pointer
+	UnsignedInt m_IP;           ///< Player's IP
+	UnsignedInt m_patchVersion; ///< TheSuperHackers patch version
 };
 
 #endif //_LANPLAYER_H_
