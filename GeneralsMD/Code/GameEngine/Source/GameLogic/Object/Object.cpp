@@ -3090,19 +3090,6 @@ void Object::onVeterancyLevelChanged( VeterancyLevel oldLevel, VeterancyLevel ne
 	if (body)
 		body->onVeterancyLevelChanged( oldLevel, newLevel, provideFeedback );
 
-	Bool hideAnimationForStealth = FALSE;
-	if( !isLocallyControlled() &&
-			testStatus( OBJECT_STATUS_STEALTHED ) &&
-			!testStatus( OBJECT_STATUS_DETECTED ) &&
-			!testStatus( OBJECT_STATUS_DISGUISED ) )
-	{
-		hideAnimationForStealth = TRUE;
-	}
-
-	Bool doAnimation = ( ! hideAnimationForStealth
-											&& (newLevel > oldLevel)
-											&& ( ! isKindOf(KINDOF_IGNORED_IN_GUI))); //First, we plan to do the animation if the level went up
-
 	switch (newLevel)
 	{
 		case LEVEL_REGULAR:
@@ -3112,7 +3099,6 @@ void Object::onVeterancyLevelChanged( VeterancyLevel oldLevel, VeterancyLevel ne
 			clearWeaponBonusCondition(WEAPONBONUSCONDITION_VETERAN);
 			clearWeaponBonusCondition(WEAPONBONUSCONDITION_ELITE);
 			clearWeaponBonusCondition(WEAPONBONUSCONDITION_HERO);
-			doAnimation = FALSE;//... but not if somehow up to Regular
 			break;
 		case LEVEL_VETERAN:
 			setWeaponSetFlag(WEAPONSET_VETERAN);
@@ -3140,7 +3126,15 @@ void Object::onVeterancyLevelChanged( VeterancyLevel oldLevel, VeterancyLevel ne
 			break;
 	}
 
-	if( doAnimation && TheGameLogic->getDrawIconUI() && provideFeedback )
+	Bool doAnimation = provideFeedback
+		&& newLevel > oldLevel
+		&& !isKindOf(KINDOF_IGNORED_IN_GUI)
+		&& (isLocallyControlled()
+			|| !testStatus(OBJECT_STATUS_STEALTHED)
+			|| testStatus(OBJECT_STATUS_DETECTED)
+			|| testStatus(OBJECT_STATUS_DISGUISED));
+
+	if( doAnimation && TheGameLogic->getDrawIconUI() )
 	{
 		if( TheAnim2DCollection && TheGlobalData->m_levelGainAnimationName.isEmpty() == FALSE )
 		{
