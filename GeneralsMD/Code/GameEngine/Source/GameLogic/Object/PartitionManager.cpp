@@ -3046,11 +3046,15 @@ void PartitionManager::shroudMapForPlayer( Int playerIndex )
 //-----------------------------------------------------------------------------
 void PartitionManager::refreshShroudForLocalPlayer()
 {
+	// TheSuperHackers @bugfix L3-M 16/08/2025 Sync ghost objects to the current player so snapshots from others are released.
+    Int playerIndex = ThePlayerList->getLocalPlayer()->getPlayerIndex();
+    if (TheGhostObjectManager)
+        TheGhostObjectManager->setLocalPlayerIndex(playerIndex);
+
 	// This is a drawing refresh only, and so is allowed to use the Local Player.
 	TheDisplay->clearShroud();
 	TheRadar->clearShroud();
 
-	Int playerIndex = ThePlayerList->getLocalPlayer()->getPlayerIndex();
 	for (int i = 0; i < m_totalCellCount; ++i)
 	{
 		Int x = m_cells[i].getCellX();
