@@ -67,3 +67,8 @@
 #define USE_OBSOLETE_GENERALS_CODE (1)
 #endif
 #endif
+
+#define MIN_DISPLAY_BIT_DEPTH       16
+#define DEFAULT_DISPLAY_BIT_DEPTH   32
+#define DEFAULT_DISPLAY_WIDTH      800 // The standard resolution this game was designed for
+#define DEFAULT_DISPLAY_HEIGHT     600 // The standard resolution this game was designed for
