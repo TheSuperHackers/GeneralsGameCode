@@ -1670,9 +1670,6 @@ ObjectShroudStatus PartitionData::getShroudedStatus(Int playerIndex)
 				{	//anything neutral that moves around will not be rendered inside fog.
 					if (!m_object->isKindOf(KINDOF_IMMOBILE))
 						m_shroudedness[playerIndex] = OBJECTSHROUD_SHROUDED;
-                    // TheSuperHackers @bugfix L3-M 14/08/2025 Fix Supply Dock is shadowed in replay playback.
-					if (TheGameLogic->isInReplayGame())
-				        return OBJECTSHROUD_CLEAR;
 				}
 				else	//Not neutral
 				{	//enemy unit will always be shrouded unless it's a building that's already been seen by the player.  Fogged Mines are also always
