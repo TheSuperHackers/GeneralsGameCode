@@ -57,6 +57,7 @@
 #include "Common/FileSystem.h"
 #include "Common/UserPreferences.h"
 
+#include "GameClient/Display.h"
 #include "GameClient/GlobalLanguage.h"
 
 //-----------------------------------------------------------------------------
@@ -195,10 +196,34 @@ float GlobalLanguage::getResolutionFontSizeAdjustment( void ) const
 
 Int GlobalLanguage::adjustFontSize(Int theFontSize)
 {
-	Real adjustFactor = TheGlobalData->m_xResolution / (Real)DEFAULT_DISPLAY_WIDTH;
+	// TheSuperHackers @tweak xezon 16/08/2025 The size adjustment now also weighs in
+	// the display height for a balanced rescale on non 4:3 resolutions.
+	// The aspect ratio scaling is clamped between 1 and 2 to avoid oversizing.
+	// The scaler no longer clamps at max 2, which makes it work properly for
+	// 4k Resolutions and beyond.
+
+	Real w = TheDisplay->getWidth();
+	Real h = TheDisplay->getHeight();
+	const Real aspect = w / h;
+	Real wScale = w / (Real)DEFAULT_DISPLAY_WIDTH;
+	Real hScale = h / (Real)DEFAULT_DISPLAY_HEIGHT;
+
+	if (aspect > 2.0f)
+	{
+		// Recompute width at aspect=2
+		w = 2.0f * h;
+		wScale = w / (Real)DEFAULT_DISPLAY_WIDTH;
+	}
+	else if (aspect < 1.0f)
+	{
+		// Recompute height at aspect=1
+		h = 1.0f * w;
+		hScale = h / (Real)DEFAULT_DISPLAY_HEIGHT;
+	}
+
+	Real adjustFactor = (wScale + hScale) * 0.5f;
 	adjustFactor = 1.0f + (adjustFactor-1.0f) * getResolutionFontSizeAdjustment();
-	if (adjustFactor<1.0f) adjustFactor = 1.0f;
-	if (adjustFactor>2.0f) adjustFactor = 2.0f;
+	if (adjustFactor < 1.0f) adjustFactor = 1.0f;
 	Int pointSize = REAL_TO_INT_FLOOR(theFontSize*adjustFactor);
 	return pointSize;
 }
