@@ -3090,14 +3090,6 @@ void Object::onVeterancyLevelChanged( VeterancyLevel oldLevel, VeterancyLevel ne
 	if (body)
 		body->onVeterancyLevelChanged( oldLevel, newLevel, provideFeedback );
 
-	Bool doAnimation = provideFeedback
-		&& newLevel > oldLevel
-		&& !isKindOf(KINDOF_IGNORED_IN_GUI)
-		&& (isLocallyControlled()
-			|| !testStatus(OBJECT_STATUS_STEALTHED)
-			|| testStatus(OBJECT_STATUS_DETECTED)
-			|| testStatus(OBJECT_STATUS_DISGUISED));
-
 	switch (newLevel)
 	{
 		case LEVEL_REGULAR:
@@ -3133,6 +3125,14 @@ void Object::onVeterancyLevelChanged( VeterancyLevel oldLevel, VeterancyLevel ne
 			setWeaponBonusCondition(WEAPONBONUSCONDITION_HERO);
 			break;
 	}
+
+	Bool doAnimation = provideFeedback
+		&& newLevel > oldLevel
+		&& !isKindOf(KINDOF_IGNORED_IN_GUI)
+		&& (isLocallyControlled()
+			|| !testStatus(OBJECT_STATUS_STEALTHED)
+			|| testStatus(OBJECT_STATUS_DETECTED)
+			|| testStatus(OBJECT_STATUS_DISGUISED));
 
 	if( doAnimation && TheGameLogic->getDrawIconUI() )
 	{
