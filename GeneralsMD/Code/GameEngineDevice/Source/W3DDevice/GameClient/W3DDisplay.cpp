@@ -111,10 +111,6 @@ static void drawFramerateBar(void);
 
 
 // DEFINE AND ENUMS ///////////////////////////////////////////////////////////
-#define DEFAULT_DISPLAY_BIT_DEPTH 32
-#define MIN_DISPLAY_BIT_DEPTH 16
-#define MIN_DISPLAY_RESOLUTION_X 800
-#define MIN_DISPLAY_RESOLUTION_Y 600
 
 #define no_SAMPLE_DYNAMIC_LIGHT	1
 #ifdef SAMPLE_DYNAMIC_LIGHT
@@ -481,7 +477,7 @@ inline Bool isResolutionSupported(const ResolutionDescClass &res)
 {
 	static const Int minBitDepth = 24;
 
-	return res.Width >= MIN_DISPLAY_RESOLUTION_X && res.BitDepth >= minBitDepth;
+	return res.Width >= DEFAULT_DISPLAY_WIDTH && res.BitDepth >= minBitDepth;
 }
 
 /*Return number of screen modes supported by the current device*/
@@ -751,15 +747,15 @@ void W3DDisplay::init( void )
 				// if the custom resolution did not succeed. This is unlikely to happen but is possible
 				// if the user writes an unsupported resolution in the Option Preferences or if the
 				// graphics adapter does not support the minimum display resolution to begin with.
-				Int xres = MIN_DISPLAY_RESOLUTION_X;
-				Int yres = MIN_DISPLAY_RESOLUTION_Y;
+				Int xres = DEFAULT_DISPLAY_WIDTH;
+				Int yres = DEFAULT_DISPLAY_HEIGHT;
 				Int bitDepth = DEFAULT_DISPLAY_BIT_DEPTH;
 				Int displayModeCount = getDisplayModeCount();
 				Int displayModeIndex = 0;
 				for (; displayModeIndex < displayModeCount; ++displayModeIndex)
 				{
 					getDisplayModeDescription(displayModeIndex, &xres, &yres, &bitDepth);
-					if (xres * yres >= MIN_DISPLAY_RESOLUTION_X * MIN_DISPLAY_RESOLUTION_Y)
+					if (xres * yres >= DEFAULT_DISPLAY_WIDTH * DEFAULT_DISPLAY_HEIGHT)
 						break; // Is good enough. Use it.
 				}
 				TheWritableGlobalData->m_xResolution = xres;
