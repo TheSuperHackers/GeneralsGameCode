@@ -377,6 +377,8 @@ GameMessageDisposition LookAtTranslator::translateGameMessage(const GameMessage 
 				for ( ;spin < 0; spin++ )
 					TheTacticalView->zoomOut();
 			}
+
+			break;
 		}
 
 		//-----------------------------------------------------------------------------
