@@ -3270,6 +3270,22 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 		}
 
 		// --------------------------------------------------------------------------------------------
+		case GameMessage::MSG_CREATE_TEAM0:
+		case GameMessage::MSG_CREATE_TEAM1:
+		case GameMessage::MSG_CREATE_TEAM2:
+		case GameMessage::MSG_CREATE_TEAM3:
+		case GameMessage::MSG_CREATE_TEAM4:
+		case GameMessage::MSG_CREATE_TEAM5:
+		case GameMessage::MSG_CREATE_TEAM6:
+		case GameMessage::MSG_CREATE_TEAM7:
+		case GameMessage::MSG_CREATE_TEAM8:
+		case GameMessage::MSG_CREATE_TEAM9:
+		{
+			ThePlayerList->getLocalPlayer()->processCreateTeamGameMessage(t - GameMessage::MSG_CREATE_TEAM0, msg);
+			break;
+		}
+
+		// --------------------------------------------------------------------------------------------
 		case GameMessage::MSG_CREATE_SELECTED_GROUP:
 		case GameMessage::MSG_SELECT_TEAM0:
 		case GameMessage::MSG_SELECT_TEAM1:

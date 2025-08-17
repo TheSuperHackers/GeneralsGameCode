@@ -1934,6 +1934,10 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 				break;
 			}
 
+			// TheSuperHackers @tweak Stubbjax 17/08/2025 The local player processes this message in CommandXlat for immediate assignment.
+			if (player->isLocalPlayer())
+				break;
+
 			player->processCreateTeamGameMessage(msg->getType() - GameMessage::MSG_CREATE_TEAM0, msg);
 			break;
 		} // end create team command
