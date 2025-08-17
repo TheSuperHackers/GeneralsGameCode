@@ -1470,10 +1470,10 @@ void InGameUI::handleBuildPlacements( void )
 				v.y = worldEnd.y - worldStart.y;
 				angle = v.toAngle();
 
-				// Use force attack mode to control snapping for convenience
+				// TheSuperHackers @tweak Stubbjax 04/08/2025 Snap angle to nearest 45 degrees
+				// while using force attack mode for convenience.
 				if (isInForceAttackMode())
 				{
-					// TheSuperHackers @tweak Stubbjax 04/08/2025 Snap angle to nearest 45 degrees (pi/4 radians)
 					const Real snapRadians = PI / 4.0f;
 					angle = floor((angle / snapRadians) + 0.5f) * snapRadians;
 				}
