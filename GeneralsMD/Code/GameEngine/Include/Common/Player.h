@@ -643,6 +643,9 @@ public:
 	// sets the currently selected group to be the given AIGroup
 	void setCurrentlySelectedAIGroup(AIGroup *group);
 
+	// is object selected
+	Bool isCurrentlySelected(Object* obj);
+
 	// adds the given AIGroup to the current selection of this player.
 	void addAIGroupToCurrentSelection(AIGroup *group);
 
