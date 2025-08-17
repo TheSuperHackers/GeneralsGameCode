@@ -3281,7 +3281,11 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 		case GameMessage::MSG_CREATE_TEAM8:
 		case GameMessage::MSG_CREATE_TEAM9:
 		{
-			ThePlayerList->getLocalPlayer()->processCreateTeamGameMessage(t - GameMessage::MSG_CREATE_TEAM0, msg);
+			Int playerIndex = msg->getPlayerIndex();
+			Player* player = ThePlayerList->getNthPlayer(playerIndex);
+			if (player->isLocalPlayer())
+				player->processCreateTeamGameMessage(t - GameMessage::MSG_CREATE_TEAM0, msg);
+
 			break;
 		}
 
