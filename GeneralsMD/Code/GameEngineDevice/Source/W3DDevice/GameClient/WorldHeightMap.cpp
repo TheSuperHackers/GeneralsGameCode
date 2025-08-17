@@ -757,6 +757,7 @@ void WorldHeightMap::setCliffState(Int xIndex, Int yIndex, Bool state)
 
 Bool WorldHeightMap::ParseWorldDictDataChunk(DataChunkInput &file, DataChunkInfo *info, void *userData)
 {
+	DEBUG_ASSERTCRASH(info->version <= K_WORLDDICT_VERSION_1, ("WorldDict chunk version newer than supported."));
 	Dict d = file.readDict();
 	*MapObject::getWorldDict() = d;
 	Bool exists;
@@ -776,6 +777,7 @@ Bool WorldHeightMap::ParseWorldDictDataChunk(DataChunkInput &file, DataChunkInfo
 */
 Bool WorldHeightMap::ParseLightingDataChunk(DataChunkInput &file, DataChunkInfo *info, void *userData)
 {
+		DEBUG_ASSERTCRASH(info->version <= K_LIGHTING_VERSION_3, ("Lighting chunk version newer than supported."));
 		TheWritableGlobalData->m_timeOfDay = (TimeOfDay)file.readInt();
 		Int i;
 		GlobalData::TerrainLighting	initLightValues	= { { 0,0,0},{0,0,0},{0,0,-1.0f}};
@@ -884,6 +886,7 @@ Bool WorldHeightMap::ParseHeightMapDataChunk(DataChunkInput &file, DataChunkInfo
 */
 Bool WorldHeightMap::ParseHeightMapData(DataChunkInput &file, DataChunkInfo *info, void *userData)
 {
+	DEBUG_ASSERTCRASH(info->version <= K_HEIGHT_MAP_VERSION_4, ("HeightMap chunk version newer than supported."));
 	m_width = file.readInt();
 	m_height = file.readInt();
 	if (info->version >= K_HEIGHT_MAP_VERSION_3) {
@@ -958,6 +961,7 @@ Bool WorldHeightMap::ParseSizeOnlyInChunk(DataChunkInput &file, DataChunkInfo *i
 */
 Bool WorldHeightMap::ParseSizeOnly(DataChunkInput &file, DataChunkInfo *info, void *userData)
 {
+	DEBUG_ASSERTCRASH(info->version <= K_HEIGHT_MAP_VERSION_4, ("HeightMap chunk version newer than supported."));
 	m_width = file.readInt();
 	m_height = file.readInt();
 	if (info->version >= K_HEIGHT_MAP_VERSION_3) {
@@ -1065,6 +1069,7 @@ void WorldHeightMap::readTexClass(TXTextureClass *texClass, TileData **tileData)
 */
 Bool WorldHeightMap::ParseBlendTileData(DataChunkInput &file, DataChunkInfo *info, void *userData)
 {
+	DEBUG_ASSERTCRASH(info->version <= K_BLEND_TILE_VERSION_8, ("BlendTile chunk version newer than supported."));
 	int i, j;
 	Int len = file.readInt();
 	if (m_dataSize != len) {
@@ -1245,6 +1250,7 @@ Bool WorldHeightMap::ParseObjectDataChunk(DataChunkInput &file, DataChunkInfo *i
 */
 Bool WorldHeightMap::ParseObjectData(DataChunkInput &file, DataChunkInfo *info, void *userData, Bool readDict)
 {
+	DEBUG_ASSERTCRASH(info->version <= K_OBJECTS_VERSION_3, ("Objects chunk version newer than supported."));
 	MapObject *pPrevious = (MapObject *)file.m_currentObject;
 
 	Coord3D loc;
