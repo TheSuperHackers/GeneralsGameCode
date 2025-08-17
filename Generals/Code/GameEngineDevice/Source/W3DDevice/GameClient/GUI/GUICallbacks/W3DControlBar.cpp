@@ -125,15 +125,7 @@ void W3DPowerDraw( GameWindow *window, WinInstanceData *instData )
 	//const Image *beginBar = NULL;
 	const Image *centerBar = NULL;
 	static const Image *slider = TheMappedImageCollection->findImageByName("PowerBarSlider");
-	Player *player = NULL;
-	if(TheControlBar->isObserverControlBarOn())
-	{
-		player = TheControlBar->getObserverLookAtPlayer();
-	}
-	else
-		player = ThePlayerList->getLocalPlayer();
-
-
+	Player* player = TheControlBar->getCurrentlyViewedPlayer();
 
 	if(!player || !TheGlobalData)
 		return;
@@ -292,15 +284,7 @@ void W3DPowerDrawA( GameWindow *window, WinInstanceData *instData )
 	const Image *beginBar = NULL;
 	const Image *centerBar = NULL;
 	static const Image *slider = TheMappedImageCollection->findImageByName("PowerBarSlider");
-	Player *player = NULL;
-	if(TheControlBar->isObserverControlBarOn())
-	{
-		player = TheControlBar->getObserverLookAtPlayer();
-	}
-	else
-		player = ThePlayerList->getLocalPlayer();
-
-
+	Player* player = TheControlBar->getCurrentlyViewedPlayer();
 
 	if(!player || !TheGlobalData)
 		return;
@@ -486,13 +470,8 @@ void W3DCommandBarGridDraw( GameWindow *window, WinInstanceData *instData )
 
 void W3DCommandBarGenExpDraw( GameWindow *window, WinInstanceData *instData )
 {
-	Player* player = NULL;
-
 	// TheSuperHackers @bugfix Stubbjax 08/08/2025 Show the experience bar for observers
-	if (TheControlBar->isObserverControlBarOn())
-		player = TheControlBar->getObserverLookAtPlayer();
-	else
-		player = ThePlayerList->getLocalPlayer();
+	Player* player = TheControlBar->getCurrentlyViewedPlayer();
 
 	if (!player)
 		return;

@@ -1842,11 +1842,7 @@ void InGameUI::update( void )
 //		moneyWin = TheWindowManager->winGetWindowFromId( NULL, moneyWindowKey );
 //
 //	}  // end if
-	Player *moneyPlayer = NULL;
-	if( TheControlBar->isObserverControlBarOn())
-		moneyPlayer = TheControlBar->getObserverLookAtPlayer();
-	else
-		moneyPlayer = ThePlayerList->getLocalPlayer();
+	Player* moneyPlayer = TheControlBar->getCurrentlyViewedPlayer();
 	if( moneyPlayer)
 	{
 		Int currentMoney = moneyPlayer->getMoney()->countMoney();

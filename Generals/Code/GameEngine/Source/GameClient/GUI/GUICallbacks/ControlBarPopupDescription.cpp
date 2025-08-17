@@ -518,11 +518,7 @@ void ControlBar::populateBuildTooltipLayout( const CommandButton *commandButton,
 			name = TheGameText->fetch("CONTROLBAR:Power");
 			descrip = TheGameText->fetch("CONTROLBAR:PowerDescription");
 
-			Player *playerToDisplay = NULL;
-			if(TheControlBar->isObserverControlBarOn())
-				playerToDisplay = TheControlBar->getObserverLookAtPlayer();
-			else
-				playerToDisplay = ThePlayerList->getLocalPlayer();
+			Player* playerToDisplay = TheControlBar->getCurrentlyViewedPlayer();
 
 			if( playerToDisplay && playerToDisplay->getEnergy() )
 			{

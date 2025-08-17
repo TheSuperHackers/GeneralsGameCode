@@ -157,6 +157,13 @@ void ControlBar::markUIDirty( void )
 #endif
 }
 
+Player* ControlBar::getCurrentlyViewedPlayer()
+{
+	if (TheControlBar->isObserverControlBarOn())
+		return TheControlBar->getObserverLookAtPlayer();
+
+	return ThePlayerList->getLocalPlayer();
+}
 
 void ControlBar::populatePurchaseScience( Player* player )
 {
