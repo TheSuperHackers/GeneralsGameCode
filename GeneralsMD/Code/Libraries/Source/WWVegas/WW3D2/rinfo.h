@@ -103,6 +103,7 @@ public:
 	float								fog_start;
 	float								fog_end;
 	float								alphaOverride;	//added for 'Generals' to allow variable alpha -MW
+	float								emissiveOverride;	//added by AW for variable additive scaling
 	float								materialPassAlphaOverride;	////added for 'Generals' to allow variable alpha on additional render passes.-MW
 	float								materialPassEmissiveOverride;	////added for 'Generals' to allow variable emissive on additional render passes.-MW
 

@@ -56,6 +56,7 @@ RenderInfoClass::RenderInfoClass(CameraClass & cam) :
 	OverrideFlagLevel(0),
 	Texture_Projector(NULL),
 	alphaOverride(1.0f),
+	emissiveOverride(1.0f),
 	materialPassAlphaOverride(1.0f),
 	materialPassEmissiveOverride(1.0f)
 {

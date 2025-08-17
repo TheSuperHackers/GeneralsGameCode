@@ -145,6 +145,7 @@ public:
 	void								Set_Lighting_Environment(LightEnvironmentClass * light_env) { if (light_env) {m_localLightEnv=*light_env;LightEnvironment = &m_localLightEnv;} else {LightEnvironment = NULL;} }
 	LightEnvironmentClass *		Get_Lighting_Environment(void) { return LightEnvironment; }
 	inline float	Get_Alpha_Override(void) { return m_alphaOverride;}
+	inline float	Get_Emissive_Override(void) { return m_emissiveOverride;}
 
 	void								Set_Next_Visible_Skin(MeshClass * next_visible) { NextVisibleSkin = next_visible; }
 	MeshClass *						Peek_Next_Visible_Skin(void) { return NextVisibleSkin; }
@@ -181,6 +182,7 @@ protected:
 	LightEnvironmentClass *		LightEnvironment;		// cached pointer to the light environment for this mesh
 	LightEnvironmentClass     m_localLightEnv;	//added for 'Generals'
 	float					m_alphaOverride;	//added for 'Generals' to allow variable alpha on meshes.
+	float					m_emissiveOverride;	//added by AW for variable additive scaling
 	float					m_materialPassEmissiveOverride;	//added for 'Generals' to allow variable emissive on additional passes.
 	float					m_materialPassAlphaOverride;	//added for 'Generals' to allow variable alpha on additional render passes.
 	int								BaseVertexOffset;		// offset to our first vertex in whatever vb this mesh is in.

@@ -1122,7 +1122,6 @@ void Drawable::fadeIn( UnsignedInt frames )		///< decloak object
 	m_timeElapsedFade = 0;
 }
 
-
 //-------------------------------------------------------------------------------------------------
 Real Drawable::getScale (void) const
 {
@@ -5234,6 +5233,9 @@ void Drawable::xfer( Xfer *xfer )
 
 	// effective stealth opacity
 	xfer->xferReal( &m_effectiveStealthOpacity );
+
+	// Emissiv Opacity Scaling
+	xfer->xferBool(&m_isEmissiveOpacityScaling);
 
 	// decalOpacityFadeTarget
 	xfer->xferReal( &m_decalOpacityFadeTarget );
