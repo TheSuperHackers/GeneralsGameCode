@@ -1474,8 +1474,8 @@ void InGameUI::handleBuildPlacements( void )
 				// while using force attack mode for convenience.
 				if (isInForceAttackMode())
 				{
-					const Real snapRadians = PI / 4.0f;
-					angle = floor((angle / snapRadians) + 0.5f) * snapRadians;
+					const Real snapRadians = DEG_TO_RADF(45);
+					angle = WWMath::Round(angle / snapRadians) * snapRadians;
 				}
 			}  // end if
 

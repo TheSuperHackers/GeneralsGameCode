@@ -143,6 +143,7 @@ static WWINLINE float		Atan2(float y,float x) { return static_cast<float>(atan2(
 static WWINLINE float		Sign(float val);
 static WWINLINE float		Ceil(float val) { return ceilf(val); }
 static WWINLINE float		Floor(float val) { return floorf(val); }
+static WWINLINE float		Round(float val) { return floorf(val + 0.5f); }
 static WWINLINE bool			Fast_Is_Float_Positive(const float & val);
 static WWINLINE bool			Is_Power_Of_2(const unsigned int val);
 
