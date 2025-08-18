@@ -242,7 +242,7 @@ void ImageCollection::load( Int textureSize )
 		if(FindFirstFile(userDataPath.str(), &findData) !=INVALID_HANDLE_VALUE)
 		{
 			userDataPath.format("%sINI\\MappedImages",TheGlobalData->getPath_UserData().str());
-			ini.loadDirectory(userDataPath, TRUE, INI_LOAD_OVERWRITE, NULL );
+			ini.loadDirectory(userDataPath, INI_LOAD_OVERWRITE, NULL );
 		}
 	}
 
@@ -251,9 +251,9 @@ void ImageCollection::load( Int textureSize )
 
 	// load all the ine files in that directory
 
-	ini.loadDirectory( AsciiString( buffer ), TRUE, INI_LOAD_OVERWRITE, NULL );
+	ini.loadDirectory( AsciiString( buffer ), INI_LOAD_OVERWRITE, NULL );
 
-	ini.loadDirectory("Data\\INI\\MappedImages\\HandCreated", TRUE, INI_LOAD_OVERWRITE, NULL );
+	ini.loadDirectory("Data\\INI\\MappedImages\\HandCreated", INI_LOAD_OVERWRITE, NULL );
 
 
 }  // end load

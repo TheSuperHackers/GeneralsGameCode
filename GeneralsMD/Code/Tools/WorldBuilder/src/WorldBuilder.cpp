@@ -86,10 +86,10 @@
 static SubsystemInterfaceList TheSubsystemListRecord;
 
 template<class SUBSYSTEM>
-void initSubsystem(SUBSYSTEM*& sysref, SUBSYSTEM* sys, const char* path1 = NULL, const char* path2 = NULL, const char* dirpath = NULL)
+void initSubsystem(SUBSYSTEM*& sysref, SUBSYSTEM* sys, const char* path1 = NULL, const char* path2 = NULL)
 {
 	sysref = sys;
-	TheSubsystemListRecord.initSubsystem(sys, path1, path2, dirpath, NULL);
+	TheSubsystemListRecord.initSubsystem(sys, path1, path2, NULL);
 }
 
 
@@ -415,7 +415,7 @@ BOOL CWorldBuilderApp::InitInstance()
 	initSubsystem(TheLocomotorStore, new LocomotorStore(), NULL, "Data\\INI\\Locomotor.ini");
 	initSubsystem(TheDamageFXStore, new DamageFXStore(), NULL, "Data\\INI\\DamageFX.ini");
 	initSubsystem(TheArmorStore, new ArmorStore(), NULL, "Data\\INI\\Armor.ini");
-	initSubsystem(TheThingFactory, new ThingFactory(), "Data\\INI\\Default\\Object.ini", NULL, "Data\\INI\\Object");
+	initSubsystem(TheThingFactory, new ThingFactory(), "Data\\INI\\Default\\Object.ini", "Data\\INI\\Object.ini");
 	initSubsystem(TheCrateSystem, new CrateSystem(), "Data\\INI\\Default\\Crate.ini", "Data\\INI\\Crate.ini");
 	initSubsystem(TheUpgradeCenter, new UpgradeCenter, "Data\\INI\\Default\\Upgrade.ini", "Data\\INI\\Upgrade.ini");
 	initSubsystem(TheAnim2DCollection, new Anim2DCollection ); //Init's itself.
