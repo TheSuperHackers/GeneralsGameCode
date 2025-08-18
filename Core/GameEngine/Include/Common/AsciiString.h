@@ -149,6 +149,11 @@ public:
 	AsciiString(const char* s);
 
 	/**
+		Constructor -- from a literal string and max length.
+	*/
+	AsciiString(const char* s, int len);
+
+	/**
 		Destructor. Not too exciting... clean up the works and such.
 	*/
 	~AsciiString();
