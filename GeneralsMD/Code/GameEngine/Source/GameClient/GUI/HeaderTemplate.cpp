@@ -151,7 +151,7 @@ void HeaderTemplateManager::init( void )
 				fname = tempName;
 		}
 	}
-	ini.load( fname, INI_LOAD_OVERWRITE, NULL );
+	ini.loadFileDirectory( fname, INI_LOAD_OVERWRITE, NULL );
 	populateGameFonts();
 }
 
