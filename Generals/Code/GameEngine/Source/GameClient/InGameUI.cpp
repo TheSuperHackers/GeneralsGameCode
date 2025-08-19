@@ -4029,8 +4029,8 @@ void InGameUI::militarySubtitle( const AsciiString& label, Int duration )
 
 	// calculate where this screen position should be since the position being passed in is based off 8x6
 	Coord2D multiplyer;
-	multiplyer.x = TheDisplay->getWidth() / 800;
-	multiplyer.y = TheDisplay->getHeight() / 600;
+	multiplyer.x = TheDisplay->getWidth() / (Real)DEFAULT_DISPLAY_WIDTH;
+	multiplyer.y = TheDisplay->getHeight() / (Real)DEFAULT_DISPLAY_HEIGHT;
 
 	// lets bring out the data structure!
 	m_militarySubtitle = NEW MilitarySubtitleData;

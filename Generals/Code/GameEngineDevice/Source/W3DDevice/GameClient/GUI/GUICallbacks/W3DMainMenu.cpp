@@ -108,7 +108,7 @@ static void advancePosition(GameWindow *window, const Image *image, UnsignedInt 
 	}
 	static Int Width = size.x + image->getImageWidth();
 
-	static Int x = -800;
+	static Int x = -DEFAULT_DISPLAY_WIDTH;
 	static Int y = pos.y - (image->getImageHeight()/2);
 
 	static UnsignedInt m_startTime = timeGetTime();

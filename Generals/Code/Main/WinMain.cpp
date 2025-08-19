@@ -76,9 +76,6 @@ const Char *g_strFile = "data\\Generals.str";
 const Char *g_csfFile = "data\\%s\\Generals.csf";
 const char *gAppPrefix = ""; /// So WB can have a different debug log file name.
 
-#define DEFAULT_XRESOLUTION 800
-#define DEFAULT_YRESOLUTION 600
-
 static Bool gInitializing = false;
 static Bool gDoPaint = true;
 static Bool isWinMainActive = false;
@@ -579,7 +576,7 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message,
 						Int savContext = ::SaveDC(dc);
 						HDC tmpDC = ::CreateCompatibleDC(dc);
 						HBITMAP savBitmap = (HBITMAP)::SelectObject(tmpDC, gLoadScreenBitmap);
-						::BitBlt(dc, 0, 0, DEFAULT_XRESOLUTION, DEFAULT_YRESOLUTION, tmpDC, 0, 0, SRCCOPY);
+						::BitBlt(dc, 0, 0, DEFAULT_DISPLAY_WIDTH, DEFAULT_DISPLAY_HEIGHT, tmpDC, 0, 0, SRCCOPY);
 						::SelectObject(tmpDC, savBitmap);
 						::DeleteDC(tmpDC);
 						::RestoreDC(dc, savContext);
@@ -661,8 +658,8 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message,
 static Bool initializeAppWindows( HINSTANCE hInstance, Int nCmdShow, Bool runWindowed )
 {
 	DWORD windowStyle;
-	Int startWidth = DEFAULT_XRESOLUTION,
-			startHeight = DEFAULT_YRESOLUTION;
+	Int startWidth = DEFAULT_DISPLAY_WIDTH,
+			startHeight = DEFAULT_DISPLAY_HEIGHT;
 
 	// register the window class
 
@@ -688,8 +685,8 @@ static Bool initializeAppWindows( HINSTANCE hInstance, Int nCmdShow, Bool runWin
 	AdjustWindowRect (&rect, windowStyle, FALSE);
 	if (runWindowed) {
 		// Makes the normal debug 800x600 window center in the screen.
-		startWidth = DEFAULT_XRESOLUTION;
-		startHeight= DEFAULT_YRESOLUTION;
+		startWidth = DEFAULT_DISPLAY_WIDTH;
+		startHeight= DEFAULT_DISPLAY_HEIGHT;
 	}
 
 	gInitializing = true;

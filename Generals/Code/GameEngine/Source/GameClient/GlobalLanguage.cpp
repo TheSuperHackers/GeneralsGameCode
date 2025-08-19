@@ -187,7 +187,7 @@ void GlobalLanguage::parseFontFileName( INI *ini, void * instance, void *store, 
 
 Int GlobalLanguage::adjustFontSize(Int theFontSize)
 {
-	Real adjustFactor = TheGlobalData->m_xResolution/800.0f;
+	Real adjustFactor = TheGlobalData->m_xResolution / (Real)DEFAULT_DISPLAY_WIDTH;
 	adjustFactor = 1.0f + (adjustFactor-1.0f) * m_resolutionFontSizeAdjustment;
 	if (adjustFactor<1.0f) adjustFactor = 1.0f;
 	if (adjustFactor>2.0f) adjustFactor = 2.0f;

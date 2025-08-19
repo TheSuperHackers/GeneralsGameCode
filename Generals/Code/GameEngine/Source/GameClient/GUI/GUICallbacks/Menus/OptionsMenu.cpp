@@ -836,7 +836,7 @@ static void setDefaults( void )
 		for( Int i = 0; i < numResolutions; ++i )
 		{	Int xres,yres,bitDepth;
 			TheDisplay->getDisplayModeDescription(i,&xres,&yres,&bitDepth);
-			if (xres == 800 && yres == 600)	//keep track of default mode in case we need it.
+			if (xres == DEFAULT_DISPLAY_WIDTH && yres == DEFAULT_DISPLAY_HEIGHT)	//keep track of default mode in case we need it.
 			{	defaultResIndex=i;
 				break;
 			}
@@ -1648,12 +1648,15 @@ void OptionsMenuInit( WindowLayout *layout, void *userData )
 
 	// get resolution from saved preferences file
 	AsciiString selectedResolution = (*pref) ["Resolution"];
-	Int selectedXRes=800,selectedYRes=600;
+	Int selectedXRes=DEFAULT_DISPLAY_WIDTH;
+	Int selectedYRes=DEFAULT_DISPLAY_HEIGHT;
 	Int selectedResIndex=-1;
 	if (!selectedResolution.isEmpty())
 	{	//try to parse 2 integers out of string
 		if (sscanf(selectedResolution.str(),"%d%d", &selectedXRes, &selectedYRes) != 2)
-		{	selectedXRes=800; selectedYRes=600;
+		{
+			selectedXRes=DEFAULT_DISPLAY_WIDTH;
+			selectedYRes=DEFAULT_DISPLAY_HEIGHT;
 		}
 	}
 
