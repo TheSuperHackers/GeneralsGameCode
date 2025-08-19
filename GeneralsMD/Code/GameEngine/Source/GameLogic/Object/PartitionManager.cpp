@@ -1842,6 +1842,8 @@ void PartitionData::hLineCircle(Int x1, Int x2, Int y)
 }
 
 // -----------------------------------------------------------------------------
+// Marks all partition cells that intersect a circle of the given center and radius
+// as covered by this object using a variation of the midpoint circle algorithm.
 void PartitionData::doCircleFill(
 	Real centerX,
 	Real centerY,
@@ -1859,7 +1861,12 @@ void PartitionData::doCircleFill(
 
 	Int y = cellRadius - 1;
 	Int dec = 3 - 2*cellRadius;
+
+#if RETAIL_COMPATIBLE_CRC
 	for (Int x = 0; x < cellRadius; x++)
+#else
+	for (Int x = 0; x <= y; x++)
+#endif
 	{
 		hLineCircle(cellCenterX - x, cellCenterX + x, cellCenterY + y);
 		hLineCircle(cellCenterX - x, cellCenterX + x, cellCenterY - y);
