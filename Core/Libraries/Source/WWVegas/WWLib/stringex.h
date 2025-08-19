@@ -16,8 +16,14 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef STRINGEX_H
-#define STRINGEX_H
+#pragma once
+
+#include "bittype.h"
+
+#if defined(_MSC_VER) && _MSC_VER < 1300
+size_t strnlen(const char *str, size_t maxlen);
+size_t wcsnlen(const wchar_t *str, size_t maxlen);
+#endif
 
 #ifndef HAVE_STRLCPY
 size_t strlcpy(char *dst, const char *src, size_t dstsize);
@@ -77,5 +83,3 @@ template<size_t Size> size_t wcslcpy_overlap_tpl(wchar_t (&dst)[Size], const wch
 	return wcslcpy_overlap(dst, src, Size);
 }
 #endif
-
-#endif // STRINGEX_H

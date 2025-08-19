@@ -20,6 +20,28 @@
 #include <ctype.h>
 #include <string.h>
 
+#if defined(_MSC_VER) && _MSC_VER < 1300
+size_t strnlen(const char *str, size_t maxlen)
+{
+	size_t n = 0;
+	while (n < maxlen && str[n] != '\0')
+	{
+		++n;
+	}
+	return n;
+}
+
+size_t wcsnlen(const wchar_t *str, size_t maxlen)
+{
+	size_t n = 0;
+	while (n < maxlen && str[n] != L'\0')
+	{
+		++n;
+	}
+	return n;
+}
+#endif // defined(_MSC_VER) && _MSC_VER < 1300
+
 #ifndef HAVE_STRLCPY
 size_t strlcpy(char *dst, const char *src, size_t dstsize)
 {
