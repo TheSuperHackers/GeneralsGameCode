@@ -540,6 +540,11 @@ public:
 	inline Real getEffectiveOpacity() const { return m_explicitOpacity * m_effectiveStealthOpacity; }		///< get alpha/opacity value used to override defaults when drawing.
 	void setEffectiveOpacity( Real pulseFactor, Real explicitOpacity = -1.0f );
 
+	// AW: new params for additive transparency scaling (=emissive)
+	inline void setEmissiveOpacityScaling(bool value) { m_isEmissiveOpacityScaling = value; }
+	inline bool getEmissiveOpacityScaling() const { return m_isEmissiveOpacityScaling; }
+	inline Real getEmissiveOpacity() const { if (m_isEmissiveOpacityScaling) return getEffectiveOpacity(); else return 1.0; }
+
 	// this is for the add'l pass fx which operates completely independently of the stealth opacity effects. Draw() does the fading every frame.
 	inline Real getSecondMaterialPassOpacity() const { return m_secondMaterialPassOpacity; }		///< get alpha/opacity value used to render add'l  rendering pass.
 	void setSecondMaterialPassOpacity( Real op ) { m_secondMaterialPassOpacity = op; }; ///< set alpha/opacity value used to render add'l  rendering pass.
@@ -662,6 +667,8 @@ private:
 	Real m_explicitOpacity;			///< opacity level. 1.0f == Solid/Opaque.
 	Real m_stealthOpacity;			///< <<minimum>> opacity due to stealth. pulse is between opaque and this
 	Real m_effectiveStealthOpacity;			///< opacity actually used to render with, after the pulse and stuff.
+
+	Bool m_isEmissiveOpacityScaling;   ///< should emissive color be scaled with opacity (needed for fading out additive objects)
 
 	Real m_decalOpacityFadeTarget;
 	Real m_decalOpacityFadeRate;

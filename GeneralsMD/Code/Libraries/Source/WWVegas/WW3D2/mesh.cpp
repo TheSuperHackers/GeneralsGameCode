@@ -673,8 +673,15 @@ void MeshClass::Render(RenderInfoClass & rinfo)
 		Set_Lighting_Environment(rinfo.light_environment);
 		//Add custom alpha
 		m_alphaOverride = rinfo.alphaOverride;
+		m_emissiveOverride = rinfo.emissiveOverride;
 		m_materialPassAlphaOverride = rinfo.materialPassAlphaOverride;
 		m_materialPassEmissiveOverride = rinfo.materialPassEmissiveOverride;
+
+		/*if (m_alphaOverride != 1.0) {
+			DEBUG_LOG((">>>mesh.cpp - Render (static sort) - '%s' - m_alphaOverride = %f,  m_materialPassAlphaOverride = %f, m_materialPassEmissiveOverride = %f",
+				Model->Get_Name(),
+				m_alphaOverride, m_materialPassAlphaOverride, m_materialPassEmissiveOverride));
+		}*/
 
 		WW3D::Add_To_Static_Sort_List(this, sort_level);
 
@@ -710,9 +717,17 @@ void MeshClass::Render(RenderInfoClass & rinfo)
 			{	Set_Lighting_Environment(rinfo.light_environment);
 
 				//Add custom alpha
+
 				m_alphaOverride = rinfo.alphaOverride;
+				m_emissiveOverride = rinfo.emissiveOverride;
 				m_materialPassAlphaOverride = rinfo.materialPassAlphaOverride;
 				m_materialPassEmissiveOverride = rinfo.materialPassEmissiveOverride;
+
+				//if (m_alphaOverride != 1.0) {
+				//	DEBUG_LOG((">>>mesh.cpp - Render - '%s' - m_alphaOverride = %f,  m_materialPassAlphaOverride = %f, m_materialPassEmissiveOverride = %f",
+				//		Model->Get_Name(),
+				//		m_alphaOverride, m_materialPassAlphaOverride, m_materialPassEmissiveOverride));
+				//}
 			}
 
 			/*

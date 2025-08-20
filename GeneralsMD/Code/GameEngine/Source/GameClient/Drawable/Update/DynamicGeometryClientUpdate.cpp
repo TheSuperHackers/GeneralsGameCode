@@ -191,13 +191,29 @@ void DynamicGeometryClientUpdate::clientUpdate( void )
 		progress = 0.5 - (Cos(progress * PI) * 0.5);
 	}
 
-	// DEBUG_LOG((">>> DGCU - progress = %f", progress));
-
 	Real alpha = (1.0 - progress) * alpha0 + progress * alpha1;
 	Real scale = (1.0 - progress) * scale0 + progress * scale1;
 
+
 	draw->setInstanceScale(m_overrideScale * scale);
+
+	// This doesn't work for additive!
 	draw->setDrawableOpacity(m_overrideAlpha * alpha);
+
+	// For additive with emissive color, this seems to work.
+	// But apparently not for all of them, and only for Static sorting?
+	draw->setEmissiveOpacityScaling(true);
+
+	// This doesn't seem to work for all models either
+	//Real factor = (1.0 - alpha) * -2.5;
+	//RGBColor color;
+	//color.red = factor;
+	//color.green = factor;
+	//color.blue = factor;
+	//draw->colorTint(&color);
+
+	// DEBUG_LOG((">>> DGCU - progress = %f, alpha = %f, scale = %f, effectiveOpacity = %f, factor = %f", progress, alpha, scale, draw->getEffectiveOpacity(), factor));
+
 }
 
 // ------------------------------------------------------------------------------------------------
