@@ -72,6 +72,46 @@ static void adjustVector(Coord3D *vec, const Matrix3D* mtx)
 		vec->z = vectmp.Z;
 	}
 }
+//-------------------------------------------------------------------------------------------------
+static void adjustVectorXY(Coord3D* vec, const Matrix3D* mtx)
+{
+	if (mtx)
+	{
+		//This can be optimized probably.
+
+		Coord3D u, x, y, z, pos;
+		Matrix3D mat;
+		Real angle = mtx->Get_Z_Rotation();
+
+		pos.x = mtx->Get_X_Translation();
+		pos.y = mtx->Get_Y_Translation();
+		pos.z = mtx->Get_Z_Translation();
+	
+		z.x = 0.0f;
+		z.y = 0.0f;
+		z.z = 1.0f;
+
+		u.x = Cos(angle);
+		u.y = Sin(angle);
+		u.z = 0.0f;
+
+		y.crossProduct(&z, &u, &y);
+		x.crossProduct(&y, &z, &x);
+
+		mat.Set(x.x, y.x, z.x, pos.x,
+			      x.y, y.y, z.y, pos.y,
+			      x.z, y.z, z.z, pos.z);
+
+		Vector3 vectmp;
+		vectmp.X = vec->x;
+		vectmp.Y = vec->y;
+		vectmp.Z = vec->z;
+		vectmp = mat.Rotate_Vector(vectmp);
+		vec->x = vectmp.X;
+		vec->y = vectmp.Y;
+		vec->z = vectmp.Z;
+	}
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // PRIVATE CLASSES ///////////////////////////////////////////////////////////////////////////////////
@@ -572,6 +612,8 @@ public:
 			{ "RotateY",							INI::parseAngleReal,				NULL, offsetof( ParticleSystemFXNugget, m_rotateY ) },
 			{ "RotateZ",							INI::parseAngleReal,				NULL, offsetof( ParticleSystemFXNugget, m_rotateZ ) },
 			{ "OrientToObject",				INI::parseBool,							NULL, offsetof( ParticleSystemFXNugget, m_orientToObject ) },
+			{ "OrientOffset",				  INI::parseBool,							NULL, offsetof( ParticleSystemFXNugget, m_orientOffset ) },
+			{ "OrientXY",				      INI::parseBool,							NULL, offsetof( ParticleSystemFXNugget, m_orientXY ) },
 			{ "Ricochet",				      INI::parseBool,							NULL, offsetof( ParticleSystemFXNugget, m_ricochet ) },
 			{ "AttachToObject",				INI::parseBool,							NULL, offsetof( ParticleSystemFXNugget, m_attachToObject ) },
 			{ "CreateAtGroundHeight",	INI::parseBool,							NULL, offsetof( ParticleSystemFXNugget, m_createAtGroundHeight ) },
@@ -589,9 +631,14 @@ protected:
 	void reallyDoFX(const Coord3D *primary, const Matrix3D* mtx, const Object* thingToAttachTo, Real overrideRadius ) const
 	{
 		Coord3D offset = m_offset;
-		if (mtx)
-		{
-			adjustVector(&offset, mtx);
+		if (mtx) {
+			if (m_orientToObject || m_orientOffset)
+			{
+				adjustVector(&offset, mtx);
+			}
+			if (m_orientXY) {
+				adjustVectorXY(&offset, mtx);
+			}
 		}
 
 		const ParticleSystemTemplate *tmp = TheParticleSystemManager->findTemplate(m_name);
@@ -625,6 +672,9 @@ protected:
 					if (m_orientToObject && mtx)
 					{
 						sys->setLocalTransform(mtx);
+					}
+					else if (m_orientXY) {
+						sys->rotateLocalTransformZ(mtx->Get_Z_Rotation());
 					}
 					if (m_rotateX != 0.0f)
 						sys->rotateLocalTransformX(m_rotateX);
@@ -669,6 +719,8 @@ private:
 	GameClientRandomVariable	m_delay;
 	Real						m_rotateX, m_rotateY, m_rotateZ;
 	Bool						m_orientToObject;
+	Bool            m_orientOffset;
+	Bool            m_orientXY;
 	Bool						m_attachToObject;
 	Bool						m_createAtGroundHeight;
 	Bool						m_useCallersRadius;
