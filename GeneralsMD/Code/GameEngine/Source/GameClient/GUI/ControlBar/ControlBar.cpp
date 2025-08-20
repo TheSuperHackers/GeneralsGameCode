@@ -1461,6 +1461,18 @@ void ControlBar::update( void )
 
 		Object* obj = drawToEvaluateFor ? drawToEvaluateFor->getObject() : NULL;
 		setPortraitByObject(obj);
+
+		if (obj && obj->getControllingPlayer() == getCurrentlyViewedPlayer())
+		{
+			ExitInterface* exit = obj->getObjectExitInterface();
+			if (exit)
+				showRallyPoint(exit->getRallyPoint());
+			else
+				showRallyPoint(NULL);
+		}
+		else
+			showRallyPoint(NULL);
+
 		return;
 	}
 
@@ -2739,7 +2751,9 @@ void ControlBar::showRallyPoint( const Coord3D *loc )
 		marker->setOrientation( TheGlobalData->m_downwindAngle );//To blow down wind -- ML
 
 		// set the marker colors to that of the local player
-		Player *player = ThePlayerList->getLocalPlayer();
+		Player* player = TheControlBar->getCurrentlyViewedPlayer();
+		if (!player)
+			return;
 
 		if (TheGlobalData->m_timeOfDay == TIME_OF_DAY_NIGHT)
 			marker->setIndicatorColor( player->getPlayerNightColor() );
