@@ -1879,13 +1879,6 @@ void DX8TextureCategoryClass::Render(void)
 		if (!DX8RendererDebugger::Is_Enabled() || !mesh->Is_Disabled_By_Debugger()) {
 
 		if ((!!mesh->Peek_Model()->Get_Flag(MeshGeometryClass::SORT)) && WW3D::Is_Sorting_Enabled()) {
-
-			if (std::strcmp(mesh->Get_Name(),"EXPRTBLSTBBBL.SPHERE01") == 0) {
-				DEBUG_LOG((">>>DX8Renderer: (render sorted?) mesh = '%s' - alpha = %f - isAdditive = %d",
-					mesh->Get_Name(),
-					mesh->Get_Alpha_Override(), mesh->Is_Additive()));
-			}
-
 			renderer->Render_Sorted(mesh->Get_Base_Vertex_Offset(),mesh->Get_Bounding_Sphere());
 		} else {
 			//non-transparent mesh that will be rendered immediately.  Okay to adjust the shader/material
@@ -1918,16 +1911,12 @@ void DX8TextureCategoryClass::Render(void)
 					oldMapper=NULL;
 				if (mesh->Get_Alpha_Override() != 1.0)
 				{
-					DEBUG_LOG((">>>DX8Renderer: ALPHA OVERRIDE - mesh = '%s' - alpha = %f - isAdditive = %d",
-						mesh->Get_Name(),
-						mesh->Get_Alpha_Override(), mesh->Is_Additive()));
 					if (mesh->Is_Additive())
 					{	//additvie blended mesh can't switch to alpha or we will get a black outline.
 						//so adjust diffuse color instead.
-						DEBUG_LOG((">>>DX8Renderer: ADDITIVE + ALPHA OVERRIDE - alpha = %f", mesh->Get_Alpha_Override()));
+						//DEBUG_LOG((">>>DX8Renderer: ADDITIVE + ALPHA OVERRIDE - alpha = %f", mesh->Get_Alpha_Override()));
 						vmaterial->Set_Diffuse(mesh->Get_Alpha_Override(),mesh->Get_Alpha_Override(),mesh->Get_Alpha_Override());
 
-						//debug (this actually works)
 						vmaterial->Set_Emissive(mesh->Get_Emissive_Override(), mesh->Get_Emissive_Override(), mesh->Get_Emissive_Override());
 
 						theAlphaShader = theShader;	//keep using additive blending.
