@@ -63,6 +63,7 @@
 #include "Common/ThingFactory.h"
 #include "Common/ThingTemplate.h"
 
+#include "GameClient/ControlBar.h"
 #include "GameClient/Drawable.h"
 #include "GameClient/GameClient.h"
 #include "GameClient/InGameUI.h"
@@ -231,7 +232,7 @@ void W3DWaypointBuffer::drawWaypoints(RenderInfoClass &rinfo)
 			Int numPoints = 0;
 			if( obj )
 			{
-				if ( ! obj->isLocallyControlled())
+				if ( obj->getControllingPlayer() != TheControlBar->getCurrentlyViewedPlayer())
 					continue;
 
 
