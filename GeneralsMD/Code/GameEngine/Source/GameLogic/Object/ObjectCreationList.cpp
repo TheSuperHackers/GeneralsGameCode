@@ -699,7 +699,8 @@ enum DebrisDisposition CPP_11(: Int)
 	RANDOM_FORCE						= 0x00000020,
 	FLOATING								= 0x00000040,
 	INHERIT_VELOCITY				= 0x00000080,
-	WHIRLING								= 0x00000100
+	WHIRLING								= 0x00000100,
+	ALIGN_Z_UP							= 0x00000200
 };
 
 static const char* DebrisDispositionNames[] =
@@ -713,6 +714,7 @@ static const char* DebrisDispositionNames[] =
 	"FLOATING",
 	"INHERIT_VELOCITY",
 	"WHIRLING",
+	"ALIGN_Z_UP"
 };
 
 std::vector<AsciiString>	debrisModelNamesGlobalHack;
@@ -1053,7 +1055,7 @@ protected:
 
 		if( BitIsSet( m_disposition, LIKE_EXISTING ) )
 		{
-			if (mtx)
+			if (mtx && !BitIsSet(m_disposition, ALIGN_Z_UP))
 				obj->setTransformMatrix(mtx);
 			else
 				obj->setOrientation(orientation);
