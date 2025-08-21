@@ -1439,17 +1439,11 @@ void ControlBar::update( void )
 		Object* obj = drawToEvaluateFor ? drawToEvaluateFor->getObject() : NULL;
 		setPortraitByObject(obj);
 
-		if (obj && obj->getControllingPlayer() == getCurrentlyViewedPlayer())
-		{
-			ExitInterface* exit = obj->getObjectExitInterface();
-			if (exit)
-				showRallyPoint(exit->getRallyPoint());
-			else
-				showRallyPoint(NULL);
-		}
-		else
-			showRallyPoint(NULL);
+		const Coord3D* exitPosition = NULL;
+		if (obj && obj->getControllingPlayer() == getCurrentlyViewedPlayer() && obj->getObjectExitInterface())
+			exitPosition = obj->getObjectExitInterface()->getRallyPoint();
 
+		showRallyPoint(exitPosition);
 		return;
 	}
 
