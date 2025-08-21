@@ -51,6 +51,7 @@
 #include "Common/Player.h"
 #include "Common/PlayerList.h"
 #include "Common/Xfer.h"
+#include "GameLogic/GameLogic.h"
 
 // ------------------------------------------------------------------------------------------------
 UnsignedInt Money::withdraw(UnsignedInt amountToWithdraw, Bool playSound)
@@ -89,6 +90,7 @@ void Money::deposit(UnsignedInt amountToDeposit, Bool playSound)
 	}
 
 	m_money += amountToDeposit;
+	m_incomeBuckets[m_currentBucket] += amountToDeposit;
 
 	if( amountToDeposit > 0 )
 	{
@@ -98,6 +100,46 @@ void Money::deposit(UnsignedInt amountToDeposit, Bool playSound)
 			player->getAcademyStats()->recordIncome();
 		}
 	}
+}
+
+// ------------------------------------------------------------------------------------------------
+void Money::setStartingCash(UnsignedInt amount)
+{
+	m_startingCash = amount;
+	m_money = amount;
+	m_currentBucket = 0;
+	m_lastBucketFrame = 0;
+	for (UnsignedInt i = 0; i < 60; ++i)
+		m_incomeBuckets[i] = 0;
+}
+
+// ------------------------------------------------------------------------------------------------
+void Money::updateIncomeBucket()
+{
+	UnsignedInt frame = TheGameLogic->getFrame();
+	UnsignedInt lastSec = m_lastBucketFrame / LOGICFRAMES_PER_SECOND;
+	UnsignedInt curSec = frame / LOGICFRAMES_PER_SECOND;
+	UnsignedInt diff = (curSec > lastSec) ? curSec - lastSec : 0;
+	if (diff > 0)
+	{
+		if (diff > 60)
+			diff = 60;
+		for (UnsignedInt i = 0; i < diff; ++i)
+		{
+			m_currentBucket = (m_currentBucket + 1) % 60;
+			m_incomeBuckets[m_currentBucket] = 0;
+		}
+	}
+	m_lastBucketFrame = frame;
+}
+
+// ------------------------------------------------------------------------------------------------
+UnsignedInt Money::getCashPerMinute() const
+{
+	UnsignedInt sum = 0;
+	for (UnsignedInt i = 0; i < 60; ++i)
+		sum += m_incomeBuckets[i];
+	return sum;
 }
 
 void Money::triggerAudioEvent(const AudioEventRTS& audioEvent)
@@ -157,4 +199,5 @@ void Money::parseMoneyAmount( INI *ini, void *instance, void *store, const void*
   // Someday, maybe, have mulitple fields like Gold:10000 Wood:1000 Tiberian:10
   Money * money = (Money *)store;
   INI::parseUnsignedInt( ini, instance, &money->m_money, userData );
+	money->setStartingCash(money->m_money);
 }

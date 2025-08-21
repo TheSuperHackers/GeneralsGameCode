@@ -64,13 +64,24 @@ class Money : public Snapshot
 
 public:
 
-	inline Money() : m_money(0), m_playerIndex(0)
+	inline Money() : m_money(0), m_playerIndex(0), m_startingCash(0), m_currentBucket(0), m_lastBucketFrame(0)
 	{
+		for (UnsignedInt i = 0; i < 60; ++i)
+		{
+			m_incomeBuckets[i] = 0;
+		}
 	}
 
 	void init()
 	{
 		m_money = 0;
+		m_startingCash = 0;
+		m_currentBucket = 0;
+		m_lastBucketFrame = 0;
+		for (UnsignedInt i = 0; i < 60; ++i)
+		{
+			m_incomeBuckets[i] = 0;
+		}
 	}
 
 	inline UnsignedInt countMoney() const
@@ -81,6 +92,10 @@ public:
 	/// returns the actual amount withdrawn, which may be less than you want. (sorry, can't go into debt...)
 	UnsignedInt withdraw(UnsignedInt amountToWithdraw, Bool playSound = TRUE);
 	void deposit(UnsignedInt amountToDeposit, Bool playSound = TRUE);
+
+	void setStartingCash(UnsignedInt amount);
+	void updateIncomeBucket();
+	UnsignedInt getCashPerMinute() const;
 
 	void setPlayerIndex(Int ndx) { m_playerIndex = ndx; }
 
@@ -105,6 +120,10 @@ private:
 
 	UnsignedInt m_money;	///< amount of money
 	Int m_playerIndex;	///< what is my player index?
+	UnsignedInt m_startingCash;
+	UnsignedInt m_incomeBuckets[60];
+	UnsignedInt m_currentBucket;
+	UnsignedInt m_lastBucketFrame;
 };
 
 #endif // _MONEY_H_

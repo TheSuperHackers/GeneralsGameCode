@@ -462,6 +462,7 @@ void Player::init(const PlayerTemplate* pt)
 			{
 				m_money.deposit( TheGlobalData->m_defaultStartingCash.countMoney(), FALSE );
 			}
+			m_money.setStartingCash(m_money.countMoney());
 		}
 
 		m_playerDisplayName.clear();

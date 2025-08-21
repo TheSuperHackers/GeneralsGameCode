@@ -828,6 +828,19 @@ Int OptionPreferences::getGameTimeFontSize(void)
 	return fontSize;
 }
 
+Bool OptionPreferences::getMoneyPerMinute(void)
+{
+	OptionPreferences::const_iterator it = find("MoneyPerMinute");
+	if (it == end())
+		return TheGlobalData->m_moneyPerMinute;
+
+	if (stricmp(it->second.str(), "yes") == 0)
+	{
+		return TRUE;
+	}
+	return FALSE;
+}
+
 static OptionPreferences *pref = NULL;
 
 static void setDefaults( void )
@@ -1352,6 +1365,15 @@ static void saveOptions( void )
 		prefString.format("%d", val);
 		(*pref)["GameTimeFontSize"] = prefString;
 		TheInGameUI->refreshGameTimeResources();
+	}
+
+	//-------------------------------------------------------------------------------------------------
+	// Set Money Per Minute
+	{
+		Bool showIncome = pref->getMoneyPerMinute();
+		AsciiString prefString;
+		prefString = showIncome ? "yes" : "no";
+		(*pref)["MoneyPerMinute"] = prefString;
 	}
 
 	//-------------------------------------------------------------------------------------------------

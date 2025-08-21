@@ -1837,6 +1837,7 @@ void InGameUI::update( void )
 	// update the player money window if the money amount has changed
 	// this seems like as good a place as any to do the power hide/show
 	static Int lastMoney = -1;
+	static Int lastIncome = -1;
 	static NameKeyType moneyWindowKey = TheNameKeyGenerator->nameToKey( "ControlBar.wnd:MoneyDisplay" );
 	static NameKeyType powerWindowKey = TheNameKeyGenerator->nameToKey( "ControlBar.wnd:PowerWindow" );
 
@@ -1852,16 +1853,59 @@ void InGameUI::update( void )
 	Player* moneyPlayer = TheControlBar->getCurrentlyViewedPlayer();
 	if( moneyPlayer)
 	{
-		Int currentMoney = moneyPlayer->getMoney()->countMoney();
-		if( lastMoney != currentMoney )
+		Money *money = moneyPlayer->getMoney();
+		Bool showIncome = TheGlobalData->m_moneyPerMinute;
+		if (!showIncome)
 		{
-			UnicodeString buffer;
+			Int currentMoney = money->countMoney();
+			if( lastMoney != currentMoney )
+			{
+				UnicodeString buffer;
 
-			buffer.format( TheGameText->fetch( "GUI:ControlBarMoneyDisplay" ), currentMoney );
-			GadgetStaticTextSetText( moneyWin, buffer );
-			lastMoney = currentMoney;
+				buffer.format(TheGameText->fetch( "GUI:ControlBarMoneyDisplay" ), currentMoney );
+				GadgetStaticTextSetText( moneyWin, buffer );
+				lastMoney = currentMoney;
 
-		}  // end if
+			}  // end if
+		}
+		else
+		{
+			// TheSuperHackers @feature L3-M 21/08/2025 player money per minute
+			money->updateIncomeBucket();
+			UnsignedInt currentMoney = money->countMoney();
+			UnsignedInt cashPerMin = money->getCashPerMinute();
+			if (lastMoney != (Int)currentMoney || lastIncome != (Int)cashPerMin)
+			{
+				UnicodeString buffer;
+				UnicodeString moneyStr;
+				UnicodeString incomeStr;
+				if (currentMoney >= 100000)
+				{
+					moneyStr.format(L"%dK", currentMoney / 1000);
+				}
+				else
+				{
+					moneyStr.format(L"%d", currentMoney);
+				}
+				if (cashPerMin >= 10000)
+				{
+					incomeStr.format(L"%dK", cashPerMin / 1000);
+				}
+				else if (cashPerMin >= 1000)
+				{
+					UnsignedInt k = cashPerMin / 100;
+					incomeStr.format(L"%d.%dK", k / 10, k % 10);
+				}
+				else
+				{
+					incomeStr.format(L"%d", cashPerMin);
+				}
+				buffer.format(TheGameText->FETCH_OR_SUBSTITUTE_FORMAT("GUI:ControlBarMoneyDisplayIncome", L"%ls (%ls)", moneyStr.str(), incomeStr.str()));
+				GadgetStaticTextSetText(moneyWin, buffer);
+				lastMoney = currentMoney;
+				lastIncome = cashPerMin;
+			}
+		}
 		moneyWin->winHide(FALSE);
 		powerWin->winHide(FALSE);
 	}
