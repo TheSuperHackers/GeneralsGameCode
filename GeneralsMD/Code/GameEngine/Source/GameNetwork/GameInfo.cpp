@@ -1126,7 +1126,7 @@ Bool ParseAsciiStringToGameInfo(GameInfo *game, AsciiString options)
     {
       UnsignedInt startingCashAmount = strtoul( val.str(), NULL, 10 );
       startingCash.init();
-      startingCash.deposit( startingCashAmount, FALSE );
+      startingCash.deposit( startingCashAmount, FALSE, FALSE );
       sawStartingCash = TRUE;
     }
     else if (key.compare("O") == 0 )

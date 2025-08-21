@@ -70,6 +70,7 @@ enum DrawableID CPP_11(: Int);
 #include <Utility/hash_map_adapter.h>
 #include <list>
 #include <map>
+#include <numeric>
 #include <queue>
 #include <set>
 #include <stack>

@@ -330,7 +330,7 @@ Money SkirmishPreferences::getStartingCash(void) const
   }
 
   Money money;
-  money.deposit( strtoul( it->second.str(), NULL, 10 ), FALSE  );
+  money.deposit( strtoul( it->second.str(), NULL, 10 ), FALSE, FALSE );
 
   return money;
 }
@@ -1044,7 +1044,7 @@ static void handleStartingCashSelection()
     GadgetComboBoxGetSelectedPos(comboBoxStartingCash, &selIndex);
 
     Money startingCash;
-    startingCash.deposit( (UnsignedInt)GadgetComboBoxGetItemData( comboBoxStartingCash, selIndex ), FALSE );
+    startingCash.deposit( (UnsignedInt)GadgetComboBoxGetItemData( comboBoxStartingCash, selIndex ), FALSE, FALSE );
     myGame->setStartingCash( startingCash );
   }
 }

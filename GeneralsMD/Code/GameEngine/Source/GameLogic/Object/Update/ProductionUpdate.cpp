@@ -360,7 +360,7 @@ void ProductionUpdate::cancelUpgrade( const UpgradeTemplate *upgrade )
 
 	// refund money back to the player
 	Money *money = player->getMoney();
-	money->deposit( production->m_upgradeToResearch->calcCostToBuild( player ) );
+	money->deposit( production->m_upgradeToResearch->calcCostToBuild( player ), TRUE, FALSE );
 
 	// remove this production from the queue
 	removeFromProductionQueue( production );
@@ -476,7 +476,7 @@ void ProductionUpdate::cancelUnitCreate( ProductionID productionID )
 			// give the player the cost of the object back
 			Player *player = getObject()->getControllingPlayer();
 			Money *money = player->getMoney();
-			money->deposit( production->m_objectToProduce->calcCostToBuild( player ) );
+			money->deposit( production->m_objectToProduce->calcCostToBuild( player ), TRUE, FALSE );
 
 			// remove from queue list
 			removeFromProductionQueue( production );

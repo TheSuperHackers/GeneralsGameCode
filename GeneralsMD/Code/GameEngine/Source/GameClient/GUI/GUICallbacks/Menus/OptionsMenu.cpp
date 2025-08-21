@@ -987,6 +987,19 @@ Real OptionPreferences::getResolutionFontAdjustment(void)
 	return fontScale;
 }
 
+Bool OptionPreferences::getShowMoneyPerMinute(void) const
+{
+	OptionPreferences::const_iterator it = find("ShowMoneyPerMinute");
+	if (it == end())
+		return TheGlobalData->m_showMoneyPerMinute;
+
+	if (stricmp(it->second.str(), "yes") == 0)
+	{
+		return TRUE;
+	}
+	return FALSE;
+}
+
 static OptionPreferences *pref = NULL;
 
 static void setDefaults( void )
@@ -1554,6 +1567,16 @@ static void saveOptions( void )
 		prefString.format("%d", REAL_TO_INT( val ) );
 		(*pref)["ResolutionFontAdjustment"] = prefString;
 		TheGlobalLanguageData->m_userResolutionFontSizeAdjustment = (Real)val / 100.0f;
+	}
+
+	//-------------------------------------------------------------------------------------------------
+	// Set Money Per Minute
+	{
+		Bool show = pref->getShowMoneyPerMinute();
+		AsciiString prefString;
+		prefString = show ? "yes" : "no";
+		(*pref)["ShowMoneyPerMinute"] = prefString;
+		TheWritableGlobalData->m_showMoneyPerMinute = show;
 	}
 
 	//-------------------------------------------------------------------------------------------------

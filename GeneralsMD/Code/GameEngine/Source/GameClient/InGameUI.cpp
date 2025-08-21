@@ -97,6 +97,39 @@
 // ------------------------------------------------------------------------------------------------
 static const RGBColor IllegalBuildColor = { 1.0, 0.0, 0.0 };
 
+// ------------------------------------------------------------------------------------------------
+static UnicodeString formatMoneyValue(UnsignedInt amount)
+{
+	UnicodeString result;
+	if (amount >= 100000)
+	{
+		result.format(L"%uk", amount / 1000);
+	}
+	else
+	{
+		result.format(L"%u", amount);
+	}
+	return result;
+}
+
+static UnicodeString formatIncomeValue(UnsignedInt cashPerMin)
+{
+	UnicodeString result;
+	if (cashPerMin >= 10000)
+	{
+		result.format(L"%uk", cashPerMin / 1000);
+	}
+	else if (cashPerMin >= 1000)
+	{
+		result.format(L"%u", (cashPerMin / 100) * 100);
+	}
+	else
+	{
+		result.format(L"%u", (cashPerMin / 10) * 10);
+	}
+	return result;
+}
+
 //-------------------------------------------------------------------------------------------------
 /// The InGameUI singleton instance.
 InGameUI *TheInGameUI = NULL;
@@ -1886,7 +1919,8 @@ void InGameUI::update( void )
 
 	// update the player money window if the money amount has changed
 	// this seems like as good a place as any to do the power hide/show
-	static Int lastMoney = -1;
+	static UnsignedInt lastMoney = ~0u;
+	static UnsignedInt lastIncome = ~0u;
 	static NameKeyType moneyWindowKey = TheNameKeyGenerator->nameToKey( "ControlBar.wnd:MoneyDisplay" );
 	static NameKeyType powerWindowKey = TheNameKeyGenerator->nameToKey( "ControlBar.wnd:PowerWindow" );
 
@@ -1902,15 +1936,38 @@ void InGameUI::update( void )
 	Player* moneyPlayer = TheControlBar->getCurrentlyViewedPlayer();
 	if( moneyPlayer)
 	{
-		Int currentMoney = moneyPlayer->getMoney()->countMoney();
-		if( lastMoney != currentMoney )
+		Money *money = moneyPlayer->getMoney();
+		Bool showIncome = TheGlobalData->m_showMoneyPerMinute;
+		if (!showIncome)
 		{
-			UnicodeString buffer;
+			UnsignedInt currentMoney = money->countMoney();
+			if( lastMoney != currentMoney )
+			{
+				UnicodeString buffer;
 
-			buffer.format( TheGameText->fetch( "GUI:ControlBarMoneyDisplay" ), currentMoney );
-			GadgetStaticTextSetText( moneyWin, buffer );
-			lastMoney = currentMoney;
+				buffer.format(TheGameText->fetch( "GUI:ControlBarMoneyDisplay" ), currentMoney );
+				GadgetStaticTextSetText( moneyWin, buffer );
+				lastMoney = currentMoney;
 
+			}
+		}
+		else
+		{
+			// TheSuperHackers @feature L3-M 21/08/2025 player money per minute
+			money->updateIncomeBucket();
+			UnsignedInt currentMoney = money->countMoney();
+			UnsignedInt cashPerMin = money->getCashPerMinute();
+			if ( lastMoney != currentMoney || lastIncome != cashPerMin )
+			{
+				UnicodeString buffer;
+				UnicodeString moneyStr = formatMoneyValue(currentMoney);
+				UnicodeString incomeStr = formatIncomeValue(cashPerMin);
+
+				buffer.format(TheGameText->FETCH_OR_SUBSTITUTE_FORMAT("GUI:ControlBarMoneyDisplayIncome", L"$ %ls +%ls/min", moneyStr.str(), incomeStr.str()));
+				GadgetStaticTextSetText(moneyWin, buffer);
+				lastMoney = currentMoney;
+				lastIncome = cashPerMin;
+			}
 		}
 		moneyWin->winHide(FALSE);
 		powerWin->winHide(FALSE);

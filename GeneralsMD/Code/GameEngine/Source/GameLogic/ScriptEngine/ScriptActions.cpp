@@ -4082,7 +4082,7 @@ void ScriptActions::doSetMoney(const AsciiString& playerName, Int money)
 		return;
 
 	m->withdraw(m->countMoney());
-	m->deposit(money);
+	m->deposit(money, FALSE, FALSE);
 }
 
 //-------------------------------------------------------------------------------------------------

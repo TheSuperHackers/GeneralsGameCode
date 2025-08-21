@@ -148,6 +148,8 @@ public:
 	Int getGameTimeFontSize(void);
 
 	Real getResolutionFontAdjustment(void);
+
+	Bool getShowMoneyPerMinute(void) const;
 };
 
 //-----------------------------------------------------------------------------
