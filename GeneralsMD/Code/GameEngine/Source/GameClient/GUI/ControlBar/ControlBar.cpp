@@ -2703,27 +2703,27 @@ void ControlBar::setPortraitByObject( Object *obj )
 /** Show a rally point marker at the world location specified.  If no location is specified
 	* any marker that we might have visible is hidden */
 // ------------------------------------------------------------------------------------------------
-void ControlBar::showRallyPoint( const Coord3D *loc )
+void ControlBar::showRallyPoint(const Coord3D* loc)
 {
 	// if loc is NULL, destroy any rally point drawble we have shown
-	if( loc == NULL )
+	if (loc == NULL)
 	{
 		// destroy rally point drawable if present
-		if( m_rallyPointDrawableID != INVALID_DRAWABLE_ID )
-			TheGameClient->destroyDrawable( TheGameClient->findDrawableByID( m_rallyPointDrawableID ) );
+		if (m_rallyPointDrawableID != INVALID_DRAWABLE_ID)
+			TheGameClient->destroyDrawable(TheGameClient->findDrawableByID(m_rallyPointDrawableID));
 
 		m_rallyPointDrawableID = INVALID_DRAWABLE_ID;
 		return;
 	}
 
-	Drawable *marker = NULL;
+	Drawable* marker = NULL;
 
 	// create a rally point drawble if necessary
-	if( m_rallyPointDrawableID == INVALID_DRAWABLE_ID )
+	if (m_rallyPointDrawableID == INVALID_DRAWABLE_ID)
 	{
 		const ThingTemplate* ttn = TheThingFactory->findTemplate("RallyPointMarker");
-		marker = TheThingFactory->newDrawable( ttn );
-		DEBUG_ASSERTCRASH( marker, ("showRallyPoint: Unable to create rally point drawable") );
+		marker = TheThingFactory->newDrawable(ttn);
+		DEBUG_ASSERTCRASH(marker, ("showRallyPoint: Unable to create rally point drawable"));
 		if (marker)
 		{
 			marker->setDrawableStatus(DRAWABLE_STATUS_NO_SAVE);
@@ -2731,14 +2731,14 @@ void ControlBar::showRallyPoint( const Coord3D *loc )
 		}
 	}
 	else
-		marker = TheGameClient->findDrawableByID( m_rallyPointDrawableID );
+		marker = TheGameClient->findDrawableByID(m_rallyPointDrawableID);
 
 	// sanity
-	DEBUG_ASSERTCRASH( marker, ("showRallyPoint: No rally point marker found" ) );
+	DEBUG_ASSERTCRASH(marker, ("showRallyPoint: No rally point marker found"));
 
 	// set the position of the rally point drawble to the position passed in
-	marker->setPosition( loc );
-	marker->setOrientation( TheGlobalData->m_downwindAngle );//To blow down wind -- ML
+	marker->setPosition(loc);
+	marker->setOrientation(TheGlobalData->m_downwindAngle); // To blow down wind -- ML
 
 	// set the marker colors to that of the local player
 	Player* player = TheControlBar->getCurrentlyViewedPlayer();
