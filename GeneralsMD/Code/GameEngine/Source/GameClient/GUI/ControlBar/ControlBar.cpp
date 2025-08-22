@@ -2712,7 +2712,7 @@ void ControlBar::showRallyPoint( const Coord3D *loc )
 		if( m_rallyPointDrawableID != INVALID_DRAWABLE_ID )
 			TheGameClient->destroyDrawable( TheGameClient->findDrawableByID( m_rallyPointDrawableID ) );
 		m_rallyPointDrawableID = INVALID_DRAWABLE_ID;
-	}  // end if
+	}
 	else
 	{
 		Drawable *marker = NULL;
@@ -2728,7 +2728,7 @@ void ControlBar::showRallyPoint( const Coord3D *loc )
 				marker->setDrawableStatus(DRAWABLE_STATUS_NO_SAVE);
 				m_rallyPointDrawableID = marker->getID();
 			}
-		}  // end if
+		}
 		else
 			marker = TheGameClient->findDrawableByID( m_rallyPointDrawableID );
 
@@ -2748,8 +2748,8 @@ void ControlBar::showRallyPoint( const Coord3D *loc )
 			else
 				marker->setIndicatorColor(player->getPlayerColor());
 		}
-	}  // end else
-}  // end showRallyPoint
+	}
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Show a rally point marker at the world location specified.  If no location is specified
