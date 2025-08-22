@@ -1669,15 +1669,15 @@ void ScriptDialog::OnCopyScript()
     ScriptGroup *pGroup = getCurGroup();
 
     // If a script is selected, copy just that script
-    if (pScript && (!pGroup || m_curSelection.m_objType == ListType::SCRIPT_IN_PLAYER_TYPE)) {
-        Script *pDup = pScript->duplicate();
-        AsciiString newName = pDup->getName();
-        newName.concat(" C");
-        pDup->setName(newName);
-        insertScript(pDup);
-        updateIcons(TVI_ROOT);
-        return;
-    }
+	if (pScript) {
+		Script *pDup = pScript->duplicate();
+		AsciiString newName = pDup->getName();
+		newName.concat(" C");
+		pDup->setName(newName);
+		insertScript(pDup);
+		updateIcons(TVI_ROOT);
+		return;
+	}
 
     // If a folder/group is selected, copy the entire group
     if (pGroup && m_curSelection.m_objType == ListType::GROUP_TYPE) {

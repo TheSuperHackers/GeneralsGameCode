@@ -73,6 +73,8 @@ class GroveOptions : public COptionsPanel
 		void OnSaveSetName();
 		void OnSelchangeGroveSetName();
 
+		Bool isUsePropsOnly() const;
+
 		afx_msg void _updateTreeWeights(void);
 		afx_msg void _updateTreeCount(void);
 		afx_msg void _updateGroveMakeup(void);

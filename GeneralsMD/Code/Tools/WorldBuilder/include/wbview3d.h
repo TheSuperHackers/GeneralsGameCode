@@ -155,6 +155,8 @@ protected:
 	afx_msg void OnUpdateViewShowMapBoundaries(CCmdUI* pCmdUI);
 	afx_msg void OnViewShowRulerGrid();
 	afx_msg void OnUpdateViewShowRulerGrid(CCmdUI* pCmdUI);
+	afx_msg void OnViewShowTracingOverlay();
+	afx_msg void OnUpdateViewShowTracingOverlay(CCmdUI* pCmdUI);
 	afx_msg void OnViewShowAmbientSounds();
 	afx_msg void OnUpdateViewShowAmbientSounds(CCmdUI* pCmdUI);
   afx_msg void OnViewShowSoundCircles();
@@ -221,6 +223,7 @@ private:
 	Bool										m_highlightTestArt;
 	Bool										m_showLetterbox;
 	Bool										m_showRulerGrid;
+	Bool										m_showTracingOverlay; ///< Flag whether to show the tracing overlay or not
 
 	Bool m_showBuildZoneFeedback;
 
@@ -236,9 +239,10 @@ protected:
 	void init3dScene();
 	void initAssets();
 	void initWW3D();
-  void drawCircle( HDC hdc, const Coord3D & centerPoint, Real radius, COLORREF color );
+	void drawCircle( HDC hdc, const Coord3D & centerPoint, Real radius, COLORREF color );
 	void drawLabels(HDC hdc);
 	void drawLabels(void);
+	void drawStatusLabels(CPoint basePt, int offset, const char* text, void* m3DFont, HDC hdc);
 	void shutdownWW3D();
 	void killTheTimer();
 	void render();
@@ -332,6 +336,7 @@ public:
 	Bool getShowAmbientSoundsFeedback(void) const { return m_showAmbientSounds; }
 
 	Bool getShowGridFeedback(void) const { return m_showRulerGrid; }
+	Bool getShowTracingOverlay(void) const { return m_showTracingOverlay; }
 
 	void togglePitchAndRotation( void ) { m_doPitch = !m_doPitch; }
 	virtual Bool isDoingPitch( void ) { return m_doPitch; }

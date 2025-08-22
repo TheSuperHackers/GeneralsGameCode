@@ -629,7 +629,7 @@ void CMainFrame::OnTimer(UINT nIDEvent)
 			{
 				CToastDialog* pToast = new CToastDialog(_T(msg), 10000, false);
 				pToast->Create(CToastDialog::IDD);
-				pToast->ShowWindow(SW_SHOW);
+				pToast->ShowWindow(SW_SHOWNOACTIVATE);
 					
 				PlaySound((LPCTSTR)SND_ALIAS_SYSTEMASTERISK, NULL, SND_ALIAS_ID | SND_ASYNC);
 			}

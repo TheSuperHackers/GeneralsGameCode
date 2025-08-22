@@ -542,6 +542,7 @@
 #define IDC_Grove_AllowWaterPlacement   1254
 #define IDC_Grove_AllowCliffPlacement   1255
 #define IDC_ANCHOR_LABEL                1256
+#define IDC_Grove_UsePropsOnly          1256
 #define IDC_JOIN                        1257
 #define IDC_WATER_HEIGHT1               1258
 #define IDC_WATER_HEIGHT2               1259
@@ -743,6 +744,8 @@
 #define ID_VIEW_LAYERS_LIST             33015
 #define ID_INSERTNEWLAYER               33017
 #define ID_DELETECURRENTLAYER           33018
+#define ID_GROUP_PIVOT_CENTER           33019
+#define ID_GROUP_ROTATE_OBJECT          33020
 #define ID_LAYERSLIST_MERGELAYERINTO_BOGUS 33021
 #define ID_LAYERSLIST_MERGELAYERINTO_BEGIN 33022
 #define ID_LAYERSLIST_MERGELAYERINTO_END 33121
@@ -778,6 +781,7 @@
 #define IDC_Grove_SetName               33348
 #define IDC_Grove_SaveSet               33349
 #define IDC_LAUNCH_ONSTARTUP            33350
+#define ID_VIEW_SHOWTRACINGOVERLAY      33351
 #define IDS_NEW                         61446
 #define IDS_RESIZE                      61447
 #define IDS_REMOVING_INUSE_TEAM         61448

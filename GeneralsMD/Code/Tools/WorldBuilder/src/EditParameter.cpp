@@ -103,6 +103,7 @@ BEGIN_MESSAGE_MAP(EditParameter, CDialog)
 	ON_EN_CHANGE(IDC_EDIT, OnChangeEdit)
 	ON_CBN_EDITCHANGE(IDC_COMBO, OnEditchangeCombo)
 	ON_BN_CLICKED(IDC_PREVIEWSOUND, OnPreviewSound)
+	ON_CBN_SELCHANGE(IDC_COMBO, OnComboSelChange)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
@@ -2147,11 +2148,21 @@ BOOL EditParameter::OnInitDialog()
 
 	}
 	if (showCombo) {
+		CString text = m_parameter->getString().str();
+
 		pCombo->ShowWindow(SW_SHOW);
-		pCombo->SetWindowText(m_parameter->getString().str());
-		if (m_parameter->getString().isEmpty()) {
+		pCombo->SetWindowText(text);
+
+		if (text.IsEmpty()) {
 			pCombo->SetCurSel(0);
+		} else {
+			int index = pCombo->FindStringExact(-1, text);
+			if (index != CB_ERR) {
+				pCombo->SetCurSel(index);
+				pCombo->SendMessage(CB_SETTOPINDEX, index, 0);  // Scroll to visible
+			}
 		}
+
 		pCombo->SetFocus();
 		if (m_key && m_key != VK_SPACE) pCombo->PostMessage(WM_CHAR, m_key, 0);
 	}	else if (showList) {
@@ -2167,9 +2178,16 @@ BOOL EditParameter::OnInitDialog()
 	}
 	pCaption->SetWindowText(captionText);
 
-	CButton *previewSound = (CButton*)GetDlgItem(IDPREVIEWSOUND);
+	CButton* previewSound = (CButton*)GetDlgItem(IDPREVIEWSOUND);
+	CButton* togglePreviewSound = (CButton*)GetDlgItem(IDC_TOGGLE_PREVIEW_SOUND);
+
 	if (previewSound) {
 		previewSound->ShowWindow(showAudioButton ? SW_SHOW : SW_HIDE);
+	}
+
+	if (togglePreviewSound) {
+		togglePreviewSound->ShowWindow(showAudioButton ? SW_SHOW : SW_HIDE);
+		togglePreviewSound->SetCheck(showAudioButton ? 1 : 0);
 	}
 
 	return FALSE;  // return TRUE unless you set the focus to a control
@@ -2402,6 +2420,41 @@ void EditParameter::OnPreviewSound()
 		event.setAudioEventInfo(TheAudio->findAudioEventInfo(comboText));
 		event.generateFilename();
 		
+		if (!event.getFilename().isEmpty()) {
+			PlaySound(event.getFilename().str(), NULL, SND_ASYNC | SND_FILENAME | SND_PURGE);
+		}
+	}
+}
+
+void EditParameter::OnComboSelChange()
+{
+	if (!m_parameter)
+		return;
+
+	CButton* togglePreview = (CButton*)GetDlgItem(IDC_TOGGLE_PREVIEW_SOUND);
+	if (!togglePreview || togglePreview->GetCheck() != BST_CHECKED)
+		return; // Auto-preview is off
+	
+	int type = m_parameter->getParameterType();
+
+	if (type == Parameter::SOUND || type == Parameter::DIALOG || type == Parameter::MUSIC)
+	{
+		CComboBox* pCombo = (CComboBox*)GetDlgItem(IDC_COMBO);
+		if (!pCombo)
+			return;
+
+		int sel = pCombo->GetCurSel();
+		if (sel == CB_ERR)
+			return;
+
+		CString txt;
+		pCombo->GetLBText(sel, txt);
+		AsciiString comboText(txt);
+
+		AudioEventRTS event;
+		event.setEventName(comboText);
+		event.setAudioEventInfo(TheAudio->findAudioEventInfo(comboText));
+		event.generateFilename();
 		if (!event.getFilename().isEmpty()) {
 			PlaySound(event.getFilename().str(), NULL, SND_ASYNC | SND_FILENAME | SND_PURGE);
 		}

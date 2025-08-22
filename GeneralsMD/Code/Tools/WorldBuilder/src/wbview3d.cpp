@@ -1731,6 +1731,18 @@ void WbView3d::invalObjectInView(MapObject *pMapObjIn)
 		
 			const ThingTemplate* tTemplate = pMapObj->getThingTemplate();
 			if (tTemplate) {
+				Bool hasPostCollapseState = false;
+				const ModuleInfo& modelinfo = tTemplate->getBehaviorModuleInfo();
+				for (Int modIdx = 0; modIdx < modelinfo.getCount(); ++modIdx) {
+					if (modelinfo.getNthName(modIdx).compare("StructureCollapseUpdate") == 0 || 
+						modelinfo.getNthName(modIdx).compare("StructureToppleUpdate")   == 0
+					) {
+						// DEBUG_LOG(("HAS POST_COLLAPSE\n"));
+						hasPostCollapseState = true;
+						break;
+					}
+				}
+				
 				scale = tTemplate->getAssetScale();
 		
 				// Setup model condition flags from the current damage state
@@ -1747,7 +1759,11 @@ void WbView3d::invalObjectInView(MapObject *pMapObjIn)
 						state.set(MODELCONDITION_REALLY_DAMAGED);
 						break;
 					case BODY_RUBBLE:
-						state.set(MODELCONDITION_RUBBLE);
+						if(hasPostCollapseState){
+							state.set(MODELCONDITION_POST_COLLAPSE);
+						} else {
+							state.set(MODELCONDITION_RUBBLE);
+						}
 						break;
 				}
 		
@@ -2663,6 +2679,8 @@ BEGIN_MESSAGE_MAP(WbView3d, WbView)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_SHOWMAPBOUNDARIES, OnUpdateViewShowMapBoundaries)
 	ON_COMMAND(ID_VIEW_RULERGRID, OnViewShowRulerGrid)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_RULERGRID, OnUpdateViewShowRulerGrid)
+	ON_COMMAND(ID_VIEW_SHOWTRACINGOVERLAY, OnViewShowTracingOverlay)
+	ON_UPDATE_COMMAND_UI(ID_VIEW_SHOWTRACINGOVERLAY, OnUpdateViewShowTracingOverlay)
 	ON_COMMAND(ID_VIEW_SHOWAMBIENTSOUNDS, OnViewShowAmbientSounds)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_SHOWAMBIENTSOUNDS, OnUpdateViewShowAmbientSounds)
   ON_COMMAND(ID_VIEW_SHOW_SOUND_CIRCLES, OnViewShowSoundCircles)
@@ -2812,10 +2830,12 @@ int WbView3d::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_showAmbientSounds = AfxGetApp()->GetProfileInt(MAIN_FRAME_SECTION, "ShowAmbientSounds", 0);
 	m_showSoundCircles = AfxGetApp()->GetProfileInt(MAIN_FRAME_SECTION, "ShowSoundCircles", 0);
 	m_showRulerGrid = AfxGetApp()->GetProfileInt(MAIN_FRAME_SECTION, "ShowRulerGrid", 1);
+	m_showTracingOverlay = AfxGetApp()->GetProfileInt(MAIN_FRAME_SECTION, "ShowTracingOverlay", 0);
 
 	DrawObject::setDoBoundaryFeedback(m_showMapBoundaries);
 	DrawObject::setDoGridFeedback(m_showRulerGrid);
 	DrawObject::setDoAmbientSoundFeedback(m_showAmbientSounds);
+	DrawObject::setDoTracingOverlayFeedback(m_showTracingOverlay);
 	return 0;
 }
 
@@ -2927,12 +2947,32 @@ void WbView3d::drawLabels(void)
 	ReleaseDC(pDC);
 }
 
+void WbView3d::drawStatusLabels(CPoint basePt, int offset, const char* text, void* m3DFont, HDC hdc) {
+	CPoint labelPt = basePt;
+	labelPt.y += offset * 15;
+
+	int red = 0, green = 255, blue = 255;
+	AsciiString label = text;
+
+	if (m3DFont && !hdc) {
+		DWORD textColor = 0xFF000000 | (red << 16) | (green << 8) | blue;
+		RECT rct = { labelPt.x + 1, labelPt.y, labelPt.x + 1, labelPt.y };
+
+		((ID3DXFont*)m3DFont)->DrawText(label.str(), label.getLength(), &rct,
+			DT_LEFT | DT_NOCLIP | DT_TOP | DT_SINGLELINE, textColor);
+	} else if (!m3DFont) {
+		::SetBkMode(hdc, TRANSPARENT);
+		::SetTextColor(hdc, RGB(red, green, blue));
+		::TextOut(hdc, labelPt.x + 1, labelPt.y, label.str(), label.getLength());
+	}
+}
+
 /// This is actually draw any 2d graphics and/or feedback.
 void WbView3d::drawLabels(HDC hdc)
 {
 	Coord3D selectedPos;	//position of selected object
 	Real	selectedRadius=120.0f;	//default distance of lightfeeback model from object
-	selectedPos.x=0;selectedPos.y=0;selectedPos.z=0;
+	selectedPos.x=0;selectedPos.y=0;selectedPos.z=0; 
 
 	// === TEMPORARY DEBUG LABEL: Draw "test" near the mouse cursor with white text and black outline ===
 	// if (PointerTool::isMouseDown() && !PointerTool::isDragSelecting()) {
@@ -3051,17 +3091,49 @@ void WbView3d::drawLabels(HDC hdc)
 			AsciiString name;
 
 			Bool isRenderableObject = !(pMapObj->getFlags() & (FLAG_ROAD_FLAGS | FLAG_BRIDGE_FLAGS));
-			if (!objectDictName.isEmpty() && isRenderableObject) {
+			if (!objectDictName.isEmpty() && isRenderableObject && (m_showModels || pMapObj->isSelected())) {
 				name = objectDictName;
 			} else if (pMapObj->isWaypoint() && m_showWaypoints) {
 				name = pMapObj->getWaypointName();
-			} else if (pMapObj->getThingTemplate() && isRenderableObject &&
+			} else if (pMapObj->getThingTemplate() && isRenderableObject && m_showModels &&
 				!pMapObj->getRenderObj() && !pMapObj->getThingTemplate()->isKindOf(KINDOF_OPTIMIZED_TREE)) {
 				name = pMapObj->getThingTemplate()->getName();
 			}
 
-			// Skip projection if object has no name and no waypoint labels
-			if (name.isEmpty() && !m_showWaypoints && objectDictName.isEmpty()) continue;
+			// Check if any of the custom status flags are true
+			bool hasStatusLabel = false;
+
+			// Show only if opposite of default
+			bool value;
+
+			value = pMapObj->getProperties()->getBool(TheKey_objectIndestructible, &exists);
+			if (exists && value) hasStatusLabel = true;
+
+			value = pMapObj->getProperties()->getBool(TheKey_objectUnsellable, &exists);
+			if (exists && value) hasStatusLabel = true;
+
+			value = pMapObj->getProperties()->getBool(TheKey_objectTargetable, &exists);
+			if (exists && value) hasStatusLabel = true;
+
+			value = pMapObj->getProperties()->getBool(TheKey_objectPowered, &exists);
+			if (exists && !value) hasStatusLabel = true;
+
+			value = pMapObj->getProperties()->getBool(TheKey_objectRecruitableAI, &exists);
+			if (exists && !value) hasStatusLabel = true;
+
+			value = pMapObj->getProperties()->getBool(TheKey_objectEnabled, &exists);
+			if (exists && !value) hasStatusLabel = true;
+
+			value = pMapObj->getProperties()->getBool(TheKey_objectSelectable, &exists);
+			if (exists && !value) hasStatusLabel = true;
+
+
+			if(!m_showModels && !pMapObj->isSelected()){
+				hasStatusLabel = false;
+			}
+	
+			// Skip label projection if completely nameless + no status
+			if (name.isEmpty() && !m_showWaypoints && objectDictName.isEmpty() && !hasStatusLabel) continue;
 
 			Vector3 world(pos.x + MAP_XY_FACTOR / 2, pos.y, pos.z);
 			Vector3 screen;
@@ -3129,6 +3201,39 @@ void WbView3d::drawLabels(HDC hdc)
 					::TextOut(hdc, labelPt.x + 1, labelPt.y, label.str(), label.getLength());
 				}
 			}
+
+			int statusOffset = 1; // Start after the main 4 label lines
+			
+			// Indestructible
+			if (pMapObj->getProperties()->getBool(TheKey_objectIndestructible, &exists) && exists)
+				drawStatusLabels(pt, statusOffset++, "Indestructible", m3DFont, hdc);
+
+			// Unsellable
+			if (pMapObj->getProperties()->getBool(TheKey_objectUnsellable, &exists) && exists)
+				drawStatusLabels(pt, statusOffset++, "Unsellable", m3DFont, hdc);
+
+			// Targetable
+			if (pMapObj->getProperties()->getBool(TheKey_objectTargetable, &exists) && exists)
+				drawStatusLabels(pt, statusOffset++, "Targetable", m3DFont, hdc);
+
+			// Powered (default true)
+			bool isPowered = pMapObj->getProperties()->getBool(TheKey_objectPowered, &exists);
+			if (exists && !isPowered)
+				drawStatusLabels(pt, statusOffset++, "Not Powered", m3DFont, hdc);
+
+			// Enabled (default true)
+			bool isEnabled = pMapObj->getProperties()->getBool(TheKey_objectEnabled, &exists);
+			if (exists && !isEnabled)
+				drawStatusLabels(pt, statusOffset++, "Not Enabled", m3DFont, hdc);
+
+			// AI Recruitable (default true)
+			bool isAIRecruitable = pMapObj->getProperties()->getBool(TheKey_objectRecruitableAI, &exists);
+			if (exists && !isAIRecruitable)
+				drawStatusLabels(pt, statusOffset++, "Not AI Recruitable", m3DFont, hdc);
+
+			bool isSelectable = pMapObj->getProperties()->getBool(TheKey_objectSelectable, &exists);
+			if (exists && !isSelectable)
+				drawStatusLabels(pt, statusOffset++, "Not Selectable", m3DFont, hdc);
 		}
 
 		/**
@@ -3941,6 +4046,17 @@ void WbView3d::OnUpdateViewShowRulerGrid(CCmdUI* pCmdUI)
 	pCmdUI->SetCheck(m_showRulerGrid ? 1 : 0);
 }
 
+void WbView3d::OnViewShowTracingOverlay()
+{
+	m_showTracingOverlay = !m_showTracingOverlay;
+	::AfxGetApp()->WriteProfileInt(MAIN_FRAME_SECTION, "ShowTracingOverlay", m_showTracingOverlay ? 1 : 0);
+	DrawObject::setDoTracingOverlayFeedback(m_showTracingOverlay);
+}
+
+void WbView3d::OnUpdateViewShowTracingOverlay(CCmdUI* pCmdUI)
+{
+	pCmdUI->SetCheck(m_showTracingOverlay ? 1 : 0);
+}
 
 void WbView3d::OnViewShowAmbientSounds()
 {

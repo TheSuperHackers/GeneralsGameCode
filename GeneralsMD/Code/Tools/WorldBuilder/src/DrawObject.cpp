@@ -112,6 +112,7 @@ Bool	DrawObject::m_meshFeedback = false;
 Bool	DrawObject::m_rampFeedback = false;
 Bool	DrawObject::m_boundaryFeedback = false;
 Bool	DrawObject::m_rulerGridFeedback = true;
+Bool	DrawObject::m_showTracingOverlay = false;
 Bool	DrawObject::m_ambientSoundFeedback = false;
 Coord3D	DrawObject::m_feedbackPoint;
 CPoint DrawObject::m_cellCenter;
@@ -2830,6 +2831,77 @@ if (_skip_drawobject_render) {
 			DX8Wrapper::Set_DX8_Render_State(D3DRS_LIGHTING, FALSE);
 			DX8Wrapper::Draw_Triangles(0, m_feedbackIndexCount / 3, 0, m_feedbackVertexCount);
 		}
+	}
+
+	if (m_showTracingOverlay) {
+		CWorldBuilderDoc *pDoc = CWorldBuilderDoc::GetActiveDoc();
+		WorldHeightMapEdit *pMap = pDoc->GetHeightMap();
+
+		// Grid resolution (increase for more detail)
+		const int gridX = 64;
+		const int gridY = 64;
+
+		float left   = ADJUST_FROM_INDEX_TO_REAL(1);
+		float top    = ADJUST_FROM_INDEX_TO_REAL(1);
+		float right  = ADJUST_FROM_INDEX_TO_REAL(pMap->getXExtent() - 2);
+		float bottom = ADJUST_FROM_INDEX_TO_REAL(pMap->getYExtent() - 2);
+
+		float dx = (right - left) / (gridX - 1);
+		float dy = (bottom - top) / (gridY - 1);
+
+		DX8VertexBufferClass::WriteLockClass lockVtxBuffer(m_vertexFeedback, D3DLOCK_DISCARD);
+		VertexFormatXYZDUV1* vb = (VertexFormatXYZDUV1*)lockVtxBuffer.Get_Vertex_Array();
+
+		int vtxCount = 0;
+		for (int y = 0; y < gridY; ++y) {
+			float fy = top + y * dy;
+			float v = (float)y / (gridY - 1);
+			for (int x = 0; x < gridX; ++x) {
+				float fx = left + x * dx;
+				float u = (float)x / (gridX - 1);
+				float fz = TheTerrainRenderObject->getHeightMapHeight(fx, fy, NULL) + 2.0f; // Slightly above terrain
+
+				vb[vtxCount].x = fx;
+				vb[vtxCount].y = fy;
+				vb[vtxCount].z = fz;
+				vb[vtxCount].u1 = u;
+				vb[vtxCount].v1 = v;
+				vb[vtxCount].diffuse = 0xFFFFFFFF;
+				vtxCount++;
+			}
+		}
+
+		DX8IndexBufferClass::WriteLockClass lockIdxBuffer(m_indexFeedback, D3DLOCK_DISCARD);
+		UnsignedShort* ib = lockIdxBuffer.Get_Index_Array();
+
+		int idxCount = 0;
+		for (int b = 0; b < gridY - 1; ++b) {
+			for (int x = 0; x < gridX - 1; ++x) {
+				int i0 = b * gridX + x;
+				int i1 = i0 + 1;
+				int i2 = i0 + gridX;
+				int i3 = i2 + 1;
+				// First triangle
+				ib[idxCount++] = i0;
+				ib[idxCount++] = i1;
+				ib[idxCount++] = i2;
+				// Second triangle
+				ib[idxCount++] = i1;
+				ib[idxCount++] = i3;
+				ib[idxCount++] = i2;
+			}
+		}
+
+		m_feedbackVertexCount = vtxCount;
+		m_feedbackIndexCount = idxCount;
+
+		DX8Wrapper::Set_Vertex_Buffer(m_vertexFeedback);
+		DX8Wrapper::Set_Index_Buffer(m_indexFeedback, 0);
+		DX8Wrapper::Set_Shader(ShaderClass::_PresetAlpha2DShader);
+		DX8Wrapper::Set_Material(m_vertexMaterialClass);
+		DX8Wrapper::Set_Texture(0, W3DAssetManager::Get_Instance()->Get_Texture("data\\editor\\trace_overlay.dds"));
+		DX8Wrapper::Draw_Triangles(0, idxCount / 3, 0, vtxCount);
+		DX8Wrapper::Set_Texture(0, NULL);
 	}
 #endif
 

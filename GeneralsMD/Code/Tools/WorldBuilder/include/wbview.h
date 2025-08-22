@@ -74,6 +74,9 @@ protected:
  	Bool					m_showNames;					///< Flag whether names are drawn in the 2d and 3d view.
 	Bool					m_showGarrisoned;
 	Bool					m_showWaypoints;
+	Bool                    m_togglePivotFarthest;
+	Bool					m_toggleObjectRotationWithGroup;
+	Bool					m_showObjectProperties;
 	Bool					m_showWater;
 	Bool					m_showRoads;
 	Bool					m_showPolygonTriggers;
@@ -160,6 +163,8 @@ public:
 	void setShowGarrisoned(Bool show) {m_showGarrisoned = show;}
 	Bool getShowGarrisoned(void) { return m_showGarrisoned;}
 
+	Bool getShowObjects(void) { return m_showObjects || m_showObjectsSelected;}
+
 	virtual Bool isDoingPitch( void ) { return false; }
 
 // Operations
@@ -204,6 +209,10 @@ protected:
 	afx_msg void OnUpdateViewSnaptogrid(CCmdUI* pCmdUI);
 	afx_msg void OnViewShowObjects();
 	afx_msg void OnUpdateViewShowObjects(CCmdUI* pCmdUI);
+	afx_msg void OnTogglePivotFarthest();
+	afx_msg void OnUpdateTogglePivotFarthest(CCmdUI* pCmdUI);
+	afx_msg void OnToggleObjectRotationWithGroup();
+	afx_msg void OnUpdateToggleObjectRotationWithGroup(CCmdUI* pCmdUI);
 	afx_msg void OnViewShowObjectsSelected();
 	afx_msg void OnUpdateViewShowObjectsSelected(CCmdUI* pCmdUI);
 	afx_msg void OnEditSelectdup();

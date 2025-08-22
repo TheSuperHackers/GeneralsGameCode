@@ -232,6 +232,12 @@ BEGIN
             MENUITEM "Roads\tCtrl+9",               ID_EDIT_PICKROADS
             MENUITEM "Sounds",                      ID_EDIT_PICKSOUNDS
         END
+        POPUP "Pointer Rotation Options"
+        BEGIN
+            MENUITEM "Pivot Farthest\tCtrl+Shift+1", ID_GROUP_PIVOT_CENTER
+            MENUITEM "Object Align with Group\tCtrl+Shift+2", 
+                                                    ID_GROUP_ROTATE_OBJECT
+        END
         MENUITEM SEPARATOR
         MENUITEM "Scripts...",                  ID_EDIT_SCRIPTS
         MENUITEM SEPARATOR
@@ -248,10 +254,11 @@ BEGIN
         MENUITEM "Show Roads",                  ID_VIEW_SHOWROADS
         MENUITEM "Show Water Mesh",             ID_VIEW_SHOWWATER
         MENUITEM "Show Terrain",                ID_VIEW_SHOW_TERRAIN
-        MENUITEM "Show Object Icons (All)\tCtrl+B", ID_VIEW_SHOW_OBJECTS
-        MENUITEM "Show Object Icons (Selected Only)", 
-                                                ID_VIEW_SHOW_OBJECTS_SELECTED
-
+        POPUP "Show Object Icons"
+        BEGIN
+            MENUITEM "All\tCtrl+B",                 ID_VIEW_SHOW_OBJECTS
+            MENUITEM "Selected Only",               ID_VIEW_SHOW_OBJECTS_SELECTED
+        END
         MENUITEM "Show Waypoints",              ID_VIEW_SHOWWAYPOINTS
         MENUITEM "Show Trigger Areas",          ID_VIEW_SHOWPOLYGONTRIGGERS
         MENUITEM "Show Shadows",                ID_VIEW_SHOWSHADOWS
@@ -263,6 +270,7 @@ BEGIN
         MENUITEM "Show Garrisoned",             ID_VIEW_GARRISONED
         MENUITEM "Show Map Boundaries",         ID_VIEW_SHOWMAPBOUNDARIES
         MENUITEM "Show Ruler Grid",             ID_VIEW_RULERGRID
+        MENUITEM "Show Tracing Overlay",        ID_VIEW_SHOWTRACINGOVERLAY
         MENUITEM "Show Letterbox",              ID_SHOW_LETTERBOX
         MENUITEM "Show Sound Flags",            ID_VIEW_SHOWAMBIENTSOUNDS
         MENUITEM "Show Sound Circles",          ID_VIEW_SHOW_SOUND_CIRCLES
@@ -415,6 +423,10 @@ BEGIN
     "0",            ID_EDIT_PICKANYTHING,   VIRTKEY, CONTROL, NOINVERT
     "1",            ID_EDIT_PICKSTRUCTS,    VIRTKEY, CONTROL, NOINVERT
     "2",            ID_EDIT_PICKINFANTRY,   VIRTKEY, CONTROL, NOINVERT
+    "1",            ID_GROUP_PIVOT_CENTER,  VIRTKEY, SHIFT, CONTROL, 
+                                                    NOINVERT
+    "2",            ID_GROUP_ROTATE_OBJECT, VIRTKEY, SHIFT, CONTROL, 
+                                                    NOINVERT
     "3",            ID_EDIT_PICKVEHICLES,   VIRTKEY, CONTROL, NOINVERT
     "4",            ID_EDIT_PICKSHRUBBERY,  VIRTKEY, CONTROL, NOINVERT
     "5",            ID_EDIT_PICKMANMADE,    VIRTKEY, CONTROL, NOINVERT
@@ -1134,91 +1146,93 @@ BEGIN
     CONTROL         "Tab1",IDC_TAB1,"SysTabControl32",0x0,7,7,324,241
 END
 
-IDD_ScriptConditions DIALOG DISCARDABLE  0, 0, 375, 205
+IDD_ScriptConditions DIALOG DISCARDABLE  0, 0, 457, 238
 STYLE WS_CHILD | WS_DISABLED | WS_CAPTION
 CAPTION "Script Conditions"
 FONT 8, "MS Sans Serif"
 BEGIN
-    LISTBOX         IDC_CONDITION_LIST,7,29,306,104,LBS_NOINTEGRALHEIGHT | 
+    LISTBOX         IDC_CONDITION_LIST,7,29,389,144,LBS_NOINTEGRALHEIGHT | 
                     WS_VSCROLL | WS_TABSTOP
     LTEXT           "Conditions for this script:",IDC_STATIC,7,14,81,8
-    PUSHBUTTON      "New...",IDC_NEW,319,32,50,14
-    PUSHBUTTON      "Edit...",IDC_EDIT_CONDITION,319,48,50,14
-    PUSHBUTTON      "Delete",IDC_DELETE,319,80,50,14
-    PUSHBUTTON      "Move Up",IDC_MOVE_UP,13,176,50,14
-    PUSHBUTTON      "Move Down",IDC_MOVE_DOWN,67,176,50,14
-    PUSHBUTTON      "Or",IDC_OR,319,97,50,14
-    PUSHBUTTON      "Copy",IDC_COPY,319,64,50,14
-    EDITTEXT        IDC_EDIT_COMMENT,7,137,306,31,ES_MULTILINE | WS_VSCROLL
+    PUSHBUTTON      "New...",IDC_NEW,401,32,50,14
+    PUSHBUTTON      "Edit...",IDC_EDIT_CONDITION,401,48,50,14
+    PUSHBUTTON      "Delete",IDC_DELETE,401,80,50,14
+    PUSHBUTTON      "Move Up",IDC_MOVE_UP,13,217,50,14
+    PUSHBUTTON      "Move Down",IDC_MOVE_DOWN,67,217,50,14
+    PUSHBUTTON      "Or",IDC_OR,401,97,50,14
+    PUSHBUTTON      "Copy",IDC_COPY,401,64,50,14
+    EDITTEXT        IDC_EDIT_COMMENT,7,178,389,31,ES_MULTILINE | WS_VSCROLL
 END
 
-IDD_ScriptActionsTrue DIALOG DISCARDABLE  0, 0, 375, 205
+IDD_ScriptActionsTrue DIALOG DISCARDABLE  0, 0, 457, 238
 STYLE WS_CHILD | WS_DISABLED | WS_CAPTION
 CAPTION "Actions if true."
 FONT 8, "MS Sans Serif"
 BEGIN
-    LISTBOX         IDC_ACTION_LIST,7,29,306,104,LBS_NOINTEGRALHEIGHT | 
+    LISTBOX         IDC_ACTION_LIST,7,29,389,144,LBS_NOINTEGRALHEIGHT | 
                     WS_VSCROLL | WS_TABSTOP
     LTEXT           "Actions to take if conditions are true:",IDC_STATIC,7,
                     14,139,8
-    PUSHBUTTON      "New...",IDC_NEW,319,32,50,14
-    PUSHBUTTON      "Edit...",IDC_EDIT,319,48,50,14
-    PUSHBUTTON      "Delete",IDC_DELETE,319,80,50,14
-    PUSHBUTTON      "Move Up",IDC_MOVE_UP,13,176,50,14
-    PUSHBUTTON      "Move Down",IDC_MOVE_DOWN,67,176,50,14
-    PUSHBUTTON      "Copy",IDC_COPY,319,64,50,14
-    EDITTEXT        IDC_EDIT_COMMENT,7,137,306,31,ES_MULTILINE | WS_VSCROLL
+    PUSHBUTTON      "New...",IDC_NEW,401,32,50,14
+    PUSHBUTTON      "Edit...",IDC_EDIT,401,48,50,14
+    PUSHBUTTON      "Delete",IDC_DELETE,401,80,50,14
+    PUSHBUTTON      "Move Up",IDC_MOVE_UP,13,217,50,14
+    PUSHBUTTON      "Move Down",IDC_MOVE_DOWN,67,217,50,14
+    PUSHBUTTON      "Copy",IDC_COPY,401,64,50,14
+    EDITTEXT        IDC_EDIT_COMMENT,7,178,389,31,ES_MULTILINE | WS_VSCROLL
 END
 
-IDD_ScriptActionsFalse DIALOG DISCARDABLE  0, 0, 375, 205
+IDD_ScriptActionsFalse DIALOG DISCARDABLE  0, 0, 457, 238
 STYLE WS_CHILD | WS_DISABLED | WS_CAPTION
 CAPTION "Actions if false."
 FONT 8, "MS Sans Serif"
 BEGIN
     LTEXT           "Actions to take if conditions are false:",IDC_STATIC,7,
                     14,120,8
-    LISTBOX         IDC_ACTION_LIST,7,29,306,104,LBS_NOINTEGRALHEIGHT | 
+    LISTBOX         IDC_ACTION_LIST,7,29,389,144,LBS_NOINTEGRALHEIGHT | 
                     WS_VSCROLL | WS_TABSTOP
-    PUSHBUTTON      "New...",IDC_NEW,319,32,50,14
-    PUSHBUTTON      "Edit...",IDC_EDIT,319,48,50,14
-    PUSHBUTTON      "Delete",IDC_DELETE,319,80,50,14
-    PUSHBUTTON      "Move Up",IDC_MOVE_UP,13,176,50,14
-    PUSHBUTTON      "Move Down",IDC_MOVE_DOWN,67,176,50,14
-    PUSHBUTTON      "Copy",IDC_COPY,319,64,50,14
-    EDITTEXT        IDC_EDIT_COMMENT,7,137,306,31,ES_MULTILINE | WS_VSCROLL
+    PUSHBUTTON      "New...",IDC_NEW,401,32,50,14
+    PUSHBUTTON      "Edit...",IDC_EDIT,401,48,50,14
+    PUSHBUTTON      "Delete",IDC_DELETE,401,80,50,14
+    PUSHBUTTON      "Move Up",IDC_MOVE_UP,13,217,50,14
+    PUSHBUTTON      "Move Down",IDC_MOVE_DOWN,67,217,50,14
+    PUSHBUTTON      "Copy",IDC_COPY,401,64,50,14
+    EDITTEXT        IDC_EDIT_COMMENT,7,178,389,31,ES_MULTILINE | WS_VSCROLL
 END
 
-IDD_ScriptProperties DIALOG DISCARDABLE  0, 0, 334, 205
+IDD_ScriptProperties DIALOG DISCARDABLE  0, 0, 457, 238
 STYLE WS_CHILD | WS_DISABLED | WS_CAPTION
 CAPTION "Script Properties"
 FONT 8, "MS Sans Serif"
 BEGIN
-    EDITTEXT        IDC_SCRIPT_NAME,52,10,119,14,ES_AUTOHSCROLL
-    CONTROL         "Script is Subroutine",IDC_SCRIPT_SUBROUTINE,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,11,41,77,10
+    EDITTEXT        IDC_SCRIPT_NAME,52,10,271,14,ES_AUTOHSCROLL
+    CONTROL         "Script is Subroutine (Make this script usable by teams, read the manual for more info)",
+                    IDC_SCRIPT_SUBROUTINE,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,9,41,280,10
     CONTROL         "Script is Active",IDC_SCRIPT_ACTIVE,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,11,54,63,10
-    CONTROL         "Deactivate upon success",IDC_ONE_SHOT,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,11,69,108,10
+                    BS_AUTOCHECKBOX | WS_TABSTOP,9,54,63,10
+    CONTROL         "Deactivate upon success (automatically disables itself after completing successfully)",
+                    IDC_ONE_SHOT,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,9,69,
+                    279,10
     CONTROL         "Easy",IDC_EASY,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,
-                    157,41,31,10
+                    299,41,31,10
     CONTROL         "Normal",IDC_NORMAL,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,157,56,38,10
+                    WS_TABSTOP,299,56,38,10
     CONTROL         "Hard",IDC_HARD,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,
-                    157,71,31,10
-    EDITTEXT        IDC_SCRIPT_COMMENT,7,100,320,98,ES_MULTILINE | 
+                    299,71,31,10
+    EDITTEXT        IDC_SCRIPT_COMMENT,3,97,450,125,ES_MULTILINE | 
                     WS_VSCROLL
-    LTEXT           "Script Name:",IDC_STATIC,7,12,43,8
-    GROUPBOX        "Active in:",IDC_STATIC,151,30,58,54
-    GROUPBOX        "Script Comment:",IDC_STATIC,4,90,327,112
-    GROUPBOX        "Script Flags:",IDC_STATIC,7,30,140,54
-    GROUPBOX        "Evaluate script:",IDC_STATIC,219,30,99,54
+    LTEXT           "Script Name:",IDC_STATIC,3,12,43,8
+    GROUPBOX        "Active in:",IDC_STATIC,293,30,58,54
+    GROUPBOX        "Script Comment:",IDC_STATIC,3,87,450,141
+    GROUPBOX        "Script Flags:",IDC_STATIC,3,30,288,54
+    GROUPBOX        "Evaluate script:",IDC_STATIC,354,30,99,54
     CONTROL         "Every Frame",IDC_EVERY_FRAME,"Button",
-                    BS_AUTORADIOBUTTON,227,43,80,10
-    CONTROL         "Every",IDC_EVERY_SECOND,"Button",BS_AUTORADIOBUTTON,228,
+                    BS_AUTORADIOBUTTON,357,43,80,10
+    CONTROL         "Every",IDC_EVERY_SECOND,"Button",BS_AUTORADIOBUTTON,358,
                     60,31,8
-    EDITTEXT        IDC_SECONDS_EDIT,262,59,19,12,ES_AUTOHSCROLL
-    LTEXT           "seconds.",IDC_STATIC,283,60,30,8
+    EDITTEXT        IDC_SECONDS_EDIT,392,59,19,12,ES_AUTOHSCROLL
+    LTEXT           "seconds.",IDC_STATIC,413,60,30,8
 END
 
 IDD_ScriptCondition DIALOG DISCARDABLE  0, 0, 581, 327
@@ -1262,6 +1276,8 @@ BEGIN
     EDITTEXT        IDC_EDIT,7,20,267,12,ES_AUTOHSCROLL
     COMBOBOX        IDC_LIST,7,20,267,250,CBS_SIMPLE | CBS_SORT | WS_VSCROLL | 
                     WS_TABSTOP
+    CONTROL         "Auto Preview",IDC_TOGGLE_PREVIEW_SOUND,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,76,273,67,14
     PUSHBUTTON      "Preview Sound",IDC_PREVIEWSOUND,7,273,62,14
 END
 
@@ -1535,65 +1551,69 @@ BEGIN
                     WS_TABSTOP,13,66,154,9
 END
 
-IDD_GROVE_OPTIONS DIALOG DISCARDABLE  0, 0, 200, 353
+IDD_GROVE_OPTIONS DIALOG DISCARDABLE  0, 0, 200, 374
 STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION
 CAPTION "Grove Options"
 FONT 8, "MS Sans Serif"
 BEGIN
-    COMBOBOX        IDC_Grove_Type1,32,36,164,243,CBS_DROPDOWNLIST | 
+    COMBOBOX        IDC_Grove_Type1,32,76,164,243,CBS_DROPDOWNLIST | 
                     CBS_SORT | WS_VSCROLL | WS_TABSTOP
-    LTEXT           "%",IDC_STATIC,15,26,8,8
-    EDITTEXT        IDC_Grove_Per1,8,36,20,13,ES_AUTOHSCROLL | ES_NUMBER
-    COMBOBOX        IDC_Grove_Type2,32,52,164,229,CBS_DROPDOWNLIST | 
+    LTEXT           "%",IDC_STATIC,15,66,8,8
+    EDITTEXT        IDC_Grove_Per1,8,76,20,13,ES_AUTOHSCROLL | ES_NUMBER
+    COMBOBOX        IDC_Grove_Type2,32,92,164,229,CBS_DROPDOWNLIST | 
                     CBS_SORT | WS_VSCROLL | WS_TABSTOP
-    EDITTEXT        IDC_Grove_Per2,8,51,20,13,ES_AUTOHSCROLL | ES_NUMBER
-    COMBOBOX        IDC_Grove_Type3,32,66,164,212,CBS_DROPDOWNLIST | 
+    EDITTEXT        IDC_Grove_Per2,8,91,20,13,ES_AUTOHSCROLL | ES_NUMBER
+    COMBOBOX        IDC_Grove_Type3,32,106,164,212,CBS_DROPDOWNLIST | 
                     CBS_SORT | WS_VSCROLL | WS_TABSTOP
-    EDITTEXT        IDC_Grove_Per3,8,66,20,13,ES_AUTOHSCROLL | ES_NUMBER
-    COMBOBOX        IDC_Grove_Type4,32,81,164,200,CBS_DROPDOWNLIST | 
+    EDITTEXT        IDC_Grove_Per3,8,106,20,13,ES_AUTOHSCROLL | ES_NUMBER
+    COMBOBOX        IDC_Grove_Type4,32,121,164,200,CBS_DROPDOWNLIST | 
                     CBS_SORT | WS_VSCROLL | WS_TABSTOP
-    EDITTEXT        IDC_Grove_Per4,8,81,20,13,ES_AUTOHSCROLL | ES_NUMBER
-    LTEXT           "Tree Type",IDC_STATIC,34,26,34,8
-    EDITTEXT        IDC_Grove_PerTotal,8,232,20,13,ES_AUTOHSCROLL | 
+    EDITTEXT        IDC_Grove_Per4,8,121,20,13,ES_AUTOHSCROLL | ES_NUMBER
+    LTEXT           "Tree Type",IDC_STATIC,34,66,34,8
+    EDITTEXT        IDC_Grove_PerTotal,8,272,20,13,ES_AUTOHSCROLL | 
                     ES_READONLY | ES_NUMBER
-    LTEXT           "% Total",IDC_STATIC,33,234,24,8
-    COMBOBOX        IDC_Grove_Type5,32,96,164,173,CBS_DROPDOWNLIST | 
+    LTEXT           "% Total",IDC_STATIC,33,274,24,8
+    COMBOBOX        IDC_Grove_Type5,32,136,164,173,CBS_DROPDOWNLIST | 
                     CBS_SORT | WS_VSCROLL | WS_TABSTOP
-    EDITTEXT        IDC_Grove_Per5,8,97,20,13,ES_AUTOHSCROLL | ES_NUMBER
-    EDITTEXT        IDC_Grove_NumberTrees,8,250,40,14,ES_AUTOHSCROLL
-    LTEXT           "Total Tree Count",IDC_STATIC,52,253,54,8
+    EDITTEXT        IDC_Grove_Per5,8,137,20,13,ES_AUTOHSCROLL | ES_NUMBER
+    EDITTEXT        IDC_Grove_NumberTrees,8,290,40,14,ES_AUTOHSCROLL
+    LTEXT           "Total Object Count",IDC_STATIC,52,293,54,8
     CONTROL         "Allow Water Placement",IDC_Grove_AllowWaterPlacement,
-                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,8,269,89,10
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,8,309,89,10
     CONTROL         "Allow Impassable Placement",
                     IDC_Grove_AllowCliffPlacement,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,8,282,81,10
-    LTEXT           "Grove Set:",IDC_STATIC,3,7,41,13,SS_CENTERIMAGE
-    COMBOBOX        IDC_Grove_SetName,44,7,152,100,CBS_DROPDOWNLIST | 
+                    WS_TABSTOP,8,322,110,10
+    COMBOBOX        IDC_Grove_SetName,10,20,180,100,CBS_DROPDOWNLIST | 
                     WS_VSCROLL | WS_TABSTOP
-    PUSHBUTTON      "Save Set",IDC_Grove_SaveSet,92,332,104,14,NOT 
+    PUSHBUTTON      "Save Set",IDC_Grove_SaveSet,92,270,104,14,NOT 
                     WS_VISIBLE | WS_DISABLED
-    GROUPBOX        "Developer Note:",IDC_STATIC,3,293,193,34
+    GROUPBOX        "Developer Note:",IDC_STATIC,3,333,193,34
     LTEXT           "Left click to place a tree, left click and drag to place mutiple trees with randomization.",
-                    IDC_STATIC,10,301,179,21
-    GROUPBOX        "Other Props:",IDC_STATIC,3,192,193,32
-    COMBOBOX        IDC_Grove_Type6,32,112,164,173,CBS_DROPDOWNLIST | 
+                    IDC_STATIC,10,342,179,21
+    GROUPBOX        "Other Props:",IDC_STATIC,3,226,193,43
+    COMBOBOX        IDC_Grove_Type6,32,152,164,173,CBS_DROPDOWNLIST | 
                     CBS_SORT | WS_VSCROLL | WS_TABSTOP
-    EDITTEXT        IDC_Grove_Per6,8,113,20,13,ES_AUTOHSCROLL | ES_NUMBER
-    COMBOBOX        IDC_Grove_Type7,32,126,164,173,CBS_DROPDOWNLIST | 
+    EDITTEXT        IDC_Grove_Per6,8,153,20,13,ES_AUTOHSCROLL | ES_NUMBER
+    COMBOBOX        IDC_Grove_Type7,32,166,164,173,CBS_DROPDOWNLIST | 
                     CBS_SORT | WS_VSCROLL | WS_TABSTOP
-    EDITTEXT        IDC_Grove_Per7,8,127,20,13,ES_AUTOHSCROLL | ES_NUMBER
-    COMBOBOX        IDC_Grove_Type8,32,142,164,173,CBS_DROPDOWNLIST | 
+    EDITTEXT        IDC_Grove_Per7,8,167,20,13,ES_AUTOHSCROLL | ES_NUMBER
+    COMBOBOX        IDC_Grove_Type8,32,182,164,173,CBS_DROPDOWNLIST | 
                     CBS_SORT | WS_VSCROLL | WS_TABSTOP
-    EDITTEXT        IDC_Grove_Per8,8,143,20,13,ES_AUTOHSCROLL | ES_NUMBER
-    COMBOBOX        IDC_Grove_Type9,32,156,164,173,CBS_DROPDOWNLIST | 
+    EDITTEXT        IDC_Grove_Per8,8,183,20,13,ES_AUTOHSCROLL | ES_NUMBER
+    COMBOBOX        IDC_Grove_Type9,32,196,164,173,CBS_DROPDOWNLIST | 
                     CBS_SORT | WS_VSCROLL | WS_TABSTOP
-    EDITTEXT        IDC_Grove_Per9,8,156,20,13,ES_AUTOHSCROLL | ES_NUMBER
-    COMBOBOX        IDC_Grove_Type10,32,171,164,173,CBS_DROPDOWNLIST | 
+    EDITTEXT        IDC_Grove_Per9,8,196,20,13,ES_AUTOHSCROLL | ES_NUMBER
+    COMBOBOX        IDC_Grove_Type10,32,211,164,173,CBS_DROPDOWNLIST | 
                     CBS_SORT | WS_VSCROLL | WS_TABSTOP
-    EDITTEXT        IDC_Grove_Per10,8,171,20,13,ES_AUTOHSCROLL | ES_NUMBER
-    COMBOBOX        IDC_Grove_Type11,32,205,164,173,CBS_DROPDOWNLIST | 
+    EDITTEXT        IDC_Grove_Per10,8,211,20,13,ES_AUTOHSCROLL | ES_NUMBER
+    COMBOBOX        IDC_Grove_Type11,32,239,164,173,CBS_DROPDOWNLIST | 
                     CBS_SORT | WS_VSCROLL | WS_TABSTOP
-    EDITTEXT        IDC_Grove_Per11,8,205,20,13,ES_AUTOHSCROLL | ES_NUMBER
+    EDITTEXT        IDC_Grove_Per11,8,239,20,13,ES_AUTOHSCROLL | ES_NUMBER
+    CONTROL         "Spawn Only Props",IDC_Grove_UsePropsOnly,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,9,255,74,10
+    LTEXT           "Hint: You can rename grove sets under worldbuilder settings",
+                    IDC_STATIC,11,40,179,21
+    GROUPBOX        "Grove Set:",IDC_STATIC,3,7,193,57
 END
 
 IDD_FENCE_OPTIONS DIALOG DISCARDABLE  0, 0, 200, 342
@@ -2027,7 +2047,7 @@ BEGIN
     CONTROL         "Powered",IDC_MAPOBJECT_Powered,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,133,113,44,10
     CONTROL         "Selectable",IDC_MAPOBJECT_Selectable,"Button",
-                    BS_AUTO3STATE | WS_TABSTOP,133,123,49,10
+                    BS_AUTOCHECKBOX | WS_TABSTOP,133,123,49,10
     EDITTEXT        IDC_MAPOBJECT_StoppingDistance,41,140,27,12,
                     ES_AUTOHSCROLL | ES_NUMBER | WS_GROUP
     EDITTEXT        IDC_MAPOBJECT_VisionDistance,105,140,27,12,
@@ -2360,33 +2380,34 @@ BEGIN
     IDD_ScriptConditions, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 369
+        RIGHTMARGIN, 451
+        VERTGUIDE, 396
         TOPMARGIN, 7
-        BOTTOMMARGIN, 198
+        BOTTOMMARGIN, 231
     END
 
     IDD_ScriptActionsTrue, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 368
+        RIGHTMARGIN, 451
         TOPMARGIN, 7
-        BOTTOMMARGIN, 196
+        BOTTOMMARGIN, 231
     END
 
     IDD_ScriptActionsFalse, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 368
+        RIGHTMARGIN, 451
         TOPMARGIN, 7
-        BOTTOMMARGIN, 198
+        BOTTOMMARGIN, 231
     END
 
     IDD_ScriptProperties, DIALOG
     BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 327
+        LEFTMARGIN, 3
+        RIGHTMARGIN, 453
         TOPMARGIN, 7
-        BOTTOMMARGIN, 198
+        BOTTOMMARGIN, 228
     END
 
     IDD_ScriptCondition, DIALOG
@@ -2478,7 +2499,7 @@ BEGIN
         LEFTMARGIN, 3
         RIGHTMARGIN, 196
         TOPMARGIN, 7
-        BOTTOMMARGIN, 346
+        BOTTOMMARGIN, 367
     END
 
     IDD_FENCE_OPTIONS, DIALOG

@@ -43,6 +43,9 @@ protected:
 	Coord3D m_downPt3d;
 	MapObject *m_curObject;
 
+	Bool m_rotateObjectsWithGroup; 
+	Bool m_useFarthestObjectPivot;
+	Coord3D m_groupPivot;
 	Bool m_moving; ///< True if we are drag moving an object.
 	Bool m_rotating; ///< True if we are rotating an object.
 	static Bool m_dragSelect; ///< True if we are drag selecting.

@@ -102,6 +102,7 @@ public:
 	static void setDoRampFeedback(Bool val) { m_rampFeedback = val; }
 	static void setDoBoundaryFeedback(Bool val) { m_boundaryFeedback = val; }
 	static void setDoGridFeedback(Bool val) { m_rulerGridFeedback = val; }
+	static void setDoTracingOverlayFeedback(Bool val) { m_showTracingOverlay = val; }
 
 	static void setDoAmbientSoundFeedback(Bool val) { m_ambientSoundFeedback = val; }
 	
@@ -178,6 +179,7 @@ protected: // static state vars.
 	static Bool								m_rampFeedback;	///< should we be showing feedback for the ramp tool?
 	static Bool								m_boundaryFeedback;
 	static Bool								m_rulerGridFeedback;
+	static Bool								m_showTracingOverlay; ///< True to show tracing overlay.
 	static Bool								m_ambientSoundFeedback;
 
 	static Bool								m_dragWaypointFeedback; ///< True for the waypoint tool dragging.

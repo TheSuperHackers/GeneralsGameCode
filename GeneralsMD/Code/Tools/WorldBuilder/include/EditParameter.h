@@ -128,6 +128,7 @@ protected:
 	virtual void OnOK();
 	virtual void OnCancel();
 	afx_msg void OnPreviewSound();
+	afx_msg void OnComboSelChange();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 };

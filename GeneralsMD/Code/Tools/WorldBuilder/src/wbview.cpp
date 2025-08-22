@@ -144,6 +144,10 @@ BEGIN_MESSAGE_MAP(WbView, CView)
 	ON_UPDATE_COMMAND_UI(ID_EDIT_PICKDEBRIS, OnUpdatePickDebris)
 	ON_COMMAND(ID_EDIT_PICKANYTHING, OnPickAnything)
 	ON_UPDATE_COMMAND_UI(ID_EDIT_PICKANYTHING, OnUpdatePickAnything)
+	ON_COMMAND(ID_GROUP_PIVOT_CENTER, OnTogglePivotFarthest)
+	ON_UPDATE_COMMAND_UI(ID_GROUP_PIVOT_CENTER, OnUpdateTogglePivotFarthest)
+	ON_COMMAND(ID_GROUP_ROTATE_OBJECT, OnToggleObjectRotationWithGroup)
+	ON_UPDATE_COMMAND_UI(ID_GROUP_ROTATE_OBJECT, OnUpdateToggleObjectRotationWithGroup)
 	ON_COMMAND(ID_EDIT_PICKWAYPOINTS, OnPickWaypoints)
 	ON_UPDATE_COMMAND_UI(ID_EDIT_PICKWAYPOINTS, OnUpdatePickWaypoints)
 	ON_COMMAND(ID_EDIT_PICKROADS, OnPickRoads)
@@ -625,6 +629,12 @@ void WbView::OnEditPaste()
 void WbView::OnViewShowObjects() 
 {
 	m_showObjects = !m_showObjects;
+
+	// Ensure mutual exclusivity
+	if (m_showObjects) {
+		m_showObjectsSelected = 0;
+	}
+
 	Invalidate(false);
 	WbView  *pView = (WbView *)WbDoc()->GetActive2DView();
 	if (pView != NULL && pView != this) {
@@ -642,6 +652,12 @@ void WbView::OnUpdateViewShowObjects(CCmdUI* pCmdUI)
 void WbView::OnViewShowObjectsSelected() 
 {
 	m_showObjectsSelected = !m_showObjectsSelected;
+
+	// Ensure mutual exclusivity
+	if (m_showObjectsSelected) {
+		m_showObjects = 0;
+	}
+
 	Invalidate(false);
 	WbView  *pView = (WbView *)WbDoc()->GetActive2DView();
 	if (pView != NULL && pView != this) {
@@ -654,6 +670,43 @@ void WbView::OnViewShowObjectsSelected()
 void WbView::OnUpdateViewShowObjectsSelected(CCmdUI* pCmdUI) 
 {
 	pCmdUI->SetCheck(m_showObjectsSelected?1:0);
+}
+
+
+/** Sets the check in the menu to match the show objects flag. */
+void WbView::OnUpdateTogglePivotFarthest(CCmdUI* pCmdUI) 
+{
+	pCmdUI->SetCheck(m_togglePivotFarthest?1:0);
+}
+
+void WbView::OnTogglePivotFarthest() 
+{
+	m_togglePivotFarthest = !m_togglePivotFarthest;
+
+	Invalidate(false);
+	WbView  *pView = (WbView *)WbDoc()->GetActive2DView();
+	if (pView != NULL && pView != this) {
+		pView->Invalidate(!m_togglePivotFarthest);
+	}
+	::AfxGetApp()->WriteProfileInt(MAIN_FRAME_SECTION, "TogglePivotFarthest", m_togglePivotFarthest?1:0);
+}
+
+/** Sets the check in the menu to match the show objects flag. */
+void WbView::OnUpdateToggleObjectRotationWithGroup(CCmdUI* pCmdUI) 
+{
+	pCmdUI->SetCheck(m_toggleObjectRotationWithGroup?1:0);
+}
+
+void WbView::OnToggleObjectRotationWithGroup() 
+{
+	m_toggleObjectRotationWithGroup = !m_toggleObjectRotationWithGroup;
+
+	Invalidate(false);
+	WbView  *pView = (WbView *)WbDoc()->GetActive2DView();
+	if (pView != NULL && pView != this) {
+		pView->Invalidate(!m_toggleObjectRotationWithGroup);
+	}
+	::AfxGetApp()->WriteProfileInt(MAIN_FRAME_SECTION, "ToggleObjectRotationWithGroup", m_toggleObjectRotationWithGroup?1:0);
 }
 
 void WbView::OnUpdateEditPaste(CCmdUI* pCmdUI) 

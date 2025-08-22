@@ -138,6 +138,13 @@ void ScriptConditionsDlg::OnEditCondition()
 	else label = "    AND ";
 	label.concat(m_condition->getUiText());
 	pList->InsertString(m_index, label.str());
+
+	// Save current selection pointers BEFORE loadList() nukes them
+    OrCondition* savedOr = m_orCondition;
+    Condition* savedCond = m_condition;
+
+	loadList(); // fixes the label bug <-------------------
+    setSel(savedOr, savedCond); // restore exact selection
 }
 
 void ScriptConditionsDlg::enableUI() 
@@ -264,13 +271,34 @@ void ScriptConditionsDlg::OnNew()
 
 void ScriptConditionsDlg::OnDelete() 
 {
-	if (m_condition && m_orCondition) {
-		m_orCondition->deleteCondition(m_condition);
-		loadList();
-	} else if (m_orCondition) {
-		m_script->deleteOrCondition(m_orCondition);
-		loadList();
-	}
+    CListBox *pList = (CListBox *)GetDlgItem(IDC_CONDITION_LIST);
+    if (!pList) return;
+
+    // Save the current index before deletion
+    int selIndex = pList->GetCurSel();
+    if (selIndex == LB_ERR) return;
+
+    // Perform the deletion
+    if (m_condition && m_orCondition) {
+        m_orCondition->deleteCondition(m_condition);
+    } 
+    else if (m_orCondition) {
+        m_script->deleteOrCondition(m_orCondition);
+    } 
+    else {
+        return; // nothing to delete
+    }
+
+    // Rebuild the list
+    loadList();
+
+    // Move selection to the previous item (or 0 if at the top)
+    int newIndex = selIndex - 1;
+    if (newIndex < 0) newIndex = 0;
+    if (pList->GetCount() > 0) {
+        pList->SetCurSel(newIndex);
+        OnSelchangeConditionList(); // update pointers/UI
+    }
 }
 
 void ScriptConditionsDlg::OnCopy() 

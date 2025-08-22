@@ -97,7 +97,9 @@ PointerTool::PointerTool(void) :
 	m_modifyUndoable(NULL),
 	m_curObject(NULL),
 	m_rotateCursor(NULL),
-	m_moveCursor(NULL)
+	m_moveCursor(NULL),
+	m_rotateObjectsWithGroup(true),
+	m_useFarthestObjectPivot(true)
 {
 	m_toolID = ID_POINTER_TOOL;
 	m_cursorID = IDC_POINTER; 
@@ -237,6 +239,11 @@ Bool PointerTool::allowPick(MapObject* pMapObj, WbView* pView)
 			return true;
 		}
 	}
+	
+	// if (pView->getShowObjects()) {
+    //     return true;
+    // }
+
 	if ((tt && !pView->getShowModels()) || (pMapObj->getFlags() & FLAG_DONT_RENDER)) {
 		return false;
 	}
@@ -407,127 +414,230 @@ void PointerTool::mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorl
 	m_isMouseDown = true;
 }
 
-/// Left button move code.
-void PointerTool::mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc)
-{
-	Coord3D cpt;
-	pView->viewToDocCoords(viewPt, &cpt, false);
-	if (m == TRACK_NONE) {
-		// See if the cursor is over an object.
-		MapObject *pObj = MapObject::getFirstMapObject();
-		m_mouseUpRotate = false;
-		m_mouseUpMove = false;
-		while (pObj) {
-			if (allowPick(pObj, pView)) {
-				TPickedStatus stat = pView->picked(pObj, cpt);
-				if (stat==PICK_ARROW) {
-					m_mouseUpRotate = true;
-					break;
+bool m_groupRotationInit = false;
+float m_startGroupAngle = 0.0f;
+
+std::map<MapObject*, Coord3D> m_originalPositions;
+std::map<MapObject*, Real> m_originalAngles;
+void PointerTool::mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc) {
+    Coord3D cpt;
+    pView->viewToDocCoords(viewPt, &cpt, false);
+    Bool KEY = (0x8000 & ::GetAsyncKeyState(VK_CONTROL)) != 0;
+	m_rotateObjectsWithGroup = ::AfxGetApp()->GetProfileInt("MainFrame", "ToggleObjectRotationWithGroup", 1);
+	m_useFarthestObjectPivot = ::AfxGetApp()->GetProfileInt("MainFrame", "TogglePivotFarthest", 1);
+
+    if (m == TRACK_NONE) {
+        MapObject *pObj = MapObject::getFirstMapObject();
+        m_mouseUpRotate = false;
+        m_mouseUpMove = false;
+        while (pObj) {
+            if (allowPick(pObj, pView)) {
+                TPickedStatus stat = pView->picked(pObj, cpt);
+                if (stat == PICK_ARROW) { m_mouseUpRotate = true; break; }
+                if (stat == PICK_CENTER) { m_mouseUpMove = true; break; }
+            }
+            pObj = pObj->getNext();
+        }
+        if (!m_mouseUpRotate) {
+            pObj = pView->picked3dObjectInView(viewPt);
+            if (allowPick(pObj, pView)) m_mouseUpMove = true;
+        }
+        if (pView->isPolygonTriggerVisible() && pickPolygon(cpt, viewPt, pView)) {
+            if (pView->GetPickConstraint() == ES_NONE || pView->GetPickConstraint() == ES_WAYPOINT) {
+                m_mouseUpMove = true;
+                m_mouseUpRotate = false;
+            }
+        }
+        return;
+    }
+
+    if (m != TRACK_L) return;
+
+    if (m_doPolyTool) {
+        PolygonTool::mouseMoved(m, viewPt, pView, pDoc);
+        return;
+    }
+
+    if (m_dragSelect) {
+        CRect box;
+        box.left = viewPt.x;
+        box.bottom = viewPt.y;
+        box.top = m_downPt2d.y;
+        box.right = m_downPt2d.x;
+        box.NormalizeRect();
+        pView->doRectFeedback(true, box);
+        pView->Invalidate();
+        return;
+    }
+
+    if (m_curObject == NULL) return;
+    pView->viewToDocCoords(viewPt, &cpt, !m_rotating);
+
+    if (!m_moving) {
+        Int dx = viewPt.x - m_downPt2d.x;
+        Int dy = viewPt.y - m_downPt2d.y;
+        if (abs(dx) > HYSTERESIS || abs(dy) > HYSTERESIS) {
+            m_moving = true;
+            m_modifyUndoable = new ModifyObjectUndoable(pDoc);
+
+            // Calculate group pivot when starting movement in group rotate mode
+            if (m_rotating && KEY) {
+                Coord3D pivot = {0, 0, 0};
+
+                if (m_useFarthestObjectPivot) {
+                    // --- Farthest pivot mode ---
+                    float maxDistSq = -1.0f;
+                    MapObject *farthestObj = NULL;
+                    MapObject *obj = MapObject::getFirstMapObject();
+                    while (obj) {
+                        if (obj->isSelected()) {
+                            Coord3D loc = *obj->getLocation();
+                            float dx = loc.x - m_downPt3d.x;
+                            float dy = loc.y - m_downPt3d.y;
+                            float distSq = dx * dx + dy * dy;
+                            if (distSq > maxDistSq) {
+                                maxDistSq = distSq;
+                                farthestObj = obj;
+                            }
+                        }
+                        obj = obj->getNext();
+                    }
+                    if (farthestObj) {
+                        pivot = *farthestObj->getLocation();
+                    }
+                } else {
+                    // --- Default average pivot mode ---
+                    int count = 0;
+                    MapObject *obj = MapObject::getFirstMapObject();
+                    while (obj) {
+                        if (obj->isSelected()) {
+                            pivot.x += obj->getLocation()->x;
+                            pivot.y += obj->getLocation()->y;
+                            pivot.z += obj->getLocation()->z;
+                            count++;
+                        }
+                        obj = obj->getNext();
+                    }
+                    if (count > 0) {
+                        pivot.x /= count;
+                        pivot.y /= count;
+                        pivot.z /= count;
+                    }
+                }
+
+                m_groupPivot = pivot;
+                m_groupRotationInit = false;
+            }
+        }
+    }
+    if (!m_moving || !m_modifyUndoable) return;
+
+    MapObject *curMapObj = MapObject::getFirstMapObject();
+    while (curMapObj) {
+        if (curMapObj->isSelected()) {
+            pView->invalObjectInView(curMapObj);
+        }
+        curMapObj = curMapObj->getNext();
+    }
+
+    CString text;
+    if (m_rotating) {
+        if (KEY) {
+            // --- FIXED GROUP ROTATION MODE ---
+            Coord3D pivot = m_groupPivot;
+
+            // On first move, store initial angle & original positions
+			if (!m_groupRotationInit) {
+				pView->snapPoint(&cpt);
+				if (pView->isLockedAngle()) {
+					m_startGroupAngle = ObjectTool::calcAngleSnapped(pivot, cpt, pView);
+				} else {
+					m_startGroupAngle = ObjectTool::calcAngle(pivot, cpt, pView);
 				}
-				if (stat==PICK_CENTER) {
-					m_mouseUpMove = true;
-					break;
+
+				m_originalPositions.clear();
+				m_originalAngles.clear();
+				MapObject* obj = MapObject::getFirstMapObject();
+				while (obj) {
+					if (obj->isSelected()) {
+						m_originalPositions[obj] = *obj->getLocation();
+						m_originalAngles[obj] = obj->getAngle();
+					}
+					obj = obj->getNext();
 				}
+				m_groupRotationInit = true;
 			}
-			pObj = pObj->getNext();
-		}
-		if (!m_mouseUpRotate) {
-			pObj = pView->picked3dObjectInView(viewPt);
-			if (allowPick(pObj, pView)) {
-				m_mouseUpMove = true;
-			}
-		}
-		if (pView->isPolygonTriggerVisible() && pickPolygon(cpt, viewPt, pView)) {
-			if (pView->GetPickConstraint() == ES_NONE || pView->GetPickConstraint() == ES_WAYPOINT) {
-				m_mouseUpMove = true;
-				m_mouseUpRotate = false;
-			}
-		}
-		return;	// setCursor will use the value of m_mouseUpRotate.  jba.
-	}
 
-	if (m != TRACK_L) return;
-	if (m_doPolyTool) {
-		PolygonTool::mouseMoved(m, viewPt, pView, pDoc);
-		return;
-	}
+            // Calculate delta rotation
+            pView->snapPoint(&cpt);
+            float currentAngle = pView->isLockedAngle()
+                ? ObjectTool::calcAngleSnapped(pivot, cpt, pView)
+                : ObjectTool::calcAngle(pivot, cpt, pView);
+            float deltaAngle = currentAngle - m_startGroupAngle;
 
-	if (m_dragSelect) {
-		CRect box;
-		box.left = viewPt.x;
-		box.bottom = viewPt.y;
-		box.top = m_downPt2d.y;
-		box.right = m_downPt2d.x;
-		box.NormalizeRect();
-		pView->doRectFeedback(true, box);
-		pView->Invalidate();
-		return;
-	}
+            // Rotate all selected objects from original positions
+            MapObject* obj = MapObject::getFirstMapObject();
+            while (obj) {
+                if (obj->isSelected()) {
+                    Coord3D origLoc = m_originalPositions[obj];
+                    float relX = origLoc.x - pivot.x;
+                    float relY = origLoc.y - pivot.y;
+                    float newX = relX * cos(deltaAngle) - relY * sin(deltaAngle);
+                    float newY = relX * sin(deltaAngle) + relY * cos(deltaAngle);
+                    origLoc.x = pivot.x + newX;
+                    origLoc.y = pivot.y + newY;
+                    obj->setLocation(&origLoc);
 
-	if (m_curObject == NULL) {
-		return;
-	}
-	pView->viewToDocCoords(viewPt, &cpt, !m_rotating);
-	if (!m_moving) {
-		// always use view coords (not doc coords) for hysteresis
-		Int dx = viewPt.x-m_downPt2d.x;
-		Int dy = viewPt.y-m_downPt2d.y;
-		if (abs(dx)>HYSTERESIS || abs(dy)>HYSTERESIS) {
-			m_moving = true;
-			m_modifyUndoable = new ModifyObjectUndoable(pDoc);
-		}
-	}
-	if (!m_moving || !m_modifyUndoable) return;
+                    // Rotate the object itself if toggle is on
+                    if (m_rotateObjectsWithGroup) {
+                        obj->setAngle(m_originalAngles[obj] + deltaAngle);
+                    }
+                }
+                obj = obj->getNext();
+            }
 
-	MapObject *curMapObj = MapObject::getFirstMapObject();
-	while (curMapObj) {
-		if (curMapObj->isSelected()) {
-			//pDoc->invalObject(curMapObj);			// invaling in all views can be too slow.
-			pView->invalObjectInView(curMapObj);	
-		}
-		curMapObj = curMapObj->getNext();
-	}
+            // UI angle display
+            float angleDeg = pView->isLockedAngle()
+                ? ObjectTool::getAngleDegreesSnapped15(pivot, cpt, pView)
+                : ObjectTool::getAngleDegrees360(pivot, cpt, pView);
+            text.Format(_T("Group Angle: %.2f"), angleDeg);
+            m_lastPointerInfo = text;
+        } else {
+            // --- NORMAL ROTATION ---
+            Coord3D center = *m_curObject->getLocation();
+            float angleDeg;
+            pView->snapPoint(&cpt);
+            if (pView->isLockedAngle()) {
+                m_modifyUndoable->RotateTo(ObjectTool::calcAngleSnapped(center, cpt, pView));
+                angleDeg = ObjectTool::getAngleDegreesSnapped15(center, cpt, pView);
+            } else {
+                m_modifyUndoable->RotateTo(ObjectTool::calcAngle(center, cpt, pView));
+                angleDeg = ObjectTool::getAngleDegrees360(center, cpt, pView);
+            }
+            text.Format(_T("Angle: %.2f"), angleDeg);
+            m_lastPointerInfo = text;
+        }
+    } else {
+        // --- MOVEMENT ---
+        pView->snapPoint(&cpt);
+        Real xOffset = (cpt.x - m_downPt3d.x);
+        Real yOffset = (cpt.y - m_downPt3d.y);
+        m_modifyUndoable->SetOffset(xOffset, yOffset);
+        Coord3D center = *m_curObject->getLocation();
+        text.Format(_T("X: %.2f\nY: %.2f"), center.x, center.y);
+        m_lastPointerInfo = text;
+    }
 
-	CString text;
-	if (m_rotating) {
-		Coord3D center = *m_curObject->getLocation();
-		float angleDeg;
-		// Support Snap point for rotation similar to placing or dragging objects to the world - Adriane
-		// I hate coding this piece of shit
-		pView->snapPoint(&cpt); 
-		if (pView->isLockedAngle()) {
-			m_modifyUndoable->RotateTo(ObjectTool::calcAngleSnapped(center, cpt, pView));
-			angleDeg = ObjectTool::getAngleDegreesSnapped15(center, cpt, pView);
-		} else {
-			m_modifyUndoable->RotateTo(ObjectTool::calcAngle(center, cpt, pView));
-			angleDeg = ObjectTool::getAngleDegrees360(center, cpt, pView);
-		}
-		text.Format(_T("Angle: %.2f"), angleDeg);
-		m_lastPointerInfo = text;
-	} else {
-		pView->snapPoint(&cpt);
-		Real xOffset = (cpt.x-m_downPt3d.x);
-		Real yOffset = (cpt.y-m_downPt3d.y);
-		m_modifyUndoable->SetOffset(xOffset, yOffset);
+    curMapObj = MapObject::getFirstMapObject();
+    while (curMapObj) {
+        if (curMapObj->isSelected()) {
+            pView->invalObjectInView(curMapObj);
+        }
+        curMapObj = curMapObj->getNext();
+    }
 
-		Coord3D center = *m_curObject->getLocation();
-		text.Format(_T("X: %.2f\nY: %.2f"), center.x, center.y);
-		m_lastPointerInfo = text;
-	}
-
-	curMapObj = MapObject::getFirstMapObject();
-	while (curMapObj) {
-		if (curMapObj->isSelected()) {
-			//pDoc->invalObject(curMapObj);			// invaling in all views can be too slow.
-			pView->invalObjectInView(curMapObj);	
-		}
-		curMapObj = curMapObj->getNext();
-	}
-
-	pDoc->updateAllViews();
-
+    pDoc->updateAllViews();
 }
-
 
 /** Execute the tool on mouse up - if modifying, do the modify, 
 else update the selection. */

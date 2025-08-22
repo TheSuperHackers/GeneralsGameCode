@@ -84,6 +84,7 @@
 #include "Win32Device/GameClient/Win32Mouse.h"
 #include "Win32Device/Common/Win32LocalFileSystem.h"
 #include "Win32Device/Common/Win32BIGFileSystem.h"
+#include "ToastDialog.h"
 
 #include "Common/WellKnownKeys.h"
 #ifdef _INTERNAL
@@ -511,7 +512,7 @@ BOOL CWorldBuilderApp::InitInstance()
 		"WARNING: This build of WorldBuilder is a work in progress.\n"
 		"Unauthorized use or distribution without notifying Adriane [Deathscythe] is discouraged.\n\n"
 		"This version is still in testing and may corrupt or break your map, so please make a backup before using it.\n\n"
-		"Build Version: c84fcc39\n"
+		"Build Version: b0c2e7d\n"
 		"If you find a bug or do want to suggest a feature, please report it on our WorldBuilder Discord server:\nhttps://discord.gg/tJ6zyGb",
 		MB_ICONEXCLAMATION | MB_OK
 	);
