@@ -2705,16 +2705,13 @@ void ControlBar::setPortraitByObject( Object *obj )
 // ------------------------------------------------------------------------------------------------
 void ControlBar::showRallyPoint( const Coord3D *loc )
 {
-
 	// if loc is NULL, destroy any rally point drawble we have shown
 	if( loc == NULL )
 	{
-
 		// destroy rally point drawable if present
 		if( m_rallyPointDrawableID != INVALID_DRAWABLE_ID )
 			TheGameClient->destroyDrawable( TheGameClient->findDrawableByID( m_rallyPointDrawableID ) );
 		m_rallyPointDrawableID = INVALID_DRAWABLE_ID;
-
 	}  // end if
 	else
 	{
@@ -2723,7 +2720,6 @@ void ControlBar::showRallyPoint( const Coord3D *loc )
 		// create a rally point drawble if necessary
 		if( m_rallyPointDrawableID == INVALID_DRAWABLE_ID )
 		{
-
 			const ThingTemplate* ttn = TheThingFactory->findTemplate("RallyPointMarker");
 			marker = TheThingFactory->newDrawable( ttn );
 			DEBUG_ASSERTCRASH( marker, ("showRallyPoint: Unable to create rally point drawable") );
@@ -2732,7 +2728,6 @@ void ControlBar::showRallyPoint( const Coord3D *loc )
 				marker->setDrawableStatus(DRAWABLE_STATUS_NO_SAVE);
 				m_rallyPointDrawableID = marker->getID();
 			}
-
 		}  // end if
 		else
 			marker = TheGameClient->findDrawableByID( m_rallyPointDrawableID );
@@ -2753,9 +2748,7 @@ void ControlBar::showRallyPoint( const Coord3D *loc )
 			else
 				marker->setIndicatorColor(player->getPlayerColor());
 		}
-
 	}  // end else
-
 }  // end showRallyPoint
 
 // ------------------------------------------------------------------------------------------------
