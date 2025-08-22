@@ -2688,43 +2688,43 @@ void ControlBar::showRallyPoint( const Coord3D *loc )
 		// destroy rally point drawable if present
 		if( m_rallyPointDrawableID != INVALID_DRAWABLE_ID )
 			TheGameClient->destroyDrawable( TheGameClient->findDrawableByID( m_rallyPointDrawableID ) );
+
 		m_rallyPointDrawableID = INVALID_DRAWABLE_ID;
+		return;
+	}
+
+	Drawable *marker = NULL;
+
+	// create a rally point drawble if necessary
+	if( m_rallyPointDrawableID == INVALID_DRAWABLE_ID )
+	{
+		const ThingTemplate* ttn = TheThingFactory->findTemplate("RallyPointMarker");
+		marker = TheThingFactory->newDrawable( ttn );
+		DEBUG_ASSERTCRASH( marker, ("showRallyPoint: Unable to create rally point drawable") );
+		if (marker)
+		{
+			marker->setDrawableStatus(DRAWABLE_STATUS_NO_SAVE);
+			m_rallyPointDrawableID = marker->getID();
+		}
 	}
 	else
+		marker = TheGameClient->findDrawableByID( m_rallyPointDrawableID );
+
+	// sanity
+	DEBUG_ASSERTCRASH( marker, ("showRallyPoint: No rally point marker found" ) );
+
+	// set the position of the rally point drawble to the position passed in
+	marker->setPosition( loc );
+	marker->setOrientation( TheGlobalData->m_downwindAngle );//To blow down wind -- ML
+
+	// set the marker colors to that of the local player
+	Player* player = TheControlBar->getCurrentlyViewedPlayer();
+	if (player)
 	{
-		Drawable *marker = NULL;
-
-		// create a rally point drawble if necessary
-		if( m_rallyPointDrawableID == INVALID_DRAWABLE_ID )
-		{
-			const ThingTemplate* ttn = TheThingFactory->findTemplate("RallyPointMarker");
-			marker = TheThingFactory->newDrawable( ttn );
-			DEBUG_ASSERTCRASH( marker, ("showRallyPoint: Unable to create rally point drawable") );
-			if (marker)
-			{
-				marker->setDrawableStatus(DRAWABLE_STATUS_NO_SAVE);
-				m_rallyPointDrawableID = marker->getID();
-			}
-		}
+		if (TheGlobalData->m_timeOfDay == TIME_OF_DAY_NIGHT)
+			marker->setIndicatorColor(player->getPlayerNightColor());
 		else
-			marker = TheGameClient->findDrawableByID( m_rallyPointDrawableID );
-
-		// sanity
-		DEBUG_ASSERTCRASH( marker, ("showRallyPoint: No rally point marker found" ) );
-
-		// set the position of the rally point drawble to the position passed in
-		marker->setPosition( loc );
-		marker->setOrientation( TheGlobalData->m_downwindAngle );//To blow down wind -- ML
-
-		// set the marker colors to that of the local player
-		Player* player = TheControlBar->getCurrentlyViewedPlayer();
-		if (player)
-		{
-			if (TheGlobalData->m_timeOfDay == TIME_OF_DAY_NIGHT)
-				marker->setIndicatorColor(player->getPlayerNightColor());
-			else
-				marker->setIndicatorColor(player->getPlayerColor());
-		}
+			marker->setIndicatorColor(player->getPlayerColor());
 	}
 }
 
