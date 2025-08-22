@@ -128,7 +128,7 @@ public:
 	Bool getFPSLimitEnabled(void);
 	Bool getNoDynamicLODEnabled(void);
 	Bool getBuildingOcclusionEnabled(void);
-	Bool getMoneyPerMinute(void);
+	Bool getShowMoneyPerMinute(void);
 	Int getParticleCap(void);
 
 	Int	 getCampaignDifficulty(void);

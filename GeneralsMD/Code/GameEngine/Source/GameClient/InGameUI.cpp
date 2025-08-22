@@ -1854,7 +1854,7 @@ void InGameUI::update( void )
 	if( moneyPlayer)
 	{
 		Money *money = moneyPlayer->getMoney();
-		Bool showIncome = TheGlobalData->m_moneyPerMinute;
+		Bool showIncome = TheGlobalData->m_showMoneyPerMinute;
 		if (!showIncome)
 		{
 			Int currentMoney = money->countMoney();
@@ -1879,22 +1879,24 @@ void InGameUI::update( void )
 				UnicodeString buffer;
 				UnicodeString moneyStr;
 				UnicodeString incomeStr;
+
 				if (currentMoney >= 100000)
 				{
-					moneyStr.format(L"%dK", currentMoney / 1000);
+					moneyStr.format(L"%dk", currentMoney / 1000);
 				}
 				else
 				{
 					moneyStr.format(L"%d", currentMoney);
 				}
+
 				if (cashPerMin >= 10000)
 				{
-					incomeStr.format(L"%dK", cashPerMin / 1000);
+					incomeStr.format(L"%dk", cashPerMin / 1000);
 				}
 				else if (cashPerMin >= 1000)
 				{
 					UnsignedInt k = cashPerMin / 100;
-					incomeStr.format(L"%d.%dK", k / 10, k % 10);
+					incomeStr.format(L"%d.%dk", k / 10, k % 10);
 				}
 				else
 				{

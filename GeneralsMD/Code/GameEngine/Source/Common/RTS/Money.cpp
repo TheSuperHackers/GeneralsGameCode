@@ -44,6 +44,7 @@
 
 #include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
 #include "Common/Money.h"
+#include <numeric>
 
 #include "Common/AudioSettings.h"
 #include "Common/GameAudio.h"
@@ -109,7 +110,7 @@ void Money::setStartingCash(UnsignedInt amount)
 	m_money = amount;
 	m_currentBucket = 0;
 	m_lastBucketFrame = 0;
-	for (UnsignedInt i = 0; i < 60; ++i)
+	for (UnsignedInt i = 0; i < ARRAY_SIZE(m_incomeBuckets); ++i)
 		m_incomeBuckets[i] = 0;
 }
 
@@ -124,11 +125,9 @@ void Money::updateIncomeBucket()
 	{
 		if (diff > 60)
 			diff = 60;
+		m_currentBucket = (m_currentBucket + diff) % ARRAY_SIZE(m_incomeBuckets);
 		for (UnsignedInt i = 0; i < diff; ++i)
-		{
-			m_currentBucket = (m_currentBucket + 1) % 60;
 			m_incomeBuckets[m_currentBucket] = 0;
-		}
 	}
 	m_lastBucketFrame = frame;
 }
@@ -136,10 +135,7 @@ void Money::updateIncomeBucket()
 // ------------------------------------------------------------------------------------------------
 UnsignedInt Money::getCashPerMinute() const
 {
-	UnsignedInt sum = 0;
-	for (UnsignedInt i = 0; i < 60; ++i)
-		sum += m_incomeBuckets[i];
-	return sum;
+	return std::accumulate(m_incomeBuckets, m_incomeBuckets + ARRAY_SIZE(m_incomeBuckets), 0u);
 }
 
 void Money::triggerAudioEvent(const AudioEventRTS& audioEvent)

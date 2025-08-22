@@ -406,7 +406,7 @@ public:
 	Bool m_useCameraInReplay;
 
 	// TheSuperHackers @feature L3-M 21/08/2025 toggle the money per minute display; 'no' shows only the original current money
-	Bool m_moneyPerMinute;
+	Bool m_showMoneyPerMinute;
 
 	// TheSuperHackers @feature Mauller 21/06/2025 allow the system time and game time font size to be set, a size of zero disables them
 	Int m_systemTimeFontSize;
