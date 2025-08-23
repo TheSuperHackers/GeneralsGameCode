@@ -73,6 +73,12 @@
 #define ENABLE_FILESYSTEM_EXISTENCE_CACHE (1)
 #endif
 
+// Enable prioritization of textures by size. This will improve the texture quality of 481 textures in Zero Hour
+// by using the larger resolution textures from Generals. Content wise these textures are identical.
+#ifndef PRIORITIZE_TEXTURES_BY_SIZE
+#define PRIORITIZE_TEXTURES_BY_SIZE (1)
+#endif
+
 // Enable obsolete code. This mainly refers to code that existed in Generals but was removed in GeneralsMD.
 // Disable and remove this when Generals and GeneralsMD are merged.
 #if RTS_GENERALS
