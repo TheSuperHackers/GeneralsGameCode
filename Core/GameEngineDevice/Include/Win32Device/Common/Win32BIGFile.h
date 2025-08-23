@@ -38,7 +38,7 @@
 class Win32BIGFile : public ArchiveFile
 {
 	public:
-		Win32BIGFile();
+		Win32BIGFile(AsciiString name, AsciiString path);
 		virtual ~Win32BIGFile();
 
 		virtual Bool					getFileInfo(const AsciiString& filename, FileInfo *fileInfo) const;	///< fill in the fileInfo struct with info about the requested file.

@@ -21,9 +21,43 @@
 #include <Utility/CppMacros.h>
 #include <utility>
 #include <algorithm>
+#include <map>
 
 namespace stl
 {
+
+// Convenience struct to avoid the std::pair<iterator, iterator>
+template <typename Container>
+struct range
+{
+	typedef typename Container::iterator iterator;
+
+	range(iterator b, iterator e) : begin(b), end(e) {}
+
+	iterator get() const { return begin; }
+	bool valid() const { return begin != end; }
+	ptrdiff_t distance() const { return std::distance(begin, end); }
+
+	iterator begin;
+	iterator end;
+};
+
+template <typename Container>
+struct const_range
+{
+	typedef typename Container::const_iterator iterator;
+
+	const_range(iterator b, iterator e) : begin(b), end(e) {}
+	const_range(const range<Container>& other) : begin(other.begin), end(other.end) {}
+
+	iterator get() const { return begin; }
+	bool valid() const { return begin != end; }
+	ptrdiff_t distance() const { return std::distance(begin, end); }
+
+	iterator begin;
+	iterator end;
+};
+
 
 // Finds first matching element in vector-like container and erases it.
 template <typename Container>
@@ -71,6 +105,40 @@ bool push_back_unique(Container& container, const typename Container::value_type
 	}
 
 	return false;
+}
+
+
+template <typename Iter>
+Iter advance_in_range(Iter first, Iter last, std::ptrdiff_t n)
+{
+	if (n <= 0)
+		return first;
+
+	const std::ptrdiff_t count = std::distance(first, last);
+
+	if (n >= count)
+		return last;
+
+	std::advance(first, n);
+	return first;
+}
+
+template <typename Key, typename Val>
+range<std::multimap<Key, Val> > get_range(std::multimap<Key, Val>& mm, const Key& key, std::ptrdiff_t n = 0)
+{
+	typedef typename std::multimap<Key, Val>::iterator Iter;
+	const std::pair<Iter, Iter> pair = mm.equal_range(key);
+	const Iter it = advance_in_range(pair.first, pair.second, n);
+	return range<std::multimap<Key, Val> >(it, pair.second);
+}
+
+template <typename Key, typename Val>
+const_range<std::multimap<Key, Val> > get_range(const std::multimap<Key, Val>& mm, const Key& key, std::ptrdiff_t n = 0)
+{
+	typedef typename std::multimap<Key, Val>::const_iterator Iter;
+	const std::pair<Iter, Iter> pair = mm.equal_range(key);
+	const Iter it = advance_in_range(pair.first, pair.second, n);
+	return const_range<std::multimap<Key, Val> >(it, pair.second);
 }
 
 } // namespace stl

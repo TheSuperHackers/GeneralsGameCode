@@ -38,7 +38,9 @@
 // Win32BIGFile::Win32BIGFile
 //============================================================================
 
-Win32BIGFile::Win32BIGFile()
+Win32BIGFile::Win32BIGFile(AsciiString name, AsciiString path)
+	: m_name(name)
+	, m_path(path)
 {
 
 }
