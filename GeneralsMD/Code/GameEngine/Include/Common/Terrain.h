@@ -40,6 +40,6 @@
 // USER INCLUDES //////////////////////////////////////////////////////////////
 
 // DEFINE /////////////////////////////////////////////////////////////////////
-#define MAX_TERRAIN_NAME_LEN 64  ///< max size of map filename with extenstion
+#define MAX_TERRAIN_NAME_LEN 64 ///< max size of map filename with extenstion
 
-#endif  // end __TERRAIN_H_
+#endif // end __TERRAIN_H_

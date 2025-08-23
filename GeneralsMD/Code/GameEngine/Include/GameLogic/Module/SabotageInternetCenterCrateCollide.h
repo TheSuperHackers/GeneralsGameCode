@@ -46,49 +46,44 @@ class Thing;
 class SabotageInternetCenterCrateCollideModuleData : public CrateCollideModuleData
 {
 public:
-	UnsignedInt m_sabotageFrames;
+    UnsignedInt m_sabotageFrames;
 
-	SabotageInternetCenterCrateCollideModuleData()
-	{
-		m_sabotageFrames = 0;
-	}
+    SabotageInternetCenterCrateCollideModuleData() { m_sabotageFrames = 0; }
 
-	static void buildFieldParse(MultiIniFieldParse& p)
-	{
-    CrateCollideModuleData::buildFieldParse(p);
+    static void buildFieldParse(MultiIniFieldParse &p)
+    {
+        CrateCollideModuleData::buildFieldParse(p);
 
-		static const FieldParse dataFieldParse[] =
-		{
-			{ "SabotageDuration", INI::parseDurationUnsignedInt, NULL, offsetof( SabotageInternetCenterCrateCollideModuleData, m_sabotageFrames ) },
-			{ 0, 0, 0, 0 }
-		};
-		p.add( dataFieldParse );
-	}
-
+        static const FieldParse dataFieldParse[] = {
+            {"SabotageDuration",
+             INI::parseDurationUnsignedInt,
+             NULL,
+             offsetof(SabotageInternetCenterCrateCollideModuleData, m_sabotageFrames)},
+            {0, 0, 0, 0}};
+        p.add(dataFieldParse);
+    }
 };
 
 //-------------------------------------------------------------------------------------------------
 class SabotageInternetCenterCrateCollide : public CrateCollide
 {
-
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( SabotageInternetCenterCrateCollide, "SabotageInternetCenterCrateCollide" )
-	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( SabotageInternetCenterCrateCollide, SabotageInternetCenterCrateCollideModuleData );
+    MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(SabotageInternetCenterCrateCollide, "SabotageInternetCenterCrateCollide")
+    MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA(
+        SabotageInternetCenterCrateCollide,
+        SabotageInternetCenterCrateCollideModuleData);
 
 public:
-
-	SabotageInternetCenterCrateCollide( Thing *thing, const ModuleData* moduleData );
-	// virtual destructor prototype provided by memory pool declaration
+    SabotageInternetCenterCrateCollide(Thing *thing, const ModuleData *moduleData);
+    // virtual destructor prototype provided by memory pool declaration
 
 protected:
+    /// This allows specific vetoes to certain types of crates and their data
+    virtual Bool isValidToExecute(const Object *other) const;
 
-	/// This allows specific vetoes to certain types of crates and their data
-	virtual Bool isValidToExecute( const Object *other ) const;
+    /// This is the game logic execution function that all real CrateCollides will implement
+    virtual Bool executeCrateBehavior(Object *other);
 
-	/// This is the game logic execution function that all real CrateCollides will implement
-	virtual Bool executeCrateBehavior( Object *other );
-
-	virtual Bool isSabotageBuildingCrateCollide() const { return TRUE; }
-
+    virtual Bool isSabotageBuildingCrateCollide() const { return TRUE; }
 };
 
 #endif

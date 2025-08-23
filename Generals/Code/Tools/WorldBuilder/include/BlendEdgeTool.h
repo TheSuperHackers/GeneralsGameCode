@@ -29,24 +29,22 @@
 class WorldHeightMapEdit;
 /*************************************************************************/
 /**                             BlendEdgeTool
-	 Does the BlendEdgesOut tool operation.
+     Does the BlendEdgesOut tool operation.
 ***************************************************************************/
 ///  Blend edges out tool.
 class BlendEdgeTool : public Tool
 {
 protected:
-	Coord3D m_downPt;
+    Coord3D m_downPt;
 
 public:
-	BlendEdgeTool(void);
-	~BlendEdgeTool(void);
+    BlendEdgeTool(void);
+    ~BlendEdgeTool(void);
 
 public:
-	/// Perform tool on mouse down.
-	virtual void mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc);
-	virtual void mouseUp(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc);
-
+    /// Perform tool on mouse down.
+    virtual void mouseDown(TTrackingMode m, CPoint viewPt, WbView *pView, CWorldBuilderDoc *pDoc);
+    virtual void mouseUp(TTrackingMode m, CPoint viewPt, WbView *pView, CWorldBuilderDoc *pDoc);
 };
 
-
-#endif //TOOL_H
+#endif // TOOL_H

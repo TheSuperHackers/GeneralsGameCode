@@ -33,179 +33,176 @@
 
 void registerDLL(const char *dllName)
 {
-	HINSTANCE hLib = LoadLibrary(dllName);
-	FARPROC lpDllEntryPoint;
+    HINSTANCE hLib = LoadLibrary(dllName);
+    FARPROC lpDllEntryPoint;
 
-	if (hLib < (HINSTANCE)HINSTANCE_ERROR)
-	{
-		return;
-	}
+    if (hLib < (HINSTANCE)HINSTANCE_ERROR)
+    {
+        return;
+    }
 
-	// Find the entry point.
-	(FARPROC&)lpDllEntryPoint = GetProcAddress(hLib,
-		"DllRegisterServer");
-	if (lpDllEntryPoint != NULL)
-		(*lpDllEntryPoint)();
-	else
-		;//unable to locate entry point
+    // Find the entry point.
+    (FARPROC &)lpDllEntryPoint = GetProcAddress(hLib, "DllRegisterServer");
+    if (lpDllEntryPoint != NULL)
+        (*lpDllEntryPoint)();
+    else
+        ; // unable to locate entry point
 }
-
-
 
 HINSTANCE g_hInst = NULL;
 
 LRESULT CALLBACK MainDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 
-int APIENTRY WinMain(HINSTANCE hInstance,
-                     HINSTANCE hPrevInstance,
-                     LPSTR     lpCmdLine,
-                     int       nCmdShow)
+int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
-	g_hInst = hInstance;
+    g_hInst = hInstance;
 
-	checkInstalledWolapiVersion();
+    checkInstalledWolapiVersion();
 
-	DialogBox(g_hInst, (LPCTSTR)IDD_MAINBOX, NULL, (DLGPROC)MainDialogProc);
+    DialogBox(g_hInst, (LPCTSTR)IDD_MAINBOX, NULL, (DLGPROC)MainDialogProc);
 
-	return 0;
+    return 0;
 }
-
 
 // Mesage handler for generals setup box.
 LRESULT CALLBACK GeneralsSetupDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
-	switch (message)
-	{
-		case WM_INITDIALOG:
-			{
-				SetDlgItemText(hDlg, IDC_EDIT_PATH, g_generalsFilename);
-				SetDlgItemText(hDlg, IDC_EDIT_SERIAL, g_generalsSerial);
-				return TRUE;
-			}
+    switch (message)
+    {
+        case WM_INITDIALOG:
+        {
+            SetDlgItemText(hDlg, IDC_EDIT_PATH, g_generalsFilename);
+            SetDlgItemText(hDlg, IDC_EDIT_SERIAL, g_generalsSerial);
+            return TRUE;
+        }
 
-		case WM_COMMAND:
-			switch(LOWORD(wParam))
-			{
-			case IDOK:
-				{
-					char genPath[_MAX_PATH], genSerial[1024];
-					GetDlgItemText(hDlg, IDC_EDIT_PATH, genPath, _MAX_PATH);
-					GetDlgItemText(hDlg, IDC_EDIT_SERIAL, genSerial, 1024);
-					setupGenerals( genPath, genSerial );
-					EndDialog(hDlg, LOWORD(wParam));
-					return TRUE;
-				}
+        case WM_COMMAND:
+            switch (LOWORD(wParam))
+            {
+                case IDOK:
+                {
+                    char genPath[_MAX_PATH], genSerial[1024];
+                    GetDlgItemText(hDlg, IDC_EDIT_PATH, genPath, _MAX_PATH);
+                    GetDlgItemText(hDlg, IDC_EDIT_SERIAL, genSerial, 1024);
+                    setupGenerals(genPath, genSerial);
+                    EndDialog(hDlg, LOWORD(wParam));
+                    return TRUE;
+                }
 
-			case IDCANCEL:
-				{
-					EndDialog(hDlg, LOWORD(wParam));
-					return TRUE;
-				}
-			}
-			break;
-	}
+                case IDCANCEL:
+                {
+                    EndDialog(hDlg, LOWORD(wParam));
+                    return TRUE;
+                }
+            }
+            break;
+    }
     return FALSE;
 }
 
 void updateDisplay(HWND hDlg)
 {
-	checkInstalledWolapiVersion();
-	if (g_wolapiInstalled)
-	{
-		char buf[200];
-		sprintf(buf, "%d.%d (%s)", MAJOR(g_wolapiRealVersion), MINOR(g_wolapiRealVersion), g_wolapiRealFilename);
-		SetDlgItemText(hDlg, IDC_TEXT_WOLVER, buf);
-	}
-	else
-	{
-		SetDlgItemText(hDlg, IDC_TEXT_WOLVER, "Not installed");
-	}
-	SetDlgItemText(hDlg, IDC_TEXT_WOLDIR, g_wolapiRegFilename);
-	SetDlgItemText(hDlg, IDC_TEXT_GENERALSDIR, g_generalsFilename);
+    checkInstalledWolapiVersion();
+    if (g_wolapiInstalled)
+    {
+        char buf[200];
+        sprintf(buf, "%d.%d (%s)", MAJOR(g_wolapiRealVersion), MINOR(g_wolapiRealVersion), g_wolapiRealFilename);
+        SetDlgItemText(hDlg, IDC_TEXT_WOLVER, buf);
+    }
+    else
+    {
+        SetDlgItemText(hDlg, IDC_TEXT_WOLVER, "Not installed");
+    }
+    SetDlgItemText(hDlg, IDC_TEXT_WOLDIR, g_wolapiRegFilename);
+    SetDlgItemText(hDlg, IDC_TEXT_GENERALSDIR, g_generalsFilename);
 }
 
 // Mesage handler for main dialog box.
 LRESULT CALLBACK MainDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
-	switch (message)
-	{
-		case WM_INITDIALOG:
-			{
-				updateDisplay(hDlg);
-				return TRUE;
-			}
+    switch (message)
+    {
+        case WM_INITDIALOG:
+        {
+            updateDisplay(hDlg);
+            return TRUE;
+        }
 
-		case WM_COMMAND:
-			switch(LOWORD(wParam))
-			{
-			case IDOK:
-			case IDCANCEL:
-				{
-					EndDialog(hDlg, LOWORD(wParam));
-					return TRUE;
-				}
-			case IDC_SETUP_GENERALS:
-				{
-					DialogBox(g_hInst, (LPCTSTR)IDD_GENERALSSETUPBOX, hDlg, (DLGPROC)GeneralsSetupDialogProc);
-					updateDisplay(hDlg);
-					break;
-				}
-			case IDC_UNINSTALL_GENERALS:
-				{
-					if (MessageBox(hDlg, "Are you sure you want to delete Generals registry entries?", "Warning!", MB_OKCANCEL) == IDOK)
-					{
-						MessageBox(hDlg, "Oops! Can't do that yet!", "Unimplemented", MB_OK);
-						updateDisplay(hDlg);
-					}
-					break;
-				}
-			case IDC_DEBUG_WOLAPI:
-				{
-					if (g_wolapiInstalled)
-					{
-						if (MessageBox(hDlg, "Are you sure you want to overwrite installed WOLAPI?", "Warning!", MB_OKCANCEL) == IDOK)
-						{
-							registerDLL("woldbg.dll");
-							updateDisplay(hDlg);
-						}
-					}
-					else
-					{
-						DialogBox(g_hInst, (LPCTSTR)IDD_GENERALSSETUPBOX, hDlg, (DLGPROC)MainDialogProc);
-					}
-					break;
-				}
-			case IDC_RELEASE_WOLAPI:
-				{
-					if (g_wolapiInstalled)
-					{
-						if (MessageBox(hDlg, "Are you sure you want to overwrite installed WOLAPI?", "Warning!", MB_OKCANCEL) == IDOK)
-						{
-							registerDLL("wolapi.dll");
-							updateDisplay(hDlg);
-						}
-					}
-					else
-					{
-						DialogBox(g_hInst, (LPCTSTR)IDD_GENERALSSETUPBOX, hDlg, (DLGPROC)MainDialogProc);
-						updateDisplay(hDlg);
-					}
-					break;
-				}
-			case IDC_UNINSTALL_WOLAPI:
-				{
-					if (g_wolapiInstalled)
-					{
-						MessageBox(hDlg, "Oops! Can't do that yet!", "Unimplemented", MB_OK);
-						updateDisplay(hDlg);
-					}
-					break;
-				}
-			}
-			break;
-	}
+        case WM_COMMAND:
+            switch (LOWORD(wParam))
+            {
+                case IDOK:
+                case IDCANCEL:
+                {
+                    EndDialog(hDlg, LOWORD(wParam));
+                    return TRUE;
+                }
+                case IDC_SETUP_GENERALS:
+                {
+                    DialogBox(g_hInst, (LPCTSTR)IDD_GENERALSSETUPBOX, hDlg, (DLGPROC)GeneralsSetupDialogProc);
+                    updateDisplay(hDlg);
+                    break;
+                }
+                case IDC_UNINSTALL_GENERALS:
+                {
+                    if (MessageBox(
+                            hDlg,
+                            "Are you sure you want to delete Generals registry entries?",
+                            "Warning!",
+                            MB_OKCANCEL)
+                        == IDOK)
+                    {
+                        MessageBox(hDlg, "Oops! Can't do that yet!", "Unimplemented", MB_OK);
+                        updateDisplay(hDlg);
+                    }
+                    break;
+                }
+                case IDC_DEBUG_WOLAPI:
+                {
+                    if (g_wolapiInstalled)
+                    {
+                        if (MessageBox(hDlg, "Are you sure you want to overwrite installed WOLAPI?", "Warning!", MB_OKCANCEL)
+                            == IDOK)
+                        {
+                            registerDLL("woldbg.dll");
+                            updateDisplay(hDlg);
+                        }
+                    }
+                    else
+                    {
+                        DialogBox(g_hInst, (LPCTSTR)IDD_GENERALSSETUPBOX, hDlg, (DLGPROC)MainDialogProc);
+                    }
+                    break;
+                }
+                case IDC_RELEASE_WOLAPI:
+                {
+                    if (g_wolapiInstalled)
+                    {
+                        if (MessageBox(hDlg, "Are you sure you want to overwrite installed WOLAPI?", "Warning!", MB_OKCANCEL)
+                            == IDOK)
+                        {
+                            registerDLL("wolapi.dll");
+                            updateDisplay(hDlg);
+                        }
+                    }
+                    else
+                    {
+                        DialogBox(g_hInst, (LPCTSTR)IDD_GENERALSSETUPBOX, hDlg, (DLGPROC)MainDialogProc);
+                        updateDisplay(hDlg);
+                    }
+                    break;
+                }
+                case IDC_UNINSTALL_WOLAPI:
+                {
+                    if (g_wolapiInstalled)
+                    {
+                        MessageBox(hDlg, "Oops! Can't do that yet!", "Unimplemented", MB_OK);
+                        updateDisplay(hDlg);
+                    }
+                    break;
+                }
+            }
+            break;
+    }
     return FALSE;
 }
-
-
-

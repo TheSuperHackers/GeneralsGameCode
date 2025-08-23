@@ -35,63 +35,61 @@ class Vector3Randomizer;
 /////////////////////////////////////////////////////////////////////////////
 class VolumeRandomDialogClass : public CDialog
 {
-// Construction
+    // Construction
 public:
-	VolumeRandomDialogClass (Vector3Randomizer *randomizer, CWnd *pParent = NULL);   // standard constructor
+    VolumeRandomDialogClass(Vector3Randomizer *randomizer, CWnd *pParent = NULL); // standard constructor
 
-// Dialog Data
-	//{{AFX_DATA(VolumeRandomDialogClass)
-	enum { IDD = IDD_VOLUME_RANDOMIZER };
-	CSpinButtonCtrl	m_SphereRadiusSpin;
-	CSpinButtonCtrl	m_CylinderRadiusSpin;
-	CSpinButtonCtrl	m_CylinderHeightSpin;
-	CSpinButtonCtrl	m_BoxZSpin;
-	CSpinButtonCtrl	m_BoxYSpin;
-	CSpinButtonCtrl	m_BoxXSpin;
-	//}}AFX_DATA
+    // Dialog Data
+    //{{AFX_DATA(VolumeRandomDialogClass)
+    enum
+    {
+        IDD = IDD_VOLUME_RANDOMIZER
+    };
+    CSpinButtonCtrl m_SphereRadiusSpin;
+    CSpinButtonCtrl m_CylinderRadiusSpin;
+    CSpinButtonCtrl m_CylinderHeightSpin;
+    CSpinButtonCtrl m_BoxZSpin;
+    CSpinButtonCtrl m_BoxYSpin;
+    CSpinButtonCtrl m_BoxXSpin;
+    //}}AFX_DATA
 
-
-// Overrides
-	// ClassWizard generated virtual function overrides
-	//{{AFX_VIRTUAL(VolumeRandomDialogClass)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
-	virtual BOOL OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult);
-	//}}AFX_VIRTUAL
-
-// Implementation
+    // Overrides
+    // ClassWizard generated virtual function overrides
+    //{{AFX_VIRTUAL(VolumeRandomDialogClass)
 protected:
+    virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
+    virtual BOOL OnNotify(WPARAM wParam, LPARAM lParam, LRESULT *pResult);
+    //}}AFX_VIRTUAL
 
-	// Generated message map functions
-	//{{AFX_MSG(VolumeRandomDialogClass)
-	virtual void OnOK();
-	virtual BOOL OnInitDialog();
-	afx_msg void OnBoxRadio();
-	afx_msg void OnCylinderRadio();
-	afx_msg void OnSphereRadio();
-	//}}AFX_MSG
-	DECLARE_MESSAGE_MAP()
+    // Implementation
+protected:
+    // Generated message map functions
+    //{{AFX_MSG(VolumeRandomDialogClass)
+    virtual void OnOK();
+    virtual BOOL OnInitDialog();
+    afx_msg void OnBoxRadio();
+    afx_msg void OnCylinderRadio();
+    afx_msg void OnSphereRadio();
+    //}}AFX_MSG
+    DECLARE_MESSAGE_MAP()
 
-	public:
+public:
+    //////////////////////////////////////////////////////////////////////////////
+    //	Public methods
+    //////////////////////////////////////////////////////////////////////////////
+    Vector3Randomizer *Get_Randomizer(void) const { return m_Randomizer; }
 
-		//////////////////////////////////////////////////////////////////////////////
-		//	Public methods
-		//////////////////////////////////////////////////////////////////////////////
-		Vector3Randomizer *	Get_Randomizer (void) const { return m_Randomizer; }
+protected:
+    //////////////////////////////////////////////////////////////////////////////
+    //	Protected methods
+    //////////////////////////////////////////////////////////////////////////////
+    void Update_Enable_State(void);
 
-	protected:
-
-		//////////////////////////////////////////////////////////////////////////////
-		//	Protected methods
-		//////////////////////////////////////////////////////////////////////////////
-		void						Update_Enable_State (void);
-
-	private:
-
-		//////////////////////////////////////////////////////////////////////////////
-		//	Private member data
-		//////////////////////////////////////////////////////////////////////////////
-		Vector3Randomizer *	m_Randomizer;
+private:
+    //////////////////////////////////////////////////////////////////////////////
+    //	Private member data
+    //////////////////////////////////////////////////////////////////////////////
+    Vector3Randomizer *m_Randomizer;
 };
 
 //{{AFX_INSERT_LOCATION}}

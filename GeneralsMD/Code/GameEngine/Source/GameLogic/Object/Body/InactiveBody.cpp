@@ -30,7 +30,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 #include "Common/ThingTemplate.h"
 #include "Common/Xfer.h"
 #include "GameLogic/Module/InactiveBody.h"
@@ -43,163 +43,151 @@
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-InactiveBody::InactiveBody( Thing *thing, const ModuleData* moduleData )
-						: BodyModule( thing, moduleData ), m_dieCalled(false)
+InactiveBody::InactiveBody(Thing *thing, const ModuleData *moduleData) : BodyModule(thing, moduleData), m_dieCalled(false)
 {
-	getObject()->setEffectivelyDead(true);
-}  // end InactiveBody
+    getObject()->setEffectivelyDead(true);
+} // end InactiveBody
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-InactiveBody::~InactiveBody( void )
+InactiveBody::~InactiveBody(void)
 {
-
-}  // end ~InactiveBody
+} // end ~InactiveBody
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-Real InactiveBody::estimateDamage( DamageInfoInput& damageInfo ) const
+Real InactiveBody::estimateDamage(DamageInfoInput &damageInfo) const
 {
-	// Inactive bodies have no health so no damage can really be done
-	Real amount = 0.0f;
+    // Inactive bodies have no health so no damage can really be done
+    Real amount = 0.0f;
 
-	// exception!
-	if (damageInfo.m_damageType == DAMAGE_UNRESISTABLE)
-	{
-		amount = damageInfo.m_amount;
-	}
+    // exception!
+    if (damageInfo.m_damageType == DAMAGE_UNRESISTABLE)
+    {
+        amount = damageInfo.m_amount;
+    }
 
-	return amount;
+    return amount;
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void InactiveBody::attemptDamage( DamageInfo *damageInfo )
+void InactiveBody::attemptDamage(DamageInfo *damageInfo)
 {
-	if( damageInfo == NULL )
-		return;
+    if (damageInfo == NULL)
+        return;
 
-	if( damageInfo->in.m_damageType == DAMAGE_HEALING )
-	{
-		// Healing and Damage are separate, so this shouldn't happen
-		attemptHealing( damageInfo );
-		return;
-	}
+    if (damageInfo->in.m_damageType == DAMAGE_HEALING)
+    {
+        // Healing and Damage are separate, so this shouldn't happen
+        attemptHealing(damageInfo);
+        return;
+    }
 
-	// Inactive bodies have no health so no damage can really be done
-	damageInfo->out.m_actualDamageDealt = 0.0f;
-	damageInfo->out.m_actualDamageClipped = 0.0f;
-	damageInfo->out.m_noEffect = true;
+    // Inactive bodies have no health so no damage can really be done
+    damageInfo->out.m_actualDamageDealt = 0.0f;
+    damageInfo->out.m_actualDamageClipped = 0.0f;
+    damageInfo->out.m_noEffect = true;
 
-	// exception: damage type KILL always wipes us out
-	if (damageInfo->in.m_damageType == DAMAGE_UNRESISTABLE)
-	{
+    // exception: damage type KILL always wipes us out
+    if (damageInfo->in.m_damageType == DAMAGE_UNRESISTABLE)
+    {
+        DEBUG_ASSERTCRASH(!getObject()->getTemplate()->isPrerequisite(), ("Prerequisites should not have InactiveBody"));
 
-		DEBUG_ASSERTCRASH(!getObject()->getTemplate()->isPrerequisite(), ("Prerequisites should not have InactiveBody"));
+        damageInfo->out.m_noEffect = false;
 
-		damageInfo->out.m_noEffect = false;
-
-		// since we have no Health, we do not call DamageModules, nor do DamageFX.
-		// however, we DO process DieModules.
-		if (!m_dieCalled)
-		{
-			getObject()->onDie( damageInfo );
-			m_dieCalled = true;
-		}
-	}
+        // since we have no Health, we do not call DamageModules, nor do DamageFX.
+        // however, we DO process DieModules.
+        if (!m_dieCalled)
+        {
+            getObject()->onDie(damageInfo);
+            m_dieCalled = true;
+        }
+    }
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void InactiveBody::attemptHealing( DamageInfo *damageInfo )
+void InactiveBody::attemptHealing(DamageInfo *damageInfo)
 {
-	if( damageInfo == NULL )
-		return;
+    if (damageInfo == NULL)
+        return;
 
-	if( damageInfo->in.m_damageType != DAMAGE_HEALING )
-	{
-		// Healing and Damage are separate, so this shouldn't happen
-		attemptDamage( damageInfo );
-		return;
-	}
+    if (damageInfo->in.m_damageType != DAMAGE_HEALING)
+    {
+        // Healing and Damage are separate, so this shouldn't happen
+        attemptDamage(damageInfo);
+        return;
+    }
 
-	// Inactive bodies have no health so no damage can really be done
-	damageInfo->out.m_actualDamageDealt = 0.0f;
-	damageInfo->out.m_actualDamageClipped = 0.0f;
-	damageInfo->out.m_noEffect = true;
+    // Inactive bodies have no health so no damage can really be done
+    damageInfo->out.m_actualDamageDealt = 0.0f;
+    damageInfo->out.m_actualDamageClipped = 0.0f;
+    damageInfo->out.m_noEffect = true;
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void InactiveBody::internalChangeHealth( Real delta )
+void InactiveBody::internalChangeHealth(Real delta)
 {
-
-	// Inactive bodies have no health to increase or decrease
-
+    // Inactive bodies have no health to increase or decrease
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 Real InactiveBody::getHealth() const
 {
+    // Inactive bodies have no health to get
+    return 0.0f;
 
-	// Inactive bodies have no health to get
-	return 0.0f;
-
-}  // end getHealth
+} // end getHealth
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 BodyDamageType InactiveBody::getDamageState() const
 {
-	return BODY_PRISTINE;
+    return BODY_PRISTINE;
 }
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void InactiveBody::setDamageState( BodyDamageType  )	///< control damage state directly.  Will adjust hitpoints.
+void InactiveBody::setDamageState(BodyDamageType) ///< control damage state directly.  Will adjust hitpoints.
 {
-
 }
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void InactiveBody::crc( Xfer *xfer )
+void InactiveBody::crc(Xfer *xfer)
 {
+    // extend base class
+    BodyModule::crc(xfer);
 
-	// extend base class
-	BodyModule::crc( xfer );
-
-}  // end crc
+} // end crc
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void InactiveBody::xfer( Xfer *xfer )
+void InactiveBody::xfer(Xfer *xfer)
 {
+    // version
+    XferVersion currentVersion = 1;
+    XferVersion version = currentVersion;
+    xfer->xferVersion(&version, currentVersion);
 
-	// version
-	XferVersion currentVersion = 1;
-	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+    // base class
+    BodyModule::xfer(xfer);
 
-	// base class
-	BodyModule::xfer( xfer );
-
-}  // end xfer
+} // end xfer
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void InactiveBody::loadPostProcess( void )
+void InactiveBody::loadPostProcess(void)
 {
+    // extend base class
+    BodyModule::loadPostProcess();
 
-	// extend base class
-	BodyModule::loadPostProcess();
-
-}  // end loadPostProcess
-
-
+} // end loadPostProcess

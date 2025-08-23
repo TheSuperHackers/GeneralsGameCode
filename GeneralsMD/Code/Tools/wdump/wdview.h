@@ -30,47 +30,48 @@
 class CWdumpView : public CView
 {
 protected: // create from serialization only
-	CWdumpView();
-	DECLARE_DYNCREATE(CWdumpView)
+    CWdumpView();
+    DECLARE_DYNCREATE(CWdumpView)
 
-// Attributes
+    // Attributes
 public:
-	CWdumpDoc* GetDocument();
+    CWdumpDoc *GetDocument();
 
-// Operations
+    // Operations
 public:
-
-// Overrides
-	// ClassWizard generated virtual function overrides
-	//{{AFX_VIRTUAL(CWdumpView)
-	public:
-	virtual void OnDraw(CDC* pDC);  // overridden to draw this view
-	virtual BOOL PreCreateWindow(CREATESTRUCT& cs);
-	protected:
-	//}}AFX_VIRTUAL
-
-// Implementation
+    // Overrides
+    // ClassWizard generated virtual function overrides
+    //{{AFX_VIRTUAL(CWdumpView)
 public:
-	virtual ~CWdumpView();
+    virtual void OnDraw(CDC *pDC); // overridden to draw this view
+    virtual BOOL PreCreateWindow(CREATESTRUCT &cs);
+
+protected:
+    //}}AFX_VIRTUAL
+
+    // Implementation
+public:
+    virtual ~CWdumpView();
 #ifdef RTS_DEBUG
-	virtual void AssertValid() const;
-	virtual void Dump(CDumpContext& dc) const;
+    virtual void AssertValid() const;
+    virtual void Dump(CDumpContext &dc) const;
 #endif
 
 protected:
-
-// Generated message map functions
+    // Generated message map functions
 protected:
-	//{{AFX_MSG(CWdumpView)
-		// NOTE - the ClassWizard will add and remove member functions here.
-		//    DO NOT EDIT what you see in these blocks of generated code !
-	//}}AFX_MSG
-	DECLARE_MESSAGE_MAP()
+    //{{AFX_MSG(CWdumpView)
+    // NOTE - the ClassWizard will add and remove member functions here.
+    //    DO NOT EDIT what you see in these blocks of generated code !
+    //}}AFX_MSG
+    DECLARE_MESSAGE_MAP()
 };
 
-#ifndef RTS_DEBUG  // debug version in wdumpView.cpp
-inline CWdumpDoc* CWdumpView::GetDocument()
-   { return (CWdumpDoc*)m_pDocument; }
+#ifndef RTS_DEBUG // debug version in wdumpView.cpp
+inline CWdumpDoc *CWdumpView::GetDocument()
+{
+    return (CWdumpDoc *)m_pDocument;
+}
 #endif
 
 /////////////////////////////////////////////////////////////////////////////

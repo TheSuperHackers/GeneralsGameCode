@@ -34,9 +34,8 @@
 class CommandLine
 {
 public:
-
-	static void parseCommandLineForStartup();
-	static void parseCommandLineForEngineInit();
+    static void parseCommandLineForStartup();
+    static void parseCommandLineForEngineInit();
 };
 
 #endif // _COMMAND_LINE_H_

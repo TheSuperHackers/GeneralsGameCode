@@ -16,25 +16,25 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
- /***********************************************************************************************
- ***              C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S               ***
- ***********************************************************************************************
- *                                                                                             *
- *                 Project Name : WW3D                                                         *
- *                                                                                             *
- *                     $Archive:: /Commando/Code/wwshade/shdlib.h                           $*
- *
- *                    Org Author:: Kenny Mitchell
- *                                                                                             *
- *                       $Author:: Kenny_m
- *
- *								$Modtime:: 07/01/02 9:58p                                               $*
- *                                                                                             *
- *                    $Revision:: 1                                                          $*
- *                                                                                             *
- *---------------------------------------------------------------------------------------------*
- * Functions:                                                                                  *
- * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+/***********************************************************************************************
+***              C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S               ***
+***********************************************************************************************
+*                                                                                             *
+*                 Project Name : WW3D                                                         *
+*                                                                                             *
+*                     $Archive:: /Commando/Code/wwshade/shdlib.h                           $*
+*
+*                    Org Author:: Kenny Mitchell
+*                                                                                             *
+*                       $Author:: Kenny_m
+*
+*								$Modtime:: 07/01/02 9:58p                                               $*
+*                                                                                             *
+*                    $Revision:: 1                                                          $*
+*                                                                                             *
+*---------------------------------------------------------------------------------------------*
+* Functions:                                                                                  *
+* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #ifndef SHDLIB_H
 #define SHDLIB_H
@@ -51,12 +51,12 @@ extern void SHD_Shutdown_Shaders();
 extern void SHD_Flush();
 extern void SHD_Register_Loader();
 
-#define SHD_INIT					SHD_Init()
-#define SHD_SHUTDOWN				SHD_Shutdown()
-#define SHD_INIT_SHADERS		SHD_Init_Shaders()
-#define SHD_SHUTDOWN_SHADERS	SHD_Shutdown_Shaders()
-#define SHD_FLUSH					SHD_Flush()
-#define SHD_REG_LOADER			SHD_Register_Loader()
+#define SHD_INIT SHD_Init()
+#define SHD_SHUTDOWN SHD_Shutdown()
+#define SHD_INIT_SHADERS SHD_Init_Shaders()
+#define SHD_SHUTDOWN_SHADERS SHD_Shutdown_Shaders()
+#define SHD_FLUSH SHD_Flush()
+#define SHD_REG_LOADER SHD_Register_Loader()
 
 #else // USE_WWSHADE
 
@@ -68,6 +68,5 @@ extern void SHD_Register_Loader();
 #define SHD_REG_LOADER
 
 #endif // USE_WWSHADE
-
 
 #endif // SHDLIB_H

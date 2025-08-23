@@ -22,7 +22,6 @@
 //																																						//
 ////////////////////////////////////////////////////////////////////////////////
 
-
 #pragma once
 
 #ifndef __FRAMEDATA_H
@@ -31,39 +30,36 @@
 #include "Lib/BaseType.h"
 #include "GameNetwork/NetCommandList.h"
 
-enum FrameDataReturnType CPP_11(: Int) {
-	FRAMEDATA_NOTREADY,
-	FRAMEDATA_RESEND,
-	FRAMEDATA_READY
-};
+enum FrameDataReturnType CPP_11( : Int){FRAMEDATA_NOTREADY, FRAMEDATA_RESEND, FRAMEDATA_READY};
 
-class FrameData {
+class FrameData
+{
 public:
-	FrameData();
-	~FrameData();
+    FrameData();
+    ~FrameData();
 
-	void init();
-	void reset();
-	void update();
+    void init();
+    void reset();
+    void update();
 
-	UnsignedInt getFrame();
-	void setFrame(UnsignedInt frame);
-	FrameDataReturnType allCommandsReady(Bool debugSpewage);
-	NetCommandList * getCommandList();
-	void setFrameCommandCount(UnsignedInt totalCommandCount);
-	UnsignedInt getFrameCommandCount();
-	void addCommand(NetCommandMsg *msg);
-	UnsignedInt getCommandCount();
-	void zeroFrame();
-	void destroyGameMessages();
+    UnsignedInt getFrame();
+    void setFrame(UnsignedInt frame);
+    FrameDataReturnType allCommandsReady(Bool debugSpewage);
+    NetCommandList *getCommandList();
+    void setFrameCommandCount(UnsignedInt totalCommandCount);
+    UnsignedInt getFrameCommandCount();
+    void addCommand(NetCommandMsg *msg);
+    UnsignedInt getCommandCount();
+    void zeroFrame();
+    void destroyGameMessages();
 
 protected:
-	UnsignedInt m_frame;
-	UnsignedInt m_frameCommandCount;
-	UnsignedInt m_commandCount;
-	NetCommandList *m_commandList;
-	UnsignedInt m_lastFailedCC;
-	UnsignedInt m_lastFailedFrameCC;
+    UnsignedInt m_frame;
+    UnsignedInt m_frameCommandCount;
+    UnsignedInt m_commandCount;
+    NetCommandList *m_commandList;
+    UnsignedInt m_lastFailedCC;
+    UnsignedInt m_lastFailedFrameCC;
 };
 
 #endif

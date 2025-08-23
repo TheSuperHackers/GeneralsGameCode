@@ -38,13 +38,13 @@ class CDownload;
 class QueuedDownload
 {
 public:
-	AsciiString server;
-	AsciiString userName;
-	AsciiString password;
-	AsciiString file;
-	AsciiString localFile;
-	AsciiString regKey;
-	Bool tryResume;
+    AsciiString server;
+    AsciiString userName;
+    AsciiString password;
+    AsciiString file;
+    AsciiString localFile;
+    AsciiString regKey;
+    Bool tryResume;
 };
 
 /////////////////////////////////////////////////////////////////////////////
@@ -53,44 +53,58 @@ public:
 class DownloadManager : public IDownload
 {
 public:
-	DownloadManager();
-	virtual ~DownloadManager();
+    DownloadManager();
+    virtual ~DownloadManager();
 
 public:
-	void init( void );
-	HRESULT update( void );
-	void reset( void );
+    void init(void);
+    HRESULT update(void);
+    void reset(void);
 
-	virtual HRESULT OnError( Int error );
-	virtual HRESULT OnEnd();
-	virtual HRESULT OnQueryResume();
-	virtual HRESULT OnProgressUpdate( Int bytesread, Int totalsize, Int timetaken, Int timeleft );
-	virtual HRESULT OnStatusUpdate( Int status );
+    virtual HRESULT OnError(Int error);
+    virtual HRESULT OnEnd();
+    virtual HRESULT OnQueryResume();
+    virtual HRESULT OnProgressUpdate(Int bytesread, Int totalsize, Int timetaken, Int timeleft);
+    virtual HRESULT OnStatusUpdate(Int status);
 
-	virtual HRESULT downloadFile( AsciiString server, AsciiString username, AsciiString password, AsciiString file, AsciiString localfile, AsciiString regkey, Bool tryResume );
-	AsciiString getLastLocalFile( void );
+    virtual HRESULT downloadFile(
+        AsciiString server,
+        AsciiString username,
+        AsciiString password,
+        AsciiString file,
+        AsciiString localfile,
+        AsciiString regkey,
+        Bool tryResume);
+    AsciiString getLastLocalFile(void);
 
-	Bool isDone( void ) { return m_sawEnd || m_wasError; }
-	Bool isOk( void ) { return m_sawEnd; }
-	Bool wasError( void ) { return m_wasError; }
+    Bool isDone(void) { return m_sawEnd || m_wasError; }
+    Bool isOk(void) { return m_sawEnd; }
+    Bool wasError(void) { return m_wasError; }
 
-	UnicodeString getStatusString( void ) { return m_statusString; }
-	UnicodeString getErrorString( void ) { return m_errorString; }
+    UnicodeString getStatusString(void) { return m_statusString; }
+    UnicodeString getErrorString(void) { return m_errorString; }
 
-	void queueFileForDownload( AsciiString server, AsciiString username, AsciiString password, AsciiString file, AsciiString localfile, AsciiString regkey, Bool tryResume );
-	Bool isFileQueuedForDownload( void ) { return !m_queuedDownloads.empty(); }
-	HRESULT downloadNextQueuedFile( void );
+    void queueFileForDownload(
+        AsciiString server,
+        AsciiString username,
+        AsciiString password,
+        AsciiString file,
+        AsciiString localfile,
+        AsciiString regkey,
+        Bool tryResume);
+    Bool isFileQueuedForDownload(void) { return !m_queuedDownloads.empty(); }
+    HRESULT downloadNextQueuedFile(void);
 
 private:
-	Bool m_winsockInit;
-	CDownload *m_download;
-	Bool m_wasError;
-	Bool m_sawEnd;
-	UnicodeString m_errorString;
-	UnicodeString m_statusString;
+    Bool m_winsockInit;
+    CDownload *m_download;
+    Bool m_wasError;
+    Bool m_sawEnd;
+    UnicodeString m_errorString;
+    UnicodeString m_statusString;
 
 protected:
-	std::list<QueuedDownload> m_queuedDownloads;
+    std::list<QueuedDownload> m_queuedDownloads;
 };
 
 extern DownloadManager *TheDownloadManager;

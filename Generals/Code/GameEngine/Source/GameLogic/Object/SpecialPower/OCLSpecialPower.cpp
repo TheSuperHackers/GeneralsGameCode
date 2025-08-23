@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 
 #include "Common/Player.h"
 #include "Common/RandomValue.h"
@@ -43,60 +43,54 @@
 // MODULE DATA ////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-
 enum
 {
-	CREATE_ABOVE_LOCATION_HEIGHT = 300
+    CREATE_ABOVE_LOCATION_HEIGHT = 300
 };
 
-static const char* TheOCLCreateLocTypeNames[] =
-{
-	"CREATE_AT_EDGE_NEAR_SOURCE",
-	"CREATE_AT_EDGE_NEAR_TARGET",
-	"CREATE_AT_LOCATION",
-	"USE_OWNER_OBJECT",
-	"CREATE_ABOVE_LOCATION",
-	"CREATE_AT_EDGE_FARTHEST_FROM_TARGET",
-	NULL
-};
+static const char *TheOCLCreateLocTypeNames[] = {
+    "CREATE_AT_EDGE_NEAR_SOURCE",
+    "CREATE_AT_EDGE_NEAR_TARGET",
+    "CREATE_AT_LOCATION",
+    "USE_OWNER_OBJECT",
+    "CREATE_ABOVE_LOCATION",
+    "CREATE_AT_EDGE_FARTHEST_FROM_TARGET",
+    NULL};
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-OCLSpecialPowerModuleData::OCLSpecialPowerModuleData( void )
+OCLSpecialPowerModuleData::OCLSpecialPowerModuleData(void)
 {
-	m_defaultOCL = NULL;
-	m_upgradeOCL.clear();
-	m_createLoc = CREATE_AT_EDGE_NEAR_SOURCE;
+    m_defaultOCL = NULL;
+    m_upgradeOCL.clear();
+    m_createLoc = CREATE_AT_EDGE_NEAR_SOURCE;
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-static void parseOCLUpgradePair( INI* ini, void * /*instance*/, void *store, const void* /*userData*/ )
+static void parseOCLUpgradePair(INI *ini, void * /*instance*/, void *store, const void * /*userData*/)
 {
-	OCLSpecialPowerModuleData::Upgrades up;
+    OCLSpecialPowerModuleData::Upgrades up;
 
-	INI::parseScience(ini, NULL, &up.m_science, NULL);
-	INI::parseObjectCreationList(ini, NULL, &up.m_ocl, NULL);
+    INI::parseScience(ini, NULL, &up.m_science, NULL);
+    INI::parseObjectCreationList(ini, NULL, &up.m_ocl, NULL);
 
-	std::vector<OCLSpecialPowerModuleData::Upgrades>* s = (std::vector<OCLSpecialPowerModuleData::Upgrades>*)store;
-	s->push_back(up);
+    std::vector<OCLSpecialPowerModuleData::Upgrades> *s = (std::vector<OCLSpecialPowerModuleData::Upgrades> *)store;
+    s->push_back(up);
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-/* static */ void OCLSpecialPowerModuleData::buildFieldParse(MultiIniFieldParse& p)
+/* static */ void OCLSpecialPowerModuleData::buildFieldParse(MultiIniFieldParse &p)
 {
-	SpecialPowerModuleData::buildFieldParse( p );
+    SpecialPowerModuleData::buildFieldParse(p);
 
-	static const FieldParse dataFieldParse[] =
-	{
-		{ "UpgradeOCL", parseOCLUpgradePair, NULL, offsetof( OCLSpecialPowerModuleData, m_upgradeOCL ) },
-		{ "OCL", INI::parseObjectCreationList, NULL, offsetof( OCLSpecialPowerModuleData, m_defaultOCL ) },
-		{ "CreateLocation", INI::parseIndexList, TheOCLCreateLocTypeNames, offsetof( OCLSpecialPowerModuleData, m_createLoc ) },
-		{ 0, 0, 0, 0 }
-	};
-	p.add(dataFieldParse);
-
+    static const FieldParse dataFieldParse[] = {
+        {"UpgradeOCL", parseOCLUpgradePair, NULL, offsetof(OCLSpecialPowerModuleData, m_upgradeOCL)},
+        {"OCL", INI::parseObjectCreationList, NULL, offsetof(OCLSpecialPowerModuleData, m_defaultOCL)},
+        {"CreateLocation", INI::parseIndexList, TheOCLCreateLocTypeNames, offsetof(OCLSpecialPowerModuleData, m_createLoc)},
+        {0, 0, 0, 0}};
+    p.add(dataFieldParse);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -105,158 +99,152 @@ static void parseOCLUpgradePair( INI* ini, void * /*instance*/, void *store, con
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-OCLSpecialPower::OCLSpecialPower( Thing *thing, const ModuleData *moduleData )
-							 : SpecialPowerModule( thing, moduleData )
+OCLSpecialPower::OCLSpecialPower(Thing *thing, const ModuleData *moduleData) : SpecialPowerModule(thing, moduleData)
 {
-
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-const ObjectCreationList* OCLSpecialPower::findOCL() const
+const ObjectCreationList *OCLSpecialPower::findOCL() const
 {
-	const OCLSpecialPowerModuleData* d = getOCLSpecialPowerModuleData();
-	const Player* controller = getObject()->getControllingPlayer();
-	if (controller != NULL)
-	{
-		for (std::vector<OCLSpecialPowerModuleData::Upgrades>::const_iterator it = d->m_upgradeOCL.begin();
-					it != d->m_upgradeOCL.end();
-					++it)
-		{
-			if (controller->hasScience(it->m_science))
-				return it->m_ocl;
-		}
-	}
-	return d->m_defaultOCL;
+    const OCLSpecialPowerModuleData *d = getOCLSpecialPowerModuleData();
+    const Player *controller = getObject()->getControllingPlayer();
+    if (controller != NULL)
+    {
+        for (std::vector<OCLSpecialPowerModuleData::Upgrades>::const_iterator it = d->m_upgradeOCL.begin();
+             it != d->m_upgradeOCL.end();
+             ++it)
+        {
+            if (controller->hasScience(it->m_science))
+                return it->m_ocl;
+        }
+    }
+    return d->m_defaultOCL;
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-OCLSpecialPower::~OCLSpecialPower( void )
+OCLSpecialPower::~OCLSpecialPower(void)
 {
-
 }
 
 //-------------------------------------------------------------------------------------------------
 /** Execute the power */
 //-------------------------------------------------------------------------------------------------
-void OCLSpecialPower::doSpecialPowerAtLocation( const Coord3D *loc, Real angle, UnsignedInt commandOptions )
+void OCLSpecialPower::doSpecialPowerAtLocation(const Coord3D *loc, Real angle, UnsignedInt commandOptions)
 {
-	if (getObject()->isDisabled())
-		return;
+    if (getObject()->isDisabled())
+        return;
 
-	// sanity
-	if( loc == NULL )
-		return;
+    // sanity
+    if (loc == NULL)
+        return;
 
-	// call the base class action cause we are *EXTENDING* functionality
-	SpecialPowerModule::doSpecialPowerAtLocation( loc, angle, commandOptions );
+    // call the base class action cause we are *EXTENDING* functionality
+    SpecialPowerModule::doSpecialPowerAtLocation(loc, angle, commandOptions);
 
-	const ObjectCreationList* ocl = findOCL();
+    const ObjectCreationList *ocl = findOCL();
 
-	// get the module data
-	const OCLSpecialPowerModuleData *modData = getOCLSpecialPowerModuleData();
+    // get the module data
+    const OCLSpecialPowerModuleData *modData = getOCLSpecialPowerModuleData();
 
-	// at what point will the "deliverer" come in
-	Coord3D creationCoord;
-	switch (modData->m_createLoc)
-	{
-		case CREATE_AT_EDGE_NEAR_SOURCE:
-			creationCoord = TheTerrainLogic->findClosestEdgePoint( getObject()->getPosition() );
-			ObjectCreationList::create( ocl, getObject(), &creationCoord, loc );
-			break;
-		case CREATE_AT_EDGE_NEAR_TARGET:
-			creationCoord = TheTerrainLogic->findClosestEdgePoint(loc);
-			ObjectCreationList::create( ocl, getObject(), &creationCoord, loc );
-			break;
-		case CREATE_AT_EDGE_FARTHEST_FROM_TARGET:
-			creationCoord = TheTerrainLogic->findFarthestEdgePoint(loc);
-			creationCoord.z += CREATE_ABOVE_LOCATION_HEIGHT;
-			ObjectCreationList::create( ocl, getObject(), &creationCoord, loc );
-			break;
-		case CREATE_AT_LOCATION:
-			// this is the case where the special power stuff originates at the location of the mouse click
-			creationCoord = *loc;
-			ObjectCreationList::create( ocl, getObject(), &creationCoord, loc );
-			break;
-		case USE_OWNER_OBJECT:
-			creationCoord.set( loc );
-			ObjectCreationList::create( ocl, getObject(), &creationCoord, loc, false );
-			break;
-		case CREATE_ABOVE_LOCATION:
-			// this is the case where the special power stuff originates above the location of the mouse click
-			creationCoord = *loc;
-			creationCoord.z += CREATE_ABOVE_LOCATION_HEIGHT;
-			ObjectCreationList::create( ocl, getObject(), &creationCoord, loc );
-			break;
-	}
+    // at what point will the "deliverer" come in
+    Coord3D creationCoord;
+    switch (modData->m_createLoc)
+    {
+        case CREATE_AT_EDGE_NEAR_SOURCE:
+            creationCoord = TheTerrainLogic->findClosestEdgePoint(getObject()->getPosition());
+            ObjectCreationList::create(ocl, getObject(), &creationCoord, loc);
+            break;
+        case CREATE_AT_EDGE_NEAR_TARGET:
+            creationCoord = TheTerrainLogic->findClosestEdgePoint(loc);
+            ObjectCreationList::create(ocl, getObject(), &creationCoord, loc);
+            break;
+        case CREATE_AT_EDGE_FARTHEST_FROM_TARGET:
+            creationCoord = TheTerrainLogic->findFarthestEdgePoint(loc);
+            creationCoord.z += CREATE_ABOVE_LOCATION_HEIGHT;
+            ObjectCreationList::create(ocl, getObject(), &creationCoord, loc);
+            break;
+        case CREATE_AT_LOCATION:
+            // this is the case where the special power stuff originates at the location of the mouse click
+            creationCoord = *loc;
+            ObjectCreationList::create(ocl, getObject(), &creationCoord, loc);
+            break;
+        case USE_OWNER_OBJECT:
+            creationCoord.set(loc);
+            ObjectCreationList::create(ocl, getObject(), &creationCoord, loc, false);
+            break;
+        case CREATE_ABOVE_LOCATION:
+            // this is the case where the special power stuff originates above the location of the mouse click
+            creationCoord = *loc;
+            creationCoord.z += CREATE_ABOVE_LOCATION_HEIGHT;
+            ObjectCreationList::create(ocl, getObject(), &creationCoord, loc);
+            break;
+    }
 }
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void OCLSpecialPower::doSpecialPowerAtObject( Object *obj, UnsignedInt commandOptions )
+void OCLSpecialPower::doSpecialPowerAtObject(Object *obj, UnsignedInt commandOptions)
 {
-	if (getObject()->isDisabled())
-		return;
+    if (getObject()->isDisabled())
+        return;
 
-	// convert to a location
-	if( !obj )
-		return;
-	doSpecialPowerAtLocation( obj->getPosition(), INVALID_ANGLE, commandOptions );
+    // convert to a location
+    if (!obj)
+        return;
+    doSpecialPowerAtLocation(obj->getPosition(), INVALID_ANGLE, commandOptions);
 }
 
 // ------------------------------------------------------------------------------------------------
-void OCLSpecialPower::doSpecialPower( UnsignedInt commandOptions )
+void OCLSpecialPower::doSpecialPower(UnsignedInt commandOptions)
 {
-	if (getObject()->isDisabled())
-		return;
+    if (getObject()->isDisabled())
+        return;
 
-	Coord3D creationCoord;
-	creationCoord.set( getObject()->getPosition() );
+    Coord3D creationCoord;
+    creationCoord.set(getObject()->getPosition());
 
-	// call the base class action cause we are *EXTENDING* functionality
-	SpecialPowerModule::doSpecialPowerAtLocation( &creationCoord, INVALID_ANGLE, commandOptions );
+    // call the base class action cause we are *EXTENDING* functionality
+    SpecialPowerModule::doSpecialPowerAtLocation(&creationCoord, INVALID_ANGLE, commandOptions);
 
-	const ObjectCreationList* ocl = findOCL();
-	ObjectCreationList::create( ocl, getObject(), &creationCoord, &creationCoord, false );
+    const ObjectCreationList *ocl = findOCL();
+    ObjectCreationList::create(ocl, getObject(), &creationCoord, &creationCoord, false);
 }
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void OCLSpecialPower::crc( Xfer *xfer )
+void OCLSpecialPower::crc(Xfer *xfer)
 {
+    // extend base class
+    SpecialPowerModule::crc(xfer);
 
-	// extend base class
-	SpecialPowerModule::crc( xfer );
-
-}  // end crc
+} // end crc
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void OCLSpecialPower::xfer( Xfer *xfer )
+void OCLSpecialPower::xfer(Xfer *xfer)
 {
+    // version
+    XferVersion currentVersion = 1;
+    XferVersion version = currentVersion;
+    xfer->xferVersion(&version, currentVersion);
 
-	// version
-	XferVersion currentVersion = 1;
-	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+    // extend base class
+    SpecialPowerModule::xfer(xfer);
 
-	// extend base class
-	SpecialPowerModule::xfer( xfer );
-
-}  // end xfer
+} // end xfer
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void OCLSpecialPower::loadPostProcess( void )
+void OCLSpecialPower::loadPostProcess(void)
 {
+    // extend base class
+    SpecialPowerModule::loadPostProcess();
 
-	// extend base class
-	SpecialPowerModule::loadPostProcess();
-
-}  // end loadPostProcess
+} // end loadPostProcess

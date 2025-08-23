@@ -23,7 +23,6 @@
 #ifndef _TRANSCS_H
 #define _TRANSCS_H
 
-
-void CreateTranslationTable ( void );
+void CreateTranslationTable(void);
 
 #endif // _TRANSCS_H

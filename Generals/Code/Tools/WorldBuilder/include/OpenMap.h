@@ -27,9 +27,10 @@
 
 #define MAP_OPENSAVE_PANEL_SECTION "MapOpenSavePanel"
 
-typedef struct {
-	CString filename;
-	Bool		browse;
+typedef struct
+{
+    CString filename;
+    Bool browse;
 } TOpenMapInfo;
 
 /////////////////////////////////////////////////////////////////////////////
@@ -37,41 +38,43 @@ typedef struct {
 
 class OpenMap : public CDialog
 {
-// Construction
+    // Construction
 public:
-	OpenMap(TOpenMapInfo *pInfo, CWnd* pParent = NULL);   // standard constructor
+    OpenMap(TOpenMapInfo *pInfo, CWnd *pParent = NULL); // standard constructor
 
-// Dialog Data
-	//{{AFX_DATA(OpenMap)
-	enum { IDD = IDD_OPEN_MAP };
-		// NOTE: the ClassWizard will add data members here
-	//}}AFX_DATA
+    // Dialog Data
+    //{{AFX_DATA(OpenMap)
+    enum
+    {
+        IDD = IDD_OPEN_MAP
+    };
+    // NOTE: the ClassWizard will add data members here
+    //}}AFX_DATA
 
-
-// Overrides
-	// ClassWizard generated virtual function overrides
-	//{{AFX_VIRTUAL(OpenMap)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
-	//}}AFX_VIRTUAL
-
-// Implementation
+    // Overrides
+    // ClassWizard generated virtual function overrides
+    //{{AFX_VIRTUAL(OpenMap)
 protected:
-	TOpenMapInfo *m_pInfo;
-	void populateMapListbox( Bool systemMaps );
-	Bool m_usingSystemDir;
-protected:
+    virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
+    //}}AFX_VIRTUAL
 
-	// Generated message map functions
-	//{{AFX_MSG(OpenMap)
-	afx_msg void OnBrowse();
-	afx_msg void OnSystemMaps();
-	afx_msg void OnUserMaps();
-	virtual void OnOK();
-	virtual BOOL OnInitDialog();
-	afx_msg void OnDblclkOpenList();
-	//}}AFX_MSG
-	DECLARE_MESSAGE_MAP()
+    // Implementation
+protected:
+    TOpenMapInfo *m_pInfo;
+    void populateMapListbox(Bool systemMaps);
+    Bool m_usingSystemDir;
+
+protected:
+    // Generated message map functions
+    //{{AFX_MSG(OpenMap)
+    afx_msg void OnBrowse();
+    afx_msg void OnSystemMaps();
+    afx_msg void OnUserMaps();
+    virtual void OnOK();
+    virtual BOOL OnInitDialog();
+    afx_msg void OnDblclkOpenList();
+    //}}AFX_MSG
+    DECLARE_MESSAGE_MAP()
 };
 
 //{{AFX_INSERT_LOCATION}}

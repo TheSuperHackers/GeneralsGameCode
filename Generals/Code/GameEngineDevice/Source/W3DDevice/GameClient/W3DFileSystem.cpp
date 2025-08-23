@@ -36,7 +36,6 @@
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 
-
 // for now we maintain old legacy files
 // #define MAINTAIN_LEGACY_FILES
 
@@ -53,264 +52,245 @@
 
 //-------------------------------------------------------------------------------------------------
 /** Game file access.  At present this allows us to access test assets, assets from
-	* legacy GDI assets, and the current flat directory access for textures, models etc */
+ * legacy GDI assets, and the current flat directory access for textures, models etc */
 //-------------------------------------------------------------------------------------------------
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 typedef enum
 {
-	FILE_TYPE_COMPLETELY_UNKNOWN = 0,	// MBL 08.15.2002 - compile error with FILE_TYPE_UNKNOWN, is constant
-	FILE_TYPE_W3D,
-	FILE_TYPE_TGA,
-	FILE_TYPE_DDS,
+    FILE_TYPE_COMPLETELY_UNKNOWN = 0, // MBL 08.15.2002 - compile error with FILE_TYPE_UNKNOWN, is constant
+    FILE_TYPE_W3D,
+    FILE_TYPE_TGA,
+    FILE_TYPE_DDS,
 } GameFileType;
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-GameFileClass::GameFileClass( char const *filename )
+GameFileClass::GameFileClass(char const *filename)
 {
+    m_fileExists = FALSE;
+    m_theFile = NULL;
+    m_filePath[0] = 0;
+    m_filename[0] = 0;
 
-	m_fileExists = FALSE;
-	m_theFile = NULL;
-	m_filePath[ 0 ] = 0;
-	m_filename[0] = 0;
-
-	if( filename )
-		Set_Name( filename );
-
+    if (filename)
+        Set_Name(filename);
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-GameFileClass::GameFileClass( void )
+GameFileClass::GameFileClass(void)
 {
-
-	m_fileExists = FALSE;
-	m_theFile = NULL;
-	m_filePath[ 0 ] = 0;
-	m_filename[ 0 ] = 0;
-
+    m_fileExists = FALSE;
+    m_theFile = NULL;
+    m_filePath[0] = 0;
+    m_filename[0] = 0;
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 GameFileClass::~GameFileClass()
 {
-
-	Close();
-
+    Close();
 }
 
 //-------------------------------------------------------------------------------------------------
 /** Gets the file name */
 //-------------------------------------------------------------------------------------------------
-char const * GameFileClass::File_Name( void ) const
+char const *GameFileClass::File_Name(void) const
 {
-
-	return m_filename;
-
+    return m_filename;
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-inline static Bool isImageFileType( GameFileType fileType )
+inline static Bool isImageFileType(GameFileType fileType)
 {
-	return (fileType == FILE_TYPE_TGA || fileType == FILE_TYPE_DDS);
+    return (fileType == FILE_TYPE_TGA || fileType == FILE_TYPE_DDS);
 }
 
 //-------------------------------------------------------------------------------------------------
 /** Sets the file name, and finds the GDI asset if present. */
 //-------------------------------------------------------------------------------------------------
-char const * GameFileClass::Set_Name( char const *filename )
+char const *GameFileClass::Set_Name(char const *filename)
 {
+    if (Is_Open())
+        Close();
 
-	if( Is_Open() )
-		Close();
+    // save the filename
+    strncpy(m_filename, filename, _MAX_PATH);
 
-	// save the filename
-	strncpy( m_filename, filename, _MAX_PATH );
+    char name[_MAX_PATH];
+    const Int EXT_LEN = 32;
+    char extension[EXT_LEN];
+    extension[0] = 0;
+    strcpy(name, filename);
+    Int i = strlen(name);
+    i--;
+    Int extLen = 1;
+    while (i > 0 && extLen < EXT_LEN)
+    {
+        if (name[i] == '.')
+        {
+            strcpy(extension, name + i);
+            name[i] = 0;
+            break;
+        }
+        i--;
+        extLen++;
+    }
+    Int j = 0;
+    // Strip out spaces.
+    for (i = 0; name[i]; i++)
+    {
+        if (name[i] != ' ')
+        {
+            name[j] = name[i];
+            j++;
+        }
+    }
+    name[j] = 0;
 
-	char name[_MAX_PATH];
-	const Int EXT_LEN = 32;
-	char extension[EXT_LEN];
-	extension[0] = 0;
-	strcpy(name, filename);
-	Int i = strlen(name);
-	i--;
-	Int extLen = 1;
-	while(i>0 && extLen < EXT_LEN) {
-		if (name[i] == '.') {
-			strcpy(extension, name+i);
-			name[i] = 0;
-			break;
-		}
-		i--;
-		extLen++;
-	}
-	Int j = 0;
-	// Strip out spaces.
-	for (i=0; name[i]; i++) {
-		if (name[i] != ' ') {
-			name[j] = name[i];
-			j++;
-		}
-	}
-	name[j] = 0;
+    // test the extension to recognize a few key file types
+    GameFileType fileType = FILE_TYPE_COMPLETELY_UNKNOWN; // MBL FILE_TYPE_UNKNOWN change due to compile error
+    if (stricmp(extension, ".w3d") == 0)
+        fileType = FILE_TYPE_W3D;
+    else if (stricmp(extension, ".tga") == 0)
+        fileType = FILE_TYPE_TGA;
+    else if (stricmp(extension, ".dds") == 0)
+        fileType = FILE_TYPE_DDS;
 
-	// test the extension to recognize a few key file types
-	GameFileType fileType = FILE_TYPE_COMPLETELY_UNKNOWN;  // MBL FILE_TYPE_UNKNOWN change due to compile error
-	if( stricmp( extension, ".w3d" ) == 0 )
-		fileType = FILE_TYPE_W3D;
-	else if( stricmp( extension, ".tga" ) == 0 )
-		fileType = FILE_TYPE_TGA;
-	else if( stricmp( extension, ".dds" ) == 0 )
-		fileType = FILE_TYPE_DDS;
+    // all .w3d files are in W3D_DIR_PATH, all .tga files are in TGA_DIR_PATH
+    if (fileType == FILE_TYPE_W3D)
+    {
+        strcpy(m_filePath, W3D_DIR_PATH);
+        strcat(m_filePath, filename);
 
-	// all .w3d files are in W3D_DIR_PATH, all .tga files are in TGA_DIR_PATH
-	if( fileType == FILE_TYPE_W3D )
-	{
+    } // end if
+    else if (isImageFileType(fileType))
+    {
+        strcpy(m_filePath, TGA_DIR_PATH);
+        strcat(m_filePath, filename);
 
-		strcpy( m_filePath, W3D_DIR_PATH );
-		strcat( m_filePath, filename );
+    } // end else if
+    else
+        strcpy(m_filePath, filename);
 
-	}  // end if
-	else if( isImageFileType(fileType) )
-	{
+    // see if the file exists
+    m_fileExists = TheFileSystem->doesFileExist(m_filePath);
 
-		strcpy( m_filePath, TGA_DIR_PATH );
-		strcat( m_filePath, filename );
+// maintain legacy compatibility directories for now
+#ifdef MAINTAIN_LEGACY_FILES
+    if (m_fileExists == FALSE)
+    {
+        if (fileType == FILE_TYPE_W3D)
+        {
+            strcpy(m_filePath, LEGACY_W3D_DIR_PATH);
+            strcat(m_filePath, filename);
 
-	}  // end else if
-	else
-		strcpy( m_filePath, filename );
+        } // end if
+        else if (isImageFileType(fileType))
+        {
+            strcpy(m_filePath, LEGACY_TGA_DIR_PATH);
+            strcat(m_filePath, filename);
 
-	// see if the file exists
-	m_fileExists = TheFileSystem->doesFileExist( m_filePath );
+        } // end else if
 
-	// maintain legacy compatibility directories for now
-	#ifdef MAINTAIN_LEGACY_FILES
-	if( m_fileExists == FALSE )
-	{
+        // see if the file exists
+        m_fileExists = TheFileSystem->doesFileExist(m_filePath);
 
-		if( fileType == FILE_TYPE_W3D )
-		{
+    } // end if
+#endif
 
-			strcpy( m_filePath, LEGACY_W3D_DIR_PATH );
-			strcat( m_filePath, filename );
+// if file is still not found, try the test art folders
+#ifdef LOAD_TEST_ASSETS
+    if (m_fileExists == FALSE)
+    {
+        if (fileType == FILE_TYPE_W3D)
+        {
+            strcpy(m_filePath, TEST_W3D_DIR_PATH);
+            strcat(m_filePath, filename);
 
-		}  // end if
-		else if( isImageFileType(fileType) )
-		{
+        } // end if
+        else if (isImageFileType(fileType))
+        {
+            strcpy(m_filePath, TEST_TGA_DIR_PATH);
+            strcat(m_filePath, filename);
 
-			strcpy( m_filePath, LEGACY_TGA_DIR_PATH );
-			strcat( m_filePath, filename );
+        } // end else if
 
-		}  // end else if
+        // see if the file exists
+        m_fileExists = TheFileSystem->doesFileExist(m_filePath);
 
-		// see if the file exists
-		m_fileExists = TheFileSystem->doesFileExist( m_filePath );
+    } // end if
+#endif
 
-	}  // end if
-	#endif
+    // We allow the user to load their own images for various assets (like the control bar)
+    if (m_fileExists == FALSE && TheGlobalData)
+    {
+        if (fileType == FILE_TYPE_W3D)
+        {
+            sprintf(m_filePath, USER_W3D_DIR_PATH, TheGlobalData->getPath_UserData().str());
+            // strcpy( m_filePath, USER_W3D_DIR_PATH );
+            strcat(m_filePath, filename);
 
-	// if file is still not found, try the test art folders
-	#ifdef LOAD_TEST_ASSETS
-	if( m_fileExists == FALSE )
-	{
+        } // end if
+        if (isImageFileType(fileType))
+        {
+            sprintf(m_filePath, USER_TGA_DIR_PATH, TheGlobalData->getPath_UserData().str());
+            // strcpy( m_filePath, USER_TGA_DIR_PATH );
+            strcat(m_filePath, filename);
 
-		if( fileType == FILE_TYPE_W3D )
-		{
+        } // end else if
 
-			strcpy( m_filePath, TEST_W3D_DIR_PATH );
-			strcat( m_filePath, filename );
+        // see if the file exists
+        m_fileExists = TheFileSystem->doesFileExist(m_filePath);
 
-		}  // end if
-		else if( isImageFileType(fileType) )
-		{
+    } // end if
 
-			strcpy( m_filePath, TEST_TGA_DIR_PATH );
-			strcat( m_filePath, filename );
+    // We Need to be able to "temporarily copy over the map preview for whichever directory it came from
+    if (m_fileExists == FALSE && TheGlobalData)
+    {
+        if (fileType == FILE_TYPE_TGA) // just TGA, since we don't dds previews
+        {
+            sprintf(m_filePath, MAP_PREVIEW_DIR_PATH, TheGlobalData->getPath_UserData().str());
+            // strcpy( m_filePath, USER_TGA_DIR_PATH );
+            strcat(m_filePath, filename);
 
-		}  // end else if
+        } // end else if
 
-		// see if the file exists
-		m_fileExists = TheFileSystem->doesFileExist( m_filePath );
+        // see if the file exists
+        m_fileExists = TheFileSystem->doesFileExist(m_filePath);
 
-	}  // end if
-	#endif
+    } // end if
 
-	// We allow the user to load their own images for various assets (like the control bar)
-	if( m_fileExists == FALSE  && TheGlobalData)
-	{
-		if( fileType == FILE_TYPE_W3D )
-		{
-			sprintf(m_filePath,USER_W3D_DIR_PATH, TheGlobalData->getPath_UserData().str());
-			//strcpy( m_filePath, USER_W3D_DIR_PATH );
-			strcat( m_filePath, filename );
+    // We need to be able to grab images from a localization dir, because Art has a fetish for baked-in text.  Munkee.
+    if (m_fileExists == FALSE)
+    {
+        if (isImageFileType(fileType))
+        {
+            static const char *localizedPathFormat = "Data/%s/Art/Textures/";
+            sprintf(m_filePath, localizedPathFormat, GetRegistryLanguage().str());
+            strcat(m_filePath, filename);
 
-		}  // end if
-		if( isImageFileType(fileType) )
-		{
-			sprintf(m_filePath,USER_TGA_DIR_PATH, TheGlobalData->getPath_UserData().str());
-			//strcpy( m_filePath, USER_TGA_DIR_PATH );
-			strcat( m_filePath, filename );
+        } // end else if
 
-		}  // end else if
+        // see if the file exists
+        m_fileExists = TheFileSystem->doesFileExist(m_filePath);
 
-		// see if the file exists
-		m_fileExists = TheFileSystem->doesFileExist( m_filePath );
+    } // end if
 
-	}  // end if
-
-
-	// We Need to be able to "temporarily copy over the map preview for whichever directory it came from
-	if( m_fileExists == FALSE  && TheGlobalData)
-	{
-		if( fileType == FILE_TYPE_TGA ) // just TGA, since we don't dds previews
-		{
-			sprintf(m_filePath,MAP_PREVIEW_DIR_PATH, TheGlobalData->getPath_UserData().str());
-			//strcpy( m_filePath, USER_TGA_DIR_PATH );
-			strcat( m_filePath, filename );
-
-		}  // end else if
-
-		// see if the file exists
-		m_fileExists = TheFileSystem->doesFileExist( m_filePath );
-
-	}  // end if
-
-	// We need to be able to grab images from a localization dir, because Art has a fetish for baked-in text.  Munkee.
-	if( m_fileExists == FALSE )
-	{
-		if( isImageFileType(fileType) )
-		{
-			static const char *localizedPathFormat = "Data/%s/Art/Textures/";
-			sprintf(m_filePath,localizedPathFormat, GetRegistryLanguage().str());
-			strcat( m_filePath, filename );
-
-		}  // end else if
-
-		// see if the file exists
-		m_fileExists = TheFileSystem->doesFileExist( m_filePath );
-
-	}  // end if
-
-
-
-	return m_filename;
-
+    return m_filename;
 }
 
 //-------------------------------------------------------------------------------------------------
 /** If we found a gdi asset, the file is available. */
 //-------------------------------------------------------------------------------------------------
-bool GameFileClass::Is_Available( int forced )
+bool GameFileClass::Is_Available(int forced)
 {
-
-	// not maintaining any GDF compatibility, all files should be where the m_filePath says
-	return m_fileExists;
-
+    // not maintaining any GDF compatibility, all files should be where the m_filePath says
+    return m_fileExists;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -318,36 +298,36 @@ bool GameFileClass::Is_Available( int forced )
 //-------------------------------------------------------------------------------------------------
 bool GameFileClass::Is_Open(void) const
 {
-	return m_theFile != NULL;
+    return m_theFile != NULL;
 }
 
 //-------------------------------------------------------------------------------------------------
 /** Open the named file. */
 //-------------------------------------------------------------------------------------------------
-int  GameFileClass::Open(char const *filename, int rights)
+int GameFileClass::Open(char const *filename, int rights)
 {
-	Set_Name(filename);
-	if (Is_Available(false)) {
-		return(Open(rights));
-	}
-	return(false);
+    Set_Name(filename);
+    if (Is_Available(false))
+    {
+        return (Open(rights));
+    }
+    return (false);
 }
 
 //-------------------------------------------------------------------------------------------------
 /** Open the file using the current file name. */
 //-------------------------------------------------------------------------------------------------
-int  GameFileClass::Open(int rights)
+int GameFileClass::Open(int rights)
 {
-	if( rights != READ )
-	{
-		return(false);
-	}
+    if (rights != READ)
+    {
+        return (false);
+    }
 
-	// just open up the file in m_filePath
-	m_theFile = TheFileSystem->openFile( m_filePath, File::READ | File::BINARY );
+    // just open up the file in m_filePath
+    m_theFile = TheFileSystem->openFile(m_filePath, File::READ | File::BINARY);
 
-	return (m_theFile != NULL);
-
+    return (m_theFile != NULL);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -355,10 +335,11 @@ int  GameFileClass::Open(int rights)
 //-------------------------------------------------------------------------------------------------
 int GameFileClass::Read(void *buffer, int len)
 {
-	if (m_theFile) {
-		return m_theFile->read(buffer, len);
-	}
-	return(0);
+    if (m_theFile)
+    {
+        return m_theFile->read(buffer, len);
+    }
+    return (0);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -366,17 +347,25 @@ int GameFileClass::Read(void *buffer, int len)
 //-------------------------------------------------------------------------------------------------
 int GameFileClass::Seek(int pos, int dir)
 {
-	File::seekMode mode = File::CURRENT;
-	switch (dir) {
-		default:
-		case SEEK_CUR: mode = File::CURRENT; break;
-		case SEEK_SET: mode = File::START; break;
-		case SEEK_END: mode = File::END; break;
-	}
-	if (m_theFile) {
-		return m_theFile->seek(pos, mode);
-	}
-	return 0xFFFFFFFF;
+    File::seekMode mode = File::CURRENT;
+    switch (dir)
+    {
+        default:
+        case SEEK_CUR:
+            mode = File::CURRENT;
+            break;
+        case SEEK_SET:
+            mode = File::START;
+            break;
+        case SEEK_END:
+            mode = File::END;
+            break;
+    }
+    if (m_theFile)
+    {
+        return m_theFile->seek(pos, mode);
+    }
+    return 0xFFFFFFFF;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -384,10 +373,11 @@ int GameFileClass::Seek(int pos, int dir)
 //-------------------------------------------------------------------------------------------------
 int GameFileClass::Size(void)
 {
-	if (m_theFile) {
-		return m_theFile->size();
-	}
-	return 0xFFFFFFFF;
+    if (m_theFile)
+    {
+        return m_theFile->size();
+    }
+    return 0xFFFFFFFF;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -397,7 +387,7 @@ int GameFileClass::Write(void const *buffer, Int len)
 {
 #ifdef RTS_DEBUG
 #endif
-	return(0);
+    return (0);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -405,12 +395,12 @@ int GameFileClass::Write(void const *buffer, Int len)
 //-------------------------------------------------------------------------------------------------
 void GameFileClass::Close(void)
 {
-	if (m_theFile) {
-		m_theFile->close();
-		m_theFile = NULL;
-	}
+    if (m_theFile)
+    {
+        m_theFile->close();
+        m_theFile = NULL;
+    }
 }
-
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // W3DFileSystem Class ////////////////////////////////////////////////////////////////////////////
@@ -423,7 +413,7 @@ W3D file factory.  */
 //-------------------------------------------------------------------------------------------------
 W3DFileSystem::W3DFileSystem(void)
 {
-	_TheFileFactory = this; // override the w3d file factory.
+    _TheFileFactory = this; // override the w3d file factory.
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -432,22 +422,21 @@ after W3D is shutdown.  */
 //-------------------------------------------------------------------------------------------------
 W3DFileSystem::~W3DFileSystem(void)
 {
-	_TheFileFactory = NULL; // remove the w3d file factory.
+    _TheFileFactory = NULL; // remove the w3d file factory.
 }
 
 //-------------------------------------------------------------------------------------------------
 /** Gets a file with the specified filename. */
 //-------------------------------------------------------------------------------------------------
-FileClass * W3DFileSystem::Get_File( char const *filename )
+FileClass *W3DFileSystem::Get_File(char const *filename)
 {
-	return NEW GameFileClass( filename );	// poolify
+    return NEW GameFileClass(filename); // poolify
 }
 
 //-------------------------------------------------------------------------------------------------
 /** Releases a file returned by Get_File. */
 //-------------------------------------------------------------------------------------------------
-void W3DFileSystem::Return_File( FileClass *file )
+void W3DFileSystem::Return_File(FileClass *file)
 {
-	delete file;
+    delete file;
 }
-

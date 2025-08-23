@@ -71,85 +71,74 @@
 // initNewLayoutDialog ========================================================
 /** The new layout dialog is being shown, initialize anything we need to */
 //=============================================================================
-static void initNewLayoutDialog( HWND hWndDialog )
+static void initNewLayoutDialog(HWND hWndDialog)
 {
+    // set default keyboard focus
+    SetFocus(GetDlgItem(hWndDialog, IDOK));
 
-	// set default keyboard focus
-	SetFocus( GetDlgItem( hWndDialog, IDOK ) );
-
-}  // end initNewLayoutDialog
+} // end initNewLayoutDialog
 
 // NewLayoutDialogProc ========================================================
 /** Dialog procedure for the new layout dialog when starting an entire
-	* new layout in the editor */
+ * new layout in the editor */
 //=============================================================================
-LRESULT CALLBACK NewLayoutDialogProc( HWND hWndDialog, UINT message,
-																			WPARAM wParam, LPARAM lParam )
+LRESULT CALLBACK NewLayoutDialogProc(HWND hWndDialog, UINT message, WPARAM wParam, LPARAM lParam)
 {
-
-	switch( message )
-	{
-
-		// ------------------------------------------------------------------------
-		case WM_INITDIALOG:
-		{
-
-			// initialize the values for the the dialog
-			initNewLayoutDialog( hWndDialog );
-			return FALSE;
-
-		}  // end init dialog
-
-		// ------------------------------------------------------------------------
-    case WM_COMMAND:
+    switch (message)
     {
+        // ------------------------------------------------------------------------
+        case WM_INITDIALOG:
+        {
+            // initialize the values for the the dialog
+            initNewLayoutDialog(hWndDialog);
+            return FALSE;
 
-      switch( LOWORD( wParam ) )
-      {
+        } // end init dialog
 
-				// --------------------------------------------------------------------
-        case IDOK:
-				{
+            // ------------------------------------------------------------------------
+        case WM_COMMAND:
+        {
+            switch (LOWORD(wParam))
+            {
+                    // --------------------------------------------------------------------
+                case IDOK:
+                {
+                    // reset the editor
+                    TheEditor->newLayout();
 
-					// reset the editor
-					TheEditor->newLayout();
+                    // end this dialog
+                    EndDialog(hWndDialog, TRUE);
 
-					// end this dialog
-					EndDialog( hWndDialog, TRUE );
+                    break;
 
-          break;
+                } // end ok
 
-				}  // end ok
+                    // --------------------------------------------------------------------
+                case IDCANCEL:
+                {
+                    EndDialog(hWndDialog, FALSE);
+                    break;
 
-				// --------------------------------------------------------------------
-        case IDCANCEL:
-				{
+                } // end cancel
 
-					EndDialog( hWndDialog, FALSE );
-          break;
+            } // end switch( LOWORD( wParam ) )
 
-				}  // end cancel
+            return 0;
 
-      }  // end switch( LOWORD( wParam ) )
+        } // end of WM_COMMAND
 
-      return 0;
+            // ------------------------------------------------------------------------
+        case WM_CLOSE:
+        {
+            EndDialog(hWndDialog, FALSE);
+            return 0;
 
-    } // end of WM_COMMAND
+        } // end close
 
-		// ------------------------------------------------------------------------
-    case WM_CLOSE:
-		{
+        // ------------------------------------------------------------------------
+        default:
+            return 0;
 
-			EndDialog( hWndDialog, FALSE );
-      return 0;
+    } // end of switch
 
-		}  // end close
-
-		// ------------------------------------------------------------------------
-		default:
-			return 0;
-
-  }  // end of switch
-
-}  // end NewLayoutDialogProc
-
+} // end NewLayoutDialogProc

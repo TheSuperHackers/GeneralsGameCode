@@ -43,14 +43,12 @@
  *   HTreeManagerClass::Get_Tree -- get a pointer to the specified hierarchy tree              *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
 #include "htreemgr.h"
 #include <string.h>
 #include "htree.h"
 #include "chunkio.h"
 #include "wwmemlog.h"
 #include "w3dexclusionlist.h"
-
 
 /***********************************************************************************************
  * HTreeManagerClass::HTreeManagerClass -- constructor                                         *
@@ -64,12 +62,12 @@
  * HISTORY:                                                                                    *
  *   08/11/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-HTreeManagerClass::HTreeManagerClass(void) :
-	NumTrees(0)
+HTreeManagerClass::HTreeManagerClass(void) : NumTrees(0)
 {
-	for (int treeidx=0; treeidx < MAX_TREES; treeidx++) {
-		TreePtr[treeidx] = NULL;
-	}
+    for (int treeidx = 0; treeidx < MAX_TREES; treeidx++)
+    {
+        TreePtr[treeidx] = NULL;
+    }
 }
 
 /***********************************************************************************************
@@ -86,7 +84,7 @@ HTreeManagerClass::HTreeManagerClass(void) :
  *=============================================================================================*/
 HTreeManagerClass::~HTreeManagerClass(void)
 {
-	Free();
+    Free();
 }
 
 /***********************************************************************************************
@@ -103,7 +101,7 @@ HTreeManagerClass::~HTreeManagerClass(void)
  *=============================================================================================*/
 void HTreeManagerClass::Free(void)
 {
-	Free_All_Trees();
+    Free_All_Trees();
 }
 
 /***********************************************************************************************
@@ -120,16 +118,18 @@ void HTreeManagerClass::Free(void)
  *=============================================================================================*/
 void HTreeManagerClass::Free_All_Trees(void)
 {
-	// Clear the hash table
-	TreeHash.Remove_All();
+    // Clear the hash table
+    TreeHash.Remove_All();
 
-	for (int treeidx=0; treeidx < MAX_TREES; treeidx++) {
-		if (TreePtr[treeidx] != NULL) {
-			delete TreePtr[treeidx];
-			TreePtr[treeidx] = NULL;
-		}
-	}
-	NumTrees = 0;
+    for (int treeidx = 0; treeidx < MAX_TREES; treeidx++)
+    {
+        if (TreePtr[treeidx] != NULL)
+        {
+            delete TreePtr[treeidx];
+            TreePtr[treeidx] = NULL;
+        }
+    }
+    NumTrees = 0;
 }
 
 /***********************************************************************************************
@@ -144,43 +144,44 @@ void HTreeManagerClass::Free_All_Trees(void)
  * HISTORY:                                                                                    *
  *   12/12/2002 GH  : Created.                                                                 *
  *=============================================================================================*/
-void HTreeManagerClass::Free_All_Trees_With_Exclusion_List(const W3DExclusionListClass & exclusion_list)
+void HTreeManagerClass::Free_All_Trees_With_Exclusion_List(const W3DExclusionListClass &exclusion_list)
 {
-	// For this system, since it is so simplistic, we simply loop over the array either deleting the tree
-	// or copying it to the new tail index if it is excluded.
-	int new_tail = 0;
+    // For this system, since it is so simplistic, we simply loop over the array either deleting the tree
+    // or copying it to the new tail index if it is excluded.
+    int new_tail = 0;
 
-	int treeidx=0;
-	for (; treeidx < MAX_TREES; treeidx++) {
-		if (TreePtr[treeidx] != NULL) {
+    int treeidx = 0;
+    for (; treeidx < MAX_TREES; treeidx++)
+    {
+        if (TreePtr[treeidx] != NULL)
+        {
+            if (exclusion_list.Is_Excluded(TreePtr[treeidx]))
+            {
+                // WWDEBUG_SAY(("excluding tree %s",TreePtr[treeidx]->Get_Name()));
+                TreePtr[new_tail] = TreePtr[treeidx];
+                new_tail++;
+            }
+            else
+            {
+                // WWDEBUG_SAY(("deleting tree %s",TreePtr[treeidx]->Get_Name()));
+                delete TreePtr[treeidx];
+                TreePtr[treeidx] = NULL;
+            }
+        }
+    }
+    NumTrees = new_tail;
 
-			if (exclusion_list.Is_Excluded(TreePtr[treeidx])) {
+    // Clear the hash table
+    TreeHash.Remove_All();
 
-				//WWDEBUG_SAY(("excluding tree %s",TreePtr[treeidx]->Get_Name()));
-				TreePtr[new_tail] = TreePtr[treeidx];
-				new_tail++;
-
-			} else {
-
-				//WWDEBUG_SAY(("deleting tree %s",TreePtr[treeidx]->Get_Name()));
-				delete TreePtr[treeidx];
-				TreePtr[treeidx] = NULL;
-			}
-		}
-	}
-	NumTrees = new_tail;
-
-	// Clear the hash table
-	TreeHash.Remove_All();
-
-	// Add back any trees that were not deleted
-	for (treeidx=0; treeidx < new_tail; treeidx++)
-	{
-		// Insert to hash table for fast name based search
-		StringClass lower_case_name(TreePtr[treeidx]->Get_Name(),true);
-		_strlwr(lower_case_name.Peek_Buffer());
-		TreeHash.Insert(lower_case_name,TreePtr[treeidx]);
-	}
+    // Add back any trees that were not deleted
+    for (treeidx = 0; treeidx < new_tail; treeidx++)
+    {
+        // Insert to hash table for fast name based search
+        StringClass lower_case_name(TreePtr[treeidx]->Get_Name(), true);
+        _strlwr(lower_case_name.Peek_Buffer());
+        TreeHash.Insert(lower_case_name, TreePtr[treeidx]);
+    }
 }
 
 /***********************************************************************************************
@@ -195,45 +196,45 @@ void HTreeManagerClass::Free_All_Trees_With_Exclusion_List(const W3DExclusionLis
  * HISTORY:                                                                                    *
  *   08/11/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-int HTreeManagerClass::Load_Tree(ChunkLoadClass & cload)
+int HTreeManagerClass::Load_Tree(ChunkLoadClass &cload)
 {
-	WWMEMLOG(MEM_ANIMATION);
-	HTreeClass * newtree = W3DNEW HTreeClass;
+    WWMEMLOG(MEM_ANIMATION);
+    HTreeClass *newtree = W3DNEW HTreeClass;
 
-	if (newtree == NULL) {
-		goto Error;
-	}
+    if (newtree == NULL)
+    {
+        goto Error;
+    }
 
-	if (newtree->Load_W3D(cload) != HTreeClass::OK) {
+    if (newtree->Load_W3D(cload) != HTreeClass::OK)
+    {
+        // load failed, delete and return error
+        delete newtree;
+        goto Error;
+    }
+    else if (Get_Tree_ID(newtree->Get_Name()) != -1)
+    {
+        // tree with this name already exists, reject it!
+        delete newtree;
+        goto Error;
+    }
+    else
+    {
+        // ok, accept this hierarchy tree!
+        TreePtr[NumTrees] = newtree;
+        NumTrees++;
 
-		// load failed, delete and return error
-		delete newtree;
-		goto Error;
+        // Insert to hash table for fast name based search
+        StringClass lower_case_name(newtree->Get_Name(), true);
+        _strlwr(lower_case_name.Peek_Buffer());
+        TreeHash.Insert(lower_case_name, newtree);
+    }
 
-	} else if (Get_Tree_ID(newtree->Get_Name()) != -1) {
-
-		// tree with this name already exists, reject it!
-		delete newtree;
-		goto Error;
-
-	} else {
-
-		// ok, accept this hierarchy tree!
-		TreePtr[NumTrees] = newtree;
-		NumTrees++;
-
-		// Insert to hash table for fast name based search
-		StringClass lower_case_name(newtree->Get_Name(),true);
-		_strlwr(lower_case_name.Peek_Buffer());
-		TreeHash.Insert(lower_case_name,newtree);
-	}
-
-	return 0;
+    return 0;
 
 Error:
 
-	return 1;
-
+    return 1;
 }
 
 /***********************************************************************************************
@@ -248,14 +249,16 @@ Error:
  * HISTORY:                                                                                    *
  *   08/11/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-int HTreeManagerClass::Get_Tree_ID(const char * name)
+int HTreeManagerClass::Get_Tree_ID(const char *name)
 {
-	for (int i=0; i<NumTrees; i++) {
-		if (TreePtr[i] && (stricmp(name,TreePtr[i]->Get_Name()) == 0)) {
-			return i;
-		}
-	}
-	return -1;
+    for (int i = 0; i < NumTrees; i++)
+    {
+        if (TreePtr[i] && (stricmp(name, TreePtr[i]->Get_Name()) == 0))
+        {
+            return i;
+        }
+    }
+    return -1;
 }
 
 /***********************************************************************************************
@@ -272,16 +275,16 @@ int HTreeManagerClass::Get_Tree_ID(const char * name)
  *=============================================================================================*/
 char *HTreeManagerClass::Get_Tree_Name(const int idx)
 {
-	if ((idx < NumTrees) && TreePtr[idx]) {
-		if (TreePtr[idx]) {
-			return (char *)TreePtr[idx]->Get_Name();
-		}
-	}
+    if ((idx < NumTrees) && TreePtr[idx])
+    {
+        if (TreePtr[idx])
+        {
+            return (char *)TreePtr[idx]->Get_Name();
+        }
+    }
 
-	return NULL;
+    return NULL;
 }
-
-
 
 /***********************************************************************************************
  * HTreeManagerClass::Get_Tree -- get a pointer to the specified hierarchy tree                *
@@ -295,21 +298,20 @@ char *HTreeManagerClass::Get_Tree_Name(const int idx)
  * HISTORY:                                                                                    *
  *   08/11/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-HTreeClass * HTreeManagerClass::Get_Tree(const char * name)
+HTreeClass *HTreeManagerClass::Get_Tree(const char *name)
 {
-	StringClass lower_case_name(name,true);
-	_strlwr(lower_case_name.Peek_Buffer());
-	return TreeHash.Get(lower_case_name);
+    StringClass lower_case_name(name, true);
+    _strlwr(lower_case_name.Peek_Buffer());
+    return TreeHash.Get(lower_case_name);
 
-//	for (int i=0; i<NumTrees; i++) {
-//		if (TreePtr[i] && (stricmp(name,TreePtr[i]->Get_Name()) == 0)) {
-//
-//			return TreePtr[i];
-//		}
-//	}
-//	return NULL;
+    //	for (int i=0; i<NumTrees; i++) {
+    //		if (TreePtr[i] && (stricmp(name,TreePtr[i]->Get_Name()) == 0)) {
+    //
+    //			return TreePtr[i];
+    //		}
+    //	}
+    //	return NULL;
 }
-
 
 /***********************************************************************************************
  * HTreeManagerClass::Get_Tree -- get a pointer to the specified hierarchy tree                *
@@ -323,11 +325,14 @@ HTreeClass * HTreeManagerClass::Get_Tree(const char * name)
  * HISTORY:                                                                                    *
  *   08/11/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-HTreeClass * HTreeManagerClass::Get_Tree(int id)
+HTreeClass *HTreeManagerClass::Get_Tree(int id)
 {
-	if ((id >= 0) && (id < NumTrees)) {
-		return TreePtr[id];
-	} else {
-		return NULL;
-	}
+    if ((id >= 0) && (id < NumTrees))
+    {
+        return TreePtr[id];
+    }
+    else
+    {
+        return NULL;
+    }
 }

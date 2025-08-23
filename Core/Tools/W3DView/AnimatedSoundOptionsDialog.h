@@ -30,49 +30,48 @@
 
 class AnimatedSoundOptionsDialogClass : public CDialog
 {
-// Construction
+    // Construction
 public:
-	AnimatedSoundOptionsDialogClass(CWnd* pParent = NULL);   // standard constructor
+    AnimatedSoundOptionsDialogClass(CWnd *pParent = NULL); // standard constructor
 
-// Dialog Data
-	//{{AFX_DATA(AnimatedSoundOptionsDialogClass)
-	enum { IDD = IDD_ANIMATED_SOUND_DIALOG };
-		// NOTE: the ClassWizard will add data members here
-	//}}AFX_DATA
+    // Dialog Data
+    //{{AFX_DATA(AnimatedSoundOptionsDialogClass)
+    enum
+    {
+        IDD = IDD_ANIMATED_SOUND_DIALOG
+    };
+    // NOTE: the ClassWizard will add data members here
+    //}}AFX_DATA
 
-
-// Overrides
-	// ClassWizard generated virtual function overrides
-	//{{AFX_VIRTUAL(AnimatedSoundOptionsDialogClass)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
-	//}}AFX_VIRTUAL
-
-// Implementation
+    // Overrides
+    // ClassWizard generated virtual function overrides
+    //{{AFX_VIRTUAL(AnimatedSoundOptionsDialogClass)
 protected:
+    virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
+    //}}AFX_VIRTUAL
 
-	// Generated message map functions
-	//{{AFX_MSG(AnimatedSoundOptionsDialogClass)
-	afx_msg void OnSoundDefinitionLibraryBrowseButton();
-	afx_msg void OnSoundIniBrowseButton();
-	virtual void OnOK();
-	virtual BOOL OnInitDialog();
-	afx_msg void OnSoundPathBrowseButton();
-	//}}AFX_MSG
-	DECLARE_MESSAGE_MAP()
+    // Implementation
+protected:
+    // Generated message map functions
+    //{{AFX_MSG(AnimatedSoundOptionsDialogClass)
+    afx_msg void OnSoundDefinitionLibraryBrowseButton();
+    afx_msg void OnSoundIniBrowseButton();
+    virtual void OnOK();
+    virtual BOOL OnInitDialog();
+    afx_msg void OnSoundPathBrowseButton();
+    //}}AFX_MSG
+    DECLARE_MESSAGE_MAP()
 
 public:
-
-	///////////////////////////////////////////////////////////////////
-	//	Public methods
-	///////////////////////////////////////////////////////////////////
-	static void			Load_Animated_Sound_Settings (void);
+    ///////////////////////////////////////////////////////////////////
+    //	Public methods
+    ///////////////////////////////////////////////////////////////////
+    static void Load_Animated_Sound_Settings(void);
 
 private:
-
-	///////////////////////////////////////////////////////////////////
-	//	Private methods
-	///////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////
+    //	Private methods
+    ///////////////////////////////////////////////////////////////////
 };
 
 //{{AFX_INSERT_LOCATION}}

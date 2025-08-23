@@ -49,9 +49,9 @@
 
 inline unsigned long systimerGetMS(void)
 {
-	struct timeval tv;
-	gettimeofday(&tv, NULL);
-	return (tv.tv_sec * 1000) + (tv.tv_usec / 1000);
+    struct timeval tv;
+    gettimeofday(&tv, NULL);
+    return (tv.tv_sec * 1000) + (tv.tv_usec / 1000);
 }
 
 #define TIMEGETTIME systimerGetMS
@@ -65,45 +65,40 @@ inline unsigned long systimerGetMS(void)
 */
 class SysTimeClass
 {
+public:
+    SysTimeClass(void); // default constructor
+    ~SysTimeClass(); // default destructor
 
-	public:
+    /*
+    ** Get. Use everywhere you would use timeGetTime
+    */
+    WWINLINE unsigned long Get(void);
+    WWINLINE unsigned long operator()(void) { return (Get()); }
+    WWINLINE operator unsigned long(void) { return (Get()); }
 
-		SysTimeClass(void);	//default constructor
-		~SysTimeClass();	//default destructor
+    /*
+    ** Use periodically (like every few days!) to make sure the timer doesn't wrap.
+    */
+    void Reset(void);
 
-		/*
-		** Get. Use everywhere you would use timeGetTime
-		*/
-		WWINLINE unsigned long Get(void);
-		WWINLINE unsigned long operator () (void) {return(Get());}
-		WWINLINE operator unsigned long(void) {return(Get());}
+    /*
+    ** See if the timer is about to wrap.
+    */
+    bool Is_Getting_Late(void);
 
-		/*
-		** Use periodically (like every few days!) to make sure the timer doesn't wrap.
-		*/
-		void Reset(void);
+private:
+    /*
+    ** Time we were first called.
+    */
+    unsigned long StartTime;
 
-		/*
-		** See if the timer is about to wrap.
-		*/
-		bool Is_Getting_Late(void);
-
-	private:
-
-		/*
-		** Time we were first called.
-		*/
-		unsigned long StartTime;
-
-		/*
-		** Time to add after timer wraps.
-		*/
-		unsigned long WrapAdd;
-
+    /*
+    ** Time to add after timer wraps.
+    */
+    unsigned long WrapAdd;
 };
 
 extern SysTimeClass SystemTime;
-
 
 /***********************************************************************************************
  * SysTimeClass::Get -- Wrapper around system timeGetTime() api call                           *
@@ -121,36 +116,34 @@ extern SysTimeClass SystemTime;
  *=============================================================================================*/
 WWINLINE unsigned long SysTimeClass::Get(void)
 {
-	/*
-	** This has to be static here since we don't know if we will get called in a global constructor of another object before our
-	** constructor gets called. In fact, we don't even have a constructor because it's pointless.
-	*/
-	static bool is_init = false;
+    /*
+    ** This has to be static here since we don't know if we will get called in a global constructor of another object before
+    *our
+    ** constructor gets called. In fact, we don't even have a constructor because it's pointless.
+    */
+    static bool is_init = false;
 
-	if (!is_init) {
-		Reset();
-		is_init = true;
-	}
+    if (!is_init)
+    {
+        Reset();
+        is_init = true;
+    }
 
-	unsigned long time = timeGetTime();
-	if (time > StartTime) {
-		return(time - StartTime);
-	}
+    unsigned long time = timeGetTime();
+    if (time > StartTime)
+    {
+        return (time - StartTime);
+    }
 
-	/*
-	** Timer wrapped around. Eeek.
-	*/
-	return(time + WrapAdd);
+    /*
+    ** Timer wrapped around. Eeek.
+    */
+    return (time + WrapAdd);
 }
-
-
 
 #ifdef timeGetTime
 #undef timeGetTime
 #define timeGetTime SystemTime.Get
-#endif //timeGetTime
-
-
-
+#endif // timeGetTime
 
 #endif //_SYSTIMER_H

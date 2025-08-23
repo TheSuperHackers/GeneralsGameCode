@@ -27,9 +27,8 @@
 // Desc:
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 #define DEFINE_SLOWDEATHPHASE_NAMES
 
 #include "Common/GlobalData.h"
@@ -54,60 +53,66 @@
 #include "GameLogic/Weapon.h"
 #include "GameClient/Drawable.h"
 
-
 //-------------------------------------------------------------------------------------------------
 GenerateMinefieldBehaviorModuleData::GenerateMinefieldBehaviorModuleData()
 {
-	m_mineName.clear();
-	m_genFX = NULL;
-	m_distanceAroundObject = TheGlobalData->m_standardMinefieldDistance;
-	m_minesPerSquareFoot = TheGlobalData->m_standardMinefieldDensity;
-	m_onDeath = false;
-	m_borderOnly = true;
-	m_alwaysCircular = false;
-	m_smartBorder = false;
-	m_smartBorderSkipInterior = true;
-	m_randomJitter = 0.0f;
-	m_skipIfThisMuchUnderStructure = 0.33f;
+    m_mineName.clear();
+    m_genFX = NULL;
+    m_distanceAroundObject = TheGlobalData->m_standardMinefieldDistance;
+    m_minesPerSquareFoot = TheGlobalData->m_standardMinefieldDensity;
+    m_onDeath = false;
+    m_borderOnly = true;
+    m_alwaysCircular = false;
+    m_smartBorder = false;
+    m_smartBorderSkipInterior = true;
+    m_randomJitter = 0.0f;
+    m_skipIfThisMuchUnderStructure = 0.33f;
 }
 
 //-------------------------------------------------------------------------------------------------
-/*static*/ void GenerateMinefieldBehaviorModuleData::buildFieldParse(MultiIniFieldParse& p)
+/*static*/ void GenerateMinefieldBehaviorModuleData::buildFieldParse(MultiIniFieldParse &p)
 {
+    static const FieldParse dataFieldParse[] = {
+        {"MineName", INI::parseAsciiString, NULL, offsetof(GenerateMinefieldBehaviorModuleData, m_mineName)},
+        {"GenerationFX", INI::parseFXList, NULL, offsetof(GenerateMinefieldBehaviorModuleData, m_genFX)},
+        {"DistanceAroundObject",
+         INI::parseReal,
+         NULL,
+         offsetof(GenerateMinefieldBehaviorModuleData, m_distanceAroundObject)},
+        {"MinesPerSquareFoot", INI::parseReal, NULL, offsetof(GenerateMinefieldBehaviorModuleData, m_minesPerSquareFoot)},
+        {"GenerateOnlyOnDeath", INI::parseBool, NULL, offsetof(GenerateMinefieldBehaviorModuleData, m_onDeath)},
+        {"BorderOnly", INI::parseBool, NULL, offsetof(GenerateMinefieldBehaviorModuleData, m_borderOnly)},
+        {"SmartBorder", INI::parseBool, NULL, offsetof(GenerateMinefieldBehaviorModuleData, m_smartBorder)},
+        {"SmartBorderSkipInterior",
+         INI::parseBool,
+         NULL,
+         offsetof(GenerateMinefieldBehaviorModuleData, m_smartBorderSkipInterior)},
+        {"AlwaysCircular", INI::parseBool, NULL, offsetof(GenerateMinefieldBehaviorModuleData, m_alwaysCircular)},
+        {"RandomJitter", INI::parsePercentToReal, NULL, offsetof(GenerateMinefieldBehaviorModuleData, m_randomJitter)},
+        {"SkipIfThisMuchUnderStructure",
+         INI::parsePercentToReal,
+         NULL,
+         offsetof(GenerateMinefieldBehaviorModuleData, m_skipIfThisMuchUnderStructure)},
+        {0, 0, 0, 0}};
 
-	static const FieldParse dataFieldParse[] =
-	{
-		{ "MineName", INI::parseAsciiString,	NULL, offsetof( GenerateMinefieldBehaviorModuleData, m_mineName ) },
-		{ "GenerationFX", INI::parseFXList,	NULL, offsetof( GenerateMinefieldBehaviorModuleData, m_genFX ) },
-		{ "DistanceAroundObject", INI::parseReal, NULL, offsetof( GenerateMinefieldBehaviorModuleData, m_distanceAroundObject ) },
-		{ "MinesPerSquareFoot", INI::parseReal, NULL, offsetof( GenerateMinefieldBehaviorModuleData, m_minesPerSquareFoot ) },
-		{ "GenerateOnlyOnDeath", INI::parseBool, NULL, offsetof(GenerateMinefieldBehaviorModuleData, m_onDeath) },
-		{ "BorderOnly", INI::parseBool, NULL, offsetof(GenerateMinefieldBehaviorModuleData, m_borderOnly) },
-		{ "SmartBorder", INI::parseBool, NULL, offsetof(GenerateMinefieldBehaviorModuleData, m_smartBorder) },
-		{ "SmartBorderSkipInterior", INI::parseBool, NULL, offsetof(GenerateMinefieldBehaviorModuleData, m_smartBorderSkipInterior) },
-		{ "AlwaysCircular", INI::parseBool, NULL, offsetof(GenerateMinefieldBehaviorModuleData, m_alwaysCircular) },
-		{ "RandomJitter", INI::parsePercentToReal, NULL, offsetof(GenerateMinefieldBehaviorModuleData, m_randomJitter) },
-		{ "SkipIfThisMuchUnderStructure", INI::parsePercentToReal, NULL, offsetof(GenerateMinefieldBehaviorModuleData, m_skipIfThisMuchUnderStructure) },
-		{ 0, 0, 0, 0 }
-	};
-
-  BehaviorModuleData::buildFieldParse(p);
-  p.add(dataFieldParse);
-  p.add(UpgradeMuxData::getFieldParse(), offsetof( GenerateMinefieldBehaviorModuleData, m_upgradeMuxData ));
+    BehaviorModuleData::buildFieldParse(p);
+    p.add(dataFieldParse);
+    p.add(UpgradeMuxData::getFieldParse(), offsetof(GenerateMinefieldBehaviorModuleData, m_upgradeMuxData));
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-GenerateMinefieldBehavior::GenerateMinefieldBehavior( Thing *thing, const ModuleData* moduleData ) : BehaviorModule( thing, moduleData )
+GenerateMinefieldBehavior::GenerateMinefieldBehavior(Thing *thing, const ModuleData *moduleData) :
+    BehaviorModule(thing, moduleData)
 {
-	m_target.zero();
-	m_generated = false;
-	m_hasTarget = false;
+    m_target.zero();
+    m_generated = false;
+    m_hasTarget = false;
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-GenerateMinefieldBehavior::~GenerateMinefieldBehavior( void )
+GenerateMinefieldBehavior::~GenerateMinefieldBehavior(void)
 {
 }
 
@@ -115,370 +120,378 @@ GenerateMinefieldBehavior::~GenerateMinefieldBehavior( void )
 //-------------------------------------------------------------------------------------------------
 void GenerateMinefieldBehavior::upgradeImplementation()
 {
-	placeMines();
+    placeMines();
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void GenerateMinefieldBehavior::onDie( const DamageInfo *damageInfo )
+void GenerateMinefieldBehavior::onDie(const DamageInfo *damageInfo)
 {
-	const GenerateMinefieldBehaviorModuleData* d = getGenerateMinefieldBehaviorModuleData();
+    const GenerateMinefieldBehaviorModuleData *d = getGenerateMinefieldBehaviorModuleData();
 
-	if (d->m_onDeath)
-	{
-		placeMines();
-	}
+    if (d->m_onDeath)
+    {
+        placeMines();
+    }
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void GenerateMinefieldBehavior::setMinefieldTarget(const Coord3D* pos)
+void GenerateMinefieldBehavior::setMinefieldTarget(const Coord3D *pos)
 {
-	if (pos)
-	{
-		m_hasTarget = true;
-		m_target = *pos;
-	}
-	else
-	{
-		m_hasTarget = false;
-		m_target.zero();
-	}
+    if (pos)
+    {
+        m_hasTarget = true;
+        m_target = *pos;
+    }
+    else
+    {
+        m_hasTarget = false;
+        m_target.zero();
+    }
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-const Coord3D* GenerateMinefieldBehavior::getMinefieldTarget() const
+const Coord3D *GenerateMinefieldBehavior::getMinefieldTarget() const
 {
-	return m_hasTarget ? &m_target : getObject()->getPosition();
+    return m_hasTarget ? &m_target : getObject()->getPosition();
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-static Bool isAnythingTooClose2D(const std::vector<Object*>& v, const Coord3D& pos, Real minDistSqr)
+static Bool isAnythingTooClose2D(const std::vector<Object *> &v, const Coord3D &pos, Real minDistSqr)
 {
-	for (std::vector<Object*>::const_iterator it = v.begin(); it != v.end(); ++it)
-	{
-		const Coord3D* p = (*it)->getPosition();
-		Real distSqr = sqr(p->x - pos.x) + sqr(p->y - pos.y);
-		if (distSqr < minDistSqr)
-			return true;
-	}
-	return false;
+    for (std::vector<Object *>::const_iterator it = v.begin(); it != v.end(); ++it)
+    {
+        const Coord3D *p = (*it)->getPosition();
+        Real distSqr = sqr(p->x - pos.x) + sqr(p->y - pos.y);
+        if (distSqr < minDistSqr)
+            return true;
+    }
+    return false;
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-static void offsetBySmallRandomAmount(Coord3D& pt, Real maxAmt)
+static void offsetBySmallRandomAmount(Coord3D &pt, Real maxAmt)
 {
-	pt.x += GameLogicRandomValueReal(-maxAmt, maxAmt);
-	pt.y += GameLogicRandomValueReal(-maxAmt, maxAmt);
+    pt.x += GameLogicRandomValueReal(-maxAmt, maxAmt);
+    pt.y += GameLogicRandomValueReal(-maxAmt, maxAmt);
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-Object* GenerateMinefieldBehavior::placeMineAt(const Coord3D& pt, const ThingTemplate* mineTemplate, Team* team, const Object* producer)
+Object *GenerateMinefieldBehavior::placeMineAt(
+    const Coord3D &pt,
+    const ThingTemplate *mineTemplate,
+    Team *team,
+    const Object *producer)
 {
-	Coord3D tmp = pt;
-	tmp.z = 99999.0f;
-	PathfindLayerEnum layer = TheTerrainLogic->getHighestLayerForDestination(&tmp);
+    Coord3D tmp = pt;
+    tmp.z = 99999.0f;
+    PathfindLayerEnum layer = TheTerrainLogic->getHighestLayerForDestination(&tmp);
 
-	if (layer == LAYER_GROUND && TheTerrainLogic->isUnderwater(pt.x, pt.y))
-		return NULL;
+    if (layer == LAYER_GROUND && TheTerrainLogic->isUnderwater(pt.x, pt.y))
+        return NULL;
 
-	if (layer == LAYER_GROUND && TheTerrainLogic->isCliffCell(pt.x, pt.y))
-		return NULL;
+    if (layer == LAYER_GROUND && TheTerrainLogic->isCliffCell(pt.x, pt.y))
+        return NULL;
 
-	Real orient = GameLogicRandomValueReal(-PI, PI);
+    Real orient = GameLogicRandomValueReal(-PI, PI);
 
-	// if the mine will be "mostly" under a structure, don't place it.
-	// for now, "mostly" means "central third of radius would overlap"
-	const GenerateMinefieldBehaviorModuleData* d = getGenerateMinefieldBehaviorModuleData();
-	GeometryInfo geom = mineTemplate->getTemplateGeometryInfo();
-	Real mineRadius = mineTemplate->getTemplateGeometryInfo().getBoundingCircleRadius();
-	geom.expandFootprint(mineRadius * -(1.0f - d->m_skipIfThisMuchUnderStructure));
-	ObjectIterator *iter = ThePartitionManager->iteratePotentialCollisions( &pt, geom, orient );
-	MemoryPoolObjectHolder hold(iter);
-	for (Object* them = iter->first(); them; them = iter->next())
-	{
-		if (them->isKindOf(KINDOF_STRUCTURE))
-			return NULL;
-	}
+    // if the mine will be "mostly" under a structure, don't place it.
+    // for now, "mostly" means "central third of radius would overlap"
+    const GenerateMinefieldBehaviorModuleData *d = getGenerateMinefieldBehaviorModuleData();
+    GeometryInfo geom = mineTemplate->getTemplateGeometryInfo();
+    Real mineRadius = mineTemplate->getTemplateGeometryInfo().getBoundingCircleRadius();
+    geom.expandFootprint(mineRadius * -(1.0f - d->m_skipIfThisMuchUnderStructure));
+    ObjectIterator *iter = ThePartitionManager->iteratePotentialCollisions(&pt, geom, orient);
+    MemoryPoolObjectHolder hold(iter);
+    for (Object *them = iter->first(); them; them = iter->next())
+    {
+        if (them->isKindOf(KINDOF_STRUCTURE))
+            return NULL;
+    }
 
-	Object* mine = TheThingFactory->newObject(mineTemplate, team);
-	mine->setPosition(&pt);
-	mine->setOrientation(orient);
-	mine->setProducer(producer);
+    Object *mine = TheThingFactory->newObject(mineTemplate, team);
+    mine->setPosition(&pt);
+    mine->setOrientation(orient);
+    mine->setProducer(producer);
 
-	for (BehaviorModule** bmi = mine->getBehaviorModules(); *bmi; ++bmi)
-	{
-		LandMineInterface* lmi = (*bmi)->getLandMineInterface();
-		if (lmi)
-		{
-			lmi->setScootParms(*producer->getPosition(), pt);
-			break;
-		}
-	}
+    for (BehaviorModule **bmi = mine->getBehaviorModules(); *bmi; ++bmi)
+    {
+        LandMineInterface *lmi = (*bmi)->getLandMineInterface();
+        if (lmi)
+        {
+            lmi->setScootParms(*producer->getPosition(), pt);
+            break;
+        }
+    }
 
-	return mine;
+    return mine;
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void GenerateMinefieldBehavior::placeMinesAlongLine(const Coord3D& posStart, const Coord3D& posEnd, const ThingTemplate* mineTemplate, Bool skipOneAtStart)
+void GenerateMinefieldBehavior::placeMinesAlongLine(
+    const Coord3D &posStart,
+    const Coord3D &posEnd,
+    const ThingTemplate *mineTemplate,
+    Bool skipOneAtStart)
 {
-	const Object* obj = getObject();
-	const GenerateMinefieldBehaviorModuleData* d = getGenerateMinefieldBehaviorModuleData();
-	Team* team = obj->getControllingPlayer()->getDefaultTeam();
+    const Object *obj = getObject();
+    const GenerateMinefieldBehaviorModuleData *d = getGenerateMinefieldBehaviorModuleData();
+    Team *team = obj->getControllingPlayer()->getDefaultTeam();
 
-	Real dx = posEnd.x - posStart.x;
-	Real dy = posEnd.y - posStart.y;
-	Real len = sqrt(sqr(dx) + sqr(dy));
-	Real mineRadius = mineTemplate->getTemplateGeometryInfo().getBoundingCircleRadius();
-	Real mineDiameter = mineRadius * 2.0f;
-	Real mineJitter = mineRadius*d->m_randomJitter;
-	Int numMines = REAL_TO_INT_CEIL(len / mineDiameter);
-	if (numMines < 1)
-		numMines = 1;
-	Real inc = len/numMines;
-	for (Real place = skipOneAtStart ? inc : 0; place <= len; place += inc)
-	{
-		Coord3D pt;
-		pt.x = posStart.x + place * dx / len;
-		pt.y = posStart.y + place * dy / len;
-		pt.z = TheTerrainLogic->getGroundHeight( pt.x, pt.y );
-		offsetBySmallRandomAmount(pt, mineJitter);
-		placeMineAt(pt, mineTemplate, team, obj);
-	}
+    Real dx = posEnd.x - posStart.x;
+    Real dy = posEnd.y - posStart.y;
+    Real len = sqrt(sqr(dx) + sqr(dy));
+    Real mineRadius = mineTemplate->getTemplateGeometryInfo().getBoundingCircleRadius();
+    Real mineDiameter = mineRadius * 2.0f;
+    Real mineJitter = mineRadius * d->m_randomJitter;
+    Int numMines = REAL_TO_INT_CEIL(len / mineDiameter);
+    if (numMines < 1)
+        numMines = 1;
+    Real inc = len / numMines;
+    for (Real place = skipOneAtStart ? inc : 0; place <= len; place += inc)
+    {
+        Coord3D pt;
+        pt.x = posStart.x + place * dx / len;
+        pt.y = posStart.y + place * dy / len;
+        pt.z = TheTerrainLogic->getGroundHeight(pt.x, pt.y);
+        offsetBySmallRandomAmount(pt, mineJitter);
+        placeMineAt(pt, mineTemplate, team, obj);
+    }
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-static void makeCorner(const Coord3D& pos, Real majorRadius, Real minorRadius, const Matrix3D& mtx, Coord3D& corner)
+static void makeCorner(const Coord3D &pos, Real majorRadius, Real minorRadius, const Matrix3D &mtx, Coord3D &corner)
 {
-	Vector3 tmp;
-	tmp.X = majorRadius;
-	tmp.Y = minorRadius;
-	tmp.Z = 0;
-	Matrix3D::Transform_Vector(mtx, tmp, &tmp);
-	corner.x = tmp.X;
-	corner.y = tmp.Y;
-	corner.z = tmp.Z;
+    Vector3 tmp;
+    tmp.X = majorRadius;
+    tmp.Y = minorRadius;
+    tmp.Z = 0;
+    Matrix3D::Transform_Vector(mtx, tmp, &tmp);
+    corner.x = tmp.X;
+    corner.y = tmp.Y;
+    corner.z = tmp.Z;
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void GenerateMinefieldBehavior::placeMinesAroundRect(const Coord3D& pos, Real majorRadius, Real minorRadius, const ThingTemplate* mineTemplate)
+void GenerateMinefieldBehavior::placeMinesAroundRect(
+    const Coord3D &pos,
+    Real majorRadius,
+    Real minorRadius,
+    const ThingTemplate *mineTemplate)
 {
-	const Object* obj = getObject();
-	const Matrix3D* mtx = obj->getTransformMatrix();
+    const Object *obj = getObject();
+    const Matrix3D *mtx = obj->getTransformMatrix();
 
-	Coord3D pt[4];
-	makeCorner(pos,  majorRadius,  minorRadius, *mtx, pt[0]);
-	makeCorner(pos, -majorRadius,  minorRadius, *mtx, pt[1]);
-	makeCorner(pos, -majorRadius, -minorRadius, *mtx, pt[2]);
-	makeCorner(pos,  majorRadius, -minorRadius, *mtx, pt[3]);
+    Coord3D pt[4];
+    makeCorner(pos, majorRadius, minorRadius, *mtx, pt[0]);
+    makeCorner(pos, -majorRadius, minorRadius, *mtx, pt[1]);
+    makeCorner(pos, -majorRadius, -minorRadius, *mtx, pt[2]);
+    makeCorner(pos, majorRadius, -minorRadius, *mtx, pt[3]);
 
-	placeMinesAlongLine(pt[0], pt[1], mineTemplate, true);
-	placeMinesAlongLine(pt[1], pt[2], mineTemplate, true);
-	placeMinesAlongLine(pt[2], pt[3], mineTemplate, true);
-	placeMinesAlongLine(pt[3], pt[0], mineTemplate, true);
+    placeMinesAlongLine(pt[0], pt[1], mineTemplate, true);
+    placeMinesAlongLine(pt[1], pt[2], mineTemplate, true);
+    placeMinesAlongLine(pt[2], pt[3], mineTemplate, true);
+    placeMinesAlongLine(pt[3], pt[0], mineTemplate, true);
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void GenerateMinefieldBehavior::placeMinesAroundCircle(const Coord3D& pos, Real radius, const ThingTemplate* mineTemplate)
+void GenerateMinefieldBehavior::placeMinesAroundCircle(const Coord3D &pos, Real radius, const ThingTemplate *mineTemplate)
 {
-	const Object* obj = getObject();
-	const GenerateMinefieldBehaviorModuleData* d = getGenerateMinefieldBehaviorModuleData();
-	Team* team = obj->getControllingPlayer()->getDefaultTeam();
+    const Object *obj = getObject();
+    const GenerateMinefieldBehaviorModuleData *d = getGenerateMinefieldBehaviorModuleData();
+    Team *team = obj->getControllingPlayer()->getDefaultTeam();
 
-	Real circum = 2.0f * PI * radius;
-	Real mineRadius = mineTemplate->getTemplateGeometryInfo().getBoundingCircleRadius();
-	Real mineDiameter = mineRadius * 2.0f;
-	Real mineJitter = mineRadius*d->m_randomJitter;
-	Int numMines = REAL_TO_INT_CEIL(circum / mineDiameter);
-	if (numMines < 1)
-		numMines = 1;
-	Real angleInc = (2*PI)/numMines;
-	Real angleLim = (2*PI) - angleInc*0.5f;
-	for (Real angle = 0; angle < angleLim; angle += angleInc)
-	{
-		Coord3D pt;
-		pt.x = pos.x + radius * Cos(angle);
-		pt.y = pos.y + radius * Sin(angle);
-		pt.z = TheTerrainLogic->getGroundHeight( pt.x, pt.y );
-		offsetBySmallRandomAmount(pt, mineJitter);
-		placeMineAt(pt, mineTemplate, team, obj);
-	}
+    Real circum = 2.0f * PI * radius;
+    Real mineRadius = mineTemplate->getTemplateGeometryInfo().getBoundingCircleRadius();
+    Real mineDiameter = mineRadius * 2.0f;
+    Real mineJitter = mineRadius * d->m_randomJitter;
+    Int numMines = REAL_TO_INT_CEIL(circum / mineDiameter);
+    if (numMines < 1)
+        numMines = 1;
+    Real angleInc = (2 * PI) / numMines;
+    Real angleLim = (2 * PI) - angleInc * 0.5f;
+    for (Real angle = 0; angle < angleLim; angle += angleInc)
+    {
+        Coord3D pt;
+        pt.x = pos.x + radius * Cos(angle);
+        pt.y = pos.y + radius * Sin(angle);
+        pt.z = TheTerrainLogic->getGroundHeight(pt.x, pt.y);
+        offsetBySmallRandomAmount(pt, mineJitter);
+        placeMineAt(pt, mineTemplate, team, obj);
+    }
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void GenerateMinefieldBehavior::placeMinesInFootprint(const GeometryInfo& geom, const ThingTemplate* mineTemplate)
+void GenerateMinefieldBehavior::placeMinesInFootprint(const GeometryInfo &geom, const ThingTemplate *mineTemplate)
 {
-	const Object* obj = getObject();
-	const GenerateMinefieldBehaviorModuleData* d = getGenerateMinefieldBehaviorModuleData();
-	Team* team = obj->getControllingPlayer()->getDefaultTeam();
+    const Object *obj = getObject();
+    const GenerateMinefieldBehaviorModuleData *d = getGenerateMinefieldBehaviorModuleData();
+    Team *team = obj->getControllingPlayer()->getDefaultTeam();
 
-	Real area = geom.getFootprintArea();
-	Int numMines = REAL_TO_INT_CEIL(d->m_minesPerSquareFoot * area);
-	if (numMines < 1)
-		numMines = 1;
+    Real area = geom.getFootprintArea();
+    Int numMines = REAL_TO_INT_CEIL(d->m_minesPerSquareFoot * area);
+    if (numMines < 1)
+        numMines = 1;
 
-	const Coord3D* target = getMinefieldTarget();
-	std::vector<Object*> minesCreatedSoFar;
-	Real minDistSqr = sqr(mineTemplate->getTemplateGeometryInfo().getBoundingCircleRadius() * 2.0f);
-	for (int i = 0; i < numMines; ++i)
-	{
-		Coord3D pt;
-		Int maxRetry = 100;
-		do
-		{
-			geom.makeRandomOffsetWithinFootprint(pt);
-			pt.x += target->x;
-			pt.y += target->y;
-			pt.z += target->z;
-			--maxRetry;
-		} while (isAnythingTooClose2D(minesCreatedSoFar, pt, minDistSqr) && maxRetry > 0);
-		DEBUG_ASSERTCRASH(maxRetry>0,("ran out of retries %f",minDistSqr));
+    const Coord3D *target = getMinefieldTarget();
+    std::vector<Object *> minesCreatedSoFar;
+    Real minDistSqr = sqr(mineTemplate->getTemplateGeometryInfo().getBoundingCircleRadius() * 2.0f);
+    for (int i = 0; i < numMines; ++i)
+    {
+        Coord3D pt;
+        Int maxRetry = 100;
+        do
+        {
+            geom.makeRandomOffsetWithinFootprint(pt);
+            pt.x += target->x;
+            pt.y += target->y;
+            pt.z += target->z;
+            --maxRetry;
+        } while (isAnythingTooClose2D(minesCreatedSoFar, pt, minDistSqr) && maxRetry > 0);
+        DEBUG_ASSERTCRASH(maxRetry > 0, ("ran out of retries %f", minDistSqr));
 
-		if (getObject()->getGeometryInfo().isPointInFootprint(*target, pt))
-			continue;
+        if (getObject()->getGeometryInfo().isPointInFootprint(*target, pt))
+            continue;
 
-		Object* mine = placeMineAt(pt, mineTemplate, team, obj);	// can return null.
-		if (mine)
-			minesCreatedSoFar.push_back(mine);
-	}
+        Object *mine = placeMineAt(pt, mineTemplate, team, obj); // can return null.
+        if (mine)
+            minesCreatedSoFar.push_back(mine);
+    }
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 void GenerateMinefieldBehavior::placeMines()
 {
-	if (m_generated)
-		return;
+    if (m_generated)
+        return;
 
-	m_generated = true;
+    m_generated = true;
 
-	const Object* obj = getObject();
-	const GenerateMinefieldBehaviorModuleData* d = getGenerateMinefieldBehaviorModuleData();
-	const ThingTemplate* mineTemplate = TheThingFactory->findTemplate(d->m_mineName);
-	if (!mineTemplate)
-	{
-		DEBUG_CRASH(("mine %s not found",d->m_mineName.str()));
-		return;
-	}
+    const Object *obj = getObject();
+    const GenerateMinefieldBehaviorModuleData *d = getGenerateMinefieldBehaviorModuleData();
+    const ThingTemplate *mineTemplate = TheThingFactory->findTemplate(d->m_mineName);
+    if (!mineTemplate)
+    {
+        DEBUG_CRASH(("mine %s not found", d->m_mineName.str()));
+        return;
+    }
 
-	const Coord3D* target = getMinefieldTarget();
-	if (d->m_smartBorder)
-	{
-		GeometryInfo geom = obj->getGeometryInfo();
+    const Coord3D *target = getMinefieldTarget();
+    if (d->m_smartBorder)
+    {
+        GeometryInfo geom = obj->getGeometryInfo();
 
-		if (!d->m_smartBorderSkipInterior)
-		{
-			geom = mineTemplate->getTemplateGeometryInfo();
-			placeMineAt(*target, mineTemplate, obj->getControllingPlayer()->getDefaultTeam(), obj);
-		}
+        if (!d->m_smartBorderSkipInterior)
+        {
+            geom = mineTemplate->getTemplateGeometryInfo();
+            placeMineAt(*target, mineTemplate, obj->getControllingPlayer()->getDefaultTeam(), obj);
+        }
 
-		if (d->m_alwaysCircular)
-			geom.set(GEOMETRY_CYLINDER, false, 1, geom.getBoundingCircleRadius(), geom.getBoundingCircleRadius());
+        if (d->m_alwaysCircular)
+            geom.set(GEOMETRY_CYLINDER, false, 1, geom.getBoundingCircleRadius(), geom.getBoundingCircleRadius());
 
-		Real mineRadius = mineTemplate->getTemplateGeometryInfo().getBoundingCircleRadius();
-		Real mineDiameter = mineRadius * 2.0f;
-		geom.expandFootprint(mineRadius);
-		do
-		{
-			if (geom.getGeomType() == GEOMETRY_BOX && !d->m_alwaysCircular)
-			{
-				placeMinesAroundRect(*target, geom.getMajorRadius(), geom.getMinorRadius(), mineTemplate);
-			}
-			else
-			{
-				placeMinesAroundCircle(*target, geom.getMajorRadius(), mineTemplate);
-			}
-			geom.expandFootprint(mineDiameter);
-		} while (geom.getBoundingCircleRadius() < d->m_distanceAroundObject);
-	}
-	else if (d->m_borderOnly)
-	{
-		GeometryInfo geom = obj->getGeometryInfo();
-		geom.expandFootprint(d->m_distanceAroundObject);
+        Real mineRadius = mineTemplate->getTemplateGeometryInfo().getBoundingCircleRadius();
+        Real mineDiameter = mineRadius * 2.0f;
+        geom.expandFootprint(mineRadius);
+        do
+        {
+            if (geom.getGeomType() == GEOMETRY_BOX && !d->m_alwaysCircular)
+            {
+                placeMinesAroundRect(*target, geom.getMajorRadius(), geom.getMinorRadius(), mineTemplate);
+            }
+            else
+            {
+                placeMinesAroundCircle(*target, geom.getMajorRadius(), mineTemplate);
+            }
+            geom.expandFootprint(mineDiameter);
+        } while (geom.getBoundingCircleRadius() < d->m_distanceAroundObject);
+    }
+    else if (d->m_borderOnly)
+    {
+        GeometryInfo geom = obj->getGeometryInfo();
+        geom.expandFootprint(d->m_distanceAroundObject);
 
-		if (geom.getGeomType() == GEOMETRY_BOX && !d->m_alwaysCircular)
-		{
-			placeMinesAroundRect(*target, geom.getMajorRadius(), geom.getMinorRadius(), mineTemplate);
-		}
-		else
-		{
-			placeMinesAroundCircle(*target, geom.getMajorRadius(), mineTemplate);
-		}
-	}
-	else
-	{
-		GeometryInfo geom = obj->getGeometryInfo();
-		geom.expandFootprint(d->m_distanceAroundObject);
+        if (geom.getGeomType() == GEOMETRY_BOX && !d->m_alwaysCircular)
+        {
+            placeMinesAroundRect(*target, geom.getMajorRadius(), geom.getMinorRadius(), mineTemplate);
+        }
+        else
+        {
+            placeMinesAroundCircle(*target, geom.getMajorRadius(), mineTemplate);
+        }
+    }
+    else
+    {
+        GeometryInfo geom = obj->getGeometryInfo();
+        geom.expandFootprint(d->m_distanceAroundObject);
 
-		if (d->m_alwaysCircular)
-			geom.set(GEOMETRY_CYLINDER, false, 1, geom.getBoundingCircleRadius(), geom.getBoundingCircleRadius());
+        if (d->m_alwaysCircular)
+            geom.set(GEOMETRY_CYLINDER, false, 1, geom.getBoundingCircleRadius(), geom.getBoundingCircleRadius());
 
-		placeMinesInFootprint(geom, mineTemplate);
-	}
+        placeMinesInFootprint(geom, mineTemplate);
+    }
 
-	FXList::doFXObj(d->m_genFX, obj);
-
+    FXList::doFXObj(d->m_genFX, obj);
 }
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void GenerateMinefieldBehavior::crc( Xfer *xfer )
+void GenerateMinefieldBehavior::crc(Xfer *xfer)
 {
+    // extend base class
+    BehaviorModule::crc(xfer);
 
-	// extend base class
-	BehaviorModule::crc( xfer );
+    // extend base class
+    UpgradeMux::upgradeMuxCRC(xfer);
 
-	// extend base class
-	UpgradeMux::upgradeMuxCRC( xfer );
-
-}  // end crc
+} // end crc
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void GenerateMinefieldBehavior::xfer( Xfer *xfer )
+void GenerateMinefieldBehavior::xfer(Xfer *xfer)
 {
+    // version
+    XferVersion currentVersion = 1;
+    XferVersion version = currentVersion;
+    xfer->xferVersion(&version, currentVersion);
 
-	// version
-	XferVersion currentVersion = 1;
-	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+    // base class
+    BehaviorModule::xfer(xfer);
 
-	// base class
-	BehaviorModule::xfer( xfer );
+    // mux "base class"
+    UpgradeMux::upgradeMuxXfer(xfer);
 
-	// mux "base class"
-	UpgradeMux::upgradeMuxXfer( xfer );
+    // generated
+    xfer->xferBool(&m_generated);
+    xfer->xferBool(&m_hasTarget);
+    xfer->xferCoord3D(&m_target);
 
-	// generated
-	xfer->xferBool( &m_generated );
-	xfer->xferBool( &m_hasTarget );
-	xfer->xferCoord3D( &m_target );
-
-}  // end xfer
+} // end xfer
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void GenerateMinefieldBehavior::loadPostProcess( void )
+void GenerateMinefieldBehavior::loadPostProcess(void)
 {
+    // extend base class
+    BehaviorModule::loadPostProcess();
 
-	// extend base class
-	BehaviorModule::loadPostProcess();
+    // extend base class
+    UpgradeMux::upgradeMuxLoadPostProcess();
 
-	// extend base class
-	UpgradeMux::upgradeMuxLoadPostProcess();
-
-}  // end loadPostProcess
+} // end loadPostProcess

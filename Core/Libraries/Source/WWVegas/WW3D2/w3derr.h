@@ -34,7 +34,6 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
 #if defined(_MSC_VER)
 #pragma once
 #endif
@@ -49,12 +48,12 @@
 */
 enum WW3DErrorType
 {
-	WW3D_ERROR_OK				= 0,
-	WW3D_ERROR_GENERIC,
-	WW3D_ERROR_LOAD_FAILED,
-	WW3D_ERROR_SAVE_FAILED,
-	WW3D_ERROR_WINDOW_NOT_OPEN,
-	WW3D_ERROR_INITIALIZATION_FAILED,
+    WW3D_ERROR_OK = 0,
+    WW3D_ERROR_GENERIC,
+    WW3D_ERROR_LOAD_FAILED,
+    WW3D_ERROR_SAVE_FAILED,
+    WW3D_ERROR_WINDOW_NOT_OPEN,
+    WW3D_ERROR_INITIALIZATION_FAILED,
 };
 
 #endif

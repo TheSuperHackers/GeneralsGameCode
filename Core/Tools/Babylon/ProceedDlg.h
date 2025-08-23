@@ -24,44 +24,46 @@
 #endif // _MSC_VER > 1000
 // ProceedDlg.h : header file
 //
-#define IDALWAYS		101
+#define IDALWAYS 101
 
 /////////////////////////////////////////////////////////////////////////////
 // ProceedDlg dialog
 
 class ProceedDlg : public CDialog
 {
-// Construction
-	const char *message;
+    // Construction
+    const char *message;
+
 public:
-	ProceedDlg(const char *message, CWnd* pParent = NULL);   // standard constructor
+    ProceedDlg(const char *message, CWnd *pParent = NULL); // standard constructor
 
-// Dialog Data
-	//{{AFX_DATA(ProceedDlg)
-	enum { IDD = IDD_PROCEED };
-		// NOTE: the ClassWizard will add data members here
-	//}}AFX_DATA
+    // Dialog Data
+    //{{AFX_DATA(ProceedDlg)
+    enum
+    {
+        IDD = IDD_PROCEED
+    };
+    // NOTE: the ClassWizard will add data members here
+    //}}AFX_DATA
 
-
-// Overrides
-	// ClassWizard generated virtual function overrides
-	//{{AFX_VIRTUAL(ProceedDlg)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
-	//}}AFX_VIRTUAL
-
-// Implementation
+    // Overrides
+    // ClassWizard generated virtual function overrides
+    //{{AFX_VIRTUAL(ProceedDlg)
 protected:
+    virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
+    //}}AFX_VIRTUAL
 
-	// Generated message map functions
-	//{{AFX_MSG(ProceedDlg)
-	afx_msg void OnYes();
-	afx_msg void OnAlways();
-	afx_msg void OnNo();
-	afx_msg void OnClose();
-	virtual BOOL OnInitDialog();
-	//}}AFX_MSG
-	DECLARE_MESSAGE_MAP()
+    // Implementation
+protected:
+    // Generated message map functions
+    //{{AFX_MSG(ProceedDlg)
+    afx_msg void OnYes();
+    afx_msg void OnAlways();
+    afx_msg void OnNo();
+    afx_msg void OnClose();
+    virtual BOOL OnInitDialog();
+    //}}AFX_MSG
+    DECLARE_MESSAGE_MAP()
 };
 
 //{{AFX_INSERT_LOCATION}}

@@ -32,35 +32,36 @@ class ViewerSceneClass;
 
 class CAddToLineupDialog : public CDialog
 {
-// Construction
+    // Construction
 public:
-	CAddToLineupDialog(ViewerSceneClass *scene, CWnd* pParent = NULL);   // standard constructor
+    CAddToLineupDialog(ViewerSceneClass *scene, CWnd *pParent = NULL); // standard constructor
 
-// Dialog Data
-	//{{AFX_DATA(CAddToLineupDialog)
-	enum { IDD = IDD_ADD_TO_LINEUP };
-	CString	m_Object;
-	//}}AFX_DATA
+    // Dialog Data
+    //{{AFX_DATA(CAddToLineupDialog)
+    enum
+    {
+        IDD = IDD_ADD_TO_LINEUP
+    };
+    CString m_Object;
+    //}}AFX_DATA
 
-
-// Overrides
-	// ClassWizard generated virtual function overrides
-	//{{AFX_VIRTUAL(CAddToLineupDialog)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
-	//}}AFX_VIRTUAL
-
-// Implementation
+    // Overrides
+    // ClassWizard generated virtual function overrides
+    //{{AFX_VIRTUAL(CAddToLineupDialog)
 protected:
+    virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
+    //}}AFX_VIRTUAL
 
-	ViewerSceneClass * m_pCScene;
+    // Implementation
+protected:
+    ViewerSceneClass *m_pCScene;
 
-	// Generated message map functions
-	//{{AFX_MSG(CAddToLineupDialog)
-	virtual BOOL OnInitDialog();
-	virtual void OnOK();
-	//}}AFX_MSG
-	DECLARE_MESSAGE_MAP()
+    // Generated message map functions
+    //{{AFX_MSG(CAddToLineupDialog)
+    virtual BOOL OnInitDialog();
+    virtual void OnOK();
+    //}}AFX_MSG
+    DECLARE_MESSAGE_MAP()
 };
 
 //{{AFX_INSERT_LOCATION}}

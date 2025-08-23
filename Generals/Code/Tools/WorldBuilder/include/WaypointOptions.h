@@ -35,61 +35,60 @@ class MovePolygonUndoable;
 
 class WaypointOptions : public COptionsPanel
 {
-
-// Construction
+    // Construction
 public:
-	WaypointOptions(CWnd* pParent = NULL);   // standard constructor
+    WaypointOptions(CWnd *pParent = NULL); // standard constructor
 
-// Dialog Data
-	//{{AFX_DATA(WaypointOptions)
-	enum { IDD = IDD_WAYPOINT_OPTIONS };
-		// NOTE: the ClassWizard will add data members here
-	//}}AFX_DATA
+    // Dialog Data
+    //{{AFX_DATA(WaypointOptions)
+    enum
+    {
+        IDD = IDD_WAYPOINT_OPTIONS
+    };
+    // NOTE: the ClassWizard will add data members here
+    //}}AFX_DATA
 
-
-// Overrides
-	// ClassWizard generated virtual function overrides
-	//{{AFX_VIRTUAL(WaypointOptions)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
-	virtual void OnOK(){return;};  //!< Modeless dialogs don't OK, so eat this for modeless.
-	virtual void OnCancel(){return;}; //!< Modeless dialogs don't close on ESC, so eat this for modeless.
-	//}}AFX_VIRTUAL
-
-// Implementation
+    // Overrides
+    // ClassWizard generated virtual function overrides
+    //{{AFX_VIRTUAL(WaypointOptions)
 protected:
+    virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
+    virtual void OnOK() { return; }; //!< Modeless dialogs don't OK, so eat this for modeless.
+    virtual void OnCancel() { return; }; //!< Modeless dialogs don't close on ESC, so eat this for modeless.
+    //}}AFX_VIRTUAL
 
-	// Generated message map functions
-	//{{AFX_MSG(WaypointOptions)
-	virtual BOOL OnInitDialog();
-	afx_msg void OnChangeWaypointnameEdit();
-	afx_msg void OnChangeSelectedWaypoint();
-	afx_msg void OnEditWaypointLocationX();
-	afx_msg void OnEditWaypointLocationY();
-	afx_msg void OnEditchangeWaypointlabel1Edit();
-	afx_msg void OnEditchangeWaypointlabel2Edit();
-	afx_msg void OnEditchangeWaypointlabel3Edit();
-	afx_msg void OnWaypointBidirectional();
-	//}}AFX_MSG
-	DECLARE_MESSAGE_MAP()
+    // Implementation
+protected:
+    // Generated message map functions
+    //{{AFX_MSG(WaypointOptions)
+    virtual BOOL OnInitDialog();
+    afx_msg void OnChangeWaypointnameEdit();
+    afx_msg void OnChangeSelectedWaypoint();
+    afx_msg void OnEditWaypointLocationX();
+    afx_msg void OnEditWaypointLocationY();
+    afx_msg void OnEditchangeWaypointlabel1Edit();
+    afx_msg void OnEditchangeWaypointlabel2Edit();
+    afx_msg void OnEditchangeWaypointlabel3Edit();
+    afx_msg void OnWaypointBidirectional();
+    //}}AFX_MSG
+    DECLARE_MESSAGE_MAP()
 
 protected:
-	static WaypointOptions *m_staticThis;  ///< Reference to the floating panel so SetWidth and SetFeather can be static.
-	Bool		m_updating; ///<true if the ui is updating itself.
-	MovePolygonUndoable *m_moveUndoable;
-	Int									 m_originalHeight;
+    static WaypointOptions *m_staticThis; ///< Reference to the floating panel so SetWidth and SetFeather can be static.
+    Bool m_updating; ///< true if the ui is updating itself.
+    MovePolygonUndoable *m_moveUndoable;
+    Int m_originalHeight;
+
 protected:
-	void updateTheUI(void);
-	void changeWaypointLabel(Int editControlID, NameKeyType key);
+    void updateTheUI(void);
+    void changeWaypointLabel(Int editControlID, NameKeyType key);
 
 public:
-	static void update(void);
-	static MapObject *getSingleSelectedWaypoint(void);
-	static PolygonTrigger *getSingleSelectedPolygon(void);
-	static Bool isUnique(AsciiString name, MapObject* theMapObj = NULL);
-	static AsciiString GenerateUniqueName(Int id);
-
-
+    static void update(void);
+    static MapObject *getSingleSelectedWaypoint(void);
+    static PolygonTrigger *getSingleSelectedPolygon(void);
+    static Bool isUnique(AsciiString name, MapObject *theMapObj = NULL);
+    static AsciiString GenerateUniqueName(Int id);
 };
 
 //{{AFX_INSERT_LOCATION}}

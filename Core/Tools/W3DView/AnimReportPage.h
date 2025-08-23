@@ -33,43 +33,45 @@ class CAdvancedAnimSheet;
 
 class CAnimReportPage : public CPropertyPage
 {
-	DECLARE_DYNCREATE(CAnimReportPage)
+    DECLARE_DYNCREATE(CAnimReportPage)
 
-// Construction
+    // Construction
 public:
-	CAnimReportPage(CAdvancedAnimSheet *sheet = NULL);
-	~CAnimReportPage();
+    CAnimReportPage(CAdvancedAnimSheet *sheet = NULL);
+    ~CAnimReportPage();
 
-// Dialog Data
-	//{{AFX_DATA(CAnimReportPage)
-	enum { IDD = IDD_PROP_PAGE_ADVANIM_REPORT };
-	CListCtrl	m_AnimReport;
-	//}}AFX_DATA
+    // Dialog Data
+    //{{AFX_DATA(CAnimReportPage)
+    enum
+    {
+        IDD = IDD_PROP_PAGE_ADVANIM_REPORT
+    };
+    CListCtrl m_AnimReport;
+    //}}AFX_DATA
 
+    // Overrides
+    // ClassWizard generate virtual function overrides
+    //{{AFX_VIRTUAL(CAnimReportPage)
+public:
+    virtual BOOL OnSetActive();
 
-// Overrides
-	// ClassWizard generate virtual function overrides
-	//{{AFX_VIRTUAL(CAnimReportPage)
-	public:
-	virtual BOOL OnSetActive();
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
-	//}}AFX_VIRTUAL
-
-// Implementation
 protected:
-	void		FillListControl (void);
-	int		FindItem (const char *item_name);
-	void		MakeChannelStr (int bone_idx, HAnimClass *hanim, char *channels);
+    virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
+    //}}AFX_VIRTUAL
 
-	CAdvancedAnimSheet *m_Sheet;
+    // Implementation
+protected:
+    void FillListControl(void);
+    int FindItem(const char *item_name);
+    void MakeChannelStr(int bone_idx, HAnimClass *hanim, char *channels);
 
-	// Generated message map functions
-	//{{AFX_MSG(CAnimReportPage)
-	virtual BOOL OnInitDialog();
-	//}}AFX_MSG
-	DECLARE_MESSAGE_MAP()
+    CAdvancedAnimSheet *m_Sheet;
 
+    // Generated message map functions
+    //{{AFX_MSG(CAnimReportPage)
+    virtual BOOL OnInitDialog();
+    //}}AFX_MSG
+    DECLARE_MESSAGE_MAP()
 };
 
 //{{AFX_INSERT_LOCATION}}

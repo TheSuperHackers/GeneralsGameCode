@@ -25,8 +25,7 @@
 #include <windows.h>
 
 // Obtain version information from the specified file.
-bool GetVersionInfo(char* filename, VS_FIXEDFILEINFO* fileInfo);
-bool loadWolapi( char *filename );
+bool GetVersionInfo(char *filename, VS_FIXEDFILEINFO *fileInfo);
+bool loadWolapi(char *filename);
 
 #endif // __VERCHK_H__
-

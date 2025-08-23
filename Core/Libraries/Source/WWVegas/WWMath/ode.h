@@ -35,7 +35,6 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
 #if defined(_MSC_VER)
 #pragma once
 #endif
@@ -46,7 +45,6 @@
 #include "always.h"
 #include "Vector.H"
 #include "wwdebug.h"
-
 
 /*
 ** StateVectorClass
@@ -59,10 +57,15 @@
 class StateVectorClass : public DynamicVectorClass<float>
 {
 public:
-	void Reset(void) { ActiveCount = 0; }
-	void Resize(int size) { if (size > VectorMax) { DynamicVectorClass<float>::Resize(size); } }
+    void Reset(void) { ActiveCount = 0; }
+    void Resize(int size)
+    {
+        if (size > VectorMax)
+        {
+            DynamicVectorClass<float>::Resize(size);
+        }
+    }
 };
-
 
 /*
 ** ODESystemClass
@@ -71,38 +74,34 @@ public:
 */
 class ODESystemClass
 {
-
 public:
+    /*
+    ** Get_Current_State
+    ** This function should fill the given state vector with the
+    ** current state of this object.  Each state variable should be
+    ** inserted into the vector using its 'Add' interface.
+    */
+    virtual void Get_State(StateVectorClass &set_state) = 0;
 
-	/*
-	** Get_Current_State
-	** This function should fill the given state vector with the
-	** current state of this object.  Each state variable should be
-	** inserted into the vector using its 'Add' interface.
-	*/
-	virtual void	Get_State(StateVectorClass & set_state) = 0;
+    /*
+    ** Set_Current_State
+    ** This function should read its state from this state vector starting from the
+    ** given index.  The return value should be the index that the next object should
+    ** read from (i.e. increment the index past your state)
+    */
+    virtual int Set_State(const StateVectorClass &new_state, int start_index = 0) = 0;
 
-	/*
-	** Set_Current_State
-	** This function should read its state from this state vector starting from the
-	** given index.  The return value should be the index that the next object should
-	** read from (i.e. increment the index past your state)
-	*/
-	virtual int		Set_State(const StateVectorClass & new_state,int start_index = 0) = 0;
-
-	/*
-	** Compute_Derivatives
-	** The various ODE solvers will use this interface to ask the ODESystemClass to
-	** compute the derivatives of their state.  In some cases, the integrator will
-	** pass in a new state vector (test_state) to be used when computing the derivatives.
-	** NULL will be passed if they want the derivatives for the initial state.
-	** This function works similarly to the Set_State function in that it passes you
-	** the index to start reading from and you pass it back the index to continue from.
-	*/
-	virtual int		Compute_Derivatives(float t,StateVectorClass * test_state,StateVectorClass * dydt,int start_index = 0) = 0;
-
+    /*
+    ** Compute_Derivatives
+    ** The various ODE solvers will use this interface to ask the ODESystemClass to
+    ** compute the derivatives of their state.  In some cases, the integrator will
+    ** pass in a new state vector (test_state) to be used when computing the derivatives.
+    ** NULL will be passed if they want the derivatives for the initial state.
+    ** This function works similarly to the Set_State function in that it passes you
+    ** the index to start reading from and you pass it back the index to continue from.
+    */
+    virtual int Compute_Derivatives(float t, StateVectorClass *test_state, StateVectorClass *dydt, int start_index = 0) = 0;
 };
-
 
 /*
 ** IntegrationSystem
@@ -122,13 +121,10 @@ public:
 class IntegrationSystem
 {
 public:
-
-	static void Euler_Integrate(ODESystemClass * sys,float dt);
-	static void	Midpoint_Integrate(ODESystemClass * sys,float dt);
-	static void	Runge_Kutta_Integrate(ODESystemClass * sys,float dt);
-	static void Runge_Kutta5_Integrate(ODESystemClass * odesys,float dt);
-
+    static void Euler_Integrate(ODESystemClass *sys, float dt);
+    static void Midpoint_Integrate(ODESystemClass *sys, float dt);
+    static void Runge_Kutta_Integrate(ODESystemClass *sys, float dt);
+    static void Runge_Kutta5_Integrate(ODESystemClass *odesys, float dt);
 };
 
 #endif
-

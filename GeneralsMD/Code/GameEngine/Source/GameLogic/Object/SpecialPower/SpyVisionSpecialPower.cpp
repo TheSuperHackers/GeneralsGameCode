@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 
 #include "Common/Xfer.h"
 #include "GameLogic/Object.h"
@@ -38,31 +38,36 @@
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-SpyVisionSpecialPowerModuleData::SpyVisionSpecialPowerModuleData( void )
+SpyVisionSpecialPowerModuleData::SpyVisionSpecialPowerModuleData(void)
 {
-
-	m_baseDurationInFrames = 0;
-	m_bonusDurationPerCapturedInFrames = 0;
-	m_maxDurationInFrames = 0;
-
+    m_baseDurationInFrames = 0;
+    m_bonusDurationPerCapturedInFrames = 0;
+    m_maxDurationInFrames = 0;
 }
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void SpyVisionSpecialPowerModuleData::buildFieldParse( MultiIniFieldParse &p )
+void SpyVisionSpecialPowerModuleData::buildFieldParse(MultiIniFieldParse &p)
 {
-	SpecialPowerModuleData::buildFieldParse( p );
+    SpecialPowerModuleData::buildFieldParse(p);
 
-	static const FieldParse dataFieldParse[] =
-	{
-		{ "BaseDuration",								INI::parseDurationUnsignedInt,	NULL,   offsetof( SpyVisionSpecialPowerModuleData, m_baseDurationInFrames ) },
-		{ "BonusDurationPerCaptured",		INI::parseDurationUnsignedInt,	NULL,   offsetof( SpyVisionSpecialPowerModuleData, m_bonusDurationPerCapturedInFrames ) },
-		{ "MaxDuration",								INI::parseDurationUnsignedInt,	NULL,   offsetof( SpyVisionSpecialPowerModuleData, m_maxDurationInFrames ) },
-		{ 0, 0, 0, 0 }
-	};
-	p.add( dataFieldParse );
+    static const FieldParse dataFieldParse[] = {
+        {"BaseDuration",
+         INI::parseDurationUnsignedInt,
+         NULL,
+         offsetof(SpyVisionSpecialPowerModuleData, m_baseDurationInFrames)},
+        {"BonusDurationPerCaptured",
+         INI::parseDurationUnsignedInt,
+         NULL,
+         offsetof(SpyVisionSpecialPowerModuleData, m_bonusDurationPerCapturedInFrames)},
+        {"MaxDuration",
+         INI::parseDurationUnsignedInt,
+         NULL,
+         offsetof(SpyVisionSpecialPowerModuleData, m_maxDurationInFrames)},
+        {0, 0, 0, 0}};
+    p.add(dataFieldParse);
 
-}  // end buildFieldParse
+} // end buildFieldParse
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -70,98 +75,92 @@ void SpyVisionSpecialPowerModuleData::buildFieldParse( MultiIniFieldParse &p )
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-SpyVisionSpecialPower::SpyVisionSpecialPower( Thing *thing, const ModuleData *moduleData )
-												: SpecialPowerModule( thing, moduleData )
+SpyVisionSpecialPower::SpyVisionSpecialPower(Thing *thing, const ModuleData *moduleData) :
+    SpecialPowerModule(thing, moduleData)
 {
-
 }
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-SpyVisionSpecialPower::~SpyVisionSpecialPower( void )
+SpyVisionSpecialPower::~SpyVisionSpecialPower(void)
 {
-
 }
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void SpyVisionSpecialPower::doSpecialPower( UnsignedInt commandOptions )
+void SpyVisionSpecialPower::doSpecialPower(UnsignedInt commandOptions)
 {
-	if (getObject()->isDisabled())
-		return;
+    if (getObject()->isDisabled())
+        return;
 
-	// call the base class action cause we are *EXTENDING* functionality
-	SpecialPowerModule::doSpecialPower( commandOptions );
+    // call the base class action cause we are *EXTENDING* functionality
+    SpecialPowerModule::doSpecialPower(commandOptions);
 
+    // get the source of this power
+    Object *source = getObject();
 
-	// get the source of this power
-	Object *source = getObject();
+    // get module data
+    const SpyVisionSpecialPowerModuleData *modData = getSpyVisionSpecialPowerModuleData();
 
-	// get module data
-	const SpyVisionSpecialPowerModuleData *modData = getSpyVisionSpecialPowerModuleData();
+    //
+    // the SpyVision special power increases in range and duration of effect the more
+    // units we have captured within us
+    //
+    UnsignedInt duration = modData->m_baseDurationInFrames;
+    ContainModuleInterface *contain = source->getContain();
+    if (contain)
+    {
+        // for every captured unit we get a bonus
+        duration += contain->getContainCount() * modData->m_bonusDurationPerCapturedInFrames;
 
-	//
-	// the SpyVision special power increases in range and duration of effect the more
-	// units we have captured within us
-	//
-	UnsignedInt duration = modData->m_baseDurationInFrames;
-	ContainModuleInterface *contain = source->getContain();
-	if( contain )
-	{
-		// for every captured unit we get a bonus
-		duration += contain->getContainCount() * modData->m_bonusDurationPerCapturedInFrames;
+        // cap at the max
+        if (duration > modData->m_maxDurationInFrames)
+            duration = modData->m_maxDurationInFrames;
+    }
 
-		// cap at the max
-		if( duration > modData->m_maxDurationInFrames )
-			duration = modData->m_maxDurationInFrames;
-	}
+    static const NameKeyType key_SpyVisionUpdate = NAMEKEY("SpyVisionUpdate");
+    SpyVisionUpdate *update = (SpyVisionUpdate *)source->findUpdateModule(key_SpyVisionUpdate);
+    if (!update)
+    {
+        return;
+    }
 
-	static const NameKeyType key_SpyVisionUpdate = NAMEKEY( "SpyVisionUpdate" );
-	SpyVisionUpdate *update = (SpyVisionUpdate*)source->findUpdateModule( key_SpyVisionUpdate );
-	if( !update )
-	{
-		return;
-	}
-
-	update->activateSpyVision( duration );
+    update->activateSpyVision(duration);
 }
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void SpyVisionSpecialPower::crc( Xfer *xfer )
+void SpyVisionSpecialPower::crc(Xfer *xfer)
 {
+    // extend base class
+    SpecialPowerModule::crc(xfer);
 
-	// extend base class
-	SpecialPowerModule::crc( xfer );
-
-}  // end crc
+} // end crc
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void SpyVisionSpecialPower::xfer( Xfer *xfer )
+void SpyVisionSpecialPower::xfer(Xfer *xfer)
 {
+    // version
+    XferVersion currentVersion = 1;
+    XferVersion version = currentVersion;
+    xfer->xferVersion(&version, currentVersion);
 
-	// version
-	XferVersion currentVersion = 1;
-	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+    // extend base class
+    SpecialPowerModule::xfer(xfer);
 
-	// extend base class
-	SpecialPowerModule::xfer( xfer );
-
-}  // end xfer
+} // end xfer
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void SpyVisionSpecialPower::loadPostProcess( void )
+void SpyVisionSpecialPower::loadPostProcess(void)
 {
+    // extend base class
+    SpecialPowerModule::loadPostProcess();
 
-	// extend base class
-	SpecialPowerModule::loadPostProcess();
-
-}  // end loadPostProcess
+} // end loadPostProcess

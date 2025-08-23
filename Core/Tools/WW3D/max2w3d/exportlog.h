@@ -36,7 +36,6 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
 #ifndef EXPORTLOG_H
 #define EXPORTLOG_H
 
@@ -49,14 +48,12 @@
 class ExportLog
 {
 public:
-	static void Init(HWND parent);
-	static void Shutdown(bool wait_for_ok);
+    static void Init(HWND parent);
+    static void Shutdown(bool wait_for_ok);
 
-   static void	printf(const char *, ...);
-	static void rprintf(const char *, ...);
-	static void	updatebar(float position, float total);
+    static void printf(const char *, ...);
+    static void rprintf(const char *, ...);
+    static void updatebar(float position, float total);
 };
 
-
-#endif //EXPORTLOG_H
-
+#endif // EXPORTLOG_H

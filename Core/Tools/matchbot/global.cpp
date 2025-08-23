@@ -22,30 +22,29 @@
 GlobalClass Global;
 
 GlobalClass::GlobalClass(void)
-{}
+{
+}
 
 bool GlobalClass::ReadFile(const char *fname)
 {
-	FILE *fp;
-	if ((fp = fopen(fname, "r")) == NULL)
-		return false;
-	config.readFile(fp);
-	fclose(fp);
+    FILE *fp;
+    if ((fp = fopen(fname, "r")) == NULL)
+        return false;
+    config.readFile(fp);
+    fclose(fp);
 
-	return true;
+    return true;
 }
 
-bool GlobalClass::GetString(const Wstring& key, Wstring& val)
+bool GlobalClass::GetString(const Wstring &key, Wstring &val)
 {
-	val = "";
-	config.getString(key, val, "STRINGS");
-	if (val == "")
-	{
-		val.setFormatted("MISSING:%s", key.get());
-		return false;
-	}
+    val = "";
+    config.getString(key, val, "STRINGS");
+    if (val == "")
+    {
+        val.setFormatted("MISSING:%s", key.get());
+        return false;
+    }
 
-	return true;
-
+    return true;
 }
-

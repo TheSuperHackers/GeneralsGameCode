@@ -56,66 +56,64 @@ class ThingTemplate;
 
 // ----------------------------------------------------------------------------------------------
 /**
-	Handicap encapsulates the sets of modifiers to abilities used to balance
-	the game and give different abilities to different Players.
-	Conceptually, it's a large set of coefficients (typically, but not necessarily,
-	in the range of 0.0...1.0).
+    Handicap encapsulates the sets of modifiers to abilities used to balance
+    the game and give different abilities to different Players.
+    Conceptually, it's a large set of coefficients (typically, but not necessarily,
+    in the range of 0.0...1.0).
 
-	Usage example (conceptual):
+    Usage example (conceptual):
 
-	Real armorCoef = this->m_handicap->getHandicap(ARMOR, this);
-	Real actualArmor = this->getArmorValue() * armorCoef;
+    Real armorCoef = this->m_handicap->getHandicap(ARMOR, this);
+    Real actualArmor = this->getArmorValue() * armorCoef;
 */
 class Handicap
 {
 public:
+    // NOTE: if you ever add/remove/change the enums in HandicapType,
+    // you must also modify initFromDict()!
+    enum HandicapType
+    {
+        BUILDCOST,
+        BUILDTIME,
 
-	// NOTE: if you ever add/remove/change the enums in HandicapType,
-	// you must also modify initFromDict()!
-	enum HandicapType
-	{
-		BUILDCOST,
-		BUILDTIME,
+        HANDICAP_TYPE_COUNT
+    };
 
-		HANDICAP_TYPE_COUNT
-	};
+    Handicap();
 
-	Handicap();
+    /// reset all handicaps to a default value.
+    void init();
 
-	/// reset all handicaps to a default value.
-	void init();
+    /**
+        initialize from the fields in the Dict. Note that this does NOT call init()
+        internally, so only those fields that are present in the dict will be set.
+        if you want to ensure all fields are something reasonable, you should call init()
+        prior to calling this.
+    */
+    void readFromDict(const Dict *d);
 
-	/**
-		initialize from the fields in the Dict. Note that this does NOT call init()
-		internally, so only those fields that are present in the dict will be set.
-		if you want to ensure all fields are something reasonable, you should call init()
-		prior to calling this.
-	*/
-	void readFromDict(const Dict* d);
-
-	/**
-		return the multiplier for the given Handicap type on the given Object.
-		The Object's type (unit, building, etc.) will generally be examined
-		to determine what value to return.
-	*/
-	Real getHandicap(HandicapType t, const ThingTemplate *tmpl) const;
+    /**
+        return the multiplier for the given Handicap type on the given Object.
+        The Object's type (unit, building, etc.) will generally be examined
+        to determine what value to return.
+    */
+    Real getHandicap(HandicapType t, const ThingTemplate *tmpl) const;
 
 protected:
 private:
+    // NOTE: if you ever add/remove/change the enums in ThingType,
+    // you must also modify initFromDict()!
+    enum ThingType
+    {
+        GENERIC, // if a thing is nothing else, it's generic.
+        BUILDINGS,
 
-	// NOTE: if you ever add/remove/change the enums in ThingType,
-	// you must also modify initFromDict()!
-	enum ThingType
-	{
-		GENERIC,		// if a thing is nothing else, it's generic.
-		BUILDINGS,
+        THING_TYPE_COUNT
+    };
 
-		THING_TYPE_COUNT
-	};
+    Real m_handicaps[HANDICAP_TYPE_COUNT][THING_TYPE_COUNT];
 
-	Real m_handicaps[HANDICAP_TYPE_COUNT][THING_TYPE_COUNT];
-
-	static ThingType getBestThingType(const ThingTemplate *tmpl);
+    static ThingType getBestThingType(const ThingTemplate *tmpl);
 };
 
 #endif // _HANDICAP_H_

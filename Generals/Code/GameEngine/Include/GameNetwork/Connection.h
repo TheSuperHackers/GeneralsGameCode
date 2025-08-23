@@ -47,60 +47,60 @@
 
 class Connection : public MemoryPoolObject
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(Connection, "Connection")
+    MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(Connection, "Connection")
 public:
-	Connection();
-	//~Connection();
+    Connection();
+    //~Connection();
 
-	void update();
-	void init();
-	void reset();
+    void update();
+    void init();
+    void reset();
 
-	UnsignedInt doSend();
-	void doRecv();
+    UnsignedInt doSend();
+    void doRecv();
 
-	Bool allCommandsReady(UnsignedInt frame);
-	Bool isQueueEmpty();
-	void attachTransport(Transport *transport);
-	void setUser(User *user);
-	User *getUser();
-	void setFrameGrouping(time_t frameGrouping);
+    Bool allCommandsReady(UnsignedInt frame);
+    Bool isQueueEmpty();
+    void attachTransport(Transport *transport);
+    void setUser(User *user);
+    User *getUser();
+    void setFrameGrouping(time_t frameGrouping);
 
-	void sendNetCommandMsg(NetCommandMsg *msg, UnsignedByte relay);
+    void sendNetCommandMsg(NetCommandMsg *msg, UnsignedByte relay);
 
-	// These two processAck calls do the same thing, just take different types of ACK commands.
-	NetCommandRef * processAck(NetAckBothCommandMsg *msg);
-	NetCommandRef * processAck(NetAckStage1CommandMsg *msg);
-	NetCommandRef * processAck(NetCommandMsg *msg);
-	NetCommandRef * processAck(UnsignedShort commandID, UnsignedByte originalPlayerID);
+    // These two processAck calls do the same thing, just take different types of ACK commands.
+    NetCommandRef *processAck(NetAckBothCommandMsg *msg);
+    NetCommandRef *processAck(NetAckStage1CommandMsg *msg);
+    NetCommandRef *processAck(NetCommandMsg *msg);
+    NetCommandRef *processAck(UnsignedShort commandID, UnsignedByte originalPlayerID);
 
-	void clearCommandsExceptFrom( Int playerIndex );
+    void clearCommandsExceptFrom(Int playerIndex);
 
-	void setQuitting( void );
-	Bool isQuitting( void ) { return m_isQuitting; }
+    void setQuitting(void);
+    Bool isQuitting(void) { return m_isQuitting; }
 
 #if defined(RTS_DEBUG)
-	void debugPrintCommands();
+    void debugPrintCommands();
 #endif
 
 protected:
-	void doRetryMetrics();
+    void doRetryMetrics();
 
-	Bool m_isQuitting;
-	UnsignedInt m_quitTime;
+    Bool m_isQuitting;
+    UnsignedInt m_quitTime;
 
-	Transport *m_transport;
-	User *m_user;
+    Transport *m_transport;
+    User *m_user;
 
-	NetCommandList *m_netCommandList;
-	time_t m_retryTime;						///< The time between sending retry packets for this connection.  Time is in milliseconds.
-	Real m_averageLatency;			///< The average time between sending a command and receiving an ACK.
-	Real m_latencies[CONNECTION_LATENCY_HISTORY_LENGTH];	///< List of the last 100 latencies.
+    NetCommandList *m_netCommandList;
+    time_t m_retryTime; ///< The time between sending retry packets for this connection.  Time is in milliseconds.
+    Real m_averageLatency; ///< The average time between sending a command and receiving an ACK.
+    Real m_latencies[CONNECTION_LATENCY_HISTORY_LENGTH]; ///< List of the last 100 latencies.
 
-	time_t m_frameGrouping;				///< The minimum time between packet sends.
-	time_t m_lastTimeSent;				///< The time of the last packet send.
-	Int m_numRetries;							///< The number of retries for the last second.
-	time_t m_retryMetricsTime;		///< The start time of the current retry metrics thing.
+    time_t m_frameGrouping; ///< The minimum time between packet sends.
+    time_t m_lastTimeSent; ///< The time of the last packet send.
+    Int m_numRetries; ///< The number of retries for the last second.
+    time_t m_retryMetricsTime; ///< The start time of the current retry metrics thing.
 };
 
 #endif

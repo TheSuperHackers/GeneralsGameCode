@@ -40,36 +40,33 @@ class TunnelTracker; // The player owns one such object for his Tunnels, so inst
 #include "Common/SubsystemInterface.h"
 
 /**
-		System responsible for Crates as code objects - ini, new/delete etc
+        System responsible for Crates as code objects - ini, new/delete etc
 */
-class CaveSystem : public SubsystemInterface,
-									 public Snapshot
+class CaveSystem : public SubsystemInterface, public Snapshot
 {
 public:
-	CaveSystem();
-	~CaveSystem();
+    CaveSystem();
+    ~CaveSystem();
 
-	void init();
-	void reset();
-	void update();
+    void init();
+    void reset();
+    void update();
 
-	Bool canSwitchIndexToIndex( Int oldIndex, Int newIndex ); // If either Index has guys in it, no, you can't
-	void registerNewCave( Int theIndex );			// All Caves are born with a default index, which could be new
-	void unregisterCave( Int theIndex );				//
-	TunnelTracker *getTunnelTrackerForCaveIndex( Int theIndex );
+    Bool canSwitchIndexToIndex(Int oldIndex, Int newIndex); // If either Index has guys in it, no, you can't
+    void registerNewCave(Int theIndex); // All Caves are born with a default index, which could be new
+    void unregisterCave(Int theIndex); //
+    TunnelTracker *getTunnelTrackerForCaveIndex(Int theIndex);
 
 protected:
-
-	// snapshot methods
-	virtual void crc( Xfer *xfer ) { }
-	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess( void ) { }
+    // snapshot methods
+    virtual void crc(Xfer *xfer) {}
+    virtual void xfer(Xfer *xfer);
+    virtual void loadPostProcess(void) {}
 
 private:
-	std::vector<TunnelTracker*> m_tunnelTrackerVector;// A vector of pointers where the indexes are known by
-	// others, so it can have NULLs in it to keep position.  I've been advised against a map, so don't be a jerk
-	// and use spot 20 first.
-
+    std::vector<TunnelTracker *> m_tunnelTrackerVector; // A vector of pointers where the indexes are known by
+    // others, so it can have NULLs in it to keep position.  I've been advised against a map, so don't be a jerk
+    // and use spot 20 first.
 };
 
 extern CaveSystem *TheCaveSystem;

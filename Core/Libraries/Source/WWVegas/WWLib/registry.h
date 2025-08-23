@@ -53,75 +53,72 @@ class INIClass;
 /*
 **
 */
-class	RegistryClass {
+class RegistryClass
+{
 public:
-	static bool Exists(const char* sub_key);
+    static bool Exists(const char *sub_key);
 
-	// Constructor & Destructor
-	RegistryClass( const char * sub_key, bool create = true );
-	~RegistryClass( void );
+    // Constructor & Destructor
+    RegistryClass(const char *sub_key, bool create = true);
+    ~RegistryClass(void);
 
-	bool	Is_Valid( void )		{ return IsValid; }
+    bool Is_Valid(void) { return IsValid; }
 
-	// Int data type access
-	int	Get_Int( const char * name, int def_value = 0 );
-	void	Set_Int( const char * name, int value );
+    // Int data type access
+    int Get_Int(const char *name, int def_value = 0);
+    void Set_Int(const char *name, int value);
 
-	// Bool data type access
-	bool	Get_Bool( const char * name, bool def_value = false );
-	void	Set_Bool( const char * name, bool value );
+    // Bool data type access
+    bool Get_Bool(const char *name, bool def_value = false);
+    void Set_Bool(const char *name, bool value);
 
-	// Float data type access
-	float	Get_Float( const char * name, float def_value = 0.0f );
-	void	Set_Float( const char * name, float value );
+    // Float data type access
+    float Get_Float(const char *name, float def_value = 0.0f);
+    void Set_Float(const char *name, float value);
 
-	// String data type access
-	char *Get_String( const char * name, char *value, int value_size,
-      const char * default_string = NULL );
-	void	Get_String( const char * name, StringClass &string, const char *default_string = NULL);
-	void	Set_String( const char * name, const char *value );
+    // String data type access
+    char *Get_String(const char *name, char *value, int value_size, const char *default_string = NULL);
+    void Get_String(const char *name, StringClass &string, const char *default_string = NULL);
+    void Set_String(const char *name, const char *value);
 
-	// Wide string data type access
-	void	Get_String( const WCHAR * name, WideStringClass &string, const WCHAR *default_string = NULL);
-	void	Set_String( const WCHAR * name, const WCHAR *value );
+    // Wide string data type access
+    void Get_String(const WCHAR *name, WideStringClass &string, const WCHAR *default_string = NULL);
+    void Set_String(const WCHAR *name, const WCHAR *value);
 
-	// Binary data type access
-	void	Get_Bin( const char * name, void *buffer, int buffer_size );
-	int	Get_Bin_Size( const char * name );
-	void	Set_Bin( const char * name, const void *buffer, int buffer_size );
+    // Binary data type access
+    void Get_Bin(const char *name, void *buffer, int buffer_size);
+    int Get_Bin_Size(const char *name);
+    void Set_Bin(const char *name, const void *buffer, int buffer_size);
 
-	// Value enumeration support
-	void	Get_Value_List( DynamicVectorClass<StringClass> &list );
+    // Value enumeration support
+    void Get_Value_List(DynamicVectorClass<StringClass> &list);
 
-	// Delete support
-	void	Delete_Value( const char * name);
-	void	Deleta_All_Values( void );
+    // Delete support
+    void Delete_Value(const char *name);
+    void Deleta_All_Values(void);
 
-	// Read only.
-	static void Set_Read_Only(bool set) {IsLocked = set;}
+    // Read only.
+    static void Set_Read_Only(bool set) { IsLocked = set; }
 
-	//
-	// Bulk registry operations. BE VERY VERY CAREFUL USING THESE
-	//
-	static void Delete_Registry_Tree(char *path);
-	static void Load_Registry(const char *filename, char *old_path, char *new_path);
-	static void Save_Registry(const char *filename, char *path);
-
+    //
+    // Bulk registry operations. BE VERY VERY CAREFUL USING THESE
+    //
+    static void Delete_Registry_Tree(char *path);
+    static void Load_Registry(const char *filename, char *old_path, char *new_path);
+    static void Save_Registry(const char *filename, char *path);
 
 private:
+    static void Delete_Registry_Values(HKEY key);
+    static void Save_Registry_Tree(char *path, INIClass *ini);
+    static void Save_Registry_Values(HKEY key, char *path, INIClass *ini);
 
-	static void Delete_Registry_Values(HKEY key);
-	static void Save_Registry_Tree(char *path, INIClass *ini);
-	static void Save_Registry_Values(HKEY key, char *path, INIClass *ini);
+    int Key;
+    bool IsValid;
 
-
-	int	Key;
-	bool	IsValid;
-
-	//
-	// Use this to make the registry 'read only'. Useful for running multiple copies of the app.
-	//
-	static bool IsLocked;
+    //
+    // Use this to make the registry 'read only'. Useful for running multiple copies of the app.
+    //
+    static bool IsLocked;
 };
 
 #endif // REGISTRY_H

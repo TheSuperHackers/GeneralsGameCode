@@ -27,60 +27,61 @@
 
 #include "Lib/BaseType.h"
 
-typedef struct {
-	Int xExtent;
-	Int yExtent;
-	Int initialHeight;
-	Int borderWidth;
-	Bool forResize;			///< If for resize, then the anchor bools are set.
-	Bool anchorTop;			///< It can be anchor top, or anchor bottom, or neither, but not both.
-	Bool anchorBottom;
-	Bool anchorLeft;			///< It can be anchor left, or anchor right, or neither but not both.
-	Bool anchorRight;
+typedef struct
+{
+    Int xExtent;
+    Int yExtent;
+    Int initialHeight;
+    Int borderWidth;
+    Bool forResize; ///< If for resize, then the anchor bools are set.
+    Bool anchorTop; ///< It can be anchor top, or anchor bottom, or neither, but not both.
+    Bool anchorBottom;
+    Bool anchorLeft; ///< It can be anchor left, or anchor right, or neither but not both.
+    Bool anchorRight;
 } TNewHeightInfo;
-
 
 /////////////////////////////////////////////////////////////////////////////
 // CNewHeightMap dialog
 
 class CNewHeightMap : public CDialog
 {
-// Construction
+    // Construction
 public:
-	CNewHeightMap(TNewHeightInfo *hiP, const char *label, CWnd* pParent = NULL);   // standard constructor
+    CNewHeightMap(TNewHeightInfo *hiP, const char *label, CWnd *pParent = NULL); // standard constructor
 
-	void GetHeightInfo(TNewHeightInfo *hiP) {*hiP = mHeightInfo; };
-// Dialog Data
-	//{{AFX_DATA(CNewHeightMap)
-	enum { IDD = IDD_NewHeightMap };
-		// NOTE: the ClassWizard will add data members here
-	//}}AFX_DATA
+    void GetHeightInfo(TNewHeightInfo *hiP) { *hiP = mHeightInfo; };
+    // Dialog Data
+    //{{AFX_DATA(CNewHeightMap)
+    enum
+    {
+        IDD = IDD_NewHeightMap
+    };
+    // NOTE: the ClassWizard will add data members here
+    //}}AFX_DATA
 
-
-// Overrides
-	// ClassWizard generated virtual function overrides
-	//{{AFX_VIRTUAL(CNewHeightMap)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
-	virtual void OnOK();
-	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam);
-	//}}AFX_VIRTUAL
-
-// Implementation
+    // Overrides
+    // ClassWizard generated virtual function overrides
+    //{{AFX_VIRTUAL(CNewHeightMap)
 protected:
-	TNewHeightInfo mHeightInfo;
-	const char *m_label;
+    virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
+    virtual void OnOK();
+    virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam);
+    //}}AFX_VIRTUAL
+
+    // Implementation
+protected:
+    TNewHeightInfo mHeightInfo;
+    const char *m_label;
 
 protected:
-	Bool doAnchorButton(Int buttonID);
+    Bool doAnchorButton(Int buttonID);
 
 protected:
-
-	// Generated message map functions
-	//{{AFX_MSG(CNewHeightMap)
-	virtual BOOL OnInitDialog();
-	//}}AFX_MSG
-	DECLARE_MESSAGE_MAP()
+    // Generated message map functions
+    //{{AFX_MSG(CNewHeightMap)
+    virtual BOOL OnInitDialog();
+    //}}AFX_MSG
+    DECLARE_MESSAGE_MAP()
 };
 
 //{{AFX_INSERT_LOCATION}}

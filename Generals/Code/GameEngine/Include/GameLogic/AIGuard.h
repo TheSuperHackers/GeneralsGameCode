@@ -52,214 +52,213 @@
 // TYPE DEFINES ///////////////////////////////////////////////////////////////
 enum
 {
-	// prevent collisions with other states that we might use, (namely AI_IDLE)
-	AI_GUARD_INNER = 5000,					///< Attack anything within this area till death
-	AI_GUARD_IDLE,									///< Wait till something shows up to attack.
-	AI_GUARD_OUTER,									///< Attack anything within this area that has been aggressive, until the timer expires
-	AI_GUARD_RETURN,								///< Restore to a position within the inner circle
-	AI_GUARD_GET_CRATE,							///< Pick up a crate from an enemy we killed.
-	AI_GUARD_ATTACK_AGGRESSOR,			///< Attack something that attacked me (that I can attack)
+    // prevent collisions with other states that we might use, (namely AI_IDLE)
+    AI_GUARD_INNER = 5000, ///< Attack anything within this area till death
+    AI_GUARD_IDLE, ///< Wait till something shows up to attack.
+    AI_GUARD_OUTER, ///< Attack anything within this area that has been aggressive, until the timer expires
+    AI_GUARD_RETURN, ///< Restore to a position within the inner circle
+    AI_GUARD_GET_CRATE, ///< Pick up a crate from an enemy we killed.
+    AI_GUARD_ATTACK_AGGRESSOR, ///< Attack something that attacked me (that I can attack)
 };
 
 //--------------------------------------------------------------------------------------
 class ExitConditions : public AttackExitConditionsInterface
 {
 public:
+    enum ExitConditionsEnum
+    {
+        ATTACK_ExitIfOutsideRadius = 0x01,
+        ATTACK_ExitIfExpiredDuration = 0x02,
+        ATTACK_ExitIfNoUnitFound = 0x04
+    };
 
-	enum ExitConditionsEnum
-	{
-		ATTACK_ExitIfOutsideRadius		= 0x01,
-		ATTACK_ExitIfExpiredDuration	= 0x02,
-		ATTACK_ExitIfNoUnitFound			= 0x04
-	};
+    Int m_conditionsToConsider;
+    Coord3D m_center; // can be updated at any time by owner
+    Real m_radiusSqr; // can be updated at any time by owner
+    UnsignedInt m_attackGiveUpFrame; // frame at which we give up (if using)
 
-	Int							m_conditionsToConsider;
-	Coord3D					m_center;								// can be updated at any time by owner
-	Real						m_radiusSqr;						// can be updated at any time by owner
-	UnsignedInt			m_attackGiveUpFrame;		// frame at which we give up (if using)
+    ExitConditions() : m_attackGiveUpFrame(0), m_conditionsToConsider(0), m_radiusSqr(0.0f)
+    {
+        // Added By Sadullah Nader
+        //  Initializations missing and needed
+        m_center.zero();
+    }
 
-	ExitConditions() : m_attackGiveUpFrame(0), m_conditionsToConsider(0), m_radiusSqr(0.0f)
-	{
-		//Added By Sadullah Nader
-		// Initializations missing and needed
-		m_center.zero();
-	}
-
-	virtual Bool shouldExit(const StateMachine* machine) const;
+    virtual Bool shouldExit(const StateMachine *machine) const;
 };
-
 
 // FORWARD DECLARATIONS ///////////////////////////////////////////////////////
 
 //--------------------------------------------------------------------------------------
 class AIGuardMachine : public StateMachine
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( AIGuardMachine, "AIGuardMachinePool" );
+    MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIGuardMachine, "AIGuardMachinePool");
 
 private:
-	ObjectID								m_targetToGuard;
-	const PolygonTrigger *	m_areaToGuard;
-	Coord3D									m_positionToGuard;
-	ObjectID								m_nemesisToAttack;
-	GuardMode								m_guardMode;
+    ObjectID m_targetToGuard;
+    const PolygonTrigger *m_areaToGuard;
+    Coord3D m_positionToGuard;
+    ObjectID m_nemesisToAttack;
+    GuardMode m_guardMode;
 
 protected:
-	// snapshot interface
-	virtual void crc( Xfer *xfer );
-	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess();
+    // snapshot interface
+    virtual void crc(Xfer *xfer);
+    virtual void xfer(Xfer *xfer);
+    virtual void loadPostProcess();
 
 public:
-	/**
-	 * The implementation of this constructor defines the states
-	 * used by this machine.
-	 */
-	AIGuardMachine( Object *owner );
-	Object* findTargetToGuardByID( void ) { return TheGameLogic->findObjectByID(m_targetToGuard); }
-	void setTargetToGuard( const Object *object ) { m_targetToGuard = object ? object->getID() : INVALID_ID; }
+    /**
+     * The implementation of this constructor defines the states
+     * used by this machine.
+     */
+    AIGuardMachine(Object *owner);
+    Object *findTargetToGuardByID(void) { return TheGameLogic->findObjectByID(m_targetToGuard); }
+    void setTargetToGuard(const Object *object) { m_targetToGuard = object ? object->getID() : INVALID_ID; }
 
-	const Coord3D *getPositionToGuard( void ) const { return &m_positionToGuard; }
-	void setTargetPositionToGuard( const Coord3D *pos) { m_positionToGuard = *pos; }
+    const Coord3D *getPositionToGuard(void) const { return &m_positionToGuard; }
+    void setTargetPositionToGuard(const Coord3D *pos) { m_positionToGuard = *pos; }
 
-	const PolygonTrigger *getAreaToGuard( void ) const { return m_areaToGuard; }
-	void setAreaToGuard( const PolygonTrigger *area) { m_areaToGuard = area; }
+    const PolygonTrigger *getAreaToGuard(void) const { return m_areaToGuard; }
+    void setAreaToGuard(const PolygonTrigger *area) { m_areaToGuard = area; }
 
-	void setNemesisID(ObjectID id) { m_nemesisToAttack = id; }
-	ObjectID getNemesisID() const { return m_nemesisToAttack; }
+    void setNemesisID(ObjectID id) { m_nemesisToAttack = id; }
+    ObjectID getNemesisID() const { return m_nemesisToAttack; }
 
-	GuardMode getGuardMode() const { return m_guardMode; }
-	void setGuardMode(GuardMode guardMode) { m_guardMode = guardMode; }
+    GuardMode getGuardMode() const { return m_guardMode; }
+    void setGuardMode(GuardMode guardMode) { m_guardMode = guardMode; }
 
-	Bool lookForInnerTarget(void);
+    Bool lookForInnerTarget(void);
 
-	static Real getStdGuardRange(const Object* obj);
+    static Real getStdGuardRange(const Object *obj);
 };
 
 //--------------------------------------------------------------------------------------
 class AIGuardInnerState : public State
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIGuardInnerState, "AIGuardInnerState")
+    MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIGuardInnerState, "AIGuardInnerState")
 public:
-	AIGuardInnerState( StateMachine *machine ) : State( machine, "AIGuardInner" )
-	{
-		m_attackState = NULL;
-	}
-	virtual StateReturnType onEnter( void );
-	virtual StateReturnType update( void );
-	virtual void onExit( StateExitType status );
-protected:
-	// snapshot interface
-	virtual void crc( Xfer *xfer );
-	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess();
-private:
-	AIGuardMachine* getGuardMachine() { return (AIGuardMachine*)getMachine(); }
+    AIGuardInnerState(StateMachine *machine) : State(machine, "AIGuardInner") { m_attackState = NULL; }
+    virtual StateReturnType onEnter(void);
+    virtual StateReturnType update(void);
+    virtual void onExit(StateExitType status);
 
-	ExitConditions m_exitConditions;
-	AIAttackState *m_attackState;
+protected:
+    // snapshot interface
+    virtual void crc(Xfer *xfer);
+    virtual void xfer(Xfer *xfer);
+    virtual void loadPostProcess();
+
+private:
+    AIGuardMachine *getGuardMachine() { return (AIGuardMachine *)getMachine(); }
+
+    ExitConditions m_exitConditions;
+    AIAttackState *m_attackState;
 };
 
 //--------------------------------------------------------------------------------------
 class AIGuardIdleState : public State
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIGuardIdleState, "AIGuardIdleState")
+    MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIGuardIdleState, "AIGuardIdleState")
 public:
-	AIGuardIdleState( StateMachine *machine ) : State( machine, "AIGuardIdleState" ) { }
-	virtual StateReturnType onEnter( void );
-	virtual StateReturnType update( void );
-	virtual void onExit( StateExitType status );
-protected:
-	// snapshot interface
-	virtual void crc( Xfer *xfer );
-	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess();
-private:
-	AIGuardMachine* getGuardMachine() { return (AIGuardMachine*)getMachine(); }
+    AIGuardIdleState(StateMachine *machine) : State(machine, "AIGuardIdleState") {}
+    virtual StateReturnType onEnter(void);
+    virtual StateReturnType update(void);
+    virtual void onExit(StateExitType status);
 
-	UnsignedInt m_nextEnemyScanTime;
-	Coord3D			m_guardeePos;						///< Where the object we are guarding was last.
+protected:
+    // snapshot interface
+    virtual void crc(Xfer *xfer);
+    virtual void xfer(Xfer *xfer);
+    virtual void loadPostProcess();
+
+private:
+    AIGuardMachine *getGuardMachine() { return (AIGuardMachine *)getMachine(); }
+
+    UnsignedInt m_nextEnemyScanTime;
+    Coord3D m_guardeePos; ///< Where the object we are guarding was last.
 };
 EMPTY_DTOR(AIGuardIdleState)
 
 //--------------------------------------------------------------------------------------
 class AIGuardOuterState : public State
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIGuardOuterState, "AIGuardOuterState")
+    MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIGuardOuterState, "AIGuardOuterState")
 public:
-	AIGuardOuterState( StateMachine *machine ) : State( machine, "AIGuardOuter" )
-	{
-		m_attackState = NULL;
-	}
-	virtual StateReturnType onEnter( void );
-	virtual StateReturnType update( void );
-	virtual void onExit( StateExitType status );
-protected:
-	// snapshot interface
-	virtual void crc( Xfer *xfer );
-	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess();
-private:
-	AIGuardMachine* getGuardMachine() { return (AIGuardMachine*)getMachine(); }
+    AIGuardOuterState(StateMachine *machine) : State(machine, "AIGuardOuter") { m_attackState = NULL; }
+    virtual StateReturnType onEnter(void);
+    virtual StateReturnType update(void);
+    virtual void onExit(StateExitType status);
 
-	ExitConditions m_exitConditions;
-	AIAttackState *m_attackState;
+protected:
+    // snapshot interface
+    virtual void crc(Xfer *xfer);
+    virtual void xfer(Xfer *xfer);
+    virtual void loadPostProcess();
+
+private:
+    AIGuardMachine *getGuardMachine() { return (AIGuardMachine *)getMachine(); }
+
+    ExitConditions m_exitConditions;
+    AIAttackState *m_attackState;
 };
 
 //--------------------------------------------------------------------------------------
 class AIGuardReturnState : public AIInternalMoveToState
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIGuardReturnState, "AIGuardReturnState")
+    MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIGuardReturnState, "AIGuardReturnState")
 private:
-	AIGuardMachine* getGuardMachine() { return (AIGuardMachine*)getMachine(); }
+    AIGuardMachine *getGuardMachine() { return (AIGuardMachine *)getMachine(); }
+
 public:
-	AIGuardReturnState( StateMachine *machine ) : AIInternalMoveToState( machine, "AIGuardReturn" )
-	{
-		m_nextReturnScanTime = 0;
-	}
-	virtual StateReturnType onEnter( void );
-	virtual StateReturnType update( void );
-	virtual void onExit( StateExitType status );
+    AIGuardReturnState(StateMachine *machine) : AIInternalMoveToState(machine, "AIGuardReturn") { m_nextReturnScanTime = 0; }
+    virtual StateReturnType onEnter(void);
+    virtual StateReturnType update(void);
+    virtual void onExit(StateExitType status);
+
 protected:
-	// snapshot interface
-	virtual void crc( Xfer *xfer );
-	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess();
+    // snapshot interface
+    virtual void crc(Xfer *xfer);
+    virtual void xfer(Xfer *xfer);
+    virtual void loadPostProcess();
+
 private:
-	UnsignedInt m_nextReturnScanTime;
+    UnsignedInt m_nextReturnScanTime;
 };
 EMPTY_DTOR(AIGuardReturnState)
-
 
 //--------------------------------------------------------------------------------------
 class AIGuardPickUpCrateState : public AIPickUpCrateState
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIGuardPickUpCrateState, "AIGuardPickUpCrateState")
+    MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIGuardPickUpCrateState, "AIGuardPickUpCrateState")
 public:
-	AIGuardPickUpCrateState( StateMachine *machine );
-	virtual StateReturnType onEnter( void );
-	virtual StateReturnType update( void );
-	virtual void onExit( StateExitType status );
+    AIGuardPickUpCrateState(StateMachine *machine);
+    virtual StateReturnType onEnter(void);
+    virtual StateReturnType update(void);
+    virtual void onExit(StateExitType status);
 };
 EMPTY_DTOR(AIGuardPickUpCrateState)
 
 //--------------------------------------------------------------------------------------
 class AIGuardAttackAggressorState : public State
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIGuardAttackAggressorState, "AIGuardAttackAggressorState")
+    MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIGuardAttackAggressorState, "AIGuardAttackAggressorState")
 public:
-	AIGuardAttackAggressorState( StateMachine *machine );
-	virtual StateReturnType onEnter( void );
-	virtual StateReturnType update( void );
-	virtual void onExit( StateExitType status );
+    AIGuardAttackAggressorState(StateMachine *machine);
+    virtual StateReturnType onEnter(void);
+    virtual StateReturnType update(void);
+    virtual void onExit(StateExitType status);
+
 protected:
-	// snapshot interface
-	virtual void crc( Xfer *xfer );
-	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess();
+    // snapshot interface
+    virtual void crc(Xfer *xfer);
+    virtual void xfer(Xfer *xfer);
+    virtual void loadPostProcess();
+
 private:
-	AIGuardMachine* getGuardMachine() { return (AIGuardMachine*)getMachine(); }
-	ExitConditions m_exitConditions;
-	AIAttackState *m_attackState;
+    AIGuardMachine *getGuardMachine() { return (AIGuardMachine *)getMachine(); }
+    ExitConditions m_exitConditions;
+    AIAttackState *m_attackState;
 };
 
 //--------------------------------------------------------------------------------------

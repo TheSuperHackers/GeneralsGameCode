@@ -27,29 +27,29 @@
 #include "GameNetwork/NetworkDefs.h"
 #include "GameNetwork/NAT.h"
 
-enum EstablishConnectionsMenuStateType CPP_11(: Int) {
-	ESTABLISHCONNECTIONSMENUSTATETYPE_SCREENON,
-	ESTABLISHCONNECTIONSMENUSTATETYPE_SCREENOFF
-};
+enum EstablishConnectionsMenuStateType CPP_11( : Int){
+    ESTABLISHCONNECTIONSMENUSTATETYPE_SCREENON,
+    ESTABLISHCONNECTIONSMENUSTATETYPE_SCREENOFF};
 
-class EstablishConnectionsMenu {
+class EstablishConnectionsMenu
+{
 public:
-	EstablishConnectionsMenu();
-	virtual ~EstablishConnectionsMenu();
+    EstablishConnectionsMenu();
+    virtual ~EstablishConnectionsMenu();
 
-	void initMenu();
-	void endMenu();
-	void abortGame();
+    void initMenu();
+    void endMenu();
+    void abortGame();
 
-	void setPlayerName(Int slot, UnicodeString name);
-	void setPlayerStatus(Int slot, NATConnectionState state);
+    void setPlayerName(Int slot, UnicodeString name);
+    void setPlayerStatus(Int slot, NATConnectionState state);
 
 protected:
-	EstablishConnectionsMenuStateType m_menuState;
+    EstablishConnectionsMenuStateType m_menuState;
 
-	static const char *m_playerReadyControlNames[MAX_SLOTS];
-	static const char *m_playerNameControlNames[MAX_SLOTS];
-	static const char *m_playerStatusControlNames[MAX_SLOTS];
+    static const char *m_playerReadyControlNames[MAX_SLOTS];
+    static const char *m_playerNameControlNames[MAX_SLOTS];
+    static const char *m_playerStatusControlNames[MAX_SLOTS];
 };
 
 extern EstablishConnectionsMenu *TheEstablishConnectionsMenu;

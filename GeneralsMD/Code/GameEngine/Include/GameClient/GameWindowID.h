@@ -59,31 +59,30 @@
 // TYPE DEFINES ///////////////////////////////////////////////////////////////
 #define GWID_INVALID 0
 
-#define GWID_SIDEBAR							100
+#define GWID_SIDEBAR 100
 
-#define GWID_SIDEBAR_1						101
-#define GWID_SIDEBAR_2						102
-#define GWID_SIDEBAR_3						103
-#define GWID_SIDEBAR_4						104
-#define GWID_SIDEBAR_5						105
-#define GWID_SIDEBAR_6						106
-#define GWID_SIDEBAR_7						107
-#define GWID_SIDEBAR_8						108
-#define GWID_SIDEBAR_9						109
-#define GWID_SIDEBAR_10						110
-#define GWID_SIDEBAR_11						111
-#define GWID_SIDEBAR_12						112
+#define GWID_SIDEBAR_1 101
+#define GWID_SIDEBAR_2 102
+#define GWID_SIDEBAR_3 103
+#define GWID_SIDEBAR_4 104
+#define GWID_SIDEBAR_5 105
+#define GWID_SIDEBAR_6 106
+#define GWID_SIDEBAR_7 107
+#define GWID_SIDEBAR_8 108
+#define GWID_SIDEBAR_9 109
+#define GWID_SIDEBAR_10 110
+#define GWID_SIDEBAR_11 111
+#define GWID_SIDEBAR_12 112
 
-#define GWID_SIDEBAR_TAB_1				151
-#define GWID_SIDEBAR_TAB_2				152
-#define GWID_SIDEBAR_TAB_3				153
-#define GWID_SIDEBAR_TAB_4				154
+#define GWID_SIDEBAR_TAB_1 151
+#define GWID_SIDEBAR_TAB_2 152
+#define GWID_SIDEBAR_TAB_3 153
+#define GWID_SIDEBAR_TAB_4 154
 
-#define GWID_SIDEBAR_RADAR				175
+#define GWID_SIDEBAR_RADAR 175
 
 // INLINING ///////////////////////////////////////////////////////////////////
 
 // EXTERNALS //////////////////////////////////////////////////////////////////
 
 #endif // __GAMEWINDOWID_H_
-

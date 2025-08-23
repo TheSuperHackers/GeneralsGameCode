@@ -42,41 +42,38 @@
 class SupplyWarehouseDockUpdateModuleData : public DockUpdateModuleData
 {
 public:
+    SupplyWarehouseDockUpdateModuleData(void);
 
-  SupplyWarehouseDockUpdateModuleData( void );
+    static void buildFieldParse(MultiIniFieldParse &p);
 
-	static void buildFieldParse(MultiIniFieldParse& p);
-
-	Int m_startingBoxesData;
-	Bool m_deleteWhenEmpty;
+    Int m_startingBoxesData;
+    Bool m_deleteWhenEmpty;
 };
 
 //-------------------------------------------------------------------------------------------------
 class SupplyWarehouseDockUpdate : public DockUpdate
 {
-
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( SupplyWarehouseDockUpdate, "SupplyWarehouseDockUpdate" )
-	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( SupplyWarehouseDockUpdate, SupplyWarehouseDockUpdateModuleData )
+    MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(SupplyWarehouseDockUpdate, "SupplyWarehouseDockUpdate")
+    MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA(SupplyWarehouseDockUpdate, SupplyWarehouseDockUpdateModuleData)
 
 public:
+    virtual DockUpdateInterface *getDockUpdateInterface() { return this; }
 
-	virtual DockUpdateInterface* getDockUpdateInterface() { return this; }
+    SupplyWarehouseDockUpdate(Thing *thing, const ModuleData *moduleData);
 
-	SupplyWarehouseDockUpdate( Thing *thing, const ModuleData* moduleData );
+    virtual void setDockCrippled(Bool setting); ///< Game Logic can set me as inoperative.  I get to decide what that means.
+    virtual Bool action(
+        Object *docker,
+        Object *drone = NULL); ///< For me, this means identifying who is docking and either taking Boxes away or giving them
 
-	virtual void setDockCrippled( Bool setting ); ///< Game Logic can set me as inoperative.  I get to decide what that means.
-	virtual Bool action( Object* docker, Object *drone = NULL );	///<For me, this means identifying who is docking and either taking Boxes away or giving them
+    Int getBoxesStored() const { return m_boxesStored; }
 
-	Int getBoxesStored() const { return m_boxesStored; }
+    void setCashValue(Int cashValue);
 
-	void setCashValue( Int cashValue );
+    virtual void onObjectCreated();
 
-	virtual void onObjectCreated();
 protected:
-
-
-	Int m_boxesStored;
-
+    Int m_boxesStored;
 };
 
 #endif

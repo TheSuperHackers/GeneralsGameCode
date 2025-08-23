@@ -35,7 +35,6 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
 #if defined(_MSC_VER)
 #pragma once
 #endif
@@ -51,280 +50,262 @@
 class ChunkLoadClass;
 class Quaternion;
 
-
 /******************************************************************************
 
-	MotionChannelClass is used to store motion.  Motion data
-	is broken into separate channels for X, Y, Z, and orientation.
-	Then if any of the channels are empty, they don't have to be stored.
-	The X,Y,Z channels all contain one-dimensional vectors and the
-	orientation channel contains four-dimensional vectors (quaternions).
+    MotionChannelClass is used to store motion.  Motion data
+    is broken into separate channels for X, Y, Z, and orientation.
+    Then if any of the channels are empty, they don't have to be stored.
+    The X,Y,Z channels all contain one-dimensional vectors and the
+    orientation channel contains four-dimensional vectors (quaternions).
 
 ******************************************************************************/
 
 class MotionChannelClass : public W3DMPO
 {
-	W3DMPO_GLUE(MotionChannelClass)
+    W3DMPO_GLUE(MotionChannelClass)
 
 public:
+    MotionChannelClass(void);
+    ~MotionChannelClass(void);
 
-	MotionChannelClass(void);
-	~MotionChannelClass(void);
-
-	bool	Load_W3D(ChunkLoadClass & cload);
-	WWINLINE int Get_Type(void) const { return Type; }
-	WWINLINE int Get_Pivot(void) const { return PivotIdx; }
-	WWINLINE void Get_Vector(int frame,float * setvec) const;
+    bool Load_W3D(ChunkLoadClass &cload);
+    WWINLINE int Get_Type(void) const { return Type; }
+    WWINLINE int Get_Pivot(void) const { return PivotIdx; }
+    WWINLINE void Get_Vector(int frame, float *setvec) const;
 
 #define SPECIAL_GETVEC_AS_QUAT
 #ifdef SPECIAL_GETVEC_AS_QUAT
-	WWINLINE void Get_Vector_As_Quat(int frame, Quaternion& quat) const;
+    WWINLINE void Get_Vector_As_Quat(int frame, Quaternion &quat) const;
 #endif
 
 private:
+    uint32 PivotIdx; // what pivot is this channel applied to
+    uint32 Type; // what type of channel is this
+    int VectorLen; // size of each individual vector
 
-	uint32	PivotIdx;			// what pivot is this channel applied to
-	uint32	Type;					// what type of channel is this
-	int		VectorLen;			// size of each individual vector
+    float *Data; // pointer to the raw floating point data
+    int FirstFrame; // first frame which was non-identity
+    int LastFrame; // last frame which was non-identity
 
-	float	*	Data;					// pointer to the raw floating point data
-	int		FirstFrame;			// first frame which was non-identity
-	int		LastFrame;			// last frame which was non-identity
+    void Free(void);
+    WWINLINE void set_identity(float *setvec) const;
 
-	void Free(void);
-	WWINLINE void set_identity(float * setvec) const;
-
-	friend class HRawAnimClass;
+    friend class HRawAnimClass;
 };
 
-WWINLINE void MotionChannelClass::set_identity(float * setvec) const
+WWINLINE void MotionChannelClass::set_identity(float *setvec) const
 {
-	if (Type == ANIM_CHANNEL_Q) {
-
-		setvec[0] = 0.0f;
-		setvec[1] = 0.0f;
-		setvec[2] = 0.0f;
-		setvec[3] = 1.0f;
-
-	} else {
-
-		setvec[0] = 0.0f;
-
-	}
+    if (Type == ANIM_CHANNEL_Q)
+    {
+        setvec[0] = 0.0f;
+        setvec[1] = 0.0f;
+        setvec[2] = 0.0f;
+        setvec[3] = 1.0f;
+    }
+    else
+    {
+        setvec[0] = 0.0f;
+    }
 }
 
-WWINLINE void	MotionChannelClass::Get_Vector(int frame,float * setvec) const
+WWINLINE void MotionChannelClass::Get_Vector(int frame, float *setvec) const
 {
-	if ((frame < FirstFrame) || (frame > LastFrame)) {
+    if ((frame < FirstFrame) || (frame > LastFrame))
+    {
+        set_identity(setvec);
+    }
+    else
+    {
+        int vframe = frame - FirstFrame;
 
-		set_identity(setvec);
-
-	} else {
-
-		int vframe = frame - FirstFrame;
-
-		for (int i=0; i<VectorLen; i++) {
-			setvec[i] = Data[vframe * VectorLen + i];
-		}
-	}
+        for (int i = 0; i < VectorLen; i++)
+        {
+            setvec[i] = Data[vframe * VectorLen + i];
+        }
+    }
 }
 
 #ifdef SPECIAL_GETVEC_AS_QUAT
-WWINLINE void MotionChannelClass::Get_Vector_As_Quat(int frame, Quaternion& quat) const
+WWINLINE void MotionChannelClass::Get_Vector_As_Quat(int frame, Quaternion &quat) const
 {
-	if ((frame < FirstFrame) || (frame > LastFrame)) {
-
-		quat.Set(0.0f, 0.0f, 0.0f, 1.0f);
-
-	} else {
-
-		const float* d = &Data[(frame - FirstFrame) * VectorLen];
-		quat.Set(d[0], d[1], d[2], d[3]);
-
-	}
+    if ((frame < FirstFrame) || (frame > LastFrame))
+    {
+        quat.Set(0.0f, 0.0f, 0.0f, 1.0f);
+    }
+    else
+    {
+        const float *d = &Data[(frame - FirstFrame) * VectorLen];
+        quat.Set(d[0], d[1], d[2], d[3]);
+    }
 }
 #endif
 
-
 /******************************************************************************
 
-	BitChannelClass is used to store a boolean "on/off" value for each frame
-	in an animation.
+    BitChannelClass is used to store a boolean "on/off" value for each frame
+    in an animation.
 
 ******************************************************************************/
 
 class BitChannelClass : public W3DMPO
 {
-	W3DMPO_GLUE(BitChannelClass)
+    W3DMPO_GLUE(BitChannelClass)
 
 public:
+    BitChannelClass(void);
+    ~BitChannelClass(void);
 
-	BitChannelClass(void);
-	~BitChannelClass(void);
-
-	bool	Load_W3D(ChunkLoadClass & cload);
-	WWINLINE int	Get_Type(void) const { return Type; }
-	WWINLINE int	Get_Pivot(void) const { return PivotIdx; }
-	WWINLINE int	Get_Bit(int frame) const;
+    bool Load_W3D(ChunkLoadClass &cload);
+    WWINLINE int Get_Type(void) const { return Type; }
+    WWINLINE int Get_Pivot(void) const { return PivotIdx; }
+    WWINLINE int Get_Bit(int frame) const;
 
 private:
+    uint32 PivotIdx;
+    uint32 Type;
+    int DefaultVal;
+    int FirstFrame;
+    int LastFrame;
 
-	uint32	PivotIdx;
-	uint32	Type;
-	int		DefaultVal;
-	int		FirstFrame;
-	int		LastFrame;
+    uint8 *Bits;
 
-	uint8 *	Bits;
+    void Free(void);
 
-	void Free(void);
-
-	friend class HRawAnimClass;
+    friend class HRawAnimClass;
 };
-
 
 WWINLINE int BitChannelClass::Get_Bit(int frame) const
 {
-	if ((frame < FirstFrame) || (frame > LastFrame)) {
+    if ((frame < FirstFrame) || (frame > LastFrame))
+    {
+        return DefaultVal;
+    }
+    else
+    {
+        int bit = frame - FirstFrame;
 
-		return DefaultVal;
-
-	} else {
-
-		int bit = frame - FirstFrame;
-
-		uint8 mask = (uint8)(1 << (bit % 8));
-		return ((*(Bits + (bit/8)) & mask) != 0);
-
-	}
+        uint8 mask = (uint8)(1 << (bit % 8));
+        return ((*(Bits + (bit / 8)) & mask) != 0);
+    }
 }
 
 /******************************************************************************
 
-	TimeCodedMotionChannelClass is used to store motion.  Motion data
-	is broken into separate channels for X, Y, Z, and orientation.
-	Then if any of the channels are empty, they don't have to be stored.
-	The X,Y,Z channels all contain one-dimensional vectors and the
-	orientation channel contains four-dimensional vectors (quaternions).
+    TimeCodedMotionChannelClass is used to store motion.  Motion data
+    is broken into separate channels for X, Y, Z, and orientation.
+    Then if any of the channels are empty, they don't have to be stored.
+    The X,Y,Z channels all contain one-dimensional vectors and the
+    orientation channel contains four-dimensional vectors (quaternions).
 
 ******************************************************************************/
 
 class TimeCodedMotionChannelClass : public W3DMPO
 {
-	W3DMPO_GLUE(TimeCodedMotionChannelClass)
+    W3DMPO_GLUE(TimeCodedMotionChannelClass)
 
 public:
+    TimeCodedMotionChannelClass(void);
+    ~TimeCodedMotionChannelClass(void);
 
-	TimeCodedMotionChannelClass(void);
-	~TimeCodedMotionChannelClass(void);
+    bool Load_W3D(ChunkLoadClass &cload);
+    int Get_Type(void) { return Type; }
+    int Get_Pivot(void) { return PivotIdx; }
+    void Get_Vector(float32 frame, float *setvec);
 
-	bool	Load_W3D(ChunkLoadClass & cload);
-	int	Get_Type(void) { return Type; }
-	int	Get_Pivot(void) { return PivotIdx; }
-	void	Get_Vector(float32 frame, float * setvec);
-
-	Quaternion Get_QuatVector(float32 frame);
+    Quaternion Get_QuatVector(float32 frame);
 
 private:
+    uint32 PivotIdx; // what pivot is this channel applied to
+    uint32 Type; // what type of channel is this
+    int VectorLen; // size of each individual vector
+    uint32 PacketSize; // size of each packet
 
-	uint32	PivotIdx;			// what pivot is this channel applied to
-	uint32	Type;					// what type of channel is this
-	int		VectorLen;			// size of each individual vector
-	uint32	PacketSize;			// size of each packet
+    uint32 NumTimeCodes; // Number of packets
 
-	uint32	NumTimeCodes;		// Number of packets
+    uint32 LastTimeCodeIdx; // absolute index to last time code
+    uint32 CachedIdx; // Last Index Used
 
-	uint32	LastTimeCodeIdx;	// absolute index to last time code
-	uint32	CachedIdx;			// Last Index Used
+    uint32 *Data; // pointer to packet data
 
-	uint32	*	Data;			 	// pointer to packet data
+    void Free(void);
+    void set_identity(float *setvec);
+    uint32 get_index(uint32 timecode);
+    uint32 binary_search_index(uint32 timecode);
 
-	void 		Free(void);
-	void 		set_identity(float * setvec);
-	uint32	get_index(uint32 timecode);
-	uint32	binary_search_index(uint32 timecode);
-
-	friend class HCompressedAnimClass;
+    friend class HCompressedAnimClass;
 };
 
 class AdaptiveDeltaMotionChannelClass : public W3DMPO
 {
-	W3DMPO_GLUE(AdaptiveDeltaMotionChannelClass)
+    W3DMPO_GLUE(AdaptiveDeltaMotionChannelClass)
 
 public:
+    AdaptiveDeltaMotionChannelClass(void);
+    ~AdaptiveDeltaMotionChannelClass(void);
 
-	AdaptiveDeltaMotionChannelClass(void);
-	~AdaptiveDeltaMotionChannelClass(void);
+    bool Load_W3D(ChunkLoadClass &cload);
+    int Get_Type(void) { return Type; }
+    int Get_Pivot(void) { return PivotIdx; }
+    void Get_Vector(float32 frame, float *setvec);
 
-	bool	Load_W3D(ChunkLoadClass & cload);
-	int	Get_Type(void) { return Type; }
-	int	Get_Pivot(void) { return PivotIdx; }
-	void	Get_Vector(float32 frame, float * setvec);
-
-	Quaternion Get_QuatVector(float32 frame);
+    Quaternion Get_QuatVector(float32 frame);
 
 private:
+    uint32 PivotIdx; // what pivot is this channel applied to
+    uint32 Type; // what type of channel is this
+    int VectorLen; // size of each individual vector
 
-	uint32	PivotIdx;			// what pivot is this channel applied to
-	uint32	Type;					// what type of channel is this
-	int		VectorLen;			// size of each individual vector
+    uint32 NumFrames; // Number of frames
 
-	uint32	NumFrames;			// Number of frames
+    float Scale; // Scale Filter, this much
 
-	float		Scale;				// Scale Filter, this much
+    uint32 *Data; // pointer to packet data
 
-	uint32  *Data;				 	// pointer to packet data
+    uint32 CacheFrame;
+    float *CacheData; // the data for CachedFrame, and CachedFrame+1, x VectorLen
 
-	uint32	CacheFrame;
-	float	  *CacheData;			// the data for CachedFrame, and CachedFrame+1, x VectorLen
+    void Free(void);
 
-	void 		Free(void);
+    float getframe(uint32 frame_idx, uint32 vector_idx = 0);
+    void decompress(uint32 frame_idx, float *outdata);
+    void decompress(uint32 src_idx, float *srcdata, uint32 frame_idx, float *outdata);
 
-	float		getframe(uint32 frame_idx, uint32 vector_idx=0);
-   void		decompress(uint32 frame_idx, float *outdata);
-   void		decompress(uint32 src_idx, float *srcdata, uint32 frame_idx, float *outdata);
-
-	friend class HCompressedAnimClass;
+    friend class HCompressedAnimClass;
 };
-
-
 
 /******************************************************************************
 
-	TimeCodedBitChannelClass is used to store a boolean "on/off" value for each frame
-	in an animation.
+    TimeCodedBitChannelClass is used to store a boolean "on/off" value for each frame
+    in an animation.
 
 ******************************************************************************/
 
 class TimeCodedBitChannelClass : public W3DMPO
 {
-	W3DMPO_GLUE(TimeCodedBitChannelClass)
+    W3DMPO_GLUE(TimeCodedBitChannelClass)
 
 public:
+    TimeCodedBitChannelClass(void);
+    ~TimeCodedBitChannelClass(void);
 
-	TimeCodedBitChannelClass(void);
-	~TimeCodedBitChannelClass(void);
-
-	bool	Load_W3D(ChunkLoadClass & cload);
-	int	Get_Type(void) { return Type; }
-	int	Get_Pivot(void) { return PivotIdx; }
-	int	Get_Bit(int frame);
+    bool Load_W3D(ChunkLoadClass &cload);
+    int Get_Type(void) { return Type; }
+    int Get_Pivot(void) { return PivotIdx; }
+    int Get_Bit(int frame);
 
 private:
+    uint32 PivotIdx;
+    uint32 Type;
+    int DefaultVal;
 
-	uint32	PivotIdx;
-	uint32	Type;
-	int		DefaultVal;
+    uint32 NumTimeCodes;
+    uint32 CachedIdx;
 
-	uint32	NumTimeCodes;
-	uint32	CachedIdx;
+    uint32 *Bits;
 
-	uint32	*Bits;
+    void Free(void);
 
-	void Free(void);
-
-	friend class HCompressedAnimClass;
+    friend class HCompressedAnimClass;
 };
-
 
 #endif

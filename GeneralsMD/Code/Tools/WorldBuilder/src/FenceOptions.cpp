@@ -47,47 +47,43 @@ so forth is all handled in the object options panel.  jba. */
 
 FenceOptions *FenceOptions::m_staticThis = NULL;
 Bool FenceOptions::m_updating = false;
-Int FenceOptions::m_currentObjectIndex=-1;
-Real FenceOptions::m_fenceSpacing=1;
-Real FenceOptions::m_fenceOffset=0;
-
+Int FenceOptions::m_currentObjectIndex = -1;
+Real FenceOptions::m_fenceSpacing = 1;
+Real FenceOptions::m_fenceOffset = 0;
 
 /////////////////////////////////////////////////////////////////////////////
 // FenceOptions dialog
 
-
-FenceOptions::FenceOptions(CWnd* pParent /*=NULL*/)
+FenceOptions::FenceOptions(CWnd *pParent /*=NULL*/)
 {
-	m_objectsList = NULL;
-	m_customSpacing = false;
-	//{{AFX_DATA_INIT(FenceOptions)
-		// NOTE: the ClassWizard will add member initialization here
-	//}}AFX_DATA_INIT
+    m_objectsList = NULL;
+    m_customSpacing = false;
+    //{{AFX_DATA_INIT(FenceOptions)
+    // NOTE: the ClassWizard will add member initialization here
+    //}}AFX_DATA_INIT
 }
-
 
 FenceOptions::~FenceOptions(void)
 {
-	if (m_objectsList) {
-		deleteInstance(m_objectsList);
-	}
-	m_objectsList = NULL;
+    if (m_objectsList)
+    {
+        deleteInstance(m_objectsList);
+    }
+    m_objectsList = NULL;
 }
 
-
-void FenceOptions::DoDataExchange(CDataExchange* pDX)
+void FenceOptions::DoDataExchange(CDataExchange *pDX)
 {
-	CDialog::DoDataExchange(pDX);
-	//{{AFX_DATA_MAP(FenceOptions)
-		// NOTE: the ClassWizard will add DDX and DDV calls here
-	//}}AFX_DATA_MAP
+    CDialog::DoDataExchange(pDX);
+    //{{AFX_DATA_MAP(FenceOptions)
+    // NOTE: the ClassWizard will add DDX and DDV calls here
+    //}}AFX_DATA_MAP
 }
-
 
 BEGIN_MESSAGE_MAP(FenceOptions, COptionsPanel)
-	//{{AFX_MSG_MAP(FenceOptions)
-	ON_EN_CHANGE(IDC_FENCE_SPACING_EDIT, OnChangeFenceSpacingEdit)
-	//}}AFX_MSG_MAP
+//{{AFX_MSG_MAP(FenceOptions)
+ON_EN_CHANGE(IDC_FENCE_SPACING_EDIT, OnChangeFenceSpacingEdit)
+//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -95,40 +91,46 @@ END_MESSAGE_MAP()
 
 /*static*/ void FenceOptions::update()
 {
-	if (m_staticThis) {
-		m_staticThis->updateObjectOptions();
-	}
+    if (m_staticThis)
+    {
+        m_staticThis->updateObjectOptions();
+    }
 }
 
 void FenceOptions::updateObjectOptions()
 {
-	if (m_currentObjectIndex >= 0) {
-		MapObject *pObj = m_objectsList;
-		int count = 0;
-		while (pObj) {
-			if (count == m_currentObjectIndex) {
-				ObjectOptions::selectObject(pObj);
-				const ThingTemplate *t = pObj->getThingTemplate();
-				if (t && !m_customSpacing) {
-					if ( !m_customSpacing) {
-						m_fenceSpacing = t->getFenceWidth();
-					}
-					m_fenceOffset = t->getFenceXOffset();
-				}
-				break;
-			}
-			count++;
-			pObj = pObj->getNext();
-		}
-	}
-	CWnd *pWnd = GetDlgItem(IDC_FENCE_SPACING_EDIT);
-	if (pWnd) {
-		CString s;
-		s.Format("%f",m_fenceSpacing);
-		pWnd->SetWindowText(s);
-	}
+    if (m_currentObjectIndex >= 0)
+    {
+        MapObject *pObj = m_objectsList;
+        int count = 0;
+        while (pObj)
+        {
+            if (count == m_currentObjectIndex)
+            {
+                ObjectOptions::selectObject(pObj);
+                const ThingTemplate *t = pObj->getThingTemplate();
+                if (t && !m_customSpacing)
+                {
+                    if (!m_customSpacing)
+                    {
+                        m_fenceSpacing = t->getFenceWidth();
+                    }
+                    m_fenceOffset = t->getFenceXOffset();
+                }
+                break;
+            }
+            count++;
+            pObj = pObj->getNext();
+        }
+    }
+    CWnd *pWnd = GetDlgItem(IDC_FENCE_SPACING_EDIT);
+    if (pWnd)
+    {
+        CString s;
+        s.Format("%f", m_fenceSpacing);
+        pWnd->SetWindowText(s);
+    }
 }
-
 
 /////////////////////////////////////////////////////////////////////////////
 // FenceOptions message handlers
@@ -136,279 +138,284 @@ void FenceOptions::updateObjectOptions()
 /// Setup the controls in the dialog.
 BOOL FenceOptions::OnInitDialog()
 {
-	CDialog::OnInitDialog();
+    CDialog::OnInitDialog();
 
-	m_updating = true;
+    m_updating = true;
 
-//	CWorldBuilderDoc* pDoc = CWorldBuilderDoc::GetActiveDoc();
+    //	CWorldBuilderDoc* pDoc = CWorldBuilderDoc::GetActiveDoc();
 
-	// add entries from the thing factory as the available objects to use
-	const ThingTemplate *tTemplate;
-	for( tTemplate = TheThingFactory->firstTemplate();
-			 tTemplate;
-			 tTemplate = tTemplate->friend_getNextTemplate() )
-	{
-		Coord3D loc = { 0, 0, 0 };
-		MapObject *pMap;
+    // add entries from the thing factory as the available objects to use
+    const ThingTemplate *tTemplate;
+    for (tTemplate = TheThingFactory->firstTemplate(); tTemplate; tTemplate = tTemplate->friend_getNextTemplate())
+    {
+        Coord3D loc = {0, 0, 0};
+        MapObject *pMap;
 
-		// Only add fence type objects.
-		if (tTemplate->getFenceWidth() == 0) continue;
+        // Only add fence type objects.
+        if (tTemplate->getFenceWidth() == 0)
+            continue;
 
-		// create new map object
-		pMap = newInstance( MapObject)( loc, tTemplate->getName(), 0.0f, 0, NULL, tTemplate );
-		pMap->setNextMap( m_objectsList );
-		m_objectsList = pMap;
+        // create new map object
+        pMap = newInstance(MapObject)(loc, tTemplate->getName(), 0.0f, 0, NULL, tTemplate);
+        pMap->setNextMap(m_objectsList);
+        m_objectsList = pMap;
 
-		// get display color for the editor
-		Color cc = tTemplate->getDisplayColor();
-		pMap->setColor(cc);
+        // get display color for the editor
+        Color cc = tTemplate->getDisplayColor();
+        pMap->setColor(cc);
 
-	}  // end for tTemplate
+    } // end for tTemplate
 
+    CWnd *pWnd = GetDlgItem(IDC_OBJECT_HEIGHT_EDIT);
+    if (pWnd)
+    {
+        CString s;
+        s.Format("%d", MAGIC_GROUND_Z);
+        pWnd->SetWindowText(s);
+    }
 
-	CWnd *pWnd = GetDlgItem(IDC_OBJECT_HEIGHT_EDIT);
-	if (pWnd) {
-		CString s;
-		s.Format("%d",MAGIC_GROUND_Z);
-		pWnd->SetWindowText(s);
-	}
+    pWnd = GetDlgItem(IDC_TERRAIN_TREEVIEW);
+    CRect rect;
+    pWnd->GetWindowRect(&rect);
 
-	pWnd = GetDlgItem(IDC_TERRAIN_TREEVIEW);
-	CRect rect;
-	pWnd->GetWindowRect(&rect);
+    ScreenToClient(&rect);
+    rect.DeflateRect(2, 2, 2, 2);
+    m_objectTreeView.Create(
+        TVS_HASLINES | TVS_LINESATROOT | TVS_HASBUTTONS | TVS_SHOWSELALWAYS | TVS_DISABLEDRAGDROP,
+        rect,
+        this,
+        IDC_TERRAIN_TREEVIEW);
+    m_objectTreeView.ShowWindow(SW_SHOW);
 
-	ScreenToClient(&rect);
-	rect.DeflateRect(2,2,2,2);
-	m_objectTreeView.Create(TVS_HASLINES|TVS_LINESATROOT|TVS_HASBUTTONS|
-		TVS_SHOWSELALWAYS|TVS_DISABLEDRAGDROP, rect, this, IDC_TERRAIN_TREEVIEW);
-	m_objectTreeView.ShowWindow(SW_SHOW);
+    MapObject *pMap = m_objectsList;
+    Int index = 0;
+    while (pMap)
+    {
+        addObject(pMap, pMap->getName().str(), "", index, TVI_ROOT);
+        index++;
+        pMap = pMap->getNext();
+    }
 
-	MapObject *pMap =  m_objectsList;
-	Int index = 0;
-	while (pMap) {
+    m_staticThis = this;
+    m_updating = false;
 
-		addObject( pMap, pMap->getName().str(), "", index, TVI_ROOT);
-		index++;
-		pMap = pMap->getNext();
-	}
-
-
-	m_staticThis = this;
-	m_updating = false;
-
-	return TRUE;  // return TRUE unless you set the focus to a control
-	              // EXCEPTION: OCX Property Pages should return FALSE
+    return TRUE; // return TRUE unless you set the focus to a control
+                 // EXCEPTION: OCX Property Pages should return FALSE
 }
 
 /** Locate the child item in tree item parent with name pLabel.  If not
 found, add it.  Either way, return child. */
 HTREEITEM FenceOptions::findOrAdd(HTREEITEM parent, const char *pLabel)
 {
-	TVINSERTSTRUCT ins;
-	char buffer[_MAX_PATH];
-	::memset(&ins, 0, sizeof(ins));
-	HTREEITEM child = m_objectTreeView.GetChildItem(parent);
-	while (child != NULL) {
-		ins.item.mask = TVIF_HANDLE|TVIF_TEXT;
-		ins.item.hItem = child;
-		ins.item.pszText = buffer;
-		ins.item.cchTextMax = sizeof(buffer)-2;
-		m_objectTreeView.GetItem(&ins.item);
-		if (strcmp(buffer, pLabel) == 0) {
-			return(child);
-		}
-		child = m_objectTreeView.GetNextSiblingItem(child);
-	}
+    TVINSERTSTRUCT ins;
+    char buffer[_MAX_PATH];
+    ::memset(&ins, 0, sizeof(ins));
+    HTREEITEM child = m_objectTreeView.GetChildItem(parent);
+    while (child != NULL)
+    {
+        ins.item.mask = TVIF_HANDLE | TVIF_TEXT;
+        ins.item.hItem = child;
+        ins.item.pszText = buffer;
+        ins.item.cchTextMax = sizeof(buffer) - 2;
+        m_objectTreeView.GetItem(&ins.item);
+        if (strcmp(buffer, pLabel) == 0)
+        {
+            return (child);
+        }
+        child = m_objectTreeView.GetNextSiblingItem(child);
+    }
 
-	// not found, so add it.
-	::memset(&ins, 0, sizeof(ins));
-	ins.hParent = parent;
-	ins.hInsertAfter = TVI_SORT;
-	ins.item.mask = TVIF_PARAM|TVIF_TEXT;
-	ins.item.lParam = -1;
-	ins.item.pszText = (char*)pLabel;
-	ins.item.cchTextMax = strlen(pLabel);
-	child = m_objectTreeView.InsertItem(&ins);
-	return(child);
+    // not found, so add it.
+    ::memset(&ins, 0, sizeof(ins));
+    ins.hParent = parent;
+    ins.hInsertAfter = TVI_SORT;
+    ins.item.mask = TVIF_PARAM | TVIF_TEXT;
+    ins.item.lParam = -1;
+    ins.item.pszText = (char *)pLabel;
+    ins.item.cchTextMax = strlen(pLabel);
+    child = m_objectTreeView.InsertItem(&ins);
+    return (child);
 }
 
 //-------------------------------------------------------------------------------------------------
 /** Add the object hierarchy paths to the tree view. */
 //-------------------------------------------------------------------------------------------------
-void FenceOptions::addObject( MapObject *mapObject, const char *pPath, const char *name,
-															 Int terrainNdx, HTREEITEM parent )
+void FenceOptions::addObject(MapObject *mapObject, const char *pPath, const char *name, Int terrainNdx, HTREEITEM parent)
 {
-	char buffer[ _MAX_PATH ];
-	const char *leafName = NULL;
+    char buffer[_MAX_PATH];
+    const char *leafName = NULL;
 
-	// sanity
-	if( mapObject == NULL )
-		return;
+    // sanity
+    if (mapObject == NULL)
+        return;
 
-	//
-	// if we have an thing template in mapObject, we've read it from the new INI database,
-	// we will sort those items into the tree based on properties of the template that
-	// make it easier for us to browse when building levels
-	//
-	// Feel free to reorganize how this tree is constructed from the template
-	// data at will, whatever makes it easier for design
-	//
-	const ThingTemplate *thingTemplate = mapObject->getThingTemplate();
-	if( thingTemplate )
-	{
+    //
+    // if we have an thing template in mapObject, we've read it from the new INI database,
+    // we will sort those items into the tree based on properties of the template that
+    // make it easier for us to browse when building levels
+    //
+    // Feel free to reorganize how this tree is constructed from the template
+    // data at will, whatever makes it easier for design
+    //
+    const ThingTemplate *thingTemplate = mapObject->getThingTemplate();
+    if (thingTemplate)
+    {
+        // first check for test sorted objects
+        if (thingTemplate->getEditorSorting() == ES_TEST)
+            parent = findOrAdd(parent, "TEST");
 
-		// first check for test sorted objects
-		if( thingTemplate->getEditorSorting() == ES_TEST )
-			parent = findOrAdd( parent, "TEST" );
+        // first sort by side, either create or find the tree item with matching side name
+        AsciiString side = thingTemplate->getDefaultOwningSide();
+        DEBUG_ASSERTCRASH(!side.isEmpty(), ("NULL default side in template"));
+        strcpy(buffer, side.str());
+        parent = findOrAdd(parent, buffer);
 
-		// first sort by side, either create or find the tree item with matching side name
-		AsciiString side = thingTemplate->getDefaultOwningSide();
-		DEBUG_ASSERTCRASH( !side.isEmpty(), ("NULL default side in template") );
-		strcpy( buffer, side.str() );
-		parent = findOrAdd( parent, buffer );
+        // next tier uses the editor sorting that design can specify in the INI
+        EditorSortingType i = ES_FIRST;
+        for (; i < ES_NUM_SORTING_TYPES; i = (EditorSortingType)(i + 1))
+        {
+            if (thingTemplate->getEditorSorting() == i)
+            {
+                parent = findOrAdd(parent, EditorSortingNames[i]);
+                break; // exit for
 
-		// next tier uses the editor sorting that design can specify in the INI
-		EditorSortingType i = ES_FIRST;
-		for( ;
-				 i < ES_NUM_SORTING_TYPES;
-				 i = (EditorSortingType)(i + 1) )
-		{
+            } // end if
 
-			if( thingTemplate->getEditorSorting() == i )
-			{
+        } // end for i
 
-				parent = findOrAdd( parent, EditorSortingNames[ i ] );
-				break;  // exit for
+        if (i == ES_NUM_SORTING_TYPES)
+            parent = findOrAdd(parent, "UNSORTED");
 
-			}  // end if
+        // the leaf name is the name of the template
+        leafName = thingTemplate->getName().str();
 
-		}  // end for i
+    } // end if
 
-		if( i == ES_NUM_SORTING_TYPES )
-			parent = findOrAdd( parent, "UNSORTED" );
+    // add to the tree view
+    if (leafName)
+    {
+        TVINSERTSTRUCT ins;
 
-		// the leaf name is the name of the template
-		leafName = thingTemplate->getName().str();
-
-	}  // end if
-
-	// add to the tree view
-	if( leafName )
-	{
-		TVINSERTSTRUCT ins;
-
-		::memset(&ins, 0, sizeof(ins));
-		ins.hParent = parent;
-		ins.hInsertAfter = TVI_SORT;
-		ins.item.mask = TVIF_PARAM|TVIF_TEXT;
-		ins.item.lParam = terrainNdx;
-		ins.item.pszText = (char*)leafName;
-		ins.item.cchTextMax = strlen(leafName)+2;
-		m_objectTreeView.InsertItem(&ins);
-
-	}
-
+        ::memset(&ins, 0, sizeof(ins));
+        ins.hParent = parent;
+        ins.hInsertAfter = TVI_SORT;
+        ins.item.mask = TVIF_PARAM | TVIF_TEXT;
+        ins.item.lParam = terrainNdx;
+        ins.item.pszText = (char *)leafName;
+        ins.item.cchTextMax = strlen(leafName) + 2;
+        m_objectTreeView.InsertItem(&ins);
+    }
 }
 
 Bool FenceOptions::hasSelectedObject(void)
 {
-	// If we have no selected object, return false.
-	if (m_currentObjectIndex==-1) return false;
-	// If the objects panel has no selected object, return false.
-	if (ObjectOptions::getCurGdfName() == AsciiString::TheEmptyString) return false;
-	// If our selection is valid, return true.
-	if (m_staticThis && m_currentObjectIndex >= 0) {
-		MapObject *pObj = m_staticThis->m_objectsList;
-		int count = 0;
-		while (pObj) {
-			if (count == m_currentObjectIndex) {
-				return(true);
-			}
-			count++;
-			pObj = pObj->getNext();
-		}
-	}
-	return false;
+    // If we have no selected object, return false.
+    if (m_currentObjectIndex == -1)
+        return false;
+    // If the objects panel has no selected object, return false.
+    if (ObjectOptions::getCurGdfName() == AsciiString::TheEmptyString)
+        return false;
+    // If our selection is valid, return true.
+    if (m_staticThis && m_currentObjectIndex >= 0)
+    {
+        MapObject *pObj = m_staticThis->m_objectsList;
+        int count = 0;
+        while (pObj)
+        {
+            if (count == m_currentObjectIndex)
+            {
+                return (true);
+            }
+            count++;
+            pObj = pObj->getNext();
+        }
+    }
+    return false;
 }
 
 /// Set the selected object in the tree view.
 Bool FenceOptions::setObjectTreeViewSelection(HTREEITEM parent, Int selection)
 {
-	TVITEM item;
-	char buffer[NAME_MAX_LEN];
-	::memset(&item, 0, sizeof(item));
-	HTREEITEM child = m_objectTreeView.GetChildItem(parent);
-	while (child != NULL) {
-		item.mask = TVIF_HANDLE|TVIF_PARAM|TVIF_TEXT;
-		item.hItem = child;
-		item.pszText = buffer;
-		item.cchTextMax = sizeof(buffer)-2;
-		m_objectTreeView.GetItem(&item);
-		if (item.lParam == selection) {
-			m_objectTreeView.SelectItem(child);
-			return(true);
-		}
-		if (setObjectTreeViewSelection(child, selection))
-		{
-			updateObjectOptions();
-			return(true);
-		}
-		child = m_objectTreeView.GetNextSiblingItem(child);
-	}
-	return(false);
+    TVITEM item;
+    char buffer[NAME_MAX_LEN];
+    ::memset(&item, 0, sizeof(item));
+    HTREEITEM child = m_objectTreeView.GetChildItem(parent);
+    while (child != NULL)
+    {
+        item.mask = TVIF_HANDLE | TVIF_PARAM | TVIF_TEXT;
+        item.hItem = child;
+        item.pszText = buffer;
+        item.cchTextMax = sizeof(buffer) - 2;
+        m_objectTreeView.GetItem(&item);
+        if (item.lParam == selection)
+        {
+            m_objectTreeView.SelectItem(child);
+            return (true);
+        }
+        if (setObjectTreeViewSelection(child, selection))
+        {
+            updateObjectOptions();
+            return (true);
+        }
+        child = m_objectTreeView.GetNextSiblingItem(child);
+    }
+    return (false);
 }
 
-
-BOOL FenceOptions::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult)
+BOOL FenceOptions::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT *pResult)
 {
-	NMTREEVIEW *pHdr = (NMTREEVIEW *)lParam;
-	if (pHdr->hdr.hwndFrom == m_objectTreeView.m_hWnd) {
+    NMTREEVIEW *pHdr = (NMTREEVIEW *)lParam;
+    if (pHdr->hdr.hwndFrom == m_objectTreeView.m_hWnd)
+    {
+        if (pHdr->hdr.code == TVN_ITEMEXPANDED)
+        {
+            if (pHdr->action == TVE_COLLAPSE)
+            {
+                TVITEM item;
+                ::memset(&item, 0, sizeof(item));
+                item.mask = TVIF_STATE;
+                item.hItem = pHdr->itemOld.hItem;
+                m_objectTreeView.GetItem(&item);
+                item.state &= (~TVIS_EXPANDEDONCE);
+                item.mask = TVIF_STATE;
+                m_objectTreeView.SetItem(&item);
+            }
+        }
+        if (pHdr->hdr.code == TVN_SELCHANGED)
+        {
+            char buffer[NAME_MAX_LEN];
+            HTREEITEM hItem = m_objectTreeView.GetSelectedItem();
+            TVITEM item;
+            ::memset(&item, 0, sizeof(item));
+            item.mask = TVIF_HANDLE | TVIF_PARAM | TVIF_TEXT | TVIF_STATE;
+            item.hItem = hItem;
+            item.pszText = buffer;
+            item.cchTextMax = sizeof(buffer) - 2;
+            m_objectTreeView.GetItem(&item);
+            if (item.lParam >= 0)
+            {
+                m_currentObjectIndex = item.lParam;
+                m_customSpacing = false;
+            }
+            else if (m_objectTreeView.ItemHasChildren(item.hItem))
+            {
+                m_currentObjectIndex = -1;
+            }
+            updateObjectOptions();
+        }
+    }
 
-		if (pHdr->hdr.code == TVN_ITEMEXPANDED) {
-			if (pHdr->action == TVE_COLLAPSE) {
-				TVITEM item;
-				::memset(&item, 0, sizeof(item));
-				item.mask = TVIF_STATE;
-				item.hItem = pHdr->itemOld.hItem;
-				m_objectTreeView.GetItem(&item);
-				item.state &= (~TVIS_EXPANDEDONCE);
-				item.mask = TVIF_STATE;
-				m_objectTreeView.SetItem(&item);
-			}
-		}
-		if (pHdr->hdr.code == TVN_SELCHANGED) {
-			char buffer[NAME_MAX_LEN];
-			HTREEITEM hItem = m_objectTreeView.GetSelectedItem();
-			TVITEM item;
-			::memset(&item, 0, sizeof(item));
-			item.mask = TVIF_HANDLE|TVIF_PARAM|TVIF_TEXT|TVIF_STATE;
-			item.hItem = hItem;
-			item.pszText = buffer;
-			item.cchTextMax = sizeof(buffer)-2;
-			m_objectTreeView.GetItem(&item);
-			if (item.lParam >= 0) {
-				m_currentObjectIndex = item.lParam;
-				m_customSpacing = false;
-			}	else if (m_objectTreeView.ItemHasChildren(item.hItem)) {
-				m_currentObjectIndex = -1;
-			}
-			updateObjectOptions();
-		}
-	}
-
-	return CDialog::OnNotify(wParam, lParam, pResult);
+    return CDialog::OnNotify(wParam, lParam, pResult);
 }
-
-
-
 
 void FenceOptions::OnChangeFenceSpacingEdit()
 {
-	CWnd *pWnd = m_staticThis->GetDlgItem(IDC_FENCE_SPACING_EDIT);
-	if (pWnd) {
-		CString val;
-		pWnd->GetWindowText(val);
-		m_fenceSpacing = atof(val);
-		m_customSpacing = true;
-	}
+    CWnd *pWnd = m_staticThis->GetDlgItem(IDC_FENCE_SPACING_EDIT);
+    if (pWnd)
+    {
+        CString val;
+        pWnd->GetWindowText(val);
+        m_fenceSpacing = atof(val);
+        m_customSpacing = true;
+    }
 }

@@ -35,170 +35,174 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
 #include "namedsel.h"
-
 
 NamedSelSetList::~NamedSelSetList()
 {
-	for (int i=0; i<Sets.Count(); i++) {
-		delete Sets[i];
-		Sets[i] = NULL;
-		delete Names[i];
-		Names[i] = NULL;
-	}
+    for (int i = 0; i < Sets.Count(); i++)
+    {
+        delete Sets[i];
+        Sets[i] = NULL;
+        delete Names[i];
+        Names[i] = NULL;
+    }
 }
 
-void NamedSelSetList::Append_Set(BitArray & nset,TSTR & setname)
+void NamedSelSetList::Append_Set(BitArray &nset, TSTR &setname)
 {
-	BitArray *n = new BitArray(nset);
-	Sets.Append(1,&n);
+    BitArray *n = new BitArray(nset);
+    Sets.Append(1, &n);
 
-	TSTR * name = new TSTR(setname);
-	Names.Append(1,&name);
+    TSTR *name = new TSTR(setname);
+    Names.Append(1, &name);
 
-	assert(Names.Count() == Sets.Count());
+    assert(Names.Count() == Sets.Count());
 }
 
 void NamedSelSetList::Delete_Set(int i)
 {
-	delete Sets[i];
-	Sets.Delete(i,1);
+    delete Sets[i];
+    Sets.Delete(i, 1);
 
-	delete Names[i];
-	Names.Delete(i,1);
+    delete Names[i];
+    Names.Delete(i, 1);
 
-	assert(Names.Count() == Sets.Count());
+    assert(Names.Count() == Sets.Count());
 }
 
-void NamedSelSetList::Delete_Set(TSTR & setname)
+void NamedSelSetList::Delete_Set(TSTR &setname)
 {
-	int i = Find_Set(setname);
-	if (i >= 0) Delete_Set(i);
+    int i = Find_Set(setname);
+    if (i >= 0)
+        Delete_Set(i);
 }
 
 void NamedSelSetList::Reset(void)
 {
-	while (Sets.Count() > 0) {
-		Delete_Set(0);
-	}
+    while (Sets.Count() > 0)
+    {
+        Delete_Set(0);
+    }
 }
 
 void NamedSelSetList::Set_Size(int size)
 {
-	for (int i=0; i<Sets.Count(); i++) {
-		Sets[i]->SetSize(size,TRUE);
-	}
+    for (int i = 0; i < Sets.Count(); i++)
+    {
+        Sets[i]->SetSize(size, TRUE);
+    }
 }
 
-NamedSelSetList& NamedSelSetList::operator=(NamedSelSetList& from)
+NamedSelSetList &NamedSelSetList::operator=(NamedSelSetList &from)
 {
-	for (int i=0; i<Sets.Count(); i++) {
-		Delete_Set(i);
-	}
-	Sets.SetCount(0);
-	Names.SetCount(0);
+    for (int i = 0; i < Sets.Count(); i++)
+    {
+        Delete_Set(i);
+    }
+    Sets.SetCount(0);
+    Names.SetCount(0);
 
-	for (i=0; i<from.Count(); i++) {
-		Append_Set(from[i],*(from.Names[i]));
-	}
+    for (i = 0; i < from.Count(); i++)
+    {
+        Append_Set(from[i], *(from.Names[i]));
+    }
 
-	return *this;
+    return *this;
 }
-
 
 int NamedSelSetList::Find_Set(TSTR &setname)
 {
-	for (int i=0; i<Names.Count(); i++) {
-		if (setname == *Names[i]) {
-			return i;
-		}
-	}
-	return -1;
+    for (int i = 0; i < Names.Count(); i++)
+    {
+        if (setname == *Names[i])
+        {
+            return i;
+        }
+    }
+    return -1;
 }
-
 
 IOResult NamedSelSetList::Save(ISave *isave)
 {
-	assert(Sets.Count() == Names.Count());
+    assert(Sets.Count() == Names.Count());
 
-	for (int i=0; i<Sets.Count(); i++) {
+    for (int i = 0; i < Sets.Count(); i++)
+    {
+        isave->BeginChunk(NAMED_SEL_SET_CHUNK);
 
-		isave->BeginChunk(NAMED_SEL_SET_CHUNK);
+        isave->BeginChunk(NAMED_SEL_NAME_CHUNK);
+        isave->WriteWString(*Names[i]);
+        isave->EndChunk();
 
-			isave->BeginChunk(NAMED_SEL_NAME_CHUNK);
-			isave->WriteWString(*Names[i]);
-			isave->EndChunk();
+        isave->BeginChunk(NAMED_SEL_BITS_CHUNK);
+        Sets[i]->Save(isave);
+        isave->EndChunk();
 
-			isave->BeginChunk(NAMED_SEL_BITS_CHUNK);
-			Sets[i]->Save(isave);
-			isave->EndChunk();
-
-		isave->EndChunk();
-
-	}
-	return IO_OK;
+        isave->EndChunk();
+    }
+    return IO_OK;
 }
-
 
 IOResult NamedSelSetList::Load(ILoad *iload)
 {
-	IOResult res;
+    IOResult res;
 
-	while (IO_OK==(res=iload->OpenChunk())) {
+    while (IO_OK == (res = iload->OpenChunk()))
+    {
+        switch (iload->CurChunkID())
+        {
+            case NAMED_SEL_SET_CHUNK:
+                res = Load_Set(iload);
+                break;
 
-		switch (iload->CurChunkID())  {
+            default:
+                assert(0);
+                break;
+        }
 
-			case NAMED_SEL_SET_CHUNK:
-				res = Load_Set(iload);
-				break;
-
-			default:
-				assert(0);
-				break;
-		}
-
-		iload->CloseChunk();
-		if (res!=IO_OK) return res;
-	}
-	return IO_OK;
+        iload->CloseChunk();
+        if (res != IO_OK)
+            return res;
+    }
+    return IO_OK;
 }
 
-IOResult NamedSelSetList::Load_Set(ILoad * iload)
+IOResult NamedSelSetList::Load_Set(ILoad *iload)
 {
-	IOResult res;
-	BitArray set;
-	TCHAR * name;
+    IOResult res;
+    BitArray set;
+    TCHAR *name;
 
-	BOOL gotset = FALSE;
-	BOOL gotname = FALSE;
+    BOOL gotset = FALSE;
+    BOOL gotname = FALSE;
 
-	res = iload->OpenChunk();
+    res = iload->OpenChunk();
 
-	while (IO_OK==(res=iload->OpenChunk())) {
+    while (IO_OK == (res = iload->OpenChunk()))
+    {
+        switch (iload->CurChunkID())
+        {
+            case NAMED_SEL_BITS_CHUNK:
+            {
+                res = set.Load(iload);
+                gotset = TRUE;
+                break;
+            }
 
-		switch (iload->CurChunkID())  {
+            case NAMED_SEL_NAME_CHUNK:
+            {
+                res = iload->ReadWStringChunk(&name);
+                gotname = TRUE;
+                break;
+            }
+        }
+        iload->CloseChunk();
+        if (res != IO_OK)
+            return res;
+    }
 
-			case NAMED_SEL_BITS_CHUNK:
-			{
-				res = set.Load(iload);
-				gotset = TRUE;
-				break;
-			}
+    assert(gotset && gotname);
+    Append_Set(set, TSTR(name));
 
-			case NAMED_SEL_NAME_CHUNK:
-			{
-				res = iload->ReadWStringChunk(&name);
-				gotname = TRUE;
-				break;
-			}
-		}
-		iload->CloseChunk();
-		if (res != IO_OK) return res;
-	}
-
-	assert(gotset && gotname);
-	Append_Set(set,TSTR(name));
-
-	return IO_OK;
+    return IO_OK;
 }

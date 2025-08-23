@@ -32,92 +32,93 @@ double s_ticksPerMSec = 0.0f;
 char buffer[1024];
 
 //-------------------------------------------------------------------------------------------------
-void GetPrecisionTimer(INT64* t)
+void GetPrecisionTimer(INT64 *t)
 {
 #if defined(_MSC_VER) && _MSC_VER < 1300
-	// CPUID is needed to force serialization of any previous instructions.
-	__asm
-	{
+    // CPUID is needed to force serialization of any previous instructions.
+    __asm
+        {
 		RDTSC
 		MOV ECX,[t]
 		MOV [ECX], EAX
 		MOV [ECX+4], EDX
-	}
+        }
 #else
-	*t = _rdtsc();
+    *t = _rdtsc();
 #endif
 }
 
 //-------------------------------------------------------------------------------------------------
 void InitPrecisionTimer()
 {
-	__int64 totalTime = 0;
-	INT64	TotalTicks = 0;
-	static int TESTS = 10;
+    __int64 totalTime = 0;
+    INT64 TotalTicks = 0;
+    static int TESTS = 10;
 
-	cout << "Starting tests..." << flush;
+    cout << "Starting tests..." << flush;
 
-	for (int i = 0; i < TESTS; ++i)
-	{
-		int            TimeStart;
-		int            TimeStop;
-		INT64		   StartTicks;
-		INT64		   EndTicks;
+    for (int i = 0; i < TESTS; ++i)
+    {
+        int TimeStart;
+        int TimeStop;
+        INT64 StartTicks;
+        INT64 EndTicks;
 
-		TimeStart = timeGetTime();
-		GetPrecisionTimer(&StartTicks);
-		for(;;)
-		{
-			TimeStop = timeGetTime();
-			if ((TimeStop - TimeStart) > 1000)
-			{
-				GetPrecisionTimer(&EndTicks);
-				break;
-			}
-		}
+        TimeStart = timeGetTime();
+        GetPrecisionTimer(&StartTicks);
+        for (;;)
+        {
+            TimeStop = timeGetTime();
+            if ((TimeStop - TimeStart) > 1000)
+            {
+                GetPrecisionTimer(&EndTicks);
+                break;
+            }
+        }
 
-		TotalTicks += (EndTicks - StartTicks);
+        TotalTicks += (EndTicks - StartTicks);
 
-		totalTime += (TimeStop - TimeStart);
-	}
+        totalTime += (TimeStop - TimeStart);
+    }
 
-	cout << "...completed" << endl;
-	s_ticksPerMSec = 1.0 * TotalTicks / totalTime;
-	s_ticksPerSec = s_ticksPerMSec * 1000.0f;
+    cout << "...completed" << endl;
+    s_ticksPerMSec = 1.0 * TotalTicks / totalTime;
+    s_ticksPerSec = s_ticksPerMSec * 1000.0f;
 
-	sprintf(buffer, "Ticks per sec: %.2f\n", s_ticksPerSec);
-	cout << buffer;
-	sprintf(buffer, "Ticks per msec: %.2f\n", s_ticksPerMSec);
-	cout << buffer;
+    sprintf(buffer, "Ticks per sec: %.2f\n", s_ticksPerSec);
+    cout << buffer;
+    sprintf(buffer, "Ticks per msec: %.2f\n", s_ticksPerMSec);
+    cout << buffer;
 }
 
-int main(int argc, char* argv[])
+int main(int argc, char *argv[])
 {
-	INT64 startTime, endTime, totalTime = 0;
-	InitPrecisionTimer();
-	FILE *out = fopen("output.txt", "w");
-	cout << "Beginning Looping tests: " << endl;
+    INT64 startTime, endTime, totalTime = 0;
+    InitPrecisionTimer();
+    FILE *out = fopen("output.txt", "w");
+    cout << "Beginning Looping tests: " << endl;
 
-	const int TESTCOUNT = 60;
+    const int TESTCOUNT = 60;
 
-	while (1) {
-		for (int i = 0; i < TESTCOUNT; ++i) {
-			GetPrecisionTimer(&startTime);
-			Sleep(5);
-			GetPrecisionTimer(&endTime);
-			totalTime += (endTime - startTime);
-		}
+    while (1)
+    {
+        for (int i = 0; i < TESTCOUNT; ++i)
+        {
+            GetPrecisionTimer(&startTime);
+            Sleep(5);
+            GetPrecisionTimer(&endTime);
+            totalTime += (endTime - startTime);
+        }
 
-		double avgPerFrame = 1.0 * totalTime / TESTCOUNT;
+        double avgPerFrame = 1.0 * totalTime / TESTCOUNT;
 
-		sprintf(buffer, "%.8f,\t", avgPerFrame / s_ticksPerMSec );
-		fwrite(buffer, strlen(buffer), 1, out);
-		fflush(out);
-		cout << buffer << endl;
-		totalTime = 0;
-	}
-	fclose(out);
+        sprintf(buffer, "%.8f,\t", avgPerFrame / s_ticksPerMSec);
+        fwrite(buffer, strlen(buffer), 1, out);
+        fflush(out);
+        cout << buffer << endl;
+        totalTime = 0;
+    }
+    fclose(out);
 
-	return 0;
+    return 0;
 }
-

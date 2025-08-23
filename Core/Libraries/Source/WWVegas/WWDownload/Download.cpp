@@ -29,96 +29,100 @@
 /////////////////////////////////////////////////////////////////////////////
 // CDownload
 
-
 //
 // Kick off a download - copys the parameters for the download to the appropriate
 // data members, then sets the status flag to start the download when PumpMessages()
 // is called.
 //
 
-HRESULT CDownload::DownloadFile(LPCSTR server, LPCSTR username, LPCSTR password, LPCSTR file, LPCSTR localfile, LPCSTR regkey, bool tryresume)
+HRESULT CDownload::DownloadFile(
+    LPCSTR server,
+    LPCSTR username,
+    LPCSTR password,
+    LPCSTR file,
+    LPCSTR localfile,
+    LPCSTR regkey,
+    bool tryresume)
 {
- 	// Check we're not in the middle of another download.
-	if((m_Status != DOWNLOADSTATUS_DONE ) && (m_Status != DOWNLOADSTATUS_FINDINGFILE))
-	{
-		return( DOWNLOAD_STATUSERROR );
-	}
+    // Check we're not in the middle of another download.
+    if ((m_Status != DOWNLOADSTATUS_DONE) && (m_Status != DOWNLOADSTATUS_FINDINGFILE))
+    {
+        return (DOWNLOAD_STATUSERROR);
+    }
 
-	// If we're still connected, make sure we're on the right server
-	if (m_Status == DOWNLOADSTATUS_FINDINGFILE)
-	{
-		if ((strcmp(m_Server, server)) || (strcmp(m_Login, username)))
-		{
-			// Damn, a server switch.  Close conn & fix state
-			m_Ftp->DisconnectFromServer();
-			m_Status=DOWNLOADSTATUS_DONE;
-		}
-	}
+    // If we're still connected, make sure we're on the right server
+    if (m_Status == DOWNLOADSTATUS_FINDINGFILE)
+    {
+        if ((strcmp(m_Server, server)) || (strcmp(m_Login, username)))
+        {
+            // Damn, a server switch.  Close conn & fix state
+            m_Ftp->DisconnectFromServer();
+            m_Status = DOWNLOADSTATUS_DONE;
+        }
+    }
 
-	// Check all parameters are non-null.
+    // Check all parameters are non-null.
 
-	if( ( server == NULL ) || ( username == NULL ) ||
-		( password == NULL ) || ( file == NULL ) ||
-		( localfile == NULL ) || ( regkey == NULL ) )
-	{
-     //////////DBGMSG("Download Paramerror");
-		return( DOWNLOAD_PARAMERROR );
-	}
+    if ((server == NULL) || (username == NULL) || (password == NULL) || (file == NULL) || (localfile == NULL)
+        || (regkey == NULL))
+    {
+        //////////DBGMSG("Download Paramerror");
+        return (DOWNLOAD_PARAMERROR);
+    }
 
-	// Make sure we have a download directory
-	_mkdir("download");
+    // Make sure we have a download directory
+    _mkdir("download");
 
-	// Copy parameters to member variables.
-	strncpy( m_Server, server, sizeof( m_Server ) );
-	strncpy( m_Login, username, sizeof( m_Login ) );
-	strncpy( m_Password, password, sizeof( m_Password ) );
-	strncpy( m_File, file, sizeof( m_File ) );
-	strncpy( m_LocalFile, localfile, sizeof( m_LocalFile ) );
+    // Copy parameters to member variables.
+    strncpy(m_Server, server, sizeof(m_Server));
+    strncpy(m_Login, username, sizeof(m_Login));
+    strncpy(m_Password, password, sizeof(m_Password));
+    strncpy(m_File, file, sizeof(m_File));
+    strncpy(m_LocalFile, localfile, sizeof(m_LocalFile));
 
-	strncpy( m_LastLocalFile, localfile, sizeof( m_LastLocalFile ) );
+    strncpy(m_LastLocalFile, localfile, sizeof(m_LastLocalFile));
 
-	strncpy( m_RegKey, regkey, sizeof( m_RegKey ) );
-	m_TryResume = tryresume;
-	m_StartPosition=0;
+    strncpy(m_RegKey, regkey, sizeof(m_RegKey));
+    m_TryResume = tryresume;
+    m_StartPosition = 0;
 
-/*********
-	// figure out file offset
-	if (m_TryResume == false)
-	{
-		m_StartPosition=0;
-	}
-	else if(( m_StartPosition = m_Ftp->FileRecoveryPosition( m_LocalFile, m_RegKey ) ) != 0 )
-	{
-		if( Listener->OnQueryResume() == DOWNLOADEVENT_DONOTRESUME )
-		{
-			m_Ftp->RestartFrom( 0 );
-			m_StartPosition = 0;
-		}
-	}
-************/
+    /*********
+        // figure out file offset
+        if (m_TryResume == false)
+        {
+            m_StartPosition=0;
+        }
+        else if(( m_StartPosition = m_Ftp->FileRecoveryPosition( m_LocalFile, m_RegKey ) ) != 0 )
+        {
+            if( Listener->OnQueryResume() == DOWNLOADEVENT_DONOTRESUME )
+            {
+                m_Ftp->RestartFrom( 0 );
+                m_StartPosition = 0;
+            }
+        }
+    ************/
 
-	// Set status so we start to connect at the next PumpMessages()
-	if (m_Status != DOWNLOADSTATUS_FINDINGFILE)
-		m_Status = DOWNLOADSTATUS_GO;
+    // Set status so we start to connect at the next PumpMessages()
+    if (m_Status != DOWNLOADSTATUS_FINDINGFILE)
+        m_Status = DOWNLOADSTATUS_GO;
 
-   //////////DBGMSG("Ready to download");
-	return S_OK;
+    //////////DBGMSG("Ready to download");
+    return S_OK;
 }
-
 
 //
 // Get the local filename of the last file we requested to download....
 //
-HRESULT CDownload::GetLastLocalFile(char *local_file, int maxlen) {
-	if (local_file==0)
-		return(E_FAIL);
+HRESULT CDownload::GetLastLocalFile(char *local_file, int maxlen)
+{
+    if (local_file == 0)
+        return (E_FAIL);
 
-	strncpy(local_file, m_LastLocalFile, maxlen);
-	local_file[maxlen-1]=0;
+    strncpy(local_file, m_LastLocalFile, maxlen);
+    local_file[maxlen - 1] = 0;
 
-	return(S_OK);
+    return (S_OK);
 }
-
 
 //
 // Abort the current download - disconnects from the server and sets the
@@ -127,27 +131,25 @@ HRESULT CDownload::GetLastLocalFile(char *local_file, int maxlen) {
 
 HRESULT CDownload::Abort()
 {
+    if (m_Status != DOWNLOADSTATUS_NONE)
+    {
+        m_Ftp->DisconnectFromServer();
+        m_Status = DOWNLOADSTATUS_NONE;
+    }
 
-	if( m_Status != DOWNLOADSTATUS_NONE )
-	{
-		m_Ftp->DisconnectFromServer();
-		m_Status = DOWNLOADSTATUS_NONE;
-	}
+    m_TimeStarted = 0;
+    m_StartPosition = 0;
+    m_FileSize = 0;
+    m_BytesRead = 0;
+    m_Server[0] = '\0';
+    m_Login[0] = '\0';
+    m_Password[0] = '\0';
+    m_File[0] = '\0';
+    m_LocalFile[0] = '\0';
+    m_RegKey[0] = '\0';
 
-	m_TimeStarted		= 0;
-	m_StartPosition		= 0;
-	m_FileSize			= 0;
-	m_BytesRead			= 0;
-	m_Server[ 0 ]		= '\0';
-	m_Login[ 0 ]		= '\0';
-	m_Password[ 0 ]		= '\0';
-	m_File[ 0 ]			= '\0';
-	m_LocalFile[ 0 ]	= '\0';
-	m_RegKey[ 0 ]		= '\0';
-
-	return S_OK;
+    return S_OK;
 }
-
 
 //
 // PumpMessages() does all the work - checks for possible resumption of a previous
@@ -156,273 +158,281 @@ HRESULT CDownload::Abort()
 
 HRESULT CDownload::PumpMessages()
 {
-	int iResult = 0;
-	int timetaken = 0;
-	int averagetimepredicted = -1;
-	static int reenter = 0;
+    int iResult = 0;
+    int timetaken = 0;
+    int averagetimepredicted = -1;
+    static int reenter = 0;
 
-	/* Avoid reentrancy. */
+    /* Avoid reentrancy. */
 
-   ////DBGMSG("Download Pump");
+    ////DBGMSG("Download Pump");
 
-	if( reenter != 0 )
-	{
-		return( DOWNLOAD_REENTERERROR );
-	}
+    if (reenter != 0)
+    {
+        return (DOWNLOAD_REENTERERROR);
+    }
 
-	reenter = 1;
+    reenter = 1;
 
+    if (m_Status == DOWNLOADSTATUS_GO)
+    {
+        // Check to see whether the file already exists locally
 
-	if( m_Status == DOWNLOADSTATUS_GO )
-	{
-		// Check to see whether the file already exists locally
+        /***********
+                if (m_TryResume == false)
+                {
+                    m_StartPosition = 0;
+                }
+                else if(	( m_StartPosition = m_Ftp->FileRecoveryPosition( m_LocalFile, m_RegKey ) ) != 0 )
+                {
+                    if( Listener->OnQueryResume() == DOWNLOADEVENT_DONOTRESUME )
+                    {
+                        m_Ftp->RestartFrom( 0 );
+                        m_StartPosition = 0;
+                    }
+                }
+        ************/
 
-/***********
-		if (m_TryResume == false)
-		{
-			m_StartPosition = 0;
-		}
-		else if(	( m_StartPosition = m_Ftp->FileRecoveryPosition( m_LocalFile, m_RegKey ) ) != 0 )
-		{
-			if( Listener->OnQueryResume() == DOWNLOADEVENT_DONOTRESUME )
-			{
-				m_Ftp->RestartFrom( 0 );
-				m_StartPosition = 0;
-			}
-		}
-************/
+        // Tell the client that we're starting to connect.
 
-		// Tell the client that we're starting to connect.
+        Listener->OnStatusUpdate(DOWNLOADSTATUS_CONNECTING);
 
-		Listener->OnStatusUpdate( DOWNLOADSTATUS_CONNECTING );
+        m_Status = DOWNLOADSTATUS_CONNECTING;
+    }
 
-		m_Status = DOWNLOADSTATUS_CONNECTING;
-	}
+    if (m_Status == DOWNLOADSTATUS_CONNECTING)
+    {
+        // Connect to the server
+        //////////DBGMSG("Connect to Server");
 
+        iResult = m_Ftp->ConnectToServer(m_Server);
+        ////////////DBGMSG("out of FTP connect");
 
-	if( m_Status == DOWNLOADSTATUS_CONNECTING )
-	{
-		// Connect to the server
-      //////////DBGMSG("Connect to Server");
+        if (iResult == FTP_SUCCEEDED)
+        {
+            m_Status = DOWNLOADSTATUS_LOGGINGIN;
+        }
+        else
+        {
+            if (iResult == FTP_FAILED)
+            {
+                // Tell the client we couldn't connect
+                ///////////DBGMSG("Couldn't connect");
+                Listener->OnError(DOWNLOADEVENT_COULDNOTCONNECT);
+                reenter = 0;
+                return DOWNLOAD_NETWORKERROR;
+            }
+        }
+        reenter = 0;
+        return DOWNLOAD_SUCCEEDED;
+    }
 
-		iResult = m_Ftp->ConnectToServer( m_Server );
-      ////////////DBGMSG("out of FTP connect");
+    if (m_Status == DOWNLOADSTATUS_LOGGINGIN)
+    {
+        // Login to the server
+        ////////////DBGMSG("Login to server");
 
-		if( iResult == FTP_SUCCEEDED )
-		{
-			m_Status = DOWNLOADSTATUS_LOGGINGIN;
-		}
-		else
-		{
-			if( iResult == FTP_FAILED )
-			{
-				// Tell the client we couldn't connect
-            ///////////DBGMSG("Couldn't connect");
-				Listener->OnError( DOWNLOADEVENT_COULDNOTCONNECT );
-				reenter = 0;
-				return DOWNLOAD_NETWORKERROR;
-			}
-		}
-		reenter = 0;
-		return DOWNLOAD_SUCCEEDED;
-	}
+        iResult = m_Ftp->LoginToServer(m_Login, m_Password);
 
-	if( m_Status == DOWNLOADSTATUS_LOGGINGIN )
-	{
-		// Login to the server
-      ////////////DBGMSG("Login to server");
+        if (iResult == FTP_SUCCEEDED)
+        {
+            Listener->OnStatusUpdate(DOWNLOADSTATUS_FINDINGFILE);
+            m_Status = DOWNLOADSTATUS_FINDINGFILE;
+        }
 
-		iResult = m_Ftp->LoginToServer( m_Login, m_Password );
+        if (iResult == FTP_FAILED)
+        {
+            // Tell the client we couldn't log in
 
-		if( iResult == FTP_SUCCEEDED )
-		{
-			Listener->OnStatusUpdate( DOWNLOADSTATUS_FINDINGFILE );
-			m_Status = DOWNLOADSTATUS_FINDINGFILE;
-		}
+            Listener->OnError(DOWNLOADEVENT_LOGINFAILED);
+            reenter = 0;
+            return (DOWNLOAD_NETWORKERROR);
+        }
 
-		if( iResult == FTP_FAILED )
-		{
-			// Tell the client we couldn't log in
+        reenter = 0;
+        return DOWNLOAD_SUCCEEDED;
+    }
 
-			Listener->OnError( DOWNLOADEVENT_LOGINFAILED );
-			reenter = 0;
-			return( DOWNLOAD_NETWORKERROR );
-		}
+    if ((m_Status == DOWNLOADSTATUS_FINDINGFILE) && (strlen(m_File)))
+    {
+        // Find the file on the server
+        ///////////DBGMSG("Find File");
 
-		reenter = 0;
-		return DOWNLOAD_SUCCEEDED;
-	}
+        if (m_Ftp->FindFile(m_File, &m_FileSize) == FTP_FAILED)
+        {
+            // Tell the client we couldn't find the file
 
-	if(( m_Status == DOWNLOADSTATUS_FINDINGFILE ) && (strlen(m_File)))
-	{
+            Listener->OnError(DOWNLOADEVENT_NOSUCHFILE);
+            reenter = 0;
+            return (DOWNLOAD_FILEERROR);
+        }
 
-		// Find the file on the server
-      ///////////DBGMSG("Find File");
+        if (m_FileSize > 0)
+        {
+            // First check to see if we already have the complete file in the proper dest location...
+            //
+            // Note, we will only skip the download if the file is a patch.  Patch files should
+            //   never ever change so this is not a concern.
+            //
+            // We identify patches because they are written into the patches folder.
+            struct _stat statdata;
+            if ((_stat(m_LocalFile, &statdata) == 0) && (statdata.st_size == m_FileSize)
+                && (_strnicmp(m_LocalFile, "patches\\", strlen("patches\\")) == 0))
+            {
+                // OK, no need to download this again....
 
-		if( m_Ftp->FindFile( m_File, &m_FileSize ) == FTP_FAILED )
-		{
-			// Tell the client we couldn't find the file
+                m_Status = DOWNLOADSTATUS_FINDINGFILE; // ready to find another file
+                m_TimeStarted = 0;
+                m_StartPosition = 0;
+                m_FileSize = 0;
+                m_BytesRead = 0;
+                m_File[0] = '\0';
+                m_LocalFile[0] = '\0';
 
-			Listener->OnError( DOWNLOADEVENT_NOSUCHFILE );
-			reenter = 0;
-			return( DOWNLOAD_FILEERROR );
-		}
+                Listener->OnEnd();
 
-		if( m_FileSize > 0 )
-		{
-			// First check to see if we already have the complete file in the proper dest location...
-			//
-			// Note, we will only skip the download if the file is a patch.  Patch files should
-			//   never ever change so this is not a concern.
-			//
-			// We identify patches because they are written into the patches folder.
-			struct _stat statdata;
-			if (	(_stat(m_LocalFile, &statdata) == 0) &&
-					(statdata.st_size == m_FileSize) &&
-					(_strnicmp(m_LocalFile, "patches\\", strlen("patches\\"))==0)) {
-				// OK, no need to download this again....
+                reenter = 0;
+                return DOWNLOAD_SUCCEEDED;
+            }
 
-				m_Status				= DOWNLOADSTATUS_FINDINGFILE;  // ready to find another file
-				m_TimeStarted		= 0;
-				m_StartPosition	= 0;
-				m_FileSize			= 0;
-				m_BytesRead			= 0;
-				m_File[ 0 ]			= '\0';
-				m_LocalFile[ 0 ]	= '\0';
+            //
+            // Check if we can do a file resume
+            //
+            if (m_TryResume == false)
+            {
+                m_StartPosition = 0;
+            }
+            else if ((m_StartPosition = m_Ftp->FileRecoveryPosition(m_LocalFile, m_RegKey)) != 0)
+            {
+                if (Listener->OnQueryResume() == DOWNLOADEVENT_DONOTRESUME)
+                {
+                    m_Ftp->RestartFrom(0);
+                    m_StartPosition = 0;
+                }
+            }
+            // end resume check
 
-				Listener->OnEnd();
+            m_Status = DOWNLOADSTATUS_DOWNLOADING;
 
-				reenter = 0;
-				return DOWNLOAD_SUCCEEDED;
-			}
+            // Tell the client we're starting to download
 
+            Listener->OnStatusUpdate(DOWNLOADSTATUS_DOWNLOADING);
+        }
 
-			//
-			// Check if we can do a file resume
-			//
-			if (m_TryResume == false)
-			{
-				m_StartPosition = 0;
-			}
-			else if(	( m_StartPosition = m_Ftp->FileRecoveryPosition( m_LocalFile, m_RegKey ) ) != 0 )
-			{
-				if( Listener->OnQueryResume() == DOWNLOADEVENT_DONOTRESUME )
-				{
-					m_Ftp->RestartFrom( 0 );
-					m_StartPosition = 0;
-				}
-			}
-			// end resume check
+        reenter = 0;
+        return DOWNLOAD_SUCCEEDED;
+    }
 
+    if (m_Status == DOWNLOADSTATUS_DOWNLOADING)
+    {
+        // Get the next chunk of the file
+        /// DBGMSG("Get Next File Block");
 
-			m_Status = DOWNLOADSTATUS_DOWNLOADING;
+        iResult = m_Ftp->GetNextFileBlock(m_LocalFile, &m_BytesRead);
 
-			// Tell the client we're starting to download
+        if (m_TimeStarted == 0)
+        {
+            // This is the first time through here - record the starting time.
+            m_TimeStarted = timeGetTime();
+        }
 
-			Listener->OnStatusUpdate( DOWNLOADSTATUS_DOWNLOADING );
-		}
+        if (iResult == FTP_SUCCEEDED)
+        {
+            m_Status = DOWNLOADSTATUS_FINISHING;
+        }
+        else
+        {
+            if (iResult == FTP_FAILED)
+            {
+                Listener->OnError(DOWNLOADEVENT_TCPERROR);
+                reenter = 0;
+                return (DOWNLOAD_NETWORKERROR);
+            }
+        }
 
-		reenter = 0;
-		return DOWNLOAD_SUCCEEDED;
-	}
+        // Calculate time taken so far, and predict how long there is left.
+        // The prediction returned is the average of the last 8 predictions.
 
-	if( m_Status == DOWNLOADSTATUS_DOWNLOADING )
-	{
+        timetaken = (timeGetTime() - m_TimeStarted) / 1000;
 
-		// Get the next chunk of the file
-      ///DBGMSG("Get Next File Block");
+        //////////if( m_BytesRead > 0 ) // NAK - RP said this is wrong
+        if ((m_BytesRead - m_StartPosition) > 0)
+        {
+            // Not the first read.
+            int predictionIndex = (m_predictions++) & 0x7;
+            m_predictionTimes[predictionIndex] =
+                MulDiv(timetaken, (m_FileSize - m_BytesRead), (m_BytesRead - m_StartPosition));
+            //__int64 numerator = ( m_FileSize - m_BytesRead )  * timetaken;
+            //__int64 denominator = ( m_BytesRead - m_StartPosition );
+            // m_predictionTimes[ predictionIndex ] = numerator/denominator;
+            // m_predictionTimes[ predictionIndex ] = ( ( m_FileSize - m_BytesRead )  * timetaken ) / ( m_BytesRead -
+            // m_StartPosition ); m_predictionTimes[ predictionIndex ] = ( ( m_FileSize - m_BytesRead ) / ( m_BytesRead -
+            // m_StartPosition ) * timetaken );
 
-		iResult = m_Ftp->GetNextFileBlock( m_LocalFile, &m_BytesRead );
+            DEBUG_LOG(
+                ("About to OnProgressUpdate() - m_FileSize=%d, m_BytesRead=%d, timetaken=%d, numerator=%d",
+                 m_FileSize,
+                 m_BytesRead,
+                 timetaken,
+                 ((m_FileSize - m_BytesRead) * timetaken)));
+            DEBUG_LOG(
+                (", m_startPosition=%d, denominator=%d, predictionTime=%d",
+                 m_StartPosition,
+                 (m_BytesRead - m_StartPosition),
+                 predictionIndex));
+            DEBUG_LOG(
+                ("vals are %d %d %d %d %d %d %d %d",
+                 m_predictionTimes[0],
+                 m_predictionTimes[1],
+                 m_predictionTimes[2],
+                 m_predictionTimes[3],
+                 m_predictionTimes[4],
+                 m_predictionTimes[5],
+                 m_predictionTimes[6],
+                 m_predictionTimes[7]));
 
-		if( m_TimeStarted == 0 )
-		{
-			// This is the first time through here - record the starting time.
-			m_TimeStarted = timeGetTime();
-		}
+            if (m_predictions > 8)
+            {
+                // We've had enough time to build up a few predictions, so calculate
+                // an average.
+                averagetimepredicted =
+                    (m_predictionTimes[0] + m_predictionTimes[1] + m_predictionTimes[2] + m_predictionTimes[3]
+                     + m_predictionTimes[4] + m_predictionTimes[5] + m_predictionTimes[6] + m_predictionTimes[7])
+                    / 8;
+            }
+            else
+            {
+                // Wait a while longer before passing a "real" prediction
+                averagetimepredicted = -1;
+            }
+        }
+        else
+        {
+            averagetimepredicted = -1;
+        }
 
-		if( iResult == FTP_SUCCEEDED )
-		{
-			m_Status = DOWNLOADSTATUS_FINISHING;
-		}
-		else
-		{
-			if( iResult == FTP_FAILED )
-			{
-				Listener->OnError( DOWNLOADEVENT_TCPERROR );
-				reenter = 0;
-				return( DOWNLOAD_NETWORKERROR );
-			}
-		}
+        // Update the client's progress bar (or whatever)
 
-		// Calculate time taken so far, and predict how long there is left.
-		// The prediction returned is the average of the last 8 predictions.
+        Listener->OnProgressUpdate(m_BytesRead, m_FileSize, timetaken, averagetimepredicted + 1);
+    }
 
-		timetaken = ( timeGetTime() - m_TimeStarted ) / 1000;
+    if (m_Status == DOWNLOADSTATUS_FINISHING)
+    {
+        if (m_Ftp->m_iCommandSocket)
+            m_Status = DOWNLOADSTATUS_FINDINGFILE; // ready to find another file
+        else
+            m_Status = DOWNLOADSTATUS_DONE; // command channel closed, connect again...
 
-		//////////if( m_BytesRead > 0 ) // NAK - RP said this is wrong
-      if( ( m_BytesRead - m_StartPosition ) > 0 )
-		{
-			// Not the first read.
-			int predictionIndex = ( m_predictions++ ) & 0x7;
-			m_predictionTimes[ predictionIndex ] = MulDiv( timetaken, (m_FileSize - m_BytesRead), (m_BytesRead - m_StartPosition) );
-			//__int64 numerator = ( m_FileSize - m_BytesRead )  * timetaken;
-			//__int64 denominator = ( m_BytesRead - m_StartPosition );
-			//m_predictionTimes[ predictionIndex ] = numerator/denominator;
-			//m_predictionTimes[ predictionIndex ] = ( ( m_FileSize - m_BytesRead )  * timetaken ) / ( m_BytesRead - m_StartPosition );
-			//m_predictionTimes[ predictionIndex ] = ( ( m_FileSize - m_BytesRead ) / ( m_BytesRead - m_StartPosition ) * timetaken );
+        m_TimeStarted = 0;
+        m_StartPosition = 0;
+        m_FileSize = 0;
+        m_BytesRead = 0;
+        m_File[0] = '\0';
+        m_LocalFile[0] = '\0';
 
-			DEBUG_LOG(("About to OnProgressUpdate() - m_FileSize=%d, m_BytesRead=%d, timetaken=%d, numerator=%d",
-				m_FileSize, m_BytesRead, timetaken, ( ( m_FileSize - m_BytesRead )  * timetaken )));
-			DEBUG_LOG((", m_startPosition=%d, denominator=%d, predictionTime=%d",
-				m_StartPosition, ( m_BytesRead - m_StartPosition ), predictionIndex));
-			DEBUG_LOG(("vals are %d %d %d %d %d %d %d %d",
-				m_predictionTimes[ 0 ], m_predictionTimes[ 1 ], m_predictionTimes[ 2 ], m_predictionTimes[ 3 ],
-				m_predictionTimes[ 4 ], m_predictionTimes[ 5 ], m_predictionTimes[ 6 ], m_predictionTimes[ 7 ]));
+        Listener->OnEnd();
+    }
 
-			if( m_predictions > 8 )
-			{
-				// We've had enough time to build up a few predictions, so calculate
-				// an average.
-				averagetimepredicted = ( m_predictionTimes[ 0 ] + m_predictionTimes[ 1 ] +
-										 m_predictionTimes[ 2 ] + m_predictionTimes[ 3 ] +
-										 m_predictionTimes[ 4 ] + m_predictionTimes[ 5 ] +
-										 m_predictionTimes[ 6 ] + m_predictionTimes[ 7 ] ) / 8;
-			}
-			else
-			{
-				// Wait a while longer before passing a "real" prediction
-				averagetimepredicted = -1;
-			}
-
-		}
-		else
-		{
-			averagetimepredicted = -1;
-		}
-
-		// Update the client's progress bar (or whatever)
-
-		Listener->OnProgressUpdate( m_BytesRead, m_FileSize, timetaken, averagetimepredicted + 1);
-	}
-
-
-	if( m_Status == DOWNLOADSTATUS_FINISHING )
-	{
-		if (m_Ftp->m_iCommandSocket)
-			m_Status = DOWNLOADSTATUS_FINDINGFILE;  // ready to find another file
-		else
-			m_Status = DOWNLOADSTATUS_DONE;			// command channel closed, connect again...
-
-		m_TimeStarted		= 0;
-		m_StartPosition		= 0;
-		m_FileSize			= 0;
-		m_BytesRead			= 0;
-		m_File[ 0 ]			= '\0';
-		m_LocalFile[ 0 ]	= '\0';
-
-		Listener->OnEnd();
-	}
-
-	reenter = 0;
-	return DOWNLOAD_SUCCEEDED;
+    reenter = 0;
+    return DOWNLOAD_SUCCEEDED;
 }

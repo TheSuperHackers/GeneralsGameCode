@@ -37,9 +37,7 @@
  *   SkinDataClass::Load -- load the skindata from a MAX file                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
 #include "skindata.h"
-
 
 /***********************************************************************************************
  * SkinDataClass::Save -- save the skindata in the MAX file                                    *
@@ -55,31 +53,34 @@
  *=============================================================================================*/
 IOResult SkinDataClass::Save(ISave *isave)
 {
-	ULONG nb;
+    ULONG nb;
 
-	/*
-	** save the flags
-	*/
-	short flags = 0;
-	if (Valid) flags |= 0x01;
-	if (Held) flags |= 0x02;
+    /*
+    ** save the flags
+    */
+    short flags = 0;
+    if (Valid)
+        flags |= 0x01;
+    if (Held)
+        flags |= 0x02;
 
-	isave->BeginChunk(FLAGS_CHUNK);
-	isave->Write(&flags,sizeof(flags),&nb);
-	isave->EndChunk();
+    isave->BeginChunk(FLAGS_CHUNK);
+    isave->Write(&flags, sizeof(flags), &nb);
+    isave->EndChunk();
 
-	/*
-	** Save the bit array of currently selected vertices
-	*/
-	if (VertSel.NumberSet() > 0) {
-		isave->BeginChunk(VERT_SEL_CHUNK);
-		VertSel.Save(isave);
-		isave->EndChunk();
-	}
+    /*
+    ** Save the bit array of currently selected vertices
+    */
+    if (VertSel.NumberSet() > 0)
+    {
+        isave->BeginChunk(VERT_SEL_CHUNK);
+        VertSel.Save(isave);
+        isave->EndChunk();
+    }
 
-	/*
-	** Save the named selection sets of vertices
-	*/
+    /*
+    ** Save the named selection sets of vertices
+    */
 #if 0
 	if (VertSelSets.Count() > 0) {
 		isave->BeginChunk(INFLUENCE_DATA_CHUNK);
@@ -88,18 +89,18 @@ IOResult SkinDataClass::Save(ISave *isave)
 	}
 #endif
 
-	/*
-	** Save the vertex influence data
-	*/
-	if (VertData.Count() > 0) {
-		isave->BeginChunk(INFLUENCE_DATA_CHUNK);
-		isave->Write(VertData.Addr(0),VertData.Count() * sizeof(InfluenceStruct), &nb);
-		isave->EndChunk();
-	}
+    /*
+    ** Save the vertex influence data
+    */
+    if (VertData.Count() > 0)
+    {
+        isave->BeginChunk(INFLUENCE_DATA_CHUNK);
+        isave->Write(VertData.Addr(0), VertData.Count() * sizeof(InfluenceStruct), &nb);
+        isave->EndChunk();
+    }
 
-	return IO_OK;
+    return IO_OK;
 }
-
 
 /***********************************************************************************************
  * SkinDataClass::Load -- load the skindata from a MAX file                                    *
@@ -115,48 +116,48 @@ IOResult SkinDataClass::Save(ISave *isave)
  *=============================================================================================*/
 IOResult SkinDataClass::Load(ILoad *iload)
 {
-	ULONG nb;
-	short flags;
-	int n;
-	IOResult res;
+    ULONG nb;
+    short flags;
+    int n;
+    IOResult res;
 
-	while (IO_OK == (res=iload->OpenChunk())) {
+    while (IO_OK == (res = iload->OpenChunk()))
+    {
+        switch (iload->CurChunkID())
+        {
+            case FLAGS_CHUNK:
+                res = iload->Read(&flags, sizeof(flags), &nb);
+                Valid = (flags & 0x01);
+                Held = (flags & 0x02);
+                break;
 
-		switch (iload->CurChunkID())  {
+            case VERT_SEL_CHUNK:
+                res = VertSel.Load(iload);
+                break;
 
-			case FLAGS_CHUNK:
-				res = iload->Read(&flags,sizeof(flags),&nb);
-				Valid = (flags & 0x01);
-				Held = (flags & 0x02);
-				break;
+            case NAMED_SEL_SETS_CHUNK:
+                res = VertSelSets.Load(iload);
+                break;
 
-			case VERT_SEL_CHUNK:
-				res = VertSel.Load(iload);
-				break;
+            case INFLUENCE_DATA_CHUNK:
+                n = iload->CurChunkLength() / sizeof(InfluenceStruct);
+                VertData.SetCount(n);
+                res = iload->Read(VertData.Addr(0), n * sizeof(InfluenceStruct), &nb);
+                break;
+        }
 
-			case NAMED_SEL_SETS_CHUNK:
-				res = VertSelSets.Load(iload);
-				break;
+        iload->CloseChunk();
 
-			case INFLUENCE_DATA_CHUNK:
-				n = iload->CurChunkLength() / sizeof(InfluenceStruct);
-				VertData.SetCount(n);
-				res = iload->Read(VertData.Addr(0),n*sizeof(InfluenceStruct),&nb);
-				break;
-		}
+        if (res != IO_OK)
+        {
+            return res;
+        }
+    }
 
-		iload->CloseChunk();
+    /*
+    ** ensure that the arrays are sized correctly
+    */
+    Invalidate();
 
-		if (res != IO_OK) {
-			return res;
-		}
-	}
-
-	/*
-	** ensure that the arrays are sized correctly
-	*/
-	Invalidate();
-
-	return IO_OK;
+    return IO_OK;
 }
-

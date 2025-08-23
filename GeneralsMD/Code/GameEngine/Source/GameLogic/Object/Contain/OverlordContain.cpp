@@ -33,7 +33,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 #include "Common/Player.h"
 #include "Common/Xfer.h"
 #include "Common/ThingTemplate.h"
@@ -46,35 +46,33 @@
 #include "GameLogic/Object.h"
 #include "GameLogic/PartitionManager.h"
 
-
-
-
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 OverlordContainModuleData::OverlordContainModuleData()
 {
-//	m_initialPayload.count = 0;
-	m_experienceSinkForRider = TRUE;
+    //	m_initialPayload.count = 0;
+    m_experienceSinkForRider = TRUE;
 }
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void OverlordContainModuleData::buildFieldParse(MultiIniFieldParse& p)
+void OverlordContainModuleData::buildFieldParse(MultiIniFieldParse &p)
 {
-  TransportContainModuleData::buildFieldParse(p);
+    TransportContainModuleData::buildFieldParse(p);
 
-	static const FieldParse dataFieldParse[] =
-	{
-    { "PayloadTemplateName",  INI::parseAsciiStringVectorAppend, NULL, offsetof(OverlordContainModuleData, m_payloadTemplateNameData) },
-    { "ExperienceSinkForRider",  INI::parseBool, NULL, offsetof(OverlordContainModuleData, m_experienceSinkForRider) },
+    static const FieldParse dataFieldParse[] = {
+        {"PayloadTemplateName",
+         INI::parseAsciiStringVectorAppend,
+         NULL,
+         offsetof(OverlordContainModuleData, m_payloadTemplateNameData)},
+        {"ExperienceSinkForRider", INI::parseBool, NULL, offsetof(OverlordContainModuleData, m_experienceSinkForRider)},
 
-		{ 0, 0, 0, 0 }
-	};
-  p.add(dataFieldParse);
+        {0, 0, 0, 0}};
+    p.add(dataFieldParse);
 }
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-//void OverlordContainModuleData::parseInitialPayload( INI* ini, void *instance, void *store, const void* /*userData*/ )
+// void OverlordContainModuleData::parseInitialPayload( INI* ini, void *instance, void *store, const void* /*userData*/ )
 //{
 //	OverlordContainModuleData* self = (OverlordContainModuleData*)instance;
 //	const char* name = ini->getNextToken();
@@ -87,453 +85,434 @@ void OverlordContainModuleData::buildFieldParse(MultiIniFieldParse& p)
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-OverlordContain::OverlordContain( Thing *thing, const ModuleData *moduleData ) :
-								 TransportContain( thing, moduleData )
+OverlordContain::OverlordContain(Thing *thing, const ModuleData *moduleData) : TransportContain(thing, moduleData)
 {
-	m_redirectionActivated = FALSE;
+    m_redirectionActivated = FALSE;
 
-  m_payloadCreated = FALSE;
-
+    m_payloadCreated = FALSE;
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-OverlordContain::~OverlordContain( void )
+OverlordContain::~OverlordContain(void)
 {
-
 }
 
-
-void OverlordContain::onObjectCreated( void )
+void OverlordContain::onObjectCreated(void)
 {
-  OverlordContain::createPayload();
+    OverlordContain::createPayload();
 }
 
 //-------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 void OverlordContain::createPayload()
 {
-	OverlordContainModuleData* self = (OverlordContainModuleData*)getOverlordContainModuleData();
+    OverlordContainModuleData *self = (OverlordContainModuleData *)getOverlordContainModuleData();
 
+    // Any number of different passengers can be loaded here at init time
+    Object *object = getObject();
+    ContainModuleInterface *contain = object->getContain();
+    if (contain)
+    {
+        contain->enableLoadSounds(FALSE);
 
-  // Any number of different passengers can be loaded here at init time
-	Object* object = getObject();
-	ContainModuleInterface *contain = object->getContain();
-	if( contain )
-  {
-		contain->enableLoadSounds( FALSE );
+        TemplateNameList list = self->m_payloadTemplateNameData;
+        TemplateNameIterator iter = list.begin();
+        while (iter != list.end())
+        {
+            const ThingTemplate *temp = TheThingFactory->findTemplate(*iter);
+            if (temp)
+            {
+                Object *payload = TheThingFactory->newObject(temp, object->getTeam());
 
-	  TemplateNameList list = self->m_payloadTemplateNameData;
-	  TemplateNameIterator iter = list.begin();
-	  while ( iter != list.end() )
-	  {
-		  const ThingTemplate* temp = TheThingFactory->findTemplate( *iter );
-		  if (temp)
-		  {
-			  Object* payload = TheThingFactory->newObject( temp, object->getTeam() );
+                if (contain->isValidContainerFor(payload, true))
+                {
+                    contain->addToContain(payload);
+                }
+                else
+                {
+                    DEBUG_CRASH(
+                        ("OverlordContain::createPayload: %s is full, or not valid for the payload %s!",
+                         object->getName().str(),
+                         self->m_initialPayload.name.str()));
+                }
+            }
 
-			  if( contain->isValidContainerFor( payload, true ) )
-			  {
-				  contain->addToContain( payload );
-			  }
-			  else
-			  {
-				  DEBUG_CRASH( ( "OverlordContain::createPayload: %s is full, or not valid for the payload %s!", object->getName().str(), self->m_initialPayload.name.str() ) );
-			  }
+            ++iter;
+        }
 
-      }
+        contain->enableLoadSounds(TRUE);
 
-      ++iter;
-    }
+    } // endif contain
 
-		contain->enableLoadSounds( TRUE );
-
-  } // endif contain
-
-	m_payloadCreated = TRUE;
-
+    m_payloadCreated = TRUE;
 }
 
 // ------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void OverlordContain::onBodyDamageStateChange( const DamageInfo* damageInfo,
-																				BodyDamageType oldState,
-																				BodyDamageType newState)  ///< state change callback
+void OverlordContain::onBodyDamageStateChange(
+    const DamageInfo *damageInfo,
+    BodyDamageType oldState,
+    BodyDamageType newState) ///< state change callback
 {
-	// I can't use any convienience functions, as they will all get routed to the bunker I may carry.
-	// I want just me.
-	// Oh, and I don't want this function trying to do death.  That is more complicated and will be handled
-	// on my death.
-	if( newState != BODY_RUBBLE  &&  m_containListSize == 1 )
-	{
-		Object *myGuy = m_containList.front();
-		myGuy->getBodyModule()->setDamageState( newState );
-	}
+    // I can't use any convienience functions, as they will all get routed to the bunker I may carry.
+    // I want just me.
+    // Oh, and I don't want this function trying to do death.  That is more complicated and will be handled
+    // on my death.
+    if (newState != BODY_RUBBLE && m_containListSize == 1)
+    {
+        Object *myGuy = m_containList.front();
+        myGuy->getBodyModule()->setDamageState(newState);
+    }
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 ContainModuleInterface *OverlordContain::getRedirectedContain() const
 {
-	// Naturally, I can not use a redirectible convienience function
-	// to answer if I am redirecting yet.
+    // Naturally, I can not use a redirectible convienience function
+    // to answer if I am redirecting yet.
 
-	// If I am empty, say no.
-	if( m_containListSize < 1 )
-		return NULL;
+    // If I am empty, say no.
+    if (m_containListSize < 1)
+        return NULL;
 
-	if( !m_redirectionActivated )
-		return NULL;// Shut off early to allow death to happen without my bunker having
-	// trouble finding me to say goodbye as messages get sucked up the pipe to him.
+    if (!m_redirectionActivated)
+        return NULL; // Shut off early to allow death to happen without my bunker having
+    // trouble finding me to say goodbye as messages get sucked up the pipe to him.
 
-	Object *myGuy = m_containList.front();
-	if( myGuy )
-		return myGuy->getContain();
+    Object *myGuy = m_containList.front();
+    if (myGuy)
+        return myGuy->getContain();
 
-	return NULL;// Or say no if they have no contain.
-}
-
-
-//-------------------------------------------------------------------------------------------------
-//-------------------------------------------------------------------------------------------------
-//-------------------------------------------------------------------------------------------------
-
-
-
-//-------------------------------------------------------------------------------------------------
-void OverlordContain::onDie( const DamageInfo *damageInfo )
-{
-	// Do you mean me the Overlord, or my behavior of passing stuff on to my passengers?
-	if( getRedirectedContain() == NULL )
-	{
-		TransportContain::onDie( damageInfo );
-		return;
-	}
-	//Everything is fine if I am empty or carrying a regular guy.  If I have a redirected contain
-	// set up, then I need to handle the order of death explicitly, or things will become confused
-	// when I stop redirecting in the middle of the process.  Or I will get confused as my commands
-	// get sucked up the pipe.
-
-	// So this is an extend that lets me control the order of death.
-
-	deactivateRedirectedContain();
-	Object *myGuy = m_containList.front();
-	myGuy->kill();
-
-	TransportContain::onDie( damageInfo );
+    return NULL; // Or say no if they have no contain.
 }
 
 //-------------------------------------------------------------------------------------------------
-void OverlordContain::onDelete( void )
+//-------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------
+
+//-------------------------------------------------------------------------------------------------
+void OverlordContain::onDie(const DamageInfo *damageInfo)
 {
-	// Do you mean me the Overlord, or my behavior of passing stuff on to my passengers?
-	if( getRedirectedContain() == NULL )
-	{
-		TransportContain::onDelete( );
-		return;
-	}
+    // Do you mean me the Overlord, or my behavior of passing stuff on to my passengers?
+    if (getRedirectedContain() == NULL)
+    {
+        TransportContain::onDie(damageInfo);
+        return;
+    }
+    // Everything is fine if I am empty or carrying a regular guy.  If I have a redirected contain
+    //  set up, then I need to handle the order of death explicitly, or things will become confused
+    //  when I stop redirecting in the middle of the process.  Or I will get confused as my commands
+    //  get sucked up the pipe.
 
-	// Without my throwing the redirect switch, teardown deletion will get confused and fire off a bunch of asserts
-	getRedirectedContain()->removeAllContained();
+    // So this is an extend that lets me control the order of death.
 
-	deactivateRedirectedContain();
-	removeAllContained();
+    deactivateRedirectedContain();
+    Object *myGuy = m_containList.front();
+    myGuy->kill();
 
-	TransportContain::onDelete( );
+    TransportContain::onDie(damageInfo);
+}
+
+//-------------------------------------------------------------------------------------------------
+void OverlordContain::onDelete(void)
+{
+    // Do you mean me the Overlord, or my behavior of passing stuff on to my passengers?
+    if (getRedirectedContain() == NULL)
+    {
+        TransportContain::onDelete();
+        return;
+    }
+
+    // Without my throwing the redirect switch, teardown deletion will get confused and fire off a bunch of asserts
+    getRedirectedContain()->removeAllContained();
+
+    deactivateRedirectedContain();
+    removeAllContained();
+
+    TransportContain::onDelete();
 }
 
 // ------------------------------------------------------------------------------------------------
-void OverlordContain::onCapture( Player *oldOwner, Player *newOwner )
+void OverlordContain::onCapture(Player *oldOwner, Player *newOwner)
 {
-	if( m_containListSize < 1 )
-		return;
+    if (m_containListSize < 1)
+        return;
 
-	// Need to capture our specific rider.  He will then kick passengers out if he is a Transport
-	Object *myGuy = m_containList.front();
-	myGuy->setTeam( newOwner->getDefaultTeam() );
+    // Need to capture our specific rider.  He will then kick passengers out if he is a Transport
+    Object *myGuy = m_containList.front();
+    myGuy->setTeam(newOwner->getDefaultTeam());
 }
 
 //-------------------------------------------------------------------------------------------------
 Bool OverlordContain::isGarrisonable() const
 {
-	if( getRedirectedContain() == NULL )
-		return FALSE;
+    if (getRedirectedContain() == NULL)
+        return FALSE;
 
-	return getRedirectedContain()->isGarrisonable();
+    return getRedirectedContain()->isGarrisonable();
 }
 
 //-------------------------------------------------------------------------------------------------
 Bool OverlordContain::isKickOutOnCapture()
 {
-	if( getRedirectedContain() == NULL )
-		return FALSE;// Me the Overlord doesn't want to
+    if (getRedirectedContain() == NULL)
+        return FALSE; // Me the Overlord doesn't want to
 
-	return getRedirectedContain()->isKickOutOnCapture();
+    return getRedirectedContain()->isKickOutOnCapture();
 }
 
 //-------------------------------------------------------------------------------------------------
-void OverlordContain::addToContainList( Object *obj )
+void OverlordContain::addToContainList(Object *obj)
 {
-	// Do you mean me the Overlord, or my behavior of passing stuff on to my passengers?
-	if( getRedirectedContain() == NULL )
-	{
-		TransportContain::addToContainList( obj );
-		return;
-	}
+    // Do you mean me the Overlord, or my behavior of passing stuff on to my passengers?
+    if (getRedirectedContain() == NULL)
+    {
+        TransportContain::addToContainList(obj);
+        return;
+    }
 
-	getRedirectedContain()->addToContainList( obj );
+    getRedirectedContain()->addToContainList(obj);
 }
 
 //-------------------------------------------------------------------------------------------------
-void OverlordContain::addToContain( Object *obj )
+void OverlordContain::addToContain(Object *obj)
 {
-	// Do you mean me the Overlord, or my behavior of passing stuff on to my passengers?
-	if( getRedirectedContain() == NULL )
-	{
-		TransportContain::addToContain( obj );
-		return;
-	}
+    // Do you mean me the Overlord, or my behavior of passing stuff on to my passengers?
+    if (getRedirectedContain() == NULL)
+    {
+        TransportContain::addToContain(obj);
+        return;
+    }
 
-	getRedirectedContain()->addToContain( obj );
-
+    getRedirectedContain()->addToContain(obj);
 }
 
 //-------------------------------------------------------------------------------------------------
 /** Remove 'obj' from the m_containList of objects in this module.
-	* This will trigger an onRemoving event for the object that this module
-	* is a part of and an onRemovedFrom event for the object being removed */
+ * This will trigger an onRemoving event for the object that this module
+ * is a part of and an onRemovedFrom event for the object being removed */
 //-------------------------------------------------------------------------------------------------
-void OverlordContain::removeFromContain( Object *obj, Bool exposeStealthUnits )
+void OverlordContain::removeFromContain(Object *obj, Bool exposeStealthUnits)
 {
-	// Do you mean me the Overlord, or my behavior of passing stuff on to my passengers?
-	if( getRedirectedContain() == NULL )
-	{
-		TransportContain::removeFromContain( obj, exposeStealthUnits );
-		return;
-	}
+    // Do you mean me the Overlord, or my behavior of passing stuff on to my passengers?
+    if (getRedirectedContain() == NULL)
+    {
+        TransportContain::removeFromContain(obj, exposeStealthUnits);
+        return;
+    }
 
-	getRedirectedContain()->removeFromContain( obj, exposeStealthUnits );
-
+    getRedirectedContain()->removeFromContain(obj, exposeStealthUnits);
 }
 
 //-------------------------------------------------------------------------------------------------
 /** Remove all contained objects from the contained list */
 //-------------------------------------------------------------------------------------------------
-void OverlordContain::removeAllContained( Bool exposeStealthUnits )
+void OverlordContain::removeAllContained(Bool exposeStealthUnits)
 {
-	// Do you mean me the Overlord, or my behavior of passing stuff on to my passengers?
-	if( getRedirectedContain() == NULL )
-	{
-		TransportContain::removeAllContained( exposeStealthUnits );
-		return;
-	}
+    // Do you mean me the Overlord, or my behavior of passing stuff on to my passengers?
+    if (getRedirectedContain() == NULL)
+    {
+        TransportContain::removeAllContained(exposeStealthUnits);
+        return;
+    }
 
-	const ContainedItemsList *fullList = getRedirectedContain()->getContainedItemsList();
+    const ContainedItemsList *fullList = getRedirectedContain()->getContainedItemsList();
 
-	Object *obj;
-	ContainedItemsList::const_iterator it;
-	it = (*fullList).begin();
-	while( it != (*fullList).end() )
-	{
-		obj = *it;
-		it++;
-		removeFromContain( obj, exposeStealthUnits );
-	}
+    Object *obj;
+    ContainedItemsList::const_iterator it;
+    it = (*fullList).begin();
+    while (it != (*fullList).end())
+    {
+        obj = *it;
+        it++;
+        removeFromContain(obj, exposeStealthUnits);
+    }
 }
 
 //-------------------------------------------------------------------------------------------------
 /** Iterate the contained list and call the callback on each of the objects */
 //-------------------------------------------------------------------------------------------------
-void OverlordContain::iterateContained( ContainIterateFunc func, void *userData, Bool reverse )
+void OverlordContain::iterateContained(ContainIterateFunc func, void *userData, Bool reverse)
 {
-	// Do you mean me the Overlord, or my behavior of passing stuff on to my passengers?
-	if( getRedirectedContain() == NULL )
-	{
-		TransportContain::iterateContained( func, userData, reverse );
-		return;
-	}
-
-	getRedirectedContain()->iterateContained( func, userData, reverse );
-}
-
-//-------------------------------------------------------------------------------------------------
-void OverlordContain::onContaining( Object *obj, Bool wasSelected )
-{
-	// Do you mean me the Overlord, or my behavior of passing stuff on to my passengers?
-	if( getRedirectedContain() == NULL )
-	{
-		TransportContain::onContaining( obj, wasSelected );
-
-
-    if ( obj->isKindOf( KINDOF_PORTABLE_STRUCTURE ) )
+    // Do you mean me the Overlord, or my behavior of passing stuff on to my passengers?
+    if (getRedirectedContain() == NULL)
     {
-  		activateRedirectedContain();//Am now carrying something
-
-			// And this contain style explicitly sucks XP from our little friend.
-			if( getOverlordContainModuleData()->m_experienceSinkForRider  &&  obj->getExperienceTracker() )
-				obj->getExperienceTracker()->setExperienceSink(getObject()->getID());
-
-
-      if ( obj->isKindOf( KINDOF_PORTABLE_STRUCTURE ) && getObject()->testStatus( OBJECT_STATUS_STEALTHED ) )
-      {
-        StealthUpdate *myStealth =  obj->getStealth();
-        if ( myStealth )
-        {
-          myStealth->receiveGrant( true );
-          // note to anyone... once stealth is granted to this gattlingcannon ( or such )
-          // let its own stealthupdate govern the allowedtostealth cases
-          // a portable structure never gets removed, so...
-        }
-      }
-
-
-
-
+        TransportContain::iterateContained(func, userData, reverse);
+        return;
     }
 
-
-    return;
-	}
-
-	OpenContain::onContaining( obj, wasSelected );
-
-	getRedirectedContain()->onContaining( obj, wasSelected );
-
+    getRedirectedContain()->iterateContained(func, userData, reverse);
 }
 
 //-------------------------------------------------------------------------------------------------
-void OverlordContain::killAllContained( void )
+void OverlordContain::onContaining(Object *obj, Bool wasSelected)
 {
-	// This is a game call meant to clear actual passengers.  We don't want it to kill our turret.  That'd be wierd.
-	if( getRedirectedContain() )
-	{
-		getRedirectedContain()->killAllContained();
-	}
+    // Do you mean me the Overlord, or my behavior of passing stuff on to my passengers?
+    if (getRedirectedContain() == NULL)
+    {
+        TransportContain::onContaining(obj, wasSelected);
+
+        if (obj->isKindOf(KINDOF_PORTABLE_STRUCTURE))
+        {
+            activateRedirectedContain(); // Am now carrying something
+
+            // And this contain style explicitly sucks XP from our little friend.
+            if (getOverlordContainModuleData()->m_experienceSinkForRider && obj->getExperienceTracker())
+                obj->getExperienceTracker()->setExperienceSink(getObject()->getID());
+
+            if (obj->isKindOf(KINDOF_PORTABLE_STRUCTURE) && getObject()->testStatus(OBJECT_STATUS_STEALTHED))
+            {
+                StealthUpdate *myStealth = obj->getStealth();
+                if (myStealth)
+                {
+                    myStealth->receiveGrant(true);
+                    // note to anyone... once stealth is granted to this gattlingcannon ( or such )
+                    // let its own stealthupdate govern the allowedtostealth cases
+                    // a portable structure never gets removed, so...
+                }
+            }
+        }
+
+        return;
+    }
+
+    OpenContain::onContaining(obj, wasSelected);
+
+    getRedirectedContain()->onContaining(obj, wasSelected);
 }
 
 //-------------------------------------------------------------------------------------------------
-void OverlordContain::onRemoving( Object *obj )
+void OverlordContain::killAllContained(void)
 {
-	// Do you mean me the Overlord, or my behavior of passing stuff on to my passengers?
-	if( getRedirectedContain() == NULL )
-	{
-		TransportContain::onRemoving( obj );
-		return;
-	}
-
-	OpenContain::onRemoving(obj);
-
-	getRedirectedContain()->onRemoving( obj );
-
+    // This is a game call meant to clear actual passengers.  We don't want it to kill our turret.  That'd be wierd.
+    if (getRedirectedContain())
+    {
+        getRedirectedContain()->killAllContained();
+    }
 }
 
 //-------------------------------------------------------------------------------------------------
-Bool OverlordContain::isValidContainerFor(const Object* obj, Bool checkCapacity) const
+void OverlordContain::onRemoving(Object *obj)
 {
-	// Do you mean me the Overlord, or my behavior of passing stuff on to my passengers?
-	if( getRedirectedContain() == NULL )
-		return TransportContain::isValidContainerFor( obj, checkCapacity );
+    // Do you mean me the Overlord, or my behavior of passing stuff on to my passengers?
+    if (getRedirectedContain() == NULL)
+    {
+        TransportContain::onRemoving(obj);
+        return;
+    }
 
-	return getRedirectedContain()->isValidContainerFor( obj, checkCapacity );
+    OpenContain::onRemoving(obj);
+
+    getRedirectedContain()->onRemoving(obj);
+}
+
+//-------------------------------------------------------------------------------------------------
+Bool OverlordContain::isValidContainerFor(const Object *obj, Bool checkCapacity) const
+{
+    // Do you mean me the Overlord, or my behavior of passing stuff on to my passengers?
+    if (getRedirectedContain() == NULL)
+        return TransportContain::isValidContainerFor(obj, checkCapacity);
+
+    return getRedirectedContain()->isValidContainerFor(obj, checkCapacity);
 }
 
 //-------------------------------------------------------------------------------------------------
 UnsignedInt OverlordContain::getContainCount() const
 {
-	ContainModuleInterface* redir = getRedirectedContain();
+    ContainModuleInterface *redir = getRedirectedContain();
 
-	// Do you mean me the Overlord, or my behavior of passing stuff on to my passengers?
-	if( redir == NULL )
-		return TransportContain::getContainCount( );
+    // Do you mean me the Overlord, or my behavior of passing stuff on to my passengers?
+    if (redir == NULL)
+        return TransportContain::getContainCount();
 
-	return redir->getContainCount();
+    return redir->getContainCount();
 }
 
 //-------------------------------------------------------------------------------------------------
-Bool OverlordContain::getContainerPipsToShow(Int& numTotal, Int& numFull)
+Bool OverlordContain::getContainerPipsToShow(Int &numTotal, Int &numFull)
 {
-	// Do you mean me the Overlord, or my behavior of passing stuff on to my passengers?
-	if( getRedirectedContain() == NULL )
-	{
-		numTotal = 0;
-		numFull = 0;
-		return false;
-	}
-	else
-	{
-		return getRedirectedContain()->getContainerPipsToShow(numTotal, numFull);
-	}
+    // Do you mean me the Overlord, or my behavior of passing stuff on to my passengers?
+    if (getRedirectedContain() == NULL)
+    {
+        numTotal = 0;
+        numFull = 0;
+        return false;
+    }
+    else
+    {
+        return getRedirectedContain()->getContainerPipsToShow(numTotal, numFull);
+    }
 }
 
 //-------------------------------------------------------------------------------------------------
-Int OverlordContain::getContainMax( ) const
+Int OverlordContain::getContainMax() const
 {
-	// Do you mean me the Overlord, or my behavior of passing stuff on to my passengers?
-	if( getRedirectedContain() == NULL )
-		return TransportContain::getContainMax( );
+    // Do you mean me the Overlord, or my behavior of passing stuff on to my passengers?
+    if (getRedirectedContain() == NULL)
+        return TransportContain::getContainMax();
 
-	return getRedirectedContain()->getContainMax();
+    return getRedirectedContain()->getContainMax();
 }
 
 //-------------------------------------------------------------------------------------------------
-const ContainedItemsList* OverlordContain::getContainedItemsList() const
+const ContainedItemsList *OverlordContain::getContainedItemsList() const
 {
-	// Do you mean me the Overlord, or my behavior of passing stuff on to my passengers?
-	if( getRedirectedContain() == NULL )
-		return TransportContain::getContainedItemsList( );
+    // Do you mean me the Overlord, or my behavior of passing stuff on to my passengers?
+    if (getRedirectedContain() == NULL)
+        return TransportContain::getContainedItemsList();
 
-	return getRedirectedContain()->getContainedItemsList();
+    return getRedirectedContain()->getContainedItemsList();
 }
 
 //-------------------------------------------------------------------------------------------------
-Bool OverlordContain::isEnclosingContainerFor( const Object *obj ) const
+Bool OverlordContain::isEnclosingContainerFor(const Object *obj) const
 {
-	// All of this redirection stuff makes it so that while I am normally a transport
-	// for Overlord subObjects, once I have a passenger, _I_ become a transport of their type.
-	// So, the answer to this question depends on if it is my passenger asking, or theirs.
-	// As always, I can't use convience functions that get redirected on a ? like this.
-	if( m_containListSize > 0  &&  obj ==  m_containList.front() )
-		return FALSE;
+    // All of this redirection stuff makes it so that while I am normally a transport
+    // for Overlord subObjects, once I have a passenger, _I_ become a transport of their type.
+    // So, the answer to this question depends on if it is my passenger asking, or theirs.
+    // As always, I can't use convience functions that get redirected on a ? like this.
+    if (m_containListSize > 0 && obj == m_containList.front())
+        return FALSE;
 
-	return TRUE;
+    return TRUE;
 }
 
 //-------------------------------------------------------------------------------------------------
 Bool OverlordContain::isDisplayedOnControlBar() const
 {
-	// Do you mean me the Overlord, or my behavior of passing stuff on to my passengers?
-	if( getRedirectedContain() == NULL )
-		return FALSE;//No need to call up inheritance, this is a module based question, and I say no.
+    // Do you mean me the Overlord, or my behavior of passing stuff on to my passengers?
+    if (getRedirectedContain() == NULL)
+        return FALSE; // No need to call up inheritance, this is a module based question, and I say no.
 
-	return getRedirectedContain()->isDisplayedOnControlBar();
+    return getRedirectedContain()->isDisplayedOnControlBar();
 }
 
 //-------------------------------------------------------------------------------------------------
 const Object *OverlordContain::friend_getRider() const
 {
-// The draw order dependency bug for riders means that our draw module needs to cheat to get
-	//around it.	So this is another function that knows it is getting around redirection to ask
-	// an Overlord specific function.
+    // The draw order dependency bug for riders means that our draw module needs to cheat to get
+    // around it.	So this is another function that knows it is getting around redirection to ask
+    // an Overlord specific function.
 
- 	if( m_containListSize > 0 )
- 		return m_containList.front();
+    if (m_containListSize > 0)
+        return m_containList.front();
 
-
-	return NULL;
+    return NULL;
 }
 
 //-------------------------------------------------------------------------------------------------
 void OverlordContain::activateRedirectedContain()
 {
-	m_redirectionActivated = TRUE;
+    m_redirectionActivated = TRUE;
 }
 
 //-------------------------------------------------------------------------------------------------
 void OverlordContain::deactivateRedirectedContain()
 {
-	m_redirectionActivated = FALSE;
+    m_redirectionActivated = FALSE;
 }
-
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -541,93 +520,85 @@ void OverlordContain::deactivateRedirectedContain()
 // this gets called from
 void OverlordContain::clientVisibleContainedFlashAsSelected()
 {
-	// THIS OVERRIDES GRAHAMS NASTY OVERRIDE THING
-	// SO WE CAN FLASH THE PORTABLE BUNKER INSTEAD OF ITS OCCUPANTS
-	const ContainedItemsList* items = TransportContain::getContainedItemsList();
+    // THIS OVERRIDES GRAHAMS NASTY OVERRIDE THING
+    // SO WE CAN FLASH THE PORTABLE BUNKER INSTEAD OF ITS OCCUPANTS
+    const ContainedItemsList *items = TransportContain::getContainedItemsList();
 
-	if( items )
-	{
-		ContainedItemsList::const_iterator it;
-		it = items->begin();
+    if (items)
+    {
+        ContainedItemsList::const_iterator it;
+        it = items->begin();
 
-		while( it != items->end() )
-		{
-			Object *object = *it;
-			if ( object && object->isKindOf( KINDOF_PORTABLE_STRUCTURE ) )
-			{
-				Drawable *draw = object->getDrawable();
-				if ( draw )
-				{
-					draw->flashAsSelected(); //WOW!
-				}
-			}
+        while (it != items->end())
+        {
+            Object *object = *it;
+            if (object && object->isKindOf(KINDOF_PORTABLE_STRUCTURE))
+            {
+                Drawable *draw = object->getDrawable();
+                if (draw)
+                {
+                    draw->flashAsSelected(); // WOW!
+                }
+            }
 
-			++it;
-		}
-	}
-
+            ++it;
+        }
+    }
 }
 
-
-Bool OverlordContain::isPassengerAllowedToFire( ObjectID id ) const
+Bool OverlordContain::isPassengerAllowedToFire(ObjectID id) const
 {
-	Object *passenger = TheGameLogic->findObjectByID(id);
+    Object *passenger = TheGameLogic->findObjectByID(id);
 
-	if(passenger != NULL)
-	{
-		//only allow infantry, and turrets and such.  no vehicles.
-		if(passenger->isKindOf(KINDOF_INFANTRY) == FALSE && passenger->isKindOf(KINDOF_PORTABLE_STRUCTURE) == FALSE)
-			return FALSE;
-	}
+    if (passenger != NULL)
+    {
+        // only allow infantry, and turrets and such.  no vehicles.
+        if (passenger->isKindOf(KINDOF_INFANTRY) == FALSE && passenger->isKindOf(KINDOF_PORTABLE_STRUCTURE) == FALSE)
+            return FALSE;
+    }
 
+    if (getObject() && getObject()->getContainedBy()) // nested containment voids firing, always
+        return FALSE;
 
-  if ( getObject() && getObject()->getContainedBy() ) // nested containment voids firing, always
-    return FALSE;
-
-  return TransportContain::isPassengerAllowedToFire();
+    return TransportContain::isPassengerAllowedToFire();
 }
-
-
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void OverlordContain::crc( Xfer *xfer )
+void OverlordContain::crc(Xfer *xfer)
 {
+    // extend base class
+    TransportContain::crc(xfer);
 
-	// extend base class
-	TransportContain::crc( xfer );
-
-}  // end crc
+} // end crc
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void OverlordContain::xfer( Xfer *xfer )
+void OverlordContain::xfer(Xfer *xfer)
 {
+    // version
+    XferVersion currentVersion = 1;
+    XferVersion version = currentVersion;
+    xfer->xferVersion(&version, currentVersion);
 
-	// version
-	XferVersion currentVersion = 1;
-	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+    // extend base class
+    TransportContain::xfer(xfer);
 
-	// extend base class
-	TransportContain::xfer( xfer );
+    // redirection activated
+    xfer->xferBool(&m_redirectionActivated);
 
-	// redirection activated
-	xfer->xferBool( &m_redirectionActivated );
-
-}  // end xfer
+} // end xfer
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void OverlordContain::loadPostProcess( void )
+void OverlordContain::loadPostProcess(void)
 {
+    // extend base class
+    TransportContain::loadPostProcess();
 
-	// extend base class
-	TransportContain::loadPostProcess();
-
-}  // end loadPostProcess
+} // end loadPostProcess

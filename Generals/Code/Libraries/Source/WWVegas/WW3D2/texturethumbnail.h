@@ -30,24 +30,24 @@
 
 class ThumbnailClass
 {
-	StringClass Name;
-	unsigned char* Bitmap;
-	unsigned Width;
-	unsigned Height;
-	bool Allocated;	// if true, destructor will free the memory
+    StringClass Name;
+    unsigned char *Bitmap;
+    unsigned Width;
+    unsigned Height;
+    bool Allocated; // if true, destructor will free the memory
 public:
-	ThumbnailClass(const char* name, unsigned char* bitmap, unsigned w, unsigned h, bool allocated);
-	ThumbnailClass(const StringClass& filename);
-	~ThumbnailClass();
+    ThumbnailClass(const char *name, unsigned char *bitmap, unsigned w, unsigned h, bool allocated);
+    ThumbnailClass(const StringClass &filename);
+    ~ThumbnailClass();
 
-	unsigned char* Peek_Bitmap() { return Bitmap; }
-	unsigned Get_Width() const { return Width; }
-	unsigned Get_Height() const { return Height; }
-	const StringClass& Get_Name() const { return Name; }
+    unsigned char *Peek_Bitmap() { return Bitmap; }
+    unsigned Get_Width() const { return Width; }
+    unsigned Get_Height() const { return Height; }
+    const StringClass &Get_Name() const { return Name; }
 
-	static ThumbnailClass* Peek_Instance(const StringClass& name);
-	static void Init();
-	static void Deinit();
+    static ThumbnailClass *Peek_Instance(const StringClass &name);
+    static void Init();
+    static void Deinit();
 };
 
 // ----------------------------------------------------------------------------

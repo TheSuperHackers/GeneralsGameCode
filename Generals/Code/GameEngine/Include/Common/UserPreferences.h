@@ -38,7 +38,7 @@
 //-----------------------------------------------------------------------------
 #include "Common/STLTypedefs.h"
 
-enum CursorCaptureMode CPP_11(: Int);
+enum CursorCaptureMode CPP_11( : Int);
 
 //-----------------------------------------------------------------------------
 // PUBLIC TYPES ///////////////////////////////////////////////////////////////
@@ -52,25 +52,25 @@ typedef std::map<AsciiString, AsciiString> PreferenceMap;
 class UserPreferences : public PreferenceMap
 {
 public:
-	UserPreferences();
-	virtual ~UserPreferences();
+    UserPreferences();
+    virtual ~UserPreferences();
 
-	// Loads or creates a file with the given name in the user data directory.
-	virtual Bool load(AsciiString fname);
-	virtual Bool write(void);
+    // Loads or creates a file with the given name in the user data directory.
+    virtual Bool load(AsciiString fname);
+    virtual Bool write(void);
 
-	Bool getBool(AsciiString key, Bool defaultValue) const;
-	Real getReal(AsciiString key, Real defaultValue) const;
-	Int getInt(AsciiString key, Int defaultValue) const;
-	AsciiString getAsciiString(AsciiString key, AsciiString defaultValue) const;
+    Bool getBool(AsciiString key, Bool defaultValue) const;
+    Real getReal(AsciiString key, Real defaultValue) const;
+    Int getInt(AsciiString key, Int defaultValue) const;
+    AsciiString getAsciiString(AsciiString key, AsciiString defaultValue) const;
 
-	void setBool(AsciiString key, Bool val);
-	void setReal(AsciiString key, Real val);
-	void setInt(AsciiString key, Int val);
-	void setAsciiString(AsciiString key, AsciiString val);
+    void setBool(AsciiString key, Bool val);
+    void setReal(AsciiString key, Real val);
+    void setInt(AsciiString key, Int val);
+    void setAsciiString(AsciiString key, AsciiString val);
 
 protected:
-	AsciiString m_filename;
+    AsciiString m_filename;
 };
 
 //-----------------------------------------------------------------------------
@@ -79,58 +79,58 @@ protected:
 class OptionPreferences : public UserPreferences
 {
 public:
-	OptionPreferences(  );
-	virtual ~OptionPreferences();
+    OptionPreferences();
+    virtual ~OptionPreferences();
 
-	Bool loadFromIniFile();
+    Bool loadFromIniFile();
 
-	UnsignedInt getLANIPAddress(void);				// convenience function
-	UnsignedInt getOnlineIPAddress(void);			// convenience function
-	void setLANIPAddress(AsciiString IP);			// convenience function
-	void setOnlineIPAddress(AsciiString IP);	// convenience function
-	void setLANIPAddress(UnsignedInt IP);			// convenience function
-	void setOnlineIPAddress(UnsignedInt IP);	// convenience function
-	Bool getAlternateMouseModeEnabled(void);	// convenience function
-	Real getScrollFactor(void);								// convenience function
-	CursorCaptureMode getCursorCaptureMode() const;
-	Bool getSendDelay(void);									// convenience function
-	Int getFirewallBehavior(void);						// convenience function
-	Short getFirewallPortAllocationDelta(void);	// convenience function
-	UnsignedShort getFirewallPortOverride(void); // convenience function
-	Bool getFirewallNeedToRefresh(void);			// convenience function
-	Bool usesSystemMapDir(void);							// convenience function
-	AsciiString getPreferred3DProvider(void);	// convenience function
-	AsciiString getSpeakerType(void);					// convenience function
-	Real getSoundVolume(void);								// convenience function
-	Real get3DSoundVolume(void);							// convenience function
-	Real getSpeechVolume(void);								// convenience function
-	Real getMusicVolume(void);								// convenience function
-	Real getMoneyTransactionVolume(void) const;
-	Bool saveCameraInReplays(void);
-	Bool useCameraInReplays(void);
-	Int	 getStaticGameDetail(void);	// detail level selected by the user.
-	Int	 getIdealStaticGameDetail(void);	// detail level detected for user.
- 	Real getGammaValue(void);
-	Int	 getTextureReduction(void);
-	void getResolution(Int *xres, Int *yres);
-	Bool get3DShadowsEnabled(void);
-	Bool get2DShadowsEnabled(void);
-	Bool getCloudShadowsEnabled(void);
-	Bool getLightmapEnabled(void);
-	Bool getSmoothWaterEnabled(void);
-	Bool getTreesEnabled(void);
-	Bool getExtraAnimationsDisabled(void);
-	Bool getDynamicLODEnabled(void);
-	Bool getFPSLimitEnabled(void);
-	Bool getNoDynamicLODEnabled(void);
-	Bool getBuildingOcclusionEnabled(void);
-	Int getParticleCap(void);
+    UnsignedInt getLANIPAddress(void); // convenience function
+    UnsignedInt getOnlineIPAddress(void); // convenience function
+    void setLANIPAddress(AsciiString IP); // convenience function
+    void setOnlineIPAddress(AsciiString IP); // convenience function
+    void setLANIPAddress(UnsignedInt IP); // convenience function
+    void setOnlineIPAddress(UnsignedInt IP); // convenience function
+    Bool getAlternateMouseModeEnabled(void); // convenience function
+    Real getScrollFactor(void); // convenience function
+    CursorCaptureMode getCursorCaptureMode() const;
+    Bool getSendDelay(void); // convenience function
+    Int getFirewallBehavior(void); // convenience function
+    Short getFirewallPortAllocationDelta(void); // convenience function
+    UnsignedShort getFirewallPortOverride(void); // convenience function
+    Bool getFirewallNeedToRefresh(void); // convenience function
+    Bool usesSystemMapDir(void); // convenience function
+    AsciiString getPreferred3DProvider(void); // convenience function
+    AsciiString getSpeakerType(void); // convenience function
+    Real getSoundVolume(void); // convenience function
+    Real get3DSoundVolume(void); // convenience function
+    Real getSpeechVolume(void); // convenience function
+    Real getMusicVolume(void); // convenience function
+    Real getMoneyTransactionVolume(void) const;
+    Bool saveCameraInReplays(void);
+    Bool useCameraInReplays(void);
+    Int getStaticGameDetail(void); // detail level selected by the user.
+    Int getIdealStaticGameDetail(void); // detail level detected for user.
+    Real getGammaValue(void);
+    Int getTextureReduction(void);
+    void getResolution(Int *xres, Int *yres);
+    Bool get3DShadowsEnabled(void);
+    Bool get2DShadowsEnabled(void);
+    Bool getCloudShadowsEnabled(void);
+    Bool getLightmapEnabled(void);
+    Bool getSmoothWaterEnabled(void);
+    Bool getTreesEnabled(void);
+    Bool getExtraAnimationsDisabled(void);
+    Bool getDynamicLODEnabled(void);
+    Bool getFPSLimitEnabled(void);
+    Bool getNoDynamicLODEnabled(void);
+    Bool getBuildingOcclusionEnabled(void);
+    Int getParticleCap(void);
 
-	Int	 getCampaignDifficulty(void);
-	void setCampaignDifficulty( Int diff );
+    Int getCampaignDifficulty(void);
+    void setCampaignDifficulty(Int diff);
 
-	Int getSystemTimeFontSize(void);
-	Int getGameTimeFontSize(void);
+    Int getSystemTimeFontSize(void);
+    Int getGameTimeFontSize(void);
 };
 
 //-----------------------------------------------------------------------------
@@ -139,18 +139,18 @@ public:
 class LANPreferences : public UserPreferences
 {
 public:
-	LANPreferences();
-	virtual ~LANPreferences();
+    LANPreferences();
+    virtual ~LANPreferences();
 
-	Bool loadFromIniFile();
+    Bool loadFromIniFile();
 
-	UnicodeString getUserName(void);		// convenience function
-	Int getPreferredFaction(void);			// convenience function
-	Int getPreferredColor(void);				// convenience function
-	AsciiString getPreferredMap(void);	// convenience function
-	Bool usesSystemMapDir(void);		// convenience function
-	Int getNumRemoteIPs(void);					// convenience function
-	UnicodeString getRemoteIPEntry(Int i);	// convenience function
+    UnicodeString getUserName(void); // convenience function
+    Int getPreferredFaction(void); // convenience function
+    Int getPreferredColor(void); // convenience function
+    AsciiString getPreferredMap(void); // convenience function
+    Bool usesSystemMapDir(void); // convenience function
+    Int getNumRemoteIPs(void); // convenience function
+    UnicodeString getRemoteIPEntry(Int i); // convenience function
 };
 
 #endif // __USERPREFERENCES_H__

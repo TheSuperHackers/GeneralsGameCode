@@ -22,14 +22,13 @@
  *                                                                                             *
  *                 Project Name : WW3DView                                                     *
  *                                                                                             *
- *                     $Archive:: /Commando/Code/Tools/W3DView/Vector3RndCombo.H                                                                                                                                                                                                                                                                                                                              $Modtime::                                                             $*
+ *                     $Archive:: /Commando/Code/Tools/W3DView/Vector3RndCombo.H $Modtime:: $*
  *                                                                                             *
  *                    $Revision:: 2                                                           $*
  *                                                                                             *
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-
 
 #if defined(_MSC_VER)
 #pragma once
@@ -47,8 +46,8 @@ class Vector3;
 //	Functions
 //
 ////////////////////////////////////////////////////////////////////
-void						Fill_Vector3_Rnd_Combo (HWND hcombobox);
-Vector3Randomizer *	Vector3_Rnd_From_Combo_Index (int index, float value1, float value2 = 0, float value3 = 0);
-int						Combo_Index_From_Vector3_Rnd (Vector3Randomizer *randomizer);
+void Fill_Vector3_Rnd_Combo(HWND hcombobox);
+Vector3Randomizer *Vector3_Rnd_From_Combo_Index(int index, float value1, float value2 = 0, float value3 = 0);
+int Combo_Index_From_Vector3_Rnd(Vector3Randomizer *randomizer);
 
 #endif //__VECTOR3RND_COMBO_H

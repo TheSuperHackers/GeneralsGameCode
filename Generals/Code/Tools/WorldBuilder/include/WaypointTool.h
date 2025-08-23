@@ -30,34 +30,33 @@ class WorldHeightMapEdit;
 class MapObject;
 /*************************************************************************/
 /**                             WaypointTool
-	 Does the add/select waypoint operation.
+     Does the add/select waypoint operation.
 ***************************************************************************/
 ///  Select tile tool.
 class WaypointTool : public Tool
 {
 public:
-	WaypointTool(void);
-	~WaypointTool(void);
+    WaypointTool(void);
+    ~WaypointTool(void);
 
 protected:
-	Int m_downWaypointID;
-	Coord3D m_mouseDownPt;
-	static Bool m_isActive;
+    Int m_downWaypointID;
+    Coord3D m_mouseDownPt;
+    static Bool m_isActive;
 
 protected:
-	MapObject *pickWaypoint(Coord3D loc);
+    MapObject *pickWaypoint(Coord3D loc);
 
 public:
-	static Bool isActive(void) {return m_isActive;};
+    static Bool isActive(void) { return m_isActive; };
 
 public:
-	/// Perform tool on mouse down.
-	virtual void mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc);
-	virtual void mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc);
-	virtual void mouseUp(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc);
-	virtual void activate(); ///< Become the current tool.
-	virtual void deactivate(); ///< Become not the current tool.
+    /// Perform tool on mouse down.
+    virtual void mouseDown(TTrackingMode m, CPoint viewPt, WbView *pView, CWorldBuilderDoc *pDoc);
+    virtual void mouseMoved(TTrackingMode m, CPoint viewPt, WbView *pView, CWorldBuilderDoc *pDoc);
+    virtual void mouseUp(TTrackingMode m, CPoint viewPt, WbView *pView, CWorldBuilderDoc *pDoc);
+    virtual void activate(); ///< Become the current tool.
+    virtual void deactivate(); ///< Become not the current tool.
 };
 
-
-#endif //WAYPOINTTOOL_H
+#endif // WAYPOINTTOOL_H

@@ -22,7 +22,6 @@
 //																																						//
 ////////////////////////////////////////////////////////////////////////////////
 
-
 #pragma once
 
 #ifndef __NETCOMMANDREF_H
@@ -41,64 +40,64 @@
 #define NEW_NETCOMMANDREF(msg) newInstance(NetCommandRef)(msg)
 #endif
 
-
 class NetCommandRef : public MemoryPoolObject
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(NetCommandRef, "NetCommandRef")
+    MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(NetCommandRef, "NetCommandRef")
 public:
 #ifdef DEBUG_NETCOMMANDREF
-	NetCommandRef(NetCommandMsg *msg, char *filename, int line);
+    NetCommandRef(NetCommandMsg *msg, char *filename, int line);
 #else
-	NetCommandRef(NetCommandMsg *msg);
+    NetCommandRef(NetCommandMsg *msg);
 #endif
-	//~NetCommandRef();
+    //~NetCommandRef();
 
-	NetCommandMsg *getCommand();
-	NetCommandRef *getNext();
-	NetCommandRef *getPrev();
-	void setNext(NetCommandRef *next);
-	void setPrev(NetCommandRef *prev);
+    NetCommandMsg *getCommand();
+    NetCommandRef *getNext();
+    NetCommandRef *getPrev();
+    void setNext(NetCommandRef *next);
+    void setPrev(NetCommandRef *prev);
 
-	void setRelay(UnsignedByte relay);
-	UnsignedByte getRelay() const;
+    void setRelay(UnsignedByte relay);
+    UnsignedByte getRelay() const;
 
-	time_t getTimeLastSent() const;
-	void setTimeLastSent(time_t timeLastSent);
+    time_t getTimeLastSent() const;
+    void setTimeLastSent(time_t timeLastSent);
 
 protected:
-	NetCommandMsg *m_msg;
-	NetCommandRef *m_next;
-	NetCommandRef *m_prev;
-	UnsignedByte m_relay; ///< Need this in the command reference since the relay value will be different depending on where this particular reference is being sent.
-	time_t m_timeLastSent;
+    NetCommandMsg *m_msg;
+    NetCommandRef *m_next;
+    NetCommandRef *m_prev;
+    UnsignedByte m_relay; ///< Need this in the command reference since the relay value will be different depending on where
+                          ///< this particular reference is being sent.
+    time_t m_timeLastSent;
 
 #ifdef DEBUG_NETCOMMANDREF
-	UnsignedInt m_id;
+    UnsignedInt m_id;
 #endif
 };
 
 /**
  * Return the command message.
  */
-inline NetCommandMsg * NetCommandRef::getCommand()
+inline NetCommandMsg *NetCommandRef::getCommand()
 {
-	return m_msg;
+    return m_msg;
 }
 
 /**
  * Return the next command ref in the list.
  */
-inline NetCommandRef * NetCommandRef::getNext()
+inline NetCommandRef *NetCommandRef::getNext()
 {
-	return m_next;
+    return m_next;
 }
 
 /**
  * Return the previous command ref in the list.
  */
-inline NetCommandRef * NetCommandRef::getPrev()
+inline NetCommandRef *NetCommandRef::getPrev()
 {
-	return m_prev;
+    return m_prev;
 }
 
 /**
@@ -106,7 +105,7 @@ inline NetCommandRef * NetCommandRef::getPrev()
  */
 inline void NetCommandRef::setNext(NetCommandRef *next)
 {
-	m_next = next;
+    m_next = next;
 }
 
 /**
@@ -114,7 +113,7 @@ inline void NetCommandRef::setNext(NetCommandRef *next)
  */
 inline void NetCommandRef::setPrev(NetCommandRef *prev)
 {
-	m_prev = prev;
+    m_prev = prev;
 }
 
 /**
@@ -122,7 +121,7 @@ inline void NetCommandRef::setPrev(NetCommandRef *prev)
  */
 inline time_t NetCommandRef::getTimeLastSent() const
 {
-	return m_timeLastSent;
+    return m_timeLastSent;
 }
 
 /**
@@ -130,7 +129,7 @@ inline time_t NetCommandRef::getTimeLastSent() const
  */
 inline void NetCommandRef::setTimeLastSent(time_t timeLastSent)
 {
-	m_timeLastSent = timeLastSent;
+    m_timeLastSent = timeLastSent;
 }
 
 /**
@@ -138,7 +137,7 @@ inline void NetCommandRef::setTimeLastSent(time_t timeLastSent)
  */
 inline void NetCommandRef::setRelay(UnsignedByte relay)
 {
-	m_relay = relay;
+    m_relay = relay;
 }
 
 /**
@@ -146,7 +145,7 @@ inline void NetCommandRef::setRelay(UnsignedByte relay)
  */
 inline UnsignedByte NetCommandRef::getRelay() const
 {
-	return m_relay;
+    return m_relay;
 }
 
 #endif // #ifndef __NETCOMMANDREF_H

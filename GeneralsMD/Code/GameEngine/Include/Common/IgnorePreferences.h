@@ -68,11 +68,10 @@ typedef std::map<Int, AsciiString> IgnorePrefMap;
 class IgnorePreferences : public UserPreferences
 {
 public:
-	IgnorePreferences();
-	virtual ~IgnorePreferences();
-	void setIgnore(const AsciiString& userName, Int profileID, Bool ignore);
-	IgnorePrefMap getIgnores(void);
-
+    IgnorePreferences();
+    virtual ~IgnorePreferences();
+    void setIgnore(const AsciiString &userName, Int profileID, Bool ignore);
+    IgnorePrefMap getIgnores(void);
 };
 
 //-----------------------------------------------------------------------------

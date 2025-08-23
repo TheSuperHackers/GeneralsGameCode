@@ -28,9 +28,8 @@
 //       for diverting missiles to the flares.
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 #include "Common/Thing.h"
 #include "Common/ThingTemplate.h"
 #include "Common/INI.h"
@@ -47,370 +46,366 @@
 #include "GameLogic/Object.h"
 #include "GameLogic/PartitionManager.h"
 
-
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 struct CountermeasuresPlayerScanHelper
 {
-	KindOfMaskType m_kindOfToTest;
-	Object *m_theHealer;
-	ObjectPointerList *m_objectList;
+    KindOfMaskType m_kindOfToTest;
+    Object *m_theHealer;
+    ObjectPointerList *m_objectList;
 };
 
-static void checkForCountermeasures( Object *testObj, void *userData )
+static void checkForCountermeasures(Object *testObj, void *userData)
 {
-	CountermeasuresPlayerScanHelper *helper = (CountermeasuresPlayerScanHelper*)userData;
-	ObjectPointerList *listToAddTo = helper->m_objectList;
+    CountermeasuresPlayerScanHelper *helper = (CountermeasuresPlayerScanHelper *)userData;
+    ObjectPointerList *listToAddTo = helper->m_objectList;
 
-	if( testObj->isEffectivelyDead() )
-		return;
+    if (testObj->isEffectivelyDead())
+        return;
 
-	if( testObj->getControllingPlayer() != helper->m_theHealer->getControllingPlayer() )
-		return;
+    if (testObj->getControllingPlayer() != helper->m_theHealer->getControllingPlayer())
+        return;
 
-	if( testObj->isOffMap() )
-		return;
+    if (testObj->isOffMap())
+        return;
 
-	if( !testObj->isAnyKindOf(helper->m_kindOfToTest) )
-		return;
+    if (!testObj->isAnyKindOf(helper->m_kindOfToTest))
+        return;
 
-	if( testObj->getBodyModule()->getHealth() >= testObj->getBodyModule()->getMaxHealth() )
-		return;
+    if (testObj->getBodyModule()->getHealth() >= testObj->getBodyModule()->getMaxHealth())
+        return;
 
-	listToAddTo->push_back(testObj);
+    listToAddTo->push_back(testObj);
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-CountermeasuresBehavior::CountermeasuresBehavior( Thing *thing, const ModuleData* moduleData ) : UpdateModule( thing, moduleData )
+CountermeasuresBehavior::CountermeasuresBehavior(Thing *thing, const ModuleData *moduleData) :
+    UpdateModule(thing, moduleData)
 {
-	const CountermeasuresBehaviorModuleData *data = getCountermeasuresBehaviorModuleData();
-	m_availableCountermeasures = data->m_numberOfVolleys * data->m_volleySize;
-	m_reactionFrame = 0;
-	m_activeCountermeasures = 0;
-	m_divertedMissiles = 0;
-	m_incomingMissiles = 0;
-	m_nextVolleyFrame = 0;
+    const CountermeasuresBehaviorModuleData *data = getCountermeasuresBehaviorModuleData();
+    m_availableCountermeasures = data->m_numberOfVolleys * data->m_volleySize;
+    m_reactionFrame = 0;
+    m_activeCountermeasures = 0;
+    m_divertedMissiles = 0;
+    m_incomingMissiles = 0;
+    m_nextVolleyFrame = 0;
 
-	setWakeFrame( getObject(), UPDATE_SLEEP_NONE );
+    setWakeFrame(getObject(), UPDATE_SLEEP_NONE);
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-CountermeasuresBehavior::~CountermeasuresBehavior( void )
+CountermeasuresBehavior::~CountermeasuresBehavior(void)
 {
 }
 
 // ------------------------------------------------------------------------------------------------
-void CountermeasuresBehavior::reportMissileForCountermeasures( Object *missile )
+void CountermeasuresBehavior::reportMissileForCountermeasures(Object *missile)
 {
-	if( !missile )
-	{
-		return;
-	}
+    if (!missile)
+    {
+        return;
+    }
 
-	//Record the number of missiles that have been fired at us
-	m_incomingMissiles++;
+    // Record the number of missiles that have been fired at us
+    m_incomingMissiles++;
 
-  if( m_availableCountermeasures + m_activeCountermeasures > 0 )
-	{
-		//We have countermeasures we can use. Determine now whether or not the incoming missile will
-		//be diverted.
-		const CountermeasuresBehaviorModuleData *data = getCountermeasuresBehaviorModuleData();
+    if (m_availableCountermeasures + m_activeCountermeasures > 0)
+    {
+        // We have countermeasures we can use. Determine now whether or not the incoming missile will
+        // be diverted.
+        const CountermeasuresBehaviorModuleData *data = getCountermeasuresBehaviorModuleData();
 
-		if( GameLogicRandomValueReal( 0.0f, 1.0f ) < data->m_evasionRate )
-		{
-			//This missile will be diverted!
-			ProjectileUpdateInterface* pui = NULL;
-			for( BehaviorModule** u = missile->getBehaviorModules(); *u; ++u )
-			{
-				if( (pui = (*u)->getProjectileUpdateInterface()) != NULL )
-				{
-					//Make sure the missile diverts after a delay. The delay needs to be larger than
-					//the countermeasure reaction time or else the missile won't have a countermeasure to divert to!
-					DEBUG_ASSERTCRASH( data->m_countermeasureReactionFrames < data->m_missileDecoyFrames,
-						("MissileDecoyDelay needs to be less than CountermeasureReactionTime in order to function properly.") );
-					pui->setFramesTillCountermeasureDiversionOccurs( data->m_missileDecoyFrames );
-					m_divertedMissiles++;
+        if (GameLogicRandomValueReal(0.0f, 1.0f) < data->m_evasionRate)
+        {
+            // This missile will be diverted!
+            ProjectileUpdateInterface *pui = NULL;
+            for (BehaviorModule **u = missile->getBehaviorModules(); *u; ++u)
+            {
+                if ((pui = (*u)->getProjectileUpdateInterface()) != NULL)
+                {
+                    // Make sure the missile diverts after a delay. The delay needs to be larger than
+                    // the countermeasure reaction time or else the missile won't have a countermeasure to divert to!
+                    DEBUG_ASSERTCRASH(
+                        data->m_countermeasureReactionFrames < data->m_missileDecoyFrames,
+                        ("MissileDecoyDelay needs to be less than CountermeasureReactionTime in order to function "
+                         "properly."));
+                    pui->setFramesTillCountermeasureDiversionOccurs(data->m_missileDecoyFrames);
+                    m_divertedMissiles++;
 
-					if( m_activeCountermeasures == 0 && m_reactionFrame == 0 )
-					{
-						//We need to launch our first volley of countermeasures, but we can't do it now. If we
-						//do, it'll look too artificial. Instead, we need to set up a timer to fake a reaction
-						//delay.
-						m_reactionFrame = TheGameLogic->getFrame() + data->m_countermeasureReactionFrames;
-					}
-					break;
-				}
-			}
-		}
-	}
+                    if (m_activeCountermeasures == 0 && m_reactionFrame == 0)
+                    {
+                        // We need to launch our first volley of countermeasures, but we can't do it now. If we
+                        // do, it'll look too artificial. Instead, we need to set up a timer to fake a reaction
+                        // delay.
+                        m_reactionFrame = TheGameLogic->getFrame() + data->m_countermeasureReactionFrames;
+                    }
+                    break;
+                }
+            }
+        }
+    }
 }
 
 //-------------------------------------------------------------------------------------------------
-ObjectID CountermeasuresBehavior::calculateCountermeasureToDivertTo( const Object& victim )
+ObjectID CountermeasuresBehavior::calculateCountermeasureToDivertTo(const Object &victim)
 {
-	const CountermeasuresBehaviorModuleData *data = getCountermeasuresBehaviorModuleData();
+    const CountermeasuresBehaviorModuleData *data = getCountermeasuresBehaviorModuleData();
 
-	// TheSuperHackers @bugfix Mauller/Stubbjax 27/07/2025 Fix unsafe iterator handling and correct the countermeasures behavior
-	// The code now iterates through all flares in the volley and selects the nearest one to the weapon as intended in the original EA code
-	// This can slightly change behavior but does not significantly impact the overall survivability of the aircraft
+    // TheSuperHackers @bugfix Mauller/Stubbjax 27/07/2025 Fix unsafe iterator handling and correct the countermeasures
+    // behavior The code now iterates through all flares in the volley and selects the nearest one to the weapon as intended
+    // in the original EA code This can slightly change behavior but does not significantly impact the overall survivability
+    // of the aircraft
 
-	Real closestFlareDist = 1e15f;
-	Object *closestFlare = NULL;
+    Real closestFlareDist = 1e15f;
+    Object *closestFlare = NULL;
 
-	const int volleySize = data->m_volleySize;
-	int volleyFlaresCounted = 0;
+    const int volleySize = data->m_volleySize;
+    int volleyFlaresCounted = 0;
 
-	//Flares are pushed to the front of the list, but we only want to acquire the "newest" of the flares, therefore
-	//Start at the end of the list and go towards the beginning.
-	CountermeasuresVec::reverse_iterator it = m_counterMeasures.rbegin();
-	//stop iterating after we've reached size of a single volley.
-	while( it != m_counterMeasures.rend() && volleyFlaresCounted < volleySize )
-	{
-		Object *obj = TheGameLogic->findObjectByID( *it++ );
-		if( obj )
-		{
-			Real weaponToFlareDist = ThePartitionManager->getDistanceSquared( obj, getObject(), FROM_CENTER_2D );
-			if( weaponToFlareDist < closestFlareDist )
-			{
-				closestFlareDist = weaponToFlareDist;
-				closestFlare = obj;
-			}
+    // Flares are pushed to the front of the list, but we only want to acquire the "newest" of the flares, therefore
+    // Start at the end of the list and go towards the beginning.
+    CountermeasuresVec::reverse_iterator it = m_counterMeasures.rbegin();
+    // stop iterating after we've reached size of a single volley.
+    while (it != m_counterMeasures.rend() && volleyFlaresCounted < volleySize)
+    {
+        Object *obj = TheGameLogic->findObjectByID(*it++);
+        if (obj)
+        {
+            Real weaponToFlareDist = ThePartitionManager->getDistanceSquared(obj, getObject(), FROM_CENTER_2D);
+            if (weaponToFlareDist < closestFlareDist)
+            {
+                closestFlareDist = weaponToFlareDist;
+                closestFlare = obj;
+            }
 #if RETAIL_COMPATIBLE_CRC
-			// TheSuperHackers @info Original EA code did not work as intended and stopped on the first retrieved flare
-			// The non retail behaviour corrects the code to iterate through all flares in the volley
-			break;
+            // TheSuperHackers @info Original EA code did not work as intended and stopped on the first retrieved flare
+            // The non retail behaviour corrects the code to iterate through all flares in the volley
+            break;
 #else
-			volleyFlaresCounted++;
+            volleyFlaresCounted++;
 #endif
-		}
-	}
+        }
+    }
 
-	if( closestFlare )
-	{
-		return closestFlare->getID();
-	}
-	return INVALID_ID;
+    if (closestFlare)
+    {
+        return closestFlare->getID();
+    }
+    return INVALID_ID;
 }
 
 //-------------------------------------------------------------------------------------------------
 Bool CountermeasuresBehavior::isActive() const
 {
-	return isUpgradeActive();
+    return isUpgradeActive();
 }
 
 //-------------------------------------------------------------------------------------------------
 /** The update callback. */
 //-------------------------------------------------------------------------------------------------
-UpdateSleepTime CountermeasuresBehavior::update( void )
+UpdateSleepTime CountermeasuresBehavior::update(void)
 {
-	UnsignedInt now = TheGameLogic->getFrame();
-	const CountermeasuresBehaviorModuleData *data = getCountermeasuresBehaviorModuleData();
-	Object *obj = getObject();
+    UnsignedInt now = TheGameLogic->getFrame();
+    const CountermeasuresBehaviorModuleData *data = getCountermeasuresBehaviorModuleData();
+    Object *obj = getObject();
 
-	if( obj->isEffectivelyDead() )
-	{
-		return UPDATE_SLEEP_FOREVER;
-	}
-	if( !isUpgradeActive()  )
-	{
-		return UPDATE_SLEEP_FOREVER;
-	}
+    if (obj->isEffectivelyDead())
+    {
+        return UPDATE_SLEEP_FOREVER;
+    }
+    if (!isUpgradeActive())
+    {
+        return UPDATE_SLEEP_FOREVER;
+    }
 
-	//Validate all existing flares, and clean them up as needed.
-	for (CountermeasuresVec::iterator it = m_counterMeasures.begin(); it != m_counterMeasures.end(); /*nothing*/ )
-	{
-		Object *obj = TheGameLogic->findObjectByID( *it );
-		if( !obj )
-		{
-			it = m_counterMeasures.erase( it );
-			m_activeCountermeasures--;
-		}
-		else
-		{
-			++it;
-		}
-	}
+    // Validate all existing flares, and clean them up as needed.
+    for (CountermeasuresVec::iterator it = m_counterMeasures.begin(); it != m_counterMeasures.end(); /*nothing*/)
+    {
+        Object *obj = TheGameLogic->findObjectByID(*it);
+        if (!obj)
+        {
+            it = m_counterMeasures.erase(it);
+            m_activeCountermeasures--;
+        }
+        else
+        {
+            ++it;
+        }
+    }
 
-	if( obj->isAirborneTarget() )
-	{
+    if (obj->isAirborneTarget())
+    {
+        // Handle flare volley launching (initial reaction, and continuation firing).
+        if (m_availableCountermeasures)
+        {
+            // Deal with the initial volley, but wait until we are permitted to react.
+            if (m_reactionFrame)
+            {
+                if (m_reactionFrame == now)
+                {
+                    // We have been shot at and now that the reaction timer has expired, fire a full volley of
+                    // countermeasures.
+                    launchVolley();
+                    m_nextVolleyFrame = now + data->m_framesBetweenVolleys;
+                    m_reactionFrame = 0;
+                }
+            }
 
-		//Handle flare volley launching (initial reaction, and continuation firing).
-		if( m_availableCountermeasures )
-		{
-			//Deal with the initial volley, but wait until we are permitted to react.
-			if( m_reactionFrame )
-			{
-				if( m_reactionFrame == now )
-				{
-					//We have been shot at and now that the reaction timer has expired, fire a full volley of
-					//countermeasures.
-					launchVolley();
-					m_nextVolleyFrame = now + data->m_framesBetweenVolleys;
-					m_reactionFrame = 0;
-				}
-			}
+            // Handle subsequent volley launching.
+            if (m_nextVolleyFrame == now)
+            {
+                launchVolley();
+                m_nextVolleyFrame = now + data->m_framesBetweenVolleys;
+            }
+        }
+    }
 
-			//Handle subsequent volley launching.
-			if( m_nextVolleyFrame == now )
-			{
-				launchVolley();
-				m_nextVolleyFrame = now + data->m_framesBetweenVolleys;
-			}
-		}
-	}
+    // Handle auto-reloading (data->m_reloadFrames of zero means it's not possible to auto-reload).
+    // Aircraft that don't auto-reload require landing at an airfield for resupply.
+    if (!m_availableCountermeasures && data->m_reloadFrames)
+    {
+        if (m_reloadFrame != 0)
+        {
+            if (m_reloadFrame <= now)
+            {
+                // We've successfully reloaded automatically.
+                reloadCountermeasures();
+            }
+        }
+        else
+        {
+            // We just started reloading, so set the frame it'll be ready.
+            m_reloadFrame = now + data->m_reloadFrames;
+        }
+    }
 
-	//Handle auto-reloading (data->m_reloadFrames of zero means it's not possible to auto-reload).
-	//Aircraft that don't auto-reload require landing at an airfield for resupply.
-	if( !m_availableCountermeasures && data->m_reloadFrames )
-	{
-		if( m_reloadFrame != 0 )
-		{
-			if( m_reloadFrame <= now )
-			{
-				//We've successfully reloaded automatically.
-				reloadCountermeasures();
-			}
-		}
-		else
-		{
-			//We just started reloading, so set the frame it'll be ready.
-			m_reloadFrame = now + data->m_reloadFrames;
-		}
-	}
-
-	return UPDATE_SLEEP( UPDATE_SLEEP_NONE );
+    return UPDATE_SLEEP(UPDATE_SLEEP_NONE);
 }
 
 //-------------------------------------------------------------------------------------------------
 void CountermeasuresBehavior::reloadCountermeasures()
 {
-	const CountermeasuresBehaviorModuleData *data = getCountermeasuresBehaviorModuleData();
-	m_availableCountermeasures = data->m_numberOfVolleys * data->m_volleySize;
-	m_reloadFrame = 0;
+    const CountermeasuresBehaviorModuleData *data = getCountermeasuresBehaviorModuleData();
+    m_availableCountermeasures = data->m_numberOfVolleys * data->m_volleySize;
+    m_reloadFrame = 0;
 }
 
 //-------------------------------------------------------------------------------------------------
 void CountermeasuresBehavior::launchVolley()
 {
-	const CountermeasuresBehaviorModuleData *data = getCountermeasuresBehaviorModuleData();
-	Object *obj = getObject();
+    const CountermeasuresBehaviorModuleData *data = getCountermeasuresBehaviorModuleData();
+    Object *obj = getObject();
 
-	Real volleySize = (Real)data->m_volleySize;
-	for( UnsignedInt i = 0; i < data->m_volleySize; i++ )
-	{
-		//Each flare in a volley will calculate a different vector to fly out. We have a +/- angle to
-		//spread out equally. With only one flare, it'll come straight out the back. Two flares will
-		//launch at the extreme positive and negative angle. Three flares will launch at extreme angles
-		//plus straight back. Four or more will divy it up equally.
-		Real currentVolley = (Real)i;
-		Real ratio = 0.0f;
-		if( volleySize != 1.0f )
-		{
-			//ratio between -1.0 and +1.0f
-			ratio = currentVolley / (volleySize - 1.0f) * 2.0f - 1.0f;
-		}
-		//Now calculate the angle. Simply multiply it by the ratio!
-		Real angle = ratio * data->m_volleyArcAngle;
+    Real volleySize = (Real)data->m_volleySize;
+    for (UnsignedInt i = 0; i < data->m_volleySize; i++)
+    {
+        // Each flare in a volley will calculate a different vector to fly out. We have a +/- angle to
+        // spread out equally. With only one flare, it'll come straight out the back. Two flares will
+        // launch at the extreme positive and negative angle. Three flares will launch at extreme angles
+        // plus straight back. Four or more will divy it up equally.
+        Real currentVolley = (Real)i;
+        Real ratio = 0.0f;
+        if (volleySize != 1.0f)
+        {
+            // ratio between -1.0 and +1.0f
+            ratio = currentVolley / (volleySize - 1.0f) * 2.0f - 1.0f;
+        }
+        // Now calculate the angle. Simply multiply it by the ratio!
+        Real angle = ratio * data->m_volleyArcAngle;
 
-		Coord3D vel;
-		PhysicsBehavior *physics = obj->getPhysics();
+        Coord3D vel;
+        PhysicsBehavior *physics = obj->getPhysics();
 
-		//Calculate the angle to fire the flare by taking the facing angle and rotating it
-		//and then scaling it by it's velocity (if it's moving).
-		obj->getUnitDirectionVector3D( vel );
-		Vector2 flareVector;
-		flareVector.X = vel.x;
-		flareVector.Y = vel.y;
-		flareVector.Normalize();
-		flareVector.Rotate( angle );
-		//Give it back to the Coord3D
-		vel.x = flareVector.X;
-		vel.y = flareVector.Y;
-		vel.z = 0.0f;
+        // Calculate the angle to fire the flare by taking the facing angle and rotating it
+        // and then scaling it by it's velocity (if it's moving).
+        obj->getUnitDirectionVector3D(vel);
+        Vector2 flareVector;
+        flareVector.X = vel.x;
+        flareVector.Y = vel.y;
+        flareVector.Normalize();
+        flareVector.Rotate(angle);
+        // Give it back to the Coord3D
+        vel.x = flareVector.X;
+        vel.y = flareVector.Y;
+        vel.z = 0.0f;
 
-		Real velocity = physics->getVelocityMagnitude();
-		if( velocity < 1.0f )
-		{
-			velocity = -10.0f;
-		}
-		vel.scale( velocity * data->m_volleyVelocityFactor );
+        Real velocity = physics->getVelocityMagnitude();
+        if (velocity < 1.0f)
+        {
+            velocity = -10.0f;
+        }
+        vel.scale(velocity * data->m_volleyVelocityFactor);
 
-		const ThingTemplate *thing = TheThingFactory->findTemplate( data->m_flareTemplateName );
-		if( thing )
-		{
-			Object *flare = TheThingFactory->newObject( thing, obj->getControllingPlayer()->getDefaultTeam() );
-			flare->setPosition( obj->getPosition() );
-			flare->setOrientation( obj->getOrientation() );
-			physics->transferVelocityTo( flare->getPhysics() );
-			flare->getPhysics()->applyMotiveForce( &vel );
-			m_activeCountermeasures++;
-			m_availableCountermeasures--;
-			m_counterMeasures.push_back( flare->getID() );
-		}
-	}
+        const ThingTemplate *thing = TheThingFactory->findTemplate(data->m_flareTemplateName);
+        if (thing)
+        {
+            Object *flare = TheThingFactory->newObject(thing, obj->getControllingPlayer()->getDefaultTeam());
+            flare->setPosition(obj->getPosition());
+            flare->setOrientation(obj->getOrientation());
+            physics->transferVelocityTo(flare->getPhysics());
+            flare->getPhysics()->applyMotiveForce(&vel);
+            m_activeCountermeasures++;
+            m_availableCountermeasures--;
+            m_counterMeasures.push_back(flare->getID());
+        }
+    }
 }
-
 
 //------------------------------------------------------------------------------------------------
 /** CRC */
 //------------------------------------------------------------------------------------------------
-void CountermeasuresBehavior::crc( Xfer *xfer )
+void CountermeasuresBehavior::crc(Xfer *xfer)
 {
+    // extend base class
+    UpdateModule::crc(xfer);
 
-	// extend base class
-	UpdateModule::crc( xfer );
+    // extend base class
+    UpgradeMux::upgradeMuxCRC(xfer);
 
-	// extend base class
-	UpgradeMux::upgradeMuxCRC( xfer );
-
-}  // end crc
+} // end crc
 
 //------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 //------------------------------------------------------------------------------------------------
-void CountermeasuresBehavior::xfer( Xfer *xfer )
+void CountermeasuresBehavior::xfer(Xfer *xfer)
 {
+    // version
+    XferVersion currentVersion = 2;
+    XferVersion version = currentVersion;
+    xfer->xferVersion(&version, currentVersion);
 
-	// version
-	XferVersion currentVersion = 2;
-	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+    // extend base class
+    UpdateModule::xfer(xfer);
 
-	// extend base class
-	UpdateModule::xfer( xfer );
+    // extend base class
+    UpgradeMux::upgradeMuxXfer(xfer);
 
-	// extend base class
-	UpgradeMux::upgradeMuxXfer( xfer );
+    if (currentVersion >= 2)
+    {
+        xfer->xferSTLObjectIDVector(&m_counterMeasures);
+        xfer->xferUnsignedInt(&m_availableCountermeasures);
+        xfer->xferUnsignedInt(&m_activeCountermeasures);
+        xfer->xferUnsignedInt(&m_divertedMissiles);
+        xfer->xferUnsignedInt(&m_incomingMissiles);
+        xfer->xferUnsignedInt(&m_reactionFrame);
+        xfer->xferUnsignedInt(&m_nextVolleyFrame);
+    }
 
-	if( currentVersion >= 2 )
-	{
-		xfer->xferSTLObjectIDVector( &m_counterMeasures );
-		xfer->xferUnsignedInt( &m_availableCountermeasures );
-		xfer->xferUnsignedInt( &m_activeCountermeasures );
-		xfer->xferUnsignedInt( &m_divertedMissiles );
-		xfer->xferUnsignedInt( &m_incomingMissiles );
-		xfer->xferUnsignedInt( &m_reactionFrame );
-		xfer->xferUnsignedInt( &m_nextVolleyFrame );
-	}
-
-}  // end xfer
+} // end xfer
 
 //------------------------------------------------------------------------------------------------
 /** Load post process */
 //------------------------------------------------------------------------------------------------
-void CountermeasuresBehavior::loadPostProcess( void )
+void CountermeasuresBehavior::loadPostProcess(void)
 {
+    // extend base class
+    UpdateModule::loadPostProcess();
 
-	// extend base class
-	UpdateModule::loadPostProcess();
+    // extend base class
+    UpgradeMux::upgradeMuxLoadPostProcess();
 
-	// extend base class
-	UpgradeMux::upgradeMuxLoadPostProcess();
-
-}  // end loadPostProcess
-
-
+} // end loadPostProcess

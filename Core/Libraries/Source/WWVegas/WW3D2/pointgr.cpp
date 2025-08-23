@@ -94,47 +94,45 @@
 // static data members
 Vector3 PointGroupClass::_TriVertexLocationOrientationTable[256][3];
 Vector3 PointGroupClass::_QuadVertexLocationOrientationTable[256][4];
-Vector2 *PointGroupClass::_TriVertexUVFrameTable[5] = { NULL, NULL, NULL, NULL, NULL};
-Vector2 *PointGroupClass::_QuadVertexUVFrameTable[5] = { NULL, NULL, NULL, NULL, NULL};
-VertexMaterialClass *PointGroupClass::PointMaterial=NULL;
+Vector2 *PointGroupClass::_TriVertexUVFrameTable[5] = {NULL, NULL, NULL, NULL, NULL};
+Vector2 *PointGroupClass::_QuadVertexUVFrameTable[5] = {NULL, NULL, NULL, NULL, NULL};
+VertexMaterialClass *PointGroupClass::PointMaterial = NULL;
 
 // Static arrays for intermediate calcs (never resized down, just up):
-VectorClass<Vector3>		PointGroupClass::compressed_loc;		// point locations 'compressed' by APT
-VectorClass<Vector4>		PointGroupClass::compressed_diffuse;	// point colors 'compressed' by APT
-VectorClass<float>			PointGroupClass::compressed_size;		// point sizes 'compressed' by APT
-VectorClass<unsigned char>	PointGroupClass::compressed_orient;	// point orientations 'compressed' by APT
-VectorClass<unsigned char>	PointGroupClass::compressed_frame;		// point frames 'compressed' by APT
-VectorClass<Vector3>		PointGroupClass::transformed_loc;		// transformed point locations
+VectorClass<Vector3> PointGroupClass::compressed_loc; // point locations 'compressed' by APT
+VectorClass<Vector4> PointGroupClass::compressed_diffuse; // point colors 'compressed' by APT
+VectorClass<float> PointGroupClass::compressed_size; // point sizes 'compressed' by APT
+VectorClass<unsigned char> PointGroupClass::compressed_orient; // point orientations 'compressed' by APT
+VectorClass<unsigned char> PointGroupClass::compressed_frame; // point frames 'compressed' by APT
+VectorClass<Vector3> PointGroupClass::transformed_loc; // transformed point locations
 
 // This array has vertex locations for screenspace mode - calculated to cover exactly 1x1 and 2x2 pixels.
-Vector3 PointGroupClass::_ScreenspaceVertexLocationSizeTable[2][3] =
-{
-	Vector3(0.5f, 0.0f, -1.0f),
-	Vector3(1.0f, 1.0f, -1.0f),
-	Vector3(0.0f, 1.0f, -1.0f),
-	Vector3(1.0f, -0.5f, -1.0f),
-	Vector3(2.7f, 2.0f, -1.0f),
-	Vector3(-0.7f, 2.0f, -1.0f)
-};
+Vector3 PointGroupClass::_ScreenspaceVertexLocationSizeTable[2][3] = {
+    Vector3(0.5f, 0.0f, -1.0f),
+    Vector3(1.0f, 1.0f, -1.0f),
+    Vector3(0.0f, 1.0f, -1.0f),
+    Vector3(1.0f, -0.5f, -1.0f),
+    Vector3(2.7f, 2.0f, -1.0f),
+    Vector3(-0.7f, 2.0f, -1.0f)};
 
 // useful for particles that aren't aligned with the screen.
 static Vector3 GroundMultiplierX(1.0f, 0.0f, 0.0f);
 static Vector3 GroundMultiplierY(0.0f, 1.0f, 0.0f);
 
 // Some internal variables
-VectorClass<Vector3>			VertexLoc;		// camera-space vertex locations
-VectorClass<Vector4>			VertexDiffuse;	// vertex diffuse/alpha colors
-VectorClass<Vector2>			VertexUV;		// vertex texture coords
+VectorClass<Vector3> VertexLoc; // camera-space vertex locations
+VectorClass<Vector4> VertexDiffuse; // vertex diffuse/alpha colors
+VectorClass<Vector2> VertexUV; // vertex texture coords
 
 // Some DX 8 variables
-#define MAX_VB_SIZE			2048
-#define MAX_TRI_POINTS		MAX_VB_SIZE/3
-#define MAX_TRI_IB_SIZE		3*MAX_TRI_POINTS
-#define MAX_QUAD_POINTS		MAX_VB_SIZE/4
-#define MAX_QUAD_IB_SIZE	6*MAX_QUAD_POINTS
+#define MAX_VB_SIZE 2048
+#define MAX_TRI_POINTS MAX_VB_SIZE / 3
+#define MAX_TRI_IB_SIZE 3 * MAX_TRI_POINTS
+#define MAX_QUAD_POINTS MAX_VB_SIZE / 4
+#define MAX_QUAD_IB_SIZE 6 * MAX_QUAD_POINTS
 
-DX8IndexBufferClass			*Tris, *Quads;						// Index buffers.
-SortingIndexBufferClass		*SortingTris, *SortingQuads;	// Sorting index buffers.
+DX8IndexBufferClass *Tris, *Quads; // Index buffers.
+SortingIndexBufferClass *SortingTris, *SortingQuads; // Sorting index buffers.
 
 /**************************************************************************
  * PointGroupClass::PointGroupClass -- PointGroupClass CTor.              *
@@ -149,27 +147,27 @@ SortingIndexBufferClass		*SortingTris, *SortingQuads;	// Sorting index buffers.
  *   11/17/1998 NH  : Created.                                            *
  *========================================================================*/
 PointGroupClass::PointGroupClass(void) :
-	PointLoc(NULL),
-	PointDiffuse(NULL),
-	APT(NULL),
-	PointSize(NULL),
-	PointOrientation(NULL),
-	PointFrame(NULL),
-	PointCount(0),
-	FrameRowColumnCountLog2(0),
-	Texture(NULL),
-	Flags(0),
-	Shader(ShaderClass::_PresetAdditiveSpriteShader),
-	PointMode(TRIS),
-	DefaultPointSize(0.0f),
-	DefaultPointColor(1.0f, 1.0f, 1.0f),
-	DefaultPointAlpha(1.0f),
-	DefaultPointOrientation(0),
-	DefaultPointFrame(0),
-	VPXMin(0.0f),
-	VPYMin(0.0f),
-	VPXMax(0.0f),
-	VPYMax(0.0f)
+    PointLoc(NULL),
+    PointDiffuse(NULL),
+    APT(NULL),
+    PointSize(NULL),
+    PointOrientation(NULL),
+    PointFrame(NULL),
+    PointCount(0),
+    FrameRowColumnCountLog2(0),
+    Texture(NULL),
+    Flags(0),
+    Shader(ShaderClass::_PresetAdditiveSpriteShader),
+    PointMode(TRIS),
+    DefaultPointSize(0.0f),
+    DefaultPointColor(1.0f, 1.0f, 1.0f),
+    DefaultPointAlpha(1.0f),
+    DefaultPointOrientation(0),
+    DefaultPointFrame(0),
+    VPXMin(0.0f),
+    VPYMin(0.0f),
+    VPXMax(0.0f),
+    VPYMax(0.0f)
 {
 }
 
@@ -187,34 +185,41 @@ PointGroupClass::PointGroupClass(void) :
  *========================================================================*/
 PointGroupClass::~PointGroupClass(void)
 {
-	if (PointLoc) {
-		PointLoc->Release_Ref();
-		PointLoc = NULL;
-	}
-	if (PointDiffuse) {
-		PointDiffuse->Release_Ref();
-		PointDiffuse=NULL;
-	}
-	if (APT) {
-		APT->Release_Ref();
-		APT = NULL;
-	}
-	if (PointSize) {
-		PointSize->Release_Ref();
-		PointSize = NULL;
-	}
-	if (PointOrientation) {
-		PointOrientation->Release_Ref();
-		PointOrientation = NULL;
-	}
-	if (PointFrame) {
-		PointFrame->Release_Ref();
-		PointFrame = NULL;
-	}
-	if (Texture) {
-		REF_PTR_RELEASE(Texture);
-		Texture = NULL;
-	}
+    if (PointLoc)
+    {
+        PointLoc->Release_Ref();
+        PointLoc = NULL;
+    }
+    if (PointDiffuse)
+    {
+        PointDiffuse->Release_Ref();
+        PointDiffuse = NULL;
+    }
+    if (APT)
+    {
+        APT->Release_Ref();
+        APT = NULL;
+    }
+    if (PointSize)
+    {
+        PointSize->Release_Ref();
+        PointSize = NULL;
+    }
+    if (PointOrientation)
+    {
+        PointOrientation->Release_Ref();
+        PointOrientation = NULL;
+    }
+    if (PointFrame)
+    {
+        PointFrame->Release_Ref();
+        PointFrame = NULL;
+    }
+    if (Texture)
+    {
+        REF_PTR_RELEASE(Texture);
+        Texture = NULL;
+    }
 }
 
 /**************************************************************************
@@ -229,14 +234,14 @@ PointGroupClass::~PointGroupClass(void)
  * HISTORY:                                                               *
  *   11/17/1998 NH  : Created.                                            *
  *========================================================================*/
-PointGroupClass & PointGroupClass::operator = (const PointGroupClass & that)
+PointGroupClass &PointGroupClass::operator=(const PointGroupClass &that)
 {
-	if (this != &that) {
-		WWASSERT(0);	// If you hit this assert implement the function!
-	}
-	return *this;
+    if (this != &that)
+    {
+        WWASSERT(0); // If you hit this assert implement the function!
+    }
+    return *this;
 }
-
 
 /**************************************************************************
  * PointGroupClass::Set_Arrays -- Set point location/color/enable arrays. *
@@ -262,46 +267,49 @@ PointGroupClass & PointGroupClass::operator = (const PointGroupClass & that)
  *   02/08/2001 HY  : Upgraded to DX8                                     *
  *========================================================================*/
 void PointGroupClass::Set_Arrays(
-	ShareBufferClass<Vector3> *locs,
-	ShareBufferClass<Vector4> *diffuse,
-	ShareBufferClass<unsigned int> *apt,
-	ShareBufferClass<float> *sizes,
-	ShareBufferClass<unsigned char> *orientations,
-	ShareBufferClass<unsigned char> *frames,
-	int active_point_count,
-	float vpxmin,
-	float vpymin,
-	float vpxmax,
-	float vpymax)
+    ShareBufferClass<Vector3> *locs,
+    ShareBufferClass<Vector4> *diffuse,
+    ShareBufferClass<unsigned int> *apt,
+    ShareBufferClass<float> *sizes,
+    ShareBufferClass<unsigned char> *orientations,
+    ShareBufferClass<unsigned char> *frames,
+    int active_point_count,
+    float vpxmin,
+    float vpymin,
+    float vpxmax,
+    float vpymax)
 {
-	// The point locations array is NOT optional!
-	WWASSERT(locs);
+    // The point locations array is NOT optional!
+    WWASSERT(locs);
 
-	// Ensure lengths of all arrays are the same:
-	WWASSERT(!diffuse || locs->Get_Count() == diffuse->Get_Count());
-	WWASSERT(!apt || locs->Get_Count() == apt->Get_Count());
-	WWASSERT(!sizes || locs->Get_Count() == sizes->Get_Count());
-	WWASSERT(!orientations || locs->Get_Count() == orientations->Get_Count());
-	WWASSERT(!frames || locs->Get_Count() == frames->Get_Count());
+    // Ensure lengths of all arrays are the same:
+    WWASSERT(!diffuse || locs->Get_Count() == diffuse->Get_Count());
+    WWASSERT(!apt || locs->Get_Count() == apt->Get_Count());
+    WWASSERT(!sizes || locs->Get_Count() == sizes->Get_Count());
+    WWASSERT(!orientations || locs->Get_Count() == orientations->Get_Count());
+    WWASSERT(!frames || locs->Get_Count() == frames->Get_Count());
 
-	REF_PTR_SET(PointLoc,locs);
-	REF_PTR_SET(PointDiffuse,diffuse);
-	REF_PTR_SET(APT,apt);
-	REF_PTR_SET(PointSize,sizes);
-	REF_PTR_SET(PointOrientation,orientations);
-	REF_PTR_SET(PointFrame,frames);
+    REF_PTR_SET(PointLoc, locs);
+    REF_PTR_SET(PointDiffuse, diffuse);
+    REF_PTR_SET(APT, apt);
+    REF_PTR_SET(PointSize, sizes);
+    REF_PTR_SET(PointOrientation, orientations);
+    REF_PTR_SET(PointFrame, frames);
 
-	if (APT) {
-		PointCount = active_point_count;
-	} else {
-		PointCount = (active_point_count >= 0) ? active_point_count : PointLoc->Get_Count();
-	}
+    if (APT)
+    {
+        PointCount = active_point_count;
+    }
+    else
+    {
+        PointCount = (active_point_count >= 0) ? active_point_count : PointLoc->Get_Count();
+    }
 
-	// Store view plane rectangle (only used in SCREENSPACE mode)
-	VPXMin = vpxmin;
-	VPYMin = vpymin;
-	VPXMax = vpxmax;
-	VPYMax = vpymax;
+    // Store view plane rectangle (only used in SCREENSPACE mode)
+    VPXMin = vpxmin;
+    VPYMin = vpymin;
+    VPXMax = vpxmax;
+    VPYMax = vpymax;
 }
 
 /**************************************************************************
@@ -318,9 +326,8 @@ void PointGroupClass::Set_Arrays(
  *========================================================================*/
 void PointGroupClass::Set_Point_Size(float size)
 {
-	DefaultPointSize = size;
+    DefaultPointSize = size;
 }
-
 
 /**************************************************************************
  * PointGroupClass::Get_Point_Size -- Get default point size.             *
@@ -336,9 +343,8 @@ void PointGroupClass::Set_Point_Size(float size)
  *========================================================================*/
 float PointGroupClass::Get_Point_Size(void)
 {
-	return DefaultPointSize;
+    return DefaultPointSize;
 }
-
 
 /**************************************************************************
  * PointGroupClass::Set_Point_Color -- Set default point color.           *
@@ -354,7 +360,7 @@ float PointGroupClass::Get_Point_Size(void)
  *========================================================================*/
 void PointGroupClass::Set_Point_Color(Vector3 color)
 {
-	DefaultPointColor = color;
+    DefaultPointColor = color;
 }
 
 /**************************************************************************
@@ -371,7 +377,7 @@ void PointGroupClass::Set_Point_Color(Vector3 color)
  *========================================================================*/
 Vector3 PointGroupClass::Get_Point_Color(void)
 {
-	return DefaultPointColor;
+    return DefaultPointColor;
 }
 
 /**************************************************************************
@@ -388,9 +394,8 @@ Vector3 PointGroupClass::Get_Point_Color(void)
  *========================================================================*/
 void PointGroupClass::Set_Point_Alpha(float alpha)
 {
-	DefaultPointAlpha = alpha;
+    DefaultPointAlpha = alpha;
 }
-
 
 /**************************************************************************
  * PointGroupClass::Get_Point_Alpha -- Get default point alpha.           *
@@ -406,9 +411,8 @@ void PointGroupClass::Set_Point_Alpha(float alpha)
  *========================================================================*/
 float PointGroupClass::Get_Point_Alpha(void)
 {
-	return DefaultPointAlpha;
+    return DefaultPointAlpha;
 }
-
 
 /**************************************************************************
  * PointGroupClass::Set_Point_Orientation -- Set default point orientation*
@@ -426,9 +430,8 @@ float PointGroupClass::Get_Point_Alpha(void)
  *========================================================================*/
 void PointGroupClass::Set_Point_Orientation(unsigned char orientation)
 {
-	DefaultPointOrientation = orientation;
+    DefaultPointOrientation = orientation;
 }
-
 
 /**************************************************************************
  * PointGroupClass::Get_Point_Orientation -- Get default point orientation*
@@ -444,9 +447,8 @@ void PointGroupClass::Set_Point_Orientation(unsigned char orientation)
  *========================================================================*/
 unsigned char PointGroupClass::Get_Point_Orientation(void)
 {
-	return DefaultPointOrientation;
+    return DefaultPointOrientation;
 }
-
 
 /**************************************************************************
  * PointGroupClass::Set_Point_Frame -- Set default point frame.           *
@@ -464,9 +466,8 @@ unsigned char PointGroupClass::Get_Point_Orientation(void)
  *========================================================================*/
 void PointGroupClass::Set_Point_Frame(unsigned char frame)
 {
-	DefaultPointFrame = frame;
+    DefaultPointFrame = frame;
 }
-
 
 /**************************************************************************
  * PointGroupClass::Get_Point_Frame -- Get default point frame.           *
@@ -482,9 +483,8 @@ void PointGroupClass::Set_Point_Frame(unsigned char frame)
  *========================================================================*/
 unsigned char PointGroupClass::Get_Point_Frame(void)
 {
-	return DefaultPointFrame;
+    return DefaultPointFrame;
 }
-
 
 /**************************************************************************
  * PointGroupClass::Set_Point_Mode -- Set point rendering method.         *
@@ -500,9 +500,8 @@ unsigned char PointGroupClass::Get_Point_Frame(void)
  *========================================================================*/
 void PointGroupClass::Set_Point_Mode(PointModeEnum mode)
 {
-	PointMode = mode;
+    PointMode = mode;
 }
-
 
 /**************************************************************************
  * PointGroupClass::Get_Point_Mode -- Get point rendering method.         *
@@ -518,9 +517,8 @@ void PointGroupClass::Set_Point_Mode(PointModeEnum mode)
  *========================================================================*/
 PointGroupClass::PointModeEnum PointGroupClass::Get_Point_Mode(void)
 {
-	return PointMode;
+    return PointMode;
 }
-
 
 /**************************************************************************
  * Set_Flag -- PointGroupClass::Set given flag to on or off.              *
@@ -536,9 +534,10 @@ PointGroupClass::PointModeEnum PointGroupClass::Get_Point_Mode(void)
  *========================================================================*/
 void PointGroupClass::Set_Flag(FlagsType flag, bool onoff)
 {
-	if (onoff) Flags|=1<<flag;
-	else
-		Flags&=~(1<<flag);
+    if (onoff)
+        Flags |= 1 << flag;
+    else
+        Flags &= ~(1 << flag);
 }
 
 /**************************************************************************
@@ -555,7 +554,7 @@ void PointGroupClass::Set_Flag(FlagsType flag, bool onoff)
  *========================================================================*/
 int PointGroupClass::Get_Flag(FlagsType flag)
 {
-	return (Flags>>flag) & 0x1;
+    return (Flags >> flag) & 0x1;
 }
 
 /**************************************************************************
@@ -571,9 +570,9 @@ int PointGroupClass::Get_Flag(FlagsType flag)
  *   11/17/1998 NH  : Created.                                            *
  *   02/08/2001 HY  : Upgraded to DX8                                     *
  *========================================================================*/
-void PointGroupClass::Set_Texture(TextureClass* texture)
+void PointGroupClass::Set_Texture(TextureClass *texture)
 {
-	REF_PTR_SET(Texture,texture);
+    REF_PTR_SET(Texture, texture);
 }
 
 /**************************************************************************
@@ -589,12 +588,12 @@ void PointGroupClass::Set_Texture(TextureClass* texture)
  *   11/17/1998 NH  : Created.                                            *
  *   02/08/2001 HY  : Upgraded to DX8                                     *
  *========================================================================*/
-TextureClass * PointGroupClass::Get_Texture(void)
+TextureClass *PointGroupClass::Get_Texture(void)
 {
-	if (Texture) Texture->Add_Ref();
-	return Texture;
+    if (Texture)
+        Texture->Add_Ref();
+    return Texture;
 }
-
 
 /***********************************************************************************************
  * PointGroupClass::Peek_Texture -- Peeks texture                                              *
@@ -611,9 +610,9 @@ TextureClass * PointGroupClass::Get_Texture(void)
  * HISTORY:                                                                                    *
  *   4/12/2001  hy : Created.                                                                  *
  *=============================================================================================*/
-TextureClass * PointGroupClass::Peek_Texture(void)
+TextureClass *PointGroupClass::Peek_Texture(void)
 {
-	return Texture;
+    return Texture;
 }
 
 /**************************************************************************
@@ -637,9 +636,8 @@ TextureClass * PointGroupClass::Peek_Texture(void)
  *========================================================================*/
 void PointGroupClass::Set_Shader(ShaderClass shader)
 {
-	Shader = shader;
+    Shader = shader;
 }
-
 
 /**************************************************************************
  * PointGroupClass::Get_Shader -- Get shader used.                        *
@@ -656,7 +654,7 @@ void PointGroupClass::Set_Shader(ShaderClass shader)
  *========================================================================*/
 ShaderClass PointGroupClass::Get_Shader(void)
 {
-	return Shader;
+    return Shader;
 }
 
 /**************************************************************************
@@ -673,7 +671,7 @@ ShaderClass PointGroupClass::Get_Shader(void)
  *========================================================================*/
 void PointGroupClass::Set_Billboard(bool shouldBillboard)
 {
-	Billboard = shouldBillboard;
+    Billboard = shouldBillboard;
 }
 
 /**************************************************************************
@@ -690,7 +688,7 @@ void PointGroupClass::Set_Billboard(bool shouldBillboard)
  *========================================================================*/
 bool PointGroupClass::Get_Billboard(void)
 {
-	return Billboard;
+    return Billboard;
 }
 
 /**************************************************************************
@@ -708,9 +706,8 @@ bool PointGroupClass::Get_Billboard(void)
  *========================================================================*/
 unsigned char PointGroupClass::Get_Frame_Row_Column_Count_Log2(void)
 {
-	return FrameRowColumnCountLog2;
+    return FrameRowColumnCountLog2;
 }
-
 
 /**************************************************************************
  * PointGroupClass::Set_Frame_Row_Column_Count_Log2 -- what it says.      *
@@ -727,7 +724,7 @@ unsigned char PointGroupClass::Get_Frame_Row_Column_Count_Log2(void)
  *========================================================================*/
 void PointGroupClass::Set_Frame_Row_Column_Count_Log2(unsigned char frccl2)
 {
-	FrameRowColumnCountLog2 = MIN(frccl2, 4);
+    FrameRowColumnCountLog2 = MIN(frccl2, 4);
 }
 
 /**************************************************************************
@@ -745,17 +742,18 @@ void PointGroupClass::Set_Frame_Row_Column_Count_Log2(unsigned char frccl2)
  *========================================================================*/
 int PointGroupClass::Get_Polygon_Count(void)
 {
-	switch (PointMode) {
-		case TRIS:
-		case SCREENSPACE:
-			return PointCount;
-			break;
-		case QUADS:
-			return PointCount * 2;
-			break;
-	}
-	WWASSERT(0);
-	return 0;
+    switch (PointMode)
+    {
+        case TRIS:
+        case SCREENSPACE:
+            return PointCount;
+            break;
+        case QUADS:
+            return PointCount * 2;
+            break;
+    }
+    WWASSERT(0);
+    return 0;
 }
 
 /**************************************************************************
@@ -774,231 +772,269 @@ int PointGroupClass::Get_Polygon_Count(void)
 static SimpleVecClass<unsigned long> remap;
 void PointGroupClass::Render(RenderInfoClass &rinfo)
 {
-	/// @todo lorenzen asks: is particle culling in the shader perhaps faster than in DoParticles? Fix winding and find out...
-	// NB: the winding for pointgroups is wrong, but we
-	// are disabling culling for particles anyway
-	Shader.Set_Cull_Mode(ShaderClass::CULL_MODE_DISABLE);
+    /// @todo lorenzen asks: is particle culling in the shader perhaps faster than in DoParticles? Fix winding and find
+    /// out...
+    // NB: the winding for pointgroups is wrong, but we
+    // are disabling culling for particles anyway
+    Shader.Set_Cull_Mode(ShaderClass::CULL_MODE_DISABLE);
 
-	// If no points, do nothing:
-	if (PointCount == 0) return;
+    // If no points, do nothing:
+    if (PointCount == 0)
+        return;
 
-	WWASSERT(PointLoc && PointLoc->Get_Array());
+    WWASSERT(PointLoc && PointLoc->Get_Array());
 
-	// Process texture reductions:
-//	if (Texture) Texture->Process_Reduction();
+    // Process texture reductions:
+    //	if (Texture) Texture->Process_Reduction();
 
-	// Pointers which point into existing buffers (member or static):
-	Vector3 *current_loc = NULL;
-	Vector4 *current_diffuse = NULL;
-	float *current_size = NULL;
-	unsigned char *current_orient = NULL;
-	unsigned char *current_frame = NULL;
+    // Pointers which point into existing buffers (member or static):
+    Vector3 *current_loc = NULL;
+    Vector4 *current_diffuse = NULL;
+    float *current_size = NULL;
+    unsigned char *current_orient = NULL;
+    unsigned char *current_frame = NULL;
 
-	// If there is a color or alpha array enable gradient in shader - otherwise disable.
-   float value_255 = 0.9961f;	//254 / 255
-	bool default_white_opaque = (	DefaultPointColor.X > value_255 &&
-											DefaultPointColor.Y > value_255 &&
-											DefaultPointColor.Z > value_255 &&
-											DefaultPointAlpha > value_255);
+    // If there is a color or alpha array enable gradient in shader - otherwise disable.
+    float value_255 = 0.9961f; // 254 / 255
+    bool default_white_opaque =
+        (DefaultPointColor.X > value_255 && DefaultPointColor.Y > value_255 && DefaultPointColor.Z > value_255
+         && DefaultPointAlpha > value_255);
 
-	// The reason we check for lack of texture here is that SR seems to render black triangles
-	// rather than white triangles as would be expected) when there is no texture AND no gradient.
-	if (PointDiffuse || !default_white_opaque || !Texture) {
-		Shader.Set_Primary_Gradient(ShaderClass::GRADIENT_MODULATE);
-	} else {
-		Shader.Set_Primary_Gradient(ShaderClass::GRADIENT_DISABLE);
-	}
+    // The reason we check for lack of texture here is that SR seems to render black triangles
+    // rather than white triangles as would be expected) when there is no texture AND no gradient.
+    if (PointDiffuse || !default_white_opaque || !Texture)
+    {
+        Shader.Set_Primary_Gradient(ShaderClass::GRADIENT_MODULATE);
+    }
+    else
+    {
+        Shader.Set_Primary_Gradient(ShaderClass::GRADIENT_DISABLE);
+    }
 
-	// If Texture is non-NULL enable texturing in shader - otherwise disable.
-	if (Texture) {
-		Shader.Set_Texturing(ShaderClass::TEXTURING_ENABLE);
-	} else {
-		Shader.Set_Texturing(ShaderClass::TEXTURING_DISABLE);
-	}
+    // If Texture is non-NULL enable texturing in shader - otherwise disable.
+    if (Texture)
+    {
+        Shader.Set_Texturing(ShaderClass::TEXTURING_ENABLE);
+    }
+    else
+    {
+        Shader.Set_Texturing(ShaderClass::TEXTURING_DISABLE);
+    }
 
-	// If there is an active point table, use it to compress the point
-	// locations/colors/alphas/sizes/orientations/frames.
-	if (APT) {
-		// Resize compressed result arrays if needed (2x guardband to prevent
-		// frequent reallocations):
+    // If there is an active point table, use it to compress the point
+    // locations/colors/alphas/sizes/orientations/frames.
+    if (APT)
+    {
+        // Resize compressed result arrays if needed (2x guardband to prevent
+        // frequent reallocations):
 
-		/// @todo lorenzen sez: precompute pointers to indexed array elements, below
+        /// @todo lorenzen sez: precompute pointers to indexed array elements, below
 
-		if (compressed_loc.Length() < PointCount) {
-			compressed_loc.Resize(PointCount * 2);
-		}
-		VectorProcessorClass::CopyIndexed(&compressed_loc[0],
-			PointLoc->Get_Array(), APT->Get_Array(), PointCount);
-		current_loc = &compressed_loc[0];
-		if (PointDiffuse) {
-			if (compressed_diffuse.Length() < PointCount) {
-				compressed_diffuse.Resize(PointCount * 2);
-			}
-			VectorProcessorClass::CopyIndexed(&compressed_diffuse[0],
-				PointDiffuse->Get_Array(), APT->Get_Array(), PointCount);
-			current_diffuse = &compressed_diffuse[0];
-		}
-		if (PointSize) {
-			if (compressed_size.Length() < PointCount) {
-				compressed_size.Resize(PointCount * 2);
-			}
-			VectorProcessorClass::CopyIndexed(&compressed_size[0],
-				PointSize->Get_Array(), APT->Get_Array(), PointCount);
-			current_size = &compressed_size[0];
-		}
-		if (PointOrientation) {
-			if (compressed_orient.Length() < PointCount) {
-				compressed_orient.Resize(PointCount * 2);
-			}
-			VectorProcessorClass::CopyIndexed(&compressed_orient[0],
-				PointOrientation->Get_Array(), APT->Get_Array(), PointCount);
-			current_orient = &compressed_orient[0];
-		}
-		if (PointFrame) {
-			if (compressed_frame.Length() < PointCount) {
-				compressed_frame.Resize(PointCount * 2);
-			}
-			VectorProcessorClass::CopyIndexed(&compressed_frame[0],
-				PointFrame->Get_Array(), APT->Get_Array(), PointCount);
-			current_frame = &compressed_frame[0];
-		}
-	} else {
-		current_loc = PointLoc->Get_Array();
-		if (PointDiffuse) {
-			current_diffuse = PointDiffuse->Get_Array();
-		}
-		if (PointSize) {
-			current_size = PointSize->Get_Array();
-		}
-		if (PointOrientation) {
-			current_orient = PointOrientation->Get_Array();
-		}
-		if (PointFrame) {
-			current_frame = PointFrame->Get_Array();
-		}
-	}
+        if (compressed_loc.Length() < PointCount)
+        {
+            compressed_loc.Resize(PointCount * 2);
+        }
+        VectorProcessorClass::CopyIndexed(&compressed_loc[0], PointLoc->Get_Array(), APT->Get_Array(), PointCount);
+        current_loc = &compressed_loc[0];
+        if (PointDiffuse)
+        {
+            if (compressed_diffuse.Length() < PointCount)
+            {
+                compressed_diffuse.Resize(PointCount * 2);
+            }
+            VectorProcessorClass::CopyIndexed(
+                &compressed_diffuse[0],
+                PointDiffuse->Get_Array(),
+                APT->Get_Array(),
+                PointCount);
+            current_diffuse = &compressed_diffuse[0];
+        }
+        if (PointSize)
+        {
+            if (compressed_size.Length() < PointCount)
+            {
+                compressed_size.Resize(PointCount * 2);
+            }
+            VectorProcessorClass::CopyIndexed(&compressed_size[0], PointSize->Get_Array(), APT->Get_Array(), PointCount);
+            current_size = &compressed_size[0];
+        }
+        if (PointOrientation)
+        {
+            if (compressed_orient.Length() < PointCount)
+            {
+                compressed_orient.Resize(PointCount * 2);
+            }
+            VectorProcessorClass::CopyIndexed(
+                &compressed_orient[0],
+                PointOrientation->Get_Array(),
+                APT->Get_Array(),
+                PointCount);
+            current_orient = &compressed_orient[0];
+        }
+        if (PointFrame)
+        {
+            if (compressed_frame.Length() < PointCount)
+            {
+                compressed_frame.Resize(PointCount * 2);
+            }
+            VectorProcessorClass::CopyIndexed(&compressed_frame[0], PointFrame->Get_Array(), APT->Get_Array(), PointCount);
+            current_frame = &compressed_frame[0];
+        }
+    }
+    else
+    {
+        current_loc = PointLoc->Get_Array();
+        if (PointDiffuse)
+        {
+            current_diffuse = PointDiffuse->Get_Array();
+        }
+        if (PointSize)
+        {
+            current_size = PointSize->Get_Array();
+        }
+        if (PointOrientation)
+        {
+            current_orient = PointOrientation->Get_Array();
+        }
+        if (PointFrame)
+        {
+            current_frame = PointFrame->Get_Array();
+        }
+    }
 
-	// Get the world and view matrices
-	Matrix4x4 view;
-	DX8Wrapper::Get_Transform(D3DTS_VIEW,view);
+    // Get the world and view matrices
+    Matrix4x4 view;
+    DX8Wrapper::Get_Transform(D3DTS_VIEW, view);
 
-	// Transform the point locations from worldspace to camera space if needed
-	// (i.e. if they are not already in camera space):
+    // Transform the point locations from worldspace to camera space if needed
+    // (i.e. if they are not already in camera space):
 
-	// need to interrupt this processing. If we are not billboarding, then we need the actual position
-	// of the vertice to lay it down flat.
+    // need to interrupt this processing. If we are not billboarding, then we need the actual position
+    // of the vertice to lay it down flat.
 
-	// (gth) changed this 'if' to use OR rather than AND... The way it was caused all emitters to break
-	if (Get_Flag(TRANSFORM) && Billboard) {
-		// Resize transformed location array if needed (2x guardband to prevent
-		// frequent reallocations):
-		if (transformed_loc.Length() < PointCount) {
-			transformed_loc.Resize(PointCount * 2);
-		}
-		// Not using vector processor class because we are discarding w
-		// Not using T&L in DX8 because we don't want DX8 to transform
-		// 3 times per particle when we can do it once
-		for (int i=0; i<PointCount; i++)
-		{
-			/// @todo lorenzen sez: use pointer arithmetic here and a fast while loop
-			Vector4 result=view*current_loc[i];
-			transformed_loc[i].X=result.X;
-			transformed_loc[i].Y=result.Y;
-			transformed_loc[i].Z=result.Z;
-		}
-		current_loc = &transformed_loc[0];
-	} // if transform
+    // (gth) changed this 'if' to use OR rather than AND... The way it was caused all emitters to break
+    if (Get_Flag(TRANSFORM) && Billboard)
+    {
+        // Resize transformed location array if needed (2x guardband to prevent
+        // frequent reallocations):
+        if (transformed_loc.Length() < PointCount)
+        {
+            transformed_loc.Resize(PointCount * 2);
+        }
+        // Not using vector processor class because we are discarding w
+        // Not using T&L in DX8 because we don't want DX8 to transform
+        // 3 times per particle when we can do it once
+        for (int i = 0; i < PointCount; i++)
+        {
+            /// @todo lorenzen sez: use pointer arithmetic here and a fast while loop
+            Vector4 result = view * current_loc[i];
+            transformed_loc[i].X = result.X;
+            transformed_loc[i].Y = result.Y;
+            transformed_loc[i].Z = result.Z;
+        }
+        current_loc = &transformed_loc[0];
+    } // if transform
 
-	// Update the arrays with the offsets.
-	int vnum, pnum;
+    // Update the arrays with the offsets.
+    int vnum, pnum;
 
-	Update_Arrays(current_loc, current_diffuse, current_size, current_orient, current_frame,
-		PointCount, PointLoc->Get_Count(), vnum, pnum);
+    Update_Arrays(
+        current_loc,
+        current_diffuse,
+        current_size,
+        current_orient,
+        current_frame,
+        PointCount,
+        PointLoc->Get_Count(),
+        vnum,
+        pnum);
 
-	// the locations are now in view space
-	// so set world and view matrices to identity and render
+    // the locations are now in view space
+    // so set world and view matrices to identity and render
 
-	Matrix4x4 identity(true);
-	DX8Wrapper::Set_Transform(D3DTS_WORLD,identity);
-	DX8Wrapper::Set_Transform(D3DTS_VIEW,identity);
+    Matrix4x4 identity(true);
+    DX8Wrapper::Set_Transform(D3DTS_WORLD, identity);
+    DX8Wrapper::Set_Transform(D3DTS_VIEW, identity);
 
-	DX8Wrapper::Set_Material(PointMaterial);
-	DX8Wrapper::Set_Shader(Shader);
-	DX8Wrapper::Set_Texture(0,Texture);
+    DX8Wrapper::Set_Material(PointMaterial);
+    DX8Wrapper::Set_Shader(Shader);
+    DX8Wrapper::Set_Texture(0, Texture);
 
-	// Enable sorting if the primitives are translucent and alpha testing is not enabled.
-	const bool sort = (Shader.Get_Dst_Blend_Func() != ShaderClass::DSTBLEND_ZERO) && (Shader.Get_Alpha_Test() == ShaderClass::ALPHATEST_DISABLE) && (WW3D::Is_Sorting_Enabled());
+    // Enable sorting if the primitives are translucent and alpha testing is not enabled.
+    const bool sort = (Shader.Get_Dst_Blend_Func() != ShaderClass::DSTBLEND_ZERO)
+        && (Shader.Get_Alpha_Test() == ShaderClass::ALPHATEST_DISABLE) && (WW3D::Is_Sorting_Enabled());
 
-	IndexBufferClass *indexbuffer;
-	int	verticesperprimitive;/// lorenzen fixed
-	int current;
-	int delta;
+    IndexBufferClass *indexbuffer;
+    int verticesperprimitive; /// lorenzen fixed
+    int current;
+    int delta;
 
-	/// @todo lorenzen sez: if tri-based particles are not supported, elim this test
-	if (PointMode == QUADS) {
-		verticesperprimitive = 2;
-		indexbuffer = sort ? static_cast <IndexBufferClass*> (SortingQuads) : static_cast <IndexBufferClass*> (Quads);
-	} else {
-		verticesperprimitive = 3;
-		indexbuffer = sort ? static_cast <IndexBufferClass*> (SortingTris) : static_cast <IndexBufferClass*> (Tris);
-	}
+    /// @todo lorenzen sez: if tri-based particles are not supported, elim this test
+    if (PointMode == QUADS)
+    {
+        verticesperprimitive = 2;
+        indexbuffer = sort ? static_cast<IndexBufferClass *>(SortingQuads) : static_cast<IndexBufferClass *>(Quads);
+    }
+    else
+    {
+        verticesperprimitive = 3;
+        indexbuffer = sort ? static_cast<IndexBufferClass *>(SortingTris) : static_cast<IndexBufferClass *>(Tris);
+    }
 
-	current = 0;
-	while (current<vnum)
-	{
-		delta=MIN(vnum-current,MAX_VB_SIZE);
-		DynamicVBAccessClass PointVerts (sort ? BUFFER_TYPE_DYNAMIC_SORTING : BUFFER_TYPE_DYNAMIC_DX8, dynamic_fvf_type, delta);
+    current = 0;
+    while (current < vnum)
+    {
+        delta = MIN(vnum - current, MAX_VB_SIZE);
+        DynamicVBAccessClass PointVerts(
+            sort ? BUFFER_TYPE_DYNAMIC_SORTING : BUFFER_TYPE_DYNAMIC_DX8,
+            dynamic_fvf_type,
+            delta);
 
-		// Copy in the data to the VB
-		{
-			DynamicVBAccessClass::WriteLockClass Lock(&PointVerts);
-			int i;
-			unsigned char *vb=(unsigned char*)Lock.Get_Formatted_Vertex_Array();
-			const FVFInfoClass& fvfinfo=PointVerts.FVF_Info();
+        // Copy in the data to the VB
+        {
+            DynamicVBAccessClass::WriteLockClass Lock(&PointVerts);
+            int i;
+            unsigned char *vb = (unsigned char *)Lock.Get_Formatted_Vertex_Array();
+            const FVFInfoClass &fvfinfo = PointVerts.FVF_Info();
 
-			for (i = current; i < current + delta; i++)
-			{
-				/// @todo lorenzen sez: use pointer arithmetic throughout this block
-				/// @todo lorenzen sez: delare thes locals outside this loop
-				/// @todo lorenzen sez: use a fast while loop
-				// Copy Locations
-				*(Vector3*)(vb+fvfinfo.Get_Location_Offset())=VertexLoc[i];
-				if (current_diffuse) {
-					unsigned color=DX8Wrapper::Convert_Color_Clamp(VertexDiffuse[i]);
-					*(unsigned int*)(vb+fvfinfo.Get_Diffuse_Offset())=color;
-				}
-				else
-					*(unsigned int*)(vb+fvfinfo.Get_Diffuse_Offset())=
-						DX8Wrapper::Convert_Color_Clamp(Vector4(DefaultPointColor[0],DefaultPointColor[1],DefaultPointColor[2],DefaultPointAlpha));
-				*(Vector2*)(vb+fvfinfo.Get_Tex_Offset(0))=VertexUV[i];
-				vb+=fvfinfo.Get_FVF_Size();
-			}
-		} // copy
+            for (i = current; i < current + delta; i++)
+            {
+                /// @todo lorenzen sez: use pointer arithmetic throughout this block
+                /// @todo lorenzen sez: delare thes locals outside this loop
+                /// @todo lorenzen sez: use a fast while loop
+                // Copy Locations
+                *(Vector3 *)(vb + fvfinfo.Get_Location_Offset()) = VertexLoc[i];
+                if (current_diffuse)
+                {
+                    unsigned color = DX8Wrapper::Convert_Color_Clamp(VertexDiffuse[i]);
+                    *(unsigned int *)(vb + fvfinfo.Get_Diffuse_Offset()) = color;
+                }
+                else
+                    *(unsigned int *)(vb + fvfinfo.Get_Diffuse_Offset()) = DX8Wrapper::Convert_Color_Clamp(
+                        Vector4(DefaultPointColor[0], DefaultPointColor[1], DefaultPointColor[2], DefaultPointAlpha));
+                *(Vector2 *)(vb + fvfinfo.Get_Tex_Offset(0)) = VertexUV[i];
+                vb += fvfinfo.Get_FVF_Size();
+            }
+        } // copy
 
-		DX8Wrapper::Set_Index_Buffer (indexbuffer, 0);
-		DX8Wrapper::Set_Vertex_Buffer (PointVerts);
+        DX8Wrapper::Set_Index_Buffer(indexbuffer, 0);
+        DX8Wrapper::Set_Vertex_Buffer(PointVerts);
 
-		if ( sort )
-		{
-				SortingRendererClass::Insert_Triangles (0, delta / verticesperprimitive, 0, delta);
-		}
-		else
-		{
-			DX8Wrapper::Draw_Triangles (0, delta / verticesperprimitive, 0, delta);
-		}
+        if (sort)
+        {
+            SortingRendererClass::Insert_Triangles(0, delta / verticesperprimitive, 0, delta);
+        }
+        else
+        {
+            DX8Wrapper::Draw_Triangles(0, delta / verticesperprimitive, 0, delta);
+        }
 
-		current+=delta;
-	} // loop while (current<vnum)
+        current += delta;
+    } // loop while (current<vnum)
 
-	// restore the matrices
-	DX8Wrapper::Set_Transform(D3DTS_VIEW,view);
+    // restore the matrices
+    DX8Wrapper::Set_Transform(D3DTS_VIEW, view);
 }
-
-
-
-
-
-
 
 /**************************************************************************
  * PointGroupClass::Update_Arrays -- Update all arrays used in rendering  *
@@ -1013,415 +1049,445 @@ void PointGroupClass::Render(RenderInfoClass &rinfo)
  *   11/17/1998 NH  : Created.                                            *
  *========================================================================*/
 void PointGroupClass::Update_Arrays(
-	Vector3 *point_loc,
-	Vector4 *point_diffuse,
-	float *point_size,
-	unsigned char *point_orientation,
-	unsigned char *point_frame,
-	int active_points,
-	int total_points,
-	int &vnum,
-	int &pnum)
+    Vector3 *point_loc,
+    Vector4 *point_diffuse,
+    float *point_size,
+    unsigned char *point_orientation,
+    unsigned char *point_frame,
+    int active_points,
+    int total_points,
+    int &vnum,
+    int &pnum)
 {
-	int verts_per_point = (PointMode == QUADS) ? 4 : 3;
-	int polys_per_point = (PointMode == QUADS) ? 2 : 1;
+    int verts_per_point = (PointMode == QUADS) ? 4 : 3;
+    int polys_per_point = (PointMode == QUADS) ? 2 : 1;
 
-	// total_vnum/pnum reflect the size of the point arrays passed to the
-	// point group. These (instead of vnum/pnum, which reflect the number of
-	// active points) are used for the resize logic - the idea is that these
-	// numbers will vary less often than the active numbers.
-	int total_vnum = verts_per_point * total_points;
-	vnum = verts_per_point * active_points;
-	pnum = polys_per_point * active_points;
+    // total_vnum/pnum reflect the size of the point arrays passed to the
+    // point group. These (instead of vnum/pnum, which reflect the number of
+    // active points) are used for the resize logic - the idea is that these
+    // numbers will vary less often than the active numbers.
+    int total_vnum = verts_per_point * total_points;
+    vnum = verts_per_point * active_points;
+    pnum = polys_per_point * active_points;
 
-	// Resize the arrays if they are too small. We only need to check the length of one array
-	// since they always all have the same length.
+    // Resize the arrays if they are too small. We only need to check the length of one array
+    // since they always all have the same length.
 
-	/// @todo lorenzen sez: precompute params below
+    /// @todo lorenzen sez: precompute params below
 
-	if (VertexLoc.Length() < total_vnum) {
-		// Resize arrays (2x guardband to prevent frequent reallocations).
-		VertexLoc.Resize(total_vnum * 2, NULL);
-		VertexUV.Resize(total_vnum * 2, NULL);
-		VertexDiffuse.Resize(total_vnum * 2, NULL);
-	}
+    if (VertexLoc.Length() < total_vnum)
+    {
+        // Resize arrays (2x guardband to prevent frequent reallocations).
+        VertexLoc.Resize(total_vnum * 2, NULL);
+        VertexUV.Resize(total_vnum * 2, NULL);
+        VertexDiffuse.Resize(total_vnum * 2, NULL);
+    }
 
-	int vert, i, j;
+    int vert, i, j;
 
-	/*
-	** Generate the vertex locations from the point locations (note that both are in camera space).
-	** Vertex locations depend on the point mode and the points' orientation and size
-	*/
+    /*
+    ** Generate the vertex locations from the point locations (note that both are in camera space).
+    ** Vertex locations depend on the point mode and the points' orientation and size
+    */
 
-	// This defines the loop we run: the LSB indicates whether there is a size override array, the
-	// next bit indicates whether there is an orientation override array, and the higher bits
-	// indicate the point mode.
-	enum LoopSelectionEnum {
-		TRIS_NOSIZE_NOORIENT		= ((int)TRIS << 2) + 0,
-		TRIS_SIZE_NOORIENT		= ((int)TRIS << 2) + 1,
-		TRIS_NOSIZE_ORIENT		= ((int)TRIS << 2) + 2,
-		TRIS_SIZE_ORIENT			= ((int)TRIS << 2) + 3,
-		QUADS_NOSIZE_NOORIENT	= ((int)QUADS << 2) + 0,
-		QUADS_SIZE_NOORIENT		= ((int)QUADS << 2) + 1,
-		QUADS_NOSIZE_ORIENT		= ((int)QUADS << 2) + 2,
-		QUADS_SIZE_ORIENT			= ((int)QUADS << 2) + 3,
-		SCREEN_NOSIZE_NOORIENT	= ((int)SCREENSPACE << 2) + 0,
-		SCREEN_SIZE_NOORIENT		= ((int)SCREENSPACE << 2) + 1,
-		SCREEN_NOSIZE_ORIENT		= ((int)SCREENSPACE << 2) + 2,
-		SCREEN_SIZE_ORIENT		= ((int)SCREENSPACE << 2) + 3,
-	};
-	LoopSelectionEnum loop_sel = (LoopSelectionEnum)(((int)PointMode << 2) +
-		(point_orientation ? 2 : 0) + (point_size ? 1 : 0));
+    // This defines the loop we run: the LSB indicates whether there is a size override array, the
+    // next bit indicates whether there is an orientation override array, and the higher bits
+    // indicate the point mode.
+    enum LoopSelectionEnum
+    {
+        TRIS_NOSIZE_NOORIENT = ((int)TRIS << 2) + 0,
+        TRIS_SIZE_NOORIENT = ((int)TRIS << 2) + 1,
+        TRIS_NOSIZE_ORIENT = ((int)TRIS << 2) + 2,
+        TRIS_SIZE_ORIENT = ((int)TRIS << 2) + 3,
+        QUADS_NOSIZE_NOORIENT = ((int)QUADS << 2) + 0,
+        QUADS_SIZE_NOORIENT = ((int)QUADS << 2) + 1,
+        QUADS_NOSIZE_ORIENT = ((int)QUADS << 2) + 2,
+        QUADS_SIZE_ORIENT = ((int)QUADS << 2) + 3,
+        SCREEN_NOSIZE_NOORIENT = ((int)SCREENSPACE << 2) + 0,
+        SCREEN_SIZE_NOORIENT = ((int)SCREENSPACE << 2) + 1,
+        SCREEN_NOSIZE_ORIENT = ((int)SCREENSPACE << 2) + 2,
+        SCREEN_SIZE_ORIENT = ((int)SCREENSPACE << 2) + 3,
+    };
+    LoopSelectionEnum loop_sel =
+        (LoopSelectionEnum)(((int)PointMode << 2) + (point_orientation ? 2 : 0) + (point_size ? 1 : 0));
 
-	vert = 0;
-	Vector3 *vertex_loc = &VertexLoc[0];
+    vert = 0;
+    Vector3 *vertex_loc = &VertexLoc[0];
 
+    /// @todo lorenzen sez: this switch statement may be done more compactly another way... look into it
 
-	/// @todo lorenzen sez: this switch statement may be done more compactly another way... look into it
+    switch (loop_sel)
+    {
+        case TRIS_NOSIZE_NOORIENT:
+        {
+            // Setup constant vertex offsets (since size and orientation are invariants)
+            Vector3 scaled_offset[3];
+            scaled_offset[0] = _TriVertexLocationOrientationTable[DefaultPointOrientation][0] * DefaultPointSize;
+            scaled_offset[1] = _TriVertexLocationOrientationTable[DefaultPointOrientation][1] * DefaultPointSize;
+            scaled_offset[2] = _TriVertexLocationOrientationTable[DefaultPointOrientation][2] * DefaultPointSize;
 
-	switch (loop_sel) {
+            // Add vertex offsets to point locations to get vertex locations
+            for (i = 0; i < active_points; i++)
+            {
+                vertex_loc[vert + 0] = point_loc[i] + scaled_offset[0];
+                vertex_loc[vert + 1] = point_loc[i] + scaled_offset[1];
+                vertex_loc[vert + 2] = point_loc[i] + scaled_offset[2];
+                vert += 3;
+            }
+        }
+        break;
 
-		case TRIS_NOSIZE_NOORIENT:
-			{
-				// Setup constant vertex offsets (since size and orientation are invariants)
-				Vector3 scaled_offset[3];
-				scaled_offset[0] = _TriVertexLocationOrientationTable[DefaultPointOrientation][0] * DefaultPointSize;
-				scaled_offset[1] = _TriVertexLocationOrientationTable[DefaultPointOrientation][1] * DefaultPointSize;
-				scaled_offset[2] = _TriVertexLocationOrientationTable[DefaultPointOrientation][2] * DefaultPointSize;
+        case TRIS_SIZE_NOORIENT:
+        {
+            // Scale vertex offsets and add them to point locations to get vertex locations
+            for (i = 0; i < active_points; i++)
+            {
+                vertex_loc[vert + 0] =
+                    point_loc[i] + _TriVertexLocationOrientationTable[DefaultPointOrientation][0] * point_size[i];
+                vertex_loc[vert + 1] =
+                    point_loc[i] + _TriVertexLocationOrientationTable[DefaultPointOrientation][1] * point_size[i];
+                vertex_loc[vert + 2] =
+                    point_loc[i] + _TriVertexLocationOrientationTable[DefaultPointOrientation][2] * point_size[i];
+                vert += 3;
+            }
+        }
+        break;
 
-				// Add vertex offsets to point locations to get vertex locations
-				for (i = 0; i < active_points; i++) {
-					vertex_loc[vert + 0] = point_loc[i] + scaled_offset[0];
-					vertex_loc[vert + 1] = point_loc[i] + scaled_offset[1];
-					vertex_loc[vert + 2] = point_loc[i] + scaled_offset[2];
-					vert += 3;
-				}
-			}
-			break;
+        case TRIS_NOSIZE_ORIENT:
+        {
+            // Scale vertex offsets and add them to point locations to get vertex locations
+            for (i = 0; i < active_points; i++)
+            {
+                vertex_loc[vert + 0] =
+                    point_loc[i] + _TriVertexLocationOrientationTable[point_orientation[i]][0] * DefaultPointSize;
+                vertex_loc[vert + 1] =
+                    point_loc[i] + _TriVertexLocationOrientationTable[point_orientation[i]][1] * DefaultPointSize;
+                vertex_loc[vert + 2] =
+                    point_loc[i] + _TriVertexLocationOrientationTable[point_orientation[i]][2] * DefaultPointSize;
+                vert += 3;
+            }
+        }
+        break;
 
-		case TRIS_SIZE_NOORIENT:
-			{
-				// Scale vertex offsets and add them to point locations to get vertex locations
-				for (i = 0; i < active_points; i++) {
-					vertex_loc[vert + 0] = point_loc[i] +
-						_TriVertexLocationOrientationTable[DefaultPointOrientation][0] * point_size[i];
-					vertex_loc[vert + 1] = point_loc[i] +
-						_TriVertexLocationOrientationTable[DefaultPointOrientation][1] * point_size[i];
-					vertex_loc[vert + 2] = point_loc[i] +
-						_TriVertexLocationOrientationTable[DefaultPointOrientation][2] * point_size[i];
-					vert += 3;
-				}
-			}
-			break;
+        case TRIS_SIZE_ORIENT:
+        {
+            // Scale vertex offsets and add them to point locations to get vertex locations
+            for (i = 0; i < active_points; i++)
+            {
+                vertex_loc[vert + 0] =
+                    point_loc[i] + _TriVertexLocationOrientationTable[point_orientation[i]][0] * point_size[i];
+                vertex_loc[vert + 1] =
+                    point_loc[i] + _TriVertexLocationOrientationTable[point_orientation[i]][1] * point_size[i];
+                vertex_loc[vert + 2] =
+                    point_loc[i] + _TriVertexLocationOrientationTable[point_orientation[i]][2] * point_size[i];
+                vert += 3;
+            }
+        }
+        break;
 
-		case TRIS_NOSIZE_ORIENT:
-			{
-				// Scale vertex offsets and add them to point locations to get vertex locations
-				for (i = 0; i < active_points; i++) {
-					vertex_loc[vert + 0] = point_loc[i] +
-						_TriVertexLocationOrientationTable[point_orientation[i]][0] * DefaultPointSize;
-					vertex_loc[vert + 1] = point_loc[i] +
-						_TriVertexLocationOrientationTable[point_orientation[i]][1] * DefaultPointSize;
-					vertex_loc[vert + 2] = point_loc[i] +
-						_TriVertexLocationOrientationTable[point_orientation[i]][2] * DefaultPointSize;
-					vert += 3;
-				}
-			}
-			break;
+        case QUADS_NOSIZE_NOORIENT:
+        {
+            // Setup constant vertex offsets (since size and orientation are invariants)
+            Vector3 scaled_offset[4];
+            scaled_offset[0] = _QuadVertexLocationOrientationTable[DefaultPointOrientation][0] * DefaultPointSize;
+            scaled_offset[1] = _QuadVertexLocationOrientationTable[DefaultPointOrientation][1] * DefaultPointSize;
+            scaled_offset[2] = _QuadVertexLocationOrientationTable[DefaultPointOrientation][2] * DefaultPointSize;
+            scaled_offset[3] = _QuadVertexLocationOrientationTable[DefaultPointOrientation][3] * DefaultPointSize;
 
-		case TRIS_SIZE_ORIENT:
-			{
-				// Scale vertex offsets and add them to point locations to get vertex locations
-				for (i = 0; i < active_points; i++) {
-					vertex_loc[vert + 0] = point_loc[i] +
-						_TriVertexLocationOrientationTable[point_orientation[i]][0] * point_size[i];
-					vertex_loc[vert + 1] = point_loc[i] +
-						_TriVertexLocationOrientationTable[point_orientation[i]][1] * point_size[i];
-					vertex_loc[vert + 2] = point_loc[i] +
-						_TriVertexLocationOrientationTable[point_orientation[i]][2] * point_size[i];
-					vert += 3;
-				}
-			}
-			break;
+            // Add vertex offsets to point locations to get vertex locations
+            for (i = 0; i < active_points; i++)
+            {
+                vertex_loc[vert + 0] = point_loc[i] + scaled_offset[0];
+                vertex_loc[vert + 1] = point_loc[i] + scaled_offset[1];
+                vertex_loc[vert + 2] = point_loc[i] + scaled_offset[2];
+                vertex_loc[vert + 3] = point_loc[i] + scaled_offset[3];
+                vert += 4;
+            }
+        }
+        break;
 
-		case QUADS_NOSIZE_NOORIENT:
-			{
-				// Setup constant vertex offsets (since size and orientation are invariants)
-				Vector3 scaled_offset[4];
-				scaled_offset[0] = _QuadVertexLocationOrientationTable[DefaultPointOrientation][0] * DefaultPointSize;
-				scaled_offset[1] = _QuadVertexLocationOrientationTable[DefaultPointOrientation][1] * DefaultPointSize;
-				scaled_offset[2] = _QuadVertexLocationOrientationTable[DefaultPointOrientation][2] * DefaultPointSize;
-				scaled_offset[3] = _QuadVertexLocationOrientationTable[DefaultPointOrientation][3] * DefaultPointSize;
+        case QUADS_SIZE_NOORIENT:
+        {
+            // Scale vertex offsets and add them to point locations to get vertex locations
+            for (i = 0; i < active_points; i++)
+            {
+                vertex_loc[vert + 0] =
+                    point_loc[i] + _QuadVertexLocationOrientationTable[DefaultPointOrientation][0] * point_size[i];
+                vertex_loc[vert + 1] =
+                    point_loc[i] + _QuadVertexLocationOrientationTable[DefaultPointOrientation][1] * point_size[i];
+                vertex_loc[vert + 2] =
+                    point_loc[i] + _QuadVertexLocationOrientationTable[DefaultPointOrientation][2] * point_size[i];
+                vertex_loc[vert + 3] =
+                    point_loc[i] + _QuadVertexLocationOrientationTable[DefaultPointOrientation][3] * point_size[i];
+                vert += 4;
+            }
+        }
+        break;
 
-				// Add vertex offsets to point locations to get vertex locations
-				for (i = 0; i < active_points; i++) {
-					vertex_loc[vert + 0] = point_loc[i] + scaled_offset[0];
-					vertex_loc[vert + 1] = point_loc[i] + scaled_offset[1];
-					vertex_loc[vert + 2] = point_loc[i] + scaled_offset[2];
-					vertex_loc[vert + 3] = point_loc[i] + scaled_offset[3];
-					vert += 4;
-				}
-			}
-			break;
+        case QUADS_NOSIZE_ORIENT:
+        {
+            // Scale vertex offsets and add them to point locations to get vertex locations
+            for (i = 0; i < active_points; i++)
+            {
+                vertex_loc[vert + 0] =
+                    point_loc[i] + _QuadVertexLocationOrientationTable[point_orientation[i]][0] * DefaultPointSize;
+                vertex_loc[vert + 1] =
+                    point_loc[i] + _QuadVertexLocationOrientationTable[point_orientation[i]][1] * DefaultPointSize;
+                vertex_loc[vert + 2] =
+                    point_loc[i] + _QuadVertexLocationOrientationTable[point_orientation[i]][2] * DefaultPointSize;
+                vertex_loc[vert + 3] =
+                    point_loc[i] + _QuadVertexLocationOrientationTable[point_orientation[i]][3] * DefaultPointSize;
+                vert += 4;
+            }
+        }
+        break;
 
-		case QUADS_SIZE_NOORIENT:
-			{
-				// Scale vertex offsets and add them to point locations to get vertex locations
-				for (i = 0; i < active_points; i++) {
-					vertex_loc[vert + 0] = point_loc[i] +
-						_QuadVertexLocationOrientationTable[DefaultPointOrientation][0] * point_size[i];
-					vertex_loc[vert + 1] = point_loc[i] +
-						_QuadVertexLocationOrientationTable[DefaultPointOrientation][1] * point_size[i];
-					vertex_loc[vert + 2] = point_loc[i] +
-						_QuadVertexLocationOrientationTable[DefaultPointOrientation][2] * point_size[i];
-					vertex_loc[vert + 3] = point_loc[i] +
-						_QuadVertexLocationOrientationTable[DefaultPointOrientation][3] * point_size[i];
-					vert += 4;
-				}
-			}
-			break;
+        case QUADS_SIZE_ORIENT:
+        {
+            Matrix4x4 view;
+            Vector4 result;
+            if (!Billboard)
+            {
+                DX8Wrapper::Get_Transform(D3DTS_VIEW, view);
+            }
 
-		case QUADS_NOSIZE_ORIENT:
-			{
-				// Scale vertex offsets and add them to point locations to get vertex locations
-				for (i = 0; i < active_points; i++) {
-					vertex_loc[vert + 0] = point_loc[i] +
-						_QuadVertexLocationOrientationTable[point_orientation[i]][0] * DefaultPointSize;
-					vertex_loc[vert + 1] = point_loc[i] +
-						_QuadVertexLocationOrientationTable[point_orientation[i]][1] * DefaultPointSize;
-					vertex_loc[vert + 2] = point_loc[i] +
-						_QuadVertexLocationOrientationTable[point_orientation[i]][2] * DefaultPointSize;
-					vertex_loc[vert + 3] = point_loc[i] +
-						_QuadVertexLocationOrientationTable[point_orientation[i]][3] * DefaultPointSize;
-					vert += 4;
-				}
-			}
-			break;
+            // Scale vertex offsets and add them to point locations to get vertex locations
+            for (i = 0; i < active_points; i++)
+            {
+                if (!Billboard)
+                {
+                    // If we're not billboarding, then the coordinate we have is in screen space.
+                    Matrix4x4 rotMat;
+                    D3DXMatrixRotationZ(&(D3DXMATRIX &)rotMat, ((float)point_orientation[i] / 255.0f * 2 * D3DX_PI));
 
-		case QUADS_SIZE_ORIENT:
-			{
-				Matrix4x4 view;
-				Vector4 result;
-				if (!Billboard) {
-					DX8Wrapper::Get_Transform(D3DTS_VIEW,view);
-				}
+                    Vector4 orientedVecX = rotMat * GroundMultiplierX;
+                    Vector4 orientedVecY = rotMat * GroundMultiplierY;
 
-				// Scale vertex offsets and add them to point locations to get vertex locations
-				for (i = 0; i < active_points; i++) {
-					if (!Billboard) {
-						// If we're not billboarding, then the coordinate we have is in screen space.
-						Matrix4x4 rotMat;
-						D3DXMatrixRotationZ(&(D3DXMATRIX&) rotMat, ((float)point_orientation[i] / 255.0f * 2 * D3DX_PI));
+                    vertex_loc[vert + 0].X = point_loc[i].X + (orientedVecX.X + orientedVecY.X) * point_size[i];
+                    vertex_loc[vert + 0].Y = point_loc[i].Y + (orientedVecX.Y + orientedVecY.Y) * point_size[i];
+                    vertex_loc[vert + 0].Z = point_loc[i].Z;
 
-						Vector4 orientedVecX = rotMat * GroundMultiplierX;
-						Vector4 orientedVecY = rotMat * GroundMultiplierY;
+                    vertex_loc[vert + 1].X = point_loc[i].X + (orientedVecX.X - orientedVecY.X) * point_size[i];
+                    vertex_loc[vert + 1].Y = point_loc[i].Y + (orientedVecX.Y - orientedVecY.Y) * point_size[i];
+                    vertex_loc[vert + 1].Z = point_loc[i].Z;
 
-						vertex_loc[vert + 0].X = point_loc[i].X +	(orientedVecX.X + orientedVecY.X) * point_size[i];
-						vertex_loc[vert + 0].Y = point_loc[i].Y +	(orientedVecX.Y + orientedVecY.Y) * point_size[i];
-						vertex_loc[vert + 0].Z = point_loc[i].Z;
+                    vertex_loc[vert + 2].X = point_loc[i].X + -(orientedVecX.X + orientedVecY.X) * point_size[i];
+                    vertex_loc[vert + 2].Y = point_loc[i].Y + -(orientedVecX.Y + orientedVecY.Y) * point_size[i];
+                    vertex_loc[vert + 2].Z = point_loc[i].Z;
 
-						vertex_loc[vert + 1].X = point_loc[i].X +	(orientedVecX.X - orientedVecY.X) * point_size[i];
-						vertex_loc[vert + 1].Y = point_loc[i].Y +	(orientedVecX.Y - orientedVecY.Y) * point_size[i];
-						vertex_loc[vert + 1].Z = point_loc[i].Z;
+                    vertex_loc[vert + 3].X = point_loc[i].X + (-orientedVecX.X + orientedVecY.X) * point_size[i];
+                    vertex_loc[vert + 3].Y = point_loc[i].Y + (-orientedVecX.Y + orientedVecY.Y) * point_size[i];
+                    vertex_loc[vert + 3].Z = point_loc[i].Z;
 
-						vertex_loc[vert + 2].X = point_loc[i].X +	-(orientedVecX.X + orientedVecY.X) * point_size[i];
-						vertex_loc[vert + 2].Y = point_loc[i].Y +	-(orientedVecX.Y + orientedVecY.Y) * point_size[i];
-						vertex_loc[vert + 2].Z = point_loc[i].Z;
+                    // now apply the view transform so that this data is in the format expected
+                    // upon the functions return.
+                    result = view * vertex_loc[vert + 0];
+                    vertex_loc[vert + 0].X = result.X;
+                    vertex_loc[vert + 0].Y = result.Y;
+                    vertex_loc[vert + 0].Z = result.Z;
 
-						vertex_loc[vert + 3].X = point_loc[i].X +	(-orientedVecX.X + orientedVecY.X) * point_size[i];
-						vertex_loc[vert + 3].Y = point_loc[i].Y +	(-orientedVecX.Y + orientedVecY.Y) * point_size[i];
-						vertex_loc[vert + 3].Z = point_loc[i].Z;
+                    result = view * vertex_loc[vert + 1];
+                    vertex_loc[vert + 1].X = result.X;
+                    vertex_loc[vert + 1].Y = result.Y;
+                    vertex_loc[vert + 1].Z = result.Z;
 
-						// now apply the view transform so that this data is in the format expected
-						// upon the functions return.
-						result = view*vertex_loc[vert + 0];
-						vertex_loc[vert + 0].X = result.X;
-						vertex_loc[vert + 0].Y = result.Y;
-						vertex_loc[vert + 0].Z = result.Z;
+                    result = view * vertex_loc[vert + 2];
+                    vertex_loc[vert + 2].X = result.X;
+                    vertex_loc[vert + 2].Y = result.Y;
+                    vertex_loc[vert + 2].Z = result.Z;
 
-						result = view*vertex_loc[vert + 1];
-						vertex_loc[vert + 1].X = result.X;
-						vertex_loc[vert + 1].Y = result.Y;
-						vertex_loc[vert + 1].Z = result.Z;
+                    result = view * vertex_loc[vert + 3];
+                    vertex_loc[vert + 3].X = result.X;
+                    vertex_loc[vert + 3].Y = result.Y;
+                    vertex_loc[vert + 3].Z = result.Z;
+                }
+                else
+                {
+                    vertex_loc[vert + 0] =
+                        point_loc[i] + _QuadVertexLocationOrientationTable[point_orientation[i]][0] * point_size[i];
+                    vertex_loc[vert + 1] =
+                        point_loc[i] + _QuadVertexLocationOrientationTable[point_orientation[i]][1] * point_size[i];
+                    vertex_loc[vert + 2] =
+                        point_loc[i] + _QuadVertexLocationOrientationTable[point_orientation[i]][2] * point_size[i];
+                    vertex_loc[vert + 3] =
+                        point_loc[i] + _QuadVertexLocationOrientationTable[point_orientation[i]][3] * point_size[i];
+                }
+                vert += 4;
+            }
+        }
+        break;
 
-						result = view*vertex_loc[vert + 2];
-						vertex_loc[vert + 2].X = result.X;
-						vertex_loc[vert + 2].Y = result.Y;
-						vertex_loc[vert + 2].Z = result.Z;
+        // Orientations are ignored for screensize pointgroups
+        case SCREEN_NOSIZE_NOORIENT:
+        case SCREEN_NOSIZE_ORIENT:
+        {
+            // Offsets need to be scaled to the current screen resolution
 
-						result = view*vertex_loc[vert + 3];
-						vertex_loc[vert + 3].X = result.X;
-						vertex_loc[vert + 3].Y = result.Y;
-						vertex_loc[vert + 3].Z = result.Z;
-					} else {
+            // First find x and y scale factors (sizes in pixels need to be
+            // normalized to 2D cam viewplane of -1,-1 to 1,1)
+            int xres, yres, bitdepth;
+            bool windowed;
+            WW3D::Get_Render_Target_Resolution(xres, yres, bitdepth, windowed);
 
-						vertex_loc[vert + 0] = point_loc[i] +
-							_QuadVertexLocationOrientationTable[point_orientation[i]][0] * point_size[i];
-						vertex_loc[vert + 1] = point_loc[i] +
-							_QuadVertexLocationOrientationTable[point_orientation[i]][1] * point_size[i];
-						vertex_loc[vert + 2] = point_loc[i] +
-							_QuadVertexLocationOrientationTable[point_orientation[i]][2] * point_size[i];
-						vertex_loc[vert + 3] = point_loc[i] +
-							_QuadVertexLocationOrientationTable[point_orientation[i]][3] * point_size[i];
-					}
-					vert += 4;
-				}
-			}
-			break;
+            float x_scale = (VPXMax - VPXMin) / xres;
+            float y_scale = (VPYMax - VPYMin) / yres;
 
-		// Orientations are ignored for screensize pointgroups
-		case SCREEN_NOSIZE_NOORIENT:
-		case SCREEN_NOSIZE_ORIENT:
-			{
-				// Offsets need to be scaled to the current screen resolution
+            Vector3 scaled_locs[2][3];
+            for (int i = 0; i < 2; i++)
+            {
+                for (int j = 0; j < 3; j++)
+                {
+                    scaled_locs[i][j].X = _ScreenspaceVertexLocationSizeTable[i][j].X * x_scale;
+                    scaled_locs[i][j].Y = _ScreenspaceVertexLocationSizeTable[i][j].Y * y_scale;
+                    scaled_locs[i][j].Z = _ScreenspaceVertexLocationSizeTable[i][j].Z;
+                }
+            }
 
-   			// First find x and y scale factors (sizes in pixels need to be
-   			// normalized to 2D cam viewplane of -1,-1 to 1,1)
-   			int xres, yres, bitdepth;
-   			bool windowed;
-   			WW3D::Get_Render_Target_Resolution(xres, yres, bitdepth, windowed);
+            // Add vertex offsets to point locations to get vertex locations
+            int size_idx = (DefaultPointSize <= 1.0f) ? 0 : 1;
+            for (i = 0; i < active_points; i++)
+            {
+                vertex_loc[vert + 0] = point_loc[i] + scaled_locs[size_idx][0];
+                vertex_loc[vert + 1] = point_loc[i] + scaled_locs[size_idx][1];
+                vertex_loc[vert + 2] = point_loc[i] + scaled_locs[size_idx][2];
+                vert += 3;
+            }
+        }
+        break;
 
-   			float x_scale = (VPXMax - VPXMin) / xres;
-   			float y_scale = (VPYMax - VPYMin) / yres;
+        case SCREEN_SIZE_NOORIENT:
+        case SCREEN_SIZE_ORIENT:
+        {
+            // Offsets need to be scaled to the current screen resolution
 
-				Vector3 scaled_locs[2][3];
-				for (int i = 0; i < 2; i++) {
-					for (int j = 0; j < 3; j++) {
-						scaled_locs[i][j].X = _ScreenspaceVertexLocationSizeTable[i][j].X * x_scale;
-						scaled_locs[i][j].Y = _ScreenspaceVertexLocationSizeTable[i][j].Y * y_scale;
-						scaled_locs[i][j].Z = _ScreenspaceVertexLocationSizeTable[i][j].Z;
-					}
-				}
+            // First find x and y scale factors (sizes in pixels need to be
+            // normalized to 2D cam viewplane of -1,-1 to 1,1)
+            int xres, yres, bitdepth;
+            bool windowed;
+            WW3D::Get_Render_Target_Resolution(xres, yres, bitdepth, windowed);
 
-				// Add vertex offsets to point locations to get vertex locations
-				int size_idx = (DefaultPointSize <= 1.0f) ? 0 : 1;
-				for (i = 0; i < active_points; i++) {
-					vertex_loc[vert + 0] = point_loc[i] + scaled_locs[size_idx][0];
-					vertex_loc[vert + 1] = point_loc[i] + scaled_locs[size_idx][1];
-					vertex_loc[vert + 2] = point_loc[i] + scaled_locs[size_idx][2];
-					vert += 3;
-				}
-			}
-			break;
+            float x_scale = (VPXMax - VPXMin) / xres;
+            float y_scale = (VPYMax - VPYMin) / yres;
 
-		case SCREEN_SIZE_NOORIENT:
-		case SCREEN_SIZE_ORIENT:
-			{
-				// Offsets need to be scaled to the current screen resolution
+            Vector3 scaled_locs[2][3];
+            for (int i = 0; i < 2; i++)
+            {
+                for (int j = 0; j < 3; j++)
+                {
+                    scaled_locs[i][j].X = _ScreenspaceVertexLocationSizeTable[i][j].X * x_scale;
+                    scaled_locs[i][j].Y = _ScreenspaceVertexLocationSizeTable[i][j].Y * y_scale;
+                    scaled_locs[i][j].Z = _ScreenspaceVertexLocationSizeTable[i][j].Z;
+                }
+            }
 
-   			// First find x and y scale factors (sizes in pixels need to be
-   			// normalized to 2D cam viewplane of -1,-1 to 1,1)
-   			int xres, yres, bitdepth;
-   			bool windowed;
-   			WW3D::Get_Render_Target_Resolution(xres, yres, bitdepth, windowed);
+            // Add vertex offsets to point locations to get vertex locations
+            for (i = 0; i < active_points; i++)
+            {
+                int size_idx = (point_size[i] <= 1.0f) ? 0 : 1;
+                vertex_loc[vert + 0] = point_loc[i] + scaled_locs[size_idx][0];
+                vertex_loc[vert + 1] = point_loc[i] + scaled_locs[size_idx][1];
+                vertex_loc[vert + 2] = point_loc[i] + scaled_locs[size_idx][2];
+                vert += 3;
+            }
+        }
+        break;
 
-   			float x_scale = (VPXMax - VPXMin) / xres;
-   			float y_scale = (VPYMax - VPYMin) / yres;
+        default:
+            WWASSERT(0);
+            break;
+    }
 
-				Vector3 scaled_locs[2][3];
-				for (int i = 0; i < 2; i++) {
-					for (int j = 0; j < 3; j++) {
-						scaled_locs[i][j].X = _ScreenspaceVertexLocationSizeTable[i][j].X * x_scale;
-						scaled_locs[i][j].Y = _ScreenspaceVertexLocationSizeTable[i][j].Y * y_scale;
-						scaled_locs[i][j].Z = _ScreenspaceVertexLocationSizeTable[i][j].Z;
-					}
-				}
+    /*
+    ** Fill the UV vertex array
+    */
 
-				// Add vertex offsets to point locations to get vertex locations
-				for (i = 0; i < active_points; i++) {
-					int size_idx = (point_size[i] <= 1.0f) ? 0 : 1;
-					vertex_loc[vert + 0] = point_loc[i] + scaled_locs[size_idx][0];
-					vertex_loc[vert + 1] = point_loc[i] + scaled_locs[size_idx][1];
-					vertex_loc[vert + 2] = point_loc[i] + scaled_locs[size_idx][2];
-					vert += 3;
-				}
-			}
-			break;
+    unsigned int frame_mask =
+        ~(0xFFFFFFFF << (FrameRowColumnCountLog2 + FrameRowColumnCountLog2)); // To ensure frames in range
+    if (point_frame)
+    {
+        /// @todo lorenzen sez: use pointer arithmetic below
 
-		default:
-			WWASSERT(0);
-			break;
+        // Fill UV array according to frame override array:
+        Vector2 *vertex_uv = &VertexUV[0];
+        if (PointMode != QUADS)
+        {
+            // Modes with three vertices per point:
+            Vector2 *uv_ptr = _TriVertexUVFrameTable[FrameRowColumnCountLog2];
+            int vert = 0;
+            for (int i = 0; i < active_points; i++)
+            {
+                int uv_idx = (point_frame[i] & frame_mask) * 3;
+                vertex_uv[vert++] = uv_ptr[uv_idx + 0];
+                vertex_uv[vert++] = uv_ptr[uv_idx + 1];
+                vertex_uv[vert++] = uv_ptr[uv_idx + 2];
+            }
+        }
+        else
+        {
+            // Modes with four vertices per point:
+            Vector2 *uv_ptr = _QuadVertexUVFrameTable[FrameRowColumnCountLog2];
+            int vert = 0;
+            for (int i = 0; i < active_points; i++)
+            {
+                int uv_idx = (point_frame[i] & frame_mask) * 4;
+                vertex_uv[vert++] = uv_ptr[uv_idx + 0];
+                vertex_uv[vert++] = uv_ptr[uv_idx + 1];
+                vertex_uv[vert++] = uv_ptr[uv_idx + 2];
+                vertex_uv[vert++] = uv_ptr[uv_idx + 3];
+            }
+        }
+    }
+    else
+    {
+        /// @todo lorenzen sez: use pointer arithmetic below
+        // Fill UV array according to frame state:
+        Vector2 *vertex_uv = &VertexUV[0];
+        if (PointMode != QUADS)
+        {
+            // Modes with three vertices per point:
+            Vector2 *uv_ptr = _TriVertexUVFrameTable[FrameRowColumnCountLog2] + ((DefaultPointFrame & frame_mask) * 3);
+            int vert = 0;
+            for (int i = 0; i < active_points; i++)
+            {
+                vertex_uv[vert++] = uv_ptr[0];
+                vertex_uv[vert++] = uv_ptr[1];
+                vertex_uv[vert++] = uv_ptr[2];
+            }
+        }
+        else
+        {
+            // Modes with four vertices per point:
+            Vector2 *uv_ptr = _QuadVertexUVFrameTable[FrameRowColumnCountLog2] + ((DefaultPointFrame & frame_mask) * 4);
+            int vert = 0;
+            for (int i = 0; i < active_points; i++)
+            {
+                vertex_uv[vert++] = uv_ptr[0];
+                vertex_uv[vert++] = uv_ptr[1];
+                vertex_uv[vert++] = uv_ptr[2];
+                vertex_uv[vert++] = uv_ptr[3];
+            }
+        }
+    }
 
-	}
-
-	/*
-	** Fill the UV vertex array
-	*/
-
-	unsigned int frame_mask = ~(0xFFFFFFFF << (FrameRowColumnCountLog2 + FrameRowColumnCountLog2));// To ensure frames in range
-	if (point_frame) {
-
-	/// @todo lorenzen sez: use pointer arithmetic below
-
-		// Fill UV array according to frame override array:
-		Vector2 *vertex_uv = &VertexUV[0];
-		if (PointMode != QUADS) {
-			// Modes with three vertices per point:
-			Vector2 *uv_ptr = _TriVertexUVFrameTable[FrameRowColumnCountLog2];
-			int vert = 0;
-			for (int i = 0; i < active_points; i++) {
-				int uv_idx = (point_frame[i] & frame_mask) * 3;
-				vertex_uv[vert++] = uv_ptr[uv_idx + 0];
-				vertex_uv[vert++] = uv_ptr[uv_idx + 1];
-				vertex_uv[vert++] = uv_ptr[uv_idx + 2];
-			}
-		} else {
-			// Modes with four vertices per point:
-			Vector2 *uv_ptr = _QuadVertexUVFrameTable[FrameRowColumnCountLog2];
-			int vert = 0;
-			for (int i = 0; i < active_points; i++) {
-				int uv_idx = (point_frame[i] & frame_mask) * 4;
-				vertex_uv[vert++] = uv_ptr[uv_idx + 0];
-				vertex_uv[vert++] = uv_ptr[uv_idx + 1];
-				vertex_uv[vert++] = uv_ptr[uv_idx + 2];
-				vertex_uv[vert++] = uv_ptr[uv_idx + 3];
-			}
-		}
-
-	} else {
-		/// @todo lorenzen sez: use pointer arithmetic below
-		// Fill UV array according to frame state:
-		Vector2 *vertex_uv = &VertexUV[0];
-		if (PointMode != QUADS) {
-			// Modes with three vertices per point:
-			Vector2 *uv_ptr = _TriVertexUVFrameTable[FrameRowColumnCountLog2] + ((DefaultPointFrame & frame_mask) * 3);
-			int vert = 0;
-			for (int i = 0; i < active_points; i++) {
-				vertex_uv[vert++] = uv_ptr[0];
-				vertex_uv[vert++] = uv_ptr[1];
-				vertex_uv[vert++] = uv_ptr[2];
-			}
-		} else {
-			// Modes with four vertices per point:
-			Vector2 *uv_ptr = _QuadVertexUVFrameTable[FrameRowColumnCountLog2] + ((DefaultPointFrame & frame_mask) * 4);
-			int vert = 0;
-			for (int i = 0; i < active_points; i++) {
-				vertex_uv[vert++] = uv_ptr[0];
-				vertex_uv[vert++] = uv_ptr[1];
-				vertex_uv[vert++] = uv_ptr[2];
-				vertex_uv[vert++] = uv_ptr[3];
-			}
-		}
-
-	}
-
-	/*
-	** If we have a point color array, fill the vertex diffuse array from it.
-	*/
-	/// @todo lorenzen sez: use a quicker, unwrapped loop, and pointer arithmetic
-	/// @todo lorenzen sez: this is a leaf function, dang it
-	vert = 0;
-	if (point_diffuse) {
-		Vector4* vertex_color = &VertexDiffuse[0];
-		for (i = 0; i < active_points; i++) {
-			for (j = 0; j < verts_per_point; j++) {
-				vertex_color[vert + j] = point_diffuse[i];
-			}
-			vert += verts_per_point;
-		}
-	}
+    /*
+    ** If we have a point color array, fill the vertex diffuse array from it.
+    */
+    /// @todo lorenzen sez: use a quicker, unwrapped loop, and pointer arithmetic
+    /// @todo lorenzen sez: this is a leaf function, dang it
+    vert = 0;
+    if (point_diffuse)
+    {
+        Vector4 *vertex_color = &VertexDiffuse[0];
+        for (i = 0; i < active_points; i++)
+        {
+            for (j = 0; j < verts_per_point; j++)
+            {
+                vertex_color[vert + j] = point_diffuse[i];
+            }
+            vert += verts_per_point;
+        }
+    }
 }
-
 
 /**************************************************************************
  * PointGroupClass::_Init -- Create static data.                          *
@@ -1437,155 +1503,143 @@ void PointGroupClass::Update_Arrays(
  *========================================================================*/
 void PointGroupClass::_Init(void)
 {
-	int i, j;
+    int i, j;
 
-	/*
-	** Fill vertex location orientation tables
-	*/
+    /*
+    ** Fill vertex location orientation tables
+    */
 
-	// Unrotated locations
-	Vector3 tri_locs[3] = {
-		Vector3(0.0f, -2.0f, 0.0f),
-		Vector3(-1.732f, 1.0f, 0.0f),
-		Vector3(1.732f, 1.0f, 0.0f)
-	};
-	Vector3 quad_locs[4] = {
-		Vector3(-0.5f, 0.5f, 0.0f),
-		Vector3(-0.5f, -0.5f, 0.0f),
-		Vector3(0.5f, -0.5f, 0.0f),
-		Vector3(0.5f, 0.5f, 0.0f)
-	};
+    // Unrotated locations
+    Vector3 tri_locs[3] = {Vector3(0.0f, -2.0f, 0.0f), Vector3(-1.732f, 1.0f, 0.0f), Vector3(1.732f, 1.0f, 0.0f)};
+    Vector3 quad_locs[4] =
+        {Vector3(-0.5f, 0.5f, 0.0f), Vector3(-0.5f, -0.5f, 0.0f), Vector3(0.5f, -0.5f, 0.0f), Vector3(0.5f, 0.5f, 0.0f)};
 
-/// @todo lorenzen sez: unwrap loop and use pointer arithmetic (if this gets called a lot)
+    /// @todo lorenzen sez: unwrap loop and use pointer arithmetic (if this gets called a lot)
 
-	float angle = 0.0f;	// In radians
-	float angle_step = (WWMATH_PI * 2.0f) / 256.0f;	// In radians
-	for (i = 0; i < 256; i++) {
-		float c = WWMath::Fast_Cos(angle);
-		float s = WWMath::Fast_Sin(angle);
-		for (j = 0; j < 3; j++) {
-			_TriVertexLocationOrientationTable[i][j].X = tri_locs[j].X * c - tri_locs[j].Y * s;
-			_TriVertexLocationOrientationTable[i][j].Y = tri_locs[j].X * s + tri_locs[j].Y * c;
-			_TriVertexLocationOrientationTable[i][j].Z = tri_locs[j].Z;
-		}
-		for (j = 0; j < 4; j++) {
-			_QuadVertexLocationOrientationTable[i][j].X = quad_locs[j].X * c - quad_locs[j].Y * s;
-			_QuadVertexLocationOrientationTable[i][j].Y = quad_locs[j].X * s + quad_locs[j].Y * c;
-			_QuadVertexLocationOrientationTable[i][j].Z = quad_locs[j].Z;
-		}
-		angle += angle_step;
-	}
+    float angle = 0.0f; // In radians
+    float angle_step = (WWMATH_PI * 2.0f) / 256.0f; // In radians
+    for (i = 0; i < 256; i++)
+    {
+        float c = WWMath::Fast_Cos(angle);
+        float s = WWMath::Fast_Sin(angle);
+        for (j = 0; j < 3; j++)
+        {
+            _TriVertexLocationOrientationTable[i][j].X = tri_locs[j].X * c - tri_locs[j].Y * s;
+            _TriVertexLocationOrientationTable[i][j].Y = tri_locs[j].X * s + tri_locs[j].Y * c;
+            _TriVertexLocationOrientationTable[i][j].Z = tri_locs[j].Z;
+        }
+        for (j = 0; j < 4; j++)
+        {
+            _QuadVertexLocationOrientationTable[i][j].X = quad_locs[j].X * c - quad_locs[j].Y * s;
+            _QuadVertexLocationOrientationTable[i][j].Y = quad_locs[j].X * s + quad_locs[j].Y * c;
+            _QuadVertexLocationOrientationTable[i][j].Z = quad_locs[j].Z;
+        }
+        angle += angle_step;
+    }
 
-	/*
-	** Fill frame UV tables
-	*/
-	// Unscaled / untranslated UVs
-	Vector2 tri_uvs[3] = {
-		Vector2(0.5f, 0.0f),
-		Vector2(0.0f, 0.866f),
-		Vector2(1.0f, 0.866f)
-	};
-	Vector2 quad_uvs[4] = {
-		Vector2(0.0f, 0.0f),
-		Vector2(0.0f, 1.0f),
-		Vector2(1.0f, 1.0f),
-		Vector2(1.0f, 0.0f)
-	};
+    /*
+    ** Fill frame UV tables
+    */
+    // Unscaled / untranslated UVs
+    Vector2 tri_uvs[3] = {Vector2(0.5f, 0.0f), Vector2(0.0f, 0.866f), Vector2(1.0f, 0.866f)};
+    Vector2 quad_uvs[4] = {Vector2(0.0f, 0.0f), Vector2(0.0f, 1.0f), Vector2(1.0f, 1.0f), Vector2(1.0f, 0.0f)};
 
-	/// @todo lorenzen sez: umwrap and use pointers
-	for (i = 0; i < 5; i++) {
+    /// @todo lorenzen sez: umwrap and use pointers
+    for (i = 0; i < 5; i++)
+    {
+        unsigned int rows = 1 << i;
+        unsigned int count = rows * rows;
 
-		unsigned int rows = 1 << i;
-		unsigned int count = rows * rows;
+        Vector2 *tri_table = _TriVertexUVFrameTable[i] = W3DNEWARRAY Vector2[count * 3];
+        Vector2 *quad_table = _QuadVertexUVFrameTable[i] = W3DNEWARRAY Vector2[count * 4];
 
-		Vector2 *tri_table = _TriVertexUVFrameTable[i] = W3DNEWARRAY Vector2[count * 3];
-		Vector2 *quad_table = _QuadVertexUVFrameTable[i] = W3DNEWARRAY Vector2[count * 4];
+        Vector2 corner(0.0f, 0.0f);
+        float scale = 1.0f / (float)rows;
 
-		Vector2 corner(0.0f, 0.0f);
-		float scale = 1.0f / (float)rows;
+        int tri_idx = 0;
+        int quad_idx = 0;
+        for (unsigned int v = 0; v < rows; v++)
+        {
+            for (unsigned int u = 0; u < rows; u++)
+            {
+                tri_table[tri_idx++] = corner + (tri_uvs[0] * scale);
+                tri_table[tri_idx++] = corner + (tri_uvs[1] * scale);
+                tri_table[tri_idx++] = corner + (tri_uvs[2] * scale);
 
-		int tri_idx = 0;
-		int quad_idx = 0;
-		for (unsigned int v = 0; v < rows; v++) {
-			for (unsigned int u = 0; u < rows; u++) {
+                quad_table[quad_idx++] = corner + (quad_uvs[0] * scale);
+                quad_table[quad_idx++] = corner + (quad_uvs[1] * scale);
+                quad_table[quad_idx++] = corner + (quad_uvs[2] * scale);
+                quad_table[quad_idx++] = corner + (quad_uvs[3] * scale);
 
-				tri_table[tri_idx++] = corner + (tri_uvs[0] * scale);
-				tri_table[tri_idx++] = corner + (tri_uvs[1] * scale);
-				tri_table[tri_idx++] = corner + (tri_uvs[2] * scale);
+                corner.X += scale;
+            }
+            corner.Y += scale;
+            corner.X = 0.0f;
+        }
+    }
 
-				quad_table[quad_idx++] = corner + (quad_uvs[0] * scale);
-				quad_table[quad_idx++] = corner + (quad_uvs[1] * scale);
-				quad_table[quad_idx++] = corner + (quad_uvs[2] * scale);
-				quad_table[quad_idx++] = corner + (quad_uvs[3] * scale);
+    // Create the IBs
+    Tris = NEW_REF(DX8IndexBufferClass, (MAX_TRI_IB_SIZE));
+    Quads = NEW_REF(DX8IndexBufferClass, (MAX_QUAD_IB_SIZE));
+    SortingTris = NEW_REF(SortingIndexBufferClass, (MAX_TRI_IB_SIZE));
+    SortingQuads = NEW_REF(SortingIndexBufferClass, (MAX_QUAD_IB_SIZE));
 
-				corner.X += scale;
-			}
-			corner.Y += scale;
-			corner.X = 0.0f;
-		}
-	}
+    // Fill up the IBs
+    {
+        DX8IndexBufferClass::WriteLockClass locktris(Tris);
+        unsigned short *ib = locktris.Get_Index_Array();
+        for (i = 0; i < MAX_TRI_IB_SIZE; i++)
+            ib[i] = (unsigned short)i;
+    }
 
-	// Create the IBs
-	Tris=NEW_REF(DX8IndexBufferClass,(MAX_TRI_IB_SIZE));
-	Quads=NEW_REF(DX8IndexBufferClass,(MAX_QUAD_IB_SIZE));
-	SortingTris=NEW_REF(SortingIndexBufferClass,(MAX_TRI_IB_SIZE));
-	SortingQuads=NEW_REF(SortingIndexBufferClass,(MAX_QUAD_IB_SIZE));
+    {
+        unsigned short vert = 0;
+        DX8IndexBufferClass::WriteLockClass lockquads(Quads);
+        unsigned short *ib = lockquads.Get_Index_Array();
+        vert = 0;
+        for (i = 0; i < MAX_QUAD_IB_SIZE; i += 6)
+        {
+            /// @todo lorenzen sez: pointer arithmetic like "++ib=vert+1"
 
-	// Fill up the IBs
-	{
-		DX8IndexBufferClass::WriteLockClass locktris(Tris);
-		unsigned short *ib=locktris.Get_Index_Array();
-		for (i=0; i<MAX_TRI_IB_SIZE; i++) ib[i]=(unsigned short) i;
-	}
+            ib[i] = vert;
+            ib[i + 1] = vert + 1;
+            ib[i + 2] = vert + 2;
 
-	{
-		unsigned short vert=0;
-		DX8IndexBufferClass::WriteLockClass lockquads(Quads);
-		unsigned short *ib=lockquads.Get_Index_Array();
-		vert=0;
-		for (i=0; i<MAX_QUAD_IB_SIZE; i+=6)
-		{
-/// @todo lorenzen sez: pointer arithmetic like "++ib=vert+1"
+            ib[i + 3] = vert + 2;
+            ib[i + 4] = vert + 3;
+            ib[i + 5] = vert;
+            vert += 4;
+        }
+    }
 
-			ib[i]=vert;
-			ib[i+1]=vert+1;
-			ib[i+2]=vert+2;
+    {
+        SortingIndexBufferClass::WriteLockClass locktris(SortingTris);
+        unsigned short *ib = locktris.Get_Index_Array();
+        for (i = 0; i < MAX_TRI_IB_SIZE; i++)
+            ib[i] = (unsigned short)i;
+    }
 
-			ib[i+3]=vert+2;
-			ib[i+4]=vert+3;
-			ib[i+5]=vert;
-			vert+=4;
-		}
-	}
+    {
+        unsigned short vert = 0;
+        SortingIndexBufferClass::WriteLockClass lockquads(SortingQuads);
+        unsigned short *ib = lockquads.Get_Index_Array();
+        vert = 0;
+        for (i = 0; i < MAX_QUAD_IB_SIZE; i += 6)
+        {
+            /// @todo lorenzen sez: pointers!
+            ib[i] = vert;
+            ib[i + 1] = vert + 1;
+            ib[i + 2] = vert + 2;
 
-	{
-		SortingIndexBufferClass::WriteLockClass locktris(SortingTris);
-		unsigned short *ib=locktris.Get_Index_Array();
-		for (i=0; i<MAX_TRI_IB_SIZE; i++) ib[i]=(unsigned short) i;
-	}
+            ib[i + 3] = vert + 2;
+            ib[i + 4] = vert + 3;
+            ib[i + 5] = vert;
+            vert += 4;
+        }
+    }
 
-	{
-		unsigned short vert=0;
-		SortingIndexBufferClass::WriteLockClass lockquads(SortingQuads);
-		unsigned short *ib=lockquads.Get_Index_Array();
-		vert=0;
-		for (i=0; i<MAX_QUAD_IB_SIZE; i+=6)
-		{
-			/// @todo lorenzen sez: pointers!
-			ib[i]=vert;
-			ib[i+1]=vert+1;
-			ib[i+2]=vert+2;
-
-			ib[i+3]=vert+2;
-			ib[i+4]=vert+3;
-			ib[i+5]=vert;
-			vert+=4;
-		}
-	}
-
-	PointMaterial=VertexMaterialClass::Get_Preset(VertexMaterialClass::PRELIT_DIFFUSE);
+    PointMaterial = VertexMaterialClass::Get_Preset(VertexMaterialClass::PRELIT_DIFFUSE);
 }
-
 
 /**************************************************************************
  * PointGroupClass::_Shutdown -- Destroy static data.                     *
@@ -1601,25 +1655,21 @@ void PointGroupClass::_Init(void)
  *========================================================================*/
 void PointGroupClass::_Shutdown(void)
 {
-	for (int i = 0; i < 5; i++) {
-		delete [] _TriVertexUVFrameTable[i];
-		delete [] _QuadVertexUVFrameTable[i];
-	}
-	REF_PTR_RELEASE(PointMaterial);
-	REF_PTR_RELEASE(SortingQuads);
-	REF_PTR_RELEASE(SortingTris);
-	REF_PTR_RELEASE(Quads);
-	REF_PTR_RELEASE(Tris);
-	transformed_loc.Clear();
-	VertexLoc.Clear();
-	VertexDiffuse.Clear();
-	VertexUV.Clear();
+    for (int i = 0; i < 5; i++)
+    {
+        delete[] _TriVertexUVFrameTable[i];
+        delete[] _QuadVertexUVFrameTable[i];
+    }
+    REF_PTR_RELEASE(PointMaterial);
+    REF_PTR_RELEASE(SortingQuads);
+    REF_PTR_RELEASE(SortingTris);
+    REF_PTR_RELEASE(Quads);
+    REF_PTR_RELEASE(Tris);
+    transformed_loc.Clear();
+    VertexLoc.Clear();
+    VertexDiffuse.Clear();
+    VertexUV.Clear();
 }
-
-
-
-
-
 
 /**************************************************************************
  * PointGroupClass::RenderVolumeParticles -- draw a point group.sandwich  *
@@ -1639,278 +1689,303 @@ void PointGroupClass::_Shutdown(void)
  *   12/03/2002	Mark Lorenzen		Created.                                  *
  *																		                                    *
  *========================================================================*/
-#define MAX_VOLUME_PARTICLE_DEPTH ( 16 )
-void PointGroupClass::RenderVolumeParticle(RenderInfoClass &rinfo, unsigned int depth )
+#define MAX_VOLUME_PARTICLE_DEPTH (16)
+void PointGroupClass::RenderVolumeParticle(RenderInfoClass &rinfo, unsigned int depth)
 {
+    if (depth <= 1) // oops,wrong number
+    {
+        Render(rinfo);
+        return;
+    }
 
-	if ( depth <= 1 ) //oops,wrong number
-	{
-		Render( rinfo );
-		return;
-	}
+    if (depth > MAX_VOLUME_PARTICLE_DEPTH)
+        depth = MAX_VOLUME_PARTICLE_DEPTH; // sanity
 
-	if ( depth > MAX_VOLUME_PARTICLE_DEPTH )
-		depth = MAX_VOLUME_PARTICLE_DEPTH; // sanity
+    Shader.Set_Cull_Mode(ShaderClass::CULL_MODE_DISABLE);
 
-	Shader.Set_Cull_Mode(ShaderClass::CULL_MODE_DISABLE);
+    if (PointCount == 0)
+        return;
 
-	if (PointCount == 0)
-		return;
+    WWASSERT(PointLoc && PointLoc->Get_Array());
 
-	WWASSERT(PointLoc && PointLoc->Get_Array());
+    // Pointers which point into existing buffers (member or static):
+    Vector3 *current_loc = NULL;
+    Vector4 *current_diffuse = NULL;
+    float *current_size = NULL;
+    unsigned char *current_orient = NULL;
+    unsigned char *current_frame = NULL;
 
-	// Pointers which point into existing buffers (member or static):
-	Vector3 *current_loc = NULL;
-	Vector4 *current_diffuse = NULL;
-	float *current_size = NULL;
-	unsigned char *current_orient = NULL;
-	unsigned char *current_frame = NULL;
+    // If there is a color or alpha array enable gradient in shader - otherwise disable.
+    float value_255 = 0.9961f; // 254 / 255
+    bool default_white_opaque =
+        (DefaultPointColor.X > value_255 && DefaultPointColor.Y > value_255 && DefaultPointColor.Z > value_255
+         && DefaultPointAlpha > value_255);
 
-	// If there is a color or alpha array enable gradient in shader - otherwise disable.
-  float value_255 = 0.9961f;	//254 / 255
-	bool default_white_opaque = (	DefaultPointColor.X > value_255 &&
-											DefaultPointColor.Y > value_255 &&
-											DefaultPointColor.Z > value_255 &&
-											DefaultPointAlpha > value_255);
+    // The reason we check for lack of texture here is that SR seems to render black triangles
+    // rather than white triangles as would be expected) when there is no texture AND no gradient.
+    if (PointDiffuse || !default_white_opaque || !Texture)
+    {
+        Shader.Set_Primary_Gradient(ShaderClass::GRADIENT_MODULATE);
+    }
+    else
+    {
+        Shader.Set_Primary_Gradient(ShaderClass::GRADIENT_DISABLE);
+    }
 
-	// The reason we check for lack of texture here is that SR seems to render black triangles
-	// rather than white triangles as would be expected) when there is no texture AND no gradient.
-	if (PointDiffuse || !default_white_opaque || !Texture) {
-		Shader.Set_Primary_Gradient(ShaderClass::GRADIENT_MODULATE);
-	} else {
-		Shader.Set_Primary_Gradient(ShaderClass::GRADIENT_DISABLE);
-	}
+    // If Texture is non-NULL enable texturing in shader - otherwise disable.
+    if (Texture)
+    {
+        Shader.Set_Texturing(ShaderClass::TEXTURING_ENABLE);
+    }
+    else
+    {
+        Shader.Set_Texturing(ShaderClass::TEXTURING_DISABLE);
+    }
 
-	// If Texture is non-NULL enable texturing in shader - otherwise disable.
-	if (Texture) {
-		Shader.Set_Texturing(ShaderClass::TEXTURING_ENABLE);
-	} else {
-		Shader.Set_Texturing(ShaderClass::TEXTURING_DISABLE);
-	}
+    // Get the world and view matrices
+    Matrix4x4 view;
+    DX8Wrapper::Get_Transform(D3DTS_VIEW, view);
 
-		// Get the world and view matrices
-		Matrix4x4 view;
-		DX8Wrapper::Get_Transform(D3DTS_VIEW,view);
+    //// VOLUME_PARTICLE LOOP ///////////////
+    for (unsigned int t = 0; t < depth; ++t)
+    {
+        // If there is an active point table, use it to compress the point
+        // locations/colors/alphas/sizes/orientations/frames.
+        if (APT)
+        {
+            // Resize compressed result arrays if needed (2x guardband to prevent
+            // frequent reallocations):
 
+            /// @todo lorenzen sez: precompute pointers to indexed array elements, below
 
+            if (compressed_loc.Length() < PointCount)
+            {
+                compressed_loc.Resize(PointCount * 2);
+            }
+            VectorProcessorClass::CopyIndexed(&compressed_loc[0], PointLoc->Get_Array(), APT->Get_Array(), PointCount);
+            current_loc = &compressed_loc[0];
+            if (PointDiffuse)
+            {
+                if (compressed_diffuse.Length() < PointCount)
+                {
+                    compressed_diffuse.Resize(PointCount * 2);
+                }
+                VectorProcessorClass::CopyIndexed(
+                    &compressed_diffuse[0],
+                    PointDiffuse->Get_Array(),
+                    APT->Get_Array(),
+                    PointCount);
+                current_diffuse = &compressed_diffuse[0];
+            }
+            if (PointSize)
+            {
+                if (compressed_size.Length() < PointCount)
+                {
+                    compressed_size.Resize(PointCount * 2);
+                }
+                VectorProcessorClass::CopyIndexed(&compressed_size[0], PointSize->Get_Array(), APT->Get_Array(), PointCount);
+                current_size = &compressed_size[0];
+            }
+            if (PointOrientation)
+            {
+                if (compressed_orient.Length() < PointCount)
+                {
+                    compressed_orient.Resize(PointCount * 2);
+                }
+                VectorProcessorClass::CopyIndexed(
+                    &compressed_orient[0],
+                    PointOrientation->Get_Array(),
+                    APT->Get_Array(),
+                    PointCount);
+                current_orient = &compressed_orient[0];
+            }
+            if (PointFrame)
+            {
+                if (compressed_frame.Length() < PointCount)
+                {
+                    compressed_frame.Resize(PointCount * 2);
+                }
+                VectorProcessorClass::CopyIndexed(
+                    &compressed_frame[0],
+                    PointFrame->Get_Array(),
+                    APT->Get_Array(),
+                    PointCount);
+                current_frame = &compressed_frame[0];
+            }
+        }
+        else
+        {
+            current_loc = PointLoc->Get_Array();
+            if (PointDiffuse)
+            {
+                current_diffuse = PointDiffuse->Get_Array();
+            }
+            if (PointSize)
+            {
+                current_size = PointSize->Get_Array();
+            }
+            if (PointOrientation)
+            {
+                current_orient = PointOrientation->Get_Array();
+            }
+            if (PointFrame)
+            {
+                current_frame = PointFrame->Get_Array();
+            }
+        }
 
-	//// VOLUME_PARTICLE LOOP ///////////////
-	for ( unsigned int t = 0; t < depth; ++t )
-	{
+        // Transform the point locations from worldspace to camera space if needed
+        // (i.e. if they are not already in camera space):
 
+        // need to interrupt this processing. If we are not billboarding, then we need the actual position
+        // of the vertice to lay it down flat.
+        if (Get_Flag(TRANSFORM) && Billboard)
+        {
+            // Resize transformed location array if needed (2x guardband to prevent
+            // frequent reallocations):
+            if (transformed_loc.Length() < PointCount)
+            {
+                transformed_loc.Resize(PointCount * 2);
+            }
+            // Not using vector processor class because we are discarding w
+            // Not using T&L in DX8 because we don't want DX8 to transform
+            // 3 times per particle when we can do it once
+            float recipDepth = 0.1f / (float)depth;
 
+            float shiftInc = (t * *current_size * recipDepth);
 
+            Vector3 volumeLayerShift;
+            Vector3 cameraPosition = rinfo.Camera.Get_Position();
 
+            for (int i = 0; i < PointCount; i++)
+            {
+                /// @todo lorenzen sez: use pointer arithmetic here and a fast while loop
+                Vector3 cameraToPointDelta;
+                Vector3::Subtract(cameraPosition, current_loc[i], &cameraToPointDelta);
+                cameraToPointDelta.Normalize();
+                cameraToPointDelta.X *= shiftInc;
+                cameraToPointDelta.Y *= shiftInc;
+                cameraToPointDelta.Z *= shiftInc;
 
-		// If there is an active point table, use it to compress the point
-		// locations/colors/alphas/sizes/orientations/frames.
-		if (APT) {
-			// Resize compressed result arrays if needed (2x guardband to prevent
-			// frequent reallocations):
+                Vector3 temp;
+                temp.X = current_loc[i].X + cameraToPointDelta.X;
+                temp.Y = current_loc[i].Y + cameraToPointDelta.Y;
+                temp.Z = current_loc[i].Z + cameraToPointDelta.Z;
 
-			/// @todo lorenzen sez: precompute pointers to indexed array elements, below
+                Vector4 result = view * temp;
+                transformed_loc[i].X = result.X;
+                transformed_loc[i].Y = result.Y;
+                transformed_loc[i].Z = result.Z;
+            }
+            current_loc = &transformed_loc[0];
+        } // if transform
 
-			if (compressed_loc.Length() < PointCount) {
-				compressed_loc.Resize(PointCount * 2);
-			}
-			VectorProcessorClass::CopyIndexed(&compressed_loc[0],
-				PointLoc->Get_Array(), APT->Get_Array(), PointCount);
-			current_loc = &compressed_loc[0];
-			if (PointDiffuse) {
-				if (compressed_diffuse.Length() < PointCount) {
-					compressed_diffuse.Resize(PointCount * 2);
-				}
-				VectorProcessorClass::CopyIndexed(&compressed_diffuse[0],
-					PointDiffuse->Get_Array(), APT->Get_Array(), PointCount);
-				current_diffuse = &compressed_diffuse[0];
-			}
-			if (PointSize) {
-				if (compressed_size.Length() < PointCount) {
-					compressed_size.Resize(PointCount * 2);
-				}
-				VectorProcessorClass::CopyIndexed(&compressed_size[0],
-					PointSize->Get_Array(), APT->Get_Array(), PointCount);
-				current_size = &compressed_size[0];
-			}
-			if (PointOrientation) {
-				if (compressed_orient.Length() < PointCount) {
-					compressed_orient.Resize(PointCount * 2);
-				}
-				VectorProcessorClass::CopyIndexed(&compressed_orient[0],
-					PointOrientation->Get_Array(), APT->Get_Array(), PointCount);
-				current_orient = &compressed_orient[0];
-			}
-			if (PointFrame) {
-				if (compressed_frame.Length() < PointCount) {
-					compressed_frame.Resize(PointCount * 2);
-				}
-				VectorProcessorClass::CopyIndexed(&compressed_frame[0],
-					PointFrame->Get_Array(), APT->Get_Array(), PointCount);
-				current_frame = &compressed_frame[0];
-			}
-		} else {
-			current_loc = PointLoc->Get_Array();
-			if (PointDiffuse) {
-				current_diffuse = PointDiffuse->Get_Array();
-			}
-			if (PointSize) {
-				current_size = PointSize->Get_Array();
-			}
-			if (PointOrientation) {
-				current_orient = PointOrientation->Get_Array();
-			}
-			if (PointFrame) {
-				current_frame = PointFrame->Get_Array();
-			}
-		}
+        // Update the arrays with the offsets.
+        int vnum, pnum;
 
+        // float attenuator = 1.0f - (1.0f/(float)depth);
+        // current_diffuse->X *= attenuator;
+        // current_diffuse->Y *= attenuator;
+        // current_diffuse->Z *= attenuator;
+        // current_diffuse->W *= attenuator;
 
+        Update_Arrays(
+            current_loc,
+            current_diffuse,
+            current_size,
+            current_orient,
+            current_frame,
+            PointCount,
+            PointLoc->Get_Count(),
+            vnum,
+            pnum);
 
+        // the locations are now in view space
+        // so set world and view matrices to identity and render
 
+        Matrix4x4 identity(true);
+        DX8Wrapper::Set_Transform(D3DTS_WORLD, identity);
+        DX8Wrapper::Set_Transform(D3DTS_VIEW, identity);
 
-		// Transform the point locations from worldspace to camera space if needed
-		// (i.e. if they are not already in camera space):
+        DX8Wrapper::Set_Material(PointMaterial);
+        DX8Wrapper::Set_Shader(Shader);
+        DX8Wrapper::Set_Texture(0, Texture);
 
-		// need to interrupt this processing. If we are not billboarding, then we need the actual position
-		// of the vertice to lay it down flat.
-		if (Get_Flag(TRANSFORM) && Billboard) {
-			// Resize transformed location array if needed (2x guardband to prevent
-			// frequent reallocations):
-			if (transformed_loc.Length() < PointCount) {
-				transformed_loc.Resize(PointCount * 2);
-			}
-			// Not using vector processor class because we are discarding w
-			// Not using T&L in DX8 because we don't want DX8 to transform
-			// 3 times per particle when we can do it once
-			float recipDepth = 0.1f / (float)depth;
+        // Enable sorting if the primitives are translucent and alpha testing is not enabled.
+        const bool sort = (Shader.Get_Dst_Blend_Func() != ShaderClass::DSTBLEND_ZERO)
+            && (Shader.Get_Alpha_Test() == ShaderClass::ALPHATEST_DISABLE) && (WW3D::Is_Sorting_Enabled());
 
-			float shiftInc = ( t *  *current_size * recipDepth );
+        IndexBufferClass *indexbuffer;
+        int verticesperprimitive; /// lorenzen fixed
+        int current;
+        int delta;
 
-			Vector3 volumeLayerShift;
-			Vector3 cameraPosition = rinfo.Camera.Get_Position();
+        /// @todo lorenzen sez: if tri-based particles are not supported, elim this test
+        if (PointMode == QUADS)
+        {
+            verticesperprimitive = 2;
+            indexbuffer = sort ? static_cast<IndexBufferClass *>(SortingQuads) : static_cast<IndexBufferClass *>(Quads);
+        }
+        else
+        {
+            verticesperprimitive = 3;
+            indexbuffer = sort ? static_cast<IndexBufferClass *>(SortingTris) : static_cast<IndexBufferClass *>(Tris);
+        }
 
-			for (int i=0; i<PointCount; i++)
-			{
-				/// @todo lorenzen sez: use pointer arithmetic here and a fast while loop
-				Vector3 cameraToPointDelta;
-				Vector3::Subtract( cameraPosition, current_loc[i], &cameraToPointDelta );
-				cameraToPointDelta.Normalize();
-				cameraToPointDelta.X *= shiftInc;
-				cameraToPointDelta.Y *= shiftInc;
-				cameraToPointDelta.Z *= shiftInc;
+        float nudge = 0;
 
-				Vector3 temp;
-				temp.X = current_loc[i].X + cameraToPointDelta.X;
-				temp.Y = current_loc[i].Y + cameraToPointDelta.Y;
-				temp.Z = current_loc[i].Z + cameraToPointDelta.Z;
+        current = 0;
+        while (current < vnum)
+        {
+            delta = MIN(vnum - current, MAX_VB_SIZE);
+            DynamicVBAccessClass PointVerts(
+                sort ? BUFFER_TYPE_DYNAMIC_SORTING : BUFFER_TYPE_DYNAMIC_DX8,
+                dynamic_fvf_type,
+                delta);
 
-				Vector4 result= view * temp;
-				transformed_loc[i].X=result.X;
-				transformed_loc[i].Y=result.Y;
-				transformed_loc[i].Z=result.Z;
-			}
-			current_loc = &transformed_loc[0];
-		} // if transform
+            // Copy in the data to the VB
+            {
+                DynamicVBAccessClass::WriteLockClass Lock(&PointVerts);
+                int i;
+                unsigned char *vb = (unsigned char *)Lock.Get_Formatted_Vertex_Array();
+                const FVFInfoClass &fvfinfo = PointVerts.FVF_Info();
 
-		// Update the arrays with the offsets.
-		int vnum, pnum;
+                for (i = current; i < current + delta; i++)
+                {
+                    /// @todo lorenzen sez: use pointer arithmetic throughout this block
+                    /// @todo lorenzen sez: delare thes locals outside this loop
+                    /// @todo lorenzen sez: use a fast while loop
+                    // Copy Locations
+                    *(Vector3 *)(vb + fvfinfo.Get_Location_Offset()) = VertexLoc[i];
 
-		//float attenuator = 1.0f - (1.0f/(float)depth);
-		//current_diffuse->X *= attenuator;
-		//current_diffuse->Y *= attenuator;
-		//current_diffuse->Z *= attenuator;
-		//current_diffuse->W *= attenuator;
+                    if (current_diffuse)
+                    {
+                        unsigned color = DX8Wrapper::Convert_Color_Clamp(VertexDiffuse[i]);
+                        *(unsigned int *)(vb + fvfinfo.Get_Diffuse_Offset()) = color;
+                    }
+                    else
+                        *(unsigned int *)(vb + fvfinfo.Get_Diffuse_Offset()) = DX8Wrapper::Convert_Color_Clamp(
+                            Vector4(DefaultPointColor[0], DefaultPointColor[1], DefaultPointColor[2], DefaultPointAlpha));
+                    *(Vector2 *)(vb + fvfinfo.Get_Tex_Offset(0)) = VertexUV[i];
+                    vb += fvfinfo.Get_FVF_Size();
+                }
+            } // copy
 
-		Update_Arrays(current_loc, current_diffuse, current_size, current_orient, current_frame,
-			PointCount, PointLoc->Get_Count(), vnum, pnum);
+            DX8Wrapper::Set_Index_Buffer(indexbuffer, 0);
+            DX8Wrapper::Set_Vertex_Buffer(PointVerts);
 
-		// the locations are now in view space
-		// so set world and view matrices to identity and render
+            /// @todo lorenzen sez: precompute these params, above
 
-		Matrix4x4 identity(true);
-		DX8Wrapper::Set_Transform(D3DTS_WORLD,identity);
-		DX8Wrapper::Set_Transform(D3DTS_VIEW,identity);
+            if (sort)
+                SortingRendererClass::Insert_Triangles(0, delta / verticesperprimitive, 0, delta);
+            else
+                DX8Wrapper::Draw_Triangles(0, delta / verticesperprimitive, 0, delta);
 
-		DX8Wrapper::Set_Material(PointMaterial);
-		DX8Wrapper::Set_Shader(Shader);
-		DX8Wrapper::Set_Texture(0,Texture);
+            current += delta;
+        } // loop while (current<vnum)
 
-		// Enable sorting if the primitives are translucent and alpha testing is not enabled.
-		const bool sort = (Shader.Get_Dst_Blend_Func() != ShaderClass::DSTBLEND_ZERO) && (Shader.Get_Alpha_Test() == ShaderClass::ALPHATEST_DISABLE) && (WW3D::Is_Sorting_Enabled());
+    } // next volume layer
 
-		IndexBufferClass *indexbuffer;
-		int	verticesperprimitive;/// lorenzen fixed
-		int current;
-		int delta;
-
-		/// @todo lorenzen sez: if tri-based particles are not supported, elim this test
-		if (PointMode == QUADS) {
-			verticesperprimitive = 2;
-			indexbuffer = sort ? static_cast <IndexBufferClass*> (SortingQuads) : static_cast <IndexBufferClass*> (Quads);
-		} else {
-			verticesperprimitive = 3;
-			indexbuffer = sort ? static_cast <IndexBufferClass*> (SortingTris) : static_cast <IndexBufferClass*> (Tris);
-		}
-
-
-		float nudge = 0;
-
-		current = 0;
-		while (current<vnum)
-		{
-			delta=MIN(vnum-current,MAX_VB_SIZE);
-			DynamicVBAccessClass PointVerts (sort ? BUFFER_TYPE_DYNAMIC_SORTING : BUFFER_TYPE_DYNAMIC_DX8, dynamic_fvf_type, delta);
-
-			// Copy in the data to the VB
-			{
-				DynamicVBAccessClass::WriteLockClass Lock(&PointVerts);
-				int i;
-				unsigned char *vb=(unsigned char*)Lock.Get_Formatted_Vertex_Array();
-				const FVFInfoClass& fvfinfo = PointVerts.FVF_Info();
-
-
-				for (i = current; i < current + delta; i++)
-				{
-					/// @todo lorenzen sez: use pointer arithmetic throughout this block
-					/// @todo lorenzen sez: delare thes locals outside this loop
-					/// @todo lorenzen sez: use a fast while loop
-					// Copy Locations
-					*(Vector3*)(vb+fvfinfo.Get_Location_Offset()) = VertexLoc[i];
-
-					if (current_diffuse) {
-						unsigned color=DX8Wrapper::Convert_Color_Clamp(VertexDiffuse[i]);
-						*(unsigned int*)(vb+fvfinfo.Get_Diffuse_Offset())=color;
-					}
-					else
-						*(unsigned int*)(vb+fvfinfo.Get_Diffuse_Offset())=
-							DX8Wrapper::Convert_Color_Clamp(Vector4(DefaultPointColor[0],DefaultPointColor[1],DefaultPointColor[2],DefaultPointAlpha));
-					*(Vector2*)(vb+fvfinfo.Get_Tex_Offset(0))=VertexUV[i];
-					vb+=fvfinfo.Get_FVF_Size();
-				}
-			} // copy
-
-			DX8Wrapper::Set_Index_Buffer (indexbuffer, 0);
-			DX8Wrapper::Set_Vertex_Buffer (PointVerts);
-
-			/// @todo lorenzen sez: precompute these params, above
-
-
-			if ( sort )
-					SortingRendererClass::Insert_Triangles (0, delta / verticesperprimitive, 0, delta);
-			else
-				DX8Wrapper::Draw_Triangles (0, delta / verticesperprimitive, 0, delta);
-
-
-			current+=delta;
-		} // loop while (current<vnum)
-
-
-
-	}// next volume layer
-
-
-
-
-	// restore the matrices
-	DX8Wrapper::Set_Transform(D3DTS_VIEW,view);
+    // restore the matrices
+    DX8Wrapper::Set_Transform(D3DTS_VIEW, view);
 }

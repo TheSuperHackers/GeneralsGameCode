@@ -31,7 +31,10 @@
 #include "WinMain.h"
 
 // DEFINES ////////////////////////////////////////////////////////////////////////////////////////
-enum { MOUSE_BUFFER_SIZE = 256, };
+enum
+{
+    MOUSE_BUFFER_SIZE = 256,
+};
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // PRIVATE FUNCTIONS //////////////////////////////////////////////////////////////////////////////
@@ -39,280 +42,255 @@ enum { MOUSE_BUFFER_SIZE = 256, };
 
 //-------------------------------------------------------------------------------------------------
 /** Create our direct input object, mouse device, and initialize it to the
-	* data formats we want */
+ * data formats we want */
 //-------------------------------------------------------------------------------------------------
-void DirectInputMouse::openMouse( void )
+void DirectInputMouse::openMouse(void)
 {
-	HRESULT hr;
+    HRESULT hr;
 
-	// create our direct input device for mouse access
-	hr = DirectInput8Create( ApplicationHInstance,
-													 DIRECTINPUT_VERSION,
-													 IID_IDirectInput8,
-													 (void **)&m_pDirectInput,
-													 NULL );
-	if( FAILED( hr ) )
-	{
+    // create our direct input device for mouse access
+    hr = DirectInput8Create(ApplicationHInstance, DIRECTINPUT_VERSION, IID_IDirectInput8, (void **)&m_pDirectInput, NULL);
+    if (FAILED(hr))
+    {
+        DEBUG_LOG(("ERROR - openMouse: Unabled to create direct input interface"));
+        assert(0);
+        closeMouse();
+        return;
 
-		DEBUG_LOG(( "ERROR - openMouse: Unabled to create direct input interface" ));
-		assert( 0 );
-		closeMouse();
-		return;
+    } // end if
 
-	}  // end if
+    // create a device for the system mouse
+    hr = m_pDirectInput->CreateDevice(GUID_SysMouse, &m_pMouseDevice, NULL);
+    if (FAILED(hr))
+    {
+        DEBUG_LOG(("ERROR - openMouse: Unable to create mouse device"));
+        assert(0);
+        closeMouse();
+        return;
 
-	// create a device for the system mouse
-	hr = m_pDirectInput->CreateDevice( GUID_SysMouse,
-																		 &m_pMouseDevice,
-																		 NULL );
-	if( FAILED( hr ) )
-	{
+    } // end if
 
-			DEBUG_LOG(( "ERROR - openMouse: Unable to create mouse device" ));
-			assert( 0 );
-			closeMouse();
-			return;
+    // set the data format for the mouse
+    hr = m_pMouseDevice->SetDataFormat(&c_dfDIMouse);
+    if (FAILED(hr))
+    {
+        DEBUG_LOG(("ERROR - openMouse: Unabled to set mouse data format"));
+        assert(0);
+        closeMouse();
+        return;
 
-	}  // end if
+    } // end if
 
-	// set the data format for the mouse
-	hr = m_pMouseDevice->SetDataFormat( &c_dfDIMouse );
-	if( FAILED( hr ) )
-	{
+    // set the mouse cooperative level
+    hr = m_pMouseDevice->SetCooperativeLevel(ApplicationHWnd, DISCL_NONEXCLUSIVE | DISCL_FOREGROUND);
+    if (FAILED(hr))
+    {
+        DEBUG_LOG(("ERROR - openMouse: Unabled to set coop level"));
+        assert(0);
+        closeMouse();
+        return;
 
-		DEBUG_LOG(( "ERROR - openMouse: Unabled to set mouse data format" ));
-		assert( 0 );
-		closeMouse();
-		return;
+    } // end if
 
-	}  // end if
+    // set the mouse buffer size
+    DIPROPDWORD prop;
+    prop.diph.dwSize = sizeof(DIPROPDWORD);
+    prop.diph.dwHeaderSize = sizeof(DIPROPHEADER);
+    prop.diph.dwObj = 0;
+    prop.diph.dwHow = DIPH_DEVICE;
+    prop.dwData = MOUSE_BUFFER_SIZE;
+    hr = m_pMouseDevice->SetProperty(DIPROP_BUFFERSIZE, &prop.diph);
+    if (FAILED(hr))
+    {
+        DEBUG_LOG(("ERROR - openMouse: Unabled to set buffer property"));
+        assert(0);
+        closeMouse();
+        return;
 
-	// set the mouse cooperative level
-	hr = m_pMouseDevice->SetCooperativeLevel( ApplicationHWnd,
-																						DISCL_NONEXCLUSIVE |
-																						DISCL_FOREGROUND );
-	if( FAILED( hr ) )
-	{
+    } // end if
 
-		DEBUG_LOG(( "ERROR - openMouse: Unabled to set coop level" ));
-		assert( 0 );
-		closeMouse();
-		return;
+    // acquire the mouse
+    hr = m_pMouseDevice->Acquire();
+    if (FAILED(hr))
+    {
+        DEBUG_LOG(("ERROR - openMouse: Unabled to acquire mouse"));
+        assert(0);
+        closeMouse();
+        return;
 
-	}  // end if
+    } // end if
 
-	// set the mouse buffer size
-	DIPROPDWORD prop;
-	prop.diph.dwSize = sizeof( DIPROPDWORD );
-	prop.diph.dwHeaderSize = sizeof( DIPROPHEADER );
-	prop.diph.dwObj = 0;
-	prop.diph.dwHow = DIPH_DEVICE;
-	prop.dwData = MOUSE_BUFFER_SIZE;
-	hr = m_pMouseDevice->SetProperty( DIPROP_BUFFERSIZE, &prop.diph );
-	if( FAILED( hr ) )
-	{
+    // get some information about the mouse
+    DIDEVCAPS diDevCaps;
 
-		DEBUG_LOG(( "ERROR - openMouse: Unabled to set buffer property" ));
-		assert( 0 );
-		closeMouse();
-		return;
+    diDevCaps.dwSize = sizeof(DIDEVCAPS);
+    hr = m_pMouseDevice->GetCapabilities(&diDevCaps);
+    if (FAILED(hr))
+    {
+        DEBUG_LOG(("WARNING - openMouse: Cann't get capabilities of mouse for button setup"));
 
-	}  // end if
+    } // end if
+    else
+    {
+        // keep some data about the mouse we care about
+        m_numButtons = (UnsignedByte)diDevCaps.dwButtons;
+        m_numAxes = (UnsignedByte)diDevCaps.dwAxes;
+        m_forceFeedback = BitIsSet(diDevCaps.dwFlags, DIDC_FORCEFEEDBACK);
 
-	// acquire the mouse
-	hr = m_pMouseDevice->Acquire();
-	if( FAILED( hr ) )
-	{
+        DEBUG_LOG(
+            ("OK - Mouse info: Buttons = '%d', Force Feedback = '%s', Axes = '%d'",
+             m_numButtons,
+             m_forceFeedback ? "Yes" : "No",
+             m_numAxes));
 
-		DEBUG_LOG(( "ERROR - openMouse: Unabled to acquire mouse" ));
-		assert( 0 );
-		closeMouse();
-		return;
+    } // end else
 
-	}  // end if
+    DEBUG_LOG(("OK - Mouse initialized successfully"));
 
-	// get some information about the mouse
-	DIDEVCAPS diDevCaps;
-
-	diDevCaps.dwSize = sizeof( DIDEVCAPS );
-	hr = m_pMouseDevice->GetCapabilities( &diDevCaps );
-	if( FAILED( hr ) )
-	{
-
-		DEBUG_LOG(( "WARNING - openMouse: Cann't get capabilities of mouse for button setup" ));
-
-	}  // end if
-	else
-	{
-
-		// keep some data about the mouse we care about
-		m_numButtons = (UnsignedByte)diDevCaps.dwButtons;
-		m_numAxes = (UnsignedByte)diDevCaps.dwAxes;
-		m_forceFeedback = BitIsSet( diDevCaps.dwFlags, DIDC_FORCEFEEDBACK );
-
-		DEBUG_LOG(( "OK - Mouse info: Buttons = '%d', Force Feedback = '%s', Axes = '%d'",
-						 m_numButtons, m_forceFeedback ? "Yes" : "No", m_numAxes ));
-
-	}  // end else
-
-	DEBUG_LOG(( "OK - Mouse initialized successfully" ));
-
-}  // end openMouse
+} // end openMouse
 
 //-------------------------------------------------------------------------------------------------
 /** Release any resources for our direct input mouse */
 //-------------------------------------------------------------------------------------------------
-void DirectInputMouse::closeMouse( void )
+void DirectInputMouse::closeMouse(void)
 {
+    // release the mouse device
+    if (m_pMouseDevice)
+    {
+        m_pMouseDevice->Unacquire();
+        m_pMouseDevice->Release();
+        m_pMouseDevice = NULL;
+        DEBUG_LOG(("OK - Mouse device closed"));
 
-	// release the mouse device
-	if( m_pMouseDevice )
-	{
+    } // end if
 
-		m_pMouseDevice->Unacquire();
-		m_pMouseDevice->Release();
-		m_pMouseDevice = NULL;
-		DEBUG_LOG(( "OK - Mouse device closed" ));
+    // release our direct input interface for the mouse
+    if (m_pDirectInput)
+    {
+        m_pDirectInput->Release();
+        m_pDirectInput = NULL;
+        DEBUG_LOG(("OK - Mouse direct input interface closed"));
 
-	}  // end if
+    } // end if
 
-	// release our direct input interface for the mouse
-	if( m_pDirectInput )
-	{
+    DEBUG_LOG(("OK - Mouse shutdown complete"));
 
-		m_pDirectInput->Release();
-		m_pDirectInput = NULL;
-		DEBUG_LOG(( "OK - Mouse direct input interface closed" ));
-
-	}  // end if
-
-	DEBUG_LOG(( "OK - Mouse shutdown complete" ));
-
-}  // end closeMouse
+} // end closeMouse
 
 //-------------------------------------------------------------------------------------------------
 /** Get a single mouse event from the device */
 //-------------------------------------------------------------------------------------------------
-UnsignedByte DirectInputMouse::getMouseEvent( MouseIO *result, Bool flush )
+UnsignedByte DirectInputMouse::getMouseEvent(MouseIO *result, Bool flush)
 {
-	HRESULT hr;
-	DIDEVICEOBJECTDATA mdat;
-	UnsignedByte mouseResult = MOUSE_NONE;
-	DWORD num;
+    HRESULT hr;
+    DIDEVICEOBJECTDATA mdat;
+    UnsignedByte mouseResult = MOUSE_NONE;
+    DWORD num;
 
-	/* set these to defaults */
-	result->leftState = result->middleState = result->rightState = FALSE;
-	result->leftFrame = result->middleFrame = result->rightFrame = 0;
-	result->pos.x = result->pos.y = result->wheelPos = 0;
+    /* set these to defaults */
+    result->leftState = result->middleState = result->rightState = FALSE;
+    result->leftFrame = result->middleFrame = result->rightFrame = 0;
+    result->pos.x = result->pos.y = result->wheelPos = 0;
 
-	if( m_pMouseDevice )
-	{
+    if (m_pMouseDevice)
+    {
+        // get 1 event, if available
+        num = 1;
+        m_pMouseDevice->Poll();
+        hr = m_pMouseDevice->GetDeviceData(sizeof(DIDEVICEOBJECTDATA), &mdat, &num, 0);
+        switch (hr)
+        {
+            // ----------------------------------------------------------------------
+            case DI_OK:
+            {
+                // nothing returned
+                if (num != 0)
+                {
+                    mapDirectInputMouse(result, &mdat);
+                    mouseResult = MOUSE_OK;
+                }
+                break;
+            }
 
-		// get 1 event, if available
-		num = 1;
-		m_pMouseDevice->Poll();
-		hr = m_pMouseDevice->GetDeviceData( sizeof( DIDEVICEOBJECTDATA ),
-																				&mdat,
-																				&num,
-																				0 );
-		switch( hr )
-		{
+            // ----------------------------------------------------------------------
+            case DIERR_NOTACQUIRED:
+            case DIERR_INPUTLOST:
+            {
+                // if we lost focus, attempt to re-acquire
+                hr = m_pMouseDevice->Acquire();
+                switch (hr)
+                {
+                    // ------------------------------------------------------------------
+                    // If successful... tell system to loop back
+                    case DI_OK:
+                    case S_FALSE:
+                        mouseResult = MOUSE_LOST;
 
-			// ----------------------------------------------------------------------
-			case DI_OK:
-			{
-				// nothing returned
-				if( num != 0 )
-				{
-					mapDirectInputMouse( result, &mdat );
-					mouseResult = MOUSE_OK;
-				}
-				break;
-			}
+                    // ------------------------------------------------------------------
+                    // If an error occurs return MOUSE_NONE
+                    case DIERR_INVALIDPARAM:
+                    case DIERR_NOTINITIALIZED:
+                    case DIERR_OTHERAPPHASPRIO:
+                    default:
+                        break;
 
-			// ----------------------------------------------------------------------
-			case DIERR_NOTACQUIRED:
-			case DIERR_INPUTLOST:
-			{
+                } // end switch
 
-				// if we lost focus, attempt to re-acquire
-				hr = m_pMouseDevice->Acquire();
-				switch( hr )
-				{
+                break;
+            }
 
-					// ------------------------------------------------------------------
-					// If successful... tell system to loop back
-					case DI_OK:
-					case S_FALSE:
-						mouseResult = MOUSE_LOST;
+            // ----------------------------------------------------------------------
+            default:
+                //				DBGPRINTF(("GetMouseEvent: GetDeviceData Error: %X.\r\n", hr ));
+                break;
 
-					// ------------------------------------------------------------------
-					//If an error occurs return MOUSE_NONE
-					case DIERR_INVALIDPARAM:
-					case DIERR_NOTINITIALIZED:
-					case DIERR_OTHERAPPHASPRIO:
-					default:
-						break;
+        } // end switch
 
-				}  // end switch
+    } // end if
 
-				break;
-			}
+    return mouseResult;
 
-			// ----------------------------------------------------------------------
-			default:
-//				DBGPRINTF(("GetMouseEvent: GetDeviceData Error: %X.\r\n", hr ));
-				break;
-
-		}  // end switch
-
-	}  // end if
-
-	return mouseResult;
-
-}  // end getMouseEvent
+} // end getMouseEvent
 
 //-------------------------------------------------------------------------------------------------
 /** Map the direct input codes to our own mouse format */
 //-------------------------------------------------------------------------------------------------
-void DirectInputMouse::mapDirectInputMouse( MouseIO *mouse,
-																						DIDEVICEOBJECTDATA *mdat )
+void DirectInputMouse::mapDirectInputMouse(MouseIO *mouse, DIDEVICEOBJECTDATA *mdat)
 {
+    switch (mdat->dwOfs)
+    {
+        case DIMOFS_BUTTON0:
+            mouse->leftState = ((mdat->dwData & 0x0080) ? TRUE : FALSE);
+            mouse->leftFrame = mdat->dwSequence;
+            break;
 
-	switch( mdat->dwOfs )
-	{
-		case DIMOFS_BUTTON0:
-			mouse->leftState = (( mdat->dwData & 0x0080 ) ? TRUE : FALSE);
-			mouse->leftFrame = mdat->dwSequence;
-			break;
+        case DIMOFS_BUTTON1:
+            mouse->rightState = ((mdat->dwData & 0x0080) ? TRUE : FALSE);
+            mouse->rightFrame = mdat->dwSequence;
+            break;
 
-		case DIMOFS_BUTTON1:
-			mouse->rightState = (( mdat->dwData & 0x0080 ) ? TRUE : FALSE);
-			mouse->rightFrame = mdat->dwSequence;
-			break;
+        case DIMOFS_BUTTON2:
+            mouse->middleState = ((mdat->dwData & 0x0080) ? TRUE : FALSE);
+            mouse->middleFrame = mdat->dwSequence;
+            break;
 
-		case DIMOFS_BUTTON2:
-			mouse->middleState = (( mdat->dwData & 0x0080 ) ? TRUE : FALSE);
-			mouse->middleFrame = mdat->dwSequence;
-			break;
+        case DIMOFS_BUTTON3:
+            break;
 
-		case DIMOFS_BUTTON3:
-			break;
+        case DIMOFS_X:
+            mouse->pos.x = mdat->dwData;
+            break;
 
-		case DIMOFS_X:
-			mouse->pos.x = mdat->dwData;
-			break;
+        case DIMOFS_Y:
+            mouse->pos.y = mdat->dwData;
+            break;
 
-		case DIMOFS_Y:
-			mouse->pos.y = mdat->dwData;
-			break;
+        case DIMOFS_Z:
+            mouse->wheelPos = mdat->dwData;
+            break;
+    }
 
-		case DIMOFS_Z:
-			mouse->wheelPos = mdat->dwData;
-			break;
-	}
-
-}  // end mapDirectInputMouse
+} // end mapDirectInputMouse
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // PUBLIC FUNCTIONS ///////////////////////////////////////////////////////////////////////////////
@@ -320,194 +298,185 @@ void DirectInputMouse::mapDirectInputMouse( MouseIO *mouse,
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-DirectInputMouse::DirectInputMouse( void )
+DirectInputMouse::DirectInputMouse(void)
 {
+    m_pDirectInput = NULL;
+    m_pMouseDevice = NULL;
 
-	m_pDirectInput = NULL;
-	m_pMouseDevice = NULL;
-
-}  // end DirectInputMouse
+} // end DirectInputMouse
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-DirectInputMouse::~DirectInputMouse( void )
+DirectInputMouse::~DirectInputMouse(void)
 {
+    // relase all mouse resources
+    closeMouse();
+    //	ShowCursor( TRUE );
 
-	// relase all mouse resources
-	closeMouse();
-//	ShowCursor( TRUE );
-
-}  // end ~DirectInputMouse
+} // end ~DirectInputMouse
 
 //-------------------------------------------------------------------------------------------------
 /** Initialize the direct input mouse device */
 //-------------------------------------------------------------------------------------------------
-void DirectInputMouse::init( void )
+void DirectInputMouse::init(void)
 {
-	POINT p;
+    POINT p;
 
-	// extending functionality from our base class
-	Mouse::init();
+    // extending functionality from our base class
+    Mouse::init();
 
-	// open the mouse and create the direct input interfaces we need
-	openMouse();
+    // open the mouse and create the direct input interfaces we need
+    openMouse();
 
-	// move the window mouse to the location we have initialized in our system
-	p.x = m_currMouse.pos.x;
-	p.y = m_currMouse.pos.y;
-	ClientToScreen( ApplicationHWnd, &p );
-	SetCursorPos( p.x, p.y );
-//	ShowCursor( FALSE );
+    // move the window mouse to the location we have initialized in our system
+    p.x = m_currMouse.pos.x;
+    p.y = m_currMouse.pos.y;
+    ClientToScreen(ApplicationHWnd, &p);
+    SetCursorPos(p.x, p.y);
+    //	ShowCursor( FALSE );
 
-}  // end init
+} // end init
 
 //-------------------------------------------------------------------------------------------------
 /** Reset direct input mouse */
 //-------------------------------------------------------------------------------------------------
-void DirectInputMouse::reset( void )
+void DirectInputMouse::reset(void)
 {
+    // extend
+    Mouse::reset();
 
-	// extend
-	Mouse::reset();
-
-}  // end reset
+} // end reset
 
 //-------------------------------------------------------------------------------------------------
 /** Update the mouse position and button data, this is called once per
-	* frame in the engine.  NOTE that this routine is extendion functionality
-	* that we may need that is direct input specific, not replacing */
+ * frame in the engine.  NOTE that this routine is extendion functionality
+ * that we may need that is direct input specific, not replacing */
 //-------------------------------------------------------------------------------------------------
-void DirectInputMouse::update( void )
+void DirectInputMouse::update(void)
 {
+    // extendion functionality from our base class
+    Mouse::update();
 
-	// extendion functionality from our base class
-	Mouse::update();
+    //
+    // since we are currently using the windows cursor because it updates at
+    // an independent rate of our application we will always just use the windows
+    // mouse cursor position
+    //
 
-	//
-	// since we are currently using the windows cursor because it updates at
-	// an independent rate of our application we will always just use the windows
-	// mouse cursor position
-	//
+    /** @todo we need to really visit this system and possibly come up with
+    our own multi-threaded cursor etc */
+    POINT p;
+    GetCursorPos(&p);
+    ScreenToClient(ApplicationHWnd, &p);
+    moveMouse(p.x, p.y, MOUSE_MOVE_ABSOLUTE);
 
-	/** @todo we need to really visit this system and possibly come up with
-	our own multi-threaded cursor etc */
-	POINT p;
-	GetCursorPos( &p );
-	ScreenToClient( ApplicationHWnd, &p );
-	moveMouse( p.x, p.y, MOUSE_MOVE_ABSOLUTE );
-
-}  // end update
+} // end update
 
 //-------------------------------------------------------------------------------------------------
 /** Set the limits which the mouse is allowed to move around in.  We
-	* will limit it to the client area, and if we are windowed we will
-	* allow for the mouse to move within the title bar at the top of
-	* the window */
+ * will limit it to the client area, and if we are windowed we will
+ * allow for the mouse to move within the title bar at the top of
+ * the window */
 //-------------------------------------------------------------------------------------------------
-void DirectInputMouse::setMouseLimits( void )
+void DirectInputMouse::setMouseLimits(void)
 {
+    //
+    // extending functionality, although we may overwrite the limits set
+    // from the base class
+    //
+    Mouse::setMouseLimits();
 
-	//
-	// extending functionality, although we may overwrite the limits set
-	// from the base class
-	//
-	Mouse::setMouseLimits();
+    //
+    // when runing windowed we want to keep the mouse within the game
+    // window cause it's annoying to mouse out of the window and click
+    // on a background window.
+    //
+    if (TheDisplay && TheDisplay->getWindowed() == TRUE)
+    {
+        RECT windowRect;
 
-	//
-	// when runing windowed we want to keep the mouse within the game
-	// window cause it's annoying to mouse out of the window and click
-	// on a background window.
-	//
-	if( TheDisplay && TheDisplay->getWindowed() == TRUE )
-	{
-		RECT windowRect;
+        // get the window rect
+        GetWindowRect(ApplicationHWnd, &windowRect);
 
-		// get the window rect
-		GetWindowRect( ApplicationHWnd, &windowRect );
+        // keep the cursor clipped to these coords when running windowed
+        ClipCursor(&windowRect);
 
-		// keep the cursor clipped to these coords when running windowed
-		ClipCursor( &windowRect );
+    } // end if
 
-	}  // end if
-
-}  // end setMouseLimits
+} // end setMouseLimits
 
 //-------------------------------------------------------------------------------------------------
 /** set the cursor position for windows OS */
 //-------------------------------------------------------------------------------------------------
-void DirectInputMouse::setPosition( Int x, Int y )
+void DirectInputMouse::setPosition(Int x, Int y)
 {
-	POINT p;
+    POINT p;
 
-	// extending functionality
-	Mouse::setPosition( x, y );
+    // extending functionality
+    Mouse::setPosition(x, y);
 
-	// set the windows cursor
-	p.x = x;
-	p.y = y;
-	ClientToScreen( ApplicationHWnd, &p );
+    // set the windows cursor
+    p.x = x;
+    p.y = y;
+    ClientToScreen(ApplicationHWnd, &p);
 
-	// set the window mouse
-	SetCursorPos( p.x, p.y );
+    // set the window mouse
+    SetCursorPos(p.x, p.y);
 
-}  // end setPosition
+} // end setPosition
 
 //-------------------------------------------------------------------------------------------------
 /** Super basic simplistic cursor */
 //-------------------------------------------------------------------------------------------------
-void DirectInputMouse::setCursor( MouseCursor cursor )
+void DirectInputMouse::setCursor(MouseCursor cursor)
 {
+    // extend
+    Mouse::setCursor(cursor);
 
-	// extend
-	Mouse::setCursor( cursor );
+    // if we're already on this cursor ignore
+    if (m_currentCursor == cursor)
+        return;
 
-	// if we're already on this cursor ignore
-	if( m_currentCursor == cursor )
-		return;
+    switch (cursor)
+    {
+        case NONE:
+            SetCursor(NULL);
+            break;
 
-	switch( cursor )
-	{
+        case NORMAL:
+        case ARROW:
+            SetCursor(LoadCursor(NULL, IDC_ARROW));
+            break;
 
-		case NONE:
-			SetCursor( NULL );
-			break;
+        case SCROLL:
+            SetCursor(LoadCursor(NULL, IDC_SIZEALL));
+            break;
 
-		case NORMAL:
-		case ARROW:
-			SetCursor( LoadCursor( NULL, IDC_ARROW ) );
-			break;
+        case CROSS:
+            SetCursor(LoadCursor(NULL, IDC_CROSS));
+            break;
 
-		case SCROLL:
-			SetCursor( LoadCursor( NULL, IDC_SIZEALL ) );
-			break;
+    } // end switch
 
-		case CROSS:
-			SetCursor( LoadCursor( NULL, IDC_CROSS ) );
-			break;
+    // save current cursor
+    m_currentCursor = cursor;
 
-	}  // end switch
-
-	// save current cursor
-	m_currentCursor = cursor;
-
-}  // end setCursor
+} // end setCursor
 
 //-------------------------------------------------------------------------------------------------
 /** Capture the mouse to our application */
 //-------------------------------------------------------------------------------------------------
-void DirectInputMouse::capture( void )
+void DirectInputMouse::capture(void)
 {
+    SetCapture(ApplicationHWnd);
 
-	SetCapture( ApplicationHWnd );
-
-}  // end capture
+} // end capture
 
 //-------------------------------------------------------------------------------------------------
 /** Release the mouse capture for our app window */
 //-------------------------------------------------------------------------------------------------
-void DirectInputMouse::releaseCapture( void )
+void DirectInputMouse::releaseCapture(void)
 {
+    ReleaseCapture();
 
-	ReleaseCapture();
-
-}  // end releaseCapture
+} // end releaseCapture

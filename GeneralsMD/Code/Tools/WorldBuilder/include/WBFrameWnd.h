@@ -30,73 +30,71 @@
 
 class CWBFrameWnd : public CFrameWnd
 {
-	DECLARE_DYNCREATE(CWBFrameWnd)
+    DECLARE_DYNCREATE(CWBFrameWnd)
 protected:
-	CWBFrameWnd();           // protected constructor used by dynamic creation
+    CWBFrameWnd(); // protected constructor used by dynamic creation
 
-// Attributes
+    // Attributes
 public:
-
-// Operations
+    // Operations
 public:
+    // Overrides
+    //{{AFX_VIRTUAL(CWBFrameWnd)
+public:
+    virtual BOOL LoadFrame(
+        UINT nIDResource,
+        DWORD dwDefaultStyle = WS_OVERLAPPEDWINDOW | FWS_ADDTOTITLE,
+        CWnd *pParentWnd = NULL,
+        CCreateContext *pContext = NULL);
+    // ClassWizard generated virtual function overrides
+    //}}AFX_VIRTUAL
 
-// Overrides
-	//{{AFX_VIRTUAL(CWBFrameWnd)
-	public:
-	virtual BOOL LoadFrame(UINT nIDResource,
-				DWORD dwDefaultStyle = WS_OVERLAPPEDWINDOW | FWS_ADDTOTITLE,
-				CWnd* pParentWnd = NULL,
-				CCreateContext* pContext = NULL);
-	// ClassWizard generated virtual function overrides
-	//}}AFX_VIRTUAL
-
-// Implementation
+    // Implementation
 protected:
-	virtual ~CWBFrameWnd();
+    virtual ~CWBFrameWnd();
 
-	// Generated message map functions
-	//{{AFX_MSG(CWBFrameWnd)
-	afx_msg void OnMove(int x, int y);
-	//}}AFX_MSG
-	DECLARE_MESSAGE_MAP()
+    // Generated message map functions
+    //{{AFX_MSG(CWBFrameWnd)
+    afx_msg void OnMove(int x, int y);
+    //}}AFX_MSG
+    DECLARE_MESSAGE_MAP()
 protected:
-	CellSizeToolBar		m_cellSizeToolBar;
-
+    CellSizeToolBar m_cellSizeToolBar;
 };
 
 class CWB3dFrameWnd : public CMainFrame
 {
-	DECLARE_DYNCREATE(CWB3dFrameWnd)
+    DECLARE_DYNCREATE(CWB3dFrameWnd)
 protected:
-	CWB3dFrameWnd();           // protected constructor used by dynamic creation
-// Operations
+    CWB3dFrameWnd(); // protected constructor used by dynamic creation
+    // Operations
 public:
-// Overrides
-	virtual BOOL LoadFrame(UINT nIDResource,
-				DWORD dwDefaultStyle = WS_OVERLAPPEDWINDOW | FWS_ADDTOTITLE,
-				CWnd* pParentWnd = NULL,
-				CCreateContext* pContext = NULL);
-	// ClassWizard generated virtual function overrides
-	//{{AFX_VIRTUAL(CWB3dFrameWnd)
-	public:
-	//}}AFX_VIRTUAL
-// Implementation
+    // Overrides
+    virtual BOOL LoadFrame(
+        UINT nIDResource,
+        DWORD dwDefaultStyle = WS_OVERLAPPEDWINDOW | FWS_ADDTOTITLE,
+        CWnd *pParentWnd = NULL,
+        CCreateContext *pContext = NULL);
+    // ClassWizard generated virtual function overrides
+    //{{AFX_VIRTUAL(CWB3dFrameWnd)
+public:
+    //}}AFX_VIRTUAL
+    // Implementation
 protected:
-	virtual ~CWB3dFrameWnd();
-	// Generated message map functions
-	//{{AFX_MSG(CWB3dFrameWnd)
-	afx_msg void OnMove(int x, int y);
-	afx_msg void OnWindowPreview1024x768();
-	afx_msg void OnUpdateWindowPreview1024x768(CCmdUI* pCmdUI);
-	afx_msg void OnWindowPreview640x480();
-	afx_msg void OnUpdateWindowPreview640x480(CCmdUI* pCmdUI);
-	afx_msg void OnWindowPreview800x600();
-	afx_msg void OnUpdateWindowPreview800x600(CCmdUI* pCmdUI);
-	afx_msg void OnPaint();
-	//}}AFX_MSG
-	DECLARE_MESSAGE_MAP()
+    virtual ~CWB3dFrameWnd();
+    // Generated message map functions
+    //{{AFX_MSG(CWB3dFrameWnd)
+    afx_msg void OnMove(int x, int y);
+    afx_msg void OnWindowPreview1024x768();
+    afx_msg void OnUpdateWindowPreview1024x768(CCmdUI *pCmdUI);
+    afx_msg void OnWindowPreview640x480();
+    afx_msg void OnUpdateWindowPreview640x480(CCmdUI *pCmdUI);
+    afx_msg void OnWindowPreview800x600();
+    afx_msg void OnUpdateWindowPreview800x600(CCmdUI *pCmdUI);
+    afx_msg void OnPaint();
+    //}}AFX_MSG
+    DECLARE_MESSAGE_MAP()
 };
-
 
 /////////////////////////////////////////////////////////////////////////////
 

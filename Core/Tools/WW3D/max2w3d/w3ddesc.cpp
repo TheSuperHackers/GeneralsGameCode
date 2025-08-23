@@ -35,8 +35,6 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-
 #include "w3ddesc.h"
 #include "w3dexp.h"
 #include "dllmain.h"
@@ -55,9 +53,9 @@
  * HISTORY:                                                                                    *
  *   06/09/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-void * W3dClassDesc::Create(BOOL)
+void *W3dClassDesc::Create(BOOL)
 {
-	return new W3dExportClass;
+    return new W3dExportClass;
 }
 
 /***********************************************************************************************
@@ -76,7 +74,7 @@ void * W3dClassDesc::Create(BOOL)
  *=============================================================================================*/
 int W3dClassDesc::IsPublic()
 {
-	return 1;
+    return 1;
 }
 
 /***********************************************************************************************
@@ -94,9 +92,9 @@ int W3dClassDesc::IsPublic()
  * HISTORY:                                                                                    *
  *   06/09/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-const TCHAR * W3dClassDesc::ClassName()
+const TCHAR *W3dClassDesc::ClassName()
 {
-	return Get_String(IDS_W3D_SHORT_DESCRIPTION);
+    return Get_String(IDS_W3D_SHORT_DESCRIPTION);
 }
 
 /***********************************************************************************************
@@ -113,7 +111,7 @@ const TCHAR * W3dClassDesc::ClassName()
  *=============================================================================================*/
 SClass_ID W3dClassDesc::SuperClassID()
 {
-	return SCENE_EXPORT_CLASS_ID;
+    return SCENE_EXPORT_CLASS_ID;
 }
 
 /***********************************************************************************************
@@ -132,9 +130,9 @@ SClass_ID W3dClassDesc::SuperClassID()
  * HISTORY:                                                                                    *
  *   06/09/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-Class_ID	W3dClassDesc::ClassID()
+Class_ID W3dClassDesc::ClassID()
 {
-	return W3D_EXPORTER_CLASS_ID;
+    return W3D_EXPORTER_CLASS_ID;
 }
 
 /***********************************************************************************************
@@ -149,8 +147,7 @@ Class_ID	W3dClassDesc::ClassID()
  * HISTORY:                                                                                    *
  *   06/09/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-const TCHAR * W3dClassDesc::Category()
+const TCHAR *W3dClassDesc::Category()
 {
-	return Get_String(IDS_SCENE_EXPORT);
+    return Get_String(IDS_SCENE_EXPORT);
 }
-

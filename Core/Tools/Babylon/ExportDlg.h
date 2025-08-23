@@ -32,48 +32,47 @@
 
 class CExportDlg : public CDialog
 {
-			LangID	langid;
-			char		filename[200];
-			TROPTIONS	options;
-			int			got_lang;
+    LangID langid;
+    char filename[200];
+    TROPTIONS options;
+    int got_lang;
 
-// Construction
+    // Construction
 public:
+    LangID Language(void) { return langid; };
+    char *Filename(void) { return filename; };
+    TROPTIONS *Options(void) { return &options; };
 
-	LangID			Language ( void )			{ return langid; };
-	char*				Filename ( void )			{ return filename; };
-	TROPTIONS*	Options ( void )			{ return &options; };
+    CExportDlg(CWnd *pParent = NULL); // standard constructor
 
-	CExportDlg(CWnd* pParent = NULL);   // standard constructor
+    // Dialog Data
+    //{{AFX_DATA(CExportDlg)
+    enum
+    {
+        IDD = IDD_EXPORT
+    };
+    // NOTE: the ClassWizard will add data members here
+    //}}AFX_DATA
 
-// Dialog Data
-	//{{AFX_DATA(CExportDlg)
-	enum { IDD = IDD_EXPORT };
-		// NOTE: the ClassWizard will add data members here
-	//}}AFX_DATA
-
-
-// Overrides
-	// ClassWizard generated virtual function overrides
-	//{{AFX_VIRTUAL(CExportDlg)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
-	//}}AFX_VIRTUAL
-
-// Implementation
+    // Overrides
+    // ClassWizard generated virtual function overrides
+    //{{AFX_VIRTUAL(CExportDlg)
 protected:
+    virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
+    //}}AFX_VIRTUAL
 
-	// Generated message map functions
-	//{{AFX_MSG(CExportDlg)
-	virtual void OnOK();
-	virtual void OnCancel();
-	virtual BOOL OnInitDialog();
-	afx_msg void OnSelchangeCombolang();
-	afx_msg void OnSelendokCombolang();
-	//}}AFX_MSG
-	DECLARE_MESSAGE_MAP()
+    // Implementation
+protected:
+    // Generated message map functions
+    //{{AFX_MSG(CExportDlg)
+    virtual void OnOK();
+    virtual void OnCancel();
+    virtual BOOL OnInitDialog();
+    afx_msg void OnSelchangeCombolang();
+    afx_msg void OnSelendokCombolang();
+    //}}AFX_MSG
+    DECLARE_MESSAGE_MAP()
 };
-
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.

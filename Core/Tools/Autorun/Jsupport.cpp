@@ -26,133 +26,141 @@
 // Can't set these characters on top of line
 static BOOL IsDBCSInvalidAtTop(unsigned int c)
 {
-	static BYTE * dtbl = (BYTE *)"￠°’”‰′″℃、。々〉》」』】〕ぁぃぅぇぉっゃゅょゎ゛゜ゝゞァィゥェォッャュョヮヵヶ・ーヽヾ！％），．：；？］｝";
-	static BYTE * stbl = (BYTE *)"!%),.:;?]}｡｣､･ﾞﾟ";
+    static BYTE * dtbl = (BYTE *)"￠°’”‰′″℃、。々〉》」』】〕ぁぃぅぇぉっゃゅょゎ゛゜ゝゞァィゥェォッャュョヮヵヶ・ーヽヾ！％），．：；？］｝";
+    static BYTE *stbl = (BYTE *)"!%),.:;?]}｡｣､･ﾞﾟ";
 
-	if(c<0x100)
-	{
-		if(strchr((char *)stbl,(char)c))
-			return TRUE;
-	}
-	else
-	{
-		BYTE	c1,c2,*p;
-		c1 = (BYTE)(c >> 8);
-		c2 = (BYTE)(c & 0xff);
-		p = dtbl;
-		while(*p)
-		{
-			if((*p==c1)&&(*(p+1)==c2))
-				return TRUE;
-			p+=2;
-		}
-	}
-	return FALSE;
+    if (c < 0x100)
+    {
+        if (strchr((char *)stbl, (char)c))
+            return TRUE;
+    }
+    else
+    {
+        BYTE c1, c2, *p;
+        c1 = (BYTE)(c >> 8);
+        c2 = (BYTE)(c & 0xff);
+        p = dtbl;
+        while (*p)
+        {
+            if ((*p == c1) && (*(p + 1) == c2))
+                return TRUE;
+            p += 2;
+        }
+    }
+    return FALSE;
 }
 
 // 後置禁則文字
 // Can't set these characters on end of line
-static BOOL IsDBCSInvalidAtEnd( unsigned int c )
+static BOOL IsDBCSInvalidAtEnd(unsigned int c)
 {
-	static BYTE * dtbl = (BYTE *)"‘“〈《「『【〔（［｛＄￡￥";
-	static BYTE * stbl = (BYTE *)"｢({[";
+    static BYTE *dtbl = (BYTE *)"‘“〈《「『【〔（［｛＄￡￥";
+    static BYTE *stbl = (BYTE *)"｢({[";
 
-	if(c<0x100)
-	{
-		if(strchr((char *)stbl,(char)c))
-			return TRUE;
-	}
-	else
-	{
-		BYTE	c1,c2,*p;
-		c1 = (BYTE)(c >> 8);
-		c2 = (BYTE)(c & 0xff);
-		p = dtbl;
-		while(*p)
-		{
-			if((*p==c1)&&(*(p+1)==c2))
-				return TRUE;
-			p+=2;
-		}
-	}
-	return FALSE;
+    if (c < 0x100)
+    {
+        if (strchr((char *)stbl, (char)c))
+            return TRUE;
+    }
+    else
+    {
+        BYTE c1, c2, *p;
+        c1 = (BYTE)(c >> 8);
+        c2 = (BYTE)(c & 0xff);
+        p = dtbl;
+        while (*p)
+        {
+            if ((*p == c1) && (*(p + 1) == c2))
+                return TRUE;
+            p += 2;
+        }
+    }
+    return FALSE;
 }
 
-int nGetWord( char *string, int fdbcs )
+int nGetWord(char *string, int fdbcs)
 {
-	BOOL	bCiae0, bCiat1, bDbcs0, bDbcs1;
-	BYTE	*p = (BYTE *)string;
-	UINT	c0, c1, c;
+    BOOL bCiae0, bCiat1, bDbcs0, bDbcs1;
+    BYTE *p = (BYTE *)string;
+    UINT c0, c1, c;
 
-	//--------------------------------------------------------------------------
-	// If no string was passed in, exit.
-	//--------------------------------------------------------------------------
-	if( !p || !( c0 = *p++ )) {
-//	if(( p == NULL ) || ( *p == '\0' )) {
-		return 0;
-	}
-//	c0 = *p;
+    //--------------------------------------------------------------------------
+    // If no string was passed in, exit.
+    //--------------------------------------------------------------------------
+    if (!p || !(c0 = *p++))
+    {
+        //	if(( p == NULL ) || ( *p == '\0' )) {
+        return 0;
+    }
+    //	c0 = *p;
 
-	//--------------------------------------------------------------------------
-	// If we are NOT a double-byte language, then just parse first word.
-	//--------------------------------------------------------------------------
-	if( !fdbcs ) {
+    //--------------------------------------------------------------------------
+    // If we are NOT a double-byte language, then just parse first word.
+    //--------------------------------------------------------------------------
+    if (!fdbcs)
+    {
+        int n = 0;
 
-		int n = 0;
+        while (*p > ' ')
+        {
+            n++;
+            p++;
+        }
 
-		while( *p >' ' ) {
-			n++;
-			p++;
-		}
+        if (*p)
+        {
+            n++;
+        }
+        return n;
+    }
 
-		if( *p ) {
-			n++;
-		}
-		return n;
-	}
+    //--------------------------------------------------------------------------
+    // If we are a double-byte language...
+    //--------------------------------------------------------------------------
+    bDbcs0 = IsDBCSLeadByte(c0) && *p;
 
-	//--------------------------------------------------------------------------
-	// If we are a double-byte language...
-	//--------------------------------------------------------------------------
-	bDbcs0 = IsDBCSLeadByte( c0 ) && *p;
+    if (bDbcs0)
+    {
+        c0 = (c0 << 8) | *p++;
+    }
 
-	if( bDbcs0 ) {
-		c0 = ( c0 << 8 ) | *p++;
-	}
+    bCiae0 = IsDBCSInvalidAtEnd(c0);
 
-	bCiae0 = IsDBCSInvalidAtEnd( c0 );
+    while (c1 = *p)
+    {
+        bDbcs1 = (IsDBCSLeadByte(c1) && (c = *(p + 1)));
+        if (bDbcs1)
+        {
+            c1 = (c1 << 8) | c;
+        }
 
-	while( c1 = *p ) {
+        if ((bDbcs0 || bDbcs1) && !(bDbcs0 && bDbcs1))
+        { // XOR
+            break;
+        }
 
-		bDbcs1 = ( IsDBCSLeadByte( c1 ) && ( c = *( p + 1 )));
-		if( bDbcs1 ) {
-			c1 = ( c1<<8 ) | c;
-		}
+        if (bDbcs1)
+        {
+            bCiat1 = IsDBCSInvalidAtTop(c1);
 
-		if(( bDbcs0 || bDbcs1 ) && !( bDbcs0 && bDbcs1 )) {		// XOR
-			break;
-		}
+            if (!(bCiae0 || bCiat1))
+            {
+                break;
+            }
+            bCiae0 = IsDBCSInvalidAtEnd(c1);
+            p += 2;
+        }
+        else
+        {
+            if (c0 <= ' ')
+            {
+                break;
+            }
+            p++;
+        }
 
-		if( bDbcs1 ) {
-
-			bCiat1 = IsDBCSInvalidAtTop( c1 );
-
-			if( !( bCiae0 || bCiat1 ))	{
-				break;
-			}
-			bCiae0 = IsDBCSInvalidAtEnd( c1 );
-			p+=2;
-
-		} else {
-
-			if( c0<=' ' ) {
-				break;
-			}
-			p++;
-		}
-
-		bDbcs0 = bDbcs1;
-		c0 = c1;
-	}
-	return( p - (BYTE *)string );
+        bDbcs0 = bDbcs1;
+        c0 = c1;
+    }
+    return (p - (BYTE *)string);
 }

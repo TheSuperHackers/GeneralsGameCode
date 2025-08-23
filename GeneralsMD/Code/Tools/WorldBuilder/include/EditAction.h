@@ -25,7 +25,6 @@
 // EditAction.h : header file
 //
 
-
 class ScriptAction;
 class SidesList;
 
@@ -34,49 +33,51 @@ class SidesList;
 
 class EditAction : public CDialog
 {
-// Construction
+    // Construction
 public:
-	EditAction(CWnd* pParent = NULL);   // standard constructor
+    EditAction(CWnd *pParent = NULL); // standard constructor
 
-// Dialog Data
-	//{{AFX_DATA(EditAction)
-	enum { IDD = IDD_ScriptAction };
-		// NOTE: the ClassWizard will add data members here
-	//}}AFX_DATA
+    // Dialog Data
+    //{{AFX_DATA(EditAction)
+    enum
+    {
+        IDD = IDD_ScriptAction
+    };
+    // NOTE: the ClassWizard will add data members here
+    //}}AFX_DATA
 
+    // Overrides
+    // ClassWizard generated virtual function overrides
+    //{{AFX_VIRTUAL(EditAction)
+protected:
+    virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
+    virtual BOOL OnNotify(WPARAM wParam, LPARAM lParam, LRESULT *pResult);
+    //}}AFX_VIRTUAL
 
-// Overrides
-	// ClassWizard generated virtual function overrides
-	//{{AFX_VIRTUAL(EditAction)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
-	virtual BOOL OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult);
-	//}}AFX_VIRTUAL
-
-// Implementation
+    // Implementation
 public:
-	void setAction(ScriptAction *pAction) {m_action = pAction;}
+    void setAction(ScriptAction *pAction) { m_action = pAction; }
 
 protected:
-	void formatScriptActionText(Int parmNdx);
-protected:
-	ScriptAction *m_action;
-	Bool			m_updating;
-	Bool			m_modifiedTextColor;
-	CRichEditCtrl m_myEditCtrl;
-	CHARRANGE m_curLinkChrg;
-	Int				m_curEditParameter;
-	CTreeCtrl	m_actionTreeView;
+    void formatScriptActionText(Int parmNdx);
 
 protected:
+    ScriptAction *m_action;
+    Bool m_updating;
+    Bool m_modifiedTextColor;
+    CRichEditCtrl m_myEditCtrl;
+    CHARRANGE m_curLinkChrg;
+    Int m_curEditParameter;
+    CTreeCtrl m_actionTreeView;
 
-	// Generated message map functions
-	//{{AFX_MSG(EditAction)
-	virtual BOOL OnInitDialog();
-	afx_msg void OnSelchangeScriptActionType();
-	afx_msg void OnTimer(UINT nIDEvent);
-	//}}AFX_MSG
-	DECLARE_MESSAGE_MAP()
+protected:
+    // Generated message map functions
+    //{{AFX_MSG(EditAction)
+    virtual BOOL OnInitDialog();
+    afx_msg void OnSelchangeScriptActionType();
+    afx_msg void OnTimer(UINT nIDEvent);
+    //}}AFX_MSG
+    DECLARE_MESSAGE_MAP()
 };
 
 //{{AFX_INSERT_LOCATION}}

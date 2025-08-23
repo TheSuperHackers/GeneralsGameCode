@@ -22,8 +22,7 @@
 //																																						//
 ////////////////////////////////////////////////////////////////////////////////
 
-
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 
 #include "GameNetwork/NetCommandRef.h"
 
@@ -40,15 +39,15 @@ NetCommandRef::NetCommandRef(NetCommandMsg *msg, char *filename, int line)
 NetCommandRef::NetCommandRef(NetCommandMsg *msg)
 #endif
 {
-	m_msg = msg;
-	m_next = NULL;
-	m_prev = NULL;
-	m_msg->attach();
-	m_timeLastSent = -1;
+    m_msg = msg;
+    m_next = NULL;
+    m_prev = NULL;
+    m_msg->attach();
+    m_timeLastSent = -1;
 
 #ifdef DEBUG_NETCOMMANDREF
-	m_id = ++refNum;
-	DEBUG_LOG(("NetCommandRef %d allocated in file %s line %d", m_id, filename, line));
+    m_id = ++refNum;
+    DEBUG_LOG(("NetCommandRef %d allocated in file %s line %d", m_id, filename, line));
 #endif
 }
 
@@ -57,15 +56,14 @@ NetCommandRef::NetCommandRef(NetCommandMsg *msg)
  */
 NetCommandRef::~NetCommandRef()
 {
-	if (m_msg != NULL)
-	{
-		m_msg->detach();
-	}
- 	DEBUG_ASSERTCRASH(m_next == NULL, ("NetCommandRef::~NetCommandRef - m_next != NULL"));
-	DEBUG_ASSERTCRASH(m_prev == NULL, ("NetCommandRef::~NetCommandRef - m_prev != NULL"));
+    if (m_msg != NULL)
+    {
+        m_msg->detach();
+    }
+    DEBUG_ASSERTCRASH(m_next == NULL, ("NetCommandRef::~NetCommandRef - m_next != NULL"));
+    DEBUG_ASSERTCRASH(m_prev == NULL, ("NetCommandRef::~NetCommandRef - m_prev != NULL"));
 
 #ifdef DEBUG_NETCOMMANDREF
-	DEBUG_LOG(("NetCommandRef %d deleted", m_id));
+    DEBUG_LOG(("NetCommandRef %d deleted", m_id));
 #endif
 }
-

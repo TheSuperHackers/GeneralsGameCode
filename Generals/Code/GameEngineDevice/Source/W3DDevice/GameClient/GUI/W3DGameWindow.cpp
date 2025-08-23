@@ -56,8 +56,8 @@
 // DEFINES ////////////////////////////////////////////////////////////////////
 enum
 {
-	BORDER_CORNER_SIZE	= 15,
-	BORDER_LINE_SIZE		= 20,
+    BORDER_CORNER_SIZE = 15,
+    BORDER_LINE_SIZE = 20,
 };
 
 // PRIVATE TYPES //////////////////////////////////////////////////////////////
@@ -66,7 +66,7 @@ enum
 // PRIVATE DATA ///////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 static Bool bordersInit = FALSE;
-static const Image *borderPieces[NUM_BORDER_PIECES] = { 0 };
+static const Image *borderPieces[NUM_BORDER_PIECES] = {0};
 
 // PUBLIC DATA ////////////////////////////////////////////////////////////////
 
@@ -78,182 +78,144 @@ static const Image *borderPieces[NUM_BORDER_PIECES] = { 0 };
 
 // initBorders ================================================================
 //=============================================================================
-static void initBorders( void )
+static void initBorders(void)
 {
+    borderPieces[BORDER_CORNER_UL] = TheMappedImageCollection->findImageByName(AsciiString("BorderCornerUL"));
 
-	borderPieces[ BORDER_CORNER_UL ] =
-						TheMappedImageCollection->findImageByName( AsciiString( "BorderCornerUL" ) );
+    borderPieces[BORDER_CORNER_UR] = TheMappedImageCollection->findImageByName(AsciiString("BorderCornerUR"));
 
-	borderPieces[ BORDER_CORNER_UR ] =
-						TheMappedImageCollection->findImageByName( AsciiString( "BorderCornerUR" ) );
+    borderPieces[BORDER_CORNER_LL] = TheMappedImageCollection->findImageByName(AsciiString("BorderCornerLL"));
 
-	borderPieces[ BORDER_CORNER_LL ] =
-						TheMappedImageCollection->findImageByName( AsciiString( "BorderCornerLL" ) );
+    borderPieces[BORDER_CORNER_LR] = TheMappedImageCollection->findImageByName(AsciiString("BorderCornerLR"));
 
-	borderPieces[ BORDER_CORNER_LR ] =
-						TheMappedImageCollection->findImageByName( AsciiString( "BorderCornerLR" ) );
+    borderPieces[BORDER_VERTICAL_LEFT] = TheMappedImageCollection->findImageByName(AsciiString("BorderLeft"));
 
-	borderPieces[ BORDER_VERTICAL_LEFT ] =
-						TheMappedImageCollection->findImageByName( AsciiString( "BorderLeft" ) );
+    borderPieces[BORDER_VERTICAL_LEFT_SHORT] = TheMappedImageCollection->findImageByName(AsciiString("BorderLeftShort"));
 
-	borderPieces[ BORDER_VERTICAL_LEFT_SHORT ] =
-						TheMappedImageCollection->findImageByName( AsciiString( "BorderLeftShort" ) );
+    borderPieces[BORDER_HORIZONTAL_TOP] = TheMappedImageCollection->findImageByName(AsciiString("BorderTop"));
 
-	borderPieces[ BORDER_HORIZONTAL_TOP ] =
-						TheMappedImageCollection->findImageByName( AsciiString( "BorderTop" ) );
+    borderPieces[BORDER_HORIZONTAL_TOP_SHORT] = TheMappedImageCollection->findImageByName(AsciiString("BorderTopShort"));
 
-	borderPieces[ BORDER_HORIZONTAL_TOP_SHORT ] =
-						TheMappedImageCollection->findImageByName( AsciiString( "BorderTopShort" ) );
+    borderPieces[BORDER_VERTICAL_RIGHT] = TheMappedImageCollection->findImageByName(AsciiString("BorderRight"));
 
-	borderPieces[ BORDER_VERTICAL_RIGHT ] =
-						TheMappedImageCollection->findImageByName( AsciiString( "BorderRight" ) );
+    borderPieces[BORDER_VERTICAL_RIGHT_SHORT] = TheMappedImageCollection->findImageByName(AsciiString("BorderRightShort"));
 
-	borderPieces[ BORDER_VERTICAL_RIGHT_SHORT ] =
-						TheMappedImageCollection->findImageByName( AsciiString( "BorderRightShort" ) );
+    borderPieces[BORDER_HORIZONTAL_BOTTOM] = TheMappedImageCollection->findImageByName(AsciiString("BorderBottom"));
 
-	borderPieces[ BORDER_HORIZONTAL_BOTTOM ] =
-						TheMappedImageCollection->findImageByName( AsciiString( "BorderBottom" ) );
+    borderPieces[BORDER_HORIZONTAL_BOTTOM_SHORT] =
+        TheMappedImageCollection->findImageByName(AsciiString("BorderBottomShort"));
 
-	borderPieces[ BORDER_HORIZONTAL_BOTTOM_SHORT ] =
-						TheMappedImageCollection->findImageByName( AsciiString( "BorderBottomShort" ) );
-
-	bordersInit = TRUE;
-
+    bordersInit = TRUE;
 }
 
 // W3DGameWindow::blitBorderRect ==============================================
 //=============================================================================
-void W3DGameWindow::blitBorderRect( Int x, Int y, Int width, Int height )
+void W3DGameWindow::blitBorderRect(Int x, Int y, Int width, Int height)
 {
-	Int Offset = 15;
-	Int OffsetLower = 5;
-	// init image loc if needed
-	if( bordersInit == FALSE )
-		initBorders();
+    Int Offset = 15;
+    Int OffsetLower = 5;
+    // init image loc if needed
+    if (bordersInit == FALSE)
+        initBorders();
 
-	// save original x, y
-	Int originalX = x;
-	Int originalY = y;
-	Int maxX = x + width;
-	Int maxY = y + height;
-	Int x2, y2;			// used for simultaneous drawing of line pairs
-	Int size = 20;
-	Int halfSize = size / 2;
+    // save original x, y
+    Int originalX = x;
+    Int originalY = y;
+    Int maxX = x + width;
+    Int maxY = y + height;
+    Int x2, y2; // used for simultaneous drawing of line pairs
+    Int size = 20;
+    Int halfSize = size / 2;
 
-	// Draw Horizontal Lines
-	// All border pieces are based on a 10 pixel offset from the centerline
-	y = originalY - Offset;
-	y2 = maxY - OffsetLower;
-	x2 = maxX - (OffsetLower + BORDER_LINE_SIZE);
+    // Draw Horizontal Lines
+    // All border pieces are based on a 10 pixel offset from the centerline
+    y = originalY - Offset;
+    y2 = maxY - OffsetLower;
+    x2 = maxX - (OffsetLower + BORDER_LINE_SIZE);
 
-	for( x=(originalX + OffsetLower); x <= x2; x += BORDER_LINE_SIZE )
-	{
+    for (x = (originalX + OffsetLower); x <= x2; x += BORDER_LINE_SIZE)
+    {
+        TheDisplay->drawImage(borderPieces[BORDER_HORIZONTAL_TOP], x, y, x + size, y + size);
+        TheDisplay->drawImage(borderPieces[BORDER_HORIZONTAL_BOTTOM], x, y2, x + size, y2 + size);
+    }
 
-		TheDisplay->drawImage( borderPieces[ BORDER_HORIZONTAL_TOP ],
-													 x, y, x + size, y + size );
-		TheDisplay->drawImage( borderPieces[ BORDER_HORIZONTAL_BOTTOM ],
-													 x, y2, x + size, y2 + size );
+    x2 = maxX - 5; // BORDER_CORNER_SIZE;
 
-	}
+    // x == place to draw remainder if any
+    if ((x2 - x) >= (BORDER_LINE_SIZE / 2))
+    {
+        // Blit Half piece
+        TheDisplay->drawImage(borderPieces[BORDER_HORIZONTAL_TOP_SHORT], x, y, x + halfSize, y + size);
+        TheDisplay->drawImage(borderPieces[BORDER_HORIZONTAL_BOTTOM_SHORT], x, y2, x + halfSize, y2 + size);
 
-	x2 = maxX - 5;//BORDER_CORNER_SIZE;
+        x += (BORDER_LINE_SIZE / 2);
+    }
 
-	// x == place to draw remainder if any
-	if( (x2 - x) >= (BORDER_LINE_SIZE / 2) )
-	{
+    // x2 - x ... must now be less than a half piece
+    // check for equals and if not blit an adjusted half piece border pieces have
+    // a two pixel repeat so we will blit one pixel over if necessary to line up
+    // the art, but we'll cover-up the overlap with the corners
+    if (x < x2)
+    {
+        x -= ((BORDER_LINE_SIZE / 2) - (((x2 - x) + 1) & ~1));
 
-		//Blit Half piece
-		TheDisplay->drawImage( borderPieces[ BORDER_HORIZONTAL_TOP_SHORT ],
-													 x, y, x + halfSize, y + size );
-		TheDisplay->drawImage( borderPieces[ BORDER_HORIZONTAL_BOTTOM_SHORT ],
-													 x, y2, x + halfSize, y2 + size );
+        // Blit Half piece
+        TheDisplay->drawImage(borderPieces[BORDER_HORIZONTAL_TOP_SHORT], x, y, x + halfSize, y + size);
+        TheDisplay->drawImage(borderPieces[BORDER_HORIZONTAL_BOTTOM_SHORT], x, y2, x + halfSize, y2 + size);
+    }
 
-		x += (BORDER_LINE_SIZE / 2);
+    // Draw Vertical Lines
+    // All border pieces are based on a 10 pixel offset from the centerline
+    x = originalX - Offset;
+    x2 = maxX - OffsetLower;
+    y2 = maxY - (OffsetLower + BORDER_LINE_SIZE);
 
-	}
+    for (y = (originalY + OffsetLower); y <= y2; y += BORDER_LINE_SIZE)
+    {
+        TheDisplay->drawImage(borderPieces[BORDER_VERTICAL_LEFT], x, y, x + size, y + size);
+        TheDisplay->drawImage(borderPieces[BORDER_VERTICAL_RIGHT], x2, y, x2 + size, y + size);
+    }
 
-	// x2 - x ... must now be less than a half piece
-	// check for equals and if not blit an adjusted half piece border pieces have
-	// a two pixel repeat so we will blit one pixel over if necessary to line up
-	// the art, but we'll cover-up the overlap with the corners
-	if( x < x2 )
-	{
-		x -= ((BORDER_LINE_SIZE / 2) - (((x2 - x) + 1) & ~1));
+    y2 = maxY - OffsetLower; // BORDER_CORNER_SIZE;
 
-		//Blit Half piece
-		TheDisplay->drawImage( borderPieces[ BORDER_HORIZONTAL_TOP_SHORT ],
-													 x, y, x + halfSize, y + size );
-		TheDisplay->drawImage( borderPieces[ BORDER_HORIZONTAL_BOTTOM_SHORT ],
-													 x, y2, x + halfSize, y2 + size );
+    // y == place to draw remainder if any
+    if ((y2 - y) >= (BORDER_LINE_SIZE / 2))
+    {
+        // Blit Half piece
+        TheDisplay->drawImage(borderPieces[BORDER_VERTICAL_LEFT_SHORT], x, y, x + size, y + halfSize);
+        TheDisplay->drawImage(borderPieces[BORDER_VERTICAL_RIGHT_SHORT], x2, y, x2 + size, y + halfSize);
 
-	}
+        y += (BORDER_LINE_SIZE / 2);
+    }
 
-	// Draw Vertical Lines
-	// All border pieces are based on a 10 pixel offset from the centerline
-	x = originalX - Offset;
-	x2 = maxX - OffsetLower;
-	y2 = maxY - (OffsetLower + BORDER_LINE_SIZE);
+    // y2 - y ... must now be less than a half piece
+    // check for equals and if not blit an adjusted half piece border pieces have
+    // a two pixel repeat so we will blit one pixel over if necessary to line up
+    // the art, but we'll cover-up the overlap with the corners
+    if (y < y2)
+    {
+        y -= ((BORDER_LINE_SIZE / 2) - (((y2 - y) + 1) & ~1));
 
-	for( y=(originalY + OffsetLower); y <= y2; y += BORDER_LINE_SIZE )
-	{
+        // Blit Half piece
+        TheDisplay->drawImage(borderPieces[BORDER_VERTICAL_LEFT_SHORT], x, y, x + size, y + halfSize);
+        TheDisplay->drawImage(borderPieces[BORDER_VERTICAL_RIGHT_SHORT], x2, y, x2 + size, y + halfSize);
+    }
 
-		TheDisplay->drawImage( borderPieces[ BORDER_VERTICAL_LEFT ],
-													 x, y, x + size, y + size );
-		TheDisplay->drawImage( borderPieces[ BORDER_VERTICAL_RIGHT ],
-													 x2, y, x2 + size, y + size );
+    // Draw Corners
+    x = originalX - BORDER_CORNER_SIZE;
+    y = originalY - BORDER_CORNER_SIZE;
+    TheDisplay->drawImage(borderPieces[BORDER_CORNER_UL], x, y, x + size, y + size);
+    x = maxX - 5; // BORDER_CORNER_SIZE;
+    y = originalY - BORDER_CORNER_SIZE;
+    TheDisplay->drawImage(borderPieces[BORDER_CORNER_UR], x, y, x + size, y + size);
+    x = originalX - BORDER_CORNER_SIZE;
+    y = maxY - 5; // BORDER_CORNER_SIZE;
+    TheDisplay->drawImage(borderPieces[BORDER_CORNER_LL], x, y, x + size, y + size);
+    x = maxX - 5; // BORDER_CORNER_SIZE;
+    y = maxY - 5; // BORDER_CORNER_SIZE;
+    TheDisplay->drawImage(borderPieces[BORDER_CORNER_LR], x, y, x + size, y + size);
 
-	}
-
-	y2 = maxY - OffsetLower;//BORDER_CORNER_SIZE;
-
-	// y == place to draw remainder if any
-	if( (y2 - y) >= (BORDER_LINE_SIZE / 2) )
-	{
-
-		//Blit Half piece
-		TheDisplay->drawImage( borderPieces[ BORDER_VERTICAL_LEFT_SHORT ],
-													 x, y, x + size, y + halfSize );
-		TheDisplay->drawImage( borderPieces[ BORDER_VERTICAL_RIGHT_SHORT ],
-													 x2, y, x2 + size, y + halfSize );
-
-		y += (BORDER_LINE_SIZE / 2);
-	}
-
-	// y2 - y ... must now be less than a half piece
-	// check for equals and if not blit an adjusted half piece border pieces have
-	// a two pixel repeat so we will blit one pixel over if necessary to line up
-	// the art, but we'll cover-up the overlap with the corners
-	if( y < y2 )
-	{
-		y -= ((BORDER_LINE_SIZE / 2) - (((y2 - y) + 1) & ~1));
-
-		//Blit Half piece
-		TheDisplay->drawImage( borderPieces[ BORDER_VERTICAL_LEFT_SHORT ],
-													 x, y, x + size, y + halfSize );
-		TheDisplay->drawImage( borderPieces[ BORDER_VERTICAL_RIGHT_SHORT ],
-													 x2, y, x2 + size, y + halfSize );
-
-	}
-
-	// Draw Corners
-	x = originalX - BORDER_CORNER_SIZE ;
-	y = originalY - BORDER_CORNER_SIZE;
-	TheDisplay->drawImage( borderPieces[ BORDER_CORNER_UL ],
-												 x, y, x + size, y + size );
-	x = maxX - 5;//BORDER_CORNER_SIZE;
-	y = originalY - BORDER_CORNER_SIZE;
-	TheDisplay->drawImage( borderPieces[ BORDER_CORNER_UR ],
-												 x, y, x + size, y + size );
-	x = originalX - BORDER_CORNER_SIZE;
-	y = maxY - 5;//BORDER_CORNER_SIZE;
-	TheDisplay->drawImage( borderPieces[ BORDER_CORNER_LL ],
-												 x, y, x + size, y + size );
-	x = maxX - 5;//BORDER_CORNER_SIZE;
-	y = maxY - 5;//BORDER_CORNER_SIZE;
-	TheDisplay->drawImage( borderPieces[ BORDER_CORNER_LR ],
-												 x, y, x + size, y + size );
-
-}  // end blitBorderRect
+} // end blitBorderRect
 
 ///////////////////////////////////////////////////////////////////////////////
 // PUBLIC FUNCTIONS ///////////////////////////////////////////////////////////
@@ -261,403 +223,386 @@ void W3DGameWindow::blitBorderRect( Int x, Int y, Int width, Int height )
 
 // W3DGameWindow::W3DGameWindow ===============================================
 //=============================================================================
-W3DGameWindow::W3DGameWindow( void )
+W3DGameWindow::W3DGameWindow(void)
 {
+    // override the default draw with our own default draw function for W3D
+    winSetDrawFunc(TheWindowManager->getDefaultDraw());
 
-	// override the default draw with our own default draw function for W3D
-	winSetDrawFunc( TheWindowManager->getDefaultDraw() );
+    m_textPos.x = m_textPos.y = 0;
+    m_currTextColor = WIN_COLOR_UNDEFINED;
+    m_needPolyDraw = FALSE;
+    m_newTextPos = FALSE;
 
-	m_textPos.x = m_textPos.y = 0;
-	m_currTextColor = WIN_COLOR_UNDEFINED;
-	m_needPolyDraw = FALSE;
-	m_newTextPos = FALSE;
-
-}  // end W3DGameWindow
+} // end W3DGameWindow
 
 // W3DGameWindow::~W3DGameWindow ==============================================
 //=============================================================================
-W3DGameWindow::~W3DGameWindow( void )
+W3DGameWindow::~W3DGameWindow(void)
 {
-
-}  // end ~W3DGameWindow
+} // end ~W3DGameWindow
 
 // W3DGameWinDefaultDraw ======================================================
 /** The default redraw callback.  Draws the background using either
-	* the drawData or the background color unless the background color
-	* is set to -1 indicating that default drawing is turned off. */
+ * the drawData or the background color unless the background color
+ * is set to -1 indicating that default drawing is turned off. */
 //=============================================================================
-void W3DGameWinDefaultDraw( GameWindow *window, WinInstanceData *instData )
+void W3DGameWinDefaultDraw(GameWindow *window, WinInstanceData *instData)
 {
-	Real borderWidth = 1.0f;
-	ICoord2D origin;
-	ICoord2D size;
-	W3DGameWindow *w3dWindow = (W3DGameWindow *)window;
+    Real borderWidth = 1.0f;
+    ICoord2D origin;
+    ICoord2D size;
+    W3DGameWindow *w3dWindow = (W3DGameWindow *)window;
 
-	/** @todo NOTE that we're making a W3DGameWindow cast here, it seems
-	logical because we are in a W3D draw function so it's reasonable to assume
-	that we have a W3DGameWindow.  However, we may want to revisit this
-	type of casting in the future, we have the same problems with the
-	ObjectModules where we cast object modules for their individual methods.
-	Also note that the other W3D implementations of GUI controls are making
-	a similar cast for their device implementation functions */
+    /** @todo NOTE that we're making a W3DGameWindow cast here, it seems
+    logical because we are in a W3D draw function so it's reasonable to assume
+    that we have a W3DGameWindow.  However, we may want to revisit this
+    type of casting in the future, we have the same problems with the
+    ObjectModules where we cast object modules for their individual methods.
+    Also note that the other W3D implementations of GUI controls are making
+    a similar cast for their device implementation functions */
 
-	// get the window position in the screen coordinates
-	w3dWindow->winGetScreenPosition( &origin.x, &origin.y );
+    // get the window position in the screen coordinates
+    w3dWindow->winGetScreenPosition(&origin.x, &origin.y);
 
-	// get size of window
-	w3dWindow->winGetSize( &size.x, &size.y );
+    // get size of window
+    w3dWindow->winGetSize(&size.x, &size.y);
 
-	// image drawing vs color drawing
-	if( BitIsSet( window->winGetStatus(), WIN_STATUS_IMAGE ) )
-	{
-		const Image *image;
+    // image drawing vs color drawing
+    if (BitIsSet(window->winGetStatus(), WIN_STATUS_IMAGE))
+    {
+        const Image *image;
 
-		// get image
-		if( BitIsSet( window->winGetStatus(), WIN_STATUS_ENABLED ) == FALSE )
-			image = window->winGetDisabledImage( 0 );
-		else if( BitIsSet( instData->getState(), WIN_STATE_HILITED ) )
-			image = window->winGetHiliteImage( 0 );
-		else
-			image = window->winGetEnabledImage( 0 );
+        // get image
+        if (BitIsSet(window->winGetStatus(), WIN_STATUS_ENABLED) == FALSE)
+            image = window->winGetDisabledImage(0);
+        else if (BitIsSet(instData->getState(), WIN_STATE_HILITED))
+            image = window->winGetHiliteImage(0);
+        else
+            image = window->winGetEnabledImage(0);
 
-		if( image )
-		{
-			ICoord2D start, end;
+        if (image)
+        {
+            ICoord2D start, end;
 
-			start.x = origin.x + instData->m_imageOffset.x;
-			start.y = origin.y + instData->m_imageOffset.y;
-			end.x = start.x + size.x;
-			end.y = start.y + size.y;
-			TheWindowManager->winDrawImage( image, start.x, start.y, end.x, end.y );
+            start.x = origin.x + instData->m_imageOffset.x;
+            start.y = origin.y + instData->m_imageOffset.y;
+            end.x = start.x + size.x;
+            end.y = start.y + size.y;
+            TheWindowManager->winDrawImage(image, start.x, start.y, end.x, end.y);
 
-		}  // end if
+        } // end if
 
-	}  // end if
-	else
-	{
-		Color color, borderColor;
+    } // end if
+    else
+    {
+        Color color, borderColor;
 
-		// get colors
-		if( BitIsSet( window->winGetStatus(), WIN_STATUS_ENABLED ) == FALSE )
-		{
+        // get colors
+        if (BitIsSet(window->winGetStatus(), WIN_STATUS_ENABLED) == FALSE)
+        {
+            color = window->winGetDisabledColor(0);
+            borderColor = window->winGetDisabledBorderColor(0);
 
-			color				= window->winGetDisabledColor( 0 );
-			borderColor = window->winGetDisabledBorderColor( 0 );
+        } // end if
+        else if (BitIsSet(instData->getState(), WIN_STATE_HILITED))
+        {
+            color = window->winGetHiliteColor(0);
+            borderColor = window->winGetHiliteBorderColor(0);
 
-		}  // end if
-		else if( BitIsSet( instData->getState(), WIN_STATE_HILITED ) )
-		{
+        } // end else if
+        else
+        {
+            color = window->winGetEnabledColor(0);
+            borderColor = window->winGetEnabledBorderColor(0);
 
-			color				= window->winGetHiliteColor( 0 );
-			borderColor = window->winGetHiliteBorderColor( 0 );
+        } // end else
 
-		}  // end else if
-		else
-		{
+        //
+        // draw the border at the edges
+        //
+        if (borderColor != WIN_COLOR_UNDEFINED)
+            TheWindowManager
+                ->winOpenRect(borderColor, borderWidth, origin.x, origin.y, origin.x + size.x, origin.y + size.y);
 
-			color				= window->winGetEnabledColor( 0 );
-			borderColor = window->winGetEnabledBorderColor( 0 );
+        // draw filled background
+        if (color != WIN_COLOR_UNDEFINED)
+            TheWindowManager->winFillRect(
+                color,
+                borderWidth,
+                origin.x + borderWidth,
+                origin.y + borderWidth,
+                origin.x + size.x - borderWidth,
+                origin.y + size.y - borderWidth);
 
-		}  // end else
+    } // end else
 
-		//
-		// draw the border at the edges
-		//
-		if( borderColor != WIN_COLOR_UNDEFINED )
-			TheWindowManager->winOpenRect( borderColor, borderWidth,
-																		 origin.x, origin.y,
-																		 origin.x + size.x, origin.y + size.y );
+    // if we have a video buffer, draw the video buffer
+    if (instData->m_videoBuffer)
+    {
+        ICoord2D pos, size;
+        window->winGetScreenPosition(&pos.x, &pos.y);
+        window->winGetSize(&size.x, &size.y);
 
-		// draw filled background
-		if( color != WIN_COLOR_UNDEFINED )
-			TheWindowManager->winFillRect( color, borderWidth,
-																		 origin.x + borderWidth,
-																		 origin.y + borderWidth,
-																		 origin.x + size.x - borderWidth,
-																		 origin.y + size.y - borderWidth );
+        TheDisplay->drawVideoBuffer(instData->m_videoBuffer, pos.x, pos.y, pos.x + size.x, pos.y + size.y);
+    }
 
-	}  // end else
-
-	// if we have a video buffer, draw the video buffer
-	if ( instData->m_videoBuffer )
-	{
-		ICoord2D pos, size;
-		window->winGetScreenPosition( &pos.x, &pos.y );
-		window->winGetSize( &size.x, &size.y );
-
-		TheDisplay->drawVideoBuffer( instData->m_videoBuffer, pos.x, pos.y, pos.x + size.x, pos.y + size.y );
-	}
-
-}  // end W3DGameWinDefaultDraw
+} // end W3DGameWinDefaultDraw
 
 // W3DGameWindow::winDrawBorder ===============================================
 //=============================================================================
-void W3DGameWindow::winDrawBorder( void )
+void W3DGameWindow::winDrawBorder(void)
 {
-	Bool found = FALSE;
-	Int originalX, originalY;
-	Int x, y;
-	Int width;
-	Int i, bits;
+    Bool found = FALSE;
+    Int originalX, originalY;
+    Int x, y;
+    Int width;
+    Int i, bits;
 
-/** @todo this WinDrawBorder is the old Nox function for drawing the borders
-	* on various windows and controls.  We should derive classes of game
-	* windows for the different GUI controls and move the specific pieces of
-	* code that apply for those gadgets to those classes */
+    /** @todo this WinDrawBorder is the old Nox function for drawing the borders
+     * on various windows and controls.  We should derive classes of game
+     * windows for the different GUI controls and move the specific pieces of
+     * code that apply for those gadgets to those classes */
 
-	// based on window class pass different regions to real draw
+    // based on window class pass different regions to real draw
 
-	winGetScreenPosition( &originalX, &originalY );
+    winGetScreenPosition(&originalX, &originalY);
 
-	for( i = 0; (i < (sizeof(UnsignedInt) * 8)) && (found == FALSE); i++ )
-	{
+    for (i = 0; (i < (sizeof(UnsignedInt) * 8)) && (found == FALSE); i++)
+    {
+        bits = (1 << i);
 
-		bits = (1 << i);
+        if (m_instData.getStyle() & bits)
+        {
+            switch (m_instData.getStyle() & bits)
+            {
+                case GWS_CHECK_BOX:
+                    found = TRUE;
+                    break;
 
-		if( m_instData.getStyle() & bits )
-		{
+                case GWS_ENTRY_FIELD:
+                {
+                    //					EntryData *e = (EntryData *)m_userData;
+                    width = m_size.x;
 
-			switch( m_instData.getStyle() & bits )
-			{
-				case GWS_CHECK_BOX:
-					found = TRUE;
-					break;
+                    x = originalX;
+                    y = originalY;
 
-				case GWS_ENTRY_FIELD:
-				{
-//					EntryData *e = (EntryData *)m_userData;
-					width = m_size.x;
+                    // Calculate space for Label
+                    if (m_instData.getTextLength())
+                    {
+                        Int textWidth = 0;
 
-					x = originalX;
-					y = originalY;
+                        TheWindowManager->winGetTextSize(m_instData.getFont(), m_instData.getText(), &textWidth, NULL, 0);
+                        width -= textWidth + 6;
+                        x += textWidth + 6;
+                    }
 
-					// Calculate space for Label
-					if( m_instData.getTextLength() )
-					{
-						Int textWidth = 0;
+                    /*
+                    // Colin: The very notion of entry width makes no sense to me since
+                    // we already have a gadget width, and the max characters for
+                    // an entry box so I am removing this.
+                                        // Adjust entry box if an entryWidth is provided
+                                        if( (e->entryWidth > 0) && (width > e->entryWidth) )
+                                        {
+                                            width = e->entryWidth;
+                                            x = originalX + (m_size.x - e->entryWidth);
+                                        }
+                    */
 
-						TheWindowManager->winGetTextSize( m_instData.getFont(),
-																							m_instData.getText(),
-																							&textWidth, NULL, 0 );
-						width -= textWidth + 6;
-						x += textWidth + 6;
+                    blitBorderRect(x, y, width, m_size.y);
 
-					}
+                    found = TRUE;
+                    break;
+                }
 
-/*
-// Colin: The very notion of entry width makes no sense to me since
-// we already have a gadget width, and the max characters for
-// an entry box so I am removing this.
-					// Adjust entry box if an entryWidth is provided
-					if( (e->entryWidth > 0) && (width > e->entryWidth) )
-					{
-						width = e->entryWidth;
-						x = originalX + (m_size.x - e->entryWidth);
-					}
-*/
+                // Sliders may need a bar for the button
+                // it is assumed that the smaller size component (width, height)
+                // is the axis of the slider
+                case GWS_VERT_SLIDER:
+                case GWS_HORZ_SLIDER:
+                    //					blitBorderLine( originalX, originalY, window->size.x, window->size.y );
 
-					blitBorderRect( x, y, width, m_size.y );
+                    found = TRUE;
+                    break;
 
-					found = TRUE;
-					break;
-				}
+                case GWS_SCROLL_LISTBOX:
+                {
+                    ListboxData *list = (ListboxData *)m_userData;
+                    Int sliderAdjustment = 0;
+                    Int labelAdjustment = 0;
 
-				// Sliders may need a bar for the button
-				// it is assumed that the smaller size component (width, height)
-				// is the axis of the slider
-				case GWS_VERT_SLIDER:
-				case GWS_HORZ_SLIDER:
-//					blitBorderLine( originalX, originalY, window->size.x, window->size.y );
+                    if (list->scrollBar)
+                    {
+                        GameWindow *child = list->slider->winGetChild();
+                        ICoord2D size;
 
-					found = TRUE;
-					break;
+                        child->winGetSize(&size.x, &size.y);
+                        sliderAdjustment = size.y;
 
-				case GWS_SCROLL_LISTBOX:
-				{
-					ListboxData *list = (ListboxData *)m_userData;
-					Int sliderAdjustment = 0;
-					Int labelAdjustment = 0;
+                    } // end if
 
-					if( list->scrollBar )
-					{
-						GameWindow *child = list->slider->winGetChild();
-						ICoord2D size;
+                    if (m_instData.getTextLength())
+                        labelAdjustment = 4;
 
-						child->winGetSize( &size.x, &size.y );
-						sliderAdjustment = size.y;
+                    blitBorderRect(
+                        (originalX - 3),
+                        (originalY - (3 + labelAdjustment)),
+                        (m_size.x + 3 - sliderAdjustment),
+                        (m_size.y + 6));
 
-					}  // end if
+                    found = TRUE;
+                    break;
+                }
 
-					if( m_instData.getTextLength() )
-						labelAdjustment = 4;
+                case GWS_RADIO_BUTTON:
+                case GWS_STATIC_TEXT:
+                case GWS_PROGRESS_BAR:
+                case GWS_PUSH_BUTTON:
+                case GWS_USER_WINDOW:
+                case GWS_TAB_CONTROL:
+                    blitBorderRect(originalX, originalY, m_size.x, m_size.y);
 
-					blitBorderRect( (originalX - 3),
-													(originalY - (3 + labelAdjustment)),
-													(m_size.x + 3 - sliderAdjustment),
-													(m_size.y + 6) );
+                    found = TRUE;
+                    break;
 
-					found = TRUE;
-					break;
-				}
+            } // end switch
 
-				case GWS_RADIO_BUTTON:
-				case GWS_STATIC_TEXT:
-				case GWS_PROGRESS_BAR:
-				case GWS_PUSH_BUTTON:
-				case GWS_USER_WINDOW:
-				case GWS_TAB_CONTROL:
-					blitBorderRect( originalX, originalY, m_size.x, m_size.y );
+        } // end if
 
-					found = TRUE;
-					break;
+    } // end for i
 
-			}  // end switch
-
-		}  // end if
-
-	}  // end for i
-
-}  // end WinDrawBorder
+} // end WinDrawBorder
 
 // W3DGameWindow::winSetFont ==================================================
 /** Set the font for a widow */
 //=============================================================================
-void W3DGameWindow::winSetFont( GameFont *font )
+void W3DGameWindow::winSetFont(GameFont *font)
 {
+    // extending functionality
+    GameWindow::winSetFont(font);
 
-	// extending functionality
-	GameWindow::winSetFont( font );
+    // assign font to text renderer
+    m_textRenderer.Set_Font(static_cast<FontCharsClass *>(font->fontData));
 
-	// assign font to text renderer
-	m_textRenderer.Set_Font( static_cast<FontCharsClass *>(font->fontData) );
+    // this is a visual change
+    m_needPolyDraw = TRUE;
 
-	// this is a visual change
-	m_needPolyDraw = TRUE;
-
-}  // end WinSetFont
+} // end WinSetFont
 
 // W3DGameWindow::winSetText ==================================================
 /** Set the text for window */
 //=============================================================================
-Int W3DGameWindow::winSetText( UnicodeString newText )
+Int W3DGameWindow::winSetText(UnicodeString newText)
 {
+    // extending functionality
+    GameWindow::winSetText(newText);
 
-	// extending functionality
-	GameWindow::winSetText( newText );
+    // rebuild the sentence in our text renderer
+    m_textRenderer.Build_Sentence(m_instData.getText().str(), NULL, NULL);
 
-	// rebuild the sentence in our text renderer
-	m_textRenderer.Build_Sentence( m_instData.getText().str(),NULL, NULL );
+    // this is a visual change
+    m_needPolyDraw = TRUE;
 
-	// this is a visual change
-	m_needPolyDraw = TRUE;
+    return WIN_ERR_OK;
 
-	return WIN_ERR_OK;
-
-}  // end WinSetText
+} // end WinSetText
 
 // W3DGameWindow::winSetPosition ==============================================
 /** Set window position */
 //=============================================================================
-Int W3DGameWindow::winSetPosition( Int x, Int y )
+Int W3DGameWindow::winSetPosition(Int x, Int y)
 {
-	ICoord2D prevPos;
+    ICoord2D prevPos;
 
-	// get previous position
-	prevPos.x = m_region.lo.x;
-	prevPos.y = m_region.lo.y;
+    // get previous position
+    prevPos.x = m_region.lo.x;
+    prevPos.y = m_region.lo.y;
 
-	// extending functionality
-	GameWindow::winSetPosition( x, y );
+    // extending functionality
+    GameWindow::winSetPosition(x, y);
 
-	// update any text position change
-	m_textPos.x += m_region.lo.x - prevPos.x;
-	m_textPos.y += m_region.lo.y - prevPos.y;
-	m_newTextPos = TRUE;
+    // update any text position change
+    m_textPos.x += m_region.lo.x - prevPos.x;
+    m_textPos.y += m_region.lo.y - prevPos.y;
+    m_newTextPos = TRUE;
 
-	return WIN_ERR_OK;
+    return WIN_ERR_OK;
 
-}  // end WinSetPosition
+} // end WinSetPosition
 
 // W3DGameWindow::getTextSize =================================================
 /** Get the size of the text in our inst data */
 //=============================================================================
-void W3DGameWindow::getTextSize( Int *width, Int *height )
+void W3DGameWindow::getTextSize(Int *width, Int *height)
 {
-	Vector2 extents = m_textRenderer.Get_Text_Extents( m_instData.getText().str() );
+    Vector2 extents = m_textRenderer.Get_Text_Extents(m_instData.getText().str());
 
-	if( width )
-		*width = extents.X;
-	if( height )
-		*height = extents.Y;
+    if (width)
+        *width = extents.X;
+    if (height)
+        *height = extents.Y;
 
-}  // end getTextSize
+} // end getTextSize
 
 // W3DGameWindow::getTextLoc ==================================================
 // Set our text rendering location */
 //=============================================================================
-void W3DGameWindow::setTextLoc( Int x, Int y )
+void W3DGameWindow::setTextLoc(Int x, Int y)
 {
+    if (m_textPos.x != x)
+    {
+        m_textPos.x = x;
+        m_newTextPos = TRUE;
+    }
+    if (m_textPos.y != y)
+    {
+        m_textPos.y = y;
+        m_newTextPos = TRUE;
 
-	if( m_textPos.x != x )
-	{
+    } // end if
 
-		m_textPos.x = x;
-		m_newTextPos = TRUE;
-
-	}
-	if( m_textPos.y != y )
-	{
-
-		m_textPos.y = y;
-		m_newTextPos = TRUE;
-
-	}  // end if
-
-}  // end setTextLoc
+} // end setTextLoc
 
 // W3DGameWindow::drawText ====================================================
 /** Draw the text in our 2d sentence renderer */
 //=============================================================================
-void W3DGameWindow::drawText( Color color )
+void W3DGameWindow::drawText(Color color)
 {
-	Bool needDraw = FALSE;
+    Bool needDraw = FALSE;
 
-	// if new text pos we need to redraw
-	if( m_newTextPos )
-	{
+    // if new text pos we need to redraw
+    if (m_newTextPos)
+    {
+        m_newTextPos = FALSE;
+        needDraw = TRUE;
 
-		m_newTextPos = FALSE;
-		needDraw = TRUE;
+    } // end if
 
-	}  // end if
+    // if color switch, set new color
+    if (m_currTextColor != color)
+    {
+        m_currTextColor = color;
+        needDraw = TRUE;
 
-	// if color switch, set new color
-	if( m_currTextColor != color )
-	{
+    } // end if
 
-		m_currTextColor = color;
-		needDraw = TRUE;
+    // draw the quads if needed
+    if (needDraw || m_needPolyDraw)
+    {
+        UnsignedInt outline = TheWindowManager->winMakeColor(0, 0, 0, 255);
 
-	}  // end if
+        m_textRenderer.Reset_Polys();
+        m_textRenderer.Set_Location(Vector2(m_textPos.x + 1, m_textPos.y + 1));
+        m_textRenderer.Draw_Sentence(outline);
 
-	// draw the quads if needed
-	if( needDraw || m_needPolyDraw )
-	{
-		UnsignedInt outline = TheWindowManager->winMakeColor( 0, 0, 0, 255 );
+        m_textRenderer.Set_Location(Vector2(m_textPos.x, m_textPos.y));
+        m_textRenderer.Draw_Sentence(m_currTextColor);
 
-		m_textRenderer.Reset_Polys();
-		m_textRenderer.Set_Location( Vector2( m_textPos.x + 1, m_textPos.y + 1 ) );
-		m_textRenderer.Draw_Sentence( outline );
+        m_needPolyDraw = FALSE;
 
-		m_textRenderer.Set_Location( Vector2( m_textPos.x, m_textPos.y ) );
-		m_textRenderer.Draw_Sentence( m_currTextColor );
+    } // end if
 
-		m_needPolyDraw = FALSE;
+    // do the render
+    m_textRenderer.Render();
 
-	}  // end if
-
-	// do the render
-	m_textRenderer.Render();
-
-}  // end drawText
-
+} // end drawText

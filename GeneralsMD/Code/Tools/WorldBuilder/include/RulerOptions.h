@@ -16,7 +16,6 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-
 #ifndef __RULEROPTIONS_H_
 #define __RULEROPTIONS_H_
 
@@ -32,46 +31,45 @@
 
 class RulerOptions : public COptionsPanel
 {
-
-// Construction
+    // Construction
 public:
+    RulerOptions(CWnd *pParent = NULL); // standard constructor
 
-	RulerOptions(CWnd* pParent = NULL);   // standard constructor
+    // Dialog Data
+    //{{AFX_DATA(RulerOptions)
+    enum
+    {
+        IDD = IDD_RULER_OPTIONS
+    };
+    // NOTE: the ClassWizard will add data members here
+    //}}AFX_DATA
 
-// Dialog Data
-	//{{AFX_DATA(RulerOptions)
-	enum { IDD = IDD_RULER_OPTIONS };
-		// NOTE: the ClassWizard will add data members here
-	//}}AFX_DATA
-
-
-// Overrides
-	// ClassWizard generated virtual function overrides
-	//{{AFX_VIRTUAL(RulerOptions)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
-	virtual void OnOK(){return;};  //!< Modeless dialogs don't OK, so eat this for modeless.
-	virtual void OnCancel(){return;}; //!< Modeless dialogs don't close on ESC, so eat this for modeless.
-	//}}AFX_VIRTUAL
-
-// Implementation
+    // Overrides
+    // ClassWizard generated virtual function overrides
+    //{{AFX_VIRTUAL(RulerOptions)
 protected:
+    virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
+    virtual void OnOK() { return; }; //!< Modeless dialogs don't OK, so eat this for modeless.
+    virtual void OnCancel() { return; }; //!< Modeless dialogs don't close on ESC, so eat this for modeless.
+    //}}AFX_VIRTUAL
 
-	// Generated message map functions
-	//{{AFX_MSG(RulerOptions)
-	virtual BOOL OnInitDialog();
-	afx_msg void OnChangeWidthEdit();
-	afx_msg void OnChangeCheckRuler();
-	//}}AFX_MSG
-	DECLARE_MESSAGE_MAP()
+    // Implementation
+protected:
+    // Generated message map functions
+    //{{AFX_MSG(RulerOptions)
+    virtual BOOL OnInitDialog();
+    afx_msg void OnChangeWidthEdit();
+    afx_msg void OnChangeCheckRuler();
+    //}}AFX_MSG
+    DECLARE_MESSAGE_MAP()
 
 protected:
-	static RulerOptions *m_staticThis;  ///< Reference to the floating panel so SetWidth and SetFeather can be static.
+    static RulerOptions *m_staticThis; ///< Reference to the floating panel so SetWidth and SetFeather can be static.
 
-	Bool		m_updating; ///<true if the ui is updating itself.
+    Bool m_updating; ///< true if the ui is updating itself.
 
 public:
-	static void setWidth(Real width);
+    static void setWidth(Real width);
 };
 
 //{{AFX_INSERT_LOCATION}}

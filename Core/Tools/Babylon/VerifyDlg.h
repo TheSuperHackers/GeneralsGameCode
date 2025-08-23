@@ -26,57 +26,58 @@
 //
 
 #include "TransDB.h"
-#define IDSKIP		100
+#define IDSKIP 100
 
 /////////////////////////////////////////////////////////////////////////////
 // VerifyDlg dialog
 
 class VerifyDlg : public CDialog
 {
-	CBitmapButton stop;
-	CBitmapButton play;
-	CBitmapButton pause;
-	CWnd					*wave;
-	CStatic				*text;
-	BabylonText				*babylon_text;
-	LANGINFO			*linfo;
-	UINT					timer;
-	char					wavefile[1024];
-	CSliderCtrl *slider;
-// Construction
+    CBitmapButton stop;
+    CBitmapButton play;
+    CBitmapButton pause;
+    CWnd *wave;
+    CStatic *text;
+    BabylonText *babylon_text;
+    LANGINFO *linfo;
+    UINT timer;
+    char wavefile[1024];
+    CSliderCtrl *slider;
+    // Construction
 public:
-	VerifyDlg(BabylonText *ntext, LangID langid, const char *path, CWnd* pParent = NULL);   // standard constructor
-	void CloseAudio ( void );
+    VerifyDlg(BabylonText *ntext, LangID langid, const char *path, CWnd *pParent = NULL); // standard constructor
+    void CloseAudio(void);
 
-// Dialog Data
-	//{{AFX_DATA(VerifyDlg)
-	enum { IDD = IDD_MATCHDIALOG };
-		// NOTE: the ClassWizard will add data members here
-	//}}AFX_DATA
+    // Dialog Data
+    //{{AFX_DATA(VerifyDlg)
+    enum
+    {
+        IDD = IDD_MATCHDIALOG
+    };
+    // NOTE: the ClassWizard will add data members here
+    //}}AFX_DATA
 
-
-// Overrides
-	// ClassWizard generated virtual function overrides
-	//{{AFX_VIRTUAL(VerifyDlg)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
-	//}}AFX_VIRTUAL
-
-// Implementation
+    // Overrides
+    // ClassWizard generated virtual function overrides
+    //{{AFX_VIRTUAL(VerifyDlg)
 protected:
+    virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
+    //}}AFX_VIRTUAL
 
-	// Generated message map functions
-	//{{AFX_MSG(VerifyDlg)
-	virtual BOOL OnInitDialog();
-	afx_msg void OnNomatch();
-	afx_msg void OnMatch();
-	virtual void OnCancel();
-	afx_msg void OnStop();
-	afx_msg void OnPlay();
-	afx_msg void OnPause();
-	afx_msg void OnTimer(UINT nIDEvent);
-	//}}AFX_MSG
-	DECLARE_MESSAGE_MAP()
+    // Implementation
+protected:
+    // Generated message map functions
+    //{{AFX_MSG(VerifyDlg)
+    virtual BOOL OnInitDialog();
+    afx_msg void OnNomatch();
+    afx_msg void OnMatch();
+    virtual void OnCancel();
+    afx_msg void OnStop();
+    afx_msg void OnPlay();
+    afx_msg void OnPause();
+    afx_msg void OnTimer(UINT nIDEvent);
+    //}}AFX_MSG
+    DECLARE_MESSAGE_MAP()
 };
 
 //{{AFX_INSERT_LOCATION}}

@@ -27,7 +27,7 @@
 // additional Doxygen module documentation
 //////////////////////////////////////////////////////////////////////////////
 #ifdef _MSC_VER
-#  pragma once
+#pragma once
 #endif
 #ifndef PROFILE_DOC_H // Include guard
 #define PROFILE_DOC_H

@@ -101,8 +101,6 @@ protected:
 	friend class MeshClass;
 };
 
-
 #endif
 
-
-#endif //0
+#endif // 0

@@ -40,7 +40,6 @@
 
 StdBIGFile::StdBIGFile()
 {
-
 }
 
 //============================================================================
@@ -49,118 +48,118 @@ StdBIGFile::StdBIGFile()
 
 StdBIGFile::~StdBIGFile()
 {
-
 }
 
 //============================================================================
 // StdBIGFile::openFile
 //============================================================================
 
-File* StdBIGFile::openFile( const Char *filename, Int access )
+File *StdBIGFile::openFile(const Char *filename, Int access)
 {
-	const ArchivedFileInfo *fileInfo = getArchivedFileInfo(AsciiString(filename));
+    const ArchivedFileInfo *fileInfo = getArchivedFileInfo(AsciiString(filename));
 
-	if (fileInfo == NULL) {
-		return NULL;
-	}
+    if (fileInfo == NULL)
+    {
+        return NULL;
+    }
 
-	RAMFile *ramFile = NULL;
+    RAMFile *ramFile = NULL;
 
-	if (BitIsSet(access, File::STREAMING))
-		ramFile = newInstance( StreamingArchiveFile );
-	else
-		ramFile = newInstance( RAMFile );
+    if (BitIsSet(access, File::STREAMING))
+        ramFile = newInstance(StreamingArchiveFile);
+    else
+        ramFile = newInstance(RAMFile);
 
-	ramFile->deleteOnClose();
-	if (ramFile->openFromArchive(m_file, fileInfo->m_filename, fileInfo->m_offset, fileInfo->m_size) == FALSE) {
-		ramFile->close();
-		ramFile = NULL;
-		return NULL;
-	}
+    ramFile->deleteOnClose();
+    if (ramFile->openFromArchive(m_file, fileInfo->m_filename, fileInfo->m_offset, fileInfo->m_size) == FALSE)
+    {
+        ramFile->close();
+        ramFile = NULL;
+        return NULL;
+    }
 
-	if ((access & File::WRITE) == 0) {
-		// requesting read only access. Just return the RAM file.
-		return ramFile;
-	}
+    if ((access & File::WRITE) == 0)
+    {
+        // requesting read only access. Just return the RAM file.
+        return ramFile;
+    }
 
-	// whoever is opening this file wants write access, so copy the file to the local disk
-	// and return that file pointer.
+    // whoever is opening this file wants write access, so copy the file to the local disk
+    // and return that file pointer.
 
-	CONSTEXPR size_t bufferSize = 0;
-	File *localFile = TheLocalFileSystem->openFile(filename, access, bufferSize);
-	if (localFile != NULL) {
-		ramFile->copyDataToFile(localFile);
-	}
+    CONSTEXPR size_t bufferSize = 0;
+    File *localFile = TheLocalFileSystem->openFile(filename, access, bufferSize);
+    if (localFile != NULL)
+    {
+        ramFile->copyDataToFile(localFile);
+    }
 
-	ramFile->close();
-	ramFile = NULL;
+    ramFile->close();
+    ramFile = NULL;
 
-	return localFile;
+    return localFile;
 }
 
 //============================================================================
 // StdBIGFile::closeAllFiles
 //============================================================================
 
-void StdBIGFile::closeAllFiles( void )
+void StdBIGFile::closeAllFiles(void)
 {
-
 }
 
 //============================================================================
 // StdBIGFile::getName
 //============================================================================
 
-AsciiString StdBIGFile::getName( void )
+AsciiString StdBIGFile::getName(void)
 {
-	return m_name;
+    return m_name;
 }
 
 //============================================================================
 // StdBIGFile::getPath
 //============================================================================
 
-AsciiString StdBIGFile::getPath( void )
+AsciiString StdBIGFile::getPath(void)
 {
-	return m_path;
+    return m_path;
 }
 
 //============================================================================
 // StdBIGFile::setSearchPriority
 //============================================================================
 
-void StdBIGFile::setSearchPriority( Int new_priority )
+void StdBIGFile::setSearchPriority(Int new_priority)
 {
-
 }
 
 //============================================================================
 // StdBIGFile::close
 //============================================================================
 
-void StdBIGFile::close( void )
+void StdBIGFile::close(void)
 {
-
 }
 
 //============================================================================
 // StdBIGFile::getFileInfo
 //============================================================================
 
-Bool StdBIGFile::getFileInfo(const AsciiString& filename, FileInfo *fileInfo) const
+Bool StdBIGFile::getFileInfo(const AsciiString &filename, FileInfo *fileInfo) const
 {
-	const ArchivedFileInfo *tempFileInfo = getArchivedFileInfo(filename);
+    const ArchivedFileInfo *tempFileInfo = getArchivedFileInfo(filename);
 
-	if (tempFileInfo == NULL) {
-		return FALSE;
-	}
+    if (tempFileInfo == NULL)
+    {
+        return FALSE;
+    }
 
-	TheLocalFileSystem->getFileInfo(AsciiString(m_file->getName()), fileInfo);
+    TheLocalFileSystem->getFileInfo(AsciiString(m_file->getName()), fileInfo);
 
-	// fill in the size info.  Since the size can't be bigger than a JUNK file, the high Int will always be 0.
-	fileInfo->sizeHigh = 0;
-	fileInfo->sizeLow = tempFileInfo->m_size;
+    // fill in the size info.  Since the size can't be bigger than a JUNK file, the high Int will always be 0.
+    fileInfo->sizeHigh = 0;
+    fileInfo->sizeLow = tempFileInfo->m_size;
 
-	return TRUE;
+    return TRUE;
 }
-

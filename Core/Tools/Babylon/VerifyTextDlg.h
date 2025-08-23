@@ -30,36 +30,38 @@
 
 class CVerifyTextDlg : public CDialog
 {
-// Construction
-	char *m_trans;
-	char *m_orig;
+    // Construction
+    char *m_trans;
+    char *m_orig;
+
 public:
-	CVerifyTextDlg(char *trans, char *orig, CWnd* pParent = NULL);   // standard constructor
+    CVerifyTextDlg(char *trans, char *orig, CWnd *pParent = NULL); // standard constructor
 
-// Dialog Data
-	//{{AFX_DATA(CVerifyTextDlg)
-	enum { IDD = IDD_VERIFYTEXT };
-		// NOTE: the ClassWizard will add data members here
-	//}}AFX_DATA
+    // Dialog Data
+    //{{AFX_DATA(CVerifyTextDlg)
+    enum
+    {
+        IDD = IDD_VERIFYTEXT
+    };
+    // NOTE: the ClassWizard will add data members here
+    //}}AFX_DATA
 
-
-// Overrides
-	// ClassWizard generated virtual function overrides
-	//{{AFX_VIRTUAL(CVerifyTextDlg)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
-	//}}AFX_VIRTUAL
-
-// Implementation
+    // Overrides
+    // ClassWizard generated virtual function overrides
+    //{{AFX_VIRTUAL(CVerifyTextDlg)
 protected:
+    virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
+    //}}AFX_VIRTUAL
 
-	// Generated message map functions
-	//{{AFX_MSG(CVerifyTextDlg)
-	afx_msg void OnNomatch();
-	afx_msg void OnMatch();
-	virtual BOOL OnInitDialog();
-	//}}AFX_MSG
-	DECLARE_MESSAGE_MAP()
+    // Implementation
+protected:
+    // Generated message map functions
+    //{{AFX_MSG(CVerifyTextDlg)
+    afx_msg void OnNomatch();
+    afx_msg void OnMatch();
+    virtual BOOL OnInitDialog();
+    //}}AFX_MSG
+    DECLARE_MESSAGE_MAP()
 };
 
 //{{AFX_INSERT_LOCATION}}

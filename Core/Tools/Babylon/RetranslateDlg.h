@@ -26,47 +26,47 @@
 //
 
 #include "TransDB.h"
-#define IDSKIP		100
+#define IDSKIP 100
 /////////////////////////////////////////////////////////////////////////////
 // RetranslateDlg dialog
 
 class RetranslateDlg : public CDialog
 {
-// Construction
+    // Construction
 public:
+    BabylonText *newtext;
+    BabylonText *oldtext;
 
-	BabylonText *newtext;
-	BabylonText *oldtext;
+    RetranslateDlg(CWnd *pParent = NULL); // standard constructor
 
-	RetranslateDlg(CWnd* pParent = NULL);   // standard constructor
+    // Dialog Data
+    //{{AFX_DATA(RetranslateDlg)
+    enum
+    {
+        IDD = IDD_RETRANSLATE
+    };
+    // NOTE: the ClassWizard will add data members here
+    //}}AFX_DATA
 
-// Dialog Data
-	//{{AFX_DATA(RetranslateDlg)
-	enum { IDD = IDD_RETRANSLATE };
-		// NOTE: the ClassWizard will add data members here
-	//}}AFX_DATA
-
-
-// Overrides
-	// ClassWizard generated virtual function overrides
-	//{{AFX_VIRTUAL(RetranslateDlg)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
-	//}}AFX_VIRTUAL
-
-// Implementation
+    // Overrides
+    // ClassWizard generated virtual function overrides
+    //{{AFX_VIRTUAL(RetranslateDlg)
 protected:
+    virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
+    //}}AFX_VIRTUAL
 
-	// Generated message map functions
-	//{{AFX_MSG(RetranslateDlg)
-	virtual BOOL OnInitDialog();
-	afx_msg void OnCancelMode();
-	afx_msg void OnRetranslate();
-	afx_msg void OnSkip();
-	afx_msg void OnNoRetranslate();
-	afx_msg void OnSkipAll();
-	//}}AFX_MSG
-	DECLARE_MESSAGE_MAP()
+    // Implementation
+protected:
+    // Generated message map functions
+    //{{AFX_MSG(RetranslateDlg)
+    virtual BOOL OnInitDialog();
+    afx_msg void OnCancelMode();
+    afx_msg void OnRetranslate();
+    afx_msg void OnSkip();
+    afx_msg void OnNoRetranslate();
+    afx_msg void OnSkipAll();
+    //}}AFX_MSG
+    DECLARE_MESSAGE_MAP()
 };
 
 //{{AFX_INSERT_LOCATION}}

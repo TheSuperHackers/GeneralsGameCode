@@ -25,33 +25,33 @@ namespace rts
 class ClientInstance
 {
 public:
-	// Can be called N times, but is initialized just once.
-	static bool initialize();
+    // Can be called N times, but is initialized just once.
+    static bool initialize();
 
-	static bool isInitialized();
+    static bool isInitialized();
 
-	static bool isMultiInstance();
+    static bool isMultiInstance();
 
-	// Change multi instance on runtime. Must be called before initialize.
-	static void setMultiInstance(bool v);
+    // Change multi instance on runtime. Must be called before initialize.
+    static void setMultiInstance(bool v);
 
-	// Skips using the primary instance. Must be called before initialize.
-	// Useful when the new process is not meant to collide with another normal Generals process.
-	static void skipPrimaryInstance();
+    // Skips using the primary instance. Must be called before initialize.
+    // Useful when the new process is not meant to collide with another normal Generals process.
+    static void skipPrimaryInstance();
 
-	// Returns the instance index of this game client. Starts at 0.
-	static UnsignedInt getInstanceIndex();
+    // Returns the instance index of this game client. Starts at 0.
+    static UnsignedInt getInstanceIndex();
 
-	// Returns the instance id of this game client. Starts at 1.
-	static UnsignedInt getInstanceId();
+    // Returns the instance id of this game client. Starts at 1.
+    static UnsignedInt getInstanceId();
 
-	// Returns the instance name of the first game client.
-	static const char* getFirstInstanceName();
+    // Returns the instance name of the first game client.
+    static const char *getFirstInstanceName();
 
 private:
-	static HANDLE s_mutexHandle;
-	static UnsignedInt s_instanceIndex;
-	static Bool s_isMultiInstance;
+    static HANDLE s_mutexHandle;
+    static UnsignedInt s_instanceIndex;
+    static Bool s_isMultiInstance;
 };
 
 } // namespace rts

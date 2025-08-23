@@ -32,33 +32,26 @@
 #ifndef __MAINMENUUTILS_H__
 #define __MAINMENUUTILS_H__
 
-void HTTPThinkWrapper( void );
-void StopAsyncDNSCheck( void );
-void StartPatchCheck( void );
-void CancelPatchCheckCallback( void );
-void StartDownloadingPatches( void );
-void HandleCanceledDownload( Bool resetDropDown = TRUE );
+void HTTPThinkWrapper(void);
+void StopAsyncDNSCheck(void);
+void StartPatchCheck(void);
+void CancelPatchCheckCallback(void);
+void StartDownloadingPatches(void);
+void HandleCanceledDownload(Bool resetDropDown = TRUE);
 
-enum OverallStatsPeriod CPP_11(: Int)
-{
-	STATS_TODAY = 0,
-	STATS_YESTERDAY,
-	STATS_ALLTIME,
-	STATS_LASTWEEK,
-	STATS_MAX
-};
+enum OverallStatsPeriod CPP_11( : Int){STATS_TODAY = 0, STATS_YESTERDAY, STATS_ALLTIME, STATS_LASTWEEK, STATS_MAX};
 
 struct OverallStats
 {
-	OverallStats();
-	Int wins[STATS_MAX];
-	Int losses[STATS_MAX];
+    OverallStats();
+    Int wins[STATS_MAX];
+    Int losses[STATS_MAX];
 };
 
-void CheckOverallStats( void );
-void HandleOverallStats( const OverallStats& USA, const OverallStats& China, const OverallStats& GLA );
+void CheckOverallStats(void);
+void HandleOverallStats(const OverallStats &USA, const OverallStats &China, const OverallStats &GLA);
 
-void CheckNumPlayersOnline( void );
-void HandleNumPlayersOnline( Int numPlayersOnline );
+void CheckNumPlayersOnline(void);
+void HandleNumPlayersOnline(Int numPlayersOnline);
 
 #endif // __MAINMENUUTILS_H__
