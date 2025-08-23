@@ -34,7 +34,6 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-
 /////////////////////////////////////////////////////////////////////////////
 // EmitterParticlePropPageClass property page
 
@@ -44,255 +43,225 @@ IMPLEMENT_DYNCREATE(EmitterParticlePropPageClass, CPropertyPage)
 //
 //  EmitterParticlePropPageClass
 //
-EmitterParticlePropPageClass::EmitterParticlePropPageClass (EmitterInstanceListClass *pemitter)
-	: m_pEmitterList (pemitter),
-	  m_bValid (true),
-	  m_Rate (0),
-	  m_BurstSize (0),
-	  m_MaxParticles (0),
-	  m_Randomizer (NULL),
-	  CPropertyPage(EmitterParticlePropPageClass::IDD)
+EmitterParticlePropPageClass::EmitterParticlePropPageClass(EmitterInstanceListClass *pemitter) :
+    m_pEmitterList(pemitter),
+    m_bValid(true),
+    m_Rate(0),
+    m_BurstSize(0),
+    m_MaxParticles(0),
+    m_Randomizer(NULL),
+    CPropertyPage(EmitterParticlePropPageClass::IDD)
 {
-	//{{AFX_DATA_INIT(EmitterParticlePropPageClass)
-	//}}AFX_DATA_INIT
-	Initialize ();
-	return ;
+    //{{AFX_DATA_INIT(EmitterParticlePropPageClass)
+    //}}AFX_DATA_INIT
+    Initialize();
+    return;
 }
-
 
 /////////////////////////////////////////////////////////////
 //
 //  ~EmitterParticlePropPageClass
 //
-EmitterParticlePropPageClass::~EmitterParticlePropPageClass (void)
+EmitterParticlePropPageClass::~EmitterParticlePropPageClass(void)
 {
-	SAFE_DELETE (m_Randomizer);
-	return;
+    SAFE_DELETE(m_Randomizer);
+    return;
 }
-
 
 /////////////////////////////////////////////////////////////
 //
 //  DoDataExchange
 //
-void
-EmitterParticlePropPageClass::DoDataExchange (CDataExchange* pDX)
+void EmitterParticlePropPageClass::DoDataExchange(CDataExchange *pDX)
 {
-	// Allow the base class to process this message
-	CPropertyPage::DoDataExchange(pDX);
-	//{{AFX_DATA_MAP(EmitterParticlePropPageClass)
-	DDX_Control(pDX, IDC_BURST_SIZE_SPIN, m_BurstSizeSpin);
-	DDX_Control(pDX, IDC_EMISSION_RATE_SPIN, m_EmitionRateSpin);
-	DDX_Control(pDX, IDC_MAX_PARTICLES_SPIN, m_MaxParticlesSpin);
-	//}}AFX_DATA_MAP
-	return ;
+    // Allow the base class to process this message
+    CPropertyPage::DoDataExchange(pDX);
+    //{{AFX_DATA_MAP(EmitterParticlePropPageClass)
+    DDX_Control(pDX, IDC_BURST_SIZE_SPIN, m_BurstSizeSpin);
+    DDX_Control(pDX, IDC_EMISSION_RATE_SPIN, m_EmitionRateSpin);
+    DDX_Control(pDX, IDC_MAX_PARTICLES_SPIN, m_MaxParticlesSpin);
+    //}}AFX_DATA_MAP
+    return;
 }
 
-
 BEGIN_MESSAGE_MAP(EmitterParticlePropPageClass, CPropertyPage)
-	//{{AFX_MSG_MAP(EmitterParticlePropPageClass)
-	ON_BN_CLICKED(IDC_SPECIFY_CREATION_VOLUME, OnSpecifyCreationVolume)
-	ON_BN_CLICKED(IDC_MAX_PARTICLES_CHECK, OnMaxParticlesCheck)
-	//}}AFX_MSG_MAP
+//{{AFX_MSG_MAP(EmitterParticlePropPageClass)
+ON_BN_CLICKED(IDC_SPECIFY_CREATION_VOLUME, OnSpecifyCreationVolume)
+ON_BN_CLICKED(IDC_MAX_PARTICLES_CHECK, OnMaxParticlesCheck)
+//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
-
 
 /////////////////////////////////////////////////////////////
 //
 //  Initialize
 //
-void
-EmitterParticlePropPageClass::Initialize (void)
+void EmitterParticlePropPageClass::Initialize(void)
 {
-	SAFE_DELETE (m_Randomizer);
-	if (m_pEmitterList != NULL) {
+    SAFE_DELETE(m_Randomizer);
+    if (m_pEmitterList != NULL)
+    {
+        //
+        // Read the settings from the emitter
+        //
+        m_Rate = m_pEmitterList->Get_Emission_Rate();
+        m_BurstSize = m_pEmitterList->Get_Burst_Size();
+        m_MaxParticles = m_pEmitterList->Get_Max_Emissions();
+        m_Randomizer = m_pEmitterList->Get_Creation_Volume();
+    }
 
-		//
-		// Read the settings from the emitter
-		//
-		m_Rate			= m_pEmitterList->Get_Emission_Rate ();
-		m_BurstSize		= m_pEmitterList->Get_Burst_Size ();
-		m_MaxParticles	= m_pEmitterList->Get_Max_Emissions ();
-		m_Randomizer	= m_pEmitterList->Get_Creation_Volume ();
-	}
-
-	return ;
+    return;
 }
-
 
 /////////////////////////////////////////////////////////////
 //
 //  OnInitDialog
 //
-BOOL
-EmitterParticlePropPageClass::OnInitDialog (void)
+BOOL EmitterParticlePropPageClass::OnInitDialog(void)
 {
-	// Allow the base class to process this message
-	CPropertyPage::OnInitDialog ();
+    // Allow the base class to process this message
+    CPropertyPage::OnInitDialog();
 
-	//
-	//	Setup the burst controls
-	//
-	m_BurstSizeSpin.SetRange (0, 10000);
-	m_BurstSizeSpin.SetPos (m_BurstSize);
-	::Initialize_Spinner (m_EmitionRateSpin, m_Rate, -10000, 10000);
+    //
+    //	Setup the burst controls
+    //
+    m_BurstSizeSpin.SetRange(0, 10000);
+    m_BurstSizeSpin.SetPos(m_BurstSize);
+    ::Initialize_Spinner(m_EmitionRateSpin, m_Rate, -10000, 10000);
 
-	//
-	//	Setup the max particles spin
-	//
-	m_MaxParticlesSpin.SetRange (0, 10000);
-	m_MaxParticlesSpin.SetPos (m_MaxParticles);
-	SendDlgItemMessage (IDC_MAX_PARTICLES_CHECK, BM_SETCHECK, WPARAM(m_MaxParticles != 0));
-	::EnableWindow (::GetDlgItem (m_hWnd, IDC_MAX_PARTICLES_EDIT), m_MaxParticles != 0);
-	::EnableWindow (::GetDlgItem (m_hWnd, IDC_MAX_PARTICLES_SPIN), m_MaxParticles != 0);
-	return TRUE;
+    //
+    //	Setup the max particles spin
+    //
+    m_MaxParticlesSpin.SetRange(0, 10000);
+    m_MaxParticlesSpin.SetPos(m_MaxParticles);
+    SendDlgItemMessage(IDC_MAX_PARTICLES_CHECK, BM_SETCHECK, WPARAM(m_MaxParticles != 0));
+    ::EnableWindow(::GetDlgItem(m_hWnd, IDC_MAX_PARTICLES_EDIT), m_MaxParticles != 0);
+    ::EnableWindow(::GetDlgItem(m_hWnd, IDC_MAX_PARTICLES_SPIN), m_MaxParticles != 0);
+    return TRUE;
 }
-
 
 /////////////////////////////////////////////////////////////
 //
 //  OnApply
 //
-BOOL
-EmitterParticlePropPageClass::OnApply (void)
+BOOL EmitterParticlePropPageClass::OnApply(void)
 {
-	//
-	//	Get the data from the controls
-	//
-	m_Rate			= ::GetDlgItemFloat (m_hWnd, IDC_EMISSION_RATE_EDIT);
-	m_BurstSize		= GetDlgItemInt (IDC_BURST_SIZE_EDIT);
+    //
+    //	Get the data from the controls
+    //
+    m_Rate = ::GetDlgItemFloat(m_hWnd, IDC_EMISSION_RATE_EDIT);
+    m_BurstSize = GetDlgItemInt(IDC_BURST_SIZE_EDIT);
 
-	//
-	//	Determine if we need to cap the particles or not
-	//
-	m_MaxParticles	= 0;
-	if (SendDlgItemMessage (IDC_MAX_PARTICLES_CHECK, BM_GETCHECK)) {
-		m_MaxParticles	= GetDlgItemInt (IDC_MAX_PARTICLES_EDIT);
-	}
+    //
+    //	Determine if we need to cap the particles or not
+    //
+    m_MaxParticles = 0;
+    if (SendDlgItemMessage(IDC_MAX_PARTICLES_CHECK, BM_GETCHECK))
+    {
+        m_MaxParticles = GetDlgItemInt(IDC_MAX_PARTICLES_EDIT);
+    }
 
-	//
-	//	Apply the changes to the emitter
-	//
-	m_pEmitterList->Set_Emission_Rate (m_Rate);
-	m_pEmitterList->Set_Burst_Size (m_BurstSize);
-	m_pEmitterList->Set_Max_Emissions (m_MaxParticles);
-	m_pEmitterList->Set_Creation_Volume (m_Randomizer->Clone ());
+    //
+    //	Apply the changes to the emitter
+    //
+    m_pEmitterList->Set_Emission_Rate(m_Rate);
+    m_pEmitterList->Set_Burst_Size(m_BurstSize);
+    m_pEmitterList->Set_Max_Emissions(m_MaxParticles);
+    m_pEmitterList->Set_Creation_Volume(m_Randomizer->Clone());
 
-	// Allow the base class to process this message
-	return CPropertyPage::OnApply ();
+    // Allow the base class to process this message
+    return CPropertyPage::OnApply();
 }
-
 
 /////////////////////////////////////////////////////////////
 //
 //  WindowProc
 //
 LRESULT
-EmitterParticlePropPageClass::WindowProc
-(
-	UINT message,
-	WPARAM wParam,
-	LPARAM lParam
-)
+EmitterParticlePropPageClass::WindowProc(UINT message, WPARAM wParam, LPARAM lParam)
 {
-	/*switch (message)
-	{
-	}*/
+    /*switch (message)
+    {
+    }*/
 
-	// Allow the base class to process this message
-	return CPropertyPage::WindowProc(message, wParam, lParam);
+    // Allow the base class to process this message
+    return CPropertyPage::WindowProc(message, wParam, lParam);
 }
-
 
 /////////////////////////////////////////////////////////////
 //
 //  OnNotify
 //
-BOOL
-EmitterParticlePropPageClass::OnNotify
-(
-	WPARAM wParam,
-	LPARAM lParam,
-	LRESULT *pResult
-)
+BOOL EmitterParticlePropPageClass::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT *pResult)
 {
-	//
-	//	Update the spinner control if necessary
-	//
-	NMHDR *pheader = (NMHDR *)lParam;
-	if ((pheader != NULL) && (pheader->code == UDN_DELTAPOS)) {
-		LPNMUPDOWN pupdown = (LPNMUPDOWN)lParam;
-		::Update_Spinner_Buddy (pheader->hwndFrom, pupdown->iDelta);
-		SetModified ();
-	}
+    //
+    //	Update the spinner control if necessary
+    //
+    NMHDR *pheader = (NMHDR *)lParam;
+    if ((pheader != NULL) && (pheader->code == UDN_DELTAPOS))
+    {
+        LPNMUPDOWN pupdown = (LPNMUPDOWN)lParam;
+        ::Update_Spinner_Buddy(pheader->hwndFrom, pupdown->iDelta);
+        SetModified();
+    }
 
-	// Allow the base class to process this message
-	return CPropertyPage::OnNotify (wParam, lParam, pResult);
+    // Allow the base class to process this message
+    return CPropertyPage::OnNotify(wParam, lParam, pResult);
 }
-
 
 /////////////////////////////////////////////////////////////
 //
 //  OnSpecifyCreationVolume
 //
 /////////////////////////////////////////////////////////////
-void
-EmitterParticlePropPageClass::OnSpecifyCreationVolume (void)
+void EmitterParticlePropPageClass::OnSpecifyCreationVolume(void)
 {
-	VolumeRandomDialogClass dialog (m_Randomizer, this);
-	if (dialog.DoModal () == IDOK) {
+    VolumeRandomDialogClass dialog(m_Randomizer, this);
+    if (dialog.DoModal() == IDOK)
+    {
+        //
+        //	Get the new randomizer from the dialog
+        //
+        SAFE_DELETE(m_Randomizer);
+        m_Randomizer = dialog.Get_Randomizer();
+        SetModified();
+    }
 
-		//
-		//	Get the new randomizer from the dialog
-		//
-		SAFE_DELETE (m_Randomizer);
-		m_Randomizer = dialog.Get_Randomizer ();
-		SetModified ();
-	}
-
-	return ;
+    return;
 }
-
 
 /////////////////////////////////////////////////////////////
 //
 //  OnCommand
 //
 /////////////////////////////////////////////////////////////
-BOOL
-EmitterParticlePropPageClass::OnCommand
-(
-	WPARAM wParam,
-	LPARAM lParam
-)
+BOOL EmitterParticlePropPageClass::OnCommand(WPARAM wParam, LPARAM lParam)
 {
-	switch (LOWORD (wParam))
-	{
-		case IDC_BURST_SIZE_EDIT:
-		case IDC_EMISSION_RATE_EDIT:
-		case IDC_MAX_PARTICLES_EDIT:
-			if (HIWORD (wParam) == EN_CHANGE) {
-				SetModified ();
-			}
-			break;
-	}
+    switch (LOWORD(wParam))
+    {
+        case IDC_BURST_SIZE_EDIT:
+        case IDC_EMISSION_RATE_EDIT:
+        case IDC_MAX_PARTICLES_EDIT:
+            if (HIWORD(wParam) == EN_CHANGE)
+            {
+                SetModified();
+            }
+            break;
+    }
 
-	return CPropertyPage::OnCommand(wParam, lParam);
+    return CPropertyPage::OnCommand(wParam, lParam);
 }
-
 
 /////////////////////////////////////////////////////////////
 //
 //  OnMaxParticlesCheck
 //
 /////////////////////////////////////////////////////////////
-void
-EmitterParticlePropPageClass::OnMaxParticlesCheck (void)
+void EmitterParticlePropPageClass::OnMaxParticlesCheck(void)
 {
-	BOOL enable = SendDlgItemMessage (IDC_MAX_PARTICLES_CHECK, BM_GETCHECK);
-	::EnableWindow (::GetDlgItem (m_hWnd, IDC_MAX_PARTICLES_EDIT), enable);
-	::EnableWindow (::GetDlgItem (m_hWnd, IDC_MAX_PARTICLES_SPIN), enable);
+    BOOL enable = SendDlgItemMessage(IDC_MAX_PARTICLES_CHECK, BM_GETCHECK);
+    ::EnableWindow(::GetDlgItem(m_hWnd, IDC_MAX_PARTICLES_EDIT), enable);
+    ::EnableWindow(::GetDlgItem(m_hWnd, IDC_MAX_PARTICLES_SPIN), enable);
 
-	SetModified ();
-	return ;
+    SetModified();
+    return;
 }

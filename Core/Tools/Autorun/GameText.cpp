@@ -47,38 +47,38 @@
 #include <Lib/BaseType.h>
 #include "GameText.h"
 
-#define DEBUG_LOG(x) {}
-#define DEBUG_ASSERTCRASH(x, y) {}
+#define DEBUG_LOG(x) \
+    { \
+    }
+#define DEBUG_ASSERTCRASH(x, y) \
+    { \
+    }
 
-//#include <Common/Language.h>
-//#include <Common/Debug.h>
-//#include <Common/std::wstring.h>
-//#include <Common/std::string.h>
-//#include <Common/GlobalData.h>
+// #include <Common/Language.h>
+// #include <Common/Debug.h>
+// #include <Common/std::wstring.h>
+// #include <Common/std::string.h>
+// #include <Common/GlobalData.h>
 #include "WSYS_file.h"
 #include "WSYS_RAMFile.h"
-
-
 
 //----------------------------------------------------------------------------
 //         Externals
 //----------------------------------------------------------------------------
 
-
-
 //----------------------------------------------------------------------------
 //         Defines
 //----------------------------------------------------------------------------
 
-#define CSF_ID ( ('C'<<24) | ('S'<<16) | ('F'<<8) | (' ') )
-#define CSF_LABEL ( ('L'<<24) | ('B'<<16) | ('L'<<8) | (' ') )
-#define CSF_STRING ( ('S'<<24) | ('T'<<16) | ('R'<<8) | (' ') )
-#define CSF_STRINGWITHWAVE ( ('S'<<24) | ('T'<<16) | ('R'<<8) | ('W') )
+#define CSF_ID (('C' << 24) | ('S' << 16) | ('F' << 8) | (' '))
+#define CSF_LABEL (('L' << 24) | ('B' << 16) | ('L' << 8) | (' '))
+#define CSF_STRING (('S' << 24) | ('T' << 16) | ('R' << 8) | (' '))
+#define CSF_STRINGWITHWAVE (('S' << 24) | ('T' << 16) | ('R' << 8) | ('W'))
 #define CSF_VERSION 3
 
 #define STRING_FILE 0
 #define CSF_FILE 1
-#define MAX_UITEXT_LENGTH (10*1024)
+#define MAX_UITEXT_LENGTH (10 * 1024)
 //----------------------------------------------------------------------------
 //         Private Types
 //----------------------------------------------------------------------------
@@ -89,15 +89,15 @@
 
 struct StringInfo
 {
-	std::string			label;
-	std::wstring		text;
-	std::string			speech;
+    std::string label;
+    std::wstring text;
+    std::string speech;
 };
 
 struct StringLookUp
 {
-	std::string		*label;
-	StringInfo		*info;
+    std::string *label;
+    StringInfo *info;
 };
 
 //===============================
@@ -106,13 +106,12 @@ struct StringLookUp
 
 struct CSFHeader
 {
-	Int id;
-	Int version;
-	Int num_labels;
-	Int num_strings;
-	Int skip;
-	Int langid;
-
+    Int id;
+    Int version;
+    Int num_labels;
+    Int num_strings;
+    Int skip;
+    Int langid;
 };
 
 //===============================
@@ -121,10 +120,9 @@ struct CSFHeader
 
 struct NoString
 {
-	struct NoString *next;
-	std::wstring text;
+    struct NoString *next;
+    std::wstring text;
 };
-
 
 //===============================
 // GameTextManager
@@ -132,54 +130,50 @@ struct NoString
 
 class GameTextManager : public GameTextInterface
 {
-	public:
+public:
+    GameTextManager();
+    virtual ~GameTextManager();
 
-		GameTextManager();
-		virtual ~GameTextManager();
+    virtual void init(void); ///< Initlaizes the text system
+    virtual void deinit(void); ///< De-initlaizes the text system
+    virtual void update(void) {}; ///< update text manager
+    virtual void reset(void); ///< Resets the text system
 
-		virtual void					init( void );						///< Initlaizes the text system
-		virtual void					deinit( void );					///< De-initlaizes the text system
-		virtual void					update( void ) {};			///< update text manager
-		virtual void					reset( void );					///< Resets the text system
+    virtual const wchar_t *fetch(const Char *label); ///< Returns the associated labeled unicode text
+protected:
+    Int m_textCount;
+    Int m_maxLabelLen;
+    Char m_buffer[MAX_UITEXT_LENGTH];
+    Char m_buffer2[MAX_UITEXT_LENGTH];
+    Char m_buffer3[MAX_UITEXT_LENGTH];
+    WideChar m_tbuffer[MAX_UITEXT_LENGTH * 2];
 
-		virtual const wchar_t * fetch( const Char *label );		///< Returns the associated labeled unicode text
-	protected:
+    StringInfo *m_stringInfo;
+    StringLookUp *m_stringLUT;
+    Bool m_initialized;
+    Bool m_jabberWockie;
+    Bool m_munkee;
+    NoString *m_noStringList;
+    Int m_useStringFile;
+    std::wstring m_failed;
 
-		Int							m_textCount;
-		Int							m_maxLabelLen;
-		Char						m_buffer[MAX_UITEXT_LENGTH];
-		Char						m_buffer2[MAX_UITEXT_LENGTH];
-		Char						m_buffer3[MAX_UITEXT_LENGTH];
-		WideChar				m_tbuffer[MAX_UITEXT_LENGTH*2];
-
-		StringInfo			*m_stringInfo;
-		StringLookUp		*m_stringLUT;
-		Bool						m_initialized;
-		Bool						m_jabberWockie;
-		Bool						m_munkee;
-		NoString				*m_noStringList;
-		Int							m_useStringFile;
-		std::wstring		m_failed;
-
-		void						stripSpaces ( WideChar *string );
-		void						removeLeadingAndTrailing ( Char *m_buffer );
-		void						readToEndOfQuote( File *file, Char *in, Char *out, Char *wavefile, Int maxBufLen );
-		void						reverseWord ( Char *file, Char *lp );
-		void						translateCopy( WideChar *outbuf, Char *inbuf );
-		Bool						getStringCount( Char *filename);
-		Bool						getCSFInfo ( Char *filename );
-		Bool						parseCSF(  Char *filename );
-		Bool						parseStringFile( char *filename );
-		Bool						readLine( char *buffer, Int max, File *file );
-		Char						readChar( File *file );
+    void stripSpaces(WideChar *string);
+    void removeLeadingAndTrailing(Char *m_buffer);
+    void readToEndOfQuote(File *file, Char *in, Char *out, Char *wavefile, Int maxBufLen);
+    void reverseWord(Char *file, Char *lp);
+    void translateCopy(WideChar *outbuf, Char *inbuf);
+    Bool getStringCount(Char *filename);
+    Bool getCSFInfo(Char *filename);
+    Bool parseCSF(Char *filename);
+    Bool parseStringFile(char *filename);
+    Bool readLine(char *buffer, Int max, File *file);
+    Char readChar(File *file);
 };
 
-static int _cdecl			compareLUT ( const void *,  const void*);
+static int _cdecl compareLUT(const void *, const void *);
 //----------------------------------------------------------------------------
 //         Private Data
 //----------------------------------------------------------------------------
-
-
 
 //----------------------------------------------------------------------------
 //         Public Data
@@ -191,13 +185,9 @@ GameTextInterface *TheGameText = NULL;
 //         Private Prototypes
 //----------------------------------------------------------------------------
 
-
-
 //----------------------------------------------------------------------------
 //         Private Functions
 //----------------------------------------------------------------------------
-
-
 
 //----------------------------------------------------------------------------
 //         Public Functions
@@ -207,27 +197,26 @@ GameTextInterface *TheGameText = NULL;
 // CreateGameTextInterface
 //============================================================================
 
-GameTextInterface* CreateGameTextInterface( void )
+GameTextInterface *CreateGameTextInterface(void)
 {
-	return new GameTextManager;
+    return new GameTextManager;
 }
-
 
 //============================================================================
 // GameTextManager::GameTextManager
 //============================================================================
 
-GameTextManager::GameTextManager()
-:	m_textCount(0),
-	m_maxLabelLen(0),
-	m_stringInfo(NULL),
-	m_stringLUT(NULL),
-	m_initialized(FALSE),
-	m_jabberWockie(FALSE),
-	m_munkee(FALSE),
-	m_noStringList(NULL),
-	m_useStringFile(TRUE),
-	m_failed(L"***FATAL*** String Manager failed to initilaized properly")
+GameTextManager::GameTextManager() :
+    m_textCount(0),
+    m_maxLabelLen(0),
+    m_stringInfo(NULL),
+    m_stringLUT(NULL),
+    m_initialized(FALSE),
+    m_jabberWockie(FALSE),
+    m_munkee(FALSE),
+    m_noStringList(NULL),
+    m_useStringFile(TRUE),
+    m_failed(L"***FATAL*** String Manager failed to initilaized properly")
 {
 }
 
@@ -237,7 +226,7 @@ GameTextManager::GameTextManager()
 
 GameTextManager::~GameTextManager()
 {
-	deinit();
+    deinit();
 }
 
 //============================================================================
@@ -246,908 +235,898 @@ GameTextManager::~GameTextManager()
 
 extern char szArgvPath[];
 
-void GameTextManager::init( void )
+void GameTextManager::init(void)
 {
-	const Char *strFile = "autorun.str";
-	const Char *csfFile = "autorun.csf";
-	Int format;
+    const Char *strFile = "autorun.str";
+    const Char *csfFile = "autorun.csf";
+    Int format;
 
-	Char realStrFile[_MAX_PATH];
-	Char realCsfFile[_MAX_PATH];
+    Char realStrFile[_MAX_PATH];
+    Char realCsfFile[_MAX_PATH];
 
-	strncpy(realStrFile, szArgvPath, _MAX_PATH);
-	strncpy(realCsfFile, szArgvPath, _MAX_PATH);
+    strncpy(realStrFile, szArgvPath, _MAX_PATH);
+    strncpy(realCsfFile, szArgvPath, _MAX_PATH);
 
-	strncat(realStrFile, strFile, _MAX_PATH - strlen(realStrFile));
-	strncat(realCsfFile, csfFile, _MAX_PATH - strlen(realCsfFile));
+    strncat(realStrFile, strFile, _MAX_PATH - strlen(realStrFile));
+    strncat(realCsfFile, csfFile, _MAX_PATH - strlen(realCsfFile));
 
-	if ( m_initialized )
-	{
-		return;
-	}
+    if (m_initialized)
+    {
+        return;
+    }
 
-	m_initialized = TRUE;
+    m_initialized = TRUE;
 
-	m_maxLabelLen = 0;
-	m_jabberWockie = FALSE;
-	m_munkee = 	FALSE;
+    m_maxLabelLen = 0;
+    m_jabberWockie = FALSE;
+    m_munkee = FALSE;
 
-	if ( m_useStringFile && getStringCount( realStrFile) )
-	{
-		format = STRING_FILE;
-	}
-	else if ( getCSFInfo ( realCsfFile ) )
-	{
-		format = CSF_FILE;
-	}
-	else
-	{
-		return;
-	}
+    if (m_useStringFile && getStringCount(realStrFile))
+    {
+        format = STRING_FILE;
+    }
+    else if (getCSFInfo(realCsfFile))
+    {
+        format = CSF_FILE;
+    }
+    else
+    {
+        return;
+    }
 
-	if( (m_textCount == 0) )
-	{
-		return;
-	}
+    if ((m_textCount == 0))
+    {
+        return;
+    }
 
-	//Allocate StringInfo Array
+    // Allocate StringInfo Array
 
-	m_stringInfo = new StringInfo[m_textCount];
+    m_stringInfo = new StringInfo[m_textCount];
 
-	if( m_stringInfo == NULL )
-	{
-		deinit();
-		return;
-	}
+    if (m_stringInfo == NULL)
+    {
+        deinit();
+        return;
+    }
 
-	if ( format == STRING_FILE )
-	{
-		if( parseStringFile( realStrFile ) == FALSE )
-		{
-			deinit();
-			return;
-		}
-	}
-	else
-	{
-		if ( !parseCSF ( realCsfFile ) )
-		{
-			deinit();
-			return;
-		}
-	}
+    if (format == STRING_FILE)
+    {
+        if (parseStringFile(realStrFile) == FALSE)
+        {
+            deinit();
+            return;
+        }
+    }
+    else
+    {
+        if (!parseCSF(realCsfFile))
+        {
+            deinit();
+            return;
+        }
+    }
 
-	m_stringLUT = new StringLookUp[m_textCount];
+    m_stringLUT = new StringLookUp[m_textCount];
 
-	StringLookUp *lut = m_stringLUT;
-	StringInfo *info = m_stringInfo;
+    StringLookUp *lut = m_stringLUT;
+    StringInfo *info = m_stringInfo;
 
-	for ( Int i = 0; i < m_textCount; i++ )
-	{
-		lut->info = info;
-		lut->label = &info->label;
-		lut++;
-		info++;
-	}
+    for (Int i = 0; i < m_textCount; i++)
+    {
+        lut->info = info;
+        lut->label = &info->label;
+        lut++;
+        info++;
+    }
 
-	qsort( m_stringLUT, m_textCount, sizeof(StringLookUp), compareLUT  );
-
+    qsort(m_stringLUT, m_textCount, sizeof(StringLookUp), compareLUT);
 }
 
 //============================================================================
 // GameTextManager::deinit
 //============================================================================
 
-void GameTextManager::deinit( void )
+void GameTextManager::deinit(void)
 {
+    if (m_stringInfo != NULL)
+    {
+        delete[] m_stringInfo;
+        m_stringInfo = NULL;
+    }
 
-	if( m_stringInfo != NULL )
-	{
-		delete [] m_stringInfo;
-		m_stringInfo = NULL;
-	}
+    if (m_stringLUT != NULL)
+    {
+        delete[] m_stringLUT;
+        m_stringLUT = NULL;
+    }
 
-	if( m_stringLUT != NULL )
-	{
-		delete [] m_stringLUT;
-		m_stringLUT = NULL;
-	}
+    m_textCount = 0;
 
-	m_textCount = 0;
+    NoString *noString = m_noStringList;
 
-	NoString *noString = m_noStringList;
+    DEBUG_LOG((""));
+    DEBUG_LOG(("*** Missing strings ***"));
+    while (noString)
+    {
+        DEBUG_LOG(("*** %ls ***", noString->text.str()));
+        NoString *next = noString->next;
+        delete noString;
+        noString = next;
+    }
+    DEBUG_LOG(("*** End missing strings ***"));
+    DEBUG_LOG((""));
 
-	DEBUG_LOG((""));
-	DEBUG_LOG(("*** Missing strings ***"));
-	while ( noString )
-	{
-		DEBUG_LOG(("*** %ls ***", noString->text.str()));
-		NoString *next = noString->next;
-		delete noString;
-		noString = next;
-	}
-	DEBUG_LOG(("*** End missing strings ***"));
-	DEBUG_LOG((""));
+    m_noStringList = NULL;
 
-	m_noStringList = NULL;
-
-	m_initialized = FALSE;
+    m_initialized = FALSE;
 }
 
 //============================================================================
 // GameTextManager::reset
 //============================================================================
 
-void GameTextManager::reset( void )
+void GameTextManager::reset(void)
 {
 }
-
 
 //============================================================================
 // GameTextManager::stripSpaces
 //============================================================================
 
-void GameTextManager::stripSpaces ( WideChar *string )
+void GameTextManager::stripSpaces(WideChar *string)
 {
-	WideChar *str, *ptr;
-	WideChar ch, last = 0;
-	Int skipall = TRUE;
+    WideChar *str, *ptr;
+    WideChar ch, last = 0;
+    Int skipall = TRUE;
 
-	str = ptr = string;
+    str = ptr = string;
 
-	while ( (ch = *ptr++) != 0 )
-	{
-		if ( ch == ' '  )
-		{
-			if ( last == ' ' || skipall )
-			{
-				continue;
-			}
-		}
+    while ((ch = *ptr++) != 0)
+    {
+        if (ch == ' ')
+        {
+            if (last == ' ' || skipall)
+            {
+                continue;
+            }
+        }
 
-		if ( ch == '\n' || ch == '\t' )
-		{
-				// remove last space
-				if ( last == ' ' )
-				{
-					str--;
-				}
+        if (ch == '\n' || ch == '\t')
+        {
+            // remove last space
+            if (last == ' ')
+            {
+                str--;
+            }
 
-				skipall = TRUE;		// skip all spaces
-				last = *str++ = ch;
-				continue;
-		}
+            skipall = TRUE; // skip all spaces
+            last = *str++ = ch;
+            continue;
+        }
 
-		last = *str++ = ch;
-		skipall = FALSE;
-	}
+        last = *str++ = ch;
+        skipall = FALSE;
+    }
 
-	if ( last == ' ' )
-	{
-		str--;
-	}
+    if (last == ' ')
+    {
+        str--;
+    }
 
-	*str = 0;
+    *str = 0;
 }
 
 //============================================================================
 // GameTextManager::removeLeadingAndTrailing
 //============================================================================
 
-void GameTextManager::removeLeadingAndTrailing ( Char *buffer )
+void GameTextManager::removeLeadingAndTrailing(Char *buffer)
 {
-	Char *first, *ptr;
-	Char ch;
+    Char *first, *ptr;
+    Char ch;
 
-	ptr = first = buffer;
+    ptr = first = buffer;
 
-	while ( (ch = *first) != 0 && iswspace ( ch ))
-	{
-			first++;
-	}
+    while ((ch = *first) != 0 && iswspace(ch))
+    {
+        first++;
+    }
 
-	while ( (*ptr++ = *first++) != 0 );
+    while ((*ptr++ = *first++) != 0)
+        ;
 
-	ptr -= 2;;
+    ptr -= 2;
+    ;
 
-	while ( (ptr > buffer) && (ch = *ptr) != 0 && iswspace ( ch ) )
-	{
-		ptr--;
-	}
+    while ((ptr > buffer) && (ch = *ptr) != 0 && iswspace(ch))
+    {
+        ptr--;
+    }
 
-	ptr++;
-	*ptr = 0;
+    ptr++;
+    *ptr = 0;
 }
 
 //============================================================================
 // GameTextManager::readToEndOfQuote
 //============================================================================
 
-void GameTextManager::readToEndOfQuote( File *file, Char *in, Char *out, Char *wavefile, Int maxBufLen )
+void GameTextManager::readToEndOfQuote(File *file, Char *in, Char *out, Char *wavefile, Int maxBufLen)
 {
-	Int slash = FALSE;
-	Int state = 0;
-	Int line_start = FALSE;
-	Char ch;
-	Int ccount = 0;
-	Int len = 0;
-	Int done = FALSE;
+    Int slash = FALSE;
+    Int state = 0;
+    Int line_start = FALSE;
+    Char ch;
+    Int ccount = 0;
+    Int len = 0;
+    Int done = FALSE;
 
-	while ( maxBufLen )
-	{
-		// get next Char
+    while (maxBufLen)
+    {
+        // get next Char
 
-		if ( in )
-		{
-			if ( (ch = *in++) == 0 )
-			{
-				in = NULL; // have exhausted the input m_buffer
-				ch = readChar ( file );
-			}
-		}
-		else
-		{
-			ch = readChar ( file );
-		}
+        if (in)
+        {
+            if ((ch = *in++) == 0)
+            {
+                in = NULL; // have exhausted the input m_buffer
+                ch = readChar(file);
+            }
+        }
+        else
+        {
+            ch = readChar(file);
+        }
 
-		if ( ch == EOF )
-		{
-			return ;
-		}
+        if (ch == EOF)
+        {
+            return;
+        }
 
-		if ( ch == '\n' )
-		{
-			line_start = TRUE;
-			slash = FALSE;
-			ccount = 0;
-			ch = ' ';
-		}
-		else if ( ch == '\\' && !slash)
-		{
-			slash = TRUE;
-		}
-		else if ( ch == '\\' && slash)
-		{
-			slash = FALSE;
-		}
-		else if ( ch == '"' && !slash )
-		{
-			break; // done
-		}
-		else
-		{
-			slash = FALSE;
-		}
+        if (ch == '\n')
+        {
+            line_start = TRUE;
+            slash = FALSE;
+            ccount = 0;
+            ch = ' ';
+        }
+        else if (ch == '\\' && !slash)
+        {
+            slash = TRUE;
+        }
+        else if (ch == '\\' && slash)
+        {
+            slash = FALSE;
+        }
+        else if (ch == '"' && !slash)
+        {
+            break; // done
+        }
+        else
+        {
+            slash = FALSE;
+        }
 
-		if ( iswspace ( ch ))
-		{
-			ch = ' ';
-		}
+        if (iswspace(ch))
+        {
+            ch = ' ';
+        }
 
-		*out++ = ch;
-		maxBufLen--;
-	}
+        *out++ = ch;
+        maxBufLen--;
+    }
 
-	*out = 0;
+    *out = 0;
 
-	while ( !done )
-	{
-		// get next Char
+    while (!done)
+    {
+        // get next Char
 
-		if ( in )
-		{
-			if ( (ch = *in++) == 0 )
-			{
-				in = NULL; // have exhausted the input m_buffer
-				ch = readChar ( file );
-			}
-		}
-		else
-		{
-			ch = readChar ( file );
-		}
+        if (in)
+        {
+            if ((ch = *in++) == 0)
+            {
+                in = NULL; // have exhausted the input m_buffer
+                ch = readChar(file);
+            }
+        }
+        else
+        {
+            ch = readChar(file);
+        }
 
-		if ( ch == '\n' || ch == EOF )
-		{
-			break;
-		}
+        if (ch == '\n' || ch == EOF)
+        {
+            break;
+        }
 
-		switch ( state )
-		{
+        switch (state)
+        {
+            case 0:
+                if (iswspace(ch) || ch == '=')
+                {
+                    break;
+                }
 
-			case 0:
-				if ( iswspace ( ch ) || ch == '=' )
-				{
-					break;
-				}
+                state = 1;
+            case 1:
+                if ((ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z') || (ch >= '0' && ch <= '9') || ch == '_')
+                {
+                    *wavefile++ = ch;
+                    len++;
+                    break;
+                }
+                state = 2;
+            case 2:
+                break;
+        }
+    }
 
-				state = 1;
-			case 1:
-				if ( ( ch >= 'a' && ch <= 'z') || ( ch >= 'A' && ch <='Z') || (ch >= '0' && ch <= '9') || ch == '_' )
-				{
-					*wavefile++ = ch;
-					len++;
-					break;
-				}
-				state = 2;
-			case 2:
-				break;
-		}
-	}
+    *wavefile = 0;
 
-	*wavefile = 0;
-
-	if ( len )
-	{
-		if ( ( ch = *(wavefile-1)) >= '0' && ch <= '9' )
-		{
-			*wavefile++ = 'e';
-			*wavefile = 0;
-		}
-	}
-
+    if (len)
+    {
+        if ((ch = *(wavefile - 1)) >= '0' && ch <= '9')
+        {
+            *wavefile++ = 'e';
+            *wavefile = 0;
+        }
+    }
 }
-
 
 //============================================================================
 // GameTextManager::reverseWord
 //============================================================================
 
-void GameTextManager::reverseWord ( Char *file, Char *lp )
+void GameTextManager::reverseWord(Char *file, Char *lp)
 {
-	Int first = TRUE;
-	Char f, l;
-	Int ok = TRUE	;
+    Int first = TRUE;
+    Char f, l;
+    Int ok = TRUE;
 
-	while ( ok )
-	{
-		if ( file >= lp )
-		{
-			return;
-		}
+    while (ok)
+    {
+        if (file >= lp)
+        {
+            return;
+        }
 
-		f = *file;
-		l = *lp;
+        f = *file;
+        l = *lp;
 
-		if ( first )
-		{
-			if ( f >= 'A' && f <= 'Z' )
-			{
-				if ( l >= 'a' && l <= 'z' )
-				{
-					f = (f - 'A') + 'a';
-					l = (l - 'a') + 'A';
-				}
-			}
+        if (first)
+        {
+            if (f >= 'A' && f <= 'Z')
+            {
+                if (l >= 'a' && l <= 'z')
+                {
+                    f = (f - 'A') + 'a';
+                    l = (l - 'a') + 'A';
+                }
+            }
 
-			first = FALSE;
-		}
+            first = FALSE;
+        }
 
-		*lp-- = f;
-		*file++ = l;
-
-	}
-
+        *lp-- = f;
+        *file++ = l;
+    }
 }
 
 //============================================================================
 // GameTextManager::translateCopy
 //============================================================================
 
-void GameTextManager::translateCopy( WideChar *outbuf, Char *inbuf )
+void GameTextManager::translateCopy(WideChar *outbuf, Char *inbuf)
 {
-	Bool slash = FALSE;
+    Bool slash = FALSE;
 
-	if ( m_jabberWockie )
-	{
-		static Char buffer[MAX_UITEXT_LENGTH*2];
-		Char *firstLetter = NULL, *lastLetter;
-		Char *b = buffer;
-		Int formatWord = FALSE;
-		Char ch;
+    if (m_jabberWockie)
+    {
+        static Char buffer[MAX_UITEXT_LENGTH * 2];
+        Char *firstLetter = NULL, *lastLetter;
+        Char *b = buffer;
+        Int formatWord = FALSE;
+        Char ch;
 
-		while ( (ch = *inbuf++) != 0 )
-		{
-			if ( ! (( ch >= 'a' && ch <= 'z') || ( ch >= 'A' && ch <= 'Z' )))
-			{
-				if ( firstLetter )
-				{
-					if ( !formatWord )
-					{
-						lastLetter = b-1;
-						reverseWord ( firstLetter, lastLetter );
-					}
-					firstLetter = NULL;
-					formatWord = FALSE;
-				}
-				*b++ = ch;
-				if ( ch == '\\' )
-				{
-					*b++ = *inbuf++;
-				}
-				if ( ch == '%' )
-				{
-					while ( (ch = *inbuf++) != 0 && !( (ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z')))
-					{
-						*b++ = ch;
-					}
-					*b++ = ch;
-				}
-			}
-			else
-			{
-				if ( !firstLetter )
-				{
-					firstLetter = b;
-				}
+        while ((ch = *inbuf++) != 0)
+        {
+            if (!((ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z')))
+            {
+                if (firstLetter)
+                {
+                    if (!formatWord)
+                    {
+                        lastLetter = b - 1;
+                        reverseWord(firstLetter, lastLetter);
+                    }
+                    firstLetter = NULL;
+                    formatWord = FALSE;
+                }
+                *b++ = ch;
+                if (ch == '\\')
+                {
+                    *b++ = *inbuf++;
+                }
+                if (ch == '%')
+                {
+                    while ((ch = *inbuf++) != 0 && !((ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z')))
+                    {
+                        *b++ = ch;
+                    }
+                    *b++ = ch;
+                }
+            }
+            else
+            {
+                if (!firstLetter)
+                {
+                    firstLetter = b;
+                }
 
-				*b++ = ch;
+                *b++ = ch;
+            }
+        }
 
-			}
-		}
+        if (firstLetter)
+        {
+            lastLetter = b - 1;
+            reverseWord(firstLetter, lastLetter);
+        }
 
-		if ( firstLetter )
-		{
-			lastLetter = b-1;
-			reverseWord ( firstLetter, lastLetter );
-		}
+        *b++ = 0;
+        inbuf = buffer;
+    }
+    else if (m_munkee)
+    {
+        wcscpy(outbuf, L"Munkee");
+        return;
+    }
 
-		*b++ = 0;
-		inbuf = buffer;
-	}
-	else if( m_munkee )
-	{
-		wcscpy(outbuf, L"Munkee");
-		return;
-	}
+    while (*inbuf != '\0')
+    {
+        if (slash == TRUE)
+        {
+            slash = FALSE;
 
-	while( *inbuf != '\0' )
-	{
-		if( slash == TRUE )
-		{
-			slash = FALSE;
+            switch (*inbuf)
+            {
+                // in case end of string is reached
+                // should never happen!!!
+                case '\0':
+                    return;
 
-			switch( *inbuf )
-			{
-				// in case end of string is reached
-				// should never happen!!!
-				case '\0':
-					return;
+                case '\\':
+                    *outbuf++ = '\\';
+                    break;
 
-				case '\\':
-					*outbuf++ = '\\';
-					break;
+                case '\'':
+                    *outbuf++ = '\'';
+                    break;
 
-				case '\'':
-					*outbuf++ = '\'';
-					break;
+                case '\"':
+                    *outbuf++ = '\"';
+                    break;
 
-				case '\"':
-					*outbuf++ = '\"';
-					break;
+                case '\?':
+                    *outbuf++ = '\?';
+                    break;
 
-				case '\?':
-					*outbuf++ = '\?';
-					break;
+                case 't':
+                    *outbuf++ = '\t';
+                    break;
 
-				case 't':
-					*outbuf++ = '\t';
-					break;
+                case 'n':
+                    *outbuf++ = '\n';
+                    break;
 
-				case 'n':
-					*outbuf++ = '\n';
-					break;
+                default:
+                    *outbuf++ = *inbuf & 0x00FF;
+                    break;
+            }
+        }
+        else if (*inbuf != '\\')
+        {
+            *outbuf++ = *inbuf & 0x00FF;
+        }
+        else
+            slash = TRUE;
 
-				default:
-					*outbuf++ = *inbuf & 0x00FF;
-					break;
-			}
-		}
-		else if( *inbuf != '\\' )
-		{
-			*outbuf++ = *inbuf & 0x00FF;
-		}
-		else
-			slash = TRUE;
-
-		inbuf++;
-	}
-	*outbuf= 0;
+        inbuf++;
+    }
+    *outbuf = 0;
 }
 
 //============================================================================
 // GameTextManager::getStringCount
 //============================================================================
 
-Bool GameTextManager::getStringCount( char *filename )
+Bool GameTextManager::getStringCount(char *filename)
 {
-	Int ok = TRUE;
+    Int ok = TRUE;
 
-	m_textCount = 0;
+    m_textCount = 0;
 
-	RAMFile file;
+    RAMFile file;
 
-	if ( !file.open( filename, File::READ | File::TEXT ))
-	{
-		return FALSE;
-	}
+    if (!file.open(filename, File::READ | File::TEXT))
+    {
+        return FALSE;
+    }
 
-	while(ok)
-	{
-		if( !readLine( m_buffer, sizeof( m_buffer) -1, &file ) )
-			break;
-		removeLeadingAndTrailing ( m_buffer );
+    while (ok)
+    {
+        if (!readLine(m_buffer, sizeof(m_buffer) - 1, &file))
+            break;
+        removeLeadingAndTrailing(m_buffer);
 
-		if( m_buffer[0] == '"' )
-		{
-				Int len = strlen(m_buffer);
-				m_buffer[ len ] = '\n';
-				m_buffer[ len+1] = 0;
-			readToEndOfQuote( &file, &m_buffer[1], m_buffer2, m_buffer3, MAX_UITEXT_LENGTH );
-		}
-		else if( !stricmp( m_buffer, "END") )
-		{
-			m_textCount++;
-		}
-	}
+        if (m_buffer[0] == '"')
+        {
+            Int len = strlen(m_buffer);
+            m_buffer[len] = '\n';
+            m_buffer[len + 1] = 0;
+            readToEndOfQuote(&file, &m_buffer[1], m_buffer2, m_buffer3, MAX_UITEXT_LENGTH);
+        }
+        else if (!stricmp(m_buffer, "END"))
+        {
+            m_textCount++;
+        }
+    }
 
-	m_textCount += 500;
-	file.close();
-	return TRUE;
+    m_textCount += 500;
+    file.close();
+    return TRUE;
 }
 
 //============================================================================
 // GameTextManager::getCSFInfo
 //============================================================================
 
-Bool GameTextManager::getCSFInfo ( Char *filename )
+Bool GameTextManager::getCSFInfo(Char *filename)
 {
-	CSFHeader header;
-	Int ok = FALSE;
-	RAMFile file;
+    CSFHeader header;
+    Int ok = FALSE;
+    RAMFile file;
 
-	if ( file.open( filename, File::READ | File::BINARY ) )
-	{
-		if ( file.read( &header, sizeof ( header )) == sizeof ( header ) )
-		{
-			if ( header.id == CSF_ID )
-			{
-				m_textCount = header.num_labels;
+    if (file.open(filename, File::READ | File::BINARY))
+    {
+        if (file.read(&header, sizeof(header)) == sizeof(header))
+        {
+            if (header.id == CSF_ID)
+            {
+                m_textCount = header.num_labels;
 
-				ok = TRUE;
-			}
-		}
+                ok = TRUE;
+            }
+        }
 
-		file.close();
-	}
+        file.close();
+    }
 
-	return ok;
+    return ok;
 }
 
 //============================================================================
 // GameTextManager::parseCSF
 //============================================================================
 
-Bool GameTextManager::parseCSF( Char *filename )
+Bool GameTextManager::parseCSF(Char *filename)
 {
-	RAMFile file;
-	Int id;
-	Int len;
-	Int listCount = 0;
-	Bool ok = FALSE;
-	CSFHeader header;
+    RAMFile file;
+    Int id;
+    Int len;
+    Int listCount = 0;
+    Bool ok = FALSE;
+    CSFHeader header;
 
-	if ( !file.open( filename, File::READ | File::BINARY ) )
-	{
-		return FALSE;
-	}
+    if (!file.open(filename, File::READ | File::BINARY))
+    {
+        return FALSE;
+    }
 
-	if (  file.read ( &header, sizeof ( CSFHeader)) != sizeof ( CSFHeader) )
-	{
-		return FALSE;
-	}
+    if (file.read(&header, sizeof(CSFHeader)) != sizeof(CSFHeader))
+    {
+        return FALSE;
+    }
 
-	while( file.read ( &id, sizeof (id)) == sizeof ( id) )
-	{
-		Int num;
-		Int num_strings;
+    while (file.read(&id, sizeof(id)) == sizeof(id))
+    {
+        Int num;
+        Int num_strings;
 
-		if ( id != CSF_LABEL )
-		{
-			goto quit;
-		}
+        if (id != CSF_LABEL)
+        {
+            goto quit;
+        }
 
-		file.read ( &num_strings, sizeof ( Int ));
+        file.read(&num_strings, sizeof(Int));
 
-		file.read ( &len, sizeof ( Int ) );
+        file.read(&len, sizeof(Int));
 
-		if ( len )
-		{
-			file.read ( m_buffer, len );
-		}
+        if (len)
+        {
+            file.read(m_buffer, len);
+        }
 
-		m_buffer[len] = 0;
+        m_buffer[len] = 0;
 
-		m_stringInfo[listCount].label = m_buffer;
+        m_stringInfo[listCount].label = m_buffer;
 
+        if (len > m_maxLabelLen)
+        {
+            m_maxLabelLen = len;
+        }
 
-		if ( len > m_maxLabelLen )
-		{
-			m_maxLabelLen = len;
-		}
+        num = 0;
 
-		num = 0;
+        while (num < num_strings)
+        {
+            file.read(&id, sizeof(Int));
 
-		while ( num < num_strings )
-		{
-		 	file.read ( &id, sizeof ( Int ) );
+            if (id != CSF_STRING && id != CSF_STRINGWITHWAVE)
+            {
+                goto quit;
+            }
 
-			if ( id != CSF_STRING && id != CSF_STRINGWITHWAVE )
-			{
-				goto quit;
-			}
+            file.read(&len, sizeof(Int));
 
-		 	file.read ( &len, sizeof ( Int ) );
+            if (len)
+            {
+                file.read(m_tbuffer, len * sizeof(WideChar));
+            }
 
-			if ( len )
-			{
-				file.read ( m_tbuffer, len*sizeof(WideChar) );
-			}
+            if (num == 0)
+            {
+                // only use the first string found
+                m_tbuffer[len] = 0;
 
-			if ( num == 0 )
-			{
-				// only use the first string found
-				m_tbuffer[len] = 0;
+                {
+                    WideChar *ptr;
 
-				{
-					WideChar *ptr;
+                    ptr = m_tbuffer;
 
-					ptr = m_tbuffer;
+                    while (*ptr)
+                    {
+                        *ptr = ~*ptr;
+                        ptr++;
+                    }
+                }
 
-					while ( *ptr )
-					{
-						*ptr = ~*ptr;
-						ptr++;
-					}
-				}
+                stripSpaces(m_tbuffer);
+                m_stringInfo[listCount].text = m_tbuffer;
+            }
 
-				stripSpaces ( m_tbuffer );
-				m_stringInfo[listCount].text = m_tbuffer;
-			}
+            if (id == CSF_STRINGWITHWAVE)
+            {
+                file.read(&len, sizeof(Int));
+                if (len)
+                {
+                    file.read(m_buffer, len);
+                }
+                m_buffer[len] = 0;
 
-			if ( id == CSF_STRINGWITHWAVE )
-			{
-			 	file.read ( &len, sizeof ( Int ) );
-				if ( len )
-				{
-					file.read ( m_buffer, len );
-				}
-				m_buffer[len] = 0;
+                if (num == 0 && len)
+                {
+                    // only use the first string found
+                    m_stringInfo[listCount].speech = m_buffer;
+                }
+            }
 
-				if ( num == 0 && len )
-				{
-					// only use the first string found
-					m_stringInfo[listCount].speech = m_buffer;
-				}
+            num++;
+        }
 
-			}
+        listCount++;
+    }
 
-			num++;
-		}
-
-		listCount++;
-	}
-
-	ok = TRUE;
+    ok = TRUE;
 
 quit:
 
-	file.close();
+    file.close();
 
-	return ok;
+    return ok;
 }
-
 
 //============================================================================
 // GameTextManager::parseStringFile
 //============================================================================
 
-Bool GameTextManager::parseStringFile( char *filename )
+Bool GameTextManager::parseStringFile(char *filename)
 {
-	Int listCount = 0;
-	Int ok = TRUE;
+    Int listCount = 0;
+    Int ok = TRUE;
 
-	RAMFile file;
+    RAMFile file;
 
-	if ( !file.open(  filename, File::READ | File::TEXT ) )
-	{
-		return FALSE;
-	}
+    if (!file.open(filename, File::READ | File::TEXT))
+    {
+        return FALSE;
+    }
 
-	while( ok )
-	{
-		Int len;
-		if( !readLine( m_buffer, MAX_UITEXT_LENGTH, &file ))
-		{
-			break;
-		}
+    while (ok)
+    {
+        Int len;
+        if (!readLine(m_buffer, MAX_UITEXT_LENGTH, &file))
+        {
+            break;
+        }
 
-		removeLeadingAndTrailing ( m_buffer );
+        removeLeadingAndTrailing(m_buffer);
 
-		if( ( *(unsigned short *)m_buffer == 0x2F2F) || !m_buffer[0])			//	0x2F2F is Hex for //
-			continue;
+        if ((*(unsigned short *)m_buffer == 0x2F2F) || !m_buffer[0]) //	0x2F2F is Hex for //
+            continue;
 
-		// make sure label is unique
+        // make sure label is unique
 
-		for ( Int i = 0; i < listCount; i++ )
-		{
-			if ( !stricmp ( m_stringInfo[i].label.c_str(), m_buffer ))
-			{
-				DEBUG_ASSERTCRASH ( FALSE, ("String label '%s' multiply defined!", m_buffer ));
-			}
-		}
+        for (Int i = 0; i < listCount; i++)
+        {
+            if (!stricmp(m_stringInfo[i].label.c_str(), m_buffer))
+            {
+                DEBUG_ASSERTCRASH(FALSE, ("String label '%s' multiply defined!", m_buffer));
+            }
+        }
 
-		m_stringInfo[listCount].label = m_buffer;
-		len = strlen ( m_buffer );
+        m_stringInfo[listCount].label = m_buffer;
+        len = strlen(m_buffer);
 
+        if (len > m_maxLabelLen)
+        {
+            m_maxLabelLen = len;
+        }
 
-		if ( len > m_maxLabelLen )
-		{
-			m_maxLabelLen = len;
-		}
+        Bool readString = FALSE;
+        while (ok)
+        {
+            if (!readLine(m_buffer, sizeof(m_buffer) - 1, &file))
+            {
+                DEBUG_ASSERTCRASH(FALSE, ("Unexpected end of string file"));
+                ok = FALSE;
+                goto quit;
+            }
 
-		Bool readString = FALSE;
-		while( ok )
-		{
-			if (!readLine ( m_buffer, sizeof(m_buffer)-1, &file ))
-			{
-				DEBUG_ASSERTCRASH (FALSE, ("Unexpected end of string file"));
-				ok = FALSE;
-				goto quit;
-			}
+            removeLeadingAndTrailing(m_buffer);
 
-			removeLeadingAndTrailing ( m_buffer );
+            if (m_buffer[0] == '"')
+            {
+                len = strlen(m_buffer);
+                m_buffer[len] = '\n';
+                m_buffer[len + 1] = 0;
+                readToEndOfQuote(&file, &m_buffer[1], m_buffer2, m_buffer3, MAX_UITEXT_LENGTH);
 
-			if( m_buffer[0] == '"' )
-			{
-				len = strlen(m_buffer);
-				m_buffer[ len ] = '\n';
-				m_buffer[ len+1] = 0;
-				readToEndOfQuote( &file, &m_buffer[1], m_buffer2, m_buffer3, MAX_UITEXT_LENGTH );
+                if (readString)
+                {
+                    // only one string per label allows
+                    DEBUG_ASSERTCRASH(
+                        FALSE,
+                        ("String label '%s' has more than one string defined!", m_stringInfo[listCount].label.str()));
+                }
+                else
+                {
+                    // Copy string into new home
+                    translateCopy(m_tbuffer, m_buffer2);
+                    stripSpaces(m_tbuffer);
 
+                    m_stringInfo[listCount].text = m_tbuffer;
+                    m_stringInfo[listCount].speech = m_buffer3;
+                    readString = TRUE;
+                }
+            }
+            else if (!stricmp(m_buffer, "END"))
+            {
+                break;
+            }
+        }
 
-				if ( readString )
-				{
-					// only one string per label allows
-						DEBUG_ASSERTCRASH ( FALSE, ("String label '%s' has more than one string defined!", m_stringInfo[listCount].label.str()));
-				}
-				else
-				{
-					// Copy string into new home
-					translateCopy( m_tbuffer, m_buffer2 );
-					stripSpaces ( m_tbuffer );
-
-					m_stringInfo[listCount].text = m_tbuffer ;
-					m_stringInfo[listCount].speech = m_buffer3;
-					readString = TRUE;
-				}
-			}
-			else if ( !stricmp ( m_buffer, "END" ))
-			{
-				break;
-			}
-		}
-
-		listCount++;
-	}
+        listCount++;
+    }
 
 quit:
 
-	file.close();
+    file.close();
 
-	return ok;
+    return ok;
 }
 
 //============================================================================
 // *GameTextManager::fetch
 //============================================================================
 
-const wchar_t * GameTextManager::fetch( const Char *label )
+const wchar_t *GameTextManager::fetch(const Char *label)
 {
-	DEBUG_ASSERTCRASH ( m_initialized, ("String Manager has not been m_initialized") );
+    DEBUG_ASSERTCRASH(m_initialized, ("String Manager has not been m_initialized"));
 
-	if( m_stringInfo == NULL )
-	{
-		return m_failed.c_str();
-	}
+    if (m_stringInfo == NULL)
+    {
+        return m_failed.c_str();
+    }
 
-	StringLookUp *lookUp;
-	StringLookUp key;
-	std::string lb;
-	lb = label;
-	key.info = NULL;
-	key.label = &lb;
+    StringLookUp *lookUp;
+    StringLookUp key;
+    std::string lb;
+    lb = label;
+    key.info = NULL;
+    key.label = &lb;
 
-	lookUp = (StringLookUp *) bsearch( &key, (void*) m_stringLUT, m_textCount, sizeof(StringLookUp), compareLUT );
+    lookUp = (StringLookUp *)bsearch(&key, (void *)m_stringLUT, m_textCount, sizeof(StringLookUp), compareLUT);
 
-	if( lookUp == NULL )
-	{
-		// See if we already have the missing string
-		wchar_t tmp[256];
-		swprintf(tmp, 256, L"MISSING: '%hs'", label);
-		std::wstring missingString = tmp;
+    if (lookUp == NULL)
+    {
+        // See if we already have the missing string
+        wchar_t tmp[256];
+        swprintf(tmp, 256, L"MISSING: '%hs'", label);
+        std::wstring missingString = tmp;
 
-		NoString *noString = m_noStringList;
+        NoString *noString = m_noStringList;
 
-		while ( noString )
-		{
-			if (noString->text == missingString)
-				return missingString.c_str();
+        while (noString)
+        {
+            if (noString->text == missingString)
+                return missingString.c_str();
 
-			noString = noString->next;
-		}
+            noString = noString->next;
+        }
 
-		//DEBUG_LOG(("*** MISSING:'%s' ***", label));
-		// Remember file could have been altered at this point.
-		noString = new NoString;
-		noString->text = missingString;
-		noString->next = m_noStringList;
-		m_noStringList = noString;
-		return noString->text.c_str();
-	}
-	return lookUp->info->text.c_str();
+        // DEBUG_LOG(("*** MISSING:'%s' ***", label));
+        //  Remember file could have been altered at this point.
+        noString = new NoString;
+        noString->text = missingString;
+        noString->next = m_noStringList;
+        m_noStringList = noString;
+        return noString->text.c_str();
+    }
+    return lookUp->info->text.c_str();
 }
 
 //============================================================================
 // GameTextManager::readLine
 //============================================================================
 
-Bool	GameTextManager::readLine( char *buffer, Int max, File *file )
+Bool GameTextManager::readLine(char *buffer, Int max, File *file)
 {
-	Int ok = FALSE;
+    Int ok = FALSE;
 
-	while ( max && file->read( buffer, 1 ) == 1 )
-	{
-		ok = TRUE;
+    while (max && file->read(buffer, 1) == 1)
+    {
+        ok = TRUE;
 
-		if ( *buffer == '\n' )
-		{
-			break;
-		}
+        if (*buffer == '\n')
+        {
+            break;
+        }
 
-		buffer++;
-		max--;
-	}
+        buffer++;
+        max--;
+    }
 
-	*buffer = 0;
+    *buffer = 0;
 
-	return ok;
+    return ok;
 }
 
 //============================================================================
 // GameTextManager::readChar
 //============================================================================
 
-Char	GameTextManager::readChar( File *file )
+Char GameTextManager::readChar(File *file)
 {
-	Char ch;
+    Char ch;
 
-	if ( file->read( &ch, 1 ) == 1 )
-	{
-		return ch;
-	}
+    if (file->read(&ch, 1) == 1)
+    {
+        return ch;
+    }
 
-	return 0;
+    return 0;
 }
 
 //============================================================================
 // GameTextManager::compareLUT
 //============================================================================
 
-static int __cdecl compareLUT ( const void *i1,  const void*i2)
+static int __cdecl compareLUT(const void *i1, const void *i2)
 {
-	StringLookUp *lut1 = (StringLookUp*) i1;
-	StringLookUp *lut2 = (StringLookUp*) i2;
+    StringLookUp *lut1 = (StringLookUp *)i1;
+    StringLookUp *lut2 = (StringLookUp *)i2;
 
-	return stricmp( lut1->label->c_str(), lut2->label->c_str());
+    return stricmp(lut1->label->c_str(), lut2->label->c_str());
 }

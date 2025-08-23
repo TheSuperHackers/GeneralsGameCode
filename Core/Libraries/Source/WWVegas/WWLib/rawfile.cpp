@@ -52,19 +52,18 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 // TheSuperHackers @build feliwir 11/04/2025 We removed Win32 API here and use plain C
-#include	"always.h"
-#include	"RAWFILE.H"
-#include	<stddef.h>
-#include	<stdio.h>
-#include	<stdlib.h>
-#include	<string.h>
-#include	<limits.h>
-#include	<errno.h>
+#include "always.h"
+#include "RAWFILE.H"
+#include <stddef.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <limits.h>
+#include <errno.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 
-
-#if 0		//#ifdef NEVER    (gth) the MAX sdk must #define NEVER! yikes :-)
+#if 0 // #ifdef NEVER    (gth) the MAX sdk must #define NEVER! yikes :-)
 	/*
 	**	This is a duplicate of the error numbers. The error handler for the RawFileClass handles
 	**	these errors. If the error routine is overridden and additional errors are defined, then
@@ -123,7 +122,6 @@
 	EUCLEAN,				// not used
 #endif
 
-
 /***********************************************************************************************
  * RawFileClass::RawFileClass -- Default constructor for a file object.                        *
  *                                                                                             *
@@ -141,17 +139,9 @@
  *   10/18/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
 RawFileClass::RawFileClass(void) :
-	Rights(READ),
-	BiasStart(0),
-	BiasLength(-1),
-	Handle(NULL_HANDLE),
-	Filename(""),
-	Date(0),
-	Time(0)
+    Rights(READ), BiasStart(0), BiasLength(-1), Handle(NULL_HANDLE), Filename(""), Date(0), Time(0)
 {
 }
-
-
 
 /***********************************************************************************************
  * RawFileClass::Is_Open -- Checks to see if the file is open or not.                          *
@@ -170,7 +160,7 @@ RawFileClass::RawFileClass(void) :
  *=============================================================================================*/
 bool RawFileClass::Is_Open(void) const
 {
-	return(Handle != NULL_HANDLE);
+    return (Handle != NULL_HANDLE);
 }
 
 /***********************************************************************************************
@@ -196,7 +186,7 @@ bool RawFileClass::Is_Open(void) const
  * HISTORY:                                                                                    *
  *   10/17/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-void RawFileClass::Error(int, int, char const * )
+void RawFileClass::Error(int, int, char const *)
 {
 }
 
@@ -218,7 +208,7 @@ void RawFileClass::Error(int, int, char const * )
  *=============================================================================================*/
 int RawFileClass::Transfer_Block_Size(void)
 {
-	return (int)((unsigned)UINT_MAX)-16L;
+    return (int)((unsigned)UINT_MAX) - 16L;
 }
 
 /***********************************************************************************************
@@ -238,14 +228,8 @@ int RawFileClass::Transfer_Block_Size(void)
  * HISTORY:                                                                                    *
  *   10/17/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-RawFileClass::RawFileClass(char const * filename) :
-	Rights(0),
-	BiasStart(0),
-	BiasLength(-1),
-	Handle(NULL_HANDLE),
-	Filename(filename),
-	Date(0),
-	Time(0)
+RawFileClass::RawFileClass(char const *filename) :
+    Rights(0), BiasStart(0), BiasLength(-1), Handle(NULL_HANDLE), Filename(filename), Date(0), Time(0)
 {
 }
 
@@ -267,7 +251,7 @@ RawFileClass::RawFileClass(char const * filename) :
  *=============================================================================================*/
 RawFileClass::~RawFileClass(void)
 {
-	Reset ();
+    Reset();
 }
 
 /***********************************************************************************************
@@ -284,8 +268,8 @@ RawFileClass::~RawFileClass(void)
  *=============================================================================================*/
 void RawFileClass::Reset(void)
 {
-	Close();
-	Filename = "";
+    Close();
+    Filename = "";
 }
 
 /***********************************************************************************************
@@ -306,9 +290,9 @@ void RawFileClass::Reset(void)
  *   11/25/2001 Jani: Note that this is virtual function and thus can't be inlined. Is there a *
  *					 reason for it to be virtual?																	  *
  *=============================================================================================*/
-char const * RawFileClass::File_Name(void) const
+char const *RawFileClass::File_Name(void) const
 {
-	return(Filename);
+    return (Filename);
 }
 
 /***********************************************************************************************
@@ -328,27 +312,26 @@ char const * RawFileClass::File_Name(void) const
  *	  11/25/2001 Jani : Changed the name storage from strdup to StringClass to benefit from our *
  *							  Fast memory allocation system.
  *=============================================================================================*/
-char const * RawFileClass::Set_Name(char const * filename)
+char const *RawFileClass::Set_Name(char const *filename)
 {
-	Bias(0);
+    Bias(0);
 
-	Filename=filename;
+    Filename = filename;
 
-	/*
-	** If this is a UNIX build, fix the filename from the DOS-like name passed in
-	*/
-	#ifdef _UNIX
-		for (int i=0; i<Filename.Get_Length(); i++)
-		{
-			if (Filename[i]=='\\')
-				Filename[i]='/';
-			Filename[i]=tolower(Filename[i]);  // don't preserve case
-		}
-	#endif
+/*
+** If this is a UNIX build, fix the filename from the DOS-like name passed in
+*/
+#ifdef _UNIX
+    for (int i = 0; i < Filename.Get_Length(); i++)
+    {
+        if (Filename[i] == '\\')
+            Filename[i] = '/';
+        Filename[i] = tolower(Filename[i]); // don't preserve case
+    }
+#endif
 
-	return(Filename);
+    return (Filename);
 }
-
 
 /***********************************************************************************************
  * RawFileClass::Open -- Assigns name and opens file in one operation.                         *
@@ -371,12 +354,11 @@ char const * RawFileClass::Set_Name(char const * filename)
  * HISTORY:                                                                                    *
  *   10/17/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-int RawFileClass::Open(char const * filename, int rights)
+int RawFileClass::Open(char const *filename, int rights)
 {
-	Set_Name(filename);
-	return(Open(rights));
+    Set_Name(filename);
+    return (Open(rights));
 }
-
 
 /***********************************************************************************************
  * RawFileClass::Open -- Opens the file object with the rights specified.                      *
@@ -398,82 +380,85 @@ int RawFileClass::Open(char const * filename, int rights)
  *=============================================================================================*/
 int RawFileClass::Open(int rights)
 {
-	Close();
+    Close();
 
-	/*
-	**	Verify that there is a filename associated with this file object. If not, then this is a
-	**	big error condition.
-	*/
-	if (Filename.Get_Length()==0) {
-		Error(ENOENT, false);
-	}
+    /*
+    **	Verify that there is a filename associated with this file object. If not, then this is a
+    **	big error condition.
+    */
+    if (Filename.Get_Length() == 0)
+    {
+        Error(ENOENT, false);
+    }
 
-	/*
-	**	Record the access rights used for this open call. These rights will be used if the
-	**	file object is duplicated.
-	*/
-	Rights = rights;
+    /*
+    **	Record the access rights used for this open call. These rights will be used if the
+    **	file object is duplicated.
+    */
+    Rights = rights;
 
-	/*
-	**	Repetitively try to open the file. Abort if a fatal error condition occurs.
-	*/
-	for (;;) {
+    /*
+    **	Repetitively try to open the file. Abort if a fatal error condition occurs.
+    */
+    for (;;)
+    {
+        /*
+        **	Try to open the file according to the access rights specified.
+        */
+        switch (rights)
+        {
+            /*
+            **	If the access rights are not recognized, then report this as
+            **	an invalid access code.
+            */
+            default:
+                errno = EINVAL;
+                break;
 
-		/*
-		**	Try to open the file according to the access rights specified.
-		*/
-		switch (rights) {
+            case READ:
+                Handle = fopen(Filename, "rb");
+                break;
 
-			/*
-			**	If the access rights are not recognized, then report this as
-			**	an invalid access code.
-			*/
-			default:
-				errno = EINVAL;
-				break;
+            case WRITE:
+                Handle = fopen(Filename, "wb");
+                break;
 
-			case READ:
-				Handle = fopen(Filename, "rb");
-				break;
+            case READ | WRITE:
+                // First try to open an existing file in read/write mode.
+                Handle = fopen(Filename, "rb+");
+                // If that fails, try to create a new file in read/write mode.
+                if (Handle == NULL_HANDLE)
+                {
+                    Handle = fopen(Filename, "wb+");
+                }
+                break;
+        }
 
-			case WRITE:
-				Handle = fopen(Filename, "wb");
-				break;
+        /*
+        **	Biased files must be positioned past the bias start position.
+        */
+        if (BiasStart != 0 || BiasLength != -1)
+        {
+            Seek(0, SEEK_SET);
+        }
 
-			case READ|WRITE:
-				// First try to open an existing file in read/write mode.
-				Handle = fopen(Filename, "rb+");
-				// If that fails, try to create a new file in read/write mode.
-				if(Handle == NULL_HANDLE) {
-					Handle = fopen(Filename, "wb+");
-				}
-				break;
-		}
+        /*
+        **	If the handle indicates the file is not open, then this is an error condition.
+        **	For the case of the file cannot be found, then allow a retry. All other cases
+        **	are fatal.
+        */
+        if (Handle == NULL_HANDLE)
+        {
+            return (false);
 
-		/*
-		**	Biased files must be positioned past the bias start position.
-		*/
-		if (BiasStart != 0 || BiasLength != -1) {
-			Seek(0, SEEK_SET);
-		}
+            //			Error(errno, false, Filename);
+            //			continue;
+        }
+        break;
+    }
 
-		/*
-		**	If the handle indicates the file is not open, then this is an error condition.
-		**	For the case of the file cannot be found, then allow a retry. All other cases
-		**	are fatal.
-		*/
-		if (Handle == NULL_HANDLE) {
-			return(false);
-
-//			Error(errno, false, Filename);
-//			continue;
-		}
-		break;
-	}
-
-	return(true);
+    return (true);
 }
-
 
 /***********************************************************************************************
  * RawFileClass::Is_Available -- Checks to see if the specified file is available to open.     *
@@ -494,52 +479,56 @@ int RawFileClass::Open(int rights)
  *=============================================================================================*/
 bool RawFileClass::Is_Available(int forced)
 {
-	if (Filename.Get_Length()==0) return(false);
+    if (Filename.Get_Length() == 0)
+        return (false);
 
-	/*
-	**	If the file is already open, then is must have already passed the availability check.
-	**	Return true in this case.
-	*/
-	if (Is_Open()) return(true);
+    /*
+    **	If the file is already open, then is must have already passed the availability check.
+    **	Return true in this case.
+    */
+    if (Is_Open())
+        return (true);
 
-	/*
-	**	If this is a forced check, then go through the normal open channels, since those
-	**	channels ensure that the file must exist.
-	*/
-	if (forced) {
-		RawFileClass::Open(READ);
-		RawFileClass::Close();
-		return(true);
-	}
+    /*
+    **	If this is a forced check, then go through the normal open channels, since those
+    **	channels ensure that the file must exist.
+    */
+    if (forced)
+    {
+        RawFileClass::Open(READ);
+        RawFileClass::Close();
+        return (true);
+    }
 
-	/*
-	**	Perform a raw open of the file. If this open fails for ANY REASON, including a missing
-	**	CD-ROM, this routine will return a failure condition. In all but the missing file
-	**	condition, go through the normal error recover channels.
-	*/
-	for (;;) {
+    /*
+    **	Perform a raw open of the file. If this open fails for ANY REASON, including a missing
+    **	CD-ROM, this routine will return a failure condition. In all but the missing file
+    **	condition, go through the normal error recover channels.
+    */
+    for (;;)
+    {
+        Handle = fopen(Filename, "r");
 
-		Handle=fopen(Filename,"r");
+        if (Handle == NULL_HANDLE)
+        {
+            return (false);
+        }
+        break;
+    }
 
-		if (Handle == NULL_HANDLE) {
-			return(false);
-		}
-		break;
-	}
+    /*
+    **	Since the file could be opened, then close it and return that the file exists.
+    */
+    int closeok;
+    closeok = ((fclose(Handle) == 0) ? true : false);
+    if (!closeok)
+    {
+        Error(errno, false, Filename);
+    }
+    Handle = NULL_HANDLE;
 
-	/*
-	**	Since the file could be opened, then close it and return that the file exists.
-	*/
-	int closeok;
-	closeok=((fclose(Handle)==0)?true:false);
-	if (! closeok) {
-		Error(errno, false, Filename);
-	}
-	Handle = NULL_HANDLE;
-
-	return(true);
+    return (true);
 }
-
 
 /***********************************************************************************************
  * RawFileClass::Close -- Perform a closure of the file.                                       *
@@ -557,29 +546,29 @@ bool RawFileClass::Is_Available(int forced)
  *=============================================================================================*/
 void RawFileClass::Close(void)
 {
-	/*
-	**	If the file is open, then close it. If the file is already closed, then just return. This
-	**	isn't considered an error condition.
-	*/
-	if (Is_Open()) {
+    /*
+    **	If the file is open, then close it. If the file is already closed, then just return. This
+    **	isn't considered an error condition.
+    */
+    if (Is_Open())
+    {
+        /*
+        **	Try to close the file. If there was an error (who knows what that could be), then
+        **	call the error routine.
+        */
+        int closeok = (fclose(Handle) == 0) ? true : false;
 
-		/*
-		**	Try to close the file. If there was an error (who knows what that could be), then
-		**	call the error routine.
-		*/
-		int closeok=(fclose(Handle)==0)?true:false;
+        if (!closeok)
+        {
+            Error(errno, false, Filename);
+        }
 
-		if (!closeok) {
-			Error(errno, false, Filename);
-		}
-
-		/*
-		**	At this point the file must have been closed. Mark the file as empty and return.
-		*/
-		Handle = NULL_HANDLE;
-	}
+        /*
+        **	At this point the file must have been closed. Mark the file as empty and return.
+        */
+        Handle = NULL_HANDLE;
+    }
 }
-
 
 /***********************************************************************************************
  * RawFileClass::Read -- Reads the specified number of bytes into a memory buffer.             *
@@ -603,64 +592,69 @@ void RawFileClass::Close(void)
  * HISTORY:                                                                                    *
  *   10/18/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-int RawFileClass::Read(void * buffer, int size)
+int RawFileClass::Read(void *buffer, int size)
 {
-	long	bytesread = 0;			// Running count of the number of bytes read into the buffer.
-	int	opened = false;		// Was the file opened by this routine?
+    long bytesread = 0; // Running count of the number of bytes read into the buffer.
+    int opened = false; // Was the file opened by this routine?
 
-	/*
-	**	If the file isn't opened, open it. This serves as a convenience
-	**	for the programmer.
-	*/
-	if (!Is_Open()) {
+    /*
+    **	If the file isn't opened, open it. This serves as a convenience
+    **	for the programmer.
+    */
+    if (!Is_Open())
+    {
+        /*
+        **	The error check here is moot. Open will never return unless it succeeded.
+        */
+        if (!Open(READ))
+        {
+            return (0);
+        }
+        opened = true;
+    }
 
-		/*
-		**	The error check here is moot. Open will never return unless it succeeded.
-		*/
-		if (!Open(READ)) {
-			return(0);
-		}
-		opened = true;
-	}
+    /*
+    **	A biased file has the requested read length limited to the bias length of
+    **	the file.
+    */
+    if (BiasLength != -1)
+    {
+        int remainder = BiasLength - Seek(0);
+        size = size < remainder ? size : remainder;
+    }
 
-	/*
-	**	A biased file has the requested read length limited to the bias length of
-	**	the file.
-	*/
-	if (BiasLength != -1) {
-		int remainder = BiasLength - Seek(0);
-		size = size < remainder ? size : remainder;
-	}
+    long total = 0;
+    while (size > 0)
+    {
+        bytesread = 0;
 
-	long total = 0;
-	while (size > 0) {
-		bytesread = 0;
+        int readok = true;
+        bytesread = fread(buffer, 1, size, Handle);
+        if ((bytesread == 0) && (!feof(Handle)))
+            readok = ferror(Handle);
 
-		int readok=true;
-		bytesread=fread(buffer,1,size,Handle);
-		if ((bytesread == 0)&&( ! feof(Handle)))
-			readok=ferror(Handle);
+        if (!readok)
+        {
+            size -= bytesread;
+            total += bytesread;
+            Error(errno, true, Filename);
+            continue;
+        }
+        size -= bytesread;
+        total += bytesread;
+        if (bytesread == 0)
+            break;
+    }
+    bytesread = total;
 
-		if (! readok) {
-			size -= bytesread;
-			total += bytesread;
-			Error(errno, true, Filename);
-			continue;
-		}
-		size -= bytesread;
-		total += bytesread;
-		if (bytesread == 0) break;
-	}
-	bytesread = total;
-
-	/*
-	**	Close the file if it was opened by this routine and return
-	**	the actual number of bytes read into the buffer.
-	*/
-	if (opened) Close();
-	return(bytesread);
+    /*
+    **	Close the file if it was opened by this routine and return
+    **	the actual number of bytes read into the buffer.
+    */
+    if (opened)
+        Close();
+    return (bytesread);
 }
-
 
 /***********************************************************************************************
  * RawFileClass::Write -- Writes the specified data to the buffer specified.                   *
@@ -680,55 +674,60 @@ int RawFileClass::Read(void * buffer, int size)
  * HISTORY:                                                                                    *
  *   10/18/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-int RawFileClass::Write(void const * buffer, int size)
+int RawFileClass::Write(void const *buffer, int size)
 {
-	long	byteswritten = 0;
-	int	opened = false;		// Was the file manually opened?
+    long byteswritten = 0;
+    int opened = false; // Was the file manually opened?
 
-	/*
-	**	Check to open status of the file. If the file is open, then merely write to
-	**	it. Otherwise, open the file for writing and then close the file when the
-	**	output is finished.
-	*/
-	if (!Is_Open()) {
-		if (!Open(WRITE)) {
-			return(0);
-		}
-		opened = true;
-	}
+    /*
+    **	Check to open status of the file. If the file is open, then merely write to
+    **	it. Otherwise, open the file for writing and then close the file when the
+    **	output is finished.
+    */
+    if (!Is_Open())
+    {
+        if (!Open(WRITE))
+        {
+            return (0);
+        }
+        opened = true;
+    }
 
-	int writeok=true;
-	byteswritten = fwrite(buffer, 1, size, Handle);
-	if (byteswritten != size)
-		writeok = false;
+    int writeok = true;
+    byteswritten = fwrite(buffer, 1, size, Handle);
+    if (byteswritten != size)
+        writeok = false;
 
-	if (! writeok) {
-		Error(errno, false, Filename);
-	}
+    if (!writeok)
+    {
+        Error(errno, false, Filename);
+    }
 
-	/*
-	**	Fixup the bias length if necessary.
-	*/
-	if (BiasLength != -1) {
-		if (Raw_Seek(0) > BiasStart+BiasLength) {
-			BiasLength = Raw_Seek(0) - BiasStart;
-		}
-	}
+    /*
+    **	Fixup the bias length if necessary.
+    */
+    if (BiasLength != -1)
+    {
+        if (Raw_Seek(0) > BiasStart + BiasLength)
+        {
+            BiasLength = Raw_Seek(0) - BiasStart;
+        }
+    }
 
-	/*
-	**	If this routine had to open the file, then close it before returning.
-	*/
-	if (opened) {
-		Close();
-	}
+    /*
+    **	If this routine had to open the file, then close it before returning.
+    */
+    if (opened)
+    {
+        Close();
+    }
 
-	/*
-	**	Return with the number of bytes written. This will always be the number of bytes
-	**	requested, since the case of the disk being full is caught by this routine.
-	*/
-	return(byteswritten);
+    /*
+    **	Return with the number of bytes written. This will always be the number of bytes
+    **	requested, since the case of the disk being full is caught by this routine.
+    */
+    return (byteswritten);
 }
-
 
 /***********************************************************************************************
  * RawFileClass::Seek -- Reposition the file pointer as indicated.                             *
@@ -753,56 +752,59 @@ int RawFileClass::Write(void const * buffer, int size)
  *=============================================================================================*/
 int RawFileClass::Seek(int pos, int dir)
 {
+    /*
+    **	A file that is biased will have a seek operation modified so that the file appears to
+    **	exist only within the bias range. All bytes outside of this range appear to be
+    **	non-existant.
+    */
+    if (BiasLength != -1)
+    {
+        switch (dir)
+        {
+            case SEEK_SET:
+                if (pos > BiasLength)
+                {
+                    pos = BiasLength;
+                }
+                pos += BiasStart;
+                break;
 
-	/*
-	**	A file that is biased will have a seek operation modified so that the file appears to
-	**	exist only within the bias range. All bytes outside of this range appear to be
-	**	non-existant.
-	*/
-	if (BiasLength != -1) {
-		switch (dir) {
-			case SEEK_SET:
-				if (pos > BiasLength) {
-					pos = BiasLength;
-				}
-				pos += BiasStart;
-				break;
+            case SEEK_CUR:
+                break;
 
-			case SEEK_CUR:
-				break;
+            case SEEK_END:
+                dir = SEEK_SET;
+                pos += BiasStart + BiasLength;
+                //				pos = (pos <= BiasStart+BiasLength) ? pos : BiasStart+BiasLength;
+                //				pos = (pos >= BiasStart) ? pos : BiasStart;
+                break;
+        }
 
-			case SEEK_END:
-				dir = SEEK_SET;
-				pos += BiasStart + BiasLength;
-//				pos = (pos <= BiasStart+BiasLength) ? pos : BiasStart+BiasLength;
-//				pos = (pos >= BiasStart) ? pos : BiasStart;
-				break;
-		}
+        /*
+        **	Perform the modified raw seek into the file.
+        */
+        long newpos = Raw_Seek(pos, dir) - BiasStart;
 
-		/*
-		**	Perform the modified raw seek into the file.
-		*/
-		long newpos = Raw_Seek(pos, dir) - BiasStart;
+        /*
+        **	Perform a final double check to make sure the file position fits with the bias range.
+        */
+        if (newpos < 0)
+        {
+            newpos = Raw_Seek(BiasStart, SEEK_SET) - BiasStart;
+        }
+        if (newpos > BiasLength)
+        {
+            newpos = Raw_Seek(BiasStart + BiasLength, SEEK_SET) - BiasStart;
+        }
+        return (newpos);
+    }
 
-		/*
-		**	Perform a final double check to make sure the file position fits with the bias range.
-		*/
-		if (newpos < 0) {
-			newpos = Raw_Seek(BiasStart, SEEK_SET) - BiasStart;
-		}
-		if (newpos > BiasLength) {
-			newpos = Raw_Seek(BiasStart+BiasLength, SEEK_SET) - BiasStart;
-		}
-		return(newpos);
-	}
-
-	/*
-	**	If the file is not biased in any fashion, then the normal seek logic will
-	**	work just fine.
-	*/
-	return(Raw_Seek(pos, dir));
+    /*
+    **	If the file is not biased in any fashion, then the normal seek logic will
+    **	work just fine.
+    */
+    return (Raw_Seek(pos, dir));
 }
-
 
 /***********************************************************************************************
  * RawFileClass::Size -- Determines size of file (in bytes).                                   *
@@ -822,56 +824,58 @@ int RawFileClass::Seek(int pos, int dir)
  *=============================================================================================*/
 int RawFileClass::Size(void)
 {
-	int size = 0;
+    int size = 0;
 
-	/*
-	**	A biased file already has its length determined.
-	*/
-	if (BiasLength != -1) {
-		return(BiasLength);
-	}
+    /*
+    **	A biased file already has its length determined.
+    */
+    if (BiasLength != -1)
+    {
+        return (BiasLength);
+    }
 
-	/*
-	**	If the file is open, then proceed normally.
-	*/
-	if (Is_Open()) {
+    /*
+    **	If the file is open, then proceed normally.
+    */
+    if (Is_Open())
+    {
+        size_t curpos;
+        curpos = ftell(Handle);
 
-		size_t curpos;
-		curpos = ftell(Handle);
+        fseek(Handle, 0, SEEK_END);
+        size = ftell(Handle);
 
-		fseek(Handle,0,SEEK_END);
-		size = ftell(Handle);
+        fseek(Handle, curpos, SEEK_SET);
 
-		fseek(Handle,curpos,SEEK_SET);
+        /*
+        **	If there was in internal error, then call the error function.
+        */
+        if (size == 0xFFFFFFFF)
+        {
+            Error(errno, false, Filename);
+        }
+    }
+    else
+    {
+        /*
+        **	If the file wasn't open, then open the file and call this routine again. Count on
+        **	the fact that the open function must succeed.
+        */
+        if (Open())
+        {
+            size = Size();
 
-		/*
-		**	If there was in internal error, then call the error function.
-		*/
-		if (size == 0xFFFFFFFF) {
-			Error(errno, false, Filename);
-		}
+            /*
+            **	Since we needed to open the file we must remember to close the file when the
+            **	size has been determined.
+            */
+            Close();
+        }
+    }
 
-	} else {
-
-		/*
-		**	If the file wasn't open, then open the file and call this routine again. Count on
-		**	the fact that the open function must succeed.
-		*/
-		if (Open()) {
-			size = Size();
-
-			/*
-			**	Since we needed to open the file we must remember to close the file when the
-			**	size has been determined.
-			*/
-			Close();
-		}
-	}
-
-	BiasLength = size-BiasStart;
-	return(BiasLength);
+    BiasLength = size - BiasStart;
+    return (BiasLength);
 }
-
 
 /***********************************************************************************************
  * RawFileClass::Create -- Creates an empty file.                                              *
@@ -891,24 +895,24 @@ int RawFileClass::Size(void)
  *=============================================================================================*/
 int RawFileClass::Create(void)
 {
-	Close();
-	if (Open(WRITE)) {
+    Close();
+    if (Open(WRITE))
+    {
+        /*
+        **	A biased file must be at least as long as the bias offset. Seeking to the
+        **	appropriate start offset has the effect of lengthening the file to the
+        **	correct length.
+        */
+        if (BiasLength != -1)
+        {
+            Seek(0, SEEK_SET);
+        }
 
-		/*
-		**	A biased file must be at least as long as the bias offset. Seeking to the
-		**	appropriate start offset has the effect of lengthening the file to the
-		**	correct length.
-		*/
-		if (BiasLength != -1) {
-			Seek(0, SEEK_SET);
-		}
-
-		Close();
-		return(true);
-	}
-	return(false);
+        Close();
+        return (true);
+    }
+    return (false);
 }
-
 
 /***********************************************************************************************
  * RawFileClass::Delete -- Deletes the file object from the disk.                              *
@@ -929,48 +933,51 @@ int RawFileClass::Create(void)
  *=============================================================================================*/
 int RawFileClass::Delete(void)
 {
-	/*
-	**	If the file was open, then it must be closed first.
-	*/
-	Close();
+    /*
+    **	If the file was open, then it must be closed first.
+    */
+    Close();
 
-	/*
-	**	If there is no filename associated with this object, then this indicates a fatal error
-	**	condition. Report this and abort.
-	*/
-	if (!Filename) {
-		Error(ENOENT, false);
-	}
+    /*
+    **	If there is no filename associated with this object, then this indicates a fatal error
+    **	condition. Report this and abort.
+    */
+    if (!Filename)
+    {
+        Error(ENOENT, false);
+    }
 
-	/*
-	**	Repetitively try to delete the file if possible. Either return with success, or
-	**	abort the program with an error.
-	*/
-	for (;;) {
+    /*
+    **	Repetitively try to delete the file if possible. Either return with success, or
+    **	abort the program with an error.
+    */
+    for (;;)
+    {
+        /*
+        **	If the file is already missing, then return with this fact. No action is necessary.
+        **	This can occur as this section loops if the file exists on a floppy and the floppy
+        **	was removed, the file deleted on another machine, and then the floppy was
+        **	reinserted. Admittedly, this is a rare case, but is handled here.
+        */
+        if (!Is_Available())
+        {
+            return (false);
+        }
 
-		/*
-		**	If the file is already missing, then return with this fact. No action is necessary.
-		**	This can occur as this section loops if the file exists on a floppy and the floppy
-		**	was removed, the file deleted on another machine, and then the floppy was
-		**	reinserted. Admittedly, this is a rare case, but is handled here.
-		*/
-		if (!Is_Available()) {
-			return(false);
-		}
+        int deleteok = (unlink(Filename) == 0) ? true : false;
 
-		int deleteok=(unlink(Filename)==0)?true:false;
+        if (!deleteok)
+        {
+            Error(errno, false, Filename);
+            return (false);
+        }
+        break;
+    }
 
-		if (! deleteok) {
-			Error(errno, false, Filename);
-			return(false);
-		}
-		break;
-	}
-
-	/*
-	**	DOS reports that the file was successfully deleted. Return with this fact.
-	*/
-	return(true);
+    /*
+    **	DOS reports that the file was successfully deleted. Return with this fact.
+    */
+    return (true);
 }
 
 /***********************************************************************************************
@@ -991,30 +998,32 @@ int RawFileClass::Delete(void)
  *=============================================================================================*/
 unsigned long RawFileClass::Get_Date_Time(void)
 {
-	// Return value
-	unsigned long retval = 0;
+    // Return value
+    unsigned long retval = 0;
 
-	// Ensure we will work properly if the file is not open
-	if (Is_Open()) {
-		// If file is open proceed normally
-		struct stat statbuf;
-		stat(Filename, &statbuf);
-		retval = statbuf.st_mtime;
-	} else {
-		// If file not open open it, if open succeeded proceed normally and then close to put
-		// everything back the way we found it.
-		if (Open()) {
-			struct stat statbuf;
-			stat(Filename, &statbuf);
-			retval = statbuf.st_mtime;
-			Close();
+    // Ensure we will work properly if the file is not open
+    if (Is_Open())
+    {
+        // If file is open proceed normally
+        struct stat statbuf;
+        stat(Filename, &statbuf);
+        retval = statbuf.st_mtime;
+    }
+    else
+    {
+        // If file not open open it, if open succeeded proceed normally and then close to put
+        // everything back the way we found it.
+        if (Open())
+        {
+            struct stat statbuf;
+            stat(Filename, &statbuf);
+            retval = statbuf.st_mtime;
+            Close();
+        }
+    }
 
-		}
-	}
-
-	return retval;
+    return retval;
 }
-
 
 /***********************************************************************************************
  * RawFileClass::Set_Date_Time -- Sets the date and time the file was last modified.           *
@@ -1033,10 +1042,9 @@ unsigned long RawFileClass::Get_Date_Time(void)
  *=============================================================================================*/
 bool RawFileClass::Set_Date_Time(unsigned long datetime)
 {
-	DEBUG_ASSERTLOG(false, ("Set_Date_Time is not implemented"));
-	return(false);
+    DEBUG_ASSERTLOG(false, ("Set_Date_Time is not implemented"));
+    return (false);
 }
-
 
 /***********************************************************************************************
  * RawFileClass::Bias -- Bias a file with a specific starting position and length.             *
@@ -1061,28 +1069,30 @@ bool RawFileClass::Set_Date_Time(unsigned long datetime)
  *=============================================================================================*/
 void RawFileClass::Bias(int start, int length)
 {
-	if (start == 0) {
-		BiasStart = 0;
-		BiasLength = -1;
-		return;
-	}
+    if (start == 0)
+    {
+        BiasStart = 0;
+        BiasLength = -1;
+        return;
+    }
 
-	BiasLength = RawFileClass::Size();
-	BiasStart += start;
-	if (length != -1) {
-		BiasLength = BiasLength < length ? BiasLength : length;
-	}
-	BiasLength = BiasLength > 0 ? BiasLength : 0;
+    BiasLength = RawFileClass::Size();
+    BiasStart += start;
+    if (length != -1)
+    {
+        BiasLength = BiasLength < length ? BiasLength : length;
+    }
+    BiasLength = BiasLength > 0 ? BiasLength : 0;
 
-	/*
-	**	Move the current file offset to a legal position if necessary and the
-	**	file was open.
-	*/
-	if (Is_Open()) {
-		RawFileClass::Seek(0, SEEK_SET);
-	}
+    /*
+    **	Move the current file offset to a legal position if necessary and the
+    **	file was open.
+    */
+    if (Is_Open())
+    {
+        RawFileClass::Seek(0, SEEK_SET);
+    }
 }
-
 
 /***********************************************************************************************
  * RawFileClass::Raw_Seek -- Performs a seek on the unbiased file                              *
@@ -1104,27 +1114,29 @@ void RawFileClass::Bias(int start, int length)
  *=============================================================================================*/
 int RawFileClass::Raw_Seek(int pos, int dir)
 {
-	/*
-	**	If the file isn't opened, then this is a fatal error condition.
-	*/
-	if (!Is_Open()) {
-		Error(EBADF, false, Filename);
-	}
+    /*
+    **	If the file isn't opened, then this is a fatal error condition.
+    */
+    if (!Is_Open())
+    {
+        Error(EBADF, false, Filename);
+    }
 
-	pos=fseek(Handle, pos, dir);
+    pos = fseek(Handle, pos, dir);
 
-	/*
-	**	If there was an error in the seek, then bail with an error condition.
-	*/
-	if (pos == 0xFFFFFFFF) {
-		Error(errno, false, Filename);
-	}
+    /*
+    **	If there was an error in the seek, then bail with an error condition.
+    */
+    if (pos == 0xFFFFFFFF)
+    {
+        Error(errno, false, Filename);
+    }
 
-	/*
-	**	Return with the new position of the file. This will range between zero and the number of
-	**	bytes the file contains.
-	*/
-	return(pos);
+    /*
+    **	Return with the new position of the file. This will range between zero and the number of
+    **	bytes the file contains.
+    */
+    return (pos);
 }
 
 /***********************************************************************************************
@@ -1139,17 +1151,17 @@ int RawFileClass::Raw_Seek(int pos, int dir)
  * HISTORY:                                                                                    *
  *   06/10/1999 PDS : Created.                                                                 *
  *=============================================================================================*/
-void RawFileClass::Attach (void *handle, int rights)
+void RawFileClass::Attach(void *handle, int rights)
 {
-	Reset ();
+    Reset();
 
-	Rights = rights;
-	BiasStart = 0;
-	BiasLength = -1;
-	Date = 0;
-	Time = 0;
+    Rights = rights;
+    BiasStart = 0;
+    BiasLength = -1;
+    Date = 0;
+    Time = 0;
 
-	Handle = (FILE *)handle;
+    Handle = (FILE *)handle;
 }
 
 /***********************************************************************************************
@@ -1164,13 +1176,12 @@ void RawFileClass::Attach (void *handle, int rights)
  * HISTORY:                                                                                    *
  *   06/10/1999 PDS : Created.                                                                 *
  *=============================================================================================*/
-void RawFileClass::Detach (void)
+void RawFileClass::Detach(void)
 {
-	Rights = 0;
-	BiasStart = 0;
-	BiasLength = -1;
-	Date = 0;
-	Time = 0;
-	Handle = NULL_HANDLE;
+    Rights = 0;
+    BiasStart = 0;
+    BiasLength = -1;
+    Date = 0;
+    Time = 0;
+    Handle = NULL_HANDLE;
 }
-

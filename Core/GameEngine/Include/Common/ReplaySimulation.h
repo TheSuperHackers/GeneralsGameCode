@@ -21,28 +21,25 @@
 class ReplaySimulation
 {
 public:
+    // TheSuperHackers @feature helmutbuhler 13/04/2025
+    // Simulate a list of replays without graphics.
+    // Returns exit code 1 if mismatch or other error occurred
+    // Returns exit code 0 if all replays were successfully simulated without mismatches
+    static int simulateReplays(const std::vector<AsciiString> &filenames, int maxProcesses);
 
-	// TheSuperHackers @feature helmutbuhler 13/04/2025
-	// Simulate a list of replays without graphics.
-	// Returns exit code 1 if mismatch or other error occurred
-	// Returns exit code 0 if all replays were successfully simulated without mismatches
-	static int simulateReplays(const std::vector<AsciiString> &filenames, int maxProcesses);
+    static void stop() { s_isRunning = false; }
 
-	static void stop() { s_isRunning = false; }
-
-	static Bool isRunning() { return s_isRunning; }
-	static UnsignedInt getCurrentReplayIndex() { return s_replayIndex; }
-	static UnsignedInt getReplayCount() { return s_replayCount; }
-
-private:
-
-	static int simulateReplaysInThisProcess(const std::vector<AsciiString> &filenames);
-	static int simulateReplaysInWorkerProcesses(const std::vector<AsciiString> &filenames, int maxProcesses);
-	static std::vector<AsciiString> resolveFilenameWildcards(const std::vector<AsciiString> &filenames);
+    static Bool isRunning() { return s_isRunning; }
+    static UnsignedInt getCurrentReplayIndex() { return s_replayIndex; }
+    static UnsignedInt getReplayCount() { return s_replayCount; }
 
 private:
+    static int simulateReplaysInThisProcess(const std::vector<AsciiString> &filenames);
+    static int simulateReplaysInWorkerProcesses(const std::vector<AsciiString> &filenames, int maxProcesses);
+    static std::vector<AsciiString> resolveFilenameWildcards(const std::vector<AsciiString> &filenames);
 
-	static Bool s_isRunning;
-	static UnsignedInt s_replayIndex;
-	static UnsignedInt s_replayCount;
+private:
+    static Bool s_isRunning;
+    static UnsignedInt s_replayIndex;
+    static UnsignedInt s_replayCount;
 };

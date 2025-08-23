@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 
 #include "GameClient/GameWindow.h"
 #include "GameClient/Gadget.h"
@@ -37,257 +37,241 @@
 #include "GameClient/DisplayString.h"
 #include "GameClient/DisplayStringManager.h"
 
-
-Int	IMECandidateWindowLineSpacing = 2;
+Int IMECandidateWindowLineSpacing = 2;
 
 static DisplayString *Dstring = NULL;
 
 //-------------------------------------------------------------------------------------------------
 /** Input procedure for the candidate window */
 //-------------------------------------------------------------------------------------------------
-WindowMsgHandledType IMECandidateWindowInput( GameWindow *window, UnsignedInt msg,
-																			WindowMsgData mData1, WindowMsgData mData2 )
+WindowMsgHandledType IMECandidateWindowInput(GameWindow *window, UnsignedInt msg, WindowMsgData mData1, WindowMsgData mData2)
 {
+    return MSG_HANDLED;
 
-	return MSG_HANDLED;
-
-}  // end IMECandidateInput
+} // end IMECandidateInput
 
 //-------------------------------------------------------------------------------------------------
 /** System callback for the IME Candidate widnow */
 //-------------------------------------------------------------------------------------------------
-WindowMsgHandledType IMECandidateWindowSystem( GameWindow *window, UnsignedInt msg,
-																			 WindowMsgData mData1, WindowMsgData mData2 )
+WindowMsgHandledType IMECandidateWindowSystem(
+    GameWindow *window,
+    UnsignedInt msg,
+    WindowMsgData mData1,
+    WindowMsgData mData2)
 {
-	switch( msg )
-	{
-		case GWM_CREATE:
-			if ( Dstring == NULL )
-			{
-				Dstring = TheDisplayStringManager->newDisplayString();
-			}
-		break;
+    switch (msg)
+    {
+        case GWM_CREATE:
+            if (Dstring == NULL)
+            {
+                Dstring = TheDisplayStringManager->newDisplayString();
+            }
+            break;
 
-		case GWM_DESTROY:
+        case GWM_DESTROY:
 
-			if ( Dstring != NULL )
-			{
-				TheDisplayStringManager->freeDisplayString( Dstring );
-				Dstring = NULL;
-			}
+            if (Dstring != NULL)
+            {
+                TheDisplayStringManager->freeDisplayString(Dstring);
+                Dstring = NULL;
+            }
 
-		break;
-		//---------------------------------------------------------------------------------------------
-		default:
-			return MSG_IGNORED;
+            break;
+        //---------------------------------------------------------------------------------------------
+        default:
+            return MSG_IGNORED;
 
-	}  // end switch( msg )
+    } // end switch( msg )
 
-	return MSG_HANDLED;
+    return MSG_HANDLED;
 
-}  // end IMECandidateWidnowSystem
+} // end IMECandidateWidnowSystem
 
 // IMECandidateDraw ================================================================
 /** Draw function for the IME candidate window */
 //=============================================================================
-void IMECandidateTextAreaDraw( GameWindow *window, WinInstanceData *instData )
+void IMECandidateTextAreaDraw(GameWindow *window, WinInstanceData *instData)
 {
-	// set up for rendering
-	ICoord2D origin, size, start, end;
-	Color		textColor,
-					textBorder,
-					textSelectColor,
-					textSelectBorder;
-	IRegion2D textRegion;
-	Color black = GameMakeColor( 0, 0, 0, 255);
+    // set up for rendering
+    ICoord2D origin, size, start, end;
+    Color textColor, textBorder, textSelectColor, textSelectBorder;
+    IRegion2D textRegion;
+    Color black = GameMakeColor(0, 0, 0, 255);
 
-	// get window position and size
-	window->winGetScreenPosition( &origin.x, &origin.y );
-	window->winGetSize( &size.x, &size.y );
+    // get window position and size
+    window->winGetScreenPosition(&origin.x, &origin.y);
+    window->winGetSize(&size.x, &size.y);
 
-	// get a nice region from the positions
-	textRegion.lo.x = origin.x;
-	textRegion.lo.y = origin.y;
-	textRegion.hi.x = origin.x + size.x;
-	textRegion.hi.y = origin.y + size.y;
+    // get a nice region from the positions
+    textRegion.lo.x = origin.x;
+    textRegion.lo.y = origin.y;
+    textRegion.hi.x = origin.x + size.x;
+    textRegion.hi.y = origin.y + size.y;
 
-	// get the right colors for drawing
-	if( BitIsSet( window->winGetStatus(), WIN_STATUS_ENABLED ) == FALSE )
-	{
+    // get the right colors for drawing
+    if (BitIsSet(window->winGetStatus(), WIN_STATUS_ENABLED) == FALSE)
+    {
+        textSelectColor = window->winGetDisabledTextColor();
+        textSelectBorder = window->winGetDisabledTextBorderColor();
+        textColor = window->winGetDisabledTextColor();
+        textBorder = window->winGetDisabledTextBorderColor();
 
-		textSelectColor		= window->winGetDisabledTextColor();
-		textSelectBorder	= window->winGetDisabledTextBorderColor();
-		textColor		= window->winGetDisabledTextColor();
-		textBorder	= window->winGetDisabledTextBorderColor();
+    } // end if, disabled
+    else if (BitIsSet(instData->getState(), WIN_STATE_HILITED))
+    {
+        textColor = window->winGetEnabledTextColor();
+        textBorder = window->winGetEnabledTextBorderColor();
+        textSelectColor = window->winGetHiliteTextColor();
+        textSelectBorder = window->winGetHiliteTextBorderColor();
 
-	}  // end if, disabled
-	else if( BitIsSet( instData->getState(), WIN_STATE_HILITED ) )
-	{
+    } // end else if, hilited
+    else
+    {
+        textSelectColor = window->winGetHiliteTextColor();
+        textSelectBorder = window->winGetHiliteTextBorderColor();
+        textColor = window->winGetEnabledTextColor();
+        textBorder = window->winGetEnabledTextBorderColor();
 
-		textColor		= window->winGetEnabledTextColor();
-		textBorder	= window->winGetEnabledTextBorderColor();
-		textSelectColor		= window->winGetHiliteTextColor();
-		textSelectBorder	= window->winGetHiliteTextBorderColor();
+    } // end else, just enabled
 
-	}  // end else if, hilited
-	else
-	{
+    {
+        Real borderWidth = 1.0f;
 
-		textSelectColor		= window->winGetHiliteTextColor();
-		textSelectBorder	= window->winGetHiliteTextBorderColor();
-		textColor		= window->winGetEnabledTextColor();
-		textBorder	= window->winGetEnabledTextBorderColor();
+        start.x = origin.x;
+        start.y = origin.y;
+        end.x = start.x + size.x;
+        end.y = start.y + size.y;
+        TheWindowManager->winOpenRect(black, borderWidth, start.x, start.y, end.x, end.y);
+    }
 
-	}  // end else, just enabled
+    if (Dstring == NULL)
+    {
+        return;
+    }
 
+    IMEManagerInterface *ime = (IMEManagerInterface *)window->winGetUserData();
 
-	{
-		Real borderWidth = 1.0f;
+    if (ime == NULL)
+    {
+        return;
+    }
 
-		start.x = origin.x;
-		start.y = origin.y;
-		end.x = start.x + size.x;
-		end.y = start.y + size.y;
-		TheWindowManager->winOpenRect( black, borderWidth,
-																	 start.x, start.y, end.x, end.y );
-	}
+    GameFont *font = window->winGetFont();
+    Int height;
 
-	if ( Dstring == NULL )
-	{
-		return;
-	}
+    // set the font
+    Dstring->setFont(font);
 
-	IMEManagerInterface *ime = (IMEManagerInterface*)window->winGetUserData();
+    // cacl line height
+    height = font->height + IMECandidateWindowLineSpacing;
 
-	if ( ime == NULL )
-	{
-		return;
-	}
+    // set the clip region
+    Dstring->setClipRegion(&textRegion);
 
-	GameFont *font = window->winGetFont() ;
-	Int height;
+    Int first = ime->getCandidatePageStart();
+    Int total = ime->getCandidateCount();
+    Int pageSize = ime->getCandidatePageSize();
+    Int selected = ime->getSelectedCandidateIndex();
 
-	// set the font
-	Dstring->setFont( font );
+    Int count = pageSize;
 
-	// cacl line height
-	height = font->height + IMECandidateWindowLineSpacing;
+    if (count + first > total)
+    {
+        count = total - first;
+    }
 
-	// set the clip region
-	Dstring->setClipRegion( &textRegion );
+    selected = selected - first;
+    UnicodeString number;
 
-	Int first = ime->getCandidatePageStart();
-	Int total = ime->getCandidateCount();
-	Int pageSize = ime->getCandidatePageSize();
-	Int selected = ime->getSelectedCandidateIndex();
+    // calulate the widest number text
+    Int width;
+    Dstring->setText(UnicodeString(L"00:"));
+    width = Dstring->getWidth();
 
-	Int count = pageSize;
+    // calc y start pos
+    Int y = origin.y;
+    Int leftEdge = origin.x + 10 + width;
 
-	if ( count + first > total )
-	{
-		count = total - first;
-	}
+    for (Int i = 0; i < count; i++, y += height)
+    {
+        UnicodeString *candidate = ime->getCandidate(first + i);
+        Int tcolor, bcolor;
 
-	selected = selected - first;
-	UnicodeString number;
+        if (i == selected)
+        {
+            tcolor = textSelectColor;
+            bcolor = textSelectBorder;
+        }
+        else
+        {
+            tcolor = textColor;
+            bcolor = textBorder;
+        }
 
-	// calulate the widest number text
-	Int width;
-	Dstring->setText(UnicodeString(L"00:"));
-	width = Dstring->getWidth();
+        // draw number tab first
+        number.format(L"%d:", i + ime->getIndexBase());
+        Dstring->setText(number);
+        width = Dstring->getWidth();
+        Dstring->draw(leftEdge - width, y, tcolor, black);
 
-	// calc y start pos
-	Int y = origin.y;
-	Int leftEdge = origin.x + 10 + width;
-
-	for ( Int i = 0; i < count; i++, y+= height )
-	{
-		UnicodeString *candidate = ime->getCandidate( first + i );
-		Int tcolor, bcolor;
-
-		if ( i == selected )
-		{
-			tcolor = textSelectColor;
-			bcolor = textSelectBorder;
-		}
-		else
-		{
-			tcolor = textColor;
-			bcolor = textBorder;
-		}
-
-		// draw number tab first
-		number.format( L"%d:", i + ime->getIndexBase());
-		Dstring->setText( number );
-		width = Dstring->getWidth();
-		Dstring->draw( leftEdge - width, y,	tcolor, black);
-
-		// draw candidate
-		Dstring->setText( *candidate );
-		Dstring->draw( leftEdge, y, tcolor, black );
-	}
+        // draw candidate
+        Dstring->setText(*candidate);
+        Dstring->draw(leftEdge, y, tcolor, black);
+    }
 }
 
 // IMECandidateDraw ================================================================
 /** Draw function for the IME candidate window */
 //=============================================================================
-void IMECandidateMainDraw( GameWindow *window, WinInstanceData *instData )
+void IMECandidateMainDraw(GameWindow *window, WinInstanceData *instData)
 {
-	// set up for rendering
-	ICoord2D origin, size, start, end;
-	Color		backColor,
-					backBorder;
-	Real borderWidth = 1.0f;
+    // set up for rendering
+    ICoord2D origin, size, start, end;
+    Color backColor, backBorder;
+    Real borderWidth = 1.0f;
 
-	// get window position and size
-	window->winGetScreenPosition( &origin.x, &origin.y );
-	window->winGetSize( &size.x, &size.y );
+    // get window position and size
+    window->winGetScreenPosition(&origin.x, &origin.y);
+    window->winGetSize(&size.x, &size.y);
 
-	// get the right colors for drawing
-	if( BitIsSet( window->winGetStatus(), WIN_STATUS_ENABLED ) == FALSE )
-	{
+    // get the right colors for drawing
+    if (BitIsSet(window->winGetStatus(), WIN_STATUS_ENABLED) == FALSE)
+    {
+        backColor = window->winGetDisabledColor(0);
+        backBorder = window->winGetDisabledBorderColor(0);
 
-		backColor		= window->winGetDisabledColor( 0 );
-		backBorder	= window->winGetDisabledBorderColor( 0 );
+    } // end if, disabled
+    else if (BitIsSet(instData->getState(), WIN_STATE_HILITED))
+    {
+        backColor = window->winGetHiliteColor(0);
+        backBorder = window->winGetHiliteBorderColor(0);
 
-	}  // end if, disabled
-	else if( BitIsSet( instData->getState(), WIN_STATE_HILITED ) )
-	{
+    } // end else if, hilited
+    else
+    {
+        backColor = window->winGetEnabledColor(0);
+        backBorder = window->winGetEnabledBorderColor(0);
 
-		backColor		= window->winGetHiliteColor( 0 );
-		backBorder	= window->winGetHiliteBorderColor( 0 );
+    } // end else, just enabled
 
-	}  // end else if, hilited
-	else
-	{
+    // draw the back border
+    if (backBorder != WIN_COLOR_UNDEFINED)
+    {
+        start.x = origin.x;
+        start.y = origin.y;
+        end.x = start.x + size.x;
+        end.y = start.y + size.y;
+        TheWindowManager->winOpenRect(backBorder, borderWidth, start.x, start.y, end.x, end.y);
+    } // end if
 
-		backColor		= window->winGetEnabledColor( 0 );
-		backBorder	= window->winGetEnabledBorderColor( 0 );
+    // draw the filled back
+    if (backColor != WIN_COLOR_UNDEFINED)
+    {
+        start.x = origin.x + 1;
+        start.y = origin.y + 1;
+        end.x = start.x + size.x - 2;
+        end.y = start.y + size.y - 2;
+        TheWindowManager->winFillRect(backColor, 0, start.x, start.y, end.x, end.y);
 
-	}  // end else, just enabled
-
-	// draw the back border
-	if( backBorder != WIN_COLOR_UNDEFINED )
-	{
-
-		start.x = origin.x;
-		start.y = origin.y;
-		end.x = start.x + size.x;
-		end.y = start.y + size.y;
-		TheWindowManager->winOpenRect( backBorder, borderWidth,
-																	 start.x, start.y, end.x, end.y );
-	}  // end if
-
-	// draw the filled back
-	if( backColor != WIN_COLOR_UNDEFINED )
-	{
-
-		start.x = origin.x + 1;
-		start.y = origin.y + 1;
-		end.x = start.x + size.x - 2;
-		end.y = start.y + size.y - 2;
-		TheWindowManager->winFillRect( backColor, 0, start.x, start.y, end.x, end.y );
-
-	}  // end if
+    } // end if
 }
-

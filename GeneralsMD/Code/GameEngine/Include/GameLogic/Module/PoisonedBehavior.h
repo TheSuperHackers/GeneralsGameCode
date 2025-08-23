@@ -37,64 +37,56 @@
 #include "GameLogic/Module/DamageModule.h"
 #include "GameLogic/Module/UpdateModule.h"
 
-
 //-------------------------------------------------------------------------------------------------
 class PoisonedBehaviorModuleData : public UpdateModuleData
 {
 public:
-	UnsignedInt m_poisonDamageIntervalData; // How often I retake poison damage dealt me
-	UnsignedInt m_poisonDurationData;				// And how long after the last poison dose I am poisoned
+    UnsignedInt m_poisonDamageIntervalData; // How often I retake poison damage dealt me
+    UnsignedInt m_poisonDurationData; // And how long after the last poison dose I am poisoned
 
-	PoisonedBehaviorModuleData();
+    PoisonedBehaviorModuleData();
 
-	static void buildFieldParse(MultiIniFieldParse& p);
+    static void buildFieldParse(MultiIniFieldParse &p);
 
 private:
-
 };
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-class PoisonedBehavior : public UpdateModule,
-												 public DamageModuleInterface
+class PoisonedBehavior : public UpdateModule, public DamageModuleInterface
 {
-
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( PoisonedBehavior, "PoisonedBehavior" )
-	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( PoisonedBehavior, PoisonedBehaviorModuleData )
+    MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(PoisonedBehavior, "PoisonedBehavior")
+    MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA(PoisonedBehavior, PoisonedBehaviorModuleData)
 
 public:
+    PoisonedBehavior(Thing *thing, const ModuleData *moduleData);
+    // virtual destructor prototype provided by memory pool declaration
 
-	PoisonedBehavior( Thing *thing, const ModuleData* moduleData );
-	// virtual destructor prototype provided by memory pool declaration
+    static Int getInterfaceMask() { return UpdateModule::getInterfaceMask() | (MODULEINTERFACE_DAMAGE); }
 
-	static Int getInterfaceMask() { return UpdateModule::getInterfaceMask() | (MODULEINTERFACE_DAMAGE); }
+    // BehaviorModule
+    virtual DamageModuleInterface *getDamage() { return this; }
 
-	// BehaviorModule
-	virtual DamageModuleInterface* getDamage() { return this; }
+    // DamageModuleInterface
+    virtual void onDamage(DamageInfo *damageInfo);
+    virtual void onHealing(DamageInfo *damageInfo);
+    virtual void onBodyDamageStateChange(const DamageInfo *damageInfo, BodyDamageType oldState, BodyDamageType newState) {}
 
-	// DamageModuleInterface
-	virtual void onDamage( DamageInfo *damageInfo );
-	virtual void onHealing( DamageInfo *damageInfo );
-	virtual void onBodyDamageStateChange(const DamageInfo* damageInfo, BodyDamageType oldState, BodyDamageType newState) { }
-
-	// UpdateInterface
-	virtual UpdateSleepTime update();
-	// Disabled conditions to process (we should still poison disabled things)
-	virtual DisabledMaskType getDisabledTypesToProcess() const { return DISABLEDMASK_ALL; }
+    // UpdateInterface
+    virtual UpdateSleepTime update();
+    // Disabled conditions to process (we should still poison disabled things)
+    virtual DisabledMaskType getDisabledTypesToProcess() const { return DISABLEDMASK_ALL; }
 
 protected:
-
-	void startPoisonedEffects( const DamageInfo *damageInfo );
-	void stopPoisonedEffects();
-	UpdateSleepTime calcSleepTime();
+    void startPoisonedEffects(const DamageInfo *damageInfo);
+    void stopPoisonedEffects();
+    UpdateSleepTime calcSleepTime();
 
 private:
-	UnsignedInt		m_poisonDamageFrame;
-	UnsignedInt		m_poisonOverallStopFrame;
-	Real					m_poisonDamageAmount;
-	DeathType			m_deathType;
-
+    UnsignedInt m_poisonDamageFrame;
+    UnsignedInt m_poisonOverallStopFrame;
+    Real m_poisonDamageAmount;
+    DeathType m_deathType;
 };
 
 #endif // __Poisoned_Behavior_H_
-

@@ -28,9 +28,9 @@
 class PopupSliderOwner
 {
 public:
-	virtual void GetPopSliderInfo(const long sliderID, long *pMin, long *pMax, long *pLineSize, long *pInitial)=0;
-	virtual void PopSliderChanged(const long sliderID, long theVal) = 0;
-	virtual void PopSliderFinished(const long sliderID, long theVal) = 0;
+    virtual void GetPopSliderInfo(const long sliderID, long *pMin, long *pMax, long *pLineSize, long *pInitial) = 0;
+    virtual void PopSliderChanged(const long sliderID, long theVal) = 0;
+    virtual void PopSliderFinished(const long sliderID, long theVal) = 0;
 };
 
 /////////////////////////////////////////////////////////////////////////////
@@ -40,143 +40,137 @@ public:
 
 class WBPopupSliderButton : public CButton
 {
-// Construction
+    // Construction
 public:
-	WBPopupSliderButton();
+    WBPopupSliderButton();
 
-// Attributes
+    // Attributes
 public:
-
-// Operations
+    // Operations
 public:
-	void SetupPopSliderButton(CWnd *pParentWnd, long controlID,
-							   PopupSliderOwner *pOwner);
+    void SetupPopSliderButton(CWnd *pParentWnd, long controlID, PopupSliderOwner *pOwner);
 
-// Overrides
-	// ClassWizard generated virtual function overrides
-	//{{AFX_VIRTUAL(WBPopupSliderButton)
-	protected:
-	//}}AFX_VIRTUAL
-
-// Implementation
-public:
-	virtual ~WBPopupSliderButton();
-
-	// Generated message map functions
+    // Overrides
+    // ClassWizard generated virtual function overrides
+    //{{AFX_VIRTUAL(WBPopupSliderButton)
 protected:
-	//{{AFX_MSG(WBPopupSliderButton)
-	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
-	//}}AFX_MSG
+    //}}AFX_VIRTUAL
 
-	DECLARE_MESSAGE_MAP()
+    // Implementation
+public:
+    virtual ~WBPopupSliderButton();
+
+    // Generated message map functions
+protected:
+    //{{AFX_MSG(WBPopupSliderButton)
+    afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
+    //}}AFX_MSG
+
+    DECLARE_MESSAGE_MAP()
 
 private:
-	Int m_controlID;
-	Int m_sliderStyle;
-	PopupSliderOwner *m_owner;
+    Int m_controlID;
+    Int m_sliderStyle;
+    PopupSliderOwner *m_owner;
 };
 
 /////////////////////////////////////////////////////////////////////////////
-
 
 /////////////////////////////////////////////////////////////////////////////
 // PopupSlider window
 
 /*
-	note: PopupSlider is a self-deleting window. It cannot
-	be instantiated except through its New function, and once
-	its Create() function has been called successfully it should
-	not be deleted. Its PostNcDestroy method will handle that
-	for you.
+    note: PopupSlider is a self-deleting window. It cannot
+    be instantiated except through its New function, and once
+    its Create() function has been called successfully it should
+    not be deleted. Its PostNcDestroy method will handle that
+    for you.
 */
 
 class PopupSlider : public CWnd
 {
-// Construction
+    // Construction
 public:
-	PopupSlider();
+    PopupSlider();
 
 public:
-	/*
-		the New function takes care of EVERYTHING for you! It
-		constructs the object, calls its create method,
-		and starts it running
-	*/
-	static void New(CWnd* pParentWnd, long kind,
-					PopupSliderOwner *pSliderOwner, long sliderID);
+    /*
+        the New function takes care of EVERYTHING for you! It
+        constructs the object, calls its create method,
+        and starts it running
+    */
+    static void New(CWnd *pParentWnd, long kind, PopupSliderOwner *pSliderOwner, long sliderID);
 
-// Attributes
+    // Attributes
 public:
-
-// Operations
+    // Operations
 public:
-
-// Overrides
-	// ClassWizard generated virtual function overrides
-	//{{AFX_VIRTUAL(PopupSlider)
-	public:
-	virtual BOOL Create(const RECT& rect, CWnd* pParentWnd);
-	protected:
-	virtual void PostNcDestroy();
-	//}}AFX_VIRTUAL
-
-// Implementation
+    // Overrides
+    // ClassWizard generated virtual function overrides
+    //{{AFX_VIRTUAL(PopupSlider)
 public:
-	virtual ~PopupSlider();
+    virtual BOOL Create(const RECT &rect, CWnd *pParentWnd);
 
-	// Generated message map functions
 protected:
-	//{{AFX_MSG(PopupSlider)
-	afx_msg void OnPaint();
-	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
-	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
-	afx_msg void OnDestroy();
-	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
-	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
-	//}}AFX_MSG
-	DECLARE_MESSAGE_MAP()
+    virtual void PostNcDestroy();
+    //}}AFX_VIRTUAL
+
+    // Implementation
+public:
+    virtual ~PopupSlider();
+
+    // Generated message map functions
+protected:
+    //{{AFX_MSG(PopupSlider)
+    afx_msg void OnPaint();
+    afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
+    afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
+    afx_msg void OnDestroy();
+    afx_msg void OnMouseMove(UINT nFlags, CPoint point);
+    afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
+    //}}AFX_MSG
+    DECLARE_MESSAGE_MAP()
 
 private:
-	void MoveThumbUnderMouse(int xNew);
+    void MoveThumbUnderMouse(int xNew);
 
-	// our owner
-	PopupSliderOwner *mSliderOwner;
+    // our owner
+    PopupSliderOwner *mSliderOwner;
 
-	// the slider value
-	long m_curValue;
+    // the slider value
+    long m_curValue;
 
-	// setup values for the slider
-	long m_lineSize;
-	long m_lo;
-	long m_hi;
-	long m_kind;
-	long mSliderID;
+    // setup values for the slider
+    long m_lineSize;
+    long m_lo;
+    long m_hi;
+    long m_kind;
+    long mSliderID;
 
-	/* the value when the slider last called "Finished"; we keep this around to
-	see if we need to call Finished again on NcDestroy */
-	long m_valOnLastFinished;
-
-private:
-	Bool mDraggingThumb;
-	Bool mClickThrough;
-	CPoint mOrigPt;
-	Bool mSetOrigPt;
-	Bool mEverMoved;
-
-	// for the thumb icon
-	HICON mIcon;
+    /* the value when the slider last called "Finished"; we keep this around to
+    see if we need to call Finished again on NcDestroy */
+    long m_valOnLastFinished;
 
 private:
-	// the one and only slider windoid that should ever be open
-	static PopupSlider *gPopupSlider;
+    Bool mDraggingThumb;
+    Bool mClickThrough;
+    CPoint mOrigPt;
+    Bool mSetOrigPt;
+    Bool mEverMoved;
 
-	void GetChannelRect(CRect* rect);
-	void GetThumbIconRect(CRect* rect);
+    // for the thumb icon
+    HICON mIcon;
 
-	// the background color brush
-	CBrush	m_brush3dFaceColor;
+private:
+    // the one and only slider windoid that should ever be open
+    static PopupSlider *gPopupSlider;
+
+    void GetChannelRect(CRect *rect);
+    void GetThumbIconRect(CRect *rect);
+
+    // the background color brush
+    CBrush m_brush3dFaceColor;
 };
-
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Developer Studio will insert additional declarations immediately before the previous line.

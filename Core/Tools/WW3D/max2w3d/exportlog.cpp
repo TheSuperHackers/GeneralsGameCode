@@ -45,19 +45,16 @@
 #include "logdlg.h"
 #include <assert.h>
 
-
 /*
 ** Static variables
 */
-LogDataDialogClass * _LogDialog = NULL;
-
+LogDataDialogClass *_LogDialog = NULL;
 
 /*
 **
 ** ExportLog implementation.  Note, this is a class which only contains static functions.
 **
 */
-
 
 /***********************************************************************************************
  * ExportLog::Init -- Initialize the export logging system                                     *
@@ -73,10 +70,9 @@ LogDataDialogClass * _LogDialog = NULL;
  *=============================================================================================*/
 void ExportLog::Init(HWND parent)
 {
-	assert(_LogDialog == NULL);
-	_LogDialog = new LogDataDialogClass(parent);
+    assert(_LogDialog == NULL);
+    _LogDialog = new LogDataDialogClass(parent);
 }
-
 
 /***********************************************************************************************
  * ExportLog::Shutdown -- Shutdown the export logging system                                   *
@@ -93,17 +89,17 @@ void ExportLog::Init(HWND parent)
  *=============================================================================================*/
 void ExportLog::Shutdown(bool wait_for_ok)
 {
-	if (_LogDialog != NULL) {
+    if (_LogDialog != NULL)
+    {
+        if (wait_for_ok)
+        {
+            _LogDialog->Wait_OK();
+        }
 
-		if (wait_for_ok) {
-			_LogDialog->Wait_OK();
-		}
-
-		delete _LogDialog;
-		_LogDialog = NULL;
-	}
+        delete _LogDialog;
+        _LogDialog = NULL;
+    }
 }
-
 
 /***********************************************************************************************
  * ExportLog::printf -- Print a string to the log window                                       *
@@ -117,15 +113,15 @@ void ExportLog::Shutdown(bool wait_for_ok)
  * HISTORY:                                                                                    *
  *   10/30/2000 gth : Created.                                                                 *
  *=============================================================================================*/
-void ExportLog::printf(const char * format, ...)
+void ExportLog::printf(const char *format, ...)
 {
-	if (_LogDialog != NULL) {
-		va_list arguments;
-		va_start(arguments, format);
-		_LogDialog->printf(format,arguments);
-	}
+    if (_LogDialog != NULL)
+    {
+        va_list arguments;
+        va_start(arguments, format);
+        _LogDialog->printf(format, arguments);
+    }
 }
-
 
 /***********************************************************************************************
  * ExportLog::rprintf -- Print a string over the last line printed                             *
@@ -139,15 +135,15 @@ void ExportLog::printf(const char * format, ...)
  * HISTORY:                                                                                    *
  *   10/30/2000 gth : Created.                                                                 *
  *=============================================================================================*/
-void ExportLog::rprintf(const char * format, ...)
+void ExportLog::rprintf(const char *format, ...)
 {
-	if (_LogDialog != NULL) {
-		va_list arguments;
-		va_start(arguments, format);
-		_LogDialog->rprintf(format,arguments);
-	}
+    if (_LogDialog != NULL)
+    {
+        va_list arguments;
+        va_start(arguments, format);
+        _LogDialog->rprintf(format, arguments);
+    }
 }
-
 
 /***********************************************************************************************
  * ExportLog::updatebar -- Set the position of the progress bar                                *
@@ -163,9 +159,8 @@ void ExportLog::rprintf(const char * format, ...)
  *=============================================================================================*/
 void ExportLog::updatebar(float position, float total)
 {
-	if (_LogDialog != NULL) {
-		_LogDialog->updatebar(position,total);
-	}
+    if (_LogDialog != NULL)
+    {
+        _LogDialog->updatebar(position, total);
+    }
 }
-
-

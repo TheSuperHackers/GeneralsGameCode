@@ -46,8 +46,7 @@
 //-----------------------------------------------------------------------------
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
-
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 
 //-----------------------------------------------------------------------------
 // USER INCLUDES //////////////////////////////////////////////////////////////
@@ -77,175 +76,155 @@ static GameWindow *parentMainMenu = NULL;
 //-------------------------------------------------------------------------------------------------
 /** Initialize the single player menu */
 //-------------------------------------------------------------------------------------------------
-void CreditsMenuInit( WindowLayout *layout, void *userData )
+void CreditsMenuInit(WindowLayout *layout, void *userData)
 {
-	TheShell->showShellMap(FALSE);
-	if(TheCredits)
-		delete TheCredits;
-	TheCredits = new CreditsManager;
-	TheCredits->load();
-	TheCredits->init();
+    TheShell->showShellMap(FALSE);
+    if (TheCredits)
+        delete TheCredits;
+    TheCredits = new CreditsManager;
+    TheCredits->load();
+    TheCredits->init();
 
-	parentMainMenuID = TheNameKeyGenerator->nameToKey( AsciiString("CreditsMenu.wnd:ParentCreditsWindow") );
-	parentMainMenu = TheWindowManager->winGetWindowFromId( NULL, parentMainMenuID );
+    parentMainMenuID = TheNameKeyGenerator->nameToKey(AsciiString("CreditsMenu.wnd:ParentCreditsWindow"));
+    parentMainMenu = TheWindowManager->winGetWindowFromId(NULL, parentMainMenuID);
 
+    // show menu
+    layout->hide(FALSE);
 
-	// show menu
-	layout->hide( FALSE );
+    // set keyboard focus to main parent
+    TheWindowManager->winSetFocus(parentMainMenu);
 
-	// set keyboard focus to main parent
-	TheWindowManager->winSetFocus( parentMainMenu );
+    TheAudio->removeAudioEvent(AHSV_StopTheMusicFade);
+    AudioEventRTS event(AsciiString("Credits"));
+    event.setShouldFade(TRUE);
+    TheAudio->addAudioEvent(&event);
 
-
-
-	TheAudio->removeAudioEvent( AHSV_StopTheMusicFade );
-	AudioEventRTS event( AsciiString( "Credits" ) );
-	event.setShouldFade( TRUE );
-	TheAudio->addAudioEvent( &event );
-
-
-}  // end CreditsMenuInit
+} // end CreditsMenuInit
 
 //-------------------------------------------------------------------------------------------------
 /** single player menu shutdown method */
 //-------------------------------------------------------------------------------------------------
-void CreditsMenuShutdown( WindowLayout *layout, void *userData )
+void CreditsMenuShutdown(WindowLayout *layout, void *userData)
 {
-	TheCredits->reset();
-	delete TheCredits;
-	TheCredits = NULL;
-	TheShell->showShellMap(TRUE);
+    TheCredits->reset();
+    delete TheCredits;
+    TheCredits = NULL;
+    TheShell->showShellMap(TRUE);
 
-	// hide menu
-	layout->hide( TRUE );
+    // hide menu
+    layout->hide(TRUE);
 
-	// our shutdown is complete
-	TheShell->shutdownComplete( layout );
+    // our shutdown is complete
+    TheShell->shutdownComplete(layout);
 
-	TheAudio->removeAudioEvent( AHSV_StopTheMusicFade );
+    TheAudio->removeAudioEvent(AHSV_StopTheMusicFade);
 
-}  // end CreditsMenuShutdown
+} // end CreditsMenuShutdown
 
 //-------------------------------------------------------------------------------------------------
 /** single player menu update method */
 //-------------------------------------------------------------------------------------------------
-void CreditsMenuUpdate( WindowLayout *layout, void *userData )
+void CreditsMenuUpdate(WindowLayout *layout, void *userData)
 {
+    if (TheCredits)
+    {
+        TheWindowManager->winSetFocus(parentMainMenu);
+        TheCredits->update();
+        if (TheCredits->isFinished())
+            TheShell->pop();
+    }
+    else
+        TheShell->pop();
 
-	if(TheCredits)
-	{
-		TheWindowManager->winSetFocus( parentMainMenu );
-		TheCredits->update();
-		if(TheCredits->isFinished())
-			TheShell->pop();
-	}
-	else
-		TheShell->pop();
-
-}  // end CreditsMenuUpdate
+} // end CreditsMenuUpdate
 
 //-------------------------------------------------------------------------------------------------
 /** Replay menu input callback */
 //-------------------------------------------------------------------------------------------------
-WindowMsgHandledType CreditsMenuInput( GameWindow *window, UnsignedInt msg,
-																						WindowMsgData mData1, WindowMsgData mData2 )
+WindowMsgHandledType CreditsMenuInput(GameWindow *window, UnsignedInt msg, WindowMsgData mData1, WindowMsgData mData2)
 {
+    switch (msg)
+    {
+        // --------------------------------------------------------------------------------------------
+        case GWM_CHAR:
+        {
+            UnsignedByte key = mData1;
+            UnsignedByte state = mData2;
 
-	switch( msg )
-	{
+            switch (key)
+            {
+                // ----------------------------------------------------------------------------------------
+                case KEY_ESC:
+                {
+                    //
+                    // send a simulated selected event to the parent window of the
+                    // back/exit button
+                    //
+                    if (BitIsSet(state, KEY_STATE_UP))
+                    {
+                        TheShell->pop();
 
-		// --------------------------------------------------------------------------------------------
-		case GWM_CHAR:
-		{
-			UnsignedByte key = mData1;
-			UnsignedByte state = mData2;
+                    } // end if
 
-			switch( key )
-			{
+                    // don't let key fall through anywhere else
+                    return MSG_HANDLED;
 
-				// ----------------------------------------------------------------------------------------
-				case KEY_ESC:
-				{
+                } // end escape
 
-					//
-					// send a simulated selected event to the parent window of the
-					// back/exit button
-					//
-					if( BitIsSet( state, KEY_STATE_UP ) )
-					{
+            } // end switch( key )
 
-						TheShell->pop();
+        } // end char
 
-					}  // end if
+    } // end switch( msg )
 
-					// don't let key fall through anywhere else
-					return MSG_HANDLED;
+    return MSG_IGNORED;
 
-				}  // end escape
-
-			}  // end switch( key )
-
-		}  // end char
-
-	}  // end switch( msg )
-
-	return MSG_IGNORED;
-
-}  // end CreditsMenuInput
+} // end CreditsMenuInput
 
 //-------------------------------------------------------------------------------------------------
 /** single player menu window system callback */
 //-------------------------------------------------------------------------------------------------
-WindowMsgHandledType CreditsMenuSystem( GameWindow *window, UnsignedInt msg,
-														 WindowMsgData mData1, WindowMsgData mData2 )
+WindowMsgHandledType CreditsMenuSystem(GameWindow *window, UnsignedInt msg, WindowMsgData mData1, WindowMsgData mData2)
 {
+    switch (msg)
+    {
+        // --------------------------------------------------------------------------------------------
+        case GWM_CREATE:
+        {
+            break;
 
-	switch( msg )
-	{
+        } // end create
 
-		// --------------------------------------------------------------------------------------------
-		case GWM_CREATE:
-		{
+        //---------------------------------------------------------------------------------------------
+        case GWM_DESTROY:
+        {
+            break;
 
+        } // end case
 
-			break;
+        // --------------------------------------------------------------------------------------------
+        case GWM_INPUT_FOCUS:
+        {
+            // if we're givin the opportunity to take the keyboard focus we must say we want it
+            if (mData1 == TRUE)
+                *(Bool *)mData2 = TRUE;
 
-		}  // end create
+            return MSG_HANDLED;
 
-		//---------------------------------------------------------------------------------------------
-		case GWM_DESTROY:
-		{
+        } // end input
+        //---------------------------------------------------------------------------------------------
+        case GBM_SELECTED:
+        {
+            break;
+        } // end selected
 
-			break;
+        default:
+            return MSG_IGNORED;
+    } // end switch
 
-		}  // end case
-
-		// --------------------------------------------------------------------------------------------
-		case GWM_INPUT_FOCUS:
-		{
-
-			// if we're givin the opportunity to take the keyboard focus we must say we want it
-			if( mData1 == TRUE )
-				*(Bool *)mData2 = TRUE;
-
-			return MSG_HANDLED;
-
-		}  // end input
-		//---------------------------------------------------------------------------------------------
-		case GBM_SELECTED:
-		{
-
-			break;
-		}  // end selected
-
-		default:
-			return MSG_IGNORED;
-	}  // end switch
-
-	return MSG_HANDLED;
-}  // end CreditsMenuSystem
+    return MSG_HANDLED;
+} // end CreditsMenuSystem
 
 //-----------------------------------------------------------------------------
 // PRIVATE FUNCTIONS //////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-

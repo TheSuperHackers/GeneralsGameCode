@@ -51,7 +51,7 @@
 //-----------------------------------------------------------------------------
 // USER INCLUDES //////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 
 #include "GameClient/AnimateWindowManager.h"
 #include "GameClient/GameWindow.h"
@@ -66,41 +66,44 @@
 //-----------------------------------------------------------------------------
 namespace wnd
 {
-AnimateWindow::AnimateWindow( void )
+AnimateWindow::AnimateWindow(void)
 {
-	m_delay = 0;
-	m_startPos.x = m_startPos.y = 0;
-	m_endPos.x = m_endPos.y = 0;
-	m_curPos.x = m_curPos.y = 0;
-	m_win = NULL;
-	m_animType = WIN_ANIMATION_NONE;
+    m_delay = 0;
+    m_startPos.x = m_startPos.y = 0;
+    m_endPos.x = m_endPos.y = 0;
+    m_curPos.x = m_curPos.y = 0;
+    m_win = NULL;
+    m_animType = WIN_ANIMATION_NONE;
 
-	m_restPos.x = m_restPos.y = 0;
-	m_vel.x = m_vel.y = 0.0f;
-	m_needsToFinish = FALSE;
-	m_isFinished = FALSE;
-	m_endTime = 0;
-	m_startTime = 0;
+    m_restPos.x = m_restPos.y = 0;
+    m_vel.x = m_vel.y = 0.0f;
+    m_needsToFinish = FALSE;
+    m_isFinished = FALSE;
+    m_endTime = 0;
+    m_startTime = 0;
 }
-AnimateWindow::~AnimateWindow( void )
+AnimateWindow::~AnimateWindow(void)
 {
-	m_win = NULL;
+    m_win = NULL;
 }
 
-void AnimateWindow::setAnimData( 	ICoord2D startPos, ICoord2D endPos,
-																	ICoord2D curPos, ICoord2D restPos,
-																	Coord2D vel, UnsignedInt startTime,
-																	UnsignedInt endTime )
+void AnimateWindow::setAnimData(
+    ICoord2D startPos,
+    ICoord2D endPos,
+    ICoord2D curPos,
+    ICoord2D restPos,
+    Coord2D vel,
+    UnsignedInt startTime,
+    UnsignedInt endTime)
 
 {
-	m_startPos = startPos;
-	m_endPos = endPos;
-	m_curPos = curPos;
-	m_restPos = restPos;
-	m_vel = vel;
-	m_startTime = startTime;
-	m_endTime = endTime;
-
+    m_startPos = startPos;
+    m_endPos = endPos;
+    m_curPos = curPos;
+    m_restPos = restPos;
+    m_vel = vel;
+    m_startTime = startTime;
+    m_endTime = endTime;
 }
 
 } // namespace wnd
@@ -111,323 +114,318 @@ void AnimateWindow::setAnimData( 	ICoord2D startPos, ICoord2D endPos,
 
 static void clearWinList(AnimateWindowList &winList)
 {
-	wnd::AnimateWindow *win = NULL;
-	while (!winList.empty())
-	{
-		win = *(winList.begin());
-		winList.pop_front();
-		if (win)
-			deleteInstance(win);
-		win = NULL;
-	}
+    wnd::AnimateWindow *win = NULL;
+    while (!winList.empty())
+    {
+        win = *(winList.begin());
+        winList.pop_front();
+        if (win)
+            deleteInstance(win);
+        win = NULL;
+    }
 }
 
-AnimateWindowManager::AnimateWindowManager( void )
+AnimateWindowManager::AnimateWindowManager(void)
 {
-// we don't allocate many of these, so no MemoryPools used
-	m_slideFromRight = NEW ProcessAnimateWindowSlideFromRight;
-	m_slideFromRightFast = NEW ProcessAnimateWindowSlideFromRightFast;
-	m_slideFromLeft = NEW ProcessAnimateWindowSlideFromLeft;
-	m_slideFromTop = NEW ProcessAnimateWindowSlideFromTop;
-	m_slideFromTopFast = NEW ProcessAnimateWindowSlideFromTopFast;
-	m_slideFromBottom = NEW ProcessAnimateWindowSlideFromBottom;
-	m_spiral = NEW ProcessAnimateWindowSpiral;
-	m_slideFromBottomTimed = NEW ProcessAnimateWindowSlideFromBottomTimed;
-	m_winList.clear();
-	m_needsUpdate = FALSE;
-	m_reverse = FALSE;
-	m_winMustFinishList.clear();
+    // we don't allocate many of these, so no MemoryPools used
+    m_slideFromRight = NEW ProcessAnimateWindowSlideFromRight;
+    m_slideFromRightFast = NEW ProcessAnimateWindowSlideFromRightFast;
+    m_slideFromLeft = NEW ProcessAnimateWindowSlideFromLeft;
+    m_slideFromTop = NEW ProcessAnimateWindowSlideFromTop;
+    m_slideFromTopFast = NEW ProcessAnimateWindowSlideFromTopFast;
+    m_slideFromBottom = NEW ProcessAnimateWindowSlideFromBottom;
+    m_spiral = NEW ProcessAnimateWindowSpiral;
+    m_slideFromBottomTimed = NEW ProcessAnimateWindowSlideFromBottomTimed;
+    m_winList.clear();
+    m_needsUpdate = FALSE;
+    m_reverse = FALSE;
+    m_winMustFinishList.clear();
 }
-AnimateWindowManager::~AnimateWindowManager( void )
+AnimateWindowManager::~AnimateWindowManager(void)
 {
-	if(m_slideFromRight)
-		delete m_slideFromRight;
-	if(m_slideFromRightFast)
-		delete m_slideFromRightFast;
-	if(m_slideFromLeft)
-		delete m_slideFromLeft;
-	if(m_slideFromTop)
-		delete m_slideFromTop;
-	if(m_slideFromTopFast)
-		delete m_slideFromTopFast;
-	if(m_slideFromBottom)
-		delete m_slideFromBottom;
-	if(m_spiral)
-		delete m_spiral;
-	if (m_slideFromBottomTimed)
-		delete m_slideFromBottomTimed;
+    if (m_slideFromRight)
+        delete m_slideFromRight;
+    if (m_slideFromRightFast)
+        delete m_slideFromRightFast;
+    if (m_slideFromLeft)
+        delete m_slideFromLeft;
+    if (m_slideFromTop)
+        delete m_slideFromTop;
+    if (m_slideFromTopFast)
+        delete m_slideFromTopFast;
+    if (m_slideFromBottom)
+        delete m_slideFromBottom;
+    if (m_spiral)
+        delete m_spiral;
+    if (m_slideFromBottomTimed)
+        delete m_slideFromBottomTimed;
 
-	m_slideFromRight = NULL;
-	resetToRestPosition( );
-	clearWinList(m_winList);
-	clearWinList(m_winMustFinishList);
-}
-
-
-void AnimateWindowManager::init( void )
-{
-	clearWinList(m_winList);
-	clearWinList(m_winMustFinishList);
-	m_needsUpdate = FALSE;
-	m_reverse = FALSE;
+    m_slideFromRight = NULL;
+    resetToRestPosition();
+    clearWinList(m_winList);
+    clearWinList(m_winMustFinishList);
 }
 
-void AnimateWindowManager::reset( void )
+void AnimateWindowManager::init(void)
 {
-	resetToRestPosition();
-	clearWinList(m_winList);
-	clearWinList(m_winMustFinishList);
-	m_needsUpdate = FALSE;
-	m_reverse = FALSE;
+    clearWinList(m_winList);
+    clearWinList(m_winMustFinishList);
+    m_needsUpdate = FALSE;
+    m_reverse = FALSE;
 }
 
-void AnimateWindowManager::update( void )
+void AnimateWindowManager::reset(void)
 {
-
-	ProcessAnimateWindow *processAnim = NULL;
-
-	// if we need to update the windows that need to finish, update that list
-	if(m_needsUpdate)
-	{
-		AnimateWindowList::iterator it = m_winMustFinishList.begin();
-		m_needsUpdate = FALSE;
-
-		while (it != m_winMustFinishList.end())
-		{
-			wnd::AnimateWindow *animWin = *it;
-			if (!animWin)
-			{
-				DEBUG_CRASH(("There's No AnimateWindow in the AnimateWindow List"));
-				return;
-			}
-			processAnim = getProcessAnimate( animWin->getAnimType() );
-			if(processAnim)
-			{
-				if(m_reverse)
-				{
-					if(!processAnim->reverseAnimateWindow(animWin))
-						m_needsUpdate = TRUE;
-				}
-				else
-				{
-					if(!processAnim->updateAnimateWindow(animWin))
-						m_needsUpdate = TRUE;
-				}
-			}
-
-			it ++;
-		}
-	}
-
-	AnimateWindowList::iterator it = m_winList.begin();
-
-	while (it != m_winList.end())
-	{
-		wnd::AnimateWindow *animWin = *it;
-		if (!animWin)
-		{
-			DEBUG_CRASH(("There's No AnimateWindow in the AnimateWindow List"));
-			return;
-		}
-		processAnim = getProcessAnimate( animWin->getAnimType() );
-		if(m_reverse)
-		{
-			if(processAnim)
-				processAnim->reverseAnimateWindow(animWin);
-		}
-		else
-		{
-			if(processAnim)
-				processAnim->updateAnimateWindow(animWin);
-		}
-		it ++;
-	}
+    resetToRestPosition();
+    clearWinList(m_winList);
+    clearWinList(m_winMustFinishList);
+    m_needsUpdate = FALSE;
+    m_reverse = FALSE;
 }
 
-
-void AnimateWindowManager::registerGameWindow(GameWindow *win, AnimTypes animType, Bool needsToFinish, UnsignedInt ms, UnsignedInt delayMs)
+void AnimateWindowManager::update(void)
 {
-	if(!win)
-	{
-		DEBUG_CRASH(("Win was NULL as it was passed into registerGameWindow... not good indeed"));
-		return;
-	}
-	if(animType <= WIN_ANIMATION_NONE || animType >= WIN_ANIMATION_COUNT )
-	{
-		DEBUG_CRASH(("an Invalid WIN_ANIMATION type was passed into registerGameWindow... please fix me "));
-		return;
-	}
+    ProcessAnimateWindow *processAnim = NULL;
 
-	// Create a new AnimateWindow class and fill in it's data.
-	wnd::AnimateWindow *animWin = wnd::AnimateWindow::createNewInstance();
-	animWin->setGameWindow(win);
-	animWin->setAnimType(animType);
-	animWin->setNeedsToFinish(needsToFinish);
-	animWin->setDelay(delayMs);
+    // if we need to update the windows that need to finish, update that list
+    if (m_needsUpdate)
+    {
+        AnimateWindowList::iterator it = m_winMustFinishList.begin();
+        m_needsUpdate = FALSE;
 
-	// Run the window through the processAnim's init function.
-	ProcessAnimateWindow *processAnim = getProcessAnimate( animType );
-	if(processAnim)
-	{
-		processAnim->setMaxDuration(ms);
-		processAnim->initAnimateWindow( animWin );
-	}
+        while (it != m_winMustFinishList.end())
+        {
+            wnd::AnimateWindow *animWin = *it;
+            if (!animWin)
+            {
+                DEBUG_CRASH(("There's No AnimateWindow in the AnimateWindow List"));
+                return;
+            }
+            processAnim = getProcessAnimate(animWin->getAnimType());
+            if (processAnim)
+            {
+                if (m_reverse)
+                {
+                    if (!processAnim->reverseAnimateWindow(animWin))
+                        m_needsUpdate = TRUE;
+                }
+                else
+                {
+                    if (!processAnim->updateAnimateWindow(animWin))
+                        m_needsUpdate = TRUE;
+                }
+            }
 
-	// Add the Window to the proper list
-	if(needsToFinish)
-	{
-		m_winMustFinishList.push_back(animWin);
-		m_needsUpdate = TRUE;
-	}
-	else
-		m_winList.push_back(animWin);
+            it++;
+        }
+    }
+
+    AnimateWindowList::iterator it = m_winList.begin();
+
+    while (it != m_winList.end())
+    {
+        wnd::AnimateWindow *animWin = *it;
+        if (!animWin)
+        {
+            DEBUG_CRASH(("There's No AnimateWindow in the AnimateWindow List"));
+            return;
+        }
+        processAnim = getProcessAnimate(animWin->getAnimType());
+        if (m_reverse)
+        {
+            if (processAnim)
+                processAnim->reverseAnimateWindow(animWin);
+        }
+        else
+        {
+            if (processAnim)
+                processAnim->updateAnimateWindow(animWin);
+        }
+        it++;
+    }
 }
 
-ProcessAnimateWindow *AnimateWindowManager::getProcessAnimate( AnimTypes animType )
+void AnimateWindowManager::registerGameWindow(
+    GameWindow *win,
+    AnimTypes animType,
+    Bool needsToFinish,
+    UnsignedInt ms,
+    UnsignedInt delayMs)
 {
-	switch (animType) {
-	case WIN_ANIMATION_SLIDE_RIGHT:
-		{
-			return m_slideFromRight;
-		}
-	case WIN_ANIMATION_SLIDE_RIGHT_FAST:
-		{
-			return m_slideFromRightFast;
-		}
-	case WIN_ANIMATION_SLIDE_LEFT:
-	{
-			return m_slideFromLeft;
-	}
-	case WIN_ANIMATION_SLIDE_TOP:
-	{
-			return m_slideFromTop;
-	}
-	case WIN_ANIMATION_SLIDE_BOTTOM:
-	{
-			return m_slideFromBottom;
-	}
-	case WIN_ANIMATION_SPIRAL:
-	{
-			return m_spiral;
-	}
-	case WIN_ANIMATION_SLIDE_BOTTOM_TIMED:
-	{
-		return m_slideFromBottomTimed;
-	}
-	case WIN_ANIMATION_SLIDE_TOP_FAST:
-	{
-		return m_slideFromTopFast;
-	}
-		default:
-		return NULL;
-	}
+    if (!win)
+    {
+        DEBUG_CRASH(("Win was NULL as it was passed into registerGameWindow... not good indeed"));
+        return;
+    }
+    if (animType <= WIN_ANIMATION_NONE || animType >= WIN_ANIMATION_COUNT)
+    {
+        DEBUG_CRASH(("an Invalid WIN_ANIMATION type was passed into registerGameWindow... please fix me "));
+        return;
+    }
+
+    // Create a new AnimateWindow class and fill in it's data.
+    wnd::AnimateWindow *animWin = wnd::AnimateWindow::createNewInstance();
+    animWin->setGameWindow(win);
+    animWin->setAnimType(animType);
+    animWin->setNeedsToFinish(needsToFinish);
+    animWin->setDelay(delayMs);
+
+    // Run the window through the processAnim's init function.
+    ProcessAnimateWindow *processAnim = getProcessAnimate(animType);
+    if (processAnim)
+    {
+        processAnim->setMaxDuration(ms);
+        processAnim->initAnimateWindow(animWin);
+    }
+
+    // Add the Window to the proper list
+    if (needsToFinish)
+    {
+        m_winMustFinishList.push_back(animWin);
+        m_needsUpdate = TRUE;
+    }
+    else
+        m_winList.push_back(animWin);
 }
 
-void AnimateWindowManager::reverseAnimateWindow( void )
+ProcessAnimateWindow *AnimateWindowManager::getProcessAnimate(AnimTypes animType)
 {
-
-	m_reverse = TRUE;
-	m_needsUpdate = TRUE;
-	ProcessAnimateWindow *processAnim = NULL;
-
-	UnsignedInt maxDelay = 0;
-	AnimateWindowList::iterator it = m_winMustFinishList.begin();
-	while (it != m_winMustFinishList.end())
-	{
-		wnd::AnimateWindow *animWin = *it;
-		if (!animWin)
-		{
-			DEBUG_CRASH(("There's No AnimateWindow in the AnimateWindow List"));
-			return;
-		}
-		if(animWin->getDelay() > maxDelay)
-			maxDelay = animWin->getDelay();
-		it ++;
-	}
-
-	it = m_winMustFinishList.begin();
-	while (it != m_winMustFinishList.end())
-	{
-		wnd::AnimateWindow *animWin = *it;
-		if (!animWin)
-		{
-			DEBUG_CRASH(("There's No AnimateWindow in the AnimateWindow List"));
-			return;
-		}
-		// Run the window through the processAnim's init function.
-		 processAnim = getProcessAnimate( animWin->getAnimType() );
-		if(processAnim)
-		{
-			processAnim->initReverseAnimateWindow( animWin, maxDelay );
-		}
-
-		animWin->setFinished(FALSE);
-		it ++;
-	}
-
-	it = m_winList.begin();
-
-	while (it != m_winList.end())
-	{
-		wnd::AnimateWindow *animWin = *it;
-		if (!animWin)
-		{
-			DEBUG_CRASH(("There's No AnimateWindow in the AnimateWindow List"));
-			return;
-		}
-		processAnim = getProcessAnimate( animWin->getAnimType() );
-
-		if(processAnim)
-			processAnim->initReverseAnimateWindow(animWin);
-		animWin->setFinished(FALSE);
-		it ++;
-	}
-
+    switch (animType)
+    {
+        case WIN_ANIMATION_SLIDE_RIGHT:
+        {
+            return m_slideFromRight;
+        }
+        case WIN_ANIMATION_SLIDE_RIGHT_FAST:
+        {
+            return m_slideFromRightFast;
+        }
+        case WIN_ANIMATION_SLIDE_LEFT:
+        {
+            return m_slideFromLeft;
+        }
+        case WIN_ANIMATION_SLIDE_TOP:
+        {
+            return m_slideFromTop;
+        }
+        case WIN_ANIMATION_SLIDE_BOTTOM:
+        {
+            return m_slideFromBottom;
+        }
+        case WIN_ANIMATION_SPIRAL:
+        {
+            return m_spiral;
+        }
+        case WIN_ANIMATION_SLIDE_BOTTOM_TIMED:
+        {
+            return m_slideFromBottomTimed;
+        }
+        case WIN_ANIMATION_SLIDE_TOP_FAST:
+        {
+            return m_slideFromTopFast;
+        }
+        default:
+            return NULL;
+    }
 }
 
-void AnimateWindowManager::resetToRestPosition( void )
+void AnimateWindowManager::reverseAnimateWindow(void)
 {
+    m_reverse = TRUE;
+    m_needsUpdate = TRUE;
+    ProcessAnimateWindow *processAnim = NULL;
 
-	m_reverse = TRUE;
-	m_needsUpdate = TRUE;
+    UnsignedInt maxDelay = 0;
+    AnimateWindowList::iterator it = m_winMustFinishList.begin();
+    while (it != m_winMustFinishList.end())
+    {
+        wnd::AnimateWindow *animWin = *it;
+        if (!animWin)
+        {
+            DEBUG_CRASH(("There's No AnimateWindow in the AnimateWindow List"));
+            return;
+        }
+        if (animWin->getDelay() > maxDelay)
+            maxDelay = animWin->getDelay();
+        it++;
+    }
 
-	AnimateWindowList::iterator it = m_winMustFinishList.begin();
-	while (it != m_winMustFinishList.end())
-	{
-		wnd::AnimateWindow *animWin = *it;
-		if (!animWin)
-		{
-			DEBUG_CRASH(("There's No AnimateWindow in the AnimateWindow List"));
-			return;
-		}
-		ICoord2D restPos = animWin->getRestPos();
-		GameWindow *win = animWin->getGameWindow();
-		if(win)
-			win->winSetPosition(restPos.x, restPos.y);
-		it ++;
-	}
-	it = 	m_winList.begin();
-	while (it != m_winList.end())
-	{
-		wnd::AnimateWindow *animWin = *it;
-		if (!animWin)
-		{
-			DEBUG_CRASH(("There's No AnimateWindow in the AnimateWindow List"));
-			return;
-		}
-		ICoord2D restPos = animWin->getRestPos();
-		GameWindow *win = animWin->getGameWindow();
-		if(win)
-			win->winSetPosition(restPos.x, restPos.y);
-		it ++;
-	}
+    it = m_winMustFinishList.begin();
+    while (it != m_winMustFinishList.end())
+    {
+        wnd::AnimateWindow *animWin = *it;
+        if (!animWin)
+        {
+            DEBUG_CRASH(("There's No AnimateWindow in the AnimateWindow List"));
+            return;
+        }
+        // Run the window through the processAnim's init function.
+        processAnim = getProcessAnimate(animWin->getAnimType());
+        if (processAnim)
+        {
+            processAnim->initReverseAnimateWindow(animWin, maxDelay);
+        }
 
+        animWin->setFinished(FALSE);
+        it++;
+    }
 
+    it = m_winList.begin();
+
+    while (it != m_winList.end())
+    {
+        wnd::AnimateWindow *animWin = *it;
+        if (!animWin)
+        {
+            DEBUG_CRASH(("There's No AnimateWindow in the AnimateWindow List"));
+            return;
+        }
+        processAnim = getProcessAnimate(animWin->getAnimType());
+
+        if (processAnim)
+            processAnim->initReverseAnimateWindow(animWin);
+        animWin->setFinished(FALSE);
+        it++;
+    }
+}
+
+void AnimateWindowManager::resetToRestPosition(void)
+{
+    m_reverse = TRUE;
+    m_needsUpdate = TRUE;
+
+    AnimateWindowList::iterator it = m_winMustFinishList.begin();
+    while (it != m_winMustFinishList.end())
+    {
+        wnd::AnimateWindow *animWin = *it;
+        if (!animWin)
+        {
+            DEBUG_CRASH(("There's No AnimateWindow in the AnimateWindow List"));
+            return;
+        }
+        ICoord2D restPos = animWin->getRestPos();
+        GameWindow *win = animWin->getGameWindow();
+        if (win)
+            win->winSetPosition(restPos.x, restPos.y);
+        it++;
+    }
+    it = m_winList.begin();
+    while (it != m_winList.end())
+    {
+        wnd::AnimateWindow *animWin = *it;
+        if (!animWin)
+        {
+            DEBUG_CRASH(("There's No AnimateWindow in the AnimateWindow List"));
+            return;
+        }
+        ICoord2D restPos = animWin->getRestPos();
+        GameWindow *win = animWin->getGameWindow();
+        if (win)
+            win->winSetPosition(restPos.x, restPos.y);
+        it++;
+    }
 }
 
 //-----------------------------------------------------------------------------
 // PRIVATE FUNCTIONS //////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-
-
-

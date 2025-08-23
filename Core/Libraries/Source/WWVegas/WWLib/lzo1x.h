@@ -59,16 +59,14 @@
    markus.oberhumer@jk.uni-linz.ac.at
  */
 
-
 #ifndef __LZO1X_H
 #define __LZO1X_H
 
-#include	"lzoconf.h"
+#include "lzoconf.h"
 
-//#ifdef __cplusplus
-//extern "C" {
-//#endif
-
+// #ifdef __cplusplus
+// extern "C" {
+// #endif
 
 /***********************************************************************
 //
@@ -78,48 +76,36 @@
  * When the required size is 0, you can also pass a NULL pointer.
  */
 
-#define LZO1X_MEM_COMPRESS      ((lzo_uint) (16384L * sizeof(lzo_byte *)))
-#define LZO1X_MEM_DECOMPRESS    (0)
-
+#define LZO1X_MEM_COMPRESS ((lzo_uint)(16384L * sizeof(lzo_byte *)))
+#define LZO1X_MEM_DECOMPRESS (0)
 
 /* fast decompression */
 LZO_EXTERN(int)
-lzo1x_decompress        ( const lzo_byte *src, lzo_uint  src_len,
-                                lzo_byte *dst, lzo_uint *dst_len,
-                                lzo_voidp wrkmem /* NOT USED */ );
+lzo1x_decompress(const lzo_byte *src, lzo_uint src_len, lzo_byte *dst, lzo_uint *dst_len, lzo_voidp wrkmem /* NOT USED */);
 
 /* safe decompression with overrun testing */
 LZO_EXTERN(int)
-lzo1x_decompress_x      ( const lzo_byte *src, lzo_uint  src_len,
-                                lzo_byte *dst, lzo_uint *dst_len,
-                                lzo_voidp wrkmem /* NOT USED */ );
-
+lzo1x_decompress_x(const lzo_byte *src, lzo_uint src_len, lzo_byte *dst, lzo_uint *dst_len, lzo_voidp wrkmem /* NOT USED */);
 
 /***********************************************************************
 //
 ************************************************************************/
 
 LZO_EXTERN(int)
-lzo1x_1_compress        ( const lzo_byte *src, lzo_uint  src_len,
-                                lzo_byte *dst, lzo_uint *dst_len,
-                                lzo_voidp wrkmem );
-
+lzo1x_1_compress(const lzo_byte *src, lzo_uint src_len, lzo_byte *dst, lzo_uint *dst_len, lzo_voidp wrkmem);
 
 /***********************************************************************
 // better compression ratio at the cost of more memory and time
 ************************************************************************/
 
-#define LZO1X_999_MEM_COMPRESS  ((lzo_uint) (14 * 16384L * sizeof(short)))
+#define LZO1X_999_MEM_COMPRESS ((lzo_uint)(14 * 16384L * sizeof(short)))
 
 LZO_EXTERN(int)
-lzo1x_999_compress      ( const lzo_byte *src, lzo_uint  src_len,
-                                lzo_byte *dst, lzo_uint *dst_len,
-                                lzo_voidp wrkmem );
+lzo1x_999_compress(const lzo_byte *src, lzo_uint src_len, lzo_byte *dst, lzo_uint *dst_len, lzo_voidp wrkmem);
 
-
-//#ifdef __cplusplus
-//} /* extern "C" */
-//#endif
+// #ifdef __cplusplus
+// } /* extern "C" */
+// #endif
 
 #endif /* already included */
 

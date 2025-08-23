@@ -32,48 +32,47 @@ class MapObject;
 
 class LightOptions : public COptionsPanel
 {
-
-// Construction
+    // Construction
 public:
-	LightOptions(CWnd* pParent = NULL);   // standard constructor
+    LightOptions(CWnd *pParent = NULL); // standard constructor
 
-// Dialog Data
-	//{{AFX_DATA(LightOptions)
-	enum { IDD = IDD_LIGHT_OPTIONS };
-		// NOTE: the ClassWizard will add data members here
-	//}}AFX_DATA
+    // Dialog Data
+    //{{AFX_DATA(LightOptions)
+    enum
+    {
+        IDD = IDD_LIGHT_OPTIONS
+    };
+    // NOTE: the ClassWizard will add data members here
+    //}}AFX_DATA
 
-
-// Overrides
-	// ClassWizard generated virtual function overrides
-	//{{AFX_VIRTUAL(LightOptions)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
-	virtual void OnOK(){return;};  //!< Modeless dialogs don't OK, so eat this for modeless.
-	virtual void OnCancel(){return;}; //!< Modeless dialogs don't close on ESC, so eat this for modeless.
-	//}}AFX_VIRTUAL
-
-// Implementation
+    // Overrides
+    // ClassWizard generated virtual function overrides
+    //{{AFX_VIRTUAL(LightOptions)
 protected:
+    virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
+    virtual void OnOK() { return; }; //!< Modeless dialogs don't OK, so eat this for modeless.
+    virtual void OnCancel() { return; }; //!< Modeless dialogs don't close on ESC, so eat this for modeless.
+    //}}AFX_VIRTUAL
 
-	// Generated message map functions
-	//{{AFX_MSG(LightOptions)
-	virtual BOOL OnInitDialog();
-	afx_msg void OnChangeLightEdit();
-	//}}AFX_MSG
-	DECLARE_MESSAGE_MAP()
-
+    // Implementation
 protected:
-	static LightOptions *m_staticThis;  ///< Reference to the floating panel so SetWidth and SetFeather can be static.
-	Bool		m_updating; ///<true if the ui is updating itself.
+    // Generated message map functions
+    //{{AFX_MSG(LightOptions)
+    virtual BOOL OnInitDialog();
+    afx_msg void OnChangeLightEdit();
+    //}}AFX_MSG
+    DECLARE_MESSAGE_MAP()
 
 protected:
-	void updateTheUI(void);
+    static LightOptions *m_staticThis; ///< Reference to the floating panel so SetWidth and SetFeather can be static.
+    Bool m_updating; ///< true if the ui is updating itself.
+
+protected:
+    void updateTheUI(void);
 
 public:
-	static void update(void);
-	static MapObject *getSingleSelectedLight(void);
-
+    static void update(void);
+    static MapObject *getSingleSelectedLight(void);
 };
 
 //{{AFX_INSERT_LOCATION}}

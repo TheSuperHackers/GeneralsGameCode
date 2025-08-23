@@ -38,76 +38,72 @@
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void DamageInfo::xfer( Xfer *xfer )
+void DamageInfo::xfer(Xfer *xfer)
 {
+    // version
+    XferVersion currentVersion = 1;
+    XferVersion version = currentVersion;
+    xfer->xferVersion(&version, currentVersion);
 
-	// version
-	XferVersion currentVersion = 1;
-	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+    // xfer input
+    xfer->xferSnapshot(&in);
 
-	// xfer input
-	xfer->xferSnapshot( &in );
+    // xfer output
+    xfer->xferSnapshot(&out);
 
-	// xfer output
-	xfer->xferSnapshot( &out );
-
-}  // end xfer
+} // end xfer
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void DamageInfoInput::xfer( Xfer *xfer )
+void DamageInfoInput::xfer(Xfer *xfer)
 {
+    // version
+    XferVersion currentVersion = 1;
+    XferVersion version = currentVersion;
+    xfer->xferVersion(&version, currentVersion);
 
-	// version
-	XferVersion currentVersion = 1;
-	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+    // source id
+    xfer->xferObjectID(&m_sourceID);
 
-	// source id
-	xfer->xferObjectID( &m_sourceID );
+    // source player mask
+    xfer->xferUser(&m_sourcePlayerMask, sizeof(PlayerMaskType));
 
-	// source player mask
-	xfer->xferUser( &m_sourcePlayerMask, sizeof( PlayerMaskType ) );
+    // damage type
+    xfer->xferUser(&m_damageType, sizeof(DamageType));
 
-	// damage type
-	xfer->xferUser( &m_damageType, sizeof( DamageType ) );
+    // death type
+    xfer->xferUser(&m_deathType, sizeof(DeathType));
 
-	// death type
-	xfer->xferUser( &m_deathType, sizeof( DeathType ) );
+    // amount
+    xfer->xferReal(&m_amount);
 
-	// amount
-	xfer->xferReal( &m_amount );
-
-}  // end xfer
+} // end xfer
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void DamageInfoOutput::xfer( Xfer *xfer )
+void DamageInfoOutput::xfer(Xfer *xfer)
 {
+    // version
+    XferVersion currentVersion = 1;
+    XferVersion version = currentVersion;
+    xfer->xferVersion(&version, currentVersion);
 
-	// version
-	XferVersion currentVersion = 1;
-	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+    // actual damage
+    xfer->xferReal(&m_actualDamageDealt);
 
-	// actual damage
-	xfer->xferReal( &m_actualDamageDealt );
+    // damage clipped
+    xfer->xferReal(&m_actualDamageClipped);
 
-	// damage clipped
-	xfer->xferReal( &m_actualDamageClipped );
+    // no effect
+    xfer->xferBool(&m_noEffect);
 
-	// no effect
-	xfer->xferBool( &m_noEffect );
-
-}  // end xfer
-
+} // end xfer

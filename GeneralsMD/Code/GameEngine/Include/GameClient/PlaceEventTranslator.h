@@ -36,12 +36,12 @@
 class PlaceEventTranslator : public GameMessageTranslator
 {
 private:
-	UnsignedInt m_frameOfUpButton;
+    UnsignedInt m_frameOfUpButton;
 
 public:
-	PlaceEventTranslator();
-	~PlaceEventTranslator();
-	virtual GameMessageDisposition translateGameMessage(const GameMessage *msg);
+    PlaceEventTranslator();
+    ~PlaceEventTranslator();
+    virtual GameMessageDisposition translateGameMessage(const GameMessage *msg);
 };
 
 #endif

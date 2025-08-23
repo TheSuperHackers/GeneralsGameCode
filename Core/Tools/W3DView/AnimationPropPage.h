@@ -30,36 +30,37 @@
 
 class CAnimationPropPage : public CPropertyPage
 {
-	DECLARE_DYNCREATE(CAnimationPropPage)
+    DECLARE_DYNCREATE(CAnimationPropPage)
 
-// Construction
+    // Construction
 public:
-	CAnimationPropPage();
-	~CAnimationPropPage();
+    CAnimationPropPage();
+    ~CAnimationPropPage();
 
-// Dialog Data
-	//{{AFX_DATA(CAnimationPropPage)
-	enum { IDD = IDD_PROP_PAGE_ANIMATION };
-		// NOTE - ClassWizard will add data members here.
-		//    DO NOT EDIT what you see in these blocks of generated code !
-	//}}AFX_DATA
+    // Dialog Data
+    //{{AFX_DATA(CAnimationPropPage)
+    enum
+    {
+        IDD = IDD_PROP_PAGE_ANIMATION
+    };
+    // NOTE - ClassWizard will add data members here.
+    //    DO NOT EDIT what you see in these blocks of generated code !
+    //}}AFX_DATA
 
-
-// Overrides
-	// ClassWizard generate virtual function overrides
-	//{{AFX_VIRTUAL(CAnimationPropPage)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
-	//}}AFX_VIRTUAL
-
-// Implementation
+    // Overrides
+    // ClassWizard generate virtual function overrides
+    //{{AFX_VIRTUAL(CAnimationPropPage)
 protected:
-	// Generated message map functions
-	//{{AFX_MSG(CAnimationPropPage)
-	virtual BOOL OnInitDialog();
-	//}}AFX_MSG
-	DECLARE_MESSAGE_MAP()
+    virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
+    //}}AFX_VIRTUAL
 
+    // Implementation
+protected:
+    // Generated message map functions
+    //{{AFX_MSG(CAnimationPropPage)
+    virtual BOOL OnInitDialog();
+    //}}AFX_MSG
+    DECLARE_MESSAGE_MAP()
 };
 
 //{{AFX_INSERT_LOCATION}}

@@ -50,252 +50,240 @@
 #include "WW3D2/scene.h"
 #include "WW3D2/matinfo.h"
 
-
-
 /**This class will hold all information about a W3D RenderObject needed to
 reconstruct it if necessary*/
 class W3DRenderObjectSnapshot : public Snapshot
 {
-	friend W3DGhostObject;
+    friend W3DGhostObject;
 
-	W3DRenderObjectSnapshot(RenderObjClass *m_parentRobj, DrawableInfo *drawInfo, Bool cloneParentRobj = TRUE);
-	~W3DRenderObjectSnapshot() {REF_PTR_RELEASE(m_robj);}
-	inline void update(RenderObjClass *robj, DrawableInfo *drawInfo, Bool cloneParentRobj=TRUE);	///<refresh the current snapshot with latest state
-	inline void addToScene(void);	///< add this fogged renderobject to the scene.
+    W3DRenderObjectSnapshot(RenderObjClass *m_parentRobj, DrawableInfo *drawInfo, Bool cloneParentRobj = TRUE);
+    ~W3DRenderObjectSnapshot() { REF_PTR_RELEASE(m_robj); }
+    inline void update(
+        RenderObjClass *robj,
+        DrawableInfo *drawInfo,
+        Bool cloneParentRobj = TRUE); ///< refresh the current snapshot with latest state
+    inline void addToScene(void); ///< add this fogged renderobject to the scene.
 protected:
-
-	virtual void crc( Xfer *xfer );
-	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess( void );
+    virtual void crc(Xfer *xfer);
+    virtual void xfer(Xfer *xfer);
+    virtual void loadPostProcess(void);
 
 #ifdef DEBUG_FOG_MEMORY
-	const char *m_robjName;		///<debug pointer so we know what this is a snapshot of.
+    const char *m_robjName; ///< debug pointer so we know what this is a snapshot of.
 #endif
-	RenderObjClass *m_robj;		///<render object representing state at time of snapshot
-	W3DRenderObjectSnapshot *m_next;	///<snapshot of next render object belonging to same drawable
+    RenderObjClass *m_robj; ///< render object representing state at time of snapshot
+    W3DRenderObjectSnapshot *m_next; ///< snapshot of next render object belonging to same drawable
 };
 
-//Dummy material override which we assign to all ghost objects to disable their
-//texture animation.
+// Dummy material override which we assign to all ghost objects to disable their
+// texture animation.
 static RenderObjClass::Material_Override animationDisableOverride;
 
-//Helper function used to disable all UV mapper animations on a given model.
+// Helper function used to disable all UV mapper animations on a given model.
 void disableUVAnimations(RenderObjClass *robj)
 {
-	if (robj && robj->Class_ID() == RenderObjClass::CLASSID_HLOD)
-	{
-		//Also disable any animations that may be playing using mappers (texture scrolling)
-		for (Int i=0; i < robj->Get_Num_Sub_Objects(); i++)
-		{
-			RenderObjClass *subObj=robj->Get_Sub_Object(i);
-			if (subObj && subObj->Class_ID() == RenderObjClass::CLASSID_MESH)
-			{	//check if sub-object has the correct material to do texture scrolling.
-				MaterialInfoClass *mat=subObj->Get_Material_Info();
-				if (mat)
-				{	for (Int j=0; j<mat->Vertex_Material_Count(); j++)
-					{
-						VertexMaterialClass *vmaterial=mat->Peek_Vertex_Material(j);
-						LinearOffsetTextureMapperClass *mapper=(LinearOffsetTextureMapperClass *)vmaterial->Peek_Mapper();
-						if (mapper && mapper->Mapper_ID() == TextureMapperClass::MAPPER_ID_LINEAR_OFFSET)
-						{
-							subObj->Set_User_Data(&animationDisableOverride);	//tell W3D about custom material settings
-						}
-					}
-					REF_PTR_RELEASE(mat);
-				}
-			}
-			REF_PTR_RELEASE(subObj);
-		}
-	}
+    if (robj && robj->Class_ID() == RenderObjClass::CLASSID_HLOD)
+    {
+        // Also disable any animations that may be playing using mappers (texture scrolling)
+        for (Int i = 0; i < robj->Get_Num_Sub_Objects(); i++)
+        {
+            RenderObjClass *subObj = robj->Get_Sub_Object(i);
+            if (subObj && subObj->Class_ID() == RenderObjClass::CLASSID_MESH)
+            { // check if sub-object has the correct material to do texture scrolling.
+                MaterialInfoClass *mat = subObj->Get_Material_Info();
+                if (mat)
+                {
+                    for (Int j = 0; j < mat->Vertex_Material_Count(); j++)
+                    {
+                        VertexMaterialClass *vmaterial = mat->Peek_Vertex_Material(j);
+                        LinearOffsetTextureMapperClass *mapper = (LinearOffsetTextureMapperClass *)vmaterial->Peek_Mapper();
+                        if (mapper && mapper->Mapper_ID() == TextureMapperClass::MAPPER_ID_LINEAR_OFFSET)
+                        {
+                            subObj->Set_User_Data(&animationDisableOverride); // tell W3D about custom material settings
+                        }
+                    }
+                    REF_PTR_RELEASE(mat);
+                }
+            }
+            REF_PTR_RELEASE(subObj);
+        }
+    }
 }
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void W3DRenderObjectSnapshot::update(RenderObjClass *robj, DrawableInfo *drawInfo,
-																		 Bool cloneParentRobj)
+void W3DRenderObjectSnapshot::update(RenderObjClass *robj, DrawableInfo *drawInfo, Bool cloneParentRobj)
 {
-	REF_PTR_RELEASE(m_robj);
+    REF_PTR_RELEASE(m_robj);
 
-	if( cloneParentRobj == TRUE )
-	{
-
-		m_robj=robj->Clone();
-		m_robj->Set_ObjectColor(robj->Get_ObjectColor());
+    if (cloneParentRobj == TRUE)
+    {
+        m_robj = robj->Clone();
+        m_robj->Set_ObjectColor(robj->Get_ObjectColor());
 #ifdef DEBUG_FOG_MEMORY
-		m_robjName = m_robj->Get_Name();
+        m_robjName = m_robj->Get_Name();
 #endif
-		//Set cloned object to same state as original object.
-		m_robj->Set_Transform(robj->Get_Transform());
-		if (robj->Class_ID() == RenderObjClass::CLASSID_HLOD)
-		{
-			float frame,mult;
-			int mode,numFrames;
+        // Set cloned object to same state as original object.
+        m_robj->Set_Transform(robj->Get_Transform());
+        if (robj->Class_ID() == RenderObjClass::CLASSID_HLOD)
+        {
+            float frame, mult;
+            int mode, numFrames;
 
-			HAnimClass *hanim=((HLodClass *)robj)->Peek_Animation_And_Info(frame,numFrames,mode,mult);
-			m_robj->Set_Animation(hanim,frame);
-			disableUVAnimations(m_robj);
-		}	//HLOD
-	}
-	else
-		m_robj=robj;
+            HAnimClass *hanim = ((HLodClass *)robj)->Peek_Animation_And_Info(frame, numFrames, mode, mult);
+            m_robj->Set_Animation(hanim, frame);
+            disableUVAnimations(m_robj);
+        } // HLOD
+    }
+    else
+        m_robj = robj;
 
-	m_robj->Set_User_Data(drawInfo);
-
+    m_robj->Set_User_Data(drawInfo);
 }
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 void W3DRenderObjectSnapshot::addToScene(void)
 {
-	if (W3DDisplay::m_3DScene != NULL)
-		((SimpleSceneClass *)W3DDisplay::m_3DScene)->Add_Render_Object(m_robj);
+    if (W3DDisplay::m_3DScene != NULL)
+        ((SimpleSceneClass *)W3DDisplay::m_3DScene)->Add_Render_Object(m_robj);
 }
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-W3DRenderObjectSnapshot::W3DRenderObjectSnapshot(RenderObjClass *robj, DrawableInfo *drawInfo,
-																								 Bool cloneParentRobj)
+W3DRenderObjectSnapshot::W3DRenderObjectSnapshot(RenderObjClass *robj, DrawableInfo *drawInfo, Bool cloneParentRobj)
 {
-	m_robj=NULL;
-	m_next=NULL;
-	update(robj, drawInfo, cloneParentRobj);
+    m_robj = NULL;
+    m_next = NULL;
+    update(robj, drawInfo, cloneParentRobj);
 }
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void W3DRenderObjectSnapshot::crc( Xfer *xfer )
+void W3DRenderObjectSnapshot::crc(Xfer *xfer)
 {
-
-}  // end crc
+} // end crc
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void W3DRenderObjectSnapshot::xfer( Xfer *xfer )
+void W3DRenderObjectSnapshot::xfer(Xfer *xfer)
 {
+    // version
+    XferVersion currentVersion = 1;
+    XferVersion version = currentVersion;
+    xfer->xferVersion(&version, currentVersion);
 
-	// version
-	XferVersion currentVersion = 1;
-	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+    // sanity
+    DEBUG_ASSERTCRASH(m_robj, ("W3DRenderObjectSnapshot::xfer - invalid m_robj"));
 
-	// sanity
-	DEBUG_ASSERTCRASH( m_robj, ("W3DRenderObjectSnapshot::xfer - invalid m_robj") );
+    // transform on the main render object
+    Matrix3D transform;
+    transform = m_robj->Get_Transform();
+    xfer->xferUser(&transform, sizeof(Matrix3D));
+    if (xfer->getXferMode() == XFER_LOAD)
+        m_robj->Set_Transform(transform);
 
-	// transform on the main render object
-	Matrix3D transform;
-	transform = m_robj->Get_Transform();
-	xfer->xferUser( &transform, sizeof( Matrix3D ) );
-	if( xfer->getXferMode() == XFER_LOAD )
-		m_robj->Set_Transform( transform );
+    // how many sub objects of data will follow
+    Int subObjectCount = m_robj->Get_Num_Sub_Objects();
+    xfer->xferInt(&subObjectCount);
 
-	// how many sub objects of data will follow
-	Int subObjectCount = m_robj->Get_Num_Sub_Objects();
-	xfer->xferInt( &subObjectCount );
+    Bool visible;
+    RenderObjClass *subObject;
+    AsciiString subObjectName;
+    for (Int i = 0; i < subObjectCount; ++i)
+    {
+        //
+        // when saving we get sub objects by index and xfer their name, when loading
+        // we read the name and find that sub object
+        //
+        if (xfer->getXferMode() == XFER_SAVE)
+        {
+            // get sub object
+            subObject = m_robj->Get_Sub_Object(i);
 
-	Bool visible;
-	RenderObjClass *subObject;
-	AsciiString subObjectName;
-	for( Int i = 0; i < subObjectCount; ++i )
-	{
+            // xfer sub object name which is unique among those in this render object
+            subObjectName.set(subObject->Get_Name());
+            xfer->xferAsciiString(&subObjectName);
 
-		//
-		// when saving we get sub objects by index and xfer their name, when loading
-		// we read the name and find that sub object
-		//
-		if( xfer->getXferMode() == XFER_SAVE )
-		{
+        } // end if, save
+        else
+        {
+            // read sub object name
+            xfer->xferAsciiString(&subObjectName);
 
-			// get sub object
-			subObject = m_robj->Get_Sub_Object( i );
+            // find this sub object on the object
+            subObject = m_robj->Get_Sub_Object_By_Name(subObjectName.str());
 
-			// xfer sub object name which is unique among those in this render object
-			subObjectName.set( subObject->Get_Name() );
-			xfer->xferAsciiString( &subObjectName );
+        } // end else load
 
-		}  // end if, save
-		else
-		{
+        //
+        // NOTE that the remainder of this xfer code works on a sub object only *if*
+        // it is present.  It is possible that in future patches we change the artwork
+        // for some objects which could remove sub objects for which we have data saved
+        // for in the save game file.  If we encounter data in the save file for
+        // sub objects that are no longer in the artwork we just read the data and
+        // throw it away
+        //
 
-			// read sub object name
-			xfer->xferAsciiString( &subObjectName );
+        // visible/hidden status of this sub object
+        if (subObject)
+            visible = subObject->Is_Not_Hidden_At_All();
+        xfer->xferBool(&visible);
+        if (subObject && xfer->getXferMode() == XFER_LOAD)
+            subObject->Set_Hidden(!visible);
 
-			// find this sub object on the object
-			subObject = m_robj->Get_Sub_Object_By_Name( subObjectName.str() );
+        // transform of this sub object
+        if (subObject)
+            transform = subObject->Get_Transform();
+        xfer->xferUser(&transform, sizeof(Matrix3D));
+        if (subObject && xfer->getXferMode() == XFER_LOAD)
+            subObject->Set_Transform(transform);
 
-		}  // end else load
+        // need to tell W3D that this sub object transforms are ok
+        if (subObject)
+        {
+            // need to cast to HLod if we can to validate the hierarchy
+            if (subObject->Class_ID() == RenderObjClass::CLASSID_HLOD)
+                ((HLodClass *)subObject)->Friend_Set_Hierarchy_Valid(TRUE);
 
-		//
-		// NOTE that the remainder of this xfer code works on a sub object only *if*
-		// it is present.  It is possible that in future patches we change the artwork
-		// for some objects which could remove sub objects for which we have data saved
-		// for in the save game file.  If we encounter data in the save file for
-		// sub objects that are no longer in the artwork we just read the data and
-		// throw it away
-		//
+        } // end if
 
-		// visible/hidden status of this sub object
-		if( subObject )
-			visible = subObject->Is_Not_Hidden_At_All();
-		xfer->xferBool( &visible );
-		if( subObject && xfer->getXferMode() == XFER_LOAD )
-			subObject->Set_Hidden( !visible );
+        // release reference to sub object
+        if (subObject)
+            REF_PTR_RELEASE(subObject);
 
-		// transform of this sub object
-		if( subObject )
-			transform = subObject->Get_Transform();
-		xfer->xferUser( &transform, sizeof( Matrix3D ) );
-		if( subObject && xfer->getXferMode() == XFER_LOAD )
-			subObject->Set_Transform( transform );
+    } // end for, i
 
-		// need to tell W3D that this sub object transforms are ok
-		if( subObject )
-		{
+    // tell W3D that the transforms for our sub objects are all OK cause we've done them ourselves
+    m_robj->Set_Sub_Object_Transforms_Dirty(FALSE);
 
-			// need to cast to HLod if we can to validate the hierarchy
-			if( subObject->Class_ID() == RenderObjClass::CLASSID_HLOD )
-				((HLodClass *)subObject)->Friend_Set_Hierarchy_Valid( TRUE );
-
-		}  // end if
-
-		// release reference to sub object
-		if( subObject )
-			REF_PTR_RELEASE( subObject );
-
-	}  // end for, i
-
-	// tell W3D that the transforms for our sub objects are all OK cause we've done them ourselves
-	m_robj->Set_Sub_Object_Transforms_Dirty( FALSE );
-
-}  // end xfer
+} // end xfer
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void W3DRenderObjectSnapshot::loadPostProcess( void )
+void W3DRenderObjectSnapshot::loadPostProcess(void)
 {
-
-}  // end loadPostProcess
+} // end loadPostProcess
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 W3DGhostObject::W3DGhostObject()
 {
+    for (Int i = 0; i < MAX_PLAYER_COUNT; i++)
+        m_parentSnapshots[i] = NULL;
 
-	for (Int i=0; i< MAX_PLAYER_COUNT; i++)
-		m_parentSnapshots[i]=NULL;
+    m_drawableInfo.m_drawable = NULL;
+    m_drawableInfo.m_flags = 0;
+    m_drawableInfo.m_ghostObject = NULL;
+    m_drawableInfo.m_shroudStatusObjectID = INVALID_ID;
 
-	m_drawableInfo.m_drawable = NULL;
-	m_drawableInfo.m_flags = 0;
-	m_drawableInfo.m_ghostObject = NULL;
-	m_drawableInfo.m_shroudStatusObjectID = INVALID_ID;
-
-	m_nextSystem = NULL;
-	m_prevSystem = NULL;
-
+    m_nextSystem = NULL;
+    m_prevSystem = NULL;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -303,12 +291,14 @@ W3DGhostObject::W3DGhostObject()
 W3DGhostObject::~W3DGhostObject()
 {
 #ifdef DEBUG_FOG_MEMORY
-	for (Int i=0; i<MAX_PLAYER_COUNT; i++)
-	{
-		DEBUG_ASSERTCRASH(m_parentSnapshots[i] == NULL, ("Delete of non-empty GhostObject"));
-	}
+    for (Int i = 0; i < MAX_PLAYER_COUNT; i++)
+    {
+        DEBUG_ASSERTCRASH(m_parentSnapshots[i] == NULL, ("Delete of non-empty GhostObject"));
+    }
 #else
-	DEBUG_ASSERTCRASH(m_parentSnapshots[TheGhostObjectManager->getLocalPlayerIndex()] == NULL, ("Delete of non-empty GhostObject"));
+    DEBUG_ASSERTCRASH(
+        m_parentSnapshots[TheGhostObjectManager->getLocalPlayerIndex()] == NULL,
+        ("Delete of non-empty GhostObject"));
 #endif
 }
 
@@ -320,70 +310,70 @@ Should only be called when object enters the fogged state.*/
 void W3DGhostObject::snapShot(int playerIndex)
 {
 #ifndef DEBUG_FOG_MEMORY
-	if (playerIndex != TheGhostObjectManager->getLocalPlayerIndex())
-		return;	//we only snapshot things for the initial local player because local player can't change in non-debug game.
+    if (playerIndex != TheGhostObjectManager->getLocalPlayerIndex())
+        return; // we only snapshot things for the initial local player because local player can't change in non-debug game.
 #endif
 
-	Drawable *draw=m_parentObject->getDrawable();
-	if (draw->isDrawableEffectivelyHidden())
-		return;	//don't bother to snapshot things which nobody can see.
+    Drawable *draw = m_parentObject->getDrawable();
+    if (draw->isDrawableEffectivelyHidden())
+        return; // don't bother to snapshot things which nobody can see.
 
-	W3DRenderObjectSnapshot *snap=m_parentSnapshots[playerIndex],*prevSnap=NULL;
+    W3DRenderObjectSnapshot *snap = m_parentSnapshots[playerIndex], *prevSnap = NULL;
 
-	//walk through all W3D render objects used by this object
-	for (DrawModule ** dm = draw->getDrawModules(); *dm; ++dm)
-	{
-		const ObjectDrawInterface* di = (*dm)->getObjectDrawInterface();
-		if (di)
-		{
-			W3DModelDraw *w3dDraw= (W3DModelDraw *)di;
-			RenderObjClass *robj=NULL;
+    // walk through all W3D render objects used by this object
+    for (DrawModule **dm = draw->getDrawModules(); *dm; ++dm)
+    {
+        const ObjectDrawInterface *di = (*dm)->getObjectDrawInterface();
+        if (di)
+        {
+            W3DModelDraw *w3dDraw = (W3DModelDraw *)di;
+            RenderObjClass *robj = NULL;
 
-			robj=w3dDraw->getRenderObject();
-			//robj may be null for modules which have no render objects such
-			//as for build-ups that are currently disabled.
-			if (robj)
-			{
-				if (snap == NULL)
-				{
-					snap = NEW W3DRenderObjectSnapshot(robj, &m_drawableInfo);	// poolify
-					if (prevSnap)
-						prevSnap->m_next=snap;
-					else
-						m_parentSnapshots[playerIndex]=snap;
-				}
-				else
-					m_parentSnapshots[playerIndex]->update(robj, &m_drawableInfo);
+            robj = w3dDraw->getRenderObject();
+            // robj may be null for modules which have no render objects such
+            // as for build-ups that are currently disabled.
+            if (robj)
+            {
+                if (snap == NULL)
+                {
+                    snap = NEW W3DRenderObjectSnapshot(robj, &m_drawableInfo); // poolify
+                    if (prevSnap)
+                        prevSnap->m_next = snap;
+                    else
+                        m_parentSnapshots[playerIndex] = snap;
+                }
+                else
+                    m_parentSnapshots[playerIndex]->update(robj, &m_drawableInfo);
 
-				//Adding and removing render objects to the scene is expensive
-				//so only do it for the real player watching the screen.  There is
-				//also no point in displaying the other player's ghost objects to
-				//the current player.
-				if (playerIndex == TheGhostObjectManager->getLocalPlayerIndex())
-				{
-					robj->Remove();	//remove normal object from scene
-					snap->addToScene();
-				}
+                // Adding and removing render objects to the scene is expensive
+                // so only do it for the real player watching the screen.  There is
+                // also no point in displaying the other player's ghost objects to
+                // the current player.
+                if (playerIndex == TheGhostObjectManager->getLocalPlayerIndex())
+                {
+                    robj->Remove(); // remove normal object from scene
+                    snap->addToScene();
+                }
 
-				prevSnap=snap;
-				snap = snap->m_next;
-			}
-		}
-	}
+                prevSnap = snap;
+                snap = snap->m_next;
+            }
+        }
+    }
 
-	//Check if we captured at least one snapshot
-	if (snap != m_parentSnapshots[playerIndex])
-	{	//save off other info we may need in case the parent object is destroyed.
-		///@todo: We're going to ignore the case where each player index could be
-		//looking at a different geometry info/orientation because ghostobjects
-		//are supposed to be used on immobile buildings.
-		m_parentGeometryType=m_parentObject->getGeometryInfo().getGeomType();
-		m_parentGeometryIsSmall=m_parentObject->getGeometryInfo().getIsSmall();
-		m_parentGeometryMajorRadius=m_parentObject->getGeometryInfo().getMajorRadius();
-		m_parentGeometryminorRadius=m_parentObject->getGeometryInfo().getMinorRadius();
-		m_parentPosition=*m_parentObject->getPosition();
-		m_parentAngle=m_parentObject->getOrientation();
-	}
+    // Check if we captured at least one snapshot
+    if (snap != m_parentSnapshots[playerIndex])
+    { // save off other info we may need in case the parent object is destroyed.
+        ///@todo: We're going to ignore the case where each player index could be
+        // looking at a different geometry info/orientation because ghostobjects
+        // are supposed to be used on immobile buildings.
+        m_parentGeometryType = m_parentObject->getGeometryInfo().getGeomType();
+        m_parentGeometryIsSmall = m_parentObject->getGeometryInfo().getIsSmall();
+        m_parentGeometryMajorRadius = m_parentObject->getGeometryInfo().getMajorRadius();
+        m_parentGeometryminorRadius = m_parentObject->getGeometryInfo().getMinorRadius();
+        m_parentPosition = *m_parentObject->getPosition();
+        m_parentAngle = m_parentObject->getOrientation();
+    }
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -391,34 +381,33 @@ void W3DGhostObject::snapShot(int playerIndex)
 // ------------------------------------------------------------------------------------------------
 void W3DGhostObject::removeParentObject(void)
 {
+    // sanity
+    if (m_parentObject == NULL)
+        return;
 
-	// sanity
-	if( m_parentObject == NULL )
-		return;
+    Drawable *draw = m_parentObject->getDrawable();
 
-	Drawable *draw=m_parentObject->getDrawable();
+    // After we remove the unfogged object, we also disable
+    // anything that should be hidden inside fog - shadow, particles, etc.
+    draw->setFullyObscuredByShroud(true);
 
-	//After we remove the unfogged object, we also disable
-	//anything that should be hidden inside fog - shadow, particles, etc.
-	draw->setFullyObscuredByShroud(true);
+    // walk through all W3D render objects used by this object
+    for (DrawModule **dm = draw->getDrawModules(); *dm; ++dm)
+    {
+        const ObjectDrawInterface *di = (*dm)->getObjectDrawInterface();
+        if (di)
+        {
+            W3DModelDraw *w3dDraw = (W3DModelDraw *)di;
+            RenderObjClass *robj = NULL;
 
-	//walk through all W3D render objects used by this object
-	for (DrawModule ** dm = draw->getDrawModules(); *dm; ++dm)
-	{
-		const ObjectDrawInterface* di = (*dm)->getObjectDrawInterface();
-		if (di)
-		{
-			W3DModelDraw *w3dDraw= (W3DModelDraw *)di;
-			RenderObjClass *robj=NULL;
-
-			robj=w3dDraw->getRenderObject();
-			if (robj)
-			{
-				DEBUG_ASSERTCRASH(robj->Peek_Scene() != NULL, ("Removing GhostObject parent not in scene"));
-				robj->Remove();
-			}
-		}
-	}
+            robj = w3dDraw->getRenderObject();
+            if (robj)
+            {
+                DEBUG_ASSERTCRASH(robj->Peek_Scene() != NULL, ("Removing GhostObject parent not in scene"));
+                robj->Remove();
+            }
+        }
+    }
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -426,68 +415,69 @@ void W3DGhostObject::removeParentObject(void)
 // ------------------------------------------------------------------------------------------------
 void W3DGhostObject::restoreParentObject(void)
 {
-	if (TheGlobalData->m_headless)
-		return;
-	Drawable *draw=m_parentObject->getDrawable();
-	if (!draw)
-		return;
+    if (TheGlobalData->m_headless)
+        return;
+    Drawable *draw = m_parentObject->getDrawable();
+    if (!draw)
+        return;
 
-	//Notify drawable that it's okay to render its render objects again.
-	draw->setFullyObscuredByShroud(false);
+    // Notify drawable that it's okay to render its render objects again.
+    draw->setFullyObscuredByShroud(false);
 
-	//walk through all W3D render objects used by this object
-	for (DrawModule ** dm = draw->getDrawModules(); *dm; ++dm)
-	{
-		const ObjectDrawInterface* di = (*dm)->getObjectDrawInterface();
-		if (di)
-		{
-			W3DModelDraw *w3dDraw= (W3DModelDraw *)di;
-			RenderObjClass *robj=NULL;
+    // walk through all W3D render objects used by this object
+    for (DrawModule **dm = draw->getDrawModules(); *dm; ++dm)
+    {
+        const ObjectDrawInterface *di = (*dm)->getObjectDrawInterface();
+        if (di)
+        {
+            W3DModelDraw *w3dDraw = (W3DModelDraw *)di;
+            RenderObjClass *robj = NULL;
 
-			robj=w3dDraw->getRenderObject();
-			//robj may be null for modules which have no render objects such
-			//as for build-ups that are currently disabled.
-			if (robj)
-			{	//if we have a render object that's not in the scene, it must have been
-				//removed by the ghost object manager, so restore it.  If we have a render
-				//object that is in the scene, then it was probably added because the model
-				//changed while the object was ghosted (for damage states, garrison, etc.).
-				if (robj->Peek_Scene() == NULL)
-					((SimpleSceneClass *)W3DDisplay::m_3DScene)->Add_Render_Object(robj);
-			}
-		}
-	}
+            robj = w3dDraw->getRenderObject();
+            // robj may be null for modules which have no render objects such
+            // as for build-ups that are currently disabled.
+            if (robj)
+            { // if we have a render object that's not in the scene, it must have been
+                // removed by the ghost object manager, so restore it.  If we have a render
+                // object that is in the scene, then it was probably added because the model
+                // changed while the object was ghosted (for damage states, garrison, etc.).
+                if (robj->Peek_Scene() == NULL)
+                    ((SimpleSceneClass *)W3DDisplay::m_3DScene)->Add_Render_Object(robj);
+            }
+        }
+    }
 }
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 void W3DGhostObject::freeAllSnapShots(void)
 {
-	Int playerIndex;
+    Int playerIndex;
 
 #ifdef DEBUG_FOG_MEMORY
-	for (playerIndex=0; playerIndex<MAX_PLAYER_COUNT; playerIndex++)
+    for (playerIndex = 0; playerIndex < MAX_PLAYER_COUNT; playerIndex++)
 #else
-	playerIndex = TheGhostObjectManager->getLocalPlayerIndex();
+    playerIndex = TheGhostObjectManager->getLocalPlayerIndex();
 #endif
-		if (m_parentSnapshots[playerIndex])
-		{	//if we have a snapshot for this object, remove it from
-			//scene.
-			removeFromScene(playerIndex);
+        if (m_parentSnapshots[playerIndex])
+        { // if we have a snapshot for this object, remove it from
+            // scene.
+            removeFromScene(playerIndex);
 
-			//Restore actual objects assuming they are still alive.
-			if (m_parentObject)
-				restoreParentObject();
+            // Restore actual objects assuming they are still alive.
+            if (m_parentObject)
+                restoreParentObject();
 
-			W3DRenderObjectSnapshot *snap=m_parentSnapshots[playerIndex];
-			W3DRenderObjectSnapshot *nextSnap;
-			while (snap)
-			{	nextSnap = snap->m_next;
-				delete snap;
-				snap = nextSnap;
-			}
-			m_parentSnapshots[playerIndex]=NULL;
-		}
+            W3DRenderObjectSnapshot *snap = m_parentSnapshots[playerIndex];
+            W3DRenderObjectSnapshot *nextSnap;
+            while (snap)
+            {
+                nextSnap = snap->m_next;
+                delete snap;
+                snap = nextSnap;
+            }
+            m_parentSnapshots[playerIndex] = NULL;
+        }
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -496,43 +486,44 @@ void W3DGhostObject::freeAllSnapShots(void)
 void W3DGhostObject::freeSnapShot(int playerIndex)
 {
 #ifndef DEBUG_FOG_MEMORY
-	if (playerIndex != TheGhostObjectManager->getLocalPlayerIndex())
-		return;	//we only snapshot things for the local player
+    if (playerIndex != TheGhostObjectManager->getLocalPlayerIndex())
+        return; // we only snapshot things for the local player
 #endif
 
-	if (m_parentSnapshots[playerIndex])
-	{	//if we have a snapshot for this object, remove it from
-		//scene and put back the original object if it still exists.
-		if (playerIndex == TheGhostObjectManager->getLocalPlayerIndex())
-		{
-			//Adding and removing render objects to the scene is expensive
-			//so only do it for the real player watching the screen.  There is
-			//also no point in displaying the other player's objects to
-			//the current player.
-			removeFromScene(playerIndex);
+    if (m_parentSnapshots[playerIndex])
+    { // if we have a snapshot for this object, remove it from
+        // scene and put back the original object if it still exists.
+        if (playerIndex == TheGhostObjectManager->getLocalPlayerIndex())
+        {
+            // Adding and removing render objects to the scene is expensive
+            // so only do it for the real player watching the screen.  There is
+            // also no point in displaying the other player's objects to
+            // the current player.
+            removeFromScene(playerIndex);
 
-			//Restore actual objects assuming they are still alive.
-			if (m_parentObject)
-				restoreParentObject();
-		}
+            // Restore actual objects assuming they are still alive.
+            if (m_parentObject)
+                restoreParentObject();
+        }
 
-		W3DRenderObjectSnapshot *snap=m_parentSnapshots[playerIndex];
-		W3DRenderObjectSnapshot *nextSnap;
-		while (snap)
-		{	nextSnap = snap->m_next;
-			delete snap;
-			snap = nextSnap;
-		}
-		m_parentSnapshots[playerIndex]=NULL;
-	}
+        W3DRenderObjectSnapshot *snap = m_parentSnapshots[playerIndex];
+        W3DRenderObjectSnapshot *nextSnap;
+        while (snap)
+        {
+            nextSnap = snap->m_next;
+            delete snap;
+            snap = nextSnap;
+        }
+        m_parentSnapshots[playerIndex] = NULL;
+    }
 }
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 void W3DGhostObject::updateParentObject(Object *object, PartitionData *mod)
 {
-	m_parentObject = object;
-	m_partitionData = mod;
+    m_parentObject = object;
+    m_partitionData = mod;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -540,13 +531,13 @@ void W3DGhostObject::updateParentObject(Object *object, PartitionData *mod)
 // ------------------------------------------------------------------------------------------------
 void W3DGhostObject::removeFromScene(int playerIndex)
 {
-	W3DRenderObjectSnapshot *snap=m_parentSnapshots[playerIndex];
+    W3DRenderObjectSnapshot *snap = m_parentSnapshots[playerIndex];
 
-	while (snap)
-	{
-		snap->m_robj->Remove();
-		snap=snap->m_next;
-	}
+    while (snap)
+    {
+        snap->m_robj->Remove();
+        snap = snap->m_next;
+    }
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -554,461 +545,445 @@ void W3DGhostObject::removeFromScene(int playerIndex)
 // ------------------------------------------------------------------------------------------------
 void W3DGhostObject::addToScene(int playerIndex)
 {
-	W3DRenderObjectSnapshot *snap=m_parentSnapshots[playerIndex];
+    W3DRenderObjectSnapshot *snap = m_parentSnapshots[playerIndex];
 
-	while (snap)
-	{
-		((SimpleSceneClass *)W3DDisplay::m_3DScene)->Add_Render_Object(snap->m_robj);
-		snap=snap->m_next;
-	}
+    while (snap)
+    {
+        ((SimpleSceneClass *)W3DDisplay::m_3DScene)->Add_Render_Object(snap->m_robj);
+        snap = snap->m_next;
+    }
 }
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 void W3DGhostObject::release(void)
 {
-	W3DRenderObjectSnapshot *snap,*nextSnap;
+    W3DRenderObjectSnapshot *snap, *nextSnap;
 
-	for (Int i=0; i<MAX_PLAYER_COUNT; i++)
-	{	snap = m_parentSnapshots[i];
-		while (snap)
-		{
-			nextSnap=snap->m_next;
-			delete snap;
-			snap=nextSnap;
-		}
-		m_parentSnapshots[i]=NULL;
-	}
+    for (Int i = 0; i < MAX_PLAYER_COUNT; i++)
+    {
+        snap = m_parentSnapshots[i];
+        while (snap)
+        {
+            nextSnap = snap->m_next;
+            delete snap;
+            snap = nextSnap;
+        }
+        m_parentSnapshots[i] = NULL;
+    }
 }
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 void W3DGhostObject::getShroudStatus(int playerIndex)
 {
-	m_partitionData->getShroudedStatus(playerIndex);
+    m_partitionData->getShroudedStatus(playerIndex);
 }
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void W3DGhostObject::crc( Xfer *xfer )
+void W3DGhostObject::crc(Xfer *xfer)
 {
+    // extend base class
+    GhostObject::crc(xfer);
 
-	// extend base class
-	GhostObject::crc( xfer );
-
-}  // end crc
+} // end crc
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void W3DGhostObject::xfer( Xfer *xfer )
+void W3DGhostObject::xfer(Xfer *xfer)
 {
+    // version
+    XferVersion currentVersion = 1;
+    XferVersion version = currentVersion;
+    xfer->xferVersion(&version, currentVersion);
 
-	// version
-	XferVersion currentVersion = 1;
-	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+    // extend base class
+    GhostObject::xfer(xfer);
 
-	// extend base class
-	GhostObject::xfer( xfer );
+    // xfer the drawable info object id
+    xfer->xferObjectID(&m_drawableInfo.m_shroudStatusObjectID);
 
-	// xfer the drawable info object id
-	xfer->xferObjectID( &m_drawableInfo.m_shroudStatusObjectID );
+    // drawable info flags
+    xfer->xferInt(&m_drawableInfo.m_flags);
 
-	// drawable info flags
-	xfer->xferInt( &m_drawableInfo.m_flags );
+    // drawable info drawable pointer
+    DrawableID drawableID = m_drawableInfo.m_drawable ? m_drawableInfo.m_drawable->getID() : INVALID_DRAWABLE_ID;
+    xfer->xferDrawableID(&drawableID);
+    if (xfer->getXferMode() == XFER_LOAD)
+    {
+        // reconnect the drawable pointer
+        m_drawableInfo.m_drawable = TheGameClient->findDrawableByID(drawableID);
 
-	// drawable info drawable pointer
-	DrawableID drawableID = m_drawableInfo.m_drawable ? m_drawableInfo.m_drawable->getID() : INVALID_DRAWABLE_ID;
-	xfer->xferDrawableID( &drawableID );
-	if( xfer->getXferMode() == XFER_LOAD )
-	{
+        // sanity
+        if (drawableID != INVALID_DRAWABLE_ID && m_drawableInfo.m_drawable == NULL)
+            DEBUG_CRASH(("W3DGhostObject::xfer - Unable to find drawable for ghost object"));
 
-		// reconnect the drawable pointer
-		m_drawableInfo.m_drawable = TheGameClient->findDrawableByID( drawableID );
+    } // end if
 
-		// sanity
-		if( drawableID != INVALID_DRAWABLE_ID && m_drawableInfo.m_drawable == NULL )
-			DEBUG_CRASH(( "W3DGhostObject::xfer - Unable to find drawable for ghost object" ));
+    //
+    // no need to mess with this "circular" back into itself pointer to the ghost object
+    // because it is already valid and assigned upon creation of this ghost object
+    //
+    // m_drawableInfo.m_ghostObject <--- no need to mess with this
 
-	}  // end if
+    // xfer snapshot array
+    UnsignedByte snapshotCount;
+    for (Int i = 0; i < MAX_PLAYER_COUNT; ++i)
+    {
+        // count the snapshots at this index
+        snapshotCount = 0;
+        W3DRenderObjectSnapshot *objectSnapshot = m_parentSnapshots[i];
+        while (objectSnapshot)
+        {
+            // increment count
+            snapshotCount++;
 
-	//
-	// no need to mess with this "circular" back into itself pointer to the ghost object
-	// because it is already valid and assigned upon creation of this ghost object
-	//
-	// m_drawableInfo.m_ghostObject <--- no need to mess with this
+            // on to the next snapshot
+            objectSnapshot = objectSnapshot->m_next;
 
-	// xfer snapshot array
-	UnsignedByte snapshotCount;
-	for( Int i = 0; i < MAX_PLAYER_COUNT; ++i )
-	{
+        } // end while
 
-		// count the snapshots at this index
-		snapshotCount = 0;
-		W3DRenderObjectSnapshot *objectSnapshot = m_parentSnapshots[ i ];
-		while( objectSnapshot )
-		{
+        // xfer the snapshot count at this index
+        xfer->xferUnsignedByte(&snapshotCount);
 
-			// increment count
-			snapshotCount++;
+        //
+        // sanity, this catches when we read from the file a count of zero, but our data
+        // structure already has something allocated in this snapshot index
+        //
+        if (snapshotCount == 0 && m_parentSnapshots[i] != NULL)
+        {
+            DEBUG_CRASH(
+                ("W3DGhostObject::xfer - m_parentShapshots[ %d ] has data present but the count from the xfer stream is "
+                 "empty",
+                 i));
+            throw INI_INVALID_DATA;
 
-			// on to the next snapshot
-			objectSnapshot = objectSnapshot->m_next;
+        } // end if
 
-		}  // end while
+        // xfer each of the snapshots at this index
+        Real scale;
+        UnsignedInt color;
+        AsciiString name;
+        if (xfer->getXferMode() == XFER_SAVE)
+        {
+            // iterate through list
+            objectSnapshot = m_parentSnapshots[i];
+            while (objectSnapshot)
+            {
+                // write name from render object
+                name.set(objectSnapshot->m_robj->Get_Name());
+                xfer->xferAsciiString(&name);
 
-		// xfer the snapshot count at this index
-		xfer->xferUnsignedByte( &snapshotCount );
+                // write scale from render object
+                scale = objectSnapshot->m_robj->Get_ObjectScale();
+                xfer->xferReal(&scale);
 
-		//
-		// sanity, this catches when we read from the file a count of zero, but our data
-		// structure already has something allocated in this snapshot index
-		//
-		if( snapshotCount == 0 && m_parentSnapshots[ i ] != NULL )
-		{
+                // write color from render object
+                color = objectSnapshot->m_robj->Get_ObjectColor();
+                xfer->xferUnsignedInt(&color);
 
-			DEBUG_CRASH(( "W3DGhostObject::xfer - m_parentShapshots[ %d ] has data present but the count from the xfer stream is empty", i ));
-			throw INI_INVALID_DATA;
+                // xfer data
+                xfer->xferSnapshot(objectSnapshot);
 
-		}  // end if
+                // onto the next
+                objectSnapshot = objectSnapshot->m_next;
 
-		// xfer each of the snapshots at this index
-		Real scale;
-		UnsignedInt color;
-		AsciiString name;
-		if( xfer->getXferMode() == XFER_SAVE )
-		{
+            } // end while
 
-			// iterate through list
-			objectSnapshot = m_parentSnapshots[ i ];
-			while( objectSnapshot )
-			{
+        } // end if, save
+        else
+        {
+            RenderObjClass *renderObject;
+            W3DRenderObjectSnapshot *prevObjectSnapshot = NULL;
 
-				// write name from render object
-				name.set( objectSnapshot->m_robj->Get_Name() );
-				xfer->xferAsciiString( &name );
+            for (UnsignedByte j = 0; j < snapshotCount; ++j)
+            {
+                // read render object name
+                xfer->xferAsciiString(&name);
 
-				// write scale from render object
-				scale = objectSnapshot->m_robj->Get_ObjectScale();
-				xfer->xferReal( &scale );
+                // read scale
+                xfer->xferReal(&scale);
 
-				// write color from render object
-				color = objectSnapshot->m_robj->Get_ObjectColor();
-				xfer->xferUnsignedInt( &color );
+                // read color
+                xfer->xferUnsignedInt(&color);
 
-				// xfer data
-				xfer->xferSnapshot( objectSnapshot );
+                // create the render object
+                renderObject = W3DDisplay::m_assetManager->Create_Render_Obj(name.str(), scale, color);
+                disableUVAnimations(renderObject);
 
-				// onto the next
-				objectSnapshot = objectSnapshot->m_next;
+                // we're loading, allocate new snapshot
+                objectSnapshot = NEW W3DRenderObjectSnapshot(renderObject, &m_drawableInfo, FALSE);
 
-			}  // end while
+                // attach to list
+                if (prevObjectSnapshot)
+                    prevObjectSnapshot->m_next = objectSnapshot;
+                else
+                    m_parentSnapshots[i] = objectSnapshot;
+                prevObjectSnapshot = objectSnapshot;
 
-		}  // end if, save
-		else
-		{
-			RenderObjClass *renderObject;
-			W3DRenderObjectSnapshot *prevObjectSnapshot = NULL;
+                // xfer data
+                xfer->xferSnapshot(objectSnapshot);
 
-			for( UnsignedByte j = 0; j < snapshotCount; ++j )
-			{
+                // add snapshot to the scene
+                objectSnapshot->addToScene();
 
-				// read render object name
-				xfer->xferAsciiString( &name );
+            } // end for, j
 
-				// read scale
-				xfer->xferReal( &scale );
+        } // end else, load
 
-				// read color
-				xfer->xferUnsignedInt( &color );
+    } // end for, i
 
-				// create the render object
-				renderObject = W3DDisplay::m_assetManager->Create_Render_Obj( name.str(), scale, color );
-				disableUVAnimations(renderObject);
+    //
+    // since there is a snapshot for this object, there cannot be a regular object/drawable
+    // in the world, we need to remove it
+    //
+    if (m_parentObject && m_parentSnapshots[ThePlayerList->getLocalPlayer()->getPlayerIndex()] != NULL
+        && xfer->getXferMode() == XFER_LOAD)
+        removeParentObject();
 
-				// we're loading, allocate new snapshot
-				objectSnapshot = NEW W3DRenderObjectSnapshot( renderObject, &m_drawableInfo, FALSE );
+    // count of partition shroudedness info to follow
+    UnsignedByte shroudednessCount = 0;
+    UnsignedByte playerIndex;
+    for (playerIndex = 0; playerIndex < MAX_PLAYER_COUNT; ++playerIndex)
+        if (m_parentSnapshots[playerIndex])
+            shroudednessCount++;
+    xfer->xferUnsignedByte(&shroudednessCount);
 
-				// attach to list
-				if( prevObjectSnapshot )
-					prevObjectSnapshot->m_next = objectSnapshot;
-				else
-					m_parentSnapshots[ i ] = objectSnapshot;
-				prevObjectSnapshot = objectSnapshot;
+    // shroudedness info
+    ObjectShroudStatus status;
+    if (xfer->getXferMode() == XFER_SAVE)
+    {
+        // iterate through all array points
+        for (playerIndex = 0; playerIndex < MAX_PLAYER_COUNT; ++playerIndex)
+        {
+            // is this a location with any info
+            if (m_parentSnapshots[playerIndex])
+            {
+                // write this index
+                xfer->xferUnsignedByte(&playerIndex);
 
-				// xfer data
-				xfer->xferSnapshot( objectSnapshot );
+                // write shroudedness
+                //				status = m_partitionData->getShroudedStatus( playerIndex );
+                //				xfer->xferUser( &status, sizeof( ObjectShroudStatus ) );
 
-				// add snapshot to the scene
-				objectSnapshot->addToScene();
+                // write previous shroudedness
+                status = m_partitionData->friend_getShroudednessPrevious(playerIndex);
+                xfer->xferUser(&status, sizeof(ObjectShroudStatus));
 
-			}  // end for, j
+            } // end if, snapshot list here exists
 
-		}  // end else, load
+        } // end for, i
 
-	}  // end for, i
+    } // end if, save
+    else
+    {
+        UnsignedByte i;
 
-	//
-	// since there is a snapshot for this object, there cannot be a regular object/drawable
-	// in the world, we need to remove it
-	//
-	if( m_parentObject &&
-			m_parentSnapshots[ ThePlayerList->getLocalPlayer()->getPlayerIndex() ] != NULL &&
-			xfer->getXferMode() == XFER_LOAD )
-		removeParentObject();
+        // how much data is here
+        for (i = 0; i < shroudednessCount; ++i)
+        {
+            // which player index is this data for
+            xfer->xferUnsignedByte(&playerIndex);
 
-	// count of partition shroudedness info to follow
-	UnsignedByte shroudednessCount = 0;
-	UnsignedByte playerIndex;
-	for( playerIndex = 0; playerIndex < MAX_PLAYER_COUNT; ++playerIndex )
-		if( m_parentSnapshots[ playerIndex ] )
-			shroudednessCount++;
-	xfer->xferUnsignedByte( &shroudednessCount );
+            // read shrouded status and set
+            //			xfer->xferUser( &status, sizeof( ObjectShroudStatus ) );
+            //			m_partitionData->friend_setShroudedness( playerIndex, status );
 
-	// shroudedness info
-	ObjectShroudStatus status;
-	if( xfer->getXferMode() == XFER_SAVE )
-	{
+            // read shroudedness previous and set
+            xfer->xferUser(&status, sizeof(ObjectShroudStatus));
+            m_partitionData->friend_setShroudednessPrevious(playerIndex, status);
 
-		// iterate through all array points
-		for( playerIndex = 0; playerIndex < MAX_PLAYER_COUNT; ++playerIndex )
-		{
+        } // end for, i
 
-			// is this a location with any info
-			if( m_parentSnapshots[ playerIndex ] )
-			{
+    } // end else load
 
-				// write this index
-				xfer->xferUnsignedByte( &playerIndex );
-
-				// write shroudedness
-//				status = m_partitionData->getShroudedStatus( playerIndex );
-//				xfer->xferUser( &status, sizeof( ObjectShroudStatus ) );
-
-				// write previous shroudedness
-				status = m_partitionData->friend_getShroudednessPrevious( playerIndex );
-				xfer->xferUser( &status, sizeof( ObjectShroudStatus ) );
-
-			}  // end if, snapshot list here exists
-
-		}  // end for, i
-
-	}  // end if, save
-	else
-	{
-		UnsignedByte i;
-
-		// how much data is here
-		for( i = 0; i < shroudednessCount; ++i )
-		{
-
-			// which player index is this data for
-			xfer->xferUnsignedByte( &playerIndex );
-
-			// read shrouded status and set
-//			xfer->xferUser( &status, sizeof( ObjectShroudStatus ) );
-//			m_partitionData->friend_setShroudedness( playerIndex, status );
-
-			// read shroudedness previous and set
-			xfer->xferUser( &status, sizeof( ObjectShroudStatus ) );
-			m_partitionData->friend_setShroudednessPrevious( playerIndex, status );
-
-		}  // end for, i
-
-	}  // end else load
-
-}  // end xfer
+} // end xfer
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void W3DGhostObject::loadPostProcess( void )
+void W3DGhostObject::loadPostProcess(void)
 {
+    // extend base class
+    GhostObject::loadPostProcess();
 
-	// extend base class
-	GhostObject::loadPostProcess();
-
-}  // end loadPostProcess
+} // end loadPostProcess
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 W3DGhostObjectManager::W3DGhostObjectManager(void)
 {
-
-	m_freeModules = NULL;
-	m_usedModules = NULL;
-
+    m_freeModules = NULL;
+    m_usedModules = NULL;
 }
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 W3DGhostObjectManager::~W3DGhostObjectManager()
 {
-	reset();	//make sure it's empty
+    reset(); // make sure it's empty
 
-	W3DGhostObject *mod = m_freeModules;
-	W3DGhostObject *nextmod;
+    W3DGhostObject *mod = m_freeModules;
+    W3DGhostObject *nextmod;
 
-	while (mod)
-	{
-		nextmod=mod->m_nextSystem;
-		delete mod;
-		mod=nextmod;
-	}
+    while (mod)
+    {
+        nextmod = mod->m_nextSystem;
+        delete mod;
+        mod = nextmod;
+    }
 }
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 void W3DGhostObjectManager::reset(void)
 {
-	W3DGhostObject *mod = m_usedModules;
-	W3DGhostObject *nextmod;
+    W3DGhostObject *mod = m_usedModules;
+    W3DGhostObject *nextmod;
 
-	//Remove any orphaned modules that were not deleted with their parent object because player had fogged memory of them.
-	while (mod)
-	{
-		nextmod=mod->m_nextSystem;
-		if (!mod->m_parentObject)	//make sure it has no parent object
-		{
-			ThePartitionManager->unRegisterGhostObject(mod);
-			removeGhostObject(mod);
-		}
-		mod=nextmod;
-	}
+    // Remove any orphaned modules that were not deleted with their parent object because player had fogged memory of them.
+    while (mod)
+    {
+        nextmod = mod->m_nextSystem;
+        if (!mod->m_parentObject) // make sure it has no parent object
+        {
+            ThePartitionManager->unRegisterGhostObject(mod);
+            removeGhostObject(mod);
+        }
+        mod = nextmod;
+    }
 
-	DEBUG_ASSERTCRASH(m_usedModules == NULL, ("Reset of Non-Empty GhostObjectManager"));
+    DEBUG_ASSERTCRASH(m_usedModules == NULL, ("Reset of Non-Empty GhostObjectManager"));
 
-	//Delete any remaining modules (should be none)
-	mod=m_usedModules;
-	while (mod)
-	{
-		nextmod=mod->m_nextSystem;
-		removeGhostObject(mod);
-		mod=nextmod;
-	}
+    // Delete any remaining modules (should be none)
+    mod = m_usedModules;
+    while (mod)
+    {
+        nextmod = mod->m_nextSystem;
+        removeGhostObject(mod);
+        mod = nextmod;
+    }
 }
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 void W3DGhostObjectManager::removeGhostObject(GhostObject *object)
 {
-	if (!object)
-		return;
+    if (!object)
+        return;
 
-	W3DGhostObject *mod = (W3DGhostObject *)object;
+    W3DGhostObject *mod = (W3DGhostObject *)object;
 
-	mod->freeAllSnapShots();
+    mod->freeAllSnapShots();
 
-	// remove module from used list
-	if( mod->m_nextSystem )
-		mod->m_nextSystem->m_prevSystem = mod->m_prevSystem;
-	if( mod->m_prevSystem )
-		mod->m_prevSystem->m_nextSystem = mod->m_nextSystem;
-	else
-		m_usedModules = mod->m_nextSystem;
+    // remove module from used list
+    if (mod->m_nextSystem)
+        mod->m_nextSystem->m_prevSystem = mod->m_prevSystem;
+    if (mod->m_prevSystem)
+        mod->m_prevSystem->m_nextSystem = mod->m_nextSystem;
+    else
+        m_usedModules = mod->m_nextSystem;
 
-	// add module to free list
-	mod->m_prevSystem = NULL;
-	mod->m_nextSystem = m_freeModules;
-	if( m_freeModules )
-		m_freeModules->m_prevSystem = mod;
-	m_freeModules = mod;
+    // add module to free list
+    mod->m_prevSystem = NULL;
+    mod->m_nextSystem = m_freeModules;
+    if (m_freeModules)
+        m_freeModules->m_prevSystem = mod;
+    m_freeModules = mod;
 }
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 GhostObject *W3DGhostObjectManager::addGhostObject(Object *object, PartitionData *pd)
 {
-
-	// we disabled adding new ghost objects - used during map border resizing and loading
-	if (m_lockGhostObjects || m_saveLockGhostObjects )
-		return NULL;
+    // we disabled adding new ghost objects - used during map border resizing and loading
+    if (m_lockGhostObjects || m_saveLockGhostObjects)
+        return NULL;
 
 #ifdef DEBUG_FOG_MEMORY
-	// sanity
-	if( object != NULL )
-	{
+    // sanity
+    if (object != NULL)
+    {
+        W3DGhostObject *sanity = m_usedModules;
+        while (sanity)
+        {
+            DEBUG_ASSERTCRASH(
+                sanity->m_parentObject != object,
+                ("W3DGhostObjectManager::addGhostObject - Duplicate ghost object detected\n"));
+            sanity = sanity->m_nextSystem;
 
-		W3DGhostObject *sanity = m_usedModules;
-		while( sanity )
-		{
+        } // end while
 
-			DEBUG_ASSERTCRASH( sanity->m_parentObject != object,
-												 ("W3DGhostObjectManager::addGhostObject - Duplicate ghost object detected\n") );
-			sanity = sanity->m_nextSystem;
-
-		}  // end while
-
-	}  // end if
+    } // end if
 #endif
 
-	W3DGhostObject *mod = m_freeModules;
-	if( mod )
-	{
-		// take module off the free list
-		if( mod->m_nextSystem )
-			mod->m_nextSystem->m_prevSystem = mod->m_prevSystem;
-		if( mod->m_prevSystem )
-			mod->m_prevSystem->m_nextSystem = mod->m_nextSystem;
-		else
-			m_freeModules = mod->m_nextSystem;
-	}
-	else
-	{
-		mod = NEW W3DGhostObject;	// poolify
-	}
+    W3DGhostObject *mod = m_freeModules;
+    if (mod)
+    {
+        // take module off the free list
+        if (mod->m_nextSystem)
+            mod->m_nextSystem->m_prevSystem = mod->m_prevSystem;
+        if (mod->m_prevSystem)
+            mod->m_prevSystem->m_nextSystem = mod->m_nextSystem;
+        else
+            m_freeModules = mod->m_nextSystem;
+    }
+    else
+    {
+        mod = NEW W3DGhostObject; // poolify
+    }
 
-	mod->m_prevSystem = NULL;
-	mod->m_nextSystem = m_usedModules;
-	if( m_usedModules )
-		m_usedModules->m_prevSystem = mod;
-	m_usedModules = mod;
+    mod->m_prevSystem = NULL;
+    mod->m_nextSystem = m_usedModules;
+    if (m_usedModules)
+        m_usedModules->m_prevSystem = mod;
+    m_usedModules = mod;
 
-	//Copy settings from parent object
-	mod->m_parentObject=object;
-	mod->m_drawableInfo.m_drawable=NULL;	//these dummy render objects don't have drawables.
-	mod->m_drawableInfo.m_ghostObject = mod;
-	mod->m_partitionData=pd;
+    // Copy settings from parent object
+    mod->m_parentObject = object;
+    mod->m_drawableInfo.m_drawable = NULL; // these dummy render objects don't have drawables.
+    mod->m_drawableInfo.m_ghostObject = mod;
+    mod->m_partitionData = pd;
 
-	return mod;
+    return mod;
 }
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 void W3DGhostObjectManager::setLocalPlayerIndex(int index)
 {
-	//Whenever we switch local players, we need to remove all ghost objects belonging
-	//to another player from the map.  We then insert the current local player's
-	//ghost objects into the map.
+    // Whenever we switch local players, we need to remove all ghost objects belonging
+    // to another player from the map.  We then insert the current local player's
+    // ghost objects into the map.
 
-	W3DGhostObject *mod = m_usedModules;
+    W3DGhostObject *mod = m_usedModules;
 
-	while (mod)
-	{
-		mod->removeFromScene(m_localPlayer);
-		if (mod->m_parentSnapshots[index])
-		{	//new player has his own snapshot
-			if (!mod->m_parentSnapshots[m_localPlayer] && mod->m_parentObject)
-			{	//previous player didn't have a snapshot so real object must
-				//have been in the scene.  Replace it with our snapshot.
-				mod->removeParentObject();
-			}
-			mod->addToScene(index);
-		}
-		//new player doesn't have a snapshot which means restore original object
-		//if it was replaced by a snapshot by the previous player.
-		else
-		if (mod->m_parentSnapshots[m_localPlayer] && mod->m_parentObject)
-			mod->restoreParentObject();
+    while (mod)
+    {
+        mod->removeFromScene(m_localPlayer);
+        if (mod->m_parentSnapshots[index])
+        { // new player has his own snapshot
+            if (!mod->m_parentSnapshots[m_localPlayer] && mod->m_parentObject)
+            { // previous player didn't have a snapshot so real object must
+                // have been in the scene.  Replace it with our snapshot.
+                mod->removeParentObject();
+            }
+            mod->addToScene(index);
+        }
+        // new player doesn't have a snapshot which means restore original object
+        // if it was replaced by a snapshot by the previous player.
+        else if (mod->m_parentSnapshots[m_localPlayer] && mod->m_parentObject)
+            mod->restoreParentObject();
 
-		mod=mod->m_nextSystem;
-	}
+        mod = mod->m_nextSystem;
+    }
 
-	m_localPlayer = index;
+    m_localPlayer = index;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -1019,39 +994,39 @@ needed*/
 // ------------------------------------------------------------------------------------------------
 void W3DGhostObjectManager::updateOrphanedObjects(int *playerIndexList, int numNonLocalPlayers)
 {
+    W3DGhostObject *mod = m_usedModules, *nextmod;
+    int numStoredSnapshots;
 
-	W3DGhostObject *mod = m_usedModules, *nextmod;
-	int numStoredSnapshots;
-
-	while (mod)
-	{
-		//updating the shroud status of this ghostobject could remove
-		//it from the scene if it becomes visible but parent object is gone.
-		nextmod=mod->m_nextSystem;
-		if (!mod->m_parentObject)
-		{
-			numStoredSnapshots=0;
+    while (mod)
+    {
+        // updating the shroud status of this ghostobject could remove
+        // it from the scene if it becomes visible but parent object is gone.
+        nextmod = mod->m_nextSystem;
+        if (!mod->m_parentObject)
+        {
+            numStoredSnapshots = 0;
 #ifdef DEBUG_FOG_MEMORY
-			for (int i=0; i<numNonLocalPlayers; i++, playerIndexList++)
-			{
-				if (mod->m_parentSnapshots[*playerIndexList])
-					mod->getShroudStatus(*playerIndexList);
-				if (mod->m_parentSnapshots[*playerIndexList])
-					numStoredSnapshots++;
-			}
+            for (int i = 0; i < numNonLocalPlayers; i++, playerIndexList++)
+            {
+                if (mod->m_parentSnapshots[*playerIndexList])
+                    mod->getShroudStatus(*playerIndexList);
+                if (mod->m_parentSnapshots[*playerIndexList])
+                    numStoredSnapshots++;
+            }
 #endif
-			mod->getShroudStatus(m_localPlayer);
-			if (mod->m_parentSnapshots[m_localPlayer])
-					numStoredSnapshots++;
-			if (!numStoredSnapshots)
-			{	ThePartitionManager->unRegisterGhostObject(mod);
-				mod->m_partitionData=NULL;
-				removeGhostObject(mod);
-			}
-		}
+            mod->getShroudStatus(m_localPlayer);
+            if (mod->m_parentSnapshots[m_localPlayer])
+                numStoredSnapshots++;
+            if (!numStoredSnapshots)
+            {
+                ThePartitionManager->unRegisterGhostObject(mod);
+                mod->m_partitionData = NULL;
+                removeGhostObject(mod);
+            }
+        }
 
-		mod=nextmod;
-	}
+        mod = nextmod;
+    }
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -1061,27 +1036,27 @@ enough data to restore the state of the partition manager.*/
 // ------------------------------------------------------------------------------------------------
 void W3DGhostObjectManager::releasePartitionData(void)
 {
-	W3DGhostObject *mod = m_usedModules;
-	W3DGhostObject *nextmod;
+    W3DGhostObject *mod = m_usedModules;
+    W3DGhostObject *nextmod;
 
-	while (mod)
-	{
-		nextmod=mod->m_nextSystem;
-		//if module has no parent object, then its holding a ghost object which
-		//needs to have it's own partition data.
-		if (!mod->m_parentObject)
-		{
-			ThePartitionManager->unRegisterGhostObject(mod);
-			mod->m_partitionData = NULL;
-		}
-		else
-		{	//The parent object will handle unregistering so just tell to break the
-			//ghost object link.
-			mod->friend_getPartitionData()->friend_setGhostObject(NULL);
-			mod->m_partitionData = NULL;
-		}
-		mod=nextmod;
-	}
+    while (mod)
+    {
+        nextmod = mod->m_nextSystem;
+        // if module has no parent object, then its holding a ghost object which
+        // needs to have it's own partition data.
+        if (!mod->m_parentObject)
+        {
+            ThePartitionManager->unRegisterGhostObject(mod);
+            mod->m_partitionData = NULL;
+        }
+        else
+        { // The parent object will handle unregistering so just tell to break the
+            // ghost object link.
+            mod->friend_getPartitionData()->friend_setGhostObject(NULL);
+            mod->m_partitionData = NULL;
+        }
+        mod = nextmod;
+    }
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -1089,165 +1064,161 @@ void W3DGhostObjectManager::releasePartitionData(void)
 // ------------------------------------------------------------------------------------------------
 void W3DGhostObjectManager::restorePartitionData(void)
 {
-	W3DGhostObject *mod = m_usedModules;
-	W3DGhostObject *nextmod;
+    W3DGhostObject *mod = m_usedModules;
+    W3DGhostObject *nextmod;
 
-	while (mod)
-	{
-		nextmod=mod->m_nextSystem;
-		//if module has no parent object, then its holding a ghost object which
-		//needs to have it's own partition data.
-		if (mod->m_parentObject)
-		{
-			//restore into parent's partition data
-			mod->m_parentObject->friend_getPartitionData()->friend_setGhostObject(mod);
-			mod->m_partitionData=mod->m_parentObject->friend_getPartitionData();
-		}
-		else
-		{
-			//restore into our own partition data
-			ThePartitionManager->registerGhostObject(mod);
-		}
+    while (mod)
+    {
+        nextmod = mod->m_nextSystem;
+        // if module has no parent object, then its holding a ghost object which
+        // needs to have it's own partition data.
+        if (mod->m_parentObject)
+        {
+            // restore into parent's partition data
+            mod->m_parentObject->friend_getPartitionData()->friend_setGhostObject(mod);
+            mod->m_partitionData = mod->m_parentObject->friend_getPartitionData();
+        }
+        else
+        {
+            // restore into our own partition data
+            ThePartitionManager->registerGhostObject(mod);
+        }
 
-		//set partition data to reflect that we've seen a fogged version
-		//of this object if one exists.
-		for (Int i=0; i<MAX_PLAYER_COUNT; i++)
-		{	if (mod->m_parentSnapshots[i])
-				mod->m_partitionData->friend_setShroudednessPrevious(i,OBJECTSHROUD_FOGGED);
-		}
+        // set partition data to reflect that we've seen a fogged version
+        // of this object if one exists.
+        for (Int i = 0; i < MAX_PLAYER_COUNT; i++)
+        {
+            if (mod->m_parentSnapshots[i])
+                mod->m_partitionData->friend_setShroudednessPrevious(i, OBJECTSHROUD_FOGGED);
+        }
 
-		mod=nextmod;
-	}
+        mod = nextmod;
+    }
 }
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void W3DGhostObjectManager::crc( Xfer *xfer )
+void W3DGhostObjectManager::crc(Xfer *xfer)
 {
+    // extend base class
+    GhostObjectManager::crc(xfer);
 
-	// extend base class
-	GhostObjectManager::crc( xfer );
-
-}  // end crc
+} // end crc
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer Method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void W3DGhostObjectManager::xfer( Xfer *xfer )
+void W3DGhostObjectManager::xfer(Xfer *xfer)
 {
+    // version
+    XferVersion currentVersion = 1;
+    XferVersion version = currentVersion;
+    xfer->xferVersion(&version, currentVersion);
 
-	// version
-	XferVersion currentVersion = 1;
-	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+    // extend base class
+    GhostObjectManager::xfer(xfer);
 
-	// extend base class
-	GhostObjectManager::xfer( xfer );
+    // count the number of used modules we have
+    UnsignedShort count = 0;
+    W3DGhostObject *w3dGhostObject;
+    for (w3dGhostObject = m_usedModules; w3dGhostObject; w3dGhostObject = w3dGhostObject->m_nextSystem)
+        count++;
 
-	// count the number of used modules we have
-	UnsignedShort count = 0;
-	W3DGhostObject *w3dGhostObject;
-	for( w3dGhostObject = m_usedModules; w3dGhostObject; w3dGhostObject = w3dGhostObject->m_nextSystem )
-		count++;
+    // xfer count
+    xfer->xferUnsignedShort(&count);
 
-	// xfer count
-	xfer->xferUnsignedShort( &count );
+    // ghost object themselves
+    ObjectID objectID;
+    if (xfer->getXferMode() == XFER_SAVE)
+    {
+        // iterate all ghost objects
+        for (w3dGhostObject = m_usedModules; w3dGhostObject; w3dGhostObject = w3dGhostObject->m_nextSystem)
+        {
+            // write out object ID
+            if (w3dGhostObject->m_parentObject)
+                objectID = w3dGhostObject->m_parentObject->getID();
+            else
+                objectID = INVALID_ID;
+            xfer->xferObjectID(&objectID);
 
-	// ghost object themselves
-	ObjectID objectID;
-	if( xfer->getXferMode() == XFER_SAVE )
-	{
+            // write out ghost object data
+            xfer->xferSnapshot(w3dGhostObject);
 
-		// iterate all ghost objects
-		for( w3dGhostObject = m_usedModules; w3dGhostObject; w3dGhostObject = w3dGhostObject->m_nextSystem )
-		{
+        } // end for, ghostObject
 
-			// write out object ID
-			if( w3dGhostObject->m_parentObject )
-				objectID = w3dGhostObject->m_parentObject->getID();
-			else
-				objectID = INVALID_ID;
-			xfer->xferObjectID( &objectID );
+    } // end if, saving
+    else
+    {
+        // sanity, there should be no ghost objects loaded at this time
+        DEBUG_ASSERTCRASH(
+            m_usedModules == NULL,
+            ("W3DGhostObjectManager::xfer - The used module list is not NULL upon load, but should be!\n"));
 
-			// write out ghost object data
-			xfer->xferSnapshot( w3dGhostObject );
+        // now it's time to unlock the ghost objects for loading
+        DEBUG_ASSERTCRASH(
+            m_saveLockGhostObjects == TRUE,
+            ("W3DGhostObjectManager::xfer - Ghost object manager is not save locked, but should be\n"));
+        TheGhostObjectManager->saveLockGhostObjects(FALSE);
 
-		}  // end for, ghostObject
+        // read all ghost objects
+        GhostObject *ghostObject;
+        Object *object;
+        for (UnsignedShort i = 0; i < count; ++i)
+        {
+            // read object id
+            xfer->xferObjectID(&objectID);
 
-	}  // end if, saving
-	else
-	{
+            // get object from id
+            object = TheGameLogic->findObjectByID(objectID);
 
-		// sanity, there should be no ghost objects loaded at this time
-		DEBUG_ASSERTCRASH( m_usedModules == NULL,
-											 ("W3DGhostObjectManager::xfer - The used module list is not NULL upon load, but should be!\n") );
+            // create ghost object data
+            if (object)
+            {
+                // create ghost object
+                ghostObject = addGhostObject(object, object->friend_getPartitionData());
 
-		// now it's time to unlock the ghost objects for loading
-		DEBUG_ASSERTCRASH( m_saveLockGhostObjects == TRUE,
-											 ("W3DGhostObjectManager::xfer - Ghost object manager is not save locked, but should be\n") );
-		TheGhostObjectManager->saveLockGhostObjects( FALSE );
+                // sanity
+                DEBUG_ASSERTCRASH(
+                    ghostObject != NULL,
+                    ("W3DGhostObjectManager::xfer - Could not create ghost object for object '%s'\n",
+                     object->getTemplate()->getName().str()));
 
-		// read all ghost objects
-		GhostObject *ghostObject;
-		Object *object;
-		for( UnsignedShort i = 0; i < count; ++i )
-		{
+                // link the ghost object and logical object togehter through partition/ghostObject dat
+                DEBUG_ASSERTCRASH(
+                    object->friend_getPartitionData()->getGhostObject() == NULL,
+                    ("W3DGhostObjectManager::xfer - Ghost object already on object '%s'\n",
+                     object->getTemplate()->getName().str()));
+                object->friend_getPartitionData()->friend_setGhostObject(ghostObject);
 
-			// read object id
-			xfer->xferObjectID( &objectID );
+            } // end if
+            else
+            {
+                // create object with no object or partition data
+                ghostObject = addGhostObject(NULL, NULL);
 
-			// get object from id
-			object = TheGameLogic->findObjectByID( objectID );
+                // register ghost object object with partition system and fill out partition data
+                ThePartitionManager->registerGhostObject(ghostObject);
 
-			// create ghost object data
-			if( object )
-			{
+            } // end else
 
-				// create ghost object
-				ghostObject = addGhostObject( object, object->friend_getPartitionData() );
+            // read ghost object data
+            xfer->xferSnapshot(ghostObject);
 
-				// sanity
-				DEBUG_ASSERTCRASH( ghostObject != NULL,
-													 ("W3DGhostObjectManager::xfer - Could not create ghost object for object '%s'\n",
-													 object->getTemplate()->getName().str()) );
+        } // end for, i
 
-				// link the ghost object and logical object togehter through partition/ghostObject dat
-				DEBUG_ASSERTCRASH( object->friend_getPartitionData()->getGhostObject() == NULL,
-													 ("W3DGhostObjectManager::xfer - Ghost object already on object '%s'\n",
-													  object->getTemplate()->getName().str()) );
-				object->friend_getPartitionData()->friend_setGhostObject( ghostObject );
+    } // end else, loading
 
-			}  // end if
-			else
-			{
-
-				// create object with no object or partition data
-				ghostObject = addGhostObject( NULL, NULL );
-
-				// register ghost object object with partition system and fill out partition data
-				ThePartitionManager->registerGhostObject( ghostObject );
-
-			}  // end else
-
-			// read ghost object data
-			xfer->xferSnapshot( ghostObject );
-
-		}  // end for, i
-
-	}  // end else, loading
-
-}  // end xfer
+} // end xfer
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void W3DGhostObjectManager::loadPostProcess( void )
+void W3DGhostObjectManager::loadPostProcess(void)
 {
+    // extend base class
+    GhostObjectManager::loadPostProcess();
 
-	// extend base class
-	GhostObjectManager::loadPostProcess();
-
-}  // end loadPostProcess
+} // end loadPostProcess

@@ -37,53 +37,53 @@ IMPLEMENT_DYNCREATE(CBabylonDlgAutoProxy, CCmdTarget)
 
 CBabylonDlgAutoProxy::CBabylonDlgAutoProxy()
 {
-	EnableAutomation();
+    EnableAutomation();
 
-	// To keep the application running as long as an automation
-	//	object is active, the constructor calls AfxOleLockApp.
-	AfxOleLockApp();
+    // To keep the application running as long as an automation
+    //	object is active, the constructor calls AfxOleLockApp.
+    AfxOleLockApp();
 
-	// Get access to the dialog through the application's
-	//  main window pointer.  Set the proxy's internal pointer
-	//  to point to the dialog, and set the dialog's back pointer to
-	//  this proxy.
-	ASSERT (AfxGetApp()->m_pMainWnd != NULL);
-	ASSERT_VALID (AfxGetApp()->m_pMainWnd);
-	ASSERT_KINDOF(CBabylonDlg, AfxGetApp()->m_pMainWnd);
-	m_pDialog = (CBabylonDlg*) AfxGetApp()->m_pMainWnd;
-	m_pDialog->m_pAutoProxy = this;
+    // Get access to the dialog through the application's
+    //  main window pointer.  Set the proxy's internal pointer
+    //  to point to the dialog, and set the dialog's back pointer to
+    //  this proxy.
+    ASSERT(AfxGetApp()->m_pMainWnd != NULL);
+    ASSERT_VALID(AfxGetApp()->m_pMainWnd);
+    ASSERT_KINDOF(CBabylonDlg, AfxGetApp()->m_pMainWnd);
+    m_pDialog = (CBabylonDlg *)AfxGetApp()->m_pMainWnd;
+    m_pDialog->m_pAutoProxy = this;
 }
 
 CBabylonDlgAutoProxy::~CBabylonDlgAutoProxy()
 {
-	// To terminate the application when all objects created with
-	// 	with automation, the destructor calls AfxOleUnlockApp.
-	//  Among other things, this will destroy the main dialog
-	if (m_pDialog != NULL)
-		m_pDialog->m_pAutoProxy = NULL;
-	AfxOleUnlockApp();
+    // To terminate the application when all objects created with
+    // 	with automation, the destructor calls AfxOleUnlockApp.
+    //  Among other things, this will destroy the main dialog
+    if (m_pDialog != NULL)
+        m_pDialog->m_pAutoProxy = NULL;
+    AfxOleUnlockApp();
 }
 
 void CBabylonDlgAutoProxy::OnFinalRelease()
 {
-	// When the last reference for an automation object is released
-	// OnFinalRelease is called.  The base class will automatically
-	// deletes the object.  Add additional cleanup required for your
-	// object before calling the base class.
+    // When the last reference for an automation object is released
+    // OnFinalRelease is called.  The base class will automatically
+    // deletes the object.  Add additional cleanup required for your
+    // object before calling the base class.
 
-	CCmdTarget::OnFinalRelease();
+    CCmdTarget::OnFinalRelease();
 }
 
 BEGIN_MESSAGE_MAP(CBabylonDlgAutoProxy, CCmdTarget)
-	//{{AFX_MSG_MAP(CBabylonDlgAutoProxy)
-		// NOTE - the ClassWizard will add and remove mapping macros here.
-	//}}AFX_MSG_MAP
+//{{AFX_MSG_MAP(CBabylonDlgAutoProxy)
+// NOTE - the ClassWizard will add and remove mapping macros here.
+//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
 BEGIN_DISPATCH_MAP(CBabylonDlgAutoProxy, CCmdTarget)
-	//{{AFX_DISPATCH_MAP(CBabylonDlgAutoProxy)
-		// NOTE - the ClassWizard will add and remove mapping macros here.
-	//}}AFX_DISPATCH_MAP
+//{{AFX_DISPATCH_MAP(CBabylonDlgAutoProxy)
+// NOTE - the ClassWizard will add and remove mapping macros here.
+//}}AFX_DISPATCH_MAP
 END_DISPATCH_MAP()
 
 // Note: we add support for IID_IBabylon to support typesafe binding
@@ -91,16 +91,28 @@ END_DISPATCH_MAP()
 //  dispinterface in the .ODL file.
 
 // {2BF31248-3BA1-11D3-B9DA-006097B90D93}
-static const IID IID_IBabylon =
-{ 0x2bf31248, 0x3ba1, 0x11d3, { 0xb9, 0xda, 0x0, 0x60, 0x97, 0xb9, 0xd, 0x93 } };
+static const IID IID_IBabylon = {0x2bf31248, 0x3ba1, 0x11d3, {0xb9, 0xda, 0x0, 0x60, 0x97, 0xb9, 0xd, 0x93}};
 
 BEGIN_INTERFACE_MAP(CBabylonDlgAutoProxy, CCmdTarget)
-	INTERFACE_PART(CBabylonDlgAutoProxy, IID_IBabylon, Dispatch)
+INTERFACE_PART(CBabylonDlgAutoProxy, IID_IBabylon, Dispatch)
 END_INTERFACE_MAP()
 
 // The IMPLEMENT_OLECREATE2 macro is defined in StdAfx.h of this project
 // {2BF31246-3BA1-11D3-B9DA-006097B90D93}
-IMPLEMENT_OLECREATE2(CBabylonDlgAutoProxy, "Babylon.Application", 0x2bf31246, 0x3ba1, 0x11d3, 0xb9, 0xda, 0x0, 0x60, 0x97, 0xb9, 0xd, 0x93)
+IMPLEMENT_OLECREATE2(
+    CBabylonDlgAutoProxy,
+    "Babylon.Application",
+    0x2bf31246,
+    0x3ba1,
+    0x11d3,
+    0xb9,
+    0xda,
+    0x0,
+    0x60,
+    0x97,
+    0xb9,
+    0xd,
+    0x93)
 
 /////////////////////////////////////////////////////////////////////////////
 // CBabylonDlgAutoProxy message handlers

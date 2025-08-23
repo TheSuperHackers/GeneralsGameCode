@@ -42,16 +42,14 @@
 #include "field.h"
 #include <wlib/wstypes.h>
 
-
 class PacketClass
 {
-  public:
-
+public:
     PacketClass(short id = 0)
     {
-      Size      = 0;
-      ID        = id;
-      Head      = 0;
+        Size = 0;
+        ID = id;
+        Head = 0;
     }
     PacketClass(char *cur_buf);
     ~PacketClass();
@@ -66,14 +64,14 @@ class PacketClass
     // These conveniance functions allow us to add a field directly to the list without
     // having to worry about newing one first.
     //
-    void Add_Field(char *field, char data) {Add_Field(new FieldClass(field, data));};
-    void Add_Field(char *field, unsigned char data) {Add_Field(new FieldClass(field, data));};
-    void Add_Field(char *field, short data) {Add_Field(new FieldClass(field, data));};
-    void Add_Field(char *field, unsigned short data) {Add_Field(new FieldClass(field, data));};
-    void Add_Field(char *field, long data) {Add_Field(new FieldClass(field, data));};
-    void Add_Field(char *field, unsigned long data) {Add_Field(new FieldClass(field, data));};
-    void Add_Field(char *field, char *data) {Add_Field(new FieldClass(field, data));};
-    void Add_Field(char *field, void *data, int length) {Add_Field(new FieldClass(field, data, length));};
+    void Add_Field(char *field, char data) { Add_Field(new FieldClass(field, data)); };
+    void Add_Field(char *field, unsigned char data) { Add_Field(new FieldClass(field, data)); };
+    void Add_Field(char *field, short data) { Add_Field(new FieldClass(field, data)); };
+    void Add_Field(char *field, unsigned short data) { Add_Field(new FieldClass(field, data)); };
+    void Add_Field(char *field, long data) { Add_Field(new FieldClass(field, data)); };
+    void Add_Field(char *field, unsigned long data) { Add_Field(new FieldClass(field, data)); };
+    void Add_Field(char *field, char *data) { Add_Field(new FieldClass(field, data)); };
+    void Add_Field(char *field, void *data, int length) { Add_Field(new FieldClass(field, data, length)); };
 
     //
     // These functions search for a field of a given name in the list and
@@ -91,7 +89,7 @@ class PacketClass
     bit8 Get_Field(char *id, unsigned &data);
     bit8 Get_Field(char *id, char *data);
     bit8 Get_Field(char *id, void *data, int &length);
-    unsigned short Get_Field_Size(char* id);
+    unsigned short Get_Field_Size(char *id);
 
     // gks 9/25/2000
     FieldClass *Get_Field_At(int position);
@@ -99,10 +97,9 @@ class PacketClass
 
     char *Create_Comms_Packet(int &size);
 
-  private:
-    unsigned short   Size;
-    short            ID;
-    FieldClass      *Head;
-    FieldClass      *Current;
+private:
+    unsigned short Size;
+    short ID;
+    FieldClass *Head;
+    FieldClass *Current;
 };
-

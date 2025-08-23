@@ -32,9 +32,9 @@
 #ifndef __CDCHECK_H_
 #define __CDCHECK_H_
 
-typedef void (*gameStartCallback) (void);
+typedef void (*gameStartCallback)(void);
 
 Bool IsFirstCDPresent(void);
-void CheckForCDAtGameStart( gameStartCallback callback );
+void CheckForCDAtGameStart(gameStartCallback callback);
 
 #endif //__CDCHECK_H_

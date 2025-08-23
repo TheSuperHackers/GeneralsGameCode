@@ -47,179 +47,176 @@ class Matrix3D;
 
 //-------------------------------------------------------------------------------------------------
 /**
-	An FXNugget encapsulates a particular type of audio/video effect. FXNuggets are virtually
-	never used on their own, but rather, as a component of an FXList (see below).
+    An FXNugget encapsulates a particular type of audio/video effect. FXNuggets are virtually
+    never used on their own, but rather, as a component of an FXList (see below).
 
-	Important notes:
+    Important notes:
 
-	-- FXNugget is an ABC; all the implementations are (currently) located in FXList.cpp,
-	thought they will probably be spread out more as we add more implementations.
+    -- FXNugget is an ABC; all the implementations are (currently) located in FXList.cpp,
+    thought they will probably be spread out more as we add more implementations.
 
-	-- As part of an FXList, an FXNugget is shared between multiple units. The implication is that
-	an FXNugget should not require private data storage to do what it needs to do, aside from stuff
-	initialized at FXNugget instantiation time (eg, parameters from an INI file). To help
-	enforce this, all it's methods are declared 'const'. If you can't implement what you
-	need within this framework, please *don't* simply de-const things, because it could lead to very
-	strange side-effects. Instead, the system will have to be enhanced to allow for multiple instances
-	of each FXNugget.
+    -- As part of an FXList, an FXNugget is shared between multiple units. The implication is that
+    an FXNugget should not require private data storage to do what it needs to do, aside from stuff
+    initialized at FXNugget instantiation time (eg, parameters from an INI file). To help
+    enforce this, all it's methods are declared 'const'. If you can't implement what you
+    need within this framework, please *don't* simply de-const things, because it could lead to very
+    strange side-effects. Instead, the system will have to be enhanced to allow for multiple instances
+    of each FXNugget.
 
-	-- an individual FXNugget is generally not directly accessible to anyone outside of the
-	FXList system; in fact, it could probably be a private class, but isn't, mainly for coding convenience.
+    -- an individual FXNugget is generally not directly accessible to anyone outside of the
+    FXList system; in fact, it could probably be a private class, but isn't, mainly for coding convenience.
 
-	-- Unlike most other game systems, FXNuggets can't be overridden by subsequent INI file
-	loads. This isn't really a problem, because all you really need to do to "override" one is to
-	specify a different one.
+    -- Unlike most other game systems, FXNuggets can't be overridden by subsequent INI file
+    loads. This isn't really a problem, because all you really need to do to "override" one is to
+    specify a different one.
 */
 class FXNugget : public MemoryPoolObject
 {
-	MEMORY_POOL_GLUE_ABC(FXNugget)
+    MEMORY_POOL_GLUE_ABC(FXNugget)
 public:
+    FXNugget() {}
+    // virtual ~FXNugget() { }
 
-	FXNugget() { }
-	//virtual ~FXNugget() { }
+    /**
+        The main guts of the system: actually perform the sound and/or video effects
+        needed. Note that primary and/or secondary can be null, so you must check for this.
+    */
+    virtual void doFXPos(
+        const Coord3D *primary,
+        const Matrix3D *primaryMtx = NULL,
+        const Real primarySpeed = 0.0f,
+        const Coord3D *secondary = NULL,
+        const Real overrideRadius = 0.0f) const = 0;
 
-	/**
-		The main guts of the system: actually perform the sound and/or video effects
-		needed. Note that primary and/or secondary can be null, so you must check for this.
-	*/
-	virtual void doFXPos(const Coord3D *primary, const Matrix3D* primaryMtx = NULL, const Real primarySpeed = 0.0f, const Coord3D *secondary = NULL, const Real overrideRadius = 0.0f) const = 0;
-
-	/**
-		the object-based version... by default, just call the location-based implementation.
-		Note that primary and/or secondary can be null, so you must check for this.
-	*/
-	virtual void doFXObj(const Object* primary, const Object* secondary = NULL) const;
+    /**
+        the object-based version... by default, just call the location-based implementation.
+        Note that primary and/or secondary can be null, so you must check for this.
+    */
+    virtual void doFXObj(const Object *primary, const Object *secondary = NULL) const;
 
 private:
-
 };
 EMPTY_DTOR(FXNugget)
 
 //-------------------------------------------------------------------------------------------------
 /**
-	An FXList is a way of encapsulating a particular set of audio/video effect(s).
-	Lots of other game systems (eg, DamageFX) use FXLists to abstract AV effects into data files
-	(rather than hardcoding them, which would be suboptimal).
+    An FXList is a way of encapsulating a particular set of audio/video effect(s).
+    Lots of other game systems (eg, DamageFX) use FXLists to abstract AV effects into data files
+    (rather than hardcoding them, which would be suboptimal).
 
-	Important notes:
+    Important notes:
 
-	-- an FXList is specified solely by name, and the only parameters it receives when performing
-	its AV effects are a primary (and optional secondary) object position.
+    -- an FXList is specified solely by name, and the only parameters it receives when performing
+    its AV effects are a primary (and optional secondary) object position.
 
-	-- There is no inheritance or overriding of FXLists; if you need an FXList that is nearly-but-not-quite
-	identical to an existing one, you must simply make an entirely new FXList. Realistically, this shouldn't
-	be a problem, since they are pretty simple to specify, and don't consume a lot of memory.
+    -- There is no inheritance or overriding of FXLists; if you need an FXList that is nearly-but-not-quite
+    identical to an existing one, you must simply make an entirely new FXList. Realistically, this shouldn't
+    be a problem, since they are pretty simple to specify, and don't consume a lot of memory.
 
-	-- an FXList is shared between multiple units. To help
-	enforce this, all it's methods are declared 'const'. If you can't implement the stuff you
-	need within this framework, please *don't* simply de-const things, because it could lead to very
-	strange side-effects. Instead, the system will have to be enhanced to allow for multiple instances
-	of each FXNugget.
+    -- an FXList is shared between multiple units. To help
+    enforce this, all it's methods are declared 'const'. If you can't implement the stuff you
+    need within this framework, please *don't* simply de-const things, because it could lead to very
+    strange side-effects. Instead, the system will have to be enhanced to allow for multiple instances
+    of each FXNugget.
 
-	-- Unlike most other game systems, FXList can't be overridden by subsequent INI file
-	loads. This isn't really a problem, because all you really need to do to "override" one is to
-	specify a different one.
+    -- Unlike most other game systems, FXList can't be overridden by subsequent INI file
+    loads. This isn't really a problem, because all you really need to do to "override" one is to
+    specify a different one.
 */
 class FXList
 {
-
 public:
+    FXList();
+    virtual ~FXList();
 
-	FXList();
-	virtual ~FXList();
+    /**
+        Toss the contents.
+    */
+    void clear();
 
-	/**
-		Toss the contents.
-	*/
-	void clear();
+    /**
+        add a nugget to the list. It belongs to the FXList, who is responsible for freeing it.
+    */
+    void addFXNugget(FXNugget *fxn) { m_nuggets.push_back(fxn); }
 
-	/**
-		add a nugget to the list. It belongs to the FXList, who is responsible for freeing it.
-	*/
-	void addFXNugget(FXNugget *fxn)
-	{
-		m_nuggets.push_back(fxn);
-	}
+    /// inline convenience method to avoid having to check for null.
+    inline static void doFXPos(
+        const FXList *fx,
+        const Coord3D *primary,
+        const Matrix3D *primaryMtx = NULL,
+        const Real primarySpeed = 0.0f,
+        const Coord3D *secondary = NULL,
+        const Real overrideRadius = 0.0f)
+    {
+        if (fx)
+            fx->doFXPos(primary, primaryMtx, primarySpeed, secondary, overrideRadius);
+    }
 
-	/// inline convenience method to avoid having to check for null.
-	inline static void doFXPos(const FXList* fx, const Coord3D *primary, const Matrix3D* primaryMtx = NULL, const Real primarySpeed = 0.0f, const Coord3D *secondary = NULL, const Real overrideRadius = 0.0f)
-	{
-		if (fx) fx->doFXPos(primary, primaryMtx, primarySpeed, secondary, overrideRadius);
-	}
+    /// inline convenience method to avoid having to check for null.
+    inline static void doFXObj(const FXList *fx, const Object *primary, const Object *secondary = NULL)
+    {
+        if (fx)
+        {
+            fx->doFXObj(primary, secondary);
 
-	/// inline convenience method to avoid having to check for null.
-	inline static void doFXObj(const FXList* fx, const Object* primary, const Object* secondary = NULL)
-	{
-		if (fx)
-		{
-			fx->doFXObj(primary, secondary);
-
-			//if (fx->)				// here we need to cal doFXRicochet, if fx calls for it
-
-		}
-
-	}
-
-
+            // if (fx->)				// here we need to cal doFXRicochet, if fx calls for it
+        }
+    }
 
 protected:
+    /**
+        The main guts of the system: actually perform the sound and/or video effects
+        needed. Note that primary and/or secondary can be null, so you must check for this.
+    */
+    void doFXPos(
+        const Coord3D *primary,
+        const Matrix3D *primaryMtx = NULL,
+        const Real primarySpeed = 0.0f,
+        const Coord3D *secondary = NULL,
+        const Real overrideRadius = 0.0f) const;
 
-
-	/**
-		The main guts of the system: actually perform the sound and/or video effects
-		needed. Note that primary and/or secondary can be null, so you must check for this.
-	*/
-	void doFXPos(const Coord3D *primary, const Matrix3D* primaryMtx = NULL, const Real primarySpeed = 0.0f, const Coord3D *secondary = NULL, const Real overrideRadius = 0.0f) const;
-
-	/**
-		the object-based version... by default, just call the location-based implementation.
-		Note that primary and/or secondary can be null, so you must check for this.
-	*/
-	void doFXObj(const Object* primary, const Object* secondary = NULL) const;
+    /**
+        the object-based version... by default, just call the location-based implementation.
+        Note that primary and/or secondary can be null, so you must check for this.
+    */
+    void doFXObj(const Object *primary, const Object *secondary = NULL) const;
 
 private:
+    typedef std::list<FXNugget *> FXNuggetList;
 
-	typedef std::list< FXNugget* > FXNuggetList;
-
-	FXNuggetList m_nuggets;
-
+    FXNuggetList m_nuggets;
 };
 
 //-------------------------------------------------------------------------------------------------
 /**
-	The "store" used to hold all the FXLists in existence.
+    The "store" used to hold all the FXLists in existence.
 */
 class FXListStore : public SubsystemInterface
 {
-
 public:
+    FXListStore();
+    ~FXListStore();
 
-	FXListStore();
-	~FXListStore();
+    void init() {}
+    void reset() {}
+    void update() {}
 
-	void init() { }
-	void reset() { }
-	void update() { }
+    /**
+        return the FXList with the given namekey.
+        return NULL if no such FXList exists.
+    */
+    const FXList *findFXList(const char *name) const;
 
-	/**
-		return the FXList with the given namekey.
-		return NULL if no such FXList exists.
-	*/
-	const FXList *findFXList( const char* name ) const;
-
-	static void parseFXListDefinition(INI* ini);
+    static void parseFXListDefinition(INI *ini);
 
 private:
+    // use the hashing function for Ints.
+    typedef std::hash_map<NameKeyType, FXList, rts::hash<NameKeyType>, rts::equal_to<NameKeyType> > FXListMap;
 
-	// use the hashing function for Ints.
-	typedef std::hash_map< NameKeyType, FXList, rts::hash<NameKeyType>, rts::equal_to<NameKeyType> > FXListMap;
-
-	FXListMap m_fxmap;
-
+    FXListMap m_fxmap;
 };
 
 // EXTERNALS //////////////////////////////////////////////////////////////////////////////////////
 extern FXListStore *TheFXListStore;
 
 #endif // _FXList_H_
-

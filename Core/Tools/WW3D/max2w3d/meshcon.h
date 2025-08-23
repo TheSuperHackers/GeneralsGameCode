@@ -35,10 +35,8 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
 #ifndef MESHCON_H
 #define MESHCON_H
-
 
 #ifndef ALWAYS_H
 #include "always.h"
@@ -64,27 +62,21 @@
 #include "Vector.H"
 #endif
 
-
 class GeometryExportTaskClass;
 class GeometryExportContextClass;
 
-
 struct ConnectionStruct
 {
-	ConnectionStruct(void) : BoneIndex(0),MeshINode(NULL)
-	{
-		memset(ObjectName,0,sizeof(ObjectName));
-	}
+    ConnectionStruct(void) : BoneIndex(0), MeshINode(NULL) { memset(ObjectName, 0, sizeof(ObjectName)); }
 
-	int							BoneIndex;
-	char							ObjectName[2*W3D_NAME_LEN];
-	INode	*						MeshINode;
+    int BoneIndex;
+    char ObjectName[2 * W3D_NAME_LEN];
+    INode *MeshINode;
 
-	// required by DynamicVectorClass...
-	operator == (const ConnectionStruct & that) { return false; }
-	operator != (const ConnectionStruct & that) { return !(*this==that); }
+    // required by DynamicVectorClass...
+    operator==(const ConnectionStruct & that) { return false; }
+    operator!=(const ConnectionStruct & that) { return !(*this == that); }
 };
-
 
 /**
 ** MeshConnectionsClass
@@ -94,56 +86,50 @@ struct ConnectionStruct
 class MeshConnectionsClass
 {
 public:
+    MeshConnectionsClass(DynamicVectorClass<GeometryExportTaskClass *> sub_objects, GeometryExportContextClass &context);
 
-	MeshConnectionsClass(	DynamicVectorClass<GeometryExportTaskClass *> sub_objects,
-									GeometryExportContextClass & context );
+    ~MeshConnectionsClass(void);
 
-	~MeshConnectionsClass(void);
+    /*
+    ** Get the name of the mesh connections object (will be
+    ** the name of the runtime HierarchyModel that this
+    ** object is describing.
+    */
+    const char *Get_Name(void) const { return Name; }
 
-	/*
-	** Get the name of the mesh connections object (will be
-	** the name of the runtime HierarchyModel that this
-	** object is describing.
-	*/
-	const char * Get_Name(void) const			{ return Name; }
+    /*
+    ** Get the total number of meshes (of all types).
+    */
+    int Get_Sub_Object_Count(void) const { return SubObjects.Count(); }
+    int Get_Aggregate_Count(void) const { return Aggregates.Count(); }
+    int Get_Proxy_Count(void) const { return ProxyObjects.Count(); }
 
-	/*
-	** Get the total number of meshes (of all types).
-	*/
-	int Get_Sub_Object_Count (void) const		{ return SubObjects.Count(); }
-	int Get_Aggregate_Count(void) const			{ return Aggregates.Count(); }
-	int Get_Proxy_Count(void) const				{ return ProxyObjects.Count(); }
+    /*
+    ** Retrieve data about the mesh of the given index.
+    ** out_name - name of the mesh is passed back by setting the char* pointed to by this value.
+    ** out_boneindex - the index of the bone used is passed back by setting the int pointed to by this value.
+    ** out_inode - mesh INode is passed by setting the INode* pointed to by this value. If this
+    **		parameter is NULL, the value is not passed back.
+    */
+    bool Get_Sub_Object_Data(int index, char **out_name, int *out_boneindex, INode **out_inode = NULL);
+    bool Get_Aggregate_Data(int index, char **out_name, int *out_boneindex, INode **out_inode = NULL);
+    bool Get_Proxy_Data(int index, char **out_name, int *out_boneindex, INode **out_inode = NULL);
 
-	/*
-	** Retrieve data about the mesh of the given index.
-	** out_name - name of the mesh is passed back by setting the char* pointed to by this value.
-	** out_boneindex - the index of the bone used is passed back by setting the int pointed to by this value.
-	** out_inode - mesh INode is passed by setting the INode* pointed to by this value. If this
-	**		parameter is NULL, the value is not passed back.
-	*/
-	bool Get_Sub_Object_Data(int index, char **out_name, int *out_boneindex, INode **out_inode = NULL);
-	bool Get_Aggregate_Data(int index, char **out_name, int *out_boneindex, INode **out_inode = NULL);
-	bool Get_Proxy_Data(int index, char **out_name, int *out_boneindex, INode **out_inode = NULL);
-
-	/*
-	** Returns the origin node used by this model.
-	*/
-	INode * Get_Origin (void) const				{ return Origin; }
+    /*
+    ** Returns the origin node used by this model.
+    */
+    INode *Get_Origin(void) const { return Origin; }
 
 private:
+    TimeValue CurTime;
+    INode *Origin;
 
-	TimeValue							CurTime;
-	INode *								Origin;
+    char Name[W3D_NAME_LEN];
 
-	char									Name[W3D_NAME_LEN];
-
-	// array of SubObjects
-	DynamicVectorClass<ConnectionStruct>	SubObjects;
-	DynamicVectorClass<ConnectionStruct>	Aggregates;
-	DynamicVectorClass<ConnectionStruct>	ProxyObjects;
-
-
+    // array of SubObjects
+    DynamicVectorClass<ConnectionStruct> SubObjects;
+    DynamicVectorClass<ConnectionStruct> Aggregates;
+    DynamicVectorClass<ConnectionStruct> ProxyObjects;
 };
-
 
 #endif /*MESHCON_H*/

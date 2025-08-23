@@ -42,71 +42,66 @@ class UpgradeMuxData;
 class FireOCLAfterWeaponCooldownUpdateModuleData : public UpdateModuleData
 {
 public:
-	UpgradeMuxData			m_upgradeMuxData;
-	ObjectCreationList	*m_ocl;
-	WeaponSlotType			m_weaponSlot;
-	UnsignedInt					m_minShotsRequired;
-	UnsignedInt					m_oclLifetimePerSecond;
-	UnsignedInt					m_oclMaxFrames;
+    UpgradeMuxData m_upgradeMuxData;
+    ObjectCreationList *m_ocl;
+    WeaponSlotType m_weaponSlot;
+    UnsignedInt m_minShotsRequired;
+    UnsignedInt m_oclLifetimePerSecond;
+    UnsignedInt m_oclMaxFrames;
 
-	FireOCLAfterWeaponCooldownUpdateModuleData();
-	static void buildFieldParse(MultiIniFieldParse& p);
+    FireOCLAfterWeaponCooldownUpdateModuleData();
+    static void buildFieldParse(MultiIniFieldParse &p);
 };
 
 //-------------------------------------------------------------------------------------------------
 class FireOCLAfterWeaponCooldownUpdate : public UpdateModule, public UpgradeMux
 {
-
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( FireOCLAfterWeaponCooldownUpdate, "FireOCLAfterWeaponCooldownUpdate" )
-	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( FireOCLAfterWeaponCooldownUpdate, FireOCLAfterWeaponCooldownUpdateModuleData )
+    MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(FireOCLAfterWeaponCooldownUpdate, "FireOCLAfterWeaponCooldownUpdate")
+    MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA(FireOCLAfterWeaponCooldownUpdate, FireOCLAfterWeaponCooldownUpdateModuleData)
 
 public:
+    FireOCLAfterWeaponCooldownUpdate(Thing *thing, const ModuleData *moduleData);
+    // virtual destructor prototype provided by memory pool declaration
 
-	FireOCLAfterWeaponCooldownUpdate( Thing *thing, const ModuleData* moduleData );
-	// virtual destructor prototype provided by memory pool declaration
-
-	// update methods
-	virtual UpdateSleepTime update();							///< called once per frame
+    // update methods
+    virtual UpdateSleepTime update(); ///< called once per frame
 
 protected:
-	virtual void upgradeImplementation()
-	{
-		// nothing!
-	}
+    virtual void upgradeImplementation()
+    {
+        // nothing!
+    }
 
-	virtual void getUpgradeActivationMasks(UpgradeMaskType& activation, UpgradeMaskType& conflicting) const
-	{
-		getFireOCLAfterWeaponCooldownUpdateModuleData()->m_upgradeMuxData.getUpgradeActivationMasks(activation, conflicting);
-	}
+    virtual void getUpgradeActivationMasks(UpgradeMaskType &activation, UpgradeMaskType &conflicting) const
+    {
+        getFireOCLAfterWeaponCooldownUpdateModuleData()->m_upgradeMuxData.getUpgradeActivationMasks(activation, conflicting);
+    }
 
-	virtual void performUpgradeFX()
-	{
-		getFireOCLAfterWeaponCooldownUpdateModuleData()->m_upgradeMuxData.performUpgradeFX(getObject());
-	}
+    virtual void performUpgradeFX()
+    {
+        getFireOCLAfterWeaponCooldownUpdateModuleData()->m_upgradeMuxData.performUpgradeFX(getObject());
+    }
 
-	virtual void processUpgradeRemoval()
-	{
-		// I can't take it any more.  Let the record show that I think the UpgradeMux multiple inheritence is CRAP.
-		getFireOCLAfterWeaponCooldownUpdateModuleData()->m_upgradeMuxData.muxDataProcessUpgradeRemoval(getObject());
-	}
+    virtual void processUpgradeRemoval()
+    {
+        // I can't take it any more.  Let the record show that I think the UpgradeMux multiple inheritence is CRAP.
+        getFireOCLAfterWeaponCooldownUpdateModuleData()->m_upgradeMuxData.muxDataProcessUpgradeRemoval(getObject());
+    }
 
-	virtual Bool requiresAllActivationUpgrades() const
-	{
-		return getFireOCLAfterWeaponCooldownUpdateModuleData()->m_upgradeMuxData.m_requiresAllTriggers;
-	}
+    virtual Bool requiresAllActivationUpgrades() const
+    {
+        return getFireOCLAfterWeaponCooldownUpdateModuleData()->m_upgradeMuxData.m_requiresAllTriggers;
+    }
 
-	virtual Bool isSubObjectsUpgrade() { return false; }
+    virtual Bool isSubObjectsUpgrade() { return false; }
 
-	void resetStats();
-	void fireOCL();
+    void resetStats();
+    void fireOCL();
 
 private:
-
-	Bool				m_valid;
-	UnsignedInt m_consecutiveShots;
-	UnsignedInt m_startFrame;
-
+    Bool m_valid;
+    UnsignedInt m_consecutiveShots;
+    UnsignedInt m_startFrame;
 };
 
 #endif // __FIRE_OCL_AFTER_WEAPON_COOLDOWN_UPDATE_H
-

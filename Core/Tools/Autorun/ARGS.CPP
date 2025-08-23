@@ -33,7 +33,7 @@
 //-----------------------------------------------------------------------------
 // INCLUDES
 //-----------------------------------------------------------------------------
-#define  STRICT
+#define STRICT
 #include <windows.h>
 #include <windowsx.h>
 #include <assert.h>
@@ -62,93 +62,98 @@ Command_Line_Arguments *Args = NULL;
 //   09/01/1997  ML/MG : Created.
 //=============================================================================
 
-Command_Line_Arguments::Command_Line_Arguments (
-	HINSTANCE current_instance_handle,
-	LPTSTR windows_command_line_string )
+Command_Line_Arguments::Command_Line_Arguments(HINSTANCE current_instance_handle, LPTSTR windows_command_line_string)
 {
-	//--------------------------------------------------------------------------
-	// debug checks...
-	//--------------------------------------------------------------------------
-	assert( windows_command_line_string != NULL );
+    //--------------------------------------------------------------------------
+    // debug checks...
+    //--------------------------------------------------------------------------
+    assert(windows_command_line_string != NULL);
 
-	//--------------------------------------------------------------------------
-	// reset all class data
-	//--------------------------------------------------------------------------
-	memset( ArgV, 0, sizeof( ArgV ) );
+    //--------------------------------------------------------------------------
+    // reset all class data
+    //--------------------------------------------------------------------------
+    memset(ArgV, 0, sizeof(ArgV));
 
-	//--------------------------------------------------------------------------
-	// Store the program name in ArgV[ 0 ].
-	//--------------------------------------------------------------------------
-	GetModuleFileName( current_instance_handle, ArgV[ 0 ], MAX_ARGUMENT_LENGTH	);
+    //--------------------------------------------------------------------------
+    // Store the program name in ArgV[ 0 ].
+    //--------------------------------------------------------------------------
+    GetModuleFileName(current_instance_handle, ArgV[0], MAX_ARGUMENT_LENGTH);
 
-	const char * ptr = windows_command_line_string;
-	bool potentially_forever = true;
+    const char *ptr = windows_command_line_string;
+    bool potentially_forever = true;
 
-	ArgC = 1;
+    ArgC = 1;
 
-	while( potentially_forever ) {
+    while (potentially_forever)
+    {
+        //-----------------------------------------------------------------------
+        // Find the next non-whitespace character in the string.
+        //-----------------------------------------------------------------------
+        while (*ptr == ' ')
+        {
+            ++ptr;
+        }
 
-		//-----------------------------------------------------------------------
-		// Find the next non-whitespace character in the string.
-		//-----------------------------------------------------------------------
-		while ( *ptr == ' ' ) {
-			++ ptr;
-		}
+        //-----------------------------------------------------------------------
+        // If we're at the end of the string, quit.
+        //-----------------------------------------------------------------------
+        if (*ptr == '\0')
+        {
+            break;
+        }
 
-		//-----------------------------------------------------------------------
-		// If we're at the end of the string, quit.
-		//-----------------------------------------------------------------------
-		if ( *ptr == '\0' ) {
-			break;
-		}
+        //-----------------------------------------------------------------------
+        // Store a command-line argument.
+        //-----------------------------------------------------------------------
+        int i = 0;
 
-		//-----------------------------------------------------------------------
-		// Store a command-line argument.
-		//-----------------------------------------------------------------------
-		int i = 0;
+        if (*ptr == '"')
+        {
+            //--------------------------------------------------------------------
+            // Skip the opening quotation mark.
+            //--------------------------------------------------------------------
+            ++ptr;
 
-		if ( *ptr == '"' ) {
+            //--------------------------------------------------------------------
+            // Collect characters until another quotation mark is encountered.
+            //--------------------------------------------------------------------
+            while (*ptr != '\0' && *ptr != '"')
+            {
+                if (i < MAX_ARGUMENT_LENGTH - 1)
+                {
+                    ArgV[ArgC][i] = *ptr;
+                    ++i;
+                }
+                ++ptr;
+            }
 
-			//--------------------------------------------------------------------
-			// Skip the opening quotation mark.
-			//--------------------------------------------------------------------
-			++ ptr;
+            //--------------------------------------------------------------------
+            // Skip the closing quotation mark.
+            //--------------------------------------------------------------------
+            if (*ptr == '"')
+            {
+                ++ptr;
+            }
+        }
+        else
+        {
+            //--------------------------------------------------------------------
+            // Collect characters until a whitespace character is encountered.
+            //--------------------------------------------------------------------
+            while (*ptr != '\0' && *ptr != ' ')
+            {
+                if (i < MAX_ARGUMENT_LENGTH - 1)
+                {
+                    ArgV[ArgC][i] = *ptr;
+                    ++i;
+                }
+                ++ptr;
+            }
+        }
 
-			//--------------------------------------------------------------------
-			// Collect characters until another quotation mark is encountered.
-			//--------------------------------------------------------------------
-			while ( *ptr != '\0' && *ptr != '"' ) {
-				if ( i < MAX_ARGUMENT_LENGTH - 1 ) {
-					ArgV [ ArgC ][ i ] = *ptr;
-					++ i;
-				}
-				++ ptr;
-			}
-
-			//--------------------------------------------------------------------
-			// Skip the closing quotation mark.
-			//--------------------------------------------------------------------
-			if ( *ptr == '"' ) {
-				++ ptr;
-			}
-
-		} else {
-
-			//--------------------------------------------------------------------
-			// Collect characters until a whitespace character is encountered.
-			//--------------------------------------------------------------------
-			while ( *ptr != '\0' && *ptr != ' ' ) {
-				if ( i < MAX_ARGUMENT_LENGTH - 1 ) {
-					ArgV [ ArgC ][ i ] = *ptr;
-					++ i;
-				}
-				++ ptr;
-			}
-		}
-
-		ArgV [ ArgC ][ i ] = '\0';
-		++ ArgC;
-	}
+        ArgV[ArgC][i] = '\0';
+        ++ArgC;
+    }
 }
 
 //*****************************************************************************
@@ -164,89 +169,95 @@ Command_Line_Arguments::Command_Line_Arguments (
 //   09/01/1997  ML/MG : Created.
 //=============================================================================
 
-Command_Line_Arguments::Command_Line_Arguments ( HINSTANCE current_instance_handle )
+Command_Line_Arguments::Command_Line_Arguments(HINSTANCE current_instance_handle)
 {
+    char *windows_command_line_string = GetCommandLine();
 
-	char * windows_command_line_string = GetCommandLine();
+    //--------------------------------------------------------------------------
+    // debug checks...
+    //--------------------------------------------------------------------------
+    assert(windows_command_line_string != NULL);
 
-	//--------------------------------------------------------------------------
-	// debug checks...
-	//--------------------------------------------------------------------------
-	assert( windows_command_line_string != NULL );
+    //--------------------------------------------------------------------------
+    // reset all class data
+    //--------------------------------------------------------------------------
+    memset(ArgV, 0, sizeof(ArgV));
 
-	//--------------------------------------------------------------------------
-	// reset all class data
-	//--------------------------------------------------------------------------
-	memset( ArgV, 0, sizeof( ArgV ) );
+    const char *ptr = windows_command_line_string;
+    bool potentially_forever = true;
 
-	const char * ptr = windows_command_line_string;
-	bool potentially_forever = true;
+    ArgC = 1;
 
-	ArgC = 1;
+    while (potentially_forever)
+    {
+        //-----------------------------------------------------------------------
+        // Find the next non-whitespace character in the string.
+        //-----------------------------------------------------------------------
+        while (*ptr == ' ')
+        {
+            ++ptr;
+        }
 
-	while( potentially_forever ) {
+        //-----------------------------------------------------------------------
+        // If we're at the end of the string, quit.
+        //-----------------------------------------------------------------------
+        if (*ptr == '\0')
+        {
+            break;
+        }
 
-		//-----------------------------------------------------------------------
-		// Find the next non-whitespace character in the string.
-		//-----------------------------------------------------------------------
-		while ( *ptr == ' ' ) {
-			++ ptr;
-		}
+        //-----------------------------------------------------------------------
+        // Store a command-line argument.
+        //-----------------------------------------------------------------------
+        int i = 0;
 
-		//-----------------------------------------------------------------------
-		// If we're at the end of the string, quit.
-		//-----------------------------------------------------------------------
-		if ( *ptr == '\0' ) {
-			break;
-		}
+        if (*ptr == '"')
+        {
+            //--------------------------------------------------------------------
+            // Skip the opening quotation mark.
+            //--------------------------------------------------------------------
+            ++ptr;
 
-		//-----------------------------------------------------------------------
-		// Store a command-line argument.
-		//-----------------------------------------------------------------------
-		int i = 0;
+            //--------------------------------------------------------------------
+            // Collect characters until another quotation mark is encountered.
+            //--------------------------------------------------------------------
+            while (*ptr != '\0' && *ptr != '"')
+            {
+                if (i < MAX_ARGUMENT_LENGTH - 1)
+                {
+                    ArgV[ArgC][i] = *ptr;
+                    ++i;
+                }
+                ++ptr;
+            }
 
-		if ( *ptr == '"' ) {
+            //--------------------------------------------------------------------
+            // Skip the closing quotation mark.
+            //--------------------------------------------------------------------
+            if (*ptr == '"')
+            {
+                ++ptr;
+            }
+        }
+        else
+        {
+            //--------------------------------------------------------------------
+            // Collect characters until a whitespace character is encountered.
+            //--------------------------------------------------------------------
+            while (*ptr != '\0' && *ptr != ' ')
+            {
+                if (i < MAX_ARGUMENT_LENGTH - 1)
+                {
+                    ArgV[ArgC][i] = *ptr;
+                    ++i;
+                }
+                ++ptr;
+            }
+        }
 
-			//--------------------------------------------------------------------
-			// Skip the opening quotation mark.
-			//--------------------------------------------------------------------
-			++ ptr;
-
-			//--------------------------------------------------------------------
-			// Collect characters until another quotation mark is encountered.
-			//--------------------------------------------------------------------
-			while ( *ptr != '\0' && *ptr != '"' ) {
-				if ( i < MAX_ARGUMENT_LENGTH - 1 ) {
-					ArgV [ ArgC ][ i ] = *ptr;
-					++ i;
-				}
-				++ ptr;
-			}
-
-			//--------------------------------------------------------------------
-			// Skip the closing quotation mark.
-			//--------------------------------------------------------------------
-			if ( *ptr == '"' ) {
-				++ ptr;
-			}
-
-		} else {
-
-			//--------------------------------------------------------------------
-			// Collect characters until a whitespace character is encountered.
-			//--------------------------------------------------------------------
-			while ( *ptr != '\0' && *ptr != ' ' ) {
-				if ( i < MAX_ARGUMENT_LENGTH - 1 ) {
-					ArgV [ ArgC ][ i ] = *ptr;
-					++ i;
-				}
-				++ ptr;
-			}
-		}
-
-		ArgV [ ArgC ][ i ] = '\0';
-		++ ArgC;
-	}
+        ArgV[ArgC][i] = '\0';
+        ++ArgC;
+    }
 }
 
 //*****************************************************************************
@@ -263,13 +274,13 @@ Command_Line_Arguments::Command_Line_Arguments ( HINSTANCE current_instance_hand
 //   09/01/1997  ML/MG : Created.
 //=============================================================================
 
-Command_Line_Arguments::~Command_Line_Arguments ( void )
+Command_Line_Arguments::~Command_Line_Arguments(void)
 {
-	//--------------------------------------------------------------------------
-	// reset all data...
-	//--------------------------------------------------------------------------
-	ArgC = -1;
-	memset( ArgV, 0, sizeof( ArgV ) );
+    //--------------------------------------------------------------------------
+    // reset all data...
+    //--------------------------------------------------------------------------
+    ArgC = -1;
+    memset(ArgV, 0, sizeof(ArgV));
 }
 
 //*****************************************************************************
@@ -285,17 +296,17 @@ Command_Line_Arguments::~Command_Line_Arguments ( void )
 //   09/01/1997  ML/MG : Created.
 //=============================================================================
 
-int Command_Line_Arguments::Get_argc ( void )
+int Command_Line_Arguments::Get_argc(void)
 {
-	//--------------------------------------------------------------------------
-	// debug checks - make sure we at least have the application name
-	//--------------------------------------------------------------------------
-	assert( ArgC >= 1 );
+    //--------------------------------------------------------------------------
+    // debug checks - make sure we at least have the application name
+    //--------------------------------------------------------------------------
+    assert(ArgC >= 1);
 
-	//--------------------------------------------------------------------------
-	// return how many string parameters there are in the "argv" list
-	//--------------------------------------------------------------------------
-	return( ArgC );
+    //--------------------------------------------------------------------------
+    // return how many string parameters there are in the "argv" list
+    //--------------------------------------------------------------------------
+    return (ArgC);
 }
 
 //*****************************************************************************
@@ -311,42 +322,39 @@ int Command_Line_Arguments::Get_argc ( void )
 //   09/01/1997  ML/MG : Created.
 //=============================================================================
 
-const char *Command_Line_Arguments::Get_argv ( int argument_index )
+const char *Command_Line_Arguments::Get_argv(int argument_index)
 {
-	//--------------------------------------------------------------------------
-	// debug checks - make sure we at least have the application name
-	//--------------------------------------------------------------------------
-	assert( argument_index >= 0 );
-	assert( argument_index < MAX_COMMAND_LINE_ARGUMENTS );
-	assert( argument_index < ArgC );
-	assert( ArgC >= 1 );
+    //--------------------------------------------------------------------------
+    // debug checks - make sure we at least have the application name
+    //--------------------------------------------------------------------------
+    assert(argument_index >= 0);
+    assert(argument_index < MAX_COMMAND_LINE_ARGUMENTS);
+    assert(argument_index < ArgC);
+    assert(ArgC >= 1);
 
-	//--------------------------------------------------------------------------
-	// return
-	//--------------------------------------------------------------------------
-	return( ArgV[ argument_index ] );
+    //--------------------------------------------------------------------------
+    // return
+    //--------------------------------------------------------------------------
+    return (ArgV[argument_index]);
 }
 
-void Command_Line_Arguments::Set_argv( int argument_index, char *arg )
+void Command_Line_Arguments::Set_argv(int argument_index, char *arg)
 {
-	if( arg == NULL || *arg == '\0' ) {
-		return;
-	}
+    if (arg == NULL || *arg == '\0')
+    {
+        return;
+    }
 
-	//--------------------------------------------------------------------------
-	// debug checks - make sure we at least have the application name
-	//--------------------------------------------------------------------------
-	assert( argument_index >= 0 );
-	assert( argument_index < MAX_COMMAND_LINE_ARGUMENTS );
-	assert( argument_index < ArgC );
-	assert( ArgC >= 1 );
+    //--------------------------------------------------------------------------
+    // debug checks - make sure we at least have the application name
+    //--------------------------------------------------------------------------
+    assert(argument_index >= 0);
+    assert(argument_index < MAX_COMMAND_LINE_ARGUMENTS);
+    assert(argument_index < ArgC);
+    assert(ArgC >= 1);
 
-	if (( argument_index >= 0 ) &&
-		( argument_index < MAX_COMMAND_LINE_ARGUMENTS ) &&
-		( argument_index < ArgC )) {
-
-		strcpy( ArgV[ argument_index ], arg );
-	}
+    if ((argument_index >= 0) && (argument_index < MAX_COMMAND_LINE_ARGUMENTS) && (argument_index < ArgC))
+    {
+        strcpy(ArgV[argument_index], arg);
+    }
 }
-
-

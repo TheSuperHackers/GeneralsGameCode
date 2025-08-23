@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 #include "Common/AudioEventRTS.h"
 #include "Common/MiscAudio.h"
 #include "Common/Player.h"
@@ -38,98 +38,94 @@
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-MoneyCrateCollide::MoneyCrateCollide( Thing *thing, const ModuleData* moduleData ) : CrateCollide( thing, moduleData )
+MoneyCrateCollide::MoneyCrateCollide(Thing *thing, const ModuleData *moduleData) : CrateCollide(thing, moduleData)
 {
-
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-MoneyCrateCollide::~MoneyCrateCollide( void )
+MoneyCrateCollide::~MoneyCrateCollide(void)
 {
-
 }
 
 //-------------------------------------------------------------------------------------------------
-Bool MoneyCrateCollide::executeCrateBehavior( Object *other )
+Bool MoneyCrateCollide::executeCrateBehavior(Object *other)
 {
-	UnsignedInt money = getMoneyCrateCollideModuleData()->m_moneyProvided;
+    UnsignedInt money = getMoneyCrateCollideModuleData()->m_moneyProvided;
 
-	money += getUpgradedSupplyBoost(other);
+    money += getUpgradedSupplyBoost(other);
 
-	other->getControllingPlayer()->getMoney()->deposit( money );
-	other->getControllingPlayer()->getScoreKeeper()->addMoneyEarned( money );
+    other->getControllingPlayer()->getMoney()->deposit(money);
+    other->getControllingPlayer()->getScoreKeeper()->addMoneyEarned(money);
 
-	//Play a crate pickup sound.
-	AudioEventRTS soundToPlay = TheAudio->getMiscAudio()->m_crateMoney;
-	soundToPlay.setObjectID( other->getID() );
-	TheAudio->addAudioEvent(&soundToPlay);
+    // Play a crate pickup sound.
+    AudioEventRTS soundToPlay = TheAudio->getMiscAudio()->m_crateMoney;
+    soundToPlay.setObjectID(other->getID());
+    TheAudio->addAudioEvent(&soundToPlay);
 
-	return TRUE;
+    return TRUE;
 }
 
 //------------------------------------------------------------------------------------------------
-Int MoneyCrateCollide::getUpgradedSupplyBoost( Object *other ) const
+Int MoneyCrateCollide::getUpgradedSupplyBoost(Object *other) const
 {
-	Player *player = other->getControllingPlayer();
-	if (!player) return 0;
+    Player *player = other->getControllingPlayer();
+    if (!player)
+        return 0;
 
-	// Loop through the upgrade pairs and see if an upgrade is present that adds supply boost
-	std::list<upgradePair>::const_iterator it = getMoneyCrateCollideModuleData()->m_upgradeBoost.begin();
-	while (it != getMoneyCrateCollideModuleData()->m_upgradeBoost.end())
-	{
-		upgradePair info = *it;
+    // Loop through the upgrade pairs and see if an upgrade is present that adds supply boost
+    std::list<upgradePair>::const_iterator it = getMoneyCrateCollideModuleData()->m_upgradeBoost.begin();
+    while (it != getMoneyCrateCollideModuleData()->m_upgradeBoost.end())
+    {
+        upgradePair info = *it;
 
-		// Check if the player has the desired upgrade. If so return the boost
-		static const UpgradeTemplate *upgradeTemplate = TheUpgradeCenter->findUpgrade( info.type.c_str() );
-		if (player && upgradeTemplate && player->hasUpgradeComplete(upgradeTemplate))
-		{
-			return info.amount;
-		}
+        // Check if the player has the desired upgrade. If so return the boost
+        static const UpgradeTemplate *upgradeTemplate = TheUpgradeCenter->findUpgrade(info.type.c_str());
+        if (player && upgradeTemplate && player->hasUpgradeComplete(upgradeTemplate))
+        {
+            return info.amount;
+        }
 
-		// check next
-		++it;
-	}
+        // check next
+        ++it;
+    }
 
-	return 0;
+    return 0;
 }
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void MoneyCrateCollide::crc( Xfer *xfer )
+void MoneyCrateCollide::crc(Xfer *xfer)
 {
+    // extend base class
+    CrateCollide::crc(xfer);
 
-	// extend base class
-	CrateCollide::crc( xfer );
-
-}  // end crc
+} // end crc
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void MoneyCrateCollide::xfer( Xfer *xfer )
+void MoneyCrateCollide::xfer(Xfer *xfer)
 {
+    // version
+    XferVersion currentVersion = 1;
+    XferVersion version = currentVersion;
+    xfer->xferVersion(&version, currentVersion);
 
-	// version
-	XferVersion currentVersion = 1;
-	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+    // extend base class
+    CrateCollide::xfer(xfer);
 
-	// extend base class
-	CrateCollide::xfer( xfer );
-
-}  // end xfer
+} // end xfer
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void MoneyCrateCollide::loadPostProcess( void )
+void MoneyCrateCollide::loadPostProcess(void)
 {
+    // extend base class
+    CrateCollide::loadPostProcess();
 
-	// extend base class
-	CrateCollide::loadPostProcess();
-
-}  // end loadPostProcess
+} // end loadPostProcess

@@ -43,13 +43,11 @@
 #include "rawfile.h"
 #include "units.h"
 
-
 /*
 ** Static functions
 */
-static BOOL CALLBACK		_logdata_dialog_proc(HWND Hwnd,UINT message,WPARAM wParam,LPARAM lParam);
-static DWORD WINAPI		_logdata_thread_function(LPVOID log_obj_ptr);
-
+static BOOL CALLBACK _logdata_dialog_proc(HWND Hwnd, UINT message, WPARAM wParam, LPARAM lParam);
+static DWORD WINAPI _logdata_thread_function(LPVOID log_obj_ptr);
 
 /***********************************************************************************************
  * LogDataDialogClass::LogDataDialogClass -- constructor for the options dialog object         *
@@ -63,30 +61,28 @@ static DWORD WINAPI		_logdata_thread_function(LPVOID log_obj_ptr);
  * HISTORY:                                                                                    *
  *   02/09/2000 JGA  : Created.                                                                *
  *=============================================================================================*/
-LogDataDialogClass::LogDataDialogClass(HWND parent):
- Hwnd(NULL),
- ParentHwnd(parent),
- buffer_index(0),
- last_buffer_index(0),
- status(0)
+LogDataDialogClass::LogDataDialogClass(HWND parent) :
+    Hwnd(NULL), ParentHwnd(parent), buffer_index(0), last_buffer_index(0), status(0)
 {
-	ThreadHandle = CreateThread(NULL, 0, _logdata_thread_function, (LPVOID)this, 0, &ThreadID);
+    ThreadHandle = CreateThread(NULL, 0, _logdata_thread_function, (LPVOID)this, 0, &ThreadID);
 
-	if (ThreadHandle) {
-		while (status == 0) {
-			// sync, wait for init
-		}
-	}
+    if (ThreadHandle)
+    {
+        while (status == 0)
+        {
+            // sync, wait for init
+        }
+    }
 }
 
 LogDataDialogClass::~LogDataDialogClass(void)
 {
-	status = 3;
-	if (::IsWindow(Hwnd)) {
-		SendMessage( Hwnd, WM_CLOSE, 0, 0 );
-	}
+    status = 3;
+    if (::IsWindow(Hwnd))
+    {
+        SendMessage(Hwnd, WM_CLOSE, 0, 0);
+    }
 }
-
 
 /***********************************************************************************************
  * LogDataDialogClass::printf -- handles doing printfs into the current log window             *
@@ -102,33 +98,31 @@ LogDataDialogClass::~LogDataDialogClass(void)
  *=============================================================================================*/
 void LogDataDialogClass::printf(const char *text, ...)
 {
-	va_list arguments;
-	va_start(arguments, text);
-}	// printf
+    va_list arguments;
+    va_start(arguments, text);
+} // printf
 
-void LogDataDialogClass::printf(const char * text, va_list args)
+void LogDataDialogClass::printf(const char *text, va_list args)
 {
-	static char string_buffer[256];
+    static char string_buffer[256];
 
-	vsprintf(string_buffer, text, args);
+    vsprintf(string_buffer, text, args);
 
-	HWND ctrlHwnd = GetDlgItem(Hwnd, IDC_ANIM_LOG_RICHEDIT);
+    HWND ctrlHwnd = GetDlgItem(Hwnd, IDC_ANIM_LOG_RICHEDIT);
 
-	SendMessage(ctrlHwnd, EM_SETSEL, -1, -1 );
-	SendMessage(ctrlHwnd, EM_REPLACESEL, FALSE, (long)string_buffer);
+    SendMessage(ctrlHwnd, EM_SETSEL, -1, -1);
+    SendMessage(ctrlHwnd, EM_REPLACESEL, FALSE, (long)string_buffer);
 
-	last_buffer_index = buffer_index;
-	buffer_index+=strlen(string_buffer);
+    last_buffer_index = buffer_index;
+    buffer_index += strlen(string_buffer);
 
-	//int min,max,pos;
-	//GetScrollRange(ctrlHwnd, SB_VERT, &min, &max);
-	//pos = GetScrollPos(ctrlHwnd, SB_VERT);
+    // int min,max,pos;
+    // GetScrollRange(ctrlHwnd, SB_VERT, &min, &max);
+    // pos = GetScrollPos(ctrlHwnd, SB_VERT);
 
-	//if (pos == max) {
-		SendMessage(GetDlgItem(Hwnd,IDC_ANIM_LOG_RICHEDIT), EM_SCROLLCARET, 0, 0);
-	//}
-
-
+    // if (pos == max) {
+    SendMessage(GetDlgItem(Hwnd, IDC_ANIM_LOG_RICHEDIT), EM_SCROLLCARET, 0, 0);
+    //}
 }
 
 /***********************************************************************************************
@@ -145,32 +139,31 @@ void LogDataDialogClass::printf(const char * text, va_list args)
  *=============================================================================================*/
 void LogDataDialogClass::rprintf(const char *text, ...)
 {
-	va_list arguments;
-	va_start(arguments, text);
+    va_list arguments;
+    va_start(arguments, text);
 
-	rprintf(text,arguments);
+    rprintf(text, arguments);
 }
 
 void LogDataDialogClass::rprintf(const char *text, va_list args)
 {
-	static char string_buffer[256];
-	vsprintf(string_buffer, text, args);
+    static char string_buffer[256];
+    vsprintf(string_buffer, text, args);
 
-	HWND ctrlHwnd = GetDlgItem(Hwnd, IDC_ANIM_LOG_RICHEDIT);
+    HWND ctrlHwnd = GetDlgItem(Hwnd, IDC_ANIM_LOG_RICHEDIT);
 
-	SendMessage(ctrlHwnd, EM_SETSEL, last_buffer_index, buffer_index );
-	SendMessage(ctrlHwnd, EM_REPLACESEL, FALSE, (long)string_buffer);
+    SendMessage(ctrlHwnd, EM_SETSEL, last_buffer_index, buffer_index);
+    SendMessage(ctrlHwnd, EM_REPLACESEL, FALSE, (long)string_buffer);
 
-	buffer_index = strlen(string_buffer) + last_buffer_index;
+    buffer_index = strlen(string_buffer) + last_buffer_index;
 
-	//int min,max,pos;
-	//GetScrollRange(ctrlHwnd, SB_VERT, &min, &max);
-	//pos = GetScrollPos(ctrlHwnd, SB_VERT);
+    // int min,max,pos;
+    // GetScrollRange(ctrlHwnd, SB_VERT, &min, &max);
+    // pos = GetScrollPos(ctrlHwnd, SB_VERT);
 
-	//SendMessage(GetDlgItem(Hwnd,IDC_ANIM_LOG_RICHEDIT), EM_SCROLLCARET, 0, 0);
+    // SendMessage(GetDlgItem(Hwnd,IDC_ANIM_LOG_RICHEDIT), EM_SCROLLCARET, 0, 0);
 
-}	// rprintf
-
+} // rprintf
 
 /***********************************************************************************************
  * LogDataDialogClass::updatebar - send message to progress meter                              *
@@ -184,18 +177,17 @@ void LogDataDialogClass::rprintf(const char *text, va_list args)
  * HISTORY:                                                                                    *
  *   02/14/2000 JGA  : Created.                                                                 *
  *=============================================================================================*/
-void	LogDataDialogClass::updatebar(float position, float total)
+void LogDataDialogClass::updatebar(float position, float total)
 {
-	int pos;
+    int pos;
 
-	pos = ((position / total) * 100.0f);
+    pos = ((position / total) * 100.0f);
 
-	HWND ctrlHwnd = GetDlgItem(Hwnd, IDC_ANIM_COMPRESS_PROGRESS);
+    HWND ctrlHwnd = GetDlgItem(Hwnd, IDC_ANIM_COMPRESS_PROGRESS);
 
-	SendMessage(ctrlHwnd, PBM_SETPOS, pos, 0 );
+    SendMessage(ctrlHwnd, PBM_SETPOS, pos, 0);
 
-}	// updatebar
-
+} // updatebar
 
 /***********************************************************************************************
  * LogDataDialogClass::Wait_OK - Give user a chance to review log, then hit ok                 *
@@ -211,16 +203,15 @@ void	LogDataDialogClass::updatebar(float position, float total)
  *=============================================================================================*/
 void LogDataDialogClass::Wait_OK()
 {
-	::EnableWindow(GetDlgItem(Hwnd,IDOK),TRUE);
-	::SetForegroundWindow(Hwnd);
+    ::EnableWindow(GetDlgItem(Hwnd, IDOK), TRUE);
+    ::SetForegroundWindow(Hwnd);
 
-	while (status < 2) {
-		// wait for the OK
-	}
+    while (status < 2)
+    {
+        // wait for the OK
+    }
 
 } // Wait_OK
-
-
 
 /***********************************************************************************************
  * LogDataDialogClass::Dialog_Proc -- Handles the windows message for the options dialog    *
@@ -234,100 +225,88 @@ void LogDataDialogClass::Wait_OK()
  * HISTORY:                                                                                    *
  *   07/24/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-bool LogDataDialogClass::Dialog_Proc
-(
-	HWND hwnd,
-	UINT message,
-	WPARAM wParam,
-	LPARAM
-)
+bool LogDataDialogClass::Dialog_Proc(HWND hwnd, UINT message, WPARAM wParam, LPARAM)
 {
-	int code = HIWORD(wParam);
+    int code = HIWORD(wParam);
 
-	switch (message )	{
+    switch (message)
+    {
+        /*******************************************************************
+         * WM_INITDIALOG
+         *
+         * Initialize all of the custom controls for the dialog box
+         *
+         *******************************************************************/
+        case WM_INITDIALOG:
 
-		/*******************************************************************
-		* WM_INITDIALOG
-		*
-		* Initialize all of the custom controls for the dialog box
-		*
-		*******************************************************************/
-		case WM_INITDIALOG:
+            Dialog_Init();
+            return TRUE;
 
-			Dialog_Init();
-			return TRUE;
+        /*******************************************************************
+         * WM_COMMAND
+         *
+         *
+         *******************************************************************/
+        case WM_COMMAND:
 
+            switch (LOWORD(wParam))
+            {
+                case IDOK:
 
-		/*******************************************************************
-		* WM_COMMAND
-		*
-		*
-		*******************************************************************/
-		case WM_COMMAND:
+                    status = 2;
 
-			switch (LOWORD(wParam))
-			{
-				case IDOK:
+                    EndDialog(Hwnd, 1);
+                    Hwnd = NULL;
+                    return TRUE;
+                    break;
+            }
+            break;
 
-					status = 2;
+            // case WM_VSCROLL:
+            //	return TRUE;
+            //	break;
 
-					EndDialog(Hwnd, 1);
-					Hwnd = NULL;
-					return TRUE;
-					break;
+        case WM_CLOSE:
 
-			}
-			break;
+            if (status >= 2)
+            {
+                EndDialog(Hwnd, 1);
+                Hwnd = NULL;
+            }
 
-		//case WM_VSCROLL:
-		//	return TRUE;
-		//	break;
+            return TRUE;
+            break;
+    }
+    return FALSE;
 
-		case WM_CLOSE:
-
-			if (status >= 2) {
-				EndDialog(Hwnd, 1);
-				Hwnd = NULL;
-			}
-
-			return TRUE;
-			break;
-
-	}
-	return FALSE;
-
-}	// Dialog_Proc
+} // Dialog_Proc
 
 void LogDataDialogClass::Dialog_Init()
 {
+    SetCursor(LoadCursor(NULL, IDC_ARROW));
 
-	SetCursor(LoadCursor (NULL, IDC_ARROW));
+    RECT desktop;
+    RECT ourwin;
 
-	RECT desktop;
-	RECT ourwin;
+    GetWindowRect(GetDesktopWindow(), &desktop);
+    GetWindowRect(Hwnd, &ourwin);
 
-	GetWindowRect(GetDesktopWindow(), &desktop);
-	GetWindowRect(Hwnd, &ourwin);
+    int sx, sy, cx, cy;
 
-	int sx,sy,cx,cy;
+    sx = ourwin.right - ourwin.left;
+    sy = ourwin.bottom - ourwin.top;
 
-	sx = ourwin.right   - ourwin.left;
-	sy = ourwin.bottom - ourwin.top;
+    cx = (((desktop.right - desktop.left) - sx) / 2) + desktop.left;
+    cy = (((desktop.bottom - desktop.top) - sy) / 2) + desktop.top;
 
-	cx = (((desktop.right - desktop.left) - sx)/2) + desktop.left;
-	cy = (((desktop.bottom - desktop.top) - sy)/2) + desktop.top;
+    // SetWindowPos(Hwnd, HWND_TOPMOST, cx, cy, 0, 0, SWP_NOSIZE);
+    SetWindowPos(Hwnd, HWND_TOP, cx, cy, 0, 0, SWP_NOSIZE);
 
-	//SetWindowPos(Hwnd, HWND_TOPMOST, cx, cy, 0, 0, SWP_NOSIZE);
-	SetWindowPos(Hwnd, HWND_TOP, cx, cy, 0, 0, SWP_NOSIZE);
+    EnableWindow(GetDlgItem(Hwnd, IDOK), FALSE);
 
-	EnableWindow(GetDlgItem(Hwnd,IDOK),FALSE);
+    status = 1; // signal init
 
-	status = 1;	// signal init
-
-
-}	// Dialog_Init
-
-
+} // Dialog_Init
 
 /***********************************************************************************************
  * _logdata_dialog_proc -- thunks into the logdata dialog class's windows message handler      *
@@ -341,48 +320,45 @@ void LogDataDialogClass::Dialog_Init()
  * HISTORY:                                                                                    *
  *   02/09/2000 JGA  : Created.                                                                 *
  *=============================================================================================*/
-BOOL CALLBACK _logdata_dialog_proc
-(
-	HWND hwnd,
-	UINT message,
-	WPARAM wParam,
-	LPARAM lParam
-)
+BOOL CALLBACK _logdata_dialog_proc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-	if (message == WM_INITDIALOG) {
-		LogDataDialogClass * log = (LogDataDialogClass *)lParam;
-		log->Hwnd = hwnd;
-		::SetProp(hwnd,"LogDataDialogClass",(HANDLE)log);
-	}
+    if (message == WM_INITDIALOG)
+    {
+        LogDataDialogClass *log = (LogDataDialogClass *)lParam;
+        log->Hwnd = hwnd;
+        ::SetProp(hwnd, "LogDataDialogClass", (HANDLE)log);
+    }
 
-	LogDataDialogClass * log = (LogDataDialogClass *)::GetProp(hwnd,"LogDataDialogClass");
+    LogDataDialogClass *log = (LogDataDialogClass *)::GetProp(hwnd, "LogDataDialogClass");
 
-	if (message == WM_DESTROY) {
-		::RemoveProp(hwnd,"LogDataDialogClass");
-	}
+    if (message == WM_DESTROY)
+    {
+        ::RemoveProp(hwnd, "LogDataDialogClass");
+    }
 
-	if (log) {
-		return log->Dialog_Proc(hwnd,message,wParam,lParam);
-	} else {
-		return FALSE;
-	}
+    if (log)
+    {
+        return log->Dialog_Proc(hwnd, message, wParam, lParam);
+    }
+    else
+    {
+        return FALSE;
+    }
 
 } // _logdata_dialog_proc
 
-
 DWORD WINAPI _logdata_thread_function(LPVOID log_obj_ptr)
 {
-	// put logdata dialog box (lpParameter is the "this" pointer of the object)
-	DialogBoxParam( AppInstance,
-   					 MAKEINTRESOURCE(IDD_W3D_LOG),
-						 ((LogDataDialogClass*)log_obj_ptr)->ParentHwnd,
-                   (DLGPROC) _logdata_dialog_proc,
-                   (LPARAM) log_obj_ptr);
+    // put logdata dialog box (lpParameter is the "this" pointer of the object)
+    DialogBoxParam(
+        AppInstance,
+        MAKEINTRESOURCE(IDD_W3D_LOG),
+        ((LogDataDialogClass *)log_obj_ptr)->ParentHwnd,
+        (DLGPROC)_logdata_dialog_proc,
+        (LPARAM)log_obj_ptr);
 
-
-	// When this exits it should terminate the thread
-	return(0);
+    // When this exits it should terminate the thread
+    return (0);
 }
-
 
 // EOF - logdlg.cpp

@@ -37,12 +37,12 @@
 class LogClass
 {
 public:
-	LogClass(const char *fname);
-	~LogClass();
-	void log(const char *fmt, ...);
+    LogClass(const char *fname);
+    ~LogClass();
+    void log(const char *fmt, ...);
 
 protected:
-	FILE *m_fp;
+    FILE *m_fp;
 };
 
 #endif // DEBUG_LOGGING

@@ -37,89 +37,97 @@
 #include "Common/UnicodeString.h"
 #include "GameClient/GameText.h"
 
-
-
 extern HWND ApplicationHWnd;
 
 //-------------------------------------------------------------------------------------------------
-static void RTSFlagsToOSFlags(UnsignedInt buttonFlags, UnsignedInt otherFlags, UnsignedInt& outWindowsFlags)
+static void RTSFlagsToOSFlags(UnsignedInt buttonFlags, UnsignedInt otherFlags, UnsignedInt &outWindowsFlags)
 {
-	outWindowsFlags = 0;
+    outWindowsFlags = 0;
 
-	if (BitIsSet(buttonFlags, OSDBT_OK)) {
-		outWindowsFlags |= MB_OK;
-	}
+    if (BitIsSet(buttonFlags, OSDBT_OK))
+    {
+        outWindowsFlags |= MB_OK;
+    }
 
-	if (BitIsSet(buttonFlags, OSDBT_CANCEL)) {
-		outWindowsFlags |= MB_OKCANCEL;
-	}
+    if (BitIsSet(buttonFlags, OSDBT_CANCEL))
+    {
+        outWindowsFlags |= MB_OKCANCEL;
+    }
 
-	//-----------------------------------------------------------------------------------------------
-	if (BitIsSet(otherFlags, OSDOF_SYSTEMMODAL)) {
-		outWindowsFlags |= MB_SYSTEMMODAL;
-	}
+    //-----------------------------------------------------------------------------------------------
+    if (BitIsSet(otherFlags, OSDOF_SYSTEMMODAL))
+    {
+        outWindowsFlags |= MB_SYSTEMMODAL;
+    }
 
-	if (BitIsSet(otherFlags, OSDOF_APPLICATIONMODAL)) {
-		outWindowsFlags |= MB_APPLMODAL;
-	}
+    if (BitIsSet(otherFlags, OSDOF_APPLICATIONMODAL))
+    {
+        outWindowsFlags |= MB_APPLMODAL;
+    }
 
-	if (BitIsSet(otherFlags, OSDOF_TASKMODAL)) {
-		outWindowsFlags |= MB_TASKMODAL;
-	}
+    if (BitIsSet(otherFlags, OSDOF_TASKMODAL))
+    {
+        outWindowsFlags |= MB_TASKMODAL;
+    }
 
-	if (BitIsSet(otherFlags, OSDOF_EXCLAMATIONICON)) {
-		outWindowsFlags |= MB_ICONEXCLAMATION;
-	}
+    if (BitIsSet(otherFlags, OSDOF_EXCLAMATIONICON))
+    {
+        outWindowsFlags |= MB_ICONEXCLAMATION;
+    }
 
-	if (BitIsSet(otherFlags, OSDOF_INFORMATIONICON)) {
-		outWindowsFlags |= MB_ICONINFORMATION;
-	}
+    if (BitIsSet(otherFlags, OSDOF_INFORMATIONICON))
+    {
+        outWindowsFlags |= MB_ICONINFORMATION;
+    }
 
-	if (BitIsSet(otherFlags, OSDOF_ERRORICON)) {
-		outWindowsFlags |= MB_ICONERROR;
-	}
+    if (BitIsSet(otherFlags, OSDOF_ERRORICON))
+    {
+        outWindowsFlags |= MB_ICONERROR;
+    }
 
-	if (BitIsSet(otherFlags, OSDOF_STOPICON)) {
-		outWindowsFlags |= MB_ICONSTOP;
-	}
-
+    if (BitIsSet(otherFlags, OSDOF_STOPICON))
+    {
+        outWindowsFlags |= MB_ICONSTOP;
+    }
 }
 
 //-------------------------------------------------------------------------------------------------
 OSDisplayButtonType OSDisplayWarningBox(AsciiString p, AsciiString m, UnsignedInt buttonFlags, UnsignedInt otherFlags)
 {
-	if (!TheGameText) {
-		return OSDBT_ERROR;
-	}
+    if (!TheGameText)
+    {
+        return OSDBT_ERROR;
+    }
 
-	UnicodeString promptStr = TheGameText->fetch(p);
-	UnicodeString mesgStr = TheGameText->fetch(m);
+    UnicodeString promptStr = TheGameText->fetch(p);
+    UnicodeString mesgStr = TheGameText->fetch(m);
 
-	UnsignedInt windowsOptionsFlags = 0;
-	RTSFlagsToOSFlags(buttonFlags, otherFlags, windowsOptionsFlags);
+    UnsignedInt windowsOptionsFlags = 0;
+    RTSFlagsToOSFlags(buttonFlags, otherFlags, windowsOptionsFlags);
 
-	// @todo Make this return more than just ok/cancel - jkmcd
-	// (we need a function to translate back the other way.)
-	Int returnResult = 0;
-	if (TheSystemIsUnicode)
-	{
-		returnResult = ::MessageBoxW(NULL, mesgStr.str(), promptStr.str(), windowsOptionsFlags);
-	}
-	else
-	{
-		// However, if we're using the default version of the message box, we need to
-		// translate the string into an AsciiString
-		AsciiString promptA, mesgA;
-		promptA.translate(promptStr);
-		mesgA.translate(mesgStr);
-		//Make sure main window is not TOP_MOST
-		::SetWindowPos(ApplicationHWnd, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE);
-		returnResult = ::MessageBoxA(NULL, mesgA.str(), promptA.str(), windowsOptionsFlags);
-	}
+    // @todo Make this return more than just ok/cancel - jkmcd
+    // (we need a function to translate back the other way.)
+    Int returnResult = 0;
+    if (TheSystemIsUnicode)
+    {
+        returnResult = ::MessageBoxW(NULL, mesgStr.str(), promptStr.str(), windowsOptionsFlags);
+    }
+    else
+    {
+        // However, if we're using the default version of the message box, we need to
+        // translate the string into an AsciiString
+        AsciiString promptA, mesgA;
+        promptA.translate(promptStr);
+        mesgA.translate(mesgStr);
+        // Make sure main window is not TOP_MOST
+        ::SetWindowPos(ApplicationHWnd, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE);
+        returnResult = ::MessageBoxA(NULL, mesgA.str(), promptA.str(), windowsOptionsFlags);
+    }
 
-	if (returnResult == IDOK) {
-		return OSDBT_OK;
-	}
+    if (returnResult == IDOK)
+    {
+        return OSDBT_OK;
+    }
 
-	return OSDBT_CANCEL;
+    return OSDBT_CANCEL;
 }

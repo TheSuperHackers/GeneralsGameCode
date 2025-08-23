@@ -35,53 +35,48 @@ static char THIS_FILE[] = __FILE__;
 // ParticleRotationKeyDialogClass constructor
 //
 /////////////////////////////////////////////////////////////////////////////
-ParticleRotationKeyDialogClass::ParticleRotationKeyDialogClass(float rotation,CWnd* pParent /*=NULL*/) :
-	CDialog(ParticleRotationKeyDialogClass::IDD, pParent),
-	m_Rotation(rotation)
+ParticleRotationKeyDialogClass::ParticleRotationKeyDialogClass(float rotation, CWnd *pParent /*=NULL*/) :
+    CDialog(ParticleRotationKeyDialogClass::IDD, pParent), m_Rotation(rotation)
 {
-	//{{AFX_DATA_INIT(ParticleRotationKeyDialogClass)
-		// NOTE: the ClassWizard will add member initialization here
-	//}}AFX_DATA_INIT
+    //{{AFX_DATA_INIT(ParticleRotationKeyDialogClass)
+    // NOTE: the ClassWizard will add member initialization here
+    //}}AFX_DATA_INIT
 }
-
 
 /////////////////////////////////////////////////////////////////////////////
 //
 // ParticleRotationKeyDialogClass destructor
 //
 /////////////////////////////////////////////////////////////////////////////
-void ParticleRotationKeyDialogClass::DoDataExchange(CDataExchange* pDX)
+void ParticleRotationKeyDialogClass::DoDataExchange(CDataExchange *pDX)
 {
-	CDialog::DoDataExchange(pDX);
-	//{{AFX_DATA_MAP(ParticleRotationKeyDialogClass)
-	DDX_Control(pDX, IDC_ROTATION_SPIN, m_RotationSpin);
-	//}}AFX_DATA_MAP
+    CDialog::DoDataExchange(pDX);
+    //{{AFX_DATA_MAP(ParticleRotationKeyDialogClass)
+    DDX_Control(pDX, IDC_ROTATION_SPIN, m_RotationSpin);
+    //}}AFX_DATA_MAP
 }
 
-
 BEGIN_MESSAGE_MAP(ParticleRotationKeyDialogClass, CDialog)
-	//{{AFX_MSG_MAP(ParticleRotationKeyDialogClass)
-	//}}AFX_MSG_MAP
+//{{AFX_MSG_MAP(ParticleRotationKeyDialogClass)
+//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
 // ParticleRotationKeyDialogClass message handlers
-
 
 /////////////////////////////////////////////////////////////////////////////
 //
 // OnInitDialog
 //
 /////////////////////////////////////////////////////////////////////////////
-BOOL
-ParticleRotationKeyDialogClass::OnInitDialog()
+BOOL ParticleRotationKeyDialogClass::OnInitDialog()
 {
-	CDialog::OnInitDialog();
+    CDialog::OnInitDialog();
 
-	Initialize_Spinner (m_RotationSpin, m_Rotation, -10000, 10000);
+    Initialize_Spinner(m_RotationSpin, m_Rotation, -10000, 10000);
 
-	return TRUE;  // return TRUE unless you set the focus to a control
-	              // EXCEPTION: OCX Property Pages should return FALSE
+    return TRUE; // return TRUE unless you set the focus to a control
+                 // EXCEPTION: OCX Property Pages should return FALSE
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -89,29 +84,28 @@ ParticleRotationKeyDialogClass::OnInitDialog()
 // OnOk
 //
 /////////////////////////////////////////////////////////////////////////////
-void
-ParticleRotationKeyDialogClass::OnOK()
+void ParticleRotationKeyDialogClass::OnOK()
 {
-	m_Rotation = GetDlgItemFloat (m_hWnd, IDC_ROTATION_EDIT);
-	CDialog::OnOK();
+    m_Rotation = GetDlgItemFloat(m_hWnd, IDC_ROTATION_EDIT);
+    CDialog::OnOK();
 }
-
 
 /////////////////////////////////////////////////////////////////////////////
 //
 // OnNotify
 //
 /////////////////////////////////////////////////////////////////////////////
-BOOL ParticleRotationKeyDialogClass::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult)
+BOOL ParticleRotationKeyDialogClass::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT *pResult)
 {
-	//
-	//	Update the spinner control if necessary
-	//
-	NMHDR *pheader = (NMHDR *)lParam;
-	if ((pheader != NULL) && (pheader->code == UDN_DELTAPOS)) {
-		LPNMUPDOWN pupdown = (LPNMUPDOWN)lParam;
-		::Update_Spinner_Buddy (pheader->hwndFrom, pupdown->iDelta);
-	}
+    //
+    //	Update the spinner control if necessary
+    //
+    NMHDR *pheader = (NMHDR *)lParam;
+    if ((pheader != NULL) && (pheader->code == UDN_DELTAPOS))
+    {
+        LPNMUPDOWN pupdown = (LPNMUPDOWN)lParam;
+        ::Update_Spinner_Buddy(pheader->hwndFrom, pupdown->iDelta);
+    }
 
-	return CDialog::OnNotify(wParam, lParam, pResult);
+    return CDialog::OnNotify(wParam, lParam, pResult);
 }

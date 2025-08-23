@@ -36,11 +36,11 @@
 class WindowTranslator : public GameMessageTranslator
 {
 private:
-	// nothing
+    // nothing
 public:
-	WindowTranslator();
-	~WindowTranslator();
-	virtual GameMessageDisposition translateGameMessage(const GameMessage *msg);
+    WindowTranslator();
+    ~WindowTranslator();
+    virtual GameMessageDisposition translateGameMessage(const GameMessage *msg);
 };
 
 #endif

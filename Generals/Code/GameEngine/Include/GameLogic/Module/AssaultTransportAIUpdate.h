@@ -37,10 +37,9 @@
 #include "GameLogic/Module/AIUpdate.h"
 
 //-------------------------------------------------------------------------------------------------
-enum AssaultStateTypes CPP_11(: Int)
-{
-	IDLE,							          ///< Not doing anything.
-	ASSAULTING,						      ///< Transport is waiting while troops do fighting.
+enum AssaultStateTypes CPP_11( : Int){
+    IDLE, ///< Not doing anything.
+    ASSAULTING, ///< Transport is waiting while troops do fighting.
 };
 
 #define MAX_TRANSPORT_SLOTS 10
@@ -49,80 +48,78 @@ enum AssaultStateTypes CPP_11(: Int)
 class AssaultTransportAIUpdateModuleData : public AIUpdateModuleData
 {
 public:
-	Real m_membersGetHealedAtLifeRatio;
-	Real m_clearRangeRequiredToContinueAttackMove;
+    Real m_membersGetHealedAtLifeRatio;
+    Real m_clearRangeRequiredToContinueAttackMove;
 
-	AssaultTransportAIUpdateModuleData()
-	{
-		m_membersGetHealedAtLifeRatio = 0.0f;
-		m_clearRangeRequiredToContinueAttackMove = 50.0f;
-	}
+    AssaultTransportAIUpdateModuleData()
+    {
+        m_membersGetHealedAtLifeRatio = 0.0f;
+        m_clearRangeRequiredToContinueAttackMove = 50.0f;
+    }
 
-	static void buildFieldParse(MultiIniFieldParse& p)
-	{
-    AIUpdateModuleData::buildFieldParse(p);
+    static void buildFieldParse(MultiIniFieldParse &p)
+    {
+        AIUpdateModuleData::buildFieldParse(p);
 
-		static const FieldParse dataFieldParse[] =
-		{
-			{ "MembersGetHealedAtLifeRatio",						INI::parseReal,	NULL, offsetof( AssaultTransportAIUpdateModuleData, m_membersGetHealedAtLifeRatio ) },
-			{ "ClearRangeRequiredToContinueAttackMove", INI::parseReal, NULL, offsetof( AssaultTransportAIUpdateModuleData, m_clearRangeRequiredToContinueAttackMove ) },
-			{ 0, 0, 0, 0 }
-		};
-    p.add(dataFieldParse);
-	}
+        static const FieldParse dataFieldParse[] = {
+            {"MembersGetHealedAtLifeRatio",
+             INI::parseReal,
+             NULL,
+             offsetof(AssaultTransportAIUpdateModuleData, m_membersGetHealedAtLifeRatio)},
+            {"ClearRangeRequiredToContinueAttackMove",
+             INI::parseReal,
+             NULL,
+             offsetof(AssaultTransportAIUpdateModuleData, m_clearRangeRequiredToContinueAttackMove)},
+            {0, 0, 0, 0}};
+        p.add(dataFieldParse);
+    }
 };
 
 class AssaultTransportAIInterface
 {
 public:
-	virtual void beginAssault( const Object *designatedTarget ) const = 0;
+    virtual void beginAssault(const Object *designatedTarget) const = 0;
 };
-
 
 //-------------------------------------------------------------------------------------------------
 class AssaultTransportAIUpdate : public AIUpdateInterface, public AssaultTransportAIInterface
 {
-
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( AssaultTransportAIUpdate, "AssaultTransportAIUpdate" )
-	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( AssaultTransportAIUpdate, AssaultTransportAIUpdateModuleData )
+    MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AssaultTransportAIUpdate, "AssaultTransportAIUpdate")
+    MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA(AssaultTransportAIUpdate, AssaultTransportAIUpdateModuleData)
 
 private:
-
 public:
+    AssaultTransportAIUpdate(Thing *thing, const ModuleData *moduleData);
+    // virtual destructor prototype provided by memory pool declaration
 
-	AssaultTransportAIUpdate( Thing *thing, const ModuleData* moduleData );
-	// virtual destructor prototype provided by memory pool declaration
+    virtual void aiDoCommand(const AICommandParms *parms);
+    virtual Bool isIdle() const;
+    virtual UpdateSleepTime update();
+    virtual AssaultTransportAIInterface *getAssaultTransportAIInterface() { return this; }
+    virtual const AssaultTransportAIInterface *getAssaultTransportAIInterface() const { return this; }
+    virtual void beginAssault(const Object *designatedTarget) const;
 
- 	virtual void aiDoCommand(const AICommandParms* parms);
-	virtual Bool isIdle() const;
-	virtual UpdateSleepTime update();
-	virtual AssaultTransportAIInterface* getAssaultTransportAIInterface() { return this; }
-	virtual const AssaultTransportAIInterface* getAssaultTransportAIInterface() const { return this; }
-	virtual void beginAssault( const Object *designatedTarget ) const;
+    UpdateSleepTime calcSleepTime();
 
-	UpdateSleepTime calcSleepTime();
-
-	void reset();
-	Bool isMemberWounded( const Object *member ) const;	//Member requires medical attention?
-	Bool isMemberHealthy( const Object *member ) const; //Member has full health?
-	void retrieveMembers();
-	void giveFinalOrders();
-  Bool isAttackPointless() const;
+    void reset();
+    Bool isMemberWounded(const Object *member) const; // Member requires medical attention?
+    Bool isMemberHealthy(const Object *member) const; // Member has full health?
+    void retrieveMembers();
+    void giveFinalOrders();
+    Bool isAttackPointless() const;
 
 protected:
-
-  ObjectID					m_memberIDs[ MAX_TRANSPORT_SLOTS ];
-	Bool							m_memberHealing[ MAX_TRANSPORT_SLOTS ];
-	Bool							m_newMember[ MAX_TRANSPORT_SLOTS ];
-  Coord3D						m_attackMoveGoalPos;
-  mutable ObjectID	m_designatedTarget;
-	AssaultStateTypes	m_state;
-	UnsignedInt				m_framesRemaining;
-	Int								m_currentMembers;
-	Bool							m_isAttackMove;
-	Bool							m_isAttackObject;
-	Bool							m_newOccupantsAreNewMembers;
+    ObjectID m_memberIDs[MAX_TRANSPORT_SLOTS];
+    Bool m_memberHealing[MAX_TRANSPORT_SLOTS];
+    Bool m_newMember[MAX_TRANSPORT_SLOTS];
+    Coord3D m_attackMoveGoalPos;
+    mutable ObjectID m_designatedTarget;
+    AssaultStateTypes m_state;
+    UnsignedInt m_framesRemaining;
+    Int m_currentMembers;
+    Bool m_isAttackMove;
+    Bool m_isAttackObject;
+    Bool m_newOccupantsAreNewMembers;
 };
 
 #endif
-

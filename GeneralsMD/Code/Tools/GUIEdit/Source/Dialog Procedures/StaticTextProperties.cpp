@@ -72,124 +72,114 @@ static Bool currCentered = FALSE;
 // staticTextPropertiesCallback ===============================================
 /** Dialog callback for properties */
 //=============================================================================
-static LRESULT CALLBACK staticTextPropertiesCallback( HWND hWndDialog,
-																											UINT message,
-																											WPARAM wParam,
-																											LPARAM lParam )
+static LRESULT CALLBACK staticTextPropertiesCallback(HWND hWndDialog, UINT message, WPARAM wParam, LPARAM lParam)
 {
-	Int returnCode;
+    Int returnCode;
 
-	//
-	// handle any common messages between all property dialogs cause they
-	// are designed to have controls doing the same functionality
-	// and names
-	//
-	if( HandleCommonDialogMessages( hWndDialog, message,
-																	wParam, lParam, &returnCode ) == TRUE )
-		return returnCode;
+    //
+    // handle any common messages between all property dialogs cause they
+    // are designed to have controls doing the same functionality
+    // and names
+    //
+    if (HandleCommonDialogMessages(hWndDialog, message, wParam, lParam, &returnCode) == TRUE)
+        return returnCode;
 
-	switch( message )
-	{
-
-		// ------------------------------------------------------------------------
-    case WM_COMMAND:
+    switch (message)
     {
-//			Int notifyCode = HIWORD( wParam );  // notification code
-			Int controlID = LOWORD( wParam );  // control ID
-//			HWND hWndControl = (HWND)lParam;  // control window handle
+            // ------------------------------------------------------------------------
+        case WM_COMMAND:
+        {
+            //			Int notifyCode = HIWORD( wParam );  // notification code
+            Int controlID = LOWORD(wParam); // control ID
+            //			HWND hWndControl = (HWND)lParam;  // control window handle
 
-      switch( controlID )
-      {
+            switch (controlID)
+            {
+                // --------------------------------------------------------------------
+                case BUTTON_CENTERED:
+                {
+                    currCentered = 1 - currCentered;
+                    if (currCentered == TRUE)
+                        SetDlgItemText(hWndDialog, BUTTON_CENTERED, "Yes");
+                    else
+                        SetDlgItemText(hWndDialog, BUTTON_CENTERED, "No");
+                    break;
 
-				// --------------------------------------------------------------------
-				case BUTTON_CENTERED:
-				{
+                } // end centered
 
-					currCentered = 1 - currCentered;
-					if( currCentered == TRUE )
-						SetDlgItemText( hWndDialog, BUTTON_CENTERED, "Yes" );
-					else
-						SetDlgItemText( hWndDialog, BUTTON_CENTERED, "No" );
-					break;
+                    // --------------------------------------------------------------------
+                case IDOK:
+                {
+                    GameWindow *window = TheEditor->getPropertyTarget();
 
-				}  // end centered
+                    // sanity
+                    if (window)
+                    {
+                        ImageAndColorInfo *info;
 
-				// --------------------------------------------------------------------
-        case IDOK:
-				{
-					GameWindow *window = TheEditor->getPropertyTarget();
+                        // save the common properties
+                        if (SaveCommonDialogProperties(hWndDialog, window) == FALSE)
+                            break;
 
-					// sanity
-					if( window )
-					{
-						ImageAndColorInfo *info;
+                        // save the image and color data
+                        // ----------------------------------------------------------------
+                        info = GetStateInfo(STATIC_TEXT_ENABLED);
+                        GadgetStaticTextSetEnabledImage(window, info->image);
+                        GadgetStaticTextSetEnabledColor(window, info->color);
+                        GadgetStaticTextSetEnabledBorderColor(window, info->borderColor);
 
-						// save the common properties
-						if( SaveCommonDialogProperties( hWndDialog, window ) == FALSE )
-							break;
+                        // ----------------------------------------------------------------
+                        info = GetStateInfo(STATIC_TEXT_DISABLED);
+                        GadgetStaticTextSetDisabledImage(window, info->image);
+                        GadgetStaticTextSetDisabledColor(window, info->color);
+                        GadgetStaticTextSetDisabledBorderColor(window, info->borderColor);
 
-						// save the image and color data
-						// ----------------------------------------------------------------
-						info = GetStateInfo( STATIC_TEXT_ENABLED );
-						GadgetStaticTextSetEnabledImage( window, info->image );
-						GadgetStaticTextSetEnabledColor( window, info->color );
-						GadgetStaticTextSetEnabledBorderColor( window, info->borderColor );
+                        // ----------------------------------------------------------------
+                        info = GetStateInfo(STATIC_TEXT_HILITE);
+                        GadgetStaticTextSetHiliteImage(window, info->image);
+                        GadgetStaticTextSetHiliteColor(window, info->color);
+                        GadgetStaticTextSetHiliteBorderColor(window, info->borderColor);
 
-						// ----------------------------------------------------------------
-						info = GetStateInfo( STATIC_TEXT_DISABLED );
-						GadgetStaticTextSetDisabledImage( window, info->image );
-						GadgetStaticTextSetDisabledColor( window, info->color );
-						GadgetStaticTextSetDisabledBorderColor( window, info->borderColor );
+                        // text data
+                        TextData *textData = (TextData *)window->winGetUserData();
+                        textData->centered = currCentered;
 
-						// ----------------------------------------------------------------
-						info = GetStateInfo( STATIC_TEXT_HILITE );
-						GadgetStaticTextSetHiliteImage( window, info->image );
-						GadgetStaticTextSetHiliteColor( window, info->color );
-						GadgetStaticTextSetHiliteBorderColor( window, info->borderColor );
+                    } // end if
 
-						// text data
-						TextData *textData = (TextData *)window->winGetUserData();
-						textData->centered = currCentered;
+                    DestroyWindow(hWndDialog);
+                    break;
 
-					}  // end if
+                } // end OK
 
-          DestroyWindow( hWndDialog );
-          break;
+                    // --------------------------------------------------------------------
+                case IDCANCEL:
+                {
+                    DestroyWindow(hWndDialog);
+                    break;
 
-				}  // end OK
+                } // end cancel
 
-				// --------------------------------------------------------------------
-        case IDCANCEL:
-				{
+            } // end switch( LOWORD( wParam ) )
 
-          DestroyWindow( hWndDialog );
-          break;
+            return 0;
 
-				}  // end cancel
+        } // end of WM_COMMAND
 
-      }  // end switch( LOWORD( wParam ) )
+            // ------------------------------------------------------------------------
+        case WM_CLOSE:
+        {
+            DestroyWindow(hWndDialog);
+            return 0;
 
-      return 0;
+        } // end close
 
-    } // end of WM_COMMAND
+        // ------------------------------------------------------------------------
+        default:
+            return 0;
 
-		// ------------------------------------------------------------------------
-    case WM_CLOSE:
-		{
+    } // end of switch
 
-      DestroyWindow( hWndDialog );
-      return 0;
-
-		}  // end close
-
-		// ------------------------------------------------------------------------
-		default:
-			return 0;
-
-  }  // end of switch
-
-}  // end staticTextPropertiesCallback
-
+} // end staticTextPropertiesCallback
 
 ///////////////////////////////////////////////////////////////////////////////
 // PUBLIC FUNCTIONS ///////////////////////////////////////////////////////////
@@ -198,60 +188,58 @@ static LRESULT CALLBACK staticTextPropertiesCallback( HWND hWndDialog,
 // InitStaticTextPropertiesDialog =============================================
 /** Bring up the static text properties dialog */
 //=============================================================================
-HWND InitStaticTextPropertiesDialog( GameWindow *window )
+HWND InitStaticTextPropertiesDialog(GameWindow *window)
 {
-	HWND dialog;
+    HWND dialog;
 
-	// create the dialog box
-	dialog = CreateDialog( TheEditor->getInstance(),
-												 (LPCTSTR)STATIC_TEXT_PROPERTIES_DIALOG,
-												 TheEditor->getWindowHandle(),
-												 (DLGPROC)staticTextPropertiesCallback );
-	if( dialog == NULL )
-		return NULL;
+    // create the dialog box
+    dialog = CreateDialog(
+        TheEditor->getInstance(),
+        (LPCTSTR)STATIC_TEXT_PROPERTIES_DIALOG,
+        TheEditor->getWindowHandle(),
+        (DLGPROC)staticTextPropertiesCallback);
+    if (dialog == NULL)
+        return NULL;
 
-	// do the common initialization
-	CommonDialogInitialize( window, dialog );
+    // do the common initialization
+    CommonDialogInitialize(window, dialog);
 
-	//
-	// store in the image and color table the values for this putton
-	//
-	const Image *image;
-	Color color, borderColor;
+    //
+    // store in the image and color table the values for this putton
+    //
+    const Image *image;
+    Color color, borderColor;
 
-	// --------------------------------------------------------------------------
-	image = GadgetStaticTextGetEnabledImage( window );
-	color = GadgetStaticTextGetEnabledColor( window );
-	borderColor = GadgetStaticTextGetEnabledBorderColor( window );
-	StoreImageAndColor( STATIC_TEXT_ENABLED, image, color, borderColor );
+    // --------------------------------------------------------------------------
+    image = GadgetStaticTextGetEnabledImage(window);
+    color = GadgetStaticTextGetEnabledColor(window);
+    borderColor = GadgetStaticTextGetEnabledBorderColor(window);
+    StoreImageAndColor(STATIC_TEXT_ENABLED, image, color, borderColor);
 
-	// --------------------------------------------------------------------------
-	image = GadgetStaticTextGetDisabledImage( window );
-	color = GadgetStaticTextGetDisabledColor( window );
-	borderColor = GadgetStaticTextGetDisabledBorderColor( window );
-	StoreImageAndColor( STATIC_TEXT_DISABLED, image, color, borderColor );
+    // --------------------------------------------------------------------------
+    image = GadgetStaticTextGetDisabledImage(window);
+    color = GadgetStaticTextGetDisabledColor(window);
+    borderColor = GadgetStaticTextGetDisabledBorderColor(window);
+    StoreImageAndColor(STATIC_TEXT_DISABLED, image, color, borderColor);
 
-	// --------------------------------------------------------------------------
-	image = GadgetStaticTextGetHiliteImage( window );
-	color = GadgetStaticTextGetHiliteColor( window );
-	borderColor = GadgetStaticTextGetHiliteBorderColor( window );
-	StoreImageAndColor( STATIC_TEXT_HILITE, image, color, borderColor );
+    // --------------------------------------------------------------------------
+    image = GadgetStaticTextGetHiliteImage(window);
+    color = GadgetStaticTextGetHiliteColor(window);
+    borderColor = GadgetStaticTextGetHiliteBorderColor(window);
+    StoreImageAndColor(STATIC_TEXT_HILITE, image, color, borderColor);
 
-	// text data
-	TextData *textData = (TextData *)window->winGetUserData();
+    // text data
+    TextData *textData = (TextData *)window->winGetUserData();
 
-	if( textData->centered )
-		SetDlgItemText( dialog, BUTTON_CENTERED, "Yes" );
-	else
-		SetDlgItemText( dialog, BUTTON_CENTERED, "No" );
-	currCentered = textData->centered;
+    if (textData->centered)
+        SetDlgItemText(dialog, BUTTON_CENTERED, "Yes");
+    else
+        SetDlgItemText(dialog, BUTTON_CENTERED, "No");
+    currCentered = textData->centered;
 
-	// select the button enabled state for display
-	SwitchToState( STATIC_TEXT_ENABLED, dialog );
+    // select the button enabled state for display
+    SwitchToState(STATIC_TEXT_ENABLED, dialog);
 
-	return dialog;
+    return dialog;
 
-}  // end InitStaticTextPropertiesDialog
-
-
-
+} // end InitStaticTextPropertiesDialog

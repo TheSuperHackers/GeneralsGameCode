@@ -35,7 +35,6 @@
  *  wwExportTreeSettings  -- Returns the directory to export, and recursive flag.              *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
 /*
 ** ExportAll.cpp - Implements wwExportTreeSettings, which presents the user with a dialog
 ** to allow them to choose which directory they want to export, and whether they want to
@@ -43,7 +42,6 @@
 ** can go through the directory (and maybe the subdirectories) and export all .max files
 ** it finds.
 */
-
 
 #include "ExportAllDlg.h"
 
@@ -53,12 +51,10 @@
 #include <strings.h>
 #include <definsfn.h>
 
-
 /*
 ** Let MAXScript know we're implementing new built-in functions.
 */
 def_visible_primitive(export_tree_settings, "wwExportTreeSettings");
-
 
 /***********************************************************************************************
  * export_tree_settings_cf - Returns the directory to export, and recursive flag.              *
@@ -76,41 +72,41 @@ def_visible_primitive(export_tree_settings, "wwExportTreeSettings");
  * HISTORY:                                                                                    *
  *   10/4/1999  AJA : Created.                                                                 *
  *=============================================================================================*/
-Value * export_tree_settings_cf (Value **arg_list, int count)
+Value *export_tree_settings_cf(Value **arg_list, int count)
 {
-	// We want an array as an argument
-	check_arg_count("wwExportAll", 1, count);
-	type_check(arg_list[0], Array, "Parameter array");
+    // We want an array as an argument
+    check_arg_count("wwExportAll", 1, count);
+    type_check(arg_list[0], Array, "Parameter array");
 
-	// Grab the two values out of the array.
-	// First value is a string whose value is the initial value for the directory.
-	// Second value is a bool, true for a recursive export.
-	ExportAllDlg	dlg(MAXScript_interface);
-	Array *args = (Array*)(arg_list[0]);
-	char *temp = (args->get(1))->to_string();
-	int len = strlen(temp);
-	if (len < MAX_PATH)
-		strcpy(dlg.m_Directory, temp);
-	else
-	{
-		strncpy(dlg.m_Directory, temp, MAX_PATH-1);
-		dlg.m_Directory[MAX_PATH-1] = 0;
-	}
-	dlg.m_Recursive = (args->get(2))->to_bool();
+    // Grab the two values out of the array.
+    // First value is a string whose value is the initial value for the directory.
+    // Second value is a bool, true for a recursive export.
+    ExportAllDlg dlg(MAXScript_interface);
+    Array *args = (Array *)(arg_list[0]);
+    char *temp = (args->get(1))->to_string();
+    int len = strlen(temp);
+    if (len < MAX_PATH)
+        strcpy(dlg.m_Directory, temp);
+    else
+    {
+        strncpy(dlg.m_Directory, temp, MAX_PATH - 1);
+        dlg.m_Directory[MAX_PATH - 1] = 0;
+    }
+    dlg.m_Recursive = (args->get(2))->to_bool();
 
-	// Show the dialog to let the user change the settings.
-	if (dlg.DoModal() == IDCANCEL)
-		return &undefined;
+    // Show the dialog to let the user change the settings.
+    if (dlg.DoModal() == IDCANCEL)
+        return &undefined;
 
-	// Create the array we will return to MaxScript.
-	one_typed_value_local(Array *result);
-	vl.result = new Array(2);
-	vl.result->append(new String(dlg.m_Directory));
-	if (dlg.m_Recursive)
-		vl.result->append(&true_value);
-	else
-		vl.result->append(&false_value);
+    // Create the array we will return to MaxScript.
+    one_typed_value_local(Array * result);
+    vl.result = new Array(2);
+    vl.result->append(new String(dlg.m_Directory));
+    if (dlg.m_Recursive)
+        vl.result->append(&true_value);
+    else
+        vl.result->append(&false_value);
 
-	// Return the new values.
-	return_value(vl.result);
+    // Return the new values.
+    return_value(vl.result);
 }

@@ -32,34 +32,35 @@
 /////////////////////////////////////////////////////////////////////////////
 class CameraDistanceDialogClass : public CDialog
 {
-// Construction
+    // Construction
 public:
-	CameraDistanceDialogClass(CWnd* pParent = NULL);   // standard constructor
+    CameraDistanceDialogClass(CWnd *pParent = NULL); // standard constructor
 
-// Dialog Data
-	//{{AFX_DATA(CameraDistanceDialogClass)
-	enum { IDD = IDD_CAMERA_DISTANCE };
-	CSpinButtonCtrl	m_DistanceSpinCtrl;
-	//}}AFX_DATA
+    // Dialog Data
+    //{{AFX_DATA(CameraDistanceDialogClass)
+    enum
+    {
+        IDD = IDD_CAMERA_DISTANCE
+    };
+    CSpinButtonCtrl m_DistanceSpinCtrl;
+    //}}AFX_DATA
 
-
-// Overrides
-	// ClassWizard generated virtual function overrides
-	//{{AFX_VIRTUAL(CameraDistanceDialogClass)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
-	virtual BOOL OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult);
-	//}}AFX_VIRTUAL
-
-// Implementation
+    // Overrides
+    // ClassWizard generated virtual function overrides
+    //{{AFX_VIRTUAL(CameraDistanceDialogClass)
 protected:
+    virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
+    virtual BOOL OnNotify(WPARAM wParam, LPARAM lParam, LRESULT *pResult);
+    //}}AFX_VIRTUAL
 
-	// Generated message map functions
-	//{{AFX_MSG(CameraDistanceDialogClass)
-	virtual BOOL OnInitDialog();
-	virtual void OnOK();
-	//}}AFX_MSG
-	DECLARE_MESSAGE_MAP()
+    // Implementation
+protected:
+    // Generated message map functions
+    //{{AFX_MSG(CameraDistanceDialogClass)
+    virtual BOOL OnInitDialog();
+    virtual void OnOK();
+    //}}AFX_MSG
+    DECLARE_MESSAGE_MAP()
 };
 
 //{{AFX_INSERT_LOCATION}}

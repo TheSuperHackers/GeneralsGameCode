@@ -41,46 +41,40 @@ class ObjectCreationList;
 class OCLUpdateModuleData : public UpdateModuleData
 {
 public:
-	const ObjectCreationList *m_ocl;
-	UnsignedInt m_minDelay;
-	UnsignedInt m_maxDelay;
-	Bool m_isCreateAtEdge; ///< Otherwise, it is created on top of myself
+    const ObjectCreationList *m_ocl;
+    UnsignedInt m_minDelay;
+    UnsignedInt m_maxDelay;
+    Bool m_isCreateAtEdge; ///< Otherwise, it is created on top of myself
 
-	OCLUpdateModuleData();
+    OCLUpdateModuleData();
 
-	static void buildFieldParse(MultiIniFieldParse& p);
+    static void buildFieldParse(MultiIniFieldParse &p);
 
 private:
-
 };
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 class OCLUpdate : public UpdateModule
 {
-
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( OCLUpdate, "OCLUpdate" )
-	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( OCLUpdate, OCLUpdateModuleData )
+    MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(OCLUpdate, "OCLUpdate")
+    MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA(OCLUpdate, OCLUpdateModuleData)
 
 public:
+    OCLUpdate(Thing *thing, const ModuleData *moduleData);
+    // virtual destructor prototype provided by memory pool declaration
 
-	OCLUpdate( Thing *thing, const ModuleData* moduleData );
-	// virtual destructor prototype provided by memory pool declaration
+    virtual UpdateSleepTime update();
 
-	virtual UpdateSleepTime update();
-
-	Real getCountdownPercent() const; ///< goes from 0% to 100%
-	UnsignedInt getRemainingFrames() const; ///< For feedback display
+    Real getCountdownPercent() const; ///< goes from 0% to 100%
+    UnsignedInt getRemainingFrames() const; ///< For feedback display
 
 protected:
+    UnsignedInt m_nextCreationFrame;
+    UnsignedInt m_timerStartedFrame;
 
-	UnsignedInt m_nextCreationFrame;
-	UnsignedInt m_timerStartedFrame;
-
-	Bool shouldCreate();
-	void setNextCreationFrame();
-
+    Bool shouldCreate();
+    void setNextCreationFrame();
 };
 
 #endif
-

@@ -16,24 +16,22 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-
 #include "Common/urllaunch.h"
 
-#define FILE_PREFIX     L"file://"
-
+#define FILE_PREFIX L"file://"
 
 ///////////////////////////////////////////////////////////////////////////////
-HRESULT MakeEscapedURL( LPWSTR pszInURL, LPWSTR *ppszOutURL )
+HRESULT MakeEscapedURL(LPWSTR pszInURL, LPWSTR *ppszOutURL)
 {
-    if( ( NULL == pszInURL ) || ( NULL == ppszOutURL ) )
+    if ((NULL == pszInURL) || (NULL == ppszOutURL))
     {
-        return( E_INVALIDARG );
+        return (E_INVALIDARG);
     }
 
     //
     // Do we need to pre-pend file://?
     //
-    BOOL fNeedFilePrefix = ( 0 == wcsstr( pszInURL, L"://" ) );
+    BOOL fNeedFilePrefix = (0 == wcsstr(pszInURL, L"://"));
 
     //
     // Count how many characters need to be escaped
@@ -41,11 +39,11 @@ HRESULT MakeEscapedURL( LPWSTR pszInURL, LPWSTR *ppszOutURL )
     LPWSTR pszTemp = pszInURL;
     DWORD cEscapees = 0;
 
-    while( TRUE )
+    while (TRUE)
     {
-        LPWSTR pchToEscape = wcspbrk( pszTemp, L" #$%&\\+,;=@[]^{}" );
+        LPWSTR pchToEscape = wcspbrk(pszTemp, L" #$%&\\+,;=@[]^{}");
 
-        if( NULL == pchToEscape )
+        if (NULL == pchToEscape)
         {
             break;
         }
@@ -58,18 +56,18 @@ HRESULT MakeEscapedURL( LPWSTR pszInURL, LPWSTR *ppszOutURL )
     //
     // Allocate sufficient outgoing buffer space
     //
-    int cchNeeded = wcslen( pszInURL ) + ( 2 * cEscapees ) + 1;
+    int cchNeeded = wcslen(pszInURL) + (2 * cEscapees) + 1;
 
-    if( fNeedFilePrefix )
+    if (fNeedFilePrefix)
     {
-        cchNeeded += wcslen( FILE_PREFIX );
+        cchNeeded += wcslen(FILE_PREFIX);
     }
 
-    *ppszOutURL = new WCHAR[ cchNeeded ];
+    *ppszOutURL = new WCHAR[cchNeeded];
 
-    if( NULL == *ppszOutURL )
+    if (NULL == *ppszOutURL)
     {
-        return( E_OUTOFMEMORY );
+        return (E_OUTOFMEMORY);
     }
 
     //
@@ -79,22 +77,22 @@ HRESULT MakeEscapedURL( LPWSTR pszInURL, LPWSTR *ppszOutURL )
 
     LPWSTR pchNext = *ppszOutURL;
 
-    if( fNeedFilePrefix )
+    if (fNeedFilePrefix)
     {
-        wcscpy( *ppszOutURL, FILE_PREFIX );
-        pchNext += wcslen( FILE_PREFIX );
+        wcscpy(*ppszOutURL, FILE_PREFIX);
+        pchNext += wcslen(FILE_PREFIX);
     }
 
-    while( TRUE )
+    while (TRUE)
     {
-        LPWSTR pchToEscape = wcspbrk( pszTemp, L" #$%&\\+,;=@[]^{}" );
+        LPWSTR pchToEscape = wcspbrk(pszTemp, L" #$%&\\+,;=@[]^{}");
 
-        if( NULL == pchToEscape )
+        if (NULL == pchToEscape)
         {
             //
             // Copy the rest of the input string and get out
             //
-            wcscpy( pchNext, pszTemp );
+            wcscpy(pchNext, pszTemp);
             break;
         }
 
@@ -103,9 +101,9 @@ HRESULT MakeEscapedURL( LPWSTR pszInURL, LPWSTR *ppszOutURL )
         //
         int cchToCopy = pchToEscape - pszTemp;
 
-        if( cchToCopy > 0 )
+        if (cchToCopy > 0)
         {
-            wcsncpy( pchNext, pszTemp, cchToCopy );
+            wcsncpy(pchNext, pszTemp, cchToCopy);
 
             pchNext += cchToCopy;
         }
@@ -113,17 +111,16 @@ HRESULT MakeEscapedURL( LPWSTR pszInURL, LPWSTR *ppszOutURL )
         //
         // Expand this character into an escape code and move on
         //
-        pchNext += swprintf( pchNext, L"%%%02x", *pchToEscape );
+        pchNext += swprintf(pchNext, L"%%%02x", *pchToEscape);
 
         pszTemp = pchToEscape + 1;
     }
 
-    return( S_OK );
+    return (S_OK);
 }
 
-
 ///////////////////////////////////////////////////////////////////////////////
-HRESULT GetShellOpenCommand( LPTSTR ptszShellOpenCommand, DWORD cbShellOpenCommand )
+HRESULT GetShellOpenCommand(LPTSTR ptszShellOpenCommand, DWORD cbShellOpenCommand)
 {
     LONG lResult;
 
@@ -137,20 +134,20 @@ HRESULT GetShellOpenCommand( LPTSTR ptszShellOpenCommand, DWORD cbShellOpenComma
         //
         // Look for the file type associated with .html files
         //
-        TCHAR szFileType[ MAX_PATH ];
+        TCHAR szFileType[MAX_PATH];
 
-        lResult = RegOpenKeyEx( HKEY_CLASSES_ROOT, _T( ".html" ), 0, KEY_READ, &hKey );
+        lResult = RegOpenKeyEx(HKEY_CLASSES_ROOT, _T( ".html" ), 0, KEY_READ, &hKey);
 
-        if( ERROR_SUCCESS != lResult )
+        if (ERROR_SUCCESS != lResult)
         {
             break;
         }
 
-        DWORD dwLength = sizeof( szFileType );
+        DWORD dwLength = sizeof(szFileType);
 
-        lResult = RegQueryValueEx( hKey, NULL, 0, NULL, (BYTE *)szFileType, &dwLength );
+        lResult = RegQueryValueEx(hKey, NULL, 0, NULL, (BYTE *)szFileType, &dwLength);
 
-        if( ERROR_SUCCESS != lResult )
+        if (ERROR_SUCCESS != lResult)
         {
             break;
         }
@@ -158,37 +155,36 @@ HRESULT GetShellOpenCommand( LPTSTR ptszShellOpenCommand, DWORD cbShellOpenComma
         //
         // Find the command for the shell's open verb associated with this file type
         //
-        TCHAR szKeyName[ MAX_PATH + 20 ];
+        TCHAR szKeyName[MAX_PATH + 20];
 
-        wsprintf( szKeyName, _T( "%s\\shell\\open\\command" ), szFileType );
+        wsprintf(szKeyName, _T( "%s\\shell\\open\\command" ), szFileType);
 
-        lResult = RegOpenKeyEx( HKEY_CLASSES_ROOT, szKeyName, 0, KEY_READ, &hFileKey );
+        lResult = RegOpenKeyEx(HKEY_CLASSES_ROOT, szKeyName, 0, KEY_READ, &hFileKey);
 
-        if( ERROR_SUCCESS != lResult )
+        if (ERROR_SUCCESS != lResult)
         {
             break;
         }
 
         dwLength = cbShellOpenCommand;
 
-        lResult = RegQueryValueEx( hFileKey, NULL, 0, NULL, (BYTE *)ptszShellOpenCommand, &dwLength );
+        lResult = RegQueryValueEx(hFileKey, NULL, 0, NULL, (BYTE *)ptszShellOpenCommand, &dwLength);
 
-        if( 0 == lResult )
+        if (0 == lResult)
         {
             fFoundExtensionCommand = TRUE;
         }
-    }
-    while( FALSE );
+    } while (FALSE);
 
     //
     // If there was no application associated with .html files by extension, look for
     // an application associated with the http protocol
     //
-    if( !fFoundExtensionCommand )
+    if (!fFoundExtensionCommand)
     {
-        if( NULL != hKey )
+        if (NULL != hKey)
         {
-            RegCloseKey( hKey );
+            RegCloseKey(hKey);
         }
 
         do
@@ -196,104 +192,102 @@ HRESULT GetShellOpenCommand( LPTSTR ptszShellOpenCommand, DWORD cbShellOpenComma
             //
             // Find the command for the shell's open verb associated with the http protocol
             //
-            lResult = RegOpenKeyEx( HKEY_CLASSES_ROOT, _T( "http\\shell\\open\\command" ), 0, KEY_READ, &hKey );
+            lResult = RegOpenKeyEx(HKEY_CLASSES_ROOT, _T( "http\\shell\\open\\command" ), 0, KEY_READ, &hKey);
 
-            if( ERROR_SUCCESS != lResult )
+            if (ERROR_SUCCESS != lResult)
             {
                 break;
             }
 
             DWORD dwLength = cbShellOpenCommand;
 
-            lResult = RegQueryValueEx( hKey, NULL, 0, NULL, (BYTE *)ptszShellOpenCommand, &dwLength );
-        }
-        while( FALSE );
+            lResult = RegQueryValueEx(hKey, NULL, 0, NULL, (BYTE *)ptszShellOpenCommand, &dwLength);
+        } while (FALSE);
     }
 
-    if( NULL != hKey )
+    if (NULL != hKey)
     {
-        RegCloseKey( hKey );
+        RegCloseKey(hKey);
     }
 
-    if( NULL != hFileKey )
+    if (NULL != hFileKey)
     {
-        RegCloseKey( hFileKey );
+        RegCloseKey(hFileKey);
     }
 
-    return( HRESULT_FROM_WIN32( lResult ) );
+    return (HRESULT_FROM_WIN32(lResult));
 }
 
-
 ///////////////////////////////////////////////////////////////////////////////
-HRESULT LaunchURL( LPCWSTR pszURL )
+HRESULT LaunchURL(LPCWSTR pszURL)
 {
     HRESULT hr;
 
     //
     // Find the appropriate command to launch URLs with
     //
-    TCHAR szShellOpenCommand[ MAX_PATH * 2 ];
+    TCHAR szShellOpenCommand[MAX_PATH * 2];
 
-    hr = GetShellOpenCommand( szShellOpenCommand, sizeof( szShellOpenCommand ) );
+    hr = GetShellOpenCommand(szShellOpenCommand, sizeof(szShellOpenCommand));
 
-    if( FAILED( hr ) )
+    if (FAILED(hr))
     {
-        return( hr );
+        return (hr);
     }
 
     //
     // Build the appropriate command line, substituting our URL parameter
     //
-    TCHAR szLaunchCommand[ 2000 ];
+    TCHAR szLaunchCommand[2000];
 
-    LPTSTR pszParam = _tcsstr( szShellOpenCommand, _T( "\"%1\"" ) );
+    LPTSTR pszParam = _tcsstr(szShellOpenCommand, _T( "\"%1\"" ));
 
-    if( NULL == pszParam )
+    if (NULL == pszParam)
     {
-        pszParam = _tcsstr( szShellOpenCommand, _T( "\"%*\"" ) );
+        pszParam = _tcsstr(szShellOpenCommand, _T( "\"%*\"" ));
     }
 
-    if( NULL != pszParam )
+    if (NULL != pszParam)
     {
-        *pszParam = _T( '\0' ) ;
+        *pszParam = _T('\0');
 
-        wsprintf( szLaunchCommand, _T( "%s%ws%s" ), szShellOpenCommand, pszURL, pszParam + 4 );
+        wsprintf(szLaunchCommand, _T( "%s%ws%s" ), szShellOpenCommand, pszURL, pszParam + 4);
     }
     else
     {
-        wsprintf( szLaunchCommand, _T( "%s %ws" ), szShellOpenCommand, pszURL );
+        wsprintf(szLaunchCommand, _T( "%s %ws" ), szShellOpenCommand, pszURL);
     }
 
     //
     // Find the application name, stripping quotes if necessary
     //
-    TCHAR szExe[ MAX_PATH * 2 ];
+    TCHAR szExe[MAX_PATH * 2];
     LPTSTR pchFirst = szShellOpenCommand;
     LPTSTR pchNext = NULL;
 
-    while( _T( ' ' ) == *pchFirst )
+    while (_T(' ') == *pchFirst)
     {
         pchFirst++;
     }
 
-    if( _T( '"' ) == *pchFirst )
+    if (_T('"') == *pchFirst)
     {
         pchFirst++;
 
-        pchNext = _tcschr( pchFirst, _T( '"' ) );
+        pchNext = _tcschr(pchFirst, _T('"'));
     }
     else
     {
-        pchNext = _tcschr( pchFirst + 1, _T( ' ' ) );
+        pchNext = _tcschr(pchFirst + 1, _T(' '));
     }
 
-    if( NULL == pchNext )
+    if (NULL == pchNext)
     {
-        pchNext = szShellOpenCommand + _tcslen( szShellOpenCommand );
+        pchNext = szShellOpenCommand + _tcslen(szShellOpenCommand);
     }
 
-    _tcsncpy( szExe, pchFirst, pchNext - pchFirst );
-    szExe[ pchNext - pchFirst ] = _T( '\0' ) ;
+    _tcsncpy(szExe, pchFirst, pchNext - pchFirst);
+    szExe[pchNext - pchFirst] = _T('\0');
 
     //
     // Because of the extremely long length of the URLs, neither
@@ -305,17 +299,16 @@ HRESULT LaunchURL( LPCWSTR pszURL )
     // to function properly.
     //
     PROCESS_INFORMATION ProcInfo;
-    ZeroMemory( (LPVOID)&ProcInfo, sizeof( PROCESS_INFORMATION ) );
+    ZeroMemory((LPVOID)&ProcInfo, sizeof(PROCESS_INFORMATION));
 
     STARTUPINFO StartUp;
-    ZeroMemory( (LPVOID)&StartUp, sizeof( STARTUPINFO ) );
+    ZeroMemory((LPVOID)&StartUp, sizeof(STARTUPINFO));
 
     StartUp.cb = sizeof(STARTUPINFO);
 
-    if( !CreateProcess( szExe, szLaunchCommand, NULL, NULL,
-                        FALSE, 0, NULL, NULL, &StartUp, &ProcInfo) )
+    if (!CreateProcess(szExe, szLaunchCommand, NULL, NULL, FALSE, 0, NULL, NULL, &StartUp, &ProcInfo))
     {
-        hr = HRESULT_FROM_WIN32( GetLastError() );
+        hr = HRESULT_FROM_WIN32(GetLastError());
     }
     else
     {
@@ -323,16 +316,16 @@ HRESULT LaunchURL( LPCWSTR pszURL )
         // CreateProcess succeeded and we do not need the handles to the thread
         // or the process, so close them now.
         //
-        if( NULL != ProcInfo.hThread )
+        if (NULL != ProcInfo.hThread)
         {
-            CloseHandle( ProcInfo.hThread );
+            CloseHandle(ProcInfo.hThread);
         }
 
-        if( NULL != ProcInfo.hProcess )
+        if (NULL != ProcInfo.hProcess)
         {
-            CloseHandle( ProcInfo.hProcess );
+            CloseHandle(ProcInfo.hProcess);
         }
     }
 
-    return( hr );
+    return (hr);
 }

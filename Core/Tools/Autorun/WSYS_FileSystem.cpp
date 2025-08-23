@@ -47,25 +47,17 @@
 //         Externals
 //----------------------------------------------------------------------------
 
-
-
 //----------------------------------------------------------------------------
 //         Defines
 //----------------------------------------------------------------------------
-
-
 
 //----------------------------------------------------------------------------
 //         Private Types
 //----------------------------------------------------------------------------
 
-
-
 //----------------------------------------------------------------------------
 //         Private Data
 //----------------------------------------------------------------------------
-
-
 
 //----------------------------------------------------------------------------
 //         Public Data
@@ -75,32 +67,27 @@
 // TheFileSystem
 //===============================
 /**
-  *	This is the FileSystem's singleton class. All file access
-	* should be through TheFileSystem, unless code needs to use an explicit
-	* File or FileSystem derivative.
-	*
-	* Using TheFileSystem->open and File exclusively for file access, particularly
-	* in library or modular code, allows applications to transparently implement
-	* file access as they see fit. This is particularly important for code that
-	* needs to be shared between applications, such as games and tools.
-	*/
+ *	This is the FileSystem's singleton class. All file access
+ * should be through TheFileSystem, unless code needs to use an explicit
+ * File or FileSystem derivative.
+ *
+ * Using TheFileSystem->open and File exclusively for file access, particularly
+ * in library or modular code, allows applications to transparently implement
+ * file access as they see fit. This is particularly important for code that
+ * needs to be shared between applications, such as games and tools.
+ */
 //===============================
 
-FileSystem	*TheFileSystem = NULL;
+FileSystem *TheFileSystem = NULL;
 
 //----------------------------------------------------------------------------
 //         Private Prototypes
 //----------------------------------------------------------------------------
 
-
-
 //----------------------------------------------------------------------------
 //         Private Functions
 //----------------------------------------------------------------------------
 
-
 //----------------------------------------------------------------------------
 //         Public Functions
 //----------------------------------------------------------------------------
-
-

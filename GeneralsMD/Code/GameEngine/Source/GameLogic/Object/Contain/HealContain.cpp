@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 #include "Common/Xfer.h"
 #include "GameLogic/Damage.h"
 #include "GameLogic/GameLogic.h"
@@ -43,29 +43,25 @@
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-HealContainModuleData::HealContainModuleData( void )
+HealContainModuleData::HealContainModuleData(void)
 {
+    m_framesForFullHeal = 0;
 
-	m_framesForFullHeal = 0;
-
-}  // end HealContainModuleData
+} // end HealContainModuleData
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-/*static*/ void HealContainModuleData::buildFieldParse(MultiIniFieldParse& p)
+/*static*/ void HealContainModuleData::buildFieldParse(MultiIniFieldParse &p)
 {
+    OpenContainModuleData::buildFieldParse(p);
 
-  OpenContainModuleData::buildFieldParse( p );
+    static const FieldParse dataFieldParse[] = {
+        {"TimeForFullHeal", INI::parseDurationUnsignedInt, NULL, offsetof(HealContainModuleData, m_framesForFullHeal)},
+        {0, 0, 0, 0}};
 
-	static const FieldParse dataFieldParse[] =
-	{
-		{ "TimeForFullHeal", INI::parseDurationUnsignedInt, NULL, offsetof( HealContainModuleData, m_framesForFullHeal ) },
-		{ 0, 0, 0, 0 }
-	};
+    p.add(dataFieldParse);
 
-  p.add(dataFieldParse);
-
-}  // end buildFieldParse
+} // end buildFieldParse
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -73,150 +69,140 @@ HealContainModuleData::HealContainModuleData( void )
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-HealContain::HealContain( Thing *thing, const ModuleData *moduleData )
-					 : OpenContain( thing, moduleData )
+HealContain::HealContain(Thing *thing, const ModuleData *moduleData) : OpenContain(thing, moduleData)
 {
-
-}  // end HealContain
+} // end HealContain
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-HealContain::~HealContain( void )
+HealContain::~HealContain(void)
 {
-
-}  // end ~HealContain
+} // end ~HealContain
 
 // ------------------------------------------------------------------------------------------------
 /** Per frame update */
 // ------------------------------------------------------------------------------------------------
-UpdateSleepTime HealContain::update( void )
+UpdateSleepTime HealContain::update(void)
 {
+    // extending functionality
+    /*UpdateSleepTime result =*/OpenContain::update();
 
-	// extending functionality
-	/*UpdateSleepTime result =*/ OpenContain::update();
+    // get the module data
+    const HealContainModuleData *modData = getHealContainModuleData();
 
-	// get the module data
-	const HealContainModuleData *modData = getHealContainModuleData();
+    //
+    // for each of our objects, we give them a little health each frame so that when the
+    // the TimeTillHealed is up, the object will exit and be fully healed
+    //
+    Bool doneHealing;
+    Object *obj;
+    ContainedItemsList::const_iterator it = getContainList().begin();
+    while (it != getContainList().end())
+    {
+        // get the object
+        obj = *it;
 
-	//
-	// for each of our objects, we give them a little health each frame so that when the
-	// the TimeTillHealed is up, the object will exit and be fully healed
-	//
-	Bool doneHealing;
-	Object *obj;
-	ContainedItemsList::const_iterator it = getContainList().begin();
-	while( it != getContainList().end() )
-	{
+        // increment the iterator, which allows failure to not cause an infinite loop
+        ++it;
 
-		// get the object
-		obj = *it;
+        // do the healing on this object
+        doneHealing = doHeal(obj, modData->m_framesForFullHeal);
 
-		// increment the iterator, which allows failure to not cause an infinite loop
-		++it;
+        // if we're done healing, we need to remove us from the healing container
+        if (doneHealing == TRUE)
+        {
+            ExitDoorType exitDoor = reserveDoorForExit(obj->getTemplate(), obj);
+            if (exitDoor != DOOR_NONE_AVAILABLE)
+                exitObjectViaDoor(obj, exitDoor);
+        } // end if
 
-		// do the healing on this object
-		doneHealing = doHeal( obj, modData->m_framesForFullHeal );
+    } // end for, it
 
-		// if we're done healing, we need to remove us from the healing container
-		if( doneHealing == TRUE )
-		{
-			ExitDoorType exitDoor = reserveDoorForExit(obj->getTemplate(), obj);
-			if (exitDoor != DOOR_NONE_AVAILABLE)
-				exitObjectViaDoor( obj, exitDoor );
-		}  // end if
+    return UPDATE_SLEEP_NONE;
 
-	}  // end for, it
-
-	return UPDATE_SLEEP_NONE;
-
-}  // end update
+} // end update
 
 // ------------------------------------------------------------------------------------------------
 /** Do the healing for a single object for a single frame. */
 // ------------------------------------------------------------------------------------------------
-Bool HealContain::doHeal( Object *obj, UnsignedInt framesForFullHeal )
+Bool HealContain::doHeal(Object *obj, UnsignedInt framesForFullHeal)
 {
-	Bool doneHealing = FALSE;
+    Bool doneHealing = FALSE;
 
-	// setup the healing damageInfo structure with all but the amount
-	DamageInfo healInfo;
-	healInfo.in.m_damageType = DAMAGE_HEALING;
-	healInfo.in.m_deathType = DEATH_NONE;
-	healInfo.in.m_sourceID = getObject()->getID();
+    // setup the healing damageInfo structure with all but the amount
+    DamageInfo healInfo;
+    healInfo.in.m_damageType = DAMAGE_HEALING;
+    healInfo.in.m_deathType = DEATH_NONE;
+    healInfo.in.m_sourceID = getObject()->getID();
 
-	// get body module of the thing to heal
-	BodyModuleInterface *body = obj->getBodyModule();
+    // get body module of the thing to heal
+    BodyModuleInterface *body = obj->getBodyModule();
 
-	// if we've been in here long enough ... set our health to max
-	if( TheGameLogic->getFrame() - obj->getContainedByFrame() >= framesForFullHeal )
-	{
+    // if we've been in here long enough ... set our health to max
+    if (TheGameLogic->getFrame() - obj->getContainedByFrame() >= framesForFullHeal)
+    {
+        // set the amount to max just to be sure we're at the top
+        healInfo.in.m_amount = body->getMaxHealth();
 
-		// set the amount to max just to be sure we're at the top
-		healInfo.in.m_amount = body->getMaxHealth();
+        // set max health
+        body->attemptHealing(&healInfo);
 
-		// set max health
-		body->attemptHealing( &healInfo );
+        // we're done healing
+        doneHealing = TRUE;
 
-		// we're done healing
-		doneHealing = TRUE;
+    } // end if
+    else
+    {
+        //
+        // given the *whole* time it would take to heal this object, lets pretend that the
+        // object is at zero health ... and give it a sliver of health as if it were at 0 health
+        // and would be fully healed at 'framesForFullHeal'
+        //
+        healInfo.in.m_amount = body->getMaxHealth() / (Real)framesForFullHeal;
 
-	}  // end if
-	else
-	{
+        // do the healing
+        body->attemptHealing(&healInfo);
 
-		//
-		// given the *whole* time it would take to heal this object, lets pretend that the
-		// object is at zero health ... and give it a sliver of health as if it were at 0 health
-		// and would be fully healed at 'framesForFullHeal'
-		//
-		healInfo.in.m_amount = body->getMaxHealth() / (Real)framesForFullHeal;
+    } // end else
 
-		// do the healing
-		body->attemptHealing( &healInfo );
+    // return if we're done healing
+    return doneHealing;
 
-	}  // end else
-
-	// return if we're done healing
-	return doneHealing;
-
-}  // end doHeal
+} // end doHeal
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void HealContain::crc( Xfer *xfer )
+void HealContain::crc(Xfer *xfer)
 {
+    // extend base class
+    OpenContain::crc(xfer);
 
-	// extend base class
-	OpenContain::crc( xfer );
-
-}  // end crc
+} // end crc
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void HealContain::xfer( Xfer *xfer )
+void HealContain::xfer(Xfer *xfer)
 {
+    // version
+    XferVersion currentVersion = 1;
+    XferVersion version = currentVersion;
+    xfer->xferVersion(&version, currentVersion);
 
-	// version
-	XferVersion currentVersion = 1;
-	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+    // extend base class
+    OpenContain::xfer(xfer);
 
-	// extend base class
-	OpenContain::xfer( xfer );
-
-}  // end xfer
+} // end xfer
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void HealContain::loadPostProcess( void )
+void HealContain::loadPostProcess(void)
 {
+    // extend base class
+    OpenContain::loadPostProcess();
 
-	// extend base class
-	OpenContain::loadPostProcess();
-
-}  // end loadPostProcess
+} // end loadPostProcess

@@ -31,7 +31,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 
 #include "Common/Player.h"
 #include "Common/SpecialPower.h"
@@ -43,30 +43,27 @@
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-DefectorSpecialPowerModuleData::DefectorSpecialPowerModuleData( void )
+DefectorSpecialPowerModuleData::DefectorSpecialPowerModuleData(void)
 {
+    m_fatCursorRadius = 0.0f;
 
-	m_fatCursorRadius = 0.0f;
-
-}  // end DefectorSpecialPowerModuleData
+} // end DefectorSpecialPowerModuleData
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 
-	//static
+// static
 
- void DefectorSpecialPowerModuleData::buildFieldParse(MultiIniFieldParse& p)
+void DefectorSpecialPowerModuleData::buildFieldParse(MultiIniFieldParse &p)
 {
-	SpecialPowerModuleData::buildFieldParse( p );
+    SpecialPowerModuleData::buildFieldParse(p);
 
-	static const FieldParse dataFieldParse[] =
-	{
-		{ "FatCursorRadius", INI::parseReal, NULL, offsetof( DefectorSpecialPowerModuleData, m_fatCursorRadius ) },
-		{ 0, 0, 0, 0 }
-	};
-	p.add(dataFieldParse);
+    static const FieldParse dataFieldParse[] = {
+        {"FatCursorRadius", INI::parseReal, NULL, offsetof(DefectorSpecialPowerModuleData, m_fatCursorRadius)},
+        {0, 0, 0, 0}};
+    p.add(dataFieldParse);
 
-}  // end buildFieldParse
+} // end buildFieldParse
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -74,102 +71,96 @@ DefectorSpecialPowerModuleData::DefectorSpecialPowerModuleData( void )
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-DefectorSpecialPower::DefectorSpecialPower( Thing *thing, const ModuleData *moduleData )
-												: SpecialPowerModule( thing, moduleData )
+DefectorSpecialPower::DefectorSpecialPower(Thing *thing, const ModuleData *moduleData) :
+    SpecialPowerModule(thing, moduleData)
 {
-
-}  // end DefectorSpecialPower
+} // end DefectorSpecialPower
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-DefectorSpecialPower::~DefectorSpecialPower( void )
+DefectorSpecialPower::~DefectorSpecialPower(void)
 {
-
-}  // end ~DefectorSpecialPower
-
+} // end ~DefectorSpecialPower
 
 // ------------------------------------------------------------------------------------------------
 
-void DefectorSpecialPower::doSpecialPowerAtLocation( const Coord3D *loc, Real angle, UnsignedInt commandOptions )
+void DefectorSpecialPower::doSpecialPowerAtLocation(const Coord3D *loc, Real angle, UnsignedInt commandOptions)
 {
-	if (getObject()->isDisabled())
-		return;
+    if (getObject()->isDisabled())
+        return;
 
-	// only allowed at objects
-	return;
+    // only allowed at objects
+    return;
 }
 
 // ------------------------------------------------------------------------------------------------
-void DefectorSpecialPower::doSpecialPowerAtObject( Object *objectToMakeDefector, UnsignedInt commandOptions )
+void DefectorSpecialPower::doSpecialPowerAtObject(Object *objectToMakeDefector, UnsignedInt commandOptions)
 {
-	if (getObject()->isDisabled())
-		return;
+    if (getObject()->isDisabled())
+        return;
 
-	// sanity check
-	if (!objectToMakeDefector)
-	{
-		return;
-	}
+    // sanity check
+    if (!objectToMakeDefector)
+    {
+        return;
+    }
 
-	// another sanity check
-	const Object *self = getObject();
-	if (!self)
-	{
-		return;
-	}
+    // another sanity check
+    const Object *self = getObject();
+    if (!self)
+    {
+        return;
+    }
 
-	// call the base class action cause we are *EXTENDING* functionality
-  SpecialPowerModule::doSpecialPowerAtObject( objectToMakeDefector, commandOptions );
+    // call the base class action cause we are *EXTENDING* functionality
+    SpecialPowerModule::doSpecialPowerAtObject(objectToMakeDefector, commandOptions);
 
-	//AIUpdateInterface *hisAI = objectToMakeDefector->getAIUpdateInterface();
-	//if (hisAI)
-	//{
-		// how do I get at SpecialPowerTemplate::getDetectionTime() from here?
-		const SpecialPowerTemplate *specPowTemp = getSpecialPowerTemplate();
-		UnsignedInt time = specPowTemp->getDetectionTime();
+    // AIUpdateInterface *hisAI = objectToMakeDefector->getAIUpdateInterface();
+    // if (hisAI)
+    //{
+    //  how do I get at SpecialPowerTemplate::getDetectionTime() from here?
+    const SpecialPowerTemplate *specPowTemp = getSpecialPowerTemplate();
+    UnsignedInt time = specPowTemp->getDetectionTime();
 
-
-		objectToMakeDefector->defect(self->getControllingPlayer()->getDefaultTeam(), time );// @todo lorenzen hook into the new AIUpdateI methods
-	//}
-
+    objectToMakeDefector->defect(
+        self->getControllingPlayer()->getDefaultTeam(),
+        time); // @todo lorenzen hook into the new AIUpdateI methods
+    //}
 }
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void DefectorSpecialPower::crc( Xfer *xfer )
+void DefectorSpecialPower::crc(Xfer *xfer)
 {
+    // extend base class
+    SpecialPowerModule::crc(xfer);
 
-	// extend base class
-	SpecialPowerModule::crc( xfer );
-
-}  // end crc
+} // end crc
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void DefectorSpecialPower::xfer( Xfer *xfer )
+void DefectorSpecialPower::xfer(Xfer *xfer)
 {
+    // version
+    XferVersion currentVersion = 1;
+    XferVersion version = currentVersion;
+    xfer->xferVersion(&version, currentVersion);
 
-	// version
-	XferVersion currentVersion = 1;
-	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+    // extend base class
+    SpecialPowerModule::xfer(xfer);
 
-	// extend base class
-	SpecialPowerModule::xfer( xfer );
-
-}  // end xfer
+} // end xfer
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void DefectorSpecialPower::loadPostProcess( void )
+void DefectorSpecialPower::loadPostProcess(void)
 {
+    // extend base class
+    SpecialPowerModule::loadPostProcess();
 
-	// extend base class
-	SpecialPowerModule::loadPostProcess();
-
-}  // end loadPostProcess
+} // end loadPostProcess

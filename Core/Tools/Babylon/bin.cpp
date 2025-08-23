@@ -25,380 +25,342 @@
 #include "assert.h"
 #include "list.h"
 
-Bin::Bin ( int size )
+Bin::Bin(int size)
 {
-	assert ( size > 0 );
-	num_buckets = size;
-	sh_item = NULL;
+    assert(size > 0);
+    num_buckets = size;
+    sh_item = NULL;
 
-	bucket = new List[size];
-
+    bucket = new List[size];
 }
 
-Bin::~Bin ( )
+Bin::~Bin()
 {
-	Clear ();
+    Clear();
 
-	delete [] bucket;
-
+    delete[] bucket;
 }
 
-
-
-void Bin::Clear ( void )
+void Bin::Clear(void)
 {
-	int count = num_buckets;
-	sh_item = NULL;
-	while ( count-- )
-	{
-		List *head = &bucket[count];
-		BinItem *item;
+    int count = num_buckets;
+    sh_item = NULL;
+    while (count--)
+    {
+        List *head = &bucket[count];
+        BinItem *item;
 
-		while ( ( item = (BinItem *) head->Next ()))
-		{
-			Remove ( item );
-		}
-	}
-
+        while ((item = (BinItem *)head->Next()))
+        {
+            Remove(item);
+        }
+    }
 }
 
-void*				Bin::Get					( OLECHAR *text1, OLECHAR *text2 )
+void *Bin::Get(OLECHAR *text1, OLECHAR *text2)
 {
-	BinItem *item;
+    BinItem *item;
 
-	if ( ( item = GetBinItem ( text1, text2 )) )
-	{
-		return item->Item();
-	}
+    if ((item = GetBinItem(text1, text2)))
+    {
+        return item->Item();
+    }
 
-	return NULL;
+    return NULL;
 }
 
-void*				Bin::GetNext			( void )
+void *Bin::GetNext(void)
 {
-	BinItem *item;
+    BinItem *item;
 
-	if ( ( item = GetNextBinItem ( )) )
-	{
-		return item->Item();
-	}
+    if ((item = GetNextBinItem()))
+    {
+        return item->Item();
+    }
 
-	return NULL;
+    return NULL;
 }
 
-void				Bin::Add					( void *data, OLECHAR *text1, OLECHAR *text2 )
+void Bin::Add(void *data, OLECHAR *text1, OLECHAR *text2)
 {
-	BinItem *item;
-	List		*list;
-	int			hash;
+    BinItem *item;
+    List *list;
+    int hash;
 
-	sh_item = NULL;
+    sh_item = NULL;
 
-	hash = calc_hash ( text1 );
-	item = new BinItem ( data, hash, text1, text2 );
+    hash = calc_hash(text1);
+    item = new BinItem(data, hash, text1, text2);
 
-	list = &bucket[hash%num_buckets];
+    list = &bucket[hash % num_buckets];
 
-	list->AddToTail ( (ListNode *) item );
-
+    list->AddToTail((ListNode *)item);
 }
 
-BinItem*		Bin::GetBinItem		( OLECHAR *text1, OLECHAR *text2)
+BinItem *Bin::GetBinItem(OLECHAR *text1, OLECHAR *text2)
 {
+    sh_size1 = sh_size2 = 0;
+    sh_text1 = text1;
+    sh_text2 = text2;
 
-	sh_size1 = sh_size2 = 0;
-	sh_text1 = text1;
-	sh_text2 = text2;
+    sh_hash = calc_hash(text1);
 
-	sh_hash = calc_hash ( text1 );
+    if (sh_text1)
+    {
+        sh_size1 = wcslen(sh_text1);
+    }
 
-	if ( sh_text1 )
-	{
-		sh_size1 = wcslen ( sh_text1 );
-	}
+    if (sh_text2)
+    {
+        sh_size2 = wcslen(sh_text2);
+    }
 
-	if ( sh_text2 )
-	{
-		sh_size2 = wcslen ( sh_text2 );
-	}
+    sh_item = (BinItem *)&bucket[sh_hash % num_buckets];
 
-	sh_item = (BinItem *) &bucket[sh_hash%num_buckets];
-
-
-	return GetNextBinItem ();
+    return GetNextBinItem();
 }
 
-BinItem*		Bin::GetNextBinItem ( void )
+BinItem *Bin::GetNextBinItem(void)
 {
-	if ( sh_item )
-	{
-		sh_item = (BinItem *) sh_item->Next ();
-	}
+    if (sh_item)
+    {
+        sh_item = (BinItem *)sh_item->Next();
+    }
 
-	while ( sh_item )
-	{
-		if ( sh_item->Same ( sh_hash, sh_text1, sh_size1, sh_text2, sh_size2 ))
-		{
-			break;
-		}
-		sh_item = (BinItem *) sh_item->Next ();
-	}
+    while (sh_item)
+    {
+        if (sh_item->Same(sh_hash, sh_text1, sh_size1, sh_text2, sh_size2))
+        {
+            break;
+        }
+        sh_item = (BinItem *)sh_item->Next();
+    }
 
-	return sh_item;
+    return sh_item;
 }
 
-BinItem*		Bin::GetBinItem	( void *item )
+BinItem *Bin::GetBinItem(void *item)
 {
-	BinItem *bitem = NULL;
-	int i;
+    BinItem *bitem = NULL;
+    int i;
 
+    for (i = 0; i < num_buckets; i++)
+    {
+        if ((bitem = (BinItem *)bucket[i].Find(item)))
+        {
+            break;
+        }
+    }
 
-	for ( i=0; i< num_buckets; i++)
-	{
-
-		if ( ( bitem = (BinItem *) bucket[i].Find ( item )))
-		{
-			break;
-		}
-
-	}
-
-	return bitem;
-
+    return bitem;
 }
 
-void				Bin::Remove			( void *item )
+void Bin::Remove(void *item)
 {
-	BinItem *bitem;
+    BinItem *bitem;
 
-	if ( ( bitem = GetBinItem ( item ) ))
-	{
-		Remove ( bitem );
-	}
-
+    if ((bitem = GetBinItem(item)))
+    {
+        Remove(bitem);
+    }
 }
 
-void				Bin::Remove			( OLECHAR *text1, OLECHAR *text2 )
+void Bin::Remove(OLECHAR *text1, OLECHAR *text2)
 {
-	BinItem *bitem;
+    BinItem *bitem;
 
-	if ( ( bitem = GetBinItem ( text1, text2 ) ))
-	{
-		Remove ( bitem );
-	}
-
+    if ((bitem = GetBinItem(text1, text2)))
+    {
+        Remove(bitem);
+    }
 }
 
-void				Bin::Remove			( BinItem *item )
+void Bin::Remove(BinItem *item)
 {
-	sh_item = NULL;
-	item->Remove ();
-	delete item ;
-
+    sh_item = NULL;
+    item->Remove();
+    delete item;
 }
 
-
-BinItem::BinItem ( void *data, int new_hash, OLECHAR *new_text1, OLECHAR *new_text2 )
+BinItem::BinItem(void *data, int new_hash, OLECHAR *new_text1, OLECHAR *new_text2)
 {
-	SetItem ( data );
-	hash = new_hash;
+    SetItem(data);
+    hash = new_hash;
 
-	if ( (text1 = new_text1) )
-	{
-		text1size = wcslen ( text1 );
-	}
-	else
-	{
-		text1size = 0;
-	}
+    if ((text1 = new_text1))
+    {
+        text1size = wcslen(text1);
+    }
+    else
+    {
+        text1size = 0;
+    }
 
-	if ( (text2 = new_text2) )
-	{
-		text2size = wcslen ( text2 );
-	}
-	else
-	{
-		text2size = 0;
-	}
+    if ((text2 = new_text2))
+    {
+        text2size = wcslen(text2);
+    }
+    else
+    {
+        text2size = 0;
+    }
 }
 
-int BinItem::Same ( int chash, OLECHAR *ctext1, int size1, OLECHAR *ctext2, int size2 )
+int BinItem::Same(int chash, OLECHAR *ctext1, int size1, OLECHAR *ctext2, int size2)
 {
-	if ( hash != chash || text1size != size1 || text2size != size2 )
-	{
-		return FALSE;
-	}
+    if (hash != chash || text1size != size1 || text2size != size2)
+    {
+        return FALSE;
+    }
 
-	if ( wcsicmp ( text1, ctext1 ))
-	{
-		return FALSE;
-	}
+    if (wcsicmp(text1, ctext1))
+    {
+        return FALSE;
+    }
 
-	if ( text2 && ctext2 && wcsicmp ( text2, ctext2 ))
-	{
-		return FALSE;
-	}
+    if (text2 && ctext2 && wcsicmp(text2, ctext2))
+    {
+        return FALSE;
+    }
 
-	return TRUE;
-
-
+    return TRUE;
 }
-int Bin::calc_hash ( OLECHAR *text )
+int Bin::calc_hash(OLECHAR *text)
 {
-	int hash = 0;
+    int hash = 0;
 
-	while ( *text )
-	{
-		hash += *text++;
-	}
+    while (*text)
+    {
+        hash += *text++;
+    }
 
-	return hash;
-
+    return hash;
 }
 
 // Bin ID code
 
-BinID::BinID ( int size )
+BinID::BinID(int size)
 {
-	assert ( size > 0 );
-	num_buckets = size;
+    assert(size > 0);
+    num_buckets = size;
 
-	bucket = new List[size];
-
+    bucket = new List[size];
 }
 
-BinID::~BinID ( )
+BinID::~BinID()
 {
-	Clear ();
+    Clear();
 
-	delete [] bucket;
-
+    delete[] bucket;
 }
 
-
-
-void BinID::Clear ( void )
+void BinID::Clear(void)
 {
-	int count = num_buckets;
+    int count = num_buckets;
 
-	while ( count-- )
-	{
-		List *head = &bucket[count];
-		BinIDItem *item;
+    while (count--)
+    {
+        List *head = &bucket[count];
+        BinIDItem *item;
 
-		while ( ( item = (BinIDItem *) head->Next ()))
-		{
-			Remove ( item );
-		}
-	}
-
+        while ((item = (BinIDItem *)head->Next()))
+        {
+            Remove(item);
+        }
+    }
 }
 
-void*				BinID::Get					( int id)
+void *BinID::Get(int id)
 {
-	BinIDItem *item;
+    BinIDItem *item;
 
-	if ( ( item = GetBinIDItem ( id  )) )
-	{
-		return item->Item();
-	}
+    if ((item = GetBinIDItem(id)))
+    {
+        return item->Item();
+    }
 
-	return NULL;
+    return NULL;
 }
 
-void				BinID::Add					( void *data, int id )
+void BinID::Add(void *data, int id)
 {
-	BinIDItem *item;
-	List		*list;
+    BinIDItem *item;
+    List *list;
 
+    item = new BinIDItem(data, id);
 
-	item = new BinIDItem ( data, id );
+    list = &bucket[id % num_buckets];
 
-	list = &bucket[id%num_buckets];
-
-	list->AddToTail ( (ListNode *) item );
-
+    list->AddToTail((ListNode *)item);
 }
 
-BinIDItem*		BinID::GetBinIDItem		( int id )
+BinIDItem *BinID::GetBinIDItem(int id)
 {
-	BinIDItem *item;
+    BinIDItem *item;
 
+    item = (BinIDItem *)bucket[id % num_buckets].Next();
 
-	item = (BinIDItem *) bucket[id%num_buckets].Next();
+    while (item)
+    {
+        if (item->Same(id))
+        {
+            break;
+        }
+        item = (BinIDItem *)item->Next();
+    }
 
-	while ( item )
-	{
-		if ( item->Same ( id ))
-		{
-			break;
-		}
-		item = (BinIDItem *) item->Next ();
-	}
-
-	return item	;
+    return item;
 }
 
-
-BinIDItem*		BinID::GetBinIDItem	( void *item )
+BinIDItem *BinID::GetBinIDItem(void *item)
 {
-	BinIDItem *bitem = NULL;
-	int i;
+    BinIDItem *bitem = NULL;
+    int i;
 
+    for (i = 0; i < num_buckets; i++)
+    {
+        if ((bitem = (BinIDItem *)bucket[i].Find(item)))
+        {
+            break;
+        }
+    }
 
-	for ( i=0; i< num_buckets; i++)
-	{
-
-		if ( ( bitem = (BinIDItem *) bucket[i].Find ( item )))
-		{
-			break;
-		}
-
-	}
-
-	return bitem;
-
+    return bitem;
 }
 
-void				BinID::Remove			( void *item )
+void BinID::Remove(void *item)
 {
-	BinIDItem *bitem;
+    BinIDItem *bitem;
 
-	if ( ( bitem = GetBinIDItem ( item ) ))
-	{
-		Remove ( bitem );
-	}
-
+    if ((bitem = GetBinIDItem(item)))
+    {
+        Remove(bitem);
+    }
 }
 
-void				BinID::Remove			( int id  )
+void BinID::Remove(int id)
 {
-	BinIDItem *bitem;
+    BinIDItem *bitem;
 
-	if ( ( bitem = GetBinIDItem ( id ) ))
-	{
-		Remove ( bitem );
-	}
-
+    if ((bitem = GetBinIDItem(id)))
+    {
+        Remove(bitem);
+    }
 }
 
-void				BinID::Remove			( BinIDItem *item )
+void BinID::Remove(BinIDItem *item)
 {
-	item->Remove ();
-	delete item ;
-
+    item->Remove();
+    delete item;
 }
 
-
-BinIDItem::BinIDItem ( void *data, int new_id  )
+BinIDItem::BinIDItem(void *data, int new_id)
 {
-	SetItem ( data );
-	id = new_id;
-
+    SetItem(data);
+    id = new_id;
 }
 
-int BinIDItem::Same ( int compare_id )
+int BinIDItem::Same(int compare_id)
 {
-	return id == compare_id;
+    return id == compare_id;
 }
-

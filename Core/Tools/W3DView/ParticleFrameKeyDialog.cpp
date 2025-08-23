@@ -33,62 +33,57 @@ static char THIS_FILE[] = __FILE__;
 /////////////////////////////////////////////////////////////////////////////
 // ParticleFrameKeyDialogClass dialog
 
-
-ParticleFrameKeyDialogClass::ParticleFrameKeyDialogClass(float frame,CWnd* pParent /*=NULL*/) :
-	CDialog(ParticleFrameKeyDialogClass::IDD, pParent),
-	m_Frame(frame)
+ParticleFrameKeyDialogClass::ParticleFrameKeyDialogClass(float frame, CWnd *pParent /*=NULL*/) :
+    CDialog(ParticleFrameKeyDialogClass::IDD, pParent), m_Frame(frame)
 {
-	//{{AFX_DATA_INIT(ParticleFrameKeyDialogClass)
-		// NOTE: the ClassWizard will add member initialization here
-	//}}AFX_DATA_INIT
+    //{{AFX_DATA_INIT(ParticleFrameKeyDialogClass)
+    // NOTE: the ClassWizard will add member initialization here
+    //}}AFX_DATA_INIT
 }
 
-
-void ParticleFrameKeyDialogClass::DoDataExchange(CDataExchange* pDX)
+void ParticleFrameKeyDialogClass::DoDataExchange(CDataExchange *pDX)
 {
-	CDialog::DoDataExchange(pDX);
-	//{{AFX_DATA_MAP(ParticleFrameKeyDialogClass)
-	DDX_Control(pDX, IDC_FRAME_SPIN, m_FrameSpin);
-	//}}AFX_DATA_MAP
+    CDialog::DoDataExchange(pDX);
+    //{{AFX_DATA_MAP(ParticleFrameKeyDialogClass)
+    DDX_Control(pDX, IDC_FRAME_SPIN, m_FrameSpin);
+    //}}AFX_DATA_MAP
 }
-
 
 BEGIN_MESSAGE_MAP(ParticleFrameKeyDialogClass, CDialog)
-	//{{AFX_MSG_MAP(ParticleFrameKeyDialogClass)
-	//}}AFX_MSG_MAP
+//{{AFX_MSG_MAP(ParticleFrameKeyDialogClass)
+//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
 // ParticleFrameKeyDialogClass message handlers
 
-
 BOOL ParticleFrameKeyDialogClass::OnInitDialog()
 {
-	CDialog::OnInitDialog();
+    CDialog::OnInitDialog();
 
-	Initialize_Spinner (m_FrameSpin, m_Frame, -1024, 1024);
+    Initialize_Spinner(m_FrameSpin, m_Frame, -1024, 1024);
 
-	return TRUE;  // return TRUE unless you set the focus to a control
-	              // EXCEPTION: OCX Property Pages should return FALSE
+    return TRUE; // return TRUE unless you set the focus to a control
+                 // EXCEPTION: OCX Property Pages should return FALSE
 }
-
 
 void ParticleFrameKeyDialogClass::OnOK()
 {
-	m_Frame = GetDlgItemFloat(m_hWnd,IDC_FRAME_EDIT);
-	CDialog::OnOK();
+    m_Frame = GetDlgItemFloat(m_hWnd, IDC_FRAME_EDIT);
+    CDialog::OnOK();
 }
 
-BOOL ParticleFrameKeyDialogClass::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult)
+BOOL ParticleFrameKeyDialogClass::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT *pResult)
 {
-	//
-	//	Update the spinner control if necessary
-	//
-	NMHDR *pheader = (NMHDR *)lParam;
-	if ((pheader != NULL) && (pheader->code == UDN_DELTAPOS)) {
-		LPNMUPDOWN pupdown = (LPNMUPDOWN)lParam;
-		::Update_Spinner_Buddy (pheader->hwndFrom, pupdown->iDelta);
-	}
+    //
+    //	Update the spinner control if necessary
+    //
+    NMHDR *pheader = (NMHDR *)lParam;
+    if ((pheader != NULL) && (pheader->code == UDN_DELTAPOS))
+    {
+        LPNMUPDOWN pupdown = (LPNMUPDOWN)lParam;
+        ::Update_Spinner_Buddy(pheader->hwndFrom, pupdown->iDelta);
+    }
 
-	return CDialog::OnNotify(wParam, lParam, pResult);
+    return CDialog::OnNotify(wParam, lParam, pResult);
 }

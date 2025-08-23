@@ -44,7 +44,6 @@
 #include "definition.h"
 #include "definitionclassids.h"
 
-
 //////////////////////////////////////////////////////////////////////////////////
 //
 //	TwiddlerClass
@@ -53,78 +52,70 @@
 class TwiddlerClass : public DefinitionClass
 {
 public:
+    /////////////////////////////////////////////////////////////////////
+    //	Editable interface requirements
+    /////////////////////////////////////////////////////////////////////
+    DECLARE_EDITABLE(TwiddlerClass, DefinitionClass);
 
-	/////////////////////////////////////////////////////////////////////
-	//	Editable interface requirements
-	/////////////////////////////////////////////////////////////////////
-	DECLARE_EDITABLE(TwiddlerClass, DefinitionClass);
+    /////////////////////////////////////////////////////////////////////
+    //	Public constructors/destructors
+    /////////////////////////////////////////////////////////////////////
+    TwiddlerClass(void);
+    virtual ~TwiddlerClass(void);
 
-	/////////////////////////////////////////////////////////////////////
-	//	Public constructors/destructors
-	/////////////////////////////////////////////////////////////////////
-	TwiddlerClass (void);
-	virtual ~TwiddlerClass (void);
+    /////////////////////////////////////////////////////////////////////
+    //	Public methods
+    /////////////////////////////////////////////////////////////////////
 
-	/////////////////////////////////////////////////////////////////////
-	//	Public methods
-	/////////////////////////////////////////////////////////////////////
+    //
+    // Type identification
+    //
+    uint32 Get_Class_ID(void) const { return CLASSID_TWIDDLERS; }
+    PersistClass *Create(void) const;
 
-	//
-	// Type identification
-	//
-	uint32								Get_Class_ID (void) const	{ return CLASSID_TWIDDLERS; }
-	PersistClass *						Create (void) const;
+    //
+    // From PersistClass
+    //
+    bool Save(ChunkSaveClass &csave);
+    bool Load(ChunkLoadClass &cload);
+    const PersistFactoryClass &Get_Factory(void) const;
 
-	//
-	// From PersistClass
-	//
-	bool									Save (ChunkSaveClass &csave);
-	bool									Load (ChunkLoadClass &cload);
-	const PersistFactoryClass &	Get_Factory (void) const;
-
-	//
-	//	Twiddler specific
-	//
-	virtual DefinitionClass *		Twiddle (void) const;
-	virtual uint32						Get_Indirect_Class_ID (void) const;
-	virtual void						Set_Indirect_Class_ID (uint32 class_id);
+    //
+    //	Twiddler specific
+    //
+    virtual DefinitionClass *Twiddle(void) const;
+    virtual uint32 Get_Indirect_Class_ID(void) const;
+    virtual void Set_Indirect_Class_ID(uint32 class_id);
 
 private:
+    /////////////////////////////////////////////////////////////////////
+    //	Private methods
+    /////////////////////////////////////////////////////////////////////
+    bool Save_Variables(ChunkSaveClass &csave);
+    bool Load_Variables(ChunkLoadClass &cload);
 
-	/////////////////////////////////////////////////////////////////////
-	//	Private methods
-	/////////////////////////////////////////////////////////////////////
-	bool								Save_Variables (ChunkSaveClass &csave);
-	bool								Load_Variables (ChunkLoadClass &cload);
-
-	/////////////////////////////////////////////////////////////////////
-	//	Private member data
-	/////////////////////////////////////////////////////////////////////
-	uint32							m_IndirectClassID;
-	DynamicVectorClass<int>		m_DefinitionList;
+    /////////////////////////////////////////////////////////////////////
+    //	Private member data
+    /////////////////////////////////////////////////////////////////////
+    uint32 m_IndirectClassID;
+    DynamicVectorClass<int> m_DefinitionList;
 };
-
 
 /////////////////////////////////////////////////////////////////////
 //	Get_Indirect_Class_ID
 /////////////////////////////////////////////////////////////////////
-inline uint32
-TwiddlerClass::Get_Indirect_Class_ID (void) const
+inline uint32 TwiddlerClass::Get_Indirect_Class_ID(void) const
 {
-	return m_IndirectClassID;
+    return m_IndirectClassID;
 }
-
 
 /////////////////////////////////////////////////////////////////////
 //	Set_Indirect_Class_ID
 /////////////////////////////////////////////////////////////////////
-inline void
-TwiddlerClass::Set_Indirect_Class_ID (uint32 class_id)
+inline void TwiddlerClass::Set_Indirect_Class_ID(uint32 class_id)
 {
-	m_IndirectClassID = class_id;
-	return ;
+    m_IndirectClassID = class_id;
+    return;
 }
 
-
 #endif //__TWIDDLER_H
-

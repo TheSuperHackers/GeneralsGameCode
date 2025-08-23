@@ -28,35 +28,30 @@
 /////////////////////////////////////////////////////////////////////////////
 // TeamReinforcement dialog
 
-
-TeamReinforcement::TeamReinforcement()
-	: CPropertyPage(TeamReinforcement::IDD)	,
-	m_teamDict(NULL)
+TeamReinforcement::TeamReinforcement() : CPropertyPage(TeamReinforcement::IDD), m_teamDict(NULL)
 {
-	//{{AFX_DATA_INIT(TeamReinforcement)
-		// NOTE: the ClassWizard will add member initialization here
-	//}}AFX_DATA_INIT
+    //{{AFX_DATA_INIT(TeamReinforcement)
+    // NOTE: the ClassWizard will add member initialization here
+    //}}AFX_DATA_INIT
 }
 
-
-void TeamReinforcement::DoDataExchange(CDataExchange* pDX)
+void TeamReinforcement::DoDataExchange(CDataExchange *pDX)
 {
-	CPropertyPage::DoDataExchange(pDX);
-	//{{AFX_DATA_MAP(TeamReinforcement)
-		// NOTE: the ClassWizard will add DDX and DDV calls here
-	//}}AFX_DATA_MAP
+    CPropertyPage::DoDataExchange(pDX);
+    //{{AFX_DATA_MAP(TeamReinforcement)
+    // NOTE: the ClassWizard will add DDX and DDV calls here
+    //}}AFX_DATA_MAP
 }
-
 
 BEGIN_MESSAGE_MAP(TeamReinforcement, CPropertyPage)
-	//{{AFX_MSG_MAP(TeamReinforcement)
-	ON_BN_CLICKED(IDC_DEPLOY_BY, OnDeployBy)
-	ON_BN_CLICKED(IDC_TEAM_STARTS_FULL, OnTeamStartsFull)
-	ON_CBN_SELCHANGE(IDC_TRANSPORT_COMBO, OnSelchangeTransportCombo)
-	ON_BN_CLICKED(IDC_TRANSPORTS_EXIT, OnTransportsExit)
-	ON_CBN_SELCHANGE(IDC_VETERANCY, OnSelchangeVeterancy)
-	ON_CBN_SELCHANGE(IDC_WAYPOINT_COMBO, OnSelchangeWaypointCombo)
-	//}}AFX_MSG_MAP
+//{{AFX_MSG_MAP(TeamReinforcement)
+ON_BN_CLICKED(IDC_DEPLOY_BY, OnDeployBy)
+ON_BN_CLICKED(IDC_TEAM_STARTS_FULL, OnTeamStartsFull)
+ON_CBN_SELCHANGE(IDC_TRANSPORT_COMBO, OnSelchangeTransportCombo)
+ON_BN_CLICKED(IDC_TRANSPORTS_EXIT, OnTransportsExit)
+ON_CBN_SELCHANGE(IDC_VETERANCY, OnSelchangeVeterancy)
+ON_CBN_SELCHANGE(IDC_WAYPOINT_COMBO, OnSelchangeWaypointCombo)
+//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -64,127 +59,136 @@ END_MESSAGE_MAP()
 
 BOOL TeamReinforcement::OnInitDialog()
 {
-	CPropertyPage::OnInitDialog();
-	Bool exists;
+    CPropertyPage::OnInitDialog();
+    Bool exists;
 
-	CComboBox *pCombo = (CComboBox *)GetDlgItem(IDC_TRANSPORT_COMBO);
-	EditParameter::loadTransports(pCombo);
-	AsciiString transport = m_teamDict->getAsciiString(TheKey_teamTransport, &exists);
-	Int stringNdx = pCombo->AddString(NONE_STRING);
-	Int noneNdx = stringNdx;
-	if (exists && !transport.isEmpty()) {
-		Int ndx = pCombo->FindStringExact(-1, transport.str());
-		if (ndx != CB_ERR) {
-			stringNdx = ndx;
-		}
-	}
-	pCombo->SetCurSel(stringNdx);
+    CComboBox *pCombo = (CComboBox *)GetDlgItem(IDC_TRANSPORT_COMBO);
+    EditParameter::loadTransports(pCombo);
+    AsciiString transport = m_teamDict->getAsciiString(TheKey_teamTransport, &exists);
+    Int stringNdx = pCombo->AddString(NONE_STRING);
+    Int noneNdx = stringNdx;
+    if (exists && !transport.isEmpty())
+    {
+        Int ndx = pCombo->FindStringExact(-1, transport.str());
+        if (ndx != CB_ERR)
+        {
+            stringNdx = ndx;
+        }
+    }
+    pCombo->SetCurSel(stringNdx);
 
-	CButton *pCheck = (CButton *) GetDlgItem(IDC_TEAM_STARTS_FULL);
-	Bool teamStartsFull = m_teamDict->getBool(TheKey_teamStartsFull, &exists);
-	pCheck->SetCheck(teamStartsFull?1:0);
+    CButton *pCheck = (CButton *)GetDlgItem(IDC_TEAM_STARTS_FULL);
+    Bool teamStartsFull = m_teamDict->getBool(TheKey_teamStartsFull, &exists);
+    pCheck->SetCheck(teamStartsFull ? 1 : 0);
 
-	pCheck = (CButton *) GetDlgItem(IDC_TRANSPORTS_EXIT);
-	Bool transportsExit = m_teamDict->getBool(TheKey_teamTransportsExit, &exists);
-	pCheck->SetCheck(transportsExit?1:0);
-	Bool enable = !(stringNdx==noneNdx);
-	pCheck->EnableWindow(enable);
-	pCombo->EnableWindow(enable);
+    pCheck = (CButton *)GetDlgItem(IDC_TRANSPORTS_EXIT);
+    Bool transportsExit = m_teamDict->getBool(TheKey_teamTransportsExit, &exists);
+    pCheck->SetCheck(transportsExit ? 1 : 0);
+    Bool enable = !(stringNdx == noneNdx);
+    pCheck->EnableWindow(enable);
+    pCombo->EnableWindow(enable);
 
-	pCheck = (CButton *) GetDlgItem(IDC_DEPLOY_BY);
-	pCheck->SetCheck( (stringNdx==noneNdx)?0:1);
+    pCheck = (CButton *)GetDlgItem(IDC_DEPLOY_BY);
+    pCheck->SetCheck((stringNdx == noneNdx) ? 0 : 1);
 
-	pCombo = (CComboBox *)GetDlgItem(IDC_VETERANCY);
-	Int value = m_teamDict->getInt(TheKey_teamVeterancy, &exists);
-	pCombo->SetCurSel(value);
+    pCombo = (CComboBox *)GetDlgItem(IDC_VETERANCY);
+    Int value = m_teamDict->getInt(TheKey_teamVeterancy, &exists);
+    pCombo->SetCurSel(value);
 
-	pCombo = (CComboBox *)GetDlgItem(IDC_WAYPOINT_COMBO);
-	EditParameter::loadWaypoints(pCombo);
-	AsciiString homeWaypoint = m_teamDict->getAsciiString(TheKey_teamReinforcementOrigin, &exists);
-	stringNdx = pCombo->AddString(NONE_STRING);
-	if (exists) {
-		Int ndx = pCombo->FindStringExact(-1, homeWaypoint.str());
-		if (ndx != CB_ERR) {
-			stringNdx = ndx;
-		}
-	}
-	pCombo->SetCurSel(stringNdx);
+    pCombo = (CComboBox *)GetDlgItem(IDC_WAYPOINT_COMBO);
+    EditParameter::loadWaypoints(pCombo);
+    AsciiString homeWaypoint = m_teamDict->getAsciiString(TheKey_teamReinforcementOrigin, &exists);
+    stringNdx = pCombo->AddString(NONE_STRING);
+    if (exists)
+    {
+        Int ndx = pCombo->FindStringExact(-1, homeWaypoint.str());
+        if (ndx != CB_ERR)
+        {
+            stringNdx = ndx;
+        }
+    }
+    pCombo->SetCurSel(stringNdx);
 
-
-	return TRUE;  // return TRUE unless you set the focus to a control
-	              // EXCEPTION: OCX Property Pages should return FALSE
+    return TRUE; // return TRUE unless you set the focus to a control
+                 // EXCEPTION: OCX Property Pages should return FALSE
 }
 
 void TeamReinforcement::OnDeployBy()
 {
-	CButton *pCheck = (CButton *) GetDlgItem(IDC_DEPLOY_BY);
-	if (pCheck->GetCheck()) {
-		CComboBox *pCombo = (CComboBox *)GetDlgItem(IDC_TRANSPORT_COMBO);
-		pCombo->SetCurSel(0);
-		pCombo->EnableWindow();
-		pCheck = (CButton *) GetDlgItem(IDC_TRANSPORTS_EXIT);
-		pCheck->EnableWindow();
-	}	else {
-		CComboBox *pCombo = (CComboBox *)GetDlgItem(IDC_TRANSPORT_COMBO);
-		pCombo->SetCurSel(-1);
-		pCombo->EnableWindow(false);
-		pCheck = (CButton *) GetDlgItem(IDC_TRANSPORTS_EXIT);
-		pCheck->EnableWindow(false);
-		m_teamDict->setAsciiString(TheKey_teamTransport, AsciiString::TheEmptyString);
-	}
+    CButton *pCheck = (CButton *)GetDlgItem(IDC_DEPLOY_BY);
+    if (pCheck->GetCheck())
+    {
+        CComboBox *pCombo = (CComboBox *)GetDlgItem(IDC_TRANSPORT_COMBO);
+        pCombo->SetCurSel(0);
+        pCombo->EnableWindow();
+        pCheck = (CButton *)GetDlgItem(IDC_TRANSPORTS_EXIT);
+        pCheck->EnableWindow();
+    }
+    else
+    {
+        CComboBox *pCombo = (CComboBox *)GetDlgItem(IDC_TRANSPORT_COMBO);
+        pCombo->SetCurSel(-1);
+        pCombo->EnableWindow(false);
+        pCheck = (CButton *)GetDlgItem(IDC_TRANSPORTS_EXIT);
+        pCheck->EnableWindow(false);
+        m_teamDict->setAsciiString(TheKey_teamTransport, AsciiString::TheEmptyString);
+    }
 }
 
 void TeamReinforcement::OnTeamStartsFull()
 {
-	CButton *pCheck = (CButton *) GetDlgItem(IDC_TEAM_STARTS_FULL);
-	Bool checked = 	pCheck->GetCheck()==1;
-	m_teamDict->setBool(TheKey_teamStartsFull, checked);
+    CButton *pCheck = (CButton *)GetDlgItem(IDC_TEAM_STARTS_FULL);
+    Bool checked = pCheck->GetCheck() == 1;
+    m_teamDict->setBool(TheKey_teamStartsFull, checked);
 }
 
 void TeamReinforcement::OnSelchangeTransportCombo()
 {
-	CComboBox *pCombo = (CComboBox*)GetDlgItem(IDC_TRANSPORT_COMBO);
-	CString txt;
-	Int curSel = pCombo->GetCurSel();
-	pCombo->GetLBText(curSel, txt);
-	AsciiString comboText = AsciiString(txt);
-	if (comboText == NONE_STRING) {
-		comboText.clear();
-	}
-	m_teamDict->setAsciiString(TheKey_teamTransport, comboText);
+    CComboBox *pCombo = (CComboBox *)GetDlgItem(IDC_TRANSPORT_COMBO);
+    CString txt;
+    Int curSel = pCombo->GetCurSel();
+    pCombo->GetLBText(curSel, txt);
+    AsciiString comboText = AsciiString(txt);
+    if (comboText == NONE_STRING)
+    {
+        comboText.clear();
+    }
+    m_teamDict->setAsciiString(TheKey_teamTransport, comboText);
 }
 
 void TeamReinforcement::OnTransportsExit()
 {
-	CButton *pCheck = (CButton *) GetDlgItem(IDC_TRANSPORTS_EXIT);
-	Bool checked = 	pCheck->GetCheck()==1;
-	m_teamDict->setBool(TheKey_teamTransportsExit, checked);
+    CButton *pCheck = (CButton *)GetDlgItem(IDC_TRANSPORTS_EXIT);
+    Bool checked = pCheck->GetCheck() == 1;
+    m_teamDict->setBool(TheKey_teamTransportsExit, checked);
 }
 
 void TeamReinforcement::OnSelchangeVeterancy()
 {
-	CComboBox *owner = (CComboBox*)GetDlgItem(IDC_VETERANCY);
-	static char buf[1024];
-	int curSel = owner->GetCurSel();
-	int value = 0;
-	if (curSel >= 0) {
-		value=curSel;
-	}
-	m_teamDict->setInt(TheKey_teamVeterancy, value);
+    CComboBox *owner = (CComboBox *)GetDlgItem(IDC_VETERANCY);
+    static char buf[1024];
+    int curSel = owner->GetCurSel();
+    int value = 0;
+    if (curSel >= 0)
+    {
+        value = curSel;
+    }
+    m_teamDict->setInt(TheKey_teamVeterancy, value);
 }
 
 void TeamReinforcement::OnSelchangeWaypointCombo()
 {
-	CComboBox *pCombo = (CComboBox*)GetDlgItem(IDC_WAYPOINT_COMBO);
-	CString txt;
-	Int curSel = pCombo->GetCurSel();
-	if (curSel >= 0) {
-		pCombo->GetLBText(curSel, txt);
-	}
-	AsciiString comboText = AsciiString(txt);
-	if (comboText == NONE_STRING) {
-		comboText.clear();
-	}
-	m_teamDict->setAsciiString(TheKey_teamReinforcementOrigin, comboText);
+    CComboBox *pCombo = (CComboBox *)GetDlgItem(IDC_WAYPOINT_COMBO);
+    CString txt;
+    Int curSel = pCombo->GetCurSel();
+    if (curSel >= 0)
+    {
+        pCombo->GetLBText(curSel, txt);
+    }
+    AsciiString comboText = AsciiString(txt);
+    if (comboText == NONE_STRING)
+    {
+        comboText.clear();
+    }
+    m_teamDict->setAsciiString(TheKey_teamReinforcementOrigin, comboText);
 }
-

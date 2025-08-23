@@ -63,39 +63,37 @@
 //-----------------------------------------------------------------------------
 struct RGBColorInt
 {
-	Int red;
-	Int green;
-	Int blue;
-	Int alpha;
-};  // end RGBColorInt
+    Int red;
+    Int green;
+    Int blue;
+    Int alpha;
+}; // end RGBColorInt
 
 // RGBColorReal ---------------------------------------------------------------
 /** Colors using 0.0 to 1.0 reals */
 //-----------------------------------------------------------------------------
 struct RGBColorReal
 {
-	Real red;
-	Real green;
-	Real blue;
-	Real alpha;
-};  // end RGBColorReal
+    Real red;
+    Real green;
+    Real blue;
+    Real alpha;
+}; // end RGBColorReal
 
 // HSVColorReal ---------------------------------------------------------------
 /** Colors using hue, saturation, value using 0.0 to 1.0 reals */
 //-----------------------------------------------------------------------------
 struct HSVColorReal
 {
-  Real hue;
-  Real saturation;
-  Real value;
-	Real alpha;
-};  // end HSVReal
+    Real hue;
+    Real saturation;
+    Real value;
+    Real alpha;
+}; // end HSVReal
 
 // INLINING ///////////////////////////////////////////////////////////////////
 
 // EXTERNALS //////////////////////////////////////////////////////////////////
-extern RGBColorInt *SelectColor( Int red, Int green, Int blue, Int alpha,
-																 Int mouseX = 0, Int mouseY = 0 );
+extern RGBColorInt *SelectColor(Int red, Int green, Int blue, Int alpha, Int mouseX = 0, Int mouseY = 0);
 
 #endif // __GUIEDITCOLOR_H_
-

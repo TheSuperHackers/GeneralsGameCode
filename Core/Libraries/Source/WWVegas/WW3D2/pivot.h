@@ -48,67 +48,62 @@
 #include "quat.h"
 #include "w3d_file.h"
 
-
 /*
 
-	PivotClass
+    PivotClass
 
-	Each node of the hierarchy tree is represented by a
-	PivotClass.
+    Each node of the hierarchy tree is represented by a
+    PivotClass.
 
 */
 
-//#define LAZY_CAP_MTX_ALLOC
+// #define LAZY_CAP_MTX_ALLOC
 
 struct PivotClass
 {
 public:
+    PivotClass(void);
+    PivotClass(const PivotClass &that);
+    PivotClass &operator=(const PivotClass &that);
 
-	PivotClass(void);
-	PivotClass(const PivotClass& that);
-	PivotClass& operator=(const PivotClass& that);
-
-	~PivotClass(void)
-	{
+    ~PivotClass(void)
+    {
 #ifdef LAZY_CAP_MTX_ALLOC
-		if (CapTransformPtr)
-			delete CapTransformPtr;
+        if (CapTransformPtr)
+            delete CapTransformPtr;
 #endif
-	}
+    }
 
-	void Capture_Update(void);
-	bool Is_Captured() const
-	{
+    void Capture_Update(void);
+    bool Is_Captured() const
+    {
 #ifdef LAZY_CAP_MTX_ALLOC
-		return CapTransformPtr != NULL;
+        return CapTransformPtr != NULL;
 #else
-		return IsCaptured;
+        return IsCaptured;
 #endif
-	}
+    }
 
 public:
-	char							Name[W3D_NAME_LEN];
-	PivotClass *			Parent;
-	Matrix3D					BaseTransform;		// base-pose transform (relative to parent).
-	Matrix3D					Transform;				// computed transform for this pivot
-	// User control.  When a pivot is 'captured' animation data is ignored and the
-	// user data is used to control the pivot.
+    char Name[W3D_NAME_LEN];
+    PivotClass *Parent;
+    Matrix3D BaseTransform; // base-pose transform (relative to parent).
+    Matrix3D Transform; // computed transform for this pivot
+    // User control.  When a pivot is 'captured' animation data is ignored and the
+    // user data is used to control the pivot.
 #ifdef LAZY_CAP_MTX_ALLOC
-	DynamicMatrix3D*	CapTransformPtr;
-	short							Index;
-	bool							IsVisible;				// result of the visibility channel
-	bool							WorldSpaceTranslation;
+    DynamicMatrix3D *CapTransformPtr;
+    short Index;
+    bool IsVisible; // result of the visibility channel
+    bool WorldSpaceTranslation;
 #else
-	Matrix3D					CapTransform;
-	int								Index;
-	bool							IsVisible;				// result of the visibility channel
-	bool							WorldSpaceTranslation;
-	bool							IsCaptured;
-	bool							Unused;						// padding
+    Matrix3D CapTransform;
+    int Index;
+    bool IsVisible; // result of the visibility channel
+    bool WorldSpaceTranslation;
+    bool IsCaptured;
+    bool Unused; // padding
 #endif
-
 };
-
-
 
 #endif

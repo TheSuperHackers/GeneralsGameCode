@@ -26,7 +26,7 @@
 // Generals GameSpy chat-related code
 // Author: Matthew D. Campbell, July 2002
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 
 #include "Common/AudioEventRTS.h"
 #include "Common/INI.h"
@@ -39,305 +39,301 @@
 #include "GameClient/InGameUI.h"
 
 #define OFFSET(x) (sizeof(Int) * (x))
-static const FieldParse GameSpyColorFieldParse[] =
-{
+static const FieldParse GameSpyColorFieldParse[] = {
 
-	{ "Default",						INI::parseColorInt,	NULL,	OFFSET(GSCOLOR_DEFAULT) },
-	{ "CurrentRoom",				INI::parseColorInt,	NULL,	OFFSET(GSCOLOR_CURRENTROOM) },
-	{ "ChatRoom",						INI::parseColorInt,	NULL,	OFFSET(GSCOLOR_ROOM) },
-	{ "Game",								INI::parseColorInt,	NULL,	OFFSET(GSCOLOR_GAME) },
-	{ "GameFull",						INI::parseColorInt,	NULL,	OFFSET(GSCOLOR_GAME_FULL) },
-	{ "GameCRCMismatch",		INI::parseColorInt,	NULL,	OFFSET(GSCOLOR_GAME_CRCMISMATCH) },
-	{ "PlayerNormal",				INI::parseColorInt,	NULL,	OFFSET(GSCOLOR_PLAYER_NORMAL) },
-	{ "PlayerOwner",				INI::parseColorInt,	NULL,	OFFSET(GSCOLOR_PLAYER_OWNER) },
-	{ "PlayerBuddy",				INI::parseColorInt,	NULL,	OFFSET(GSCOLOR_PLAYER_BUDDY) },
-	{ "PlayerSelf",					INI::parseColorInt,	NULL,	OFFSET(GSCOLOR_PLAYER_SELF) },
-	{ "PlayerIgnored",			INI::parseColorInt,	NULL,	OFFSET(GSCOLOR_PLAYER_IGNORED) },
-	{ "ChatNormal",					INI::parseColorInt,	NULL,	OFFSET(GSCOLOR_CHAT_NORMAL) },
-	{ "ChatEmote",					INI::parseColorInt,	NULL,	OFFSET(GSCOLOR_CHAT_EMOTE) },
-	{ "ChatOwner",					INI::parseColorInt,	NULL,	OFFSET(GSCOLOR_CHAT_OWNER) },
-	{ "ChatOwnerEmote",			INI::parseColorInt,	NULL,	OFFSET(GSCOLOR_CHAT_OWNER_EMOTE) },
-	{ "ChatPriv",						INI::parseColorInt,	NULL,	OFFSET(GSCOLOR_CHAT_PRIVATE) },
-	{ "ChatPrivEmote",			INI::parseColorInt,	NULL,	OFFSET(GSCOLOR_CHAT_PRIVATE_EMOTE) },
-	{ "ChatPrivOwner",			INI::parseColorInt,	NULL,	OFFSET(GSCOLOR_CHAT_PRIVATE_OWNER) },
-	{ "ChatPrivOwnerEmote",	INI::parseColorInt,	NULL,	OFFSET(GSCOLOR_CHAT_PRIVATE_OWNER_EMOTE) },
-	{ "ChatBuddy",					INI::parseColorInt,	NULL,	OFFSET(GSCOLOR_CHAT_BUDDY) },
-	{ "ChatSelf",						INI::parseColorInt,	NULL,	OFFSET(GSCOLOR_CHAT_SELF) },
-	{ "AcceptTrue",					INI::parseColorInt,	NULL,	OFFSET(GSCOLOR_ACCEPT_TRUE) },
-	{ "AcceptFalse",				INI::parseColorInt,	NULL,	OFFSET(GSCOLOR_ACCEPT_FALSE) },
-	{ "MapSelected",				INI::parseColorInt,	NULL,	OFFSET(GSCOLOR_MAP_SELECTED) },
-	{ "MapUnselected",			INI::parseColorInt,	NULL,	OFFSET(GSCOLOR_MAP_UNSELECTED) },
-	{ "MOTD",								INI::parseColorInt,	NULL,	OFFSET(GSCOLOR_MOTD) },
-	{ "MOTDHeading",				INI::parseColorInt,	NULL,	OFFSET(GSCOLOR_MOTD_HEADING) },
+    {"Default", INI::parseColorInt, NULL, OFFSET(GSCOLOR_DEFAULT)},
+    {"CurrentRoom", INI::parseColorInt, NULL, OFFSET(GSCOLOR_CURRENTROOM)},
+    {"ChatRoom", INI::parseColorInt, NULL, OFFSET(GSCOLOR_ROOM)},
+    {"Game", INI::parseColorInt, NULL, OFFSET(GSCOLOR_GAME)},
+    {"GameFull", INI::parseColorInt, NULL, OFFSET(GSCOLOR_GAME_FULL)},
+    {"GameCRCMismatch", INI::parseColorInt, NULL, OFFSET(GSCOLOR_GAME_CRCMISMATCH)},
+    {"PlayerNormal", INI::parseColorInt, NULL, OFFSET(GSCOLOR_PLAYER_NORMAL)},
+    {"PlayerOwner", INI::parseColorInt, NULL, OFFSET(GSCOLOR_PLAYER_OWNER)},
+    {"PlayerBuddy", INI::parseColorInt, NULL, OFFSET(GSCOLOR_PLAYER_BUDDY)},
+    {"PlayerSelf", INI::parseColorInt, NULL, OFFSET(GSCOLOR_PLAYER_SELF)},
+    {"PlayerIgnored", INI::parseColorInt, NULL, OFFSET(GSCOLOR_PLAYER_IGNORED)},
+    {"ChatNormal", INI::parseColorInt, NULL, OFFSET(GSCOLOR_CHAT_NORMAL)},
+    {"ChatEmote", INI::parseColorInt, NULL, OFFSET(GSCOLOR_CHAT_EMOTE)},
+    {"ChatOwner", INI::parseColorInt, NULL, OFFSET(GSCOLOR_CHAT_OWNER)},
+    {"ChatOwnerEmote", INI::parseColorInt, NULL, OFFSET(GSCOLOR_CHAT_OWNER_EMOTE)},
+    {"ChatPriv", INI::parseColorInt, NULL, OFFSET(GSCOLOR_CHAT_PRIVATE)},
+    {"ChatPrivEmote", INI::parseColorInt, NULL, OFFSET(GSCOLOR_CHAT_PRIVATE_EMOTE)},
+    {"ChatPrivOwner", INI::parseColorInt, NULL, OFFSET(GSCOLOR_CHAT_PRIVATE_OWNER)},
+    {"ChatPrivOwnerEmote", INI::parseColorInt, NULL, OFFSET(GSCOLOR_CHAT_PRIVATE_OWNER_EMOTE)},
+    {"ChatBuddy", INI::parseColorInt, NULL, OFFSET(GSCOLOR_CHAT_BUDDY)},
+    {"ChatSelf", INI::parseColorInt, NULL, OFFSET(GSCOLOR_CHAT_SELF)},
+    {"AcceptTrue", INI::parseColorInt, NULL, OFFSET(GSCOLOR_ACCEPT_TRUE)},
+    {"AcceptFalse", INI::parseColorInt, NULL, OFFSET(GSCOLOR_ACCEPT_FALSE)},
+    {"MapSelected", INI::parseColorInt, NULL, OFFSET(GSCOLOR_MAP_SELECTED)},
+    {"MapUnselected", INI::parseColorInt, NULL, OFFSET(GSCOLOR_MAP_UNSELECTED)},
+    {"MOTD", INI::parseColorInt, NULL, OFFSET(GSCOLOR_MOTD)},
+    {"MOTDHeading", INI::parseColorInt, NULL, OFFSET(GSCOLOR_MOTD_HEADING)},
 
-	{ NULL,					NULL,						NULL,						0 }  // keep this last
+    {NULL, NULL, NULL, 0} // keep this last
 
 };
 
-void INI::parseOnlineChatColorDefinition( INI* ini )
+void INI::parseOnlineChatColorDefinition(INI *ini)
 {
-	// parse the ini definition
-	ini->initFromINI( GameSpyColor, GameSpyColorFieldParse );
+    // parse the ini definition
+    ini->initFromINI(GameSpyColor, GameSpyColorFieldParse);
 }
 
-
-Color GameSpyColor[GSCOLOR_MAX] =
-{
-	GameMakeColor(255,255,255,255),	// GSCOLOR_DEFAULT
-	GameMakeColor(255,255,  0,255),	// GSCOLOR_CURRENTROOM
-	GameMakeColor(255,255,255,255),	// GSCOLOR_ROOM
-	GameMakeColor(128,128,0,255),		// GSCOLOR_GAME
-	GameMakeColor(128,128,128,255),	// GSCOLOR_GAME_FULL
-	GameMakeColor(128,128,128,255),	// GSCOLOR_GAME_CRCMISMATCH
-	GameMakeColor(255,255,255,255),	// GSCOLOR_PLAYER_NORMAL
-	GameMakeColor(255,  0,255,255),	// GSCOLOR_PLAYER_OWNER
-	GameMakeColor(255,  0,128,255),	// GSCOLOR_PLAYER_BUDDY
-	GameMakeColor(255,  0,  0,255),	// GSCOLOR_PLAYER_SELF
-	GameMakeColor(128,128,128,255),	// GSCOLOR_PLAYER_IGNORED
-	GameMakeColor(255,255,255,255),		// GSCOLOR_CHAT_NORMAL
-	GameMakeColor(255,128,0,255),		// GSCOLOR_CHAT_EMOTE,
-	GameMakeColor(255,255,0,255),		// GSCOLOR_CHAT_OWNER,
-	GameMakeColor(128,255,0,255),		// GSCOLOR_CHAT_OWNER_EMOTE,
-	GameMakeColor(0,0,255,255),			// GSCOLOR_CHAT_PRIVATE,
-	GameMakeColor(0,255,255,255),		// GSCOLOR_CHAT_PRIVATE_EMOTE,
-	GameMakeColor(255,0,255,255),		// GSCOLOR_CHAT_PRIVATE_OWNER,
-	GameMakeColor(255,128,255,255),	// GSCOLOR_CHAT_PRIVATE_OWNER_EMOTE,
-	GameMakeColor(255,  0,255,255),	// GSCOLOR_CHAT_BUDDY,
-	GameMakeColor(255,  0,128,255),	// GSCOLOR_CHAT_SELF,
-	GameMakeColor(  0,255,  0,255),	// GSCOLOR_ACCEPT_TRUE,
-	GameMakeColor(255,  0,  0,255),	// GSCOLOR_ACCEPT_FALSE,
-	GameMakeColor(255,255,  0,255),	// GSCOLOR_MAP_SELECTED,
-	GameMakeColor(255,255,255,255),	// GSCOLOR_MAP_UNSELECTED,
-	GameMakeColor(255,255,255,255),	// GSCOLOR_MOTD,
-	GameMakeColor(255,255,  0,255),	// GSCOLOR_MOTD_HEADING,
+Color GameSpyColor[GSCOLOR_MAX] = {
+    GameMakeColor(255, 255, 255, 255), // GSCOLOR_DEFAULT
+    GameMakeColor(255, 255, 0, 255), // GSCOLOR_CURRENTROOM
+    GameMakeColor(255, 255, 255, 255), // GSCOLOR_ROOM
+    GameMakeColor(128, 128, 0, 255), // GSCOLOR_GAME
+    GameMakeColor(128, 128, 128, 255), // GSCOLOR_GAME_FULL
+    GameMakeColor(128, 128, 128, 255), // GSCOLOR_GAME_CRCMISMATCH
+    GameMakeColor(255, 255, 255, 255), // GSCOLOR_PLAYER_NORMAL
+    GameMakeColor(255, 0, 255, 255), // GSCOLOR_PLAYER_OWNER
+    GameMakeColor(255, 0, 128, 255), // GSCOLOR_PLAYER_BUDDY
+    GameMakeColor(255, 0, 0, 255), // GSCOLOR_PLAYER_SELF
+    GameMakeColor(128, 128, 128, 255), // GSCOLOR_PLAYER_IGNORED
+    GameMakeColor(255, 255, 255, 255), // GSCOLOR_CHAT_NORMAL
+    GameMakeColor(255, 128, 0, 255), // GSCOLOR_CHAT_EMOTE,
+    GameMakeColor(255, 255, 0, 255), // GSCOLOR_CHAT_OWNER,
+    GameMakeColor(128, 255, 0, 255), // GSCOLOR_CHAT_OWNER_EMOTE,
+    GameMakeColor(0, 0, 255, 255), // GSCOLOR_CHAT_PRIVATE,
+    GameMakeColor(0, 255, 255, 255), // GSCOLOR_CHAT_PRIVATE_EMOTE,
+    GameMakeColor(255, 0, 255, 255), // GSCOLOR_CHAT_PRIVATE_OWNER,
+    GameMakeColor(255, 128, 255, 255), // GSCOLOR_CHAT_PRIVATE_OWNER_EMOTE,
+    GameMakeColor(255, 0, 255, 255), // GSCOLOR_CHAT_BUDDY,
+    GameMakeColor(255, 0, 128, 255), // GSCOLOR_CHAT_SELF,
+    GameMakeColor(0, 255, 0, 255), // GSCOLOR_ACCEPT_TRUE,
+    GameMakeColor(255, 0, 0, 255), // GSCOLOR_ACCEPT_FALSE,
+    GameMakeColor(255, 255, 0, 255), // GSCOLOR_MAP_SELECTED,
+    GameMakeColor(255, 255, 255, 255), // GSCOLOR_MAP_UNSELECTED,
+    GameMakeColor(255, 255, 255, 255), // GSCOLOR_MOTD,
+    GameMakeColor(255, 255, 0, 255), // GSCOLOR_MOTD_HEADING,
 };
 
-Bool GameSpyInfo::sendChat( UnicodeString message, Bool isAction, GameWindow *playerListbox )
+Bool GameSpyInfo::sendChat(UnicodeString message, Bool isAction, GameWindow *playerListbox)
 {
-	static UnicodeString s_prevMsg = UnicodeString::TheEmptyString;  //stop spam before it happens
+    static UnicodeString s_prevMsg = UnicodeString::TheEmptyString; // stop spam before it happens
 
-	RoomType roomType = StagingRoom;
-	if (getCurrentGroupRoom())
-		roomType = GroupRoom;
+    RoomType roomType = StagingRoom;
+    if (getCurrentGroupRoom())
+        roomType = GroupRoom;
 
-	PeerRequest req;
-	req.text = message.str();
+    PeerRequest req;
+    req.text = message.str();
 
-	message.trim();
-	// Echo the user's input to the chat window
-	if (!message.isEmpty())
-	{
-		if (!playerListbox)
-		{	// Public message
-			if( isAction  ||  message.compare(s_prevMsg) != 0 )  //don't send duplicate messages
-			{
-				req.message.isAction = isAction;
-				req.peerRequestType = PeerRequest::PEERREQUEST_MESSAGEROOM;
-				TheGameSpyPeerMessageQueue->addRequest(req);
-				s_prevMsg = message;
-			}
-			return false;
-		}
+    message.trim();
+    // Echo the user's input to the chat window
+    if (!message.isEmpty())
+    {
+        if (!playerListbox)
+        { // Public message
+            if (isAction || message.compare(s_prevMsg) != 0) // don't send duplicate messages
+            {
+                req.message.isAction = isAction;
+                req.peerRequestType = PeerRequest::PEERREQUEST_MESSAGEROOM;
+                TheGameSpyPeerMessageQueue->addRequest(req);
+                s_prevMsg = message;
+            }
+            return false;
+        }
 
-		// Get the selections (is this a private message?)
-		Int maxSel = GadgetListBoxGetListLength(playerListbox);
-		Int *selections;
-		GadgetListBoxGetSelected(playerListbox, (Int *)&selections);
+        // Get the selections (is this a private message?)
+        Int maxSel = GadgetListBoxGetListLength(playerListbox);
+        Int *selections;
+        GadgetListBoxGetSelected(playerListbox, (Int *)&selections);
 
-		if (selections[0] == -1)
-		{	// Public message
-			if( isAction  ||  message.compare(s_prevMsg) != 0 )  //don't send duplicate messages
-			{
-				req.message.isAction = isAction;
-				req.peerRequestType = PeerRequest::PEERREQUEST_MESSAGEROOM;
-				TheGameSpyPeerMessageQueue->addRequest(req);
-				s_prevMsg = message;
-			}
-			return false;
-		}
-		else
-		{
-			// Private message
+        if (selections[0] == -1)
+        { // Public message
+            if (isAction || message.compare(s_prevMsg) != 0) // don't send duplicate messages
+            {
+                req.message.isAction = isAction;
+                req.peerRequestType = PeerRequest::PEERREQUEST_MESSAGEROOM;
+                TheGameSpyPeerMessageQueue->addRequest(req);
+                s_prevMsg = message;
+            }
+            return false;
+        }
+        else
+        {
+            // Private message
 
-			// Construct a list
-			AsciiString names = AsciiString::TheEmptyString;
-			AsciiString tmp = AsciiString::TheEmptyString;
-			AsciiString aStr; // AsciiString buf for translating Unicode entries
-			names.format("%s", TheGameSpyInfo->getLocalName().str());
-			for (int i=0; i<maxSel; i++)
-			{
-				if (selections[i] != -1)
-				{
-					aStr.translate(GadgetListBoxGetText(playerListbox, selections[i], GadgetListBoxGetNumColumns(playerListbox)-1));
-					if (aStr.compareNoCase(TheGameSpyInfo->getLocalName()))
-					{
-						tmp.format(",%s", aStr.str());
-						names.concat(tmp);
-					}
-				}
-				else
-				{
-					break;
-				}
-			}
+            // Construct a list
+            AsciiString names = AsciiString::TheEmptyString;
+            AsciiString tmp = AsciiString::TheEmptyString;
+            AsciiString aStr; // AsciiString buf for translating Unicode entries
+            names.format("%s", TheGameSpyInfo->getLocalName().str());
+            for (int i = 0; i < maxSel; i++)
+            {
+                if (selections[i] != -1)
+                {
+                    aStr.translate(
+                        GadgetListBoxGetText(playerListbox, selections[i], GadgetListBoxGetNumColumns(playerListbox) - 1));
+                    if (aStr.compareNoCase(TheGameSpyInfo->getLocalName()))
+                    {
+                        tmp.format(",%s", aStr.str());
+                        names.concat(tmp);
+                    }
+                }
+                else
+                {
+                    break;
+                }
+            }
 
-			if (!names.isEmpty())
-			{
-				req.nick = names.str();
-				req.message.isAction = isAction;
-				req.peerRequestType = PeerRequest::PEERREQUEST_MESSAGEPLAYER;
-				TheGameSpyPeerMessageQueue->addRequest(req);
-			}
-			s_prevMsg = message;
-			return true;
-		}
-	}
-	s_prevMsg = message;
-	return false;
+            if (!names.isEmpty())
+            {
+                req.nick = names.str();
+                req.message.isAction = isAction;
+                req.peerRequestType = PeerRequest::PEERREQUEST_MESSAGEPLAYER;
+                TheGameSpyPeerMessageQueue->addRequest(req);
+            }
+            s_prevMsg = message;
+            return true;
+        }
+    }
+    s_prevMsg = message;
+    return false;
 }
 
-void GameSpyInfo::addChat( AsciiString nick, Int profileID, UnicodeString msg, Bool isPublic, Bool isAction, GameWindow *win )
+void GameSpyInfo::addChat(AsciiString nick, Int profileID, UnicodeString msg, Bool isPublic, Bool isAction, GameWindow *win)
 {
-	PlayerInfoMap::iterator it = getPlayerInfoMap()->find(nick);
-	if (it != getPlayerInfoMap()->end())
-	{
-		addChat( it->second, msg, isPublic, isAction, win );
-	}
-	else
-	{
-	}
+    PlayerInfoMap::iterator it = getPlayerInfoMap()->find(nick);
+    if (it != getPlayerInfoMap()->end())
+    {
+        addChat(it->second, msg, isPublic, isAction, win);
+    }
+    else
+    {
+    }
 }
 
-void GameSpyInfo::addChat( PlayerInfo p, UnicodeString msg, Bool isPublic, Bool isAction, GameWindow *win )
+void GameSpyInfo::addChat(PlayerInfo p, UnicodeString msg, Bool isPublic, Bool isAction, GameWindow *win)
 {
-	Int style;
-	if(isSavedIgnored(p.m_profileID) || isIgnored(p.m_name))
-		return;
+    Int style;
+    if (isSavedIgnored(p.m_profileID) || isIgnored(p.m_name))
+        return;
 
-	Bool isOwner = p.m_flags & PEER_FLAG_OP;
-	Bool isBuddy = getBuddyMap()->find(p.m_profileID) != getBuddyMap()->end();
+    Bool isOwner = p.m_flags & PEER_FLAG_OP;
+    Bool isBuddy = getBuddyMap()->find(p.m_profileID) != getBuddyMap()->end();
 
-	Bool isMe = p.m_name.compare(TheGameSpyInfo->getLocalName()) == 0;
+    Bool isMe = p.m_name.compare(TheGameSpyInfo->getLocalName()) == 0;
 
-	if(!isMe)
-	{
-		if(m_disallowAsainText)
-		{
-			const WideChar *buff = msg.str();
-			Int length =  msg.getLength();
-			for(Int i = 0; i < length; ++i)
-			{
-				if(buff[i] >= 256)
-					return;
-			}
-		}
-		else if(m_disallowNonAsianText)
-		{
-			const WideChar *buff = msg.str();
-			Int length =  msg.getLength();
-			Bool hasUnicode = FALSE;
-			for(Int i = 0; i < length; ++i)
-			{
-				if(buff[i] >= 256)
-				{
-					hasUnicode = TRUE;
-					break;
-				}
-			}
-			if(!hasUnicode)
-				return;
-		}
+    if (!isMe)
+    {
+        if (m_disallowAsainText)
+        {
+            const WideChar *buff = msg.str();
+            Int length = msg.getLength();
+            for (Int i = 0; i < length; ++i)
+            {
+                if (buff[i] >= 256)
+                    return;
+            }
+        }
+        else if (m_disallowNonAsianText)
+        {
+            const WideChar *buff = msg.str();
+            Int length = msg.getLength();
+            Bool hasUnicode = FALSE;
+            for (Int i = 0; i < length; ++i)
+            {
+                if (buff[i] >= 256)
+                {
+                    hasUnicode = TRUE;
+                    break;
+                }
+            }
+            if (!hasUnicode)
+                return;
+        }
 
-		if (!isPublic)
-		{
-			AudioEventRTS privMsgAudio("GUIMessageReceived");
+        if (!isPublic)
+        {
+            AudioEventRTS privMsgAudio("GUIMessageReceived");
 
-			if( TheAudio )
-			{
-				TheAudio->addAudioEvent( &privMsgAudio );
-			}  // end if
-		}
-	}
+            if (TheAudio)
+            {
+                TheAudio->addAudioEvent(&privMsgAudio);
+            } // end if
+        }
+    }
 
+    if (isBuddy)
+    {
+        style = GSCOLOR_CHAT_BUDDY;
+    }
+    else if (isPublic && isAction)
+    {
+        style = (isOwner) ? GSCOLOR_CHAT_OWNER_EMOTE : GSCOLOR_CHAT_EMOTE;
+    }
+    else if (isPublic)
+    {
+        style = (isOwner) ? GSCOLOR_CHAT_OWNER : GSCOLOR_CHAT_NORMAL;
+    }
+    else if (isAction)
+    {
+        style = (isOwner) ? GSCOLOR_CHAT_PRIVATE_OWNER_EMOTE : GSCOLOR_CHAT_PRIVATE_EMOTE;
+    }
+    else
+    {
+        style = (isOwner) ? GSCOLOR_CHAT_PRIVATE_OWNER : GSCOLOR_CHAT_PRIVATE;
+    }
 
-	if (isBuddy)
-	{
-		style = GSCOLOR_CHAT_BUDDY;
-	}
-	else if (isPublic && isAction)
-	{
-		style = (isOwner)?GSCOLOR_CHAT_OWNER_EMOTE:GSCOLOR_CHAT_EMOTE;
-	}
-	else if (isPublic)
-	{
-		style = (isOwner)?GSCOLOR_CHAT_OWNER:GSCOLOR_CHAT_NORMAL;
-	}
-	else if (isAction)
-	{
-		style = (isOwner)?GSCOLOR_CHAT_PRIVATE_OWNER_EMOTE:GSCOLOR_CHAT_PRIVATE_EMOTE;
-	}
-	else
-	{
-		style = (isOwner)?GSCOLOR_CHAT_PRIVATE_OWNER:GSCOLOR_CHAT_PRIVATE;
-	}
+    UnicodeString name;
+    name.translate(p.m_name);
 
-	UnicodeString name;
-	name.translate(p.m_name);
-
-	// filters language
-//  if( TheGlobalData->m_languageFilterPref )
-//  {
+    // filters language
+    //  if( TheGlobalData->m_languageFilterPref )
+    //  {
     TheLanguageFilter->filterLine(msg);
-//  }
+    //  }
 
-	UnicodeString fullMsg;
-	if (isAction)
-	{
-		fullMsg.format( L"%ls %ls", name.str(), msg.str() );
-	}
-	else
-	{
-		fullMsg.format( L"[%ls] %ls", name.str(), msg.str() );
-	}
+    UnicodeString fullMsg;
+    if (isAction)
+    {
+        fullMsg.format(L"%ls %ls", name.str(), msg.str());
+    }
+    else
+    {
+        fullMsg.format(L"[%ls] %ls", name.str(), msg.str());
+    }
 
-	Int index = addText(fullMsg, GameSpyColor[style], win);
-	if (index >= 0)
-	{
-		GadgetListBoxSetItemData(win, (void *)p.m_profileID, index);
-	}
+    Int index = addText(fullMsg, GameSpyColor[style], win);
+    if (index >= 0)
+    {
+        GadgetListBoxSetItemData(win, (void *)p.m_profileID, index);
+    }
 }
 
-Int GameSpyInfo::addText( UnicodeString message, Color c, GameWindow *win )
+Int GameSpyInfo::addText(UnicodeString message, Color c, GameWindow *win)
 {
-	if (TheGameSpyGame && TheGameSpyGame->isInGame() && TheGameSpyGame->isGameInProgress())
-	{
-		static AudioEventRTS messageFromChatSound("GUIMessageReceived");
-		TheAudio->addAudioEvent(&messageFromChatSound);
+    if (TheGameSpyGame && TheGameSpyGame->isInGame() && TheGameSpyGame->isGameInProgress())
+    {
+        static AudioEventRTS messageFromChatSound("GUIMessageReceived");
+        TheAudio->addAudioEvent(&messageFromChatSound);
 
-		TheInGameUI->message(message);
-	}
+        TheInGameUI->message(message);
+    }
 
-	if (!win)
-	{
-		// try to pick up a registered text window
-		if (m_textWindows.empty())
-			return -1;
+    if (!win)
+    {
+        // try to pick up a registered text window
+        if (m_textWindows.empty())
+            return -1;
 
-		win = *(m_textWindows.begin());
-	}
-	Int index = GadgetListBoxAddEntryText(win, message, c, -1, -1);
-	GadgetListBoxSetItemData(win, (void *)-1, index);
+        win = *(m_textWindows.begin());
+    }
+    Int index = GadgetListBoxAddEntryText(win, message, c, -1, -1);
+    GadgetListBoxSetItemData(win, (void *)-1, index);
 
-	return index;
+    return index;
 }
 
-void GameSpyInfo::registerTextWindow( GameWindow *win )
+void GameSpyInfo::registerTextWindow(GameWindow *win)
 {
-	m_textWindows.insert(win);
+    m_textWindows.insert(win);
 }
 
-void GameSpyInfo::unregisterTextWindow( GameWindow *win )
+void GameSpyInfo::unregisterTextWindow(GameWindow *win)
 {
-	m_textWindows.erase(win);
+    m_textWindows.erase(win);
 }
-

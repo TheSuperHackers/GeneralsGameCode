@@ -32,93 +32,102 @@ LightOptions *LightOptions::m_staticThis = NULL;
 /////////////////////////////////////////////////////////////////////////////
 /// LightOptions dialog trivial construstor - Create does the real work.
 
-
-LightOptions::LightOptions(CWnd* pParent /*=NULL*/)
+LightOptions::LightOptions(CWnd *pParent /*=NULL*/)
 {
-	//{{AFX_DATA_INIT(LightOptions)
-		// NOTE: the ClassWizard will add member initialization here
-	//}}AFX_DATA_INIT
+    //{{AFX_DATA_INIT(LightOptions)
+    // NOTE: the ClassWizard will add member initialization here
+    //}}AFX_DATA_INIT
 }
 
 /// Windows default stuff.
-void LightOptions::DoDataExchange(CDataExchange* pDX)
+void LightOptions::DoDataExchange(CDataExchange *pDX)
 {
-	CDialog::DoDataExchange(pDX);
-	//{{AFX_DATA_MAP(LightOptions)
-		// NOTE: the ClassWizard will add DDX and DDV calls here
-	//}}AFX_DATA_MAP
+    CDialog::DoDataExchange(pDX);
+    //{{AFX_DATA_MAP(LightOptions)
+    // NOTE: the ClassWizard will add DDX and DDV calls here
+    //}}AFX_DATA_MAP
 }
 
 MapObject *LightOptions::getSingleSelectedLight(void)
 {
-	MapObject *pMapObj;
-	MapObject *theMapObj = NULL;
-//	Bool found = false;
-	Int selCount=0;
-	for (pMapObj = MapObject::getFirstMapObject(); pMapObj; pMapObj = pMapObj->getNext()) {
-		if (pMapObj->isSelected()) {
-			if (pMapObj->isLight()) {
-				theMapObj = pMapObj;
-			}
-			selCount++;
-		}
-	}
-	if (selCount==1 && theMapObj) {
-		return theMapObj;
-	}
-	return(NULL);
+    MapObject *pMapObj;
+    MapObject *theMapObj = NULL;
+    //	Bool found = false;
+    Int selCount = 0;
+    for (pMapObj = MapObject::getFirstMapObject(); pMapObj; pMapObj = pMapObj->getNext())
+    {
+        if (pMapObj->isSelected())
+        {
+            if (pMapObj->isLight())
+            {
+                theMapObj = pMapObj;
+            }
+            selCount++;
+        }
+    }
+    if (selCount == 1 && theMapObj)
+    {
+        return theMapObj;
+    }
+    return (NULL);
 }
-
 
 void LightOptions::updateTheUI(void)
 {
-	MapObject *theMapObj = getSingleSelectedLight();
-	if (!theMapObj) return;
-	Dict *props = theMapObj->getProperties();
+    MapObject *theMapObj = getSingleSelectedLight();
+    if (!theMapObj)
+        return;
+    Dict *props = theMapObj->getProperties();
 
-	CString str;
+    CString str;
 
-	Real lightHeightAboveTerrain, lightInnerRadius, lightOuterRadius;
-	RGBColor lightAmbientColor, lightDiffuseColor;
+    Real lightHeightAboveTerrain, lightInnerRadius, lightOuterRadius;
+    RGBColor lightAmbientColor, lightDiffuseColor;
 
-	lightHeightAboveTerrain = props->getReal(TheKey_lightHeightAboveTerrain);
-	lightInnerRadius = props->getReal(TheKey_lightInnerRadius);
-	lightOuterRadius = props->getReal(TheKey_lightOuterRadius);
-	lightAmbientColor.setFromInt(props->getInt(TheKey_lightAmbientColor));
-	lightDiffuseColor.setFromInt(props->getInt(TheKey_lightDiffuseColor));
+    lightHeightAboveTerrain = props->getReal(TheKey_lightHeightAboveTerrain);
+    lightInnerRadius = props->getReal(TheKey_lightInnerRadius);
+    lightOuterRadius = props->getReal(TheKey_lightOuterRadius);
+    lightAmbientColor.setFromInt(props->getInt(TheKey_lightAmbientColor));
+    lightDiffuseColor.setFromInt(props->getInt(TheKey_lightDiffuseColor));
 
-	CWnd *pEdit = m_staticThis->GetDlgItem(IDC_RA_EDIT);
-	if (pEdit) {
-		str.Format("%.2f", lightAmbientColor.red);
-		pEdit->SetWindowText(str);
-	}
-	pEdit = m_staticThis->GetDlgItem(IDC_GA_EDIT);
-	if (pEdit) {
-		str.Format("%.2f", lightAmbientColor.green);
-		pEdit->SetWindowText(str);
-	}
-	pEdit = m_staticThis->GetDlgItem(IDC_BA_EDIT);
-	if (pEdit) {
-		str.Format("%.2f", lightAmbientColor.blue);
-		pEdit->SetWindowText(str);
-	}
-	pEdit = m_staticThis->GetDlgItem(IDC_HEIGHT_EDIT);
-	if (pEdit) {
-		str.Format("%.2f", lightHeightAboveTerrain);
-		pEdit->SetWindowText(str);
-	}
-	pEdit = m_staticThis->GetDlgItem(IDC_RADIUS_EDIT);
-	if (pEdit) {
-		str.Format("%.2f", lightOuterRadius);
-		pEdit->SetWindowText(str);
-	}
+    CWnd *pEdit = m_staticThis->GetDlgItem(IDC_RA_EDIT);
+    if (pEdit)
+    {
+        str.Format("%.2f", lightAmbientColor.red);
+        pEdit->SetWindowText(str);
+    }
+    pEdit = m_staticThis->GetDlgItem(IDC_GA_EDIT);
+    if (pEdit)
+    {
+        str.Format("%.2f", lightAmbientColor.green);
+        pEdit->SetWindowText(str);
+    }
+    pEdit = m_staticThis->GetDlgItem(IDC_BA_EDIT);
+    if (pEdit)
+    {
+        str.Format("%.2f", lightAmbientColor.blue);
+        pEdit->SetWindowText(str);
+    }
+    pEdit = m_staticThis->GetDlgItem(IDC_HEIGHT_EDIT);
+    if (pEdit)
+    {
+        str.Format("%.2f", lightHeightAboveTerrain);
+        pEdit->SetWindowText(str);
+    }
+    pEdit = m_staticThis->GetDlgItem(IDC_RADIUS_EDIT);
+    if (pEdit)
+    {
+        str.Format("%.2f", lightOuterRadius);
+        pEdit->SetWindowText(str);
+    }
 }
 
 void LightOptions::update(void)
 {
-	if (m_staticThis) {
-		m_staticThis->updateTheUI();
-	}
+    if (m_staticThis)
+    {
+        m_staticThis->updateTheUI();
+    }
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -129,86 +138,97 @@ void LightOptions::update(void)
 width and feather in the ui controls. */
 BOOL LightOptions::OnInitDialog()
 {
-	CDialog::OnInitDialog();
+    CDialog::OnInitDialog();
 
-	m_updating = true;
+    m_updating = true;
 
-	m_staticThis = this;
-	m_updating = false;
-	return TRUE;  // return TRUE unless you set the focus to a control
-	              // EXCEPTION: OCX Property Pages should return FALSE
+    m_staticThis = this;
+    m_updating = false;
+    return TRUE; // return TRUE unless you set the focus to a control
+                 // EXCEPTION: OCX Property Pages should return FALSE
 }
 
-
 BEGIN_MESSAGE_MAP(LightOptions, COptionsPanel)
-	//{{AFX_MSG_MAP(LightOptions)
-	ON_EN_CHANGE(IDC_RA_EDIT, OnChangeLightEdit)
-	ON_EN_CHANGE(IDC_GA_EDIT, OnChangeLightEdit)
-	ON_EN_CHANGE(IDC_BA_EDIT, OnChangeLightEdit)
-	ON_EN_CHANGE(IDC_HEIGHT_EDIT, OnChangeLightEdit)
-	ON_EN_CHANGE(IDC_RADIUS_EDIT, OnChangeLightEdit)
-	//}}AFX_MSG_MAP
+//{{AFX_MSG_MAP(LightOptions)
+ON_EN_CHANGE(IDC_RA_EDIT, OnChangeLightEdit)
+ON_EN_CHANGE(IDC_GA_EDIT, OnChangeLightEdit)
+ON_EN_CHANGE(IDC_BA_EDIT, OnChangeLightEdit)
+ON_EN_CHANGE(IDC_HEIGHT_EDIT, OnChangeLightEdit)
+ON_EN_CHANGE(IDC_RADIUS_EDIT, OnChangeLightEdit)
+//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
-
 
 void LightOptions::OnChangeLightEdit()
 {
-	MapObject *theMapObj = getSingleSelectedLight();
-	if (!theMapObj) return;
-	if (!theMapObj->isLight()) return;
+    MapObject *theMapObj = getSingleSelectedLight();
+    if (!theMapObj)
+        return;
+    if (!theMapObj->isLight())
+        return;
 
-	Real lightHeightAboveTerrain, lightInnerRadius, lightOuterRadius;
-	RGBColor lightAmbientColor, lightDiffuseColor;
+    Real lightHeightAboveTerrain, lightInnerRadius, lightOuterRadius;
+    RGBColor lightAmbientColor, lightDiffuseColor;
 
-	Dict *props = theMapObj->getProperties();
-	lightHeightAboveTerrain = props->getReal(TheKey_lightHeightAboveTerrain);
-	lightInnerRadius = props->getReal(TheKey_lightInnerRadius);
-	lightOuterRadius = props->getReal(TheKey_lightOuterRadius);
-	lightAmbientColor.setFromInt(props->getInt(TheKey_lightAmbientColor));
-	lightDiffuseColor.setFromInt(props->getInt(TheKey_lightDiffuseColor));
+    Dict *props = theMapObj->getProperties();
+    lightHeightAboveTerrain = props->getReal(TheKey_lightHeightAboveTerrain);
+    lightInnerRadius = props->getReal(TheKey_lightInnerRadius);
+    lightOuterRadius = props->getReal(TheKey_lightOuterRadius);
+    lightAmbientColor.setFromInt(props->getInt(TheKey_lightAmbientColor));
+    lightDiffuseColor.setFromInt(props->getInt(TheKey_lightDiffuseColor));
 
-	Real clr;
-	char buffer[_MAX_PATH];
+    Real clr;
+    char buffer[_MAX_PATH];
 
-	CWnd *pEdit = m_staticThis->GetDlgItem(IDC_RA_EDIT);
-	if (pEdit) {
-		pEdit->GetWindowText(buffer, sizeof(buffer));
-		if (1==sscanf(buffer, "%f", &clr)) lightAmbientColor.red = clr;
-	}
-	pEdit = m_staticThis->GetDlgItem(IDC_GA_EDIT);
-	if (pEdit) {
-		pEdit->GetWindowText(buffer, sizeof(buffer));
-		if (1==sscanf(buffer, "%f", &clr)) lightAmbientColor.green = clr;
-	}
-	pEdit = m_staticThis->GetDlgItem(IDC_BA_EDIT);
-	if (pEdit) {
-		pEdit->GetWindowText(buffer, sizeof(buffer));
-		if (1==sscanf(buffer, "%f", &clr)) lightAmbientColor.blue = clr;
-	}
-	pEdit = m_staticThis->GetDlgItem(IDC_HEIGHT_EDIT);
-	Real r;
-	if (pEdit) {
-		pEdit->GetWindowText(buffer, sizeof(buffer));
-		if (1==sscanf(buffer, "%f", &r)) lightHeightAboveTerrain = r;
-	}
-	pEdit = m_staticThis->GetDlgItem(IDC_RADIUS_EDIT);
-	if (pEdit) {
-		pEdit->GetWindowText(buffer, sizeof(buffer));
-		if (1==sscanf(buffer, "%f", &r)) lightOuterRadius = r;
-	}
-	lightDiffuseColor.red = 0;
-	lightDiffuseColor.green = 0;
-	lightDiffuseColor.blue = 0;
-	lightInnerRadius = lightOuterRadius/2;
+    CWnd *pEdit = m_staticThis->GetDlgItem(IDC_RA_EDIT);
+    if (pEdit)
+    {
+        pEdit->GetWindowText(buffer, sizeof(buffer));
+        if (1 == sscanf(buffer, "%f", &clr))
+            lightAmbientColor.red = clr;
+    }
+    pEdit = m_staticThis->GetDlgItem(IDC_GA_EDIT);
+    if (pEdit)
+    {
+        pEdit->GetWindowText(buffer, sizeof(buffer));
+        if (1 == sscanf(buffer, "%f", &clr))
+            lightAmbientColor.green = clr;
+    }
+    pEdit = m_staticThis->GetDlgItem(IDC_BA_EDIT);
+    if (pEdit)
+    {
+        pEdit->GetWindowText(buffer, sizeof(buffer));
+        if (1 == sscanf(buffer, "%f", &clr))
+            lightAmbientColor.blue = clr;
+    }
+    pEdit = m_staticThis->GetDlgItem(IDC_HEIGHT_EDIT);
+    Real r;
+    if (pEdit)
+    {
+        pEdit->GetWindowText(buffer, sizeof(buffer));
+        if (1 == sscanf(buffer, "%f", &r))
+            lightHeightAboveTerrain = r;
+    }
+    pEdit = m_staticThis->GetDlgItem(IDC_RADIUS_EDIT);
+    if (pEdit)
+    {
+        pEdit->GetWindowText(buffer, sizeof(buffer));
+        if (1 == sscanf(buffer, "%f", &r))
+            lightOuterRadius = r;
+    }
+    lightDiffuseColor.red = 0;
+    lightDiffuseColor.green = 0;
+    lightDiffuseColor.blue = 0;
+    lightInnerRadius = lightOuterRadius / 2;
 
-	props->setReal(TheKey_lightHeightAboveTerrain, lightHeightAboveTerrain);
-	props->setReal(TheKey_lightInnerRadius, lightInnerRadius);
-	props->setReal(TheKey_lightOuterRadius, lightOuterRadius);
-	props->setInt(TheKey_lightAmbientColor, lightAmbientColor.getAsInt());
-	props->setInt(TheKey_lightDiffuseColor, lightDiffuseColor.getAsInt());
+    props->setReal(TheKey_lightHeightAboveTerrain, lightHeightAboveTerrain);
+    props->setReal(TheKey_lightInnerRadius, lightInnerRadius);
+    props->setReal(TheKey_lightOuterRadius, lightOuterRadius);
+    props->setInt(TheKey_lightAmbientColor, lightAmbientColor.getAsInt());
+    props->setInt(TheKey_lightDiffuseColor, lightDiffuseColor.getAsInt());
 
-	WbView3d * pView = CWorldBuilderDoc::GetActive3DView();
-	if (pView) {
-		pView->invalObjectInView(theMapObj);
-	}
+    WbView3d *pView = CWorldBuilderDoc::GetActive3DView();
+    if (pView)
+    {
+        pView->invalObjectInView(theMapObj);
+    }
 }

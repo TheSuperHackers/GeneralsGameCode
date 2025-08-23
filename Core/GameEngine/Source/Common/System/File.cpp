@@ -52,45 +52,31 @@
 #include <stdarg.h>
 #include <stdio.h>
 
-
 #include "Common/file.h"
-
 
 //----------------------------------------------------------------------------
 //         Externals
 //----------------------------------------------------------------------------
 
-
-
 //----------------------------------------------------------------------------
 //         Defines
 //----------------------------------------------------------------------------
-
-
 
 //----------------------------------------------------------------------------
 //         Private Types
 //----------------------------------------------------------------------------
 
-
-
 //----------------------------------------------------------------------------
 //         Private Data
 //----------------------------------------------------------------------------
-
-
 
 //----------------------------------------------------------------------------
 //         Public Data
 //----------------------------------------------------------------------------
 
-
-
 //----------------------------------------------------------------------------
 //         Private Prototypes
 //----------------------------------------------------------------------------
-
-
 
 //----------------------------------------------------------------------------
 //         Private Functions
@@ -100,21 +86,14 @@
 // File::File
 //=================================================================
 
-File::File()
-:	m_open(FALSE),
-	m_deleteOnClose(FALSE),
-	m_access(NONE)
+File::File() : m_open(FALSE), m_deleteOnClose(FALSE), m_access(NONE)
 {
-
-	setName("<no file>");
-
+    setName("<no file>");
 }
-
 
 //----------------------------------------------------------------------------
 //         Public Functions
 //----------------------------------------------------------------------------
-
 
 //=================================================================
 // File::~File
@@ -128,142 +107,143 @@ File::~File()
 // File::open
 //=================================================================
 /**
-  * Any derived open() members must first call File::open. If File::open
-	* succeeds but the derived class's open failes then make sure to call
-	* File::close() before returning.
-	*/
+ * Any derived open() members must first call File::open. If File::open
+ * succeeds but the derived class's open failes then make sure to call
+ * File::close() before returning.
+ */
 //=================================================================
 
-Bool File::open( const Char *filename, Int access, size_t bufferSize )
+Bool File::open(const Char *filename, Int access, size_t bufferSize)
 {
-	if( m_open )
-	{
-		return FALSE;
-	}
+    if (m_open)
+    {
+        return FALSE;
+    }
 
-	setName( filename );
+    setName(filename);
 
-	if( (access & ( STREAMING | WRITE )) == ( STREAMING | WRITE ))
-	{
-		// illegal access
-		return FALSE;
-	}
+    if ((access & (STREAMING | WRITE)) == (STREAMING | WRITE))
+    {
+        // illegal access
+        return FALSE;
+    }
 
-	if( (access & ( TEXT | BINARY)) == ( TEXT | BINARY ))
-	{
-		// illegal access
-		return FALSE;
-	}
+    if ((access & (TEXT | BINARY)) == (TEXT | BINARY))
+    {
+        // illegal access
+        return FALSE;
+    }
 
-	if ( (access & (READ|WRITE)) == 0 )
-	{
-		access |= READ;
-	}
+    if ((access & (READ | WRITE)) == 0)
+    {
+        access |= READ;
+    }
 
-	if ( (access & (READ|APPEND)) == 0 )
-	{
-		access |= TRUNCATE;
-	}
+    if ((access & (READ | APPEND)) == 0)
+    {
+        access |= TRUNCATE;
+    }
 
-	if ( (access & (TEXT|BINARY)) == 0 )
-	{
-		access |= BINARY;
-	}
+    if ((access & (TEXT | BINARY)) == 0)
+    {
+        access |= BINARY;
+    }
 
-	m_access = access;
-	m_open = TRUE;
-	return TRUE;
+    m_access = access;
+    m_open = TRUE;
+    return TRUE;
 }
 
 //=================================================================
 // File::close
 //=================================================================
 /**
-  * Must call File::close() for each successful File::open() call.
-	*/
+ * Must call File::close() for each successful File::open() call.
+ */
 //=================================================================
 
-void File::close( void )
+void File::close(void)
 {
-	if( m_open )
-	{
-		setName( "<no file>" );
-		m_open = FALSE;
-		if ( m_deleteOnClose )
-		{
-			deleteInstance(this); // on special cases File object will delete itself when closing
-		}
-	}
+    if (m_open)
+    {
+        setName("<no file>");
+        m_open = FALSE;
+        if (m_deleteOnClose)
+        {
+            deleteInstance(this); // on special cases File object will delete itself when closing
+        }
+    }
 }
 
 //=================================================================
 
 void File::closeWithoutDelete()
 {
-	if( m_open )
-	{
-		setName( "<no file>" );
-		m_open = FALSE;
-	}
+    if (m_open)
+    {
+        setName("<no file>");
+        m_open = FALSE;
+    }
 }
 
 //=================================================================
 // File::size
 //=================================================================
 /**
-  * Default implementation of File::size. Derived classes can optimize
-	* this member function.
-	*/
+ * Default implementation of File::size. Derived classes can optimize
+ * this member function.
+ */
 //=================================================================
 
-Int File::size( void )
+Int File::size(void)
 {
-	Int pos = seek( 0, CURRENT );
-	Int size = seek( 0, END );
+    Int pos = seek(0, CURRENT);
+    Int size = seek(0, END);
 
-	seek( pos, START );
+    seek(pos, START);
 
-	return size < 0 ? 0 : size;
+    return size < 0 ? 0 : size;
 }
 
 //============================================================================
 // File::position
 //============================================================================
 
-Int File::position( void )
+Int File::position(void)
 {
-	return seek(0, CURRENT);
+    return seek(0, CURRENT);
 }
 
 //============================================================================
 // File::print
 //============================================================================
 
-Bool	File::print ( const Char *format, ...)
+Bool File::print(const Char *format, ...)
 {
-	Char buffer[10*1024];
-	Int len;
+    Char buffer[10 * 1024];
+    Int len;
 
-	if ( ! (m_access & TEXT ) )
-	{
-		return FALSE;
-	}
+    if (!(m_access & TEXT))
+    {
+        return FALSE;
+    }
 
-	va_list args;
-	va_start( args, format );     /* Initialize variable arguments. */
-	len = vsprintf( buffer, format, args );
-	va_end( args );
+    va_list args;
+    va_start(args, format); /* Initialize variable arguments. */
+    len = vsprintf(buffer, format, args);
+    va_end(args);
 
-	if ( len >= sizeof(buffer) )
-	{
-		// Big Problem
-		assert( FALSE );
-		return FALSE;
-	}
+    if (len >= sizeof(buffer))
+    {
+        // Big Problem
+        assert(FALSE);
+        return FALSE;
+    }
 
-	return (write ( buffer, len ) == len);
+    return (write(buffer, len) == len);
 }
 
-Bool	File::eof() {
-	return (position() == size());
+Bool File::eof()
+{
+    return (position() == size());
 }

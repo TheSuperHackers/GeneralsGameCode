@@ -59,4 +59,3 @@
 extern HINSTANCE ApplicationHInstance;
 
 #endif // __WINMAIN_H_
-

@@ -25,7 +25,8 @@
 #define XLSTUFF_H
 
 #include "BabylonDlg.h"
-typedef enum {
+typedef enum
+{
     xlAll = -4104,
     xlAutomatic = -4105,
     xlBoth = 1,
@@ -191,14 +192,16 @@ typedef enum {
     xlDrawingObject = 14
 } Constants;
 
-typedef enum {
+typedef enum
+{
     xlHairline = 1,
     xlMedium = -4138,
     xlThick = 4,
     xlThin = 2
 } XlBorderWeight;
 
-typedef enum {
+typedef enum
+{
     xlContinuous = 1,
     xlDash = -4115,
     xlDashDot = 4,
@@ -209,7 +212,8 @@ typedef enum {
     xlLineStyleNone = -4142
 } XlLineStyle;
 
-typedef enum {
+typedef enum
+{
     xlInsideHorizontal = 12,
     xlInsideVertical = 11,
     xlDiagonalDown = 5,
@@ -220,43 +224,40 @@ typedef enum {
     xlEdgeTop = 8
 } XlBordersIndex;
 
-enum {
-		CELL_WAVEFILE = 1,
-		CELL_LABEL,
-		CELL_SPEAKER,
-		CELL_LISTENER,
-		CELL_STRINGID,
-		CELL_ENGLISH,
-		CELL_LOCALIZED,
-		CELL_CONTEXT,
-		CELL_COMMENT,
-		CELL_MAXLEN,
-		CELL_STRLEN,
-		CELL_LENCHECK,
-		CELL_REVISION,
-		CELL_LAST
+enum
+{
+    CELL_WAVEFILE = 1,
+    CELL_LABEL,
+    CELL_SPEAKER,
+    CELL_LISTENER,
+    CELL_STRINGID,
+    CELL_ENGLISH,
+    CELL_LOCALIZED,
+    CELL_CONTEXT,
+    CELL_COMMENT,
+    CELL_MAXLEN,
+    CELL_STRLEN,
+    CELL_LENCHECK,
+    CELL_REVISION,
+    CELL_LAST
 };
 
-#define ROW_COUNT					1
-#define COLUMN_COUNT			2
-#define ROW_LANGUAGE			1
-#define COLUMN_LANGUAGE		1
+#define ROW_COUNT 1
+#define COLUMN_COUNT 2
+#define ROW_LANGUAGE 1
+#define COLUMN_LANGUAGE 1
 
-
-
-int OpenExcel ( void );
-void CloseExcel ( void );
-int NewWorkBook ( const char *path );
-int SaveWorkBook ( const char *filename, int protect = FALSE );
-int OpenWorkBook ( const char *filename );
-void CloseWorkBook ( void );
-int PutCell ( int row, int column, const OLECHAR *string, int val );
-int PutSeparator ( int row );
-int PutSection ( int row, const OLECHAR *title );
-void SelectActiveSheet ( void );
-int GetInt ( int row, int cell );
-int GetString ( int row, int cell, OLECHAR *buffer );
-
-
+int OpenExcel(void);
+void CloseExcel(void);
+int NewWorkBook(const char *path);
+int SaveWorkBook(const char *filename, int protect = FALSE);
+int OpenWorkBook(const char *filename);
+void CloseWorkBook(void);
+int PutCell(int row, int column, const OLECHAR *string, int val);
+int PutSeparator(int row);
+int PutSection(int row, const OLECHAR *title);
+void SelectActiveSheet(void);
+int GetInt(int row, int cell);
+int GetString(int row, int cell, OLECHAR *buffer);
 
 #endif // XLSTUFF_H

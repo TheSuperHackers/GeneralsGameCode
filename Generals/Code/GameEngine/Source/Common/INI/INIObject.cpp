@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 
 #include "Common/INI.h"
 #include "Common/ThingTemplate.h"
@@ -42,20 +42,18 @@
 //-------------------------------------------------------------------------------------------------
 /** Parse Object entry */
 //-------------------------------------------------------------------------------------------------
-void INI::parseObjectDefinition( INI* ini )
+void INI::parseObjectDefinition(INI *ini)
 {
-	AsciiString name = ini->getNextToken();
-	ThingFactory::parseObjectDefinition(ini, name, AsciiString::TheEmptyString);
+    AsciiString name = ini->getNextToken();
+    ThingFactory::parseObjectDefinition(ini, name, AsciiString::TheEmptyString);
 }
 
 //-------------------------------------------------------------------------------------------------
 /** Parse Object entry */
 //-------------------------------------------------------------------------------------------------
-void INI::parseObjectReskinDefinition( INI* ini )
+void INI::parseObjectReskinDefinition(INI *ini)
 {
-	AsciiString name = ini->getNextToken();
-	AsciiString reskinFrom = ini->getNextToken();
-	ThingFactory::parseObjectDefinition(ini, name, reskinFrom);
+    AsciiString name = ini->getNextToken();
+    AsciiString reskinFrom = ini->getNextToken();
+    ThingFactory::parseObjectDefinition(ini, name, reskinFrom);
 }
-
-

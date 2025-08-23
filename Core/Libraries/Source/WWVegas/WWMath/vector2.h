@@ -60,99 +60,142 @@
 #include "wwmath.h"
 #include <math.h>
 
-
 /*
 ** 2-Dimensional Vectors
 */
 
 class Vector2
 {
-
 public:
+    union
+    {
+        float X;
+        float U;
+    };
 
-	union {
-		float	X;
-		float U;
-	};
+    union
+    {
+        float Y;
+        float V;
+    };
 
-	union {
-		float	Y;
-		float V;
-	};
+    // Constructors
+    WWINLINE Vector2(void) {};
+    WWINLINE Vector2(const Vector2 &v)
+    {
+        X = v.X;
+        Y = v.Y;
+    }
+    WWINLINE Vector2(float x, float y)
+    {
+        X = x;
+        Y = y;
+    }
+    WWINLINE Vector2(const float vector[2])
+    {
+        X = vector[0];
+        Y = vector[1];
+    }
 
-	// Constructors
-	WWINLINE Vector2(void) {};
-	WWINLINE Vector2(const Vector2 & v) { X = v.X; Y = v.Y; }
-	WWINLINE Vector2(float x, float y) { X = x; Y = y; }
-	WWINLINE Vector2(const float vector[2]) { X = vector[0]; Y = vector[1]; }
+    // Assignment
+    WWINLINE Vector2 &operator=(const Vector2 &v)
+    {
+        X = v[0];
+        Y = v[1];
+        return *this;
+    }
+    WWINLINE void Set(float x, float y)
+    {
+        X = x;
+        Y = y;
+    }
+    WWINLINE void Set(const Vector2 &v)
+    {
+        X = v.X;
+        Y = v.Y;
+    }
 
+    // Array access
+    WWINLINE float &operator[](int i) { return (&X)[i]; }
+    WWINLINE const float &operator[](int i) const { return (&X)[i]; }
 
-	// Assignment
-	WWINLINE Vector2 & operator = (const Vector2 & v) { X = v[0]; Y = v[1]; return *this; }
-	WWINLINE void	Set(float x, float y) { X = x; Y = y; }
-	WWINLINE void	Set(const Vector2 & v) { X = v.X; Y = v.Y; }
+    // normalize, compute length
+    WWINLINE void Normalize(void);
+    WWINLINE float Length(void) const;
+    WWINLINE float Length2(void) const;
 
-	// Array access
-	WWINLINE float &	operator [](int i) { return (&X)[i]; }
-	WWINLINE const float &  operator [](int i) const { return (&X)[i]; }
+    // unary operators
+    WWINLINE Vector2 operator-() const { return Vector2(-X, -Y); }
+    WWINLINE Vector2 operator+() const { return *this; }
 
-	// normalize, compute length
-	WWINLINE void	Normalize(void);
-	WWINLINE float Length(void) const;
-	WWINLINE float Length2(void) const;
+    WWINLINE Vector2 &operator+=(const Vector2 &v)
+    {
+        X += v.X;
+        Y += v.Y;
+        return *this;
+    }
+    WWINLINE Vector2 &operator-=(const Vector2 &v)
+    {
+        X -= v.X;
+        Y -= v.Y;
+        return *this;
+    }
+    WWINLINE Vector2 &operator*=(float k)
+    {
+        X = (float)(X * k);
+        Y = (float)(Y * k);
+        return *this;
+    }
+    WWINLINE Vector2 &operator/=(float k)
+    {
+        k = 1.0f / k;
+        X *= k;
+        Y *= k;
+        return *this;
+    }
 
-	// unary operators
-	WWINLINE Vector2 operator-() const { return Vector2(-X,-Y); }
-	WWINLINE Vector2 operator+() const { return *this; }
+    // scalar multiplication, division
+    WWINLINE friend Vector2 operator*(const Vector2 &a, float k);
+    WWINLINE friend Vector2 operator*(float k, const Vector2 &a);
+    WWINLINE friend Vector2 operator/(const Vector2 &a, float k);
 
-	WWINLINE Vector2 & operator += (const Vector2 & v) { X += v.X; Y += v.Y; return *this; }
-	WWINLINE Vector2 & operator -= (const Vector2 & v) { X -= v.X; Y -= v.Y; return *this; }
-	WWINLINE Vector2 & operator *= (float k) { X = (float)(X*k); Y=(float)(Y*k); return *this; }
-	WWINLINE Vector2 & operator /= (float k) { k=1.0f/k; X*=k; Y*=k; return *this; }
+    // vector addition,subtraction
+    WWINLINE friend Vector2 operator+(const Vector2 &a, const Vector2 &b);
+    WWINLINE friend Vector2 operator-(const Vector2 &a, const Vector2 &b);
 
-	// scalar multiplication, division
-	WWINLINE friend Vector2 operator * (const Vector2 &a,float k);
-	WWINLINE friend Vector2 operator * (float k,const Vector2 &a);
- 	WWINLINE friend Vector2 operator / (const Vector2 &a,float k);
+    // dot product / inner product
+    WWINLINE friend float operator*(const Vector2 &a, const Vector2 &b);
+    static WWINLINE float Dot_Product(const Vector2 &a, const Vector2 &b);
 
-	// vector addition,subtraction
-	WWINLINE friend Vector2 operator + (const Vector2 &a,const Vector2 &b);
-	WWINLINE friend Vector2 operator - (const Vector2 &a,const Vector2 &b);
+    // dot product between a and perpendicular vector to b
+    static float Perp_Dot_Product(const Vector2 &a, const Vector2 &b);
 
-	// dot product / inner product
-	WWINLINE friend float operator * (const Vector2 &a,const Vector2 &b);
-	static WWINLINE float Dot_Product(const Vector2 &a,const Vector2 &b);
+    // Equality operators
+    friend bool operator==(const Vector2 &a, const Vector2 &b);
+    friend bool operator!=(const Vector2 &a, const Vector2 &b);
+    WWINLINE friend bool Equal_Within_Epsilon(const Vector2 &a, const Vector2 &b, float epsilon);
 
-	// dot product between a and perpendicular vector to b
-	static float Perp_Dot_Product(const Vector2 &a,const Vector2 &b);
+    // Rotation
+    WWINLINE void Rotate(float theta);
+    WWINLINE void Rotate(float s, float c);
+    WWINLINE bool Rotate_Towards_Vector(Vector2 &target, float max_theta, bool &positive_turn);
+    WWINLINE bool Rotate_Towards_Vector(Vector2 &target, float max_s, float max_c, bool &positive_turn);
 
-	// Equality operators
-	friend bool operator == (const Vector2 &a,const Vector2 &b);
-	friend bool operator != (const Vector2 &a,const Vector2 &b);
-   WWINLINE friend bool Equal_Within_Epsilon(const Vector2 &a,const Vector2 &b,float epsilon);
+    // verify that none of the members of this vector are invalid floats
+    WWINLINE bool Is_Valid(void) const;
 
-	// Rotation
-	WWINLINE void Rotate(float theta);
-	WWINLINE void Rotate(float s, float c);
-	WWINLINE bool Rotate_Towards_Vector(Vector2 &target, float max_theta, bool & positive_turn);
-	WWINLINE bool Rotate_Towards_Vector(Vector2 &target, float max_s, float max_c, bool & positive_turn);
+    // make this vector the min or max of itself and the passed vector
+    WWINLINE void Update_Min(const Vector2 &a);
+    WWINLINE void Update_Max(const Vector2 &a);
+    WWINLINE void Scale(float a, float b);
+    WWINLINE void Scale(const Vector2 &a);
 
-	// verify that none of the members of this vector are invalid floats
-	WWINLINE bool Is_Valid(void) const;
+    static WWINLINE float Distance(const Vector2 &p1, const Vector2 &p2);
+    static WWINLINE float Quick_Distance(const Vector2 &p1, const Vector2 &p2);
 
-	// make this vector the min or max of itself and the passed vector
-	WWINLINE void Update_Min (const Vector2 & a);
-	WWINLINE void Update_Max (const Vector2 & a);
-	WWINLINE void Scale (float a, float b);
-	WWINLINE void Scale (const Vector2 & a);
-
-	static WWINLINE float Distance(const Vector2 &p1, const Vector2 &p2);
-	static WWINLINE float Quick_Distance(const Vector2 &p1, const Vector2 &p2);
-
-	// interpolate between two Vector2's
-	static void Lerp(const Vector2 & a,const Vector2 & b,float t,Vector2 * set_result);
+    // interpolate between two Vector2's
+    static void Lerp(const Vector2 &a, const Vector2 &b, float t, Vector2 *set_result);
 };
-
 
 /**************************************************************************
  * Scalar Multiply Operator -- Multiply a vector by a scalar              *
@@ -166,18 +209,18 @@ public:
  * HISTORY:                                                               *
  *   02/24/1997 GH  : Created.                                            *
  *========================================================================*/
-WWINLINE Vector2 operator * (const Vector2 &a,float k)
+WWINLINE Vector2 operator*(const Vector2 &a, float k)
 {
-	float a0k(a[0] * k);
-	float a1k(a[1] * k);
-	return Vector2(a0k,a1k);
+    float a0k(a[0] * k);
+    float a1k(a[1] * k);
+    return Vector2(a0k, a1k);
 }
 
-WWINLINE Vector2 operator * (float k, const Vector2 &a)
+WWINLINE Vector2 operator*(float k, const Vector2 &a)
 {
-	float a0k(a[0] * k);
-	float a1k(a[1] * k);
-	return Vector2(a0k,a1k);
+    float a0k(a[0] * k);
+    float a1k(a[1] * k);
+    return Vector2(a0k, a1k);
 }
 
 /**************************************************************************
@@ -191,12 +234,12 @@ WWINLINE Vector2 operator * (float k, const Vector2 &a)
  *                                                                        *
  * HISTORY:                                                               *
  *========================================================================*/
-WWINLINE Vector2 operator / (const Vector2 &a,float k)
+WWINLINE Vector2 operator/(const Vector2 &a, float k)
 {
-	float ook=1.0f/k;
-	float a0ook(a[0] * ook);
-	float a1ook(a[1] * ook);
-	return Vector2(a0ook,a1ook);
+    float ook = 1.0f / k;
+    float a0ook(a[0] * ook);
+    float a1ook(a[1] * ook);
+    return Vector2(a0ook, a1ook);
 }
 
 /**************************************************************************
@@ -211,12 +254,9 @@ WWINLINE Vector2 operator / (const Vector2 &a,float k)
  * HISTORY:                                                               *
  *   02/24/1997 GH  : Created.                                            *
  *========================================================================*/
-WWINLINE Vector2 operator + (const Vector2 &a,const Vector2 &b)
+WWINLINE Vector2 operator+(const Vector2 &a, const Vector2 &b)
 {
-	return Vector2(
-							a.X + b.X,
-							a.Y + b.Y
-						);
+    return Vector2(a.X + b.X, a.Y + b.Y);
 }
 
 /**************************************************************************
@@ -231,12 +271,9 @@ WWINLINE Vector2 operator + (const Vector2 &a,const Vector2 &b)
  * HISTORY:                                                               *
  *   02/24/1997 GH  : Created.                                            *
  *========================================================================*/
-WWINLINE Vector2 operator - (const Vector2 &a,const Vector2 &b)
+WWINLINE Vector2 operator-(const Vector2 &a, const Vector2 &b)
 {
-	return Vector2(
-							a.X - b.X,
-							a.Y - b.Y
-						);
+    return Vector2(a.X - b.X, a.Y - b.Y);
 }
 
 /**************************************************************************
@@ -250,19 +287,19 @@ WWINLINE Vector2 operator - (const Vector2 &a,const Vector2 &b)
  *                                                                        *
  * HISTORY:                                                               *
  *========================================================================*/
-WWINLINE float operator * (const Vector2 &a,const Vector2 &b)
+WWINLINE float operator*(const Vector2 &a, const Vector2 &b)
 {
-	return	a.X*b.X + a.Y*b.Y;
+    return a.X * b.X + a.Y * b.Y;
 }
 
-WWINLINE float Vector2::Dot_Product(const Vector2 &a,const Vector2 &b)
+WWINLINE float Vector2::Dot_Product(const Vector2 &a, const Vector2 &b)
 {
-	return a*b;
+    return a * b;
 }
 
-WWINLINE float Vector2::Perp_Dot_Product(const Vector2 &a,const Vector2 &b)
+WWINLINE float Vector2::Perp_Dot_Product(const Vector2 &a, const Vector2 &b)
 {
-	return a.X * -b.Y + a.Y * b.X;
+    return a.X * -b.Y + a.Y * b.X;
 }
 
 /**************************************************************************
@@ -276,11 +313,11 @@ WWINLINE float Vector2::Perp_Dot_Product(const Vector2 &a,const Vector2 &b)
  *                                                                        *
  * HISTORY:                                                               *
  *========================================================================*/
-WWINLINE bool operator == (const Vector2 &a,const Vector2 &b)
+WWINLINE bool operator==(const Vector2 &a, const Vector2 &b)
 {
-	bool a0b0(a[0] == b[0]);
-	bool a1b1(a[1] == b[1]);
-	return ( a0b0 & a1b1);
+    bool a0b0(a[0] == b[0]);
+    bool a1b1(a[1] == b[1]);
+    return (a0b0 & a1b1);
 }
 
 /**************************************************************************
@@ -294,11 +331,11 @@ WWINLINE bool operator == (const Vector2 &a,const Vector2 &b)
  *                                                                        *
  * HISTORY:                                                               *
  *========================================================================*/
-WWINLINE bool operator != (const Vector2 &a,const Vector2 &b)
+WWINLINE bool operator!=(const Vector2 &a, const Vector2 &b)
 {
-	bool a0b0(a[0] != b[0]);
-	bool a1b1(a[1] != b[1]);
-	return ( a0b0 | a1b1);
+    bool a0b0(a[0] != b[0]);
+    bool a1b1(a[1] != b[1]);
+    return (a0b0 | a1b1);
 }
 
 /**************************************************************************
@@ -312,9 +349,9 @@ WWINLINE bool operator != (const Vector2 &a,const Vector2 &b)
  *                                                                        *
  * HISTORY:                                                               *
  *========================================================================*/
-WWINLINE bool Equal_Within_Epsilon(const Vector2 &a,const Vector2 &b,float epsilon)
+WWINLINE bool Equal_Within_Epsilon(const Vector2 &a, const Vector2 &b, float epsilon)
 {
-   return( (WWMath::Fabs(a.X - b.X) < epsilon) && (WWMath::Fabs(a.Y - b.Y) < epsilon) );
+    return ((WWMath::Fabs(a.X - b.X) < epsilon) && (WWMath::Fabs(a.Y - b.Y) < epsilon));
 }
 
 /**************************************************************************
@@ -330,22 +367,24 @@ WWINLINE bool Equal_Within_Epsilon(const Vector2 &a,const Vector2 &b,float epsil
  *========================================================================*/
 WWINLINE void Vector2::Normalize()
 {
-	float len2 = Length2();
-	if (len2 != 0.0f) {
-		float oolen = WWMath::Inv_Sqrt(len2);
-		X *= oolen;
-		Y *= oolen;
-	}
+    float len2 = Length2();
+    if (len2 != 0.0f)
+    {
+        float oolen = WWMath::Inv_Sqrt(len2);
+        X *= oolen;
+        Y *= oolen;
+    }
 }
 
-WWINLINE Vector2 Normalize(const Vector2 & vec)
+WWINLINE Vector2 Normalize(const Vector2 &vec)
 {
-	float len2 = vec.Length2();
-	if (len2 != 0.0f) {
-		float oolen = WWMath::Inv_Sqrt(len2);
-		return vec / oolen;
-	}
-	return Vector2(0.0f,0.0f);
+    float len2 = vec.Length2();
+    if (len2 != 0.0f)
+    {
+        float oolen = WWMath::Inv_Sqrt(len2);
+        return vec / oolen;
+    }
+    return Vector2(0.0f, 0.0f);
 }
 
 /**************************************************************************
@@ -361,7 +400,7 @@ WWINLINE Vector2 Normalize(const Vector2 & vec)
  *========================================================================*/
 WWINLINE float Vector2::Length() const
 {
-	return (float)WWMath::Sqrt(Length2());
+    return (float)WWMath::Sqrt(Length2());
 }
 
 /**************************************************************************
@@ -377,7 +416,7 @@ WWINLINE float Vector2::Length() const
  *========================================================================*/
 WWINLINE float Vector2::Length2() const
 {
-	return (X*X + Y*Y);
+    return (X * X + Y * Y);
 }
 
 /**************************************************************************
@@ -394,7 +433,7 @@ WWINLINE float Vector2::Length2() const
  *========================================================================*/
 WWINLINE void Vector2::Rotate(float theta)
 {
-	Rotate(WWMath::Sin(theta), WWMath::Cos(theta));
+    Rotate(WWMath::Sin(theta), WWMath::Cos(theta));
 }
 
 /**************************************************************************
@@ -412,10 +451,10 @@ WWINLINE void Vector2::Rotate(float theta)
  *========================================================================*/
 WWINLINE void Vector2::Rotate(float s, float c)
 {
-	float new_x = X * c + Y * -s;
-	float new_y = X * s + Y * c;
-	X = new_x;
-	Y = new_y;
+    float new_x = X * c + Y * -s;
+    float new_y = X * s + Y * c;
+    X = new_x;
+    Y = new_y;
 }
 
 /**************************************************************************
@@ -432,9 +471,9 @@ WWINLINE void Vector2::Rotate(float s, float c)
  *                                                                        *
  * HISTORY:                                                               *
  *========================================================================*/
-WWINLINE bool Vector2::Rotate_Towards_Vector(Vector2 &target, float max_theta, bool & positive_turn)
+WWINLINE bool Vector2::Rotate_Towards_Vector(Vector2 &target, float max_theta, bool &positive_turn)
 {
-	return Rotate_Towards_Vector(target, WWMath::Sin(max_theta), WWMath::Cos(max_theta), positive_turn);
+    return Rotate_Towards_Vector(target, WWMath::Sin(max_theta), WWMath::Cos(max_theta), positive_turn);
 }
 
 /**************************************************************************
@@ -452,25 +491,31 @@ WWINLINE bool Vector2::Rotate_Towards_Vector(Vector2 &target, float max_theta, b
  *                                                                        *
  * HISTORY:                                                               *
  *========================================================================*/
-WWINLINE bool Vector2::Rotate_Towards_Vector(Vector2 &target, float max_s, float max_c, bool & positive_turn)
+WWINLINE bool Vector2::Rotate_Towards_Vector(Vector2 &target, float max_s, float max_c, bool &positive_turn)
 {
-	bool return_value = false;
+    bool return_value = false;
 
-	positive_turn = Vector2::Perp_Dot_Product(target, *this) > 0.0f;
+    positive_turn = Vector2::Perp_Dot_Product(target, *this) > 0.0f;
 
-	if (Vector2::Dot_Product(*this, target) >= max_c) {
-		Set(target);
-		return_value = true;
-	} else {
-		// Determine turn direction and rotate accordingly.
-		if (positive_turn) {
-			Rotate(max_s, max_c);
-		} else {
-			Rotate(-max_s, max_c);
-		}
-	}
+    if (Vector2::Dot_Product(*this, target) >= max_c)
+    {
+        Set(target);
+        return_value = true;
+    }
+    else
+    {
+        // Determine turn direction and rotate accordingly.
+        if (positive_turn)
+        {
+            Rotate(max_s, max_c);
+        }
+        else
+        {
+            Rotate(-max_s, max_c);
+        }
+    }
 
-	return return_value;
+    return return_value;
 }
 
 /***********************************************************************************************
@@ -485,13 +530,12 @@ WWINLINE bool Vector2::Rotate_Towards_Vector(Vector2 &target, float max_s, float
  * HISTORY:                                                                                    *
  *   08/11/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-WWINLINE void Swap(Vector2 & a,Vector2 & b)
+WWINLINE void Swap(Vector2 &a, Vector2 &b)
 {
-	Vector2 tmp(a);
-	a = b;
-	b = tmp;
+    Vector2 tmp(a);
+    a = b;
+    b = tmp;
 }
-
 
 /***********************************************************************************************
  * Vector2::Is_Valid -- Verifies that all components are valid floats                          *
@@ -507,9 +551,8 @@ WWINLINE void Swap(Vector2 & a,Vector2 & b)
  *=============================================================================================*/
 WWINLINE bool Vector2::Is_Valid(void) const
 {
-	return (WWMath::Is_Valid_Float(X) && WWMath::Is_Valid_Float(Y));
+    return (WWMath::Is_Valid_Float(X) && WWMath::Is_Valid_Float(Y));
 }
-
 
 /***********************************************************************************************
  * Vector2::Update_Min -- Set each component of the vector to the min of this and a.			  *
@@ -523,12 +566,13 @@ WWINLINE bool Vector2::Is_Valid(void) const
  * HISTORY:                                                                                    *
  *   06/12/00   IML : Created.                                                                 *
  *=============================================================================================*/
-WWINLINE void Vector2::Update_Min (const Vector2 & a)
+WWINLINE void Vector2::Update_Min(const Vector2 &a)
 {
-	if (a.X < X) X = a.X;
-	if (a.Y < Y) Y = a.Y;
+    if (a.X < X)
+        X = a.X;
+    if (a.Y < Y)
+        Y = a.Y;
 }
-
 
 /***********************************************************************************************
  * Vector2::Update_Max -- Set each component of the vector to the max of this and a.			  *
@@ -542,12 +586,13 @@ WWINLINE void Vector2::Update_Min (const Vector2 & a)
  * HISTORY:                                                                                    *
  *   06/12/00   IML : Created.                                                                 *
  *=============================================================================================*/
-WWINLINE void Vector2::Update_Max (const Vector2 & a)
+WWINLINE void Vector2::Update_Max(const Vector2 &a)
 {
-	if (a.X > X) X = a.X;
-	if (a.Y > Y) Y = a.Y;
+    if (a.X > X)
+        X = a.X;
+    if (a.Y > Y)
+        Y = a.Y;
 }
-
 
 /***********************************************************************************************
  * Vector2::Scale -- multiply components of a vector by independant scaling factors.			  *
@@ -561,12 +606,11 @@ WWINLINE void Vector2::Update_Max (const Vector2 & a)
  * HISTORY:                                                                                    *
  *   06/19/2000  IML : Created.                                                                 *
  *=============================================================================================*/
-WWINLINE void Vector2::Scale (float a, float b)
+WWINLINE void Vector2::Scale(float a, float b)
 {
-	X *= a;
-	Y *= b;
+    X *= a;
+    Y *= b;
 }
-
 
 /***********************************************************************************************
  * Vector2::Scale -- multiply components of a vector by independant scaling factors.			  *
@@ -580,12 +624,11 @@ WWINLINE void Vector2::Scale (float a, float b)
  * HISTORY:                                                                                    *
  *   06/19/2000  IML : Created.                                                                 *
  *=============================================================================================*/
-WWINLINE void Vector2::Scale (const Vector2 & a)
+WWINLINE void Vector2::Scale(const Vector2 &a)
 {
-	X *= a.X;
-	Y *= a.Y;
+    X *= a.X;
+    Y *= a.Y;
 }
-
 
 /***********************************************************************************************
  * Quick_Distance -- Fast but inaccurate 2D distance calculation.                              *
@@ -598,28 +641,27 @@ WWINLINE void Vector2::Scale (const Vector2 & a)
  *=============================================================================================*/
 WWINLINE float Quick_Distance(float x1, float y1, float x2, float y2)
 {
-	// From Graphic Gems I.
-	float x_diff = x1 - x2;
-	float y_diff = y1 - y2;
+    // From Graphic Gems I.
+    float x_diff = x1 - x2;
+    float y_diff = y1 - y2;
 
-	WWMath::Fabs(x_diff);
-	WWMath::Fabs(y_diff);
+    WWMath::Fabs(x_diff);
+    WWMath::Fabs(y_diff);
 
-	if (x_diff > y_diff)
-	{
-		return ((y_diff / 2) + x_diff);
-	}
-	else
-	{
-		return ((x_diff / 2) + y_diff);
-	}
+    if (x_diff > y_diff)
+    {
+        return ((y_diff / 2) + x_diff);
+    }
+    else
+    {
+        return ((x_diff / 2) + y_diff);
+    }
 }
 
 WWINLINE float Vector2::Quick_Distance(const Vector2 &a, const Vector2 &b)
 {
-	return ::Quick_Distance(a.X, a.Y, b.X, b.Y);
+    return ::Quick_Distance(a.X, a.Y, b.X, b.Y);
 }
-
 
 /***********************************************************************************************
  * Distance -- Accurate distance 2D calculation.                                               *
@@ -632,20 +674,19 @@ WWINLINE float Vector2::Quick_Distance(const Vector2 &a, const Vector2 &b)
  *=============================================================================================*/
 WWINLINE float Vector2::Distance(const Vector2 &a, const Vector2 &b)
 {
-	Vector2 temp;
-	temp = a - b;
+    Vector2 temp;
+    temp = a - b;
 
-	return (temp.Length());
+    return (temp.Length());
 }
 
 WWINLINE float Distance(float x1, float y1, float x2, float y2)
 {
-	float x_diff = x1 - x2;
-	float y_diff = y1 - y2;
+    float x_diff = x1 - x2;
+    float y_diff = y1 - y2;
 
-	return (WWMath::Sqrt((x_diff * x_diff) + (y_diff * y_diff)));
+    return (WWMath::Sqrt((x_diff * x_diff) + (y_diff * y_diff)));
 }
-
 
 /***********************************************************************************************
  * Vector2::Lerp -- linearly interpolates two Vector2's                                        *
@@ -659,13 +700,11 @@ WWINLINE float Distance(float x1, float y1, float x2, float y2)
  * HISTORY:                                                                                    *
  *   4/14/2000  gth : Created.                                                                 *
  *=============================================================================================*/
-WWINLINE void Vector2::Lerp(const Vector2 & a,const Vector2 & b,float t,Vector2 * set_result)
+WWINLINE void Vector2::Lerp(const Vector2 &a, const Vector2 &b, float t, Vector2 *set_result)
 {
-	assert(set_result != NULL);
-	set_result->X = (a.X + (b.X - a.X)*t);
-   set_result->Y = (a.Y + (b.Y - a.Y)*t);
+    assert(set_result != NULL);
+    set_result->X = (a.X + (b.X - a.X) * t);
+    set_result->Y = (a.Y + (b.Y - a.Y) * t);
 }
 
-
 #endif /* VECTOR2_H */
-

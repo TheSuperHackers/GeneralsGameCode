@@ -27,214 +27,286 @@
 #include "Common/Dict.h"
 #include "Common/WellKnownKeys.h"
 
-static const UINT s_allControls[][2] =
-{
-	{ IDC_SCRIPT_PREFIX1,		IDC_TeamGeneric_Script1,	},
-	{ IDC_SCRIPT_PREFIX2,		IDC_TeamGeneric_Script2,	},
-	{ IDC_SCRIPT_PREFIX3,		IDC_TeamGeneric_Script3,	},
-	{ IDC_SCRIPT_PREFIX4,		IDC_TeamGeneric_Script4,	},
-	{ IDC_SCRIPT_PREFIX5,		IDC_TeamGeneric_Script5,	},
-	{ IDC_SCRIPT_PREFIX6,		IDC_TeamGeneric_Script6,	},
-	{ IDC_SCRIPT_PREFIX7,		IDC_TeamGeneric_Script7,	},
-	{ IDC_SCRIPT_PREFIX8,		IDC_TeamGeneric_Script8,	},
-	{ IDC_SCRIPT_PREFIX9,		IDC_TeamGeneric_Script9,	},
-	{ IDC_SCRIPT_PREFIX10,	IDC_TeamGeneric_Script10, },
-	{ IDC_SCRIPT_PREFIX11,	IDC_TeamGeneric_Script11, },
-	{ IDC_SCRIPT_PREFIX12,	IDC_TeamGeneric_Script12, },
-	{ IDC_SCRIPT_PREFIX13,	IDC_TeamGeneric_Script13, },
-	{ IDC_SCRIPT_PREFIX14,	IDC_TeamGeneric_Script14, },
-	{ IDC_SCRIPT_PREFIX15,	IDC_TeamGeneric_Script15, },
-	{ IDC_SCRIPT_PREFIX16,	IDC_TeamGeneric_Script16, },
-	{ 0,0, },
+static const UINT s_allControls[][2] = {
+    {
+        IDC_SCRIPT_PREFIX1,
+        IDC_TeamGeneric_Script1,
+    },
+    {
+        IDC_SCRIPT_PREFIX2,
+        IDC_TeamGeneric_Script2,
+    },
+    {
+        IDC_SCRIPT_PREFIX3,
+        IDC_TeamGeneric_Script3,
+    },
+    {
+        IDC_SCRIPT_PREFIX4,
+        IDC_TeamGeneric_Script4,
+    },
+    {
+        IDC_SCRIPT_PREFIX5,
+        IDC_TeamGeneric_Script5,
+    },
+    {
+        IDC_SCRIPT_PREFIX6,
+        IDC_TeamGeneric_Script6,
+    },
+    {
+        IDC_SCRIPT_PREFIX7,
+        IDC_TeamGeneric_Script7,
+    },
+    {
+        IDC_SCRIPT_PREFIX8,
+        IDC_TeamGeneric_Script8,
+    },
+    {
+        IDC_SCRIPT_PREFIX9,
+        IDC_TeamGeneric_Script9,
+    },
+    {
+        IDC_SCRIPT_PREFIX10,
+        IDC_TeamGeneric_Script10,
+    },
+    {
+        IDC_SCRIPT_PREFIX11,
+        IDC_TeamGeneric_Script11,
+    },
+    {
+        IDC_SCRIPT_PREFIX12,
+        IDC_TeamGeneric_Script12,
+    },
+    {
+        IDC_SCRIPT_PREFIX13,
+        IDC_TeamGeneric_Script13,
+    },
+    {
+        IDC_SCRIPT_PREFIX14,
+        IDC_TeamGeneric_Script14,
+    },
+    {
+        IDC_SCRIPT_PREFIX15,
+        IDC_TeamGeneric_Script15,
+    },
+    {
+        IDC_SCRIPT_PREFIX16,
+        IDC_TeamGeneric_Script16,
+    },
+    {
+        0,
+        0,
+    },
 };
 
 TeamGeneric::TeamGeneric() : CPropertyPage(TeamGeneric::IDD)
 {
-
 }
 
 BOOL TeamGeneric::OnInitDialog()
 {
-	CPropertyPage::OnInitDialog();
-	// Fill all the combo boxes with the scripts we have.
-	_fillComboBoxesWithScripts();
+    CPropertyPage::OnInitDialog();
+    // Fill all the combo boxes with the scripts we have.
+    _fillComboBoxesWithScripts();
 
-	// Set up the dialog as appropriate.
-	_dictToScripts();
+    // Set up the dialog as appropriate.
+    _dictToScripts();
 
-	return FALSE;
+    return FALSE;
 }
 
 void TeamGeneric::_fillComboBoxesWithScripts()
 {
-	int i = 0;
-	while (s_allControls[i][1]) {
-		CComboBox *pCombo = (CComboBox*) GetDlgItem(s_allControls[i][1]);
-		if (!pCombo) {
-			continue;
-		}
+    int i = 0;
+    while (s_allControls[i][1])
+    {
+        CComboBox *pCombo = (CComboBox *)GetDlgItem(s_allControls[i][1]);
+        if (!pCombo)
+        {
+            continue;
+        }
 
-		// Load all the scripts, then add the NONE string.
-		EditParameter::loadScripts(pCombo, true);
-		pCombo->InsertString(0, NONE_STRING);
-		++i;
-	}
+        // Load all the scripts, then add the NONE string.
+        EditParameter::loadScripts(pCombo, true);
+        pCombo->InsertString(0, NONE_STRING);
+        ++i;
+    }
 }
 
 void TeamGeneric::_dictToScripts()
 {
-	CWnd *pText = NULL;
-	CComboBox *pCombo = NULL;
+    CWnd *pText = NULL;
+    CComboBox *pCombo = NULL;
 
-	if (!m_teamDict) {
-		return;
-	}
+    if (!m_teamDict)
+    {
+        return;
+    }
 
-	int i = 0;
-	while (s_allControls[i][1]) {
+    int i = 0;
+    while (s_allControls[i][1])
+    {
+        pText = GetDlgItem(s_allControls[i][0]);
+        if (!pText)
+        {
+            continue;
+        }
 
-		pText = GetDlgItem(s_allControls[i][0]);
-		if (!pText) {
-			continue;
-		}
+        pCombo = (CComboBox *)GetDlgItem(s_allControls[i][1]);
+        if (!pCombo)
+        {
+            continue;
+        }
 
-		pCombo = (CComboBox*) GetDlgItem(s_allControls[i][1]);
-		if (!pCombo) {
-			continue;
-		}
+        Bool exists;
+        AsciiString scriptString;
+        AsciiString keyName;
+        keyName.format("%s%d", TheNameKeyGenerator->keyToName(TheKey_teamGenericScriptHook).str(), i);
+        scriptString = m_teamDict->getAsciiString(NAMEKEY(keyName), &exists);
 
-		Bool exists;
-		AsciiString scriptString;
-		AsciiString keyName;
-		keyName.format("%s%d", TheNameKeyGenerator->keyToName(TheKey_teamGenericScriptHook).str(), i);
-		scriptString = m_teamDict->getAsciiString(NAMEKEY(keyName), &exists);
+        pText->ShowWindow(SW_SHOW);
+        pCombo->ShowWindow(SW_SHOW);
 
-		pText->ShowWindow(SW_SHOW);
-		pCombo->ShowWindow(SW_SHOW);
+        if (exists)
+        {
+            Int selNdx = pCombo->FindStringExact(-1, scriptString.str());
+            if (selNdx == LB_ERR)
+            {
+                pCombo->SetCurSel(0);
+            }
+            else
+            {
+                pCombo->SetCurSel(selNdx);
+            }
+        }
+        else
+        {
+            break;
+        }
 
-		if (exists) {
-			Int selNdx = pCombo->FindStringExact(-1, scriptString.str());
-			if (selNdx == LB_ERR) {
-				pCombo->SetCurSel(0);
-			} else {
-				pCombo->SetCurSel(selNdx);
-			}
-		} else {
-			break;
-		}
+        ++i;
+    }
 
-		++i;
-	}
+    if (!s_allControls[i][1])
+    {
+        // We filled everything.
+        return;
+    }
 
-	if (!s_allControls[i][1]) {
-		// We filled everything.
-		return;
-	}
+    if (!pCombo)
+    {
+        // We filled nothing, or there was an error.
+        return;
+    }
 
-	if (!pCombo) {
-		// We filled nothing, or there was an error.
-		return;
-	}
+    pCombo->SetCurSel(0);
 
-	pCombo->SetCurSel(0);
+    ++i;
+    while (s_allControls[i][1])
+    {
+        pText = GetDlgItem(s_allControls[i][0]);
+        if (!pText)
+        {
+            continue;
+        }
 
-	++i;
-	while (s_allControls[i][1]) {
-		pText = GetDlgItem(s_allControls[i][0]);
-		if (!pText) {
-			continue;
-		}
+        pCombo = (CComboBox *)GetDlgItem(s_allControls[i][1]);
+        if (!pCombo)
+        {
+            continue;
+        }
 
-		pCombo = (CComboBox*) GetDlgItem(s_allControls[i][1]);
-		if (!pCombo) {
-			continue;
-		}
-
-		pText->ShowWindow(SW_HIDE);
-		pCombo->ShowWindow(SW_HIDE);
-		++i;
-	}
+        pText->ShowWindow(SW_HIDE);
+        pCombo->ShowWindow(SW_HIDE);
+        ++i;
+    }
 }
 
 void TeamGeneric::_scriptsToDict()
 {
-	if (!m_teamDict) {
-		return;
-	}
+    if (!m_teamDict)
+    {
+        return;
+    }
 
-	CWnd *pText = NULL;
-	CComboBox *pCombo = NULL;
+    CWnd *pText = NULL;
+    CComboBox *pCombo = NULL;
 
-	int scriptNum = 0;
+    int scriptNum = 0;
 
-	int i = 0;
-	while (s_allControls[i][1]) {
+    int i = 0;
+    while (s_allControls[i][1])
+    {
+        pText = GetDlgItem(s_allControls[i][0]);
+        if (!pText)
+        {
+            continue;
+        }
 
-		pText = GetDlgItem(s_allControls[i][0]);
-		if (!pText) {
-			continue;
-		}
+        pCombo = (CComboBox *)GetDlgItem(s_allControls[i][1]);
+        if (!pCombo)
+        {
+            continue;
+        }
 
-		pCombo = (CComboBox*) GetDlgItem(s_allControls[i][1]);
-		if (!pCombo) {
-			continue;
-		}
+        // i should always be incremented, so just do it here.
+        ++i;
 
-		// i should always be incremented, so just do it here.
-		++i;
+        AsciiString keyName;
+        keyName.format("%s%d", TheNameKeyGenerator->keyToName(TheKey_teamGenericScriptHook).str(), scriptNum);
 
-		AsciiString keyName;
-		keyName.format("%s%d", TheNameKeyGenerator->keyToName(TheKey_teamGenericScriptHook).str(), scriptNum);
+        int curSel = pCombo->GetCurSel();
+        if (curSel == CB_ERR || curSel == 0)
+        {
+            if (m_teamDict->known(NAMEKEY(keyName), Dict::DICT_ASCIISTRING))
+            {
+                // remove it if we know it.
+                m_teamDict->remove(NAMEKEY(keyName));
+            }
 
-		int curSel = pCombo->GetCurSel();
-		if (curSel == CB_ERR || curSel == 0) {
-			if (m_teamDict->known(NAMEKEY(keyName), Dict::DICT_ASCIISTRING)) {
-				// remove it if we know it.
-				m_teamDict->remove(NAMEKEY(keyName));
-			}
+            continue;
+        }
 
-			continue;
-		}
+        CString cstr;
+        pCombo->GetLBText(curSel, cstr);
 
-		CString cstr;
-		pCombo->GetLBText(curSel, cstr);
+        AsciiString scriptString = static_cast<LPCSTR>(cstr);
+        m_teamDict->setAsciiString(NAMEKEY(keyName), scriptString);
+        ++scriptNum;
+    }
 
-		AsciiString scriptString = static_cast<LPCSTR>(cstr);
-		m_teamDict->setAsciiString(NAMEKEY(keyName), scriptString);
-		++scriptNum;
-	}
+    for (; s_allControls[scriptNum][1]; ++scriptNum)
+    {
+        AsciiString keyName;
+        keyName.format("%s%d", TheNameKeyGenerator->keyToName(TheKey_teamGenericScriptHook).str(), scriptNum);
 
-	for ( ; s_allControls[scriptNum][1]; ++scriptNum ) {
-		AsciiString keyName;
-		keyName.format("%s%d", TheNameKeyGenerator->keyToName(TheKey_teamGenericScriptHook).str(), scriptNum);
-
-		if (m_teamDict->known(NAMEKEY(keyName), Dict::DICT_ASCIISTRING))  {
-			m_teamDict->remove(NAMEKEY(keyName));
-		}
-	}
+        if (m_teamDict->known(NAMEKEY(keyName), Dict::DICT_ASCIISTRING))
+        {
+            m_teamDict->remove(NAMEKEY(keyName));
+        }
+    }
 }
 
 void TeamGeneric::OnScriptAdjust()
 {
-	_scriptsToDict();
-	_dictToScripts();
+    _scriptsToDict();
+    _dictToScripts();
 }
 
 BEGIN_MESSAGE_MAP(TeamGeneric, CPropertyPage)
-	ON_CBN_SELCHANGE(IDC_TeamGeneric_Script1, OnScriptAdjust)
-	ON_CBN_SELCHANGE(IDC_TeamGeneric_Script2, OnScriptAdjust)
-	ON_CBN_SELCHANGE(IDC_TeamGeneric_Script3, OnScriptAdjust)
-	ON_CBN_SELCHANGE(IDC_TeamGeneric_Script4, OnScriptAdjust)
-	ON_CBN_SELCHANGE(IDC_TeamGeneric_Script5, OnScriptAdjust)
-	ON_CBN_SELCHANGE(IDC_TeamGeneric_Script6, OnScriptAdjust)
-	ON_CBN_SELCHANGE(IDC_TeamGeneric_Script7, OnScriptAdjust)
-	ON_CBN_SELCHANGE(IDC_TeamGeneric_Script8, OnScriptAdjust)
-	ON_CBN_SELCHANGE(IDC_TeamGeneric_Script9, OnScriptAdjust)
-	ON_CBN_SELCHANGE(IDC_TeamGeneric_Script10, OnScriptAdjust)
-	ON_CBN_SELCHANGE(IDC_TeamGeneric_Script11, OnScriptAdjust)
-	ON_CBN_SELCHANGE(IDC_TeamGeneric_Script12, OnScriptAdjust)
-	ON_CBN_SELCHANGE(IDC_TeamGeneric_Script13, OnScriptAdjust)
-	ON_CBN_SELCHANGE(IDC_TeamGeneric_Script14, OnScriptAdjust)
-	ON_CBN_SELCHANGE(IDC_TeamGeneric_Script15, OnScriptAdjust)
-	ON_CBN_SELCHANGE(IDC_TeamGeneric_Script16, OnScriptAdjust)
+ON_CBN_SELCHANGE(IDC_TeamGeneric_Script1, OnScriptAdjust)
+ON_CBN_SELCHANGE(IDC_TeamGeneric_Script2, OnScriptAdjust)
+ON_CBN_SELCHANGE(IDC_TeamGeneric_Script3, OnScriptAdjust)
+ON_CBN_SELCHANGE(IDC_TeamGeneric_Script4, OnScriptAdjust)
+ON_CBN_SELCHANGE(IDC_TeamGeneric_Script5, OnScriptAdjust)
+ON_CBN_SELCHANGE(IDC_TeamGeneric_Script6, OnScriptAdjust)
+ON_CBN_SELCHANGE(IDC_TeamGeneric_Script7, OnScriptAdjust)
+ON_CBN_SELCHANGE(IDC_TeamGeneric_Script8, OnScriptAdjust)
+ON_CBN_SELCHANGE(IDC_TeamGeneric_Script9, OnScriptAdjust)
+ON_CBN_SELCHANGE(IDC_TeamGeneric_Script10, OnScriptAdjust)
+ON_CBN_SELCHANGE(IDC_TeamGeneric_Script11, OnScriptAdjust)
+ON_CBN_SELCHANGE(IDC_TeamGeneric_Script12, OnScriptAdjust)
+ON_CBN_SELCHANGE(IDC_TeamGeneric_Script13, OnScriptAdjust)
+ON_CBN_SELCHANGE(IDC_TeamGeneric_Script14, OnScriptAdjust)
+ON_CBN_SELCHANGE(IDC_TeamGeneric_Script15, OnScriptAdjust)
+ON_CBN_SELCHANGE(IDC_TeamGeneric_Script16, OnScriptAdjust)
 END_MESSAGE_MAP()

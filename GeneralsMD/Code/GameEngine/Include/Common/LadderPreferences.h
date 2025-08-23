@@ -45,15 +45,12 @@
 class LadderPref
 {
 public:
-	UnicodeString name;
-	AsciiString address;
-	UnsignedShort port;
-	time_t lastPlayDate;
+    UnicodeString name;
+    AsciiString address;
+    UnsignedShort port;
+    time_t lastPlayDate;
 
-	bool operator== (const LadderPref& other) const
-	{
-		return ( address==other.address && port==other.port );
-	}
+    bool operator==(const LadderPref &other) const { return (address == other.address && port == other.port); }
 };
 
 typedef std::map<time_t, LadderPref> LadderPrefMap;
@@ -64,17 +61,17 @@ typedef std::map<time_t, LadderPref> LadderPrefMap;
 class LadderPreferences : public UserPreferences
 {
 public:
-	LadderPreferences();
-	virtual ~LadderPreferences();
+    LadderPreferences();
+    virtual ~LadderPreferences();
 
-	Bool loadProfile( Int profileID );
-	virtual bool write( void );
+    Bool loadProfile(Int profileID);
+    virtual bool write(void);
 
-	const LadderPrefMap& getRecentLadders( void );
-	void addRecentLadder( LadderPref ladder );
+    const LadderPrefMap &getRecentLadders(void);
+    void addRecentLadder(LadderPref ladder);
 
 private:
-	LadderPrefMap m_ladders;
+    LadderPrefMap m_ladders;
 };
 
 #endif // __LADDERPREFERENCES_H__

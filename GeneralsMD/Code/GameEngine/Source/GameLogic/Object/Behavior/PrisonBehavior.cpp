@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 #include "Common/GameState.h"
 #include "Common/Player.h"
 #include "Common/RandomValue.h"
@@ -51,37 +51,32 @@
 // ------------------------------------------------------------------------------------------------
 class PrisonVisual : public MemoryPoolObject
 {
-
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( PrisonVisual, "PrisonVisual" )
+    MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(PrisonVisual, "PrisonVisual")
 
 public:
+    PrisonVisual(void);
+    // virtual destructor prototype provied by memory pool object
 
-	PrisonVisual( void );
-	// virtual destructor prototype provied by memory pool object
-
-	ObjectID m_objectID;				///< object that is contained
-	DrawableID m_drawableID;		///< associated visual prisoner drawable
-	PrisonVisual *m_next;				///< next
-
+    ObjectID m_objectID; ///< object that is contained
+    DrawableID m_drawableID; ///< associated visual prisoner drawable
+    PrisonVisual *m_next; ///< next
 };
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-PrisonVisual::PrisonVisual( void )
+PrisonVisual::PrisonVisual(void)
 {
+    m_objectID = INVALID_ID;
+    m_drawableID = INVALID_DRAWABLE_ID;
+    m_next = NULL;
 
-	m_objectID = INVALID_ID;
-	m_drawableID = INVALID_DRAWABLE_ID;
-	m_next = NULL;
-
-}  // end PrisonVisual
+} // end PrisonVisual
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-PrisonVisual::~PrisonVisual( void )
+PrisonVisual::~PrisonVisual(void)
 {
-
-}  // end ~PrisonVisual
+} // end ~PrisonVisual
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -89,31 +84,29 @@ PrisonVisual::~PrisonVisual( void )
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-PrisonBehaviorModuleData::PrisonBehaviorModuleData( void )
+PrisonBehaviorModuleData::PrisonBehaviorModuleData(void)
 {
+    m_showPrisoners = FALSE;
 
-	m_showPrisoners = FALSE;
-
-}  // end PrisonBehaviorModuleData
+} // end PrisonBehaviorModuleData
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-/*static*/ void PrisonBehaviorModuleData::buildFieldParse( MultiIniFieldParse &p )
+/*static*/ void PrisonBehaviorModuleData::buildFieldParse(MultiIniFieldParse &p)
 {
-  OpenContainModuleData::buildFieldParse( p );
+    OpenContainModuleData::buildFieldParse(p);
 
-	static const FieldParse dataFieldParse[] =
-	{
+    static const FieldParse dataFieldParse[] = {
 
-		{ "ShowPrisoners",	INI::parseBool,					NULL,		offsetof( PrisonBehaviorModuleData, m_showPrisoners ) },
-		{ "YardBonePrefix",	INI::parseAsciiString,	NULL,		offsetof( PrisonBehaviorModuleData, m_prisonYardBonePrefix ) },
-		{ 0, 0, 0, 0 }
+        {"ShowPrisoners", INI::parseBool, NULL, offsetof(PrisonBehaviorModuleData, m_showPrisoners)},
+        {"YardBonePrefix", INI::parseAsciiString, NULL, offsetof(PrisonBehaviorModuleData, m_prisonYardBonePrefix)},
+        {0, 0, 0, 0}
 
-	};
+    };
 
-  p.add( dataFieldParse );
+    p.add(dataFieldParse);
 
-}  // end buildFieldParse
+} // end buildFieldParse
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -121,84 +114,77 @@ PrisonBehaviorModuleData::PrisonBehaviorModuleData( void )
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-PrisonBehavior::PrisonBehavior( Thing *thing, const ModuleData *moduleData )
-							: OpenContain( thing, moduleData )
+PrisonBehavior::PrisonBehavior(Thing *thing, const ModuleData *moduleData) : OpenContain(thing, moduleData)
 {
+    m_visualList = NULL;
 
-	m_visualList = NULL;
-
-}  // end PrisonBehavior
+} // end PrisonBehavior
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-PrisonBehavior::~PrisonBehavior( void )
+PrisonBehavior::~PrisonBehavior(void)
 {
-
-}  // end ~PrisonBehavior
+} // end ~PrisonBehavior
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void PrisonBehavior::onDelete( void )
+void PrisonBehavior::onDelete(void)
 {
+    // extend functionality
+    OpenContain::onDelete();
 
-	// extend functionality
-	OpenContain::onDelete();
+    // delete our list
+    Drawable *draw;
+    PrisonVisual *visual;
+    while (m_visualList)
+    {
+        // delete drawable if found
+        draw = TheGameClient->findDrawableByID(m_visualList->m_drawableID);
+        if (draw)
+            TheGameClient->destroyDrawable(draw);
 
-	// delete our list
-	Drawable *draw;
-	PrisonVisual *visual;
-	while( m_visualList )
-	{
+        // delete element and set next to head
+        visual = m_visualList->m_next;
+        deleteInstance(m_visualList);
+        m_visualList = visual;
 
-		// delete drawable if found
-		draw = TheGameClient->findDrawableByID( m_visualList->m_drawableID );
-		if( draw )
-			TheGameClient->destroyDrawable( draw );
+    } // end while
 
-		// delete element and set next to head
-		visual = m_visualList->m_next;
-		deleteInstance(m_visualList);
-		m_visualList = visual;
-
-	}  // end while
-
-}  // end onDelete
+} // end onDelete
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void PrisonBehavior::onContaining( Object *obj, Bool wasSelected )
+void PrisonBehavior::onContaining(Object *obj, Bool wasSelected)
 {
+    // extend functionality
+    OpenContain::onContaining(obj, wasSelected);
 
-	// extend functionality
-	OpenContain::onContaining( obj, wasSelected );
+    // objects inside a prison are held
+    obj->setDisabled(DISABLED_HELD);
 
-	// objects inside a prison are held
-	obj->setDisabled( DISABLED_HELD );
+    // if we show visuals, make one
+    const PrisonBehaviorModuleData *modData = getPrisonBehaviorModuleData();
+    if (modData->m_showPrisoners)
+        addVisual(obj);
 
-	// if we show visuals, make one
-	const PrisonBehaviorModuleData *modData = getPrisonBehaviorModuleData();
-	if( modData->m_showPrisoners )
-		addVisual( obj );
-
-}  // end onContaining
+} // end onContaining
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void PrisonBehavior::onRemoving( Object *obj )
+void PrisonBehavior::onRemoving(Object *obj)
 {
+    // if we show visuals, remove one
+    const PrisonBehaviorModuleData *modData = getPrisonBehaviorModuleData();
+    if (modData->m_showPrisoners)
+        removeVisual(obj);
 
-	// if we show visuals, remove one
-	const PrisonBehaviorModuleData *modData = getPrisonBehaviorModuleData();
-	if( modData->m_showPrisoners )
-		removeVisual( obj );
+    // object is no longer held inside a garrisoned building
+    obj->clearDisabled(DISABLED_HELD);
 
-	// object is no longer held inside a garrisoned building
-	obj->clearDisabled( DISABLED_HELD );
+    // extend functionality
+    OpenContain::onRemoving(obj);
 
-	// extend functionality
-	OpenContain::onRemoving( obj );
-
-}  // end onRemoving
+} // end onRemoving
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // PRIVATE ////////////////////////////////////////////////////////////////////////////////////////
@@ -207,272 +193,253 @@ void PrisonBehavior::onRemoving( Object *obj )
 // ------------------------------------------------------------------------------------------------
 /** Pick a random location inside the prison yard */
 // ------------------------------------------------------------------------------------------------
-void PrisonBehavior::pickVisualLocation( Coord3D *pos )
+void PrisonBehavior::pickVisualLocation(Coord3D *pos)
 {
-	Object *us = getObject();
-	const PrisonBehaviorModuleData *modData = getPrisonBehaviorModuleData();
-	Int i;
+    Object *us = getObject();
+    const PrisonBehaviorModuleData *modData = getPrisonBehaviorModuleData();
+    Int i;
 
-	// sanity
-	if( pos == NULL )
-		return;
+    // sanity
+    if (pos == NULL)
+        return;
 
-	// initialize the picked location to that of the prison center
-	Coord3D pickedLocation = *us->getPosition();
+    // initialize the picked location to that of the prison center
+    Coord3D pickedLocation = *us->getPosition();
 
-	// get the positions of the bones that make up the prison yard area
-	const Int MAX_YARD_BONES = 16;
-	Coord3D yardPositions[ MAX_YARD_BONES ];
-	Int yardBones = us->getMultiLogicalBonePosition( modData->m_prisonYardBonePrefix.str(),
-																									 MAX_YARD_BONES,
-																									 yardPositions,
-																									 NULL );
+    // get the positions of the bones that make up the prison yard area
+    const Int MAX_YARD_BONES = 16;
+    Coord3D yardPositions[MAX_YARD_BONES];
+    Int yardBones =
+        us->getMultiLogicalBonePosition(modData->m_prisonYardBonePrefix.str(), MAX_YARD_BONES, yardPositions, NULL);
 
-	//
-	// we must have at least 3 bone locations to make a yard polygon, otherwise we'll
-	// default to the object position
-	//
-	if( yardBones >= 3 )
-	{
+    //
+    // we must have at least 3 bone locations to make a yard polygon, otherwise we'll
+    // default to the object position
+    //
+    if (yardBones >= 3)
+    {
+        // find the bounding region of the yard area
+        Region2D yardRegion;
+        yardRegion.lo.x = yardPositions[0].x;
+        yardRegion.lo.y = yardPositions[0].y;
+        yardRegion.hi.x = yardPositions[0].x;
+        yardRegion.hi.y = yardPositions[0].y;
+        for (i = 1; i < yardBones; i++)
+        {
+            if (yardPositions[i].x < yardRegion.lo.x)
+                yardRegion.lo.x = yardPositions[i].x;
+            if (yardPositions[i].y < yardRegion.lo.y)
+                yardRegion.lo.y = yardPositions[i].y;
+            if (yardPositions[i].x > yardRegion.hi.x)
+                yardRegion.hi.x = yardPositions[i].x;
+            if (yardPositions[i].y > yardRegion.hi.y)
+                yardRegion.hi.y = yardPositions[i].y;
 
-		// find the bounding region of the yard area
-		Region2D yardRegion;
-		yardRegion.lo.x = yardPositions[ 0 ].x;
-		yardRegion.lo.y = yardPositions[ 0 ].y;
-		yardRegion.hi.x = yardPositions[ 0 ].x;
-		yardRegion.hi.y = yardPositions[ 0 ].y;
-		for( i = 1; i < yardBones; i++ )
-		{
+        } // end for i
 
-			if( yardPositions[ i ].x < yardRegion.lo.x )
-				yardRegion.lo.x = yardPositions[ i ].x;
-			if( yardPositions[ i ].y < yardRegion.lo.y )
-				yardRegion.lo.y = yardPositions[ i ].y;
-			if( yardPositions[ i ].x > yardRegion.hi.x )
-				yardRegion.hi.x = yardPositions[ i ].x;
-			if( yardPositions[ i ].y > yardRegion.hi.y )
-				yardRegion.hi.y = yardPositions[ i ].y;
+        //
+        // now that we have a yard region, the default visual position will be in the middle
+        // of the yard region instead of the position of our object
+        //
+        pickedLocation.x = yardRegion.lo.x + yardRegion.width() / 2.0f;
+        pickedLocation.y = yardRegion.lo.y + yardRegion.height() / 2.0f;
+        // NOTE: pickedLocation.z is left alone at the object center Z
 
-		}  // end for i
+        // loop till we find a valid location that is inside the yard area
+        Int maxTries = 32;
+        Coord3D loc;
+        for (i = 0; i < maxTries; ++i)
+        {
+            // pick a location
+            loc.x = GameLogicRandomValueReal(yardRegion.lo.x, yardRegion.hi.x);
+            loc.y = GameLogicRandomValueReal(yardRegion.lo.y, yardRegion.hi.y);
+            loc.z = pickedLocation.z;
 
-		//
-		// now that we have a yard region, the default visual position will be in the middle
-		// of the yard region instead of the position of our object
-		//
-		pickedLocation.x = yardRegion.lo.x + yardRegion.width() / 2.0f;
-		pickedLocation.y = yardRegion.lo.y + yardRegion.height() / 2.0f;
-		// NOTE: pickedLocation.z is left alone at the object center Z
+            // must be inside the yard polygon
+            if (PointInsideArea2D(&loc, yardPositions, yardBones) == TRUE)
+            {
+                // use this location, leave Z alone as the center of the prison
+                pickedLocation = loc;
+                break; // exit for i
 
-		// loop till we find a valid location that is inside the yard area
-		Int maxTries = 32;
-		Coord3D loc;
-		for( i = 0; i < maxTries; ++i )
-		{
+            } // end if
 
-			// pick a location
-			loc.x = GameLogicRandomValueReal( yardRegion.lo.x, yardRegion.hi.x );
-			loc.y = GameLogicRandomValueReal( yardRegion.lo.y, yardRegion.hi.y );
-			loc.z = pickedLocation.z;
+        } // end for i
 
-			// must be inside the yard polygon
-			if( PointInsideArea2D( &loc, yardPositions, yardBones ) == TRUE )
-			{
+    } // end if
 
-				// use this location, leave Z alone as the center of the prison
-				pickedLocation = loc;
-				break;  // exit for i
+    // return the location picked
+    *pos = pickedLocation;
 
-			}  // end if
-
-		}  // end for i
-
-	}  // end if
-
-	// return the location picked
-	*pos = pickedLocation;
-
-}  // end pickVisualLocation
+} // end pickVisualLocation
 
 // ------------------------------------------------------------------------------------------------
 /** Add prisoner visual to the prison yard */
 // ------------------------------------------------------------------------------------------------
-void PrisonBehavior::addVisual( Object *obj )
+void PrisonBehavior::addVisual(Object *obj)
 {
+    // sanity
+    if (obj == NULL)
+        return;
 
-	// sanity
-	if( obj == NULL )
-		return;
+    // create a drawable
+    Drawable *draw = TheThingFactory->newDrawable(obj->getTemplate());
 
-	// create a drawable
-	Drawable *draw = TheThingFactory->newDrawable( obj->getTemplate() );
+    // set the color of the drawable to that of the object
+    if (TheGlobalData->m_timeOfDay == TIME_OF_DAY_NIGHT)
+        draw->setIndicatorColor(obj->getNightIndicatorColor());
+    else
+        draw->setIndicatorColor(obj->getIndicatorColor());
 
-	// set the color of the drawable to that of the object
-	if (TheGlobalData->m_timeOfDay == TIME_OF_DAY_NIGHT)
-		draw->setIndicatorColor( obj->getNightIndicatorColor() );
-	else
-		draw->setIndicatorColor( obj->getIndicatorColor() );
+    // pick a location insid the prison yard
+    Coord3D pos;
+    pickVisualLocation(&pos);
 
-	// pick a location insid the prison yard
-	Coord3D pos;
-	pickVisualLocation( &pos );
+    // place drawable withing the prison yard area
+    draw->setPosition(&pos);
+    draw->setOrientation(GameLogicRandomValueReal(0, TWO_PI));
+    DrawableInfo *drawInfo = draw->getDrawableInfo();
+    drawInfo->m_shroudStatusObjectID = getObject()->getID();
 
-	// place drawable withing the prison yard area
-	draw->setPosition( &pos );
-	draw->setOrientation( GameLogicRandomValueReal( 0, TWO_PI ) );
-	DrawableInfo *drawInfo=draw->getDrawableInfo();
-	drawInfo->m_shroudStatusObjectID=getObject()->getID();
+    // record this object/drawable pair
+    PrisonVisual *visual = newInstance(PrisonVisual);
+    visual->m_objectID = obj->getID();
+    visual->m_drawableID = draw->getID();
+    visual->m_next = m_visualList;
+    m_visualList = visual;
 
-	// record this object/drawable pair
-	PrisonVisual *visual = newInstance(PrisonVisual);
-	visual->m_objectID = obj->getID();
-	visual->m_drawableID = draw->getID();
-	visual->m_next = m_visualList;
-	m_visualList = visual;
-
-}  // end addVisual
+} // end addVisual
 
 // ------------------------------------------------------------------------------------------------
 /** Remove prisoner visual from the prison yard */
 // ------------------------------------------------------------------------------------------------
-void PrisonBehavior::removeVisual( Object *obj )
+void PrisonBehavior::removeVisual(Object *obj)
 {
+    // sanity
+    if (obj == NULL)
+        return;
 
-	// sanity
-	if( obj == NULL )
-		return;
+    // initialize a drawable ID to invalid
+    DrawableID drawableID = INVALID_DRAWABLE_ID;
 
-	// initialize a drawable ID to invalid
-	DrawableID drawableID = INVALID_DRAWABLE_ID;
+    // find visual info in our list, once found, take this opportunity to remove it from that list
+    PrisonVisual *visual, *prevVisual = NULL;
+    for (visual = m_visualList; visual; visual = visual->m_next)
+    {
+        // is this the one we're looking for
+        if (visual->m_objectID == obj->getID())
+        {
+            // record the information we need here
+            drawableID = visual->m_drawableID;
 
-	// find visual info in our list, once found, take this opportunity to remove it from that list
-	PrisonVisual *visual, *prevVisual = NULL;
-	for( visual = m_visualList; visual; visual = visual->m_next )
-	{
+            // remove from list
+            if (prevVisual)
+                prevVisual->m_next = visual->m_next;
+            else
+                m_visualList = visual->m_next;
 
-		// is this the one we're looking for
-		if( visual->m_objectID == obj->getID() )
-		{
+            // delete the element
+            deleteInstance(visual);
 
-			// record the information we need here
-			drawableID = visual->m_drawableID;
+            break; // exit for
 
-			// remove from list
-			if( prevVisual )
-				prevVisual->m_next = visual->m_next;
-			else
-				m_visualList = visual->m_next;
+        } // end if
 
-			// delete the element
-			deleteInstance(visual);
+        // keep a pointer to the previous element
+        prevVisual = visual;
 
-			break;  // exit for
+    } // end for
 
-		}  // end if
+    // find the drawable visual and destroy it
+    Drawable *draw = TheGameClient->findDrawableByID(drawableID);
+    if (draw)
+        TheGameClient->destroyDrawable(draw);
 
-		// keep a pointer to the previous element
-		prevVisual = visual;
-
-	}  // end for
-
-	// find the drawable visual and destroy it
-	Drawable *draw = TheGameClient->findDrawableByID( drawableID );
-	if( draw )
-		TheGameClient->destroyDrawable( draw );
-
-}  // end removeVisual
+} // end removeVisual
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void PrisonBehavior::crc( Xfer *xfer )
+void PrisonBehavior::crc(Xfer *xfer)
 {
+    // extend base class
+    OpenContain::crc(xfer);
 
-	// extend base class
-	OpenContain::crc( xfer );
-
-}  // end crc
+} // end crc
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void PrisonBehavior::xfer( Xfer *xfer )
+void PrisonBehavior::xfer(Xfer *xfer)
 {
+    // version
+    XferVersion currentVersion = 1;
+    XferVersion version = currentVersion;
+    xfer->xferVersion(&version, currentVersion);
 
-	// version
-	XferVersion currentVersion = 1;
-	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+    // extend base class
+    OpenContain::xfer(xfer);
 
-	// extend base class
-	OpenContain::xfer( xfer );
+    // count and data for the prison visuals
+    UnsignedShort visualCount = 0;
+    PrisonVisual *visual;
+    for (visual = m_visualList; visual; visual = visual->m_next)
+        visualCount++;
+    xfer->xferUnsignedShort(&visualCount);
+    if (xfer->getXferMode() == XFER_SAVE)
+    {
+        // write all data
+        for (visual = m_visualList; visual; visual = visual->m_next)
+        {
+            // object id
+            xfer->xferObjectID(&visual->m_objectID);
 
-	// count and data for the prison visuals
-	UnsignedShort visualCount = 0;
-	PrisonVisual *visual;
-	for( visual = m_visualList; visual; visual = visual->m_next )
-		visualCount++;
-	xfer->xferUnsignedShort( &visualCount );
-	if( xfer->getXferMode() == XFER_SAVE )
-	{
+            // drawable id
+            xfer->xferDrawableID(&visual->m_drawableID);
 
-		// write all data
-		for( visual = m_visualList; visual; visual = visual->m_next )
-		{
+        } // end for, visual
 
-			// object id
-			xfer->xferObjectID( &visual->m_objectID );
+    } // end if, save
+    else
+    {
+        // the visual list should be empty
+        if (m_visualList != NULL)
+        {
+            DEBUG_CRASH(("PrisonBehavior::xfer - the visual list should be empty but is not"));
+            throw SC_INVALID_DATA;
 
-			// drawable id
-			xfer->xferDrawableID( &visual->m_drawableID );
+        } // end if
 
-		}  // end for, visual
+        // read each item
+        for (UnsignedShort i = 0; i < visualCount; ++i)
+        {
+            // allocate a new visual and tie to list
+            visual = newInstance(PrisonVisual);
+            visual->m_next = m_visualList;
+            m_visualList = visual;
 
-	}  // end if, save
-	else
-	{
+            // read object id
+            xfer->xferObjectID(&visual->m_objectID);
 
-		// the visual list should be empty
-		if( m_visualList != NULL )
-		{
+            // read drawable id
+            xfer->xferDrawableID(&visual->m_drawableID);
 
-			DEBUG_CRASH(( "PrisonBehavior::xfer - the visual list should be empty but is not" ));
-			throw SC_INVALID_DATA;
+        } // end for, i
 
-		}  // end if
+    } // end else, load
 
-		// read each item
-		for( UnsignedShort i = 0; i < visualCount; ++i )
-		{
-
-			// allocate a new visual and tie to list
-			visual = newInstance(PrisonVisual);
-			visual->m_next = m_visualList;
-			m_visualList = visual;
-
-			// read object id
-			xfer->xferObjectID( &visual->m_objectID );
-
-			// read drawable id
-			xfer->xferDrawableID( &visual->m_drawableID );
-
-		}  // end for, i
-
-	}  // end else, load
-
-}  // end xfer
+} // end xfer
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void PrisonBehavior::loadPostProcess( void )
+void PrisonBehavior::loadPostProcess(void)
 {
+    // extend base class
+    OpenContain::loadPostProcess();
 
-	// extend base class
-	OpenContain::loadPostProcess();
-
-}  // end loadPostProcess
+} // end loadPostProcess
 
 #endif
-

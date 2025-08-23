@@ -30,37 +30,38 @@
 
 class MapSettings : public CDialog
 {
-// Construction
+    // Construction
 public:
-	MapSettings(CWnd* pParent = NULL);   // standard constructor
+    MapSettings(CWnd *pParent = NULL); // standard constructor
 
-// Dialog Data
-	//{{AFX_DATA(MapSettings)
-	enum { IDD = IDD_MAP_SETTINGS };
-		// NOTE: the ClassWizard will add data members here
-	//}}AFX_DATA
+    // Dialog Data
+    //{{AFX_DATA(MapSettings)
+    enum
+    {
+        IDD = IDD_MAP_SETTINGS
+    };
+    // NOTE: the ClassWizard will add data members here
+    //}}AFX_DATA
 
-
-// Overrides
-	// ClassWizard generated virtual function overrides
-	//{{AFX_VIRTUAL(MapSettings)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
-	//}}AFX_VIRTUAL
-
-// Implementation
+    // Overrides
+    // ClassWizard generated virtual function overrides
+    //{{AFX_VIRTUAL(MapSettings)
 protected:
+    virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
+    //}}AFX_VIRTUAL
 
-	// Generated message map functions
-	//{{AFX_MSG(MapSettings)
-	afx_msg void OnChangeMapTimeofday();
-	afx_msg void OnChangeMapWeather();
-	virtual BOOL OnInitDialog();
-	virtual void OnOK();
-	afx_msg void OnChangeMapTitle();
-	afx_msg void OnChangeMapCompression();
-	//}}AFX_MSG
-	DECLARE_MESSAGE_MAP()
+    // Implementation
+protected:
+    // Generated message map functions
+    //{{AFX_MSG(MapSettings)
+    afx_msg void OnChangeMapTimeofday();
+    afx_msg void OnChangeMapWeather();
+    virtual BOOL OnInitDialog();
+    virtual void OnOK();
+    afx_msg void OnChangeMapTitle();
+    afx_msg void OnChangeMapCompression();
+    //}}AFX_MSG
+    DECLARE_MESSAGE_MAP()
 };
 
 //{{AFX_INSERT_LOCATION}}

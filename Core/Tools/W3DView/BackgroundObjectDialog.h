@@ -30,35 +30,36 @@
 
 class CBackgroundObjectDialog : public CDialog
 {
-// Construction
+    // Construction
 public:
-	CBackgroundObjectDialog(CWnd* pParent = NULL);   // standard constructor
+    CBackgroundObjectDialog(CWnd *pParent = NULL); // standard constructor
 
-// Dialog Data
-	//{{AFX_DATA(CBackgroundObjectDialog)
-	enum { IDD = IDD_BACKGROUND_OBJECT };
-	CListCtrl	m_heirarchyListCtrl;
-	//}}AFX_DATA
+    // Dialog Data
+    //{{AFX_DATA(CBackgroundObjectDialog)
+    enum
+    {
+        IDD = IDD_BACKGROUND_OBJECT
+    };
+    CListCtrl m_heirarchyListCtrl;
+    //}}AFX_DATA
 
-
-// Overrides
-	// ClassWizard generated virtual function overrides
-	//{{AFX_VIRTUAL(CBackgroundObjectDialog)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
-	//}}AFX_VIRTUAL
-
-// Implementation
+    // Overrides
+    // ClassWizard generated virtual function overrides
+    //{{AFX_VIRTUAL(CBackgroundObjectDialog)
 protected:
+    virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
+    //}}AFX_VIRTUAL
 
-	// Generated message map functions
-	//{{AFX_MSG(CBackgroundObjectDialog)
-	virtual BOOL OnInitDialog();
-	virtual void OnOK();
-	afx_msg void OnItemChangedHierarchyList(NMHDR* pNMHDR, LRESULT* pResult);
-	afx_msg void OnClear();
-	//}}AFX_MSG
-	DECLARE_MESSAGE_MAP()
+    // Implementation
+protected:
+    // Generated message map functions
+    //{{AFX_MSG(CBackgroundObjectDialog)
+    virtual BOOL OnInitDialog();
+    virtual void OnOK();
+    afx_msg void OnItemChangedHierarchyList(NMHDR *pNMHDR, LRESULT *pResult);
+    afx_msg void OnClear();
+    //}}AFX_MSG
+    DECLARE_MESSAGE_MAP()
 };
 
 //{{AFX_INSERT_LOCATION}}

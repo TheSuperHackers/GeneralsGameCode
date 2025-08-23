@@ -30,48 +30,47 @@
 
 class ParticleSizeDialogClass : public CDialog
 {
-// Construction
+    // Construction
 public:
-	ParticleSizeDialogClass (float size, CWnd* pParent = NULL);   // standard constructor
+    ParticleSizeDialogClass(float size, CWnd *pParent = NULL); // standard constructor
 
-// Dialog Data
-	//{{AFX_DATA(ParticleSizeDialogClass)
-	enum { IDD = IDD_PARTICLE_SIZE };
-	CSpinButtonCtrl	m_SizeSpin;
-	//}}AFX_DATA
+    // Dialog Data
+    //{{AFX_DATA(ParticleSizeDialogClass)
+    enum
+    {
+        IDD = IDD_PARTICLE_SIZE
+    };
+    CSpinButtonCtrl m_SizeSpin;
+    //}}AFX_DATA
 
-
-// Overrides
-	// ClassWizard generated virtual function overrides
-	//{{AFX_VIRTUAL(ParticleSizeDialogClass)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
-	virtual BOOL OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult);
-	//}}AFX_VIRTUAL
-
-// Implementation
+    // Overrides
+    // ClassWizard generated virtual function overrides
+    //{{AFX_VIRTUAL(ParticleSizeDialogClass)
 protected:
+    virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
+    virtual BOOL OnNotify(WPARAM wParam, LPARAM lParam, LRESULT *pResult);
+    //}}AFX_VIRTUAL
 
-	// Generated message map functions
-	//{{AFX_MSG(ParticleSizeDialogClass)
-	virtual BOOL OnInitDialog();
-	virtual void OnOK();
-	//}}AFX_MSG
-	DECLARE_MESSAGE_MAP()
+    // Implementation
+protected:
+    // Generated message map functions
+    //{{AFX_MSG(ParticleSizeDialogClass)
+    virtual BOOL OnInitDialog();
+    virtual void OnOK();
+    //}}AFX_MSG
+    DECLARE_MESSAGE_MAP()
 
-	public:
+public:
+    /////////////////////////////////////////////////////////////
+    //	Public methods
+    /////////////////////////////////////////////////////////////
+    float Get_Size(void) const { return m_Size; }
 
-		/////////////////////////////////////////////////////////////
-		//	Public methods
-		/////////////////////////////////////////////////////////////
-		float					Get_Size (void) const { return m_Size; }
-
-	private:
-
-		/////////////////////////////////////////////////////////////
-		//	Private member data
-		/////////////////////////////////////////////////////////////
-		float					m_Size;
+private:
+    /////////////////////////////////////////////////////////////
+    //	Private member data
+    /////////////////////////////////////////////////////////////
+    float m_Size;
 };
 
 //{{AFX_INSERT_LOCATION}}

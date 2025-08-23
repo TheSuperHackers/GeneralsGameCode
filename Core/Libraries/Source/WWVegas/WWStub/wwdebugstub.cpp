@@ -22,20 +22,19 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-char* TheCurrentIgnoreCrashPtr = NULL;
-
+char *TheCurrentIgnoreCrashPtr = NULL;
 
 #ifdef DEBUG_LOGGING
 
 void DebugLog(const char *format, ...)
 {
-	// Print it to the console
+    // Print it to the console
 
-	va_list arg;
-	va_start(arg, format);
-	vprintf(format, arg);
-	va_end(arg);
-	printf("\n");
+    va_list arg;
+    va_start(arg, format);
+    vprintf(format, arg);
+    va_end(arg);
+    printf("\n");
 }
 
 #endif
@@ -44,15 +43,15 @@ void DebugLog(const char *format, ...)
 
 void DebugCrash(const char *format, ...)
 {
-	// Print it to the console
+    // Print it to the console
 
-	va_list arg;
-	va_start(arg, format);
-	vprintf(format, arg);
-	va_end(arg);
-	printf("\n");
+    va_list arg;
+    va_start(arg, format);
+    vprintf(format, arg);
+    va_end(arg);
+    printf("\n");
 
-	// No exit in this stub
+    // No exit in this stub
 }
 
 #endif

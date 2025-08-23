@@ -35,21 +35,22 @@
  *   Get_CPU_Rate -- Fetch the rate of CPU ticks per second.                                   *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#include	"always.h"
-#include	"win.h"
-#include	"MPU.H"
+#include "always.h"
+#include "win.h"
+#include "MPU.H"
 #include "math.h"
 #include <assert.h>
 #include <Utility/intrin_compat.h>
 
-typedef union {
-	LARGE_INTEGER LargeInt;
-	struct QuadPart {
-		unsigned long LowPart;
-		unsigned long HighPart;
-	} QuadPart;
+typedef union
+{
+    LARGE_INTEGER LargeInt;
+    struct QuadPart
+    {
+        unsigned long LowPart;
+        unsigned long HighPart;
+    } QuadPart;
 } QuadValue;
-
 
 /***********************************************************************************************
  * Get_CPU_Rate -- Fetch the rate of CPU ticks per second.                                     *
@@ -66,40 +67,39 @@ typedef union {
  * HISTORY:                                                                                    *
  *   05/20/1997 JLB : Created.                                                                 *
  *=============================================================================================*/
-unsigned long Get_CPU_Rate(unsigned long & high)
+unsigned long Get_CPU_Rate(unsigned long &high)
 {
-	union {
-		LARGE_INTEGER LargeInt;
-		struct {
-			unsigned long LowPart;
-			unsigned long HighPart;
-		} QuadPart;
-	} value;
+    union
+    {
+        LARGE_INTEGER LargeInt;
+        struct
+        {
+            unsigned long LowPart;
+            unsigned long HighPart;
+        } QuadPart;
+    } value;
 
-	if (QueryPerformanceFrequency(&value.LargeInt)) {
-		high = value.QuadPart.HighPart;
-		return(value.QuadPart.LowPart);
-	}
-	high = 0;
-	return(0);
+    if (QueryPerformanceFrequency(&value.LargeInt))
+    {
+        high = value.QuadPart.HighPart;
+        return (value.QuadPart.LowPart);
+    }
+    high = 0;
+    return (0);
 }
 
-
-unsigned long Get_CPU_Clock(unsigned long & high)
+unsigned long Get_CPU_Clock(unsigned long &high)
 {
-	int h;
-	int l;
+    int h;
+    int l;
 
-	auto tsc = _rdtsc();
-	h = tsc >> 32;
-	l = tsc & 0xFFFFFFFF;
+    auto tsc = _rdtsc();
+    h = tsc >> 32;
+    l = tsc & 0xFFFFFFFF;
 
-	high = h;
-	return(l);
+    high = h;
+    return (l);
 }
-
-
-
 
 /*
 **
@@ -115,11 +115,11 @@ unsigned long Get_CPU_Clock(unsigned long & high)
 #define ASM_RDTSC _asm _emit 0x0f _asm _emit 0x31
 
 // Max # of samplings to allow before giving up and returning current average.
-#define MAX_TRIES			20
-#define ROUND_THRESHOLD		6
+#define MAX_TRIES 20
+#define ROUND_THRESHOLD 6
 
 // # of MHz to allow samplings to deviate from average of samplings.
-#define TOLERANCE			1
+#define TOLERANCE 1
 
 static unsigned long TSC_Low;
 static unsigned long TSC_High;
@@ -131,124 +131,129 @@ void RDTSC(void)
     TSC_High = TSC >> 32;
 }
 
-
 int Get_RDTSC_CPU_Speed(void)
 {
-	LARGE_INTEGER t0,t1;
-	DWORD	freq=0;						// Most current freq. calc.
-	DWORD	freq2=0;						// 2nd most current freq. calc.
-	DWORD	freq3=0;						// 3rd most current freq. calc.
-	DWORD	total;						// Sum of previous three freq. calc.
-	int	tries=0;						// Number of times a calculation has been
-												// made on this call
-	DWORD	total_cycles=0, cycles;	// Clock cycles elapsed during test
-	DWORD	stamp0, stamp1;			// Time Stamp for beginning and end of test
-	DWORD	total_ticks=0, ticks;	// Microseconds elapsed during test
-// DWORD	current = 0;				// Elapsed time during loop
-	LARGE_INTEGER count_freq;			// Hi-Res Performance Counter frequency
+    LARGE_INTEGER t0, t1;
+    DWORD freq = 0; // Most current freq. calc.
+    DWORD freq2 = 0; // 2nd most current freq. calc.
+    DWORD freq3 = 0; // 3rd most current freq. calc.
+    DWORD total; // Sum of previous three freq. calc.
+    int tries = 0; // Number of times a calculation has been
+                   // made on this call
+    DWORD total_cycles = 0, cycles; // Clock cycles elapsed during test
+    DWORD stamp0, stamp1; // Time Stamp for beginning and end of test
+    DWORD total_ticks = 0, ticks; // Microseconds elapsed during test
+    // DWORD	current = 0;				// Elapsed time during loop
+    LARGE_INTEGER count_freq; // Hi-Res Performance Counter frequency
 
+    if (!QueryPerformanceFrequency(&count_freq))
+        return (0);
 
-	if ( !QueryPerformanceFrequency(&count_freq) ) return(0);
+    HANDLE process = GetCurrentProcess();
+    DWORD processPri = GetPriorityClass(process);
+    SetPriorityClass(process, REALTIME_PRIORITY_CLASS);
 
+    HANDLE thread = GetCurrentThread();
+    int threadPri = GetThreadPriority(thread);
+    SetThreadPriority(thread, THREAD_PRIORITY_TIME_CRITICAL);
 
-	HANDLE process = GetCurrentProcess();
-	DWORD processPri = GetPriorityClass(process);
-	SetPriorityClass(process, REALTIME_PRIORITY_CLASS);
+    /*
+    ** On processors supporting the TSC opcode, compare elapsed time on the
+    ** High-Resolution Counter with elapsed cycles on the Time Stamp Counter.
+    */
 
-	HANDLE thread = GetCurrentThread();
-	int threadPri = GetThreadPriority(thread);
-	SetThreadPriority(thread, THREAD_PRIORITY_TIME_CRITICAL);
+    do
+    {
+        /*
+        ** This do loop runs up to 20 times or until the average of the previous
+        ** three calculated frequencies is within 1 MHz of each of the individual
+        ** calculated frequencies.   This resampling increases the accuracy of the
+        ** results since outside factors could affect this calculation.
+        */
 
-	/*
-	** On processors supporting the TSC opcode, compare elapsed time on the
-	** High-Resolution Counter with elapsed cycles on the Time Stamp Counter.
-	*/
+        tries++; // Increment number of times sampled
+                 //   on this call to cpuspeed
 
-	do	{
-		/*
-		** This do loop runs up to 20 times or until the average of the previous
-		** three calculated frequencies is within 1 MHz of each of the individual
-		** calculated frequencies.   This resampling increases the accuracy of the
-		** results since outside factors could affect this calculation.
-		*/
+        freq3 = freq2; // Shift frequencies back to make
+        freq2 = freq; //   room for new frequency measurement
 
-		tries++;								// Increment number of times sampled
-												//   on this call to cpuspeed
+        /*
+        ** Get high-resolution performance counter time
+        */
+        QueryPerformanceCounter(&t0);
 
-		freq3 = freq2;						// Shift frequencies back to make
-		freq2 = freq;						//   room for new frequency measurement
+        t1.LowPart = t0.LowPart; // Set Initial time
+        t1.HighPart = t0.HighPart;
 
-		/*
-		** Get high-resolution performance counter time
-		*/
-		QueryPerformanceCounter(&t0);
+        /*
+        ** Loop until 50 ticks have passed since last read of hi-res counter.
+        ** This accounts for overhead later.
+        */
+        while ((DWORD)t1.LowPart - (DWORD)t0.LowPart < 50)
+        {
+            QueryPerformanceCounter(&t1);
+        }
 
-		t1.LowPart = t0.LowPart;		// Set Initial time
-		t1.HighPart = t0.HighPart;
+        stamp0 = _rdtsc();
 
-		/*
-		** Loop until 50 ticks have passed since last read of hi-res counter.
-		** This accounts for overhead later.
-		*/
-		while ( (DWORD)t1.LowPart - (DWORD)t0.LowPart<50) {
-			QueryPerformanceCounter(&t1);
-		}
+        t0.LowPart = t1.LowPart; // Reset Initial Time
+        t0.HighPart = t1.HighPart;
 
-		stamp0 = _rdtsc();
+        /*
+        ** Loop until 1000 ticks have passed since last read of hi-res counter.
+        ** This allows for elapsed time for sampling.
+        */
+        while ((DWORD)t1.LowPart - (DWORD)t0.LowPart < 1000)
+        {
+            QueryPerformanceCounter(&t1);
+        }
 
-		t0.LowPart = t1.LowPart;		// Reset Initial Time
-		t0.HighPart = t1.HighPart;
+        stamp1 = _rdtsc();
 
-		/*
-		** Loop until 1000 ticks have passed since last read of hi-res counter.
-		** This allows for elapsed time for sampling.
-		*/
-		while ( (DWORD)t1.LowPart - (DWORD)t0.LowPart < 1000 ) {
-			QueryPerformanceCounter(&t1);
-		}
+        cycles = stamp1 - stamp0; // # of cycles passed between reads
 
-		stamp1 = _rdtsc();
+        double bigticks = (double)((DWORD)t1.LowPart - (DWORD)t0.LowPart);
+        assert((bigticks * 100000.0) > bigticks);
+        bigticks = bigticks * 100000.0; // Convert ticks to hundred
+                                        //   thousandths of a tick
+        ticks = (DWORD)(bigticks / (double)(count_freq.LowPart / 10));
+        // Hundred Thousandths of a
+        //   Ticks / ( 10 ticks/second )
+        //   = microseconds (us)
+        total_ticks += ticks;
+        total_cycles += cycles;
+        if ((ticks % count_freq.LowPart) > (count_freq.LowPart / 2))
+            ticks++; // Round up if necessary
 
-		cycles = stamp1 - stamp0;					// # of cycles passed between reads
+        freq = cycles / ticks; // MHz = cycles / us
 
-		double bigticks = (double)((DWORD)t1.LowPart - (DWORD)t0.LowPart);
-		assert((bigticks * 100000.0) > bigticks);
-		bigticks = bigticks * 100000.0;						// Convert ticks to hundred
-															//   thousandths of a tick
-		ticks = (DWORD)(bigticks / (double)(count_freq.LowPart / 10));
-															// Hundred Thousandths of a
-															//   Ticks / ( 10 ticks/second )
-															//   = microseconds (us)
-		total_ticks += ticks;
-		total_cycles += cycles;
-		if ( (ticks % count_freq.LowPart) > (count_freq.LowPart/2) ) ticks++;		// Round up if necessary
+        if (cycles % ticks > ticks / 2)
+            freq++; // Round up if necessary
 
-		freq = cycles/ticks;							// MHz = cycles / us
+        total = (freq + freq2 + freq3); // Total last three frequency calcs
 
-		if ( cycles%ticks > ticks/2 ) freq++;	// Round up if necessary
+    } while ((tries < 3)
+             || (tries < 20)
+                 && (((3 * freq - total) > 3 * TOLERANCE) || ((3 * freq2 - total) > 3 * TOLERANCE)
+                     || ((3 * freq3 - total) > 3 * TOLERANCE)));
 
-		total = ( freq + freq2 + freq3 );		// Total last three frequency calcs
+    SetThreadPriority(thread, threadPri);
+    SetPriorityClass(process, processPri);
 
-	} while ( (tries < 3 ) || (tries < 20) && (((3 * freq -total) > 3*TOLERANCE )|| ((3 * freq2-total) > 3*TOLERANCE )|| ((3 * freq3-total) > 3*TOLERANCE )));
+    /*
+    ** Try one more significant digit.
+    */
+    freq3 = (total_cycles * 10) / total_ticks;
+    freq2 = (total_cycles * 100) / total_ticks;
 
-	SetThreadPriority(thread, threadPri);
-	SetPriorityClass(process, processPri);
+    if (freq2 - (freq3 * 10) >= ROUND_THRESHOLD)
+        freq3++;
 
-	/*
-	** Try one more significant digit.
-	*/
-	freq3 = ( total_cycles * 10 ) / total_ticks;
-	freq2 = ( total_cycles * 100 ) / total_ticks;
+    int norm_freq = total_cycles / total_ticks;
 
-	if ( freq2 - (freq3 * 10) >= ROUND_THRESHOLD ) freq3++;
+    freq = norm_freq * 10;
+    if ((freq3 - freq) >= ROUND_THRESHOLD)
+        norm_freq++;
 
-	int norm_freq = total_cycles / total_ticks;
-
-	freq = norm_freq * 10;
-	if ( (freq3 - freq) >= ROUND_THRESHOLD ) norm_freq++;
-
-	return (norm_freq);
-
+    return (norm_freq);
 }
-
-

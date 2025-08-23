@@ -19,8 +19,8 @@
 #ifndef DIALOG_HEADER
 #define DIALOG_HEADER
 
-#include"winblows.h"
-#include<commctrl.h>
+#include "winblows.h"
+#include <commctrl.h>
 HWND Create_Patch_Dialog(void);
 
 extern HWND PatchDialog;

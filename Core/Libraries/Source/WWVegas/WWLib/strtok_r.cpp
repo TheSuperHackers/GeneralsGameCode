@@ -52,36 +52,36 @@
 #ifndef _UNIX
 char *strtok_r(char *strptr, const char *delimiters, char **lasts)
 {
-	if (strptr)
-		*lasts=strptr;
+    if (strptr)
+        *lasts = strptr;
 
-	if ((*lasts)[0]==0)  // 0 length string?
-		return(NULL);
+    if ((*lasts)[0] == 0) // 0 length string?
+        return (NULL);
 
-	//
-	// Note: strcspn & strspn are both called, they're opposites
-	//
-	int dstart=strcspn(*lasts, delimiters);  // find first char of string in delimiters
+    //
+    // Note: strcspn & strspn are both called, they're opposites
+    //
+    int dstart = strcspn(*lasts, delimiters); // find first char of string in delimiters
 
-	if (dstart == 0)  // string starts with a delimiter
-	{
-		int dend=strspn(*lasts, delimiters);     // find last char of string NOT in delimiters
-		*lasts+=dend;
+    if (dstart == 0) // string starts with a delimiter
+    {
+        int dend = strspn(*lasts, delimiters); // find last char of string NOT in delimiters
+        *lasts += dend;
 
-		if ((*lasts)[0]==0)  // 0 length string?
-			return(NULL);
+        if ((*lasts)[0] == 0) // 0 length string?
+            return (NULL);
 
-		dstart=strcspn(*lasts, delimiters);
-	}
-	char *retval=*lasts;
+        dstart = strcspn(*lasts, delimiters);
+    }
+    char *retval = *lasts;
 
-	if ((*lasts)[dstart]==0)  // is this the last token?
-		*lasts+=dstart;
-	else	// at least one more token to go...
-	{
-		(*lasts)[dstart]=0;  // null out the end
-		*lasts+=(dstart+1);  // advance pointer
-	}
-	return(retval);
+    if ((*lasts)[dstart] == 0) // is this the last token?
+        *lasts += dstart;
+    else // at least one more token to go...
+    {
+        (*lasts)[dstart] = 0; // null out the end
+        *lasts += (dstart + 1); // advance pointer
+    }
+    return (retval);
 }
 #endif
