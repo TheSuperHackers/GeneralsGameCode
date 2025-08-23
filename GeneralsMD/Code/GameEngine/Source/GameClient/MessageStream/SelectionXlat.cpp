@@ -1233,6 +1233,13 @@ GameMessageDisposition SelectionTranslator::translateGameMessage(const GameMessa
 						{
 							VecObjectPtr objlist = selectedSquad->getLiveObjects();
 							Int numObjs = objlist.size();
+
+							// TheSuperHackers @fix skyaero 22/07/2025 check to prevent group force attack exploit
+							if (numObjs > 0 && objlist[0]->getDrawable()->isKindOf(KINDOF_STRUCTURE))
+							{
+								TheInGameUI->deselectAllDrawables();
+							}
+
 							for (Int i = 0; i < numObjs; ++i)
 							{
 								TheInGameUI->selectDrawable(objlist[i]->getDrawable());
