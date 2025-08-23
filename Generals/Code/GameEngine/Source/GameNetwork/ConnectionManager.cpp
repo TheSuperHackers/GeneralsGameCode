@@ -1246,22 +1246,20 @@ void ConnectionManager::updateRunAhead(Int oldRunAhead, Int frameRate, Bool didS
 				// if the minimum fps is within 10% of the desired framerate, then keep the current minimum fps.
 				minFps = frameRate;
 			}
-			if (minFps < 5) {
-				minFps = 5; // Absolutely do not run below 5 fps.
-			}
-			if (minFps > TheGlobalData->m_framesPerSecondLimit) {
-				minFps = TheGlobalData->m_framesPerSecondLimit; // Cap to 30 FPS.
-			}
-			DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("ConnectionManager::updateRunAhead - minFps after adjustment is %d", minFps));
-			Int newRunAhead = (Int)((getMaximumLatency() / 2.0) * (Real)minFps);
-			newRunAhead += (newRunAhead * TheGlobalData->m_networkRunAheadSlack) / 100; // Add in 10% of slack to the run ahead in case of network hiccups.
-			if (newRunAhead < MIN_RUNAHEAD) {
-				newRunAhead = MIN_RUNAHEAD; // make sure its at least MIN_RUNAHEAD.
-			}
 
-			if (newRunAhead > (MAX_FRAMES_AHEAD / 2)) {
-				newRunAhead = MAX_FRAMES_AHEAD / 2; // dont let run ahead get out of hand.
-			}
+			// TheSuperHackers @info this clamps the logic time scale fps in network games
+			minFps = clamp<Int>(MIN_LOGIC_FRAMES, minFps, TheGlobalData->m_framesPerSecondLimit);
+			DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("ConnectionManager::updateRunAhead - minFps after adjustment is %d", minFps));
+
+			// TheSuperHackers @bugfix Mauller 21/08/2025 calculate the runahead so it always follows the latency
+			// The runahead should always be rounded up to the next integer value to prevent variations in latency from causing stutter
+			// The network slack pushes the runahead up to the next value when the latency is within the slack percentage of the current runahead
+			const Real runAheadSlackScale = 1.0f + ( (Real)TheGlobalData->m_networkRunAheadSlack / 100.0f );
+			Int newRunAhead = ceilf( getMaximumLatency() * runAheadSlackScale * (Real)minFps );
+
+			// TheSuperHackers @info if the runahead goes below 3 logic frames it can start to introduce stutter
+			// We also limit the upper range of the runahead to prevent it getting out of hand
+			newRunAhead = clamp<Int>(MIN_RUNAHEAD, newRunAhead, MAX_FRAMES_AHEAD / 2);
 
 			NetRunAheadCommandMsg *msg = newInstance(NetRunAheadCommandMsg);
 			msg->setPlayerID(m_localSlot);
@@ -1361,24 +1359,15 @@ void ConnectionManager::updateRunAhead(Int oldRunAhead, Int frameRate, Bool didS
 }
 
 Real ConnectionManager::getMaximumLatency() {
-	// This works for 2 player games because the latency for the packet router is always 0.
-	Real lat1 = 0.0;
-	Real lat2 = 0.0;
+	Real Maxlat = 0.0f;
 
 	for (Int i = 0; i < MAX_SLOTS; ++i) {
-		if (isPlayerConnected(i)) {
-			if (m_latencyAverages[i] != 0.0) {
-				if (m_latencyAverages[i] > lat1) {
-					lat2 = lat1;
-					lat1 = m_latencyAverages[i];
-				} else if (m_latencyAverages[i] > lat2) {
-					lat2 = m_latencyAverages[i];
-				}
-			}
+		if (isPlayerConnected(i) && m_latencyAverages[i] > Maxlat) {
+				Maxlat = m_latencyAverages[i];
 		}
 	}
 
-	return (lat1 + lat2);
+	return Maxlat;
 }
 
 void ConnectionManager::getMinimumFps(Int &minFps, Int &minFpsPlayer) {

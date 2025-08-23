@@ -29,6 +29,7 @@
 
 // TheSuperHackers @tweak Mauller 26/08/2025 reduce the minimum runahead from 10
 // This lets network games run at latencies down to 133ms when the network conditions allow
+Int MIN_LOGIC_FRAMES = 5;
 Int MAX_FRAMES_AHEAD = 128;
 Int MIN_RUNAHEAD = 4;
 Int FRAME_DATA_LENGTH = (MAX_FRAMES_AHEAD+1)*2;
