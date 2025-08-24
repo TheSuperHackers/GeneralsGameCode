@@ -329,22 +329,32 @@ UnicodeString Version::getUnicodeProductString() const
 
 	if (!productTitle.isEmpty())
 	{
-		UnicodeString productVersion = TheGameText->FETCH_OR_SUBSTITUTE("Version:ProductVersion", getUnicodeProductVersion().str());
-		UnicodeString productAuthor = TheGameText->FETCH_OR_SUBSTITUTE("Version:ProductAuthor", getUnicodeProductAuthor().str());
+		// Get build user or author name
+		AsciiString asciiUser = getAsciiBuildUserOrGitCommitAuthorName();
+		UnicodeString user;
+		if (!asciiUser.isEmpty())
+		{
+			user.translate(asciiUser);
+		}
+		else
+		{
+			user = L"Unknown";
+		}
+
+		// Get release name from gitinfo
+		UnicodeString releaseName;
+		if (ReleaseName[0] != '\0')
+		{
+			releaseName.translate(ReleaseName);
+		}
+		else
+		{
+			releaseName = getUnicodeGitTagOrHash();
+		}
 
 		str.concat(productTitle);
-
-		if (!productVersion.isEmpty())
-		{
-			str.concat(L" ");
-			str.concat(productVersion);
-		}
-
-		if (!productAuthor.isEmpty())
-		{
-			str.concat(L" ");
-			str.concat(productAuthor);
-		}
+		str.concat(L" by ");
+		str.concat(user);
 	}
 
 	return str;
@@ -356,15 +366,26 @@ UnicodeString Version::getUnicodeProductVersionHashString() const
 	UnicodeString productString = getUnicodeProductString();
 	UnicodeString gameVersion = getUnicodeVersion();
 	UnicodeString gameHash;
-	gameHash.format(L"exe:%08X ini:%08X", TheGlobalData->m_exeCRC, TheGlobalData->m_iniCRC);
+
+	if (ReleaseName[0])
+	{
+		AsciiString asciiRel;
+		asciiRel.concat(ReleaseName);
+		UnicodeString uRel;
+		uRel.translate(asciiRel);
+		gameHash.format(L" release %s", uRel.str());
+	}
+	else
+	{
+		gameHash.format(L" | exe:%08X ini:%08X", TheGlobalData->m_exeCRC, TheGlobalData->m_iniCRC);
+	}
 
 	if (!productString.isEmpty())
 	{
 		str.concat(productString);
-		str.concat(L" | ");
 	}
 	str.concat(gameHash);
-	str.concat(L" ");
+	str.concat(L" - ");
 	str.concat(gameVersion);
 
 	return str;
