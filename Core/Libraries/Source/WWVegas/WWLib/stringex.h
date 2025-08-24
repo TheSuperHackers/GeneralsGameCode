@@ -44,19 +44,19 @@ size_t strlcat(char *dst, const char *src, size_t dstsize);
 size_t wcslcpy(wchar_t *dst, const wchar_t *src, size_t dstsize);
 size_t wcslcat(wchar_t *dst, const wchar_t *src, size_t dstsize);
 
-template<typename T> size_t strlcpy_overlap_t(T *dst, const T *src, size_t dstsize);
-template<typename T> size_t strlcat_overlap_t(T *dst, const T *src, size_t dstsize);
+template<typename T> size_t strlmove_t(T *dst, const T *src, size_t dstsize);
+template<typename T> size_t strlmcat_t(T *dst, const T *src, size_t dstsize);
 
-size_t strlcpy_overlap(char *dst, const char *src, size_t dstsize);
-size_t strlcat_overlap(char *dst, const char *src, size_t dstsize);
-size_t wcslcpy_overlap(wchar_t *dst, const wchar_t *src, size_t dstsize);
-size_t wcslcat_overlap(wchar_t *dst, const wchar_t *src, size_t dstsize);
+size_t strlmove(char *dst, const char *src, size_t dstsize);
+size_t strlmcat(char *dst, const char *src, size_t dstsize);
+size_t wcslmove(wchar_t *dst, const wchar_t *src, size_t dstsize);
+size_t wcslmcat(wchar_t *dst, const wchar_t *src, size_t dstsize);
 
 #if !(defined(_MSC_VER) && _MSC_VER < 1300)
 template<size_t Size> size_t strlcpy_t(char (&dst)[Size], const char *src);
 template<size_t Size> size_t strlcat_t(char (&dst)[Size], const char *src);
-template<size_t Size> size_t strlcpy_overlap_t(char (&dst)[Size], const char *src);
-template<size_t Size> size_t strlcat_overlap_t(char (&dst)[Size], const char *src);
+template<size_t Size> size_t strlmove_t(char (&dst)[Size], const char *src);
+template<size_t Size> size_t strlmcat_t(char (&dst)[Size], const char *src);
 #endif
 
 
@@ -126,7 +126,7 @@ inline size_t strlcat(char *dst, const char *src, size_t dstsize) { return strlc
 inline size_t wcslcpy(wchar_t *dst, const wchar_t *src, size_t dstsize) { return strlcpy_t(dst, src, dstsize); }
 inline size_t wcslcat(wchar_t *dst, const wchar_t *src, size_t dstsize) { return strlcat_t(dst, src, dstsize); }
 
-template<typename T> size_t strlcpy_overlap_t(T *dst, const T *src, size_t dstsize)
+template<typename T> size_t strlmove_t(T *dst, const T *src, size_t dstsize)
 {
 	size_t srclen = strlen_t(src);
 	if (dstsize > 0)
@@ -138,7 +138,7 @@ template<typename T> size_t strlcpy_overlap_t(T *dst, const T *src, size_t dstsi
 	return srclen; // length tried to create
 }
 
-template<typename T> size_t strlcat_overlap_t(T *dst, const T *src, size_t dstsize)
+template<typename T> size_t strlmcat_t(T *dst, const T *src, size_t dstsize)
 {
 	size_t dstlen = strnlen_t(dst, dstsize);
 	size_t srclen = strlen_t(src);
@@ -159,14 +159,14 @@ template<typename T> size_t strlcat_overlap_t(T *dst, const T *src, size_t dstsi
 	return dstlen + srclen; // length tried to create
 }
 
-inline size_t strlcpy_overlap(char *dst, const char *src, size_t dstsize) { return strlcpy_overlap_t(dst, src, dstsize); }
-inline size_t strlcat_overlap(char *dst, const char *src, size_t dstsize) { return strlcat_overlap_t(dst, src, dstsize); }
-inline size_t wcslcpy_overlap(wchar_t *dst, const wchar_t *src, size_t dstsize) { return strlcpy_overlap_t(dst, src, dstsize); }
-inline size_t wcslcat_overlap(wchar_t *dst, const wchar_t *src, size_t dstsize) { return strlcat_overlap_t(dst, src, dstsize); }
+inline size_t strlmove(char *dst, const char *src, size_t dstsize) { return strlmove_t(dst, src, dstsize); }
+inline size_t strlmcat(char *dst, const char *src, size_t dstsize) { return strlmcat_t(dst, src, dstsize); }
+inline size_t wcslmove(wchar_t *dst, const wchar_t *src, size_t dstsize) { return strlmove_t(dst, src, dstsize); }
+inline size_t wcslmcat(wchar_t *dst, const wchar_t *src, size_t dstsize) { return strlmcat_t(dst, src, dstsize); }
 
 #if !(defined(_MSC_VER) && _MSC_VER < 1300)
 template<size_t Size> size_t strlcpy_t(char (&dst)[Size], const char *src) { return strlcpy_t(dst, src, Size); }
 template<size_t Size> size_t strlcat_t(char (&dst)[Size], const char *src) { return strlcat_t(dst, src, Size); }
-template<size_t Size> size_t strlcpy_overlap_t(char (&dst)[Size], const char *src) { return strlcpy_overlap_t(dst, src, Size); }
-template<size_t Size> size_t strlcat_overlap_t(char (&dst)[Size], const char *src) { return strlcat_overlap_t(dst, src, Size); }
+template<size_t Size> size_t strlmove_t(char (&dst)[Size], const char *src) { return strlmove_t(dst, src, Size); }
+template<size_t Size> size_t strlmcat_t(char (&dst)[Size], const char *src) { return strlmcat_t(dst, src, Size); }
 #endif
