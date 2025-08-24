@@ -98,13 +98,13 @@ template<typename T> size_t strlcpy_t(T *dst, const T *src, size_t dstsize)
 
 template<typename T> size_t strlcat_t(T *dst, const T *src, size_t dstsize)
 {
-	size_t dstlen = strnlen_t(dst, dstsize); // safer than walking blindly
+	size_t dstlen = strnlen_t(dst, dstsize);
 	size_t srclen = strlen_t(src);
 	if (dstlen == dstsize)
 	{
-		return dstsize + srclen; // dst not NUL terminated
+		return dstsize + srclen; // no space to append
 	}
-	size_t copylen = dstsize - dstlen - 1; // space left (excluding NUL)
+	size_t copylen = dstsize - dstlen - 1;
 	if (copylen > srclen)
 	{
 		copylen = srclen;
@@ -146,7 +146,7 @@ template<typename T> size_t strlmcat_t(T *dst, const T *src, size_t dstsize)
 	{
 		return dstsize + srclen; // no space to append
 	}
-	size_t copylen = dstsize - dstlen - 1; // space left for src
+	size_t copylen = dstsize - dstlen - 1;
 	if (copylen > srclen)
 	{
 		copylen = srclen;
