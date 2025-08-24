@@ -282,6 +282,7 @@ protected:
 	void handleGameStartTimer( LANMessage *msg, UnsignedInt senderIP );
 	void handleGameOptions( LANMessage *msg, UnsignedInt senderIP );
 	void handleInActive( LANMessage *msg, UnsignedInt senderIP );
+	void handlePatchVersion( LANMessage *msg, UnsignedInt senderIP );
 
 };
 
@@ -319,6 +320,7 @@ struct LANMessage
 		MSG_INACTIVE,						///< I've alt-tabbed out.  Unaccept me cause I'm a poo-flinging monkey.
 
 		MSG_REQUEST_GAME_INFO,	///< For direct connect, get the game info from a specific IP Address
+		MSG_PATCH_VERSION,      ///< TheSuperHackers patch version
 
 		MSG_MAX
 	} LANMessageType;
@@ -414,6 +416,11 @@ struct LANMessage
 		{
 			char options[m_lanMaxOptionsLength+1];
 		} GameOptions;
+
+		struct
+		{
+			UnsignedInt patchVersion;
+		} PatchInfo;
 
 	};
 };

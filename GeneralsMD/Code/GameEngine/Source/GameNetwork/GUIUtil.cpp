@@ -423,6 +423,12 @@ void UpdateSlotList( GameInfo *myGame, GameWindow *comboPlayer[],
 			}
 			if(slot->isHuman())
 			{
+				if (i == myGame->getLocalSlotNum() || myGame->getSlot(i)->getPatchVersion() > 0)
+				{
+					GadgetComboBoxSetEnabledTextColors(comboPlayer[i], 0xFFFFFF00, 0xFF000000);
+					GadgetComboBoxSetDisabledTextColors(comboPlayer[i], 0xFFC0C000, 0xFF000000);
+				}
+
 				UnicodeString newName = slot->getName();
 				UnicodeString oldName = GadgetComboBoxGetText(comboPlayer[i]);
 				if (comboPlayer[i] && newName.compare(oldName))
