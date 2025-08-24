@@ -1901,16 +1901,10 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 			Player *player = ThePlayerList->getNthPlayer(playerIndex);
 			DEBUG_ASSERTCRASH(player != NULL, ("Could not find player for create team message"));
 
-			if (player == NULL)
-			{
-				break;
-			}
-
 			// TheSuperHackers @tweak Stubbjax 17/08/2025 The local player processes this message in CommandXlat for immediate assignment.
-			if (player->isLocalPlayer())
-				break;
+			if (player && !player->isLocalPlayer())
+				player->processCreateTeamGameMessage(msg->getType() - GameMessage::MSG_CREATE_TEAM0, msg);
 
-			player->processCreateTeamGameMessage(msg->getType() - GameMessage::MSG_CREATE_TEAM0, msg);
 			break;
 		} // end create team command
 
