@@ -205,12 +205,64 @@ INI::~INI( void )
 }  // end ~INI
 
 //-------------------------------------------------------------------------------------------------
+UnsignedInt INI::loadFileDirectory( AsciiString fileDirName, INILoadType loadType, Xfer *pXfer, Bool subdirs )
+{
+	UnsignedInt filesRead = 0;
+
+	AsciiString iniDir = fileDirName;
+	AsciiString iniFile = fileDirName;
+
+	char ext[] = ".ini";
+
+	if (iniDir.endsWithNoCase(ext))
+	{
+		iniDir.truncateBy(ARRAY_SIZE(ext)-1);
+	}
+
+	if (!iniFile.endsWithNoCase(ext))
+	{
+		iniFile.concat(ext);
+	}
+
+	if (TheFileSystem->doesFileExist(iniFile.str()))
+	{
+		filesRead += load(iniFile, loadType, pXfer);
+	}
+
+#if RTS_GENERALS
+	// Load any additional ini files from a "Generals\filename" directory and its subdirectories.
+	const char* begin = iniDir.str();
+	const char* end = iniDir.reverseFind('\\');
+	if (end == NULL)
+		end = begin;
+	const int len =  (int)(end - begin);
+	AsciiString generalsIniDir(begin, len);
+	generalsIniDir.concat("\\Generals");
+	generalsIniDir.concat(end);
+	filesRead += loadDirectory(generalsIniDir, loadType, pXfer, subdirs);
+#endif
+
+	// Load any additional ini files from a "filename" directory and its subdirectories.
+	filesRead += loadDirectory(iniDir, loadType, pXfer, subdirs);
+
+	// Expect to open and load at least one file.
+	if (filesRead == 0)
+	{
+		throw INI_CANT_OPEN_FILE;
+	}
+
+	return filesRead;
+}
+
+//-------------------------------------------------------------------------------------------------
 /** Load all INI files in the specified directory (and subdirectories if indicated).
 	* If we are to load subdirectories, we will load them *after* we load all the
 	* files in the current directory */
 //-------------------------------------------------------------------------------------------------
-void INI::loadDirectory( AsciiString dirName, Bool subdirs, INILoadType loadType, Xfer *pXfer )
+UnsignedInt INI::loadDirectory( AsciiString dirName, INILoadType loadType, Xfer *pXfer, Bool subdirs )
 {
+	UnsignedInt filesRead = 0;
+
 	// sanity
 	if( dirName.isEmpty() )
 		throw INI_INVALID_DIRECTORY;
@@ -219,7 +271,7 @@ void INI::loadDirectory( AsciiString dirName, Bool subdirs, INILoadType loadType
 	{
 		FilenameList filenameList;
 		dirName.concat('\\');
-		TheFileSystem->getFileListInDirectory(dirName, "*.ini", filenameList, TRUE);
+		TheFileSystem->getFileListInDirectory(dirName, "*.ini", filenameList, subdirs);
 		// Load the INI files in the dir now, in a sorted order.  This keeps things the same between machines
 		// in a network game.
 		FilenameList::const_iterator it = filenameList.begin();
@@ -230,7 +282,7 @@ void INI::loadDirectory( AsciiString dirName, Bool subdirs, INILoadType loadType
 
 			if ((tempname.find('\\') == NULL) && (tempname.find('/') == NULL)) {
 				// this file doesn't reside in a subdirectory, load it first.
-				load( *it, loadType, pXfer );
+				filesRead += load( *it, loadType, pXfer );
 			}
 			++it;
 		}
@@ -242,7 +294,7 @@ void INI::loadDirectory( AsciiString dirName, Bool subdirs, INILoadType loadType
 			tempname = (*it).str() + dirName.getLength();
 
 			if ((tempname.find('\\') != NULL) || (tempname.find('/') != NULL)) {
-				load( *it, loadType, pXfer );
+				filesRead += load( *it, loadType, pXfer );
 			}
 			++it;
 		}
@@ -253,7 +305,8 @@ void INI::loadDirectory( AsciiString dirName, Bool subdirs, INILoadType loadType
 		throw;
 	}
 
-}  // end loadDirectory
+	return filesRead;
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -283,7 +336,7 @@ void INI::prepFile( AsciiString filename, INILoadType loadType )
 	// save our filename
 	m_filename = filename;
 
-	// save our load time
+	// save our load type
 	m_loadType = loadType;
 }
 
@@ -344,7 +397,7 @@ static INIFieldParseProc findFieldParse(const FieldParse* parseTable, const char
 //-------------------------------------------------------------------------------------------------
 /** Load and parse an INI file */
 //-------------------------------------------------------------------------------------------------
-void INI::load( AsciiString filename, INILoadType loadType, Xfer *pXfer )
+UnsignedInt INI::load( AsciiString filename, INILoadType loadType, Xfer *pXfer )
 {
 	setFPMode(); // so we have consistent Real values for GameLogic -MDC
 
@@ -408,10 +461,11 @@ void INI::load( AsciiString filename, INILoadType loadType, Xfer *pXfer )
 
 	unPrepFile();
 
-}  // end load
+	return 1;
+}
 
 //-------------------------------------------------------------------------------------------------
-/** Read a line from the already open file.  Any comments will be remved and
+/** Read a line from the already open file.  Any comments will be removed and
 	* therefore ignored from any given line */
 //-------------------------------------------------------------------------------------------------
 void INI::readLine( void )
