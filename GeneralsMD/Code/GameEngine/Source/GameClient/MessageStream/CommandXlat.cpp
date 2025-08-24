@@ -3624,7 +3624,7 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 		{
 			Int playerIndex = msg->getPlayerIndex();
 			Player* player = ThePlayerList->getNthPlayer(playerIndex);
-			if (player->isLocalPlayer())
+			if (player && player->isLocalPlayer())
 				player->processCreateTeamGameMessage(t - GameMessage::MSG_CREATE_TEAM0, msg);
 
 			break;
