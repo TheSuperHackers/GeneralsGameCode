@@ -42,6 +42,7 @@
 #include "GameLogic/Module/StealthUpdate.h"
 
 #include "GameClient/Color.h"
+#include "GameClient/ControlBar.h"
 #include "GameClient/Display.h"
 #include "GameClient/GameClient.h"
 #include "GameClient/GameWindow.h"
@@ -696,7 +697,7 @@ void W3DRadar::renderObjectList( const RadarObject *listHead, TextureClass *text
 			if( !stealth )
 				continue;
 
-      if ( ThePlayerList->getLocalPlayer()->getRelationship(obj->getTeam()) == ENEMIES )
+      if ( TheControlBar->getCurrentlyViewedPlayerRelationship(obj->getTeam()) == ENEMIES )
         if( !obj->testStatus( OBJECT_STATUS_DETECTED ) && !stealth->isDisguised() )
 				  skip = TRUE;
 
