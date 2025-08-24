@@ -208,6 +208,11 @@ public:
 
 		return true;
 	}
+
+	// AW: New additions for MultiAddonContain only
+	virtual short getRiderSlot(ObjectID riderID) const = 0; 	// get the slot occupied by the object.
+	virtual short getPortableSlot(ObjectID portableID) const = 0; 	// get the slot occupied by the object.
+	virtual const ContainedItemsList* getAddOnList() const = 0;
 };
 //-------------------------------------------------------------------------------------------------
 

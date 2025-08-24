@@ -47,6 +47,8 @@ class W3DOverlordAircraftDrawModuleData : public W3DModelDrawModuleData
 {
 public:
 
+	Bool m_hasMultiAddOns; ///< compatibility for MultiAddOnContain and similar modules;
+
 	W3DOverlordAircraftDrawModuleData();
 	~W3DOverlordAircraftDrawModuleData();
 	static void buildFieldParse(MultiIniFieldParse& p);

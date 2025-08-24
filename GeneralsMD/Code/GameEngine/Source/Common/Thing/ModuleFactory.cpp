@@ -70,6 +70,7 @@
 #include "GameLogic/Module/TunnelContain.h"
 #include "GameLogic/Module/OverlordContain.h"
 #include "GameLogic/Module/HelixContain.h"
+#include "GameLogic/Module/MultiAddOnContain.h"
 #include "GameLogic/Module/ParachuteContain.h"
 #ifdef ALLOW_SURRENDER
 #include "GameLogic/Module/POWTruckBehavior.h"
@@ -361,6 +362,7 @@ void ModuleFactory::init( void )
 	addModule( TunnelContain );
 	addModule( OverlordContain );
 	addModule( HelixContain );
+	addModule( MultiAddOnContain );
 	addModule( ParachuteContain );
 #ifdef ALLOW_SURRENDER
 	addModule( POWTruckBehavior );

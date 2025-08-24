@@ -138,14 +138,26 @@ void W3DDependencyModelDraw::adjustTransformMtx(Matrix3D& mtx) const
 		if( theirDrawable )
 		{
 			Matrix3D theirBoneMtx;
-			if( theirDrawable->getCurrentWorldspaceClientBonePositions( md->m_attachToDrawableBoneInContainer.str(), theirBoneMtx ) )
+
+			AsciiString boneName;
+			// if we are in a MultiAddOnContain, we add the slot number to the bone name
+			short slot = me->getContainedBy()->getContain()->getPortableSlot(me->getID());
+			DEBUG_LOG((">>> W3DDependencyModelDraw::adjustTransformMtx - riderSlot = %d", slot));
+			if (slot != -1)
+				boneName.format("%s%02d", md->m_attachToDrawableBoneInContainer.str(), slot+1);
+
+			if ((slot != -1) && theirDrawable->getCurrentWorldspaceClientBonePositions(boneName.str(), theirBoneMtx))
+			{
+				mtx = theirBoneMtx;
+			}
+			else if( theirDrawable->getCurrentWorldspaceClientBonePositions( md->m_attachToDrawableBoneInContainer.str(), theirBoneMtx ) )
 			{
 				mtx = theirBoneMtx;
 			}
 			else
 			{
         mtx = *theirDrawable->getTransformMatrix();//TransformMatrix();
-				DEBUG_LOG(("m_attachToDrawableBoneInContainer %s not found",getW3DDependencyModelDrawModuleData()->m_attachToDrawableBoneInContainer.str()));
+				DEBUG_LOG(("m_attachToDrawableBoneInContainer %s not found", md->m_attachToDrawableBoneInContainer.str()));
 			}
 		}
 	}

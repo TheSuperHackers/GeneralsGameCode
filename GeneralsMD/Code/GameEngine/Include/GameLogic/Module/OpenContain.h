@@ -255,6 +255,10 @@ protected:
 	// exists primarily for TransportContain to override
 	virtual void killRidersWhoAreNotFreeToExit() { }
 
+	virtual short getRiderSlot(ObjectID riderID) const { return -1; }
+	virtual short getPortableSlot(ObjectID portableID) const { return -1; }
+	virtual const ContainedItemsList* getAddOnList() const { return NULL; }
+
 	void pruneDeadWanters();
 
 	ContainedItemsList	m_containList;						///< the list of contained objects

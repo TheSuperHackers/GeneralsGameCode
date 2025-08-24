@@ -196,6 +196,7 @@ static PoolSizeRec PoolSizes[] =
 	{ "OverchargeBehavior", 32, 32 },
 	{ "OverlordContain", 32, 32 },
 	{ "HelixContain", 32, 32 },
+	{ "MultiAddOnContain", 64, 32 },
 	{ "ParachuteContain", 128, 32 },
 	{ "PhysicsBehavior", 600, 32 },
 	{ "PoisonedBehavior", 512, 64 },

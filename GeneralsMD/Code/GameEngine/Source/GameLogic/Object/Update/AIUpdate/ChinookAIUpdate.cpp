@@ -1410,6 +1410,15 @@ void ChinookAIUpdate::privateIdle(CommandSourceType cmdSource)
 			if (riderAI)
 				riderAI->aiIdle(cmdSource);
 		}
+
+		const std::list<Object*>* addOnList = contain->getAddOnList();
+		if (addOnList) {
+			for (Object* obj : *addOnList) {
+				AIUpdateInterface* ai = obj ? obj->getAI() : NULL;
+				if (ai)
+					ai->aiIdle(cmdSource);
+			}
+		}
 	}
 
   SupplyTruckAIUpdate::privateIdle( cmdSource );
@@ -1502,6 +1511,25 @@ void ChinookAIUpdate::private___TellPortableStructureToAttackWithMe( Object *vic
 				riderAI->aiAttackObject(victim, maxShotsToFire, cmdSource);
 			}
 		}
+
+		const std::list<Object*>* addOnList = contain->getAddOnList();
+		if (addOnList) {
+			for (Object* obj : *addOnList) {
+				if (obj
+					&& obj->isKindOf(KINDOF_PORTABLE_STRUCTURE)
+					&& !obj->isDisabledByType(DISABLED_HACKED)
+					&& !obj->isDisabledByType(DISABLED_EMP)
+					&& !obj->isDisabledByType(DISABLED_SUBDUED)
+					&& !obj->isDisabledByType(DISABLED_PARALYZED))
+				{
+					AIUpdateInterface* riderAI = obj->getAIUpdateInterface();
+					if (riderAI)
+					{
+						riderAI->aiAttackObject(victim, maxShotsToFire, cmdSource);
+					}
+				}
+			}
+		}
 	}
 }
 
@@ -1577,7 +1605,24 @@ void ChinookAIUpdate::privateForceAttackObject( Object *victim, Int maxShotsToFi
 					riderAI->aiForceAttackObject(victim, maxShotsToFire, cmdSource);
 				}
 			}
-
+			const std::list<Object*>* addOnList = contain->getAddOnList();
+			if (addOnList) {
+				for (Object* obj : *addOnList) {
+					if (obj
+						&& obj->isKindOf(KINDOF_PORTABLE_STRUCTURE)
+						&& !obj->isDisabledByType(DISABLED_HACKED)
+						&& !obj->isDisabledByType(DISABLED_EMP)
+						&& !obj->isDisabledByType(DISABLED_SUBDUED)
+						&& !obj->isDisabledByType(DISABLED_PARALYZED))
+					{
+						AIUpdateInterface* riderAI = obj->getAIUpdateInterface();
+						if (riderAI)
+						{
+							riderAI->aiForceAttackObject(victim, maxShotsToFire, cmdSource);
+						}
+					}
+				}
+			}
 		}
 	}
 
@@ -1652,6 +1697,24 @@ void ChinookAIUpdate::privateAttackPosition( const Coord3D *pos, Int maxShotsToF
 				if( riderAI )
 				{
 					riderAI->aiAttackPosition(pos, maxShotsToFire, cmdSource);
+				}
+			}
+			const std::list<Object*>* addOnList = contain->getAddOnList();
+			if (addOnList) {
+				for (Object* obj : *addOnList) {
+					if (obj
+						&& obj->isKindOf(KINDOF_PORTABLE_STRUCTURE)
+						&& !obj->isDisabledByType(DISABLED_HACKED)
+						&& !obj->isDisabledByType(DISABLED_EMP)
+						&& !obj->isDisabledByType(DISABLED_SUBDUED)
+						&& !obj->isDisabledByType(DISABLED_PARALYZED))
+					{
+						AIUpdateInterface* riderAI = obj->getAIUpdateInterface();
+						if (riderAI)
+						{
+							riderAI->aiAttackPosition(pos, maxShotsToFire, cmdSource);
+						}
+					}
 				}
 			}
 		}

@@ -1947,7 +1947,7 @@ void INI::parseDeathTypeFlags(INI* ini, void* /*instance*/, void* store, const v
 
 			if (TheGlobalData) {
 				flags &= ~TheGlobalData->m_defaultExcludedDeathTypes;
-				DEBUG_LOG(("INI::parseDeathTypeFlags - flags = %X\n", flags));
+				// DEBUG_LOG(("INI::parseDeathTypeFlags - flags = %X\n", flags));
 			}
 			else {
 				DEBUG_LOG(("INI::parseDeathTypeFlags - TheGlobalData is NULL\n"));
