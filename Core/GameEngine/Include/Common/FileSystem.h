@@ -54,6 +54,8 @@
 #include "Common/STLTypedefs.h"
 #include "Common/SubsystemInterface.h"
 
+#include <map>
+
 //----------------------------------------------------------------------------
 //           Forward References
 //----------------------------------------------------------------------------
@@ -98,7 +100,16 @@ typedef FilenameList::iterator FilenameListIter;
 #define TEST_TGA_DIR_PATH "../TestArt/"		///< .tga texture files live here
 #endif
 
+#ifndef ENABLE_FILESYSTEM_LOGGING
+#define ENABLE_FILESYSTEM_LOGGING (0)
+#endif
+
+
 struct FileInfo {
+
+	Int64 size() const { return (Int64)sizeHigh << 32 | sizeLow; }
+	Int64 timestamp() const { return (Int64)timestampHigh << 32 | timestampLow; }
+
 	Int sizeHigh;
 	Int sizeLow;
 	Int timestampHigh;
@@ -111,12 +122,13 @@ struct FileInfo {
 /**
   * FileSystem is an interface class for creating specific FileSystem objects.
   *
-	* A FileSystem object's implemenation decides what derivative of File object needs to be
+	* A FileSystem object's implementation decides what derivative of File object needs to be
 	* created when FileSystem::Open() gets called.
 	*/
+// TheSuperHackers @feature xezon 23/08/2025 Implements file instance access.
+// Can be used to access different versions of files in different archives under the same name.
+// Instance 0 refers to the top file that shadows all other files under the same name.
 //===============================
-#include <map>
-
 class FileSystem : public SubsystemInterface
 {
   FileSystem(const FileSystem&);
@@ -130,22 +142,30 @@ public:
 	void reset();
 	void update();
 
-	File* openFile( const Char *filename, Int access = File::NONE, size_t bufferSize = File::BUFFERSIZE );		///< opens a File interface to the specified file
-	Bool doesFileExist(const Char *filename) const;								///< returns TRUE if the file exists.  filename should have no directory.
+	File* openFile( const Char *filename, Int access = File::NONE, size_t bufferSize = File::BUFFERSIZE, UnsignedInt instance = 0 ); ///< opens a File interface to the specified file
+	Bool doesFileExist(const Char *filename, UnsignedInt instance = 0) const; ///< returns TRUE if the file exists.  filename should have no directory.
 	void getFileListInDirectory(const AsciiString& directory, const AsciiString& searchName, FilenameList &filenameList, Bool searchSubdirectories) const; ///< search the given directory for files matching the searchName (egs. *.ini, *.rep).  Possibly search subdirectories.
-	Bool getFileInfo(const AsciiString& filename, FileInfo *fileInfo) const; ///< fills in the FileInfo struct for the file given. returns TRUE if successful.
+	Bool getFileInfo(const AsciiString& filename, FileInfo *fileInfo, UnsignedInt instance = 0) const; ///< fills in the FileInfo struct for the file given. returns TRUE if successful.
 
 	Bool createDirectory(AsciiString directory); ///< create a directory of the given name.
 
 	Bool areMusicFilesOnCD();
 	void loadMusicFilesFromCD();
 	void unloadMusicFilesFromCD();
-	AsciiString normalizePath(const AsciiString& path) const;	///< normalizes a file path. The path can refer to a directory. File path must be absolute, but does not need to exist. Returns an empty string on failure.
+
+	static AsciiString normalizePath(const AsciiString& path);	///< normalizes a file path. The path can refer to a directory. File path must be absolute, but does not need to exist. Returns an empty string on failure.
 	static Bool isPathInDirectory(const AsciiString& testPath, const AsciiString& basePath);	///< determines if a file path is within a base path. Both paths must be absolute, but do not need to exist.
 
 protected:
 #if ENABLE_FILESYSTEM_EXISTENCE_CACHE
-	mutable std::map<unsigned,bool> m_fileExist;
+	struct FileExistData
+	{
+		FileExistData() : instanceExists(0), instanceDoesNotExist(~0u) {}
+		UnsignedInt instanceExists;
+		UnsignedInt instanceDoesNotExist;
+	};
+	typedef std::map<unsigned, FileExistData> FileExistMap; ///< Filename key to data
+	mutable FileExistMap m_fileExist;
 #endif
 };
 
