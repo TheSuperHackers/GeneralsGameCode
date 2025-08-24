@@ -91,7 +91,7 @@ template<typename T> size_t strlcpy_t(T *dst, const T *src, size_t dstsize)
 	{
 		size_t copylen = (srclen >= dstsize) ? dstsize - 1 : srclen;
 		memcpy(dst, src, copylen * sizeof(T));
-		dst[copylen] = 0;
+		dst[copylen] = T(0);
 	}
 	return srclen; // length tried to create
 }
@@ -112,7 +112,7 @@ template<typename T> size_t strlcat_t(T *dst, const T *src, size_t dstsize)
 	if (copylen > 0)
 	{
 		memcpy(dst + dstlen, src, copylen * sizeof(T));
-		dst[dstlen + copylen] = 0;
+		dst[dstlen + copylen] = T(0);
 	}
 	return dstlen + srclen; // length tried to create
 }
@@ -133,7 +133,7 @@ template<typename T> size_t strlmove_t(T *dst, const T *src, size_t dstsize)
 	{
 		size_t copylen = (srclen >= dstsize) ? dstsize - 1 : srclen;
 		memmove(dst, src, copylen * sizeof(T));
-		dst[copylen] = 0;
+		dst[copylen] = T(0);
 	}
 	return srclen; // length tried to create
 }
@@ -154,7 +154,7 @@ template<typename T> size_t strlmcat_t(T *dst, const T *src, size_t dstsize)
 	if (copylen > 0)
 	{
 		memmove(dst + dstlen, src, copylen * sizeof(T));
-		dst[dstlen + copylen] = '\0';
+		dst[dstlen + copylen] = T(0);
 	}
 	return dstlen + srclen; // length tried to create
 }
