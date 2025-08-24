@@ -28,46 +28,43 @@
 #include <string.h>
 #include <memory.h>
 
-void CreateTranslationTable ( void )
+void CreateTranslationTable(void)
 {
-	int i;
-	FILE *out;
-	wchar_t wc;
-	wchar_t mb;
-	DWORD last_error;
+  int i;
+  FILE *out;
+  wchar_t wc;
+  wchar_t mb;
+  DWORD last_error;
 
-	if ( ! ( out = fopen ( "utable.c", "wt" )))
-	{
-		return;
-	}
+  if (!(out = fopen("utable.c", "wt")))
+  {
+    return;
+  }
 
+  fprintf(out, "static unsigned short Utable[0x10000] =\n{");
 
-	fprintf (out, "static unsigned short Utable[0x10000] =\n{" );
+  for (i = 0; i < 0x10000; i++)
+  {
+    if ((i % 32) == 0)
+    {
+      fprintf(out, "\n\t/* 0x%04x */\t", i);
+    }
 
-	for ( i = 0; i < 0x10000; i++ )
-	{
+    mb = i;
+    if (MultiByteToWideChar(CP_ACP, MB_ERR_INVALID_CHARS, (LPCSTR)&mb, 2, &wc, 2) == 0)
+    {
+      wc = 0;
+      last_error = GetLastError();
+    }
 
-		if ( ( i %32 ) == 0 )
-		{
-			fprintf ( out, "\n\t/* 0x%04x */\t", i );
-		}
+    fprintf(out, "0x%04x", wc);
+    if (i != 0xffff)
+    {
+      fprintf(out, ",");
+    }
+  }
 
-		mb = i;
-		if ( MultiByteToWideChar (CP_ACP, MB_ERR_INVALID_CHARS, (LPCSTR) &mb, 2, &wc, 2 ) == 0 )
-		{
-			wc = 0;
-			last_error = GetLastError ( );
-		}
+  fprintf(out, "\n};\n");
 
-		fprintf (out, "0x%04x", wc );
-		if ( i != 0xffff )
-		{
-			fprintf (out, "," );
-		}
-	}
-
-	fprintf ( out, "\n};\n");
-
-	fclose ( out );
-
+  fclose(out);
 }

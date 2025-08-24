@@ -34,7 +34,6 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
 #if defined(_MSC_VER)
 #pragma once
 #endif
@@ -58,10 +57,9 @@ class SnapPointsClass;
 */
 struct HmdlNodeDefStruct
 {
-	char	RenderObjName[2*W3D_NAME_LEN];
-	int	PivotID;
+  char RenderObjName[2 * W3D_NAME_LEN];
+  int PivotID;
 };
-
 
 /*
 **	HModelDefClass
@@ -73,40 +71,38 @@ struct HmdlNodeDefStruct
 */
 class HModelDefClass
 {
+  public:
+  enum
+  {
+    OK,
+    LOAD_ERROR
+  };
 
-public:
+  HModelDefClass(void);
+  ~HModelDefClass(void);
 
-	enum {
-		OK,
-		LOAD_ERROR
-	};
+  int Load_W3D(ChunkLoadClass &cload);
+  const char *Get_Name(void) const { return Name; }
 
-	HModelDefClass(void);
-	~HModelDefClass(void);
+  private:
+  char Name[2 * W3D_NAME_LEN]; // <basepose>.<modelname>
+  char ModelName[W3D_NAME_LEN]; // name of the model
+  char BasePoseName[W3D_NAME_LEN]; // name of the base pose (hierarchy tree)
 
-	int				Load_W3D(ChunkLoadClass & cload);
-	const char *	Get_Name(void) const { return Name; }
+  int SubObjectCount;
+  HmdlNodeDefStruct *SubObjects;
+  SnapPointsClass *SnapPoints;
 
-private:
+  void Free(void);
+  bool read_header(ChunkLoadClass &cload);
+  bool read_connection(ChunkLoadClass &cload, HmdlNodeDefStruct *con, bool pre30);
+  bool read_mesh_connection(ChunkLoadClass &cload, int idx, bool pre30);
+  bool read_collision_connection(ChunkLoadClass &cload, int idx, bool pre30);
+  bool read_skin_connection(ChunkLoadClass &cload, int idx, bool pre30);
 
-	char							Name[2*W3D_NAME_LEN];			// <basepose>.<modelname>
-	char							ModelName[W3D_NAME_LEN];		// name of the model
-	char							BasePoseName[W3D_NAME_LEN];	// name of the base pose (hierarchy tree)
-
-	int							SubObjectCount;
-	HmdlNodeDefStruct *		SubObjects;
-	SnapPointsClass *			SnapPoints;
-
-	void Free(void);
-	bool read_header(ChunkLoadClass & cload);
-	bool read_connection(ChunkLoadClass & cload,HmdlNodeDefStruct * con,bool pre30);
-	bool read_mesh_connection(ChunkLoadClass & cload,int idx,bool pre30);
-	bool read_collision_connection(ChunkLoadClass & cload,int idx,bool pre30);
-	bool read_skin_connection(ChunkLoadClass & cload,int idx,bool pre30);
-
-	// HModelClass requires intimate knowlege of us
-	friend class HModelClass;
-	friend class HLodClass;
+  // HModelClass requires intimate knowlege of us
+  friend class HModelClass;
+  friend class HLodClass;
 };
 
 #endif

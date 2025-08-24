@@ -31,4 +31,3 @@
 std::string intToString(int val);
 
 #endif // __MISC_H__
-

@@ -43,19 +43,18 @@ class INI;
 // IMPORTANT NOTE: you should endeavor to set up states such that the most "normal"
 // state is defined by the bit being off. That is, the typical "normal" condition
 // has all condition flags set to zero.
-enum ArmorSetType CPP_11(: Int)
-{
-	// The access and use of this enum has the bit shifting built in, so this is a 0,1,2,3,4,5 enum
-	ARMORSET_VETERAN		= 0,
-	ARMORSET_ELITE			= 1,
-	ARMORSET_HERO				= 2,
-	ARMORSET_PLAYER_UPGRADE = 3,
-	ARMORSET_WEAK_VERSUS_BASEDEFENSES = 4,
-	ARMORSET_SECOND_LIFE = 5,	///< Body Module has marked us as on our second life
-	ARMORSET_CRATE_UPGRADE_ONE, ///< Just like weaponset type from salvage.
-	ARMORSET_CRATE_UPGRADE_TWO,
+enum ArmorSetType CPP_11( : Int){
+  // The access and use of this enum has the bit shifting built in, so this is a 0,1,2,3,4,5 enum
+  ARMORSET_VETERAN = 0,
+  ARMORSET_ELITE = 1,
+  ARMORSET_HERO = 2,
+  ARMORSET_PLAYER_UPGRADE = 3,
+  ARMORSET_WEAK_VERSUS_BASEDEFENSES = 4,
+  ARMORSET_SECOND_LIFE = 5, ///< Body Module has marked us as on our second life
+  ARMORSET_CRATE_UPGRADE_ONE, ///< Just like weaponset type from salvage.
+  ARMORSET_CRATE_UPGRADE_TWO,
 
-	ARMORSET_COUNT			///< keep last, please
+  ARMORSET_COUNT ///< keep last, please
 };
 
 //-------------------------------------------------------------------------------------------------
@@ -64,37 +63,34 @@ typedef BitFlags<ARMORSET_COUNT> ArmorSetFlags;
 //-------------------------------------------------------------------------------------------------
 class ArmorTemplateSet
 {
-private:
-	ArmorSetFlags m_types;
-	const ArmorTemplate* m_template;
-	const DamageFX* m_fx;
+  private:
+  ArmorSetFlags m_types;
+  const ArmorTemplate *m_template;
+  const DamageFX *m_fx;
 
-public:
-	inline ArmorTemplateSet()
-	{
-		clear();
-	}
+  public:
+  inline ArmorTemplateSet() { clear(); }
 
-	inline void clear()
-	{
-		m_types.clear();
-		m_template = NULL;
-		m_fx = NULL;
-	}
+  inline void clear()
+  {
+    m_types.clear();
+    m_template = NULL;
+    m_fx = NULL;
+  }
 
-	inline const ArmorTemplate* getArmorTemplate() const { return m_template; }
-	inline const DamageFX* getDamageFX() const { return m_fx; }
+  inline const ArmorTemplate *getArmorTemplate() const { return m_template; }
+  inline const DamageFX *getDamageFX() const { return m_fx; }
 
-	inline Int getConditionsYesCount() const { return 1; }
-	inline const ArmorSetFlags& getNthConditionsYes(Int i) const { return m_types; }
+  inline Int getConditionsYesCount() const { return 1; }
+  inline const ArmorSetFlags &getNthConditionsYes(Int i) const { return m_types; }
 #if defined(RTS_DEBUG)
-	inline AsciiString getDescription() const { return AsciiString("ArmorTemplateSet"); }
+  inline AsciiString getDescription() const { return AsciiString("ArmorTemplateSet"); }
 #endif
 
-	void parseArmorTemplateSet( INI* ini );
+  void parseArmorTemplateSet(INI *ini);
 };
 
 //-------------------------------------------------------------------------------------------------
 typedef std::vector<ArmorTemplateSet> ArmorTemplateSetVector;
 
-#endif	// _ArmorSet_H_
+#endif // _ArmorSet_H_

@@ -34,7 +34,7 @@
 #include "Common/GameType.h"
 #include "GameClient/Color.h"
 
-enum ShadowType CPP_11(: Int);
+enum ShadowType CPP_11( : Int);
 class Player;
 class Shadow;
 class RadiusDecalTemplate;
@@ -42,54 +42,57 @@ class RadiusDecalTemplate;
 // ------------------------------------------------------------------------------------------------
 class RadiusDecal
 {
-	friend class RadiusDecalTemplate;
-private:
-	const RadiusDecalTemplate*	m_template;
-	Shadow*											m_decal;
-	Bool												m_empty;
-public:
-	RadiusDecal();
-	RadiusDecal(const RadiusDecal& that);
-	RadiusDecal& operator=(const RadiusDecal& that);
-	~RadiusDecal();
+  friend class RadiusDecalTemplate;
 
-	void xferRadiusDecal( Xfer *xfer );
+  private:
+  const RadiusDecalTemplate *m_template;
+  Shadow *m_decal;
+  Bool m_empty;
 
-	// please note: it is very important, for game/net sync reasons, to ensure that
-	// isEmpty() returns the same value, regardless of whether this decal will
-	// be visible to the local player or not.
-	Bool isEmpty() const { return m_empty; }
-	void clear();
-	void update();
-	void setPosition(const Coord3D& pos);
-	void setOpacity( const Real o );
+  public:
+  RadiusDecal();
+  RadiusDecal(const RadiusDecal &that);
+  RadiusDecal &operator=(const RadiusDecal &that);
+  ~RadiusDecal();
+
+  void xferRadiusDecal(Xfer *xfer);
+
+  // please note: it is very important, for game/net sync reasons, to ensure that
+  // isEmpty() returns the same value, regardless of whether this decal will
+  // be visible to the local player or not.
+  Bool isEmpty() const { return m_empty; }
+  void clear();
+  void update();
+  void setPosition(const Coord3D &pos);
+  void setOpacity(const Real o);
 };
 
 // ------------------------------------------------------------------------------------------------
 class RadiusDecalTemplate
 {
-	friend class RadiusDecal;
-private:
-	AsciiString		m_name;
-	ShadowType		m_shadowType;
-	Real					m_minOpacity;
-	Real					m_maxOpacity;
-	UnsignedInt		m_opacityThrobTime;
-	Color					m_color;
-	Bool					m_onlyVisibleToOwningPlayer;
+  friend class RadiusDecal;
 
-public:
-	RadiusDecalTemplate();
+  private:
+  AsciiString m_name;
+  ShadowType m_shadowType;
+  Real m_minOpacity;
+  Real m_maxOpacity;
+  UnsignedInt m_opacityThrobTime;
+  Color m_color;
+  Bool m_onlyVisibleToOwningPlayer;
 
-	Bool valid() const { return m_name.isNotEmpty(); }
-	void xferRadiusDecalTemplate( Xfer *xfer );
+  public:
+  RadiusDecalTemplate();
 
-	// please note: it is very important, for game/net sync reasons, to ensure that
-	// a valid radiusdecal is created, even if will not be visible to the local player,
-	// since some logic makes decisions based on this.
-	void createRadiusDecal(const Coord3D& pos, Real radius, const Player* owningPlayer, RadiusDecal& result) const;
+  Bool valid() const { return m_name.isNotEmpty(); }
+  void xferRadiusDecalTemplate(Xfer *xfer);
 
-	static void parseRadiusDecalTemplate(INI* ini, void *instance, void * store, const void* /*userData*/);
+  // please note: it is very important, for game/net sync reasons, to ensure that
+  // a valid radiusdecal is created, even if will not be visible to the local player,
+  // since some logic makes decisions based on this.
+  void createRadiusDecal(const Coord3D &pos, Real radius, const Player *owningPlayer, RadiusDecal &result) const;
+
+  static void parseRadiusDecalTemplate(INI *ini, void *instance, void *store, const void * /*userData*/);
 };
 
 #endif

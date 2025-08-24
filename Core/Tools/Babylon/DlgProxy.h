@@ -33,42 +33,41 @@ class CBabylonDlg;
 
 class CBabylonDlgAutoProxy : public CCmdTarget
 {
-	DECLARE_DYNCREATE(CBabylonDlgAutoProxy)
+  DECLARE_DYNCREATE(CBabylonDlgAutoProxy)
 
-	CBabylonDlgAutoProxy();           // protected constructor used by dynamic creation
+  CBabylonDlgAutoProxy(); // protected constructor used by dynamic creation
 
-// Attributes
-public:
-	CBabylonDlg* m_pDialog;
+  // Attributes
+  public:
+  CBabylonDlg *m_pDialog;
 
-// Operations
-public:
+  // Operations
+  public:
+  // Overrides
+  // ClassWizard generated virtual function overrides
+  //{{AFX_VIRTUAL(CBabylonDlgAutoProxy)
+  public:
+  virtual void OnFinalRelease();
+  //}}AFX_VIRTUAL
 
-// Overrides
-	// ClassWizard generated virtual function overrides
-	//{{AFX_VIRTUAL(CBabylonDlgAutoProxy)
-	public:
-	virtual void OnFinalRelease();
-	//}}AFX_VIRTUAL
+  // Implementation
+  protected:
+  virtual ~CBabylonDlgAutoProxy();
 
-// Implementation
-protected:
-	virtual ~CBabylonDlgAutoProxy();
+  // Generated message map functions
+  //{{AFX_MSG(CBabylonDlgAutoProxy)
+  // NOTE - the ClassWizard will add and remove member functions here.
+  //}}AFX_MSG
 
-	// Generated message map functions
-	//{{AFX_MSG(CBabylonDlgAutoProxy)
-		// NOTE - the ClassWizard will add and remove member functions here.
-	//}}AFX_MSG
+  DECLARE_MESSAGE_MAP()
+  DECLARE_OLECREATE(CBabylonDlgAutoProxy)
 
-	DECLARE_MESSAGE_MAP()
-	DECLARE_OLECREATE(CBabylonDlgAutoProxy)
-
-	// Generated OLE dispatch map functions
-	//{{AFX_DISPATCH(CBabylonDlgAutoProxy)
-		// NOTE - the ClassWizard will add and remove member functions here.
-	//}}AFX_DISPATCH
-	DECLARE_DISPATCH_MAP()
-	DECLARE_INTERFACE_MAP()
+  // Generated OLE dispatch map functions
+  //{{AFX_DISPATCH(CBabylonDlgAutoProxy)
+  // NOTE - the ClassWizard will add and remove member functions here.
+  //}}AFX_DISPATCH
+  DECLARE_DISPATCH_MAP()
+  DECLARE_INTERFACE_MAP()
 };
 
 /////////////////////////////////////////////////////////////////////////////

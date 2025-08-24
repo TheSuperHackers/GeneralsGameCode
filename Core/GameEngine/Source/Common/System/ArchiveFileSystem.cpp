@@ -51,29 +51,21 @@
 #include "Common/AsciiString.h"
 #include "Common/PerfTimer.h"
 
-
 //----------------------------------------------------------------------------
 //         Externals
 //----------------------------------------------------------------------------
-
-
 
 //----------------------------------------------------------------------------
 //         Defines
 //----------------------------------------------------------------------------
 
-
-
 //----------------------------------------------------------------------------
 //         Private Types
 //----------------------------------------------------------------------------
 
-
 //----------------------------------------------------------------------------
 //         Private Data
 //----------------------------------------------------------------------------
-
-
 
 //----------------------------------------------------------------------------
 //         Public Data
@@ -81,18 +73,13 @@
 
 ArchiveFileSystem *TheArchiveFileSystem = NULL;
 
-
 //----------------------------------------------------------------------------
 //         Private Prototypes
 //----------------------------------------------------------------------------
 
-
-
 //----------------------------------------------------------------------------
 //         Private Functions
 //----------------------------------------------------------------------------
-
-
 
 //----------------------------------------------------------------------------
 //         Public Functions
@@ -107,216 +94,235 @@ ArchiveFileSystem::ArchiveFileSystem()
 
 ArchiveFileSystem::~ArchiveFileSystem()
 {
-	ArchiveFileMap::iterator iter = m_archiveFileMap.begin();
-	while (iter != m_archiveFileMap.end()) {
-		ArchiveFile *file = iter->second;
-		if (file != NULL) {
-			delete file;
-			file = NULL;
-		}
-		iter++;
-	}
+  ArchiveFileMap::iterator iter = m_archiveFileMap.begin();
+  while (iter != m_archiveFileMap.end())
+  {
+    ArchiveFile *file = iter->second;
+    if (file != NULL)
+    {
+      delete file;
+      file = NULL;
+    }
+    iter++;
+  }
 }
 
-void ArchiveFileSystem::loadIntoDirectoryTree(const ArchiveFile *archiveFile, const AsciiString& archiveFilename, Bool overwrite)
+void ArchiveFileSystem::loadIntoDirectoryTree(
+    const ArchiveFile *archiveFile,
+    const AsciiString &archiveFilename,
+    Bool overwrite)
 {
+  FilenameList filenameList;
 
-	FilenameList filenameList;
+  archiveFile->getFileListInDirectory(AsciiString(""), AsciiString(""), AsciiString("*"), filenameList, TRUE);
 
-	archiveFile->getFileListInDirectory(AsciiString(""), AsciiString(""), AsciiString("*"), filenameList, TRUE);
+  FilenameListIter it = filenameList.begin();
 
-	FilenameListIter it = filenameList.begin();
+  while (it != filenameList.end())
+  {
+    // add this filename to the directory tree.
+    AsciiString path = *it;
+    path.toLower();
+    AsciiString token;
+    AsciiString debugpath;
 
-	while (it != filenameList.end()) {
-		// add this filename to the directory tree.
-		AsciiString path = *it;
-		path.toLower();
-		AsciiString token;
-		AsciiString debugpath;
+    ArchivedDirectoryInfo *dirInfo = &m_rootDirectory;
 
-		ArchivedDirectoryInfo *dirInfo = &m_rootDirectory;
+    Bool infoInPath;
+    infoInPath = path.nextToken(&token, "\\/");
 
-		Bool infoInPath;
-		infoInPath = path.nextToken(&token, "\\/");
+    while (infoInPath && (!token.find('.') || path.find('.')))
+    {
+      ArchivedDirectoryInfoMap::iterator tempiter = dirInfo->m_directories.find(token);
+      if (tempiter == dirInfo->m_directories.end())
+      {
+        dirInfo->m_directories[token].clear();
+        dirInfo->m_directories[token].m_directoryName = token;
+      }
 
-		while (infoInPath && (!token.find('.') || path.find('.'))) {
-			ArchivedDirectoryInfoMap::iterator tempiter = dirInfo->m_directories.find(token);
-			if (tempiter == dirInfo->m_directories.end())
-			{
-				dirInfo->m_directories[token].clear();
-				dirInfo->m_directories[token].m_directoryName = token;
-			}
+      dirInfo = &(dirInfo->m_directories[token]);
+      debugpath.concat(token);
+      debugpath.concat('\\');
+      infoInPath = path.nextToken(&token, "\\/");
+    }
 
-			dirInfo = &(dirInfo->m_directories[token]);
-			debugpath.concat(token);
-			debugpath.concat('\\');
-			infoInPath = path.nextToken(&token, "\\/");
-		}
+    // token is the filename, and dirInfo is the directory that this file is in.
+    if (dirInfo->m_files.find(token) == dirInfo->m_files.end() || overwrite)
+    {
+      AsciiString path2;
+      path2 = debugpath;
+      path2.concat(token);
+      //			DEBUG_LOG(("ArchiveFileSystem::loadIntoDirectoryTree - adding file %s, archived in %s", path2.str(),
+      // archiveFilename.str()));
+      dirInfo->m_files[token] = archiveFilename;
+    }
 
-		// token is the filename, and dirInfo is the directory that this file is in.
-		if (dirInfo->m_files.find(token) == dirInfo->m_files.end() || overwrite) {
-			AsciiString path2;
-			path2 = debugpath;
-			path2.concat(token);
-//			DEBUG_LOG(("ArchiveFileSystem::loadIntoDirectoryTree - adding file %s, archived in %s", path2.str(), archiveFilename.str()));
-			dirInfo->m_files[token] = archiveFilename;
-		}
-
-		it++;
-	}
+    it++;
+  }
 }
 
-void ArchiveFileSystem::loadMods() {
-	if (TheGlobalData->m_modBIG.isNotEmpty())
-	{
-		ArchiveFile *archiveFile = openArchiveFile(TheGlobalData->m_modBIG.str());
+void ArchiveFileSystem::loadMods()
+{
+  if (TheGlobalData->m_modBIG.isNotEmpty())
+  {
+    ArchiveFile *archiveFile = openArchiveFile(TheGlobalData->m_modBIG.str());
 
-		if (archiveFile != NULL) {
-			DEBUG_LOG(("ArchiveFileSystem::loadMods - loading %s into the directory tree.", TheGlobalData->m_modBIG.str()));
-			loadIntoDirectoryTree(archiveFile, TheGlobalData->m_modBIG, TRUE);
-			m_archiveFileMap[TheGlobalData->m_modBIG] = archiveFile;
-			DEBUG_LOG(("ArchiveFileSystem::loadMods - %s inserted into the archive file map.", TheGlobalData->m_modBIG.str()));
-		}
-		else
-		{
-			DEBUG_LOG(("ArchiveFileSystem::loadMods - could not openArchiveFile(%s)", TheGlobalData->m_modBIG.str()));
-		}
-	}
+    if (archiveFile != NULL)
+    {
+      DEBUG_LOG(("ArchiveFileSystem::loadMods - loading %s into the directory tree.", TheGlobalData->m_modBIG.str()));
+      loadIntoDirectoryTree(archiveFile, TheGlobalData->m_modBIG, TRUE);
+      m_archiveFileMap[TheGlobalData->m_modBIG] = archiveFile;
+      DEBUG_LOG(("ArchiveFileSystem::loadMods - %s inserted into the archive file map.", TheGlobalData->m_modBIG.str()));
+    }
+    else
+    {
+      DEBUG_LOG(("ArchiveFileSystem::loadMods - could not openArchiveFile(%s)", TheGlobalData->m_modBIG.str()));
+    }
+  }
 
-	if (TheGlobalData->m_modDir.isNotEmpty())
-	{
+  if (TheGlobalData->m_modDir.isNotEmpty())
+  {
 #ifdef DEBUG_LOGGING
-		Bool ret =
+    Bool ret =
 #endif
-		loadBigFilesFromDirectory(TheGlobalData->m_modDir, "*.big", TRUE);
-		DEBUG_ASSERTLOG(ret, ("loadBigFilesFromDirectory(%s) returned FALSE!", TheGlobalData->m_modDir.str()));
-	}
+        loadBigFilesFromDirectory(TheGlobalData->m_modDir, "*.big", TRUE);
+    DEBUG_ASSERTLOG(ret, ("loadBigFilesFromDirectory(%s) returned FALSE!", TheGlobalData->m_modDir.str()));
+  }
 }
 
 Bool ArchiveFileSystem::doesFileExist(const Char *filename) const
 {
-	AsciiString path = filename;
-	path.toLower();
-	AsciiString token;
+  AsciiString path = filename;
+  path.toLower();
+  AsciiString token;
 
-	const ArchivedDirectoryInfo *dirInfo = &m_rootDirectory;
+  const ArchivedDirectoryInfo *dirInfo = &m_rootDirectory;
 
-	path.nextToken(&token, "\\/");
+  path.nextToken(&token, "\\/");
 
-	while (!token.find('.') || path.find('.'))
-	{
-		ArchivedDirectoryInfoMap::const_iterator tempiter = dirInfo->m_directories.find(token);
-		if (tempiter != dirInfo->m_directories.end())
-		{
-			dirInfo = &tempiter->second;
-			path.nextToken(&token, "\\/");
-		}
-		else
-		{
-			// the directory doesn't exist, so return false
-			return FALSE;
-		}
-	}
+  while (!token.find('.') || path.find('.'))
+  {
+    ArchivedDirectoryInfoMap::const_iterator tempiter = dirInfo->m_directories.find(token);
+    if (tempiter != dirInfo->m_directories.end())
+    {
+      dirInfo = &tempiter->second;
+      path.nextToken(&token, "\\/");
+    }
+    else
+    {
+      // the directory doesn't exist, so return false
+      return FALSE;
+    }
+  }
 
-	// token is the filename, and dirInfo is the directory that this file is in.
-	if (dirInfo->m_files.find(token) == dirInfo->m_files.end()) {
-		return FALSE;
-	}
-	return TRUE;
+  // token is the filename, and dirInfo is the directory that this file is in.
+  if (dirInfo->m_files.find(token) == dirInfo->m_files.end())
+  {
+    return FALSE;
+  }
+  return TRUE;
 }
 
-File * ArchiveFileSystem::openFile(const Char *filename, Int access /* = 0 */)
+File *ArchiveFileSystem::openFile(const Char *filename, Int access /* = 0 */)
 {
-	AsciiString archiveFilename;
-	archiveFilename = getArchiveFilenameForFile(AsciiString(filename));
+  AsciiString archiveFilename;
+  archiveFilename = getArchiveFilenameForFile(AsciiString(filename));
 
-	if (archiveFilename.getLength() == 0) {
-		return NULL;
-	}
+  if (archiveFilename.getLength() == 0)
+  {
+    return NULL;
+  }
 
-	return m_archiveFileMap[archiveFilename]->openFile(filename, access);
+  return m_archiveFileMap[archiveFilename]->openFile(filename, access);
 }
 
-Bool ArchiveFileSystem::getFileInfo(const AsciiString& filename, FileInfo *fileInfo) const
+Bool ArchiveFileSystem::getFileInfo(const AsciiString &filename, FileInfo *fileInfo) const
 {
-	if (fileInfo == NULL) {
-		return FALSE;
-	}
+  if (fileInfo == NULL)
+  {
+    return FALSE;
+  }
 
-	if (filename.getLength() <= 0) {
-		return FALSE;
-	}
+  if (filename.getLength() <= 0)
+  {
+    return FALSE;
+  }
 
-	AsciiString archiveFilename = getArchiveFilenameForFile(filename);
-	ArchiveFileMap::const_iterator it = m_archiveFileMap.find(archiveFilename);
-	if (it != m_archiveFileMap.end())
-	{
-		return it->second->getFileInfo(filename, fileInfo);
-	}
-	else
-	{
-		return FALSE;
-	}
+  AsciiString archiveFilename = getArchiveFilenameForFile(filename);
+  ArchiveFileMap::const_iterator it = m_archiveFileMap.find(archiveFilename);
+  if (it != m_archiveFileMap.end())
+  {
+    return it->second->getFileInfo(filename, fileInfo);
+  }
+  else
+  {
+    return FALSE;
+  }
 }
 
-AsciiString ArchiveFileSystem::getArchiveFilenameForFile(const AsciiString& filename) const
+AsciiString ArchiveFileSystem::getArchiveFilenameForFile(const AsciiString &filename) const
 {
-	AsciiString path;
-	path = filename;
-	path.toLower();
-	AsciiString token;
-	AsciiString debugpath;
+  AsciiString path;
+  path = filename;
+  path.toLower();
+  AsciiString token;
+  AsciiString debugpath;
 
-	const ArchivedDirectoryInfo *dirInfo = &m_rootDirectory;
+  const ArchivedDirectoryInfo *dirInfo = &m_rootDirectory;
 
-	path.nextToken(&token, "\\/");
+  path.nextToken(&token, "\\/");
 
-	while (!token.find('.') || path.find('.')) {
+  while (!token.find('.') || path.find('.'))
+  {
+    ArchivedDirectoryInfoMap::const_iterator it = dirInfo->m_directories.find(token);
+    if (it != dirInfo->m_directories.end())
+    {
+      dirInfo = &it->second;
+    }
+    else
+    {
+      // the directory doesn't exist, so return NULL
 
-		ArchivedDirectoryInfoMap::const_iterator it = dirInfo->m_directories.find(token);
-		if (it != dirInfo->m_directories.end())
-		{
-			dirInfo = &it->second;
-		}
-		else
-		{
-			// the directory doesn't exist, so return NULL
+      // dump the directories;
+      // DEBUG_LOG(("directory %s not found in %s in archive file system", token.str(), debugpath.str()));
+      // DEBUG_LOG(("directories in %s in archive file system are:", debugpath.str()));
+      // ArchivedDirectoryInfoMap::const_iterator it = dirInfo->m_directories.begin();
+      // while (it != dirInfo->m_directories.end()) {
+      //	DEBUG_LOG(("\t%s", it->second.m_directoryName.str()));
+      //	it++;
+      //}
+      // DEBUG_LOG(("end of directory list."));
+      return AsciiString::TheEmptyString;
+    }
 
-			// dump the directories;
-			//DEBUG_LOG(("directory %s not found in %s in archive file system", token.str(), debugpath.str()));
-			//DEBUG_LOG(("directories in %s in archive file system are:", debugpath.str()));
-			//ArchivedDirectoryInfoMap::const_iterator it = dirInfo->m_directories.begin();
-			//while (it != dirInfo->m_directories.end()) {
-			//	DEBUG_LOG(("\t%s", it->second.m_directoryName.str()));
-			//	it++;
-			//}
-			//DEBUG_LOG(("end of directory list."));
-			return AsciiString::TheEmptyString;
-		}
+    debugpath.concat(token);
+    debugpath.concat('\\');
 
-		debugpath.concat(token);
-		debugpath.concat('\\');
+    path.nextToken(&token, "\\/");
+  }
 
-		path.nextToken(&token, "\\/");
-	}
-
-	ArchivedFileLocationMap::const_iterator it = dirInfo->m_files.find(token);
-	if (it != dirInfo->m_files.end())
-	{
-		return it->second;
-	}
-	else
-	{
-		return AsciiString::TheEmptyString;
-	}
-
+  ArchivedFileLocationMap::const_iterator it = dirInfo->m_files.find(token);
+  if (it != dirInfo->m_files.end())
+  {
+    return it->second;
+  }
+  else
+  {
+    return AsciiString::TheEmptyString;
+  }
 }
 
-void ArchiveFileSystem::getFileListInDirectory(const AsciiString& currentDirectory, const AsciiString& originalDirectory, const AsciiString& searchName, FilenameList &filenameList, Bool searchSubdirectories) const
+void ArchiveFileSystem::getFileListInDirectory(
+    const AsciiString &currentDirectory,
+    const AsciiString &originalDirectory,
+    const AsciiString &searchName,
+    FilenameList &filenameList,
+    Bool searchSubdirectories) const
 {
-	ArchiveFileMap::const_iterator it = m_archiveFileMap.begin();
-	while (it != m_archiveFileMap.end()) {
-		it->second->getFileListInDirectory(currentDirectory, originalDirectory, searchName, filenameList, searchSubdirectories);
-		it++;
-	}
+  ArchiveFileMap::const_iterator it = m_archiveFileMap.begin();
+  while (it != m_archiveFileMap.end())
+  {
+    it->second->getFileListInDirectory(currentDirectory, originalDirectory, searchName, filenameList, searchSubdirectories);
+    it++;
+  }
 }

@@ -80,50 +80,44 @@ static NameKeyType closeButtonID = NAMEKEY_INVALID;
 // MOTDSystem =================================================================
 /** Message of the day */
 //=============================================================================
-WindowMsgHandledType MOTDSystem( GameWindow *window, UnsignedInt msg,
-								 WindowMsgData mData1, WindowMsgData mData2 )
+WindowMsgHandledType MOTDSystem(GameWindow *window, UnsignedInt msg, WindowMsgData mData1, WindowMsgData mData2)
 {
-	switch( msg )
-	{
+  switch (msg)
+  {
+    // ------------------------------------------------------------------------
+    case GWM_CREATE:
+    {
+      // load id's needed
+      closeButtonID = TheNameKeyGenerator->nameToKey("MOTD.wnd:CloseMOTD");
 
-		// ------------------------------------------------------------------------
-		case GWM_CREATE:
-		{
+      break;
 
-			// load id's needed
-			closeButtonID = TheNameKeyGenerator->nameToKey( "MOTD.wnd:CloseMOTD" );
+    } // end create
 
-			break;
+    // ------------------------------------------------------------------------
+    case GWM_DESTROY:
+    {
+      break;
 
-		}  // end create
+    } // end case
 
-		// ------------------------------------------------------------------------
-		case GWM_DESTROY:
-		{
+    // ------------------------------------------------------------------------
+    case GBM_SELECTED:
+    {
+      GameWindow *control = (GameWindow *)mData1;
+      Int controlID = control->winGetWindowId();
 
-			break;
+      if (controlID == closeButtonID)
+        window->winHide(!window->winIsHidden());
 
-		}  // end case
+      break;
 
-		// ------------------------------------------------------------------------
-		case GBM_SELECTED:
-		{
-			GameWindow *control = (GameWindow *)mData1;
-			Int controlID = control->winGetWindowId();
+    } // end selected
 
-			if( controlID == closeButtonID )
-				window->winHide( !window->winIsHidden() );
+    default:
+      return MSG_IGNORED;
+  } // end switch
 
-			break;
+  return MSG_HANDLED;
 
-		}  // end selected
-
-		default:
-			return MSG_IGNORED;
-	}  // end switch
-
-	return MSG_HANDLED;
-
-}  // end MOTDSystem
-
-
+} // end MOTDSystem

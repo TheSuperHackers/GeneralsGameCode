@@ -35,12 +35,12 @@
 
 class Win32LocalFile : public LocalFile
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(Win32LocalFile, "Win32LocalFile")
-public:
-	Win32LocalFile();
-	//virtual ~Win32LocalFile();
+  MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(Win32LocalFile, "Win32LocalFile")
+  public:
+  Win32LocalFile();
+  // virtual ~Win32LocalFile();
 
-protected:
+  protected:
 };
 
 #endif // __WIN32LOCALFILE_H

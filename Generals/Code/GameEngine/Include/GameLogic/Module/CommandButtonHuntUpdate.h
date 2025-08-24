@@ -40,20 +40,18 @@
 class ThingTemplate;
 class WeaponTemplate;
 
-
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 class CommandButtonHuntUpdateModuleData : public ModuleData
 {
-public:
-	UnsignedInt			m_scanFrames;
-	Real						m_scanRange;
+  public:
+  UnsignedInt m_scanFrames;
+  Real m_scanRange;
 
-	CommandButtonHuntUpdateModuleData();
-	static void buildFieldParse(MultiIniFieldParse& p);
+  CommandButtonHuntUpdateModuleData();
+  static void buildFieldParse(MultiIniFieldParse &p);
 
-private:
-
+  private:
 };
 
 //-------------------------------------------------------------------------------------------------
@@ -61,31 +59,26 @@ private:
 //-------------------------------------------------------------------------------------------------
 class CommandButtonHuntUpdate : public UpdateModule
 {
+  MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(CommandButtonHuntUpdate, "CommandButtonHuntUpdate")
+  MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA(CommandButtonHuntUpdate, CommandButtonHuntUpdateModuleData);
 
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( CommandButtonHuntUpdate, "CommandButtonHuntUpdate" )
-	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( CommandButtonHuntUpdate, CommandButtonHuntUpdateModuleData );
+  public:
+  CommandButtonHuntUpdate(Thing *thing, const ModuleData *moduleData);
+  // virtual destructor prototype provided by memory pool declaration
 
-public:
+  virtual void onObjectCreated();
+  virtual UpdateSleepTime update();
 
-	CommandButtonHuntUpdate( Thing *thing, const ModuleData* moduleData );
-	// virtual destructor prototype provided by memory pool declaration
+  void setCommandButton(const AsciiString &buttonName);
 
-	virtual void onObjectCreated();
-	virtual UpdateSleepTime update();
+  protected:
+  Object *scanClosestTarget(void);
+  UpdateSleepTime huntSpecialPower(AIUpdateInterface *ai);
+  UpdateSleepTime huntWeapon(AIUpdateInterface *ai);
 
-	void setCommandButton(const AsciiString& buttonName);
-
-protected:
-	Object* scanClosestTarget(void);
-	UpdateSleepTime huntSpecialPower(AIUpdateInterface *ai);
-	UpdateSleepTime huntWeapon(AIUpdateInterface *ai);
-
-
-protected:
-	AsciiString		m_commandButtonName;
-	const CommandButton *m_commandButton;
+  protected:
+  AsciiString m_commandButtonName;
+  const CommandButton *m_commandButton;
 };
 
-
 #endif
-

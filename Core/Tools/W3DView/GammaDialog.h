@@ -30,35 +30,36 @@
 
 class GammaDialogClass : public CDialog
 {
-// Construction
-public:
-	GammaDialogClass(CWnd* pParent = NULL);   // standard constructor
+  // Construction
+  public:
+  GammaDialogClass(CWnd *pParent = NULL); // standard constructor
 
-// Dialog Data
-	//{{AFX_DATA(GammaDialogClass)
-	enum { IDD = IDD_GAMMA_DIALOG };
-	CSliderCtrl	m_gammaslider;
-	int		m_gamma;
-	//}}AFX_DATA
+  // Dialog Data
+  //{{AFX_DATA(GammaDialogClass)
+  enum
+  {
+    IDD = IDD_GAMMA_DIALOG
+  };
+  CSliderCtrl m_gammaslider;
+  int m_gamma;
+  //}}AFX_DATA
 
+  // Overrides
+  // ClassWizard generated virtual function overrides
+  //{{AFX_VIRTUAL(GammaDialogClass)
+  protected:
+  virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
+  //}}AFX_VIRTUAL
 
-// Overrides
-	// ClassWizard generated virtual function overrides
-	//{{AFX_VIRTUAL(GammaDialogClass)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
-	//}}AFX_VIRTUAL
-
-// Implementation
-protected:
-
-	// Generated message map functions
-	//{{AFX_MSG(GammaDialogClass)
-	virtual BOOL OnInitDialog();
-	virtual void OnOK();
-	afx_msg void OnReleasedcaptureGammaSlider(NMHDR* pNMHDR, LRESULT* pResult);
-	//}}AFX_MSG
-	DECLARE_MESSAGE_MAP()
+  // Implementation
+  protected:
+  // Generated message map functions
+  //{{AFX_MSG(GammaDialogClass)
+  virtual BOOL OnInitDialog();
+  virtual void OnOK();
+  afx_msg void OnReleasedcaptureGammaSlider(NMHDR *pNMHDR, LRESULT *pResult);
+  //}}AFX_MSG
+  DECLARE_MESSAGE_MAP()
 };
 
 //{{AFX_INSERT_LOCATION}}

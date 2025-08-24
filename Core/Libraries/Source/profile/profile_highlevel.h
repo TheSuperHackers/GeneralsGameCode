@@ -27,7 +27,7 @@
 // High level profiling
 //////////////////////////////////////////////////////////////////////////////
 #ifdef _MSC_VER
-#  pragma once
+#pragma once
 #endif
 #ifndef PROFILE_HIGHLEVEL_H // Include guard
 #define PROFILE_HIGHLEVEL_H
@@ -43,18 +43,17 @@ class ProfileHighLevel
   friend class Profile;
 
   // no, no copying allowed!
-  ProfileHighLevel(const ProfileHighLevel&);
-  ProfileHighLevel& operator=(const ProfileHighLevel&);
+  ProfileHighLevel(const ProfileHighLevel &);
+  ProfileHighLevel &operator=(const ProfileHighLevel &);
 
-public:
-
+  public:
   /// \brief A high level profile ID.
   class Id
   {
     friend ProfileHighLevel;
 
-  public:
-    Id(void): m_idPtr(0) {}
+public:
+    Id(void) : m_idPtr(0) {}
 
     /**
       \brief Increment the internal profile value.
@@ -63,7 +62,7 @@ public:
 
       \param add amount to add to internal profile value
     */
-    void Increment(double add=1.0);
+    void Increment(double add = 1.0);
 
     /**
       \brief Set a new maximum value.
@@ -138,8 +137,7 @@ public:
     */
     const char *GetTotalValue(void) const;
 
-  private:
-
+private:
     /// internal pointer
     ProfileId *m_idPtr;
   };
@@ -150,10 +148,10 @@ public:
     friend ProfileHighLevel;
 
     // no copying
-    Block(const Block&);
-    Block& operator=(const Block&);
+    Block(const Block &);
+    Block &operator=(const Block &);
 
-  public:
+public:
     /**
       \brief Instructs high level profiler to start a new timer
              based function block (or update if it already exists)
@@ -168,7 +166,7 @@ public:
     /// \brief Updates timer based function block
     ~Block();
 
-  private:
+private:
     /// internal id (time)
     Id m_idTime;
 
@@ -196,7 +194,7 @@ public:
     \param exp10 10 base exponent (used for scaleing)
     \return internal profile ID value
   */
-  static Id AddProfile(const char *name, const char *descr, const char *unit, int precision, int exp10=0);
+  static Id AddProfile(const char *name, const char *descr, const char *unit, int precision, int exp10 = 0);
 
   /**
     \brief Enumerates the list of known high level profile values.
@@ -222,8 +220,7 @@ public:
   */
   static bool FindProfile(const char *name, Id &id);
 
-private:
-
+  private:
   /** \internal
 
     Undocumented default constructor. Initializes high level profiler.

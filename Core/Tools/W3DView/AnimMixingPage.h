@@ -32,43 +32,44 @@ class CAdvancedAnimSheet;
 
 class CAnimMixingPage : public CPropertyPage
 {
-	DECLARE_DYNCREATE(CAnimMixingPage)
+  DECLARE_DYNCREATE(CAnimMixingPage)
 
-// Construction
-public:
-	CAnimMixingPage(CAdvancedAnimSheet *sheet = NULL);
-	~CAnimMixingPage();
+  // Construction
+  public:
+  CAnimMixingPage(CAdvancedAnimSheet *sheet = NULL);
+  ~CAnimMixingPage();
 
-// Dialog Data
-	//{{AFX_DATA(CAnimMixingPage)
-	enum { IDD = IDD_PROP_PAGE_ADVANIM_MIXING };
-	CListCtrl	m_AnimList;
-	//}}AFX_DATA
+  // Dialog Data
+  //{{AFX_DATA(CAnimMixingPage)
+  enum
+  {
+    IDD = IDD_PROP_PAGE_ADVANIM_MIXING
+  };
+  CListCtrl m_AnimList;
+  //}}AFX_DATA
 
+  // Overrides
+  // ClassWizard generate virtual function overrides
+  //{{AFX_VIRTUAL(CAnimMixingPage)
+  public:
+  virtual void OnOK();
+  virtual BOOL OnKillActive();
 
-// Overrides
-	// ClassWizard generate virtual function overrides
-	//{{AFX_VIRTUAL(CAnimMixingPage)
-	public:
-	virtual void OnOK();
-	virtual BOOL OnKillActive();
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
-	//}}AFX_VIRTUAL
+  protected:
+  virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
+  //}}AFX_VIRTUAL
 
-// Implementation
-protected:
+  // Implementation
+  protected:
+  void FillListCtrl(void);
 
-	void FillListCtrl (void);
+  CAdvancedAnimSheet *m_Sheet;
 
-	CAdvancedAnimSheet *m_Sheet;
-
-	// Generated message map functions
-	//{{AFX_MSG(CAnimMixingPage)
-	virtual BOOL OnInitDialog();
-	//}}AFX_MSG
-	DECLARE_MESSAGE_MAP()
-
+  // Generated message map functions
+  //{{AFX_MSG(CAnimMixingPage)
+  virtual BOOL OnInitDialog();
+  //}}AFX_MSG
+  DECLARE_MESSAGE_MAP()
 };
 
 //{{AFX_INSERT_LOCATION}}

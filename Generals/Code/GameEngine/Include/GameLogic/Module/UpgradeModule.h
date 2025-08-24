@@ -51,52 +51,50 @@ class Player;
 //-------------------------------------------------------------------------------------------------
 class UpgradeModuleInterface
 {
-public:
-
- 	virtual Bool isAlreadyUpgraded() const = 0;
-	virtual Bool attemptUpgrade( UpgradeMaskType keyMask ) = 0;
-	virtual Bool wouldUpgrade( UpgradeMaskType keyMask ) const = 0;
-	virtual Bool resetUpgrade( UpgradeMaskType keyMask ) = 0;
-	virtual Bool isSubObjectsUpgrade() = 0;
-	virtual void forceRefreshUpgrade() = 0;
-	virtual Bool testUpgradeConditions( UpgradeMaskType keyMask ) const = 0;
-
+  public:
+  virtual Bool isAlreadyUpgraded() const = 0;
+  virtual Bool attemptUpgrade(UpgradeMaskType keyMask) = 0;
+  virtual Bool wouldUpgrade(UpgradeMaskType keyMask) const = 0;
+  virtual Bool resetUpgrade(UpgradeMaskType keyMask) = 0;
+  virtual Bool isSubObjectsUpgrade() = 0;
+  virtual void forceRefreshUpgrade() = 0;
+  virtual Bool testUpgradeConditions(UpgradeMaskType keyMask) const = 0;
 };
 
 //-------------------------------------------------------------------------------------------------
-class UpgradeMuxData	// does NOT inherit from ModuleData.
+class UpgradeMuxData // does NOT inherit from ModuleData.
 {
-public:
-	mutable std::vector<AsciiString>	m_activationUpgradeNames;
-	mutable std::vector<AsciiString>	m_conflictingUpgradeNames;
-	mutable const FXList*							m_fxListUpgrade;
-	mutable UpgradeMaskType						m_activationMask;				///< Activation only supports a single name currently
-	mutable UpgradeMaskType						m_conflictingMask;			///< Conflicts support multiple listings, and they are an OR
-	mutable Bool											m_requiresAllTriggers;
+  public:
+  mutable std::vector<AsciiString> m_activationUpgradeNames;
+  mutable std::vector<AsciiString> m_conflictingUpgradeNames;
+  mutable const FXList *m_fxListUpgrade;
+  mutable UpgradeMaskType m_activationMask; ///< Activation only supports a single name currently
+  mutable UpgradeMaskType m_conflictingMask; ///< Conflicts support multiple listings, and they are an OR
+  mutable Bool m_requiresAllTriggers;
 
-	UpgradeMuxData()
-	{
-		m_fxListUpgrade = NULL;
-		m_activationMask.clear();
-		m_conflictingMask.clear();
-		m_requiresAllTriggers = false;
-	}
+  UpgradeMuxData()
+  {
+    m_fxListUpgrade = NULL;
+    m_activationMask.clear();
+    m_conflictingMask.clear();
+    m_requiresAllTriggers = false;
+  }
 
-	static const FieldParse* getFieldParse()
-	{
-		static const FieldParse dataFieldParse[] =
-		{
-			{ "TriggeredBy",		INI::parseAsciiStringVector, NULL, offsetof( UpgradeMuxData, m_activationUpgradeNames ) },
-			{ "ConflictsWith",	INI::parseAsciiStringVector, NULL, offsetof( UpgradeMuxData, m_conflictingUpgradeNames ) },
-			{ "FXListUpgrade",	INI::parseFXList, NULL, offsetof( UpgradeMuxData, m_fxListUpgrade ) },
-			{ "RequiresAllTriggers", INI::parseBool, NULL, offsetof( UpgradeMuxData, m_requiresAllTriggers ) },
-			{ 0, 0, 0, 0 }
-		};
-		return dataFieldParse;
-	}
-	Bool requiresAllActivationUpgrades() const;
-	void getUpgradeActivationMasks(UpgradeMaskType& activation, UpgradeMaskType& conflicting) const;	///< The first time someone looks at my mask, I'll figure it out.
-	void performUpgradeFX(Object* obj) const;
+  static const FieldParse *getFieldParse()
+  {
+    static const FieldParse dataFieldParse[] = {
+      { "TriggeredBy", INI::parseAsciiStringVector, NULL, offsetof(UpgradeMuxData, m_activationUpgradeNames) },
+      { "ConflictsWith", INI::parseAsciiStringVector, NULL, offsetof(UpgradeMuxData, m_conflictingUpgradeNames) },
+      { "FXListUpgrade", INI::parseFXList, NULL, offsetof(UpgradeMuxData, m_fxListUpgrade) },
+      { "RequiresAllTriggers", INI::parseBool, NULL, offsetof(UpgradeMuxData, m_requiresAllTriggers) },
+      { 0, 0, 0, 0 }
+    };
+    return dataFieldParse;
+  }
+  Bool requiresAllActivationUpgrades() const;
+  void getUpgradeActivationMasks(UpgradeMaskType &activation, UpgradeMaskType &conflicting)
+      const; ///< The first time someone looks at my mask, I'll figure it out.
+  void performUpgradeFX(Object *obj) const;
 };
 
 //-------------------------------------------------------------------------------------------------
@@ -104,101 +102,95 @@ public:
 // that want to implement Upgrades
 class UpgradeMux : public UpgradeModuleInterface
 {
-public:
+  public:
+  UpgradeMux();
 
-	UpgradeMux();
+  virtual Bool isAlreadyUpgraded() const;
+  // ***DANGER! DANGER! Don't use this, unless you are forcing an already made upgrade to refresh!!
+  virtual void forceRefreshUpgrade();
+  virtual Bool attemptUpgrade(UpgradeMaskType keyMask);
+  virtual Bool wouldUpgrade(UpgradeMaskType keyMask) const;
+  virtual Bool resetUpgrade(UpgradeMaskType keyMask);
+  virtual Bool testUpgradeConditions(UpgradeMaskType keyMask) const;
 
-	virtual Bool isAlreadyUpgraded() const ;
-	// ***DANGER! DANGER! Don't use this, unless you are forcing an already made upgrade to refresh!!
-	virtual void forceRefreshUpgrade();
-	virtual Bool attemptUpgrade( UpgradeMaskType keyMask );
-	virtual Bool wouldUpgrade( UpgradeMaskType keyMask ) const;
-	virtual Bool resetUpgrade( UpgradeMaskType keyMask );
-	virtual Bool testUpgradeConditions( UpgradeMaskType keyMask ) const;
+  protected:
+  void setUpgradeExecuted(Bool e) { m_upgradeExecuted = e; }
+  virtual void upgradeImplementation() = 0; ///< Here's the actual work of Upgrading
+  virtual void getUpgradeActivationMasks(UpgradeMaskType &activation, UpgradeMaskType &conflicting)
+      const = 0; ///< Here's the actual work of Upgrading
+  virtual void performUpgradeFX() = 0; ///< perform the associated fx list
+  virtual Bool requiresAllActivationUpgrades() const = 0;
+  virtual Bool isSubObjectsUpgrade() = 0;
 
-protected:
+  void giveSelfUpgrade()
+  {
+    // If I have an activation condition, and I haven't activated, and this key matches my condition.
+    performUpgradeFX();
+    upgradeImplementation();
+    setUpgradeExecuted(true);
+  }
 
-	void setUpgradeExecuted(Bool e) { m_upgradeExecuted = e; }
-	virtual void upgradeImplementation( ) = 0; ///< Here's the actual work of Upgrading
-	virtual void getUpgradeActivationMasks(UpgradeMaskType& activation, UpgradeMaskType& conflicting) const = 0; ///< Here's the actual work of Upgrading
-	virtual void performUpgradeFX() = 0;	///< perform the associated fx list
-	virtual Bool requiresAllActivationUpgrades() const = 0;
-	virtual Bool isSubObjectsUpgrade() = 0;
+  //
+  // this is not a snapshot class itself, but it is a base class used in conjunction with
+  // multiple inheritance for modules, so those modules need to be able to poke inside
+  // this class and xfer the data here during a snapshot process
+  //
+  virtual void upgradeMuxCRC(Xfer *xfer);
+  virtual void upgradeMuxXfer(Xfer *xfer);
+  virtual void upgradeMuxLoadPostProcess(void);
 
-	void giveSelfUpgrade()
-	{
-		// If I have an activation condition, and I haven't activated, and this key matches my condition.
-		performUpgradeFX();
-		upgradeImplementation();
-		setUpgradeExecuted(true);
-	}
-
-	//
-	// this is not a snapshot class itself, but it is a base class used in conjunction with
-	// multiple inheritance for modules, so those modules need to be able to poke inside
-	// this class and xfer the data here during a snapshot process
-	//
-	virtual void upgradeMuxCRC( Xfer *xfer );
-	virtual void upgradeMuxXfer( Xfer *xfer);
-	virtual void upgradeMuxLoadPostProcess( void );
-
-private:
-	Bool m_upgradeExecuted;				///< Upgrade only executes once
-
+  private:
+  Bool m_upgradeExecuted; ///< Upgrade only executes once
 };
 
 //-------------------------------------------------------------------------------------------------
 struct UpgradeModuleData : public BehaviorModuleData
 {
-public:
-	UpgradeMuxData				m_upgradeMuxData;
+  public:
+  UpgradeMuxData m_upgradeMuxData;
 
-	static void buildFieldParse(MultiIniFieldParse& p)
-	{
+  static void buildFieldParse(MultiIniFieldParse &p)
+  {
     ModuleData::buildFieldParse(p);
-		p.add(UpgradeMuxData::getFieldParse(), offsetof( UpgradeModuleData, m_upgradeMuxData ));
-	}
+    p.add(UpgradeMuxData::getFieldParse(), offsetof(UpgradeModuleData, m_upgradeMuxData));
+  }
 };
 
 //-------------------------------------------------------------------------------------------------
 class UpgradeModule : public BehaviorModule, public UpgradeMux
 {
+  MEMORY_POOL_GLUE_ABC(UpgradeModule)
+  MAKE_STANDARD_MODULE_MACRO_ABC(UpgradeModule)
+  MAKE_STANDARD_MODULE_DATA_MACRO_ABC(UpgradeModule, UpgradeModuleData)
 
-	MEMORY_POOL_GLUE_ABC( UpgradeModule )
-	MAKE_STANDARD_MODULE_MACRO_ABC( UpgradeModule )
-	MAKE_STANDARD_MODULE_DATA_MACRO_ABC(UpgradeModule, UpgradeModuleData)
+  public:
+  UpgradeModule(Thing *thing, const ModuleData *moduleData);
+  // virtual destructor prototype defined by MemoryPoolObject
 
-public:
+  // module methods
+  static Int getInterfaceMask() { return MODULEINTERFACE_UPGRADE; }
 
-	UpgradeModule( Thing *thing, const ModuleData* moduleData );
-	// virtual destructor prototype defined by MemoryPoolObject
+  // BehaviorModule
+  virtual UpgradeModuleInterface *getUpgrade() { return this; }
 
-	// module methods
-	static Int getInterfaceMask() { return MODULEINTERFACE_UPGRADE; }
+  protected:
+  virtual Bool requiresAllActivationUpgrades() const
+  {
+    return getUpgradeModuleData()->m_upgradeMuxData.m_requiresAllTriggers;
+  }
 
-	// BehaviorModule
-	virtual UpgradeModuleInterface* getUpgrade() { return this; }
+  virtual void getUpgradeActivationMasks(UpgradeMaskType &activation, UpgradeMaskType &conflicting) const
+  {
+    getUpgradeModuleData()->m_upgradeMuxData.getUpgradeActivationMasks(activation, conflicting);
+  }
 
-protected:
-
-	virtual Bool requiresAllActivationUpgrades() const
-	{
-		return getUpgradeModuleData()->m_upgradeMuxData.m_requiresAllTriggers;
-	}
-
-	virtual void getUpgradeActivationMasks(UpgradeMaskType& activation, UpgradeMaskType& conflicting) const
-	{
-		getUpgradeModuleData()->m_upgradeMuxData.getUpgradeActivationMasks(activation, conflicting);
-	}
-
-	virtual void performUpgradeFX()
-	{
-		getUpgradeModuleData()->m_upgradeMuxData.performUpgradeFX(getObject());
-	}
-
+  virtual void performUpgradeFX() { getUpgradeModuleData()->m_upgradeMuxData.performUpgradeFX(getObject()); }
 };
-inline UpgradeModule::UpgradeModule( Thing *thing, const ModuleData* moduleData ) : BehaviorModule( thing, moduleData ) { }
-inline UpgradeModule::~UpgradeModule() { }
-
+inline UpgradeModule::UpgradeModule(Thing *thing, const ModuleData *moduleData) : BehaviorModule(thing, moduleData)
+{
+}
+inline UpgradeModule::~UpgradeModule()
+{
+}
 
 #endif

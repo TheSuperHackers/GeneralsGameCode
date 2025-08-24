@@ -26,99 +26,116 @@
 #include "Common/BezFwdIterator.h"
 
 //-------------------------------------------------------------------------------------------------
-BezFwdIterator::BezFwdIterator(): mStep(0), mStepsDesired(0)
+BezFwdIterator::BezFwdIterator() : mStep(0), mStepsDesired(0)
 {
-	// Added by Sadullah Nader
-	mCurrPoint.zero();
-	mDDDq.zero();
-	mDDq.zero();
-	mDq.zero();
+  // Added by Sadullah Nader
+  mCurrPoint.zero();
+  mDDDq.zero();
+  mDDq.zero();
+  mDq.zero();
 }
 
 //-------------------------------------------------------------------------------------------------
 BezFwdIterator::BezFwdIterator(Int stepsDesired, const BezierSegment *bezSeg)
 {
-	// Added by Sadullah Nader
-	mCurrPoint.zero();
-	mDDDq.zero();
-	mDDq.zero();
-	mDq.zero();
-	//
+  // Added by Sadullah Nader
+  mCurrPoint.zero();
+  mDDDq.zero();
+  mDDq.zero();
+  mDq.zero();
+  //
 
-	mStepsDesired = stepsDesired;
-	mBezSeg = (*bezSeg);
+  mStepsDesired = stepsDesired;
+  mBezSeg = (*bezSeg);
 }
 
 //-------------------------------------------------------------------------------------------------
 void BezFwdIterator::start(void)
 {
-	mStep = 0;
+  mStep = 0;
 
-	if (mStepsDesired <= 1)
-		return;
+  if (mStepsDesired <= 1)
+    return;
 
-	float d	 = 1.0f / (mStepsDesired - 1);
-	float d2 = d * d;
-	float d3 = d * d2;
+  float d = 1.0f / (mStepsDesired - 1);
+  float d2 = d * d;
+  float d3 = d * d2;
 
-	D3DXVECTOR4 px(mBezSeg.m_controlPoints[0].x, mBezSeg.m_controlPoints[1].x, mBezSeg.m_controlPoints[2].x, mBezSeg.m_controlPoints[3].x);
-	D3DXVECTOR4 py(mBezSeg.m_controlPoints[0].y, mBezSeg.m_controlPoints[1].y, mBezSeg.m_controlPoints[2].y, mBezSeg.m_controlPoints[3].y);
-	D3DXVECTOR4 pz(mBezSeg.m_controlPoints[0].z, mBezSeg.m_controlPoints[1].z, mBezSeg.m_controlPoints[2].z, mBezSeg.m_controlPoints[3].z);
+  D3DXVECTOR4 px(
+      mBezSeg.m_controlPoints[0].x,
+      mBezSeg.m_controlPoints[1].x,
+      mBezSeg.m_controlPoints[2].x,
+      mBezSeg.m_controlPoints[3].x);
+  D3DXVECTOR4 py(
+      mBezSeg.m_controlPoints[0].y,
+      mBezSeg.m_controlPoints[1].y,
+      mBezSeg.m_controlPoints[2].y,
+      mBezSeg.m_controlPoints[3].y);
+  D3DXVECTOR4 pz(
+      mBezSeg.m_controlPoints[0].z,
+      mBezSeg.m_controlPoints[1].z,
+      mBezSeg.m_controlPoints[2].z,
+      mBezSeg.m_controlPoints[3].z);
 
-	D3DXVECTOR4 cVec[3];
-	D3DXVec4Transform(&cVec[0], &px, &BezierSegment::s_bezBasisMatrix);
-	D3DXVec4Transform(&cVec[1], &py, &BezierSegment::s_bezBasisMatrix);
-	D3DXVec4Transform(&cVec[2], &pz, &BezierSegment::s_bezBasisMatrix);
+  D3DXVECTOR4 cVec[3];
+  D3DXVec4Transform(&cVec[0], &px, &BezierSegment::s_bezBasisMatrix);
+  D3DXVec4Transform(&cVec[1], &py, &BezierSegment::s_bezBasisMatrix);
+  D3DXVec4Transform(&cVec[2], &pz, &BezierSegment::s_bezBasisMatrix);
 
-	mCurrPoint = mBezSeg.m_controlPoints[0];
+  mCurrPoint = mBezSeg.m_controlPoints[0];
 
-	int i = 3;
-	while (i--) {
-		float a = cVec[i].x;
-		float b = cVec[i].y;
-		float c = cVec[i].z;
+  int i = 3;
+  while (i--)
+  {
+    float a = cVec[i].x;
+    float b = cVec[i].y;
+    float c = cVec[i].z;
 
-		float *pD, *pDD, *pDDD;
+    float *pD, *pDD, *pDDD;
 
-		if (i == 2) {
-			pD = &mDq.z;
-			pDD = &mDDq.z;
-			pDDD = &mDDDq.z;
-		} else if (i == 1) {
-			pD = &mDq.y;
-			pDD = &mDDq.y;
-			pDDD = &mDDDq.y;
-		} else if (i == 0) {
-			pD = &mDq.x;
-			pDD = &mDDq.x;
-			pDDD = &mDDDq.x;
-		}
+    if (i == 2)
+    {
+      pD = &mDq.z;
+      pDD = &mDDq.z;
+      pDDD = &mDDDq.z;
+    }
+    else if (i == 1)
+    {
+      pD = &mDq.y;
+      pDD = &mDDq.y;
+      pDDD = &mDDDq.y;
+    }
+    else if (i == 0)
+    {
+      pD = &mDq.x;
+      pDD = &mDDq.x;
+      pDDD = &mDDDq.x;
+    }
 
-		(*pD) = a * d3 + b * d2 + c * d;
-		(*pDD) = 6 * a * d3 + 2 * b * d2;
-		(*pDDD) = 6 * a * d3;
-	}
+    (*pD) = a * d3 + b * d2 + c * d;
+    (*pDD) = 6 * a * d3 + 2 * b * d2;
+    (*pDDD) = 6 * a * d3;
+  }
 }
 
 //-------------------------------------------------------------------------------------------------
 Bool BezFwdIterator::done(void)
 {
-	return (mStep >= mStepsDesired);
+  return (mStep >= mStepsDesired);
 }
 
 //-------------------------------------------------------------------------------------------------
-const Coord3D& BezFwdIterator::getCurrent(void) const
+const Coord3D &BezFwdIterator::getCurrent(void) const
 {
-	return mCurrPoint;
+  return mCurrPoint;
 }
 
 //-------------------------------------------------------------------------------------------------
 void BezFwdIterator::next(void)
 {
-	mCurrPoint.add(&mDq);
-	mDq.add(&mDDq);
-	mDDq.add(&mDDDq);
+  mCurrPoint.add(&mDq);
+  mDq.add(&mDDq);
+  mDDq.add(&mDDDq);
 
-	++mStep;
+  ++mStep;
 }
-

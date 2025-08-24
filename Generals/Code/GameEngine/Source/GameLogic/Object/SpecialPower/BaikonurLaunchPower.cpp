@@ -43,7 +43,7 @@
 //-----------------------------------------------------------------------------
 ///////////////////////////////////////////////////////////////////////////////
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 
 #include "Common/Player.h"
 #include "Common/ThingFactory.h"
@@ -52,111 +52,102 @@
 #include "GameLogic/Object.h"
 #include "GameLogic/Module/BaikonurLaunchPower.h"
 
-BaikonurLaunchPowerModuleData::BaikonurLaunchPowerModuleData( void )
+BaikonurLaunchPowerModuleData::BaikonurLaunchPowerModuleData(void)
 {
 }
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-/*static*/ void BaikonurLaunchPowerModuleData::buildFieldParse(MultiIniFieldParse& p)
+/*static*/ void BaikonurLaunchPowerModuleData::buildFieldParse(MultiIniFieldParse &p)
 {
-	SpecialPowerModuleData::buildFieldParse( p );
+  SpecialPowerModuleData::buildFieldParse(p);
 
-	static const FieldParse dataFieldParse[] =
-	{
-		{ "DetonationObject", INI::parseAsciiString, NULL, offsetof( BaikonurLaunchPowerModuleData, m_detonationObject ) },
-		{ 0, 0, 0, 0 }
-	};
-	p.add(dataFieldParse);
+  static const FieldParse dataFieldParse[] = {
+    { "DetonationObject", INI::parseAsciiString, NULL, offsetof(BaikonurLaunchPowerModuleData, m_detonationObject) },
+    { 0, 0, 0, 0 }
+  };
+  p.add(dataFieldParse);
 
-}  // end buildFieldParse
-
+} // end buildFieldParse
 
 // ------------------------------------------------------------------------------------------------
-BaikonurLaunchPower::BaikonurLaunchPower( Thing *thing, const ModuleData *moduleData )
-												: SpecialPowerModule( thing, moduleData )
+BaikonurLaunchPower::BaikonurLaunchPower(Thing *thing, const ModuleData *moduleData) : SpecialPowerModule(thing, moduleData)
 {
-
 }
 
 // ------------------------------------------------------------------------------------------------
-BaikonurLaunchPower::~BaikonurLaunchPower( void )
+BaikonurLaunchPower::~BaikonurLaunchPower(void)
 {
-
 }
 
 // ------------------------------------------------------------------------------------------------
-void BaikonurLaunchPower::doSpecialPower( UnsignedInt commandOptions )
+void BaikonurLaunchPower::doSpecialPower(UnsignedInt commandOptions)
 {
-	if (getObject()->isDisabled())
-		return;
+  if (getObject()->isDisabled())
+    return;
 
-	// call the base class action cause we are *EXTENDING* functionality
-	SpecialPowerModule::doSpecialPower( commandOptions );
+  // call the base class action cause we are *EXTENDING* functionality
+  SpecialPowerModule::doSpecialPower(commandOptions);
 
-	getObject()->setModelConditionState( MODELCONDITION_DOOR_1_OPENING );
+  getObject()->setModelConditionState(MODELCONDITION_DOOR_1_OPENING);
 }
 
 // ------------------------------------------------------------------------------------------------
-void BaikonurLaunchPower::doSpecialPowerAtLocation( const Coord3D *loc, Real angle, UnsignedInt commandOptions )
+void BaikonurLaunchPower::doSpecialPowerAtLocation(const Coord3D *loc, Real angle, UnsignedInt commandOptions)
 {
-	if (getObject()->isDisabled())
-		return;
+  if (getObject()->isDisabled())
+    return;
 
-	const BaikonurLaunchPowerModuleData *data = getBaikonurLaunchPowerModuleData();
+  const BaikonurLaunchPowerModuleData *data = getBaikonurLaunchPowerModuleData();
 
-	// call the base class action cause we are *EXTENDING* functionality
-	SpecialPowerModule::doSpecialPowerAtLocation( loc, angle, commandOptions );
+  // call the base class action cause we are *EXTENDING* functionality
+  SpecialPowerModule::doSpecialPowerAtLocation(loc, angle, commandOptions);
 
-	//Create the detonation
-	const ThingTemplate *thing = TheThingFactory->findTemplate( data->m_detonationObject );
-	if( thing )
-	{
-		Object *detonation = TheThingFactory->newObject( thing, getObject()->getTeam() );
-		if( detonation )
-		{
-			detonation->setPosition( loc );
-		}
-	}
+  // Create the detonation
+  const ThingTemplate *thing = TheThingFactory->findTemplate(data->m_detonationObject);
+  if (thing)
+  {
+    Object *detonation = TheThingFactory->newObject(thing, getObject()->getTeam());
+    if (detonation)
+    {
+      detonation->setPosition(loc);
+    }
+  }
 }
-
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void BaikonurLaunchPower::crc( Xfer *xfer )
+void BaikonurLaunchPower::crc(Xfer *xfer)
 {
+  // extend base class
+  SpecialPowerModule::crc(xfer);
 
-	// extend base class
-	SpecialPowerModule::crc( xfer );
-
-}  // end crc
+} // end crc
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void BaikonurLaunchPower::xfer( Xfer *xfer )
+void BaikonurLaunchPower::xfer(Xfer *xfer)
 {
+  // version
+  XferVersion currentVersion = 1;
+  XferVersion version = currentVersion;
+  xfer->xferVersion(&version, currentVersion);
 
-	// version
-	XferVersion currentVersion = 1;
-	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+  // extend base class
+  SpecialPowerModule::xfer(xfer);
 
-	// extend base class
-	SpecialPowerModule::xfer( xfer );
-
-}  // end xfer
+} // end xfer
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void BaikonurLaunchPower::loadPostProcess( void )
+void BaikonurLaunchPower::loadPostProcess(void)
 {
+  // extend base class
+  SpecialPowerModule::loadPostProcess();
 
-	// extend base class
-	SpecialPowerModule::loadPostProcess();
-
-}  // end loadPostProcess
+} // end loadPostProcess

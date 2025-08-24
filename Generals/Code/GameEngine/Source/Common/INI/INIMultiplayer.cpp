@@ -28,53 +28,52 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 
 #include "Common/INI.h"
 #include "Common/MultiplayerSettings.h"
 
-void INI::parseMultiplayerSettingsDefinition( INI* ini )
+void INI::parseMultiplayerSettingsDefinition(INI *ini)
 {
-	if( TheMultiplayerSettings )
-	{
-		//
-		// if the type of loading we're doing creates override data, we need to
-		// be loading into a new override item
-		//
-		if( ini->getLoadType() == INI_LOAD_CREATE_OVERRIDES )
-		{
-			DEBUG_ASSERTCRASH(false, ("Creating an override of MultiplayerSettings!"));
-		}
-	}  // end if
-	else
-	{
-		// we don't have any multiplayer settings instance at all yet, create one
-		TheMultiplayerSettings = NEW MultiplayerSettings;
-	}  // end else
+  if (TheMultiplayerSettings)
+  {
+    //
+    // if the type of loading we're doing creates override data, we need to
+    // be loading into a new override item
+    //
+    if (ini->getLoadType() == INI_LOAD_CREATE_OVERRIDES)
+    {
+      DEBUG_ASSERTCRASH(false, ("Creating an override of MultiplayerSettings!"));
+    }
+  } // end if
+  else
+  {
+    // we don't have any multiplayer settings instance at all yet, create one
+    TheMultiplayerSettings = NEW MultiplayerSettings;
+  } // end else
 
-	// parse the ini definition
-	ini->initFromINI( TheMultiplayerSettings, TheMultiplayerSettings->getFieldParse() );
+  // parse the ini definition
+  ini->initFromINI(TheMultiplayerSettings, TheMultiplayerSettings->getFieldParse());
 }
 
-void INI::parseMultiplayerColorDefinition( INI* ini )
+void INI::parseMultiplayerColorDefinition(INI *ini)
 {
-	const char *c;
-	AsciiString name;
-	MultiplayerColorDefinition *multiplayerColorDefinition;
+  const char *c;
+  AsciiString name;
+  MultiplayerColorDefinition *multiplayerColorDefinition;
 
-	// read the name
-	c = ini->getNextToken();
-	name.set( c );
+  // read the name
+  c = ini->getNextToken();
+  name.set(c);
 
-	// find existing item if present, but this type does not allow overrides,
-	//so if it exists just overwrite it.
-	multiplayerColorDefinition = TheMultiplayerSettings->findMultiplayerColorDefinitionByName( name );
-	if( multiplayerColorDefinition == NULL )
-		multiplayerColorDefinition = TheMultiplayerSettings->newMultiplayerColorDefinition( name );
+  // find existing item if present, but this type does not allow overrides,
+  // so if it exists just overwrite it.
+  multiplayerColorDefinition = TheMultiplayerSettings->findMultiplayerColorDefinitionByName(name);
+  if (multiplayerColorDefinition == NULL)
+    multiplayerColorDefinition = TheMultiplayerSettings->newMultiplayerColorDefinition(name);
 
-	ini->initFromINI( multiplayerColorDefinition, multiplayerColorDefinition->getFieldParse() );
+  ini->initFromINI(multiplayerColorDefinition, multiplayerColorDefinition->getFieldParse());
 
-	multiplayerColorDefinition->setColor(multiplayerColorDefinition->getRGBValue());
-	multiplayerColorDefinition->setNightColor(multiplayerColorDefinition->getRGBNightValue());
+  multiplayerColorDefinition->setColor(multiplayerColorDefinition->getRGBValue());
+  multiplayerColorDefinition->setNightColor(multiplayerColorDefinition->getRGBNightValue());
 }
-

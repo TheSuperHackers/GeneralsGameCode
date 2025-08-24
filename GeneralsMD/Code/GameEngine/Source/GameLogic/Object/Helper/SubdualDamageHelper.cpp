@@ -37,93 +37,88 @@
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-SubdualDamageHelper::SubdualDamageHelper( Thing *thing, const ModuleData *modData ) : ObjectHelper( thing, modData )
+SubdualDamageHelper::SubdualDamageHelper(Thing *thing, const ModuleData *modData) : ObjectHelper(thing, modData)
 {
-	m_healingStepCountdown = 0;
+  m_healingStepCountdown = 0;
 
-	setWakeFrame(getObject(), UPDATE_SLEEP_FOREVER);
+  setWakeFrame(getObject(), UPDATE_SLEEP_FOREVER);
 }
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-SubdualDamageHelper::~SubdualDamageHelper( void )
+SubdualDamageHelper::~SubdualDamageHelper(void)
 {
-
 }
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 UpdateSleepTime SubdualDamageHelper::update()
 {
-	BodyModuleInterface *body = getObject()->getBodyModule();
+  BodyModuleInterface *body = getObject()->getBodyModule();
 
-	m_healingStepCountdown--;
-	if( m_healingStepCountdown > 0 )
-		return UPDATE_SLEEP_NONE;
+  m_healingStepCountdown--;
+  if (m_healingStepCountdown > 0)
+    return UPDATE_SLEEP_NONE;
 
-	m_healingStepCountdown = body->getSubdualDamageHealRate();
+  m_healingStepCountdown = body->getSubdualDamageHealRate();
 
-	DamageInfo removeSubdueDamage;
-	removeSubdueDamage.in.m_damageType = DAMAGE_SUBDUAL_UNRESISTABLE;
-	removeSubdueDamage.in.m_amount = -body->getSubdualDamageHealAmount();
-	body->attemptDamage(&removeSubdueDamage);
+  DamageInfo removeSubdueDamage;
+  removeSubdueDamage.in.m_damageType = DAMAGE_SUBDUAL_UNRESISTABLE;
+  removeSubdueDamage.in.m_amount = -body->getSubdualDamageHealAmount();
+  body->attemptDamage(&removeSubdueDamage);
 
-	if( body->hasAnySubdualDamage() )
-		return UPDATE_SLEEP_NONE;
-	else
-		return UPDATE_SLEEP_FOREVER;
+  if (body->hasAnySubdualDamage())
+    return UPDATE_SLEEP_NONE;
+  else
+    return UPDATE_SLEEP_FOREVER;
 }
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void SubdualDamageHelper::notifySubdualDamage( Real amount )
+void SubdualDamageHelper::notifySubdualDamage(Real amount)
 {
-	if( amount > 0 )
-	{
-		m_healingStepCountdown = getObject()->getBodyModule()->getSubdualDamageHealRate();
-		setWakeFrame(getObject(), UPDATE_SLEEP_NONE);
-	}
+  if (amount > 0)
+  {
+    m_healingStepCountdown = getObject()->getBodyModule()->getSubdualDamageHealRate();
+    setWakeFrame(getObject(), UPDATE_SLEEP_NONE);
+  }
 }
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void SubdualDamageHelper::crc( Xfer *xfer )
+void SubdualDamageHelper::crc(Xfer *xfer)
 {
+  // object helper crc
+  ObjectHelper::crc(xfer);
 
-	// object helper crc
-	ObjectHelper::crc( xfer );
-
-}  // end crc
+} // end crc
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info;
-	* 1: Initial version */
+ * Version Info;
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void SubdualDamageHelper::xfer( Xfer *xfer )
+void SubdualDamageHelper::xfer(Xfer *xfer)
 {
+  // version
+  XferVersion currentVersion = 1;
+  XferVersion version = currentVersion;
+  xfer->xferVersion(&version, currentVersion);
 
-	// version
-	XferVersion currentVersion = 1;
-	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+  // object helper base class
+  ObjectHelper::xfer(xfer);
 
-	// object helper base class
-	ObjectHelper::xfer( xfer );
+  xfer->xferUnsignedInt(&m_healingStepCountdown);
 
-	xfer->xferUnsignedInt( &m_healingStepCountdown );
-
-}  // end xfer
+} // end xfer
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void SubdualDamageHelper::loadPostProcess( void )
+void SubdualDamageHelper::loadPostProcess(void)
 {
+  // object helper base class
+  ObjectHelper::loadPostProcess();
 
-	// object helper base class
-	ObjectHelper::loadPostProcess();
-
-}  // end loadPostProcess
-
+} // end loadPostProcess

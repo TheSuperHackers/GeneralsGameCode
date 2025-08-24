@@ -35,12 +35,12 @@
 #include "Lib/BaseType.h"
 
 // do NOT use these functions directly, rather use the macros below
-extern Int GetGameLogicRandomValue( int lo, int hi, const char *file, int line );
-extern Real GetGameLogicRandomValueReal( Real lo, Real hi, const char *file, int line );
+extern Int GetGameLogicRandomValue(int lo, int hi, const char *file, int line);
+extern Real GetGameLogicRandomValueReal(Real lo, Real hi, const char *file, int line);
 
 // use these macros to access the random value functions
-#define GameLogicRandomValue( lo, hi ) GetGameLogicRandomValue( lo, hi, __FILE__, __LINE__ )
-#define GameLogicRandomValueReal( lo, hi ) GetGameLogicRandomValueReal( lo, hi, __FILE__, __LINE__ )
+#define GameLogicRandomValue(lo, hi) GetGameLogicRandomValue(lo, hi, __FILE__, __LINE__)
+#define GameLogicRandomValueReal(lo, hi) GetGameLogicRandomValueReal(lo, hi, __FILE__, __LINE__)
 
 //--------------------------------------------------------------------------------------------------------------
 class CColorAlphaDialog;
@@ -52,42 +52,47 @@ class DebugWindowDialog;
  */
 class GameLogicRandomVariable
 {
-public:
-	// NOTE: This class cannot have a constructor or destructor due to its use within unions
+  public:
+  // NOTE: This class cannot have a constructor or destructor due to its use within unions
 
-	/**
-	 * CONSTANT represents a single, constant, value.
-	 * UNIFORM represents a uniform distribution of random values.
-	 * GAUSSIAN represents a normally distributed set of random values.
-	 * TRIANGULAR represents a distribution of random values in the shape
-	 *		of a triangle, with the peak probability midway between low and high.
-	 * LOW_BIAS represents a distribution of random values with
-	 *		maximum probability at low, and zero probability at high.
-	 * HIGH_BIAS represents a distribution of random values with
-	 *		zero probability at low, and maximum probability at high.
-	 */
-	enum DistributionType
-	{
-		CONSTANT, UNIFORM, GAUSSIAN, TRIANGULAR, LOW_BIAS, HIGH_BIAS
-	};
+  /**
+   * CONSTANT represents a single, constant, value.
+   * UNIFORM represents a uniform distribution of random values.
+   * GAUSSIAN represents a normally distributed set of random values.
+   * TRIANGULAR represents a distribution of random values in the shape
+   *		of a triangle, with the peak probability midway between low and high.
+   * LOW_BIAS represents a distribution of random values with
+   *		maximum probability at low, and zero probability at high.
+   * HIGH_BIAS represents a distribution of random values with
+   *		zero probability at low, and maximum probability at high.
+   */
+  enum DistributionType
+  {
+    CONSTANT,
+    UNIFORM,
+    GAUSSIAN,
+    TRIANGULAR,
+    LOW_BIAS,
+    HIGH_BIAS
+  };
 
-	static const char *DistributionTypeNames[];
+  static const char *DistributionTypeNames[];
 
-	/// define the range of random values, and the distribution of values
-	void setRange( Real low, Real high, DistributionType type = UNIFORM );
+  /// define the range of random values, and the distribution of values
+  void setRange(Real low, Real high, DistributionType type = UNIFORM);
 
-	Real getValue( void ) const;														///< return a value from the random distribution
-	inline Real getMinimumValue( void ) const { return m_low; }
-	inline Real getMaximumValue( void ) const { return m_high; }
-	inline DistributionType getDistributionType( void ) const { return m_type; }
-protected:
-	DistributionType m_type;																		///< the kind of random distribution
-	Real m_low, m_high;																					///< the range of random values
+  Real getValue(void) const; ///< return a value from the random distribution
+  inline Real getMinimumValue(void) const { return m_low; }
+  inline Real getMaximumValue(void) const { return m_high; }
+  inline DistributionType getDistributionType(void) const { return m_type; }
 
-	// These two friends are for particle editing.
-	friend CColorAlphaDialog;
-	friend DebugWindowDialog;
+  protected:
+  DistributionType m_type; ///< the kind of random distribution
+  Real m_low, m_high; ///< the range of random values
 
+  // These two friends are for particle editing.
+  friend CColorAlphaDialog;
+  friend DebugWindowDialog;
 };
 
 //--------------------------------------------------------------------------------------------------------------

@@ -32,55 +32,55 @@
 
 class CReport : public CDialog
 {
-	char filename[300];
-	RPOPTIONS	options;
-	LangID	langids[200];
-	int			langindices[200];
-	int			num_langs;
-	CListBox *list;
-	CEdit		*limit;
-	CButton *dialog_status;
-	CButton *trans_status;
-	CButton *show_details;
-	CButton *ifless;
-	CStatic *items;
+  char filename[300];
+  RPOPTIONS options;
+  LangID langids[200];
+  int langindices[200];
+  int num_langs;
+  CListBox *list;
+  CEdit *limit;
+  CButton *dialog_status;
+  CButton *trans_status;
+  CButton *show_details;
+  CButton *ifless;
+  CStatic *items;
 
+  // Construction
+  public:
+  CReport(CWnd *pParent = NULL); // standard constructor
 
-// Construction
-public:
-	CReport(CWnd* pParent = NULL);   // standard constructor
+  char *Filename(void) { return filename; };
+  RPOPTIONS *Options(void) { return &options; };
+  LangID *Langauges(void) { return langids; };
 
-	char*					Filename	( void )			{ return filename; };
-	RPOPTIONS*		Options			( void )		{ return &options; };
-	LangID*				Langauges		( void )		{ return langids; };
+  // Dialog Data
+  //{{AFX_DATA(CReport)
+  enum
+  {
+    IDD = IDD_CREATE_REPORTS
+  };
+  // NOTE: the ClassWizard will add data members here
+  //}}AFX_DATA
 
-// Dialog Data
-	//{{AFX_DATA(CReport)
-	enum { IDD = IDD_CREATE_REPORTS };
-		// NOTE: the ClassWizard will add data members here
-	//}}AFX_DATA
+  // Overrides
+  // ClassWizard generated virtual function overrides
+  //{{AFX_VIRTUAL(CReport)
+  protected:
+  virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
+  //}}AFX_VIRTUAL
 
-
-// Overrides
-	// ClassWizard generated virtual function overrides
-	//{{AFX_VIRTUAL(CReport)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
-	//}}AFX_VIRTUAL
-
-// Implementation
-protected:
-
-	// Generated message map functions
-	//{{AFX_MSG(CReport)
-	virtual BOOL OnInitDialog();
-	afx_msg void OnInvert();
-	afx_msg void OnSelectall();
-	afx_msg void OnShowDetails();
-	virtual void OnOK();
-	virtual void OnCancel();
-	//}}AFX_MSG
-	DECLARE_MESSAGE_MAP()
+  // Implementation
+  protected:
+  // Generated message map functions
+  //{{AFX_MSG(CReport)
+  virtual BOOL OnInitDialog();
+  afx_msg void OnInvert();
+  afx_msg void OnSelectall();
+  afx_msg void OnShowDetails();
+  virtual void OnOK();
+  virtual void OnCancel();
+  //}}AFX_MSG
+  DECLARE_MESSAGE_MAP()
 };
 
 //{{AFX_INSERT_LOCATION}}

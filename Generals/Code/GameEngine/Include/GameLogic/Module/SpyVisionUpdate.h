@@ -40,39 +40,32 @@
 //-------------------------------------------------------------------------------------------------
 class SpyVisionUpdateModuleData : public UpdateModuleData
 {
-public:
+  public:
+  SpyVisionUpdateModuleData() {}
 
-	SpyVisionUpdateModuleData()
-	{
-	}
-
-	static void buildFieldParse(MultiIniFieldParse& p);
+  static void buildFieldParse(MultiIniFieldParse &p);
 };
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 class SpyVisionUpdate : public UpdateModule
 {
+  MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(SpyVisionUpdate, "SpyVisionUpdate")
+  MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA(SpyVisionUpdate, SpyVisionUpdateModuleData)
 
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( SpyVisionUpdate, "SpyVisionUpdate" )
-	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( SpyVisionUpdate, SpyVisionUpdateModuleData )
+  public:
+  SpyVisionUpdate(Thing *thing, const ModuleData *moduleData);
+  // virtual destructor prototype provided by memory pool declaration
 
-public:
+  virtual void onDelete(void);
+  virtual UpdateSleepTime update(void);
 
-	SpyVisionUpdate( Thing *thing, const ModuleData* moduleData );
-	// virtual destructor prototype provided by memory pool declaration
+  void activateSpyVision(UnsignedInt duration);
 
-	virtual void onDelete( void );
-	virtual UpdateSleepTime update( void );
+  private:
+  void doActivationWork(Bool setting);
 
-	void activateSpyVision( UnsignedInt duration );
-
-private:
-
-	void doActivationWork( Bool setting );
-
-	UnsignedInt m_deactivateFrame;
+  UnsignedInt m_deactivateFrame;
 };
 
 #endif
-

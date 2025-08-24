@@ -33,39 +33,36 @@ class ThingTemplate;
 
 class ObjectPreview : public CWnd
 {
-// Construction
-public:
-	ObjectPreview();
+  // Construction
+  public:
+  ObjectPreview();
 
-// Attributes
-public:
+  // Attributes
+  public:
+  // Operations
+  public:
+  // Overrides
+  // ClassWizard generated virtual function overrides
+  //{{AFX_VIRTUAL(ObjectPreview)
+  //}}AFX_VIRTUAL
 
-// Operations
-public:
+  // Implementation
+  public:
+  virtual ~ObjectPreview();
 
-// Overrides
-	// ClassWizard generated virtual function overrides
-	//{{AFX_VIRTUAL(ObjectPreview)
-	//}}AFX_VIRTUAL
+  void SetThingTemplate(const ThingTemplate *tTempl);
 
-// Implementation
-public:
-	virtual ~ObjectPreview();
+  // Generated message map functions
+  protected:
+  //{{AFX_MSG(ObjectPreview)
+  afx_msg void OnPaint();
+  //}}AFX_MSG
+  DECLARE_MESSAGE_MAP()
 
-	void SetThingTemplate(const ThingTemplate *tTempl);
+  protected:
+  void DrawMyTexture(CDC *pDc, int top, int left, Int width, Int height, UnsignedByte *rgbData);
 
-	// Generated message map functions
-protected:
-	//{{AFX_MSG(ObjectPreview)
-	afx_msg void OnPaint();
-	//}}AFX_MSG
-	DECLARE_MESSAGE_MAP()
-
-protected:
-	void DrawMyTexture(CDC *pDc, int top, int left, Int width, Int height, UnsignedByte *rgbData);
-
-	const ThingTemplate *m_tTempl;
-
+  const ThingTemplate *m_tTempl;
 };
 
 /////////////////////////////////////////////////////////////////////////////

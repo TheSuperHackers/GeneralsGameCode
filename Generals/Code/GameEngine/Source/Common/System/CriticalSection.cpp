@@ -22,8 +22,7 @@
 //																																						//
 ////////////////////////////////////////////////////////////////////////////////
 
-
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 #include "Common/CriticalSection.h"
 
 // Definitions.
@@ -36,4 +35,3 @@ CriticalSection *TheDebugLogCriticalSection = NULL;
 #ifdef PERF_TIMERS
 PerfGather TheCritSecPerfGather("CritSec");
 #endif
-

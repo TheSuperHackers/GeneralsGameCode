@@ -84,120 +84,117 @@ class ChunkSaveClass;
 */
 class GridCullSystemClass : public CullSystemClass
 {
+  public:
+  GridCullSystemClass(void);
+  ~GridCullSystemClass(void);
 
-public:
+  virtual void Collect_Objects(const Vector3 &point);
+  virtual void Collect_Objects(const AABoxClass &box);
+  virtual void Collect_Objects(const OBBoxClass &box);
+  virtual void Collect_Objects(const FrustumClass &frustum);
 
-	GridCullSystemClass(void);
-	~GridCullSystemClass(void);
+  virtual void Re_Partition(const Vector3 &min, const Vector3 &max, float objdim);
+  virtual void Update_Culling(CullableClass *obj);
 
-	virtual void		Collect_Objects(const Vector3 & point);
-	virtual void		Collect_Objects(const AABoxClass & box);
-	virtual void		Collect_Objects(const OBBoxClass & box);
-	virtual void		Collect_Objects(const FrustumClass & frustum);
+  virtual void Load(ChunkLoadClass &cload);
+  virtual void Save(ChunkSaveClass &csave);
 
-	virtual void		Re_Partition(const Vector3 & min,const Vector3 & max,float objdim);
-	virtual void		Update_Culling(CullableClass * obj);
+  virtual int Get_Object_Count(void) const { return ObjCount; }
 
-	virtual void		Load(ChunkLoadClass & cload);
-	virtual void		Save(ChunkSaveClass & csave);
+  /*
+  ** Statistics
+  */
+  struct StatsStruct
+  {
+    int NodeCount;
+    int NodesAccepted;
+    int NodesTriviallyAccepted;
+    int NodesRejected;
+  };
 
-	virtual int			Get_Object_Count (void) const { return ObjCount; }
+  void Reset_Statistics(void);
+  const StatsStruct &Get_Statistics(void);
 
-	/*
-	** Statistics
-	*/
-	struct StatsStruct
-	{
-		int				NodeCount;
-		int				NodesAccepted;
-		int				NodesTriviallyAccepted;
-		int				NodesRejected;
-	};
+  void Get_Min_Cell_Size(Vector3 &size) const { size = MinCellSize; }
+  void Set_Min_Cell_Size(const Vector3 &size) { MinCellSize = size; }
 
-	void					Reset_Statistics(void);
-	const StatsStruct & Get_Statistics(void);
+  int Get_Termination_Count(void) const { return TerminationCellCount; }
+  void Set_Termination_Count(int count) { TerminationCellCount = count; }
 
-	void					Get_Min_Cell_Size (Vector3 &size) const	{ size = MinCellSize; }
-	void					Set_Min_Cell_Size (const Vector3 &size)	{ MinCellSize = size; }
+  protected:
+  void Collect_And_Unlink_All(void);
+  void Add_Object_Internal(CullableClass *obj);
+  void Remove_Object_Internal(CullableClass *obj);
 
-	int					Get_Termination_Count (void) const	{ return TerminationCellCount; }
-	void					Set_Termination_Count (int count)	{ TerminationCellCount = count; }
+  enum
+  {
+    TERMINATION_CELL_COUNT = 16384, // algorithm terminates if we ever have more than this many cells.
+    UNGRIDDED_ADDRESS = 0xFFFFFFFF // address given to objs that didn't fit in grid
+  };
 
-protected:
+  // Constants which control the division of space:
+  Vector3 MinCellSize; // min dimensions for a cell (don't go below this...)
+  float MaxObjExtent; // max extent/radius (objects bigger than this are just put in a list)
+  int TerminationCellCount;
 
-	void					Collect_And_Unlink_All(void);
-	void					Add_Object_Internal(CullableClass * obj);
-	void					Remove_Object_Internal(CullableClass * obj);
+  // Constants that define the division of space
+  Vector3 Origin;
+  Vector3 CellDim;
+  Vector3 OOCellDim;
+  int CellCount[3];
 
-	enum
-	{
-		TERMINATION_CELL_COUNT	= 16384,			// algorithm terminates if we ever have more than this many cells.
-		UNGRIDDED_ADDRESS			= 0xFFFFFFFF	// address given to objs that didn't fit in grid
-	};
+  //	3D array of pointers to objects in each cell
+  CullableClass **Cells;
 
-	// Constants which control the division of space:
-	Vector3				MinCellSize;			// min dimensions for a cell (don't go below this...)
-	float					MaxObjExtent;			// max extent/radius (objects bigger than this are just put in a list)
-	int					TerminationCellCount;
+  // list of objs that were outside or too big for the grid.
+  CullableClass *NoGridList;
 
-	// Constants that define the division of space
-	Vector3				Origin;
-	Vector3				CellDim;
-	Vector3				OOCellDim;
-	int					CellCount[3];
+  // number of objects in the system
+  int ObjCount;
 
-	//	3D array of pointers to objects in each cell
-	CullableClass **	Cells;
+  // statistics
+  StatsStruct Stats;
 
-	// list of objs that were outside or too big for the grid.
-	CullableClass *	NoGridList;
+  // Structure used to define a volume in the grid.  The volume spans from the cell indexed
+  // by Min[0],Min[1],Min[2] to the cell indexed by Max[0]-1,Max[1]-1,Max[2]-1.
+  struct VolumeStruct
+  {
+    VolumeStruct(void);
+    VolumeStruct(int i0, int j0, int k0, int i1, int j1, int k1);
+    bool Is_Leaf(void) const;
+    bool Is_Empty(void) const;
+    void Split(VolumeStruct &v0, VolumeStruct &v1) const;
 
-	// number of objects in the system
-	int					ObjCount;
+    int Min[3];
+    int Max[3];
+  };
 
-	// statistics
-	StatsStruct				Stats;
+  void link_object(CullableClass *obj);
+  void link_object(CullableClass *obj, int address);
+  void unlink_object(CullableClass *obj);
+  void link_object_to_list(CullableClass **head, CullableClass *obj);
+  void unlink_object_from_list(CullableClass **head, CullableClass *obj);
 
-	// Structure used to define a volume in the grid.  The volume spans from the cell indexed
-	// by Min[0],Min[1],Min[2] to the cell indexed by Max[0]-1,Max[1]-1,Max[2]-1.
-	struct VolumeStruct
-	{
-		VolumeStruct(void);
-		VolumeStruct(int i0,int j0,int k0,int i1,int j1,int k1);
-		bool Is_Leaf(void) const;
-		bool Is_Empty(void) const;
-		void Split(VolumeStruct & v0,VolumeStruct & v1) const;
+  bool map_point_to_cell(const Vector3 &pt, int &set_i, int &set_j, int &set_k);
+  bool map_point_to_address(const Vector3 &pt, int &set_address);
+  WWINLINE int map_indices_to_address(int i, int j, int k);
+  void clamp_indices_to_grid(int *i, int *j, int *k);
 
-		int Min[3];
-		int Max[3];
-	};
+  int total_cell_count(void);
+  void compute_box(int i, int j, int k, AABoxClass *set_box);
+  void compute_box(const VolumeStruct &area, AABoxClass *set_box);
 
-	void					link_object(CullableClass * obj);
-	void					link_object(CullableClass * obj,int address);
-	void					unlink_object(CullableClass * obj);
-	void					link_object_to_list(CullableClass ** head,CullableClass * obj);
-	void					unlink_object_from_list(CullableClass ** head,CullableClass * obj);
+  void init_volume(const Vector3 &bound_min, const Vector3 &bound_max, VolumeStruct *set_volume);
+  void init_volume(const Vector3 &point, VolumeStruct *set_volume);
+  void init_volume(const LineSegClass &line, VolumeStruct *set_volume);
+  void init_volume(const AABoxClass &box, VolumeStruct *set_volume);
+  void init_volume(const OBBoxClass &box, VolumeStruct *set_volume);
+  void init_volume(const FrustumClass &frustum, VolumeStruct *set_volume);
 
-	bool					map_point_to_cell(const Vector3 & pt,int & set_i,int & set_j,int & set_k);
-	bool					map_point_to_address(const Vector3 & pt,int & set_address);
-	WWINLINE int			map_indices_to_address(int i,int j,int k);
-	void					clamp_indices_to_grid(int * i,int * j,int * k);
-
-	int					total_cell_count(void);
-	void					compute_box(int i,int j,int k,AABoxClass * set_box);
-	void					compute_box(const VolumeStruct & area, AABoxClass * set_box);
-
-	void					init_volume(const Vector3 & bound_min,const Vector3 & bound_max,VolumeStruct * set_volume);
-	void					init_volume(const Vector3 & point,VolumeStruct * set_volume);
-	void					init_volume(const LineSegClass & line,VolumeStruct * set_volume);
-	void					init_volume(const AABoxClass & box,VolumeStruct * set_volume);
-	void					init_volume(const OBBoxClass & box,VolumeStruct * set_volume);
-	void					init_volume(const FrustumClass & frustum,VolumeStruct * set_volume);
-
-	void					collect_objects_in_leaf(const Vector3 & point,CullableClass * head);
-	void					collect_objects_in_leaf(const AABoxClass & aabox,CullableClass * head);
-	void					collect_objects_in_leaf(const OBBoxClass & obbox,CullableClass * head);
-	void					collect_objects_in_leaf(const FrustumClass & frustum,CullableClass * head);
+  void collect_objects_in_leaf(const Vector3 &point, CullableClass *head);
+  void collect_objects_in_leaf(const AABoxClass &aabox, CullableClass *head);
+  void collect_objects_in_leaf(const OBBoxClass &obbox, CullableClass *head);
+  void collect_objects_in_leaf(const FrustumClass &frustum, CullableClass *head);
 };
 
 /*
@@ -206,9 +203,9 @@ protected:
 */
 #ifdef WWDEBUG
 
-#define GRIDCULL_NODE_ACCEPTED						Stats.NodesAccepted ++;
-#define GRIDCULL_NODE_TRIVIALLY_ACCEPTED			Stats.NodesTriviallyAccepted ++;
-#define GRIDCULL_NODE_REJECTED						Stats.NodesRejected ++;
+#define GRIDCULL_NODE_ACCEPTED Stats.NodesAccepted++;
+#define GRIDCULL_NODE_TRIVIALLY_ACCEPTED Stats.NodesTriviallyAccepted++;
+#define GRIDCULL_NODE_REJECTED Stats.NodesRejected++;
 
 #else
 
@@ -218,25 +215,22 @@ protected:
 
 #endif
 
-
 /*
 ** TypedGridCullSystemClass
 ** This class simply enforces that a certain type of object is inserted into the grid cull system.
 ** It exposes the add, remove, and collection iterating functions and is intended to be the class
 ** actually used by the end user.
 */
-template <class T> class TypedGridCullSystemClass : public GridCullSystemClass
+template<class T>
+class TypedGridCullSystemClass : public GridCullSystemClass
 {
-public:
+  public:
+  virtual void Add_Object(T *obj) { Add_Object_Internal(obj); }
+  virtual void Remove_Object(T *obj) { Remove_Object_Internal(obj); }
 
-	virtual void		Add_Object(T * obj)						{ Add_Object_Internal(obj); }
-	virtual void		Remove_Object(T * obj)					{ Remove_Object_Internal(obj); }
-
-	T *					Get_First_Collected_Object(void)		{ return (T*)Get_First_Collected_Object_Internal(); }
-	T *					Get_Next_Collected_Object(T * obj)	{ return (T*)Get_Next_Collected_Object_Internal(obj); }
-
+  T *Get_First_Collected_Object(void) { return (T *)Get_First_Collected_Object_Internal(); }
+  T *Get_Next_Collected_Object(T *obj) { return (T *)Get_Next_Collected_Object_Internal(obj); }
 };
-
 
 /*
 ** GridLinkClass
@@ -244,17 +238,16 @@ public:
 ** This class is should only be used by classes which derive from GridCullSystemClass
 ** not normal users.
 */
-class GridLinkClass : public CullLinkClass, public AutoPoolClass<GridLinkClass,256>
+class GridLinkClass : public CullLinkClass, public AutoPoolClass<GridLinkClass, 256>
 {
-public:
-	GridLinkClass(GridCullSystemClass * system);
-	virtual ~GridLinkClass(void);
+  public:
+  GridLinkClass(GridCullSystemClass *system);
+  virtual ~GridLinkClass(void);
 
-	int									GridAddress;		// address in the grid.
-	CullableClass *					Prev;					// prev object in this cell
-	CullableClass *					Next;					// next object in this cell
+  int GridAddress; // address in the grid.
+  CullableClass *Prev; // prev object in this cell
+  CullableClass *Next; // next object in this cell
 };
-
 
 /*
 ** GridListIterator
@@ -265,27 +258,45 @@ public:
 */
 class GridListIterator
 {
-public:
+  public:
+  GridListIterator(CullableClass *head) { First(head); }
 
-	GridListIterator(CullableClass * head)		{ First(head); }
+  void First(CullableClass *head)
+  {
+    Head = head;
+    CurObj = head;
+  }
+  void First(void) { CurObj = Head; }
+  void Next(void)
+  {
+    if (CurObj)
+    {
+      CurObj = ((GridLinkClass *)CurObj->Get_Cull_Link())->Next;
+    }
+  }
+  void Prev(void)
+  {
+    if (CurObj)
+    {
+      CurObj = ((GridLinkClass *)CurObj->Get_Cull_Link())->Prev;
+    }
+  }
+  bool Is_Done(void) { return (CurObj == NULL); }
 
-	void			First(CullableClass * head)	{ Head = head; CurObj = head; }
-	void			First(void)							{ CurObj = Head; }
-	void			Next(void)							{ if (CurObj) { CurObj = ((GridLinkClass *)CurObj->Get_Cull_Link())->Next; } }
-	void			Prev(void)							{ if (CurObj) { CurObj = ((GridLinkClass *)CurObj->Get_Cull_Link())->Prev; } }
-	bool			Is_Done(void)						{ return (CurObj == NULL); }
+  CullableClass *Get_Obj(void)
+  {
+    if (CurObj)
+    {
+      CurObj->Add_Ref();
+    }
+    return CurObj;
+  }
+  CullableClass *Peek_Obj(void) { return CurObj; }
 
-	CullableClass *	Get_Obj(void)				{ if (CurObj) { CurObj->Add_Ref(); } return CurObj; }
-	CullableClass *	Peek_Obj(void)				{ return CurObj; }
-
-private:
-
-	CullableClass *	Head;				// head of the list we're working in
-	CullableClass *	CurObj;			// node we're currently at.
-
+  private:
+  CullableClass *Head; // head of the list we're working in
+  CullableClass *CurObj; // node we're currently at.
 };
-
-
 
 /***********************************************************************************************
  * GridCullSystemClass::clamp_indices_to_grid -- constrains indices to be a valid location     *
@@ -299,16 +310,21 @@ private:
  * HISTORY:                                                                                    *
  *   3/30/2000  gth : Created.                                                                 *
  *=============================================================================================*/
-WWINLINE void GridCullSystemClass::clamp_indices_to_grid(int * i,int * j,int * k)
+WWINLINE void GridCullSystemClass::clamp_indices_to_grid(int *i, int *j, int *k)
 {
-	if (*i < 0) *i = 0;
-	if (*i >= CellCount[0]) *i = CellCount[0] - 1;
-	if (*j < 0) *j = 0;
-	if (*j >= CellCount[1]) *j = CellCount[1] - 1;
-	if (*k < 0) *k = 0;
-	if (*k >= CellCount[2]) *k = CellCount[2] - 1;
+  if (*i < 0)
+    *i = 0;
+  if (*i >= CellCount[0])
+    *i = CellCount[0] - 1;
+  if (*j < 0)
+    *j = 0;
+  if (*j >= CellCount[1])
+    *j = CellCount[1] - 1;
+  if (*k < 0)
+    *k = 0;
+  if (*k >= CellCount[2])
+    *k = CellCount[2] - 1;
 }
-
 
 /***********************************************************************************************
  * GridCullSystemClass::map_point_to_cell -- determines which cell  the point is in            *
@@ -322,21 +338,20 @@ WWINLINE void GridCullSystemClass::clamp_indices_to_grid(int * i,int * j,int * k
  * HISTORY:                                                                                    *
  *   3/30/2000  gth : Created.                                                                 *
  *=============================================================================================*/
-WWINLINE bool GridCullSystemClass::map_point_to_cell(const Vector3 & pt,int & set_i,int & set_j,int & set_k)
+WWINLINE bool GridCullSystemClass::map_point_to_cell(const Vector3 &pt, int &set_i, int &set_j, int &set_k)
 {
-	Vector3 dp = pt - Origin;
-	set_i = floor(dp.X * OOCellDim.X);
-	set_j = floor(dp.Y * OOCellDim.Y);
-	set_k = floor(dp.Z * OOCellDim.Z);
+  Vector3 dp = pt - Origin;
+  set_i = floor(dp.X * OOCellDim.X);
+  set_j = floor(dp.Y * OOCellDim.Y);
+  set_k = floor(dp.Z * OOCellDim.Z);
 
-	if (	(set_i >= 0) && (set_j >= 0) && (set_k >= 0) &&
-			(set_i < CellCount[0]) && (set_j < CellCount[1]) && (set_k < CellCount[2])	)
-	{
-		return true;
-	}
-	return false;
+  if ((set_i >= 0) && (set_j >= 0) && (set_k >= 0) && (set_i < CellCount[0]) && (set_j < CellCount[1])
+      && (set_k < CellCount[2]))
+  {
+    return true;
+  }
+  return false;
 }
-
 
 /***********************************************************************************************
  * GridCullSystemClass::map_point_to_address -- determines the address of a point in the grid  *
@@ -350,20 +365,22 @@ WWINLINE bool GridCullSystemClass::map_point_to_cell(const Vector3 & pt,int & se
  * HISTORY:                                                                                    *
  *   3/30/2000  gth : Created.                                                                 *
  *=============================================================================================*/
-WWINLINE bool GridCullSystemClass::map_point_to_address(const Vector3 & pt,int &set_address)
+WWINLINE bool GridCullSystemClass::map_point_to_address(const Vector3 &pt, int &set_address)
 {
-	int i,j,k;
-	bool res = map_point_to_cell(pt,i,j,k);
+  int i, j, k;
+  bool res = map_point_to_cell(pt, i, j, k);
 
-	if (res) {
-		set_address = map_indices_to_address(i,j,k);
-		return true;
-	} else {
-		set_address = UNGRIDDED_ADDRESS;
-		return false;
-	}
+  if (res)
+  {
+    set_address = map_indices_to_address(i, j, k);
+    return true;
+  }
+  else
+  {
+    set_address = UNGRIDDED_ADDRESS;
+    return false;
+  }
 }
-
 
 /***********************************************************************************************
  * GridCullSystemClass::map_indices_to_address -- computes the address for given index triplet *
@@ -377,11 +394,10 @@ WWINLINE bool GridCullSystemClass::map_point_to_address(const Vector3 & pt,int &
  * HISTORY:                                                                                    *
  *   3/30/2000  gth : Created.                                                                 *
  *=============================================================================================*/
-WWINLINE int GridCullSystemClass::map_indices_to_address(int i,int j,int k)
+WWINLINE int GridCullSystemClass::map_indices_to_address(int i, int j, int k)
 {
-	return i + j*CellCount[0] + k*CellCount[0]*CellCount[1];
+  return i + j * CellCount[0] + k * CellCount[0] * CellCount[1];
 }
-
 
 /***********************************************************************************************
  * GridCullSystemClass::total_cell_count -- returns the total number of cells in the grid      *
@@ -397,9 +413,8 @@ WWINLINE int GridCullSystemClass::map_indices_to_address(int i,int j,int k)
  *=============================================================================================*/
 WWINLINE int GridCullSystemClass::total_cell_count(void)
 {
-	return CellCount[0] * CellCount[1] * CellCount[2];
+  return CellCount[0] * CellCount[1] * CellCount[2];
 }
-
 
 /***********************************************************************************************
  * GridCullSystemClass::compute_box -- computes the bounding box for a grid cell               *
@@ -413,25 +428,24 @@ WWINLINE int GridCullSystemClass::total_cell_count(void)
  * HISTORY:                                                                                    *
  *   3/30/2000  gth : Created.                                                                 *
  *=============================================================================================*/
-WWINLINE void	GridCullSystemClass::compute_box(int i,int j,int k,AABoxClass * set_box)
+WWINLINE void GridCullSystemClass::compute_box(int i, int j, int k, AABoxClass *set_box)
 {
-	WWASSERT(set_box != NULL);
-	WWASSERT((i >= 0) && (j >= 0) && (k >= 0));
-	WWASSERT((i < CellCount[0]) && (j < CellCount[1]) && (k < CellCount[2]));
+  WWASSERT(set_box != NULL);
+  WWASSERT((i >= 0) && (j >= 0) && (k >= 0));
+  WWASSERT((i < CellCount[0]) && (j < CellCount[1]) && (k < CellCount[2]));
 
-	Vector3 min,max;
+  Vector3 min, max;
 
-	min.X = Origin.X + i * CellDim.X - MaxObjExtent;
-	min.Y = Origin.Y + j * CellDim.Y - MaxObjExtent;
-	min.Z = Origin.Z + k * CellDim.Z - MaxObjExtent;
+  min.X = Origin.X + i * CellDim.X - MaxObjExtent;
+  min.Y = Origin.Y + j * CellDim.Y - MaxObjExtent;
+  min.Z = Origin.Z + k * CellDim.Z - MaxObjExtent;
 
-	max.X = min.X + CellDim.X + 2.0f*MaxObjExtent;
-	max.Y = min.Y + CellDim.Y + 2.0f*MaxObjExtent;
-	max.Z = min.Z + CellDim.Z + 2.0f*MaxObjExtent;
+  max.X = min.X + CellDim.X + 2.0f * MaxObjExtent;
+  max.Y = min.Y + CellDim.Y + 2.0f * MaxObjExtent;
+  max.Z = min.Z + CellDim.Z + 2.0f * MaxObjExtent;
 
-	set_box->Init((min+max)*0.5f, (min-max)*0.5f);
+  set_box->Init((min + max) * 0.5f, (min - max) * 0.5f);
 }
-
 
 /***********************************************************************************************
  * GridCullSystemClass::compute_box -- computes bounding box for a range of grid cells         *
@@ -445,27 +459,26 @@ WWINLINE void	GridCullSystemClass::compute_box(int i,int j,int k,AABoxClass * se
  * HISTORY:                                                                                    *
  *   3/30/2000  gth : Created.                                                                 *
  *=============================================================================================*/
-WWINLINE void	GridCullSystemClass::compute_box(const GridCullSystemClass::VolumeStruct & vol, AABoxClass * set_box)
+WWINLINE void GridCullSystemClass::compute_box(const GridCullSystemClass::VolumeStruct &vol, AABoxClass *set_box)
 {
-	WWASSERT(set_box != NULL);
-	WWASSERT((vol.Min[0] >= 0) && (vol.Min[1] >= 0) && (vol.Min[2] >= 0));
-	WWASSERT((vol.Max[0] <= CellCount[0]) && (vol.Max[1] <= CellCount[1]) && (vol.Max[2] <= CellCount[2]));
+  WWASSERT(set_box != NULL);
+  WWASSERT((vol.Min[0] >= 0) && (vol.Min[1] >= 0) && (vol.Min[2] >= 0));
+  WWASSERT((vol.Max[0] <= CellCount[0]) && (vol.Max[1] <= CellCount[1]) && (vol.Max[2] <= CellCount[2]));
 
-	Vector3 min,max;
+  Vector3 min, max;
 
-	min.X = Origin.X + vol.Min[0] * CellDim.X - MaxObjExtent;
-	min.Y = Origin.Y + vol.Min[1] * CellDim.Y - MaxObjExtent;
-	min.Z = Origin.Z + vol.Min[2] * CellDim.Z - MaxObjExtent;
+  min.X = Origin.X + vol.Min[0] * CellDim.X - MaxObjExtent;
+  min.Y = Origin.Y + vol.Min[1] * CellDim.Y - MaxObjExtent;
+  min.Z = Origin.Z + vol.Min[2] * CellDim.Z - MaxObjExtent;
 
-	max.X = Origin.X + vol.Max[0] * CellDim.X + MaxObjExtent;
-	max.Y = Origin.Y + vol.Max[1] * CellDim.Y + MaxObjExtent;
-	max.Z = Origin.Z + vol.Max[2] * CellDim.Z + MaxObjExtent;
+  max.X = Origin.X + vol.Max[0] * CellDim.X + MaxObjExtent;
+  max.Y = Origin.Y + vol.Max[1] * CellDim.Y + MaxObjExtent;
+  max.Z = Origin.Z + vol.Max[2] * CellDim.Z + MaxObjExtent;
 
-	Vector3 center((max.X+min.X)*0.5f,(max.Y+min.Y)*0.5f,(max.Z+min.Z)*0.5f);
-	Vector3 extent((max.X-min.X)*0.5f,(max.Y-min.Y)*0.5f,(max.Z-min.Z)*0.5f);
-	set_box->Init(center,extent);
+  Vector3 center((max.X + min.X) * 0.5f, (max.Y + min.Y) * 0.5f, (max.Z + min.Z) * 0.5f);
+  Vector3 extent((max.X - min.X) * 0.5f, (max.Y - min.Y) * 0.5f, (max.Z - min.Z) * 0.5f);
+  set_box->Init(center, extent);
 }
-
 
 /***********************************************************************************************
  * GridCullSystemClass::init_volume -- inits volume to contain the given range                 *
@@ -479,38 +492,32 @@ WWINLINE void	GridCullSystemClass::compute_box(const GridCullSystemClass::Volume
  * HISTORY:                                                                                    *
  *   3/30/2000  gth : Created.                                                                 *
  *=============================================================================================*/
-WWINLINE void GridCullSystemClass::init_volume
-(
-	const Vector3 &		bound_min,
-	const Vector3 &		bound_max,
-	VolumeStruct *			set_vol
-)
+WWINLINE void GridCullSystemClass::init_volume(const Vector3 &bound_min, const Vector3 &bound_max, VolumeStruct *set_vol)
 {
-	// expand the box by the maximum size of any object
-	Vector3 grid_min = bound_min;
-	grid_min.X -= MaxObjExtent;
-	grid_min.Y -= MaxObjExtent;
-	grid_min.Z -= MaxObjExtent;
+  // expand the box by the maximum size of any object
+  Vector3 grid_min = bound_min;
+  grid_min.X -= MaxObjExtent;
+  grid_min.Y -= MaxObjExtent;
+  grid_min.Z -= MaxObjExtent;
 
-	Vector3 grid_max = bound_max;
-	grid_max.X += MaxObjExtent;
-	grid_max.Y += MaxObjExtent;
-	grid_max.Z += MaxObjExtent;
+  Vector3 grid_max = bound_max;
+  grid_max.X += MaxObjExtent;
+  grid_max.Y += MaxObjExtent;
+  grid_max.Z += MaxObjExtent;
 
-	// now compute the grid coordinates of the corners of the box
-	GridCullSystemClass::map_point_to_cell(grid_min,set_vol->Min[0],set_vol->Min[1],set_vol->Min[2]);
-	GridCullSystemClass::map_point_to_cell(grid_max,set_vol->Max[0],set_vol->Max[1],set_vol->Max[2]);
+  // now compute the grid coordinates of the corners of the box
+  GridCullSystemClass::map_point_to_cell(grid_min, set_vol->Min[0], set_vol->Min[1], set_vol->Min[2]);
+  GridCullSystemClass::map_point_to_cell(grid_max, set_vol->Max[0], set_vol->Max[1], set_vol->Max[2]);
 
-	// now clamp the volume to the actual grid
-	clamp_indices_to_grid(&(set_vol->Min[0]),&(set_vol->Min[1]),&(set_vol->Min[2]));
-	clamp_indices_to_grid(&(set_vol->Max[0]),&(set_vol->Max[1]),&(set_vol->Max[2]));
+  // now clamp the volume to the actual grid
+  clamp_indices_to_grid(&(set_vol->Min[0]), &(set_vol->Min[1]), &(set_vol->Min[2]));
+  clamp_indices_to_grid(&(set_vol->Max[0]), &(set_vol->Max[1]), &(set_vol->Max[2]));
 
-	// increment the outer edge of the box due to the way we traverse the grid...
-	set_vol->Max[0] ++;
-	set_vol->Max[1] ++;
-	set_vol->Max[2] ++;
+  // increment the outer edge of the box due to the way we traverse the grid...
+  set_vol->Max[0]++;
+  set_vol->Max[1]++;
+  set_vol->Max[2]++;
 }
-
 
 /***********************************************************************************************
  * GridCullSystemClass::init_volume -- inits volume to contain the given line segment          *
@@ -524,18 +531,17 @@ WWINLINE void GridCullSystemClass::init_volume
  * HISTORY:                                                                                    *
  *   3/30/2000  gth : Created.                                                                 *
  *=============================================================================================*/
-WWINLINE void GridCullSystemClass::init_volume(const LineSegClass & line,VolumeStruct * set_volume)
+WWINLINE void GridCullSystemClass::init_volume(const LineSegClass &line, VolumeStruct *set_volume)
 {
-	Vector3 min_pt,max_pt;
-	min_pt.X = WWMath::Min(line.Get_P0().X,line.Get_P1().X);
-	max_pt.X = WWMath::Max(line.Get_P0().X,line.Get_P1().X);
-	min_pt.Y = WWMath::Min(line.Get_P0().Y,line.Get_P1().Y);
-	max_pt.Y = WWMath::Max(line.Get_P0().Y,line.Get_P1().Y);
-	min_pt.Z = WWMath::Min(line.Get_P0().Z,line.Get_P1().Z);
-	max_pt.Z = WWMath::Max(line.Get_P0().Z,line.Get_P1().Z);
-	init_volume(min_pt,max_pt,set_volume);
+  Vector3 min_pt, max_pt;
+  min_pt.X = WWMath::Min(line.Get_P0().X, line.Get_P1().X);
+  max_pt.X = WWMath::Max(line.Get_P0().X, line.Get_P1().X);
+  min_pt.Y = WWMath::Min(line.Get_P0().Y, line.Get_P1().Y);
+  max_pt.Y = WWMath::Max(line.Get_P0().Y, line.Get_P1().Y);
+  min_pt.Z = WWMath::Min(line.Get_P0().Z, line.Get_P1().Z);
+  max_pt.Z = WWMath::Max(line.Get_P0().Z, line.Get_P1().Z);
+  init_volume(min_pt, max_pt, set_volume);
 }
-
 
 /***********************************************************************************************
  * GridCullSystemClass::init_volume -- inits volume to contain the given box                   *
@@ -549,11 +555,10 @@ WWINLINE void GridCullSystemClass::init_volume(const LineSegClass & line,VolumeS
  * HISTORY:                                                                                    *
  *   3/30/2000  gth : Created.                                                                 *
  *=============================================================================================*/
-WWINLINE void GridCullSystemClass::init_volume(const AABoxClass & box,VolumeStruct * set_volume)
+WWINLINE void GridCullSystemClass::init_volume(const AABoxClass &box, VolumeStruct *set_volume)
 {
-	init_volume(box.Center - box.Extent,box.Center + box.Extent,set_volume);
+  init_volume(box.Center - box.Extent, box.Center + box.Extent, set_volume);
 }
-
 
 /***********************************************************************************************
  * GridCullSystemClass::init_volume -- inits volume to contain the given oriented box          *
@@ -567,13 +572,12 @@ WWINLINE void GridCullSystemClass::init_volume(const AABoxClass & box,VolumeStru
  * HISTORY:                                                                                    *
  *   3/30/2000  gth : Created.                                                                 *
  *=============================================================================================*/
-WWINLINE void GridCullSystemClass::init_volume(const OBBoxClass & box,VolumeStruct * set_volume)
+WWINLINE void GridCullSystemClass::init_volume(const OBBoxClass &box, VolumeStruct *set_volume)
 {
-	Vector3 aaextent;
-	box.Compute_Axis_Aligned_Extent(&aaextent);
-	init_volume(box.Center - aaextent,box.Center + aaextent,set_volume);
+  Vector3 aaextent;
+  box.Compute_Axis_Aligned_Extent(&aaextent);
+  init_volume(box.Center - aaextent, box.Center + aaextent, set_volume);
 }
-
 
 /***********************************************************************************************
  * GridCullSystemClass::init_volume -- inits volume to contain the given frustum               *
@@ -587,11 +591,10 @@ WWINLINE void GridCullSystemClass::init_volume(const OBBoxClass & box,VolumeStru
  * HISTORY:                                                                                    *
  *   3/30/2000  gth : Created.                                                                 *
  *=============================================================================================*/
-WWINLINE void GridCullSystemClass::init_volume(const FrustumClass & frustum,VolumeStruct * set_volume)
+WWINLINE void GridCullSystemClass::init_volume(const FrustumClass &frustum, VolumeStruct *set_volume)
 {
-	init_volume(frustum.Get_Bound_Min(),frustum.Get_Bound_Max(),set_volume);
+  init_volume(frustum.Get_Bound_Min(), frustum.Get_Bound_Max(), set_volume);
 }
-
 
 /***********************************************************************************************
  * GridCullSystemClass::VolumeStruct::VolumeStruct -- constructor                              *
@@ -608,7 +611,6 @@ WWINLINE GridCullSystemClass::VolumeStruct::VolumeStruct(void)
 {
 }
 
-
 /***********************************************************************************************
  * GridCullSystemClass::VolumeStruct::VolumeStruct -- constructor                              *
  *                                                                                             *
@@ -621,19 +623,18 @@ WWINLINE GridCullSystemClass::VolumeStruct::VolumeStruct(void)
  * HISTORY:                                                                                    *
  *   3/30/2000  gth : Created.                                                                 *
  *=============================================================================================*/
-WWINLINE GridCullSystemClass::VolumeStruct::VolumeStruct(int i0,int j0,int k0,int i1,int j1,int k1)
+WWINLINE GridCullSystemClass::VolumeStruct::VolumeStruct(int i0, int j0, int k0, int i1, int j1, int k1)
 {
-	Min[0] = i0;
-	Min[1] = j0;
-	Min[2] = k0;
-	Max[0] = i1;
-	Max[1] = j1;
-	Max[2] = k1;
-	WWASSERT(Max[0] > Min[0]);
-	WWASSERT(Max[1] > Min[1]);
-	WWASSERT(Max[2] > Min[2]);
+  Min[0] = i0;
+  Min[1] = j0;
+  Min[2] = k0;
+  Max[0] = i1;
+  Max[1] = j1;
+  Max[2] = k1;
+  WWASSERT(Max[0] > Min[0]);
+  WWASSERT(Max[1] > Min[1]);
+  WWASSERT(Max[2] > Min[2]);
 }
-
 
 /***********************************************************************************************
  * GridCullSystemClass::VolumeStruct::Is_Leaf -- check if volume is a leaf                     *
@@ -649,9 +650,8 @@ WWINLINE GridCullSystemClass::VolumeStruct::VolumeStruct(int i0,int j0,int k0,in
  *=============================================================================================*/
 WWINLINE bool GridCullSystemClass::VolumeStruct::Is_Leaf(void) const
 {
-	return ((Max[0]-Min[0] == 1) && (Max[1]-Min[1] == 1) && (Max[2]-Min[2] == 1));
+  return ((Max[0] - Min[0] == 1) && (Max[1] - Min[1] == 1) && (Max[2] - Min[2] == 1));
 }
-
 
 /***********************************************************************************************
  * GridCullSystemClass::VolumeStruct::Is_Empty -- check if volume is empty (or invalid)        *
@@ -667,9 +667,8 @@ WWINLINE bool GridCullSystemClass::VolumeStruct::Is_Leaf(void) const
  *=============================================================================================*/
 WWINLINE bool GridCullSystemClass::VolumeStruct::Is_Empty(void) const
 {
-	return ((Max[0]-Min[0] <= 0) || (Max[1]-Min[1] <= 0) || (Max[2]-Min[2] <= 0));
+  return ((Max[0] - Min[0] <= 0) || (Max[1] - Min[1] <= 0) || (Max[2] - Min[2] <= 0));
 }
-
 
 /***********************************************************************************************
  * GridCullSystemClass::VolumeStruct::Split -- split this volume                               *
@@ -683,24 +682,26 @@ WWINLINE bool GridCullSystemClass::VolumeStruct::Is_Empty(void) const
  * HISTORY:                                                                                    *
  *   3/30/2000  gth : Created.                                                                 *
  *=============================================================================================*/
-WWINLINE void GridCullSystemClass::VolumeStruct::Split(VolumeStruct & v0,VolumeStruct & v1) const
+WWINLINE void GridCullSystemClass::VolumeStruct::Split(VolumeStruct &v0, VolumeStruct &v1) const
 {
-	// find the longest dimension
-	int split_axis = 0;
-	int delta[3];
+  // find the longest dimension
+  int split_axis = 0;
+  int delta[3];
 
-	delta[0] = Max[0] - Min[0];
-	delta[1] = Max[1] - Min[1];
-	delta[2] = Max[2] - Min[2];
+  delta[0] = Max[0] - Min[0];
+  delta[1] = Max[1] - Min[1];
+  delta[2] = Max[2] - Min[2];
 
-	if (delta[1] > delta[split_axis]) split_axis = 1;
-	if (delta[2] > delta[split_axis]) split_axis = 2;
+  if (delta[1] > delta[split_axis])
+    split_axis = 1;
+  if (delta[2] > delta[split_axis])
+    split_axis = 2;
 
-	WWASSERT(delta[split_axis] > 0);
+  WWASSERT(delta[split_axis] > 0);
 
-	// split the volume perpendicularly to that dimension
-	memcpy(&v0,this,sizeof(VolumeStruct));
-	memcpy(&v1,this,sizeof(VolumeStruct));
+  // split the volume perpendicularly to that dimension
+  memcpy(&v0, this, sizeof(VolumeStruct));
+  memcpy(&v1, this, sizeof(VolumeStruct));
 
-	v0.Max[split_axis] = v1.Min[split_axis] = Min[split_axis] + (delta[split_axis] >> 1);
+  v0.Max[split_axis] = v1.Min[split_axis] = Min[split_axis] + (delta[split_axis] >> 1);
 }

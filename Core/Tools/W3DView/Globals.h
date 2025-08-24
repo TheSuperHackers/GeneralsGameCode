@@ -28,7 +28,6 @@
 #ifndef __GLOBALS_H
 #define __GLOBALS_H
 
-
 //////////////////////////////////////////////////////
 //  Externs
 //////////////////////////////////////////////////////
@@ -39,12 +38,10 @@ extern int g_iBitsPerPixel;
 extern int g_iWidth;
 extern int g_iHeight;
 
-
 //////////////////////////////////////////////////////
 //  Contants
 //////////////////////////////////////////////////////
-const int DEFAULT_DEVICEINDEX       = 1;
-const int DEFAULT_BITSPERPIX        = 16;
-
+const int DEFAULT_DEVICEINDEX = 1;
+const int DEFAULT_BITSPERPIX = 16;
 
 #endif //__GLOBALS_H

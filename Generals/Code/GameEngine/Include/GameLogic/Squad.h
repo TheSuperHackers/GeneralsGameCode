@@ -52,48 +52,47 @@ class AIGroup;
 class Object;
 class Team;
 
-
 // TYPE DEFINES ///////////////////////////////////////////////////////////////
 typedef std::vector<ObjectID> VecObjectID;
 typedef VecObjectID::iterator VecObjectIDIt;
 
-typedef std::vector<Object*> VecObjectPtr;
+typedef std::vector<Object *> VecObjectPtr;
 typedef VecObjectPtr::iterator VecObjectPtrIt;
 
 class Squad : public MemoryPoolObject, public Snapshot
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(Squad, "Squad")
+  MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(Squad, "Squad")
 
-protected:
-	// snapshot methods
-	virtual void crc( Xfer *xfer );
-	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess( void );
+  protected:
+  // snapshot methods
+  virtual void crc(Xfer *xfer);
+  virtual void xfer(Xfer *xfer);
+  virtual void loadPostProcess(void);
 
-	VecObjectID m_objectIDs;
+  VecObjectID m_objectIDs;
 
-	// this one is the last requested object stuff. Its used so that we can return a
-	// const& rather than making a copy and placing it on the stack.
-	VecObjectPtr m_objectsCached;
+  // this one is the last requested object stuff. Its used so that we can return a
+  // const& rather than making a copy and placing it on the stack.
+  VecObjectPtr m_objectsCached;
 
-public:
-	void addObject(Object *objectToAdd);							// add an object
-	void addObjectID(ObjectID objectID);							// add an object ID
-	void removeObject(Object *objectToRemove);				// remove an object
-	void clearSquad();																// remove all objects from this squad.
-	const VecObjectPtr& getAllObjects(void);					// get all objects on the list that haven't been deleted
-	const VecObjectPtr& getLiveObjects(void);					// get all objects that pass "isEffectivelyDead" test
-	Int getSizeOfGroup(void) const;										// get the current number of objects, including dead objects
-	Bool isOnSquad(const Object *objToTest) const;		// returns true if the object is on this squad, otherwise false
+  public:
+  void addObject(Object *objectToAdd); // add an object
+  void addObjectID(ObjectID objectID); // add an object ID
+  void removeObject(Object *objectToRemove); // remove an object
+  void clearSquad(); // remove all objects from this squad.
+  const VecObjectPtr &getAllObjects(void); // get all objects on the list that haven't been deleted
+  const VecObjectPtr &getLiveObjects(void); // get all objects that pass "isEffectivelyDead" test
+  Int getSizeOfGroup(void) const; // get the current number of objects, including dead objects
+  Bool isOnSquad(const Object *objToTest) const; // returns true if the object is on this squad, otherwise false
 
-	// convenience function to fill this squad with members of a team
-	// There SHOULD NOT be a TeamFromSquad Function. See comments in Squad.cpp for details
-	void squadFromTeam(const Team* fromTeam, Bool clearSquadFirst);
+  // convenience function to fill this squad with members of a team
+  // There SHOULD NOT be a TeamFromSquad Function. See comments in Squad.cpp for details
+  void squadFromTeam(const Team *fromTeam, Bool clearSquadFirst);
 
-	// convenience function to create a squad from an AIGroup, and an AIGroup from a team.
-	// When creating the AIGroup from the Squad, the old AIGroup affiliations are broken.
-	void squadFromAIGroup(const AIGroup* fromAIGroup, Bool clearSquadFirst);
-	void aiGroupFromSquad(AIGroup* aiGroupToFill);
+  // convenience function to create a squad from an AIGroup, and an AIGroup from a team.
+  // When creating the AIGroup from the Squad, the old AIGroup affiliations are broken.
+  void squadFromAIGroup(const AIGroup *fromAIGroup, Bool clearSquadFirst);
+  void aiGroupFromSquad(AIGroup *aiGroupToFill);
 };
 EMPTY_DTOR(Squad)
 

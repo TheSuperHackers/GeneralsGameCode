@@ -59,130 +59,127 @@ that don't belong to them, etc...
 //
 // Usage: ArrayList<int> TheList;
 //
-template <class T>
+template<class T>
 class ArrayList
 {
- public:
-                   ArrayList();
-                   ArrayList(ArrayList<T> &other);
-                  ~ArrayList();
+  public:
+  ArrayList();
+  ArrayList(ArrayList<T> &other);
+  ~ArrayList();
 
   // Remove all entries from the lsit
-  void             clear(void);
+  void clear(void);
 
   // Add a node after the zero based 'pos'
-  bit8             add(IN T &node,sint32 pos);
-  bit8             addTail(IN T &node);
-  bit8             addHead(IN T &node);
-  bit8		   addSortedAsc(IN T &node);		// Ascending
-  bit8		   addSortedDes(IN T &node);		// Descending
+  bit8 add(IN T &node, sint32 pos);
+  bit8 addTail(IN T &node);
+  bit8 addHead(IN T &node);
+  bit8 addSortedAsc(IN T &node); // Ascending
+  bit8 addSortedDes(IN T &node); // Descending
   /*bit8		   addNumSortedAsc(IN T &node);		// Ascending
   bit8		   addNumSortedDes(IN T &node);		// Descending*/
 
   // Remove a node
-  bit8             remove(OUT T &node,sint32 pos);
-  bit8             remove(sint32 pos);
-  bit8             removeHead(OUT T &node);
-  bit8             removeTail(OUT T &node);
+  bit8 remove(OUT T &node, sint32 pos);
+  bit8 remove(sint32 pos);
+  bit8 removeHead(OUT T &node);
+  bit8 removeTail(OUT T &node);
 
   // Replace one obj with another
-  bit8             replace(IN T &node, sint32 pos);
-
+  bit8 replace(IN T &node, sint32 pos);
 
   // Get a node without removing from the list
-  bit8             get(OUT T &node,sint32 pos) RO;
-  bit8             getHead(OUT T &node) RO;
-  bit8             getTail(OUT T &node) RO;
+  bit8 get(OUT T &node, sint32 pos) RO;
+  bit8 getHead(OUT T &node) RO;
+  bit8 getTail(OUT T &node) RO;
 
   // Get a pointer to the interally managed copy (careful!)
-  bit8             getPointer(OUT T **node,sint32 pos) RO;
+  bit8 getPointer(OUT T **node, sint32 pos) RO;
 
   // Get the number of entries in the list
-  sint32           length(void) RO;
+  sint32 length(void) RO;
 
   // UNSAFE! for classes, see note below!
-  bit8             setSize(sint32 newsize, IN T &filler);
+  bit8 setSize(sint32 newsize, IN T &filler);
 
   // Print information on the list
-  void             print(FILE *out);
+  void print(FILE *out);
 
   // assignment operator
-  ArrayList<T>   &operator=(IN ArrayList<T> &other);
+  ArrayList<T> &operator=(IN ArrayList<T> &other);
 
- private:
-  sint32 	   _sortedLookup(IN T &target, int ascending);
-  sint32           Entries_;   // Number of entries
-  sint32           Slots_;     // Number of available slots
+  private:
+  sint32 _sortedLookup(IN T &target, int ascending);
+  sint32 Entries_; // Number of entries
+  sint32 Slots_; // Number of available slots
 
-  T               *Vector_;    // The actual memory where the list is held
+  T *Vector_; // The actual memory where the list is held
 
   enum
   {
     INITIAL_SIZE = 10
   };
 
-  bit8             growVector(void);   // Expand the number of slots
-  bit8             shrinkVector(void); // Reduce the number of slots
+  bit8 growVector(void); // Expand the number of slots
+  bit8 shrinkVector(void); // Reduce the number of slots
 };
 
-
-//Create the empty list
-template <class T>
+// Create the empty list
+template<class T>
 ArrayList<T>::ArrayList()
 {
-  Entries_=0;
-  Slots_=0;
-  Vector_=NULL;
+  Entries_ = 0;
+  Slots_ = 0;
+  Vector_ = NULL;
 }
 
 // copy constructor
-template <class T>
+template<class T>
 ArrayList<T>::ArrayList(ArrayList<T> &other)
 {
-  Entries_=0;
-  Slots_=0;
-  Vector_=NULL;
-  (*this)=other;
+  Entries_ = 0;
+  Slots_ = 0;
+  Vector_ = NULL;
+  (*this) = other;
 }
 
-//Free all the memory...
-template <class T>
+// Free all the memory...
+template<class T>
 ArrayList<T>::~ArrayList()
 {
-  clear();                   // Remove the entries & call destructors on them
+  clear(); // Remove the entries & call destructors on them
 
-  delete[]((uint8*)Vector_); // this will prevent the destructors from
-                             //  gettting called on elements not
-                             //  containing valid objects.
+  delete[] ((uint8 *)Vector_); // this will prevent the destructors from
+                               //  gettting called on elements not
+                               //  containing valid objects.
 
-  //fprintf(stderr,"Arraylist destructor\n");
+  // fprintf(stderr,"Arraylist destructor\n");
 }
 
 // assignment operator
-template <class T>
+template<class T>
 ArrayList<T> &ArrayList<T>::operator=(IN ArrayList<T> &other)
 {
   T node;
   clear();
-  for (int i=0; i<other.length(); i++)
+  for (int i = 0; i < other.length(); i++)
   {
-    other.get(node,i);
+    other.get(node, i);
     addTail(node);
   }
-  return(*this);
+  return (*this);
 }
 
-
 // Remove all the entries and free the memory
-template <class T>
+template<class T>
 void ArrayList<T>::clear()
 {
-  for (int i=0; i<Entries_; i++)
+  for (int i = 0; i < Entries_; i++)
   {
-    (Vector_+i)->~T();    // Call the destructor manually. Don't try this
-                          //  at home kiddies!
+    (Vector_ + i)->~T(); // Call the destructor manually. Don't try this
+                         //  at home kiddies!
   }
-  Entries_=0;
+  Entries_ = 0;
 }
 
 // ************************* UNSAFE UNSAFE UNSAFE *************************
@@ -194,186 +191,179 @@ void ArrayList<T>::clear()
 // Add/remove entries in a stupid manner...
 //
 // **************************************************************************
-template <class T>
+template<class T>
 bit8 ArrayList<T>::setSize(sint32 newsize, IN T &filler)
 {
-  int oldEntries=Entries_;
+  int oldEntries = Entries_;
   Entries_ = newsize;
 
-  if (newsize<0)
-    return(false);
+  if (newsize < 0)
+    return (false);
 
   // Grow the vector as much as we need to
   while (newsize > Slots_)
     growVector();
 
   // Create new objects in the blank holes
-  for (int i=oldEntries; i<Entries_; i++)
+  for (int i = oldEntries; i < Entries_; i++)
   {
     // Now put the replacement object in there...
-    new((void *)(Vector_+i)) T(filler); // Trust me, this isn't a memory leak
+    new ((void *)(Vector_ + i)) T(filler); // Trust me, this isn't a memory leak
   }
 
   // If we're at 33% usage or less, shrink the vector
-  if ((Entries_*3) <= Slots_)  // don't do while, because I think shrink will never goto 0
+  if ((Entries_ * 3) <= Slots_) // don't do while, because I think shrink will never goto 0
     shrinkVector();
 
-  return(true);
+  return (true);
 }
-
 
 // When adding into a position, the new node goes at the zero based slot
 // specified by pos. All other nodes get moved one slot down.
-template <class T>
-bit8 ArrayList<T>::add(IN T &node,sint32 pos)
+template<class T>
+bit8 ArrayList<T>::add(IN T &node, sint32 pos)
 {
-  if (pos > Entries_)      // You can only access one of the end of the vector
-    pos=Entries_;
-  if (pos >= Slots_)        // If we're at the end, grow the list
+  if (pos > Entries_) // You can only access one of the end of the vector
+    pos = Entries_;
+  if (pos >= Slots_) // If we're at the end, grow the list
     growVector();
-  if (Entries_ >= Slots_)   // enuff space?
+  if (Entries_ >= Slots_) // enuff space?
     growVector();
 
   // If we are insering into the middle or front of the list we have to
   //  slide the old objects forward.
-  if (pos < Entries_)   // If there are elements after the add point
-    memmove(Vector_+pos+1,Vector_+pos,sizeof(T)*(Entries_-pos)); // move them forward
+  if (pos < Entries_) // If there are elements after the add point
+    memmove(Vector_ + pos + 1, Vector_ + pos, sizeof(T) * (Entries_ - pos)); // move them forward
 
-  //fprintf(stderr,"Placement new to %p\n",(Vector_+pos));
+  // fprintf(stderr,"Placement new to %p\n",(Vector_+pos));
 
   // This uses the placement new operator. placement new allows us to
   //  specify the memory address for the new object.  In this case we
   //  want it at the 'pos' index into our array.
-  new((void *)(Vector_+pos)) T((T &)node); // Trust me, this isn't a memory leak
-  Entries_++;                         // one new entry
-  return(TRUE);
+  new ((void *)(Vector_ + pos)) T((T &)node); // Trust me, this isn't a memory leak
+  Entries_++; // one new entry
+  return (TRUE);
 }
-
 
 // Add to the first node, all others get shifted down one slot
-template <class T>
+template<class T>
 bit8 ArrayList<T>::addHead(IN T &node)
 {
-  return(add(node,0));
+  return (add(node, 0));
 }
-
 
 // Append to the end of the list
-template <class T>
+template<class T>
 bit8 ArrayList<T>::addTail(IN T &node)
 {
-  return(add(node,length()));
+  return (add(node, length()));
 }
-
 
 // addSortedX only works (properly) if evrerything else in the list is added
 // using addSorted.
-template <class T>
+template<class T>
 bit8 ArrayList<T>::addSortedAsc(IN T &node)
 {
-	sint32 pos = _sortedLookup(node, 1);
-	return(add(node, pos));
+  sint32 pos = _sortedLookup(node, 1);
+  return (add(node, pos));
 }
-
 
 // addSortedX only works (properly) if evrerything else in the list is added
 // using addSorted.
-template <class T>
+template<class T>
 bit8 ArrayList<T>::addSortedDes(IN T &node)
 {
-	sint32 pos = _sortedLookup(node, 0);
-	return(add(node, pos));
+  sint32 pos = _sortedLookup(node, 0);
+  return (add(node, pos));
 }
-
 
 // This is the binary search used by addSorted
-template <class T>
+template<class T>
 sint32 ArrayList<T>::_sortedLookup(IN T &target, int ascending)
 {
-	int	low, mid, high;
-	T* 	lowtarget;
-	T* 	hightarget;
-	T* 	midtarget;
+  int low, mid, high;
+  T *lowtarget;
+  T *hightarget;
+  T *midtarget;
 
+  // Trivial cases
+  if (Entries_ == 0)
+    return 0;
 
-	// Trivial cases
-	if( Entries_ == 0 )
-		return 0;
+  low = 0;
+  high = Entries_ - 1;
+  while (1)
+  {
+    assert(low <= high);
+    mid = low + (int)(floor(((double)high - (double)low) / (double)2));
 
-	low = 0;
-	high = Entries_ - 1;
-	while( 1 )
-	{
-		assert( low <= high );
-		mid = low + (int)(floor(((double)high - (double)low) / (double)2));
+    getPointer(&lowtarget, low);
+    getPointer(&hightarget, high);
+    getPointer(&midtarget, mid);
 
-		getPointer(&lowtarget, low);
-		getPointer(&hightarget, high);
-		getPointer(&midtarget, mid);
+    // Exact match
+    if (*midtarget == target)
+      return mid;
 
-		// Exact match
-		if( *midtarget == target )  return mid;
+    // Single element
+    if (high == low)
+    {
+      if (ascending)
+      {
+        if (target <= *lowtarget)
+          return low;
+        else
+          return low + 1;
+      }
+      else
+      {
+        if (target <= *lowtarget)
+          return low + 1;
+        else
+          return low;
+      }
+    }
 
-		// Single element
-		if( high == low )
-		{
-			if( ascending )
-			{
-				if( target <= *lowtarget )
-					return low;
-				else
-					return low + 1;
-			}
-			else
-			{
-				if( target <= *lowtarget )
-					return low + 1;
-				else
-					return low;
-			}
-		}
+    // Two elemsnts
+    if ((high - low) == 1)
+    {
+      if (ascending)
+      {
+        if (target <= *lowtarget)
+          return low;
+        else if (target <= *hightarget)
+          return high;
+        else
+          return high + 1;
+      }
+      else
+      {
+        if (target <= *hightarget)
+          return high + 1;
+        else if (target <= *lowtarget)
+          return high;
+        else
+          return low;
+      }
+    }
 
-		// Two elemsnts
-		if( (high - low) == 1 )
-		{
-			if( ascending )
-			{
-				if( target <= *lowtarget )
-					return low;
-				else if( target <= *hightarget )
-					return high;
-				else
-					return high + 1;
-			}
-			else
-			{
-				if( target <= *hightarget )
-					return high + 1;
-				else if( target <= *lowtarget )
-					return high;
-				else
-					return low;
-			}
-		}
-
-		// Sorry, try again...
-		if( ascending )
-		{
-			if( target < *midtarget )
-				high = mid;
-			else
-				low = mid;
-		}
-		else
-		{
-			if( target < *midtarget )
-				low = mid;
-			else
-				high = mid;
-		}
-	}
+    // Sorry, try again...
+    if (ascending)
+    {
+      if (target < *midtarget)
+        high = mid;
+      else
+        low = mid;
+    }
+    else
+    {
+      if (target < *midtarget)
+        low = mid;
+      else
+        high = mid;
+    }
+  }
 }
-
 
 /*// addNumSortedX works in much the same way as addSortedX, except that I needed
 // it for a very specific thing.  I needed a list of strings numerically sorted,
@@ -415,295 +405,283 @@ bit8 ArrayList<T>::addSortedDes(IN T &node, char delim, int fields)
 template <class T>
 sint32 ArrayList<T>::_numSortedLookup(IN T &target, char delim, int fields, int ascending)
 {
-	int	low, mid, high;
-	T* 	lowtarget;
-	T* 	hightarget;
-	T* 	midtarget;
+  int	low, mid, high;
+  T* 	lowtarget;
+  T* 	hightarget;
+  T* 	midtarget;
 
 
-	// Trivial case
-	if( Entries_ == 0 )
-		return 0;
+  // Trivial case
+  if( Entries_ == 0 )
+    return 0;
 
-	low = 0;
-	high = Entries_;
-	while( 1 )
-	{
-		assert( low <= high );
-		mid = low + (int)(floor(((double)high - (double)low) / (double)2));
+  low = 0;
+  high = Entries_;
+  while( 1 )
+  {
+    assert( low <= high );
+    mid = low + (int)(floor(((double)high - (double)low) / (double)2));
 
-		getPointer(&lowtarget, low);
-		getPointer(&hightarget, high);
-		getPointer(&midtarget, mid);
+    getPointer(&lowtarget, low);
+    getPointer(&hightarget, high);
+    getPointer(&midtarget, mid);
 
-		// Exact match
-		if( *midtarget == target )  return mid;
+    // Exact match
+    if( *midtarget == target )  return mid;
 
-		// Single element
-		if( high == low )
-		{
-			if( ascending )
-			{
-				if( target <= *lowtarget )
-					return low;
-				else
-					return low + 1;
-			}
-			else
-			{
-				if( target <= *lowtarget )
-					return low + 1;
-				else
-					return low;
-			}
-		}
+    // Single element
+    if( high == low )
+    {
+      if( ascending )
+      {
+        if( target <= *lowtarget )
+          return low;
+        else
+          return low + 1;
+      }
+      else
+      {
+        if( target <= *lowtarget )
+          return low + 1;
+        else
+          return low;
+      }
+    }
 
-		// Two elemsnts
-		if( (high - low) == 1 )
-		{
-			if( ascending )
-			{
-				if( target <= *lowtarget )
-					return low;
-				else
-					return high;
-			}
-			else
-			{
-				if( target <= *lowtarget )
-					return high;
-				else
-					return low;
-			}
-		}
+    // Two elemsnts
+    if( (high - low) == 1 )
+    {
+      if( ascending )
+      {
+        if( target <= *lowtarget )
+          return low;
+        else
+          return high;
+      }
+      else
+      {
+        if( target <= *lowtarget )
+          return high;
+        else
+          return low;
+      }
+    }
 
-		// Sorry, try again...
-		if( ascending )
-		{
-			if( target < *midtarget )
-				high = mid;
-			else
-				low = mid;
-		}
-		else
-		{
-			if( target < *midtarget )
-				low = mid;
-			else
-				high = mid;
-		}
-	}
+    // Sorry, try again...
+    if( ascending )
+    {
+      if( target < *midtarget )
+        high = mid;
+      else
+        low = mid;
+    }
+    else
+    {
+      if( target < *midtarget )
+        low = mid;
+      else
+        high = mid;
+    }
+  }
 }*/
-
 
 //
 // Delete an item at this index and construct a new one in it's place
 //
-template <class T>
+template<class T>
 bit8 ArrayList<T>::replace(IN T &node, sint32 pos)
 {
-  if (Entries_==0)
-    return(FALSE);
-  if (pos<0)
-    pos=0;
+  if (Entries_ == 0)
+    return (FALSE);
+  if (pos < 0)
+    pos = 0;
   if (pos >= Entries_)
-    pos=Entries_-1;
+    pos = Entries_ - 1;
 
-  (Vector_+pos)->~T();    // Call the destructor manually. Don't try this
-                          //  at home kiddies!
+  (Vector_ + pos)->~T(); // Call the destructor manually. Don't try this
+                         //  at home kiddies!
 
   // Now put the replacement object in there...
-  new((void *)(Vector_+pos)) T(node); // Trust me, this isn't a memory leak
+  new ((void *)(Vector_ + pos)) T(node); // Trust me, this isn't a memory leak
 
-  return(TRUE);
+  return (TRUE);
 }
-
-
 
 // Remove at the zero based index specified by 'pos'.  When removing from
 // a slot, all others get shifted up by one.
-template <class T>
+template<class T>
 bit8 ArrayList<T>::remove(sint32 pos)
 {
-  if (Entries_==0)
-    return(FALSE);
-  if (pos<0)
-    pos=0;
+  if (Entries_ == 0)
+    return (FALSE);
+  if (pos < 0)
+    pos = 0;
   if (pos >= Entries_)
-    pos=Entries_-1;
+    pos = Entries_ - 1;
 
-  (Vector_+pos)->~T();    // Call the destructor manually. Don't try this
-                          //  at home kiddies!
+  (Vector_ + pos)->~T(); // Call the destructor manually. Don't try this
+                         //  at home kiddies!
 
-  memmove(Vector_+pos,Vector_+pos+1,sizeof(T)*(Entries_-pos-1));
+  memmove(Vector_ + pos, Vector_ + pos + 1, sizeof(T) * (Entries_ - pos - 1));
 
   Entries_--;
 
   // If we're at 33% usage or less, shrink the vector
-  if ( (Entries_*3) <= Slots_)
+  if ((Entries_ * 3) <= Slots_)
     shrinkVector();
 
-  return(TRUE);
+  return (TRUE);
 }
-
 
 // Remove at the zero based index specified by 'pos'.  When removing from
 // a slot, all others get shifted up by one.
-template <class T>
+template<class T>
 bit8 ArrayList<T>::remove(OUT T &node, sint32 pos)
 {
   bit8 retval;
-  retval=get(node,pos);
-  if (retval==FALSE)
-    return(FALSE);
-  return(remove(pos));
+  retval = get(node, pos);
+  if (retval == FALSE)
+    return (FALSE);
+  return (remove(pos));
 }
-
 
 // Remove the first node of the list
-template <class T>
+template<class T>
 bit8 ArrayList<T>::removeHead(OUT T &node)
 {
-  return(remove(node,0));
+  return (remove(node, 0));
 }
 
-
 // Remove the last node of the list
-template <class T>
+template<class T>
 bit8 ArrayList<T>::removeTail(OUT T &node)
 {
-  return(remove(node,Entries_-1));
+  return (remove(node, Entries_ - 1));
 }
 
 // get a pointer to the internally managed object.  Try and avoid this, but
 //  sometimes efficiency requires it...
 // get a copy of an item
-template <class T>
-bit8 ArrayList<T>::getPointer(OUT T **node,sint32 pos) RO
+template<class T>
+bit8 ArrayList<T>::getPointer(OUT T **node, sint32 pos) RO
 {
-  if ((pos < 0)||(pos >= Entries_))
-    return(FALSE);
-  *node=&(Vector_[pos]);
-  return(TRUE);
+  if ((pos < 0) || (pos >= Entries_))
+    return (FALSE);
+  *node = &(Vector_[pos]);
+  return (TRUE);
 }
-
 
 // get a copy of an item
-template <class T>
-bit8 ArrayList<T>::get(OUT T &node,sint32 pos) RO
+template<class T>
+bit8 ArrayList<T>::get(OUT T &node, sint32 pos) RO
 {
-  if ((pos < 0)||(pos >= Entries_))
-    return(FALSE);
-  node=Vector_[pos];
-  return(TRUE);
+  if ((pos < 0) || (pos >= Entries_))
+    return (FALSE);
+  node = Vector_[pos];
+  return (TRUE);
 }
-
 
 // get a copy of the first node of the list
-template <class T>
+template<class T>
 bit8 ArrayList<T>::getHead(OUT T &node) RO
 {
-  return(get(node,0));
+  return (get(node, 0));
 }
 
-
 // get a copy of the last node
-template <class T>
+template<class T>
 bit8 ArrayList<T>::getTail(OUT T &node) RO
 {
-  return(get(node,Entries_-1));
+  return (get(node, Entries_ - 1));
 }
 
 // just for debugging
-template <class T>
+template<class T>
 void ArrayList<T>::print(FILE *out)
 {
-  fprintf(out,"--------------------\n");
-  //for (int i=0; i<Entries_; i++)
-  //  Vector_[i].print();
-  fprintf(out,"Entries: %d  Slots:  %d  sizeof(T): %d\n",Entries_,Slots_,
-    sizeof(T));
-  fprintf(out,"--------------------\n");
+  fprintf(out, "--------------------\n");
+  // for (int i=0; i<Entries_; i++)
+  //   Vector_[i].print();
+  fprintf(out, "Entries: %d  Slots:  %d  sizeof(T): %d\n", Entries_, Slots_, sizeof(T));
+  fprintf(out, "--------------------\n");
 }
 
 // Return the current length of the list
-template <class T>
+template<class T>
 sint32 ArrayList<T>::length(void) RO
 {
-  return(Entries_);
+  return (Entries_);
 }
 
 // Grow the vector by a factor of 2X
-template <class T>
+template<class T>
 bit8 ArrayList<T>::growVector(void)
 {
-  if (Entries_ < Slots_)   // Don't grow until we're at 100% usage
-    return(FALSE);
+  if (Entries_ < Slots_) // Don't grow until we're at 100% usage
+    return (FALSE);
 
-  int   newSlots=Entries_*2;
-  if(newSlots < INITIAL_SIZE)
-    newSlots=INITIAL_SIZE;
+  int newSlots = Entries_ * 2;
+  if (newSlots < INITIAL_SIZE)
+    newSlots = INITIAL_SIZE;
 
-  //fprintf(stderr,"Growing vector to: %d\n",newSlots);
+  // fprintf(stderr,"Growing vector to: %d\n",newSlots);
 
   // The goofy looking new below prevents operator new from getting called
   //  unnecessarily.  This is severall times faster than allocating all of
   //  the slots as objects and then calling the assignment operator on them
   //  when they actually get used.
   //
-  T *newVector=(T *)(new uint8[newSlots * sizeof(T)]);
-  memset(newVector,0,newSlots * sizeof(T)); // zero just to be safe
+  T *newVector = (T *)(new uint8[newSlots * sizeof(T)]);
+  memset(newVector, 0, newSlots * sizeof(T)); // zero just to be safe
 
   if (Vector_ != NULL)
-    memcpy(newVector,Vector_,Entries_*sizeof(T));
+    memcpy(newVector, Vector_, Entries_ * sizeof(T));
 
-  delete[]((uint8 *)Vector_);  // Get rid of the old vector without calling
+  delete[] ((uint8 *)Vector_); // Get rid of the old vector without calling
                                //  destructors
 
-  Vector_=newVector;
-  Slots_=newSlots;
+  Vector_ = newVector;
+  Slots_ = newSlots;
 
-  return(TRUE);
+  return (TRUE);
 }
 
-
 // Shrink the vector by a factor of 2X
-template <class T>
+template<class T>
 bit8 ArrayList<T>::shrinkVector(void)
 {
-  //fprintf(stderr,"Shrink called\n");
+  // fprintf(stderr,"Shrink called\n");
 
   // Don't need to shrink until usage goes below 33%
-  if ( (Entries_*3) > Slots_)
-    return(FALSE);
+  if ((Entries_ * 3) > Slots_)
+    return (FALSE);
 
-  int   newSlots=Slots_/2;
-  if(newSlots < INITIAL_SIZE) // never shrink past initial size
-    newSlots=INITIAL_SIZE;
+  int newSlots = Slots_ / 2;
+  if (newSlots < INITIAL_SIZE) // never shrink past initial size
+    newSlots = INITIAL_SIZE;
 
-  if (newSlots >= Slots_)   // don't need to shrink
-    return(FALSE);
+  if (newSlots >= Slots_) // don't need to shrink
+    return (FALSE);
 
-  //fprintf(stderr,"Shrinking vector to: %d\n",newSlots);
+  // fprintf(stderr,"Shrinking vector to: %d\n",newSlots);
 
   // The goofy looking new below prevents operator new from getting called
   //  unnecessarily.  This is severall times faster than allocating all of
   //  the slots as objects and then calling the assignment operator on them
   //  when they actually get used.
   //
-  T *newVector=(T *)(new uint8[newSlots * sizeof(T)]);
+  T *newVector = (T *)(new uint8[newSlots * sizeof(T)]);
 
-  if (Vector_ != NULL)    // Vector_ better not be NULL!
-    memcpy(newVector,Vector_,Entries_*sizeof(T));
+  if (Vector_ != NULL) // Vector_ better not be NULL!
+    memcpy(newVector, Vector_, Entries_ * sizeof(T));
 
-  delete[]((uint8 *)Vector_);  // Get rid of the old vector without calling
+  delete[] ((uint8 *)Vector_); // Get rid of the old vector without calling
                                //  destructors
 
-  Vector_=newVector;
-  Slots_=newSlots;
+  Vector_ = newVector;
+  Slots_ = newSlots;
 
-  return(TRUE);
+  return (TRUE);
 }
-
 
 #endif

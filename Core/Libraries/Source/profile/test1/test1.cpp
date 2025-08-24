@@ -55,9 +55,9 @@ void recursion2(int level);
 
 void recursion(int level)
 {
-  q+=level;
-  if (level<5000)
-    recursion2(level+1);
+  q += level;
+  if (level < 5000)
+    recursion2(level + 1);
 }
 
 void recursion2(int level)
@@ -74,14 +74,14 @@ void recursionShell(void)
 void showResults(void)
 {
   ProfileHighLevel::Id id;
-  for (unsigned index=0;ProfileHighLevel::EnumProfile(index,id);index++)
-    printf("%-16s%-6s %s\n",id.GetName(),id.GetTotalValue(),id.GetUnit());
+  for (unsigned index = 0; ProfileHighLevel::EnumProfile(index, id); index++)
+    printf("%-16s%-6s %s\n", id.GetName(), id.GetTotalValue(), id.GetUnit());
 }
 
 void main(void)
 {
-  for (int k=0;k<100;k++)
-    if (k%2&&k>80)
+  for (int k = 0; k < 100; k++)
+    if (k % 2 && k > 80)
       calcThat();
     else
       calcThis();

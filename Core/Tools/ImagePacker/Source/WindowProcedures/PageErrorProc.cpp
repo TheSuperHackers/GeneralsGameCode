@@ -66,98 +66,91 @@
 // PageErrorProc ==============================================================
 /** Dialog proc for the error window */
 //=============================================================================
-BOOL CALLBACK PageErrorProc( HWND hWndDialog, UINT message,
-														 WPARAM wParam, LPARAM lParam )
+BOOL CALLBACK PageErrorProc(HWND hWndDialog, UINT message, WPARAM wParam, LPARAM lParam)
 {
+  switch (message)
+  {
+    // ------------------------------------------------------------------------
+    case WM_INITDIALOG:
+    {
+      //
+      // load the listbox with pages that could not be processed
+      // and the reasons for it
+      //
 
-	switch( message )
-	{
+      // sanity
+      if (TheImagePacker == NULL)
+        return TRUE;
 
-		// ------------------------------------------------------------------------
-		case WM_INITDIALOG:
-		{
+      // go through all pages
+      TexturePage *page;
+      HWND list = GetDlgItem(hWndDialog, LIST_PAGES);
+      char buffer[_MAX_PATH + 256];
+      char reason[32];
 
-			//
-			// load the listbox with pages that could not be processed
-			// and the reasons for it
-			//
+      for (page = TheImagePacker->getFirstTexturePage(); page; page = page->m_next)
+      {
+        // if image can't be processed find out why
+        if (BitIsSet(page->m_status, TexturePage::PAGE_ERROR))
+        {
+          if (BitIsSet(page->m_status, TexturePage::CANT_ALLOCATE_PACKED_IMAGE))
+            sprintf(reason, "Can't allocate image memory");
+          else if (BitIsSet(page->m_status, TexturePage::CANT_ADD_IMAGE_DATA))
+            sprintf(reason, "Can't add image(s) data");
+          else if (BitIsSet(page->m_status, TexturePage::NO_TEXTURE_DATA))
+            sprintf(reason, "No texture data to write");
+          else if (BitIsSet(page->m_status, TexturePage::ERROR_DURING_SAVE))
+            sprintf(reason, "Error writing texture file");
+          else
+            sprintf(reason, "Unknown Reason");
 
-			// sanity
-			if( TheImagePacker == NULL )
-				return TRUE;
+          sprintf(
+              buffer,
+              "%s: (%dx%d) %s%d",
+              reason,
+              page->getWidth(),
+              page->getHeight(),
+              TheImagePacker->getOutputFile(),
+              page->getID());
 
-			// go through all pages
-			TexturePage *page;
-			HWND list = GetDlgItem( hWndDialog, LIST_PAGES );
-			char buffer[ _MAX_PATH + 256 ];
-			char reason[ 32 ];
+          SendMessage(list, LB_INSERTSTRING, -1, (LPARAM)buffer);
 
-			for( page = TheImagePacker->getFirstTexturePage();
-					 page;
-					 page = page->m_next )
-			{
+        } // end if
 
-				// if image can't be processed find out why
-				if( BitIsSet( page->m_status, TexturePage::PAGE_ERROR ) )
-				{
+      } // end for i
 
-					if( BitIsSet( page->m_status, TexturePage::CANT_ALLOCATE_PACKED_IMAGE ) )
-						sprintf( reason, "Can't allocate image memory" );
-					else if( BitIsSet( page->m_status, TexturePage::CANT_ADD_IMAGE_DATA ) )
-						sprintf( reason, "Can't add image(s) data" );
-					else if( BitIsSet( page->m_status, TexturePage::NO_TEXTURE_DATA ) )
-						sprintf( reason, "No texture data to write" );
-					else if( BitIsSet( page->m_status, TexturePage::ERROR_DURING_SAVE ) )
-						sprintf( reason, "Error writing texture file" );
-					else
-						sprintf( reason, "Unknown Reason" );
+      // set the extents for the horizontal scroll bar in the listbox
+      SendMessage(list, LB_SETHORIZONTALEXTENT, 1280, 0);
 
-					sprintf( buffer, "%s: (%dx%d) %s%d",
-									 reason, page->getWidth(), page->getHeight(),
-									 TheImagePacker->getOutputFile(), page->getID() );
+      return TRUE;
 
-					SendMessage( list, LB_INSERTSTRING, -1, (LPARAM)buffer );
+    } // end init
 
-				}  // end if
+    // ------------------------------------------------------------------------
+    case WM_COMMAND:
+    {
+      Int controlID = LOWORD(wParam);
+      //			Int notifyCode = HIWORD( wParam );
+      //			HWND hWndControl = (HWND)lParam;
 
-			}  // end for i
+      switch (controlID)
+      {
+        // --------------------------------------------------------------------
+        case IDOK:
+        {
+          EndDialog(hWndDialog, TRUE);
+          break;
 
-			// set the extents for the horizontal scroll bar in the listbox
-			SendMessage( list, LB_SETHORIZONTALEXTENT, 1280, 0 );
+        } // end proceed
 
-			return TRUE;
+      } // end switch
 
-		}  // end init
+      break;
 
-		// ------------------------------------------------------------------------
-		case WM_COMMAND:
-		{
-			Int controlID = LOWORD( wParam );
-//			Int notifyCode = HIWORD( wParam );
-//			HWND hWndControl = (HWND)lParam;
+    } // end command
 
-			switch( controlID )
-			{
+  } // end switch message
 
-				// --------------------------------------------------------------------
-				case IDOK:
-				{
+  return 0;
 
-					EndDialog( hWndDialog, TRUE );
-					break;
-
-				}  // end proceed
-
-			}  // end switch
-
-			break;
-
-		}  // end command
-
-	}  // end switch message
-
-	return 0;
-
-}  // end PageErrorProc
-
-
+} // end PageErrorProc

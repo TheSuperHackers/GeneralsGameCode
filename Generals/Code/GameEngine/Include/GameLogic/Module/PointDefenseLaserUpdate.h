@@ -40,24 +40,22 @@
 class ThingTemplate;
 class WeaponTemplate;
 
-
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 class PointDefenseLaserUpdateModuleData : public ModuleData
 {
-public:
-	WeaponTemplate	*m_weaponTemplate;
-	KindOfMaskType	m_primaryTargetKindOf;
-	KindOfMaskType  m_secondaryTargetKindOf;
-	UnsignedInt			m_scanFrames;
-	Real						m_scanRange;
-	Real						m_velocityFactor;
+  public:
+  WeaponTemplate *m_weaponTemplate;
+  KindOfMaskType m_primaryTargetKindOf;
+  KindOfMaskType m_secondaryTargetKindOf;
+  UnsignedInt m_scanFrames;
+  Real m_scanRange;
+  Real m_velocityFactor;
 
-	PointDefenseLaserUpdateModuleData();
-	static void buildFieldParse(MultiIniFieldParse& p);
+  PointDefenseLaserUpdateModuleData();
+  static void buildFieldParse(MultiIniFieldParse &p);
 
-private:
-
+  private:
 };
 
 //-------------------------------------------------------------------------------------------------
@@ -65,29 +63,24 @@ private:
 //-------------------------------------------------------------------------------------------------
 class PointDefenseLaserUpdate : public UpdateModule
 {
+  MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(PointDefenseLaserUpdate, "PointDefenseLaserUpdate")
+  MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA(PointDefenseLaserUpdate, PointDefenseLaserUpdateModuleData);
 
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( PointDefenseLaserUpdate, "PointDefenseLaserUpdate" )
-	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( PointDefenseLaserUpdate, PointDefenseLaserUpdateModuleData );
+  public:
+  PointDefenseLaserUpdate(Thing *thing, const ModuleData *moduleData);
+  // virtual destructor prototype provided by memory pool declaration
 
-public:
+  virtual void onObjectCreated();
+  virtual UpdateSleepTime update();
 
-	PointDefenseLaserUpdate( Thing *thing, const ModuleData* moduleData );
-	// virtual destructor prototype provided by memory pool declaration
+  Object *scanClosestTarget();
+  void fireWhenReady();
 
-	virtual void onObjectCreated();
-	virtual UpdateSleepTime update();
-
-	Object* scanClosestTarget();
-	void fireWhenReady();
-
-protected:
-
-	ObjectID m_bestTargetID;
-	Bool m_inRange;
-	Int m_nextScanFrames;
-	Int m_nextShotAvailableInFrames;
+  protected:
+  ObjectID m_bestTargetID;
+  Bool m_inRange;
+  Int m_nextScanFrames;
+  Int m_nextShotAvailableInFrames;
 };
 
-
 #endif
-

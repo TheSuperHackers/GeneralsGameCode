@@ -33,101 +33,101 @@ Bool ClientInstance::s_isMultiInstance = false;
 
 bool ClientInstance::initialize()
 {
-	if (isInitialized())
-	{
-		return true;
-	}
+  if (isInitialized())
+  {
+    return true;
+  }
 
-	// Create a mutex with a unique name to Generals in order to determine if our app is already running.
-	// WARNING: DO NOT use this number for any other application except Generals.
-	while (true)
-	{
-		if (isMultiInstance())
-		{
-			std::string guidStr = getFirstInstanceName();
-			if (s_instanceIndex > 0u)
-			{
-				char idStr[33];
-				itoa(s_instanceIndex, idStr, 10);
-				guidStr.push_back('-');
-				guidStr.append(idStr);
-			}
-			s_mutexHandle = CreateMutex(NULL, FALSE, guidStr.c_str());
-			if (GetLastError() == ERROR_ALREADY_EXISTS)
-			{
-				if (s_mutexHandle != NULL)
-				{
-					CloseHandle(s_mutexHandle);
-					s_mutexHandle = NULL;
-				}
-				// Try again with a new instance.
-				++s_instanceIndex;
-				continue;
-			}
-		}
-		else
-		{
-			s_mutexHandle = CreateMutex(NULL, FALSE, getFirstInstanceName());
-			if (GetLastError() == ERROR_ALREADY_EXISTS)
-			{
-				if (s_mutexHandle != NULL)
-				{
-					CloseHandle(s_mutexHandle);
-					s_mutexHandle = NULL;
-				}
-				return false;
-			}
-		}
-		break;
-	}
+  // Create a mutex with a unique name to Generals in order to determine if our app is already running.
+  // WARNING: DO NOT use this number for any other application except Generals.
+  while (true)
+  {
+    if (isMultiInstance())
+    {
+      std::string guidStr = getFirstInstanceName();
+      if (s_instanceIndex > 0u)
+      {
+        char idStr[33];
+        itoa(s_instanceIndex, idStr, 10);
+        guidStr.push_back('-');
+        guidStr.append(idStr);
+      }
+      s_mutexHandle = CreateMutex(NULL, FALSE, guidStr.c_str());
+      if (GetLastError() == ERROR_ALREADY_EXISTS)
+      {
+        if (s_mutexHandle != NULL)
+        {
+          CloseHandle(s_mutexHandle);
+          s_mutexHandle = NULL;
+        }
+        // Try again with a new instance.
+        ++s_instanceIndex;
+        continue;
+      }
+    }
+    else
+    {
+      s_mutexHandle = CreateMutex(NULL, FALSE, getFirstInstanceName());
+      if (GetLastError() == ERROR_ALREADY_EXISTS)
+      {
+        if (s_mutexHandle != NULL)
+        {
+          CloseHandle(s_mutexHandle);
+          s_mutexHandle = NULL;
+        }
+        return false;
+      }
+    }
+    break;
+  }
 
-	return true;
+  return true;
 }
 
 bool ClientInstance::isInitialized()
 {
-	return s_mutexHandle != NULL;
+  return s_mutexHandle != NULL;
 }
 
 bool ClientInstance::isMultiInstance()
 {
-	return s_isMultiInstance;
+  return s_isMultiInstance;
 }
 
 void ClientInstance::setMultiInstance(bool v)
 {
-	if (isInitialized())
-	{
-		DEBUG_CRASH(("ClientInstance::setMultiInstance(%d) - cannot set multi instance after initialization", (int)v));
-		return;
-	}
-	s_isMultiInstance = v;
+  if (isInitialized())
+  {
+    DEBUG_CRASH(("ClientInstance::setMultiInstance(%d) - cannot set multi instance after initialization", (int)v));
+    return;
+  }
+  s_isMultiInstance = v;
 }
 
 void ClientInstance::skipPrimaryInstance()
 {
-	if (isInitialized())
-	{
-		DEBUG_CRASH(("ClientInstance::skipPrimaryInstance() - cannot skip primary instance after initialization"));
-		return;
-	}
-	s_instanceIndex = 1;
+  if (isInitialized())
+  {
+    DEBUG_CRASH(("ClientInstance::skipPrimaryInstance() - cannot skip primary instance after initialization"));
+    return;
+  }
+  s_instanceIndex = 1;
 }
 
 UnsignedInt ClientInstance::getInstanceIndex()
 {
-	DEBUG_ASSERTLOG(isInitialized(), ("ClientInstance::isInitialized() failed"));
-	return s_instanceIndex;
+  DEBUG_ASSERTLOG(isInitialized(), ("ClientInstance::isInitialized() failed"));
+  return s_instanceIndex;
 }
 
 UnsignedInt ClientInstance::getInstanceId()
 {
-	return getInstanceIndex() + 1;
+  return getInstanceIndex() + 1;
 }
 
-const char* ClientInstance::getFirstInstanceName()
+const char *ClientInstance::getFirstInstanceName()
 {
-	return GENERALS_GUID;
+  return GENERALS_GUID;
 }
 
 } // namespace rts

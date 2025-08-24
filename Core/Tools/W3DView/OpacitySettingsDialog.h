@@ -33,48 +33,47 @@ class ColorBarClass;
 
 class OpacitySettingsDialogClass : public CDialog
 {
-// Construction
-public:
-	OpacitySettingsDialogClass(float opacity, CWnd* pParent = NULL);   // standard constructor
+  // Construction
+  public:
+  OpacitySettingsDialogClass(float opacity, CWnd *pParent = NULL); // standard constructor
 
-// Dialog Data
-	//{{AFX_DATA(OpacitySettingsDialogClass)
-	enum { IDD = IDD_OPACITY };
-		// NOTE: the ClassWizard will add data members here
-	//}}AFX_DATA
+  // Dialog Data
+  //{{AFX_DATA(OpacitySettingsDialogClass)
+  enum
+  {
+    IDD = IDD_OPACITY
+  };
+  // NOTE: the ClassWizard will add data members here
+  //}}AFX_DATA
 
+  // Overrides
+  // ClassWizard generated virtual function overrides
+  //{{AFX_VIRTUAL(OpacitySettingsDialogClass)
+  protected:
+  virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
+  //}}AFX_VIRTUAL
 
-// Overrides
-	// ClassWizard generated virtual function overrides
-	//{{AFX_VIRTUAL(OpacitySettingsDialogClass)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
-	//}}AFX_VIRTUAL
+  // Implementation
+  protected:
+  // Generated message map functions
+  //{{AFX_MSG(OpacitySettingsDialogClass)
+  virtual BOOL OnInitDialog();
+  virtual void OnOK();
+  //}}AFX_MSG
+  DECLARE_MESSAGE_MAP()
 
-// Implementation
-protected:
+  public:
+  ////////////////////////////////////////////////////////////////
+  //	Public methods
+  ////////////////////////////////////////////////////////////////
+  float Get_Opacity(void) const { return m_Opacity; }
 
-	// Generated message map functions
-	//{{AFX_MSG(OpacitySettingsDialogClass)
-	virtual BOOL OnInitDialog();
-	virtual void OnOK();
-	//}}AFX_MSG
-	DECLARE_MESSAGE_MAP()
-
-	public:
-
-		////////////////////////////////////////////////////////////////
-		//	Public methods
-		////////////////////////////////////////////////////////////////
-		float					Get_Opacity (void) const	{ return m_Opacity; }
-
-	private:
-
-		////////////////////////////////////////////////////////////////
-		//	Private member data
-		////////////////////////////////////////////////////////////////
-		ColorBarClass *	m_OpacityBar;
-		float					m_Opacity;
+  private:
+  ////////////////////////////////////////////////////////////////
+  //	Private member data
+  ////////////////////////////////////////////////////////////////
+  ColorBarClass *m_OpacityBar;
+  float m_Opacity;
 };
 
 //{{AFX_INSERT_LOCATION}}

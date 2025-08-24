@@ -42,131 +42,144 @@
 //-------------------------------------------------------------------------------------------------
 class FireWeaponWhenDamagedBehaviorModuleData : public UpdateModuleData
 {
-public:
-	UpgradeMuxData				m_upgradeMuxData;
-	Bool									m_initiallyActive;
-	DamageTypeFlags				m_damageTypes;
-	Real									m_damageAmount;
-	const WeaponTemplate* m_reactionWeaponPristine;///< fire these weapons only when damage is received
-	const WeaponTemplate* m_reactionWeaponDamaged;
-	const WeaponTemplate* m_reactionWeaponReallyDamaged;
-	const WeaponTemplate* m_reactionWeaponRubble;
-	const WeaponTemplate*	m_continuousWeaponPristine;///< fire these weapons continuously, versus just onDamage
-	const WeaponTemplate*	m_continuousWeaponDamaged;
-	const WeaponTemplate*	m_continuousWeaponReallyDamaged;
-	const WeaponTemplate*	m_continuousWeaponRubble;
+  public:
+  UpgradeMuxData m_upgradeMuxData;
+  Bool m_initiallyActive;
+  DamageTypeFlags m_damageTypes;
+  Real m_damageAmount;
+  const WeaponTemplate *m_reactionWeaponPristine; ///< fire these weapons only when damage is received
+  const WeaponTemplate *m_reactionWeaponDamaged;
+  const WeaponTemplate *m_reactionWeaponReallyDamaged;
+  const WeaponTemplate *m_reactionWeaponRubble;
+  const WeaponTemplate *m_continuousWeaponPristine; ///< fire these weapons continuously, versus just onDamage
+  const WeaponTemplate *m_continuousWeaponDamaged;
+  const WeaponTemplate *m_continuousWeaponReallyDamaged;
+  const WeaponTemplate *m_continuousWeaponRubble;
 
-	FireWeaponWhenDamagedBehaviorModuleData()
-	{
-		m_initiallyActive = false;
-		m_reactionWeaponPristine = NULL;
-		m_reactionWeaponDamaged = NULL;
-		m_reactionWeaponReallyDamaged = NULL;
-		m_reactionWeaponRubble = NULL;
-		m_continuousWeaponPristine = NULL;
-		m_continuousWeaponDamaged = NULL;
-		m_continuousWeaponReallyDamaged = NULL;
-		m_continuousWeaponRubble = NULL;
-		m_damageTypes = DAMAGE_TYPE_FLAGS_ALL;
-		m_damageAmount = 0;
-	}
+  FireWeaponWhenDamagedBehaviorModuleData()
+  {
+    m_initiallyActive = false;
+    m_reactionWeaponPristine = NULL;
+    m_reactionWeaponDamaged = NULL;
+    m_reactionWeaponReallyDamaged = NULL;
+    m_reactionWeaponRubble = NULL;
+    m_continuousWeaponPristine = NULL;
+    m_continuousWeaponDamaged = NULL;
+    m_continuousWeaponReallyDamaged = NULL;
+    m_continuousWeaponRubble = NULL;
+    m_damageTypes = DAMAGE_TYPE_FLAGS_ALL;
+    m_damageAmount = 0;
+  }
 
+  static void buildFieldParse(MultiIniFieldParse &p)
+  {
+    static const FieldParse dataFieldParse[] = {
+      { "StartsActive", INI::parseBool, NULL, offsetof(FireWeaponWhenDamagedBehaviorModuleData, m_initiallyActive) },
+      { "ReactionWeaponPristine",
+        INI::parseWeaponTemplate,
+        NULL,
+        offsetof(FireWeaponWhenDamagedBehaviorModuleData, m_reactionWeaponPristine) },
+      { "ReactionWeaponDamaged",
+        INI::parseWeaponTemplate,
+        NULL,
+        offsetof(FireWeaponWhenDamagedBehaviorModuleData, m_reactionWeaponDamaged) },
+      { "ReactionWeaponReallyDamaged",
+        INI::parseWeaponTemplate,
+        NULL,
+        offsetof(FireWeaponWhenDamagedBehaviorModuleData, m_reactionWeaponReallyDamaged) },
+      { "ReactionWeaponRubble",
+        INI::parseWeaponTemplate,
+        NULL,
+        offsetof(FireWeaponWhenDamagedBehaviorModuleData, m_reactionWeaponRubble) },
+      { "ContinuousWeaponPristine",
+        INI::parseWeaponTemplate,
+        NULL,
+        offsetof(FireWeaponWhenDamagedBehaviorModuleData, m_continuousWeaponPristine) },
+      { "ContinuousWeaponDamaged",
+        INI::parseWeaponTemplate,
+        NULL,
+        offsetof(FireWeaponWhenDamagedBehaviorModuleData, m_continuousWeaponDamaged) },
+      { "ContinuousWeaponReallyDamaged",
+        INI::parseWeaponTemplate,
+        NULL,
+        offsetof(FireWeaponWhenDamagedBehaviorModuleData, m_continuousWeaponReallyDamaged) },
+      { "ContinuousWeaponRubble",
+        INI::parseWeaponTemplate,
+        NULL,
+        offsetof(FireWeaponWhenDamagedBehaviorModuleData, m_continuousWeaponRubble) },
+      { "DamageTypes", INI::parseDamageTypeFlags, NULL, offsetof(FireWeaponWhenDamagedBehaviorModuleData, m_damageTypes) },
+      { "DamageAmount", INI::parseReal, NULL, offsetof(FireWeaponWhenDamagedBehaviorModuleData, m_damageAmount) },
+      { 0, 0, 0, 0 }
+    };
 
-	static void buildFieldParse(MultiIniFieldParse& p)
-	{
-		static const FieldParse dataFieldParse[] =
-		{
-			{ "StartsActive",	INI::parseBool, NULL, offsetof( FireWeaponWhenDamagedBehaviorModuleData, m_initiallyActive ) },
-			{ "ReactionWeaponPristine", INI::parseWeaponTemplate, NULL, offsetof(FireWeaponWhenDamagedBehaviorModuleData,				m_reactionWeaponPristine) },
-			{ "ReactionWeaponDamaged", INI::parseWeaponTemplate, NULL, offsetof(FireWeaponWhenDamagedBehaviorModuleData,				m_reactionWeaponDamaged) },
-			{ "ReactionWeaponReallyDamaged", INI::parseWeaponTemplate, NULL, offsetof(FireWeaponWhenDamagedBehaviorModuleData,	m_reactionWeaponReallyDamaged) },
-			{ "ReactionWeaponRubble", INI::parseWeaponTemplate, NULL, offsetof(FireWeaponWhenDamagedBehaviorModuleData,					m_reactionWeaponRubble) },
-			{ "ContinuousWeaponPristine", INI::parseWeaponTemplate, NULL, offsetof(FireWeaponWhenDamagedBehaviorModuleData,			m_continuousWeaponPristine) },
-			{ "ContinuousWeaponDamaged", INI::parseWeaponTemplate, NULL, offsetof(FireWeaponWhenDamagedBehaviorModuleData,			m_continuousWeaponDamaged) },
-			{ "ContinuousWeaponReallyDamaged", INI::parseWeaponTemplate, NULL, offsetof(FireWeaponWhenDamagedBehaviorModuleData,m_continuousWeaponReallyDamaged) },
-			{ "ContinuousWeaponRubble", INI::parseWeaponTemplate, NULL, offsetof(FireWeaponWhenDamagedBehaviorModuleData,				m_continuousWeaponRubble) },
-			{ "DamageTypes", INI::parseDamageTypeFlags, NULL, offsetof( FireWeaponWhenDamagedBehaviorModuleData, m_damageTypes ) },
-			{ "DamageAmount", INI::parseReal, NULL, offsetof( FireWeaponWhenDamagedBehaviorModuleData, m_damageAmount ) },
-			{ 0, 0, 0, 0 }
-		};
+    UpdateModuleData::buildFieldParse(p);
+    p.add(dataFieldParse);
+    p.add(UpgradeMuxData::getFieldParse(), offsetof(FireWeaponWhenDamagedBehaviorModuleData, m_upgradeMuxData));
+  }
 
-		UpdateModuleData::buildFieldParse(p);
-		p.add(dataFieldParse);
-		p.add(UpgradeMuxData::getFieldParse(), offsetof( FireWeaponWhenDamagedBehaviorModuleData, m_upgradeMuxData ));
-	}
-
-
-private:
-
+  private:
 };
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-class FireWeaponWhenDamagedBehavior : public UpdateModule,
-																			public UpgradeMux,
-																			public DamageModuleInterface
+class FireWeaponWhenDamagedBehavior : public UpdateModule, public UpgradeMux, public DamageModuleInterface
 {
+  MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(FireWeaponWhenDamagedBehavior, "FireWeaponWhenDamagedBehavior")
+  MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA(FireWeaponWhenDamagedBehavior, FireWeaponWhenDamagedBehaviorModuleData)
 
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( FireWeaponWhenDamagedBehavior, "FireWeaponWhenDamagedBehavior" )
-	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( FireWeaponWhenDamagedBehavior, FireWeaponWhenDamagedBehaviorModuleData )
+  public:
+  FireWeaponWhenDamagedBehavior(Thing *thing, const ModuleData *moduleData);
+  // virtual destructor prototype provided by memory pool declaration
 
-public:
+  // module methids
+  static Int getInterfaceMask()
+  {
+    return UpdateModule::getInterfaceMask() | (MODULEINTERFACE_UPGRADE) | (MODULEINTERFACE_DAMAGE);
+  }
 
-	FireWeaponWhenDamagedBehavior( Thing *thing, const ModuleData* moduleData );
-	// virtual destructor prototype provided by memory pool declaration
+  // BehaviorModule
+  virtual UpgradeModuleInterface *getUpgrade() { return this; }
+  virtual DamageModuleInterface *getDamage() { return this; }
 
-	// module methids
-	static Int getInterfaceMask() { return UpdateModule::getInterfaceMask() | (MODULEINTERFACE_UPGRADE) | (MODULEINTERFACE_DAMAGE); }
+  // DamageModuleInterface
+  virtual void onDamage(DamageInfo *damageInfo);
+  virtual void onHealing(DamageInfo *damageInfo) {}
+  virtual void onBodyDamageStateChange(const DamageInfo *damageInfo, BodyDamageType oldState, BodyDamageType newState) {}
 
-	// BehaviorModule
-	virtual UpgradeModuleInterface* getUpgrade() { return this; }
-	virtual DamageModuleInterface* getDamage() { return this; }
+  // UpdateModuleInterface
+  virtual UpdateSleepTime update();
 
-	// DamageModuleInterface
-	virtual void onDamage( DamageInfo *damageInfo );
-	virtual void onHealing( DamageInfo *damageInfo ) { }
-	virtual void onBodyDamageStateChange(const DamageInfo* damageInfo, BodyDamageType oldState, BodyDamageType newState) { }
+  protected:
+  virtual void upgradeImplementation() { setWakeFrame(getObject(), UPDATE_SLEEP_NONE); }
 
-	// UpdateModuleInterface
-	virtual UpdateSleepTime update();
+  virtual void getUpgradeActivationMasks(UpgradeMaskType &activation, UpgradeMaskType &conflicting) const
+  {
+    getFireWeaponWhenDamagedBehaviorModuleData()->m_upgradeMuxData.getUpgradeActivationMasks(activation, conflicting);
+  }
 
-protected:
+  virtual void performUpgradeFX()
+  {
+    getFireWeaponWhenDamagedBehaviorModuleData()->m_upgradeMuxData.performUpgradeFX(getObject());
+  }
 
-	virtual void upgradeImplementation()
-	{
-		setWakeFrame(getObject(), UPDATE_SLEEP_NONE);
-	}
+  virtual Bool requiresAllActivationUpgrades() const
+  {
+    return getFireWeaponWhenDamagedBehaviorModuleData()->m_upgradeMuxData.m_requiresAllTriggers;
+  }
 
-	virtual void getUpgradeActivationMasks(UpgradeMaskType& activation, UpgradeMaskType& conflicting) const
-	{
-		getFireWeaponWhenDamagedBehaviorModuleData()->m_upgradeMuxData.getUpgradeActivationMasks(activation, conflicting);
-	}
+  inline Bool isUpgradeActive() const { return isAlreadyUpgraded(); }
 
-	virtual void performUpgradeFX()
-	{
-		getFireWeaponWhenDamagedBehaviorModuleData()->m_upgradeMuxData.performUpgradeFX(getObject());
-	}
+  virtual Bool isSubObjectsUpgrade() { return false; }
 
-	virtual Bool requiresAllActivationUpgrades() const
-	{
-		return getFireWeaponWhenDamagedBehaviorModuleData()->m_upgradeMuxData.m_requiresAllTriggers;
-	}
-
-	inline Bool isUpgradeActive() const { return isAlreadyUpgraded(); }
-
-	virtual Bool isSubObjectsUpgrade() { return false; }
-
-private:
-	Weapon *m_reactionWeaponPristine;
-	Weapon *m_reactionWeaponDamaged;
-	Weapon *m_reactionWeaponReallyDamaged;
-	Weapon *m_reactionWeaponRubble;
-	Weapon *m_continuousWeaponPristine;
-	Weapon *m_continuousWeaponDamaged;
-	Weapon *m_continuousWeaponReallyDamaged;
-	Weapon *m_continuousWeaponRubble;
-
+  private:
+  Weapon *m_reactionWeaponPristine;
+  Weapon *m_reactionWeaponDamaged;
+  Weapon *m_reactionWeaponReallyDamaged;
+  Weapon *m_reactionWeaponRubble;
+  Weapon *m_continuousWeaponPristine;
+  Weapon *m_continuousWeaponDamaged;
+  Weapon *m_continuousWeaponReallyDamaged;
+  Weapon *m_continuousWeaponRubble;
 };
 
 #endif // __FireWeaponWhenDamagedBehavior_H_
-

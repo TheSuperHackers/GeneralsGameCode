@@ -30,40 +30,38 @@
 
 class CAssetPropertySheet : public CPropertySheet
 {
-	DECLARE_DYNAMIC(CAssetPropertySheet)
+  DECLARE_DYNAMIC(CAssetPropertySheet)
 
-// Construction
-public:
-    CAssetPropertySheet (int iCaptionID, CPropertyPage *pCPropertyPage, CWnd *pCParentWnd = NULL);
+  // Construction
+  public:
+  CAssetPropertySheet(int iCaptionID, CPropertyPage *pCPropertyPage, CWnd *pCParentWnd = NULL);
 
-// Attributes
-public:
+  // Attributes
+  public:
+  // Operations
+  public:
+  // Overrides
+  // ClassWizard generated virtual function overrides
+  //{{AFX_VIRTUAL(CAssetPropertySheet)
+  //}}AFX_VIRTUAL
 
-// Operations
-public:
+  // Implementation
+  public:
+  virtual ~CAssetPropertySheet();
 
-// Overrides
-	// ClassWizard generated virtual function overrides
-	//{{AFX_VIRTUAL(CAssetPropertySheet)
-	//}}AFX_VIRTUAL
+  // Generated message map functions
+  protected:
+  //{{AFX_MSG(CAssetPropertySheet)
+  // NOTE - the ClassWizard will add and remove member functions here.
+  //}}AFX_MSG
+  DECLARE_MESSAGE_MAP()
 
-// Implementation
-public:
-	virtual ~CAssetPropertySheet();
+  private:
+  // Private constructors (shouldn't be called)
+  CAssetPropertySheet(UINT nIDCaption, CWnd *pParentWnd = NULL, UINT iSelectPage = 0) {}
+  CAssetPropertySheet(LPCTSTR pszCaption, CWnd *pParentWnd = NULL, UINT iSelectPage = 0) {}
 
-	// Generated message map functions
-protected:
-	//{{AFX_MSG(CAssetPropertySheet)
-		// NOTE - the ClassWizard will add and remove member functions here.
-	//}}AFX_MSG
-	DECLARE_MESSAGE_MAP()
-
-    private:
-        // Private constructors (shouldn't be called)
-	    CAssetPropertySheet(UINT nIDCaption, CWnd* pParentWnd = NULL, UINT iSelectPage = 0) {}
-	    CAssetPropertySheet(LPCTSTR pszCaption, CWnd* pParentWnd = NULL, UINT iSelectPage = 0) {}
-
-        CPropertyPage *m_pCPropertyPage;
+  CPropertyPage *m_pCPropertyPage;
 };
 
 /////////////////////////////////////////////////////////////////////////////

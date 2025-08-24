@@ -34,7 +34,6 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
 #if defined(_MSC_VER)
 #pragma once
 #endif
@@ -54,8 +53,8 @@ class INode;
 */
 class SnapPointsClass
 {
-public:
-	static void Export_Points(INode * scene_root,TimeValue time,ChunkSaveClass & csave);
+  public:
+  static void Export_Points(INode *scene_root, TimeValue time, ChunkSaveClass &csave);
 };
 
 #endif

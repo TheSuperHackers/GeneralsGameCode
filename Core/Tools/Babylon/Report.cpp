@@ -33,37 +33,32 @@ static char THIS_FILE[] = __FILE__;
 /////////////////////////////////////////////////////////////////////////////
 // CReport dialog
 
-
-CReport::CReport(CWnd* pParent /*=NULL*/)
-	: CDialog(CReport::IDD, pParent)
+CReport::CReport(CWnd *pParent /*=NULL*/) : CDialog(CReport::IDD, pParent)
 {
-
-	options.translations = TRUE;
-	options.dialog = TRUE;
-	options.limit = 0;
-	langids[0] = LANGID_UNKNOWN;
-	filename[0] = 0;
-	//{{AFX_DATA_INIT(CReport)
-		// NOTE: the ClassWizard will add member initialization here
-	//}}AFX_DATA_INIT
+  options.translations = TRUE;
+  options.dialog = TRUE;
+  options.limit = 0;
+  langids[0] = LANGID_UNKNOWN;
+  filename[0] = 0;
+  //{{AFX_DATA_INIT(CReport)
+  // NOTE: the ClassWizard will add member initialization here
+  //}}AFX_DATA_INIT
 }
 
-
-void CReport::DoDataExchange(CDataExchange* pDX)
+void CReport::DoDataExchange(CDataExchange *pDX)
 {
-	CDialog::DoDataExchange(pDX);
-	//{{AFX_DATA_MAP(CReport)
-		// NOTE: the ClassWizard will add DDX and DDV calls here
-	//}}AFX_DATA_MAP
+  CDialog::DoDataExchange(pDX);
+  //{{AFX_DATA_MAP(CReport)
+  // NOTE: the ClassWizard will add DDX and DDV calls here
+  //}}AFX_DATA_MAP
 }
-
 
 BEGIN_MESSAGE_MAP(CReport, CDialog)
-	//{{AFX_MSG_MAP(CReport)
-	ON_BN_CLICKED(IDC_INVERT, OnInvert)
-	ON_BN_CLICKED(IDC_SELECTALL, OnSelectall)
-	ON_BN_CLICKED(IDC_SHOW_DETAILS, OnShowDetails)
-	//}}AFX_MSG_MAP
+//{{AFX_MSG_MAP(CReport)
+ON_BN_CLICKED(IDC_INVERT, OnInvert)
+ON_BN_CLICKED(IDC_SELECTALL, OnSelectall)
+ON_BN_CLICKED(IDC_SHOW_DETAILS, OnShowDetails)
+//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -71,148 +66,141 @@ END_MESSAGE_MAP()
 
 BOOL CReport::OnInitDialog()
 {
-	int index;
-	LANGINFO	*info;
+  int index;
+  LANGINFO *info;
 
-	limit = (CEdit *) GetDlgItem ( IDC_LIMIT );
-	trans_status = (CButton *) GetDlgItem ( IDC_TRANSLATION_STATUS );
-	dialog_status = (CButton *) GetDlgItem ( IDC_DIALOG_STATUS );
-	show_details = (CButton *) GetDlgItem ( IDC_SHOW_DETAILS );
-	ifless = (CButton *) GetDlgItem ( IDC_IFLESS );
-	list = (CListBox *) GetDlgItem ( IDC_LANGUAGE );
-	items = (CStatic *) GetDlgItem ( IDC_ITEMS );
+  limit = (CEdit *)GetDlgItem(IDC_LIMIT);
+  trans_status = (CButton *)GetDlgItem(IDC_TRANSLATION_STATUS);
+  dialog_status = (CButton *)GetDlgItem(IDC_DIALOG_STATUS);
+  show_details = (CButton *)GetDlgItem(IDC_SHOW_DETAILS);
+  ifless = (CButton *)GetDlgItem(IDC_IFLESS);
+  list = (CListBox *)GetDlgItem(IDC_LANGUAGE);
+  items = (CStatic *)GetDlgItem(IDC_ITEMS);
 
-	CDialog::OnInitDialog();
+  CDialog::OnInitDialog();
 
-	// TODO: Add extra initialization here
+  // TODO: Add extra initialization here
 
-	trans_status->SetCheck ( options.translations );
-	dialog_status->SetCheck ( options.dialog );
-	show_details->SetCheck ( 0 );
-	ifless->SetCheck ( 1 );
-	limit->EnableWindow ( FALSE );
-	ifless->EnableWindow ( FALSE );
-	items->EnableWindow ( FALSE );
-	limit->SetWindowText ( "100" );
-	limit->SetLimitText ( 50 );
-	options.limit = 100;
+  trans_status->SetCheck(options.translations);
+  dialog_status->SetCheck(options.dialog);
+  show_details->SetCheck(0);
+  ifless->SetCheck(1);
+  limit->EnableWindow(FALSE);
+  ifless->EnableWindow(FALSE);
+  items->EnableWindow(FALSE);
+  limit->SetWindowText("100");
+  limit->SetLimitText(50);
+  options.limit = 100;
 
-	index = 0;
-	while ( (info = GetLangInfo ( index )) )
-	{
-		list->InsertString ( index,  info->name );
-		if ( info->langid == CurrentLanguage )
-		{
-			list->SetSel ( index );
-		}
+  index = 0;
+  while ((info = GetLangInfo(index)))
+  {
+    list->InsertString(index, info->name);
+    if (info->langid == CurrentLanguage)
+    {
+      list->SetSel(index);
+    }
 
-		index++;
-	}
-	num_langs = index;
+    index++;
+  }
+  num_langs = index;
 
-
-	return TRUE;  // return TRUE unless you set the focus to a control
-	              // EXCEPTION: OCX Property Pages should return FALSE
+  return TRUE; // return TRUE unless you set the focus to a control
+               // EXCEPTION: OCX Property Pages should return FALSE
 }
 
 void CReport::OnSelectall()
 {
-	// TODO: Add your control notification handler code here
-	 list->SelItemRange ( TRUE, 0, num_langs-1 );
+  // TODO: Add your control notification handler code here
+  list->SelItemRange(TRUE, 0, num_langs - 1);
 }
 
 void CReport::OnInvert()
 {
-	// TODO: Add your control notification handler code here
-	int index = 0;
+  // TODO: Add your control notification handler code here
+  int index = 0;
 
-
-	while ( index < num_langs )
-	{
-		list->SetSel ( index,  !list->GetSel ( index ));
-		index++;
-	}
-
-
+  while (index < num_langs)
+  {
+    list->SetSel(index, !list->GetSel(index));
+    index++;
+  }
 }
-
-
 
 void CReport::OnShowDetails()
 {
-	// TODO: Add your control notification handler code here
-	if ( show_details->GetCheck () == 0 )
-	{
-		ifless->EnableWindow ( FALSE );
-		limit->EnableWindow ( FALSE );
-		items->EnableWindow ( FALSE );
-	}
-	else
-	{
-		ifless->EnableWindow ( TRUE );
-		limit->EnableWindow ( TRUE );
-		items->EnableWindow ( TRUE );
-	}
+  // TODO: Add your control notification handler code here
+  if (show_details->GetCheck() == 0)
+  {
+    ifless->EnableWindow(FALSE);
+    limit->EnableWindow(FALSE);
+    items->EnableWindow(FALSE);
+  }
+  else
+  {
+    ifless->EnableWindow(TRUE);
+    limit->EnableWindow(TRUE);
+    items->EnableWindow(TRUE);
+  }
 }
 
 void CReport::OnOK()
 {
-	int count;
-	int i;
-	char buffer[100];
+  int count;
+  int i;
+  char buffer[100];
 
-	count = list->GetSelItems ( num_langs, langindices );
+  count = list->GetSelItems(num_langs, langindices);
 
-	if ( !count )
-	{
-		AfxMessageBox ( "No languages selected" );
-		return;
-	}
+  if (!count)
+  {
+    AfxMessageBox("No languages selected");
+    return;
+  }
 
-// get the filename
-	CFileDialog fd ( FALSE , NULL, "*.txt",  OFN_OVERWRITEPROMPT | OFN_NOCHANGEDIR );
+  // get the filename
+  CFileDialog fd(FALSE, NULL, "*.txt", OFN_OVERWRITEPROMPT | OFN_NOCHANGEDIR);
 
-	if ( fd.DoModal () != IDOK )
-	{
-		return;
-	}
+  if (fd.DoModal() != IDOK)
+  {
+    return;
+  }
 
-	strcpy ( filename, fd.GetPathName ());
+  strcpy(filename, fd.GetPathName());
 
-	num_langs = 0;
-	for ( i = 0; i <count; i++ )
-	{
-		LANGINFO *info;
+  num_langs = 0;
+  for (i = 0; i < count; i++)
+  {
+    LANGINFO *info;
 
-		if ( info = GetLangInfo ( langindices[i] ))
-		{
-			langids[num_langs++] = info->langid;
-		}
-	}
+    if (info = GetLangInfo(langindices[i]))
+    {
+      langids[num_langs++] = info->langid;
+    }
+  }
 
-	langids[num_langs] = LANGID_UNKNOWN;
+  langids[num_langs] = LANGID_UNKNOWN;
 
-	options.dialog = dialog_status->GetCheck ();
-	options.translations = trans_status->GetCheck ();
-	limit->GetWindowText( buffer, sizeof(buffer)-1);
-	options.limit = atoi ( buffer );
+  options.dialog = dialog_status->GetCheck();
+  options.translations = trans_status->GetCheck();
+  limit->GetWindowText(buffer, sizeof(buffer) - 1);
+  options.limit = atoi(buffer);
 
-	if ( !show_details->GetCheck () )
-	{
-		options.limit = 0;
-	}
-	else if ( !ifless->GetCheck () )
-	{
-		options.limit = INT_MAX;
-	}
+  if (!show_details->GetCheck())
+  {
+    options.limit = 0;
+  }
+  else if (!ifless->GetCheck())
+  {
+    options.limit = INT_MAX;
+  }
 
-
-	CDialog::OnOK();
+  CDialog::OnOK();
 }
 
 void CReport::OnCancel()
 {
-	// TODO: Add extra cleanup here
+  // TODO: Add extra cleanup here
 
-	CDialog::OnCancel();
+  CDialog::OnCancel();
 }

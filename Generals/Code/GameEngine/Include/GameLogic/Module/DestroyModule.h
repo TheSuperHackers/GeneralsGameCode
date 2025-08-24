@@ -40,31 +40,28 @@
 //-------------------------------------------------------------------------------------------------
 class DestroyModuleInterface
 {
-public:
-	virtual void onDestroy() = 0;
+  public:
+  virtual void onDestroy() = 0;
 };
 
 //-------------------------------------------------------------------------------------------------
 class DestroyModule : public BehaviorModule, public DestroyModuleInterface
 {
+  MEMORY_POOL_GLUE_ABC(DestroyModule)
+  MAKE_STANDARD_MODULE_MACRO_ABC(DestroyModule)
 
-	MEMORY_POOL_GLUE_ABC( DestroyModule )
-	MAKE_STANDARD_MODULE_MACRO_ABC( DestroyModule )
+  public:
+  DestroyModule(Thing *thing, const ModuleData *moduleData);
+  // virtual destructor prototype defined by MemoryPoolObject
 
-public:
+  static Int getInterfaceMask() { return MODULEINTERFACE_DESTROY; }
 
-	DestroyModule( Thing *thing, const ModuleData* moduleData );
-	// virtual destructor prototype defined by MemoryPoolObject
+  // BehaviorModule
+  virtual DestroyModuleInterface *getDestroy() { return this; }
 
-	static Int getInterfaceMask() { return MODULEINTERFACE_DESTROY; }
+  virtual void onDestroy() = 0;
 
-	// BehaviorModule
-	virtual DestroyModuleInterface* getDestroy() { return this; }
-
-	virtual void onDestroy() = 0;
-
-protected:
-
+  protected:
 };
 
 #endif

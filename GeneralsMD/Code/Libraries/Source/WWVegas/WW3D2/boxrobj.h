@@ -50,7 +50,6 @@
 
 class VertexMaterialClass;
 
-
 /**
 ** BoxRenderObjClass: base class for AABox and OBBox collision boxes
 **
@@ -74,112 +73,105 @@ class VertexMaterialClass;
 */
 class BoxRenderObjClass : public RenderObjClass
 {
+  public:
+  BoxRenderObjClass(void);
+  BoxRenderObjClass(const W3dBoxStruct &def);
+  BoxRenderObjClass(const BoxRenderObjClass &src);
+  BoxRenderObjClass &operator=(const BoxRenderObjClass &);
 
-public:
+  virtual int Get_Num_Polys(void) const;
+  virtual const char *Get_Name(void) const;
+  virtual void Set_Name(const char *name);
+  void Set_Color(const Vector3 &color);
+  void Set_Opacity(float opacity) { Opacity = opacity; }
 
-	BoxRenderObjClass(void);
-	BoxRenderObjClass(const W3dBoxStruct & def);
-	BoxRenderObjClass(const BoxRenderObjClass & src);
-	BoxRenderObjClass & operator = (const BoxRenderObjClass &);
+  static void Init(void);
+  static void Shutdown(void);
 
-	virtual int							Get_Num_Polys(void) const;
-	virtual const char *				Get_Name(void) const;
-	virtual void						Set_Name(const char * name);
-	void									Set_Color(const Vector3 & color);
-	void									Set_Opacity(float opacity) { Opacity = opacity; }
+  static void Set_Box_Display_Mask(int mask);
+  static int Get_Box_Display_Mask(void);
 
-	static void							Init(void);
-	static void							Shutdown(void);
+  void Set_Local_Center_Extent(const Vector3 &center, const Vector3 &extent);
+  void Set_Local_Min_Max(const Vector3 &min, const Vector3 &max);
 
-	static void							Set_Box_Display_Mask(int mask);
-	static int							Get_Box_Display_Mask(void);
+  const Vector3 &Get_Local_Center(void) { return ObjSpaceCenter; }
+  const Vector3 &Get_Local_Extent(void) { return ObjSpaceExtent; }
 
-	void									Set_Local_Center_Extent(const Vector3 & center,const Vector3 & extent);
-	void									Set_Local_Min_Max(const Vector3 & min,const Vector3 & max);
+  protected:
+  virtual void update_cached_box(void) = 0;
+  void render_box(RenderInfoClass &rinfo, const Vector3 &center, const Vector3 &extent);
+  void vis_render_box(SpecialRenderInfoClass &rinfo, const Vector3 &center, const Vector3 &extent);
 
-	const Vector3 &					Get_Local_Center(void) { return ObjSpaceCenter; }
-	const Vector3 &					Get_Local_Extent(void) { return ObjSpaceExtent; }
+  char Name[2 * W3D_NAME_LEN];
+  Vector3 Color;
+  Vector3 ObjSpaceCenter;
+  Vector3 ObjSpaceExtent;
+  float Opacity;
 
-protected:
-
-	virtual void						update_cached_box(void) = 0;
-	void									render_box(RenderInfoClass & rinfo,const Vector3 & center,const Vector3 & extent);
-	void									vis_render_box(SpecialRenderInfoClass & rinfo,const Vector3 & center,const Vector3 & extent);
-
-	char									Name[2*W3D_NAME_LEN];
-	Vector3								Color;
-	Vector3								ObjSpaceCenter;
-	Vector3								ObjSpaceExtent;
-	float									Opacity;
-
-	static bool							IsInitted;
-	static int							DisplayMask;
+  static bool IsInitted;
+  static int DisplayMask;
 };
 
-inline void BoxRenderObjClass::Set_Local_Center_Extent(const Vector3 & center,const Vector3 & extent)
+inline void BoxRenderObjClass::Set_Local_Center_Extent(const Vector3 &center, const Vector3 &extent)
 {
-	ObjSpaceCenter = center;
-	ObjSpaceExtent = extent;
-	update_cached_box();
+  ObjSpaceCenter = center;
+  ObjSpaceExtent = extent;
+  update_cached_box();
 }
 
-inline void BoxRenderObjClass::Set_Local_Min_Max(const Vector3 & min,const Vector3 & max)
+inline void BoxRenderObjClass::Set_Local_Min_Max(const Vector3 &min, const Vector3 &max)
 {
-	ObjSpaceCenter = (max + min) / 2.0f;
-	ObjSpaceExtent = (max - min) / 2.0f;
-	update_cached_box();
+  ObjSpaceCenter = (max + min) / 2.0f;
+  ObjSpaceExtent = (max - min) / 2.0f;
+  update_cached_box();
 }
-
 
 /*
 ** AABoxRenderObjClass -- RenderObject for axis-aligned collision boxes.
 */
 class AABoxRenderObjClass : public W3DMPO, public BoxRenderObjClass
 {
-	W3DMPO_GLUE(AABoxRenderObjClass)
-public:
+  W3DMPO_GLUE(AABoxRenderObjClass)
+  public:
+  AABoxRenderObjClass(void);
+  AABoxRenderObjClass(const W3dBoxStruct &def);
+  AABoxRenderObjClass(const AABoxRenderObjClass &src);
+  AABoxRenderObjClass(const AABoxClass &box);
+  AABoxRenderObjClass &operator=(const AABoxRenderObjClass &);
 
-	AABoxRenderObjClass(void);
-	AABoxRenderObjClass(const W3dBoxStruct & def);
-	AABoxRenderObjClass(const AABoxRenderObjClass & src);
-	AABoxRenderObjClass(const AABoxClass & box);
-	AABoxRenderObjClass & operator = (const AABoxRenderObjClass &);
+  /////////////////////////////////////////////////////////////////////////////
+  // Render Object Interface
+  /////////////////////////////////////////////////////////////////////////////
+  virtual RenderObjClass *Clone(void) const;
+  virtual int Class_ID(void) const;
+  virtual void Render(RenderInfoClass &rinfo);
+  virtual void Special_Render(SpecialRenderInfoClass &rinfo);
+  virtual void Set_Transform(const Matrix3D &m);
+  virtual void Set_Position(const Vector3 &v);
+  virtual bool Cast_Ray(RayCollisionTestClass &raytest);
+  virtual bool Cast_AABox(AABoxCollisionTestClass &boxtest);
+  virtual bool Cast_OBBox(OBBoxCollisionTestClass &boxtest);
+  virtual bool Intersect_AABox(AABoxIntersectionTestClass &boxtest);
+  virtual bool Intersect_OBBox(OBBoxIntersectionTestClass &boxtest);
+  virtual void Get_Obj_Space_Bounding_Sphere(SphereClass &sphere) const;
+  virtual void Get_Obj_Space_Bounding_Box(AABoxClass &box) const;
 
-	/////////////////////////////////////////////////////////////////////////////
-	// Render Object Interface
-	/////////////////////////////////////////////////////////////////////////////
-	virtual RenderObjClass *	Clone(void) const;
-	virtual int						Class_ID(void) const;
-	virtual void					Render(RenderInfoClass & rinfo);
-	virtual void					Special_Render(SpecialRenderInfoClass & rinfo);
-	virtual void 					Set_Transform(const Matrix3D &m);
-	virtual void 					Set_Position(const Vector3 &v);
-	virtual bool					Cast_Ray(RayCollisionTestClass & raytest);
-	virtual bool					Cast_AABox(AABoxCollisionTestClass & boxtest);
-	virtual bool					Cast_OBBox(OBBoxCollisionTestClass & boxtest);
-	virtual bool					Intersect_AABox(AABoxIntersectionTestClass & boxtest);
-	virtual bool					Intersect_OBBox(OBBoxIntersectionTestClass & boxtest);
-   virtual void					Get_Obj_Space_Bounding_Sphere(SphereClass & sphere) const;
-   virtual void					Get_Obj_Space_Bounding_Box(AABoxClass & box) const;
+  /////////////////////////////////////////////////////////////////////////////
+  // AABoxRenderObjClass Interface
+  /////////////////////////////////////////////////////////////////////////////
+  const AABoxClass &Get_Box(void);
 
-	/////////////////////////////////////////////////////////////////////////////
-	// AABoxRenderObjClass Interface
-	/////////////////////////////////////////////////////////////////////////////
-	const AABoxClass &			Get_Box(void);
+  protected:
+  virtual void update_cached_box(void);
 
-protected:
-
-	virtual void					update_cached_box(void);
-
-	AABoxClass						CachedBox;
-
+  AABoxClass CachedBox;
 };
 
-inline const AABoxClass & AABoxRenderObjClass::Get_Box(void)
+inline const AABoxClass &AABoxRenderObjClass::Get_Box(void)
 {
-	Validate_Transform();
-	update_cached_box();
-	return CachedBox;
+  Validate_Transform();
+  update_cached_box();
+  return CachedBox;
 }
 
 /*
@@ -187,56 +179,51 @@ inline const AABoxClass & AABoxRenderObjClass::Get_Box(void)
 */
 class OBBoxRenderObjClass : public W3DMPO, public BoxRenderObjClass
 {
-	W3DMPO_GLUE(OBBoxRenderObjClass)
-public:
+  W3DMPO_GLUE(OBBoxRenderObjClass)
+  public:
+  OBBoxRenderObjClass(void);
+  OBBoxRenderObjClass(const W3dBoxStruct &def);
+  OBBoxRenderObjClass(const OBBoxRenderObjClass &src);
+  OBBoxRenderObjClass(const OBBoxClass &box);
+  OBBoxRenderObjClass &operator=(const OBBoxRenderObjClass &);
 
-	OBBoxRenderObjClass(void);
-	OBBoxRenderObjClass(const W3dBoxStruct & def);
-	OBBoxRenderObjClass(const OBBoxRenderObjClass & src);
-	OBBoxRenderObjClass(const OBBoxClass & box);
-	OBBoxRenderObjClass & operator = (const OBBoxRenderObjClass &);
+  /////////////////////////////////////////////////////////////////////////////
+  // Render Object Interface
+  /////////////////////////////////////////////////////////////////////////////
+  virtual RenderObjClass *Clone(void) const;
+  virtual int Class_ID(void) const;
+  virtual void Render(RenderInfoClass &rinfo);
+  virtual void Special_Render(SpecialRenderInfoClass &rinfo);
+  virtual void Set_Transform(const Matrix3D &m);
+  virtual void Set_Position(const Vector3 &v);
+  virtual bool Cast_Ray(RayCollisionTestClass &raytest);
+  virtual bool Cast_AABox(AABoxCollisionTestClass &boxtest);
+  virtual bool Cast_OBBox(OBBoxCollisionTestClass &boxtest);
+  virtual bool Intersect_AABox(AABoxIntersectionTestClass &boxtest);
+  virtual bool Intersect_OBBox(OBBoxIntersectionTestClass &boxtest);
+  virtual void Get_Obj_Space_Bounding_Sphere(SphereClass &sphere) const;
+  virtual void Get_Obj_Space_Bounding_Box(AABoxClass &box) const;
 
-	/////////////////////////////////////////////////////////////////////////////
-	// Render Object Interface
-	/////////////////////////////////////////////////////////////////////////////
-	virtual RenderObjClass *	Clone(void) const;
-	virtual int						Class_ID(void) const;
-	virtual void					Render(RenderInfoClass & rinfo);
-	virtual void					Special_Render(SpecialRenderInfoClass & rinfo);
-	virtual void 					Set_Transform(const Matrix3D &m);
-	virtual void 					Set_Position(const Vector3 &v);
-	virtual bool					Cast_Ray(RayCollisionTestClass & raytest);
-	virtual bool					Cast_AABox(AABoxCollisionTestClass & boxtest);
-	virtual bool					Cast_OBBox(OBBoxCollisionTestClass & boxtest);
-	virtual bool					Intersect_AABox(AABoxIntersectionTestClass & boxtest);
-	virtual bool					Intersect_OBBox(OBBoxIntersectionTestClass & boxtest);
-   virtual void					Get_Obj_Space_Bounding_Sphere(SphereClass & sphere) const;
-   virtual void					Get_Obj_Space_Bounding_Box(AABoxClass & box) const;
+  /////////////////////////////////////////////////////////////////////////////
+  // OBBoxRenderObjClass Interface
+  /////////////////////////////////////////////////////////////////////////////
+  OBBoxClass &Get_Box(void);
 
-	/////////////////////////////////////////////////////////////////////////////
-	// OBBoxRenderObjClass Interface
-	/////////////////////////////////////////////////////////////////////////////
-	OBBoxClass &					Get_Box(void);
+  protected:
+  virtual void update_cached_box(void);
 
-protected:
-
-	virtual void					update_cached_box(void);
-
-	OBBoxClass						CachedBox;
-
+  OBBoxClass CachedBox;
 };
-
 
 /*
 ** Loader for boxes
 */
 class BoxLoaderClass : public PrototypeLoaderClass
 {
-public:
-	virtual int						Chunk_Type (void)  { return W3D_CHUNK_BOX; }
-	virtual PrototypeClass *	Load_W3D(ChunkLoadClass & cload);
+  public:
+  virtual int Chunk_Type(void) { return W3D_CHUNK_BOX; }
+  virtual PrototypeClass *Load_W3D(ChunkLoadClass &cload);
 };
-
 
 // ----------------------------------------------------------------------------
 /*
@@ -244,24 +231,21 @@ public:
 */
 class BoxPrototypeClass : public W3DMPO, public PrototypeClass
 {
-	W3DMPO_GLUE(BoxPrototypeClass)
-public:
-	BoxPrototypeClass(W3dBoxStruct box);
-	virtual const char *				Get_Name(void) const;
-	virtual int									Get_Class_ID(void) const;
-	virtual RenderObjClass *		Create(void);
-	virtual void								DeleteSelf() { delete this; }
-private:
-	W3dBoxStruct					Definition;
+  W3DMPO_GLUE(BoxPrototypeClass)
+  public:
+  BoxPrototypeClass(W3dBoxStruct box);
+  virtual const char *Get_Name(void) const;
+  virtual int Get_Class_ID(void) const;
+  virtual RenderObjClass *Create(void);
+  virtual void DeleteSelf() { delete this; }
+
+  private:
+  W3dBoxStruct Definition;
 };
 
 /*
 ** Instance of the loader which the asset manager installs
 */
-extern BoxLoaderClass			_BoxLoader;
-
-
-
+extern BoxLoaderClass _BoxLoader;
 
 #endif
-

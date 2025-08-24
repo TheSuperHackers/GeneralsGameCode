@@ -30,10 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 
 #include "Common/GameAudio.h"
 #include "Common/MiscAudio.h"
@@ -46,7 +44,7 @@
 
 #include "GameClient/Drawable.h"
 #include "GameClient/Eva.h"
-#include "GameClient/InGameUI.h"  // useful for printing quick debug strings when we need to
+#include "GameClient/InGameUI.h" // useful for printing quick debug strings when we need to
 
 #include "GameLogic/ExperienceTracker.h"
 #include "GameLogic/Object.h"
@@ -61,134 +59,130 @@
 #include "GameLogic/Module/SabotageCommandCenterCrateCollide.h"
 #include "GameLogic/Module/SpecialPowerModule.h"
 
-
-
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-SabotageCommandCenterCrateCollide::SabotageCommandCenterCrateCollide( Thing *thing, const ModuleData* moduleData ) : CrateCollide( thing, moduleData )
+SabotageCommandCenterCrateCollide::SabotageCommandCenterCrateCollide(Thing *thing, const ModuleData *moduleData) :
+    CrateCollide(thing, moduleData)
 {
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-SabotageCommandCenterCrateCollide::~SabotageCommandCenterCrateCollide( void )
+SabotageCommandCenterCrateCollide::~SabotageCommandCenterCrateCollide(void)
 {
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-Bool SabotageCommandCenterCrateCollide::isValidToExecute( const Object *other ) const
+Bool SabotageCommandCenterCrateCollide::isValidToExecute(const Object *other) const
 {
-	if( !CrateCollide::isValidToExecute(other) )
-	{
-		//Extend functionality.
-		return FALSE;
-	}
+  if (!CrateCollide::isValidToExecute(other))
+  {
+    // Extend functionality.
+    return FALSE;
+  }
 
-	if( other->isEffectivelyDead() )
-	{
-		//Can't sabotage dead structures
-		return FALSE;
-	}
+  if (other->isEffectivelyDead())
+  {
+    // Can't sabotage dead structures
+    return FALSE;
+  }
 
-	if( !other->isKindOf( KINDOF_COMMANDCENTER ) )
-	{
-		//We can only sabotage superweapon structures.
-		return FALSE;
-	}
+  if (!other->isKindOf(KINDOF_COMMANDCENTER))
+  {
+    // We can only sabotage superweapon structures.
+    return FALSE;
+  }
 
-	if (other->getStatusBits().testForAny(MAKE_OBJECT_STATUS_MASK2(OBJECT_STATUS_UNDER_CONSTRUCTION, OBJECT_STATUS_SOLD)))
-	{
-		// TheSuperHackers @bugfix Stubbjax 03/08/2025 Can't enter something being sold or under construction.
-		return FALSE;
-	}
+  if (other->getStatusBits().testForAny(MAKE_OBJECT_STATUS_MASK2(OBJECT_STATUS_UNDER_CONSTRUCTION, OBJECT_STATUS_SOLD)))
+  {
+    // TheSuperHackers @bugfix Stubbjax 03/08/2025 Can't enter something being sold or under construction.
+    return FALSE;
+  }
 
-	Relationship r = getObject()->getRelationship( other );
-	if( r != ENEMIES )
-	{
-		//Can only sabotage enemy buildings.
-		return FALSE;
-	}
+  Relationship r = getObject()->getRelationship(other);
+  if (r != ENEMIES)
+  {
+    // Can only sabotage enemy buildings.
+    return FALSE;
+  }
 
-	return TRUE;
+  return TRUE;
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-Bool SabotageCommandCenterCrateCollide::executeCrateBehavior( Object *other )
+Bool SabotageCommandCenterCrateCollide::executeCrateBehavior(Object *other)
 {
-	//Check to make sure that the other object is also the goal object in the AIUpdateInterface
-	//in order to prevent an unintentional conversion simply by having the terrorist walk too close
-	//to it.
-	//Assume ai is valid because CrateCollide::isValidToExecute(other) checks it.
-	Object *obj = getObject();
-	AIUpdateInterface* ai = obj->getAIUpdateInterface();
-	if (ai && ai->getGoalObject() != other)
-	{
-		return false;
-	}
+  // Check to make sure that the other object is also the goal object in the AIUpdateInterface
+  // in order to prevent an unintentional conversion simply by having the terrorist walk too close
+  // to it.
+  // Assume ai is valid because CrateCollide::isValidToExecute(other) checks it.
+  Object *obj = getObject();
+  AIUpdateInterface *ai = obj->getAIUpdateInterface();
+  if (ai && ai->getGoalObject() != other)
+  {
+    return false;
+  }
 
-	TheRadar->tryInfiltrationEvent( other );
+  TheRadar->tryInfiltrationEvent(other);
 
-  doSabotageFeedbackFX( other, CrateCollide::SAB_VICTIM_COMMAND_CENTER );
+  doSabotageFeedbackFX(other, CrateCollide::SAB_VICTIM_COMMAND_CENTER);
 
-	//When the sabotage occurs, play the appropriate EVA
-	//event if the local player is the victim!
-	if( other->isLocallyControlled() )
-	{
-		TheEva->setShouldPlay( EVA_BuildingSabotaged );
-	}
+  // When the sabotage occurs, play the appropriate EVA
+  // event if the local player is the victim!
+  if (other->isLocallyControlled())
+  {
+    TheEva->setShouldPlay(EVA_BuildingSabotaged);
+  }
 
-	//Reset ALL special powers!
-	for( BehaviorModule **m = other->getBehaviorModules(); *m; ++m )
-	{
-		SpecialPowerModuleInterface* sp = (*m)->getSpecialPower();
-		if( !sp )
-		{
-			continue;
-		}
-		sp->startPowerRecharge();
-	}
+  // Reset ALL special powers!
+  for (BehaviorModule **m = other->getBehaviorModules(); *m; ++m)
+  {
+    SpecialPowerModuleInterface *sp = (*m)->getSpecialPower();
+    if (!sp)
+    {
+      continue;
+    }
+    sp->startPowerRecharge();
+  }
 
-	return TRUE;
+  return TRUE;
 }
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void SabotageCommandCenterCrateCollide::crc( Xfer *xfer )
+void SabotageCommandCenterCrateCollide::crc(Xfer *xfer)
 {
+  // extend base class
+  CrateCollide::crc(xfer);
 
-	// extend base class
-	CrateCollide::crc( xfer );
-
-}  // end crc
+} // end crc
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void SabotageCommandCenterCrateCollide::xfer( Xfer *xfer )
+void SabotageCommandCenterCrateCollide::xfer(Xfer *xfer)
 {
+  // version
+  XferVersion currentVersion = 1;
+  XferVersion version = currentVersion;
+  xfer->xferVersion(&version, currentVersion);
 
-	// version
-	XferVersion currentVersion = 1;
-	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+  // extend base class
+  CrateCollide::xfer(xfer);
 
-	// extend base class
-	CrateCollide::xfer( xfer );
-
-}  // end xfer
+} // end xfer
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void SabotageCommandCenterCrateCollide::loadPostProcess( void )
+void SabotageCommandCenterCrateCollide::loadPostProcess(void)
 {
+  // extend base class
+  CrateCollide::loadPostProcess();
 
-	// extend base class
-	CrateCollide::loadPostProcess();
-
-}  // end loadPostProcess
+} // end loadPostProcess

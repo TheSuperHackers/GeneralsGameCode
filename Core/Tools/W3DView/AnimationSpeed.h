@@ -30,41 +30,42 @@
 
 class CAnimationSpeed : public CDialog
 {
-// Construction
-public:
-	CAnimationSpeed(CWnd* pParent = NULL);   // standard constructor
+  // Construction
+  public:
+  CAnimationSpeed(CWnd *pParent = NULL); // standard constructor
 
-// Dialog Data
-	//{{AFX_DATA(CAnimationSpeed)
-	enum { IDD = IDD_DISPLAYSPEED };
-	CSliderCtrl	m_speedSlider;
-	//}}AFX_DATA
+  // Dialog Data
+  //{{AFX_DATA(CAnimationSpeed)
+  enum
+  {
+    IDD = IDD_DISPLAYSPEED
+  };
+  CSliderCtrl m_speedSlider;
+  //}}AFX_DATA
 
+  // Overrides
+  // ClassWizard generated virtual function overrides
+  //{{AFX_VIRTUAL(CAnimationSpeed)
+  protected:
+  virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
+  //}}AFX_VIRTUAL
 
-// Overrides
-	// ClassWizard generated virtual function overrides
-	//{{AFX_VIRTUAL(CAnimationSpeed)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
-	//}}AFX_VIRTUAL
+  // Implementation
+  protected:
+  // Generated message map functions
+  //{{AFX_MSG(CAnimationSpeed)
+  virtual BOOL OnInitDialog();
+  afx_msg void OnHScroll(UINT nSBCode, UINT nPos, CScrollBar *pScrollBar);
+  afx_msg void OnDestroy();
+  afx_msg void OnBlend();
+  afx_msg void OnCompressq();
+  afx_msg void On16bit();
+  afx_msg void On8bit();
+  //}}AFX_MSG
+  DECLARE_MESSAGE_MAP()
 
-// Implementation
-protected:
-
-	// Generated message map functions
-	//{{AFX_MSG(CAnimationSpeed)
-	virtual BOOL OnInitDialog();
-	afx_msg void OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
-	afx_msg void OnDestroy();
-	afx_msg void OnBlend();
-	afx_msg void OnCompressq();
-	afx_msg void On16bit();
-	afx_msg void On8bit();
-	//}}AFX_MSG
-	DECLARE_MESSAGE_MAP()
-
-    private:
-        int m_iInitialPercent;
+  private:
+  int m_iInitialPercent;
 };
 
 //{{AFX_INSERT_LOCATION}}

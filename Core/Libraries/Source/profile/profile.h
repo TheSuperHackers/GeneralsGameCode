@@ -27,7 +27,7 @@
 // Profiling module
 //////////////////////////////////////////////////////////////////////////////
 #ifdef _MSC_VER
-#  pragma once
+#pragma once
 #endif
 #ifndef PROFILE_H // Include guard
 #define PROFILE_H
@@ -48,14 +48,13 @@ class Profile
   // nobody can construct this class
   Profile();
 
-public:
-
+  public:
   /**
     \brief Starts range recording.
 
     \param range name of range to record, ==NULL for "frame"
   */
-  static void StartRange(const char *range=0);
+  static void StartRange(const char *range = 0);
 
   /**
     \brief Appends profile data to the last recorded frame
@@ -63,7 +62,7 @@ public:
 
     \param range name of range to record, ==NULL for "frame"
   */
-  static void AppendRange(const char *range=0);
+  static void AppendRange(const char *range = 0);
 
   /**
     \brief Stops range recording.
@@ -73,7 +72,7 @@ public:
 
     \param range name of range to record, ==NULL for "frame"
   */
-  static void StopRange(const char *range=0);
+  static void StopRange(const char *range = 0);
 
   /**
     \brief Determines if any range recording is enabled or not.
@@ -128,10 +127,12 @@ public:
     \param name factory name
     \param arg description of optional parameters the factory function recognizes
   */
-  static void AddResultFunction(ProfileResultInterface* (*func)(int, const char * const *),
-                                const char *name, const char *arg);
+  static void AddResultFunction(
+      ProfileResultInterface *(*func)(int, const char *const *),
+      const char *name,
+      const char *arg);
 
-private:
+  private:
   /** \internal
 
     \brief Simple recursive pattern matcher.

@@ -16,7 +16,6 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-
 #include <signal.h>
 #ifdef _WINDOWS
 #include <process.h> // *MUST* be included before ANY Wnet/Wlib headers if _REENTRANT is defined
@@ -34,9 +33,6 @@
 #include <wstring.h>
 #include <wdebug.h>
 #include <udp.h>
-
-
-
 
 /***************************************************************************
  * Add_CRC -- Adds a value to a CRC                                        *
@@ -56,65 +52,67 @@
  *=========================================================================*/
 void Add_CRC(unsigned long *crc, unsigned char val)
 {
-	int hibit;
+  int hibit;
 
-	//cout << "\t\t" << hex << val;
-//	val = htonl(val);
-	//cout << " / " << hex << val <<endl;
+  // cout << "\t\t" << hex << val;
+  //	val = htonl(val);
+  // cout << " / " << hex << val <<endl;
 
-	if ((*crc) & 0x80000000) {
-		hibit = 1;
-	} else {
-		hibit = 0;
-	}
+  if ((*crc) & 0x80000000)
+  {
+    hibit = 1;
+  }
+  else
+  {
+    hibit = 0;
+  }
 
-	(*crc) <<= 1;
-	(*crc) += val;
-	(*crc) += hibit;
+  (*crc) <<= 1;
+  (*crc) += val;
+  (*crc) += hibit;
 
-	//cout << hex << (*crc) <<endl;
+  // cout << hex << (*crc) <<endl;
 }
-
 
 void Build_Packet_CRC(unsigned char *buf, int len)
 {
-	if (len < 5)
-	{
-		DBGMSG("Ack!  Constructing a packet too small to hold a CRC!");
-		return;
-	}
-	if (!buf)
-	{
-		DBGMSG("Ack!  Constructing a CRC for a void *");
-		return;
-	}
+  if (len < 5)
+  {
+    DBGMSG("Ack!  Constructing a packet too small to hold a CRC!");
+    return;
+  }
+  if (!buf)
+  {
+    DBGMSG("Ack!  Constructing a CRC for a void *");
+    return;
+  }
 
-	*((unsigned long *)buf) = 0;
+  *((unsigned long *)buf) = 0;
 
-	unsigned long *crc_ptr = (unsigned long *)buf;
-	unsigned char *packetptr = (unsigned char*) (buf+4);
+  unsigned long *crc_ptr = (unsigned long *)buf;
+  unsigned char *packetptr = (unsigned char *)(buf + 4);
 
-	len -= 4; // look past CRC
+  len -= 4; // look past CRC
 
-	for (int i=0 ; i<len ; i++) {
-		Add_CRC (crc_ptr, *packetptr++);
-	}
-/*
-	int leftover = len & 3;
-	if (leftover) {
-		unsigned long val = 0;
-		unsigned char *c = (unsigned char *)packetptr;
-		for (int i=0; i<leftover; i++)
-		{
-			val += (c[i] << (i*8));
-		}
-		val = htonl(val);
-		Add_CRC (crc_ptr, val);
-	}
-*/
-	*crc_ptr = htonl(*crc_ptr);
+  for (int i = 0; i < len; i++)
+  {
+    Add_CRC(crc_ptr, *packetptr++);
+  }
+  /*
+    int leftover = len & 3;
+    if (leftover) {
+      unsigned long val = 0;
+      unsigned char *c = (unsigned char *)packetptr;
+      for (int i=0; i<leftover; i++)
+      {
+        val += (c[i] << (i*8));
+      }
+      val = htonl(val);
+      Add_CRC (crc_ptr, val);
+    }
+  */
+  *crc_ptr = htonl(*crc_ptr);
 }
-
 
 /***********************************************************************************************
  * Passes_CRC_Check -- Checks the CRC for a packet                                             *
@@ -135,46 +133,48 @@ void Build_Packet_CRC(unsigned char *buf, int len)
  *=============================================================================================*/
 bool Passes_CRC_Check(unsigned char *buf, int len)
 {
-	if (len < 5)
-	{
-		DBGMSG("Recieved packet too small to contain a CRC");
-		return false;
-	}
-	if (!buf)
-	{
-		DBGMSG("Ack!  Checking a CRC for a void *");
-		return false;
-	}
+  if (len < 5)
+  {
+    DBGMSG("Recieved packet too small to contain a CRC");
+    return false;
+  }
+  if (!buf)
+  {
+    DBGMSG("Ack!  Checking a CRC for a void *");
+    return false;
+  }
 
-	unsigned long crc = 0;
+  unsigned long crc = 0;
 
-	unsigned long *crc_ptr = &crc;
-	unsigned char *packetptr = (unsigned char*) (buf+4);
+  unsigned long *crc_ptr = &crc;
+  unsigned char *packetptr = (unsigned char *)(buf + 4);
 
-	len -= 4; // remove the CRC from packet size - just look at payload
+  len -= 4; // remove the CRC from packet size - just look at payload
 
-	for (int i=0 ; i<len ; i++) {
-		Add_CRC (crc_ptr, *packetptr++);
-	}
-/*
-	int leftover = len & 3;
-	if (leftover) {
-		unsigned long val = 0;
-		unsigned char *c = (unsigned char *)packetptr;
-		for (int i=0; i<leftover; i++)
-		{
-			val += (c[i] << (i*8));
-		}
-		val = htonl(val);
-		Add_CRC (crc_ptr, val);
-	}
-*/
-	crc = htonl(crc);
+  for (int i = 0; i < len; i++)
+  {
+    Add_CRC(crc_ptr, *packetptr++);
+  }
+  /*
+    int leftover = len & 3;
+    if (leftover) {
+      unsigned long val = 0;
+      unsigned char *c = (unsigned char *)packetptr;
+      for (int i=0; i<leftover; i++)
+      {
+        val += (c[i] << (i*8));
+      }
+      val = htonl(val);
+      Add_CRC (crc_ptr, val);
+    }
+  */
+  crc = htonl(crc);
 
-	if (crc == *((unsigned long *)buf)) {
-		return (true);
-	}
+  if (crc == *((unsigned long *)buf))
+  {
+    return (true);
+  }
 
-	DBGMSG("Invalid packet CRC");
-	return (false);
+  DBGMSG("Invalid packet CRC");
+  return (false);
 }

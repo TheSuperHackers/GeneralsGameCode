@@ -48,7 +48,6 @@
 #include "chunkio.h"
 #include "PROGRESS.H"
 
-
 /*******************************************************************************************
 **
 ** DazzleSaveClass - Create a Dazzle definition from an INode.  Basically, we just save
@@ -57,34 +56,26 @@
 *******************************************************************************************/
 class DazzleSaveClass
 {
-public:
+  public:
+  enum
+  {
+    EX_UNKNOWN = 0, // exception error codes
+    EX_CANCEL = 1
+  };
 
-	enum {
-		EX_UNKNOWN = 0,	// exception error codes
-		EX_CANCEL = 1
-	};
+  DazzleSaveClass(
+      char *mesh_name,
+      char *container_name,
+      INode *inode,
+      Matrix3 &exportspace,
+      TimeValue curtime,
+      Progress_Meter_Class &meter);
 
-	DazzleSaveClass(		char *						mesh_name,
-								char *						container_name,
-								INode *						inode,
-								Matrix3 &					exportspace,
-								TimeValue					curtime,
-								Progress_Meter_Class &	meter);
+  int Write_To_File(ChunkSaveClass &csave);
 
-	int Write_To_File(ChunkSaveClass & csave);
-
-private:
-
-	char						W3DName[128];
-	char						DazzleType[128];
-
+  private:
+  char W3DName[128];
+  char DazzleType[128];
 };
 
-
-
-
-
-
-
-#endif //DAZZLESAVE_H
-
+#endif // DAZZLESAVE_H

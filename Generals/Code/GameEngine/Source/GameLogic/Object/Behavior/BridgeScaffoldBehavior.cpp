@@ -37,330 +37,316 @@
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-BridgeScaffoldBehavior::BridgeScaffoldBehavior( Thing *thing, const ModuleData *moduleData )
-											: UpdateModule( thing, moduleData )
+BridgeScaffoldBehavior::BridgeScaffoldBehavior(Thing *thing, const ModuleData *moduleData) : UpdateModule(thing, moduleData)
 {
+  m_targetMotion = STM_STILL;
+  m_createPos.zero();
+  m_riseToPos.zero();
+  m_buildPos.zero();
+  m_targetPos.zero();
+  m_lateralSpeed = 1.0f;
+  m_verticalSpeed = 1.0f;
 
-	m_targetMotion = STM_STILL;
-	m_createPos.zero();
-	m_riseToPos.zero();
-	m_buildPos.zero();
-	m_targetPos.zero();
-	m_lateralSpeed = 1.0f;
-	m_verticalSpeed = 1.0f;
-
-}  // end BridgeScaffoldBehavior
+} // end BridgeScaffoldBehavior
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-BridgeScaffoldBehavior::~BridgeScaffoldBehavior( void )
+BridgeScaffoldBehavior::~BridgeScaffoldBehavior(void)
 {
-
-}  // end ~BridgeScaffoldBehavior
+} // end ~BridgeScaffoldBehavior
 
 // ------------------------------------------------------------------------------------------------
 /** Set all of the target positions that we're care about as a moving scaffold object */
 // ------------------------------------------------------------------------------------------------
-void BridgeScaffoldBehavior::setPositions( const Coord3D *createPos,
-																					 const Coord3D *riseToPos,
-																					 const Coord3D *buildPos )
+void BridgeScaffoldBehavior::setPositions(const Coord3D *createPos, const Coord3D *riseToPos, const Coord3D *buildPos)
 {
+  m_createPos = *createPos;
+  m_riseToPos = *riseToPos;
+  m_buildPos = *buildPos;
 
-	m_createPos = *createPos;
-	m_riseToPos = *riseToPos;
-	m_buildPos = *buildPos;
-
-}  // end setPositions
+} // end setPositions
 
 // ------------------------------------------------------------------------------------------------
 /** Set us moving to the right target position for the requested motion type */
 // ------------------------------------------------------------------------------------------------
-void BridgeScaffoldBehavior::setMotion( ScaffoldTargetMotion targetMotion )
+void BridgeScaffoldBehavior::setMotion(ScaffoldTargetMotion targetMotion)
 {
+  // save the target motion type
+  m_targetMotion = targetMotion;
 
-	// save the target motion type
-	m_targetMotion = targetMotion;
+  // given the target motion, pick a destination target
+  switch (m_targetMotion)
+  {
+    // --------------------------------------------------------------------------------------------
+    case STM_RISE:
+    case STM_TEAR_DOWN_ACROSS:
+      m_targetPos = m_riseToPos;
+      break;
 
-	// given the target motion, pick a destination target
-	switch( m_targetMotion )
-	{
+    // --------------------------------------------------------------------------------------------
+    case STM_BUILD_ACROSS:
+      m_targetPos = m_buildPos;
+      break;
 
-		// --------------------------------------------------------------------------------------------
-		case STM_RISE:
-		case STM_TEAR_DOWN_ACROSS:
-			m_targetPos = m_riseToPos;
-			break;
+    // --------------------------------------------------------------------------------------------
+    case STM_SINK:
+      m_targetPos = m_createPos;
+      break;
 
-		// --------------------------------------------------------------------------------------------
-		case STM_BUILD_ACROSS:
-			m_targetPos = m_buildPos;
-			break;
+  } // end switch
 
-		// --------------------------------------------------------------------------------------------
-		case STM_SINK:
-			m_targetPos = m_createPos;
-			break;
-
-	}  // end switch
-
-}  // end setMotion
+} // end setMotion
 
 // ------------------------------------------------------------------------------------------------
 /** Whatever our current state of motion is, reverse it */
 // ------------------------------------------------------------------------------------------------
-void BridgeScaffoldBehavior::reverseMotion( void )
+void BridgeScaffoldBehavior::reverseMotion(void)
 {
+  switch (m_targetMotion)
+  {
+    case STM_STILL:
+      setMotion(STM_TEAR_DOWN_ACROSS);
+      break;
 
-	switch( m_targetMotion )
-	{
+    case STM_RISE:
+      setMotion(STM_SINK);
+      break;
 
-		case STM_STILL:
-			setMotion( STM_TEAR_DOWN_ACROSS );
-			break;
+    case STM_BUILD_ACROSS:
+      setMotion(STM_TEAR_DOWN_ACROSS);
+      break;
 
-		case STM_RISE:
-			setMotion( STM_SINK );
-			break;
+    case STM_TEAR_DOWN_ACROSS:
+      setMotion(STM_BUILD_ACROSS);
+      break;
 
-		case STM_BUILD_ACROSS:
-			setMotion( STM_TEAR_DOWN_ACROSS );
-			break;
+    case STM_SINK:
+      setMotion(STM_RISE);
+      break;
 
-		case STM_TEAR_DOWN_ACROSS:
-			setMotion( STM_BUILD_ACROSS );
-			break;
+  } // end switch
 
-		case STM_SINK:
-			setMotion( STM_RISE );
-			break;
-
-	}  // end switch
-
-}  // end reverseMotion
+} // end reverseMotion
 
 // ------------------------------------------------------------------------------------------------
 /** The update method */
 // ------------------------------------------------------------------------------------------------
-UpdateSleepTime BridgeScaffoldBehavior::update( void )
+UpdateSleepTime BridgeScaffoldBehavior::update(void)
 {
+  // do nothing if we're not in motion
+  if (m_targetMotion == STM_STILL)
+    return UPDATE_SLEEP_NONE;
 
-	// do nothing if we're not in motion
-	if( m_targetMotion == STM_STILL )
-		return UPDATE_SLEEP_NONE;
+  // get our info
+  Object *us = getObject();
+  const Coord3D *ourPos = us->getPosition();
 
-	// get our info
-	Object *us = getObject();
-	const Coord3D *ourPos = us->getPosition();
+  // compute direction vector from our position to the target position
+  Coord3D dirV;
+  dirV.x = m_targetPos.x - ourPos->x;
+  dirV.y = m_targetPos.y - ourPos->y;
+  dirV.z = m_targetPos.z - ourPos->z;
 
-	// compute direction vector from our position to the target position
-	Coord3D dirV;
-	dirV.x = m_targetPos.x - ourPos->x;
-	dirV.y = m_targetPos.y - ourPos->y;
-	dirV.z = m_targetPos.z - ourPos->z;
+  // use normalized direction vector "v" to do the pulling movement
+  Coord3D v = dirV;
+  v.normalize();
 
-	// use normalized direction vector "v" to do the pulling movement
-	Coord3D v = dirV;
-	v.normalize();
+  // depending on our motion type, we move at different speeds
+  Real topSpeed = 1.0f;
+  Coord3D *start, *end;
+  switch (m_targetMotion)
+  {
+    case STM_RISE:
+      topSpeed = m_verticalSpeed;
+      start = &m_createPos;
+      end = &m_riseToPos;
+      break;
 
-	// depending on our motion type, we move at different speeds
-	Real topSpeed = 1.0f;
-	Coord3D *start, *end;
-	switch( m_targetMotion )
-	{
+    case STM_SINK:
+      topSpeed = m_verticalSpeed;
+      start = &m_riseToPos;
+      end = &m_createPos;
+      break;
 
-		case STM_RISE:
-			topSpeed = m_verticalSpeed;
-			start = &m_createPos;
-			end = &m_riseToPos;
-			break;
+    case STM_BUILD_ACROSS:
+      topSpeed = m_lateralSpeed;
+      start = &m_riseToPos;
+      end = &m_buildPos;
+      break;
 
-		case STM_SINK:
-			topSpeed = m_verticalSpeed;
-			start = &m_riseToPos;
-			end = &m_createPos;
-			break;
+    case STM_TEAR_DOWN_ACROSS:
+      topSpeed = m_lateralSpeed;
+      start = &m_buildPos;
+      end = &m_riseToPos;
+      break;
 
-		case STM_BUILD_ACROSS:
-			topSpeed = m_lateralSpeed;
-			start = &m_riseToPos;
-			end = &m_buildPos;
-			break;
+    default:
+      DEBUG_CRASH(("Unhandled case in BridgeScaffoldBehavior::update()"));
+      return UPDATE_SLEEP_NONE;
 
-		case STM_TEAR_DOWN_ACROSS:
-			topSpeed = m_lateralSpeed;
-			start = &m_buildPos;
-			end = &m_riseToPos;
-			break;
+  } // end switch
 
-		default:
-			DEBUG_CRASH(("Unhandled case in BridgeScaffoldBehavior::update()"));
-			return UPDATE_SLEEP_NONE;
+  // adjust speed so it's slower at the end of motion
+  Coord3D speedVector;
+  speedVector.x = end->x - start->x;
+  speedVector.y = end->y - start->y;
+  speedVector.z = end->z - start->z;
+  Real totalDistance = speedVector.length() * 0.25f;
+  speedVector.x = end->x - ourPos->x;
+  speedVector.y = end->y - ourPos->y;
+  speedVector.z = end->z - ourPos->z;
+  Real ourDistance = speedVector.length();
+  Real speed = (ourDistance / totalDistance) * topSpeed;
+  Real minSpeed = topSpeed * 0.08f;
+  if (speed < minSpeed)
+    speed = minSpeed;
+  if (speed > topSpeed)
+    speed = topSpeed;
 
-	}  // end switch
+  //
+  // make sure that speed can't get so incredibly small that we never finish our
+  // movement no matter what the speed and distance are
+  //
+  if (speed < 0.001f)
+    speed = 0.001f;
 
-	// adjust speed so it's slower at the end of motion
-	Coord3D speedVector;
-	speedVector.x = end->x - start->x;
-	speedVector.y = end->y - start->y;
-	speedVector.z = end->z - start->z;
-	Real totalDistance = speedVector.length() * 0.25f;
-	speedVector.x = end->x - ourPos->x;
-	speedVector.y = end->y - ourPos->y;
-	speedVector.z = end->z - ourPos->z;
-	Real ourDistance = speedVector.length();
-	Real speed = (ourDistance / totalDistance) * topSpeed;
-	Real minSpeed = topSpeed * 0.08f;
-	if( speed < minSpeed )
-		speed = minSpeed;
-	if( speed > topSpeed )
-		speed = topSpeed;
+  // compute the new position given the speed
+  Coord3D newPos;
+  newPos.x = v.x * speed + ourPos->x;
+  newPos.y = v.y * speed + ourPos->y;
+  newPos.z = v.z * speed + ourPos->z;
 
-	//
-	// make sure that speed can't get so incredibly small that we never finish our
-	// movement no matter what the speed and distance are
-	//
-	if( speed < 0.001f )
-		speed = 0.001f;
+  //
+  // will this new position push us beyond our target destination, we will take the vector
+  // from the new position to the destination and the vector from our current present position
+  // tot he destination and dot them togehter ... if the result is < 0 then we have will
+  // overshoot the distance if we use the new position
+  //
+  Coord3D tooFarVector;
+  tooFarVector.x = m_targetPos.x - newPos.x;
+  tooFarVector.y = m_targetPos.y - newPos.y;
+  tooFarVector.z = m_targetPos.z - newPos.z;
+  if (tooFarVector.x * dirV.x + tooFarVector.y * dirV.y + tooFarVector.z * dirV.z <= 0.0f)
+  {
+    // use the destination position
+    newPos = m_targetPos;
 
-	// compute the new position given the speed
-	Coord3D newPos;
-	newPos.x = v.x * speed + ourPos->x;
-	newPos.y = v.y * speed + ourPos->y;
-	newPos.z = v.z * speed + ourPos->z;
+    //
+    // we have reached our target position, switch motion to the next position in
+    // the chain (which may be stay still and don't move anymore)
+    //
+    switch (m_targetMotion)
+    {
+      case STM_RISE:
+        setMotion(STM_BUILD_ACROSS);
+        break;
+      case STM_BUILD_ACROSS:
+        setMotion(STM_STILL);
+        break;
+      case STM_TEAR_DOWN_ACROSS:
+        setMotion(STM_SINK);
+        break;
 
-	//
-	// will this new position push us beyond our target destination, we will take the vector
-	// from the new position to the destination and the vector from our current present position
-	// tot he destination and dot them togehter ... if the result is < 0 then we have will
-	// overshoot the distance if we use the new position
-	//
-	Coord3D tooFarVector;
-	tooFarVector.x = m_targetPos.x - newPos.x;
-	tooFarVector.y = m_targetPos.y - newPos.y;
-	tooFarVector.z = m_targetPos.z - newPos.z;
-	if( tooFarVector.x * dirV.x + tooFarVector.y * dirV.y + tooFarVector.z * dirV.z <= 0.0f )
-	{
+      case STM_SINK:
+      {
+        // we are done with a sinking motion, destroy the scaffold object as our job is done
+        TheGameLogic->destroyObject(us);
+        break;
 
-		// use the destination position
-		newPos = m_targetPos;
+      } // end case
 
-		//
-		// we have reached our target position, switch motion to the next position in
-		// the chain (which may be stay still and don't move anymore)
-		//
-		switch( m_targetMotion )
-		{
+    } // end switch
 
-			case STM_RISE: setMotion( STM_BUILD_ACROSS ); break;
-			case STM_BUILD_ACROSS: setMotion( STM_STILL ); break;
-			case STM_TEAR_DOWN_ACROSS: setMotion( STM_SINK ); break;
+  } // end if
 
-			case STM_SINK:
-			{
+  // set the new position
+  us->setPosition(&newPos);
 
-				// we are done with a sinking motion, destroy the scaffold object as our job is done
-				TheGameLogic->destroyObject( us );
-				break;
+  // do not sleep
+  return UPDATE_SLEEP_NONE;
 
-			}  // end case
-
-		}  // end switch
-
-	}  // end if
-
-	// set the new position
-	us->setPosition( &newPos );
-
-	// do not sleep
-	return UPDATE_SLEEP_NONE;
-
-}  // end update
+} // end update
 
 // ------------------------------------------------------------------------------------------------
 /** STATIC MEMBER:
-	* Helper function to retrieve a bridge scaffold interface from an object if one is present */
+ * Helper function to retrieve a bridge scaffold interface from an object if one is present */
 // ------------------------------------------------------------------------------------------------
-BridgeScaffoldBehaviorInterface *BridgeScaffoldBehavior::getBridgeScaffoldBehaviorInterfaceFromObject( Object *obj )
+BridgeScaffoldBehaviorInterface *BridgeScaffoldBehavior::getBridgeScaffoldBehaviorInterfaceFromObject(Object *obj)
 {
+  // santiy
+  if (obj == NULL)
+    return NULL;
 
-	// santiy
-	if( obj == NULL )
-		return NULL;
+  // get the bridge tower behavior interface
+  BridgeScaffoldBehaviorInterface *bridgeScaffoldInterface = NULL;
+  BehaviorModule **bmi;
+  for (bmi = obj->getBehaviorModules(); *bmi; ++bmi)
+  {
+    bridgeScaffoldInterface = (*bmi)->getBridgeScaffoldBehaviorInterface();
+    if (bridgeScaffoldInterface)
+      return bridgeScaffoldInterface;
 
-	// get the bridge tower behavior interface
-	BridgeScaffoldBehaviorInterface *bridgeScaffoldInterface = NULL;
-	BehaviorModule **bmi;
-	for( bmi = obj->getBehaviorModules(); *bmi; ++bmi )
-	{
+  } // end for bmi
 
-		bridgeScaffoldInterface = (*bmi)->getBridgeScaffoldBehaviorInterface();
-		if( bridgeScaffoldInterface )
-			return bridgeScaffoldInterface;
+  // interface not found
+  return NULL;
 
-	}  // end for bmi
-
-	// interface not found
-	return NULL;
-
-}  // end getBridgeScaffoldBehaviorInterfaceFromObject
+} // end getBridgeScaffoldBehaviorInterfaceFromObject
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void BridgeScaffoldBehavior::crc( Xfer *xfer )
+void BridgeScaffoldBehavior::crc(Xfer *xfer)
 {
+  // extend base class
+  UpdateModule::crc(xfer);
 
-	// extend base class
-	UpdateModule::crc( xfer );
-
-}  // end crc
+} // end crc
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void BridgeScaffoldBehavior::xfer( Xfer *xfer )
+void BridgeScaffoldBehavior::xfer(Xfer *xfer)
 {
+  // version
+  XferVersion currentVersion = 1;
+  XferVersion version = currentVersion;
+  xfer->xferVersion(&version, currentVersion);
 
-	// version
-	XferVersion currentVersion = 1;
-	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+  // extend base class
+  UpdateModule::xfer(xfer);
 
-	// extend base class
-	UpdateModule::xfer( xfer );
+  // target motion
+  xfer->xferUser(&m_targetMotion, sizeof(ScaffoldTargetMotion));
 
-	// target motion
-	xfer->xferUser( &m_targetMotion, sizeof( ScaffoldTargetMotion ) );
+  // create pos
+  xfer->xferCoord3D(&m_createPos);
 
-	// create pos
-	xfer->xferCoord3D( &m_createPos );
+  // rise to pos
+  xfer->xferCoord3D(&m_riseToPos);
 
-	// rise to pos
-	xfer->xferCoord3D( &m_riseToPos );
+  // build pos
+  xfer->xferCoord3D(&m_buildPos);
 
-	// build pos
-	xfer->xferCoord3D( &m_buildPos );
+  // lateral speed
+  xfer->xferReal(&m_lateralSpeed);
 
-	// lateral speed
-	xfer->xferReal( &m_lateralSpeed );
+  // vertical speed
+  xfer->xferReal(&m_verticalSpeed);
 
-	// vertical speed
-	xfer->xferReal( &m_verticalSpeed );
+  // current target pos
+  xfer->xferCoord3D(&m_targetPos);
 
-	// current target pos
-	xfer->xferCoord3D( &m_targetPos );
-
-}  // end xfer
+} // end xfer
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void BridgeScaffoldBehavior::loadPostProcess( void )
+void BridgeScaffoldBehavior::loadPostProcess(void)
 {
+  // extend base class
+  UpdateModule::loadPostProcess();
 
-	// extend base class
-	UpdateModule::loadPostProcess();
-
-}  // end loadPostProcess
+} // end loadPostProcess

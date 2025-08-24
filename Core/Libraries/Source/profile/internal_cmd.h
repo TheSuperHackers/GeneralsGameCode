@@ -27,17 +27,17 @@
 // Profile module command interface
 //////////////////////////////////////////////////////////////////////////////
 #ifdef _MSC_VER
-#  pragma once
+#pragma once
 #endif
 #ifndef INTERNAL_CMD_H // Include guard
 #define INTERNAL_CMD_H
 
-class ProfileCmdInterface: public DebugCmdInterface
+class ProfileCmdInterface : public DebugCmdInterface
 {
   struct Factory
   {
-    ProfileResultInterface* (*func)(int, const char * const *);
-    const char *name,*arg;
+    ProfileResultInterface *(*func)(int, const char *const *);
+    const char *name, *arg;
   };
 
   static unsigned numResIf;
@@ -46,15 +46,16 @@ class ProfileCmdInterface: public DebugCmdInterface
   unsigned numResFunc; // optimizer bug: must be declared volatile!
   ProfileResultInterface **resFunc;
 
-public:
-  ProfileCmdInterface(void): numResFunc(0), resFunc(0) {}
+  public:
+  ProfileCmdInterface(void) : numResFunc(0), resFunc(0) {}
 
-  static void AddResultFunction(ProfileResultInterface* (*func)(int, const char * const *),
-                                const char *name, const char *arg);
+  static void AddResultFunction(
+      ProfileResultInterface *(*func)(int, const char *const *),
+      const char *name,
+      const char *arg);
   void RunResultFunctions(void);
 
-  virtual bool Execute(class Debug& dbg, const char *cmd, CommandMode cmdmode,
-                       unsigned argn, const char * const * argv);
+  virtual bool Execute(class Debug &dbg, const char *cmd, CommandMode cmdmode, unsigned argn, const char *const *argv);
   virtual void Delete(void) {}
 };
 

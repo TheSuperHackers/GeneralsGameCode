@@ -29,24 +29,26 @@
 
 class INIException
 {
-	// This is a stack based exception class. It is used to output useful information
-	// when thrown from an INI message
+  // This is a stack based exception class. It is used to output useful information
+  // when thrown from an INI message
 
-public:
-	char *mFailureMessage;
+  public:
+  char *mFailureMessage;
 
-	INIException(const char* errorMessage) : mFailureMessage(NULL)
-	{
-		if (errorMessage) {
-			mFailureMessage = new char[strlen(errorMessage) + 1];
-			strcpy(mFailureMessage, errorMessage);
-		}
-	}
+  INIException(const char *errorMessage) : mFailureMessage(NULL)
+  {
+    if (errorMessage)
+    {
+      mFailureMessage = new char[strlen(errorMessage) + 1];
+      strcpy(mFailureMessage, errorMessage);
+    }
+  }
 
-	~INIException()
-	{
-		if (mFailureMessage) {
-			delete [] mFailureMessage;
-		}
-	}
+  ~INIException()
+  {
+    if (mFailureMessage)
+    {
+      delete[] mFailureMessage;
+    }
+  }
 };

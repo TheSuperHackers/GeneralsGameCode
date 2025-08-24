@@ -31,85 +31,94 @@
 /////////////////////////////////////////////////////////////////////////////
 // MeshMoldOptions dialog
 
-class MeshMoldOptions : public COptionsPanel , public PopupSliderOwner
+class MeshMoldOptions : public COptionsPanel, public PopupSliderOwner
 {
-// Construction
-public:
-	MeshMoldOptions(CWnd* pParent = NULL);   // standard constructor
-	enum {MIN_ANGLE=-180,
-				MAX_ANGLE=180,
-				MIN_HEIGHT=-10,
-				MAX_HEIGHT=256,
-				MIN_SCALE=1,
-				MAX_SCALE=200};
+  // Construction
+  public:
+  MeshMoldOptions(CWnd *pParent = NULL); // standard constructor
+  enum
+  {
+    MIN_ANGLE = -180,
+    MAX_ANGLE = 180,
+    MIN_HEIGHT = -10,
+    MAX_HEIGHT = 256,
+    MIN_SCALE = 1,
+    MAX_SCALE = 200
+  };
 
-// Dialog Data
-	//{{AFX_DATA(MeshMoldOptions)
-	enum { IDD = IDD_MESHMOLD_OPTIONS };
-		// NOTE: the ClassWizard will add data members here
-	//}}AFX_DATA
+  // Dialog Data
+  //{{AFX_DATA(MeshMoldOptions)
+  enum
+  {
+    IDD = IDD_MESHMOLD_OPTIONS
+  };
+  // NOTE: the ClassWizard will add data members here
+  //}}AFX_DATA
 
+  // Overrides
+  // ClassWizard generated virtual function overrides
+  //{{AFX_VIRTUAL(MeshMoldOptions)
+  protected:
+  virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
+  virtual BOOL OnInitDialog();
+  virtual void OnOK() { return; }; //!< Modeless dialogs don't OK, so eat this for modeless.
+  virtual void OnCancel() { return; }; //!< Modeless dialogs don't close on ESC, so eat this for modeless.
+  virtual BOOL OnNotify(WPARAM wParam, LPARAM lParam, LRESULT *pResult);
+  //}}AFX_VIRTUAL
 
-// Overrides
-	// ClassWizard generated virtual function overrides
-	//{{AFX_VIRTUAL(MeshMoldOptions)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
-	virtual BOOL OnInitDialog();
-	virtual void OnOK(){return;};  //!< Modeless dialogs don't OK, so eat this for modeless.
-	virtual void OnCancel(){return;}; //!< Modeless dialogs don't close on ESC, so eat this for modeless.
-	virtual BOOL OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult);
-	//}}AFX_VIRTUAL
+  // Implementation
+  protected:
+  // Generated message map functions
+  //{{AFX_MSG(MeshMoldOptions)
+  afx_msg void OnPreview();
+  afx_msg void OnApplyMesh();
+  afx_msg void OnChangeScaleEdit();
+  afx_msg void OnChangeHeightEdit();
+  afx_msg void OnChangeAngleEdit();
+  afx_msg void OnRaise();
+  afx_msg void OnRaiseLower();
+  afx_msg void OnLower();
+  //}}AFX_MSG
+  DECLARE_MESSAGE_MAP()
 
-// Implementation
-protected:
+  protected:
+  WBPopupSliderButton m_anglePopup;
+  WBPopupSliderButton m_scalePopup;
+  WBPopupSliderButton m_HeightPopup;
+  CTreeCtrl m_moldTreeView;
+  Bool m_updating;
+  AsciiString m_meshModelName;
 
-	// Generated message map functions
-	//{{AFX_MSG(MeshMoldOptions)
-	afx_msg void OnPreview();
-	afx_msg void OnApplyMesh();
-	afx_msg void OnChangeScaleEdit();
-	afx_msg void OnChangeHeightEdit();
-	afx_msg void OnChangeAngleEdit();
-	afx_msg void OnRaise();
-	afx_msg void OnRaiseLower();
-	afx_msg void OnLower();
-	//}}AFX_MSG
-	DECLARE_MESSAGE_MAP()
+  static Real m_currentHeight;
+  static Real m_currentScale;
+  static Int m_currentAngle;
+  static Bool m_doingPreview;
+  static Bool m_raiseOnly;
+  static Bool m_lowerOnly;
 
-protected:
-	WBPopupSliderButton m_anglePopup;
-	WBPopupSliderButton m_scalePopup;
-	WBPopupSliderButton m_HeightPopup;
-	CTreeCtrl						m_moldTreeView;
-	Bool								m_updating;
-	AsciiString					m_meshModelName;
+  public:
+  static void setScale(Real scale);
+  static void setHeight(Real height);
+  static void setAngle(Int angle);
 
-	static Real m_currentHeight;
-	static Real m_currentScale;
-	static Int m_currentAngle;
-	static Bool m_doingPreview;
-	static Bool m_raiseOnly;
-	static Bool m_lowerOnly;
+  static Real getHeight(void) { return m_currentHeight; };
+  static Real getScale(void) { return m_currentScale; };
+  static Int getAngle(void) { return m_currentAngle; };
+  static MeshMoldOptions *m_staticThis;
+  static Bool isDoingPreview(void) { return m_doingPreview; };
+  static Bool isRaisingOnly(void) { return m_raiseOnly; };
+  static Bool isLoweringOnly(void) { return m_lowerOnly; };
+  static AsciiString getModelName(void)
+  {
+    if (m_staticThis)
+      return m_staticThis->m_meshModelName;
+    return "";
+  };
 
-public:
-	static void setScale(Real scale);
-	static void setHeight(Real height);
-	static void setAngle(Int angle);
-
-	static Real getHeight(void) {return m_currentHeight;};
-	static Real getScale(void) {return m_currentScale;};
-	static Int getAngle(void) {return m_currentAngle;};
-	static MeshMoldOptions *m_staticThis;
-	static Bool isDoingPreview(void) {return m_doingPreview;};
-	static Bool isRaisingOnly(void) {return m_raiseOnly;};
-	static Bool isLoweringOnly(void) {return m_lowerOnly;};
-	static AsciiString getModelName(void) {if (m_staticThis) return m_staticThis->m_meshModelName; return "";};
-
-public:	 //PopupSliderOwner methods.
-	virtual void GetPopSliderInfo(const long sliderID, long *pMin, long *pMax, long *pLineSize, long *pInitial);
-	virtual void PopSliderChanged(const long sliderID, long theVal);
-	virtual void PopSliderFinished(const long sliderID, long theVal);
+  public: // PopupSliderOwner methods.
+  virtual void GetPopSliderInfo(const long sliderID, long *pMin, long *pMax, long *pLineSize, long *pInitial);
+  virtual void PopSliderChanged(const long sliderID, long theVal);
+  virtual void PopSliderFinished(const long sliderID, long theVal);
 };
 
 //{{AFX_INSERT_LOCATION}}

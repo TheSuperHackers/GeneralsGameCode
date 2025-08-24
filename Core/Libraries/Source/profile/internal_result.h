@@ -27,20 +27,20 @@
 // Internal result functions
 //////////////////////////////////////////////////////////////////////////////
 #ifdef _MSC_VER
-#  pragma once
+#pragma once
 #endif
 #ifndef INTERNAL_RESULT_H // Include guard
 #define INTERNAL_RESULT_H
 
 /// \brief Simple CSV format flat file result function, for all threads.
-class ProfileResultFileCSV: public ProfileResultInterface
+class ProfileResultFileCSV : public ProfileResultInterface
 {
   ProfileResultFileCSV(void) {}
 
   void WriteThread(ProfileFuncLevel::Thread &thread);
 
-public:
-  static ProfileResultInterface *Create(int argn, const char * const *);
+  public:
+  static ProfileResultInterface *Create(int argn, const char *const *);
   virtual const char *GetName(void) const { return "file_csv"; }
   virtual void WriteResults(void);
   virtual void Delete(void);
@@ -57,9 +57,9 @@ public:
   \note A DOT file is used with the DOT tool from the GraphViz package
   for generating directed graphs, e.g. by issuing dot -Tgif -ograph.gif profile.dot
 */
-class ProfileResultFileDOT: public ProfileResultInterface
+class ProfileResultFileDOT : public ProfileResultInterface
 {
-public:
+  public:
   enum
   {
     MAX_FUNCTIONS_PER_FILE = 200
@@ -75,14 +75,13 @@ public:
                          will be folded into a single entry
     \return new instance
   */
-  static ProfileResultInterface *Create(int argn, const char * const *);
+  static ProfileResultInterface *Create(int argn, const char *const *);
 
   virtual const char *GetName(void) const { return "file_dot"; }
   virtual void WriteResults(void);
   virtual void Delete(void);
 
-private:
-
+  private:
   ProfileResultFileDOT(const char *fileName, const char *frameName, int foldThreshold);
 
   struct FoldHelper

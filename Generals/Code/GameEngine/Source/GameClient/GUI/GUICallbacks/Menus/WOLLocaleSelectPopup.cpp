@@ -29,7 +29,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 
 #include "GameClient/GameText.h"
 #include "Common/CustomMatchPreferences.h"
@@ -48,7 +48,6 @@
 #include "GameNetwork/GameSpy/PersistentStorageDefs.h"
 #include "GameNetwork/GameSpy/PersistentStorageThread.h"
 
-
 // PRIVATE DATA ///////////////////////////////////////////////////////////////////////////////////
 // window ids ------------------------------------------------------------------------------
 static NameKeyType parentLocaleSelectID = NAMEKEY_INVALID;
@@ -63,168 +62,159 @@ static GameWindow *listboxLocale = NULL;
 //-------------------------------------------------------------------------------------------------
 /** Initialize the WOL Status Menu */
 //-------------------------------------------------------------------------------------------------
-void WOLLocaleSelectInit( WindowLayout *layout, void *userData )
+void WOLLocaleSelectInit(WindowLayout *layout, void *userData)
 {
-	parentLocaleSelectID = TheNameKeyGenerator->nameToKey( AsciiString( "PopupLocaleSelect.wnd:ParentLocaleSelect" ) );
-	buttonOkID = TheNameKeyGenerator->nameToKey( AsciiString( "PopupLocaleSelect.wnd:ButtonOk" ) );
-	listboxLocaleID = TheNameKeyGenerator->nameToKey( AsciiString( "PopupLocaleSelect.wnd:ListBoxLocaleSelect" ) );
-	parentLocaleSelect = TheWindowManager->winGetWindowFromId( NULL, parentLocaleSelectID );
-	buttonOk = TheWindowManager->winGetWindowFromId( NULL,  buttonOkID);
-	listboxLocale = TheWindowManager->winGetWindowFromId( NULL,  listboxLocaleID);
+  parentLocaleSelectID = TheNameKeyGenerator->nameToKey(AsciiString("PopupLocaleSelect.wnd:ParentLocaleSelect"));
+  buttonOkID = TheNameKeyGenerator->nameToKey(AsciiString("PopupLocaleSelect.wnd:ButtonOk"));
+  listboxLocaleID = TheNameKeyGenerator->nameToKey(AsciiString("PopupLocaleSelect.wnd:ListBoxLocaleSelect"));
+  parentLocaleSelect = TheWindowManager->winGetWindowFromId(NULL, parentLocaleSelectID);
+  buttonOk = TheWindowManager->winGetWindowFromId(NULL, buttonOkID);
+  listboxLocale = TheWindowManager->winGetWindowFromId(NULL, listboxLocaleID);
 
-	for (int i=LOC_MIN; i<=LOC_MAX; ++i)
-	{
-		AsciiString id;
-		id.format("WOL:Locale%2.2d", i);
-		GadgetListBoxAddEntryText(listboxLocale, TheGameText->fetch(id.str()), GameSpyColor[GSCOLOR_DEFAULT], -1, -1);
-	}
-	GadgetListBoxSetSelected(listboxLocale, 0);
+  for (int i = LOC_MIN; i <= LOC_MAX; ++i)
+  {
+    AsciiString id;
+    id.format("WOL:Locale%2.2d", i);
+    GadgetListBoxAddEntryText(listboxLocale, TheGameText->fetch(id.str()), GameSpyColor[GSCOLOR_DEFAULT], -1, -1);
+  }
+  GadgetListBoxSetSelected(listboxLocale, 0);
 
-	// Show Menu
-	layout->hide( FALSE );
+  // Show Menu
+  layout->hide(FALSE);
 
-	// Set Keyboard to Main Parent
-	TheWindowManager->winSetFocus( parentLocaleSelect );
-	TheWindowManager->winSetModal( parentLocaleSelect );
+  // Set Keyboard to Main Parent
+  TheWindowManager->winSetFocus(parentLocaleSelect);
+  TheWindowManager->winSetModal(parentLocaleSelect);
 } // WOLLocaleSelectInit
 
 //-------------------------------------------------------------------------------------------------
 /** WOL Status Menu shutdown method */
 //-------------------------------------------------------------------------------------------------
-void WOLLocaleSelectShutdown( WindowLayout *layout, void *userData )
+void WOLLocaleSelectShutdown(WindowLayout *layout, void *userData)
 {
+  // hide menu
+  layout->hide(TRUE);
 
-	// hide menu
-	layout->hide( TRUE );
+  // our shutdown is complete
+  TheShell->shutdownComplete(layout);
 
-	// our shutdown is complete
-	TheShell->shutdownComplete( layout );
-
-}  // WOLLocaleSelectShutdown
-
+} // WOLLocaleSelectShutdown
 
 //-------------------------------------------------------------------------------------------------
 /** WOL Status Menu update method */
 //-------------------------------------------------------------------------------------------------
-void WOLLocaleSelectUpdate( WindowLayout * layout, void *userData)
+void WOLLocaleSelectUpdate(WindowLayout *layout, void *userData)
 {
-
-}// WOLLocaleSelectUpdate
+} // WOLLocaleSelectUpdate
 
 //-------------------------------------------------------------------------------------------------
 /** WOL Status Menu input callback */
 //-------------------------------------------------------------------------------------------------
-WindowMsgHandledType WOLLocaleSelectInput( GameWindow *window, UnsignedInt msg,
-																			 WindowMsgData mData1, WindowMsgData mData2 )
+WindowMsgHandledType WOLLocaleSelectInput(GameWindow *window, UnsignedInt msg, WindowMsgData mData1, WindowMsgData mData2)
 {
-	switch( msg )
-	{
+  switch (msg)
+  {
+    // --------------------------------------------------------------------------------------------
+    case GWM_CHAR:
+    {
+      //			UnsignedByte key = mData1;
+      //			UnsignedByte state = mData2;
 
-		// --------------------------------------------------------------------------------------------
-		case GWM_CHAR:
-		{
-//			UnsignedByte key = mData1;
-//			UnsignedByte state = mData2;
+      // ----------------------------------------------------------------------------------------
+      // don't let key fall through anywhere else
+      return MSG_HANDLED;
+    } // end char
+  } // end switch( msg )
+  return MSG_IGNORED;
+} // WOLLocaleSelectInput
 
-			// ----------------------------------------------------------------------------------------
-			// don't let key fall through anywhere else
-			return MSG_HANDLED;
-		}  // end char
-	}  // end switch( msg )
-	return MSG_IGNORED;
-}// WOLLocaleSelectInput
-
-//Int getRegistryNicknameOffset(AsciiString nick); /// @todo: mdc remove this once we can save ini pref files
+// Int getRegistryNicknameOffset(AsciiString nick); /// @todo: mdc remove this once we can save ini pref files
 //-------------------------------------------------------------------------------------------------
 /** WOL Status Menu window system callback */
 //-------------------------------------------------------------------------------------------------
-WindowMsgHandledType WOLLocaleSelectSystem( GameWindow *window, UnsignedInt msg,
-														 WindowMsgData mData1, WindowMsgData mData2 )
+WindowMsgHandledType WOLLocaleSelectSystem(GameWindow *window, UnsignedInt msg, WindowMsgData mData1, WindowMsgData mData2)
 {
-	UnicodeString txtInput;
+  UnicodeString txtInput;
 
-	switch( msg )
-	{
+  switch (msg)
+  {
+    case GWM_CREATE:
+    {
+      break;
+    } // case GWM_DESTROY:
 
+    case GWM_DESTROY:
+    {
+      break;
+    } // case GWM_DESTROY:
 
-		case GWM_CREATE:
-			{
+    case GWM_INPUT_FOCUS:
+    {
+      // if we're givin the opportunity to take the keyboard focus we must say we want it
+      if (mData1 == TRUE)
+        *(Bool *)mData2 = TRUE;
 
-				break;
-			} // case GWM_DESTROY:
+      return MSG_HANDLED;
+    } // case GWM_INPUT_FOCUS:
 
-		case GWM_DESTROY:
-			{
-				break;
-			} // case GWM_DESTROY:
+    case GBM_SELECTED:
+    {
+      GameWindow *control = (GameWindow *)mData1;
+      Int controlID = control->winGetWindowId();
 
-		case GWM_INPUT_FOCUS:
-			{
-				// if we're givin the opportunity to take the keyboard focus we must say we want it
-				if( mData1 == TRUE )
-					*(Bool *)mData2 = TRUE;
+      if (controlID == buttonOkID)
+      {
+        int selected;
+        GadgetListBoxGetSelected(listboxLocale, &selected);
+        if (selected < 0)
+          return MSG_HANDLED; // can't select nothing!
+        PSRequest psReq;
+        psReq.requestType = PSRequest::PSREQUEST_UPDATEPLAYERLOCALE;
+        psReq.player.locale = selected + LOC_MIN;
+        psReq.email = TheGameSpyInfo->getLocalEmail().str();
+        psReq.nick = TheGameSpyInfo->getLocalBaseName().str();
+        psReq.password = TheGameSpyInfo->getLocalPassword().str();
+        psReq.player.id = TheGameSpyInfo->getLocalProfileID();
 
-				return MSG_HANDLED;
-			}//case GWM_INPUT_FOCUS:
+        TheGameSpyPSMessageQueue->addRequest(psReq);
+        GameSpyCloseOverlay(GSOVERLAY_LOCALESELECT);
 
-		case GBM_SELECTED:
-			{
-				GameWindow *control = (GameWindow *)mData1;
-				Int controlID = control->winGetWindowId();
+        GameSpyMiscPreferences cPref;
+        cPref.setLocale(psReq.player.locale);
+        cPref.write();
 
-				if ( controlID == buttonOkID )
-				{
-					int selected;
-					GadgetListBoxGetSelected(listboxLocale, &selected);
-					if (selected < 0)
-						return MSG_HANDLED; // can't select nothing!
-					PSRequest psReq;
-					psReq.requestType = PSRequest::PSREQUEST_UPDATEPLAYERLOCALE;
-					psReq.player.locale = selected + LOC_MIN;
-					psReq.email = TheGameSpyInfo->getLocalEmail().str();
-					psReq.nick = TheGameSpyInfo->getLocalBaseName().str();
-					psReq.password = TheGameSpyInfo->getLocalPassword().str();
-					psReq.player.id = TheGameSpyInfo->getLocalProfileID();
+        PSPlayerStats stats = TheGameSpyPSMessageQueue->findPlayerStatsByID(TheGameSpyInfo->getLocalProfileID());
+        stats.locale = psReq.player.locale;
+        if (stats.id == TheGameSpyInfo->getLocalProfileID())
+          TheGameSpyPSMessageQueue->trackPlayerStats(stats);
 
-					TheGameSpyPSMessageQueue->addRequest(psReq);
-					GameSpyCloseOverlay(GSOVERLAY_LOCALESELECT);
+        if (stats.id == 0)
+        {
+          stats = TheGameSpyInfo->getCachedLocalPlayerStats();
+          stats.locale = psReq.player.locale;
+          TheGameSpyInfo->setCachedLocalPlayerStats(stats);
+        }
+        else
+        {
+          // force an update of our shtuff
+          PSResponse newResp;
+          newResp.responseType = PSResponse::PSRESPONSE_PLAYERSTATS;
+          newResp.player = TheGameSpyPSMessageQueue->findPlayerStatsByID(TheGameSpyInfo->getLocalProfileID());
+          TheGameSpyPSMessageQueue->addResponse(newResp);
+        }
+        CheckReOpenPlayerInfo();
+      } // if ( controlID == buttonDisconnect )
+      break;
+    } // case GBM_SELECTED:
 
-					GameSpyMiscPreferences cPref;
-					cPref.setLocale(psReq.player.locale);
-					cPref.write();
+    case GEM_EDIT_DONE:
+    {
+      break;
+    }
+    default:
+      return MSG_IGNORED;
 
-					PSPlayerStats stats = TheGameSpyPSMessageQueue->findPlayerStatsByID(TheGameSpyInfo->getLocalProfileID());
-					stats.locale = psReq.player.locale;
-					if (stats.id == TheGameSpyInfo->getLocalProfileID())
-						TheGameSpyPSMessageQueue->trackPlayerStats(stats);
+  } // Switch
 
-					if(stats.id == 0)
-					{
-						stats = TheGameSpyInfo->getCachedLocalPlayerStats();
-						stats.locale = psReq.player.locale;
-						TheGameSpyInfo->setCachedLocalPlayerStats(stats);
-					}
-					else
-					{
-						// force an update of our shtuff
-						PSResponse newResp;
-						newResp.responseType = PSResponse::PSRESPONSE_PLAYERSTATS;
-						newResp.player = TheGameSpyPSMessageQueue->findPlayerStatsByID(TheGameSpyInfo->getLocalProfileID());
-						TheGameSpyPSMessageQueue->addResponse(newResp);
-					}
-					CheckReOpenPlayerInfo();
-				} //if ( controlID == buttonDisconnect )
-				break;
-			}// case GBM_SELECTED:
-
-		case GEM_EDIT_DONE:
-			{
-				break;
-			}
-		default:
-			return MSG_IGNORED;
-
-	}//Switch
-
-	return MSG_HANDLED;
-}// WOLLocaleSelectSystem
+  return MSG_HANDLED;
+} // WOLLocaleSelectSystem

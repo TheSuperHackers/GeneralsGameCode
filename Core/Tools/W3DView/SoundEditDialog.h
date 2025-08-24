@@ -23,7 +23,6 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
-
 #include "wwstring.h"
 #include "resource.h"
 #include "soundrobj.h"
@@ -33,7 +32,6 @@
 /////////////////////////////////////////////////////////////////////
 class AudibleSoundClass;
 
-
 /////////////////////////////////////////////////////////////////////
 //
 //	SoundEditDialogClass
@@ -41,75 +39,77 @@ class AudibleSoundClass;
 /////////////////////////////////////////////////////////////////////
 class SoundEditDialogClass : public CDialog
 {
-public:
-	SoundEditDialogClass (CWnd *parent);
-	virtual ~SoundEditDialogClass (void);
+  public:
+  SoundEditDialogClass(CWnd *parent);
+  virtual ~SoundEditDialogClass(void);
 
-// Form Data
-public:
-	//{{AFX_DATA(SoundEditDialogClass)
-	enum { IDD = IDD_SOUND_EDIT };
-	CSliderCtrl	VolumeSlider;
-	CSliderCtrl	PrioritySlider;
-	//}}AFX_DATA
+  // Form Data
+  public:
+  //{{AFX_DATA(SoundEditDialogClass)
+  enum
+  {
+    IDD = IDD_SOUND_EDIT
+  };
+  CSliderCtrl VolumeSlider;
+  CSliderCtrl PrioritySlider;
+  //}}AFX_DATA
 
-// Attributes
-public:
+  // Attributes
+  public:
+  // Operations
+  public:
+  // Overrides
+  // ClassWizard generated virtual function overrides
+  //{{AFX_VIRTUAL(SoundEditDialogClass)
+  protected:
+  virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
+  //}}AFX_VIRTUAL
 
-// Operations
-public:
-
-// Overrides
-	// ClassWizard generated virtual function overrides
-	//{{AFX_VIRTUAL(SoundEditDialogClass)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
-	//}}AFX_VIRTUAL
-
-// Implementation
-protected:
+  // Implementation
+  protected:
 #ifdef RTS_DEBUG
-	virtual void AssertValid() const;
-	virtual void Dump(CDumpContext& dc) const;
+  virtual void AssertValid() const;
+  virtual void Dump(CDumpContext &dc) const;
 #endif
 
-	// Generated message map functions
-	//{{AFX_MSG(SoundEditDialogClass)
-	afx_msg void OnBrowse();
-	afx_msg void On2DRadio();
-	afx_msg void On3DRadio();
-	afx_msg void OnPlay();
-	virtual BOOL OnInitDialog();
-	virtual void OnOK();
-	virtual void OnCancel();
-	//}}AFX_MSG
-	DECLARE_MESSAGE_MAP()
+  // Generated message map functions
+  //{{AFX_MSG(SoundEditDialogClass)
+  afx_msg void OnBrowse();
+  afx_msg void On2DRadio();
+  afx_msg void On3DRadio();
+  afx_msg void OnPlay();
+  virtual BOOL OnInitDialog();
+  virtual void OnOK();
+  virtual void OnCancel();
+  //}}AFX_MSG
+  DECLARE_MESSAGE_MAP()
 
-public:
+  public:
+  ///////////////////////////////////////////////////////
+  //	Public methods
+  ///////////////////////////////////////////////////////
+  void Set_Sound(SoundRenderObjClass *sound) { REF_PTR_SET(SoundRObj, sound); }
+  SoundRenderObjClass *Get_Sound(void) const
+  {
+    if (SoundRObj != NULL)
+      SoundRObj->Add_Ref();
+    return SoundRObj;
+  }
 
-	///////////////////////////////////////////////////////
-	//	Public methods
-	///////////////////////////////////////////////////////
-	void							Set_Sound (SoundRenderObjClass *sound)	{ REF_PTR_SET (SoundRObj, sound); }
-	SoundRenderObjClass *	Get_Sound (void) const						{ if (SoundRObj != NULL) SoundRObj->Add_Ref (); return SoundRObj; }
+  protected:
+  ///////////////////////////////////////////////////////
+  //	Protected methods
+  ///////////////////////////////////////////////////////
+  void Update_Enable_State(void);
+  AudibleSoundClass *Create_Sound_Object(void);
 
-protected:
-
-	///////////////////////////////////////////////////////
-	//	Protected methods
-	///////////////////////////////////////////////////////
-	void							Update_Enable_State (void);
-	AudibleSoundClass *		Create_Sound_Object (void);
-
-private:
-
-	///////////////////////////////////////////////////////
-	//	Private member data
-	///////////////////////////////////////////////////////
-	SoundRenderObjClass *	SoundRObj;
-	StringClass					OldName;
+  private:
+  ///////////////////////////////////////////////////////
+  //	Private member data
+  ///////////////////////////////////////////////////////
+  SoundRenderObjClass *SoundRObj;
+  StringClass OldName;
 };
-
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.

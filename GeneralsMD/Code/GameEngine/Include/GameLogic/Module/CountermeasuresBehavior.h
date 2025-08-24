@@ -47,72 +47,77 @@ class ParticleSystemTemplate;
 //-------------------------------------------------------------------------------------------------
 class CountermeasuresBehaviorModuleData : public UpdateModuleData
 {
-public:
-	UpgradeMuxData				m_upgradeMuxData;
-	AsciiString						m_flareTemplateName;
-	AsciiString						m_flareBoneBaseName;
-  Real									m_evasionRate;
-  UnsignedInt						m_volleySize;
-  Real									m_volleyArcAngle;
-	Real									m_volleyVelocityFactor;
-  UnsignedInt						m_framesBetweenVolleys;
-	UnsignedInt						m_numberOfVolleys;
-  UnsignedInt						m_reloadFrames;
-	UnsignedInt						m_missileDecoyFrames;
-	UnsignedInt						m_countermeasureReactionFrames;
-	Bool									m_mustReloadAtAirfield;
+  public:
+  UpgradeMuxData m_upgradeMuxData;
+  AsciiString m_flareTemplateName;
+  AsciiString m_flareBoneBaseName;
+  Real m_evasionRate;
+  UnsignedInt m_volleySize;
+  Real m_volleyArcAngle;
+  Real m_volleyVelocityFactor;
+  UnsignedInt m_framesBetweenVolleys;
+  UnsignedInt m_numberOfVolleys;
+  UnsignedInt m_reloadFrames;
+  UnsignedInt m_missileDecoyFrames;
+  UnsignedInt m_countermeasureReactionFrames;
+  Bool m_mustReloadAtAirfield;
 
-	CountermeasuresBehaviorModuleData()
-	{
-    m_volleySize            = 0;
-		m_volleyArcAngle				= 0.0f;
-    m_framesBetweenVolleys  = 0;
-		m_numberOfVolleys       = 0;
-    m_reloadFrames          = 0;
-    m_evasionRate           = 0.0f;
-		m_mustReloadAtAirfield	= FALSE;
-		m_missileDecoyFrames		= 0;
-		m_volleyVelocityFactor  = 1.0f;
-	}
+  CountermeasuresBehaviorModuleData()
+  {
+    m_volleySize = 0;
+    m_volleyArcAngle = 0.0f;
+    m_framesBetweenVolleys = 0;
+    m_numberOfVolleys = 0;
+    m_reloadFrames = 0;
+    m_evasionRate = 0.0f;
+    m_mustReloadAtAirfield = FALSE;
+    m_missileDecoyFrames = 0;
+    m_volleyVelocityFactor = 1.0f;
+  }
 
-	static void buildFieldParse(MultiIniFieldParse& p)
-	{
-		static const FieldParse dataFieldParse[] =
-		{
-			{ "FlareTemplateName",			INI::parseAsciiString,					NULL, offsetof( CountermeasuresBehaviorModuleData, m_flareTemplateName ) },
-			{ "FlareBoneBaseName",			INI::parseAsciiString,					NULL, offsetof( CountermeasuresBehaviorModuleData, m_flareBoneBaseName ) },
-			{ "VolleySize",							INI::parseUnsignedInt,					NULL, offsetof( CountermeasuresBehaviorModuleData, m_volleySize ) },
-			{ "VolleyArcAngle",					INI::parseAngleReal,						NULL, offsetof( CountermeasuresBehaviorModuleData, m_volleyArcAngle ) },
-			{ "VolleyVelocityFactor",		INI::parseReal,						NULL, offsetof( CountermeasuresBehaviorModuleData, m_volleyVelocityFactor ) },
-			{ "DelayBetweenVolleys",		INI::parseDurationUnsignedInt,  NULL, offsetof( CountermeasuresBehaviorModuleData, m_framesBetweenVolleys ) },
-			{ "NumberOfVolleys",				INI::parseUnsignedInt,					NULL, offsetof( CountermeasuresBehaviorModuleData, m_numberOfVolleys ) },
-			{ "ReloadTime",							INI::parseDurationUnsignedInt,  NULL, offsetof( CountermeasuresBehaviorModuleData, m_reloadFrames ) },
-			{ "EvasionRate",						INI::parsePercentToReal,				NULL, offsetof( CountermeasuresBehaviorModuleData, m_evasionRate ) },
-			{ "MustReloadAtAirfield",		INI::parseBool,									NULL, offsetof( CountermeasuresBehaviorModuleData, m_mustReloadAtAirfield ) },
-			{ "MissileDecoyDelay",			INI::parseDurationUnsignedInt,	NULL, offsetof( CountermeasuresBehaviorModuleData, m_missileDecoyFrames ) },
-			{ "ReactionLaunchLatency",	INI::parseDurationUnsignedInt,	NULL, offsetof( CountermeasuresBehaviorModuleData, m_countermeasureReactionFrames ) },
-			{ 0, 0, 0, 0 }
-		};
+  static void buildFieldParse(MultiIniFieldParse &p)
+  {
+    static const FieldParse dataFieldParse[] = {
+      { "FlareTemplateName", INI::parseAsciiString, NULL, offsetof(CountermeasuresBehaviorModuleData, m_flareTemplateName) },
+      { "FlareBoneBaseName", INI::parseAsciiString, NULL, offsetof(CountermeasuresBehaviorModuleData, m_flareBoneBaseName) },
+      { "VolleySize", INI::parseUnsignedInt, NULL, offsetof(CountermeasuresBehaviorModuleData, m_volleySize) },
+      { "VolleyArcAngle", INI::parseAngleReal, NULL, offsetof(CountermeasuresBehaviorModuleData, m_volleyArcAngle) },
+      { "VolleyVelocityFactor", INI::parseReal, NULL, offsetof(CountermeasuresBehaviorModuleData, m_volleyVelocityFactor) },
+      { "DelayBetweenVolleys",
+        INI::parseDurationUnsignedInt,
+        NULL,
+        offsetof(CountermeasuresBehaviorModuleData, m_framesBetweenVolleys) },
+      { "NumberOfVolleys", INI::parseUnsignedInt, NULL, offsetof(CountermeasuresBehaviorModuleData, m_numberOfVolleys) },
+      { "ReloadTime", INI::parseDurationUnsignedInt, NULL, offsetof(CountermeasuresBehaviorModuleData, m_reloadFrames) },
+      { "EvasionRate", INI::parsePercentToReal, NULL, offsetof(CountermeasuresBehaviorModuleData, m_evasionRate) },
+      { "MustReloadAtAirfield", INI::parseBool, NULL, offsetof(CountermeasuresBehaviorModuleData, m_mustReloadAtAirfield) },
+      { "MissileDecoyDelay",
+        INI::parseDurationUnsignedInt,
+        NULL,
+        offsetof(CountermeasuresBehaviorModuleData, m_missileDecoyFrames) },
+      { "ReactionLaunchLatency",
+        INI::parseDurationUnsignedInt,
+        NULL,
+        offsetof(CountermeasuresBehaviorModuleData, m_countermeasureReactionFrames) },
+      { 0, 0, 0, 0 }
+    };
 
-		UpdateModuleData::buildFieldParse(p);
-		p.add(dataFieldParse);
-		p.add(UpgradeMuxData::getFieldParse(), offsetof( CountermeasuresBehaviorModuleData, m_upgradeMuxData ));
-	}
-
+    UpdateModuleData::buildFieldParse(p);
+    p.add(dataFieldParse);
+    p.add(UpgradeMuxData::getFieldParse(), offsetof(CountermeasuresBehaviorModuleData, m_upgradeMuxData));
+  }
 };
-
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 class CountermeasuresBehaviorInterface
 {
-public:
-	virtual void reportMissileForCountermeasures( Object *missile ) = 0;
-	virtual ObjectID calculateCountermeasureToDivertTo( const Object& victim ) = 0;
-	virtual void reloadCountermeasures() = 0;
-	virtual Bool isActive() const = 0;
+  public:
+  virtual void reportMissileForCountermeasures(Object *missile) = 0;
+  virtual ObjectID calculateCountermeasureToDivertTo(const Object &victim) = 0;
+  virtual void reloadCountermeasures() = 0;
+  virtual Bool isActive() const = 0;
 };
-
 
 typedef std::vector<ObjectID> CountermeasuresVec;
 
@@ -120,78 +125,67 @@ typedef std::vector<ObjectID> CountermeasuresVec;
 //-------------------------------------------------------------------------------------------------
 class CountermeasuresBehavior : public UpdateModule, public UpgradeMux, public CountermeasuresBehaviorInterface
 {
+  MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(CountermeasuresBehavior, "CountermeasuresBehavior")
+  MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA(CountermeasuresBehavior, CountermeasuresBehaviorModuleData)
 
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( CountermeasuresBehavior, "CountermeasuresBehavior" )
-	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( CountermeasuresBehavior, CountermeasuresBehaviorModuleData )
+  public:
+  CountermeasuresBehavior(Thing *thing, const ModuleData *moduleData);
+  // virtual destructor prototype provided by memory pool declaration
 
-public:
+  // module methods
+  static Int getInterfaceMask() { return UpdateModule::getInterfaceMask() | MODULEINTERFACE_UPGRADE; }
 
-	CountermeasuresBehavior( Thing *thing, const ModuleData* moduleData );
-	// virtual destructor prototype provided by memory pool declaration
+  // BehaviorModule
+  virtual UpgradeModuleInterface *getUpgrade() { return this; }
+  virtual CountermeasuresBehaviorInterface *getCountermeasuresBehaviorInterface() { return this; }
+  virtual const CountermeasuresBehaviorInterface *getCountermeasuresBehaviorInterface() const { return this; }
 
-	// module methods
-	static Int getInterfaceMask() { return UpdateModule::getInterfaceMask() | MODULEINTERFACE_UPGRADE; }
+  // UpdateModuleInterface
+  virtual UpdateSleepTime update();
+  virtual DisabledMaskType getDisabledTypesToProcess() const { return MAKE_DISABLED_MASK(DISABLED_HELD); }
 
-	// BehaviorModule
-	virtual UpgradeModuleInterface* getUpgrade() { return this; }
-	virtual CountermeasuresBehaviorInterface* getCountermeasuresBehaviorInterface() { return this; }
-	virtual const CountermeasuresBehaviorInterface* getCountermeasuresBehaviorInterface() const { return this; }
+  // CountermeasuresBehaviorInterface
+  virtual void reportMissileForCountermeasures(Object *missile);
+  virtual ObjectID calculateCountermeasureToDivertTo(const Object &victim);
+  virtual void reloadCountermeasures();
+  virtual Bool isActive() const;
 
-	// UpdateModuleInterface
-	virtual UpdateSleepTime update();
-	virtual DisabledMaskType getDisabledTypesToProcess() const { return MAKE_DISABLED_MASK( DISABLED_HELD ); }
+  protected:
+  virtual void upgradeImplementation() { setWakeFrame(getObject(), UPDATE_SLEEP_NONE); }
 
-	// CountermeasuresBehaviorInterface
-	virtual void reportMissileForCountermeasures( Object *missile );
-	virtual ObjectID calculateCountermeasureToDivertTo( const Object& victim );
-	virtual void reloadCountermeasures();
-	virtual Bool isActive() const;
+  virtual void getUpgradeActivationMasks(UpgradeMaskType &activation, UpgradeMaskType &conflicting) const
+  {
+    getCountermeasuresBehaviorModuleData()->m_upgradeMuxData.getUpgradeActivationMasks(activation, conflicting);
+  }
 
+  virtual void performUpgradeFX() { getCountermeasuresBehaviorModuleData()->m_upgradeMuxData.performUpgradeFX(getObject()); }
 
-protected:
+  virtual void processUpgradeRemoval()
+  {
+    // I can't take it any more.  Let the record show that I think the UpgradeMux multiple inheritence is CRAP.
+    getCountermeasuresBehaviorModuleData()->m_upgradeMuxData.muxDataProcessUpgradeRemoval(getObject());
+  }
 
-	virtual void upgradeImplementation()
-	{
-		setWakeFrame(getObject(), UPDATE_SLEEP_NONE);
-	}
+  virtual Bool requiresAllActivationUpgrades() const
+  {
+    return getCountermeasuresBehaviorModuleData()->m_upgradeMuxData.m_requiresAllTriggers;
+  }
 
-	virtual void getUpgradeActivationMasks(UpgradeMaskType& activation, UpgradeMaskType& conflicting) const
-	{
-		getCountermeasuresBehaviorModuleData()->m_upgradeMuxData.getUpgradeActivationMasks(activation, conflicting);
-	}
+  inline Bool isUpgradeActive() const { return isAlreadyUpgraded(); }
 
-	virtual void performUpgradeFX()
-	{
-		getCountermeasuresBehaviorModuleData()->m_upgradeMuxData.performUpgradeFX(getObject());
-	}
+  virtual Bool isSubObjectsUpgrade() { return false; }
 
-	virtual void processUpgradeRemoval()
-	{
-		// I can't take it any more.  Let the record show that I think the UpgradeMux multiple inheritence is CRAP.
-		getCountermeasuresBehaviorModuleData()->m_upgradeMuxData.muxDataProcessUpgradeRemoval(getObject());
-	}
+  void launchVolley();
 
-	virtual Bool requiresAllActivationUpgrades() const
-	{
-		return getCountermeasuresBehaviorModuleData()->m_upgradeMuxData.m_requiresAllTriggers;
-	}
-
-	inline Bool isUpgradeActive() const { return isAlreadyUpgraded(); }
-
-	virtual Bool isSubObjectsUpgrade() { return false; }
-
-	void launchVolley();
-
-private:
-	CountermeasuresVec m_counterMeasures;		//vector of countermeasures in the world.
-	UnsignedInt m_availableCountermeasures;	//number of countermeasures that can be launched to divert missiles.
-	UnsignedInt m_activeCountermeasures;		//number of countermeasures currently able to divert missiles.
-	UnsignedInt m_divertedMissiles;					//number of missiles that have been diverted to countermeasures.
-	UnsignedInt m_incomingMissiles;					//grand total of all missiles that were ever fired at me.
-	UnsignedInt m_reactionFrame;						//The frame countermeasures will be launched after initial hostile act.
-	UnsignedInt m_nextVolleyFrame;					//Frame the next volley is fired.
-	UnsignedInt m_reloadFrame;							//The frame countermeasures will be ready to use again.
+  private:
+  CountermeasuresVec m_counterMeasures; // vector of countermeasures in the world.
+  UnsignedInt m_availableCountermeasures; // number of countermeasures that can be launched to divert missiles.
+  UnsignedInt m_activeCountermeasures; // number of countermeasures currently able to divert missiles.
+  UnsignedInt m_divertedMissiles; // number of missiles that have been diverted to countermeasures.
+  UnsignedInt m_incomingMissiles; // grand total of all missiles that were ever fired at me.
+  UnsignedInt m_reactionFrame; // The frame countermeasures will be launched after initial hostile act.
+  UnsignedInt m_nextVolleyFrame; // Frame the next volley is fired.
+  UnsignedInt m_reloadFrame; // The frame countermeasures will be ready to use again.
 };
 
 #endif // __COUNTERMEASURES_BEHAVIOR_H
-

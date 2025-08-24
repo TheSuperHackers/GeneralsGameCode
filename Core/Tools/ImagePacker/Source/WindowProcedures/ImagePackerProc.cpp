@@ -66,342 +66,323 @@
 // ImagePackerProc ============================================================
 /** Dialog procedure for the program flow */
 //=============================================================================
-BOOL CALLBACK ImagePackerProc( HWND hWndDialog, UINT message,
-															 WPARAM wParam, LPARAM lParam )
+BOOL CALLBACK ImagePackerProc(HWND hWndDialog, UINT message, WPARAM wParam, LPARAM lParam)
 {
+  switch (message)
+  {
+    // ------------------------------------------------------------------------
+    case WM_INITDIALOG:
+    {
+      // we must have our program interface to continue
+      if (TheImagePacker == NULL)
+      {
+        MessageBox(NULL, "Internal Error, 'TheImagePacker' not initialized", "Internal Error", MB_OK);
+        EndDialog(hWndDialog, FALSE);
+
+      } // end if
+
+      // save our window handlw
+      TheImagePacker->setWindowHandle(hWndDialog);
+
+      // get size of the screen
+      Int x, y;
+      x = GetSystemMetrics(SM_CXFULLSCREEN);
+      y = GetSystemMetrics(SM_CYFULLSCREEN);
 
-	switch( message )
-	{
+      // get size of our dialog
+      RECT rect;
+      ICoord2D size;
+      GetWindowRect(hWndDialog, &rect);
+      size.x = rect.right - rect.left;
+      size.y = rect.bottom - rect.top;
+
+      // center dialog on screen
+      MoveWindow(hWndDialog, (x / 2) - (size.x / 2), (y / 2) - (size.y / 2), size.x, size.y, TRUE);
+
+      // setup the status message
+      TheImagePacker->statusMessage("Select options and click 'Start'.");
+
+      // set gutter size
+      SetDlgItemInt(hWndDialog, EDIT_GUTTER, TheImagePacker->getGutter(), FALSE);
 
-		// ------------------------------------------------------------------------
-		case WM_INITDIALOG:
-		{
+      // set alpha check
+      if (TheImagePacker->getOutputAlpha())
+        CheckDlgButton(hWndDialog, CHECK_ALPHA, BST_CHECKED);
 
-			// we must have our program interface to continue
-			if( TheImagePacker == NULL )
-			{
+      // set the check for preview using the actual texture
+      if (TheImagePacker->getUseTexturePreview())
+        CheckDlgButton(hWndDialog, CHECK_BITMAP_PREVIEW, BST_CHECKED);
 
-				MessageBox( NULL, "Internal Error, 'TheImagePacker' not initialized",
-										"Internal Error", MB_OK );
-				EndDialog( hWndDialog, FALSE );
+      // set the check for creating INI definition
+      if (TheImagePacker->createINIFile())
+        CheckDlgButton(hWndDialog, CHECK_INI, BST_CHECKED);
 
-			}  // end if
+      // check the resursive checkbox by default
+      CheckDlgButton(hWndDialog, CHECK_USE_SUB_FOLDERS, BST_CHECKED);
 
-			// save our window handlw
-			TheImagePacker->setWindowHandle( hWndDialog );
+      // check the default image size radio button
+      CheckDlgButton(hWndDialog, RADIO_512X512, BST_CHECKED);
 
-			// get size of the screen
-			Int x, y;
-			x = GetSystemMetrics( SM_CXFULLSCREEN );
-			y = GetSystemMetrics( SM_CYFULLSCREEN );
+      // fill out a default target filename
+      SetDlgItemText(hWndDialog, EDIT_FILENAME, "NewImage");
 
-			// get size of our dialog
-			RECT rect;
-			ICoord2D size;
-			GetWindowRect( hWndDialog, &rect );
-			size.x = rect.right - rect.left;
-			size.y = rect.bottom - rect.top;
+      // limit the size if the filename edit box
+      SendDlgItemMessage(hWndDialog, EDIT_FILENAME, EM_LIMITTEXT, MAX_OUTPUT_FILE_LEN, 0);
 
-			// center dialog on screen
-			MoveWindow( hWndDialog,
-									(x / 2) - (size.x / 2),
-									(y / 2) - (size.y / 2),
-									size.x,
-									size.y,
-									TRUE );
+      // set options for compressed textures
+      if (TheImagePacker->getCompressTextures())
+        CheckDlgButton(hWndDialog, CHECK_COMPRESS, BST_CHECKED);
 
-			// setup the status message
-			TheImagePacker->statusMessage( "Select options and click 'Start'." );
+      // set option checks for gap method
+      UnsignedInt gapOptions = TheImagePacker->getGapMethod();
+      if (BitIsSet(gapOptions, ImagePacker::GAP_METHOD_EXTEND_RGB))
+        CheckDlgButton(hWndDialog, CHECK_GAP_EXTEND_RGB, BST_CHECKED);
+      if (BitIsSet(gapOptions, ImagePacker::GAP_METHOD_GUTTER))
+        CheckDlgButton(hWndDialog, CHECK_GAP_GUTTER, BST_CHECKED);
 
-			// set gutter size
-			SetDlgItemInt( hWndDialog, EDIT_GUTTER, TheImagePacker->getGutter(), FALSE );
+      return TRUE;
+
+    } // end init dialog
 
-			// set alpha check
-			if( TheImagePacker->getOutputAlpha() )
-				CheckDlgButton( hWndDialog, CHECK_ALPHA, BST_CHECKED );
+    // ------------------------------------------------------------------------
+    case WM_COMMAND:
+    {
+      Int notifyCode = HIWORD(wParam);
+      Int controlID = LOWORD(wParam);
+      //			HWND hWndControl = (HWND)lParam;
 
-			// set the check for preview using the actual texture
-			if( TheImagePacker->getUseTexturePreview() )
-				CheckDlgButton( hWndDialog, CHECK_BITMAP_PREVIEW, BST_CHECKED );
+      switch (controlID)
+      {
+        // --------------------------------------------------------------------
+        case BUTTON_PREVIOUS:
+        {
+          Int page = TheImagePacker->getTargetPreviewPage();
 
-			// set the check for creating INI definition
-			if( TheImagePacker->createINIFile() )
-				CheckDlgButton( hWndDialog, CHECK_INI, BST_CHECKED );
+          // target preview page back one
+          if (page > 1)
+          {
+            page--;
+            TheImagePacker->setTargetPreviewPage(page);
+            UpdatePreviewWindow();
 
-			// check the resursive checkbox by default
-			CheckDlgButton( hWndDialog, CHECK_USE_SUB_FOLDERS, BST_CHECKED );
+          } // end if
 
-			// check the default image size radio button
-			CheckDlgButton( hWndDialog, RADIO_512X512, BST_CHECKED );
+          break;
 
-			// fill out a default target filename
-			SetDlgItemText( hWndDialog, EDIT_FILENAME, "NewImage" );
+        } // end previous
 
-			// limit the size if the filename edit box
-			SendDlgItemMessage( hWndDialog, EDIT_FILENAME,
-													EM_LIMITTEXT, MAX_OUTPUT_FILE_LEN, 0 );
+        // --------------------------------------------------------------------
+        case BUTTON_NEXT:
+        {
+          UnsignedInt page = TheImagePacker->getTargetPreviewPage();
 
-			// set options for compressed textures
-			if( TheImagePacker->getCompressTextures() )
-				CheckDlgButton( hWndDialog, CHECK_COMPRESS, BST_CHECKED );
+          if (page < TheImagePacker->getPageCount())
+          {
+            page++;
+            TheImagePacker->setTargetPreviewPage(page);
+            UpdatePreviewWindow();
 
-			// set option checks for gap method
-			UnsignedInt gapOptions = TheImagePacker->getGapMethod();
-			if( BitIsSet( gapOptions, ImagePacker::GAP_METHOD_EXTEND_RGB ) )
-				CheckDlgButton( hWndDialog, CHECK_GAP_EXTEND_RGB, BST_CHECKED );
-			if( BitIsSet( gapOptions, ImagePacker::GAP_METHOD_GUTTER ) )
-				CheckDlgButton( hWndDialog, CHECK_GAP_GUTTER, BST_CHECKED );
+          } // end if
 
-			return TRUE;
+          break;
+
+        } // end next
 
-		}  // end init dialog
+        // --------------------------------------------------------------------
+        case CHECK_BITMAP_PREVIEW:
+        {
+          Bool useBitmap;
 
-		// ------------------------------------------------------------------------
-		case WM_COMMAND:
-		{
-			Int notifyCode = HIWORD( wParam );
-			Int controlID = LOWORD( wParam );
-//			HWND hWndControl = (HWND)lParam;
+          if (IsDlgButtonChecked(hWndDialog, controlID) == BST_CHECKED)
+            useBitmap = TRUE;
+          else
+            useBitmap = FALSE;
+
+          TheImagePacker->setUseTexturePreview(useBitmap);
+          UpdatePreviewWindow();
 
-			switch( controlID )
-			{
+          break;
 
-				// --------------------------------------------------------------------
-				case BUTTON_PREVIOUS:
-				{
-					Int page = TheImagePacker->getTargetPreviewPage();
+        } // end preview using image
 
-					// target preview page back one
-					if( page > 1 )
-					{
+        // --------------------------------------------------------------------
+        case CHECK_GAP_GUTTER:
+        {
+          Bool enable = FALSE;
+
+          if (IsDlgButtonChecked(hWndDialog, controlID) == BST_CHECKED)
+            enable = TRUE;
+
+          EnableWindow(GetDlgItem(hWndDialog, STATIC_GAP_INFO), enable);
+          EnableWindow(GetDlgItem(hWndDialog, EDIT_GUTTER), enable);
+
+          break;
+
+        } // end transparent gutter
+
+        // --------------------------------------------------------------------
+        case BUTTON_PREVIEW:
+        {
+          HWND preview = TheImagePacker->getPreviewWindow();
+
+          if (preview)
+          {
+            // delete test display window
+            DestroyWindow(preview);
+            TheImagePacker->setPreviewWindow(NULL);
+            SetDlgItemText(hWndDialog, BUTTON_PREVIEW, "Open Preview");
+
+          } // end if
+          else
+          {
+            HWND preview = MakePreviewDisplay();
+
+            if (preview)
+            {
+              TheImagePacker->setPreviewWindow(preview);
+              UpdatePreviewWindow();
+              SetDlgItemText(hWndDialog, BUTTON_PREVIEW, "Close Preview");
+
+            } // end if
+
+          } // end else
+
+          break;
+
+        } // end test
+
+        // --------------------------------------------------------------------
+        case BUTTON_ADD_FOLDER:
+        {
+          // bring up the add directory dialog
+          DialogBox(
+              ApplicationHInstance,
+              (LPCTSTR)DIRECTORY_SELECT_DIALOG,
+              TheImagePacker->getWindowHandle(),
+              (DLGPROC)DirectorySelectProc);
+          break;
+
+        } // end add folder
+
+        // --------------------------------------------------------------------
+        case BUTTON_REMOVE_FOLDER:
+        {
+          HWND folderList;
 
-						page--;
-						TheImagePacker->setTargetPreviewPage( page );
-						UpdatePreviewWindow();
+          // get the directory listbox
+          folderList = GetDlgItem(hWndDialog, LIST_FOLDERS);
+          if (folderList == NULL)
+            break;
+          ;
+
+          // get the selected item in the folder listbox
+          Int selCount;
+          selCount = SendMessage(folderList, LB_GETSELCOUNT, 0, 0);
+          if (selCount == 0)
+          {
+            MessageBox(
+                NULL,
+                "You must first select a folder to remove it",
+                "Select Folder First",
+                MB_OK | MB_ICONINFORMATION);
+            break;
 
-					}  // end if
+          } // end if
 
-					break;
+          //
+          // start at the end of the listbox, delete any items that
+          // are selected
+          //
+          Int itemCount = SendMessage(folderList, LB_GETCOUNT, 0, 0);
+          for (Int i = itemCount - 1; i >= 0; i--)
+            if (SendMessage(folderList, LB_GETSEL, i, 0) > 0)
+              SendMessage(folderList, LB_DELETESTRING, i, 0);
 
-				}  // end previous
+          break;
 
-				// --------------------------------------------------------------------
-				case BUTTON_NEXT:
-				{
-					UnsignedInt page = TheImagePacker->getTargetPreviewPage();
+        } // end remove folder
 
-					if( page < TheImagePacker->getPageCount() )
-					{
+        // --------------------------------------------------------------------
+        case RADIO_128X128:
+        case RADIO_256X256:
+        case RADIO_512X512:
+        case RADIO_TARGET_OTHER:
+        {
+          Bool enable;
 
-						page++;
-						TheImagePacker->setTargetPreviewPage( page );
-						UpdatePreviewWindow();
+          //
+          // if this is the other button, enable the first edit box for
+          // user size, if not, disable that section of the UI
+          //
+          enable = IsDlgButtonChecked(hWndDialog, RADIO_TARGET_OTHER);
+          EnableWindow(GetDlgItem(hWndDialog, EDIT_WIDTH), enable);
+          EnableWindow(GetDlgItem(hWndDialog, STATIC_X), enable);
 
-					}  // end if
+          break;
 
-					break;
+        } // end target image size radio buttons
 
-				}  // end next
+        // --------------------------------------------------------------------
+        case EDIT_WIDTH:
+        {
+          switch (notifyCode)
+          {
+            // ----------------------------------------------------------------
+            case EN_UPDATE:
+            {
+              char buffer[32];
 
-				// --------------------------------------------------------------------
-				case CHECK_BITMAP_PREVIEW:
-				{
-					Bool useBitmap;
+              //
+              // the text of the width has changed, since our requirements
+              // are that the image must be square automatically update
+              // the height box as well
+              //
+              GetDlgItemText(hWndDialog, EDIT_WIDTH, buffer, 32);
+              SetDlgItemText(hWndDialog, EDIT_HEIGHT, buffer);
 
-					if( IsDlgButtonChecked( hWndDialog, controlID ) == BST_CHECKED )
-						useBitmap = TRUE;
-					else
-						useBitmap = FALSE;
+              break;
 
-					TheImagePacker->setUseTexturePreview( useBitmap );
-					UpdatePreviewWindow();
+            } // end update
 
-					break;
+          } // end switch
 
-				}  // end preview using image
+          break;
 
-				// --------------------------------------------------------------------
-				case CHECK_GAP_GUTTER:
-				{
-					Bool enable = FALSE;
+        } // end user defined width
 
-					if( IsDlgButtonChecked( hWndDialog, controlID ) == BST_CHECKED )
-						enable = TRUE;
+        // --------------------------------------------------------------------
+        case BUTTON_START:
+        {
+          Bool success;
 
-					EnableWindow( GetDlgItem( hWndDialog, STATIC_GAP_INFO ), enable );
-					EnableWindow( GetDlgItem( hWndDialog, EDIT_GUTTER ), enable );
+          // get all the options from the dialog into the image packer
+          success = TheImagePacker->getSettingsFromDialog(hWndDialog);
 
-					break;
+          // run the packer if nothing went wrong
+          if (success)
+            TheImagePacker->process();
 
-				}  // end transparent gutter
+          break;
 
-				// --------------------------------------------------------------------
-				case BUTTON_PREVIEW:
-				{
-					HWND preview = TheImagePacker->getPreviewWindow();
+        } // end execute
 
-					if( preview )
-					{
+        // --------------------------------------------------------------------
+        case BUTTON_EXIT:
+        {
+          // quit the program
+          EndDialog(hWndDialog, TRUE);
+          break;
 
-						// delete test display window
-						DestroyWindow( preview );
-						TheImagePacker->setPreviewWindow( NULL );
-						SetDlgItemText( hWndDialog, BUTTON_PREVIEW, "Open Preview" );
+        } // end exit
 
-					}  // end if
-					else
-					{
-						HWND preview = MakePreviewDisplay();
+      } // end switch
 
-						if( preview )
-						{
+      return 0;
 
-							TheImagePacker->setPreviewWindow( preview );
-							UpdatePreviewWindow();
-							SetDlgItemText( hWndDialog, BUTTON_PREVIEW, "Close Preview" );
+    } // end command
 
-						}  // end if
+  } // end switch
 
-					}  // end else
+  return 0;
 
-					break;
-
-				}  // end test
-
-				// --------------------------------------------------------------------
-				case BUTTON_ADD_FOLDER:
-				{
-
-					// bring up the add directory dialog
-					DialogBox( ApplicationHInstance,
-										 (LPCTSTR)DIRECTORY_SELECT_DIALOG,
-										 TheImagePacker->getWindowHandle(),
-										 (DLGPROC)DirectorySelectProc );
-					break;
-
-				}  // end add folder
-
-				// --------------------------------------------------------------------
-				case BUTTON_REMOVE_FOLDER:
-				{
-					HWND folderList;
-
-					// get the directory listbox
-					folderList = GetDlgItem( hWndDialog, LIST_FOLDERS );
-					if( folderList == NULL )
-						break;;
-
-					// get the selected item in the folder listbox
-					Int selCount;
-					selCount = SendMessage( folderList, LB_GETSELCOUNT, 0, 0 );
-					if( selCount == 0 )
-					{
-
-						MessageBox( NULL, "You must first select a folder to remove it",
-												"Select Folder First", MB_OK | MB_ICONINFORMATION );
-						break;
-
-					}  // end if
-
-					//
-					// start at the end of the listbox, delete any items that
-					// are selected
-					//
-					Int itemCount = SendMessage( folderList, LB_GETCOUNT, 0, 0 );
-					for( Int i = itemCount - 1; i >= 0; i-- )
-						if( SendMessage( folderList, LB_GETSEL, i, 0 )  > 0 )
-							SendMessage( folderList, LB_DELETESTRING, i, 0 );
-
-					break;
-
-				}  // end remove folder
-
-				// --------------------------------------------------------------------
-				case RADIO_128X128:
-				case RADIO_256X256:
-				case RADIO_512X512:
-				case RADIO_TARGET_OTHER:
-				{
-					Bool enable;
-
-					//
-					// if this is the other button, enable the first edit box for
-					// user size, if not, disable that section of the UI
-					//
-					enable =  IsDlgButtonChecked( hWndDialog, RADIO_TARGET_OTHER );
-					EnableWindow( GetDlgItem( hWndDialog, EDIT_WIDTH ), enable );
-					EnableWindow( GetDlgItem( hWndDialog, STATIC_X ), enable );
-
-					break;
-
-				}  // end target image size radio buttons
-
-				// --------------------------------------------------------------------
-				case EDIT_WIDTH:
-				{
-
-					switch( notifyCode )
-					{
-
-						// ----------------------------------------------------------------
-						case EN_UPDATE:
-						{
-							char buffer[ 32 ];
-
-							//
-							// the text of the width has changed, since our requirements
-							// are that the image must be square automatically update
-							// the height box as well
-							//
-							GetDlgItemText( hWndDialog, EDIT_WIDTH, buffer, 32 );
-							SetDlgItemText( hWndDialog, EDIT_HEIGHT, buffer );
-
-							break;
-
-						}  // end update
-
-					}  // end switch
-
-					break;
-
-				}  // end user defined width
-
-				// --------------------------------------------------------------------
-				case BUTTON_START:
-				{
-					Bool success;
-
-					// get all the options from the dialog into the image packer
-					success = TheImagePacker->getSettingsFromDialog( hWndDialog );
-
-					// run the packer if nothing went wrong
-					if( success )
-						TheImagePacker->process();
-
-					break;
-
-				}  // end execute
-
-				// --------------------------------------------------------------------
-				case BUTTON_EXIT:
-				{
-
-					// quit the program
-					EndDialog( hWndDialog, TRUE );
-					break;
-
-				}  // end exit
-
-			}  // end switch
-
-			return 0;
-
-		}  // end command
-
-	}  // end switch
-
-	return 0;
-
-}  // end ImagePackerProc
-
-
+} // end ImagePackerProc

@@ -34,7 +34,6 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
 #if defined(_MSC_VER)
 #pragma once
 #endif
@@ -50,15 +49,14 @@
 */
 class CatmullRomSpline3DClass : public HermiteSpline3DClass
 {
-public:
-	void					Update_Tangents(void);
+  public:
+  void Update_Tangents(void);
 
-	// save-load support
-	virtual const PersistFactoryClass &	Get_Factory(void) const;
-	virtual bool								Save(ChunkSaveClass &csave);
-	virtual bool								Load(ChunkLoadClass &cload);
+  // save-load support
+  virtual const PersistFactoryClass &Get_Factory(void) const;
+  virtual bool Save(ChunkSaveClass &csave);
+  virtual bool Load(ChunkLoadClass &cload);
 };
-
 
 /**
 ** CatmullRomSpline1DClass
@@ -66,13 +64,13 @@ public:
 */
 class CatmullRomSpline1DClass : public HermiteSpline1DClass
 {
-public:
-	void					Update_Tangents(void);
+  public:
+  void Update_Tangents(void);
 
-	// save-load support
-	virtual const PersistFactoryClass &	Get_Factory(void) const;
-	virtual bool								Save(ChunkSaveClass &csave);
-	virtual bool								Load(ChunkLoadClass &cload);
+  // save-load support
+  virtual const PersistFactoryClass &Get_Factory(void) const;
+  virtual bool Save(ChunkSaveClass &csave);
+  virtual bool Load(ChunkLoadClass &cload);
 };
 
 #endif

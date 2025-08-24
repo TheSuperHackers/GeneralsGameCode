@@ -78,43 +78,41 @@ class TextureClass;
 
 class DecalMeshClass : public RefCountClass
 {
-public:
+  public:
+  DecalMeshClass(MeshClass *parent, DecalSystemClass *system);
+  virtual ~DecalMeshClass(void);
 
-	DecalMeshClass(MeshClass * parent,DecalSystemClass * system);
-	virtual ~DecalMeshClass(void);
+  // world_vertex_locs and world_vertex_norms are dynamically updated worldspace vertex data
+  // which are used by some decal types which cannot use static object geometry (such as decals
+  // for skins, procedurally generated meshes, etc.)
 
-	// world_vertex_locs and world_vertex_norms are dynamically updated worldspace vertex data
-	// which are used by some decal types which cannot use static object geometry (such as decals
-	// for skins, procedurally generated meshes, etc.)
+  virtual void Render(void) = 0;
 
-	virtual void											Render(void) = 0;
+  virtual bool Create_Decal(
+      DecalGeneratorClass *generator,
+      const OBBoxClass &localbox,
+      SimpleDynVecClass<uint32> &apt,
+      const DynamicVectorClass<Vector3> *world_vertex_locs = 0) = 0;
 
-	virtual bool											Create_Decal(	DecalGeneratorClass * generator,
-																					const OBBoxClass & localbox,
-																					SimpleDynVecClass<uint32> & apt,
-																					const DynamicVectorClass<Vector3> * world_vertex_locs = 0) = 0;
+  virtual bool Delete_Decal(uint32 id) = 0;
 
-	virtual bool											Delete_Decal(uint32 id) = 0;
+  virtual int Decal_Count(void) = 0;
+  virtual uint32 Get_Decal_ID(int decal_index) = 0;
 
-	virtual int												Decal_Count(void) = 0;
-	virtual uint32											Get_Decal_ID(int decal_index) = 0;
+  MeshClass *Peek_Parent(void);
+  DecalSystemClass *Peek_System(void);
 
-	MeshClass *												Peek_Parent(void);
-	DecalSystemClass *									Peek_System(void);
+  DecalMeshClass *Peek_Next_Visible(void) { return NextVisible; }
+  void Set_Next_Visible(DecalMeshClass *mesh) { NextVisible = mesh; }
 
-	DecalMeshClass *										Peek_Next_Visible(void) { return NextVisible; }
-	void														Set_Next_Visible(DecalMeshClass * mesh) { NextVisible = mesh; }
-
-protected:
-
-	/*
-	** Members
-	*/
-	MeshClass *												Parent;
-	DecalSystemClass *									DecalSystem;
-	DecalMeshClass *										NextVisible;
+  protected:
+  /*
+  ** Members
+  */
+  MeshClass *Parent;
+  DecalSystemClass *DecalSystem;
+  DecalMeshClass *NextVisible;
 };
-
 
 /*
 ** RigidDecalMeshClass: a concrete class derived from DecalMeshClass which is
@@ -123,63 +121,61 @@ protected:
 
 class RigidDecalMeshClass : public DecalMeshClass
 {
-public:
+  public:
+  RigidDecalMeshClass(MeshClass *parent, DecalSystemClass *system);
+  virtual ~RigidDecalMeshClass(void);
 
-	RigidDecalMeshClass(MeshClass * parent,DecalSystemClass * system);
-	virtual ~RigidDecalMeshClass(void);
+  // Rigid decal meshes have static geometry so they do not use world_vertex_locs/norms
 
-	// Rigid decal meshes have static geometry so they do not use world_vertex_locs/norms
+  virtual void Render(void);
 
-	virtual void											Render(void);
+  virtual bool Create_Decal(
+      DecalGeneratorClass *generator,
+      const OBBoxClass &localbox,
+      SimpleDynVecClass<uint32> &apt,
+      const DynamicVectorClass<Vector3> *world_vertex_locs = 0);
 
-	virtual bool											Create_Decal(	DecalGeneratorClass * generator,
-																					const OBBoxClass & localbox,
-																					SimpleDynVecClass<uint32> & apt,
-																					const DynamicVectorClass<Vector3> * world_vertex_locs = 0);
+  virtual bool Delete_Decal(uint32 id);
 
-	virtual bool											Delete_Decal(uint32 id);
+  int Decal_Count(void);
+  uint32 Get_Decal_ID(int decal_index);
 
-	int														Decal_Count(void);
-	uint32													Get_Decal_ID(int decal_index);
+  protected:
+  int Process_Material_Run(int start_index);
 
-protected:
+  /*
+  ** Connectivity
+  */
+  SimpleDynVecClass<TriIndex> Polys;
 
-	int														Process_Material_Run(int start_index);
+  /*
+  ** Geometry
+  */
+  SimpleDynVecClass<Vector3> Verts;
+  SimpleDynVecClass<Vector3> VertNorms;
 
-	/*
-	** Connectivity
-	*/
-	SimpleDynVecClass<TriIndex>						Polys;
+  /*
+  ** Materials
+  */
+  SimpleDynVecClass<ShaderClass> Shaders;
+  SimpleDynVecClass<TextureClass *> Textures;
+  SimpleDynVecClass<VertexMaterialClass *> VertexMaterials;
+  SimpleDynVecClass<Vector2> TexCoords;
 
-	/*
-	** Geometry
-	*/
-	SimpleDynVecClass<Vector3>							Verts;
-	SimpleDynVecClass<Vector3>							VertNorms;
+  /*
+  ** Decal Organization
+  */
+  struct DecalStruct
+  {
+    uint32 DecalID;
+    uint16 VertexStartIndex;
+    uint16 VertexCount;
+    uint16 FaceStartIndex;
+    uint16 FaceCount;
+  };
 
-	/*
-	** Materials
-	*/
-	SimpleDynVecClass<ShaderClass>					Shaders;
-	SimpleDynVecClass<TextureClass *>				Textures;
-	SimpleDynVecClass<VertexMaterialClass *>		VertexMaterials;
-	SimpleDynVecClass<Vector2>							TexCoords;
-
-	/*
-	** Decal Organization
-	*/
-	struct DecalStruct
-	{
-		uint32	DecalID;
-		uint16	VertexStartIndex;
-		uint16	VertexCount;
-		uint16	FaceStartIndex;
-		uint16	FaceCount;
-	};
-
-	SimpleDynVecClass<DecalStruct>					Decals;
+  SimpleDynVecClass<DecalStruct> Decals;
 };
-
 
 /*
 ** SkinDecalMeshClass: a concrete class derived from DecalMeshClass which is
@@ -188,77 +184,74 @@ protected:
 
 class SkinDecalMeshClass : public DecalMeshClass
 {
-public:
+  public:
+  SkinDecalMeshClass(MeshClass *parent, DecalSystemClass *system);
+  virtual ~SkinDecalMeshClass(void);
 
-	SkinDecalMeshClass(MeshClass * parent,DecalSystemClass * system);
-	virtual ~SkinDecalMeshClass(void);
+  // Skin decals use world_vertex_locs/norms since they cannot use static geometry
 
-	// Skin decals use world_vertex_locs/norms since they cannot use static geometry
+  virtual void Render(void);
 
-	virtual void											Render(void);
+  virtual bool Create_Decal(
+      DecalGeneratorClass *generator,
+      const OBBoxClass &localbox,
+      SimpleDynVecClass<uint32> &apt,
+      const DynamicVectorClass<Vector3> *world_vertex_locs);
 
-	virtual bool											Create_Decal(	DecalGeneratorClass * generator,
-																					const OBBoxClass & localbox,
-																					SimpleDynVecClass<uint32> & apt,
-																					const DynamicVectorClass<Vector3> * world_vertex_locs);
+  virtual bool Delete_Decal(uint32 id);
 
-	virtual bool											Delete_Decal(uint32 id);
+  int Decal_Count(void);
+  uint32 Get_Decal_ID(int decal_index);
 
-	int														Decal_Count(void);
-	uint32													Get_Decal_ID(int decal_index);
+  protected:
+  int Process_Material_Run(int start_index);
 
-protected:
+  /*
+  ** Connectivity
+  */
+  SimpleDynVecClass<TriIndex> Polys;
 
-	int														Process_Material_Run(int start_index);
+  /*
+  ** Indirected vertex indices (for copying dynamically updated mesh geometry)
+  */
+  SimpleDynVecClass<uint32> ParentVertexIndices;
 
-	/*
-	** Connectivity
-	*/
-	SimpleDynVecClass<TriIndex>						Polys;
+  /*
+  ** Materials
+  */
+  SimpleDynVecClass<ShaderClass> Shaders;
+  SimpleDynVecClass<TextureClass *> Textures;
+  SimpleDynVecClass<VertexMaterialClass *> VertexMaterials;
+  SimpleDynVecClass<Vector2> TexCoords;
 
-	/*
-	** Indirected vertex indices (for copying dynamically updated mesh geometry)
-	*/
-	SimpleDynVecClass<uint32> 							ParentVertexIndices;
+  /*
+  ** Decal Organization
+  */
+  struct DecalStruct
+  {
+    uint32 DecalID;
+    uint16 VertexStartIndex;
+    uint16 VertexCount;
+    uint16 FaceStartIndex;
+    uint16 FaceCount;
+  };
 
-	/*
-	** Materials
-	*/
-	SimpleDynVecClass<ShaderClass>					Shaders;
-	SimpleDynVecClass<TextureClass *>				Textures;
-	SimpleDynVecClass<VertexMaterialClass *>		VertexMaterials;
-	SimpleDynVecClass<Vector2>							TexCoords;
-
-	/*
-	** Decal Organization
-	*/
-	struct DecalStruct
-	{
-		uint32	DecalID;
-		uint16	VertexStartIndex;
-		uint16	VertexCount;
-		uint16	FaceStartIndex;
-		uint16	FaceCount;
-	};
-
-	SimpleDynVecClass<DecalStruct>					Decals;
+  SimpleDynVecClass<DecalStruct> Decals;
 };
-
 
 /*
 ** DecalMeshClass inline functions
 */
 
-inline MeshClass * DecalMeshClass::Peek_Parent(void)
+inline MeshClass *DecalMeshClass::Peek_Parent(void)
 {
-	return Parent;
+  return Parent;
 }
 
-inline DecalSystemClass * DecalMeshClass::Peek_System(void)
+inline DecalSystemClass *DecalMeshClass::Peek_System(void)
 {
-	return DecalSystem;
+  return DecalSystem;
 }
-
 
 /*
 ** RigidDecalMeshClass inline functions
@@ -266,14 +259,13 @@ inline DecalSystemClass * DecalMeshClass::Peek_System(void)
 
 inline int RigidDecalMeshClass::Decal_Count(void)
 {
-	return Decals.Count();
+  return Decals.Count();
 }
 
 inline uint32 RigidDecalMeshClass::Get_Decal_ID(int decal_index)
 {
-	return Decals[decal_index].DecalID;
+  return Decals[decal_index].DecalID;
 }
-
 
 /*
 ** SkinDecalMeshClass inline functions
@@ -281,14 +273,12 @@ inline uint32 RigidDecalMeshClass::Get_Decal_ID(int decal_index)
 
 inline int SkinDecalMeshClass::Decal_Count(void)
 {
-	return Decals.Count();
+  return Decals.Count();
 }
 
 inline uint32 SkinDecalMeshClass::Get_Decal_ID(int decal_index)
 {
-	return Decals[decal_index].DecalID;
+  return Decals[decal_index].DecalID;
 }
 
-
-#endif //DECALMSH_H
-
+#endif // DECALMSH_H

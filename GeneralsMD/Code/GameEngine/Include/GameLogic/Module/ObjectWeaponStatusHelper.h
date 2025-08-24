@@ -41,45 +41,40 @@
 // ------------------------------------------------------------------------------------------------
 class ObjectWeaponStatusHelperModuleData : public ModuleData
 {
-
 };
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 class ObjectWeaponStatusHelper : public ObjectHelper
 {
+  MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA(ObjectWeaponStatusHelper, ObjectWeaponStatusHelperModuleData)
+  MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(ObjectWeaponStatusHelper, "ObjectWeaponStatusHelperPool")
 
-	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( ObjectWeaponStatusHelper, ObjectWeaponStatusHelperModuleData )
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(ObjectWeaponStatusHelper, "ObjectWeaponStatusHelperPool" )
+  protected:
+  /*
+    The ObjectWeaponStatusHelper needs to have its update run after all "normal"
+    user update modules, so it redefines this. Please don't redefine this
+    for other modules without very careful deliberation. (srj)
+  */
+  virtual SleepyUpdatePhase getUpdatePhase() const { return PHASE_FINAL; }
 
-protected:
+  public:
+  ObjectWeaponStatusHelper(Thing *thing, const ModuleData *modData) : ObjectHelper(thing, modData)
+  {
+    // unlike other helpers, this one needs to start active.
+    DEBUG_ASSERTCRASH(
+        getObject()->getTemplate()->canPossiblyHaveAnyWeapon(),
+        ("should not be instantiated if we have no weapon"));
+    setWakeFrame(getObject(), UPDATE_SLEEP_NONE);
+  }
+  // virtual destructor prototype provided by memory pool object
 
-	/*
-		The ObjectWeaponStatusHelper needs to have its update run after all "normal"
-		user update modules, so it redefines this. Please don't redefine this
-		for other modules without very careful deliberation. (srj)
-	*/
-	virtual SleepyUpdatePhase getUpdatePhase() const
-	{
-		return PHASE_FINAL;
-	}
-public:
-
-	ObjectWeaponStatusHelper( Thing *thing, const ModuleData *modData ) :
-		ObjectHelper( thing, modData )
-	{
-		// unlike other helpers, this one needs to start active.
-		DEBUG_ASSERTCRASH(getObject()->getTemplate()->canPossiblyHaveAnyWeapon(), ("should not be instantiated if we have no weapon"));
-		setWakeFrame(getObject(), UPDATE_SLEEP_NONE);
-	}
-	// virtual destructor prototype provided by memory pool object
-
-	virtual UpdateSleepTime update()
-	{
-		getObject()->adjustModelConditionForWeaponStatus();
-		// unlike other helpers, this one must run every frame.
-		return UPDATE_SLEEP_NONE;
-	}
+  virtual UpdateSleepTime update()
+  {
+    getObject()->adjustModelConditionForWeaponStatus();
+    // unlike other helpers, this one must run every frame.
+    return UPDATE_SLEEP_NONE;
+  }
 };
 
-#endif  // end __OBJECT_DEFECTION_HELPER_H_
+#endif // end __OBJECT_DEFECTION_HELPER_H_

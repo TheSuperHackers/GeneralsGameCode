@@ -27,7 +27,7 @@
 // Precompiled header (module internal)
 //////////////////////////////////////////////////////////////////////////////
 #ifdef _MSC_VER
-#  pragma once
+#pragma once
 #endif
 #ifndef _PCH_H // Include guard
 #define _PCH_H

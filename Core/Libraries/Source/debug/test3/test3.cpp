@@ -52,11 +52,11 @@ void main(void)
 
   // now log something...
   DLOG("This should be visible.\n");
-  DLOG_GROUP(no_log,"This should *NOT* be visible.\n");
-  for (int k=0;k<200;k++)
-    DLOG_GROUP(split_me,"Log line " << k << "\n");
-  DLOG_GROUP(split_me,"Final line in separate log file.\n");
+  DLOG_GROUP(no_log, "This should *NOT* be visible.\n");
+  for (int k = 0; k < 200; k++)
+    DLOG_GROUP(split_me, "Log line " << k << "\n");
+  DLOG_GROUP(split_me, "Final line in separate log file.\n");
 
   // and now let's crash!
-  divByNull/=divByNull;
+  divByNull /= divByNull;
 }

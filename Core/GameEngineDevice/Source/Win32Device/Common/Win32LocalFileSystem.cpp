@@ -38,66 +38,73 @@ Win32LocalFileSystem::Win32LocalFileSystem() : LocalFileSystem()
 {
 }
 
-Win32LocalFileSystem::~Win32LocalFileSystem() {
+Win32LocalFileSystem::~Win32LocalFileSystem()
+{
 }
 
-//DECLARE_PERF_TIMER(Win32LocalFileSystem_openFile)
-File * Win32LocalFileSystem::openFile(const Char *filename, Int access, size_t bufferSize)
+// DECLARE_PERF_TIMER(Win32LocalFileSystem_openFile)
+File *Win32LocalFileSystem::openFile(const Char *filename, Int access, size_t bufferSize)
 {
-	//USE_PERF_TIMER(Win32LocalFileSystem_openFile)
+  // USE_PERF_TIMER(Win32LocalFileSystem_openFile)
 
-	// sanity check
-	if (strlen(filename) <= 0) {
-		return NULL;
-	}
+  // sanity check
+  if (strlen(filename) <= 0)
+  {
+    return NULL;
+  }
 
-	if (access & File::WRITE) {
-		// if opening the file for writing, we need to make sure the directory is there
-		// before we try to create the file.
-		AsciiString string;
-		string = filename;
-		AsciiString token;
-		AsciiString dirName;
-		string.nextToken(&token, "\\/");
-		dirName = token;
-		while ((token.find('.') == NULL) || (string.find('.') != NULL)) {
-			createDirectory(dirName);
-			string.nextToken(&token, "\\/");
-			dirName.concat('\\');
-			dirName.concat(token);
-		}
-	}
+  if (access & File::WRITE)
+  {
+    // if opening the file for writing, we need to make sure the directory is there
+    // before we try to create the file.
+    AsciiString string;
+    string = filename;
+    AsciiString token;
+    AsciiString dirName;
+    string.nextToken(&token, "\\/");
+    dirName = token;
+    while ((token.find('.') == NULL) || (string.find('.') != NULL))
+    {
+      createDirectory(dirName);
+      string.nextToken(&token, "\\/");
+      dirName.concat('\\');
+      dirName.concat(token);
+    }
+  }
 
-	// TheSuperHackers @fix Mauller 21/04/2025 Create new file handle when necessary to prevent memory leak
-	Win32LocalFile *file = newInstance( Win32LocalFile );
+  // TheSuperHackers @fix Mauller 21/04/2025 Create new file handle when necessary to prevent memory leak
+  Win32LocalFile *file = newInstance(Win32LocalFile);
 
-	if (file->open(filename, access, bufferSize) == FALSE) {
-		deleteInstance(file);
-		file = NULL;
-	} else {
-		file->deleteOnClose();
-	}
+  if (file->open(filename, access, bufferSize) == FALSE)
+  {
+    deleteInstance(file);
+    file = NULL;
+  }
+  else
+  {
+    file->deleteOnClose();
+  }
 
-// this will also need to play nice with the STREAMING type that I added, if we ever enable this
+  // this will also need to play nice with the STREAMING type that I added, if we ever enable this
 
-// srj sez: this speeds up INI loading, but makes BIG files unusable.
-// don't enable it without further tweaking.
-//
-// unless you like running really slowly.
-//	if (!(access&File::WRITE)) {
-//		// Return a ramfile.
-//		RAMFile *ramFile = newInstance( RAMFile );
-//		if (ramFile->open(file)) {
-//			file->close(); // is deleteonclose, so should delete.
-//			ramFile->deleteOnClose();
-//			return ramFile;
-//		}	else {
-//			ramFile->close();
-//			deleteInstance(ramFile);
-//		}
-//	}
+  // srj sez: this speeds up INI loading, but makes BIG files unusable.
+  // don't enable it without further tweaking.
+  //
+  // unless you like running really slowly.
+  //	if (!(access&File::WRITE)) {
+  //		// Return a ramfile.
+  //		RAMFile *ramFile = newInstance( RAMFile );
+  //		if (ramFile->open(file)) {
+  //			file->close(); // is deleteonclose, so should delete.
+  //			ramFile->deleteOnClose();
+  //			return ramFile;
+  //		}	else {
+  //			ramFile->close();
+  //			deleteInstance(ramFile);
+  //		}
+  //	}
 
-	return file;
+  return file;
 }
 
 void Win32LocalFileSystem::update()
@@ -112,124 +119,136 @@ void Win32LocalFileSystem::reset()
 {
 }
 
-//DECLARE_PERF_TIMER(Win32LocalFileSystem_doesFileExist)
+// DECLARE_PERF_TIMER(Win32LocalFileSystem_doesFileExist)
 Bool Win32LocalFileSystem::doesFileExist(const Char *filename) const
 {
-	//USE_PERF_TIMER(Win32LocalFileSystem_doesFileExist)
-	if (_access(filename, 0) == 0) {
-		return TRUE;
-	}
-	return FALSE;
+  // USE_PERF_TIMER(Win32LocalFileSystem_doesFileExist)
+  if (_access(filename, 0) == 0)
+  {
+    return TRUE;
+  }
+  return FALSE;
 }
 
-void Win32LocalFileSystem::getFileListInDirectory(const AsciiString& currentDirectory, const AsciiString& originalDirectory, const AsciiString& searchName, FilenameList & filenameList, Bool searchSubdirectories) const
+void Win32LocalFileSystem::getFileListInDirectory(
+    const AsciiString &currentDirectory,
+    const AsciiString &originalDirectory,
+    const AsciiString &searchName,
+    FilenameList &filenameList,
+    Bool searchSubdirectories) const
 {
-	HANDLE fileHandle = NULL;
-	WIN32_FIND_DATA findData;
+  HANDLE fileHandle = NULL;
+  WIN32_FIND_DATA findData;
 
-	char search[_MAX_PATH];
-	AsciiString asciisearch;
-	asciisearch = originalDirectory;
-	asciisearch.concat(currentDirectory);
-	asciisearch.concat(searchName);
-	strcpy(search, asciisearch.str());
+  char search[_MAX_PATH];
+  AsciiString asciisearch;
+  asciisearch = originalDirectory;
+  asciisearch.concat(currentDirectory);
+  asciisearch.concat(searchName);
+  strcpy(search, asciisearch.str());
 
-	Bool done = FALSE;
+  Bool done = FALSE;
 
-	fileHandle = FindFirstFile(search, &findData);
-	done = (fileHandle == INVALID_HANDLE_VALUE);
+  fileHandle = FindFirstFile(search, &findData);
+  done = (fileHandle == INVALID_HANDLE_VALUE);
 
-	while (!done)	{
-		if (!(findData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) &&
-				(strcmp(findData.cFileName, ".") && strcmp(findData.cFileName, ".."))) {
-			// if we haven't already, add this filename to the list.
-				// a stl set should only allow one copy of each filename
-				AsciiString newFilename;
-				newFilename = originalDirectory;
-				newFilename.concat(currentDirectory);
-				newFilename.concat(findData.cFileName);
-				if (filenameList.find(newFilename) == filenameList.end()) {
-					filenameList.insert(newFilename);
-				}
-		}
+  while (!done)
+  {
+    if (!(findData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
+        && (strcmp(findData.cFileName, ".") && strcmp(findData.cFileName, "..")))
+    {
+      // if we haven't already, add this filename to the list.
+      // a stl set should only allow one copy of each filename
+      AsciiString newFilename;
+      newFilename = originalDirectory;
+      newFilename.concat(currentDirectory);
+      newFilename.concat(findData.cFileName);
+      if (filenameList.find(newFilename) == filenameList.end())
+      {
+        filenameList.insert(newFilename);
+      }
+    }
 
-		done = (FindNextFile(fileHandle, &findData) == 0);
-	}
-	FindClose(fileHandle);
+    done = (FindNextFile(fileHandle, &findData) == 0);
+  }
+  FindClose(fileHandle);
 
-	if (searchSubdirectories) {
-		AsciiString subdirsearch;
-		subdirsearch = originalDirectory;
-		subdirsearch.concat(currentDirectory);
-		subdirsearch.concat("*.");
-		fileHandle = FindFirstFile(subdirsearch.str(), &findData);
-		done = fileHandle == INVALID_HANDLE_VALUE;
+  if (searchSubdirectories)
+  {
+    AsciiString subdirsearch;
+    subdirsearch = originalDirectory;
+    subdirsearch.concat(currentDirectory);
+    subdirsearch.concat("*.");
+    fileHandle = FindFirstFile(subdirsearch.str(), &findData);
+    done = fileHandle == INVALID_HANDLE_VALUE;
 
-		while (!done) {
-			if ((findData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) &&
-					(strcmp(findData.cFileName, ".") && strcmp(findData.cFileName, ".."))) {
+    while (!done)
+    {
+      if ((findData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
+          && (strcmp(findData.cFileName, ".") && strcmp(findData.cFileName, "..")))
+      {
+        AsciiString tempsearchstr;
+        tempsearchstr.concat(currentDirectory);
+        tempsearchstr.concat(findData.cFileName);
+        tempsearchstr.concat('\\');
 
-					AsciiString tempsearchstr;
-					tempsearchstr.concat(currentDirectory);
-					tempsearchstr.concat(findData.cFileName);
-					tempsearchstr.concat('\\');
+        // recursively add files in subdirectories if required.
+        getFileListInDirectory(tempsearchstr, originalDirectory, searchName, filenameList, searchSubdirectories);
+      }
 
-					// recursively add files in subdirectories if required.
-					getFileListInDirectory(tempsearchstr, originalDirectory, searchName, filenameList, searchSubdirectories);
-			}
+      done = (FindNextFile(fileHandle, &findData) == 0);
+    }
 
-			done = (FindNextFile(fileHandle, &findData) == 0);
-		}
-
-		FindClose(fileHandle);
-	}
-
+    FindClose(fileHandle);
+  }
 }
 
-Bool Win32LocalFileSystem::getFileInfo(const AsciiString& filename, FileInfo *fileInfo) const
+Bool Win32LocalFileSystem::getFileInfo(const AsciiString &filename, FileInfo *fileInfo) const
 {
-	WIN32_FIND_DATA findData;
-	HANDLE findHandle = NULL;
-	findHandle = FindFirstFile(filename.str(), &findData);
+  WIN32_FIND_DATA findData;
+  HANDLE findHandle = NULL;
+  findHandle = FindFirstFile(filename.str(), &findData);
 
-	if (findHandle == INVALID_HANDLE_VALUE) {
-		return FALSE;
-	}
+  if (findHandle == INVALID_HANDLE_VALUE)
+  {
+    return FALSE;
+  }
 
-	fileInfo->timestampHigh = findData.ftLastWriteTime.dwHighDateTime;
-	fileInfo->timestampLow = findData.ftLastWriteTime.dwLowDateTime;
-	fileInfo->sizeHigh = findData.nFileSizeHigh;
-	fileInfo->sizeLow = findData.nFileSizeLow;
+  fileInfo->timestampHigh = findData.ftLastWriteTime.dwHighDateTime;
+  fileInfo->timestampLow = findData.ftLastWriteTime.dwLowDateTime;
+  fileInfo->sizeHigh = findData.nFileSizeHigh;
+  fileInfo->sizeLow = findData.nFileSizeLow;
 
-	FindClose(findHandle);
+  FindClose(findHandle);
 
-	return TRUE;
+  return TRUE;
 }
 
 Bool Win32LocalFileSystem::createDirectory(AsciiString directory)
 {
-	if ((directory.getLength() > 0) && (directory.getLength() < _MAX_DIR)) {
-		return (CreateDirectory(directory.str(), NULL) != 0);
-	}
-	return FALSE;
+  if ((directory.getLength() > 0) && (directory.getLength() < _MAX_DIR))
+  {
+    return (CreateDirectory(directory.str(), NULL) != 0);
+  }
+  return FALSE;
 }
 
-AsciiString Win32LocalFileSystem::normalizePath(const AsciiString& filePath) const
+AsciiString Win32LocalFileSystem::normalizePath(const AsciiString &filePath) const
 {
-	DWORD retval = GetFullPathNameA(filePath.str(), 0, NULL, NULL);
-	if (retval == 0)
-	{
-		DEBUG_LOG(("Unable to determine buffer size for normalized file path. Error=(%u).", GetLastError()));
-		return AsciiString::TheEmptyString;
-	}
+  DWORD retval = GetFullPathNameA(filePath.str(), 0, NULL, NULL);
+  if (retval == 0)
+  {
+    DEBUG_LOG(("Unable to determine buffer size for normalized file path. Error=(%u).", GetLastError()));
+    return AsciiString::TheEmptyString;
+  }
 
-	AsciiString normalizedFilePath;
-	retval = GetFullPathNameA(filePath.str(), retval, normalizedFilePath.getBufferForRead(retval - 1), NULL);
-	if (retval == 0)
-	{
-		DEBUG_LOG(("Unable to normalize file path '%s'. Error=(%u).", filePath.str(), GetLastError()));
-		return AsciiString::TheEmptyString;
-	}
+  AsciiString normalizedFilePath;
+  retval = GetFullPathNameA(filePath.str(), retval, normalizedFilePath.getBufferForRead(retval - 1), NULL);
+  if (retval == 0)
+  {
+    DEBUG_LOG(("Unable to normalize file path '%s'. Error=(%u).", filePath.str(), GetLastError()));
+    return AsciiString::TheEmptyString;
+  }
 
-	return normalizedFilePath;
+  return normalizedFilePath;
 }

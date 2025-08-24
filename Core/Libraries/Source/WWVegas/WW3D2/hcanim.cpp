@@ -48,7 +48,6 @@
  *   HCompressedAnimClass::Get_Visibility -- return visibility state for given pivot/frame     *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
 #include "hcanim.h"
 #include "assetmgr.h"
 #include "htree.h"
@@ -59,42 +58,44 @@
 #include <string.h>
 #include <nstrdup.h>
 
-
 struct NodeCompressedMotionStruct
 {
-	NodeCompressedMotionStruct();
-	~NodeCompressedMotionStruct();
+  NodeCompressedMotionStruct();
+  ~NodeCompressedMotionStruct();
 
-	void SetFlavor(int flavor)  {Flavor = flavor;}
+  void SetFlavor(int flavor) { Flavor = flavor; }
 
-	int Flavor;
+  int Flavor;
 
-	union {
-		struct {
-			TimeCodedMotionChannelClass *		X;
-			TimeCodedMotionChannelClass *		Y;
-			TimeCodedMotionChannelClass *		Z;
-			TimeCodedMotionChannelClass *		Q;
-		} tc;
+  union
+  {
+    struct
+    {
+      TimeCodedMotionChannelClass *X;
+      TimeCodedMotionChannelClass *Y;
+      TimeCodedMotionChannelClass *Z;
+      TimeCodedMotionChannelClass *Q;
+    } tc;
 
-		struct {
-			AdaptiveDeltaMotionChannelClass *		X;
-			AdaptiveDeltaMotionChannelClass *		Y;
-			AdaptiveDeltaMotionChannelClass *		Z;
-			AdaptiveDeltaMotionChannelClass *		Q;
+    struct
+    {
+      AdaptiveDeltaMotionChannelClass *X;
+      AdaptiveDeltaMotionChannelClass *Y;
+      AdaptiveDeltaMotionChannelClass *Z;
+      AdaptiveDeltaMotionChannelClass *Q;
 
-		} ad;
+    } ad;
 
-		struct {
-			 void * X;
-			 void * Y;
-			 void * Z;
-			 void * Q;
-		} vd;
-	};
+    struct
+    {
+      void *X;
+      void *Y;
+      void *Z;
+      void *Q;
+    } vd;
+  };
 
-
-	TimeCodedBitChannelClass *			Vis;
+  TimeCodedBitChannelClass *Vis;
 };
 
 /***********************************************************************************************
@@ -108,15 +109,13 @@ struct NodeCompressedMotionStruct
  *                                                                                             *
  * HISTORY:                                                                                    *
  *=============================================================================================*/
-NodeCompressedMotionStruct::NodeCompressedMotionStruct() :
-	Vis(NULL)
+NodeCompressedMotionStruct::NodeCompressedMotionStruct() : Vis(NULL)
 {
-		vd.X = NULL;
-		vd.Y = NULL;
-		vd.Z = NULL;
-		vd.Q = NULL;
+  vd.X = NULL;
+  vd.Y = NULL;
+  vd.Z = NULL;
+  vd.Q = NULL;
 }
-
 
 /***********************************************************************************************
  * NodeCompressedMotionStruct::~NodeCompressedMotionStruct -- destructor                       *
@@ -133,30 +132,39 @@ NodeCompressedMotionStruct::NodeCompressedMotionStruct() :
  *=============================================================================================*/
 NodeCompressedMotionStruct::~NodeCompressedMotionStruct()
 {
-	// Needs to be changed to call the correct destructors
+  // Needs to be changed to call the correct destructors
 
-	switch (Flavor) {
-		case ANIM_FLAVOR_TIMECODED:
-			if (tc.X) delete tc.X;
-			if (tc.Y) delete tc.Y;
-			if (tc.Z) delete tc.Z;
-			if (tc.Q) delete tc.Q;
-			break;
-		case ANIM_FLAVOR_ADAPTIVE_DELTA:
-			if (ad.X) delete ad.X;
-			if (ad.Y) delete ad.Y;
-			if (ad.Z) delete ad.Z;
-			if (ad.Q) delete ad.Q;
-			break;
-		default:
-			WWASSERT(0);	// unknown flavor
-			break;
-	}
+  switch (Flavor)
+  {
+    case ANIM_FLAVOR_TIMECODED:
+      if (tc.X)
+        delete tc.X;
+      if (tc.Y)
+        delete tc.Y;
+      if (tc.Z)
+        delete tc.Z;
+      if (tc.Q)
+        delete tc.Q;
+      break;
+    case ANIM_FLAVOR_ADAPTIVE_DELTA:
+      if (ad.X)
+        delete ad.X;
+      if (ad.Y)
+        delete ad.Y;
+      if (ad.Z)
+        delete ad.Z;
+      if (ad.Q)
+        delete ad.Q;
+      break;
+    default:
+      WWASSERT(0); // unknown flavor
+      break;
+  }
 
-	if (Vis) delete Vis;
+  if (Vis)
+    delete Vis;
 
-}  // ~NodeCompressedMotionStruct
-
+} // ~NodeCompressedMotionStruct
 
 /***********************************************************************************************
  * HCompressedAnimClass::HCompressedAnimClass -- constructor                                   *
@@ -170,17 +178,11 @@ NodeCompressedMotionStruct::~NodeCompressedMotionStruct()
  * HISTORY:                                                                                    *
  *   08/11/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-HCompressedAnimClass::HCompressedAnimClass(void) :
-	NumFrames(0),
-	NumNodes(0),
-	Flavor(0),
-	FrameRate(0),
-	NodeMotion(NULL)
+HCompressedAnimClass::HCompressedAnimClass(void) : NumFrames(0), NumNodes(0), Flavor(0), FrameRate(0), NodeMotion(NULL)
 {
-	memset(Name,0,W3D_NAME_LEN);
-	memset(HierarchyName,0,W3D_NAME_LEN);
+  memset(Name, 0, W3D_NAME_LEN);
+  memset(HierarchyName, 0, W3D_NAME_LEN);
 }
-
 
 /***********************************************************************************************
  * HCompressedAnimClass::~HCompressedAnimClass -- Destructor                                   *
@@ -196,9 +198,8 @@ HCompressedAnimClass::HCompressedAnimClass(void) :
  *=============================================================================================*/
 HCompressedAnimClass::~HCompressedAnimClass(void)
 {
-	Free();
+  Free();
 }
-
 
 /***********************************************************************************************
  * HCompressedAnimClass::Free -- De-allocates all memory in use                                *
@@ -214,11 +215,11 @@ HCompressedAnimClass::~HCompressedAnimClass(void)
  *=============================================================================================*/
 void HCompressedAnimClass::Free(void)
 {
-	if (NodeMotion != NULL) {
-		delete[] NodeMotion;
-	}
+  if (NodeMotion != NULL)
+  {
+    delete[] NodeMotion;
+  }
 }
-
 
 /***********************************************************************************************
  * HCompressedAnimClass::Load -- Loads hierarchy animation from a file                         *
@@ -232,146 +233,164 @@ void HCompressedAnimClass::Free(void)
  * HISTORY:                                                                                    *
  *   08/11/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-int HCompressedAnimClass::Load_W3D(ChunkLoadClass & cload)
+int HCompressedAnimClass::Load_W3D(ChunkLoadClass &cload)
 {
-	int i = 0;
-	/*
-	** First make sure we release any memory in use
-	*/
-	Free();
+  int i = 0;
+  /*
+  ** First make sure we release any memory in use
+  */
+  Free();
 
-	/*
-	**	Open the first chunk, it should be the animation header
-	*/
-	if (!cload.Open_Chunk()) return LOAD_ERROR;
+  /*
+  **	Open the first chunk, it should be the animation header
+  */
+  if (!cload.Open_Chunk())
+    return LOAD_ERROR;
 
-	if (cload.Cur_Chunk_ID() != W3D_CHUNK_COMPRESSED_ANIMATION_HEADER) {
-		// ERROR: Expected Animation Header!
-		return LOAD_ERROR;
-	}
+  if (cload.Cur_Chunk_ID() != W3D_CHUNK_COMPRESSED_ANIMATION_HEADER)
+  {
+    // ERROR: Expected Animation Header!
+    return LOAD_ERROR;
+  }
 
-	W3dCompressedAnimHeaderStruct aheader;
-	if (cload.Read(&aheader,sizeof(W3dAnimHeaderStruct)) != sizeof(W3dAnimHeaderStruct)) {
-		return LOAD_ERROR;
-	}
+  W3dCompressedAnimHeaderStruct aheader;
+  if (cload.Read(&aheader, sizeof(W3dAnimHeaderStruct)) != sizeof(W3dAnimHeaderStruct))
+  {
+    return LOAD_ERROR;
+  }
 
-	cload.Close_Chunk();
+  cload.Close_Chunk();
 
-	strcpy(Name,aheader.HierarchyName);
-	strcat(Name,".");
-	strcat(Name,aheader.Name);
+  strcpy(Name, aheader.HierarchyName);
+  strcat(Name, ".");
+  strcat(Name, aheader.Name);
 
-	// TSS chasing crash bug 05/26/99
-   WWASSERT(HierarchyName != NULL);
-   WWASSERT(aheader.HierarchyName != NULL);
-   WWASSERT(sizeof(HierarchyName) >= W3D_NAME_LEN);
-   strncpy(HierarchyName,aheader.HierarchyName,W3D_NAME_LEN);
+  // TSS chasing crash bug 05/26/99
+  WWASSERT(HierarchyName != NULL);
+  WWASSERT(aheader.HierarchyName != NULL);
+  WWASSERT(sizeof(HierarchyName) >= W3D_NAME_LEN);
+  strncpy(HierarchyName, aheader.HierarchyName, W3D_NAME_LEN);
 
-	HTreeClass * base_pose = WW3DAssetManager::Get_Instance()->Get_HTree(HierarchyName);
-	if (base_pose == NULL) {
-		goto Error;
-	}
-	NumNodes = base_pose->Num_Pivots();
+  HTreeClass *base_pose = WW3DAssetManager::Get_Instance()->Get_HTree(HierarchyName);
+  if (base_pose == NULL)
+  {
+    goto Error;
+  }
+  NumNodes = base_pose->Num_Pivots();
 
-	NumFrames = aheader.NumFrames;
-	FrameRate = aheader.FrameRate;
-	Flavor    = aheader.Flavor;
+  NumFrames = aheader.NumFrames;
+  FrameRate = aheader.FrameRate;
+  Flavor = aheader.Flavor;
 
-	// Just for now
-	WWASSERT((Flavor == ANIM_FLAVOR_TIMECODED)||(Flavor == ANIM_FLAVOR_ADAPTIVE_DELTA));
+  // Just for now
+  WWASSERT((Flavor == ANIM_FLAVOR_TIMECODED) || (Flavor == ANIM_FLAVOR_ADAPTIVE_DELTA));
 
-	NodeMotion = W3DNEWARRAY NodeCompressedMotionStruct[ NumNodes ];
-	if (NodeMotion == NULL) {
-		goto Error;
-	}
+  NodeMotion = W3DNEWARRAY NodeCompressedMotionStruct[NumNodes];
+  if (NodeMotion == NULL)
+  {
+    goto Error;
+  }
 
-	// Initialize Flavor
-	for (i=0; i<NumNodes; i++) {
-		NodeMotion[i].SetFlavor(Flavor);
-	}
+  // Initialize Flavor
+  for (i = 0; i < NumNodes; i++)
+  {
+    NodeMotion[i].SetFlavor(Flavor);
+  }
 
-	/*
-	** Now, read in all of the other chunks (motion channels).
-	*/
-	TimeCodedMotionChannelClass * tc_chan;
-	AdaptiveDeltaMotionChannelClass * ad_chan;
-	TimeCodedBitChannelClass * newbitchan;
+  /*
+  ** Now, read in all of the other chunks (motion channels).
+  */
+  TimeCodedMotionChannelClass *tc_chan;
+  AdaptiveDeltaMotionChannelClass *ad_chan;
+  TimeCodedBitChannelClass *newbitchan;
 
-	while (cload.Open_Chunk()) {
+  while (cload.Open_Chunk())
+  {
+    switch (cload.Cur_Chunk_ID())
+    {
+      case W3D_CHUNK_COMPRESSED_ANIMATION_CHANNEL:
 
-		switch (cload.Cur_Chunk_ID()) {
+        switch (Flavor)
+        {
+          case ANIM_FLAVOR_TIMECODED:
 
-			case W3D_CHUNK_COMPRESSED_ANIMATION_CHANNEL:
+            if (!read_channel(cload, &tc_chan))
+            {
+              goto Error;
+            }
+            if (tc_chan->Get_Pivot() < NumNodes)
+            {
+              add_channel(tc_chan);
+            }
+            else
+            {
+              // PWG 12-14-98: we have only allocated space for NumNode pivots.
+              // If we have an index thats equal or higher than NumNode we are
+              // gonna trash memory.  Boy will we trash memory.
+              // GTH 09-25-2000: print a warning and survive this error
+              delete tc_chan;
+              WWDEBUG_SAY(("ERROR! animation %s indexes a bone not present in the model. Please re-export!", Name));
+            }
 
-				switch ( Flavor ) {
+            break;
 
-					case ANIM_FLAVOR_TIMECODED:
+          case ANIM_FLAVOR_ADAPTIVE_DELTA:
+            if (!read_channel(cload, &ad_chan))
+            {
+              goto Error;
+            }
+            if (ad_chan->Get_Pivot() < NumNodes)
+            {
+              add_channel(ad_chan);
+            }
+            else
+            {
+              // PWG 12-14-98: we have only allocated space for NumNode pivots.
+              // If we have an index thats equal or higher than NumNode we are
+              // gonna trash memory.  Boy will we trash memory.
+              // GTH 09-25-2000: print a warning and survive this error
+              delete ad_chan;
+              WWDEBUG_SAY(("ERROR! animation %s indexes a bone not present in the model. Please re-export!", Name));
+            }
+            break;
+        }
+        break;
 
-						if (!read_channel(cload,&tc_chan)) {
-							goto Error;
-						}
-						if (tc_chan->Get_Pivot() < NumNodes) {
-							add_channel(tc_chan);
-						} else {
-							// PWG 12-14-98: we have only allocated space for NumNode pivots.
-							// If we have an index thats equal or higher than NumNode we are
-							// gonna trash memory.  Boy will we trash memory.
-							// GTH 09-25-2000: print a warning and survive this error
-							delete tc_chan;
-							WWDEBUG_SAY(("ERROR! animation %s indexes a bone not present in the model. Please re-export!",Name));
-						}
+      case W3D_CHUNK_COMPRESSED_BIT_CHANNEL:
+        if (!read_bit_channel(cload, &newbitchan))
+        {
+          goto Error;
+        }
+        if (newbitchan->Get_Pivot() < NumNodes)
+        {
+          add_bit_channel(newbitchan);
+        }
+        else
+        {
+          // PWG 12-14-98: we have only allocated space for NumNode pivots.
+          // If we have an index thats equal or higher than NumNode we are
+          // gonna trash memory.  Boy will we trash memory.
+          // GTH 09-25-2000: print a warning and survive this error
+          delete newbitchan;
+          WWDEBUG_SAY(("ERROR! animation %s indexes a bone not present in the model. Please re-export!", Name));
+        }
 
-						break;
+        break;
 
-					case ANIM_FLAVOR_ADAPTIVE_DELTA:
-						if (!read_channel(cload,&ad_chan)) {
-							goto Error;
-						}
-						if (ad_chan->Get_Pivot() < NumNodes) {
-							add_channel(ad_chan);
-						} else {
-							// PWG 12-14-98: we have only allocated space for NumNode pivots.
-							// If we have an index thats equal or higher than NumNode we are
-							// gonna trash memory.  Boy will we trash memory.
-							// GTH 09-25-2000: print a warning and survive this error
-							delete ad_chan;
-							WWDEBUG_SAY(("ERROR! animation %s indexes a bone not present in the model. Please re-export!",Name));
-						}
-						break;
-				}
-				break;
+      default:
+        break;
+    }
+    cload.Close_Chunk();
+  }
 
-			case W3D_CHUNK_COMPRESSED_BIT_CHANNEL:
-				if (!read_bit_channel(cload,&newbitchan)) {
-					goto Error;
-				}
-				if (newbitchan->Get_Pivot() < NumNodes) {
-					add_bit_channel(newbitchan);
-				} else {
-					// PWG 12-14-98: we have only allocated space for NumNode pivots.
-					// If we have an index thats equal or higher than NumNode we are
-					// gonna trash memory.  Boy will we trash memory.
-					// GTH 09-25-2000: print a warning and survive this error
-					delete newbitchan;
-					WWDEBUG_SAY(("ERROR! animation %s indexes a bone not present in the model. Please re-export!",Name));
-				}
-
-				break;
-
-			default:
-				break;
-		}
-		cload.Close_Chunk();
-	}
-
-	return OK;
+  return OK;
 
 Error:
 
-	Free();
-	return LOAD_ERROR;
+  Free();
+  return LOAD_ERROR;
 
-}	 // Load_W3D
+} // Load_W3D
 
 /***********************************************************************************************
  * HCompressedAnimClass::read_channel -- Reads in a single channel of motion                   *
@@ -385,24 +404,23 @@ Error:
  * HISTORY:                                                                                    *
  *   08/11/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-bool HCompressedAnimClass::read_channel(ChunkLoadClass & cload,TimeCodedMotionChannelClass * * newchan)
+bool HCompressedAnimClass::read_channel(ChunkLoadClass &cload, TimeCodedMotionChannelClass **newchan)
 {
-	*newchan = W3DNEW TimeCodedMotionChannelClass;
-	bool result = (*newchan)->Load_W3D(cload);
+  *newchan = W3DNEW TimeCodedMotionChannelClass;
+  bool result = (*newchan)->Load_W3D(cload);
 
-	return result;
+  return result;
 
-}	// read_channel
+} // read_channel
 
-bool HCompressedAnimClass::read_channel(ChunkLoadClass & cload,AdaptiveDeltaMotionChannelClass * * newchan)
+bool HCompressedAnimClass::read_channel(ChunkLoadClass &cload, AdaptiveDeltaMotionChannelClass **newchan)
 {
-	*newchan = W3DNEW AdaptiveDeltaMotionChannelClass;
-	bool result = (*newchan)->Load_W3D(cload);
+  *newchan = W3DNEW AdaptiveDeltaMotionChannelClass;
+  bool result = (*newchan)->Load_W3D(cload);
 
-	return result;
+  return result;
 
-}	// read_channel
-
+} // read_channel
 
 /***********************************************************************************************
  * HCompressedAnimClass::add_channel -- Adds a motion channel to the animation                 *
@@ -416,58 +434,55 @@ bool HCompressedAnimClass::read_channel(ChunkLoadClass & cload,AdaptiveDeltaMoti
  * HISTORY:                                                                                    *
  *   08/11/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-void HCompressedAnimClass::add_channel(TimeCodedMotionChannelClass * newchan)
+void HCompressedAnimClass::add_channel(TimeCodedMotionChannelClass *newchan)
 {
-	int idx = newchan->Get_Pivot();
+  int idx = newchan->Get_Pivot();
 
-	switch (newchan->Get_Type())
-	{
-		case ANIM_CHANNEL_X:
-			NodeMotion[idx].tc.X = newchan;
-			break;
+  switch (newchan->Get_Type())
+  {
+    case ANIM_CHANNEL_X:
+      NodeMotion[idx].tc.X = newchan;
+      break;
 
-		case ANIM_CHANNEL_Y:
-			NodeMotion[idx].tc.Y = newchan;
-			break;
+    case ANIM_CHANNEL_Y:
+      NodeMotion[idx].tc.Y = newchan;
+      break;
 
-		case ANIM_CHANNEL_Z:
-			NodeMotion[idx].tc.Z = newchan;
-			break;
+    case ANIM_CHANNEL_Z:
+      NodeMotion[idx].tc.Z = newchan;
+      break;
 
-		case ANIM_CHANNEL_Q:
-			NodeMotion[idx].tc.Q = newchan;
-			break;
-	}
+    case ANIM_CHANNEL_Q:
+      NodeMotion[idx].tc.Q = newchan;
+      break;
+  }
 
-}	// add_channel
+} // add_channel
 
-void HCompressedAnimClass::add_channel(AdaptiveDeltaMotionChannelClass * newchan)
+void HCompressedAnimClass::add_channel(AdaptiveDeltaMotionChannelClass *newchan)
 {
-	int idx = newchan->Get_Pivot();
+  int idx = newchan->Get_Pivot();
 
-	switch (newchan->Get_Type())
-	{
-		case ANIM_CHANNEL_X:
-			NodeMotion[idx].ad.X = newchan;
-			break;
+  switch (newchan->Get_Type())
+  {
+    case ANIM_CHANNEL_X:
+      NodeMotion[idx].ad.X = newchan;
+      break;
 
-		case ANIM_CHANNEL_Y:
-			NodeMotion[idx].ad.Y = newchan;
-			break;
+    case ANIM_CHANNEL_Y:
+      NodeMotion[idx].ad.Y = newchan;
+      break;
 
-		case ANIM_CHANNEL_Z:
-			NodeMotion[idx].ad.Z = newchan;
-			break;
+    case ANIM_CHANNEL_Z:
+      NodeMotion[idx].ad.Z = newchan;
+      break;
 
-		case ANIM_CHANNEL_Q:
-			NodeMotion[idx].ad.Q = newchan;
-			break;
-	}
+    case ANIM_CHANNEL_Q:
+      NodeMotion[idx].ad.Q = newchan;
+      break;
+  }
 
-}	// add_channel
-
-
-
+} // add_channel
 
 /***********************************************************************************************
  * HCompressedAnimClass::read_bit_channel -- read a bit channel from the file                  *
@@ -481,15 +496,14 @@ void HCompressedAnimClass::add_channel(AdaptiveDeltaMotionChannelClass * newchan
  * HISTORY:                                                                                    *
  *   1/19/98    GTH : Created.                                                                 *
  *=============================================================================================*/
-bool HCompressedAnimClass::read_bit_channel(ChunkLoadClass & cload,TimeCodedBitChannelClass * * newchan)
+bool HCompressedAnimClass::read_bit_channel(ChunkLoadClass &cload, TimeCodedBitChannelClass **newchan)
 {
-	*newchan = W3DNEW TimeCodedBitChannelClass;
-	bool result = (*newchan)->Load_W3D(cload);
+  *newchan = W3DNEW TimeCodedBitChannelClass;
+  bool result = (*newchan)->Load_W3D(cload);
 
-	return result;
+  return result;
 
-}	// read_bit_channel
-
+} // read_bit_channel
 
 /***********************************************************************************************
  * HCompressedAnimClass::add_bit_channel -- install a bit channel into the animation           *
@@ -503,16 +517,16 @@ bool HCompressedAnimClass::read_bit_channel(ChunkLoadClass & cload,TimeCodedBitC
  * HISTORY:                                                                                    *
  *   1/19/98    GTH : Created.                                                                 *
  *=============================================================================================*/
-void HCompressedAnimClass::add_bit_channel(TimeCodedBitChannelClass * newchan)
+void HCompressedAnimClass::add_bit_channel(TimeCodedBitChannelClass *newchan)
 {
-	int idx = newchan->Get_Pivot();
+  int idx = newchan->Get_Pivot();
 
-	switch (newchan->Get_Type())
-	{
-		case BIT_CHANNEL_VIS:
-			NodeMotion[idx].Vis = newchan;
-			break;
-	}
+  switch (newchan->Get_Type())
+  {
+    case BIT_CHANNEL_VIS:
+      NodeMotion[idx].Vis = newchan;
+      break;
+  }
 }
 
 /***********************************************************************************************
@@ -527,27 +541,34 @@ void HCompressedAnimClass::add_bit_channel(TimeCodedBitChannelClass * newchan)
  * HISTORY:                                                                                    *
  *   08/11/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-void HCompressedAnimClass::Get_Translation( Vector3& trans, int pividx, float frame ) const
+void HCompressedAnimClass::Get_Translation(Vector3 &trans, int pividx, float frame) const
 {
-	struct NodeCompressedMotionStruct * motion = &NodeMotion[pividx];
+  struct NodeCompressedMotionStruct *motion = &NodeMotion[pividx];
 
-	trans=Vector3(0,0,0);
+  trans = Vector3(0, 0, 0);
 
-	switch(Flavor) {
-		case ANIM_FLAVOR_TIMECODED:
-			if (motion->tc.X) motion->tc.X->Get_Vector(frame, &(trans[0]));
-			if (motion->tc.Y) motion->tc.Y->Get_Vector(frame, &(trans[1]));
-			if (motion->tc.Z) motion->tc.Z->Get_Vector(frame, &(trans[2]));
-			break;
-		case ANIM_FLAVOR_ADAPTIVE_DELTA:
-			if (motion->ad.X) motion->ad.X->Get_Vector(frame, &(trans[0]));
-			if (motion->ad.Y) motion->ad.Y->Get_Vector(frame, &(trans[1]));
-			if (motion->ad.Z) motion->ad.Z->Get_Vector(frame, &(trans[2]));
-			break;
-		default:
-			WWASSERT(0);	// unknown flavor
-			break;
-	}
+  switch (Flavor)
+  {
+    case ANIM_FLAVOR_TIMECODED:
+      if (motion->tc.X)
+        motion->tc.X->Get_Vector(frame, &(trans[0]));
+      if (motion->tc.Y)
+        motion->tc.Y->Get_Vector(frame, &(trans[1]));
+      if (motion->tc.Z)
+        motion->tc.Z->Get_Vector(frame, &(trans[2]));
+      break;
+    case ANIM_FLAVOR_ADAPTIVE_DELTA:
+      if (motion->ad.X)
+        motion->ad.X->Get_Vector(frame, &(trans[0]));
+      if (motion->ad.Y)
+        motion->ad.Y->Get_Vector(frame, &(trans[1]));
+      if (motion->ad.Z)
+        motion->ad.Z->Get_Vector(frame, &(trans[2]));
+      break;
+    default:
+      WWASSERT(0); // unknown flavor
+      break;
+  }
 }
 
 /***********************************************************************************************
@@ -562,21 +583,26 @@ void HCompressedAnimClass::Get_Translation( Vector3& trans, int pividx, float fr
  * HISTORY:                                                                                    *
  *   08/11/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-void HCompressedAnimClass::Get_Orientation(Quaternion& q, int pividx,float frame) const
+void HCompressedAnimClass::Get_Orientation(Quaternion &q, int pividx, float frame) const
 {
-	switch(Flavor) {
-		case ANIM_FLAVOR_TIMECODED:
-			if (NodeMotion[pividx].tc.Q) q = NodeMotion[pividx].tc.Q->Get_QuatVector(frame);
-			else q.Make_Identity();
-			break;
-		case ANIM_FLAVOR_ADAPTIVE_DELTA:
-			if (NodeMotion[pividx].ad.Q) q = NodeMotion[pividx].ad.Q->Get_QuatVector(frame);
-			else q.Make_Identity();
-			break;
-		default:
-			WWASSERT(0); // unknown flavor
-			break;
-	}
+  switch (Flavor)
+  {
+    case ANIM_FLAVOR_TIMECODED:
+      if (NodeMotion[pividx].tc.Q)
+        q = NodeMotion[pividx].tc.Q->Get_QuatVector(frame);
+      else
+        q.Make_Identity();
+      break;
+    case ANIM_FLAVOR_ADAPTIVE_DELTA:
+      if (NodeMotion[pividx].ad.Q)
+        q = NodeMotion[pividx].ad.Q->Get_QuatVector(frame);
+      else
+        q.Make_Identity();
+      break;
+    default:
+      WWASSERT(0); // unknown flavor
+      break;
+  }
 } // Get_Orientation
 
 /***********************************************************************************************
@@ -591,38 +617,49 @@ void HCompressedAnimClass::Get_Orientation(Quaternion& q, int pividx,float frame
  * HISTORY:                                                                                    *
  *   08/11/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-void HCompressedAnimClass::Get_Transform( Matrix3D& mtx, int pividx, float frame ) const
+void HCompressedAnimClass::Get_Transform(Matrix3D &mtx, int pividx, float frame) const
 {
-	struct NodeCompressedMotionStruct * motion = &NodeMotion[pividx];
+  struct NodeCompressedMotionStruct *motion = &NodeMotion[pividx];
 
-	switch(Flavor) {
-		case ANIM_FLAVOR_TIMECODED:
-			if (NodeMotion[pividx].tc.Q) {
-				Quaternion q;
-				q = NodeMotion[pividx].tc.Q->Get_QuatVector(frame);
-				::Build_Matrix3D(q,mtx);
-			}
-			else mtx.Make_Identity();
-			if (motion->tc.X) motion->tc.X->Get_Vector(frame, &(mtx[0][3]));
-			if (motion->tc.Y) motion->tc.Y->Get_Vector(frame, &(mtx[1][3]));
-			if (motion->tc.Z) motion->tc.Z->Get_Vector(frame, &(mtx[2][3]));
-			break;
-		case ANIM_FLAVOR_ADAPTIVE_DELTA:
-			if (NodeMotion[pividx].ad.Q) {
-				Quaternion q;
-				q = NodeMotion[pividx].ad.Q->Get_QuatVector(frame);
-				::Build_Matrix3D(q,mtx);
-			}
-			else mtx.Make_Identity();
+  switch (Flavor)
+  {
+    case ANIM_FLAVOR_TIMECODED:
+      if (NodeMotion[pividx].tc.Q)
+      {
+        Quaternion q;
+        q = NodeMotion[pividx].tc.Q->Get_QuatVector(frame);
+        ::Build_Matrix3D(q, mtx);
+      }
+      else
+        mtx.Make_Identity();
+      if (motion->tc.X)
+        motion->tc.X->Get_Vector(frame, &(mtx[0][3]));
+      if (motion->tc.Y)
+        motion->tc.Y->Get_Vector(frame, &(mtx[1][3]));
+      if (motion->tc.Z)
+        motion->tc.Z->Get_Vector(frame, &(mtx[2][3]));
+      break;
+    case ANIM_FLAVOR_ADAPTIVE_DELTA:
+      if (NodeMotion[pividx].ad.Q)
+      {
+        Quaternion q;
+        q = NodeMotion[pividx].ad.Q->Get_QuatVector(frame);
+        ::Build_Matrix3D(q, mtx);
+      }
+      else
+        mtx.Make_Identity();
 
-			if (motion->ad.X) motion->ad.X->Get_Vector(frame, &(mtx[0][3]));
-			if (motion->ad.Y) motion->ad.Y->Get_Vector(frame, &(mtx[1][3]));
-			if (motion->ad.Z) motion->ad.Z->Get_Vector(frame, &(mtx[2][3]));
-			break;
-		default:
-			WWASSERT(0);	// unknown flavor
-			break;
-	}
+      if (motion->ad.X)
+        motion->ad.X->Get_Vector(frame, &(mtx[0][3]));
+      if (motion->ad.Y)
+        motion->ad.Y->Get_Vector(frame, &(mtx[1][3]));
+      if (motion->ad.Z)
+        motion->ad.Z->Get_Vector(frame, &(mtx[2][3]));
+      break;
+    default:
+      WWASSERT(0); // unknown flavor
+      break;
+  }
 }
 
 /***********************************************************************************************
@@ -637,19 +674,16 @@ void HCompressedAnimClass::Get_Transform( Matrix3D& mtx, int pividx, float frame
  * HISTORY:                                                                                    *
  *   1/19/98    GTH : Created.                                                                 *
  *=============================================================================================*/
-bool HCompressedAnimClass::Get_Visibility(int pividx,float frame)
+bool HCompressedAnimClass::Get_Visibility(int pividx, float frame)
 {
+  if (NodeMotion[pividx].Vis != NULL)
+  {
+    return (NodeMotion[pividx].Vis->Get_Bit((int)frame) == 1);
+  }
 
-	if (NodeMotion[pividx].Vis != NULL) {
-		return (NodeMotion[pividx].Vis->Get_Bit((int)frame) == 1);
-	}
-
-
-	// default to always visible...
-	return 1;
+  // default to always visible...
+  return 1;
 }
-
-
 
 /***********************************************************************************************
  * HAnimClass::Is_Node_Motion_Present -- return true if there is motion defined for this frame *
@@ -665,46 +699,50 @@ bool HCompressedAnimClass::Get_Visibility(int pividx,float frame)
  *=============================================================================================*/
 bool HCompressedAnimClass::Is_Node_Motion_Present(int pividx)
 {
-	WWASSERT((pividx >= 0) && (pividx < NumNodes));
+  WWASSERT((pividx >= 0) && (pividx < NumNodes));
 
-	if (NodeMotion[pividx].vd.X != NULL)	return true;
-	if (NodeMotion[pividx].vd.Y != NULL)	return true;
-	if (NodeMotion[pividx].vd.Z != NULL)	return true;
-	if (NodeMotion[pividx].vd.Q  != NULL)	return true;
-	if (NodeMotion[pividx].Vis != NULL)		return true;
+  if (NodeMotion[pividx].vd.X != NULL)
+    return true;
+  if (NodeMotion[pividx].vd.Y != NULL)
+    return true;
+  if (NodeMotion[pividx].vd.Z != NULL)
+    return true;
+  if (NodeMotion[pividx].vd.Q != NULL)
+    return true;
+  if (NodeMotion[pividx].Vis != NULL)
+    return true;
 
-	return false;
+  return false;
 }
 
-bool HCompressedAnimClass::Has_X_Translation (int pividx)
+bool HCompressedAnimClass::Has_X_Translation(int pividx)
 {
-	WWASSERT((pividx >= 0) && (pividx < NumNodes));
-	return NodeMotion[pividx].vd.X != NULL;
+  WWASSERT((pividx >= 0) && (pividx < NumNodes));
+  return NodeMotion[pividx].vd.X != NULL;
 }
 
-bool HCompressedAnimClass::Has_Y_Translation (int pividx)
+bool HCompressedAnimClass::Has_Y_Translation(int pividx)
 {
-	WWASSERT((pividx >= 0) && (pividx < NumNodes));
-	return NodeMotion[pividx].vd.Y != NULL;
+  WWASSERT((pividx >= 0) && (pividx < NumNodes));
+  return NodeMotion[pividx].vd.Y != NULL;
 }
 
-bool HCompressedAnimClass::Has_Z_Translation (int pividx)
+bool HCompressedAnimClass::Has_Z_Translation(int pividx)
 {
-	WWASSERT((pividx >= 0) && (pividx < NumNodes));
-	return NodeMotion[pividx].vd.Z != NULL;
+  WWASSERT((pividx >= 0) && (pividx < NumNodes));
+  return NodeMotion[pividx].vd.Z != NULL;
 }
 
-bool HCompressedAnimClass::Has_Rotation (int pividx)
+bool HCompressedAnimClass::Has_Rotation(int pividx)
 {
-	WWASSERT((pividx >= 0) && (pividx < NumNodes));
-	return NodeMotion[pividx].vd.Q != NULL;
+  WWASSERT((pividx >= 0) && (pividx < NumNodes));
+  return NodeMotion[pividx].vd.Q != NULL;
 }
 
-bool HCompressedAnimClass::Has_Visibility (int pividx)
+bool HCompressedAnimClass::Has_Visibility(int pividx)
 {
-	WWASSERT((pividx >= 0) && (pividx < NumNodes));
-	return NodeMotion[pividx].Vis != NULL;
+  WWASSERT((pividx >= 0) && (pividx < NumNodes));
+  return NodeMotion[pividx].Vis != NULL;
 }
-
 
 // eof - hcanim.cpp

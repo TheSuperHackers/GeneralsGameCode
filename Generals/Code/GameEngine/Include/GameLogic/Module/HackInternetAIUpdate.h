@@ -37,194 +37,194 @@
 //-------------------------------------------------------------------------------------------------
 class HackInternetStateMachine : public AIStateMachine
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( HackInternetStateMachine, "HackInternetStateMachine" );
-public:
-	HackInternetStateMachine( Object *owner, AsciiString name );
+  MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(HackInternetStateMachine, "HackInternetStateMachine");
+
+  public:
+  HackInternetStateMachine(Object *owner, AsciiString name);
 };
 
 //-------------------------------------------------------------------------------------------------
-class HackInternetState :  public State
+class HackInternetState : public State
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(HackInternetState, "HackInternetState")
-public:
-	HackInternetState( StateMachine *machine ) :State( machine, "HackInternetState" )
-	{
-		//Added By Sadullah Nader
-		//Initializations missing and needed
-		m_framesRemaining = 0;
-		//
-	}
-	virtual StateReturnType update();
-	virtual StateReturnType onEnter();
-	virtual void onExit( StateExitType status );
+  MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(HackInternetState, "HackInternetState")
+  public:
+  HackInternetState(StateMachine *machine) : State(machine, "HackInternetState")
+  {
+    // Added By Sadullah Nader
+    // Initializations missing and needed
+    m_framesRemaining = 0;
+    //
+  }
+  virtual StateReturnType update();
+  virtual StateReturnType onEnter();
+  virtual void onExit(StateExitType status);
 
-protected:
-	// snapshot interface
-	virtual void crc( Xfer *xfer );
-	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess();
+  protected:
+  // snapshot interface
+  virtual void crc(Xfer *xfer);
+  virtual void xfer(Xfer *xfer);
+  virtual void loadPostProcess();
 
-private:
-	UnsignedInt m_framesRemaining; //frames till next cash update
+  private:
+  UnsignedInt m_framesRemaining; // frames till next cash update
 };
 EMPTY_DTOR(HackInternetState)
 
 //-------------------------------------------------------------------------------------------------
-class PackingState :  public State
+class PackingState : public State
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(PackingState, "PackingState")
-public:
-	PackingState( StateMachine *machine ) : State( machine, "PackingState" )
-	{
-		//Added By Sadullah Nader
-		//Initializations inserted
-		m_framesRemaining = 0;
-		//
-	}
-	virtual StateReturnType update();
-	virtual StateReturnType onEnter();
-	virtual void onExit( StateExitType status );
-protected:
-	// snapshot interface
-	virtual void crc( Xfer *xfer );
-	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess();
+  MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(PackingState, "PackingState")
+  public:
+  PackingState(StateMachine *machine) : State(machine, "PackingState")
+  {
+    // Added By Sadullah Nader
+    // Initializations inserted
+    m_framesRemaining = 0;
+    //
+  }
+  virtual StateReturnType update();
+  virtual StateReturnType onEnter();
+  virtual void onExit(StateExitType status);
 
-private:
-	UnsignedInt m_framesRemaining; //frames till packing animation complete
+  protected:
+  // snapshot interface
+  virtual void crc(Xfer *xfer);
+  virtual void xfer(Xfer *xfer);
+  virtual void loadPostProcess();
+
+  private:
+  UnsignedInt m_framesRemaining; // frames till packing animation complete
 };
 EMPTY_DTOR(PackingState)
 
 //-------------------------------------------------------------------------------------------------
-class UnpackingState :  public State
+class UnpackingState : public State
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(UnpackingState, "UnpackingState")
-public:
-	UnpackingState( StateMachine *machine ) :State( machine, "UnpackingState" )
-	{
-		m_framesRemaining = 0;
-	}
-	virtual StateReturnType update();
-	virtual StateReturnType onEnter();
-	virtual void onExit( StateExitType status );
-protected:
-	// snapshot interface
-	virtual void crc( Xfer *xfer );
-	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess();
+  MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(UnpackingState, "UnpackingState")
+  public:
+  UnpackingState(StateMachine *machine) : State(machine, "UnpackingState") { m_framesRemaining = 0; }
+  virtual StateReturnType update();
+  virtual StateReturnType onEnter();
+  virtual void onExit(StateExitType status);
 
-private:
-	UnsignedInt m_framesRemaining; //frames till unpacking animation complete
+  protected:
+  // snapshot interface
+  virtual void crc(Xfer *xfer);
+  virtual void xfer(Xfer *xfer);
+  virtual void loadPostProcess();
+
+  private:
+  UnsignedInt m_framesRemaining; // frames till unpacking animation complete
 };
 EMPTY_DTOR(UnpackingState)
-
 
 //-------------------------------------------------------------------------------------------------
 enum
 {
-	UNPACKING = 1000,						///< Kneel down and set up internet satellite link
-	HACK_INTERNET,							///< Once set up, start hacking for cash.
-	PACKING,						///< Pack up before moving.
+  UNPACKING = 1000, ///< Kneel down and set up internet satellite link
+  HACK_INTERNET, ///< Once set up, start hacking for cash.
+  PACKING, ///< Pack up before moving.
 };
 
 //-------------------------------------------------------------------------------------------------
 class HackInternetAIUpdateModuleData : public AIUpdateModuleData
 {
-public:
-	UnsignedInt		m_unpackTime;
-	UnsignedInt		m_packTime;
-	UnsignedInt		m_cashUpdateDelay;
-	UnsignedInt		m_regularCashAmount;
-	UnsignedInt		m_veteranCashAmount;
-	UnsignedInt		m_eliteCashAmount;
-	UnsignedInt		m_heroicCashAmount;
-	UnsignedInt		m_xpPerCashUpdate;
-	Real					m_packUnpackVariationFactor;
+  public:
+  UnsignedInt m_unpackTime;
+  UnsignedInt m_packTime;
+  UnsignedInt m_cashUpdateDelay;
+  UnsignedInt m_regularCashAmount;
+  UnsignedInt m_veteranCashAmount;
+  UnsignedInt m_eliteCashAmount;
+  UnsignedInt m_heroicCashAmount;
+  UnsignedInt m_xpPerCashUpdate;
+  Real m_packUnpackVariationFactor;
 
-	HackInternetAIUpdateModuleData()
-	{
-		m_unpackTime = 0;
-		m_packTime = 0;
-		m_cashUpdateDelay = 0;
-		m_regularCashAmount = 0;
-		m_veteranCashAmount = 0;
-		m_eliteCashAmount = 0;
-		m_heroicCashAmount = 0;
-		m_xpPerCashUpdate = 0;
-		m_packUnpackVariationFactor = 0.0f;
-	}
+  HackInternetAIUpdateModuleData()
+  {
+    m_unpackTime = 0;
+    m_packTime = 0;
+    m_cashUpdateDelay = 0;
+    m_regularCashAmount = 0;
+    m_veteranCashAmount = 0;
+    m_eliteCashAmount = 0;
+    m_heroicCashAmount = 0;
+    m_xpPerCashUpdate = 0;
+    m_packUnpackVariationFactor = 0.0f;
+  }
 
-	static void buildFieldParse(MultiIniFieldParse& p)
-	{
+  static void buildFieldParse(MultiIniFieldParse &p)
+  {
     AIUpdateModuleData::buildFieldParse(p);
 
-		static const FieldParse dataFieldParse[] =
-		{
-			{ "UnpackTime",					INI::parseDurationUnsignedInt,	NULL, offsetof( HackInternetAIUpdateModuleData, m_unpackTime ) },
-			{ "PackTime",						INI::parseDurationUnsignedInt,	NULL, offsetof( HackInternetAIUpdateModuleData, m_packTime ) },
-			{ "PackUnpackVariationFactor", INI::parseReal,					NULL, offsetof( HackInternetAIUpdateModuleData, m_packUnpackVariationFactor ) },
-			{ "CashUpdateDelay",		INI::parseDurationUnsignedInt,	NULL, offsetof( HackInternetAIUpdateModuleData, m_cashUpdateDelay ) },
-			{ "RegularCashAmount",	INI::parseUnsignedInt,	NULL, offsetof( HackInternetAIUpdateModuleData, m_regularCashAmount ) },
-			{ "VeteranCashAmount",	INI::parseUnsignedInt,	NULL, offsetof( HackInternetAIUpdateModuleData, m_veteranCashAmount ) },
-			{ "EliteCashAmount",		INI::parseUnsignedInt,	NULL, offsetof( HackInternetAIUpdateModuleData, m_eliteCashAmount ) },
-			{ "HeroicCashAmount",		INI::parseUnsignedInt,	NULL, offsetof( HackInternetAIUpdateModuleData, m_heroicCashAmount ) },
-			{ "XpPerCashUpdate",		INI::parseUnsignedInt,	NULL, offsetof( HackInternetAIUpdateModuleData, m_xpPerCashUpdate ) },
-			{ 0, 0, 0, 0 }
-		};
+    static const FieldParse dataFieldParse[] = {
+      { "UnpackTime", INI::parseDurationUnsignedInt, NULL, offsetof(HackInternetAIUpdateModuleData, m_unpackTime) },
+      { "PackTime", INI::parseDurationUnsignedInt, NULL, offsetof(HackInternetAIUpdateModuleData, m_packTime) },
+      { "PackUnpackVariationFactor",
+        INI::parseReal,
+        NULL,
+        offsetof(HackInternetAIUpdateModuleData, m_packUnpackVariationFactor) },
+      { "CashUpdateDelay",
+        INI::parseDurationUnsignedInt,
+        NULL,
+        offsetof(HackInternetAIUpdateModuleData, m_cashUpdateDelay) },
+      { "RegularCashAmount", INI::parseUnsignedInt, NULL, offsetof(HackInternetAIUpdateModuleData, m_regularCashAmount) },
+      { "VeteranCashAmount", INI::parseUnsignedInt, NULL, offsetof(HackInternetAIUpdateModuleData, m_veteranCashAmount) },
+      { "EliteCashAmount", INI::parseUnsignedInt, NULL, offsetof(HackInternetAIUpdateModuleData, m_eliteCashAmount) },
+      { "HeroicCashAmount", INI::parseUnsignedInt, NULL, offsetof(HackInternetAIUpdateModuleData, m_heroicCashAmount) },
+      { "XpPerCashUpdate", INI::parseUnsignedInt, NULL, offsetof(HackInternetAIUpdateModuleData, m_xpPerCashUpdate) },
+      { 0, 0, 0, 0 }
+    };
     p.add(dataFieldParse);
-
-	}
+  }
 };
 
 class HackInternetAIInterface
 {
-public:
-	virtual Bool isHacking() const = 0;
-	virtual Bool isHackingPackingOrUnpacking() const = 0;
+  public:
+  virtual Bool isHacking() const = 0;
+  virtual Bool isHackingPackingOrUnpacking() const = 0;
 };
 
 //-------------------------------------------------------------------------------------------------
 class HackInternetAIUpdate : public AIUpdateInterface, public HackInternetAIInterface
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( HackInternetAIUpdate, "HackInternetAIUpdate"  )
-	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( HackInternetAIUpdate, HackInternetAIUpdateModuleData )
+  MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(HackInternetAIUpdate, "HackInternetAIUpdate")
+  MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA(HackInternetAIUpdate, HackInternetAIUpdateModuleData)
 
-private:
+  private:
+  public:
+  HackInternetAIUpdate(Thing *thing, const ModuleData *moduleData);
+  // virtual destructor prototype provided by memory pool declaration
 
-public:
-	HackInternetAIUpdate( Thing *thing, const ModuleData* moduleData );
-	// virtual destructor prototype provided by memory pool declaration
+  virtual void aiDoCommand(const AICommandParms *parms);
 
- 	virtual void aiDoCommand(const AICommandParms* parms);
+  Real getPackUnpackVariationFactor() const { return getHackInternetAIUpdateModuleData()->m_packUnpackVariationFactor; }
+  UnsignedInt getUnpackTime() const;
+  UnsignedInt getPackTime() const;
+  UnsignedInt getCashUpdateDelay() const;
+  UnsignedInt getRegularCashAmount() const { return getHackInternetAIUpdateModuleData()->m_regularCashAmount; }
+  UnsignedInt getVeteranCashAmount() const { return getHackInternetAIUpdateModuleData()->m_veteranCashAmount; }
+  UnsignedInt getEliteCashAmount() const { return getHackInternetAIUpdateModuleData()->m_eliteCashAmount; }
+  UnsignedInt getHeroicCashAmount() const { return getHackInternetAIUpdateModuleData()->m_heroicCashAmount; }
+  UnsignedInt getXpPerCashUpdate() const { return getHackInternetAIUpdateModuleData()->m_xpPerCashUpdate; }
 
-	Real getPackUnpackVariationFactor() const { return getHackInternetAIUpdateModuleData()->m_packUnpackVariationFactor; }
-	UnsignedInt getUnpackTime()					const;
-	UnsignedInt getPackTime()						const;
-	UnsignedInt getCashUpdateDelay()		const;
-	UnsignedInt getRegularCashAmount()	const { return getHackInternetAIUpdateModuleData()->m_regularCashAmount; }
-	UnsignedInt getVeteranCashAmount()	const { return getHackInternetAIUpdateModuleData()->m_veteranCashAmount; }
-	UnsignedInt getEliteCashAmount()		const { return getHackInternetAIUpdateModuleData()->m_eliteCashAmount; }
-	UnsignedInt getHeroicCashAmount()		const { return getHackInternetAIUpdateModuleData()->m_heroicCashAmount; }
-	UnsignedInt getXpPerCashUpdate()		const { return getHackInternetAIUpdateModuleData()->m_xpPerCashUpdate; }
+  void hackInternet();
+  virtual UpdateSleepTime update();
 
-	void hackInternet();
-	virtual UpdateSleepTime update();
+  virtual Bool isIdle() const;
 
-	virtual Bool isIdle() const;
+  virtual HackInternetAIInterface *getHackInternetAIInterface() { return this; }
+  virtual const HackInternetAIInterface *getHackInternetAIInterface() const { return this; }
 
-	virtual HackInternetAIInterface* getHackInternetAIInterface() { return this; }
-	virtual const HackInternetAIInterface* getHackInternetAIInterface() const { return this; }
+  virtual Bool isHacking() const;
+  virtual Bool isHackingPackingOrUnpacking() const;
 
-	virtual Bool isHacking() const;
-	virtual Bool isHackingPackingOrUnpacking() const;
+  protected:
+  virtual AIStateMachine *makeStateMachine();
 
-protected:
-
-	virtual AIStateMachine* makeStateMachine();
-
-	AICommandParmsStorage		m_pendingCommand;
-	Bool m_hasPendingCommand;
+  AICommandParmsStorage m_pendingCommand;
+  Bool m_hasPendingCommand;
 };
 
 #endif
-

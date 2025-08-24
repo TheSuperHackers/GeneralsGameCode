@@ -31,19 +31,21 @@
 unsigned ProfileCmdInterface::numResIf;
 ProfileCmdInterface::Factory *ProfileCmdInterface::resIf;
 
-void ProfileCmdInterface::AddResultFunction(ProfileResultInterface* (*func)(int, const char * const *),
-                                            const char *name, const char *arg)
+void ProfileCmdInterface::AddResultFunction(
+    ProfileResultInterface *(*func)(int, const char *const *),
+    const char *name,
+    const char *arg)
 {
   DFAIL_IF(!func) return;
   DFAIL_IF(!name) return;
-  for (unsigned k=0;k<numResIf;k++)
-    if (!strcmp(resIf[k].name,name))
+  for (unsigned k = 0; k < numResIf; k++)
+    if (!strcmp(resIf[k].name, name))
       return;
   ++numResIf;
-  resIf=(Factory *)ProfileReAllocMemory(resIf,numResIf*sizeof(Factory));
-  resIf[numResIf-1].func=func;
-  resIf[numResIf-1].name=name;
-  resIf[numResIf-1].arg=arg;
+  resIf = (Factory *)ProfileReAllocMemory(resIf, numResIf * sizeof(Factory));
+  resIf[numResIf - 1].func = func;
+  resIf[numResIf - 1].name = name;
+  resIf[numResIf - 1].arg = arg;
 }
 
 void ProfileCmdInterface::RunResultFunctions(void)
@@ -53,20 +55,24 @@ void ProfileCmdInterface::RunResultFunctions(void)
     Debug::Command("profile.result file_csv");
 
   // process result interfaces
-  for (unsigned k=0;k<numResFunc;k++)
+  for (unsigned k = 0; k < numResFunc; k++)
   {
     resFunc[k]->WriteResults();
     resFunc[k]->Delete();
   }
 }
 
-bool ProfileCmdInterface::Execute(class Debug& dbg, const char *cmd, CommandMode cmdmode,
-                                  unsigned argn, const char * const * argv)
+bool ProfileCmdInterface::Execute(
+    class Debug &dbg,
+    const char *cmd,
+    CommandMode cmdmode,
+    unsigned argn,
+    const char *const *argv)
 {
   // just for convenience...
-  bool normalMode=cmdmode==CommandMode::Normal;
+  bool normalMode = cmdmode == CommandMode::Normal;
 
-  if (!strcmp(cmd,"help"))
+  if (!strcmp(cmd, "help"))
   {
     if (!normalMode)
       return true;
@@ -77,7 +83,7 @@ bool ProfileCmdInterface::Execute(class Debug& dbg, const char *cmd, CommandMode
              "  result, caller, clear, add, view\n";
       return true;
     }
-    else if (!strcmp(argv[0],"result"))
+    else if (!strcmp(argv[0], "result"))
     {
       dbg << "result\n\n"
              "Shows the list of available result functions and their\n"
@@ -87,20 +93,20 @@ bool ProfileCmdInterface::Execute(class Debug& dbg, const char *cmd, CommandMode
              "Adds the given result function to be executed on program\n"
              "exit.\n";
     }
-    else if (!strcmp(argv[0],"caller"))
+    else if (!strcmp(argv[0], "caller"))
     {
       dbg << "caller [ (+|-) ]\n\n"
              "Enables/disables recording of caller information while\n"
              "performing function level profiling. Turned off by default\n"
              "since CPU hit is non-zero.\n";
     }
-    else if (!strcmp(argv[0],"clear"))
+    else if (!strcmp(argv[0], "clear"))
     {
       dbg << "clear\n\n"
              "Clears the profile inclusion/exclusion list.\n";
       return true;
     }
-    else if (!strcmp(argv[0],"add"))
+    else if (!strcmp(argv[0], "add"))
     {
       dbg << "add (+|-) <pattern>\n"
              "\n"
@@ -111,7 +117,7 @@ bool ProfileCmdInterface::Execute(class Debug& dbg, const char *cmd, CommandMode
              "- for inactive). The final state is always the last match.";
       return true;
     }
-    else if (!strcmp(argv[0],"view"))
+    else if (!strcmp(argv[0], "view"))
     {
       dbg << "view\n\n"
              "Shows the active pattern list.\n";
@@ -121,32 +127,32 @@ bool ProfileCmdInterface::Execute(class Debug& dbg, const char *cmd, CommandMode
   }
 
   // command: result
-  if (!strcmp(cmd,"result"))
+  if (!strcmp(cmd, "result"))
   {
     if (!argn)
     {
-      unsigned k=0;
-      for (;k<numResIf;k++)
+      unsigned k = 0;
+      for (; k < numResIf; k++)
       {
         dbg << resIf[k].name;
-        if ((resIf[k].arg&&*resIf[k].arg)||!normalMode)
+        if ((resIf[k].arg && *resIf[k].arg) || !normalMode)
           dbg << "\n  " << resIf[k].arg;
         dbg << "\n";
       }
     }
     else
     {
-      unsigned k=0;
-      for (;k<numResIf;k++)
-        if (!strcmp(argv[0],resIf[k].name))
+      unsigned k = 0;
+      for (; k < numResIf; k++)
+        if (!strcmp(argv[0], resIf[k].name))
           break;
-      if (k==numResIf)
+      if (k == numResIf)
       {
         dbg << "Unknown result function\n";
         return true;
       }
 
-      ProfileResultInterface *newIf=resIf[k].func(argn-1,argv+1);
+      ProfileResultInterface *newIf = resIf[k].func(argn - 1, argv + 1);
       if (!newIf)
       {
         dbg << "Could not add result function\n";
@@ -154,8 +160,8 @@ bool ProfileCmdInterface::Execute(class Debug& dbg, const char *cmd, CommandMode
       }
 
       ++numResFunc;
-      resFunc=(ProfileResultInterface **)ProfileReAllocMemory(resFunc,numResFunc*sizeof(ProfileResultInterface *));
-      resFunc[numResFunc-1]=newIf;
+      resFunc = (ProfileResultInterface **)ProfileReAllocMemory(resFunc, numResFunc * sizeof(ProfileResultInterface *));
+      resFunc[numResFunc - 1] = newIf;
       if (normalMode)
         dbg << "Result function " << argv[0] << " added\n";
     }
@@ -164,90 +170,90 @@ bool ProfileCmdInterface::Execute(class Debug& dbg, const char *cmd, CommandMode
   }
 
   // command: caller
-  if (!strcmp(cmd,"caller"))
+  if (!strcmp(cmd, "caller"))
   {
 #ifdef HAS_PROFILE
     if (argn)
     {
-      if (*argv[0]=='+')
-        ProfileFuncLevelTracer::recordCaller=true;
-      if (*argv[0]=='-')
-        ProfileFuncLevelTracer::recordCaller=false;
+      if (*argv[0] == '+')
+        ProfileFuncLevelTracer::recordCaller = true;
+      if (*argv[0] == '-')
+        ProfileFuncLevelTracer::recordCaller = false;
     }
     if (normalMode)
-      dbg << "Record caller: " << (ProfileFuncLevelTracer::recordCaller?"on":"off");
+      dbg << "Record caller: " << (ProfileFuncLevelTracer::recordCaller ? "on" : "off");
     else
-      dbg << (ProfileFuncLevelTracer::recordCaller?"1":"0");
+      dbg << (ProfileFuncLevelTracer::recordCaller ? "1" : "0");
 #endif
 
     return true;
   }
 
   // command: clear
-  if (!strcmp(cmd,"clear"))
+  if (!strcmp(cmd, "clear"))
   {
     // remove some (or all) pattern
-    const char *pattern=argn<1?"*":argv[0];
-    for (Profile::PatternListEntry **entryPtr=&Profile::firstPatternEntry;*entryPtr;)
+    const char *pattern = argn < 1 ? "*" : argv[0];
+    for (Profile::PatternListEntry **entryPtr = &Profile::firstPatternEntry; *entryPtr;)
     {
-      if (Profile::SimpleMatch((*entryPtr)->pattern,pattern))
+      if (Profile::SimpleMatch((*entryPtr)->pattern, pattern))
       {
         // remove this entry
-        Profile::PatternListEntry *cur=*entryPtr;
-        *entryPtr=cur->next;
+        Profile::PatternListEntry *cur = *entryPtr;
+        *entryPtr = cur->next;
         ProfileFreeMemory(cur->pattern);
         ProfileFreeMemory(cur);
       }
       else
-        entryPtr=&((*entryPtr)->next);
+        entryPtr = &((*entryPtr)->next);
     }
 
     // must fixup lastPatternEntry now
     if (Profile::firstPatternEntry)
     {
-      Profile::PatternListEntry *cur=Profile::firstPatternEntry;
-      for (;cur->next;cur=cur->next);
-      Profile::lastPatternEntry=cur;
+      Profile::PatternListEntry *cur = Profile::firstPatternEntry;
+      for (; cur->next; cur = cur->next)
+        ;
+      Profile::lastPatternEntry = cur;
     }
     else
-      Profile::lastPatternEntry=NULL;
+      Profile::lastPatternEntry = NULL;
     return true;
   }
 
   // command: add
-  if (!strcmp(cmd,"add"))
+  if (!strcmp(cmd, "add"))
   {
     // add a pattern
-    if (argn<2)
+    if (argn < 2)
       dbg << "Please specify mode and pattern";
     else
     {
       // alloc new pattern entry
-      Profile::PatternListEntry *cur=(Profile::PatternListEntry *)
-          ProfileAllocMemory(sizeof(Profile::PatternListEntry));
+      Profile::PatternListEntry *cur = (Profile::PatternListEntry *)ProfileAllocMemory(sizeof(Profile::PatternListEntry));
 
       // init
-      cur->next=NULL;
-      cur->isActive=*argv[0]=='+';
-      cur->pattern=(char *)ProfileAllocMemory(strlen(argv[1])+1);
-      strcpy(cur->pattern,argv[1]);
+      cur->next = NULL;
+      cur->isActive = *argv[0] == '+';
+      cur->pattern = (char *)ProfileAllocMemory(strlen(argv[1]) + 1);
+      strcpy(cur->pattern, argv[1]);
 
       // add to list
       if (Profile::lastPatternEntry)
-        Profile::lastPatternEntry->next=cur;
+        Profile::lastPatternEntry->next = cur;
       else
-        Profile::firstPatternEntry=cur;
-      Profile::lastPatternEntry=cur;
+        Profile::firstPatternEntry = cur;
+      Profile::lastPatternEntry = cur;
     }
     return true;
   }
 
   // command: view
-  if (!strcmp(cmd,"view"))
+  if (!strcmp(cmd, "view"))
   {
     // show list of defined patterns
-    for (Profile::PatternListEntry *cur=Profile::firstPatternEntry;cur;cur=cur->next)
-      dbg << (cur->isActive?"+ ":"- ") << cur->pattern << "\n";
+    for (Profile::PatternListEntry *cur = Profile::firstPatternEntry; cur; cur = cur->next)
+      dbg << (cur->isActive ? "+ " : "- ") << cur->pattern << "\n";
     return true;
   }
 

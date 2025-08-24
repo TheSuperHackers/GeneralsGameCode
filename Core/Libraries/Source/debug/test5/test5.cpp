@@ -38,6 +38,6 @@ void main(void)
   // turn on all logs
   Debug::Command("add l + *");
 
-  for (int k=0;k<16;k++)
-    DLOG("Testing: " << Debug::Format("0x%04x (%c)",k,'A'+k) << "\n");
+  for (int k = 0; k < 16; k++)
+    DLOG("Testing: " << Debug::Format("0x%04x (%c)", k, 'A' + k) << "\n");
 }

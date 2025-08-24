@@ -30,35 +30,36 @@
 
 class TexturePathDialogClass : public CDialog
 {
-// Construction
-public:
-	TexturePathDialogClass(CWnd* pParent = NULL);   // standard constructor
+  // Construction
+  public:
+  TexturePathDialogClass(CWnd *pParent = NULL); // standard constructor
 
-// Dialog Data
-	//{{AFX_DATA(TexturePathDialogClass)
-	enum { IDD = IDD_TEXTURE_PATHS };
-		// NOTE: the ClassWizard will add data members here
-	//}}AFX_DATA
+  // Dialog Data
+  //{{AFX_DATA(TexturePathDialogClass)
+  enum
+  {
+    IDD = IDD_TEXTURE_PATHS
+  };
+  // NOTE: the ClassWizard will add data members here
+  //}}AFX_DATA
 
+  // Overrides
+  // ClassWizard generated virtual function overrides
+  //{{AFX_VIRTUAL(TexturePathDialogClass)
+  protected:
+  virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
+  //}}AFX_VIRTUAL
 
-// Overrides
-	// ClassWizard generated virtual function overrides
-	//{{AFX_VIRTUAL(TexturePathDialogClass)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
-	//}}AFX_VIRTUAL
-
-// Implementation
-protected:
-
-	// Generated message map functions
-	//{{AFX_MSG(TexturePathDialogClass)
-	virtual BOOL OnInitDialog();
-	virtual void OnOK();
-	afx_msg void OnBrowse1();
-	afx_msg void OnBrowse2();
-	//}}AFX_MSG
-	DECLARE_MESSAGE_MAP()
+  // Implementation
+  protected:
+  // Generated message map functions
+  //{{AFX_MSG(TexturePathDialogClass)
+  virtual BOOL OnInitDialog();
+  virtual void OnOK();
+  afx_msg void OnBrowse1();
+  afx_msg void OnBrowse2();
+  //}}AFX_MSG
+  DECLARE_MESSAGE_MAP()
 };
 
 //{{AFX_INSERT_LOCATION}}

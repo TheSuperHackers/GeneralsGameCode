@@ -20,297 +20,276 @@
 // list.cpp
 //
 
-
 #include "StdAfx.h"
 #include <assert.h>
 #include "list.h"
 
-ListNode::ListNode	( void )
+ListNode::ListNode(void)
 {
-	prev = next = this;
-	pri = NORMAL_PRIORITY;
-	item = NULL;
+  prev = next = this;
+  pri = NORMAL_PRIORITY;
+  item = NULL;
 }
 
-void				ListNode::Append			( ListNode *new_node )
+void ListNode::Append(ListNode *new_node)
 {
-	assert ( ! new_node->InList());	/* node is already in a list or was not initialized*/
+  assert(!new_node->InList()); /* node is already in a list or was not initialized*/
 
-	new_node->prev = this;
-	new_node->next = next;
-	next = new_node;
-	new_node->next->prev = new_node;
-
+  new_node->prev = this;
+  new_node->next = next;
+  next = new_node;
+  new_node->next->prev = new_node;
 }
 
-void				ListNode::Prepend			( ListNode *new_node )
+void ListNode::Prepend(ListNode *new_node)
 {
+  assert(!new_node->InList()); /* node is already in a list or was not initialized*/
 
-	assert ( !new_node->InList() );	/* node is already in a list or was not initialized*/
-
-	new_node->prev = prev;
-	new_node->next = this;
-	prev = new_node;
-	new_node->prev->next = new_node;
-
+  new_node->prev = prev;
+  new_node->next = this;
+  prev = new_node;
+  new_node->prev->next = new_node;
 }
-void				ListNode::Link ( ListNode *node)
+void ListNode::Link(ListNode *node)
 {
-	next = node;
-	node->prev = next;
+  next = node;
+  node->prev = next;
 }
 
-void				ListNode::Remove			( void )
+void ListNode::Remove(void)
 {
-	prev->next = next;
-	next->prev = prev;
-	prev = next = this;		/* so we know that the node is not in a list */
+  prev->next = next;
+  next->prev = prev;
+  prev = next = this; /* so we know that the node is not in a list */
 }
 
-ListNode*		ListNode::Next				( void )
+ListNode *ListNode::Next(void)
 {
-	if ( next->IsHead ( ) )
-	{
-		return NULL;
-	}
+  if (next->IsHead())
+  {
+    return NULL;
+  }
 
-	return next;
+  return next;
 }
 
-ListNode*		ListNode::Prev				( void )
+ListNode *ListNode::Prev(void)
 {
-	if ( prev->IsHead () )
-	{
-		return NULL;
-	}
+  if (prev->IsHead())
+  {
+    return NULL;
+  }
 
-	return prev;
+  return prev;
 }
 
-ListNode*		ListNode::NextLoop		( void )
+ListNode *ListNode::NextLoop(void)
 {
-	ListNode *next_node = next;
+  ListNode *next_node = next;
 
-	if ( next_node->IsHead ( ))
-	{
-		/* skip head node */
-		next_node = next_node->next;
-		if ( next_node->IsHead ( ))
-		{
-			return NULL;	/* it is an empty list */
-		}
-	}
+  if (next_node->IsHead())
+  {
+    /* skip head node */
+    next_node = next_node->next;
+    if (next_node->IsHead())
+    {
+      return NULL; /* it is an empty list */
+    }
+  }
 
-	return next_node;
-
+  return next_node;
 }
 
-ListNode*		ListNode::PrevLoop		( void )
+ListNode *ListNode::PrevLoop(void)
 {
-	ListNode *prev_node = prev;
+  ListNode *prev_node = prev;
 
-	if ( prev_node->IsHead ( ))
-	{
-		/* skip head node */
-		prev_node = prev_node->prev;
-		if ( prev_node->IsHead ( ))
-		{
-			return NULL;	/* it is an empty list */
-		}
-	}
+  if (prev_node->IsHead())
+  {
+    /* skip head node */
+    prev_node = prev_node->prev;
+    if (prev_node->IsHead())
+    {
+      return NULL; /* it is an empty list */
+    }
+  }
 
-	return prev_node;
+  return prev_node;
 }
 
-void*				ListNode::Item				( void )
+void *ListNode::Item(void)
 {
+  assert(!IsHead());
 
-	assert ( !IsHead () );
-
-	return item;
-
+  return item;
 }
 
-void				ListNode::SetItem			( void *new_item )
+void ListNode::SetItem(void *new_item)
 {
-	assert ( !IsHead () );
-	item = new_item	;
+  assert(!IsHead());
+  item = new_item;
 }
 
-int					ListNode::InList			( void )
+int ListNode::InList(void)
 {
-
-	return prev != this;
+  return prev != this;
 }
 
-int					ListNode::IsHead			( void )
+int ListNode::IsHead(void)
 {
-	return item == &this->item;
+  return item == &this->item;
 }
 
-int					ListNode::Priority		( void )
+int ListNode::Priority(void)
 {
-	return pri;
-
+  return pri;
 }
-void				ListNode::SetPriority ( int new_pri )
+void ListNode::SetPriority(int new_pri)
 {
-
-	assert ( new_pri <= HIGHEST_PRIORITY );
-	assert ( new_pri >= LOWEST_PRIORITY );
-	pri = new_pri;
-
+  assert(new_pri <= HIGHEST_PRIORITY);
+  assert(new_pri >= LOWEST_PRIORITY);
+  pri = new_pri;
 }
 
-List::List ( void )
+List::List(void)
 {
-
-	SetItem ( &this->item );
-
+  SetItem(&this->item);
 }
 
-void				List::AddToTail ( ListNode *node )
+void List::AddToTail(ListNode *node)
 {
-	assert ( IsHead ());
-	Prepend ( node );
+  assert(IsHead());
+  Prepend(node);
 }
 
-void				List::AddToHead ( ListNode *node )
+void List::AddToHead(ListNode *node)
 {
-	assert ( IsHead ());
-	Append ( node );
+  assert(IsHead());
+  Append(node);
 }
 
-void				List::Add				( ListNode *new_node )
+void List::Add(ListNode *new_node)
 {
-	ListNode*	node;
-	int		pri;
+  ListNode *node;
+  int pri;
 
-	assert ( IsHead ());
-	assert ( !new_node->InList ());
+  assert(IsHead());
+  assert(!new_node->InList());
 
-	pri = new_node->Priority();
-	node = FirstNode ( );
+  pri = new_node->Priority();
+  node = FirstNode();
 
-	while( node )
-	{
-		if (node->Priority() <= pri )
-		{
-			node->Prepend ( new_node );
-			return;
-		}
+  while (node)
+  {
+    if (node->Priority() <= pri)
+    {
+      node->Prepend(new_node);
+      return;
+    }
 
-		node = node->Next ();
-	}
+    node = node->Next();
+  }
 
-	Prepend ( new_node );
-
+  Prepend(new_node);
 }
 
-void				List::Merge			( List *list )
+void List::Merge(List *list)
 {
-	ListNode	*first,
-						*last,
-						*node;
+  ListNode *first, *last, *node;
 
-	assert ( IsHead ());
+  assert(IsHead());
 
-	first = list->Next();
-	last = list->Prev();
+  first = list->Next();
+  last = list->Prev();
 
-	if ( !first || !last )
-	{
-		return;
-	}
+  if (!first || !last)
+  {
+    return;
+  }
 
-	node = Prev();
-	node->Link ( first );
-	last->Link ( this );
+  node = Prev();
+  node->Link(first);
+  last->Link(this);
 
-	list->Empty ();
-
+  list->Empty();
 }
 
-int					List::NumItems  ( void )
+int List::NumItems(void)
 {
-	int count = 0;
-	ListNode *node;
+  int count = 0;
+  ListNode *node;
 
-	assert ( IsHead ());
-	node = FirstNode();
+  assert(IsHead());
+  node = FirstNode();
 
-	while ( node )
-	{
-		count++;
-		node = node->Next ();
-	}
+  while (node)
+  {
+    count++;
+    node = node->Next();
+  }
 
-	return count;
+  return count;
 }
 
-void*				List::Item			( int list_index )
+void *List::Item(int list_index)
 {
-	ListNode *node;
+  ListNode *node;
 
-	assert ( IsHead ());
-	node = FirstNode();
+  assert(IsHead());
+  node = FirstNode();
 
-	while (list_index && node )
-	{
-		list_index--;
-		node = node->Next ();
-	}
-	if ( node )
-	{
-		return node->Item();
-	}
+  while (list_index && node)
+  {
+    list_index--;
+    node = node->Next();
+  }
+  if (node)
+  {
+    return node->Item();
+  }
 
-	return NULL;
+  return NULL;
 }
 
-ListNode*		List::FirstNode ( void )
+ListNode *List::FirstNode(void)
 {
-	assert ( IsHead ());
-	return Next ();
-
+  assert(IsHead());
+  return Next();
 }
 
-ListNode*		List::LastNode ( void )
+ListNode *List::LastNode(void)
 {
-	assert ( IsHead ());
-	return Prev ();
-
+  assert(IsHead());
+  return Prev();
 }
 
-int					List::IsEmpty		( void )
+int List::IsEmpty(void)
 {
-	assert ( IsHead ());
+  assert(IsHead());
 
-	return !InList();
-
+  return !InList();
 }
 
-void				List::Empty			( void )
+void List::Empty(void)
 {
-	assert ( IsHead ());
-	Remove ();
+  assert(IsHead());
+  Remove();
 }
 
-
-ListNode*		List::Find			( void *item )
+ListNode *List::Find(void *item)
 {
-	ListNode *node;
+  ListNode *node;
 
-	node = FirstNode ();
+  node = FirstNode();
 
-	while ( node )
-	{
-		if ( node->Item () == item )
-		{
-			return node;
-		}
+  while (node)
+  {
+    if (node->Item() == item)
+    {
+      return node;
+    }
 
-		node = node->Next ();
-	}
-	return NULL;
+    node = node->Next();
+  }
+  return NULL;
 }

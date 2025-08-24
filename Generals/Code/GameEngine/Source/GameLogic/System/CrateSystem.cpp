@@ -27,9 +27,9 @@
 // Desc:   System responsible for Crates as code objects - ini, new/delete etc
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 
-#define DEFINE_VETERANCY_NAMES				// for TheVeterancyNames[]
+#define DEFINE_VETERANCY_NAMES // for TheVeterancyNames[]
 
 #include "GameLogic/CrateSystem.h"
 #include "Common/BitFlagsIO.h"
@@ -38,192 +38,196 @@ CrateSystem *TheCrateSystem = NULL;
 
 CrateSystem::CrateSystem()
 {
-	m_crateTemplateVector.clear();
+  m_crateTemplateVector.clear();
 }
 
 CrateSystem::~CrateSystem()
 {
-	Int count = m_crateTemplateVector.size();
-	for( Int templateIndex = 0; templateIndex < count; templateIndex ++ )
-	{
-		CrateTemplate *currentTemplate = m_crateTemplateVector[templateIndex];
-		if( currentTemplate )
-		{
-			deleteInstance(currentTemplate);
-		}
-	}
-	m_crateTemplateVector.clear();
+  Int count = m_crateTemplateVector.size();
+  for (Int templateIndex = 0; templateIndex < count; templateIndex++)
+  {
+    CrateTemplate *currentTemplate = m_crateTemplateVector[templateIndex];
+    if (currentTemplate)
+    {
+      deleteInstance(currentTemplate);
+    }
+  }
+  m_crateTemplateVector.clear();
 }
 
-void CrateSystem::init( void )
+void CrateSystem::init(void)
 {
-	reset();
+  reset();
 }
 
-void CrateSystem::reset( void )
+void CrateSystem::reset(void)
 {
-	// clean up overrides
-	std::vector<CrateTemplate *>::iterator it;
-	for( it = m_crateTemplateVector.begin(); it != m_crateTemplateVector.end(); )
-	{
-		CrateTemplate *currentTemplate = *it;
-		if( currentTemplate )
-		{
-			Overridable *tempCrateTemplate = currentTemplate->deleteOverrides();
-			if (!tempCrateTemplate)
-			{
-				// base dude was an override - kill it from the vector
-				it = m_crateTemplateVector.erase(it);
-			}
-			else
-			{
-				++it;
-			}
-		}
-		else
-		{
-			it = m_crateTemplateVector.erase(it);
-		}
-	}
+  // clean up overrides
+  std::vector<CrateTemplate *>::iterator it;
+  for (it = m_crateTemplateVector.begin(); it != m_crateTemplateVector.end();)
+  {
+    CrateTemplate *currentTemplate = *it;
+    if (currentTemplate)
+    {
+      Overridable *tempCrateTemplate = currentTemplate->deleteOverrides();
+      if (!tempCrateTemplate)
+      {
+        // base dude was an override - kill it from the vector
+        it = m_crateTemplateVector.erase(it);
+      }
+      else
+      {
+        ++it;
+      }
+    }
+    else
+    {
+      it = m_crateTemplateVector.erase(it);
+    }
+  }
 }
 
-void CrateSystem::parseCrateTemplateDefinition(INI* ini)
+void CrateSystem::parseCrateTemplateDefinition(INI *ini)
 {
-	AsciiString name;
+  AsciiString name;
 
-	// read the crateTemplate name
-	const char* c = ini->getNextToken();
-	name.set(c);
+  // read the crateTemplate name
+  const char *c = ini->getNextToken();
+  name.set(c);
 
-	CrateTemplate *crateTemplate = TheCrateSystem->friend_findCrateTemplate(name);
-	if (crateTemplate == NULL) {
-		crateTemplate = TheCrateSystem->newCrateTemplate(name);
+  CrateTemplate *crateTemplate = TheCrateSystem->friend_findCrateTemplate(name);
+  if (crateTemplate == NULL)
+  {
+    crateTemplate = TheCrateSystem->newCrateTemplate(name);
 
-		if (ini->getLoadType() == INI_LOAD_CREATE_OVERRIDES) {
-			crateTemplate->markAsOverride();
-		}
-	} else if( ini->getLoadType() != INI_LOAD_CREATE_OVERRIDES ) {
-			DEBUG_CRASH(( "[LINE: %d in '%s'] Duplicate crate %s found!", ini->getLineNum(), ini->getFilename().str(), name.str() ));
-	} else {
-		crateTemplate = TheCrateSystem->newCrateTemplateOverride(crateTemplate);
-	}
+    if (ini->getLoadType() == INI_LOAD_CREATE_OVERRIDES)
+    {
+      crateTemplate->markAsOverride();
+    }
+  }
+  else if (ini->getLoadType() != INI_LOAD_CREATE_OVERRIDES)
+  {
+    DEBUG_CRASH(("[LINE: %d in '%s'] Duplicate crate %s found!", ini->getLineNum(), ini->getFilename().str(), name.str()));
+  }
+  else
+  {
+    crateTemplate = TheCrateSystem->newCrateTemplateOverride(crateTemplate);
+  }
 
-	// parse the ini weapon definition
-	ini->initFromINI(crateTemplate, crateTemplate->getFieldParse());
+  // parse the ini weapon definition
+  ini->initFromINI(crateTemplate, crateTemplate->getFieldParse());
 }
 
-CrateTemplate *CrateSystem::newCrateTemplate( AsciiString name )
+CrateTemplate *CrateSystem::newCrateTemplate(AsciiString name)
 {
-	// sanity
-	if(name.isEmpty())
-		return NULL;
+  // sanity
+  if (name.isEmpty())
+    return NULL;
 
-	// allocate a new weapon
-	CrateTemplate *ct = newInstance(CrateTemplate);
+  // allocate a new weapon
+  CrateTemplate *ct = newInstance(CrateTemplate);
 
-	// if the default template is present, get it and copy over any data to the new template
-	const CrateTemplate *defaultCT = findCrateTemplate(AsciiString("DefaultCrate"));
-	if(defaultCT)
-	{
-		*ct = *defaultCT;
-	}
+  // if the default template is present, get it and copy over any data to the new template
+  const CrateTemplate *defaultCT = findCrateTemplate(AsciiString("DefaultCrate"));
+  if (defaultCT)
+  {
+    *ct = *defaultCT;
+  }
 
-	ct->setName( name );
-	m_crateTemplateVector.push_back(ct);
+  ct->setName(name);
+  m_crateTemplateVector.push_back(ct);
 
-	return ct;
+  return ct;
 }
 
-CrateTemplate *CrateSystem::newCrateTemplateOverride( CrateTemplate *crateToOverride )
+CrateTemplate *CrateSystem::newCrateTemplateOverride(CrateTemplate *crateToOverride)
 {
-	if (!crateToOverride) {
-		return NULL;
-	}
+  if (!crateToOverride)
+  {
+    return NULL;
+  }
 
-	CrateTemplate *newOverride = newInstance(CrateTemplate);
-	*newOverride = *crateToOverride;
+  CrateTemplate *newOverride = newInstance(CrateTemplate);
+  *newOverride = *crateToOverride;
 
-	newOverride->markAsOverride();
+  newOverride->markAsOverride();
 
-	crateToOverride->setNextOverride(newOverride);
-	return newOverride;
+  crateToOverride->setNextOverride(newOverride);
+  return newOverride;
 }
 
 const CrateTemplate *CrateSystem::findCrateTemplate(AsciiString name) const
 {
-	// search weapon list for name
-	for (size_t i = 0; i < m_crateTemplateVector.size(); i++)
-		if(m_crateTemplateVector[i]->getName() == name) {
-			CrateTemplateOverride overridable(m_crateTemplateVector[i]);
-			return overridable;
-		}
+  // search weapon list for name
+  for (size_t i = 0; i < m_crateTemplateVector.size(); i++)
+    if (m_crateTemplateVector[i]->getName() == name)
+    {
+      CrateTemplateOverride overridable(m_crateTemplateVector[i]);
+      return overridable;
+    }
 
-
-	return NULL;
+  return NULL;
 }
 
 CrateTemplate *CrateSystem::friend_findCrateTemplate(AsciiString name)
 {
-	// search weapon list for name
-	for (size_t i = 0; i < m_crateTemplateVector.size(); i++)
-		if(m_crateTemplateVector[i]->getName() == name) {
-			CrateTemplateOverride overridable(m_crateTemplateVector[i]);
-			return const_cast<CrateTemplate*>((const CrateTemplate *)overridable);
-		}
-	return NULL;
+  // search weapon list for name
+  for (size_t i = 0; i < m_crateTemplateVector.size(); i++)
+    if (m_crateTemplateVector[i]->getName() == name)
+    {
+      CrateTemplateOverride overridable(m_crateTemplateVector[i]);
+      return const_cast<CrateTemplate *>((const CrateTemplate *)overridable);
+    }
+  return NULL;
 }
 
-
-
 //--------------------------------------------------------------------------------
 //--------------------------------------------------------------------------------
 //--------------------------------------------------------------------------------
 //--------------------------------------------------------------------------------
 //--------------------------------------------------------------------------------
-const FieldParse CrateTemplate::TheCrateTemplateFieldParseTable[] =
-{
-	{ "CreationChance",		INI::parseReal,													NULL,									offsetof( CrateTemplate, m_creationChance ) },
-	{ "VeterancyLevel",		INI::parseIndexList,										TheVeterancyNames,		offsetof( CrateTemplate, m_veterancyLevel ) },
-	{ "KilledByType",			KindOfMaskType::parseFromINI,												NULL,									offsetof( CrateTemplate, m_killedByTypeKindof) },
-	{ "CrateObject",			CrateTemplate::parseCrateCreationEntry,	NULL,									NULL },
-	{ "KillerScience",		INI::parseScience,											NULL,									offsetof( CrateTemplate, m_killerScience) },
-	{ "OwnedByMaker",			INI::parseBool,													NULL,									offsetof( CrateTemplate, m_isOwnedByMaker) },
-	{ NULL,								NULL,																		NULL,									NULL },		// keep this last!
+const FieldParse CrateTemplate::TheCrateTemplateFieldParseTable[] = {
+  { "CreationChance", INI::parseReal, NULL, offsetof(CrateTemplate, m_creationChance) },
+  { "VeterancyLevel", INI::parseIndexList, TheVeterancyNames, offsetof(CrateTemplate, m_veterancyLevel) },
+  { "KilledByType", KindOfMaskType::parseFromINI, NULL, offsetof(CrateTemplate, m_killedByTypeKindof) },
+  { "CrateObject", CrateTemplate::parseCrateCreationEntry, NULL, NULL },
+  { "KillerScience", INI::parseScience, NULL, offsetof(CrateTemplate, m_killerScience) },
+  { "OwnedByMaker", INI::parseBool, NULL, offsetof(CrateTemplate, m_isOwnedByMaker) },
+  { NULL, NULL, NULL, NULL }, // keep this last!
 };
 
 CrateTemplate::CrateTemplate()
 {
-	m_name = "";
+  m_name = "";
 
-	m_creationChance = 0;
-	CLEAR_KINDOFMASK(m_killedByTypeKindof);
-	m_veterancyLevel = LEVEL_INVALID;
-	m_killerScience = SCIENCE_INVALID;
-	m_possibleCrates.clear();
-	m_isOwnedByMaker = FALSE;
+  m_creationChance = 0;
+  CLEAR_KINDOFMASK(m_killedByTypeKindof);
+  m_veterancyLevel = LEVEL_INVALID;
+  m_killerScience = SCIENCE_INVALID;
+  m_possibleCrates.clear();
+  m_isOwnedByMaker = FALSE;
 }
 
 CrateTemplate::~CrateTemplate()
 {
-	m_possibleCrates.clear();
+  m_possibleCrates.clear();
 }
 
-void CrateTemplate::parseCrateCreationEntry( INI* ini, void *instance, void *, const void*  )
+void CrateTemplate::parseCrateCreationEntry(INI *ini, void *instance, void *, const void *)
 {
-	CrateTemplate *self = (CrateTemplate *)instance;
+  CrateTemplate *self = (CrateTemplate *)instance;
 
-	const char *token = ini->getNextToken();
-	AsciiString crateName = token;
+  const char *token = ini->getNextToken();
+  AsciiString crateName = token;
 
-	token = ini->getNextToken();
-	Real crateValue;
-	if (sscanf( token, "%f", &crateValue ) != 1)
-		throw INI_INVALID_DATA;
+  token = ini->getNextToken();
+  Real crateValue;
+  if (sscanf(token, "%f", &crateValue) != 1)
+    throw INI_INVALID_DATA;
 
-	crateCreationEntry newEntry;
-	newEntry.crateName = crateName;
-	newEntry.crateChance = crateValue;
+  crateCreationEntry newEntry;
+  newEntry.crateName = crateName;
+  newEntry.crateChance = crateValue;
 
-	self->m_possibleCrates.push_back( newEntry );
+  self->m_possibleCrates.push_back(newEntry);
 }
-

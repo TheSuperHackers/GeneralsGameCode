@@ -27,7 +27,7 @@
 // High level profiling (internal header)
 //////////////////////////////////////////////////////////////////////////////
 #ifdef _MSC_VER
-#  pragma once
+#pragma once
 #endif
 #ifndef INTERNAL_HIGHLEVEL_H // Include guard
 #define INTERNAL_HIGHLEVEL_H
@@ -35,10 +35,10 @@
 /// an internal high level profile ID
 class ProfileId
 {
-  ProfileId(const ProfileId&);
-  ProfileId& operator=(const ProfileId&);
+  ProfileId(const ProfileId &);
+  ProfileId &operator=(const ProfileId &);
 
-public:
+  public:
   /**
     Creates a new high level profile ID.
 
@@ -76,14 +76,14 @@ public:
 
     \return profile ID unit name
   */
-  const char *GetUnit(void) const { return m_unit?m_unit:""; }
+  const char *GetUnit(void) const { return m_unit ? m_unit : ""; }
 
   /**
     Retrieves description of the profile ID.
 
     \return profile description
   */
-  const char *GetDescr(void) const { return m_descr?m_descr:""; }
+  const char *GetDescr(void) const { return m_descr ? m_descr : ""; }
 
   /**
     Increments the profile value.
@@ -106,8 +106,8 @@ public:
   */
   double GetCurrentValue(void)
   {
-    double help=m_curVal;
-    m_curVal=0.;
+    double help = m_curVal;
+    m_curVal = 0.;
     return help;
   }
 
@@ -116,10 +116,7 @@ public:
 
     \return total value
   */
-  double GetTotalValue(void) const
-  {
-    return m_totalVal;
-  }
+  double GetTotalValue(void) const { return m_totalVal; }
 
   /**
     Returns value at the given frame.
@@ -130,10 +127,9 @@ public:
   */
   bool GetFrameValue(unsigned frame, double &value) const
   {
-    if (frame<(unsigned)m_firstFrame||
-        frame>=(unsigned)curFrame)
+    if (frame < (unsigned)m_firstFrame || frame >= (unsigned)curFrame)
       return false;
-    value=m_recFrameVal[frame-m_firstFrame];
+    value = m_recFrameVal[frame - m_firstFrame];
     return true;
   }
 
@@ -165,11 +161,11 @@ public:
   */
   static void ClearTotals(void)
   {
-    for (ProfileId *cur=first;cur;cur=cur->m_next)
-      cur->m_totalVal=0.;
+    for (ProfileId *cur = first; cur; cur = cur->m_next)
+      cur->m_totalVal = 0.;
   }
 
-private:
+  private:
   /**
     ProfileId's can't be destructed.
   */

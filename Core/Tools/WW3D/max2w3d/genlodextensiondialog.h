@@ -51,44 +51,36 @@ class ISpinnerControl;
 **********************************************************************************************/
 class GenLodExtensionDialogClass
 {
-public:
+  public:
+  GenLodExtensionDialogClass(Interface *maxinterface);
+  ~GenLodExtensionDialogClass();
 
-	GenLodExtensionDialogClass(Interface * maxinterface);
-	~GenLodExtensionDialogClass();
+  struct OptionsStruct
+  {
+    OptionsStruct(void) : LodIndex(0) {}
 
-	struct OptionsStruct
-	{
-		OptionsStruct(void) : LodIndex(0)
-		{
-		}
+    // name options
+    int LodIndex;
+  };
 
-		// name options
-		int		LodIndex;
-	};
+  bool Get_Options(OptionsStruct *options);
+  bool Dialog_Proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM);
 
-	bool Get_Options(OptionsStruct * options);
-	bool Dialog_Proc(HWND hWnd,UINT message,WPARAM wParam,LPARAM);
+  private:
+  enum
+  {
+    MIN_LOD_INDEX = 0,
+    MAX_LOD_INDEX = 99,
+    INITIAL_LOD_INDEX = 0,
+  };
 
-private:
+  HWND Hwnd;
 
-	enum
-	{
-		MIN_LOD_INDEX				= 0,
-		MAX_LOD_INDEX				= 99,
-		INITIAL_LOD_INDEX			= 0,
-	};
+  OptionsStruct *Options;
+  Interface *MaxInterface;
+  ISpinnerControl *LodIndexSpin;
 
-	HWND								Hwnd;
-
-	OptionsStruct *				Options;
-	Interface *						MaxInterface;
-	ISpinnerControl *				LodIndexSpin;
-
-	friend BOOL CALLBACK			_gen_lod_ext_dialog_proc(HWND Hwnd,UINT message,WPARAM wParam,LPARAM lParam);
-
+  friend BOOL CALLBACK _gen_lod_ext_dialog_proc(HWND Hwnd, UINT message, WPARAM wParam, LPARAM lParam);
 };
 
-
-
-
-#endif //GENLODEXTENSIONDIALOG_H
+#endif // GENLODEXTENSIONDIALOG_H

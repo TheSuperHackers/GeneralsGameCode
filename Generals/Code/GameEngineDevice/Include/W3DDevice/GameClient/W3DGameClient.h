@@ -67,64 +67,67 @@ extern Win32Mouse *TheWin32Mouse;
 //-----------------------------------------------------------------------------
 class W3DGameClient : public GameClient
 {
+  public:
+  W3DGameClient();
+  virtual ~W3DGameClient();
 
-public:
+  /// given a type, create a drawable
+  virtual Drawable *friend_createDrawable(const ThingTemplate *thing, DrawableStatus statusBits = DRAWABLE_STATUS_NONE);
 
-	W3DGameClient();
-	virtual ~W3DGameClient();
+  virtual void init(void); ///< initialize resources
+  virtual void update(void); ///< per frame update
+  virtual void reset(void); ///< reset system
 
-	/// given a type, create a drawable
-	virtual Drawable *friend_createDrawable( const ThingTemplate *thing, DrawableStatus statusBits = DRAWABLE_STATUS_NONE );
+  virtual void addScorch(const Coord3D *pos, Real radius, Scorches type);
+  virtual void createRayEffectByTemplate(
+      const Coord3D *start,
+      const Coord3D *end,
+      const ThingTemplate *tmpl); ///< create effect needing start and end location
+  // virtual Bool getBonePos(Drawable *draw, AsciiString boneName, Coord3D* pos, Matrix3D* transform) const;
 
-	virtual void init( void );		///< initialize resources
-	virtual void update( void );  ///< per frame update
-	virtual void reset( void );   ///< reset system
+  virtual void setTimeOfDay(TimeOfDay tod); ///< Tell all the drawables what time of day it is now
 
-	virtual void addScorch(const Coord3D *pos, Real radius, Scorches type);
-	virtual void createRayEffectByTemplate( const Coord3D *start, const Coord3D *end, const ThingTemplate* tmpl );  ///< create effect needing start and end location
-	//virtual Bool getBonePos(Drawable *draw, AsciiString boneName, Coord3D* pos, Matrix3D* transform) const;
+  //---------------------------------------------------------------------------
+  virtual void setTeamColor(Int red, Int green, Int blue); ///< @todo superhack for demo, remove!!!
+  virtual void adjustLOD(Int adj); ///< @todo hack for evaluation, remove.
 
-	virtual void setTimeOfDay( TimeOfDay tod );							///< Tell all the drawables what time of day it is now
+  protected:
+  virtual Keyboard *createKeyboard(void); ///< factory for the keyboard
+  virtual Mouse *createMouse(void); ///< factory for the mouse
 
-	//---------------------------------------------------------------------------
-	virtual void setTeamColor( Int red, Int green, Int blue );  ///< @todo superhack for demo, remove!!!
-	virtual void adjustLOD( Int adj ); ///< @todo hack for evaluation, remove.
+  /// factory for creating TheDisplay
+  virtual Display *createGameDisplay(void) { return NEW W3DDisplay; }
 
-protected:
+  /// factory for creating TheInGameUI
+  virtual InGameUI *createInGameUI(void) { return NEW W3DInGameUI; }
 
-	virtual Keyboard *createKeyboard( void );								///< factory for the keyboard
-	virtual Mouse *createMouse( void );											///< factory for the mouse
+  /// factory for creating the window manager
+  virtual GameWindowManager *createWindowManager(void) { return NEW W3DGameWindowManager; }
 
-	/// factory for creating TheDisplay
-	virtual Display *createGameDisplay( void ) { return NEW W3DDisplay; }
-
-	/// factory for creating TheInGameUI
-	virtual InGameUI *createInGameUI( void ) { return NEW W3DInGameUI; }
-
-	/// factory for creating the window manager
-	virtual GameWindowManager *createWindowManager( void ) { return NEW W3DGameWindowManager; }
-
-	/// factory for creating the font library
-	virtual FontLibrary *createFontLibrary( void ) { return NEW W3DFontLibrary; }
+  /// factory for creating the font library
+  virtual FontLibrary *createFontLibrary(void) { return NEW W3DFontLibrary; }
 
   /// Manager for display strings
-	virtual DisplayStringManager *createDisplayStringManager( void ) { return NEW W3DDisplayStringManager; }
+  virtual DisplayStringManager *createDisplayStringManager(void) { return NEW W3DDisplayStringManager; }
 
-	virtual VideoPlayerInterface *createVideoPlayer( void ) { return NEW BinkVideoPlayer; }
-	/// factory for creating the TerrainVisual
-	virtual TerrainVisual *createTerrainVisual( void ) { return NEW W3DTerrainVisual; }
+  virtual VideoPlayerInterface *createVideoPlayer(void) { return NEW BinkVideoPlayer; }
+  /// factory for creating the TerrainVisual
+  virtual TerrainVisual *createTerrainVisual(void) { return NEW W3DTerrainVisual; }
 
-	virtual void setFrameRate(Real msecsPerFrame) { TheW3DFrameLengthInMsec = msecsPerFrame; }
+  virtual void setFrameRate(Real msecsPerFrame) { TheW3DFrameLengthInMsec = msecsPerFrame; }
 
-};  // end class W3DGameClient
+}; // end class W3DGameClient
 
-inline Keyboard *W3DGameClient::createKeyboard( void ) { return NEW DirectInputKeyboard; }
-inline Mouse *W3DGameClient::createMouse( void )
+inline Keyboard *W3DGameClient::createKeyboard(void)
 {
-	//return new DirectInputMouse;
-	Win32Mouse * mouse = NEW W3DMouse;
-	TheWin32Mouse = mouse;   ///< global cheat for the WndProc()
-	return mouse;
+  return NEW DirectInputKeyboard;
+}
+inline Mouse *W3DGameClient::createMouse(void)
+{
+  // return new DirectInputMouse;
+  Win32Mouse *mouse = NEW W3DMouse;
+  TheWin32Mouse = mouse; ///< global cheat for the WndProc()
+  return mouse;
 }
 
-#endif  // end __W3DGAMEINTERFACE_H_
+#endif // end __W3DGAMEINTERFACE_H_

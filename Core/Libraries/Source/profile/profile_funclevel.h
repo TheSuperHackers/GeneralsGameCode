@@ -27,7 +27,7 @@
 // Function level profiling
 //////////////////////////////////////////////////////////////////////////////
 #ifdef _MSC_VER
-#  pragma once
+#pragma once
 #endif
 #ifndef PROFILE_FUNCLEVEL_H // Include guard
 #define PROFILE_FUNCLEVEL_H
@@ -44,10 +44,10 @@ class ProfileFuncLevel
   friend class Profile;
 
   // no, no copying allowed!
-  ProfileFuncLevel(const ProfileFuncLevel&);
-  ProfileFuncLevel& operator=(const ProfileFuncLevel&);
+  ProfileFuncLevel(const ProfileFuncLevel &);
+  ProfileFuncLevel &operator=(const ProfileFuncLevel &);
 
-public:
+  public:
   class Id;
   class Thread;
 
@@ -56,8 +56,8 @@ public:
   {
     friend Id;
 
-  public:
-    IdList(void): m_ptr(0) {}
+public:
+    IdList(void) : m_ptr(0) {}
 
     /**
       \brief Enumerates the list of IDs.
@@ -69,10 +69,9 @@ public:
       \param countPtr return buffer for count, if given
       \return true if ID found at given index, false if not
     */
-    bool Enum(unsigned index, Id &id, unsigned *countPtr=0) const;
+    bool Enum(unsigned index, Id &id, unsigned *countPtr = 0) const;
 
-  private:
-
+private:
     /// internal value
     void *m_ptr;
   };
@@ -83,8 +82,8 @@ public:
     friend IdList;
     friend Thread;
 
-  public:
-    Id(void): m_funcPtr(0) {}
+public:
+    Id(void) : m_funcPtr(0) {}
 
     /// special 'frame' numbers
     enum
@@ -154,7 +153,7 @@ public:
     */
     IdList GetCaller(unsigned frame) const;
 
-  private:
+private:
     /// internal function pointer
     void *m_funcPtr;
   };
@@ -164,8 +163,8 @@ public:
   {
     friend ProfileFuncLevel;
 
-  public:
-    Thread(void): m_threadID(0) {}
+public:
+    Thread(void) : m_threadID(0) {}
 
     /**
       \brief Enumerates the list of known function level profile values.
@@ -183,12 +182,9 @@ public:
 
       \return profile thread ID
     */
-    unsigned GetId(void) const
-    {
-      return unsigned(m_threadID);
-    }
+    unsigned GetId(void) const { return unsigned(m_threadID); }
 
-  private:
+private:
     /// internal thread ID
     class ProfileFuncLevelTracer *m_threadID;
   };
@@ -204,8 +200,7 @@ public:
   */
   static bool EnumThreads(unsigned index, Thread &thread);
 
-private:
-
+  private:
   /** \internal
 
     Undocumented default constructor. Initializes function level profiler.

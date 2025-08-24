@@ -42,13 +42,13 @@ class ParticleSystem;
 //-------------------------------------------------------------------------------------------------
 class BeaconClientUpdateModuleData : public ClientUpdateModuleData
 {
-public:
-	UnsignedInt m_framesBetweenRadarPulses;
-	UnsignedInt m_radarPulseDuration;
+  public:
+  UnsignedInt m_framesBetweenRadarPulses;
+  UnsignedInt m_radarPulseDuration;
 
-	BeaconClientUpdateModuleData();
-	~BeaconClientUpdateModuleData();
-	static void buildFieldParse(MultiIniFieldParse& p);
+  BeaconClientUpdateModuleData();
+  ~BeaconClientUpdateModuleData();
+  static void buildFieldParse(MultiIniFieldParse &p);
 };
 
 //-------------------------------------------------------------------------------------------------
@@ -56,25 +56,20 @@ public:
 //-------------------------------------------------------------------------------------------------
 class BeaconClientUpdate : public ClientUpdateModule
 {
+  MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(BeaconClientUpdate, "BeaconClientUpdate")
+  MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA(BeaconClientUpdate, BeaconClientUpdateModuleData);
 
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( BeaconClientUpdate, "BeaconClientUpdate" )
-	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( BeaconClientUpdate, BeaconClientUpdateModuleData );
+  public:
+  BeaconClientUpdate(Thing *thing, const ModuleData *moduleData);
+  // virtual destructor prototype provided by memory pool declaration
 
-public:
+  /// the client update callback
+  virtual void clientUpdate(void);
+  void hideBeacon(void);
 
-	BeaconClientUpdate( Thing *thing, const ModuleData* moduleData );
-	// virtual destructor prototype provided by memory pool declaration
-
-	/// the client update callback
-	virtual void clientUpdate( void );
-	void hideBeacon( void );
-
-protected:
-
-	ParticleSystemID m_particleSystemID;
-	UnsignedInt m_lastRadarPulse;
-
+  protected:
+  ParticleSystemID m_particleSystemID;
+  UnsignedInt m_lastRadarPulse;
 };
 
 #endif // __BEACONCLIENTUPDATE_H_
-

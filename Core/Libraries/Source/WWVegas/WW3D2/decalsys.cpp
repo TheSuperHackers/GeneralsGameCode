@@ -54,9 +54,7 @@
 #include "matrixmapper.h"
 #include "texture.h"
 
-
 uint32 DecalSystemClass::DecalIDGenerator = 0;
-
 
 /*
 ** DecalSystemClass Implementation
@@ -77,7 +75,6 @@ DecalSystemClass::DecalSystemClass(void)
 {
 }
 
-
 /***********************************************************************************************
  * DecalSystemClass::~DecalSystemClass -- Destructor                                           *
  *                                                                                             *
@@ -93,7 +90,6 @@ DecalSystemClass::~DecalSystemClass(void)
 {
 }
 
-
 /***********************************************************************************************
  * DecalSystemClass::Lock_Decal_Generator -- returns a DecalGenerator                          *
  *                                                                                             *
@@ -106,12 +102,11 @@ DecalSystemClass::~DecalSystemClass(void)
  * HISTORY:                                                                                    *
  *   1/26/00    gth : Created.                                                                 *
  *=============================================================================================*/
-DecalGeneratorClass * DecalSystemClass::Lock_Decal_Generator(void)
+DecalGeneratorClass *DecalSystemClass::Lock_Decal_Generator(void)
 {
-	DecalGeneratorClass * gen = W3DNEW DecalGeneratorClass(Generate_Decal_Id(), this);
-	return gen;
+  DecalGeneratorClass *gen = W3DNEW DecalGeneratorClass(Generate_Decal_Id(), this);
+  return gen;
 }
-
 
 /***********************************************************************************************
  * DecalSystemClass::Unlock_Decal_Generator -- Destroys the decal generator                    *
@@ -128,11 +123,10 @@ DecalGeneratorClass * DecalSystemClass::Lock_Decal_Generator(void)
  * HISTORY:                                                                                    *
  *   1/26/00    gth : Created.                                                                 *
  *=============================================================================================*/
-void DecalSystemClass::Unlock_Decal_Generator(DecalGeneratorClass * generator)
+void DecalSystemClass::Unlock_Decal_Generator(DecalGeneratorClass *generator)
 {
-	delete generator;
+  delete generator;
 }
-
 
 /***********************************************************************************************
  * DecalSystemClass::Generate_Unique_Global_Decal_Id -- Generates a unique id for a decal      *
@@ -149,9 +143,8 @@ void DecalSystemClass::Unlock_Decal_Generator(DecalGeneratorClass * generator)
  *=============================================================================================*/
 uint32 DecalSystemClass::Generate_Unique_Global_Decal_Id(void)
 {
-	return DecalIDGenerator++;
+  return DecalIDGenerator++;
 }
-
 
 /*
 ** DecalGeneratorClass Implementation
@@ -169,19 +162,14 @@ uint32 DecalSystemClass::Generate_Unique_Global_Decal_Id(void)
  * HISTORY:                                                                                    *
  *   1/26/00    gth : Created.                                                                 *
  *=============================================================================================*/
-DecalGeneratorClass::DecalGeneratorClass(uint32 id,DecalSystemClass * system) :
-	DecalID(id),
-	System(system),
-	BackfaceVal(0.0f),
-	ApplyToTranslucentMeshes(false),
-	Material(NULL)
+DecalGeneratorClass::DecalGeneratorClass(uint32 id, DecalSystemClass *system) :
+    DecalID(id), System(system), BackfaceVal(0.0f), ApplyToTranslucentMeshes(false), Material(NULL)
 {
-	Material = NEW_REF(MaterialPassClass,());
+  Material = NEW_REF(MaterialPassClass, ());
 
-	WWASSERT(System != NULL);
-	WWASSERT(Material != NULL);
+  WWASSERT(System != NULL);
+  WWASSERT(Material != NULL);
 }
-
 
 /***********************************************************************************************
  * DecalGeneratorClass::~DecalGeneratorClass -- Destructor                                     *
@@ -197,9 +185,8 @@ DecalGeneratorClass::DecalGeneratorClass(uint32 id,DecalSystemClass * system) :
  *=============================================================================================*/
 DecalGeneratorClass::~DecalGeneratorClass(void)
 {
-	REF_PTR_RELEASE(Material);
+  REF_PTR_RELEASE(Material);
 }
-
 
 /***********************************************************************************************
  * DecalGeneratorClass::Add_Mesh -- Meshes that generate a decal should add themselves         *
@@ -216,12 +203,11 @@ DecalGeneratorClass::~DecalGeneratorClass(void)
  * HISTORY:                                                                                    *
  *   1/26/00    gth : Created.                                                                 *
  *=============================================================================================*/
-void DecalGeneratorClass::Add_Mesh(RenderObjClass * mesh)
+void DecalGeneratorClass::Add_Mesh(RenderObjClass *mesh)
 {
-	WWASSERT(mesh->Class_ID() == RenderObjClass::CLASSID_MESH);
-	MeshList.Add(mesh);
+  WWASSERT(mesh->Class_ID() == RenderObjClass::CLASSID_MESH);
+  MeshList.Add(mesh);
 }
-
 
 /***********************************************************************************************
  * DecalGeneratorClass::Get_Mesh_List -- returns the list of meshes                            *
@@ -237,11 +223,10 @@ void DecalGeneratorClass::Add_Mesh(RenderObjClass * mesh)
  * HISTORY:                                                                                    *
  *   1/26/00    gth : Created.                                                                 *
  *=============================================================================================*/
-NonRefRenderObjListClass & DecalGeneratorClass::Get_Mesh_List(void)
+NonRefRenderObjListClass &DecalGeneratorClass::Get_Mesh_List(void)
 {
-	return MeshList;
+  return MeshList;
 }
-
 
 /***********************************************************************************************
  * DecalGeneratorClass::Set_Mesh_Transform -- sets the current mesh coordinate system          *
@@ -258,159 +243,162 @@ NonRefRenderObjListClass & DecalGeneratorClass::Get_Mesh_List(void)
  * HISTORY:                                                                                    *
  *   1/26/00    gth : Created.                                                                 *
  *=============================================================================================*/
-void DecalGeneratorClass::Set_Mesh_Transform(const Matrix3D & mesh_transform)
+void DecalGeneratorClass::Set_Mesh_Transform(const Matrix3D &mesh_transform)
 {
-	/*
-	** Mobj-texture = Projection * Mwrld-texture * Mobj-wrld
-	*/
-	Matrix3D world_to_texture;
-	Matrix3D tmp;
-	Matrix4x4  mesh_to_texture;
+  /*
+  ** Mobj-texture = Projection * Mwrld-texture * Mobj-wrld
+  */
+  Matrix3D world_to_texture;
+  Matrix3D tmp;
+  Matrix4x4 mesh_to_texture;
 
-	Transform.Get_Orthogonal_Inverse(world_to_texture);
-	Matrix3D::Multiply(world_to_texture,mesh_transform,&tmp);
-	Matrix4x4::Multiply(Projection,tmp,&mesh_to_texture);
+  Transform.Get_Orthogonal_Inverse(world_to_texture);
+  Matrix3D::Multiply(world_to_texture, mesh_transform, &tmp);
+  Matrix4x4::Multiply(Projection, tmp, &mesh_to_texture);
 
-	/*
-	** Plug the matrix and texture size into the mapper
-	*/
-	if (WW3D::Is_Texturing_Enabled()) {
-		float texsize = 64.0f;
-		TextureClass * tex = Material->Peek_Texture();
-		WWASSERT(tex != NULL);
-		if (tex) {
-//			SurfaceClass::SurfaceDescription surface_desc;
-//			tex->Get_Level_Description(surface_desc);
-//			texsize = surface_desc.Width;
-			texsize = tex->Get_Width();
-		}
+  /*
+  ** Plug the matrix and texture size into the mapper
+  */
+  if (WW3D::Is_Texturing_Enabled())
+  {
+    float texsize = 64.0f;
+    TextureClass *tex = Material->Peek_Texture();
+    WWASSERT(tex != NULL);
+    if (tex)
+    {
+      //			SurfaceClass::SurfaceDescription surface_desc;
+      //			tex->Get_Level_Description(surface_desc);
+      //			texsize = surface_desc.Width;
+      texsize = tex->Get_Width();
+    }
 
-		Mapper->Set_Texture_Transform(mesh_to_texture,texsize);
-	}
+    Mapper->Set_Texture_Transform(mesh_to_texture, texsize);
+  }
 }
-
 
 /*
 ** MultiFixedPoolDecalSystemClass implementation
 */
 
 MultiFixedPoolDecalSystemClass::MultiFixedPoolDecalSystemClass(uint32 num_pools, const uint32 *pool_sizes) :
-	Pools(0),
-	PoolCount(num_pools),
-	Generator_PoolID(0),
-	Generator_SlotID(0)
+    Pools(0), PoolCount(num_pools), Generator_PoolID(0), Generator_SlotID(0)
 {
-	if (PoolCount)
-	{
-		WWASSERT(pool_sizes);
-		Pools = W3DNEWARRAY LogicalDecalPoolClass [PoolCount];
-	}
-	for (uint32 i = 0; i < PoolCount; i++) {
-		assert(pool_sizes[i]);
-		Pools[i].Initialize(pool_sizes[i]);
-	}
+  if (PoolCount)
+  {
+    WWASSERT(pool_sizes);
+    Pools = W3DNEWARRAY LogicalDecalPoolClass[PoolCount];
+  }
+  for (uint32 i = 0; i < PoolCount; i++)
+  {
+    assert(pool_sizes[i]);
+    Pools[i].Initialize(pool_sizes[i]);
+  }
 }
 
-MultiFixedPoolDecalSystemClass::MultiFixedPoolDecalSystemClass(const MultiFixedPoolDecalSystemClass & that) :
-	Pools(0),
-	PoolCount(that.PoolCount),
-	Generator_PoolID(that.Generator_PoolID),
-	Generator_SlotID(that.Generator_SlotID)
+MultiFixedPoolDecalSystemClass::MultiFixedPoolDecalSystemClass(const MultiFixedPoolDecalSystemClass &that) :
+    Pools(0), PoolCount(that.PoolCount), Generator_PoolID(that.Generator_PoolID), Generator_SlotID(that.Generator_SlotID)
 {
-	uint32 i;
+  uint32 i;
 
-	// Allocate arrays (we dont' copy array contents because those are mesh-specific and will be
-	// filled when the state is set anyway)
-	if (PoolCount) Pools = W3DNEWARRAY LogicalDecalPoolClass [PoolCount];
-	for (i = 0; i < PoolCount; i++) {
-		Pools[i].Initialize(that.Pools[i].Size);
-	}
+  // Allocate arrays (we dont' copy array contents because those are mesh-specific and will be
+  // filled when the state is set anyway)
+  if (PoolCount)
+    Pools = W3DNEWARRAY LogicalDecalPoolClass[PoolCount];
+  for (i = 0; i < PoolCount; i++)
+  {
+    Pools[i].Initialize(that.Pools[i].Size);
+  }
 }
 
 MultiFixedPoolDecalSystemClass::~MultiFixedPoolDecalSystemClass(void)
 {
-	if (Pools) {
-		delete [] Pools;
-		Pools = 0;
-	}
+  if (Pools)
+  {
+    delete[] Pools;
+    Pools = 0;
+  }
 }
 
 // This clears the slot in addition to locking the generator, thus preventing any decal id
 // collisions (since any decal previously in that slot will have the same id as the new one).
-DecalGeneratorClass * MultiFixedPoolDecalSystemClass::Lock_Decal_Generator(void)
+DecalGeneratorClass *MultiFixedPoolDecalSystemClass::Lock_Decal_Generator(void)
 {
-	Clear_Decal_Slot(Generator_PoolID, Generator_SlotID);
-	return DecalSystemClass::Lock_Decal_Generator();
+  Clear_Decal_Slot(Generator_PoolID, Generator_SlotID);
+  return DecalSystemClass::Lock_Decal_Generator();
 }
 
 // This will register the decal in the system in the appropriate pool and slot (determined by
 // the generator's pool and slot ids), removing any decal which may have been there before.
-void MultiFixedPoolDecalSystemClass::Unlock_Decal_Generator(DecalGeneratorClass * generator)
+void MultiFixedPoolDecalSystemClass::Unlock_Decal_Generator(DecalGeneratorClass *generator)
 {
-	find_logical_decal(generator->Get_Decal_ID()).Set(generator);
-	DecalSystemClass::Unlock_Decal_Generator(generator);
+  find_logical_decal(generator->Get_Decal_ID()).Set(generator);
+  DecalSystemClass::Unlock_Decal_Generator(generator);
 }
 
 // This notifies the system that a mesh which has decals on it was destroyed - therefore we
 // need to remove the mesh from our list to avoid dangling pointers.
-void MultiFixedPoolDecalSystemClass::Decal_Mesh_Destroyed(uint32 decal_id,DecalMeshClass * mesh)
+void MultiFixedPoolDecalSystemClass::Decal_Mesh_Destroyed(uint32 decal_id, DecalMeshClass *mesh)
 {
-	// We must remove this mesh from all lists where it is present. The method is: for each
-	// decal id present in the decal mesh, find the logical decal and remove the decal mesh from
-	// its list.
-	assert(mesh);
-	MeshClass *parent = mesh->Peek_Parent();
-	find_logical_decal(decal_id).MeshList.Remove(parent);
+  // We must remove this mesh from all lists where it is present. The method is: for each
+  // decal id present in the decal mesh, find the logical decal and remove the decal mesh from
+  // its list.
+  assert(mesh);
+  MeshClass *parent = mesh->Peek_Parent();
+  find_logical_decal(decal_id).MeshList.Remove(parent);
 }
 
 // Not part of the DecalSystemClass interface - this function removes any decal currently in
 // the given slot in the given pool.
 void MultiFixedPoolDecalSystemClass::Clear_Decal_Slot(uint32 pool_id, uint32 slot_id)
 {
-	find_logical_decal(pool_id, slot_id).Clear(encode_decal_id(pool_id, slot_id));
+  find_logical_decal(pool_id, slot_id).Clear(encode_decal_id(pool_id, slot_id));
 }
 
 // This one removes all decals in a given pool.
 void MultiFixedPoolDecalSystemClass::Clear_Pool(uint32 pool_id)
 {
-	LogicalDecalPoolClass & pool = Pools[pool_id];
-	uint32 pool_size = pool.Size;
-	for (uint32 slot_id = 0; slot_id < pool_size; slot_id++) {
-		pool.Array[slot_id].Clear(encode_decal_id(pool_id, slot_id));
-	}
+  LogicalDecalPoolClass &pool = Pools[pool_id];
+  uint32 pool_size = pool.Size;
+  for (uint32 slot_id = 0; slot_id < pool_size; slot_id++)
+  {
+    pool.Array[slot_id].Clear(encode_decal_id(pool_id, slot_id));
+  }
 }
 
 // And this one removes all decals in the system.
 void MultiFixedPoolDecalSystemClass::Clear_All_Decals(void)
 {
-	for (uint32 pool_id = 0; pool_id < PoolCount; pool_id++) {
-		LogicalDecalPoolClass & pool = Pools[pool_id];
-		uint32 pool_size = pool.Size;
-		for (uint32 slot_id = 0; slot_id < pool_size; slot_id++) {
-			pool.Array[slot_id].Clear(encode_decal_id(pool_id, slot_id));
-		}
-	}
+  for (uint32 pool_id = 0; pool_id < PoolCount; pool_id++)
+  {
+    LogicalDecalPoolClass &pool = Pools[pool_id];
+    uint32 pool_size = pool.Size;
+    for (uint32 slot_id = 0; slot_id < pool_size; slot_id++)
+    {
+      pool.Array[slot_id].Clear(encode_decal_id(pool_id, slot_id));
+    }
+  }
 }
 
 // Get a reference to the logical decal at the given pool and slot id (performs range checking)
-MultiFixedPoolDecalSystemClass::LogicalDecalClass & MultiFixedPoolDecalSystemClass::find_logical_decal(uint32 pool_id, uint32 slot_id)
+MultiFixedPoolDecalSystemClass::LogicalDecalClass &MultiFixedPoolDecalSystemClass::find_logical_decal(
+    uint32 pool_id,
+    uint32 slot_id)
 {
-	assert(pool_id < PoolCount);
-	pool_id = MIN(pool_id, PoolCount);
-	LogicalDecalPoolClass & pool = Pools[pool_id];
-	assert(slot_id < pool.Size);
-	slot_id = MIN(slot_id, pool.Size);
-	return pool.Array[slot_id];
+  assert(pool_id < PoolCount);
+  pool_id = MIN(pool_id, PoolCount);
+  LogicalDecalPoolClass &pool = Pools[pool_id];
+  assert(slot_id < pool.Size);
+  slot_id = MIN(slot_id, pool.Size);
+  return pool.Array[slot_id];
 }
 
 // Get a reference to the logical decal with the given decal id
-MultiFixedPoolDecalSystemClass::LogicalDecalClass & MultiFixedPoolDecalSystemClass::find_logical_decal(uint32 decal_id)
+MultiFixedPoolDecalSystemClass::LogicalDecalClass &MultiFixedPoolDecalSystemClass::find_logical_decal(uint32 decal_id)
 {
-	uint32 pool_id, slot_id;
-	decode_decal_id(decal_id, pool_id, slot_id);
-	return find_logical_decal(pool_id, slot_id);
+  uint32 pool_id, slot_id;
+  decode_decal_id(decal_id, pool_id, slot_id);
+  return find_logical_decal(pool_id, slot_id);
 }
-
 
 /*
 ** MultiFixedPoolDecalSystemClass::LogicalDecalClass implementation
@@ -422,68 +410,70 @@ MultiFixedPoolDecalSystemClass::LogicalDecalClass::LogicalDecalClass(void)
 
 MultiFixedPoolDecalSystemClass::LogicalDecalClass::~LogicalDecalClass(void)
 {
-	// We don't need to do anything here since the mesh list will get removed automatically and
-	// the decals themselves don't neccessarily need to be removed because the logical decal is.
-	// (we don't hold references to the meshes in the mesh list)
+  // We don't need to do anything here since the mesh list will get removed automatically and
+  // the decals themselves don't neccessarily need to be removed because the logical decal is.
+  // (we don't hold references to the meshes in the mesh list)
 }
 
 // Sets the logical decal to the one specified by the given generator (clearing any existing
 // decal information)
-void MultiFixedPoolDecalSystemClass::LogicalDecalClass::Set(DecalGeneratorClass * generator)
+void MultiFixedPoolDecalSystemClass::LogicalDecalClass::Set(DecalGeneratorClass *generator)
 {
-	Clear(generator->Get_Decal_ID());
+  Clear(generator->Get_Decal_ID());
 
-	/*
-	** Copy the generators' mesh list into our mesh list
-	*/
-	NonRefRenderObjListIterator gen_mesh_it(&(generator->Get_Mesh_List()));
-	for (gen_mesh_it.First(); !gen_mesh_it.Is_Done(); gen_mesh_it.Next()) {
-		MeshList.Add(gen_mesh_it.Get_Obj());
-	}
+  /*
+  ** Copy the generators' mesh list into our mesh list
+  */
+  NonRefRenderObjListIterator gen_mesh_it(&(generator->Get_Mesh_List()));
+  for (gen_mesh_it.First(); !gen_mesh_it.Is_Done(); gen_mesh_it.Next())
+  {
+    MeshList.Add(gen_mesh_it.Get_Obj());
+  }
 }
 
 // Just clears any existing logical decal information, leaving the decal empty.
 void MultiFixedPoolDecalSystemClass::LogicalDecalClass::Clear(uint32 decal_id)
 {
-	// Remove the decal with this ID from all meshes where it appears
-	NonRefRenderObjListIterator it(&MeshList);
-	for (it.First(); !it.Is_Done(); it.Next()) {
-		it.Get_Obj()->Delete_Decal(decal_id);
-	}
+  // Remove the decal with this ID from all meshes where it appears
+  NonRefRenderObjListIterator it(&MeshList);
+  for (it.First(); !it.Is_Done(); it.Next())
+  {
+    it.Get_Obj()->Delete_Decal(decal_id);
+  }
 
-	// Delete list
-	while (!MeshList.Is_Empty()) {
-		MeshList.Remove_Head();
-	}
+  // Delete list
+  while (!MeshList.Is_Empty())
+  {
+    MeshList.Remove_Head();
+  }
 }
-
 
 /*
 ** MultiFixedPoolDecalSystemClass::LogicalDecalPoolClass implementation
 */
 
-MultiFixedPoolDecalSystemClass::LogicalDecalPoolClass::LogicalDecalPoolClass(void) :
-	Array(0),
-	Size(0)
+MultiFixedPoolDecalSystemClass::LogicalDecalPoolClass::LogicalDecalPoolClass(void) : Array(0), Size(0)
 {
 }
 
 MultiFixedPoolDecalSystemClass::LogicalDecalPoolClass::~LogicalDecalPoolClass(void)
 {
-	if (Array) {
-		delete [] Array;
-		Array = 0;
-	}
+  if (Array)
+  {
+    delete[] Array;
+    Array = 0;
+  }
 }
 
 void MultiFixedPoolDecalSystemClass::LogicalDecalPoolClass::Initialize(uint32 size)
 {
-	if (Array) {
-		delete [] Array;
-		Array = 0;
-	}
+  if (Array)
+  {
+    delete[] Array;
+    Array = 0;
+  }
 
-	Size = size;
-	assert(Size);
-	Array = W3DNEWARRAY LogicalDecalClass[Size];
+  Size = size;
+  assert(Size);
+  Array = W3DNEWARRAY LogicalDecalClass[Size];
 }

@@ -44,171 +44,163 @@ struct FieldParse;
 //-------------------------------------------------------------------------------------------------
 typedef enum
 {
-	TERRAIN_NONE = 0,
-	TERRAIN_DESERT_1,
-	TERRAIN_DESERT_2,
-	TERRAIN_DESERT_3,
-	TERRAIN_EASTERN_EUROPE_1,
-	TERRAIN_EASTERN_EUROPE_2,
-	TERRAIN_EASTERN_EUROPE_3,
-	TERRAIN_SWISS_1,
-	TERRAIN_SWISS_2,
-	TERRAIN_SWISS_3,
-	TERRAIN_SNOW_1,
-	TERRAIN_SNOW_2,
-	TERRAIN_SNOW_3,
+  TERRAIN_NONE = 0,
+  TERRAIN_DESERT_1,
+  TERRAIN_DESERT_2,
+  TERRAIN_DESERT_3,
+  TERRAIN_EASTERN_EUROPE_1,
+  TERRAIN_EASTERN_EUROPE_2,
+  TERRAIN_EASTERN_EUROPE_3,
+  TERRAIN_SWISS_1,
+  TERRAIN_SWISS_2,
+  TERRAIN_SWISS_3,
+  TERRAIN_SNOW_1,
+  TERRAIN_SNOW_2,
+  TERRAIN_SNOW_3,
 
-	// remove all the terrain types below when Todd says he's redone them all
-	//TERRAIN_ASPHALT,
-	//TERRAIN_CONCRETE,
-	TERRAIN_DIRT,
-	TERRAIN_GRASS,
-	TERRAIN_TRANSITION,
-	TERRAIN_ROCK,
-	TERRAIN_SAND,
-	TERRAIN_CLIFF,
-	TERRAIN_WOOD,
-	TERRAIN_BLEND_EDGES,
+  // remove all the terrain types below when Todd says he's redone them all
+  // TERRAIN_ASPHALT,
+  // TERRAIN_CONCRETE,
+  TERRAIN_DIRT,
+  TERRAIN_GRASS,
+  TERRAIN_TRANSITION,
+  TERRAIN_ROCK,
+  TERRAIN_SAND,
+  TERRAIN_CLIFF,
+  TERRAIN_WOOD,
+  TERRAIN_BLEND_EDGES,
 
-	// New terrain types (for Samm Ivri)
-	TERRAIN_LIVE_DESERT,
-	TERRAIN_DRY_DESERT,
-	TERRAIN_ACCENT_SAND,
-	TERRAIN_TROPICAL_BEACH,
-	TERRAIN_BEACH_PARK,
-	TERRAIN_RUGGED_MOUNTAIN,
-	TERRAIN_COBBLESTONE_GRASS,
-	TERRAIN_ACCENT_GRASS,
-	TERRAIN_RESIDENTIAL,
-	TERRAIN_RUGGED_SNOW,
-	TERRAIN_FLAT_SNOW,
-	TERRAIN_FIELD,
-	TERRAIN_ASPHALT,
-	TERRAIN_CONCRETE,
-	TERRAIN_CHINA,
-	TERRAIN_ACCENT_ROCK,
-	TERRAIN_URBAN,
+  // New terrain types (for Samm Ivri)
+  TERRAIN_LIVE_DESERT,
+  TERRAIN_DRY_DESERT,
+  TERRAIN_ACCENT_SAND,
+  TERRAIN_TROPICAL_BEACH,
+  TERRAIN_BEACH_PARK,
+  TERRAIN_RUGGED_MOUNTAIN,
+  TERRAIN_COBBLESTONE_GRASS,
+  TERRAIN_ACCENT_GRASS,
+  TERRAIN_RESIDENTIAL,
+  TERRAIN_RUGGED_SNOW,
+  TERRAIN_FLAT_SNOW,
+  TERRAIN_FIELD,
+  TERRAIN_ASPHALT,
+  TERRAIN_CONCRETE,
+  TERRAIN_CHINA,
+  TERRAIN_ACCENT_ROCK,
+  TERRAIN_URBAN,
 
-
-	TERRAIN_NUM_CLASSES  // keep this last
+  TERRAIN_NUM_CLASSES // keep this last
 
 } TerrainClass;
 #ifdef DEFINE_TERRAIN_TYPE_NAMES
-static const char *terrainTypeNames[] =
-{
-	"NONE",
-	"DESERT_1",
-	"DESERT_2",
-	"DESERT_3",
-	"EASTERN_EUROPE_1",
-	"EASTERN_EUROPE_2",
-	"EASTERN_EUROPE_3",
-	"SWISS_1",
-	"SWISS_2",
-	"SWISS_3",
-	"SNOW_1",
-	"SNOW_2",
-	"SNOW_3",
+static const char *terrainTypeNames[] = { "NONE",
+                                          "DESERT_1",
+                                          "DESERT_2",
+                                          "DESERT_3",
+                                          "EASTERN_EUROPE_1",
+                                          "EASTERN_EUROPE_2",
+                                          "EASTERN_EUROPE_3",
+                                          "SWISS_1",
+                                          "SWISS_2",
+                                          "SWISS_3",
+                                          "SNOW_1",
+                                          "SNOW_2",
+                                          "SNOW_3",
 
-	// remove all the terrain types below when Todd says he's redone them all
-	//"ASPHALT",
-	//"CONCRETE",
-	"DIRT",
-	"GRASS",
-	"TRANSITION",
-	"ROCK",
-	"SAND",
-	"CLIFF",
-	"WOOD",
-	"BLEND_EDGE",
+                                          // remove all the terrain types below when Todd says he's redone them all
+                                          //"ASPHALT",
+                                          //"CONCRETE",
+                                          "DIRT",
+                                          "GRASS",
+                                          "TRANSITION",
+                                          "ROCK",
+                                          "SAND",
+                                          "CLIFF",
+                                          "WOOD",
+                                          "BLEND_EDGE",
 
-		// New terrain types (for Samm Ivri)
-	"DESERT_LIVE",
-	"DESERT_DRY",
-	"SAND_ACCENT",
-	"BEACH_TROPICAL",
-	"BEACH_PARK",
-	"MOUNTAIN_RUGGED",
-	"GRASS_COBBLESTONE",
-	"GRASS_ACCENT",
-	"RESIDENTIAL",
-	"SNOW_RUGGED",
-	"SNOW_FLAT",
-	"FIELD",
-	"ASPHALT",
-	"CONCRETE",
-	"CHINA",
-	"ROCK_ACCENT",
-	"URBAN",
+                                          // New terrain types (for Samm Ivri)
+                                          "DESERT_LIVE",
+                                          "DESERT_DRY",
+                                          "SAND_ACCENT",
+                                          "BEACH_TROPICAL",
+                                          "BEACH_PARK",
+                                          "MOUNTAIN_RUGGED",
+                                          "GRASS_COBBLESTONE",
+                                          "GRASS_ACCENT",
+                                          "RESIDENTIAL",
+                                          "SNOW_RUGGED",
+                                          "SNOW_FLAT",
+                                          "FIELD",
+                                          "ASPHALT",
+                                          "CONCRETE",
+                                          "CHINA",
+                                          "ROCK_ACCENT",
+                                          "URBAN",
 
-	NULL
-};
-#endif  // end DEFINE_TERRAIN_TYPE_NAMES
+                                          NULL };
+#endif // end DEFINE_TERRAIN_TYPE_NAMES
 
 //-------------------------------------------------------------------------------------------------
 /** A terrain type definition */
 //-------------------------------------------------------------------------------------------------
 class TerrainType : public MemoryPoolObject
 {
+  MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(TerrainType, "TerrainType")
 
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( TerrainType, "TerrainType" )
+  public:
+  TerrainType(void);
+  // destructor prototype defined by memory pool glue
 
-public:
+  /// get the name for this terrain
+  inline AsciiString getName(void) { return m_name; }
 
-	TerrainType( void );
-	// destructor prototype defined by memory pool glue
+  /// get whether this terrain is blend edge terrain.
+  inline Bool isBlendEdge(void) { return m_blendEdgeTexture; }
 
-	/// get the name for this terrain
-	inline AsciiString getName( void ) { return m_name; }
+  /// get the type of this terrain
+  inline TerrainClass getClass(void) { return m_class; }
 
-	/// get whether this terrain is blend edge terrain.
-	inline Bool isBlendEdge( void ) { return m_blendEdgeTexture; }
+  /// get the construction restrictions
+  inline Bool getRestrictConstruction(void) { return m_restrictConstruction; }
 
-	/// get the type of this terrain
-	inline TerrainClass getClass( void ) { return m_class; }
+  /// get the texture file for this terrain
+  inline AsciiString getTexture(void) { return m_texture; }
 
-	/// get the construction restrictions
-	inline Bool getRestrictConstruction( void ) { return m_restrictConstruction; }
+  /// get next terrain in list, only for use by the terrain collection
+  inline TerrainType *friend_getNext(void) { return m_next; }
 
-	/// get the texture file for this terrain
-	inline AsciiString getTexture( void ) { return m_texture; }
+  /// set the name for this terrain, for use by terrain collection only
+  inline void friend_setName(AsciiString name) { m_name = name; }
 
-	/// get next terrain in list, only for use by the terrain collection
-	inline TerrainType *friend_getNext( void ) { return m_next; }
+  /// set the next pointer for the terrain list, for use by terrain collection only
+  inline void friend_setNext(TerrainType *next) { m_next = next; }
 
-	/// set the name for this terrain, for use by terrain collection only
-	inline void friend_setName( AsciiString name ) { m_name = name; }
+  /// set the texture, for use by terrain collection only
+  inline void friend_setTexture(AsciiString texture) { m_texture = texture; }
 
-	/// set the next pointer for the terrain list, for use by terrain collection only
-	inline void friend_setNext( TerrainType *next ) { m_next = next; }
+  /// set the class, for use by terrain collection only
+  inline void friend_setClass(TerrainClass terrainClass) { m_class = terrainClass; }
 
-	/// set the texture, for use by terrain collection only
-	inline void friend_setTexture( AsciiString texture ) { m_texture = texture; }
+  /// set the restrict construction flag, for use by terrain collection only
+  inline void friend_setRestrictConstruction(Bool restrict) { m_restrictConstruction = restrict; }
 
-	/// set the class, for use by terrain collection only
-	inline void friend_setClass( TerrainClass terrainClass ) { m_class = terrainClass; }
+  /// set whether this terrain is blend edge terrain, for use by terrain collection only
+  inline void friend_setBlendEdge(Bool isBlend) { m_blendEdgeTexture = isBlend; }
 
-	/// set the restrict construction flag, for use by terrain collection only
-	inline void friend_setRestrictConstruction( Bool restrict ) { m_restrictConstruction = restrict; }
+  /// get the parsing table for INI
+  const FieldParse *getFieldParse(void) { return m_terrainTypeFieldParseTable; }
 
-	/// set whether this terrain is blend edge terrain, for use by terrain collection only
-	inline void friend_setBlendEdge( Bool isBlend ) { m_blendEdgeTexture = isBlend; }
+  protected:
+  AsciiString m_name; ///< terrain entry name
+  AsciiString m_texture; ///< texture.tga file for terrain
+  Bool m_blendEdgeTexture; ///< contains custom blend edges
+  TerrainClass m_class; ///< type classification of name
+  Bool m_restrictConstruction; ///< do not allow construction on this terrain tile
+  TerrainType *m_next; ///< next in terrain list
 
-	/// get the parsing table for INI
-	const FieldParse *getFieldParse( void ) { return m_terrainTypeFieldParseTable; }
-
-protected:
-
-	AsciiString m_name;								///< terrain entry name
-	AsciiString m_texture;						///< texture.tga file for terrain
-	Bool m_blendEdgeTexture;					///< contains custom blend edges
-	TerrainClass m_class;							///< type classification of name
-	Bool m_restrictConstruction;			///< do not allow construction on this terrain tile
-	TerrainType *m_next;							///< next in terrain list
-
-	// for parsing from INI
-	static const FieldParse m_terrainTypeFieldParseTable[];		///< the parse table for INI definition
-
+  // for parsing from INI
+  static const FieldParse m_terrainTypeFieldParseTable[]; ///< the parse table for INI definition
 };
 
 //-------------------------------------------------------------------------------------------------
@@ -216,33 +208,28 @@ protected:
 //-------------------------------------------------------------------------------------------------
 class TerrainTypeCollection : public SubsystemInterface
 {
+  public:
+  TerrainTypeCollection(void);
+  ~TerrainTypeCollection(void);
 
-public:
+  void init() {}
+  void reset() {}
+  void update() {}
 
-	TerrainTypeCollection( void );
-	~TerrainTypeCollection( void );
+  TerrainType *findTerrain(AsciiString name); ///< find terrain by name
+  TerrainType *newTerrain(AsciiString name); ///< allocate a new terrain
 
-	void init() { }
-	void reset() { }
-	void update() { }
+  /// get first terrain in list
+  TerrainType *firstTerrain(void) { return m_terrainList; }
 
-	TerrainType *findTerrain( AsciiString name );		///< find terrain by name
-	TerrainType *newTerrain( AsciiString name );			///< allocate a new terrain
+  /// get next terrain in list
+  TerrainType *nextTerrain(TerrainType *terrainType) { return terrainType->friend_getNext(); }
 
-	/// get first terrain in list
-	TerrainType *firstTerrain( void ) { return m_terrainList; }
-
-	/// get next terrain in list
-	TerrainType *nextTerrain( TerrainType *terrainType ) { return terrainType->friend_getNext(); }
-
-protected:
-
-	TerrainType *m_terrainList;						///< list of available terrain types
-
+  protected:
+  TerrainType *m_terrainList; ///< list of available terrain types
 };
 
 // EXTERNAL ///////////////////////////////////////////////////////////////////////////////////////
 extern TerrainTypeCollection *TheTerrainTypes;
 
 #endif // __TERRAINTYPE_H_
-

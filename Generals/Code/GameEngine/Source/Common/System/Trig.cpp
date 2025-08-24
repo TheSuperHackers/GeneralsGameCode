@@ -35,112 +35,112 @@
 #include "Lib/BaseType.h"
 #include "Lib/trig.h"
 
-#define TWOPI			6.28318530718f
-#define DEG2RAD 	0.0174532925199f
+#define TWOPI 6.28318530718f
+#define DEG2RAD 0.0174532925199f
 #define TRIG_RES 4096
 
 // the following are for fixed point ints with 12 fractional bits
-#define INT_ONE								4096
-#define INT_TWOPI							25736
-#define INT_THREEPIOVERTWO 		19302
-#define INT_PI								12868
-#define INT_HALFPI 						6434
+#define INT_ONE 4096
+#define INT_TWOPI 25736
+#define INT_THREEPIOVERTWO 19302
+#define INT_PI 12868
+#define INT_HALFPI 6434
 
 Real Sin(Real x)
 {
-	return sinf(x);
+  return sinf(x);
 }
 
 Real Cos(Real x)
 {
-	return cosf(x);
+  return cosf(x);
 }
 
 Real Tan(Real x)
 {
-	return tanf(x);
+  return tanf(x);
 }
 
 Real ACos(Real x)
 {
-	return acosf(x);
+  return acosf(x);
 }
 
 Real ASin(Real x)
 {
-	return asinf(x);
+  return asinf(x);
 }
 
 #ifdef REGENERATE_TRIG_TABLES
 #include <stdio.h>
-void initTrig( void )
+void initTrig(void)
 {
-	static Byte inited = FALSE;
-	Real angle, r;
-	int i;
+  static Byte inited = FALSE;
+  Real angle, r;
+  int i;
 
-	if (inited)
-		return;
+  if (inited)
+    return;
 
-	inited = TRUE;
+  inited = TRUE;
 
-	static int columns = 8;
-	int column = 0;
-	FILE *fp = fopen("trig.txt", "w");
-	fprintf(fp, "static Int sinLookup[TRIG_RES] = {\n");
-	for( i=0; i<TRIG_RES; i++ ) {
-		angle = TWOPI * i / (Real)TRIG_RES;
-		sinLookup[i] = (Int)(sin(angle) * INT_ONE);
+  static int columns = 8;
+  int column = 0;
+  FILE *fp = fopen("trig.txt", "w");
+  fprintf(fp, "static Int sinLookup[TRIG_RES] = {\n");
+  for (i = 0; i < TRIG_RES; i++)
+  {
+    angle = TWOPI * i / (Real)TRIG_RES;
+    sinLookup[i] = (Int)(sin(angle) * INT_ONE);
 
-		if (i == 0)
-		{
-			fprintf(fp, "\t0x%8.8X", sinLookup[i]);
-		}
-		else if (column == 0)
-		{
-		fprintf(fp, ",\n\t0x%8.8X", sinLookup[i]);
-		}
-		else
-		{
-		fprintf(fp, ", 0x%8.8X", sinLookup[i]);
-		}
-		column = (column + 1) % columns;
-	}
-	fprintf(fp, "\n};\n\n");
+    if (i == 0)
+    {
+      fprintf(fp, "\t0x%8.8X", sinLookup[i]);
+    }
+    else if (column == 0)
+    {
+      fprintf(fp, ",\n\t0x%8.8X", sinLookup[i]);
+    }
+    else
+    {
+      fprintf(fp, ", 0x%8.8X", sinLookup[i]);
+    }
+    column = (column + 1) % columns;
+  }
+  fprintf(fp, "\n};\n\n");
 
-	column = 0;
-	fprintf(fp, "static Int arcCosLookup[2 * INT_ONE] = {\n");
-	for( i=0; i<2*INT_ONE; i++ ) {
-		r = (Real)i / (Real)INT_ONE - 1.0f;
+  column = 0;
+  fprintf(fp, "static Int arcCosLookup[2 * INT_ONE] = {\n");
+  for (i = 0; i < 2 * INT_ONE; i++)
+  {
+    r = (Real)i / (Real)INT_ONE - 1.0f;
 
-		arcCosLookup[i] = (Int)(acos( (double)r ) * INT_TWOPI / TWOPI );
+    arcCosLookup[i] = (Int)(acos((double)r) * INT_TWOPI / TWOPI);
 
-		if (i == 0)
-		{
-			fprintf(fp, "\t0x%8.8X", arcCosLookup[i]);
-		}
-		else if (column == 0)
-		{
-		fprintf(fp, ",\n\t0x%8.8X", arcCosLookup[i]);
-		}
-		else
-		{
-		fprintf(fp, ", 0x%8.8X", arcCosLookup[i]);
-		}
-		column = (column + 1) % columns;
-	}
-	fprintf(fp, "\n};\n\n");
+    if (i == 0)
+    {
+      fprintf(fp, "\t0x%8.8X", arcCosLookup[i]);
+    }
+    else if (column == 0)
+    {
+      fprintf(fp, ",\n\t0x%8.8X", arcCosLookup[i]);
+    }
+    else
+    {
+      fprintf(fp, ", 0x%8.8X", arcCosLookup[i]);
+    }
+    column = (column + 1) % columns;
+  }
+  fprintf(fp, "\n};\n\n");
 
-	fclose(fp);
+  fclose(fp);
 }
 
 class TrigInit
 {
-public:
-	TrigInit() { initTrig(); }
+  public:
+  TrigInit() { initTrig(); }
 };
 TrigInit trigInitializer;
 
 #endif // REGENERATE_TRIG_TABLES
-
-

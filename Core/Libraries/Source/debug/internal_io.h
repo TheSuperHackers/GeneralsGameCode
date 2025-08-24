@@ -27,13 +27,13 @@
 // Internal header: I/O classes
 //////////////////////////////////////////////////////////////////////////////
 #ifdef _MSC_VER
-#  pragma once
+#pragma once
 #endif
 #ifndef INTERNAL_IO_H // Include guard
 #define INTERNAL_IO_H
 
 /// \internal \brief con debug I/O class
-class DebugIOCon: public DebugIOInterface
+class DebugIOCon : public DebugIOInterface
 {
   /**
     true if we allocated the console, false if there has already
@@ -58,26 +58,25 @@ class DebugIOCon: public DebugIOInterface
   */
   unsigned m_inputRead;
 
-public:
+  public:
   explicit DebugIOCon(void);
   virtual ~DebugIOCon();
   virtual int Read(char *buf, int maxchar);
   virtual void Write(StringType type, const char *src, const char *str);
   virtual void EmergencyFlush(void) {}
-  virtual void Execute(class Debug& dbg, const char *cmd, bool structuredCmd,
-                       unsigned argn, const char * const * argv);
+  virtual void Execute(class Debug &dbg, const char *cmd, bool structuredCmd, unsigned argn, const char *const *argv);
   static DebugIOInterface *Create(void);
   virtual void Delete(void);
 };
 
 /// \internal \brief con flat I/O class
-class DebugIOFlat: public DebugIOInterface
+class DebugIOFlat : public DebugIOInterface
 {
   /// \brief single output stream
   class OutputStream
   {
-    OutputStream(const OutputStream&);
-    OutputStream& operator=(const OutputStream&);
+    OutputStream(const OutputStream &);
+    OutputStream &operator=(const OutputStream &);
 
     /// output file name (dynamically allocated)
     char *m_fileName;
@@ -112,8 +111,7 @@ class DebugIOFlat: public DebugIOInterface
     */
     void InternalWrite(const char *src, unsigned len);
 
-  public:
-
+public:
     /**
       \brief Creates a new output stream instance.
 
@@ -131,7 +129,7 @@ class DebugIOFlat: public DebugIOInterface
 
       \param path optional path to a destination directory
     */
-    void Delete(const char *path=NULL);
+    void Delete(const char *path = NULL);
 
     /**
       \brief Determines name of output stream.
@@ -209,46 +207,43 @@ class DebugIOFlat: public DebugIOInterface
   */
   static void ExpandMagic(const char *src, const char *splitName, char *buf);
 
-public:
+  public:
   explicit DebugIOFlat(void);
   virtual ~DebugIOFlat();
   virtual int Read(char *buf, int maxchar) { return 0; }
   virtual void Write(StringType type, const char *src, const char *str);
   virtual void EmergencyFlush(void);
-  virtual void Execute(class Debug& dbg, const char *cmd, bool structuredCmd,
-                       unsigned argn, const char * const * argv);
+  virtual void Execute(class Debug &dbg, const char *cmd, bool structuredCmd, unsigned argn, const char *const *argv);
   static DebugIOInterface *Create(void);
   virtual void Delete(void);
 };
 
 /// \internal \brief net debug I/O class
-class DebugIONet: public DebugIOInterface
+class DebugIONet : public DebugIOInterface
 {
   /// our pipe handle
   HANDLE m_pipe;
 
-public:
+  public:
   explicit DebugIONet(void);
   virtual ~DebugIONet();
   virtual int Read(char *buf, int maxchar);
   virtual void Write(StringType type, const char *src, const char *str);
   virtual void EmergencyFlush(void);
-  virtual void Execute(class Debug& dbg, const char *cmd, bool structuredCmd,
-                       unsigned argn, const char * const * argv);
+  virtual void Execute(class Debug &dbg, const char *cmd, bool structuredCmd, unsigned argn, const char *const *argv);
   static DebugIOInterface *Create(void);
   virtual void Delete(void);
 };
 
 /// \internal \brief ods debug I/O class
-class DebugIOOds: public DebugIOInterface
+class DebugIOOds : public DebugIOInterface
 {
-public:
+  public:
   explicit DebugIOOds(void) {}
   virtual int Read(char *buf, int maxchar) { return 0; }
   virtual void Write(StringType type, const char *src, const char *str);
   virtual void EmergencyFlush(void) {}
-  virtual void Execute(class Debug& dbg, const char *cmd, bool structuredCmd,
-                       unsigned argn, const char * const * argv) {}
+  virtual void Execute(class Debug &dbg, const char *cmd, bool structuredCmd, unsigned argn, const char *const *argv) {}
   static DebugIOInterface *Create(void);
   virtual void Delete(void);
 };

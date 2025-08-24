@@ -30,34 +30,35 @@
 
 class CBackgroundBMPDialog : public CDialog
 {
-// Construction
-public:
-	CBackgroundBMPDialog(CWnd* pParent = NULL);   // standard constructor
+  // Construction
+  public:
+  CBackgroundBMPDialog(CWnd *pParent = NULL); // standard constructor
 
-// Dialog Data
-	//{{AFX_DATA(CBackgroundBMPDialog)
-	enum { IDD = IDD_BACKGROUND_BMP };
-		// NOTE: the ClassWizard will add data members here
-	//}}AFX_DATA
+  // Dialog Data
+  //{{AFX_DATA(CBackgroundBMPDialog)
+  enum
+  {
+    IDD = IDD_BACKGROUND_BMP
+  };
+  // NOTE: the ClassWizard will add data members here
+  //}}AFX_DATA
 
+  // Overrides
+  // ClassWizard generated virtual function overrides
+  //{{AFX_VIRTUAL(CBackgroundBMPDialog)
+  protected:
+  virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
+  //}}AFX_VIRTUAL
 
-// Overrides
-	// ClassWizard generated virtual function overrides
-	//{{AFX_VIRTUAL(CBackgroundBMPDialog)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
-	//}}AFX_VIRTUAL
-
-// Implementation
-protected:
-
-	// Generated message map functions
-	//{{AFX_MSG(CBackgroundBMPDialog)
-	virtual BOOL OnInitDialog();
-	virtual void OnOK();
-	afx_msg void OnBrowse();
-	//}}AFX_MSG
-	DECLARE_MESSAGE_MAP()
+  // Implementation
+  protected:
+  // Generated message map functions
+  //{{AFX_MSG(CBackgroundBMPDialog)
+  virtual BOOL OnInitDialog();
+  virtual void OnOK();
+  afx_msg void OnBrowse();
+  //}}AFX_MSG
+  DECLARE_MESSAGE_MAP()
 };
 
 //{{AFX_INSERT_LOCATION}}

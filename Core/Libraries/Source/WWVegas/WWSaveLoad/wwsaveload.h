@@ -50,11 +50,9 @@
 
 class WWSaveLoad
 {
-public:
-	static void		Init(void);
-	static void		Shutdown(void);
+  public:
+  static void Init(void);
+  static void Shutdown(void);
 };
 
-
 #endif
-

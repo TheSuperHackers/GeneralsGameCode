@@ -34,7 +34,6 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
 #if defined(_MSC_VER)
 #pragma once
 #endif
@@ -46,12 +45,10 @@
 #include "SphereGeneralPropPage.h"
 #include "SphereSizePropPage.h"
 
-
 // Forward declarations
 class ParticleEmitterClass;
 class EmitterInstanceListClass;
 class AssetInfoClass;
-
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -60,63 +57,58 @@ class AssetInfoClass;
 /////////////////////////////////////////////////////////////////////////////
 class SpherePropertySheetClass : public CPropertySheet
 {
-	DECLARE_DYNAMIC(SpherePropertySheetClass)
+  DECLARE_DYNAMIC(SpherePropertySheetClass)
 
-// Construction
-public:
-	SpherePropertySheetClass (SphereRenderObjClass *sphere, UINT nIDCaption, CWnd* pParentWnd = NULL, UINT iSelectPage = 0);
-	SpherePropertySheetClass (SphereRenderObjClass *sphere, LPCTSTR pszCaption, CWnd* pParentWnd = NULL, UINT iSelectPage = 0);
+  // Construction
+  public:
+  SpherePropertySheetClass(SphereRenderObjClass *sphere, UINT nIDCaption, CWnd *pParentWnd = NULL, UINT iSelectPage = 0);
+  SpherePropertySheetClass(SphereRenderObjClass *sphere, LPCTSTR pszCaption, CWnd *pParentWnd = NULL, UINT iSelectPage = 0);
 
-// Attributes
-public:
+  // Attributes
+  public:
+  // Operations
+  public:
+  // Overrides
+  // ClassWizard generated virtual function overrides
+  //{{AFX_VIRTUAL(SpherePropertySheetClass)
+  protected:
+  virtual LRESULT WindowProc(UINT message, WPARAM wParam, LPARAM lParam);
+  //}}AFX_VIRTUAL
 
-// Operations
-public:
+  // Implementation
+  public:
+  virtual ~SpherePropertySheetClass();
 
-// Overrides
-	// ClassWizard generated virtual function overrides
-	//{{AFX_VIRTUAL(SpherePropertySheetClass)
-	protected:
-	virtual LRESULT WindowProc(UINT message, WPARAM wParam, LPARAM lParam);
-	//}}AFX_VIRTUAL
+  // Generated message map functions
+  protected:
+  //{{AFX_MSG(SpherePropertySheetClass)
+  //}}AFX_MSG
+  DECLARE_MESSAGE_MAP()
 
-// Implementation
-public:
-	virtual ~SpherePropertySheetClass();
+  public:
+  //////////////////////////////////////////////////////////////////////
+  //	Public methods
+  //////////////////////////////////////////////////////////////////////
 
-	// Generated message map functions
-protected:
-	//{{AFX_MSG(SpherePropertySheetClass)
-	//}}AFX_MSG
-	DECLARE_MESSAGE_MAP()
+  protected:
+  //////////////////////////////////////////////////////////////////////
+  //	Protected methods
+  //////////////////////////////////////////////////////////////////////
+  void Initialize(void);
+  SphereRenderObjClass *Create_Object(void);
+  void Update_Object(void);
+  void Add_Object_To_Viewer(void);
+  void Create_New_Object(void);
 
-public:
-
-	//////////////////////////////////////////////////////////////////////
-	//	Public methods
-	//////////////////////////////////////////////////////////////////////
-
-protected:
-
-	//////////////////////////////////////////////////////////////////////
-	//	Protected methods
-	//////////////////////////////////////////////////////////////////////
-	void							Initialize (void);
-	SphereRenderObjClass *	Create_Object (void);
-	void							Update_Object (void);
-	void							Add_Object_To_Viewer (void);
-	void							Create_New_Object (void);
-
-private:
-
-	//////////////////////////////////////////////////////////////////////
-	//	Private member data
-	//////////////////////////////////////////////////////////////////////
-	SphereGeneralPropPageClass		m_GeneralPage;
-	SphereColorPropPageClass		m_ColorPage;
-	SphereSizePropPageClass			m_ScalePage;
-	SphereRenderObjClass *			m_RenderObj;
-	CString								m_LastSavedName;
+  private:
+  //////////////////////////////////////////////////////////////////////
+  //	Private member data
+  //////////////////////////////////////////////////////////////////////
+  SphereGeneralPropPageClass m_GeneralPage;
+  SphereColorPropPageClass m_ColorPage;
+  SphereSizePropPageClass m_ScalePage;
+  SphereRenderObjClass *m_RenderObj;
+  CString m_LastSavedName;
 };
 
 /////////////////////////////////////////////////////////////////////////////

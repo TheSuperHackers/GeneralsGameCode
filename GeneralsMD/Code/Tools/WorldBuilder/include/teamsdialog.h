@@ -32,67 +32,67 @@
 
 class CTeamsDialog : public CDialog
 {
-// Construction
-public:
-	CTeamsDialog(CWnd* pParent = NULL);   // standard constructor
+  // Construction
+  public:
+  CTeamsDialog(CWnd *pParent = NULL); // standard constructor
 
-// Dialog Data
-	//{{AFX_DATA(CTeamsDialog)
-	enum { IDD = IDD_TEAMS_DIALOG };
-		// NOTE: the ClassWizard will add data members here
-	//}}AFX_DATA
+  // Dialog Data
+  //{{AFX_DATA(CTeamsDialog)
+  enum
+  {
+    IDD = IDD_TEAMS_DIALOG
+  };
+  // NOTE: the ClassWizard will add data members here
+  //}}AFX_DATA
 
+  // Overrides
+  // ClassWizard generated virtual function overrides
+  //{{AFX_VIRTUAL(CTeamsDialog)
+  protected:
+  virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
+  //}}AFX_VIRTUAL
 
-// Overrides
-	// ClassWizard generated virtual function overrides
-	//{{AFX_VIRTUAL(CTeamsDialog)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
-	//}}AFX_VIRTUAL
+  // Implementation
+  protected:
+  // Generated message map functions
+  //{{AFX_MSG(CTeamsDialog)
+  virtual BOOL OnInitDialog();
+  virtual void OnOK();
+  virtual void OnCancel();
+  afx_msg void OnNewteam();
+  afx_msg void OnDeleteteam();
+  afx_msg void OnEditTemplate();
+  afx_msg void OnSelchangePlayerList();
+  afx_msg void OnClickTeamsList(NMHDR *pNMHDR, LRESULT *pResult);
+  afx_msg void OnDblclkTeamsList(NMHDR *pNMHDR, LRESULT *pResult);
+  afx_msg void OnCopyteam();
+  afx_msg void OnSelectTeamMembers();
+  afx_msg void OnMoveDownTeam();
+  afx_msg void OnMoveUpTeam();
+  //}}AFX_MSG
+  DECLARE_MESSAGE_MAP()
 
-// Implementation
-protected:
+  Int m_updating;
+  SidesList m_sides;
+  Int m_curTeam;
 
-	// Generated message map functions
-	//{{AFX_MSG(CTeamsDialog)
-	virtual BOOL OnInitDialog();
-	virtual void OnOK();
-	virtual void OnCancel();
-	afx_msg void OnNewteam();
-	afx_msg void OnDeleteteam();
-	afx_msg void OnEditTemplate();
-	afx_msg void OnSelchangePlayerList();
-	afx_msg void OnClickTeamsList(NMHDR* pNMHDR, LRESULT* pResult);
-	afx_msg void OnDblclkTeamsList(NMHDR* pNMHDR, LRESULT* pResult);
-	afx_msg void OnCopyteam();
-	afx_msg void OnSelectTeamMembers();
-	afx_msg void OnMoveDownTeam();
-	afx_msg void OnMoveUpTeam();
-	//}}AFX_MSG
-	DECLARE_MESSAGE_MAP()
+  enum
+  {
+    REBUILD_TEAMS = 0x01,
+    REBUILD_OWNERS = 0x02,
+    REBUILD_ALLIES = 0x04,
 
-	Int								m_updating;
-	SidesList						m_sides;
-	Int								m_curTeam;
+    REBUILD_NONE = 0x00,
+    REBUILD_ALL = 0xff
+  };
 
-	enum
-	{
-		REBUILD_TEAMS = 0x01,
-		REBUILD_OWNERS = 0x02,
-		REBUILD_ALLIES = 0x04,
+  void updateUI(Int whatToRebuild);
+  void validateTeamOwners(void);
+  Bool isValidTeamOwner(AsciiString ownerName);
+  void doCorrectTeamOwnerDialog(TeamsInfo *ti);
 
-		REBUILD_NONE = 0x00,
-		REBUILD_ALL = 0xff
-	};
-
-	void updateUI(Int whatToRebuild);
-	void validateTeamOwners( void );
-	Bool isValidTeamOwner( AsciiString ownerName );
-	void doCorrectTeamOwnerDialog( TeamsInfo *ti );
-
-private:
-	void UpdateTeamsList(void);
-
+  private:
+  void UpdateTeamsList(void);
 };
 
 //{{AFX_INSERT_LOCATION}}

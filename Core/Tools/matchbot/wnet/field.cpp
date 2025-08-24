@@ -42,166 +42,162 @@
 #endif
 #include "field.h"
 
-
 // private member func
 void FieldClass::Clear(void)
 {
-  delete[](Data);
+  delete[] (Data);
 
-  strcpy(ID,"");
-  DataType=0;
-  Size=0;
-  Data=NULL;
-  Next=NULL;
+  strcpy(ID, "");
+  DataType = 0;
+  Size = 0;
+  Data = NULL;
+  Next = NULL;
 }
-
 
 FieldClass::FieldClass(char *id, char data)
 {
-  Data=NULL;
-  Set(id,data);
+  Data = NULL;
+  Set(id, data);
 }
 
 FieldClass::FieldClass(char *id, unsigned char data)
 {
-  Data=NULL;
-  Set(id,data);
+  Data = NULL;
+  Set(id, data);
 }
 
 FieldClass::FieldClass(char *id, short data)
 {
-  Data=NULL;
-  Set(id,data);
+  Data = NULL;
+  Set(id, data);
 }
 
 FieldClass::FieldClass(char *id, unsigned short data)
 {
-  Data=NULL;
-  Set(id,data);
+  Data = NULL;
+  Set(id, data);
 }
 
 FieldClass::FieldClass(char *id, long data)
 {
-  Data=NULL;
-  Set(id,data);
+  Data = NULL;
+  Set(id, data);
 }
 
 FieldClass::FieldClass(char *id, unsigned long data)
 {
-  Data=NULL;
-  Set(id,data);
+  Data = NULL;
+  Set(id, data);
 }
 
 FieldClass::FieldClass(char *id, char *data)
 {
-  Data=NULL;
-  Set(id,data);
+  Data = NULL;
+  Set(id, data);
 }
 
 FieldClass::FieldClass(char *id, void *data, int length)
 {
-  Data=NULL;
-  Set(id,data,length);
+  Data = NULL;
+  Set(id, data, length);
 }
 
 void FieldClass::Set(char *id, char data)
 {
-  FieldClass     *Nextsave=Next;
+  FieldClass *Nextsave = Next;
 
   Clear();
   strncpy(ID, id, sizeof(ID));
-  DataType      = TYPE_CHAR;
-  Size		= sizeof(data);
-  Data		= new char[Size];
+  DataType = TYPE_CHAR;
+  Size = sizeof(data);
+  Data = new char[Size];
   memcpy(Data, &data, Size);
-  Next		= Nextsave;
+  Next = Nextsave;
 }
 
 void FieldClass::Set(char *id, unsigned char data)
 {
-  FieldClass     *Nextsave=Next;
+  FieldClass *Nextsave = Next;
   Clear();
   strncpy(ID, id, sizeof(ID));
   DataType = TYPE_UNSIGNED_CHAR;
-  Size     = sizeof(data);
-  Data     = new char[Size];
+  Size = sizeof(data);
+  Data = new char[Size];
   memcpy(Data, &data, Size);
-  Next     = Nextsave;
+  Next = Nextsave;
 }
 
 void FieldClass::Set(char *id, short data)
 {
-  FieldClass     *Nextsave=Next;
+  FieldClass *Nextsave = Next;
   Clear();
   strncpy(ID, id, sizeof(ID));
   DataType = TYPE_SHORT;
-  Size    = sizeof(data);
-  Data    = new char[Size];
+  Size = sizeof(data);
+  Data = new char[Size];
   memcpy(Data, &data, Size);
-  Next    = Nextsave;
+  Next = Nextsave;
 }
 
 void FieldClass::Set(char *id, unsigned short data)
 {
-  FieldClass     *Nextsave=Next;
+  FieldClass *Nextsave = Next;
   Clear();
   strncpy(ID, id, sizeof(ID));
   DataType = TYPE_UNSIGNED_SHORT;
-  Size    = sizeof(data);
-  Data    = new char[Size];
+  Size = sizeof(data);
+  Data = new char[Size];
   memcpy(Data, &data, Size);
-  Next    = Nextsave;
+  Next = Nextsave;
 }
 
 void FieldClass::Set(char *id, long data)
 {
-  FieldClass     *Nextsave=Next;
+  FieldClass *Nextsave = Next;
   Clear();
   strncpy(ID, id, sizeof(ID));
   DataType = TYPE_LONG;
-  Size    = sizeof(data);
-  Data    = new char[Size];
+  Size = sizeof(data);
+  Data = new char[Size];
   memcpy(Data, &data, Size);
-  Next    = Nextsave;
+  Next = Nextsave;
 }
 
 void FieldClass::Set(char *id, unsigned long data)
 {
-  FieldClass     *Nextsave=Next;
+  FieldClass *Nextsave = Next;
   Clear();
   strncpy(ID, id, sizeof(ID));
   DataType = TYPE_UNSIGNED_LONG;
-  Size    = sizeof(data);
-  Data    = new char[Size];
+  Size = sizeof(data);
+  Data = new char[Size];
   memcpy(Data, &data, Size);
-  Next    = Nextsave;
+  Next = Nextsave;
 }
 
 void FieldClass::Set(char *id, char *data)
 {
-  FieldClass     *Nextsave=Next;
+  FieldClass *Nextsave = Next;
   Clear();
   strncpy(ID, id, sizeof(ID));
   DataType = TYPE_STRING;
-  Size    = (unsigned short)(strlen(data)+1);
-  Data    = new char[Size];
+  Size = (unsigned short)(strlen(data) + 1);
+  Data = new char[Size];
   memcpy(Data, data, Size);
-  Next    = Nextsave;
+  Next = Nextsave;
 }
-
 
 void FieldClass::Set(char *id, void *data, int length)
 {
-  FieldClass     *Nextsave=Next;
+  FieldClass *Nextsave = Next;
   Clear();
   strncpy(ID, id, sizeof(ID));
   DataType = TYPE_CHUNK;
-  Size    = (unsigned short)length;
-  Data    = new char[Size];
+  Size = (unsigned short)length;
+  Data = new char[Size];
   memcpy(Data, data, Size);
-  Next    = Nextsave;
+  Next = Nextsave;
 }
-
 
 FieldClass::~FieldClass()
 {
@@ -211,17 +207,17 @@ FieldClass::~FieldClass()
 // Fetch the datatype
 int FieldClass::Get_Type(void)
 {
-  return(DataType);
+  return (DataType);
 }
 
 void *FieldClass::Get_Data(void)
 {
-return(Data);
+  return (Data);
 }
 
 char *FieldClass::Get_ID(void)
 {
-return(ID);
+  return (ID);
 }
 
 /**************************************************************************
@@ -240,7 +236,8 @@ void FieldClass::Host_To_Net(void)
   // Before we convert the data type, we should convert the actual data
   //  sent.
   //
-  switch (DataType) {
+  switch (DataType)
+  {
     case TYPE_CHAR:
     case TYPE_UNSIGNED_CHAR:
     case TYPE_STRING:
@@ -267,7 +264,7 @@ void FieldClass::Host_To_Net(void)
   // Finally convert over the data type and the size of the packet.
   //
   DataType = htons(DataType);
-  Size      = htons(Size);
+  Size = htons(Size);
 }
 
 /**************************************************************************
@@ -286,13 +283,14 @@ void FieldClass::Net_To_Host(void)
   // Finally convert over the data type and the size of the packet.
   //
   DataType = ntohs(DataType);
-  Size      = ntohs(Size);
+  Size = ntohs(Size);
 
   //
   // Before we convert the data type, we should convert the actual data
   //  sent.
   //
-  switch (DataType) {
+  switch (DataType)
+  {
     case TYPE_CHAR:
     case TYPE_UNSIGNED_CHAR:
     case TYPE_STRING:
@@ -316,4 +314,3 @@ void FieldClass::Net_To_Host(void)
       break;
   }
 }
-

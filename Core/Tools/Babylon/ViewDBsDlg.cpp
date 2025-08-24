@@ -36,186 +36,177 @@ int ViewChanges = FALSE;
 /////////////////////////////////////////////////////////////////////////////
 // CViewDBsDlg dialog
 
-
-VIEWDBSII::VIEWDBSII(CWnd* pParent /*=NULL*/)
-	: CDialog(VIEWDBSII::IDD, pParent)
+VIEWDBSII::VIEWDBSII(CWnd *pParent /*=NULL*/) : CDialog(VIEWDBSII::IDD, pParent)
 {
-	//{{AFX_DATA_INIT(CViewDBsDlg)
-		// NOTE: the ClassWizard will add member initialization here
-	//}}AFX_DATA_INIT
+  //{{AFX_DATA_INIT(CViewDBsDlg)
+  // NOTE: the ClassWizard will add member initialization here
+  //}}AFX_DATA_INIT
 }
 
-
-void VIEWDBSII::DoDataExchange(CDataExchange* pDX)
+void VIEWDBSII::DoDataExchange(CDataExchange *pDX)
 {
-	CDialog::DoDataExchange(pDX);
-	//{{AFX_DATA_MAP(CViewDBsDlg)
-		// NOTE: the ClassWizard will add DDX and DDV calls here
-	//}}AFX_DATA_MAP
+  CDialog::DoDataExchange(pDX);
+  //{{AFX_DATA_MAP(CViewDBsDlg)
+  // NOTE: the ClassWizard will add DDX and DDV calls here
+  //}}AFX_DATA_MAP
 }
-
 
 BEGIN_MESSAGE_MAP(VIEWDBSII, CDialog)
-	//{{AFX_MSG_MAP(CViewDBsDlg)
-	ON_WM_CLOSE()
-	//}}AFX_MSG_MAP
+//{{AFX_MSG_MAP(CViewDBsDlg)
+ON_WM_CLOSE()
+//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
 // CViewDBsDlg message handlers
 
 static int label_count;
-static void progress_cb ( void )
+static void progress_cb(void)
 {
-	label_count++;
-	if ( MainDLG )
-	{
-		MainDLG->SetProgress ( label_count );
-	}
+  label_count++;
+  if (MainDLG)
+  {
+    MainDLG->SetProgress(label_count);
+  }
 }
 
-HTREEITEM VIEWDBSII::create_full_view ( void )
+HTREEITEM VIEWDBSII::create_full_view(void)
 {
-	CTreeCtrl *tc = ( CTreeCtrl *) GetDlgItem ( IDC_TREEVIEW );
-	HTREEITEM	root;
-	TransDB	*db;
-	int count = 0;
-	const char *title = "Building database view...";
+  CTreeCtrl *tc = (CTreeCtrl *)GetDlgItem(IDC_TREEVIEW);
+  HTREEITEM root;
+  TransDB *db;
+  int count = 0;
+  const char *title = "Building database view...";
 
-	MainDLG->Log ("");
-	MainDLG->Status ( title );
+  MainDLG->Log("");
+  MainDLG->Status(title);
 
-	root = tc->InsertItem ( "DBs" );
+  root = tc->InsertItem("DBs");
 
+  db = FirstTransDB();
 
-	db = FirstTransDB ( );
+  while (db)
+  {
+    count += db->NumLabels();
+    count += db->NumObsolete();
+    db = db->Next();
+  }
 
-	while ( db )
-	{
-		count += db->NumLabels ();
-		count += db->NumObsolete ();
-		db = db->Next ();
-	}
+  MainDLG->InitProgress(count);
 
-	MainDLG->InitProgress ( count );
+  label_count = 0;
 
-	label_count = 0;
+  db = FirstTransDB();
 
-	db = FirstTransDB ( );
+  while (db)
+  {
+    char buffer[100];
 
-	while ( db )
-	{
-		char buffer[100];
+    sprintf(buffer, "%s%s", title, db->Name());
+    MainDLG->Status(buffer, FALSE);
+    db->AddToTree(tc, root, FALSE, progress_cb);
+    db = db->Next();
+  }
 
-		sprintf ( buffer, "%s%s", title, db->Name());
-		MainDLG->Status ( buffer, FALSE );
-		db->AddToTree ( tc, root, FALSE, progress_cb );
-		db = db->Next ();
-	}
-
-	MainDLG->Log ("OK", SAME_LINE );
-	tc->Expand ( root, TVE_EXPAND );
-	return root;
+  MainDLG->Log("OK", SAME_LINE);
+  tc->Expand(root, TVE_EXPAND);
+  return root;
 }
 
-HTREEITEM VIEWDBSII::create_changes_view ( void )
+HTREEITEM VIEWDBSII::create_changes_view(void)
 {
-	CTreeCtrl *tc = ( CTreeCtrl *) GetDlgItem ( IDC_TREEVIEW );
-	HTREEITEM	root;
-	TransDB	*db;
-	int count = 0;
-	const char *title = "Building changes view...";
+  CTreeCtrl *tc = (CTreeCtrl *)GetDlgItem(IDC_TREEVIEW);
+  HTREEITEM root;
+  TransDB *db;
+  int count = 0;
+  const char *title = "Building changes view...";
 
-	MainDLG->Log ("");
-	MainDLG->Status ( title );
+  MainDLG->Log("");
+  MainDLG->Status(title);
 
+  db = FirstTransDB();
 
+  while (db)
+  {
+    if (db->IsChanged())
+    {
+      count += db->NumLabels();
+      count += db->NumObsolete();
+    }
+    db = db->Next();
+  }
 
-	db = FirstTransDB ( );
+  if (MainDLG)
+  {
+    MainDLG->InitProgress(count);
+  }
 
-	while ( db )
-	{
-		if ( db->IsChanged ())
-		{
-			count += db->NumLabels ();
-			count += db->NumObsolete ();
-		}
-		db = db->Next ();
-	}
+  if (count)
+  {
+    root = tc->InsertItem("Changes");
+  }
+  else
+  {
+    root = tc->InsertItem("No Changes");
+  }
 
-	if ( MainDLG )
-	{
-		MainDLG->InitProgress ( count );
-	}
+  label_count = 0;
 
-	if ( count )
-	{
-		root = tc->InsertItem ( "Changes" );
-	}
-	else
-	{
-		root = tc->InsertItem ( "No Changes" );
-	}
+  db = FirstTransDB();
 
-	label_count = 0;
+  while (db)
+  {
+    char buffer[100];
 
-	db = FirstTransDB ( );
+    if (db->IsChanged())
+    {
+      sprintf(buffer, "%s%s", title, db->Name());
+      MainDLG->Status(buffer, FALSE);
+      db->AddToTree(tc, root, TRUE, progress_cb);
+    }
+    db = db->Next();
+  }
 
-	while ( db )
-	{
-		char buffer[100];
+  if (MainDLG)
+  {
+    MainDLG->ProgressComplete();
+    MainDLG->Log("OK", SAME_LINE);
+    MainDLG->Ready();
+  }
 
-		if ( db->IsChanged ())
-		{
-			sprintf ( buffer, "%s%s", title, db->Name());
-			MainDLG->Status ( buffer, FALSE );
-			db->AddToTree ( tc, root, TRUE, progress_cb );
-		}
-		db = db->Next ();
-	}
-
-	if ( MainDLG )
-	{
-		MainDLG->ProgressComplete ( );
-		MainDLG->Log ("OK", SAME_LINE );
-		MainDLG->Ready ();
-	}
-
-	tc->Expand ( root, TVE_EXPAND );
-	return root;
+  tc->Expand(root, TVE_EXPAND);
+  return root;
 }
 
 BOOL VIEWDBSII::OnInitDialog()
 {
-	HTREEITEM root;
-	CDialog::OnInitDialog();
+  HTREEITEM root;
+  CDialog::OnInitDialog();
 
-	// TODO: Add extra initialization here
+  // TODO: Add extra initialization here
 
-	if ( !ViewChanges )
-	{
-		root = create_full_view ();
-	}
-	else
-	{
-		root = create_changes_view ();
-	}
+  if (!ViewChanges)
+  {
+    root = create_full_view();
+  }
+  else
+  {
+    root = create_changes_view();
+  }
 
+  MainDLG->Ready();
 
-	MainDLG->Ready();
-
-	return TRUE;  // return TRUE unless you set the focus to a control
-	              // EXCEPTION: OCX Property Pages should return FALSE
+  return TRUE; // return TRUE unless you set the focus to a control
+               // EXCEPTION: OCX Property Pages should return FALSE
 }
 
 void VIEWDBSII::OnClose()
 {
-	// TODO: Add your message handler code here and/or call default
+  // TODO: Add your message handler code here and/or call default
 
-	CTreeCtrl *tc = ( CTreeCtrl *) GetDlgItem ( IDC_TREEVIEW );
-	HTREEITEM root = tc->GetRootItem ();
-	tc->Expand ( root, TVE_COLLAPSE );
-	tc->DeleteAllItems ();
-	CDialog::OnClose();
+  CTreeCtrl *tc = (CTreeCtrl *)GetDlgItem(IDC_TREEVIEW);
+  HTREEITEM root = tc->GetRootItem();
+  tc->Expand(root, TVE_COLLAPSE);
+  tc->DeleteAllItems();
+  CDialog::OnClose();
 }
-

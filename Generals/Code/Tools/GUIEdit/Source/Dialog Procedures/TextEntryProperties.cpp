@@ -68,153 +68,141 @@
 // textEntryPropertiesCallback ================================================
 /** Dialog callback for properties */
 //=============================================================================
-static LRESULT CALLBACK textEntryPropertiesCallback( HWND hWndDialog,
-																										 UINT message,
-																										 WPARAM wParam,
-																										 LPARAM lParam )
+static LRESULT CALLBACK textEntryPropertiesCallback(HWND hWndDialog, UINT message, WPARAM wParam, LPARAM lParam)
 {
-	Int returnCode;
+  Int returnCode;
 
-	//
-	// handle any common messages between all property dialogs cause they
-	// are designed to have controls doing the same functionality
-	// and names
-	//
-	if( HandleCommonDialogMessages( hWndDialog, message,
-																	wParam, lParam, &returnCode ) == TRUE )
-		return returnCode;
+  //
+  // handle any common messages between all property dialogs cause they
+  // are designed to have controls doing the same functionality
+  // and names
+  //
+  if (HandleCommonDialogMessages(hWndDialog, message, wParam, lParam, &returnCode) == TRUE)
+    return returnCode;
 
-	switch( message )
-	{
-
-		// ------------------------------------------------------------------------
+  switch (message)
+  {
+    // ------------------------------------------------------------------------
     case WM_COMMAND:
     {
-//			Int notifyCode = HIWORD( wParam );  // notification code
-			Int controlID = LOWORD( wParam );  // control ID
-//			HWND hWndControl = (HWND)lParam;  // control window handle
+      //			Int notifyCode = HIWORD( wParam );  // notification code
+      Int controlID = LOWORD(wParam); // control ID
+      //			HWND hWndControl = (HWND)lParam;  // control window handle
 
-      switch( controlID )
+      switch (controlID)
       {
-
-				// --------------------------------------------------------------------
+        // --------------------------------------------------------------------
         case IDOK:
-				{
-					GameWindow *window = TheEditor->getPropertyTarget();
+        {
+          GameWindow *window = TheEditor->getPropertyTarget();
 
-					// sanity
-					if( window )
-					{
-						ImageAndColorInfo *info;
+          // sanity
+          if (window)
+          {
+            ImageAndColorInfo *info;
 
-						// save the common properties
-						if( SaveCommonDialogProperties( hWndDialog, window ) == FALSE )
-							break;
+            // save the common properties
+            if (SaveCommonDialogProperties(hWndDialog, window) == FALSE)
+              break;
 
-						// save the image and color data
-						// ----------------------------------------------------------------
-						info = GetStateInfo( TEXT_ENTRY_ENABLED_LEFT );
-						GadgetTextEntrySetEnabledImageLeft( window, info->image );
-						GadgetTextEntrySetEnabledColor( window, info->color );
-						GadgetTextEntrySetEnabledBorderColor( window, info->borderColor );
-						info = GetStateInfo( TEXT_ENTRY_ENABLED_RIGHT );
-						GadgetTextEntrySetEnabledImageRight( window, info->image );
-						info = GetStateInfo( TEXT_ENTRY_ENABLED_CENTER );
-						GadgetTextEntrySetEnabledImageCenter( window, info->image );
-						info = GetStateInfo( TEXT_ENTRY_ENABLED_SMALL_CENTER );
-						GadgetTextEntrySetEnabledImageSmallCenter( window, info->image );
+            // save the image and color data
+            // ----------------------------------------------------------------
+            info = GetStateInfo(TEXT_ENTRY_ENABLED_LEFT);
+            GadgetTextEntrySetEnabledImageLeft(window, info->image);
+            GadgetTextEntrySetEnabledColor(window, info->color);
+            GadgetTextEntrySetEnabledBorderColor(window, info->borderColor);
+            info = GetStateInfo(TEXT_ENTRY_ENABLED_RIGHT);
+            GadgetTextEntrySetEnabledImageRight(window, info->image);
+            info = GetStateInfo(TEXT_ENTRY_ENABLED_CENTER);
+            GadgetTextEntrySetEnabledImageCenter(window, info->image);
+            info = GetStateInfo(TEXT_ENTRY_ENABLED_SMALL_CENTER);
+            GadgetTextEntrySetEnabledImageSmallCenter(window, info->image);
 
-						// ----------------------------------------------------------------
-						info = GetStateInfo( TEXT_ENTRY_DISABLED_LEFT );
-						GadgetTextEntrySetDisabledImageLeft( window, info->image );
-						GadgetTextEntrySetDisabledColor( window, info->color );
-						GadgetTextEntrySetDisabledBorderColor( window, info->borderColor );
-						info = GetStateInfo( TEXT_ENTRY_DISABLED_RIGHT );
-						GadgetTextEntrySetDisabledImageRight( window, info->image );
-						info = GetStateInfo( TEXT_ENTRY_DISABLED_CENTER );
-						GadgetTextEntrySetDisabledImageCenter( window, info->image );
-						info = GetStateInfo( TEXT_ENTRY_DISABLED_SMALL_CENTER );
-						GadgetTextEntrySetDisabledImageSmallCenter( window, info->image );
+            // ----------------------------------------------------------------
+            info = GetStateInfo(TEXT_ENTRY_DISABLED_LEFT);
+            GadgetTextEntrySetDisabledImageLeft(window, info->image);
+            GadgetTextEntrySetDisabledColor(window, info->color);
+            GadgetTextEntrySetDisabledBorderColor(window, info->borderColor);
+            info = GetStateInfo(TEXT_ENTRY_DISABLED_RIGHT);
+            GadgetTextEntrySetDisabledImageRight(window, info->image);
+            info = GetStateInfo(TEXT_ENTRY_DISABLED_CENTER);
+            GadgetTextEntrySetDisabledImageCenter(window, info->image);
+            info = GetStateInfo(TEXT_ENTRY_DISABLED_SMALL_CENTER);
+            GadgetTextEntrySetDisabledImageSmallCenter(window, info->image);
 
-						// ----------------------------------------------------------------
-						info = GetStateInfo( TEXT_ENTRY_HILITE_LEFT );
-						GadgetTextEntrySetHiliteImageLeft( window, info->image );
-						GadgetTextEntrySetHiliteColor( window, info->color );
-						GadgetTextEntrySetHiliteBorderColor( window, info->borderColor );
-						info = GetStateInfo( TEXT_ENTRY_HILITE_RIGHT );
-						GadgetTextEntrySetHiliteImageRight( window, info->image );
-						info = GetStateInfo( TEXT_ENTRY_HILITE_CENTER );
-						GadgetTextEntrySetHiliteImageCenter( window, info->image );
-						info = GetStateInfo( TEXT_ENTRY_HILITE_SMALL_CENTER );
-						GadgetTextEntrySetHiliteImageSmallCenter( window, info->image );
+            // ----------------------------------------------------------------
+            info = GetStateInfo(TEXT_ENTRY_HILITE_LEFT);
+            GadgetTextEntrySetHiliteImageLeft(window, info->image);
+            GadgetTextEntrySetHiliteColor(window, info->color);
+            GadgetTextEntrySetHiliteBorderColor(window, info->borderColor);
+            info = GetStateInfo(TEXT_ENTRY_HILITE_RIGHT);
+            GadgetTextEntrySetHiliteImageRight(window, info->image);
+            info = GetStateInfo(TEXT_ENTRY_HILITE_CENTER);
+            GadgetTextEntrySetHiliteImageCenter(window, info->image);
+            info = GetStateInfo(TEXT_ENTRY_HILITE_SMALL_CENTER);
+            GadgetTextEntrySetHiliteImageSmallCenter(window, info->image);
 
-						// text entry props
-						EntryData *entryData = (EntryData *)window->winGetUserData();
+            // text entry props
+            EntryData *entryData = (EntryData *)window->winGetUserData();
 
-						entryData->maxTextLen = GetDlgItemInt( hWndDialog, EDIT_MAX_CHARS, NULL, TRUE );
-						entryData->secretText = IsDlgButtonChecked( hWndDialog, CHECK_SECRET_TEXT );
-						entryData->aSCIIOnly = IsDlgButtonChecked( hWndDialog, CHECK_ASCII_TEXT );
-						if( IsDlgButtonChecked( hWndDialog, RADIO_LETTERS_AND_NUMBERS ) )
-						{
+            entryData->maxTextLen = GetDlgItemInt(hWndDialog, EDIT_MAX_CHARS, NULL, TRUE);
+            entryData->secretText = IsDlgButtonChecked(hWndDialog, CHECK_SECRET_TEXT);
+            entryData->aSCIIOnly = IsDlgButtonChecked(hWndDialog, CHECK_ASCII_TEXT);
+            if (IsDlgButtonChecked(hWndDialog, RADIO_LETTERS_AND_NUMBERS))
+            {
+              entryData->alphaNumericalOnly = TRUE;
+              entryData->numericalOnly = FALSE;
 
-							entryData->alphaNumericalOnly = TRUE;
-							entryData->numericalOnly = FALSE;
+            } // end if
+            else if (IsDlgButtonChecked(hWndDialog, RADIO_NUMBERS))
+            {
+              entryData->alphaNumericalOnly = FALSE;
+              entryData->numericalOnly = TRUE;
 
-						}  // end if
-						else if( IsDlgButtonChecked( hWndDialog, RADIO_NUMBERS ) )
-						{
+            } // end else if
+            else
+            {
+              entryData->alphaNumericalOnly = FALSE;
+              entryData->numericalOnly = FALSE;
 
-							entryData->alphaNumericalOnly = FALSE;
-							entryData->numericalOnly = TRUE;
+            } // end else
 
-						}  // end else if
-						else
-						{
+          } // end if
 
-							entryData->alphaNumericalOnly = FALSE;
-							entryData->numericalOnly = FALSE;
-
-						}  // end else
-
-					}  // end if
-
-          DestroyWindow( hWndDialog );
+          DestroyWindow(hWndDialog);
           break;
 
-				}  // end OK
+        } // end OK
 
-				// --------------------------------------------------------------------
+        // --------------------------------------------------------------------
         case IDCANCEL:
-				{
-
-          DestroyWindow( hWndDialog );
+        {
+          DestroyWindow(hWndDialog);
           break;
 
-				}  // end cancel
+        } // end cancel
 
-      }  // end switch( LOWORD( wParam ) )
+      } // end switch( LOWORD( wParam ) )
 
       return 0;
 
     } // end of WM_COMMAND
 
-		// ------------------------------------------------------------------------
+    // ------------------------------------------------------------------------
     case WM_CLOSE:
-		{
-
-      DestroyWindow( hWndDialog );
+    {
+      DestroyWindow(hWndDialog);
       return 0;
 
-		}  // end close
+    } // end close
 
-		// ------------------------------------------------------------------------
-		default:
-			return 0;
+    // ------------------------------------------------------------------------
+    default:
+      return 0;
 
-  }  // end of switch
+  } // end of switch
 
-}  // end textEntryPropertiesCallback
-
+} // end textEntryPropertiesCallback
 
 ///////////////////////////////////////////////////////////////////////////////
 // PUBLIC FUNCTIONS ///////////////////////////////////////////////////////////
@@ -223,88 +211,86 @@ static LRESULT CALLBACK textEntryPropertiesCallback( HWND hWndDialog,
 // InitTextEntryPropertiesDialog ==============================================
 /** Bring up the text entry properties dialog */
 //=============================================================================
-HWND InitTextEntryPropertiesDialog( GameWindow *window )
+HWND InitTextEntryPropertiesDialog(GameWindow *window)
 {
-	HWND dialog;
+  HWND dialog;
 
-	// create the dialog box
-	dialog = CreateDialog( TheEditor->getInstance(),
-												 (LPCTSTR)TEXT_ENTRY_PROPERTIES_DIALOG,
-												 TheEditor->getWindowHandle(),
-												 (DLGPROC)textEntryPropertiesCallback );
-	if( dialog == NULL )
-		return NULL;
+  // create the dialog box
+  dialog = CreateDialog(
+      TheEditor->getInstance(),
+      (LPCTSTR)TEXT_ENTRY_PROPERTIES_DIALOG,
+      TheEditor->getWindowHandle(),
+      (DLGPROC)textEntryPropertiesCallback);
+  if (dialog == NULL)
+    return NULL;
 
-	// do the common initialization
-	CommonDialogInitialize( window, dialog );
+  // do the common initialization
+  CommonDialogInitialize(window, dialog);
 
-	//
-	// store in the image and color table the values for this putton
-	//
-	const Image *image;
-	Color color, borderColor;
+  //
+  // store in the image and color table the values for this putton
+  //
+  const Image *image;
+  Color color, borderColor;
 
-	// --------------------------------------------------------------------------
-	image = GadgetTextEntryGetEnabledImageLeft( window );
-	color = GadgetTextEntryGetEnabledColor( window );
-	borderColor = GadgetTextEntryGetEnabledBorderColor( window );
-	StoreImageAndColor( TEXT_ENTRY_ENABLED_LEFT, image, color, borderColor );
-	image = GadgetTextEntryGetEnabledImageRight( window );
-	StoreImageAndColor( TEXT_ENTRY_ENABLED_RIGHT, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED );
-	image = GadgetTextEntryGetEnabledImageCenter( window );
-	StoreImageAndColor( TEXT_ENTRY_ENABLED_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED );
-	image = GadgetTextEntryGetEnabledImageSmallCenter( window );
-	StoreImageAndColor( TEXT_ENTRY_ENABLED_SMALL_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED );
+  // --------------------------------------------------------------------------
+  image = GadgetTextEntryGetEnabledImageLeft(window);
+  color = GadgetTextEntryGetEnabledColor(window);
+  borderColor = GadgetTextEntryGetEnabledBorderColor(window);
+  StoreImageAndColor(TEXT_ENTRY_ENABLED_LEFT, image, color, borderColor);
+  image = GadgetTextEntryGetEnabledImageRight(window);
+  StoreImageAndColor(TEXT_ENTRY_ENABLED_RIGHT, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED);
+  image = GadgetTextEntryGetEnabledImageCenter(window);
+  StoreImageAndColor(TEXT_ENTRY_ENABLED_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED);
+  image = GadgetTextEntryGetEnabledImageSmallCenter(window);
+  StoreImageAndColor(TEXT_ENTRY_ENABLED_SMALL_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED);
 
-	// --------------------------------------------------------------------------
-	image = GadgetTextEntryGetDisabledImageLeft( window );
-	color = GadgetTextEntryGetDisabledColor( window );
-	borderColor = GadgetTextEntryGetDisabledBorderColor( window );
-	StoreImageAndColor( TEXT_ENTRY_DISABLED_LEFT, image, color, borderColor );
-	image = GadgetTextEntryGetDisabledImageRight( window );
-	StoreImageAndColor( TEXT_ENTRY_DISABLED_RIGHT, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED );
-	image = GadgetTextEntryGetDisabledImageCenter( window );
-	StoreImageAndColor( TEXT_ENTRY_DISABLED_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED );
-	image = GadgetTextEntryGetDisabledImageSmallCenter( window );
-	StoreImageAndColor( TEXT_ENTRY_DISABLED_SMALL_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED );
+  // --------------------------------------------------------------------------
+  image = GadgetTextEntryGetDisabledImageLeft(window);
+  color = GadgetTextEntryGetDisabledColor(window);
+  borderColor = GadgetTextEntryGetDisabledBorderColor(window);
+  StoreImageAndColor(TEXT_ENTRY_DISABLED_LEFT, image, color, borderColor);
+  image = GadgetTextEntryGetDisabledImageRight(window);
+  StoreImageAndColor(TEXT_ENTRY_DISABLED_RIGHT, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED);
+  image = GadgetTextEntryGetDisabledImageCenter(window);
+  StoreImageAndColor(TEXT_ENTRY_DISABLED_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED);
+  image = GadgetTextEntryGetDisabledImageSmallCenter(window);
+  StoreImageAndColor(TEXT_ENTRY_DISABLED_SMALL_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED);
 
-	// --------------------------------------------------------------------------
-	image = GadgetTextEntryGetHiliteImageLeft( window );
-	color = GadgetTextEntryGetHiliteColor( window );
-	borderColor = GadgetTextEntryGetHiliteBorderColor( window );
-	StoreImageAndColor( TEXT_ENTRY_HILITE_LEFT, image, color, borderColor );
-	image = GadgetTextEntryGetHiliteImageRight( window );
-	StoreImageAndColor( TEXT_ENTRY_HILITE_RIGHT, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED );
-	image = GadgetTextEntryGetHiliteImageCenter( window );
-	StoreImageAndColor( TEXT_ENTRY_HILITE_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED );
-	image = GadgetTextEntryGetHiliteImageSmallCenter( window );
-	StoreImageAndColor( TEXT_ENTRY_HILITE_SMALL_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED );
+  // --------------------------------------------------------------------------
+  image = GadgetTextEntryGetHiliteImageLeft(window);
+  color = GadgetTextEntryGetHiliteColor(window);
+  borderColor = GadgetTextEntryGetHiliteBorderColor(window);
+  StoreImageAndColor(TEXT_ENTRY_HILITE_LEFT, image, color, borderColor);
+  image = GadgetTextEntryGetHiliteImageRight(window);
+  StoreImageAndColor(TEXT_ENTRY_HILITE_RIGHT, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED);
+  image = GadgetTextEntryGetHiliteImageCenter(window);
+  StoreImageAndColor(TEXT_ENTRY_HILITE_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED);
+  image = GadgetTextEntryGetHiliteImageSmallCenter(window);
+  StoreImageAndColor(TEXT_ENTRY_HILITE_SMALL_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED);
 
-	// fill out text entry properties
-	EntryData *entryData = (EntryData *)window->winGetUserData();
+  // fill out text entry properties
+  EntryData *entryData = (EntryData *)window->winGetUserData();
 
-	SetDlgItemInt( dialog, EDIT_MAX_CHARS, entryData->maxTextLen, TRUE );
-	if( entryData->secretText )
-		CheckDlgButton( dialog, CHECK_SECRET_TEXT, BST_CHECKED );
-	if( entryData->aSCIIOnly )
-		CheckDlgButton( dialog, CHECK_ASCII_TEXT, BST_CHECKED );
-	if( entryData->numericalOnly )
-		CheckDlgButton( dialog, RADIO_NUMBERS, BST_CHECKED );
-	else if( entryData->alphaNumericalOnly )
-		CheckDlgButton( dialog, RADIO_LETTERS_AND_NUMBERS, BST_CHECKED );
-	else
-		CheckDlgButton( dialog, RADIO_ANY_TEXT, BST_CHECKED );
+  SetDlgItemInt(dialog, EDIT_MAX_CHARS, entryData->maxTextLen, TRUE);
+  if (entryData->secretText)
+    CheckDlgButton(dialog, CHECK_SECRET_TEXT, BST_CHECKED);
+  if (entryData->aSCIIOnly)
+    CheckDlgButton(dialog, CHECK_ASCII_TEXT, BST_CHECKED);
+  if (entryData->numericalOnly)
+    CheckDlgButton(dialog, RADIO_NUMBERS, BST_CHECKED);
+  else if (entryData->alphaNumericalOnly)
+    CheckDlgButton(dialog, RADIO_LETTERS_AND_NUMBERS, BST_CHECKED);
+  else
+    CheckDlgButton(dialog, RADIO_ANY_TEXT, BST_CHECKED);
 
-	// select the button enabled state for display
-	SwitchToState( TEXT_ENTRY_ENABLED_LEFT, dialog );
+  // select the button enabled state for display
+  SwitchToState(TEXT_ENTRY_ENABLED_LEFT, dialog);
 
-	//
-	// initialize the dialog with values from the window
-	//
+  //
+  // initialize the dialog with values from the window
+  //
 
-	return dialog;
+  return dialog;
 
-}  // end InitTextEntryPropertiesDialog
-
-
-
+} // end InitTextEntryPropertiesDialog

@@ -35,12 +35,12 @@
 #include "Lib/BaseType.h"
 
 // do NOT use these functions directly, rather use the macros below
-extern Int GetGameAudioRandomValue( int lo, int hi, const char *file, int line );
-extern Real GetGameAudioRandomValueReal( Real lo, Real hi, const char *file, int line );
+extern Int GetGameAudioRandomValue(int lo, int hi, const char *file, int line);
+extern Real GetGameAudioRandomValueReal(Real lo, Real hi, const char *file, int line);
 
 // use these macros to access the random value functions
-#define GameAudioRandomValue( lo, hi ) GetGameAudioRandomValue( lo, hi, __FILE__, __LINE__ )
-#define GameAudioRandomValueReal( lo, hi ) GetGameAudioRandomValueReal( lo, hi, __FILE__, __LINE__ )
+#define GameAudioRandomValue(lo, hi) GetGameAudioRandomValue(lo, hi, __FILE__, __LINE__)
+#define GameAudioRandomValueReal(lo, hi) GetGameAudioRandomValueReal(lo, hi, __FILE__, __LINE__)
 
 //--------------------------------------------------------------------------------------------------------------
 

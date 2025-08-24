@@ -42,48 +42,41 @@ class PrisonVisual;
 // ------------------------------------------------------------------------------------------------
 class PrisonBehaviorModuleData : public OpenContainModuleData
 {
+  public:
+  PrisonBehaviorModuleData(void);
 
-public:
+  static void buildFieldParse(MultiIniFieldParse &p);
 
-	PrisonBehaviorModuleData( void );
-
-	static void buildFieldParse( MultiIniFieldParse &p );
-
-	Bool m_showPrisoners;								///< Will the contained prisoners be shown in the prison yard
-	AsciiString m_prisonYardBonePrefix;	///< Bone prefix that makes up the prison yards
-
+  Bool m_showPrisoners; ///< Will the contained prisoners be shown in the prison yard
+  AsciiString m_prisonYardBonePrefix; ///< Bone prefix that makes up the prison yards
 };
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 class PrisonBehavior : public OpenContain
 {
+  MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(PrisonBehavior, "PrisonBehavior")
+  MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA(PrisonBehavior, PrisonBehaviorModuleData)
 
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( PrisonBehavior, "PrisonBehavior" )
-	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( PrisonBehavior, PrisonBehaviorModuleData )
+  public:
+  PrisonBehavior(Thing *thing, const ModuleData *moduleData);
+  // virtual destructor prototype provided by memory pool object
 
-public:
+  // module methods
+  virtual void onDelete(void);
 
-	PrisonBehavior( Thing *thing, const ModuleData *moduleData );
-	// virtual destructor prototype provided by memory pool object
+  // contain methods
+  virtual void onContaining(Object *obj, Bool wasSelected);
+  virtual void onRemoving(Object *obj);
 
-	// module methods
-	virtual void onDelete( void );
+  protected:
+  void pickVisualLocation(Coord3D *pos); ///< pick a location inside the prison yard
+  void addVisual(Object *obj); ///< add prisoner visual
+  void removeVisual(Object *obj); ///< remove prisoner visual
 
-	// contain methods
-	virtual void onContaining( Object *obj, Bool wasSelected );
-	virtual void onRemoving( Object *obj );
-
-protected:
-
-	void pickVisualLocation( Coord3D *pos );		///< pick a location inside the prison yard
-	void addVisual( Object *obj );							///< add prisoner visual
-	void removeVisual( Object *obj );						///< remove prisoner visual
-
-	PrisonVisual *m_visualList;									///< list of visual representation data (if needed)
-
+  PrisonVisual *m_visualList; ///< list of visual representation data (if needed)
 };
 
 #endif
 
-#endif  // end __PRISON_BEHAVIOR_H_
+#endif // end __PRISON_BEHAVIOR_H_

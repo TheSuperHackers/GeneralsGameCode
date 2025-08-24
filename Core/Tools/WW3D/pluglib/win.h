@@ -59,19 +59,19 @@
 #define WIN32_LEAN_AND_MEAN
 #endif
 
-#include	<windows.h>
-//#include <mmsystem.h>
-//#include	<windowsx.h>
-//#include	<winnt.h>
-//#include	<winuser.h>
+#include <windows.h>
+// #include <mmsystem.h>
+// #include	<windowsx.h>
+// #include	<winnt.h>
+// #include	<winuser.h>
 
 #if (_MSC_VER >= 1200)
 #pragma warning(pop)
 #endif
 
 #ifdef _WINDOWS
-extern HINSTANCE	ProgramInstance;
-extern HWND			MainWindow;
+extern HINSTANCE ProgramInstance;
+extern HWND MainWindow;
 extern bool GameInFocus;
 
 #ifdef RTS_DEBUG

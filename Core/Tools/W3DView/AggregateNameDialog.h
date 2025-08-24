@@ -30,51 +30,50 @@
 
 class AggregateNameDialogClass : public CDialog
 {
-// Construction
-public:
-	AggregateNameDialogClass(CWnd* pParent = NULL);
-	AggregateNameDialogClass(UINT resource_id, const CString &def_name, CWnd* pParent = NULL);
+  // Construction
+  public:
+  AggregateNameDialogClass(CWnd *pParent = NULL);
+  AggregateNameDialogClass(UINT resource_id, const CString &def_name, CWnd *pParent = NULL);
 
-// Dialog Data
-	//{{AFX_DATA(AggregateNameDialogClass)
-	enum { IDD = IDD_MAKE_AGGREGATE };
-		// NOTE: the ClassWizard will add data members here
-	//}}AFX_DATA
+  // Dialog Data
+  //{{AFX_DATA(AggregateNameDialogClass)
+  enum
+  {
+    IDD = IDD_MAKE_AGGREGATE
+  };
+  // NOTE: the ClassWizard will add data members here
+  //}}AFX_DATA
 
+  // Overrides
+  // ClassWizard generated virtual function overrides
+  //{{AFX_VIRTUAL(AggregateNameDialogClass)
+  protected:
+  virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
+  //}}AFX_VIRTUAL
 
-// Overrides
-	// ClassWizard generated virtual function overrides
-	//{{AFX_VIRTUAL(AggregateNameDialogClass)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
-	//}}AFX_VIRTUAL
+  // Implementation
+  protected:
+  // Generated message map functions
+  //{{AFX_MSG(AggregateNameDialogClass)
+  virtual void OnOK();
+  virtual BOOL OnInitDialog();
+  //}}AFX_MSG
+  DECLARE_MESSAGE_MAP()
 
-// Implementation
-protected:
+  public:
+  ////////////////////////////////////////////////////////////////
+  //
+  //	Public methods
+  //
+  const CString &Get_Name(void) const { return m_Name; }
+  void Set_Name(const CString &name) { m_Name = name; }
 
-	// Generated message map functions
-	//{{AFX_MSG(AggregateNameDialogClass)
-	virtual void OnOK();
-	virtual BOOL OnInitDialog();
-	//}}AFX_MSG
-	DECLARE_MESSAGE_MAP()
-
-	public:
-
-		////////////////////////////////////////////////////////////////
-		//
-		//	Public methods
-		//
-		const CString &			Get_Name (void) const				{ return m_Name; }
-		void							Set_Name (const CString &name)	{ m_Name = name; }
-
-	private:
-
-		////////////////////////////////////////////////////////////////
-		//
-		//	Private member data
-		//
-		CString						m_Name;
+  private:
+  ////////////////////////////////////////////////////////////////
+  //
+  //	Private member data
+  //
+  CString m_Name;
 };
 
 //{{AFX_INSERT_LOCATION}}

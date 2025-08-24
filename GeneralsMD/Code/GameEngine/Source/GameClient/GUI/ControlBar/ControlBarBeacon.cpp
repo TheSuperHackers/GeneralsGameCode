@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 
 #include "Common/NameKeyGenerator.h"
 #include "Common/ThingTemplate.h"
@@ -41,66 +41,63 @@
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void ControlBar::populateBeacon( Object *beacon )
+void ControlBar::populateBeacon(Object *beacon)
 {
+  // set the portrait for the thing being constructed
+  setPortraitByObject(beacon);
 
-	// set the portrait for the thing being constructed
-	setPortraitByObject( beacon );
+  static NameKeyType textID = NAMEKEY("ControlBar.wnd:EditBeaconText");
+  static NameKeyType staticTextID = NAMEKEY("ControlBar.wnd:StaticTextBeaconLabel");
+  static NameKeyType clearButtonID = NAMEKEY("ControlBar.wnd:ButtonClearBeaconText");
 
-	static NameKeyType textID = NAMEKEY("ControlBar.wnd:EditBeaconText");
-	static NameKeyType staticTextID = NAMEKEY("ControlBar.wnd:StaticTextBeaconLabel");
-	static NameKeyType clearButtonID = NAMEKEY("ControlBar.wnd:ButtonClearBeaconText");
+  GameWindow *textEntryWin = TheWindowManager->winGetWindowFromId(NULL, textID);
+  GameWindow *staticTextWin = TheWindowManager->winGetWindowFromId(NULL, staticTextID);
+  GameWindow *buttonWin = TheWindowManager->winGetWindowFromId(NULL, clearButtonID);
 
-	GameWindow *textEntryWin = TheWindowManager->winGetWindowFromId(NULL, textID);
-	GameWindow *staticTextWin = TheWindowManager->winGetWindowFromId(NULL, staticTextID);
-	GameWindow *buttonWin = TheWindowManager->winGetWindowFromId(NULL, clearButtonID);
+  if (beacon->isLocallyControlled())
+  {
+    if (textEntryWin)
+    {
+      textEntryWin->winHide(FALSE);
+      GadgetTextEntrySetText(textEntryWin, beacon->getDrawable()->getCaptionText());
+      TheWindowManager->winSetFocus(textEntryWin);
+    }
 
-	if (beacon->isLocallyControlled())
-	{
-		if (textEntryWin)
-		{
-			textEntryWin->winHide(FALSE);
-			GadgetTextEntrySetText( textEntryWin, beacon->getDrawable()->getCaptionText() );
-			TheWindowManager->winSetFocus( textEntryWin );
-		}
+    if (staticTextWin)
+      staticTextWin->winHide(FALSE);
 
-		if (staticTextWin)
-			staticTextWin->winHide(FALSE);
+    if (buttonWin)
+      buttonWin->winHide(FALSE);
+  }
+  else
+  {
+    if (textEntryWin)
+      textEntryWin->winHide(TRUE);
 
-		if (buttonWin)
-			buttonWin->winHide(FALSE);
-	}
-	else
-	{
-		if (textEntryWin)
-			textEntryWin->winHide(TRUE);
+    if (staticTextWin)
+      staticTextWin->winHide(TRUE);
 
-		if (staticTextWin)
-			staticTextWin->winHide(TRUE);
-
-		if (buttonWin)
-			buttonWin->winHide(TRUE);
-	}
-}  // end populateBeacon
+    if (buttonWin)
+      buttonWin->winHide(TRUE);
+  }
+} // end populateBeacon
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void ControlBar::updateContextBeacon( void )
+void ControlBar::updateContextBeacon(void)
 {
-
-}  // end updateContextBeacon
+} // end updateContextBeacon
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-WindowMsgHandledType BeaconWindowInput( GameWindow *window, UnsignedInt msg,
-																			 WindowMsgData mData1, WindowMsgData mData2 )
+WindowMsgHandledType BeaconWindowInput(GameWindow *window, UnsignedInt msg, WindowMsgData mData1, WindowMsgData mData2)
 {
-	if (msg == GWM_CHAR && mData1 == KEY_ESC)
-	{
-		TheInGameUI->deselectAllDrawables(TRUE); // there should only be one beacon and nothing else selected
-		return MSG_HANDLED;
-	}
+  if (msg == GWM_CHAR && mData1 == KEY_ESC)
+  {
+    TheInGameUI->deselectAllDrawables(TRUE); // there should only be one beacon and nothing else selected
+    return MSG_HANDLED;
+  }
 
-	return MSG_IGNORED;
+  return MSG_IGNORED;
 
-}  // end InGameChatInput
+} // end InGameChatInput

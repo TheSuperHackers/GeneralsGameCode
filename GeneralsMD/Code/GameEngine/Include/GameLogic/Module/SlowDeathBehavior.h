@@ -43,140 +43,130 @@ class WeaponTemplate;
 class DamageInfo;
 
 //-------------------------------------------------------------------------------------------------
-typedef std::vector<const FXList*> FXListVec;
-typedef std::vector<const ObjectCreationList*> OCLVec;
-typedef std::vector<const WeaponTemplate*> WeaponTemplateVec;
+typedef std::vector<const FXList *> FXListVec;
+typedef std::vector<const ObjectCreationList *> OCLVec;
+typedef std::vector<const WeaponTemplate *> WeaponTemplateVec;
 
 //-------------------------------------------------------------------------------------------------
-enum SlowDeathPhaseType CPP_11(: Int)
-{
-	SDPHASE_INITIAL = 0,
-	SDPHASE_MIDPOINT,
-	SDPHASE_FINAL,
+enum SlowDeathPhaseType CPP_11( : Int){
+  SDPHASE_INITIAL = 0,
+  SDPHASE_MIDPOINT,
+  SDPHASE_FINAL,
 
-	SD_PHASE_COUNT	// keep last
+  SD_PHASE_COUNT // keep last
 };
 
 #ifdef DEFINE_SLOWDEATHPHASE_NAMES
-static const char *TheSlowDeathPhaseNames[] =
-{
-	"INITIAL",
-	"MIDPOINT",
-	"FINAL",
+static const char *TheSlowDeathPhaseNames[] = { "INITIAL",
+                                                "MIDPOINT",
+                                                "FINAL",
 
-	NULL
-};
+                                                NULL };
 #endif
-
 
 //-------------------------------------------------------------------------------------------------
 class SlowDeathBehaviorModuleData : public UpdateModuleData
 {
-public:
-	DieMuxData				m_dieMuxData;
-	Real							m_sinkRate;
-	Int								m_probabilityModifier;
-	Real							m_modifierBonusPerOverkillPercent;
-	UnsignedInt				m_sinkDelay;
-	UnsignedInt				m_sinkDelayVariance;
-	Real							m_destructionAltitude;
-	UnsignedInt				m_destructionDelay;
-	UnsignedInt				m_destructionDelayVariance;
-	FXListVec					m_fx[SD_PHASE_COUNT];
-	OCLVec						m_ocls[SD_PHASE_COUNT];
-	WeaponTemplateVec	m_weapons[SD_PHASE_COUNT];
-	Real							m_flingForce;
-	Real							m_flingForceVariance;
-	Real							m_flingPitch;
-	Real							m_flingPitchVariance;
+  public:
+  DieMuxData m_dieMuxData;
+  Real m_sinkRate;
+  Int m_probabilityModifier;
+  Real m_modifierBonusPerOverkillPercent;
+  UnsignedInt m_sinkDelay;
+  UnsignedInt m_sinkDelayVariance;
+  Real m_destructionAltitude;
+  UnsignedInt m_destructionDelay;
+  UnsignedInt m_destructionDelayVariance;
+  FXListVec m_fx[SD_PHASE_COUNT];
+  OCLVec m_ocls[SD_PHASE_COUNT];
+  WeaponTemplateVec m_weapons[SD_PHASE_COUNT];
+  Real m_flingForce;
+  Real m_flingForceVariance;
+  Real m_flingPitch;
+  Real m_flingPitchVariance;
 
-	enum
-	{
-		//flags used by m_maskOfLoadedEffects
-		HAS_FX							= 1,
-		HAS_OCL							= 2,
-		HAS_WEAPON					= 4,
-		HAS_NON_LOD_EFFECTS = (HAS_OCL | HAS_WEAPON)
-	};
-	Byte							m_maskOfLoadedEffects;	///<used to keep track of whether m_fx,m_ocls,m_weapons actually contain anything.
+  enum
+  {
+    // flags used by m_maskOfLoadedEffects
+    HAS_FX = 1,
+    HAS_OCL = 2,
+    HAS_WEAPON = 4,
+    HAS_NON_LOD_EFFECTS = (HAS_OCL | HAS_WEAPON)
+  };
+  Byte m_maskOfLoadedEffects; ///< used to keep track of whether m_fx,m_ocls,m_weapons actually contain anything.
 
-	SlowDeathBehaviorModuleData();
-	static void buildFieldParse(MultiIniFieldParse& p);
-	inline Bool hasNonLodEffects() const
-	{
-		return (m_maskOfLoadedEffects & SlowDeathBehaviorModuleData::HAS_NON_LOD_EFFECTS) != 0;
-	}
+  SlowDeathBehaviorModuleData();
+  static void buildFieldParse(MultiIniFieldParse &p);
+  inline Bool hasNonLodEffects() const
+  {
+    return (m_maskOfLoadedEffects & SlowDeathBehaviorModuleData::HAS_NON_LOD_EFFECTS) != 0;
+  }
 
-private:
-
+  private:
 };
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 class SlowDeathBehaviorInterface
 {
-public:
-	virtual void beginSlowDeath( const DamageInfo *damageInfo ) = 0;
-	virtual Int getProbabilityModifier( const DamageInfo *damageInfo ) const = 0;
-	virtual Bool isDieApplicable(const DamageInfo *damageInfo) const = 0;
+  public:
+  virtual void beginSlowDeath(const DamageInfo *damageInfo) = 0;
+  virtual Int getProbabilityModifier(const DamageInfo *damageInfo) const = 0;
+  virtual Bool isDieApplicable(const DamageInfo *damageInfo) const = 0;
 };
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-class SlowDeathBehavior : public UpdateModule,
-													public DieModuleInterface,
-													public SlowDeathBehaviorInterface
+class SlowDeathBehavior : public UpdateModule, public DieModuleInterface, public SlowDeathBehaviorInterface
 {
+  MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(SlowDeathBehavior, "SlowDeathBehavior")
+  MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA(SlowDeathBehavior, SlowDeathBehaviorModuleData)
 
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( SlowDeathBehavior, "SlowDeathBehavior" )
-	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( SlowDeathBehavior, SlowDeathBehaviorModuleData )
+  public:
+  SlowDeathBehavior(Thing *thing, const ModuleData *moduleData);
+  // virtual destructor prototype provided by memory pool declaration
 
-public:
+  static Int getInterfaceMask() { return UpdateModule::getInterfaceMask() | (MODULEINTERFACE_DIE); }
 
-	SlowDeathBehavior( Thing *thing, const ModuleData* moduleData );
-	// virtual destructor prototype provided by memory pool declaration
+  // BehaviorModule
+  virtual DieModuleInterface *getDie() { return this; }
 
-	static Int getInterfaceMask() { return UpdateModule::getInterfaceMask() | (MODULEINTERFACE_DIE); }
+  // UpdateModuleInterface
+  virtual UpdateSleepTime update();
+  virtual SlowDeathBehaviorInterface *getSlowDeathBehaviorInterface() { return this; }
+  // Disabled conditions to process -- all
+  virtual DisabledMaskType getDisabledTypesToProcess() const { return DISABLEDMASK_ALL; }
 
-	// BehaviorModule
-	virtual DieModuleInterface* getDie() { return this; }
+  // DieModuleInterface
+  virtual void onDie(const DamageInfo *damageInfo);
 
-	// UpdateModuleInterface
-	virtual UpdateSleepTime update();
-	virtual SlowDeathBehaviorInterface* getSlowDeathBehaviorInterface() { return this; }
-	// Disabled conditions to process -- all
-	virtual DisabledMaskType getDisabledTypesToProcess() const { return DISABLEDMASK_ALL; }
+  // SlowDeathBehaviorInterface
+  virtual void beginSlowDeath(const DamageInfo *damageInfo);
+  virtual Int getProbabilityModifier(const DamageInfo *damageInfo) const;
+  virtual Bool isDieApplicable(const DamageInfo *damageInfo) const
+  {
+    return getSlowDeathBehaviorModuleData()->m_dieMuxData.isDieApplicable(getObject(), damageInfo);
+  }
 
-	// DieModuleInterface
-	virtual void onDie( const DamageInfo *damageInfo );
+  protected:
+  void doPhaseStuff(SlowDeathPhaseType sdphase);
+  inline Bool isSlowDeathActivated() const { return (m_flags & (1 << SLOW_DEATH_ACTIVATED)) != 0; }
+  inline UnsignedInt getDestructionFrame() const { return m_destructionFrame; }
 
-	// SlowDeathBehaviorInterface
-	virtual void beginSlowDeath( const DamageInfo *damageInfo );
-	virtual Int getProbabilityModifier( const DamageInfo *damageInfo ) const;
-	virtual Bool isDieApplicable(const DamageInfo *damageInfo) const { return getSlowDeathBehaviorModuleData()->m_dieMuxData.isDieApplicable(getObject(), damageInfo); }
+  private:
+  enum
+  {
+    SLOW_DEATH_ACTIVATED,
+    MIDPOINT_EXECUTED,
+    FLUNG_INTO_AIR,
+    BOUNCED
+  };
 
-protected:
-
-	void doPhaseStuff(SlowDeathPhaseType sdphase);
-	inline Bool isSlowDeathActivated() const { return (m_flags & (1<<SLOW_DEATH_ACTIVATED)) != 0; }
-	inline UnsignedInt getDestructionFrame() const { return m_destructionFrame; }
-
-private:
-
-	enum
-	{
-		SLOW_DEATH_ACTIVATED,
-		MIDPOINT_EXECUTED,
-		FLUNG_INTO_AIR,
-		BOUNCED
-	};
-
-	UnsignedInt m_sinkFrame;							///< Frame to be sunken into the ground on
-	UnsignedInt m_midpointFrame;					///< The midpoint is between .25 through life and .75 through life (eg)
-	UnsignedInt m_destructionFrame;
-	Real				m_acceleratedTimeScale;		///<used to speedup deaths when needed to improve game performance.
-	UnsignedInt	m_flags;
+  UnsignedInt m_sinkFrame; ///< Frame to be sunken into the ground on
+  UnsignedInt m_midpointFrame; ///< The midpoint is between .25 through life and .75 through life (eg)
+  UnsignedInt m_destructionFrame;
+  Real m_acceleratedTimeScale; ///< used to speedup deaths when needed to improve game performance.
+  UnsignedInt m_flags;
 };
 
 #endif // __SlowDeathBehavior_H_
-

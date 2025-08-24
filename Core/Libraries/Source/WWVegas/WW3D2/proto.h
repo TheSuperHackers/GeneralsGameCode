@@ -34,7 +34,6 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
 #if defined(_MSC_VER)
 #pragma once
 #endif
@@ -84,45 +83,43 @@ class ChunkLoadClass;
 */
 class PrototypeClass
 {
+  public:
+  PrototypeClass(void) : NextHash(NULL) {}
 
-public:
+  virtual const char *Get_Name(void) const = 0;
+  virtual int Get_Class_ID(void) const = 0;
+  virtual RenderObjClass *Create(void) = 0;
+  virtual void DeleteSelf() = 0;
 
-	PrototypeClass(void) : NextHash(NULL) {}
+  inline void friend_setNextHash(PrototypeClass *n) { NextHash = n; }
+  inline PrototypeClass *friend_getNextHash() { return NextHash; }
 
-	virtual const char *			Get_Name(void)	const = 0;
-	virtual int								Get_Class_ID(void) const = 0;
-	virtual RenderObjClass *	Create(void) = 0;
-	virtual void							DeleteSelf() = 0;
+  protected:
+  virtual ~PrototypeClass(void) {};
 
-	inline void friend_setNextHash(PrototypeClass* n) { NextHash = n; }
-	inline PrototypeClass* friend_getNextHash() { return NextHash; }
+  private:
+  PrototypeClass *NextHash;
 
-protected:
-	virtual ~PrototypeClass(void) {};
-
-private:
-	PrototypeClass *				NextHash;
-
-	// Not Implemented
-	PrototypeClass(const PrototypeClass & that);
-	PrototypeClass & operator = (const PrototypeClass & that);
+  // Not Implemented
+  PrototypeClass(const PrototypeClass &that);
+  PrototypeClass &operator=(const PrototypeClass &that);
 };
 
 class PrimitivePrototypeClass : public W3DMPO, public PrototypeClass
 {
-	W3DMPO_GLUE(PrimitivePrototypeClass)
-public:
-	PrimitivePrototypeClass(RenderObjClass * proto);
+  W3DMPO_GLUE(PrimitivePrototypeClass)
+  public:
+  PrimitivePrototypeClass(RenderObjClass *proto);
 
-	virtual const char *			Get_Name(void) const;
-	virtual int						Get_Class_ID(void) const;
-	virtual RenderObjClass *	Create(void);
-	virtual void							DeleteSelf()										{ delete this; }
+  virtual const char *Get_Name(void) const;
+  virtual int Get_Class_ID(void) const;
+  virtual RenderObjClass *Create(void);
+  virtual void DeleteSelf() { delete this; }
 
-	RenderObjClass *				Proto;
+  RenderObjClass *Proto;
 
-protected:
-	virtual ~PrimitivePrototypeClass(void);
+  protected:
+  virtual ~PrimitivePrototypeClass(void);
 };
 
 /*
@@ -133,51 +130,41 @@ protected:
 */
 class PrototypeLoaderClass
 {
+  public:
+  PrototypeLoaderClass(void) {}
+  ~PrototypeLoaderClass(void) {}
 
-public:
+  virtual int Chunk_Type(void) = 0;
+  virtual PrototypeClass *Load_W3D(ChunkLoadClass &cload) = 0;
 
-	PrototypeLoaderClass(void) {}
-	~PrototypeLoaderClass(void) {}
-
-	virtual int						Chunk_Type(void) = 0;
-	virtual PrototypeClass *	Load_W3D(ChunkLoadClass & cload) = 0;
-
-private:
-
-	// Not Implemented:
-	PrototypeLoaderClass(const PrototypeLoaderClass & that);
-	PrototypeLoaderClass & operator = (const PrototypeLoaderClass & that);
-
+  private:
+  // Not Implemented:
+  PrototypeLoaderClass(const PrototypeLoaderClass &that);
+  PrototypeLoaderClass &operator=(const PrototypeLoaderClass &that);
 };
-
 
 /*
 ** Default Prototype Loaders for Meshes and HModels
 */
 class MeshLoaderClass : public PrototypeLoaderClass
 {
-public:
-
-	virtual int						Chunk_Type(void) { return W3D_CHUNK_MESH; }
-	virtual PrototypeClass *	Load_W3D(ChunkLoadClass & cload);
+  public:
+  virtual int Chunk_Type(void) { return W3D_CHUNK_MESH; }
+  virtual PrototypeClass *Load_W3D(ChunkLoadClass &cload);
 };
 
 class HModelLoaderClass : public PrototypeLoaderClass
 {
-public:
-
-	virtual int						Chunk_Type(void) { return W3D_CHUNK_HMODEL; }
-	virtual PrototypeClass *	Load_W3D(ChunkLoadClass & cload);
+  public:
+  virtual int Chunk_Type(void) { return W3D_CHUNK_HMODEL; }
+  virtual PrototypeClass *Load_W3D(ChunkLoadClass &cload);
 };
-
 
 /*
 ** Instances of the default loaders which the asset manager can
 ** automatically install at creation time
 */
-extern MeshLoaderClass			_MeshLoader;
-extern HModelLoaderClass		_HModelLoader;
-
-
+extern MeshLoaderClass _MeshLoader;
+extern HModelLoaderClass _HModelLoader;
 
 #endif

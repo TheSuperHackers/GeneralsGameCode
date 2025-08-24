@@ -48,8 +48,8 @@
 #include <string.h>
 #include "ffactory.h"
 #include "RAWFILE.H"
-int   	 ArgvClass::Argc = 0;
-char 		*ArgvClass::Argv[MAX_ARGC];
+int ArgvClass::Argc = 0;
+char *ArgvClass::Argv[MAX_ARGC];
 
 /***********************************************************************************************
  * CurrentPos -- Create an instance to parse argv with.                                        *
@@ -65,13 +65,10 @@ char 		*ArgvClass::Argv[MAX_ARGC];
  * HISTORY:                                                                                    *
  *   06/18/1999 SKB : Created.                                                                 *
  *=============================================================================================*/
-ArgvClass::ArgvClass(bool case_sensitive, bool exact_size):
-	Flags(0),
-	LastArg(0),
-	CurrentPos(-1)
+ArgvClass::ArgvClass(bool case_sensitive, bool exact_size) : Flags(0), LastArg(0), CurrentPos(-1)
 {
-	Case_Sensitive(case_sensitive);
-	Exact_Size(exact_size);
+  Case_Sensitive(case_sensitive);
+  Exact_Size(exact_size);
 }
 
 /***********************************************************************************************
@@ -90,54 +87,75 @@ ArgvClass::ArgvClass(bool case_sensitive, bool exact_size):
  *=============================================================================================*/
 const char *ArgvClass::Find_Again(const char *arg)
 {
-	if (arg) {
-		LastArg = arg;
-	} else {
-		arg = LastArg;
-	}
+  if (arg)
+  {
+    LastArg = arg;
+  }
+  else
+  {
+    arg = LastArg;
+  }
 
-	// Make sure user has given us something to work with here.
-	assert(LastArg);
+  // Make sure user has given us something to work with here.
+  assert(LastArg);
 
-	CurrentPos++;
-	if (CurrentPos < Argc) {
-		if (Is_Case_Sensitive()) {
-			if (Is_Exact_Size()) {
-				// Case Sensitive, Exact Size.
-				for (; CurrentPos < Argc; CurrentPos++) {
-					if (!strcmp(arg, Argv[CurrentPos])) {
-						return Argv[CurrentPos];
-					}
-				}
-			} else {
-				// Case Sensitive, Match first strlen(arg).
-				int len = strlen(arg);
-				for (; CurrentPos < Argc; CurrentPos++) {
-					if (!strncmp(arg, Argv[CurrentPos], len)) {
-						return Argv[CurrentPos];
-					}
-				}
-			}
-		} else {
-			if (Is_Exact_Size()) {
-				// Note case sensitive, Exact Size.
-				for (; CurrentPos < Argc; CurrentPos++) {
-					if (!stricmp(arg, Argv[CurrentPos])) {
-						return Argv[CurrentPos];
-					}
-				}
-			} else {
-				// Note case sensitive, Match first strlen(arg).
-				int len = strlen(arg);
-				for (; CurrentPos < Argc; CurrentPos++) {
-					if (!strnicmp(arg, Argv[CurrentPos], len)) {
-						return Argv[CurrentPos];
-					}
-				}
-			}
-		}
-	}
-	return NULL;
+  CurrentPos++;
+  if (CurrentPos < Argc)
+  {
+    if (Is_Case_Sensitive())
+    {
+      if (Is_Exact_Size())
+      {
+        // Case Sensitive, Exact Size.
+        for (; CurrentPos < Argc; CurrentPos++)
+        {
+          if (!strcmp(arg, Argv[CurrentPos]))
+          {
+            return Argv[CurrentPos];
+          }
+        }
+      }
+      else
+      {
+        // Case Sensitive, Match first strlen(arg).
+        int len = strlen(arg);
+        for (; CurrentPos < Argc; CurrentPos++)
+        {
+          if (!strncmp(arg, Argv[CurrentPos], len))
+          {
+            return Argv[CurrentPos];
+          }
+        }
+      }
+    }
+    else
+    {
+      if (Is_Exact_Size())
+      {
+        // Note case sensitive, Exact Size.
+        for (; CurrentPos < Argc; CurrentPos++)
+        {
+          if (!stricmp(arg, Argv[CurrentPos]))
+          {
+            return Argv[CurrentPos];
+          }
+        }
+      }
+      else
+      {
+        // Note case sensitive, Match first strlen(arg).
+        int len = strlen(arg);
+        for (; CurrentPos < Argc; CurrentPos++)
+        {
+          if (!strnicmp(arg, Argv[CurrentPos], len))
+          {
+            return Argv[CurrentPos];
+          }
+        }
+      }
+    }
+  }
+  return NULL;
 }
 
 /***********************************************************************************************
@@ -161,72 +179,85 @@ const char *ArgvClass::Find_Again(const char *arg)
  *=============================================================================================*/
 int ArgvClass::Init(char *lpCmdLine, const char *fileprefix)
 {
-	// Get pointer to command line.
-   char	*ptr = lpCmdLine;
-	if (!ptr || !*ptr) {
-		return 0;
-	}
+  // Get pointer to command line.
+  char *ptr = lpCmdLine;
+  if (!ptr || !*ptr)
+  {
+    return 0;
+  }
 
-	int fp_cmp_len = (fileprefix) ? strlen(fileprefix) : 0;
+  int fp_cmp_len = (fileprefix) ? strlen(fileprefix) : 0;
 
-	// Save original Argc for return.
-	int origargc = Argc;
+  // Save original Argc for return.
+  int origargc = Argc;
 
-	while (*ptr) {
-		char  *eos;
-		char  save;
+  while (*ptr)
+  {
+    char *eos;
+    char save;
 
-		// Keep anything within quotes as one string.
-		if (*ptr == '"') {
-			ptr++;
-			eos = ptr;
-			// Search for next " or a null.
-			while (*eos && (*eos != '"')) {
-				eos++;
-			}
-		} else if (isspace(*ptr)) {
-			ptr++;
-			continue;
-		} else {
-			eos = ptr + 1;
-			// search for next white space or null.
-			while (*eos && !isspace(*eos)) {
-				eos++;
-			}
-		}
+    // Keep anything within quotes as one string.
+    if (*ptr == '"')
+    {
+      ptr++;
+      eos = ptr;
+      // Search for next " or a null.
+      while (*eos && (*eos != '"'))
+      {
+        eos++;
+      }
+    }
+    else if (isspace(*ptr))
+    {
+      ptr++;
+      continue;
+    }
+    else
+    {
+      eos = ptr + 1;
+      // search for next white space or null.
+      while (*eos && !isspace(*eos))
+      {
+        eos++;
+      }
+    }
 
-		// Null out end of string so string function work.
-		// Save the end to restore later.
-		save = *eos;
-		*eos = 0;
+    // Null out end of string so string function work.
+    // Save the end to restore later.
+    save = *eos;
+    *eos = 0;
 
-		bool was_file = false;
+    bool was_file = false;
 
-		// See if we are to load a file with parameters in it.
-		if (fp_cmp_len && !strncmp(fileprefix, ptr, fp_cmp_len)) {
-			ptr += fp_cmp_len;
-			if (*ptr) {
-				was_file = Load_File(ptr);
-			}
-		}
+    // See if we are to load a file with parameters in it.
+    if (fp_cmp_len && !strncmp(fileprefix, ptr, fp_cmp_len))
+    {
+      ptr += fp_cmp_len;
+      if (*ptr)
+      {
+        was_file = Load_File(ptr);
+      }
+    }
 
-		// If it was not the file or the load failed...then add parameter.
-		if (!was_file) {
-			// Copy string over and continue.
-			Argv[Argc] = strdup(ptr);
-			Argc++;
-		}
+    // If it was not the file or the load failed...then add parameter.
+    if (!was_file)
+    {
+      // Copy string over and continue.
+      Argv[Argc] = strdup(ptr);
+      Argc++;
+    }
 
-		// If save is null, then we are at the end and we can bail out.
-		if (!save) break;
+    // If save is null, then we are at the end and we can bail out.
+    if (!save)
+      break;
 
-		// resore whitespace.
-		*eos = save;
-		ptr = eos + 1;
-	}
+    // resore whitespace.
+    *eos = save;
+    ptr = eos + 1;
+  }
 
-	// Return number of params read in.
-	return(Argc - origargc);
+  // Return number of params read in.
+  return (Argc - origargc);
 }
 
 /***********************************************************************************************
@@ -244,45 +275,52 @@ int ArgvClass::Init(char *lpCmdLine, const char *fileprefix)
  *=============================================================================================*/
 bool ArgvClass::Load_File(const char *fname)
 {
-	FILE *fp = fopen(fname, "r");
+  FILE *fp = fopen(fname, "r");
 
-	if (fp)  {
-		while (Argc < MAX_ARGC) {
-			const int maxstrlen = 255;
-			char string[maxstrlen + 1];
+  if (fp)
+  {
+    while (Argc < MAX_ARGC)
+    {
+      const int maxstrlen = 255;
+      char string[maxstrlen + 1];
 
-			// Get next line in file.
-			if (!fgets(string, maxstrlen - 1, fp)) {
-				break;
-			}
+      // Get next line in file.
+      if (!fgets(string, maxstrlen - 1, fp))
+      {
+        break;
+      }
 
-			// Check for comments.
-			if ((*string != '#') && (*string != ';'))  {
-				// Make sure null terminated.
-				string[maxstrlen - 1] = '\0';
+      // Check for comments.
+      if ((*string != '#') && (*string != ';'))
+      {
+        // Make sure null terminated.
+        string[maxstrlen - 1] = '\0';
 
-				char *ptr = string + (strlen(string) - 1);
-				while (*ptr <= ' ')  {
-					*ptr = 0;
+        char *ptr = string + (strlen(string) - 1);
+        while (*ptr <= ' ')
+        {
+          *ptr = 0;
 
-					// Is it just a blank line?
-					if (ptr == string) {
-						break;
-					}
-					ptr--;
-				}
+          // Is it just a blank line?
+          if (ptr == string)
+          {
+            break;
+          }
+          ptr--;
+        }
 
-				// If there is anyting in the string. (NAK: old code used to fail for 1 char options)
-				if (strlen(string)) {
-					Argv[Argc] = strdup(string);
-					Argc++;
-				}
-			}
-		}
-		fclose(fp);
-		return(true);
-	}
-	return(false);
+        // If there is anyting in the string. (NAK: old code used to fail for 1 char options)
+        if (strlen(string))
+        {
+          Argv[Argc] = strdup(string);
+          Argc++;
+        }
+      }
+    }
+    fclose(fp);
+    return (true);
+  }
+  return (false);
 }
 
 /***********************************************************************************************
@@ -299,13 +337,13 @@ bool ArgvClass::Load_File(const char *fname)
  *=============================================================================================*/
 void ArgvClass::Free()
 {
-	for (int lp = 0; lp < Argc; lp++) {
-		free(Argv[lp]);
-		Argv[lp] = 0;
-	}
-	Argc = -1;
+  for (int lp = 0; lp < Argc; lp++)
+  {
+    free(Argv[lp]);
+    Argv[lp] = 0;
+  }
+  Argc = -1;
 }
-
 
 /***********************************************************************************************
  * *ArgvClass::Find_Value -- Find value of argument given prefix.                              *
@@ -321,13 +359,15 @@ void ArgvClass::Free()
  *=============================================================================================*/
 const char *ArgvClass::Find_Value(const char *arg)
 {
-	if (arg && *arg) {
-		const char *ptr = Find(arg);
-		if (ptr) {
-			return(Get_Cur_Value(strlen(arg)));
-		}
-	}
-	return(NULL);
+  if (arg && *arg)
+  {
+    const char *ptr = Find(arg);
+    if (ptr)
+    {
+      return (Get_Cur_Value(strlen(arg)));
+    }
+  }
+  return (NULL);
 }
 
 /***********************************************************************************************
@@ -343,46 +383,52 @@ const char *ArgvClass::Find_Value(const char *arg)
  *   08/23/1999 SKB : Created.                                                                 *
  *   06/25/2001 SKB : add flag user can check to see if value was extracted from next location.*
  *=============================================================================================*/
-const char *ArgvClass::Get_Cur_Value(unsigned prefixlen, bool * val_in_next)
+const char *ArgvClass::Get_Cur_Value(unsigned prefixlen, bool *val_in_next)
 {
-	if (val_in_next) *val_in_next = false;
-	if (CurrentPos < 0) {
-		return NULL;
-	}
-	char *ptr = Argv[CurrentPos];
+  if (val_in_next)
+    *val_in_next = false;
+  if (CurrentPos < 0)
+  {
+    return NULL;
+  }
+  char *ptr = Argv[CurrentPos];
 
-	if (strlen(ptr) < prefixlen) {
-		return(NULL);
-	}
+  if (strlen(ptr) < prefixlen)
+  {
+    return (NULL);
+  }
 
-	ptr += prefixlen;
+  ptr += prefixlen;
 
-	// Look for non white space (or eol).
-	while (*ptr && !isgraph(*ptr)) {
-		ptr++;
-	}
-	if (*ptr) {
-		return ptr;
-	}
+  // Look for non white space (or eol).
+  while (*ptr && !isgraph(*ptr))
+  {
+    ptr++;
+  }
+  if (*ptr)
+  {
+    return ptr;
+  }
 
-	// Goto next line to handle '-P data' case on command line.
-	ptr = Argv[CurrentPos + 1];
-	if (!ptr) {
-		return NULL;
-	}
+  // Goto next line to handle '-P data' case on command line.
+  ptr = Argv[CurrentPos + 1];
+  if (!ptr)
+  {
+    return NULL;
+  }
 
-	while (*ptr) {
-		if (isgraph(*ptr)) {
-			if (val_in_next) *val_in_next = true;
-			return ptr;
-		}
-		ptr++;
-	}
-	return (NULL);
+  while (*ptr)
+  {
+    if (isgraph(*ptr))
+    {
+      if (val_in_next)
+        *val_in_next = true;
+      return ptr;
+    }
+    ptr++;
+  }
+  return (NULL);
 }
-
-
-
 
 /***********************************************************************************************
  * void ArgvClass::Update_Value -- Add/Replace a value                                         *
@@ -400,25 +446,24 @@ const char *ArgvClass::Get_Cur_Value(unsigned prefixlen, bool * val_in_next)
  *=============================================================================================*/
 void ArgvClass::Update_Value(const char *attrib, const char *value)
 {
-	if ((Find_Value(attrib))!=NULL)
-	{
-		if (((CurrentPos+1) < Argc) && (Argv[CurrentPos+1][0] != '-'))  // update old value
-		{
-			free(Argv[CurrentPos+1]);
-			Argv[CurrentPos+1]=strdup(value);
-		}
-		else  // add new value
-		{
-			// shift vals down to make room
-			memmove(&(Argv[CurrentPos+2]),&(Argv[CurrentPos+1]),sizeof(char *) * (MAX_ARGC-CurrentPos-2));
-			Argv[CurrentPos+1]=strdup(value);
-			Argc++;
-		}
-	}
-	else  // just add the new stuff
-		Add_Value(attrib, value);
+  if ((Find_Value(attrib)) != NULL)
+  {
+    if (((CurrentPos + 1) < Argc) && (Argv[CurrentPos + 1][0] != '-')) // update old value
+    {
+      free(Argv[CurrentPos + 1]);
+      Argv[CurrentPos + 1] = strdup(value);
+    }
+    else // add new value
+    {
+      // shift vals down to make room
+      memmove(&(Argv[CurrentPos + 2]), &(Argv[CurrentPos + 1]), sizeof(char *) * (MAX_ARGC - CurrentPos - 2));
+      Argv[CurrentPos + 1] = strdup(value);
+      Argc++;
+    }
+  }
+  else // just add the new stuff
+    Add_Value(attrib, value);
 }
-
 
 /***********************************************************************************************
  * void ArgvClass::Add_Value -- Add a value                                                    *
@@ -436,19 +481,18 @@ void ArgvClass::Update_Value(const char *attrib, const char *value)
  *=============================================================================================*/
 void ArgvClass::Add_Value(const char *attrib, const char *value)
 {
-	if (attrib)
-	{
-		Argv[Argc]=strdup(attrib);
-		Argc++;
+  if (attrib)
+  {
+    Argv[Argc] = strdup(attrib);
+    Argc++;
 
-		if (value)
-		{
-			Argv[Argc]=strdup(value);
-			Argc++;
-		}
-	}
+    if (value)
+    {
+      Argv[Argc] = strdup(value);
+      Argc++;
+    }
+  }
 }
-
 
 /***********************************************************************************************
  * bool ArgvClass::Remove_Value -- Remove a value                                              *
@@ -470,32 +514,21 @@ void ArgvClass::Add_Value(const char *attrib, const char *value)
  *=============================================================================================*/
 bool ArgvClass::Remove_Value(const char *attrib)
 {
-	int        removeCount=1;
+  int removeCount = 1;
 
-	if ((Find_Value(attrib))!=NULL)
-	{
-		free(Argv[CurrentPos]);
-		if (((CurrentPos+1) < Argc)&&(Argv[CurrentPos+1][0]!='-'))  // value for this arg
-		{
-			free(Argv[CurrentPos+1]);
-			removeCount=2;
-		}
-		memmove(&(Argv[CurrentPos]),&(Argv[CurrentPos+removeCount]),sizeof(char *) * (MAX_ARGC-CurrentPos-removeCount));
+  if ((Find_Value(attrib)) != NULL)
+  {
+    free(Argv[CurrentPos]);
+    if (((CurrentPos + 1) < Argc) && (Argv[CurrentPos + 1][0] != '-')) // value for this arg
+    {
+      free(Argv[CurrentPos + 1]);
+      removeCount = 2;
+    }
+    memmove(&(Argv[CurrentPos]), &(Argv[CurrentPos + removeCount]), sizeof(char *) * (MAX_ARGC - CurrentPos - removeCount));
 
-		Argc-=removeCount;
+    Argc -= removeCount;
 
-		return(true);
-	}
-	return(false);
+    return (true);
+  }
+  return (false);
 }
-
-
-
-
-
-
-
-
-
-
-

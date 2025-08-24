@@ -30,49 +30,47 @@
 
 class ParticleRotationKeyDialogClass : public CDialog
 {
-// Construction
-public:
-	ParticleRotationKeyDialogClass(float rotation,CWnd* pParent = NULL);   // standard constructor
+  // Construction
+  public:
+  ParticleRotationKeyDialogClass(float rotation, CWnd *pParent = NULL); // standard constructor
 
-// Dialog Data
-	//{{AFX_DATA(ParticleRotationKeyDialogClass)
-	enum { IDD = IDD_PARTICLE_ROTATION_KEY };
-	CSpinButtonCtrl	m_RotationSpin;
-	//}}AFX_DATA
+  // Dialog Data
+  //{{AFX_DATA(ParticleRotationKeyDialogClass)
+  enum
+  {
+    IDD = IDD_PARTICLE_ROTATION_KEY
+  };
+  CSpinButtonCtrl m_RotationSpin;
+  //}}AFX_DATA
 
+  // Overrides
+  // ClassWizard generated virtual function overrides
+  //{{AFX_VIRTUAL(ParticleRotationKeyDialogClass)
+  protected:
+  virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
+  virtual BOOL OnNotify(WPARAM wParam, LPARAM lParam, LRESULT *pResult);
+  //}}AFX_VIRTUAL
 
-// Overrides
-	// ClassWizard generated virtual function overrides
-	//{{AFX_VIRTUAL(ParticleRotationKeyDialogClass)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
-	virtual BOOL OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult);
-	//}}AFX_VIRTUAL
+  // Implementation
+  protected:
+  // Generated message map functions
+  //{{AFX_MSG(ParticleRotationKeyDialogClass)
+  virtual BOOL OnInitDialog();
+  virtual void OnOK();
+  //}}AFX_MSG
+  DECLARE_MESSAGE_MAP()
 
-// Implementation
-protected:
+  public:
+  /////////////////////////////////////////////////////////////
+  //	Public methods
+  /////////////////////////////////////////////////////////////
+  float Get_Rotation(void) const { return m_Rotation; }
 
-	// Generated message map functions
-	//{{AFX_MSG(ParticleRotationKeyDialogClass)
-	virtual BOOL OnInitDialog();
-	virtual void OnOK();
-	//}}AFX_MSG
-	DECLARE_MESSAGE_MAP()
-
-public:
-
-	/////////////////////////////////////////////////////////////
-	//	Public methods
-	/////////////////////////////////////////////////////////////
-	float					Get_Rotation (void) const { return m_Rotation; }
-
-private:
-
-	/////////////////////////////////////////////////////////////
-	//	Private member data
-	/////////////////////////////////////////////////////////////
-	float					m_Rotation;
-
+  private:
+  /////////////////////////////////////////////////////////////
+  //	Private member data
+  /////////////////////////////////////////////////////////////
+  float m_Rotation;
 };
 
 //{{AFX_INSERT_LOCATION}}

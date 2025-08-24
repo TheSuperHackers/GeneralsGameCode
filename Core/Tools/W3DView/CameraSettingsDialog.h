@@ -30,50 +30,50 @@
 
 class CameraSettingsDialogClass : public CDialog
 {
-// Construction
-public:
-	CameraSettingsDialogClass(CWnd* pParent = NULL);   // standard constructor
+  // Construction
+  public:
+  CameraSettingsDialogClass(CWnd *pParent = NULL); // standard constructor
 
-// Dialog Data
-	//{{AFX_DATA(CameraSettingsDialogClass)
-	enum { IDD = IDD_CAMERA_SETTINGS };
-	CSpinButtonCtrl	m_LensSpin;
-	CSpinButtonCtrl	m_FarClipSpin;
-	CSpinButtonCtrl	m_VFOVSpin;
-	CSpinButtonCtrl	m_NearClipSpin;
-	CSpinButtonCtrl	m_HFOVSpin;
-	//}}AFX_DATA
+  // Dialog Data
+  //{{AFX_DATA(CameraSettingsDialogClass)
+  enum
+  {
+    IDD = IDD_CAMERA_SETTINGS
+  };
+  CSpinButtonCtrl m_LensSpin;
+  CSpinButtonCtrl m_FarClipSpin;
+  CSpinButtonCtrl m_VFOVSpin;
+  CSpinButtonCtrl m_NearClipSpin;
+  CSpinButtonCtrl m_HFOVSpin;
+  //}}AFX_DATA
 
+  // Overrides
+  // ClassWizard generated virtual function overrides
+  //{{AFX_VIRTUAL(CameraSettingsDialogClass)
+  protected:
+  virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
+  virtual BOOL OnNotify(WPARAM wParam, LPARAM lParam, LRESULT *pResult);
+  virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam);
+  //}}AFX_VIRTUAL
 
-// Overrides
-	// ClassWizard generated virtual function overrides
-	//{{AFX_VIRTUAL(CameraSettingsDialogClass)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
-	virtual BOOL OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult);
-	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam);
-	//}}AFX_VIRTUAL
+  // Implementation
+  protected:
+  // Generated message map functions
+  //{{AFX_MSG(CameraSettingsDialogClass)
+  virtual BOOL OnInitDialog();
+  virtual void OnOK();
+  afx_msg void OnFovCheck();
+  afx_msg void OnClipPlaneCheck();
+  afx_msg void OnReset();
+  //}}AFX_MSG
+  DECLARE_MESSAGE_MAP()
 
-// Implementation
-protected:
-
-	// Generated message map functions
-	//{{AFX_MSG(CameraSettingsDialogClass)
-	virtual BOOL OnInitDialog();
-	virtual void OnOK();
-	afx_msg void OnFovCheck();
-	afx_msg void OnClipPlaneCheck();
-	afx_msg void OnReset();
-	//}}AFX_MSG
-	DECLARE_MESSAGE_MAP()
-
-protected:
-
-	///////////////////////////////////////////////////////////////////
-	//	Protected methods
-	///////////////////////////////////////////////////////////////////
-	void			Update_Camera_Lens (void);
-	void			Update_FOV (void);
+  protected:
+  ///////////////////////////////////////////////////////////////////
+  //	Protected methods
+  ///////////////////////////////////////////////////////////////////
+  void Update_Camera_Lens(void);
+  void Update_FOV(void);
 };
 
 //{{AFX_INSERT_LOCATION}}

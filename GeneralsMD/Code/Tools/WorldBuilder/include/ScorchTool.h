@@ -33,24 +33,23 @@ class MapObject;
 ///  Scorch tool.
 class ScorchTool : public Tool
 {
-public:
-	ScorchTool(void);
-	~ScorchTool(void);
+  public:
+  ScorchTool(void);
+  ~ScorchTool(void);
 
-protected:
-	Coord3D m_mouseDownPt;
+  protected:
+  Coord3D m_mouseDownPt;
 
-protected:
-	MapObject *pickScorch(Coord3D loc);
+  protected:
+  MapObject *pickScorch(Coord3D loc);
 
-public:
-	/// Perform tool on mouse down.
-	virtual void mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc);
-	virtual void mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc);
-	virtual void mouseUp(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc);
-	virtual void activate(); ///< Become the current tool.
-	virtual void deactivate(); ///< Become not the current tool.
+  public:
+  /// Perform tool on mouse down.
+  virtual void mouseDown(TTrackingMode m, CPoint viewPt, WbView *pView, CWorldBuilderDoc *pDoc);
+  virtual void mouseMoved(TTrackingMode m, CPoint viewPt, WbView *pView, CWorldBuilderDoc *pDoc);
+  virtual void mouseUp(TTrackingMode m, CPoint viewPt, WbView *pView, CWorldBuilderDoc *pDoc);
+  virtual void activate(); ///< Become the current tool.
+  virtual void deactivate(); ///< Become not the current tool.
 };
 
-
-#endif //SCORCHTOOL_H
+#endif // SCORCHTOOL_H

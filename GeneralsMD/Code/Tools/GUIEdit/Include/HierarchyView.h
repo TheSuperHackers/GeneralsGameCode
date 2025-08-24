@@ -65,115 +65,135 @@
 // Add slight improvement to load times -- was 2:30, now 0:02 for test case.
 #define USE_FAST_FIND_ITEM 1
 
-
 // HierarchyOption ------------------------------------------------------------
 //-----------------------------------------------------------------------------
 typedef enum
 {
 
-	HIERARCHY_ADD_AT_TOP,
-	HIERARCHY_ADD_AT_BOTTOM,
+  HIERARCHY_ADD_AT_TOP,
+  HIERARCHY_ADD_AT_BOTTOM,
 
 } HierarchyOption;
 
 // HierarchyView --------------------------------------------------------------
 /** This view allows users to manipulate the windows hierarchy using
-	* a tree view control */
+ * a tree view control */
 //-----------------------------------------------------------------------------
 class HierarchyView
 {
+  public:
+  HierarchyView(void);
+  ~HierarchyView(void);
 
-public:
+  void init(void);
+  void reset(void);
+  void shutdown(void);
 
-	HierarchyView( void );
-	~HierarchyView( void );
+  char *getWindowTreeName(GameWindow *window);
+  void addWindow(GameWindow *window, HierarchyOption option); ///< add a window to the view
+  void removeWindow(GameWindow *window); ///< remove window from tree
+  void bringWindowToTop(GameWindow *window); ///< bring window to top of parent list
+  void updateWindowName(GameWindow *window); ///< update tree entry based on name
+  void selectWindow(GameWindow *window); ///< select window
 
-	void init( void );
-	void reset( void );
-	void shutdown( void );
+  HWND getTreeHandle(void); ///< get the tree control handle
+  HWND getHierarchyHandle(void); ///< get window handle for the whole dialog
 
-	char *getWindowTreeName( GameWindow *window );
-	void addWindow( GameWindow *window, HierarchyOption option );  ///< add a window to the view
-	void removeWindow( GameWindow *window );  ///< remove window from tree
-	void bringWindowToTop( GameWindow *window );  ///< bring window to top of parent list
-	void updateWindowName( GameWindow *window );  ///< update tree entry based on name
-	void selectWindow( GameWindow *window );  ///< select window
+  void setDialogPos(ICoord2D *pos);
+  void getDialogPos(ICoord2D *pos);
+  void setDialogSize(ICoord2D *size);
+  void getDialogSize(ICoord2D *size);
 
-	HWND getTreeHandle( void );  ///< get the tree control handle
-	HWND getHierarchyHandle( void );  ///< get window handle for the whole dialog
+  void setDragWindow(GameWindow *window);
+  void setDragTarget(GameWindow *window);
+  GameWindow *getDragWindow(void);
+  GameWindow *getDragTarget(void);
+  void moveWindowAheadOf(GameWindow *window, GameWindow *aheadOf); ///< move hierarchy representation
+  void moveWindowChildOf(GameWindow *window, GameWindow *parent); ///< move hierarchy representation
 
-	void setDialogPos( ICoord2D *pos );
-	void getDialogPos( ICoord2D *pos );
-	void setDialogSize( ICoord2D *size );
-	void getDialogSize( ICoord2D *size );
+  Bool validateDragDropOperation(GameWindow *source, GameWindow *target);
 
-	void setDragWindow( GameWindow *window );
-	void setDragTarget( GameWindow *window );
-	GameWindow *getDragWindow( void );
-	GameWindow *getDragTarget( void );
-	void moveWindowAheadOf( GameWindow *window, GameWindow *aheadOf );  ///< move hierarchy representation
-	void moveWindowChildOf( GameWindow *window, GameWindow *parent );  ///< move hierarchy representation
+  void setPopupTarget(GameWindow *window); ///< set target for popup menu
+  GameWindow *getPopupTarget(void); ///< get the popup target window
 
-	Bool validateDragDropOperation( GameWindow *source, GameWindow *target );
+  HTREEITEM treePointToItem(Int x, Int y); ///< translate mouse pos to item location
+  GameWindow *getWindowFromItem(HTREEITEM treeItem); ///< get game window from user data in the tree item
 
-	void setPopupTarget( GameWindow *window );  ///< set target for popup menu
-	GameWindow *getPopupTarget( void );  ///< get the popup target window
+  protected:
+  static LRESULT CALLBACK dialogProc(HWND hWndDialog, UINT message, WPARAM wParam, LPARAM lParam);
 
-	HTREEITEM treePointToItem( Int x, Int y );  ///< translate mouse pos to item location
-	GameWindow *getWindowFromItem( HTREEITEM treeItem );  ///< get game window from user data in the tree item
+  void addWindowToTree(
+      GameWindow *window,
+      HTREEITEM treeParent,
+      HierarchyOption option,
+      Bool addChildren,
+      Bool addSiblings); ///< workhorse for addWindow()
+  HTREEITEM findItemEntry(HTREEITEM node, GameWindow *window); ///< workhorse for findTreeEntry
+  HTREEITEM findTreeEntry(GameWindow *window); ///< return entry if in tree
 
-protected:
+  HWND m_dialog; ///< window handle for our control dialog
+  HWND m_tree; ///< window handle for the tree control
 
-	static LRESULT CALLBACK dialogProc( HWND hWndDialog, UINT message,
-																			WPARAM wParam, LPARAM lParam );
-
-	void addWindowToTree( GameWindow *window, HTREEITEM treeParent,
-												HierarchyOption option, Bool addChildren,
-												Bool addSiblings );  ///< workhorse for addWindow()
-	HTREEITEM findItemEntry( HTREEITEM node, GameWindow *window );   ///< workhorse for findTreeEntry
-	HTREEITEM findTreeEntry( GameWindow *window );  ///< return entry if in tree
-
-	HWND m_dialog;  ///< window handle for our control dialog
-	HWND m_tree;  ///< window handle for the tree control
-
-	GameWindow *m_dragWindow;  ///< for drag drop operations
-	GameWindow *m_dragTarget;  ///< target for drag and drop operations while mouse is moving
-	GameWindow *m_popupTarget;  ///< the target for right mouse popup menus
+  GameWindow *m_dragWindow; ///< for drag drop operations
+  GameWindow *m_dragTarget; ///< target for drag and drop operations while mouse is moving
+  GameWindow *m_popupTarget; ///< the target for right mouse popup menus
 
 #if USE_FAST_FIND_ITEM
-	typedef const GameWindow* ConstGameWindowPtr;
- 	// use special class for hashing, since std::hash won't compile for arbitrary ptrs
- 	struct hashConstGameWindowPtr
- 	{
- 		size_t operator()(ConstGameWindowPtr p) const
- 		{
- 			std::hash<UnsignedInt> hasher;
- 			return hasher((UnsignedInt)p);
- 		}
- 	};
+  typedef const GameWindow *ConstGameWindowPtr;
+  // use special class for hashing, since std::hash won't compile for arbitrary ptrs
+  struct hashConstGameWindowPtr
+  {
+    size_t operator()(ConstGameWindowPtr p) const
+    {
+      std::hash<UnsignedInt> hasher;
+      return hasher((UnsignedInt)p);
+    }
+  };
 
- 	typedef std::hash_map< ConstGameWindowPtr, HTREEITEM, hashConstGameWindowPtr, std::equal_to<ConstGameWindowPtr> > TreeHash;
+  typedef std::hash_map<ConstGameWindowPtr, HTREEITEM, hashConstGameWindowPtr, std::equal_to<ConstGameWindowPtr> > TreeHash;
 
- 	TreeHash 		m_treeHash;	///< Speed up the search with a nice hash.
+  TreeHash m_treeHash; ///< Speed up the search with a nice hash.
 #endif
 
-
-};  // end HierarchyView
+}; // end HierarchyView
 
 ///////////////////////////////////////////////////////////////////////////////
 // INLINING ///////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
-inline HWND HierarchyView::getTreeHandle( void ) { return m_tree; }
-inline HWND HierarchyView::getHierarchyHandle( void ) { return m_dialog; }
-inline void HierarchyView::setDragWindow( GameWindow *window ) { m_dragWindow = window; }
-inline void HierarchyView::setDragTarget( GameWindow *window ) { m_dragTarget = window; }
-inline GameWindow *HierarchyView::getDragWindow( void ) { return m_dragWindow; }
-inline GameWindow *HierarchyView::getDragTarget( void ) { return m_dragTarget; }
-inline void HierarchyView::setPopupTarget( GameWindow *window ) { m_popupTarget = window; }
-inline GameWindow *HierarchyView::getPopupTarget( void ) { return m_popupTarget; }
+inline HWND HierarchyView::getTreeHandle(void)
+{
+  return m_tree;
+}
+inline HWND HierarchyView::getHierarchyHandle(void)
+{
+  return m_dialog;
+}
+inline void HierarchyView::setDragWindow(GameWindow *window)
+{
+  m_dragWindow = window;
+}
+inline void HierarchyView::setDragTarget(GameWindow *window)
+{
+  m_dragTarget = window;
+}
+inline GameWindow *HierarchyView::getDragWindow(void)
+{
+  return m_dragWindow;
+}
+inline GameWindow *HierarchyView::getDragTarget(void)
+{
+  return m_dragTarget;
+}
+inline void HierarchyView::setPopupTarget(GameWindow *window)
+{
+  m_popupTarget = window;
+}
+inline GameWindow *HierarchyView::getPopupTarget(void)
+{
+  return m_popupTarget;
+}
 
 // EXTERNALS //////////////////////////////////////////////////////////////////
-extern HierarchyView *TheHierarchyView;  ///< singleton for our view
+extern HierarchyView *TheHierarchyView; ///< singleton for our view
 
 #endif // __CONTROLPALETTE_H_
-

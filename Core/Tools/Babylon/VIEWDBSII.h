@@ -30,37 +30,38 @@
 
 class VIEWDBSII : public CDialog
 {
-// Construction
-public:
-	VIEWDBSII(CWnd* pParent = NULL);   // standard constructor
+  // Construction
+  public:
+  VIEWDBSII(CWnd *pParent = NULL); // standard constructor
 
-	void OnClose();
-	BOOL OnInitDialog();
-	HTREEITEM create_changes_view ( void );
-	HTREEITEM create_full_view ( void );
+  void OnClose();
+  BOOL OnInitDialog();
+  HTREEITEM create_changes_view(void);
+  HTREEITEM create_full_view(void);
 
-// Dialog Data
-	//{{AFX_DATA(VIEWDBSII)
-	enum { IDD = IDD_VIEWDBS };
-		// NOTE: the ClassWizard will add data members here
-	//}}AFX_DATA
+  // Dialog Data
+  //{{AFX_DATA(VIEWDBSII)
+  enum
+  {
+    IDD = IDD_VIEWDBS
+  };
+  // NOTE: the ClassWizard will add data members here
+  //}}AFX_DATA
 
+  // Overrides
+  // ClassWizard generated virtual function overrides
+  //{{AFX_VIRTUAL(VIEWDBSII)
+  protected:
+  virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
+  //}}AFX_VIRTUAL
 
-// Overrides
-	// ClassWizard generated virtual function overrides
-	//{{AFX_VIRTUAL(VIEWDBSII)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
-	//}}AFX_VIRTUAL
-
-// Implementation
-protected:
-
-	// Generated message map functions
-	//{{AFX_MSG(VIEWDBSII)
-		// NOTE: the ClassWizard will add member functions here
-	//}}AFX_MSG
-	DECLARE_MESSAGE_MAP()
+  // Implementation
+  protected:
+  // Generated message map functions
+  //{{AFX_MSG(VIEWDBSII)
+  // NOTE: the ClassWizard will add member functions here
+  //}}AFX_MSG
+  DECLARE_MESSAGE_MAP()
 };
 
 extern int ViewChanges;

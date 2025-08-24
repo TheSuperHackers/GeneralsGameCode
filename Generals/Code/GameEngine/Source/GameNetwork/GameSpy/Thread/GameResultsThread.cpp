@@ -26,9 +26,9 @@
 // Ping thread
 // Author: Matthew D. Campbell, August 2002
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 
-#include <winsock.h>	// This one has to be here. Prevents collisions with winsock2.h
+#include <winsock.h> // This one has to be here. Prevents collisions with winsock2.h
 
 #include "GameNetwork/GameSpy/GameResultsThread.h"
 #include "mutex.h"
@@ -46,40 +46,40 @@ class GameResultsThreadClass;
 
 class GameResultsQueue : public GameResultsInterface
 {
-public:
-	virtual ~GameResultsQueue();
-	GameResultsQueue();
+  public:
+  virtual ~GameResultsQueue();
+  GameResultsQueue();
 
-	virtual void init() {}
-	virtual void reset() {}
-	virtual void update() {}
+  virtual void init() {}
+  virtual void reset() {}
+  virtual void update() {}
 
-	virtual void startThreads( void );
-	virtual void endThreads( void );
-	virtual Bool areThreadsRunning( void );
+  virtual void startThreads(void);
+  virtual void endThreads(void);
+  virtual Bool areThreadsRunning(void);
 
-	virtual void addRequest( const GameResultsRequest& req );
-	virtual Bool getRequest( GameResultsRequest& resp );
+  virtual void addRequest(const GameResultsRequest &req);
+  virtual Bool getRequest(GameResultsRequest &resp);
 
-	virtual void addResponse( const GameResultsResponse& resp );
-	virtual Bool getResponse( GameResultsResponse& resp );
+  virtual void addResponse(const GameResultsResponse &resp);
+  virtual Bool getResponse(GameResultsResponse &resp);
 
-	virtual Bool areGameResultsBeingSent( void );
+  virtual Bool areGameResultsBeingSent(void);
 
-private:
-	MutexClass m_requestMutex;
-	MutexClass m_responseMutex;
-	RequestQueue m_requests;
-	ResponseQueue m_responses;
-	Int m_requestCount;
-	Int m_responseCount;
+  private:
+  MutexClass m_requestMutex;
+  MutexClass m_responseMutex;
+  RequestQueue m_requests;
+  ResponseQueue m_responses;
+  Int m_requestCount;
+  Int m_responseCount;
 
-	GameResultsThreadClass *m_workerThreads[NumWorkerThreads];
+  GameResultsThreadClass *m_workerThreads[NumWorkerThreads];
 };
 
-GameResultsInterface* GameResultsInterface::createNewGameResultsInterface( void )
+GameResultsInterface *GameResultsInterface::createNewGameResultsInterface(void)
 {
-	return NEW GameResultsQueue;
+  return NEW GameResultsQueue;
 }
 
 GameResultsInterface *TheGameResultsQueue;
@@ -88,324 +88,323 @@ GameResultsInterface *TheGameResultsQueue;
 
 class GameResultsThreadClass : public ThreadClass
 {
+  public:
+  GameResultsThreadClass() : ThreadClass() {}
 
-public:
-	GameResultsThreadClass() : ThreadClass() {}
+  void Thread_Function();
 
-	void Thread_Function();
-
-private:
-	Int sendGameResults( UnsignedInt IP, UnsignedShort port, const std::string& results );
+  private:
+  Int sendGameResults(UnsignedInt IP, UnsignedShort port, const std::string &results);
 };
-
 
 //-------------------------------------------------------------------------
 
 GameResultsQueue::GameResultsQueue() : m_requestCount(0), m_responseCount(0)
 {
-	for (Int i=0; i<NumWorkerThreads; ++i)
-	{
-		m_workerThreads[i] = NULL;
-	}
+  for (Int i = 0; i < NumWorkerThreads; ++i)
+  {
+    m_workerThreads[i] = NULL;
+  }
 
-	startThreads();
+  startThreads();
 }
 
 GameResultsQueue::~GameResultsQueue()
 {
-	endThreads();
+  endThreads();
 }
 
-void GameResultsQueue::startThreads( void )
+void GameResultsQueue::startThreads(void)
 {
-	endThreads();
-	for (Int i=0; i<NumWorkerThreads; ++i)
-	{
-		m_workerThreads[i] = NEW GameResultsThreadClass;
-		m_workerThreads[i]->Execute();
-	}
+  endThreads();
+  for (Int i = 0; i < NumWorkerThreads; ++i)
+  {
+    m_workerThreads[i] = NEW GameResultsThreadClass;
+    m_workerThreads[i]->Execute();
+  }
 }
 
-void GameResultsQueue::endThreads( void )
+void GameResultsQueue::endThreads(void)
 {
-	for (Int i=0; i<NumWorkerThreads; ++i)
-	{
-		if (m_workerThreads[i])
-		{
-			delete m_workerThreads[i];
-			m_workerThreads[i] = NULL;
-		}
-	}
+  for (Int i = 0; i < NumWorkerThreads; ++i)
+  {
+    if (m_workerThreads[i])
+    {
+      delete m_workerThreads[i];
+      m_workerThreads[i] = NULL;
+    }
+  }
 }
 
-Bool GameResultsQueue::areThreadsRunning( void )
+Bool GameResultsQueue::areThreadsRunning(void)
 {
-	for (Int i=0; i<NumWorkerThreads; ++i)
-	{
-		if (m_workerThreads[i])
-		{
-			if (m_workerThreads[i]->Is_Running())
-				return true;
-		}
-	}
-	return false;
+  for (Int i = 0; i < NumWorkerThreads; ++i)
+  {
+    if (m_workerThreads[i])
+    {
+      if (m_workerThreads[i]->Is_Running())
+        return true;
+    }
+  }
+  return false;
 }
 
-void GameResultsQueue::addRequest( const GameResultsRequest& req )
+void GameResultsQueue::addRequest(const GameResultsRequest &req)
 {
-	MutexClass::LockClass m(m_requestMutex);
+  MutexClass::LockClass m(m_requestMutex);
 
-	++m_requestCount;
-	m_requests.push(req);
+  ++m_requestCount;
+  m_requests.push(req);
 }
 
-Bool GameResultsQueue::getRequest( GameResultsRequest& req )
+Bool GameResultsQueue::getRequest(GameResultsRequest &req)
 {
-	MutexClass::LockClass m(m_requestMutex, 0);
-	if (m.Failed())
-		return false;
+  MutexClass::LockClass m(m_requestMutex, 0);
+  if (m.Failed())
+    return false;
 
-	if (m_requests.empty())
-		return false;
-	req = m_requests.front();
-	m_requests.pop();
-	return true;
+  if (m_requests.empty())
+    return false;
+  req = m_requests.front();
+  m_requests.pop();
+  return true;
 }
 
-void GameResultsQueue::addResponse( const GameResultsResponse& resp )
+void GameResultsQueue::addResponse(const GameResultsResponse &resp)
 {
-	{
-		MutexClass::LockClass m(m_responseMutex);
+  {
+    MutexClass::LockClass m(m_responseMutex);
 
-		++m_responseCount;
-		m_responses.push(resp);
-	}
+    ++m_responseCount;
+    m_responses.push(resp);
+  }
 }
 
-Bool GameResultsQueue::getResponse( GameResultsResponse& resp )
+Bool GameResultsQueue::getResponse(GameResultsResponse &resp)
 {
-	MutexClass::LockClass m(m_responseMutex, 0);
-	if (m.Failed())
-		return false;
+  MutexClass::LockClass m(m_responseMutex, 0);
+  if (m.Failed())
+    return false;
 
-	if (m_responses.empty())
-		return false;
-	resp = m_responses.front();
-	m_responses.pop();
-	return true;
+  if (m_responses.empty())
+    return false;
+  resp = m_responses.front();
+  m_responses.pop();
+  return true;
 }
 
-Bool GameResultsQueue::areGameResultsBeingSent( void )
+Bool GameResultsQueue::areGameResultsBeingSent(void)
 {
-	MutexClass::LockClass m(m_requestMutex, 0);
-	if (m.Failed())
-		return true;
+  MutexClass::LockClass m(m_requestMutex, 0);
+  if (m.Failed())
+    return true;
 
-	return m_requestCount > 0;
+  return m_requestCount > 0;
 }
-
 
 //-------------------------------------------------------------------------
 // Wrap ladder results in HTTP POST
-static void WrapHTTP( const std::string& hostname, std::string& results )
+static void WrapHTTP(const std::string &hostname, std::string &results)
 {
-	const char HEADER[] =
-		"PUT / HTTP/1.1\r\n"
-		"Connection: Close\r\n"
-		"Host: %s\r\n"
-		"Content-Length: %d\r\n"
-		"\r\n";
+  const char HEADER[] =
+      "PUT / HTTP/1.1\r\n"
+      "Connection: Close\r\n"
+      "Host: %s\r\n"
+      "Content-Length: %d\r\n"
+      "\r\n";
 
-	char szHdr[256];
-	snprintf( szHdr, 256, HEADER, hostname.c_str(), results.length() );
-	results = szHdr + results;
-} //WrapHTTP
-
+  char szHdr[256];
+  snprintf(szHdr, 256, HEADER, hostname.c_str(), results.length());
+  results = szHdr + results;
+} // WrapHTTP
 
 //-------------------------------------------------------------------------
 
 void GameResultsThreadClass::Thread_Function()
 {
-	try {
-	GameResultsRequest req;
+  try
+  {
+    GameResultsRequest req;
 
-	WSADATA wsaData;
+    WSADATA wsaData;
 
-	// Fire up winsock (prob already done, but doesn't matter)
-	WORD wVersionRequested = MAKEWORD(1, 1);
-	WSAStartup( wVersionRequested, &wsaData );
+    // Fire up winsock (prob already done, but doesn't matter)
+    WORD wVersionRequested = MAKEWORD(1, 1);
+    WSAStartup(wVersionRequested, &wsaData);
 
-	while ( running )
-	{
-		// deal with requests
-		if (TheGameResultsQueue && TheGameResultsQueue->getRequest(req))
-		{
-			// resolve the hostname
-			const char *hostnameBuffer = req.hostname.c_str();
-			UnsignedInt IP = 0xFFFFFFFF;
-			if (isdigit(hostnameBuffer[0]))
-			{
-				IP = inet_addr(hostnameBuffer);
-				in_addr hostNode;
-				hostNode.s_addr = IP;
-				DEBUG_LOG(("sending game results to %s - IP = %s", hostnameBuffer, inet_ntoa(hostNode) ));
-			}
-			else
-			{
-				HOSTENT *hostStruct;
-				in_addr *hostNode;
-				hostStruct = gethostbyname(hostnameBuffer);
-				if (hostStruct == NULL)
-				{
-					DEBUG_LOG(("sending game results to %s - host lookup failed", hostnameBuffer));
+    while (running)
+    {
+      // deal with requests
+      if (TheGameResultsQueue && TheGameResultsQueue->getRequest(req))
+      {
+        // resolve the hostname
+        const char *hostnameBuffer = req.hostname.c_str();
+        UnsignedInt IP = 0xFFFFFFFF;
+        if (isdigit(hostnameBuffer[0]))
+        {
+          IP = inet_addr(hostnameBuffer);
+          in_addr hostNode;
+          hostNode.s_addr = IP;
+          DEBUG_LOG(("sending game results to %s - IP = %s", hostnameBuffer, inet_ntoa(hostNode)));
+        }
+        else
+        {
+          HOSTENT *hostStruct;
+          in_addr *hostNode;
+          hostStruct = gethostbyname(hostnameBuffer);
+          if (hostStruct == NULL)
+          {
+            DEBUG_LOG(("sending game results to %s - host lookup failed", hostnameBuffer));
 
-					// Even though this failed to resolve IP, still need to send a
-					//   callback.
-					IP = 0xFFFFFFFF;   // flag for IP resolve failed
-				}
-				else
-				{
-					hostNode = (in_addr *) hostStruct->h_addr;
-					IP = hostNode->s_addr;
-					DEBUG_LOG(("sending game results to %s IP = %s", hostnameBuffer, inet_ntoa(*hostNode) ));
-				}
-			}
+            // Even though this failed to resolve IP, still need to send a
+            //   callback.
+            IP = 0xFFFFFFFF; // flag for IP resolve failed
+          }
+          else
+          {
+            hostNode = (in_addr *)hostStruct->h_addr;
+            IP = hostNode->s_addr;
+            DEBUG_LOG(("sending game results to %s IP = %s", hostnameBuffer, inet_ntoa(*hostNode)));
+          }
+        }
 
-			int result = sendGameResults( IP, req.port, req.results );
-			GameResultsResponse resp;
-			resp.hostname = req.hostname;
-			resp.port = req.port;
-			resp.sentOk = (result == req.results.length());
+        int result = sendGameResults(IP, req.port, req.results);
+        GameResultsResponse resp;
+        resp.hostname = req.hostname;
+        resp.port = req.port;
+        resp.sentOk = (result == req.results.length());
+      }
 
-		}
+      // end our timeslice
+      Switch_Thread();
+    }
 
-		// end our timeslice
-		Switch_Thread();
-	}
-
-	WSACleanup();
-	} catch ( ... ) {
-		DEBUG_CRASH(("Exception in results thread!"));
-	}
+    WSACleanup();
+  }
+  catch (...)
+  {
+    DEBUG_CRASH(("Exception in results thread!"));
+  }
 }
 
 //-------------------------------------------------------------------------
 
-#define CASE(x) case (x): return #x;
+#define CASE(x) \
+  case (x): \
+    return #x;
 
-static const char *getWSAErrorString( Int error )
+static const char *getWSAErrorString(Int error)
 {
-	switch (error)
-	{
-		CASE(WSABASEERR)
-		CASE(WSAEINTR)
-		CASE(WSAEBADF)
-		CASE(WSAEACCES)
-		CASE(WSAEFAULT)
-		CASE(WSAEINVAL)
-		CASE(WSAEMFILE)
-		CASE(WSAEWOULDBLOCK)
-		CASE(WSAEINPROGRESS)
-		CASE(WSAEALREADY)
-		CASE(WSAENOTSOCK)
-		CASE(WSAEDESTADDRREQ)
-		CASE(WSAEMSGSIZE)
-		CASE(WSAEPROTOTYPE)
-		CASE(WSAENOPROTOOPT)
-		CASE(WSAEPROTONOSUPPORT)
-		CASE(WSAESOCKTNOSUPPORT)
-		CASE(WSAEOPNOTSUPP)
-		CASE(WSAEPFNOSUPPORT)
-		CASE(WSAEAFNOSUPPORT)
-		CASE(WSAEADDRINUSE)
-		CASE(WSAEADDRNOTAVAIL)
-		CASE(WSAENETDOWN)
-		CASE(WSAENETUNREACH)
-		CASE(WSAENETRESET)
-		CASE(WSAECONNABORTED)
-		CASE(WSAECONNRESET)
-		CASE(WSAENOBUFS)
-		CASE(WSAEISCONN)
-		CASE(WSAENOTCONN)
-		CASE(WSAESHUTDOWN)
-		CASE(WSAETOOMANYREFS)
-		CASE(WSAETIMEDOUT)
-		CASE(WSAECONNREFUSED)
-		CASE(WSAELOOP)
-		CASE(WSAENAMETOOLONG)
-		CASE(WSAEHOSTDOWN)
-		CASE(WSAEHOSTUNREACH)
-		CASE(WSAENOTEMPTY)
-		CASE(WSAEPROCLIM)
-		CASE(WSAEUSERS)
-		CASE(WSAEDQUOT)
-		CASE(WSAESTALE)
-		CASE(WSAEREMOTE)
-		CASE(WSAEDISCON)
-		CASE(WSASYSNOTREADY)
-		CASE(WSAVERNOTSUPPORTED)
-		CASE(WSANOTINITIALISED)
-		CASE(WSAHOST_NOT_FOUND)
-		CASE(WSATRY_AGAIN)
-		CASE(WSANO_RECOVERY)
-		CASE(WSANO_DATA)
-		default:
-			return "Not a Winsock error";
-	}
+  switch (error)
+  {
+    CASE(WSABASEERR)
+    CASE(WSAEINTR)
+    CASE(WSAEBADF)
+    CASE(WSAEACCES)
+    CASE(WSAEFAULT)
+    CASE(WSAEINVAL)
+    CASE(WSAEMFILE)
+    CASE(WSAEWOULDBLOCK)
+    CASE(WSAEINPROGRESS)
+    CASE(WSAEALREADY)
+    CASE(WSAENOTSOCK)
+    CASE(WSAEDESTADDRREQ)
+    CASE(WSAEMSGSIZE)
+    CASE(WSAEPROTOTYPE)
+    CASE(WSAENOPROTOOPT)
+    CASE(WSAEPROTONOSUPPORT)
+    CASE(WSAESOCKTNOSUPPORT)
+    CASE(WSAEOPNOTSUPP)
+    CASE(WSAEPFNOSUPPORT)
+    CASE(WSAEAFNOSUPPORT)
+    CASE(WSAEADDRINUSE)
+    CASE(WSAEADDRNOTAVAIL)
+    CASE(WSAENETDOWN)
+    CASE(WSAENETUNREACH)
+    CASE(WSAENETRESET)
+    CASE(WSAECONNABORTED)
+    CASE(WSAECONNRESET)
+    CASE(WSAENOBUFS)
+    CASE(WSAEISCONN)
+    CASE(WSAENOTCONN)
+    CASE(WSAESHUTDOWN)
+    CASE(WSAETOOMANYREFS)
+    CASE(WSAETIMEDOUT)
+    CASE(WSAECONNREFUSED)
+    CASE(WSAELOOP)
+    CASE(WSAENAMETOOLONG)
+    CASE(WSAEHOSTDOWN)
+    CASE(WSAEHOSTUNREACH)
+    CASE(WSAENOTEMPTY)
+    CASE(WSAEPROCLIM)
+    CASE(WSAEUSERS)
+    CASE(WSAEDQUOT)
+    CASE(WSAESTALE)
+    CASE(WSAEREMOTE)
+    CASE(WSAEDISCON)
+    CASE(WSASYSNOTREADY)
+    CASE(WSAVERNOTSUPPORTED)
+    CASE(WSANOTINITIALISED)
+    CASE(WSAHOST_NOT_FOUND)
+    CASE(WSATRY_AGAIN)
+    CASE(WSANO_RECOVERY)
+    CASE(WSANO_DATA)
+    default:
+      return "Not a Winsock error";
+  }
 }
 
 #undef CASE
 
 //-------------------------------------------------------------------------
 
-Int GameResultsThreadClass::sendGameResults( UnsignedInt IP, UnsignedShort port, const std::string& results )
+Int GameResultsThreadClass::sendGameResults(UnsignedInt IP, UnsignedShort port, const std::string &results)
 {
-	int error = 0;
+  int error = 0;
 
-	// create the socket
-	Int sock = socket( AF_INET, SOCK_STREAM, 0 );
-	if (sock < 0)
-	{
-		DEBUG_LOG(("GameResultsThreadClass::sendGameResults() - socket() returned %d(%s)", sock, getWSAErrorString(sock)));
-		return sock;
-	}
+  // create the socket
+  Int sock = socket(AF_INET, SOCK_STREAM, 0);
+  if (sock < 0)
+  {
+    DEBUG_LOG(("GameResultsThreadClass::sendGameResults() - socket() returned %d(%s)", sock, getWSAErrorString(sock)));
+    return sock;
+  }
 
-	// fill in address info
-	struct sockaddr_in sockAddr;
-	memset( &sockAddr, 0, sizeof( sockAddr ) );
-	sockAddr.sin_family = AF_INET;
-	sockAddr.sin_addr.s_addr = IP;
-	sockAddr.sin_port = htons(port);
+  // fill in address info
+  struct sockaddr_in sockAddr;
+  memset(&sockAddr, 0, sizeof(sockAddr));
+  sockAddr.sin_family = AF_INET;
+  sockAddr.sin_addr.s_addr = IP;
+  sockAddr.sin_port = htons(port);
 
-	// Start the connection process....
-	if( connect( sock, (struct sockaddr *)&sockAddr, sizeof( sockAddr ) ) == -1 )
-	{
-		error = WSAGetLastError();
-		DEBUG_LOG(("GameResultsThreadClass::sendGameResults() - connect() returned %d(%s)", error, getWSAErrorString(error)));
-		if( ( error == WSAEWOULDBLOCK ) || ( error == WSAEINVAL ) || ( error == WSAEALREADY ) )
-		{
-			return( -1 );
-		}
+  // Start the connection process....
+  if (connect(sock, (struct sockaddr *)&sockAddr, sizeof(sockAddr)) == -1)
+  {
+    error = WSAGetLastError();
+    DEBUG_LOG(("GameResultsThreadClass::sendGameResults() - connect() returned %d(%s)", error, getWSAErrorString(error)));
+    if ((error == WSAEWOULDBLOCK) || (error == WSAEINVAL) || (error == WSAEALREADY))
+    {
+      return (-1);
+    }
 
-		if( error != WSAEISCONN )
-		{
-			closesocket( sock );
-			return( -1 );
-		}
-	}
+    if (error != WSAEISCONN)
+    {
+      closesocket(sock);
+      return (-1);
+    }
+  }
 
-	if (send( sock, results.c_str(), results.length(), 0 ) == SOCKET_ERROR)
-	{
-		error = WSAGetLastError();
-		DEBUG_LOG(("GameResultsThreadClass::sendGameResults() - send() returned %d(%s)", error, getWSAErrorString(error)));
-		closesocket(sock);
-		return WSAGetLastError();
-	}
+  if (send(sock, results.c_str(), results.length(), 0) == SOCKET_ERROR)
+  {
+    error = WSAGetLastError();
+    DEBUG_LOG(("GameResultsThreadClass::sendGameResults() - send() returned %d(%s)", error, getWSAErrorString(error)));
+    closesocket(sock);
+    return WSAGetLastError();
+  }
 
-	closesocket(sock);
+  closesocket(sock);
 
-	return results.length();
+  return results.length();
 }
-
 
 //-------------------------------------------------------------------------

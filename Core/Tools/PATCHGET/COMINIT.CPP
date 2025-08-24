@@ -31,13 +31,12 @@ namespace patchget
 ComInit::ComInit()
 {
   HRESULT hRes = CoInitialize(NULL);
-  if (SUCCEEDED(hRes)==FALSE)
+  if (SUCCEEDED(hRes) == FALSE)
   {
-    MessageBox(NULL,"Can't initialize COM?!?!","Error:",MB_OK);
+    MessageBox(NULL, "Can't initialize COM?!?!", "Error:", MB_OK);
     exit(0);
   }
 }
-
 
 ComInit::~ComInit()
 {
@@ -45,6 +44,6 @@ ComInit::~ComInit()
 }
 
 // Creating this instance will setup all COM stuff & do cleanup on program exit
-ComInit  Global_COM_Initializer;
+ComInit Global_COM_Initializer;
 
 } // namespace patchget

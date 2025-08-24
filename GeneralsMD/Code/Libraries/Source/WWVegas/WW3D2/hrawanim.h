@@ -51,93 +51,85 @@ class BitChannelClass;
 
 struct NodeMotionStruct
 {
-	NodeMotionStruct();
-	~NodeMotionStruct();
+  NodeMotionStruct();
+  ~NodeMotionStruct();
 
-	MotionChannelClass *		X;
-	MotionChannelClass *		Y;
-	MotionChannelClass *		Z;
-	MotionChannelClass *		XR;
-	MotionChannelClass *		YR;
-	MotionChannelClass *		ZR;
-	MotionChannelClass *		Q;
+  MotionChannelClass *X;
+  MotionChannelClass *Y;
+  MotionChannelClass *Z;
+  MotionChannelClass *XR;
+  MotionChannelClass *YR;
+  MotionChannelClass *ZR;
+  MotionChannelClass *Q;
 
-	BitChannelClass *			Vis;
+  BitChannelClass *Vis;
 };
 
 /**********************************************************************************
 
-	HRawAnimClass
+  HRawAnimClass
 
-	Stores motion data to be applied to a HierarchyTree.  Each frame
-	of the motion contains deltas from the HierarchyTree's base position
-	to the desired position.
+  Stores motion data to be applied to a HierarchyTree.  Each frame
+  of the motion contains deltas from the HierarchyTree's base position
+  to the desired position.
 
 **********************************************************************************/
 
 class HRawAnimClass : public HAnimClass
 {
+  public:
+  enum
+  {
+    OK,
+    LOAD_ERROR
+  };
 
-public:
+  HRawAnimClass(void);
+  ~HRawAnimClass(void);
 
-	enum
-	{
-		OK,
-		LOAD_ERROR
-	};
+  int Load_W3D(ChunkLoadClass &cload);
 
-	HRawAnimClass(void);
-	~HRawAnimClass(void);
+  const char *Get_Name(void) const { return Name; }
+  const char *Get_HName(void) const { return HierarchyName; }
+  int Get_Num_Frames(void) { return NumFrames; }
+  float Get_Frame_Rate() { return FrameRate; }
+  float Get_Total_Time() { return (float)NumFrames / FrameRate; }
 
-	int							Load_W3D(ChunkLoadClass & cload);
+  //	Vector3						Get_Translation(int pividx,float frame);
+  //	Quaternion					Get_Orientation(int pividx,float frame);
+  void Get_Translation(Vector3 &translation, int pividx, float frame) const;
+  void Get_Orientation(Quaternion &orientation, int pividx, float frame) const;
+  void Get_Transform(Matrix3D &transform, int pividx, float frame) const;
+  bool Get_Visibility(int pividx, float frame);
 
-	const char *				Get_Name(void) const { return Name; }
-	const char *				Get_HName(void) const { return HierarchyName; }
-	int							Get_Num_Frames(void) { return NumFrames; }
-	float							Get_Frame_Rate() { return FrameRate; }
-	float							Get_Total_Time() { return (float)NumFrames / FrameRate; }
+  bool Is_Node_Motion_Present(int pividx);
+  int Get_Num_Pivots(void) const { return NumNodes; }
 
-//	Vector3						Get_Translation(int pividx,float frame);
-//	Quaternion					Get_Orientation(int pividx,float frame);
-	void							Get_Translation(Vector3& translation, int pividx,float frame) const;
-	void							Get_Orientation(Quaternion& orientation, int pividx,float frame) const;
-	void							Get_Transform(Matrix3D& transform, int pividx,float frame) const;
-	bool							Get_Visibility(int pividx,float frame);
+  // Methods that test the presence of a certain motion channel.
+  bool Has_X_Translation(int pividx);
+  bool Has_Y_Translation(int pividx);
+  bool Has_Z_Translation(int pividx);
+  bool Has_Rotation(int pividx);
+  bool Has_Visibility(int pividx);
+  NodeMotionStruct *Get_Node_Motion_Array(void) { return NodeMotion; }
+  virtual int Class_ID(void) const { return CLASSID_HRAWANIM; }
 
-	bool							Is_Node_Motion_Present(int pividx);
-	int							Get_Num_Pivots(void) const { return NumNodes; }
+  private:
+  char Name[2 * W3D_NAME_LEN];
+  char HierarchyName[W3D_NAME_LEN];
 
-	// Methods that test the presence of a certain motion channel.
-	bool							Has_X_Translation (int pividx);
-	bool							Has_Y_Translation (int pividx);
-	bool							Has_Z_Translation (int pividx);
-	bool							Has_Rotation (int pividx);
-	bool							Has_Visibility (int pividx);
-	NodeMotionStruct				*Get_Node_Motion_Array(void) {return NodeMotion;}
-	virtual int					Class_ID(void)	const															{ return CLASSID_HRAWANIM; }
+  int NumFrames;
+  int NumNodes;
+  float FrameRate;
 
-private:
+  NodeMotionStruct *NodeMotion;
 
-	char							Name[2*W3D_NAME_LEN];
-	char							HierarchyName[W3D_NAME_LEN];
+  void Free(void);
+  bool read_channel(ChunkLoadClass &cload, MotionChannelClass **newchan, bool pre30);
+  void add_channel(MotionChannelClass *newchan);
 
-	int							NumFrames;
-	int							NumNodes;
-	float							FrameRate;
-
-	NodeMotionStruct *		NodeMotion;
-
-	void Free(void);
-	bool read_channel(ChunkLoadClass & cload,MotionChannelClass * * newchan,bool pre30);
-	void add_channel(MotionChannelClass * newchan);
-
-	bool read_bit_channel(ChunkLoadClass & cload,BitChannelClass * * newchan,bool pre30);
-	void add_bit_channel(BitChannelClass * newchan);
-
+  bool read_bit_channel(ChunkLoadClass &cload, BitChannelClass **newchan, bool pre30);
+  void add_bit_channel(BitChannelClass *newchan);
 };
 
-
-
-
 #endif
-

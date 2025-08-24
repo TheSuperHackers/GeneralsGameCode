@@ -29,11 +29,11 @@
 #include "../debug.h"
 #include <stdio.h>
 
-int test,divByZero;
+int test, divByZero;
 
 void func1(void)
 {
-  test/=divByZero;
+  test /= divByZero;
 }
 
 void func2(void)

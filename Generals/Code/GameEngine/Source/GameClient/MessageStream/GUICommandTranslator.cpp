@@ -30,7 +30,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 
 #include "Common/ActionManager.h"
 #include "Common/GameCommon.h"
@@ -47,466 +47,450 @@
 #include "GameClient/GUICommandTranslator.h"
 #include "GameClient/CommandXlat.h"
 
-
 // PRIVATE ////////////////////////////////////////////////////////////////////////////////////////
 enum CommandStatus
 {
-	COMMAND_INCOMPLETE = 0,
-	COMMAND_COMPLETE
+  COMMAND_INCOMPLETE = 0,
+  COMMAND_COMPLETE
 };
 
 // PUBLIC /////////////////////////////////////////////////////////////////////////////////////////
 
 PickAndPlayInfo::PickAndPlayInfo()
 {
-	m_air = FALSE;
-	m_drawTarget = NULL;
-	m_weaponSlot = NULL;
-	m_specialPowerType = SPECIAL_INVALID;
+  m_air = FALSE;
+  m_drawTarget = NULL;
+  m_weaponSlot = NULL;
+  m_specialPowerType = SPECIAL_INVALID;
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 GUICommandTranslator::GUICommandTranslator()
 {
-
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 GUICommandTranslator::~GUICommandTranslator()
 {
-
 }
 
 //-------------------------------------------------------------------------------------------------
 /** Is the object under the mouse position a valid target for the command */
 //-------------------------------------------------------------------------------------------------
-static Object *validUnderCursor( const ICoord2D *mouse, const CommandButton *command, PickType pickType )
+static Object *validUnderCursor(const ICoord2D *mouse, const CommandButton *command, PickType pickType)
 {
-	Object *pickObj = NULL;
+  Object *pickObj = NULL;
 
-	// pick a drawable at the mouse location
-	Drawable *pick = TheTacticalView->pickDrawable( mouse, FALSE, pickType );
+  // pick a drawable at the mouse location
+  Drawable *pick = TheTacticalView->pickDrawable(mouse, FALSE, pickType);
 
-	// only continue if there is something there
-	if( pick && pick->getObject() )
-	{
-		Player *player = ThePlayerList->getLocalPlayer();
+  // only continue if there is something there
+  if (pick && pick->getObject())
+  {
+    Player *player = ThePlayerList->getLocalPlayer();
 
-		// get object we picked
-		pickObj = pick->getObject();
+    // get object we picked
+    pickObj = pick->getObject();
 
-		if (!command->isValidObjectTarget(player, pickObj))
-				pickObj = NULL;
+    if (!command->isValidObjectTarget(player, pickObj))
+      pickObj = NULL;
 
-	}  // end if
+  } // end if
 
+  return pickObj;
 
-	return pickObj;
-
-}  // end validUnderCursor
+} // end validUnderCursor
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-static CommandStatus doFireWeaponCommand( const CommandButton *command, const ICoord2D *mouse )
+static CommandStatus doFireWeaponCommand(const CommandButton *command, const ICoord2D *mouse)
 {
+  // sanity
+  if (command == NULL || mouse == NULL)
+    return COMMAND_COMPLETE;
 
-	// sanity
-	if( command == NULL || mouse == NULL )
-		return COMMAND_COMPLETE;
+  //
+  // for single object selections get the source ID and sanity check for illegal object and
+  // bail along the way
+  //
+  ObjectID sourceID = INVALID_ID;
+  if (TheInGameUI->getSelectCount() == 1)
+  {
+    Drawable *draw = TheInGameUI->getFirstSelectedDrawable();
 
-	//
-	// for single object selections get the source ID and sanity check for illegal object and
-	// bail along the way
-	//
-	ObjectID sourceID = INVALID_ID;
-	if( TheInGameUI->getSelectCount() == 1 )
-	{
-		Drawable *draw = TheInGameUI->getFirstSelectedDrawable();
+    // sanity
+    if (draw == NULL || draw->getObject() == NULL)
+      return COMMAND_COMPLETE;
 
-		// sanity
-		if( draw == NULL || draw->getObject() == NULL )
-			return COMMAND_COMPLETE;
+    // get object id
+    sourceID = draw->getObject()->getID();
 
-		// get object id
-		sourceID = draw->getObject()->getID();
+  } // end if
 
-	}  // end if
+  // create message and send to the logic
+  GameMessage *msg;
+  if (BitIsSet(command->getOptions(), NEED_TARGET_POS))
+  {
+    Coord3D world;
 
-	// create message and send to the logic
-	GameMessage *msg;
-	if( BitIsSet( command->getOptions(), NEED_TARGET_POS ) )
-	{
-		Coord3D world;
+    // translate the mouse location into world coords
+    TheTacticalView->screenToTerrain(mouse, &world);
 
-		// translate the mouse location into world coords
-		TheTacticalView->screenToTerrain( mouse, &world );
+    // create the message and append arguments
+    msg = TheMessageStream->appendMessage(GameMessage::MSG_DO_WEAPON_AT_LOCATION);
+    msg->appendIntegerArgument(command->getWeaponSlot());
+    msg->appendLocationArgument(world);
+    msg->appendIntegerArgument(command->getMaxShotsToFire());
 
-		// create the message and append arguments
-		msg = TheMessageStream->appendMessage( GameMessage::MSG_DO_WEAPON_AT_LOCATION );
-		msg->appendIntegerArgument( command->getWeaponSlot() );
-		msg->appendLocationArgument( world );
-		msg->appendIntegerArgument( command->getMaxShotsToFire() );
+    // Also append the object ID (incase weapon doesn't like obstacles on land).
+    Object *target = validUnderCursor(mouse, command, PICK_TYPE_SELECTABLE);
+    ObjectID targetID = target ? target->getID() : INVALID_ID;
+    msg->appendObjectIDArgument(targetID);
 
-		//Also append the object ID (incase weapon doesn't like obstacles on land).
-		Object *target = validUnderCursor( mouse, command, PICK_TYPE_SELECTABLE );
-		ObjectID targetID = target ? target->getID() : INVALID_ID;
-		msg->appendObjectIDArgument( targetID );
+  } // end if
+  else if (BitIsSet(command->getOptions(), COMMAND_OPTION_NEED_OBJECT_TARGET))
+  {
+    // setup the pick type ... some commands allow us to target shrubbery
+    PickType pickType = PICK_TYPE_SELECTABLE;
 
+    if (BitIsSet(command->getOptions(), ALLOW_SHRUBBERY_TARGET) == TRUE)
+      pickType = (PickType)((Int)pickType | (Int)PICK_TYPE_SHRUBBERY);
 
-	}  // end if
-	else if( BitIsSet( command->getOptions(), COMMAND_OPTION_NEED_OBJECT_TARGET ) )
-	{
+    if (BitIsSet(command->getOptions(), ALLOW_MINE_TARGET) == TRUE)
+      pickType = (PickType)((Int)pickType | (Int)PICK_TYPE_MINES);
 
-		// setup the pick type ... some commands allow us to target shrubbery
-		PickType pickType = PICK_TYPE_SELECTABLE;
+    // get the target object under the cursor
+    Object *target = validUnderCursor(mouse, command, pickType);
 
-		if( BitIsSet( command->getOptions(), ALLOW_SHRUBBERY_TARGET ) == TRUE )
-			pickType = (PickType)((Int)pickType | (Int)PICK_TYPE_SHRUBBERY);
+    // only continue if the object meets all the command criteria
+    if (target)
+    {
+      msg = TheMessageStream->appendMessage(GameMessage::MSG_DO_WEAPON_AT_OBJECT);
+      msg->appendIntegerArgument(command->getWeaponSlot());
+      msg->appendObjectIDArgument(target->getID());
+      msg->appendIntegerArgument(command->getMaxShotsToFire());
 
-		if( BitIsSet( command->getOptions(), ALLOW_MINE_TARGET ) == TRUE )
-			pickType = (PickType)((Int)pickType | (Int)PICK_TYPE_MINES);
+    } // end if
 
-		// get the target object under the cursor
-		Object *target = validUnderCursor( mouse, command, pickType );
+  } // end else
+  else
+  {
+    msg = TheMessageStream->appendMessage(GameMessage::MSG_DO_WEAPON);
+    msg->appendIntegerArgument(command->getWeaponSlot());
+    msg->appendIntegerArgument(command->getMaxShotsToFire());
 
-		// only continue if the object meets all the command criteria
-		if( target )
-		{
+    // This could be legit now -- think of firing a self destruct weapon
+    //-----------------------------------------------------------------
+    // DEBUG_ASSERTCRASH( 0, ("doFireWeaponCommand: Command options say it doesn't need additional user input '%s'",
+    //											command->m_name.str()) );
+    // return COMMAND_COMPLETE;
 
-			msg = TheMessageStream->appendMessage( GameMessage::MSG_DO_WEAPON_AT_OBJECT );
-			msg->appendIntegerArgument( command->getWeaponSlot() );
-			msg->appendObjectIDArgument( target->getID() );
-			msg->appendIntegerArgument( command->getMaxShotsToFire() );
+  } // end else
 
-		}  // end if
+  return COMMAND_COMPLETE;
 
-	}  // end else
-	else
-	{
-		msg = TheMessageStream->appendMessage( GameMessage::MSG_DO_WEAPON );
-		msg->appendIntegerArgument( command->getWeaponSlot() );
-		msg->appendIntegerArgument( command->getMaxShotsToFire() );
-
-		//This could be legit now -- think of firing a self destruct weapon
-		//-----------------------------------------------------------------
-		//DEBUG_ASSERTCRASH( 0, ("doFireWeaponCommand: Command options say it doesn't need additional user input '%s'",
-		//											command->m_name.str()) );
-		//return COMMAND_COMPLETE;
-
-	}  // end else
-
-	return COMMAND_COMPLETE;
-
-}  // end fire weapon
+} // end fire weapon
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-static CommandStatus doGuardCommand( const CommandButton *command, GuardMode guardMode, const ICoord2D *mouse )
+static CommandStatus doGuardCommand(const CommandButton *command, GuardMode guardMode, const ICoord2D *mouse)
 {
-	// sanity
-	if( command == NULL || mouse == NULL )
-		return COMMAND_COMPLETE;
+  // sanity
+  if (command == NULL || mouse == NULL)
+    return COMMAND_COMPLETE;
 
-	if( TheInGameUI->getSelectCount() == 0 )
-		return COMMAND_COMPLETE;
+  if (TheInGameUI->getSelectCount() == 0)
+    return COMMAND_COMPLETE;
 
-	GameMessage *msg = NULL;
+  GameMessage *msg = NULL;
 
-	if ( msg == NULL && BitIsSet( command->getOptions(), COMMAND_OPTION_NEED_OBJECT_TARGET ) )
-	{
-		// get the target object under the cursor
-		Object* target = validUnderCursor( mouse, command, PICK_TYPE_SELECTABLE );
-		if( target )
-		{
-			msg = TheMessageStream->appendMessage( GameMessage::MSG_DO_GUARD_OBJECT );
-			msg->appendObjectIDArgument( target->getID() );
-			msg->appendIntegerArgument(guardMode);
-			pickAndPlayUnitVoiceResponse(TheInGameUI->getAllSelectedDrawables(), GameMessage::MSG_DO_GUARD_OBJECT);
-		}
-	}
+  if (msg == NULL && BitIsSet(command->getOptions(), COMMAND_OPTION_NEED_OBJECT_TARGET))
+  {
+    // get the target object under the cursor
+    Object *target = validUnderCursor(mouse, command, PICK_TYPE_SELECTABLE);
+    if (target)
+    {
+      msg = TheMessageStream->appendMessage(GameMessage::MSG_DO_GUARD_OBJECT);
+      msg->appendObjectIDArgument(target->getID());
+      msg->appendIntegerArgument(guardMode);
+      pickAndPlayUnitVoiceResponse(TheInGameUI->getAllSelectedDrawables(), GameMessage::MSG_DO_GUARD_OBJECT);
+    }
+  }
 
-	if(  msg == NULL )
-	{
-		Coord3D world;
-		if (BitIsSet( command->getOptions(), NEED_TARGET_POS ))
-		{
-			// translate the mouse location into world coords
-			TheTacticalView->screenToTerrain( mouse, &world );
-		}
-		else
-		{
-			Drawable *draw = TheInGameUI->getFirstSelectedDrawable();
-			if( draw == NULL || draw->getObject() == NULL )
-				return COMMAND_COMPLETE;
-			world = *draw->getObject()->getPosition();
-		}
+  if (msg == NULL)
+  {
+    Coord3D world;
+    if (BitIsSet(command->getOptions(), NEED_TARGET_POS))
+    {
+      // translate the mouse location into world coords
+      TheTacticalView->screenToTerrain(mouse, &world);
+    }
+    else
+    {
+      Drawable *draw = TheInGameUI->getFirstSelectedDrawable();
+      if (draw == NULL || draw->getObject() == NULL)
+        return COMMAND_COMPLETE;
+      world = *draw->getObject()->getPosition();
+    }
 
-		// create the message and append arguments
-		msg = TheMessageStream->appendMessage( GameMessage::MSG_DO_GUARD_POSITION );
-		msg->appendLocationArgument(world);
-		msg->appendIntegerArgument(guardMode);
-		pickAndPlayUnitVoiceResponse(TheInGameUI->getAllSelectedDrawables(), GameMessage::MSG_DO_GUARD_POSITION);
-	}
+    // create the message and append arguments
+    msg = TheMessageStream->appendMessage(GameMessage::MSG_DO_GUARD_POSITION);
+    msg->appendLocationArgument(world);
+    msg->appendIntegerArgument(guardMode);
+    pickAndPlayUnitVoiceResponse(TheInGameUI->getAllSelectedDrawables(), GameMessage::MSG_DO_GUARD_POSITION);
+  }
 
-	return COMMAND_COMPLETE;
-
+  return COMMAND_COMPLETE;
 }
 
 //-------------------------------------------------------------------------------------------------
 /** Do the set rally point command */
 //-------------------------------------------------------------------------------------------------
-static CommandStatus doAttackMoveCommand( const CommandButton *command, const ICoord2D *mouse )
+static CommandStatus doAttackMoveCommand(const CommandButton *command, const ICoord2D *mouse)
 {
+  // sanity
+  if (command == NULL || mouse == NULL)
+    return COMMAND_COMPLETE;
 
-	// sanity
-	if( command == NULL || mouse == NULL )
-		return COMMAND_COMPLETE;
+  //
+  // we can only set rally points for structures ... and we never multiple select structures
+  // so we must be sure there is only one thing selected (that thing we will set the point on)
+  //
+  Drawable *draw = TheInGameUI->getFirstSelectedDrawable();
+  DEBUG_ASSERTCRASH(draw, ("doAttackMoveCommand: No selected object(s)"));
 
-	//
-	// we can only set rally points for structures ... and we never multiple select structures
-	// so we must be sure there is only one thing selected (that thing we will set the point on)
-	//
-	Drawable *draw = TheInGameUI->getFirstSelectedDrawable();
-	DEBUG_ASSERTCRASH( draw, ("doAttackMoveCommand: No selected object(s)") );
+  // sanity
+  if (draw == NULL || draw->getObject() == NULL)
+    return COMMAND_COMPLETE;
 
-	// sanity
-	if( draw == NULL || draw->getObject() == NULL )
-		return COMMAND_COMPLETE;
+  // convert mouse point to world coords
+  Coord3D world;
+  TheTacticalView->screenToTerrain(mouse, &world);
 
-	// convert mouse point to world coords
-	Coord3D world;
-	TheTacticalView->screenToTerrain( mouse, &world );
+  // send the message to set the rally point
+  GameMessage *msg = TheMessageStream->appendMessage(GameMessage::MSG_DO_ATTACKMOVETO);
+  msg->appendLocationArgument(world);
 
-	// send the message to set the rally point
-	GameMessage *msg = TheMessageStream->appendMessage( GameMessage::MSG_DO_ATTACKMOVETO );
-	msg->appendLocationArgument( world );
+  // Play the unit voice response
+  pickAndPlayUnitVoiceResponse(TheInGameUI->getAllSelectedDrawables(), GameMessage::MSG_DO_ATTACKMOVETO);
 
-	// Play the unit voice response
-	pickAndPlayUnitVoiceResponse(TheInGameUI->getAllSelectedDrawables(), GameMessage::MSG_DO_ATTACKMOVETO);
-
-	return COMMAND_COMPLETE;
-
+  return COMMAND_COMPLETE;
 }
-
 
 //-------------------------------------------------------------------------------------------------
 /** Do the set rally point command */
 //-------------------------------------------------------------------------------------------------
-static CommandStatus doSetRallyPointCommand( const CommandButton *command, const ICoord2D *mouse )
+static CommandStatus doSetRallyPointCommand(const CommandButton *command, const ICoord2D *mouse)
 {
+  // sanity
+  if (command == NULL || mouse == NULL)
+    return COMMAND_COMPLETE;
 
-	// sanity
-	if( command == NULL || mouse == NULL )
-		return COMMAND_COMPLETE;
+  //
+  // we can only set rally points for structures ... and we never multiple select structures
+  // so we must be sure there is only one thing selected (that thing we will set the point on)
+  //
+  DEBUG_ASSERTCRASH(
+      TheInGameUI->getSelectCount() == 1,
+      ("doSetRallyPointCommand: The selected count is not 1, we can only set a rally point on a *SINGLE* building\n"));
+  Drawable *draw = TheInGameUI->getFirstSelectedDrawable();
+  DEBUG_ASSERTCRASH(draw, ("doSetRallyPointCommand: No selected object"));
 
-	//
-	// we can only set rally points for structures ... and we never multiple select structures
-	// so we must be sure there is only one thing selected (that thing we will set the point on)
-	//
-	DEBUG_ASSERTCRASH( TheInGameUI->getSelectCount() == 1,
-										 ("doSetRallyPointCommand: The selected count is not 1, we can only set a rally point on a *SINGLE* building\n") );
-	Drawable *draw = TheInGameUI->getFirstSelectedDrawable();
-	DEBUG_ASSERTCRASH( draw, ("doSetRallyPointCommand: No selected object") );
+  // sanity
+  if (draw == NULL || draw->getObject() == NULL)
+    return COMMAND_COMPLETE;
 
-	// sanity
-	if( draw == NULL || draw->getObject() == NULL )
-		return COMMAND_COMPLETE;
+  // convert mouse point to world coords
+  Coord3D world;
+  TheTacticalView->screenToTerrain(mouse, &world);
 
-	// convert mouse point to world coords
-	Coord3D world;
-	TheTacticalView->screenToTerrain( mouse, &world );
+  // send the message to set the rally point
+  GameMessage *msg = TheMessageStream->appendMessage(GameMessage::MSG_SET_RALLY_POINT);
+  msg->appendObjectIDArgument(draw->getObject()->getID());
+  msg->appendLocationArgument(world);
 
-	// send the message to set the rally point
-	GameMessage *msg = TheMessageStream->appendMessage( GameMessage::MSG_SET_RALLY_POINT );
-	msg->appendObjectIDArgument( draw->getObject()->getID() );
-	msg->appendLocationArgument( world );
+  return COMMAND_COMPLETE;
 
-	return COMMAND_COMPLETE;
-
-}  // end doSetRallyPointCommand
+} // end doSetRallyPointCommand
 
 //-------------------------------------------------------------------------------------------------
 /** Do the beacon placement command */
 //-------------------------------------------------------------------------------------------------
-static CommandStatus doPlaceBeacon( const CommandButton *command, const ICoord2D *mouse )
+static CommandStatus doPlaceBeacon(const CommandButton *command, const ICoord2D *mouse)
 {
+  // sanity
+  if (command == NULL || mouse == NULL)
+    return COMMAND_COMPLETE;
 
-	// sanity
-	if( command == NULL || mouse == NULL )
-		return COMMAND_COMPLETE;
+  // convert mouse point to world coords
+  Coord3D world;
+  TheTacticalView->screenToTerrain(mouse, &world);
 
-	// convert mouse point to world coords
-	Coord3D world;
-	TheTacticalView->screenToTerrain( mouse, &world );
+  // send the message to set the rally point
+  GameMessage *msg = TheMessageStream->appendMessage(GameMessage::MSG_PLACE_BEACON);
+  msg->appendLocationArgument(world);
 
-	// send the message to set the rally point
-	GameMessage *msg = TheMessageStream->appendMessage( GameMessage::MSG_PLACE_BEACON );
-	msg->appendLocationArgument( world );
+  return COMMAND_COMPLETE;
 
-	return COMMAND_COMPLETE;
-
-}  // end doPlaceBeacon
+} // end doPlaceBeacon
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 GameMessageDisposition GUICommandTranslator::translateGameMessage(const GameMessage *msg)
 {
-	GameMessageDisposition disp = KEEP_MESSAGE;
+  GameMessageDisposition disp = KEEP_MESSAGE;
 
-	// only pay attention to clicks in this translator if there is a pending GUI command
-	const CommandButton *command = TheInGameUI->getGUICommand();
-	if( command == NULL )
-		return disp;
+  // only pay attention to clicks in this translator if there is a pending GUI command
+  const CommandButton *command = TheInGameUI->getGUICommand();
+  if (command == NULL)
+    return disp;
 
-	switch( msg->getType() )
-	{
+  switch (msg->getType())
+  {
+    //---------------------------------------------------------------------------------------------
+    case GameMessage::MSG_RAW_MOUSE_LEFT_BUTTON_DOWN:
+    {
+      //
+      //
+      // it is necessary to use this input when there is a pending gui command, we don't wan't
+      // it to fall through to the rest of the system when we're in pending gui command "mode"
+      // because things like selection rectangles will start when we want to stay totally
+      // within the gui command "mode" here
+      //
+      disp = DESTROY_MESSAGE;
 
-		//---------------------------------------------------------------------------------------------
-		case GameMessage::MSG_RAW_MOUSE_LEFT_BUTTON_DOWN:
-		{
+      break;
 
-			//
-			//
-			// it is necessary to use this input when there is a pending gui command, we don't wan't
-			// it to fall through to the rest of the system when we're in pending gui command "mode"
-			// because things like selection rectangles will start when we want to stay totally
-			// within the gui command "mode" here
-			//
-			disp = DESTROY_MESSAGE;
+    } // end left mouse down
 
-			break;
+    //---------------------------------------------------------------------------------------------
+    case GameMessage::MSG_MOUSE_LEFT_DOUBLE_CLICK:
+    case GameMessage::MSG_MOUSE_LEFT_CLICK:
+    {
+      CommandStatus commandStatus = COMMAND_COMPLETE;
+      ICoord2D mouse = msg->getArgument(0)->pixelRegion.hi;
 
-		}  // end left mouse down
+      // do the command action
+      if (command && !command->isContextCommand())
+      {
+        switch (command->getCommandType())
+        {
+          //---------------------------------------------------------------------------------------
+          case GUI_COMMAND_FIRE_WEAPON:
+          {
+            commandStatus = doFireWeaponCommand(command, &mouse);
 
-		//---------------------------------------------------------------------------------------------
-		case GameMessage::MSG_MOUSE_LEFT_DOUBLE_CLICK:
-		case GameMessage::MSG_MOUSE_LEFT_CLICK:
-		{
-			CommandStatus commandStatus = COMMAND_COMPLETE;
-			ICoord2D mouse = msg->getArgument(0)->pixelRegion.hi;
+            PickAndPlayInfo info;
+            WeaponSlotType slot = command->getWeaponSlot();
+            info.m_weaponSlot = &slot;
 
-			// do the command action
-			if( command && !command->isContextCommand() )
-			{
-				switch( command->getCommandType() )
-				{
+            pickAndPlayUnitVoiceResponse(
+                TheInGameUI->getAllSelectedDrawables(),
+                GameMessage::MSG_DO_WEAPON_AT_LOCATION,
+                &info);
+            break;
 
-					//---------------------------------------------------------------------------------------
-					case GUI_COMMAND_FIRE_WEAPON:
-					{
-						commandStatus = doFireWeaponCommand( command, &mouse );
+          } // end fire weapon command
 
-						PickAndPlayInfo info;
-						WeaponSlotType slot = command->getWeaponSlot();
-						info.m_weaponSlot = &slot;
+          //---------------------------------------------------------------------------------------
+          case GUI_COMMAND_EVACUATE:
+          {
+            if (BitIsSet(command->getOptions(), NEED_TARGET_POS))
+            {
+              Coord3D worldPos;
 
-	 					pickAndPlayUnitVoiceResponse( TheInGameUI->getAllSelectedDrawables(), GameMessage::MSG_DO_WEAPON_AT_LOCATION, &info );
-						break;
+              TheTacticalView->screenToTerrain(&mouse, &worldPos);
 
-					}  // end fire weapon command
+              GameMessage *msg = TheMessageStream->appendMessage(GameMessage::MSG_EVACUATE);
+              msg->appendLocationArgument(worldPos);
 
+              pickAndPlayUnitVoiceResponse(TheInGameUI->getAllSelectedDrawables(), GameMessage::MSG_EVACUATE);
 
-					//---------------------------------------------------------------------------------------
-					case GUI_COMMAND_EVACUATE:
-					{
-						if (BitIsSet(command->getOptions(), NEED_TARGET_POS)) {
-							Coord3D worldPos;
+              commandStatus = COMMAND_COMPLETE;
+            }
 
-							TheTacticalView->screenToTerrain(&mouse, &worldPos);
+            break;
+          }
 
-							GameMessage *msg = TheMessageStream->appendMessage(GameMessage::MSG_EVACUATE);
-							msg->appendLocationArgument(worldPos);
+          //---------------------------------------------------------------------------------------
+          case GUI_COMMAND_GUARD:
+          {
+            commandStatus = doGuardCommand(command, GUARDMODE_NORMAL, &mouse);
+            break;
+          }
 
-							pickAndPlayUnitVoiceResponse( TheInGameUI->getAllSelectedDrawables(), GameMessage::MSG_EVACUATE );
+          //---------------------------------------------------------------------------------------
+          case GUI_COMMAND_GUARD_WITHOUT_PURSUIT:
+          {
+            commandStatus = doGuardCommand(command, GUARDMODE_GUARD_WITHOUT_PURSUIT, &mouse);
+            break;
+          }
 
-							commandStatus = COMMAND_COMPLETE;
-						}
+          //---------------------------------------------------------------------------------------
+          case GUI_COMMAND_GUARD_FLYING_UNITS_ONLY:
+          {
+            commandStatus = doGuardCommand(command, GUARDMODE_GUARD_FLYING_UNITS_ONLY, &mouse);
+            break;
+          }
 
-						break;
-					}
+          // Special weapons are now always context commands...
+          //---------------------------------------------------------------------------------------
+          case GUI_COMMAND_SPECIAL_POWER:
+          case GUI_COMMAND_SPECIAL_POWER_FROM_COMMAND_CENTER:
+          {
+            return KEEP_MESSAGE;
+            break;
 
-					//---------------------------------------------------------------------------------------
-					case GUI_COMMAND_GUARD:
-					{
-						commandStatus = doGuardCommand( command, GUARDMODE_NORMAL, &mouse );
-						break;
-					}
+          } // end special power
 
-					//---------------------------------------------------------------------------------------
-					case GUI_COMMAND_GUARD_WITHOUT_PURSUIT:
-					{
-						commandStatus = doGuardCommand( command, GUARDMODE_GUARD_WITHOUT_PURSUIT, &mouse );
-						break;
-					}
+          case GUI_COMMAND_ATTACK_MOVE:
+          {
+            commandStatus = doAttackMoveCommand(command, &mouse);
+            break;
+          }
 
-					//---------------------------------------------------------------------------------------
-					case GUI_COMMAND_GUARD_FLYING_UNITS_ONLY:
-					{
-						commandStatus = doGuardCommand( command, GUARDMODE_GUARD_FLYING_UNITS_ONLY, &mouse );
-						break;
-					}
+          //---------------------------------------------------------------------------------------
+          case GUI_COMMAND_SET_RALLY_POINT:
+          {
+            commandStatus = doSetRallyPointCommand(command, &mouse);
+            break;
 
-					//Special weapons are now always context commands...
-					//---------------------------------------------------------------------------------------
-					case GUI_COMMAND_SPECIAL_POWER:
-					case GUI_COMMAND_SPECIAL_POWER_FROM_COMMAND_CENTER:
-					{
-						return KEEP_MESSAGE;
-						break;
+          } // end set rally point
 
-					}  // end special power
+          //---------------------------------------------------------------------------------------
+          case GUICOMMANDMODE_PLACE_BEACON:
+          {
+            commandStatus = doPlaceBeacon(command, &mouse);
+            break;
 
-					case GUI_COMMAND_ATTACK_MOVE:
-					{
-						commandStatus = doAttackMoveCommand( command, &mouse );
-						break;
-					}
+          } // end set rally point
 
-					//---------------------------------------------------------------------------------------
-					case GUI_COMMAND_SET_RALLY_POINT:
-					{
-						commandStatus = doSetRallyPointCommand( command, &mouse );
-						break;
+        } // end switch
 
-					}  // end set rally point
+        // used the input
+        disp = DESTROY_MESSAGE;
 
-					//---------------------------------------------------------------------------------------
-					case GUICOMMANDMODE_PLACE_BEACON:
-					{
-						commandStatus = doPlaceBeacon( command, &mouse );
-						break;
+        // get out of GUI command mode if we completed the command one way or another
+        if (commandStatus == COMMAND_COMPLETE)
+        {
+          TheInGameUI->setPreventLeftClickDeselectionInAlternateMouseModeForOneClick(TRUE);
+          TheInGameUI->setGUICommand(NULL);
+        }
+      } // end if
 
-					}  // end set rally point
+      break;
 
-				}  // end switch
+    } // end left mouse up
 
-				// used the input
-				disp = DESTROY_MESSAGE;
+  } // end switch
 
-				// get out of GUI command mode if we completed the command one way or another
-				if( commandStatus == COMMAND_COMPLETE )
-				{
-					TheInGameUI->setPreventLeftClickDeselectionInAlternateMouseModeForOneClick( TRUE );
-					TheInGameUI->setGUICommand( NULL );
-				}
-			}  // end if
+  // If we're destroying the message, it means we used it. Therefore, destroy the current
+  // attack move instruction as well.
+  if (disp == DESTROY_MESSAGE)
+    TheInGameUI->clearAttackMoveToMode();
 
-			break;
+  return disp;
 
-		}  // end left mouse up
-
-	}  // end switch
-
-	// If we're destroying the message, it means we used it. Therefore, destroy the current
-	// attack move instruction as well.
-	if (disp == DESTROY_MESSAGE)
-		TheInGameUI->clearAttackMoveToMode();
-
-
-	return disp;
-
-}  // end translateMessage
-
-
+} // end translateMessage

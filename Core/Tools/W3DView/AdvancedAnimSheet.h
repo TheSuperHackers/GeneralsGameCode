@@ -28,60 +28,54 @@
 #include "AnimMixingPage.h"
 #include "AnimReportPage.h"
 
-#define MAX_REPORT_ANIMS		128
-
-
+#define MAX_REPORT_ANIMS 128
 
 /////////////////////////////////////////////////////////////////////////////
 // CAdvancedAnimSheet
 
 class CAdvancedAnimSheet : public CPropertySheet
 {
-	DECLARE_DYNAMIC(CAdvancedAnimSheet)
+  DECLARE_DYNAMIC(CAdvancedAnimSheet)
 
-// Construction
-public:
-	CAdvancedAnimSheet(CWnd *pParentWnd = NULL, UINT iSelectPage = 0);
+  // Construction
+  public:
+  CAdvancedAnimSheet(CWnd *pParentWnd = NULL, UINT iSelectPage = 0);
 
-// Attributes
-public:
+  // Attributes
+  public:
+  // Pages in the property sheet.
+  CAnimMixingPage m_MixingPage;
+  CAnimReportPage m_ReportPage;
 
-	// Pages in the property sheet.
-	CAnimMixingPage	m_MixingPage;
-	CAnimReportPage	m_ReportPage;
+  // Indeces of animations selected in the mixing page.
+  DynamicVectorClass<int> m_SelectedAnims;
 
-	// Indeces of animations selected in the mixing page.
-	DynamicVectorClass<int>	m_SelectedAnims;
+  // Operations
+  public:
+  int GetAnimCount(void);
+  HAnimClass **GetAnims(void);
 
-// Operations
-public:
+  // Overrides
+  // ClassWizard generated virtual function overrides
+  //{{AFX_VIRTUAL(CAdvancedAnimSheet)
+  //}}AFX_VIRTUAL
 
-	int				GetAnimCount (void);
-	HAnimClass **	GetAnims (void);
+  // Implementation
+  public:
+  virtual ~CAdvancedAnimSheet();
 
-// Overrides
-	// ClassWizard generated virtual function overrides
-	//{{AFX_VIRTUAL(CAdvancedAnimSheet)
-	//}}AFX_VIRTUAL
+  // Generated message map functions
+  protected:
+  void LoadAnims(void);
 
-// Implementation
-public:
-	virtual ~CAdvancedAnimSheet();
+  HAnimClass *Anims[MAX_REPORT_ANIMS];
+  int AnimCount;
+  bool AnimsValid;
 
-	// Generated message map functions
-protected:
-
-	void				LoadAnims (void);
-
-	HAnimClass		*Anims[MAX_REPORT_ANIMS];
-	int				AnimCount;
-	bool				AnimsValid;
-
-
-	//{{AFX_MSG(CAdvancedAnimSheet)
-		// NOTE - the ClassWizard will add and remove member functions here.
-	//}}AFX_MSG
-	DECLARE_MESSAGE_MAP()
+  //{{AFX_MSG(CAdvancedAnimSheet)
+  // NOTE - the ClassWizard will add and remove member functions here.
+  //}}AFX_MSG
+  DECLARE_MESSAGE_MAP()
 };
 
 /////////////////////////////////////////////////////////////////////////////

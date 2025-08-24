@@ -27,7 +27,7 @@
 // Debug command interface
 //////////////////////////////////////////////////////////////////////////////
 #ifdef _MSC_VER
-#  pragma once
+#pragma once
 #endif
 #ifndef DEBUG_CMD_H // Include guard
 #define DEBUG_CMD_H
@@ -51,14 +51,14 @@
 class DebugCmdInterface
 {
   // no copy/assign op
-  DebugCmdInterface(const DebugCmdInterface&);
-  DebugCmdInterface& operator=(const DebugCmdInterface&);
+  DebugCmdInterface(const DebugCmdInterface &);
+  DebugCmdInterface &operator=(const DebugCmdInterface &);
 
-protected:
+  protected:
   // nobody can call this destructor (except child classes)
   virtual ~DebugCmdInterface() {}
 
-public:
+  public:
   // interface only so no functionality here
   explicit DebugCmdInterface(void) {}
 
@@ -87,15 +87,14 @@ public:
     \param argv argument list
     \return true if command was known, false if not
   */
-  virtual bool Execute(class Debug& dbg, const char *cmd, CommandMode cmdmode,
-                       unsigned argn, const char * const * argv)=0;
+  virtual bool Execute(class Debug &dbg, const char *cmd, CommandMode cmdmode, unsigned argn, const char *const *argv) = 0;
 
   /**
     \brief Destroys the current command interface.
 
     Use this function instead of just delete'ing the instance.
   */
-  virtual void Delete(void)=0;
+  virtual void Delete(void) = 0;
 };
 
 /**
@@ -109,20 +108,20 @@ public:
 
 #ifdef DOXYGEN
 
-  /**
-    \brief Helper macro for creating and registering a command interface
-    instance the Debug module.
+/**
+  \brief Helper macro for creating and registering a command interface
+  instance the Debug module.
 
-    \param groupname name of command group this class if for
-                 (without quotes)
-    \param type type name of class we're implementing
-  */
-  #define DEBUG_CREATE_COMMAND_GROUP(groupname,type)
+  \param groupname name of command group this class if for
+               (without quotes)
+  \param type type name of class we're implementing
+*/
+#define DEBUG_CREATE_COMMAND_GROUP(groupname, type)
 
 #else
 
-  #define DEBUG_CREATE_COMMAND_GROUP(groupname,type) \
-    static bool __RegisterDebugCmdGroup_##type=Debug::AddCommands(#groupname,new type);
+#define DEBUG_CREATE_COMMAND_GROUP(groupname, type) \
+  static bool __RegisterDebugCmdGroup_##type = Debug::AddCommands(#groupname, new type);
 
 #endif
 

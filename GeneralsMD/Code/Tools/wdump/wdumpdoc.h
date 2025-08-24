@@ -31,48 +31,47 @@
 
 class CWdumpDoc : public CDocument
 {
-//Moumine 1/2/2002    11:12:25 AM ---Need this as public in project W3dShellExt
-#if ! defined _W3DSHELLEXT
-protected: // create from serialization only
+// Moumine 1/2/2002    11:12:25 AM ---Need this as public in project W3dShellExt
+#if !defined _W3DSHELLEXT
+  protected: // create from serialization only
 #else
-public:
+  public:
 #endif
-	CWdumpDoc();
-protected:
-	DECLARE_DYNCREATE(CWdumpDoc)
-	void Read_File(const char *filename);
+  CWdumpDoc();
 
-// Attributes
-public:
-	ChunkData m_ChunkData;
-	ChunkItem *m_ChunkItem;
-// Operations
-public:
+  protected:
+  DECLARE_DYNCREATE(CWdumpDoc)
+  void Read_File(const char *filename);
 
-// Overrides
-	// ClassWizard generated virtual function overrides
-	//{{AFX_VIRTUAL(CWdumpDoc)
-	public:
-	virtual BOOL OnNewDocument();
-	virtual void Serialize(CArchive& ar);
-	//}}AFX_VIRTUAL
+  // Attributes
+  public:
+  ChunkData m_ChunkData;
+  ChunkItem *m_ChunkItem;
+  // Operations
+  public:
+  // Overrides
+  // ClassWizard generated virtual function overrides
+  //{{AFX_VIRTUAL(CWdumpDoc)
+  public:
+  virtual BOOL OnNewDocument();
+  virtual void Serialize(CArchive &ar);
+  //}}AFX_VIRTUAL
 
-// Implementation
-public:
-	virtual ~CWdumpDoc();
+  // Implementation
+  public:
+  virtual ~CWdumpDoc();
 #ifdef RTS_DEBUG
-	virtual void AssertValid() const;
-	virtual void Dump(CDumpContext& dc) const;
+  virtual void AssertValid() const;
+  virtual void Dump(CDumpContext &dc) const;
 #endif
 
-protected:
-
-// Generated message map functions
-protected:
-	//{{AFX_MSG(CWdumpDoc)
-	afx_msg void OnFileOpen();
-	//}}AFX_MSG
-	DECLARE_MESSAGE_MAP()
+  protected:
+  // Generated message map functions
+  protected:
+  //{{AFX_MSG(CWdumpDoc)
+  afx_msg void OnFileOpen();
+  //}}AFX_MSG
+  DECLARE_MESSAGE_MAP()
 };
 
 /////////////////////////////////////////////////////////////////////////////

@@ -30,46 +30,47 @@
 
 class BaseBuildProps : public CDialog
 {
-// Construction
-public:
-	BaseBuildProps(CWnd* pParent = NULL);   // standard constructor
+  // Construction
+  public:
+  BaseBuildProps(CWnd *pParent = NULL); // standard constructor
 
-// Dialog Data
-	//{{AFX_DATA(BaseBuildProps)
-	enum { IDD = IDD_BASE_BUILDING_PROPS };
-		// NOTE: the ClassWizard will add data members here
-	//}}AFX_DATA
+  // Dialog Data
+  //{{AFX_DATA(BaseBuildProps)
+  enum
+  {
+    IDD = IDD_BASE_BUILDING_PROPS
+  };
+  // NOTE: the ClassWizard will add data members here
+  //}}AFX_DATA
 
+  // Overrides
+  // ClassWizard generated virtual function overrides
+  //{{AFX_VIRTUAL(BaseBuildProps)
+  protected:
+  virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
+  //}}AFX_VIRTUAL
 
-// Overrides
-	// ClassWizard generated virtual function overrides
-	//{{AFX_VIRTUAL(BaseBuildProps)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
-	//}}AFX_VIRTUAL
+  // Implementation
+  protected:
+  // Generated message map functions
+  //{{AFX_MSG(BaseBuildProps)
+  virtual BOOL OnInitDialog();
+  virtual void OnOK();
+  //}}AFX_MSG
+  DECLARE_MESSAGE_MAP()
 
-// Implementation
-protected:
+  private:
+  AsciiString m_name;
+  AsciiString m_script;
+  Int m_health;
+  Bool m_unsellable;
 
-	// Generated message map functions
-	//{{AFX_MSG(BaseBuildProps)
-	virtual BOOL OnInitDialog();
-	virtual void OnOK();
-	//}}AFX_MSG
-	DECLARE_MESSAGE_MAP()
-
-private:
-	AsciiString m_name;
-	AsciiString m_script;
-	Int m_health;
-	Bool m_unsellable;
-
-public:
-	void setProps(AsciiString name, AsciiString script, Int health, Bool unsellable);
-	AsciiString getName(void) {return m_name;}
-	AsciiString getScript(void) {return m_script;}
-	Int getHealth(void) {return m_health;}
-	Bool getUnsellable(void) {return m_unsellable;}
+  public:
+  void setProps(AsciiString name, AsciiString script, Int health, Bool unsellable);
+  AsciiString getName(void) { return m_name; }
+  AsciiString getScript(void) { return m_script; }
+  Int getHealth(void) { return m_health; }
+  Bool getUnsellable(void) { return m_unsellable; }
 };
 
 //{{AFX_INSERT_LOCATION}}

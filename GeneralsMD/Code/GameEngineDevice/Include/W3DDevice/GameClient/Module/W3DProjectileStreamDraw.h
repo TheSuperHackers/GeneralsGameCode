@@ -43,46 +43,43 @@ class Vector3;
 //-------------------------------------------------------------------------------------------------
 class W3DProjectileStreamDrawModuleData : public ModuleData
 {
-public:
+  public:
+  AsciiString m_textureName;
+  Real m_width;
+  Real m_tileFactor;
+  Real m_scrollRate;
+  Int m_maxSegments;
 
-	AsciiString m_textureName;
-	Real m_width;
-	Real m_tileFactor;
-	Real m_scrollRate;
-	Int m_maxSegments;
-
-	W3DProjectileStreamDrawModuleData();
-	~W3DProjectileStreamDrawModuleData();
-	static void buildFieldParse(MultiIniFieldParse& p);
+  W3DProjectileStreamDrawModuleData();
+  ~W3DProjectileStreamDrawModuleData();
+  static void buildFieldParse(MultiIniFieldParse &p);
 };
 
 //-------------------------------------------------------------------------------------------------
 class W3DProjectileStreamDraw : public DrawModule
 {
+  MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(W3DProjectileStreamDraw, "W3DProjectileStreamDraw")
+  MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA(W3DProjectileStreamDraw, W3DProjectileStreamDrawModuleData)
 
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( W3DProjectileStreamDraw, "W3DProjectileStreamDraw" )
-	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( W3DProjectileStreamDraw, W3DProjectileStreamDrawModuleData )
+  public:
+  W3DProjectileStreamDraw(Thing *thing, const ModuleData *moduleData);
+  // virtual destructor prototype provided by memory pool declaration
 
-public:
+  virtual void doDrawModule(const Matrix3D *transformMtx);
+  virtual void releaseShadows(void) {}; ///< we don't care about preserving temporary shadows.
+  virtual void allocateShadows(void) {}; ///< we don't care about preserving temporary shadows.
+  virtual void setShadowsEnabled(Bool) {}
+  virtual void setFullyObscuredByShroud(Bool);
+  virtual void reactToTransformChange(const Matrix3D *oldMtx, const Coord3D *oldPos, Real oldAngle) {}
+  virtual void reactToGeometryChange() {}
 
-	W3DProjectileStreamDraw( Thing *thing, const ModuleData* moduleData );
-	// virtual destructor prototype provided by memory pool declaration
+  protected:
+  void makeOrUpdateLine(Vector3 *points, UnsignedInt pointCount, Int lineIndex);
 
-	virtual void doDrawModule(const Matrix3D* transformMtx);
-	virtual void releaseShadows(void) {};	///< we don't care about preserving temporary shadows.
-	virtual void allocateShadows(void) {};	///< we don't care about preserving temporary shadows.
-	virtual void setShadowsEnabled(Bool ) { }
-	virtual void setFullyObscuredByShroud(Bool);
-	virtual void reactToTransformChange(const Matrix3D* oldMtx, const Coord3D* oldPos, Real oldAngle) { }
-	virtual void reactToGeometryChange() { }
-
-protected:
-	void makeOrUpdateLine( Vector3 *points, UnsignedInt pointCount, Int lineIndex );
-
-	TextureClass *m_texture;
-	SegmentedLineClass *m_allLines[MAX_PROJECTILE_STREAM];	///< Persist, so I can ensure they live a full cycle, and minimize re-creates by holding on
-	Int m_linesValid;
+  TextureClass *m_texture;
+  SegmentedLineClass *m_allLines[MAX_PROJECTILE_STREAM]; ///< Persist, so I can ensure they live a full cycle, and minimize
+                                                         ///< re-creates by holding on
+  Int m_linesValid;
 };
 
 #endif
-

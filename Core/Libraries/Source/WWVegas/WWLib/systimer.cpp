@@ -38,7 +38,6 @@
 
 SysTimeClass SystemTime;
 
-
 /***********************************************************************************************
  * SysTimeClass::SysTimeClass -- default constructor, sets resolution                          *
  *                                                                                             *
@@ -55,8 +54,8 @@ SysTimeClass SystemTime;
  *=============================================================================================*/
 SysTimeClass::SysTimeClass(void)
 {
-	//tell windows we need single ms precision.
-	timeBeginPeriod(1);
+  // tell windows we need single ms precision.
+  timeBeginPeriod(1);
 }
 
 /***********************************************************************************************
@@ -75,8 +74,8 @@ SysTimeClass::SysTimeClass(void)
  *=============================================================================================*/
 SysTimeClass::~SysTimeClass(void)
 {
-	//tell windows we need single ms precision.
-	timeEndPeriod(1);
+  // tell windows we need single ms precision.
+  timeEndPeriod(1);
 }
 
 /***********************************************************************************************
@@ -95,11 +94,9 @@ SysTimeClass::~SysTimeClass(void)
  *=============================================================================================*/
 void SysTimeClass::Reset(void)
 {
-	StartTime = timeGetTime();
-	WrapAdd = 0 - StartTime;
+  StartTime = timeGetTime();
+  WrapAdd = 0 - StartTime;
 }
-
-
 
 /***********************************************************************************************
  * SysTimeClass::Is_Getting_Late -- Are we running out of timer time?                          *
@@ -117,37 +114,13 @@ void SysTimeClass::Reset(void)
  *=============================================================================================*/
 bool SysTimeClass::Is_Getting_Late(void)
 {
-	/*
-	** Even though the timers are all unsigned so we have a max time of 0xffffffff the game casts it to int in various places
-	** so it's safer to assume a signed max value.
-	*/
-	if (Get() > 0x6fffffff) {
-		return(true);
-	}
-	return(false);
+  /*
+  ** Even though the timers are all unsigned so we have a max time of 0xffffffff the game casts it to int in various places
+  ** so it's safer to assume a signed max value.
+  */
+  if (Get() > 0x6fffffff)
+  {
+    return (true);
+  }
+  return (false);
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

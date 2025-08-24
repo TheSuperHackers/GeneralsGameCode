@@ -49,7 +49,7 @@
 //-----------------------------------------------------------------------------
 // USER INCLUDES //////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 
 #include "Common/Player.h"
 #include "Common/Xfer.h"
@@ -68,49 +68,47 @@
 // PRIVATE FUNCTIONS //////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
 
-
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 CashBountyPowerModuleData::CashBountyPowerModuleData()
 {
 #ifdef NOT_IN_USE
-	m_upgrades.clear();
+  m_upgrades.clear();
 #endif
-	m_defaultBounty = 0.0;
+  m_defaultBounty = 0.0;
 }
 
 #ifdef NOT_IN_USE
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-static void parseBountyUpgradePair( INI* ini, void * /*instance*/, void *store, const void* /*userData*/ )
+static void parseBountyUpgradePair(INI *ini, void * /*instance*/, void *store, const void * /*userData*/)
 {
-	CashBountyPowerModuleData::Upgrades up;
+  CashBountyPowerModuleData::Upgrades up;
 
-	INI::parseScience(ini, NULL, &up.m_science, NULL);
-	INI::parsePercentToReal(ini, NULL, &up.m_bounty, NULL);
+  INI::parseScience(ini, NULL, &up.m_science, NULL);
+  INI::parsePercentToReal(ini, NULL, &up.m_bounty, NULL);
 
-	std::vector<CashBountyPowerModuleData::Upgrades>* s = (std::vector<CashBountyPowerModuleData::Upgrades>*)store;
-	s->push_back(up);
+  std::vector<CashBountyPowerModuleData::Upgrades> *s = (std::vector<CashBountyPowerModuleData::Upgrades> *)store;
+  s->push_back(up);
 }
 #endif
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-/* static */ void CashBountyPowerModuleData::buildFieldParse(MultiIniFieldParse& p)
+/* static */ void CashBountyPowerModuleData::buildFieldParse(MultiIniFieldParse &p)
 {
-	SpecialPowerModuleData::buildFieldParse( p );
+  SpecialPowerModuleData::buildFieldParse(p);
 
-	static const FieldParse dataFieldParse[] =
-	{
+  static const FieldParse dataFieldParse[] = {
 #ifdef NOT_IN_USE
-		{ "UpgradeBounty", parseBountyUpgradePair, NULL, offsetof( CashBountyPowerModuleData, m_upgrades ) },
+    { "UpgradeBounty", parseBountyUpgradePair, NULL, offsetof(CashBountyPowerModuleData, m_upgrades) },
 #endif
-		{ "Bounty",			INI::parsePercentToReal, NULL, offsetof( CashBountyPowerModuleData, m_defaultBounty ) },
-		{ 0, 0, 0, 0 }
-	};
-	p.add(dataFieldParse);
+    { "Bounty", INI::parsePercentToReal, NULL, offsetof(CashBountyPowerModuleData, m_defaultBounty) },
+    { 0, 0, 0, 0 }
+  };
+  p.add(dataFieldParse);
 
-}  // end buildFieldParse
+} // end buildFieldParse
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -118,103 +116,98 @@ static void parseBountyUpgradePair( INI* ini, void * /*instance*/, void *store, 
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-CashBountyPower::CashBountyPower( Thing *thing, const ModuleData* moduleData ) :
-							SpecialPowerModule( thing, moduleData )
+CashBountyPower::CashBountyPower(Thing *thing, const ModuleData *moduleData) : SpecialPowerModule(thing, moduleData)
 {
-}  // end CashBountyPower
+} // end CashBountyPower
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 CashBountyPower::~CashBountyPower()
 {
-
-}  // end ~CashBountyPower
+} // end ~CashBountyPower
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 void CashBountyPower::onObjectCreated()
 {
-	Player* controller = getObject()->getControllingPlayer();
-	if (controller && controller->hasScience(getRequiredScience()))
-	{
-		Real bounty = findBounty();
-		if (bounty > controller->getCashBounty())
-			controller->setCashBounty(bounty);
-	}
+  Player *controller = getObject()->getControllingPlayer();
+  if (controller && controller->hasScience(getRequiredScience()))
+  {
+    Real bounty = findBounty();
+    if (bounty > controller->getCashBounty())
+      controller->setCashBounty(bounty);
+  }
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 Real CashBountyPower::findBounty() const
 {
-	const CashBountyPowerModuleData* d = getCashBountyPowerModuleData();
+  const CashBountyPowerModuleData *d = getCashBountyPowerModuleData();
 #ifdef NOT_IN_USE
-	const Player* controller = getObject()->getControllingPlayer();
-	if (controller != NULL)
-	{
-		for (std::vector<CashBountyPowerModuleData::Upgrades>::const_iterator it = d->m_upgrades.begin();
-					it != d->m_upgrades.end();
-					++it)
-		{
-			if (controller->hasScience(it->m_science))
-				return it->m_bounty;
-		}
-	}
+  const Player *controller = getObject()->getControllingPlayer();
+  if (controller != NULL)
+  {
+    for (std::vector<CashBountyPowerModuleData::Upgrades>::const_iterator it = d->m_upgrades.begin();
+         it != d->m_upgrades.end();
+         ++it)
+    {
+      if (controller->hasScience(it->m_science))
+        return it->m_bounty;
+    }
+  }
 #endif
-	return d->m_defaultBounty;
+  return d->m_defaultBounty;
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 void CashBountyPower::onSpecialPowerCreation()
 {
-	SpecialPowerModule::onSpecialPowerCreation();
+  SpecialPowerModule::onSpecialPowerCreation();
 
-	Player* controller = getObject()->getControllingPlayer();
-	if (controller)
-	{
-		Real bounty = findBounty();
-		if (bounty > controller->getCashBounty())
-			controller->setCashBounty(bounty);
-	}
+  Player *controller = getObject()->getControllingPlayer();
+  if (controller)
+  {
+    Real bounty = findBounty();
+    if (bounty > controller->getCashBounty())
+      controller->setCashBounty(bounty);
+  }
 }
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void CashBountyPower::crc( Xfer *xfer )
+void CashBountyPower::crc(Xfer *xfer)
 {
+  // extend base class
+  SpecialPowerModule::crc(xfer);
 
-	// extend base class
-	SpecialPowerModule::crc( xfer );
-
-}  // end crc
+} // end crc
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void CashBountyPower::xfer( Xfer *xfer )
+void CashBountyPower::xfer(Xfer *xfer)
 {
+  // version
+  XferVersion currentVersion = 1;
+  XferVersion version = currentVersion;
+  xfer->xferVersion(&version, currentVersion);
 
-	// version
-	XferVersion currentVersion = 1;
-	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+  // extend base class
+  SpecialPowerModule::xfer(xfer);
 
-	// extend base class
-	SpecialPowerModule::xfer( xfer );
-
-}  // end xfer
+} // end xfer
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void CashBountyPower::loadPostProcess( void )
+void CashBountyPower::loadPostProcess(void)
 {
+  // extend base class
+  SpecialPowerModule::loadPostProcess();
 
-	// extend base class
-	SpecialPowerModule::loadPostProcess();
-
-}  // end loadPostProcess
+} // end loadPostProcess

@@ -39,75 +39,64 @@
 class Thing;
 class Anim2DTemplate;
 class FXList;
-enum ScienceType CPP_11(: Int);
+enum ScienceType CPP_11( : Int);
 
 //-------------------------------------------------------------------------------------------------
 class CrateCollideModuleData : public CollideModuleData
 {
-public:
-	KindOfMaskType	m_kindof;				///< the kind(s) of units that can be collided with
-	KindOfMaskType	m_kindofnot;		///< the kind(s) of units that CANNOT be collided with
-	Bool m_isForbidOwnerPlayer;			///< This crate cannot be picked up by the player of the dead thing that made it.
-	Bool m_isBuildingPickup;			///< This crate can be picked up by a Building (bypassing AI requirement)
-	Bool m_isHumanOnlyPickup;				///< Can this crate only be picked up by a human player?  (Mission thing)
-	ScienceType m_pickupScience;		///< Can only be picked up by a unit whose player has this science
-	FXList *m_executeFX;						///< FXList to play when activated
+  public:
+  KindOfMaskType m_kindof; ///< the kind(s) of units that can be collided with
+  KindOfMaskType m_kindofnot; ///< the kind(s) of units that CANNOT be collided with
+  Bool m_isForbidOwnerPlayer; ///< This crate cannot be picked up by the player of the dead thing that made it.
+  Bool m_isBuildingPickup; ///< This crate can be picked up by a Building (bypassing AI requirement)
+  Bool m_isHumanOnlyPickup; ///< Can this crate only be picked up by a human player?  (Mission thing)
+  ScienceType m_pickupScience; ///< Can only be picked up by a unit whose player has this science
+  FXList *m_executeFX; ///< FXList to play when activated
 
-	AsciiString m_executionAnimationTemplate;				///< Anim2D to play at crate location
-	Real m_executeAnimationDisplayTimeInSeconds;		///< time to play animation for
-	Real m_executeAnimationZRisePerSecond;					///< rise animation up while playing
-	Bool m_executeAnimationFades;										///< animation fades out
+  AsciiString m_executionAnimationTemplate; ///< Anim2D to play at crate location
+  Real m_executeAnimationDisplayTimeInSeconds; ///< time to play animation for
+  Real m_executeAnimationZRisePerSecond; ///< rise animation up while playing
+  Bool m_executeAnimationFades; ///< animation fades out
 
-	CrateCollideModuleData();
-	static void buildFieldParse(MultiIniFieldParse& p);
+  CrateCollideModuleData();
+  static void buildFieldParse(MultiIniFieldParse &p);
 };
 
 //-------------------------------------------------------------------------------------------------
 class CrateCollide : public CollideModule
 {
+  MEMORY_POOL_GLUE_ABC(CrateCollide)
+  MAKE_STANDARD_MODULE_MACRO_ABC(CrateCollide)
+  MAKE_STANDARD_MODULE_DATA_MACRO_ABC(CrateCollide, CrateCollideModuleData)
 
-	MEMORY_POOL_GLUE_ABC( CrateCollide )
-	MAKE_STANDARD_MODULE_MACRO_ABC( CrateCollide )
-	MAKE_STANDARD_MODULE_DATA_MACRO_ABC( CrateCollide, CrateCollideModuleData )
+  public:
+  enum SabotageVictimType CPP_11( : Int){
+    SAB_VICTIM_GENERIC = 0,     SAB_VICTIM_COMMAND_CENTER,   SAB_VICTIM_FAKE_BUILDING,
+    SAB_VICTIM_INTERNET_CENTER, SAB_VICTIM_MILITARY_FACTORY, SAB_VICTIM_POWER_PLANT,
+    SAB_VICTIM_SUPERWEAPON,     SAB_VICTIM_SUPPLY_CENTER,    SAB_VICTIM_DROP_ZONE,
+  };
 
-public:
+  CrateCollide(Thing *thing, const ModuleData *moduleData);
+  // virtual destructor prototype provided by memory pool declaration
 
-enum SabotageVictimType CPP_11(: Int)
-{
-	SAB_VICTIM_GENERIC = 0,
-	SAB_VICTIM_COMMAND_CENTER,
-	SAB_VICTIM_FAKE_BUILDING,
-	SAB_VICTIM_INTERNET_CENTER,
-	SAB_VICTIM_MILITARY_FACTORY,
-	SAB_VICTIM_POWER_PLANT,
-	SAB_VICTIM_SUPERWEAPON,
-	SAB_VICTIM_SUPPLY_CENTER,
-	SAB_VICTIM_DROP_ZONE,
-};
+  /// This collide method gets called when collision occur
+  virtual void onCollide(Object *other, const Coord3D *loc, const Coord3D *normal);
 
-	CrateCollide( Thing *thing, const ModuleData* moduleData );
-	// virtual destructor prototype provided by memory pool declaration
+  virtual Bool wouldLikeToCollideWith(const Object *other) const { return isValidToExecute(other); }
 
-	/// This collide method gets called when collision occur
-	virtual void onCollide( Object *other, const Coord3D *loc, const Coord3D *normal );
+  virtual Bool isRailroad() const { return FALSE; };
+  virtual Bool isCarBombCrateCollide() const { return FALSE; }
+  virtual Bool isHijackedVehicleCrateCollide() const { return FALSE; }
+  virtual Bool isSabotageBuildingCrateCollide() const { return FALSE; }
 
-	virtual Bool wouldLikeToCollideWith(const Object* other) const { return isValidToExecute(other); }
+  void doSabotageFeedbackFX(const Object *other, SabotageVictimType type = SAB_VICTIM_GENERIC);
 
-	virtual Bool isRailroad() const { return FALSE;};
- 	virtual Bool isCarBombCrateCollide() const { return FALSE; }
-	virtual Bool isHijackedVehicleCrateCollide() const { return FALSE; }
-	virtual Bool isSabotageBuildingCrateCollide() const { return FALSE; }
+  protected:
+  /// This is the game logic execution function that all real CrateCollides will implement
+  virtual Bool executeCrateBehavior(Object *other) = 0;
 
-  void doSabotageFeedbackFX( const Object *other, SabotageVictimType type = SAB_VICTIM_GENERIC );
-
-protected:
-
-	/// This is the game logic execution function that all real CrateCollides will implement
-	virtual Bool executeCrateBehavior( Object *other ) = 0;
-
-	/// This allows specific vetoes to certain types of crates and their data
-	virtual Bool isValidToExecute( const Object *other ) const;
-
+  /// This allows specific vetoes to certain types of crates and their data
+  virtual Bool isValidToExecute(const Object *other) const;
 };
 
 #endif

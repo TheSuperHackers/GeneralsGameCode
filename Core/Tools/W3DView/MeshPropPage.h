@@ -30,42 +30,43 @@
 
 class CMeshPropPage : public CPropertyPage
 {
-	DECLARE_DYNCREATE(CMeshPropPage)
+  DECLARE_DYNCREATE(CMeshPropPage)
 
-// Construction
-public:
-    CMeshPropPage (const CString &stringMeshName);
-	~CMeshPropPage ();
+  // Construction
+  public:
+  CMeshPropPage(const CString &stringMeshName);
+  ~CMeshPropPage();
 
-// Dialog Data
-	//{{AFX_DATA(CMeshPropPage)
-	enum { IDD = IDD_PROP_PAGE_MESH };
-		// NOTE - ClassWizard will add data members here.
-		//    DO NOT EDIT what you see in these blocks of generated code !
-	//}}AFX_DATA
+  // Dialog Data
+  //{{AFX_DATA(CMeshPropPage)
+  enum
+  {
+    IDD = IDD_PROP_PAGE_MESH
+  };
+  // NOTE - ClassWizard will add data members here.
+  //    DO NOT EDIT what you see in these blocks of generated code !
+  //}}AFX_DATA
 
+  // Overrides
+  // ClassWizard generate virtual function overrides
+  //{{AFX_VIRTUAL(CMeshPropPage)
+  protected:
+  virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
+  //}}AFX_VIRTUAL
 
-// Overrides
-	// ClassWizard generate virtual function overrides
-	//{{AFX_VIRTUAL(CMeshPropPage)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
-	//}}AFX_VIRTUAL
+  // Implementation
+  protected:
+  // Generated message map functions
+  //{{AFX_MSG(CMeshPropPage)
+  virtual BOOL OnInitDialog();
+  afx_msg void OnClose();
+  //}}AFX_MSG
+  DECLARE_MESSAGE_MAP()
 
-// Implementation
-protected:
-	// Generated message map functions
-	//{{AFX_MSG(CMeshPropPage)
-	virtual BOOL OnInitDialog();
-	afx_msg void OnClose();
-	//}}AFX_MSG
-	DECLARE_MESSAGE_MAP()
+  private:
+  CMeshPropPage() {};
 
-    private:
-        CMeshPropPage () {};
-
-        CString m_stringMeshName;
-
+  CString m_stringMeshName;
 };
 
 //{{AFX_INSERT_LOCATION}}

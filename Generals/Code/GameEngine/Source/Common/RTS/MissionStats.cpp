@@ -42,7 +42,7 @@
 //
 //-----------------------------------------------------------------------------
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 
 #include "Common/MissionStats.h"
 #include "Common/Player.h"
@@ -51,63 +51,60 @@
 //-----------------------------------------------------------------------------
 MissionStats::MissionStats()
 {
-	init();
+  init();
 }
 
 //-----------------------------------------------------------------------------
 void MissionStats::init()
 {
-	Int i;
+  Int i;
 
-	for (i = 0; i < MAX_PLAYER_COUNT; ++i)
-	{
-		m_unitsKilled[i] = 0;
-		m_buildingsKilled[i] = 0;
-	}
-	m_unitsLost = 0;
-	m_buildingsLost = 0;
-	//m_whoLastHurtMe = PLAYER_NONE;
+  for (i = 0; i < MAX_PLAYER_COUNT; ++i)
+  {
+    m_unitsKilled[i] = 0;
+    m_buildingsKilled[i] = 0;
+  }
+  m_unitsLost = 0;
+  m_buildingsLost = 0;
+  // m_whoLastHurtMe = PLAYER_NONE;
 }
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void MissionStats::crc( Xfer *xfer )
+void MissionStats::crc(Xfer *xfer)
 {
-
-}  // end crc
+} // end crc
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info;
-	* 1: Initial version */
+ * Version Info;
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void MissionStats::xfer( Xfer *xfer )
+void MissionStats::xfer(Xfer *xfer)
 {
+  // version
+  XferVersion currentVersion = 1;
+  XferVersion version = currentVersion;
+  xfer->xferVersion(&version, currentVersion);
 
-	// version
-	XferVersion currentVersion = 1;
-	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+  // units killed
+  xfer->xferUser(m_unitsKilled, sizeof(Int) * MAX_PLAYER_COUNT);
 
-	// units killed
-	xfer->xferUser( m_unitsKilled, sizeof( Int ) * MAX_PLAYER_COUNT );
+  // units lost
+  xfer->xferInt(&m_unitsLost);
 
-	// units lost
-	xfer->xferInt( &m_unitsLost );
+  // buidings killed
+  xfer->xferUser(m_buildingsKilled, sizeof(Int) * MAX_PLAYER_COUNT);
 
-	// buidings killed
-	xfer->xferUser( m_buildingsKilled, sizeof( Int ) * MAX_PLAYER_COUNT );
+  // buildings lost
+  xfer->xferInt(&m_buildingsLost);
 
-	// buildings lost
-	xfer->xferInt( &m_buildingsLost );
-
-}  // end xfer
+} // end xfer
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void MissionStats::loadPostProcess( void )
+void MissionStats::loadPostProcess(void)
 {
-
-}  // end loadPostProcess
+} // end loadPostProcess

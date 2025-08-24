@@ -38,54 +38,48 @@
 //-------------------------------------------------------------------------------------------------
 class DeletionUpdateModuleData : public UpdateModuleData
 {
-public:
-	UnsignedInt m_minFrames;
-	UnsignedInt m_maxFrames;
+  public:
+  UnsignedInt m_minFrames;
+  UnsignedInt m_maxFrames;
 
-	DeletionUpdateModuleData()
-	{
-		m_minFrames = 0.0f;
-		m_maxFrames = 0.0f;
-	}
+  DeletionUpdateModuleData()
+  {
+    m_minFrames = 0.0f;
+    m_maxFrames = 0.0f;
+  }
 
-	static void buildFieldParse(MultiIniFieldParse& p)
-	{
+  static void buildFieldParse(MultiIniFieldParse &p)
+  {
     UpdateModuleData::buildFieldParse(p);
-		static const FieldParse dataFieldParse[] =
-		{
-			{ "MinLifetime",					INI::parseDurationUnsignedInt,		NULL, offsetof( DeletionUpdateModuleData, m_minFrames ) },
-			{ "MaxLifetime",					INI::parseDurationUnsignedInt,		NULL, offsetof( DeletionUpdateModuleData, m_maxFrames ) },
-			{ 0, 0, 0, 0 }
-		};
+    static const FieldParse dataFieldParse[] = {
+      { "MinLifetime", INI::parseDurationUnsignedInt, NULL, offsetof(DeletionUpdateModuleData, m_minFrames) },
+      { "MaxLifetime", INI::parseDurationUnsignedInt, NULL, offsetof(DeletionUpdateModuleData, m_maxFrames) },
+      { 0, 0, 0, 0 }
+    };
     p.add(dataFieldParse);
-	}
+  }
 };
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 class DeletionUpdate : public UpdateModule
 {
+  MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(DeletionUpdate, "DeletionUpdate")
+  MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA(DeletionUpdate, DeletionUpdateModuleData)
 
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( DeletionUpdate, "DeletionUpdate" )
-	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( DeletionUpdate, DeletionUpdateModuleData )
+  public:
+  DeletionUpdate(Thing *thing, const ModuleData *moduleData);
+  // virtual destructor prototype provided by memory pool declaration
 
-public:
+  void setLifetimeRange(UnsignedInt minFrames, UnsignedInt maxFrames);
+  UnsignedInt getDieFrame() { return m_dieFrame; }
 
-	DeletionUpdate( Thing *thing, const ModuleData* moduleData );
-	// virtual destructor prototype provided by memory pool declaration
+  virtual UpdateSleepTime update(void);
 
-	void setLifetimeRange( UnsignedInt minFrames, UnsignedInt maxFrames );
-	UnsignedInt getDieFrame() { return m_dieFrame; }
+  protected:
+  UnsignedInt calcSleepDelay(UnsignedInt minFrames, UnsignedInt maxFrames);
 
-	virtual UpdateSleepTime update( void );
-
-protected:
-
-	UnsignedInt calcSleepDelay(UnsignedInt minFrames, UnsignedInt maxFrames);
-
-	UnsignedInt m_dieFrame;			///< frame we die on
-
+  UnsignedInt m_dieFrame; ///< frame we die on
 };
 
 #endif
-

@@ -48,53 +48,58 @@ class WinInstanceData;
 //-----------------------------------------------------------------------------
 class SkirmishBattleHonors : public UserPreferences
 {
-public:
-	SkirmishBattleHonors();
-	virtual ~SkirmishBattleHonors();
+  public:
+  SkirmishBattleHonors();
+  virtual ~SkirmishBattleHonors();
 
-	Bool loadFromIniFile();
+  Bool loadFromIniFile();
 
-	void setWins(Int val);
-	Int getWins(void) const;
+  void setWins(Int val);
+  Int getWins(void) const;
 
-	void setLosses(Int val);
-	Int getLosses(void) const;
+  void setLosses(Int val);
+  Int getLosses(void) const;
 
-	void setWinStreak(Int val);
-	Int getWinStreak(void) const;
+  void setWinStreak(Int val);
+  Int getWinStreak(void) const;
 
-	void setBestWinStreak(Int val);
-	Int getBestWinStreak(void) const;
+  void setBestWinStreak(Int val);
+  Int getBestWinStreak(void) const;
 
-	void setChallengeMedals(Int val);
-	Int getChallengeMedals(void) const;
+  void setChallengeMedals(Int val);
+  Int getChallengeMedals(void) const;
 
-	void setBuiltSCUD(void);
-	Bool builtSCUD(void) const;
+  void setBuiltSCUD(void);
+  Bool builtSCUD(void) const;
 
-	void setBuiltParticleCannon(void);
-	Bool builtParticleCannon(void) const;
+  void setBuiltParticleCannon(void);
+  Bool builtParticleCannon(void) const;
 
-	void setBuiltNuke(void);
-	Bool builtNuke(void) const;
+  void setBuiltNuke(void);
+  Bool builtNuke(void) const;
 
-	void setHonors(Int mask);
-	Int getHonors(void) const;
+  void setHonors(Int mask);
+  Int getHonors(void) const;
 
-	void setEnduranceMedal(AsciiString mapName, Int difficulty, int numAIs);
-	Int getEnduranceMedal(AsciiString mapName, Int difficulty) const;
+  void setEnduranceMedal(AsciiString mapName, Int difficulty, int numAIs);
+  Int getEnduranceMedal(AsciiString mapName, Int difficulty) const;
 
-	void setLastGeneral(AsciiString val);
-	AsciiString getLastGeneral(void) const;
+  void setLastGeneral(AsciiString val);
+  AsciiString getLastGeneral(void) const;
 
-	void setNumGamesLoyal(Int val);
-	Int getNumGamesLoyal(void) const;
+  void setNumGamesLoyal(Int val);
+  Int getNumGamesLoyal(void) const;
 };
 
 void ResetBattleHonorInsertion(void);
-void InsertBattleHonor(GameWindow *list, const Image *image, Bool enabled, Int itemData, Int& row, Int& column, UnicodeString text = UnicodeString::TheEmptyString);
-void BattleHonorTooltip(GameWindow *window,
-												WinInstanceData *instData,
-												UnsignedInt mouse);
+void InsertBattleHonor(
+    GameWindow *list,
+    const Image *image,
+    Bool enabled,
+    Int itemData,
+    Int &row,
+    Int &column,
+    UnicodeString text = UnicodeString::TheEmptyString);
+void BattleHonorTooltip(GameWindow *window, WinInstanceData *instData, UnsignedInt mouse);
 
 #endif // __SKIRMISHBATTLEHONORS_H__

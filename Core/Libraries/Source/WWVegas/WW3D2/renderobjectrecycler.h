@@ -36,7 +36,6 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
 #ifndef RENDEROBJECTRECYCLER_H
 #define RENDEROBJECTRECYCLER_H
 
@@ -62,23 +61,16 @@ class Matrix3D;
 */
 class RenderObjectRecyclerClass
 {
-public:
+  public:
+  void Reset(void);
+  RenderObjClass *Get_Render_Object(const char *name, const Matrix3D &tm);
+  void Return_Render_Object(RenderObjClass *obj);
 
-	void					Reset(void);
-	RenderObjClass*	Get_Render_Object(const char * name,const Matrix3D & tm);
-	void					Return_Render_Object(RenderObjClass * obj);
+  private:
+  void Insert_Inactive_Model(RenderObjClass *obj);
+  void Reset_Model(RenderObjClass *model);
 
-private:
-
-	void					Insert_Inactive_Model(RenderObjClass * obj);
-	void					Reset_Model(RenderObjClass * model);
-
-
-	RefRenderObjListClass	InactiveModels;
-
+  RefRenderObjListClass InactiveModels;
 };
 
-
-
-
-#endif //RENDEROBJECTRECYCLER_H
+#endif // RENDEROBJECTRECYCLER_H

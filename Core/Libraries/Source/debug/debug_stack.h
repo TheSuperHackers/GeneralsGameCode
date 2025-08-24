@@ -27,7 +27,7 @@
 // Stack walker
 //////////////////////////////////////////////////////////////////////////////
 #ifdef _MSC_VER
-#  pragma once
+#pragma once
 #endif
 #ifndef DEBUG_STACK_H // Include guard
 #define DEBUG_STACK_H
@@ -37,15 +37,14 @@ class DebugStackwalk
 {
   friend class Debug;
 
-  DebugStackwalk(const DebugStackwalk&);
-  DebugStackwalk& operator=(DebugStackwalk&);
+  DebugStackwalk(const DebugStackwalk &);
+  DebugStackwalk &operator=(DebugStackwalk &);
 
   // private so that only Debug can create and destroy us
   DebugStackwalk(void);
   ~DebugStackwalk();
 
-public:
-
+  public:
   /// \brief a stack trace signature
   class Signature
   {
@@ -53,7 +52,10 @@ public:
     friend class DebugStackwalk;
 
     /// max # of possible addresses
-    enum { MAX_ADDR = 256 };
+    enum
+    {
+      MAX_ADDR = 256
+    };
 
     /// number of addresses
     unsigned m_numAddr;
@@ -61,10 +63,10 @@ public:
     /// addresses
     unsigned m_addr[MAX_ADDR];
 
-  public:
-    explicit Signature(void): m_numAddr(0) {}
+public:
+    explicit Signature(void) : m_numAddr(0) {}
     Signature(const Signature &src);
-    Signature& operator=(const Signature& src);
+    Signature &operator=(const Signature &src);
 
     /**
       \brief Determine the number of addresses in this signature.
@@ -92,15 +94,15 @@ public:
     */
     bool operator<(const Signature &other) const
     {
-      unsigned m=m_numAddr<other.m_numAddr?m_numAddr:other.m_numAddr;
-      for (unsigned k=0;k<m;k++)
+      unsigned m = m_numAddr < other.m_numAddr ? m_numAddr : other.m_numAddr;
+      for (unsigned k = 0; k < m; k++)
       {
-        if (m_addr[m_numAddr-k-1]<other.m_addr[other.m_numAddr-k-1])
+        if (m_addr[m_numAddr - k - 1] < other.m_addr[other.m_numAddr - k - 1])
           return true;
-        if (m_addr[m_numAddr-k-1]>other.m_addr[other.m_numAddr-k-1])
+        if (m_addr[m_numAddr - k - 1] > other.m_addr[other.m_numAddr - k - 1])
           return false;
       }
-      return m_numAddr<other.m_numAddr;
+      return m_numAddr < other.m_numAddr;
     }
 
     /**
@@ -130,10 +132,18 @@ public:
       \param line line number, may be NULL
       \param relLine relative address within line, may be NULL
     */
-    static void GetSymbol(unsigned addr,
-                          char *bufMod, unsigned sizeMod, unsigned *relMod,
-                          char *bufSym, unsigned sizeSym, unsigned *relSym,
-                          char *bufFile, unsigned sizeFile, unsigned *line, unsigned *relLine);
+    static void GetSymbol(
+        unsigned addr,
+        char *bufMod,
+        unsigned sizeMod,
+        unsigned *relMod,
+        char *bufSym,
+        unsigned sizeSym,
+        unsigned *relSym,
+        char *bufFile,
+        unsigned sizeFile,
+        unsigned *line,
+        unsigned *relLine);
   };
 
   /** \internal
@@ -157,7 +167,7 @@ public:
     \param ctx processor context, if NULL then use current address
     \return number of addresses found
   */
-  static int StackWalk(Signature &sig, struct _CONTEXT *ctx=0);
+  static int StackWalk(Signature &sig, struct _CONTEXT *ctx = 0);
 };
 
 /**
@@ -167,6 +177,6 @@ public:
   \param sig signature
   \return debug instance
 */
-Debug& operator<<(Debug &dbg, const DebugStackwalk::Signature &sig);
+Debug &operator<<(Debug &dbg, const DebugStackwalk::Signature &sig);
 
 #endif // DEBUG_STACK_H

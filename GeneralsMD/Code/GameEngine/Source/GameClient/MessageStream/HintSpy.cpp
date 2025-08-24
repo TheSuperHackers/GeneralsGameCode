@@ -27,7 +27,7 @@
 // for which it then generates visual "hints".
 // Author: Michael S. Booth, March 2001
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 
 #include "Common/MessageStream.h"
 #include "GameClient/HintSpy.h"
@@ -41,97 +41,96 @@
  */
 GameMessageDisposition HintSpyTranslator::translateGameMessage(const GameMessage *msg)
 {
-	GameMessageDisposition disp = KEEP_MESSAGE;
+  GameMessageDisposition disp = KEEP_MESSAGE;
 
-	/// @todo Create an automated way to associate method callbacks with messages
-	switch( msg->getType() )
-	{
-		//-----------------------------------------------------------------------------
-		case GameMessage::MSG_MOUSEOVER_DRAWABLE_HINT:
-			{
-				TheInGameUI->createMouseoverHint( msg );
+  /// @todo Create an automated way to associate method callbacks with messages
+  switch (msg->getType())
+  {
+    //-----------------------------------------------------------------------------
+    case GameMessage::MSG_MOUSEOVER_DRAWABLE_HINT:
+    {
+      TheInGameUI->createMouseoverHint(msg);
 
-				disp = DESTROY_MESSAGE; //hint no longer needed by anyone.  Eat it.
-			}
-			break;
-		case GameMessage::MSG_MOUSEOVER_LOCATION_HINT:
-			{
-				TheInGameUI->createMouseoverHint( msg );
+      disp = DESTROY_MESSAGE; // hint no longer needed by anyone.  Eat it.
+    }
+    break;
+    case GameMessage::MSG_MOUSEOVER_LOCATION_HINT:
+    {
+      TheInGameUI->createMouseoverHint(msg);
 
-				disp = DESTROY_MESSAGE; //hint no longer needed by anyone.  Eat it.
-			}
-			break;
+      disp = DESTROY_MESSAGE; // hint no longer needed by anyone.  Eat it.
+    }
+    break;
 
-		//-----------------------------------------------------------------------------
-		case GameMessage::MSG_DEFECTOR_HINT:
-		case GameMessage::MSG_DO_MOVETO_HINT:
-		case GameMessage::MSG_DO_ATTACKMOVETO_HINT:
-		case GameMessage::MSG_DO_ATTACK_OBJECT_HINT:
-		case GameMessage::MSG_DO_ATTACK_OBJECT_AFTER_MOVING_HINT:
-		case GameMessage::MSG_DO_FORCE_ATTACK_OBJECT_HINT:
-		case GameMessage::MSG_DO_FORCE_ATTACK_GROUND_HINT:
-		case GameMessage::MSG_ADD_WAYPOINT_HINT:
-		case GameMessage::MSG_GET_REPAIRED_HINT:
-		case GameMessage::MSG_DOCK_HINT:
-		case GameMessage::MSG_GET_HEALED_HINT:
-		case GameMessage::MSG_DO_REPAIR_HINT:
-		case GameMessage::MSG_RESUME_CONSTRUCTION_HINT:
-		case GameMessage::MSG_ENTER_HINT:
-		case GameMessage::MSG_HIJACK_HINT:
-		case GameMessage::MSG_SABOTAGE_HINT:
-		case GameMessage::MSG_CONVERT_TO_CARBOMB_HINT:
+    //-----------------------------------------------------------------------------
+    case GameMessage::MSG_DEFECTOR_HINT:
+    case GameMessage::MSG_DO_MOVETO_HINT:
+    case GameMessage::MSG_DO_ATTACKMOVETO_HINT:
+    case GameMessage::MSG_DO_ATTACK_OBJECT_HINT:
+    case GameMessage::MSG_DO_ATTACK_OBJECT_AFTER_MOVING_HINT:
+    case GameMessage::MSG_DO_FORCE_ATTACK_OBJECT_HINT:
+    case GameMessage::MSG_DO_FORCE_ATTACK_GROUND_HINT:
+    case GameMessage::MSG_ADD_WAYPOINT_HINT:
+    case GameMessage::MSG_GET_REPAIRED_HINT:
+    case GameMessage::MSG_DOCK_HINT:
+    case GameMessage::MSG_GET_HEALED_HINT:
+    case GameMessage::MSG_DO_REPAIR_HINT:
+    case GameMessage::MSG_RESUME_CONSTRUCTION_HINT:
+    case GameMessage::MSG_ENTER_HINT:
+    case GameMessage::MSG_HIJACK_HINT:
+    case GameMessage::MSG_SABOTAGE_HINT:
+    case GameMessage::MSG_CONVERT_TO_CARBOMB_HINT:
 #ifdef ALLOW_SURRENDER
-		case GameMessage::MSG_PICK_UP_PRISONER_HINT:
+    case GameMessage::MSG_PICK_UP_PRISONER_HINT:
 #endif
-		case GameMessage::MSG_VALID_GUICOMMAND_HINT:
-		case GameMessage::MSG_INVALID_GUICOMMAND_HINT:
-		case GameMessage::MSG_CAPTUREBUILDING_HINT:
-		case GameMessage::MSG_HACK_HINT:
-		case GameMessage::MSG_SET_RALLY_POINT_HINT:
-		case GameMessage::MSG_IMPOSSIBLE_ATTACK_HINT:
-		case GameMessage::MSG_DO_SPECIAL_POWER_OVERRIDE_DESTINATION_HINT:
-		case GameMessage::MSG_DO_SALVAGE_HINT:
-		case GameMessage::MSG_DO_INVALID_HINT:
-			TheInGameUI->createCommandHint( msg );
-			disp = DESTROY_MESSAGE; //hint no longer needed by anyone.  Eat it.
-			break;
+    case GameMessage::MSG_VALID_GUICOMMAND_HINT:
+    case GameMessage::MSG_INVALID_GUICOMMAND_HINT:
+    case GameMessage::MSG_CAPTUREBUILDING_HINT:
+    case GameMessage::MSG_HACK_HINT:
+    case GameMessage::MSG_SET_RALLY_POINT_HINT:
+    case GameMessage::MSG_IMPOSSIBLE_ATTACK_HINT:
+    case GameMessage::MSG_DO_SPECIAL_POWER_OVERRIDE_DESTINATION_HINT:
+    case GameMessage::MSG_DO_SALVAGE_HINT:
+    case GameMessage::MSG_DO_INVALID_HINT:
+      TheInGameUI->createCommandHint(msg);
+      disp = DESTROY_MESSAGE; // hint no longer needed by anyone.  Eat it.
+      break;
 
-		//-----------------------------------------------------------------------------
-		case GameMessage::MSG_AREA_SELECTION_HINT:
-			TheInGameUI->beginAreaSelectHint( msg );
-			break;
+    //-----------------------------------------------------------------------------
+    case GameMessage::MSG_AREA_SELECTION_HINT:
+      TheInGameUI->beginAreaSelectHint(msg);
+      break;
 
-		//-----------------------------------------------------------------------------
-		// An AREA_SELECTION_HINT is always followed by an AREA_SELECTION, so
-		// watch for it to stop hinting.
-		case GameMessage::MSG_AREA_SELECTION:
-			TheInGameUI->endAreaSelectHint( msg );
-			break;
+    //-----------------------------------------------------------------------------
+    // An AREA_SELECTION_HINT is always followed by an AREA_SELECTION, so
+    // watch for it to stop hinting.
+    case GameMessage::MSG_AREA_SELECTION:
+      TheInGameUI->endAreaSelectHint(msg);
+      break;
 
-		//-----------------------------------------------------------------------------
-		case GameMessage::MSG_DO_MOVETO:
-		case GameMessage::MSG_DO_ATTACKMOVETO:
-		case GameMessage::MSG_DO_FORCEMOVETO:
-		case GameMessage::MSG_ADD_WAYPOINT:
-			TheInGameUI->createMoveHint( msg );
-			break;
+    //-----------------------------------------------------------------------------
+    case GameMessage::MSG_DO_MOVETO:
+    case GameMessage::MSG_DO_ATTACKMOVETO:
+    case GameMessage::MSG_DO_FORCEMOVETO:
+    case GameMessage::MSG_ADD_WAYPOINT:
+      TheInGameUI->createMoveHint(msg);
+      break;
 
-		//-----------------------------------------------------------------------------
-		case GameMessage::MSG_DO_ATTACK_OBJECT:
-			TheInGameUI->createAttackHint( msg );
-			break;
+    //-----------------------------------------------------------------------------
+    case GameMessage::MSG_DO_ATTACK_OBJECT:
+      TheInGameUI->createAttackHint(msg);
+      break;
 
-		//-----------------------------------------------------------------------------
-		case GameMessage::MSG_DO_FORCE_ATTACK_GROUND:
-		case GameMessage::MSG_DO_FORCE_ATTACK_OBJECT:
-			TheInGameUI->createForceAttackHint( msg );
-			break;
+    //-----------------------------------------------------------------------------
+    case GameMessage::MSG_DO_FORCE_ATTACK_GROUND:
+    case GameMessage::MSG_DO_FORCE_ATTACK_OBJECT:
+      TheInGameUI->createForceAttackHint(msg);
+      break;
 
-		//-----------------------------------------------------------------------------
-		case GameMessage::MSG_ENTER:
-			TheInGameUI->createGarrisonHint( msg );
-			break;
-
-	}
-	return disp;
+    //-----------------------------------------------------------------------------
+    case GameMessage::MSG_ENTER:
+      TheInGameUI->createGarrisonHint(msg);
+      break;
+  }
+  return disp;
 }

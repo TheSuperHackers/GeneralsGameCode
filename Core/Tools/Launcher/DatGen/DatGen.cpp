@@ -30,173 +30,174 @@ void __cdecl doIt(void);
 
 static void doIt(void)
 {
-	// Generate passkey
-	char passKey[128];
-	passKey[0] = '\0';
-	unsigned char installPath[MAX_PATH] = "";
+  // Generate passkey
+  char passKey[128];
+  passKey[0] = '\0';
+  unsigned char installPath[MAX_PATH] = "";
 
-	// Get game information
-	HKEY hKey;
-	bool usesHKeycurrentUser = false;
-
-#if RTS_GENERALS
-	const char* gameRegistryKey = "Software\\Electronic Arts\\EA Games\\Generals";
-#elif RTS_ZEROHOUR
-	const char* gameRegistryKey = "Software\\Electronic Arts\\EA Games\\Command and Conquer Generals Zero Hour";
-#endif
-
-	LONG result = RegOpenKeyEx(HKEY_LOCAL_MACHINE, gameRegistryKey, 0, KEY_READ, &hKey);
-	if (result != ERROR_SUCCESS)
-	{
-		result = RegOpenKeyEx(HKEY_CURRENT_USER, gameRegistryKey, 0, KEY_READ, &hKey);
-		usesHKeycurrentUser = true;
-	}
-	assert((result == ERROR_SUCCESS) && "Failed to open game registry key");
-
-	if (result != ERROR_SUCCESS)
-	{
-		return;
-	}
-
-	// Retrieve install path
-	DWORD type;
-	DWORD sizeOfBuffer = sizeof(installPath);
-	result = RegQueryValueEx(hKey, "InstallPath", NULL, &type, installPath, &sizeOfBuffer);
-
-	assert((result == ERROR_SUCCESS) && "Failed to obtain game install path!");
-	assert((strlen((const char*)installPath) > 0) && "Game install path invalid!");
-	DebugPrint("Game install path: %s\n", installPath);
-
-	// Retrieve Hard drive S/N
-	char drive[8];
-	_splitpath((const char*)installPath, drive, NULL, NULL, NULL);
-	strcat(drive, "\\");
-
-	DWORD volumeSerialNumber = 0;
-	DWORD maxComponentLength;
-	DWORD fileSystemFlags;
-	BOOL volInfoSuccess = GetVolumeInformation((const char*)drive, NULL, 0,
-		                    &volumeSerialNumber, &maxComponentLength, &fileSystemFlags, NULL, 0);
-
-	if (volInfoSuccess == FALSE)
-	{
-		PrintWin32Error("***** GetVolumeInformation() Failed!");
-	}
-
-	DebugPrint("Drive Serial Number: %lx\n", volumeSerialNumber);
-
-	// Add hard drive serial number portion
-	char volumeSN[16];
-	sprintf(volumeSN, "%lx-", volumeSerialNumber);
-	strcat(passKey, volumeSN);
-
-	// Retrieve game serial #
-	unsigned char gameSerialNumber[64];
-	gameSerialNumber[0] = '\0';
-	sizeOfBuffer = sizeof(gameSerialNumber);
+  // Get game information
+  HKEY hKey;
+  bool usesHKeycurrentUser = false;
 
 #if RTS_GENERALS
-	const char* serialRegistryKey = "Software\\Electronic Arts\\EA Games\\Generals\\ergc";
+  const char *gameRegistryKey = "Software\\Electronic Arts\\EA Games\\Generals";
 #elif RTS_ZEROHOUR
-	const char* serialRegistryKey = "Software\\Electronic Arts\\EA Games\\Command and Conquer Generals Zero Hour\\ergc";
+  const char *gameRegistryKey = "Software\\Electronic Arts\\EA Games\\Command and Conquer Generals Zero Hour";
 #endif
 
-	if (usesHKeycurrentUser)
-	{
-		result = RegOpenKeyEx(HKEY_CURRENT_USER, serialRegistryKey, 0, KEY_READ, &hKey);
-	}
-	else
-	{
-		result = RegOpenKeyEx(HKEY_LOCAL_MACHINE, serialRegistryKey, 0, KEY_READ, &hKey);
-	}
-	assert((result == ERROR_SUCCESS) && "Failed to open game serial registry key");
+  LONG result = RegOpenKeyEx(HKEY_LOCAL_MACHINE, gameRegistryKey, 0, KEY_READ, &hKey);
+  if (result != ERROR_SUCCESS)
+  {
+    result = RegOpenKeyEx(HKEY_CURRENT_USER, gameRegistryKey, 0, KEY_READ, &hKey);
+    usesHKeycurrentUser = true;
+  }
+  assert((result == ERROR_SUCCESS) && "Failed to open game registry key");
 
-	if (result == ERROR_SUCCESS)
-	{
-		result = RegQueryValueEx(hKey, "", NULL, &type, gameSerialNumber, &sizeOfBuffer);
-		assert((result == ERROR_SUCCESS) && "Failed to obtain game serial number!");
-		assert((strlen((const char*)gameSerialNumber) > 0) && "Game serial number invalid!");
-	}
+  if (result != ERROR_SUCCESS)
+  {
+    return;
+  }
 
-	DebugPrint("Game serial number: %s\n", gameSerialNumber);
+  // Retrieve install path
+  DWORD type;
+  DWORD sizeOfBuffer = sizeof(installPath);
+  result = RegQueryValueEx(hKey, "InstallPath", NULL, &type, installPath, &sizeOfBuffer);
 
-	RegCloseKey(hKey);
+  assert((result == ERROR_SUCCESS) && "Failed to obtain game install path!");
+  assert((strlen((const char *)installPath) > 0) && "Game install path invalid!");
+  DebugPrint("Game install path: %s\n", installPath);
 
-	// Add game serial number portion
-	strcat(passKey, (char*)gameSerialNumber);
+  // Retrieve Hard drive S/N
+  char drive[8];
+  _splitpath((const char *)installPath, drive, NULL, NULL, NULL);
+  strcat(drive, "\\");
 
-	// Obtain windows product ID
-	result = RegOpenKeyEx(HKEY_LOCAL_MACHINE, "Software\\Microsoft\\Windows\\CurrentVersion", 0, KEY_READ, &hKey);
-	assert((result == ERROR_SUCCESS) && "Failed to open windows registry key!");
+  DWORD volumeSerialNumber = 0;
+  DWORD maxComponentLength;
+  DWORD fileSystemFlags;
+  BOOL volInfoSuccess = GetVolumeInformation(
+      (const char *)drive,
+      NULL,
+      0,
+      &volumeSerialNumber,
+      &maxComponentLength,
+      &fileSystemFlags,
+      NULL,
+      0);
 
-	if (result == ERROR_SUCCESS)
-	{
-		// Retrieve Windows Product ID
-		unsigned char winProductID[64];
-		winProductID[0] = '\0';
+  if (volInfoSuccess == FALSE)
+  {
+    PrintWin32Error("***** GetVolumeInformation() Failed!");
+  }
 
-		DWORD type;
-		DWORD sizeOfBuffer = sizeof(winProductID);
-		result = RegQueryValueEx(hKey, "ProductID", NULL, &type, winProductID, &sizeOfBuffer);
+  DebugPrint("Drive Serial Number: %lx\n", volumeSerialNumber);
 
-		assert((result == ERROR_SUCCESS) && "Failed to obtain windows product ID!");
-		assert((strlen((const char*)winProductID) > 0) && "Invalid windows product ID");
+  // Add hard drive serial number portion
+  char volumeSN[16];
+  sprintf(volumeSN, "%lx-", volumeSerialNumber);
+  strcat(passKey, volumeSN);
 
-		DebugPrint("Windows Product ID: %s\n", winProductID);
+  // Retrieve game serial #
+  unsigned char gameSerialNumber[64];
+  gameSerialNumber[0] = '\0';
+  sizeOfBuffer = sizeof(gameSerialNumber);
 
-		RegCloseKey(hKey);
+#if RTS_GENERALS
+  const char *serialRegistryKey = "Software\\Electronic Arts\\EA Games\\Generals\\ergc";
+#elif RTS_ZEROHOUR
+  const char *serialRegistryKey = "Software\\Electronic Arts\\EA Games\\Command and Conquer Generals Zero Hour\\ergc";
+#endif
 
-		// Add windows product ID portion
-		strcat(passKey, "-");
-		strcat(passKey, (char*)winProductID);
-	}
+  if (usesHKeycurrentUser)
+  {
+    result = RegOpenKeyEx(HKEY_CURRENT_USER, serialRegistryKey, 0, KEY_READ, &hKey);
+  }
+  else
+  {
+    result = RegOpenKeyEx(HKEY_LOCAL_MACHINE, serialRegistryKey, 0, KEY_READ, &hKey);
+  }
+  assert((result == ERROR_SUCCESS) && "Failed to open game serial registry key");
 
-	DebugPrint("Retrieved PassKey: %s\n", passKey);
+  if (result == ERROR_SUCCESS)
+  {
+    result = RegQueryValueEx(hKey, "", NULL, &type, gameSerialNumber, &sizeOfBuffer);
+    assert((result == ERROR_SUCCESS) && "Failed to obtain game serial number!");
+    assert((strlen((const char *)gameSerialNumber) > 0) && "Game serial number invalid!");
+  }
 
-	const char *plainText = "Play the \"Command & Conquer: Generals\" Multiplayer Test.";
-	int textLen = strlen(plainText);
-	char cypherText[128];
+  DebugPrint("Game serial number: %s\n", gameSerialNumber);
 
-	DebugPrint("Retrieved PassKey: %s\n", passKey);
+  RegCloseKey(hKey);
 
-	// Decrypt protected data into the memory mapped file
-	BlowfishEngine blowfish;
-	int len = strlen(passKey);
-	if (len > BlowfishEngine::MAX_KEY_LENGTH)
-		len = BlowfishEngine::MAX_KEY_LENGTH;
-	blowfish.Submit_Key(passKey, len);
+  // Add game serial number portion
+  strcat(passKey, (char *)gameSerialNumber);
 
-	blowfish.Encrypt(plainText, textLen, cypherText);
-	cypherText[textLen] = 0;
-	DebugPrint("Encrypted data: %s\n", cypherText);
+  // Obtain windows product ID
+  result = RegOpenKeyEx(HKEY_LOCAL_MACHINE, "Software\\Microsoft\\Windows\\CurrentVersion", 0, KEY_READ, &hKey);
+  assert((result == ERROR_SUCCESS) && "Failed to open windows registry key!");
 
-	DebugPrint("Install dir = '%s'\n", installPath);
+  if (result == ERROR_SUCCESS)
+  {
+    // Retrieve Windows Product ID
+    unsigned char winProductID[64];
+    winProductID[0] = '\0';
 
-	char *lastBackslash = strrchr((char *)installPath, '\\');
-	if (lastBackslash)
-		*lastBackslash = 0; // strip of \\game.exe from install path
+    DWORD type;
+    DWORD sizeOfBuffer = sizeof(winProductID);
+    result = RegQueryValueEx(hKey, "ProductID", NULL, &type, winProductID, &sizeOfBuffer);
 
-	strcat((char *)installPath, "\\Generals.dat");
+    assert((result == ERROR_SUCCESS) && "Failed to obtain windows product ID!");
+    assert((strlen((const char *)winProductID) > 0) && "Invalid windows product ID");
 
-	DebugPrint("DAT file = '%s'\n", installPath);
+    DebugPrint("Windows Product ID: %s\n", winProductID);
 
-	FILE *fp = fopen((char *)installPath, "wb");
-	if (fp)
-	{
-		fwrite(cypherText, textLen, 1, fp);
-		fclose(fp);
-	}
+    RegCloseKey(hKey);
+
+    // Add windows product ID portion
+    strcat(passKey, "-");
+    strcat(passKey, (char *)winProductID);
+  }
+
+  DebugPrint("Retrieved PassKey: %s\n", passKey);
+
+  const char *plainText = "Play the \"Command & Conquer: Generals\" Multiplayer Test.";
+  int textLen = strlen(plainText);
+  char cypherText[128];
+
+  DebugPrint("Retrieved PassKey: %s\n", passKey);
+
+  // Decrypt protected data into the memory mapped file
+  BlowfishEngine blowfish;
+  int len = strlen(passKey);
+  if (len > BlowfishEngine::MAX_KEY_LENGTH)
+    len = BlowfishEngine::MAX_KEY_LENGTH;
+  blowfish.Submit_Key(passKey, len);
+
+  blowfish.Encrypt(plainText, textLen, cypherText);
+  cypherText[textLen] = 0;
+  DebugPrint("Encrypted data: %s\n", cypherText);
+
+  DebugPrint("Install dir = '%s'\n", installPath);
+
+  char *lastBackslash = strrchr((char *)installPath, '\\');
+  if (lastBackslash)
+    *lastBackslash = 0; // strip of \\game.exe from install path
+
+  strcat((char *)installPath, "\\Generals.dat");
+
+  DebugPrint("DAT file = '%s'\n", installPath);
+
+  FILE *fp = fopen((char *)installPath, "wb");
+  if (fp)
+  {
+    fwrite(cypherText, textLen, 1, fp);
+    fclose(fp);
+  }
 }
 
-int APIENTRY WinMain(HINSTANCE hInstance,
-                     HINSTANCE hPrevInstance,
-                     LPSTR     lpCmdLine,
-                     int       nCmdShow)
+int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
-	doIt();
+  doIt();
 
-	return 0;
+  return 0;
 }
-
-
-

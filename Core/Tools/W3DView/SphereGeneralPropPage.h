@@ -36,82 +36,85 @@
 /////////////////////////////////////////////////////////////////////////////
 class SphereGeneralPropPageClass : public CPropertyPage
 {
-	DECLARE_DYNCREATE(SphereGeneralPropPageClass)
+  DECLARE_DYNCREATE(SphereGeneralPropPageClass)
 
-// Construction
-public:
-	SphereGeneralPropPageClass (SphereRenderObjClass *sphere = NULL);
-	~SphereGeneralPropPageClass ();
+  // Construction
+  public:
+  SphereGeneralPropPageClass(SphereRenderObjClass *sphere = NULL);
+  ~SphereGeneralPropPageClass();
 
-// Dialog Data
-	//{{AFX_DATA(SphereGeneralPropPageClass)
-	enum { IDD = IDD_PROP_PAGE_SPHERE_GEN };
-	CSpinButtonCtrl	m_LifetimeSpin;
-	//}}AFX_DATA
+  // Dialog Data
+  //{{AFX_DATA(SphereGeneralPropPageClass)
+  enum
+  {
+    IDD = IDD_PROP_PAGE_SPHERE_GEN
+  };
+  CSpinButtonCtrl m_LifetimeSpin;
+  //}}AFX_DATA
 
+  // Overrides
+  // ClassWizard generate virtual function overrides
+  //{{AFX_VIRTUAL(SphereGeneralPropPageClass)
+  public:
+  virtual BOOL OnApply();
 
-// Overrides
-	// ClassWizard generate virtual function overrides
-	//{{AFX_VIRTUAL(SphereGeneralPropPageClass)
-	public:
-	virtual BOOL OnApply();
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
-	virtual BOOL OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult);
-	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam);
-	//}}AFX_VIRTUAL
+  protected:
+  virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
+  virtual BOOL OnNotify(WPARAM wParam, LPARAM lParam, LRESULT *pResult);
+  virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam);
+  //}}AFX_VIRTUAL
 
-// Implementation
-protected:
-	// Generated message map functions
-	//{{AFX_MSG(SphereGeneralPropPageClass)
-	virtual BOOL OnInitDialog();
-	afx_msg void OnBrowseButton();
-	afx_msg void OnChangeFilenameEdit();
-	afx_msg void OnChangeNameEdit();
-	afx_msg void OnChangeLifetimeEdit();
-	afx_msg void OnSelchangeShaderCombo();
-	//}}AFX_MSG
-	DECLARE_MESSAGE_MAP()
+  // Implementation
+  protected:
+  // Generated message map functions
+  //{{AFX_MSG(SphereGeneralPropPageClass)
+  virtual BOOL OnInitDialog();
+  afx_msg void OnBrowseButton();
+  afx_msg void OnChangeFilenameEdit();
+  afx_msg void OnChangeNameEdit();
+  afx_msg void OnChangeLifetimeEdit();
+  afx_msg void OnSelchangeShaderCombo();
+  //}}AFX_MSG
+  DECLARE_MESSAGE_MAP()
 
+  public:
+  /////////////////////////////////////////////////////////
+  //	Public methods
+  /////////////////////////////////////////////////////////
 
-public:
+  //
+  //	Inline accessors
+  //
+  SphereRenderObjClass *Get_Sphere(void) const { return m_RenderObj; }
+  void Set_Sphere(SphereRenderObjClass *sphere)
+  {
+    m_RenderObj = sphere;
+    Initialize();
+  }
+  bool Is_Data_Valid(void) const { return m_bValid; }
 
-	/////////////////////////////////////////////////////////
-	//	Public methods
-	/////////////////////////////////////////////////////////
+  const CString &Get_Name(void) const { return m_Name; }
+  const CString &Get_Texture_Filename(void) const { return m_TextureFilename; }
+  float Get_Lifetime(void) const { return m_Lifetime; }
+  const ShaderClass &Get_Shader(void) const { return m_Shader; }
 
-	//
-	//	Inline accessors
-	//
-	SphereRenderObjClass *	Get_Sphere (void) const							{ return m_RenderObj; }
-	void							Set_Sphere (SphereRenderObjClass *sphere)	{ m_RenderObj = sphere; Initialize (); }
-	bool							Is_Data_Valid (void) const						{ return m_bValid; }
+  protected:
+  /////////////////////////////////////////////////////////
+  //	Protected methods
+  /////////////////////////////////////////////////////////
+  void Initialize(void);
+  void Add_Shader_To_Combo(ShaderClass &shader, LPCTSTR name);
 
-	const CString &			Get_Name (void) const					{ return m_Name; }
-	const CString &			Get_Texture_Filename (void) const	{ return m_TextureFilename; }
-	float							Get_Lifetime (void) const				{ return m_Lifetime; }
-	const ShaderClass &		Get_Shader (void) const					{ return m_Shader; }
-
-protected:
-
-	/////////////////////////////////////////////////////////
-	//	Protected methods
-	/////////////////////////////////////////////////////////
-	void								Initialize (void);
-	void								Add_Shader_To_Combo (ShaderClass &shader, LPCTSTR name);
-
-private:
-
-	/////////////////////////////////////////////////////////
-	//	Private member data
-	/////////////////////////////////////////////////////////
-	SphereRenderObjClass *		m_RenderObj;
-	CString							m_Name;
-	CString							m_TextureFilename;
-	ShaderClass						m_Shader;
-	float								m_Lifetime;
-	bool								m_bValid;
+  private:
+  /////////////////////////////////////////////////////////
+  //	Private member data
+  /////////////////////////////////////////////////////////
+  SphereRenderObjClass *m_RenderObj;
+  CString m_Name;
+  CString m_TextureFilename;
+  ShaderClass m_Shader;
+  float m_Lifetime;
+  bool m_bValid;
 };
 
 //{{AFX_INSERT_LOCATION}}

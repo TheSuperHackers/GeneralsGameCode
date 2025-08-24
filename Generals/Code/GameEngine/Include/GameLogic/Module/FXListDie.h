@@ -45,46 +45,40 @@ class FXList;
 //-------------------------------------------------------------------------------------------------
 class FXListDieModuleData : public DieModuleData
 {
-public:
-	const FXList *m_defaultDeathFX;								///< default fx to make
-	Bool m_orientToObject;
+  public:
+  const FXList *m_defaultDeathFX; ///< default fx to make
+  Bool m_orientToObject;
 
-	FXListDieModuleData()
-	{
-		m_defaultDeathFX = NULL;
-		m_orientToObject = true;
-	}
+  FXListDieModuleData()
+  {
+    m_defaultDeathFX = NULL;
+    m_orientToObject = true;
+  }
 
-	static void buildFieldParse(MultiIniFieldParse& p)
-	{
+  static void buildFieldParse(MultiIniFieldParse &p)
+  {
     DieModuleData::buildFieldParse(p);
 
-		static const FieldParse dataFieldParse[] =
-		{
-			{ "DeathFX",							INI::parseFXList,		NULL, offsetof( FXListDieModuleData, m_defaultDeathFX ) },
-			{ "OrientToObject",				INI::parseBool,		NULL, offsetof( FXListDieModuleData, m_orientToObject ) },
-			{ 0, 0, 0, 0 }
-		};
+    static const FieldParse dataFieldParse[] = {
+      { "DeathFX", INI::parseFXList, NULL, offsetof(FXListDieModuleData, m_defaultDeathFX) },
+      { "OrientToObject", INI::parseBool, NULL, offsetof(FXListDieModuleData, m_orientToObject) },
+      { 0, 0, 0, 0 }
+    };
     p.add(dataFieldParse);
-	}
+  }
 };
 
 //-------------------------------------------------------------------------------------------------
 class FXListDie : public DieModule
 {
+  MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA(FXListDie, FXListDieModuleData);
+  MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(FXListDie, "FXListDie")
 
-	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( FXListDie, FXListDieModuleData );
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( FXListDie, "FXListDie" )
+  public:
+  FXListDie(Thing *thing, const ModuleData *moduleData);
+  // virtual destructor prototype provided by memory pool declaration
 
-public:
-
-	FXListDie( Thing *thing, const ModuleData* moduleData );
-	// virtual destructor prototype provided by memory pool declaration
-
-	virtual void onDie( const DamageInfo *damageInfo );
-
+  virtual void onDie(const DamageInfo *damageInfo);
 };
 
-
 #endif // __FXListDie_H_
-

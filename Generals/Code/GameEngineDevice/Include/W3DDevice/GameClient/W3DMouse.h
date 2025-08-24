@@ -64,48 +64,46 @@ class SurfaceClass;
 //-----------------------------------------------------------------------------
 class W3DMouse : public Win32Mouse
 {
+  public:
+  W3DMouse(void);
+  virtual ~W3DMouse(void);
 
-public:
+  virtual void init(void); ///< init mouse, extend this functionality, do not replace
+  virtual void reset(void); ///< reset the system
 
-	W3DMouse( void );
-	virtual ~W3DMouse( void );
+  virtual void setCursor(MouseCursor cursor); ///< set mouse cursor
+  virtual void draw(void); ///< draw the cursor or refresh the image
+  virtual void setRedrawMode(RedrawMode mode); ///< set cursor drawing method.
 
-	virtual void init( void );		///< init mouse, extend this functionality, do not replace
-	virtual void reset( void );		///< reset the system
+  private:
+  MouseCursor m_currentD3DCursor; ///< keep track of last cursor image sent to D3D.
+  SurfaceClass *m_currentD3DSurface[MAX_2D_CURSOR_ANIM_FRAMES];
+  ICoord2D m_currentHotSpot;
+  Int m_currentFrames; ///< total number of frames in current 2D cursor animation.
+  Real m_currentAnimFrame; ///< current frame of 2D cursor animation.
+  Int m_currentD3DFrame; ///< current frame actually sent to the hardware.
+  Int m_lastAnimTime; ///< ms at last animation update.
+  Real m_currentFMS; ///< frames per ms.
+  Bool m_drawing; ///< flag to indicate mouse cursor is currently in the act of drawing.
+  ///@todo: remove the textures if we only need surfaces
+  void initD3DAssets(void); ///< load textures for mouse cursors, etc.
+  void freeD3DAssets(void); ///< unload textures used by mouse cursors.
+  Bool loadD3DCursorTextures(MouseCursor cursor); ///< load the textures/animation for given cursor.
+  Bool releaseD3DCursorTextures(MouseCursor cursor); ///< release loaded textures for cursor.
 
-	virtual void setCursor( MouseCursor cursor );		///< set mouse cursor
-	virtual void draw( void );		///< draw the cursor or refresh the image
-	virtual void setRedrawMode(RedrawMode mode);	///<set cursor drawing method.
+  // W3D animated model cursor
+  CameraClass *m_camera; ///< our camera
+  MouseCursor m_currentW3DCursor;
+  void initW3DAssets(void); ///< load models for mouse cursors, etc.
+  void freeW3DAssets(void); ///< unload models used by mouse cursors.
 
-private:
-	MouseCursor m_currentD3DCursor;	///< keep track of last cursor image sent to D3D.
-	SurfaceClass *m_currentD3DSurface[MAX_2D_CURSOR_ANIM_FRAMES];
-	ICoord2D m_currentHotSpot;
-	Int	m_currentFrames;	///< total number of frames in current 2D cursor animation.
-	Real m_currentAnimFrame;///< current frame of 2D cursor animation.
-	Int m_currentD3DFrame;	///< current frame actually sent to the hardware.
-	Int m_lastAnimTime;		///< ms at last animation update.
-	Real m_currentFMS;		///< frames per ms.
-	Bool m_drawing;			///< flag to indicate mouse cursor is currently in the act of drawing.
-///@todo: remove the textures if we only need surfaces
-	void initD3DAssets(void);		///< load textures for mouse cursors, etc.
-	void freeD3DAssets(void);		///< unload textures used by mouse cursors.
-	Bool loadD3DCursorTextures(MouseCursor cursor);	///<load the textures/animation for given cursor.
-	Bool releaseD3DCursorTextures(MouseCursor cursor);	///<release loaded textures for cursor.
+  MouseCursor m_currentPolygonCursor;
+  void initPolygonAssets(void); ///< load images for cursor polygon.
+  void freePolygonAssets(void); ///< free images for cursor polygon.
 
-	// W3D animated model cursor
-	CameraClass *m_camera;								///< our camera
-	MouseCursor m_currentW3DCursor;
-	void initW3DAssets(void);		///< load models for mouse cursors, etc.
-	void freeW3DAssets(void);		///< unload models used by mouse cursors.
+  void setCursorDirection(MouseCursor cursor); /// figure out direction for oriented 2D cursors.
 
-	MouseCursor m_currentPolygonCursor;
-	void initPolygonAssets(void);		///< load images for cursor polygon.
-	void freePolygonAssets(void);		///< free images for cursor polygon.
-
-	void setCursorDirection(MouseCursor cursor);	///figure out direction for oriented 2D cursors.
-
-};  // end Win32Mouse
+}; // end Win32Mouse
 
 // INLINING ///////////////////////////////////////////////////////////////////
 

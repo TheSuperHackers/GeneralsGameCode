@@ -38,15 +38,15 @@ char AppTitle[200];
 CBabylonDlg *MainDLG = NULL;
 
 static const char *AppName = "Babylon:";
-static int AlreadyRunning( void );
+static int AlreadyRunning(void);
 static HWND FoundWindow = NULL;
 /////////////////////////////////////////////////////////////////////////////
 // CBabylonApp
 
 BEGIN_MESSAGE_MAP(CBabylonApp, CWinApp)
-	//{{AFX_MSG_MAP(CBabylonApp)
-	//}}AFX_MSG_MAP
-	ON_COMMAND(ID_HELP, CWinApp::OnHelp)
+//{{AFX_MSG_MAP(CBabylonApp)
+//}}AFX_MSG_MAP
+ON_COMMAND(ID_HELP, CWinApp::OnHelp)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -54,180 +54,178 @@ END_MESSAGE_MAP()
 
 CBabylonApp::CBabylonApp()
 {
-	// TODO: add construction code here,
-	// Place all significant initialization in InitInstance
+  // TODO: add construction code here,
+  // Place all significant initialization in InitInstance
 }
 
 /////////////////////////////////////////////////////////////////////////////
 // The one and only CBabylonApp object
 
 CBabylonApp theApp;
-TransDB				*BabylonstrDB = NULL;
-TransDB				*MainDB = NULL;
-char		BabylonstrFilename[_MAX_PATH];
-char		MainXLSFilename[_MAX_PATH];
-char		DialogPath[_MAX_PATH];
-char		RootPath[_MAX_PATH];
-LangID	CurrentLanguage = LANGID_US;
-
+TransDB *BabylonstrDB = NULL;
+TransDB *MainDB = NULL;
+char BabylonstrFilename[_MAX_PATH];
+char MainXLSFilename[_MAX_PATH];
+char DialogPath[_MAX_PATH];
+char RootPath[_MAX_PATH];
+LangID CurrentLanguage = LANGID_US;
 
 /////////////////////////////////////////////////////////////////////////////
 // CBabylonApp initialization
 
 BOOL CBabylonApp::InitInstance()
 {
-	// Initialize OLE libraries
-	if (!AfxOleInit())
-	{
-		AfxMessageBox(IDP_OLE_INIT_FAILED);
-		return FALSE;
-	}
+  // Initialize OLE libraries
+  if (!AfxOleInit())
+  {
+    AfxMessageBox(IDP_OLE_INIT_FAILED);
+    return FALSE;
+  }
 
-	// Standard initialization
-	// If you are not using these features and wish to reduce the size
-	//  of your final executable, you should remove from the following
-	//  the specific initialization routines you do not need.
+  // Standard initialization
+  // If you are not using these features and wish to reduce the size
+  //  of your final executable, you should remove from the following
+  //  the specific initialization routines you do not need.
 
 #ifdef _AFXDLL
-	Enable3dControls();			// Call this when using MFC in a shared DLL
+  Enable3dControls(); // Call this when using MFC in a shared DLL
 #else
-	Enable3dControlsStatic();	// Call this when linking to MFC statically
+  Enable3dControlsStatic(); // Call this when linking to MFC statically
 #endif
 
-	// Parse the command line to see if launched as OLE server
-	if (RunEmbedded() || RunAutomated())
-	{
-		// Register all OLE server (factories) as running.  This enables the
-		//  OLE libraries to create objects from other applications.
-		COleTemplateServer::RegisterAll();
-	}
-	else
-	{
-		// When a server application is launched stand-alone, it is a good idea
-		//  to update the system registry in case it has been damaged.
-		COleObjectFactory::UpdateRegistryAll();
-	}
+  // Parse the command line to see if launched as OLE server
+  if (RunEmbedded() || RunAutomated())
+  {
+    // Register all OLE server (factories) as running.  This enables the
+    //  OLE libraries to create objects from other applications.
+    COleTemplateServer::RegisterAll();
+  }
+  else
+  {
+    // When a server application is launched stand-alone, it is a good idea
+    //  to update the system registry in case it has been damaged.
+    COleObjectFactory::UpdateRegistryAll();
+  }
 
-	MainDB = new TransDB ( "Main" );
-	BabylonstrDB = new TransDB ( "Generals.str" );
-	MainDB->EnableIDs ();
+  MainDB = new TransDB("Main");
+  BabylonstrDB = new TransDB("Generals.str");
+  MainDB->EnableIDs();
 
-	if ( !AfxInitRichEdit( ) )
-	{
-		AfxMessageBox ( "Error initializing Rich Edit" );
-	}
+  if (!AfxInitRichEdit())
+  {
+    AfxMessageBox("Error initializing Rich Edit");
+  }
 
-	sprintf (AppTitle, "%s Built on %s - %s", AppName, __DATE__, __TIME__ );
+  sprintf(AppTitle, "%s Built on %s - %s", AppName, __DATE__, __TIME__);
 
-  if ( !_getcwd( RootPath, _MAX_PATH ) )
-	{
-		AfxMessageBox ( "Failed to obtain current working directoy!\n\n Set directoy path to \"c:\\Babylon\"." );
-		strcpy ( (char *) RootPath, "c:\\Babylon" );
-	}
-	strlwr ( RootPath );
+  if (!_getcwd(RootPath, _MAX_PATH))
+  {
+    AfxMessageBox("Failed to obtain current working directoy!\n\n Set directoy path to \"c:\\Babylon\".");
+    strcpy((char *)RootPath, "c:\\Babylon");
+  }
+  strlwr(RootPath);
 
-	strcpy ( (char *) BabylonstrFilename, RootPath );
-	strcat ( (char *) BabylonstrFilename, "\\Data\\Generals.str" );
-	strcpy ( (char *) MainXLSFilename, RootPath );
-	strcat ( (char *) MainXLSFilename, "\\Data\\main.db" );
-	strcpy ( (char *) DialogPath, RootPath );
-	strcat ( (char *) DialogPath, "\\dialog" );
+  strcpy((char *)BabylonstrFilename, RootPath);
+  strcat((char *)BabylonstrFilename, "\\Data\\Generals.str");
+  strcpy((char *)MainXLSFilename, RootPath);
+  strcat((char *)MainXLSFilename, "\\Data\\main.db");
+  strcpy((char *)DialogPath, RootPath);
+  strcat((char *)DialogPath, "\\dialog");
 
-	if ( AlreadyRunning ()  )
-	{
-		if ( FoundWindow )
-		{
-			SetForegroundWindow ( FoundWindow );
-		}
-	}
-	else if ( OpenExcel ( ) )
-	{
-		CBabylonDlg dlg;
-		m_pMainWnd = &dlg;
-		MainDLG = &dlg;
+  if (AlreadyRunning())
+  {
+    if (FoundWindow)
+    {
+      SetForegroundWindow(FoundWindow);
+    }
+  }
+  else if (OpenExcel())
+  {
+    CBabylonDlg dlg;
+    m_pMainWnd = &dlg;
+    MainDLG = &dlg;
 
-		int nResponse = dlg.DoModal();
+    int nResponse = dlg.DoModal();
 
-		CloseExcel ();
-	}
+    CloseExcel();
+  }
 
-	delete BabylonstrDB ;
-	delete MainDB;
-	// Since the dialog has been closed, return FALSE so that we exit the
-	//  application, rather than start the application's message pump.
-	return FALSE;
+  delete BabylonstrDB;
+  delete MainDB;
+  // Since the dialog has been closed, return FALSE so that we exit the
+  //  application, rather than start the application's message pump.
+  return FALSE;
 }
 
-//DEL void CBabylonApp::OnDropFiles(HDROP hDropInfo)
-//DEL {
-//DEL 	// TODO: Add your message handler code here and/or call default
-//DEL
-//DEL 	CWinApp::OnDropFiles(hDropInfo);
-//DEL }
+// DEL void CBabylonApp::OnDropFiles(HDROP hDropInfo)
+// DEL {
+// DEL 	// TODO: Add your message handler code here and/or call default
+// DEL
+// DEL 	CWinApp::OnDropFiles(hDropInfo);
+// DEL }
 
 static BOOL CALLBACK EnumAllWindowsProc(HWND hWnd, LPARAM lParam);
 static BOOL CALLBACK EnumAllWindowsProcExact(HWND hWnd, LPARAM lParam);
 static const char *szSearchTitle;
 
-static int AlreadyRunning( void )
+static int AlreadyRunning(void)
 {
-	BOOL found = FALSE;
+  BOOL found = FALSE;
 
-	szSearchTitle = AppName;
+  szSearchTitle = AppName;
 
-	EnumWindows((WNDENUMPROC) EnumAllWindowsProcExact, (LPARAM) &found);
+  EnumWindows((WNDENUMPROC)EnumAllWindowsProcExact, (LPARAM)&found);
 
-	return found;
+  return found;
 }
 
 //--------------------------------------------------------------------------------
 
-int ExcelRunning( void )
+int ExcelRunning(void)
 {
-	BOOL found = FALSE;
+  BOOL found = FALSE;
 
-	szSearchTitle = "Microsoft Excel";
+  szSearchTitle = "Microsoft Excel";
 
-	EnumWindows((WNDENUMPROC) EnumAllWindowsProc, (LPARAM) &found);
+  EnumWindows((WNDENUMPROC)EnumAllWindowsProc, (LPARAM)&found);
 
-	return found;
+  return found;
 }
 
 //--------------------------------------------------------------------------------
 
 BOOL CALLBACK EnumAllWindowsProc(HWND hWnd, LPARAM lParam)
 {
-	char szText[256];
+  char szText[256];
 
-	GetWindowText(hWnd, szText, sizeof(szText));
+  GetWindowText(hWnd, szText, sizeof(szText));
 
-	if ( strstr(szText, szSearchTitle))
-	{
-		* (BOOL *) lParam = TRUE;
-		 FoundWindow = hWnd;
-		 return FALSE;
-	}
+  if (strstr(szText, szSearchTitle))
+  {
+    *(BOOL *)lParam = TRUE;
+    FoundWindow = hWnd;
+    return FALSE;
+  }
 
-	FoundWindow = NULL;
-	return TRUE;
+  FoundWindow = NULL;
+  return TRUE;
 }
 
 //--------------------------------------------------------------------------------
 
 BOOL CALLBACK EnumAllWindowsProcExact(HWND hWnd, LPARAM lParam)
 {
-	char szText[256];
+  char szText[256];
 
-	GetWindowText(hWnd, szText, sizeof(szText));
+  GetWindowText(hWnd, szText, sizeof(szText));
 
-	if ( !strncmp (szText, szSearchTitle, strlen ( szSearchTitle)))
-	{
-		* (BOOL *) lParam = TRUE;
-		 FoundWindow = hWnd;
-		 return FALSE;
-	}
+  if (!strncmp(szText, szSearchTitle, strlen(szSearchTitle)))
+  {
+    *(BOOL *)lParam = TRUE;
+    FoundWindow = hWnd;
+    return FALSE;
+  }
 
-	FoundWindow = NULL;
-	return TRUE;
+  FoundWindow = NULL;
+  return TRUE;
 }
-

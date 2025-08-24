@@ -27,7 +27,7 @@
 // Function level profiling (internal header)
 //////////////////////////////////////////////////////////////////////////////
 #ifdef _MSC_VER
-#  pragma once
+#pragma once
 #endif
 #ifndef INTERNAL_FUNCLEVEL_H // Include guard
 #define INTERNAL_FUNCLEVEL_H
@@ -37,10 +37,10 @@ class ProfileFuncLevelTracer
   friend class ProfileCmdInterface;
 
   // can't copy this
-  ProfileFuncLevelTracer(const ProfileFuncLevelTracer&);
-  ProfileFuncLevelTracer& operator=(const ProfileFuncLevelTracer&);
+  ProfileFuncLevelTracer(const ProfileFuncLevelTracer &);
+  ProfileFuncLevelTracer &operator=(const ProfileFuncLevelTracer &);
 
-public:
+  public:
   enum
   {
     // # of simultaneous frame recordings
@@ -50,8 +50,8 @@ public:
   /// simple unique unsigned/unsigned map
   class UnsignedMap
   {
-    UnsignedMap(const UnsignedMap&);
-    UnsignedMap& operator=(const UnsignedMap&);
+    UnsignedMap(const UnsignedMap &);
+    UnsignedMap &operator=(const UnsignedMap &);
 
     struct Entry
     {
@@ -68,13 +68,13 @@ public:
     };
 
     Entry *e;
-    unsigned alloc,used;
+    unsigned alloc, used;
     Entry *hash[HASH_SIZE];
     bool writeLock;
 
     void _Insert(unsigned at, unsigned val, int countAdd);
 
-  public:
+public:
     UnsignedMap(void);
     ~UnsignedMap();
 
@@ -106,17 +106,17 @@ public:
 
     void Copy(const Profile &src)
     {
-      callCount=src.callCount;
-      tickPure=src.tickPure;
-      tickTotal=src.tickTotal;
+      callCount = src.callCount;
+      tickPure = src.tickPure;
+      tickTotal = src.tickTotal;
       caller.Copy(src.caller);
     }
 
     void MixIn(const Profile &src)
     {
-      callCount+=src.callCount;
-      tickPure+=src.tickPure;
-      tickTotal+=src.tickTotal;
+      callCount += src.callCount;
+      tickPure += src.tickPure;
+      tickTotal += src.tickTotal;
       caller.MixIn(src.caller);
     }
   };
@@ -124,8 +124,8 @@ public:
   /// map of profiles
   class ProfileMap
   {
-    ProfileMap(const ProfileMap&);
-    ProfileMap& operator=(const ProfileMap&);
+    ProfileMap(const ProfileMap &);
+    ProfileMap &operator=(const ProfileMap &);
 
     struct List
     {
@@ -134,9 +134,9 @@ public:
       Profile p;
     };
 
-    List *root,**tail;
+    List *root, **tail;
 
-  public:
+public:
     ProfileMap(void);
     ~ProfileMap();
 
@@ -174,11 +174,11 @@ public:
 
     Function(ProfileFuncLevelTracer *tr)
     {
-      glob.tracer=tr;
-      for (int k=0;k<MAX_FRAME_RECORDS;k++)
-        cur[k].tracer=tr;
-      funcSource=funcName=NULL;
-      funcLine=0;
+      glob.tracer = tr;
+      for (int k = 0; k < MAX_FRAME_RECORDS; k++)
+        cur[k].tracer = tr;
+      funcSource = funcName = NULL;
+      funcLine = 0;
     }
   };
 
@@ -229,32 +229,20 @@ public:
 
     \return first function level tracer
   */
-  static ProfileFuncLevelTracer *GetFirst(void)
-  {
-    return head;
-  }
+  static ProfileFuncLevelTracer *GetFirst(void) { return head; }
 
   /**
     Retrieves next function level tracer.
 
     \return next function level tracer, NULL if none
   */
-  ProfileFuncLevelTracer *GetNext(void)
-  {
-    return next;
-  }
+  ProfileFuncLevelTracer *GetNext(void) { return next; }
 
-  Function *FindFunction(unsigned addr)
-  {
-    return func.Find(addr);
-  }
+  Function *FindFunction(unsigned addr) { return func.Find(addr); }
 
-  Function *EnumFunction(unsigned index)
-  {
-    return func.Enumerate(index);
-  }
+  Function *EnumFunction(unsigned index) { return func.Enumerate(index); }
 
-private:
+  private:
   /// single stack entry
   struct StackEntry
   {
@@ -277,8 +265,8 @@ private:
   /// map of functions
   class FunctionMap
   {
-    FunctionMap(const FunctionMap&);
-    FunctionMap& operator=(const FunctionMap&);
+    FunctionMap(const FunctionMap &);
+    FunctionMap &operator=(const FunctionMap &);
 
     struct Entry
     {
@@ -292,10 +280,10 @@ private:
     };
 
     Entry *e;
-    unsigned alloc,used;
+    unsigned alloc, used;
     Entry *hash[HASH_SIZE];
 
-  public:
+public:
     FunctionMap(void);
     ~FunctionMap();
 
@@ -341,20 +329,20 @@ private:
 inline void ProfileFuncLevelTracer::UnsignedMap::Insert(unsigned val, int countAdd)
 {
   // in hash?
-  unsigned at=(val/16)%HASH_SIZE;
-  for (Entry *e=hash[at];e;e=e->next)
-    if (e->val==val)
+  unsigned at = (val / 16) % HASH_SIZE;
+  for (Entry *e = hash[at]; e; e = e->next)
+    if (e->val == val)
     {
-      e->count+=countAdd;
+      e->count += countAdd;
       return;
     }
-  _Insert(at,val,countAdd);
+  _Insert(at, val, countAdd);
 }
 
 inline ProfileFuncLevelTracer::Function *ProfileFuncLevelTracer::FunctionMap::Find(unsigned addr)
 {
-  for (Entry *e=hash[(addr/16)%HASH_SIZE];e;e=e->next)
-    if (e->funcPtr->addr==addr)
+  for (Entry *e = hash[(addr / 16) % HASH_SIZE]; e; e = e->next)
+    if (e->funcPtr->addr == addr)
       return e->funcPtr;
   return NULL;
 }

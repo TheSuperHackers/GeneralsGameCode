@@ -48,35 +48,30 @@ class Thing;
 
 class GrantUpgradeCreateModuleData : public CreateModuleData
 {
-public:
-	AsciiString		m_upgradeName;			///< name of the upgrade to be granted.
-	ObjectStatusMaskType m_exemptStatus; ///< do not execute if this status is set in the object
+  public:
+  AsciiString m_upgradeName; ///< name of the upgrade to be granted.
+  ObjectStatusMaskType m_exemptStatus; ///< do not execute if this status is set in the object
 
-	GrantUpgradeCreateModuleData();
-	static void buildFieldParse(MultiIniFieldParse& p);
+  GrantUpgradeCreateModuleData();
+  static void buildFieldParse(MultiIniFieldParse &p);
 };
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 class GrantUpgradeCreate : public CreateModule
 {
+  MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(GrantUpgradeCreate, "GrantUpgradeCreate");
+  MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA(GrantUpgradeCreate, GrantUpgradeCreateModuleData);
 
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( GrantUpgradeCreate, "GrantUpgradeCreate" );
-	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( GrantUpgradeCreate, GrantUpgradeCreateModuleData );
+  public:
+  GrantUpgradeCreate(Thing *thing, const ModuleData *moduleData);
+  // virtual destructor prototype provided by memory pool declaration
 
+  /// the create method
+  virtual void onCreate(void);
+  virtual void onBuildComplete(); ///< This is called when you are a finished game object
 
-public:
-
-	GrantUpgradeCreate( Thing *thing, const ModuleData* moduleData );
-	// virtual destructor prototype provided by memory pool declaration
-
-	/// the create method
-	virtual void onCreate( void );
-	virtual void onBuildComplete();	///< This is called when you are a finished game object
-
-protected:
-
+  protected:
 };
 
 #endif // __GRANTUPGRADECREATE_H_
-

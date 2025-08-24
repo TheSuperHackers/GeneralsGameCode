@@ -44,20 +44,19 @@ CWDumpEditView::~CWDumpEditView()
 {
 }
 
-
 BEGIN_MESSAGE_MAP(CWDumpEditView, CEditView)
-	//{{AFX_MSG_MAP(CWDumpEditView)
-		// NOTE - the ClassWizard will add and remove mapping macros here.
-	//}}AFX_MSG_MAP
+//{{AFX_MSG_MAP(CWDumpEditView)
+// NOTE - the ClassWizard will add and remove mapping macros here.
+//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
 // CWDumpEditView drawing
 
-void CWDumpEditView::OnDraw(CDC* pDC)
+void CWDumpEditView::OnDraw(CDC *pDC)
 {
-	CDocument* pDoc = GetDocument();
-	// TODO: add draw code here
+  CDocument *pDoc = GetDocument();
+  // TODO: add draw code here
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -66,79 +65,84 @@ void CWDumpEditView::OnDraw(CDC* pDC)
 #ifdef RTS_DEBUG
 void CWDumpEditView::AssertValid() const
 {
-	CEditView::AssertValid();
+  CEditView::AssertValid();
 }
 
-void CWDumpEditView::Dump(CDumpContext& dc) const
+void CWDumpEditView::Dump(CDumpContext &dc) const
 {
-	CEditView::Dump(dc);
+  CEditView::Dump(dc);
 }
-#endif //RTS_DEBUG
+#endif // RTS_DEBUG
 
 /////////////////////////////////////////////////////////////////////////////
 // CWDumpEditView message handlers
 
-void CWDumpEditView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
+void CWDumpEditView::OnUpdate(CView *pSender, LPARAM lHint, CObject *pHint)
 {
-	// TODO: Add your specialized code here and/or call the base class
-	CEdit &edit = GetEditCtrl();
-	edit.SetReadOnly(TRUE);
-	CWdumpDoc *doc= (CWdumpDoc *) GetDocument();
-	ChunkItem *item = doc->m_ChunkItem;
+  // TODO: Add your specialized code here and/or call the base class
+  CEdit &edit = GetEditCtrl();
+  edit.SetReadOnly(TRUE);
+  CWdumpDoc *doc = (CWdumpDoc *)GetDocument();
+  ChunkItem *item = doc->m_ChunkItem;
 
-	if(item == 0) {
-		edit.SetWindowText("Load a chunk file and select the chunk in the tree view to see it's hex data here.");
-		return; // no selected chunk item, leave a clear screen.
-	}
-	char *text = Build_Hex_Text((unsigned char *) item->Data, item->Length);
+  if (item == 0)
+  {
+    edit.SetWindowText("Load a chunk file and select the chunk in the tree view to see it's hex data here.");
+    return; // no selected chunk item, leave a clear screen.
+  }
+  char *text = Build_Hex_Text((unsigned char *)item->Data, item->Length);
 
-	edit.SetWindowText(text);
+  edit.SetWindowText(text);
 
-	delete text;
+  delete text;
 }
 
-
-char * CWDumpEditView::Build_Hex_Text(unsigned char * Source, int Length)
+char *CWDumpEditView::Build_Hex_Text(unsigned char *Source, int Length)
 {
-	if(Source == 0) {
-			char *c = new char[256];
-			sprintf(c, "This chunk is a wrapper chunk for other chunks. It's total length is %d", Length);
-			return c;
-	}
-	int per_line = 16;
+  if (Source == 0)
+  {
+    char *c = new char[256];
+    sprintf(c, "This chunk is a wrapper chunk for other chunks. It's total length is %d", Length);
+    return c;
+  }
+  int per_line = 16;
 
-	int lines = Length / per_line;
-	int buf_size = Length * 5 + per_line * 5;
+  int lines = Length / per_line;
+  int buf_size = Length * 5 + per_line * 5;
 
-	char *buffer = new char[buf_size];
-	char *dest = buffer;
+  char *buffer = new char[buf_size];
+  char *dest = buffer;
 
-	while(lines--) {
-		if(lines == 0) {
-			per_line = Length % per_line;
-		}
-		int counter = 0;
-		do {
-			sprintf(dest, "%02x ", Source[counter]);
-			dest += 3;
-		} while(++counter < per_line);
+  while (lines--)
+  {
+    if (lines == 0)
+    {
+      per_line = Length % per_line;
+    }
+    int counter = 0;
+    do
+    {
+      sprintf(dest, "%02x ", Source[counter]);
+      dest += 3;
+    } while (++counter < per_line);
 
-		*dest++ = ' ';
-		*dest++ = ' ';
+    *dest++ = ' ';
+    *dest++ = ' ';
 
-		counter = 0;
-		do {
-			char c = Source[counter];
-			if(c >= 32 && c <= 192)
-				*dest++ = c;
-			else
-				*dest++ = '.';
-		} while(++counter < per_line);
+    counter = 0;
+    do
+    {
+      char c = Source[counter];
+      if (c >= 32 && c <= 192)
+        *dest++ = c;
+      else
+        *dest++ = '.';
+    } while (++counter < per_line);
 
-		*dest++ = '\r';
-		*dest++ = '\n';
-		Source += per_line;
-	}
-	*dest = 0;
-	return buffer;
+    *dest++ = '\r';
+    *dest++ = '\n';
+    Source += per_line;
+  }
+  *dest = 0;
+  return buffer;
 }

@@ -30,10 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 
 #include "Common/GameAudio.h"
 #include "Common/MiscAudio.h"
@@ -46,7 +44,7 @@
 #include "GameClient/Drawable.h"
 #include "GameClient/Eva.h"
 #include "GameClient/GameText.h"
-#include "GameClient/InGameUI.h"  // useful for printing quick debug strings when we need to
+#include "GameClient/InGameUI.h" // useful for printing quick debug strings when we need to
 
 #include "GameLogic/ExperienceTracker.h"
 #include "GameLogic/Object.h"
@@ -60,174 +58,169 @@
 #include "GameLogic/Module/OCLUpdate.h"
 #include "GameLogic/Module/SabotageSupplyDropzoneCrateCollide.h"
 
-
-
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-SabotageSupplyDropzoneCrateCollide::SabotageSupplyDropzoneCrateCollide( Thing *thing, const ModuleData* moduleData ) : CrateCollide( thing, moduleData )
+SabotageSupplyDropzoneCrateCollide::SabotageSupplyDropzoneCrateCollide(Thing *thing, const ModuleData *moduleData) :
+    CrateCollide(thing, moduleData)
 {
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-SabotageSupplyDropzoneCrateCollide::~SabotageSupplyDropzoneCrateCollide( void )
+SabotageSupplyDropzoneCrateCollide::~SabotageSupplyDropzoneCrateCollide(void)
 {
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-Bool SabotageSupplyDropzoneCrateCollide::isValidToExecute( const Object *other ) const
+Bool SabotageSupplyDropzoneCrateCollide::isValidToExecute(const Object *other) const
 {
-	if( !CrateCollide::isValidToExecute(other) )
-	{
-		//Extend functionality.
-		return FALSE;
-	}
+  if (!CrateCollide::isValidToExecute(other))
+  {
+    // Extend functionality.
+    return FALSE;
+  }
 
-	if( other->isEffectivelyDead() )
-	{
-		//Can't sabotage dead structures
-		return FALSE;
-	}
+  if (other->isEffectivelyDead())
+  {
+    // Can't sabotage dead structures
+    return FALSE;
+  }
 
-	if( !other->isKindOf( KINDOF_FS_SUPPLY_DROPZONE ) )
-	{
-		//We can only sabotage supply dropzones.
-		return FALSE;
-	}
+  if (!other->isKindOf(KINDOF_FS_SUPPLY_DROPZONE))
+  {
+    // We can only sabotage supply dropzones.
+    return FALSE;
+  }
 
-	if (other->getStatusBits().testForAny(MAKE_OBJECT_STATUS_MASK2(OBJECT_STATUS_UNDER_CONSTRUCTION, OBJECT_STATUS_SOLD)))
-	{
-		// TheSuperHackers @bugfix Stubbjax 03/08/2025 Can't enter something being sold or under construction.
-		return FALSE;
-	}
+  if (other->getStatusBits().testForAny(MAKE_OBJECT_STATUS_MASK2(OBJECT_STATUS_UNDER_CONSTRUCTION, OBJECT_STATUS_SOLD)))
+  {
+    // TheSuperHackers @bugfix Stubbjax 03/08/2025 Can't enter something being sold or under construction.
+    return FALSE;
+  }
 
-	Relationship r = getObject()->getRelationship( other );
-	if( r != ENEMIES )
-	{
-		//Can only sabotage enemy buildings.
-		return FALSE;
-	}
+  Relationship r = getObject()->getRelationship(other);
+  if (r != ENEMIES)
+  {
+    // Can only sabotage enemy buildings.
+    return FALSE;
+  }
 
-	return TRUE;
+  return TRUE;
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-Bool SabotageSupplyDropzoneCrateCollide::executeCrateBehavior( Object *other )
+Bool SabotageSupplyDropzoneCrateCollide::executeCrateBehavior(Object *other)
 {
-	//Check to make sure that the other object is also the goal object in the AIUpdateInterface
-	//in order to prevent an unintentional conversion simply by having the terrorist walk too close
-	//to it.
-	//Assume ai is valid because CrateCollide::isValidToExecute(other) checks it.
-	Object *obj = getObject();
-	AIUpdateInterface* ai = obj->getAIUpdateInterface();
-	if (ai && ai->getGoalObject() != other)
-	{
-		return false;
-	}
+  // Check to make sure that the other object is also the goal object in the AIUpdateInterface
+  // in order to prevent an unintentional conversion simply by having the terrorist walk too close
+  // to it.
+  // Assume ai is valid because CrateCollide::isValidToExecute(other) checks it.
+  Object *obj = getObject();
+  AIUpdateInterface *ai = obj->getAIUpdateInterface();
+  if (ai && ai->getGoalObject() != other)
+  {
+    return false;
+  }
 
-	TheRadar->tryInfiltrationEvent( other );
+  TheRadar->tryInfiltrationEvent(other);
 
-  doSabotageFeedbackFX( other, CrateCollide::SAB_VICTIM_DROP_ZONE );
+  doSabotageFeedbackFX(other, CrateCollide::SAB_VICTIM_DROP_ZONE);
 
-	//Reset the timer on the dropzone. Um... only the dropzone has an OCLUpdate and one, so
-	//we can "assume" it's going to be safe. Otherwise, we'll have to write code to search for
-	//a specific OCLUpdate.
-	static NameKeyType key_ocl = NAMEKEY( "OCLUpdate" );
-	OCLUpdate *update = (OCLUpdate*)other->findUpdateModule( key_ocl );
-	if( update )
-	{
-		update->resetTimer();
-	}
+  // Reset the timer on the dropzone. Um... only the dropzone has an OCLUpdate and one, so
+  // we can "assume" it's going to be safe. Otherwise, we'll have to write code to search for
+  // a specific OCLUpdate.
+  static NameKeyType key_ocl = NAMEKEY("OCLUpdate");
+  OCLUpdate *update = (OCLUpdate *)other->findUpdateModule(key_ocl);
+  if (update)
+  {
+    update->resetTimer();
+  }
 
-	//Steal cash!
-	Money *targetMoney = other->getControllingPlayer()->getMoney();
-	Money *objectMoney = obj->getControllingPlayer()->getMoney();
-	if( targetMoney && objectMoney )
-	{
-		UnsignedInt cash = targetMoney->countMoney();
-		UnsignedInt desiredAmount = getSabotageSupplyDropzoneCrateCollideModuleData()->m_stealCashAmount;
-		//Check to see if they have the cash, otherwise, take the remainder!
-		cash = min( desiredAmount, cash );
-		if( cash > 0 )
-		{
-			//Steal the cash
-			targetMoney->withdraw( cash );
-			objectMoney->deposit( cash );
-			Player* controller = obj->getControllingPlayer();
-			if (controller)
-				controller->getScoreKeeper()->addMoneyEarned( cash );
+  // Steal cash!
+  Money *targetMoney = other->getControllingPlayer()->getMoney();
+  Money *objectMoney = obj->getControllingPlayer()->getMoney();
+  if (targetMoney && objectMoney)
+  {
+    UnsignedInt cash = targetMoney->countMoney();
+    UnsignedInt desiredAmount = getSabotageSupplyDropzoneCrateCollideModuleData()->m_stealCashAmount;
+    // Check to see if they have the cash, otherwise, take the remainder!
+    cash = min(desiredAmount, cash);
+    if (cash > 0)
+    {
+      // Steal the cash
+      targetMoney->withdraw(cash);
+      objectMoney->deposit(cash);
+      Player *controller = obj->getControllingPlayer();
+      if (controller)
+        controller->getScoreKeeper()->addMoneyEarned(cash);
 
-			//Play the "cash stolen" EVA event if the local player is the victim!
-			if( other->isLocallyControlled() )
-			{
-				TheEva->setShouldPlay( EVA_CashStolen );
-			}
+      // Play the "cash stolen" EVA event if the local player is the victim!
+      if (other->isLocallyControlled())
+      {
+        TheEva->setShouldPlay(EVA_CashStolen);
+      }
 
-			//Display cash income floating over the about to be deleted saboteur.
-			UnicodeString moneyString;
-			moneyString.format( TheGameText->fetch( "GUI:AddCash" ), cash );
-			Coord3D pos;
-			pos.set( obj->getPosition() );
-			pos.z += 20.0f; //add a little z to make it show up above the unit.
-			TheInGameUI->addFloatingText( moneyString, &pos, GameMakeColor( 0, 255, 0, 255 ) );
+      // Display cash income floating over the about to be deleted saboteur.
+      UnicodeString moneyString;
+      moneyString.format(TheGameText->fetch("GUI:AddCash"), cash);
+      Coord3D pos;
+      pos.set(obj->getPosition());
+      pos.z += 20.0f; // add a little z to make it show up above the unit.
+      TheInGameUI->addFloatingText(moneyString, &pos, GameMakeColor(0, 255, 0, 255));
 
-			//Display cash lost floating over the target
-			moneyString.format( TheGameText->fetch( "GUI:LoseCash" ), cash );
-			pos.set( other->getPosition() );
-			pos.z += 30.0f; //add a little z to make it show up above the unit.
-			TheInGameUI->addFloatingText( moneyString, &pos, GameMakeColor( 255, 0, 0, 255 ) );
-		}
-		else
-		{
-			if( other->isLocallyControlled() )
-			{
-				TheEva->setShouldPlay( EVA_BuildingSabotaged );
-			}
-		}
-	}
+      // Display cash lost floating over the target
+      moneyString.format(TheGameText->fetch("GUI:LoseCash"), cash);
+      pos.set(other->getPosition());
+      pos.z += 30.0f; // add a little z to make it show up above the unit.
+      TheInGameUI->addFloatingText(moneyString, &pos, GameMakeColor(255, 0, 0, 255));
+    }
+    else
+    {
+      if (other->isLocallyControlled())
+      {
+        TheEva->setShouldPlay(EVA_BuildingSabotaged);
+      }
+    }
+  }
 
-
-	return TRUE;
+  return TRUE;
 }
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void SabotageSupplyDropzoneCrateCollide::crc( Xfer *xfer )
+void SabotageSupplyDropzoneCrateCollide::crc(Xfer *xfer)
 {
+  // extend base class
+  CrateCollide::crc(xfer);
 
-	// extend base class
-	CrateCollide::crc( xfer );
-
-}  // end crc
+} // end crc
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void SabotageSupplyDropzoneCrateCollide::xfer( Xfer *xfer )
+void SabotageSupplyDropzoneCrateCollide::xfer(Xfer *xfer)
 {
+  // version
+  XferVersion currentVersion = 1;
+  XferVersion version = currentVersion;
+  xfer->xferVersion(&version, currentVersion);
 
-	// version
-	XferVersion currentVersion = 1;
-	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+  // extend base class
+  CrateCollide::xfer(xfer);
 
-	// extend base class
-	CrateCollide::xfer( xfer );
-
-}  // end xfer
+} // end xfer
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void SabotageSupplyDropzoneCrateCollide::loadPostProcess( void )
+void SabotageSupplyDropzoneCrateCollide::loadPostProcess(void)
 {
+  // extend base class
+  CrateCollide::loadPostProcess();
 
-	// extend base class
-	CrateCollide::loadPostProcess();
-
-}  // end loadPostProcess
+} // end loadPostProcess

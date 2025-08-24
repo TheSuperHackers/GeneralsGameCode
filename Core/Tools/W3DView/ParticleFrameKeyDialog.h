@@ -30,49 +30,47 @@
 
 class ParticleFrameKeyDialogClass : public CDialog
 {
-// Construction
-public:
-	ParticleFrameKeyDialogClass(float frame,CWnd* pParent = NULL);   // standard constructor
+  // Construction
+  public:
+  ParticleFrameKeyDialogClass(float frame, CWnd *pParent = NULL); // standard constructor
 
-// Dialog Data
-	//{{AFX_DATA(ParticleFrameKeyDialogClass)
-	enum { IDD = IDD_PARTICLE_FRAME_KEY };
-	CSpinButtonCtrl	m_FrameSpin;
-	//}}AFX_DATA
+  // Dialog Data
+  //{{AFX_DATA(ParticleFrameKeyDialogClass)
+  enum
+  {
+    IDD = IDD_PARTICLE_FRAME_KEY
+  };
+  CSpinButtonCtrl m_FrameSpin;
+  //}}AFX_DATA
 
+  // Overrides
+  // ClassWizard generated virtual function overrides
+  //{{AFX_VIRTUAL(ParticleFrameKeyDialogClass)
+  protected:
+  virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
+  virtual BOOL OnNotify(WPARAM wParam, LPARAM lParam, LRESULT *pResult);
+  //}}AFX_VIRTUAL
 
-// Overrides
-	// ClassWizard generated virtual function overrides
-	//{{AFX_VIRTUAL(ParticleFrameKeyDialogClass)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
-	virtual BOOL OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult);
-	//}}AFX_VIRTUAL
+  // Implementation
+  protected:
+  // Generated message map functions
+  //{{AFX_MSG(ParticleFrameKeyDialogClass)
+  virtual BOOL OnInitDialog();
+  virtual void OnOK();
+  //}}AFX_MSG
+  DECLARE_MESSAGE_MAP()
 
-// Implementation
-protected:
+  public:
+  /////////////////////////////////////////////////////////////
+  //	Public methods
+  /////////////////////////////////////////////////////////////
+  float Get_Frame(void) const { return m_Frame; }
 
-	// Generated message map functions
-	//{{AFX_MSG(ParticleFrameKeyDialogClass)
-	virtual BOOL OnInitDialog();
-	virtual void OnOK();
-	//}}AFX_MSG
-	DECLARE_MESSAGE_MAP()
-
-public:
-
-	/////////////////////////////////////////////////////////////
-	//	Public methods
-	/////////////////////////////////////////////////////////////
-	float					Get_Frame (void) const { return m_Frame; }
-
-private:
-
-	/////////////////////////////////////////////////////////////
-	//	Private member data
-	/////////////////////////////////////////////////////////////
-	float					m_Frame;
-
+  private:
+  /////////////////////////////////////////////////////////////
+  //	Private member data
+  /////////////////////////////////////////////////////////////
+  float m_Frame;
 };
 
 //{{AFX_INSERT_LOCATION}}

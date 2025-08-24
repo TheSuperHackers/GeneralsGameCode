@@ -54,43 +54,29 @@
 //         Externals
 //----------------------------------------------------------------------------
 
-
-
 //----------------------------------------------------------------------------
 //         Defines
 //----------------------------------------------------------------------------
-
-
 
 //----------------------------------------------------------------------------
 //         Private Types
 //----------------------------------------------------------------------------
 
-
-
 //----------------------------------------------------------------------------
 //         Private Data
 //----------------------------------------------------------------------------
-
-
 
 //----------------------------------------------------------------------------
 //         Public Data
 //----------------------------------------------------------------------------
 
-
-
 //----------------------------------------------------------------------------
 //         Private Prototypes
 //----------------------------------------------------------------------------
 
-
-
 //----------------------------------------------------------------------------
 //         Private Functions
 //----------------------------------------------------------------------------
-
-
 
 //----------------------------------------------------------------------------
 //         Public Functions
@@ -100,10 +86,8 @@
 // W3DDebugDisplay::W3DDebugDisplay
 //============================================================================
 
-W3DDebugDisplay::W3DDebugDisplay()
-: m_displayString(NULL)
+W3DDebugDisplay::W3DDebugDisplay() : m_displayString(NULL)
 {
-
 }
 
 //============================================================================
@@ -112,52 +96,51 @@ W3DDebugDisplay::W3DDebugDisplay()
 
 W3DDebugDisplay::~W3DDebugDisplay()
 {
-	if ( m_displayString )
-	{
-		TheDisplayStringManager->freeDisplayString( m_displayString );
-	}
+  if (m_displayString)
+  {
+    TheDisplayStringManager->freeDisplayString(m_displayString);
+  }
 }
 
 //============================================================================
 // W3DDebugDisplay::init
 //============================================================================
 
-void W3DDebugDisplay::init( void )
+void W3DDebugDisplay::init(void)
 {
-	m_displayString = TheDisplayStringManager->newDisplayString();
+  m_displayString = TheDisplayStringManager->newDisplayString();
 }
 
 //============================================================================
 // W3DDebugDisplay::drawText
 //============================================================================
 
-void W3DDebugDisplay::drawText( Int x, Int y, Char *text )
+void W3DDebugDisplay::drawText(Int x, Int y, Char *text)
 {
-	if ( m_font == NULL || m_displayString == NULL )
-	{
-		return ;
-	}
+  if (m_font == NULL || m_displayString == NULL)
+  {
+    return;
+  }
 
-	::Color textColor = GameMakeColor( 255, 255, 255, 255 );
-	::Color dropColor = GameMakeColor( 0, 0, 0, 255 );
+  ::Color textColor = GameMakeColor(255, 255, 255, 255);
+  ::Color dropColor = GameMakeColor(0, 0, 0, 255);
 
-	UnicodeString unicode;
+  UnicodeString unicode;
 
-	unicode.translate( AsciiString( text ) );
-	m_displayString->setText( unicode );
-	m_displayString->draw( x*m_fontWidth, 13 + y*m_fontHeight, textColor, dropColor );
+  unicode.translate(AsciiString(text));
+  m_displayString->setText(unicode);
+  m_displayString->draw(x * m_fontWidth, 13 + y * m_fontHeight, textColor, dropColor);
 }
 
 //============================================================================
 // W3DDebugDisplay::setFont
 //============================================================================
 
-void W3DDebugDisplay::setFont( GameFont *font )
+void W3DDebugDisplay::setFont(GameFont *font)
 {
-	m_font = font;
-	if ( m_displayString )
-	{
-		m_displayString->setFont( m_font );
-	}
+  m_font = font;
+  if (m_displayString)
+  {
+    m_displayString->setFont(m_font);
+  }
 }
-

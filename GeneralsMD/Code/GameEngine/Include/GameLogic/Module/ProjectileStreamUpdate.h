@@ -40,7 +40,7 @@ class Vector3;
 
 enum
 {
-	MAX_PROJECTILE_STREAM = 20
+  MAX_PROJECTILE_STREAM = 20
 };
 
 //-------------------------------------------------------------------------------------------------
@@ -48,36 +48,35 @@ enum
 //-------------------------------------------------------------------------------------------------
 class ProjectileStreamUpdate : public UpdateModule
 {
+  MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(ProjectileStreamUpdate, "ProjectileStreamUpdate")
+  MAKE_STANDARD_MODULE_MACRO(ProjectileStreamUpdate);
 
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( ProjectileStreamUpdate, "ProjectileStreamUpdate" )
-	MAKE_STANDARD_MODULE_MACRO( ProjectileStreamUpdate );
+  public:
+  ProjectileStreamUpdate(Thing *thing, const ModuleData *moduleData);
+  // virtual destructor prototype provided by memory pool declaration
 
-public:
+  void addProjectile(
+      ObjectID sourceID,
+      ObjectID newID,
+      ObjectID victimID,
+      const Coord3D *victimPos); ///< This projectile was just shot, so keep track of it.
+  void getAllPoints(Vector3 *points, Int *count); ///< unroll circlular array and write down all projectile positions
+  void setPosition(const Coord3D *newPosition); ///< I need to exist at the place I want to draw since only (near) on
+                                                ///< screen Drawables get updated
 
-	ProjectileStreamUpdate( Thing *thing, const ModuleData* moduleData );
-	// virtual destructor prototype provided by memory pool declaration
+  virtual UpdateSleepTime update();
 
-	void addProjectile( ObjectID sourceID, ObjectID newID, ObjectID victimID, const Coord3D *victimPos );	///< This projectile was just shot, so keep track of it.
-	void getAllPoints( Vector3 *points, Int *count );					///< unroll circlular array and write down all projectile positions
-	void setPosition( const Coord3D *newPosition );						///< I need to exist at the place I want to draw since only (near) on screen Drawables get updated
+  protected:
+  void cullFrontOfList();
+  Bool considerDying();
 
-	virtual UpdateSleepTime update();
+  ObjectID m_projectileIDs[MAX_PROJECTILE_STREAM];
+  Int m_nextFreeIndex;
+  Int m_firstValidIndex;
+  ObjectID m_owningObject;
 
-protected:
-
-
-	void cullFrontOfList();
-	Bool considerDying();
-
-	ObjectID m_projectileIDs[MAX_PROJECTILE_STREAM];
-	Int m_nextFreeIndex;
-	Int m_firstValidIndex;
-	ObjectID m_owningObject;
-
-	ObjectID m_targetObject;///< Need to insert a hole if target changes, so track target ID and target position
-	Coord3D m_targetPosition;
+  ObjectID m_targetObject; ///< Need to insert a hole if target changes, so track target ID and target position
+  Coord3D m_targetPosition;
 };
 
-
 #endif
-

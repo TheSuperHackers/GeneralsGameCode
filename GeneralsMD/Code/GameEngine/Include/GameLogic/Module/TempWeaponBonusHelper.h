@@ -35,38 +35,34 @@
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/ObjectHelper.h"
 
-enum WeaponBonusConditionType CPP_11(: Int);
+enum WeaponBonusConditionType CPP_11( : Int);
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 class TempWeaponBonusHelperModuleData : public ModuleData
 {
-
 };
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 class TempWeaponBonusHelper : public ObjectHelper
 {
+  MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA(TempWeaponBonusHelper, TempWeaponBonusHelperModuleData)
+  MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(TempWeaponBonusHelper, "TempWeaponBonusHelper")
 
-	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( TempWeaponBonusHelper, TempWeaponBonusHelperModuleData )
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(TempWeaponBonusHelper, "TempWeaponBonusHelper" )
+  public:
+  TempWeaponBonusHelper(Thing *thing, const ModuleData *modData);
+  // virtual destructor prototype provided by memory pool object
 
-public:
+  virtual DisabledMaskType getDisabledTypesToProcess() const { return DISABLEDMASK_ALL; }
+  virtual UpdateSleepTime update();
 
-	TempWeaponBonusHelper( Thing *thing, const ModuleData *modData );
-	// virtual destructor prototype provided by memory pool object
+  void doTempWeaponBonus(WeaponBonusConditionType status, UnsignedInt duration);
 
-	virtual DisabledMaskType getDisabledTypesToProcess() const { return DISABLEDMASK_ALL; }
-	virtual UpdateSleepTime update();
-
-	void doTempWeaponBonus( WeaponBonusConditionType status, UnsignedInt duration );
-
-protected:
-	WeaponBonusConditionType m_currentBonus;
-	UnsignedInt m_frameToRemove;
-	void clearTempWeaponBonus();
+  protected:
+  WeaponBonusConditionType m_currentBonus;
+  UnsignedInt m_frameToRemove;
+  void clearTempWeaponBonus();
 };
 
-
-#endif  // end __TempWeaponBonusHelper_H_
+#endif // end __TempWeaponBonusHelper_H_

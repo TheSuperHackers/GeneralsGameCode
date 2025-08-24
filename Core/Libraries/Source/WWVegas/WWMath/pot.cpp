@@ -52,30 +52,32 @@
  *========================================================================*/
 int Find_POT(int val)
 {
-	// clear out the recorded position and the recorded count
-	int recpos = 0;
-	int reccnt = 0;
+  // clear out the recorded position and the recorded count
+  int recpos = 0;
+  int reccnt = 0;
 
-	// walk through the value shifting off bits and record the
-	// position of the highest bit, and whether we have found
-	// more than one bit.
-	for (int lp = 0; val; lp++) {
-		if (val & 1) {
-			recpos = lp;
-			reccnt++;
-		}
-		val >>= 1;
-	}
-	// if we have not found more than one bit then the number
-	// was the power of two so return it.
-	if (reccnt < 2) {
-		return( 1 << recpos);
-	}
-	// if we found more than one bit, then the number needs to
-	// be rounded up to the next highest power of 2.
-	return( 1 << (recpos + 1));
+  // walk through the value shifting off bits and record the
+  // position of the highest bit, and whether we have found
+  // more than one bit.
+  for (int lp = 0; val; lp++)
+  {
+    if (val & 1)
+    {
+      recpos = lp;
+      reccnt++;
+    }
+    val >>= 1;
+  }
+  // if we have not found more than one bit then the number
+  // was the power of two so return it.
+  if (reccnt < 2)
+  {
+    return (1 << recpos);
+  }
+  // if we found more than one bit, then the number needs to
+  // be rounded up to the next highest power of 2.
+  return (1 << (recpos + 1));
 }
-
 
 /**************************************************************************
  * Find_POT_Log2 -- finds log2 of closest inclusive power of 2 to a value *
@@ -91,28 +93,29 @@ int Find_POT(int val)
  *========================================================================*/
 unsigned int Find_POT_Log2(unsigned int val)
 {
-	// clear out the recorded position and the recorded count
-	int recpos = 0;
-	int reccnt = 0;
+  // clear out the recorded position and the recorded count
+  int recpos = 0;
+  int reccnt = 0;
 
-	// walk through the value shifting off bits and record the
-	// position of the highest bit, and whether we have found
-	// more than one bit.
-	for (int lp = 0; val; lp++) {
-		if (val & 1) {
-			recpos = lp;
-			reccnt++;
-		}
-		val >>= 1;
-	}
-	// if we have not found more than one bit then the number
-	// was the power of two so return it.
-	if (reccnt < 2) {
-		return recpos;
-	}
-	// if we found more than one bit, then the number needs to
-	// be rounded up to the next highest power of 2.
-	return recpos + 1;
+  // walk through the value shifting off bits and record the
+  // position of the highest bit, and whether we have found
+  // more than one bit.
+  for (int lp = 0; val; lp++)
+  {
+    if (val & 1)
+    {
+      recpos = lp;
+      reccnt++;
+    }
+    val >>= 1;
+  }
+  // if we have not found more than one bit then the number
+  // was the power of two so return it.
+  if (reccnt < 2)
+  {
+    return recpos;
+  }
+  // if we found more than one bit, then the number needs to
+  // be rounded up to the next highest power of 2.
+  return recpos + 1;
 }
-
-

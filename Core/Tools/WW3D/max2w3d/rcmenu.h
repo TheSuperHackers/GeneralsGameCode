@@ -52,36 +52,37 @@ class W3DUtilityClass;
 **********************************************************************************************/
 class RCMenuClass : public RightClickMenu
 {
+  public:
+  RCMenuClass() { Installed = FALSE; }
+  ~RCMenuClass() {}
 
-public:
+  void Bind(Interface *ipi, W3DUtilityClass *eni)
+  {
+    InterfacePtr = ipi;
+    UtilityPtr = eni;
+  }
 
-	RCMenuClass() {Installed=FALSE;}
-	~RCMenuClass() {}
+  void Init(RightClickMenuManager *manager, HWND hWnd, IPoint2 m);
+  void Selected(UINT id);
+  void Toggle_Hierarchy(INode *node);
+  void Toggle_Geometry(INode *node);
 
-	void Bind(Interface * ipi, W3DUtilityClass * eni) { InterfacePtr = ipi; UtilityPtr = eni; }
+  public:
+  BOOL Installed;
 
-	void Init(RightClickMenuManager* manager, HWND hWnd, IPoint2 m);
-	void Selected(UINT id);
-	void Toggle_Hierarchy(INode * node);
-	void Toggle_Geometry(INode * node);
+  private:
+  Interface *InterfacePtr;
+  W3DUtilityClass *UtilityPtr;
+  INode *SelNode;
 
-public:
-
-	BOOL Installed;
-
-private:
-
-	Interface *				InterfacePtr;
-	W3DUtilityClass *		UtilityPtr;
-	INode *					SelNode;
-
-	enum {
-		MENU_SEPARATOR = 0,
-		MENU_TOGGLE_HIERARCHY,
-		MENU_TOGGLE_GEOMETRY,
-		MENU_NODE_NAME,
-		MENU_NODE_POINTER
-	};
+  enum
+  {
+    MENU_SEPARATOR = 0,
+    MENU_TOGGLE_HIERARCHY,
+    MENU_TOGGLE_GEOMETRY,
+    MENU_NODE_NAME,
+    MENU_NODE_POINTER
+  };
 };
 
 extern RCMenuClass TheRCMenu;

@@ -22,7 +22,6 @@
 //																																						//
 ////////////////////////////////////////////////////////////////////////////////
 
-
 #pragma once
 
 #include "Common/MessageStream.h"
@@ -31,146 +30,155 @@
 class File;
 
 /**
-  * The ReplayGameInfo class holds information about the replay game and
-	* the contents of its slot list for reconstructing multiplayer games.
-	*/
+ * The ReplayGameInfo class holds information about the replay game and
+ * the contents of its slot list for reconstructing multiplayer games.
+ */
 class ReplayGameInfo : public GameInfo
 {
-private:
-	GameSlot m_ReplaySlot[MAX_SLOTS];
+  private:
+  GameSlot m_ReplaySlot[MAX_SLOTS];
 
-public:
-	ReplayGameInfo()
-	{
-		for (Int i = 0; i< MAX_SLOTS; ++i)
-			setSlotPointer(i, &m_ReplaySlot[i]);
-	}
+  public:
+  ReplayGameInfo()
+  {
+    for (Int i = 0; i < MAX_SLOTS; ++i)
+      setSlotPointer(i, &m_ReplaySlot[i]);
+  }
 };
 
-enum RecorderModeType CPP_11(: Int) {
-	RECORDERMODETYPE_RECORD,
-	RECORDERMODETYPE_PLAYBACK,
-	RECORDERMODETYPE_SIMULATION_PLAYBACK, // Play back replay without any graphics
-	RECORDERMODETYPE_NONE // this is a valid state to be in on the shell map, or in saved games
+enum RecorderModeType CPP_11( : Int){
+  RECORDERMODETYPE_RECORD,
+  RECORDERMODETYPE_PLAYBACK,
+  RECORDERMODETYPE_SIMULATION_PLAYBACK, // Play back replay without any graphics
+  RECORDERMODETYPE_NONE // this is a valid state to be in on the shell map, or in saved games
 };
 
 class CRCInfo;
 
-class RecorderClass : public SubsystemInterface {
-public:
-	struct ReplayHeader;
+class RecorderClass : public SubsystemInterface
+{
+  public:
+  struct ReplayHeader;
 
-public:
-	RecorderClass();																	///< Constructor.
-	virtual ~RecorderClass();													///< Destructor.
+  public:
+  RecorderClass(); ///< Constructor.
+  virtual ~RecorderClass(); ///< Destructor.
 
-	void init();																			///< Initialize TheRecorder.
-	void reset();																			///< Reset the state of TheRecorder.
-	void update();																		///< General purpose update function.
+  void init(); ///< Initialize TheRecorder.
+  void reset(); ///< Reset the state of TheRecorder.
+  void update(); ///< General purpose update function.
 
-	// Methods dealing with recording.
-	void updateRecord();															///< The update function for recording.
+  // Methods dealing with recording.
+  void updateRecord(); ///< The update function for recording.
 
-	// Methods dealing with playback.
-	void updatePlayback();														///< The update function for playing back a file.
-	Bool playbackFile(AsciiString filename);					///< Starts playback of the specified file.
-	Bool replayMatchesGameVersion(AsciiString filename); ///< Returns true if the playback is a valid playback file for this version.
-	static Bool replayMatchesGameVersion(const ReplayHeader& header); ///< Returns true if the playback is a valid playback file for this version.
-	AsciiString getCurrentReplayFilename( void );			///< valid during playback only
-	UnsignedInt getPlaybackFrameCount() const { return m_playbackFrameCount; }			///< valid during playback only
-	void stopPlayback();															///< Stops playback.  Its fine to call this even if not playing back a file.
-	Bool simulateReplay(AsciiString filename);
+  // Methods dealing with playback.
+  void updatePlayback(); ///< The update function for playing back a file.
+  Bool playbackFile(AsciiString filename); ///< Starts playback of the specified file.
+  Bool replayMatchesGameVersion(
+      AsciiString filename); ///< Returns true if the playback is a valid playback file for this version.
+  static Bool replayMatchesGameVersion(
+      const ReplayHeader &header); ///< Returns true if the playback is a valid playback file for this version.
+  AsciiString getCurrentReplayFilename(void); ///< valid during playback only
+  UnsignedInt getPlaybackFrameCount() const { return m_playbackFrameCount; } ///< valid during playback only
+  void stopPlayback(); ///< Stops playback.  Its fine to call this even if not playing back a file.
+  Bool simulateReplay(AsciiString filename);
 #if defined(RTS_DEBUG)
-	Bool analyzeReplay( AsciiString filename );
+  Bool analyzeReplay(AsciiString filename);
 #endif
-	Bool isPlaybackInProgress() const;
+  Bool isPlaybackInProgress() const;
 
-public:
-	void handleCRCMessage(UnsignedInt newCRC, Int playerIndex, Bool fromPlayback);
-protected:
-	CRCInfo *m_crcInfo;
-public:
+  public:
+  void handleCRCMessage(UnsignedInt newCRC, Int playerIndex, Bool fromPlayback);
 
-	// read in info relating to a replay, conditionally setting up m_file for playback
-	struct ReplayHeader
-	{
-		AsciiString filename;
-		Bool forPlayback;
-		UnicodeString replayName;
-		SYSTEMTIME timeVal;
-		UnicodeString versionString;
-		UnicodeString versionTimeString;
-		UnsignedInt versionNumber;
-		UnsignedInt exeCRC;
-		UnsignedInt iniCRC;
-		time_t startTime;
-		time_t endTime;
-		UnsignedInt frameCount;
-		Bool quitEarly;
-		Bool desyncGame;
-		Bool playerDiscons[MAX_SLOTS];
-		AsciiString gameOptions;
-		Int localPlayerIndex;
-	};
-	Bool readReplayHeader( ReplayHeader& header );
+  protected:
+  CRCInfo *m_crcInfo;
 
-	RecorderModeType getMode();												///< Returns the current operating mode.
-	Bool isPlaybackMode() const { return m_mode == RECORDERMODETYPE_PLAYBACK || m_mode == RECORDERMODETYPE_SIMULATION_PLAYBACK; }
-	void initControls();															///< Show or Hide the Replay controls
+  public:
+  // read in info relating to a replay, conditionally setting up m_file for playback
+  struct ReplayHeader
+  {
+    AsciiString filename;
+    Bool forPlayback;
+    UnicodeString replayName;
+    SYSTEMTIME timeVal;
+    UnicodeString versionString;
+    UnicodeString versionTimeString;
+    UnsignedInt versionNumber;
+    UnsignedInt exeCRC;
+    UnsignedInt iniCRC;
+    time_t startTime;
+    time_t endTime;
+    UnsignedInt frameCount;
+    Bool quitEarly;
+    Bool desyncGame;
+    Bool playerDiscons[MAX_SLOTS];
+    AsciiString gameOptions;
+    Int localPlayerIndex;
+  };
+  Bool readReplayHeader(ReplayHeader &header);
 
-	AsciiString getReplayDir();												///< Returns the directory that holds the replay files.
-	static AsciiString getReplayExtention();									///< Returns the file extention for replay files.
-	AsciiString getLastReplayFileName();							///< Returns the filename used for the default replay.
+  RecorderModeType getMode(); ///< Returns the current operating mode.
+  Bool isPlaybackMode() const
+  {
+    return m_mode == RECORDERMODETYPE_PLAYBACK || m_mode == RECORDERMODETYPE_SIMULATION_PLAYBACK;
+  }
+  void initControls(); ///< Show or Hide the Replay controls
 
-	GameInfo *getGameInfo( void ) { return &m_gameInfo; }	///< Returns the slot list for playback game start
+  AsciiString getReplayDir(); ///< Returns the directory that holds the replay files.
+  static AsciiString getReplayExtention(); ///< Returns the file extention for replay files.
+  AsciiString getLastReplayFileName(); ///< Returns the filename used for the default replay.
 
-	Bool isMultiplayer( void );												///< is this a multiplayer game (record OR playback)?
+  GameInfo *getGameInfo(void) { return &m_gameInfo; } ///< Returns the slot list for playback game start
 
-	Int getGameMode( void ) { return m_originalGameMode; }
+  Bool isMultiplayer(void); ///< is this a multiplayer game (record OR playback)?
 
-	void logPlayerDisconnect(UnicodeString player, Int slot);
-	void logCRCMismatch( void );
-	Bool sawCRCMismatch() const;
-	void cleanUpReplayFile( void );										///< after a crash, send replay/debug info to a central repository
+  Int getGameMode(void) { return m_originalGameMode; }
 
-	void stopRecording();															///< Stop recording and close m_file.
-protected:
-	void startRecording(GameDifficulty diff, Int originalGameMode, Int rankPoints, Int maxFPS);					///< Start recording to m_file.
-	void writeToFile(GameMessage *msg);								///< Write this GameMessage to m_file.
+  void logPlayerDisconnect(UnicodeString player, Int slot);
+  void logCRCMismatch(void);
+  Bool sawCRCMismatch() const;
+  void cleanUpReplayFile(void); ///< after a crash, send replay/debug info to a central repository
 
-	void logGameStart(AsciiString options);
-	void logGameEnd( void );
+  void stopRecording(); ///< Stop recording and close m_file.
+  protected:
+  void startRecording(GameDifficulty diff, Int originalGameMode, Int rankPoints,
+                      Int maxFPS); ///< Start recording to m_file.
+  void writeToFile(GameMessage *msg); ///< Write this GameMessage to m_file.
 
-	AsciiString readAsciiString();										///< Read the next string from m_file using ascii characters.
-	UnicodeString readUnicodeString();								///< Read the next string from m_file using unicode characters.
-	void readNextFrame();															///< Read the next frame number to execute a command on.
-	void appendNextCommand();													///< Read the next GameMessage and append it to TheCommandList.
-	void writeArgument(GameMessageArgumentDataType type, const GameMessageArgumentType arg);
-	void readArgument(GameMessageArgumentDataType type, GameMessage *msg);
+  void logGameStart(AsciiString options);
+  void logGameEnd(void);
 
-	struct CullBadCommandsResult
-	{
-		CullBadCommandsResult() : hasClearGameDataMessage(false) {}
-		Bool hasClearGameDataMessage;
-	};
+  AsciiString readAsciiString(); ///< Read the next string from m_file using ascii characters.
+  UnicodeString readUnicodeString(); ///< Read the next string from m_file using unicode characters.
+  void readNextFrame(); ///< Read the next frame number to execute a command on.
+  void appendNextCommand(); ///< Read the next GameMessage and append it to TheCommandList.
+  void writeArgument(GameMessageArgumentDataType type, const GameMessageArgumentType arg);
+  void readArgument(GameMessageArgumentDataType type, GameMessage *msg);
 
-	CullBadCommandsResult cullBadCommands(); ///< prevent the user from giving mouse commands that he shouldn't be able to do during playback.
+  struct CullBadCommandsResult
+  {
+    CullBadCommandsResult() : hasClearGameDataMessage(false) {}
+    Bool hasClearGameDataMessage;
+  };
 
-	File* m_file;
-	AsciiString m_fileName;
-	Int m_currentFilePosition;
-	RecorderModeType m_mode;
-	AsciiString m_currentReplayFilename;							///< valid during playback only
-	UnsignedInt m_playbackFrameCount;
+  CullBadCommandsResult cullBadCommands(); ///< prevent the user from giving mouse commands that he shouldn't be able to do
+                                           ///< during playback.
 
-	ReplayGameInfo m_gameInfo;
-	Bool m_wasDesync;
+  File *m_file;
+  AsciiString m_fileName;
+  Int m_currentFilePosition;
+  RecorderModeType m_mode;
+  AsciiString m_currentReplayFilename; ///< valid during playback only
+  UnsignedInt m_playbackFrameCount;
 
-	Bool m_doingAnalysis;
+  ReplayGameInfo m_gameInfo;
+  Bool m_wasDesync;
 
-	Int m_originalGameMode; // valid in replays
+  Bool m_doingAnalysis;
 
-	UnsignedInt m_nextFrame;												///< The Frame that the next message is to be executed on.  This can be -1.
+  Int m_originalGameMode; // valid in replays
+
+  UnsignedInt m_nextFrame; ///< The Frame that the next message is to be executed on.  This can be -1.
 };
 
 extern RecorderClass *TheRecorder;

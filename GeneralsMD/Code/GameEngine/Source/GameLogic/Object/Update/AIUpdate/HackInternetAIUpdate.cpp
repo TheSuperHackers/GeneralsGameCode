@@ -26,7 +26,7 @@
 // Author: Kris Morness, June 2002
 // Desc:   State machine that handles internet hacking (free cash)
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 
 #include "Common/Player.h"
 #include "Common/ThingFactory.h"
@@ -40,218 +40,217 @@
 #include "GameLogic/Module/HackInternetAIUpdate.h"
 #include "GameLogic/Module/PhysicsUpdate.h"
 #include "GameLogic/Object.h"
-//#include "GameLogic/PartitionManager.h"
-
-
-//-------------------------------------------------------------------------------------------------
-//-------------------------------------------------------------------------------------------------
-//-------------------------------------------------------------------------------------------------
+// #include "GameLogic/PartitionManager.h"
 
 //-------------------------------------------------------------------------------------------------
-AIStateMachine* HackInternetAIUpdate::makeStateMachine()
+//-------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------
+
+//-------------------------------------------------------------------------------------------------
+AIStateMachine *HackInternetAIUpdate::makeStateMachine()
 {
-	return newInstance(HackInternetStateMachine)( getObject(), "HackInternetBasicAI");
+  return newInstance(HackInternetStateMachine)(getObject(), "HackInternetBasicAI");
 }
 
 //-------------------------------------------------------------------------------------------------
-HackInternetAIUpdate::HackInternetAIUpdate( Thing *thing, const ModuleData* moduleData ) : AIUpdateInterface( thing, moduleData )
+HackInternetAIUpdate::HackInternetAIUpdate(Thing *thing, const ModuleData *moduleData) : AIUpdateInterface(thing, moduleData)
 {
-	m_hasPendingCommand = false;
+  m_hasPendingCommand = false;
 }
 
 //-------------------------------------------------------------------------------------------------
-HackInternetAIUpdate::~HackInternetAIUpdate( void )
+HackInternetAIUpdate::~HackInternetAIUpdate(void)
 {
 }
 
 //-------------------------------------------------------------------------------------------------
 Bool HackInternetAIUpdate::isIdle() const
 {
-	// we need to do this because we enter an idle state briefly between takeoff/landing in these cases,
-	// but scripting relies on us never claiming to be "idle"...
-	if (m_hasPendingCommand)
-		return false;
+  // we need to do this because we enter an idle state briefly between takeoff/landing in these cases,
+  // but scripting relies on us never claiming to be "idle"...
+  if (m_hasPendingCommand)
+    return false;
 
-	return AIUpdateInterface::isIdle();
+  return AIUpdateInterface::isIdle();
 }
 
 //-------------------------------------------------------------------------------------------------
 Bool HackInternetAIUpdate::isHacking() const
 {
-	if( getStateMachine()->getCurrentStateID() == HACK_INTERNET )
-	{
-		return true;
-	}
-	return false;
+  if (getStateMachine()->getCurrentStateID() == HACK_INTERNET)
+  {
+    return true;
+  }
+  return false;
 }
 
 //-------------------------------------------------------------------------------------------------
 Bool HackInternetAIUpdate::isHackingPackingOrUnpacking() const
 {
-	if( getStateMachine()->getCurrentStateID() == HACK_INTERNET ||
-			getStateMachine()->getCurrentStateID() == PACKING ||
-			getStateMachine()->getCurrentStateID() == UNPACKING )
-	{
-		return true;
-	}
-	return false;
+  if (getStateMachine()->getCurrentStateID() == HACK_INTERNET || getStateMachine()->getCurrentStateID() == PACKING
+      || getStateMachine()->getCurrentStateID() == UNPACKING)
+  {
+    return true;
+  }
+  return false;
 }
 
 //-------------------------------------------------------------------------------------------------
-UpdateSleepTime HackInternetAIUpdate::update( void )
+UpdateSleepTime HackInternetAIUpdate::update(void)
 {
-	// have to call our parent's isIdle, because we override it to never return true
-	// when we have a pending command...
-	if( AIUpdateInterface::isIdle() )
-	{
-		if( m_hasPendingCommand )
-		{
-			AICommandParms parms( AICMD_MOVE_TO_POSITION, CMD_FROM_AI );	// values don't matter, will be wiped by next line
-			m_pendingCommand.reconstitute( parms );
-			m_hasPendingCommand = false;
+  // have to call our parent's isIdle, because we override it to never return true
+  // when we have a pending command...
+  if (AIUpdateInterface::isIdle())
+  {
+    if (m_hasPendingCommand)
+    {
+      AICommandParms parms(AICMD_MOVE_TO_POSITION, CMD_FROM_AI); // values don't matter, will be wiped by next line
+      m_pendingCommand.reconstitute(parms);
+      m_hasPendingCommand = false;
 
- 			aiDoCommand(&parms);
-		}
-	}
+      aiDoCommand(&parms);
+    }
+  }
 
-	/*UpdateSleepTime ret =*/ AIUpdateInterface::update();
-	//return (mine < ret) ? mine : ret;
-	/// @todo srj -- someday, make sleepy. for now, must not sleep.
-	return UPDATE_SLEEP_NONE;
+  /*UpdateSleepTime ret =*/AIUpdateInterface::update();
+  // return (mine < ret) ? mine : ret;
+  /// @todo srj -- someday, make sleepy. for now, must not sleep.
+  return UPDATE_SLEEP_NONE;
 }
 
 //-------------------------------------------------------------------------------------------------
-void HackInternetAIUpdate::aiDoCommand(const AICommandParms* parms)
+void HackInternetAIUpdate::aiDoCommand(const AICommandParms *parms)
 {
-	if (!isAllowedToRespondToAiCommands(parms))
-		return;
+  if (!isAllowedToRespondToAiCommands(parms))
+    return;
 
-	const StateID currentState = getStateMachine()->getCurrentStateID();
+  const StateID currentState = getStateMachine()->getCurrentStateID();
 
 #if !RETAIL_COMPATIBLE_CRC
-	// TheSuperHackers @bugfix andrew-2e128 / Mauller 14/07/2025 prevent hacking hackers packing and unpacking when commanded to hack the internet
-	if (parms->m_cmd == AICMD_HACK_INTERNET && ( currentState == HACK_INTERNET || currentState == UNPACKING ) )
-	{
-		return;
-	}
+  // TheSuperHackers @bugfix andrew-2e128 / Mauller 14/07/2025 prevent hacking hackers packing and unpacking when commanded
+  // to hack the internet
+  if (parms->m_cmd == AICMD_HACK_INTERNET && (currentState == HACK_INTERNET || currentState == UNPACKING))
+  {
+    return;
+  }
 #endif
 
-	//If our hacker is currently packing up his gear, we need to prevent him
-	//from moving until completed. In order to accomplish this, we'll detect,
-	//then
-	if( currentState == HACK_INTERNET || currentState == PACKING )
-	{
-		// nuke any existing pending cmd
-		m_pendingCommand.store(*parms);
-		m_hasPendingCommand = true;
+  // If our hacker is currently packing up his gear, we need to prevent him
+  // from moving until completed. In order to accomplish this, we'll detect,
+  // then
+  if (currentState == HACK_INTERNET || currentState == PACKING)
+  {
+    // nuke any existing pending cmd
+    m_pendingCommand.store(*parms);
+    m_hasPendingCommand = true;
 
-		if( currentState == HACK_INTERNET )
-		{
-			getStateMachine()->clear();
-			setLastCommandSource( CMD_FROM_AI );
-			getStateMachine()->setState( PACKING );
-		}
-		return;
-	}
+    if (currentState == HACK_INTERNET)
+    {
+      getStateMachine()->clear();
+      setLastCommandSource(CMD_FROM_AI);
+      getStateMachine()->setState(PACKING);
+    }
+    return;
+  }
 
-	m_hasPendingCommand = false;
-	AIUpdateInterface::aiDoCommand(parms);
+  m_hasPendingCommand = false;
+  AIUpdateInterface::aiDoCommand(parms);
 }
-
 
 //-------------------------------------------------------------------------------------------------
 void HackInternetAIUpdate::hackInternet()
 {
-	//if (m_hackInternetStateMachine)
-	//	deleteInstance(m_hackInternetStateMachine);
-	//m_hackInternetStateMachine = NULL;
+  // if (m_hackInternetStateMachine)
+  //	deleteInstance(m_hackInternetStateMachine);
+  // m_hackInternetStateMachine = NULL;
 
-	// must make the state machine AFTER initing the other stuff, since it may inquire of its values...
-	//m_hackInternetStateMachine = newInstance(HackInternetStateMachine)( getObject() );
-	//m_hackInternetStateMachine->initDefaultState();
+  // must make the state machine AFTER initing the other stuff, since it may inquire of its values...
+  // m_hackInternetStateMachine = newInstance(HackInternetStateMachine)( getObject() );
+  // m_hackInternetStateMachine->initDefaultState();
 #ifdef RTS_DEBUG
-	//m_hackInternetStateMachine->setName("HackInternetSpecificAI");
+  // m_hackInternetStateMachine->setName("HackInternetSpecificAI");
 #endif
-		getStateMachine()->setState(UNPACKING);
+  getStateMachine()->setState(UNPACKING);
 }
 
 // ------------------------------------------------------------------------------------------------
 UnsignedInt HackInternetAIUpdate::getUnpackTime() const
 {
-	// Not yet contained at the time this is queried
-	return getHackInternetAIUpdateModuleData()->m_unpackTime;
+  // Not yet contained at the time this is queried
+  return getHackInternetAIUpdateModuleData()->m_unpackTime;
 }
 
 // ------------------------------------------------------------------------------------------------
 UnsignedInt HackInternetAIUpdate::getPackTime() const
 {
-	if( getObject()->getContainedBy() != NULL )
-		return 0; //We don't need to pack if exiting a building
+  if (getObject()->getContainedBy() != NULL)
+    return 0; // We don't need to pack if exiting a building
 
-	return getHackInternetAIUpdateModuleData()->m_packTime;
+  return getHackInternetAIUpdateModuleData()->m_packTime;
 }
 
 // ------------------------------------------------------------------------------------------------
 UnsignedInt HackInternetAIUpdate::getCashUpdateDelay() const
 {
-	if( getObject()->getContainedBy() != NULL )
-		return getHackInternetAIUpdateModuleData()->m_cashUpdateDelayFast;
-	else
-		return getHackInternetAIUpdateModuleData()->m_cashUpdateDelay;
+  if (getObject()->getContainedBy() != NULL)
+    return getHackInternetAIUpdateModuleData()->m_cashUpdateDelayFast;
+  else
+    return getHackInternetAIUpdateModuleData()->m_cashUpdateDelay;
 }
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void HackInternetAIUpdate::crc( Xfer *xfer )
+void HackInternetAIUpdate::crc(Xfer *xfer)
 {
-	// extend base class
-	AIUpdateInterface::crc(xfer);
-}  // end crc
+  // extend base class
+  AIUpdateInterface::crc(xfer);
+} // end crc
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void HackInternetAIUpdate::xfer( Xfer *xfer )
+void HackInternetAIUpdate::xfer(Xfer *xfer)
 {
   // version
   XferVersion currentVersion = 1;
   XferVersion version = currentVersion;
-  xfer->xferVersion( &version, currentVersion );
+  xfer->xferVersion(&version, currentVersion);
 
- // extend base class
-	AIUpdateInterface::xfer(xfer);
-	xfer->xferBool(&m_hasPendingCommand);
-	if (m_hasPendingCommand) {
-		m_pendingCommand.doXfer(xfer);
-	}
-}  // end xfer
+  // extend base class
+  AIUpdateInterface::xfer(xfer);
+  xfer->xferBool(&m_hasPendingCommand);
+  if (m_hasPendingCommand)
+  {
+    m_pendingCommand.doXfer(xfer);
+  }
+} // end xfer
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void HackInternetAIUpdate::loadPostProcess( void )
+void HackInternetAIUpdate::loadPostProcess(void)
 {
- // extend base class
-	AIUpdateInterface::loadPostProcess();
-}  // end loadPostProcess
-
-
-//-------------------------------------------------------------------------------------------------
-//-------------------------------------------------------------------------------------------------
-//-------------------------------------------------------------------------------------------------
+  // extend base class
+  AIUpdateInterface::loadPostProcess();
+} // end loadPostProcess
 
 //-------------------------------------------------------------------------------------------------
-HackInternetStateMachine::HackInternetStateMachine( Object *owner, AsciiString name ) : AIStateMachine( owner, "HackInternetStateMachine" )
+//-------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------
+
+//-------------------------------------------------------------------------------------------------
+HackInternetStateMachine::HackInternetStateMachine(Object *owner, AsciiString name) :
+    AIStateMachine(owner, "HackInternetStateMachine")
 {
-	//HackInternetAIUpdate *ai = (HackInternetAIUpdate*)owner->getAIUpdateInterface();
+  // HackInternetAIUpdate *ai = (HackInternetAIUpdate*)owner->getAIUpdateInterface();
 
-	// order matters: first state is the default state.
-	defineState( UNPACKING,						newInstance(UnpackingState)( this ), HACK_INTERNET, HACK_INTERNET );
-	defineState( HACK_INTERNET,				newInstance(HackInternetState)( this ), PACKING, PACKING );
-	defineState( PACKING,							newInstance(PackingState)( this ), AI_IDLE, AI_IDLE );
+  // order matters: first state is the default state.
+  defineState(UNPACKING, newInstance(UnpackingState)(this), HACK_INTERNET, HACK_INTERNET);
+  defineState(HACK_INTERNET, newInstance(HackInternetState)(this), PACKING, PACKING);
+  defineState(PACKING, newInstance(PackingState)(this), AI_IDLE, AI_IDLE);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -262,349 +261,350 @@ HackInternetStateMachine::~HackInternetStateMachine()
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void UnpackingState::crc( Xfer *xfer )
+void UnpackingState::crc(Xfer *xfer)
 {
-}  // end crc
+} // end crc
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer Method */
 // ------------------------------------------------------------------------------------------------
-void UnpackingState::xfer( Xfer *xfer )
+void UnpackingState::xfer(Xfer *xfer)
 {
   // version
   XferVersion currentVersion = 1;
   XferVersion version = currentVersion;
-  xfer->xferVersion( &version, currentVersion );
+  xfer->xferVersion(&version, currentVersion);
 
-	xfer->xferUnsignedInt(&m_framesRemaining);
-}  // end xfer
+  xfer->xferUnsignedInt(&m_framesRemaining);
+} // end xfer
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void UnpackingState::loadPostProcess( void )
+void UnpackingState::loadPostProcess(void)
 {
-}  // end loadPostProcess
+} // end loadPostProcess
 
 //-------------------------------------------------------------------------------------------------
 StateReturnType UnpackingState::onEnter()
 {
-	Object *owner = getMachineOwner();
-	HackInternetAIUpdate *ai = (HackInternetAIUpdate*)owner->getAIUpdateInterface();
-	if( !ai )
-	{
-		return STATE_FAILURE;
-	}
+  Object *owner = getMachineOwner();
+  HackInternetAIUpdate *ai = (HackInternetAIUpdate *)owner->getAIUpdateInterface();
+  if (!ai)
+  {
+    return STATE_FAILURE;
+  }
 
-	owner->clearModelConditionFlags( MAKE_MODELCONDITION_MASK3( MODELCONDITION_PACKING, MODELCONDITION_FIRING_A, MODELCONDITION_UNPACKING ) );
+  owner->clearModelConditionFlags(
+      MAKE_MODELCONDITION_MASK3(MODELCONDITION_PACKING, MODELCONDITION_FIRING_A, MODELCONDITION_UNPACKING));
 
-	owner->setModelConditionState( MODELCONDITION_UNPACKING );
+  owner->setModelConditionState(MODELCONDITION_UNPACKING);
 
-	AudioEventRTS sound = *owner->getTemplate()->getPerUnitSound( "UnitUnpack" );
-	sound.setObjectID( owner->getID() );
-	TheAudio->addAudioEvent( &sound );
+  AudioEventRTS sound = *owner->getTemplate()->getPerUnitSound("UnitUnpack");
+  sound.setObjectID(owner->getID());
+  TheAudio->addAudioEvent(&sound);
 
-	Real variationFactor = ai->getPackUnpackVariationFactor();
-	Real variation = GameLogicRandomValueReal( 1.0f - variationFactor, 1.0f + variationFactor );
-	m_framesRemaining = ai->getUnpackTime() * variation; //In frames
-	owner->getDrawable()->setAnimationLoopDuration( m_framesRemaining );
+  Real variationFactor = ai->getPackUnpackVariationFactor();
+  Real variation = GameLogicRandomValueReal(1.0f - variationFactor, 1.0f + variationFactor);
+  m_framesRemaining = ai->getUnpackTime() * variation; // In frames
+  owner->getDrawable()->setAnimationLoopDuration(m_framesRemaining);
 
-	return STATE_CONTINUE;
+  return STATE_CONTINUE;
 }
 
 //-------------------------------------------------------------------------------------------------
 StateReturnType UnpackingState::update()
 {
-	Object *owner = getMachineOwner();
-//	HackInternetAIUpdate *ai = (HackInternetAIUpdate*)owner->getAIUpdateInterface();
+  Object *owner = getMachineOwner();
+  //	HackInternetAIUpdate *ai = (HackInternetAIUpdate*)owner->getAIUpdateInterface();
 
-	// This is a bit hacky, no pun intended, but if this Update is engeged specialability (disablebuilding)
-	// The unpacking modelconditionflag gets cleared by specialability::cleanup() after my onEnter() sets it!
-	// Why HackInterent wasn't included within specialability I can't figure out, but... too late to change now.
-	owner->setModelConditionState( MODELCONDITION_UNPACKING );
+  // This is a bit hacky, no pun intended, but if this Update is engeged specialability (disablebuilding)
+  // The unpacking modelconditionflag gets cleared by specialability::cleanup() after my onEnter() sets it!
+  // Why HackInterent wasn't included within specialability I can't figure out, but... too late to change now.
+  owner->setModelConditionState(MODELCONDITION_UNPACKING);
 
-	if( m_framesRemaining > 0 )
-	{
-		m_framesRemaining--;
-	}
-	else
-	{
-		return STATE_SUCCESS;
-	}
+  if (m_framesRemaining > 0)
+  {
+    m_framesRemaining--;
+  }
+  else
+  {
+    return STATE_SUCCESS;
+  }
 
-	return STATE_CONTINUE;
+  return STATE_CONTINUE;
 }
 
 //-------------------------------------------------------------------------------------------------
-void UnpackingState::onExit( StateExitType status )
+void UnpackingState::onExit(StateExitType status)
 {
-	Object *owner = getMachineOwner();
-	owner->clearModelConditionState( MODELCONDITION_UNPACKING );
+  Object *owner = getMachineOwner();
+  owner->clearModelConditionState(MODELCONDITION_UNPACKING);
 }
 
-
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void PackingState::crc( Xfer *xfer )
+void PackingState::crc(Xfer *xfer)
 {
-}  // end crc
+} // end crc
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer Method */
 // ------------------------------------------------------------------------------------------------
-void PackingState::xfer( Xfer *xfer )
+void PackingState::xfer(Xfer *xfer)
 {
   // version
   XferVersion currentVersion = 1;
   XferVersion version = currentVersion;
-  xfer->xferVersion( &version, currentVersion );
+  xfer->xferVersion(&version, currentVersion);
 
-	xfer->xferUnsignedInt(&m_framesRemaining);
-}  // end xfer
+  xfer->xferUnsignedInt(&m_framesRemaining);
+} // end xfer
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void PackingState::loadPostProcess( void )
+void PackingState::loadPostProcess(void)
 {
-}  // end loadPostProcess
+} // end loadPostProcess
 
 //-------------------------------------------------------------------------------------------------
 StateReturnType PackingState::onEnter()
 {
-	Object *owner = getMachineOwner();
-	HackInternetAIUpdate *ai = (HackInternetAIUpdate*)owner->getAIUpdateInterface();
-	if( !ai )
-	{
-		return STATE_FAILURE;
-	}
+  Object *owner = getMachineOwner();
+  HackInternetAIUpdate *ai = (HackInternetAIUpdate *)owner->getAIUpdateInterface();
+  if (!ai)
+  {
+    return STATE_FAILURE;
+  }
 
-	owner->clearAndSetModelConditionFlags( MAKE_MODELCONDITION_MASK( MODELCONDITION_FIRING_A ),
-																				 MAKE_MODELCONDITION_MASK( MODELCONDITION_PACKING ) );
+  owner->clearAndSetModelConditionFlags(
+      MAKE_MODELCONDITION_MASK(MODELCONDITION_FIRING_A),
+      MAKE_MODELCONDITION_MASK(MODELCONDITION_PACKING));
 
-	AudioEventRTS sound = *owner->getTemplate()->getPerUnitSound( "UnitPack" );
-	sound.setObjectID( owner->getID() );
-	TheAudio->addAudioEvent( &sound );
+  AudioEventRTS sound = *owner->getTemplate()->getPerUnitSound("UnitPack");
+  sound.setObjectID(owner->getID());
+  TheAudio->addAudioEvent(&sound);
 
-	Real variationFactor = ai->getPackUnpackVariationFactor();
-	Real variation = GameLogicRandomValueReal( 1.0f - variationFactor, 1.0f + variationFactor );
-	m_framesRemaining = ai->getPackTime() * variation; //In frames
-	owner->getDrawable()->setAnimationLoopDuration( m_framesRemaining );
-	return STATE_CONTINUE;
+  Real variationFactor = ai->getPackUnpackVariationFactor();
+  Real variation = GameLogicRandomValueReal(1.0f - variationFactor, 1.0f + variationFactor);
+  m_framesRemaining = ai->getPackTime() * variation; // In frames
+  owner->getDrawable()->setAnimationLoopDuration(m_framesRemaining);
+  return STATE_CONTINUE;
 }
 
 //-------------------------------------------------------------------------------------------------
 StateReturnType PackingState::update()
 {
-//	Object *owner = getMachineOwner();
-//	HackInternetAIUpdate *ai = (HackInternetAIUpdate*)owner->getAIUpdateInterface();
+  //	Object *owner = getMachineOwner();
+  //	HackInternetAIUpdate *ai = (HackInternetAIUpdate*)owner->getAIUpdateInterface();
 
-	if( m_framesRemaining > 0 )
-	{
-		m_framesRemaining--;
-	}
-	else
-	{
-		return STATE_SUCCESS;
-	}
+  if (m_framesRemaining > 0)
+  {
+    m_framesRemaining--;
+  }
+  else
+  {
+    return STATE_SUCCESS;
+  }
 
-	return STATE_CONTINUE;
+  return STATE_CONTINUE;
 }
 
 //-------------------------------------------------------------------------------------------------
-void PackingState::onExit( StateExitType status )
+void PackingState::onExit(StateExitType status)
 {
-	Object *owner = getMachineOwner();
-	owner->clearModelConditionState( MODELCONDITION_PACKING );
+  Object *owner = getMachineOwner();
+  owner->clearModelConditionState(MODELCONDITION_PACKING);
 }
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void HackInternetState::crc( Xfer *xfer )
+void HackInternetState::crc(Xfer *xfer)
 {
-}  // end crc
+} // end crc
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer Method */
 // ------------------------------------------------------------------------------------------------
-void HackInternetState::xfer( Xfer *xfer )
+void HackInternetState::xfer(Xfer *xfer)
 {
   // version
   XferVersion currentVersion = 1;
   XferVersion version = currentVersion;
-  xfer->xferVersion( &version, currentVersion );
+  xfer->xferVersion(&version, currentVersion);
 
-	xfer->xferUnsignedInt(&m_framesRemaining);
-}  // end xfer
+  xfer->xferUnsignedInt(&m_framesRemaining);
+} // end xfer
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void HackInternetState::loadPostProcess( void )
+void HackInternetState::loadPostProcess(void)
 {
-}  // end loadPostProcess
+} // end loadPostProcess
 
 //-------------------------------------------------------------------------------------------------
 StateReturnType HackInternetState::onEnter()
 {
-	//Go into the hack internet stance.
-	Object *owner = getMachineOwner();
-	HackInternetAIUpdate *ai = (HackInternetAIUpdate*)owner->getAIUpdateInterface();
-	if( !ai )
-	{
-		return STATE_FAILURE;
-	}
+  // Go into the hack internet stance.
+  Object *owner = getMachineOwner();
+  HackInternetAIUpdate *ai = (HackInternetAIUpdate *)owner->getAIUpdateInterface();
+  if (!ai)
+  {
+    return STATE_FAILURE;
+  }
 
-	owner->clearAndSetModelConditionFlags( MAKE_MODELCONDITION_MASK( MODELCONDITION_UNPACKING ),
-																				 MAKE_MODELCONDITION_MASK( MODELCONDITION_FIRING_A ) );
+  owner->clearAndSetModelConditionFlags(
+      MAKE_MODELCONDITION_MASK(MODELCONDITION_UNPACKING),
+      MAKE_MODELCONDITION_MASK(MODELCONDITION_FIRING_A));
 
-	m_framesRemaining = ai->getCashUpdateDelay();
+  m_framesRemaining = ai->getCashUpdateDelay();
 
-	return STATE_CONTINUE;
+  return STATE_CONTINUE;
 }
 
 //-------------------------------------------------------------------------------------------------
 StateReturnType HackInternetState::update()
 {
-	Object *owner = getMachineOwner();
-	HackInternetAIUpdate *ai = (HackInternetAIUpdate*)owner->getAIUpdateInterface();
-	if( !ai )
-	{
-		return STATE_FAILURE;
-	}
+  Object *owner = getMachineOwner();
+  HackInternetAIUpdate *ai = (HackInternetAIUpdate *)owner->getAIUpdateInterface();
+  if (!ai)
+  {
+    return STATE_FAILURE;
+  }
 
-	if( owner->isDisabledByType( DISABLED_HACKED ) )
-	{
-		//Don't hack while hacked, hehe.
-		return STATE_CONTINUE;
-	}
+  if (owner->isDisabledByType(DISABLED_HACKED))
+  {
+    // Don't hack while hacked, hehe.
+    return STATE_CONTINUE;
+  }
 
-	if( m_framesRemaining > 0 )
-	{
-		//Decrement frame counter.
-		m_framesRemaining--;
-	}
-	else
-	{
-		//We have waited the full amount of the delay, so hack some cash from the heavens!
+  if (m_framesRemaining > 0)
+  {
+    // Decrement frame counter.
+    m_framesRemaining--;
+  }
+  else
+  {
+    // We have waited the full amount of the delay, so hack some cash from the heavens!
 
-		//Add cash
-		Money *money = owner->getControllingPlayer()->getMoney();
-		if( money )
-		{
-			ExperienceTracker *xp = owner->getExperienceTracker();
-			if( xp )
-			{
-				UnsignedInt amount = 0;
-				switch( xp->getVeterancyLevel() )
-				{
-					case LEVEL_HEROIC:
-						amount = ai->getHeroicCashAmount();
-						if( amount )
-						{
-							break;
-						}
-						FALLTHROUGH; //If entry missing, fall through!
-					case LEVEL_ELITE:
-						amount = ai->getEliteCashAmount();
-						if( amount )
-						{
-							break;
-						}
-						FALLTHROUGH; //If entry missing, fall through!
-					case LEVEL_VETERAN:
-						amount = ai->getVeteranCashAmount();
-						if( amount )
-						{
-							break;
-						}
-						FALLTHROUGH; //If entry missing, fall through!
-					case LEVEL_REGULAR:
-						amount = ai->getRegularCashAmount();
-						if( amount )
-						{
-							break;
-						}
-						FALLTHROUGH; //If entry missing, fall through!
-					default:
-						amount = 1;
-						break;
-				}
-				money->deposit( amount );
-				owner->getControllingPlayer()->getScoreKeeper()->addMoneyEarned( amount );
+    // Add cash
+    Money *money = owner->getControllingPlayer()->getMoney();
+    if (money)
+    {
+      ExperienceTracker *xp = owner->getExperienceTracker();
+      if (xp)
+      {
+        UnsignedInt amount = 0;
+        switch (xp->getVeterancyLevel())
+        {
+          case LEVEL_HEROIC:
+            amount = ai->getHeroicCashAmount();
+            if (amount)
+            {
+              break;
+            }
+            FALLTHROUGH; // If entry missing, fall through!
+          case LEVEL_ELITE:
+            amount = ai->getEliteCashAmount();
+            if (amount)
+            {
+              break;
+            }
+            FALLTHROUGH; // If entry missing, fall through!
+          case LEVEL_VETERAN:
+            amount = ai->getVeteranCashAmount();
+            if (amount)
+            {
+              break;
+            }
+            FALLTHROUGH; // If entry missing, fall through!
+          case LEVEL_REGULAR:
+            amount = ai->getRegularCashAmount();
+            if (amount)
+            {
+              break;
+            }
+            FALLTHROUGH; // If entry missing, fall through!
+          default:
+            amount = 1;
+            break;
+        }
+        money->deposit(amount);
+        owner->getControllingPlayer()->getScoreKeeper()->addMoneyEarned(amount);
 
-				//Grant the unit some experience for a successful hack.
-				xp->addExperiencePoints( ai->getXpPerCashUpdate() );
+        // Grant the unit some experience for a successful hack.
+        xp->addExperiencePoints(ai->getXpPerCashUpdate());
 
-				Bool displayMoney = TRUE;
-				if( owner->testStatus(OBJECT_STATUS_STEALTHED) )
-				{
-					// OY LOOK!  I AM USING LOCAL PLAYER.  Do not put anything other than TheInGameUI->addFloatingText in the block this controls!!!
-					if( !owner->isLocallyControlled() && !owner->testStatus(OBJECT_STATUS_DETECTED) )
-					{
-						displayMoney = FALSE;
-					}
-				}
-				if( owner->getContainedBy() && owner->getContainedBy()->testStatus(OBJECT_STATUS_STEALTHED) )
-				{
-					// OY LOOK!  I AM USING LOCAL PLAYER.  Do not put anything other than TheInGameUI->addFloatingText in the block this controls!!!
-					if( !owner->getContainedBy()->isLocallyControlled() && !owner->getContainedBy()->testStatus(OBJECT_STATUS_DETECTED) )
-					{
-						displayMoney = FALSE;
-					}
-				}
+        Bool displayMoney = TRUE;
+        if (owner->testStatus(OBJECT_STATUS_STEALTHED))
+        {
+          // OY LOOK!  I AM USING LOCAL PLAYER.  Do not put anything other than TheInGameUI->addFloatingText in the
+          // block this controls!!!
+          if (!owner->isLocallyControlled() && !owner->testStatus(OBJECT_STATUS_DETECTED))
+          {
+            displayMoney = FALSE;
+          }
+        }
+        if (owner->getContainedBy() && owner->getContainedBy()->testStatus(OBJECT_STATUS_STEALTHED))
+        {
+          // OY LOOK!  I AM USING LOCAL PLAYER.  Do not put anything other than TheInGameUI->addFloatingText in the
+          // block this controls!!!
+          if (!owner->getContainedBy()->isLocallyControlled()
+              && !owner->getContainedBy()->testStatus(OBJECT_STATUS_DETECTED))
+          {
+            displayMoney = FALSE;
+          }
+        }
 
-				if( displayMoney )
-				{
-					// OY LOOK!  I AM USING LOCAL PLAYER.  Do not put anything other than TheInGameUI->addFloatingText in the block this controls!!!
-					//Display cash income floating over the hacker.
-					UnicodeString moneyString;
-					moneyString.format( TheGameText->fetch( "GUI:AddCash" ), amount );
-					Coord3D pos;
-					pos.zero();
-					pos.add( owner->getPosition() );
-					pos.z += 20.0f; //add a little z to make it show up above the unit.
-
+        if (displayMoney)
+        {
+          // OY LOOK!  I AM USING LOCAL PLAYER.  Do not put anything other than TheInGameUI->addFloatingText in the
+          // block this controls!!!
+          // Display cash income floating over the hacker.
+          UnicodeString moneyString;
+          moneyString.format(TheGameText->fetch("GUI:AddCash"), amount);
+          Coord3D pos;
+          pos.zero();
+          pos.add(owner->getPosition());
+          pos.z += 20.0f; // add a little z to make it show up above the unit.
 
           Object *internetCenter = owner->getContainedBy();
-          if ( internetCenter )
+          if (internetCenter)
           {
             Real width = internetCenter->getGeometryInfo().getMajorRadius() * 0.3f;
             Real depth = internetCenter->getGeometryInfo().getMinorRadius() * 0.3f;
-            pos.x += GameClientRandomValue(-width,width);
-            pos.y += GameClientRandomValue(-depth,depth);
+            pos.x += GameClientRandomValue(-width, width);
+            pos.y += GameClientRandomValue(-depth, depth);
           }
 
+          TheInGameUI->addFloatingText(moneyString, &pos, GameMakeColor(0, 255, 0, 255));
+        }
 
-					TheInGameUI->addFloatingText( moneyString, &pos, GameMakeColor( 0, 255, 0, 255 ) );
-				}
+        AudioEventRTS sound = *(owner->getTemplate()->getPerUnitSound("UnitCashPing"));
+        sound.setObjectID(owner->getID());
+        TheAudio->addAudioEvent(&sound);
+      }
+    }
 
-				AudioEventRTS sound = *(owner->getTemplate()->getPerUnitSound( "UnitCashPing" ));
-				sound.setObjectID( owner->getID() );
-				TheAudio->addAudioEvent( &sound );
-			}
-		}
+    // Reset timer and start a new cycle.
+    m_framesRemaining = ai->getCashUpdateDelay();
+  }
 
-
-		//Reset timer and start a new cycle.
-		m_framesRemaining = ai->getCashUpdateDelay();
-
-	}
-
-	//This is a persistent state until told otherwise.
-	return STATE_CONTINUE;
+  // This is a persistent state until told otherwise.
+  return STATE_CONTINUE;
 }
 
 //-------------------------------------------------------------------------------------------------
-void HackInternetState::onExit( StateExitType status )
+void HackInternetState::onExit(StateExitType status)
 {
-	Object *owner = getMachineOwner();
-	owner->clearModelConditionState( MODELCONDITION_FIRING_A );
+  Object *owner = getMachineOwner();
+  owner->clearModelConditionState(MODELCONDITION_FIRING_A);
 }

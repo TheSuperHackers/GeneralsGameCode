@@ -61,7 +61,6 @@
 #include "util.h"
 #include "modstack.h"
 
-
 /***********************************************************************************************
 **
 ** W3DAppData2Struct Implementation
@@ -77,201 +76,202 @@
 */
 const int W3DAPPDATA2_CURRENT_VERSION = 1;
 
-
-
-W3DAppData2Struct::W3DAppData2Struct(void) :
-	ExportFlags(0),
-	GeometryType(0),
-	GeometryFlags(0),
-	CollisionFlags(0)
+W3DAppData2Struct::W3DAppData2Struct(void) : ExportFlags(0), GeometryType(0), GeometryFlags(0), CollisionFlags(0)
 {
-	memset(UnUsed,0,sizeof(UnUsed));
-	Init_With_Other_Defaults();
+  memset(UnUsed, 0, sizeof(UnUsed));
+  Init_With_Other_Defaults();
 }
 
-W3DAppData2Struct::W3DAppData2Struct(W3DAppData0Struct & olddata)	:
-	ExportFlags(0),
-	GeometryType(0),
-	GeometryFlags(0),
-	CollisionFlags(0)
+W3DAppData2Struct::W3DAppData2Struct(W3DAppData0Struct &olddata) :
+    ExportFlags(0), GeometryType(0), GeometryFlags(0), CollisionFlags(0)
 {
-	memset(UnUsed,0,sizeof(UnUsed));
-	Init_From_AppData0(olddata);
+  memset(UnUsed, 0, sizeof(UnUsed));
+  Init_From_AppData0(olddata);
 }
 
 void W3DAppData2Struct::Init_With_Mesh_Defaults(void)
 {
-	ExportFlags = (EXPORT_TRANSFORM|EXPORT_GEOMETRY);
-	GeometryType = GEO_TYPE_NORMAL_MESH;
-	GeometryFlags = 0;
-	CollisionFlags = 0;
-	memset(UnUsed,0,sizeof(UnUsed));
+  ExportFlags = (EXPORT_TRANSFORM | EXPORT_GEOMETRY);
+  GeometryType = GEO_TYPE_NORMAL_MESH;
+  GeometryFlags = 0;
+  CollisionFlags = 0;
+  memset(UnUsed, 0, sizeof(UnUsed));
 
-	Set_Version(W3DAPPDATA2_CURRENT_VERSION);
+  Set_Version(W3DAPPDATA2_CURRENT_VERSION);
 }
 
-void	W3DAppData2Struct::Init_With_Other_Defaults(void)
+void W3DAppData2Struct::Init_With_Other_Defaults(void)
 {
-	ExportFlags = 0;
-	GeometryType = 0;
-	GeometryFlags = 0;
-	CollisionFlags = 0;
-	memset(UnUsed,0,sizeof(UnUsed));
+  ExportFlags = 0;
+  GeometryType = 0;
+  GeometryFlags = 0;
+  CollisionFlags = 0;
+  memset(UnUsed, 0, sizeof(UnUsed));
 
-	Set_Version(W3DAPPDATA2_CURRENT_VERSION);
+  Set_Version(W3DAPPDATA2_CURRENT_VERSION);
 }
 
-void	W3DAppData2Struct::Init_From_AppData0(W3DAppData0Struct & olddata)
+void W3DAppData2Struct::Init_From_AppData0(W3DAppData0Struct &olddata)
 {
-	Init_With_Other_Defaults();
+  Init_With_Other_Defaults();
 
-	Enable_Export_Transform(olddata.Is_Bone());
-	Enable_Export_Geometry(olddata.Is_Geometry());
+  Enable_Export_Transform(olddata.Is_Bone());
+  Enable_Export_Geometry(olddata.Is_Geometry());
 
-	if (olddata.Is_Camera_Aligned_Mesh()) {
-		Set_Geometry_Type(GEO_TYPE_CAMERA_ALIGNED);
-	}
-	if (olddata.Is_Camera_Oriented_Mesh()) {
-		Set_Geometry_Type(GEO_TYPE_CAMERA_ORIENTED);
-	}
-	if (olddata.Is_Collision_AABox()) {
-		Set_Geometry_Type(GEO_TYPE_AABOX);
-	}
-	if (olddata.Is_Collision_OBBox()) {
-		Set_Geometry_Type(GEO_TYPE_OBBOX);
-	}
-	if (olddata.Is_Normal_Mesh()) {
-		Set_Geometry_Type(GEO_TYPE_NORMAL_MESH);
-	}
-	if (olddata.Is_Null()) {
-		Set_Geometry_Type(GEO_TYPE_NULL);
-	}
+  if (olddata.Is_Camera_Aligned_Mesh())
+  {
+    Set_Geometry_Type(GEO_TYPE_CAMERA_ALIGNED);
+  }
+  if (olddata.Is_Camera_Oriented_Mesh())
+  {
+    Set_Geometry_Type(GEO_TYPE_CAMERA_ORIENTED);
+  }
+  if (olddata.Is_Collision_AABox())
+  {
+    Set_Geometry_Type(GEO_TYPE_AABOX);
+  }
+  if (olddata.Is_Collision_OBBox())
+  {
+    Set_Geometry_Type(GEO_TYPE_OBBOX);
+  }
+  if (olddata.Is_Normal_Mesh())
+  {
+    Set_Geometry_Type(GEO_TYPE_NORMAL_MESH);
+  }
+  if (olddata.Is_Null())
+  {
+    Set_Geometry_Type(GEO_TYPE_NULL);
+  }
 
-	Enable_Hidden(olddata.Is_Hidden());
-	Enable_Two_Sided(olddata.Is_Two_Sided());
-	Enable_Shadow(olddata.Is_Shadow());
-	Enable_Vertex_Alpha(olddata.Is_Vertex_Alpha());
-	Enable_ZNormals(olddata.Is_ZNormals());
-	Enable_Physical_Collision(olddata.Is_Physical_Collision());
-	Enable_Projectile_Collision(olddata.Is_Projectile_Collision());
-	Enable_Vis_Collision(olddata.Is_Vis_Collision());
-	Enable_Camera_Collision(olddata.Is_Physical_Collision());		// make camera setting match physical
+  Enable_Hidden(olddata.Is_Hidden());
+  Enable_Two_Sided(olddata.Is_Two_Sided());
+  Enable_Shadow(olddata.Is_Shadow());
+  Enable_Vertex_Alpha(olddata.Is_Vertex_Alpha());
+  Enable_ZNormals(olddata.Is_ZNormals());
+  Enable_Physical_Collision(olddata.Is_Physical_Collision());
+  Enable_Projectile_Collision(olddata.Is_Projectile_Collision());
+  Enable_Vis_Collision(olddata.Is_Vis_Collision());
+  Enable_Camera_Collision(olddata.Is_Physical_Collision()); // make camera setting match physical
 
-	Set_Version(W3DAPPDATA2_CURRENT_VERSION);
+  Set_Version(W3DAPPDATA2_CURRENT_VERSION);
 }
 
 void W3DAppData2Struct::Update_Version(void)
 {
-	/*
-	** If this is a version 0 struct, We need to initialize the camera collision
-	** setting to be equal to the physical collision setting and convert to version 1
-	*/
-	if (Get_Version() == 0) {
-		Enable_Camera_Collision(Is_Physical_Collision_Enabled());
-		Set_Version(1);
-	}
+  /*
+  ** If this is a version 0 struct, We need to initialize the camera collision
+  ** setting to be equal to the physical collision setting and convert to version 1
+  */
+  if (Get_Version() == 0)
+  {
+    Enable_Camera_Collision(Is_Physical_Collision_Enabled());
+    Set_Version(1);
+  }
 
-	/*
-	** Add future version conversion code here!
-	*/
+  /*
+  ** Add future version conversion code here!
+  */
 }
 
-bool	W3DAppData2Struct::operator == (const W3DAppData2Struct & that)
+bool W3DAppData2Struct::operator==(const W3DAppData2Struct &that)
 {
-	/*
-	** Export flags have to match
-	*/
-	if (ExportFlags != that.ExportFlags) return false;
+  /*
+  ** Export flags have to match
+  */
+  if (ExportFlags != that.ExportFlags)
+    return false;
 
-	/*
-	** If geometry is enabled, verify the geometry type and options
-	*/
-	if (Is_Geometry()) {
-		if (Get_Geometry_Type() != that.Get_Geometry_Type()) return false;
-		if (GeometryFlags != that.GeometryFlags) return false;
-		if (CollisionFlags != that.CollisionFlags) return false;
-	}
+  /*
+  ** If geometry is enabled, verify the geometry type and options
+  */
+  if (Is_Geometry())
+  {
+    if (Get_Geometry_Type() != that.Get_Geometry_Type())
+      return false;
+    if (GeometryFlags != that.GeometryFlags)
+      return false;
+    if (CollisionFlags != that.CollisionFlags)
+      return false;
+  }
 
-	return true;
+  return true;
 }
 
-bool W3DAppData2Struct::Geometry_Options_Match(const W3DAppData2Struct & that)
+bool W3DAppData2Struct::Geometry_Options_Match(const W3DAppData2Struct &that)
 {
-	if (Get_Geometry_Type() != that.Get_Geometry_Type()) return false;
-	if (GeometryFlags != that.GeometryFlags) return false;
-	if (CollisionFlags != that.CollisionFlags) return false;
-	return true;
+  if (Get_Geometry_Type() != that.Get_Geometry_Type())
+    return false;
+  if (GeometryFlags != that.GeometryFlags)
+    return false;
+  if (CollisionFlags != that.CollisionFlags)
+    return false;
+  return true;
 }
 
-
-W3DAppData2Struct * W3DAppData2Struct::Get_App_Data
-(
-	INode * node,
-	bool create_if_missing
-)
+W3DAppData2Struct *W3DAppData2Struct::Get_App_Data(INode *node, bool create_if_missing)
 {
-	/*
-	** Try to get our AppData which has the export flags
-	*/
-	W3DAppData2Struct * wdata = NULL;
-	AppDataChunk * appdata = node->GetAppDataChunk(W3DUtilityClassID,UTILITY_CLASS_ID,W3D_APPDATA_2);
+  /*
+  ** Try to get our AppData which has the export flags
+  */
+  W3DAppData2Struct *wdata = NULL;
+  AppDataChunk *appdata = node->GetAppDataChunk(W3DUtilityClassID, UTILITY_CLASS_ID, W3D_APPDATA_2);
 
-	/*
-	** If there wasn't one, look for an AppData0 chunk and convert that.
-	** If there was one, get the data from it
-	*/
-	if (appdata) {
+  /*
+  ** If there wasn't one, look for an AppData0 chunk and convert that.
+  ** If there was one, get the data from it
+  */
+  if (appdata)
+  {
+    wdata = (W3DAppData2Struct *)(appdata->data);
+    wdata->Update_Version();
+  }
+  else
+  {
+    /*
+    ** Create a new W3DAppData2Struct for this node
+    */
+    wdata = (W3DAppData2Struct *)malloc(sizeof(W3DAppData2Struct));
 
-		wdata = (W3DAppData2Struct *)(appdata->data);
-		wdata->Update_Version();
+    /*
+    ** If we have the old AppData0 then initialize from it otherwise
+    ** just initialize to the defaults
+    */
+    AppDataChunk *oldappdata = node->GetAppDataChunk(W3DUtilityClassID, UTILITY_CLASS_ID, W3D_APPDATA_0);
+    if (oldappdata)
+    {
+      /*
+      ** initializing from the old app data 0 chunk;
+      */
+      wdata->Init_From_AppData0(*(W3DAppData0Struct *)(oldappdata->data));
 
-	} else {
+      /*
+      ** Destroy the old obsolete App Data 0 chunk
+      */
+      node->RemoveAppDataChunk(W3DUtilityClassID, UTILITY_CLASS_ID, W3D_APPDATA_0);
+    }
+    else
+    {
+      /*
+      ** If this object looks like it is going to be a mesh, then default
+      ** it to have the mesh export flags (export its transform and the
+      ** triangle mesh).  Otherwise use the default of completely ignoring it!
+      */
+      if (Is_Max_Tri_Mesh(node))
+      {
+        wdata->Init_With_Mesh_Defaults();
+      }
+      else
+      {
+        wdata->Init_With_Other_Defaults();
+      }
+    }
+    node->AddAppDataChunk(W3DUtilityClassID, UTILITY_CLASS_ID, 2, sizeof(W3DAppData2Struct), wdata);
+    appdata = node->GetAppDataChunk(W3DUtilityClassID, UTILITY_CLASS_ID, 2);
+    assert(appdata);
+  }
 
-		/*
-		** Create a new W3DAppData2Struct for this node
-		*/
-		wdata = (W3DAppData2Struct *)malloc(sizeof(W3DAppData2Struct));
-
-		/*
-		** If we have the old AppData0 then initialize from it otherwise
-		** just initialize to the defaults
-		*/
-		AppDataChunk * oldappdata = node->GetAppDataChunk(W3DUtilityClassID,UTILITY_CLASS_ID,W3D_APPDATA_0);
-		if (oldappdata) {
-
-			/*
-			** initializing from the old app data 0 chunk;
-			*/
-			wdata->Init_From_AppData0(*(W3DAppData0Struct*)(oldappdata->data));
-
-			/*
-			** Destroy the old obsolete App Data 0 chunk
-			*/
-			node->RemoveAppDataChunk(W3DUtilityClassID, UTILITY_CLASS_ID, W3D_APPDATA_0);
-
-		} else {
-
-			/*
-			** If this object looks like it is going to be a mesh, then default
-			** it to have the mesh export flags (export its transform and the
-			** triangle mesh).  Otherwise use the default of completely ignoring it!
-			*/
-			if (Is_Max_Tri_Mesh(node)) {
-				wdata->Init_With_Mesh_Defaults();
-			} else {
-				wdata->Init_With_Other_Defaults();
-			}
-
-		}
-		node->AddAppDataChunk(W3DUtilityClassID,UTILITY_CLASS_ID,2,sizeof(W3DAppData2Struct),wdata);
-		appdata = node->GetAppDataChunk(W3DUtilityClassID,UTILITY_CLASS_ID,2);
-		assert(appdata);
-
-	}
-
-	return wdata;
+  return wdata;
 }
-
 
 /***********************************************************************************************
 **
@@ -280,47 +280,47 @@ W3DAppData2Struct * W3DAppData2Struct::Get_App_Data
 ***********************************************************************************************/
 W3DDazzleAppDataStruct::W3DDazzleAppDataStruct(void)
 {
-	UnUsed[0] = 0;
-	UnUsed[1] = 0;
-	UnUsed[2] = 0;
-	UnUsed[3] = 0;
-	memset(DazzleType,0,sizeof(DazzleType));
-	strcpy(DazzleType,"DEFAULT");
+  UnUsed[0] = 0;
+  UnUsed[1] = 0;
+  UnUsed[2] = 0;
+  UnUsed[3] = 0;
+  memset(DazzleType, 0, sizeof(DazzleType));
+  strcpy(DazzleType, "DEFAULT");
 }
 
-
-W3DDazzleAppDataStruct * W3DDazzleAppDataStruct::Get_App_Data(INode * node,bool create_if_missing)
+W3DDazzleAppDataStruct *W3DDazzleAppDataStruct::Get_App_Data(INode *node, bool create_if_missing)
 {
-	/*
-	** Try to get the existing AppData chunk
-	*/
-	W3DDazzleAppDataStruct * dazzledata = NULL;
-	AppDataChunk * appdata = node->GetAppDataChunk(W3DUtilityClassID,UTILITY_CLASS_ID,W3D_DAZZLE_APPDATA);
+  /*
+  ** Try to get the existing AppData chunk
+  */
+  W3DDazzleAppDataStruct *dazzledata = NULL;
+  AppDataChunk *appdata = node->GetAppDataChunk(W3DUtilityClassID, UTILITY_CLASS_ID, W3D_DAZZLE_APPDATA);
 
-	if (appdata) {
+  if (appdata)
+  {
+    /*
+    ** Found it, get the pointer to the dazzle data
+    */
+    dazzledata = (W3DDazzleAppDataStruct *)(appdata->data);
+  }
+  else if (create_if_missing)
+  {
+    /*
+    ** Create a new W3DDazzleAppDataStruct for this node
+    */
+    dazzledata = new W3DDazzleAppDataStruct;
+    node->AddAppDataChunk(
+        W3DUtilityClassID,
+        UTILITY_CLASS_ID,
+        W3D_DAZZLE_APPDATA,
+        sizeof(W3DDazzleAppDataStruct),
+        dazzledata);
 
-		/*
-		** Found it, get the pointer to the dazzle data
-		*/
-		dazzledata = (W3DDazzleAppDataStruct *)(appdata->data);
-
-	} else if (create_if_missing) {
-
-		/*
-		** Create a new W3DDazzleAppDataStruct for this node
-		*/
-		dazzledata = new W3DDazzleAppDataStruct;
-		node->AddAppDataChunk(W3DUtilityClassID,UTILITY_CLASS_ID,W3D_DAZZLE_APPDATA,sizeof(W3DDazzleAppDataStruct),dazzledata);
-
-		appdata = node->GetAppDataChunk(W3DUtilityClassID,UTILITY_CLASS_ID,W3D_DAZZLE_APPDATA);
-		assert(appdata);
-	}
-	return dazzledata;
+    appdata = node->GetAppDataChunk(W3DUtilityClassID, UTILITY_CLASS_ID, W3D_DAZZLE_APPDATA);
+    assert(appdata);
+  }
+  return dazzledata;
 }
-
-
-
-
 
 /***********************************************************************************************
 **
@@ -328,10 +328,10 @@ W3DDazzleAppDataStruct * W3DDazzleAppDataStruct::Get_App_Data(INode * node,bool 
 **
 ***********************************************************************************************/
 
-static int get_geometry_type(INode * node)
+static int get_geometry_type(INode *node)
 {
-	assert(node != NULL);
-	return W3DAppData2Struct::Get_App_Data(node)->Get_Geometry_Type();
+  assert(node != NULL);
+  return W3DAppData2Struct::Get_App_Data(node)->Get_Geometry_Type();
 }
 
 /***********************************************************************************************
@@ -346,15 +346,18 @@ static int get_geometry_type(INode * node)
  * HISTORY:                                                                                    *
  *   10/26/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-bool Is_Bone(INode * node)
+bool Is_Bone(INode *node)
 {
-	/*
-	** regardless of the bits, skins should not have their transform exported.
-	*/
-	if (Is_Skin(node)) return false;
-	if (Is_Origin(node)) return false;
-	//if (Is_Proxy(*node)) return false;
-	else return (W3DAppData2Struct::Get_App_Data(node)->Is_Bone());
+  /*
+  ** regardless of the bits, skins should not have their transform exported.
+  */
+  if (Is_Skin(node))
+    return false;
+  if (Is_Origin(node))
+    return false;
+  // if (Is_Proxy(*node)) return false;
+  else
+    return (W3DAppData2Struct::Get_App_Data(node)->Is_Bone());
 }
 
 /***********************************************************************************************
@@ -369,9 +372,9 @@ bool Is_Bone(INode * node)
  * HISTORY:                                                                                    *
  *   1/13/98    GTH : Created.                                                                 *
  *=============================================================================================*/
-bool Is_Geometry(INode * node)
+bool Is_Geometry(INode *node)
 {
-	return (W3DAppData2Struct::Get_App_Data(node)->Is_Geometry());
+  return (W3DAppData2Struct::Get_App_Data(node)->Is_Geometry());
 }
 
 /***********************************************************************************************
@@ -386,14 +389,16 @@ bool Is_Geometry(INode * node)
  * HISTORY:                                                                                    *
  *   10/26/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-bool Is_Normal_Mesh(INode * node)
+bool Is_Normal_Mesh(INode *node)
 {
- 	if (!Is_Geometry(node)) return false;
-	if (Is_Skin(node)) return false;
-	if (Is_Proxy(*node)) return false;
-	return (get_geometry_type(node) == W3DAppData2Struct::GEO_TYPE_NORMAL_MESH);
+  if (!Is_Geometry(node))
+    return false;
+  if (Is_Skin(node))
+    return false;
+  if (Is_Proxy(*node))
+    return false;
+  return (get_geometry_type(node) == W3DAppData2Struct::GEO_TYPE_NORMAL_MESH);
 }
-
 
 /***********************************************************************************************
  * Is_Camera_Aligned_Mesh -- check if a node is to be a camera aligned mesh                    *
@@ -407,10 +412,11 @@ bool Is_Normal_Mesh(INode * node)
  * HISTORY:                                                                                    *
  *   5/5/98     GTH : Created.                                                                 *
  *=============================================================================================*/
-bool Is_Camera_Aligned_Mesh(INode * node)
+bool Is_Camera_Aligned_Mesh(INode *node)
 {
-	if (!Is_Geometry(node)) return false;
-	return (get_geometry_type(node) == W3DAppData2Struct::GEO_TYPE_CAMERA_ALIGNED);
+  if (!Is_Geometry(node))
+    return false;
+  return (get_geometry_type(node) == W3DAppData2Struct::GEO_TYPE_CAMERA_ALIGNED);
 }
 
 /***********************************************************************************************
@@ -425,10 +431,11 @@ bool Is_Camera_Aligned_Mesh(INode * node)
  * HISTORY:                                                                                    *
  *   3/2/99     NH : Created.                                                                  *
  *=============================================================================================*/
-bool Is_Camera_Oriented_Mesh(INode * node)
+bool Is_Camera_Oriented_Mesh(INode *node)
 {
-	if (!Is_Geometry(node)) return false;
-	return (get_geometry_type(node) == W3DAppData2Struct::GEO_TYPE_CAMERA_ORIENTED);
+  if (!Is_Geometry(node))
+    return false;
+  return (get_geometry_type(node) == W3DAppData2Struct::GEO_TYPE_CAMERA_ORIENTED);
 }
 
 /***********************************************************************************************
@@ -443,12 +450,12 @@ bool Is_Camera_Oriented_Mesh(INode * node)
  * HISTORY:                                                                                    *
  *   10/26/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-bool Is_Collision_AABox(INode * node)
+bool Is_Collision_AABox(INode *node)
 {
-	if (!Is_Geometry(node)) return false;
-	return (get_geometry_type(node) == W3DAppData2Struct::GEO_TYPE_AABOX);
+  if (!Is_Geometry(node))
+    return false;
+  return (get_geometry_type(node) == W3DAppData2Struct::GEO_TYPE_AABOX);
 }
-
 
 /***********************************************************************************************
  * Is_Collision_OBBox -- check if a node is a collision box                                    *
@@ -462,10 +469,11 @@ bool Is_Collision_AABox(INode * node)
  * HISTORY:                                                                                    *
  *   11/17/1998 GH  : Created.                                                                 *
  *=============================================================================================*/
-bool Is_Collision_OBBox(INode * node)
+bool Is_Collision_OBBox(INode *node)
 {
-	if (!Is_Geometry(node)) return false;
-	return (get_geometry_type(node) == W3DAppData2Struct::GEO_TYPE_OBBOX);
+  if (!Is_Geometry(node))
+    return false;
+  return (get_geometry_type(node) == W3DAppData2Struct::GEO_TYPE_OBBOX);
 }
 
 /***********************************************************************************************
@@ -480,30 +488,34 @@ bool Is_Collision_OBBox(INode * node)
  * HISTORY:                                                                                    *
  *   10/26/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-bool Is_Skin(INode * node)
+bool Is_Skin(INode *node)
 {
-	if (!Is_Geometry(node)) return false;
-	if (get_geometry_type(node) != W3DAppData2Struct::GEO_TYPE_NORMAL_MESH) return false;
+  if (!Is_Geometry(node))
+    return false;
+  if (get_geometry_type(node) != W3DAppData2Struct::GEO_TYPE_NORMAL_MESH)
+    return false;
 
-	for (int i = 0; i < node->NumRefs(); i++) {
+  for (int i = 0; i < node->NumRefs(); i++)
+  {
+    ReferenceTarget *refTarg = node->GetReference(i);
 
-		ReferenceTarget *refTarg = node->GetReference(i);
+    if (refTarg != NULL && refTarg->ClassID() == Class_ID(WSM_DERIVOB_CLASS_ID, 0))
+    {
+      IDerivedObject *wsm_der_obj = (IDerivedObject *)refTarg;
+      // MessageBox(NULL, "WSM found", _T("WSM"), MB_OK);
 
-		if (refTarg != NULL && refTarg->ClassID() == Class_ID(WSM_DERIVOB_CLASS_ID,0)) {
+      for (int j = 0; j < wsm_der_obj->NumModifiers(); j++)
+      {
+        Modifier *mod = wsm_der_obj->GetModifier(j);
+        if (mod->ClassID() == SKIN_MOD_CLASS_ID)
+        {
+          return true;
+        }
+      }
+    }
+  }
 
-			IDerivedObject * wsm_der_obj = (IDerivedObject *)refTarg;
-			//MessageBox(NULL, "WSM found", _T("WSM"), MB_OK);
-
-			for (int j = 0; j < wsm_der_obj->NumModifiers(); j++) {
-				Modifier * mod = wsm_der_obj->GetModifier(j);
-				if (mod->ClassID() == SKIN_MOD_CLASS_ID) {
-					return true;
-				}
-			}
-		}
-	}
-
-	return false;
+  return false;
 }
 
 /***********************************************************************************************
@@ -518,11 +530,12 @@ bool Is_Skin(INode * node)
  * HISTORY:                                                                                    *
  *   10/26/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-bool Is_Shadow(INode * node)
+bool Is_Shadow(INode *node)
 {
-	if (!Is_Geometry(node)) return false;
-	W3DAppData2Struct * wdata = W3DAppData2Struct::Get_App_Data(node);
-	return (wdata->Is_Shadow_Enabled());
+  if (!Is_Geometry(node))
+    return false;
+  W3DAppData2Struct *wdata = W3DAppData2Struct::Get_App_Data(node);
+  return (wdata->Is_Shadow_Enabled());
 }
 
 /***********************************************************************************************
@@ -537,12 +550,12 @@ bool Is_Shadow(INode * node)
  * HISTORY:                                                                                    *
  *   10/26/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-bool Is_Null_Object(INode * node)
+bool Is_Null_Object(INode *node)
 {
-	if (!Is_Geometry(node)) return false;
-	return (get_geometry_type(node) == W3DAppData2Struct::GEO_TYPE_NULL);
+  if (!Is_Geometry(node))
+    return false;
+  return (get_geometry_type(node) == W3DAppData2Struct::GEO_TYPE_NULL);
 }
-
 
 /***********************************************************************************************
  * Is_Dazzle -- check if a node is a dazzle object                                             *
@@ -556,12 +569,12 @@ bool Is_Null_Object(INode * node)
  * HISTORY:                                                                                    *
  *   8/5/2000   gth : Created.                                                                 *
  *=============================================================================================*/
-bool	Is_Dazzle(INode * node)
+bool Is_Dazzle(INode *node)
 {
-	if (!Is_Geometry(node)) return false;
-	return (get_geometry_type(node) == W3DAppData2Struct::GEO_TYPE_DAZZLE);
+  if (!Is_Geometry(node))
+    return false;
+  return (get_geometry_type(node) == W3DAppData2Struct::GEO_TYPE_DAZZLE);
 }
-
 
 /***********************************************************************************************
  * Is_Aggregate -- check if a node is an aggregate object                                      *
@@ -575,10 +588,11 @@ bool	Is_Dazzle(INode * node)
  * HISTORY:                                                                                    *
  *   10/24/2000 gth : Created.                                                                 *
  *=============================================================================================*/
-bool Is_Aggregate(INode * node)
+bool Is_Aggregate(INode *node)
 {
-	if (!Is_Geometry(node)) return false;
-	return (get_geometry_type(node) == W3DAppData2Struct::GEO_TYPE_AGGREGATE);
+  if (!Is_Geometry(node))
+    return false;
+  return (get_geometry_type(node) == W3DAppData2Struct::GEO_TYPE_AGGREGATE);
 }
 
 /***********************************************************************************************
@@ -593,12 +607,11 @@ bool Is_Aggregate(INode * node)
  * HISTORY:                                                                                    *
  *   1/23/98    GTH : Created.                                                                 *
  *=============================================================================================*/
-bool Is_Physical_Collision(INode * node)
+bool Is_Physical_Collision(INode *node)
 {
-	W3DAppData2Struct * wdata = W3DAppData2Struct::Get_App_Data(node);
-	return (wdata->Is_Physical_Collision_Enabled());
+  W3DAppData2Struct *wdata = W3DAppData2Struct::Get_App_Data(node);
+  return (wdata->Is_Physical_Collision_Enabled());
 }
-
 
 /***********************************************************************************************
  * Is_Projectile_Collision -- Is node categorized as "projectile collision geometry"?          *
@@ -612,12 +625,11 @@ bool Is_Physical_Collision(INode * node)
  * HISTORY:                                                                                    *
  *   1/23/98    GTH : Created.                                                                 *
  *=============================================================================================*/
-bool Is_Projectile_Collision(INode * node)
+bool Is_Projectile_Collision(INode *node)
 {
-	W3DAppData2Struct * wdata = W3DAppData2Struct::Get_App_Data(node);
-	return (wdata->Is_Projectile_Collision_Enabled());
+  W3DAppData2Struct *wdata = W3DAppData2Struct::Get_App_Data(node);
+  return (wdata->Is_Projectile_Collision_Enabled());
 }
-
 
 /***********************************************************************************************
  * Is_Projectile_Collision -- Is node categorized as "vis collision geometry"?                 *
@@ -631,12 +643,11 @@ bool Is_Projectile_Collision(INode * node)
  * HISTORY:                                                                                    *
  *   1/23/98    GTH : Created.                                                                 *
  *=============================================================================================*/
-bool Is_Vis_Collision(INode * node)
+bool Is_Vis_Collision(INode *node)
 {
-	W3DAppData2Struct * wdata = W3DAppData2Struct::Get_App_Data(node);
-	return (wdata->Is_Vis_Collision_Enabled());
+  W3DAppData2Struct *wdata = W3DAppData2Struct::Get_App_Data(node);
+  return (wdata->Is_Vis_Collision_Enabled());
 }
-
 
 /***********************************************************************************************
  * Is_Camera_Collision -- Is node categorized as "camera collision geometry"?                  *
@@ -650,10 +661,10 @@ bool Is_Vis_Collision(INode * node)
  * HISTORY:                                                                                    *
  *   8/4/2000   gth : Created.                                                                 *
  *=============================================================================================*/
-bool Is_Camera_Collision(INode * node)
+bool Is_Camera_Collision(INode *node)
 {
-	W3DAppData2Struct * wdata = W3DAppData2Struct::Get_App_Data(node);
-	return (wdata->Is_Camera_Collision_Enabled());
+  W3DAppData2Struct *wdata = W3DAppData2Struct::Get_App_Data(node);
+  return (wdata->Is_Camera_Collision_Enabled());
 }
 
 /***********************************************************************************************
@@ -668,10 +679,10 @@ bool Is_Camera_Collision(INode * node)
  * HISTORY:                                                                                    *
  *   8/4/2000   gth : Created.                                                                 *
  *=============================================================================================*/
-bool Is_Vehicle_Collision(INode * node)
+bool Is_Vehicle_Collision(INode *node)
 {
-	W3DAppData2Struct * wdata = W3DAppData2Struct::Get_App_Data(node);
-	return (wdata->Is_Vehicle_Collision_Enabled());
+  W3DAppData2Struct *wdata = W3DAppData2Struct::Get_App_Data(node);
+  return (wdata->Is_Vehicle_Collision_Enabled());
 }
 
 /***********************************************************************************************
@@ -688,12 +699,11 @@ bool Is_Vehicle_Collision(INode * node)
  * HISTORY:                                                                                    *
  *   11/18/98   GTH : Created.                                                                 *
  *=============================================================================================*/
-bool	Is_Hidden(INode * node)
+bool Is_Hidden(INode *node)
 {
-	W3DAppData2Struct * wdata = W3DAppData2Struct::Get_App_Data(node);
-	return (wdata->Is_Hidden_Enabled());
+  W3DAppData2Struct *wdata = W3DAppData2Struct::Get_App_Data(node);
+  return (wdata->Is_Hidden_Enabled());
 }
-
 
 /***********************************************************************************************
  * Is_Two_Sided -- Checks whether the node should be two sided                                 *
@@ -707,12 +717,11 @@ bool	Is_Hidden(INode * node)
  * HISTORY:                                                                                    *
  *   11/18/98   GTH : Created.                                                                 *
  *=============================================================================================*/
-bool	Is_Two_Sided(INode * node)
+bool Is_Two_Sided(INode *node)
 {
-	W3DAppData2Struct * wdata = W3DAppData2Struct::Get_App_Data(node);
-	return (wdata->Is_Two_Sided_Enabled());
+  W3DAppData2Struct *wdata = W3DAppData2Struct::Get_App_Data(node);
+  return (wdata->Is_Two_Sided_Enabled());
 }
-
 
 /***********************************************************************************************
  * Is_ZNormals -- checks if the node should be exported with 0,0,1 vert normals                *
@@ -726,31 +735,26 @@ bool	Is_Two_Sided(INode * node)
  * HISTORY:                                                                                    *
  *   2/9/99     GTH : Created.                                                                 *
  *=============================================================================================*/
-bool	Is_ZNormals(INode * node)
+bool Is_ZNormals(INode *node)
 {
-	W3DAppData2Struct * wdata = W3DAppData2Struct::Get_App_Data(node);
-	return (wdata->Is_ZNormals_Enabled());
+  W3DAppData2Struct *wdata = W3DAppData2Struct::Get_App_Data(node);
+  return (wdata->Is_ZNormals_Enabled());
 }
 
-
-bool	Is_Vertex_Alpha(INode * node)
+bool Is_Vertex_Alpha(INode *node)
 {
-	W3DAppData2Struct * wdata = W3DAppData2Struct::Get_App_Data(node);
-	return (wdata->Is_Vertex_Alpha_Enabled());
+  W3DAppData2Struct *wdata = W3DAppData2Struct::Get_App_Data(node);
+  return (wdata->Is_Vertex_Alpha_Enabled());
 }
 
-bool	Is_Shatterable(INode * node)
+bool Is_Shatterable(INode *node)
 {
-	W3DAppData2Struct * wdata = W3DAppData2Struct::Get_App_Data(node);
-	return (wdata->Is_Shatterable_Enabled());
+  W3DAppData2Struct *wdata = W3DAppData2Struct::Get_App_Data(node);
+  return (wdata->Is_Shatterable_Enabled());
 }
 
-bool	Is_NPatchable(INode * node)
+bool Is_NPatchable(INode *node)
 {
-	W3DAppData2Struct * wdata = W3DAppData2Struct::Get_App_Data(node);
-	return (wdata->Is_NPatchable_Enabled());
+  W3DAppData2Struct *wdata = W3DAppData2Struct::Get_App_Data(node);
+  return (wdata->Is_NPatchable_Enabled());
 }
-
-
-
-

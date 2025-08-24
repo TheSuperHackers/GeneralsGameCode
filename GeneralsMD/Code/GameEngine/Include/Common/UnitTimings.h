@@ -32,8 +32,6 @@
 #ifndef __UNITTIMINGS_H_
 #define __UNITTIMINGS_H_
 
-
 #define dont_DO_UNIT_TIMINGS
 
 #endif
-

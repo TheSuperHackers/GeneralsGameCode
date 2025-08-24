@@ -35,59 +35,54 @@
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-ObjectRepulsorHelper::~ObjectRepulsorHelper( void )
+ObjectRepulsorHelper::~ObjectRepulsorHelper(void)
 {
-
 }
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 UpdateSleepTime ObjectRepulsorHelper::update()
 {
-	// if we ever get here, clear this.
-	getObject()->clearStatus( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_REPULSOR ) );
+  // if we ever get here, clear this.
+  getObject()->clearStatus(MAKE_OBJECT_STATUS_MASK(OBJECT_STATUS_REPULSOR));
 
-	// then go back to sleep until we are forcibly awakened.
-	return UPDATE_SLEEP_FOREVER;
+  // then go back to sleep until we are forcibly awakened.
+  return UPDATE_SLEEP_FOREVER;
 }
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void ObjectRepulsorHelper::crc( Xfer *xfer )
+void ObjectRepulsorHelper::crc(Xfer *xfer)
 {
+  // object helper crc
+  ObjectHelper::crc(xfer);
 
-	// object helper crc
-	ObjectHelper::crc( xfer );
-
-}  // end crc
+} // end crc
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info;
-	* 1: Initial version */
+ * Version Info;
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void ObjectRepulsorHelper::xfer( Xfer *xfer )
+void ObjectRepulsorHelper::xfer(Xfer *xfer)
 {
+  // version
+  XferVersion currentVersion = 1;
+  XferVersion version = currentVersion;
+  xfer->xferVersion(&version, currentVersion);
 
-	// version
-	XferVersion currentVersion = 1;
-	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+  // object helper base class
+  ObjectHelper::xfer(xfer);
 
-	// object helper base class
-	ObjectHelper::xfer( xfer );
-
-}  // end xfer
+} // end xfer
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void ObjectRepulsorHelper::loadPostProcess( void )
+void ObjectRepulsorHelper::loadPostProcess(void)
 {
+  // object helper base class
+  ObjectHelper::loadPostProcess();
 
-	// object helper base class
-	ObjectHelper::loadPostProcess();
-
-}  // end loadPostProcess
-
+} // end loadPostProcess

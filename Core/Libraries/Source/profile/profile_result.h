@@ -27,7 +27,7 @@
 // Result function interface and result functions
 //////////////////////////////////////////////////////////////////////////////
 #ifdef _MSC_VER
-#  pragma once
+#pragma once
 #endif
 #ifndef PROFILE_RESULT_H // Include guard
 #define PROFILE_RESULT_H
@@ -41,25 +41,25 @@
 class ProfileResultInterface
 {
   // no copying
-  ProfileResultInterface(const ProfileResultInterface&);
-  ProfileResultInterface& operator=(const ProfileResultInterface&);
+  ProfileResultInterface(const ProfileResultInterface &);
+  ProfileResultInterface &operator=(const ProfileResultInterface &);
 
-public:
+  public:
   /**
     \brief Write out results.
 
     This function is called on program exit.
   */
-  virtual void WriteResults(void)=0;
+  virtual void WriteResults(void) = 0;
 
   /**
     \brief Destroys the current result function.
 
     Use this function instead of just delete'ing the instance.
   */
-  virtual void Delete(void)=0;
+  virtual void Delete(void) = 0;
 
-protected:
+  protected:
   ProfileResultInterface(void) {}
 };
 

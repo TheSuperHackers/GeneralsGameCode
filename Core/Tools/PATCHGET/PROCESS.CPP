@@ -23,32 +23,32 @@ namespace patchget
 
 Process::Process()
 {
-  directory[0]=0;
-  command[0]=0;
-  args[0]=0;
-  hProcess=NULL;
-  hThread=NULL;
+  directory[0] = 0;
+  command[0] = 0;
+  args[0] = 0;
+  hProcess = NULL;
+  hThread = NULL;
 }
 
 // Create a process
 bit8 Create_Process(Process &process)
 {
-    int                      retval;
-    STARTUPINFO              si;
-    PROCESS_INFORMATION      piProcess;
-    ZeroMemory(&si,sizeof(si));
-    si.cb=sizeof(si);
+  int retval;
+  STARTUPINFO si;
+  PROCESS_INFORMATION piProcess;
+  ZeroMemory(&si, sizeof(si));
+  si.cb = sizeof(si);
 
-    char cmdargs[513];
-    memset(cmdargs,0,513);
-    strcpy(cmdargs,process.command);
-    strcat(cmdargs,process.args);
+  char cmdargs[513];
+  memset(cmdargs, 0, 513);
+  strcpy(cmdargs, process.command);
+  strcat(cmdargs, process.args);
 
-    retval=CreateProcess(NULL,cmdargs,NULL,NULL,FALSE, 0  ,NULL, NULL/*process.directory*/,&si,&piProcess);
+  retval = CreateProcess(NULL, cmdargs, NULL, NULL, FALSE, 0, NULL, NULL /*process.directory*/, &si, &piProcess);
 
-    process.hProcess=piProcess.hProcess;
-    process.hThread=piProcess.hThread;
-    return(TRUE);
+  process.hProcess = piProcess.hProcess;
+  process.hThread = piProcess.hThread;
+  return (TRUE);
 }
 
 //
@@ -57,17 +57,17 @@ bit8 Create_Process(Process &process)
 bit8 Wait_Process(Process &process, DWORD *exit_code)
 {
   DWORD retval;
-  retval=WaitForSingleObject(process.hProcess,INFINITE);
+  retval = WaitForSingleObject(process.hProcess, INFINITE);
   if (exit_code != NULL)
-    *exit_code=-1;
-  if (retval==WAIT_OBJECT_0)  // process exited
+    *exit_code = -1;
+  if (retval == WAIT_OBJECT_0) // process exited
   {
     if (exit_code != NULL)
-      GetExitCodeProcess(process.hProcess,exit_code);
-    return(TRUE);
+      GetExitCodeProcess(process.hProcess, exit_code);
+    return (TRUE);
   }
-  else                        // can this happen?
-    return(FALSE);
+  else // can this happen?
+    return (FALSE);
 }
 
 /*******************

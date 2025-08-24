@@ -27,11 +27,11 @@
 // Debug I/O class ods (OutputDebugString, for use in debugger)
 //////////////////////////////////////////////////////////////////////////////
 #include "_pch.h"
-#include <new>      // needed for placement new prototype
+#include <new> // needed for placement new prototype
 
 void DebugIOOds::Write(StringType type, const char *src, const char *str)
 {
-  if (type!=StringType::StructuredCmdReply&&str)
+  if (type != StringType::StructuredCmdReply && str)
     OutputDebugString(str);
 }
 

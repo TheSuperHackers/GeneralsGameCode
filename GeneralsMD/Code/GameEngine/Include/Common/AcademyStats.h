@@ -64,217 +64,211 @@ class ThingTemplate;
 
 struct AcademyAdviceInfo
 {
-	UnicodeString advice[ MAX_ADVICE_TIPS ];
-	UnsignedInt numTips;
+  UnicodeString advice[MAX_ADVICE_TIPS];
+  UnsignedInt numTips;
 };
 
-enum AcademyClassificationType CPP_11(: Int)
-{
-	//Don't forget to update the strings too!
-	ACT_NONE,
-	ACT_UPGRADE_RADAR,
-	ACT_SUPERPOWER,
+enum AcademyClassificationType CPP_11( : Int){
+  // Don't forget to update the strings too!
+  ACT_NONE,
+  ACT_UPGRADE_RADAR,
+  ACT_SUPERPOWER,
 };
-extern const char *TheAcademyClassificationTypeNames[]; //Change above, change this!
-
+extern const char *TheAcademyClassificationTypeNames[]; // Change above, change this!
 
 // ----------------------------------------------------------------------------------------------
 class AcademyStats : public Snapshot
 {
+  public:
+  AcademyStats();
 
-public:
+  void init(const Player *player);
+  void update();
 
-	AcademyStats();
+  Bool isFirstUpdate() const { return m_firstUpdate; }
+  void setFirstUpdate(Bool set) { m_firstUpdate = set; }
 
-	void init( const Player *player );
-	void update();
+  void recordProduction(const Object *obj, const Object *constructer);
+  void recordUpgrade(const UpgradeTemplate *upgrade, Bool granted);
+  void recordSpecialPowerUsed(const SpecialPowerTemplate *spTemplate);
+  void recordIncome();
 
-	Bool isFirstUpdate() const { return m_firstUpdate; }
-	void setFirstUpdate( Bool set ) { m_firstUpdate = set; }
+  void recordBuildingCapture() { m_structuresCaptured++; }
+  void recordGeneralsPointsSpent(Int points) { m_generalsPointsSpent += points; }
+  void recordBuildingGarrisoned() { m_structuresGarrisoned++; }
+  void recordDragSelection() { m_dragSelectUnits++; }
+  void recordStrategyCenter() { m_hadAStrategyCenter = TRUE; }
+  void recordBattlePlanSelected() { m_choseAStrategyForCenter = TRUE; }
+  void recordUnitEnteredTunnelNetwork() { m_unitsEnteredTunnelNetwork++; }
+  void recordControlGroupsUsed() { m_controlGroupsUsed++; }
+  void recordClearedGarrisonedBuilding() { m_clearedGarrisonedBuildings++; }
+  void recordVehicleDisguised() { m_vehiclesDisguised++; }
+  void recordFirestormCreated() { m_firestormsCreated++; }
+  void recordGuardAbilityUsed() { m_guardAbilityUsedCount++; }
+  void recordSalvageCollected() { m_salvageCollected++; }
+  void recordDoubleClickAttackMoveOrderGiven() { m_doubleClickAttackMoveOrdersGiven++; }
+  void recordMineCleared() { m_minesCleared++; }
 
-	void recordProduction( const Object *obj, const Object *constructer );
-	void recordUpgrade( const UpgradeTemplate *upgrade, Bool granted );
-	void recordSpecialPowerUsed( const SpecialPowerTemplate *spTemplate );
-	void recordIncome();
+  // Returns the natural command center template (you may capture others in a game...)
+  const ThingTemplate *getCommandCenterTemplate() const { return m_commandCenterTemplate; }
 
-	void recordBuildingCapture() { m_structuresCaptured++; }
-	void recordGeneralsPointsSpent( Int points ) { m_generalsPointsSpent += points; }
-	void recordBuildingGarrisoned() { m_structuresGarrisoned++; }
-	void recordDragSelection() { m_dragSelectUnits++; }
-	void recordStrategyCenter() { m_hadAStrategyCenter = TRUE; }
-	void recordBattlePlanSelected() { m_choseAStrategyForCenter = TRUE; }
-	void recordUnitEnteredTunnelNetwork() { m_unitsEnteredTunnelNetwork++; }
-	void recordControlGroupsUsed() { m_controlGroupsUsed++; }
-	void recordClearedGarrisonedBuilding() { m_clearedGarrisonedBuildings++; }
-	void recordVehicleDisguised() { m_vehiclesDisguised++; }
-	void recordFirestormCreated() { m_firestormsCreated++; }
-	void recordGuardAbilityUsed() { m_guardAbilityUsedCount++; }
-	void recordSalvageCollected() { m_salvageCollected++;}
-	void recordDoubleClickAttackMoveOrderGiven() { m_doubleClickAttackMoveOrdersGiven++; }
-	void recordMineCleared() { m_minesCleared++; }
+  // Use these functions for the Neutral player only!
+  void recordVehicleSniped() { m_vehiclesSniped++; }
+  UnsignedInt getVehiclesSniped() const { return m_vehiclesSniped; }
+  void recordMine() { m_mines++; }
+  UnsignedInt getMines() const { return m_mines; }
 
-	//Returns the natural command center template (you may capture others in a game...)
-	const ThingTemplate* getCommandCenterTemplate() const { return m_commandCenterTemplate; }
+  const Player *getPlayer() { return m_player; }
+  Bool hadASupplyCenter() const { return m_supplyCentersBuilt > 0; }
 
-	//Use these functions for the Neutral player only!
-	void recordVehicleSniped() { m_vehiclesSniped++; }
-	UnsignedInt getVehiclesSniped() const { return m_vehiclesSniped; }
-	void recordMine() { m_mines++; }
-	UnsignedInt getMines() const { return m_mines; }
+  Bool calculateAcademyAdvice(AcademyAdviceInfo *info);
 
-	const Player *getPlayer() { return m_player; }
-	Bool hadASupplyCenter() const { return m_supplyCentersBuilt > 0; }
+  protected:
+  // snapshot methods
+  virtual void crc(Xfer *xfer);
+  virtual void xfer(Xfer *xfer);
+  virtual void loadPostProcess(void);
 
-	Bool calculateAcademyAdvice( AcademyAdviceInfo *info );
+  private:
+  void evaluateTier1Advice(AcademyAdviceInfo *info, Int numAvailableTips = -1);
+  void evaluateTier2Advice(AcademyAdviceInfo *info, Int numAvailableTips = -1);
+  void evaluateTier3Advice(AcademyAdviceInfo *info, Int numAvailableTips = -1);
 
-protected:
-	// snapshot methods
-	virtual void crc( Xfer *xfer );
-	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess( void );
+  const Player *m_player;
+  UnsignedInt m_nextUpdateFrame;
+  Bool m_firstUpdate;
+  const CommandSet *m_dozerCommandSet;
+  Bool m_unknownSide;
+  const ThingTemplate *m_commandCenterTemplate;
 
-private:
+  //+-----------------------+
+  //| Tier 1 (Basic advice) |
+  //+-----------------------+
 
-	void evaluateTier1Advice( AcademyAdviceInfo *info, Int numAvailableTips = -1 );
-	void evaluateTier2Advice( AcademyAdviceInfo *info, Int numAvailableTips = -1 );
-	void evaluateTier3Advice( AcademyAdviceInfo *info, Int numAvailableTips = -1 );
+  // 1) Did player build at least one of each structure type available?
+  // CUT!!!
 
-	const Player *m_player;
-	UnsignedInt m_nextUpdateFrame;
-	Bool m_firstUpdate;
-	const CommandSet *m_dozerCommandSet;
-	Bool m_unknownSide;
-	const ThingTemplate *m_commandCenterTemplate;
+  // 2) Did player run out of money before building a supply center?
+  Bool m_spentCashBeforeBuildingSupplyCenter;
+  UnsignedInt m_supplyCentersBuilt;
+  const ThingTemplate *m_supplyCenterTemplate;
+  UnsignedInt m_supplyCenterCost;
 
-	//+-----------------------+
-	//| Tier 1 (Basic advice) |
-	//+-----------------------+
+  // 3) Did player build radar (if applicable)?
+  Bool m_researchedRadar;
 
-	//1) Did player build at least one of each structure type available?
-	//CUT!!!
+  // 4) Did player build any dozers/workers?
+  UnsignedInt m_peonsBuilt;
 
-	//2) Did player run out of money before building a supply center?
-	Bool m_spentCashBeforeBuildingSupplyCenter;
-	UnsignedInt m_supplyCentersBuilt;
-	const ThingTemplate *m_supplyCenterTemplate;
-	UnsignedInt m_supplyCenterCost;
+  // 5) Did player ever capture a structure?
+  UnsignedInt m_structuresCaptured;
 
-	//3) Did player build radar (if applicable)?
-	Bool m_researchedRadar;
+  // 6) Did player spend any generals points?
+  UnsignedInt m_generalsPointsSpent;
 
-	//4) Did player build any dozers/workers?
-	UnsignedInt m_peonsBuilt;
+  // 7) Did player ever use a generals power or superweapon?
+  UnsignedInt m_specialPowersUsed;
 
-	//5) Did player ever capture a structure?
-	UnsignedInt m_structuresCaptured;
+  // 8) Did player garrison any structures?
+  UnsignedInt m_structuresGarrisoned;
 
-	//6) Did player spend any generals points?
-	UnsignedInt m_generalsPointsSpent;
+  // 9) How idle was the player in building military units?
+  UnsignedInt m_idleBuildingUnitsMaxFrames;
+  UnsignedInt m_lastUnitBuiltFrame;
 
-	//7) Did player ever use a generals power or superweapon?
-	UnsignedInt m_specialPowersUsed;
+  // 10) Did player drag select units?
+  UnsignedInt m_dragSelectUnits;
 
-	//8) Did player garrison any structures?
-	UnsignedInt m_structuresGarrisoned;
+  // 11) Did player upgrade anything?
+  UnsignedInt m_upgradesPurchased;
 
-	//9) How idle was the player in building military units?
-	UnsignedInt m_idleBuildingUnitsMaxFrames;
-	UnsignedInt m_lastUnitBuiltFrame;
+  // 12) Was player out of power for more than 10 minutes?
+  UnsignedInt m_powerOutMaxFrames;
+  UnsignedInt m_oldestPowerOutFrame;
+  Bool m_hadPowerLastCheck;
 
-	//10) Did player drag select units?
-	UnsignedInt m_dragSelectUnits;
+  // 13) Extra gathers built?
+  UnsignedInt m_gatherersBuilt;
 
-	//11) Did player upgrade anything?
-	UnsignedInt m_upgradesPurchased;
+  // 14) Heros built?
+  UnsignedInt m_heroesBuilt;
 
-	//12) Was player out of power for more than 10 minutes?
-	UnsignedInt m_powerOutMaxFrames;
-	UnsignedInt m_oldestPowerOutFrame;
-	Bool				m_hadPowerLastCheck;
+  //+------------------------------+
+  //| Tier 2 (Intermediate advice) |
+  //+------------------------------+
 
-	//13) Extra gathers built?
-	UnsignedInt m_gatherersBuilt;
+  // 15) Selected a strategy center battle plan?
+  Bool m_hadAStrategyCenter;
+  Bool m_choseAStrategyForCenter;
 
-	//14) Heros built?
-	UnsignedInt m_heroesBuilt;
+  // 16) Placed units inside tunnel network?
+  UnsignedInt m_unitsEnteredTunnelNetwork;
+  Bool m_hadATunnelNetwork;
 
-	//+------------------------------+
-	//| Tier 2 (Intermediate advice) |
-	//+------------------------------+
+  // 17) Player used control groups?
+  UnsignedInt m_controlGroupsUsed;
 
-	//15) Selected a strategy center battle plan?
-	Bool m_hadAStrategyCenter;
-	Bool m_choseAStrategyForCenter;
+  // 18) Built secondary income unit (hacker, dropzone, blackmarket)?
+  UnsignedInt m_secondaryIncomeUnitsBuilt;
 
-	//16) Placed units inside tunnel network?
-	UnsignedInt m_unitsEnteredTunnelNetwork;
-	Bool m_hadATunnelNetwork;
+  // 19) Cleared out garrisoned buildings?
+  UnsignedInt m_clearedGarrisonedBuildings;
 
-	//17) Player used control groups?
-	UnsignedInt m_controlGroupsUsed;
+  // 20) Did the Player pick up salvage (as GLA)?
+  UnsignedInt m_salvageCollected;
 
-	//18) Built secondary income unit (hacker, dropzone, blackmarket)?
-	UnsignedInt m_secondaryIncomeUnitsBuilt;
+  // 21) Did the player ever use the "Guard" ability?
+  UnsignedInt m_guardAbilityUsedCount;
 
-	//19) Cleared out garrisoned buildings?
-	UnsignedInt m_clearedGarrisonedBuildings;
+  // 22) Did the player build more than one Supply Center (that is, did he expand out)?
+  // Uses m_supplyCentersBuilt!
 
-	//20) Did the Player pick up salvage (as GLA)?
-	UnsignedInt m_salvageCollected;
+  // 23) Did the player ever garrison a vehicle?
+  // CUT!!!
 
-	//21) Did the player ever use the "Guard" ability?
-	UnsignedInt m_guardAbilityUsedCount;
+  // 24) Did the player ever use the hotkey to grab all of one unit type (change to use any hotkeys)?
+  // CUT!!!
 
-	//22) Did the player build more than one Supply Center (that is, did he expand out)?
-	//Uses m_supplyCentersBuilt!
+  //+--------------------------+
+  //| Tier 3 (Advanced advice) |
+  //+--------------------------+
 
-	//23) Did the player ever garrison a vehicle?
-	//CUT!!!
+  // 25) Did the player use the new alternate interface in the options?
+  // Uses TheGlobalData->m_useAlternateMouse
 
-	//24) Did the player ever use the hotkey to grab all of one unit type (change to use any hotkeys)?
-	//CUT!!!
+  // 26) Player did not use the new "double click location attack move/guard"
+  UnsignedInt m_doubleClickAttackMoveOrdersGiven;
 
-	//+--------------------------+
-	//| Tier 3 (Advanced advice) |
-	//+--------------------------+
+  // 27) Built barracks within 5 minutes?
+  Bool m_builtBarracksWithinFiveMinutes;
 
-	//25) Did the player use the new alternate interface in the options?
-	//Uses TheGlobalData->m_useAlternateMouse
+  // 28) Built war factory within 10 minutes?
+  Bool m_builtWarFactoryWithinTenMinutes;
 
-	//26) Player did not use the new "double click location attack move/guard"
-	UnsignedInt m_doubleClickAttackMoveOrdersGiven;
+  // 29) Built tech structure within 15 minutes?
+  Bool m_builtTechStructureWithinFifteenMinutes;
 
-  //27) Built barracks within 5 minutes?
-	Bool m_builtBarracksWithinFiveMinutes;
+  // 30) No income for 2 minutes?
+  UnsignedInt m_lastIncomeFrame;
+  UnsignedInt m_maxFramesBetweenIncome;
 
-	//28) Built war factory within 10 minutes?
-	Bool m_builtWarFactoryWithinTenMinutes;
+  // 31) Did the Player ever use Dozers/Workers to clear out traps/mines/booby traps?
+  UnsignedInt m_mines; // Neutral player stat
+  UnsignedInt m_minesCleared;
 
-	//29) Built tech structure within 15 minutes?
-	Bool m_builtTechStructureWithinFifteenMinutes;
+  // 32) Captured any sniped vehicles?
+  UnsignedInt m_vehiclesRecovered;
+  UnsignedInt m_vehiclesSniped;
 
-	//30) No income for 2 minutes?
-	UnsignedInt m_lastIncomeFrame;
-	UnsignedInt m_maxFramesBetweenIncome;
+  // 33) Did the player ever build a "disguisable" unit and never used the disguise ability?
+  UnsignedInt m_disguisableVehiclesBuilt;
+  UnsignedInt m_vehiclesDisguised;
 
-	//31) Did the Player ever use Dozers/Workers to clear out traps/mines/booby traps?
-	UnsignedInt m_mines; //Neutral player stat
-	UnsignedInt m_minesCleared;
+  // 34) Did the player never build a "stealth" upgrade?
+  // CUT!!!
 
-	//32) Captured any sniped vehicles?
-	UnsignedInt m_vehiclesRecovered;
-	UnsignedInt m_vehiclesSniped;
-
-	//33) Did the player ever build a "disguisable" unit and never used the disguise ability?
-	UnsignedInt m_disguisableVehiclesBuilt;
-	UnsignedInt m_vehiclesDisguised;
-
-	//34) Did the player never build a "stealth" upgrade?
-	//CUT!!!
-
-	//35) Did the player ever create a "Firestorm" with his MiGs or Inferno Cannons?
-	UnsignedInt m_firestormsCreated;
+  // 35) Did the player ever create a "Firestorm" with his MiGs or Inferno Cannons?
+  UnsignedInt m_firestormsCreated;
 };
 
 #endif // __ACADEMY_STATS_H
-

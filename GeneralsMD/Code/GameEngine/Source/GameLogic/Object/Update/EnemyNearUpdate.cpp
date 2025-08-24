@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 
 #include "Common/PerfTimer.h"
 #include "Common/ThingTemplate.h"
@@ -43,40 +43,38 @@
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-EnemyNearUpdate::EnemyNearUpdate( Thing *thing, const ModuleData* moduleData ) : UpdateModule( thing, moduleData ),
-	m_enemyNear(false),
-	m_enemyScanDelay(0)
+EnemyNearUpdate::EnemyNearUpdate(Thing *thing, const ModuleData *moduleData) :
+    UpdateModule(thing, moduleData), m_enemyNear(false), m_enemyScanDelay(0)
 {
-	// bias a random amount so everyone doesn't spike at once
-	m_enemyScanDelay += GameLogicRandomValue(0, getEnemyNearUpdateModuleData()->m_enemyScanDelayTime);
+  // bias a random amount so everyone doesn't spike at once
+  m_enemyScanDelay += GameLogicRandomValue(0, getEnemyNearUpdateModuleData()->m_enemyScanDelayTime);
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-EnemyNearUpdate::~EnemyNearUpdate( void )
+EnemyNearUpdate::~EnemyNearUpdate(void)
 {
 }
-
 
 //-------------------------------------------------------------------------------------------------
 /**
  * Look around us for enemies.
  */
-void EnemyNearUpdate::checkForEnemies( void )
+void EnemyNearUpdate::checkForEnemies(void)
 {
-	// periodic enemy checks
-	if (m_enemyScanDelay == 0)
-	{
-		m_enemyScanDelay = getEnemyNearUpdateModuleData()->m_enemyScanDelayTime;
+  // periodic enemy checks
+  if (m_enemyScanDelay == 0)
+  {
+    m_enemyScanDelay = getEnemyNearUpdateModuleData()->m_enemyScanDelayTime;
 
-		Real visionRange = getObject()->getVisionRange();
-		Object* enemy = TheAI->findClosestEnemy( getObject(), visionRange, AI::CAN_SEE );
-		m_enemyNear = (enemy != NULL);
-	}
-	else
-	{
-		--m_enemyScanDelay;
-	}
+    Real visionRange = getObject()->getVisionRange();
+    Object *enemy = TheAI->findClosestEnemy(getObject(), visionRange, AI::CAN_SEE);
+    m_enemyNear = (enemy != NULL);
+  }
+  else
+  {
+    --m_enemyScanDelay;
+  }
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -84,70 +82,67 @@ void EnemyNearUpdate::checkForEnemies( void )
 //-------------------------------------------------------------------------------------------------
 UpdateSleepTime EnemyNearUpdate::update()
 {
-/// @todo srj use SLEEPY_UPDATE here
-	Bool enemyWasNear = m_enemyNear;
+  /// @todo srj use SLEEPY_UPDATE here
+  Bool enemyWasNear = m_enemyNear;
 
-	checkForEnemies();
+  checkForEnemies();
 
-	if (m_enemyNear && !enemyWasNear)
-	{
-		// change the state of the art to an "enemy near" state
-		Drawable *draw = getObject()->getDrawable();
-		if( draw )
-			draw->setModelConditionState( MODELCONDITION_ENEMYNEAR );
-	}
-	else if (!m_enemyNear && enemyWasNear)
-	{
-		// change the state of the art to an idle state
-		Drawable *draw = getObject()->getDrawable();
-		if( draw )
-			draw->clearModelConditionState( MODELCONDITION_ENEMYNEAR );
-	}
-	return UPDATE_SLEEP_NONE;
+  if (m_enemyNear && !enemyWasNear)
+  {
+    // change the state of the art to an "enemy near" state
+    Drawable *draw = getObject()->getDrawable();
+    if (draw)
+      draw->setModelConditionState(MODELCONDITION_ENEMYNEAR);
+  }
+  else if (!m_enemyNear && enemyWasNear)
+  {
+    // change the state of the art to an idle state
+    Drawable *draw = getObject()->getDrawable();
+    if (draw)
+      draw->clearModelConditionState(MODELCONDITION_ENEMYNEAR);
+  }
+  return UPDATE_SLEEP_NONE;
 }
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void EnemyNearUpdate::crc( Xfer *xfer )
+void EnemyNearUpdate::crc(Xfer *xfer)
 {
+  // extend base class
+  UpdateModule::crc(xfer);
 
-	// extend base class
-	UpdateModule::crc( xfer );
-
-}  // end crc
+} // end crc
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void EnemyNearUpdate::xfer( Xfer *xfer )
+void EnemyNearUpdate::xfer(Xfer *xfer)
 {
+  // version
+  XferVersion currentVersion = 1;
+  XferVersion version = currentVersion;
+  xfer->xferVersion(&version, currentVersion);
 
-	// version
-	XferVersion currentVersion = 1;
-	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+  // extend base class
+  UpdateModule::xfer(xfer);
 
-	// extend base class
-	UpdateModule::xfer( xfer );
+  // enemy scan delay
+  xfer->xferUnsignedInt(&m_enemyScanDelay);
 
-	// enemy scan delay
-	xfer->xferUnsignedInt( &m_enemyScanDelay );
+  // enemy near
+  xfer->xferBool(&m_enemyNear);
 
-	// enemy near
-	xfer->xferBool( &m_enemyNear );
-
-}  // end xfer
+} // end xfer
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void EnemyNearUpdate::loadPostProcess( void )
+void EnemyNearUpdate::loadPostProcess(void)
 {
+  // extend base class
+  UpdateModule::loadPostProcess();
 
-	// extend base class
-	UpdateModule::loadPostProcess();
-
-}  // end loadPostProcess
+} // end loadPostProcess

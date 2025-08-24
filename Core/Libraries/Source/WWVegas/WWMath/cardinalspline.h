@@ -34,7 +34,6 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
 #if defined(_MSC_VER)
 #pragma once
 #endif
@@ -50,27 +49,24 @@
 */
 class CardinalSpline3DClass : public HermiteSpline3DClass
 {
-public:
+  public:
+  virtual int Add_Key(const Vector3 &point, float t);
+  virtual void Remove_Key(int i);
+  virtual void Clear_Keys(void);
 
-	virtual int			Add_Key(const Vector3 & point,float t);
-	virtual void		Remove_Key(int i);
-	virtual void		Clear_Keys(void);
+  virtual void Set_Tightness(int i, float tightness);
+  virtual float Get_Tightness(int i);
 
-	virtual void		Set_Tightness(int i,float tightness);
-	virtual float		Get_Tightness(int i);
+  virtual void Update_Tangents(void);
 
-	virtual void		Update_Tangents(void);
+  // save-load support
+  virtual const PersistFactoryClass &Get_Factory(void) const;
+  virtual bool Save(ChunkSaveClass &csave);
+  virtual bool Load(ChunkLoadClass &cload);
 
-	// save-load support
-	virtual const PersistFactoryClass &	Get_Factory(void) const;
-	virtual bool								Save(ChunkSaveClass &csave);
-	virtual bool								Load(ChunkLoadClass &cload);
-
-protected:
-
-	DynamicVectorClass<float>	Tightness;
+  protected:
+  DynamicVectorClass<float> Tightness;
 };
-
 
 /**
 ** CardinalSpline1DClass
@@ -78,27 +74,23 @@ protected:
 */
 class CardinalSpline1DClass : public HermiteSpline1DClass
 {
-public:
+  public:
+  virtual int Add_Key(float point, float t);
+  virtual void Remove_Key(int i);
+  virtual void Clear_Keys(void);
 
-	virtual int			Add_Key(float point,float t);
-	virtual void		Remove_Key(int i);
-	virtual void		Clear_Keys(void);
+  virtual void Set_Tightness(int i, float tightness);
+  virtual float Get_Tightness(int i);
 
-	virtual void		Set_Tightness(int i,float tightness);
-	virtual float		Get_Tightness(int i);
+  virtual void Update_Tangents(void);
 
-	virtual void		Update_Tangents(void);
+  // save-load support
+  virtual const PersistFactoryClass &Get_Factory(void) const;
+  virtual bool Save(ChunkSaveClass &csave);
+  virtual bool Load(ChunkLoadClass &cload);
 
-	// save-load support
-	virtual const PersistFactoryClass &	Get_Factory(void) const;
-	virtual bool								Save(ChunkSaveClass &csave);
-	virtual bool								Load(ChunkLoadClass &cload);
-
-protected:
-
-	DynamicVectorClass<float>	Tightness;
+  protected:
+  DynamicVectorClass<float> Tightness;
 };
 
-
 #endif
-

@@ -38,10 +38,6 @@
 #include "GameLogic/Module/ContainModule.h"
 #include "W3DDevice/GameClient/Module/W3DDependencyModelDraw.h"
 
-
-
-
-
 //-------------------------------------------------------------------------------------------------
 W3DDependencyModelDrawModuleData::W3DDependencyModelDrawModuleData()
 {
@@ -53,24 +49,26 @@ W3DDependencyModelDrawModuleData::~W3DDependencyModelDrawModuleData()
 }
 
 //-------------------------------------------------------------------------------------------------
-void W3DDependencyModelDrawModuleData::buildFieldParse(MultiIniFieldParse& p)
+void W3DDependencyModelDrawModuleData::buildFieldParse(MultiIniFieldParse &p)
 {
   W3DModelDrawModuleData::buildFieldParse(p);
 
-	static const FieldParse dataFieldParse[] =
-	{
-		{ "AttachToBoneInContainer", INI::parseAsciiString, NULL, offsetof(W3DDependencyModelDrawModuleData, m_attachToDrawableBoneInContainer) },
+  static const FieldParse dataFieldParse[] = {
+    { "AttachToBoneInContainer",
+      INI::parseAsciiString,
+      NULL,
+      offsetof(W3DDependencyModelDrawModuleData, m_attachToDrawableBoneInContainer) },
 
-		{ 0, 0, 0, 0 }
-	};
+    { 0, 0, 0, 0 }
+  };
   p.add(dataFieldParse);
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-W3DDependencyModelDraw::W3DDependencyModelDraw( Thing *thing, const ModuleData* moduleData ) : W3DModelDraw( thing, moduleData )
+W3DDependencyModelDraw::W3DDependencyModelDraw(Thing *thing, const ModuleData *moduleData) : W3DModelDraw(thing, moduleData)
 {
-	m_dependencyCleared = FALSE;
+  m_dependencyCleared = FALSE;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -80,118 +78,110 @@ W3DDependencyModelDraw::~W3DDependencyModelDraw()
 
 //-------------------------------------------------------------------------------------------------
 // All this does is stop the call path if we haven't been cleared to draw yet
-void W3DDependencyModelDraw::doDrawModule(const Matrix3D* transformMtx)
+void W3DDependencyModelDraw::doDrawModule(const Matrix3D *transformMtx)
 {
-	if( m_dependencyCleared )
-	{
-		// We've been cleared by the thing we were waiting to draw, so we can draw.
-		W3DModelDraw::doDrawModule( transformMtx );
-		m_dependencyCleared = FALSE;
-
+  if (m_dependencyCleared)
+  {
+    // We've been cleared by the thing we were waiting to draw, so we can draw.
+    W3DModelDraw::doDrawModule(transformMtx);
+    m_dependencyCleared = FALSE;
 
     // A handy place to synchronize my drawable with container's
     Drawable *myDrawable = getDrawable();
-    if ( ! myDrawable )
+    if (!myDrawable)
       return;
 
     const Object *me = myDrawable->getObject();
-    if ( ! me )
+    if (!me)
       return;
 
-	  Drawable *theirDrawable = NULL;
+    Drawable *theirDrawable = NULL;
 
-	  if( me->getContainedBy() && !me->getContainedBy()->getContain()->isEnclosingContainerFor(me) )
-		  theirDrawable = me->getContainedBy()->getDrawable();
+    if (me->getContainedBy() && !me->getContainedBy()->getContain()->isEnclosingContainerFor(me))
+      theirDrawable = me->getContainedBy()->getDrawable();
 
-    if( ! theirDrawable )
-		  return;
+    if (!theirDrawable)
+      return;
 
-    myDrawable->imitateStealthLook( *theirDrawable );
-
-	}
+    myDrawable->imitateStealthLook(*theirDrawable);
+  }
 }
 
 //-------------------------------------------------------------------------------------------------
-void W3DDependencyModelDraw::notifyDrawModuleDependencyCleared( )
+void W3DDependencyModelDraw::notifyDrawModuleDependencyCleared()
 {
-	m_dependencyCleared = TRUE;
+  m_dependencyCleared = TRUE;
 }
 
 // ------------------------------------------------------------------------------------------------
-void W3DDependencyModelDraw::adjustTransformMtx(Matrix3D& mtx) const
+void W3DDependencyModelDraw::adjustTransformMtx(Matrix3D &mtx) const
 {
-	W3DModelDraw::adjustTransformMtx(mtx);
+  W3DModelDraw::adjustTransformMtx(mtx);
 
-	// We have an additional adjustment to make, we want to use a bone in our container if there is one
-	const Object *me = getDrawable()->getObject();
-	const W3DDependencyModelDrawModuleData *md = getW3DDependencyModelDrawModuleData();
+  // We have an additional adjustment to make, we want to use a bone in our container if there is one
+  const Object *me = getDrawable()->getObject();
+  const W3DDependencyModelDrawModuleData *md = getW3DDependencyModelDrawModuleData();
 
-	if( md->m_attachToDrawableBoneInContainer.isNotEmpty()
-		&& me
-		&& me->getContainedBy()
-		&& !me->getContainedBy()->getContain()->isEnclosingContainerFor(me)
-		)
-	{
-		// If we are currently "riding on", then our client position is determined by the client position of
-		// a particular bone in our container object.  Our logic position is updated by OpenContain.
-		const Drawable *theirDrawable = me->getContainedBy()->getDrawable();
-		if( theirDrawable )
-		{
-			Matrix3D theirBoneMtx;
-			if( theirDrawable->getCurrentWorldspaceClientBonePositions( md->m_attachToDrawableBoneInContainer.str(), theirBoneMtx ) )
-			{
-				mtx = theirBoneMtx;
-			}
-			else
-			{
-        mtx = *theirDrawable->getTransformMatrix();//TransformMatrix();
-				DEBUG_LOG(("m_attachToDrawableBoneInContainer %s not found",getW3DDependencyModelDrawModuleData()->m_attachToDrawableBoneInContainer.str()));
-			}
-		}
-	}
+  if (md->m_attachToDrawableBoneInContainer.isNotEmpty() && me && me->getContainedBy()
+      && !me->getContainedBy()->getContain()->isEnclosingContainerFor(me))
+  {
+    // If we are currently "riding on", then our client position is determined by the client position of
+    // a particular bone in our container object.  Our logic position is updated by OpenContain.
+    const Drawable *theirDrawable = me->getContainedBy()->getDrawable();
+    if (theirDrawable)
+    {
+      Matrix3D theirBoneMtx;
+      if (theirDrawable->getCurrentWorldspaceClientBonePositions(md->m_attachToDrawableBoneInContainer.str(), theirBoneMtx))
+      {
+        mtx = theirBoneMtx;
+      }
+      else
+      {
+        mtx = *theirDrawable->getTransformMatrix(); // TransformMatrix();
+        DEBUG_LOG(
+            ("m_attachToDrawableBoneInContainer %s not found",
+             getW3DDependencyModelDrawModuleData()->m_attachToDrawableBoneInContainer.str()));
+      }
+    }
+  }
 }
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void W3DDependencyModelDraw::crc( Xfer *xfer )
+void W3DDependencyModelDraw::crc(Xfer *xfer)
 {
+  // extend base class
+  W3DModelDraw::crc(xfer);
 
-	// extend base class
-	W3DModelDraw::crc( xfer );
-
-}  // end crc
+} // end crc
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void W3DDependencyModelDraw::xfer( Xfer *xfer )
+void W3DDependencyModelDraw::xfer(Xfer *xfer)
 {
+  // version
+  XferVersion currentVersion = 1;
+  XferVersion version = currentVersion;
+  xfer->xferVersion(&version, currentVersion);
 
-	// version
-	XferVersion currentVersion = 1;
-	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+  // extend base class
+  W3DModelDraw::xfer(xfer);
 
-	// extend base class
-	W3DModelDraw::xfer( xfer );
+  // Dependency status
+  xfer->xferBool(&m_dependencyCleared);
 
-	// Dependency status
-	xfer->xferBool( &m_dependencyCleared );
-
-}  // end xfer
+} // end xfer
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void W3DDependencyModelDraw::loadPostProcess( void )
+void W3DDependencyModelDraw::loadPostProcess(void)
 {
+  // extend base class
+  W3DModelDraw::loadPostProcess();
 
-	// extend base class
-	W3DModelDraw::loadPostProcess();
-
-}  // end loadPostProcess
-
-
+} // end loadPostProcess

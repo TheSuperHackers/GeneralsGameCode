@@ -36,13 +36,13 @@
 #include <cstdarg>
 class LogClass
 {
-public:
-	LogClass(const char *fname);
-	~LogClass();
-	void log(const char *fmt, ...);
+  public:
+  LogClass(const char *fname);
+  ~LogClass();
+  void log(const char *fmt, ...);
 
-protected:
-	FILE *m_fp;
+  protected:
+  FILE *m_fp;
 };
 
 #endif // DEBUG_LOGGING

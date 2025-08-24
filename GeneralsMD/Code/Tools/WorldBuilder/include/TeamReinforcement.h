@@ -30,42 +30,45 @@
 
 class TeamReinforcement : public CPropertyPage
 {
-// Construction
-public:
-	TeamReinforcement();   // standard constructor
+  // Construction
+  public:
+  TeamReinforcement(); // standard constructor
 
-// Dialog Data
-	//{{AFX_DATA(TeamReinforcement)
-	enum { IDD = IDD_TeamReinforcement };
-		// NOTE: the ClassWizard will add data members here
-	//}}AFX_DATA
+  // Dialog Data
+  //{{AFX_DATA(TeamReinforcement)
+  enum
+  {
+    IDD = IDD_TeamReinforcement
+  };
+  // NOTE: the ClassWizard will add data members here
+  //}}AFX_DATA
 
+  // Overrides
+  // ClassWizard generated virtual function overrides
+  //{{AFX_VIRTUAL(TeamReinforcement)
+  protected:
+  virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
+  //}}AFX_VIRTUAL
 
-// Overrides
-	// ClassWizard generated virtual function overrides
-	//{{AFX_VIRTUAL(TeamReinforcement)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
-	//}}AFX_VIRTUAL
+  // Implementation
+  protected:
+  Dict *m_teamDict;
 
-// Implementation
-protected:
-	Dict *m_teamDict;
-public:
-	void setTeamDict(Dict *pDict) {m_teamDict = pDict;};
-protected:
+  public:
+  void setTeamDict(Dict *pDict) { m_teamDict = pDict; };
 
-	// Generated message map functions
-	//{{AFX_MSG(TeamReinforcement)
-	afx_msg void OnDeployBy();
-	afx_msg void OnTeamStartsFull();
-	afx_msg void OnSelchangeTransportCombo();
-	afx_msg void OnTransportsExit();
-	afx_msg void OnSelchangeVeterancy();
-	afx_msg void OnSelchangeWaypointCombo();
-	virtual BOOL OnInitDialog();
-	//}}AFX_MSG
-	DECLARE_MESSAGE_MAP()
+  protected:
+  // Generated message map functions
+  //{{AFX_MSG(TeamReinforcement)
+  afx_msg void OnDeployBy();
+  afx_msg void OnTeamStartsFull();
+  afx_msg void OnSelchangeTransportCombo();
+  afx_msg void OnTransportsExit();
+  afx_msg void OnSelchangeVeterancy();
+  afx_msg void OnSelchangeWaypointCombo();
+  virtual BOOL OnInitDialog();
+  //}}AFX_MSG
+  DECLARE_MESSAGE_MAP()
 };
 
 //{{AFX_INSERT_LOCATION}}

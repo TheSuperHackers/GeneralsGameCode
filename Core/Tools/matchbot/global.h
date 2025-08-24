@@ -36,15 +36,15 @@
 
 class GlobalClass
 {
-public:
-	GlobalClass();
+  public:
+  GlobalClass();
 
-	ConfigFile config;
-	bool ReadFile(const char *fname);
+  ConfigFile config;
+  bool ReadFile(const char *fname);
 
-	bool GetString(const Wstring& key, Wstring& val);
+  bool GetString(const Wstring &key, Wstring &val);
 
-	RandClass rnd;
+  RandClass rnd;
 };
 
 extern GlobalClass Global;
@@ -54,4 +54,3 @@ void rotateOutput(void);
 void rotateParanoid(void);
 
 #endif
-

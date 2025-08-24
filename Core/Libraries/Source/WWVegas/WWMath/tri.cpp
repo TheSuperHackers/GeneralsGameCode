@@ -39,94 +39,92 @@
 #include "tri.h"
 #include "vector2.h"
 
-
 struct FDPRec
 {
-	int axis1;
-	int axis2;
-	int axis3;
+  int axis1;
+  int axis2;
+  int axis3;
 };
 
-static inline void find_dominant_plane_fast(const TriClass & tri, FDPRec& info)
+static inline void find_dominant_plane_fast(const TriClass &tri, FDPRec &info)
 {
-	static const FDPRec dominance[3] =
-	{
-		{ 1, 2, 0 },		// Dominant is the X axis
-		{ 0, 2, 1 },		// Dominant is the Y axis
-		{ 0, 1, 2 }			// Dominant is the Z axis
-	};
+  static const FDPRec dominance[3] = {
+    { 1, 2, 0 }, // Dominant is the X axis
+    { 0, 2, 1 }, // Dominant is the Y axis
+    { 0, 1, 2 } // Dominant is the Z axis
+  };
 
-	/*
-	** Find the largest component of the normal
-	*/
-	float x = WWMath::Fabs(tri.N->X);
-	float y = WWMath::Fabs(tri.N->Y);
-	float z = WWMath::Fabs(tri.N->Z);
+  /*
+  ** Find the largest component of the normal
+  */
+  float x = WWMath::Fabs(tri.N->X);
+  float y = WWMath::Fabs(tri.N->Y);
+  float z = WWMath::Fabs(tri.N->Z);
 
-	float val = x;
-	int ni = 0;
+  float val = x;
+  int ni = 0;
 
-	if (y > val)
-	{
-		ni = 1;
-		val = y;
-	}
+  if (y > val)
+  {
+    ni = 1;
+    val = y;
+  }
 
-	if (z > val)
-	{
-		ni = 2;
-	}
+  if (z > val)
+  {
+    ni = 2;
+  }
 
-	info = dominance[ni];
+  info = dominance[ni];
 }
 
-static inline void find_dominant_plane(const TriClass & tri, int * axis1,int * axis2,int * axis3)
+static inline void find_dominant_plane(const TriClass &tri, int *axis1, int *axis2, int *axis3)
 {
-	/*
-	** Find the largest component of the normal
-	*/
-	int ni = 0;
-	float x = WWMath::Fabs(tri.N->X);
-	float y = WWMath::Fabs(tri.N->Y);
-	float z = WWMath::Fabs(tri.N->Z);
-	float val = x;
+  /*
+  ** Find the largest component of the normal
+  */
+  int ni = 0;
+  float x = WWMath::Fabs(tri.N->X);
+  float y = WWMath::Fabs(tri.N->Y);
+  float z = WWMath::Fabs(tri.N->Z);
+  float val = x;
 
-	if (y > val) {
-		ni = 1;
-		val = y;
-	}
+  if (y > val)
+  {
+    ni = 1;
+    val = y;
+  }
 
-	if (z > val) {
-		ni = 2;
-	}
+  if (z > val)
+  {
+    ni = 2;
+  }
 
-	/*
-	** return the indices of the two axes perpendicular
-	*/
-	switch (ni)
-	{
-	case 0:
-		// Dominant is the X axis
-		*axis1 = 1;
-		*axis2 = 2;
-		*axis3 = 0;
-		break;
-	case 1:
-		// Dominant is the Y axis
-		*axis1 = 0;
-		*axis2 = 2;
-		*axis3 = 1;
-		break;
-	case 2:
-		// Dominant is the Z axis
-		*axis1 = 0;
-		*axis2 = 1;
-		*axis3 = 2;
-		break;
-	}
+  /*
+  ** return the indices of the two axes perpendicular
+  */
+  switch (ni)
+  {
+    case 0:
+      // Dominant is the X axis
+      *axis1 = 1;
+      *axis2 = 2;
+      *axis3 = 0;
+      break;
+    case 1:
+      // Dominant is the Y axis
+      *axis1 = 0;
+      *axis2 = 2;
+      *axis3 = 1;
+      break;
+    case 2:
+      // Dominant is the Z axis
+      *axis1 = 0;
+      *axis2 = 1;
+      *axis3 = 2;
+      break;
+  }
 }
-
-
 
 /***********************************************************************************************
  * TriClass::Find_Dominant_Plane -- returns indices of the axes of the dominant plane          *
@@ -140,49 +138,50 @@ static inline void find_dominant_plane(const TriClass & tri, int * axis1,int * a
  * HISTORY:                                                                                    *
  *   3/24/99    GTH : Created.                                                                 *
  *=============================================================================================*/
-void TriClass::Find_Dominant_Plane(int * axis1,int * axis2) const
+void TriClass::Find_Dominant_Plane(int *axis1, int *axis2) const
 {
-	/*
-	** Find the largest component of the normal
-	*/
-	int ni = 0;
-	float x = WWMath::Fabs(N->X);
-	float y = WWMath::Fabs(N->Y);
-	float z = WWMath::Fabs(N->Z);
-	float val = x;
+  /*
+  ** Find the largest component of the normal
+  */
+  int ni = 0;
+  float x = WWMath::Fabs(N->X);
+  float y = WWMath::Fabs(N->Y);
+  float z = WWMath::Fabs(N->Z);
+  float val = x;
 
-	if (y > val) {
-		ni = 1;
-		val = y;
-	}
+  if (y > val)
+  {
+    ni = 1;
+    val = y;
+  }
 
-	if (z > val) {
-		ni = 2;
-	}
+  if (z > val)
+  {
+    ni = 2;
+  }
 
-	/*
-	** return the indices of the two axes perpendicular
-	*/
-	switch (ni)
-	{
-	case 0:
-		// Dominant is the X axis
-		*axis1 = 1;
-		*axis2 = 2;
-		break;
-	case 1:
-		// Dominant is the Y axis
-		*axis1 = 0;
-		*axis2 = 2;
-		break;
-	case 2:
-		// Dominant is the Z axis
-		*axis1 = 0;
-		*axis2 = 1;
-		break;
-	}
+  /*
+  ** return the indices of the two axes perpendicular
+  */
+  switch (ni)
+  {
+    case 0:
+      // Dominant is the X axis
+      *axis1 = 1;
+      *axis2 = 2;
+      break;
+    case 1:
+      // Dominant is the Y axis
+      *axis1 = 0;
+      *axis2 = 2;
+      break;
+    case 2:
+      // Dominant is the Z axis
+      *axis1 = 0;
+      *axis2 = 1;
+      break;
+  }
 }
-
 
 /***********************************************************************************************
  * TriClass::Contains_Point -- performs 2D point-in-triangle test.                             *
@@ -198,7 +197,7 @@ void TriClass::Find_Dominant_Plane(int * axis1,int * axis2) const
  * HISTORY:                                                                                    *
  *   3/24/99    GTH : Created.                                                                 *
  *=============================================================================================*/
-bool TriClass::Contains_Point(const Vector3 & ipoint) const
+bool TriClass::Contains_Point(const Vector3 &ipoint) const
 {
 #if 0
 	/*
@@ -283,7 +282,6 @@ bool TriClass::Contains_Point(const Vector3 & ipoint) const
 	return my_intersect;
 #endif
 
-
 /*
 ** "Optimized" version
 */
@@ -328,36 +326,34 @@ bool TriClass::Contains_Point(const Vector3 & ipoint) const
 	return my_intersect;
 
 #else
-	int vi;
-	int axis1 = 0;
-	int axis2 = 0;
-	int axis3 = 0;
+  int vi;
+  int axis1 = 0;
+  int axis2 = 0;
+  int axis3 = 0;
 
-	find_dominant_plane(*this,&axis1,&axis2,&axis3);
+  find_dominant_plane(*this, &axis1, &axis2, &axis3);
 
-	bool side[3];
+  bool side[3];
 
-	/*
-	** Compute the 2D cross product of edge0 with a vector to the point
-	*/
-	Vector2 edge;
-	Vector2 dp;
+  /*
+  ** Compute the 2D cross product of edge0 with a vector to the point
+  */
+  Vector2 edge;
+  Vector2 dp;
 
-	for (vi=0; vi<3; vi++) {
+  for (vi = 0; vi < 3; vi++)
+  {
+    int va = vi;
+    int vb = (vi + 1) % 3;
 
-		int va=vi;
-		int vb=(vi+1)%3;
+    edge.Set((*V[vb])[axis1] - (*V[va])[axis1], (*V[vb])[axis2] - (*V[va])[axis2]);
+    dp.Set(ipoint[axis1] - (*V[va])[axis1], ipoint[axis2] - (*V[va])[axis2]);
+    float cross = edge.X * dp.Y - edge.Y * dp.X;
+    side[vi] = (cross >= 0.0f);
+  }
 
-		edge.Set((*V[vb])[axis1] - (*V[va])[axis1] , (*V[vb])[axis2] - (*V[va])[axis2]);
-		dp.Set(ipoint[axis1] - (*V[va])[axis1] , ipoint[axis2] - (*V[va])[axis2]);
-		float cross = edge.X * dp.Y - edge.Y * dp.X;
-		side[vi] = (cross >= 0.0f);
-	}
-
-	bool my_intersect = ((side[0] == side[1]) && (side[1] == side[2]));
-	return my_intersect;
+  bool my_intersect = ((side[0] == side[1]) && (side[1] == side[2]));
+  return my_intersect;
 #endif
 #endif
-
-
 }

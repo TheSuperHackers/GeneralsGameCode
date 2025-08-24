@@ -27,7 +27,7 @@
 // Unhandled exception handler
 //////////////////////////////////////////////////////////////////////////////
 #ifdef _MSC_VER
-#  pragma once
+#pragma once
 #endif
 #ifndef INTERNAL_EXCEPT_H // Include guard
 #define INTERNAL_EXCEPT_H
@@ -35,8 +35,8 @@
 /// \internal exception handler
 class DebugExceptionhandler
 {
-  DebugExceptionhandler(const DebugExceptionhandler&);
-  DebugExceptionhandler& operator=(const DebugExceptionhandler&);
+  DebugExceptionhandler(const DebugExceptionhandler &);
+  DebugExceptionhandler &operator=(const DebugExceptionhandler &);
 
   // nobody can instantiate us
   DebugExceptionhandler(void);
@@ -68,8 +68,7 @@ class DebugExceptionhandler
   */
   static void LogFPURegisters(Debug &dbg, struct _EXCEPTION_POINTERS *exptr);
 
-public:
-
+  public:
   /** \internal
 
     \brief Determine exception type.
@@ -84,7 +83,7 @@ public:
 
     \brief System exception filter
   */
-  static long __stdcall ExceptionFilter(struct _EXCEPTION_POINTERS* pExPtrs);
+  static long __stdcall ExceptionFilter(struct _EXCEPTION_POINTERS *pExPtrs);
 };
 
 #endif // INTERNAL_EXCEPT_H

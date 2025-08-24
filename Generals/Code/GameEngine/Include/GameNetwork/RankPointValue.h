@@ -66,29 +66,29 @@ class PSPlayerStats;
 //-----------------------------------------------------------------------------
 enum
 {
-	RANK_PRIVATE = 0,
-	RANK_CORPORAL,
-	RANK_SERGEANT,
-	RANK_LIEUTENANT,
-	RANK_CAPTAIN,
-	RANK_MAJOR,
-	RANK_COLONEL,
-	RANK_BRIGADIER_GENERAL,
-	RANK_GENERAL,
-	RANK_COMMANDER_IN_CHIEF,
+  RANK_PRIVATE = 0,
+  RANK_CORPORAL,
+  RANK_SERGEANT,
+  RANK_LIEUTENANT,
+  RANK_CAPTAIN,
+  RANK_MAJOR,
+  RANK_COLONEL,
+  RANK_BRIGADIER_GENERAL,
+  RANK_GENERAL,
+  RANK_COMMANDER_IN_CHIEF,
 
-	MAX_RANKS // keep last
+  MAX_RANKS // keep last
 };
 
 struct RankPoints
 {
-RankPoints(void );
-	Int m_ranks[MAX_RANKS];
-	Real m_winMultiplier;
-	Real m_lostMultiplier;
-	Real m_hourSpentOnlineMultiplier;
-	Real m_completedSoloCampaigns;
-	Real m_disconnectMultiplier;
+  RankPoints(void);
+  Int m_ranks[MAX_RANKS];
+  Real m_winMultiplier;
+  Real m_lostMultiplier;
+  Real m_hourSpentOnlineMultiplier;
+  Real m_completedSoloCampaigns;
+  Real m_disconnectMultiplier;
 };
 //-----------------------------------------------------------------------------
 // INLINING ///////////////////////////////////////////////////////////////////
@@ -97,9 +97,9 @@ RankPoints(void );
 //-----------------------------------------------------------------------------
 // EXTERNALS //////////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-Int CalculateRank( const PSPlayerStats& stats );
-Int GetFavoriteSide( const PSPlayerStats& stats );
-const Image* LookupSmallRankImage(Int side, Int rankPoints);
+Int CalculateRank(const PSPlayerStats &stats);
+Int GetFavoriteSide(const PSPlayerStats &stats);
+const Image *LookupSmallRankImage(Int side, Int rankPoints);
 extern RankPoints *TheRankPointValues;
 
 #endif // __RANK_POINT_VALUE_H_

@@ -27,10 +27,6 @@
 #ifndef __W3DCUSTOMSCENE_H_
 #define __W3DCUSTOMSCENE_H_
 
-enum CustomScenePassModes CPP_11(: Int)
-{
-	SCENE_PASS_DEFAULT,
-	SCENE_PASS_ALPHA_MASK
-};
+enum CustomScenePassModes CPP_11( : Int){ SCENE_PASS_DEFAULT, SCENE_PASS_ALPHA_MASK };
 
-#endif //W3DCUSTOMSCENE
+#endif // W3DCUSTOMSCENE

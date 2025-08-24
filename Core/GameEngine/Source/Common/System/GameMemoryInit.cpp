@@ -41,7 +41,7 @@
 // Desc:      Memory manager
 //
 // ----------------------------------------------------------------------------
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 
 // SYSTEM INCLUDES
 
@@ -51,9 +51,9 @@
 
 struct PoolSizeRec
 {
-	const char* name;
-	Int initial;
-	Int overflow;
+  const char *name;
+  Int initial;
+  Int overflow;
 };
 
 #if RTS_GENERALS
@@ -67,88 +67,87 @@ struct PoolSizeRec
 //-----------------------------------------------------------------------------
 void userMemoryManagerGetDmaParms(Int *numSubPools, const PoolInitRec **pParms)
 {
-	*numSubPools = ARRAY_SIZE(DefaultDMA);
-	*pParms = DefaultDMA;
+  *numSubPools = ARRAY_SIZE(DefaultDMA);
+  *pParms = DefaultDMA;
 }
 
 //-----------------------------------------------------------------------------
-void userMemoryAdjustPoolSize(const char *poolName, Int& initialAllocationCount, Int& overflowAllocationCount)
+void userMemoryAdjustPoolSize(const char *poolName, Int &initialAllocationCount, Int &overflowAllocationCount)
 {
-	if (initialAllocationCount > 0)
-		return;
+  if (initialAllocationCount > 0)
+    return;
 
-	for (const PoolSizeRec* p = PoolSizes; p->name != NULL; ++p)
-	{
-		if (strcmp(p->name, poolName) == 0)
-		{
-			initialAllocationCount = p->initial;
-			overflowAllocationCount = p->overflow;
-			return;
-		}
-	}
+  for (const PoolSizeRec *p = PoolSizes; p->name != NULL; ++p)
+  {
+    if (strcmp(p->name, poolName) == 0)
+    {
+      initialAllocationCount = p->initial;
+      overflowAllocationCount = p->overflow;
+      return;
+    }
+  }
 
-	DEBUG_CRASH(("Initial size for pool %s not found -- you should add it to MemoryInit.cpp",poolName));
+  DEBUG_CRASH(("Initial size for pool %s not found -- you should add it to MemoryInit.cpp", poolName));
 }
 
 //-----------------------------------------------------------------------------
 static Int roundUpMemBound(Int i)
 {
-	const int MEM_BOUND_ALIGNMENT = 4;
+  const int MEM_BOUND_ALIGNMENT = 4;
 
-	if (i < MEM_BOUND_ALIGNMENT)
-		return MEM_BOUND_ALIGNMENT;
-	else
-		return (i + (MEM_BOUND_ALIGNMENT-1)) & ~(MEM_BOUND_ALIGNMENT-1);
+  if (i < MEM_BOUND_ALIGNMENT)
+    return MEM_BOUND_ALIGNMENT;
+  else
+    return (i + (MEM_BOUND_ALIGNMENT - 1)) & ~(MEM_BOUND_ALIGNMENT - 1);
 }
 
 //-----------------------------------------------------------------------------
 void userMemoryManagerInitPools()
 {
-	// note that we MUST use stdio stuff here, and not the normal game file system
-	// (with bigfile support, etc), because that relies on memory pools, which
-	// aren't yet initialized properly! so rely ONLY on straight stdio stuff here.
-	// (not even AsciiString. thanks.)
+  // note that we MUST use stdio stuff here, and not the normal game file system
+  // (with bigfile support, etc), because that relies on memory pools, which
+  // aren't yet initialized properly! so rely ONLY on straight stdio stuff here.
+  // (not even AsciiString. thanks.)
 
-	// since we're called prior to main, the cur dir might not be what
-	// we expect. so do it the hard way.
-	char buf[_MAX_PATH];
-	::GetModuleFileName(NULL, buf, sizeof(buf));
-	char* pEnd = buf + strlen(buf);
-	while (pEnd != buf)
-	{
-		if (*pEnd == '\\')
-		{
-			*pEnd = 0;
-			break;
-		}
-		--pEnd;
-	}
-	strcat(buf, "\\Data\\INI\\MemoryPools.ini");
+  // since we're called prior to main, the cur dir might not be what
+  // we expect. so do it the hard way.
+  char buf[_MAX_PATH];
+  ::GetModuleFileName(NULL, buf, sizeof(buf));
+  char *pEnd = buf + strlen(buf);
+  while (pEnd != buf)
+  {
+    if (*pEnd == '\\')
+    {
+      *pEnd = 0;
+      break;
+    }
+    --pEnd;
+  }
+  strcat(buf, "\\Data\\INI\\MemoryPools.ini");
 
-	FILE* fp = fopen(buf, "r");
-	if (fp)
-	{
-		char poolName[256];
-		int initial, overflow;
-		while (fgets(buf, _MAX_PATH, fp))
-		{
-			if (buf[0] == ';')
-				continue;
-			if (sscanf(buf, "%s %d %d", poolName, &initial, &overflow ) == 3)
-			{
-				for (PoolSizeRec* p = PoolSizes; p->name != NULL; ++p)
-				{
-					if (stricmp(p->name, poolName) == 0)
-					{
-						// currently, these must be multiples of 4. so round up.
-						p->initial = roundUpMemBound(initial);
-						p->overflow = roundUpMemBound(overflow);
-						break;	// from for-p
-					}
-				}
-			}
-		}
-		fclose(fp);
-	}
+  FILE *fp = fopen(buf, "r");
+  if (fp)
+  {
+    char poolName[256];
+    int initial, overflow;
+    while (fgets(buf, _MAX_PATH, fp))
+    {
+      if (buf[0] == ';')
+        continue;
+      if (sscanf(buf, "%s %d %d", poolName, &initial, &overflow) == 3)
+      {
+        for (PoolSizeRec *p = PoolSizes; p->name != NULL; ++p)
+        {
+          if (stricmp(p->name, poolName) == 0)
+          {
+            // currently, these must be multiples of 4. so round up.
+            p->initial = roundUpMemBound(initial);
+            p->overflow = roundUpMemBound(overflow);
+            break; // from for-p
+          }
+        }
+      }
+    }
+    fclose(fp);
+  }
 }
-

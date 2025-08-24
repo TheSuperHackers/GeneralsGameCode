@@ -26,7 +26,7 @@
 // Derivation of AudioEventInfo structure, for customized sounds
 // Author: Ian Barkley-Yeung, June 2003
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 
 #include "Common/DynamicAudioEventInfo.h"
 #include "Common/Xfer.h"
@@ -37,8 +37,7 @@ DynamicAudioEventInfo::DynamicAudioEventInfo()
 }
 
 /** Initialize AudioEventInfo portion of DynamicAudioEventInfo as copy; leave remainder uninitialized */
-DynamicAudioEventInfo::DynamicAudioEventInfo( const AudioEventInfo & baseInfo )
-: AudioEventInfo( baseInfo )
+DynamicAudioEventInfo::DynamicAudioEventInfo(const AudioEventInfo &baseInfo) : AudioEventInfo(baseInfo)
 {
 }
 
@@ -53,92 +52,91 @@ Bool DynamicAudioEventInfo::isLevelSpecific() const
 }
 
 /** Override; cheap dynamic casting */
-DynamicAudioEventInfo * DynamicAudioEventInfo::getDynamicAudioEventInfo()
+DynamicAudioEventInfo *DynamicAudioEventInfo::getDynamicAudioEventInfo()
 {
   return this;
 }
 
 /** Override; cheap dynamic casting */
-const DynamicAudioEventInfo * DynamicAudioEventInfo::getDynamicAudioEventInfo() const
+const DynamicAudioEventInfo *DynamicAudioEventInfo::getDynamicAudioEventInfo() const
 {
   return this;
 }
 
-
 /** Override; change the name of this audio event*/
-void DynamicAudioEventInfo::overrideAudioName( const AsciiString & newName )
+void DynamicAudioEventInfo::overrideAudioName(const AsciiString &newName)
 {
   // Record new name. Needed later for load & save
   m_originalName = m_audioName;
 
-  m_overriddenFields.set( OVERRIDE_NAME );
+  m_overriddenFields.set(OVERRIDE_NAME);
 
   m_audioName = newName;
 }
 
 /** Override; change the looping property of this audio event */
-void DynamicAudioEventInfo::overrideLoopFlag( Bool newLoopFlag )
+void DynamicAudioEventInfo::overrideLoopFlag(Bool newLoopFlag)
 {
-  m_overriddenFields.set( OVERRIDE_LOOP_FLAG );
+  m_overriddenFields.set(OVERRIDE_LOOP_FLAG);
 
-  if ( newLoopFlag)
-    BitSet( m_control, AC_LOOP );
+  if (newLoopFlag)
+    BitSet(m_control, AC_LOOP);
   else
-    BitClear( m_control, AC_LOOP );
+    BitClear(m_control, AC_LOOP);
 }
 
 /** Override; change the looping properties of this audio event*/
-void DynamicAudioEventInfo::overrideLoopCount( Int newLoopCount )
+void DynamicAudioEventInfo::overrideLoopCount(Int newLoopCount)
 {
-  m_overriddenFields.set( OVERRIDE_LOOP_COUNT );
+  m_overriddenFields.set(OVERRIDE_LOOP_COUNT);
 
   m_loopCount = newLoopCount;
 }
 
 /** Override; change the volume of this audio event*/
-void DynamicAudioEventInfo::overrideVolume( Real newVolume )
+void DynamicAudioEventInfo::overrideVolume(Real newVolume)
 {
-  m_overriddenFields.set( OVERRIDE_VOLUME );
+  m_overriddenFields.set(OVERRIDE_VOLUME);
 
   m_volume = newVolume;
 }
 
 /** Override; change the minimum volume of this audio event*/
-void DynamicAudioEventInfo::overrideMinVolume( Real newMinVolume )
+void DynamicAudioEventInfo::overrideMinVolume(Real newMinVolume)
 {
-  m_overriddenFields.set( OVERRIDE_MIN_VOLUME );
+  m_overriddenFields.set(OVERRIDE_MIN_VOLUME);
 
   m_minVolume = newMinVolume;
 }
 
 /** Override; change the name of this audio event*/
-void DynamicAudioEventInfo::overrideMinRange( Real newMinRange )
+void DynamicAudioEventInfo::overrideMinRange(Real newMinRange)
 {
-  m_overriddenFields.set( OVERRIDE_MIN_RANGE );
+  m_overriddenFields.set(OVERRIDE_MIN_RANGE);
 
   m_minDistance = newMinRange;
 }
 
 /** Override; change the name of this audio event*/
-void DynamicAudioEventInfo::overrideMaxRange( Real newMaxRange )
+void DynamicAudioEventInfo::overrideMaxRange(Real newMaxRange)
 {
-  m_overriddenFields.set( OVERRIDE_MAX_RANGE );
+  m_overriddenFields.set(OVERRIDE_MAX_RANGE);
 
   m_maxDistance = newMaxRange;
 }
 
 /** Override; change the name of this audio event*/
-void DynamicAudioEventInfo::overridePriority( AudioPriority newPriority )
+void DynamicAudioEventInfo::overridePriority(AudioPriority newPriority)
 {
-  m_overriddenFields.set( OVERRIDE_PRIORITY );
+  m_overriddenFields.set(OVERRIDE_PRIORITY);
 
   m_priority = newPriority;
 }
 
 /** Get the name of the INI entry this event info was derived from */
-const AsciiString & DynamicAudioEventInfo::getOriginalName() const
+const AsciiString &DynamicAudioEventInfo::getOriginalName() const
 {
-  if ( wasAudioNameOverriden() )
+  if (wasAudioNameOverriden())
   {
     return m_originalName;
   }
@@ -149,85 +147,91 @@ const AsciiString & DynamicAudioEventInfo::getOriginalName() const
 }
 
 /** Transfer all overridden fields except the customized name */
-void DynamicAudioEventInfo::xferNoName( Xfer * xfer )
+void DynamicAudioEventInfo::xferNoName(Xfer *xfer)
 {
   const XferVersion currentVersion = 1;
   XferVersion version = currentVersion;
-  xfer->xferVersion( &version, currentVersion );
+  xfer->xferVersion(&version, currentVersion);
 
   // The default BitFlags xfer function is really strange. It also requires us to name our
   // bits, which I don't want to do, since it forces anyone who has the same number of bits
   // as us to use our names. Instead, just transfer directly and count on our local version
   // to keep things straight, If you change the list, be sure to change this code too...
-  if ( xfer->getXferMode() == XFER_LOAD )
+  if (xfer->getXferMode() == XFER_LOAD)
   {
     UnsignedByte overriddenFlags;
-    DEBUG_ASSERTCRASH( OVERRIDE_COUNT <= sizeof( overriddenFlags ) * 8, ("Save/load code assumes override flags can fit into UnsignedByte, but it doesn't work anymore! Move up to larger integer type") );
-    xfer->xferUnsignedByte( &overriddenFlags );
+    DEBUG_ASSERTCRASH(
+        OVERRIDE_COUNT <= sizeof(overriddenFlags) * 8,
+        ("Save/load code assumes override flags can fit into UnsignedByte, but it doesn't work anymore! Move up to "
+         "larger integer type"));
+    xfer->xferUnsignedByte(&overriddenFlags);
     Int field;
-    for ( field = 0; field < OVERRIDE_COUNT; field++ )
+    for (field = 0; field < OVERRIDE_COUNT; field++)
     {
-      m_overriddenFields.set( field, BitIsSet( overriddenFlags, 1 << field ) );
+      m_overriddenFields.set(field, BitIsSet(overriddenFlags, 1 << field));
     }
   }
   else
   {
     UnsignedByte overriddenFlags = 0;
-    DEBUG_ASSERTCRASH( OVERRIDE_COUNT <= sizeof( overriddenFlags ) * 8, ("Save/load code assumes override flags can fit into UnsignedByte, but it doesn't work anymore! Move up to larger integer type") );
+    DEBUG_ASSERTCRASH(
+        OVERRIDE_COUNT <= sizeof(overriddenFlags) * 8,
+        ("Save/load code assumes override flags can fit into UnsignedByte, but it doesn't work anymore! Move up to "
+         "larger integer type"));
     Int field;
-    for ( field = 0; field < OVERRIDE_COUNT; field++ )
+    for (field = 0; field < OVERRIDE_COUNT; field++)
     {
-      if ( m_overriddenFields.test( field ) )
+      if (m_overriddenFields.test(field))
       {
-        BitSet( overriddenFlags, 1 << field );
+        BitSet(overriddenFlags, 1 << field);
       }
     }
-    xfer->xferUnsignedByte( &overriddenFlags );
+    xfer->xferUnsignedByte(&overriddenFlags);
   }
 
-  if ( wasLoopFlagOverriden() )
+  if (wasLoopFlagOverriden())
   {
-    Bool loopFlag = BitIsSet( m_control, AC_LOOP );
-    xfer->xferBool( &loopFlag );
-    if ( loopFlag )
+    Bool loopFlag = BitIsSet(m_control, AC_LOOP);
+    xfer->xferBool(&loopFlag);
+    if (loopFlag)
     {
-      BitSet( m_control, AC_LOOP );
+      BitSet(m_control, AC_LOOP);
     }
     else
     {
-      BitClear( m_control, AC_LOOP );
+      BitClear(m_control, AC_LOOP);
     }
   }
 
-  if ( wasLoopCountOverriden() )
+  if (wasLoopCountOverriden())
   {
-    xfer->xferInt( &m_loopCount );
+    xfer->xferInt(&m_loopCount);
   }
 
-  if ( wasVolumeOverriden() )
+  if (wasVolumeOverriden())
   {
-    xfer->xferReal( &m_volume );
+    xfer->xferReal(&m_volume);
   }
 
-  if ( wasMinVolumeOverriden() )
+  if (wasMinVolumeOverriden())
   {
-    xfer->xferReal( &m_minVolume );
+    xfer->xferReal(&m_minVolume);
   }
 
-  if ( wasMinRangeOverriden() )
+  if (wasMinRangeOverriden())
   {
-    xfer->xferReal( &m_minDistance );
+    xfer->xferReal(&m_minDistance);
   }
 
-  if ( wasMaxRangeOverriden() )
+  if (wasMaxRangeOverriden())
   {
-    xfer->xferReal( &m_maxDistance );
+    xfer->xferReal(&m_maxDistance);
   }
 
-  if ( wasPriorityOverriden() )
+  if (wasPriorityOverriden())
   {
     UnsignedByte priority = (UnsignedByte)m_priority;
-    xfer->xferUnsignedByte( &priority );
+    xfer->xferUnsignedByte(&priority);
     m_priority = (AudioPriority)priority;
   }
 }

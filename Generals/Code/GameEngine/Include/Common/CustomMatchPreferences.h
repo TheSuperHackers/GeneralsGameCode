@@ -43,41 +43,40 @@
 //-----------------------------------------------------------------------------
 class CustomMatchPreferences : public UserPreferences
 {
-public:
-	CustomMatchPreferences();
-	virtual ~CustomMatchPreferences();
+  public:
+  CustomMatchPreferences();
+  virtual ~CustomMatchPreferences();
 
-	void setLastLadder(const AsciiString& addr, UnsignedShort port);
-	AsciiString getLastLadderAddr( void );
-	UnsignedShort getLastLadderPort( void );
+  void setLastLadder(const AsciiString &addr, UnsignedShort port);
+  AsciiString getLastLadderAddr(void);
+  UnsignedShort getLastLadderPort(void);
 
-	Int getPreferredFaction(void);
-	void setPreferredFaction(Int val);
+  Int getPreferredFaction(void);
+  void setPreferredFaction(Int val);
 
-	Int getPreferredColor(void);
-	void setPreferredColor(Int val);
+  Int getPreferredColor(void);
+  void setPreferredColor(Int val);
 
-	Int getChatSizeSlider(void);
-	void setChatSizeSlider(Int val);
+  Int getChatSizeSlider(void);
+  void setChatSizeSlider(Int val);
 
-	AsciiString getPreferredMap(void);
-	void setPreferredMap(AsciiString val);
+  AsciiString getPreferredMap(void);
+  void setPreferredMap(AsciiString val);
 
-	Bool usesSystemMapDir(void);
-	void setUsesSystemMapDir(Bool val);
+  Bool usesSystemMapDir(void);
+  void setUsesSystemMapDir(Bool val);
 
-	Bool usesLongGameList(void);
-	void setUsesLongGameList(Bool val);
+  Bool usesLongGameList(void);
+  void setUsesLongGameList(Bool val);
 
-	Bool allowsObservers(void);
-	void setAllowsObserver(Bool val);
+  Bool allowsObservers(void);
+  void setAllowsObserver(Bool val);
 
-	Bool getDisallowAsianText( void );
-	void setDisallowAsianText(Bool val);
+  Bool getDisallowAsianText(void);
+  void setDisallowAsianText(Bool val);
 
-	Bool getDisallowNonAsianText( void );
-	void setDisallowNonAsianText( Bool val );
-
+  Bool getDisallowNonAsianText(void);
+  void setDisallowNonAsianText(Bool val);
 };
 
 #endif // __CUSTOMMATCHPREFERENCES_H__

@@ -38,91 +38,85 @@
 //-------------------------------------------------------------------------------------------------
 class EMPUpdateModuleData : public UpdateModuleData
 {
-public:
-	UnsignedInt m_lifeFrames;
-	UnsignedInt m_startFadeFrame;
-	UnsignedInt m_disabledDuration;
-	Real				m_startScale; ///< how big I start drawing
-	Real				m_targetScaleMin; ///< how big I change to by the time I'm done
-	Real				m_targetScaleMax; ///< how big I change to by the time I'm done
-	//Real				m_spinRateMax; ///< how fast may I spin?
-	RGBColor		m_startColor;
-	RGBColor		m_endColor;
-	const ParticleSystemTemplate *m_disableFXParticleSystem;
-	Real m_sparksPerCubicFoot; //<just like it sounds
+  public:
+  UnsignedInt m_lifeFrames;
+  UnsignedInt m_startFadeFrame;
+  UnsignedInt m_disabledDuration;
+  Real m_startScale; ///< how big I start drawing
+  Real m_targetScaleMin; ///< how big I change to by the time I'm done
+  Real m_targetScaleMax; ///< how big I change to by the time I'm done
+  // Real				m_spinRateMax; ///< how fast may I spin?
+  RGBColor m_startColor;
+  RGBColor m_endColor;
+  const ParticleSystemTemplate *m_disableFXParticleSystem;
+  Real m_sparksPerCubicFoot; //<just like it sounds
 
-	EMPUpdateModuleData()
-	{
-		m_lifeFrames = 1;
-		m_startFadeFrame = 0;
-		m_startScale = 1.0f;
-		m_targetScaleMax = 1.0f;
-		m_targetScaleMin = 1.0f;
-		m_startColor.setFromInt(0xffffffff);
-		m_endColor.setFromInt  (0x00000000);
-		//m_spinRateMax = 0.0f;
-		m_disabledDuration = 0;
-		m_disableFXParticleSystem = NULL;
-		m_sparksPerCubicFoot = 0.001f;
+  EMPUpdateModuleData()
+  {
+    m_lifeFrames = 1;
+    m_startFadeFrame = 0;
+    m_startScale = 1.0f;
+    m_targetScaleMax = 1.0f;
+    m_targetScaleMin = 1.0f;
+    m_startColor.setFromInt(0xffffffff);
+    m_endColor.setFromInt(0x00000000);
+    // m_spinRateMax = 0.0f;
+    m_disabledDuration = 0;
+    m_disableFXParticleSystem = NULL;
+    m_sparksPerCubicFoot = 0.001f;
+  }
 
-	}
-
-	static void buildFieldParse(MultiIniFieldParse& p)
-	{
+  static void buildFieldParse(MultiIniFieldParse &p)
+  {
     UpdateModuleData::buildFieldParse(p);
-		static const FieldParse dataFieldParse[] =
-		{
-			{ "Lifetime",	INI::parseDurationUnsignedInt,		NULL, offsetof( EMPUpdateModuleData, m_lifeFrames ) },
-			{ "StartFadeTime",	INI::parseDurationUnsignedInt,		NULL, offsetof( EMPUpdateModuleData, m_startFadeFrame ) },
-			{ "StartScale",	INI::parseReal,										NULL, offsetof( EMPUpdateModuleData, m_startScale ) },
-			{ "DisabledDuration",	INI::parseDurationUnsignedInt,	NULL, offsetof( EMPUpdateModuleData, m_disabledDuration ) },
-			//{ "SpinRateMax",	INI::parseReal,										NULL, offsetof( EMPUpdateModuleData, m_spinRateMax ) },
-			{ "TargetScaleMax",	INI::parseReal,										NULL, offsetof( EMPUpdateModuleData, m_targetScaleMax ) },
-			{ "TargetScaleMin",	INI::parseReal,										NULL, offsetof( EMPUpdateModuleData, m_targetScaleMin ) },
-			{ "StartColor",	INI::parseRGBColor,			NULL, offsetof( EMPUpdateModuleData, m_startColor ) },
-			{ "EndColor",	INI::parseRGBColor,				NULL, offsetof( EMPUpdateModuleData, m_endColor ) },
-			{ "DisableFXParticleSystem",		INI::parseParticleSystemTemplate, NULL, offsetof( EMPUpdateModuleData, m_disableFXParticleSystem ) },
-			{ "SparksPerCubicFoot",		INI::parseReal, NULL, offsetof( EMPUpdateModuleData, m_sparksPerCubicFoot ) },
+    static const FieldParse dataFieldParse[] = {
+      { "Lifetime", INI::parseDurationUnsignedInt, NULL, offsetof(EMPUpdateModuleData, m_lifeFrames) },
+      { "StartFadeTime", INI::parseDurationUnsignedInt, NULL, offsetof(EMPUpdateModuleData, m_startFadeFrame) },
+      { "StartScale", INI::parseReal, NULL, offsetof(EMPUpdateModuleData, m_startScale) },
+      { "DisabledDuration", INI::parseDurationUnsignedInt, NULL, offsetof(EMPUpdateModuleData, m_disabledDuration) },
+      //{ "SpinRateMax",	INI::parseReal,										NULL, offsetof( EMPUpdateModuleData, m_spinRateMax ) },
+      { "TargetScaleMax", INI::parseReal, NULL, offsetof(EMPUpdateModuleData, m_targetScaleMax) },
+      { "TargetScaleMin", INI::parseReal, NULL, offsetof(EMPUpdateModuleData, m_targetScaleMin) },
+      { "StartColor", INI::parseRGBColor, NULL, offsetof(EMPUpdateModuleData, m_startColor) },
+      { "EndColor", INI::parseRGBColor, NULL, offsetof(EMPUpdateModuleData, m_endColor) },
+      { "DisableFXParticleSystem",
+        INI::parseParticleSystemTemplate,
+        NULL,
+        offsetof(EMPUpdateModuleData, m_disableFXParticleSystem) },
+      { "SparksPerCubicFoot", INI::parseReal, NULL, offsetof(EMPUpdateModuleData, m_sparksPerCubicFoot) },
 
-
-			{ 0, 0, 0, 0 }
-		};
+      { 0, 0, 0, 0 }
+    };
     p.add(dataFieldParse);
-	}
+  }
 };
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 class EMPUpdate : public UpdateModule
 {
+  MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(EMPUpdate, "EMPUpdate")
+  MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA(EMPUpdate, EMPUpdateModuleData)
 
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( EMPUpdate, "EMPUpdate" )
-	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( EMPUpdate, EMPUpdateModuleData )
+  public:
+  EMPUpdate(Thing *thing, const ModuleData *moduleData);
+  // virtual destructor prototype provided by memory pool declaration
 
-public:
+  UnsignedInt getDieFrame() { return m_dieFrame; }
 
-	EMPUpdate( Thing *thing, const ModuleData* moduleData );
-	// virtual destructor prototype provided by memory pool declaration
+  virtual UpdateSleepTime update(void);
+  void doDisableAttack(void);
 
-	UnsignedInt getDieFrame() { return m_dieFrame; }
+  protected:
+  UnsignedInt m_dieFrame; ///< frame we die on
+  UnsignedInt m_tintEnvFadeFrames; ///< param for tint envelope
+  UnsignedInt m_tintEnvPlayFrame; ///< which frame to trigger the tint envelope
 
-	virtual UpdateSleepTime update( void );
-	void doDisableAttack( void );
+  Real m_targetScale; /// How big will I get
+  // Real				m_spinRate;			///HowMuch To Spin each frame;
+  Real m_currentScale; ///< how big I am drawing this frame
 
-protected:
-
-	UnsignedInt m_dieFrame;			///< frame we die on
-	UnsignedInt m_tintEnvFadeFrames;///< param for tint envelope
-	UnsignedInt m_tintEnvPlayFrame;///< which frame to trigger the tint envelope
-
-	Real				m_targetScale;  ///How big will I get
-	//Real				m_spinRate;			///HowMuch To Spin each frame;
-	Real				m_currentScale; ///< how big I am drawing this frame
-
-	//static Bool s_lastInstanceSpunPositive;/// so that only every other instance spins positive direction
-
-
+  // static Bool s_lastInstanceSpunPositive;/// so that only every other instance spins positive direction
 };
 
 #endif // __EMPUPDATE_H_
-

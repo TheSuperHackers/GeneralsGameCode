@@ -56,52 +56,37 @@
 //         Externals
 //----------------------------------------------------------------------------
 
-
-
 //----------------------------------------------------------------------------
 //         Defines
 //----------------------------------------------------------------------------
-
-
 
 //----------------------------------------------------------------------------
 //         Private Types
 //----------------------------------------------------------------------------
 
-
-
 //----------------------------------------------------------------------------
 //         Private Data
 //----------------------------------------------------------------------------
-
-
 
 //----------------------------------------------------------------------------
 //         Public Data
 //----------------------------------------------------------------------------
 
-
-
 //----------------------------------------------------------------------------
 //         Private Prototypes
 //----------------------------------------------------------------------------
-
-
 
 //----------------------------------------------------------------------------
 //         Private Functions
 //----------------------------------------------------------------------------
 
-
-
 //----------------------------------------------------------------------------
 //         Public Functions
 //----------------------------------------------------------------------------
 
-
-CDManagerInterface* CreateCDManager( void )
+CDManagerInterface *CreateCDManager(void)
 {
-	return NEW Win32CDManager;
+  return NEW Win32CDManager;
 }
 
 //============================================================================
@@ -110,7 +95,6 @@ CDManagerInterface* CreateCDManager( void )
 
 Win32CDDrive::Win32CDDrive()
 {
-
 }
 
 //============================================================================
@@ -119,33 +103,32 @@ Win32CDDrive::Win32CDDrive()
 
 Win32CDDrive::~Win32CDDrive()
 {
-
 }
 
 //============================================================================
 // Win32CDDrive::refreshInfo
 //============================================================================
 
-void Win32CDDrive::refreshInfo( void )
+void Win32CDDrive::refreshInfo(void)
 {
-	Bool mayRequireUpdate = (m_disk != CD::NO_DISK);
-	Char volName[1024];
-	// read the volume info
-	if ( GetVolumeInformation( m_drivePath.str(), volName, sizeof(volName) -1, NULL, NULL, NULL, NULL, 0 ))
-	{
-		m_diskName = volName;
-		m_disk = CD::UNKNOWN_DISK;
-	}
-	else
-	{
-		m_diskName.clear();
-		m_disk = CD::NO_DISK;
+  Bool mayRequireUpdate = (m_disk != CD::NO_DISK);
+  Char volName[1024];
+  // read the volume info
+  if (GetVolumeInformation(m_drivePath.str(), volName, sizeof(volName) - 1, NULL, NULL, NULL, NULL, 0))
+  {
+    m_diskName = volName;
+    m_disk = CD::UNKNOWN_DISK;
+  }
+  else
+  {
+    m_diskName.clear();
+    m_disk = CD::NO_DISK;
 
-		if (mayRequireUpdate)
-			TheFileSystem->unloadMusicFilesFromCD();
-	}
+    if (mayRequireUpdate)
+      TheFileSystem->unloadMusicFilesFromCD();
+  }
 
-	// This is an override, not an extension of CDDrive
+  // This is an override, not an extension of CDDrive
 }
 
 //============================================================================
@@ -154,7 +137,6 @@ void Win32CDDrive::refreshInfo( void )
 
 Win32CDManager::Win32CDManager()
 {
-
 }
 
 //============================================================================
@@ -163,74 +145,65 @@ Win32CDManager::Win32CDManager()
 
 Win32CDManager::~Win32CDManager()
 {
-
 }
 
 //============================================================================
 // Win32CDManager::init
 //============================================================================
 
-void Win32CDManager::init( void )
+void Win32CDManager::init(void)
 {
-	CDManager::init();	// init base classes
+  CDManager::init(); // init base classes
 
-	destroyAllDrives();
+  destroyAllDrives();
 
-	// detect CD Drives
-	for ( Char driveLetter = 'a'; driveLetter <= 'z'; driveLetter++ )
-	{
-		AsciiString drivePath;
-		drivePath.format( "%c:\\", driveLetter );
+  // detect CD Drives
+  for (Char driveLetter = 'a'; driveLetter <= 'z'; driveLetter++)
+  {
+    AsciiString drivePath;
+    drivePath.format("%c:\\", driveLetter);
 
-		if ( GetDriveType( drivePath.str() ) == DRIVE_CDROM )
-		{
-			newDrive( drivePath.str() );
-		}
-	}
+    if (GetDriveType(drivePath.str()) == DRIVE_CDROM)
+    {
+      newDrive(drivePath.str());
+    }
+  }
 
-	refreshDrives();
+  refreshDrives();
 }
 
 //============================================================================
 // Win32CDManager::update
 //============================================================================
 
-void Win32CDManager::update( void )
+void Win32CDManager::update(void)
 {
-	CDManager::update();
-
-
+  CDManager::update();
 }
 
 //============================================================================
 // Win32CDManager::reset
 //============================================================================
 
-void Win32CDManager::reset( void )
+void Win32CDManager::reset(void)
 {
-	CDManager::reset();
-
+  CDManager::reset();
 }
 
 //============================================================================
 // Win32CDManager::createDrive
 //============================================================================
 
-CDDriveInterface* Win32CDManager::createDrive( void )
+CDDriveInterface *Win32CDManager::createDrive(void)
 {
-	return NEW Win32CDDrive;
+  return NEW Win32CDDrive;
 }
-
 
 //============================================================================
 // Win32CDManager::refreshDrives
 //============================================================================
 
-void Win32CDManager::refreshDrives( void )
+void Win32CDManager::refreshDrives(void)
 {
-	CDManager::refreshDrives();
+  CDManager::refreshDrives();
 }
-
-
-
-

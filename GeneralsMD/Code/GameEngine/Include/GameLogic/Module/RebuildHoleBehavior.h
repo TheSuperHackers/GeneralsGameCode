@@ -41,84 +41,73 @@
 // ------------------------------------------------------------------------------------------------
 class RebuildHoleBehaviorModuleData : public UpdateModuleData
 {
+  public:
+  RebuildHoleBehaviorModuleData(void);
 
-public:
+  static void buildFieldParse(MultiIniFieldParse &p);
 
-	RebuildHoleBehaviorModuleData( void );
+  Real m_workerRespawnDelay; ///< delay in frames from death of object till respawn of worker
+  Real m_holeHealthRegenPercentPerSecond; ///< the hole recovers this % of the max hit points per second
+  AsciiString m_workerTemplateName; ///< name of worker object
 
-	static void buildFieldParse( MultiIniFieldParse &p );
-
-	Real m_workerRespawnDelay;							///< delay in frames from death of object till respawn of worker
-	Real m_holeHealthRegenPercentPerSecond; ///< the hole recovers this % of the max hit points per second
-	AsciiString m_workerTemplateName;				///< name of worker object
-
-private:
-
+  private:
 };
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 class RebuildHoleBehaviorInterface
 {
-
-public:
-
-	virtual void startRebuildProcess( const ThingTemplate *rebuild, ObjectID spawnerID ) = 0;
-	virtual ObjectID getSpawnerID( void ) = 0;
-	virtual ObjectID getReconstructedBuildingID( void ) = 0;
-	virtual const ThingTemplate* getRebuildTemplate() const = 0;
-
+  public:
+  virtual void startRebuildProcess(const ThingTemplate *rebuild, ObjectID spawnerID) = 0;
+  virtual ObjectID getSpawnerID(void) = 0;
+  virtual ObjectID getReconstructedBuildingID(void) = 0;
+  virtual const ThingTemplate *getRebuildTemplate() const = 0;
 };
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-class RebuildHoleBehavior : public UpdateModule,
-														public DieModuleInterface,
-														public RebuildHoleBehaviorInterface
+class RebuildHoleBehavior : public UpdateModule, public DieModuleInterface, public RebuildHoleBehaviorInterface
 {
+  MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(RebuildHoleBehavior, "RebuildHoleBehavior")
+  MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA(RebuildHoleBehavior, RebuildHoleBehaviorModuleData)
 
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( RebuildHoleBehavior, "RebuildHoleBehavior" )
-	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( RebuildHoleBehavior, RebuildHoleBehaviorModuleData )
+  public:
+  RebuildHoleBehavior(Thing *thing, const ModuleData *moduleData);
+  // virtual destructor prototype provided by memory pool declaration
 
-public:
+  virtual RebuildHoleBehaviorInterface *getRebuildHoleBehaviorInterface() { return this; }
 
-	RebuildHoleBehavior( Thing *thing, const ModuleData *moduleData );
-	// virtual destructor prototype provided by memory pool declaration
+  static Int getInterfaceMask(void) { return UpdateModule::getInterfaceMask() | (MODULEINTERFACE_DIE); }
 
-	virtual RebuildHoleBehaviorInterface* getRebuildHoleBehaviorInterface() { return this; }
+  // BehaviorModule
+  virtual DieModuleInterface *getDie(void) { return this; }
 
-	static Int getInterfaceMask( void ) { return UpdateModule::getInterfaceMask() | (MODULEINTERFACE_DIE); }
+  // UpdateModuleInterface
+  virtual UpdateSleepTime update(void);
 
-	// BehaviorModule
-	virtual DieModuleInterface* getDie( void ) { return this; }
+  // DieModuleInterface
+  virtual void onDie(const DamageInfo *damageInfo);
 
-	// UpdateModuleInterface
-	virtual UpdateSleepTime update( void );
+  // RebuildHole specific methods
+  virtual void startRebuildProcess(const ThingTemplate *rebuild, ObjectID spawnerID);
+  virtual ObjectID getSpawnerID(void) { return m_spawnerObjectID; }
+  virtual ObjectID getReconstructedBuildingID(void) { return m_reconstructingID; }
+  virtual const ThingTemplate *getRebuildTemplate() const { return m_rebuildTemplate; }
+  void transferBombs(Object *reconstruction);
 
-	// DieModuleInterface
-	virtual void onDie( const DamageInfo *damageInfo );
+  // interface acquisition
+  static RebuildHoleBehaviorInterface *getRebuildHoleBehaviorInterfaceFromObject(Object *obj);
 
-	// RebuildHole specific methods
-	virtual void startRebuildProcess( const ThingTemplate *rebuild, ObjectID spawnerID );
-	virtual ObjectID getSpawnerID( void ) { return m_spawnerObjectID; }
-	virtual ObjectID getReconstructedBuildingID( void ) { return m_reconstructingID; }
-	virtual const ThingTemplate* getRebuildTemplate() const { return m_rebuildTemplate; }
-	void transferBombs( Object *reconstruction );
+  protected:
+  void newWorkerRespawnProcess(
+      Object *existingWorker); ///< start the worker respawn process (again if existingWorker is non NULL)
 
-	// interface acquisition
-	static RebuildHoleBehaviorInterface* getRebuildHoleBehaviorInterfaceFromObject( Object *obj );
-
-protected:
-
-	void newWorkerRespawnProcess( Object *existingWorker );		///< start the worker respawn process (again if existingWorker is non NULL)
-
-	ObjectID m_workerID;										///< id of the worker that will rebuild us
-	ObjectID m_reconstructingID;						///< ID of the object we're reconstructing
-	ObjectID m_spawnerObjectID;							///< Object that was killed and therefore the object that created this hole
-	UnsignedInt m_workerWaitCounter;				///< when this reaches zero we spawn a worker after death
-	const ThingTemplate *m_workerTemplate;  ///< template of the worker to make
-	const ThingTemplate *m_rebuildTemplate;	///< what we are rebuilding
-
+  ObjectID m_workerID; ///< id of the worker that will rebuild us
+  ObjectID m_reconstructingID; ///< ID of the object we're reconstructing
+  ObjectID m_spawnerObjectID; ///< Object that was killed and therefore the object that created this hole
+  UnsignedInt m_workerWaitCounter; ///< when this reaches zero we spawn a worker after death
+  const ThingTemplate *m_workerTemplate; ///< template of the worker to make
+  const ThingTemplate *m_rebuildTemplate; ///< what we are rebuilding
 };
 
-#endif  // end __REBUILD_HOLE_BEHAVIOR_H_
+#endif // end __REBUILD_HOLE_BEHAVIOR_H_

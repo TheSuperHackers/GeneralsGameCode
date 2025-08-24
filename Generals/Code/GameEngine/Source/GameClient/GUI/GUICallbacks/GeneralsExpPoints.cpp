@@ -46,7 +46,7 @@
 //-----------------------------------------------------------------------------
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 
 //-----------------------------------------------------------------------------
 // USER INCLUDES //////////////////////////////////////////////////////////////
@@ -63,107 +63,97 @@
 //-----------------------------------------------------------------------------
 
 //-------------------------------------------------------------------------------------------------
-WindowMsgHandledType GeneralsExpPointsInput( GameWindow *window, UnsignedInt msg,
-																			WindowMsgData mData1, WindowMsgData mData2 )
+WindowMsgHandledType GeneralsExpPointsInput(GameWindow *window, UnsignedInt msg, WindowMsgData mData1, WindowMsgData mData2)
 {
+  switch (msg)
+  {
+    // --------------------------------------------------------------------------------------------
+    case GWM_MOUSE_ENTERING:
+      // Get rid of any building placement mode!
+      if (TheInGameUI)
+      {
+        TheInGameUI->placeBuildAvailable(NULL, NULL);
+      }
+      break;
 
-	switch( msg )
-	{
+    case GWM_CHAR:
+    {
+      UnsignedByte key = mData1;
+      //			UnsignedByte state = mData2;
 
-		// --------------------------------------------------------------------------------------------
-		case GWM_MOUSE_ENTERING:
-			//Get rid of any building placement mode!
-			if( TheInGameUI )
-			{
-				TheInGameUI->placeBuildAvailable( NULL, NULL );
-			}
-			break;
+      switch (key)
+      {
+        // ----------------------------------------------------------------------------------------
+        case KEY_ESC:
+        {
+          TheControlBar->hidePurchaseScience();
+          return MSG_HANDLED;
+          // return MSG_IGNORED;
+        } // end escape
 
-		case GWM_CHAR:
-		{
-			UnsignedByte key = mData1;
-//			UnsignedByte state = mData2;
+      } // end switch( key )
 
-			switch( key )
-			{
+      return MSG_HANDLED;
 
-				// ----------------------------------------------------------------------------------------
-				case KEY_ESC:
-				{
-					TheControlBar->hidePurchaseScience();
-					return MSG_HANDLED;
-					//return MSG_IGNORED;
-				}  // end escape
+    } // end char
+  }
 
-			}  // end switch( key )
+  return MSG_HANDLED;
 
-			return MSG_HANDLED;
-
-		}  // end char
-
-	}
-
-	return MSG_HANDLED;
-
-}  // end DiplomacyInput
-
-
+} // end DiplomacyInput
 
 //-----------------------------------------------------------------------------
 // PUBLIC FUNCTIONS ///////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-WindowMsgHandledType GeneralsExpPointsSystem( GameWindow *window, UnsignedInt msg,
-																			 WindowMsgData mData1, WindowMsgData mData2 )
+WindowMsgHandledType GeneralsExpPointsSystem(GameWindow *window, UnsignedInt msg, WindowMsgData mData1, WindowMsgData mData2)
 {
+  switch (msg)
+  {
+    //---------------------------------------------------------------------------------------------
+    case GGM_FOCUS_CHANGE:
+    {
+      //			Bool focus = (Bool) mData1;
+      // if (focus)
+      // TheWindowManager->winSetGrabWindow( chatTextEntry );
+      break;
+    } // end focus change
 
-	switch( msg )
-	{
-		//---------------------------------------------------------------------------------------------
-		case GGM_FOCUS_CHANGE:
-		{
-			//			Bool focus = (Bool) mData1;
-			//if (focus)
-				//TheWindowManager->winSetGrabWindow( chatTextEntry );
-			break;
-		} // end focus change
+    //---------------------------------------------------------------------------------------------
+    case GWM_INPUT_FOCUS:
+    {
+      // if we're given the opportunity to take the keyboard focus we must say we don't want it
+      if (mData1 == TRUE)
+        *(Bool *)mData2 = FALSE;
 
-		//---------------------------------------------------------------------------------------------
-		case GWM_INPUT_FOCUS:
-		{
-			// if we're given the opportunity to take the keyboard focus we must say we don't want it
-			if( mData1 == TRUE )
-				*(Bool *)mData2 = FALSE;
+      return MSG_HANDLED;
+    } // case GWM_INPUT_FOCUS:
 
-			return MSG_HANDLED;
-		}//case GWM_INPUT_FOCUS:
+    //---------------------------------------------------------------------------------------------
+    case GBM_SELECTED:
+    {
+      GameWindow *control = (GameWindow *)mData1;
+      NameKeyType controlID = (NameKeyType)control->winGetWindowId();
+      static NameKeyType buttonExitID = NAMEKEY("GeneralsExpPoints.wnd:ButtonExit");
+      if (controlID == buttonExitID)
+      {
+        TheControlBar->hidePurchaseScience();
+      }
+      else
+        TheControlBar->processContextSensitiveButtonClick(control, (GadgetGameMessage)msg);
+      break;
 
-		//---------------------------------------------------------------------------------------------
-		case GBM_SELECTED:
-		{
-			GameWindow *control = (GameWindow *)mData1;
-			NameKeyType controlID = (NameKeyType)control->winGetWindowId();
-			static NameKeyType buttonExitID = NAMEKEY( "GeneralsExpPoints.wnd:ButtonExit" );
-			if (controlID == buttonExitID)
-			{
-				TheControlBar->hidePurchaseScience();
-			}
-			else
-				TheControlBar->processContextSensitiveButtonClick( control, (GadgetGameMessage)msg );
-			break;
+    } // end button selected
 
-		}  // end button selected
+    //---------------------------------------------------------------------------------------------
+    default:
+      return MSG_IGNORED;
 
-		//---------------------------------------------------------------------------------------------
-		default:
-			return MSG_IGNORED;
+  } // end switch( msg )
 
-	}  // end switch( msg )
+  return MSG_HANDLED;
 
-	return MSG_HANDLED;
-
-}  // end GeneralsExpPointsSystem
+} // end GeneralsExpPointsSystem
 
 //-----------------------------------------------------------------------------
 // PRIVATE FUNCTIONS //////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-

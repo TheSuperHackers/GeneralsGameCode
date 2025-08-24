@@ -30,37 +30,38 @@
 
 class CellWidth : public CDialog
 {
-// Construction
-public:
-	CellWidth(int cellWidth, CWnd* pParent = NULL);   // standard constructor
+  // Construction
+  public:
+  CellWidth(int cellWidth, CWnd *pParent = NULL); // standard constructor
 
-	int GetCellWidth(void) {return mCellWidth;};
-// Dialog Data
-	//{{AFX_DATA(CellWidth)
-	enum { IDD = IDD_CellWidth };
-		// NOTE: the ClassWizard will add data members here
-	//}}AFX_DATA
+  int GetCellWidth(void) { return mCellWidth; };
+  // Dialog Data
+  //{{AFX_DATA(CellWidth)
+  enum
+  {
+    IDD = IDD_CellWidth
+  };
+  // NOTE: the ClassWizard will add data members here
+  //}}AFX_DATA
 
+  // Overrides
+  // ClassWizard generated virtual function overrides
+  //{{AFX_VIRTUAL(CellWidth)
+  protected:
+  virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
+  virtual void OnOK();
+  //}}AFX_VIRTUAL
 
-// Overrides
-	// ClassWizard generated virtual function overrides
-	//{{AFX_VIRTUAL(CellWidth)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
-	virtual void OnOK();
-	//}}AFX_VIRTUAL
+  // Implementation
+  protected:
+  int mCellWidth;
 
-// Implementation
-protected:
-	int mCellWidth;
-
-protected:
-
-	// Generated message map functions
-	//{{AFX_MSG(CellWidth)
-	virtual BOOL OnInitDialog();
-	//}}AFX_MSG
-	DECLARE_MESSAGE_MAP()
+  protected:
+  // Generated message map functions
+  //{{AFX_MSG(CellWidth)
+  virtual BOOL OnInitDialog();
+  //}}AFX_MSG
+  DECLARE_MESSAGE_MAP()
 };
 
 //{{AFX_INSERT_LOCATION}}

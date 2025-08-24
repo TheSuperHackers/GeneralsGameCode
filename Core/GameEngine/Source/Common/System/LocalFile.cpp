@@ -59,25 +59,17 @@
 #include "Lib/BaseType.h"
 #include "Common/PerfTimer.h"
 
-
-
 //----------------------------------------------------------------------------
 //         Externals
 //----------------------------------------------------------------------------
-
-
 
 //----------------------------------------------------------------------------
 //         Defines
 //----------------------------------------------------------------------------
 
-
-
 //----------------------------------------------------------------------------
 //         Private Types
 //----------------------------------------------------------------------------
-
-
 
 //----------------------------------------------------------------------------
 //         Private Data
@@ -89,13 +81,9 @@ static Int s_totalOpen = 0;
 //         Public Data
 //----------------------------------------------------------------------------
 
-
-
 //----------------------------------------------------------------------------
 //         Private Prototypes
 //----------------------------------------------------------------------------
-
-
 
 //----------------------------------------------------------------------------
 //         Private Functions
@@ -107,18 +95,18 @@ static Int s_totalOpen = 0;
 
 LocalFile::LocalFile()
 #if USE_BUFFERED_IO
-	: m_file(NULL)
+    :
+    m_file(NULL)
 #else
-	: m_handle(-1)
+    :
+    m_handle(-1)
 #endif
 {
 }
 
-
 //----------------------------------------------------------------------------
 //         Public Functions
 //----------------------------------------------------------------------------
-
 
 //=================================================================
 // LocalFile::~LocalFile
@@ -126,186 +114,186 @@ LocalFile::LocalFile()
 
 LocalFile::~LocalFile()
 {
-	closeFile();
+  closeFile();
 }
 
 //=================================================================
 // LocalFile::open
 //=================================================================
 /**
-	* This function opens a file using the standard C open() or
-	* fopen() call. Access flags are mapped to the appropriate flags.
-	* Returns true if file was opened successfully.
-	*/
+ * This function opens a file using the standard C open() or
+ * fopen() call. Access flags are mapped to the appropriate flags.
+ * Returns true if file was opened successfully.
+ */
 //=================================================================
 
-//DECLARE_PERF_TIMER(LocalFile)
-Bool LocalFile::open( const Char *filename, Int access, size_t bufferSize )
+// DECLARE_PERF_TIMER(LocalFile)
+Bool LocalFile::open(const Char *filename, Int access, size_t bufferSize)
 {
-	//USE_PERF_TIMER(LocalFile)
-	if( !File::open( filename, access) )
-	{
-		return FALSE;
-	}
+  // USE_PERF_TIMER(LocalFile)
+  if (!File::open(filename, access))
+  {
+    return FALSE;
+  }
 
-	/* here we translate WSYS file access to the std C equivalent */
+  /* here we translate WSYS file access to the std C equivalent */
 #if USE_BUFFERED_IO
 
-	// r    open for reading (The file must exist)
-	// w    open for writing (creates file if it doesn't exist). Deletes content and overwrites the file.
-	// a    open for appending (creates file if it doesn't exist).
-	// r+   open for reading and writing (The file must exist).
-	// w+   open for reading and writing.
-	//      If file exists deletes content and overwrites the file, otherwise creates an empty new file.
-	// a+   open for reading and writing (append if file exists).
+  // r    open for reading (The file must exist)
+  // w    open for writing (creates file if it doesn't exist). Deletes content and overwrites the file.
+  // a    open for appending (creates file if it doesn't exist).
+  // r+   open for reading and writing (The file must exist).
+  // w+   open for reading and writing.
+  //      If file exists deletes content and overwrites the file, otherwise creates an empty new file.
+  // a+   open for reading and writing (append if file exists).
 
-	const Bool write     = (m_access & WRITE) != 0;
-	const Bool readwrite = (m_access & READWRITE) == READWRITE;
-	const Bool append    = (m_access & APPEND) != 0;
-	const Bool create    = (m_access & CREATE) != 0;
-	const Bool truncate  = (m_access & TRUNCATE) != 0;
-	const Bool binary    = (m_access & BINARY) != 0;
+  const Bool write = (m_access & WRITE) != 0;
+  const Bool readwrite = (m_access & READWRITE) == READWRITE;
+  const Bool append = (m_access & APPEND) != 0;
+  const Bool create = (m_access & CREATE) != 0;
+  const Bool truncate = (m_access & TRUNCATE) != 0;
+  const Bool binary = (m_access & BINARY) != 0;
 
-	const Char *mode = NULL;
+  const Char *mode = NULL;
 
-	// Mode string selection (mimics _open flag combinations)
-	// TEXT is implicit for fopen if 'b' is not present
-	if (readwrite)
-	{
-		if (append)
-			mode = binary ? "a+b" : "a+";
-		else if (truncate || create)
-			mode = binary ? "w+b" : "w+";
-		else
-			mode = binary ? "r+b" : "r+";
-	}
-	else if (write)
-	{
-		if (append)
-			mode = binary ? "ab" : "a";
-		else
-			mode = binary ? "wb" : "w";
-	}
-	else // implicitly read-only
-	{
-		mode = binary ? "rb" : "r";
-	}
+  // Mode string selection (mimics _open flag combinations)
+  // TEXT is implicit for fopen if 'b' is not present
+  if (readwrite)
+  {
+    if (append)
+      mode = binary ? "a+b" : "a+";
+    else if (truncate || create)
+      mode = binary ? "w+b" : "w+";
+    else
+      mode = binary ? "r+b" : "r+";
+  }
+  else if (write)
+  {
+    if (append)
+      mode = binary ? "ab" : "a";
+    else
+      mode = binary ? "wb" : "w";
+  }
+  else // implicitly read-only
+  {
+    mode = binary ? "rb" : "r";
+  }
 
-	m_file = fopen(filename, mode);
-	if (m_file == NULL)
-	{
-		goto error;
-	}
+  m_file = fopen(filename, mode);
+  if (m_file == NULL)
+  {
+    goto error;
+  }
 
-	{
-		Int result = 0;
+  {
+    Int result = 0;
 
-		if (bufferSize == 0)
-		{
-			result = setvbuf(m_file, NULL, _IONBF, 0); // Uses no buffering
-		}
-		else
-		{
-			const Int bufferMode = (m_access & LINEBUF)
-				? _IOLBF // Uses line buffering
-				: _IOFBF; // Uses full buffering
+    if (bufferSize == 0)
+    {
+      result = setvbuf(m_file, NULL, _IONBF, 0); // Uses no buffering
+    }
+    else
+    {
+      const Int bufferMode = (m_access & LINEBUF) ? _IOLBF // Uses line buffering
+                                                    :
+                                                    _IOFBF; // Uses full buffering
 
-			// Buffer is expected to lazy allocate on first read or write later
-			result = setvbuf(m_file, NULL, bufferMode, bufferSize);
-		}
+      // Buffer is expected to lazy allocate on first read or write later
+      result = setvbuf(m_file, NULL, bufferMode, bufferSize);
+    }
 
-		DEBUG_ASSERTCRASH(result == 0, ("LocalFile::open - setvbuf failed"));
-	}
+    DEBUG_ASSERTCRASH(result == 0, ("LocalFile::open - setvbuf failed"));
+  }
 
 #else
 
-	int flags = 0;
+  int flags = 0;
 
-	if (m_access & CREATE)
-	{
-		flags |= _O_CREAT;
-	}
-	if (m_access & TRUNCATE)
-	{
-		flags |= _O_TRUNC;
-	}
-	if (m_access & APPEND)
-	{
-		flags |= _O_APPEND;
-	}
-	if (m_access & TEXT)
-	{
-		flags |= _O_TEXT;
-	}
-	if (m_access & BINARY)
-	{
-		flags |= _O_BINARY;
-	}
+  if (m_access & CREATE)
+  {
+    flags |= _O_CREAT;
+  }
+  if (m_access & TRUNCATE)
+  {
+    flags |= _O_TRUNC;
+  }
+  if (m_access & APPEND)
+  {
+    flags |= _O_APPEND;
+  }
+  if (m_access & TEXT)
+  {
+    flags |= _O_TEXT;
+  }
+  if (m_access & BINARY)
+  {
+    flags |= _O_BINARY;
+  }
 
-	if((m_access & READWRITE )== READWRITE )
-	{
-		flags |= _O_RDWR;
-	}
-	else if(m_access & WRITE)
-	{
-		flags |= _O_WRONLY;
-		flags |= _O_CREAT;
-	}
-	else // implicitly read-only
-	{
-		flags |= _O_RDONLY;
-	}
+  if ((m_access & READWRITE) == READWRITE)
+  {
+    flags |= _O_RDWR;
+  }
+  else if (m_access & WRITE)
+  {
+    flags |= _O_WRONLY;
+    flags |= _O_CREAT;
+  }
+  else // implicitly read-only
+  {
+    flags |= _O_RDONLY;
+  }
 
-	m_handle = _open( filename, flags , _S_IREAD | _S_IWRITE);
+  m_handle = _open(filename, flags, _S_IREAD | _S_IWRITE);
 
-	if( m_handle == -1 )
-	{
-		goto error;
-	}
+  if (m_handle == -1)
+  {
+    goto error;
+  }
 
 #endif
 
-	++s_totalOpen;
-///	DEBUG_LOG(("LocalFile::open %s (total %d)",filename,s_totalOpen));
-	if ( m_access & APPEND )
-	{
-		if ( seek ( 0, END ) < 0 )
-		{
-			goto error;
-		}
-	}
+  ++s_totalOpen;
+  ///	DEBUG_LOG(("LocalFile::open %s (total %d)",filename,s_totalOpen));
+  if (m_access & APPEND)
+  {
+    if (seek(0, END) < 0)
+    {
+      goto error;
+    }
+  }
 
-	return TRUE;
+  return TRUE;
 
 error:
 
-	// TheSuperHackers @fix Instance must never delete itself in this function.
-	closeWithoutDelete();
+  // TheSuperHackers @fix Instance must never delete itself in this function.
+  closeWithoutDelete();
 
-	return FALSE;
+  return FALSE;
 }
 
 //=================================================================
 // LocalFile::close
 //=================================================================
 /**
-	* Closes the current file if it is open.
-  * Must call LocalFile::close() for each successful LocalFile::open() call.
-	*/
+ * Closes the current file if it is open.
+ * Must call LocalFile::close() for each successful LocalFile::open() call.
+ */
 //=================================================================
 
-void LocalFile::close( void )
+void LocalFile::close(void)
 {
-	closeFile();
-	File::close();
+  closeFile();
+  File::close();
 }
 
 //=================================================================
 
 void LocalFile::closeWithoutDelete()
 {
-	closeFile();
-	File::closeWithoutDelete();
+  closeFile();
+  File::closeWithoutDelete();
 }
 
 //=================================================================
@@ -313,19 +301,19 @@ void LocalFile::closeWithoutDelete()
 void LocalFile::closeFile()
 {
 #if USE_BUFFERED_IO
-	if (m_file)
-	{
-		fclose(m_file);
-		m_file = NULL;
-		--s_totalOpen;
-	}
+  if (m_file)
+  {
+    fclose(m_file);
+    m_file = NULL;
+    --s_totalOpen;
+  }
 #else
-	if( m_handle != -1 )
-	{
-		_close( m_handle );
-		m_handle = -1;
-		--s_totalOpen;
-	}
+  if (m_handle != -1)
+  {
+    _close(m_handle);
+    m_handle = -1;
+    --s_totalOpen;
+  }
 #endif
 }
 
@@ -333,178 +321,179 @@ void LocalFile::closeFile()
 // LocalFile::read
 //=================================================================
 
-Int LocalFile::read( void *buffer, Int bytes )
+Int LocalFile::read(void *buffer, Int bytes)
 {
-	//USE_PERF_TIMER(LocalFile)
-	if( !m_open )
-	{
-		return -1;
-	}
+  // USE_PERF_TIMER(LocalFile)
+  if (!m_open)
+  {
+    return -1;
+  }
 
-	if (buffer == NULL)
-	{
+  if (buffer == NULL)
+  {
 #if USE_BUFFERED_IO
-		fseek(m_file, bytes, SEEK_CUR);
+    fseek(m_file, bytes, SEEK_CUR);
 #else
-		_lseek(m_handle, bytes, SEEK_CUR);
+    _lseek(m_handle, bytes, SEEK_CUR);
 #endif
-		return bytes;
-	}
+    return bytes;
+  }
 
 #if USE_BUFFERED_IO
-	Int ret = fread(buffer, 1, bytes, m_file);
+  Int ret = fread(buffer, 1, bytes, m_file);
 #else
-	Int ret = _read( m_handle, buffer, bytes );
+  Int ret = _read(m_handle, buffer, bytes);
 #endif
 
-	return ret;
+  return ret;
 }
 
 //=================================================================
 // LocalFile::readChar
 //=================================================================
 
-Int LocalFile::readChar( )
+Int LocalFile::readChar()
 {
-	Char character = '\0';
+  Char character = '\0';
 
-	Int ret = read( &character, sizeof(character) );
+  Int ret = read(&character, sizeof(character));
 
-	if (ret == sizeof(character))
-		return (Int)character;
+  if (ret == sizeof(character))
+    return (Int)character;
 
-	return EOF;
+  return EOF;
 }
 
 //=================================================================
 // LocalFile::readWideChar
 //=================================================================
 
-Int LocalFile::readWideChar( )
+Int LocalFile::readWideChar()
 {
-	WideChar character = L'\0';
+  WideChar character = L'\0';
 
-	Int ret = read( &character, sizeof(character) );
+  Int ret = read(&character, sizeof(character));
 
-	if (ret == sizeof(character))
-		return (Int)character;
+  if (ret == sizeof(character))
+    return (Int)character;
 
-	return WEOF;
+  return WEOF;
 }
 
 //=================================================================
 // LocalFile::write
 //=================================================================
 
-Int LocalFile::write( const void *buffer, Int bytes )
+Int LocalFile::write(const void *buffer, Int bytes)
 {
-
-	if( !m_open || !buffer )
-	{
-		return -1;
-	}
+  if (!m_open || !buffer)
+  {
+    return -1;
+  }
 
 #if USE_BUFFERED_IO
-	Int ret = fwrite(buffer, 1, bytes, m_file);
+  Int ret = fwrite(buffer, 1, bytes, m_file);
 #else
-	Int ret = _write( m_handle, buffer, bytes );
+  Int ret = _write(m_handle, buffer, bytes);
 #endif
-	return ret;
+  return ret;
 }
 
 //=================================================================
 // LocalFile::writeFormat - Ascii
 //=================================================================
 
-Int LocalFile::writeFormat( const Char* format, ... )
+Int LocalFile::writeFormat(const Char *format, ...)
 {
-	char buffer[1024];
+  char buffer[1024];
 
-	va_list args;
-	va_start(args, format);
-	Int length = vsnprintf(buffer, sizeof(buffer), format, args);
-	va_end(args);
+  va_list args;
+  va_start(args, format);
+  Int length = vsnprintf(buffer, sizeof(buffer), format, args);
+  va_end(args);
 
-	return write( buffer, length );
+  return write(buffer, length);
 }
 
 //=================================================================
 // LocalFile::writeFormat - Wide character
 //=================================================================
 
-Int LocalFile::writeFormat( const WideChar* format, ... )
+Int LocalFile::writeFormat(const WideChar *format, ...)
 {
-	WideChar buffer[1024];
+  WideChar buffer[1024];
 
-	va_list args;
-	va_start(args, format);
-	Int length = vswprintf(buffer, sizeof(buffer) / sizeof(WideChar), format, args);
-	va_end(args);
+  va_list args;
+  va_start(args, format);
+  Int length = vswprintf(buffer, sizeof(buffer) / sizeof(WideChar), format, args);
+  va_end(args);
 
-	return write( buffer, length * sizeof(WideChar) );
+  return write(buffer, length * sizeof(WideChar));
 }
 
 //=================================================================
 // LocalFile::writeChar - Ascii
 //=================================================================
 
-Int LocalFile::writeChar( const Char* character )
+Int LocalFile::writeChar(const Char *character)
 {
-	if ( write( character, sizeof(Char) ) == sizeof(Char) ) {
-		return (Int)character;
-	}
+  if (write(character, sizeof(Char)) == sizeof(Char))
+  {
+    return (Int)character;
+  }
 
-	return EOF;
+  return EOF;
 }
 
 //=================================================================
 // LocalFile::writeChar - Wide character
 //=================================================================
 
-Int LocalFile::writeChar( const WideChar* character )
+Int LocalFile::writeChar(const WideChar *character)
 {
-	if ( write( character, sizeof(WideChar) ) == sizeof(WideChar) ) {
-		return (Int)character;
-	}
+  if (write(character, sizeof(WideChar)) == sizeof(WideChar))
+  {
+    return (Int)character;
+  }
 
-	return WEOF;
+  return WEOF;
 }
 
 //=================================================================
 // LocalFile::seek
 //=================================================================
 
-Int LocalFile::seek( Int pos, seekMode mode)
+Int LocalFile::seek(Int pos, seekMode mode)
 {
-	int lmode;
+  int lmode;
 
-	switch( mode )
-	{
-		case START:
-			DEBUG_ASSERTCRASH(pos >= 0, ("LocalFile::seek - pos must be >= 0 when seeking from the beginning of the file"));
-			lmode = SEEK_SET;
-			break;
-		case CURRENT:
-			lmode = SEEK_CUR;
-			break;
-		case END:
-			lmode = SEEK_END;
-			break;
-		default:
-			DEBUG_CRASH(("LocalFile::seek - bad seek mode"));
-			return -1;
-	}
+  switch (mode)
+  {
+    case START:
+      DEBUG_ASSERTCRASH(pos >= 0, ("LocalFile::seek - pos must be >= 0 when seeking from the beginning of the file"));
+      lmode = SEEK_SET;
+      break;
+    case CURRENT:
+      lmode = SEEK_CUR;
+      break;
+    case END:
+      lmode = SEEK_END;
+      break;
+    default:
+      DEBUG_CRASH(("LocalFile::seek - bad seek mode"));
+      return -1;
+  }
 
 #if USE_BUFFERED_IO
-	Int ret = fseek(m_file, pos, lmode);
-	if (ret == 0)
-		return ftell(m_file);
-	else
-		return -1;
+  Int ret = fseek(m_file, pos, lmode);
+  if (ret == 0)
+    return ftell(m_file);
+  else
+    return -1;
 #else
-	Int ret = _lseek( m_handle, pos, lmode );
+  Int ret = _lseek(m_handle, pos, lmode);
 #endif
-	return ret;
+  return ret;
 }
 
 //=================================================================
@@ -513,7 +502,7 @@ Int LocalFile::seek( Int pos, seekMode mode)
 
 Bool LocalFile::flush()
 {
-	return fflush(m_file) != EOF;
+  return fflush(m_file) != EOF;
 }
 
 //=================================================================
@@ -523,44 +512,48 @@ Bool LocalFile::flush()
 // or at EOF
 Bool LocalFile::scanInt(Int &newInt)
 {
-	newInt = 0;
-	AsciiString tempstr;
-	Char c;
-	Int val;
+  newInt = 0;
+  AsciiString tempstr;
+  Char c;
+  Int val;
 
-	// skip preceding non-numeric characters
-	do {
+  // skip preceding non-numeric characters
+  do
+  {
 #if USE_BUFFERED_IO
-		val = fread(&c, 1, 1, m_file);
+    val = fread(&c, 1, 1, m_file);
 #else
-		val = _read( m_handle, &c, 1);
+    val = _read(m_handle, &c, 1);
 #endif
-	} while ((val != 0) && (((c < '0') || (c > '9')) && (c != '-')));
+  } while ((val != 0) && (((c < '0') || (c > '9')) && (c != '-')));
 
-	if (val == 0) {
-		return FALSE;
-	}
+  if (val == 0)
+  {
+    return FALSE;
+  }
 
-	do {
-		tempstr.concat(c);
+  do
+  {
+    tempstr.concat(c);
 #if USE_BUFFERED_IO
-		val = fread(&c, 1, 1, m_file);
+    val = fread(&c, 1, 1, m_file);
 #else
-		val = _read( m_handle, &c, 1);
+    val = _read(m_handle, &c, 1);
 #endif
-	} while ((val != 0) && ((c >= '0') && (c <= '9')));
+  } while ((val != 0) && ((c >= '0') && (c <= '9')));
 
-	// put the last read char back, since we didn't use it.
-	if (val != 0) {
+  // put the last read char back, since we didn't use it.
+  if (val != 0)
+  {
 #if USE_BUFFERED_IO
-		fseek(m_file, -1, SEEK_CUR);
+    fseek(m_file, -1, SEEK_CUR);
 #else
-		_lseek(m_handle, -1, SEEK_CUR);
+    _lseek(m_handle, -1, SEEK_CUR);
 #endif
-	}
+  }
 
-	newInt = atoi(tempstr.str());
-	return TRUE;
+  newInt = atoi(tempstr.str());
+  return TRUE;
 }
 
 //=================================================================
@@ -570,47 +563,52 @@ Bool LocalFile::scanInt(Int &newInt)
 // or at EOF
 Bool LocalFile::scanReal(Real &newReal)
 {
-	newReal = 0.0;
-	AsciiString tempstr;
-	Char c;
-	Int val;
-	Bool sawDec = FALSE;
+  newReal = 0.0;
+  AsciiString tempstr;
+  Char c;
+  Int val;
+  Bool sawDec = FALSE;
 
-	// skip the preceding white space
-	do {
+  // skip the preceding white space
+  do
+  {
 #if USE_BUFFERED_IO
-		val = fread(&c, 1, 1, m_file);
+    val = fread(&c, 1, 1, m_file);
 #else
-		val = _read( m_handle, &c, 1);
+    val = _read(m_handle, &c, 1);
 #endif
-	} while ((val != 0) && (((c < '0') || (c > '9')) && (c != '-') && (c != '.')));
+  } while ((val != 0) && (((c < '0') || (c > '9')) && (c != '-') && (c != '.')));
 
-	if (val == 0) {
-		return FALSE;
-	}
+  if (val == 0)
+  {
+    return FALSE;
+  }
 
-	do {
-		tempstr.concat(c);
-		if (c == '.') {
-			sawDec = TRUE;
-		}
+  do
+  {
+    tempstr.concat(c);
+    if (c == '.')
+    {
+      sawDec = TRUE;
+    }
 #if USE_BUFFERED_IO
-		val = fread(&c, 1, 1, m_file);
+    val = fread(&c, 1, 1, m_file);
 #else
-		val = _read(m_handle, &c, 1);
+    val = _read(m_handle, &c, 1);
 #endif
-	} while ((val != 0) && (((c >= '0') && (c <= '9')) || ((c == '.') && !sawDec)));
+  } while ((val != 0) && (((c >= '0') && (c <= '9')) || ((c == '.') && !sawDec)));
 
-	if (val != 0) {
+  if (val != 0)
+  {
 #if USE_BUFFERED_IO
-		fseek(m_file, -1, SEEK_CUR);
+    fseek(m_file, -1, SEEK_CUR);
 #else
-		_lseek(m_handle, -1, SEEK_CUR);
+    _lseek(m_handle, -1, SEEK_CUR);
 #endif
-	}
+  }
 
-	newReal = atof(tempstr.str());
-	return TRUE;
+  newReal = atof(tempstr.str());
+  return TRUE;
 }
 
 //=================================================================
@@ -620,42 +618,46 @@ Bool LocalFile::scanReal(Real &newReal)
 // or at EOF
 Bool LocalFile::scanString(AsciiString &newString)
 {
-	Char c;
-	Int val;
+  Char c;
+  Int val;
 
-	newString.clear();
+  newString.clear();
 
-	// skip the preceding whitespace
-	do {
+  // skip the preceding whitespace
+  do
+  {
 #if USE_BUFFERED_IO
-		val = fread(&c, 1, 1, m_file);
+    val = fread(&c, 1, 1, m_file);
 #else
-		val = _read(m_handle, &c, 1);
+    val = _read(m_handle, &c, 1);
 #endif
-	} while ((val != 0) && (isspace(c)));
+  } while ((val != 0) && (isspace(c)));
 
-	if (val == 0) {
-		return FALSE;
-	}
+  if (val == 0)
+  {
+    return FALSE;
+  }
 
-	do {
-		newString.concat(c);
+  do
+  {
+    newString.concat(c);
 #if USE_BUFFERED_IO
-		val = fread(&c, 1, 1, m_file);
+    val = fread(&c, 1, 1, m_file);
 #else
-		val = _read(m_handle, &c, 1);
+    val = _read(m_handle, &c, 1);
 #endif
-	} while ((val != 0) && (!isspace(c)));
+  } while ((val != 0) && (!isspace(c)));
 
-	if (val != 0) {
+  if (val != 0)
+  {
 #if USE_BUFFERED_IO
-		fseek(m_file, -1, SEEK_CUR);
+    fseek(m_file, -1, SEEK_CUR);
 #else
-		_lseek(m_handle, -1, SEEK_CUR);
+    _lseek(m_handle, -1, SEEK_CUR);
 #endif
-	}
+  }
 
-	return TRUE;
+  return TRUE;
 }
 
 //=================================================================
@@ -664,77 +666,85 @@ Bool LocalFile::scanString(AsciiString &newString)
 // scans to the first character after a new-line or at EOF
 void LocalFile::nextLine(Char *buf, Int bufSize)
 {
-	Char c = 0;
-	Int val;
-	Int i = 0;
+  Char c = 0;
+  Int val;
+  Int i = 0;
 
-	// seek to the next new-line.
-	do {
-		if ((buf == NULL) || (i >= (bufSize-1))) {
+  // seek to the next new-line.
+  do
+  {
+    if ((buf == NULL) || (i >= (bufSize - 1)))
+    {
 #if USE_BUFFERED_IO
-			val = fread(&c, 1, 1, m_file);
+      val = fread(&c, 1, 1, m_file);
 #else
-			val = _read(m_handle, &c, 1);
+      val = _read(m_handle, &c, 1);
 #endif
-		} else {
+    }
+    else
+    {
 #if USE_BUFFERED_IO
-			val = fread(buf + i, 1, 1, m_file);
+      val = fread(buf + i, 1, 1, m_file);
 #else
-			val = _read(m_handle, buf + i, 1);
+      val = _read(m_handle, buf + i, 1);
 #endif
-			c = buf[i];
-		}
-		++i;
-	} while ((val != 0) && (c != '\n'));
+      c = buf[i];
+    }
+    ++i;
+  } while ((val != 0) && (c != '\n'));
 
-	if (buf != NULL) {
-		if (i < bufSize) {
-			buf[i] = 0;
-		} else {
-			buf[bufSize] = 0;
-		}
-	}
+  if (buf != NULL)
+  {
+    if (i < bufSize)
+    {
+      buf[i] = 0;
+    }
+    else
+    {
+      buf[bufSize] = 0;
+    }
+  }
 }
 
 //=================================================================
 //=================================================================
-File* LocalFile::convertToRAMFile()
+File *LocalFile::convertToRAMFile()
 {
-	RAMFile *ramFile = newInstance( RAMFile );
-	if (ramFile->open(this))
-	{
-		if (this->m_deleteOnClose)
-		{
-			ramFile->deleteOnClose();
-		}
-		deleteInstance(this);
-		return ramFile;
-	}
-	else
-	{
-		deleteInstance(ramFile);
-		return this;
-	}
+  RAMFile *ramFile = newInstance(RAMFile);
+  if (ramFile->open(this))
+  {
+    if (this->m_deleteOnClose)
+    {
+      ramFile->deleteOnClose();
+    }
+    deleteInstance(this);
+    return ramFile;
+  }
+  else
+  {
+    deleteInstance(ramFile);
+    return this;
+  }
 }
 
 //=================================================================
 // LocalFile::readEntireAndClose
 //=================================================================
 /**
-	Allocate a buffer large enough to hold entire file, read
-	the entire file into the buffer, then close the file.
-	the buffer is owned by the caller, who is responsible
-	for freeing is (via delete[]). This is a Good Thing to
-	use because it minimizes memory copies for BIG files.
+  Allocate a buffer large enough to hold entire file, read
+  the entire file into the buffer, then close the file.
+  the buffer is owned by the caller, who is responsible
+  for freeing is (via delete[]). This is a Good Thing to
+  use because it minimizes memory copies for BIG files.
 */
-char* LocalFile::readEntireAndClose()
+char *LocalFile::readEntireAndClose()
 {
-	UnsignedInt fileSize = size();
-	char* buffer = NEW char[fileSize];
+  UnsignedInt fileSize = size();
+  char *buffer = NEW char[fileSize];
 
-	read(buffer, fileSize);
+  read(buffer, fileSize);
 
-	close();
+  close();
 
-	return buffer;
+  return buffer;
 }

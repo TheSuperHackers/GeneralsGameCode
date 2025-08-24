@@ -39,122 +39,120 @@
 class Transport;
 class GameSlot;
 
-enum NATStateType CPP_11(: Int) {
-	NATSTATE_IDLE,
-	NATSTATE_DOCONNECTIONPATHS,
-	NATSTATE_WAITFORSTATS,
-	NATSTATE_DONE,
-	NATSTATE_FAILED
+enum NATStateType CPP_11( : Int){ NATSTATE_IDLE,
+                                  NATSTATE_DOCONNECTIONPATHS,
+                                  NATSTATE_WAITFORSTATS,
+                                  NATSTATE_DONE,
+                                  NATSTATE_FAILED };
+
+enum NATConnectionState CPP_11( : Int){ NATCONNECTIONSTATE_NOSTATE,
+                                        NATCONNECTIONSTATE_WAITINGTOBEGIN,
+                                        //	NATCONNECTIONSTATE_NETGEARDELAY,
+                                        NATCONNECTIONSTATE_WAITINGFORMANGLERRESPONSE,
+                                        NATCONNECTIONSTATE_WAITINGFORMANGLEDPORT,
+                                        NATCONNECTIONSTATE_WAITINGFORRESPONSE,
+                                        NATCONNECTIONSTATE_DONE,
+                                        NATCONNECTIONSTATE_FAILED };
+
+struct ConnectionNodeType
+{
+  FirewallHelperClass::tFirewallBehaviorType m_behavior; ///< the NAT/Firewall behavior of this node.
+  UnsignedInt m_slotIndex; ///< the player list index of this node.
 };
 
-enum NATConnectionState CPP_11(: Int) {
-	NATCONNECTIONSTATE_NOSTATE,
-	NATCONNECTIONSTATE_WAITINGTOBEGIN,
-//	NATCONNECTIONSTATE_NETGEARDELAY,
-	NATCONNECTIONSTATE_WAITINGFORMANGLERRESPONSE,
-	NATCONNECTIONSTATE_WAITINGFORMANGLEDPORT,
-	NATCONNECTIONSTATE_WAITINGFORRESPONSE,
-	NATCONNECTIONSTATE_DONE,
-	NATCONNECTIONSTATE_FAILED
-};
+class NAT
+{
+  public:
+  NAT();
+  virtual ~NAT();
 
-struct ConnectionNodeType {
-	FirewallHelperClass::tFirewallBehaviorType m_behavior;	///< the NAT/Firewall behavior of this node.
-	UnsignedInt m_slotIndex; ///< the player list index of this node.
-};
+  NATStateType update();
 
-class NAT {
-public:
-	NAT();
-	virtual ~NAT();
+  void attachSlotList(GameSlot **slotList, Int localSlot, UnsignedInt localIP);
+  void establishConnectionPaths();
 
-	NATStateType update();
+  Int getSlotPort(Int slot);
+  Transport *getTransport(); ///< return the newly created Transport layer that has all the connections and whatnot.
 
-	void attachSlotList(GameSlot **slotList, Int localSlot, UnsignedInt localIP);
-	void establishConnectionPaths();
+  // Notification messages from GameSpy
+  void processGlobalMessage(Int slotNum, const char *options);
 
-	Int getSlotPort(Int slot);
-	Transport * getTransport();	///< return the newly created Transport layer that has all the connections and whatnot.
+  protected:
+  NATConnectionState connectionUpdate(); ///< the update function for the connections.
+  void sendMangledSourcePort(); ///< starts the process to get the next mangled source port.
+  void processManglerResponse(UnsignedShort mangledPort);
 
-	// Notification messages from GameSpy
-	void processGlobalMessage(Int slotNum, const char *options);
+  Bool allConnectionsDoneThisRound();
+  Bool allConnectionsDone();
 
-protected:
-	NATConnectionState connectionUpdate(); ///< the update function for the connections.
-	void sendMangledSourcePort(); ///< starts the process to get the next mangled source port.
-	void processManglerResponse(UnsignedShort mangledPort);
+  void generatePortNumbers(GameSlot **slotList, Int localSlot); ///< generate all of the slots' port numbers to be used.
 
-	Bool allConnectionsDoneThisRound();
-	Bool allConnectionsDone();
+  void doThisConnectionRound(); ///< compute who will connect with who for this round.
+  void setConnectionState(Int nodeNumber, NATConnectionState state); ///< central point for changing a connection's state.
+  void sendAProbe(UnsignedInt ip, UnsignedShort port, Int fromNode); ///< send a "PROBE" packet to this IP and port.
+  void notifyTargetOfProbe(GameSlot *targetSlot);
+  void notifyUsersOfConnectionDone(Int nodeIndex);
+  void notifyUsersOfConnectionFailed(Int nodeIndex);
+  void sendMangledPortNumberToTarget(UnsignedShort mangledPort, GameSlot *targetSlot);
 
-	void generatePortNumbers(GameSlot **slotList, Int localSlot); ///< generate all of the slots' port numbers to be used.
+  void probed(Int nodeNumber);
+  void gotMangledPort(Int nodeNumber, UnsignedShort mangledPort);
+  void gotInternalAddress(Int nodeNumber, UnsignedInt address);
+  void connectionComplete(Int slotIndex);
+  void connectionFailed(Int slotIndex);
 
-	void doThisConnectionRound();	///< compute who will connect with who for this round.
-	void setConnectionState(Int nodeNumber, NATConnectionState state); ///< central point for changing a connection's state.
-	void sendAProbe(UnsignedInt ip, UnsignedShort port, Int fromNode);	///< send a "PROBE" packet to this IP and port.
-	void notifyTargetOfProbe(GameSlot *targetSlot);
-	void notifyUsersOfConnectionDone(Int nodeIndex);
-	void notifyUsersOfConnectionFailed(Int nodeIndex);
-	void sendMangledPortNumberToTarget(UnsignedShort mangledPort, GameSlot *targetSlot);
+  Transport *m_transport;
+  GameSlot **m_slotList;
+  NATStateType m_NATState;
+  Int m_localNodeNumber; ///< The node number of the local player.
+  Int m_targetNodeNumber; ///< The node number of the player we are connecting to this round.
+  UnsignedInt m_localIP; ///< The IP of the local computer.
+  UnsignedInt m_numNodes; ///< The number of players we have to connect together.
+  UnsignedInt m_connectionRound; ///< The "round" of connections we are currently on.
 
-	void probed(Int nodeNumber);
-	void gotMangledPort(Int nodeNumber, UnsignedShort mangledPort);
-	void gotInternalAddress(Int nodeNumber, UnsignedInt address);
-	void connectionComplete(Int slotIndex);
-	void connectionFailed(Int slotIndex);
+  Int m_numRetries;
+  Int m_maxNumRetriesAllowed;
 
-	Transport *m_transport;
-	GameSlot **m_slotList;
-	NATStateType m_NATState;
-	Int m_localNodeNumber;	///< The node number of the local player.
-	Int m_targetNodeNumber;	///< The node number of the player we are connecting to this round.
-	UnsignedInt m_localIP;	///< The IP of the local computer.
-	UnsignedInt m_numNodes;	///< The number of players we have to connect together.
-	UnsignedInt m_connectionRound; ///< The "round" of connections we are currently on.
+  UnsignedShort m_packetID;
+  UnsignedShort m_spareSocketPort;
+  time_t m_manglerRetryTime;
+  Int m_manglerRetries;
+  UnsignedShort m_previousSourcePort;
 
-	Int m_numRetries;
-	Int m_maxNumRetriesAllowed;
+  Bool m_beenProbed; ///< have I been notified that I've been probed this round?
 
-	UnsignedShort m_packetID;
-	UnsignedShort m_spareSocketPort;
-	time_t m_manglerRetryTime;
-	Int m_manglerRetries;
-	UnsignedShort m_previousSourcePort;
+  UnsignedInt m_manglerAddress;
 
-	Bool m_beenProbed; ///< have I been notified that I've been probed this round?
+  time_t m_timeTillNextSend; ///< The number of milliseconds till we send to the other guy's port again.
+  NATConnectionState m_connectionStates[MAX_SLOTS]; ///< connection states for this round for all the nodes.
 
-	UnsignedInt m_manglerAddress;
+  ConnectionNodeType m_connectionNodes[MAX_SLOTS]; ///< info regarding the nodes that are being connected.
 
-	time_t m_timeTillNextSend; ///< The number of milliseconds till we send to the other guy's port again.
-	NATConnectionState m_connectionStates[MAX_SLOTS]; ///< connection states for this round for all the nodes.
+  UnsignedShort m_sourcePorts[MAX_SLOTS]; ///< the source ports that the other players communicate to us on.
 
-	ConnectionNodeType m_connectionNodes[MAX_SLOTS]; ///< info regarding the nodes that are being connected.
+  Bool m_myConnections[MAX_SLOTS]; ///< keeps track of all the nodes I've connected to. For keepalive.
+  time_t m_nextKeepaliveTime; ///< the next time we will send out our keepalive packets.
 
-	UnsignedShort m_sourcePorts[MAX_SLOTS]; ///< the source ports that the other players communicate to us on.
+  static Int m_connectionPairs[MAX_SLOTS - 1][MAX_SLOTS - 1][MAX_SLOTS];
+  Int m_connectionPairIndex;
 
-	Bool m_myConnections[MAX_SLOTS]; ///< keeps track of all the nodes I've connected to. For keepalive.
-	time_t m_nextKeepaliveTime; ///< the next time we will send out our keepalive packets.
+  UnsignedShort
+      m_startingPortNumber; ///< the starting port number for this game. The slots all get port numbers with their port
+                            ///< numbers based on this number. this is done so that games that are played right after each
+                            ///< other with the same players in the same slot order will not use the old source port
+                            ///< allocation scheme in case their NAT hasn't timed out that connection.
 
-	static Int m_connectionPairs[MAX_SLOTS-1][MAX_SLOTS-1][MAX_SLOTS];
-	Int m_connectionPairIndex;
+  time_t m_nextPortSendTime; ///< Last time we sent our mangled port number to our target this round.
 
-	UnsignedShort m_startingPortNumber; ///< the starting port number for this game. The slots all get port numbers with their port numbers based on this number.
-																			///< this is done so that games that are played right after each other with the same players in the same
-																			///< slot order will not use the old source port allocation scheme in case their NAT
-																			///< hasn't timed out that connection.
+  time_t m_timeoutTime; ///< the time at which we will time out waiting for the other player's port number.
+  time_t m_roundTimeout; ///< the time at which we will time out this connection round.
 
-	time_t m_nextPortSendTime; ///< Last time we sent our mangled port number to our target this round.
-
-	time_t m_timeoutTime; ///< the time at which we will time out waiting for the other player's port number.
-	time_t m_roundTimeout;	///< the time at which we will time out this connection round.
-
- static Int m_timeBetweenRetries; // 1 second between retries sounds good to me.
- static time_t m_manglerRetryTimeInterval; // sounds good to me.
- static Int m_maxAllowedManglerRetries; // works for me.
- static time_t m_keepaliveInterval; // 15 seconds between keepalive packets seems good.
- static time_t m_timeToWaitForPort; // wait for ten seconds for the other player's port number.
- static time_t m_timeForRoundTimeout; // wait for at most ten seconds for each connection round to finish.
-
+  static Int m_timeBetweenRetries; // 1 second between retries sounds good to me.
+  static time_t m_manglerRetryTimeInterval; // sounds good to me.
+  static Int m_maxAllowedManglerRetries; // works for me.
+  static time_t m_keepaliveInterval; // 15 seconds between keepalive packets seems good.
+  static time_t m_timeToWaitForPort; // wait for ten seconds for the other player's port number.
+  static time_t m_timeForRoundTimeout; // wait for at most ten seconds for each connection round to finish.
 };
 
 extern NAT *TheNAT;

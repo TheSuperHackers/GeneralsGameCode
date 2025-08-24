@@ -35,12 +35,12 @@
 //-----------------------------------------------------------------------------
 class WindowTranslator : public GameMessageTranslator
 {
-private:
-	// nothing
-public:
-	WindowTranslator();
-	~WindowTranslator();
-	virtual GameMessageDisposition translateGameMessage(const GameMessage *msg);
+  private:
+  // nothing
+  public:
+  WindowTranslator();
+  ~WindowTranslator();
+  virtual GameMessageDisposition translateGameMessage(const GameMessage *msg);
 };
 
 #endif

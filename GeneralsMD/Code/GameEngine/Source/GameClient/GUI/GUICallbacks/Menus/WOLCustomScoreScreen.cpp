@@ -29,7 +29,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 
 #include "Lib/BaseType.h"
 #include "Common/GameEngine.h"
@@ -42,10 +42,8 @@
 #include "GameClient/GadgetListBox.h"
 #include "GameClient/GadgetTextEntry.h"
 #include "Common/GlobalData.h"
-//#include "GameNetwork/WOL.h"
-//#include "GameNetwork/WOLmenus.h"
-
-
+// #include "GameNetwork/WOL.h"
+// #include "GameNetwork/WOLmenus.h"
 
 // PRIVATE DATA ///////////////////////////////////////////////////////////////////////////////////
 // window ids ------------------------------------------------------------------------------
@@ -61,172 +59,172 @@ static GameWindow *buttonLobby = NULL;
 //-------------------------------------------------------------------------------------------------
 /** Initialize the WOL Status Menu */
 //-------------------------------------------------------------------------------------------------
-void WOLCustomScoreScreenInit( WindowLayout *layout, void *userData )
+void WOLCustomScoreScreenInit(WindowLayout *layout, void *userData)
 {
-	parentWOLCustomScoreID = TheNameKeyGenerator->nameToKey( AsciiString( "WOLCustomScoreScreen.wnd:WOLCustomScoreScreenParent" ) );
-	buttonDisconnectID = TheNameKeyGenerator->nameToKey( AsciiString( "WOLCustomScoreScreen.wnd:ButtonDisconnect" ) );
-	buttonLobbyID = TheNameKeyGenerator->nameToKey( AsciiString( "WOLCustomScoreScreen.wnd:ButtonLobby" ) );
-	parentWOLCustomScore = TheWindowManager->winGetWindowFromId( NULL, parentWOLCustomScoreID );
-	buttonDisconnect = TheWindowManager->winGetWindowFromId( NULL,  buttonDisconnectID);
-	buttonLobby = TheWindowManager->winGetWindowFromId( NULL,  buttonLobbyID);
+  parentWOLCustomScoreID =
+      TheNameKeyGenerator->nameToKey(AsciiString("WOLCustomScoreScreen.wnd:WOLCustomScoreScreenParent"));
+  buttonDisconnectID = TheNameKeyGenerator->nameToKey(AsciiString("WOLCustomScoreScreen.wnd:ButtonDisconnect"));
+  buttonLobbyID = TheNameKeyGenerator->nameToKey(AsciiString("WOLCustomScoreScreen.wnd:ButtonLobby"));
+  parentWOLCustomScore = TheWindowManager->winGetWindowFromId(NULL, parentWOLCustomScoreID);
+  buttonDisconnect = TheWindowManager->winGetWindowFromId(NULL, buttonDisconnectID);
+  buttonLobby = TheWindowManager->winGetWindowFromId(NULL, buttonLobbyID);
 
-	/*
-	if (WOL::TheWOL->getState() == WOL::WOLAPI_FATAL_ERROR)
-	{
-		// We can get to the score screen even though we've been disconnected.  Just hide
-		// any buttons that lead back into WOL.
-		buttonLobby->winHide( TRUE );
-	}
-	*/
+  /*
+  if (WOL::TheWOL->getState() == WOL::WOLAPI_FATAL_ERROR)
+  {
+    // We can get to the score screen even though we've been disconnected.  Just hide
+    // any buttons that lead back into WOL.
+    buttonLobby->winHide( TRUE );
+  }
+  */
 
-	// Show Menu
-	layout->hide( FALSE );
+  // Show Menu
+  layout->hide(FALSE);
 
-	// Set Keyboard to Main Parent
-	TheWindowManager->winSetFocus( parentWOLCustomScore );
+  // Set Keyboard to Main Parent
+  TheWindowManager->winSetFocus(parentWOLCustomScore);
 } // WOLCustomScoreScreenInit
 
 //-------------------------------------------------------------------------------------------------
 /** WOL Status Menu shutdown method */
 //-------------------------------------------------------------------------------------------------
-void WOLCustomScoreScreenShutdown( WindowLayout *layout, void *userData )
+void WOLCustomScoreScreenShutdown(WindowLayout *layout, void *userData)
 {
-	// hide menu
-	layout->hide( TRUE );
+  // hide menu
+  layout->hide(TRUE);
 
-	// our shutdown is complete
-	TheShell->shutdownComplete( layout );
-}  // WOLCustomScoreScreenShutdown
-
+  // our shutdown is complete
+  TheShell->shutdownComplete(layout);
+} // WOLCustomScoreScreenShutdown
 
 //-------------------------------------------------------------------------------------------------
 /** WOL Status Menu update method */
 //-------------------------------------------------------------------------------------------------
-void WOLCustomScoreScreenUpdate( WindowLayout * layout, void *userData)
+void WOLCustomScoreScreenUpdate(WindowLayout *layout, void *userData)
 {
-	/*
-	if (WOL::TheWOL)
-		WOL::TheWOL->update();
-	*/
-}// WOLCustomScoreScreenUpdate
+  /*
+  if (WOL::TheWOL)
+    WOL::TheWOL->update();
+  */
+} // WOLCustomScoreScreenUpdate
 
 //-------------------------------------------------------------------------------------------------
 /** WOL Status Menu input callback */
 //-------------------------------------------------------------------------------------------------
-WindowMsgHandledType WOLCustomScoreScreenInput( GameWindow *window, UnsignedInt msg,
-																			 WindowMsgData mData1, WindowMsgData mData2 )
+WindowMsgHandledType WOLCustomScoreScreenInput(
+    GameWindow *window,
+    UnsignedInt msg,
+    WindowMsgData mData1,
+    WindowMsgData mData2)
 {
-	switch( msg )
-	{
+  switch (msg)
+  {
+    // --------------------------------------------------------------------------------------------
+    case GWM_CHAR:
+    {
+      UnsignedByte key = mData1;
+      UnsignedByte state = mData2;
 
-		// --------------------------------------------------------------------------------------------
-		case GWM_CHAR:
-		{
-			UnsignedByte key = mData1;
-			UnsignedByte state = mData2;
+      switch (key)
+      {
+        // ----------------------------------------------------------------------------------------
+        case KEY_ESC:
+        {
+          //
+          // send a simulated selected event to the parent window of the
+          // back/exit button
+          //
+          if (BitIsSet(state, KEY_STATE_UP))
+          {
+            TheWindowManager->winSendSystemMsg(window, GBM_SELECTED, (WindowMsgData)buttonDisconnect, buttonDisconnectID);
 
-			switch( key )
-			{
+          } // end if
 
-				// ----------------------------------------------------------------------------------------
-				case KEY_ESC:
-				{
+          // don't let key fall through anywhere else
+          return MSG_HANDLED;
 
-					//
-					// send a simulated selected event to the parent window of the
-					// back/exit button
-					//
-					if( BitIsSet( state, KEY_STATE_UP ) )
-					{
-						TheWindowManager->winSendSystemMsg( window, GBM_SELECTED,
-																							(WindowMsgData)buttonDisconnect, buttonDisconnectID );
+        } // end escape
 
-					}  // end if
+      } // end switch( key )
 
-					// don't let key fall through anywhere else
-					return MSG_HANDLED;
+    } // end char
 
-				}  // end escape
+  } // end switch( msg )
 
-			}  // end switch( key )
-
-		}  // end char
-
-	}  // end switch( msg )
-
-	return MSG_IGNORED;
-}// WOLCustomScoreScreenInput
+  return MSG_IGNORED;
+} // WOLCustomScoreScreenInput
 
 //-------------------------------------------------------------------------------------------------
 /** WOL Status Menu window system callback */
 //-------------------------------------------------------------------------------------------------
-WindowMsgHandledType WOLCustomScoreScreenSystem( GameWindow *window, UnsignedInt msg,
-														 WindowMsgData mData1, WindowMsgData mData2 )
+WindowMsgHandledType WOLCustomScoreScreenSystem(
+    GameWindow *window,
+    UnsignedInt msg,
+    WindowMsgData mData1,
+    WindowMsgData mData2)
 {
-	UnicodeString txtInput;
+  UnicodeString txtInput;
 
-	switch( msg )
-	{
+  switch (msg)
+  {
+    case GWM_CREATE:
+    {
+      break;
+    } // case GWM_DESTROY:
 
-		case GWM_CREATE:
-			{
+    case GWM_DESTROY:
+    {
+      break;
+    } // case GWM_DESTROY:
 
-				break;
-			} // case GWM_DESTROY:
+    case GWM_INPUT_FOCUS:
+    {
+      // if we're given the opportunity to take the keyboard focus we must say we want it
+      if (mData1 == TRUE)
+        *(Bool *)mData2 = TRUE;
 
-		case GWM_DESTROY:
-			{
-				break;
-			} // case GWM_DESTROY:
+      return MSG_HANDLED;
+    } // case GWM_INPUT_FOCUS:
 
-		case GWM_INPUT_FOCUS:
-			{
-				// if we're given the opportunity to take the keyboard focus we must say we want it
-				if( mData1 == TRUE )
-					*(Bool *)mData2 = TRUE;
+    case GBM_SELECTED:
+    {
+      /*
+      GameWindow *control = (GameWindow *)mData1;
+      Int controlID = control->winGetWindowId();
 
-				return MSG_HANDLED;
-			}//case GWM_INPUT_FOCUS:
+      if ( controlID == buttonDisconnectID )
+      {
+        if (WOL::TheWOL->setState( WOL::WOLAPI_FATAL_ERROR ))
+        {
+          WOL::TheWOL->addCommand( WOL::WOLCOMMAND_RESET );  // don't display an error, log out, or anything
+        }
 
-		case GBM_SELECTED:
-			{
-				/*
-				GameWindow *control = (GameWindow *)mData1;
-				Int controlID = control->winGetWindowId();
+      } //if ( controlID == buttonDisconnect )
+      else if ( controlID == buttonLobbyID )
+      {
+        if (WOL::TheWOL->getState() != WOL::WOLAPI_FATAL_ERROR)
+        {
+          WOL::TheWOL->setScreen(WOL::WOLAPI_MENU_CUSTOMLOBBY);
+          WOL::TheWOL->setGameMode(WOL::WOLTYPE_CUSTOM);
+          WOL::TheWOL->setState( WOL::WOLAPI_LOBBY );
+          WOL::TheWOL->addCommand( WOL::WOLCOMMAND_REFRESH_CHANNELS );
+        }
+        else
+        {
+        }
+      } //if ( controlID == buttonDisconnect )
+      */
+      break;
+    } // case GBM_SELECTED:
 
-				if ( controlID == buttonDisconnectID )
-				{
-					if (WOL::TheWOL->setState( WOL::WOLAPI_FATAL_ERROR ))
-					{
-						WOL::TheWOL->addCommand( WOL::WOLCOMMAND_RESET );  // don't display an error, log out, or anything
-					}
+    case GEM_EDIT_DONE:
+    {
+      break;
+    }
+    default:
+      return MSG_IGNORED;
 
-				} //if ( controlID == buttonDisconnect )
-				else if ( controlID == buttonLobbyID )
-				{
-					if (WOL::TheWOL->getState() != WOL::WOLAPI_FATAL_ERROR)
-					{
-						WOL::TheWOL->setScreen(WOL::WOLAPI_MENU_CUSTOMLOBBY);
-						WOL::TheWOL->setGameMode(WOL::WOLTYPE_CUSTOM);
-						WOL::TheWOL->setState( WOL::WOLAPI_LOBBY );
-						WOL::TheWOL->addCommand( WOL::WOLCOMMAND_REFRESH_CHANNELS );
-					}
-					else
-					{
-					}
-				} //if ( controlID == buttonDisconnect )
-				*/
-				break;
-			}// case GBM_SELECTED:
+  } // Switch
 
-		case GEM_EDIT_DONE:
-			{
-				break;
-			}
-		default:
-			return MSG_IGNORED;
-
-	}//Switch
-
-	return MSG_HANDLED;
-}// WOLCustomScoreScreenSystem
+  return MSG_HANDLED;
+} // WOLCustomScoreScreenSystem

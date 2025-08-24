@@ -25,7 +25,6 @@
 // EditCondition.h : header file
 //
 
-
 class Condition;
 class SidesList;
 /////////////////////////////////////////////////////////////////////////////
@@ -33,48 +32,50 @@ class SidesList;
 
 class EditCondition : public CDialog
 {
-// Construction
-public:
-	EditCondition(CWnd* pParent = NULL);   // standard constructor
+  // Construction
+  public:
+  EditCondition(CWnd *pParent = NULL); // standard constructor
 
-// Dialog Data
-	//{{AFX_DATA(EditCondition)
-	enum { IDD = IDD_ScriptCondition };
-		// NOTE: the ClassWizard will add data members here
-	//}}AFX_DATA
+  // Dialog Data
+  //{{AFX_DATA(EditCondition)
+  enum
+  {
+    IDD = IDD_ScriptCondition
+  };
+  // NOTE: the ClassWizard will add data members here
+  //}}AFX_DATA
 
+  // Overrides
+  // ClassWizard generated virtual function overrides
+  //{{AFX_VIRTUAL(EditCondition)
+  protected:
+  virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
+  virtual BOOL OnNotify(WPARAM wParam, LPARAM lParam, LRESULT *pResult);
+  //}}AFX_VIRTUAL
 
-// Overrides
-	// ClassWizard generated virtual function overrides
-	//{{AFX_VIRTUAL(EditCondition)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
-	virtual BOOL OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult);
-	//}}AFX_VIRTUAL
+  // Implementation
+  public:
+  void setCondition(Condition *pCond) { m_condition = pCond; }
 
-// Implementation
-public:
-	void setCondition(Condition *pCond) {m_condition = pCond;}
+  protected:
+  void formatConditionText(Int parmNdx);
 
-protected:
-	void formatConditionText(Int parmNdx);
-protected:
-	Condition *m_condition;
-	Bool			m_updating;
-	Bool			m_modifiedTextColor;
-	CRichEditCtrl m_myEditCtrl;
-	CHARRANGE m_curLinkChrg;
-	Int				m_curEditParameter;
+  protected:
+  Condition *m_condition;
+  Bool m_updating;
+  Bool m_modifiedTextColor;
+  CRichEditCtrl m_myEditCtrl;
+  CHARRANGE m_curLinkChrg;
+  Int m_curEditParameter;
 
-protected:
-
-	// Generated message map functions
-	//{{AFX_MSG(EditCondition)
-	virtual BOOL OnInitDialog();
-	afx_msg void OnSelchangeConditionType();
-	afx_msg void OnTimer(UINT nIDEvent);
-	//}}AFX_MSG
-	DECLARE_MESSAGE_MAP()
+  protected:
+  // Generated message map functions
+  //{{AFX_MSG(EditCondition)
+  virtual BOOL OnInitDialog();
+  afx_msg void OnSelchangeConditionType();
+  afx_msg void OnTimer(UINT nIDEvent);
+  //}}AFX_MSG
+  DECLARE_MESSAGE_MAP()
 };
 
 //{{AFX_INSERT_LOCATION}}

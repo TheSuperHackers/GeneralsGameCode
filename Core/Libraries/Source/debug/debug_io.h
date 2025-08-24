@@ -27,7 +27,7 @@
 // Debug I/O interface
 //////////////////////////////////////////////////////////////////////////////
 #ifdef _MSC_VER
-#  pragma once
+#pragma once
 #endif
 #ifndef DEBUG_IO_H // Include guard
 #define DEBUG_IO_H
@@ -46,10 +46,10 @@
 class DebugIOInterface
 {
   // no copy/assign op
-  DebugIOInterface(const DebugIOInterface&);
-  DebugIOInterface& operator=(const DebugIOInterface&);
+  DebugIOInterface(const DebugIOInterface &);
+  DebugIOInterface &operator=(const DebugIOInterface &);
 
-protected:
+  protected:
   /**
     \brief I/O class destructor.
 
@@ -58,7 +58,7 @@ protected:
   */
   virtual ~DebugIOInterface() {}
 
-public:
+  public:
   // interface only so no functionality here
   explicit DebugIOInterface(void) {}
 
@@ -103,7 +103,7 @@ public:
     \return numbers of characters written to buffer
     \note There is no terminating NUL char written to the buffer
   */
-  virtual int Read(char *buf, int maxchar)=0;
+  virtual int Read(char *buf, int maxchar) = 0;
 
   /**
     \brief Write out some characters differentiated by the log string type.
@@ -124,7 +124,7 @@ public:
     \param str string to output, NUL delimited, if NULL then simply flush
                output (if applicable)
   */
-  virtual void Write(StringType type, const char *src, const char *str)=0;
+  virtual void Write(StringType type, const char *src, const char *str) = 0;
 
   /**
     \brief Emergency shutdown function.
@@ -132,7 +132,7 @@ public:
     This function gets called during an exception and should perform the
     absolute bare minimum (e.g. just flushing and closing the output file).
   */
-  virtual void EmergencyFlush(void)=0;
+  virtual void EmergencyFlush(void) = 0;
 
   /**
     \brief I/O class specific command.
@@ -147,15 +147,14 @@ public:
     \param argn number of additional arguments passed in
     \param argv argument list
   */
-  virtual void Execute(class Debug& dbg, const char *cmd, bool structuredCmd,
-                       unsigned argn, const char * const * argv)=0;
+  virtual void Execute(class Debug &dbg, const char *cmd, bool structuredCmd, unsigned argn, const char *const *argv) = 0;
 
   /**
     \brief Destroys the current I/O class instance.
 
     Use this function instead of just delete'ing the instance.
   */
-  virtual void Delete(void)=0;
+  virtual void Delete(void) = 0;
 };
 
 /**
@@ -165,35 +164,38 @@ public:
 
 #ifdef DOXYGEN
 
-  /**
-    \brief Helper macro used in I/O class declaration to declare
-    a factory function.
+/**
+  \brief Helper macro used in I/O class declaration to declare
+  a factory function.
 
-    \param type type name of class we're implementing
-    \note This macro changes the access method to private.
-  */
-  #define DEBUG_DECLARE_IO_INTERFACE(type)
+  \param type type name of class we're implementing
+  \note This macro changes the access method to private.
+*/
+#define DEBUG_DECLARE_IO_INTERFACE(type)
 
-  /**
-    \brief Helper macro for registering I/O class factory with
-    the Debug module.
+/**
+  \brief Helper macro for registering I/O class factory with
+  the Debug module.
 
-    \param io_id name of I/O class as it should be registered with Debug module
-                 (without quotes)
-    \param descr short I/O class description
-    \param type type name of class we're implementing
-  */
-  #define DEBUG_IMPLEMENT_IO_INTERFACE(io_id,descr,type)
+  \param io_id name of I/O class as it should be registered with Debug module
+               (without quotes)
+  \param descr short I/O class description
+  \param type type name of class we're implementing
+*/
+#define DEBUG_IMPLEMENT_IO_INTERFACE(io_id, descr, type)
 
 #else
 
-  #define DEBUG_DECLARE_IO_INTERFACE(type) \
-    public: \
-      static bool __RegisterClassFactory; \
-      static DebugIOInterface *__ClassFactory(void) { return new type; }
+#define DEBUG_DECLARE_IO_INTERFACE(type) \
+  public: \
+  static bool __RegisterClassFactory; \
+  static DebugIOInterface *__ClassFactory(void) \
+  { \
+    return new type; \
+  }
 
-  #define DEBUG_IMPLEMENT_IO_INTERFACE(io_id,descr,type) \
-    static bool type::__RegisterClassFactory=Debug::AddIOFactory(#io_id,descr,type::__ClassFactory);
+#define DEBUG_IMPLEMENT_IO_INTERFACE(io_id, descr, type) \
+  static bool type::__RegisterClassFactory = Debug::AddIOFactory(#io_id, descr, type::__ClassFactory);
 
 #endif
 

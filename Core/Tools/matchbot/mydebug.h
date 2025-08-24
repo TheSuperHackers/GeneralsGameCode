@@ -90,45 +90,44 @@ extern CritSec MyDebugLibSemaphore;
 #endif
 
 // Print an information message
-#define PARANOIDMSG(X)\
-{\
-char     timebuf[40]; \
-Xtime now; \
-now -= TimezoneOffset(); \
-now.FormatTime(timebuf, "mm/dd/yy hh:mm:ss"); \
-MYDEBUGLOCK; \
-if (MyMsgManager::paranoidStream()) \
-(*(MyMsgManager::paranoidStream())) << "HACK " << timebuf << " [" << \
-__FILE__ <<  " " << __LINE__ << "] " << X << endl; \
-MYDEBUGUNLOCK; \
-}
+#define PARANOIDMSG(X) \
+  { \
+    char timebuf[40]; \
+    Xtime now; \
+    now -= TimezoneOffset(); \
+    now.FormatTime(timebuf, "mm/dd/yy hh:mm:ss"); \
+    MYDEBUGLOCK; \
+    if (MyMsgManager::paranoidStream()) \
+      (*(MyMsgManager::paranoidStream())) << "HACK " << timebuf << " [" << __FILE__ << " " << __LINE__ << "] " << X \
+                                          << endl; \
+    MYDEBUGUNLOCK; \
+  }
 
 // Just get a stream to the information device, no extra junk
-#define PARANOIDSTREAM(X)\
-{\
-MYDEBUGLOCK; \
-if (MyMsgManager::paranoidStream()) \
-(*(MyMsgManager::paranoidStream())) << X;\
-MYDEBUGUNLOCK; \
-}
+#define PARANOIDSTREAM(X) \
+  { \
+    MYDEBUGLOCK; \
+    if (MyMsgManager::paranoidStream()) \
+      (*(MyMsgManager::paranoidStream())) << X; \
+    MYDEBUGUNLOCK; \
+  }
 
-
-//#undef MYDEBUGLOCK
-//#undef MYDEBUGUNLOCK
+// #undef MYDEBUGLOCK
+// #undef MYDEBUGUNLOCK
 
 class MyMsgManager
 {
-protected:
-	MyMsgManager();
+  protected:
+  MyMsgManager();
 
-public:
-	static int                 setAllStreams(OutputDevice *device);
-	static int                 setParanoidStream(OutputDevice *device);
-	static int                 ReplaceAllStreams(FileD *output_device, const char *device_filename, const char *copy_filename);
+  public:
+  static int setAllStreams(OutputDevice *device);
+  static int setParanoidStream(OutputDevice *device);
+  static int ReplaceAllStreams(FileD *output_device, const char *device_filename, const char *copy_filename);
 
-	static void                enableParanoid(int flag);
+  static void enableParanoid(int flag);
 
-	static ostream            *paranoidStream(void);
+  static ostream *paranoidStream(void);
 };
 
 #endif

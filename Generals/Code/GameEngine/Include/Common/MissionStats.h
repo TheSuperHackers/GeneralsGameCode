@@ -53,38 +53,33 @@
 
 // ----------------------------------------------------------------------------------------------
 /**
-	Class that accumulates stats during a mission. Some of this will be for scoring purposes,
-	and some will probably be used by AI to determine future moves.
+  Class that accumulates stats during a mission. Some of this will be for scoring purposes,
+  and some will probably be used by AI to determine future moves.
 
-	@todo: not sure what need to be here. Alas. For now, I have just put in the fields from RA2
-	that are indicated as being used for scoring in multiplayer games, so this will certainly
-	increase.
+  @todo: not sure what need to be here. Alas. For now, I have just put in the fields from RA2
+  that are indicated as being used for scoring in multiplayer games, so this will certainly
+  increase.
 */
 class MissionStats : public Snapshot
 {
+  public:
+  MissionStats();
 
-public:
+  /// reset all stats to "nothing".
+  void init();
 
-	MissionStats();
+  protected:
+  // snapshot methods
+  virtual void crc(Xfer *xfer);
+  virtual void xfer(Xfer *xfer);
+  virtual void loadPostProcess(void);
 
-	/// reset all stats to "nothing".
-	void init();
-
-protected:
-
-	// snapshot methods
-	virtual void crc( Xfer *xfer );
-	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess( void );
-
-private:
-
-	Int m_unitsKilled[MAX_PLAYER_COUNT];					///< how many units for each Player were killed by us?
-	Int m_unitsLost;															///< how many of our units were destroyed?
-	Int m_buildingsKilled[MAX_PLAYER_COUNT];			///< how many buildings for each Player were killed by us?
-	Int m_buildingsLost;													///< how many of our buildings were destroyed?
-	//Int	m_whoLastHurtMe;													///< last Player to destroy one of my units
+  private:
+  Int m_unitsKilled[MAX_PLAYER_COUNT]; ///< how many units for each Player were killed by us?
+  Int m_unitsLost; ///< how many of our units were destroyed?
+  Int m_buildingsKilled[MAX_PLAYER_COUNT]; ///< how many buildings for each Player were killed by us?
+  Int m_buildingsLost; ///< how many of our buildings were destroyed?
+  // Int	m_whoLastHurtMe;													///< last Player to destroy one of my units
 };
 
 #endif // _MISSIONSTATS_H_
-

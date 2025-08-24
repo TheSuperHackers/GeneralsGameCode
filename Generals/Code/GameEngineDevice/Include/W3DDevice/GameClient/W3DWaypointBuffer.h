@@ -70,22 +70,21 @@ class SegmentedLineClass;
 
 class W3DWaypointBuffer
 {
-	friend class HeightMapRenderObjClass;
-public:
+  friend class HeightMapRenderObjClass;
 
-	W3DWaypointBuffer(void);
-	~W3DWaypointBuffer(void);
+  public:
+  W3DWaypointBuffer(void);
+  ~W3DWaypointBuffer(void);
 
-	void drawWaypoints(RenderInfoClass &rinfo);
-	void freeWaypointBuffers();
+  void drawWaypoints(RenderInfoClass &rinfo);
+  void freeWaypointBuffers();
 
-
-private:
+  private:
   void setDefaultLineStyle();
 
-	RenderObjClass *m_waypointNodeRobj;
-	SegmentedLineClass *m_line;
-	TextureClass *m_texture;
+  RenderObjClass *m_waypointNodeRobj;
+  SegmentedLineClass *m_line;
+  TextureClass *m_texture;
 };
 
-#endif  // end __W3D_WAYPOINT_BUFFER_H
+#endif // end __W3D_WAYPOINT_BUFFER_H

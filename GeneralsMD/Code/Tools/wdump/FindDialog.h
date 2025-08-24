@@ -33,59 +33,47 @@
 
 class FindDialog : public CDialog
 {
-// Construction
-public:
-	FindDialog(CWnd* pParent = NULL);   // standard constructor
+  // Construction
+  public:
+  FindDialog(CWnd *pParent = NULL); // standard constructor
 
-	static const char *String()
-	{
-		return (_FindString);
-	}
+  static const char *String() { return (_FindString); }
 
-	static void Compare (const char *string)
-	{
-		_Found |= (strstr (string, _FindString) != NULL);
-	}
+  static void Compare(const char *string) { _Found |= (strstr(string, _FindString) != NULL); }
 
-	static bool Found()
-	{
-		return (_Found);
-	}
+  static bool Found() { return (_Found); }
 
-	static void Found (bool found)
-	{
-		_Found = found;
-	}
+  static void Found(bool found) { _Found = found; }
 
-// Dialog Data
-	//{{AFX_DATA(FindDialog)
-	enum { IDD = IDD_TOOLS_FIND };
-		// NOTE: the ClassWizard will add data members here
-	//}}AFX_DATA
+  // Dialog Data
+  //{{AFX_DATA(FindDialog)
+  enum
+  {
+    IDD = IDD_TOOLS_FIND
+  };
+  // NOTE: the ClassWizard will add data members here
+  //}}AFX_DATA
 
+  // Overrides
+  // ClassWizard generated virtual function overrides
+  //{{AFX_VIRTUAL(FindDialog)
+  protected:
+  virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
+  //}}AFX_VIRTUAL
 
-// Overrides
-	// ClassWizard generated virtual function overrides
-	//{{AFX_VIRTUAL(FindDialog)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
-	//}}AFX_VIRTUAL
+  // Implementation
+  protected:
+  // Generated message map functions
+  //{{AFX_MSG(FindDialog)
+  virtual BOOL OnInitDialog();
+  afx_msg void OnChangeFindString();
+  afx_msg void OnUpdateFindString();
+  //}}AFX_MSG
+  DECLARE_MESSAGE_MAP()
 
-// Implementation
-protected:
-
-	// Generated message map functions
-	//{{AFX_MSG(FindDialog)
-	virtual BOOL OnInitDialog();
-	afx_msg void OnChangeFindString();
-	afx_msg void OnUpdateFindString();
-	//}}AFX_MSG
-	DECLARE_MESSAGE_MAP()
-
-private:
-
-	static bool	_Found;
-	static char _FindString [MAX_FIND_STRING_LENGTH + 1];
+  private:
+  static bool _Found;
+  static char _FindString[MAX_FIND_STRING_LENGTH + 1];
 };
 
 //{{AFX_INSERT_LOCATION}}

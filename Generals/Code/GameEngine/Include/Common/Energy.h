@@ -57,67 +57,62 @@ class Object;
 
 // ----------------------------------------------------------------------------------------------
 /**
-	This class is used to encapsulate the Player's energy use and production.
-	for consistent nomenclature, we'll arbitrarily call energy units "kilowatts"
-	(though that may have no bearing on reality).
+  This class is used to encapsulate the Player's energy use and production.
+  for consistent nomenclature, we'll arbitrarily call energy units "kilowatts"
+  (though that may have no bearing on reality).
 */
 class Energy : public Snapshot
 {
+  public:
+  Energy();
 
-public:
+  // reset energy information to base values.
+  void init(Player *owner)
+  {
+    m_energyProduction = 0;
+    m_energyConsumption = 0;
+    m_owner = owner;
+  }
 
-	Energy();
+  /// return current energy production in kilowatts
+  Int getProduction() const;
 
-	// reset energy information to base values.
-	void init( Player *owner)
-	{
-		m_energyProduction = 0;
-		m_energyConsumption = 0;
-		m_owner = owner;
-	}
+  /// return current energy consumption in kilowatts
+  Int getConsumption() const { return m_energyConsumption; }
 
-	/// return current energy production in kilowatts
-	Int getProduction() const;
+  Bool hasSufficientPower(void) const;
 
-	/// return current energy consumption in kilowatts
-	Int getConsumption() const { return m_energyConsumption; }
+  // If adding is false, we're supposed to be removing this.
+  void adjustPower(Int powerDelta, Bool adding);
 
-	Bool hasSufficientPower(void) const;
+  /// new 'obj' will now add/subtract from this energy construct
+  void objectEnteringInfluence(Object *obj);
 
-	// If adding is false, we're supposed to be removing this.
-	void adjustPower(Int powerDelta, Bool adding);
+  /// 'obj' will now no longer add/subtrack from this energy construct
+  void objectLeavingInfluence(Object *obj);
 
-	/// new 'obj' will now add/subtract from this energy construct
-	void objectEnteringInfluence( Object *obj );
+  /** Adds an energy bonus to the player's pool if the power bonus status bit is set */
+  void addPowerBonus(Object *obj);
+  void removePowerBonus(Object *obj);
 
-	/// 'obj' will now no longer add/subtrack from this energy construct
-	void objectLeavingInfluence( Object *obj );
+  /**
+    return the percentage of energy needed that we actually produce, as a 0.0 ... 1.0 fraction.
+  */
+  Real getEnergySupplyRatio() const;
 
-	/** Adds an energy bonus to the player's pool if the power bonus status bit is set */
-	void addPowerBonus( Object *obj );
-	void removePowerBonus( Object *obj );
+  protected:
+  // snapshot methods
+  virtual void crc(Xfer *xfer);
+  virtual void xfer(Xfer *xfer);
+  virtual void loadPostProcess(void);
 
-	/**
-		return the percentage of energy needed that we actually produce, as a 0.0 ... 1.0 fraction.
-	*/
-	Real getEnergySupplyRatio() const;
+  void addProduction(Int amt);
+  void addConsumption(Int amt);
 
-protected:
-
-	// snapshot methods
-	virtual void crc( Xfer *xfer );
-	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess( void );
-
-	void addProduction(Int amt);
-	void addConsumption(Int amt);
-
-private:
-
-	Int		m_energyProduction;		///< level of energy production, in kw
-	Int		m_energyConsumption;	///< level of energy consumption, in kw
-	Player *m_owner;						///< Tight pointer to the Player I am intrinsic to.
+  private:
+  Int m_energyProduction; ///< level of energy production, in kw
+  Int m_energyConsumption; ///< level of energy consumption, in kw
+  Player *m_owner; ///< Tight pointer to the Player I am intrinsic to.
 };
 
 #endif // _ENERGY_H_
-

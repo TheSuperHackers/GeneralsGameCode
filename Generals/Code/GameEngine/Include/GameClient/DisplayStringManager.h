@@ -40,32 +40,29 @@
 //-------------------------------------------------------------------------------------------------
 class DisplayStringManager : public SubsystemInterface
 {
+  public:
+  DisplayStringManager(void);
+  virtual ~DisplayStringManager(void);
 
-public:
+  virtual void init(void) {} ///< initialize the factory
+  virtual void reset(void) {} ///< reset system
+  virtual void update(void) {}; ///< update anything we need to in our strings
 
-	DisplayStringManager( void );
-	virtual ~DisplayStringManager( void );
+  virtual DisplayString *newDisplayString(void) = 0; ///< allocate new display string
+  virtual void freeDisplayString(DisplayString *string) = 0; ///< free string
 
-	virtual void init( void ) {}			///< initialize the factory
-	virtual void reset( void ) {}			///< reset system
-	virtual void update( void ) {};		///< update anything we need to in our strings
+  virtual DisplayString *getGroupNumeralString(Int numeral) = 0;
+  virtual DisplayString *getFormationLetterString(void) = 0;
 
-	virtual DisplayString *newDisplayString( void ) = 0;  ///< allocate new display string
-	virtual void freeDisplayString( DisplayString *string ) = 0;  ///< free string
+  protected:
+  void link(DisplayString *string); ///< link display string to list
+  void unLink(DisplayString *string); ///< unlink display string from list
 
-	virtual DisplayString *getGroupNumeralString( Int numeral ) = 0;
-	virtual DisplayString *getFormationLetterString( void ) = 0;
-protected:
-
-	void link( DisplayString *string );  ///< link display string to list
-	void unLink( DisplayString *string );  ///< unlink display string from list
-
-	DisplayString *m_stringList;  ///< list of all display strings
-	DisplayString *m_currentCheckpoint; ///< current checkpoint of strings to be freed
+  DisplayString *m_stringList; ///< list of all display strings
+  DisplayString *m_currentCheckpoint; ///< current checkpoint of strings to be freed
 };
 
 // EXTERNALS //////////////////////////////////////////////////////////////////////////////////////
-extern DisplayStringManager *TheDisplayStringManager;  ///< singleton extern
+extern DisplayStringManager *TheDisplayStringManager; ///< singleton extern
 
 #endif // __DISPLAYSTRINGMANAGER_H_
-

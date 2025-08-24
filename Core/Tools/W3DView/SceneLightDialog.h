@@ -34,90 +34,88 @@ class Vector3;
 //
 class CSceneLightDialog : public CDialog
 {
-// Construction
-public:
-	CSceneLightDialog(CWnd* pParent = NULL);   // standard constructor
+  // Construction
+  public:
+  CSceneLightDialog(CWnd *pParent = NULL); // standard constructor
 
-// Dialog Data
-	//{{AFX_DATA(CSceneLightDialog)
-	enum { IDD = IDD_LIGHT_SCENE_DIALOG };
-	CSpinButtonCtrl	m_StartAttenSpin;
-	CSpinButtonCtrl	m_EndAttenSpin;
-	CSpinButtonCtrl	m_DistanceSpin;
-	CSliderCtrl	m_IntensitySlider;
-	CSliderCtrl	m_blueSlider;
-	CSliderCtrl	m_greenSlider;
-	CSliderCtrl	m_redSlider;
-	//}}AFX_DATA
+  // Dialog Data
+  //{{AFX_DATA(CSceneLightDialog)
+  enum
+  {
+    IDD = IDD_LIGHT_SCENE_DIALOG
+  };
+  CSpinButtonCtrl m_StartAttenSpin;
+  CSpinButtonCtrl m_EndAttenSpin;
+  CSpinButtonCtrl m_DistanceSpin;
+  CSliderCtrl m_IntensitySlider;
+  CSliderCtrl m_blueSlider;
+  CSliderCtrl m_greenSlider;
+  CSliderCtrl m_redSlider;
+  //}}AFX_DATA
 
+  // Overrides
+  // ClassWizard generated virtual function overrides
+  //{{AFX_VIRTUAL(CSceneLightDialog)
+  protected:
+  virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
+  virtual LRESULT WindowProc(UINT message, WPARAM wParam, LPARAM lParam);
+  //}}AFX_VIRTUAL
 
-// Overrides
-	// ClassWizard generated virtual function overrides
-	//{{AFX_VIRTUAL(CSceneLightDialog)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
-	virtual LRESULT WindowProc(UINT message, WPARAM wParam, LPARAM lParam);
-	//}}AFX_VIRTUAL
+  // Implementation
+  protected:
+  // Generated message map functions
+  //{{AFX_MSG(CSceneLightDialog)
+  virtual BOOL OnInitDialog();
+  afx_msg void OnHScroll(UINT nSBCode, UINT nPos, CScrollBar *pScrollBar);
+  virtual void OnCancel();
+  afx_msg void OnGrayscaleCheck();
+  afx_msg void OnChannelBothRadio();
+  afx_msg void OnChannelDiffuseRadio();
+  afx_msg void OnChannelSpecularRadio();
+  afx_msg void OnAttenuationCheck();
+  //}}AFX_MSG
+  DECLARE_MESSAGE_MAP()
 
-// Implementation
-protected:
+  protected:
+  ////////////////////////////////////////////////////////////////////
+  //
+  //	Protected methods
+  //
+  void Set_Color_Control_State(const Vector3 &color);
+  void Update_Light(const Vector3 &color);
+  void Update_Distance(float distance);
+  void Update_Attenuation(void);
+  void Update_Attenuation_Controls(void);
 
-	// Generated message map functions
-	//{{AFX_MSG(CSceneLightDialog)
-	virtual BOOL OnInitDialog();
-	afx_msg void OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
-	virtual void OnCancel();
-	afx_msg void OnGrayscaleCheck();
-	afx_msg void OnChannelBothRadio();
-	afx_msg void OnChannelDiffuseRadio();
-	afx_msg void OnChannelSpecularRadio();
-	afx_msg void OnAttenuationCheck();
-	//}}AFX_MSG
-	DECLARE_MESSAGE_MAP()
+  private:
+  ////////////////////////////////////////////////////////////////////
+  //
+  //	Private data types
+  //
+  typedef enum
+  {
+    DIFFUSE = 2,
+    SPECULAR = 4,
+    BOTH = DIFFUSE | SPECULAR
+  } CHANNEL;
 
-	protected:
+  ////////////////////////////////////////////////////////////////////
+  //
+  //	Private member data
+  //
+  int m_InitialRedDiffuse;
+  int m_InitialGreenDiffuse;
+  int m_InitialBlueDiffuse;
+  int m_InitialRedSpecular;
+  int m_InitialGreenSpecular;
+  int m_InitialBlueSpecular;
+  CHANNEL m_CurrentChannel;
 
-		////////////////////////////////////////////////////////////////////
-		//
-		//	Protected methods
-		//
-		void				Set_Color_Control_State (const Vector3 &color);
-		void				Update_Light (const Vector3 &color);
-		void				Update_Distance (float distance);
-		void				Update_Attenuation (void);
-		void				Update_Attenuation_Controls (void);
-
-	private:
-
-		////////////////////////////////////////////////////////////////////
-		//
-		//	Private data types
-		//
-		typedef enum
-		{
-			DIFFUSE		= 2,
-			SPECULAR		= 4,
-			BOTH			= DIFFUSE | SPECULAR
-		} CHANNEL;
-
-
-		////////////////////////////////////////////////////////////////////
-		//
-		//	Private member data
-		//
-		int		m_InitialRedDiffuse;
-		int		m_InitialGreenDiffuse;
-		int		m_InitialBlueDiffuse;
-		int		m_InitialRedSpecular;
-		int		m_InitialGreenSpecular;
-		int		m_InitialBlueSpecular;
-		CHANNEL	m_CurrentChannel;
-
-		float		m_InitialStartAtten;
-		float		m_InitialEndAtten;
-		float		m_InitialDistance;
-		float		m_InitialIntensity;
-		BOOL		m_InitialAttenOn;
+  float m_InitialStartAtten;
+  float m_InitialEndAtten;
+  float m_InitialDistance;
+  float m_InitialIntensity;
+  BOOL m_InitialAttenOn;
 };
 
 //{{AFX_INSERT_LOCATION}}

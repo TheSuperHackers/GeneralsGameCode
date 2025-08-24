@@ -38,18 +38,17 @@
 #include "GameClient/GadgetTextEntry.h"
 #include "GameNetwork/LANAPI.h"
 
-
 // LAN API Singleton ----------------------------------------------------------------------
 extern LANAPI *TheLAN;
 
-//external declarations of the Gadgets the callbacks can use
-// LanLobby
+// external declarations of the Gadgets the callbacks can use
+//  LanLobby
 extern NameKeyType listboxChatWindowID;
 extern GameWindow *listboxChatWindow;
 extern GameWindow *listboxPlayers;
 extern NameKeyType listboxGamesID;
 extern GameWindow *listboxGames;
-//LanGame Options screen
+// LanGame Options screen
 extern NameKeyType listboxChatWindowLanGameID;
 extern GameWindow *listboxChatWindowLanGame;
 extern WindowLayout *mapSelectLayout;
@@ -57,8 +56,7 @@ extern WindowLayout *mapSelectLayout;
 extern NameKeyType listboxChatWindowScoreScreenID;
 extern GameWindow *listboxChatWindowScoreScreen;
 
-
-//Colors used for the chat dialogs
+// Colors used for the chat dialogs
 extern const Color playerColor;
 extern const Color gameColor;
 extern const Color gameInProgressColor;
@@ -71,19 +69,13 @@ extern const Color chatSystemColor;
 extern const Color acceptTrueColor;
 extern const Color acceptFalseColor;
 
+void lanUpdateSlotList(void);
+void updateGameOptions(void);
 
-void lanUpdateSlotList( void );
-void updateGameOptions( void );
-
-
-//Enum is used for the utility function so other windows do not need
-//to know about controls on LanGameOptions window.
-enum PostToLanGameType CPP_11(: Int){ SEND_GAME_OPTS = 0,
-												MAP_BACK,
-												POST_TO_LAN_GAME_TYPE_COUNT };
-//the utility function mentioned above
+// Enum is used for the utility function so other windows do not need
+// to know about controls on LanGameOptions window.
+enum PostToLanGameType CPP_11( : Int){ SEND_GAME_OPTS = 0, MAP_BACK, POST_TO_LAN_GAME_TYPE_COUNT };
+// the utility function mentioned above
 void PostToLanGameOptions(PostToLanGameType post);
-
-
 
 #endif //_LANAPI_CALLBACKS_H_

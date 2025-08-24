@@ -37,89 +37,90 @@
 class BuildListInfo;
 class SpecialPowerTemplate;
 
-
 /**
  * The computer-controlled opponent.
  */
 class AISkirmishPlayer : public AIPlayer
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( AISkirmishPlayer, "AISkirmishPlayer"  )
+  MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AISkirmishPlayer, "AISkirmishPlayer")
 
-public:	 // AISkirmish specific methods.
+  public: // AISkirmish specific methods.
+  AISkirmishPlayer(Player *p); ///< constructor
+  virtual void computeSuperweaponTarget(
+      const SpecialPowerTemplate *power,
+      Coord3D *pos,
+      Int playerNdx,
+      Real weaponRadius); ///< Calculates best pos for weapon given radius.
 
-	AISkirmishPlayer( Player *p );							///< constructor
-	virtual void computeSuperweaponTarget(const SpecialPowerTemplate *power, Coord3D *pos, Int playerNdx, Real weaponRadius); ///< Calculates best pos for weapon given radius.
+  public: // AIPlayer interface methods.
+  virtual void update(); ///< simulates the behavior of a player
 
-public:	// AIPlayer interface methods.
+  virtual void newMap(); ///< New map loaded call.
 
-	virtual void update();											///< simulates the behavior of a player
+  /// Invoked when a unit I am training comes into existence
+  virtual void onUnitProduced(Object *factory, Object *unit);
 
-	virtual void newMap();											///< New map loaded call.
+  virtual void buildSpecificAITeam(TeamPrototype *teamProto, Bool priorityBuild); ///< Builds this team immediately.
 
-	/// Invoked when a unit I am training comes into existence
-	virtual void onUnitProduced( Object *factory, Object *unit );
+  virtual void buildSpecificAIBuilding(const AsciiString &thingName); ///< Builds this building as soon as possible.
 
-	virtual void buildSpecificAITeam(TeamPrototype *teamProto, Bool priorityBuild); ///< Builds this team immediately.
+  virtual void buildAIBaseDefense(Bool flank); ///< Builds base defense on front or flank of base.
 
-	virtual void buildSpecificAIBuilding(const AsciiString &thingName); ///< Builds this building as soon as possible.
+  virtual void buildAIBaseDefenseStructure(
+      const AsciiString &thingName,
+      Bool flank); ///< Builds base defense on front or flank of base.
 
-	virtual void buildAIBaseDefense(Bool flank); ///< Builds base defense on front or flank of base.
+  virtual void recruitSpecificAITeam(TeamPrototype *teamProto, Real recruitRadius); ///< Builds this team immediately.
 
-	virtual void buildAIBaseDefenseStructure(const AsciiString &thingName, Bool flank); ///< Builds base defense on front or flank of base.
+  virtual Bool isSkirmishAI(void) { return true; }
 
-	virtual void recruitSpecificAITeam(TeamPrototype *teamProto, Real recruitRadius); ///< Builds this team immediately.
+  virtual Bool checkBridges(Object *unit, Waypoint *way);
 
-	virtual Bool isSkirmishAI(void) {return true;}
+  virtual Player *getAiEnemy(
+      void); ///< Solo AI attacks based on scripting.  Only skirmish auto-acquires an enemy at this point.  jba.
 
-	virtual Bool checkBridges(Object *unit, Waypoint *way);
+  protected:
+  // snapshot methods
+  virtual void crc(Xfer *xfer);
+  virtual void xfer(Xfer *xfer);
+  virtual void loadPostProcess(void);
 
-	virtual Player *getAiEnemy(void);	///< Solo AI attacks based on scripting.  Only skirmish auto-acquires an enemy at this point.  jba.
+  virtual void doBaseBuilding(void);
+  virtual void checkReadyTeams(void);
+  virtual void checkQueuedTeams(void);
+  virtual void doTeamBuilding(void);
+  virtual Object *findDozer(const Coord3D *pos);
+  virtual void queueDozer(void);
 
-protected:
+  protected:
+  virtual Bool selectTeamToBuild(void); ///< determine the next team to build
+  virtual Bool selectTeamToReinforce(Int minPriority); ///< determine the next team to reinforce
+  virtual Bool startTraining(
+      WorkOrder *order,
+      Bool busyOK,
+      AsciiString teamName); ///< find a production building that can handle the order, and start building
 
-	// snapshot methods
-	virtual void crc( Xfer *xfer );
-	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess( void );
+  virtual Bool isAGoodIdeaToBuildTeam(TeamPrototype *proto); ///< return true if team should be built
+  virtual void processBaseBuilding(void); ///< do base-building behaviors
+  virtual void processTeamBuilding(void); ///< do team-building behaviors
 
-	virtual void doBaseBuilding(void);
-	virtual void checkReadyTeams(void);
-	virtual void checkQueuedTeams(void);
-	virtual void doTeamBuilding(void);
-	virtual Object *findDozer(const Coord3D *pos);
-	virtual void queueDozer(void);
+  protected:
+  void adjustBuildList(BuildListInfo *list);
+  Int getMyEnemyPlayerIndex(void);
+  void acquireEnemy(void);
 
-protected:
+  protected:
+  Int m_curFrontBaseDefense; // First is 0.
+  Int m_curFlankBaseDefense; // First is 0.
+  Real m_curFrontLeftDefenseAngle;
+  Real m_curFrontRightDefenseAngle;
+  Real m_curLeftFlankLeftDefenseAngle;
+  Real m_curLeftFlankRightDefenseAngle;
+  Real m_curRightFlankLeftDefenseAngle;
+  Real m_curRightFlankRightDefenseAngle;
 
-	virtual Bool selectTeamToBuild( void );			///< determine the next team to build
-	virtual Bool selectTeamToReinforce( Int minPriority );			///< determine the next team to reinforce
-	virtual Bool startTraining( WorkOrder *order, Bool busyOK, AsciiString teamName);	///< find a production building that can handle the order, and start building
-
-	virtual Bool isAGoodIdeaToBuildTeam( TeamPrototype *proto );		///< return true if team should be built
-	virtual void processBaseBuilding( void );		///< do base-building behaviors
-	virtual void processTeamBuilding( void );		///< do team-building behaviors
-
-protected:
-	void adjustBuildList(BuildListInfo *list);
-	Int getMyEnemyPlayerIndex(void);
-	void acquireEnemy(void);
-
-protected:
-	Int m_curFrontBaseDefense; // First is 0.
-	Int m_curFlankBaseDefense; // First is 0.
-	Real m_curFrontLeftDefenseAngle;
-	Real m_curFrontRightDefenseAngle;
-	Real m_curLeftFlankLeftDefenseAngle;
-	Real m_curLeftFlankRightDefenseAngle;
-	Real m_curRightFlankLeftDefenseAngle;
-	Real m_curRightFlankRightDefenseAngle;
-
-	UnsignedInt m_frameToCheckEnemy;
-	Player			*m_currentEnemy;
-
+  UnsignedInt m_frameToCheckEnemy;
+  Player *m_currentEnemy;
 };
 
 #endif // _AI_SKIRMISH_PLAYER_H_
-
-
-

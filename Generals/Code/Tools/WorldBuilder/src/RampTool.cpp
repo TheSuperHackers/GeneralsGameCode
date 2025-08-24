@@ -45,141 +45,143 @@
 
 #include "GameClient/Line2D.h"
 
-
 #include "W3DDevice/GameClient/HeightMap.h"
 
-RampTool::RampTool() : Tool(ID_RAMPTOOL, IDC_RAMP )
+RampTool::RampTool() : Tool(ID_RAMPTOOL, IDC_RAMP)
 {
-
 }
 
 void RampTool::activate()
 {
-	Tool::activate();
-	CMainFrame::GetMainFrame()->showOptionsDialog(IDD_RAMP_OPTIONS);
+  Tool::activate();
+  CMainFrame::GetMainFrame()->showOptionsDialog(IDD_RAMP_OPTIONS);
 
-	mIsMouseDown = false;
+  mIsMouseDown = false;
 }
 
 void RampTool::deactivate()
 {
-	DrawObject::setDoRampFeedback(false);
-	mIsMouseDown = false;
+  DrawObject::setDoRampFeedback(false);
+  mIsMouseDown = false;
 }
 
 Bool RampTool::followsTerrain(void)
 {
-	return true;
+  return true;
 }
 
-void RampTool::mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc)
+void RampTool::mouseMoved(TTrackingMode m, CPoint viewPt, WbView *pView, CWorldBuilderDoc *pDoc)
 {
-	if (!((m == TRACK_L) && mIsMouseDown)) {
-		if (TheRampOptions->shouldApplyTheRamp()) {
-			// Call me now for your free ramp application!
-			applyRamp(pDoc);
-			return;
-		}
-	} else if (m == TRACK_L) {
-		Coord3D docPt;
-		pView->viewToDocCoords(viewPt, &docPt);
-		docPt.z = TheTerrainRenderObject->getHeightMapHeight(docPt.x, docPt.y, NULL);
-		mEndPoint = docPt;
-	}
+  if (!((m == TRACK_L) && mIsMouseDown))
+  {
+    if (TheRampOptions->shouldApplyTheRamp())
+    {
+      // Call me now for your free ramp application!
+      applyRamp(pDoc);
+      return;
+    }
+  }
+  else if (m == TRACK_L)
+  {
+    Coord3D docPt;
+    pView->viewToDocCoords(viewPt, &docPt);
+    docPt.z = TheTerrainRenderObject->getHeightMapHeight(docPt.x, docPt.y, NULL);
+    mEndPoint = docPt;
+  }
 
-	drawFeedback(&mEndPoint);
+  drawFeedback(&mEndPoint);
 }
 
-void RampTool::mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc)
+void RampTool::mouseDown(TTrackingMode m, CPoint viewPt, WbView *pView, CWorldBuilderDoc *pDoc)
 {
-	if (m != TRACK_L) {
-		return;
-	}
+  if (m != TRACK_L)
+  {
+    return;
+  }
 
-	Coord3D docPt;
-	pView->viewToDocCoords(viewPt, &docPt);
-	mStartPoint = docPt;
-	mStartPoint.z = TheTerrainRenderObject->getHeightMapHeight(mStartPoint.x, mStartPoint.y, NULL);
+  Coord3D docPt;
+  pView->viewToDocCoords(viewPt, &docPt);
+  mStartPoint = docPt;
+  mStartPoint.z = TheTerrainRenderObject->getHeightMapHeight(mStartPoint.x, mStartPoint.y, NULL);
 
-	mIsMouseDown = true;
+  mIsMouseDown = true;
 }
 
-void RampTool::mouseUp(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc)
+void RampTool::mouseUp(TTrackingMode m, CPoint viewPt, WbView *pView, CWorldBuilderDoc *pDoc)
 {
+  if (!((m == TRACK_L) && mIsMouseDown))
+  {
+    return;
+  }
 
-	if (!((m == TRACK_L) && mIsMouseDown)) {
-		return;
-	}
+  Coord3D docPt;
+  pView->viewToDocCoords(viewPt, &docPt);
+  mEndPoint = docPt;
+  mEndPoint.z = TheTerrainRenderObject->getHeightMapHeight(mEndPoint.x, mEndPoint.y, NULL);
 
-	Coord3D docPt;
-	pView->viewToDocCoords(viewPt, &docPt);
-	mEndPoint = docPt;
-	mEndPoint.z = TheTerrainRenderObject->getHeightMapHeight(mEndPoint.x, mEndPoint.y, NULL);
-
-	mIsMouseDown = false;
+  mIsMouseDown = false;
 }
 
-void RampTool::drawFeedback(Coord3D* endPoint)
+void RampTool::drawFeedback(Coord3D *endPoint)
 {
-	DrawObject::setDoRampFeedback(true);
-	DrawObject::setRampFeedbackParms(&mStartPoint, endPoint, TheRampOptions->getRampWidth());
+  DrawObject::setDoRampFeedback(true);
+  DrawObject::setRampFeedbackParms(&mStartPoint, endPoint, TheRampOptions->getRampWidth());
 }
 
-void RampTool::applyRamp(CWorldBuilderDoc* pDoc)
+void RampTool::applyRamp(CWorldBuilderDoc *pDoc)
 {
-	Coord3D bl, tl, br, tr;
-	VecHeightMapIndexes indices;
+  Coord3D bl, tl, br, tr;
+  VecHeightMapIndexes indices;
 
-	WorldHeightMapEdit *worldHeightDup = pDoc->GetHeightMap()->duplicate();
+  WorldHeightMapEdit *worldHeightDup = pDoc->GetHeightMap()->duplicate();
 
-	Real width = TheRampOptions->getRampWidth();
+  Real width = TheRampOptions->getRampWidth();
 
-	BuildRectFromSegmentAndWidth(&mStartPoint, &mEndPoint, width,
-															 &bl, &tl, &br, &tr);
+  BuildRectFromSegmentAndWidth(&mStartPoint, &mEndPoint, width, &bl, &tl, &br, &tr);
 
-	if (bl == br || bl == tl) {
-		return;
-	}
+  if (bl == br || bl == tl)
+  {
+    return;
+  }
 
-	getAllIndexesIn(&bl, &br, &tl, &tr, 0, pDoc, &indices);
-	int indiceCount = indices.size();
-	if (indiceCount == 0) {
-		return;
-	}
+  getAllIndexesIn(&bl, &br, &tl, &tr, 0, pDoc, &indices);
+  int indiceCount = indices.size();
+  if (indiceCount == 0)
+  {
+    return;
+  }
 
-	/*
-		This part is pretty straightforward. Determine the U value for the shortest segment from the
-		index's actual location to the segments from mStartPoint to mEndPoint, and then apply a
-		linear gradient factor according to the height from the beginning to the end of mStartPoint
-		and mEndPoint.
-	*/
+  /*
+    This part is pretty straightforward. Determine the U value for the shortest segment from the
+    index's actual location to the segments from mStartPoint to mEndPoint, and then apply a
+    linear gradient factor according to the height from the beginning to the end of mStartPoint
+    and mEndPoint.
+  */
 
-	for (int i = 0; i < indiceCount; ++i) {
-		Coord3D pt;
-		pDoc->getCoordFromCellIndex(indices[i], &pt);
+  for (int i = 0; i < indiceCount; ++i)
+  {
+    Coord3D pt;
+    pDoc->getCoordFromCellIndex(indices[i], &pt);
 
-		Real uVal;
-		Coord2D start = { mStartPoint.x, mStartPoint.y };
-		Coord2D end = { mEndPoint.x, mEndPoint.y };
-		Coord2D pt2D = { pt.x, pt.y };
+    Real uVal;
+    Coord2D start = { mStartPoint.x, mStartPoint.y };
+    Coord2D end = { mEndPoint.x, mEndPoint.y };
+    Coord2D pt2D = { pt.x, pt.y };
 
-		ShortestDistancePointToSegment2D(&start, &end, &pt2D, NULL, NULL, &uVal);
-		Real height = mStartPoint.z + uVal * (mEndPoint.z - mStartPoint.z);
+    ShortestDistancePointToSegment2D(&start, &end, &pt2D, NULL, NULL, &uVal);
+    Real height = mStartPoint.z + uVal * (mEndPoint.z - mStartPoint.z);
 
-		worldHeightDup->setHeight(indices[i].x, indices[i].y, (UnsignedByte) (height / MAP_HEIGHT_SCALE));
-	}
+    worldHeightDup->setHeight(indices[i].x, indices[i].y, (UnsignedByte)(height / MAP_HEIGHT_SCALE));
+  }
 
-	IRegion2D partialRange = {0,0,0,0};
-	pDoc->updateHeightMap(worldHeightDup, false, partialRange);
+  IRegion2D partialRange = { 0, 0, 0, 0 };
+  pDoc->updateHeightMap(worldHeightDup, false, partialRange);
 
-	WBDocUndoable *pUndo = new WBDocUndoable(pDoc, worldHeightDup);
-	pDoc->AddAndDoUndoable(pUndo);
-	REF_PTR_RELEASE(pUndo); // belongs to pDoc now.
-	REF_PTR_RELEASE(worldHeightDup);
+  WBDocUndoable *pUndo = new WBDocUndoable(pDoc, worldHeightDup);
+  pDoc->AddAndDoUndoable(pUndo);
+  REF_PTR_RELEASE(pUndo); // belongs to pDoc now.
+  REF_PTR_RELEASE(worldHeightDup);
 
-
-	// Once we've applied the ramp, its no longer a mutable thing, so blow away the feedback
-	DrawObject::setDoRampFeedback(false);
+  // Once we've applied the ramp, its no longer a mutable thing, so blow away the feedback
+  DrawObject::setDoRampFeedback(false);
 }
-
-

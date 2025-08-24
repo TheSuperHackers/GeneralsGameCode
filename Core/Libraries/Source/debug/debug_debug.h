@@ -27,7 +27,7 @@
 // main Debug object (singleton)
 //////////////////////////////////////////////////////////////////////////////
 #ifdef _MSC_VER
-#  pragma once
+#pragma once
 #endif
 #ifndef DEBUG_DEBUG_H // Include guard
 #define DEBUG_DEBUG_H
@@ -45,11 +45,11 @@ class Debug
   // necessary because exception handler needs direct access
   friend class DebugExceptionhandler;
 
-public:
+  public:
   enum
   {
     /// maximum number of times a check can be hit before it is turned off
-    MAX_CHECK_HITS  =   20
+    MAX_CHECK_HITS = 20
   };
 
   /**
@@ -80,20 +80,25 @@ DLOG( "This is 16 bytes of memory:\n" << Debug::MemDump::Raw(&somePointer,16) );
     // necessary because Debug needs access to the following private members
     friend Debug;
 
-    const unsigned char *m_startPtr;  ///< start dumping with this address
-    unsigned m_numItems;              ///< dump the given number of items
-    unsigned m_bytePerItem;           ///< determines the number of bytes per item (1. 2 or 4)
-    bool m_absAddr;                   ///< show absolute addresses (true) or relative addresses (false)
-    bool m_withChars;                 ///< show printable characters on right side of dump (true) or not (false)
+    const unsigned char *m_startPtr; ///< start dumping with this address
+    unsigned m_numItems; ///< dump the given number of items
+    unsigned m_bytePerItem; ///< determines the number of bytes per item (1. 2 or 4)
+    bool m_absAddr; ///< show absolute addresses (true) or relative addresses (false)
+    bool m_withChars; ///< show printable characters on right side of dump (true) or not (false)
 
     // constructor is private on purpose so that nobody can
     // create instances of this class except the static functions
     // provided herein
-    MemDump(const void *ptr, unsigned num, unsigned bpi, bool absAddr, bool withChars):
-      m_startPtr((const unsigned char *)ptr), m_numItems(num),
-      m_bytePerItem(bpi), m_absAddr(absAddr), m_withChars(withChars) {}
-  public:
+    MemDump(const void *ptr, unsigned num, unsigned bpi, bool absAddr, bool withChars) :
+        m_startPtr((const unsigned char *)ptr),
+        m_numItems(num),
+        m_bytePerItem(bpi),
+        m_absAddr(absAddr),
+        m_withChars(withChars)
+    {
+    }
 
+public:
     /**
       Creates a memory dump descriptor.
 
@@ -101,9 +106,9 @@ DLOG( "This is 16 bytes of memory:\n" << Debug::MemDump::Raw(&somePointer,16) );
       \param numItems number of items (usually bytes) to dump
       \param bytePerItem number of bytes per item (usually 1)
     */
-    static MemDump Raw(const void *startPtr, unsigned numItems, unsigned bytePerItem=1)
+    static MemDump Raw(const void *startPtr, unsigned numItems, unsigned bytePerItem = 1)
     {
-      return MemDump(startPtr,numItems,bytePerItem,true,false);
+      return MemDump(startPtr, numItems, bytePerItem, true, false);
     }
 
     /**
@@ -113,9 +118,9 @@ DLOG( "This is 16 bytes of memory:\n" << Debug::MemDump::Raw(&somePointer,16) );
       \param numItems number of items (usually bytes) to dump
       \param bytePerItem number of bytes per item (usually 1)
     */
-    static MemDump RawRel(const void *startPtr, unsigned numItems, unsigned bytePerItem=1)
+    static MemDump RawRel(const void *startPtr, unsigned numItems, unsigned bytePerItem = 1)
     {
-      return MemDump(startPtr,numItems,bytePerItem,false,false);
+      return MemDump(startPtr, numItems, bytePerItem, false, false);
     }
 
     /**
@@ -125,9 +130,9 @@ DLOG( "This is 16 bytes of memory:\n" << Debug::MemDump::Raw(&somePointer,16) );
       \param numItems number of items (usually bytes) to dump
       \param bytePerItem number of bytes per item (usually 1)
     */
-    static MemDump Char(const void *startPtr, unsigned numItems, unsigned bytePerItem=1)
+    static MemDump Char(const void *startPtr, unsigned numItems, unsigned bytePerItem = 1)
     {
-      return MemDump(startPtr,numItems,bytePerItem,true,true);
+      return MemDump(startPtr, numItems, bytePerItem, true, true);
     }
 
     /**
@@ -137,9 +142,9 @@ DLOG( "This is 16 bytes of memory:\n" << Debug::MemDump::Raw(&somePointer,16) );
       \param numItems number of items (usually bytes) to dump
       \param bytePerItem number of bytes per item (usually 1)
     */
-    static MemDump CharRel(const void *startPtr, unsigned numItems, unsigned bytePerItem=1)
+    static MemDump CharRel(const void *startPtr, unsigned numItems, unsigned bytePerItem = 1)
     {
-      return MemDump(startPtr,numItems,bytePerItem,false,true);
+      return MemDump(startPtr, numItems, bytePerItem, false, true);
     }
   };
 
@@ -162,16 +167,15 @@ DLOG( "My HResult is: " << Debug::HResult(SomeHRESULTValue) << "\n" );
     // necessary because Debug needs access to the following private members
     friend Debug;
 
-    long m_hresult;                   ///< HRESULT value
+    long m_hresult; ///< HRESULT value
 
-  public:
-
+public:
     /**
       Creates a HRESULT descriptor.
 
       \param hresult HRESULT value (checked, Windows declares HRESULT as typedef long)
     */
-    explicit HResult(long hresult): m_hresult(hresult) {}
+    explicit HResult(long hresult) : m_hresult(hresult) {}
   };
 
   /** \internal
@@ -182,11 +186,10 @@ DLOG( "My HResult is: " << Debug::HResult(SomeHRESULTValue) << "\n" );
   class LogDescription
   {
     // sorry, no copies or assignments
-    LogDescription(const LogDescription&);
-    LogDescription& operator=(const LogDescription&);
+    LogDescription(const LogDescription &);
+    LogDescription &operator=(const LogDescription &);
 
-  public:
-
+public:
     /** \internal
 
       Adds a description for a logging file/group.
@@ -200,36 +203,42 @@ DLOG( "My HResult is: " << Debug::HResult(SomeHRESULTValue) << "\n" );
   /**
     \brief Switches integer output to hexadecimal format.
   */
-  class Hex {};
+  class Hex
+  {
+  };
 
   /// \internal Performs actual switch to hexadecimal format.
-  Debug& operator<<(const Hex)
+  Debug &operator<<(const Hex)
   {
-    SetPrefixAndRadix("0x",16);
+    SetPrefixAndRadix("0x", 16);
     return *this;
   }
 
   /**
     \brief Switches integer output to decimal format.
   */
-  class Dec {};
+  class Dec
+  {
+  };
 
   /// \internal Performs actuals switch to decimal format
-  Debug& operator<<(const Dec)
+  Debug &operator<<(const Dec)
   {
-    SetPrefixAndRadix("",10);
+    SetPrefixAndRadix("", 10);
     return *this;
   }
 
   /**
     \brief Switches integer output to binary format.
   */
-  class Bin {};
+  class Bin
+  {
+  };
 
   /// \internal Performs actuals switch to binary format
-  Debug& operator<<(const Bin)
+  Debug &operator<<(const Bin)
   {
-    SetPrefixAndRadix("%",2);
+    SetPrefixAndRadix("%", 2);
     return *this;
   }
 
@@ -241,17 +250,17 @@ DLOG( "My HResult is: " << Debug::HResult(SomeHRESULTValue) << "\n" );
     // necessary because Debug needs access to the following private members
     friend Debug;
 
-    int m_width;  ///< output width
+    int m_width; ///< output width
 
-  public:
+public:
     /// \brief Sets new output width (next insertion only).
-    explicit Width(int width): m_width(width) {}
+    explicit Width(int width) : m_width(width) {}
   };
 
   /// \internal Performs actuals width switch
-  Debug& operator<<(const Width w)
+  Debug &operator<<(const Width w)
   {
-    m_width=w.m_width;
+    m_width = w.m_width;
     return *this;
   }
 
@@ -263,17 +272,17 @@ DLOG( "My HResult is: " << Debug::HResult(SomeHRESULTValue) << "\n" );
     // necessary because Debug needs access to the following private members
     friend Debug;
 
-    char m_fill;  ///< fill character
+    char m_fill; ///< fill character
 
-  public:
+public:
     /// \brief Sets new fill character.
-    explicit FillChar(char ch=' '): m_fill(ch) {}
+    explicit FillChar(char ch = ' ') : m_fill(ch) {}
   };
 
   /// \internal Performs actuals setting of fill char
-  Debug& operator<<(const FillChar c)
+  Debug &operator<<(const FillChar c)
   {
-    m_fillChar=c.m_fill;
+    m_fillChar = c.m_fill;
     return *this;
   }
 
@@ -285,16 +294,16 @@ DLOG( "My HResult is: " << Debug::HResult(SomeHRESULTValue) << "\n" );
     // necessary because Debug needs access to the following private members
     friend Debug;
 
-    char m_char;  ///< character
-    int m_count;  ///< repeat count
+    char m_char; ///< character
+    int m_count; ///< repeat count
 
-  public:
+public:
     /// \brief Repeats a given character N times
-    explicit RepeatChar(char ch, int count): m_char(ch), m_count(count) {}
+    explicit RepeatChar(char ch, int count) : m_char(ch), m_count(count) {}
   };
 
   /// \internal Performs actuals repeating of char
-  Debug& operator<<(RepeatChar c);
+  Debug &operator<<(RepeatChar c);
 
   /**
     \brief Old printf style formatting.
@@ -309,17 +318,17 @@ DLOG( "My HResult is: " << Debug::HResult(SomeHRESULTValue) << "\n" );
 
     // no CC, AOp
     Format(const Format &);
-    Format& operator=(const Format&);
+    Format &operator=(const Format &);
 
     char m_buffer[512]; ///< this contains the string to write \note Fixed size buffer!
 
-  public:
+public:
     /// \brief Old printf style formatting.
     explicit Format(const char *format, ...);
   };
 
   /// \internal Writes printf style formatted string to debug log.
-  Debug& operator<<(const Format &f)
+  Debug &operator<<(const Format &f)
   {
     operator<<(f.m_buffer);
     return *this;
@@ -470,7 +479,7 @@ DLOG( "My HResult is: " << Debug::HResult(SomeHRESULTValue) << "\n" );
     \param str string to write
     \return *this
   */
-  Debug& operator<<(const char *str);
+  Debug &operator<<(const char *str);
 
   /** \internal
 
@@ -488,7 +497,7 @@ DLOG( "My HResult is: " << Debug::HResult(SomeHRESULTValue) << "\n" );
     \param val signed integer
     \return *this
   */
-  Debug& operator<<(int val);
+  Debug &operator<<(int val);
 
   /** \internal
 
@@ -497,7 +506,7 @@ DLOG( "My HResult is: " << Debug::HResult(SomeHRESULTValue) << "\n" );
     \param val unsigned integer
     \return *this
   */
-  Debug& operator<<(unsigned val);
+  Debug &operator<<(unsigned val);
 
   /** \internal
 
@@ -506,7 +515,7 @@ DLOG( "My HResult is: " << Debug::HResult(SomeHRESULTValue) << "\n" );
     \param val signed long
     \return *this
   */
-  Debug& operator<<(long val);
+  Debug &operator<<(long val);
 
   /** \internal
 
@@ -515,7 +524,7 @@ DLOG( "My HResult is: " << Debug::HResult(SomeHRESULTValue) << "\n" );
     \param val unsigned long
     \return *this
   */
-  Debug& operator<<(unsigned long val);
+  Debug &operator<<(unsigned long val);
 
   /** \internal
 
@@ -524,7 +533,7 @@ DLOG( "My HResult is: " << Debug::HResult(SomeHRESULTValue) << "\n" );
     \param val bool
     \return *this
   */
-  Debug& operator<<(bool val);
+  Debug &operator<<(bool val);
 
   /** \internal
 
@@ -533,7 +542,7 @@ DLOG( "My HResult is: " << Debug::HResult(SomeHRESULTValue) << "\n" );
     \param val float
     \return *this
   */
-  Debug& operator<<(float val);
+  Debug &operator<<(float val);
 
   /** \internal
 
@@ -542,7 +551,7 @@ DLOG( "My HResult is: " << Debug::HResult(SomeHRESULTValue) << "\n" );
     \param val double
     \return *this
   */
-  Debug& operator<<(double val);
+  Debug &operator<<(double val);
 
   /** \internal
 
@@ -551,7 +560,7 @@ DLOG( "My HResult is: " << Debug::HResult(SomeHRESULTValue) << "\n" );
     \param val signed short integer
     \return *this
   */
-  Debug& operator<<(short val);
+  Debug &operator<<(short val);
 
   /** \internal
 
@@ -560,7 +569,7 @@ DLOG( "My HResult is: " << Debug::HResult(SomeHRESULTValue) << "\n" );
     \param val unsigned short integer
     \return *this
   */
-  Debug& operator<<(unsigned short val);
+  Debug &operator<<(unsigned short val);
 
   /** \internal
 
@@ -569,7 +578,7 @@ DLOG( "My HResult is: " << Debug::HResult(SomeHRESULTValue) << "\n" );
     \param val signed 64 bit integer
     \return *this
   */
-  Debug& operator<<(__int64 val);
+  Debug &operator<<(__int64 val);
 
   /** \internal
 
@@ -578,7 +587,7 @@ DLOG( "My HResult is: " << Debug::HResult(SomeHRESULTValue) << "\n" );
     \param val unsigned 64 bit integer
     \return *this
   */
-  Debug& operator<<(unsigned __int64 val);
+  Debug &operator<<(unsigned __int64 val);
 
   /** \internal
 
@@ -587,7 +596,7 @@ DLOG( "My HResult is: " << Debug::HResult(SomeHRESULTValue) << "\n" );
     \param ptr pointer address
     \return *this
   */
-  Debug& operator<<(const void *ptr);
+  Debug &operator<<(const void *ptr);
 
   /** \internal
 
@@ -596,7 +605,7 @@ DLOG( "My HResult is: " << Debug::HResult(SomeHRESULTValue) << "\n" );
     \param dump MemDump descriptor, defines what range of memory to dump
     \return *this
   */
-  Debug& operator<<(const MemDump &dump);
+  Debug &operator<<(const MemDump &dump);
 
   /** \internal
 
@@ -605,7 +614,7 @@ DLOG( "My HResult is: " << Debug::HResult(SomeHRESULTValue) << "\n" );
     \param hres HResult descriptor
     \return *this
   */
-  Debug& operator<<(HResult hres);
+  Debug &operator<<(HResult hres);
 
   /** \internal
     \brief Determines if a log file/group is active or not.
@@ -634,7 +643,7 @@ DLOG( "My HResult is: " << Debug::HResult(SomeHRESULTValue) << "\n" );
     \param user optional user pointer which will be passed to the given translator
     \see RemoveHResultTranslator
   */
-  static void AddHResultTranslator(unsigned prio, HResultTranslator func, void *user=0);
+  static void AddHResultTranslator(unsigned prio, HResultTranslator func, void *user = 0);
 
   /**
     \brief Removes a HRESULT translator.
@@ -645,7 +654,7 @@ DLOG( "My HResult is: " << Debug::HResult(SomeHRESULTValue) << "\n" );
     \param user optional user pointer
     \see AddHResultTranslator
   */
-  static void RemoveHResultTranslator(HResultTranslator func, void *user=0);
+  static void RemoveHResultTranslator(HResultTranslator func, void *user = 0);
 
   /**
     \brief Registers a new I/O class factory function.
@@ -659,8 +668,7 @@ DLOG( "My HResult is: " << Debug::HResult(SomeHRESULTValue) << "\n" );
     \param func factory function
     \return true (so function can be used in static initializers)
   */
-  static bool AddIOFactory(const char *io_id, const char *descr,
-                           DebugIOInterface* (*func)(void));
+  static bool AddIOFactory(const char *io_id, const char *descr, DebugIOInterface *(*func)(void));
 
   /**
     \brief Adds a new command group.
@@ -724,19 +732,17 @@ DLOG( "My HResult is: " << Debug::HResult(SomeHRESULTValue) << "\n" );
     \param internalVersion internal version
     \param buildDate build date & time
   */
-  static void SetBuildInfo(const char *version,
-                           const char *internalVersion,
-                           const char *buildDate);
+  static void SetBuildInfo(const char *version, const char *internalVersion, const char *buildDate);
 
   /**
     \brief Write build information into log.
   */
   void WriteBuildInfo(void);
 
-private:
+  private:
   // no assignment, no copy constructor
-  Debug(const Debug&);
-  Debug& operator=(const Debug&);
+  Debug(const Debug &);
+  Debug &operator=(const Debug &);
 
   /** \internal
 
@@ -824,7 +830,7 @@ private:
     const char *descr;
 
     /// factory function
-    DebugIOInterface* (*factory)(void);
+    DebugIOInterface *(*factory)(void);
 
     /// I/O interface (may be NULL)
     DebugIOInterface *io;
@@ -884,10 +890,10 @@ private:
     FrameTypeAssert = 0x00000001,
 
     /// check
-    FrameTypeCheck  = 0x00000002,
+    FrameTypeCheck = 0x00000002,
 
     /// log
-    FrameTypeLog    = 0x00000004
+    FrameTypeLog = 0x00000004
   };
 
   /** \internal
@@ -936,13 +942,19 @@ private:
   };
 
   /// \internal initial frame hash size (prime number)
-  enum { FRAME_HASH_SIZE = 10007 };
+  enum
+  {
+    FRAME_HASH_SIZE = 10007
+  };
 
   /// \internal frame hash pointers
   FrameHashEntry *frameHash[FRAME_HASH_SIZE];
 
   /// \internal number of FrameHashEntry structures to allocate at one time
-  enum { FRAME_HASH_ALLOC_COUNT = 100 };
+  enum
+  {
+    FRAME_HASH_ALLOC_COUNT = 100
+  };
 
   /// \internal next unused FrameHashEntry structure
   FrameHashEntry *nextUnusedFrameHash;
@@ -959,8 +971,8 @@ private:
   */
   __forceinline FrameHashEntry *LookupFrame(unsigned addr)
   {
-    for (FrameHashEntry *e=frameHash[addr%FRAME_HASH_SIZE];e;e=e->next)
-      if (e->frameAddr==addr)
+    for (FrameHashEntry *e = frameHash[addr % FRAME_HASH_SIZE]; e; e = e->next)
+      if (e->frameAddr == addr)
         return e;
     return 0;
   }
@@ -977,8 +989,7 @@ private:
     \param line line number
     \return the entry just added
   */
-  FrameHashEntry *AddFrameEntry(unsigned addr, unsigned type,
-                                const char *fileOrGroup, int line);
+  FrameHashEntry *AddFrameEntry(unsigned addr, unsigned type, const char *fileOrGroup, int line);
 
   /** \internal
 
@@ -999,13 +1010,12 @@ private:
     \param line line number
     \return the entry just added (or the already existing entry)
   */
-  FrameHashEntry *GetFrameEntry(unsigned addr, unsigned type,
-                                const char *fileOrGroup, int line)
+  FrameHashEntry *GetFrameEntry(unsigned addr, unsigned type, const char *fileOrGroup, int line)
   {
-    FrameHashEntry *e=LookupFrame(addr);
+    FrameHashEntry *e = LookupFrame(addr);
     if (!e)
-      e=AddFrameEntry(addr,type,fileOrGroup,line);
-    if (e->status==Unknown)
+      e = AddFrameEntry(addr, type, fileOrGroup, line);
+    if (e->status == Unknown)
       UpdateFrameStatus(*e);
     return e;
   }
@@ -1098,7 +1108,7 @@ private:
     \param defaultLog if true and no I/O class is active then data
            is written to default.log
   */
-  void FlushOutput(bool defaultLog=true);
+  void FlushOutput(bool defaultLog = true);
 
   /// \internal pointer to currently active frame
   FrameHashEntry *curFrameEntry;

@@ -31,168 +31,168 @@
 
 std::string intToString(int val)
 {
-	std::string s = "";
-	bool neg = (val < 0);
-	if (val < 0)
-	{
-		val = -val;
-	}
-	if (val == 0)
-		return "0";
+  std::string s = "";
+  bool neg = (val < 0);
+  if (val < 0)
+  {
+    val = -val;
+  }
+  if (val == 0)
+    return "0";
 
-	char buf[2];
-	buf[1] = 0;
-	while (val)
-	{
-		buf[0] = '0' + val%10;
-		val /= 10;
-		s.insert(0, buf);
-	}
-	if (neg)
-		s.insert(0, "-");
-	return s;
+  char buf[2];
+  buf[1] = 0;
+  while (val)
+  {
+    buf[0] = '0' + val % 10;
+    val /= 10;
+    s.insert(0, buf);
+  }
+  if (neg)
+    s.insert(0, "-");
+  return s;
 }
 
-static std::string trim(std::string s, const std::string& delim)
+static std::string trim(std::string s, const std::string &delim)
 {
-	unsigned int i;
-	i = s.find_first_not_of(delim);
-	if (i != s.npos)
-	{
-		s = s.substr(i);
-	}
+  unsigned int i;
+  i = s.find_first_not_of(delim);
+  if (i != s.npos)
+  {
+    s = s.substr(i);
+  }
 
-	i = s.find_last_not_of(delim);
-	if (i>=0 && i<s.npos)
-	{
-		s = s.substr(0, i+1);
-	}
+  i = s.find_last_not_of(delim);
+  if (i >= 0 && i < s.npos)
+  {
+    s = s.substr(0, i + 1);
+  }
 
-	return s;
+  return s;
 }
 
-static KeyValueMap parseIntoKVPairs( std::string s, const std::string& delim )
+static KeyValueMap parseIntoKVPairs(std::string s, const std::string &delim)
 {
-	KeyValueMap m;
-	bool done = false;
-	std::string kv, k, v;
-	while (!done)
-	{
-		int comma;
-		comma = s.find_first_of(delim, 0);
-		if (comma < 1)
-		{
-			done = true;
-			kv = s;
-		}
-		else
-		{
-			kv = s.substr(0, comma);
-			s = s.substr(comma+1);
-		}
-		s = trim(s, delim);
-		kv = trim(kv, delim);
+  KeyValueMap m;
+  bool done = false;
+  std::string kv, k, v;
+  while (!done)
+  {
+    int comma;
+    comma = s.find_first_of(delim, 0);
+    if (comma < 1)
+    {
+      done = true;
+      kv = s;
+    }
+    else
+    {
+      kv = s.substr(0, comma);
+      s = s.substr(comma + 1);
+    }
+    s = trim(s, delim);
+    kv = trim(kv, delim);
 
-		if (!kv.empty())
-		{
-			int equals = kv.find_first_of('=', 0);
-			if (equals < 1)
-			{
-				done = true;
-			}
-			else
-			{
-				k = trim(trim(kv.substr(0, equals), delim), " \t");
-				v = trim(trim(kv.substr(equals+1), delim), " \t");
+    if (!kv.empty())
+    {
+      int equals = kv.find_first_of('=', 0);
+      if (equals < 1)
+      {
+        done = true;
+      }
+      else
+      {
+        k = trim(trim(kv.substr(0, equals), delim), " \t");
+        v = trim(trim(kv.substr(equals + 1), delim), " \t");
 
-				if (!k.empty() && !v.empty())
-				{
-					m[k] = v;
-				}
-			}
-		}
-	}
-	return m;
+        if (!k.empty() && !v.empty())
+        {
+          m[k] = v;
+        }
+      }
+    }
+  }
+  return m;
 }
 
-KVPairClass::KVPairClass( void )
-{}
-
-KVPairClass::KVPairClass( const std::string& in, const std::string& delim )
+KVPairClass::KVPairClass(void)
 {
-	set( in, delim );
 }
 
-void KVPairClass::set( const std::string& in, const std::string& delim )
+KVPairClass::KVPairClass(const std::string &in, const std::string &delim)
 {
-	m_map = parseIntoKVPairs( in, delim );
+  set(in, delim);
 }
 
-void KVPairClass::readFromFile( const std::string& in, const std::string& delim )
+void KVPairClass::set(const std::string &in, const std::string &delim)
 {
-	m_map.clear();
-	FILE *fp = fopen(in.c_str(), "rb");
-	if (fp)
-	{
-		std::string s = "";
-		fseek(fp, 0, SEEK_END);
-		int len = ftell(fp);
-		fseek(fp, 0, SEEK_SET);
-
-		char *buf = new char[len + 1];
-		memset(buf, 0, len+1);
-		fread(buf, 1, len, fp);
-		fclose(fp);
-
-		s.append(buf);
-		delete[] buf;
-		set(s, delim);
-	}
+  m_map = parseIntoKVPairs(in, delim);
 }
 
-std::string KVPairClass::getStringVal( const std::string& key ) const
+void KVPairClass::readFromFile(const std::string &in, const std::string &delim)
 {
-	KeyValueMap::const_iterator it = m_map.find(key);
-	if (it == m_map.end())
-	{
-		return "";
-	}
-	return it->second;
+  m_map.clear();
+  FILE *fp = fopen(in.c_str(), "rb");
+  if (fp)
+  {
+    std::string s = "";
+    fseek(fp, 0, SEEK_END);
+    int len = ftell(fp);
+    fseek(fp, 0, SEEK_SET);
+
+    char *buf = new char[len + 1];
+    memset(buf, 0, len + 1);
+    fread(buf, 1, len, fp);
+    fclose(fp);
+
+    s.append(buf);
+    delete[] buf;
+    set(s, delim);
+  }
 }
 
-bool KVPairClass::getString( const std::string& key, std::string& val ) const
+std::string KVPairClass::getStringVal(const std::string &key) const
 {
-	std::string tmp = getStringVal(key);
-	if (tmp.empty())
-	{
-		return false;
-	}
-
-	val = tmp;
-	return true;
+  KeyValueMap::const_iterator it = m_map.find(key);
+  if (it == m_map.end())
+  {
+    return "";
+  }
+  return it->second;
 }
 
-bool KVPairClass::getInt( const std::string& key, int& val ) const
+bool KVPairClass::getString(const std::string &key, std::string &val) const
 {
-	std::string tmp = getStringVal(key);
-	if (tmp.empty())
-	{
-		return false;
-	}
+  std::string tmp = getStringVal(key);
+  if (tmp.empty())
+  {
+    return false;
+  }
 
-	val = atoi(tmp.c_str());
-	return true;
+  val = tmp;
+  return true;
 }
 
-bool KVPairClass::getUnsignedInt( const std::string& key, unsigned int& val ) const
+bool KVPairClass::getInt(const std::string &key, int &val) const
 {
-	std::string tmp = getStringVal(key);
-	if (tmp.empty())
-	{
-		return false;
-	}
+  std::string tmp = getStringVal(key);
+  if (tmp.empty())
+  {
+    return false;
+  }
 
-	val = atoi(tmp.c_str());
-	return true;
+  val = atoi(tmp.c_str());
+  return true;
 }
 
+bool KVPairClass::getUnsignedInt(const std::string &key, unsigned int &val) const
+{
+  std::string tmp = getStringVal(key);
+  if (tmp.empty())
+  {
+    return false;
+  }
+
+  val = atoi(tmp.c_str());
+  return true;
+}

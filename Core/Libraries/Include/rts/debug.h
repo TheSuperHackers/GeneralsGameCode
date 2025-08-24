@@ -27,7 +27,7 @@
 // Proxy header for debug module
 //////////////////////////////////////////////////////////////////////////////
 #ifdef _MSC_VER
-#  pragma once
+#pragma once
 #endif
 #ifndef PROXY_DEBUG_H // Include guard
 #define PROXY_DEBUG_H

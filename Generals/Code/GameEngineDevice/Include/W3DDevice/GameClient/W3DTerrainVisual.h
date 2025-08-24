@@ -46,93 +46,86 @@ class WorldHeightMap;
 //-------------------------------------------------------------------------------------------------
 class W3DTerrainVisual : public TerrainVisual
 {
+  public:
+  W3DTerrainVisual();
+  virtual ~W3DTerrainVisual();
 
-public:
+  virtual void init(void);
+  virtual void reset(void);
+  virtual void update(void);
 
-	W3DTerrainVisual();
-	virtual ~W3DTerrainVisual();
+  virtual Bool load(AsciiString filename);
 
-	virtual void init( void );
-	virtual void reset( void );
-	virtual void update( void );
+  void getTerrainColorAt(Real x, Real y, RGBColor *pColor);
 
-	virtual Bool load( AsciiString filename );
+  /// get the terrain tile type at the world location in the (x,y) plane ignoring Z
+  TerrainType *getTerrainTile(Real x, Real y);
 
-	void getTerrainColorAt( Real x, Real y, RGBColor *pColor );
+  /** intersect the ray with the terrain, if a hit occurs TRUE is returned
+  and the result point on the terrain is returned in "result" */
+  virtual Bool intersectTerrain(Coord3D *rayStart, Coord3D *rayEnd, Coord3D *result);
 
-	/// get the terrain tile type at the world location in the (x,y) plane ignoring Z
-	TerrainType *getTerrainTile( Real x, Real y );
+  //
+  // water methods
+  //
+  /// enable/disable the water grid
+  virtual void enableWaterGrid(Bool enable);
+  /// set min/max height values allowed in water grid pointed to by waterTable
+  virtual void setWaterGridHeightClamps(const WaterHandle *waterTable, Real minZ, Real maxZ);
+  /// adjust fallof parameters for grid change method
+  virtual void setWaterAttenuationFactors(const WaterHandle *waterTable, Real a, Real b, Real c, Real range);
+  /// set the water table position and orientation in world space
+  virtual void setWaterTransform(const WaterHandle *waterTable, Real angle, Real x, Real y, Real z);
+  virtual void setWaterTransform(const Matrix3D *transform);
+  virtual void getWaterTransform(const WaterHandle *waterTable, Matrix3D *transform);
+  /// water grid resolution spacing
+  virtual void setWaterGridResolution(const WaterHandle *waterTable, Real gridCellsX, Real gridCellsY, Real cellSize);
+  virtual void getWaterGridResolution(const WaterHandle *waterTable, Real *gridCellsX, Real *gridCellsY, Real *cellSize);
+  /// adjust the water grid in world coords by the delta
+  virtual void changeWaterHeight(Real x, Real y, Real delta);
+  /// adjust the velocity at a water grid point corresponding to the world x,y
+  virtual void addWaterVelocity(Real worldX, Real worldY, Real velocity, Real preferredHeight);
+  virtual Bool getWaterGridHeight(Real worldX, Real worldY, Real *height);
 
-	/** intersect the ray with the terrain, if a hit occurs TRUE is returned
-	and the result point on the terrain is returned in "result" */
-	virtual Bool intersectTerrain( Coord3D *rayStart, Coord3D *rayEnd, Coord3D *result );
+  virtual void setTerrainTracksDetail(void);
+  virtual void setShoreLineDetail(void);
 
-	//
-	// water methods
-	//
-	/// enable/disable the water grid
-	virtual void enableWaterGrid( Bool enable );
-	/// set min/max height values allowed in water grid pointed to by waterTable
-	virtual void setWaterGridHeightClamps( const WaterHandle *waterTable, Real minZ, Real maxZ );
-	/// adjust fallof parameters for grid change method
-	virtual void setWaterAttenuationFactors( const WaterHandle *waterTable,
-																					 Real a, Real b, Real c, Real range );
-	/// set the water table position and orientation in world space
-	virtual void setWaterTransform( const WaterHandle *waterTable,
-																	Real angle, Real x, Real y, Real z );
-	virtual void setWaterTransform( const Matrix3D *transform );
-	virtual void getWaterTransform( const WaterHandle *waterTable, Matrix3D *transform );
-	/// water grid resolution spacing
-	virtual void setWaterGridResolution( const WaterHandle *waterTable,
-																			 Real gridCellsX, Real gridCellsY, Real cellSize );
-	virtual void getWaterGridResolution( const WaterHandle *waterTable,
-																			 Real *gridCellsX, Real *gridCellsY, Real *cellSize );
-	/// adjust the water grid in world coords by the delta
-	virtual void changeWaterHeight( Real x, Real y, Real delta );
-	/// adjust the velocity at a water grid point corresponding to the world x,y
-	virtual void addWaterVelocity( Real worldX, Real worldY,
-																 Real velocity, Real preferredHeight );
-	virtual Bool getWaterGridHeight( Real worldX, Real worldY, Real *height);
+  /// Add a bib at location.
+  void addFactionBib(Object *factionBuilding, Bool highlight, Real extra = 0);
+  /// Remove a bib.
+  void removeFactionBib(Object *factionBuilding);
 
-	virtual void setTerrainTracksDetail(void);
-	virtual void setShoreLineDetail(void);
+  /// Add a bib at location.
+  void addFactionBibDrawable(Drawable *factionBuilding, Bool highlight, Real extra = 0);
+  /// Remove a bib.
+  void removeFactionBibDrawable(Drawable *factionBuilding);
 
-	/// Add a bib at location.
-	void addFactionBib(Object *factionBuilding, Bool highlight, Real extra = 0);
-	/// Remove a bib.
-	void removeFactionBib(Object *factionBuilding);
+  virtual void removeAllBibs(void);
+  virtual void removeBibHighlighting(void);
 
-	/// Add a bib at location.
-	void addFactionBibDrawable(Drawable *factionBuilding, Bool highlight, Real extra = 0);
-	/// Remove a bib.
-	void removeFactionBibDrawable(Drawable *factionBuilding);
+  //
+  // Modify height.
+  //
+  virtual void setRawMapHeight(const ICoord2D *gridPos, Int height);
 
-	virtual void removeAllBibs(void);
-	virtual void removeBibHighlighting(void);
+  /// Replace the skybox texture
+  virtual void replaceSkyboxTextures(
+      const AsciiString *oldTexName[NumSkyboxTextures],
+      const AsciiString *newTexName[NumSkyboxTextures]);
 
-	//
-	// Modify height.
-	//
-	virtual void setRawMapHeight(const ICoord2D *gridPos, Int height);
+  protected:
+  // snapshot methods
+  virtual void crc(Xfer *xfer);
+  virtual void xfer(Xfer *xfer);
+  virtual void loadPostProcess(void);
 
-	/// Replace the skybox texture
-	virtual void replaceSkyboxTextures(const AsciiString *oldTexName[NumSkyboxTextures], const AsciiString *newTexName[NumSkyboxTextures]);
+  HeightMapRenderObjClass *m_terrainRenderObject; ///< W3D render object for terrain
+  WaterRenderObjClass *m_waterRenderObject; ///< W3D render object for water plane
+  WorldHeightMap *m_terrainHeightMap; ///< height map used for render obj building
+  Bool m_isWaterGridRenderingEnabled;
+  AsciiString m_currentSkyboxTexNames[NumSkyboxTextures]; ///< store current texture names applied to skybox.
+  AsciiString m_initialSkyboxTexNames[NumSkyboxTextures]; ///< store starting texture/default skybox textures.
 
+}; // end class W3DTerrainVisual
 
-protected:
-
-	// snapshot methods
-	virtual void crc( Xfer *xfer );
-	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess( void );
-
-	HeightMapRenderObjClass *m_terrainRenderObject;  ///< W3D render object for terrain
-	WaterRenderObjClass	*m_waterRenderObject;	///< W3D render object for water plane
-	WorldHeightMap *m_terrainHeightMap;  ///< height map used for render obj building
-	Bool m_isWaterGridRenderingEnabled;
-	AsciiString	m_currentSkyboxTexNames[NumSkyboxTextures];	///<store current texture names applied to skybox.
-	AsciiString m_initialSkyboxTexNames[NumSkyboxTextures];	///<store starting texture/default skybox textures.
-
-};  // end class W3DTerrainVisual
-
-#endif  // end __W3DTERRAINVISUAL_H_
+#endif // end __W3DTERRAINVISUAL_H_

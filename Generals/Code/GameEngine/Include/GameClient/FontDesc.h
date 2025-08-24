@@ -34,10 +34,10 @@
 
 struct FontDesc
 {
-	FontDesc(void);
-	AsciiString name;	///<name of font
-	Int	size;			///<point size
-	Bool bold;			///<is bold?
+  FontDesc(void);
+  AsciiString name; ///< name of font
+  Int size; ///< point size
+  Bool bold; ///< is bold?
 };
 
 #endif // _FONTDESC_H_

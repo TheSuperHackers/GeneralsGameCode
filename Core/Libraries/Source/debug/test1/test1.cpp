@@ -34,15 +34,15 @@ const char *DebugGetDefaultCommands(void)
 }
 
 int divByNull;
-unsigned *invalidPtr=(unsigned *)0x666;
+unsigned *invalidPtr = (unsigned *)0x666;
 
 bool crash(void)
 {
-  *invalidPtr/=divByNull;
+  *invalidPtr /= divByNull;
   return true;
 }
 
-bool thisWillCrash=crash();
+bool thisWillCrash = crash();
 
 void main(void)
 {

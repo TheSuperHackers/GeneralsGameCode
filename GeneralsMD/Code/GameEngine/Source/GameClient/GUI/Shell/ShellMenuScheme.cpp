@@ -50,7 +50,7 @@
 //-----------------------------------------------------------------------------
 // USER INCLUDES //////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 
 #include "Common/INI.h"
 #include "GameClient/ShellMenuScheme.h"
@@ -60,267 +60,259 @@
 // DEFINES ////////////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
 
-const FieldParse ShellMenuSchemeManager::m_shellMenuSchemeFieldParseTable[] =
-{
+const FieldParse ShellMenuSchemeManager::m_shellMenuSchemeFieldParseTable[] = {
 
-	{ "ImagePart",						ShellMenuSchemeManager::parseImagePart,			NULL, NULL },
-	{ "LinePart",							ShellMenuSchemeManager::parseLinePart,	NULL, NULL },
-	{ NULL,										NULL,													NULL, 0 }  // keep this last
+  { "ImagePart", ShellMenuSchemeManager::parseImagePart, NULL, NULL },
+  { "LinePart", ShellMenuSchemeManager::parseLinePart, NULL, NULL },
+  { NULL, NULL, NULL, 0 } // keep this last
 
 };
 
 //-----------------------------------------------------------------------------
 // PUBLIC FUNCTIONS ///////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-void INI::parseShellMenuSchemeDefinition( INI *ini )
+void INI::parseShellMenuSchemeDefinition(INI *ini)
 {
-	AsciiString name;
-	ShellMenuSchemeManager *SMSchemeManager;
-	ShellMenuScheme *SMScheme;
+  AsciiString name;
+  ShellMenuSchemeManager *SMSchemeManager;
+  ShellMenuScheme *SMScheme;
 
-	// read the name
-	const char* c = ini->getNextToken();
-	name.set( c );
+  // read the name
+  const char *c = ini->getNextToken();
+  name.set(c);
 
-	// find existing item if present
-	SMSchemeManager = TheShell->getShellMenuSchemeManager();
-	DEBUG_ASSERTCRASH( SMSchemeManager, ("parseShellMenuSchemeDefinition: Unable to Get SMSchemeManager") );
-	if( !SMSchemeManager )
-		return;
+  // find existing item if present
+  SMSchemeManager = TheShell->getShellMenuSchemeManager();
+  DEBUG_ASSERTCRASH(SMSchemeManager, ("parseShellMenuSchemeDefinition: Unable to Get SMSchemeManager"));
+  if (!SMSchemeManager)
+    return;
 
-	// If we have a previously allocated control bar, this will return a cleared out pointer to it so we
-	// can overwrite it
-	SMScheme = SMSchemeManager->newShellMenuScheme( name );
+  // If we have a previously allocated control bar, this will return a cleared out pointer to it so we
+  // can overwrite it
+  SMScheme = SMSchemeManager->newShellMenuScheme(name);
 
-	// sanity
-	DEBUG_ASSERTCRASH( SMScheme, ("parseControlBarSchemeDefinition: Unable to allocate Scheme '%s'", name.str()) );
+  // sanity
+  DEBUG_ASSERTCRASH(SMScheme, ("parseControlBarSchemeDefinition: Unable to allocate Scheme '%s'", name.str()));
 
-	// parse the ini definition
-	ini->initFromINI( SMScheme, SMSchemeManager->getFieldParse() );
+  // parse the ini definition
+  ini->initFromINI(SMScheme, SMSchemeManager->getFieldParse());
 
-}  // end parseCommandButtonDefinition
+} // end parseCommandButtonDefinition
 
-ShellMenuSchemeLine::ShellMenuSchemeLine( void )
+ShellMenuSchemeLine::ShellMenuSchemeLine(void)
 {
-	m_startPos.x = m_startPos.y = 0;
-	m_endPos.x = m_endPos.y = 0;
-	m_color = GAME_COLOR_UNDEFINED;
-	m_width = 1;
+  m_startPos.x = m_startPos.y = 0;
+  m_endPos.x = m_endPos.y = 0;
+  m_color = GAME_COLOR_UNDEFINED;
+  m_width = 1;
 }
-ShellMenuSchemeLine::~ShellMenuSchemeLine( void )
+ShellMenuSchemeLine::~ShellMenuSchemeLine(void)
 {
-}
-
-ShellMenuSchemeImage::ShellMenuSchemeImage( void )
-{
-	m_name.clear();
-	m_position.x = m_position.y = 0;
-	m_size.x = m_size.x = 0;
-	m_image = NULL;
 }
 
-ShellMenuSchemeImage::~ShellMenuSchemeImage( void )
+ShellMenuSchemeImage::ShellMenuSchemeImage(void)
 {
-	m_image = NULL;
+  m_name.clear();
+  m_position.x = m_position.y = 0;
+  m_size.x = m_size.x = 0;
+  m_image = NULL;
 }
 
-ShellMenuScheme::ShellMenuScheme( void )
+ShellMenuSchemeImage::~ShellMenuSchemeImage(void)
 {
-
+  m_image = NULL;
 }
 
-ShellMenuScheme::~ShellMenuScheme( void )
+ShellMenuScheme::ShellMenuScheme(void)
 {
-	ShellMenuSchemeImageListIt it = m_imageList.begin();
-	while(it != m_imageList.end())
-	{
-		ShellMenuSchemeImage *image = *it;
-		it = m_imageList.erase( it );
-		if(image)
-			delete image;
-	}
-
-	ShellMenuSchemeLineListIt lineIt = m_lineList.begin();
-	while(lineIt != m_lineList.end())
-	{
-		ShellMenuSchemeLine *line = *lineIt;
-		lineIt = m_lineList.erase( lineIt );
-		if(line)
-			delete line;
-	}
-
-
 }
 
-void ShellMenuScheme::addLine( ShellMenuSchemeLine* schemeLine )
+ShellMenuScheme::~ShellMenuScheme(void)
 {
-	if(!schemeLine)
-		return;
+  ShellMenuSchemeImageListIt it = m_imageList.begin();
+  while (it != m_imageList.end())
+  {
+    ShellMenuSchemeImage *image = *it;
+    it = m_imageList.erase(it);
+    if (image)
+      delete image;
+  }
 
-	m_lineList.push_back( schemeLine );
+  ShellMenuSchemeLineListIt lineIt = m_lineList.begin();
+  while (lineIt != m_lineList.end())
+  {
+    ShellMenuSchemeLine *line = *lineIt;
+    lineIt = m_lineList.erase(lineIt);
+    if (line)
+      delete line;
+  }
 }
 
-
-void ShellMenuScheme::addImage( ShellMenuSchemeImage* schemeImage )
+void ShellMenuScheme::addLine(ShellMenuSchemeLine *schemeLine)
 {
-	if(!schemeImage)
-		return;
+  if (!schemeLine)
+    return;
 
-	m_imageList.push_back( schemeImage );
+  m_lineList.push_back(schemeLine);
 }
 
-void ShellMenuScheme::draw( void )
+void ShellMenuScheme::addImage(ShellMenuSchemeImage *schemeImage)
 {
+  if (!schemeImage)
+    return;
 
-	ShellMenuSchemeImageListIt imageIt = m_imageList.begin();
-	while(imageIt != m_imageList.end())
-	{
-		ShellMenuSchemeImage *image = *imageIt;
-		if(image && image->m_image)
-		{
-			TheDisplay->drawImage(image->m_image, image->m_position.x, image->m_position.y,
-														image->m_position.x + image->m_size.x , image->m_position.y + image->m_size.y);
-		}
-		++imageIt;
-	}
-
-	ShellMenuSchemeLineListIt it = m_lineList.begin();
-	while(it != m_lineList.end())
-	{
-		ShellMenuSchemeLine *line = *it;
-
-		if(line)
-		{
-			TheDisplay->drawLine(line->m_startPos.x, line->m_startPos.y, line->m_endPos.x,
-														line->m_endPos.y,line->m_width, line->m_color);
-		}
-		++it;
-	}
-
-
+  m_imageList.push_back(schemeImage);
 }
 
-ShellMenuSchemeManager::ShellMenuSchemeManager( void )
+void ShellMenuScheme::draw(void)
 {
-	m_currentScheme = NULL;
+  ShellMenuSchemeImageListIt imageIt = m_imageList.begin();
+  while (imageIt != m_imageList.end())
+  {
+    ShellMenuSchemeImage *image = *imageIt;
+    if (image && image->m_image)
+    {
+      TheDisplay->drawImage(
+          image->m_image,
+          image->m_position.x,
+          image->m_position.y,
+          image->m_position.x + image->m_size.x,
+          image->m_position.y + image->m_size.y);
+    }
+    ++imageIt;
+  }
+
+  ShellMenuSchemeLineListIt it = m_lineList.begin();
+  while (it != m_lineList.end())
+  {
+    ShellMenuSchemeLine *line = *it;
+
+    if (line)
+    {
+      TheDisplay->drawLine(
+          line->m_startPos.x,
+          line->m_startPos.y,
+          line->m_endPos.x,
+          line->m_endPos.y,
+          line->m_width,
+          line->m_color);
+    }
+    ++it;
+  }
 }
 
-ShellMenuSchemeManager::~ShellMenuSchemeManager( void )
+ShellMenuSchemeManager::ShellMenuSchemeManager(void)
 {
-	m_currentScheme = NULL;
-
-
-	ShellMenuSchemeListIt it = m_schemeList.begin();
-	while(it != m_schemeList.end())
-	{
-		ShellMenuScheme *scheme = *it;
-		it = m_schemeList.erase( it );
-		if(scheme)
-			delete scheme;
-	}
-
+  m_currentScheme = NULL;
 }
 
-void ShellMenuSchemeManager::parseImagePart(INI *ini, void *instance, void* /*store*/, const void* /*userData*/)
+ShellMenuSchemeManager::~ShellMenuSchemeManager(void)
 {
-	static const FieldParse myFieldParse[] =
-		{
-			{ "Position",				INI::parseICoord2D,				NULL, offsetof( ShellMenuSchemeImage, m_position ) },
-			{ "Size",						INI::parseICoord2D,				NULL, offsetof( ShellMenuSchemeImage, m_size ) },
-      { "ImageName",			INI::parseMappedImage,		NULL, offsetof( ShellMenuSchemeImage, m_image ) },
-			{ NULL,							NULL,											NULL, 0 }  // keep this last
-		};
+  m_currentScheme = NULL;
 
-	ShellMenuSchemeImage *schemeImage = NEW ShellMenuSchemeImage;
-	ini->initFromINI(schemeImage, myFieldParse);
-	((ShellMenuScheme*)instance)->addImage(schemeImage);
-
+  ShellMenuSchemeListIt it = m_schemeList.begin();
+  while (it != m_schemeList.end())
+  {
+    ShellMenuScheme *scheme = *it;
+    it = m_schemeList.erase(it);
+    if (scheme)
+      delete scheme;
+  }
 }
 
-void ShellMenuSchemeManager::parseLinePart(INI *ini, void *instance, void* /*store*/, const void* /*userData*/)
+void ShellMenuSchemeManager::parseImagePart(INI *ini, void *instance, void * /*store*/, const void * /*userData*/)
 {
-	static const FieldParse myFieldParse[] =
-		{
-			{ "StartPosition",		INI::parseICoord2D,				NULL, offsetof( ShellMenuSchemeLine, m_startPos ) },
-			{ "EndPosition",			INI::parseICoord2D,				NULL, offsetof( ShellMenuSchemeLine, m_endPos ) },
-      { "Color",						INI::parseColorInt,				NULL, offsetof( ShellMenuSchemeLine, m_color ) },
-			{ "Width",						INI::parseInt,						NULL, offsetof( ShellMenuSchemeLine, m_width ) },
+  static const FieldParse myFieldParse[] = {
+    { "Position", INI::parseICoord2D, NULL, offsetof(ShellMenuSchemeImage, m_position) },
+    { "Size", INI::parseICoord2D, NULL, offsetof(ShellMenuSchemeImage, m_size) },
+    { "ImageName", INI::parseMappedImage, NULL, offsetof(ShellMenuSchemeImage, m_image) },
+    { NULL, NULL, NULL, 0 } // keep this last
+  };
 
-			{ NULL,								NULL,											NULL, 0 }  // keep this last
-		};
+  ShellMenuSchemeImage *schemeImage = NEW ShellMenuSchemeImage;
+  ini->initFromINI(schemeImage, myFieldParse);
+  ((ShellMenuScheme *)instance)->addImage(schemeImage);
+}
 
-	ShellMenuSchemeLine *schemeLine = NEW ShellMenuSchemeLine;
-	ini->initFromINI(schemeLine, myFieldParse);
-	((ShellMenuScheme*)instance)->addLine(schemeLine);
+void ShellMenuSchemeManager::parseLinePart(INI *ini, void *instance, void * /*store*/, const void * /*userData*/)
+{
+  static const FieldParse myFieldParse[] = {
+    { "StartPosition", INI::parseICoord2D, NULL, offsetof(ShellMenuSchemeLine, m_startPos) },
+    { "EndPosition", INI::parseICoord2D, NULL, offsetof(ShellMenuSchemeLine, m_endPos) },
+    { "Color", INI::parseColorInt, NULL, offsetof(ShellMenuSchemeLine, m_color) },
+    { "Width", INI::parseInt, NULL, offsetof(ShellMenuSchemeLine, m_width) },
 
+    { NULL, NULL, NULL, 0 } // keep this last
+  };
+
+  ShellMenuSchemeLine *schemeLine = NEW ShellMenuSchemeLine;
+  ini->initFromINI(schemeLine, myFieldParse);
+  ((ShellMenuScheme *)instance)->addLine(schemeLine);
 }
 
 ShellMenuScheme *ShellMenuSchemeManager::newShellMenuScheme(AsciiString name)
 {
-	ShellMenuSchemeListIt it;
-	it = m_schemeList.begin();
-	name.toLower();
-	while(it != m_schemeList.end())
-	{
-		ShellMenuScheme *scheme = *it;
-		if(scheme->m_name.compare(name) == 0)
-		{
-			m_schemeList.erase( it );
-			delete scheme;
-			break;
-		}
-		else
-			++it;
-	}
-	ShellMenuScheme *newScheme = NEW ShellMenuScheme;
-	newScheme->m_name.set(name);
-	m_schemeList.push_back(newScheme);
-	return newScheme;
+  ShellMenuSchemeListIt it;
+  it = m_schemeList.begin();
+  name.toLower();
+  while (it != m_schemeList.end())
+  {
+    ShellMenuScheme *scheme = *it;
+    if (scheme->m_name.compare(name) == 0)
+    {
+      m_schemeList.erase(it);
+      delete scheme;
+      break;
+    }
+    else
+      ++it;
+  }
+  ShellMenuScheme *newScheme = NEW ShellMenuScheme;
+  newScheme->m_name.set(name);
+  m_schemeList.push_back(newScheme);
+  return newScheme;
 }
 
-void ShellMenuSchemeManager::init( void )
+void ShellMenuSchemeManager::init(void)
 {
-	INI ini;
-	// Read from INI all the ControlBarSchemes
-	ini.load( AsciiString( "Data\\INI\\Default\\ShellMenuScheme.ini" ), INI_LOAD_OVERWRITE, NULL );
-	ini.load( AsciiString( "Data\\INI\\ShellMenuScheme.ini" ), INI_LOAD_OVERWRITE, NULL );
-
+  INI ini;
+  // Read from INI all the ControlBarSchemes
+  ini.load(AsciiString("Data\\INI\\Default\\ShellMenuScheme.ini"), INI_LOAD_OVERWRITE, NULL);
+  ini.load(AsciiString("Data\\INI\\ShellMenuScheme.ini"), INI_LOAD_OVERWRITE, NULL);
 }
 
-void ShellMenuSchemeManager::setShellMenuScheme( AsciiString name )
+void ShellMenuSchemeManager::setShellMenuScheme(AsciiString name)
 {
-	if(name.isEmpty())
-	{
-		m_currentScheme = NULL;
-		return;
-	}
+  if (name.isEmpty())
+  {
+    m_currentScheme = NULL;
+    return;
+  }
 
-	ShellMenuSchemeListIt it;
-	it = m_schemeList.begin();
-	name.toLower();
-	while(it != m_schemeList.end())
-	{
-		ShellMenuScheme *scheme = *it;
-		if(scheme->m_name.compare(name) == 0)
-		{
-			m_currentScheme = scheme;
-			break;
-		}
-		++it;
-	}
+  ShellMenuSchemeListIt it;
+  it = m_schemeList.begin();
+  name.toLower();
+  while (it != m_schemeList.end())
+  {
+    ShellMenuScheme *scheme = *it;
+    if (scheme->m_name.compare(name) == 0)
+    {
+      m_currentScheme = scheme;
+      break;
+    }
+    ++it;
+  }
 }
 
-void ShellMenuSchemeManager::draw( void )
+void ShellMenuSchemeManager::draw(void)
 {
-	if(m_currentScheme)
-		m_currentScheme->draw();
+  if (m_currentScheme)
+    m_currentScheme->draw();
 }
 
-void ShellMenuSchemeManager::update( void )
+void ShellMenuSchemeManager::update(void)
 {
-
 }
 //-----------------------------------------------------------------------------
 // PRIVATE FUNCTIONS //////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-
