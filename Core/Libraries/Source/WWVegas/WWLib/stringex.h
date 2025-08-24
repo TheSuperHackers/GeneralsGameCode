@@ -62,6 +62,8 @@ template<size_t Size> size_t strlmcat_t(char (&dst)[Size], const char *src);
 
 // Implementation
 
+// Templated strlen.
+// Returns the number of characters until the first zero character.
 template<typename T> size_t strlen_t(const T *str)
 {
 	const T* begin = str;
@@ -70,6 +72,8 @@ template<typename T> size_t strlen_t(const T *str)
 	return static_cast<size_t>(str - begin);
 }
 
+// Templated strlen.
+// Returns the number of characters until the first zero character or when maxlen is reached.
 template<typename T> size_t strnlen_t(const T *str, size_t maxlen)
 {
 	const T* begin = str;
@@ -84,9 +88,12 @@ inline size_t strnlen(const char *str, size_t maxlen) { return strnlen_t(str, ma
 inline size_t wcsnlen(const wchar_t *str, size_t maxlen) { return strnlen_t(str, maxlen); }
 #endif
 
+// Templated strlcpy. Prefer using this over strncpy.
+// Copies src into dst until dstsize minus one. Always null terminates.
+// Returns the length of src, excluding the null terminator.
 template<typename T> size_t strlcpy_t(T *dst, const T *src, size_t dstsize)
 {
-	size_t srclen = strlen_t(src);
+	const size_t srclen = strlen_t(src);
 	if (dstsize != 0)
 	{
 		size_t copylen = (srclen >= dstsize) ? dstsize - 1 : srclen;
@@ -96,10 +103,13 @@ template<typename T> size_t strlcpy_t(T *dst, const T *src, size_t dstsize)
 	return srclen; // length tried to create
 }
 
+// Templated strlcat. Prefer using this over strncpy.
+// Appends src into dst until dstsize minus one. Always null terminates.
+// Returns the length of dst + src, excluding the null terminator.
 template<typename T> size_t strlcat_t(T *dst, const T *src, size_t dstsize)
 {
-	size_t dstlen = strnlen_t(dst, dstsize);
-	size_t srclen = strlen_t(src);
+	const size_t dstlen = strnlen_t(dst, dstsize);
+	const size_t srclen = strlen_t(src);
 	if (dstlen == dstsize)
 	{
 		return dstsize + srclen; // no space to append
@@ -126,9 +136,12 @@ inline size_t strlcat(char *dst, const char *src, size_t dstsize) { return strlc
 inline size_t wcslcpy(wchar_t *dst, const wchar_t *src, size_t dstsize) { return strlcpy_t(dst, src, dstsize); }
 inline size_t wcslcat(wchar_t *dst, const wchar_t *src, size_t dstsize) { return strlcat_t(dst, src, dstsize); }
 
+// Templated strlmove. Prefer using this over strlcpy if dst and src overlap.
+// Moves src into dst until dstsize minus one. Always null terminates.
+// Returns the length of src, excluding the null terminator.
 template<typename T> size_t strlmove_t(T *dst, const T *src, size_t dstsize)
 {
-	size_t srclen = strlen_t(src);
+	const size_t srclen = strlen_t(src);
 	if (dstsize > 0)
 	{
 		size_t copylen = (srclen >= dstsize) ? dstsize - 1 : srclen;
@@ -138,10 +151,13 @@ template<typename T> size_t strlmove_t(T *dst, const T *src, size_t dstsize)
 	return srclen; // length tried to create
 }
 
+// Templated strlmcat. Prefer using this over strlcat if dst and src overlap.
+// Appends src into dst until dstsize minus one. Always null terminates.
+// Returns the length of dst + src, excluding the null terminator.
 template<typename T> size_t strlmcat_t(T *dst, const T *src, size_t dstsize)
 {
-	size_t dstlen = strnlen_t(dst, dstsize);
-	size_t srclen = strlen_t(src);
+	const size_t dstlen = strnlen_t(dst, dstsize);
+	const size_t srclen = strlen_t(src);
 	if (dstlen == dstsize)
 	{
 		return dstsize + srclen; // no space to append
