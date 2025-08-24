@@ -1461,6 +1461,12 @@ void ControlBar::update( void )
 
 		Object* obj = drawToEvaluateFor ? drawToEvaluateFor->getObject() : NULL;
 		setPortraitByObject(obj);
+
+		const Coord3D* exitPosition = NULL;
+		if (obj && obj->getControllingPlayer() == getCurrentlyViewedPlayer() && obj->getObjectExitInterface())
+			exitPosition = obj->getObjectExitInterface()->getRallyPoint();
+
+		showRallyPoint(exitPosition);
 		return;
 	}
 
@@ -2697,58 +2703,53 @@ void ControlBar::setPortraitByObject( Object *obj )
 /** Show a rally point marker at the world location specified.  If no location is specified
 	* any marker that we might have visible is hidden */
 // ------------------------------------------------------------------------------------------------
-void ControlBar::showRallyPoint( const Coord3D *loc )
+void ControlBar::showRallyPoint(const Coord3D* loc)
 {
-
 	// if loc is NULL, destroy any rally point drawble we have shown
-	if( loc == NULL )
+	if (loc == NULL)
 	{
-
 		// destroy rally point drawable if present
-		if( m_rallyPointDrawableID != INVALID_DRAWABLE_ID )
-			TheGameClient->destroyDrawable( TheGameClient->findDrawableByID( m_rallyPointDrawableID ) );
+		if (m_rallyPointDrawableID != INVALID_DRAWABLE_ID)
+			TheGameClient->destroyDrawable(TheGameClient->findDrawableByID(m_rallyPointDrawableID));
+
 		m_rallyPointDrawableID = INVALID_DRAWABLE_ID;
+		return;
+	}
 
-	}  // end if
-	else
+	Drawable* marker = NULL;
+
+	// create a rally point drawble if necessary
+	if (m_rallyPointDrawableID == INVALID_DRAWABLE_ID)
 	{
-		Drawable *marker = NULL;
-
-		// create a rally point drawble if necessary
-		if( m_rallyPointDrawableID == INVALID_DRAWABLE_ID )
+		const ThingTemplate* ttn = TheThingFactory->findTemplate("RallyPointMarker");
+		marker = TheThingFactory->newDrawable(ttn);
+		DEBUG_ASSERTCRASH(marker, ("showRallyPoint: Unable to create rally point drawable"));
+		if (marker)
 		{
+			marker->setDrawableStatus(DRAWABLE_STATUS_NO_SAVE);
+			m_rallyPointDrawableID = marker->getID();
+		}
+	}
+	else
+		marker = TheGameClient->findDrawableByID(m_rallyPointDrawableID);
 
-			const ThingTemplate* ttn = TheThingFactory->findTemplate("RallyPointMarker");
-			marker = TheThingFactory->newDrawable( ttn );
-			DEBUG_ASSERTCRASH( marker, ("showRallyPoint: Unable to create rally point drawable") );
-			if (marker)
-			{
-				marker->setDrawableStatus(DRAWABLE_STATUS_NO_SAVE);
-				m_rallyPointDrawableID = marker->getID();
-			}
+	// sanity
+	DEBUG_ASSERTCRASH(marker, ("showRallyPoint: No rally point marker found"));
 
-		}  // end if
-		else
-			marker = TheGameClient->findDrawableByID( m_rallyPointDrawableID );
+	// set the position of the rally point drawble to the position passed in
+	marker->setPosition(loc);
+	marker->setOrientation(TheGlobalData->m_downwindAngle); // To blow down wind -- ML
 
-		// sanity
-		DEBUG_ASSERTCRASH( marker, ("showRallyPoint: No rally point marker found" ) );
-
-		// set the position of the rally point drawble to the position passed in
-		marker->setPosition( loc );
-		marker->setOrientation( TheGlobalData->m_downwindAngle );//To blow down wind -- ML
-
-		// set the marker colors to that of the local player
-		Player *player = ThePlayerList->getLocalPlayer();
-
+	// set the marker colors to that of the local player
+	Player* player = TheControlBar->getCurrentlyViewedPlayer();
+	if (player)
+	{
 		if (TheGlobalData->m_timeOfDay == TIME_OF_DAY_NIGHT)
-			marker->setIndicatorColor( player->getPlayerNightColor() );
+			marker->setIndicatorColor(player->getPlayerNightColor());
 		else
-			marker->setIndicatorColor( player->getPlayerColor() );
-
-	}  // end else
-
-}  // end showRallyPoint
+			marker->setIndicatorColor(player->getPlayerColor());
+	}
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Show a rally point marker at the world location specified.  If no location is specified

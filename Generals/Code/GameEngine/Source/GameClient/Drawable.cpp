@@ -63,6 +63,7 @@
 #include "GameLogic/Weapon.h"
 
 #include "GameClient/Anim2D.h"
+#include "GameClient/ControlBar.h"
 #include "GameClient/Display.h"
 #include "GameClient/DisplayStringManager.h"
 #include "GameClient/Drawable.h"
@@ -2285,7 +2286,7 @@ Bool Drawable::drawsAnyUIText( void )
 		return FALSE;
 
 	const Object *obj = getObject();
-	if ( !obj || !obj->isLocallyControlled() )
+	if ( !obj || obj->getControllingPlayer() != TheControlBar->getCurrentlyViewedPlayer())
 		return FALSE;
 
 	Player *owner = obj->getControllingPlayer();
@@ -2434,7 +2435,7 @@ void Drawable::drawAmmo( const IRegion2D *healthBarRegion )
 	if (!(
 				TheGlobalData->m_showObjectHealth &&
 				(isSelected() || (TheInGameUI && (TheInGameUI->getMousedOverDrawableID() == getID()))) &&
-				obj->getControllingPlayer() == ThePlayerList->getLocalPlayer()
+				obj->getControllingPlayer() == TheControlBar->getCurrentlyViewedPlayer()
 			))
 		return;
 
@@ -2492,7 +2493,7 @@ void Drawable::drawContained( const IRegion2D *healthBarRegion )
 	if (!(
 				TheGlobalData->m_showObjectHealth &&
 				(isSelected() || (TheInGameUI && (TheInGameUI->getMousedOverDrawableID() == getID()))) &&
-				obj->getControllingPlayer() == ThePlayerList->getLocalPlayer()
+				obj->getControllingPlayer() == TheControlBar->getCurrentlyViewedPlayer()
 			))
 		return;
 
@@ -2965,7 +2966,7 @@ void Drawable::drawBombed(const IRegion2D* healthBarRegion)
 	UnsignedInt now = TheGameLogic->getFrame();
 
 	if( obj->testWeaponSetFlag( WEAPONSET_CARBOMB ) &&
-				obj->getControllingPlayer() == ThePlayerList->getLocalPlayer())
+				obj->getControllingPlayer() == TheControlBar->getCurrentlyViewedPlayer())
 	{
 		if( !getIconInfo()->m_icon[ ICON_CARBOMB ] )
 			getIconInfo()->m_icon[ ICON_CARBOMB ] = newInstance(Anim2D)( s_animationTemplates[ ICON_CARBOMB ], TheAnim2DCollection );
