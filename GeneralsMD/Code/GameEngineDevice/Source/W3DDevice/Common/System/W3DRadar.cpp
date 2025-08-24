@@ -40,6 +40,7 @@
 #include "GameLogic/Object.h"
 
 #include "GameClient/Color.h"
+#include "GameClient/ControlBar.h"
 #include "GameClient/Display.h"
 #include "GameClient/GameClient.h"
 #include "GameClient/GameWindow.h"
@@ -690,7 +691,7 @@ void W3DRadar::renderObjectList( const RadarObject *listHead, TextureClass *text
 		// Now it twinkles for any stealthed object, whether locally controlled or neutral-observier-viewed
 		if( obj->testStatus( OBJECT_STATUS_STEALTHED ) )
 		{
-      if ( ThePlayerList->getLocalPlayer()->getRelationship(obj->getTeam()) == ENEMIES )
+      if ( TheControlBar->getCurrentlyViewedPlayerRelationship(obj->getTeam()) == ENEMIES )
         if( !obj->testStatus( OBJECT_STATUS_DETECTED ) && !obj->testStatus( OBJECT_STATUS_DISGUISED ) )
 				  skip = TRUE;
 

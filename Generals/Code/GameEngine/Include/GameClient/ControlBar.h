@@ -733,6 +733,8 @@ public:
 
 	/// Returns the currently viewed player. May return NULL if no player is selected while observing.
 	Player* getCurrentlyViewedPlayer();
+	/// Returns the relationship with the currently viewed player. May return NEUTRAL if no player is selected while observing.
+	Relationship getCurrentlyViewedPlayerRelationship(const Team* team);
 
 //	ControlBarResizer *getControlBarResizer( void ) {return m_controlBarResizer;}
 
