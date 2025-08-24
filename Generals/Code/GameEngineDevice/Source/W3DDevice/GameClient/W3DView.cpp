@@ -1652,7 +1652,7 @@ void W3DView::scrollBy( Coord2D *delta )
 
 		start.X = getWidth();
 		start.Y = getHeight();
-		Real aspect = getHeight() == 0 ? 1 : getWidth()/getHeight();
+		Real aspect = getHeight() == 0 ? 1 : (Real)getWidth() / (Real)getHeight();
 		end.X = start.X + delta->x * SCROLL_RESOLUTION;
 		end.Y = start.Y + delta->y * SCROLL_RESOLUTION*aspect;
 
