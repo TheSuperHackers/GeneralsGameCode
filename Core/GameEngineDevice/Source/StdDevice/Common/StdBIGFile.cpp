@@ -38,7 +38,9 @@
 // StdBIGFile::StdBIGFile
 //============================================================================
 
-StdBIGFile::StdBIGFile()
+StdBIGFile::StdBIGFile(AsciiString name, AsciiString path)
+	: m_name(name)
+	, m_path(path)
 {
 
 }

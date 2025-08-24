@@ -40,6 +40,7 @@
 // for now we maintain old legacy files
 // #define MAINTAIN_LEGACY_FILES
 
+#include "Common/ArchiveFile.h"
 #include "Common/Debug.h"
 #include "Common/file.h"
 #include "Common/FileSystem.h"
@@ -47,9 +48,11 @@
 #include "Common/MapObject.h"
 #include "Common/Registry.h"
 #include "W3DDevice/GameClient/W3DFileSystem.h"
-// DEFINES ////////////////////////////////////////////////////////////////////////////////////////
 
 #include <io.h>
+#include <Utility/stdio_adapter.h>
+
+// DEFINES ////////////////////////////////////////////////////////////////////////////////////////
 
 //-------------------------------------------------------------------------------------------------
 /** Game file access.  At present this allows us to access test assets, assets from
@@ -71,9 +74,9 @@ typedef enum
 GameFileClass::GameFileClass( char const *filename )
 {
 
-	m_fileExists = FALSE;
 	m_theFile = NULL;
-	m_filePath[ 0 ] = 0;
+	m_fileExists = FALSE;
+	m_filePath[0] = 0;
 	m_filename[0] = 0;
 
 	if( filename )
@@ -120,6 +123,36 @@ inline static Bool isImageFileType( GameFileType fileType )
 }
 
 //-------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------
+static GameFileType getFileType( char const *filename )
+{
+	const Int EXT_LEN = 32;
+	char extension[EXT_LEN];
+	extension[0] = 0;
+	Int i = strlen(filename);
+	i--;
+	Int extLen = 1;
+	while(i>0 && extLen < EXT_LEN) {
+		if (filename[i] == '.') {
+			strcpy(extension, filename+i);
+			break;
+		}
+		i--;
+		extLen++;
+	}
+
+	// test the extension to recognize a few key file types
+	if( stricmp( extension, ".w3d" ) == 0 )
+		return FILE_TYPE_W3D;
+	else if( stricmp( extension, ".tga" ) == 0 )
+		return FILE_TYPE_TGA;
+	else if( stricmp( extension, ".dds" ) == 0 )
+		return FILE_TYPE_DDS;
+	else
+		return FILE_TYPE_COMPLETELY_UNKNOWN;  // MBL FILE_TYPE_UNKNOWN change due to compile error
+}
+
+//-------------------------------------------------------------------------------------------------
 /**
 	Sets the file name, and finds the GDI asset if present.
 
@@ -146,43 +179,7 @@ char const * GameFileClass::Set_Name( char const *filename )
 	// save the filename
 	strncpy( m_filename, filename, _MAX_PATH );
 
-	char name[_MAX_PATH];
-	const Int EXT_LEN = 32;
-	char extension[EXT_LEN];
-	extension[0] = 0;
-	strcpy(name, filename);
-	Int i = strlen(name);
-	i--;
-	Int extLen = 1;
-	while(i>0 && extLen < EXT_LEN) {
-		if (name[i] == '.') {
-			strcpy(extension, name+i);
-			name[i] = 0;
-			break;
-		}
-		i--;
-		extLen++;
-	}
-	Int j = 0;
-	// Strip out spaces.
-	for (i=0; name[i]; i++) {
-		if (name[i] != ' ') {
-			name[j] = name[i];
-			j++;
-		}
-	}
-	name[j] = 0;
-
-	// test the extension to recognize a few key file types
-	GameFileType fileType = FILE_TYPE_COMPLETELY_UNKNOWN;  // MBL FILE_TYPE_UNKNOWN change due to compile error
-	if( stricmp( extension, ".w3d" ) == 0 )
-		fileType = FILE_TYPE_W3D;
-	else if( stricmp( extension, ".tga" ) == 0 )
-		fileType = FILE_TYPE_TGA;
-	else if( stricmp( extension, ".dds" ) == 0 )
-		fileType = FILE_TYPE_DDS;
-
-
+	GameFileType fileType = getFileType(filename);
 
 	// We need to be able to grab w3d's from a localization dir, since Germany hates exploding people units.
 	if( fileType == FILE_TYPE_W3D )
@@ -192,9 +189,8 @@ char const * GameFileClass::Set_Name( char const *filename )
 		strcat( m_filePath, filename );
 
 	}  // end if
-
 	// We need to be able to grab images from a localization dir, because Art has a fetish for baked-in text.  Munkee.
-	if( isImageFileType(fileType) )
+	else if( isImageFileType(fileType) )
 	{
 		static const char *localizedPathFormat = "Data/%s/Art/Textures/";
 		sprintf(m_filePath,localizedPathFormat, GetRegistryLanguage().str());
@@ -298,7 +294,7 @@ char const * GameFileClass::Set_Name( char const *filename )
 			strcat( m_filePath, filename );
 
 		}  // end if
-		if( isImageFileType(fileType) )
+		else if( isImageFileType(fileType) )
 		{
 			sprintf(m_filePath,USER_TGA_DIR_PATH, TheGlobalData->getPath_UserData().str());
 			//strcpy( m_filePath, USER_TGA_DIR_PATH );
@@ -312,10 +308,10 @@ char const * GameFileClass::Set_Name( char const *filename )
 	}  // end if
 
 
-	// We Need to be able to "temporarily copy over the map preview for whichever directory it came from
+	// We need to be able to temporarily copy over the map preview for whichever directory it came from
 	if( m_fileExists == FALSE  && TheGlobalData)
 	{
-		if( fileType == FILE_TYPE_TGA ) // just TGA, since we don't dds previews
+		if( fileType == FILE_TYPE_TGA ) // just TGA, since we don't do dds previews
 		{
 			sprintf(m_filePath,MAP_PREVIEW_DIR_PATH, TheGlobalData->getPath_UserData().str());
 			//strcpy( m_filePath, USER_TGA_DIR_PATH );
@@ -373,11 +369,9 @@ int  GameFileClass::Open(int rights)
 		return(false);
 	}
 
-	// just open up the file in m_filePath
 	m_theFile = TheFileSystem->openFile( m_filePath, File::READ | File::BINARY );
 
 	return (m_theFile != NULL);
-
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -448,12 +442,16 @@ void GameFileClass::Close(void)
 extern W3DFileSystem *TheW3DFileSystem = NULL;
 
 //-------------------------------------------------------------------------------------------------
-/** Constructor.  Creating an instance of this class overrices the default
+/** Constructor.  Creating an instance of this class overrides the default
 W3D file factory.  */
 //-------------------------------------------------------------------------------------------------
 W3DFileSystem::W3DFileSystem(void)
 {
 	_TheFileFactory = this; // override the w3d file factory.
+
+#if PRIORITIZE_TEXTURES_BY_SIZE
+	reprioritizeTexturesBySize();
+#endif
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -481,3 +479,75 @@ void W3DFileSystem::Return_File( FileClass *file )
 	delete file;
 }
 
+//-------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------
+void W3DFileSystem::reprioritizeTexturesBySize()
+{
+	{
+		ArchivedDirectoryInfo* dirInfo = TheArchiveFileSystem->friend_getArchivedDirectoryInfo(TGA_DIR_PATH);
+		if (dirInfo != NULL)
+			reprioritizeTexturesBySize(*dirInfo);
+	}
+
+	{
+		char path[_MAX_PATH];
+		snprintf(path, ARRAY_SIZE(path), "Data/%s/Art/Textures/", GetRegistryLanguage().str());
+		ArchivedDirectoryInfo* dirInfo = TheArchiveFileSystem->friend_getArchivedDirectoryInfo(path);
+		if (dirInfo != NULL)
+			reprioritizeTexturesBySize(*dirInfo);
+	}
+}
+
+//-------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------
+void W3DFileSystem::reprioritizeTexturesBySize(ArchivedDirectoryInfo& dirInfo)
+{
+	ArchivedFileLocationMap::iterator it0;
+	ArchivedFileLocationMap::iterator it1 = dirInfo.m_files.begin();
+	ArchivedFileLocationMap::iterator end = dirInfo.m_files.end();
+
+	if (it1 != end)
+	{
+		it0 = it1;
+		++it1;
+	}
+
+	// This algorithm only prioritizes the first item in the multimap.
+	for (; it1 != end; ++it1)
+	{
+		const AsciiString& file0 = it0->first;
+		const AsciiString& file1 = it1->first;
+
+		if (file0 == file1)
+		{
+			GameFileType type = getFileType(file0.str());
+			if (isImageFileType(type))
+			{
+				ArchiveFile* archive0 = it0->second;
+				ArchiveFile* archive1 = it1->second;
+				FileInfo info0;
+				FileInfo info1;
+				AsciiString filepath(dirInfo.m_path);
+				filepath.concat(file0);
+
+				if (archive0->getFileInfo(filepath, &info0) && archive1->getFileInfo(filepath, &info1))
+				{
+					if (info0.size() < info1.size())
+					{
+						std::swap(it0->second, it1->second);
+
+#if ENABLE_FILESYSTEM_LOGGING
+						DEBUG_LOG(("W3DFileSystem::reprioritizeTexturesBySize - prioritize %s(%ukb) from %s over %s(%ukb) from %s",
+							file1.str(), UnsignedInt(info1.size() / 1024), archive1->getName().str(),
+							file0.str(), UnsignedInt(info0.size() / 1024), archive0->getName().str()));
+#endif
+					}
+				}
+			}
+		}
+		else
+		{
+			it0 = it1;
+		}
+	}
+}

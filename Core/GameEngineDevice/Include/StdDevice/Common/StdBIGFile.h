@@ -38,7 +38,7 @@
 class StdBIGFile : public ArchiveFile
 {
 	public:
-		StdBIGFile();
+		StdBIGFile(AsciiString name, AsciiString path);
 		virtual ~StdBIGFile();
 
 		virtual Bool					getFileInfo(const AsciiString& filename, FileInfo *fileInfo) const;	///< fill in the fileInfo struct with info about the requested file.

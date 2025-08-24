@@ -90,50 +90,46 @@ ArchiveFile::~ArchiveFile()
 }
 
 ArchiveFile::ArchiveFile()
+	: m_file(NULL)
 {
-	m_rootDirectory.clear();
 }
 
 void ArchiveFile::addFile(const AsciiString& path, const ArchivedFileInfo *fileInfo)
 {
-	AsciiString temp;
-	temp = path;
-	temp.toLower();
-	AsciiString token;
-	AsciiString debugpath;
-
 	DetailedArchivedDirectoryInfo *dirInfo = &m_rootDirectory;
 
-	temp.nextToken(&token, "\\/");
+	AsciiString token;
+	AsciiString tokenizer = path;
+	tokenizer.toLower();
+	tokenizer.nextToken(&token, "\\/");
 
-	while (token.getLength() > 0) {
-		if (dirInfo->m_directories.find(token) == dirInfo->m_directories.end())
+	while (token.getLength() > 0)
+	{
+		DetailedArchivedDirectoryInfoMap::iterator tempiter = dirInfo->m_directories.find(token);
+		if (tempiter == dirInfo->m_directories.end())
 		{
-			dirInfo->m_directories[token].clear();
-			dirInfo->m_directories[token].m_directoryName = token;
+			dirInfo = &(dirInfo->m_directories[token]);
+			dirInfo->m_directoryName = token;
+		}
+		else
+		{
+			dirInfo = &tempiter->second;
 		}
 
-		debugpath.concat(token);
-		debugpath.concat('\\');
-		dirInfo = &(dirInfo->m_directories[token]);
-		temp.nextToken(&token, "\\/");
+		tokenizer.nextToken(&token, "\\/");
 	}
 
 	dirInfo->m_files[fileInfo->m_filename] = *fileInfo;
-	//path.concat(fileInfo->m_filename);
 }
 
 void ArchiveFile::getFileListInDirectory(const AsciiString& currentDirectory, const AsciiString& originalDirectory, const AsciiString& searchName, FilenameList &filenameList, Bool searchSubdirectories) const
 {
-
-	AsciiString searchDir;
 	const DetailedArchivedDirectoryInfo *dirInfo = &m_rootDirectory;
 
-	searchDir = originalDirectory;
-	searchDir.toLower();
 	AsciiString token;
-
-	searchDir.nextToken(&token, "\\/");
+	AsciiString tokenizer = originalDirectory;
+	tokenizer.toLower();
+	tokenizer.nextToken(&token, "\\/");
 
 	while (token.getLength() > 0) {
 
@@ -148,7 +144,7 @@ void ArchiveFile::getFileListInDirectory(const AsciiString& currentDirectory, co
 			return;
 		}
 
-		searchDir.nextToken(&token, "\\/");
+		tokenizer.nextToken(&token, "\\/");
 	}
 
 	getFileListInDirectory(dirInfo, originalDirectory, searchName, filenameList, searchSubdirectories);
@@ -198,17 +194,15 @@ void ArchiveFile::attachFile(File *file)
 
 const ArchivedFileInfo * ArchiveFile::getArchivedFileInfo(const AsciiString& filename) const
 {
-	AsciiString path;
-	path = filename;
-	path.toLower();
-	AsciiString token;
-
 	const DetailedArchivedDirectoryInfo *dirInfo = &m_rootDirectory;
 
-	path.nextToken(&token, "\\/");
+	AsciiString token;
+	AsciiString tokenizer = filename;
+	tokenizer.toLower();
+	tokenizer.nextToken(&token, "\\/");
 
-	while ((token.find('.') == NULL) || (path.find('.') != NULL)) {
-
+	while (!token.find('.') || tokenizer.find('.'))
+	{
 		DetailedArchivedDirectoryInfoMap::const_iterator it = dirInfo->m_directories.find(token);
 		if (it != dirInfo->m_directories.end())
 		{
@@ -219,7 +213,7 @@ const ArchivedFileInfo * ArchiveFile::getArchivedFileInfo(const AsciiString& fil
 			return NULL;
 		}
 
-		path.nextToken(&token, "\\/");
+		tokenizer.nextToken(&token, "\\/");
 	}
 
 	ArchivedFileInfoMap::const_iterator it = dirInfo->m_files.find(token);
