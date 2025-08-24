@@ -28,7 +28,7 @@
 #include "GameNetwork/networkutil.h"
 
 Int MAX_FRAMES_AHEAD = 128;
-Int MIN_RUNAHEAD = 10;
+Int MIN_RUNAHEAD = 4;
 Int FRAME_DATA_LENGTH = (MAX_FRAMES_AHEAD+1)*2;
 Int FRAMES_TO_KEEP = (MAX_FRAMES_AHEAD/2) + 1;
 
