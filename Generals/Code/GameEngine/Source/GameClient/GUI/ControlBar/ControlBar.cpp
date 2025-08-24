@@ -167,18 +167,15 @@ Player* ControlBar::getCurrentlyViewedPlayer()
 
 Relationship ControlBar::getCurrentlyViewedPlayerRelationship(const Team* team)
 {
-	Player* player = NULL;
-
 	if (TheControlBar->isObserverControlBarOn())
 	{
-		player = TheControlBar->getObserverLookAtPlayer();
-		if (!player)
+		if (!TheControlBar->getObserverLookAtPlayer())
 			return NEUTRAL;
-	}
-	else
-		player = ThePlayerList->getLocalPlayer();
 
-	return player->getRelationship(team);
+		return TheControlBar->getObserverLookAtPlayer()->getRelationship(team);
+	}
+
+	return ThePlayerList->getLocalPlayer()->getRelationship(team);
 }
 
 void ControlBar::populatePurchaseScience( Player* player )
