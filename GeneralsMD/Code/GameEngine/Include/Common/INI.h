@@ -180,9 +180,6 @@ public:
 	//  Example 2:  "Data\INI\Armor"          loads "Data\INI\Armor.ini"          and all *.ini files in "Data\INI\Armor"
 	//  Example 3:  "Data\INI\Default\Armor"  loads "Data\INI\Default\Armor.ini"  and all *.ini files in "Data\INI\Default\Armor"
 	//
-	// In Generals a special rules applies: INI files will also be searched in a "Generals" directory (and its subdirectories) to hide them from Zero Hour.
-	//  Example 4:  "Data\INI\Armor.ini"      loads "Data\INI\Armor.ini"          and all *.ini files in "Data\INI\Armor" and "Data\INI\Generals\Armor"
-	//
 	// Throws if not a single INI file is found or one is not read correctly.
 	UnsignedInt loadFileDirectory( AsciiString fileDirName, INILoadType loadType, Xfer *pXfer, Bool subdirs = TRUE );
 

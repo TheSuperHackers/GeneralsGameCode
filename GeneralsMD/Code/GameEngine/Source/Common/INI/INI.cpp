@@ -229,19 +229,6 @@ UnsignedInt INI::loadFileDirectory( AsciiString fileDirName, INILoadType loadTyp
 		filesRead += load(iniFile, loadType, pXfer);
 	}
 
-#if RTS_GENERALS
-	// Load any additional ini files from a "Generals\filename" directory and its subdirectories.
-	const char* begin = iniDir.str();
-	const char* end = iniDir.reverseFind('\\');
-	if (end == NULL)
-		end = begin;
-	const int len =  (int)(end - begin);
-	AsciiString generalsIniDir(begin, len);
-	generalsIniDir.concat("\\Generals");
-	generalsIniDir.concat(end);
-	filesRead += loadDirectory(generalsIniDir, loadType, pXfer, subdirs);
-#endif
-
 	// Load any additional ini files from a "filename" directory and its subdirectories.
 	filesRead += loadDirectory(iniDir, loadType, pXfer, subdirs);
 
