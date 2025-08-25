@@ -138,7 +138,7 @@ void GlobalLanguage::init( void )
 
 	INI ini;
 	AsciiString fname;
-	fname.format("Data\\%s\\Language.ini", GetRegistryLanguage().str());
+	fname.format("Data\\%s\\Language", GetRegistryLanguage().str());
 
 	OSVERSIONINFO	osvi;
 	osvi.dwOSVersionInfoSize=sizeof(OSVERSIONINFO);

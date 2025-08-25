@@ -55,7 +55,7 @@ ChallengeGenerals::~ChallengeGenerals()
 void ChallengeGenerals::init( void )
 {
 	INI ini;
-	ini.loadFileDirectory( AsciiString( "Data\\INI\\ChallengeMode.ini" ), INI_LOAD_OVERWRITE, NULL );
+	ini.loadFileDirectory( AsciiString( "Data\\INI\\ChallengeMode" ), INI_LOAD_OVERWRITE, NULL );
 }
 
 

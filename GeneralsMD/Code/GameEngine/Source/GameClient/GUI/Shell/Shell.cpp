@@ -150,8 +150,8 @@ void Shell::init( void )
 {
 	INI ini;
 	// Read from INI all the ShellMenuScheme
-	ini.loadFileDirectory( AsciiString( "Data\\INI\\Default\\ShellMenuScheme.ini" ), INI_LOAD_OVERWRITE, NULL );
-	ini.loadFileDirectory( AsciiString( "Data\\INI\\ShellMenuScheme.ini" ), INI_LOAD_OVERWRITE, NULL );
+	ini.loadFileDirectory( AsciiString( "Data\\INI\\Default\\ShellMenuScheme" ), INI_LOAD_OVERWRITE, NULL );
+	ini.loadFileDirectory( AsciiString( "Data\\INI\\ShellMenuScheme" ), INI_LOAD_OVERWRITE, NULL );
 
 	if( m_schemeManager )
 		m_schemeManager->init();
