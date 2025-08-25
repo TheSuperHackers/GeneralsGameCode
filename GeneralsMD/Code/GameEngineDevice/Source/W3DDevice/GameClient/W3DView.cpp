@@ -1818,32 +1818,36 @@ void W3DView::setSnapMode( CameraLockType lockType, Real lockDist )
 }
 
 //-------------------------------------------------------------------------------------------------
-/** Scroll the view by the given delta in SCREEN COORDINATES, this interface
-	* assumes we will be scrolling along the X,Y plane */
+// Scroll the view by the given delta in SCREEN COORDINATES, this interface
+// assumes we will be scrolling along the X,Y plane
+// 
+// TheSuperHackers @bugfix Now rotates the view plane on the Z axis only to properly discard the
+// camera pitch. The aspect ratio also no longer modifies the vertical scroll speed.
 //-------------------------------------------------------------------------------------------------
 void W3DView::scrollBy( Coord2D *delta )
 {
 	// if we haven't moved, ignore
 	if( delta && (delta->x != 0 || delta->y != 0) )
 	{
-		const Real SCROLL_RESOLUTION = 250.0f;
+		CONSTEXPR const Real SCROLL_RESOLUTION = 250.0f;
 
 		Vector3 world, worldStart, worldEnd;
-		Vector2 screen, start, end;
+		Vector2 start, end;
 
 		m_scrollAmount = *delta;
 
-		screen.X = delta->x;
-		screen.Y = delta->y;
-
 		start.X = getWidth();
 		start.Y = getHeight();
-		Real aspect = getHeight() == 0 ? 1 : getWidth()/getHeight();
-		end.X = start.X + delta->x * SCROLL_RESOLUTION;
-		end.Y = start.Y + delta->y * SCROLL_RESOLUTION*aspect;
 
-		m_3DCamera->Device_To_World_Space( start, &worldStart );
-		m_3DCamera->Device_To_World_Space( end, &worldEnd );
+		end.X = start.X + delta->x * SCROLL_RESOLUTION;
+		end.Y = start.Y + delta->y * SCROLL_RESOLUTION;
+
+		m_3DCamera->Device_To_View_Space( start, &worldStart );
+		m_3DCamera->Device_To_View_Space( end, &worldEnd );
+
+		const Real zRotation = m_3DCamera->Get_Transform().Get_Z_Rotation();
+		worldStart.Rotate_Z(zRotation);
+		worldEnd.Rotate_Z(zRotation);
 
 		world.X = worldEnd.X - worldStart.X;
 		world.Y = worldEnd.Y - worldStart.Y;
