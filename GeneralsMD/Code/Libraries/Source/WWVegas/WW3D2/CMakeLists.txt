@@ -178,7 +178,7 @@ set(WW3D2_SRC
     shader.h
     #shattersystem.cpp
     #shattersystem.h
-    shdlib.h
+    #shdlib.h
     #snappts.cpp
     #snapPts.h
     sortingrenderer.cpp
