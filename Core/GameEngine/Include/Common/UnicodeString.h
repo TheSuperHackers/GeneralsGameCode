@@ -142,11 +142,11 @@ public:
 	/**
 		Constructor -- from a literal string. Constructs an UnicodeString
 		with the given string. Note that a copy of the string is made;
-		the input ptr is not saved. Note also that this is declared
-		'explicit' to avoid implicit conversions from const-WideChar-*
-		(e.g., as input arguments).
+		the input ptr is not saved.
+		Note that this is no longer explicit, as the conversion is almost
+		always wanted, anyhow.
 	*/
-	explicit UnicodeString(const WideChar* s);
+	UnicodeString(const WideChar* s);
 
 	/**
 		Destructor. Not too exciting... clean up the works and such.
