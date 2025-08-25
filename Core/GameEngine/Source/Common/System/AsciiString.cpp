@@ -125,14 +125,20 @@ void AsciiString::ensureUniqueBufferOfSize(int numCharsNeeded, Bool preserveData
 {
 	validate();
 
+	const int usableNumChars = numCharsNeeded - 1;
+
 	if (m_data &&
 			m_data->m_refCount == 1 &&
 			m_data->m_numCharsAllocated >= numCharsNeeded)
 	{
 		// no buffer manhandling is needed (it's already large enough, and unique to us)
 		if (strToCopy)
+		{
 			// TheSuperHackers @fix Mauller 04/04/2025 Replace strcpy with safer memmove as memory regions can overlap when part of string is copied to itself
-			memmove(m_data->peek(), strToCopy, strlen(strToCopy) + 1);
+			DEBUG_ASSERTCRASH(usableNumChars <= strlen(strToCopy), ("strToCopy is too small"));
+			memmove(m_data->peek(), strToCopy, usableNumChars);
+			m_data->peek()[usableNumChars] = 0;
+		}
 		if (strToCat)
 			strcat(m_data->peek(), strToCat);
 		return;
@@ -157,7 +163,11 @@ void AsciiString::ensureUniqueBufferOfSize(int numCharsNeeded, Bool preserveData
 	// do these BEFORE releasing the old buffer, so that self-copies
 	// or self-cats will work correctly.
 	if (strToCopy)
-		strcpy(newData->peek(), strToCopy);
+	{
+		DEBUG_ASSERTCRASH(usableNumChars <= strlen(strToCopy), ("strToCopy is too small"));
+		strncpy(newData->peek(), strToCopy, usableNumChars);
+		newData->peek()[usableNumChars] = 0;
+	}
 	if (strToCat)
 		strcat(newData->peek(), strToCat);
 
@@ -186,11 +196,22 @@ void AsciiString::releaseBuffer()
 }
 
 // -----------------------------------------------------
-AsciiString::AsciiString(const char* s) : m_data(0)
+AsciiString::AsciiString(const char* s) : m_data(NULL)
 {
 	//DEBUG_ASSERTCRASH(isMemoryManagerOfficiallyInited(), ("Initializing AsciiStrings prior to main (ie, as static vars) can cause memory leak reporting problems. Are you sure you want to do this?"));
-	int len = (s)?strlen(s):0;
-	if (len)
+	int len = s ? (int)strlen(s) : 0;
+	if (len > 0)
+	{
+		ensureUniqueBufferOfSize(len + 1, false, s, NULL);
+	}
+	validate();
+}
+
+// -----------------------------------------------------
+AsciiString::AsciiString(const char* s, int len) : m_data(NULL)
+{
+	len = min(s ? (int)strlen(s) : 0, len);
+	if (len > 0)
 	{
 		ensureUniqueBufferOfSize(len + 1, false, s, NULL);
 	}
@@ -375,7 +396,7 @@ void AsciiString::truncateBy(const Int charCount)
 		const size_t len = strlen(peek());
 		if (len > 0)
 		{
-			ensureUniqueBufferOfSize(len+1, true, NULL, NULL);
+			ensureUniqueBufferOfSize(len + 1, true, NULL, NULL);
 			size_t count = charCount;
 			if (charCount > len)
 			{

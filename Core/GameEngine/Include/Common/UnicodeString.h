@@ -149,6 +149,11 @@ public:
 	explicit UnicodeString(const WideChar* s);
 
 	/**
+		Constructor -- from a literal string and max length.
+	*/
+	UnicodeString(const WideChar* s, int len);
+
+	/**
 		Destructor. Not too exciting... clean up the works and such.
 	*/
 	~UnicodeString();
