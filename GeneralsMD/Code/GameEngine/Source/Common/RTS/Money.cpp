@@ -45,6 +45,7 @@
 #include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
 #include "Common/Money.h"
 #include <numeric>
+#include <algorithm>
 
 #include "Common/AudioSettings.h"
 #include "Common/GameAudio.h"
@@ -88,10 +89,10 @@ void Money::deposit(UnsignedInt amountToDeposit, Bool playSound)
 	if (playSound)
 	{
 		triggerAudioEvent(TheAudio->getMiscAudio()->m_moneyDepositSound);
+		m_incomeBuckets[m_currentBucket] += amountToDeposit;
 	}
 
 	m_money += amountToDeposit;
-	m_incomeBuckets[m_currentBucket] += amountToDeposit;
 
 	if( amountToDeposit > 0 )
 	{
@@ -106,12 +107,10 @@ void Money::deposit(UnsignedInt amountToDeposit, Bool playSound)
 // ------------------------------------------------------------------------------------------------
 void Money::setStartingCash(UnsignedInt amount)
 {
-	m_startingCash = amount;
 	m_money = amount;
 	m_currentBucket = 0;
 	m_lastBucketFrame = 0;
-	for (UnsignedInt i = 0; i < ARRAY_SIZE(m_incomeBuckets); ++i)
-		m_incomeBuckets[i] = 0;
+	std::fill(m_incomeBuckets, m_incomeBuckets + ARRAY_SIZE(m_incomeBuckets), 0u);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -123,11 +122,17 @@ void Money::updateIncomeBucket()
 	UnsignedInt diff = (curSec > lastSec) ? curSec - lastSec : 0;
 	if (diff > 0)
 	{
-		if (diff > 60)
-			diff = 60;
+		if (diff > ARRAY_SIZE(m_incomeBuckets))
+			diff = ARRAY_SIZE(m_incomeBuckets);
+
+		UnsignedInt next = (m_currentBucket + 1) % ARRAY_SIZE(m_incomeBuckets);
+		UnsignedInt first = std::min(diff, ARRAY_SIZE(m_incomeBuckets) - next);
+		std::fill(m_incomeBuckets + next, m_incomeBuckets + next + first, 0u);
+
+		if (diff > first)
+			std::fill(m_incomeBuckets, m_incomeBuckets + (diff - first), 0u);
+
 		m_currentBucket = (m_currentBucket + diff) % ARRAY_SIZE(m_incomeBuckets);
-		for (UnsignedInt i = 0; i < diff; ++i)
-			m_incomeBuckets[m_currentBucket] = 0;
 	}
 	m_lastBucketFrame = frame;
 }

@@ -96,6 +96,40 @@
 static const Real placementOpacity = 0.45f;
 static const RGBColor illegalBuildColor = { 1.0, 0.0, 0.0 };
 
+// ------------------------------------------------------------------------------------------------
+static UnicodeString formatMoneyValue(UnsignedInt amount)
+{
+    UnicodeString result;
+    if (amount >= 100000)
+    {
+        result.format(L"%dk", amount / 1000);
+    }
+    else
+    {
+        result.format(L"%d", amount);
+    }
+    return result;
+}
+
+static UnicodeString formatIncomeValue(UnsignedInt cashPerMin)
+{
+    UnicodeString result;
+    if (cashPerMin >= 10000)
+    {
+        result.format(L"%dk", cashPerMin / 1000);
+    }
+    else if (cashPerMin >= 1000)
+    {
+        UnsignedInt k = cashPerMin / 100;
+        result.format(L"%d.%dk", k / 10, k % 10);
+    }
+    else
+    {
+        result.format(L"%d", cashPerMin);
+    }
+    return result;
+}
+
 //-------------------------------------------------------------------------------------------------
 /// The InGameUI singleton instance.
 InGameUI *TheInGameUI = NULL;
@@ -1877,31 +1911,9 @@ void InGameUI::update( void )
 			if (lastMoney != (Int)currentMoney || lastIncome != (Int)cashPerMin)
 			{
 				UnicodeString buffer;
-				UnicodeString moneyStr;
-				UnicodeString incomeStr;
+				UnicodeString moneyStr = formatMoneyValue(currentMoney);
+				UnicodeString incomeStr = formatIncomeValue(cashPerMin);
 
-				if (currentMoney >= 100000)
-				{
-					moneyStr.format(L"%dk", currentMoney / 1000);
-				}
-				else
-				{
-					moneyStr.format(L"%d", currentMoney);
-				}
-
-				if (cashPerMin >= 10000)
-				{
-					incomeStr.format(L"%dk", cashPerMin / 1000);
-				}
-				else if (cashPerMin >= 1000)
-				{
-					UnsignedInt k = cashPerMin / 100;
-					incomeStr.format(L"%d.%dk", k / 10, k % 10);
-				}
-				else
-				{
-					incomeStr.format(L"%d", cashPerMin);
-				}
 				buffer.format(TheGameText->FETCH_OR_SUBSTITUTE_FORMAT("GUI:ControlBarMoneyDisplayIncome", L"%ls (%ls)", moneyStr.str(), incomeStr.str()));
 				GadgetStaticTextSetText(moneyWin, buffer);
 				lastMoney = currentMoney;

@@ -64,24 +64,14 @@ class Money : public Snapshot
 
 public:
 
-	inline Money() : m_money(0), m_playerIndex(0), m_startingCash(0), m_currentBucket(0), m_lastBucketFrame(0)
+	inline Money() : m_playerIndex(0)
 	{
-		for (UnsignedInt i = 0; i < 60; ++i)
-		{
-			m_incomeBuckets[i] = 0;
-		}
+		init();
 	}
 
 	void init()
 	{
-		m_money = 0;
-		m_startingCash = 0;
-		m_currentBucket = 0;
-		m_lastBucketFrame = 0;
-		for (UnsignedInt i = 0; i < 60; ++i)
-		{
-			m_incomeBuckets[i] = 0;
-		}
+		setStartingCash(0);
 	}
 
 	inline UnsignedInt countMoney() const
@@ -120,7 +110,6 @@ private:
 
 	UnsignedInt m_money;	///< amount of money
 	Int m_playerIndex;	///< what is my player index?
-	UnsignedInt m_startingCash;
 	UnsignedInt m_incomeBuckets[60];
 	UnsignedInt m_currentBucket;
 	UnsignedInt m_lastBucketFrame;
