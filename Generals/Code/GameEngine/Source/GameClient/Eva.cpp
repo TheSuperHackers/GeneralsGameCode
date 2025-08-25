@@ -25,6 +25,7 @@
 // GameClient/Eva.cpp /////////////////////////////////////////////////////////////////////////////
 
 #include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "GameClient/ControlBar.h"
 #include "GameClient/Eva.h"
 
 #include "Common/Player.h"
@@ -213,7 +214,7 @@ void Eva::update()
 		return;
 	}
 
-	m_localPlayer = ThePlayerList->getLocalPlayer();
+	m_localPlayer = TheControlBar->getCurrentlyViewedPlayer();
 	UnsignedInt frame = TheGameLogic->getFrame();
 
 	// Don't update for the first few frames. This way, we don't have to deal with our initial power
@@ -428,7 +429,7 @@ void Eva::processPlayingMessages(UnsignedInt currentFrame)
 	}
 
 	// We've got a winner!
-	AsciiString side = ThePlayerList->getLocalPlayer()->getSide();
+	AsciiString side = TheControlBar->getCurrentlyViewedPlayerSide();
 	Int numSides = storedIt->m_evaInfo->m_evaSideSounds.size();
 
 	for (Int i = 0; i < numSides; ++i) {
