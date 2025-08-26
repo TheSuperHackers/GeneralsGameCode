@@ -372,6 +372,8 @@ public:
 
 	Real m_keyboardScrollFactor;			///< Factor applied to game scrolling speed via keyboard scrolling
 	Real m_keyboardDefaultScrollFactor;			///< Factor applied to game scrolling speed via keyboard scrolling
+	Bool m_drawScrollAnchor;					///< Set that the scroll anchor should be enabled
+	Bool m_moveScrollAnchor;					///< set that the scroll anchor should move
 
 	Bool m_animateWindows;						///< Should we animate window transitions?
 
