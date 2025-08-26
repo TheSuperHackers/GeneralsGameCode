@@ -1528,10 +1528,6 @@ void INI::initFromINIMulti( void *what, const MultiIniFieldParse& parseTableList
 				{
 					DEBUG_ASSERTCRASH( 0, ("[LINE: %d - FILE: '%s'] Unknown field '%s' in block '%s'",
 														 INI::getLineNum(), INI::getFilename().str(), field, m_curBlockStart) );
-#if !defined(RTS_DEBUG)
-					// Just ignore unknown fields in debug builds
-					throw INI_UNKNOWN_TOKEN;
-#endif
 				}
 
 			}  // end else
