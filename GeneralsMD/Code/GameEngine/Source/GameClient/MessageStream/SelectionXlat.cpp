@@ -995,12 +995,6 @@ GameMessageDisposition SelectionTranslator::translateGameMessage(const GameMessa
 
 			Bool isClick = TheMouse->isClick(&m_deselectFeedbackAnchor, &pixel, m_lastClick, currentTime);
 
-			if (isClick &&
-					cameraPos.length() > TheMouse->m_dragTolerance3D)
-			{
-				isClick = FALSE;
-			}
-
 			// right click behavior (not right drag)
 			if (isClick)
 			{
