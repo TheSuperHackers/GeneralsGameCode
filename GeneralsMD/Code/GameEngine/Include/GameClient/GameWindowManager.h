@@ -256,6 +256,9 @@ public:
 	virtual GameWindow *winGetGrabWindow( void );  ///< who is currently 'held' by mouse
 	virtual void winSetLoneWindow( GameWindow *window );  ///< set the open window
 
+	// Finds the top-level window at the mouse position that matches the required and forbidden status masks.
+	virtual GameWindow* findWindowUnderMouse(GameWindow*& toolTipWindow, const ICoord2D* mousePos, unsigned int requiredStatusMask, unsigned int forbiddenStatusMask);
+
 	virtual Bool isEnabled( GameWindow *win );  ///< is window or parents enabled
 	virtual Bool isHidden( GameWindow *win );  ///< is parent or parents hidden
 	virtual void addWindowToParent( GameWindow *window, GameWindow *parent );

@@ -837,7 +837,6 @@ WinInputReturnCode GameWindowManager::winProcessMouseEvent( GameWindowMessage ms
 	UnsignedInt packedMouseCoords;
 	GameWindow *window = NULL;
 	GameWindow *toolTipWindow = NULL;
-	GameWindow *childWindow;
 	Int dx, dy;
 	Bool clearGrabWindow = FALSE;
 
@@ -1006,111 +1005,16 @@ WinInputReturnCode GameWindowManager::winProcessMouseEvent( GameWindowMessage ms
 			}
 			else
 			{
-
-				/**@todo Colin, there are 3 cases here that are nearly identical code,
-				break them up into functions with parameters */
-
 				// search for top-level window which contains pointer
-				for( window = m_windowList; window; window = window->m_next )
-				{
-
-					if( BitIsSet( window->m_status, WIN_STATUS_ABOVE ) &&
-							!BitIsSet( window->m_status, WIN_STATUS_HIDDEN ) &&
-							mousePos->x >= window->m_region.lo.x &&
-							mousePos->x <= window->m_region.hi.x &&
-							mousePos->y >= window->m_region.lo.y &&
-							mousePos->y <= window->m_region.hi.y)
-					{
-
-						childWindow = window->winPointInAnyChild( mousePos->x, mousePos->y, TRUE, TRUE );
-						if( toolTipWindow == NULL )
-						{
-							if( childWindow->m_tooltip ||
-									childWindow->m_instData.getTooltipTextLength() )
-							{
-								toolTipWindow = childWindow;
-							}
-						}
-						if( BitIsSet( window->m_status, WIN_STATUS_ENABLED ) )
-						{
-							// determine which child window the mouse is in
-							window = window->winPointInChild( mousePos->x, mousePos->y );
-							break;  // exit for
-						}
-
-					}  // end if
-
-				}  // end for window
+				window = findWindowUnderMouse(toolTipWindow, mousePos, WIN_STATUS_ABOVE, WIN_STATUS_HIDDEN);
 
 				// check !above, below and hidden
 				if( window == NULL )
-				{
-
-					for( window = m_windowList; window; window = window->m_next )
-					{
-
-						if( !BitIsSet( window->m_status, WIN_STATUS_ABOVE |
-																						WIN_STATUS_BELOW |
-																						WIN_STATUS_HIDDEN ) &&
-								mousePos->x >= window->m_region.lo.x &&
-								mousePos->x <= window->m_region.hi.x &&
-								mousePos->y >= window->m_region.lo.y &&
-								mousePos->y <= window->m_region.hi.y)
-						{
-
-							childWindow = window->winPointInAnyChild( mousePos->x, mousePos->y, TRUE, TRUE );
-							if( toolTipWindow == NULL )
-							{
-								if( childWindow->m_tooltip ||
-										childWindow->m_instData.getTooltipTextLength() )
-								{
-									toolTipWindow = childWindow;
-								}
-							}
-							if( BitIsSet( window->m_status, WIN_STATUS_ENABLED ))
-							{
-								// determine which child window the mouse is in
-								window = window->winPointInChild( mousePos->x, mousePos->y );
-								break;  // exit for
-							}
-						}
-					}
-				}  // end if, window == NULL
+					window = findWindowUnderMouse(toolTipWindow, mousePos, WIN_STATUS_NONE, WIN_STATUS_ABOVE | WIN_STATUS_BELOW | WIN_STATUS_HIDDEN);
 
 				// check below and !hidden
 				if( window == NULL )
-				{
-
-					for( window = m_windowList; window; window = window->m_next )
-					{
-
-						if( BitIsSet( window->m_status, WIN_STATUS_BELOW ) &&
-								!BitIsSet( window->m_status, WIN_STATUS_HIDDEN ) &&
-								mousePos->x >= window->m_region.lo.x &&
-								mousePos->x <= window->m_region.hi.x &&
-								mousePos->y >= window->m_region.lo.y &&
-								mousePos->y <= window->m_region.hi.y)
-						{
-
-							childWindow = window->winPointInAnyChild( mousePos->x, mousePos->y, TRUE, TRUE );
-							if( toolTipWindow == NULL )
-							{
-								if( childWindow->m_tooltip ||
-										childWindow->m_instData.getTooltipTextLength() )
-								{
-									toolTipWindow = childWindow;
-								}
-							}
-							if( BitIsSet( window->m_status, WIN_STATUS_ENABLED ))
-							{
-								// determine which child window the mouse is in
-								window = window->winPointInChild( mousePos->x, mousePos->y );
-								break;  // exit for
-							}
-						}
-					}
-				}  // end if
-
+					window = findWindowUnderMouse(toolTipWindow, mousePos, WIN_STATUS_BELOW, WIN_STATUS_HIDDEN);
 			}  // end else, no modal head
 
 			if( window )
@@ -1272,6 +1176,35 @@ WinInputReturnCode GameWindowManager::winProcessMouseEvent( GameWindowMessage ms
 	return returnCode;
 
 }  // end winProcessMouseEvent
+
+GameWindow* GameWindowManager::findWindowUnderMouse(GameWindow*& toolTipWindow, const ICoord2D* mousePos, unsigned int requiredStatusMask, unsigned int forbiddenStatusMask)
+{
+	for (GameWindow* window = m_windowList; window; window = window->m_next)
+	{
+		if ((BitIsSet(window->m_status, requiredStatusMask) || requiredStatusMask == 0) &&
+			!BitIsSet(window->m_status, forbiddenStatusMask) &&
+			mousePos->x >= window->m_region.lo.x &&
+			mousePos->x <= window->m_region.hi.x &&
+			mousePos->y >= window->m_region.lo.y &&
+			mousePos->y <= window->m_region.hi.y)
+		{
+			GameWindow* childWindow = window->winPointInAnyChild(mousePos->x, mousePos->y, TRUE, TRUE);
+			if (toolTipWindow == NULL)
+			{
+				if (childWindow->m_tooltip || childWindow->m_instData.getTooltipTextLength())
+					toolTipWindow = childWindow;
+			}
+
+			if (BitIsSet(window->m_status, WIN_STATUS_ENABLED))
+			{
+				// determine which child window the mouse is in
+				return window->winPointInChild(mousePos->x, mousePos->y);
+			}
+		}
+	}
+
+	return NULL;
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Draw a window and its children, in parent-first order.
