@@ -1917,8 +1917,8 @@ Bool INI::isDeclarationOfType( AsciiString blockType, AsciiString blockName, cha
 		retVal = false;
 	}
 
-	while (strlen(tempBuff)) {
-		retVal = retVal && isspace(tempBuff[0]);
+	while (*tempBuff) {
+		retVal = retVal && isspace(*tempBuff);
 		++tempBuff;
 	}
 
@@ -1963,8 +1963,8 @@ Bool INI::isEndOfBlock( char *bufferToCheck )
 		retVal = false;
 	}
 
-	while (strlen(tempBuff)) {
-		retVal = retVal && isspace(tempBuff[0]);
+	while (*tempBuff) {
+		retVal = retVal && isspace(*tempBuff);
 		++tempBuff;
 	}
 
