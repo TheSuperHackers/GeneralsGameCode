@@ -149,7 +149,8 @@ public:
 	explicit UnicodeString(const WideChar* s);
 
 	/**
-		Constructor -- from a literal string and max length.
+		Constructs an UnicodeString with the given string and length.
+		The length must not be larger than the actual string length.
 	*/
 	UnicodeString(const WideChar* s, int len);
 

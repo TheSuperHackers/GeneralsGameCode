@@ -149,7 +149,8 @@ public:
 	AsciiString(const char* s);
 
 	/**
-		Constructor -- from a literal string and max length.
+		Constructs an AsciiString with the given string and length.
+		The length must not be larger than the actual string length.
 	*/
 	AsciiString(const char* s, int len);
 
