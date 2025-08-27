@@ -1181,25 +1181,27 @@ GameWindow* GameWindowManager::findWindowUnderMouse(GameWindow*& toolTipWindow, 
 {
 	for (GameWindow* window = m_windowList; window; window = window->m_next)
 	{
-		if ((BitIsSet(window->m_status, requiredStatusMask) || requiredStatusMask == 0) &&
-			!BitIsSet(window->m_status, forbiddenStatusMask) &&
-			mousePos->x >= window->m_region.lo.x &&
-			mousePos->x <= window->m_region.hi.x &&
-			mousePos->y >= window->m_region.lo.y &&
-			mousePos->y <= window->m_region.hi.y)
+		if (BitIsSet(window->m_status, forbiddenStatusMask) ||
+			(!BitIsSet(window->m_status, requiredStatusMask) && requiredStatusMask != 0) ||
+			mousePos->x < window->m_region.lo.x ||
+			mousePos->x > window->m_region.hi.x ||
+			mousePos->y < window->m_region.lo.y ||
+			mousePos->y > window->m_region.hi.y)
 		{
-			GameWindow* childWindow = window->winPointInAnyChild(mousePos->x, mousePos->y, TRUE, TRUE);
-			if (toolTipWindow == NULL)
-			{
-				if (childWindow->m_tooltip || childWindow->m_instData.getTooltipTextLength())
-					toolTipWindow = childWindow;
-			}
+			continue;
+		}
 
-			if (BitIsSet(window->m_status, WIN_STATUS_ENABLED))
-			{
-				// determine which child window the mouse is in
-				return window->winPointInChild(mousePos->x, mousePos->y);
-			}
+		GameWindow* childWindow = window->winPointInAnyChild(mousePos->x, mousePos->y, TRUE, TRUE);
+		if (toolTipWindow == NULL)
+		{
+			if (childWindow->m_tooltip || childWindow->m_instData.getTooltipTextLength())
+				toolTipWindow = childWindow;
+		}
+
+		if (BitIsSet(window->m_status, WIN_STATUS_ENABLED))
+		{
+			// determine which child window the mouse is in
+			return window->winPointInChild(mousePos->x, mousePos->y);
 		}
 	}
 
