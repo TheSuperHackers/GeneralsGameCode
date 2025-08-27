@@ -159,7 +159,6 @@ UnicodeString::UnicodeString(const WideChar* s) : m_data(NULL)
 // -----------------------------------------------------
 UnicodeString::UnicodeString(const WideChar* s, int len) : m_data(NULL)
 {
-	len = min(s ? (int)wcslen(s) : 0, len);
 	if (len > 0)
 	{
 		ensureUniqueBufferOfSize(len + 1, false, s, NULL);

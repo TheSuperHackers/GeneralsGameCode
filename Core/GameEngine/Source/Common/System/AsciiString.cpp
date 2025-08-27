@@ -210,7 +210,6 @@ AsciiString::AsciiString(const char* s) : m_data(NULL)
 // -----------------------------------------------------
 AsciiString::AsciiString(const char* s, int len) : m_data(NULL)
 {
-	len = min(s ? (int)strlen(s) : 0, len);
 	if (len > 0)
 	{
 		ensureUniqueBufferOfSize(len + 1, false, s, NULL);
